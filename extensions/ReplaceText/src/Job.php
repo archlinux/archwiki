@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * https://www.gnu.org/copyleft/gpl.html
  *
  * @file
  * @author Yaron Koren
@@ -22,17 +22,14 @@
 namespace MediaWiki\Extension\ReplaceText;
 
 use CommentStoreComment;
+use ContentHandler;
 use Job as JobParent;
 use MediaWiki\MediaWikiServices;
 use RecentChange;
 use RequestContext;
 use TextContent;
 use Title;
-use User;
-use WatchAction;
 use Wikimedia\ScopedCallback;
-use WikiPage;
-use WikitextContent;
 
 /**
  * Background job to replace text in a given page
@@ -53,9 +50,10 @@ class Job extends JobParent {
 	 * @return bool success
 	 */
 	function run() {
+		$services = MediaWikiServices::getInstance();
 		// T279090
-		$current_user = User::newFromId( $this->params['user_id'] );
-		$permissionManager = MediaWikiServices::getInstance()->getPermissionManager();
+		$current_user = $services->getUserFactory()->newFromId( $this->params['user_id'] );
+		$permissionManager = $services->getPermissionManager();
 		if ( !$permissionManager->userCan(
 			'replacetext', $current_user, $this->title
 		) ) {
@@ -72,7 +70,7 @@ class Job extends JobParent {
 		}
 
 		if ( $this->title === null ) {
-			$this->error = "replaceText: Invalid title";
+			$this->error = 'replaceText: Invalid title';
 			return false;
 		}
 
@@ -85,39 +83,25 @@ class Job extends JobParent {
 			);
 
 			if ( $new_title === null ) {
-				$this->error = "replaceText: Invalid new title - " . $this->params['replacement_str'];
+				$this->error = 'replaceText: Invalid new title - ' . $this->params['replacement_str'];
 				return false;
 			}
 
 			$reason = $this->params['edit_summary'];
 			$create_redirect = $this->params['create_redirect'];
-			$mvPage = MediaWikiServices::getInstance()->getMovePageFactory()->newMovePage( $this->title, $new_title );
+			$mvPage = $services->getMovePageFactory()->newMovePage( $this->title, $new_title );
 			$mvStatus = $mvPage->move( $current_user, $reason, $create_redirect );
 			if ( !$mvStatus->isOK() ) {
-				$this->error = "replaceText: error while moving: " . $this->title->getPrefixedDBkey() .
-					". Errors: " . $mvStatus->getWikiText();
+				$this->error = 'replaceText: error while moving: ' . $this->title->getPrefixedDBkey() .
+					'. Errors: ' . $mvStatus->getWikiText();
 				return false;
 			}
 
 			if ( $this->params['watch_page'] ) {
-				if ( method_exists( \MediaWiki\Watchlist\WatchlistManager::class, 'addWatch' ) ) {
-					// MW 1.37+
-					MediaWikiServices::getInstance()->getWatchlistManager()->addWatch( $current_user, $new_title );
-				} else {
-					// Method was removed, but we only invoke it in versions its
-					// still available, suppress phan error
-					// @phan-suppress-next-line PhanUndeclaredStaticMethod
-					WatchAction::doWatch( $new_title, $current_user );
-				}
-
+				$services->getWatchlistManager()->addWatch( $current_user, $new_title );
 			}
 		} else {
-			if ( method_exists( MediaWikiServices::class, 'getWikiPageFactory' ) ) {
-				// MW 1.36+
-				$wikiPage = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $this->title );
-			} else {
-				$wikiPage = new WikiPage( $this->title );
-			}
+			$wikiPage = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $this->title );
 			$latestRevision = $wikiPage->getRevisionRecord();
 
 			if ( $latestRevision === null ) {
@@ -146,14 +130,6 @@ class Job extends JobParent {
 
 				$slotContent = $revisionSlots->getContent( $role );
 
-				if ( $slotContent->getModel() !== CONTENT_MODEL_WIKITEXT ) {
-					// The slot does not contain wikitext, give an error.
-					$this->error =
-						'replaceText: Slot "' . $role .
-						'" does not hold regular wikitext for wiki page "' . $this->title->getPrefixedDBkey() . '".';
-					return false;
-				}
-
 				if ( !( $slotContent instanceof TextContent ) ) {
 					// Sanity check: Does the slot actually contain TextContent?
 					$this->error =
@@ -178,7 +154,10 @@ class Job extends JobParent {
 				// If there's at least one replacement, modify the slot.
 				if ( $num_matches > 0 ) {
 					$hasMatches = true;
-					$updater->setContent( $role, new WikitextContent( $new_text ) );
+					$updater->setContent(
+						$role,
+						ContentHandler::makeContent( $new_text, $this->title, $slotContent->getModel() )
+					);
 				}
 			}
 

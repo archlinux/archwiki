@@ -9,6 +9,7 @@
 	},
 	"gadgets-desc": "Umožňuje uživatelům vybrat si v [[Special:Preferences#mw-prefsection-gadgets|nastavení]] [[Special:Gadgets|CSSová a JavaScriptová udělátka]].",
 	"prefs-gadgets": "Udělátka",
+	"prefs-description-gadgets": "Zapněte si na svém účtu doplňkové funkce.",
 	"gadgets-prefstext": "Níže je přehled speciálních udělátek, která si můžete ve svém účtu zapnout.\nTato udělátka jsou založena převážně na JavaScriptu, takže je pro jejich funkčnost nutné mít v prohlížeči JavaScript zapnutý.\nUdělátka nejsou aplikována na této stránce nastavení.\n\nUvědomte si také, že speciální udělátka nejsou součástí softwaru MediaWiki a&nbsp;jsou vytvářena a&nbsp;spravována uživateli této wiki.\nMístní správci rozhraní mohou upravovat [[MediaWiki:Gadgets-definition|definice]] dostupných udělátek a&nbsp;místní správci mohou upravovat jejich [[Special:Gadgets|popisy]], kde naleznete také jejich zdrojové kódy. Počty uživatelů každého udělátka na této wiki jsou zaznamenány ve [[Special:GadgetUsage|statistice užívání udělátek]].",
 	"gadgets": "Udělátka",
 	"gadgetusage": "Statistika využití udělátek",

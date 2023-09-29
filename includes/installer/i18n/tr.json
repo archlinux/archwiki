@@ -76,8 +76,7 @@
 	"config-env-good": "Ortam kontrol edildi.\nMediaWiki'yi kurabilirsiniz.",
 	"config-env-bad": "Ortam kontrol edildi.\nMediaWiki'yi kuramazsınız.",
 	"config-env-php": "PHP $1 kurulu.",
-	"config-unicode-using-intl": "Unicode normalleştirmesi için [https://php.net/manual/tr/book.intl.php PHP inlt uzantı] kullanımı.",
-	"config-unicode-update-warning": "<strong>Uyarı:</strong> Unicode normalleştirme sarmalayıcısının kurulu sürümü, [http://site.icu-project.org/ ICU projesinin] kitaplığının eski bir sürümünü kullanır.\nUnicode kullanma konusunda endişeleriniz varsa, [https://www.mediawiki.org/wiki/Unicode_normalization_considerations/tr yükseltmelisiniz].",
+	"config-env-icu": "ICU $1 kuruldu (Unicode $2 destekleniyor).",
 	"config-no-db": "Uygun bir veri tabanı sürücüsü bulunamadı! PHP için bir veri tabanı sürücüsü kurmanız gerekir. Şu veri tabanı {{PLURAL:$2|türü|türleri}} desteklenmektedir: $1\n\nEğer PHP'yi kendiniz derlediyseniz, bu durumda <code>./configure --with-mysqli</code> kullanarak etkinleştirilmiş veri tabanı istemcisi ile yeniden yapılandırmalısınız.\nPHP'yi bir Debian veya Ubuntu paketinden yüklediyseniz, bu durumda <code>php-mysql</code> paketini de kurmanız gerekir.",
 	"config-outdated-sqlite": "<strong>Uyarı:</strong> sizin SQLite $2 var. Gerekli minimum sürüm: $1. SQLite kullanılamayacaktır.",
 	"config-no-fts3": "<strong>Uyarı:</strong> SQLite [//sqlite.org/fts3.html FTS3 modülü] olmadan derlendi, bu arkayüzde arama özellikleri kullanılamayacaktır.",
@@ -103,7 +102,6 @@
 	"config-using-uri": "Sunucu URLsi olarak \"<nowiki>$1$2</nowiki>\" kullanılıyor.",
 	"config-uploads-not-safe": "<strong>Uyarı:</strong> <code>$1</code> yüklemeleri için varsayılan dizininiz, rastgele betiği çalıştırmaya karşı savunmasızdır.\nMediaWiki yüklenen tüm dosyaları güvenlik tehditlerine karşı kontrol etse de, yüklemeleri etkinleştirmeden önce [https://www.mediawiki.org/wiki/Manual:Security/tr#Upload_security bu güvenlik açığını kapatmanız] şiddetle tavsiye edilir.",
 	"config-no-cli-uploads-check": "<strong>Uyarı:</strong> Yüklemeler için varsayılan dizininiz (<code>$1</code>), CLI yüklemesi sırasında rastgele kod yürütme güvenlik açığı açısından denetlenmez.",
-	"config-suhosin-max-value-length": "Suhosin kurulur ve GET parametresini <code>length</code> parametresiyle $1 bayt olarak sınırlar.\nMediaWiki, <code>suhosin.get.max_value_length</code>'in en az $2 olmasını gerektirir. Bu ayarı devre dışı bırakın veya bu değeri <code>php.ini</code>'de $3 ile yükseltin.",
 	"config-using-32bit": "<strong>Uyarı:</strong> sisteminiz 32 bit tam sayılarla çalışıyor gibi görünüyor. Bu [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit tavsiye edilmez].",
 	"config-db-type": "Veritabanı türü:",
 	"config-db-host": "Veritabanı sunucusu:",
@@ -123,6 +121,7 @@
 	"config-db-prefix": "Veritabanı tablosu öneki (tiresiz):",
 	"config-db-prefix-help": "Bir veritabanını birden çok viki arasında veya MediaWiki ile başka bir web uygulaması arasında paylaşmanız gerekirse, çakışmaları önlemek için tüm tablo adlarına bir önek eklemeyi seçebilirsiniz.\nBoşluk kullanmayın.\n\nBu alan genellikle boş bırakılır.",
 	"config-mysql-old": "MySQL $1 veya daha yenisi gerekir. Sizde $2 var.",
+	"config-mariadb-old": "MariaDB $1 ya da daha yenisi gerekli. Sizinki $2.",
 	"config-db-port": "Veritabanı bağlantı noktası:",
 	"config-db-schema": "MediaWiki için şema (tiresiz):",
 	"config-db-schema-help": "Bu şema yeterli olacaktır.\nEğer gerçekten ihtiyaç duyarsanız değiştirin.",
@@ -333,6 +332,7 @@
 	"config-screenshot": "ekran görüntüsü",
 	"config-extension-not-found": "\"$1\" uzantısı için kayıt dosyası bulunamadı",
 	"config-extension-dependency": "\"$1\" uzantısı kurulurken bir bağımlılık hatası oluştu: $2",
+	"config-ext-skins-more-info": "daha fazla bilgi",
 	"mainpagetext": "<strong>MediaWiki başarı ile kuruldu.</strong>",
 	"mainpagedocfooter": "Viki yazılımının kullanımı hakkında bilgi almak için [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents kullanıcı rehberine] bakınız.\n\n== Yeni Başlayanlar ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Yapılandırma ayarlarının listesi]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ MediaWiki SSS]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ MediaWiki sürüm e-posta listesi]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Diliniz için MediaWiki'yi yerelleştirin]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Vikinizde spam ile nasıl savaşılacağını öğrenin]"
 }

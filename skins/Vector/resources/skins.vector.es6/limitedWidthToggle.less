@@ -1,0 +1,31 @@
+/**
+ * Limited width toggle - a button which lets users change the layout from
+ * a fixed-width content column to a layout where the content takes up the
+ * full window width.
+ */
+
+// By default, toggle should be hidden unless the breakpoint below is reached.
+.vector-limited-width-toggle {
+	display: none;
+}
+
+// Note on certain pages the control will have no effect e.g. Special:RecentChanges
+// Defining this at 1400px is a product decision so do not change it
+// (more context at https://phabricator.wikimedia.org/T326887#8540889)
+@media ( min-width: 1400px ) {
+	.vector-limited-width-toggle {
+		display: block;
+		position: fixed;
+		bottom: 8px;
+		right: 8px;
+	}
+
+	//NOTE: enabled/disabled class on body.
+	.vector-feature-limited-width-disabled .vector-limited-width-toggle:before {
+		background-image: url( images/fullscreen-close.svg );
+	}
+
+	.vector-feature-limited-width-enabled .vector-limited-width-toggle:before {
+		background-image: url( images/fullscreen.svg );
+	}
+}

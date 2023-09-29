@@ -33,11 +33,11 @@ use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
  * application state statically, e.g.
  *
  * ```lang=php
- * $featureManager->registerComplexRequirement(
+ * $featureManager->registerRequirement(
  *   new DynamicConfigRequirement(
  *     $config,
- *     'Sitename',
- *     'Foo'
+ *     MainConfigNames::Sitename,
+ *     'requirementName'
  *   )
  * );
  * ```
@@ -48,9 +48,9 @@ use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
  * Contrast to
  *
  * ```lang=php
- * $featureManager->registerRequirement(
- *   'Foo',
- *   $config->get( 'Sitename' )
+ * $featureManager->registerSimpleRequirement(
+ *   'requirementName',
+ *   (bool)$config->get( MainConfigNames::Sitename )
  * );
  * ```
  *

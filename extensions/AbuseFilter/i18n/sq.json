@@ -11,7 +11,8 @@
 			"Liridon",
 			"Marinari",
 			"Matma Rex",
-			"Vinie007"
+			"Vinie007",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Zbaton automatikisht deduktimin e redaktimeve",
@@ -132,7 +133,7 @@
 	"abusefilter-edit-action-disallow": "Pengo përdoruesin nga kryerja e veprimit në fjalë",
 	"abusefilter-edit-action-blockautopromote": "Anulo statusin e autoconfirmimit të përdoruesit",
 	"abusefilter-edit-action-degroup": "Hiq përdoruesin nga të gjitha grupet e privilegjuara",
-	"abusefilter-edit-action-block": "Blloko përdoruesin dhe / ose IP adresën  nga redaktimi",
+	"abusefilter-edit-action-block": "Blloko përdoruesin dhe / ose IP adresën nga redaktimi",
 	"abusefilter-edit-action-throttle": "Inico veprimin vetëm nëse përdoruesi ngec normën e limitit",
 	"abusefilter-edit-action-rangeblock": "Blloko intervalin përkatës të IP-eve prej nga vjen përdoruesi",
 	"abusefilter-edit-action-tag": "Etiketo redaktimin për shqyrtim të mëtejshëm",

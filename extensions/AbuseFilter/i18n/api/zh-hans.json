@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Func",
+			"Lakejason0",
 			"Liuxinyu970226",
 			"Looong",
 			"SomeyaMako",
 			"VulpesVulpes825",
 			"Wenyuan Liu",
-			"Yfdyh000",
-			"Lakejason0"
+			"Yfdyh000"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "检查以查看滥用过滤器是否匹配某个变量集、某次编辑或某条日志记载的过滤器活动。\n\nvars、rcid或logid是必须的，然而只有一个会被使用。",

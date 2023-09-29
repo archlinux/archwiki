@@ -4,16 +4,14 @@ namespace MediaWiki\Extension\AbuseFilter\Consequences;
 
 use MediaWiki\Block\BlockUser;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Block;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Consequence;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\ConsequencesDisablerConsequence;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\HookAborterConsequence;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
-use MediaWiki\Extension\AbuseFilter\Variables\UnsetVariableException;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
-use MediaWiki\Linker\LinkTarget;
-use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerInterface;
 use Status;
 
@@ -37,10 +35,8 @@ class ConsequencesExecutor {
 	private $logger;
 	/** @var ServiceOptions */
 	private $options;
-	/** @var UserIdentity */
-	private $user;
-	/** @var LinkTarget */
-	private $title;
+	/** @var ActionSpecifier */
+	private $specifier;
 	/** @var VariableHolder */
 	private $vars;
 
@@ -51,8 +47,7 @@ class ConsequencesExecutor {
 	 * @param FilterLookup $filterLookup
 	 * @param LoggerInterface $logger
 	 * @param ServiceOptions $options
-	 * @param UserIdentity $user
-	 * @param LinkTarget $title
+	 * @param ActionSpecifier $specifier
 	 * @param VariableHolder $vars
 	 */
 	public function __construct(
@@ -62,8 +57,7 @@ class ConsequencesExecutor {
 		FilterLookup $filterLookup,
 		LoggerInterface $logger,
 		ServiceOptions $options,
-		UserIdentity $user,
-		LinkTarget $title,
+		ActionSpecifier $specifier,
 		VariableHolder $vars
 	) {
 		$this->consLookup = $consLookup;
@@ -73,8 +67,7 @@ class ConsequencesExecutor {
 		$this->logger = $logger;
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
-		$this->user = $user;
-		$this->title = $title;
+		$this->specifier = $specifier;
 		$this->vars = $vars;
 	}
 
@@ -164,8 +157,9 @@ class ConsequencesExecutor {
 		foreach ( $consParams as $filter => $actions ) {
 			foreach ( $actions as $name => $parameters ) {
 				if ( $name === 'block' ) {
+					$user = $this->specifier->getUser();
 					$consParams[$filter][$name] = [
-						'expiry' => $this->user->isRegistered() ? $parameters[2] : $parameters[1],
+						'expiry' => $user->isRegistered() ? $parameters[2] : $parameters[1],
 						'blocktalk' => $parameters[0] === 'blocktalk'
 					];
 				}
@@ -326,9 +320,7 @@ class ConsequencesExecutor {
 		$baseConsParams = new Parameters(
 			$filterObj,
 			$isGlobalFilter,
-			$this->user,
-			$this->title,
-			$this->vars->getComputedVariable( 'action' )->toString()
+			$this->specifier
 		);
 
 		switch ( $actionName ) {
@@ -362,13 +354,7 @@ class ConsequencesExecutor {
 					$rawParams['blocktalk']
 				);
 			case 'tag':
-				try {
-					// The variable is not lazy-loaded
-					$accountName = $this->vars->getComputedVariable( 'accountname' )->toNative();
-				} catch ( UnsetVariableException $_ ) {
-					$accountName = null;
-				}
-				return $this->consFactory->newTag( $baseConsParams, $accountName, $rawParams );
+				return $this->consFactory->newTag( $baseConsParams, $rawParams );
 			default:
 				if ( array_key_exists( $actionName, $this->consRegistry->getCustomActions() ) ) {
 					$callback = $this->consRegistry->getCustomActions()[$actionName];
@@ -403,6 +389,7 @@ class ConsequencesExecutor {
 	 *                actions taken because of that filter.
 	 * @param array[] $messages a list of arrays, where each array contains a message key
 	 *                followed by any message parameters.
+	 * @phan-param non-empty-array[] $messages
 	 *
 	 * @return Status
 	 */

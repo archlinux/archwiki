@@ -51,7 +51,7 @@ ve.ui.MWUseExistingReferenceDialogTool = function VeUiMWUseExistingReferenceDial
 OO.inheritClass( ve.ui.MWUseExistingReferenceDialogTool, ve.ui.WindowTool );
 ve.ui.MWUseExistingReferenceDialogTool.static.name = 'reference/existing';
 ve.ui.MWUseExistingReferenceDialogTool.static.group = 'object';
-ve.ui.MWUseExistingReferenceDialogTool.static.icon = 'reference-existing';
+ve.ui.MWUseExistingReferenceDialogTool.static.icon = 'referenceExisting';
 if ( mw.config.get( 'wgCiteVisualEditorOtherGroup' ) ) {
 	ve.ui.MWUseExistingReferenceDialogTool.static.title = OO.ui.deferMsg(
 		'cite-ve-othergroup-item',

@@ -207,7 +207,6 @@
 	"visualeditor-dialog-transclusion-param-selection-aria-description": "पैरामीटर जोड़ने या हटाने के लिए Space दबाएँ। पैरामीटर जोड़कर सीधे उसके वैल्यू को संपादित करने के लिए Enter दबाएँ। जब पैरामीटर को चुन लिया जाए, उसके वैल्यू को संपादित करने के लिए Enter दबाएँ।",
 	"visualeditor-dialog-transclusion-param-selection-aria-label": "$1 में पैरामीटर",
 	"visualeditor-dialog-transclusion-param-undocumented": "(अप्रलेखित पैरामीटर)",
-	"visualeditor-dialog-transclusion-placeholder": "साँचा जोड़ें",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "साँचा खोजें",
 	"visualeditor-dialog-transclusion-required-parameter": "आवश्यक फ़ील्ड्स",
 	"visualeditor-dialog-transclusion-required-parameter-description": "यह फ़ील्ड आवश्यक है।",

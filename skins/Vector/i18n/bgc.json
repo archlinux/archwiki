@@ -14,5 +14,8 @@
 	"vector-view-create": "बनावें",
 	"vector-view-history": "इतिहास नै देखें",
 	"vector-more-actions": "और भी",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> सी सहित पन्ने  खोजें"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> सी सहित पन्ने  खोजें",
+	"vector-page-tools-label": "औजारें",
+	"vector-page-tools-general-label": "सामान्य",
+	"vector-unpin-element-label": "छिपावें"
 }

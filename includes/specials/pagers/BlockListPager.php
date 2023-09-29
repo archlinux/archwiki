@@ -28,6 +28,9 @@ use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Block\Restriction\Restriction;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
+use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPageFactory;
@@ -179,7 +182,7 @@ class BlockListPager extends TablePager {
 				if ( $row->ipb_auto ) {
 					$formatted = $this->msg( 'autoblockid', $row->ipb_id )->parse();
 				} else {
-					list( $target, ) = $this->blockUtils->parseBlockTarget( $row->ipb_address );
+					[ $target, ] = $this->blockUtils->parseBlockTarget( $row->ipb_address );
 
 					if ( is_string( $target ) ) {
 						if ( IPUtils::isValidRange( $target ) ) {

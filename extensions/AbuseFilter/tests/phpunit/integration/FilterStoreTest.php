@@ -48,7 +48,7 @@ class FilterStoreTest extends MediaWikiIntegrationTestCase {
 		$filter = $this->getFilterFromSpecs( [ 'id' => $id ] + $row );
 		// Use some black magic to bypass checks
 		$filterStore = TestingAccessWrapper::newFromObject( AbuseFilterServices::getFilterStore() );
-		wfGetDB( DB_PRIMARY )->insert(
+		$this->db->insert(
 			'abuse_filter',
 			$filterStore->filterToDatabaseRow( $filter ),
 			__METHOD__

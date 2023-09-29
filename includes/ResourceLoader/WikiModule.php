@@ -31,12 +31,13 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use MemoizedCallable;
-use Title;
 use TitleValue;
 use Wikimedia\Minify\CSSMin;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -432,9 +433,6 @@ class WikiModule extends Module {
 				[ $style, false, $remoteDir, true ]
 			);
 			$media = $options['media'] ?? 'all';
-			if ( !isset( $styles[$media] ) ) {
-				$styles[$media] = [];
-			}
 			$style = ResourceLoader::makeComment( $titleText ) . $style;
 			$styles[$media][] = $style;
 		}
@@ -545,12 +543,12 @@ class WikiModule extends Module {
 	}
 
 	/**
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @param array $pages
 	 * @param string $fname
 	 * @return array
 	 */
-	protected static function fetchTitleInfo( IDatabase $db, array $pages, $fname = __METHOD__ ) {
+	protected static function fetchTitleInfo( IReadableDatabase $db, array $pages, $fname = __METHOD__ ) {
 		$titleInfo = [];
 		$linkBatchFactory = MediaWikiServices::getInstance()->getLinkBatchFactory();
 		$batch = $linkBatchFactory->newLinkBatch();
@@ -562,12 +560,12 @@ class WikiModule extends Module {
 			}
 		}
 		if ( !$batch->isEmpty() ) {
-			$res = $db->select( 'page',
+			$res = $db->newSelectQueryBuilder()
 				// Include page_touched to allow purging if cache is poisoned (T117587, T113916)
-				[ 'page_namespace', 'page_title', 'page_touched', 'page_len', 'page_latest' ],
-				$batch->constructSet( 'page', $db ),
-				$fname
-			);
+				->select( [ 'page_namespace', 'page_title', 'page_touched', 'page_len', 'page_latest' ] )
+				->from( 'page' )
+				->where( $batch->constructSet( 'page', $db ) )
+				->caller( $fname )->fetchResultSet();
 			foreach ( $res as $row ) {
 				// Avoid including ids or timestamps of revision/page tables so
 				// that versions are not wasted

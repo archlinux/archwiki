@@ -2,6 +2,7 @@
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -36,7 +37,6 @@ use Wikimedia\TestingAccessWrapper;
  * @covers LockManagerGroup
  * @covers MemoryFileBackend
  * @covers MoveFileOp
- * @covers MySqlLockManager
  * @covers NullFileOp
  * @covers StoreFileOp
  * @covers TempFSFile
@@ -1199,7 +1199,7 @@ class FileBackendIntegrationTest extends MediaWikiIntegrationTestCase {
 			$data = ob_get_contents();
 			ob_end_clean();
 
-			$this->assertRegExp( '#<h1>File not found</h1>#', $data,
+			$this->assertMatchesRegularExpression( '#<h1>File not found</h1>#', $data,
 				"Correct content streamed from '$path' ($backendName)" );
 		}
 	}

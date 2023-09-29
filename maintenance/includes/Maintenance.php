@@ -76,8 +76,8 @@ abstract class Maintenance {
 	public const STDIN_ALL = -1;
 
 	// Help group names
-	public const SCRIPT_DEPENDENT_PARAMETERS = 'Script dependent parameters';
-	public const GENERIC_MAINTENANCE_PARAMETERS = 'Generic maintenance parameters';
+	public const SCRIPT_DEPENDENT_PARAMETERS = 'Common options';
+	public const GENERIC_MAINTENANCE_PARAMETERS = 'Script runner options';
 
 	/**
 	 * @var MaintenanceParameters
@@ -227,6 +227,26 @@ abstract class Maintenance {
 	abstract public function execute();
 
 	/**
+	 * Whether this script can run without LocalSettings.php. Scripts that need to be able
+	 * to run when MediaWiki has not been installed should override this to return true.
+	 * Scripts that return true from this method must be able to function without
+	 * a storage backend. When no LocalSettings.php file is present, any attempt to access
+	 * the database will fail with a fatal error.
+	 *
+	 * @note Subclasses that override this method to return true should also override
+	 * getDbType() to return self::DB_NONE, unless they are going to use the database
+	 * connection when it is available.
+	 *
+	 * @see getDbType()
+	 * @since 1.40
+	 * @stable to override
+	 * @return bool
+	 */
+	public function canExecuteWithoutLocalSettings(): bool {
+		return false;
+	}
+
+	/**
 	 * Checks to see if a particular option in supported.  Normally this means it
 	 * has been registered by the script via addOption.
 	 * @param string $name The name of the option
@@ -290,9 +310,10 @@ abstract class Maintenance {
 	 * @param string $arg Name of the arg, like 'start'
 	 * @param string $description Short description of the arg
 	 * @param bool $required Is this required?
+	 * @param bool $multi Does it allow multiple values? (Last arg only)
 	 */
-	protected function addArg( $arg, $description, $required = true ) {
-		$this->parameters->addArg( $arg, $description, $required );
+	protected function addArg( $arg, $description, $required = true, $multi = false ) {
+		$this->parameters->addArg( $arg, $description, $required, $multi );
 	}
 
 	/**
@@ -322,7 +343,8 @@ abstract class Maintenance {
 
 	/**
 	 * Does a given argument exist?
-	 * @param int $argId The integer value (from zero) for the arg
+	 * @param int|string $argId The index (from zero) of the argument, or
+	 *                   the name declared for the argument by addArg().
 	 * @return bool
 	 */
 	protected function hasArg( $argId = 0 ) {
@@ -331,7 +353,8 @@ abstract class Maintenance {
 
 	/**
 	 * Get an argument.
-	 * @param int $argId The integer value (from zero) for the arg
+	 * @param int|string $argId The index (from zero) of the argument, or
+	 *                   the name declared for the argument by addArg().
 	 * @param mixed|null $default The default if it doesn't exist
 	 * @return mixed
 	 * @return-taint none
@@ -442,7 +465,7 @@ abstract class Maintenance {
 	 */
 	protected function output( $out, $channel = null ) {
 		// This is sometimes called very early, before Setup.php is included.
-		if ( class_exists( MediaWikiServices::class ) ) {
+		if ( defined( 'MW_SERVICE_BOOTSTRAP_COMPLETE' ) ) {
 			// Flush stats periodically in long-running CLI scripts to avoid OOM (T181385)
 			$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
 			if ( $stats->getDataCount() > 1000 ) {
@@ -551,6 +574,12 @@ abstract class Maintenance {
 	 *    Maintenance::DB_NONE  -  For no DB access at all
 	 *    Maintenance::DB_STD   -  For normal DB access, default
 	 *    Maintenance::DB_ADMIN -  For admin DB access
+	 *
+	 * @note Subclasses that override this method to return self::DB_NONE should
+	 * also override canExecuteWithoutLocalSettings() to return true, unless they
+	 * need the wiki to be set up for reasons beyond access to a database connection.
+	 *
+	 * @see canExecuteWithoutLocalSettings()
 	 * @stable to override
 	 * @return int
 	 */
@@ -667,6 +696,7 @@ abstract class Maintenance {
 	 * to it.
 	 * @param string $maintClass A name of a child maintenance class
 	 * @param string|null $classFile Full path of where the child is
+	 * @stable to override
 	 * @return Maintenance
 	 */
 	public function runChild( $maintClass, $classFile = null ) {
@@ -697,10 +727,11 @@ abstract class Maintenance {
 	}
 
 	/**
-	 * Do some checking and basic setup
+	 * Provides subclasses with an opportunity to perform initial checks.
+	 * @stable to override
 	 */
 	public function setup() {
-		$this->loadParamsAndArgs();
+		// noop
 	}
 
 	/**
@@ -745,11 +776,21 @@ abstract class Maintenance {
 	}
 
 	/**
+	 * @since 1.40
+	 * @internal
+	 * @param string $name
+	 */
+	public function setName( string $name ) {
+		$this->mSelf = $name;
+		$this->parameters->setName( $this->mSelf );
+	}
+
+	/**
 	 * Load params and arguments from a given array
 	 * of command-line arguments
 	 *
 	 * @since 1.27
-	 * @param array $argv
+	 * @param array $argv The argument array, not including the script itself.
 	 */
 	public function loadWithArgv( $argv ) {
 		if ( $this->mDescription ) {
@@ -769,7 +810,7 @@ abstract class Maintenance {
 	}
 
 	/**
-	 * Process command line arguments
+	 * Process command line arguments when running as a child script
 	 *
 	 * @param string|null $self The name of the script, if any
 	 * @param array|null $opts An array of options, in form of key=>value
@@ -787,8 +828,7 @@ abstract class Maintenance {
 		}
 
 		# If we've already loaded input (either by user values or from $argv)
-		# skip on loading it again. The array_shift() will corrupt values if
-		# it's run again and again
+		# skip on loading it again.
 		if ( $this->mInputLoaded ) {
 			$this->loadSpecialVars();
 
@@ -807,11 +847,6 @@ abstract class Maintenance {
 	 */
 	public function validateParamsAndArgs() {
 		$valid = $this->parameters->validate();
-
-		if ( $this->parameters->hasErrors() ) {
-			$errors = "\nERROR: " . implode( "\nERROR: ", $this->parameters->getErrors() ) . "\n";
-			$this->error( $errors );
-		}
 
 		$this->maybeHelp( !$valid );
 	}
@@ -844,6 +879,12 @@ abstract class Maintenance {
 		if ( !$force && !$this->hasOption( 'help' ) ) {
 			return;
 		}
+
+		if ( $this->parameters->hasErrors() && !$this->hasOption( 'help' ) ) {
+			$errors = "\nERROR: " . implode( "\nERROR: ", $this->parameters->getErrors() ) . "\n";
+			$this->error( $errors );
+		}
+
 		$this->showHelp();
 		die( 1 );
 	}
@@ -949,11 +990,8 @@ abstract class Maintenance {
 		$overrides['ShowExceptionDetails'] = true;
 		$overrides['ShowHostname'] = true;
 
-		$ini = [
-			'max_execution_time' => 0,
-		];
-
-		$settingsBuilder->loadArray( [ 'config' => $overrides, 'php-ini' => $ini ] );
+		ini_set( 'max_execution_time', '0' );
+		$settingsBuilder->putConfigValues( $overrides );
 	}
 
 	/**
@@ -999,10 +1037,11 @@ abstract class Maintenance {
 			DeferredUpdates::doUpdates();
 		}
 
-		// Handle external profiler outputs
-		// FIXME: Handle embedded outputs as well, such as ProfilerOutputText (T253547)
+		// Handle profiler outputs
+		// NOTE: MaintenanceRunner ensures Profiler::setAllowOutput() during setup
 		$profiler = Profiler::instance();
 		$profiler->logData();
+		$profiler->logDataPageOutputOnly();
 
 		MediaWiki::emitBufferedStatsdData(
 			MediaWikiServices::getInstance()->getStatsdDataFactory(),
@@ -1340,6 +1379,8 @@ abstract class Maintenance {
 	/**
 	 * Call this to set up the autoloader to allow classes to be used from the
 	 * tests directory.
+	 *
+	 * @deprecated since 1.41. Set the MW_AUTOLOAD_TEST_CLASSES in file scope instead.
 	 */
 	public static function requireTestsAutoloader() {
 		require_once __DIR__ . '/../../tests/common/TestsAutoLoader.php';

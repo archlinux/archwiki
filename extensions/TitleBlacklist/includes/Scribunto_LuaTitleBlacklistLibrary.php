@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\TitleBlacklist;
 
+use MediaWiki\MediaWikiServices;
 use Scribunto_LuaLibraryBase;
 
 class Scribunto_LuaTitleBlacklistLibrary extends Scribunto_LuaLibraryBase {
@@ -20,7 +21,12 @@ class Scribunto_LuaTitleBlacklistLibrary extends Scribunto_LuaLibraryBase {
 		$this->checkTypeOptional( 'mw.ext.TitleBlacklist.test', 2, $title, 'string', '' );
 		$this->incrementExpensiveFunctionCount();
 		if ( $title == '' ) {
-			$title = $this->getParser()->mTitle->getPrefixedText();
+			$page = $this->getParser()->getPage();
+			if ( !$page ) {
+				// Nothing to check
+				return [ null ];
+			}
+			$title = MediaWikiServices::getInstance()->getTitleFormatter()->getPrefixedText( $page );
 		}
 		$entry = TitleBlacklist::singleton()->isBlacklisted( $title, $action );
 		if ( $entry ) {

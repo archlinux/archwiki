@@ -2,14 +2,14 @@
 
 namespace MediaWiki\Tests\ResourceLoader;
 
-use FauxRequest;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\ResourceLoader\Context;
 use MediaWiki\ResourceLoader\DerivativeContext;
 use MediaWiki\ResourceLoader\ResourceLoader;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWikiIntegrationTestCase;
 use ResourceLoaderTestCase;
-use Title;
 use User;
 
 /**
@@ -34,10 +34,10 @@ class DerivativeContextTest extends MediaWikiIntegrationTestCase {
 
 	public function testChangeModules() {
 		$derived = new DerivativeContext( self::makeContext() );
-		$this->assertSame( $derived->getModules(), [ 'test.default' ], 'inherit from parent' );
+		$this->assertSame( [ 'test.default' ], $derived->getModules(), 'inherit from parent' );
 
 		$derived->setModules( [ 'test.override' ] );
-		$this->assertSame( $derived->getModules(), [ 'test.override' ] );
+		$this->assertSame( [ 'test.override' ], $derived->getModules() );
 	}
 
 	public function testChangeLanguageAndDirection() {

@@ -5,10 +5,11 @@ namespace MediaWiki\Tests\Parser;
 use CacheTime;
 use JsonSerializable;
 use MediaWiki\Json\JsonCodec;
+use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
+use MWDebug;
 use MWTimestamp;
 use ParserOutput;
-use Title;
 use Wikimedia\Tests\SerializationTestUtils;
 
 /**
@@ -62,6 +63,31 @@ abstract class ParserCacheSerializationTestCases {
 		'\x00' => "\x00",
 		'gzip' => "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\x03\xcb\x48\xcd\xc9\xc9\x57\x28\xcf\x2f'
 			. '\xca\x49\x01\x00\x85\x11\x4a\x0d\x0b\x00\x00\x00",
+	];
+
+	private const SECTIONS = [
+		[
+			'toclevel' => 0,
+			'line' => 'heading_1',
+			'level' => 1,
+			'number' => '1.0',
+			'index' => 'T-1',
+			'fromtitle' => '',
+			'byteoffset' => null,
+			'anchor' => 'heading_1',
+			'linkAnchor' => '#heading_1',
+		],
+		[
+			'toclevel' => 1,
+			'line' => 'heading_2',
+			'level' => 2,
+			'number' => '2.0',
+			'index' => 'T-2',
+			'fromtitle' => '',
+			'byteoffset' => null,
+			'anchor' => 'heading_2',
+			'linkAnchor' => '#heading_2'
+		],
 	];
 
 	private const CACHE_TIME = '20010419042521';
@@ -145,6 +171,7 @@ abstract class ParserCacheSerializationTestCases {
 	 * @return array[]
 	 */
 	public static function getParserOutputTestCases() {
+		MWDebug::filterDeprecationForTest( '/Use of ParserOutput::setTOCHTML/' );
 		$parserOutputWithCacheTimeProps = new ParserOutput( 'CacheTime' );
 		$parserOutputWithCacheTimeProps->setCacheTime( self::CACHE_TIME );
 		$parserOutputWithCacheTimeProps->updateCacheExpiry( 10 );
@@ -184,7 +211,7 @@ abstract class ParserCacheSerializationTestCases {
 		$parserOutputWithMetadata->addCategory( 'category1', '2' );
 		$parserOutputWithMetadata->setIndicator( 'indicator1', 'indicator1_value' );
 		$parserOutputWithMetadata->setTitleText( 'title_text1' );
-		$parserOutputWithMetadata->setSections( [ 'section1', 'section2' ] );
+		$parserOutputWithMetadata->setSections( self::SECTIONS );
 		$parserOutputWithMetadata->addLink( Title::makeTitle( NS_MAIN, 'Link1' ), 42 );
 		$parserOutputWithMetadata->addLink( Title::makeTitle( NS_USER, 'Link2' ), 43 );
 		$parserOutputWithMetadata->addTemplate(
@@ -212,6 +239,9 @@ abstract class ParserCacheSerializationTestCases {
 		$parserOutputWithMetadata->setHideNewSection( true );
 		$parserOutputWithMetadata->setNewSection( true );
 		$parserOutputWithMetadata->setFlag( 'test' );
+
+		$parserOutputWithSections = new ParserOutput( '' );
+		$parserOutputWithSections->setSections( self::SECTIONS );
 
 		$parserOutputWithMetadataPost1_31 = new ParserOutput( '' );
 		$parserOutputWithMetadataPost1_31->addWrapperDivClass( 'test_wrapper' );
@@ -355,7 +385,7 @@ abstract class ParserCacheSerializationTestCases {
 					], $object->getCategories() );
 					$testCase->assertArrayEquals( [ 'indicator1' => 'indicator1_value' ], $object->getIndicators() );
 					$testCase->assertSame( 'title_text1', $object->getTitleText() );
-					$testCase->assertArrayEquals( [ 'section1', 'section2' ], $object->getSections() );
+					$testCase->assertArrayEquals( self::SECTIONS, $object->getSections() );
 					$testCase->assertArrayEquals( [
 						NS_MAIN => [ 'Link1' => 42 ],
 						NS_USER => [ 'Link2' => 43 ]
@@ -393,6 +423,12 @@ abstract class ParserCacheSerializationTestCases {
 					$testCase->assertTrue( $object->getNewSection() );
 					$testCase->assertTrue( $object->getFlag( 'test' ) );
 					$testCase->assertArrayEquals( [ 'test' ], $object->getAllFlags() );
+				}
+			],
+			'withSections' => [
+				'instance' => $parserOutputWithSections,
+				'assertions' => static function ( MediaWikiIntegrationTestCase $testCase, ParserOutput $object ) {
+					$testCase->assertArrayEquals( self::SECTIONS, $object->getSections() );
 				}
 			],
 			'withMetadataPost1_31' => [

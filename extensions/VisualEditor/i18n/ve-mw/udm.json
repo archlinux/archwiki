@@ -4,15 +4,17 @@
 			"AlnashPiyash2",
 			"Kaganer",
 			"Kotwys",
-			"Wadorgurt"
+			"Wadorgurt",
+			"Света Поторочина",
+			"Udmwiki"
 		]
 	},
 	"tooltip-ca-ve-edit": "Та бамез тупатоно",
-	"visualeditor-ca-createlocaldescriptionsource": "Интыысь описанилэсь источниксэ ватсаны",
-	"visualeditor-ca-createsource": "Кылдытоно вики-текстэз сямен",
+	"visualeditor-ca-createlocaldescriptionsource": "Та интылы тупась кылсуред ватсано",
+	"visualeditor-ca-createsource": "Кодзэ кылдытоно",
 	"visualeditor-ca-editsource": "Кодзэ тупатоно",
-	"visualeditor-ca-editsource-section": "вики-текстэз тупатыны",
-	"visualeditor-descriptionpagelink": "Project:VisualEditor",
+	"visualeditor-ca-editsource-section": "бамлэсь кодзэ тупатоно",
+	"visualeditor-descriptionpagelink": "Project:Визуальной редактор",
 	"visualeditor-dialog-meta-languages-label": "Кылъёс",
 	"visualeditor-dialog-meta-languages-section": "Кылъёс",
 	"visualeditor-languages-tool": "Кылъёс",

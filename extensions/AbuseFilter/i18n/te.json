@@ -8,7 +8,8 @@
 			"Pavan santhosh.s",
 			"Ravichandra",
 			"Veeven",
-			"వైజాసత్య"
+			"వైజాసత్య",
+			"Amire80"
 		]
 	},
 	"abusefilter": "దుర్వినియోగ వడపోతల నిర్వహణ",
@@ -53,7 +54,7 @@
 	"abusefilter-log-search-group": "వడపోత గుంపు:",
 	"abusefilter-log-search-group-any": "ఏదైనా",
 	"abusefilter-log-search-filter": "వడపోత IDలు:",
-	"abusefilter-log-search-filter-help": "పైప్‌లతో వేరు చేయండి, సార్వత్రిక ఫిల్టర్ల కోసం ముందు  \"$1\" చేర్చండి",
+	"abusefilter-log-search-filter-help": "పైప్‌లతో వేరు చేయండి, సార్వత్రిక ఫిల్టర్ల కోసం ముందు \"$1\" చేర్చండి",
 	"abusefilter-log-search-filter-help-central": "పైపులతో విడదీయి",
 	"abusefilter-log-search-title": "శీర్షిక:",
 	"abusefilter-log-search-wiki": "వికీ:",
@@ -198,7 +199,7 @@
 	"abusefilter-edit-field-conditions": "నిబంధనలు:",
 	"abusefilter-edit-notes": "గమనికలు:",
 	"abusefilter-edit-lastmod": "వడపోత చివరి మార్పు:",
-	"abusefilter-edit-lastmod-text": "$1న  $2చే",
+	"abusefilter-edit-lastmod-text": "$1న $2చే",
 	"abusefilter-edit-hitcount": "వడపోత హిట్లు:",
 	"abusefilter-edit-consequences": "జోడి కుదిరినప్పుడు తీసుకోవాల్సిన చర్యలు",
 	"abusefilter-edit-action-warn": "వాడుకరికి ఒక హెచ్చరిక చేసాక, ఈ చర్యలను ప్రేరేపించు",
@@ -492,7 +493,7 @@
 	"abusefilter-diff-backhistory": "తిరిగి వడపోత చరిత్రకి",
 	"abusefilter-diff-prev": "పాత మార్పు",
 	"abusefilter-diff-next": "కొత్త మార్పు",
-	"abusefilter-import-intro": "ఇతర వికీల నుండి వడపోతకాలను దిగుమతి చేసుకునేందుకు ఈ ఇంటరుఫేసును వాడవచ్చు.\nమూలవికీలో, ఎడిటింగ్ ఇంటరుఫేసులోని \"{{int:abusefilter-edit-tools}}\"  కింద ఉన్న \"{{int:abusefilter-edit-export}}\" ను నొక్కండి.\nఅప్పుడు కనిపించే టెక్స్టుబాక్సులో ఉన్న పాఠ్యాన్ని కాపీ చేసుకుని, దాన్ని ఈ టెక్స్టుబాక్సులో పేస్టు చెయ్యండి. ఆ తరవాత \"{{int:abusefilter-import-submit}}\" నొక్కండి.",
+	"abusefilter-import-intro": "ఇతర వికీల నుండి వడపోతకాలను దిగుమతి చేసుకునేందుకు ఈ ఇంటరుఫేసును వాడవచ్చు.\nమూలవికీలో, ఎడిటింగ్ ఇంటరుఫేసులోని \"{{int:abusefilter-edit-tools}}\" కింద ఉన్న \"{{int:abusefilter-edit-export}}\" ను నొక్కండి.\nఅప్పుడు కనిపించే టెక్స్టుబాక్సులో ఉన్న పాఠ్యాన్ని కాపీ చేసుకుని, దాన్ని ఈ టెక్స్టుబాక్సులో పేస్టు చెయ్యండి. ఆ తరవాత \"{{int:abusefilter-import-submit}}\" నొక్కండి.",
 	"abusefilter-import-submit": "భోగట్టాని దిగుమతించు",
 	"abusefilter-group-default": "అప్రమేయం",
 	"abusefilter-http-error": "HTTP లోపమేదో దొర్లింది: $1.",

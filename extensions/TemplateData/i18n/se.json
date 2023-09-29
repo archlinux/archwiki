@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik",
-			"Kimberli Mäkäräinen (WMNO)"
+			"Kimberli Mäkäräinen (WMNO)",
+			"Yupik"
 		]
 	},
 	"templatedata-doc-desc-empty": "Ii gávdno govvádus.",
@@ -29,13 +29,15 @@
 	"templatedata-doc-param-type-wiki-template-name": "Málle",
 	"templatedata-doc-param-type-wiki-user-name": "Geavaheaddji",
 	"templatedata-doc-params": "Málle paramehterat",
+	"templatedata-editbutton": "Rievdat málledieđuid",
+	"templatedata-helplink": "Lassedieđut málledieđuid birra",
 	"templatedata-invalid-parse": "Syntáksameattáhus JSON:s.",
 	"templatedata-modal-button-add-language": "Lasit giela",
 	"templatedata-modal-button-addparam": "Lasit paramehtera",
 	"templatedata-modal-button-addmap": "Lasit ođđa kártta",
 	"templatedata-modal-button-apply": "Geavat",
 	"templatedata-modal-button-back": "Ruovttoluotta",
-	"templatedata-modal-button-cancel": "Šluhtte",
+	"templatedata-modal-button-cancel": "Gaskkalduhte",
 	"templatedata-modal-button-changelang": "Molsso giela",
 	"templatedata-modal-button-delparam": "Sihko paramehterdieđu",
 	"templatedata-modal-button-map": "Rievdat kárttaid",
@@ -53,6 +55,7 @@
 	"templatedata-modal-table-param-name": "Namma",
 	"templatedata-modal-table-param-suggested": "Evttohuvvon",
 	"templatedata-modal-table-param-suggestedvalues": "Evttohuvvon árvvut",
+	"templatedata-modal-placeholder-multiselect": "Lasit árvvu...",
 	"templatedata-modal-title-addparam": "Lasit ođđa paramehtera",
 	"templatedata-modal-title-choose-language": "Vállje giela",
 	"templatedata-modal-title-language": "Giella",

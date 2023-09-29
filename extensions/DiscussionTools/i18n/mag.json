@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"ऐक्टिवेटेड्"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "उत्तर",
+	"discussiontools-replylink": "उत्तर दी",
+	"discussiontools-replywidget-advanced": "उन्नत",
+	"discussiontools-replywidget-cancel": "निरस्त करी",
+	"discussiontools-replywidget-mode-source": "स्रोत",
+	"discussiontools-replywidget-mode-visual": "यथादृश्य",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} के उत्तर दी",
+	"discussiontools-replywidget-preview": "झलक",
+	"discussiontools-replywidget-reply": "उत्तर दी",
+	"discussiontools-replywidget-summary": "सारान्स",
+	"discussiontools-replywidget-watchthis": "एकरा अपन [[Special:Watchlist|ध्यानसूचीमे]] डाली",
+	"discussiontools-topicheader-authorcount": "बार्तालापमे $1 {{PLURAL:$1|लोग}}",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|टिप्पणी}}",
+	"discussiontools-topicheader-latestcomment": "सबसे नया टिप्पणी: $1",
+	"discussiontools-topicsubscription-button-subscribe": "सदस्सता ली",
+	"discussiontools-topicsubscription-button-subscribe-label": "सदस्सता",
+	"discussiontools-topicsubscription-button-unsubscribe": "सदस्सता समाप्त करी",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "असदस्सता",
+	"discussiontools-topicsubscription-notify-subscribed-body": "अपनेके इ बिसयमे नया टिप्पणीके बारेमे सूचना मिलतै।",
+	"discussiontools-topicsubscription-notify-subscribed-title": "अपने सदस्सता लेलेलही!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "अखनी अपनेके इ बिसयमे नया टिप्पणीके बारेमे सूचना न मिलतै।",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "अपने सदस्सता समाप्त करदेली।"
+}

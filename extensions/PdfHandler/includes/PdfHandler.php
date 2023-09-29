@@ -395,8 +395,8 @@ class PdfHandler extends ImageHandler {
 		if ( !$info ) {
 			$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 			$info = $cache->getWithSetCallback(
-				$cache->makeKey( 'file-pdf', 'dimensions', $file->getSha1() ),
-				$cache::TTL_INDEFINITE,
+				$cache->makeKey( 'file-pdf-dimensions', $file->getSha1() ),
+				$cache::TTL_MONTH,
 				static function () use ( $file ) {
 					$data = $file->getMetadataItems( PdfImage::ITEMS_FOR_PAGE_SIZE );
 					if ( !$data || !isset( $data['Pages'] ) ) {

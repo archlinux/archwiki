@@ -1,12 +1,12 @@
 <?php
 
 use MediaWiki\Actions\ActionFactory;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Tests\Unit\DummyServicesTrait;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Container\ContainerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
-use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
  * @coversDefaultClass \MediaWiki\Actions\ActionFactory
@@ -14,6 +14,7 @@ use Wikimedia\ObjectFactory\ObjectFactory;
  * @author DannyS712
  */
 class ActionFactoryTest extends MediaWikiUnitTestCase {
+	use DummyServicesTrait;
 
 	/**
 	 * @param array $overrides
@@ -21,14 +22,12 @@ class ActionFactoryTest extends MediaWikiUnitTestCase {
 	 * @return ActionFactory|MockObject
 	 */
 	private function getFactory( $overrides = [], $hooks = [] ) {
-		// ContainerInterface needs to provide the services used in creating
+		// ObjectFactory needs to provide the services used in creating
 		// SpecialPageAction because we create instances of that in testing
 		// the 'revisiondelete' and 'editchangetags' actions
-		$containerInterface = $this->getMockForAbstractClass( ContainerInterface::class );
-		$containerInterface->method( 'get' )
-			->with( 'SpecialPageFactory' )
-			->willReturn( $this->createMock( SpecialPageFactory::class ) );
-		$objectFactory = new ObjectFactory( $containerInterface );
+		$objectFactory = $this->getDummyObjectFactory( [
+			'SpecialPageFactory' => $this->createMock( SpecialPageFactory::class ),
+		] );
 
 		$mock = $this->getMockBuilder( ActionFactory::class )
 			->setConstructorArgs( [
@@ -182,7 +181,9 @@ class ActionFactoryTest extends MediaWikiUnitTestCase {
 		$factory = $this->getFactory( [
 			'actions' => [
 				'edit' => true,
-				'info' => [ $this, 'getInfoAction' ],
+				'info' => function ( Article $article, IContextSource $context ) {
+					return $this->createMock( InfoAction::class );
+				},
 			]
 		] );
 		$article = $this->getArticle();
@@ -198,18 +199,6 @@ class ActionFactoryTest extends MediaWikiUnitTestCase {
 			$infoAction,
 			'Callable used as a factory'
 		);
-	}
-
-	/**
-	 * Callback for ObjectFactory
-	 *
-	 * @param Article $article
-	 * @param IContextSource $context
-	 * @return InfoAction
-	 */
-	public function getInfoAction( Article $article, IContextSource $context ) {
-		// Don't worry about all of the services that InfoAction really uses
-		return $this->createMock( InfoAction::class );
 	}
 
 	public function provideGetActionName() {

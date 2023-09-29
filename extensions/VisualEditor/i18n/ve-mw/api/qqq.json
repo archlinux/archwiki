@@ -35,7 +35,6 @@
 	"apierror-visualeditor-docserver-http-error": "{{Related|apierror-visualeditor-docserver}}\n{{doc-apierror}}\n\nParameters:\n* $1 - Error message in English",
 	"apierror-visualeditor-docserver-http": "{{Related|apierror-visualeditor-docserver}}\n{{doc-apierror}}\n\nParameters:\n* $1 - HTTP status code (numeric)\n* $2 - Error message in English",
 	"apierror-visualeditor-docserver": "{{Related|apierror-visualeditor-docserver}}\n{{doc-apierror}}",
-	"apierror-visualeditor-latestnotfound": "{{doc-apierror}}",
 	"apihelp-visualeditor-description": "{{doc-apihelp-description|visualeditor}}",
 	"apihelp-visualeditor-param-basetimestamp": "{{doc-apihelp-param|visualeditor|basetimestamp}}",
 	"apihelp-visualeditor-param-badetag": "{{doc-apihelp-param|visualeditor|badetag}}",

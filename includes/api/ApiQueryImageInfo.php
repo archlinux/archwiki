@@ -20,9 +20,11 @@
  * @file
  */
 
-use MediaWiki\BadFileLookup;
+use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\File\BadFileLookup;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -114,9 +116,8 @@ class ApiQueryImageInfo extends ApiQueryBase {
 
 			$fromTitle = null;
 			if ( $params['continue'] !== null ) {
-				$cont = explode( '|', $params['continue'] );
-				$this->dieContinueUsageIf( count( $cont ) != 2 );
-				$fromTitle = strval( $cont[0] );
+				$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'string', 'string' ] );
+				$fromTitle = $cont[0];
 				$fromTimestamp = $cont[1];
 				// Filter out any titles before $fromTitle
 				foreach ( $titles as $key => $title ) {
@@ -513,7 +514,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 			}
 			if ( $canShowField( File::DELETED_COMMENT ) ) {
 				if ( $pcomment ) {
-					$vals['parsedcomment'] = Linker::formatComment(
+					$vals['parsedcomment'] = MediaWikiServices::getInstance()->getCommentFormatter()->format(
 						$file->getDescription( File::RAW ), $file->getTitle() );
 				}
 				if ( $comment ) {
@@ -579,7 +580,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 						}
 
 						if ( isset( $prop['thumbmime'] ) && $file->getHandler() ) {
-							list( , $mime ) = $file->getHandler()->getThumbType(
+							[ , $mime ] = $file->getHandler()->getThumbType(
 								$mto->getExtension(), $file->getMimeType(), $thumbParams );
 							$vals['thumbmime'] = $mime;
 						}
@@ -716,11 +717,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	 * @return string
 	 */
 	protected function getContinueStr( $img, $start = null ) {
-		if ( $start === null ) {
-			$start = $img->getTimestamp();
-		}
-
-		return $img->getOriginalTitle()->getDBkey() . '|' . $start;
+		return $img->getOriginalTitle()->getDBkey() . '|' . ( $start ?? $img->getTimestamp() );
 	}
 
 	public function getAllowedParams() {

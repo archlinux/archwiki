@@ -1,10 +1,12 @@
 <?php
 
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 
 /**
@@ -151,9 +153,10 @@ class ParserMethodsTest extends MediaWikiLangTestCase {
 	 * @covers ParserOutput::getSections
 	 */
 	public function testGetSections() {
+		$this->overrideConfigValue( MainConfigNames::FragmentMode, [ 'html5' ] );
 		$title = Title::makeTitle( NS_MAIN, 'TestGetSections' );
 		$out = $this->getServiceContainer()->getParser()->parse(
-			"==foo==\n<h2>bar</h2>\n==baz==\n",
+			"==foo==\n<h2>bar</h2>\n==baz==\n== Romeo+Juliet %A Ó %20 ==\ntest",
 			$title,
 			ParserOptions::newFromAnon()
 		);
@@ -167,6 +170,7 @@ class ParserMethodsTest extends MediaWikiLangTestCase {
 				'fromtitle' => $title->getPrefixedDBkey(),
 				'byteoffset' => 0,
 				'anchor' => 'foo',
+				'linkAnchor' => 'foo',
 			],
 			[
 				'toclevel' => 1,
@@ -177,6 +181,7 @@ class ParserMethodsTest extends MediaWikiLangTestCase {
 				'fromtitle' => false,
 				'byteoffset' => null,
 				'anchor' => 'bar',
+				'linkAnchor' => 'bar',
 			],
 			[
 				'toclevel' => 1,
@@ -187,7 +192,19 @@ class ParserMethodsTest extends MediaWikiLangTestCase {
 				'fromtitle' => $title->getPrefixedDBkey(),
 				'byteoffset' => 21,
 				'anchor' => 'baz',
+				'linkAnchor' => 'baz',
 			],
+			[
+				'toclevel' => 1,
+				'level' => '2',
+				'line' => 'Romeo+Juliet %A Ó %20',
+				'number' => '4',
+				'index' => '3',
+				'fromtitle' => $title->getPrefixedDBkey(),
+				'byteoffset' => 29,
+				'anchor' => 'Romeo+Juliet_%A_Ó_%20',
+				'linkAnchor' => 'Romeo+Juliet_%A_Ó_%2520',
+			]
 		], $out->getSections(), 'getSections() with proper value when <h2> is used' );
 	}
 

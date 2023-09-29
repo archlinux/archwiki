@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -8,11 +9,12 @@ use Wikimedia\TestingAccessWrapper;
 class MWHttpRequestTest extends PHPUnit\Framework\TestCase {
 
 	public function testFactory() {
+		MWDebug::filterDeprecationForTest( '/Use of MWHttpRequest::factory /' );
 		$this->assertInstanceOf( MWHttpRequest::class, MWHttpRequest::factory( 'http://example.test' ) );
 	}
 
 	/**
-	 * Feeds URI to test a long regular expression in Http::isValidURI
+	 * Feeds URI to test a long regular expression in MWHttpRequest::isValidURI
 	 */
 	public static function provideURI() {
 		/** Format: 'boolean expectation', 'URI to test', 'Optional message' */
@@ -43,7 +45,7 @@ class MWHttpRequestTest extends PHPUnit\Framework\TestCase {
 
 			# (\S+) - host part is made of anything not whitespaces
 			// commented these out in order to remove @group Broken
-			// @todo are these valid tests? if so, fix Http::isValidURI so it can handle them
+			// @todo are these valid tests? if so, fix MWHttpRequest::isValidURI so it can handle them
 			// [ false, 'http://!"èèè¿¿¿~~\'', 'hostname is made of any non whitespace' ],
 			// [ false, 'http://exam:ple.org/', 'hostname can not use colons!' ],
 
@@ -79,7 +81,7 @@ class MWHttpRequestTest extends PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * T29854 : Http::isValidURI is too lax
+	 * T29854 : MWHttpRequest::isValidURI is too lax
 	 * @dataProvider provideURI
 	 * @covers MWHttpRequest::isValidURI
 	 */
@@ -89,7 +91,7 @@ class MWHttpRequestTest extends PHPUnit\Framework\TestCase {
 
 	public function testSetReverseProxy() {
 		$req = TestingAccessWrapper::newFromObject(
-			MWHttpRequest::factory( 'https://example.org/path?query=string' )
+			MediaWikiServices::getInstance()->getHttpRequestFactory()->create( 'https://example.org/path?query=string' )
 		);
 		$req->setReverseProxy( 'http://localhost:1234' );
 		$this->assertSame( 'http://localhost:1234/path?query=string', $req->url );

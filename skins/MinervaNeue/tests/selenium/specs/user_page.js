@@ -8,15 +8,15 @@ const { iAmUsingTheMobileSite } = require( '../features/step_definitions/common_
 // @chrome @firefox @login @test2.m.wikipedia.org @vagrant
 describe( 'User:<username>', () => {
 
-	beforeEach( () => {
-		iAmUsingTheMobileSite();
-		iVisitMyUserPage();
+	beforeEach( async () => {
+		await iAmUsingTheMobileSite();
+		await iVisitMyUserPage();
 	} );
 
 	// </username>@en.m.wikipedia.beta.wmflabs.org
-	it( 'Check components in user page', () => {
-		iShouldBeOnMyUserPage();
-		thereShouldBeALinkToMyTalkPage();
-		thereShouldBeALinkToMyContributions();
+	it.skip( 'Check components in user page', async () => {
+		await iShouldBeOnMyUserPage();
+		await thereShouldBeALinkToMyTalkPage();
+		await thereShouldBeALinkToMyContributions();
 	} );
 } );

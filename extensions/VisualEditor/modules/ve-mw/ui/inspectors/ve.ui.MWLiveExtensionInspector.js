@@ -126,6 +126,10 @@ ve.ui.MWLiveExtensionInspector.prototype.onChange = function () {
  * Update the node rendering to reflect the current content in the inspector.
  */
 ve.ui.MWLiveExtensionInspector.prototype.updatePreview = function () {
+	if ( !this.selectedNode ) {
+		// Method is called debounced, so selectedNode may not still exist
+		return;
+	}
 	var mwData = ve.copy( this.selectedNode.getAttribute( 'mw' ) );
 
 	this.updateMwData( mwData );

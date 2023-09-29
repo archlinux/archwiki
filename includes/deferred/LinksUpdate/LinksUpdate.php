@@ -36,12 +36,12 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MWException;
 use ParserOutput;
 use RefreshLinksJob;
 use RuntimeException;
-use Title;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\ScopedCallback;
 
@@ -149,7 +149,7 @@ class LinksUpdate extends DataUpdate {
 				$ill = $this->getParserOutput()->getLanguageLinks();
 				$res = [];
 				foreach ( $ill as $link ) {
-					list( $key, $title ) = explode( ':', $link, 2 );
+					[ $key, $title ] = explode( ':', $link, 2 );
 					$res[$key] = $title;
 				}
 				return $res;
@@ -180,15 +180,10 @@ class LinksUpdate extends DataUpdate {
 			$page,
 			$services->getLinkTargetLookup(),
 			$config->get( MainConfigNames::UpdateRowsPerQuery ),
-			function ( $table, $rows ) {
-				$this->getHookRunner()->onLinksUpdateAfterInsert( $this, $table, $rows );
-			},
 			$config->get( MainConfigNames::TempCategoryCollations )
 		);
 		// TODO: this does not have to be called in LinksDeletionUpdate
 		$this->tableFactory->setParserOutput( $parserOutput );
-
-		$this->getHookRunner()->onLinksUpdateConstructed( $this );
 	}
 
 	public function setTransactionTicket( $ticket ) {
@@ -220,7 +215,7 @@ class LinksUpdate extends DataUpdate {
 		if ( !$this->mId ) {
 			// Probably due to concurrent deletion or renaming of the page
 			$logger = LoggerFactory::getInstance( 'SecondaryDataUpdate' );
-			$logger->notice(
+			$logger->warning(
 				'LinksUpdate: The Title object yields no ID. Perhaps the page was deleted?',
 				[
 					'page_title' => $this->mTitle->getPrefixedDBkey(),
@@ -355,7 +350,7 @@ class LinksUpdate extends DataUpdate {
 	 * @param BacklinkCache|null $backlinkCache
 	 */
 	public static function queueRecursiveJobsForTable(
-		PageIdentity $page, $table, $action = 'unknown', $userName = 'unknown', ?BacklinkCache $backlinkCache = null
+		PageIdentity $page, $table, $action = 'LinksUpdate', $userName = 'unknown', ?BacklinkCache $backlinkCache = null
 	) {
 		$title = Title::castFromPageIdentity( $page );
 		if ( !$backlinkCache ) {

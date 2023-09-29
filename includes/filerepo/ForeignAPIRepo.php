@@ -23,6 +23,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Title\Title;
 
 /**
  * A foreign repository for a remote MediaWiki accessible through api.php requests.
@@ -125,7 +126,7 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 	 * files. Well, we don't.
 	 *
 	 * @param PageIdentity|LinkTarget|string $title
-	 * @param string|bool $time
+	 * @param string|false $time
 	 * @return File|false
 	 */
 	public function newFile( $title, $time = false ) {
@@ -231,7 +232,7 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 
 	/**
 	 * @param array $data
-	 * @return bool|array
+	 * @return array|false
 	 */
 	public function getImageInfo( $data ) {
 		if ( $data && isset( $data['query']['pages'] ) ) {
@@ -310,7 +311,7 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 	 * @param int $height
 	 * @param string $otherParams
 	 * @param string|null $lang Language code for language of error
-	 * @return bool|MediaTransformError
+	 * @return MediaTransformError|false
 	 * @since 1.22
 	 */
 	public function getThumbError(
@@ -353,7 +354,7 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 	 * @param int $height
 	 * @param string $params Other rendering parameters (page number, etc)
 	 *   from handler's makeParamString.
-	 * @return bool|string
+	 * @return string|false
 	 */
 	public function getThumbUrlFromCache( $name, $width, $height, $params = "" ) {
 		// We can't check the local cache using FileRepo functions because
@@ -466,7 +467,7 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 	/**
 	 * Get the local directory corresponding to one of the basic zones
 	 * @param string $zone
-	 * @return bool|null|string
+	 * @return null|string|false
 	 */
 	public function getZonePath( $zone ) {
 		$supported = [ 'public', 'thumb' ];
@@ -538,9 +539,12 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 		$url, $timeout = 'default', $options = [], &$mtime = false
 	) {
 		$options['timeout'] = $timeout;
-		/* Http::get */
-		$url = wfExpandUrl( $url, PROTO_HTTP );
+		$url = MediaWikiServices::getInstance()->getUrlUtils()
+			->expand( $url, PROTO_HTTP );
 		wfDebug( "ForeignAPIRepo: HTTP GET: $url" );
+		if ( !$url ) {
+			return false;
+		}
 		$options['method'] = "GET";
 
 		if ( !isset( $options['timeout'] ) ) {

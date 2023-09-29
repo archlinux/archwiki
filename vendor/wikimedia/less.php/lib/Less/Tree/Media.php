@@ -1,10 +1,6 @@
 <?php
-
 /**
- * Media
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_Media extends Less_Tree {
 
@@ -15,7 +11,7 @@ class Less_Tree_Media extends Less_Tree {
 	public $isReferenced;
 	public $type = 'Media';
 
-	public function __construct( $value = array(), $features = array(), $index = null, $currentFileInfo = null ) {
+	public function __construct( $value = [], $features = [], $index = null, $currentFileInfo = null ) {
 		$this->index = $index;
 		$this->currentFileInfo = $currentFileInfo;
 
@@ -23,7 +19,7 @@ class Less_Tree_Media extends Less_Tree {
 
 		$this->features = new Less_Tree_Value( $features );
 
-		$this->rules = array( new Less_Tree_Ruleset( $selectors, $value ) );
+		$this->rules = [ new Less_Tree_Ruleset( $selectors, $value ) ];
 		$this->rules[0]->allowImports = true;
 	}
 
@@ -39,11 +35,15 @@ class Less_Tree_Media extends Less_Tree {
 		$output->add( '@media ', $this->currentFileInfo, $this->index );
 		$this->features->genCSS( $output );
 		Less_Tree::outputRuleset( $output, $this->rules );
-
 	}
 
+	/**
+	 * @param Less_Environment $env
+	 * @return Less_Tree_Media|Less_Tree_Ruleset
+	 * @see less-2.5.3.js#Media.prototype.eval
+	 */
 	public function compile( $env ) {
-		$media = new Less_Tree_Media( array(), array(), $this->index, $this->currentFileInfo );
+		$media = new Less_Tree_Media( [], [], $this->index, $this->currentFileInfo );
 
 		$strictMathBypass = false;
 		if ( Less_Parser::$options['strictMath'] === false ) {
@@ -61,7 +61,7 @@ class Less_Tree_Media extends Less_Tree {
 		$env->mediaBlocks[] = $media;
 
 		array_unshift( $env->frames, $this->rules[0] );
-		$media->rules = array( $this->rules[0]->compile( $env ) );
+		$media->rules = [ $this->rules[0]->compile( $env ) ];
 		array_shift( $env->frames );
 
 		array_pop( $env->mediaPath );
@@ -79,7 +79,7 @@ class Less_Tree_Media extends Less_Tree {
 
 	public function emptySelectors() {
 		$el = new Less_Tree_Element( '', '&', $this->index, $this->currentFileInfo );
-		$sels = array( new Less_Tree_Selector( array( $el ), array(), null, $this->index, $this->currentFileInfo ) );
+		$sels = [ new Less_Tree_Selector( [ $el ], [], null, $this->index, $this->currentFileInfo ) ];
 		$sels[0]->mediaEmpty = true;
 		return $sels;
 	}
@@ -100,20 +100,26 @@ class Less_Tree_Media extends Less_Tree {
 			$result->multiMedia = true;
 		}
 
-		$env->mediaBlocks = array();
-		$env->mediaPath = array();
+		$env->mediaBlocks = [];
+		$env->mediaPath = [];
 
 		return $result;
 	}
 
+	/**
+	 * @param Less_Environment $env
+	 * @return Less_Tree_Ruleset
+	 */
 	public function compileNested( $env ) {
-		$path = array_merge( $env->mediaPath, array( $this ) );
+		$path = array_merge( $env->mediaPath, [ $this ] );
+		'@phan-var array<Less_Tree_Media> $path';
 
 		// Extract the media-query conditions separated with `,` (OR).
 		foreach ( $path as $key => $p ) {
 			$value = $p->features instanceof Less_Tree_Value ? $p->features->value : $p->features;
-			$path[$key] = is_array( $value ) ? $value : array( $value );
+			$path[$key] = is_array( $value ) ? $value : [ $value ];
 		}
+		'@phan-var array<array<Less_Tree>> $path';
 
 		// Trace all permutations to generate the resulting media-query.
 		//
@@ -124,7 +130,7 @@ class Less_Tree_Media extends Less_Tree {
 		//	b and c and e
 
 		$permuted = $this->permute( $path );
-		$expressions = array();
+		$expressions = [];
 		foreach ( $permuted as $path ) {
 
 			for ( $i = 0, $len = count( $path ); $i < $len; $i++ ) {
@@ -132,7 +138,7 @@ class Less_Tree_Media extends Less_Tree {
 			}
 
 			for ( $i = count( $path ) - 1; $i > 0; $i-- ) {
-				array_splice( $path, $i, 0, array( new Less_Tree_Anonymous( 'and' ) ) );
+				array_splice( $path, $i, 0, [ new Less_Tree_Anonymous( 'and' ) ] );
 			}
 
 			$expressions[] = new Less_Tree_Expression( $path );
@@ -140,23 +146,25 @@ class Less_Tree_Media extends Less_Tree {
 		$this->features = new Less_Tree_Value( $expressions );
 
 		// Fake a tree-node that doesn't output anything.
-		return new Less_Tree_Ruleset( array(), array() );
+		return new Less_Tree_Ruleset( [], [] );
 	}
 
 	public function permute( $arr ) {
-		if ( !$arr )
-			return array();
+		if ( !$arr ) {
+			return [];
+		}
 
-		if ( count( $arr ) == 1 )
+		if ( count( $arr ) == 1 ) {
 			return $arr[0];
+		}
 
-		$result = array();
+		$result = [];
 		$rest = $this->permute( array_slice( $arr, 1 ) );
 		foreach ( $rest as $r ) {
 			foreach ( $arr[0] as $a ) {
 				$result[] = array_merge(
-					is_array( $a ) ? $a : array( $a ),
-					is_array( $r ) ? $r : array( $r )
+					is_array( $a ) ? $a : [ $a ],
+					is_array( $r ) ? $r : [ $r ]
 				);
 			}
 		}
@@ -165,9 +173,11 @@ class Less_Tree_Media extends Less_Tree {
 	}
 
 	public function bubbleSelectors( $selectors ) {
-		if ( !$selectors ) return;
+		if ( !$selectors ) {
+			return;
+		}
 
-		$this->rules = array( new Less_Tree_Ruleset( $selectors, array( $this->rules[0] ) ) );
+		$this->rules = [ new Less_Tree_Ruleset( $selectors, [ $this->rules[0] ] ) ];
 	}
 
 }

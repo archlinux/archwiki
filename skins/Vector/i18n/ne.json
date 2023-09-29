@@ -3,13 +3,13 @@
 		"authors": [
 			"Bada Kaji",
 			"Bhawani Gautam",
+			"CAPTAIN MEDUSA",
 			"RajeshPandey",
 			"पर्वत सुबेदी",
 			"बडा काजी",
 			"बिप्लब आनन्द",
 			"राम प्रसाद जोशी",
-			"सरोज कुमार ढकाल",
-			"CAPTAIN MEDUSA"
+			"सरोज कुमार ढकाल"
 		]
 	},
 	"skinname-vector": "भेक्टर विरासत (२०१०)",
@@ -48,9 +48,7 @@
 	"vector-search-loader": "खोज सुझावहरू खोल्दै",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> भएको पृष्ठहरू खोज्नुहोस्",
 	"vector-intro-page": "Help:स्वशिक्षा",
-	"vector-toc-heading": "विषयसूची",
-	"vector-toc-toggle-position-sidebar": "बाँया खण्डमा सार्नुहोस्",
-	"vector-toc-toggle-position-title": "लुकाउनुहोस्",
+	"vector-toc-label": "विषयसूची",
 	"vector-toc-beginning": "सुरुवात",
 	"vector-toc-toggle-button-label": "$1 उपखण्ड सक्षम गर्नुहोस्",
 	"vector-anon-user-menu-pages": "निर्गमन सम्पादकहरूका लागि पृष्ठहरू",
@@ -59,8 +57,17 @@
 	"vector-main-menu-tooltip": "मुख्य सूचीपत्र",
 	"vector-toc-menu-tooltip": "विषयसूची",
 	"vector-toc-collapsible-button-label": "सामग्रीको तालिका सक्षम गर्नुहोस्",
-	"vector-article-tools-nav-label": "उपकरणहरू",
 	"vector-site-nav-label": "साइट",
+	"vector-main-menu-label": "मुख्य सूचीपत्र",
+	"vector-limited-width-toggle": "सीमित सामग्री चौडाइ टगल गर्नुहोस्",
+	"vector-page-tools-label": "उपकरणहरू",
+	"vector-page-tools-general-label": "साधारण",
+	"vector-page-tools-actions-label": "कार्यहरू",
+	"vector-pin-element-label": "बाँया खण्डमा सार्नुहोस्",
+	"vector-unpin-element-label": "लुकाउनुहोस्",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|चर्चा]]",
-	"tooltip-vector-anon-user-menu-title": "थप विकल्पहरू"
+	"tooltip-vector-anon-user-menu-title": "थप विकल्पहरू",
+	"vector-prefs-limited-width": "सीमित चौडाइ मोड सक्षम गर्नुहोस्",
+	"vector-prefs-limited-width-help": "सुधारिएको पठन अनुभवको लागि सीमित चौडाइ मोड सक्षम गर्नुहोस्।",
+	"empty-language-selector-body": "पृष्ठ सामग्री अन्य भाषाहरूमा समर्थित छैन।"
 }

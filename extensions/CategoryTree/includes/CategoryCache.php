@@ -23,6 +23,7 @@ namespace MediaWiki\Extension\CategoryTree;
 use Category;
 use MediaWiki\Linker\LinkTarget;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Caches Category::class objects
@@ -91,6 +92,13 @@ class CategoryCache {
 			->caller( __METHOD__ )
 			->fetchResultSet();
 
+		$this->fillFromQuery( $rows );
+	}
+
+	/**
+	 * @param IResultWrapper $rows
+	 */
+	public function fillFromQuery( IResultWrapper $rows ) {
 		foreach ( $rows as $row ) {
 			$this->cache[$row->cat_title] = Category::newFromRow( $row );
 		}

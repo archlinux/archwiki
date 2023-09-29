@@ -43,7 +43,7 @@
 	"vector-search-loader": "Qidiruv takliflari yuklanmoqda",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>ni oʻz ichiga olgan sahifalar uchun qidiruv",
 	"vector-intro-page": "Help:Mundarija",
-	"vector-toc-heading": "Mundarija",
+	"vector-toc-label": "Mundarija",
 	"vector-toc-beginning": "Boshlanishi",
 	"vector-anon-user-menu-pages": "Chiqishni amalga oshirgan tahrirchilar uchun sahifalar",
 	"vector-anon-user-menu-pages-learn": "batafsil maʼlumot",
@@ -51,6 +51,13 @@
 	"vector-main-menu-tooltip": "Asosiy menyu",
 	"vector-toc-menu-tooltip": "Mundarija",
 	"vector-site-nav-label": "Sayt",
+	"vector-main-menu-label": "Asosiy menyu",
+	"vector-page-tools-label": "Asboblar",
+	"vector-page-tools-general-label": "Umumiy",
+	"vector-page-tools-actions-label": "Amallar",
+	"vector-pin-element-label": "yonqutiga oʻtish",
+	"vector-unpin-element-label": "yashirish",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Munozara]]",
-	"tooltip-vector-anon-user-menu-title": "Koʻproq opsiyalar"
+	"tooltip-vector-anon-user-menu-title": "Koʻproq opsiyalar",
+	"empty-language-selector-body": "Sahifa kontenti boshqa tillarda dastaklanmaydi."
 }

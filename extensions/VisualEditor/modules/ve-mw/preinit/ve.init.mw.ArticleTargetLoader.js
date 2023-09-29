@@ -24,20 +24,13 @@
 			// Add modules from $wgVisualEditorPluginModules
 			.concat( conf.pluginModules.filter( mw.loader.getState ) );
 
-	var uri;
-	try {
-		uri = new mw.Uri();
-	} catch ( e ) {
-		// URI may not be parseable (T106244)
-		uri = false;
-	}
+	var url = new URL( location.href );
 	// Provide the new wikitext editor
 	if (
-		uri &&
 		conf.enableWikitext &&
 		(
 			mw.user.options.get( 'visualeditor-newwikitext' ) ||
-			uri.query.veaction === 'editsource'
+			url.searchParams.get( 'veaction' ) === 'editsource'
 		) &&
 		mw.loader.getState( 'ext.visualEditor.mwwikitext' )
 	) {
@@ -53,15 +46,6 @@
 		} )
 	) {
 		modules.push( 'ext.visualEditor.mwsignature' );
-	}
-
-	// Add preference modules
-	for ( var prefName in conf.preferenceModules ) {
-		var prefValue = mw.user.options.get( prefName );
-		// Check "0" (T89513)
-		if ( prefValue && prefValue !== '0' ) {
-			modules.push( conf.preferenceModules[ prefName ] );
-		}
 	}
 
 	mw.libs.ve = mw.libs.ve || {};
@@ -365,8 +349,8 @@
 				ve.track( 'trace.restbaseLoad.enter', { mode: 'visual' } );
 
 				var headers = {
-					// Should be synchronised with VisualEditorParsoidClient.php
-					Accept: 'text/html; charset=utf-8; profile="https://www.mediawiki.org/wiki/Specs/HTML/2.4.0"',
+					// Should be synchronised with DirectParsoidClient.php
+					Accept: 'text/html; charset=utf-8; profile="https://www.mediawiki.org/wiki/Specs/HTML/2.6.0"',
 					'Accept-Language': mw.config.get( 'wgVisualEditor' ).pageLanguageCode,
 					'Api-User-Agent': 'VisualEditor-MediaWiki/' + mw.config.get( 'wgVersion' )
 				};

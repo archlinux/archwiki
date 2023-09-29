@@ -639,7 +639,11 @@ class ParserFunctions {
 	public function pf_pagelanguage( $token, Frame $frame, Params $params ): array {
 		$args = $params->args;
 		// The language (code) of the current page.
-		return [ $this->env->getPageConfig()->getPageLanguage() ];
+		// Note: this is exposed as a mediawiki-internal code.
+		$code = Utils::bcp47ToMwCode(
+			$this->env->getPageConfig()->getPageLanguageBcp47()
+		);
+		return [ $code ];
 	}
 
 	public function pf_directionmark( $token, Frame $frame, Params $args ): array {
@@ -799,7 +803,11 @@ class ParserFunctions {
 		$args = $params->args;
 		// Despite the name, this returns the wiki's default interface language
 		// ($wgLanguageCode), *not* the language of the current page content.
-		return [ $this->env->getSiteConfig()->lang() ];
+		// Note: this is exposed as a mediawiki-internal code.
+		$code = Utils::bcp47ToMwCode(
+			$this->env->getSiteConfig()->langBcp47()
+		);
+		return [ $code ];
 	}
 
 	public function pf_contentlang( $token, Frame $frame, Params $params ): array {
@@ -851,14 +859,14 @@ class ParserFunctions {
 
 	public function pf_server( $token, Frame $frame, Params $params ): array {
 		$args = $params->args;
-		$dataAttribs = $token->dataAttribs->clone();
+		$dataParsoid = $token->dataParsoid->clone();
 		return [
 			new TagTk( 'a', [
 					new KV( 'rel', 'nofollow' ),
 					new KV( 'class', 'external free' ),
 					new KV( 'href', $this->env->getSiteConfig()->server() ),
 					new KV( 'typeof', 'mw:ExtLink/URL' )
-				], $dataAttribs
+				], $dataParsoid
 			),
 			$this->env->getSiteConfig()->server(),
 			new EndTagTk( 'a' )

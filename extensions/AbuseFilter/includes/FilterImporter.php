@@ -15,6 +15,7 @@ use MediaWiki\Extension\AbuseFilter\Filter\Specs;
 /**
  * This class allows encoding filters to (and decoding from) a string format that can be used
  * to export them to another wiki.
+ *
  * @internal
  * @note Callers should NOT rely on the output format, as it may vary
  */

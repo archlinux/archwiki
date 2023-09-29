@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Boukman",
-			"Masterches",
 			"Amire80",
-			"Kitanago"
+			"Boukman",
+			"Kitanago",
+			"Masterches"
 		]
 	},
 	"cite-desc": "Ajoute eleman sa yo <code>&lt;ref&gt;</code> epi <code>&lt;references/&gt;</code> pou sitasyon yo.",

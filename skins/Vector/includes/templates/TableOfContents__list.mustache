@@ -1,0 +1,13 @@
+<ul class="vector-toc-contents" id="mw-panel-toc-list">
+	{{#is-vector-toc-beginning-enabled}}
+	<li id="toc-mw-content-text"
+		class="vector-toc-list-item vector-toc-level-1">
+		<a href="#" class="vector-toc-link">
+			<div class="vector-toc-text">{{ msg-vector-toc-beginning }}</div>
+		</a>
+	</li>
+	{{/is-vector-toc-beginning-enabled}}
+	{{#array-sections}}
+	{{>TableOfContents__line}}
+	{{/array-sections}}
+</ul>

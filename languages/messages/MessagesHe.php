@@ -1,8 +1,6 @@
 <?php
 /** Hebrew (עברית)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -131,6 +129,7 @@ $specialPageAliases = [
 	'Recentchangeslinked'       => [ 'שינויים_בדפים_המקושרים' ],
 	'Redirect'                  => [ 'הפניה' ],
 	'RemoveCredentials'         => [ 'הסרת_נתוני_ההזדהות' ],
+	'Renameuser'                => [ 'שינוי_שם_משתמש' ],
 	'ResetTokens'               => [ 'איפוס_אסימונים' ],
 	'Revisiondelete'            => [ 'מחיקת_ושחזור_גרסאות' ],
 	'RunJobs'                   => [ 'הרצת_משימות' ],

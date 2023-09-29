@@ -80,16 +80,6 @@ class MultiWriteBagOStuff extends BagOStuff {
 			if ( $cacheInfo instanceof BagOStuff ) {
 				$this->caches[] = $cacheInfo;
 			} else {
-				if ( !isset( $cacheInfo['args'] ) ) {
-					// B/C for when $cacheInfo was for ObjectCache::newFromParams().
-					// Callers intending this to be for ObjectFactory::getObjectFromSpec
-					// should have set "args" per the docs above. Doings so avoids extra
-					// (likely harmless) params (factory/class/calls) ending up in "args".
-					$cacheInfo['args'] = [ $cacheInfo ];
-				}
-
-				// ObjectFactory::getObjectFromSpec accepts an array, not just a callable (phan bug)
-				// @phan-suppress-next-line PhanTypeInvalidCallableArraySize
 				$this->caches[] = ObjectFactory::getObjectFromSpec( $cacheInfo );
 			}
 		}
@@ -306,26 +296,6 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
-	public function incr( $key, $value = 1, $flags = 0 ) {
-		return $this->callKeyWriteMethodOnTierCaches(
-			$this->cacheIndexes,
-			__FUNCTION__,
-			self::ARG0_KEY,
-			self::RES_NONKEY,
-			func_get_args()
-		);
-	}
-
-	public function decr( $key, $value = 1, $flags = 0 ) {
-		return $this->callKeyWriteMethodOnTierCaches(
-			$this->cacheIndexes,
-			__FUNCTION__,
-			self::ARG0_KEY,
-			self::RES_NONKEY,
-			func_get_args()
-		);
-	}
-
 	public function incrWithInit( $key, $exptime, $step = 1, $init = null, $flags = 0 ) {
 		return $this->callKeyWriteMethodOnTierCaches(
 			$this->cacheIndexes,
@@ -336,7 +306,7 @@ class MultiWriteBagOStuff extends BagOStuff {
 		);
 	}
 
-	public function makeKeyInternal( $keyspace, $components ) {
+	protected function makeKeyInternal( $keyspace, $components ) {
 		return $this->genericKeyFromComponents( $keyspace, ...$components );
 	}
 
@@ -355,16 +325,6 @@ class MultiWriteBagOStuff extends BagOStuff {
 
 	public function addBusyCallback( callable $workCallback ) {
 		$this->caches[0]->addBusyCallback( $workCallback );
-	}
-
-	public function setNewPreparedValues( array $valueByKey ) {
-		return $this->callKeyMethodOnTierCache(
-			0,
-			__FUNCTION__,
-			self::ARG0_KEYMAP,
-			self::RES_NONKEY,
-			func_get_args()
-		);
 	}
 
 	public function setMockTime( &$time ) {

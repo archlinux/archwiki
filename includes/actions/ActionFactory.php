@@ -56,6 +56,9 @@ class ActionFactory {
 	/** @var ObjectFactory */
 	private $objectFactory;
 
+	/** @var HookContainer */
+	private $hookContainer;
+
 	/** @var HookRunner */
 	private $hookRunner;
 
@@ -104,7 +107,6 @@ class ActionFactory {
 			'class' => InfoAction::class,
 			'services' => [
 				'ContentLanguage',
-				'HookContainer',
 				'LanguageNameUtils',
 				'LinkBatchFactory',
 				'LinkRenderer',
@@ -130,25 +132,28 @@ class ActionFactory {
 		'mcrundo' => [
 			'class' => McrUndoAction::class,
 			'services' => [
+				// Same as for McrRestoreAction
 				'ReadOnlyMode',
 				'RevisionLookup',
 				'RevisionRenderer',
+				'CommentFormatter',
 				'MainConfig',
 			],
 		],
 		'mcrrestore' => [
 			'class' => McrRestoreAction::class,
 			'services' => [
+				// Same as for McrUndoAction
 				'ReadOnlyMode',
 				'RevisionLookup',
 				'RevisionRenderer',
+				'CommentFormatter',
 				'MainConfig',
 			],
 		],
 		'raw' => [
 			'class' => RawAction::class,
 			'services' => [
-				'HookContainer',
 				'Parser',
 				'PermissionManager',
 				'RevisionLookup',
@@ -214,12 +219,13 @@ class ActionFactory {
 		$this->actionsConfig = $actionsConfig;
 		$this->logger = $logger;
 		$this->objectFactory = $objectFactory;
+		$this->hookContainer = $hookContainer;
 		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
 	/**
 	 * @param string $actionName should already be in all lowercase
-	 * @return string|callable|bool|Action|array|null The spec for the action, in any valid form,
+	 * @return string|callable|false|Action|array|null The spec for the action, in any valid form,
 	 *   based on $this->actionsConfig, or if not included there, CORE_ACTIONS, or null if the
 	 *   action does not exist.
 	 */
@@ -243,7 +249,7 @@ class ActionFactory {
 	 * @param string $actionName
 	 * @param Article $article
 	 * @param IContextSource $context
-	 * @return Action|bool|null False if the action is disabled, null if not recognized
+	 * @return Action|false|null False if the action is disabled, null if not recognized
 	 */
 	public function getAction(
 		string $actionName,
@@ -310,6 +316,7 @@ class ActionFactory {
 				'assertClass' => Action::class
 			]
 		);
+		$actionObj->setHookContainer( $this->hookContainer );
 		return $actionObj;
 	}
 
@@ -344,9 +351,11 @@ class ActionFactory {
 			return 'nosuchaction';
 		}
 
-		// Workaround for T22966: inability of IE to provide an action dependent
-		// on which submit button is clicked.
+		// TODO: Remove legacy historysubmit handling for cached action=history
+		// after one week (Nov 2022, T314008).
 		if ( $actionName === 'historysubmit' ) {
+			// Workaround for T22966: inability of IE to provide an action dependent
+			// on which submit button is clicked.
 			if ( $request->getBool( 'revisiondelete' ) ) {
 				$actionName = 'revisiondelete';
 			} elseif ( $request->getBool( 'editchangetags' ) ) {

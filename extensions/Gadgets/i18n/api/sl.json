@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Janezdrilc",
-			"Eleassar"
+			"Eleassar",
+			"Janezdrilc"
 		]
 	},
 	"apihelp-query+gadgetcategories-description": "Vrne seznam kategorij pripomočkov.",

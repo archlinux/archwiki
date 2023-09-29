@@ -76,7 +76,6 @@
 	"math_unknown_function": "nepoznata funkcija \"$1\"",
 	"mw_math_latexml": "LaTeXML (eksperimentalni; koristi MathML)",
 	"mw_math_mathml": "MathML sa SVG ili PNG rezervom (preporučuje se za moderne preglednike i alate pristupačnosti)",
-	"mw_math_png": "PNG slike",
 	"mw_math_source": "LaTeX izvor (za tekstualne preglednike)",
 	"prefs-math": "Matematika",
 	"mathstatus": "Stanje matematike",

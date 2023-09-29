@@ -6,7 +6,9 @@
 			"Calak",
 			"Muhammed taha",
 			"Sarchia",
-			"ئارام بکر"
+			"ئارام بکر",
+			"Halbast",
+			"TerranBoy"
 		]
 	},
 	"skinname-vector": "ڤێکتۆری کۆن (٢٠١٠)",
@@ -15,7 +17,7 @@
 	"vector-skin-desc": "٢ پێستەی ڤێکتۆر دابین دەکات:\n* ٢٠١١ - وەشانی مۆدێرن لە مۆنۆبووک بە دیمەنێکی تازە و چەندین چاکسازیی بەسوود.\n* ٢٠٢٢ - ڤێکتۆرەکە وەک بەشێک لە پڕۆژەی [[mw:Desktop Improvements]] سەر بە دامەزراوەی ویکیمیدیا دروست کراوە.",
 	"prefs-vector-enable-vector-1-label": "ڤێکتۆری سپاردە بەکاربێنە",
 	"prefs-vector-enable-vector-1-help": "لەماوەی چەند ساڵی داھاتوو، ھەوڵی نوێکردنەوەی پێستەی ڤێکتۆر دەدەین. ڤێکتۆری سپاردە ڕێگەت پێ دەدات کە وەشانە کۆنەکەی ڤێکتۆر (لە کانوونی یەکەمی ٢٠١٩) ببینیت. بۆ زیاتر زانیاری لەسەر نوێکردنەوەکان، بڕۆ بۆ [[mw:Reading/Web/Desktop_Improvements|پەڕەی پرۆژەکەمان]].",
-	"vector-opt-out": "بۆ دیمەنە کۆنەکە بیگۆڕە",
+	"vector-opt-out": "بیگۆڕە بۆ ڕووکەشە کۆنەکە",
 	"vector-opt-out-tooltip": "ڕێکخستنەکانت بۆ گەڕانەوەی دیمەنە کۆنەکەی پێستەکە (ڤێکتۆری سپاردە) بگۆڕە",
 	"vector-action-toggle-sidebar": "شریتەلا بگۆڕە",
 	"vector-languages": "زمانەکان",
@@ -42,15 +44,26 @@
 	"vector-search-loader": "پێشنیارەکانی گەڕان باردەکرێ",
 	"vector-searchsuggest-containing": "بەدوای ئەو پەڕانە بگەڕێ کە «<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>»یان تێدایە.",
 	"vector-intro-page": "ویکیپیدیا:ناساندن",
+	"vector-toc-label": "ناوەڕۆکەکان",
 	"vector-toc-beginning": "دەستپێک",
 	"vector-toc-toggle-button-label": "ژێربەشی $1 بگۆڕە",
 	"vector-anon-user-menu-pages": "ئەو پەڕانەی بۆ ئەو دەستکاریکەرانەن کە لەدەرەوەن",
 	"vector-anon-user-menu-pages-learn": "زیاتر فێر بە",
 	"vector-anon-user-menu-pages-label": "زیاتر لەسەر دەستکاریکردن فێر بە",
-	"vector-main-menu-tooltip": "پێڕستی سەرەکی",
+	"vector-main-menu-tooltip": "پێرستی سەرەکی",
 	"vector-toc-menu-tooltip": "خشتەی ناوەڕۆکەکان",
 	"vector-toc-collapsible-button-label": "خشتەی ناوەڕۆکەکان بگۆڕە",
 	"vector-site-nav-label": "پێگە",
+	"vector-main-menu-label": "پێڕستی سەرەکی",
+	"vector-limited-width-toggle": "پانیی ناوەڕۆکی سنووردار بگۆڕە",
+	"vector-page-tools-label": "ئامرازەکان",
+	"vector-page-tools-general-label": "گشتی",
+	"vector-page-tools-actions-label": "کردەوەکان",
+	"vector-pin-element-label": "بڕۆ بۆ شریتەلا",
+	"vector-unpin-element-label": "بشارەوە",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|وتووێژ]]",
-	"tooltip-vector-anon-user-menu-title": "ھەڵبژاردەی زیاتر"
+	"tooltip-vector-anon-user-menu-title": "ھەڵبژاردەی زیاتر",
+	"vector-prefs-limited-width": "دۆخی پانیی سنووردار چالاک بکە",
+	"vector-prefs-limited-width-help": "دۆخی پانیی سنووردار چالاک بکە بۆ باشترکردنی ئەزموونی خوێندنەوە.",
+	"empty-language-selector-body": "ناوەڕۆکی پەڕە بە زمانەکانی تر پشتگیریی لێ ناکرێت."
 }

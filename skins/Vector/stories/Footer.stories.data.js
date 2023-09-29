@@ -18,7 +18,7 @@ const
 			{
 				id: 'footer-info-copyright',
 				html: `This text is available under the <a href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike Licence</a>;
-additional terms may apply. See <a href="https://foundation.wikimedia.org/wiki/Special:MyLanguage/Terms_of_Use">Terms of Use</a> for details.`
+additional terms may apply. See <a href="https://foundation.wikimedia.org/wiki/Special:MyLanguage/Policy:Terms_of_Use">Terms of Use</a> for details.`
 
 			}
 		]
@@ -28,7 +28,7 @@ additional terms may apply. See <a href="https://foundation.wikimedia.org/wiki/S
 		'array-items': [
 			{
 				id: 'footer-places-privacy',
-				html: `<a href="https://foundation.wikimedia.org/wiki/Privacy_policy" class="extiw" title="wmf:Privacy policy">Privacy policy</a>`
+				html: `<a href="https://foundation.wikimedia.org/wiki/Special:MyLanguage/Policy:Privacy_policy" class="extiw" title="wmf:Privacy policy">Privacy policy</a>`
 			},
 			{
 				id: 'footer-places-about',
@@ -52,7 +52,7 @@ additional terms may apply. See <a href="https://foundation.wikimedia.org/wiki/S
 			},
 			{
 				id: 'footer-places-cookiestatement',
-				html: `<a href="https://foundation.wikimedia.org/wiki/Cookie_statement">Cookie statement</a>`
+				html: `<a href="https://foundation.wikimedia.org/wiki/Special:MyLanguage/Policy:Cookie_statement">Cookie statement</a>`
 			},
 			{
 				id: 'footer-places-mobileview',

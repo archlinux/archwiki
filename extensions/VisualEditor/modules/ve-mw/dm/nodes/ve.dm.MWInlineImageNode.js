@@ -62,6 +62,7 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 	var recognizedClasses = [];
 	var errorIndex = typeofAttrs.indexOf( 'mw:Error' );
 	var isError = errorIndex !== -1;
+	var errorText = isError ? img.textContent : null;
 	var width = img.getAttribute( isError ? 'data-width' : 'width' );
 	var height = img.getAttribute( isError ? 'data-height' : 'height' );
 
@@ -71,7 +72,7 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 		// Otherwise Parsoid generates |link= options for copy-pasted images (T193253).
 		var targetData = mw.libs.ve.getTargetDataFromHref( href, converter.getTargetHtmlDocument() );
 		if ( targetData.isInternal ) {
-			href = './' + targetData.rawTitle;
+			href = mw.libs.ve.encodeParsoidResourceName( targetData.title );
 		}
 	}
 
@@ -95,7 +96,8 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 		height: height !== null && height !== '' ? +height : null,
 		alt: img.getAttribute( 'alt' ),
 		mw: mwData,
-		isError: isError
+		isError: isError,
+		errorText: errorText
 	};
 
 	// Extract individual classes
@@ -218,7 +220,7 @@ ve.dm.MWInlineImageNode.static.toDomElements = function ( dataElement, doc, conv
 			firstChild.classList.add( 'new' );
 		}
 		var filename = mw.libs.ve.normalizeParsoidResourceName( attributes.resource || '' );
-		img.appendChild( doc.createTextNode( filename ) );
+		img.appendChild( doc.createTextNode( attributes.errorText ? attributes.errorText : filename ) );
 		// At the moment, preserving this is only relevant on mw:Error spans
 		if ( attributes.imageClassAttr ) {
 			// eslint-disable-next-line mediawiki/class-doc

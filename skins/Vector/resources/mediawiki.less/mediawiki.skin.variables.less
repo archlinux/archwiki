@@ -30,10 +30,32 @@
 @color-link-external--visited: #795cb2;
 @color-link-external--active: #faa700;
 
+// Opacities
+@opacity-base: 1;
+@opacity-medium: 0.65;
+@opacity-low: 0.3;
+@opacity-transparent: 0;
+// Legacy opacity for icon states in CSS-only component and non-Codex products.
+@opacity-icon-base: 0.87; // = `#222` on `background-color: #fff`, closest to `#202122`.
+// Legacy opacity for icon states in CSS-only component and non-Codex products.
+@opacity-icon-base--hover: 0.74; // = `#424242` on `background-color: #fff`, closest to `#404244`.
+// Legacy opacity for icon states in CSS-only component and non-Codex products.
+@opacity-icon-base--selected: 1;
+// Legacy opacity for icon states in CSS-only component and non-Codex products.
+@opacity-icon-base--disabled: 0.51; // = `#7d7d7d` on `background-color: #fff`, closest to `#72777d`.
+// Legacy opacity for icon states in CSS-only component and non-Codex products.
+@opacity-icon-accessory: 0.67; // = `#555` on `background-color: `#fff`, closest to `#54595d`.
+
+// == Box Model properties ==
+// Border Styles
+@border-style-base: solid;
+// Border Widths
+@border-width-base: 1px;
+// Border Radius. Match WikimediaUI Base and Codex.
+@border-radius-base: 2px;
+
+// == Typography ==
 // Body content uses the user setting in browser / the system default sans-serif font:
 // Arial on Windows, Roboto on Android.
 // FIXME: Use WikimediaUI Base's OS specific default sans-serif fonts.
 @font-family-sans: sans-serif;
-
-// Matches WikimediaUI Base and Codex, OOUI/wikimedia
-@border-radius-base: 2px;

@@ -33,7 +33,8 @@
 			"관인생략",
 			"렌즈",
 			"밝은소년",
-			"아라"
+			"아라",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "사용자 편집을 규칙에 따라 자동으로 검사합니다",
@@ -219,7 +220,7 @@
 	"abusefilter-edit-status-label": "통계:",
 	"abusefilter-edit-status": "최근 {{PLURAL:$1|동작}} $1개 중 $2건($3%)이 이 필터와 일치하였습니다.\n평균적으로 필터의 작동 시간은 $4밀리초이며, $5만큼의 {{PLURAL:$5|부하}}가 걸리고 있습니다.",
 	"abusefilter-edit-throttled-warning": "'''경고''': 이 필터는 자동으로 유해한 것으로 표시되었습니다. 안전 장치로서 다음의 {{PLURAL:$2|조치}}는 실행되지 않을 것입니다: $1 높은 일치율이 예상되는지 확인해주세요. 그렇다면 필터를 다시 저장하여 이 제한을 제거할 수 있습니다.",
-	"abusefilter-edit-throttled-warning-no-actions": "'''경고:''' 이 필터는 자동으로 유해한 것으로 표시되었습니다.  자동으로 비활성화된 조치는 없지만 높은 일치율이 예상되는지 확인해 주세요. 그렇다면 이 경고를 무시해도 됩니다.",
+	"abusefilter-edit-throttled-warning-no-actions": "'''경고:''' 이 필터는 자동으로 유해한 것으로 표시되었습니다. 자동으로 비활성화된 조치는 없지만 높은 일치율이 예상되는지 확인해 주세요. 그렇다면 이 경고를 무시해도 됩니다.",
 	"abusefilter-edit-new": "새 필터",
 	"abusefilter-edit-save": "필터 저장하기",
 	"abusefilter-edit-id": "필터 ID:",

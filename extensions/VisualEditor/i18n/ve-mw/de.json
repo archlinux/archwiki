@@ -3,6 +3,7 @@
 		"authors": [
 			"APPER",
 			"Brettchenweber",
+			"CyberOne25",
 			"Filzstift",
 			"G.Hagedorn",
 			"Hwboehm",
@@ -12,6 +13,7 @@
 			"Johanna Strodt (WMDE)",
 			"Kghbln",
 			"Kurt Jansson",
+			"McDutchie",
 			"Metalhead64",
 			"Murma174",
 			"R",
@@ -24,8 +26,7 @@
 			"Tomabrafix",
 			"Umherirrender",
 			"Wnme",
-			"McDutchie",
-			"CyberOne25"
+			"XanonymusX"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -179,6 +180,7 @@
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Name des Parameters",
 	"visualeditor-dialog-transclusion-add-param-save": "Hinzufügen",
 	"visualeditor-dialog-transclusion-add-template": "Vorlage hinzufügen",
+	"visualeditor-dialog-transclusion-add-template-button": "Vorlage hinzufügen",
 	"visualeditor-dialog-transclusion-add-template-save": "Hinzufügen",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Undokumentierten Parameter hinzufügen",
 	"visualeditor-dialog-transclusion-back-confirmation-prompt": "Zurück zur Suche gehen? Deine Bearbeitungen gehen verloren und können nicht wiederhergestellt werden.",
@@ -209,8 +211,7 @@
 	"visualeditor-dialog-transclusion-param-example-long": "Beispiel: $1",
 	"visualeditor-dialog-transclusion-param-selection-aria-description": "Drücke die Leertaste, um Parameter hinzuzufügen oder zu entfernen. Drücke die Eingabetaste, um einen Parameter hinzuzufügen und seinen Wert sofort zu bearbeiten. Wenn ein Parameter bereits ausgewählt ist, drücke Enter, um den Wert zu bearbeiten.",
 	"visualeditor-dialog-transclusion-param-selection-aria-label": "Parameter in $1",
-	"visualeditor-dialog-transclusion-param-undocumented": "(Undokumentierter Parameter)",
-	"visualeditor-dialog-transclusion-placeholder": "Eine Vorlage hinzufügen",
+	"visualeditor-dialog-transclusion-param-undocumented": "(undokumentierter Parameter)",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Vorlage finden",
 	"visualeditor-dialog-transclusion-required-parameter": "Erforderlicher Parameter",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Parameter ist erforderlich.",
@@ -374,7 +375,7 @@
 	"visualeditor-templatesused-tool": "Verwendete Vorlagen",
 	"visualeditor-title-error": "Ungültiger Titel.",
 	"visualeditor-toload": "Der Editor wird jetzt geladen. Wenn du diese Meldung nach einigen Sekunden noch siehst, [$1 lade bitte die Seite] neu.",
-	"visualeditor-tooltip-non-breaking-space": "Nicht-umbrechendes Leerzeichen",
+	"visualeditor-tooltip-non-breaking-space": "Nicht umbrechendes Leerzeichen",
 	"visualeditor-version-label": "Version",
 	"visualeditor-wikitext-progress": "Konvertiere Wikitext",
 	"visualeditor-wikitext-warning": "Du benutzt den visuellen Editor. [[{{MediaWiki:visualeditor-wikitext-warning-link}}|Wikitext]] funktioniert hier nicht. Um jederzeit ohne Verlust deiner Änderungen zur Quelltextbearbeitung zurückzukehren, klicke auf den Wechseln-Button.",

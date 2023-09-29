@@ -4,19 +4,21 @@ namespace MediaWiki\Extension\SpamBlacklist;
 
 use ApiMessage;
 use Content;
-use ContentHandler;
 use EditPage;
 use Html;
 use IContextSource;
 use LogicException;
+use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Hook\EditFilterHook;
 use MediaWiki\Hook\EditFilterMergedContentHook;
 use MediaWiki\Hook\UploadVerifyUploadHook;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Storage\Hook\ParserOutputStashForEditHook;
+use MediaWiki\Storage\PageEditStash;
 use MediaWiki\User\Hook\UserCanSendEmailHook;
 use MediaWiki\User\UserIdentity;
 use Message;
@@ -41,6 +43,36 @@ class Hooks implements
 	UserCanSendEmailHook
 {
 
+	/** @var PermissionManager */
+	private $permissionManager;
+
+	/** @var PageEditStash */
+	private $pageEditStash;
+
+	/** @var ContentRenderer */
+	private $contentRenderer;
+
+	/** @var IContentHandlerFactory */
+	private $contentHandlerFactory;
+
+	/**
+	 * @param PermissionManager $permissionManager
+	 * @param PageEditStash $pageEditStash
+	 * @param ContentRenderer $contentRenderer
+	 * @param IContentHandlerFactory $contentHandlerFactory
+	 */
+	public function __construct(
+		PermissionManager $permissionManager,
+		PageEditStash $pageEditStash,
+		ContentRenderer $contentRenderer,
+		IContentHandlerFactory $contentHandlerFactory
+	) {
+		$this->permissionManager = $permissionManager;
+		$this->pageEditStash = $pageEditStash;
+		$this->contentRenderer = $contentRenderer;
+		$this->contentHandlerFactory = $contentHandlerFactory;
+	}
+
 	/**
 	 * Hook function for EditFilterMergedContent
 	 *
@@ -61,9 +93,7 @@ class Hooks implements
 		User $user,
 		$minoredit
 	) {
-		if ( MediaWikiServices::getInstance()->getPermissionManager()
-			->userHasRight( $user, 'sboverride' )
-		) {
+		if ( $this->permissionManager->userHasRight( $user, 'sboverride' ) ) {
 			return true;
 		}
 
@@ -73,8 +103,7 @@ class Hooks implements
 			$updater = $context->getWikiPage()->getCurrentUpdate();
 			$pout = $updater->getParserOutputForMetaData();
 		} catch ( PreconditionException | LogicException $exception ) {
-			$services = MediaWikiServices::getInstance();
-			$stashedEdit = $services->getPageEditStash()->checkCache(
+			$stashedEdit = $this->pageEditStash->checkCache(
 				$title,
 				$content,
 				$user
@@ -85,8 +114,7 @@ class Hooks implements
 				$pout = $stashedEdit->output;
 			} else {
 				// Last resort, parse the page.
-				$contentRenderer = $services->getContentRenderer();
-				$pout = $contentRenderer->getParserOutput(
+				$pout = $this->contentRenderer->getParserOutput(
 					$content,
 					$title,
 					null,
@@ -257,19 +285,17 @@ class Hooks implements
 		$pageText,
 		&$error
 	) {
-		if ( MediaWikiServices::getInstance()->getPermissionManager()
-			->userHasRight( $user, 'sboverride' )
-		) {
+		if ( $this->permissionManager->userHasRight( $user, 'sboverride' ) ) {
 			return;
 		}
 
 		$title = $upload->getTitle();
 
 		// get the link from the not-yet-saved page content.
-		$content = ContentHandler::makeContent( $pageText, $title );
+		$content = $this->contentHandlerFactory->getContentHandler( $title->getContentModel() )
+			->unserializeContent( $pageText );
 		$parserOptions = ParserOptions::newFromAnon();
-		$contentRenderer = MediaWikiServices::getInstance()->getContentRenderer();
-		$output = $contentRenderer->getParserOutput( $content, $title, null, $parserOptions );
+		$output = $this->contentRenderer->getParserOutput( $content, $title, null, $parserOptions );
 		$links = array_keys( $output->getExternalLinks() );
 
 		// HACK: treat comment as a link if it contains anything

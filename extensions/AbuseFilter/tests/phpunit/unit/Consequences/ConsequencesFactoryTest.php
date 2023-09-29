@@ -51,8 +51,7 @@ class ConsequencesFactoryTest extends MediaWikiUnitTestCase {
 			$this->createMock( Session::class ),
 			$this->createMock( MessageLocalizer::class ),
 			$this->createMock( UserEditTracker::class ),
-			$this->createMock( UserFactory::class ),
-			'1.2.3.4'
+			$this->createMock( UserFactory::class )
 		);
 	}
 
@@ -116,7 +115,7 @@ class ConsequencesFactoryTest extends MediaWikiUnitTestCase {
 	 * @covers ::newTag
 	 */
 	public function testNewTag() {
-		$this->getFactory()->newTag( $this->createMock( Parameters::class ), null, [] );
+		$this->getFactory()->newTag( $this->createMock( Parameters::class ), [] );
 		$this->addToAssertionCount( 1 );
 	}
 }

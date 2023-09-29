@@ -4,7 +4,8 @@
 			"Amire80",
 			"Daud I.F. Argana",
 			"Kandar",
-			"Pijri Paijar"
+			"Pijri Paijar",
+			"Akbar Soepadhi"
 		]
 	},
 	"vector-skin-desc": "MonoBook vérsi modéren dina pidangan anu leuwih anyar jeung leuwih hadé",
@@ -23,5 +24,10 @@
 	"vector-view-view": "Baca",
 	"vector-view-viewsource": "Témbongkeun sumber",
 	"vector-more-actions": "Lianna",
-	"vector-searchsuggest-containing": "Paluruh kaca-kaca anu ngandung <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Paluruh kaca-kaca anu ngandung <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Eusi",
+	"vector-toc-beginning": "Mimiti",
+	"vector-page-tools-label": "Parabot",
+	"vector-page-tools-general-label": "Umum",
+	"vector-unpin-element-label": "sumputkeun"
 }

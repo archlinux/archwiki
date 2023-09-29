@@ -36,6 +36,7 @@
 	"vector-search-loader": "تحميل اقتراحات البحث",
 	"vector-searchsuggest-containing": "بحث عن صفحات تحوي <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:مقدمة",
+	"vector-toc-label": "محتوى",
 	"vector-toc-beginning": "المقدمة",
 	"vector-toc-toggle-button-label": "ثبِّت القسم الفرعي $1",
 	"vector-anon-user-menu-pages": "صفحات للمحررين اللي سجَّلوا خروجهم",
@@ -45,6 +46,16 @@
 	"vector-toc-menu-tooltip": "جدول المحتوى",
 	"vector-toc-collapsible-button-label": "تبديل عرض جدول المحتوى",
 	"vector-site-nav-label": "الموقع",
+	"vector-main-menu-label": "القائمة الرئيسية",
+	"vector-limited-width-toggle": "تبديل عرض المحتوى المحدود",
+	"vector-page-tools-label": "عدة",
+	"vector-page-tools-general-label": "عام",
+	"vector-page-tools-actions-label": "سوايات",
+	"vector-pin-element-label": "انقل للشريط الجانبي",
+	"vector-unpin-element-label": "ضمها",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|مناقشة]]",
-	"tooltip-vector-anon-user-menu-title": "بعد اختيارات"
+	"tooltip-vector-anon-user-menu-title": "بعد اختيارات",
+	"vector-prefs-limited-width": "شعل وضع العرض المحدود",
+	"vector-prefs-limited-width-help": "فعل وضع العرض المحدود لتجربة قراءة محسنة.",
+	"empty-language-selector-body": "محتوى الصفحه مو موجود بغير لغات"
 }

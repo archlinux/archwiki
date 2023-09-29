@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Naval Scene",
-			"Amire80",
-			"Bangrapip"
+			"Bangrapip",
+			"Amire80"
 		]
 	},
 	"vector-skin-desc": "Nyediain 2 kulit Bèktor:\n* 2011 - Pèrsi moderen deri MonoBook dengen roman anyar èn banyak peningkatan kebegunaan.\n* 2022 -Bèktor nyang dibangun sebagé bagèan deri proyèk WMF [[mw:Desktop Improvements]].",
@@ -30,15 +30,16 @@
 	"vector-view-history": "Deleng riwayat",
 	"vector-view-view": "Baca",
 	"vector-view-viewsource": "Deleng sumber",
-	"vector-jumptonavigation": "Loncat ke pengarahan",
+	"vector-jumptonavigation": "Loncat ke babelan",
 	"vector-jumptosearch": "Loncat ke penyarian",
 	"vector-jumptocontent": "Loncat ke isi",
 	"vector-more-actions": "Laènnya",
 	"vector-search-loader": "Muat saran penyarian",
 	"vector-searchsuggest-containing": "Cari halaman nyang ada <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Mukadimah",
+	"vector-toc-label": "Daptar isi",
 	"vector-toc-beginning": "Awal",
-	"vector-toc-toggle-button-label": "Cetèkin anak-bagèan $1",
+	"vector-toc-toggle-button-label": "Cetèkin anakbagèan $1",
 	"vector-anon-user-menu-pages": "Halaman bakal pemermak nyang kuar",
 	"vector-anon-user-menu-pages-learn": "belajarin lebi lanjut",
 	"vector-anon-user-menu-pages-label": "Belajarin lebi lanjut pasal pemermakan",
@@ -46,6 +47,16 @@
 	"vector-toc-menu-tooltip": "Daptar isi",
 	"vector-toc-collapsible-button-label": "Cetèkin daptar isi",
 	"vector-site-nav-label": "Pelampang",
+	"vector-main-menu-label": "Menu utama",
+	"vector-limited-width-toggle": "Cetèkin lèbar isi kewates",
+	"vector-page-tools-label": "Peranti",
+	"vector-page-tools-general-label": "Umum",
+	"vector-page-tools-actions-label": "Piil",
+	"vector-pin-element-label": "pindah ke palang samping",
+	"vector-unpin-element-label": "umpetin",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Perhadring]]",
-	"tooltip-vector-anon-user-menu-title": "Opsi laènnya"
+	"tooltip-vector-anon-user-menu-title": "Pilihan laènnya",
+	"vector-prefs-limited-width": "Nyalain mode lèbar kewates",
+	"vector-prefs-limited-width-help": "Nyalain mode lèbar kewates biar lebi ènak ngebacanya.",
+	"empty-language-selector-body": "Isi halaman kaga' didukung di laèn-laèn basa."
 }

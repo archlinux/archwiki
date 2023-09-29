@@ -26,7 +26,7 @@ class PageImagesTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testConstructor() {
-		$pageImages = new PageImages();
+		$pageImages = new PageImages( $this->getServiceContainer()->getUserOptionsLookup() );
 		$this->assertInstanceOf( PageImages::class, $pageImages );
 	}
 
@@ -59,7 +59,8 @@ class PageImagesTest extends MediaWikiIntegrationTestCase {
 			->method( 'addMeta' );
 
 		$skinTemplate = new SkinTemplate();
-		( new PageImages() )->onBeforePageDisplay( $outputPage, $skinTemplate );
+		( new PageImages( $this->getServiceContainer()->getUserOptionsLookup() ) )
+			->onBeforePageDisplay( $outputPage, $skinTemplate );
 	}
 
 	public function testGivenNonExistingPageOnBeforePageDisplayDoesNotAddMeta() {
@@ -71,7 +72,8 @@ class PageImagesTest extends MediaWikiIntegrationTestCase {
 			->method( 'addMeta' );
 
 		$skinTemplate = new SkinTemplate();
-		( new PageImages() )->onBeforePageDisplay( $outputPage, $skinTemplate );
+		( new PageImages( $this->getServiceContainer()->getUserOptionsLookup() ) )
+			->onBeforePageDisplay( $outputPage, $skinTemplate );
 	}
 
 	public static function provideFallbacks() {
@@ -96,7 +98,8 @@ class PageImagesTest extends MediaWikiIntegrationTestCase {
 			->with( $this->equalTo( 'og:image' ), $this->equalTo( $expected ) );
 
 		$skinTemplate = new SkinTemplate();
-		( new PageImages() )->onBeforePageDisplay( $outputPage, $skinTemplate );
+		( new PageImages( $this->getServiceContainer()->getUserOptionsLookup() ) )
+			->onBeforePageDisplay( $outputPage, $skinTemplate );
 	}
 
 	/**

@@ -13,7 +13,8 @@
 			"Sethakill",
 			"Sp5uhe",
 			"Tar Lócesilion",
-			"Woytecr"
+			"Woytecr",
+			"Msz2001"
 		]
 	},
 	"math-desc": "Renderowanie formuł matematycznych między znacznikami <code>&lt;math&gt;</code> … <code>&lt;/math&gt;</code>",
@@ -93,6 +94,7 @@
 	"math_unknown_function": "nieznana funkcja „$1”",
 	"mw_math_latexml": "LaTeXML (eksperymentalne; wykorzystuje MathML)",
 	"mw_math_mathml": "SVG (MathML może zostać włączone przez wtyczkę w przeglądarce)",
+	"mw_math_native": "MathML (eksperymentalny; brak obrazów)",
 	"mw_math_source": "Źródło w LaTeX (dla przeglądarek tekstowych)",
 	"prefs-math": "Wzory",
 	"mathstatus": "Status renderowania formuł matematycznych",

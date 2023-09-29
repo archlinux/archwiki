@@ -103,11 +103,11 @@ class FileBackendDBRepoWrapper extends FileBackend {
 				continue;
 			}
 
-			list( , $container ) = FileBackend::splitStoragePath( $path );
+			[ , $container ] = FileBackend::splitStoragePath( $path );
 
 			if ( $container === "{$this->repoName}-public" ) {
 				$name = basename( $path );
-				if ( strpos( $path, '!' ) !== false ) {
+				if ( str_contains( $path, '!' ) ) {
 					$sha1 = $db->selectField( 'oldimage', 'oi_sha1',
 						[ 'oi_archive_name' => $name ],
 						__METHOD__

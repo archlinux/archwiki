@@ -6,11 +6,11 @@ const assert = require( 'assert' ),
 	ArticlePageWithOverlay = require( '../support/pages/article_page_with_overlay' ),
 	{ ArticlePage, UserLoginPage } = require( '../support/world.js' );
 
-const waitForPropagation = ( timeMs ) => {
+const waitForPropagation = async ( timeMs ) => {
 	// wait 2 seconds so the change can propogate.
 	// Replace this with a more dynamic statement.
 	// eslint-disable-next-line wdio/no-pause
-	browser.pause( timeMs );
+	await browser.pause( timeMs );
 };
 
 const createPages = ( pages ) => {
@@ -43,37 +43,37 @@ const createPage = ( title, wikitext ) => {
 	} );
 };
 
-const iAmUsingTheMobileSite = () => {
-	ArticlePage.setMobileMode();
+const iAmUsingTheMobileSite = async () => {
+	await ArticlePage.setMobileMode();
 };
 
 const iAmInBetaMode = () => {
 	ArticlePage.setBetaMode();
 };
 
-const iAmOnPage = ( article ) => {
-	ArticlePage.open( article );
+const iAmOnPage = async ( article ) => {
+	await ArticlePage.open( article );
 	// Make sure the article opened and JS loaded.
-	ArticlePage.waitUntilResourceLoaderModuleReady( 'skins.minerva.scripts' );
+	await ArticlePage.waitUntilResourceLoaderModuleReady( 'skins.minerva.scripts' );
 };
 
-const iAmLoggedIn = () => {
-	UserLoginPage.open();
-	UserLoginPage.loginAdmin();
-	assert.strictEqual( ArticlePage.is_authenticated_element.isExisting(), true );
+const iAmLoggedIn = async () => {
+	await UserLoginPage.open();
+	await UserLoginPage.loginAdmin();
+	assert.strictEqual( await ArticlePage.is_authenticated_element.isExisting(), true );
 };
 
-const iAmLoggedIntoTheMobileWebsite = () => {
-	iAmUsingTheMobileSite();
-	iAmLoggedIn();
+const iAmLoggedIntoTheMobileWebsite = async () => {
+	await iAmUsingTheMobileSite();
+	await iAmLoggedIn();
 };
 
-const pageExists = ( title ) => {
-	browser.call( () =>
-		createPage( title, 'Page created by Selenium browser test.' )
+const pageExists = async ( title ) => {
+	await browser.call( async () =>
+		await createPage( title, 'Page created by Selenium browser test.' )
 	);
 	// wait 2 seconds so the change can propogate.
-	waitForPropagation( 2000 );
+	await waitForPropagation( 2000 );
 };
 
 const pageExistsWithText = ( title, text ) => {
@@ -88,18 +88,18 @@ const iAmOnAPageThatDoesNotExist = () => {
 	return iAmOnPage( `NewPage ${new Date()}` );
 };
 
-const iShouldSeeAToastNotification = () => {
-	ArticlePage.notification_element.waitForDisplayed();
+const iShouldSeeAToastNotification = async () => {
+	await ArticlePage.notification_element.waitForDisplayed();
 };
 
-const iShouldSeeAToastNotificationWithMessage = ( msg ) => {
-	iShouldSeeAToastNotification();
-	const notificationBody = ArticlePage.notification_element.$( '.mw-notification-content' );
-	assert.strictEqual( notificationBody.getText().includes( msg ), true );
+const iShouldSeeAToastNotificationWithMessage = async ( msg ) => {
+	await iShouldSeeAToastNotification();
+	const notificationBody = await ArticlePage.notification_element.$( '.mw-notification-content' ).getText();
+	assert.strictEqual( await notificationBody.includes( msg ), true );
 };
 
-const iClickTheBrowserBackButton = () => {
-	browser.back();
+const iClickTheBrowserBackButton = async () => {
+	await browser.back();
 };
 
 const iClickTheOverlayCloseButton = () => {
@@ -108,19 +108,21 @@ const iClickTheOverlayCloseButton = () => {
 	ArticlePageWithOverlay.overlay_close_element.click();
 };
 
-const iSeeAnOverlay = () => {
-	ArticlePageWithOverlay.overlay_element.waitForDisplayed();
-	assert.strictEqual( ArticlePageWithOverlay.overlay_element.isDisplayed(), true );
+const iSeeAnOverlay = async () => {
+	await ArticlePageWithOverlay.overlay_element.waitForDisplayed();
+	assert.strictEqual( await ArticlePageWithOverlay.overlay_element.isDisplayed(), true );
 };
 
-const iDoNotSeeAnOverlay = () => {
-	waitForPropagation( 5000 );
-	browser.waitUntil( () => !ArticlePageWithOverlay.overlay_element.isDisplayed() );
-	assert.strictEqual( ArticlePageWithOverlay.overlay_element.isDisplayed(), false );
+const iDoNotSeeAnOverlay = async () => {
+	await waitForPropagation( 5000 );
+	await browser.waitUntil(
+		async () => !( await ArticlePageWithOverlay.overlay_element.isDisplayed() )
+	);
+	assert.strictEqual( await ArticlePageWithOverlay.overlay_element.isDisplayed(), false );
 };
 
-const iAmUsingMobileScreenResolution = () => {
-	browser.setWindowSize( 320, 480 );
+const iAmUsingMobileScreenResolution = async () => {
+	await browser.setWindowSize( 320, 480 );
 };
 
 module.exports = {

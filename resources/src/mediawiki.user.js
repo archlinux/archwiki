@@ -56,6 +56,7 @@
 			try {
 				// Initialize a typed array containing 5 0-initialized 16-bit integers.
 				// Note that Uint16Array is array-like but does not implement Array.
+				// eslint-disable-next-line es-x/no-typed-arrays
 				rnds = new Uint16Array( 5 );
 				// Overwrite the array elements with cryptographically strong random values.
 				// https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues
@@ -107,6 +108,24 @@
 		 */
 		getId: function () {
 			return mw.config.get( 'wgUserId' ) || 0;
+		},
+
+		/**
+		 * Is the user a normal non-temporary registered user?
+		 *
+		 * @return {boolean}
+		 */
+		isNamed: function () {
+			return !mw.user.isAnon() && !mw.user.isTemp();
+		},
+
+		/**
+		 * Is the user an autocreated temporary user?
+		 *
+		 * @return {boolean}
+		 */
+		isTemp: function () {
+			return mw.config.get( 'wgUserIsTemp' ) || false;
 		},
 
 		/**

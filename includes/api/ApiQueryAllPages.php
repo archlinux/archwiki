@@ -22,6 +22,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -94,11 +95,9 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 		$this->addTables( 'page' );
 
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) != 1 );
-			$op = $params['dir'] == 'descending' ? '<' : '>';
-			$cont_from = $db->addQuotes( $cont[0] );
-			$this->addWhere( "page_title $op= $cont_from" );
+			$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'string' ] );
+			$op = $params['dir'] == 'descending' ? '<=' : '>=';
+			$this->addWhere( $db->buildComparison( $op, [ 'page_title' => $cont[0] ] ) );
 		}
 
 		$miserMode = $this->getConfig()->get( MainConfigNames::MiserMode );
@@ -357,7 +356,8 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 					'definite',
 					'all'
 				],
-				ParamValidator::PARAM_DEFAULT => 'all'
+				ParamValidator::PARAM_DEFAULT => 'all',
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
 		];
 

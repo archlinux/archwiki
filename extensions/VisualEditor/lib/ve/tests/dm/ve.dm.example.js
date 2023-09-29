@@ -91,25 +91,6 @@ ve.dm.example.postprocessAnnotations = function ( data, store, preserveDomElemen
 };
 
 /**
- * Remove originalDomElements from linear model data.
- *
- * @param {Array} data Linear model data. Will be modified.
- * @return {Array} data parameter
- */
-ve.dm.example.removeOriginalDomElements = function ( data ) {
-	for ( var i = 0, len = data.length; i < len; i++ ) {
-		if ( data[ i ].originalDomElementsHash !== undefined ) {
-			if ( Object.isFrozen( data[ i ] ) ) {
-				// Unfreeze, this data is just for testing
-				data[ i ] = ve.copy( data[ i ] );
-			}
-			delete data[ i ].originalDomElementsHash;
-		}
-	}
-	return data;
-};
-
-/**
  * Create an annotation object from shorthand notation.
  *
  * @param {Object} annotation Plain object with type and attributes properties
@@ -195,11 +176,12 @@ ve.dm.example.commentNodePreview = function ( text ) {
  *
  * @param {string} [name='data'] Named element of ve.dm.example
  * @param {ve.dm.HashValueStore} [store] A specific hash-value store to use, optionally.
+ * @param {string} [base=ve.dm.example.baseUri] Base URL to use for the document
  * @return {ve.dm.Document}
  * @throws {Error} Example data not found
  */
-ve.dm.example.createExampleDocument = function ( name, store ) {
-	return ve.dm.example.createExampleDocumentFromObject( name, store, ve.dm.example );
+ve.dm.example.createExampleDocument = function ( name, store, base ) {
+	return ve.dm.example.createExampleDocumentFromObject( name, store, ve.dm.example, base );
 };
 
 /**
@@ -208,19 +190,21 @@ ve.dm.example.createExampleDocument = function ( name, store ) {
  * @param {string} [name='data'] Named element of ve.dm.example
  * @param {ve.dm.HashValueStore} [store] A specific hash-value store to use, optionally.
  * @param {Object} object Collection of test documents, keyed by name
+ * @param {string} [base=ve.dm.example.baseUri] Base URL to use for the document
  * @return {ve.dm.Document}
  * @throws {Error} Example data not found
  */
-ve.dm.example.createExampleDocumentFromObject = function ( name, store, object ) {
+ve.dm.example.createExampleDocumentFromObject = function ( name, store, object, base ) {
 	name = name || 'data';
 	if ( object[ name ] === undefined ) {
 		throw new Error( 'Example data \'' + name + '\' not found' );
 	}
-	return ve.dm.example.createExampleDocumentFromData( object[ name ], store );
+	return ve.dm.example.createExampleDocumentFromData( object[ name ], store, base );
 };
 
-ve.dm.example.createExampleDocumentFromData = function ( data, store ) {
+ve.dm.example.createExampleDocumentFromData = function ( data, store, base ) {
 	store = store || new ve.dm.HashValueStore();
+	base = base || ve.dm.example.baseUri;
 	var doc = new ve.dm.Document(
 		ve.dm.example.preprocessAnnotations( ve.copy( data ), store )
 	);
@@ -238,6 +222,7 @@ ve.dm.example.createExampleDocumentFromData = function ( data, store ) {
 		doc.setStorage( 'internallist-counter', data.internalListNextUniqueNumber );
 	}
 	doc.buildNodeTree();
+	ve.fixBase( doc.getHtmlDocument(), doc.getHtmlDocument(), base );
 	return doc;
 };
 
@@ -256,29 +241,9 @@ ve.dm.example.lookupNode = function ( root ) {
 	return node;
 };
 
-ve.dm.example.createDomElement = function ( type, attributes ) {
-	var element = document.createElement( type );
-	for ( var key in attributes ) {
-		element.setAttribute( key, attributes[ key ] );
-	}
-	return element;
-};
-
-ve.dm.example.testDir = window.VE_TESTDIR || '.';
-
 ve.dm.example.imgSrc = 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Wikipedia-logo-v2-en.svg';
 
 ve.dm.example.baseUri = 'http://example.org';
-
-ve.dm.example.base = ( function () {
-	var doc = ve.createDocumentFromHtml( '' ),
-		node = doc.createElement( 'base' );
-	node.setAttribute( 'href', ve.dm.example.baseUri );
-	doc.head.appendChild( node );
-	return doc;
-}() );
-
-ve.dm.example.fullImgSrc = ve.resolveUrl( ve.dm.example.imgSrc, ve.dm.example.base );
 
 ve.dm.example.image = {
 	html: '<img src="' + ve.dm.example.imgSrc + '" alt="Example" width="100" height="50">',
@@ -1313,17 +1278,6 @@ ve.dm.example.figcaption = [
 ve.dm.example.emptyBranch = [
 	{ type: 'table' },
 	{ type: '/table' },
-	{ type: 'internalList' },
-	{ type: '/internalList' }
-];
-
-ve.dm.example.annotatedComplexities = [
-	{ type: 'paragraph' },
-	[ 'a', [ { type: 'textStyle/bold', attributes: { nodeName: 'b' } } ] ],
-	[ 'a', [ { type: 'textStyle/bold', attributes: { nodeName: 'strong' } } ] ],
-	[ 'a', [ { type: 'textStyle/bold', attributes: { nodeName: 'b', style: 'color: red;' } } ] ],
-	[ 'a', [ { type: 'textStyle/bold', attributes: { nodeName: 'b', style: 'color: blue;' } } ] ],
-	{ type: '/paragraph' },
 	{ type: 'internalList' },
 	{ type: '/internalList' }
 ];
@@ -2596,7 +2550,7 @@ ve.dm.example.domToDataCases = {
 	},
 	'list item with space followed by link': {
 		body: '<ul><li><p> <a href="Foobar">bar</a></p></li></ul>',
-		head: '<base href="http://example.com/Foo" />',
+		base: 'http://example.com/Foo',
 		data: [
 			{ type: 'list', attributes: { style: 'bullet' } },
 			{ type: 'listItem' },
@@ -3692,7 +3646,7 @@ ve.dm.example.domToDataCases = {
 	},
 	'nested annotations are closed and reopened in the correct order': {
 		body: '<p><a href="Foo">F<b>o<i>o</i></b><i>b</i></a><i>a<b>r</b>b<u>a</u>z</i></p>',
-		head: '<base href="http://example.com/Bar/Baz" />',
+		base: 'http://example.com/Bar/Baz',
 		data: [
 			{ type: 'paragraph' },
 			[ 'F', [ ve.dm.example.link( 'Foo' ) ] ],

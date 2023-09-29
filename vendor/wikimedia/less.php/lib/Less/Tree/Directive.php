@@ -1,10 +1,6 @@
 <?php
-
 /**
- * Directive
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_Directive extends Less_Tree {
 
@@ -51,7 +47,7 @@ class Less_Tree_Directive extends Less_Tree {
 			$this->value->genCSS( $output );
 		}
 		if ( $this->rules ) {
-			Less_Tree::outputRuleset( $output, array( $this->rules ) );
+			Less_Tree::outputRuleset( $output, [ $this->rules ] );
 		} else {
 			$output->add( ';' );
 		}

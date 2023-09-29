@@ -50,6 +50,8 @@ class Gadget {
 	private $definition;
 	/** @var bool */
 	private $resourceLoaded = false;
+	/** @var bool */
+	private $requiresES6 = false;
 	/** @var string[] */
 	private $requiredRights = [];
 	/** @var string[] */
@@ -83,6 +85,7 @@ class Gadget {
 				case 'name':
 				case 'definition':
 				case 'resourceLoaded':
+				case 'requiresES6':
 				case 'requiredRights':
 				case 'requiredActions':
 				case 'requiredSkins':
@@ -116,6 +119,7 @@ class Gadget {
 		$info = [
 			'name' => $id,
 			'resourceLoaded' => true,
+			'requiresES6' => $data['settings']['requiresES6'],
 			'requiredRights' => $data['settings']['rights'],
 			'onByDefault' => $data['settings']['default'],
 			'package' => $data['settings']['package'],
@@ -285,6 +289,13 @@ class Gadget {
 	 */
 	public function supportsResourceLoader() {
 		return $this->resourceLoaded;
+	}
+
+	/**
+	 * @return bool Whether this gadget requires ES6
+	 */
+	public function requiresES6(): bool {
+		return $this->requiresES6 && !$this->onByDefault;
 	}
 
 	/**

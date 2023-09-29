@@ -36,16 +36,16 @@ class MinervaPage extends Page {
 	 * @param {string} name - name of the cookie
 	 * @param {string} value - value of the cookie
 	 */
-	setCookie( name, value ) {
-		const currentPage = browser.getUrl();
-		if ( !currentPage.includes( browser.options.baseUrl ) ) {
+	async setCookie( name, value ) {
+		const currentPage = await browser.getUrl();
+		if ( !currentPage.includes( await browser.options.baseUrl ) ) {
 			this.open();
 		}
 
-		const cookie = browser.getCookies( [ name ] );
+		const cookie = await browser.getCookies( [ name ] );
 
 		if ( !cookie || cookie.value !== value ) {
-			browser.setCookies( {
+			await browser.setCookies( {
 				name: name,
 				value: value } );
 		}

@@ -11,7 +11,6 @@
 //   <div class="thumb"><img src="images/arrow-left.png"></div>
 // </div>
 .content {
-	figure,
 	.thumb {
 		margin: 0.6em 0;
 
@@ -23,8 +22,13 @@
 		}
 	}
 
-	figcaption,
 	.thumbcaption {
+		width: auto !important;
+	}
+
+	.thumbcaption,
+	figure[ typeof~='mw:File/Thumb' ] > figcaption,
+	figure[ typeof~='mw:File/Frame' ] > figcaption {
 		margin: 0.5em 0 0;
 		font-size: @font-size-minerva-smallest;
 		line-height: 1.5;
@@ -32,12 +36,21 @@
 		color: @grayMediumDark;
 	}
 
-	.thumbcaption {
-		width: auto !important;
+	figure[ typeof~='mw:File/Thumb' ],
+	figure[ typeof~='mw:File/Frame' ] {
+		margin: 0.6em auto;
+		display: table;
+		border-collapse: collapse;
+
+		> figcaption {
+			display: table-caption;
+			caption-side: bottom;
+		}
 	}
 
 	// Parsoid class name is mw-image-border (T198534) and parser (PHP) class name is thumbborder
-	.mw-image-border,
+	// However, Parsoid places the class on the wrapper, whereas the legacy parser placed it on the img
+	.mw-image-border img,
 	.thumbborder {
 		border: 1px solid @colorGray12;
 	}

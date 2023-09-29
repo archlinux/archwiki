@@ -21,6 +21,8 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Request\DerivativeRequest;
+
 /**
  * Special page which uses an HTMLForm to handle processing.  This is mostly a
  * clone of FormAction.  More special pages should be built this way; maybe this could be
@@ -139,6 +141,9 @@ abstract class FormSpecialPage extends SpecialPage {
 			$context,
 			$this->getMessagePrefix()
 		);
+		if ( !$this->requiresPost() ) {
+			$form->setMethod( 'get' );
+		}
 		$form->setSubmitCallback( $onSubmit );
 		if ( $this->getDisplayFormat() !== 'ooui' ) {
 			// No legend and wrapper by default in OOUI forms, but can be set manually
@@ -155,6 +160,13 @@ abstract class FormSpecialPage extends SpecialPage {
 		// the deprecation process so a subclass overriding *Text and *Html both work
 		$form->addPreText( $this->preText() );
 		$form->addPostText( $this->postText() );
+
+		// Give precedence to subpage syntax
+		$field = $this->getSubpageField();
+		if ( $this->par && $field ) {
+			$this->getRequest()->setVal( $form->getField( $field )->getName(), $this->par );
+			$form->setTitle( $this->getPageTitle() );
+		}
 		$this->alterForm( $form );
 		if ( $form->getMethod() == 'post' ) {
 			// Retain query parameters (uselang etc) on POST requests
@@ -170,7 +182,7 @@ abstract class FormSpecialPage extends SpecialPage {
 	}
 
 	/**
-	 * Process the form on POST submission.
+	 * Process the form on submission.
 	 * @phpcs:disable MediaWiki.Commenting.FunctionComment.ExtraParamComment
 	 * @param array $data
 	 * @param HTMLForm|null $form
@@ -196,6 +208,7 @@ abstract class FormSpecialPage extends SpecialPage {
 	public function execute( $par ) {
 		$this->setParameter( $par );
 		$this->setHeaders();
+		$this->outputHeader();
 
 		// This will throw exceptions if there's a problem
 		$this->checkExecutePermissions( $this->getUser() );
@@ -206,9 +219,24 @@ abstract class FormSpecialPage extends SpecialPage {
 		}
 
 		$form = $this->getForm();
-		if ( $form->show() ) {
+		// GET forms can be set as includable
+		if ( !$this->including() ) {
+			$result = $this->getShowAlways() ? $form->showAlways() : $form->show();
+		} else {
+			$result = $form->prepareForm()->tryAuthorizedSubmit();
+		}
+		if ( $result === true || ( $result instanceof Status && $result->isGood() ) ) {
 			$this->onSuccess();
 		}
+	}
+
+	/**
+	 * Whether the form should always be shown despite the success of submission.
+	 * @since 1.40
+	 * @return bool
+	 */
+	protected function getShowAlways() {
+		return false;
 	}
 
 	/**
@@ -217,6 +245,15 @@ abstract class FormSpecialPage extends SpecialPage {
 	 */
 	protected function setParameter( $par ) {
 		$this->par = $par;
+	}
+
+	/**
+	 * Override this function to set the field name used in the subpage syntax.
+	 * @since 1.40
+	 * @return false|string
+	 */
+	protected function getSubpageField() {
+		return false;
 	}
 
 	/**
@@ -246,19 +283,28 @@ abstract class FormSpecialPage extends SpecialPage {
 	}
 
 	/**
-	 * Whether this action requires the wiki not to be locked
+	 * Whether this action should using POST method to submit, default to true
+	 * @since 1.40
 	 * @return bool
 	 */
-	public function requiresWrite() {
+	public function requiresPost() {
 		return true;
 	}
 
 	/**
-	 * Whether this action cannot be executed by a blocked user
+	 * Whether this action requires the wiki not to be locked, default to requiresPost()
+	 * @return bool
+	 */
+	public function requiresWrite() {
+		return $this->requiresPost();
+	}
+
+	/**
+	 * Whether this action cannot be executed by a blocked user, default to requiresPost()
 	 * @return bool
 	 */
 	public function requiresUnblock() {
-		return true;
+		return $this->requiresPost();
 	}
 
 	/**

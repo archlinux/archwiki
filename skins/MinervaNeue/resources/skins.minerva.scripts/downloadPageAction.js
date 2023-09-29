@@ -45,6 +45,11 @@
 		var androidVersion = getAndroidVersion( userAgent ),
 			chromeVersion = getChromeVersion( userAgent );
 
+		if ( typeof window.print !== 'function' ) {
+			// T309591: No window.print support
+			return false;
+		}
+
 		// Download button is restricted to certain namespaces T181152.
 		// Not shown on missing pages
 		// Defaults to 0, in case cached JS has been served.

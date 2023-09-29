@@ -106,6 +106,91 @@ Explicitely specified output language (Dutch)
 !! end
 
 !! test
+#titleparts
+!! wikitext
+{{#titleparts:A/b/c/d}}
+{{#titleparts:A/b/c/d|1}}
+{{#titleparts:A/b/c/d|2}}
+{{#titleparts:A/b/c/d|-3}}
+{{#titleparts:A/b/c/d||1}}
+{{#titleparts:A/b/c/d||2}}
+{{#titleparts:A/b/c/d||-2}}
+{{#titleparts:A/b/c/d|1|1}}
+{{#titleparts:A/b/c/d|1|2}}
+{{#titleparts:A/b/c/d|1|-2}}
+!! html
+<p>A/b/c/d
+A
+A/b
+A
+A/b/c/d
+b/c/d
+c/d
+A
+b
+c
+</p>
+!! end
+
+!! test
+#titleparts stops splitting after 25 parts
+!! wikitext
+{{#titleparts:A/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/!/!/!|24}}
+{{#titleparts:A/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/!/!/!|25}}
+{{#titleparts:A/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/!/!/!|-1}}
+{{#titleparts:A/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/!/!/!||-1}}
+!! html
+<p>A/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x
+A/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/!/!/!
+A/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x
+!/!/!
+</p>
+!! end
+
+!! test
+Zero parameters in #if and such
+!! wikitext
+[{{#ifexpr:}},{{#if:}},{{#ifeq:}},{{#switch:}},{{#ifexist:}}]
+!! html
+<p>[,,,,]
+</p>
+!! end
+
+!! test
+Empty condition in #if and such
+!! wikitext
+Empty ifexpr is {{#ifexpr:|true|false}}
+Empty if is {{#if:|true|false}}
+Empty ifeq is {{#ifeq:||equal|not equal}}
+Empty switch is {{#switch:|=empty|#default=something else}}
+Empty ifexist is {{#ifexist:|true|false}}
+!! html
+<p>Empty ifexpr is false
+Empty if is false
+Empty ifeq is equal
+Empty switch is empty
+Empty ifexist is false
+</p>
+!! end
+
+!! test
+Missing or all-empty outputs
+!! wikitext
+[{{#ifexpr: 1}},{{#ifexpr: 1|}},{{#ifexpr: 1||}}]
+[{{#if: 1}},{{#if: 1|}},{{#if: 1||}}]
+[{{#ifeq: 1|1}},{{#ifeq: 1|1|}},{{#ifeq: 1|1||}}]
+[{{#switch: 1}},{{#switch: 1|}}]
+[{{#ifexist: ParserFunctions page}},{{#ifexist: ParserFunctions page|}},{{#ifexist: ParserFunctions page||}}]
+!! html
+<p>[,,]
+[,,]
+[,,]
+[,]
+[,,]
+</p>
+!! end
+
+!! test
 Preserve tags in #switch default value
 !! wikitext
 {{#switch:a|b|<div>c</div>}}

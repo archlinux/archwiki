@@ -2,16 +2,16 @@
 
 namespace MediaWiki\Revision;
 
-use ActorMigration;
 use ChangeTags;
 use ContribsPager;
-use FauxRequest;
 use IContextSource;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkRendererFactory;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\User\ActorMigration;
 use MediaWiki\User\UserIdentity;
 use Message;
 use NamespaceInfo;

@@ -21,14 +21,13 @@
 
 namespace MediaWiki\Page;
 
-use ActorMigration;
 use BagOStuff;
-use CommentStore;
 use Config;
 use ContentModelChange;
 use JobQueueGroup;
 use MediaWiki\Cache\BacklinkCacheFactory;
 use MediaWiki\Collation\CollationFactory;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\EditPage\SpamChecker;
@@ -38,18 +37,17 @@ use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Storage\PageUpdaterFactory;
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
+use MediaWiki\User\ActorMigration;
 use MediaWiki\User\ActorNormalization;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
-use MergeHistory;
-use MovePage;
 use NamespaceInfo;
 use Psr\Log\LoggerInterface;
 use ReadOnlyMode;
 use RepoGroup;
-use Title;
-use TitleFactory;
 use TitleFormatter;
 use WatchedItemStoreInterface;
 use Wikimedia\Message\ITextFormatter;

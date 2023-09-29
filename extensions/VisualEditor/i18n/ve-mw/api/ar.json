@@ -5,7 +5,8 @@
 			"Meno25",
 			"ديفيد",
 			"علاء",
-			"فلورانس"
+			"فلورانس",
+			"Amire80"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "لا cached serialization تم العثور عليه مع هذا المفتاح",
@@ -13,11 +14,10 @@
 	"apierror-visualeditor-docserver-http-error": "خطأ في الاتصال بخادم Parsoid/RESTBase: $1",
 	"apierror-visualeditor-docserver-http": "خطأ في الاتصال بخادم Parsoid / RESTBase (HTTP $1 ): $2",
 	"apierror-visualeditor-docserver": "خطأ في الاتصال بخادم Parsoid/RESTBase (بدون استجابة)",
-	"apierror-visualeditor-latestnotfound": "لم يمكن العثور على أحدث نسخة للعنوان",
 	"apihelp-visualeditor-description": "يرجع HTML5 لصفحة من الخدمة بارسويد (Parsoid).",
 	"apihelp-visualeditor-param-basetimestamp": "عندما تحفظ، وتعيين هذا إلى الطابع الزمني للمراجعة التي تم تحريرها. تستخدم لكشف الصراعات تحرير.",
 	"apihelp-visualeditor-param-badetag": "إذا أرجع استعلام RESTBase ETag غير صالح على ما يبدو، فقم بتمريره هنا لأغراض التسجيل.",
-	"apihelp-visualeditor-param-cachekey": "لتسلسل أو فرق، استخدم نتيجة لتسلسل السابق لطلب مخبأ مع هذا المفتاح. يتجاوز  $1html.",
+	"apihelp-visualeditor-param-cachekey": "لتسلسل أو فرق، استخدم نتيجة لتسلسل السابق لطلب مخبأ مع هذا المفتاح. يتجاوز $1html.",
 	"apihelp-visualeditor-param-editintro": "مقدمة التعديل للإضافة للملاحظات.",
 	"apihelp-visualeditor-param-etag": "ETag للإرسال.",
 	"apihelp-visualeditor-param-format": "صيغة الخرج.",
@@ -44,7 +44,7 @@
 	"apihelp-visualeditoredit-param-html": "HTML لإرسالها إلى Parsoid في مقابل نصوص WikiText.",
 	"apihelp-visualeditoredit-param-minor": "العلم لتغيير طفيف.",
 	"apihelp-visualeditoredit-param-needcheck": "عند حفظ، تعيين هذه المعلمة إذا كان التعديل قد تواجه مشاكل ذهابا وإيابا. وهذا يؤدي إلى تحرير يجري الموسومة.",
-	"apihelp-visualeditoredit-param-oldid": "رقم المراجعة للاستخدام. افتراضات إلى التنقيح الأخير. استخدام 0 لصفحة جديدة.",
+	"apihelp-visualeditoredit-param-oldid": "رقم المراجعة المطلوب استخدامه. الافتراضيات إلى أحدث مراجعة.",
 	"apihelp-visualeditoredit-param-paction": "الفعل للعمل.",
 	"apihelp-visualeditoredit-param-page": "الصفحة لتنفيذ الأفعال عليها.",
 	"apihelp-visualeditoredit-param-section": "القسم للعمل عليه.",

@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-require_once dirname(__FILE__) . '/../lib/Less/Autoloader.php';
+require_once __DIR__ . '/../lib/Less/Autoloader.php';
 Less_Autoloader::register();
 
 // Create our environment

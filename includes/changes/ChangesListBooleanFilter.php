@@ -21,6 +21,7 @@
  * @author Matthew Flaschen
  */
 
+use MediaWiki\Html\FormOptions;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
@@ -117,7 +118,7 @@ class ChangesListBooleanFilter extends ChangesListFilter {
 		if ( isset( $filterDefinition['default'] ) ) {
 			$this->setDefault( $filterDefinition['default'] );
 		} else {
-			throw new MWException( 'You must set a default' );
+			throw new InvalidArgumentException( 'You must set a default' );
 		}
 
 		if ( isset( $filterDefinition['queryCallable'] ) ) {

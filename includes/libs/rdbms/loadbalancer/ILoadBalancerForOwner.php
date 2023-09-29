@@ -38,30 +38,36 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 
 	/**
 	 * @param array $params Parameter map with keys:
-	 *  - servers : List of server info structures
+	 *  - servers : List of server configuration maps, starting with either the global master
+	 *     or local datacenter multi-master, and optionally followed by local datacenter replicas.
+	 *     Each server configuration map has the same format as the Database::factory() $params
+	 *     argument, with the following additional optional fields:
+	 *      - type: the DB type (sqlite, mysql, postgres,...)
+	 *      - groupLoads: map of (group => weight for this server) [optional]
+	 *      - max lag: per-server override of the "max lag" [optional]
+	 *      - is static: whether the dataset is static *and* this server has a copy [optional]
 	 *  - localDomain: A DatabaseDomain or domain ID string
-	 *  - loadMonitor : LoadMonitor::__construct() parameters with "class" field. [optional]
-	 *  - readOnlyReason : Reason the primary DB is read-only if so [optional]
-	 *  - waitTimeout : Maximum time to wait for replicas for consistency [optional]
-	 *  - maxLag: Try to avoid DB replicas with lag above this many seconds [optional]
+	 *  - loadMonitor : LoadMonitor::__construct() parameters with "class" field [optional]
+	 *  - readOnlyReason : Reason the primary server is read-only if so [optional]
 	 *  - srvCache : BagOStuff object for server cache [optional]
 	 *  - wanCache : WANObjectCache object [optional]
 	 *  - databaseFactory: DatabaseFactory object [optional]
-	 *  - chronologyCallback: Callback to run before the first connection attempt [optional]
+	 *  - chronologyCallback: Callback to run before the first connection attempt.
+	 *     It takes this ILoadBalancerForOwner instance and yields the relevant DBPrimaryPos
+	 *     for session (null if not applicable). [optional]
 	 *  - defaultGroup: Default query group; the generic group if not specified [optional]
 	 *  - hostname : The name of the current server [optional]
 	 *  - cliMode: Whether the execution context is a CLI script [optional]
 	 *  - profiler : Callback that takes a section name argument and returns
 	 *      a ScopedCallback instance that ends the profile section in its destructor [optional]
 	 *  - trxProfiler: TransactionProfiler instance [optional]
-	 *  - replLogger: PSR-3 logger instance [optional]
-	 *  - connLogger: PSR-3 logger instance [optional]
-	 *  - queryLogger: PSR-3 logger instance [optional]
-	 *  - perfLogger: PSR-3 logger instance [optional]
+	 *  - logger: PSR-3 logger instance [optional]
 	 *  - errorLogger : Callback that takes an Exception and logs it [optional]
 	 *  - deprecationLogger: Callback to log a deprecation warning [optional]
 	 *  - roundStage: STAGE_POSTCOMMIT_* class constant; for internal use [optional]
-	 *  - clusterName: The logical name of the DB cluster [optional]
+	 *  - clusterName: The name of the overall (single/multi-datacenter) cluster of servers
+	 *     managing the dataset, regardless of 'servers' excluding replicas and
+	 *     multi-masters from remote datacenter [optional]
 	 *  - criticalSectionProvider: CriticalSectionProvider instance [optional]
 	 */
 	public function __construct( array $params );
@@ -84,14 +90,6 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	public function closeAll( $fname = __METHOD__ );
 
 	/**
-	 * Commit transactions on all open connections
-	 *
-	 * @param string $fname Caller name
-	 * @throws DBExpectedError
-	 */
-	public function commitAll( $fname = __METHOD__ );
-
-	/**
 	 * Run pre-commit callbacks and defer execution of post-commit callbacks
 	 *
 	 * Use this only for multi-database commits
@@ -107,13 +105,12 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 *
 	 * Use this only for multi-database commits
 	 *
-	 * @param array $options Includes:
-	 *   - maxWriteDuration : max write query duration time in seconds
+	 * @param int $maxWriteDuration : max write query duration time in seconds
 	 * @param string $fname Caller name
 	 * @throws DBTransactionError
 	 * @since 1.37
 	 */
-	public function approvePrimaryChanges( array $options, $fname = __METHOD__ );
+	public function approvePrimaryChanges( int $maxWriteDuration, $fname = __METHOD__ );
 
 	/**
 	 * Flush any primary transaction snapshots and set DBO_TRX (if DBO_DEFAULT is set)
@@ -121,7 +118,6 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 * The DBO_TRX setting will be reverted to the default in each of these methods:
 	 *   - commitPrimaryChanges()
 	 *   - rollbackPrimaryChanges()
-	 *   - commitAll()
 	 * This allows for custom transaction rounds from any outer transaction scope.
 	 *
 	 * @param string $fname Caller name
@@ -200,23 +196,6 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 * @since 1.37
 	 */
 	public function pendingPrimaryChangeCallers();
-
-	/**
-	 * Call a function with each open connection object
-	 * @deprecated since 1.39
-	 * @param callable $callback
-	 * @param array $params
-	 */
-	public function forEachOpenConnection( $callback, array $params = [] );
-
-	/**
-	 * Call a function with each open connection object to a primary
-	 * @deprecated since 1.39
-	 * @param callable $callback
-	 * @param array $params
-	 * @since 1.37
-	 */
-	public function forEachOpenPrimaryConnection( $callback, array $params = [] );
 
 	/**
 	 * Set a new table prefix for the existing local domain ID for testing

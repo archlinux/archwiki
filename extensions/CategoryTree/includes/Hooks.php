@@ -24,26 +24,25 @@
 
 namespace MediaWiki\Extension\CategoryTree;
 
-use Article;
 use Config;
 use Html;
-use IContextSource;
+use MediaWiki\Hook\CategoryViewer__doCategoryQueryHook;
+use MediaWiki\Hook\CategoryViewer__generateLinkHook;
 use MediaWiki\Hook\OutputPageMakeCategoryLinksHook;
-use MediaWiki\Hook\OutputPageParserOutputHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Hook\SkinBuildSidebarHook;
 use MediaWiki\Hook\SpecialTrackingCategories__generateCatLinkHook;
 use MediaWiki\Hook\SpecialTrackingCategories__preprocessHook;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\Page\Hook\ArticleFromTitleHook;
 use OutputPage;
 use Parser;
-use ParserOutput;
 use PPFrame;
+use RequestContext;
 use Sanitizer;
 use Skin;
 use SpecialPage;
 use Title;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Hooks for the CategoryTree extension, an AJAX based gadget
@@ -52,23 +51,19 @@ use Title;
  * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
  */
 class Hooks implements
-	ArticleFromTitleHook,
 	SpecialTrackingCategories__preprocessHook,
 	SpecialTrackingCategories__generateCatLinkHook,
-	OutputPageParserOutputHook,
 	SkinBuildSidebarHook,
 	ParserFirstCallInitHook,
-	OutputPageMakeCategoryLinksHook
+	OutputPageMakeCategoryLinksHook,
+	CategoryViewer__doCategoryQueryHook,
+	CategoryViewer__generateLinkHook
 {
-
-	private const EXTENSION_DATA_FLAG = 'CategoryTree';
 
 	/** @var CategoryCache */
 	private $categoryCache;
 
-	/**
-	 * @var Config
-	 */
+	/** @var Config */
 	private $config;
 
 	/**
@@ -192,8 +187,9 @@ class Hooks implements
 		$allowMissing = false
 	) {
 		if ( $parser ) {
-			# flag for use by Hooks::parserOutput
-			$parser->getOutput()->setExtensionData( self::EXTENSION_DATA_FLAG, true );
+			$parserOutput = $parser->getOutput();
+			$parserOutput->addModuleStyles( [ 'ext.categoryTree.styles' ] );
+			$parserOutput->addModules( [ 'ext.categoryTree' ] );
 		}
 
 		$ct = new CategoryTree( $argv );
@@ -212,33 +208,6 @@ class Hooks implements
 		}
 
 		return $ct->getTag( $parser, $cat, $hideroot, $attr, $depth, $allowMissing );
-	}
-
-	/**
-	 * Hook callback that injects messages and things into the <head> tag,
-	 * if needed in the current page.
-	 * Does nothing if self::EXTENSION_DATA_FLAG is not set on $parserOutput extension data.
-	 * @param OutputPage $outputPage
-	 * @param ParserOutput $parserOutput
-	 */
-	public function onOutputPageParserOutput( $outputPage, $parserOutput ): void {
-		if ( $parserOutput->getExtensionData( self::EXTENSION_DATA_FLAG ) ) {
-			CategoryTree::setHeaders( $outputPage );
-		}
-	}
-
-	/**
-	 * ArticleFromTitle hook, override category page handling
-	 *
-	 * @param Title $title
-	 * @param Article|null &$article Article (object) that will be returned
-	 * @param IContextSource $context
-	 * @return bool|void True or no return value to continue or false to abort
-	 */
-	public function onArticleFromTitle( $title, &$article, $context ) {
-		if ( $title->getNamespace() === NS_CATEGORY ) {
-			$article = new CategoryTreeCategoryPage( $title );
-		}
 	}
 
 	/**
@@ -311,5 +280,46 @@ class Hooks implements
 		$cat = $this->categoryCache->getCategory( $catTitle );
 
 		$html .= CategoryTree::createCountString( $specialPage->getContext(), $cat, 0 );
+	}
+
+	/**
+	 * @param string $type
+	 * @param IResultWrapper $res
+	 */
+	public function onCategoryViewer__doCategoryQuery( $type, $res ) {
+		if ( $type === 'subcat' && $res ) {
+			$this->categoryCache->fillFromQuery( $res );
+			CategoryTree::setHeaders( RequestContext::getMain()->getOutput() );
+		}
+	}
+
+	/**
+	 * @param string $type
+	 * @param Title $title
+	 * @param string $html
+	 * @param string &$link
+	 * @return bool
+	 */
+	public function onCategoryViewer__generateLink( $type, $title, $html, &$link ) {
+		if ( $type !== 'subcat' || $link !== null ) {
+			return true;
+		}
+
+		$request = RequestContext::getMain()->getRequest();
+		if ( $request->getCheck( 'notree' ) ) {
+			return true;
+		}
+
+		$options = $this->config->get( 'CategoryTreeCategoryPageOptions' );
+		$mode = $request->getRawVal( 'mode' );
+		if ( $mode !== null ) {
+			$options['mode'] = $mode;
+		}
+		$tree = new CategoryTree( $options );
+
+		$cat = $this->categoryCache->getCategory( $title );
+
+		$link = $tree->renderNodeInfo( $title, $cat );
+		return false;
 	}
 }

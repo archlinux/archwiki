@@ -4,5 +4,8 @@
 			"ꠢꠣꠍꠘ ꠞꠣꠎꠣ"
 		]
 	},
-	"cite_error": "ꠛꠥꠞꠣ ꠟꠈ: $1"
+	"cite_error": "ꠛꠥꠞꠣ ꠟꠈ: $1",
+	"cite_references_link_accessibility_label": "ꠚꠣꠟꠖꠤ ꠃꠙꠞꠦ ꠃꠑꠂꠘ",
+	"cite_references_link_many_accessibility_label": "ꠚꠣꠟꠖꠤ ꠅꠃ ꠙꠞꠎꠘ꠆ꠔ ꠏꠣꠁꠘ",
+	"cite_references_link_accessibility_back_label": "ꠚꠣꠟꠖꠤ ꠇꠞ ꠟꠣꠝꠂꠘ"
 }

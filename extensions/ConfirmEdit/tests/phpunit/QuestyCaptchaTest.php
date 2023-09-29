@@ -1,7 +1,9 @@
 <?php
 
+use MediaWiki\Extension\ConfirmEdit\QuestyCaptcha\QuestyCaptcha;
+
 /**
- * @covers QuestyCaptcha
+ * @covers \MediaWiki\Extension\ConfirmEdit\QuestyCaptcha\QuestyCaptcha
  */
 class QuestyCaptchaTest extends MediaWikiIntegrationTestCase {
 
@@ -10,12 +12,13 @@ class QuestyCaptchaTest extends MediaWikiIntegrationTestCase {
 
 		$this->mergeMwGlobalArrayValue(
 			'wgAutoloadClasses',
-			[ 'QuestyCaptcha' => __DIR__ . '/../../QuestyCaptcha/includes/QuestyCaptcha.php' ]
+			[ 'MediaWiki\\Extension\\ConfirmEdit\\QuestyCaptcha\\QuestyCaptcha'
+				=> __DIR__ . '/../../QuestyCaptcha/includes/QuestyCaptcha.php' ]
 		);
 	}
 
 	/**
-	 * @covers QuestyCaptcha::getCaptcha
+	 * @covers \MediaWiki\Extension\ConfirmEdit\QuestyCaptcha\QuestyCaptcha::getCaptcha
 	 * @dataProvider provideGetCaptcha
 	 */
 	public function testGetCaptcha( $config, $expected ) {

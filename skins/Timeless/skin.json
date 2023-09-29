@@ -8,7 +8,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"ValidSkinNames": {
 		"timeless": {
@@ -51,10 +51,6 @@
 	},
 	"ResourceModules": {
 		"skins.timeless": {
-			"targets": [
-				"desktop",
-				"mobile"
-			],
 			"class": "MediaWiki\\Skin\\Timeless\\TimelessVariablesModule",
 			"features": {
 				"normalize": false,
@@ -122,10 +118,6 @@
 			"@NOTE": "Remember to also update variables.less if you change the width cutoffs here. screen-misc.less and mobile.js may also need updating."
 		},
 		"skins.timeless.js": {
-			"targets": [
-				"desktop",
-				"mobile"
-			],
 			"scripts": [
 				"resources/main.js",
 				"resources/mobile.js"

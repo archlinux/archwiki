@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Adam-Yourist"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Жоп",
+	"discussiontools-replylink": "жоп",
+	"discussiontools-replywidget-advanced": "Кхы а",
+	"discussiontools-replywidget-cancel": "Эшац",
+	"discussiontools-replywidget-mode-source": "Чура",
+	"discussiontools-replywidget-mode-visual": "ТӀера",
+	"discussiontools-replywidget-placeholder-reply": "Жоп ле → {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Хьалххе бӀаргтохар",
+	"discussiontools-replywidget-reply": "Жоп",
+	"discussiontools-replywidget-summary": "Суртйоазув",
+	"discussiontools-replywidget-watchthis": "ТӀатоха ер оагӀув хьай [[Special:Watchlist|зем-мугӀама]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|саг}} ва къамаьл дара юкъе",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|хоам}}",
+	"discussiontools-topicheader-latestcomment": "ТӀеххьара хоам: $1",
+	"discussiontools-topicsubscription-button-subscribe": "дӀатӀаязле",
+	"discussiontools-topicsubscription-button-subscribe-label": "ДӀатӀаязле",
+	"discussiontools-topicsubscription-button-unsubscribe": "юхаязле",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Юхаязле",
+	"discussiontools-topicsubscription-pager-notified": "ТӀеххьара дӀахайтар"
+}

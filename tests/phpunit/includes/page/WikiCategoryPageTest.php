@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Page\PageProps;
+use MediaWiki\Title\Title;
+
 class WikiCategoryPageTest extends MediaWikiLangTestCase {
 
 	/**
@@ -7,7 +10,7 @@ class WikiCategoryPageTest extends MediaWikiLangTestCase {
 	 */
 	public function testHiddenCategory_PropertyNotSet() {
 		$title = Title::makeTitle( NS_CATEGORY, 'CategoryPage' );
-		$categoryPage = WikiCategoryPage::factory( $title );
+		$categoryPage = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
 		$pageProps = $this->createMock( PageProps::class );
 		$pageProps->expects( $this->once() )
@@ -33,7 +36,7 @@ class WikiCategoryPageTest extends MediaWikiLangTestCase {
 	 */
 	public function testHiddenCategory_PropertyIsSet( $isHidden ) {
 		$categoryTitle = Title::makeTitle( NS_CATEGORY, 'CategoryPage' );
-		$categoryPage = WikiCategoryPage::factory( $categoryTitle );
+		$categoryPage = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $categoryTitle );
 
 		$pageProps = $this->createMock( PageProps::class );
 		$pageProps->expects( $this->once() )
@@ -51,7 +54,7 @@ class WikiCategoryPageTest extends MediaWikiLangTestCase {
 	 */
 	public function testExpectUnusedCategory_PropertyNotSet() {
 		$title = Title::makeTitle( NS_CATEGORY, 'CategoryPage' );
-		$categoryPage = WikiCategoryPage::factory( $title );
+		$categoryPage = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
 		$pageProps = $this->createMock( PageProps::class );
 		$pageProps->expects( $this->once() )
@@ -70,7 +73,7 @@ class WikiCategoryPageTest extends MediaWikiLangTestCase {
 	 */
 	public function testExpectUnusedCategory_PropertyIsSet( $isExpectedUnusedCategory ) {
 		$categoryTitle = Title::makeTitle( NS_CATEGORY, 'CategoryPage' );
-		$categoryPage = WikiCategoryPage::factory( $categoryTitle );
+		$categoryPage = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $categoryTitle );
 		$returnValue = $isExpectedUnusedCategory ? [ $categoryTitle->getArticleID() => '' ] : [];
 
 		$pageProps = $this->createMock( PageProps::class );

@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\MainConfigNames;
 use Wikimedia\Rdbms\LikeMatch;
 
@@ -139,10 +140,10 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 			[ 'http://', '[2001:db8:0:0:*]', 'http://[2001:0DB8::]' ],
 			[ 'http://', '[2001:db8:0:0:*]', 'http://[2001:0DB8::123]' ],
 			[ 'http://', '[2001:db8:0:0:*]', 'http://[2001:0DB8::123:456]' ],
-			[ 'http://', 'xn--f-vgaa.example.com', 'http://fóó.example.com', [ 'idn' => true ] ],
-			[ 'http://', 'xn--f-vgaa.example.com', 'http://f%c3%b3%C3%B3.example.com', [ 'idn' => true ] ],
-			[ 'http://', 'fóó.example.com', 'http://xn--f-vgaa.example.com', [ 'idn' => true ] ],
-			[ 'http://', 'f%c3%b3%C3%B3.example.com', 'http://xn--f-vgaa.example.com', [ 'idn' => true ] ],
+			[ 'http://', 'xn--f-vgaa.example.com', 'http://fóó.example.com' ],
+			[ 'http://', 'xn--f-vgaa.example.com', 'http://f%c3%b3%C3%B3.example.com' ],
+			[ 'http://', 'fóó.example.com', 'http://xn--f-vgaa.example.com' ],
+			[ 'http://', 'f%c3%b3%C3%B3.example.com', 'http://xn--f-vgaa.example.com' ],
 			[ 'http://', 'f%c3%b3%C3%B3.example.com', 'http://fóó.example.com' ],
 			[ 'http://', 'fóó.example.com', 'http://f%c3%b3%C3%B3.example.com' ],
 
@@ -207,13 +208,9 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 	 * @param string $url URL to feed to LinkFilter::makeIndexes
 	 * @param array $options
 	 *  - found: (bool) Should the URL be found? (defaults true)
-	 *  - idn: (bool) Does this test require the idn conversion (default false)
 	 */
 	public function testMakeLikeArrayWithValidPatterns( $protocol, $pattern, $url, $options = [] ) {
-		$options += [ 'found' => true, 'idn' => false ];
-		if ( !empty( $options['idn'] ) && !LinkFilter::supportsIDN() ) {
-			$this->markTestSkipped( 'LinkFilter IDN support is not available' );
-		}
+		$options += [ 'found' => true ];
 
 		$indexes = LinkFilter::makeIndexes( $url );
 		$likeArray = LinkFilter::makeLikeArray( $pattern, $protocol );
@@ -229,11 +226,12 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 		$matches = 0;
 
 		foreach ( $indexes as $index ) {
-			$matches += preg_match( $regex, $index );
-			$debugmsg .= "\t'$index'\n";
+			$indexString = implode( '', $index );
+			$matches += preg_match( $regex, $indexString );
+			$debugmsg .= "\t'$indexString'\n";
 		}
 
-		if ( !empty( $options['found'] ) ) {
+		if ( $options['found'] ) {
 			$this->assertTrue(
 				$matches > 0,
 				"Search pattern '$protocol$pattern' does not find url '$url' \n$debugmsg"
@@ -313,34 +311,34 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 			// Testcase for T30627
 			[
 				'https://example.org/test.cgi?id=12345',
-				[ 'https://org.example./test.cgi?id=12345' ]
+				[ [ 'https://org.example.', '/test.cgi?id=12345' ] ]
 			],
 			[
 				// mailtos are handled special
 				'mailto:wiki@wikimedia.org',
-				[ 'mailto:org.wikimedia.@wiki' ]
+				[ [ 'mailto:org.wikimedia.@wiki', '' ] ]
 			],
 			[
 				// mailtos are handled special
 				'mailto:wiki',
-				[ 'mailto:@wiki' ]
+				[ [ 'mailto:@wiki', '' ] ]
 			],
 
 			// file URL cases per T30627...
 			[
 				// three slashes: local filesystem path Unix-style
 				'file:///whatever/you/like.txt',
-				[ 'file://./whatever/you/like.txt' ]
+				[ [ 'file://.', '/whatever/you/like.txt' ] ]
 			],
 			[
 				// three slashes: local filesystem path Windows-style
 				'file:///c:/whatever/you/like.txt',
-				[ 'file://./c:/whatever/you/like.txt' ]
+				[ [ 'file://.', '/c:/whatever/you/like.txt' ] ]
 			],
 			[
 				// two slashes: UNC filesystem path Windows-style
 				'file://intranet/whatever/you/like.txt',
-				[ 'file://intranet./whatever/you/like.txt' ]
+				[ [ 'file://intranet.', '/whatever/you/like.txt' ] ]
 			],
 			// Multiple-slash cases that can sorta work on Mozilla
 			// if you hack it just right are kinda pathological,
@@ -353,39 +351,39 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 			[
 				'//example.org/test.cgi?id=12345',
 				[
-					'http://org.example./test.cgi?id=12345',
-					'https://org.example./test.cgi?id=12345'
+					[ 'http://org.example.', '/test.cgi?id=12345' ],
+					[ 'https://org.example.', '/test.cgi?id=12345' ]
 				]
 			],
 
 			// IP addresses
 			[
 				'http://192.0.2.0/foo',
-				[ 'http://V4.192.0.2.0./foo' ]
+				[ [ 'http://V4.192.0.2.0.', '/foo' ] ]
 			],
 			[
 				'http://192.0.0002.0/foo',
-				[ 'http://V4.192.0.2.0./foo' ]
+				[ [ 'http://V4.192.0.2.0.', '/foo' ] ]
 			],
 			[
 				'http://[2001:db8::1]/foo',
-				[ 'http://V6.2001.DB8.0.0.0.0.0.1./foo' ]
+				[ [ 'http://V6.2001.DB8.0.0.0.0.0.1.', '/foo' ] ]
 			],
 
 			// Explicit specification of the DNS root
 			[
 				'http://example.com./foo',
-				[ 'http://com.example./foo' ]
+				[ [ 'http://com.example.', '/foo' ] ]
 			],
 			[
 				'http://192.0.2.0./foo',
-				[ 'http://V4.192.0.2.0./foo' ]
+				[ [ 'http://V4.192.0.2.0.', '/foo' ] ]
 			],
 
 			// Weird edge case
 			[
 				'http://.example.com/foo',
-				[ 'http://com.example../foo' ]
+				[ [ 'http://com.example..', '/foo' ] ]
 			],
 		];
 	}
@@ -458,10 +456,10 @@ class LinkFilterTest extends MediaWikiLangTestCase {
 			],
 			'Various options' => [
 				'example.com',
-				[ 'protocol' => 'https://', 'prefix' => 'xx' ],
+				[ 'protocol' => 'https://' ],
 				[
-					'xx_index_60 LIKE \'https://com.example./%\' ESCAPE \'`\' ',
-					'xx_index LIKE \'https://com.example./%\' ESCAPE \'`\' ',
+					'el_index_60 LIKE \'https://com.example./%\' ESCAPE \'`\' ',
+					'el_index LIKE \'https://com.example./%\' ESCAPE \'`\' ',
 				],
 			],
 		];

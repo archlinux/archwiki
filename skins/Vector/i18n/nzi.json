@@ -4,7 +4,12 @@
 			"Valentine Badu"
 		]
 	},
+	"vector-action-addsection": "Fa tidwɛkɛ boka nwo",
+	"vector-action-delete": "Twikyi",
 	"vector-action-move": "Fa kɔ",
+	"vector-action-protect": "Gyima",
+	"vector-view-create": "Buke",
 	"vector-view-edit": "Sa nu",
-	"vector-more-actions": "Kpondɛ dɔɔnwo"
+	"vector-more-actions": "Kpondɛ dɔɔnwo",
+	"vector-unpin-element-label": "Fa fia"
 }

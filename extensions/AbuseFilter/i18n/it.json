@@ -369,6 +369,7 @@
 	"abusefilter-edit-builder-funcs-substr": "Sottostringa (substr)",
 	"abusefilter-edit-builder-funcs-strpos": "Posizione della sottostringa nella stringa (strpos)",
 	"abusefilter-edit-builder-funcs-str_replace": "Sostituisci sottostringa con stringa (str_replace)",
+	"abusefilter-edit-builder-funcs-str_replace_regexp": "Cerca e sostituisci per espressione regolare (str_replace_regexp)",
 	"abusefilter-edit-builder-funcs-rescape": "Stringa di escape come valore letterale in regex (rescape)",
 	"abusefilter-edit-builder-funcs-set_var": "Imposta variabile (set_var)",
 	"abusefilter-edit-builder-funcs-sanitize": "Normalizza le entità HTML in caratteri unicode (sanitize)",

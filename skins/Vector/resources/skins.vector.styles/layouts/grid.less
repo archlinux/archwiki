@@ -2,33 +2,101 @@
 // Grid layout
 //
 
-@width-gutter: 20px;
+// Match styles between TOC and fade element to ensure the fade covers the correct area
+// This is expressed in pixels to support different font sizes since our layout is currently
+// expressed in pixels. See T313817.
+.vector-feature-page-tools-disabled #vector-toc-pinned-container .vector-toc:after,
+.vector-feature-page-tools-disabled #vector-toc-pinned-container .vector-toc,
+.vector-feature-page-tools-disabled .vector-main-menu {
+	// T305069 Layout adjustments of sidebar elements
+	// Align the left edge of main menu with the main menu button.
+	width: 220px;
 
-// Makes a column span entire page
-.mixin-column-full-width() {
-	grid-column: sidebar / content;
-	margin-left: auto;
-	margin-right: auto;
-	// Needed for minimal content e.g. one word articles.
-	width: 100%;
-	box-sizing: border-box;
-	max-width: @max-width-content-container;
+	// Align the left edge of main menu with the main menu button icon.
+	@media ( min-width: @min-width-desktop-wide ) {
+		width: 244px;
+	}
 }
 
-// aligns left side of column with hamburger icon.
-.mixin-column-align-width-hamburger-icon() {
-	// Align the content with the hamburger icon
-	padding-left: 8px;
+/* Use of minmax is important to restrict the maximum grid column width more information: T314756 */
+@grid-template-column-desktop: ~'@{width-column-start-desktop} minmax(0, 1fr)';
+@grid-template-column-desktop-wide: ~'@{width-column-start-desktop-wide} minmax(0, 1fr)';
+
+@media ( min-width: @min-width-desktop ) {
+	.mw-page-container-inner {
+		display: grid;
+		column-gap: @grid-column-gap;
+		grid-template: ~'min-content min-content min-content 1fr min-content / @{grid-template-column-desktop}';
+		grid-template-areas: 'header header'
+			'siteNotice siteNotice'
+			'mainMenu pageContent'
+			'toc pageContent'
+			'footer footer';
+	}
+
+	.vector-feature-page-tools-disabled .mw-page-container-inner {
+		column-gap: @grid-column-gap + 8px; // 8px + 12px (.mw-body padding-left) = 20px total spacing
+	}
+
+	.vector-sitenotice-container {
+		grid-area: siteNotice;
+	}
+
+	.mw-table-of-contents-container {
+		grid-area: toc;
+		overflow-anchor: none; // T330108
+	}
+
+	.mw-header {
+		grid-area: header;
+	}
+
+	.vector-main-menu-container {
+		grid-area: mainMenu;
+		overflow-anchor: none; // T330108
+	}
+
+	.mw-content-container {
+		grid-area: pageContent;
+	}
+
+	.mw-footer-container {
+		grid-area: footer;
+	}
 }
 
-.mw-content-container {
-	max-width: @max-width-content-container;
+@media ( min-width: @min-width-desktop-wide ) {
+	.mw-page-container-inner {
+		grid-template-columns: @grid-template-column-desktop-wide;
+	}
 
-	// For container logic specific to special pages and history pages.
-	.skin-vector-disable-max-width & {
+	.vector-feature-page-tools-enabled .mw-header {
+		display: grid;
+		column-gap: @grid-column-gap;
+		grid-template: ~'auto / @{grid-template-column-desktop-wide}';
+		grid-template-areas: 'headerStart headerEnd';
+
+		.vector-header-start {
+			grid-area: headerStart;
+		}
+
+		.vector-header-end {
+			grid-area: headerEnd;
+		}
+	}
+}
+
+.mw-content-container,
+.mw-table-of-contents-container {
+	.vector-feature-page-tools-disabled & {
+		max-width: @max-width-content-container;
+	}
+
+	.vector-feature-limited-width-disabled &,
+	.vector-feature-limited-width-content-disabled & {
 		// Allow the max-width of content on history/special pages to be wider than
 		// the max-width of content on article pages.
-		// Note, we don't disable the max-width on .mw-article-toolbar-container intentionally
+		// Note, we don't disable the max-width on .vector-page-toolbar-container intentionally
 		// to support easier navigation between tabs.
 		// See T293441 for further information on that.
 		// Both rules are !important as they are final. Max-width on a page should be restored by removing the `skin-vector-disable-max-width`,
@@ -40,73 +108,68 @@
 	}
 }
 
+// Horizontally center content when column start is empty (i.e. no pinned ToC or pinned main menu)
+.vector-feature-page-tools-disabled {
+
+	@{selector-sidebar-no-toc-sidebar-closed},
+	&.vector-feature-toc-pinned-disabled @{selector-main-menu-closed} {
+		& ~ .mw-content-container {
+			grid-column: mainMenu / pageContent;
+			margin-left: auto;
+			margin-right: auto;
+			width: 100%;
+		}
+	}
+}
+
+// Horizontally center content when column start is empty (i.e. no pinned ToC or pinned main menu)
+.vector-feature-page-tools-enabled {
+	&.vector-feature-main-menu-pinned-disabled .vector-sidebar-container-no-toc ~ .mw-content-container,
+	&.vector-feature-main-menu-pinned-disabled.vector-feature-toc-pinned-disabled .mw-content-container {
+		grid-column: mainMenu / pageContent;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
 @media ( min-width: @min-width-desktop ) {
-	.mw-page-container-inner {
+	.vector-feature-page-tools-enabled .mw-body {
 		display: grid;
-		width: 100%;
-		grid-template: ~'min-content min-content min-content 1fr min-content / 232px @{width-gutter} minmax(0, 1fr)';
-		grid-template-areas: 'header header header'
-			'sitenotice sitenotice sitenotice'
-			'sidebar gutter content'
-			'toc gutter content'
-			'footer footer footer';
-	}
+		grid-template: ~'min-content min-content min-content 1fr / minmax(0, @{max-width-content-container}) min-content';
+		/**
+		 * NOTE: T327715 - 'titlebar-cx' grid area is a temporary workaround to accommodate
+		 * the Content Translation extension and should not be used beyond that.
+		 * FIXME: This can be removed when T322740 is resolved.
+		 */
+		grid-template-areas: 'titlebar-cx .'
+			'titlebar columnEnd'
+			'toolbar columnEnd'
+			'content columnEnd';
 
-	.mw-body {
-		padding-left: 0;
-	}
+		.vector-feature-page-tools-pinned-enabled& {
+			column-gap: @grid-column-gap;
+		}
 
-	// FIXME: Remove selector after I39959f43f20880e83bef945a7535d58cfe0b6412 has been in prod for a week
-	.mw-page-container-inner > #siteNotice,
-	.vector-sitenotice-container {
-		grid-area: sitenotice;
-	}
+		.vector-feature-limited-width-disabled&,
+		.vector-feature-limited-width-content-disabled& {
+			grid-template-columns: ~'minmax(0, 1fr) min-content';
+		}
 
-	.mw-table-of-contents-container {
-		grid-area: toc;
-	}
+		.vector-page-titlebar {
+			grid-area: titlebar;
+		}
 
-	.mw-header {
-		grid-area: header;
-	}
+		.vector-page-toolbar {
+			grid-area: toolbar;
+		}
 
-	.vector-sidebar-container {
-		grid-area: sidebar;
-	}
+		#bodyContent {
+			grid-area: content;
+		}
 
-	.mw-content-container {
-		grid-area: content;
-	}
-
-	// FIXME: Remove padding in favor of updating the header icons itself and making mw-body spacing consistent
-	// This padding complicates the collapsed TOC menu styles and contributes to inconsistent spacing
-	// with sidebar closed, when no table of contents, align with hamburger menu
-	@{selector-sidebar-no-toc-sidebar-closed} ~ .mw-content-container {
-		.mixin-column-align-width-hamburger-icon();
-	}
-
-	.mw-footer-container {
-		grid-area: footer;
-	}
-}
-
-@media ( min-width: @min-width-desktop-wide ) {
-	.mw-page-container-inner {
-		/* Use of minmax is important to restrict the maximum grid column width
-		more information: T314756 */
-		grid-template-columns: ~'284px @{width-gutter} minmax(0, 1fr)';
-	}
-}
-
-@{selector-sidebar-no-toc-sidebar-closed} {
-	& ~ .mw-content-container {
-		.mixin-column-full-width();
-	}
-}
-
-.vector-toc-collapsed @{selector-main-menu-closed} {
-	& ~ .mw-content-container,
-	& ~ .mw-table-of-contents-container {
-		.mixin-column-full-width();
+		.vector-column-end {
+			grid-area: columnEnd;
+			overflow-anchor: none; // T330108
+		}
 	}
 }

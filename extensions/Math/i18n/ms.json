@@ -26,7 +26,6 @@
 	"math_unknown_function": "fungsi '$1' yang tidak dikenali",
 	"mw_math_latexml": "LaTeXML (percubaan; menggunakan MathML)",
 	"mw_math_mathml": "MathML dengan sandaran SVG atau PNG (disyorkan untuk pelayar dan alat-alat aksesibiliti moden)",
-	"mw_math_png": "Imej PNG",
 	"mw_math_source": "Sumber LaTeX (untuk pelayar teks)",
 	"prefs-math": "Matematik",
 	"mathstatus": "Status Math"

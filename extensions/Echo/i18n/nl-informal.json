@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kars",
+			"McDutchie",
+			"Siebrand"
+		]
+	},
+	"tooltip-pt-notifications-alert": "{{GENDER:|Jouw}} meldingen",
+	"echo-none": "Je hebt geen meldingen.",
+	"echo-email-batch-subject-daily": "Je hebt {{PLURAL:$2|een nieuwe melding|nieuwe meldingen}} op {{SITENAME}}",
+	"echo-email-batch-subject-weekly": "Je hebt deze week {{PLURAL:$2|een nieuwe melding|nieuwe meldingen}} op {{SITENAME}}"
+}

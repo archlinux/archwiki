@@ -43,8 +43,7 @@
 	"vector-search-loader": "Ngemot pamrayoganing panggolèk",
 	"vector-searchsuggest-containing": "Golèk kaca sing nduwèni ukara <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Wikipédia:Sugeng_rawuh",
-	"vector-toc-heading": "Pratélaning isi",
-	"vector-toc-toggle-position-title": "dhelikaké",
+	"vector-toc-label": "Pratélaning isi",
 	"vector-toc-beginning": "Wiwitan",
 	"vector-anon-user-menu-pages": "Kaca pambesut kang metu log",
 	"vector-anon-user-menu-pages-learn": "sinaoni candhaké",
@@ -52,6 +51,10 @@
 	"vector-main-menu-tooltip": "Menu pokok",
 	"vector-toc-menu-tooltip": "Pratélan Isi",
 	"vector-site-nav-label": "Situs",
+	"vector-page-tools-label": "Piranti",
+	"vector-page-tools-actions-label": "Laku",
+	"vector-pin-element-label": "lih menyang wilah sisih",
+	"vector-unpin-element-label": "dhelikaké",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Parembugan]]",
 	"tooltip-vector-anon-user-menu-title": "Pilihan liya"
 }

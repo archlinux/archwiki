@@ -4,11 +4,13 @@
 			"Amara-Amaziɣ",
 			"Ayour2002",
 			"Dalinanir",
-			"Lhoussine AIT TAYFST"
+			"Lhoussine AIT TAYFST",
+			"AguzulH"
 		]
 	},
 	"vector-languages": "Tutlayin",
 	"vector-language-button-label": "{{PLURAL:$1|$1 tutlayt|$1 tutlayin}}",
+	"vector-no-language-button-label": "Rnu tutlayin",
 	"vector-action-addsection": "Rnu asntl",
 	"vector-action-delete": "Kks",
 	"vector-action-move": "Smatti",
@@ -20,5 +22,7 @@
 	"vector-view-history": "Ẓr amzruy",
 	"vector-view-view": "Ɣr",
 	"vector-view-viewsource": "Ẓr aɣbalu",
-	"vector-more-actions": "Uggar"
+	"vector-more-actions": "Uggar",
+	"vector-page-tools-label": "Imassn",
+	"vector-unpin-element-label": "ssntl"
 }

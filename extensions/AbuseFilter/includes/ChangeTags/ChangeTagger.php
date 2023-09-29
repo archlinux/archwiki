@@ -108,7 +108,14 @@ class ChangeTagger {
 			$recentChange->getAttribute( 'rc_user' ),
 			$recentChange->getAttribute( 'rc_user_text' )
 		);
-		return $this->getActionID( new ActionSpecifier( $action, $title, $user, $user->getName() ) );
+		$specifier = new ActionSpecifier(
+			$action,
+			$title,
+			$user,
+			$recentChange->getAttribute( 'rc_ip' ) ?? '',
+			$user->getName()
+		);
+		return $this->getActionID( $specifier );
 	}
 
 	/**

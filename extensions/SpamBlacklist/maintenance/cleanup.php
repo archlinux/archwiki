@@ -51,7 +51,7 @@ class Cleanup extends Maintenance {
 		$maxID = (int)$dbr->selectField( 'page', 'MAX(page_id)', [], __METHOD__ );
 		$reportingInterval = 100;
 
-		$this->output( "Regexes are " . implode( ', ', array_map( 'count', $regexes ) ) . " bytes\n" );
+		$this->output( "Regexes are " . implode( ', ', array_map( 'strlen', $regexes ) ) . " bytes\n" );
 		$this->output( "Searching for spam in $maxID pages...\n" );
 		if ( $dryRun ) {
 			$this->output( "Dry run only\n" );

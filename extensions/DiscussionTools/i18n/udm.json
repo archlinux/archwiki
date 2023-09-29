@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kotwys",
+			"Света Поторочина"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Валэктон",
+	"discussiontools-replylink": "берен вазёно",
+	"discussiontools-replywidget-advanced": "Ватсаса",
+	"discussiontools-replywidget-cancel": "Берланьтон",
+	"discussiontools-replywidget-mode-source": "Кылдонэз",
+	"discussiontools-replywidget-mode-visual": "Визуал амалэн",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} викиавторлы берен вазёно",
+	"discussiontools-replywidget-preview": "Азьпал учкон",
+	"discussiontools-replywidget-reply": "Берен вазёно",
+	"discussiontools-replywidget-summary": "Вакчияк кылсуред",
+	"discussiontools-replywidget-watchthis": "Та бамез асьтэлэн [[Special:Watchlist|чакланъёсын лыдъетады]] ватсано.",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|адями|адямиос}} вераськонын",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|валэктон|валэктонъёс}}",
+	"discussiontools-topicheader-latestcomment": "Берпуметӥез валэктон: $1",
+	"discussiontools-topicsubscription-button-subscribe": "гожтӥськоно",
+	"discussiontools-topicsubscription-button-subscribe-label": "гожтӥськоно",
+	"discussiontools-topicsubscription-button-unsubscribe": "Гожтӥськонъёслэсь куштӥськоно",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Гожтӥськонлэсь куштӥськоно"
+}

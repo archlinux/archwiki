@@ -6,7 +6,6 @@ use Config;
 use Content;
 use CssContent;
 use EmptyResourceLoader;
-use FauxRequest;
 use HashConfig;
 use JavaScriptContent;
 use JavaScriptContentHandler;
@@ -15,15 +14,17 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\PageStore;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\ResourceLoader\Context;
 use MediaWiki\ResourceLoader\DerivativeContext;
 use MediaWiki\ResourceLoader\WikiModule;
+use MediaWiki\Title\Title;
+use MediaWiki\WikiMap\WikiMap;
 use ReflectionMethod;
 use ResourceLoaderTestCase;
-use Title;
 use TitleValue;
-use WikiMap;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\TestingAccessWrapper;
 use WikitextContent;
 
@@ -474,7 +475,7 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 class TestResourceLoaderWikiModule extends WikiModule {
 	public static $returnFetchTitleInfo = null;
 
-	protected static function fetchTitleInfo( IDatabase $db, array $pages, $fname = null ) {
+	protected static function fetchTitleInfo( IReadableDatabase $db, array $pages, $fname = null ) {
 		$ret = self::$returnFetchTitleInfo;
 		self::$returnFetchTitleInfo = null;
 		return $ret;

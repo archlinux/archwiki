@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Piano1forte2"
+		]
+	},
+	"cite-ve-changedesc-ref-group-both": "Reference group changed from '$1' to '$2'",
+	"cite-ve-changedesc-ref-group-from": "Reference group changed from '$1' to the general group",
+	"cite-ve-changedesc-ref-group-to": "Reference group changed from the general group to '$1'",
+	"cite-ve-changedesc-reflist-group-from": "References list group changed from '$1' to the general group",
+	"cite-ve-changedesc-reflist-group-to": "References list group changed from the general group to '$1'",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "List of references for group '$1'",
+	"cite-ve-referenceslist-isempty": "There are no references with the group '$1' on this page to include in this list.",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Reference group name: '$1'"
+}

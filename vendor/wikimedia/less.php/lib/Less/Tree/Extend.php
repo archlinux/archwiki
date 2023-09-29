@@ -1,17 +1,13 @@
 <?php
-
 /**
- * Extend
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_Extend extends Less_Tree {
 
 	public $selector;
 	public $option;
 	public $index;
-	public $selfSelectors = array();
+	public $selfSelectors = [];
 	public $allowBefore;
 	public $allowAfter;
 	public $firstExtendOnThisSelectorPath;
@@ -19,10 +15,10 @@ class Less_Tree_Extend extends Less_Tree {
 	public $ruleset;
 
 	public $object_id;
-	public $parent_ids = array();
+	public $parent_ids = [];
 
 	/**
-	 * @param integer $index
+	 * @param int $index
 	 */
 	public function __construct( $selector, $option, $index ) {
 		static $i = 0;
@@ -34,20 +30,20 @@ class Less_Tree_Extend extends Less_Tree {
 			case "all":
 				$this->allowBefore = true;
 				$this->allowAfter = true;
-			break;
+				break;
 			default:
 				$this->allowBefore = false;
 				$this->allowAfter = false;
-			break;
+				break;
 		}
 
 		// This must use a string (instead of int) so that array_merge()
 		// preserves keys on arrays that use IDs in their keys.
 		$this->object_id = 'id_' . $i++;
 
-		$this->parent_ids = array(
+		$this->parent_ids = [
 			$this->object_id => true
-		);
+		];
 	}
 
 	public function accept( $visitor ) {
@@ -61,8 +57,12 @@ class Less_Tree_Extend extends Less_Tree {
 		// return new Less_Tree_Extend( $this->selector->compile($env), $this->option, $this->index);
 	}
 
+	public function clone() {
+		return new Less_Tree_Extend( $this->selector, $this->option, $this->index );
+	}
+
 	public function findSelfSelectors( $selectors ) {
-		$selfElements = array();
+		$selfElements = [];
 
 		for ( $i = 0, $selectors_len = count( $selectors ); $i < $selectors_len; $i++ ) {
 			$selectorElements = $selectors[$i]->elements;
@@ -74,7 +74,7 @@ class Less_Tree_Extend extends Less_Tree {
 			$selfElements = array_merge( $selfElements, $selectors[$i]->elements );
 		}
 
-		$this->selfSelectors = array( new Less_Tree_Selector( $selfElements ) );
+		$this->selfSelectors = [ new Less_Tree_Selector( $selfElements ) ];
 	}
 
 }

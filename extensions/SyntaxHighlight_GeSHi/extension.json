@@ -14,7 +14,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.39.0",
+		"MediaWiki": ">= 1.40.0",
 		"platform": {
 			"ability-shell": true
 		}
@@ -26,10 +26,6 @@
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\SyntaxHighlight\\": "includes/"
-	},
-	"AutoloadClasses": {
-		"SyntaxHighlight": "includes/SyntaxHighlight.php",
-		"MediaWiki\\SyntaxHighlight\\SyntaxHighlight": "includes/SyntaxHighlight.php"
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules",
@@ -97,16 +93,10 @@
 		}
 	},
 	"Hooks": {
-		"ParserFirstCallInit": [
-			"SyntaxHighlight::onParserFirstCallInit"
-		],
-		"ContentGetParserOutput": [
-			"SyntaxHighlight::onContentGetParserOutput"
-		],
-		"ApiFormatHighlight": [
-			"SyntaxHighlight::onApiFormatHighlight"
-		],
-		"SoftwareInfo": "SyntaxHighlight::onSoftwareInfo"
+		"ParserFirstCallInit": "MediaWiki\\SyntaxHighlight\\SyntaxHighlight::onParserFirstCallInit",
+		"ContentGetParserOutput": "MediaWiki\\SyntaxHighlight\\SyntaxHighlight::onContentGetParserOutput",
+		"ApiFormatHighlight": "MediaWiki\\SyntaxHighlight\\SyntaxHighlight::onApiFormatHighlight",
+		"SoftwareInfo": "MediaWiki\\SyntaxHighlight\\SyntaxHighlight::onSoftwareInfo"
 	},
 	"ParsoidModules": [
 		"MediaWiki\\SyntaxHighlight\\ParsoidExt"
@@ -124,6 +114,12 @@
 	"config": {
 		"PygmentizePath": {
 			"value": false
+		},
+		"SyntaxHighlightMaxLines": {
+			"value": 1000
+		},
+		"SyntaxHighlightMaxBytes": {
+			"value": 102400
 		}
 	},
 	"TrackingCategories": [

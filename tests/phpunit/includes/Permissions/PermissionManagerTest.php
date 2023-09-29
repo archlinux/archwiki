@@ -4,7 +4,6 @@ namespace MediaWiki\Tests\Integration\Permissions;
 
 use Action;
 use ContentHandler;
-use FauxRequest;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\Restriction\ActionRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
@@ -13,16 +12,18 @@ use MediaWiki\Block\SystemBlock;
 use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\MutableRevisionRecord;
+use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Session\SessionId;
 use MediaWiki\Session\TestUtils;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiLangTestCase;
 use Message;
 use RequestContext;
 use stdClass;
 use TestAllServiceOptionsUsed;
-use Title;
 use User;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
@@ -236,7 +237,7 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 	}
 
 	public function testCascadingSourcesRestrictions() {
-		$this->setTitle( NS_MAIN, "test page" );
+		$this->setTitle( NS_MAIN, "Test page" );
 		$this->overrideUserPermissions( $this->user, [ "edit", "bogus", 'createpage' ] );
 
 		$rs = $this->getServiceContainer()->getRestrictionStore();
@@ -414,7 +415,7 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 
 		$this->overrideUserPermissions( $this->user, [ 'edit' ] );
 
-		$this->assertEmpty( $permissionManager->getPermissionErrors( 'edit', $this->user, $title ) );
+		$this->assertSame( [], $permissionManager->getPermissionErrors( 'edit', $this->user, $title ) );
 		$this->assertTrue( $permissionManager->userCan( 'edit', $this->user, $title ) );
 	}
 
@@ -444,7 +445,8 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 				$title
 			)
 		);
-		$this->assertEmpty(
+		$this->assertSame(
+			[],
 			$permissionManager->getPermissionErrors(
 				'edit',
 				$user,
@@ -1004,6 +1006,7 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 	}
 
 	public function testGroupPermissions() {
+		$this->hideDeprecated( 'MediaWiki\\Permissions\\PermissionManager::getGroupPermissions' );
 		$rights = $this->getServiceContainer()->getPermissionManager()
 			->getGroupPermissions( [ 'unittesters' ] );
 		$this->assertContains( 'runtest', $rights );
@@ -1020,6 +1023,7 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 	}
 
 	public function testRevokePermissions() {
+		$this->hideDeprecated( 'MediaWiki\\Permissions\\PermissionManager::getGroupPermissions' );
 		$rights = $this->getServiceContainer()->getPermissionManager()
 			->getGroupPermissions( [ 'unittesters', 'formertesters' ] );
 		$this->assertNotContains( 'runtest', $rights );
@@ -1032,6 +1036,7 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 	 * @dataProvider provideGetGroupsWithPermission
 	 */
 	public function testGetGroupsWithPermission( $expected, $right ) {
+		$this->hideDeprecated( 'MediaWiki\\Permissions\\PermissionManager::getGroupsWithPermission' );
 		$result = $this->getServiceContainer()->getPermissionManager()
 			->getGroupsWithPermission( $right );
 		sort( $result );
@@ -1084,6 +1089,7 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 	}
 
 	public function testGroupHasPermission() {
+		$this->hideDeprecated( 'MediaWiki\\Permissions\\PermissionManager::groupHasPermission' );
 		$permissionManager = $this->getServiceContainer()->getPermissionManager();
 
 		$result = $permissionManager->groupHasPermission(
@@ -1150,7 +1156,7 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 	private function getJavascriptRevision( Title $title, User $user, $text ) {
 		$content = ContentHandler::makeContent( $text, $title, CONTENT_MODEL_JAVASCRIPT );
 		$revision = new MutableRevisionRecord( $title );
-		$revision->setContent( 'main', $content );
+		$revision->setContent( SlotRecord::MAIN, $content );
 		return $revision;
 	}
 
@@ -1168,7 +1174,7 @@ class PermissionManagerTest extends MediaWikiLangTestCase {
 			->getContentHandler( CONTENT_MODEL_JAVASCRIPT )
 			->makeRedirectContent( $redirectTargetTitle );
 		$revision = new MutableRevisionRecord( $title );
-		$revision->setContent( 'main', $content );
+		$revision->setContent( SlotRecord::MAIN, $content );
 		return $revision;
 	}
 

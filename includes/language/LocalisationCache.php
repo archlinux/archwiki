@@ -244,11 +244,9 @@ class LocalisationCache {
 	];
 
 	/**
-	 * For constructor parameters, see the documentation for the LocalisationCacheConf
-	 * setting in docs/Configuration.md.
+	 * For constructor parameters, @ref \MediaWiki\MainConfigSchema::LocalisationCacheConf.
 	 *
-	 * Do not construct this directly. Use MediaWikiServices.
-	 *
+	 * @internal Do not construct directly, use MediaWikiServices instead.
 	 * @param ServiceOptions $options
 	 * @param LCStore $store What backend to use for storage
 	 * @param LoggerInterface $logger
@@ -257,7 +255,6 @@ class LocalisationCache {
 	 *   MessageBlobStore.
 	 * @param LanguageNameUtils $langNameUtils
 	 * @param HookContainer $hookContainer
-	 * @throws MWException
 	 */
 	public function __construct(
 		ServiceOptions $options,
@@ -799,31 +796,6 @@ class LocalisationCache {
 	}
 
 	/**
-	 * Given an array mapping language code to localisation value, such as is
-	 * found in extension *.i18n.php files, iterate through a fallback sequence
-	 * to merge the given data with an existing primary value.
-	 *
-	 * Returns true if any data from the extension array was used, false
-	 * otherwise.
-	 * @param array $codeSequence
-	 * @param string $key
-	 * @param mixed &$value
-	 * @param mixed $fallbackValue
-	 * @return bool
-	 */
-	protected function mergeExtensionItem( $codeSequence, $key, &$value, $fallbackValue ) {
-		$used = false;
-		foreach ( $codeSequence as $code ) {
-			if ( isset( $fallbackValue[$code] ) ) {
-				$this->mergeItem( $key, $value, $fallbackValue[$code] );
-				$used = true;
-			}
-		}
-
-		return $used;
-	}
-
-	/**
 	 * Gets the combined list of messages dirs from
 	 * core and extensions
 	 *
@@ -1014,16 +986,10 @@ class LocalisationCache {
 		unset( $page );
 
 		# If there were no plural rules, return an empty array
-		if ( $allData['pluralRules'] === null ) {
-			$allData['pluralRules'] = [];
-		}
-		if ( $allData['compiledPluralRules'] === null ) {
-			$allData['compiledPluralRules'] = [];
-		}
+		$allData['pluralRules'] ??= [];
+		$allData['compiledPluralRules'] ??= [];
 		# If there were no plural rule types, return an empty array
-		if ( $allData['pluralRuleTypes'] === null ) {
-			$allData['pluralRuleTypes'] = [];
-		}
+		$allData['pluralRuleTypes'] ??= [];
 
 		# Set the list keys
 		$allData['list'] = [];

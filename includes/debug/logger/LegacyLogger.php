@@ -22,6 +22,7 @@ namespace MediaWiki\Logger;
 
 use DateTimeZone;
 use Error;
+use MediaWiki\WikiMap\WikiMap;
 use MWDebug;
 use MWExceptionHandler;
 use Psr\Log\AbstractLogger;
@@ -29,7 +30,6 @@ use Psr\Log\LogLevel;
 use RuntimeException;
 use Throwable;
 use UDPTransport;
-use WikiMap;
 use Wikimedia\AtEase\AtEase;
 
 /**
@@ -83,14 +83,6 @@ class LegacyLogger extends AbstractLogger {
 	];
 
 	/**
-	 * @var array
-	 */
-	protected static $dbChannels = [
-		'DBQuery' => true,
-		'DBConnection' => true
-	];
-
-	/**
 	 * Minimum level. This is just to allow faster discard of debugging
 	 * messages. Not all messages meeting the level will be logged.
 	 *
@@ -112,7 +104,7 @@ class LegacyLogger extends AbstractLogger {
 		global $wgDebugLogFile, $wgDBerrorLog, $wgDebugLogGroups, $wgDebugToolbar, $wgDebugRawPage;
 
 		$this->channel = $channel;
-		$this->isDB = isset( self::$dbChannels[$channel] );
+		$this->isDB = ( $channel === 'rdbms' );
 
 		// Calculate minimum level, duplicating some of the logic from log() and shouldEmit()
 		if ( !$wgDebugRawPage && wfIsDebugRawPage() ) {
@@ -171,7 +163,7 @@ class LegacyLogger extends AbstractLogger {
 			return;
 		}
 
-		if ( $this->channel === 'DBQuery'
+		if ( $this->isDB
 			&& $level === self::LEVEL_DEBUG
 			&& isset( $context['sql'] )
 		) {
@@ -393,7 +385,7 @@ class LegacyLogger extends AbstractLogger {
 	 * @return string Interpolated message
 	 */
 	public static function interpolate( $message, array $context ) {
-		if ( strpos( $message, '{' ) !== false ) {
+		if ( str_contains( $message, '{' ) ) {
 			$replace = [];
 			foreach ( $context as $key => $val ) {
 				$replace['{' . $key . '}'] = self::flatten( $val );
@@ -514,7 +506,7 @@ class LegacyLogger extends AbstractLogger {
 	 * @param string $file Filename
 	 */
 	public static function emit( $text, $file ) {
-		if ( substr( $file, 0, 4 ) == 'udp:' ) {
+		if ( str_starts_with( $file, 'udp:' ) ) {
 			$transport = UDPTransport::newFromString( $file );
 			$transport->emit( $text );
 		} else {

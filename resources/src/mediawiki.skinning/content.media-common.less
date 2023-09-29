@@ -5,16 +5,7 @@
  */
 
 figure[ typeof~='mw:File' ],
-figure[ typeof~='mw:File/Frameless' ],
-/* TODO: Remove "Image|Video|Audio" when version 2.4.0 of the content is no
- * longer supported
- */
-figure[ typeof~='mw:Image' ],
-figure[ typeof~='mw:Video' ],
-figure[ typeof~='mw:Audio' ],
-figure[ typeof~='mw:Image/Frameless' ],
-figure[ typeof~='mw:Video/Frameless' ],
-figure[ typeof~='mw:Audio/Frameless' ] {
+figure[ typeof~='mw:File/Frameless' ] {
 	margin: 0;  // Maybe belongs in element.css for figure
 
 	> a {
@@ -64,21 +55,13 @@ figure[ typeof~='mw:Audio/Frameless' ] {
 }
 
 figure[ typeof~='mw:File/Thumb' ],
-figure[ typeof~='mw:File/Frame' ],
-/* TODO: Remove "Image|Video|Audio" when version 2.4.0 of the content is no
- * longer supported
- */
-figure[ typeof~='mw:Image/Thumb' ],
-figure[ typeof~='mw:Video/Thumb' ],
-figure[ typeof~='mw:Audio/Thumb' ],
-figure[ typeof~='mw:Image/Frame' ],
-figure[ typeof~='mw:Video/Frame' ],
-figure[ typeof~='mw:Audio/Frame' ] {
+figure[ typeof~='mw:File/Frame' ] {
 	margin: 0;  // Maybe belongs in element.css for figure
 	margin-bottom: @margin-bottom-thumb;
 	display: table;
 	text-align: center;
 	border-collapse: collapse;
+	line-height: 0;
 
 	> a {
 		// The addition of the class is needed for higher specificity
@@ -157,6 +140,7 @@ figure[ typeof~='mw:Audio/Frame' ] {
 		 */
 		> span.mw-broken-media {
 			display: inline-block;
+			line-height: 1.6em;
 			/* The extra horizontal margin here is to make up for the lack of a border */
 			margin: 3px 4px;
 			/* This is hardcoded in Linker::makeThumbLink2 for broken media */
@@ -208,6 +192,16 @@ figure[ typeof~='mw:Audio/Frame' ] {
 	}
 }
 
+// Remove bogus padding from framed images without captions
+figure[ typeof~='mw:File/Frame' ] > figcaption:empty {
+	padding-bottom: 0;
+}
+
+// However, it's still necessary for thumbs because the magnifying icon is present
+figure[ typeof~='mw:File/Thumb' ] > figcaption:empty {
+	padding-bottom: 3px;
+}
+
 /**
  * Inline media items
  */
@@ -245,28 +239,5 @@ a:first-child {
 		.mw-valign-text-bottom > & {
 			vertical-align: text-bottom;
 		}
-	}
-}
-
-/* stylelint-disable selector-class-pattern */
-
-/**
- * Avoid the need to calculate paddings individually
- * https://stackoverflow.com/a/7310398
- *
- * FIXME: This would be better in mediawiki.page.gallery.styles,
- * but let's wait until wgParserEnableLegacyMediaDOM is removed
- */
-.mw-gallery-traditional .gallerybox > .thumb {
-	&:before {
-		content: '';
-		vertical-align: middle;
-		display: inline-block;
-		height: 100%;
-	}
-
-	> * {
-		vertical-align: middle;
-		display: inline-block;
 	}
 }

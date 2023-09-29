@@ -4,7 +4,7 @@ Replace Text Extension
         Yaron Koren, Niklas Laxström and others
 
 This is free software licenced under the GNU General Public Licence. Please
-see http://www.gnu.org/copyleft/gpl.html for further details, including the
+see https://www.gnu.org/copyleft/gpl.html for further details, including the
 full text and terms of the licence.
 
 == Overview ==
@@ -38,7 +38,7 @@ your MediaWiki 'extensions' directory, then add the following line to your
 
      wfLoadExtension( 'ReplaceText' );
 
-In order to perform replacements, you must have the 'replacetext' permssion;
+In order to perform replacements, you must have the 'replacetext' permission;
 if you are an administrator on your wiki, the easiest way to do this is to
 also add the following line:
 

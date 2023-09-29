@@ -32,6 +32,7 @@
 	"vector-search-loader": "खोज सुझाव लोड होय रहलौ छौ",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> सँ जुड़लो पन्ना खोजौ",
 	"vector-intro-page": "Help:परिचय",
+	"vector-toc-label": "विषय सूची",
 	"vector-toc-beginning": "शुरुआत",
 	"vector-toc-toggle-button-label": "$1 उप-अनुभाग क टॉगल करौ",
 	"vector-anon-user-menu-pages": "लॉग-आउट करलौ गेलौ संपादक सिनी लेली पन्ना",
@@ -41,6 +42,16 @@
 	"vector-toc-menu-tooltip": "विषयसूची",
 	"vector-toc-collapsible-button-label": "विषयसूची क टॉगल करौ",
 	"vector-site-nav-label": "साइट",
+	"vector-main-menu-label": "मुख्य सूची",
+	"vector-limited-width-toggle": "सीमित सामग्री के चौड़ाई क टॉगल करौ",
+	"vector-page-tools-label": "उपकरण",
+	"vector-page-tools-general-label": "सामान्य",
+	"vector-page-tools-actions-label": "कार्रवाई",
+	"vector-pin-element-label": "साइडबार प जा",
+	"vector-unpin-element-label": "नुकाबौ",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|चर्चा]]",
-	"tooltip-vector-anon-user-menu-title": "अन्य विकल्प सिनी"
+	"tooltip-vector-anon-user-menu-title": "अन्य विकल्प सिनी",
+	"vector-prefs-limited-width": "सीमित चौड़ाई मोड सक्षम करौ",
+	"vector-prefs-limited-width-help": "बेहतर पठन अनुभव लेली सीमित चौड़ाई मोड सक्षम करौ।",
+	"empty-language-selector-body": "पृष्ठ सामग्री अन्य भाषा सिनी मँ समर्थित नाय छौं।"
 }

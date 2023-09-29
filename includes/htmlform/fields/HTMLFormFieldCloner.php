@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Html\Html;
+use MediaWiki\Request\DerivativeRequest;
+
 /**
  * A container for HTMLFormFields that allows for multiple copies of the set of
  * fields to be displayed to and entered by the user.
@@ -58,7 +61,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 		parent::__construct( $params );
 
 		if ( empty( $this->mParams['fields'] ) || !is_array( $this->mParams['fields'] ) ) {
-			throw new MWException( 'HTMLFormFieldCloner called without any fields' );
+			throw new InvalidArgumentException( 'HTMLFormFieldCloner called without any fields' );
 		}
 
 		// Make sure the delete button, if explicitly specified, is sensible
@@ -71,7 +74,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 			unset( $info['name'], $info['class'] );
 
 			if ( !isset( $info['type'] ) || $info['type'] !== 'submit' ) {
-				throw new MWException(
+				throw new InvalidArgumentException(
 					'HTMLFormFieldCloner delete field, if specified, must be of type "submit"'
 				);
 			}
@@ -235,10 +238,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 			return $this->getDefault();
 		}
 
-		$values = $request->getArray( $this->mName );
-		if ( $values === null ) {
-			$values = [];
-		}
+		$values = $request->getArray( $this->mName ) ?? [];
 
 		$ret = [];
 		foreach ( $values as $key => $value ) {
@@ -389,7 +389,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 
 			if ( $field instanceof HTMLHiddenField ) {
 				// HTMLHiddenField doesn't generate its own HTML
-				list( $name, $value, $params ) = $field->getHiddenFieldData( $v );
+				[ $name, $value, $params ] = $field->getHiddenFieldData( $v );
 				$hidden .= Html::hidden( $name, $value, $params ) . "\n";
 			} else {
 				$html .= $field->$getFieldHtmlMethod( $v );
@@ -517,7 +517,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 
 			if ( $field instanceof HTMLHiddenField ) {
 				// HTMLHiddenField doesn't generate its own HTML
-				list( $name, $value, $params ) = $field->getHiddenFieldData( $v );
+				[ $name, $value, $params ] = $field->getHiddenFieldData( $v );
 				$hidden .= Html::hidden( $name, $value, $params ) . "\n";
 			} else {
 				$html .= $field->getOOUI( $v );

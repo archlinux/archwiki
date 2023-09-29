@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Htawmonzel",
+			"咽頭べさ"
+		]
+	},
+	"tooltip-pt-notifications-alert": "{{GENDER:|မၞး}} မကဵုသတိဂမၠိုင်",
+	"notification-inbox-filter-all": "သီုဖအိုတ်",
+	"echo-notification-alert": "{{PLURAL:$1|ကဵုသတိ ($1)|ကဵုသတိဂမၠိုင် ($1)|100=ကဵုသတိဂမၠိုင် (99+)}}",
+	"echo-notification-alert-text-only": "ကဵုသတိဂမၠိုင်",
+	"echo-overlay-link": "ပွမကဵုသတိ သီုဖအိုတ်ဂမၠိုၚ်"
+}

@@ -23,6 +23,7 @@
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -72,8 +73,8 @@ class SpecialUncategorizedCategories extends SpecialUncategorizedPages {
 			$exList = $this->msg( 'uncategorized-categories-exceptionlist' )
 				->inContentLanguage()->plain();
 			$proposedTitles = explode( "\n", $exList );
-			foreach ( $proposedTitles as $count => $titleStr ) {
-				if ( strpos( $titleStr, '*' ) !== 0 ) {
+			foreach ( $proposedTitles as $titleStr ) {
+				if ( !str_starts_with( $titleStr, '*' ) ) {
 					continue;
 				}
 				$titleStr = preg_replace( "/^\\*\\s*/", '', $titleStr );

@@ -100,7 +100,7 @@
 	"templatedata-modal-table-param-required": "Ferplichte",
 	"templatedata-modal-table-param-suggested": "Suggestje",
 	"templatedata-modal-table-param-suggestedvalues": "Weardesuggestjes",
-	"templatedata-modal-table-param-suggestedvalues-placeholder": "Wearde tafoegje ...",
+	"templatedata-modal-placeholder-multiselect": "Wearde tafoegje ...",
 	"templatedata-modal-table-param-type": "Type",
 	"templatedata-modal-table-param-uneditablefield": "Net bewurkber",
 	"templatedata-modal-title": "Bewurker foar berjochtdokumintaasje",

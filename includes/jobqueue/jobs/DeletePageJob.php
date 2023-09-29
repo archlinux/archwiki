@@ -2,9 +2,12 @@
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\DeletePage;
+use MediaWiki\Title\Title;
 
 /**
- * Class DeletePageJob
+ * @newable
+ * @since 1.32
+ * @ingroup JobQueue
  */
 class DeletePageJob extends Job implements GenericParameterJob {
 	public function __construct( array $params ) {

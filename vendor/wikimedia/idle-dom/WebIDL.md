@@ -244,19 +244,26 @@ that "well-formed UTF-8 specifically disallows surrogate code points".
 
 Since we represent strings natively as UTF-8, it is true that
 surrogates don't appear in our native representation.  However, for
-those interfaces (`CharacterData` and `Text`, for example) which
-require offsets to be in UTF-16 units we will perform an internal
-conversion to UTF-16, which will by necessity generate surrogate pairs
-where needed.  If you extract a substring (using UTF-16 offsets) that
-contains an unmatched surrogate, it would need to be converted back to
-UTF-8 before being returned -- but UTF-8 cannot properly represent
-these characters.
+those interfaces (`CharacterData` and `Text`, for example) for which
+the spec requires offsets to be in UTF-16 units, it is possible that
+following the spec will generate unpaired surrogates.  For example, if
+you extract a substring (using UTF-16 offsets) that contains an
+unmatched surrogate, that lonely surrogate would need to be converted
+back to UTF-8 before being returned -- but UTF-8 cannot properly
+represent these characters.
 
 The behavior of a PHP WebIDL implementation following this
 specification should be considered undefined in these situations.
 
-The most efficient option (and the one implemented by
-`wikimedia/Dodo`, for instance) is to use PHP's built-in
+Indeed, for the special case of the `CharacterData` APIs, this spec
+makes it implementation-defined whether the offsets will be measured
+in UTF-16 code units or unicode code points (see the [PHP
+compatibility](#compatibility) section for more details).  If
+measuring in unicode code points, the creation of unpaired surrogates
+will not occur.
+
+However, if the implementation elects to use offsets measured in
+UTF-16 code units, one may use (for example) PHP's built-in
 `mb_convert_encoding` to convert between UTF-16 and UTF-8.  The
 `mb_convert_encoding` function will drop an unpaired initial surrogate
 and return an ASCII question mark character for an unpaired trailing
@@ -271,7 +278,7 @@ assertEquals('', $text->data); // leading unpaired surrogate deleted
 assertEquals('?', $text2->data); // trailing unpaired surrogate converted to ?
 ```
 
-At a slight cost in performance, an implementation might also choose
+Alternatively, an implementation using UTF-16 offsets might choose
 to fall back to a [WTF-8] encoding of the unpaired surrogate.  String
 concatenation of unpaired surrogates is likely to lead to further
 unexpected behavior, however, and PHP does not contain robust support
@@ -281,8 +288,8 @@ where surrogate-splitting is not involved and so would be explicitly
 in violation of this spec, which mandates UTF-8 for all results not
 involving unpaired surrogates.)
 
-Perhaps the safest option is to throw an exception if an unpaired
-surrogate is encountered.
+Perhaps the safest option for implementations using UTF-16 offsets is
+to throw an exception if an unpaired surrogate is encountered.
 
 ### object
 
@@ -719,6 +726,19 @@ work properly, so these methods have been added to our IDL for
 `Element`.  It is recommended that implementers implement them as
 no-ops for compatibility with legacy code.
 
+Various methods on [`DOMCharacterData`](https://www.php.net/manual/en/class.domcharacterdata.php)
+are defined in the spec to take or return offsets in UTF-16 code units.
+Originally the PHP DOM extension also used UTF-16 code units (and the
+PHP documentation still claims it does) however in PHP5 the implementation
+was changed to measure in unicode *code points* instead.  This primarily
+affects the handling of UTF-16 surrogate pairs.
+
+As discussed in the definition of the [string types](#domstring-bytestring-usvstring-cssomstring)
+above, the implementation is allowed to choose whether it implements
+the DOM standard/pre-PHP5 behavior or else the modern PHP5-and-later
+behavior for these methods.  If the DOM standard/pre-PHP5 behavior is
+implemented, there are additional issues with the handling of unpaired
+surrogates which can't be represented in UTF-8.
 
 [PHP escaped]: #names
 [`dictionary`]: https://heycam.github.io/webidl/#idl-dictionaries

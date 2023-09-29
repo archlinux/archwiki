@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -389,7 +390,7 @@ class ApiUpload extends ApiBase {
 		if ( $status->getMessage()->getKey() === 'uploadstash-exception' ) {
 			// The exceptions thrown by upload stash code and pretty silly and UploadBase returns poor
 			// Statuses for it. Just extract the exception details and parse them ourselves.
-			list( $exceptionType, $message ) = $status->getMessage()->getParams();
+			[ $exceptionType, $message ] = $status->getMessage()->getParams();
 			$debugMessage = 'Stashing temporary file failed: ' . $exceptionType . ' ' . $message;
 			wfDebug( __METHOD__ . ' ' . $debugMessage );
 		}
@@ -600,11 +601,6 @@ class ApiUpload extends ApiBase {
 		if ( $user->isBlockedFromUpload() ) {
 			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable Block is checked and not null
 			$this->dieBlocked( $user->getBlock() );
-		}
-
-		// Global blocks
-		if ( $user->isBlockedGlobally() ) {
-			$this->dieBlocked( $user->getGlobalBlock() );
 		}
 	}
 
@@ -841,9 +837,7 @@ class ApiUpload extends ApiBase {
 	 */
 	protected function performUpload( $warnings ) {
 		// Use comment as initial page text by default
-		if ( $this->mParams['text'] === null ) {
-			$this->mParams['text'] = $this->mParams['comment'];
-		}
+		$this->mParams['text'] ??= $this->mParams['comment'];
 
 		/** @var LocalFile $file */
 		$file = $this->mUpload->getLocalFile();

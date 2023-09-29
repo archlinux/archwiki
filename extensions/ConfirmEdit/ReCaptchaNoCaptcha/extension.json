@@ -13,15 +13,12 @@
 			"i18n/api"
 		]
 	},
-	"AutoloadClasses": {
-		"ReCaptchaNoCaptcha": "includes/ReCaptchaNoCaptcha.php",
-		"ReCaptchaNoCaptchaHooks": "includes/ReCaptchaNoCaptchaHooks.php",
-		"HTMLReCaptchaNoCaptchaField": "includes/HTMLReCaptchaNoCaptchaField.php",
-		"ReCaptchaNoCaptchaAuthenticationRequest": "includes/ReCaptchaNoCaptchaAuthenticationRequest.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\ConfirmEdit\\ReCaptchaNoCaptcha\\": "includes/"
 	},
 	"config": {
 		"CaptchaClass": {
-			"value": "ReCaptchaNoCaptcha"
+			"value": "MediaWiki\\Extension\\ConfirmEdit\\ReCaptchaNoCaptcha\\ReCaptchaNoCaptcha"
 		},
 		"ReCaptchaSiteKey": {
 			"value": ""
@@ -47,7 +44,7 @@
 		}
 	},
 	"Hooks": {
-		"ResourceLoaderGetConfigVars": "ReCaptchaNoCaptchaHooks::onResourceLoaderGetConfigVars"
+		"ResourceLoaderGetConfigVars": "MediaWiki\\Extension\\ConfirmEdit\\ReCaptchaNoCaptcha\\Hooks::onResourceLoaderGetConfigVars"
 	},
 	"attributes": {
 		"VisualEditor": {

@@ -6,11 +6,11 @@
 			"Lazowik",
 			"Mateuszek045",
 			"Matma Rex",
+			"Msz2001",
 			"Rail",
 			"Railfail536",
 			"WTM",
-			"Woytecr",
-			"Msz2001"
+			"Woytecr"
 		]
 	},
 	"minerva-last-modified-date": "Ostatnio edytowano $1 o $2",
@@ -85,7 +85,7 @@
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Zobacz kategorie stron",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Ulepszone rozwiązywanie problemów ze stroną",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problemy ze stroną (Szablon:ambox) będą wyświetlane wewnątrz artykułu.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Niestety, funkcja grupowania wyników na strony nie jest dostępna w wersji mobilnej. Jeżeli chcesz użyć funkcji grupowania na strony, przejdź do wersji standardowej.",
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Niestety, grupowanie wyników według stron nie jest dostępna w wersji mobilnej. Jeżeli chcesz korzystać z tej funkcji, przejdź do wersji standardowej strony.",
 	"minerva.css": "/* Umieszczony tutaj kod CSS zostanie załadowany przez użytkowników korzystających ze skórki MinervaNeue */",
 	"minerva.js": "/* Umieszczony tutaj kod JavaScript zostanie załadowany przez użytkowników korzystających ze skórki MinervaNeue */"
 }

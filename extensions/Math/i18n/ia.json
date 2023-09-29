@@ -82,6 +82,7 @@
 	"math_unknown_function": "function '$1' incognite",
 	"mw_math_latexml": "LaTeXML (experimental, usa MathML)",
 	"mw_math_mathml": "SVG (MathML pote esser activate via un extension del navigator)",
+	"mw_math_native": "MathML (experimental; nulle imagines)",
 	"mw_math_source": "Codice-fonte LaTeX (pro navigatores in modo texto)",
 	"prefs-math": "Mathematica",
 	"mathstatus": "Stato mathematic",

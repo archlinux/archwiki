@@ -9,6 +9,7 @@
 			"Siddhartha Ghai",
 			"ThisIsACreeper0101",
 			"आलोक",
+			"भारत्पराक्रमि",
 			"रोहित रावत"
 		]
 	},
@@ -45,9 +46,7 @@
 	"vector-search-loader": "खोज सुझाव लोड हो रहे हैं",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> से युक्त पृष्ठ खोजें",
 	"vector-intro-page": "Help:परिचय",
-	"vector-toc-heading": "सामग्री",
-	"vector-toc-toggle-position-sidebar": "साइडबार पर जाएँ",
-	"vector-toc-toggle-position-title": "छुपाएँ",
+	"vector-toc-label": "सामग्री",
 	"vector-toc-beginning": "शुरुआत",
 	"vector-toc-toggle-button-label": "$1 उप-अनुभाग को टॉगल करें",
 	"vector-anon-user-menu-pages": "लॉग-आउट किए गए संपादकों के लिए पृष्ठ",
@@ -56,8 +55,13 @@
 	"vector-main-menu-tooltip": "मुख्य मेन्यू",
 	"vector-toc-menu-tooltip": "विषयसूची",
 	"vector-toc-collapsible-button-label": "विषयसूची को टॉगल करें",
-	"vector-article-tools-nav-label": "उपकरण",
 	"vector-site-nav-label": "साइट",
+	"vector-main-menu-label": "मुख्य मेन्यू",
+	"vector-page-tools-label": "उपकरण",
+	"vector-page-tools-general-label": "सामान्य",
+	"vector-page-tools-actions-label": "क्रियाएँ",
+	"vector-pin-element-label": "साइडबार पर जाएँ",
+	"vector-unpin-element-label": "छुपाएँ",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|चर्चा]]",
 	"tooltip-vector-anon-user-menu-title": "अन्य विकल्प"
 }

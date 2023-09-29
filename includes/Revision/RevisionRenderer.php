@@ -22,9 +22,9 @@
 
 namespace MediaWiki\Revision;
 
-use Html;
 use InvalidArgumentException;
 use MediaWiki\Content\Renderer\ContentRenderer;
+use MediaWiki\Html\Html;
 use MediaWiki\Permissions\Authority;
 use ParserOptions;
 use ParserOutput;
@@ -56,14 +56,14 @@ class RevisionRenderer {
 	/** @var ContentRenderer */
 	private $contentRenderer;
 
-	/** @var string|bool */
+	/** @var string|false */
 	private $dbDomain;
 
 	/**
 	 * @param ILoadBalancer $loadBalancer
 	 * @param SlotRoleRegistry $roleRegistry
 	 * @param ContentRenderer $contentRenderer
-	 * @param bool|string $dbDomain DB domain of the relevant wiki or false for the current one
+	 * @param string|false $dbDomain DB domain of the relevant wiki or false for the current one
 	 */
 	public function __construct(
 		ILoadBalancer $loadBalancer,
@@ -101,6 +101,8 @@ class RevisionRenderer {
 	 *        matched the $rev and $options. This mechanism is intended as a temporary stop-gap,
 	 *        for the time until caches have been changed to store RenderedRevision states instead
 	 *        of ParserOutput objects.
+	 *      - 'causeAction' the reason for rendering. This should be informative, for used for
+	 *        logging and debugging.
 	 * @phan-param array{use-master?:bool,audience?:int,known-revision-output?:ParserOutput} $hints
 	 *
 	 * @return RenderedRevision|null The rendered revision, or null if the audience checks fails.
@@ -125,9 +127,13 @@ class RevisionRenderer {
 		}
 
 		if ( !$options ) {
-			$options = ParserOptions::newCanonical(
-				$forPerformer ? $forPerformer->getUser() : 'canonical'
-			);
+			$options = $forPerformer ?
+				ParserOptions::newFromUser( $forPerformer->getUser() ) :
+				ParserOptions::newFromAnon();
+		}
+
+		if ( isset( $hints['causeAction'] ) ) {
+			$options->setRenderReason( $hints['causeAction'] );
 		}
 
 		$usePrimary = $hints['use-master'] ?? false;

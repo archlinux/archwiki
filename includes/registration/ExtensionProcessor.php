@@ -53,6 +53,7 @@ class ExtensionProcessor implements Processor {
 		MainConfigNames::LogTypes,
 		MainConfigNames::MediaHandlers,
 		MainConfigNames::PasswordPolicy,
+		MainConfigNames::PrivilegedGroups,
 		MainConfigNames::RateLimits,
 		MainConfigNames::RawHtmlMessages,
 		MainConfigNames::ReauthenticateTime,
@@ -74,8 +75,10 @@ class ExtensionProcessor implements Processor {
 		'ParsoidModules',
 		'RestRoutes',
 		'SkinOOUIThemes',
+		'SkinCodexThemes',
 		'SearchMappings',
 		'TrackingCategories',
+		'LateJSConfigVarNames',
 		'TempUserSerialProviders',
 		'TempUserSerialMappings',
 	];
@@ -140,7 +143,6 @@ class ExtensionProcessor implements Processor {
 		'MessagePosterModule',
 		'MessagesDirs',
 		'OOUIThemePaths',
-		'ParserTestFiles',
 		'QUnitTestModule',
 		'ResourceFileModulePaths',
 		'ResourceModuleSkinStyles',
@@ -267,13 +269,6 @@ class ExtensionProcessor implements Processor {
 				'wgServiceWiringFiles',
 				$dir,
 				$info['ServiceWiringFiles']
-			);
-		}
-		if ( isset( $info['ParserTestFiles'] ) ) {
-			$this->extractPathBasedGlobal(
-				'wgParserTestFiles',
-				$dir,
-				$info['ParserTestFiles']
 			);
 		}
 		$name = $this->extractCredits( $path, $info );
@@ -654,6 +649,8 @@ class ExtensionProcessor implements Processor {
 					$data['localBasePath'] = "$dir/{$data['localBasePath']}";
 				}
 			}
+			// Satisfy PHPUnit ResourcesTest::testUnsatisfiableDependencies
+			$data['targets'] = [ 'test' ];
 			$this->attributes['QUnitTestModules']["test.{$info['name']}"] = $data;
 		}
 

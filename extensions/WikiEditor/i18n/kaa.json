@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Nurlan",
 			"Ajiniyaz Nurniyazov",
+			"Nurlan",
 			"Amire80"
 		]
 	},
@@ -113,7 +113,8 @@
 	"wikieditor-toolbar-tool-replace-title": "Izlew hám almastırıw",
 	"wikieditor-toolbar-tool-replace-search": "Izlew:",
 	"wikieditor-toolbar-tool-replace-replace": "Mınaǵan almastırıw:",
-	"wikieditor-toolbar-tool-replace-case": "Háriplerdiń úlken-kishiligin esapqa alıp izlew",
+	"wikieditor-toolbar-tool-replace-case": "Háriplerdiń úlken-kishiligin esapqa alıw",
+	"wikieditor-toolbar-tool-replace-regex": "Izlew qatarındaǵı jazıwdı turaqlı ańlatpa retinde qaraw",
 	"wikieditor-toolbar-tool-replace-button-findnext": "Keyingisin tabıw",
 	"wikieditor-toolbar-tool-replace-button-replace": "Almastırıw",
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Barlıǵın almastırıw",

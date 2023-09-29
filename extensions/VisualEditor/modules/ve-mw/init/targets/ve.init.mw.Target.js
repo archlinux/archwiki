@@ -324,10 +324,10 @@ ve.init.mw.Target.prototype.createSurface = function ( dmDoc, config ) {
 		config = this.getSurfaceConfig( ve.extendObject( {}, config, {
 			importRules: importRules
 		} ) );
-		return new ve.ui.MWWikitextSurface( dmDoc, config );
+		return new ve.ui.MWWikitextSurface( this, dmDoc, config );
 	}
 
-	return new ve.ui.MWSurface( dmDoc, this.getSurfaceConfig( config ) );
+	return new ve.ui.MWSurface( this, dmDoc, this.getSurfaceConfig( config ) );
 };
 
 /**
@@ -428,6 +428,7 @@ ve.init.mw.Target.prototype.setSurface = function ( surface ) {
  * @cfg {boolean} [suppressNotification=false] Don't notify the user if changes are recovered
  * @cfg {string} [docId] Document ID for storage grouping
  * @cfg {ve.init.SafeStorage} [storage] Storage interface
+ * @cfg {number} [storageExpiry] Storage expiry time in seconds (optional)
  */
 ve.init.mw.Target.prototype.initAutosave = function ( config ) {
 	var target = this;
@@ -447,7 +448,7 @@ ve.init.mw.Target.prototype.initAutosave = function ( config ) {
 	}
 
 	if ( config.storage ) {
-		surfaceModel.setStorage( config.storage );
+		surfaceModel.setStorage( config.storage, config.storageExpiry );
 	}
 
 	if ( this.recovered ) {

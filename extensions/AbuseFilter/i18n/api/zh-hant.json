@@ -4,9 +4,9 @@
 			"A2093064",
 			"Kly",
 			"LNDDYL",
+			"Lakejason0",
 			"Laundry Machine",
-			"Xiplus",
-			"Lakejason0"
+			"Xiplus"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "檢查防濫用過濾器是否符合變數集、編輯、或是所記錄的防濫用過濾器事件。\n\nvars、rcid 或 logid是必須填入的，然而只會使用其中一個。",

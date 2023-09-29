@@ -87,7 +87,6 @@
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Cha mholar an raon seo tuilleadh. $1",
 	"visualeditor-dialog-transclusion-loading": "'Ga luchdadh...",
 	"visualeditor-dialog-transclusion-no-template-description": "Chan eil tuairisgeul aig an teamplaid \"$1\" fhathast ach dh'fhaoidte gu bheil fiosrachadh air [[$2|duilleag na teamplaid]].",
-	"visualeditor-dialog-transclusion-placeholder": "Cuir teamplaid ris",
 	"visualeditor-dialog-transclusion-required-parameter": "Raon riatanach",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Tha an raon seo riatanach.",
 	"visualeditor-dialogbutton-media-tooltip": "Meadhanan",

@@ -80,7 +80,6 @@
 	"math_unknown_function": "función '$1' desconocida",
 	"mw_math_latexml": "LaTeXML (esperimental; usa MathML)",
 	"mw_math_mathml": "MathML con alternativa SVG o PNG (recomendau en restoladores y ferramientes d'accesibilidá modernos)",
-	"mw_math_png": "Imaxes PNG",
 	"mw_math_source": "Fonte LaTeX (pa restoladores de testu)",
 	"prefs-math": "Fórmules matemátiques",
 	"mathstatus": "Estau de Math",

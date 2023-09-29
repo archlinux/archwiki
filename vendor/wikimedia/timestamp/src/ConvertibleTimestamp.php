@@ -29,6 +29,7 @@ use DateInterval;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use InvalidArgumentException;
 
 /**
  * Library for creating, parsing, and converting timestamps.
@@ -117,33 +118,88 @@ class ConvertibleTimestamp {
 	/**
 	 * Get the current time in the same form that PHP's built-in time() function uses.
 	 *
-	 * This is used by now() get setTimestamp( false ) instead of the built in time() function.
+	 * This is used by now() through setTimestamp( false ) instead of the built in time() function.
 	 * The output of this method can be overwritten for testing purposes by calling setFakeTime().
 	 *
 	 * @return int UNIX epoch
 	 */
 	public static function time() {
-		return static::$fakeTimeCallback ? call_user_func( static::$fakeTimeCallback ) : \time();
+		return static::$fakeTimeCallback ? (int)call_user_func( static::$fakeTimeCallback ) : \time();
+	}
+
+	/**
+	 * Get the current time as seconds since the epoch, with sub-second precision.
+	 * This is equivalent to calling PHP's built-in microtime() function with $as_float = true.
+	 * The exact precision depends on the underlying operating system.
+	 *
+	 * Subsequent calls to microtime() are very unlikely to return the same value twice,
+	 * and the values returned should be increasing. But there is no absolute guarantee
+	 * of either of these properties.
+	 *
+	 * The output of this method can be overwritten for testing purposes by calling setFakeTime().
+	 * In that case, microtime() will use the return value of time(), with a monotonic counter
+	 * used to make the return value of subsequent calls different from each other by a fraction
+	 * of a second.
+	 *
+	 * @return float Seconds since the epoch
+	 */
+	public static function microtime(): float {
+		static $fakeSecond = 0;
+		static $fakeOffset = 0.0;
+
+		if ( static::$fakeTimeCallback ) {
+			$sec = static::time();
+
+			// Use the fake time returned by time(), but add a microsecond each
+			// time this method is called, so subsequent calls to this method
+			// never return the same value. Reset the counter when the time
+			// returned by time() is different from the value it returned
+			// previously.
+			if ( $sec !== $fakeSecond ) {
+				$fakeSecond = $sec;
+				$fakeOffset = 0.0;
+			} else {
+				$fakeOffset++;
+			}
+
+			return $fakeSecond + $fakeOffset * 0.000001;
+		} else {
+			return microtime( true );
+		}
 	}
 
 	/**
 	 * Set a fake time value or clock callback.
 	 *
-	 * @param callable|string|int|false $fakeTime a fixed time string, or an integer Unix time, or
-	 *   a callback() returning an int representing a UNIX epoch, or false to disable fake time and
-	 *   go back to real time.
+	 * @param callable|ConvertibleTimestamp|string|int|false $fakeTime a fixed time given as a string,
+	 *   or as a number representing seconds since the UNIX epoch; or a callback that returns an int.
+	 *   or false to disable fake time and go back to real time.
+	 * @param int|float $step The number of seconds by which to increment the clock each time
+	 *   the time() method is called. Must not be smaller than zero.
+	 *   Ignored if $fakeTime is a callback or false.
 	 *
 	 * @return callable|null the previous fake time callback, if any.
 	 */
-	public static function setFakeTime( $fakeTime ) {
+	public static function setFakeTime( $fakeTime, $step = 0 ) {
+		if ( $fakeTime instanceof ConvertibleTimestamp ) {
+			$fakeTime = (int)$fakeTime->getTimestamp();
+		}
+
 		if ( is_string( $fakeTime ) ) {
 			$fakeTime = (int)static::convert( TS_UNIX, $fakeTime );
 		}
 
 		if ( is_int( $fakeTime ) ) {
-			$fakeTime = static function () use ( $fakeTime ) {
-				return $fakeTime;
+			$clock = $fakeTime;
+			$fakeTime = static function () use ( &$clock, $step ) {
+				$t = $clock;
+				$clock += $step;
+				return (int)$t;
 			};
+		}
+
+		if ( $fakeTime && !is_callable( $fakeTime ) ) {
+			throw new InvalidArgumentException( 'Bad fake time' );
 		}
 
 		$old = static::$fakeTimeCallback;
@@ -162,6 +218,7 @@ class ConvertibleTimestamp {
 	 * or the current time if unspecified.
 	 *
 	 * @param bool|string|int|float|DateTime $timestamp Timestamp to set, or false for current time
+	 * @throws TimestampException
 	 */
 	public function __construct( $timestamp = false ) {
 		if ( $timestamp instanceof DateTime ) {
@@ -345,6 +402,7 @@ class ConvertibleTimestamp {
 
 	/**
 	 * @return string
+	 * @throws TimestampException
 	 */
 	public function __toString() {
 		return $this->getTimestamp();
@@ -359,6 +417,42 @@ class ConvertibleTimestamp {
 	 */
 	public function diff( ConvertibleTimestamp $relativeTo ) {
 		return $this->timestamp->diff( $relativeTo->timestamp );
+	}
+
+	/**
+	 * Add an interval to the timestamp.
+	 * @param DateInterval|string $interval DateInterval or DateInterval specification (such as "P2D")
+	 * @return $this
+	 * @throws TimestampException
+	 */
+	public function add( $interval ) {
+		if ( is_string( $interval ) ) {
+			try {
+				$interval = new DateInterval( $interval );
+			} catch ( Exception $e ) {
+				throw new TimestampException( __METHOD__ . ': Invalid interval.', $e->getCode(), $e );
+			}
+		}
+		$this->timestamp->add( $interval );
+		return $this;
+	}
+
+	/**
+	 * Subtract an interval from the timestamp.
+	 * @param DateInterval|string $interval DateInterval or DateInterval specification (such as "P2D")
+	 * @return $this
+	 * @throws TimestampException
+	 */
+	public function sub( $interval ) {
+		if ( is_string( $interval ) ) {
+			try {
+				$interval = new DateInterval( $interval );
+			} catch ( Exception $e ) {
+				throw new TimestampException( __METHOD__ . ': Invalid interval.', $e->getCode(), $e );
+			}
+		}
+		$this->timestamp->sub( $interval );
+		return $this;
 	}
 
 	/**

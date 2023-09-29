@@ -35,6 +35,9 @@ ve.init.mw.MobileArticleTarget = function VeInitMwMobileArticleTarget( overlay, 
 	// Parent constructor
 	ve.init.mw.MobileArticleTarget.super.call( this, config );
 
+	// eslint-disable-next-line no-jquery/no-global-selector
+	this.$editableContent = $( '#mw-content-text' );
+
 	if ( config.section !== undefined ) {
 		this.section = config.section;
 	}
@@ -402,40 +405,16 @@ ve.init.mw.MobileArticleTarget.prototype.showSaveDialog = function () {
  * @inheritdoc
  */
 ve.init.mw.MobileArticleTarget.prototype.replacePageContent = function (
-	html, categoriesHtml, displayTitle, lastModified, contentSub, sections
+	html, categoriesHtml, displayTitle, lastModified /* , contentSub, sections */
 ) {
-	var $content = $( $.parseHTML( html ) );
+	// Parent method
+	ve.init.mw.MobileArticleTarget.super.prototype.replacePageContent.apply( this, arguments );
 
 	if ( lastModified ) {
 		// TODO: Update the last-modified-bar with the correct info
 		// eslint-disable-next-line no-jquery/no-global-selector
 		$( '.last-modified-bar' ).remove();
 	}
-
-	// eslint-disable-next-line no-jquery/no-global-selector
-	var $editableContent = $( '#mw-content-text' );
-	$editableContent.find( '.mw-parser-output' ).replaceWith( $content );
-	mw.hook( 'wikipage.content' ).fire( $editableContent );
-	if ( displayTitle ) {
-		// eslint-disable-next-line no-jquery/no-html, no-jquery/no-global-selector
-		$( '#firstHeading' ).html( displayTitle );
-	}
-
-	// Categories are only shown in AMC
-	// eslint-disable-next-line no-jquery/no-global-selector
-	if ( $( '#catlinks' ).length ) {
-		var $categories = $( $.parseHTML( categoriesHtml ) );
-		mw.hook( 'wikipage.categories' ).fire( $categories );
-		// eslint-disable-next-line no-jquery/no-global-selector
-		$( '#catlinks' ).replaceWith( $categories );
-	}
-
-	// eslint-disable-next-line no-jquery/no-global-selector, no-jquery/no-html
-	$( '.minerva__subtitle' ).html( contentSub );
-
-	mw.hook( 'wikipage.tableOfContents' ).fire( sections );
-
-	this.setRealRedirectInterface();
 };
 
 /**
@@ -450,7 +429,7 @@ ve.init.mw.MobileArticleTarget.prototype.saveComplete = function ( data ) {
 	// Parent method
 	ve.init.mw.MobileArticleTarget.super.prototype.saveComplete.apply( this, arguments );
 
-	var fragment = this.getSectionFragmentFromPage();
+	var fragment = this.getSectionHashFromPage().slice( 1 );
 
 	this.overlay.sectionId = fragment;
 	this.overlay.onSaveComplete( data.newrevid );
@@ -481,9 +460,11 @@ ve.init.mw.MobileArticleTarget.prototype.teardown = function () {
 	// Parent method
 	return ve.init.mw.MobileArticleTarget.super.prototype.teardown.call( this ).then( function () {
 		if ( !target.isViewPage ) {
-			location.href = target.viewUri.clone().extend( {
-				redirect: mw.config.get( 'wgIsRedirect' ) ? 'no' : undefined
-			} );
+			var newUrl = new URL( target.viewUrl );
+			if ( mw.config.get( 'wgIsRedirect' ) ) {
+				newUrl.searchParams.set( 'redirect', 'no' );
+			}
+			location.href = newUrl;
 		}
 	} );
 };

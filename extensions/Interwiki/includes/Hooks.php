@@ -2,8 +2,6 @@
 
 namespace MediaWiki\Extension\Interwiki;
 
-use Hooks as MWHooks;
-use Language;
 use MediaWiki\MediaWikiServices;
 use WikiMap;
 
@@ -42,7 +40,7 @@ class Hooks {
 			return;
 		}
 		// This will trigger a deprecation warning in MW 1.36+
-		MWHooks::register(
+		MediaWikiServices::getInstance()->getHookContainer()->register(
 			'InterwikiLoadPrefix', 'MediaWiki\Extension\Interwiki\Hooks::onInterwikiLoadPrefix'
 		);
 	}
@@ -60,7 +58,7 @@ class Hooks {
 
 	public static function onInterwikiLoadPrefix( $prefix, &$iwData ) {
 		global $wgInterwikiCentralDB, $wgInterwikiCentralInterlanguageDB;
-		$isInterlanguageLink = Language::fetchLanguageName( $prefix );
+		$isInterlanguageLink = MediaWikiServices::getInstance()->getLanguageNameUtils()->getLanguageName( $prefix );
 		if ( !$isInterlanguageLink && !self::$shouldSkipIWCheck ) {
 			// Check if prefix exists locally and skip
 			$lookup = MediaWikiServices::getInstance()->getInterwikiLookup();

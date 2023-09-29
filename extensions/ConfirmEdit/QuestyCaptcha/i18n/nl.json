@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"HanV",
-			"Siebrand"
+			"Siebrand",
+			"McDutchie"
 		]
 	},
+	"questycaptcha-desc": "Questy CAPTCHA-generator voor Confirm Edit",
 	"questycaptcha-addurl": "Uw bewerking bevat nieuwe externe koppelingen.\nBeantwoord de onderstaande vraag als bescherming tegen automatische spam ([[Special:Captcha/help|meer informatie]]):",
 	"questycaptcha-badlogin": "Beantwoord de onderstaande vraag als bescherming tegen het automatisch kraken van wachtwoorden  ([[Special:Captcha/help|meer informatie]]):",
 	"questycaptcha-createaccount": "Beantwoord de onderstaande vraag als bescherming tegen het geautomatiseerd aanmaken van gebruikers ([[Special:Captcha/help|meer informatie]]):",

@@ -151,8 +151,6 @@ class RefreshImageMetadata extends Maintenance {
 			'ORDER BY' => $fieldPrefix . 'name ASC',
 		];
 
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-
 		do {
 			$res = $dbw->select(
 				$fileQuery['tables'],
@@ -200,7 +198,7 @@ class RefreshImageMetadata extends Maintenance {
 				// @phan-suppress-next-line PhanPossiblyUndeclaredVariable rows contains at least one item
 				$conds2 = [ $fieldPrefix . 'name > ' . $dbw->addQuotes( $row->$nameField ) ];
 			}
-			$lbFactory->waitForReplication();
+			$this->waitForReplication();
 			if ( $sleep ) {
 				sleep( $sleep );
 			}
@@ -235,7 +233,7 @@ class RefreshImageMetadata extends Maintenance {
 			$conds[] = $fieldPrefix . 'name <= ' . $dbw->addQuotes( $end );
 		}
 		if ( $mime !== false ) {
-			list( $major, $minor ) = File::splitMime( $mime );
+			[ $major, $minor ] = File::splitMime( $mime );
 			$conds[$fieldPrefix . 'major_mime'] = $major;
 			if ( $minor !== '*' ) {
 				$conds[$fieldPrefix . 'minor_mime'] = $minor;

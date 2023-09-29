@@ -36,4 +36,11 @@ class FQTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( 'a_{b}^{c}', $fq->render(), 'Should create a basic fq' );
 	}
 
+	public function testGetters() {
+		$fq = new FQ( new Literal( 'a' ), new Literal( 'b' ), new Literal( 'c' ) );
+		$this->assertNotEmpty( $fq->getBase() );
+		$this->assertNotEmpty( $fq->getUp() );
+		$this->assertNotEmpty( $fq->getDown() );
+	}
+
 }

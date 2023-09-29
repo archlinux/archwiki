@@ -9,8 +9,8 @@
 			"Iwan Novirion",
 			"Rachmat.Wahidi",
 			"Rachmat04",
-			"William Surya Permana",
-			"Veracious"
+			"Veracious",
+			"William Surya Permana"
 		]
 	},
 	"math-desc": "Menghasilkan rumus matematika di antara tag <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -90,6 +90,7 @@
 	"math_unknown_function": "fungsi tak dikenal \"$1\"",
 	"mw_math_latexml": "LaTeXML (eksperimental; menggunakan MathML)",
 	"mw_math_mathml": "SVG (MathML dapat diaktifkan melalui plugin peramban)",
+	"mw_math_native": "MathML (eksperimental; tanpa gambar)",
 	"mw_math_source": "Sumber LaTeX (untuk peramban teks)",
 	"prefs-math": "Matematika",
 	"mathstatus": "Status matematika",

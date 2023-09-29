@@ -8,6 +8,8 @@
  * @author Kunal Mehta <legoktm@gmail.com>
  */
 
+use MediaWiki\Html\Html;
+
 /**
  * JSON text content that can be viewed and edit directly by users.
  *
@@ -42,9 +44,7 @@ class JsonContent extends TextContent {
 	 * @return Status
 	 */
 	public function getData() {
-		if ( $this->jsonParse === null ) {
-			$this->jsonParse = FormatJson::parse( $this->getText() );
-		}
+		$this->jsonParse ??= FormatJson::parse( $this->getText() );
 		return $this->jsonParse;
 	}
 

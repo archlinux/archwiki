@@ -29,6 +29,8 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\StubObject\StubGlobalUser;
+use MediaWiki\Title\Title;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -81,7 +83,6 @@ class DeleteBatch extends Maintenance {
 		}
 
 		$services = MediaWikiServices::getInstance();
-		$lbFactory = $services->getDBLoadBalancerFactory();
 		$wikiPageFactory = $services->getWikiPageFactory();
 		$repoGroup = $services->getRepoGroup();
 
@@ -132,7 +133,7 @@ class DeleteBatch extends Maintenance {
 			if ( $interval ) {
 				sleep( $interval );
 			}
-			$lbFactory->waitForReplication();
+			$this->waitForReplication();
 		}
 	}
 }

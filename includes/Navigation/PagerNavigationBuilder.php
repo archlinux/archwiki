@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Navigation;
 
-use Html;
+use MediaWiki\Html\Html;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Title\Title;
 use Message;
 use MessageLocalizer;
-use RawMessage;
 use RuntimeException;
-use Title;
 
 /**
  * Build the navigation for a pager, with links to prev/next page, links to change limits, and
@@ -243,6 +243,7 @@ class PagerNavigationBuilder {
 	 * @return $this
 	 */
 	public function setMakeLinkCallback( ?callable $callback ): PagerNavigationBuilder {
+		wfDeprecated( __METHOD__, '1.39' );
 		$this->makeLinkCallback = $callback;
 		return $this;
 	}

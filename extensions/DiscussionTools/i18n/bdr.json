@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Tofeiku"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Nampung",
+	"discussiontools-replylink": "nampung",
+	"discussiontools-replywidget-advanced": "Embunda",
+	"discussiontools-replywidget-cancel": "Kinsil",
+	"discussiontools-replywidget-mode-source": "Poon",
+	"discussiontools-replywidget-mode-visual": "Bijual",
+	"discussiontools-replywidget-placeholder-reply": "Nampung {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Petele’",
+	"discussiontools-replywidget-reply": "Nampung",
+	"discussiontools-replywidget-summary": "Repod",
+	"discussiontools-replywidget-watchthis": "Namba laman tu ta'[[Special:Watchlist|senarai nijegoon]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|urang}} diam perundingan",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|kumin|kumin}}",
+	"discussiontools-topicheader-latestcomment": "Kumin betiru: $1",
+	"discussiontools-topicsubscription-button-subscribe": "ngendo'",
+	"discussiontools-topicsubscription-button-subscribe-label": "Ngendo'",
+	"discussiontools-topicsubscription-button-unsubscribe": "beranti ngendo'",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Beranti ngendo'"
+}

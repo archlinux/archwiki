@@ -1,4 +1,88 @@
 # OOUI Release History
+
+## v0.46.3 / 2023-02-06
+### Features
+* Respect prefers-reduce-motion preference when scrolling to an element (David Lynch)
+* Window: Preserve scroll position when resizing windows (Bartosz Dziewoński)
+
+### Styles
+* Restore z-index border fix for hovering buttons in group (Ed Sanders)
+
+
+## v0.46.2 / 2023-01-17
+### Features
+* DraggableElement: Enable Drag'n'Drop on Chrome on Android (Michael Große)
+* MultilineTextInputWidget: Work around recent Firefox bug calculating wrong .scrollheight (Thiemo Kreuz)
+
+### Styles
+* MessageWidget: Replace 'check' with 'success' icon (Volker E.)
+* icons: Add 'success' to the 'alerts' icon pack (Volker E.)
+* icons: Add Wikimedia logos to 'wikimedia' icon pack (Volker E.)
+
+### Code
+* Fix `.addItems()` methods silently ignoring non-array input (Thiemo Kreuz)
+* Remove uses of `void` (Bartosz Dziewoński)
+* Replace `remove`/`addClass` with `toggleClass` where possible (Thiemo Kreuz)
+
+
+## v0.46.1 / 2023-01-07
+### Code
+* php: Declare all class properties (Umherirrender)
+* php: Fix undeclared method issues from phan (Umherirrender)
+
+
+## v0.46.0 / 2022-12-07
+### Breaking changes
+* [BREAKING CHANGE] Raise claimed PHP need from 7.2+ to 7.4+ (James D. Forrester)
+
+### Features
+* Allow minlength attribute to be set in text input based widgets (dreamyjazz)
+
+### Styles
+* WikimediaUI theme: Remove negative top/bottom margins on dropdown menus (Volker E.)
+* WikimediaUI theme: Use design-first backdrop color (Volker E.)
+* icons: Minor file size optimization for the new 'palette' icons (Thiemo Kreuz)
+* icons: Update warning color to new design-first `#edab00` (Volker E.)
+
+### Code
+* Add some small pieces of missing documentation (Thiemo Kreuz)
+* Avoid PHP notice in IndexLayout::getTabPanel() (Daimona Eaytoy)
+* FloatableElement: Clear all relevant properties when not positioning (Bartosz Dziewoński)
+* MenuSelectWidget: Remove unneeded 'width: 100%;' causing incorrect width (Bartosz Dziewoński)
+* OutlineOptionWidget: Fix setting default indent level (Bartosz Dziewoński)
+* PHP: Fix multiple issues in StackLayout::setItem() (Thiemo Kreuz)
+* PHP: Optimize code initializing default configuration (Thiemo Kreuz)
+* Remove unused "multiline" configuration (Thiemo Kreuz)
+* build: Update 'wikimedia-ui-base' to latest v0.20.0 (Volker E.)
+* build: Update mediawiki/mediawiki-codesniffer (Umherirrender)
+* build: Update mediawiki/mediawiki-phan-config to 0.12.0 (Daimona Eaytoy)
+* build: Update stylelint-config-wikimedia (Umherirrender)
+* build: Update wikimedia-ui-base to 0.21.0 (Volker E.)
+* build: Upgrade PHPUnit from ^8.5 to ^9.5 (James D. Forrester)
+* demo: Fix preserving scroll position when changing options (Bartosz Dziewoński)
+* demo: Scroll to URL fragment on load (Bartosz Dziewoński)
+* docs: Fix and add all missing PHPDoc tags (Thiemo Kreuz)
+
+
+## v0.45.0 / 2022-09-26
+### Breaking changes
+* [BREAKING CHANGE] Raise jQuery requirement from v3.6.0 to v3.6.1 (James D. Forrester)
+* [BREAKING CHANGE] icons: Drop stopHand, renamed to hand since v0.43.0 (James D. Forrester)
+
+### Features
+* Allow custom menu class to be passed in to `OO.ui.ButtonMenuSelectWidget` (Thalia Chan)
+
+### Styles
+* icons: Add 'palette' to 'editing-advanced' (Volker E.)
+* icons: Minimize 'search' icon (Thiemo Kreuz)
+* WikimediaUI theme: Remove selected Tabs state handling (Volker E.)
+
+### Code
+* demos: Make icons page more robust (Thiemo Kreuz)
+* README: Update some of the release steps to avoid typo mistakes (James D. Forrester)
+* AUTHORS: Update for the first time since 2017(!) and composer.json listing too (James D. Forrester)
+
+
 ## 0.44.5 / 2023-02-06
 ### Styles
 * build: Update 'wikimedia-ui-base' to v0.20.0 (Volker E.)

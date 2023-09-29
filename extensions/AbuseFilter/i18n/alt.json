@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"Батыр Комдошев"
+		]
+	},
+	"abusefilter-log-search-user": "Туружаачы:",
+	"abusefilter-log-search-group": "Ылгаштыруныҥ группазы:",
+	"abusefilter-log-search-group-any": "Кандый да болзо",
+	"abusefilter-log-search-title": "Бажалык:",
+	"abusefilter-log-search-wiki": "Википроект:",
+	"abusefilter-log-search-impact": "Каманын јетиргени:",
+	"abusefilter-log-search-impact-all": "Ончо кылыныш",
+	"abusefilter-log-search-impact-saved": "Јӱк ле артыскан солынтылар",
+	"abusefilter-log-search-impact-not-saved": "Јӱк ле артыспаган солынтылар",
+	"abusefilter-log-search-entries-label": "Кӧрӱнери:",
+	"abusefilter-log-search-entries-all": "Ончо бичимелдер",
+	"abusefilter-log-search-entries-hidden": "Јӱк ле јажырган бичимелдер",
+	"abusefilter-log-search-entries-visible": "Јӱк ле кӧрӱнген бичимелдер",
+	"abusefilter-log-search-action-label": "Кылыныш:",
+	"abusefilter-log-search-action-other": "Ӧскӧ",
+	"abusefilter-log-search-action-any": "Кандый да болзо",
+	"abusefilter-log-search-action-taken-label": "Эдилген керектер:",
+	"abusefilter-log-search-action-taken-any": "Ончозы",
+	"abusefilter-log-search-submit": "Бедреш",
+	"abusefilter-log-detailedentry-local": "ылгаштыру $1",
+	"abusefilter-log-detailslink": "јартамалдар",
+	"abusefilter-log-diff": "башка.",
+	"abusefilter-log-hidelink": "кӧрӱнерин эптештирер",
+	"abusefilter-log-description-not-available": "јок",
+	"abusefilter-log-details-var": "Кубулгактар"
+}

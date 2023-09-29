@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"BrennodAloisi",
+			"Quentí"
+		]
+	},
+	"discussiontools": "Aisinas de discussion",
+	"discussiontools-pageframe-latestcomment": "Comentari darrièr: $1 per $2 dins lo tèma $3",
+	"discussiontools-pageframe-latestcomment-notopic": "Darrièr comentari: $1 per $2",
+	"discussiontools-replywidget-placeholder-reply": "Respondre a {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Previsualizacion",
+	"discussiontools-topicheader-latestcomment": "Darrièr comentari: $1"
+}

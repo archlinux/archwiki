@@ -21,6 +21,7 @@
 
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\LBFactory;
 
 /**
@@ -139,7 +140,7 @@ abstract class RevDelList extends RevisionListBase {
 
 		// CAS-style checks are done on the _deleted fields so the select
 		// does not need to use FOR UPDATE nor be in the atomic section
-		$dbw = $this->lbFactory->getMainLB()->getConnectionRef( DB_PRIMARY );
+		$dbw = $this->lbFactory->getPrimaryDatabase();
 		$this->res = $this->doQuery( $dbw );
 
 		$status->merge( $this->acquireItemLocks() );
@@ -338,16 +339,8 @@ abstract class RevDelList extends RevisionListBase {
 	 * @since 1.37
 	 */
 	public function reloadFromPrimary() {
-		$dbw = $this->lbFactory->getMainLB()->getConnectionRef( DB_PRIMARY );
+		$dbw = $this->lbFactory->getPrimaryDatabase();
 		$this->res = $this->doQuery( $dbw );
-	}
-
-	/**
-	 * @deprecated since 1.37; please use reloadFromPrimary() instead.
-	 */
-	public function reloadFromMaster() {
-		wfDeprecated( __METHOD__, '1.37' );
-		$this->reloadFromPrimary();
 	}
 
 	/**

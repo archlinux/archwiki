@@ -1,7 +1,5 @@
 <?php
 /**
- * InterwikiLookup implementing the "classic" interwiki storage (hardcoded up to MW 1.26).
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -25,220 +23,162 @@ namespace MediaWiki\Interwiki;
 use Interwiki;
 use Language;
 use MapCacheLRU;
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
-use MWException;
+use MediaWiki\MainConfigNames;
+use MediaWiki\WikiMap\WikiMap;
 use WANObjectCache;
-use WikiMap;
-use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
- * InterwikiLookup implementing the "classic" interwiki storage (hardcoded up to MW 1.26).
+ * InterwikiLookup backed by the `interwiki` database table or $wgInterwikiCache.
  *
- * This implements two levels of caching (in-process array and a WANObjectCache)
- * and two storage backends (SQL and plain PHP arrays).
+ * By default this uses the SQL backend (`interwiki` database table) and includes
+ * two levels of caching. When parsing a wiki page, many interwiki lookups may
+ * be required and thus there is in-class caching for repeat lookups. To reduce
+ * database pressure, there is also WANObjectCache for each prefix.
  *
- * All information is loaded on creation when called by $this->fetch( $prefix ).
- * All work is done on replica DB, because this should *never* change (except during
- * schema updates etc, which aren't wiki-related)
+ * Optionally, a pregenerated dataset can be statically set via $wgInterwikiCache,
+ * in which case there are no calls to either database or WANObjectCache.
  *
  * @since 1.28
  */
 class ClassicInterwikiLookup implements InterwikiLookup {
-
 	/**
-	 * @var MapCacheLRU
+	 * @internal For use by ServiceWiring
+	 * @var string[]
 	 */
-	private $localCache;
+	public const CONSTRUCTOR_OPTIONS = [
+		MainConfigNames::InterwikiExpiry,
+		MainConfigNames::InterwikiCache,
+		MainConfigNames::InterwikiScopes,
+		MainConfigNames::InterwikiFallbackSite,
+		'wikiId',
+	];
 
-	/**
-	 * @var Language
-	 */
+	private ServiceOptions $options;
+	/** @var Language */
 	private $contLang;
-
-	/**
-	 * @var WANObjectCache
-	 */
-	private $objectCache;
-
-	/**
-	 * @var int
-	 */
-	private $objectCacheExpiry;
-
-	/**
-	 * @var array|null Complete pregenerated data if available
-	 */
-	private $data;
-
-	/**
-	 * @var int
-	 */
-	private $interwikiScopes;
-
-	/**
-	 * @var string
-	 */
-	private $fallbackSite;
-
-	/**
-	 * @var string|null
-	 */
-	private $thisSite = null;
-
+	/** @var WANObjectCache */
+	private $wanCache;
 	/** @var HookRunner */
 	private $hookRunner;
-
 	/** @var ILoadBalancer */
 	private $loadBalancer;
 
+	/** @var MapCacheLRU<Interwiki|false> */
+	private $instances;
 	/**
-	 * @param Language $contLang Language object used to convert prefixes to lower case
-	 * @param WANObjectCache $objectCache Cache for interwiki info retrieved from the database
-	 * @param HookContainer $hookContainer
-	 * @param ILoadBalancer $loadBalancer
-	 * @param int $objectCacheExpiry Expiry time for $objectCache, in seconds
-	 * @param bool|array $interwikiData The pre-generated interwiki data, or
-	 *   false to use the database.
-	 * @param int $interwikiScopes Specify number of domains to check for messages:
+	 * Specify number of domains to check for messages:
 	 *    - 1: Just local wiki level
 	 *    - 2: wiki and global levels
 	 *    - 3: site level as well as wiki and global levels
-	 * @param string $fallbackSite The code to assume for the local site,
+	 * @var int
+	 */
+	private $interwikiScopes;
+	/** @var array|null Complete pregenerated data if available */
+	private $data;
+	/** @var string */
+	private $wikiId;
+	/** @var string|null */
+	private $thisSite = null;
+
+	/**
+	 * @param ServiceOptions $options
+	 * @param Language $contLang Language object used to convert prefixes to lower case
+	 * @param WANObjectCache $wanCache Cache for interwiki info retrieved from the database
+	 * @param HookContainer $hookContainer
+	 * @param ILoadBalancer $loadBalancer
 	 */
 	public function __construct(
+		ServiceOptions $options,
 		Language $contLang,
-		WANObjectCache $objectCache,
+		WANObjectCache $wanCache,
 		HookContainer $hookContainer,
-		ILoadBalancer $loadBalancer,
-		$objectCacheExpiry,
-		$interwikiData,
-		$interwikiScopes,
-		$fallbackSite
+		ILoadBalancer $loadBalancer
 	) {
-		$this->localCache = new MapCacheLRU( 1000 );
+		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
+		$this->options = $options;
 
 		$this->contLang = $contLang;
-		$this->objectCache = $objectCache;
+		$this->wanCache = $wanCache;
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->loadBalancer = $loadBalancer;
-		$this->objectCacheExpiry = $objectCacheExpiry;
-		if ( is_array( $interwikiData ) ) {
-			$this->data = $interwikiData;
-		} elseif ( $interwikiData ) {
-			throw new MWException(
-				'Setting $wgInterwikiCache to a CDB path is no longer supported' );
-		}
-		$this->interwikiScopes = $interwikiScopes;
-		$this->fallbackSite = $fallbackSite;
+
+		$this->instances = new MapCacheLRU( 1000 );
+		$this->interwikiScopes = $options->get( MainConfigNames::InterwikiScopes );
+
+		$interwikiData = $options->get( MainConfigNames::InterwikiCache );
+		$this->data = is_array( $interwikiData ) ? $interwikiData : null;
+		$this->wikiId = $options->get( 'wikiId' );
 	}
 
 	/**
-	 * Check whether an interwiki prefix exists
-	 *
-	 * @param string $prefix Interwiki prefix to use
-	 * @return bool Whether it exists
+	 * @inheritDoc
+	 * @param string $prefix
+	 * @return bool
 	 */
 	public function isValidInterwiki( $prefix ) {
-		$result = $this->fetch( $prefix );
-
-		return (bool)$result;
+		$iw = $this->fetch( $prefix );
+		return (bool)$iw;
 	}
 
 	/**
-	 * Fetch an Interwiki object
-	 *
-	 * @param string $prefix Interwiki prefix to use
-	 * @return Interwiki|null|bool
+	 * @inheritDoc
+	 * @param string|null $prefix
+	 * @return Interwiki|null|false
 	 */
 	public function fetch( $prefix ) {
-		if ( $prefix == '' ) {
+		if ( $prefix === null || $prefix === '' ) {
 			return null;
 		}
 
 		$prefix = $this->contLang->lc( $prefix );
 
-		return $this->localCache->getWithSetCallback(
+		return $this->instances->getWithSetCallback(
 			$prefix,
 			function () use ( $prefix ) {
-				if ( $this->data !== null ) {
-					$iw = $this->fetchPregenerated( $prefix );
-				} else {
-					$iw = $this->load( $prefix );
-					if ( !$iw ) {
-						$iw = false;
-					}
-				}
-				return $iw;
+				return $this->load( $prefix );
 			}
 		);
 	}
 
 	/**
-	 * Resets locally cached Interwiki objects. This is intended for use during testing only.
-	 * This does not invalidate entries in the persistent cache, as invalidateCache() does.
-	 * @since 1.27
-	 */
-	public function resetLocalCache() {
-		$this->localCache->clear();
-	}
-
-	/**
-	 * Purge the in-process and object cache for an interwiki prefix
+	 * Purge the instance cache and memcached for an interwiki prefix
+	 *
+	 * Note that memcached is not used when $wgInterwikiCache
+	 * is enabled, as the pregenerated data will be used statically
+	 * without need for memcached.
+	 *
 	 * @param string $prefix
 	 */
 	public function invalidateCache( $prefix ) {
-		$this->localCache->clear( $prefix );
+		$this->instances->clear( $prefix );
 
-		$key = $this->objectCache->makeKey( 'interwiki', $prefix );
-		$this->objectCache->delete( $key );
+		$key = $this->wanCache->makeKey( 'interwiki', $prefix );
+		$this->wanCache->delete( $key );
 	}
 
 	/**
-	 * Fetch interwiki prefix data from local cache in constant database.
+	 * Get value from pregenerated data
 	 *
-	 * @note More logic is explained in docs/Configuration.md.
-	 *
-	 * @param string $prefix Interwiki prefix
-	 * @return Interwiki|false
+	 * @param string $prefix
+	 * @return string|false The pregen value or false if prefix is not known
 	 */
-	private function fetchPregenerated( $prefix ) {
-		$value = $this->getPregeneratedEntry( $prefix );
-
-		if ( $value ) {
-			// Split values
-			list( $local, $url ) = explode( ' ', $value, 2 );
-			return new Interwiki( $prefix, $url, '', '', (int)$local );
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Get entry from pregenerated data
-	 *
-	 * @note More logic is explained in docs/Configuration.md.
-	 *
-	 * @param string $prefix Database key
-	 * @return bool|string The interwiki entry or false if not found
-	 */
-	private function getPregeneratedEntry( $prefix ) {
-		wfDebug( __METHOD__ . "( $prefix )" );
-
-		$wikiId = WikiMap::getCurrentWikiId();
-
-		// Resolve site name
+	private function getPregenValue( string $prefix ) {
+		// Lazily resolve site name
 		if ( $this->interwikiScopes >= 3 && !$this->thisSite ) {
-			$this->thisSite = $this->data['__sites:' . $wikiId] ?? $this->fallbackSite;
+			$this->thisSite = $this->data['__sites:' . $this->wikiId]
+				?? $this->options->get( MainConfigNames::InterwikiFallbackSite );
 		}
 
-		$value = $this->data[$wikiId . ':' . $prefix] ?? false;
+		$value = $this->data[$this->wikiId . ':' . $prefix] ?? false;
 		// Site level
 		if ( $value === false && $this->interwikiScopes >= 3 ) {
 			$value = $this->data["_{$this->thisSite}:{$prefix}"] ?? false;
 		}
-		// Global Level
+		// Global level
 		if ( $value === false && $this->interwikiScopes >= 2 ) {
 			$value = $this->data["__global:{$prefix}"] ?? false;
 		}
@@ -247,33 +187,37 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	}
 
 	/**
-	 * Load the interwiki, trying first memcached then the DB
+	 * Fetch interwiki data and create an Interwiki object.
+	 *
+	 * Use pregenerated data if enabled. Otherwise try memcached first
+	 * and fallback to a DB query.
 	 *
 	 * @param string $prefix The interwiki prefix
-	 * @return Interwiki|bool Interwiki if $prefix is valid, otherwise false
+	 * @return Interwiki|false False is prefix is invalid
 	 */
 	private function load( $prefix ) {
-		$iwData = [];
-		if ( !$this->hookRunner->onInterwikiLoadPrefix( $prefix, $iwData ) ) {
-			return $this->loadFromArray( $iwData );
+		if ( $this->data !== null ) {
+			$value = $this->getPregenValue( $prefix );
+			return $value ? $this->makeFromPregen( $prefix, $value ) : false;
 		}
 
-		if ( is_array( $iwData ) ) {
-			$iw = $this->loadFromArray( $iwData );
-			if ( $iw ) {
-				return $iw; // handled by hook
-			}
+		$iwData = [];
+		$abort = !$this->hookRunner->onInterwikiLoadPrefix( $prefix, $iwData );
+		if ( isset( $iwData['iw_url'] ) ) {
+			// Hook provided data
+			return $this->makeFromRow( $iwData );
+		}
+		if ( $abort ) {
+			// Hook indicated no other source may be considered
+			return false;
 		}
 
 		$fname = __METHOD__;
-		$iwData = $this->objectCache->getWithSetCallback(
-			$this->objectCache->makeKey( 'interwiki', $prefix ),
-			$this->objectCacheExpiry,
+		$iwData = $this->wanCache->getWithSetCallback(
+			$this->wanCache->makeKey( 'interwiki', $prefix ),
+			$this->options->get( MainConfigNames::InterwikiExpiry ),
 			function ( $oldValue, &$ttl, array &$setOpts ) use ( $prefix, $fname ) {
 				$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
-
-				$setOpts += Database::getCacheSetOptions( $dbr );
-
 				$row = $dbr->selectRow(
 					'interwiki',
 					self::selectFields(),
@@ -285,53 +229,51 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 			}
 		);
 
-		if ( is_array( $iwData ) ) {
-			return $this->loadFromArray( $iwData ) ?: false;
-		}
-
-		return false;
+		// Handle non-existent case
+		return is_array( $iwData ) ? $this->makeFromRow( $iwData ) : false;
 	}
 
 	/**
-	 * Fill in member variables from an array (e.g. memcached result, Database::fetchRow, etc)
-	 *
-	 * @param array $mc Associative array: row from the interwiki table
-	 * @return Interwiki|bool Interwiki object or false if $mc['iw_url'] is not set
+	 * @param array $row Row from the interwiki table, possibly via memcached
+	 * @return Interwiki|false False if row is missing a `iw_url` value
 	 */
-	private function loadFromArray( $mc ) {
-		if ( isset( $mc['iw_url'] ) ) {
-			$url = $mc['iw_url'];
-			$local = $mc['iw_local'] ?? 0;
-			$trans = $mc['iw_trans'] ?? 0;
-			$api = $mc['iw_api'] ?? '';
-			$wikiId = $mc['iw_wikiid'] ?? '';
+	private function makeFromRow( array $row ) {
+		$url = $row['iw_url'];
+		$local = $row['iw_local'] ?? 0;
+		$trans = $row['iw_trans'] ?? 0;
+		$api = $row['iw_api'] ?? '';
+		$wikiId = $row['iw_wikiid'] ?? '';
 
-			return new Interwiki( null, $url, $api, $wikiId, $local, $trans );
-		}
+		return new Interwiki( null, $url, $api, $wikiId, $local, $trans );
+	}
 
-		return false;
+	/**
+	 * @param string $prefix
+	 * @param string $value
+	 * @return Interwiki
+	 */
+	private function makeFromPregen( string $prefix, string $value ) {
+		// Split values
+		[ $local, $url ] = explode( ' ', $value, 2 );
+		return new Interwiki( $prefix, $url, '', '', (int)$local );
 	}
 
 	/**
 	 * Fetch all interwiki prefixes from pregenerated data
 	 *
-	 * @param null|string $local If not null, limits output to local/non-local interwikis
-	 * @return array List of prefixes, where each row is an associative array
+	 * @param null|string $local
+	 * @return array Database-like rows
 	 */
 	private function getAllPrefixesPregenerated( $local ) {
-		wfDebug( __METHOD__ . "()" );
-
-		$wikiId = WikiMap::getCurrentWikiId();
-
-		$data = [];
-		/* Resolve site name */
+		// Lazily resolve site name
 		if ( $this->interwikiScopes >= 3 && !$this->thisSite ) {
-			$this->thisSite = $this->data['__sites:' . $wikiId] ?? $this->fallbackSite;
+			$this->thisSite = $this->data['__sites:' . $this->wikiId]
+				?? $this->options->get( MainConfigNames::InterwikiFallbackSite );
 		}
 
 		// List of interwiki sources
 		$sources = [];
-		// Global Level
+		// Global level
 		if ( $this->interwikiScopes >= 2 ) {
 			$sources[] = '__global';
 		}
@@ -339,8 +281,9 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 		if ( $this->interwikiScopes >= 3 ) {
 			$sources[] = '_' . $this->thisSite;
 		}
-		$sources[] = $wikiId;
+		$sources[] = $this->wikiId;
 
+		$data = [];
 		foreach ( $sources as $source ) {
 			$list = $this->data['__list:' . $source] ?? '';
 			foreach ( explode( ' ', $list ) as $iw_prefix ) {
@@ -349,7 +292,7 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 					continue;
 				}
 
-				list( $iw_local, $iw_url ) = explode( ' ', $row );
+				[ $iw_local, $iw_url ] = explode( ' ', $row );
 
 				if ( $local !== null && $local != $iw_local ) {
 					continue;
@@ -367,17 +310,19 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	}
 
 	/**
-	 * Given the array returned by getAllPrefixes(), build a PHP hash which
+	 * Build an array in the format accepted by $wgInterwikiCache.
+	 *
+	 * Given the array returned by getAllPrefixes(), build a PHP array which
 	 * can be given to self::__construct() as $interwikiData, i.e. as the
 	 * value of $wgInterwikiCache.  This is used to construct mock
 	 * interwiki lookup services for testing (in particular, parsertests).
+	 *
 	 * @param array $allPrefixes An array of interwiki information such as
 	 *   would be returned by ::getAllPrefixes()
 	 * @param int $scope The scope at which to insert interwiki prefixes.
 	 *   See the $interwikiScopes parameter to ::__construct().
 	 * @param ?string $thisSite The value of $thisSite, if $scope is 3.
-	 * @return array A PHP associative array suitable to use as
-	 *   $wgInterwikiCache
+	 * @return array
 	 */
 	public static function buildCdbHash(
 		array $allPrefixes, int $scope = 1, ?string $thisSite = null
@@ -405,19 +350,17 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	/**
 	 * Fetch all interwiki prefixes from DB
 	 *
-	 * @param bool|null $local If not null, limits output to local/non-local interwikis
-	 * @return array[] Interwiki rows
+	 * @param bool|null $local
+	 * @return array[] Database rows
 	 */
 	private function getAllPrefixesDB( $local ) {
-		$db = $this->loadBalancer->getConnectionRef( DB_REPLICA );
-
 		$where = [];
-
 		if ( $local !== null ) {
 			$where['iw_local'] = (int)$local;
 		}
 
-		$res = $db->select( 'interwiki',
+		$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+		$res = $dbr->select( 'interwiki',
 			self::selectFields(),
 			$where, __METHOD__, [ 'ORDER BY' => 'iw_prefix' ]
 		);
@@ -426,27 +369,26 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 		foreach ( $res as $row ) {
 			$retval[] = (array)$row;
 		}
-
 		return $retval;
 	}
 
 	/**
-	 * Returns all interwiki prefixes
+	 * Fetch all interwiki data
 	 *
-	 * @param string|null $local If set, limits output to local/non-local interwikis
-	 * @return array[] Interwiki rows, where each row is an associative array
+	 * @param string|null $local If set, limit returned data to local or non-local interwikis
+	 * @return array[] Database-like interwiki rows
 	 */
 	public function getAllPrefixes( $local = null ) {
 		if ( $this->data !== null ) {
 			return $this->getAllPrefixesPregenerated( $local );
+		} else {
+			return $this->getAllPrefixesDB( $local );
 		}
-
-		return $this->getAllPrefixesDB( $local );
 	}
 
 	/**
-	 * Return the list of interwiki fields that should be selected to create
-	 * a new Interwiki object.
+	 * List of interwiki table fields to select.
+	 *
 	 * @return string[]
 	 */
 	private static function selectFields() {

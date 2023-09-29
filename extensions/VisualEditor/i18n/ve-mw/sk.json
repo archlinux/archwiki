@@ -142,7 +142,6 @@
 	"visualeditor-dialog-transclusion-loading": "Načítava sa...",
 	"visualeditor-dialog-transclusion-no-template-description": "Šablóna „$1“ zatiaľ nemá popis, nejaké informácie sa ale môžu nachádzať na [[$2|jej stránke]].",
 	"visualeditor-dialog-transclusion-param-default": "Predvolená hodnota: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Pridať šablónu",
 	"visualeditor-dialog-transclusion-required-parameter": "Povinné pole",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Pole je povinné.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Späť",

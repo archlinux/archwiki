@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"McDutchie",
-			"Siebrand"
+			"Siebrand",
+			"Amire80"
 		]
 	},
 	"abusefilter-warning": "'''Waarschuwing:''' Deze handeling is automatisch als schadelijk aangemerkt.\nSchadelijke handelingen worden snel teruggedraaid. Blijf je slechte bewerkingen uitvoeren, dan wordt je account of IP-adres geblokkeerd.\nAls jij denkt dat deze handeling wel iets bijdraagt, bevestig je handeling dan opnieuw.\nHier is een korte beschrijving van de regel op basis waarvan jouw handeling is tegengehouden: $1",
@@ -14,7 +15,7 @@
 	"abusefilter-log-details-hidden": "Je kunt de details van deze melding niet bekijken omdat deze verborgen is.",
 	"abusefilter-log-hide-forbidden": "Je hebt niet de juiste rechten om meldingen in het filterlogboek te verbergen.",
 	"abusefilter-reautoconfirm-notallowed": "Je hebt geen rechten om de automatisch bevestigde status opnieuw in te stellen.",
-	"abusefilter-edit-oldwarning": "<strong>Je bent een oude versie van dit  filter aan het bewerken.\nDe weergegeven statistieken gelden voor de meest recente versie van het filter.\nAls je je wijzigingen opslaat, overschrijf je alle wijzigingen die na deze versie zijn gemaakt.</strong> &bull;\n[[Special:AbuseFilter/history/$2|Terug naar de geschiedenis van dit filter]]",
+	"abusefilter-edit-oldwarning": "<strong>Je bent een oude versie van dit filter aan het bewerken.\nDe weergegeven statistieken gelden voor de meest recente versie van het filter.\nAls je je wijzigingen opslaat, overschrijf je alle wijzigingen die na deze versie zijn gemaakt.</strong> &bull;\n[[Special:AbuseFilter/history/$2|Terug naar de geschiedenis van dit filter]]",
 	"abusefilter-edit-denied": "Je mag de details van dit filter niet bekijken, omdat die niet openbaar zijn.",
 	"abusefilter-edit-restricted": "Je kunt dit filter niet bewerken omdat die één of meerdere beperkte handelingen bevat.\nVraag een gebruiker met toestemming om beperkte handelingen toe te voegen om de wijziging voor je te maken.",
 	"abusefilter-edit-bad-tags": "Een of meer van de labels die je hebt opgegeven zijn niet geldig.\nLabels moeten kort zijn, mogen geen speciale tekens bevatten, en mogen niet gereserveerd zijn door andere software. Kies een andere labelnaam.",

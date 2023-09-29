@@ -4,6 +4,8 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\StaticHookRegistry;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleArrayFromResult;
 use Wikimedia\Rdbms\FakeResultWrapper;
 
 /**

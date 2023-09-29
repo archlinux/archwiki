@@ -115,7 +115,7 @@
 	"visualeditor-dialog-transclusion-no-template-parameters": "यो ढाँचामा कुनै कागजातित मापदण्डहरू छैनन् र हाम्रो लागि अभिप्रेरित नहुन सक्छ।",
 	"visualeditor-dialog-transclusion-param-default": "पुनर्निधारित: $1",
 	"visualeditor-dialog-transclusion-param-example-long": "उदाहरण: $1",
-	"visualeditor-dialog-transclusion-placeholder": "ढाँचा थप्नुहोस्",
+	"visualeditor-dialog-transclusion-param-undocumented": "(अप्रमाणित मापदण्ड)",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "ढाँचा खोज्नुहोस्",
 	"visualeditor-dialog-transclusion-required-parameter": "आवश्यक क्षेत्र",
 	"visualeditor-dialog-transclusion-required-parameter-description": "क्षेत्र आवश्यक छ।",

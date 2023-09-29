@@ -54,7 +54,7 @@ OO.mixinClass( ve.ce.MWReferenceNode, ve.ce.FocusableNode );
 
 ve.ce.MWReferenceNode.static.name = 'mwReference';
 
-ve.ce.MWReferenceNode.static.tagName = 'span';
+ve.ce.MWReferenceNode.static.tagName = 'sup';
 
 ve.ce.MWReferenceNode.static.primaryCommandName = 'reference';
 

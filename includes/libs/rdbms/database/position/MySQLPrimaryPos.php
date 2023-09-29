@@ -3,7 +3,6 @@
 namespace Wikimedia\Rdbms;
 
 use InvalidArgumentException;
-use UnexpectedValueException;
 
 /**
  * DBPrimaryPos implementation for MySQL and MariaDB.
@@ -134,29 +133,6 @@ class MySQLPrimaryPos implements DBPrimaryPos {
 
 		// Comparing totally different binlogs does not make sense
 		return false;
-	}
-
-	public function channelsMatch( DBPrimaryPos $pos ) {
-		if ( !( $pos instanceof self ) ) {
-			throw new InvalidArgumentException( "Position not an instance of " . __CLASS__ );
-		}
-
-		// Prefer GTID comparisons, which work with multi-tier replication
-		$thisPosDomains = array_keys( $this->getActiveGtidCoordinates() );
-		$thatPosDomains = array_keys( $pos->getActiveGtidCoordinates() );
-		if ( $thisPosDomains && $thatPosDomains ) {
-			// Check that $this has a GTID for at least one domain also in $pos; due to MariaDB
-			// quirks, prior primary switch-overs may result in inactive garbage GTIDs that cannot
-			// easily be cleaned up. Assume that the domains in both this and $pos cover the
-			// relevant active channels.
-			return array_intersect( $thatPosDomains, $thisPosDomains ) ? true : false;
-		}
-
-		// Fallback to the binlog file comparisons
-		$thisBinPos = $this->getBinlogCoordinates();
-		$thatBinPos = $pos->getBinlogCoordinates();
-
-		return ( $thisBinPos && $thatBinPos && $thisBinPos['binlog'] === $thatBinPos['binlog'] );
 	}
 
 	/**
@@ -319,51 +295,30 @@ class MySQLPrimaryPos implements DBPrimaryPos {
 			: false;
 	}
 
-	public function serialize(): string {
-		return serialize( $this->__serialize() );
+	public static function newFromArray( array $data ) {
+		$pos = new self( $data['position'], $data['asOfTime'] );
+
+		if ( isset( $data['activeDomain'] ) ) {
+			$pos->setActiveDomain( $data['activeDomain'] );
+		}
+		if ( isset( $data['activeServerId'] ) ) {
+			$pos->setActiveOriginServerId( $data['activeServerId'] );
+		}
+		if ( isset( $data['activeServerUUID'] ) ) {
+			$pos->setActiveOriginServerUUID( $data['activeServerUUID'] );
+		}
+		return $pos;
 	}
 
-	public function __serialize() {
+	public function toArray(): array {
 		return [
+			'_type_' => get_class( $this ),
 			'position' => $this->__toString(),
 			'activeDomain' => $this->activeDomain,
 			'activeServerId' => $this->activeServerId,
 			'activeServerUUID' => $this->activeServerUUID,
 			'asOfTime' => $this->asOfTime
 		];
-	}
-
-	public function unserialize( $serialized ): void {
-		$this->__unserialize( unserialize( $serialized ) );
-	}
-
-	public function __unserialize( $data ) {
-		if ( !is_array( $data ) ) {
-			throw new UnexpectedValueException( __METHOD__ . ": cannot unserialize position" );
-		}
-
-		$this->init( $data['position'], $data['asOfTime'] );
-		if ( isset( $data['activeDomain'] ) ) {
-			$this->setActiveDomain( $data['activeDomain'] );
-		}
-		if ( isset( $data['activeServerId'] ) ) {
-			$this->setActiveOriginServerId( $data['activeServerId'] );
-		}
-		if ( isset( $data['activeServerUUID'] ) ) {
-			$this->setActiveOriginServerUUID( $data['activeServerUUID'] );
-		}
-	}
-
-	public static function newFromArray( array $data ) {
-		$pos = new self( $data['position'], $data['asOfTime'] );
-		$pos->__unserialize( $data );
-		return $pos;
-	}
-
-	public function toArray(): array {
-		$data = $this->__serialize();
-		$data['_type_'] = get_class( $this );
-		return $data;
 	}
 
 	/**

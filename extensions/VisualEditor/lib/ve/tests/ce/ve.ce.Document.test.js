@@ -14,6 +14,7 @@ QUnit.test( 'Converter tests', function ( assert ) {
 	for ( var msg in cases ) {
 		if ( cases[ msg ].ceHtml ) {
 			var caseItem = ve.copy( cases[ msg ] );
+			caseItem.base = caseItem.base || ve.dm.example.baseUri;
 			var model = ve.test.utils.getModelFromTestCase( caseItem );
 			var view = new ve.ce.Document( model );
 			var $documentElement = view.getDocumentNode().$element;
@@ -22,7 +23,7 @@ QUnit.test( 'Converter tests', function ( assert ) {
 			assert.equalDomElement(
 				// Wrap both in plain DIVs as we are only comparing the child nodes
 				$( '<div>' ).append( $documentElement.contents() )[ 0 ],
-				$( '<div>' ).append( ve.createDocumentFromHtml( caseItem.ceHtml ).body.childNodes )[ 0 ],
+				$( '<div>' ).html( caseItem.ceHtml )[ 0 ],
 				msg
 			);
 		}

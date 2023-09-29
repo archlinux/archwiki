@@ -10,7 +10,7 @@
 	"license-name": "GPL-2.0-or-later AND MIT",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"APIModules": {
 		"scribunto-console": "MediaWiki\\Extension\\Scribunto\\ApiScribuntoConsole"
@@ -33,45 +33,31 @@
 		"ScribuntoNamespaces": "Scribunto.namespaces.php"
 	},
 	"AutoloadClasses": {
-		"Scribunto_LuaError": "includes/engines/LuaCommon/LuaError.php",
-		"Scribunto_LuaInterpreterNotFoundError": "includes/engines/LuaCommon/LuaInterpreterNotFoundError.php",
-		"Scribunto_LuaInterpreterBadVersionError": "includes/engines/LuaCommon/LuaInterpreterBadVersionError.php",
-		"Scribunto_LuaStandaloneInterpreterFunction": "includes/engines/LuaStandalone/LuaStandaloneInterpreterFunction.php",
-		"Scribunto_LuaEngine": "includes/engines/LuaCommon/LuaEngine.php",
-		"Scribunto_LuaModule": "includes/engines/LuaCommon/LuaModule.php",
-		"Scribunto_LuaInterpreter": "includes/engines/LuaCommon/LuaInterpreter.php",
-		"Scribunto_LuaLibraryBase": "includes/engines/LuaCommon/LibraryBase.php",
-		"Scribunto_LuaSiteLibrary": "includes/engines/LuaCommon/SiteLibrary.php",
-		"Scribunto_LuaUriLibrary": "includes/engines/LuaCommon/UriLibrary.php",
-		"Scribunto_LuaUstringLibrary": "includes/engines/LuaCommon/UstringLibrary.php",
-		"Scribunto_LuaLanguageLibrary": "includes/engines/LuaCommon/LanguageLibrary.php",
-		"Scribunto_LuaMessageLibrary": "includes/engines/LuaCommon/MessageLibrary.php",
-		"Scribunto_LuaTitleLibrary": "includes/engines/LuaCommon/TitleLibrary.php",
-		"Scribunto_LuaTextLibrary": "includes/engines/LuaCommon/TextLibrary.php",
-		"Scribunto_LuaHtmlLibrary": "includes/engines/LuaCommon/HtmlLibrary.php",
-		"Scribunto_LuaHashLibrary": "includes/engines/LuaCommon/HashLibrary.php",
-		"MediaWiki\\Extension\\Scribunto\\Engines\\LuaStandalone\\LuaStandaloneInterpreterFunction": "includes/engines/LuaStandalone/LuaStandaloneInterpreterFunction.php"
+		"MediaWiki\\Extension\\Scribunto\\Engines\\LuaCommon\\LibraryBase": "includes/Engines/LuaCommon/LibraryBase.php",
+		"MediaWiki\\Extension\\Scribunto\\Engines\\LuaCommon\\LuaEngine": "includes/Engines/LuaCommon/LuaEngine.php",
+		"MediaWiki\\Extension\\Scribunto\\Engines\\LuaCommon\\LuaError": "includes/Engines/LuaCommon/LuaError.php",
+		"MediaWiki\\Extension\\Scribunto\\Engines\\LuaStandalone\\LuaStandaloneInterpreterFunction": "includes/Engines/LuaStandalone/LuaStandaloneInterpreterFunction.php",
+		"Scribunto_LuaEngine": "includes/Engines/LuaCommon/LuaEngine.php",
+		"Scribunto_LuaError": "includes/Engines/LuaCommon/LuaError.php",
+		"Scribunto_LuaLibraryBase": "includes/Engines/LuaCommon/LibraryBase.php",
+		"Scribunto_LuaStandaloneInterpreterFunction": "includes/Engines/LuaStandalone/LuaStandaloneInterpreterFunction.php"
 	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\Scribunto\\": "includes/",
-		"MediaWiki\\Extension\\Scribunto\\Engines\\": "includes/engines/"
+		"MediaWiki\\Extension\\Scribunto\\": "includes/"
 	},
 	"TestAutoloadClasses": {
-		"Scribunto_LuaCommonTestsFailLibrary": "tests/phpunit/engines/LuaCommon/LuaCommonTestsFailLibrary.php",
-		"Scribunto_LuaCommonTestsLibrary": "tests/phpunit/engines/LuaCommon/LuaCommonTestsLibrary.php",
-		"Scribunto_LuaDataProvider": "tests/phpunit/engines/LuaCommon/LuaDataProvider.php",
-		"Scribunto_LuaEngineTestBase": "tests/phpunit/engines/LuaCommon/LuaEngineTestBase.php",
-		"Scribunto_LuaEngineTestHelper": "tests/phpunit/engines/LuaCommon/LuaEngineTestHelper.php",
-		"Scribunto_LuaEngineTestSkip": "tests/phpunit/engines/LuaCommon/LuaEngineTestSkip.php",
-		"Scribunto_LuaEngineUnitTestBase": "tests/phpunit/engines/LuaCommon/LuaEngineUnitTestBase.php",
-		"UstringLibraryNormalizationTestProvider": "tests/phpunit/engines/LuaCommon/UstringLibraryNormalizationTestProvider.php"
+		"MediaWiki\\Extension\\Scribunto\\Tests\\Engines\\LuaCommon\\LuaEngineTestBase": "tests/phpunit/Engines/LuaCommon/LuaEngineTestBase.php",
+		"Scribunto_LuaEngineTestBase": "tests/phpunit/Engines/LuaCommon/LuaEngineTestBase.php"
+	},
+	"TestAutoloadNamespaces": {
+		"MediaWiki\\Extension\\Scribunto\\Tests\\": "tests/phpunit/"
 	},
 	"ResourceModules": {
 		"ext.scribunto.errors": {
 			"scripts": "ext.scribunto.errors.js",
 			"styles": "ext.scribunto.errors.css",
 			"dependencies": [
-				"jquery.ui"
+				"oojs-ui-widgets"
 			],
 			"messages": [
 				"scribunto-parser-dialog-title"
@@ -163,7 +149,7 @@
 					"maxLangCacheSize": 30
 				},
 				"luaautodetect": {
-					"factory": "Scribunto_LuaEngine::newAutodetectEngine"
+					"factory": "MediaWiki\\Extension\\Scribunto\\Engines\\LuaCommon\\LuaEngine::newAutodetectEngine"
 				}
 			},
 			"merge_strategy": "array_plus_2d"

@@ -4,5 +4,6 @@
 			"Bosogo"
 		]
 	},
+	"scribunto-console-clear": "Алып салуу",
 	"scribunto-lua-error": "Lua катасы: $2."
 }

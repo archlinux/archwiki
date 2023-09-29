@@ -24,6 +24,7 @@
 	"abusefilter-log-search-wiki": "Wiki:",
 	"abusefilter-log-search-impact-all": "Omna agadi",
 	"abusefilter-log-search-impact-saved": "Nur konservita modifikuri",
+	"abusefilter-log-search-entries-label": "Videbleso:",
 	"abusefilter-log-search-action-taken-any": "Irga",
 	"abusefilter-log-search-submit": "Serchez",
 	"abusefilter-log-diff": "diferi",
@@ -40,6 +41,7 @@
 	"abusefilter-list": "Omna filtrili",
 	"abusefilter-list-status": "Stando",
 	"abusefilter-list-public": "Publika deskripto",
+	"abusefilter-list-visibility": "Videbleso",
 	"abusefilter-list-lastmodified": "Lasta modifikuro",
 	"abusefilter-hidden": "Privata",
 	"abusefilter-unhidden": "Publika",
@@ -137,6 +139,7 @@
 	"abusefilter-log-header": "Ca protokolo ('log') montras rezumo di modifikuri en la filtrili.\nPor plusa detali, videz [[Special:AbuseFilter/history|la listo di recenta chanji en la filtrili]].",
 	"abusefilter-logentry-create": "$4 {{GENDER:$2|kreesis}} da $1 ($5)",
 	"abusefilter-log-noresults": "Nula rezulti",
+	"abusefilter-diff-item": "Elemento",
 	"abusefilter-diff-version": "Versiono ye $1 {{GENDER:$3|da}} $2",
 	"abusefilter-group-default": "Normala",
 	"abusefilter-http-error": "Eventis eroro di HTTP: $1."

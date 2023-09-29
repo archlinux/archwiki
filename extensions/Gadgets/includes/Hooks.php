@@ -33,6 +33,7 @@ use MediaWiki\Extension\Gadgets\Content\GadgetDefinitionContent;
 use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\DeleteUnknownPreferencesHook;
 use MediaWiki\Hook\EditFilterMergedContentHook;
+use MediaWiki\Hook\PreferencesGetIconHook;
 use MediaWiki\Hook\PreferencesGetLegendHook;
 use MediaWiki\Page\Hook\PageDeleteCompleteHook;
 use MediaWiki\Page\ProperPageIdentity;
@@ -64,6 +65,7 @@ class Hooks implements
 	PageSaveCompleteHook,
 	UserGetDefaultOptionsHook,
 	GetPreferencesHook,
+	PreferencesGetIconHook,
 	PreferencesGetLegendHook,
 	ResourceLoaderRegisterModulesHook,
 	BeforePageDisplayHook,
@@ -206,6 +208,15 @@ class Hooks implements
 		if ( str_starts_with( $key, 'gadget-section-' ) ) {
 			$legend = new HtmlSnippet( $form->msg( $key )->parse() );
 		}
+	}
+
+	/**
+	 * Add icon for Special:Preferences mobile layout
+	 *
+	 * @param array &$iconNames Array of icon names for their respective sections.
+	 */
+	public function onPreferencesGetIcon( &$iconNames ) {
+		$iconNames[ 'gadgets' ] = 'puzzle';
 	}
 
 	/**

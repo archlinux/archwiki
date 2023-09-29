@@ -28,7 +28,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"MessagesDirs": {
 		"MultimediaViewer": [
@@ -96,11 +96,11 @@
 				"mediawiki.Title",
 				"mediawiki.Uri",
 				"mediawiki.jqueryMsg",
+				"mediawiki.router",
 				"mediawiki.storage",
 				"mediawiki.user",
 				"mediawiki.util",
 				"oojs",
-				"oojs-router",
 				"jquery.fullscreen",
 				"jquery.color",
 				"jquery.tipsy",
@@ -332,14 +332,14 @@
 			],
 			"dependencies": [
 				"mediawiki.api",
+				"mediawiki.router",
 				"mediawiki.ui.button",
 				"mediawiki.ui.icon",
 				"mediawiki.Title",
 				"mediawiki.user",
 				"mediawiki.storage",
 				"mmv.head",
-				"oojs",
-				"oojs-router"
+				"oojs"
 			],
 			"messages": [
 				"multimediaviewer-view-expanded",

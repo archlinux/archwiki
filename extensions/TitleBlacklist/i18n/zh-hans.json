@@ -13,7 +13,8 @@
 			"Xiaomingyan",
 			"Xiplus",
 			"乌拉跨氪",
-			"列维劳德"
+			"列维劳德",
+			"Diskdance"
 		]
 	},
 	"action-tboverride": "忽略禁用标题与用户名名单",
@@ -22,7 +23,7 @@
 	"log-name-titleblacklist": "禁用标题名单日志",
 	"log-description-titleblacklist": "这些事件触发了禁用标题名单。",
 	"logentry-titleblacklist-hit-username": "$1 在尝试创建匹配 $4 的 $3 账户时{{GENDER:$2|触发}}禁用标题名单。",
-	"titleblacklist-desc": "允许管理员通过[[MediaWiki:Titleblacklist|禁用标题名单]]和[[MediaWiki:Titlewhitelist|允许标题名单]]禁止页面和用户帐户的创建",
+	"titleblacklist-desc": "允许管理员通过[[MediaWiki:Titleblacklist|禁用标题名单]]和[[MediaWiki:Titlewhitelist|允许标题名单]]禁止页面和用户账号的创建",
 	"titleblacklist": "# 本页面为“禁用标题名单”。任何匹配本名单正则表达式的标题和用户名会被阻止建立和编辑。\n# 请使用\"#\"来添加注释。\n# 本页默认忽略大小写",
 	"titlewhitelist": "# 本页面为“允许标题名单”。 请使用\"#\"来添加注释。\n# 本页默认忽略大小写",
 	"titleblacklist-forbidden-edit": "标题 \"$2\" 已被禁止创建。\n其与以下禁用标题名单项匹配：<code>$1</code>",

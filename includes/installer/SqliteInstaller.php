@@ -23,7 +23,7 @@
 
 use MediaWiki\MediaWikiServices;
 use Wikimedia\AtEase\AtEase;
-use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\DatabaseFactory;
 use Wikimedia\Rdbms\DatabaseSqlite;
 use Wikimedia\Rdbms\DBConnectionError;
 
@@ -62,7 +62,7 @@ class SqliteInstaller extends DatabaseInstaller {
 	public function checkPrerequisites() {
 		// Bail out if SQLite is too old
 		$db = DatabaseSqlite::newStandaloneInstance( ':memory:' );
-		$result = static::meetsMinimumRequirement( $db->getServerVersion() );
+		$result = static::meetsMinimumRequirement( $db );
 		// Check for FTS3 full-text search module
 		if ( DatabaseSqlite::getFulltextSearchModule() != 'FTS3' ) {
 			$result->warning( 'config-no-fts3' );
@@ -110,12 +110,7 @@ class SqliteInstaller extends DatabaseInstaller {
 	 * @return string
 	 */
 	private static function realpath( $path ) {
-		$result = realpath( $path );
-		if ( !$result ) {
-			return $path;
-		}
-
-		return $result;
+		return realpath( $path ) ?: $path;
 	}
 
 	/**
@@ -259,7 +254,7 @@ class SqliteInstaller extends DatabaseInstaller {
 
 		# Create the l10n cache DB
 		try {
-			$conn = Database::factory(
+			$conn = ( new DatabaseFactory() )->create(
 				'sqlite', [ 'dbname' => "{$db}_l10n_cache", 'dbDirectory' => $dir ] );
 			# @todo: don't duplicate l10n_cache definition, though it's very simple
 			$sql =
@@ -280,7 +275,7 @@ EOT;
 
 		# Create the job queue DB
 		try {
-			$conn = Database::factory(
+			$conn = ( new DatabaseFactory() )->create(
 				'sqlite', [ 'dbname' => "{$db}_jobqueue", 'dbDirectory' => $dir ] );
 			# @todo: don't duplicate job definition, though it's very static
 			$sql =

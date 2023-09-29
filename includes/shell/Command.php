@@ -137,19 +137,6 @@ class Command extends UnboxedCommand {
 	}
 
 	/**
-	 * Sets cgroup for this command. Has no effect since MW 1.36. This setting
-	 * is injected into the executor from CommandFactory instead.
-	 *
-	 * @deprecated since 1.36
-	 * @param string|false $cgroup Absolute file path to the cgroup, or false to not use a cgroup
-	 * @return $this
-	 */
-	public function cgroup( $cgroup ): Command {
-		wfDeprecated( __METHOD__, '1.36' );
-		return $this;
-	}
-
-	/**
 	 * Set restrictions for this request, overwriting any previously set restrictions.
 	 *
 	 * Add the "no network" restriction:
@@ -202,11 +189,13 @@ class Command extends UnboxedCommand {
 	 *
 	 * limit.sh will always be whitelisted
 	 *
-	 * @deprecated since 1.36 Use allowPath/disallowPath
+	 * @deprecated since 1.36 Use allowPath/disallowPath. Hard
+	 *   deprecated in 1.40 and to be removed in 1.41
 	 * @param string[] $paths
 	 * @return $this
 	 */
 	public function whitelistPaths( array $paths ): Command {
+		wfDeprecated( __METHOD__, '1.36' );
 		$this->allowedPaths( array_merge( $this->getAllowedPaths(), $paths ) );
 		return $this;
 	}

@@ -15,9 +15,7 @@
 	"apihelp-oathvalidate-description": "驗證雙因素驗證（OATH）權杖。",
 	"apihelp-oathvalidate-summary": "驗證雙因素驗證（OATH）權杖。",
 	"apihelp-oathvalidate-param-user": "要驗證權杖的使用者。預設是目前使用者。",
-	"apihelp-oathvalidate-param-totp": "雙重認證（OATH）權杖。已過時，應使用「data」參數代替。",
-	"apihelp-oathvalidate-example-1": "驗證目前使用者的令牌",
-	"apihelp-oathvalidate-example-2": "驗證使用者 <kbd>Example</kbd> 的權杖",
+	"apihelp-oathvalidate-example-1": "驗證目前使用者的 JSON 資料",
 	"apihelp-oathvalidate-example-3": "為使用者 <kbd>Example</kbd> 驗證 JSON 資料",
 	"apihelp-oathvalidate-param-data": "用於驗證使用者的目前有效模組之預期JSON編碼資料"
 }

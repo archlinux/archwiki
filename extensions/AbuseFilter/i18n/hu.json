@@ -8,6 +8,7 @@
 			"Dani",
 			"Dj",
 			"Dunee",
+			"Eukarióta",
 			"Glanthor Reviol",
 			"Hanna Tardos",
 			"Matma Rex",
@@ -16,7 +17,9 @@
 			"Tacsipacsi",
 			"Tgr",
 			"Wolf Rex",
-			"Eukarióta"
+			"Zalán Hári",
+			"Amire80",
+			"Beze"
 		]
 	},
 	"abusefilter-desc": "Automatikus heurisztikát alkalmaz a szerkesztésekre.",
@@ -119,6 +122,8 @@
 	"abusefilter-log-hide-reason": "Indoklás:",
 	"abusefilter-log-hide-reason-other": "Más/további ok:",
 	"abusefilter-log-hide-forbidden": "Nincs jogosultságod elrejteni ezeket a tételeket.",
+	"abusefilter-log-hide-show": "Megjelenítés",
+	"abusefilter-log-hide-hide": "Elrejtés",
 	"abusefilter-log-entry-suppress": "$1 {{GENDER:$2|elrejtette}} $3",
 	"abusefilter-log-entry-unsuppress": "$1 {{GENDER:$2|láthatóvá tette}} $3",
 	"logentry-abusefilter-hit": "$1 „$5” műveletével {{GENDER:$2|beindította}} a(z) $4 vandálszűrőt a(z) $3 oldalon. Elvégzett intézkedések: $6 ($7)",
@@ -219,7 +224,7 @@
 	"abusefilter-edit-throttle-placeholder": "Vesszővel elválasztva összefűzés ÉS-ként, egyenként beillesztve VAGY-ként",
 	"abusefilter-throttle-ip": "IP-címek",
 	"abusefilter-throttle-user": "felhasználói fiók",
-	"abusefilter-throttle-range": "/16-os tartomány",
+	"abusefilter-throttle-range": "IP-tartomány",
 	"abusefilter-throttle-creationdate": "felhasználói fiók létrehozásának dátuma",
 	"abusefilter-throttle-editcount": "szerkesztésszám",
 	"abusefilter-throttle-site": "egész oldal",
@@ -282,7 +287,7 @@
 	"abusefilter-edit-builder-op-comparison-equal": "Az érték egyenlő a következővel (==)",
 	"abusefilter-edit-builder-op-comparison-equal-strict": "Az érték és a típus egyenlő a következővel (===)",
 	"abusefilter-edit-builder-op-comparison-notequal": "Az érték nem egyenlő a következővel (!=)",
-	"abusefilter-edit-builder-op-comparison-notequal-strict": "Az érték és  atípus nem egyenlő a következővel (!==)",
+	"abusefilter-edit-builder-op-comparison-notequal-strict": "Az érték és atípus nem egyenlő a következővel (!==)",
 	"abusefilter-edit-builder-op-comparison-lt": "kisebb (<)",
 	"abusefilter-edit-builder-op-comparison-gt": "nagyobb (>)",
 	"abusefilter-edit-builder-op-comparison-lte": "kisebb vagy egyenlő (<=)",
@@ -531,5 +536,6 @@
 	"abusefilter-log-ip-not-available": "Nem elérhető",
 	"abusefilter-tag-reserved": "Az <code>abusefilter-condition-limit</code> címke a Vandálszűrő belső használatára van fenntartva.",
 	"tag-abusefilter-condition-limit": "feltételhatár elérve",
-	"tag-abusefilter-condition-limit-description": "Szerkesztések vagy egyéb események, amelyek nem lettek ellenőrizve az összes aktív [[Special:AbuseFilter|Vandálszűrő]] által ([[mw:Extension:AbuseFilter/Conditions|segítség]])."
+	"tag-abusefilter-condition-limit-description": "Szerkesztések vagy egyéb események, amelyek nem lettek ellenőrizve az összes aktív [[Special:AbuseFilter|Vandálszűrő]] által ([[mw:Extension:AbuseFilter/Conditions|segítség]]).",
+	"notification-link-text-show-filter": "Szűrő megjelenítése"
 }

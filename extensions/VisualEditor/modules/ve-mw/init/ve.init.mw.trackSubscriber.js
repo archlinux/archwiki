@@ -15,12 +15,12 @@
 			saveSuccess: 'save_success',
 			saveFailure: 'save_failure'
 		},
-		trackdebug = !!mw.Uri().query.trackdebug,
+		trackdebug = new URL( location.href ).searchParams.has( 'trackdebug' ),
 		firstInitDone = false;
 
 	function getEditingSessionIdFromRequest() {
 		return mw.config.get( 'wgWMESchemaEditAttemptStepSessionId' ) ||
-			mw.Uri().query.editingStatsId;
+			new URL( location.href ).searchParams.get( 'editingStatsId' );
 	}
 
 	var timing = {};
@@ -34,7 +34,7 @@
 		console.log.apply( console, arguments );
 	}
 
-	function inSample() {
+	function inEASSample() {
 		// Not using mw.eventLog.inSample() because we need to be able to pass our own editingSessionId
 		return mw.eventLog.randomTokenMatch(
 			1 / mw.config.get( 'wgWMESchemaEditAttemptStepSamplingRate' ),
@@ -42,13 +42,27 @@
 		);
 	}
 
-	function addABTestData( data ) {
-		// DiscussionTools New Topic A/B test for logged out users
+	function inVEFUSample() {
+		return mw.eventLog.randomTokenMatch(
+			1 / mw.config.get( 'wgWMESchemaVisualEditorFeatureUseSamplingRate' ),
+			editingSessionId
+		);
+	}
+
+	function addABTestData( data, addToken ) {
+		// DiscussionTools A/B test for logged out users
 		if ( !mw.config.get( 'wgDiscussionToolsABTest' ) ) {
 			return;
 		}
 		if ( mw.config.get( 'wgDiscussionToolsABTestBucket' ) ) {
 			data.bucket = mw.config.get( 'wgDiscussionToolsABTestBucket' );
+		}
+		if ( mw.user.isAnon() && addToken ) {
+			var token = mw.cookie.get( 'DTABid', '' );
+			if ( token ) {
+				// eslint-disable-next-line camelcase
+				data.anonymous_user_token = token;
+			}
 		}
 	}
 
@@ -152,6 +166,10 @@
 			firstInitDone = true;
 		}
 
+		if ( !inEASSample() && !mw.config.get( 'wgWMESchemaEditAttemptStepOversample' ) && !trackdebug ) {
+			return;
+		}
+
 		if (
 			action === 'abort' &&
 			( data.type === 'unknown' || data.type === 'unknown-edited' )
@@ -221,19 +239,15 @@
 		}
 		/* eslint-enable camelcase */
 
-		addABTestData( data );
+		addABTestData( data, true );
 
 		logEditViaMetricsPlatform( data, actionPrefix );
-
-		if ( !inSample() && !mw.config.get( 'wgWMESchemaEditAttemptStepOversample' ) && !trackdebug ) {
-			return;
-		}
 
 		/* eslint-disable camelcase */
 		var event = ve.extendObject( {
 			version: 1,
 			action: action,
-			is_oversample: !inSample(),
+			is_oversample: !inEASSample(),
 			editor_interface: 'visualeditor',
 			integration: ve.init && ve.init.target && ve.init.target.constructor.static.integrationType || 'page',
 			page_id: mw.config.get( 'wgArticleId' ),
@@ -278,7 +292,7 @@
 	function activityHandler( topic, data ) {
 		var feature = topic.split( '.' )[ 1 ];
 
-		if ( !inSample() && !mw.config.get( 'wgWMESchemaEditAttemptStepOversample' ) && !trackdebug ) {
+		if ( !inVEFUSample() && !mw.config.get( 'wgWMESchemaEditAttemptStepOversample' ) && !trackdebug ) {
 			return;
 		}
 
@@ -299,7 +313,7 @@
 			feature: feature,
 			action: data.action,
 			editingSessionId: editingSessionId,
-			is_oversample: !inSample(),
+			is_oversample: !inVEFUSample(),
 			user_id: mw.user.getId(),
 			user_editcount: mw.config.get( 'wgUserEditCount', 0 ),
 			editor_interface: ve.getProp( ve, 'init', 'target', 'surface', 'mode' ) === 'source' ? 'wikitext-2017' : 'visualeditor',
@@ -314,16 +328,36 @@
 			log( topic, event );
 		} else {
 			mw.track( 'event.VisualEditorFeatureUse', event );
+
+			// T309602: Also log via the Metrics Platform:
+			var eventName = 'vefu.' + event.action;
+
+			/* eslint-disable camelcase */
+			var customData = {
+				feature: event.feature,
+				editing_session_id: event.editingSessionId,
+				editor_interface: event.editor_interface,
+				integration: event.integration
+			};
+			/* eslint-enable camelcase */
+
+			mw.eventLog.dispatch( eventName, customData );
 		}
 	}
 
 	// Only log events if the WikimediaEvents extension is installed.
 	// It provides variables that the above code depends on and registers the schemas.
 	if ( mw.config.exists( 'wgWMESchemaEditAttemptStepSamplingRate' ) ) {
-		// Ensure 'ext.eventLogging' first, it provides mw.eventLog.randomTokenMatch.
+		// Ensure 'ext.eventLogging' first, it provides mw.eventLog.randomTokenMatch and
+		// mw.eventLog.dispatch.
 		mw.loader.using( 'ext.eventLogging' ).done( function () {
 			ve.trackSubscribe( 'mwedit.', mwEditHandler );
 			ve.trackSubscribe( 'mwtiming.', mwTimingHandler );
+		} );
+	}
+
+	if ( mw.config.exists( 'wgWMESchemaVisualEditorFeatureUseSamplingRate' ) ) {
+		mw.loader.using( 'ext.eventLogging' ).done( function () {
 			ve.trackSubscribe( 'activity.', activityHandler );
 		} );
 	}

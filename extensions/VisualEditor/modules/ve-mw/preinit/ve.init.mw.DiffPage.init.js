@@ -13,8 +13,8 @@
 		$visualDiffContainer = $( '<div>' ),
 		$visualDiff = $( '<div>' ),
 		progress = new OO.ui.ProgressBarWidget( { classes: [ 've-init-mw-diffPage-loading' ] } ),
-		originalUri = new mw.Uri(),
-		initMode = originalUri.query.diffmode || mw.user.options.get( 'visualeditor-diffmode-historical' ) || 'source',
+		originalUrl = new URL( location.href ),
+		initMode = originalUrl.searchParams.get( 'diffmode' ) || mw.user.options.get( 'visualeditor-diffmode-historical' ) || 'source',
 		conf = mw.config.get( 'wgVisualEditorConfig' ),
 		pluginModules = conf.pluginModules.filter( mw.loader.getState );
 
@@ -29,14 +29,14 @@
 	);
 
 	function onReviewModeButtonSelectSelect( item ) {
-		var uri = new mw.Uri();
+		var url = new URL( location.href );
 
 		var oldPageName, newPageName;
 		if ( mw.config.get( 'wgCanonicalSpecialPageName' ) !== 'ComparePages' ) {
 			oldPageName = newPageName = mw.config.get( 'wgRelevantPageName' );
 		} else {
-			oldPageName = uri.query.page1;
-			newPageName = uri.query.page2;
+			oldPageName = url.searchParams.get( 'page1' );
+			newPageName = url.searchParams.get( 'page2' );
 		}
 
 		var mode = item.getData();
@@ -87,13 +87,15 @@
 			}, function ( code, data ) {
 				mw.notify( new mw.Api().getErrorMessage( data ), { type: 'error' } );
 				reviewModeButtonSelect.selectItemByData( 'source' );
+			} ).catch( function ( error ) {
+				mw.notify( error.message, { type: 'error' } );
+				reviewModeButtonSelect.selectItemByData( 'source' );
+				throw error;
 			} );
 		}
 
-		if ( history.replaceState ) {
-			uri.query.diffmode = mode;
-			history.replaceState( history.state, '', uri );
-		}
+		url.searchParams.set( 'diffmode', mode );
+		history.replaceState( history.state, '', url );
 
 	}
 

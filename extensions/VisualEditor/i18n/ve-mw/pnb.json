@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Abbas dhothar",
-			"Khalid Mahmood",
-			"Bgo eiu"
+			"Bgo eiu",
+			"Khalid Mahmood"
 		]
 	},
 	"collabpad-doctitle": "کولیب پیڈ: $1",
@@ -71,7 +71,6 @@
 	"visualeditor-dialog-transclusion-collapse-options": "اختیار لُکاؤ",
 	"visualeditor-dialog-transclusion-loading": "لوڈنگ۔۔۔",
 	"visualeditor-dialog-transclusion-param-default": "ڈیفالٹ: $1",
-	"visualeditor-dialog-transclusion-placeholder": "سانچہ رلاؤ",
 	"visualeditor-formatdropdown-format-mw-heading1": "صفحہ عنوان",
 	"visualeditor-languages-tool": "بولیاں",
 	"visualeditor-media-title-audio": "آڈیو",

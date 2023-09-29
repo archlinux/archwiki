@@ -22,9 +22,12 @@
  */
 
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Title\Title;
 
 /**
  * Object handling generic submission, CSRF protection, layout and
@@ -184,6 +187,7 @@ class HTMLForm extends ContextSource {
 		'time' => HTMLDateTimeField::class,
 		'datetime' => HTMLDateTimeField::class,
 		'expiry' => HTMLExpiryField::class,
+		'timezone' => HTMLTimezoneField::class,
 		// HTMLTextField will output the correct type="" attribute automagically.
 		// There are about four zillion other HTML5 input types, like range, but
 		// we don't use those at the moment, so no point in adding all of them.
@@ -243,7 +247,7 @@ class HTMLForm extends ContextSource {
 	/**
 	 * Form action URL. false means we will use the URL to set Title
 	 * @since 1.19
-	 * @var bool|string
+	 * @var string|false
 	 */
 	protected $mAction = false;
 
@@ -425,7 +429,7 @@ class HTMLForm extends ContextSource {
 			$this->mFlatFields[$fieldname] = $field;
 		}
 
-		$this->mFieldTree = array_merge( $this->mFieldTree, $loadedDescriptor );
+		$this->mFieldTree = array_merge_recursive( $this->mFieldTree, $loadedDescriptor );
 
 		return $this;
 	}
@@ -544,6 +548,7 @@ class HTMLForm extends ContextSource {
 	 * 	in the class documentation
 	 * @param HTMLForm|null $parent Parent instance of HTMLForm
 	 *
+	 * @warning Not passing (or passing null) for $parent is deprecated as of 1.40
 	 * @throws MWException
 	 * @return HTMLFormField Instance of a subclass of HTMLFormField
 	 */
@@ -694,10 +699,12 @@ class HTMLForm extends ContextSource {
 		}
 
 		# Check for validation
+		$hasNonDefault = false;
 		foreach ( $this->mFlatFields as $fieldname => $field ) {
 			if ( !array_key_exists( $fieldname, $this->mFieldData ) ) {
 				continue;
 			}
+			$hasNonDefault = $hasNonDefault || $this->mFieldData[$fieldname] !== $field->getDefault();
 			if ( $field->isDisabled( $this->mFieldData ) ) {
 				continue;
 			}
@@ -715,6 +722,14 @@ class HTMLForm extends ContextSource {
 		}
 
 		if ( !$valid ) {
+			// Treat as not submitted if got nothing from the user on GET forms.
+			if ( !$hasNonDefault && $this->getMethod() === 'get' &&
+				( $this->mFormIdentifier === null ||
+					$this->getRequest()->getCheck( 'wpFormIdentifier' ) )
+			) {
+				$this->mWasSubmitted = false;
+				return false;
+			}
 			return $hoistedErrors;
 		}
 
@@ -1124,6 +1139,7 @@ class HTMLForm extends ContextSource {
 
 	/**
 	 * Add a hidden field to the output
+	 * Array values are discarded for security reasons (per WebRequest::getVal)
 	 *
 	 * @param string $name Field name.  This will be used exactly as entered
 	 * @param mixed $value Field value
@@ -1132,14 +1148,18 @@ class HTMLForm extends ContextSource {
 	 * @return HTMLForm $this for chaining calls (since 1.20)
 	 */
 	public function addHiddenField( $name, $value, array $attribs = [] ) {
-		$attribs += [ 'name' => $name ];
-		$this->mHiddenFields[] = [ $value, $attribs ];
+		if ( !is_array( $value ) ) {
+			// Per WebRequest::getVal: Array values are discarded for security reasons.
+			$attribs += [ 'name' => $name ];
+			$this->mHiddenFields[] = [ $value, $attribs ];
+		}
 
 		return $this;
 	}
 
 	/**
 	 * Add an array of hidden fields to the output
+	 * Array values are discarded for security reasons (per WebRequest::getVal)
 	 *
 	 * @since 1.22
 	 *
@@ -1150,6 +1170,10 @@ class HTMLForm extends ContextSource {
 	 */
 	public function addHiddenFields( array $fields ) {
 		foreach ( $fields as $name => $value ) {
+			if ( is_array( $value ) ) {
+				// Per WebRequest::getVal: Array values are discarded for security reasons.
+				continue;
+			}
 			$this->mHiddenFields[] = [ $value, [ 'name' => $name ] ];
 		}
 
@@ -1525,7 +1549,7 @@ class HTMLForm extends ContextSource {
 		}
 		$elementstr = false;
 		if ( $elements instanceof Status ) {
-			list( $errorStatus, $warningStatus ) = $elements->splitByErrorType();
+			[ $errorStatus, $warningStatus ] = $elements->splitByErrorType();
 			$status = $elementsType === 'error' ? $errorStatus : $warningStatus;
 			if ( $status->isGood() ) {
 				$elementstr = '';
@@ -1936,7 +1960,7 @@ class HTMLForm extends ContextSource {
 					? $this->mFieldData[$key]
 					: $value->getDefault();
 
-				$retval = $value->$getFieldHtmlMethod( $v );
+				$retval = $value->$getFieldHtmlMethod( $v ?? '' );
 
 				// check, if the form field should be added to
 				// the output.
@@ -1957,7 +1981,6 @@ class HTMLForm extends ContextSource {
 						"mw-htmlform-$key",
 						"$fieldsetIDPrefix$key-",
 						$subsectionHasVisibleFields );
-				$legend = null;
 
 				if ( $subsectionHasVisibleFields === true ) {
 					// Display the section with various niceties.
@@ -2159,7 +2182,7 @@ class HTMLForm extends ContextSource {
 		// As browser remove the query string before submitting GET forms,
 		// it means that the title would be lost. In such case use script path instead
 		// and put title in an hidden field (see getHiddenFields()).
-		if ( strpos( $articlePath, '?' ) !== false && $this->getMethod() === 'get' ) {
+		if ( str_contains( $articlePath, '?' ) && $this->getMethod() === 'get' ) {
 			return $this->getConfig()->get( MainConfigNames::Script );
 		}
 
@@ -2202,7 +2225,7 @@ class HTMLForm extends ContextSource {
 	 * @since 1.29
 	 */
 	public function needsJSForHtml5FormValidation() {
-		foreach ( $this->mFlatFields as $fieldname => $field ) {
+		foreach ( $this->mFlatFields as $field ) {
 			if ( $field->needsJSForHtml5FormValidation() ) {
 				return true;
 			}

@@ -20,7 +20,9 @@
  * @file
  */
 
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\StubObject\StubUserLang;
 
 /**
  * Generic operation result class
@@ -138,7 +140,7 @@ class Status extends StatusValue {
 	 * @return Status[]
 	 */
 	public function splitByErrorType() {
-		list( $errorsOnlyStatus, $warningsOnlyStatus ) = parent::splitByErrorType();
+		[ $errorsOnlyStatus, $warningsOnlyStatus ] = parent::splitByErrorType();
 		// phan/phan#2133?
 		'@phan-var Status $errorsOnlyStatus';
 		'@phan-var Status $warningsOnlyStatus';
@@ -180,9 +182,9 @@ class Status extends StatusValue {
 	/**
 	 * Get the error list as a wikitext formatted list
 	 *
-	 * @param string|bool $shortContext A short enclosing context message name, to
+	 * @param string|false $shortContext A short enclosing context message name, to
 	 *        be used when there is a single error
-	 * @param string|bool $longContext A long enclosing context message name, for a list
+	 * @param string|false $longContext A long enclosing context message name, for a list
 	 * @param string|Language|StubUserLang|null $lang Language to use for processing messages
 	 * @return string
 	 */
@@ -235,8 +237,8 @@ class Status extends StatusValue {
 	 *
 	 * If both parameters are missing, and there is only one error, no bullet will be added.
 	 *
-	 * @param string|string[]|bool $shortContext A message name or an array of message names.
-	 * @param string|string[]|bool $longContext A message name or an array of message names.
+	 * @param string|string[]|false $shortContext A message name or an array of message names.
+	 * @param string|string[]|false $longContext A message name or an array of message names.
 	 * @param string|Language|StubUserLang|null $lang Language to use for processing messages
 	 * @return Message
 	 */
@@ -281,13 +283,62 @@ class Status extends StatusValue {
 	}
 
 	/**
+	 * Try to convert the status to a PSR-3 friendly format. The output will be similar to
+	 * getWikiText( false, false, 'en' ), but message parameters will be extracted into the
+	 * context array with parameter names 'parameter1' etc. when possible.
+	 *
+	 * @return array A pair of (message, context) suitable for passing to a PSR-3 logger.
+	 * @phan-return array{0:string,1:(int|float|string)[]}
+	 */
+	public function getPsr3MessageAndContext(): array {
+		if ( count( $this->errors ) === 1 ) {
+			// identical to getMessage( false, false, 'en' ) when there's just one error
+			$message = $this->getErrorMessage( $this->errors[0], 'en' );
+
+			$text = null;
+			if ( in_array( get_class( $message ), [ Message::class, ApiMessage::class ], true ) ) {
+				// $1,$2... will be left as-is when no parameters are provided.
+				$text = $this->msgInLang( $message->getKey(), 'en' )->plain();
+			} elseif ( in_array( get_class( $message ), [ RawMessage::class, ApiRawMessage::class ], true ) ) {
+				$text = $message->getKey();
+			} else {
+				// Unknown Message subclass, we can't be sure how it marks parameters. Fall back to getWikiText.
+				return [ $this->getWikiText( false, false, 'en' ), [] ];
+			}
+
+			$context = [];
+			$i = 1;
+			foreach ( $message->getParams() as $param ) {
+				if ( is_array( $param ) && count( $param ) === 1 ) {
+					// probably Message::numParam() or similar
+					$param = reset( $param );
+				}
+				if ( is_int( $param ) || is_float( $param ) || is_string( $param ) ) {
+					$context["parameter$i"] = $param;
+				} else {
+					// Parameter is not of a safe type, fall back to getWikiText.
+					return [ $this->getWikiText( false, false, 'en' ), [] ];
+				}
+
+				$text = str_replace( "\$$i", "{parameter$i}", $text );
+
+				$i++;
+			}
+
+			return [ $text, $context ];
+		}
+		// Parameters cannot be easily extracted, fall back to getWikiText,
+		return [ $this->getWikiText( false, false, 'en' ), [] ];
+	}
+
+	/**
 	 * Return the message for a single error
 	 *
 	 * The code string can be used a message key with per-language versions.
 	 * If $error is an array, the "params" field is a list of parameters for the message.
 	 *
 	 * @param array|string $error Code string or (key: code string, params: string[]) map
-	 * @param string|Language|null $lang Language to use for processing messages
+	 * @param string|Language|StubUserLang|null $lang Language to use for processing messages
 	 * @return Message
 	 */
 	protected function getErrorMessage( $error, $lang = null ) {
@@ -319,10 +370,10 @@ class Status extends StatusValue {
 
 	/**
 	 * Get the error message as HTML. This is done by parsing the wikitext error message
-	 * @param string|bool $shortContext A short enclosing context message name, to
+	 * @param string|false $shortContext A short enclosing context message name, to
 	 *        be used when there is a single error
-	 * @param string|bool $longContext A long enclosing context message name, for a list
-	 * @param string|Language|null $lang Language to use for processing messages
+	 * @param string|false $longContext A long enclosing context message name, for a list
+	 * @param string|Language|StubUserLang|null $lang Language to use for processing messages
 	 * @return string
 	 */
 	public function getHTML( $shortContext = false, $longContext = false, $lang = null ) {
@@ -337,7 +388,7 @@ class Status extends StatusValue {
 	/**
 	 * Return an array with a Message object for each error.
 	 * @param array $errors
-	 * @param string|Language|null $lang Language to use for processing messages
+	 * @param string|Language|StubUserLang|null $lang Language to use for processing messages
 	 * @return Message[]
 	 */
 	protected function getErrorMessageArray( $errors, $lang = null ) {

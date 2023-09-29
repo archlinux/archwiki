@@ -21,6 +21,7 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
 
 /**
@@ -253,7 +254,7 @@ class SpecialRedirect extends FormSpecialPage {
 			// so varnish cache.
 			$value = $status->getValue();
 			if ( is_array( $value ) ) {
-				list( $url, $code ) = $value;
+				[ $url, $code ] = $value;
 			} else {
 				$url = $value;
 				$code = 301;
@@ -329,13 +330,9 @@ class SpecialRedirect extends FormSpecialPage {
 	}
 
 	protected function alterForm( HTMLForm $form ) {
-		/* display summary at top of page */
-		$this->outputHeader();
 		// tweak label on submit button
 		// Message: redirect-submit
 		$form->setSubmitTextMsg( $this->getMessagePrefix() . '-submit' );
-		/* submit form every time */
-		$form->setMethod( 'get' );
 	}
 
 	protected function getDisplayFormat() {
@@ -360,14 +357,7 @@ class SpecialRedirect extends FormSpecialPage {
 	/**
 	 * @return bool
 	 */
-	public function requiresWrite() {
-		return false;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function requiresUnblock() {
+	public function requiresPost() {
 		return false;
 	}
 

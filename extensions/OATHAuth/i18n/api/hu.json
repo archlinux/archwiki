@@ -10,7 +10,5 @@
 	"apihelp-query+oath-example-2": "Információk az <kbd>Example</kbd> felhasználóról.",
 	"apihelp-oathvalidate-description": "Kétlépcsős hitelesítés (OATH) tokenjének érvényesítése.",
 	"apihelp-oathvalidate-param-user": "A felhasználó, akinek a tokenjét érvényesíteni szeretnéd, alapértelmezetten az aktuális felhasználó.",
-	"apihelp-oathvalidate-param-totp": "Kétlépcsős azonosítás (OATH) tokenje.",
-	"apihelp-oathvalidate-example-1": "Egy token érvényesítése az aktuális felhasználónak",
-	"apihelp-oathvalidate-example-2": "Egy token érvényesítése az <kbd>Example</kbd> felhasználónak"
+	"apihelp-oathvalidate-example-1": "Egy token érvényesítése az aktuális felhasználónak"
 }

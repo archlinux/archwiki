@@ -34,6 +34,7 @@
 	"vector-search-loader": "Zvikarakadzo zvatsvagwa zvirikurayichwa.",
 	"vector-searchsuggest-containing": "Tsvaga mazanhi ane <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Musumo",
+	"vector-toc-label": "Zvirozvemo",
 	"vector-toc-beginning": "Pekutanga",
 	"vector-toc-toggle-button-label": "Hlogora $1 chikamuzasi",
 	"vector-anon-user-menu-pages": "Mazanhi evachinjirudzi vakabuda",
@@ -43,6 +44,16 @@
 	"vector-toc-menu-tooltip": "Tafura ye zvirozvemo",
 	"vector-toc-collapsible-button-label": "Hlogora tafura ye zvirozvemo",
 	"vector-site-nav-label": "Sayiti",
+	"vector-main-menu-label": "Nhorongoshwa huru",
+	"vector-limited-width-toggle": "Hlogora hupamhi hwezvirozvemo zvakaganhukwa",
+	"vector-page-tools-label": "Maturusi",
+	"vector-page-tools-general-label": "Chikumbi",
+	"vector-page-tools-actions-label": "Zviito",
+	"vector-pin-element-label": "chichinura kubhaaredivi",
+	"vector-unpin-element-label": "viga",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Hurukuro]]",
-	"tooltip-vector-anon-user-menu-title": "Zvimwe zvisarudzo"
+	"tooltip-vector-anon-user-menu-title": "Zvimwe zvisarudzo",
+	"vector-prefs-limited-width": "Baridza mashandiro ehupamhi hwakaganhuka",
+	"vector-prefs-limited-width-help": "Baridza mashandiro ehupamhi hwakaganhuka kuti kuwerenga kwako kuve kurinani.",
+	"empty-language-selector-body": "Zvirozvemo zvezanhi hazvitsigirwe mumimwe mitauro."
 }

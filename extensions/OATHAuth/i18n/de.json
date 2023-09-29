@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"Hwboehm",
 			"Inkowik",
 			"Kghbln",
@@ -10,8 +11,7 @@
 			"MuratTheTurkish",
 			"Sushi",
 			"Umherirrender",
-			"Wnme",
-			"Brettchenweber"
+			"Wnme"
 		]
 	},
 	"oathauth-desc": "Ermöglicht die Authentifizierung mit HMAC-gestützten Einmalpasswörtern",

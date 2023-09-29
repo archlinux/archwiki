@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Андрей Саг.",
-			"AlexandrL714"
+			"AlexandrL714",
+			"Андрей Саг."
 		]
 	},
 	"vector-languages": "Тіллер",
@@ -17,5 +17,8 @@
 	"vector-view-history": "Кӧрігтердің тархыны",
 	"vector-view-view": "Хығырарға",
 	"vector-more-actions": "Хоза",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> страницаларны тілег"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> страницаларны тілег",
+	"vector-page-tools-label": "Тиріглер",
+	"vector-page-tools-general-label": "Пір тиксі",
+	"vector-unpin-element-label": "чазырарға"
 }

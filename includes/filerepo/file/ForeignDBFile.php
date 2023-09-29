@@ -19,6 +19,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\DBUnexpectedError;
 
@@ -30,7 +31,7 @@ use Wikimedia\Rdbms\DBUnexpectedError;
 class ForeignDBFile extends LocalFile {
 
 	/**
-	 * @return ForeignDBRepo|bool
+	 * @return ForeignDBRepo|false
 	 */
 	public function getRepo() {
 		return $this->repo;
@@ -96,7 +97,7 @@ class ForeignDBFile extends LocalFile {
 			return false;
 		}
 
-		$lang = $lang ?? $wgLang;
+		$lang ??= $wgLang;
 		$renderUrl = $this->repo->getDescriptionRenderUrl( $this->getName(), $lang->getCode() );
 		if ( !$renderUrl ) {
 			return false;

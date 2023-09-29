@@ -664,6 +664,7 @@
 		"fun_infix": true
 	},
 	"\\circ": {
+		"mhchem_single_macro": true,
 		"nullary_macro": true
 	},
 	"\\circeq": {

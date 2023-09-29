@@ -22,13 +22,20 @@
  */
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Feed\FeedItem;
+use MediaWiki\Html\FormOptions;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\GroupPermissionsLookup;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserOptionsLookup;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -72,6 +79,9 @@ class SpecialNewpages extends IncludableSpecialPage {
 	/** @var UserOptionsLookup */
 	private $userOptionsLookup;
 
+	/** @var CommentFormatter */
+	private $commentFormatter;
+
 	/**
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param CommentStore $commentStore
@@ -81,6 +91,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 	 * @param RevisionLookup $revisionLookup
 	 * @param NamespaceInfo $namespaceInfo
 	 * @param UserOptionsLookup $userOptionsLookup
+	 * @param CommentFormatter $commentFormatter
 	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
@@ -90,7 +101,8 @@ class SpecialNewpages extends IncludableSpecialPage {
 		ILoadBalancer $loadBalancer,
 		RevisionLookup $revisionLookup,
 		NamespaceInfo $namespaceInfo,
-		UserOptionsLookup $userOptionsLookup
+		UserOptionsLookup $userOptionsLookup,
+		CommentFormatter $commentFormatter
 	) {
 		parent::__construct( 'Newpages' );
 		$this->linkBatchFactory = $linkBatchFactory;
@@ -101,6 +113,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 		$this->revisionLookup = $revisionLookup;
 		$this->namespaceInfo = $namespaceInfo;
 		$this->userOptionsLookup = $userOptionsLookup;
+		$this->commentFormatter = $commentFormatter;
 	}
 
 	/**
@@ -371,7 +384,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 			)
 			->setSubmitTextMsg( 'newpages-submit' )
 			->setWrapperLegendMsg( 'newpages' )
-			->addFooterText( Html::rawElement(
+			->addFooterHtml( Html::rawElement(
 				'div',
 				[],
 				$this->filterLinks()
@@ -469,7 +482,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 		);
 
 		$ulink = Linker::revUserTools( $revRecord );
-		$comment = Linker::revComment( $revRecord );
+		$comment = $this->commentFormatter->formatRevision( $revRecord, $this->getAuthority() );
 
 		if ( $this->patrollable( $result ) ) {
 			$classes[] = 'not-patrolled';
@@ -482,7 +495,7 @@ class SpecialNewpages extends IncludableSpecialPage {
 
 		# Tags, if any.
 		if ( isset( $result->ts_tags ) ) {
-			list( $tagDisplay, $newClasses ) = ChangeTags::formatSummaryRow(
+			[ $tagDisplay, $newClasses ] = ChangeTags::formatSummaryRow(
 				$result->ts_tags,
 				'newpages',
 				$this->getContext()

@@ -1,18 +1,22 @@
 {
 	"@metadata": {
 		"authors": [
-			"Zolgoyo"
+			"Zolgoyo",
+			"Amire80"
 		]
 	},
-	"vector-languages": "Tĭller",
-	"vector-language-button-label": "{{PLURAL:$1|tĭl}}",
-	"vector-no-language-button-label": "Tĭl qoş",
-	"vector-action-addsection": "Mewzu qoş",
-	"vector-action-delete": "Yoq et",
-	"vector-action-move": "Adını degĭştĭr",
-	"vector-action-protect": "Qolla",
+	"vector-languages": "Tíller",
+	"vector-language-button-label": "{{PLURAL:$1|$1 tíl}}",
+	"vector-no-language-button-label": "Tíl koş",
+	"vector-action-addsection": "Mewzu koş",
+	"vector-action-delete": "Yok et",
+	"vector-action-move": "Atînî degíştír",
+	"vector-action-protect": "Kolla",
 	"vector-view-create": "Yarat",
-	"vector-view-history": "Keşmĭş",
-	"vector-more-actions": "Taa köp",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ĭşergen saypalardı qıdır"
+	"vector-view-history": "Keşmíş",
+	"vector-more-actions": "Taa kóp",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> íşergen sayipalardî kîdîr",
+	"vector-page-tools-label": "Aletler",
+	"vector-page-tools-general-label": "Genel",
+	"vector-unpin-element-label": "gízle"
 }

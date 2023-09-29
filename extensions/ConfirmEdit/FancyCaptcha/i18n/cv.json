@@ -1,8 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Chuvash2014"
+			"Chuvash2014",
+			"Astahar"
 		]
 	},
+	"fancycaptcha-captcha": "Хӑрушсӑрлӑха тӗрӗслени",
+	"fancycaptcha-accountcreate": "Автоматизациленӗ регистрацирен хӳтӗленӗ май аяларах вырнаҫнӑ рамкӑри сӑмахсене кӗртме ыйтатпӑр ([[Special:Captcha/help|тӗплӗрех]]):",
+	"fancycaptcha-imgcaptcha-ph": "Картинка ҫине курӑнакан текста кӗртӗр",
 	"fancycaptcha-reload-text": "Çĕнет"
 }

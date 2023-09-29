@@ -136,7 +136,6 @@
 	"visualeditor-dialog-transclusion-loading": "Загрузка…",
 	"visualeditor-dialog-transclusion-no-template-description": "Шаблён «$1» яшчэ ня мае апісаньня, але некаторыя зьвесткі могуць утрымлівацца на [[$2|старонцы шаблёну]].",
 	"visualeditor-dialog-transclusion-param-default": "Дапомна: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Дадаць шаблён",
 	"visualeditor-dialog-transclusion-required-parameter": "Абавязковае поле",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Поле зьяўляецца абавязковым.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Вярнуцца",

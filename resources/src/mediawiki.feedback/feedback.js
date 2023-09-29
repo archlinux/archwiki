@@ -44,8 +44,6 @@
 	 *  title of the dialog box
 	 * @cfg {mw.Uri|string} [bugsLink="//phabricator.wikimedia.org/maniphest/task/edit/form/1/"] URL where
 	 *  bugs can be posted
-	 * @cfg {mw.Uri|string} [bugsListLink="//phabricator.wikimedia.org/maniphest/query/advanced"] URL
-	 *  where bugs can be listed
 	 * @cfg {boolean} [showUseragentCheckbox=false] Show a Useragent agreement checkbox as part of the form.
 	 * @cfg {boolean} [useragentCheckboxMandatory=false] Make the Useragent checkbox mandatory.
 	 * @cfg {string|jQuery} [useragentCheckboxMessage] Supply a custom message for the useragent checkbox.
@@ -64,13 +62,12 @@
 
 		// Links
 		this.bugsTaskSubmissionLink = config.bugsLink || '//phabricator.wikimedia.org/maniphest/task/edit/form/1/';
-		this.bugsTaskListLink = config.bugsListLink || '//phabricator.wikimedia.org/maniphest/query/advanced';
 
 		// Terms of use
 		this.useragentCheckboxShow = !!config.showUseragentCheckbox;
 		this.useragentCheckboxMandatory = !!config.useragentCheckboxMandatory;
 		this.useragentCheckboxMessage = config.useragentCheckboxMessage ||
-			$( '<p>' ).append( mw.msg( 'feedback-terms' ) );
+			$( '<p>' ).append( mw.message( 'feedback-terms' ).parseDom() );
 
 		// Message dialog
 		this.thankYouDialog = new OO.ui.MessageDialog();
@@ -172,7 +169,6 @@
 					title: this.feedbackPageTitle,
 					dialogTitleMessageKey: this.dialogTitleMessageKey,
 					bugsTaskSubmissionLink: this.bugsTaskSubmissionLink,
-					bugsTaskListLink: this.bugsTaskListLink,
 					useragentCheckbox: {
 						show: this.useragentCheckboxShow,
 						mandatory: this.useragentCheckboxMandatory,

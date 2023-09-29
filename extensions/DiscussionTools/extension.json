@@ -1,0 +1,584 @@
+{
+	"name": "DiscussionTools",
+	"license-name": "MIT",
+	"version": "0.0.0",
+	"url": "https://www.mediawiki.org/wiki/Extension:DiscussionTools",
+	"namemsg": "discussiontools",
+	"descriptionmsg": "discussiontools-desc",
+	"manifest_version": 2,
+	"requires": {
+		"MediaWiki": ">= 1.40.0",
+		"extensions": {
+			"VisualEditor": ">= 0.1.2",
+			"Linter": "*"
+		}
+	},
+	"MessagesDirs": {
+		"DiscussionTools": [
+			"i18n",
+			"i18n/api"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"DiscussionToolsAlias": "DiscussionTools.alias.php"
+	},
+	"callback": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\RegistrationHooks::onRegistration",
+	"ResourceFileModulePaths": {
+		"localBasePath": "modules",
+		"remoteExtPath": "DiscussionTools/modules"
+	},
+	"ResourceModules": {
+		"ext.discussionTools.init.styles": {
+			"styles": "dt.init.less",
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		},
+		"ext.discussionTools.init": {
+			"packageFiles": [
+				"dt.init.js",
+				"controller.js",
+				"highlighter.js",
+				"topicsubscriptions.js",
+				"mobile.js",
+				"LedeSectionDialog.js",
+				{
+					"name": "controller/contLangMessages.json",
+					"callback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getContentLanguageMessages",
+					"callbackParam": [
+						"discussiontools-defaultsummary-reply",
+						"newsectionsummary",
+						"discussiontools-replywidget-feedback-link",
+						"discussiontools-replywidget-feedback-link-newtopic",
+						"discussiontools-replywidget-mention-prefix",
+						"discussiontools-replywidget-mention-suffix"
+					]
+				},
+				{
+					"name": "config.json",
+					"config": {
+						"enable": "DiscussionToolsEnable",
+						"replyIndentation": "DiscussionToolsReplyIndentation",
+						"switchTime": "DiscussionToolsTimestampFormatSwitchTime",
+						"showFeedbackLinks": "DiscussionToolsShowFeedbackLinks"
+					}
+				},
+				"ReplyLinksController.js",
+				"CommentController.js",
+				"NewTopicController.js",
+				"logger.js",
+				"modifier.js",
+				"utils.js",
+				"Parser.js",
+				"ThreadItemSet.js",
+				"ThreadItem.js",
+				"CommentItem.js",
+				"HeadingItem.js",
+				"CommentDetails.js",
+				"createMemoryStorage.js",
+				"lib/moment-timezone/moment-timezone-with-data-1970-2030.js",
+				{
+					"name": "parser/data.json",
+					"callback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getLocalData"
+				}
+			],
+			"styles": [
+				"dt.ui.NewTopicController.less"
+			],
+			"dependencies": [
+				"ext.discussionTools.init.styles",
+				"web2017-polyfills",
+				"moment",
+				"rangefix",
+				"oojs-ui-windows",
+				"mediawiki.api",
+				"mediawiki.Title",
+				"mediawiki.util",
+				"mediawiki.storage",
+				"mediawiki.String",
+				"mediawiki.user",
+				"ext.visualEditor.core.utils.parsing"
+			],
+			"messages": [
+				"discussiontools-postedit-confirmation-published",
+				"discussiontools-postedit-confirmation-topicadded",
+				"discussiontools-autotopicsubpopup-title",
+				"discussiontools-autotopicsubpopup-body",
+				"discussiontools-autotopicsubpopup-dismiss",
+				"discussiontools-autotopicsubpopup-preferences",
+				"discussiontools-error-comment-conflict",
+				"discussiontools-error-comment-disappeared",
+				"discussiontools-error-comment-disappeared-reload",
+				"discussiontools-error-comment-not-saved",
+				"discussiontools-error-comment-is-transcluded",
+				"discussiontools-error-comment-is-transcluded-title",
+				"discussiontools-error-lint",
+				"discussiontools-error-noswitchtove",
+				"discussiontools-error-noswitchtove-extension",
+				"discussiontools-error-noswitchtove-table",
+				"discussiontools-error-noswitchtove-template",
+				"discussiontools-error-noswitchtove-title",
+				"discussiontools-ledesection-title",
+				"discussiontools-newtopic-legacy-hint",
+				"discussiontools-newtopic-placeholder-title",
+				"discussiontools-newtopic-missing-title",
+				"discussiontools-pagetitle-newtopic",
+				"discussiontools-pagetitle-reply",
+				"discussiontools-replylink",
+				"discussiontools-replywidget-loading",
+				"discussiontools-replywidget-watchthis",
+				"discussiontools-target-comment-missing",
+				"discussiontools-target-comments-missing",
+				"discussiontools-topicsubscription-button-subscribe",
+				"discussiontools-topicsubscription-button-subscribe-label",
+				"discussiontools-topicsubscription-button-subscribe-tooltip",
+				"discussiontools-topicsubscription-button-unsubscribe",
+				"discussiontools-topicsubscription-button-unsubscribe-label",
+				"discussiontools-topicsubscription-button-unsubscribe-tooltip",
+				"discussiontools-topicsubscription-notify-subscribed-body",
+				"discussiontools-topicsubscription-notify-subscribed-title",
+				"discussiontools-topicsubscription-notify-unsubscribed-body",
+				"discussiontools-topicsubscription-notify-unsubscribed-title",
+				"minerva-talk-full-page",
+				"pagetitle",
+				"skin-view-edit"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		},
+		"ext.discussionTools.debug": {
+			"packageFiles": [
+				"dt.debug.js",
+				"debughighlighter.js"
+			],
+			"styles": "debughighlighter.less",
+			"dependencies": [
+				"ext.discussionTools.init"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		},
+		"ext.discussionTools.ReplyWidget": {
+			"packageFiles": [
+				"dt.ui.ReplyWidget.js",
+				"ModeTabSelectWidget.js",
+				"ModeTabOptionWidget.js",
+				"AbandonCommentDialog.js",
+				"AbandonTopicDialog.js",
+				{
+					"name": "licenseMessages.json",
+					"callback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getTermsOfUseMessagesParsed",
+					"versionCallback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getTermsOfUseMessagesVersion"
+				}
+			],
+			"styles": [
+				"dt.ui.ReplyWidget.less"
+			],
+			"messages": [
+				"discussiontools-replywidget-abandon",
+				"discussiontools-replywidget-abandon-discard",
+				"discussiontools-replywidget-abandon-keep",
+				"discussiontools-replywidget-abandontopic",
+				"discussiontools-replywidget-abandontopic-discard",
+				"discussiontools-replywidget-abandontopic-keep",
+				"discussiontools-replywidget-advanced",
+				"discussiontools-replywidget-anon-warning",
+				"discussiontools-replywidget-cancel",
+				"discussiontools-replywidget-feedback",
+				"discussiontools-replywidget-mention-tool-header",
+				"discussiontools-replywidget-mention-tool-title",
+				"discussiontools-replywidget-mode-source",
+				"discussiontools-replywidget-mode-visual",
+				"discussiontools-replywidget-newcomments-button",
+				"discussiontools-replywidget-newtopic",
+				"discussiontools-replywidget-placeholder-newtopic",
+				"discussiontools-replywidget-placeholder-reply",
+				"discussiontools-replywidget-preferences",
+				"discussiontools-replywidget-preview",
+				"discussiontools-replywidget-publish-accesskey",
+				"discussiontools-replywidget-reply",
+				"discussiontools-replywidget-return-to-newtopic",
+				"discussiontools-replywidget-return-to-reply",
+				"discussiontools-replywidget-summary",
+				"discussiontools-replywidget-transcluded",
+				"ooui-popup-widget-close-button-aria-label",
+				"visualeditor-key-ctrl",
+				"visualeditor-key-enter",
+				"visualeditor-key-escape",
+				"visualeditor-mweditmode-tooltip"
+			],
+			"dependencies": [
+				"oojs-ui-widgets",
+				"oojs-ui.styles.indicators",
+				"ext.discussionTools.init",
+				"mediawiki.widgets.AbandonEditDialog",
+				"mediawiki.widgets.visibleLengthLimit"
+			],
+			"optionalDependencies": {
+				"ConfirmEdit": "ext.confirmEdit.CaptchaInputWidget"
+			},
+			"factory": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::addOptionalDependencies",
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		},
+		"ext.discussionTools.ReplyWidgetPlain": {
+			"packageFiles": [
+				"dt.ui.ReplyWidgetPlain.js"
+			],
+			"dependencies": [
+				"ext.discussionTools.ReplyWidget",
+				"mediawiki.editfont.styles",
+				"mediawiki.user",
+				"mediawiki.jqueryMsg",
+				"ext.visualEditor.switching"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		},
+		"ext.discussionTools.ReplyWidgetVisual": {
+			"packageFiles": [
+				"dt.ui.ReplyWidgetVisual.js",
+				"dt-ve/CommentTarget.js",
+				"dt-ve/CommentTargetWidget.js",
+				"dt-ve/dt.dm.MWSignatureNode.js",
+				"dt-ve/dt.ce.MWSignatureNode.js",
+				"dt-ve/dt.ui.MWSignatureContextItem.js",
+				"dt-ve/dt.ui.registries.js",
+				"dt-ve/dt.ui.UsernameCompletionAction.js",
+				"dt-ve/dt.ui.UsernameCompletionTool.js",
+				"dt-ve/dt.dm.PingNode.js",
+				"dt-ve/dt.ce.PingNode.js"
+			],
+			"styles": [
+				"dt-ve/CommentTargetWidget.less"
+			],
+			"messages": [
+				"discussiontools-replywidget-signature-title",
+				"discussiontools-replywidget-signature-body"
+			],
+			"dependencies": [
+				"ext.discussionTools.ReplyWidget",
+				"ext.visualEditor.mwcore",
+				"ext.visualEditor.mwsignature",
+				"ext.visualEditor.mwwikitext",
+				"ext.visualEditor.articleTarget"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		}
+	},
+	"QUnitTestModule": {
+		"localBasePath": "tests",
+		"remoteExtPath": "DiscussionTools/tests",
+		"packageFiles": [
+			"qunit/index.js",
+			"qunit/testUtils.js",
+			{
+				"name": "data-en.json",
+				"callback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getLocalData",
+				"callbackParam": "en"
+			},
+			"qunit/utils.test.js",
+			"qunit/modifier.test.js",
+			"qunit/parser.test.js",
+			"qunit/ThreadItem.test.js"
+		],
+		"testData": [
+			"cases/authors.json",
+			"cases/comments.json",
+			"cases/modified.json",
+			"cases/reply.json",
+			"cases/unwrap.json",
+			"cases/linearWalk.json",
+			"cases/sanitize-wikitext-linebreaks.json",
+			"cases/timestamp-regex.json",
+			"cases/timestamp-parser.json",
+			"cases/timestamp-parser-dst.json"
+		],
+		"factory": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::makeTestModule",
+		"dependencies": [
+			"ext.discussionTools.init"
+		]
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\DiscussionTools\\": "includes/"
+	},
+	"TestAutoloadNamespaces": {
+		"MediaWiki\\Extension\\DiscussionTools\\Tests\\Unit\\": "tests/phpunit/unit/",
+		"MediaWiki\\Extension\\DiscussionTools\\Tests\\": "tests/phpunit/"
+	},
+	"APIModules": {
+		"discussiontoolscompare": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\ApiDiscussionToolsCompare",
+			"services": [
+				"VisualEditor.ParsoidClientFactory",
+				"DiscussionTools.CommentParser",
+				"RevisionLookup"
+			]
+		},
+		"discussiontoolsedit": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\ApiDiscussionToolsEdit",
+			"services": [
+				"VisualEditor.ParsoidClientFactory",
+				"DiscussionTools.CommentParser",
+				"DiscussionTools.SubscriptionStore",
+				"SkinFactory",
+				"ConfigFactory",
+				"RevisionLookup"
+			]
+		},
+		"discussiontoolsgetsubscriptions": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\ApiDiscussionToolsGetSubscriptions",
+			"services": [
+				"DiscussionTools.SubscriptionStore",
+				"ConfigFactory"
+			]
+		},
+		"discussiontoolspageinfo": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\ApiDiscussionToolsPageInfo",
+			"services": [
+				"VisualEditor.ParsoidClientFactory",
+				"DiscussionTools.CommentParser",
+				"RevisionLookup"
+			]
+		},
+		"discussiontoolspreview": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\ApiDiscussionToolsPreview",
+			"services": [
+				"VisualEditor.ParsoidClientFactory",
+				"DiscussionTools.CommentParser",
+				"SkinFactory"
+			]
+		},
+		"discussiontoolssubscribe": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\ApiDiscussionToolsSubscribe",
+			"services": [
+				"DiscussionTools.SubscriptionStore",
+				"ConfigFactory"
+			]
+		}
+	},
+	"SpecialPages": {
+		"TopicSubscriptions": {
+			"class": "\\MediaWiki\\Extension\\DiscussionTools\\SpecialTopicSubscriptions",
+			"services": [
+				"LinkRenderer",
+				"LinkBatchFactory"
+			]
+		},
+		"FindComment": {
+			"class": "\\MediaWiki\\Extension\\DiscussionTools\\SpecialFindComment",
+			"services": [
+				"DiscussionTools.ThreadItemStore",
+				"DiscussionTools.ThreadItemFormatter"
+			]
+		},
+		"GoToComment": {
+			"class": "\\MediaWiki\\Extension\\DiscussionTools\\SpecialGoToComment",
+			"services": [
+				"DiscussionTools.ThreadItemStore"
+			]
+		}
+	},
+	"Hooks": {
+		"BeforeCreateEchoEvent": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\EchoHooks::onBeforeCreateEchoEvent",
+		"EchoGetBundleRules": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\EchoHooks::onEchoGetBundleRules",
+		"EchoGetEventsForRevision": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\EchoHooks::onEchoGetEventsForRevision",
+		"MinervaNeueTalkPageOverlay": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\MobileHooks::onMinervaNeueTalkPageOverlay",
+		"RevisionDataUpdates": "dataupdates",
+		"LoadExtensionSchemaUpdates": "installer",
+		"ParserAfterTidy": "parser",
+		"BeforeDisplayNoArticleText": "page",
+		"BeforePageDisplay": "page",
+		"GetActionName": "page",
+		"OutputPageBeforeHTML": "page",
+		"OutputPageParserOutput": "page",
+		"TitleGetEditNotices": "page",
+		"ResourceLoaderGetConfigVars": "resourceloader",
+		"GetBetaFeaturePreferences": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\PreferenceHooks::onGetBetaFeaturePreferences",
+		"GetPreferences": "preferences",
+		"LocalUserCreated": "preferences",
+		"ChangeTagsListActive": "tags",
+		"ListDefinedTags": "tags",
+		"RecentChange_save": "tags"
+	},
+	"HookHandlers": {
+		"dataupdates": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\DataUpdatesHooks",
+			"services": [
+				"DiscussionTools.ThreadItemStore"
+			]
+		},
+		"installer": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\InstallerHooks"
+		},
+		"page": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\PageHooks",
+			"services": [
+				"ConfigFactory",
+				"DiscussionTools.SubscriptionStore",
+				"UserNameUtils",
+				"UserOptionsLookup"
+			]
+		},
+		"parser": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\ParserHooks",
+			"services": [
+				"ConfigFactory"
+			]
+		},
+		"preferences": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\PreferenceHooks",
+			"services": [
+				"ConfigFactory",
+				"LinkRenderer"
+			]
+		},
+		"resourceloader": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\ResourceLoaderHooks",
+			"services": [
+				"ConfigFactory"
+			]
+		},
+		"tags": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\TagHooks"
+		}
+	},
+	"Actions": {
+		"dtunsubscribe": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Actions\\UnsubscribeAction",
+			"services": [
+				"DiscussionTools.SubscriptionStore"
+			]
+		}
+	},
+	"LateJSConfigVarNames": [
+		"wgDiscussionToolsPageThreads"
+	],
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
+	],
+	"DefaultUserOptions": {
+		"discussiontools-betaenable": 0,
+		"discussiontools-editmode": "",
+		"discussiontools-newtopictool": 1,
+		"discussiontools-newtopictool-createpage": 1,
+		"discussiontools-replytool": 1,
+		"discussiontools-sourcemodetoolbar": 1,
+		"discussiontools-topicsubscription": 1,
+		"discussiontools-autotopicsub": 1,
+		"discussiontools-visualenhancements": 1
+	},
+	"config": {
+		"DiscussionToolsEnable": {
+			"value": true,
+			"description": "Enable DiscussionTools on talk pages."
+		},
+		"DiscussionToolsBeta": {
+			"value": false,
+			"description": "Make DiscussionTools a BetaFeature."
+		},
+		"DiscussionToolsABTest": {
+			"value": false,
+			"description": "A/B test DiscussionTools features for logged in users. false, 'replytool', 'newtopictool', or 'mobile'"
+		},
+		"DiscussionToolsEnableMobile": {
+			"value": true,
+			"description": "Enable DiscussionTools on mobile talk pages. Currently this automatically enables 'replytool', 'newtopictool' & 'sourcemodetoolbar' on those pages and disables topic subscriptions on those pages."
+		},
+		"DiscussionTools_replytool": {
+			"value": "default",
+			"description": "Override availability of DiscussionTools reply tool. 'default', 'available', or 'unavailable'."
+		},
+		"DiscussionTools_newtopictool": {
+			"value": "default",
+			"description": "Override availability of DiscussionTools new topic tool. 'default', 'available', or 'unavailable'."
+		},
+		"DiscussionTools_sourcemodetoolbar": {
+			"value": "default",
+			"description": "Enable the toolbar in source mode for the reply tool and new topic tool. 'default', 'available', or 'unavailable'."
+		},
+		"DiscussionTools_topicsubscription": {
+			"value": "default",
+			"description": "Override availability of DiscussionTools topic subscription feature. 'default', 'available', or 'unavailable'."
+		},
+		"DiscussionTools_autotopicsub": {
+			"value": "default",
+			"description": "Override availability of DiscussionTools automatic topic subscription feature. 'default', 'available', or 'unavailable'."
+		},
+		"DiscussionTools_visualenhancements": {
+			"value": "default",
+			"description": "Override availability of DiscussionTools visual enhancements. 'default', 'available', or 'unavailable'."
+		},
+		"DiscussionTools_visualenhancements_pageframe": {
+			"value": "default",
+			"description": "Override availability of DiscussionTools visual enhancements's page frame sub-feature. 'default', 'available', or 'unavailable'."
+		},
+		"DiscussionTools_visualenhancements_reply": {
+			"value": "default",
+			"description": "Override availability of DiscussionTools visual enhancements's reply buttons sub-feature. 'default', 'available', or 'unavailable'."
+		},
+		"DiscussionTools_visualenhancements_reply_icon_languages": {
+			"value": [
+				"ar",
+				"zh",
+				"yue",
+				"ja",
+				"nod"
+			],
+			"description": "A list of language codes which will receive an icon in their enhanced reply-button treatment",
+			"merge_strategy": "provide_default"
+		},
+		"DiscussionToolsEnablePermalinksBackend": {
+			"value": true,
+			"description": "Enable the permalinks backend. Do not enable this unless the database tables exist."
+		},
+		"DiscussionToolsAutoTopicSubEditor": {
+			"value": "discussiontoolsapi",
+			"description": "Editor which triggers automatic topic subscriptions. Either 'discussiontoolsapi' for edits made using DiscussionTools' API (e.g. reply and new topic tools), or 'any' for any editor."
+		},
+		"DiscussionToolsTalkPageParserCacheExpiry": {
+			"value": 0,
+			"description": "Override $wgParserCacheExpireTime for discussion pages, regardless of DiscussionTools enablement."
+		},
+		"DiscussionToolsReplyIndentation": {
+			"value": "invisible",
+			"description": "Reply indentation syntax to use: 'invisible' (use `<dl><dd>` tags to output `:` in wikitext) or 'bullet' (use `<ul><li>` tags to output `*` in wikitext)."
+		},
+		"DiscussionToolsShowFeedbackLinks": {
+			"value": false,
+			"description": "Show 'Share feedback...' links in the footer of reply tool and new topic tool."
+		},
+		"DiscussionToolsTimestampFormatSwitchTime": {
+			"value": "2022-07-12",
+			"description": "Date on which the internal timestamp format has changed (T304595), in ISO 8601 format."
+		},
+		"DiscussionToolsConflictingGadgetName": {
+			"value": "convenientDiscussions",
+			"description": "Internal name of the Convenient Discussions gadget, which conflicts with the reply tool. Reply tool will be unavailable when the user has this gadget enabled."
+		},
+		"DTSchemaEditAttemptStepSamplingRate": {
+			"value": 0,
+			"description": "Rate at which to sample sessions for instrumentation; overrides WikimediaEvents rate if set to any number other than 0"
+		},
+		"DTSchemaEditAttemptStepOversample": {
+			"value": false,
+			"description": "Oversample EditAttemptStep logging; distinct from rate tuning, as it'll flag the events as being oversampled"
+		}
+	},
+	"ConfigRegistry": {
+		"discussiontools": "GlobalVarConfig::newInstance"
+	},
+	"type": "other"
+}

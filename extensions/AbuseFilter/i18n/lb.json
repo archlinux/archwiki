@@ -6,7 +6,8 @@
 			"Robby",
 			"Soued031",
 			"Talex42",
-			"Volvox"
+			"Volvox",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Applizéiert automatesch Heuristiken op Ännerungen",
@@ -134,7 +135,7 @@
 	"abusefilter-edit-subtitle": "Ännere vum Filter $1",
 	"abusefilter-edit-subtitle-new": "Filter uleeën",
 	"abusefilter-edit-token-not-match": "D'Ännerung gouf net gespäichert! Späichert et wgl. nach eng Kéier.",
-	"abusefilter-edit-oldwarning": "<strong>Dir sidd am Gaang eng al Versioun vum Filter z'änneren.\nD'Statistike sinn déi vun der leschter Versioun vum Filter.\nWann Dir Är Ännerunge späichert dann iwwerschreiwt Dir all Ännerungen zënter der Versioun déi Dir elo ännert. </strong> &bull;\n[[Special:AbuseFilter/history/$2|Zréck op d'Versiounsgeschicht vun  dësem Filter]].",
+	"abusefilter-edit-oldwarning": "<strong>Dir sidd am Gaang eng al Versioun vum Filter z'änneren.\nD'Statistike sinn déi vun der leschter Versioun vum Filter.\nWann Dir Är Ännerunge späichert dann iwwerschreiwt Dir all Ännerungen zënter der Versioun déi Dir elo ännert. </strong> &bull;\n[[Special:AbuseFilter/history/$2|Zréck op d'Versiounsgeschicht vun dësem Filter]].",
 	"abusefilter-edit-status-label": "Statistiken:",
 	"abusefilter-edit-status": "Dëse Filter huet bei {{PLURAL:$1|der leschter Aktioun|de leschte(n) $1 Aktiounen}}, $2 mol ($3%) ugeschloen.\nAm Duerchschnëtt leeft en $4 Milli-Sekonnen an e benotzt {{PLURAL:$5|eng Konditioun|$5 Konditioune}} vun der Konditiouns-Limite.",
 	"abusefilter-edit-new": "Neie Filter",
@@ -218,7 +219,7 @@
 	"abusefilter-edit-builder-op-arithmetic-pow": "Potenz (**)",
 	"abusefilter-edit-builder-group-op-comparison": "Operateure fir ze vergläichen",
 	"abusefilter-edit-builder-op-comparison-equal": "Wäert selwecht wéi (==)",
-	"abusefilter-edit-builder-op-comparison-equal-strict": "Wäert an Typ deselwechte wéi  (!==)",
+	"abusefilter-edit-builder-op-comparison-equal-strict": "Wäert an Typ deselwechte wéi (!==)",
 	"abusefilter-edit-builder-op-comparison-notequal": "Wäert verschidde vun (!=)",
 	"abusefilter-edit-builder-op-comparison-notequal-strict": "Wäert an Typ verschidde vu(n) (!==)",
 	"abusefilter-edit-builder-op-comparison-lt": "Manner wéi (<)",
@@ -414,7 +415,7 @@
 	"abusefilter-diff-backhistory": "Zréck op d'Lëscht vun de Versioune vum Filter",
 	"abusefilter-diff-prev": "Méi al Ännerung",
 	"abusefilter-diff-next": "Méi nei Ännerung",
-	"abusefilter-import-intro": "Dir kënnt dësen Interface benotze fir Filtere vun anere Wikien z'importéieren.\nKlickt op der originaler Wiki op \"{{int:abusefilter-edit-export}}\"  ënner \"{{int:abusefilter-edit-tools}}\" op dem Interface vun den Ännerungen.\nKopéiert vun der Textkëscht déi opgeet an dës Textkëscht a klickt op \"{{int:abusefilter-import-submit}}\",",
+	"abusefilter-import-intro": "Dir kënnt dësen Interface benotze fir Filtere vun anere Wikien z'importéieren.\nKlickt op der originaler Wiki op \"{{int:abusefilter-edit-export}}\" ënner \"{{int:abusefilter-edit-tools}}\" op dem Interface vun den Ännerungen.\nKopéiert vun der Textkëscht déi opgeet an dës Textkëscht a klickt op \"{{int:abusefilter-import-submit}}\",",
 	"abusefilter-import-submit": "Donnéeën importéieren",
 	"abusefilter-import-invalid-data": "D'Donnéeën déi Dir probéiert huet z'importéieren ass net valabel",
 	"abusefilter-group-default": "Standard",

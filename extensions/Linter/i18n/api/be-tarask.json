@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Red Winged Duck"
+		]
+	},
+	"apihelp-query+linterrors-description": "Атрымаць сьпіс lint-памылак"
+}

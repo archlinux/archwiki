@@ -1,7 +1,7 @@
 // This file extends the mw.log skeleton defined in startup/mediawiki.js.
 // Code that is not needed by mw.loader is placed here.
 
-/* eslint-disable no-console */
+/* eslint-disable no-console, es-x/no-set */
 
 /**
  * @class mw
@@ -39,14 +39,10 @@ function stackSet() {
  * Most browsers also print a stacktrace when calling this method if the
  * argument is an Error object.
  *
- * This method is a no-op in browsers that don't implement the Console API.
- *
  * @since 1.26
  * @param {...Mixed} msg Messages to output to console
  */
-mw.log.error = console.error ?
-	Function.prototype.bind.call( console.error, console ) :
-	function () {};
+mw.log.error = Function.prototype.bind.call( console.error, console );
 
 /**
  * Create a function that logs a deprecation warning when called.

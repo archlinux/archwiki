@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"EpicPupper",
 			"Zoranzoki21"
 		]
 	},
 	"apihelp-templatedata-description": "Fetch data stored by the TemplateData extension.",
 	"apihelp-templatedata-summary": "Fetch data stored by the TemplateData extension.",
-	"apihelp-templatedata-example-1": "Return TemplateData for [[Template:Stub]] and [[Template:Example]], with results if the templates do not exist or do exist but have no TemplateData",
-	"apihelp-templatedata-example-2": "Return TemplateData for [[Template:Stub]] and [[Template:Example]], with no results if the templates do not exist or do exist but have no TemplateData",
+	"apihelp-templatedata-example-1": "Return TemplateData for [[Template:Foobar]], with results if the template does not exist or exists but has no TemplateData",
+	"apihelp-templatedata-example-2": "Return TemplateData for [[Template:Phabricator]], with no results if the template does not exist or exists but has no TemplateData",
 	"apihelp-templatedata-param-includeMissingTitles": "Return data about titles even if they are missing or lack TemplateData. By default titles are only returned if they exist and have TemplateData.",
 	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "Return data about titles even if they are missing or lack TemplateData. By default (for backwards compatibility) titles are only returned if they exist and have TemplateData.",
 	"apihelp-templatedata-param-lang": "Return localized values in this language. By default all available translations are returned.",

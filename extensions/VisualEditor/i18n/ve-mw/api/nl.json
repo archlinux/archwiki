@@ -32,7 +32,7 @@
 	"apihelp-visualeditoredit-param-html": "HTML die naar Parsoid gestuurd moet worden in ruil voor wikitekst.",
 	"apihelp-visualeditoredit-param-minor": "Als kleine bewerking markeren.",
 	"apihelp-visualeditoredit-param-needcheck": "Stel deze parameter in tijdens het opslaan als de versie mogelijk roundtripproblemen heeft. Dit resulteert in het labelen van de bewerking.",
-	"apihelp-visualeditoredit-param-oldid": "Het te gebruiken versienummer. Standaard de laatste versie. Gebruik 0 voor een nieuwe pagina.",
+	"apihelp-visualeditoredit-param-oldid": "Het te gebruiken versienummer. Standaard de laatste versie.",
 	"apihelp-visualeditoredit-param-paction": "Actie om uit te voeren.",
 	"apihelp-visualeditoredit-param-page": "De pagina waarop handelingen worden uitgevoerd.",
 	"apihelp-visualeditoredit-param-sectiontitle": "De naam van de nieuw kopje.",

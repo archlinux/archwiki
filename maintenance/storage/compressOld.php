@@ -42,6 +42,7 @@
  */
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 
 require_once __DIR__ . '/../Maintenance.php';
 
@@ -305,10 +306,8 @@ class CompressOld extends Maintenance {
 		# $tables[] = 'page';
 		# $conds[] = 'page_id=rev_page AND rev_id != page_latest';
 
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-
 		for ( $pageId = $startId; $pageId <= $maxPageId; $pageId++ ) {
-			$lbFactory->waitForReplication();
+			$this->waitForReplication();
 
 			# Wake up
 			$dbr->ping();

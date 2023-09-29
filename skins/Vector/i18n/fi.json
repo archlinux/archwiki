@@ -13,8 +13,8 @@
 			"Pxos",
 			"Pyscowicz",
 			"Rönttönen",
-			"SuperPete",
 			"Stryn",
+			"SuperPete",
 			"Yupik"
 		]
 	},
@@ -52,7 +52,7 @@
 	"vector-more-actions": "Muut",
 	"vector-search-loader": "Ladataan hakuehdotuksia",
 	"vector-searchsuggest-containing": "Hae sivuja, jotka sisältävät <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-toc-heading": "Sisällysluettelo",
+	"vector-toc-label": "Sisällysluettelo",
 	"vector-toc-beginning": "Johdanto",
 	"vector-anon-user-menu-pages": "Sivut kirjautumattomille muokkaajille",
 	"vector-anon-user-menu-pages-learn": "lue lisää",
@@ -60,6 +60,14 @@
 	"vector-main-menu-tooltip": "Päävalikko",
 	"vector-toc-menu-tooltip": "Sisällysluettelo",
 	"vector-site-nav-label": "Sivusto",
+	"vector-main-menu-label": "Päävalikko",
+	"vector-page-tools-label": "Työkalut",
+	"vector-page-tools-general-label": "Yleinen",
+	"vector-page-tools-actions-label": "Toiminnot",
+	"vector-pin-element-label": "siirrä sivupalkkiin",
+	"vector-unpin-element-label": "piilota",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Keskustelu]]",
-	"tooltip-vector-anon-user-menu-title": "Lisää valintoja"
+	"tooltip-vector-anon-user-menu-title": "Lisää valintoja",
+	"vector-prefs-limited-width": "Ota rajoitettu leveystila käyttöön",
+	"vector-prefs-limited-width-help": "Ota käyttöön rajoitettu leveystila parantaaksesi lukukokemusta."
 }

@@ -6,6 +6,7 @@
 			"Eduardo.mps",
 			"Eduardoaddad",
 			"Felipe L. Ewald",
+			"Fúlvio",
 			"Giro720",
 			"GoEThe",
 			"Hamilton Abreu",
@@ -14,12 +15,12 @@
 			"Luan",
 			"Rafael Vargas",
 			"Teles",
-			555,
-			"Fúlvio"
+			555
 		]
 	},
 	"gadgets-desc": "Permite que os usuários selecionem [[Special:Gadgets|\"gadgets\" JavaScript e CSS]] personalizados nas suas [[Special:Preferences#mw-prefsection-gadgets|preferências]]",
 	"prefs-gadgets": "Gadgets",
+	"prefs-description-gadgets": "Ativar as funcionalidades adicionais para a sua conta.",
 	"gadgets-prefstext": "Em baixo tem uma lista de ''gadgets'' especiais que pode ativar para a sua conta.\nEstes ''gadgets'' são baseados principalmente em JavaScript, sendo necessário ativar o suporte a JavaScript no seu navegador para que funcionem.\nNote que estes não terão efeito nesta página de preferências.\n\nNote também que estes ''gadgets'' especiais não fazem parte do ''software'' MediaWiki, sendo geralmente desenvolvidos e mantidos por utilizadores na sua wiki local.\nOs administradores locais podem editar as [[MediaWiki:Gadgets-definition|definições]] dos ''gadgets'' disponíveis, e os administradores locais podem editar as suas  [[Special:Gadgets|descrições]], onde pode ver o código fonte de cada ''gadget''. O número de utilizadores para cada ''gadget'' nesta wiki está listado nas [[Special:GadgetUsage|estatísticas de utilização de ''gadgets'']].",
 	"gadgets": "Gadgets",
 	"gadgetusage": "Estatísticas de uso de gadgets",
@@ -46,6 +47,7 @@
 	"gadgets-not-found": "O gadget \"$1\" não encontrado.",
 	"gadgets-export-text": "Para exportar o gadget $1, clique no botão \"{{int:gadgets-export-download}}\", salve o arquivo transferido,\nvá à página Special:Import no wiki de destino e faça o upload do arquivo. Depois, adicione o seguinte à página MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nÉ necessário que você tenha, no wiki de destino, as permissões necessárias (incluindo o privilégio de editar mensagens de sistema) e a importação por upload de arquivos deve estar ativada.",
 	"gadgets-export-download": "Baixar",
+	"gadgets-requires-es6": "Este gadget é suportado apenas por navegadores compatíveis com ES6",
 	"gadgets-validate-notset": "A propriedade <code>$1</code> não está definida.",
 	"gadgets-validate-wrongtype": "A propriedade <code>$1</code> deve ser do tipo <code>$2</code> em vez de <code>$3</code>.",
 	"right-gadgets-edit": "Editar as páginas de JavaScript e CSS dos gadgets",

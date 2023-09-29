@@ -28,7 +28,6 @@ class NumberInputWidget extends TextInputWidget {
 	 */
 	public function __construct( array $config = [] ) {
 		$config['type'] = 'number';
-		$config['multiline'] = false;
 
 		// Parent constructor
 		parent::__construct( $config );

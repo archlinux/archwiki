@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Paraw2"
+			"Paraw2",
+			"TerranBoy"
 		]
 	},
-	"captcha-label": "کەپچا"
+	"captcha-label": "کەپچا",
+	"confirmedit-preview-line": "شمارەێ کڕ"
 }

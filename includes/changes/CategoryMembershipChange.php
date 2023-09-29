@@ -3,6 +3,7 @@
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 
 /**
@@ -187,13 +188,8 @@ class CategoryMembershipChange {
 		if ( $revision !== null ) {
 			$revisionStore = MediaWikiServices::getInstance()->getRevisionStore();
 
-			$correspondingRc = $revisionStore->getRecentChange( $this->revision );
-			if ( $correspondingRc === null ) {
-				$correspondingRc = $revisionStore->getRecentChange(
-					$this->revision,
-					RevisionStore::READ_LATEST
-				);
-			}
+			$correspondingRc = $revisionStore->getRecentChange( $this->revision ) ??
+				$revisionStore->getRecentChange( $this->revision, RevisionStore::READ_LATEST );
 			if ( $correspondingRc !== null ) {
 				$bot = $correspondingRc->getAttribute( 'rc_bot' ) ?: 0;
 				$ip = $correspondingRc->getAttribute( 'rc_ip' ) ?: '';

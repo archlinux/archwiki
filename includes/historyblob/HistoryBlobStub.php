@@ -24,6 +24,12 @@ use MediaWiki\MediaWikiServices;
 
 /**
  * Pointer object for an item within a CGZ blob stored in the text table.
+ *
+ * WARNING: Objects of this class are serialized and permanently stored in the DB.
+ * Do not change the name or visibility of any property!
+ *
+ * Note: the property visibility was changed in 2020 from public to protected.
+ * This may cause problems in future.
  */
 class HistoryBlobStub {
 	/**
@@ -122,19 +128,13 @@ class HistoryBlobStub {
 			if ( in_array( 'gzip', $flags ) ) {
 				// This shouldn't happen, but a bug in the compress script
 				// may at times gzip-compress a HistoryBlob object row.
-				$obj = unserialize( gzinflate( $row->old_text ) );
+				$obj = HistoryBlobUtils::unserialize( gzinflate( $row->old_text ), true );
 			} else {
-				$obj = unserialize( $row->old_text );
-			}
-
-			if ( !is_object( $obj ) ) {
-				// Correct for old double-serialization bug.
-				$obj = unserialize( $obj );
+				$obj = HistoryBlobUtils::unserialize( $row->old_text, true );
 			}
 
 			// Save this item for reference; if pulling many
 			// items in a row we'll likely use it again.
-			$obj->uncompress();
 			self::$blobCache = [ $this->mOldId => $obj ];
 		}
 

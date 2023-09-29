@@ -6,6 +6,7 @@
 			"Chinneeb",
 			"DannyS712",
 			"E.shijir",
+			"Enkhsaihan2005",
 			"Fitoschido",
 			"Irus",
 			"Kaganer",
@@ -20,8 +21,7 @@
 			"Wisdom",
 			"Zorigt",
 			"לערי ריינהארט",
-			"아라",
-			"Enkhsaihan2005"
+			"아라"
 		]
 	},
 	"tog-underline": "Линкүүдийн доогуур зураас зур:",
@@ -1307,6 +1307,7 @@
 	"filehist-dimensions": "Хэмжээ",
 	"filehist-filesize": "Файлын хэмжээ",
 	"filehist-comment": "Тайлбар",
+	"filehist-missing": "Файл байхгүй байна",
 	"imagelinks": "Файлын хэрэглээ",
 	"linkstoimage": "Дараах {{PLURAL:$1|хуудас уг файлтай|$1 хуудас уг файлтай}} холбогдсон байна:",
 	"linkstoimage-more": "$1-с их зураг энэ файлд холбогдсон байна.\nДараах жагсаалт нь энэ файлд холбогдсон эхний $1 хуудсыг л харуулна.\n[[Special:WhatLinksHere/$2|Бүтэн жагсаалт]] мөн байгаа.",
@@ -1534,7 +1535,7 @@
 	"emailuserfooter": "Энэ мэйл нь {{SITENAME}} дахь \"Энэ хэрэглэгчид мэйл илгээх\" функцийг ашиглан $1-с $2-д илгээгдсэн байна.",
 	"usermessage-summary": "Системийн мессеж үлдээв.",
 	"usermessage-editor": "Системийн мессежийг засварлагч",
-	"usermessage-template": "МедиаВики:ХэрэглэгчийнМэдээ",
+	"usermessage-template": "MediaWiki:ХэрэглэгчийнМэдээ",
 	"watchlist": "Хянах жагсаалт",
 	"mywatchlist": "Хяналтын хуудсын жагсаалт",
 	"watchlistfor2": "Хэрэглэгч: $1 $2",
@@ -1563,7 +1564,7 @@
 	"enotif_lastvisited": "$1-н хамгийн сүүлд зочилсноос хойших өөрчлөлтүүдийг харуул.",
 	"enotif_lastdiff": "$1-г харж энэ өөрчлөлтийг үзнэ үү.",
 	"enotif_anon_editor": "$1 бүртгэлгүй хэрэглэгч",
-	"enotif_body": "$WATCHINGUSERNAME танаа,\n\nTo change your watchlist settings, visit\n{{canonicalurl:{{#special:EditWatchlist}}}}\n\n{{SITENAME}}-н $PAGETITLE хуудаст $PAGEEDITOR $PAGEEDITDATE-нд $CHANGEDORCREATED үйлдэл хийжээ. $PAGETITLE_URL -руу орж одоогоор хийгдээд байгаа засварыг харна уу.\n\n$NEWPAGE\n\nЗассан тойм: $PAGESUMMARY $PAGEMINOREDIT\n\nЗасвар хийсэн хүний холбогдъё гэвэл:\nемэйл: $PAGEEDITOR_EMAIL\nвики: $PAGEEDITOR_WIKI\n\nӨөр шинээр хийгдэх өөрчлөлтүүдийн талаарх уг хуудсан орж л байж мэдэх боломжтой.\nМөн та үзсэн хуудсынхаа шинээр хийгдэх өөрчлөлтүүдийг сануулах тохиргоог шинэчилж болно. \n\n\t\t\t {{SITENAME}} -н сануулгын систем\n\n--\nИмейл хаягаар шинэчлэл хийсэн талаар мэдээлэл явуулах тохиргоог \n{{canonicalurl:{{#special:Preferences}}}} хаягаар орж хийнэ үү\n\nХянаж буй хуудсын жагсаалтын тохиргоог\n{{canonicalurl:{{#special:EditWatchlist}}}} хаягаар орж хийнэ үү\n\nХянаж буй хуудын жагсаалтаас хаяг хасах тохиолдолд\n$UNWATCHURL\n\nСанал сэтгэгдэл болон тулгарсан бэрхшээлээ :\n$HELPPAGE хаягаар орж бичнэ үү",
+	"enotif_body": "$WATCHINGUSERNAME танаа,\n\n$PAGEINTRO $NEWPAGE\n\nЗассан тойм: $PAGESUMMARY $PAGEMINOREDIT\n\nЗасвар хийсэн хүний холбогдъё гэвэл:\nемэйл: $PAGEEDITOR_EMAIL\nвики: $PAGEEDITOR_WIKI\n\nӨөр шинээр хийгдэх өөрчлөлтүүдийн талаарх уг хуудсан орж л байж мэдэх боломжтой.\nМөн та үзсэн хуудсынхаа шинээр хийгдэх өөрчлөлтүүдийг сануулах тохиргоог шинэчилж болно. \n\n{{SITENAME}} -н сануулгын систем\n\n--\nИмейл хаягаар шинэчлэл хийсэн талаар мэдээлэл явуулах тохиргоог \n{{canonicalurl:{{#special:Preferences}}}} хаягаар орж хийнэ үү\n\nХянаж буй хуудсын жагсаалтын тохиргоог\n{{canonicalurl:{{#special:EditWatchlist}}}} хаягаар орж хийнэ үү\n\nХянаж буй хуудын жагсаалтаас хаяг хасах тохиолдолд\n$UNWATCHURL\n\nСанал сэтгэгдэл болон тулгарсан бэрхшээлээ :\n$HELPPAGE хаягаар орж бичнэ үү",
 	"created": "үүсгэсэн",
 	"changed": "өөрчлөгдсөн",
 	"deletepage-submit": "Хуудсыг устга",
@@ -2130,7 +2131,7 @@
 	"metadata-help": "Энэ файланд бодвол дижитал аппарат эсвэл сканнераас нэмэгдсэн нэмэлт мэдээлэл байна.\nХэрэв энэ файл анхныхаа байдлаас өөрчлөгдсөн бол зарим мэдээлэл нь одоогийн хувилбартайгаа нийцэхгүй байж магадгүй.",
 	"metadata-expand": "Дэлгэрэнгүй мэдээллийг харуулах",
 	"metadata-collapse": "Дэлгэрэнгүй мэдээллийг нуух",
-	"metadata-fields": "Энэ мэдэгдэлд байгаа зурагний мэдээллийн талбарууд нь мэдээллийн хүснэгт буулгагдсан үед зургын хуудсанд харагдана.\nБусдыг анхны тохиргоогоор нууцалсан байгаа.\n* make\n* model\n* datetimeoriginal\n* exposuretime\n* fnumber\n* isospeedratings\n* focallength\n* artist\n* copyright\n* imagedescription\n* gpslatitude\n* gpslongitude\n* gpsaltitude",
+	"metadata-fields": "Энэ мэдэгдэлд байгаа зурагний мэдээллийн талбарууд нь мэдээллийн хүснэгт буулгагдсан үед зургын хуудсанд харагдана.\nБусдыг анхны тохиргоогоор нууцалсан байгаа.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
 	"namespacesall": "бүгдийг",
 	"monthsall": "бүх сар",
 	"confirmemail": "Мэйл хаягийг баталгаажуулах",
@@ -2319,5 +2320,6 @@
 	"skin-action-protect": "Хамгаалах",
 	"skin-action-undelete": "Үл устгах",
 	"skin-action-delete": "Устгах",
-	"skin-action-move": "Зөөх"
+	"skin-action-move": "Зөөх",
+	"renameusersubmit": "Явуулах"
 }

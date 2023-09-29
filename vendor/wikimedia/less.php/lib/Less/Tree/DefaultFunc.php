@@ -1,10 +1,6 @@
 <?php
-
 /**
- * DefaultFunc
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_DefaultFunc {
 

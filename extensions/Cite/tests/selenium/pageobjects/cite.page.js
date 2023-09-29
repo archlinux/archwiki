@@ -9,13 +9,13 @@ class CitePage extends Page {
 	getCiteSingleBacklink( num ) { return $( '.references li:nth-of-type(' + num + ') .mw-cite-backlink a' ); }
 	getCiteSubBacklink( num ) { return $( '.mw-cite-backlink sup:nth-of-type(' + num + ') a' ); }
 
-	scriptsReady() {
-		Util.waitForModuleState( 'ext.cite.ux-enhancements' );
+	async scriptsReady() {
+		await Util.waitForModuleState( 'ext.cite.ux-enhancements' );
 	}
 
-	getFragmentFromLink( linkElement ) {
+	async getFragmentFromLink( linkElement ) {
 		// the href includes the full url so slice the fragment from it
-		const href = linkElement.getAttribute( 'href' );
+		const href = await linkElement.getAttribute( 'href' );
 		return href.slice( href.indexOf( '#' ) + 1 );
 	}
 }

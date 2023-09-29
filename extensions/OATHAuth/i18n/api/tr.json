@@ -14,9 +14,7 @@
 	"apihelp-oathvalidate-description": "İki faktörlü kimlik doğrulama (OATH) anahtarını doğrulayın.",
 	"apihelp-oathvalidate-summary": "İki faktörlü kimlik doğrulama (OATH) anahtarını doğrulayın.",
 	"apihelp-oathvalidate-param-user": "Kullanıcı için belirteci doğrulamak için. Geçerli kullanıcıya varsayılanlar.",
-	"apihelp-oathvalidate-param-totp": "İki faktörlü kimlik doğrulama (OATH) belirteci. Eski, bunun yerine \"veri\" paramını kullan",
 	"apihelp-oathvalidate-example-1": "Geçerli kullanıcı için bir belirteç doğrula",
-	"apihelp-oathvalidate-example-2": "<kbd>Example</kbd> kullanıcısı için bir belirteç doğrulayın.",
 	"apihelp-oathvalidate-example-3": "<kbd>Example</kbd> kullanıcısı için JSON verilerini doğrulayın",
 	"apihelp-oathvalidate-param-data": "JSON, kimliği doğrulanmış kullanıcı için şu anda etkin olan modül tarafından beklenen verileri kodladı"
 }

@@ -5,7 +5,9 @@
 			"Olve Utne"
 		]
 	},
+	"vector-languages": "Giela",
 	"vector-language-button-label": "{{PLURAL:$1|$1 giella|$1 giela}}",
+	"vector-no-language-button-label": "Lasedä gielajt",
 	"vector-action-addsection": "Lasedä ábdnasav",
 	"vector-action-delete": "Gádodä",
 	"vector-action-move": "Sirde",
@@ -16,5 +18,10 @@
 	"vector-view-view": "Lågå",
 	"vector-view-viewsource": "Vuosedä wikitiekstav",
 	"vector-more-actions": "Ienap",
-	"vector-searchsuggest-containing": "Åtså belijda májdne lä tjállám <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Åtså belijda májdne lä tjállám <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Sisadno",
+	"vector-toc-beginning": "Állgo",
+	"vector-page-tools-label": "Riejdo",
+	"vector-page-tools-general-label": "Gájjkasatj",
+	"vector-unpin-element-label": "tjiega"
 }

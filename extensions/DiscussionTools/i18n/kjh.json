@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"AlexandrL714"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Нандырығ",
+	"discussiontools-replylink": "нандырарға",
+	"discussiontools-replywidget-advanced": "Хоза",
+	"discussiontools-replywidget-cancel": "Чох иткені",
+	"discussiontools-replywidget-mode-source": "Код",
+	"discussiontools-replywidget-mode-visual": "Визуально",
+	"discussiontools-replywidget-placeholder-reply": "Нандырарға {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Предпросмотр",
+	"discussiontools-replywidget-reply": "нандырарға",
+	"discussiontools-replywidget-summary": "Пасханы",
+	"discussiontools-replywidget-watchthis": "Сірернің [[Special:Watchlist|харааны списогіңерге]] хозарға",
+	"discussiontools-topicheader-latestcomment": "Халғанҷы искіріг: $1",
+	"discussiontools-topicsubscription-button-subscribe": "пазыныбызарға",
+	"discussiontools-topicsubscription-button-subscribe-label": "Пазыныбызарға",
+	"discussiontools-topicsubscription-button-unsubscribe": "отписка идерге",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Отписка идерге",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Сірер пазындызар!",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Отписка иттізер."
+}

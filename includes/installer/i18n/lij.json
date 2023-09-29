@@ -52,8 +52,7 @@
 	"config-env-good": "L'anbiénte o l'é stæto controlòu.\nO l'é poscìbile instalâ MediaWiki.",
 	"config-env-bad": "L'anbiénte o l'é stæto controlòu.\nO no l'é poscìbile instalâ MediaWiki.",
 	"config-env-php": "PHP $1 o l'é instalòu.",
-	"config-unicode-using-intl": "Adêuvia [https://php.net/manual/en/book.intl.php l'estensción PHP intl] pî-a normalizaçión Unicode.",
-	"config-unicode-update-warning": "'''Atençión:''' a versción instalâ do gestô pî-a normalizaçión Unicode a l'adêuvia 'na vêgia versción da libràia [http://site.icu-project.org/ do progètto ICU].\nTi ti doviêsci [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations agiornâ] se ti ti vêu dêuviâ l'Unicode.",
+	"config-env-icu": "ICU $1 o l'é instalòu (o supòrta Unicode $2).",
 	"config-no-db": "Inposcìbile trovâ 'n driver adàtto pî-a bànca dæti! O l'é necesâio instalâ 'n driver pe PHP.\n{{PLURAL:$2|O formâto de bànca dæti chi de sótta o l'é suportòu|I formâti de bànca dæti chi de sótta són suportæ}}: $1.\n\nSe ti ti conpîli PHP aotonomaménte, riconfigurilo ativàndo 'n client database, prezénpio dêuviàndo <code>./configure --with-mysqli</code>.\nCâxo mâi ti t'aviêsci instalòu PHP pe mêzo de 'n pachétto Debian ò Ubuntu, alôa ti ti dêvi instalâ o pachétto <code>php-mysql</code> ascì.",
 	"config-outdated-sqlite": "<strong>Atençión:</strong> ti t'æ SQLite $2, ma a l'é necesâia cómme mìnimo a versción $1. SQLite o no saiâ disponìbile.",
 	"config-no-fts3": "<strong>Atençión:</strong> SQLite o l'é conpilòu sénsa o [//sqlite.org/fts3.html mòdolo FTS3], e fonçionalitæ de riçèrca no saiàn disponìbili in sce 'sto backend chi.",
@@ -79,7 +78,6 @@
 	"config-using-uri": "URL do sèrver in ûzo \"<nowiki>$1$2</nowiki>\".",
 	"config-uploads-not-safe": "<strong>Atençión:</strong> a directory predefinîa pe-i caregaménti <code>$1</code> a l'é vulneràbile a l'ezecuçión arbitrâia de script.\nScibén che, a diféiza da seguéssa, MediaWiki a contròlla tùtti i file càregæ, o l'é forteménte racomandòu de [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security serâ quésta minàccia] prìmma d'abilitâ i caregaménti.",
 	"config-no-cli-uploads-check": "<strong>Atençion:</strong> a directory predefinîa pe-i caregaménti (<code>$1</code>) a no l'é stæta verificâ pî-a vulnerabilitæ in sce l'ezecuçión arbitrâia de script inte l'instalaçión da lìnia de comàndo.",
-	"config-suhosin-max-value-length": "Suhosin o l'é instalèu e o lìmita o paràmetro GET <code>length</code> a $1 byte.\nMediaWiki a domànda 'n valô pe <code>suhosin.get.max_value_length</code> a-o mêno de $2. Dizatîva quésta inpostaçión, ò aoménta 'sto valô chi a $3 in <code>php.ini</code>.",
 	"config-using-32bit": "<strong>Atençión:</strong> o pâ che o tò scistêma o l'adêuvia di intrêghi a 32-bit, fæto ch'o no l'é racomandòu.",
 	"config-db-type": "Tîpo de bànca dæti:",
 	"config-db-host": "Host da bànca dæti:",
@@ -99,6 +97,7 @@
 	"config-db-prefix": "Prefìsso tabélla da bànca dæti (no tratìn):",
 	"config-db-prefix-help": "Se ti t'æ de bezéugno de condivìdde 'na bànca dæti tra ciù wiki, ò tra MediaWiki e 'n'âtra aplicaçión web, ti ti pêu çèrne d'azónze 'n prefìsso a tùtti i nómmi de tabélla, pe evitâ conflìtti.\nNo dêuviâ di spàççi.\n\nDe sòlito 'sto cànpo chi o l'é lasciòu vêuo.",
 	"config-mysql-old": "O l'é necesâio MySQL $1 ò 'na versción sucesîva. Ti t'æ a $2.",
+	"config-mariadb-old": "O l'é necesâio MariaDB $1 ò 'na versción sucesîva. Ti t'æ a $2.",
 	"config-db-port": "Pòrta da bànca dæti:",
 	"config-db-schema": "Schêma pe MediaWiki (no tratìn):",
 	"config-db-schema-help": "Quésto schêma de sòlito o l'aniâ bén.\nDa cangiâ sôlo se ti t'ê segûo ch'o ségge da fâ.",
@@ -309,6 +308,7 @@
 	"config-screenshot": "screenshot",
 	"config-extension-not-found": "Inposcìbile trovâ o file de registraçión pe l'estensción \"$1\"",
 	"config-extension-dependency": "O s'é verificòu 'n erô de dipendénsa inte l'instalaçión de l'estensción \"$1\": $2",
+	"config-ext-skins-more-info": "ciù informaçioìn",
 	"mainpagetext": "<strong>MediaWiki o l'é stæto instalòu.</strong>",
 	"mainpagedocfooter": "Consùlta a [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents goìdda uténte] pe avéi ciù informaçioîn in sce l'ûzo de quésto software wiki.\n\n== Pe iniçiâ ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Inpostaçioîn de configuraçión]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Domànde fæte de sovénte in sce MediaWiki]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ Mailing list anónçi MediaWiki]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Trêuva MediaWiki inta tò léngoa]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Inpréndi a conbàtte o spam in sciâ tò wiki]"
 }

@@ -12,6 +12,17 @@
 	// logo and searchbox (28px) = 296px which equals the sum of widths of sidebar elements (i.e. TOC) when toggled.
 	// 226px @ 16 provides correct spacing between the right edge of logo container + left edge of searchbox input.
 	min-width: 13.875em; // 222px @ 16
+
+	.vector-feature-page-tools-disabled & {
+		// The logo is 24px from the main menu button icon
+		margin-left: 24px;
+	}
+
+	.vector-feature-page-tools-enabled.vector-feature-main-menu-pinned-disabled & {
+		// The logo is 40px from the page container.
+		// Main menu button width (20px) + 20px = 40px
+		margin-left: 20px;
+	}
 }
 
 .mw-logo-icon {

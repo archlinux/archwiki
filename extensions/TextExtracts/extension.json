@@ -4,7 +4,7 @@
 		"Max Semenik"
 	],
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"url": "https://www.mediawiki.org/wiki/Extension:TextExtracts",
 	"descriptionmsg": "textextracts-desc",
@@ -43,6 +43,7 @@
 			"value": [
 				"table",
 				"div",
+				"figure",
 				"script",
 				"input",
 				"style",

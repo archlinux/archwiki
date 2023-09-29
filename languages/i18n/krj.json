@@ -6,9 +6,9 @@
 			"Joebertj",
 			"Jose77",
 			"Oxyzen",
+			"Pare Mo",
 			"RonaldPanaligan",
-			"TMg",
-			"Pare Mo"
+			"TMg"
 		]
 	},
 	"tog-underline": "Koritan ang dalum kang manga ''link'':",
@@ -220,6 +220,7 @@
 	"showdiff": "Ipakità ang manga ilis",
 	"loginreqlink": "sëlëd",
 	"newarticle": "(Bag·o)",
+	"userpage-userdoesnotexist-view": "Indî nakarehistro ang akawnt pangmanuggamit nga \"$1\" sa diyâ nga wiki.",
 	"editing": "Ginailis ang $1",
 	"creating": "Ginahimò ang $1",
 	"editingsection": "Ginailis ang $1 (bahin)",

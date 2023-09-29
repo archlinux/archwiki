@@ -63,7 +63,7 @@ class ExternalStoreDB extends ExternalStoreMedium {
 	 * @see ExternalStoreMedium::fetchFromURL()
 	 */
 	public function fetchFromURL( $url ) {
-		list( $cluster, $id, $itemID ) = $this->parseURL( $url );
+		[ $cluster, $id, $itemID ] = $this->parseURL( $url );
 		$ret = $this->fetchBlob( $cluster, $id, $itemID );
 
 		if ( $itemID !== false && $ret !== false ) {
@@ -86,7 +86,7 @@ class ExternalStoreDB extends ExternalStoreMedium {
 	public function batchFetchFromURLs( array $urls ) {
 		$batched = $inverseUrlMap = [];
 		foreach ( $urls as $url ) {
-			list( $cluster, $id, $itemID ) = $this->parseURL( $url );
+			[ $cluster, $id, $itemID ] = $this->parseURL( $url );
 			$batched[$cluster][$id][] = $itemID;
 			// false $itemID gets cast to int, but should be ok
 			// since we do === from the $itemID in $batched
@@ -137,10 +137,7 @@ class ExternalStoreDB extends ExternalStoreMedium {
 			return true;
 		}
 
-		$lb = $this->getLoadBalancer( $location );
-		$domainId = $this->getDomainId( $lb->getServerInfo( $lb->getWriterIndex() ) );
-
-		return ( $lb->getReadOnlyReason( $domainId ) !== false );
+		return ( $this->getLoadBalancer( $location )->getReadOnlyReason() !== false );
 	}
 
 	/**
@@ -187,16 +184,6 @@ class ExternalStoreDB extends ExternalStoreMedium {
 			$this->getDomainId( $lb->getServerInfo( $lb->getWriterIndex() ) ),
 			$lb::CONN_TRX_AUTOCOMMIT
 		);
-	}
-
-	/**
-	 * @deprecated since 1.37; please use getPrimary() instead.
-	 * @param string $cluster Cluster name
-	 * @return \Wikimedia\Rdbms\IMaintainableDatabase
-	 */
-	public function getMaster( $cluster ) {
-		wfDeprecated( __METHOD__, '1.37' );
-		return $this->getPrimary( $cluster );
 	}
 
 	/**
@@ -320,7 +307,8 @@ class ExternalStoreDB extends ExternalStoreMedium {
 		if ( $ret === false ) {
 			// Try the primary DB
 			$this->logger->warning( __METHOD__ . ": primary DB fallback on $cacheID" );
-			$scope = $this->lbFactory->getTransactionProfiler()->silenceForScope();
+			$trxProfiler = $this->lbFactory->getTransactionProfiler();
+			$scope = $trxProfiler->silenceForScope( $trxProfiler::EXPECTATION_REPLICAS_ONLY );
 			$dbw = $this->getPrimary( $cluster );
 			$ret = $dbw->selectField(
 				$this->getTable( $dbw, $cluster ),
@@ -335,7 +323,7 @@ class ExternalStoreDB extends ExternalStoreMedium {
 		}
 		if ( $itemID !== false && $ret !== false ) {
 			// Unserialise object; caller extracts item
-			$ret = unserialize( $ret );
+			$ret = HistoryBlobUtils::unserialize( $ret );
 		}
 
 		$externalBlobCache = [ $cacheID => $ret ];
@@ -370,7 +358,8 @@ class ExternalStoreDB extends ExternalStoreMedium {
 				__METHOD__ . ": primary fallback on '$cluster' for: " .
 				implode( ',', array_keys( $ids ) )
 			);
-			$scope = $this->lbFactory->getTransactionProfiler()->silenceForScope();
+			$trxProfiler = $this->lbFactory->getTransactionProfiler();
+			$scope = $trxProfiler->silenceForScope( $trxProfiler::EXPECTATION_REPLICAS_ONLY );
 			$dbw = $this->getPrimary( $cluster );
 			$res = $dbw->newSelectQueryBuilder()
 				->select( [ 'blob_id', 'blob_text' ] )
@@ -411,7 +400,7 @@ class ExternalStoreDB extends ExternalStoreMedium {
 				$ret[$id] = $row->blob_text;
 			} else {
 				// multi result stored per blob
-				$ret[$id] = unserialize( $row->blob_text );
+				$ret[$id] = HistoryBlobUtils::unserialize( $row->blob_text );
 			}
 		}
 	}

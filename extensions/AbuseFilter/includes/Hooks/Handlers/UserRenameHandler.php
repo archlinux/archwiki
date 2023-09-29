@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
-use MediaWiki\Extension\Renameuser\Hook\RenameUserSQLHook;
-use MediaWiki\Extension\Renameuser\RenameuserSQL;
+use MediaWiki\RenameUser\Hook\RenameUserSQLHook;
+use MediaWiki\RenameUser\RenameuserSQL;
 
 class UserRenameHandler implements RenameUserSQLHook {
 

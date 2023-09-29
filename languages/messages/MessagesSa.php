@@ -1,8 +1,6 @@
 <?php
 /** Sanskrit (संस्कृतम्)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  *
@@ -276,7 +274,7 @@ $1', 'सङ्कुचितचित्र=$1', 'अङ्गुष्ठ=$1'
 	'sitename'                  => [ '1', 'स्थाननाम', 'स्थलनाम', 'SITENAME' ],
 	'special'                   => [ '0', 'विशेषः', 'विशेष', 'special' ],
 	'staticredirect'            => [ '1', '__अनित्यपुनर्निर्देशनम्__', '__अनित्यपुनर्निदेशन__', '__STATICREDIRECT__' ],
-	'subjectpagename'           => [ '1',  'विषयपृष्ठनाम', 'लेखपृष्ठनाम', 'SUBJECTPAGENAME', 'ARTICLEPAGENAME' ],
+	'subjectpagename'           => [ '1', 'विषयपृष्ठनाम', 'लेखपृष्ठनाम', 'SUBJECTPAGENAME', 'ARTICLEPAGENAME' ],
 	'subjectspace'              => [ '1', 'विषयस्थानम्', 'लेखस्थानम्', 'विषयविश्व', 'लेखविश्व', 'SUBJECTSPACE', 'ARTICLESPACE' ],
 	'subpagename'               => [ '1', 'उपपृष्ठनाम', 'SUBPAGENAME' ],
 	'tag'                       => [ '0', 'अङ्कनम्', 'वीजक', 'tag' ],

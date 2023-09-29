@@ -3,7 +3,8 @@
 		"authors": [
 			"Fitoschido",
 			"Macofe",
-			"Xuacu"
+			"Xuacu",
+			"YoaR"
 		]
 	},
 	"wikieditor": "Interfaz avanzada d'edición de testu wiki",
@@ -32,7 +33,7 @@
 	"wikieditor-toolbar-tool-link-ext-target": "URL del enllaz:",
 	"wikieditor-toolbar-tool-link-ext-text": "Testu del enllaz:",
 	"wikieditor-toolbar-tool-link-insert": "Inxertar enllaz",
-	"wikieditor-toolbar-tool-link-cancel": "Encaboxar",
+	"wikieditor-toolbar-tool-link-cancel": "Zarrar",
 	"wikieditor-toolbar-tool-link-int-target-status-exists": "La páxina yá esiste",
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "La páxina nun esiste",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Títulu inválidu",
@@ -53,7 +54,7 @@
 	"wikieditor-toolbar-file-format": "Formatu:",
 	"wikieditor-toolbar-file-format-none": "dengún",
 	"wikieditor-toolbar-tool-file-insert": "Inxertar",
-	"wikieditor-toolbar-tool-file-cancel": "Encaboxar",
+	"wikieditor-toolbar-tool-file-cancel": "Zarrar",
 	"wikieditor-toolbar-tool-file-upload": "Xubir",
 	"wikieditor-toolbar-tool-reference": "Referencia",
 	"wikieditor-toolbar-tool-reference-example": "Escribir equí el testu de la nota al pie",
@@ -95,6 +96,7 @@
 	"wikieditor-toolbar-tool-table-example-old": "-\n! testera 1\n! testera 2\n! testera 3\n|-\n| filera 1, caxella 1\n| filera 1, caxella 2\n| filera 1, caxella 3\n|-\n| filera 2, caxella 1\n| filera 2, caxella 2\n| filera 2, caxella 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Testu de la caxella",
 	"wikieditor-toolbar-tool-table-example-header": "Testu de cabecera",
+	"wikieditor-toolbar-tool-table-example-caption": "Testu de cabecera de la tabla",
 	"wikieditor-toolbar-tool-table-title": "Inxertar una tabla",
 	"wikieditor-toolbar-tool-table-dimensions-rows": "Fileres",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "Columnes",
@@ -104,7 +106,7 @@
 	"wikieditor-toolbar-tool-table-example": "Exemplu",
 	"wikieditor-toolbar-tool-table-preview": "Vista previa",
 	"wikieditor-toolbar-tool-table-insert": "Inxertar",
-	"wikieditor-toolbar-tool-table-cancel": "Encaboxar",
+	"wikieditor-toolbar-tool-table-cancel": "Zarrar",
 	"wikieditor-toolbar-tool-table-toomany": "Con esti diálogu nun ye posible inxertar una tabla de más de $1 {{PLURAL:$1|caxella|caxelles}}.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "Nun escribisti un númberu válidu de fileres o columnes.",
 	"wikieditor-toolbar-tool-table-zero": "Nun pues inxertar una tabla con cero fileres o columnes.",

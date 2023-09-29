@@ -13,16 +13,17 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\RenameUser\RenameuserSQL;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Session\Session;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Parser;
 use ParserOptions;
 use Skin;
 use SpecialPage;
 use StatusValue;
-use Title;
 
 /**
  * This class provides an implementation of the core hook interfaces,
@@ -77,6 +78,8 @@ class HookRunner implements
 	\MediaWiki\Content\Hook\PageContentLanguageHook,
 	\MediaWiki\Content\Hook\PlaceNewSectionHook,
 	\MediaWiki\Content\Hook\SearchDataForIndexHook,
+	\MediaWiki\Content\Hook\SearchDataForIndex2Hook,
+	\MediaWiki\Specials\Contribute\Hook\ContributeCardsHook,
 	\MediaWiki\Diff\Hook\AbortDiffCacheHook,
 	\MediaWiki\Diff\Hook\ArticleContentOnDiffHook,
 	\MediaWiki\Diff\Hook\DifferenceEngineAfterLoadNewTextHook,
@@ -113,14 +116,11 @@ class HookRunner implements
 	\MediaWiki\Hook\ArticleRevisionVisibilitySetHook,
 	\MediaWiki\Hook\ArticleUpdateBeforeRedirectHook,
 	\MediaWiki\Hook\BadImageHook,
-	\MediaWiki\Hook\BaseTemplateAfterPortletHook,
 	\MediaWiki\Hook\BeforeInitializeHook,
 	\MediaWiki\Hook\BeforePageDisplayHook,
 	\MediaWiki\Hook\BeforePageRedirectHook,
 	\MediaWiki\Hook\BeforeParserFetchFileAndTitleHook,
-	\MediaWiki\Hook\BeforeParserFetchTemplateAndtitleHook,
 	\MediaWiki\Hook\BeforeParserFetchTemplateRevisionRecordHook,
-	\MediaWiki\Hook\BeforeParserrenderImageGalleryHook,
 	\MediaWiki\Hook\BeforeWelcomeCreationHook,
 	\MediaWiki\Hook\BitmapHandlerCheckImageAreaHook,
 	\MediaWiki\Hook\BitmapHandlerTransformHook,
@@ -181,6 +181,7 @@ class HookRunner implements
 	\MediaWiki\Hook\FileUploadHook,
 	\MediaWiki\Hook\FormatAutocommentsHook,
 	\MediaWiki\Hook\GalleryGetModesHook,
+	\MediaWiki\Hook\GetBlockErrorMessageKeyHook,
 	\MediaWiki\Hook\GetCacheVaryCookiesHook,
 	\MediaWiki\Hook\GetCanonicalURLHook,
 	\MediaWiki\Hook\GetDefaultSortkeyHook,
@@ -218,7 +219,6 @@ class HookRunner implements
 	\MediaWiki\Hook\InfoActionHook,
 	\MediaWiki\Hook\InitializeArticleMaybeRedirectHook,
 	\MediaWiki\Hook\InternalParseBeforeLinksHook,
-	\MediaWiki\Hook\InternalParseBeforeSanitizeHook,
 	\MediaWiki\Hook\IRCLineURLHook,
 	\MediaWiki\Hook\IsTrustedProxyHook,
 	\MediaWiki\Hook\IsUploadAllowedFromUrlHook,
@@ -229,9 +229,7 @@ class HookRunner implements
 	\MediaWiki\Hook\LinkerMakeExternalImageHook,
 	\MediaWiki\Hook\LinkerMakeExternalLinkHook,
 	\MediaWiki\Hook\LinkerMakeMediaLinkFileHook,
-	\MediaWiki\Hook\LinksUpdateAfterInsertHook,
 	\MediaWiki\Hook\LinksUpdateCompleteHook,
-	\MediaWiki\Hook\LinksUpdateConstructedHook,
 	\MediaWiki\Hook\LinksUpdateHook,
 	\MediaWiki\Hook\LocalFilePurgeThumbnailsHook,
 	\MediaWiki\Hook\LocalFile__getHistoryHook,
@@ -298,11 +296,12 @@ class HookRunner implements
 	\MediaWiki\Hook\ParserOptionsRegisterHook,
 	\MediaWiki\Hook\ParserOutputPostCacheTransformHook,
 	\MediaWiki\Hook\ParserPreSaveTransformCompleteHook,
-	\MediaWiki\Hook\ParserSectionCreateHook,
 	\MediaWiki\Hook\ParserTestGlobalsHook,
 	\MediaWiki\Hook\ParserTestTablesHook,
 	\MediaWiki\Hook\PasswordPoliciesForUserHook,
 	\MediaWiki\Hook\PostLoginRedirectHook,
+	\MediaWiki\Hook\PreferencesGetIconHook,
+	\MediaWiki\Hook\PreferencesGetLayoutHook,
 	\MediaWiki\Hook\PreferencesGetLegendHook,
 	\MediaWiki\Hook\PrefsEmailAuditHook,
 	\MediaWiki\Hook\ProtectionForm__buildFormHook,
@@ -339,6 +338,7 @@ class HookRunner implements
 	\MediaWiki\Hook\SpecialBlockModifyFormFieldsHook,
 	\MediaWiki\Hook\SpecialContributionsBeforeMainOutputHook,
 	\MediaWiki\Hook\SpecialContributions__formatRow__flagsHook,
+	\MediaWiki\Hook\SpecialCreateAccountBenefitsHook,
 	\MediaWiki\Hook\SpecialExportGetExtraPagesHook,
 	\MediaWiki\Hook\SpecialContributions__getForm__filtersHook,
 	\MediaWiki\Hook\SpecialListusersDefaultQueryHook,
@@ -349,7 +349,6 @@ class HookRunner implements
 	\MediaWiki\Hook\SpecialLogAddLogSearchRelationsHook,
 	\MediaWiki\Hook\SpecialMovepageAfterMoveHook,
 	\MediaWiki\Hook\SpecialMuteModifyFormFieldsHook,
-	\MediaWiki\Hook\SpecialMuteSubmitHook,
 	\MediaWiki\Hook\SpecialNewpagesConditionsHook,
 	\MediaWiki\Hook\SpecialNewPagesFiltersHook,
 	\MediaWiki\Hook\SpecialRandomGetRandomTitleHook,
@@ -463,6 +462,7 @@ class HookRunner implements
 	\MediaWiki\Page\Hook\PageDeleteCompleteHook,
 	\MediaWiki\Page\Hook\PageDeleteHook,
 	\MediaWiki\Page\Hook\PageDeletionDataUpdatesHook,
+	\MediaWiki\Page\Hook\PageUndeleteCompleteHook,
 	\MediaWiki\Page\Hook\PageUndeleteHook,
 	\MediaWiki\Page\Hook\PageViewUpdatesHook,
 	\MediaWiki\Page\Hook\RevisionFromEditCompleteHook,
@@ -484,6 +484,11 @@ class HookRunner implements
 	\MediaWiki\Permissions\Hook\UserIsEveryoneAllowedHook,
 	\MediaWiki\Preferences\Hook\GetPreferencesHook,
 	\MediaWiki\Preferences\Hook\PreferencesFormPreSaveHook,
+	\MediaWiki\RenameUser\Hook\RenameUserAbortHook,
+	\MediaWiki\RenameUser\Hook\RenameUserCompleteHook,
+	\MediaWiki\RenameUser\Hook\RenameUserPreRenameHook,
+	\MediaWiki\RenameUser\Hook\RenameUserSQLHook,
+	\MediaWiki\RenameUser\Hook\RenameUserWarningHook,
 	\MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook,
 	\MediaWiki\ResourceLoader\Hook\ResourceLoaderJqueryMsgModuleMagicWordsHook,
 	\MediaWiki\Rest\Hook\SearchResultProvideDescriptionHook,
@@ -506,7 +511,6 @@ class HookRunner implements
 	\MediaWiki\Search\Hook\SpecialSearchProfileFormHook,
 	\MediaWiki\Session\Hook\SessionCheckInfoHook,
 	\MediaWiki\Session\Hook\SessionMetadataHook,
-	\MediaWiki\Session\Hook\UserSetCookiesHook,
 	\MediaWiki\Shell\Hook\WfShellWikiCmdHook,
 	\MediaWiki\Skins\Hook\SkinAfterPortletHook,
 	\MediaWiki\Skins\Hook\SkinPageReadyConfigHook,
@@ -551,8 +555,8 @@ class HookRunner implements
 	\MediaWiki\User\Hook\UserIsLockedHook,
 	\MediaWiki\User\Hook\UserLoadAfterLoadFromSessionHook,
 	\MediaWiki\User\Hook\UserLoadDefaultsHook,
-	\MediaWiki\User\Hook\UserLoadFromDatabaseHook,
 	\MediaWiki\User\Hook\UserLogoutHook,
+	\MediaWiki\User\Hook\UserPrivilegedGroupsHook,
 	\MediaWiki\User\Hook\UserRemoveGroupHook,
 	\MediaWiki\User\Hook\UserSaveSettingsHook,
 	\MediaWiki\User\Hook\UserSendConfirmationMailHook,
@@ -915,13 +919,6 @@ class HookRunner implements
 		);
 	}
 
-	public function onBaseTemplateAfterPortlet( $template, $portlet, &$html ) {
-		return $this->container->run(
-			'BaseTemplateAfterPortlet',
-			[ $template, $portlet, &$html ]
-		);
-	}
-
 	public function onBeforeDisplayNoArticleText( $article ) {
 		return $this->container->run(
 			'BeforeDisplayNoArticleText',
@@ -962,15 +959,6 @@ class HookRunner implements
 		);
 	}
 
-	public function onBeforeParserFetchTemplateAndtitle( $parser, $title, &$skip,
-		&$id
-	) {
-		return $this->container->run(
-			'BeforeParserFetchTemplateAndtitle',
-			[ $parser, $title, &$skip, &$id ]
-		);
-	}
-
 	public function onBeforeParserFetchTemplateRevisionRecord(
 		?LinkTarget $contextTitle, LinkTarget $title,
 		bool &$skip, ?RevisionRecord &$revRecord
@@ -978,13 +966,6 @@ class HookRunner implements
 		return $this->container->run(
 			'BeforeParserFetchTemplateRevisionRecord',
 			[ $contextTitle, $title, &$skip, &$revRecord ]
-		);
-	}
-
-	public function onBeforeParserrenderImageGallery( $parser, $ig ) {
-		return $this->container->run(
-			'BeforeParserrenderImageGallery',
-			[ $parser, $ig ]
 		);
 	}
 
@@ -1272,6 +1253,13 @@ class HookRunner implements
 		return $this->container->run(
 			'ContribsPager::reallyDoQuery',
 			[ &$data, $pager, $offset, $limit, $descending ]
+		);
+	}
+
+	public function onContributeCards( &$cards ): void {
+		$this->container->run(
+			'ContributeCards',
+			[ &$cards ]
 		);
 	}
 
@@ -2181,13 +2169,6 @@ class HookRunner implements
 		);
 	}
 
-	public function onInternalParseBeforeSanitize( $parser, &$text, $stripState ) {
-		return $this->container->run(
-			'InternalParseBeforeSanitize',
-			[ $parser, &$text, $stripState ]
-		);
-	}
-
 	public function onInterwikiLoadPrefix( $prefix, &$iwData ) {
 		return $this->container->run(
 			'InterwikiLoadPrefix',
@@ -2325,24 +2306,10 @@ class HookRunner implements
 		);
 	}
 
-	public function onLinksUpdateAfterInsert( $linksUpdate, $table, $insertions ) {
-		return $this->container->run(
-			'LinksUpdateAfterInsert',
-			[ $linksUpdate, $table, $insertions ]
-		);
-	}
-
 	public function onLinksUpdateComplete( $linksUpdate, $ticket ) {
 		return $this->container->run(
 			'LinksUpdateComplete',
 			[ $linksUpdate, $ticket ]
-		);
-	}
-
-	public function onLinksUpdateConstructed( $linksUpdate ) {
-		return $this->container->run(
-			'LinksUpdateConstructed',
-			[ $linksUpdate ]
 		);
 	}
 
@@ -2580,6 +2547,13 @@ class HookRunner implements
 		);
 	}
 
+	public function onGetBlockErrorMessageKey( $block, &$key ) {
+		return $this->container->run(
+			'GetBlockErrorMessageKey',
+			[ $block, &$key ]
+		);
+	}
+
 	public function onModifyExportQuery( $db, &$tables, $cond, &$opts,
 		&$join_conds, &$conds
 	) {
@@ -2780,6 +2754,32 @@ class HookRunner implements
 		return $this->container->run(
 			'PageUndelete',
 			[ $page, $performer, $reason, $unsuppress, $timestamps, $fileVersions, $status ]
+		);
+	}
+
+	public function onPageUndeleteComplete(
+		ProperPageIdentity $page,
+		Authority $restorer,
+		string $reason,
+		RevisionRecord $restoredRev,
+		ManualLogEntry $logEntry,
+		int $restoredRevisionCount,
+		bool $created,
+		array $restoredPageIds
+	): void {
+		$this->container->run(
+			'PageUndeleteComplete',
+			[
+				$page,
+				$restorer,
+				$reason,
+				$restoredRev,
+				$logEntry,
+				$restoredRevisionCount,
+				$created,
+				$restoredPageIds
+			],
+			[ 'abortable' => false ]
 		);
 	}
 
@@ -3004,15 +3004,6 @@ class HookRunner implements
 		);
 	}
 
-	public function onParserSectionCreate( $parser, $section, &$sectionContent,
-		$showEditLinks
-	) {
-		return $this->container->run(
-			'ParserSectionCreate',
-			[ $parser, $section, &$sectionContent, $showEditLinks ]
-		);
-	}
-
 	public function onParserTestGlobals( &$globals ) {
 		return $this->container->run(
 			'ParserTestGlobals',
@@ -3076,6 +3067,22 @@ class HookRunner implements
 		return $this->container->run(
 			'PreferencesFormPreSave',
 			[ $formData, $form, $user, &$result, $oldUserOptions ]
+		);
+	}
+
+	public function onPreferencesGetIcon( &$iconNames ) {
+		return $this->container->run(
+			'PreferencesGetIcon',
+			[ &$iconNames ]
+		);
+	}
+
+	public function onPreferencesGetLayout( &$useMobileLayout, $skinName,
+		$skinProperties = []
+	) {
+		return $this->container->run(
+			'PreferencesGetLayout',
+			[ &$useMobileLayout, $skinName, $skinProperties ]
 		);
 	}
 
@@ -3151,8 +3158,8 @@ class HookRunner implements
 		);
 	}
 
-	public function onRecentChangesPurgeRows( $rows ) {
-		return $this->container->run(
+	public function onRecentChangesPurgeRows( $rows ): void {
+		$this->container->run(
 			'RecentChangesPurgeRows',
 			[ $rows ]
 		);
@@ -3178,6 +3185,45 @@ class HookRunner implements
 		return $this->container->run(
 			'RejectParserCacheValue',
 			[ $parserOutput, $wikiPage, $parserOptions ]
+		);
+	}
+
+	public function onRenameUserAbort( int $uid, string $old, string $new ) {
+		return $this->container->run(
+			'RenameUserAbort',
+			[ $uid, $old, $new ]
+		);
+	}
+
+	public function onRenameUserComplete( int $uid, string $old, string $new ): void {
+		$this->container->run(
+			'RenameUserComplete',
+			[ $uid, $old, $new ],
+			[ 'abortable' => false ]
+		);
+	}
+
+	public function onRenameUserPreRename( int $uid, string $old, string $new ): void {
+		$this->container->run(
+			'RenameUserPreRename',
+			[ $uid, $old, $new ],
+			[ 'abortable' => false ]
+		);
+	}
+
+	public function onRenameUserSQL( RenameuserSQL $renameUserSql ): void {
+		$this->container->run(
+			'RenameUserSQL',
+			[ $renameUserSql ],
+			[ 'abortable' => false ]
+		);
+	}
+
+	public function onRenameUserWarning( string $oldUsername, string $newUsername, array &$warnings ): void {
+		$this->container->run(
+			'RenameUserWarning',
+			[ $oldUsername, $newUsername, &$warnings ],
+			[ 'abortable' => false ]
 		);
 	}
 
@@ -3262,12 +3308,19 @@ class HookRunner implements
 		);
 	}
 
-	public function onSearchDataForIndex( &$fields, $handler, $page, $output,
-		$engine
-	) {
+	public function onSearchDataForIndex( &$fields, $handler, $page, $output, $engine ) {
 		return $this->container->run(
 			'SearchDataForIndex',
 			[ &$fields, $handler, $page, $output, $engine ]
+		);
+	}
+
+	public function onSearchDataForIndex2( array &$fields, \ContentHandler $handler,
+		\WikiPage $page, \ParserOutput $output, \SearchEngine $engine, RevisionRecord $revision
+	) {
+		return $this->container->run(
+			'SearchDataForIndex2',
+			[ &$fields, $handler, $page, $output, $engine, $revision ]
 		);
 	}
 
@@ -3580,6 +3633,13 @@ class HookRunner implements
 		);
 	}
 
+	public function onSpecialCreateAccountBenefits( ?string &$html, array $info, array &$options ) {
+		return $this->container->run(
+			'SpecialCreateAccountBenefits',
+			[ &$html, $info, &$options ]
+		);
+	}
+
 	public function onSpecialExportGetExtraPages( $inputPages, &$extraPages ) {
 		return $this->container->run(
 			'SpecialExportGetExtraPages',
@@ -3640,13 +3700,6 @@ class HookRunner implements
 		return $this->container->run(
 			'SpecialMuteModifyFormFields',
 			[ $target, $user, &$fields ]
-		);
-	}
-
-	public function onSpecialMuteSubmit( $data ) {
-		return $this->container->run(
-			'SpecialMuteSubmit',
-			[ $data ]
 		);
 	}
 
@@ -4180,6 +4233,13 @@ class HookRunner implements
 		);
 	}
 
+	public function onUserPrivilegedGroups( $userIdentity, &$groups ) {
+		return $this->container->run(
+			'UserPrivilegedGroups',
+			[ $userIdentity, &$groups ]
+		);
+	}
+
 	public function onUserGetReservedNames( &$reservedUsernames ) {
 		return $this->container->run(
 			'UserGetReservedNames',
@@ -4257,13 +4317,6 @@ class HookRunner implements
 		return $this->container->run(
 			'UserLoadDefaults',
 			[ $user, $name ]
-		);
-	}
-
-	public function onUserLoadFromDatabase( $user, &$s ) {
-		return $this->container->run(
-			'UserLoadFromDatabase',
-			[ $user, &$s ]
 		);
 	}
 
@@ -4358,13 +4411,6 @@ class HookRunner implements
 		return $this->container->run(
 			'UserSendConfirmationMail',
 			[ $user, &$mail, $info ]
-		);
-	}
-
-	public function onUserSetCookies( $user, &$session, &$cookies ) {
-		return $this->container->run(
-			'UserSetCookies',
-			[ $user, &$session, &$cookies ]
 		);
 	}
 

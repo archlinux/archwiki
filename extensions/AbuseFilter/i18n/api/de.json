@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"FF-11",
 			"FF11",
 			"Inkowik",
 			"MGChecker",
 			"Metalhead64",
 			"Schmackes",
-			"ToBeFree",
-			"Brettchenweber"
+			"ToBeFree"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "Prüfen, ob ein Missbrauchsfilter mit einem Satz von Variablen, einer Bearbeitung oder einem protokollierten Missbrauchsfilter-Ereignis übereinstimmt.\n\nvars, rcid oder logid ist erforderlich, es darf jedoch nur eine davon verwendet werden.",

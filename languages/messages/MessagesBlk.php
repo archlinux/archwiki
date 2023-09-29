@@ -1,8 +1,6 @@
 <?php
 /** Pa'O (ပအိုဝ်ႏဘာႏသာႏ)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  *
@@ -15,7 +13,7 @@ $fallback = 'my';
 
 $namespaceNames = [
 	NS_MEDIA            => 'မီဒီယာ',
-	NS_SPECIAL          => 'တဲး၀ါး',
+	NS_SPECIAL          => 'တဲးဝါး', // T317598
 	NS_TALK             => 'အိုင်ကိုမ်ဒေါ့ꩻရီ',
 	NS_USER             => 'ကေားသုင်ꩻသား',
 	NS_USER_TALK        => 'ကေားသုင်ꩻသား_အိုင်ကိုမ်ဒေါ့ꩻရီ',
@@ -121,7 +119,7 @@ $specialPageAliases = [
 	'RunJobs'                   => [ 'ခွုမ်မာꩻထာꩻမာꩻ' ],
 	'Search'                    => [ 'ထိုမ်ႏ' ],
 	'Shortpages'                => [ 'လိတ်မဲ့ငါဒွေါင်ႏဖုံႏ' ],
-	'Specialpages'              => [ 'လိတ်မဲ့ငါတဲး၀ါးဖုံႏ' ],
+	'Specialpages'              => [ 'လိတ်မဲ့ငါတဲးဝါးဖုံႏ' ], // T317598
 	'Statistics'                => [ 'စာႏရင်ꩻအင်ꩻဖုံႏ', 'စာႏရင်ꩻအင်ꩻ' ],
 	'Tags'                      => [ 'လိတ်တွယ်ꩻဖုံႏ' ],
 	'TrackingCategories'        => [ 'ကဏ္ဍထွေလွဉ်ꩻဖုံႏ' ],

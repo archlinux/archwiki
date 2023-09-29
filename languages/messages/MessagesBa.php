@@ -1,8 +1,6 @@
 <?php
 /** Bashkir (башҡортса)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -97,6 +95,7 @@ $specialPageAliases = [
 	'Randompage'                => [ 'Осраҡлы_мәҡәлә' ],
 	'Recentchanges'             => [ 'Һуңғы_үҙгәртеүҙәр' ],
 	'Recentchangeslinked'       => [ 'Бәйле_үҙгәртеүҙәр' ],
+	'Renameuser'                => [ 'RenameUser' ],
 	'Revisiondelete'            => [ 'Төҙәтеүҙе_юйыу' ],
 	'Search'                    => [ 'Эҙләү' ],
 	'Shortpages'                => [ 'Ҡыҫҡа_биттәр' ],

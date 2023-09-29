@@ -420,9 +420,6 @@ FilterTagMultiselectWidget.prototype.onMenuToggle = function ( isVisible ) {
 		// Clear the search
 		this.controller.setSearch( '' );
 
-		// Log filter grouping
-		this.controller.trackFilterGroupings( 'filtermenu' );
-
 		this.blur();
 	}
 
@@ -774,7 +771,7 @@ FilterTagMultiselectWidget.prototype.createTagItemWidget = function ( data ) {
 		return new FilterTagItemWidget(
 			this.controller,
 			this.model,
-			this.model.getInvertModel(),
+			this.model.getInvertModel( filterItem.getGroupModel().getView() ),
 			filterItem,
 			{
 				$overlay: this.$overlay

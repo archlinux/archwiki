@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Winston Sung"
+		]
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|多謝}}}}",
+	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|多謝咗}}}}",
+	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|多謝}}}}",
+	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|多謝咗}}}}",
+	"thanks-error-undefined": "多謝失敗，麻煩再試多次。",
+	"thanks-error-invalidrevision": "錯嘅版本號",
+	"thanks-thank-tooltip": "送封多謝信畀爾名用戶",
+	"echo-category-title-edit-thank": "人哋嘅多謝"
+}

@@ -51,19 +51,21 @@
  */
 
 // phpcs:disable MediaWiki.Usage.DeprecatedGlobalVariables
-use MediaWiki\HeaderCallback;
+use MediaWiki\HookContainer\FauxGlobalHookArray;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Settings\Config\GlobalConfigBuilder;
-use MediaWiki\Settings\Config\PhpIniSink;
+use MediaWiki\Request\HeaderCallback;
 use MediaWiki\Settings\DynamicDefaultValues;
 use MediaWiki\Settings\LocalSettingsLoader;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Settings\Source\PhpSettingsSource;
 use MediaWiki\Settings\Source\ReflectionSchemaSource;
 use MediaWiki\Settings\WikiFarmSettingsLoader;
+use MediaWiki\StubObject\StubGlobalUser;
+use MediaWiki\StubObject\StubUserLang;
+use MediaWiki\Title\Title;
 use Psr\Log\LoggerInterface;
 use Wikimedia\RequestTimeout\RequestTimeout;
 
@@ -80,7 +82,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
 // PHP must not be configured to overload mbstring functions. (T5782, T122807)
-// This was deprecated by upstream in PHP 7.2, likely to be removed in PHP 8.0.
+// This was deprecated by upstream in PHP 7.2 and was removed in PHP 8.0.
 if ( ini_get( 'mbstring.func_overload' ) ) {
 	die( 'MediaWiki does not support installations where mbstring.func_overload is non-zero.' );
 }
@@ -129,7 +131,7 @@ if ( !interface_exists( LoggerInterface::class ) ) {
 }
 
 // Set $wgCommandLineMode to false if it wasn't set to true.
-$wgCommandLineMode = $wgCommandLineMode ?? false;
+$wgCommandLineMode ??= false;
 
 /**
  * $wgConf hold the site configuration.
@@ -138,27 +140,15 @@ $wgCommandLineMode = $wgCommandLineMode ?? false;
  */
 $wgConf = new SiteConfiguration;
 
-$wgAutoloadClasses = $wgAutoloadClasses ?? [];
+$wgAutoloadClasses ??= [];
 
-$wgSettings = new SettingsBuilder(
-	MW_INSTALL_PATH,
-	ExtensionRegistry::getInstance(),
-	new GlobalConfigBuilder( 'wg' ),
-	new PhpIniSink()
-);
+$wgSettings = SettingsBuilder::getInstance();
 
 if ( defined( 'MW_USE_CONFIG_SCHEMA_CLASS' ) ) {
 	// Load config schema from MainConfigSchema. Useful for running scripts that
 	// generate other representations of the config schema. This is slow, so it
 	// should not be used for serving web traffic.
 	$wgSettings->load( new ReflectionSchemaSource( MainConfigSchema::class ) );
-} elseif ( getenv( 'MW_USE_LEGACY_DEFAULT_SETTINGS' ) || defined( 'MW_USE_LEGACY_DEFAULT_SETTINGS' ) ) {
-	// Load the old DefaultSettings.php file. Should be removed in 1.39. See T300129.
-	require_once MW_INSTALL_PATH . '/includes/DefaultSettings.php';
-
-	// This is temporary until we no longer need this mode.
-	// TODO: delete config-merge-strategies.php when this code is removed.
-	$wgSettings->load( new PhpSettingsSource( MW_INSTALL_PATH . '/includes/config-merge-strategies.php' ) );
 } else {
 	$wgSettings->load( new PhpSettingsSource( MW_INSTALL_PATH . '/includes/config-schema.php' ) );
 }
@@ -200,42 +190,34 @@ if ( !isset( $GLOBALS['wgScopeTest'] ) || $GLOBALS['wgScopeTest'] !== $wgScopeTe
 }
 unset( $wgScopeTest );
 
-if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
-	call_user_func( MW_CONFIG_CALLBACK, $wgSettings );
-} else {
-	wfDetectLocalSettingsFile( MW_INSTALL_PATH );
-
-	if ( getenv( 'MW_USE_LOCAL_SETTINGS_LOADER' ) ) {
-		// NOTE: This will not work for configuration variables that use a prefix
-		//       other than "wg".
-		$localSettingsLoader = new LocalSettingsLoader( $wgSettings, MW_INSTALL_PATH );
-		$localSettingsLoader->loadLocalSettingsFile( MW_CONFIG_FILE );
-		unset( $localSettingsLoader );
+try {
+	if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
+		call_user_func( MW_CONFIG_CALLBACK, $wgSettings );
 	} else {
-		if ( str_ends_with( MW_CONFIG_FILE, '.php' ) ) {
-			// make defaults available as globals
-			$wgSettings->apply();
-			require_once MW_CONFIG_FILE;
+		wfDetectLocalSettingsFile( MW_INSTALL_PATH );
+
+		if ( getenv( 'MW_USE_LOCAL_SETTINGS_LOADER' ) ) {
+			// NOTE: This will not work for configuration variables that use a prefix
+			//       other than "wg".
+			$localSettingsLoader = new LocalSettingsLoader( $wgSettings, MW_INSTALL_PATH );
+			$localSettingsLoader->loadLocalSettingsFile( MW_CONFIG_FILE );
+			unset( $localSettingsLoader );
 		} else {
-			$wgSettings->loadFile( MW_CONFIG_FILE );
+			if ( str_ends_with( MW_CONFIG_FILE, '.php' ) ) {
+				// make defaults available as globals
+				$wgSettings->apply();
+				require_once MW_CONFIG_FILE;
+			} else {
+				$wgSettings->loadFile( MW_CONFIG_FILE );
+			}
 		}
 	}
-}
 
-// Make settings loaded by LocalSettings.php available in globals for use here
-$wgSettings->apply();
-
-/**
- * Customization point after all loading (constants, functions, classes,
- * LocalSettings). Specifically, this is before usage of
- * settings, before instantiation of Profiler (and other singletons), and
- * before any setup functions or hooks run.
- */
-
-if ( defined( 'MW_SETUP_CALLBACK' ) ) {
-	call_user_func( MW_SETUP_CALLBACK, $wgSettings );
-	// Make any additional settings available in globals for use here
+	// Make settings loaded by LocalSettings.php available in globals for use here
 	$wgSettings->apply();
+} catch ( MissingExtensionException $e ) {
+	// Make a common mistake give a friendly error
+	$e->render();
 }
 
 // If in a wiki-farm, load site-specific settings
@@ -243,6 +225,22 @@ if ( $wgSettings->getConfig()->get( MainConfigNames::WikiFarmSettingsDirectory )
 	$wikiFarmSettingsLoader = new WikiFarmSettingsLoader( $wgSettings );
 	$wikiFarmSettingsLoader->loadWikiFarmSettings();
 	unset( $wikiFarmSettingsLoader );
+}
+
+// All settings should be loaded now.
+$wgSettings->enterRegistrationStage();
+
+/**
+ * Customization point after most things are loaded (constants, functions, classes,
+ * LocalSettings.
+ * Note that this runs before extensions are registered, and before most singletons become
+ * available, and before MediaWikiServices is initialized.
+ */
+
+if ( defined( 'MW_SETUP_CALLBACK' ) ) {
+	call_user_func( MW_SETUP_CALLBACK, $wgSettings );
+	// Make any additional settings available in globals for use here
+	$wgSettings->apply();
 }
 
 // Apply dynamic defaults declared in config schema callbacks.
@@ -257,8 +255,10 @@ $wgSettings->apply();
 // callbacks in the config schema.
 require __DIR__ . '/SetupDynamicConfig.php';
 
-// All settings should be loaded now.
-$wgSettings->finalize();
+if ( defined( 'MW_AUTOLOAD_TEST_CLASSES' ) ) {
+	require_once __DIR__ . '/../tests/common/TestsAutoLoader.php';
+}
+
 if ( $wgBaseDirectory !== MW_INSTALL_PATH ) {
 	throw new FatalError(
 		'$wgBaseDirectory must not be modified in settings files! ' .
@@ -274,10 +274,28 @@ if ( $wgRequestTimeLimit && !$wgCommandLineMode ) {
 /**
  * Load queued extensions
  */
+if ( defined( 'MW_AUTOLOAD_TEST_CLASSES' ) ) {
+	ExtensionRegistry::getInstance()->setLoadTestClassesAndNamespaces( true );
+}
 
+ExtensionRegistry::getInstance()->setSettingsBuilder( $wgSettings );
 ExtensionRegistry::getInstance()->loadFromQueue();
 // Don't let any other extensions load
 ExtensionRegistry::getInstance()->finish();
+
+/**
+ * Customization point after ALL loading (constants, functions, classes,
+ * LocalSettings, extensions, dynamic defaults).
+ * Note that this runs before MediaWikiServices is initialized.
+ */
+if ( defined( 'MW_FINAL_SETUP_CALLBACK' ) ) {
+	call_user_func( MW_FINAL_SETUP_CALLBACK, $wgSettings );
+	// Make any additional settings available in globals for use below
+	$wgSettings->apply();
+}
+
+// Config can no longer be changed.
+$wgSettings->enterReadOnlyStage();
 
 // Set an appropriate locale (T291234)
 // setlocale() will return the locale name actually set.
@@ -303,6 +321,7 @@ define( 'MW_SERVICE_BOOTSTRAP_COMPLETE', 1 );
 
 MWExceptionRenderer::setShowExceptionDetails( $wgShowExceptionDetails );
 MWExceptionHandler::installHandler( $wgLogExceptionBacktrace, $wgPropagateErrors );
+Profiler::init( $wgProfiler );
 
 // Non-trivial validation of: $wgServer
 // The FatalError page only renders cleanly after MWExceptionHandler is installed.
@@ -314,6 +333,17 @@ if ( $wgServer === false ) {
 		'https://www.mediawiki.org/wiki/Manual:$wgServer</a>.'
 	);
 }
+
+// Set up a fake $wgHooks array.
+// XXX: It would be nice if we could still get the originally configured hook handlers
+//      using the MainConfigNames::Hooks setting, but it's not really needed,
+//      since we need the HookContainer to be initialized first anyway.
+
+global $wgHooks;
+$wgHooks = new FauxGlobalHookArray(
+	MediaWikiServices::getInstance()->getHookContainer(),
+	$wgHooks
+);
 
 // Non-trivial expansion of: $wgCanonicalServer, $wgServerName.
 // These require calling global functions.

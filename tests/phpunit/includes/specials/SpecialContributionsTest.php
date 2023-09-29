@@ -2,6 +2,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\UltimateAuthority;
+use MediaWiki\Request\FauxRequest;
 
 /**
  * @author Ammarpad
@@ -41,7 +42,7 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 	 * @dataProvider provideTestExecuteRange
 	 */
 	public function testExecuteRange( $username, $shouldShowLinks ) {
-		list( $html ) = $this->executeSpecialPage( $username, null, 'qqx', $this->admin, true );
+		[ $html ] = $this->executeSpecialPage( $username, null, 'qqx', $this->admin, true );
 
 		if ( $shouldShowLinks ) {
 			$this->assertStringContainsString( 'blocklink', $html );
@@ -56,7 +57,7 @@ class SpecialContributionsTest extends SpecialPageTestBase {
 	 * @dataProvider provideTestExecuteNonRange
 	 */
 	public function testExecuteNonRange( $username, $shouldShowLinks ) {
-		list( $html ) = $this->executeSpecialPage( $username, null, 'qqx', $this->admin, true );
+		[ $html ] = $this->executeSpecialPage( $username, null, 'qqx', $this->admin, true );
 
 		if ( $shouldShowLinks ) {
 			$this->assertStringContainsString( 'blocklink', $html );

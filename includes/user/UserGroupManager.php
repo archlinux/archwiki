@@ -34,18 +34,20 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\GroupPermissionsLookup;
 use MediaWiki\User\TempUser\TempUserConfig;
+use MediaWiki\WikiMap\WikiMap;
 use Psr\Log\LoggerInterface;
 use ReadOnlyMode;
 use Sanitizer;
 use User;
 use UserGroupExpiryJob;
 use UserGroupMembership;
-use WikiMap;
 use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\DBConnRef;
+use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * Managers user groups.
@@ -71,6 +73,7 @@ class UserGroupManager implements IDBAccessObject {
 		MainConfigNames::GroupsRemoveFromSelf,
 		MainConfigNames::RevokePermissions,
 		MainConfigNames::RemoveGroups,
+		MainConfigNames::PrivilegedGroups,
 	];
 
 	/** @var ServiceOptions */
@@ -124,6 +127,9 @@ class UserGroupManager implements IDBAccessObject {
 	/** string key for former groups cache */
 	private const CACHE_FORMER = 'former';
 
+	/** string key for former groups cache */
+	private const CACHE_PRIVILEGED = 'privileged';
+
 	/**
 	 * @var array Service caches, an assoc. array keyed after the user-keys generated
 	 * by the getCacheKey method and storing values in the following format:
@@ -133,6 +139,7 @@ class UserGroupManager implements IDBAccessObject {
 	 *   self::CACHE_EFFECTIVE => effective groups cache
 	 *   self::CACHE_MEMBERSHIP => [ ] // Array of UserGroupMembership objects
 	 *   self::CACHE_FORMER => former groups cache
+	 *   self::CACHE_PRIVILEGED => privileged groups cache
 	 * ]
 	 */
 	private $userGroupCache = [];
@@ -144,8 +151,9 @@ class UserGroupManager implements IDBAccessObject {
 	 * userKey => [
 	 *   self::CACHE_IMPLICIT => implicit groups query flag
 	 *   self::CACHE_EFFECTIVE => effective groups query flag
-	 *   self::CACHE_MEMBERSHIP  => membership groups query flag
+	 *   self::CACHE_MEMBERSHIP => membership groups query flag
 	 *   self::CACHE_FORMER => former groups query flag
+	 *   self::CACHE_PRIVILEGED => privileged groups query flag
 	 * ]
 	 */
 	private $queryFlagsUsedForCaching = [];
@@ -161,7 +169,7 @@ class UserGroupManager implements IDBAccessObject {
 	 * @param LoggerInterface $logger
 	 * @param TempUserConfig $tempUserConfig
 	 * @param callable[] $clearCacheCallbacks
-	 * @param string|bool $dbDomain
+	 * @param string|false $dbDomain
 	 */
 	public function __construct(
 		ServiceOptions $options,
@@ -381,13 +389,12 @@ class UserGroupManager implements IDBAccessObject {
 			return [];
 		}
 
-		$db = $this->getDBConnectionRefForQueryFlags( $queryFlags );
-		$res = $db->select(
-			'user_former_groups',
-			[ 'ufg_group' ],
-			[ 'ufg_user' => $user->getId() ],
-			__METHOD__
-		);
+		$res = $this->getDBConnectionRefForQueryFlags( $queryFlags )->newSelectQueryBuilder()
+			->select( 'ufg_group' )
+			->from( 'user_former_groups' )
+			->where( [ 'ufg_user' => $user->getId() ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 		$formerGroups = [];
 		foreach ( $res as $row ) {
 			$formerGroups[] = $row->ufg_group;
@@ -460,6 +467,57 @@ class UserGroupManager implements IDBAccessObject {
 		}
 
 		return $promote;
+	}
+
+	/**
+	 * Returns the list of privileged groups that $user belongs to.
+	 * Privileged groups are ones that can be abused in a dangerous way.
+	 *
+	 * Depending on how extensions extend this method, it might return values
+	 * that are not strictly user groups (ACL list names, etc.).
+	 * It is meant for logging/auditing, not for passing to methods that expect group names.
+	 *
+	 * @param UserIdentity $user
+	 * @param int $queryFlags
+	 * @param bool $recache Whether to avoid the cache
+	 * @return string[]
+	 * @since 1.41 (also backported to 1.39.5 and 1.40.1)
+	 * @see $wgPrivilegedGroups
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/UserGetPrivilegedGroups
+	 */
+	public function getUserPrivilegedGroups(
+		UserIdentity $user,
+		int $queryFlags = self::READ_NORMAL,
+		bool $recache = false
+	): array {
+		$userKey = $this->getCacheKey( $user );
+
+		if ( !$recache &&
+			$this->canUseCachedValues( $user, self::CACHE_PRIVILEGED, $queryFlags ) &&
+			isset( $this->userGroupCache[$userKey][self::CACHE_PRIVILEGED] )
+		) {
+			return $this->userGroupCache[$userKey][self::CACHE_PRIVILEGED];
+		}
+
+		if ( !$user->isRegistered() ) {
+			return [];
+		}
+
+		$groups = array_intersect(
+			$this->getUserEffectiveGroups( $user, $queryFlags, $recache ),
+			$this->options->get( 'PrivilegedGroups' )
+		);
+
+		$this->hookRunner->onUserPrivilegedGroups( $user, $groups );
+
+		$this->setCache(
+			$this->getCacheKey( $user ),
+			self::CACHE_PRIVILEGED,
+			array_values( array_unique( $groups ) ),
+			$queryFlags
+		);
+
+		return $this->userGroupCache[$userKey][self::CACHE_PRIVILEGED];
 	}
 
 	/**
@@ -711,16 +769,11 @@ class UserGroupManager implements IDBAccessObject {
 			return [];
 		}
 
-		$db = $this->getDBConnectionRefForQueryFlags( $queryFlags );
-		$queryInfo = $this->getQueryInfo();
-		$res = $db->select(
-			$queryInfo['tables'],
-			$queryInfo['fields'],
-			[ 'ug_user' => $user->getId() ],
-			__METHOD__,
-			[],
-			$queryInfo['joins']
-		);
+		$queryBuilder = $this->newQueryBuilder( $this->getDBConnectionRefForQueryFlags( $queryFlags ) );
+		$res = $queryBuilder
+			->where( [ 'ug_user' => $user->getId() ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$ugms = [];
 		foreach ( $res as $row ) {
@@ -943,33 +996,27 @@ class UserGroupManager implements IDBAccessObject {
 	}
 
 	/**
-	 * Return the tables and fields to be selected to construct new UserGroupMembership object
-	 * using newGroupMembershipFromRow method.
+	 * Return the query builder to build upon and query
 	 *
-	 * @return array[] With three keys:
-	 *  - tables: (string[]) to include in the `$table` to `IDatabase->select()` or `SelectQueryBuilder::tables`
-	 *  - fields: (string[]) to include in the `$vars` to `IDatabase->select()` or `SelectQueryBuilder::fields`
-	 *  - joins: (array) to include in the `$join_conds` to `IDatabase->select()` or `SelectQueryBuilder::joinConds`
+	 * @param IDatabase $db
+	 * @return SelectQueryBuilder
 	 * @internal
-	 * @phan-return array{tables:string[],fields:string[],joins:array}
 	 */
-	public function getQueryInfo(): array {
-		return [
-			'tables' => [ 'user_groups' ],
-			'fields' => [
+	public function newQueryBuilder( IDatabase $db ): SelectQueryBuilder {
+		 return $db->newSelectQueryBuilder()
+			->select( [
 				'ug_user',
 				'ug_group',
 				'ug_expiry',
-			],
-			'joins' => []
-		];
+			] )
+			->from( 'user_groups' );
 	}
 
 	/**
 	 * Purge expired memberships from the user_groups table
 	 * @internal
 	 * @note this could be slow and is intended for use in a background job
-	 * @return int|bool false if purging wasn't attempted (e.g. because of
+	 * @return int|false false if purging wasn't attempted (e.g. because of
 	 *  readonly), the number of rows purged (might be 0) otherwise
 	 */
 	public function purgeExpired() {
@@ -988,18 +1035,14 @@ class UserGroupManager implements IDBAccessObject {
 
 		$now = time();
 		$purgedRows = 0;
-		$queryInfo = $this->getQueryInfo();
 		do {
 			$dbw->startAtomic( __METHOD__ );
-
-			$res = $dbw->select(
-				$queryInfo['tables'],
-				$queryInfo['fields'],
-				[ 'ug_expiry < ' . $dbw->addQuotes( $dbw->timestamp( $now ) ) ],
-				__METHOD__,
-				[ 'FOR UPDATE', 'LIMIT' => 100 ],
-				$queryInfo['joins']
-			);
+			$res = $this->newQueryBuilder( $dbw )
+				->where( [ 'ug_expiry < ' . $dbw->addQuotes( $dbw->timestamp( $now ) ) ] )
+				->forUpdate()
+				->limit( 100 )
+				->caller( __METHOD__ )
+				->fetchResultSet();
 
 			if ( $res->numRows() > 0 ) {
 				$insertData = []; // array of users/groups to insert to user_former_groups
@@ -1174,7 +1217,7 @@ class UserGroupManager implements IDBAccessObject {
 	 * @return DBConnRef
 	 */
 	private function getDBConnectionRefForQueryFlags( int $queryFlags ): DBConnRef {
-		list( $mode, ) = DBAccessObjectUtils::getDBOptions( $queryFlags );
+		[ $mode, ] = DBAccessObjectUtils::getDBOptions( $queryFlags );
 		return $this->loadBalancer->getConnectionRef( $mode, [], $this->dbDomain );
 	}
 

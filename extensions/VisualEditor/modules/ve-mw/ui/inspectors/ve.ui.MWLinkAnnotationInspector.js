@@ -335,6 +335,8 @@ ve.ui.MWLinkAnnotationInspector.prototype.createAnnotationInput = function () {
 ve.ui.MWLinkAnnotationInspector.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWLinkAnnotationInspector.super.prototype.getSetupProcess.call( this, data )
 		.next( function () {
+			this.isReady = false;
+
 			var isReadOnly = this.isReadOnly();
 			this.linkTypeIndex.setTabPanel(
 				this.initialAnnotation instanceof ve.dm.MWExternalLinkAnnotation ? 'external' : 'internal'
@@ -346,6 +348,18 @@ ve.ui.MWLinkAnnotationInspector.prototype.getSetupProcess = function ( data ) {
 			this.trackedInternalLinkInputChange = false;
 			this.trackedExternalLinkInputChange = false;
 			this.isActive = true;
+		}, this );
+};
+
+/**
+ * @inheritdoc
+ */
+ve.ui.MWLinkAnnotationInspector.prototype.getReadyProcess = function ( data ) {
+	return ve.ui.MWLinkAnnotationInspector.super.prototype.getReadyProcess.call( this, data )
+		.next( function () {
+			this.isReady = true;
+			// Focus is skipped during setup. (T321026)
+			this.annotationInput.getTextInputWidget().focus();
 		}, this );
 };
 
@@ -433,7 +447,12 @@ ve.ui.MWLinkAnnotationInspector.prototype.onLinkTypeIndexSet = function ( tabPan
 		this.allowProtocolInInternal = true;
 	}
 
-	this.annotationInput.getTextInputWidget().setValue( text ).focus();
+	this.annotationInput.getTextInputWidget().setValue( text );
+	if ( this.isReady ) {
+		// Focussing an element that isn't visible yet triggers a
+		// bug in jQuery that prevents future focusses. (T321026)
+		this.annotationInput.getTextInputWidget().focus();
+	}
 	// Select entire link when switching, for ease of replacing entire contents.
 	// Most common case:
 	// 1. Inspector opened, internal-link shown with the selected-word prefilled

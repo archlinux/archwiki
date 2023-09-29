@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Piano1forte2"
+		]
+	},
+	"apihelp-query+gadgetcategories-example-2": "Get all information about categories named 'foo' and 'bar'",
+	"apihelp-query+gadgets-example-3": "Get a list of gadgets belonging to category 'foo'"
+}

@@ -45,6 +45,7 @@
 	"scribunto-lua-error-location": "Erro em Lua $1: $2.",
 	"scribunto-lua-error": "Erro em lua: $2.",
 	"scribunto-lua-notarrayreturn": "Erro de script: O módulo retornou um valor de $2. Devia ter retornado uma tabela de exportação.",
+	"scribunto-lua-warning": "Aviso de script: $1",
 	"scribunto-luastandalone-proc-error": "Erro em Lua: impossível criar o processo.",
 	"scribunto-luastandalone-proc-error-msg": "Erro em Lua: Não é possível criar o processo: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Erro em Lua: Não é possível criar o processo: proc_open não está disponível. Verifique a diretiva de configuração \"disable_functions\".",

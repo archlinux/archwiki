@@ -19,10 +19,13 @@
  */
 namespace Wikimedia\Rdbms;
 
+use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
+use NullStatsdDataFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
+use StatsdAwareInterface;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -35,13 +38,19 @@ use Wikimedia\ScopedCallback;
  * @ingroup Profiler
  * @ingroup Database
  */
-class TransactionProfiler implements LoggerAwareInterface {
+class TransactionProfiler implements LoggerAwareInterface, StatsdAwareInterface {
 	/** @var LoggerInterface */
 	private $logger;
-	/** @var array<string,array> Map of (name => threshold value) */
+	/** @var StatsdDataFactoryInterface */
+	private $stats;
+	/** @var array<string,array> Map of (event name => map of FLD_* class constants) */
 	private $expect;
-	/** @var array<string,int> Map of (name => current hits) */
+	/** @var array<string,int> Map of (event name => current hits) */
 	private $hits;
+	/** @var array<string,int> Map of (event name => violation counter) */
+	private $violations;
+	/** @var array<string,int> Map of (event name => silence counter) */
+	private $silenced;
 
 	/**
 	 * @var array<string,array> Map of (trx ID => (write start time, list of DBs involved))
@@ -55,8 +64,11 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 */
 	private $dbTrxMethodTimes;
 
-	/** @var bool Whether logging is disabled */
-	private $silenced;
+	/** @var string|null HTTP request method; null for CLI mode */
+	private $method;
+
+	/** @var float|null */
+	private $wallClockOverride;
 
 	/** Treat locks as long-running if they last longer than this many seconds */
 	private const DB_LOCK_THRESHOLD_SEC = 3.0;
@@ -88,41 +100,89 @@ class TransactionProfiler implements LoggerAwareInterface {
 	/** Key to the function that set the max expected value */
 	private const FLD_FNAME = 1;
 
+	/** Any type of expectation */
+	public const EXPECTATION_ANY = 'any';
+	/** Any expectations about replica usage never occurring */
+	public const EXPECTATION_REPLICAS_ONLY = 'replicas-only';
+
 	public function __construct() {
 		$this->initPlaceholderExpectations();
 
 		$this->dbTrxHoldingLocks = [];
 		$this->dbTrxMethodTimes = [];
 
-		$this->silenced = false;
+		$this->silenced = array_fill_keys( self::EVENT_NAMES, 0 );
 
 		$this->setLogger( new NullLogger() );
+		$this->setStatsdDataFactory( new NullStatsdDataFactory() );
 	}
 
 	public function setLogger( LoggerInterface $logger ) {
 		$this->logger = $logger;
 	}
 
+	public function setStatsdDataFactory( StatsdDataFactoryInterface $statsFactory ) {
+		$this->stats = $statsFactory;
+	}
+
+	/**
+	 * @param ?string $method HTTP method; null for CLI mode
+	 * @return void
+	 */
+	public function setRequestMethod( ?string $method ) {
+		$this->method = $method;
+	}
+
 	/**
 	 * @param bool $value
 	 * @return bool Old value
 	 * @since 1.28
+	 * @deprecated Since 1.40
 	 */
 	public function setSilenced( bool $value ) {
-		$old = $this->silenced;
-		$this->silenced = $value;
+		wfDeprecated( __METHOD__, '1.40' );
 
-		return $old;
+		$delta = $value ? 1 : -1;
+		foreach ( self::EVENT_NAMES as $event ) {
+			$this->silenced[$event] += $delta;
+		}
+
+		return false;
 	}
 
 	/**
-	 * Disable the logging of warnings until the returned object goes out of scope or is consumed.
+	 * Temporarily ignore expectations until the returned object goes out of scope
+	 *
+	 * During this time, violation of expectations will not be logged and counters
+	 * for expectations (e.g. "conns") will not be incremented.
+	 *
+	 * This will suppress warnings about event counters which have a limit of zero.
+	 * The main use case is too avoid warnings about primary connections/writes and
+	 * warnings about getting any primary/replica connections at all.
+	 *
+	 * @param string $type Class EXPECTATION_* constant [default: TransactionProfiler::EXPECTATION_ANY]
 	 * @return ScopedCallback
 	 */
-	public function silenceForScope() {
-		$oldSilenced = $this->setSilenced( true );
-		return new ScopedCallback( function () use ( $oldSilenced ) {
-			$this->setSilenced( $oldSilenced );
+	public function silenceForScope( string $type = self::EXPECTATION_ANY ) {
+		if ( $type === self::EXPECTATION_REPLICAS_ONLY ) {
+			$events = [];
+			foreach ( [ 'writes', 'masterConns' ] as $event ) {
+				if ( $this->expect[$event][self::FLD_LIMIT] === 0 ) {
+					$events[] = $event;
+				}
+			}
+		} else {
+			$events = self::EVENT_NAMES;
+		}
+
+		foreach ( $events as $event ) {
+			++$this->silenced[$event];
+		}
+
+		return new ScopedCallback( function () use ( $events ) {
+			foreach ( $events as $event ) {
+				--$this->silenced[$event];
+			}
 		} );
 	}
 
@@ -131,7 +191,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 *
 	 * With conflicting expectations, the most narrow ones will be used
 	 *
-	 * @param string $event One of the names in TransactionProfiler::EVENT_NAMES
+	 * @param string $event Event name, {@see self::EVENT_NAMES}
 	 * @param float|int $limit Maximum event count, event value, or total event value
 	 * @param string $fname Caller
 	 * @since 1.25
@@ -157,7 +217,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 *
 	 * Use this to initialize expectations or make them stricter mid-request
 	 *
-	 * @param array $expects Map of (event => limit)
+	 * @param array $expects Map of (event name => limit), {@see self::EVENT_NAMES}
 	 * @param string $fname
 	 * @since 1.26
 	 */
@@ -186,7 +246,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 * Use this to apply a totally different set of expectations for a different part
 	 * of the request, such as during "post-send" (execution after HTTP response completion)
 	 *
-	 * @param array $expects Map of (event => limit)
+	 * @param array $expects Map of (event name => limit), {@see self::EVENT_NAMES}
 	 * @param string $fname
 	 * @since 1.33
 	 */
@@ -239,7 +299,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 			$this->logger->warning( "Nested transaction for '$name' - out of sync." );
 		}
 		$this->dbTrxHoldingLocks[$name] = [
-			'start' => microtime( true ),
+			'start' => $this->getCurrentTime(),
 			'conns' => [], // all connections involved
 		];
 		$this->dbTrxMethodTimes[$name] = [];
@@ -270,7 +330,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 		string $trxId,
 		?string $serverName = null
 	) {
-		$eTime = microtime( true );
+		$eTime = $this->getCurrentTime();
 		$elapsed = ( $eTime - $sTime );
 
 		if ( $isWrite && $this->isAboveThreshold( $rowCount, 'maxAffected' ) ) {
@@ -374,7 +434,7 @@ class TransactionProfiler implements LoggerAwareInterface {
 		// Fill in the last non-query period...
 		$lastQuery = end( $this->dbTrxMethodTimes[$name] );
 		if ( $lastQuery ) {
-			$now = microtime( true );
+			$now = $this->getCurrentTime();
 			$lastEnd = $lastQuery[2];
 			if ( ( $now - $lastEnd ) > self::EVENT_THRESHOLD_SEC ) {
 				$this->dbTrxMethodTimes[$name][] = [ '...delay...', $lastEnd, $now ];
@@ -410,56 +470,70 @@ class TransactionProfiler implements LoggerAwareInterface {
 		);
 
 		$this->hits = array_fill_keys( self::COUNTER_EVENT_NAMES, 0 );
+		$this->violations = array_fill_keys( self::EVENT_NAMES, 0 );
 	}
 
 	/**
 	 * @param float|int $value
-	 * @param string $expectation
+	 * @param string $event
 	 * @return bool
 	 */
-	private function isAboveThreshold( $value, string $expectation ) {
-		return ( $value > $this->expect[$expectation][self::FLD_LIMIT] );
+	private function isAboveThreshold( $value, string $event ) {
+		if ( $this->silenced[$event] > 0 ) {
+			return false;
+		}
+
+		return ( $value > $this->expect[$event][self::FLD_LIMIT] );
 	}
 
 	/**
-	 * @param string $expectation
+	 * @param string $event
 	 * @return bool
 	 */
-	private function pingAndCheckThreshold( string $expectation ) {
-		$newValue = ++$this->hits[$expectation];
+	private function pingAndCheckThreshold( string $event ) {
+		if ( $this->silenced[$event] > 0 ) {
+			return false;
+		}
 
-		return ( $newValue > $this->expect[$expectation][self::FLD_LIMIT] );
+		$newValue = ++$this->hits[$event];
+		$limit = $this->expect[$event][self::FLD_LIMIT];
+
+		return ( $newValue > $limit );
 	}
 
 	/**
-	 * @param string $expectation
+	 * @param string $event
 	 * @param string|GeneralizedSql $query
 	 * @param float|int $actual
 	 * @param string|null $trxId Transaction id
 	 * @param string|null $serverName db host name like db1234
 	 */
 	private function reportExpectationViolated(
-		$expectation,
+		$event,
 		$query,
 		$actual,
 		?string $trxId = null,
 		?string $serverName = null
 	) {
-		if ( $this->silenced ) {
-			return;
+		$violations = ++$this->violations[$event];
+		// First violation; check if this is a web request
+		if ( $violations === 1 && $this->method !== null ) {
+			$this->stats->increment( "rdbms_trxprofiler_warnings.$event.{$this->method}" );
 		}
 
-		$max = $this->expect[$expectation][self::FLD_LIMIT];
-		$by = $this->expect[$expectation][self::FLD_FNAME];
-		$message = "Expectation ($expectation <= $max) by $by not met (actual: {actualSeconds})";
+		$max = $this->expect[$event][self::FLD_LIMIT];
+		$by = $this->expect[$event][self::FLD_FNAME];
+
+		$message = "Expectation ($event <= $max) by $by not met (actual: {actualSeconds})";
 		if ( $trxId ) {
 			$message .= ' in trx #{trxId}';
 		}
 		$message .= ":\n{query}\n";
+
 		$this->logger->warning(
 			$message,
 			[
-				'measure' => $expectation,
+				'measure' => $event,
 				'maxSeconds' => $max,
 				'by' => $by,
 				'actualSeconds' => $actual,
@@ -486,5 +560,21 @@ class TransactionProfiler implements LoggerAwareInterface {
 	 */
 	private function getRawSql( $query ) {
 		return $query instanceof GeneralizedSql ? $query->getRawSql() : $query;
+	}
+
+	/**
+	 * @return float UNIX timestamp
+	 * @codeCoverageIgnore
+	 */
+	private function getCurrentTime() {
+		return $this->wallClockOverride ?: microtime( true );
+	}
+
+	/**
+	 * @param float|null &$time Mock UNIX timestamp for testing
+	 * @codeCoverageIgnore
+	 */
+	public function setMockTime( &$time ) {
+		$this->wallClockOverride =& $time;
 	}
 }

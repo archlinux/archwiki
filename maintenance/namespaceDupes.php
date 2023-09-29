@@ -30,6 +30,7 @@ use MediaWiki\Deferred\LinksUpdate\LinksDeletionUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -372,11 +373,10 @@ class NamespaceDupes extends Maintenance {
 		$batchConds = [];
 		$fromField = "{$fieldPrefix}_from";
 		$batchSize = 500;
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$linksMigration = MediaWikiServices::getInstance()->getLinksMigration();
 		if ( isset( $linksMigration::$mapping[$table] ) ) {
 			$queryInfo = $linksMigration->getQueryInfo( $table );
-			list( $namespaceField, $titleField ) = $linksMigration->getTitleFields( $table );
+			[ $namespaceField, $titleField ] = $linksMigration->getTitleFields( $table );
 		} else {
 			$queryInfo = [
 				'tables' => [ $table ],
@@ -488,17 +488,16 @@ class NamespaceDupes extends Maintenance {
 				$this->resolvableLinks -= $dbw->affectedRows();
 			}
 
-			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable rows contains at least one item
-			$encLastTitle = $dbw->addQuotes( $row->$titleField );
-			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable rows contains at least one item
-			$encLastFrom = $dbw->addQuotes( $row->$fromField );
-
 			$batchConds = [
-				"$titleField > $encLastTitle " .
-				"OR ($titleField = $encLastTitle AND $fromField > $encLastFrom)"
+				$dbw->buildComparison( '>', [
+					// @phan-suppress-next-line PhanPossiblyUndeclaredVariable rows contains at least one item
+					$titleField => $row->$titleField,
+					// @phan-suppress-next-line PhanPossiblyUndeclaredVariable rows contains at least one item
+					$fromField => $row->$fromField,
+				] )
 			];
 
-			$lbFactory->waitForReplication();
+			$this->waitForReplication();
 		}
 	}
 
@@ -600,7 +599,7 @@ class NamespaceDupes extends Maintenance {
 	 * @param int $ns The destination namespace ID
 	 * @param string $dbk The source DB key (i.e. page_title)
 	 * @param array $options Associative array of validated command-line options
-	 * @return Title|bool
+	 * @return Title|false
 	 */
 	private function getAlternateTitle( $ns, $dbk, $options ) {
 		$prefix = $options['add-prefix'];

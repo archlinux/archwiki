@@ -27,9 +27,10 @@ use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Navigation\PrevNextNavigationRenderer;
+use MediaWiki\Navigation\PagerNavigationBuilder;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Title\Title;
 
 /**
  * Parent class for all special pages.
@@ -127,7 +128,6 @@ class SpecialPage implements MessageLocalizer {
 	 * @param string|false $subpage Subpage string, or false to not use a subpage
 	 * @param string $fragment The link fragment (after the "#")
 	 * @return Title
-	 * @throws MWException
 	 */
 	public static function getTitleFor( $name, $subpage = false, $fragment = '' ) {
 		return Title::newFromLinkTarget(
@@ -441,7 +441,7 @@ class SpecialPage implements MessageLocalizer {
 	 * a stolen account (e.g. a reauthentication). What exactly that will mean is decided by the
 	 * authentication framework.
 	 * @stable to override
-	 * @return bool|string False or the argument for AuthManager::securitySensitiveOperationStatus().
+	 * @return string|false False or the argument for AuthManager::securitySensitiveOperationStatus().
 	 *   Typically a special page needing elevated security would return its name here.
 	 */
 	protected function getLoginSecurityLevel() {
@@ -1131,10 +1131,24 @@ class SpecialPage implements MessageLocalizer {
 		$atend = false,
 		$subpage = false
 	) {
-		$title = $this->getPageTitle( $subpage );
-		$prevNext = new PrevNextNavigationRenderer( $this );
+		$navBuilder = new PagerNavigationBuilder( $this );
+		$navBuilder
+			->setPage( $this->getPageTitle( $subpage ) )
+			->setLinkQuery( [ 'limit' => $limit, 'offset' => $offset ] + $query )
+			->setLimitLinkQueryParam( 'limit' )
+			->setCurrentLimit( $limit )
+			->setPrevTooltipMsg( 'prevn-title' )
+			->setNextTooltipMsg( 'nextn-title' )
+			->setLimitTooltipMsg( 'shown-title' );
 
-		return $prevNext->buildPrevNextNavigation( $title, $offset, $limit, $query, $atend );
+		if ( $offset > 0 ) {
+			$navBuilder->setPrevLinkQuery( [ 'offset' => (string)max( $offset - $limit, 0 ) ] );
+		}
+		if ( !$atend ) {
+			$navBuilder->setNextLinkQuery( [ 'offset' => (string)( $offset + $limit ) ] );
+		}
+
+		return $navBuilder->getHtml();
 	}
 
 	/**

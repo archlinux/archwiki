@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Tests\Unit\Revision;
 
-use ActorMigration;
 use CommentStore;
 use HashBagOStuff;
 use MediaWiki\Content\IContentHandlerFactory;
@@ -16,6 +15,8 @@ use MediaWiki\Storage\BlobStoreFactory;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Storage\NameTableStoreFactory;
 use MediaWiki\Storage\SqlBlobStore;
+use MediaWiki\Title\TitleFactory;
+use MediaWiki\User\ActorMigration;
 use MediaWiki\User\ActorStore;
 use MediaWiki\User\ActorStoreFactory;
 use MediaWiki\User\UserIdentityLookup;
@@ -23,7 +24,6 @@ use MediaWikiUnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use TitleFactory;
 use WANObjectCache;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\ILoadBalancer;

@@ -44,7 +44,7 @@ class Sanitizer {
 		'itemtype' => true,
 	];
 
-	private const UTF8_REPLACEMENT = "ï¿½";
+	private const UTF8_REPLACEMENT = "\u{FFFD}";
 
 	/**
 	 * Regular expression to match various types of character references in
@@ -85,7 +85,7 @@ class Sanitizer {
 	 *
 	 * @since 1.30
 	 */
-	private const ID_PRIMARY = 0;
+	public const ID_PRIMARY = 0;
 
 	/**
 	 * Tells escapeUrlForHtml() to encode the ID using the fallback encoding, or return false
@@ -474,10 +474,12 @@ class Sanitizer {
 	}
 
 	/**
-	 * @param int $codepoint
+	 * @param string $codepoint
 	 * @return null|string
 	 */
-	private static function decCharReference( $codepoint ) {
+	private static function decCharReference( string $codepoint ): ?string {
+		# intval() will (safely) saturate at the maximum signed integer
+		# value if $codepoint is too many digits
 		$point = intval( $codepoint );
 		if ( self::validateCodepoint( $point ) ) {
 			return sprintf( '&#%d;', $point );
@@ -487,10 +489,16 @@ class Sanitizer {
 	}
 
 	/**
-	 * @param int $codepoint
+	 * @param string $codepoint
 	 * @return null|string
 	 */
-	private static function hexCharReference( $codepoint ) {
+	private static function hexCharReference( string $codepoint ): ?string {
+		# hexdec() will return a float (not an int) if $codepoint is too
+		# long, so protect against that.  The largest valid codepoint is
+		# 0x10FFFF.
+		if ( strlen( ltrim( $codepoint, '0' ) ) > 6 ) {
+			return null;
+		}
 		$point = hexdec( $codepoint );
 		if ( self::validateCodepoint( $point ) ) {
 			return sprintf( '&#x%x;', $point );
@@ -633,6 +641,12 @@ class Sanitizer {
 				} elseif ( $matches[2] !== '' ) {
 					return self::decodeChar( intval( $matches[2] ) );
 				} elseif ( $matches[3] !== '' ) {
+					# hexdec will return a float if the string is too long (!) so
+					# check the length of the string first.
+					if ( strlen( ltrim( $matches[3], '0' ) ) > 6 ) {
+						// Invalid character reference.
+						return self::UTF8_REPLACEMENT;
+					}
 					return self::decodeChar( hexdec( $matches[3] ) );
 				}
 				# Last case should be an ampersand by itself
@@ -850,11 +864,11 @@ class Sanitizer {
 		// unconditionally discard the entire attribute or process it further.
 		// That further processing will catch and discard any dangerous
 		// strings in the rest of the attribute
-		return in_array( $k, [ 'typeof', 'property', 'rel' ], true )
-			&& preg_match( '/(?:^|\s)mw:.+?(?=$|\s)/D', $v )
-			|| $k === 'about' && preg_match( '/^#mwt\d+$/D', $v )
-			|| $k === 'content'
-			&& preg_match( '/(?:^|\s)mw:.+?(?=$|\s)/D', KV::lookup( $attrs, 'property' ) ?? '' );
+		return ( in_array( $k, [ 'typeof', 'property', 'rel' ], true )
+				&& preg_match( '/(?:^|\s)mw:.+?(?=$|\s)/D', $v ) )
+			|| ( $k === 'about' && preg_match( '/^#mwt\d+$/D', $v ) )
+			|| ( $k === 'content'
+				&& preg_match( '/(?:^|\s)mw:.+?(?=$|\s)/D', KV::lookup( $attrs, 'property' ) ?? '' ) );
 	}
 
 	/**
@@ -949,8 +963,7 @@ class Sanitizer {
 				# * Disallow data attributes used by MediaWiki code
 				# * Ensure that the attribute is not namespaced by banning
 				#   colons.
-				if ( ( !preg_match( '/^data-[^:]*$/iD', $k )
-					 && !isset( $list[$k] ) )
+				if ( ( !preg_match( '/^data-[^:]*$/iD', $k ) && !isset( $list[$k] ) )
 					 || self::isReservedDataAttribute( $k )
 				) {
 					$newAttrs[$k] = [ null, $origV, $origK ];
@@ -1091,6 +1104,8 @@ class Sanitizer {
 			// Line continuation
 			return '';
 		} elseif ( $matches[2] !== '' ) {
+			# hexdec could return a float if the match is too long, but the
+			# regexp in question limits the string length to 6.
 			$char = self::codepointToUtf8( hexdec( $matches[2] ) );
 		} elseif ( $matches[3] !== '' ) {
 			$char = $matches[3];
@@ -1114,11 +1129,11 @@ class Sanitizer {
 	 * @return string
 	 */
 	public static function sanitizeTitleURI( string $title, bool $isInterwiki = false ): string {
-		$bits = explode( '#', $title );
+		$idx = strpos( $title, '#' );
 		$anchor = null;
-		if ( count( $bits ) > 1 ) { // split at first '#'
-			$anchor = substr( $title, strlen( $bits[0] ) + 1 );
-			$title = $bits[0];
+		if ( $idx !== false ) { // split at first '#'
+			$anchor = substr( $title, $idx + 1 );
+			$title = substr( $title, 0, $idx );
 		}
 		$title = preg_replace_callback(
 			'/[%? \[\]#|<>]/', static function ( $matches ) {
@@ -1296,10 +1311,14 @@ class Sanitizer {
 	}
 
 	/**
-	 * @param string $id
+	 * Normalizes whitespace in a section name, such as might be returned
+	 * by Parser::stripSectionName(), for use in the ids that are used for
+	 * section links.
+	 *
+	 * @param string $section
 	 * @return string
 	 */
-	public static function normalizeSectionIdWhiteSpace( string $id ): string {
-		return trim( preg_replace( '/[ _]+/', ' ', $id ) );
+	public static function normalizeSectionNameWhiteSpace( string $section ): string {
+		return trim( preg_replace( '/[ _]+/', ' ', $section ) );
 	}
 }

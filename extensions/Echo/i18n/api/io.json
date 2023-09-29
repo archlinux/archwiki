@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Joao Xavier"
+		]
+	},
+	"apihelp-echomarkread-description": "Markizez avizi kom lektita, por la nuna uzero.",
+	"apihelp-echomarkread-example-2": "Markizez omna avizi kom ''vidida''",
+	"apihelp-echopushsubscriptions-param-command": "Agado facenda.",
+	"apihelp-query+notifications-description": "Recevar avizi qui vartas la nuna uzero."
+}

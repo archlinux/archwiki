@@ -3,13 +3,17 @@
 		"authors": [
 			"Chavash",
 			"Chuvash",
-			"Chuvash2014"
+			"Chuvash2014",
+			"Astahar"
 		]
 	},
 	"tooltip-ca-ve-edit": "Кăна тӳрлет",
+	"visualeditor-ca-createlocaldescriptionsource": "Вырӑнта код евӗр хатӗрле",
+	"visualeditor-ca-createsource": "Код хатӗрле",
 	"visualeditor-ca-editsource": "Кодне тӳрлет",
 	"visualeditor-ca-editsource-section": "кодне тӳрлет",
 	"visualeditor-categories-tool": "Категорисем",
+	"visualeditor-descriptionpagelink": "Project:Курӑмлӑ редактор",
 	"visualeditor-dialog-meta-categories-data-label": "Категорисем",
 	"visualeditor-dialog-meta-categories-input-hiddencategorieslabel": "Пытарнă категорисем",
 	"visualeditor-dialog-meta-categories-section": "Категорисем",
@@ -17,5 +21,5 @@
 	"visualeditor-dialog-meta-languages-section": "Чĕлхесем",
 	"visualeditor-dialog-meta-settings-hiddencat-label": "Пытарнă категори",
 	"visualeditor-languages-tool": "Чĕлхесем",
-	"visualeditor-savedialog-review-wikitext": "Викитексчĕ"
+	"visualeditor-savedialog-review-wikitext": "Викитекст"
 }

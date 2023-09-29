@@ -3,10 +3,11 @@
 		"authors": [
 			"Minh Nguyen",
 			"NguoiDungKhongDinhDanh",
-			"Vinhtantran"
+			"Vinhtantran",
+			"NguyenHung"
 		]
 	},
-	"cite-desc": "Thêm các thẻ <code>&lt;ref[ name=id]&gt;</code> và <code>&lt;references/&gt;</code> để ghi chú thích hoặc nguồn tham khảo",
+	"cite-desc": "Thêm các thẻ <code>&lt;ref&gt;</code> và <code>&lt;references&gt;</code> để ghi chú thích hoặc nguồn tham khảo",
 	"cite_error": "Lỗi chú thích: $1",
 	"cite_error_ref_numeric_key": "Thẻ <code>&lt;ref&gt;</code> sai; tên không thể chỉ là số nguyên, hãy dùng tựa đề có tính miêu tả",
 	"cite_error_ref_no_key": "Thẻ mở <code>&lt;ref&gt;</code> bị hỏng hoặc có tên sai",

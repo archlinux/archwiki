@@ -52,7 +52,7 @@ class UpdateSpecialPages extends Maintenance {
 		$queryCacheLimit = (int)$config->get( MainConfigNames::QueryCacheLimit );
 		$disabledQueryPages = QueryPage::getDisabledQueryPages( $config );
 		foreach ( QueryPage::getPages() as $page ) {
-			list( , $special ) = $page;
+			[ , $special ] = $page;
 			$limit = $page[2] ?? $queryCacheLimit;
 
 			# --list : just show the name of pages
@@ -94,7 +94,7 @@ class UpdateSpecialPages extends Maintenance {
 
 						$elapsed = $t2 - $t1;
 						$hours = intval( $elapsed / 3600 );
-						$minutes = intval( $elapsed % 3600 / 60 );
+						$minutes = intval( (int)$elapsed % 3600 / 60 );
 						$seconds = $elapsed - $hours * 3600 - $minutes * 60;
 						if ( $hours ) {
 							$this->output( $hours . 'h ' );
@@ -142,7 +142,7 @@ class UpdateSpecialPages extends Maintenance {
 			$this->output( "Reconnected\n\n" );
 		}
 		// Wait for the replica DB to catch up
-		$lbFactory->waitForReplication();
+		$this->waitForReplication();
 	}
 
 	public function doSpecialPageCacheUpdates( $dbw ) {
@@ -166,7 +166,7 @@ class UpdateSpecialPages extends Maintenance {
 				$this->output( "completed in " );
 				$elapsed = $t2 - $t1;
 				$hours = intval( $elapsed / 3600 );
-				$minutes = intval( $elapsed % 3600 / 60 );
+				$minutes = intval( (int)$elapsed % 3600 / 60 );
 				$seconds = $elapsed - $hours * 3600 - $minutes * 60;
 				if ( $hours ) {
 					$this->output( $hours . 'h ' );

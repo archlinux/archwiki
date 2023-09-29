@@ -182,6 +182,7 @@
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>Perkara senarai</li><li>Perkara senarai</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "Fail terbenam",
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Contoh.png|$2|$3]]",
+	"wikieditor-toolbar-help-content-file-caption": "Teks keterangan gambar",
 	"wikieditor-toolbar-help-content-reference-description": "Rujukan",
 	"wikieditor-toolbar-help-content-reference-syntax": "Teks laman.&lt;ref&gt;[http://www.contoh.org Teks pautan], teks tambahan.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "Teks laman.<sup><a href='#'>[1]</a></sup>",
@@ -205,5 +206,6 @@
 	"wikieditor-realtimepreview-reload-title": "Muat semula anak tetingkap pralihat masa nyata",
 	"wikieditor-realtimepreview-manual": "Sila muat semula sekarang untuk pralihatkan secara manual suntingan anda.",
 	"wikieditor-realtimepreview-onboarding-title": "Pralihat Masa Nyata",
+	"wikieditor-realtimepreview-onboarding-body": "Lihat rupa suntingan anda bagi pembaca dengan pralihatnya pada masa nyata.",
 	"wikieditor-realtimepreview-onboarding-button": "Baik, saya faham"
 }

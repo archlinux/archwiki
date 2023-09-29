@@ -412,7 +412,7 @@ class Hooks {
 
 	/**
 	 * @param Article $article
-	 * @param bool &$outputDone
+	 * @param bool|ParserOutput|null &$outputDone
 	 * @param bool &$pcache
 	 * @return bool
 	 */

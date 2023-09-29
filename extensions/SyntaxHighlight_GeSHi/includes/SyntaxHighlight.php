@@ -33,18 +33,11 @@ use Status;
 use TextContent;
 use Title;
 use WANObjectCache;
-
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 
 class SyntaxHighlight extends ExtensionTagHandler {
-
-	/** @var int The maximum number of lines that may be selected for highlighting. */
-	private const HIGHLIGHT_MAX_LINES = 1000;
-
-	/** @var int Maximum input size for the highlighter (100 kB). */
-	private const HIGHLIGHT_MAX_BYTES = 102400;
 
 	/** @var string CSS class for syntax-highlighted code. Public as used by the updateCSS maintenance script. */
 	public const HIGHLIGHT_CSS_CLASS = 'mw-highlight';
@@ -58,6 +51,26 @@ class SyntaxHighlight extends ExtensionTagHandler {
 		'application/json' => 'javascript',
 		'text/xml'         => 'xml',
 	];
+
+	/**
+	 * Returns the maximum number of lines that may be selected for highlighting
+	 *
+	 * @return int
+	 */
+	private static function getMaxLines(): int {
+		$config = MediaWikiServices::getInstance()->getMainConfig();
+		return $config->get( 'SyntaxHighlightMaxLines' );
+	}
+
+	/**
+	 * Returns the maximum input size for the highlighter
+	 *
+	 * @return int
+	 */
+	private static function getMaxBytes(): int {
+		$config = MediaWikiServices::getInstance()->getMainConfig();
+		return $config->get( 'SyntaxHighlightMaxBytes' );
+	}
 
 	/**
 	 * Get the Pygments lexer name for a particular language.
@@ -179,6 +192,9 @@ class SyntaxHighlight extends ExtensionTagHandler {
 
 		// Register CSS
 		$parser->getOutput()->addModuleStyles( self::getModuleStyles() );
+		if ( !empty( $args['linelinks'] ) && ctype_alpha( $args['linelinks'] ) ) {
+			$parser->getOutput()->addModules( [ 'ext.pygments.linenumbers' ] );
+		}
 
 		return $result['html'];
 	}
@@ -237,9 +253,10 @@ class SyntaxHighlight extends ExtensionTagHandler {
 	 * @param string $code
 	 * @param string|null $lang
 	 * @param array $args
+	 * @param Parser|null $parser Parser, if generating content to be parsed.
 	 * @return Status
 	 */
-	private static function highlightInner( $code, $lang = null, $args = [] ) {
+	private static function highlightInner( $code, $lang = null, $args = [], ?Parser $parser = null ) {
 		$status = new Status;
 
 		$lexer = self::getLexer( $lang );
@@ -254,13 +271,13 @@ class SyntaxHighlight extends ExtensionTagHandler {
 		}
 
 		$length = strlen( $code );
-		if ( strlen( $code ) > self::HIGHLIGHT_MAX_BYTES ) {
+		if ( strlen( $code ) > self::getMaxBytes() ) {
 			// Disable syntax highlighting
 			$lexer = null;
 			$status->warning(
 				'syntaxhighlight-error-exceeds-size-limit',
 				$length,
-				self::HIGHLIGHT_MAX_BYTES
+				self::getMaxBytes()
 			);
 		}
 
@@ -273,6 +290,12 @@ class SyntaxHighlight extends ExtensionTagHandler {
 
 		if ( $lexer === null ) {
 			// When syntax highlighting is disabled..
+			$status->value = self::plainCodeWrap( $code, $isInline );
+			return $status;
+		}
+
+		if ( $parser && !$parser->incrementExpensiveFunctionCount() ) {
+			// Highlighting is expensive, return unstyled
 			$status->value = self::plainCodeWrap( $code, $isInline );
 			return $status;
 		}
@@ -367,7 +390,7 @@ class SyntaxHighlight extends ExtensionTagHandler {
 	 *  code as its value.
 	 */
 	public static function highlight( $code, $lang = null, $args = [], ?Parser $parser = null ) {
-		$status = self::highlightInner( $code, $lang, $args );
+		$status = self::highlightInner( $code, $lang, $args, $parser );
 		$output = $status->getValue();
 
 		$isInline = isset( $args['inline'] );
@@ -487,8 +510,8 @@ class SyntaxHighlight extends ExtensionTagHandler {
 					}
 				}
 			}
-			if ( count( $lines ) > self::HIGHLIGHT_MAX_LINES ) {
-				$lines = array_slice( $lines, 0, self::HIGHLIGHT_MAX_LINES );
+			if ( count( $lines ) > self::getMaxLines() ) {
+				$lines = array_slice( $lines, 0, self::getMaxLines() );
 				break;
 			}
 		}
@@ -509,7 +532,7 @@ class SyntaxHighlight extends ExtensionTagHandler {
 		// given range to reduce the impact.
 		return $start > 0 &&
 			$start < $end &&
-			$end - $start < self::HIGHLIGHT_MAX_LINES;
+			$end - $start < self::getMaxLines();
 	}
 
 	/**
@@ -628,5 +651,3 @@ class SyntaxHighlight extends ExtensionTagHandler {
 		}
 	}
 }
-
-class_alias( SyntaxHighlight::class, 'SyntaxHighlight' );

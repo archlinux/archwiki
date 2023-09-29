@@ -12,11 +12,10 @@
 namespace MediaWiki\Extension\Math;
 
 use DeferredUpdates;
-use MediaWiki\Extension\Math\InputCheck\RestbaseChecker;
+use MediaWiki\Extension\Math\InputCheck\BaseChecker;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use Message;
-use MWException;
 use Parser;
 use Psr\Log\LoggerInterface;
 use RequestContext;
@@ -238,7 +237,7 @@ abstract class MathRenderer {
 		if ( $rpage !== false ) {
 			$this->initializeFromDatabaseRow( $rpage );
 			$this->storedInDatabase = true;
-				return true;
+			return true;
 		} else {
 			# Missing from the database and/or the render cache
 			$this->storedInDatabase = false;
@@ -385,6 +384,11 @@ abstract class MathRenderer {
 		}
 	}
 
+	protected function getChecker(): BaseChecker {
+		return Math::getCheckerFactory()
+			->newDefaultChecker( $this->tex, $this->getInputType(), $this->rbi );
+	}
+
 	/**
 	 * Returns sanitized attributes
 	 *
@@ -439,7 +443,7 @@ abstract class MathRenderer {
 	 * @return bool
 	 */
 	public function setMode( $newMode ) {
-		if ( MediaWikiServices::getInstance()->get( 'Math.Config' )->isValidRenderingMode( $newMode ) ) {
+		if ( Math::getMathConfig()->isValidRenderingMode( $newMode ) ) {
 			$this->mode = $newMode;
 			return true;
 		} else {
@@ -550,13 +554,9 @@ abstract class MathRenderer {
 	 */
 	public function setMathStyle( $mathStyle = 'display' ) {
 		if ( $this->mathStyle !== $mathStyle ) {
+			$this->mathStyle = $mathStyle;
 			$this->changed = true;
-		}
-		$this->mathStyle = $mathStyle;
-		if ( $mathStyle == 'inline' ) {
-			$this->inputType = 'inline-tex';
-		} else {
-			$this->inputType = 'tex';
+			$this->inputType = $mathStyle === 'inline' ? 'inline-tex' : 'tex';
 		}
 	}
 
@@ -686,19 +686,15 @@ abstract class MathRenderer {
 		return $this->inputType;
 	}
 
-	/**
-	 * @return bool
-	 */
-	protected function doCheck() {
-		$checker = new RestbaseChecker( $this->tex, $this->getInputType(), $this->rbi );
-		try {
-			if ( $checker->isValid() ) {
-				$this->setTex( $checker->getValidTex() );
-				$this->texSecure = true;
-				return true;
-			}
-		} catch ( MWException $e ) {
+	protected function doCheck(): bool {
+		$checker = $this->getChecker();
+
+		if ( $checker->isValid() ) {
+			$this->setTex( $checker->getValidTex() );
+			$this->texSecure = true;
+			return true;
 		}
+
 		$checkerError = $checker->getError();
 		$this->lastError = $this->getError( $checkerError->getKey(), ...$checkerError->getParams() );
 		return false;

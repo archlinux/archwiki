@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 
 /**
@@ -60,7 +61,7 @@ class CategoryMembershipChangeTest extends MediaWikiLangTestCase {
 		$info = $this->insertPage( self::$pageName );
 		$title = $info['title'];
 
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		self::$pageRev = $page->getRevisionRecord();
 		self::$revUser = self::$pageRev->getUser( RevisionRecord::RAW );
 	}

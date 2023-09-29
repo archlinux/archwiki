@@ -1,5 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\ConfirmEdit\FancyCaptcha;
+
+use Html;
+use HTMLFormField;
+
 /**
  * Captcha input field for FancyCaptcha that displays a question and returns the answer.
  * Does not include the captcha ID; that must be included in the form as a separate hidden field.

@@ -19,6 +19,7 @@
  */
 
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\WikiMap\WikiMap;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\TransactionProfiler;
 use Wikimedia\ScopedCallback;
@@ -34,7 +35,7 @@ use Wikimedia\ScopedCallback;
  * @ingroup Profiler
  */
 abstract class Profiler {
-	/** @var string|bool Profiler ID for bucketing data */
+	/** @var string|false Profiler ID for bucketing data */
 	protected $profileID = false;
 	/** @var array All of the params passed from $wgProfiler */
 	protected $params = [];
@@ -63,51 +64,54 @@ abstract class Profiler {
 	}
 
 	/**
+	 * @internal For use by Setup.php
+	 * @param array $profilerConf Value from $wgProfiler
+	 */
+	final public static function init( array $profilerConf ): void {
+		$params = $profilerConf + [
+			'class'     => ProfilerStub::class,
+			'sampling'  => 1,
+			'threshold' => 0.0,
+			'output'    => [],
+			'cliEnable' => false,
+		];
+
+		// Avoid global func wfIsCLI() during setup
+		$isCLI = ( PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg' );
+		$inSample = $params['sampling'] === 1 ? true : ( mt_rand( 0, $params['sampling'] - 1 ) === 0 );
+		if (
+			!$inSample ||
+			// On CLI, profiling is disabled by default, and can be explicitly enabled
+			// via the `--profiler` option, which MediaWiki\Maintenance\MaintenanceRunner::setup
+			// translates into 'cliEnable'.
+			// See also $wgProfiler docs.
+			//
+			// For this to work, Setup.php must call Profiler::init() after handling of
+			// MW_FINAL_SETUP_CALLBACK, which is what doMaintenance.php uses to call
+			// MaintenanceRunner::setup.
+			( $isCLI && !$params['cliEnable'] )
+		) {
+			$params['class'] = ProfilerStub::class;
+		}
+
+		if ( !is_array( $params['output'] ) ) {
+			$params['output'] = [ $params['output'] ];
+		}
+
+		self::$instance = new $params['class']( $params );
+	}
+
+	/**
 	 * Singleton
 	 * @return Profiler
 	 */
 	final public static function instance() {
-		if ( self::$instance === null ) {
-			global $wgProfiler;
-
-			$params = ( $wgProfiler ?? [] ) + [
-				'class'     => ProfilerStub::class,
-				'sampling'  => 1,
-				'threshold' => 0.0,
-				'output'    => [],
-			];
-
-			$inSample = mt_rand( 0, $params['sampling'] - 1 ) === 0;
-			// wfIsCLI() is not available yet
-			if ( PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg' || !$inSample ) {
-				$params['class'] = ProfilerStub::class;
-			}
-
-			// "Redundant attempt to cast $params['output'] of type array{} to array"
-			// Not correct, this could be a non-array if $wgProfiler sets it to a non-array.
-			// @phan-suppress-next-line PhanRedundantCondition
-			if ( !is_array( $params['output'] ) ) {
-				$params['output'] = [ $params['output'] ];
-			}
-
-			self::$instance = new $params['class']( $params );
+		if ( !self::$instance ) {
+			trigger_error( 'Called Profiler::instance before settings are loaded', E_USER_WARNING );
+			self::init( [] );
 		}
+
 		return self::$instance;
-	}
-
-	/**
-	 * Replace the current profiler with $profiler if no non-stub profiler is set
-	 *
-	 * @param Profiler $profiler
-	 * @throws MWException
-	 * @since 1.25
-	 */
-	final public static function replaceStubInstance( Profiler $profiler ) {
-		if ( self::$instance && !( self::$instance instanceof ProfilerStub ) ) {
-			throw new MWException( 'Could not replace non-stub profiler instance.' );
-		} else {
-			self::$instance = $profiler;
-		}
 	}
 
 	/**
@@ -206,7 +210,10 @@ abstract class Profiler {
 	}
 
 	/**
-	 * Log the data to the backing store for all ProfilerOutput instances that have one
+	 * Log data to all the applicable backing stores
+	 *
+	 * This logs the profiling data to the backing store for each configured ProfilerOutput
+	 * instance. It also logs any request data for the TransactionProfiler instance.
 	 *
 	 * @since 1.25
 	 */

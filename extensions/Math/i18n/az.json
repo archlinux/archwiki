@@ -74,6 +74,7 @@
 	"math_unknown_function": "bilinməyən \"$1\" funksiyası",
 	"mw_math_latexml": "LaTeXML (eksperimental; MathML istifadə edir)",
 	"mw_math_mathml": "SVG (MathML brauzer əlavəsi vasitəsilə aktivləşdirilə bilər)",
+	"mw_math_native": "MathML (eksperimental; şəkillər yoxdur)",
 	"mw_math_source": "LaTeX kimi saxla (mətn brouzerləri üçün)",
 	"prefs-math": "Riyaziyyat",
 	"mathstatus": "Riyaziyyat statusu",

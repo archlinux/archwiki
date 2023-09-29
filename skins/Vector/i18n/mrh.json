@@ -19,5 +19,8 @@
 	"vector-view-history": "Chhichânazy palâ teh",
 	"vector-view-view": "Reih teih",
 	"vector-more-actions": "A hluh via",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ahlaopa hmiazy tlua teh"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ahlaopa hmiazy tlua teh",
+	"vector-page-tools-label": "Hmobaohpazy",
+	"vector-page-tools-general-label": "Vâtlâh",
+	"vector-unpin-element-label": "nyu"
 }

@@ -88,6 +88,15 @@ abstract class Handler {
 	}
 
 	/**
+	 * Returns the path this handler is bound to, including path variables.
+	 *
+	 * @return string
+	 */
+	public function getPath(): string {
+		return $this->getConfig()['path'];
+	}
+
+	/**
 	 * Get the Router. The return type declaration causes it to raise
 	 * a fatal error if init() has not yet been called.
 	 * @return Router
@@ -292,6 +301,28 @@ abstract class Handler {
 		$method = $this->getRequest()->getMethod();
 		if ( $method === 'GET' || $method === 'HEAD' ) {
 			$this->getConditionalHeaderUtil()->applyResponseHeaders( $response );
+		}
+	}
+
+	/**
+	 * Apply cache control to enforce privacy.
+	 *
+	 * @param ResponseInterface $response
+	 */
+	public function applyCacheControl( ResponseInterface $response ) {
+		// NOTE: keep this consistent with the logic in OutputPage::sendCacheControl
+
+		if ( $response->getHeaderLine( 'Set-Cookie' ) ) {
+			// If the response sets cookies, it must not be cached in proxies!
+			$response->setHeader( 'Cache-Control', 'private,no-cache,s-maxage=0' );
+		}
+
+		if ( !$response->getHeaderLine( 'Cache-Control' ) ) {
+			$rqMethod = $this->getRequest()->getMethod();
+			if ( $rqMethod !== 'GET' && $rqMethod !== 'HEAD' ) {
+				// Responses to requests other than GET or HEAD should not be cacheable per default.
+				$response->setHeader( 'Cache-Control', 'private,no-cache,s-maxage=0' );
+			}
 		}
 	}
 

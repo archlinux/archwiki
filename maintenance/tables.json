@@ -156,7 +156,7 @@
 			},
 			{
 				"name": "comment_text",
-				"comment": "Text comment summarizing the change. This text is shown in the history and other changes lists, rendered in a subset of wiki markup by Linker::formatComment(). Size limits are enforced at the application level, and should take care to crop UTF-8 strings appropriately.",
+				"comment": "Text comment summarizing the change. This text is shown in the history and other changes lists, rendered in a subset of wiki markup by MediaWiki\\CommentFormatter\\CommentFormatter::format(). Size limits are enforced at the application level, and should take care to crop UTF-8 strings appropriately.",
 				"type": "blob",
 				"options": { "length": 65535, "notnull": true }
 			},
@@ -1301,14 +1301,27 @@
 				"type": "binary",
 				"comment": "'el_index' truncated to 60 bytes to allow for sortable queries that aren't supported by a partial index",
 				"options": { "notnull": true, "length": 60 }
+			},
+			{
+				"name": "el_to_domain_index",
+				"type": "binary",
+				"comment": "Indexable domain",
+				"options": { "notnull": true, "length": 255, "default": "" }
+			},
+			{
+				"name": "el_to_path",
+				"type": "blob",
+				"comment": "Path to the external link without considering the domain",
+				"options": { "length": 65530, "notnull": false }
 			}
 		],
 		"indexes": [
-			{ "name": "el_from", "columns": [ "el_from", "el_to" ], "unique": false, "options": { "lengths": [ null, 40 ] } },
+			{ "name": "el_from", "columns": [ "el_from" ], "unique": false },
 			{ "name": "el_to", "columns": [ "el_to", "el_from" ], "unique": false, "options": { "lengths": [ 60, null ] } },
 			{ "name": "el_index", "columns": [ "el_index" ], "unique": false, "options": { "lengths": [ 60 ] } },
 			{ "name": "el_index_60", "columns": [ "el_index_60", "el_id" ], "unique": false },
-			{ "name": "el_from_index_60", "columns": [ "el_from", "el_index_60", "el_id" ], "unique": false }
+			{ "name": "el_from_index_60", "columns": [ "el_from", "el_index_60", "el_id" ], "unique": false },
+			{ "name": "el_to_domain_index_to_path", "columns": [ "el_to_domain_index", "el_to_path" ], "unique": false, "options": { "lengths": [ null, 60 ] } }
 		],
 		"pk": [ "el_id" ]
 	},
@@ -2555,7 +2568,7 @@
 			},
 			{
 				"name": "ipb_parent_block_id",
-				"comment": "ID of the block that caused this block to exist. Autoblocks set this to the original block so that the original block being deleted also deletes the autoblocks",
+				"comment": "ID of the block that caused this block to exist. Autoblocks set this to the original block so that the original block being deleted also deletes the autoblocks. Due to a bug this could be 0, which should be handled as null.",
 				"type": "integer",
 				"options": {
 					"notnull": false,
@@ -3192,7 +3205,7 @@
 			},
 			{
 				"name": "ar_rev_id",
-				"comment": "Copied from rev_id. @since 1.5 Entries from 1.4 will be NULL here. When restoring archive rows from before 1.5, a new rev_id is created.",
+				"comment": "Copied from rev_id.",
 				"type": "integer",
 				"options": {
 					"unsigned": true,

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Fulup",
-			"Huñvreüs"
+			"Huñvreüs",
+			"McDutchie"
 		]
 	},
 	"syntaxhighlight-desc": "Talvezout a ra da lakaat an ereadur war wel dre ar valizenn <code>&lt;syntaxhighlight&gt;</code> en ur ober gant [http://pygments.org/ Pygments - liver ereadur Python]",

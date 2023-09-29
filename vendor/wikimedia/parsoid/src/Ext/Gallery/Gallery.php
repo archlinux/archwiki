@@ -14,9 +14,10 @@ use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
+use Wikimedia\Parsoid\Ext\WTSUtils;
+use Wikimedia\Parsoid\Ext\WTUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\PHPUtils;
-use Wikimedia\Parsoid\Utils\WTUtils;
 
 /**
  * Implements the php parser's `renderImageGallery` natively.
@@ -41,6 +42,9 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 				[
 					'name' => 'gallery',
 					'handler' => self::class,
+					'options' => [
+						'outputHasCoreMwDomSpecMarkup' => true
+					],
 				]
 			],
 		];
@@ -75,7 +79,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 			return null;
 		}
 
-		$titleStr = $matches[1];
+		$oTitleStr = $matches[1];
 		$imageOptStr = $matches[2] ?? '';
 
 		// TODO: % indicates rawurldecode.
@@ -84,8 +88,38 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 
 		$imageOpts = [
 			"|{$mode->dimensions( $opts )}",
-			[ $imageOptStr, $lineStartOffset + strlen( $titleStr ) ],
+			[ $imageOptStr, $lineStartOffset + strlen( $oTitleStr ) ],
 		];
+
+		$fileNs = $extApi->getSiteConfig()->canonicalNamespaceId( 'file' );
+
+		$noPrefix = false;
+		$title = $extApi->makeTitle( $oTitleStr, 0 );
+		if ( $title === null || $title->getNamespaceId() !== $fileNs ) {
+			// Try again, this time with a default namespace
+			$title = $extApi->makeTitle( $oTitleStr, $fileNs );
+			$noPrefix = true;
+		}
+		if ( $title === null || $title->getNamespaceId() !== $fileNs ) {
+			return null;
+		}
+
+		if ( $noPrefix ) {
+			// Take advantage of $fileNs to give us the right namespace, since,
+			// the explicit prefix isn't necessary in galleries but for the
+			// wikilink syntax it is.  Ex,
+			//
+			// <gallery>
+			// Test.png
+			// </gallery>
+			//
+			// vs [[File:Test.png]], here the File: prefix is necessary
+			//
+			// Note, this is no longer from source now
+			$titleStr = $title->getPrefixedDBKey();
+		} else {
+			$titleStr = $oTitleStr;
+		}
 
 		$thumb = $extApi->renderMedia(
 			$titleStr, $imageOpts, $error,
@@ -95,6 +129,17 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		);
 		if ( !$thumb || DOMCompat::nodeName( $thumb ) !== 'figure' ) {
 			return null;
+		}
+
+		if ( $noPrefix ) {
+			// Fiddling with the shadow attribute below, rather than using
+			// DOMDataUtils::setShadowInfoIfModified, since WikiLinkHandler::renderFile
+			// always sets a shadow (at minimum for the relative './') and that
+			// method preserves the original source from the first time it's called,
+			// though there's a FIXME to remove that behaviour.
+			$media = $thumb->firstChild->firstChild;
+			$dp = DOMDataUtils::getDataParsoid( $media );
+			$dp->sa['resource'] = $oTitleStr;
 		}
 
 		$doc = $thumb->ownerDocument;
@@ -108,12 +153,6 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		DOMCompat::remove( $figcaption );
 
 		if ( $opts->showfilename ) {
-			// No need for error checking on this call since it was already
-			// done in $extApi->renderMedia() above
-			$title = $extApi->makeTitle(
-				$titleStr,
-				$extApi->getSiteConfig()->canonicalNamespaceId( 'file' )
-			);
 			$file = $title->getPrefixedDBKey();
 			$galleryfilename = $doc->createElement( 'a' );
 			$galleryfilename->setAttribute( 'href', $extApi->getTitleUri( $title ) );
@@ -124,9 +163,11 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		}
 
 		$gallerytext = null;
-		for ( $capChild = $figcaption->firstChild;
-			 $capChild !== null;
-			 $capChild = $capChild->nextSibling ) {
+		for (
+			$capChild = $figcaption->firstChild;
+			$capChild !== null;
+			$capChild = $capChild->nextSibling
+		) {
 			if (
 				$capChild instanceof Text &&
 				preg_match( '/^\s*$/D', $capChild->nodeValue )
@@ -172,8 +213,8 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		} );
 
 		$mode = Mode::byName( $opts->mode );
-		$extApi->addModules( $mode->getModules() );
-		$extApi->addModuleStyles( $mode->getModuleStyles() );
+		$extApi->getMetadata()->addModules( $mode->getModules() );
+		$extApi->getMetadata()->addModuleStyles( $mode->getModuleStyles() );
 		return $mode->render( $extApi, $opts, $caption, $lines );
 	}
 
@@ -213,7 +254,12 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 					// FIXME: Dry all this out with T252246 / T262833
 					if ( $ms->hasResource() ) {
 						$resource = $ms->getResource();
-						$content .= PHPUtils::stripPrefix( $resource, './' );
+						$rs = WTSUtils::getShadowInfo( $ms->mediaElt, 'resource', $resource );
+						if ( $rs['fromsrc'] ) {
+							$content .= $rs['value'];
+						} else {
+							$content .= PHPUtils::stripPrefix( $resource, './' );
+						}
 						// FIXME: Serializing of these attributes should
 						// match the link handler so that values stashed in
 						// data-mw aren't ignored.
@@ -275,15 +321,16 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		ParsoidExtensionAPI $extApi, Element $node, bool $wrapperUnmodified
 	) {
 		$dataMw = DOMDataUtils::getDataMw( $node );
-		$dataMw->attrs = $dataMw->attrs ?? new stdClass;
+		$dataMw->attrs ??= new stdClass;
+		$nativeGalleryEnabled = $extApi->getSiteConfig()->nativeGalleryEnabled();
 		// Handle the "gallerycaption" first
 		$galcaption = DOMCompat::querySelector( $node, 'li.gallerycaption' );
 		if (
-			$galcaption &&
-			// FIXME: VE should signal to use the HTML by removing the
-			// `caption` from data-mw.
-			!is_string( $dataMw->attrs->caption ?? null )
-		) {
+			$galcaption && ( $nativeGalleryEnabled ||
+				// FIXME: VE should signal to use the HTML by removing the
+				// `caption` from data-mw.
+				!is_string( $dataMw->attrs->caption ?? null )
+		) ) {
 			$dataMw->attrs->caption = $extApi->domChildrenToWikitext(
 				$galcaption, $extApi::IN_IMG_CAPTION | $extApi::IN_OPTION
 			);
@@ -295,7 +342,10 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		} else {
 			// FIXME: VE should signal to use the HTML by removing the
 			// `extsrc` from the data-mw.
-			if ( is_string( $dataMw->body->extsrc ?? null ) ) {
+			if (
+				!$nativeGalleryEnabled &&
+				is_string( $dataMw->body->extsrc ?? null )
+			) {
 				$content = $dataMw->body->extsrc;
 			} else {
 				$content = $this->contentHandler( $extApi, $node );

@@ -51,7 +51,6 @@
 	"config-env-good": "Okruženje je provereno.\nMožete da instalirate Medijaviki.",
 	"config-env-bad": "Okruženje je provereno.\nNe možete da instalirate Medijaviki.",
 	"config-env-php": "PHP $1 je instaliran.",
-	"config-unicode-using-intl": "Koristi se [https://php.net/manual/en/book.intl.php dodatak PHP intl] za normalizaciju Unikoda.",
 	"config-outdated-sqlite": "<strong>Upozorenje:</strong> imate SQLite $2, koji je niži od najmanje tražene verzije $1. SQLite će biti nedostupan.",
 	"config-no-fts3": "<strong>Upozorenje:</strong> SQLite je kompajliran bez [//sqlite.org/fts3.html FTS3 modula], funkcije pretrage biće nedostupne na ovoj bazi podataka.",
 	"config-pcre-old": "<strong>Neotklonjiva greška:</strong> Neophodan je PCRE $1 ili noviji.\nVaš binarni PHP je povezan sa PCRE $2.\n[https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Errors_and_symptoms/PCRE Više informacija].",
@@ -269,6 +268,7 @@
 	"config-screenshot": "snimak ekrana",
 	"config-extension-not-found": "Nije moguće pronaći datoteku registracije za dodatak „$1”",
 	"config-extension-dependency": "Došlo je do greške zavisnosti pri instaliranju dodatka „$1”: $2",
+	"config-ext-skins-more-info": "više informacija",
 	"mainpagetext": "<strong>MediaWiki je instaliran.</strong>",
 	"mainpagedocfooter": "Pogledajte [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents Vodič za korisnike] za više informacija o tome kako koristiti viki softver.\n\n== Uvod ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Spisak postavki konfiguracije]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Česta pitanja o MediaWiki-ju]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ Dopisna lista o izdanjima softvera MediaWiki]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Lokalizujte MediaWiki na vaš jezik]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Saznajte kako da se borite protiv nepoželjnog sadržaja na svom vikiju]"
 }

@@ -23,43 +23,43 @@ interface NodeFilter {
 	public const FILTER_SKIP = 3;
 
 	/** @var int */
-	public const SHOW_ALL = 0xFFFFFFFF;
+	public const SHOW_ALL = -1;
 
 	/** @var int */
-	public const SHOW_ELEMENT = 0x1;
+	public const SHOW_ELEMENT = 1;
 
 	/** @var int */
-	public const SHOW_ATTRIBUTE = 0x2;
+	public const SHOW_ATTRIBUTE = 2;
 
 	/** @var int */
-	public const SHOW_TEXT = 0x4;
+	public const SHOW_TEXT = 4;
 
 	/** @var int */
-	public const SHOW_CDATA_SECTION = 0x8;
+	public const SHOW_CDATA_SECTION = 8;
 
 	/** @var int */
-	public const SHOW_ENTITY_REFERENCE = 0x10;
+	public const SHOW_ENTITY_REFERENCE = 16;
 
 	/** @var int */
-	public const SHOW_ENTITY = 0x20;
+	public const SHOW_ENTITY = 32;
 
 	/** @var int */
-	public const SHOW_PROCESSING_INSTRUCTION = 0x40;
+	public const SHOW_PROCESSING_INSTRUCTION = 64;
 
 	/** @var int */
-	public const SHOW_COMMENT = 0x80;
+	public const SHOW_COMMENT = 128;
 
 	/** @var int */
-	public const SHOW_DOCUMENT = 0x100;
+	public const SHOW_DOCUMENT = 256;
 
 	/** @var int */
-	public const SHOW_DOCUMENT_TYPE = 0x200;
+	public const SHOW_DOCUMENT_TYPE = 512;
 
 	/** @var int */
-	public const SHOW_DOCUMENT_FRAGMENT = 0x400;
+	public const SHOW_DOCUMENT_FRAGMENT = 1024;
 
 	/** @var int */
-	public const SHOW_NOTATION = 0x800;
+	public const SHOW_NOTATION = 2048;
 
 	/**
 	 * @param Node $node

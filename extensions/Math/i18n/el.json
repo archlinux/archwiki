@@ -92,6 +92,7 @@
 	"math_unknown_function": "άγνωστη συνάρτηση \"$1\"",
 	"mw_math_latexml": "LaTeXML (πειραματικό; χρησιμοποιεί MathML)",
 	"mw_math_mathml": "SVG (Η MathML μπορεί να ενεργοποιηθεί μέσω μιας προσθήκης στο πρόγραμμα περιήγησης)",
+	"mw_math_native": "MathML (πειραματικό; χωρίς εικόνες)",
 	"mw_math_source": "Πηγή LaTeX (για text browsers)",
 	"prefs-math": "Απόδοση μαθηματικών",
 	"mathstatus": "Μαθηματικά στατιστικά",

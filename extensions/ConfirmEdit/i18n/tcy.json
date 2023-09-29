@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"BHARATHESHA ALASANDEMAJALU",
-			"VASANTH S.N."
+			"VASANTH S.N.",
+			"ChiK"
 		]
 	},
 	"captcha-label": "ಕ್ಯಾಪ್ಚಾ",
-	"confirmedit-preview-content": "ಪರಿವಿಡಿ",
+	"confirmedit-preview-content": "ವಿಸಯೊಲು",
 	"confirmedit-preview-invalid": "ಸರಿ ಇಜ್ಜಿ"
 }

@@ -7,7 +7,8 @@
 			"Palmtree222",
 			"Pxos",
 			"Pyscowicz",
-			"아라"
+			"아라",
+			"Amire80"
 		]
 	},
 	"tog-underline": "Linkitten alleviivaus:",
@@ -900,7 +901,6 @@
 	"mergehistory-comment": "Yhisti sivun [[:$1]] sivuun [[:$2]]: $3",
 	"mergehistory-same-destination": "Lähe- ja kohdesivut eivät voi olla samat",
 	"mergehistory-reason": "Syy:",
-	"mergehistory-revisionrow": "$1 ($2) $3 . . $4 $5 $6",
 	"mergelog": "Yhistämisloki",
 	"revertmerge": "Pane takashiin yhistäminen",
 	"mergelogpagetext": "Alla oon loki viimeisimmistä muutoshistuurioiden yhistämisistä.",
@@ -2070,7 +2070,7 @@
 	"allinnamespace": "Kaikki sivut nimiavaruuessa $1",
 	"allpagessubmit": "Hae",
 	"allpagesprefix": "Sivut, jokka alkavat prefiksilä:",
-	"allpagesbadtitle": "Annettu sivun nimi oli kelvoton tai siinä oli etuliite, joka tarkoittaa toista wikiprujektia tai toisenkielistä wikiä.\nSivun nimessä on voinu olla yksi tai usseempia merkkejä, jokka  ole sallittuja sivun nimessä.",
+	"allpagesbadtitle": "Annettu sivun nimi oli kelvoton tai siinä oli etuliite, joka tarkoittaa toista wikiprujektia tai toisenkielistä wikiä.\nSivun nimessä on voinu olla yksi tai usseempia merkkejä, jokka ole sallittuja sivun nimessä.",
 	"allpages-bad-ns": "{{GRAMMAR:inessive|{{SITENAME}}}} ei ole nimiavaruutta ”$1”.",
 	"allpages-hide-redirects": "Piilota ohjaukset",
 	"categories": "Katekuurit",
@@ -2364,7 +2364,6 @@
 	"undeletehistorynoadmin": "Tämä sivu on poistettu. \nSyy sivun poistamisheen näkkyy alla olevassa yhtheenveossa, jossa on myös tiot, kukka olivat mookanheet tätä sivua ennen poistamista. \nNäitten poistettuitten versuunitten varsinainen tekstisisältö on vain atministraattoritten luettavissa.",
 	"undelete-revision": "Poistettu versuuni sivusta $1 (aikaleima $4 kello $5). versuunin tekijä: $3.",
 	"undeleterevision-missing": "Virheelinen tai puuttuva versuuni . \nSinula on kenties käytössä väärä länkki, tai sitten versuuni on saatettu palauttaa takaisin tai poistaa arkistosta.",
-	"undeleterevision-duplicate-revid": "{{PLURAL:$1|Yhtä versuunia|$1 versuunia}} ei voitu palauttaa, koska {{PLURAL:$1|sen|niitten}} <code>rev_id</code> oli jo käytössä.",
 	"undelete-nodiff": "Aikaisempaa versuunia ei löyvetty.",
 	"undeletebtn": "Palauta",
 	"undeletelink": "näytä/ota takashiin",
@@ -2875,7 +2874,7 @@
 	"bad_image_list": "Listan muoto on seuraava:\n\nVain *-merkilä alkavat rivit otethaan huomihoon.\nRivin ensimäinen länkki häätyy mennä kehnoon fiilhiin.\nKaikki muut länkit samala rivilä käsitelthään poikkeuksena, eli toisin sanoen sivuja missä fiilin saapi käyttää.",
 	"metadata": "Meettataatta",
 	"metadata-help": "Tämä fiili sisältää lisätietoja esimerkiks kuvanlukijan, eli kuvakäsittelyprukrammin lisätietoja. Kaikki tieot ei ennää välttämättä vastaa toelisuutheen, jos kuvvaa on mookattu sen alkuperäsen luomisen jälkhiin.",
-	"metadata-fields": "Seuraavaa meettataatta kentät listattu tässä informasuunissa, sisälethään näkyvänä kuvasivussa, kun meettataatta taulukko kolapsaa. Muut piilotethaan stantartina.\n* make\n* model\n* datetimeoriginal\n* exposuretime\n* fnumber\n* isospeedratings\n* focallength\n* artist\n* copyright\n* imagedescription\n* gpslatitude\n* gpslongitude\n* gpsaltitude",
+	"metadata-fields": "Seuraavaa meettataatta kentät listattu tässä informasuunissa, sisälethään näkyvänä kuvasivussa, kun meettataatta taulukko kolapsaa. Muut piilotethaan stantartina.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
 	"namespacesall": "kaikki",
 	"monthsall": "kaikki",
 	"imgmultipagenext": "seuraava sivu →",

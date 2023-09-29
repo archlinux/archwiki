@@ -1,18 +1,18 @@
 <li id="toc-{{anchor}}"
-	class="sidebar-toc-list-item sidebar-toc-level-{{toclevel}}{{#is-top-level-section}}{{^vector-is-collapse-sections-enabled}} sidebar-toc-list-item-expanded{{/vector-is-collapse-sections-enabled}}{{/is-top-level-section}}">
-	<a class="sidebar-toc-link" href="#{{anchor}}">
-		<div class="sidebar-toc-text">
-		<span class="sidebar-toc-numb">{{number}}</span>{{{line}}}</div>
+	class="vector-toc-list-item vector-toc-level-{{toclevel}}{{#is-top-level-section}}{{^vector-is-collapse-sections-enabled}} vector-toc-list-item-expanded{{/vector-is-collapse-sections-enabled}}{{/is-top-level-section}}">
+	<a class="vector-toc-link" href="#{{linkAnchor}}{{^linkAnchor}}{{anchor}}{{/linkAnchor}}">
+		<div class="vector-toc-text">
+		<span class="vector-toc-numb">{{number}}</span>{{{line}}}</div>
 	</a>
-	{{#html-summary}}
+	{{#extensionData.DiscussionTools-html-summary}}
 	{{{.}}}
-	{{/html-summary}}
+	{{/extensionData.DiscussionTools-html-summary}}
 	{{#is-top-level-section}}{{#is-parent-section}}
-		<button aria-controls="toc-{{anchor}}-sublist" class="mw-ui-icon mw-ui-icon-wikimedia-expand mw-ui-icon-small sidebar-toc-toggle">
+		<button aria-controls="toc-{{anchor}}-sublist" class="mw-ui-icon mw-ui-icon-wikimedia-expand mw-ui-icon-small vector-toc-toggle">
 			{{{vector-button-label}}}
 		</button>
 	{{/is-parent-section}}{{/is-top-level-section}}
-	<ul id="toc-{{anchor}}-sublist" class="sidebar-toc-list">
+	<ul id="toc-{{anchor}}-sublist" class="vector-toc-list">
 		{{#array-sections}}
 		{{>TableOfContents__line}}
 		{{/array-sections}}

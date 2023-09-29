@@ -1,92 +1,148 @@
 {
-	"parserTests.txt": {
-		"repo": "/mediawiki/core/",
-		"path": "tests/parser/parserTests.txt",
-		"expectedSHA1": "476712bda18bcaf1d7d8ac8da4bf7ea74ab866f8",
-		"latestCommit": "00b4244b2063c9a8ed94018d645a1861c489a18d"
+	"parsoid": {
+		"project": "mediawiki/services/parsoid",
+		"targets": {
+			"annotationParserTests.txt": {},
+			"attributeExpanderTests.txt": {},
+			"domNormalizerTests.txt": {},
+			"encapParserTests.txt": {},
+			"i18nParserTests.txt": {},
+			"langParserTests.txt": {},
+			"sectionWrappingParserTests.txt": {},
+			"selserWrappingParserTests.txt": {},
+			"separatorTests.txt": {},
+			"tableFixupsParserTests.txt": {}
+		}
 	},
-	"extraParserTests.txt": {
-		"repo": "/mediawiki/core/",
-		"path": "tests/parser/extraParserTests.txt",
-		"expectedSHA1": "940dcd0852058eac1cce52b6c58f50400703e5c8",
-		"latestCommit": "3223981217da67950e3ad5cb5a71a27d35ac9d51"
+	"core": {
+		"project": "mediawiki/core",
+		"latestCommit": "4e2d0f1fe50b0d2b2d02b7eabe4b5e620d251b88",
+		"targets": {
+			"comments.txt": {
+				"path": "tests/parser/comments.txt",
+				"expectedSHA1": "38288b6baa071579b9cbb410175c07ad92d6c56a"
+			},
+			"badCharacters.txt": {
+				"path": "tests/parser/badCharacters.txt",
+				"expectedSHA1": "e2f899e0190e8cc2bece52e543b183dc5b0ab0a2"
+			},
+			"definitionLists.txt": {
+				"path": "tests/parser/definitionLists.txt",
+				"expectedSHA1": "8d5c067353d51e5747b9015128d85664230b0a9a"
+			},
+			"extLinks.txt": {
+				"path": "tests/parser/extLinks.txt",
+				"expectedSHA1": "10bd2463607a6359049d73745f69724e2c7f5dc3"
+			},
+			"indentPre.txt": {
+				"path": "tests/parser/indentPre.txt",
+				"expectedSHA1": "352a1f95bd465d4a3e490cacc18c2012e069958b"
+			},
+			"interlanguageLinks.txt": {
+				"path": "tests/parser/interlanguageLinks.txt",
+				"expectedSHA1": "87fad95423a2d997aadac1c8c6b81d917ac709a3"
+			},
+			"interwikiLinks.txt": {
+				"path": "tests/parser/interwikiLinks.txt",
+				"expectedSHA1": "bad5f2fac380336314ba3a8797363b898fdb6e2b"
+			},
+			"legacyMedia.txt": {
+				"path": "tests/parser/legacyMedia.txt",
+				"expectedSHA1": "43c682017b3d5114cec5527aaa6b077ab0dbd1c5"
+			},
+			"magicLinks.txt": {
+				"path": "tests/parser/magicLinks.txt",
+				"expectedSHA1": "a4d86f08c77f8e364ab5469dc8d17c4a11b1a11d"
+			},
+			"magicWords.txt": {
+				"path": "tests/parser/magicWords.txt",
+				"expectedSHA1": "707fd4a5e74a6c4c3965012526a55c578a01588d"
+			},
+			"media.txt": {
+				"path": "tests/parser/media.txt",
+				"expectedSHA1": "1939c0339cfc280d66b04ffd4d5eb39fce4ebfc5"
+			},
+			"parserTests.txt": {
+				"path": "tests/parser/parserTests.txt",
+				"expectedSHA1": "c1884af013715e1ba44475808b2be9543b797845"
+			},
+			"preTags.txt": {
+				"path": "tests/parser/preTags.txt",
+				"expectedSHA1": "305f02c312dd80d4953d38cccb4f5d23778a8764"
+			},
+			"pst.txt": {
+				"path": "tests/parser/pst.txt",
+				"expectedSHA1": "c217958bf630f03cf0428ff885d9de95fc7e1305"
+			},
+			"pWrapping.txt": {
+				"path": "tests/parser/pWrapping.txt",
+				"expectedSHA1": "9f4f9812521ba7498ba32ea12fb41e8ff193a862"
+			},
+			"preprocessor.txt": {
+				"path": "tests/parser/preprocessor.txt",
+				"expectedSHA1": "2553fcc9d0d075907a6c2bc46dbb97fab0153f12"
+			},
+			"quotes.txt": {
+				"path": "tests/parser/quotes.txt",
+				"expectedSHA1": "1d6681c2fc8570dd136072b40fdaf45d6d96b950"
+			},
+			"redirects.txt": {
+				"path": "tests/parser/redirects.txt",
+				"expectedSHA1": "e9f5e6ea3481e8acdccfcf9f0737983a6188d42c"
+			},
+			"tables.txt": {
+				"path": "tests/parser/tables.txt",
+				"expectedSHA1": "327683b9fb2cf8adf3ce1b15f5060d3530ef38fe"
+			},
+			"toc.txt": {
+				"path": "tests/parser/toc.txt",
+				"expectedSHA1": "b526f90e5a5c31af04976a2c7a9b9e6310475d88"
+			},
+			"wtEscaping.txt": {
+				"path": "tests/parser/wtEscaping.txt",
+				"expectedSHA1": "fe987026757b7ba520a58fd69c5ed52fb015ee6f"
+			}
+		}
 	},
-	"indentPreTests.txt": {
-		"repo": "--UNUSED--",
-		"path": "--UNUSED--"
+	"Cite": {
+		"project": "mediawiki/extensions/Cite",
+		"latestCommit": "b30d10bc6097bdbfbf6b4a348366a682f973f1ca",
+		"targets": {
+			"citeParserTests.txt": {
+				"path": "tests/parser/citeParserTests.txt",
+				"expectedSHA1": "38eea67de43ed7bd879e10542761e128e4177e47"
+			}
+		}
 	},
-	"mediaParserTests.txt": {
-		"repo": "/mediawiki/core/",
-		"path": "tests/parser/mediaParserTests.txt",
-		"expectedSHA1": "7b2ab7514c6d5210bc8889ed09d8ced6193d51cc",
-		"latestCommit": "5007edfbeab367ac31f84d8e259602b7dad55cf7"
+	"TMH": {
+		"project": "mediawiki/extensions/TimedMediaHandler",
+		"latestCommit": "ba78bb0eadbcf2e82ca3a2c25404ff2e5fe555ff",
+		"targets": {
+			"timedMediaHandlerParserTests.txt": {
+				"path": "tests/parser/parserTests.txt",
+				"expectedSHA1": "291fde4241dca41ad4ee657b27ebb7c1782efba2"
+			}
+		}
 	},
-	"legacyMediaParserTests.txt": {
-		"repo": "/mediawiki/core/",
-		"path": "tests/parser/legacyMediaParserTests.txt",
-		"expectedSHA1": "14a3349a9088f7c6b0a04a105d0fb89293294e55",
-		"latestCommit": "5007edfbeab367ac31f84d8e259602b7dad55cf7"
+	"Poem": {
+		"project": "mediawiki/extensions/Poem",
+		"latestCommit": "9347a82b7a6fbe1ae4eeee49d5144b837a3aaed0",
+		"targets": {
+			"poemParserTests.txt": {
+				"repo": "Poem",
+				"path": "tests/parser/parserTests.txt",
+				"expectedSHA1": "763b07ff73c231eb0399756ce0776c7a6244e3ed"
+			}
+		}
 	},
-	"sectionWrappingParserTests.txt": {
-		"repo": "--UNUSED--",
-		"path": "--UNUSED--"
-	},
-	"tableFixupsParserTests.txt": {
-		"repo": "--UNUSED--",
-		"path": "--UNUSED--"
-	},
-	"tableTests.txt": {
-		"repo": "--UNUSED--",
-		"path": "--UNUSED--"
-	},
-	"wtEscapeTests.txt": {
-		"repo": "--UNUSED--",
-		"path": "--UNUSED--"
-	},
-	"separatorTests.txt": {
-		"repo": "--UNUSED--",
-		"path": "--UNUSED--"
-	},
-	"selserWrappingParserTests.txt": {
-		"repo": "--UNUSED--",
-		"path": "--UNUSED--"
-	},
-	"langParserTests.txt": {
-		"repo": "--UNUSED--",
-		"path": "--UNUSED--"
-	},
-	"citeParserTests.txt": {
-		"repo": "/mediawiki/extensions/Cite/",
-		"path": "tests/parser/citeParserTests.txt",
-		"expectedSHA1": "828839a4971bfd85463f1f5f6f87261a68b828d7",
-		"latestCommit": "0060e2b43d526fbbe188eb1f72775b410bfaaa83"
-	},
-	"timedMediaHandlerParserTests.txt": {
-		"repo": "/mediawiki/extensions/TimedMediaHandler/",
-		"path": "tests/parser/parserTests.txt",
-		"expectedSHA1": "ceb6911c2f6c22c67e81c806f8ddbc489a7da776",
-		"latestCommit": "0919e0d6223525cf8a7dca5c48fb7ec1606104d4"
-	},
-	"poemParserTests.txt": {
-		"repo": "/mediawiki/extensions/Poem/",
-		"path": "tests/parser/parserTests.txt",
-		"expectedSHA1": "3f6a206276e02f12b0395d4489204d29d65b8adf",
-		"latestCommit": "6a12103aa86ecfe07b0d3832b9cce63c890f4b7b"
-	},
-	"imageMapParserTests.txt": {
-		"repo": "/mediawiki/extensions/ImageMap/",
-		"path": "tests/parser/imageMapParserTests.txt",
-		"expectedSHA1": "aa1d41d33a0de6b956a42993779c621011bdb09f",
-		"latestCommit": "bc5f7f7f3f33eb2fef96ce06bd7d07ae1cebc8ec"
-	},
-	"annotationParserTests.txt": {
-		"path": "tests/parser/annotationParserTests.txt"
-	},
-	"i18nParserTests.txt": {
-		"path": "tests/parser/i18nParserTests.txt"
-	},
-	"encapParserTests.txt": {
-		"repo": "--UNUSED--",
-		"path": "--UNUSED--"
+	"ImageMap": {
+		"project": "mediawiki/extensions/ImageMap",
+		"latestCommit": "a4d5daa43f9498fe90f72ae22bdaeef9ac8ee7e6",
+		"targets": {
+			"imageMapParserTests.txt": {
+				"path": "tests/parser/imageMapParserTests.txt",
+				"expectedSHA1": "34b92f5e795d81156b87cdb6bda4d9ee935fbe34"
+			}
+		}
 	}
 }

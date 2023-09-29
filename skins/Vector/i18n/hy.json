@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Arman musikyan",
+			"Armenoid",
 			"Kareyac",
 			"Teak",
 			"Vadgt",
 			"Xelgen",
-			"Սերգեյ Սաֆարյան",
-			"Armenoid",
-			"Դավիթ Սարոյան"
+			"Դավիթ Սարոյան",
+			"Սերգեյ Սաֆարյան"
 		]
 	},
 	"skinname-vector": "Սովորական",
@@ -31,12 +31,17 @@
 	"vector-view-viewsource": "Դիտել ելատեքստը",
 	"vector-more-actions": "Ավելին",
 	"vector-intro-page": "Օգնություն:Գլխացանկ",
-	"vector-toc-heading": "Բովանդակություն",
-	"vector-toc-toggle-position-title": "թաքցնել",
+	"vector-toc-label": "Բովանդակություն",
 	"vector-toc-beginning": "Ներածություն",
 	"vector-anon-user-menu-pages": "Էջեր չգրանցված խմբագիրների համար",
 	"vector-anon-user-menu-pages-learn": "իմանալ ավելին",
 	"vector-main-menu-tooltip": "Հիմնական ընտրացանկ",
 	"vector-toc-menu-tooltip": "Բովանդակություն",
+	"vector-main-menu-label": "Հիմնական ընտրացանկ",
+	"vector-page-tools-label": "Գործիքներ",
+	"vector-page-tools-general-label": "Ընդհանուր",
+	"vector-page-tools-actions-label": "Գործողություններ",
+	"vector-pin-element-label": "տեղափոխել կողագոտի",
+	"vector-unpin-element-label": "թաքցնել",
 	"tooltip-vector-anon-user-menu-title": "Այլ ընտրանքներ"
 }

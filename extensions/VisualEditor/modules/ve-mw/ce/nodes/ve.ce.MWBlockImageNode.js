@@ -33,7 +33,7 @@ ve.ce.MWBlockImageNode = function VeCeMWBlockImageNode() {
 	// Build DOM:
 	if ( isError ) {
 		$image = $( [] );
-		var $missingImage = $( '<span>' ).text( this.model.getFilename() );
+		var $missingImage = $( '<span>' ).text( this.model.getAttribute( 'errorText' ) );
 		this.$a = $( '<a>' )
 			.addClass( 'new' )
 			.append( $missingImage );
@@ -42,8 +42,9 @@ ve.ce.MWBlockImageNode = function VeCeMWBlockImageNode() {
 		$image = $( '<img>' )
 			.attr( 'src', this.getResolvedAttribute( 'src' ) );
 		this.$a = $( '<a>' )
-			.attr( 'href', this.getResolvedAttribute( 'href' ) )
 			.append( $image );
+		// T322704
+		ve.setAttributeSafe( this.$a[ 0 ], 'href', this.getResolvedAttribute( 'href' ) || '', '#' );
 		$focusable = $image;
 	}
 

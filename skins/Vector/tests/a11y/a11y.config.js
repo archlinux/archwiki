@@ -23,9 +23,13 @@ module.exports = {
 		],
 		includeWarnings: true,
 		includeNotices: true,
+		ignore: [
+			'color-contrast',
+			'WCAG2AA.Principle2.Guideline2_4.2_4_1.G1,G123,G124.NoSuchID'
+		],
 		hideElements: '#bodyContent, #siteNotice, #mwe-pt-toolbar, #centralnotice, #centralnotice_testbanner',
 		chromeLaunchConfig: {
-			headless: true,
+			headless: false,
 			args: [
 				'--no-sandbox',
 				'--disable-setuid-sandbox'
@@ -36,24 +40,19 @@ module.exports = {
 		{
 			name: 'default',
 			url: testData.baseUrl + testData.pageUrl,
-			actions: [
-				'check field #mw-sidebar-checkbox' // Open main menu
-			]
+			actions: []
 		},
 		{
 			name: 'logged_in',
 			url: testData.baseUrl + testData.pageUrl,
 			wait: '500',
 			actions: [
-				'click #p-personal-checkbox',
-				'wait for .vector-user-menu-login a to be visible',
-				'click .vector-user-menu-login a',
+				'click #pt-login-2 a',
 				'wait for #wpName1 to be visible',
 				'set field #wpName1 to ' + testData.loginUser,
 				'set field #wpPassword1 to ' + testData.loginPassword,
 				'click #wpLoginAttempt',
-				'wait for #pt-userpage-2 to be visible', // Confirm login was successful
-				'check field #mw-sidebar-checkbox' // Open main menu
+				'wait for #pt-userpage-2 to be visible' // Confirm login was successful
 			]
 		},
 		{

@@ -22,6 +22,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -87,7 +88,7 @@ class LocalIdLookup extends CentralIdLookup {
 			return [];
 		}
 		$audience = $this->checkAudience( $audience );
-		list( $index, $options ) = DBAccessObjectUtils::getDBOptions( $flags );
+		[ $index, $options ] = DBAccessObjectUtils::getDBOptions( $flags );
 		$db = $this->loadBalancer->getConnectionRef( $index );
 
 		$tables = [ 'user' ];
@@ -118,7 +119,7 @@ class LocalIdLookup extends CentralIdLookup {
 		}
 
 		$audience = $this->checkAudience( $audience );
-		list( $index, $options ) = DBAccessObjectUtils::getDBOptions( $flags );
+		[ $index, $options ] = DBAccessObjectUtils::getDBOptions( $flags );
 		$db = $this->loadBalancer->getConnectionRef( $index );
 
 		$tables = [ 'user' ];

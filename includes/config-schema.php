@@ -150,6 +150,7 @@ return [
 				28 => 'cmd',
 				29 => 'vxd',
 				30 => 'cpl',
+				31 => 'xml',
 			],
 			'MimeTypeExclusions' => [
 				0 => 'text/html',
@@ -168,6 +169,8 @@ return [
 				13 => 'application/x-msdownload',
 				14 => 'application/x-msmetafile',
 				15 => 'application/java',
+				16 => 'application/xml',
+				17 => 'text/xml',
 			],
 			'CheckFileExtensions' => true,
 			'StrictFileExtensions' => true,
@@ -250,7 +253,6 @@ return [
 			],
 			'AntivirusRequired' => true,
 			'VerifyMimeType' => true,
-			'VerifyMimeTypeIE' => true,
 			'MimeTypeFile' => 'internal',
 			'MimeInfoFile' => 'internal',
 			'MimeDetectorCommand' => null,
@@ -295,6 +297,9 @@ return [
 				3 => 200,
 				4 => 250,
 				5 => 300,
+			],
+			'ThumbnailNamespaces' => [
+				0 => 6,
 			],
 			'ThumbnailBuckets' => null,
 			'ThumbnailMinimumBucketDistance' => 50,
@@ -381,8 +386,20 @@ return [
 			'DatabaseReplicaLagCritical' => 30,
 			'MaxExecutionTimeForExpensiveQueries' => 0,
 			'TemplateLinksSchemaMigrationStage' => 768,
+			'ExternalLinksSchemaMigrationStage' => 3,
+			'CommentTempTableSchemaMigrationStage' => [
+			],
 			'ContentHandlers' => [
-				'wikitext' => 'WikitextContentHandler',
+				'wikitext' => [
+					'class' => 'WikitextContentHandler',
+					'services' => [
+						0 => 'TitleFactory',
+						1 => 'ParserFactory',
+						2 => 'GlobalIdGenerator',
+						3 => 'LanguageNameUtils',
+						4 => 'MagicWordFactory',
+					],
+				],
 				'javascript' => 'JavaScriptContentHandler',
 				'json' => 'JsonContentHandler',
 				'css' => 'CssContentHandler',
@@ -419,6 +436,12 @@ return [
 			'MaxArticleSize' => 2048,
 			'MemoryLimit' => '50M',
 			'PoolCounterConf' => null,
+			'PoolCountClientConf' => [
+				'servers' => [
+					0 => '127.0.0.1',
+				],
+				'timeout' => 0.1,
+			],
 			'MaxUserDBWriteDuration' => false,
 			'MaxJobDBWriteDuration' => false,
 			'LinkHolderBatchSize' => 1000,
@@ -495,14 +518,8 @@ return [
 					'reportDupes' => false,
 				],
 			],
-			'MainWANCache' => false,
-			'WANObjectCaches' => [
-				0 => [
-					'class' => 'WANObjectCache',
-					'cacheId' => 0,
-				],
+			'WANObjectCache' => [
 			],
-			'EnableWANCacheReaper' => false,
 			'MainStash' => 'db-replicated',
 			'ParsoidCacheConfig' => [
 				'StashType' => null,
@@ -603,8 +620,8 @@ return [
 				0 => 'copyright',
 				1 => 'history_copyright',
 				2 => 'googlesearch',
-				3 => 'feedback-terms',
-				4 => 'feedback-termsofuse',
+				3 => 'youhavenewmessagesmanyusers',
+				4 => 'youhavenewmessages',
 			],
 			'Localtimezone' => null,
 			'LocalTZoffset' => null,
@@ -625,6 +642,7 @@ return [
 			'FallbackSkin' => 'fallback',
 			'SkipSkins' => [
 			],
+			'ResourceLoaderClientPreferences' => false,
 			'DisableOutputCompression' => false,
 			'FragmentMode' => [
 				0 => 'html5',
@@ -649,7 +667,6 @@ return [
 			'Send404Code' => true,
 			'ShowRollbackEditCount' => 10,
 			'EnableCanonicalServerLink' => false,
-			'MangleFlashPolicy' => true,
 			'ResourceModules' => [
 			],
 			'ResourceModuleSkinStyles' => [
@@ -727,6 +744,7 @@ return [
 				1 => 'Mypage',
 				2 => 'Mytalk',
 				3 => 'Redirect',
+				4 => 'Mylog',
 			],
 			'DisableHardRedirects' => false,
 			'FixDoubleRedirects' => false,
@@ -785,7 +803,7 @@ return [
 			'ParsoidSettings' => [
 				'useSelser' => true,
 			],
-			'ParserEnableLegacyMediaDOM' => true,
+			'ParserEnableLegacyMediaDOM' => false,
 			'UseContentMediaStyles' => false,
 			'RawHtml' => false,
 			'ExternalLinkTarget' => false,
@@ -845,7 +863,7 @@ return [
 					],
 					'default' => [
 						'MinimalPasswordLength' => [
-							'value' => 1,
+							'value' => 8,
 							'suggestChangeOnLogin' => true,
 						],
 						'PasswordCannotBeSubstringInUsername' => [
@@ -971,7 +989,10 @@ return [
 					'cost' => 9,
 				],
 				'pbkdf2' => [
-					'class' => 'Pbkdf2Password',
+					'factory' => [
+						0 => 'AbstractPbkdf2Password',
+						1 => 'newInstance',
+					],
 					'algo' => 'sha512',
 					'cost' => '30000',
 					'length' => '64',
@@ -1042,6 +1063,7 @@ return [
 				'search-match-redirect' => true,
 				'search-special-page' => 'Search',
 				'searchlimit' => 20,
+				'search-thumbnail-extra-namespaces' => true,
 				'showhiddencats' => 0,
 				'shownumberswatching' => 1,
 				'showrollbackconfirmation' => 0,
@@ -1075,7 +1097,7 @@ return [
 			],
 			'HiddenPrefs' => [
 			],
-			'InvalidUsernameCharacters' => '@:>',
+			'InvalidUsernameCharacters' => '@:>=',
 			'UserrightsInterwikiDelimiter' => '@',
 			'SecureLogin' => false,
 			'AuthenticationTokenVersion' => null,
@@ -1085,7 +1107,6 @@ return [
 					'args' => [
 						0 => [
 							'priority' => 30,
-							'callUserSetCookiesHook' => true,
 						],
 					],
 				],
@@ -1234,6 +1255,7 @@ return [
 				'bureaucrat' => [
 					'userrights' => true,
 					'noratelimit' => true,
+					'renameuser' => true,
 				],
 				'suppress' => [
 					'hideuser' => true,
@@ -1243,6 +1265,12 @@ return [
 					'deleterevision' => true,
 					'deletelogentry' => true,
 				],
+			],
+			'PrivilegedGroups' => [
+				0 => 'bureaucrat',
+				1 => 'interface-admin',
+				2 => 'suppress',
+				3 => 'sysop',
 			],
 			'RevokePermissions' => [
 			],
@@ -1379,7 +1407,7 @@ return [
 						1 => 3600,
 					],
 				],
-				'emailuser' => [
+				'sendemail' => [
 					'ip' => [
 						0 => 5,
 						1 => 86400,
@@ -1473,7 +1501,7 @@ return [
 						1 => 60,
 					],
 				],
-				'changetag' => [
+				'changetags' => [
 					'ip' => [
 						0 => 8,
 						1 => 60,
@@ -1827,12 +1855,10 @@ return [
 			'StatsdMetricPrefix' => 'MediaWiki',
 			'StatsdSamplingRates' => [
 			],
-			'MetricsTarget' => null,
-			'MetricsFormat' => null,
-			'MetricsPrefix' => 'mediawiki',
+			'StatsTarget' => null,
+			'StatsFormat' => null,
+			'StatsPrefix' => 'mediawiki',
 			'PageInfoTransclusionLimit' => 50,
-			'ParserTestFiles' => [
-			],
 			'EnableJavaScriptTest' => false,
 			'CachePrefix' => false,
 			'DebugToolbar' => false,
@@ -1844,7 +1870,6 @@ return [
 				'application/x-suggestions+json' => false,
 				'application/x-suggestions+xml' => false,
 			],
-			'EnableOpenSearchSuggest' => true,
 			'OpenSearchDefaultLimit' => 10,
 			'OpenSearchDescriptionLength' => 100,
 			'SearchSuggestCacheExpiry' => 1200,
@@ -1913,8 +1938,8 @@ return [
 			'OverrideSiteFeed' => [
 			],
 			'FeedClasses' => [
-				'rss' => 'RSSFeed',
-				'atom' => 'AtomFeed',
+				'rss' => 'MediaWiki\\Feed\\RSSFeed',
+				'atom' => 'MediaWiki\\Feed\\AtomFeed',
 			],
 			'AdvertisedFeedTypes' => [
 				0 => 'atom',
@@ -1969,7 +1994,7 @@ return [
 			],
 			'WatchlistExpiry' => false,
 			'WatchlistPurgeRate' => 0.1,
-			'WatchlistExpiryMaxDuration' => '6 months',
+			'WatchlistExpiryMaxDuration' => '1 year',
 			'RightsPage' => null,
 			'RightsUrl' => null,
 			'RightsText' => null,
@@ -2005,7 +2030,6 @@ return [
 			],
 			'SpecialPages' => [
 			],
-			'AutoloadAttemptLowercase' => false,
 			'ExtensionCredits' => [
 			],
 			'Hooks' => [
@@ -2035,9 +2059,24 @@ return [
 				'clearWatchlistNotifications' => 'ClearWatchlistNotificationsJob',
 				'userOptionsUpdate' => 'UserOptionsUpdateJob',
 				'revertedTagUpdate' => 'RevertedTagUpdateJob',
-				'enqueue' => 'EnqueueJob',
 				'null' => 'NullJob',
 				'userEditCountInit' => 'UserEditCountInitJob',
+				'parsoidCachePrewarm' => [
+					'class' => 'ParsoidCachePrewarmJob',
+					'services' => [
+						0 => 'ParsoidOutputAccess',
+						1 => 'PageStore',
+						2 => 'RevisionLookup',
+					],
+					'needsPage' => false,
+				],
+				'renameUser' => [
+					'class' => 'RenameUserJob',
+					'services' => [
+						0 => 'MainConfig',
+						1 => 'DBLoadBalancerFactory',
+					],
+				],
 			],
 			'JobTypesExcludedFromDefaultQueue' => [
 				0 => 'AssembleUploadChunks',
@@ -2085,6 +2124,7 @@ return [
 				11 => 'tag',
 				12 => 'managetags',
 				13 => 'contentmodel',
+				14 => 'renameuser',
 			],
 			'LogRestrictions' => [
 				'suppress' => 'suppressionlog',
@@ -2149,6 +2189,7 @@ return [
 				'protect/move_prot' => 'ProtectLogFormatter',
 				'protect/protect' => 'ProtectLogFormatter',
 				'protect/unprotect' => 'ProtectLogFormatter',
+				'renameuser/renameuser' => 'RenameuserLogFormatter',
 				'rights/autopromote' => 'RightsLogFormatter',
 				'rights/rights' => 'RightsLogFormatter',
 				'suppress/block' => 'BlockLogFormatter',
@@ -2362,7 +2403,6 @@ return [
 			'ShellCgroup' => false,
 			'PhpCli' => '/usr/bin/php',
 			'ShellRestrictionMethod' => 'autodetect',
-			'ShellboxUrl' => null,
 			'ShellboxUrls' => [
 				'default' => null,
 			],
@@ -2410,6 +2450,8 @@ return [
 			'SkinsPreferred' => [
 				0 => 'vector-2022',
 				1 => 'vector',
+			],
+			'SpecialContributeSkinsEnabled' => [
 			],
 		],
 		'type' => [
@@ -2508,6 +2550,7 @@ return [
 			'XMLMimeTypes' => 'object',
 			'ImageLimits' => 'array',
 			'ThumbLimits' => 'array',
+			'ThumbnailNamespaces' => 'array',
 			'ThumbnailBuckets' => [
 				0 => 'array',
 				1 => 'null',
@@ -2549,6 +2592,8 @@ return [
 			'LBFactoryConf' => 'object',
 			'LocalDatabases' => 'array',
 			'TemplateLinksSchemaMigrationStage' => 'integer',
+			'ExternalLinksSchemaMigrationStage' => 'integer',
+			'CommentTempTableSchemaMigrationStage' => 'object',
 			'ContentHandlers' => 'object',
 			'NamespaceContentModels' => 'object',
 			'TextModelsToParse' => 'array',
@@ -2577,6 +2622,7 @@ return [
 				0 => 'object',
 				1 => 'null',
 			],
+			'PoolCountClientConf' => 'object',
 			'MaxUserDBWriteDuration' => [
 				0 => 'integer',
 				1 => 'boolean',
@@ -2587,13 +2633,7 @@ return [
 			],
 			'MultiShardSiteStats' => 'boolean',
 			'ObjectCaches' => 'object',
-			'MainWANCache' => [
-				0 => 'integer',
-				1 => 'string',
-				2 => 'boolean',
-			],
-			'WANObjectCaches' => 'object',
-			'EnableWANCacheReaper' => 'boolean',
+			'WANObjectCache' => 'object',
 			'ParsoidCacheConfig' => 'object',
 			'ChronologyProtectorStash' => [
 				0 => 'string',
@@ -2614,7 +2654,7 @@ return [
 			'CdnServersNoPurge' => 'object',
 			'HTCPRouting' => 'object',
 			'GrammarForms' => 'object',
-			'ExtraInterlanguageLinkPrefixes' => 'object',
+			'ExtraInterlanguageLinkPrefixes' => 'array',
 			'InterlanguageLinkCodeMap' => 'object',
 			'ExtraLanguageNames' => 'object',
 			'ExtraLanguageCodes' => 'object',
@@ -2651,7 +2691,6 @@ return [
 			'InterwikiCache' => [
 				0 => 'boolean',
 				1 => 'object',
-				2 => 'string',
 			],
 			'SiteTypes' => 'object',
 			'UrlProtocols' => 'array',
@@ -2690,6 +2729,7 @@ return [
 			'BlockCIDRLimit' => 'object',
 			'EnablePartialActionBlocks' => 'boolean',
 			'GroupPermissions' => 'object',
+			'PrivilegedGroups' => 'array',
 			'RevokePermissions' => 'object',
 			'GroupInheritsPermissions' => 'object',
 			'ImplicitGroups' => 'array',
@@ -2755,16 +2795,15 @@ return [
 			'MWLoggerDefaultSpi' => 'object',
 			'Profiler' => 'object',
 			'StatsdSamplingRates' => 'object',
-			'MetricsTarget' => [
+			'StatsTarget' => [
 				0 => 'string',
 				1 => 'null',
 			],
-			'MetricsFormat' => [
+			'StatsFormat' => [
 				0 => 'string',
 				1 => 'null',
 			],
-			'MetricsPrefix' => 'string',
-			'ParserTestFiles' => 'object',
+			'StatsPrefix' => 'string',
 			'OpenSearchTemplates' => 'object',
 			'NamespacesToBeSearchedDefault' => 'object',
 			'SitemapNamespaces' => [
@@ -2871,6 +2910,7 @@ return [
 			'ReportToEndpoints' => 'array',
 			'FeaturePolicyReportOnly' => 'array',
 			'SkinsPreferred' => 'array',
+			'SpecialContributeSkinsEnabled' => 'array',
 		],
 		'mergeStrategy' => [
 			'TiffThumbnailType' => 'replace',
@@ -3127,6 +3167,11 @@ return [
 		'UploadStashScalerBaseUrl' => [
 			'deprecated' => 'since 1.36 Use thumbProxyUrl in $wgLocalFileRepo',
 		],
+		'ThumbnailNamespaces' => [
+			'items' => [
+				'type' => 'integer',
+			],
+		],
 		'LocalDatabases' => [
 			'items' => [
 				'type' => 'string',
@@ -3142,9 +3187,6 @@ return [
 			'items' => [
 				'type' => 'string',
 			],
-		],
-		'MangleFlashPolicy' => [
-			'deprecated' => 'since 1.39; no longer has any effect',
 		],
 		'AllowImageTag' => [
 			'deprecated' => 'since 1.35; register an extension tag named <img> instead.',
@@ -3206,22 +3248,13 @@ return [
 				'type' => 'string',
 			],
 		],
-		'ParserTestFiles' => [
-			'deprecated' => 'since 1.30',
-		],
 		'OpenSearchTemplate' => [
 			'deprecated' => 'since 1.25 Use $wgOpenSearchTemplates[\'application/x-suggestions+json\'] instead',
-		],
-		'EnableOpenSearchSuggest' => [
-			'deprecated' => 'since 1.35 No longer used',
 		],
 		'SoftwareTags' => [
 			'additionalProperties' => [
 				'type' => 'boolean',
 			],
-		],
-		'AutoloadAttemptLowercase' => [
-			'deprecated' => 'since 1.35',
 		],
 		'JobBackoffThrottling' => [
 			'additionalProperties' => [
@@ -3252,9 +3285,6 @@ return [
 				'type' => 'integer',
 			],
 		],
-		'ShellboxUrl' => [
-			'deprecated' => 'since 1.37; use $wgShellboxUrls instead',
-		],
 		'ShellboxUrls' => [
 			'additionalProperties' => [
 				'type' => [
@@ -3264,5 +3294,10 @@ return [
 				],
 			],
 		],
+	],
+	'obsolete-config' => [
+		'MangleFlashPolicy' => 'Since 1.39; no longer has any effect.',
+		'EnableOpenSearchSuggest' => 'Since 1.35, no longer used',
+		'AutoloadAttemptLowercase' => 'Since 1.40; no longer has any effect.',
 	],
 ];

@@ -33,17 +33,14 @@ ve.dm.MWCategoryMetaItem.static.matchTagNames = [ 'link' ];
 ve.dm.MWCategoryMetaItem.static.matchRdfaTypes = [ 'mw:PageProp/Category' ];
 
 ve.dm.MWCategoryMetaItem.static.toDataElement = function ( domElements ) {
+	// Parsoid: LinkHandlerUtils::serializeAsWikiLink
 	var href = domElements[ 0 ].getAttribute( 'href' ),
-		data = mw.libs.ve.parseParsoidResourceName( href ),
-		rawTitleAndFragment = data.rawTitle.match( /^(.*?)(?:#(.*))?$/ ),
-		titleAndFragment = data.title.match( /^(.*?)(?:#(.*))?\s*$/ );
+		titleAndFragment = href.match( /^(.*?)(?:#(.*))?\s*$/ );
 	return {
 		type: this.name,
 		attributes: {
-			category: titleAndFragment[ 1 ],
-			origCategory: rawTitleAndFragment[ 1 ],
-			sortkey: titleAndFragment[ 2 ] || '',
-			origSortkey: rawTitleAndFragment[ 2 ] || ''
+			category: mw.libs.ve.parseParsoidResourceName( titleAndFragment[ 1 ] ).title,
+			sortkey: titleAndFragment[ 2 ] ? decodeURIComponent( titleAndFragment[ 2 ] ) : ''
 		}
 	};
 };
@@ -51,27 +48,17 @@ ve.dm.MWCategoryMetaItem.static.toDataElement = function ( domElements ) {
 ve.dm.MWCategoryMetaItem.static.toDomElements = function ( dataElement, doc ) {
 	var domElement = doc.createElement( 'link' ),
 		category = dataElement.attributes.category || '',
-		sortkey = dataElement.attributes.sortkey || '',
-		origCategory = dataElement.attributes.origCategory || '',
-		origSortkey = dataElement.attributes.origSortkey || '',
-		normalizedOrigCategory = mw.libs.ve.decodeURIComponentIntoArticleTitle( origCategory ),
-		normalizedOrigSortkey = mw.libs.ve.decodeURIComponentIntoArticleTitle( origSortkey );
-	if ( normalizedOrigSortkey === sortkey ) {
-		sortkey = origSortkey;
-	} else {
-		sortkey = encodeURIComponent( sortkey );
-	}
-	var encodedCategory;
-	if ( normalizedOrigCategory === category ) {
-		encodedCategory = origCategory;
-	} else {
-		encodedCategory = encodeURIComponent( category );
-	}
+		sortkey = dataElement.attributes.sortkey || '';
 	domElement.setAttribute( 'rel', 'mw:PageProp/Category' );
-	var href = './' + encodedCategory;
+
+	// Parsoid: WikiLinkHandler::renderCategory
+	var href = mw.libs.ve.encodeParsoidResourceName( category );
 	if ( sortkey !== '' ) {
-		href += '#' + sortkey;
+		href += '#' + sortkey.replace( /[%? [\]#|<>]/g, function ( match ) {
+			return encodeURIComponent( match );
+		} );
 	}
+
 	domElement.setAttribute( 'href', href );
 	return [ domElement ];
 };

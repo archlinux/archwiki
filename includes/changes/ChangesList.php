@@ -24,12 +24,15 @@
 
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 use OOUI\IconWidget;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -693,8 +696,12 @@ class ChangesList extends ContextSource {
 			$s .= ' <span class="' . $deletedClass . '">' .
 				$this->msg( 'rev-deleted-user' )->escaped() . '</span>';
 		} else {
-			$s .= $this->getLanguage()->getDirMark() . Linker::userLink( $rc->mAttribs['rc_user'],
-				$rc->mAttribs['rc_user_text'] );
+			$s .= $this->getLanguage()->getDirMark() . Linker::userLink(
+				$rc->mAttribs['rc_user'],
+				$rc->mAttribs['rc_user_text'],
+				false,
+				[ 'data-mw-revid' => $rc->mAttribs['rc_this_oldid'] ]
+			);
 			$s .= Linker::userToolLinks(
 				$rc->mAttribs['rc_user'], $rc->mAttribs['rc_user_text'],
 				false, 0, null,
@@ -796,9 +803,7 @@ class ChangesList extends ContextSource {
 	 * @return bool
 	 */
 	public static function userCan( $rc, $field, Authority $performer = null ) {
-		if ( $performer === null ) {
-			$performer = RequestContext::getMain()->getAuthority();
-		}
+		$performer ??= RequestContext::getMain()->getAuthority();
 
 		if ( $rc->mAttribs['rc_type'] == RC_LOG ) {
 			return LogEventsList::userCanBitfield( $rc->mAttribs['rc_deleted'], $field, $performer );
@@ -827,33 +832,52 @@ class ChangesList extends ContextSource {
 	 * @param RecentChange &$rc
 	 */
 	public function insertRollback( &$s, &$rc ) {
-		if ( $rc->mAttribs['rc_type'] == RC_EDIT
-			&& $rc->mAttribs['rc_this_oldid']
-			&& $rc->mAttribs['rc_cur_id']
-			&& $rc->getAttribute( 'page_latest' ) == $rc->mAttribs['rc_this_oldid']
-		) {
-			$title = $rc->getTitle();
-			/** Check for rollback permissions, disallow special pages, and only
-			 * show a link on the top-most revision
-			 */
-			if ( $this->getAuthority()->probablyCan( 'rollback', $title ) ) {
-				$revRecord = new MutableRevisionRecord( $title );
-				$revRecord->setId( (int)$rc->mAttribs['rc_this_oldid'] );
-				$revRecord->setVisibility( (int)$rc->mAttribs['rc_deleted'] );
-				$user = new UserIdentityValue(
-					(int)$rc->mAttribs['rc_user'],
-					$rc->mAttribs['rc_user_text']
-				);
-				$revRecord->setUser( $user );
+		$this->insertPageTools( $s, $rc );
+	}
 
-				$s .= ' ';
-				$s .= Linker::generateRollback(
-					$revRecord,
-					$this->getContext(),
-					[ 'noBrackets' ]
-				);
-			}
+	/**
+	 * Insert an extensible set of page tools into the changelist row
+	 * which includes a rollback link and undo link if applicable.
+	 *
+	 * @param string &$s
+	 * @param RecentChange &$rc
+	 *
+	 */
+	private function insertPageTools( &$s, &$rc ) {
+		// FIXME Some page tools (e.g. thanks) might make sense for log entries.
+		if ( !in_array( $rc->mAttribs['rc_type'], [ RC_EDIT, RC_NEW ] )
+			// FIXME When would either of these not exist when type is RC_EDIT? Document.
+			|| !$rc->mAttribs['rc_this_oldid']
+			|| !$rc->mAttribs['rc_cur_id']
+		) {
+			return;
 		}
+
+		// Construct a fake revision for PagerTools. FIXME can't we just obtain the real one?
+		$title = $rc->getTitle();
+		$revRecord = new MutableRevisionRecord( $title );
+		$revRecord->setId( (int)$rc->mAttribs['rc_this_oldid'] );
+		$revRecord->setVisibility( (int)$rc->mAttribs['rc_deleted'] );
+		$user = new UserIdentityValue(
+			(int)$rc->mAttribs['rc_user'],
+			$rc->mAttribs['rc_user_text']
+		);
+		$revRecord->setUser( $user );
+
+		$tools = new PagerTools(
+			$revRecord,
+			null,
+			// only show a rollback link on the top-most revision
+			$rc->getAttribute( 'page_latest' ) == $rc->mAttribs['rc_this_oldid']
+				&& $rc->mAttribs['rc_type'] != RC_NEW,
+			$this->getHookRunner(),
+			$title,
+			$this->getContext(),
+			// @todo: Inject
+			MediaWikiServices::getInstance()->getLinkRenderer()
+		);
+
+		$s .= $tools->toHTML();
 	}
 
 	/**
@@ -877,7 +901,7 @@ class ChangesList extends ContextSource {
 			return;
 		}
 
-		list( $tagSummary, $newClasses ) = ChangeTags::formatSummaryRow(
+		[ $tagSummary, $newClasses ] = ChangeTags::formatSummaryRow(
 			$rc->mAttribs['ts_tags'],
 			'changeslist',
 			$this->getContext()

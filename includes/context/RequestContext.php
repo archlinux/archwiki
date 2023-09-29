@@ -26,7 +26,10 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\CsrfTokenSet;
+use MediaWiki\StubObject\StubGlobalUser;
+use MediaWiki\Title\Title;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\IPUtils;
 use Wikimedia\NonSerializable\NonSerializableTrait;
@@ -119,11 +122,9 @@ class RequestContext implements IContextSource, MutableContext {
 	 * @return Config
 	 */
 	public function getConfig() {
-		if ( $this->config === null ) {
-			// @todo In the future, we could move this to WebStart.php so
-			// the Config object is ready for when initialization happens
-			$this->config = MediaWikiServices::getInstance()->getMainConfig();
-		}
+		// @todo In the future, we could move this to WebStart.php so
+		// the Config object is ready for when initialization happens
+		$this->config ??= MediaWikiServices::getInstance()->getMainConfig();
 
 		return $this->config;
 	}
@@ -153,25 +154,12 @@ class RequestContext implements IContextSource, MutableContext {
 	}
 
 	/**
-	 * @deprecated since 1.27 use a StatsdDataFactory from MediaWikiServices (preferably injected).
-	 *  Hard deprecated since 1.39.
-	 *
-	 * @return IBufferingStatsdDataFactory
-	 */
-	public function getStats() {
-		wfDeprecated( __METHOD__, '1.27' );
-		return MediaWikiServices::getInstance()->getStatsdDataFactory();
-	}
-
-	/**
 	 * @return Timing
 	 */
 	public function getTiming() {
-		if ( $this->timing === null ) {
-			$this->timing = new Timing( [
-				'logger' => LoggerFactory::getInstance( 'Timing' )
-			] );
-		}
+		$this->timing ??= new Timing( [
+			'logger' => LoggerFactory::getInstance( 'Timing' )
+		] );
 		return $this->timing;
 	}
 
@@ -294,34 +282,28 @@ class RequestContext implements IContextSource, MutableContext {
 		// expensive operations to compute this. The computation involves creation
 		// of Article, WikiPage, and ContentHandler objects (and the various
 		// database queries these classes require to be instantiated), as well
-		// as potentially slow extension hooks at various level in these
-		// classes.
+		// as potentially slow extension hooks in these classes.
 		//
-		// This is value frequently needed in OutputPage and in various
+		// This value is frequently needed in OutputPage and in various
 		// Skin-related methods and classes.
-		if ( $this->action === null ) {
-			$this->action = MediaWikiServices::getInstance()
-				->getActionFactory()
-				->getActionName( $this );
-		}
+		$this->action ??= MediaWikiServices::getInstance()
+			->getActionFactory()
+			->getActionName( $this );
 
 		return $this->action;
 	}
 
 	private function clearActionName(): void {
 		if ( $this->action !== null ) {
-			// Log if cleared after something already computed it as that is
-			// likely to cause bugs (given the first caller may be using it for
-			// something), and also because it's an expensive thing to needlessly
-			// compute multiple times even when it produces the same value.
+			// If we're clearing after something else has actually already computed the action,
+			// emit a warning.
 			//
-			// TODO: Once confident we don't rely on this,
-			// change to E_USER_WARNING with trigger_error and silence error
-			// in relevant tests.
-			$logger = LoggerFactory::getInstance( 'Setup' );
-			$logger->warning( 'Changing action after getActionName was already called',
-				[ 'exception' => new Exception ]
-			);
+			// Doing so is unstable, given the first caller got something that turns out to be
+			// incomplete or incorrect. Even if we end up re-creating an instance of the same
+			// class, we may now be acting on a different title/skin/user etc.
+			//
+			// Re-computing the action is expensive and can be a performance problem (T302623).
+			trigger_error( 'Unexpected clearActionName after getActionName already called' );
 			$this->action = null;
 		}
 	}
@@ -337,9 +319,7 @@ class RequestContext implements IContextSource, MutableContext {
 	 * @return OutputPage
 	 */
 	public function getOutput() {
-		if ( $this->output === null ) {
-			$this->output = new OutputPage( $this );
-		}
+		$this->output ??= new OutputPage( $this );
 
 		return $this->output;
 	}
@@ -395,18 +375,21 @@ class RequestContext implements IContextSource, MutableContext {
 	/**
 	 * Accepts a language code and ensures it's sensible. Outputs a cleaned up language
 	 * code and replaces with $wgLanguageCode if not sensible.
-	 * @param string $code Language code
+	 * @param ?string $code Language code
 	 * @return string
 	 */
 	public static function sanitizeLangCode( $code ) {
 		global $wgLanguageCode;
 
+		if ( !$code ) {
+			return $wgLanguageCode;
+		}
+
 		// BCP 47 - letter case MUST NOT carry meaning
 		$code = strtolower( $code );
 
 		# Validate $code
-		if ( !$code
-			|| !MediaWikiServices::getInstance()->getLanguageNameUtils()
+		if ( !MediaWikiServices::getInstance()->getLanguageNameUtils()
 				->isValidCode( $code )
 			|| $code === 'qqq'
 		) {
@@ -561,9 +544,7 @@ class RequestContext implements IContextSource, MutableContext {
 	 * @return RequestContext
 	 */
 	public static function getMain(): RequestContext {
-		if ( self::$instance === null ) {
-			self::$instance = new self;
-		}
+		self::$instance ??= new self;
 
 		return self::$instance;
 	}
@@ -628,8 +609,6 @@ class RequestContext implements IContextSource, MutableContext {
 	 * behalf of a user. In general the 'sessionId' parameter should be set
 	 * to an empty string unless session importing is *truly* needed. This
 	 * feature is somewhat deprecated.
-	 *
-	 * @note suhosin.session.encrypt may interfere with this method.
 	 *
 	 * @param array $params Result of RequestContext::exportSession()
 	 * @return ScopedCallback
@@ -713,7 +692,7 @@ class RequestContext implements IContextSource, MutableContext {
 			static function () use ( $importSessionFunc, $oUser, $oParams, $oRequest ) {
 				global $wgRequest;
 				$importSessionFunc( $oUser, $oParams );
-				// Restore the exact previous Request object (instead of leaving FauxRequest)
+				// Restore the exact previous Request object (instead of leaving MediaWiki\Request\FauxRequest)
 				RequestContext::getMain()->setRequest( $oRequest );
 				$wgRequest = RequestContext::getMain()->getRequest(); // b/c
 			}
@@ -724,14 +703,14 @@ class RequestContext implements IContextSource, MutableContext {
 	 * Create a new extraneous context. The context is filled with information
 	 * external to the current session.
 	 * - Title is specified by argument
-	 * - Request is a FauxRequest, or a FauxRequest can be specified by argument
+	 * - Request is a MediaWiki\Request\FauxRequest, or a MediaWiki\Request\FauxRequest can be specified by argument
 	 * - User is an anonymous user, for separation IPv4 localhost is used
 	 * - Language will be based on the anonymous user and request, may be content
 	 *   language or a uselang param in the fauxrequest data may change the lang
 	 * - Skin will be based on the anonymous user, should be the wiki's default skin
 	 *
 	 * @param Title $title Title to use for the extraneous request
-	 * @param WebRequest|array $request A WebRequest or data to use for a FauxRequest
+	 * @param WebRequest|array $request A WebRequest or data to use for a MediaWiki\Request\FauxRequest
 	 * @return RequestContext
 	 */
 	public static function newExtraneousContext( Title $title, $request = [] ) {

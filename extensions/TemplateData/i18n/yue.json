@@ -5,14 +5,15 @@
 			"Ktchankt",
 			"Moon0319",
 			"Shinjiman",
-			"捍粵者"
+			"捍粵者",
+			"Hello903hello"
 		]
 	},
 	"templatedata-desc": "裝住模板參數嘅相關資訊（用JSON）",
 	"templatedata-doc-desc-empty": "無描述。",
 	"templatedata-doc-format-block": "爾塊模，建議攤開格式，一行一個參數。",
 	"templatedata-doc-format-custom": "呢個模有特定格式。",
-	"templatedata-doc-format-inline": "爾塊模，建議一行過寫晒所有參數。",
+	"templatedata-doc-format-inline": "呢塊模建議一行過寫晒所有參數。",
 	"templatedata-doc-no-params-set": "冇指明參數",
 	"templatedata-doc-param-autovalue": "自動值",
 	"templatedata-doc-param-default": "預設",

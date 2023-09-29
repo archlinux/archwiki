@@ -8,12 +8,12 @@
 			"Lloffiwr",
 			"Muddyb",
 			"Muddyb Blast Producer",
-			"Yasen igra",
-			"Wangombe"
+			"Wangombe",
+			"Yasen igra"
 		]
 	},
 	"vector-languages": "Lugha",
-	"vector-language-button-label": "{{PLURAL:$1|$1 lugha}}",
+	"vector-language-button-label": "{{PLURAL:$1|Lugha $1}}",
 	"vector-no-language-button-label": "Ongeza lugha",
 	"vector-action-addsection": "Weka mada",
 	"vector-action-delete": "Futa",
@@ -28,5 +28,8 @@
 	"vector-view-viewsource": "Tazama msimbo",
 	"vector-jumptocontent": "Rukia yaliyomo",
 	"vector-more-actions": "Zaidi",
-	"vector-searchsuggest-containing": "Tafuta kurasa zilizo na <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Tafuta kurasa zilizo na <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-page-tools-label": "Zana",
+	"vector-page-tools-general-label": "Kijumla",
+	"vector-unpin-element-label": "ficha"
 }

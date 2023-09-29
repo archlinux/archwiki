@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"RMizo",
-			"Jokomarel"
+			"Jokomarel",
+			"RMizo"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 ṭawng|$1 ṭawngte}}",

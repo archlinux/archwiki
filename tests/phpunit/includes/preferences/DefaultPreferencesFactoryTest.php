@@ -11,9 +11,11 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\DefaultPreferencesFactory;
 use MediaWiki\Preferences\SignatureValidatorFactory;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\SessionId;
 use MediaWiki\Session\TestUtils;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserOptionsLookup;
@@ -62,6 +64,7 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 		$services = $this->getServiceContainer();
 
 		$this->overrideConfigValue( MainConfigNames::DisableLangConversion, false );
+		$this->overrideConfigValue( MainConfigNames::UsePigLatinVariant, false );
 		$this->config = $services->getMainConfig();
 	}
 
@@ -98,6 +101,7 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 		$params[] = $this->createMock( SkinFactory::class );
 		$params[] = $this->createMock( UserGroupManager::class );
 		$params[] = $this->createMock( SignatureValidatorFactory::class );
+		$params[] = new HashConfig();
 		$oldMwServices = MediaWikiServices::forceGlobalInstance(
 			$this->createNoOpMock( MediaWikiServices::class )
 		);
@@ -166,7 +170,8 @@ class DefaultPreferencesFactoryTest extends \MediaWikiIntegrationTestCase {
 			$services->getParser(),
 			$services->getSkinFactory(),
 			$userGroupManager,
-			$services->getSignatureValidatorFactory()
+			$services->getSignatureValidatorFactory(),
+			$services->getMainConfig()
 		);
 	}
 

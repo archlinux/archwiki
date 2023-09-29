@@ -249,6 +249,8 @@ class DOMNormalizer {
 		DOMCompat::normalize( $a );
 
 		// Update diff markers
+		$this->addDiffMarks( $a->parentNode, 'children-changed' ); // $b was removed
+		$this->addDiffMarks( $a, 'children-changed' ); // $a got more children
 		if ( !DOMUtils::isRemoved( $sentinel ) ) {
 			// Nodes starting at 'sentinal' were inserted into 'a'
 			// b, which was a's sibling was deleted
@@ -257,14 +259,12 @@ class DOMNormalizer {
 			if ( $sentinel->parentNode ) {
 				$this->addDiffMarks( $sentinel, 'moved', true );
 			}
-			$this->addDiffMarks( $a, 'children-changed', true );
 		}
 		if ( $a->nextSibling ) {
 			// FIXME: Hmm .. there is an API hole here
 			// about ability to add markers after last child
 			$this->addDiffMarks( $a->nextSibling, 'moved', true );
 		}
-		$this->addDiffMarks( $a->parentNode, 'children-changed' );
 
 		return $a;
 	}
@@ -486,11 +486,6 @@ class DOMNormalizer {
 		}
 
 		if ( !$node->hasAttribute( 'href' ) ) {
-			$this->state->getEnv()->log(
-				'error/normalize',
-				'href is missing from a tag',
-				DOMCompat::getOuterHTML( $node )
-			);
 			return $node;
 		}
 		$nodeHref = $node->getAttribute( 'href' );

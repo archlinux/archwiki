@@ -1,24 +1,39 @@
 <?php
 
+use MediaWiki\MainConfigNames;
+use MediaWiki\MainConfigSchema;
+use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
+use MediaWiki\Title\Title;
+
 /**
  * @group Database
  */
 class ArticleTest extends \MediaWikiIntegrationTestCase {
 
-	/**
-	 * @var Title
-	 */
-	private $title;
-	/**
-	 * @var Article
-	 */
-	private $article;
+	protected $tablesUsed = [
+		'revision',
+		'recentchanges',
+	];
 
-	/** creates a title object and its article object */
-	protected function setUp(): void {
-		parent::setUp();
-		$this->title = Title::makeTitle( NS_MAIN, 'SomePage' );
-		$this->article = new Article( $this->title );
+	/**
+	 * @param Title $title
+	 * @param User|null $user
+	 *
+	 * @return Article
+	 */
+	private function newArticle( Title $title, User $user = null ): Article {
+		if ( !$user ) {
+			$user = $this->getTestUser()->getUser();
+		}
+
+		$context = new RequestContext();
+		$article = new Article( $title );
+		$context->setUser( $user );
+		$context->setTitle( $title );
+		$article->setContext( $context );
+
+		return $article;
 	}
 
 	/**
@@ -26,21 +41,23 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 	 * @covers Article::__set
 	 */
 	public function testGetOrSetOnNewProperty() {
+		$article = new Article( Title::newMainPage() );
+
 		$this->filterDeprecated(
 			'/Accessing Article::\$ext_someNewProperty/'
 		);
 		$this->filterDeprecated(
 			'/Setting Article::\$ext_someNewProperty/'
 		);
-		$this->article->ext_someNewProperty = 12;
-		$this->assertEquals( 12, $this->article->ext_someNewProperty,
+		$article->ext_someNewProperty = 12;
+		$this->assertEquals( 12, $article->ext_someNewProperty,
 			"Article get/set magic on new field" );
-		$this->assertEquals( 12, $this->article->getPage()->ext_someNewProperty,
+		$this->assertEquals( 12, $article->getPage()->ext_someNewProperty,
 			"Article get/set magic on new field" );
-		$this->article->ext_someNewProperty = -8;
-		$this->assertEquals( -8, $this->article->ext_someNewProperty,
+		$article->ext_someNewProperty = -8;
+		$this->assertEquals( -8, $article->ext_someNewProperty,
 			"Article get/set magic on update to new field" );
-		$this->assertEquals( -8, $this->article->getPage()->ext_someNewProperty,
+		$this->assertEquals( -8, $article->getPage()->ext_someNewProperty,
 			"Article get/set magic on new field" );
 	}
 
@@ -48,8 +65,10 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 	 * @covers Article::__sleep
 	 */
 	public function testSerialization_fails() {
+		$article = new Article( Title::newMainPage() );
+
 		$this->expectException( LogicException::class );
-		serialize( $this->article );
+		serialize( $article );
 	}
 
 	/**
@@ -60,8 +79,8 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 	public function testMissingArticleMessage() {
 		// Use a well-known system message
 		$title = Title::makeTitle( NS_MEDIAWIKI, 'Uploadedimage' );
-		$article = new Article( $title, 0 );
-		$article->getContext()->getOutput()->setTitle( $title );
+		$article = $this->newArticle( $title );
+
 		$article->showMissingArticle();
 		$output = $article->getContext()->getOutput();
 		$this->assertStringContainsString(
@@ -76,17 +95,16 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 	 * @dataProvider provideShowPatrolFooter
 	 */
 	public function testShowPatrolFooter( $group, $title, $editPageText, $isEditedBySameUser, $expectedResult ) {
-		$context = new RequestContext();
-		$article = new Article( $title );
+		$testPage = $this->getNonexistingTestPage( $title );
 		$user1 = $this->getTestUser( $group )->getUser();
 		$user2 = $this->getTestUser()->getUser();
-		$context->setUser( $user1 );
-		$article->setContext( $context );
 		if ( $editPageText !== null ) {
 			$editedUser = $isEditedBySameUser ? $user1 : $user2;
-			$editIsGood = $this->editPage( $article->getPage(), $editPageText, '', NS_MAIN, $editedUser )->isGood();
+			$editIsGood = $this->editPage( $testPage, $editPageText, '', NS_MAIN, $editedUser )->isGood();
 			$this->assertTrue( $editIsGood, 'edited a page' );
 		}
+
+		$article = $this->newArticle( $title, $user1 );
 		$this->assertSame( $expectedResult, $article->showPatrolFooter() );
 	}
 
@@ -123,4 +141,100 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 			false
 		];
 	}
+
+	/**
+	 * Show patrol footer even if the page was moved (T162871).
+	 *
+	 * @covers Article::showPatrolFooter
+	 */
+	public function testShowPatrolFooterMovedPage() {
+		$oldTitle = Title::makeTitle( NS_USER, 'NewDraft' );
+		$newTitle = Title::makeTitle( NS_MAIN, 'NewDraft' );
+		$editor = $this->getTestUser()->getUser();
+
+		$editIsGood = $this->editPage( $oldTitle, 'Content', '', NS_USER, $editor )->isGood();
+		$this->assertTrue( $editIsGood, 'edited a page' );
+
+		$status = $this->getServiceContainer()
+			->getMovePageFactory()
+			->newMovePage( $oldTitle, $newTitle )
+			->move( $this->getTestUser()->getUser() );
+		$this->assertTrue( $status->isOK() );
+
+		$sysop = $this->getTestUser( 'sysop' )->getUser();
+		$article = $this->newArticle( $newTitle, $sysop );
+
+		$this->assertTrue( $article->showPatrolFooter() );
+	}
+
+	/**
+	 * Ensure that content that is present in the parser cache will be used.
+	 *
+	 * @covers Article::generateContentOutput
+	 */
+	public function testUsesCachedOutput() {
+		$title = $this->getExistingTestPage()->getTitle();
+
+		$parserOutputAccess = $this->createNoOpMock( ParserOutputAccess::class, [ 'getCachedParserOutput' ] );
+		$parserOutputAccess->method( 'getCachedParserOutput' )
+			->willReturn( new ParserOutput( 'Kittens' ) );
+
+		$parsoidOutputAccess = $this->createNoOpMock( ParsoidOutputAccess::class );
+
+		$this->setService( 'ParserOutputAccess', $parserOutputAccess );
+		$this->setService( 'ParsoidOutputAccess', $parsoidOutputAccess );
+
+		$article = $this->newArticle( $title );
+		$article->view();
+		$this->assertStringContainsString( 'Kittens', $article->getContext()->getOutput()->getHTML() );
+	}
+
+	/**
+	 * Ensure that content that is present in the parser cache will be used.
+	 *
+	 * @covers Article::generateContentOutput
+	 */
+	public function testOutputIsCached() {
+		$this->overrideConfigValue(
+			MainConfigNames::ParsoidCacheConfig,
+			[ 'WarmParsoidParserCache' => true ]
+			+ MainConfigSchema::getDefaultValue( MainConfigNames::ParsoidCacheConfig )
+		);
+
+		$title = $this->getExistingTestPage()->getTitle();
+
+		$parserOutputAccess = $this->createNoOpMock(
+			ParserOutputAccess::class,
+			[ 'getCachedParserOutput', 'getParserOutput', ]
+		);
+		$parserOutputAccess->method( 'getCachedParserOutput' )
+			->willReturn( null );
+		$parserOutputAccess
+			->expects( $this->once() ) // This is the key assertion in this test case.
+			->method( 'getParserOutput' )
+			->willReturn( Status::newGood( new ParserOutput( 'Old Kittens' ) ) );
+
+		$parsoidOutputAccess = $this->createNoOpMock(
+			ParsoidOutputAccess::class,
+			[ 'getParserOutput', 'supportsContentModel' ]
+		);
+		$parsoidOutputAccess->method( 'supportsContentModel' )
+			->willReturn( true );
+		$parsoidOutputAccess
+			->expects( $this->once() ) // This is the key assertion in this test case.
+			->method( 'getParserOutput' )
+			->willReturn( Status::newGood( new ParserOutput( 'New Kittens' ) ) );
+
+		$this->setService( 'ParserOutputAccess', $parserOutputAccess );
+		$this->setService( 'ParsoidOutputAccess', $parsoidOutputAccess );
+
+		$article = $this->newArticle( $title );
+		$article->view();
+
+		$this->runJobs( [ 'minJobs' => 1, 'maxJobs' => 1 ], [ 'type' => 'parsoidCachePrewarm' ] );
+
+		// This is just a sanity check, not the key assertion.
+		$this->assertStringContainsString( 'Old Kittens', $article->getContext()->getOutput()->getHTML() );
+	}
+
 }

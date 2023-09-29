@@ -1,17 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"DerHexer",
 			"Envlh",
 			"Inkowik",
 			"Keegan",
 			"Kghbln",
+			"Lucas Werkmeister",
 			"Metalhead64",
 			"Snatcher",
 			"Steinsplitter",
-			"WhatamIdoing",
-			"Lucas Werkmeister",
-			"Brettchenweber"
+			"WhatamIdoing"
 		]
 	},
 	"multimediaviewer-desc": "Ermöglicht die Darstellung von Vorschaubildern in einer Vollbildschnittstelle",

@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Piano1forte2"
+		]
+	},
+	"gadgets-required-actions": "Works on the {{PLURAL:$2|'$1' page action|following page actions: $1}}.",
+	"gadgets-not-found": "Gadget '$1' not found."
+}

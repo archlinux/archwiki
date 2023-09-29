@@ -23,6 +23,7 @@
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\RollbackPageFactory;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
@@ -218,10 +219,13 @@ class ApiRollback extends ApiBase {
 	}
 
 	protected function getExamplesMessages() {
+		$title = Title::newMainPage()->getPrefixedText();
+		$mp = rawurlencode( $title );
+
 		return [
-			'action=rollback&title=Main%20Page&user=Example&token=123ABC' =>
+			"action=rollback&title={$mp}&user=Example&token=123ABC" =>
 				'apihelp-rollback-example-simple',
-			'action=rollback&title=Main%20Page&user=192.0.2.5&' .
+			"action=rollback&title={$mp}&user=192.0.2.5&" .
 				'token=123ABC&summary=Reverting%20vandalism&markbot=1' =>
 				'apihelp-rollback-example-summary',
 		];

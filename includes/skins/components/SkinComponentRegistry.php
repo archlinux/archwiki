@@ -84,6 +84,11 @@ class SkinComponentRegistry {
 		$skin = $this->skinContext;
 		$user = $skin->getUser();
 		switch ( $name ) {
+			case 'copyright':
+				$component = new SkinComponentCopyright(
+					$skin
+				);
+				break;
 			case 'logos':
 				$component = new SkinComponentLogo(
 					$skin->getConfig(),
@@ -100,9 +105,15 @@ class SkinComponentRegistry {
 				);
 				break;
 			case 'toc':
-				$component = new SkinComponentTableOfContents(
-					$skin->getOutput()
+				$component = new SkinComponentTableOfContents( $skin->getOutput() );
+				break;
+			case 'last-modified':
+				$component = new SkinComponentLastModified(
+					$skin, $skin->getOutput()->getRevisionTimestamp()
 				);
+				break;
+			case 'footer':
+				$component = new SkinComponentFooter( $skin );
 				break;
 			default:
 				throw new RuntimeException( 'Unknown component: ' . $name );
@@ -114,8 +125,11 @@ class SkinComponentRegistry {
 	 * Registers components used by skin.
 	 */
 	private function registerComponents() {
+		$this->registerComponent( 'copyright' );
+		$this->registerComponent( 'last-modified' );
 		$this->registerComponent( 'logos' );
 		$this->registerComponent( 'toc' );
 		$this->registerComponent( 'search-box' );
+		$this->registerComponent( 'footer' );
 	}
 }

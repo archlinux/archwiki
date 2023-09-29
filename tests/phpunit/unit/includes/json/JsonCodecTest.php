@@ -7,8 +7,9 @@ use InvalidArgumentException;
 use JsonSerializable;
 use MediaWiki\Json\JsonCodec;
 use MediaWiki\Json\JsonConstants;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
-use Title;
 use Wikimedia\Assert\PreconditionException;
 
 /**
@@ -49,6 +50,18 @@ class JsonCodecTest extends MediaWikiUnitTestCase {
 	 */
 	public function testSimpleTypesUnserialize( $value, string $serialization ) {
 		$this->assertSame( $value, $this->getCodec()->unserialize( $serialization ) );
+	}
+
+	public function testActualClassInstanceIsNotJsonObject() {
+		// Can be any trivial value class that's suitable to be used in pure unit tests
+		$object = UserIdentityValue::newAnonymous( '' );
+
+		// TODO: We probably want this to throw an exception as well
+		$array = [ $object ];
+		$this->assertSame( $array, $this->getCodec()->unserialize( $array ) );
+
+		$this->expectException( InvalidArgumentException::class );
+		$this->getCodec()->unserialize( $object );
 	}
 
 	/**
@@ -111,6 +124,23 @@ class JsonCodecTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $subClassInstance->getSubClassField(), $superClassUnserialized->getSubClassField() );
 	}
 
+	public function testRoundTripSubClassNested() {
+		$subClassInstance1 = new JsonUnserializableSubClass( 'Super Value', 'Sub Value' );
+		$superClassInstance1 = new JsonUnserializableSuperClass( 'XYZ' );
+		$superClassInstance2 = new JsonUnserializableSuperClass(
+			// To be a bit tricky, wrap the embedded instance in an array
+			[ $superClassInstance1 ]
+		);
+		$subClassInstance2 = new JsonUnserializableSubClass(
+			$subClassInstance1,
+			// Again, we're tricky and wrap this instance in a stdClass object
+			(object)[ 'a' => $superClassInstance1 ]
+		);
+		$json = $this->getCodec()->serialize( $subClassInstance2 );
+		$unserialized = $this->getCodec()->unserialize( $json );
+		$this->assertEquals( $subClassInstance2, $unserialized );
+	}
+
 	public function testArrayRoundTrip() {
 		$array = [
 			new JsonUnserializableSuperClass( 'Super Value' ),
@@ -138,6 +168,7 @@ class JsonCodecTest extends MediaWikiUnitTestCase {
 		yield 'Empty stdClass' => [ (object)[], true, null ];
 		yield 'Non-empty array' => [ [ 1, 2, 3 ], true, null ];
 		yield 'Non-empty map' => [ [ 'a' => 'b' ], true, null ];
+		yield 'Nested stdClass' => [ [ 'a' => [ 'b' => (object)[] ] ], true, null ];
 		yield 'Nested, serializable' => [ [ 'a' => [ 'b' => [ 'c' => 'd' ] ] ], true, null ];
 		yield 'Nested, serializable, with null' => [ [ 'a' => [ 'b' => null ] ], true, null ];
 		yield 'Nested, serializable, with stdClass' => [ [ 'a' => (object)[ 'b' => [ 'c' => 'd' ] ] ], true, null ];
@@ -169,6 +200,24 @@ class JsonCodecTest extends MediaWikiUnitTestCase {
 			->detectNonSerializableData( $value, $expectUnserialize ) );
 	}
 
+	/**
+	 * @dataProvider provideValidateSerializable
+	 * @covers \MediaWiki\Json\JsonCodec::detectNonSerializableData
+	 * @covers \MediaWiki\Json\JsonCodec::detectNonSerializableDataInternal
+	 * @covers \MediaWiki\Json\JsonCodec::detectNonSerializableDataInternal
+	 */
+	public function testValidateSerializable2( $value, bool $expectUnserialize, ?string $result ) {
+		if ( $result !== null || !$expectUnserialize ) {
+			$this->assertTrue( true ); // skip this test
+			return;
+		}
+		// Sanity check by ensuring that "serializable" things actually
+		// are unserializable w/o losing value or type
+		$json = $this->getCodec()->serialize( $value );
+		$newValue = $this->getCodec()->unserialize( $json );
+		$this->assertEquals( $value, $newValue );
+	}
+
 	public function provideSerializeThrowsOnFailure() {
 		$classInstance = new class() {
 		};
@@ -195,7 +244,7 @@ class JsonCodecTest extends MediaWikiUnitTestCase {
 			}
 		};
 		yield 'array' => [ [ 'a' => 'b' ], '{"a":"b"}' ];
-		yield 'JsonSerializable' => [ $serializableInstance, '{"c":"d"}' ];
+		yield 'JsonSerializable' => [ $serializableInstance, '{"c":"d","_complex_":true}' ];
 	}
 
 	/**

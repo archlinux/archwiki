@@ -8,7 +8,7 @@
 	"descriptionmsg": "gadgets-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"type": "other",
 	"namespaces": [
@@ -89,7 +89,8 @@
 		"PreferencesGetLegend": "GadgetHooks",
 		"ResourceLoaderRegisterModules": "GadgetHooks",
 		"wgQueryPages": "GadgetHooks",
-		"DeleteUnknownPreferences": "GadgetHooks"
+		"DeleteUnknownPreferences": "GadgetHooks",
+		"PreferencesGetIcon": "GadgetHooks"
 	},
 	"config": {
 		"GadgetsRepoClass": {

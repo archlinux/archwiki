@@ -25,6 +25,9 @@
 require_once __DIR__ . '/Maintenance.php';
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\StubObject\StubGlobalUser;
+use MediaWiki\Title\Title;
+use MediaWiki\User\ActorMigration;
 
 /**
  * Maintenance script that deletes all pages in the MediaWiki namespace
@@ -91,11 +94,10 @@ class DeleteDefaultMessages extends Maintenance {
 		$this->output( "\n...deleting old default messages (this may take a long time!)...", 'msg' );
 		$dbw = $this->getDB( DB_PRIMARY );
 
-		$lbFactory = $services->getDBLoadBalancerFactory();
 		$wikiPageFactory = $services->getWikiPageFactory();
 
 		foreach ( $res as $row ) {
-			$lbFactory->waitForReplication();
+			$this->waitForReplication();
 			$dbw->ping();
 			$title = Title::makeTitle( $row->page_namespace, $row->page_title );
 			$page = $wikiPageFactory->newFromTitle( $title );

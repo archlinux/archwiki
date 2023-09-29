@@ -44,9 +44,7 @@
 	"vector-search-loader": "Hleð inn leitar uppástungum",
 	"vector-searchsuggest-containing": "Leita að síðum sem innihalda <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
-	"vector-toc-heading": "Efni",
-	"vector-toc-toggle-position-sidebar": "færa í hliðarstiku",
-	"vector-toc-toggle-position-title": "fela",
+	"vector-toc-label": "Efni",
 	"vector-toc-beginning": "Byrjun",
 	"vector-toc-toggle-button-label": "Sýna/fela $1 undirkafla",
 	"vector-anon-user-menu-pages": "Síður fyrir útskráða notendur",
@@ -56,6 +54,12 @@
 	"vector-toc-menu-tooltip": "Efnisyfirlit",
 	"vector-toc-collapsible-button-label": "Sýna/fela efnisyfirlit",
 	"vector-site-nav-label": "Vefsíða",
+	"vector-page-tools-label": "Verkfæri",
+	"vector-page-tools-general-label": "Almennt",
+	"vector-pin-element-label": "færa í hliðarstiku",
+	"vector-unpin-element-label": "fela",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Discussion]]",
-	"tooltip-vector-anon-user-menu-title": "Frekari valkostir"
+	"tooltip-vector-anon-user-menu-title": "Frekari valkostir",
+	"vector-prefs-limited-width": "Virkja ham takmarkaðar breiddar",
+	"vector-prefs-limited-width-help": "Virkja ham takmarkaðrar breiddar fyrir betri lestarupplifun."
 }

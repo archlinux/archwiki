@@ -23,6 +23,7 @@
  * @copyright Copyright © 2005, Ævar Arnfjörð Bjarmason
  */
 
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 
 /**
@@ -95,12 +96,12 @@ class Licenses extends HTMLFormField {
 		$lines = explode( "\n", $this->msg );
 
 		foreach ( $lines as $line ) {
-			if ( strpos( $line, '*' ) !== 0 ) {
+			if ( !str_starts_with( $line, '*' ) ) {
 				continue;
 			}
-			list( $level, $line ) = $this->trimStars( $line );
+			[ $level, $line ] = $this->trimStars( $line );
 
-			if ( strpos( $line, '|' ) !== false ) {
+			if ( str_contains( $line, '|' ) ) {
 				$obj = $this->buildLine( $line );
 				$this->stackItem( $this->lines, $levels, $obj );
 			} else {

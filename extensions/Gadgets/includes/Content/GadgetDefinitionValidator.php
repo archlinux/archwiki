@@ -25,6 +25,7 @@ class GadgetDefinitionValidator {
 		'settings.actions' => [ 'is_array', 'array', 'is_string', 'string' ],
 		'settings.category' => [ 'is_string', 'string' ],
 		'settings.supportsUrlLoad' => [ 'is_bool', 'boolean' ],
+		'settings.requiresES6' => [ 'is_bool', 'boolean' ],
 		'module' => [ 'is_array', 'array' ],
 		'module.scripts' => [ 'is_array', 'array', 'is_string', 'string' ],
 		'module.styles' => [ 'is_array', 'array', 'is_string', 'string' ],

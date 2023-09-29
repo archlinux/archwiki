@@ -23,22 +23,24 @@
 namespace MediaWiki\ResourceLoader;
 
 use BagOStuff;
-use CommentStore;
 use Config;
 use DeferredUpdates;
 use Exception;
 use ExtensionRegistry;
 use HashBagOStuff;
 use Hooks;
-use Html;
 use HttpStatus;
 use InvalidArgumentException;
 use Less_Parser;
-use MediaWiki\HeaderCallback;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\HeaderCallback;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\WikiMap\WikiMap;
 use MWException;
 use MWExceptionHandler;
 use MWExceptionRenderer;
@@ -52,10 +54,8 @@ use ResourceFileCache;
 use RuntimeException;
 use stdClass;
 use Throwable;
-use Title;
 use UnexpectedValueException;
 use WebRequest;
-use WikiMap;
 use Wikimedia\DependencyStore\DependencyStore;
 use Wikimedia\DependencyStore\KeyValueDependencyStore;
 use Wikimedia\Minify\CSSMin;
@@ -79,15 +79,6 @@ use XmlJsCode;
  * @ingroup ResourceLoader
  * @ingroup Hooks
  */
-
-/**
- * PHP 7.2 hack to work around the issue described at https://phabricator.wikimedia.org/T166010#5962098
- * Load the Context class when ResourceLoader is loaded.
- * phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound
- * phpcs:disable MediaWiki.Files.ClassMatchesFilename.NotMatch
- */
-class Context72Hack extends Context {
-}
 
 /**
  * ResourceLoader is a loading system for JavaScript and CSS resources.
@@ -312,13 +303,8 @@ class ResourceLoader implements LoggerAwareInterface {
 	 * @codeCoverageIgnore
 	 */
 	public function registerTestModules(): void {
-		$testModulesMeta = [ 'qunit' => [] ];
-		$this->hookRunner->onResourceLoaderTestModules( $testModulesMeta, $this );
-
 		$extRegistry = ExtensionRegistry::getInstance();
-		// In case of conflict, the deprecated hook has precedence.
-		$testModules = $testModulesMeta['qunit']
-			+ $extRegistry->getAttribute( 'QUnitTestModules' );
+		$testModules = $extRegistry->getAttribute( 'QUnitTestModules' );
 
 		$testModuleNames = [];
 		foreach ( $testModules as $name => &$module ) {
@@ -935,7 +921,13 @@ class ResourceLoader implements LoggerAwareInterface {
 			header( 'Cache-Control: private, no-cache, must-revalidate' );
 			header( 'Pragma: no-cache' );
 		} else {
-			header( "Cache-Control: public, max-age=$maxage, s-maxage=$maxage" );
+			// T132418: When a resource expires mid-way a browsing session, prefer to renew it in
+			// the background instead of blocking the next page load (eg. startup module, or CSS).
+			$staleDirective = ( $maxage > self::MAXAGE_RECOVER
+				? ", stale-while-revalidate=" . min( 60, intval( $maxage / 2 ) )
+				: ''
+			);
+			header( "Cache-Control: public, max-age=$maxage, s-maxage=$maxage" . $staleDirective );
 			header( 'Expires: ' . ConvertibleTimestamp::convert( TS_RFC2822, time() + $maxage ) );
 		}
 		foreach ( $extra as $header ) {
@@ -1133,7 +1125,6 @@ MESSAGE;
 						} elseif ( is_array( $scripts ) ) {
 							// ...except when $scripts is an array of URLs or an associative array
 							$strContent = self::makeLoaderImplementScript(
-								$context,
 								$implementKey,
 								$scripts,
 								[],
@@ -1165,7 +1156,6 @@ MESSAGE;
 							}
 						}
 						$strContent = self::makeLoaderImplementScript(
-							$context,
 							$implementKey,
 							$scripts,
 							$content['styles'] ?? [],
@@ -1226,7 +1216,11 @@ MESSAGE;
 			}
 		} elseif ( $states ) {
 			$this->errors[] = 'Problematic modules: '
-				. $context->encodeJson( $states );
+				// Don't issue a server-side warning for client errors. (T331641)
+				// Modules with invalid encoded names can't be registered, but can be requested
+				// by forming a bad URL.
+				// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+				. @$context->encodeJson( $states );
 		}
 
 		return $out;
@@ -1266,7 +1260,6 @@ MESSAGE;
 	/**
 	 * Return JS code that calls mw.loader.implement with given module properties.
 	 *
-	 * @param Context $context
 	 * @param string $name Module name or implement key (format "`[name]@[version]`")
 	 * @param XmlJsCode|array|string $scripts Code as XmlJsCode (to be wrapped in a closure),
 	 *  list of URLs to JavaScript files, string of JavaScript for eval, or array with
@@ -1281,7 +1274,7 @@ MESSAGE;
 	 * @return string JavaScript code
 	 */
 	private static function makeLoaderImplementScript(
-		Context $context, $name, $scripts, $styles, $messages, $templates
+		$name, $scripts, $styles, $messages, $templates
 	) {
 		if ( $scripts instanceof XmlJsCode ) {
 			if ( $scripts->value === '' ) {
@@ -1291,7 +1284,7 @@ MESSAGE;
 			}
 		} elseif ( is_array( $scripts ) && isset( $scripts['files'] ) ) {
 			$files = $scripts['files'];
-			foreach ( $files as $path => &$file ) {
+			foreach ( $files as &$file ) {
 				// $file is changed (by reference) from a descriptor array to the content of the file
 				// All of these essentially do $file = $file['content'];, some just have wrapping around it
 				if ( $file['type'] === 'script' ) {
@@ -1332,18 +1325,6 @@ MESSAGE;
 	}
 
 	/**
-	 * Returns JS code which, when called, will register a given list of messages.
-	 *
-	 * @param mixed $messages Associative array mapping message key to value.
-	 * @return string JavaScript code
-	 */
-	public static function makeMessageSetScript( $messages ) {
-		return 'mw.messages.set('
-			. self::encodeJsonForScript( (object)$messages )
-			. ');';
-	}
-
-	/**
 	 * Combines an associative array mapping media type to CSS into a
 	 * single stylesheet with "@media" blocks.
 	 *
@@ -1381,12 +1362,10 @@ MESSAGE;
 	 * Wrapper around json_encode that avoids needless escapes,
 	 * and pretty-prints in debug mode.
 	 *
-	 * @internal For use within ResourceLoader classes only
-	 * @since 1.32
 	 * @param mixed $data
 	 * @return string|false JSON string, false on error
 	 */
-	public static function encodeJsonForScript( $data ) {
+	private static function encodeJsonForScript( $data ) {
 		// Keep output as small as possible by disabling needless escape modes
 		// that PHP uses by default.
 		// However, while most module scripts are only served on HTTP responses
@@ -1938,12 +1917,9 @@ MESSAGE;
 			}
 		);
 		$stats->increment( $incKey );
-		if ( $result === null ) {
-			// Cached failure
-			$result = $data;
-		}
 
-		return $result;
+		// Use $data on cache failure
+		return $result ?? $data;
 	}
 
 	/**

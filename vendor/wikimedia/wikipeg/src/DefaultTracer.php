@@ -69,6 +69,3 @@ class DefaultTracer implements Tracer {
 		}
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( DefaultTracer::class, 'WikiPEG\DefaultTracer' );

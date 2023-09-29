@@ -21,6 +21,7 @@ namespace Wikimedia\Rdbms;
 
 use FSLockManager;
 use LockManager;
+use MediaWiki\MediaWikiServices;
 use NullLockManager;
 use PDO;
 use PDOException;
@@ -28,6 +29,7 @@ use PDOStatement;
 use RuntimeException;
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 use Wikimedia\Rdbms\Platform\SqlitePlatform;
+use Wikimedia\Rdbms\Replication\ReplicationReporter;
 
 /**
  * This is the SQLite database abstraction layer.
@@ -99,9 +101,14 @@ class DatabaseSqlite extends Database {
 		$this->lockMgr = $this->makeLockManager();
 		$this->platform = new SqlitePlatform(
 			$this,
-			$params['queryLogger'],
+			$this->logger,
 			$this->currentDomain,
 			$this->errorLogger
+		);
+		$this->replicationReporter = new ReplicationReporter(
+			$params['topologyRole'],
+			$this->logger,
+			$params['srvCache']
 		);
 	}
 
@@ -126,7 +133,7 @@ class DatabaseSqlite extends Database {
 		$p['schema'] = null;
 		$p['tablePrefix'] = '';
 		/** @var DatabaseSqlite $db */
-		$db = Database::factory( 'sqlite', $p );
+		$db = MediaWikiServices::getInstance()->getDatabaseFactory()->create( 'sqlite', $p );
 		'@phan-var DatabaseSqlite $db';
 
 		return $db;
@@ -174,7 +181,7 @@ class DatabaseSqlite extends Database {
 			// Persistent connections can avoid some schema index reading overhead.
 			// On the other hand, they can cause horrible contention with DBO_TRX.
 			if ( $this->getFlag( self::DBO_TRX ) || $this->getFlag( self::DBO_DEFAULT ) ) {
-				$this->connLogger->warning(
+				$this->logger->warning(
 					__METHOD__ . ": ignoring DBO_PERSISTENT due to DBO_TRX or DBO_DEFAULT",
 					$this->getLogContext()
 				);
@@ -440,8 +447,9 @@ class DatabaseSqlite extends Database {
 		if ( is_object( $this->conn ) ) {
 			$e = $this->conn->errorInfo();
 
-			return $e[2] ?? '';
+			return $e[2] ?? $this->lastConnectError;
 		}
+
 		return 'No database connection';
 	}
 
@@ -456,6 +464,7 @@ class DatabaseSqlite extends Database {
 				return $info[1];
 			}
 		}
+
 		return 0;
 	}
 
@@ -535,7 +544,7 @@ class DatabaseSqlite extends Database {
 
 	protected function doReplace( $table, array $identityKey, array $rows, $fname ) {
 		$encTable = $this->tableName( $table );
-		list( $sqlColumns, $sqlTuples ) = $this->platform->makeInsertLists( $rows );
+		[ $sqlColumns, $sqlTuples ] = $this->platform->makeInsertLists( $rows );
 		// https://sqlite.org/lang_insert.html
 		$this->query(
 			"REPLACE INTO $encTable ($sqlColumns) VALUES $sqlTuples",
@@ -580,11 +589,6 @@ class DatabaseSqlite extends Database {
 		// https://sqlite.org/lang_createtable.html#uniqueconst
 		// https://sqlite.org/lang_conflict.html
 		return false;
-	}
-
-	public function getTopologyBasedServerId() {
-		// Sqlite topologies trivially consist of single primary server for the dataset
-		return '0';
 	}
 
 	public function serverIsReadOnly() {
@@ -699,7 +703,7 @@ class DatabaseSqlite extends Database {
 			// There is an additional bug regarding sorting this data after insert
 			// on older versions of sqlite shipped with ubuntu 12.04
 			// https://phabricator.wikimedia.org/T74367
-			$this->queryLogger->debug(
+			$this->logger->debug(
 				__FUNCTION__ .
 				': Quoting value containing null byte. ' .
 				'For consistency all binary data should have been ' .
@@ -709,18 +713,6 @@ class DatabaseSqlite extends Database {
 		} else {
 			return $this->getBindingHandle()->quote( (string)$s );
 		}
-	}
-
-	/**
-	 * No-op version of deadlockLoop
-	 *
-	 * @param mixed ...$args
-	 * @return mixed
-	 */
-	public function deadlockLoop( ...$args ) {
-		$function = array_shift( $args );
-
-		return $function( ...$args );
 	}
 
 	public function doLockIsFree( string $lockName, string $method ) {
@@ -776,7 +768,7 @@ class DatabaseSqlite extends Database {
 		);
 		if ( $temporary ) {
 			if ( preg_match( '/^\\s*CREATE\\s+VIRTUAL\\s+TABLE\b/i', $sqlCreateTable ) ) {
-				$this->queryLogger->debug(
+				$this->logger->debug(
 					"Table $oldName is virtual, can't create a temporary duplicate." );
 			} else {
 				$sqlCreateTable = str_replace(

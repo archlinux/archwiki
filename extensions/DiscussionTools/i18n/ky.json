@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bosogo"
+		]
+	},
+	"discussiontools-autotopicsubpopup-dismiss": "Макул, түшүндүм",
+	"discussiontools-autotopicsubpopup-preferences": "Параметрлерди өзгөртүү",
+	"discussiontools-defaultsummary-reply": "Жооп",
+	"discussiontools-emptystate-button": "Талкууну баштоо",
+	"discussiontools-findcomment-label-search": "Издөө",
+	"discussiontools-ledesection-title": "Бул талкуу барагы тууралуу",
+	"discussiontools-newtopic-placeholder-title": "Тема",
+	"discussiontools-replywidget-advanced": "Кеңейтүү",
+	"discussiontools-replywidget-cancel": "Жокко чыгаруу",
+	"discussiontools-replywidget-loading": "Жүктөлүүдө...",
+	"discussiontools-replywidget-mode-source": "Булак",
+	"discussiontools-replywidget-mode-visual": "Визуалдык",
+	"discussiontools-replywidget-placeholder-newtopic": "Негизги текст",
+	"discussiontools-replywidget-preferences": "Параметрлер",
+	"discussiontools-replywidget-preview": "Алдын ала көрүү",
+	"discussiontools-replywidget-reply": "Жооп берүү",
+	"discussiontools-replywidget-summary": "Түшүндүрмө",
+	"discussiontools-replywidget-watchthis": "Бул баракты [[Special:Watchlist|көзөмөл тизмегиме]] кошуу",
+	"discussiontools-topicheader-authorcount": "Талкууга $1 {{PLURAL:$1|адам}} катышууда.",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|пикир}}",
+	"discussiontools-topicheader-latestcomment": "Соңку пикир: $1",
+	"discussiontools-topicsubscription-action-unsubscribe-button": "Жазылуудан баш тартуу",
+	"discussiontools-topicsubscription-button-subscribe": "жазылуу",
+	"discussiontools-topicsubscription-button-subscribe-label": "Жазылуу",
+	"discussiontools-topicsubscription-button-unsubscribe": "жазылуудан баш тартуу",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Жазылуудан баш тартуу",
+	"discussiontools-topicsubscription-pager-actions": "Аракеттер",
+	"discussiontools-topicsubscription-pager-notified": "Соңку кабарлама",
+	"discussiontools-topicsubscription-pager-notified-never": "эч качан",
+	"discussiontools-topicsubscription-pager-page": "Барак",
+	"discussiontools-topicsubscription-pager-topic": "Тема",
+	"discussiontools-topicsubscription-pager-unsubscribe-button": "Жазылуудан баш тартуу"
+}

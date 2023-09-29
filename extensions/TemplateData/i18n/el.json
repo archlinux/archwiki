@@ -101,7 +101,7 @@
 	"templatedata-modal-table-param-required": "Απαιτείται",
 	"templatedata-modal-table-param-suggested": "Προτεινόμενο",
 	"templatedata-modal-table-param-suggestedvalues": "Συνιστώμενες τιμές",
-	"templatedata-modal-table-param-suggestedvalues-placeholder": "Προσθήκη τιμής...",
+	"templatedata-modal-placeholder-multiselect": "Προσθήκη τιμής...",
 	"templatedata-modal-table-param-type": "Τύπος",
 	"templatedata-modal-table-param-uneditablefield": "Μη επεξεργάσιμο",
 	"templatedata-modal-title": "Επεξεργαστής τεκμηρίωσης προτύπου",

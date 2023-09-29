@@ -116,6 +116,11 @@ class Hooks {
 			'wgEditSubmitButtonLabelPublish',
 			$veConfig->get( 'EditSubmitButtonLabelPublish' )
 		);
+
+		// Don't index VE edit pages (T319124)
+		if ( $output->getRequest()->getVal( 'veaction' ) ) {
+			$output->setRobotPolicy( 'noindex,nofollow' );
+		}
 	}
 
 	/**
@@ -462,7 +467,7 @@ class Hooks {
 		// This logic matches getLastEditor in:
 		// modules/ve-mw/init/targets/ve.init.mw.DesktopArticleTarget.init.js
 		$editor = $req->getCookie( 'VEE', '' );
-		// Set editor to user's preference or site's default if …
+		// Set editor to user's preference or site's default if …
 		if (
 			// … user is logged in,
 			$user->isRegistered() ||
@@ -844,7 +849,7 @@ class Hooks {
 				'label-message' => [
 					'visualeditor-preference-enable',
 					$wgLang->commaList( array_map(
-						[ 'self', 'convertNs' ],
+						[ self::class, 'convertNs' ],
 						$namespaces
 					) ),
 					count( $namespaces )
@@ -1077,6 +1082,10 @@ class Hooks {
 			)
 		);
 
+		$parsoidClientFactory =
+			MediaWikiServices::getInstance()->getService( VisualEditorParsoidClientFactory::SERVICE_NAME );
+		$useRestbase = $parsoidClientFactory->useParsoidOverHTTP();
+
 		$namespacesWithSubpages = $coreConfig->get( 'NamespacesWithSubpages' );
 		// Export as a list of namespaces where subpages are enabled instead of an object
 		// mapping namespaces to if subpages are enabled or not, so filter out disabled
@@ -1098,7 +1107,6 @@ class Hooks {
 			'isBeta' => $veConfig->get( 'VisualEditorEnableBetaFeature' ),
 			'disableForAnons' => $veConfig->get( 'VisualEditorDisableForAnons' ),
 			'preloadModules' => $veConfig->get( 'VisualEditorPreloadModules' ),
-			'preferenceModules' => $veConfig->get( 'VisualEditorPreferenceModules' ),
 			'namespaces' => $availableNamespaces,
 			'contentModels' => $availableContentModels,
 			'pluginModules' => array_merge(
@@ -1124,9 +1132,10 @@ class Hooks {
 			'namespacesWithSubpages' => $namespacesWithSubpagesEnabled,
 			'specialBooksources' => urldecode( SpecialPage::getTitleFor( 'Booksources' )->getPrefixedURL() ),
 			'rebaserUrl' => $coreConfig->get( 'VisualEditorRebaserURL' ),
-			'restbaseUrl' => $coreConfig->get( 'VisualEditorRestbaseURL' ),
-			'fullRestbaseUrl' => $coreConfig->get( 'VisualEditorFullRestbaseURL' ),
-			'allowLossySwitching' => $coreConfig->get( 'VisualEditorAllowLossySwitching' ),
+			'restbaseUrl' => $useRestbase ? $coreConfig->get( 'VisualEditorRestbaseURL' ) : false,
+			'fullRestbaseUrl' => $useRestbase ? $coreConfig->get( 'VisualEditorFullRestbaseURL' ) : false,
+			// XXX: Do we still need to be able to disable switching?
+			'allowSwitchingToVisualMode' => true,
 			'feedbackApiUrl' => $veConfig->get( 'VisualEditorFeedbackAPIURL' ),
 			'feedbackTitle' => $veConfig->get( 'VisualEditorFeedbackTitle' ),
 			'sourceFeedbackTitle' => $veConfig->get( 'VisualEditorSourceFeedbackTitle' ),

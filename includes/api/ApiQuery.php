@@ -22,6 +22,7 @@
 
 use MediaWiki\Export\WikiExporterFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\Title;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IDatabase;
@@ -70,6 +71,7 @@ class ApiQuery extends ApiBase {
 				'LinkBatchFactory',
 				'ContentRenderer',
 				'ContentTransformer',
+				'CommentFormatter',
 			]
 		],
 		'duplicatefiles' => [
@@ -163,6 +165,7 @@ class ApiQuery extends ApiBase {
 				'ActorMigration',
 				'ContentRenderer',
 				'ContentTransformer',
+				'CommentFormatter',
 			]
 		],
 		'stashimageinfo' => [
@@ -209,6 +212,7 @@ class ApiQuery extends ApiBase {
 				'NamespaceInfo',
 				'ContentRenderer',
 				'ContentTransformer',
+				'CommentFormatter',
 			]
 		],
 		'allfileusages' => [
@@ -264,6 +268,7 @@ class ApiQuery extends ApiBase {
 				'NamespaceInfo',
 				'ContentRenderer',
 				'ContentTransformer',
+				'CommentFormatter',
 			]
 		],
 		'mystashedfiles' => [
@@ -397,6 +402,7 @@ class ApiQuery extends ApiBase {
 			'services' => [
 				'SearchEngineConfig',
 				'SearchEngineFactory',
+				'TitleMatcher',
 			],
 		],
 		'tags' => [
@@ -411,6 +417,7 @@ class ApiQuery extends ApiBase {
 				'RevisionStore',
 				'ChangeTagDefStore',
 				'ActorMigration',
+				'CommentFormatter',
 			],
 		],
 		'users' => [
@@ -431,6 +438,7 @@ class ApiQuery extends ApiBase {
 				'ContentLanguage',
 				'NamespaceInfo',
 				'GenderCache',
+				'CommentFormatter',
 			],
 		],
 		'watchlistraw' => [
@@ -950,9 +958,12 @@ class ApiQuery extends ApiBase {
 	}
 
 	protected function getExamplesMessages() {
+		$title = Title::newMainPage()->getPrefixedText();
+		$mp = rawurlencode( $title );
+
 		return [
 			'action=query&prop=revisions&meta=siteinfo&' .
-				'titles=Main%20Page&rvprop=user|comment&continue='
+				"titles={$mp}&rvprop=user|comment&continue="
 				=> 'apihelp-query-example-revisions',
 			'action=query&generator=allpages&gapprefix=API/&prop=revisions&continue='
 				=> 'apihelp-query-example-allpages',

@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"Narazeni"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "გამაშ მეჭარუა",
+	"discussiontools-desc": "სხუნუაშ ხასჷლეფიშ გაუჯგუშაფალი ხეჭკუდეფი.",
+	"discussiontools-emptystate-button": "დისკუსიაშ დოჭყაფა",
+	"discussiontools-emptystate-desc": "სხუნუაშ ხასჷლა რე აბანი, სოდე ჯარალუა გჷთმოსხუნუნს შხვადოშხვა ოკითხირეეფს, ნამუთ საიტიშ „{{SITENAME}}“ დინორეშ გაუჯგუშაფაშ გეშა რენ. ათე ხასჷლაშ გჷმორინაფა შეილებჷმა შხვა მახვარებუეფწკჷმა დისკუსიაშო, თიშ გეშა, ნამჷ-და გაუჯგუშათ ხასჷლა[[:{{SUBJECTPAGENAME}}]]. [[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|ქეგეგით უმოსი]].",
+	"discussiontools-emptystate-title": "{{SUBJECTPAGENAME}}-შ გეშა დისკუსიაშ დოჭყაფა",
+	"discussiontools-emptystate-title-self": "მოზოჯით თქვან სხუნუაშ ხასჷლაშა",
+	"discussiontools-emptystate-title-self-anon": "მოზოჯით ათე სხუნუაშ ხასჷლაშა",
+	"discussiontools-emptystate-title-user": "ქჷდიჭყით დისკუსია მახვარებუწკჷმა {{PAGENAME}}",
+	"discussiontools-emptystate-title-user-anon": "მოზოჯით თქვან სხუნუაშ ხასჷლაშა",
+	"discussiontools-error-noswitchtove": "სანარღოთ, ვიზუალურ რედაქტირაფაშა გინოჸონაფაქ ვემიხუჯინჷ, თიშ გეშა, ნამჷ-და <b>$1</b> რე თქვან ნაჭარა კომენტარს. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:DiscussionTools/Reply_tool_visual_mode_limitations ქეგეგით უმოსი].",
+	"discussiontools-error-noswitchtove-extension": "გაფართაფა ვარ-და სქოლიოშ სინტაქსი",
+	"discussiontools-error-noswitchtove-table": "რცხილიშ სინტაქსი",
+	"discussiontools-error-noswitchtove-template": "თანგიშ სინტაქსი",
+	"discussiontools-error-noswitchtove-title": "ვიზუალური რედაქტორი გოთიშილი რე",
+	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|წამი}}",
+	"discussiontools-newtopic-missing-title": "ქორთხინთ, სხუნუაშ თემას ქენაჭარით დუდჯოხო. დო ქეგუნჭირანთ „{{int:discussiontools-replywidget-newtopic}}“-ს-და, თემა დუდჯოხოშ უმუშო გეგმიბჟინუაფჷ.",
+	"discussiontools-newtopic-placeholder-title": "დუდჯოხო",
+	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|ართი ახალი გამა|$1 ახალი გამა|100=99+ ახალი გამა}} \"<strong>$3-ის</strong>\".",
+	"discussiontools-notification-subscribed-new-comment-view": "კომენტარიშ ძირაფა",
+	"discussiontools-postedit-confirmation-published": "თქვან კომენტარი გჷმობჟინაფილი რე.",
+	"discussiontools-postedit-confirmation-topicadded": "თქვანი თემა გეძინელი რე.",
+	"discussiontools-preference-label": "სხუნუაშ ხეჭკუდეფი",
+	"discussiontools-topicsubscription-pager-page": "ხასჷლა",
+	"discussiontools-topicsubscription-pager-topic": "ოკითხირე",
+	"discussiontools-topicsubscription-pager-unsubscribe-button": "გიშაჭარუაშ გოუქვაფა"
+}

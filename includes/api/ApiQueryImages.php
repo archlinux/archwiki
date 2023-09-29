@@ -20,6 +20,7 @@
  * @file
  */
 
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -65,16 +66,13 @@ class ApiQueryImages extends ApiQueryGeneratorBase {
 		$this->addTables( 'imagelinks' );
 		$this->addWhereFld( 'il_from', array_keys( $pages ) );
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) != 2 );
-			$op = $params['dir'] == 'descending' ? '<' : '>';
-			$ilfrom = (int)$cont[0];
-			$ilto = $this->getDB()->addQuotes( $cont[1] );
-			$this->addWhere(
-				"il_from $op $ilfrom OR " .
-				"(il_from = $ilfrom AND " .
-				"il_to $op= $ilto)"
-			);
+			$db = $this->getDB();
+			$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'int', 'string' ] );
+			$op = $params['dir'] == 'descending' ? '<=' : '>=';
+			$this->addWhere( $db->buildComparison( $op, [
+				'il_from' => $cont[0],
+				'il_to' => $cont[1],
+			] ) );
 		}
 
 		$sort = ( $params['dir'] == 'descending' ? ' DESC' : '' );
@@ -171,10 +169,13 @@ class ApiQueryImages extends ApiQueryGeneratorBase {
 	}
 
 	protected function getExamplesMessages() {
+		$title = Title::newMainPage()->getPrefixedText();
+		$mp = rawurlencode( $title );
+
 		return [
-			'action=query&prop=images&titles=Main%20Page'
+			"action=query&prop=images&titles={$mp}"
 				=> 'apihelp-query+images-example-simple',
-			'action=query&generator=images&titles=Main%20Page&prop=info'
+			"action=query&generator=images&titles={$mp}&prop=info"
 				=> 'apihelp-query+images-example-generator',
 		];
 	}

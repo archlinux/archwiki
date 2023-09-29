@@ -12,6 +12,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\AtEase\AtEase;
 
@@ -283,7 +284,7 @@ class FileRepo {
 	 * @return bool
 	 */
 	public static function isVirtualUrl( $url ) {
-		return substr( $url, 0, 9 ) == 'mwrepo://';
+		return str_starts_with( $url, 'mwrepo://' );
 	}
 
 	/**
@@ -353,14 +354,14 @@ class FileRepo {
 	 * @return string
 	 */
 	public function resolveVirtualUrl( $url ) {
-		if ( substr( $url, 0, 9 ) != 'mwrepo://' ) {
+		if ( !str_starts_with( $url, 'mwrepo://' ) ) {
 			throw new MWException( __METHOD__ . ': unknown protocol' );
 		}
 		$bits = explode( '/', substr( $url, 9 ), 3 );
 		if ( count( $bits ) != 3 ) {
 			throw new MWException( __METHOD__ . ": invalid mwrepo URL: $url" );
 		}
-		list( $repo, $zone, $rel ) = $bits;
+		[ $repo, $zone, $rel ] = $bits;
 		if ( $repo !== $this->name ) {
 			throw new MWException( __METHOD__ . ": fetching from a foreign repo is not supported" );
 		}
@@ -393,7 +394,7 @@ class FileRepo {
 	 * @return string|null Returns null if the zone is not defined
 	 */
 	public function getZonePath( $zone ) {
-		list( $container, $base ) = $this->getZoneLocation( $zone );
+		[ $container, $base ] = $this->getZoneLocation( $zone );
 		if ( $container === null || $base === null ) {
 			return null;
 		}
@@ -947,7 +948,7 @@ class FileRepo {
 		$operations = [];
 		// Validate each triplet and get the store operation...
 		foreach ( $triplets as $triplet ) {
-			list( $src, $dstZone, $dstRel ) = $triplet;
+			[ $src, $dstZone, $dstRel ] = $triplet;
 			$srcPath = ( $src instanceof FSFile ) ? $src->getPath() : $src;
 			wfDebug( __METHOD__
 				. "( \$src='$srcPath', \$dstZone='$dstZone', \$dstRel='$dstRel' )"
@@ -1012,7 +1013,7 @@ class FileRepo {
 		foreach ( $files as $path ) {
 			if ( is_array( $path ) ) {
 				// This is a pair, extract it
-				list( $zone, $rel ) = $path;
+				[ $zone, $rel ] = $path;
 				$path = $this->getZonePath( $zone ) . "/$rel";
 			} else {
 				// Resolve source to a storage path if virtual
@@ -1068,7 +1069,7 @@ class FileRepo {
 		$status = $this->newGood();
 		$operations = [];
 		foreach ( $triples as $triple ) {
-			list( $src, $dst ) = $triple;
+			[ $src, $dst ] = $triple;
 			if ( $src instanceof FSFile ) {
 				$op = 'store';
 			} else {
@@ -1295,7 +1296,7 @@ class FileRepo {
 		$sourceFSFilesToDelete = []; // cleanup for disk source files
 		// Validate each triplet and get the store operation...
 		foreach ( $ntuples as $ntuple ) {
-			list( $src, $dstRel, $archiveRel ) = $ntuple;
+			[ $src, $dstRel, $archiveRel ] = $ntuple;
 			$srcPath = ( $src instanceof FSFile ) ? $src->getPath() : $src;
 
 			$options = $ntuple[3] ?? [];
@@ -1365,7 +1366,7 @@ class FileRepo {
 		$status->merge( $backend->doOperations( $operations ) );
 		// Find out which files were archived...
 		foreach ( $ntuples as $i => $ntuple ) {
-			list( , , $archiveRel ) = $ntuple;
+			[ , , $archiveRel ] = $ntuple;
 			$archivePath = $this->getZonePath( 'public' ) . "/$archiveRel";
 			if ( $this->fileExists( $archivePath ) ) {
 				$status->value[$i] = 'archived';
@@ -1392,7 +1393,7 @@ class FileRepo {
 	 */
 	protected function initDirectory( $dir ) {
 		$path = $this->resolveToStoragePathIfVirtual( $dir );
-		list( , $container, ) = FileBackend::splitStoragePath( $path );
+		[ , $container, ] = FileBackend::splitStoragePath( $path );
 
 		$params = [ 'dir' => $path ];
 		if ( $this->isPrivate
@@ -1995,7 +1996,8 @@ class FileRepo {
 		}
 		if ( isset( $this->favicon ) ) {
 			// Expand any local path to full URL to improve API usability (T77093).
-			$ret['favicon'] = wfExpandUrl( $this->favicon );
+			$ret['favicon'] = MediaWikiServices::getInstance()->getUrlUtils()
+				->expand( $this->favicon );
 		}
 
 		return $ret;

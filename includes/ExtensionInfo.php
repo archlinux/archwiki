@@ -14,7 +14,7 @@ class ExtensionInfo {
 	 *
 	 * @since 1.35
 	 *
-	 * @return bool|string False if no such file exists, otherwise returns
+	 * @return string|false False if no such file exists, otherwise returns
 	 * a path to it.
 	 */
 	public static function getAuthorsFileName( $dir ) {
@@ -38,13 +38,11 @@ class ExtensionInfo {
 	/**
 	 * Obtains the full paths of COPYING or LICENSE files if they exist.
 	 *
-	 * @param string $extDir Path to the extensions root directory
-	 *
 	 * @since 1.35
-	 *
+	 * @param string $extDir Path to the extensions root directory
 	 * @return string[] Returns an array of zero or more paths.
 	 */
-	public static function getLicenseFileNames( $extDir ) {
+	public static function getLicenseFileNames( string $extDir ): array {
 		if ( !$extDir ) {
 			return [];
 		}

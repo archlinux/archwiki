@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Balyozxane",
 			"Bikarhêner",
-			"Krinkle",
-			"Balyozxane"
+			"Krinkle"
 		]
 	},
 	"monobook.css": "/* CSS placed here will affect users of the Monobook skin */",

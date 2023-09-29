@@ -3,6 +3,7 @@
 		"authors": [
 			"Abanima",
 			"Ciphers",
+			"FShbib",
 			"Macofe",
 			"Maroen1990",
 			"Meno25",
@@ -15,7 +16,6 @@
 			"ديفيد",
 			"زكريا",
 			"محمد أحمد عبد الفتاح",
-			"FShbib",
 			"Alshamiri1"
 		]
 	},
@@ -96,6 +96,7 @@
 	"math_unknown_function": "وظيفة غير معروفة «$1»",
 	"mw_math_latexml": "LaTeXML (تجريبي؛ يستخدم MathML)",
 	"mw_math_mathml": "SVG (يمكن تمكين MathML عبر البرنامج المساعد للمتصفح)",
+	"mw_math_native": "MathML (تجريبي ؛ لا توجد صور)",
 	"mw_math_source": "اعرض على هيئة LaTeX (للمتصفحات النصية)",
 	"prefs-math": "رياضيات",
 	"mathstatus": "حالة الرياضيات",

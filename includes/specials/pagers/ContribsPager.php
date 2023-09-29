@@ -23,11 +23,16 @@ use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Html\Html;
+use MediaWiki\Html\TemplateParser;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Title\Title;
+use MediaWiki\User\ActorMigration;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserRigorOptions;
 use Wikimedia\IPUtils;
@@ -63,6 +68,11 @@ class ContribsPager extends RangeChronologicalPager {
 	 * @var string[]|false Name of tag to filter, or false to ignore tags
 	 */
 	private $tagFilter;
+
+	/**
+	 * @var bool Set to true to invert the tag selection
+	 */
+	private $tagInvert;
 
 	/**
 	 * @var bool Set to true to invert the namespace selection
@@ -169,7 +179,7 @@ class ContribsPager extends RangeChronologicalPager {
 	) {
 		// Class is used directly in extensions - T266484
 		$services = MediaWikiServices::getInstance();
-		$loadBalancer = $loadBalancer ?? $services->getDBLoadBalancer();
+		$loadBalancer ??= $services->getDBLoadBalancer();
 
 		// Set ->target before calling parent::__construct() so
 		// parent can call $this->getIndexField() and get the right result. Set
@@ -198,6 +208,7 @@ class ContribsPager extends RangeChronologicalPager {
 
 		$this->namespace = $options['namespace'] ?? '';
 		$this->tagFilter = $options['tagfilter'] ?? false;
+		$this->tagInvert = $options['tagInvert'] ?? false;
 		$this->nsInvert = $options['nsInvert'] ?? false;
 		$this->associated = $options['associated'] ?? false;
 
@@ -207,10 +218,7 @@ class ContribsPager extends RangeChronologicalPager {
 		$this->hideMinor = !empty( $options['hideMinor'] );
 		$this->revisionsOnly = !empty( $options['revisionsOnly'] );
 
-		// Most of this code will use the 'contributions' group DB, which can map to replica DBs
-		// with extra user based indexes or partitioning by user.
-		// Set database before parent constructor to avoid setting it there with wfGetDB
-		$this->mDb = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA, 'contributions' );
+		$this->mDb = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
 		// Needed by call to getIndexField -> getTargetTable from parent constructor
 		$this->actorMigration = $actorMigration ?? $services->getActorMigration();
 		parent::__construct( $context, $linkRenderer ?? $services->getLinkRenderer() );
@@ -262,7 +270,7 @@ class ContribsPager extends RangeChronologicalPager {
 	 * @return IResultWrapper
 	 */
 	public function reallyDoQuery( $offset, $limit, $order ) {
-		list( $tables, $fields, $conds, $fname, $options, $join_conds ) = $this->buildQueryInfo(
+		[ $tables, $fields, $conds, $fname, $options, $join_conds ] = $this->buildQueryInfo(
 			$offset,
 			$limit,
 			$order
@@ -293,6 +301,9 @@ class ContribsPager extends RangeChronologicalPager {
 			$tables, $fields, $conds, $fname, $options, $join_conds
 		) ];
 		if ( !$this->revisionsOnly ) {
+			// TODO: Range offsets are fairly important and all handlers should take care of it.
+			// If this hook will be replaced (e.g. unified with the DeletedContribsPager one),
+			// please consider passing [ $this->endOffset, $this->startOffset ] to it (T167577).
 			$this->hookRunner->onContribsPager__reallyDoQuery(
 				$data, $this, $offset, $limit, $order );
 		}
@@ -371,10 +382,7 @@ class ContribsPager extends RangeChronologicalPager {
 			// tables and joins are already handled by RevisionStore::getQueryInfo()
 			$conds = $this->actorMigration->getWhere( $dbr, 'rev_user', $this->targetUser );
 			$queryInfo['conds'][] = $conds['conds'];
-			// Force the appropriate index to avoid bad query plans (T189026 and T307295)
-			if ( isset( $conds['orconds']['actor'] ) ) {
-				$queryInfo['options']['USE INDEX']['temp_rev_user'] = 'actor_timestamp';
-			}
+			// Force the appropriate index to avoid bad query plans (T307295)
 			if ( isset( $conds['orconds']['newactor'] ) ) {
 				$queryInfo['options']['USE INDEX']['revision'] = 'rev_actor_timestamp';
 			}
@@ -421,7 +429,8 @@ class ContribsPager extends RangeChronologicalPager {
 			$queryInfo['conds'],
 			$queryInfo['join_conds'],
 			$queryInfo['options'],
-			$this->tagFilter
+			$this->tagFilter,
+			$this->tagInvert,
 		);
 
 		$this->hookRunner->onContribsPager__getQueryInfo( $this, $queryInfo );
@@ -464,7 +473,7 @@ class ContribsPager extends RangeChronologicalPager {
 			return false;
 		}
 
-		list( $start, $end ) = IPUtils::parseRange( $ip );
+		[ $start, $end ] = IPUtils::parseRange( $ip );
 
 		return 'ipc_hex BETWEEN ' . $db->addQuotes( $start ) . ' AND ' . $db->addQuotes( $end );
 	}
@@ -672,12 +681,11 @@ class ContribsPager extends RangeChronologicalPager {
 		// ContributionsLineEnding hook below.
 		// FIXME: have some better way for extensions to provide formatted rows.
 		$revRecord = $this->tryCreatingRevisionRecord( $row, $page );
-		if ( $revRecord ) {
+		if ( $revRecord && $page ) {
 			$revRecord = $this->revisionStore->newRevisionFromRow( $row, 0, $page );
 			$attribs['data-mw-revid'] = $revRecord->getId();
 
 			$link = $linkRenderer->makeLink(
-				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
 				$page,
 				$page->getPrefixedText(),
 				[ 'class' => 'mw-contributions-title' ],
@@ -686,30 +694,28 @@ class ContribsPager extends RangeChronologicalPager {
 			# Mark current revisions
 			$topmarktext = '';
 
+			$pagerTools = new PagerTools(
+				$revRecord,
+				null,
+				$row->rev_id === $row->page_latest && !$row->page_is_new,
+				$this->hookRunner,
+				$page,
+				$this->getContext(),
+				$this->getLinkRenderer()
+			);
 			if ( $row->rev_id === $row->page_latest ) {
 				$topmarktext .= '<span class="mw-uctop">' . $this->messages['uctop'] . '</span>';
 				$classes[] = 'mw-contributions-current';
-				# Add rollback link
-				if ( !$row->page_is_new &&
-					// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
-					$this->getAuthority()->probablyCan( 'rollback', $page ) &&
-					// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
-					$this->getAuthority()->probablyCan( 'edit', $page )
-				) {
-					$this->setPreventClickjacking( true );
-					$topmarktext .= ' ' . Linker::generateRollback(
-						$revRecord,
-						$this->getContext(),
-						[ 'noBrackets' ]
-					);
-				}
 			}
+			if ( $pagerTools->shouldPreventClickjacking() ) {
+				$this->setPreventClickjacking( true );
+			}
+			$topmarktext .= $pagerTools->toHTML();
 			# Is there a visible previous revision?
 			if ( $revRecord->getParentId() !== 0 &&
 				$revRecord->userCan( RevisionRecord::DELETED_TEXT, $this->getAuthority() )
 			) {
 				$difftext = $linkRenderer->makeKnownLink(
-					// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
 					$page,
 					new HtmlArmor( $this->messages['diff'] ),
 					[ 'class' => 'mw-changeslist-diff' ],
@@ -722,7 +728,6 @@ class ContribsPager extends RangeChronologicalPager {
 				$difftext = $this->messages['diff'];
 			}
 			$histlink = $linkRenderer->makeKnownLink(
-				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
 				$page,
 				new HtmlArmor( $this->messages['hist'] ),
 				[ 'class' => 'mw-changeslist-history' ],
@@ -787,7 +792,6 @@ class ContribsPager extends RangeChronologicalPager {
 				$flags[] = ChangesList::flag( 'minor' );
 			}
 
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
 			$del = Linker::getRevDeleteLink( $authority, $revRecord, $page );
 			if ( $del !== '' ) {
 				$del .= ' ';
@@ -807,9 +811,9 @@ class ContribsPager extends RangeChronologicalPager {
 			);
 
 			# Tags, if any.
-			list( $tagSummary, $newClasses ) = ChangeTags::formatSummaryRow(
+			[ $tagSummary, $newClasses ] = ChangeTags::formatSummaryRow(
 				$row->ts_tags,
-				'contributions',
+				null,
 				$this->getContext()
 			);
 			$classes = array_merge( $classes, $newClasses );

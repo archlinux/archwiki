@@ -146,7 +146,6 @@
 	"visualeditor-dialog-transclusion-loading": "Camallando…",
 	"visualeditor-dialog-transclusion-no-template-description": "O modello \"$1\" 'na descrission o no ghe l'ha ancon, ma poriæ vesighe de informassioin inta [[$2|paggina do modello]].",
 	"visualeditor-dialog-transclusion-param-default": "Predefinio: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Azonzi 'n modello",
 	"visualeditor-dialog-transclusion-required-parameter": "Campo obrigatoio",
 	"visualeditor-dialog-transclusion-required-parameter-description": "O campo o l'è obrigatoio.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Torna inderê",

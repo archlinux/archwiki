@@ -18,12 +18,12 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use ParserOptions;
 use ParserOutput;
 use PHPUnit\Framework\MockObject\MockObject;
-use TitleFactory;
 use Wikimedia\Rdbms\DBConnRef;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -92,7 +92,7 @@ class RevisionRendererTest extends MediaWikiIntegrationTestCase {
 			->willReturn( [] );
 
 		$roleReg = new SlotRoleRegistry( $slotRoles );
-		$roleReg->defineRole( 'main', function () {
+		$roleReg->defineRole( SlotRecord::MAIN, function () {
 			return new MainSlotRoleHandler(
 				[],
 				$this->createMock( IContentHandlerFactory::class ),
@@ -272,7 +272,7 @@ class RevisionRendererTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( 'user:Frank', $html );
 		$this->assertStringContainsString( 'time:20180101000003', $html );
 
-		$this->assertSame( $html, $rr->getSlotParserOutput( 'main' )->getText() );
+		$this->assertSame( $html, $rr->getSlotParserOutput( SlotRecord::MAIN )->getText() );
 	}
 
 	public function testGetRenderedRevision_suppressed() {
@@ -335,7 +335,7 @@ class RevisionRendererTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( 'user:Frank', $html );
 		$this->assertStringContainsString( 'time:20180101000003', $html );
 
-		$this->assertSame( $html, $rr->getSlotParserOutput( 'main' )->getText() );
+		$this->assertSame( $html, $rr->getSlotParserOutput( SlotRecord::MAIN )->getText() );
 	}
 
 	public function testGetRenderedRevision_raw() {
@@ -382,7 +382,7 @@ class RevisionRendererTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( 'user:Frank', $html );
 		$this->assertStringContainsString( 'time:20180101000003', $html );
 
-		$this->assertSame( $html, $rr->getSlotParserOutput( 'main' )->getText() );
+		$this->assertSame( $html, $rr->getSlotParserOutput( SlotRecord::MAIN )->getText() );
 	}
 
 	public function testGetRenderedRevision_multi() {

@@ -1,10 +1,6 @@
 <?php
-
 /**
- * Url
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_Url extends Less_Tree {
 
@@ -14,6 +10,11 @@ class Less_Tree_Url extends Less_Tree {
 	public $isEvald;
 	public $type = 'Url';
 
+	/**
+	 * @param Less_Tree_Variable|Less_Tree_Quoted|Less_Tree_Anonymous $value
+	 * @param array|null $currentFileInfo
+	 * @param bool|null $isEvald
+	 */
 	public function __construct( $value, $currentFileInfo = null, $isEvald = null ) {
 		$this->value = $value;
 		$this->currentFileInfo = $currentFileInfo;
@@ -34,7 +35,7 @@ class Less_Tree_Url extends Less_Tree {
 	}
 
 	/**
-	 * @param Less_Functions $ctx
+	 * @param Less_Environment $ctx
 	 */
 	public function compile( $ctx ) {
 		$val = $this->value->compile( $ctx );

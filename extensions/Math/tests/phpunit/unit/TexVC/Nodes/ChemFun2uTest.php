@@ -36,6 +36,13 @@ class ChemFun2uTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( 'a{b}_{c}', $fun2u->render(), 'Should create a basic ChemFun2u' );
 	}
 
+	public function testGetters() {
+		$fun2u = new ChemFun2u( 'a', new Literal( 'b' ), new Literal( 'c' ) );
+		$this->assertNotEmpty( $fun2u->getFname() );
+		$this->assertNotEmpty( $fun2u->getLeft() );
+		$this->assertNotEmpty( $fun2u->getRight() );
+	}
+
 	public function testExtractIdentifiers() {
 		$fun2u = new ChemFun2u( 'a', new Literal( 'b' ), new Literal( 'c' ) );
 		$this->assertEquals( [], $fun2u->extractIdentifiers(), 'Should extract identifiers' );

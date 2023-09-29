@@ -52,8 +52,7 @@
 	"config-env-good": "Le ambiente ha essite verificate.\nTu pote installar MediaWiki.",
 	"config-env-bad": "Le ambiente ha essite verificate.\nTu non pote installar MediaWiki.",
 	"config-env-php": "PHP $1 es installate.",
-	"config-unicode-using-intl": "Le [https://php.net/manual/en/book.intl.php extension PHP intl] es usate pro le normalisation Unicode.",
-	"config-unicode-update-warning": "'''Aviso''': Le version installate del bibliotheca inveloppante pro normalisation Unicode usa un version ancian del bibliotheca del [http://site.icu-project.org/ projecto ICU].\nTu deberea [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations actualisar lo] si le uso de Unicode importa a te.",
+	"config-env-icu": "ICU $1 es installate (supporta Unicode $2).",
 	"config-no-db": "Non poteva trovar un driver appropriate pro le base de datos! Es necessari installar un driver de base de datos pro PHP.\nLe sequente {{PLURAL:$2|typo|typos}} de base de datos es supportate: $1.\n\nSi tu compilava PHP tu mesme, reconfigura lo con un cliente de base de datos activate, per exemplo, usante <code>./configure --with-mysqli</code>.\nSi tu installava PHP ex un pacchetto Debian o Ubuntu, tu debe etiam installar, per exemplo, le modulo <code>php-mysql</code>.",
 	"config-outdated-sqlite": "<strong>Attention</strong>: tu ha SQLite $2, que es inferior al minime version requirite, $1. SQLite essera indisponibile.",
 	"config-no-fts3": "'''Attention''': SQLite es compilate sin [//sqlite.org/fts3.html modulo FTS3]; functionalitate de recerca non essera disponibile in iste back-end.",
@@ -79,7 +78,6 @@
 	"config-using-uri": "Le URL de servitor \"<nowiki>$1$2</nowiki>\" es usate.",
 	"config-uploads-not-safe": "'''Aviso:''' Le directorio predefinite pro files incargate <code>$1</code> es vulnerabile al execution arbitrari de scripts.\nBen que MediaWiki verifica tote le files incargate contra le menacias de securitate, il es altemente recommendate [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security remediar iste vulnerabilitate de securitate] ante de activar le incargamento de files.",
 	"config-no-cli-uploads-check": "'''Attention:''' Le directorio predefinite pro files incargate (<code>$1</code>) non es verificate contra le vulnerabilitate\nal execution arbitrari de scripts durante le installation de CLI.",
-	"config-suhosin-max-value-length": "Suhosin es installate e limita parametro <code>length</code> de GET a $1 bytes.\nMediaWiki require que <code>suhosin.get.max_value_length</code> sia al minus $2. Disactiva iste parametro, o augmenta iste valor a $3 in <code>php.ini</code>.",
 	"config-using-32bit": "<strong>Attention:</strong> tu systema pare operar con integres de 32 bits. Isto [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit non es recommendate].",
 	"config-db-type": "Typo de base de datos:",
 	"config-db-host": "Servitor de base de datos:",
@@ -99,6 +97,7 @@
 	"config-db-prefix": "Prefixo de tabella del base de datos (sin tractos de union):",
 	"config-db-prefix-help": "Si il es necessari usar un base de datos in commun inter multiple wikis, o inter MediaWiki e un altere application web, tu pote optar pro adder un prefixo a tote le nomines de tabella pro evitar conflictos.\nNon usa spatios.\n\nIste campo usualmente resta vacue.",
 	"config-mysql-old": "MySQL $1 o plus recente es requirite, tu ha $2.",
+	"config-mariadb-old": "MariaDB $1 o plus recente es necessari. Tu ha $2.",
 	"config-db-port": "Porto de base de datos:",
 	"config-db-schema": "Schema pro MediaWiki (sin tractos de union):",
 	"config-db-schema-help": "Iste schema es generalmente correcte.\nSolmente cambia lo si tu es secur que es necessari.",
@@ -311,6 +310,7 @@
 	"config-screenshot": "captura de schermo",
 	"config-extension-not-found": "Impossibile trovar le file de registration pro le extension \"$1\"",
 	"config-extension-dependency": "Un error de dependentia se ha producite durante le installation del extension \"$1\": $2",
+	"config-ext-skins-more-info": "plus information",
 	"mainpagetext": "<strong>MediaWiki ha essite installate.</strong>",
 	"mainpagedocfooter": "Consulta le [https://meta.wikimedia.org/wiki/Help:Contents Guida del usator] pro information sur le uso del software wiki.\n\n== Pro initiar ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Lista de configurationes]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ FAQ a proposito de MediaWiki]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ Lista de diffusion pro annuncios de nove versiones de MediaWiki]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Traducer MediaWiki in tu lingua]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Como combatter le spam in tu wiki]"
 }

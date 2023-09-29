@@ -7,6 +7,7 @@ use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
 use InvalidArgumentException;
 use LogicException;
+use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Parsoid\Config\DataAccess;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\PageConfig;
@@ -24,6 +25,7 @@ use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wikitext\Wikitext;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\AddRedLinks;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\ConvertOffsets;
@@ -35,7 +37,7 @@ class Parsoid {
 	 * @see https://www.mediawiki.org/wiki/Parsoid/API#Content_Negotiation
 	 * @see https://www.mediawiki.org/wiki/Specs/HTML#Versioning
 	 */
-	public const AVAILABLE_VERSIONS = [ '2.6.0', '999.0.0' ];
+	public const AVAILABLE_VERSIONS = [ '2.7.0', '999.0.0' ];
 
 	private const DOWNGRADES = [
 		[ 'from' => '999.0.0', 'to' => '2.0.0', 'func' => 'downgrade999to2' ],
@@ -160,7 +162,7 @@ class Parsoid {
 			$this->siteConfig, $pageConfig, $this->dataAccess, $metadata, $envOptions
 		);
 		if ( !$env->compareWt2HtmlLimit(
-			'wikitextSize', strlen( $pageConfig->getPageMainContent() )
+			'wikitextSize', strlen( $env->topFrame->getSrcText() )
 		) ) {
 			throw new ResourceLimitExceededException(
 				"wt2html: wikitextSize limit exceeded"
@@ -187,8 +189,12 @@ class Parsoid {
 	 *   'discardDataParsoid'   => (bool) Drop all data-parsoid annotations.
 	 *   'offsetType'           => (string) ucs2, char, byte are valid values
 	 *                                      what kind of source offsets should be emitted?
-	 *   'htmlVariantLanguage'  => (string) If non-null, the language variant used for Parsoid HTML.
-	 *   'wtVariantLanguage'    => (string) If non-null, the language variant used for wikitext.
+	 *   'htmlVariantLanguage'  => (string|Bcp47Code) If non-null, the language variant used for Parsoid HTML.
+	 *                             A MediaWiki-internal language code string (deprecated),
+	 *                             or a Bcp47Code object.
+	 *   'wtVariantLanguage'    => (string|Bcp47Code) If non-null, the language variant used for wikitext.
+	 *                             A MediaWiki-internal language code string (deprecated),
+	 *                             or a Bcp47Code object.
 	 *   'logLinterData'        => (bool) Should we log linter data if linting is enabled?
 	 *   'traceFlags'           => (array) associative array with tracing options
 	 *   'dumpFlags'            => (array) associative array with dump options
@@ -224,8 +230,7 @@ class Parsoid {
 			] );
 			return new PageBundle(
 				$out['html'],
-				get_object_vars( $out['pb']->parsoid ),
-				isset( $out['pb']->mw ) ? get_object_vars( $out['pb']->mw ) : null,
+				$out['pb']->parsoid, $out['pb']->mw ?? null,
 				$env->getOutputContentVersion(),
 				$headers,
 				$contentmodel
@@ -266,8 +271,12 @@ class Parsoid {
 	 *   'offsetType'          => (string) ucs2, char, byte are valid values
 	 *                                     what kind of source offsets are present in the HTML?
 	 *   'contentmodel'        => (string|null) The content model of the input.
-	 *   'htmlVariantLanguage' => (string) If non-null, the language variant used for Parsoid HTML.
-	 *   'wtVariantLanguage'   => (string) If non-null, the language variant used for wikitext.
+	 *   'htmlVariantLanguage' => (string|Bcp47Code) If non-null, the language variant used for Parsoid HTML.
+	 *                            A MediaWiki-internal language code string (deprecated),
+	 *                            or a Bcp47Code object.
+	 *   'wtVariantLanguage'   => (string|Bcp47Code) If non-null, the language variant used for wikitext.
+	 *                            A MediaWiki-internal language code string (deprecated),
+	 *                            or a Bcp47Code object.
 	 *   'traceFlags'          => (array) associative array with tracing options
 	 *   'dumpFlags'           => (array) associative array with dump options
 	 *   'debugFlags'          => (array) associative array with debug options
@@ -354,8 +363,10 @@ class Parsoid {
 			// __NOCONTENTCONVERT__ magic word is present, or the targetVariant
 			// is a base language code or otherwise invalid.
 			LanguageConverter::maybeConvert(
-				$env, $doc, $options['variant']['target'],
-				$options['variant']['source'] ?? null
+				$env, $doc,
+				Utils::mwCodeToBcp47( $options['variant']['target'] ),
+				$options['variant']['source'] ?
+				Utils::mwCodeToBcp47( $options['variant']['source'] ) : null
 			);
 			// Update content-language and vary headers.
 			// This also ensures there is a <head> element.
@@ -369,7 +380,7 @@ class Parsoid {
 				return $el;
 			};
 			( $ensureHeader( 'content-language' ) )->setAttribute(
-				'content', $env->htmlContentLanguage()
+				'content', $env->htmlContentLanguageBcp47()->toBcp47Code()
 			);
 			( $ensureHeader( 'vary' ) )->setAttribute(
 				'content', $env->htmlVary()
@@ -393,8 +404,7 @@ class Parsoid {
 		] );
 		return new PageBundle(
 			$out['html'],
-			get_object_vars( $out['pb']->parsoid ),
-			isset( $out['pb']->mw ) ? get_object_vars( $out['pb']->mw ) : null,
+			$out['pb']->parsoid, $out['pb']->mw ?? null,
 			// Prefer the passed in version, since this was just a transformation
 			$pb->version ?? $env->getOutputContentVersion(),
 			DOMUtils::findHttpEquivHeaders( $doc ),
@@ -473,6 +483,37 @@ class Parsoid {
 		throw new InvalidArgumentException(
 			"Unsupported downgrade: {$dg['from']} -> {$dg['to']}"
 		);
+	}
+
+	/**
+	 * Check if language variant conversion is implemented for a language
+	 *
+	 * @internal FIXME: Remove once Parsoid's language variant work is completed
+	 * @param PageConfig $pageConfig
+	 * @param string $targetVariantCode Variant code to check
+	 * @return bool
+	 * @deprecated Use ::implementsLanguageConversionBcp47()
+	 */
+	public function implementsLanguageConversion( PageConfig $pageConfig, string $targetVariantCode ): bool {
+		// argh, another interface that doesn't use Bcp47Code :(
+		return $this->implementsLanguageConversionBcp47(
+			$pageConfig, Utils::mwCodeToBcp47( $targetVariantCode )
+		);
+	}
+
+	/**
+	 * Check if language variant conversion is implemented for a language
+	 *
+	 * @internal FIXME: Remove once Parsoid's language variant work is completed
+	 * @param PageConfig $pageConfig
+	 * @param Bcp47Code $targetVariant Variant language to check
+	 * @return bool
+	 */
+	public function implementsLanguageConversionBcp47( PageConfig $pageConfig, Bcp47Code $targetVariant ): bool {
+		$metadata = new StubMetadataCollector( $this->siteConfig->getLogger() );
+		$env = new Env( $this->siteConfig, $pageConfig, $this->dataAccess, $metadata );
+
+		return LanguageConverter::implementsLanguageConversion( $env, $targetVariant );
 	}
 
 	/**

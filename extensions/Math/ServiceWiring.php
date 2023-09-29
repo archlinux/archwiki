@@ -46,6 +46,7 @@ return [
 			new ServiceOptions( MathWikibaseConnector::CONSTRUCTOR_OPTIONS, $services->getMainConfig() ),
 			WikibaseClient::getRepoLinker( $services ),
 			$services->getLanguageFactory(),
+			$services->getLanguageNameUtils(),
 			WikibaseClient::getEntityRevisionLookup( $services ),
 			WikibaseClient::getFallbackLabelDescriptionLookupFactory( $services ),
 			WikibaseClient::getSite( $services ),

@@ -51,8 +51,6 @@
 	"config-env-good": "Okruženje je provjereno.\nMožete instalirati MediaWiki.",
 	"config-env-bad": "Okruženje je provjereno.\nNe možete instalirati MediaWiki.",
 	"config-env-php": "PHP $1 je instaliran.",
-	"config-unicode-using-intl": "S dodatkom [https://php.net/manual/en/book.intl.php dodatak PHP intl] za normalizaciju Unikoda.",
-	"config-unicode-update-warning": "'''Upozorenje:''' Uspostavljena verzija omotnice Unicode normalizacije koristi stariju verziju biblioteke [http://site.icu-project.org/ projekta ICU].\nDa biste koristili Unicode, trebate napraviti [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations nadogradnju].",
 	"config-no-db": "Nisam mogao pronaći odgovarajući upravljački program za bazu podataka! Morat ćete uspostaviti upravljački program za PHP-bazu.\n{{PLURAL:$2|Podržana je sljedeća vrsta|Podržane su sljedeće vrste}} baze: $1.\n\nAko ste sami kompilirali PHP, omogućite bazni klijent u postavkama - npr. s <code>./configure --with-mysqli</code>.\nAko ovaj PHP uspostavite iz Debian ili Ubuntu paketa, tada ćete ga morati uspostaviti, npr., paket <code>php-mysql</code>.",
 	"config-outdated-sqlite": "<strong>Upozorenje</strong>: imate SQLite $2. Najstarija dopuštena verzija je $1. Stoga, SQLite će biti nedostupan.",
 	"config-no-fts3": "'''Upozorenje''': SQLite se kompilira bez modula [//sqlite.org/fts3.html FTS3] - za tu bazu podataka neće biti mogućnosti pretrage.",
@@ -77,7 +75,6 @@
 	"config-using-uri": "Koristite server s URL adresom \"<nowiki>$1$2</nowiki>\".",
 	"config-uploads-not-safe": "'''Upozorenje:''' Vaš matični direktorijum za otpremanja <code>$1</code> podliježe izvršavanju (pokretanju) proizvoljnih skripta.\nIako MediaWiki provodi sigurnosne provjere svih prenesenih datoteka, savjetujemo vam da [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security zatvorite ovu sigurnosnu rupu] prije omogućavanja otpremanja.",
 	"config-no-cli-uploads-check": "'''Upozorenje:'''  Vaš podrazumevani direktorijum za otpremanje (<code>$1</code>) nije provjeren ako je podložna\nslučajno izvršavanje skripti tijekom uspostavke posrednika na razini pozivatelja (CLI).",
-	"config-suhosin-max-value-length": "Suhosin je uspostavljen i ograničava duljinu GET parametra na $1 bajta. Sekcija ResourceLoader MediaWikija će zaobići ovu granicu, ali to će pogoršati učinkovitost. Ako je ikako moguće, na <code>suhosin.get.max_value_length</code> treba ga namjestiti na 1024 ili više u <code>php.ini</code>, i dati istu vrijednost <code>$wgResourceLoaderMaxQueryLength</code> u <code>LocalSettings.php</code>.",
 	"config-using-32bit": "<strong>Upozorenje:</strong> vaš sistem radi na 32-bitnim celim brojevima. Ovo se [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit ne preporučuje].",
 	"config-db-type": "Tip baze podataka:",
 	"config-db-host": "Domaćin baze podataka:",
@@ -247,6 +244,7 @@
 	"config-screenshot": "ekranski snimak",
 	"config-extension-not-found": "Nisam mogao naći datoteku registracije za dodatak „$1”",
 	"config-extension-dependency": "Naišao na grešku sa zavisnošću pri instaliranju dodatka „$1”: $2",
+	"config-ext-skins-more-info": "više informacija",
 	"mainpagetext": "<strong>MediaWiki je instaliran.</strong>",
 	"mainpagedocfooter": "Za informacije o korištenju wiki softvera konzultirajte [https://meta.wikimedia.org/wiki/Help:Contents Vodič za korisnike].\n\n== Uvod u rad ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Lista konfiguracije postavki]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ MediaWiki FAQ]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ Lista primatelja izdanja MediaWikija]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Lokalizirajte MediaWiki za svoj jezik]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Saznajte kako se boriti protiv spama na svojem wikiju]"
 }

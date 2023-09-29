@@ -227,9 +227,9 @@ class Mail_smtpmx extends Mail {
 
         // port number
         if (isset($params['port'])) {
-            $this->_port = $params['port'];
+            $this->port = $params['port'];
         } else {
-            $this->_port = getservbyname('smtp', 'tcp');
+            $this->port = getservbyname('smtp', 'tcp');
         }
 
         if (isset($params['timeout'])) $this->timeout = $params['timeout'];

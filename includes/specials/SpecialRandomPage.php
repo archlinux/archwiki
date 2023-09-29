@@ -23,6 +23,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -52,7 +53,7 @@ class SpecialRandomPage extends SpecialPage {
 		$this->loadBalancer = $loadBalancer instanceof ILoadBalancer
 			? $loadBalancer
 			: $services->getDBLoadBalancer();
-		$nsInfo = $nsInfo ?? $services->getNamespaceInfo();
+		$nsInfo ??= $services->getNamespaceInfo();
 		$this->namespaces = $nsInfo->getContentNamespaces();
 	}
 

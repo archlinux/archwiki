@@ -104,10 +104,10 @@ const iAmViewingAWatchedPage = () => {
 	waitForPropagation( 5000 );
 };
 
-const iAmViewingAnUnwatchedPage = () => {
+const iAmViewingAnUnwatchedPage = async () => {
 	// new pages are watchable but unwatched by default
 	const title = 'I am on the "Selenium mobile unwatched test ' + new Date();
-	iAmOnPage( title );
+	await iAmOnPage( title );
 };
 
 const iAmOnATalkPageWithNoTalkTopics = () => {

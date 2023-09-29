@@ -5,8 +5,8 @@
 			"Mirin",
 			"Objectivesea",
 			"Robin van der Vliet",
-			"Yekrats",
-			"Stefangrotz"
+			"Stefangrotz",
+			"Yekrats"
 		]
 	},
 	"skinname-vector": "Vector malnova (2010)",
@@ -43,9 +43,7 @@
 	"vector-more-actions": "Pli",
 	"vector-search-loader": "Ŝarĝante serĉsugestojn",
 	"vector-searchsuggest-containing": "Serĉu paĝojn enhavantajn<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-toc-heading": "Enhavo",
-	"vector-toc-toggle-position-sidebar": "movigi al flanka panelo",
-	"vector-toc-toggle-position-title": "kaŝi",
+	"vector-toc-label": "Enhavo",
 	"vector-toc-beginning": "Komenco",
 	"vector-toc-toggle-button-label": "Baskuli $1 subsekcio",
 	"vector-anon-user-menu-pages": "Paĝoj por elsalutitaj redaktistoj",
@@ -54,5 +52,7 @@
 	"vector-main-menu-tooltip": "Ĉefa menuo",
 	"vector-toc-menu-tooltip": "Enhavtabelo",
 	"vector-toc-collapsible-button-label": "Ŝaltu la enhavtabelon",
+	"vector-pin-element-label": "movigi al flanka panelo",
+	"vector-unpin-element-label": "kaŝi",
 	"tooltip-vector-anon-user-menu-title": "Pliaj agordoj"
 }

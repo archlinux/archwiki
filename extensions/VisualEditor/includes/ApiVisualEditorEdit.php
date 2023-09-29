@@ -45,9 +45,6 @@ class ApiVisualEditorEdit extends ApiBase {
 	/** @var RevisionLookup */
 	private $revisionLookup;
 
-	/** @var IBufferingStatsdDataFactory */
-	private $statsdDataFactory;
-
 	/** @var PageEditStash */
 	private $pageEditStash;
 
@@ -56,6 +53,9 @@ class ApiVisualEditorEdit extends ApiBase {
 
 	/** @var WikiPageFactory */
 	private $wikiPageFactory;
+
+	/** @var VisualEditorParsoidClientFactory */
+	private $parsoidClientFactory;
 
 	/**
 	 * @param ApiMain $main
@@ -66,6 +66,7 @@ class ApiVisualEditorEdit extends ApiBase {
 	 * @param PageEditStash $pageEditStash
 	 * @param SkinFactory $skinFactory
 	 * @param WikiPageFactory $wikiPageFactory
+	 * @param VisualEditorParsoidClientFactory $parsoidClientFactory
 	 */
 	public function __construct(
 		ApiMain $main,
@@ -75,16 +76,27 @@ class ApiVisualEditorEdit extends ApiBase {
 		IBufferingStatsdDataFactory $statsdDataFactory,
 		PageEditStash $pageEditStash,
 		SkinFactory $skinFactory,
-		WikiPageFactory $wikiPageFactory
+		WikiPageFactory $wikiPageFactory,
+		VisualEditorParsoidClientFactory $parsoidClientFactory
 	) {
 		parent::__construct( $main, $name );
 		$this->setLogger( LoggerFactory::getInstance( 'VisualEditor' ) );
+		$this->setStats( $statsdDataFactory );
 		$this->hookRunner = $hookRunner;
 		$this->revisionLookup = $revisionLookup;
-		$this->statsdDataFactory = $statsdDataFactory;
 		$this->pageEditStash = $pageEditStash;
 		$this->skinFactory = $skinFactory;
 		$this->wikiPageFactory = $wikiPageFactory;
+		$this->parsoidClientFactory = $parsoidClientFactory;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function getParsoidClient(): ParsoidClient {
+		return $this->parsoidClientFactory->createParsoidClient(
+			$this->getRequest()->getHeader( 'Cookie' )
+		);
 	}
 
 	/**
@@ -288,7 +300,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		}
 
 		$status = $ok ? 'ok' : 'failed';
-		$this->statsdDataFactory->increment( "editstash.ve_serialization_cache.set_" . $status );
+		$this->getStats()->increment( "editstash.ve_serialization_cache.set_" . $status );
 
 		// Also parse and prepare the edit in case it might be saved later
 		$pageUpdater = $this->wikiPageFactory->newFromTitle( $title )->newPageUpdater( $this->getUser() );
@@ -299,7 +311,7 @@ class ApiVisualEditorEdit extends ApiBase {
 			$logger = LoggerFactory::getInstance( 'StashEdit' );
 			$logger->debug( "Cached parser output for VE content key '$key'." );
 		}
-		$this->statsdDataFactory->increment( "editstash.ve_cache_stores.$status" );
+		$this->getStats()->increment( "editstash.ve_cache_stores.$status" );
 
 		return $hash;
 	}
@@ -334,7 +346,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		$value = $cache->get( $key );
 
 		$status = ( $value !== false ) ? 'hit' : 'miss';
-		$this->statsdDataFactory->increment( "editstash.ve_serialization_cache.get_$status" );
+		$this->getStats()->increment( "editstash.ve_serialization_cache.get_$status" );
 
 		return $value;
 	}
@@ -343,12 +355,12 @@ class ApiVisualEditorEdit extends ApiBase {
 	 * Calculate the different between the wikitext of an edit and an existing revision.
 	 *
 	 * @param Title $title The title of the page
-	 * @param int $fromId The existing revision of the page to compare with
+	 * @param int|null $fromId The existing revision of the page to compare with
 	 * @param string $wikitext The wikitext to compare against
 	 * @param int|null $section Whether the wikitext refers to a given section or the whole page
 	 * @return array The comparison, or `[ 'result' => 'nochanges' ]` if there are none
 	 */
-	protected function diffWikitext( Title $title, $fromId, $wikitext, $section = null ) {
+	protected function diffWikitext( Title $title, ?int $fromId, $wikitext, $section = null ) {
 		$apiParams = [
 			'action' => 'compare',
 			'prop' => 'diff',
@@ -577,9 +589,15 @@ class ApiVisualEditorEdit extends ApiBase {
 			],
 			'section' => null,
 			'sectiontitle' => null,
-			'basetimestamp' => null,
-			'starttimestamp' => null,
-			'oldid' => null,
+			'basetimestamp' => [
+				ParamValidator::PARAM_TYPE => 'timestamp',
+			],
+			'starttimestamp' => [
+				ParamValidator::PARAM_TYPE => 'timestamp',
+			],
+			'oldid' => [
+				ParamValidator::PARAM_TYPE => 'integer',
+			],
 			'minor' => null,
 			'watchlist' => null,
 			'html' => [
@@ -638,4 +656,5 @@ class ApiVisualEditorEdit extends ApiBase {
 	public function isWriteMode() {
 		return true;
 	}
+
 }

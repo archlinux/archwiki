@@ -216,6 +216,7 @@
 	"anoneditwarning": "<strong>Ескертув:</strong> Кириш етилмеген. Сизинъ IP-адресинъиз, бир туьрлентуьв еткен сонъ, тарих бетине джазылачак. Аккаунтинъиз бар болса <strong>[$1 Кириш етинъиз]</strong> йоксам <strong>[$2 аккаунт етинъиз]</strong>.",
 	"loginreqlink": "кируьв",
 	"newarticle": "(Янъы)",
+	"userpage-userdoesnotexist-view": "\"$1\" кулланувшысы бул викиге джазылмаган.",
 	"previewnote": "<strong>Унутманъыз бул бир алдан коьрсетуьв.</strong>\nДенъишиклер тагы джаздырылмаган!",
 	"continue-editing": "Оьзгертуьв ерине барув",
 	"editing": "Туьрлентуьв: $1",
@@ -556,5 +557,6 @@
 	"special-characters-group-cyrillic": "Кириллица",
 	"special-characters-group-arabic": "Арапша",
 	"nstab-mainpage": "Бас бет",
-	"skin-action-delete": "Йок ет"
+	"skin-action-delete": "Йок ет",
+	"renameuserreason": "Себеп:"
 }

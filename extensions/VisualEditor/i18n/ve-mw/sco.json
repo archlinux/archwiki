@@ -108,7 +108,6 @@
 	"visualeditor-dialog-transclusion-loading": "Laidin...",
 	"visualeditor-dialog-transclusion-no-template-description": "Ye'r eikin the \"$1\" template tae this page. It disna hae ae descreeption yet, but thaur micht be some information oan the [[$2|template's page]].",
 	"visualeditor-dialog-transclusion-param-default": "Ordinar value: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Eik ae template",
 	"visualeditor-dialog-transclusion-required-parameter": "Needed feeld",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Field is needit.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Gang back",

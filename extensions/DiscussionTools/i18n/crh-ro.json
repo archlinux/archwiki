@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Zolgoyo"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Ğewap",
+	"discussiontools-replywidget-advanced": "Kelíşmíş",
+	"discussiontools-replywidget-cancel": "Wazkeş",
+	"discussiontools-replywidget-mode-source": "Menba",
+	"discussiontools-replywidget-mode-visual": "Kórsel",
+	"discussiontools-replywidget-preview": "Kórselden kara",
+	"discussiontools-replywidget-summary": "Kîska tarif",
+	"discussiontools-replywidget-watchthis": "Bo sayipanî [[Special:Watchlist|Kózetúw ğedwelîne]] koş",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|kíşí}} muzakerede",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|yorum}}",
+	"discussiontools-topicheader-latestcomment": "Soñkî yorum: $1",
+	"discussiontools-topicsubscription-button-subscribe": "abone bol",
+	"discussiontools-topicsubscription-button-subscribe-label": "Abone bol",
+	"discussiontools-topicsubscription-button-unsubscribe": "abone bolma",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Abone bolma"
+}

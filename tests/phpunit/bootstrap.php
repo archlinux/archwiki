@@ -94,3 +94,13 @@ $autoload = $extensionProcessor->getExtractedAutoloadInfo( true );
 AutoLoader::loadFiles( $autoload['files'] );
 AutoLoader::registerClasses( $autoload['classes'] );
 AutoLoader::registerNamespaces( $autoload['namespaces'] );
+
+// More faking in lieu of Setup.php
+Profiler::init( [] );
+
+// Check that composer dependencies are up-to-date
+if ( !getenv( 'MW_SKIP_EXTERNAL_DEPENDENCIES' ) ) {
+	$composerLockUpToDate = new CheckComposerLockUpToDate();
+	$composerLockUpToDate->loadParamsAndArgs( 'phpunit', [ 'quiet' => true ] );
+	$composerLockUpToDate->execute();
+}

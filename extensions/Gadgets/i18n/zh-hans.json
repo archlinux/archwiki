@@ -8,6 +8,7 @@
 			"GraceL",
 			"Hydra",
 			"Impersonator 1",
+			"Lakejason0",
 			"Liangent",
 			"Liuxinyu970226",
 			"Mywood",
@@ -20,12 +21,12 @@
 			"孟天皓",
 			"御坂美琴",
 			"阿pp",
-			"飞舞回堂前",
-			"Lakejason0"
+			"飞舞回堂前"
 		]
 	},
 	"gadgets-desc": "让用户在其[[Special:Preferences#mw-prefsection-gadgets|参数设置]]中选择自定义[[Special:Gadgets|CSS和JavaScript工具]]",
 	"prefs-gadgets": "小工具",
+	"prefs-description-gadgets": "为您的账号启用额外功能。",
 	"gadgets-prefstext": "下面是您可以为账户启用的特殊小工具列表。这些小工具大多数基于JavaScript，所以您的浏览器需要启用JavaScript以使其生效。请注意这些小工具不会在这个参数设置页面上生效。\n\n同时请注意，这些特殊小工具不是MediaWiki软件的组成部分，而通常是由您的本地wiki的用户开发并维护的。本地界面管理员可以编辑可用小工具的[[MediaWiki:Gadgets-definition|定义]]，本地管理员可以编辑它们的描述[[Special:Gadgets|说明]]，在此处你可以看到各个小工具的源代码。该wiki上每个小工具的用户数量列于[[Special:GadgetUsage|小工具使用统计]]页面中。",
 	"gadgets": "小工具",
 	"gadgetusage": "小工具使用统计",
@@ -52,6 +53,7 @@
 	"gadgets-not-found": "找不到“$1”小工具。",
 	"gadgets-export-text": "要导出$1小工具，请单击“{{int:gadgets-export-download}}”按钮，保存下载的文件，前往目标wiki的Special:Import并将文件上传。然后添加以下内容至MediaWiki:Gadgets-definition页面：\n<pre>$2</pre>\n您必须在目标wiki上拥有适当的权限（包括编辑系统消息的权限），并且启用从文件上传导入。",
 	"gadgets-export-download": "下载",
+	"gadgets-requires-es6": "此小工具仅在兼容ES6的浏览器上受支持",
 	"gadgets-validate-notset": "未设置属性<code>$1</code>。",
 	"gadgets-validate-wrongtype": "属性<code>$1</code>的类型必须为<code>$2</code>，而不是<code>$3</code>。",
 	"right-gadgets-edit": "编辑小工具的JavaScript和CSS页面",

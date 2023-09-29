@@ -2,8 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Азат Хәлилов",
-			"Айбикә"
+			"Айбикә",
+			"З. ӘЙЛЕ"
 		]
 	},
-	"renocaptcha-createaccount-fail": "Һеҙ CAPTCHA -ны сисә алманығыҙ"
+	"renocaptcha-createaccount-fail": "Күрәһең, CAPTCHA-ның яуабын тапманығыҙ."
 }

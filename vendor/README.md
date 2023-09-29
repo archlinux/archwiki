@@ -19,9 +19,13 @@ Adding or updating libraries
 ----------------------------
 
 0. Read the [documentation] on the process for adding new libraries.
-1. Ensure you're using version 2.5.1 of composer via `composer --version`. Us
-   all using the same version means that diffs from the autoloader are minimal
-   and so easier to validate and simpler to manually rebase.
+1. Ensure you're using version 2.5.1 of composer via `composer --version`.
+   Everyone using the same version means that diffs from the autoloader are
+   minimal and so easier to validate and manually rebase. This is most easily
+   done with Docker. For example, to run `composer update --no-dev` do:
+   ```
+   docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD/.git:/src/.git:ro" -v "$PWD:/src" -w /src docker-registry.wikimedia.org/releng/composer-php74 update --no-dev
+   ```
 2. Edit the composer.json file to add/update the libraries you want to change.
    It is recommended that you use `composer require <package> <version>
    --no-update` to do so as composer will then automatically sort the

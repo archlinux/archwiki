@@ -14,7 +14,6 @@
 
 	/* Icon for registered user names & anonymous message */
 	#pt-anonuserpage,
-	#pt-tmpuserpage,
 	#pt-userpage a {
 		background-position: @background-position-nav-personal-icon;
 		background-image: url( images/user-avatar.svg );
@@ -22,6 +21,12 @@
 		background-size: @background-size-nav-personal-icon @background-size-nav-personal-icon;
 		padding-top: 0.5em;
 		padding-left: 1.5em;
+
+		&.mw-userpage-tmp {
+			font-weight: normal;
+			opacity: 0.67;
+			background-image: url( images/userAnonymous.svg );
+		}
 	}
 
 	#pt-userpage {
@@ -33,8 +38,7 @@
 	}
 
 	/* Show anonymous "Not logged in" text in gray */
-	#pt-anonuserpage,
-	#pt-tmpuserpage {
+	#pt-anonuserpage {
 		color: #54595d;
 	}
 

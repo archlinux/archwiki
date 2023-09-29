@@ -1,9 +1,11 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -62,16 +64,20 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 	 */
 	protected function doEdits() {
 		$title = $this->getTitle();
-		$page = WikiPage::factory( $title );
 
 		$strings = [ "it is a kitten", "two kittens", "three kittens", "four kittens" ];
 		$revisions = [];
 
-		$user = $this->getTestSysop()->getUser();
+		$user = $this->getTestSysop()->getAuthority();
 		foreach ( $strings as $string ) {
-			$content = ContentHandler::makeContent( $string, $title );
-			$page->doUserEditContent( $content, $user, 'edit page' );
-			$revisions[] = $page->getLatest();
+			$status = $this->editPage(
+				$title,
+				$string,
+				'edit page',
+				NS_MAIN,
+				$user
+			);
+			$revisions[] = $status->getNewRevision()->getId();
 		}
 
 		return $revisions;
@@ -342,7 +348,7 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 			$this->context->setConfig( $config );
 		}
 
-		$page = $this->getNonExistingTestPage( 'Page1' );
+		$page = $this->getNonexistingTestPage( 'Page1' );
 		$this->assertTrue( $this->editPage( $page, 'Edit1' )->isGood(), 'edited a page' );
 		$rev1 = $page->getRevisionRecord();
 		$this->assertTrue( $this->editPage( $page, 'Edit2' )->isGood(), 'edited a page' );
@@ -412,4 +418,85 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 		return $revision;
 	}
 
+	/**
+	 * @dataProvider provideRevisionHeader
+	 */
+	public function testRevisionHeader( $deletedFlag, $allowedAction ) {
+		$revs = self::$revisions;
+
+		if ( $deletedFlag !== 'none' ) {
+			$this->revisionDelete(
+				$revs[1],
+				[
+					RevisionRecord::DELETED_TEXT => 1,
+					RevisionRecord::DELETED_RESTRICTED => $deletedFlag === 'suppressed' ? 1 : 0,
+				],
+				'Testing'
+			);
+		}
+
+		$context = new DerivativeContext( $this->context );
+		$context->setLanguage( 'qqx' );
+		$permissionSet = [];
+		if ( $allowedAction !== 'none' ) {
+			if ( $allowedAction === 'edit' ) {
+				$permissionSet[] = 'edit';
+			}
+			if ( $deletedFlag === 'suppressed' ) {
+				$permissionSet[] = 'suppressrevision';
+			} else {
+				$permissionSet[] = 'deletedtext';
+			}
+		}
+		$context->setAuthority(
+			new SimpleAuthority( $this->getTestUser()->getUser(), $permissionSet )
+		);
+
+		$diffEngine = new DifferenceEngine( $context, $revs[1], $revs[2], 2, true, true );
+		$this->assertTrue( $diffEngine->loadRevisionData() );
+		$revisionHeaderHtml = $diffEngine->getRevisionHeader( $diffEngine->getOldRevision(), 'complete' );
+
+		// Always show the timestamp
+		$this->assertStringContainsString( '(revisionasof:', $revisionHeaderHtml );
+
+		if ( $allowedAction === 'none' ) {
+			$this->assertStringNotContainsString( 'oldid=' . $revs[1], $revisionHeaderHtml );
+		} else {
+			$this->assertStringContainsString( 'oldid=' . $revs[1], $revisionHeaderHtml );
+		}
+		if ( $allowedAction === 'edit' ) {
+			$this->assertStringContainsString( '(editold)', $revisionHeaderHtml );
+		} else {
+			$this->assertStringNotContainsString( '(editold)', $revisionHeaderHtml );
+		}
+		if ( $allowedAction === 'view' ) {
+			$this->assertStringContainsString( '(viewsourceold)', $revisionHeaderHtml );
+		} else {
+			$this->assertStringNotContainsString( '(viewsourceold)', $revisionHeaderHtml );
+		}
+
+		if ( $deletedFlag === 'none' ) {
+			$this->assertStringNotContainsString( 'history-deleted', $revisionHeaderHtml );
+		} else {
+			$this->assertStringContainsString( 'history-deleted', $revisionHeaderHtml );
+		}
+		if ( $deletedFlag === 'suppressed' ) {
+			$this->assertStringContainsString( 'mw-history-suppressed', $revisionHeaderHtml );
+		} else {
+			$this->assertStringNotContainsString( 'mw-history-suppressed', $revisionHeaderHtml );
+		}
+	}
+
+	public function provideRevisionHeader() {
+		return [
+			[ 'none', 'view' ],
+			[ 'none', 'edit' ],
+			[ 'deleted', 'none' ],
+			[ 'deleted', 'view' ],
+			[ 'deleted', 'edit' ],
+			[ 'suppressed', 'none' ],
+			[ 'suppressed', 'view' ],
+			[ 'suppressed', 'edit' ],
+		];
+	}
 }

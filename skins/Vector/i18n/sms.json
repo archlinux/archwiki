@@ -20,10 +20,11 @@
 	"vector-view-viewsource": "Čuäʹjet käivvkood",
 	"vector-more-actions": "Lââʹzz",
 	"vector-searchsuggest-containing": "Ooʒʒ seeidaid, koin lij <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-toc-heading": "Siiskâžlooǥǥtõs",
-	"vector-toc-toggle-position-title": "čiõǥǥ",
+	"vector-toc-label": "Siiskâžlooǥǥtõs",
 	"vector-anon-user-menu-pages-learn": "lââʹssteâđ",
 	"vector-main-menu-tooltip": "Väʹlddvaʹlljõk",
 	"vector-toc-menu-tooltip": "Siiskâžlooǥǥtõs",
-	"vector-site-nav-label": "Seiddõs"
+	"vector-site-nav-label": "Seiddõs",
+	"vector-page-tools-label": "Neävv",
+	"vector-unpin-element-label": "čiõǥǥ"
 }

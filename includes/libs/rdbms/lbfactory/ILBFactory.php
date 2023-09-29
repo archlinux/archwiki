@@ -23,12 +23,27 @@ use Generator;
 use InvalidArgumentException;
 
 /**
- * Manager of ILoadBalancer objects, and indirectly of IDatabase connections.
+ * Manager of ILoadBalancer objects and, indirectly, IDatabase connections
+ *
+ * Each Load balancer instances corresponds to a specific database cluster.
+ * A "cluster" is the set of database servers that manage a given dataset.
+ *
+ * The "core" clusters are meant to colocate the most basic and highly relational application
+ * data for one or more "sister projects" managed by this site. This allows for highly flexible
+ * queries. Each project is identified by a database domain. Note that if there are several
+ * projects stored on a cluster, then the cluster dataset is a superset of the dataset for each
+ * of those projects.
+ *
+ * The "external" clusters are meant to provide places for bulk text storage, to colocate bulky
+ * relational data from specific modules, and to colocate data from cross-project modules such
+ * as authentication systems. An external cluster can have a database/schema for each project.
+ *
+ * @see ILoadBalancer
  *
  * @ingroup Database
  * @since 1.28
  */
-interface ILBFactory {
+interface ILBFactory extends IConnectionProvider {
 	/** Idiom for "no special shutdown flags" */
 	public const SHUTDOWN_NORMAL = 0;
 	/** Do not save "session consistency" DB replication positions */
@@ -49,14 +64,10 @@ interface ILBFactory {
 	 *  - wanCache: WANObjectCache instance [optional]
 	 *  - databaseFactory: DatabaseFactory instance [optional]
 	 *  - cliMode: Whether the execution context is a CLI script. [optional]
-	 *  - maxLag: Try to avoid DB replicas with lag above this many seconds [optional]
-	 *  - profiler: Callback that takes a section name argument and returns
-	 *      a ScopedCallback instance that ends the profile section in its destructor [optional]
+	 *  - profiler: Callback that takes a profile section name and returns a ScopedCallback
+	 *     that ends the profile section in its destructor [optional]
 	 *  - trxProfiler: TransactionProfiler instance. [optional]
-	 *  - replLogger: PSR-3 logger instance. [optional]
-	 *  - connLogger: PSR-3 logger instance. [optional]
-	 *  - queryLogger: PSR-3 logger instance. [optional]
-	 *  - perfLogger: PSR-3 logger instance. [optional]
+	 *  - logger: PSR-3 logger instance. [optional]
 	 *  - errorLogger: Callback that takes an Exception and logs it. [optional]
 	 *  - deprecationLogger: Callback to log a deprecation warning. [optional]
 	 *  - secret: Secret string to use for HMAC hashing [optional]
@@ -72,6 +83,12 @@ interface ILBFactory {
 	 * @see ILoadBalancer::disable()
 	 */
 	public function destroy();
+
+	/**
+	 * Reload the configuration if necessary.
+	 * This may or may not have any effect.
+	 */
+	public function autoReconfigure(): void;
 
 	/**
 	 * Get the local (and default) database domain ID of connection handles
@@ -184,19 +201,6 @@ interface ILBFactory {
 	public function getAllExternalLBs(): array;
 
 	/**
-	 * Execute a function for each instantiated tracked load balancer instance
-	 *
-	 * The callback is called with the load balancer as the first parameter,
-	 * and $params passed as the subsequent parameters.
-	 *
-	 * @deprecated since 1.39 use getAllLBs()
-	 *
-	 * @param callable $callback
-	 * @param array $params
-	 */
-	public function forEachLB( $callback, array $params = [] );
-
-	/**
 	 * Get all tracked load balancer instances (generator)
 	 *
 	 * @return Generator|ILoadBalancer[]
@@ -220,7 +224,7 @@ interface ILBFactory {
 	);
 
 	/**
-	 * Commit all replica DB transactions so as to flush any REPEATABLE-READ or SSI snapshot
+	 * Commit all replica database server transactions, clearing any REPEATABLE-READ/SSI snapshots
 	 *
 	 * This only applies to the instantiated tracked load balancer instances.
 	 *
@@ -231,27 +235,11 @@ interface ILBFactory {
 	public function flushReplicaSnapshots( $fname = __METHOD__ );
 
 	/**
-	 * Commit open transactions on all connections
-	 *
-	 * This only applies to the instantiated tracked load balancer instances.
-	 *
-	 * This is useful for two main cases:
-	 *   - a) Committing changes to the masters
-	 *   - b) Releasing the snapshot on all connections, primary and replica DBs
-	 *
-	 * @param string $fname Caller name
-	 * @param array $options Options map:
-	 *   - maxWriteDuration: abort if more than this much time was spent in write queries
-	 */
-	public function commitAll( $fname = __METHOD__, array $options = [] );
-
-	/**
 	 * Flush any primary transaction snapshots and set DBO_TRX (if DBO_DEFAULT is set)
 	 *
 	 * The DBO_TRX setting will be reverted to the default in each of these methods:
 	 *   - commitPrimaryChanges()
 	 *   - rollbackPrimaryChanges()
-	 *   - commitAll()
 	 *
 	 * This only applies to the tracked load balancer instances.
 	 *
@@ -269,12 +257,11 @@ interface ILBFactory {
 	 * This only applies to the instantiated tracked load balancer instances.
 	 *
 	 * @param string $fname Caller name
-	 * @param array $options Options map:
-	 *   - maxWriteDuration: abort if more than this much time was spent in write queries
+	 * @param int $maxWriteDuration abort if more than this much time was spent in write queries
 	 * @throws DBTransactionError
 	 * @since 1.37
 	 */
-	public function commitPrimaryChanges( $fname = __METHOD__, array $options = [] );
+	public function commitPrimaryChanges( $fname = __METHOD__, int $maxWriteDuration = 0 );
 
 	/**
 	 * Rollback changes on all primary connections
@@ -328,7 +315,7 @@ interface ILBFactory {
 	public function hasPrimaryChanges();
 
 	/**
-	 * Determine if any lagged replica DB connection was used
+	 * Determine if any lagged replica database server connection was used.
 	 *
 	 * This only applies to the instantiated tracked load balancer instances.
 	 *
@@ -347,10 +334,10 @@ interface ILBFactory {
 	public function hasOrMadeRecentPrimaryChanges( $age = null );
 
 	/**
-	 * Waits for the replica DBs to catch up to the current primary position
+	 * Waits for the replica database server to catch up to the current primary position
 	 *
-	 * Use this when updating very large numbers of rows, as in maintenance scripts,
-	 * to avoid causing too much lag. Of course, this is a no-op if there are no replica DBs.
+	 * Use this when updating very large numbers of rows, as in maintenance scripts, to
+	 * avoid causing too much lag. This is a no-op if there are no replica database servers.
 	 *
 	 * By default this waits on all DB clusters actually used in this request.
 	 * This makes sense when lag being waiting on is caused by the code that does this check.
@@ -382,30 +369,6 @@ interface ILBFactory {
 	 * @param callable|null $callback Use null to unset a callback
 	 */
 	public function setWaitForReplicationListener( $name, callable $callback = null );
-
-	/**
-	 * Get a token asserting that no transaction writes are active on tracked load balancers
-	 *
-	 * @param string $fname Caller name (e.g. __METHOD__)
-	 * @return mixed A value to pass to commitAndWaitForReplication()
-	 */
-	public function getEmptyTransactionTicket( $fname );
-
-	/**
-	 * Call commitPrimaryChanges() and waitForReplication() if $ticket indicates it is safe
-	 *
-	 * The ticket is used to check that the caller owns the transaction round or can act on
-	 * behalf of the caller that owns the transaction round.
-	 *
-	 * @see commitPrimaryChanges()
-	 * @see waitForReplication()
-	 *
-	 * @param string $fname Caller name (e.g. __METHOD__)
-	 * @param mixed $ticket Result of getEmptyTransactionTicket()
-	 * @param array $opts Options to waitForReplication()
-	 * @return bool True if the wait was successful, false on timeout
-	 */
-	public function commitAndWaitForReplication( $fname, $ticket, array $opts = [] );
 
 	/**
 	 * Get the UNIX timestamp when the client last touched the DB, if they did so recently
@@ -452,14 +415,6 @@ interface ILBFactory {
 	 * @return string
 	 */
 	public function appendShutdownCPIndexAsQuery( $url, $index );
-
-	/**
-	 * Get the client ID of the ChronologyProtector instance
-	 *
-	 * @return string Client ID
-	 * @since 1.34
-	 */
-	public function getChronologyProtectorClientId();
 
 	/**
 	 * Inject HTTP request header/cookie information during setup of this instance

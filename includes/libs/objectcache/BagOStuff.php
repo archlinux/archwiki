@@ -349,19 +349,19 @@ abstract class BagOStuff implements
 	 *
 	 * @param string $key
 	 * @param int $timeout Lock wait timeout; 0 for non-blocking [optional]
-	 * @param int $expiry Lock expiry [optional]; 1 day maximum
+	 * @param int $exptime Lock time-to-live [optional]; 1 day maximum
 	 * @param string $rclass Allow reentry if set and the current lock used this value
 	 * @return ScopedCallback|null Returns null on failure
 	 * @since 1.26
 	 */
-	final public function getScopedLock( $key, $timeout = 6, $expiry = 30, $rclass = '' ) {
-		$expiry = min( $expiry ?: INF, self::TTL_DAY );
+	final public function getScopedLock( $key, $timeout = 6, $exptime = 30, $rclass = '' ) {
+		$exptime = min( $exptime ?: INF, self::TTL_DAY );
 
-		if ( !$this->lock( $key, $timeout, $expiry, $rclass ) ) {
+		if ( !$this->lock( $key, $timeout, $exptime, $rclass ) ) {
 			return null;
 		}
 
-		return new ScopedCallback( function () use ( $key, $expiry ) {
+		return new ScopedCallback( function () use ( $key ) {
 			$this->unlock( $key );
 		} );
 	}
@@ -435,28 +435,6 @@ abstract class BagOStuff implements
 	 * @since 1.34
 	 */
 	abstract public function changeTTLMulti( array $keys, $exptime, $flags = 0 );
-
-	/**
-	 * Increase stored value of $key by $value while preserving its TTL
-	 *
-	 * @param string $key Key to increase
-	 * @param int $value Value to add to $key (default: 1) [optional]
-	 * @param int $flags Bit field of class WRITE_* constants [optional]
-	 * @return int|bool New value or false on failure
-	 * @deprecated Since 1.38
-	 */
-	abstract public function incr( $key, $value = 1, $flags = 0 );
-
-	/**
-	 * Decrease stored value of $key by $value while preserving its TTL
-	 *
-	 * @param string $key
-	 * @param int $value Value to subtract from $key (default: 1) [optional]
-	 * @param int $flags Bit field of class WRITE_* constants [optional]
-	 * @return int|bool New value or false on failure
-	 * @deprecated Since 1.38
-	 */
-	abstract public function decr( $key, $value = 1, $flags = 0 );
 
 	/**
 	 * Increase the value of the given key (no TTL change) if it exists or create it otherwise
@@ -542,21 +520,6 @@ abstract class BagOStuff implements
 	 * @deprecated since 1.39
 	 */
 	abstract public function addBusyCallback( callable $workCallback );
-
-	/**
-	 * Make a cache key for the given keyspace and components
-	 *
-	 * Long components might be converted to respective hashes due to size constraints.
-	 * In extreme cases, all of them might be combined into a single hash component.
-	 *
-	 * @internal This method should not be used outside of BagOStuff (since 1.36)
-	 *
-	 * @param string $keyspace Keyspace component
-	 * @param string[]|int[] $components Key components (key collection name first)
-	 * @return string Keyspace-prepended list of encoded components as a colon-separated value
-	 * @since 1.27
-	 */
-	abstract public function makeKeyInternal( $keyspace, $components );
 
 	/**
 	 * Make a cache key for the default keyspace and given components
@@ -652,30 +615,28 @@ abstract class BagOStuff implements
 	/**
 	 * Stage a set of new key values for storage and estimate the amount of bytes needed
 	 *
-	 * All previously prepared values will be cleared. Each of the new prepared values will be
-	 * individually cleared as they get used by write operations for that key. This is done to
-	 * avoid unchecked growth in PHP memory usage.
-	 *
-	 * Example usage:
-	 * @code
-	 *     $valueByKey = [ $key1 => $value1, $key2 => $value2, $key3 => $value3 ];
-	 *     $cache->setNewPreparedValues( $valueByKey );
-	 *     $cache->set( $key1, $value1, $cache::TTL_HOUR );
-	 *     $cache->setMulti( [ $key2 => $value2, $key3 => $value3 ], $cache::TTL_HOUR );
-	 * @endcode
-	 *
-	 * This is only useful if the caller needs an estimate of the serialized object sizes,
-	 * such as cache wrappers with adaptive write slam avoidance or store wrappers with metrics.
-	 * The caller cannot know the serialization format and even if it did, it could be expensive
-	 * to serialize complex values twice just to get the size information before writing them to
-	 * cache. This method solves both problems by making the cache instance do the serialization
-	 * and having it reuse the result when the cache write happens.
-	 *
 	 * @param array $valueByKey Map of (cache key => PHP variable value to serialize)
 	 * @return int[]|null[] Corresponding list of size estimates (null for invalid values)
 	 * @since 1.35
+	 * @deprecated Since 1.40
 	 */
-	abstract public function setNewPreparedValues( array $valueByKey );
+	public function setNewPreparedValues( array $valueByKey ) {
+		$sizes = [];
+		foreach ( $valueByKey as $value ) {
+			// Roughly estimate the size of the value once serialized. This does not account
+			// for the use of non-PHP serialization (e.g. igbinary/msgpack/json), compression
+			// (e.g. gzip/lzma), nor protocol/storage metadata.
+			if ( is_string( $value ) ) {
+				// E.g. "<type><delim1><quote><value><quote><delim2>"
+				$size = strlen( $value ) + 5;
+			} else {
+				$size = strlen( serialize( $value ) );
+			}
+			$sizes[] = $size;
+		}
+
+		return $sizes;
+	}
 
 	/**
 	 * Register info about a caching layer class that uses BagOStuff as a backing store
@@ -835,7 +796,7 @@ abstract class BagOStuff implements
 			// and thus has the format of "<scope>:<collection>[:<constant or variable>]..."
 			$components = explode( ':', $key, 3 );
 			// Handle legacy callers that fail to use the key building methods
-			$collection = $components[1] ?? $components[0];
+			$collection = $components[1] ?? 'UNKNOWN';
 			$statsGroup = 'objectcache';
 		}
 

@@ -66,6 +66,7 @@ class AutoLoader {
 		'MediaWiki\\Mail\\' => __DIR__ . '/mail/',
 		'MediaWiki\\Page\\' => __DIR__ . '/page/',
 		'MediaWiki\\Parser\\' => __DIR__ . '/parser/',
+		'MediaWiki\\PoolCounter\\' => __DIR__ . '/poolcounter/',
 		'MediaWiki\\Preferences\\' => __DIR__ . '/preferences/',
 		'MediaWiki\\Search\\' => __DIR__ . '/search/',
 		'MediaWiki\\Search\\SearchWidgets\\' => __DIR__ . '/search/searchwidgets/',
@@ -74,6 +75,7 @@ class AutoLoader {
 		'MediaWiki\\Site\\' => __DIR__ . '/site/',
 		'MediaWiki\\Sparql\\' => __DIR__ . '/sparql/',
 		'MediaWiki\\SpecialPage\\' => __DIR__ . '/specialpage/',
+		'MediaWiki\\Specials\\Contribute\\' => __DIR__ . '/specials/Contribute',
 		'MediaWiki\\Tidy\\' => __DIR__ . '/tidy/',
 		'MediaWiki\\User\\' => __DIR__ . '/user/',
 		'MediaWiki\\Utils\\' => __DIR__ . '/utils/',
@@ -85,16 +87,9 @@ class AutoLoader {
 	];
 
 	/**
-	 * Cache for lower-case version of the content of $wgAutoloadLocalClasses.
-	 * @var array|null
-	 */
-	private static $autoloadLocalClassesLower = null;
-
-	/**
 	 * @var string[] Namespace (ends with \) => Path (ends with /)
-	 * @internal Will become private in 1.40.
 	 */
-	public static $psr4Namespaces = self::CORE_NAMESPACES;
+	private static $psr4Namespaces = self::CORE_NAMESPACES;
 
 	/**
 	 * @var string[] Class => File
@@ -165,7 +160,7 @@ class AutoLoader {
 	 * @return string|null The path containing the class, not null if not found
 	 */
 	public static function find( $className ): ?string {
-		global $wgAutoloadLocalClasses, $wgAutoloadClasses, $wgAutoloadAttemptLowercase;
+		global $wgAutoloadLocalClasses, $wgAutoloadClasses;
 
 		// NOTE: $wgAutoloadClasses is supported for compatibility with old-style extension
 		//       registration files.
@@ -174,25 +169,6 @@ class AutoLoader {
 			self::$classFiles[$className] ??
 			$wgAutoloadClasses[$className] ??
 			false;
-
-		if ( !$filename && $wgAutoloadAttemptLowercase ) {
-			// Try a different capitalisation.
-			//
-			// PHP 4 objects are always serialized with the classname coerced to lowercase,
-			// and we are plagued with several legacy uses created by MediaWiki < 1.5, see
-			// https://wikitech.wikimedia.org/wiki/Text_storage_data
-			if ( self::$autoloadLocalClassesLower === null ) {
-				self::$autoloadLocalClassesLower = array_change_key_case( $wgAutoloadLocalClasses, CASE_LOWER );
-			}
-			$lowerClass = strtolower( $className );
-			if ( isset( self::$autoloadLocalClassesLower[$lowerClass] ) ) {
-				if ( function_exists( 'wfDebugLog' ) ) {
-					wfDebugLog( 'autoloader', "Class {$className} was loaded using incorrect case" );
-				}
-				// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
-				$filename = self::$autoloadLocalClassesLower[$lowerClass];
-			}
-		}
 
 		if ( !$filename && strpos( $className, '\\' ) !== false ) {
 			// This class is namespaced, so look in the namespace map
@@ -243,14 +219,6 @@ class AutoLoader {
 		if ( $filename !== null ) {
 			require $filename;
 		}
-	}
-
-	/**
-	 * Method to clear the protected class property $autoloadLocalClassesLower.
-	 * Used in tests.
-	 */
-	public static function resetAutoloadLocalClassesLower() {
-		self::$autoloadLocalClassesLower = null;
 	}
 
 	///// Methods used during testing //////////////////////////////////////////////

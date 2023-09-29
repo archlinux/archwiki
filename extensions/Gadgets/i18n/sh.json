@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"BadDog",
 			"Conquistador",
 			"Kolega2357",
-			"Vlad5250",
-			"BadDog"
+			"Vlad5250"
 		]
 	},
 	"gadgets-desc": "Omogućava korisnicima u svojim [[Special:Preferences#mw-prefsection-gadgets|podešavanjima]] da odaberu svoje prilagođene [[Special:Gadgets|CSS i JavaScript spravice]]",
 	"prefs-gadgets": "Gadgeti",
+	"prefs-description-gadgets": "Omogućite dodatne mogućnosti za svoj račun.",
 	"gadgets": "Gadgeti",
 	"gadgetusage": "Statistika korištenja spravica",
 	"gadgetusage-gadget": "Gadget",

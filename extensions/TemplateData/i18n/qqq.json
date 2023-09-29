@@ -116,7 +116,7 @@
 	"templatedata-modal-table-param-required": "Label for a parameter property input: Required status of the parameter.\n{{Identical|Required}}",
 	"templatedata-modal-table-param-suggested": "Label for a parameter property input: Suggested status of the parameter.\n{{Identical|Suggested}}",
 	"templatedata-modal-table-param-suggestedvalues": "Label for a parameter property input: List of suggested values",
-	"templatedata-modal-table-param-suggestedvalues-placeholder": "Placeholder text for suggested values field.",
+	"templatedata-modal-placeholder-multiselect": "Placeholder text for suggested values field.",
 	"templatedata-modal-table-param-type": "Label for a parameter property input: Type of the parameter.\n{{Identical|Type}}",
 	"templatedata-modal-table-param-uneditablefield": "Placeholder text notifying the user the field is uneditable",
 	"templatedata-modal-title": "Title of the edit dialog.",

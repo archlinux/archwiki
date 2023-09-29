@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Language;
 
 use Wikimedia\Assert\Assert;
+use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\LangConv\ReplacementMachine;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -18,25 +19,25 @@ use Wikimedia\Parsoid\Utils\Utils;
 
 class ConversionTraverser extends DOMTraverser {
 
-	/** @var string */
+	/** @var Bcp47Code a language code */
 	private $toLang;
 
-	/** @var string */
+	/** @var Bcp47Code a language code */
 	private $fromLang;
 
 	/** @var LanguageGuesser */
 	private $guesser;
 
-	/** @var ReplacementMachine */
+	/** @var ReplacementMachine (uses MW-internal codes) */
 	private $machine;
 
 	/**
-	 * @param string $toLang target language for conversion
+	 * @param Bcp47Code $toLang target language for conversion
 	 * @param LanguageGuesser $guesser oracle to determine "original language" for round-tripping
 	 * @param ReplacementMachine $machine machine to do actual conversion
 	 */
 	public function __construct(
-		string $toLang, LanguageGuesser $guesser, ReplacementMachine $machine
+		Bcp47Code $toLang, LanguageGuesser $guesser, ReplacementMachine $machine
 	) {
 		parent::__construct();
 		$this->toLang = $toLang;
@@ -48,34 +49,34 @@ class ConversionTraverser extends DOMTraverser {
 		// XXX: <cite> ought to probably be handled more generically
 		// as extension output, not special-cased as a HTML tag.
 		foreach ( [ 'code', 'script', 'pre', 'cite' ] as $el ) {
-			$this->addHandler( $el, function ( ...$args ) {
-				return $this->noConvertHandler( ...$args );
+			$this->addHandler( $el, function ( Element $el, Env $env ) {
+				return $this->noConvertHandler( $el, $env );
 			} );
 		}
 		// Setting/saving the language context
-		$this->addHandler( null, function ( ...$args ) {
-			return $this->anyHandler( ...$args );
+		$this->addHandler( null, function ( Node $node, Env $env ) {
+			return $this->anyHandler( $node, $env );
 		} );
-		$this->addHandler( 'p', function ( ...$args ) {
-			return $this->langContextHandler( ...$args );
+		$this->addHandler( 'p', function ( Element $el, Env $env ) {
+			return $this->langContextHandler( $el, $env );
 		} );
-		$this->addHandler( 'body', function ( ...$args ) {
-			return $this->langContextHandler( ...$args );
+		$this->addHandler( 'body', function ( Element $el, Env $env ) {
+			return $this->langContextHandler( $el, $env );
 		} );
 		// Converting #text, <a> nodes, and title/alt attributes
-		$this->addHandler( '#text', function ( ...$args ) {
-			return $this->textHandler( ...$args );
+		$this->addHandler( '#text', function ( Node $node, Env $env ) {
+			return $this->textHandler( $node, $env );
 		} );
-		$this->addHandler( 'a', function ( ...$args ) {
-			return $this->aHandler( ...$args );
+		$this->addHandler( 'a', function ( Element $el, Env $env ) {
+			return $this->aHandler( $el, $env );
 		} );
-		$this->addHandler( null, function ( ...$args ) {
-			return $this->attrHandler( ...$args );
+		$this->addHandler( null, function ( Node $node, Env $env ) {
+			return $this->attrHandler( $node, $env );
 		} );
 		// LanguageConverter markup
 		foreach ( [ 'meta', 'div', 'span' ] as $el ) {
-			$this->addHandler( $el, function ( ...$args ) {
-				return $this->lcHandler( ...$args );
+			$this->addHandler( $el, function ( Element $el, Env $env ) {
+				return $this->lcHandler( $el, $env );
 			} );
 		}
 	}
@@ -114,7 +115,9 @@ class ConversionTraverser extends DOMTraverser {
 	 */
 	private function langContextHandler( Element $el, Env $env ) {
 		$this->fromLang = $this->guesser->guessLang( $el );
-		$el->setAttribute( 'data-mw-variant-lang', $this->fromLang );
+		// T320662: use internal MW language names for now :(
+		$fromLangMw = Utils::bcp47ToMwCode( $this->fromLang );
+		$el->setAttribute( 'data-mw-variant-lang', $fromLangMw );
 		return true; // Continue with other handlers
 	}
 
@@ -125,8 +128,10 @@ class ConversionTraverser extends DOMTraverser {
 	 */
 	private function textHandler( Node $node, Env $env ) {
 		Assert::invariant( $this->fromLang !== null, 'Text w/o a context' );
+		$toLangMw = Utils::bcp47ToMwCode( $this->toLang );
+		$fromLangMw = Utils::bcp47ToMwCode( $this->fromLang );
 		// @phan-suppress-next-line PhanTypeMismatchArgument,PhanTypeMismatchReturn both declared as DOMNode
-		return $this->machine->replace( $node, $this->toLang, $this->fromLang );
+		return $this->machine->replace( $node, $toLangMw, $fromLangMw );
 	}
 
 	/**
@@ -140,7 +145,9 @@ class ConversionTraverser extends DOMTraverser {
 			$href = preg_replace( '#^(\.\.?/)+#', '', $el->getAttribute( 'href' ) ?? '', 1 );
 			$fromPage = Utils::decodeURI( $href );
 			$toPageFrag = $this->machine->convert(
-				$el->ownerDocument, $fromPage, $this->toLang, $this->fromLang
+				$el->ownerDocument, $fromPage,
+				Utils::bcp47ToMwCode( $this->toLang ),
+				Utils::bcp47ToMwCode( $this->fromLang )
 			);
 			'@phan-var DocumentFragment $toPageFrag'; // @var DocumentFragment $toPageFrag
 			$toPage = $this->docFragToString( $toPageFrag );
@@ -205,7 +212,9 @@ class ConversionTraverser extends DOMTraverser {
 				continue; /* Don't convert URLs */
 			}
 			$toFrag = $this->machine->convert(
-				$node->ownerDocument, $orig, $this->toLang, $this->fromLang
+				$node->ownerDocument, $orig,
+				Utils::bcp47ToMwCode( $this->toLang ),
+				Utils::bcp47ToMwCode( $this->fromLang )
 			);
 			'@phan-var DocumentFragment $toFrag'; // @var DocumentFragment $toFrag
 			$to = $this->docFragToString( $toFrag );

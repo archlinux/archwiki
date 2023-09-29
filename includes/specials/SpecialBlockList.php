@@ -27,6 +27,8 @@ use MediaWiki\Block\BlockUtils;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
+use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Html\Html;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -185,7 +187,7 @@ class SpecialBlockList extends SpecialPage {
 		}
 
 		if ( $this->target !== '' ) {
-			list( $target, $type ) = $this->blockUtils->parseBlockTarget( $this->target );
+			[ $target, $type ] = $this->blockUtils->parseBlockTarget( $this->target );
 
 			switch ( $type ) {
 				case DatabaseBlock::TYPE_ID:
@@ -195,7 +197,7 @@ class SpecialBlockList extends SpecialPage {
 
 				case DatabaseBlock::TYPE_IP:
 				case DatabaseBlock::TYPE_RANGE:
-					list( $start, $end ) = IPUtils::parseRange( $target );
+					[ $start, $end ] = IPUtils::parseRange( $target );
 					$conds[] = $db->makeList(
 						[
 							'ipb_address' => $target,

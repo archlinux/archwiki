@@ -14,7 +14,7 @@ QUnit.test( 'isolateAndUnwrap (MWheading)', ( assert ) => {
 		data.splice( 11, 0, { type: '/list' } );
 		data.splice( 12, 1 );
 		data.splice( 20, 1, { type: 'list', attributes: { style: 'bullet' } } );
-	}, 'isolating paragraph in list item "Item 2" for MWheading' );
+	}, ve.dm.mwExample.baseUri, 'isolating paragraph in list item "Item 2" for MWheading' );
 
 	ve.test.utils.runIsolateTest( assert, 'mwHeading', new ve.Range( 202, 212 ), ( data ) => {
 		data.splice( 201, 1,
@@ -25,7 +25,7 @@ QUnit.test( 'isolateAndUnwrap (MWheading)', ( assert ) => {
 			{ type: 'listItem' },
 			{ type: 'list', attributes: { style: 'number' } }
 		);
-	}, 'isolating paragraph in list item "Nested 2" for MWheading' );
+	}, ve.dm.mwExample.baseUri, 'isolating paragraph in list item "Nested 2" for MWheading' );
 } );
 
 QUnit.test( 'insertContent (MWheading)', ( assert ) => {

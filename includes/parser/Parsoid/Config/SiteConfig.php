@@ -24,10 +24,9 @@ namespace MediaWiki\Parser\Parsoid\Config;
 use Config;
 use ExtensionRegistry;
 use Language;
+use LanguageCode;
 use LanguageConverter;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
-use MagicWordArray;
-use MagicWordFactory;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Languages\LanguageConverterFactory;
@@ -35,9 +34,13 @@ use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\MagicWordArray;
+use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Utils\UrlUtils;
+use MediaWiki\WikiMap\WikiMap;
 use MutableConfig;
 use MWException;
 use NamespaceInfo;
@@ -45,9 +48,8 @@ use Parser;
 use ParserOutput;
 use PrefixingStatsdDataFactoryProxy;
 use Psr\Log\LoggerInterface;
-use Title;
 use UnexpectedValueException;
-use WikiMap;
+use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Parsoid\Config\SiteConfig as ISiteConfig;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
@@ -60,6 +62,7 @@ use Wikimedia\Parsoid\Utils\Utils;
  * This includes both global configuration and wiki-level configuration.
  *
  * @since 1.39
+ * @internal
  */
 class SiteConfig extends ISiteConfig {
 
@@ -77,6 +80,7 @@ class SiteConfig extends ISiteConfig {
 		MainConfigNames::ArticlePath,
 		MainConfigNames::InterwikiMagic,
 		MainConfigNames::ExtraInterlanguageLinkPrefixes,
+		MainConfigNames::InterlanguageLinkCodeMap,
 		MainConfigNames::LocalInterwikis,
 		MainConfigNames::LanguageCode,
 		MainConfigNames::NamespaceAliases,
@@ -97,7 +101,7 @@ class SiteConfig extends ISiteConfig {
 	private $config;
 
 	/** @var Config */
-	private $optionalConfig;
+	private $mwConfig;
 
 	/** @var array Parsoid-specific options array from $config */
 	private $parsoidSettings;
@@ -172,7 +176,7 @@ class SiteConfig extends ISiteConfig {
 	 * @param LanguageNameUtils $languageNameUtils
 	 * @param UrlUtils $urlUtils
 	 * @param Parser $parser
-	 * @param Config $optionalConfig
+	 * @param Config $mwConfig
 	 */
 	public function __construct(
 		ServiceOptions $config,
@@ -189,16 +193,15 @@ class SiteConfig extends ISiteConfig {
 		LanguageConverterFactory $languageConverterFactory,
 		LanguageNameUtils $languageNameUtils,
 		UrlUtils $urlUtils,
-		// These arguments are temporary and will be removed once
-		// better solutions are found.
+		// $parser is temporary and may be removed once a better solution is found.
 		Parser $parser, // T268776
-		Config $optionalConfig // T268777
+		Config $mwConfig
 	) {
 		parent::__construct();
 
 		$config->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->config = $config;
-		$this->optionalConfig = $optionalConfig;
+		$this->mwConfig = $mwConfig;
 		$this->parsoidSettings = $parsoidSettings;
 
 		$this->objectFactory = $objectFactory;
@@ -436,6 +439,7 @@ class SiteConfig extends ISiteConfig {
 		$getPrefixes = $this->interwikiLookup->getAllPrefixes();
 		$langNames = $this->languageNameUtils->getLanguageNames();
 		$extraLangPrefixes = $this->config->get( MainConfigNames::ExtraInterlanguageLinkPrefixes );
+		$extraLangCodeMap = $this->config->get( MainConfigNames::InterlanguageLinkCodeMap );
 		$localInterwikis = $this->config->get( MainConfigNames::LocalInterwikis );
 
 		foreach ( $getPrefixes as $row ) {
@@ -463,23 +467,21 @@ class SiteConfig extends ISiteConfig {
 			}
 			if ( isset( $langNames[$prefix] ) ) {
 				$val['language'] = true;
+				$standard = LanguageCode::replaceDeprecatedCodes( $prefix );
+				if ( $standard !== $prefix ) {
+					# Note that even if this code is deprecated, it should
+					# only be remapped if extralanglink (set below) is false.
+					$val['deprecated'] = $standard;
+				}
+				$val['bcp47'] = LanguageCode::bcp47( $standard );
 			}
 			if ( in_array( $prefix, $localInterwikis, true ) ) {
 				$val['localinterwiki'] = true;
 			}
 			if ( in_array( $prefix, $extraLangPrefixes, true ) ) {
 				$val['extralanglink'] = true;
-
-				/**
-				 * ApiQuerySiteinfo adds a 'linktext' field, but Parsoid
-				 * doesn't use this -- and because it uses wfMessage()
-				 * it implicitly uses a MessageCache which would have to
-				 * be injected here.
-				 */
-				// $linktext = wfMessage( "interlanguage-link-$prefix" );
-				// if ( !$linktext->isDisabled() ) {
-				// 	$val['linktext'] = $linktext->text();
-				// }
+				$val['code'] = $extraLangCodeMap[$prefix] ?? $prefix;
+				$val['bcp47'] = LanguageCode::bcp47( $val['code'] );
 			}
 
 			$this->interwikiMap[$prefix] = $val;
@@ -507,8 +509,8 @@ class SiteConfig extends ISiteConfig {
 		return $this->contLang->linkTrail();
 	}
 
-	public function lang(): string {
-		return $this->config->get( MainConfigNames::LanguageCode );
+	public function langBcp47(): Bcp47Code {
+		return $this->contLang;
 	}
 
 	public function mainpage(): string {
@@ -516,30 +518,32 @@ class SiteConfig extends ISiteConfig {
 		return Title::newMainPage()->getPrefixedText();
 	}
 
-	public function responsiveReferences(): array {
-		// @todo This is from the Cite extension, which shouldn't be known about by core
-		// T268777
-		return [
-			'enabled' => $this->optionalConfig->has( 'CiteResponsiveReferences' ) ?
-				$this->optionalConfig->get( 'CiteResponsiveReferences' ) : false,
-			'threshold' => 10,
-		];
+	/**
+	 * Lookup config
+	 * @param string $key
+	 * @return mixed config value for $key, if present or null, if not.
+	 */
+	public function getMWConfigValue( string $key ) {
+		return $this->mwConfig->has( $key ) ? $this->mwConfig->get( $key ) : null;
 	}
 
 	public function rtl(): bool {
 		return $this->contLang->isRTL();
 	}
 
-	/** @inheritDoc */
-	public function langConverterEnabled( string $lang ): bool {
+	/**
+	 * @param Bcp47Code $lang
+	 * @return bool
+	 */
+	public function langConverterEnabledBcp47( Bcp47Code $lang ): bool {
 		if ( $this->languageConverterFactory->isConversionDisabled() ) {
-			return false;
-		}
-		if ( !in_array( $lang, LanguageConverter::$languagesWithVariants, true ) ) {
 			return false;
 		}
 		try {
 			$langObject = $this->languageFactory->getLanguage( $lang );
+			if ( !in_array( $langObject->getCode(), LanguageConverter::$languagesWithVariants, true ) ) {
+				return false;
+			}
 			$converter = $this->languageConverterFactory->getLanguageConverter( $langObject );
 			return $converter->hasVariants();
 		} catch ( MWException $ex ) {
@@ -560,12 +564,18 @@ class SiteConfig extends ISiteConfig {
 		return $this->config->get( MainConfigNames::Server );
 	}
 
-	/** @inheritDoc */
-	public function exportMetadataToHead(
+	/**
+	 * @inheritDoc
+	 * @param Document $document
+	 * @param ContentMetadataCollector $metadata
+	 * @param string $defaultTitle
+	 * @param Bcp47Code $lang
+	 */
+	public function exportMetadataToHeadBcp47(
 		Document $document,
 		ContentMetadataCollector $metadata,
 		string $defaultTitle,
-		string $lang
+		Bcp47Code $lang
 	): void {
 		'@phan-var ParserOutput $metadata'; // @var ParserOutput $metadata
 		// Look for a displaytitle.
@@ -587,6 +597,14 @@ class SiteConfig extends ISiteConfig {
 		return $this->config->get( MainConfigNames::LocalTZoffset );
 	}
 
+	/**
+	 * Language variant information
+	 * @return array<string,array> Keys are MediaWiki-internal variant codes (e.g. "zh-cn"),
+	 * values are arrays with two fields:
+	 *   - base: (string) Base language code (e.g. "zh") (MediaWiki-internal)
+	 *   - fallbacks: (string[]) Fallback variants (MediaWiki-internal codes)
+	 * @deprecated Use ::variantsFor() (T320662)
+	 */
 	public function variants(): array {
 		if ( $this->variants !== null ) {
 			return $this->variants;
@@ -619,6 +637,31 @@ class SiteConfig extends ISiteConfig {
 			}
 		}
 		return $this->variants;
+	}
+
+	/**
+	 * Language variant information for the given language (or null if
+	 * unknown).
+	 * @param Bcp47Code $code The language for which you want variant information
+	 * @return ?array{base:Bcp47Code,fallbacks:Bcp47Code[]} an array with
+	 * two fields:
+	 *   - base: (Bcp47Code) Base BCP-47 language code (e.g. "zh")
+	 *   - fallbacks: (Bcp47Code[]) Fallback variants, as BCP-47 codes
+	 */
+	public function variantsFor( Bcp47Code $code ): ?array {
+		$variants = $this->variants();
+		$lang = $this->languageFactory->getLanguage( $code );
+		$tuple = $variants[$lang->getCode()] ?? null;
+		if ( $tuple === null ) {
+			return null;
+		}
+		return [
+			'base' => $this->languageFactory->getLanguage( $tuple['base'] ),
+			'fallbacks' => array_map(
+				[ $this->languageFactory, 'getLanguage' ],
+				$tuple['fallbacks']
+			),
+		];
 	}
 
 	public function widthOption(): int {

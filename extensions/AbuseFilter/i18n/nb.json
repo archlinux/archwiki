@@ -24,7 +24,8 @@
 			"PeterFisk",
 			"Stigmj",
 			"VukAnd12",
-			"Vukky"
+			"Vukky",
+			"EdoAug"
 		]
 	},
 	"abusefilter-desc": "Legger til automatisk heuristikk til redigeringer.",
@@ -492,7 +493,7 @@
 	"abusefilter-exception-variablevariable": "set og set_var forventer at forventer at det første argumentet er en streng, funnet ved tegn $1.",
 	"abusefilter-exception-unknownfunction": "$2 er ikke en gyldig funksjon ved tegn $1.",
 	"abusefilter-exception-unusedvars": "Følgende variabler er ubrukte: $2.",
-	"abusefilter-parser-warning-match-empty-regex": "Dette regulære uttrykker matcher en tom streng ved tegn $1",
+	"abusefilter-parser-warning-match-empty-regex": "Dette regulære uttrykket matcher en tom streng ved tegn $1",
 	"abusefilter-action-tag": "Tagg",
 	"abusefilter-action-throttle": "Begrensning av endringshastighet",
 	"abusefilter-action-warn": "Advar",

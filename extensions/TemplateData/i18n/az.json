@@ -9,6 +9,7 @@
 			"Wertuose"
 		]
 	},
+	"templatedata-desc": "Şablon parametrləri üçün məlumat saxlanmasını həyata keçirir (JSON istifadə edərək)",
 	"templatedata-doc-desc-empty": "İzahı yoxdur.",
 	"templatedata-doc-format-block": "Bu şablon parametrlərin blok formatına üstünlük verir.",
 	"templatedata-doc-format-custom": "Bu şablonun fərdi formatı var.",
@@ -41,7 +42,7 @@
 	"templatedata-doc-param-type-wiki-template-name": "Şablon",
 	"templatedata-doc-param-type-wiki-user-name": "İstifadəçi",
 	"templatedata-doc-params": "Şablon parametrləri",
-	"templatedata-editbutton": "TemplateData meneceri",
+	"templatedata-editbutton": "Şablon məlumatlarını redaktə edin",
 	"templatedata-errormsg-jsonbadformat": "Pis JSON formatı. Əgər bu əməliyyat düzgün aparılıbsa, siz bildirişi ləğv edərək <templatedata> teqlərini silib və yenidən yükləyə bilərsiniz və yaxud davam edərək cari TemplateData-nı yenisi ilə əvəzləyə bilərsiniz.",
 	"templatedata-exists-on-related-page": "Xahiş edirik, nəzərə alın: TemplateData bloku artıq \"[[$1]]\" səhifəsinə əlavə edilib.",
 	"templatedata-helplink": "TemplateData haqqında məlumat",

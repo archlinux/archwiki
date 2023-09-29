@@ -1,10 +1,6 @@
 <?php
-
 /**
- * Keyword
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_Keyword extends Less_Tree {
 
@@ -16,10 +12,6 @@ class Less_Tree_Keyword extends Less_Tree {
 	 */
 	public function __construct( $value ) {
 		$this->value = $value;
-	}
-
-	public function compile() {
-		return $this;
 	}
 
 	/**

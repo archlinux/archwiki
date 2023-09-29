@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
+			"Eric Mukiza",
 			"Ndahiro derrick",
 			"Nemo bis",
 			"RebecaRwanda",
 			"Rodrigue",
+			"TheJackNation",
 			"Vogone",
-			"Eric Mukiza",
-			"TheJackNation"
+			"Musindi250"
 		]
 	},
 	"tog-underline": "Ihuza umurongo:",
@@ -133,7 +134,7 @@
 	"privacypage": "Project:Ibigenga uburenganzira",
 	"ok": "Yego",
 	"retrievedfrom": "Garura kuri \"$1\"",
-	"editsection": "eindura",
+	"editsection": "hindura",
 	"editold": "hindura",
 	"editlink": "hindura",
 	"viewsourcelink": "reba inkomoko",

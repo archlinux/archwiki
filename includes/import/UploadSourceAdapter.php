@@ -57,6 +57,29 @@ class UploadSourceAdapter {
 	}
 
 	/**
+	 * @param string $id
+	 * @return bool
+	 */
+	public static function isSeekableSource( string $id ) {
+		if ( !isset( self::$sourceRegistrations[$id] ) ) {
+			return false;
+		}
+		return self::$sourceRegistrations[$id]->isSeekable();
+	}
+
+	/**
+	 * @param string $id
+	 * @param int $offset
+	 * @return int|false
+	 */
+	public static function seekSource( string $id, int $offset ) {
+		if ( !isset( self::$sourceRegistrations[$id] ) ) {
+			return false;
+		}
+		return self::$sourceRegistrations[$id]->seek( $offset );
+	}
+
+	/**
 	 * @param string $path
 	 * @param string $mode
 	 * @param int $options

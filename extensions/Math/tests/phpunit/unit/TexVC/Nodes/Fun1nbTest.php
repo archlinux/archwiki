@@ -32,8 +32,14 @@ class Fun1nbTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testBasicFunctionFun1nb() {
-		$fq = new Fun1nb( '\\f', new Literal( 'a' ) );
-		$this->assertEquals( '\\f {a} ', $fq->render(), 'Should create a basic function' );
+		$fun1nb = new Fun1nb( '\\f', new Literal( 'a' ) );
+		$this->assertEquals( '\\f {a} ', $fun1nb->render(), 'Should create a basic function' );
+	}
+
+	public function testGetters() {
+		$fun1nb = new Fun1nb( '\\f', new Literal( 'a' ) );
+		$this->assertNotEmpty( $fun1nb->getFname() );
+		$this->assertNotEmpty( $fun1nb->getArg() );
 	}
 
 	public function testCurliesFun1nb() {

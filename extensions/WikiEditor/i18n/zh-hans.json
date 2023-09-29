@@ -24,7 +24,9 @@
 			"Xiaomingyan",
 			"Zhang8569",
 			"列维劳德",
-			"铁桶"
+			"铁桶",
+			"Anarkiisto",
+			"LittlePaw365"
 		]
 	},
 	"wikieditor": "高级wikitext编辑界面",
@@ -33,7 +35,7 @@
 	"wikieditor-toolbar": "编辑工具栏",
 	"wikieditor-toolbar-desc": "有增强的使用性能的页面编辑工具栏",
 	"wikieditor-toolbar-preference": "启用编辑工具栏",
-	"wikieditor-toolbar-preference-help": "该功能有时被称为“2010年版wikitext编辑器”。",
+	"wikieditor-toolbar-preference-help": "此功能有时称作“2010版wikitext编辑器”。",
 	"wikieditor-toolbar-tool-bold": "粗体",
 	"wikieditor-toolbar-tool-bold-example": "粗体文本",
 	"wikieditor-toolbar-tool-italic": "斜体",
@@ -41,7 +43,7 @@
 	"wikieditor-toolbar-tool-ilink": "内部链接",
 	"wikieditor-toolbar-tool-ilink-example": "链接标题",
 	"wikieditor-toolbar-tool-xlink": "外部链接（注意加前缀http://）",
-	"wikieditor-toolbar-tool-xlink-example": "http://www.范例.com（在这里输入网址） 链接文本",
+	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com 链接标题",
 	"wikieditor-toolbar-tool-link": "链接",
 	"wikieditor-toolbar-tool-link-title": "插入链接",
 	"wikieditor-toolbar-tool-link-int": "链往wiki页面",

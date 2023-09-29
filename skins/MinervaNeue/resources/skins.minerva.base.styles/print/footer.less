@@ -8,48 +8,40 @@
 }
 
 // stylelint-disable selector-max-id
-#mw-mf-page-center > footer {
+.minerva-footer {
 	border-top: solid 4px #000;
+	// Un-hide the last-modified info and license text
+	display: block;
 	padding-top: 23px;
 	background: #fff !important;
 
-	.mw-ui-icon:before {
-		display: none !important;
-	}
+	.footer-content {
+		display: block !important;
 
-	.last-modified-bar {
-		background: none !important;
-		border: 0 !important;
-	}
-
-	.last-modifier-tagline {
-		font-size: 36px;
-		padding-top: 0 !important;
-		padding-bottom: 16px !important;
-	}
-
-	.last-modified-bar,
-	.last-modified-bar a {
-		font-weight: bold !important;
-		color: #000 !important;
-	}
-
-	.post-content {
-		margin-top: 15px !important;
-		display: block;
-
-		// ... and add these instead.
-		.hlist,
-		h2 {
-			display: none;
-		}
-
-		.license a,
-		.license {
+		#footer-info,
+		#footer-info-lastmod,
+		#footer-info-copyright {
+			display: block !important;
 			font-size: 30px;
 			color: @colorPrintSubtle;
 			font-weight: normal;
 		}
+
+		.minerva-footer-logo {
+			margin: 0 !important;
+			border: 0 !important;
+			padding: 0 !important;
+		}
+
+		// Hide everything else once again
+		#mw-data-after-content,
+		#footer-places {
+			display: none;
+		}
+	}
+
+	.last-modified-bar {
+		display: none;
 	}
 }
 // stylelint-enable selector-max-id

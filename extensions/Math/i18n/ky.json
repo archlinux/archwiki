@@ -1,6 +1,9 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Bosogo"
+		]
 	},
+	"math-visualeditor-mwlatexinspector-display-block": "Бөгөт",
 	"math_unknown_error": "белгисиз ката"
 }

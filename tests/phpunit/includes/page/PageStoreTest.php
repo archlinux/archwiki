@@ -11,9 +11,9 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\PageStore;
+use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use MockTitleTrait;
-use Title;
 use TitleValue;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\Rdbms\IDatabase;
@@ -764,7 +764,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 		$this->getExistingTestPage( $title->getSubpage( 'B' ) );
 
 		$pageStore = $this->getPageStore();
-		$this->assertEmpty( $pageStore->getSubpages( $title, 100 ) );
+		$this->assertCount( 0, $pageStore->getSubpages( $title, 100 ) );
 	}
 
 	/**

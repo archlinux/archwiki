@@ -10,6 +10,7 @@
 			"Minh Nguyen",
 			"Nghiemtrongdai VN",
 			"NguoiDungKhongDinhDanh",
+			"Nguyenphutrong2",
 			"Nguyễn Mạnh An",
 			"Phjtieudoc",
 			"Thingofme",
@@ -17,7 +18,8 @@
 			"Vinhtantran",
 			"Withoutaname",
 			"Đỗ Thảo",
-			"Nguyenphutrong2"
+			"Flyplanevn27",
+			"Tryvix1509"
 		]
 	},
 	"abusefilter-desc": "Áp dụng heuristic tự động vào các sửa đổi",
@@ -325,6 +327,7 @@
 	"abusefilter-edit-builder-op-bool-not": "Phủ định (!)",
 	"abusefilter-edit-builder-op-bool-and": "Và (&)",
 	"abusefilter-edit-builder-op-bool-or": "Hoặc (|)",
+	"abusefilter-edit-builder-op-bool-xor": "XOR (^)",
 	"abusefilter-edit-builder-group-misc": "Khác",
 	"abusefilter-edit-builder-misc-in": "Có trong chuỗi (in)",
 	"abusefilter-edit-builder-misc-like": "Trùng với mẫu (like)",

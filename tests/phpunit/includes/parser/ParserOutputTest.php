@@ -3,6 +3,10 @@
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Tests\Parser\ParserCacheSerializationTestCases;
+use MediaWiki\Title\Title;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
+use Wikimedia\Parsoid\Core\SectionMetadata;
+use Wikimedia\Parsoid\Core\TOCData;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Tests\SerializationTestTrait;
 
@@ -23,6 +27,9 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 			MainConfigNames::ParserCacheExpireTime,
 			ParserCacheSerializationTestCases::FAKE_CACHE_EXPIRY
 		);
+		// Serialization tests still use these methods.
+		$this->hideDeprecated( 'ParserOutput::setTOCHTML' );
+		$this->hideDeprecated( 'ParserOutput::getTOCHTML' );
 	}
 
 	/**
@@ -186,6 +193,28 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	}
 
 	/**
+	 * @covers ParserOutput::setLanguage
+	 * @covers ParserOutput::getLanguage
+	 */
+	public function testLanguage() {
+		$po = new ParserOutput();
+
+		$langFr = new Bcp47CodeValue( 'fr' );
+		$langCrhCyrl = new Bcp47CodeValue( 'crh-cyrl' );
+
+		// Fallback to null
+		$this->assertSame( null, $po->getLanguage() );
+
+		// Simple case
+		$po->setLanguage( $langFr );
+		$this->assertSame( $langFr->toBcp47Code(), $po->getLanguage()->toBcp47Code() );
+
+		// Language with a variant
+		$po->setLanguage( $langCrhCyrl );
+		$this->assertSame( $langCrhCyrl->toBcp47Code(), $po->getLanguage()->toBcp47Code() );
+	}
+
+	/**
 	 * @covers ParserOutput::getWrapperDivClass
 	 * @covers ParserOutput::addWrapperDivClass
 	 * @covers ParserOutput::clearWrapperDivClass
@@ -241,8 +270,6 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 	/**
 	 * @covers ParserOutput::getText
 	 * @dataProvider provideGetText
-	 * @dataProvider provideGetTextBackCompat
-	 * @dataProvider provideGetTextForwardCompat
 	 * @param array $options Options to getText()
 	 * @param string $text Parser text
 	 * @param string $expect Expected output
@@ -255,247 +282,53 @@ class ParserOutputTest extends MediaWikiLangTestCase {
 		] );
 
 		$po = new ParserOutput( $text );
-		$po->setTOCHTML( self::provideGetTextToC() );
+		self::initSections( $po );
 		$actual = $po->getText( $options );
 		$this->assertSame( $expect, $actual );
 	}
 
-	public static function provideGetTextToC() {
-		$toc = <<<EOF
-<div id="toc" class="toc"><div class="toctitle"><h2>Contents</h2></div>
-<ul>
-<li class="toclevel-1 tocsection-1"><a href="#Section_1"><span class="tocnumber">1</span> <span class="toctext">Section 1</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#Section_2"><span class="tocnumber">2</span> <span class="toctext">Section 2</span></a>
-<ul>
-<li class="toclevel-2 tocsection-3"><a href="#Section_2.1"><span class="tocnumber">2.1</span> <span class="toctext">Section 2.1</span></a></li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-4"><a href="#Section_3"><span class="tocnumber">3</span> <span class="toctext">Section 3</span></a></li>
-</ul>
-</div>
-
-EOF;
-		return $toc;
+	private static function initSections( ParserOutput $po ): void {
+		$po->setTOCData( new TOCData(
+			SectionMetadata::fromLegacy( [
+				'index' => "1",
+				'level' => 1,
+				'toclevel' => 1,
+				'number' => "1",
+				'line' => "Section 1",
+				'anchor' => "Section_1"
+			] ),
+			SectionMetadata::fromLegacy( [
+				'index' => "2",
+				'level' => 1,
+				'toclevel' => 1,
+				'number' => "2",
+				'line' => "Section 2",
+				'anchor' => "Section_2"
+			] ),
+			SectionMetadata::fromLegacy( [
+				'index' => "3",
+				'level' => 2,
+				'toclevel' => 2,
+				'number' => "2.1",
+				'line' => "Section 2.1",
+				'anchor' => "Section_2.1"
+			] ),
+			SectionMetadata::fromLegacy( [
+				'index' => "4",
+				'level' => 1,
+				'toclevel' => 1,
+				'number' => "3",
+				'line' => "Section 3",
+				'anchor' => "Section_3"
+			] ),
+		) );
 	}
 
-	// REMOVE THIS ONCE Parser::TOC_START IS REMOVED
-	public static function provideGetTextBackCompat() {
-		$toc = self::provideGetTextToc();
-		$text = <<<EOF
-<p>Test document.
-</p>
-<mw:toc>$toc</mw:toc>
-<h2><span class="mw-headline" id="Section_1">Section 1</span><mw:editsection page="Test Page" section="1">Section 1</mw:editsection></h2>
-<p>One
-</p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span><mw:editsection page="Test Page" section="2">Section 2</mw:editsection></h2>
-<p>Two
-</p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span><mw:editsection page="Talk:User:Bug_T261347" section="3">Section 2.1</mw:editsection></h3>
-<p>Two point one
-</p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span><mw:editsection page="Test Page" section="4">Section 3</mw:editsection></h2>
-<p>Three
-</p>
-EOF;
-
-		return [
-			'No options (mw:toc)' => [
-				[], $text, <<<EOF
-<p>Test document.
-</p>
-<div id="toc" class="toc"><div class="toctitle"><h2>Contents</h2></div>
-<ul>
-<li class="toclevel-1 tocsection-1"><a href="#Section_1"><span class="tocnumber">1</span> <span class="toctext">Section 1</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#Section_2"><span class="tocnumber">2</span> <span class="toctext">Section 2</span></a>
-<ul>
-<li class="toclevel-2 tocsection-3"><a href="#Section_2.1"><span class="tocnumber">2.1</span> <span class="toctext">Section 2.1</span></a></li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-4"><a href="#Section_3"><span class="tocnumber">3</span> <span class="toctext">Section 3</span></a></li>
-</ul>
-</div>
-
-<h2><span class="mw-headline" id="Section_1">Section 1</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=1" title="Edit section: Section 1">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>One
-</p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=2" title="Edit section: Section 2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>Two
-</p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span></h3>
-<p>Two point one
-</p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=4" title="Edit section: Section 3">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>Three
-</p>
-EOF
-			],
-			'Disable section edit links (mw:toc)' => [
-				[ 'enableSectionEditLinks' => false ], $text, <<<EOF
-<p>Test document.
-</p>
-<div id="toc" class="toc"><div class="toctitle"><h2>Contents</h2></div>
-<ul>
-<li class="toclevel-1 tocsection-1"><a href="#Section_1"><span class="tocnumber">1</span> <span class="toctext">Section 1</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#Section_2"><span class="tocnumber">2</span> <span class="toctext">Section 2</span></a>
-<ul>
-<li class="toclevel-2 tocsection-3"><a href="#Section_2.1"><span class="tocnumber">2.1</span> <span class="toctext">Section 2.1</span></a></li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-4"><a href="#Section_3"><span class="tocnumber">3</span> <span class="toctext">Section 3</span></a></li>
-</ul>
-</div>
-
-<h2><span class="mw-headline" id="Section_1">Section 1</span></h2>
-<p>One
-</p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span></h2>
-<p>Two
-</p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span></h3>
-<p>Two point one
-</p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span></h2>
-<p>Three
-</p>
-EOF
-			],
-			'Disable TOC, but wrap (mw:toc)' => [
-				[ 'allowTOC' => false, 'wrapperDivClass' => 'mw-parser-output' ], $text, <<<EOF
-<div class="mw-parser-output"><p>Test document.
-</p>
-
-<h2><span class="mw-headline" id="Section_1">Section 1</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=1" title="Edit section: Section 1">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>One
-</p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=2" title="Edit section: Section 2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>Two
-</p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span></h3>
-<p>Two point one
-</p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=4" title="Edit section: Section 3">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>Three
-</p></div>
-EOF
-			],
-		];
-		// phpcs:enable
-	}
-
-		// Remove this once we've transitioned the cache to the new
-		// TOC_PLACEHOLDER
-	public static function provideGetTextForwardCompat() {
-		// phpcs:disable Generic.Files.LineLength
-		$toc = self::provideGetTextToc();
+	public static function provideGetText() {
 		$text = <<<EOF
 <p>Test document.
 </p>
 <meta property="mw:PageProp/toc" />
-<h2><span class="mw-headline" id="Section_1">Section 1</span><mw:editsection page="Test Page" section="1">Section 1</mw:editsection></h2>
-<p>One
-</p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span><mw:editsection page="Test Page" section="2">Section 2</mw:editsection></h2>
-<p>Two
-</p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span><mw:editsection page="Talk:User:Bug_T261347" section="3">Section 2.1</mw:editsection></h3>
-<p>Two point one
-</p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span><mw:editsection page="Test Page" section="4">Section 3</mw:editsection></h2>
-<p>Three
-</p>
-EOF;
-
-		return [
-			'No options (meta tag)' => [
-				[], $text, <<<EOF
-<p>Test document.
-</p>
-<div id="toc" class="toc"><div class="toctitle"><h2>Contents</h2></div>
-<ul>
-<li class="toclevel-1 tocsection-1"><a href="#Section_1"><span class="tocnumber">1</span> <span class="toctext">Section 1</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#Section_2"><span class="tocnumber">2</span> <span class="toctext">Section 2</span></a>
-<ul>
-<li class="toclevel-2 tocsection-3"><a href="#Section_2.1"><span class="tocnumber">2.1</span> <span class="toctext">Section 2.1</span></a></li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-4"><a href="#Section_3"><span class="tocnumber">3</span> <span class="toctext">Section 3</span></a></li>
-</ul>
-</div>
-
-<h2><span class="mw-headline" id="Section_1">Section 1</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=1" title="Edit section: Section 1">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>One
-</p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=2" title="Edit section: Section 2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>Two
-</p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span></h3>
-<p>Two point one
-</p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=4" title="Edit section: Section 3">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>Three
-</p>
-EOF
-			],
-			'Disable section edit links (meta tag)' => [
-				[ 'enableSectionEditLinks' => false ], $text, <<<EOF
-<p>Test document.
-</p>
-<div id="toc" class="toc"><div class="toctitle"><h2>Contents</h2></div>
-<ul>
-<li class="toclevel-1 tocsection-1"><a href="#Section_1"><span class="tocnumber">1</span> <span class="toctext">Section 1</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#Section_2"><span class="tocnumber">2</span> <span class="toctext">Section 2</span></a>
-<ul>
-<li class="toclevel-2 tocsection-3"><a href="#Section_2.1"><span class="tocnumber">2.1</span> <span class="toctext">Section 2.1</span></a></li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-4"><a href="#Section_3"><span class="tocnumber">3</span> <span class="toctext">Section 3</span></a></li>
-</ul>
-</div>
-
-<h2><span class="mw-headline" id="Section_1">Section 1</span></h2>
-<p>One
-</p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span></h2>
-<p>Two
-</p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span></h3>
-<p>Two point one
-</p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span></h2>
-<p>Three
-</p>
-EOF
-			],
-			'Disable TOC, but wrap (meta tag)' => [
-				[ 'allowTOC' => false, 'wrapperDivClass' => 'mw-parser-output' ], $text, <<<EOF
-<div class="mw-parser-output"><p>Test document.
-</p>
-
-<h2><span class="mw-headline" id="Section_1">Section 1</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=1" title="Edit section: Section 1">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>One
-</p>
-<h2><span class="mw-headline" id="Section_2">Section 2</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=2" title="Edit section: Section 2">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>Two
-</p>
-<h3><span class="mw-headline" id="Section_2.1">Section 2.1</span></h3>
-<p>Two point one
-</p>
-<h2><span class="mw-headline" id="Section_3">Section 3</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Test_Page&amp;action=edit&amp;section=4" title="Edit section: Section 3">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<p>Three
-</p></div>
-EOF
-			],
-		];
-		// phpcs:enable
-	}
-
-	public static function provideGetText() {
-		$toc = self::provideGetTextToc();
-		$text = <<<EOF
-<p>Test document.
-</p>
-<mw:tocplace></mw:tocplace>
 <h2><span class="mw-headline" id="Section_1">Section 1</span><mw:editsection page="Test Page" section="1">Section 1</mw:editsection></h2>
 <p>One
 </p>
@@ -528,7 +361,7 @@ EOF;
 				[], $text, <<<EOF
 <p>Test document.
 </p>
-<div id="toc" class="toc"><div class="toctitle"><h2>Contents</h2></div>
+<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
 <ul>
 <li class="toclevel-1 tocsection-1"><a href="#Section_1"><span class="tocnumber">1</span> <span class="toctext">Section 1</span></a></li>
 <li class="toclevel-1 tocsection-2"><a href="#Section_2"><span class="tocnumber">2</span> <span class="toctext">Section 2</span></a>
@@ -558,7 +391,7 @@ EOF
 				[ 'enableSectionEditLinks' => false ], $text, <<<EOF
 <p>Test document.
 </p>
-<div id="toc" class="toc"><div class="toctitle"><h2>Contents</h2></div>
+<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
 <ul>
 <li class="toclevel-1 tocsection-1"><a href="#Section_1"><span class="tocnumber">1</span> <span class="toctext">Section 1</span></a></li>
 <li class="toclevel-1 tocsection-2"><a href="#Section_2"><span class="tocnumber">2</span> <span class="toctext">Section 2</span></a>
@@ -746,6 +579,18 @@ EOF
 		$b->setIndexPolicy( 'noindex' );
 		yield 'right noindex wins' => [ $a, $b, [ 'getIndexPolicy' => 'noindex' ] ];
 
+		$crhCyrl = new Bcp47CodeValue( 'crh-cyrl' );
+
+		$a = new ParserOutput();
+		$a->setLanguage( $crhCyrl );
+		$b = new ParserOutput();
+		yield 'only left language' => [ $a, $b, [ 'getLanguage' => $crhCyrl ] ];
+
+		$a = new ParserOutput();
+		$b = new ParserOutput();
+		$b->setLanguage( $crhCyrl );
+		yield 'only right language' => [ $a, $b, [ 'getLanguage' => $crhCyrl ] ];
+
 		// head items and friends ------------
 		$a = new ParserOutput();
 		$a->addHeadItem( '<foo1>' );
@@ -817,21 +662,26 @@ EOF
 		] ];
 
 		// TOC ------------
-		$a = new ParserOutput();
-		$a->setTOCHTML( '<p>TOC A</p>' );
+		$a = new ParserOutput( '' );
 		$a->setSections( [ [ 'fromtitle' => 'A1' ], [ 'fromtitle' => 'A2' ] ] );
+		$a->getText(); // force TOC
 
-		$b = new ParserOutput();
-		$b->setTOCHTML( '<p>TOC B</p>' );
+		$b = new ParserOutput( '' );
 		$b->setSections( [ [ 'fromtitle' => 'B1' ], [ 'fromtitle' => 'B2' ] ] );
+		$b->getText(); // force TOC
+
+		$emptyTOC = '<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>' . "\n" .
+		'<li class="toclevel-0"><a href="#"><span class="tocnumber"></span> <span class="toctext"></span></a></li>' . "\n" .
+		'<li class="toclevel-0"><a href="#"><span class="tocnumber"></span> <span class="toctext"></span></a>' . "\n" .
+		"</li></div>\n";
 
 		yield 'concat TOC' => [ $a, $b, [
-			'getTOCHTML' => '<p>TOC A</p><p>TOC B</p>',
+			'getTOCHTML' => $emptyTOC . $emptyTOC,
 			'getSections' => [
-				[ 'fromtitle' => 'A1' ],
-				[ 'fromtitle' => 'A2' ],
-				[ 'fromtitle' => 'B1' ],
-				[ 'fromtitle' => 'B2' ]
+				SectionMetadata::fromLegacy( [ 'fromtitle' => 'A1' ] )->toLegacy(),
+				SectionMetadata::fromLegacy( [ 'fromtitle' => 'A2' ] )->toLegacy(),
+				SectionMetadata::fromLegacy( [ 'fromtitle' => 'B1' ] )->toLegacy(),
+				SectionMetadata::fromLegacy( [ 'fromtitle' => 'B2' ] )->toLegacy()
 			],
 		] ];
 
@@ -1383,9 +1233,9 @@ EOF
 	public function testCSPSources() {
 		$po = new ParserOutput;
 
-		$this->assertEquals( $po->getExtraCSPScriptSrcs(), [], 'empty Script' );
-		$this->assertEquals( $po->getExtraCSPStyleSrcs(), [], 'empty Style' );
-		$this->assertEquals( $po->getExtraCSPDefaultSrcs(), [], 'empty Default' );
+		$this->assertEquals( [], $po->getExtraCSPScriptSrcs(), 'empty Script' );
+		$this->assertEquals( [], $po->getExtraCSPStyleSrcs(), 'empty Style' );
+		$this->assertEquals( [], $po->getExtraCSPDefaultSrcs(), 'empty Default' );
 
 		$po->addExtraCSPScriptSrc( 'foo.com' );
 		$po->addExtraCSPScriptSrc( 'bar.com' );
@@ -1393,9 +1243,9 @@ EOF
 		$po->addExtraCSPStyleSrc( 'fred.com' );
 		$po->addExtraCSPStyleSrc( 'xyzzy.com' );
 
-		$this->assertEquals( $po->getExtraCSPScriptSrcs(), [ 'foo.com', 'bar.com' ], 'Script' );
-		$this->assertEquals( $po->getExtraCSPDefaultSrcs(),  [ 'baz.com' ], 'Default' );
-		$this->assertEquals( $po->getExtraCSPStyleSrcs(), [ 'fred.com', 'xyzzy.com' ], 'Style' );
+		$this->assertEquals( [ 'foo.com', 'bar.com' ], $po->getExtraCSPScriptSrcs(), 'Script' );
+		$this->assertEquals( [ 'baz.com' ], $po->getExtraCSPDefaultSrcs(), 'Default' );
+		$this->assertEquals( [ 'fred.com', 'xyzzy.com' ], $po->getExtraCSPStyleSrcs(), 'Style' );
 	}
 
 	/**

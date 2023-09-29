@@ -5,15 +5,15 @@ namespace MediaWiki\Tests\Unit\Parser\Parsoid\Config;
 use HashConfig;
 use ILanguageConverter;
 use Language;
-use MagicWord;
-use MagicWordArray;
-use MagicWordFactory;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\MagicWord;
+use MediaWiki\Parser\MagicWordArray;
+use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\Parser\Parsoid\Config\SiteConfig;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\User\UserOptionsLookup;
@@ -25,6 +25,7 @@ use NamespaceInfo;
 use NullStatsdDataFactory;
 use Parser;
 use UnexpectedValueException;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\TestingAccessWrapper;
 use ZhConverter;
 
@@ -42,6 +43,7 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		MainConfigNames::ArticlePath => false,
 		MainConfigNames::InterwikiMagic => true,
 		MainConfigNames::ExtraInterlanguageLinkPrefixes => [],
+		MainConfigNames::InterlanguageLinkCodeMap => [],
 		MainConfigNames::LocalInterwikis => [],
 		MainConfigNames::LanguageCode => 'qqq',
 		MainConfigNames::DisableLangConversion => false,
@@ -130,23 +132,6 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 			'interwikiMagic',
 			true
 		];
-		yield 'lang' => [
-			[ MainConfigNames::LanguageCode => 'qqx' ],
-			'lang',
-			'qqx'
-		];
-		// This is a setting from Cite extension
-		yield 'responsiveReferences, absent' => [
-			[],
-			'responsiveReferences',
-			[ 'enabled' => false, 'threshold' => 10 ]
-		];
-		// This is a setting from Cite extension
-		yield 'responsiveReferences, true' => [
-			[ 'CiteResponsiveReferences' => true ],
-			'responsiveReferences',
-			[ 'enabled' => true, 'threshold' => 10 ]
-		];
 		yield 'script' => [
 			[ MainConfigNames::Script => 'blabla' ],
 			'script',
@@ -205,8 +190,6 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::galleryOptions
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::allowedExternalImagePrefixes
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::interwikiMagic
-	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::lang
-	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::responsiveReferences
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::script
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::scriptpath
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::server
@@ -290,6 +273,9 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		yield 'linkTrail' => [
 			Language::class, 'linkTrail', [], 'blabla', 'linkTrail', 'blabla'
 		];
+		yield 'langBcp47' => [
+			Language::class, null, [], null, 'langBcp47', '<service-mock>'
+		];
 		yield 'rtl' => [
 			Language::class, 'isRTL', [], true, 'rtl', true
 		];
@@ -318,6 +304,7 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::namespaceIsTalk
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::ucfirst
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::linkTrail
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::langBcp47
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::rtl
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::widthOption
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::getVariableIDs
@@ -325,7 +312,7 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::getMagicWords
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::getNonNativeExtensionTags
 	 * @param string $serviceClass
-	 * @param string $serviceMethod
+	 * @param ?string $serviceMethod
 	 * @param array $arguments
 	 * @param mixed $returnValue
 	 * @param string $method
@@ -333,22 +320,27 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	 */
 	public function testServiceMethodProxied(
 		string $serviceClass,
-		string $serviceMethod,
+		?string $serviceMethod,
 		array $arguments,
 		$returnValue,
 		string $method,
 		$expectedValue
 	) {
 		$serviceMock = $this->createMock( $serviceClass );
-		$serviceMock
-			->expects( $this->once() )
-			->method( $serviceMethod )
-			->with( ...$arguments )
-			->willReturn( $returnValue );
+		if ( $serviceMethod ) {
+			$serviceMock
+				->expects( $this->once() )
+				->method( $serviceMethod )
+				->with( ...$arguments )
+				->willReturn( $returnValue );
+		}
 		$config = $this->createSiteConfig( [], [], [
 			$serviceClass => $serviceMock
 		] );
 		$config = TestingAccessWrapper::newFromObject( $config );
+		if ( $expectedValue === '<service-mock>' ) {
+			$expectedValue = $serviceMock;
+		}
 		$this->assertSame( $expectedValue, $config->$method( ...$arguments ) );
 	}
 
@@ -524,8 +516,10 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 				'protorel' => true,
 				'local' => true,
 				'language' => true,
+				'bcp47' => 'ru',
 				'localinterwiki' => true,
 				'extralanglink' => true,
+				'code' => 'ru',
 			]
 		], $config->interwikiMap() );
 	}
@@ -578,9 +572,9 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::langConverterEnabled
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::langConverterEnabledBcp47
 	 */
-	public function testLangConverterEnabled_disabled() {
+	public function testLangConverterEnabledBcp47_disabled() {
 		$langConverterFactoryMock = $this->createMock( LanguageConverterFactory::class );
 		$langConverterFactoryMock
 			->method( 'isConversionDisabled' )
@@ -588,33 +582,42 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		$config = $this->createSiteConfig( [], [], [
 			LanguageConverterFactory::class => $langConverterFactoryMock,
 		] );
-		$this->assertFalse( $config->langConverterEnabled( 'zh' ) );
+		$zh = new Bcp47CodeValue( 'zh' );
+		$this->assertFalse( $config->langConverterEnabledBcp47( $zh ) );
 	}
 
 	/**
-	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::langConverterEnabled
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::langConverterEnabledBcp47
 	 */
-	public function testLangConverterEnabled_invalidCode() {
+	public function testLangConverterEnabledBcp47_invalidCode() {
+		$langMock = $this->createMock( Language::class );
+		$langMock
+			->method( 'getCode' )
+			->willReturn( 'bogus' );
 		$langConverterFactoryMock = $this->createMock( LanguageConverterFactory::class );
 		$langConverterFactoryMock
 			->method( 'isConversionDisabled' )
 			->willReturn( false );
-		$config = $this->createSiteConfig( [], [], [
-			LanguageConverterFactory::class => $langConverterFactoryMock,
-		] );
-		$this->assertFalse( $config->langConverterEnabled( 'zhasdcasdc' ) );
-	}
-
-	/**
-	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::langConverterEnabled
-	 */
-	public function testLangConverterEnabled_valid() {
-		$langMock = $this->createMock( Language::class );
 		$langFactoryMock = $this->createMock( LanguageFactory::class );
 		$langFactoryMock
 			->method( 'getLanguage' )
-			->with( 'zh' )
+			->with( $langMock )
 			->willReturn( $langMock );
+		$config = $this->createSiteConfig( [], [], [
+			LanguageFactory::class => $langFactoryMock,
+			LanguageConverterFactory::class => $langConverterFactoryMock,
+		] );
+		$this->assertFalse( $config->langConverterEnabledBcp47( $langMock ) );
+	}
+
+	/**
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::langConverterEnabledBcp47
+	 */
+	public function testLangConverterEnabled_valid() {
+		$langMock = $this->createMock( Language::class );
+		$langMock
+			->method( 'getCode' )
+			->willReturn( 'zh' );
 		$langConverterMock = $this->createMock( ZhConverter::class );
 		$langConverterMock
 			->method( 'hasVariants' )
@@ -627,11 +630,16 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		$langConverterFactoryMock
 			->method( 'isConversionDisabled' )
 			->willReturn( false );
+		$langFactoryMock = $this->createMock( LanguageFactory::class );
+		$langFactoryMock
+			->method( 'getLanguage' )
+			->with( $langMock )
+			->willReturn( $langMock );
 		$config = $this->createSiteConfig( [], [], [
 			LanguageFactory::class => $langFactoryMock,
 			LanguageConverterFactory::class => $langConverterFactoryMock
 		] );
-		$this->assertTrue( $config->langConverterEnabled( 'zh' ) );
+		$this->assertTrue( $config->langConverterEnabledBcp47( $langMock ) );
 	}
 
 	/**
@@ -816,5 +824,19 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		$config = TestingAccessWrapper::newFromObject( $config );
 		$this->assertSame( [ 'Page1', 'Alias1', 'Alias2' ], $config->getSpecialPageAliases( 'Page1' ) );
 		$this->assertSame( [ 'Page2' ], $config->getSpecialPageAliases( 'Page2' ) );
+	}
+
+	/**
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::getMWConfigValue
+	 */
+	public function testGetMWConfigValue() {
+		$config = $this->createSiteConfig( [
+			'CiteResponsiveReferences' => true,
+			'CiteResponsiveReferencesThreshold' => 10,
+		], [], [] );
+		$config = TestingAccessWrapper::newFromObject( $config );
+		$this->assertSame( true, $config->getMWConfigValue( 'CiteResponsiveReferences' ) );
+		$this->assertSame( 10, $config->getMWConfigValue( 'CiteResponsiveReferencesThreshold' ) );
+		$this->assertSame( null, $config->getMWConfigValue( 'CiteUnknownConfig' ) );
 	}
 }

@@ -3,13 +3,13 @@
 const assert = require( 'assert' );
 const { ArticlePageWithEditorOverlay, ArticlePage } = require( '../support/world.js' );
 
-const iClickTheEditButton = () => {
-	ArticlePage.edit_link_element.waitForDisplayed();
-	ArticlePage.edit_link_element.click();
+const iClickTheEditButton = async () => {
+	await ArticlePage.edit_link_element.waitForDisplayed();
+	await ArticlePage.edit_link_element.click();
 };
-const iSeeTheWikitextEditorOverlay = () => {
-	ArticlePageWithEditorOverlay.editor_overlay_element.waitForDisplayed();
-	ArticlePageWithEditorOverlay.editor_textarea_element.waitForExist();
+const iSeeTheWikitextEditorOverlay = async () => {
+	await ArticlePageWithEditorOverlay.editor_overlay_element.waitForDisplayed();
+	await ArticlePageWithEditorOverlay.editor_textarea_element.waitForExist();
 };
 const iClearTheEditor = () => {
 	ArticlePageWithEditorOverlay.editor_textarea_element.setValue( '' );
@@ -48,11 +48,11 @@ const iSayOkayInTheConfirmDialog = () => {
 	}, 2000 );
 	browser.acceptAlert();
 };
-const theTextOfTheFirstHeadingShouldBe = ( title ) => {
-	ArticlePage.first_heading_element.waitForDisplayed();
-	assert.strictEqual(
-		ArticlePage.first_heading_element.getText(),
-		title
+const theTextOfTheFirstHeadingShouldBe = async ( title ) => {
+	await ArticlePage.first_heading_element.waitForDisplayed();
+	assert.match(
+		await ArticlePage.first_heading_element.getText(),
+		new RegExp( `.*${title}$` )
 	);
 };
 const thereShouldBeARedLinkWithText = ( text ) => {

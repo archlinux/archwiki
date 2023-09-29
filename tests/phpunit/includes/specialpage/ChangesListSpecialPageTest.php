@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\TestingAccessWrapper;
 
@@ -575,7 +577,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 	public function testFilterUserExpLevelUnregisteredOrExperienced() {
 		$conds = $this->buildQuery( [ 'userExpLevel' => 'unregistered;experienced' ] );
 
-		$this->assertRegExp(
+		$this->assertMatchesRegularExpression(
 			'/actor_user IS NULL OR '
 				. '\(\(user_editcount >= 500\) AND \(\(user_registration IS NULL\) OR '
 				. '\(user_registration <= \'[^\']+\'\)\)\)/',
@@ -1099,7 +1101,7 @@ class ChangesListSpecialPageTest extends AbstractChangesListSpecialPageTestCase 
 			],
 			[
 				// changeType
-				[ 'hidepageedits' => 1, 'hidenewpages' => 1, 'hidecategorization' => 1, 'hidelog' => 1, ],
+				[ 'hidepageedits' => 1, 'hidenewpages' => 1, 'hidecategorization' => 1, 'hidelog' => 1, 'hidenewuserlog' => 1 ],
 				true,
 				[],
 				true,

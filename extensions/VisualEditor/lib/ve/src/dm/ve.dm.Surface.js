@@ -67,7 +67,7 @@ ve.dm.Surface = function VeDmSurface( doc, attachedRoot, config ) {
 	this.autosavePrefix = '';
 	this.synchronizer = null;
 	this.storing = false;
-	this.storage = ve.init.platform.sessionStorage;
+	this.setStorage( ve.init.platform.sessionStorage );
 
 	// Let document know about the attachedRoot
 	this.documentModel.attachedRoot = this.attachedRoot;
@@ -1240,30 +1240,36 @@ ve.dm.Surface.prototype.onDocumentPreCommit = function ( tx ) {
 /**
  * Get a minimal set of ranges which have been modified by changes to the surface.
  *
- * @param {boolean} [includeCollapsed] Include collapsed ranges (removed content)
- * @param {boolean} [includeInternalList] Include changes within the internal list
+ * @param {Object} [options] Options
+ * @param {boolean} [options.includeCollapsed] Include collapsed ranges (removed content)
+ * @param {boolean} [options.includeInternalList] Include changes within the internal list
+ * @param {boolean} [options.excludeAnnotations] Exclude annotation-only changes
+ * @param {boolean} [options.excludeAttributes] Exclude attribute changes
  * @return {ve.Range[]} Modified ranges
  */
-ve.dm.Surface.prototype.getModifiedRanges = function ( includeCollapsed, includeInternalList ) {
+ve.dm.Surface.prototype.getModifiedRanges = function ( options ) {
 	var doc = this.getDocument();
 	var ranges = [];
 
+	options = options || {};
+
 	this.getHistory().forEach( function ( stackItem ) {
 		stackItem.transactions.forEach( function ( tx ) {
-			var newRange = tx.getModifiedRange( doc, includeInternalList );
+			var newRange = tx.getModifiedRange( doc, options );
 			// newRange will by null for no-ops
 			if ( newRange ) {
 				// Translate previous ranges by the current transaction
 				ranges.forEach( function ( range, i, arr ) {
 					arr[ i ] = tx.translateRange( range, true );
 				} );
-				if ( includeCollapsed || !newRange.isCollapsed() ) {
+				if ( options.includeCollapsed || !newRange.isCollapsed() ) {
 					ranges.push( newRange );
 				}
 			}
 		} );
 	} );
 
+	// Merge adjacent ranges
 	var compactRanges = [];
 	var lastRange = null;
 	ranges
@@ -1271,7 +1277,7 @@ ve.dm.Surface.prototype.getModifiedRanges = function ( includeCollapsed, include
 			return a.start - b.start;
 		} )
 		.forEach( function ( range ) {
-			if ( includeCollapsed || !range.isCollapsed() ) {
+			if ( options.includeCollapsed || !range.isCollapsed() ) {
 				if ( lastRange && lastRange.touchesRange( range ) ) {
 					compactRanges.pop();
 					range = lastRange.expand( range );
@@ -1383,9 +1389,12 @@ ve.dm.Surface.prototype.storeChanges = function () {
 	var dmDoc = this.getDocument();
 	var change = dmDoc.getChangeSince( this.lastStoredChange );
 	if ( !change.isEmpty() ) {
-		if ( this.storage.appendToList( this.autosavePrefix + 've-changes', JSON.stringify( change ) ) ) {
+		var changes = this.storage.getObject( this.autosavePrefix + 've-changes' ) || [];
+		changes.push( change );
+		if ( this.storage.setObject( this.autosavePrefix + 've-changes', changes, this.storageExpiry ) ) {
 			this.lastStoredChange = dmDoc.getCompleteHistoryLength();
-			this.storage.setObject( this.autosavePrefix + 've-selection', this.getSelection() );
+			this.storage.setObject( this.autosavePrefix + 've-selection', this.getSelection(), this.storageExpiry );
+			this.updateExpiry( [ 've-changes', 've-selection' ] );
 		} else {
 			// Auto-save failed probably because of memory limits
 			// so flag it so we don't keep trying in vain.
@@ -1404,7 +1413,8 @@ ve.dm.Surface.prototype.storeDocStorage = function () {
 	}
 
 	var dmDoc = this.getDocument();
-	this.storage.setObject( this.autosavePrefix + 've-docstorage', dmDoc.getStorage() );
+	this.storage.setObject( this.autosavePrefix + 've-docstorage', dmDoc.getStorage(), this.storageExpiry );
+	this.updateExpiry( [ 've-docstorage' ] );
 };
 
 /**
@@ -1422,13 +1432,31 @@ ve.dm.Surface.prototype.setAutosaveDocId = function ( docId ) {
 /**
  * Set the storage interface for autosave
  *
- * @param {ve.init.SafeStorage} storage Storage interface
+ * @param {ve.init.ConflictableStorage} storage Storage interface
+ * @param {number} [storageExpiry] Storage expiry time in seconds
  */
-ve.dm.Surface.prototype.setStorage = function ( storage ) {
+ve.dm.Surface.prototype.setStorage = function ( storage, storageExpiry ) {
 	if ( this.storing ) {
 		throw new Error( 'Can\'t change storage interface after auto-save has stared' );
 	}
 	this.storage = storage;
+	this.storageExpiry = storageExpiry;
+
+	var isLocalStorage = false;
+	try {
+		// Accessing window.localStorage can throw an exception when it is disabled
+		// eslint-disable-next-line no-undef
+		isLocalStorage = this.storage.store === window.localStorage;
+	} catch ( e ) {}
+
+	if ( isLocalStorage ) {
+		var conflictableKeys = {};
+		conflictableKeys[ this.autosavePrefix + 've-docstate' ] = true;
+		conflictableKeys[ this.autosavePrefix + 've-dochtml' ] = true;
+		conflictableKeys[ this.autosavePrefix + 've-selection' ] = true;
+		conflictableKeys[ this.autosavePrefix + 've-changes' ] = true;
+		this.storage.addConflictableKeys( conflictableKeys );
+	}
 };
 
 /**
@@ -1438,6 +1466,7 @@ ve.dm.Surface.prototype.startStoringChanges = function () {
 	this.storing = true;
 	this.on( 'undoStackChange', this.storeChangesListener );
 	this.getDocument().on( 'storage', this.storeDocStorageListener );
+	this.updateExpiry();
 };
 
 /**
@@ -1458,12 +1487,11 @@ ve.dm.Surface.prototype.stopStoringChanges = function () {
 ve.dm.Surface.prototype.restoreChanges = function () {
 	var surface = this,
 		restored = false,
-		changes = this.storage.getList( this.autosavePrefix + 've-changes' );
+		changes = this.storage.getObject( this.autosavePrefix + 've-changes' ) || [];
 
 	try {
-		changes.forEach( function ( changeString ) {
-			var data = JSON.parse( changeString ),
-				change = ve.dm.Change.static.unsafeDeserialize( data );
+		changes.forEach( function ( data ) {
+			var change = ve.dm.Change.static.unsafeDeserialize( data );
 			change.applyTo( surface, true );
 			surface.breakpoint();
 		} );
@@ -1517,12 +1545,13 @@ ve.dm.Surface.prototype.storeDocState = function ( state, html ) {
 	}
 	var useLatestHtml = html === undefined;
 	// Store HTML separately to avoid wasteful JSON encoding
-	if ( !this.storage.set( this.autosavePrefix + 've-dochtml', useLatestHtml ? this.getHtml() : html ) ) {
+	if ( !this.storage.set( this.autosavePrefix + 've-dochtml', useLatestHtml ? this.getHtml() : html, this.storageExpiry ) ) {
 		// If we failed to store the html, wipe the docstate
 		this.storage.remove( this.autosavePrefix + 've-docstate' );
 		this.stopStoringChanges();
 		return false;
 	}
+	this.updateExpiry( [ 've-dochtml' ] );
 
 	if ( useLatestHtml ) {
 		// If storing the latest HTML, reset the lastStoreChange pointer,
@@ -1540,7 +1569,29 @@ ve.dm.Surface.prototype.storeDocState = function ( state, html ) {
  * @return {boolean} Document metadata was successfully stored
  */
 ve.dm.Surface.prototype.updateDocState = function ( state ) {
-	return this.storage.set( this.autosavePrefix + 've-docstate', JSON.stringify( state ) );
+	if ( this.storage.set( this.autosavePrefix + 've-docstate', JSON.stringify( state ), this.storageExpiry ) ) {
+		this.updateExpiry( [ 've-docstate' ] );
+		return true;
+	}
+	return false;
+};
+
+/**
+ * Update the expiry value of keys in use
+ *
+ * @param {string[]} [skipKeys] Keys to skip (because they have just been updated)
+ */
+ve.dm.Surface.prototype.updateExpiry = function ( skipKeys ) {
+	if ( !this.storageExpiry ) {
+		return;
+	}
+	var surface = this;
+	skipKeys = skipKeys || [];
+	[ 've-docstate', 've-dochtml', 've-selection', 've-changes' ].forEach( function ( key ) {
+		if ( skipKeys.indexOf( key ) === -1 ) {
+			surface.storage.setExpires( surface.autosavePrefix + key, surface.storageExpiry );
+		}
+	} );
 };
 
 /**
@@ -1550,5 +1601,5 @@ ve.dm.Surface.prototype.removeDocStateAndChanges = function () {
 	this.storage.remove( this.autosavePrefix + 've-docstate' );
 	this.storage.remove( this.autosavePrefix + 've-dochtml' );
 	this.storage.remove( this.autosavePrefix + 've-selection' );
-	this.storage.removeList( this.autosavePrefix + 've-changes' );
+	this.storage.remove( this.autosavePrefix + 've-changes' );
 };

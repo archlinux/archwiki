@@ -16,7 +16,7 @@ class MultilineTextInputWidget extends TextInputWidget {
 
 	/**
 	 * @param array $config Configuration options
-	 *      - int $config['rows'] If multiline, number of visible lines in textarea
+	 *      - int $config['rows'] Number of visible lines in textarea.
 	 */
 	public function __construct( array $config = [] ) {
 		// Config initialization

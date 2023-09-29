@@ -35,6 +35,8 @@
 	"cite-ve-dialogbutton-reference-title": "सन्दर्भ",
 	"cite-ve-dialogbutton-reference-tooltip": "सामान्य",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "सन्दर्भ सामग्रीहरू",
+	"cite-ve-referenceslist-isempty": "यस पृष्ठमा यो सूचीमा समावेश गर्नको लागि समूह \"$1\" सँग कुनै सन्दर्भहरू छैनन्।",
+	"cite-ve-referenceslist-isempty-default": "यो सूचीमा समावेश गर्न यस पृष्ठमा कुनै सन्दर्भहरू छैनन्।",
 	"cite-ve-referenceslist-missingreflist": "यो सन्दर्भसूची ढाँचाद्वारा उत्पन्न गरिएको हो, र अहिलेको लागि मात्र स्रोत सम्पादकमा सम्पादन गर्न सकिन्छ।",
 	"cite-ve-toolbar-group-label": "उर्ध्वभरण",
 	"cite-ve-othergroup-item": "$1 सन्दर्भ",

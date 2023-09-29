@@ -12,7 +12,7 @@
  *
  * @param {ve.ui.Context} context Context item is in
  * @param {ve.dm.Model} model Model item is related to
- * @param {Object} config Configuration options
+ * @param {Object} [config]
  */
 ve.ui.MWGalleryContextItem = function VeUiMWGalleryContextItem() {
 	// Parent constructor

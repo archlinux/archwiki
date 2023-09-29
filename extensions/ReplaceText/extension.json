@@ -10,7 +10,7 @@
 	"descriptionmsg": "replacetext-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"type": "specialpage",
 	"GroupPermissions": {
@@ -22,7 +22,19 @@
 		"replacetext"
 	],
 	"SpecialPages": {
-		"ReplaceText": "MediaWiki\\Extension\\ReplaceText\\SpecialReplaceText"
+		"ReplaceText": {
+			"class": "MediaWiki\\Extension\\ReplaceText\\SpecialReplaceText",
+			"services": [
+				"ContentLanguage",
+				"LinkRenderer",
+				"MovePageFactory",
+				"NamespaceInfo",
+				"SearchEngineConfig",
+				"SlotRoleStore",
+				"UserFactory",
+				"UserOptionsLookup"
+			]
+		}
 	},
 	"JobClasses": {
 		"replaceText": "MediaWiki\\Extension\\ReplaceText\\Job"
@@ -58,12 +70,17 @@
 		"AdminLinks": [
 			"MediaWiki\\Extension\\ReplaceText\\Hooks::addToAdminLinks"
 		],
-		"SpecialMovepageAfterMove": [
-			"MediaWiki\\Extension\\ReplaceText\\Hooks::replaceTextReminder"
-		],
-		"UserGetReservedNames": [
-			"MediaWiki\\Extension\\ReplaceText\\Hooks::getReservedNames"
-		]
+		"SpecialMovepageAfterMove": "main",
+		"UserGetReservedNames": "main"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\ReplaceText\\Hooks",
+			"services": [
+				"MainConfig",
+				"SpecialPageFactory"
+			]
+		}
 	},
 	"config": {
 		"ReplaceTextResultsLimit": 250,

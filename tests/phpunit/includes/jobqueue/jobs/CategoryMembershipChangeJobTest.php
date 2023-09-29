@@ -2,6 +2,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 
 /**
  * @covers CategoryMembershipChangeJob
@@ -39,14 +40,15 @@ class CategoryMembershipChangeJobTest extends MediaWikiIntegrationTestCase {
 	 * @return int|null
 	 */
 	private function editPageText( $text ) {
-		$page = WikiPage::factory( $this->title );
-		$editResult = $page->doUserEditContent(
-			ContentHandler::makeContent( $text, $this->title ),
-			$this->getTestSysop()->getUser(),
-			__METHOD__
+		$editResult = $this->editPage(
+			$this->title,
+			$text,
+			__METHOD__,
+			NS_MAIN,
+			$this->getTestSysop()->getAuthority()
 		);
 		/** @var RevisionRecord $revisionRecord */
-		$revisionRecord = $editResult->value['revision-record'];
+		$revisionRecord = $editResult->getNewRevision();
 		$this->runJobs();
 
 		return $revisionRecord->getId();

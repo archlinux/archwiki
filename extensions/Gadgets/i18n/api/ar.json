@@ -3,7 +3,8 @@
 		"authors": [
 			"Abanima",
 			"Maroen1990",
-			"Meno25"
+			"Meno25",
+			"Amire80"
 		]
 	},
 	"apihelp-query+gadgetcategories-description": "يعطي قائمة بتصنيفات الإضافات.",
@@ -16,7 +17,7 @@
 	"apihelp-query+gadgets-summary": "يرجع قائمة بالإضافات المستخدمة في هذة الويكي.",
 	"apihelp-query+gadgets-param-prop": "ما هي معلومات الإضافة للحصول عليها:\n;id:رقم الإضافة الداخلي.\n;metadata:بيانات الميتا الخاصة بالإضافة.\n;desc:وصف الإضافة محول إلى HTML (يمكن أن يكون بطيئا، استخدم فقط لو هناك حاجة ماسة له).",
 	"apihelp-query+gadgets-param-categories": "الإضافات من أي تصنيفات للاسترجاع.",
-	"apihelp-query+gadgets-param-ids": "معرفات  الإضافات للاسترداد.",
+	"apihelp-query+gadgets-param-ids": "معرفات الإضافات للاسترداد.",
 	"apihelp-query+gadgets-param-allowedonly": "اسرد فقط الإضافات المسموحة للمستخدم الحالي.",
 	"apihelp-query+gadgets-param-enabledonly": "اسرد فقط الإضافات المفعَّلة من قبل المستخدم الحالي.",
 	"apihelp-query+gadgets-example-1": "اعط قائمة بالإضافات مع وصفها.",

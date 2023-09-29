@@ -4,5 +4,13 @@
 			"Bosogo"
 		]
 	},
+	"multimediaviewer-datetime-created": "Түзүлгөн датасы: $1",
+	"multimediaviewer-datetime-uploaded": "Жүктөлдү: $1",
+	"multimediaviewer-multiple-authors-combine": "$1 менен $2",
+	"multimediaviewer-reuse-loading-placeholder": "Жүктөлүүдө...",
+	"multimediaviewer-download-link": "Бул файлды жүктөп алуу",
+	"multimediaviewer-embed-wt": "Викитекст",
+	"multimediaviewer-html-embed-credit-link-text": "Шилтеме",
+	"multimediaviewer-title-popup-text": "Сыпаттама",
 	"multimediaviewer-option-cancel-button": "Жокко чыгаруу"
 }

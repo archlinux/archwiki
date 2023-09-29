@@ -1,7 +1,8 @@
 @import '../resources/common/variables.less';
 
-// Even if the editing form is max-width, the preview should be constrained.
-.skin-vector-disable-max-width #wikiPreview {
-	max-width: @max-width-content-container;
-	margin: auto;
+.vector-feature-limited-width-enabled #wikiPreview {
+	// @max-width-content-container is defined in ems, so the final width depends on font-size,
+	// but this element is nested in an element with a different font-size. Divide by the
+	// current font-size to get the intended result (as if font-size wasn't changed).
+	max-width: @max-width-content-container / @font-size-base;
 }

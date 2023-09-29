@@ -14,16 +14,17 @@
 
 // Note this uses variables defined in mediawiki.skin.variables so that VisualEditor can read them
 // see T259331.
-@padding-content: @padding-top-content @padding-horizontal-content 1.5em;
+@padding-content: @padding-top-content 0 1.5em;
 
 // Breakpoints
 
 // Defines the minimum viewport width, at which point the layout will not get any
 // smaller and will start horizontal scrolling instead.
-@min-width-supported:
-	unit( 500px / @font-size-browser, em ) -
-	( 2 * @padding-horizontal-page-container-wide );
-// 31.25em - 3.75em = 27.5em @ 16
+@min-width-supported: unit( 500px / @font-size-browser, em );
+
+html {
+	scroll-padding-top: @scroll-padding-top;
+}
 
 body {
 	background-color: @background-color-secondary--modern;
@@ -38,14 +39,11 @@ body {
 }
 
 .mw-body {
-	border-top: @border-width-base @border-style-base transparent;
-	/* Merge the border with tabs' one (in their background image) */
-	margin-top: -@border-width-base;
+	// T315261 Remove horizontal padding, rely on .mw-page-container padding instead
 	padding: @padding-content;
 
 	.firstHeading {
-		/* Change the default from mediawiki.skinning CSS to let indicators float into heading area */
-		overflow: visible;
+		word-wrap: break-word;
 		margin-bottom: 0;
 	}
 }
@@ -72,62 +70,45 @@ body {
 	z-index: @z-index-indicators;
 }
 
-.mw-body-header,
-.mw-body-subheader {
+.vector-page-titlebar {
 	.mixin-clearfix();
+}
+
+.vector-body-before-content {
+	// Contain the floating .mw-indicators, but don't use clearfix because of browser inconsistencies
+	// when combining 'clear' and 'margin-top' (T325391)
+	overflow: hidden;
 }
 
 .mw-body .mw-portlet-lang {
 	float: right;
 }
 
-#siteSub {
-	// By default its hidden as it was hidden in Vector legacy but site styles can reveal.
-	display: none;
-}
-
 .vector-body {
 	position: relative;
 	z-index: @z-index-base;
-
-	#siteSub {
-		margin-top: 8px; // T311564
-	}
-
-	#contentSub,
-	#contentSub2 {
-		font-size: 84%;
-		line-height: 1.2em;
-		// T311564
-		margin: 8px 0 0;
-		color: #54595d;
-		width: auto;
-	}
 }
 
-#left-navigation {
-	float: left;
-	margin-left: -@padding-horizontal-tabs;
+#siteSub {
+	// By default its hidden as it was hidden in Vector legacy but site styles can reveal.
+	display: none;
+	margin-top: 8px; // T311564
 }
 
-#right-navigation {
-	float: right;
-	margin-right: -@padding-horizontal-tabs;
-	// Any dropdowns inside the right navigation in modern Vector (e.g. "more" menu).
-	// should be right-aligned to prevent horizontal scrolling.
-	.vector-menu-content {
-		left: auto;
-		right: -@border-width-base;
-	}
+// Styles only applied to non-empty #contentSub to avoid extra margins when both #contentSub and #contentSub2
+// are rendered.
+#contentSub:not( :empty ),
+#contentSub2 {
+	font-size: 84%;
+	line-height: 1.2em;
+	color: @color-base--subtle;
+	width: auto;
+	// Visually separate #contentSub and #contentSub2 (T315639)
+	margin: 8px 0 0;
 }
 
 .parsoid-body {
 	padding: @padding-content;
-}
-
-.mw-footer {
-	border-top: @border-base;
-	padding: 0.75em;
 }
 
 // Container logic.
@@ -138,6 +119,10 @@ body {
 	position: relative;
 	z-index: 0;
 	max-width: @max-width-page-container;
+	// Set a min-width to make explicit we do not support anything below this threshold.
+	// For devices too small, they should be more useable with horizontal scrolling.
+	// e.g. Portrait on an iPad
+	min-width: @min-width-supported;
 	// Fill the viewport even if the content height is small. This also helps
 	// mitigate a long sidebar overflowing the page container (T257518).
 	min-height: 100%;
@@ -145,21 +130,22 @@ body {
 	margin-right: auto;
 	// Use non-zero padding to disable margin collapse.
 	// Be careful not to use overflow-y: scroll here (see T270146 and T271868)
-	padding: 0.05px ( @padding-horizontal-page-container / 2 );
+	padding: 0.05px @padding-horizontal-page-container;
 	background-color: @background-color-page-container;
-	// Set a min-width to make explicit we do not support anything below this threshold.
-	// For devices too small, they should be more useable with horizontal scrolling.
-	// e.g. Portrait on an iPad
-	min-width: @min-width-supported;
+	box-sizing: border-box;
+
+	.vector-feature-limited-width-disabled & {
+		max-width: none;
+	}
 
 	@media ( min-width: @min-width-desktop ) {
-		padding-left: @padding-horizontal-page-container;
-		padding-right: @padding-horizontal-page-container;
+		padding-left: @padding-horizontal-page-container-desktop;
+		padding-right: @padding-horizontal-page-container-desktop;
 	}
 
 	@media ( min-width: @min-width-desktop-wide ) {
-		padding-left: @padding-horizontal-page-container-wide;
-		padding-right: @padding-horizontal-page-container-wide;
+		padding-left: @padding-horizontal-page-container-desktop-wide;
+		padding-right: @padding-horizontal-page-container-desktop-wide;
 	}
 }
 
@@ -168,3 +154,5 @@ body {
 }
 
 @import 'grid.less';
+@import 'toc/pinned.less';
+@import 'toc/unpinned.less';

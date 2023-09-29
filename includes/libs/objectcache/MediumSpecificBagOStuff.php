@@ -32,12 +32,15 @@ use Wikimedia\WaitConditionLoop;
  * @since 1.34
  */
 abstract class MediumSpecificBagOStuff extends BagOStuff {
-	/** @var array<string,array> Map of (key => (class, depth, expiry) */
+	/** @var array<string,array> Map of (key => (class LOCK_* constant => value) */
 	protected $locks = [];
 	/** @var int Bytes; chunk size of segmented cache values */
 	protected $segmentationSize;
 	/** @var int Bytes; maximum total size of a segmented cache value */
 	protected $segmentedValueMaxSize;
+
+	/** @var float Seconds; maximum expected seconds for a lock ping to reach the backend */
+	protected $maxLockSendDelay = 0.05;
 
 	/** @var array */
 	private $duplicateKeyLookups = [];
@@ -45,9 +48,6 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 	private $reportDupes = false;
 	/** @var bool */
 	private $dupeTrackScheduled = false;
-
-	/** @var array[] Map of (key => (PHP variable value, serialized value)) */
-	protected $preparedValues = [];
 
 	/** Component to use for key construction of blob segment keys */
 	private const SEGMENT_COMPONENT = 'segment';
@@ -548,7 +548,6 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 				if ( $this->add( $this->makeLockKey( $key ), 1, $exptime ) ) {
 					$lockTsUnix = microtime( true );
 
-					// locked!
 					return WaitConditionLoop::CONDITION_REACHED;
 				} elseif ( $this->getLastError( $watchPoint ) ) {
 					$this->logger->warning(
@@ -556,7 +555,6 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 						[ 'key' => $key ]
 					);
 
-					// network partition?
 					return WaitConditionLoop::CONDITION_ABORTED;
 				}
 
@@ -615,21 +613,24 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 	 * @return bool Success
 	 */
 	protected function doUnlock( $key ) {
-		// Estimate the remaining TTL of the lock key
-		$curTTL = $this->locks[$key][self::LOCK_EXPIRY] - $this->getCurrentTime();
-		// Maximum expected one-way-delay for a query to reach the backend
-		$maxOWD = 0.050;
-
 		$released = false;
 
-		if ( ( $curTTL - $maxOWD ) > 0 ) {
-			// The lock key is extremely unlikely to expire before a deletion operation
-			// sent from this method arrives on the relevant backend server
+		// Estimate the remaining TTL of the lock key
+		$curTTL = $this->locks[$key][self::LOCK_EXPIRY] - $this->getCurrentTime();
+
+		// Check the risk of race conditions for key deletion
+		if ( $this->getQoS( self::ATTR_DURABILITY ) <= self::QOS_DURABILITY_SCRIPT ) {
+			// Lock (and data) keys use memory specific to this request (e.g. HashBagOStuff)
+			$isSafe = true;
+		} else {
+			// It is unsafe to delete the lock key if there is a serious risk of the key already
+			// being claimed by another thread before the delete operation reaches the backend
+			$isSafe = ( $curTTL > $this->maxLockSendDelay );
+		}
+
+		if ( $isSafe ) {
 			$released = $this->doDelete( $this->makeLockKey( $key ) );
 		} else {
-			// It is unsafe for this method to delete the lock key due to the risk of it
-			// expiring and being claimed by another thread before the deletion operation
-			// arrives on the backend server
 			$this->logger->warning(
 				"Lock for {key} held too long ({age} sec).",
 				[ 'key' => $key, 'curTTL' => $curTTL ]
@@ -999,6 +1000,19 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 		return $this->makeKeyInternal( $this->keyspace, func_get_args() );
 	}
 
+	/**
+	 * Make a cache key for the given keyspace and components
+	 *
+	 * Long components might be converted to respective hashes due to size constraints.
+	 * In extreme cases, all of them might be combined into a single hash component.
+	 *
+	 * @param string $keyspace Keyspace component
+	 * @param string[]|int[] $components Key components (key collection name first)
+	 * @return string Keyspace-prepended list of encoded components as a colon-separated value
+	 * @since 1.27
+	 */
+	abstract protected function makeKeyInternal( $keyspace, $components );
+
 	protected function convertGenericKey( $key ) {
 		$components = $this->componentsFromGenericKey( $key );
 		if ( count( $components ) < 2 ) {
@@ -1023,89 +1037,18 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 		return $this->segmentedValueMaxSize;
 	}
 
-	public function setNewPreparedValues( array $valueByKey ) {
-		$this->preparedValues = [];
-
-		$sizes = [];
-		foreach ( $valueByKey as $key => $value ) {
-			if ( $value === false ) {
-				// not storable, don't bother
-				$sizes[] = null;
-				continue;
-			}
-
-			$serialized = $this->serialize( $value );
-			$sizes[] = ( $serialized !== false ) ? strlen( $serialized ) : null;
-
-			$this->preparedValues[$key] = [ $value, $serialized ];
-		}
-
-		return $sizes;
-	}
-
 	/**
-	 * Get the serialized form a value, using any applicable prepared value
-	 *
-	 * @see BagOStuff::setNewPreparedValues()
+	 * Get the serialized form a value, logging a warning if it involves custom classes
 	 *
 	 * @param mixed $value
 	 * @param string $key
-	 * @return string|int String/integer representation
+	 * @return string|int String/integer representation of value
 	 * @since 1.35
 	 */
 	protected function getSerialized( $value, $key ) {
-		// Reuse any available prepared (serialized) value
-		if ( array_key_exists( $key, $this->preparedValues ) ) {
-			list( $prepValue, $prepSerialized ) = $this->preparedValues[$key];
-			// Normally, this comparison should only take a few microseconds to confirm a match.
-			// Using "===" on variables of different types is always fast. It is also fast for
-			// variables of matching type int, float, bool, null, and object. Lastly, it is fast
-			// for comparing arrays/strings if they are copy-on-write references, which should be
-			// the case at this point, assuming prepareValues() was called correctly.
-			if ( $prepValue === $value ) {
-				unset( $this->preparedValues[$key] );
-
-				return $prepSerialized;
-			}
-		}
-
 		$this->checkValueSerializability( $value, $key );
 
 		return $this->serialize( $value );
-	}
-
-	/**
-	 * Estimate the size of a variable once serialized
-	 *
-	 * @param mixed $value
-	 * @param int $depth Current stack depth
-	 * @param int &$loops Number of iterable nodes visited
-	 * @return int|null Size in bytes; null for unsupported variable types
-	 * @since 1.35
-	 */
-	protected function guessSerialValueSize( $value, $depth = 0, &$loops = 0 ) {
-		if ( is_string( $value ) ) {
-			// E.g. "<type><delim1><quote><value><quote><delim2>"
-			return strlen( $value ) + 5;
-		} else {
-			return strlen( serialize( $value ) );
-		}
-	}
-
-	/**
-	 * Estimate the size of a each variable once serialized
-	 *
-	 * @param array $values List/map with PHP variable values to serialize
-	 * @return int[]|null[] Corresponding list of size estimates (null for invalid values)
-	 * @since 1.39
-	 */
-	protected function guessSerialSizeOfValues( array $values ) {
-		$sizes = [];
-		foreach ( $values as $value ) {
-			$sizes[] = $this->guessSerialValueSize( $value );
-		}
-
-		return $sizes;
 	}
 
 	/**
@@ -1205,7 +1148,7 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 		foreach ( $keyInfo as $indexOrKey => $keyOrSizes ) {
 			if ( is_array( $keyOrSizes ) ) {
 				$key = $indexOrKey;
-				list( $sPayloadSize, $rPayloadSize ) = $keyOrSizes;
+				[ $sPayloadSize, $rPayloadSize ] = $keyOrSizes;
 			} else {
 				$key = $keyOrSizes;
 				$sPayloadSize = 0;

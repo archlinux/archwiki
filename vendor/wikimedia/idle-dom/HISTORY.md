@@ -1,5 +1,14 @@
 # Release History
 
+## IDLeDOM 1.0.0 (2022-12-07)
+* The WebIDL PHP binding has been altered to allow implementations to measure
+  offsets and lengths in unicode code points for the attributes of
+  `CharacterData`, instead of using UTF-16 code units.
+* Support for PHP 7.2 and PHP 7.3 has been dropped.
+* Various dependencies have been updated for PHP 8 compatibility.
+* Properly encode `unsigned long` constants from IDL as PHP's (signed)
+  `int` type for compatibility with 32-bit PHP systems (T324489).
+
 ## IDLeDOM 0.10.0 (2021-08-07)
 * The second and third arguments to DOMImplementation::createDocumentType()
   are now optional, for PHP compatibility.

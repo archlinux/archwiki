@@ -1,4 +1,19 @@
 <?php
+
+namespace MediaWiki\Extension\AbuseFilter\Maintenance;
+
+use LoggedUpdateMaintenance;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
+use Wikimedia\Rdbms\IMaintainableDatabase;
+
+// @codeCoverageIgnoreStart
+$IP = getenv( 'MW_INSTALL_PATH' );
+if ( $IP === false ) {
+	$IP = __DIR__ . '/../../..';
+}
+require_once "$IP/maintenance/Maintenance.php";
+// @codeCoverageIgnoreEnd
+
 /**
  * Normalizes throttle parameters as part of the overhaul described in T203587
  *
@@ -16,33 +31,14 @@
  *     - at least a number missing from parameters[1] ==> insert 0 in place of the missing param
  *     - empty groups ==> 'none' (special case, uses the message abusefilter-throttle-none)
  *
- * @ingroup Maintenance
- */
-
-namespace MediaWiki\Extension\AbuseFilter\Maintenance;
-
-use LoggedUpdateMaintenance;
-use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
-
-// @codeCoverageIgnoreStart
-if ( getenv( 'MW_INSTALL_PATH' ) ) {
-	$IP = getenv( 'MW_INSTALL_PATH' );
-} else {
-	$IP = __DIR__ . '/../../..';
-}
-require_once "$IP/maintenance/Maintenance.php";
-// @codeCoverageIgnoreEnd
-
-/**
- * Normalizes throttle parameters, see T203587
  * @codeCoverageIgnore
- * No need to cover: old, single-use script.
+ * No need to test old single-use script.
  */
 class NormalizeThrottleParameters extends LoggedUpdateMaintenance {
 	public function __construct() {
 		parent::__construct();
 
-		$this->addDescription( 'Normalize AbuseFilter throttle parameters - T203587' );
+		$this->addDescription( 'Normalize AbuseFilter throttle parameters' );
 		$this->addOption( 'dry-run', 'Perform a dry run' );
 		$this->requireExtension( 'Abuse Filter' );
 	}
@@ -55,7 +51,7 @@ class NormalizeThrottleParameters extends LoggedUpdateMaintenance {
 		return 'NormalizeThrottleParameters';
 	}
 
-	/** @var \Wikimedia\Rdbms\Database The primary database */
+	/** @var IMaintainableDatabase The primary database */
 	private $dbw;
 
 	/**
@@ -486,7 +482,7 @@ class NormalizeThrottleParameters extends LoggedUpdateMaintenance {
 	 */
 	public function doDBUpdates() {
 		$dryRun = $this->hasOption( 'dry-run' );
-		$this->dbw = wfGetDB( DB_PRIMARY );
+		$this->dbw = $this->getDB( DB_PRIMARY );
 		$this->beginTransaction( $this->dbw, __METHOD__ );
 
 		$normalized = $this->normalizeParameters();

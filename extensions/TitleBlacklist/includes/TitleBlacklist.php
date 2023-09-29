@@ -138,11 +138,7 @@ class TitleBlacklist {
 			}
 			if ( $title->getNamespace() == NS_MEDIAWIKI ) {
 				$msg = wfMessage( $title->getText() )->inContentLanguage();
-				if ( !$msg->isDisabled() ) {
-					return $msg->text();
-				} else {
-					return '';
-				}
+				return $msg->isDisabled() ? '' : $msg->text();
 			} else {
 				$page = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 				if ( $page->exists() ) {
@@ -153,11 +149,10 @@ class TitleBlacklist {
 		} elseif ( $source['type'] == 'url' && count( $source ) >= 2 ) {
 			return self::getHttp( $source['src'] );
 		} elseif ( $source['type'] == 'file' && count( $source ) >= 2 ) {
-			if ( file_exists( $source['src'] ) ) {
-				return file_get_contents( $source['src'] );
-			} else {
+			if ( !file_exists( $source['src'] ) ) {
 				return '';
 			}
+			return file_get_contents( $source['src'] );
 		}
 
 		return '';
@@ -361,7 +356,7 @@ class TitleBlacklist {
 	 * Indicates whether user can override blacklist on certain action.
 	 *
 	 * @param User $user
-	 * @param string $action Action
+	 * @param string $action
 	 *
 	 * @return bool
 	 */
@@ -370,5 +365,3 @@ class TitleBlacklist {
 			( $action == 'new-account' && $user->isAllowed( 'tboverride-account' ) );
 	}
 }
-
-class_alias( TitleBlacklist::class, 'TitleBlacklist' );

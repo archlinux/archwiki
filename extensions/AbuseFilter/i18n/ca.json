@@ -29,7 +29,8 @@
 			"Toniher",
 			"Townie",
 			"Vfc",
-			"Vriullop"
+			"Vriullop",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Aplica heurística automàtica a les edicions",
@@ -405,7 +406,7 @@
 	"abusefilter-history-diff": "Canvis",
 	"abusefilter-history-error-hidden": "El filtre que heu demanat s'ha amagat, i no podeu veure'n l'historial.",
 	"abusefilter-exception-unexpectedatend": "Inesperat \"$2\" al caràcter $1.",
-	"abusefilter-exception-expectednotfound": "S'esperava un  $2  a les de caràcter  $1 , que no es troba (s'ha trobat  $3   $4  en el seu lloc).",
+	"abusefilter-exception-expectednotfound": "S'esperava un $2 a la posició $1, i no s'hi troba (s'ha trobat $3 $4 en el seu lloc).",
 	"abusefilter-exception-unrecognisedkeyword": "Paraula clau no reconeguda $2 al caràcter $1 .",
 	"abusefilter-exception-unexpectedtoken": "Element inesperat \"$3\" (del tipus $2) al caràcter $1.",
 	"abusefilter-exception-unclosedstring": "Cadena no tancada que comença al caràcter $1.",
@@ -418,7 +419,7 @@
 	"abusefilter-exception-regexfailure": "Error en l’expressió regular «$2» al caràcter $1.",
 	"abusefilter-exception-overridebuiltin": "Anul·lació incorrecta de la identificació incorporada «$2» al caràcter $1.",
 	"abusefilter-exception-outofbounds": "Sol·licitant un article $2 inexistent de la matriu (grandària de la matriu = $3) al caràcter $1.",
-	"abusefilter-exception-notarray": "Sol. licitant element de matriu de no-matriu a caràcter  $1 .",
+	"abusefilter-exception-notarray": "S'està sol·licitant un element de matriu de no matriu al caràcter $1.",
 	"abusefilter-exception-invalidiprange": "S’ha proporcionat l’interval d’IP no vàlid «$2» al caràcter $1.",
 	"abusefilter-exception-disabledvar": "Ja no es fa servir la variable $2 al caràcter $1.",
 	"abusefilter-action-tag": "Etiqueta",
@@ -441,7 +442,7 @@
 	"abusefilter-revert-confirm-legend": "Confirma la reversió",
 	"abusefilter-revert-confirm": "Confirma",
 	"abusefilter-revert-success": "Heu revertit totes les accions del filtre d'abusos generades pel [[Special:AbuseFilter/$1|filtre $2]].",
-	"abusefilter-revert-reason": "Automatic tornar de totes les mesures adoptades pel filtre d'abús a causa de filtre de  $1 .\nMotiu donat:$2",
+	"abusefilter-revert-reason": "Automatic tornar de totes les mesures adoptades pel filtre d'abús a causa de filtre de $1 .\nMotiu donat:$2",
 	"abusefilter-revert-reasonfield": "Motiu:",
 	"abusefilter-test": "Prova un filtre contra les edicions anteriors",
 	"abusefilter-test-intro": "Aquesta pàgina us permet comprovar un filtre entrar en el camp de sota respecte els últims $1 {{PLURAL:$1|canvi|canvis}}.\nPer carregar un filtre existent, escriviu el seu número d'identificació en el camp sota la caixa de text i cliqueu el botó \"{{int:abusefilter-test-load}}\".",

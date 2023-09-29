@@ -1,20 +1,19 @@
 <?php
 
+use MediaWiki\EditPage\EditPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\EditResult;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Editing
- *
  * @group Database
- *        ^--- tell jenkins this test needs the database
- *
  * @group medium
- *        ^--- tell phpunit that these test cases may take longer than 2 seconds.
  */
 class EditPageTest extends MediaWikiLangTestCase {
 
@@ -31,6 +30,9 @@ class EditPageTest extends MediaWikiLangTestCase {
 				[ 'testing' => 'DummyContentHandlerForTesting' ] +
 				MainConfigSchema::getDefaultValue( MainConfigNames::ContentHandlers ),
 		] );
+
+		// Disable WAN cache to avoid edit conflicts in testUpdateNoMinor
+		$this->setMainCache( CACHE_NONE );
 	}
 
 	/**
@@ -138,7 +140,8 @@ class EditPageTest extends MediaWikiLangTestCase {
 			$user = $this->getTestUser()->getUser();
 		}
 
-		$page = WikiPage::factory( $title );
+		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
+		$page = $wikiPageFactory->newFromTitle( $title );
 
 		if ( $baseText !== null ) {
 			$content = ContentHandler::makeContent( $baseText, $title );
@@ -195,7 +198,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 				"Expected result code mismatch. $message" );
 		}
 
-		$page = WikiPage::factory( $title );
+		$page = $wikiPageFactory->newFromTitle( $title );
 
 		if ( $expectedText !== null ) {
 			// check resulting page text
@@ -676,7 +679,7 @@ hello
 
 		$elmosEdit['wpSummary'] = 'Elmo\'s edit';
 		$bertasEdit['wpSummary'] = 'Bertas\'s edit';
-		$newEdit['wpSummary'] = $newEdit['wpSummary'] ?? 'new edit';
+		$newEdit['wpSummary'] ??= 'new edit';
 
 		// first edit: Elmo
 		$page = $this->assertEdit( __METHOD__, null, 'Elmo', $elmosEdit,
@@ -965,7 +968,7 @@ hello
 	}
 
 	public function provideWatchlistExpiry() {
-		$standardOptions = [ 'infinite', '1 week', '1 month', '3 months', '6 months' ];
+		$standardOptions = [ 'infinite', '1 week', '1 month', '3 months', '6 months', '1 year' ];
 		return [
 			'not watched, request nothing' => [
 				'existingExpiry' => '',

@@ -37,6 +37,12 @@ class ChemWordTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( 'ab', $chemWord->render(), 'Should create a basic function' );
 	}
 
+	public function testGetters() {
+		$chemWord = new ChemWord( new Literal( 'a' ), new Literal( 'b' ) );
+		$this->assertNotEmpty( $chemWord->getLeft() );
+		$this->assertNotEmpty( $chemWord->getRight() );
+	}
+
 	public function testExtractIdentifiersBox() {
 		$chemWord = new ChemWord( new Literal( 'a' ), new Literal( 'b' ) );
 		$this->assertEquals( [], $chemWord->extractIdentifiers(), 'Should extract identifiers' );

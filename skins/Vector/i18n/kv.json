@@ -3,16 +3,25 @@
 		"authors": [
 			"Comp1089",
 			"Enye Lav",
-			"Merrahtar"
+			"Merrahtar",
+			"Amire80",
+			"СерМар"
 		]
 	},
 	"vector-languages": "Кывъяс",
-	"vector-language-button-label": "{{PLURAL:$1|кыв}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 кыв|$1 кывъяс}}",
+	"vector-no-language-button-label": "Содтыны кывъяс",
+	"vector-action-addsection": "Содтыны тема",
 	"vector-action-move": "Ним вежны",
 	"vector-view-create": "Лӧсьӧдны",
 	"vector-view-edit": "Вежны",
 	"vector-view-history": "История",
 	"vector-view-view": "Лыддьыны",
 	"vector-more-actions": "Нӧшта",
-	"vector-searchsuggest-containing": "Корсьны лист бокъяс, кӧні эм <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Корсьны лист бокъяс, кӧні эм <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Юриндалысь",
+	"vector-toc-beginning": "Заводитчӧм",
+	"vector-page-tools-label": "Инструментъяс",
+	"vector-page-tools-general-label": "Ӧтувъя",
+	"vector-unpin-element-label": "сайӧдны"
 }

@@ -1,8 +1,6 @@
 <?php
 /** Romanian (română)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  *
@@ -253,6 +251,7 @@ $specialPageAliases = [
 	'Randomredirect'            => [ 'Redirectare_aleatorie' ],
 	'Recentchanges'             => [ 'Schimbări_recente' ],
 	'Recentchangeslinked'       => [ 'Modificări_corelate' ],
+	'Renameuser'                => [ 'Redenumire_utilizator' ],
 	'Revisiondelete'            => [ 'Şterge_revizie' ],
 	'Search'                    => [ 'Căutare' ],
 	'Shortpages'                => [ 'Pagini_scurte' ],

@@ -26,9 +26,14 @@
 	"vector-more-actions": "Àutri cosi",
 	"vector-searchsuggest-containing": "Arricerca li pàggini ca cuntènnunu<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Ntroduzzioni",
-	"vector-toc-heading": "Cuntinuti",
+	"vector-toc-label": "Ìnnici",
 	"vector-anon-user-menu-pages-learn": "àutri nfurmazzioni",
 	"vector-main-menu-tooltip": "Menu principali",
 	"vector-site-nav-label": "Situ",
+	"vector-main-menu-label": "Menu principali",
+	"vector-page-tools-label": "Strummenta",
+	"vector-page-tools-general-label": "Ginirali",
+	"vector-page-tools-actions-label": "Azzioni",
+	"vector-unpin-element-label": "ammuccia",
 	"tooltip-vector-anon-user-menu-title": "Àutri opzioni"
 }

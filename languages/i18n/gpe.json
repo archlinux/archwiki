@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Afimaame",
 			"Amire80",
 			"DaSupremo",
-			"Jwale2",
-			"Afimaame"
+			"Jwale2"
 		]
 	},
 	"tog-underline": "Link wey dey underline:",
@@ -162,6 +162,7 @@
 	"permalink": "Permanent link",
 	"print": "Print",
 	"view": "View",
+	"viewcontribs": "Make you view contributions",
 	"skin-view-view": "Read",
 	"skin-view-foreign": "View on $1",
 	"edit": "Edit",
@@ -178,6 +179,8 @@
 	"skin-action-unprotect": "Change protection",
 	"unprotect": "Change protection",
 	"newpage": "Fresh page",
+	"newpage-desc": "Make you start fresh page give topic wey dem request.",
+	"view-missing-pages": "Make you view pages dem miss",
 	"talkpagelinktext": "talk",
 	"specialpage": "Special page",
 	"personaltools": "Personal tools",
@@ -400,13 +403,13 @@
 	"showpreview": "Show preview",
 	"showdiff": "Show changes",
 	"anoneditwarning": "<strong>Warning:</strong> You no log insyd. Your IP address go be publicly visible if you make any edits. If you <strong>[$1 log in]</strong> anaa <strong>[$2 create account]</strong>, dem go attribute your edits go your username, along plus oda benefits.",
-	"blockedtext": "<strong>Dem block your username or IP address.</strong>\n\n$1 wey block you.\nDe reason e give be say <em>$2</em>.\n\n* Block start: $8\n* Block go expire: $6\n* Blockee wey e intend: $7\n\nYou fit to contact $1 or anoda [[{{MediaWiki:Grouppage-sysop}}|administrator]] so say you go discuss de block.\nYou fit to use de \"{{int:emailuser}}\" feature if dem specify valid email address for your [[Special:Preferences|preferences]] inside wey dem no block you from using am.\nYour current IP address be $3, wey de block ID be #$5.\nWe beg include all above details for any queries you make inside.",
+	"blockedtext": "<strong>Dem block your username or IP address.</strong>\n\n{{int:blockedtext-made-by|$1}}\n{{int:blockedtext-reason-comment|$2}}.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-contact-blocker-admin|$1}}\nYou go fi use de \"{{int:emailuser}}\" feature if dem specify valid email address for your [[Special:Preferences|preferences]] insyd wey dem no block you make you no use am.\n{{int:blockedtext-block-ip|$3}}, den de block ID be #$5.\n{{int:blockedtext-include-details-queries}}",
 	"loginreqlink": "log insyd",
 	"newarticletext": "You follow link to page wey no dey exist yet.\nTo create de page, start dey type for de box insyd below (spy de [$1 help page] for more info).\nIf you cam hie by mistake, click your browser ein <strong>back</strong> button.",
 	"anontalkpagetext": "----\n<em>Dis be de discussion page give anonymous user wey no create account yet, anaa person wey no dey use am.</em>\nWe therefore for use de numerical IP address so say we go identify dem.\nChaw users fi to share such IP address.\nIf you be anonymous user wey you dey feel say dem direct irrelevant comments for your top, we beg [[Special:CreateAccount|create account]] anaa [[Special:UserLogin|log in]] so say you go avoid future confusion plus oda anonymous users.",
 	"noarticletext": "Currently no text dey dis page insyd. You fi [[Special:Search/{{PAGENAME}}|search for dis page title]] for oda pages insyd, <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} search de related logs],\nanaa [{{fullurl:{{FULLPAGENAME}}|action=edit}} create dis page]</span>.",
 	"noarticletext-nopermission": "Currently no text dey dis page insyd der.\nYou fi [[Special:Search/{{PAGENAME}}|search dis page title]] for oda pages insyd, anaa <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} search de related logs]</span>, but you no get permission make you create dis page.",
-	"userpage-userdoesnotexist-view": "User account \"$1\" no be registered.",
+	"userpage-userdoesnotexist-view": "User account \"$1\" no be registered for dis wiki top.",
 	"previewnote": "<strong>Kai say dis be preview per.</strong>\nDem no publish your changes yet!",
 	"continue-editing": "Go area dem dey edit",
 	"editing": "Dey edit $1",
@@ -674,5 +677,13 @@
 	"revdelete-content-hid": "content hidden",
 	"searchsuggest-search": "Search {{SITENAME}}",
 	"searchsuggest-containing": "Search for pages wey dey contain",
-	"duration-days": "$1 {{PLURAL:$1|day|days}}"
+	"duration-days": "$1 {{PLURAL:$1|day|days}}",
+	"blockedtext-made-by": "$1 wey make de block.",
+	"blockedtext-reason-comment": "De reason dem give be <em>$1</em>",
+	"blockedtext-start-time": "Block start: $1",
+	"blockedtext-expiration-time": "Block expire: $1",
+	"blockedtext-intended-blockee": "Blockee dem intend: $1",
+	"blockedtext-contact-blocker-admin": "You fi contact $1 anaa anoda [[{{MediaWiki:Grouppage-sysop}}|administrator]] make you discuss de block.",
+	"blockedtext-block-ip": "Your current IP address be $1",
+	"blockedtext-include-details-queries": "We beg make you include all above details for any queries you make insyd."
 }

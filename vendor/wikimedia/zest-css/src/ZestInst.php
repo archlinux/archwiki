@@ -154,7 +154,6 @@ class ZestInst {
 				// bad string.
 				$str = substr( $str, 1 );
 			}
-			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			return preg_replace_callback( self::$rules->str_escape, function ( array $matches ) {
 				$s = $matches[0];
 				if ( !preg_match( '/^\\\(?:([0-9A-Fa-f]+)|([\r\n\f]+))/', $s, $m ) ) {
@@ -166,7 +165,6 @@ class ZestInst {
 				$cp = intval( $m[ 1 ], 16 );
 				return self::unichr( $cp );
 			}, $str );
-			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 		} elseif ( preg_match( self::$rules->ident, $str ) ) {
 			return self::decodeid( $str );
 		} else {
@@ -176,7 +174,6 @@ class ZestInst {
 	}
 
 	private static function decodeid( string $str ): string {
-		// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 		return preg_replace_callback( self::$rules->escape, function ( array $matches ) {
 			$s = $matches[0];
 			if ( !preg_match( '/^\\\([0-9A-Fa-f]+)/', $s, $m ) ) {
@@ -302,7 +299,15 @@ class ZestInst {
 			// to do this the hard/slow way
 			$r = [];
 			foreach ( $this->getElementsByTagName( $context, '*', $opts ) as $el ) {
-				if ( $id === ( $el->getAttribute( 'id' ) ?? '' ) ) {
+				// Work around Phan 8.1 / 7.4 issues by telling Phan what
+				// the expected type is. Zest could be used with newer DOM
+				// implementations that could return null for missing attributes.
+				// See https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute#non-existing_attributes
+				// But, Phan doesn't know that and only sees the native PHP
+				// implementation that returns '' for missing attributes.
+				$elId = $el->getAttribute( 'id' );
+				'@phan-var ?string $elId';
+				if ( $id === ( $elId ?? '' ) ) {
 					$r[] = $el;
 				}
 			}
@@ -1080,12 +1085,12 @@ class ZestInst {
 				return null;
 			}
 
-			$attr = $node->getAttribute( $name ) ?: '';
+			$attr = $node->getAttribute( $name ) ?? '';
 			if ( $attr !== '' && $attr[ 0 ] === '#' ) {
 				$attr = substr( $attr, 1 );
 			}
 
-			$id = $node->getAttribute( 'id' ) ?: '';
+			$id = $node->getAttribute( 'id' ) ?? '';
 			if ( $attr === $id && call_user_func( $test, $node, $opts ) ) {
 				return $node;
 			}
@@ -1156,7 +1161,6 @@ class ZestInst {
 		$ref = null;
 
 		while ( $sel ) {
-			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			if ( preg_match( self::$rules->qname, $sel, $cap ) ) {
 				$sel = substr( $sel, strlen( $cap[0] ) );
 				$qname = self::decodeid( $cap[ 1 ] );
@@ -1167,7 +1171,6 @@ class ZestInst {
 				} elseif ( substr( $qname, 0, 2 ) === '*|' ) {
 					$qname = substr( $qname, 2 );
 				}
-				// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			} elseif ( preg_match( self::$rules->simple, $sel, $cap, PREG_UNMATCHED_AS_NULL ) ) {
 				$sel = substr( $sel, strlen( $cap[0] ) );
 				$qname = '*';
@@ -1177,7 +1180,6 @@ class ZestInst {
 				throw $this->newBadSelectorException( 'Invalid selector.' );
 			}
 
-			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			while ( preg_match( self::$rules->simple, $sel, $cap, PREG_UNMATCHED_AS_NULL ) ) {
 				$sel = substr( $sel, strlen( $cap[0] ) );
 				$buff[] = $this->tok( $cap );
@@ -1190,7 +1192,6 @@ class ZestInst {
 				$buff[] = $subject->simple;
 			}
 
-			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			if ( preg_match( self::$rules->ref, $sel, $cap ) ) {
 				$sel = substr( $sel, strlen( $cap[0] ) );
 				$ref = $this->makeRef( self::makeSimple( $buff ), self::decodeid( $cap[ 1 ] ) );
@@ -1199,7 +1200,6 @@ class ZestInst {
 				continue;
 			}
 
-			// @phan-suppress-next-line SecurityCheck-LikelyFalsePositive
 			if ( preg_match( self::$rules->combinator, $sel, $cap, PREG_UNMATCHED_AS_NULL ) ) {
 				$sel = substr( $sel, strlen( $cap[0] ) );
 				$op = $cap[ 1 ] ?? $cap[ 2 ] ?? $cap[ 3 ];
@@ -1414,7 +1414,7 @@ class ZestInst {
 	 * @param string $sel
 	 * @param DOMDocument|DOMDocumentFragment|DOMElement $node
 	 * @param array $opts
-	 * @return DOMNode[]
+	 * @return DOMElement[]
 	 */
 	private function findInternal( string $sel, $node, $opts ): array {
 		$results = [];
@@ -1489,7 +1489,6 @@ class ZestInst {
 			}
 		}
 		/* do things the hard/slow way */
-		// @phan-suppress-next-line PhanTypeMismatchReturn
 		return $this->findInternal( $sel, $context, $opts );
 	}
 
@@ -1547,7 +1546,7 @@ class ZestInst {
 		// \DOMDocument, otherwise use standards mode.
 		$doc = self::nodeIsDocument( $context ) ?
 			 $context : $context->ownerDocument;
-		return !$doc instanceof DOMDocument;
+		return !( $doc instanceof DOMDocument );
 	}
 
 	/** @var ?ZestInst */

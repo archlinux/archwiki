@@ -107,7 +107,7 @@
 	"templatedata-modal-table-param-required": "Обов'язковий",
 	"templatedata-modal-table-param-suggested": "Пропонований",
 	"templatedata-modal-table-param-suggestedvalues": "Пропоновані значення",
-	"templatedata-modal-table-param-suggestedvalues-placeholder": "Додати значення…",
+	"templatedata-modal-placeholder-multiselect": "Додати значення…",
 	"templatedata-modal-table-param-type": "Тип",
 	"templatedata-modal-table-param-uneditablefield": "Недоступно для редагування",
 	"templatedata-modal-title": "Редактор шаблонів документації",

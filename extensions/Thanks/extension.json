@@ -1,0 +1,227 @@
+{
+	"name": "Thanks",
+	"version": "1.2.0",
+	"author": [
+		"Ryan Kaldari",
+		"Benjamin Chen",
+		"Wctaiwan"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:Thanks",
+	"descriptionmsg": "thanks-desc",
+	"license-name": "MIT",
+	"type": "other",
+	"requires": {
+		"MediaWiki": ">= 1.40.0",
+		"extensions": {
+			"Echo": "*"
+		}
+	},
+	"DefaultUserOptions": {
+		"echo-subscriptions-web-edit-thank": true,
+		"echo-subscriptions-email-edit-thank": false
+	},
+	"RateLimits": {
+		"thanks-notification": {
+			"user": [
+				10,
+				60
+			]
+		}
+	},
+	"SpecialPages": {
+		"Thanks": "MediaWiki\\Extension\\Thanks\\SpecialThanks"
+	},
+	"LogTypes": [
+		"thanks"
+	],
+	"FilterLogTypes": {
+		"thanks": true
+	},
+	"LogActionsHandlers": {
+		"thanks/*": "MediaWiki\\Extension\\Thanks\\ThanksLogFormatter"
+	},
+	"APIModules": {
+		"thank": "MediaWiki\\Extension\\Thanks\\ApiCoreThank"
+	},
+	"MessagesDirs": {
+		"Thanks": [
+			"i18n",
+			"i18n/api"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"ThanksAlias": "Thanks.alias.php"
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\Thanks\\": "includes/"
+	},
+	"ResourceModules": {
+		"ext.thanks.images": {
+			"class": "ResourceLoaderImageModule",
+			"selector": ".mw-ui-icon-thanks-{name}:before",
+			"defaultColor": "#fff",
+			"images": {
+				"userTalk": {
+					"file": {
+						"ltr": "userTalk-ltr.svg",
+						"rtl": "userTalk-rtl.svg"
+					}
+				}
+			}
+		},
+		"ext.thanks": {
+			"scripts": [
+				"ext.thanks.thank.js"
+			],
+			"dependencies": [
+				"mediawiki.cookie",
+				"mediawiki.api"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		},
+		"ext.thanks.corethank": {
+			"scripts": [
+				"ext.thanks.corethank.js"
+			],
+			"messages": [
+				"thanks-thanked",
+				"thanks-error-undefined",
+				"thanks-error-invalidrevision",
+				"thanks-error-ratelimited",
+				"thanks-error-revdeleted",
+				"thanks-confirmation2",
+				"thanks-thank-tooltip-no",
+				"thanks-thank-tooltip-yes",
+				"thanks-button-thank",
+				"cancel"
+			],
+			"dependencies": [
+				"oojs-ui-core",
+				"oojs-ui-windows",
+				"mediawiki.jqueryMsg",
+				"mediawiki.api",
+				"jquery.confirmable",
+				"ext.thanks"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		},
+		"ext.thanks.mobilediff": {
+			"scripts": [
+				"ext.thanks.mobilediff.js"
+			],
+			"messages": [
+				"thanks-button-action-queued",
+				"thanks-button-action-cancel",
+				"thanks-button-action-completed",
+				"thanks-button-thank",
+				"thanks-button-thanked",
+				"thanks-error-invalidrevision",
+				"thanks-error-ratelimited",
+				"thanks-error-undefined",
+				"thanks-thanked-notice"
+			],
+			"dependencies": [
+				"mobile.startup",
+				"ext.thanks.images",
+				"mediawiki.api",
+				"mediawiki.jqueryMsg"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		},
+		"ext.thanks.flowthank": {
+			"scripts": [
+				"jquery.findWithParent.js",
+				"ext.thanks.flowthank.js"
+			],
+			"messages": [
+				"thanks-button-thanked",
+				"thanks-error-undefined",
+				"thanks-error-ratelimited"
+			],
+			"dependencies": [
+				"oojs-ui-core",
+				"oojs-ui-windows",
+				"mediawiki.jqueryMsg",
+				"mediawiki.api",
+				"ext.thanks"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "modules",
+		"remoteExtPath": "Thanks/modules"
+	},
+	"QUnitTestModule": {
+		"localBasePath": "tests/qunit",
+		"remoteExtPath": "Thanks/tests/qunit",
+		"scripts": [
+			"test_ext.thanks.thank.js",
+			"test_ext.thanks.mobilediff.js"
+		],
+		"dependencies": [
+			"ext.thanks",
+			"ext.thanks.mobilediff"
+		]
+	},
+	"Hooks": {
+		"ApiMain::moduleManager": "MediaWiki\\Extension\\Thanks\\Hooks::onApiMainModuleManager",
+		"BeforeCreateEchoEvent": "MediaWiki\\Extension\\Thanks\\Hooks::onBeforeCreateEchoEvent",
+		"BeforePageDisplay": "MediaWiki\\Extension\\Thanks\\Hooks::onBeforePageDisplay",
+		"BeforeSpecialMobileDiffDisplay": "MediaWiki\\Extension\\Thanks\\Hooks::onBeforeSpecialMobileDiffDisplay",
+		"DiffTools": "MediaWiki\\Extension\\Thanks\\Hooks::onDiffTools",
+		"DifferenceEngineViewHeader": "MediaWiki\\Extension\\Thanks\\Hooks::onDifferenceEngineViewHeader",
+		"EchoGetBundleRules": "MediaWiki\\Extension\\Thanks\\Hooks::onEchoGetBundleRules",
+		"GetAllBlockActions": "MediaWiki\\Extension\\Thanks\\Hooks::onGetAllBlockActions",
+		"GetLogTypesOnUser": "MediaWiki\\Extension\\Thanks\\Hooks::onGetLogTypesOnUser",
+		"HistoryTools": "MediaWiki\\Extension\\Thanks\\Hooks::onHistoryTools",
+		"LocalUserCreated": "MediaWiki\\Extension\\Thanks\\Hooks::onAccountCreated",
+		"LogEventsListLineEnding": "MediaWiki\\Extension\\Thanks\\Hooks::onLogEventsListLineEnding",
+		"PageHistoryBeforeList": "MediaWiki\\Extension\\Thanks\\Hooks::onPageHistoryBeforeList"
+	},
+	"ServiceWiringFiles": [
+		"ServiceWiring.php"
+	],
+	"config": {
+		"ThanksSendToBots": {
+			"value": false
+		},
+		"ThanksLogging": {
+			"value": true
+		},
+		"ThanksConfirmationRequired": {
+			"value": true
+		},
+		"ThanksAllowedLogTypes": {
+			"value": [
+				"contentmodel",
+				"create",
+				"delete",
+				"import",
+				"merge",
+				"move",
+				"pagelang",
+				"patrol",
+				"protect",
+				"tag",
+				"upload",
+				"managetags",
+				"rights/rights",
+				"lock"
+			]
+		}
+	},
+	"manifest_version": 2
+}

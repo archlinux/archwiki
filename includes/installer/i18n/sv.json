@@ -57,8 +57,7 @@
 	"config-env-good": "Miljön har kontrollerats.\nDu kan installera MediaWiki.",
 	"config-env-bad": "Miljön har kontrollerats.\nDu kan inte installera MediaWiki.",
 	"config-env-php": "PHP $1 är installerat.",
-	"config-unicode-using-intl": "Använder tillägget [https://pecl.php.net/intl PHP intl] för Unicode-normalisering.",
-	"config-unicode-update-warning": "<strong>Varning:</strong> Den installerade versionen av Unicode-normaliserings \"wrappern\" använder en äldre version av [http://site.icu-project.org/ ICU projektets] bibliotek.\nDu bör [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations uppgradera] om är intresserad av att använda Unicode.",
+	"config-env-icu": "ICU $1 är installerad (stödjer Unicode $2).",
 	"config-no-db": "Kunde inte hitta en lämplig databasdrivrutin! Du måste installera en databasdrivrutin för PHP.\nFöljande databas{{PLURAL:$2|typ |typer}} stöds: $1.\n\nOm du själv kompilerat din PHP, konfigurera den med en databasklient aktiverad genom att t.ex. använda <code>./configure --with-mysqli</code>.\nOm du installerade PHP från ett Debian- eller Ubuntupaket måste du även installera, t.ex. <code>php-mysql</code>-paketet.",
 	"config-outdated-sqlite": "<strong>Varning:</strong> Du har SQLite $2, vilket är lägre än minimikravet version $1. SQLite kommer inte att vara tillgänglig.",
 	"config-no-fts3": "'''Varning:''' SQLite kompileras utan [//sqlite.org/fts3.html FTS3-modulen], sökfunktioner kommer att vara otillgängliga på denna backend.",
@@ -84,7 +83,6 @@
 	"config-using-uri": "Använder server-URL \"<nowiki>$1$2</nowiki>\".",
 	"config-uploads-not-safe": "<strong>Varning:</strong> Din standardkatalog för uppladdningar <code>$1</code> är sårbar för körning av godtyckliga skript.\nÄven om MediaWiki kontrollerar alla uppladdade filer för säkerhetshot är det ändå starkt rekommenderat att [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security stänga detta säkerhetshål] innan du aktiverar uppladdningar.",
 	"config-no-cli-uploads-check": "<strong>Varning:</strong> Din standardkatalog för uppladdningar (<code>$1</code>) har inte kontrollerats för sårbarhet från körning av godtyckliga skript under CLI-installationen.",
-	"config-suhosin-max-value-length": "Suhosin är installerat och begränsar GET-parametern <code>length</code> till $1 byte.\nMediaWiki kräver att <code>suhosin.get.max_value_length</code> är minst $2. Inaktivera denna inställning eller öka detta värde till $3 i <code>php.ini</code>.",
 	"config-using-32bit": "<strong>Varning:</strong> ditt system verkar vara en 32-bitarsversion. Detta [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit rekommenderas inte].",
 	"config-db-type": "Databastyp:",
 	"config-db-host": "Databasvärd:",
@@ -104,6 +102,7 @@
 	"config-db-prefix": "Prefix för databastabell (inga bindestreck):",
 	"config-db-prefix-help": "Om du behöver dela en databas mellan flera olika wikier, eller mellan MediaWiki och en annan webbapplikation, kan du välja att lägga till ett prefix till alla tabellnamn för att undvika konflikter.\nAnvänd inte mellanslag.\n\nDet här fältet lämnas vanligtvis tomt.",
 	"config-mysql-old": "MySQL $1 eller senare krävs. Du har $2.",
+	"config-mariadb-old": "MariaDB $1 eller senare krävs. Du har $2.",
 	"config-db-port": "Databasport:",
 	"config-db-schema": "Schema för MediaWiki (inga bindestreck):",
 	"config-db-schema-help": "Det här schemat stämmer oftast.\nÄndra det endast om du vet att du behöver.",
@@ -316,6 +315,7 @@
 	"config-screenshot": "skärmbild",
 	"config-extension-not-found": "Kunde inte hitta registreringsfilen för tillägget \"$1\"",
 	"config-extension-dependency": "En beroendefel inträffade när tillägget \"$1\" installerades: $2",
+	"config-ext-skins-more-info": "mer information",
 	"mainpagetext": "<strong>MediaWiki har installerats utan problem.</strong>",
 	"mainpagedocfooter": "Information om hur wiki-programvaran används finns i [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents användarguiden].\n\n== Att komma igång ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Lista över konfigurationsinställningar]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ MediaWiki FAQ]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ E-postlista för nya versioner av MediaWiki]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Lokalisera MediaWiki för ditt språk]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Läs om hur du bekämpar spam på din wiki]"
 }

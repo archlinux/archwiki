@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"Hwboehm",
-			"Metalhead64",
-			"Brettchenweber"
+			"Metalhead64"
 		]
 	},
 	"apihelp-query+pageimages-description": "Liefert Informationen über Bilder auf der Seite, wie z. B. Miniaturansichten und das Vorhandensein von Fotos.",

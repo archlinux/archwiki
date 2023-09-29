@@ -33,16 +33,17 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Title\Title;
 use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
+use Message;
 use MessageSpecifier;
 use NamespaceInfo;
 use PermissionsError;
 use RequestContext;
 use SpecialPage;
-use Title;
 use TitleFormatter;
 use User;
 use UserCache;
@@ -207,6 +208,7 @@ class PermissionManager {
 		'protect',
 		'purge',
 		'read',
+		'renameuser',
 		'reupload',
 		'reupload-own',
 		'reupload-shared',
@@ -687,7 +689,7 @@ class PermissionManager {
 			} elseif ( $title->isSpecialPage() ) {
 				// If it's a special page, ditch the subpage bit and check again
 				$name = $title->getDBkey();
-				list( $name, /* $subpage */ ) =
+				[ $name, /* $subpage */ ] =
 					$this->specialPageFactory->resolveAlias( $name );
 				if ( $name ) {
 					$pure = SpecialPage::getTitleFor( $name )->getPrefixedText();
@@ -750,7 +752,7 @@ class PermissionManager {
 	 */
 	private function isSameSpecialPage( $name, LinkTarget $page ): bool {
 		if ( $page->getNamespace() === NS_SPECIAL ) {
-			list( $thisName, /* $subpage */ ) =
+			[ $thisName, /* $subpage */ ] =
 				$this->specialPageFactory->resolveAlias( $page->getDBkey() );
 			if ( $name == $thisName ) {
 				return true;
@@ -1087,7 +1089,7 @@ class PermissionManager {
 		// TODO: remove & rework upon further use of LinkTarget
 		$title = Title::newFromLinkTarget( $page );
 		if ( $rigor !== self::RIGOR_QUICK && !$title->isUserConfigPage() ) {
-			list( $cascadingSources, $restrictions ) = $this->restrictionStore->getCascadeProtectionSources( $title );
+			[ $cascadingSources, $restrictions ] = $this->restrictionStore->getCascadeProtectionSources( $title );
 			// Cascading protection depends on more than this page...
 			// Several cascading protected pages may include this page...
 			// Check each cascading level
@@ -1138,8 +1140,6 @@ class PermissionManager {
 		$short,
 		LinkTarget $page
 	): array {
-		global $wgLang;
-
 		// TODO: remove & rework upon further use of LinkTarget
 		$title = Title::newFromLinkTarget( $page );
 
@@ -1203,7 +1203,7 @@ class PermissionManager {
 				// NOTE: This check is deprecated since 1.37, see T288759
 				$errors[] = [
 					'delete-toobig',
-					$wgLang->formatNum( $this->options->get( MainConfigNames::DeleteRevisionsLimit ) )
+					Message::numParam( $this->options->get( MainConfigNames::DeleteRevisionsLimit ) )
 				];
 			}
 		} elseif ( $action === 'undelete' ) {
@@ -1478,7 +1478,7 @@ class PermissionManager {
 		$rightsCacheKey = $this->getRightsCacheKey( $user );
 		if ( !isset( $this->usersRights[ $rightsCacheKey ] ) ) {
 			$userObj = User::newFromIdentity( $user );
-			$this->usersRights[ $rightsCacheKey ] = $this->getGroupPermissions(
+			$this->usersRights[ $rightsCacheKey ] = $this->groupPermissionsLookup->getGroupPermissions(
 				$this->userGroupManager->getUserEffectiveGroups( $user )
 			);
 			// Hook requires a full User object
@@ -1558,12 +1558,13 @@ class PermissionManager {
 	 * from anyone.
 	 *
 	 * @since 1.34
-	 * @deprecated since 1.36 Use GroupPermissionsLookup instead
+	 * @deprecated since 1.36, hard-deprecated since 1.40. Use GroupPermissionsLookup instead.
 	 * @param string $group Group to check
 	 * @param string $role Role to check
 	 * @return bool
 	 */
 	public function groupHasPermission( $group, $role ): bool {
+		wfDeprecated( __METHOD__, '1.36' );
 		return $this->groupPermissionsLookup->groupHasPermission( $group, $role );
 	}
 
@@ -1571,11 +1572,12 @@ class PermissionManager {
 	 * Get the permissions associated with a given list of groups
 	 *
 	 * @since 1.34
-	 * @deprecated since 1.36 Use GroupPermissionsLookup instead
+	 * @deprecated since 1.36, hard-deprecated since 1.40. Use GroupPermissionsLookup instead.
 	 * @param string[] $groups internal group names
 	 * @return string[] permission key names for given groups combined
 	 */
 	public function getGroupPermissions( $groups ): array {
+		wfDeprecated( __METHOD__, '1.36' );
 		return $this->groupPermissionsLookup->getGroupPermissions( $groups );
 	}
 
@@ -1583,11 +1585,12 @@ class PermissionManager {
 	 * Get all the groups who have a given permission
 	 *
 	 * @since 1.34
-	 * @deprecated since 1.36, use GroupPermissionsLookup instead.
+	 * @deprecated since 1.36, hard-deprecated since 1.40. use GroupPermissionsLookup instead.
 	 * @param string $role Role to check
 	 * @return string[] internal group names with the given permission
 	 */
 	public function getGroupsWithPermission( $role ): array {
+		wfDeprecated( __METHOD__, '1.36' );
 		return $this->groupPermissionsLookup->getGroupsWithPermission( $role );
 	}
 
@@ -1730,7 +1733,7 @@ class PermissionManager {
 				$right = 'editsemiprotected'; // BC
 			}
 			if ( $right != '' ) {
-				$namespaceRightGroups[$right] = $this->getGroupsWithPermission( $right );
+				$namespaceRightGroups[$right] = $this->groupPermissionsLookup->getGroupsWithPermission( $right );
 			}
 		}
 
@@ -1751,7 +1754,7 @@ class PermissionManager {
 			) {
 				// Do any of the namespace rights imply the restriction right? (see explanation above)
 				foreach ( $namespaceRightGroups as $groups ) {
-					if ( !array_diff( $groups, $this->getGroupsWithPermission( $right ) ) ) {
+					if ( !array_diff( $groups, $this->groupPermissionsLookup->getGroupsWithPermission( $right ) ) ) {
 						// Yes, this one does.
 						continue 2;
 					}

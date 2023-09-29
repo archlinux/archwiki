@@ -27,6 +27,7 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\RequestTimeout\TimeoutException;
 
@@ -54,6 +55,8 @@ class ApiComparePages extends ApiBase {
 	/** @var CommentFormatter */
 	private $commentFormatter;
 
+	private bool $inlineSupported;
+
 	/**
 	 * @param ApiMain $mainModule
 	 * @param string $moduleName
@@ -78,6 +81,8 @@ class ApiComparePages extends ApiBase {
 		$this->contentHandlerFactory = $contentHandlerFactory;
 		$this->contentTransformer = $contentTransformer;
 		$this->commentFormatter = $commentFormatter;
+		$this->inlineSupported = function_exists( 'wikidiff2_inline_diff' )
+			&& DifferenceEngine::getEngine() === 'wikidiff2';
 	}
 
 	public function execute() {
@@ -97,7 +102,7 @@ class ApiComparePages extends ApiBase {
 		$this->getMain()->setCacheMode( 'public' );
 
 		// Get the 'from' RevisionRecord
-		list( $fromRev, $fromRelRev, $fromValsRev ) = $this->getDiffRevision( 'from', $params );
+		[ $fromRev, $fromRelRev, $fromValsRev ] = $this->getDiffRevision( 'from', $params );
 
 		// Get the 'to' RevisionRecord
 		if ( $params['torelative'] !== null ) {
@@ -112,7 +117,7 @@ class ApiComparePages extends ApiBase {
 			switch ( $params['torelative'] ) {
 				case 'prev':
 					// Swap 'from' and 'to'
-					list( $toRev, $toRelRev, $toValsRev ) = [ $fromRev, $fromRelRev, $fromValsRev ];
+					[ $toRev, $toRelRev, $toValsRev ] = [ $fromRev, $fromRelRev, $fromValsRev ];
 					$fromRev = $this->revisionStore->getPreviousRevision( $toRelRev );
 					$fromRelRev = $fromRev;
 					$fromValsRev = $fromRev;
@@ -171,7 +176,7 @@ class ApiComparePages extends ApiBase {
 					break;
 			}
 		} else {
-			list( $toRev, $toRelRev, $toValsRev ) = $this->getDiffRevision( 'to', $params );
+			[ $toRev, $toRelRev, $toValsRev ] = $this->getDiffRevision( 'to', $params );
 		}
 
 		// Handle missing from or to revisions (should never happen)
@@ -204,6 +209,10 @@ class ApiComparePages extends ApiBase {
 			}
 		}
 		$de = new DifferenceEngine( $context );
+		// Use the diff-type option if Wikidiff2 is installed.
+		if ( $this->inlineSupported ) {
+			$de->setSlotDiffOptions( [ 'diff-type' => $params['difftype'] ] );
+		}
 		$de->setRevisions( $fromRev, $toRev );
 		if ( $params['slots'] === null ) {
 			$difftext = $de->getDiffBody();
@@ -215,6 +224,9 @@ class ApiComparePages extends ApiBase {
 			foreach ( $params['slots'] as $role ) {
 				$difftext[$role] = $de->getDiffBodyForRole( $role );
 			}
+		}
+		foreach ( $de->getRevisionLoadErrors() as $msg ) {
+			$this->addWarning( $msg );
 		}
 
 		// Fill in the response
@@ -775,6 +787,14 @@ class ApiComparePages extends ApiBase {
 			ParamValidator::PARAM_ALL => true,
 		];
 
+		// Expose the inline option if Wikidiff2 is installed.
+		if ( $this->inlineSupported ) {
+			$ret['difftype'] = [
+				ParamValidator::PARAM_TYPE => [ 'table', 'inline' ],
+				ParamValidator::PARAM_DEFAULT => 'table',
+			];
+		}
+
 		return $ret;
 	}
 
@@ -783,5 +803,9 @@ class ApiComparePages extends ApiBase {
 			'action=compare&fromrev=1&torev=2'
 				=> 'apihelp-compare-example-1',
 		];
+	}
+
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Compare';
 	}
 }

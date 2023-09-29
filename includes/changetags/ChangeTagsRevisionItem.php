@@ -19,6 +19,9 @@
  * @ingroup Change tagging
  */
 
+use MediaWiki\Linker\Linker;
+use MediaWiki\MediaWikiServices;
+
 /**
  * Item class for a live revision table row with its associated change tags.
  * @since 1.25
@@ -40,7 +43,8 @@ class ChangeTagsRevisionItem extends RevisionItem {
 			->rawParams( $this->getDiffLink() )->escaped();
 		$revlink = $this->getRevisionLink();
 		$userlink = Linker::revUserLink( $this->getRevisionRecord() );
-		$comment = Linker::revComment( $this->getRevisionRecord() );
+		$comment = MediaWikiServices::getInstance()->getCommentFormatter()
+			->formatRevision( $this->getRevisionRecord(), $this->list->getAuthority() );
 		if ( $this->isDeleted() ) {
 			$class = Linker::getRevisionDeletedClass( $this->getRevisionRecord() );
 			$revlink = "<span class=\"$class\">$revlink</span>";
@@ -50,7 +54,7 @@ class ChangeTagsRevisionItem extends RevisionItem {
 		$attribs = [];
 		$tags = $this->getTags();
 		if ( $tags ) {
-			list( $tagSummary, $classes ) = ChangeTags::formatSummaryRow(
+			[ $tagSummary, $classes ] = ChangeTags::formatSummaryRow(
 				$tags,
 				'edittags',
 				$this->list->getContext()

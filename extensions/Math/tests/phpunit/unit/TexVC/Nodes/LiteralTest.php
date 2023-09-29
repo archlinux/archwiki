@@ -63,10 +63,35 @@ class LiteralTest extends MediaWikiUnitTestCase {
 			'Identifier modifications should report extra space' );
 	}
 
+	public function testGetters() {
+		$lit = new Literal( 'hello world' );
+		$this->assertNotEmpty( $lit->getExtendedLiterals() );
+		$this->assertNotEmpty( $lit->getLiterals() );
+		$this->assertNotEmpty( $lit->getArg() );
+	}
+
 	public function testExtractSubscripts() {
 		$n = new Literal( '\\beta' );
 		$this->assertEquals( [ '\\beta' ], $n->extractSubscripts(),
 			'Should extract subscripts' );
+	}
+
+	public function testVLineNotInMatrix() {
+		$n = new Literal( '\\vline' );
+		$this->assertEquals( '<mi>\vline</mi>', $n->renderMML(),
+			'vline should fall through' );
+	}
+
+	public function testVLineInMatrix() {
+		$n = new Literal( '\\vline' );
+		$this->assertStringContainsString( '|</mo>', $n->renderMML( [], [ 'inMatrix' => true ] ),
+			'vline should render a vertical bar operator in matrix context.' );
+	}
+
+	public function testHBoxLiterals() {
+		$n = new Literal( 'in box' );
+		$this->assertStringContainsString( 'in box', $n->renderMML( [], [ 'inHBox' => true ] ),
+			'hboxes should not be wrapped in to mi elements.' );
 	}
 
 }

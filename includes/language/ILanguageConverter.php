@@ -19,6 +19,7 @@
  */
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Title\Title;
 
 /**
  * The shared interface for all language converters.
@@ -71,7 +72,7 @@ interface ILanguageConverter {
 	 * which does a strict test.
 	 *
 	 * @param string|null $variant The variant to validate
-	 * @return mixed Returns an equivalent valid variant code if possible,
+	 * @return string|null Returns an equivalent valid variant code if possible,
 	 *   null otherwise
 	 */
 	public function validateVariant( $variant = null );
@@ -79,7 +80,7 @@ interface ILanguageConverter {
 	/**
 	 * Get the variant specified in the URL
 	 *
-	 * @return mixed Variant if one found, null otherwise
+	 * @return string|null Variant if one found, null otherwise
 	 */
 	public function getURLVariant();
 
@@ -169,10 +170,12 @@ interface ILanguageConverter {
 	 * @param string $text Text to be converted, already html escaped
 	 * @param-taint $text exec_html
 	 * @param string $variant The target variant code
+	 * @param bool $clearState Whether to clear the converter title before
+	 *   conversion (defaults to true)
 	 * @return string Converted text
 	 * @return-taint escaped
 	 */
-	public function convertTo( $text, $variant );
+	public function convertTo( $text, $variant, bool $clearState = true );
 
 	/**
 	 * If a language supports multiple variants, it is possible that

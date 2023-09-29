@@ -33,12 +33,13 @@ use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 use Profiler;
 use RequestContext;
 use SpecialPage;
-use Title;
-use TitleFactory;
 use User;
+use Wikimedia\DebugInfo\DebugInfoTrait;
 use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
@@ -63,6 +64,8 @@ use Wikimedia\ObjectFactory\ObjectFactory;
  * @since 1.17
  */
 class SpecialPageFactory {
+	use DebugInfoTrait;
+
 	/**
 	 * List of special page names to the subclass of SpecialPage which handles them.
 	 */
@@ -240,7 +243,7 @@ class SpecialPageFactory {
 			]
 		],
 		'Wantedfiles' => [
-			'class' => \WantedFilesPage::class,
+			'class' => \MediaWiki\Specials\SpecialWantedFiles::class,
 			'services' => [
 				'RepoGroup',
 				'DBLoadBalancer',
@@ -248,7 +251,7 @@ class SpecialPageFactory {
 			]
 		],
 		'Wantedpages' => [
-			'class' => \WantedPagesPage::class,
+			'class' => \MediaWiki\Specials\SpecialWantedPages::class,
 			'services' => [
 				'DBLoadBalancer',
 				'LinkBatchFactory',
@@ -269,6 +272,7 @@ class SpecialPageFactory {
 			'services' => [
 				'DBLoadBalancer',
 				'SearchEngineFactory',
+				'PageStore',
 			]
 		],
 		'Prefixindex' => [
@@ -356,6 +360,7 @@ class SpecialPageFactory {
 				'LinkBatchFactory',
 				'DBLoadBalancer',
 				'UserGroupManager',
+				'UserIdentityLookup',
 			]
 		],
 		'Block' => [
@@ -428,12 +433,13 @@ class SpecialPageFactory {
 			'services' => [
 				'PermissionManager',
 				'DBLoadBalancer',
-				'CommentStore',
 				'RevisionFactory',
 				'NamespaceInfo',
 				'UserFactory',
 				'UserNameUtils',
 				'UserNamePrefixSearch',
+				'CommentFormatter',
+				'LinkBatchFactory',
 			]
 		],
 		'Preferences' => [
@@ -483,6 +489,7 @@ class SpecialPageFactory {
 				'LinkBatchFactory',
 				'DBLoadBalancer',
 				'UserGroupManager',
+				'UserIdentityLookup',
 			]
 		],
 		'Listadmins' => [
@@ -492,7 +499,7 @@ class SpecialPageFactory {
 			'class' => \SpecialListBots::class,
 		],
 		'Userrights' => [
-			'class' => \UserrightsPage::class,
+			'class' => \MediaWiki\Specials\SpecialUserRights::class,
 			'services' => [
 				'UserGroupManagerFactory',
 				'UserNameUtils',
@@ -558,6 +565,7 @@ class SpecialPageFactory {
 				'RevisionLookup',
 				'NamespaceInfo',
 				'UserOptionsLookup',
+				'CommentFormatter',
 			]
 		],
 		'Recentchanges' => [
@@ -593,6 +601,7 @@ class SpecialPageFactory {
 				'UserNameUtils',
 				'UserNamePrefixSearch',
 				'UserCache',
+				'CommentFormatter',
 			]
 		],
 		'Filepath' => [
@@ -639,6 +648,7 @@ class SpecialPageFactory {
 			'services' => [
 				'RepoGroup',
 				'HttpRequestFactory',
+				'UrlUtils',
 			]
 		],
 		'ListDuplicatedFiles' => [
@@ -672,6 +682,7 @@ class SpecialPageFactory {
 			'class' => \SpecialVersion::class,
 			'services' => [
 				'Parser',
+				'UrlUtils',
 			]
 		],
 		'Lockdb' => [
@@ -687,6 +698,7 @@ class SpecialPageFactory {
 			'services' => [
 				'DBLoadBalancer',
 				'LinkBatchFactory',
+				'UrlUtils',
 			]
 		],
 		'Randompage' => [
@@ -730,7 +742,7 @@ class SpecialPageFactory {
 			]
 		],
 		'Mostimages' => [
-			'class' => \MostimagesPage::class,
+			'class' => \MediaWiki\Specials\SpecialMostImages::class,
 			'services' => [
 				'DBLoadBalancer',
 				'LanguageConverterFactory',
@@ -818,6 +830,7 @@ class SpecialPageFactory {
 				'SearchEngineFactory',
 				'UndeletePageFactory',
 				'ArchivedRevisionLookup',
+				'CommentFormatter',
 			],
 		],
 		'Whatlinkshere' => [
@@ -839,6 +852,7 @@ class SpecialPageFactory {
 				'LinkBatchFactory',
 				'DBLoadBalancer',
 				'RevisionStore',
+				'CommentFormatter',
 			]
 		],
 		'ExpandTemplates' => [
@@ -872,6 +886,9 @@ class SpecialPageFactory {
 		// Unlisted / redirects
 		'ApiHelp' => [
 			'class' => \SpecialApiHelp::class,
+			'services' => [
+				'UrlUtils',
+			]
 		],
 		'Blankpage' => [
 			'class' => \SpecialBlankpage::class,
@@ -906,7 +923,7 @@ class SpecialPageFactory {
 			]
 		],
 		'Movepage' => [
-			'class' => \MovePageForm::class,
+			'class' => \MediaWiki\Specials\SpecialMovePage::class,
 			'services' => [
 				'MovePageFactory',
 				'PermissionManager',
@@ -931,6 +948,9 @@ class SpecialPageFactory {
 				'LanguageNameUtils',
 				'RedirectLookup'
 			]
+		],
+		'Mylog' => [
+			'class' => \SpecialMylog::class,
 		],
 		'Mypage' => [
 			'class' => \SpecialMypage::class,
@@ -984,6 +1004,18 @@ class SpecialPageFactory {
 				'UserFactory',
 			]
 		],
+		'Renameuser' => [
+			'class' => \SpecialRenameuser::class,
+			'services' => [
+				'DBLoadBalancerFactory',
+				'ContentLanguage',
+				'MovePageFactory',
+				'PermissionManager',
+				'TitleFactory',
+				'UserFactory',
+				'UserNamePrefixSearch',
+			]
+		],
 		'Revisiondelete' => [
 			'class' => \SpecialRevisionDelete::class,
 			'services' => [
@@ -1004,6 +1036,9 @@ class SpecialPageFactory {
 		'PageData' => [
 			'class' => \SpecialPageData::class,
 		],
+		'Contribute' => [
+			'class' => \SpecialContribute::class,
+		],
 	];
 
 	/** @var array Special page name => class name */
@@ -1018,13 +1053,22 @@ class SpecialPageFactory {
 	/** @var Language */
 	private $contLang;
 
-	/** @var ObjectFactory */
+	/**
+	 * @var ObjectFactory
+	 * @noVarDump
+	 */
 	private $objectFactory;
 
-	/** @var HookContainer */
+	/**
+	 * @var HookContainer
+	 * @noVarDump
+	 */
 	private $hookContainer;
 
-	/** @var HookRunner */
+	/**
+	 * @var HookRunner
+	 * @noVarDump
+	 */
 	private $hookRunner;
 
 	/**
@@ -1098,7 +1142,10 @@ class SpecialPageFactory {
 						'InterwikiLookup',
 						'ReadOnlyMode',
 						'UserOptionsManager',
-						'LanguageConverterFactory'
+						'LanguageConverterFactory',
+						'RepoGroup',
+						'SearchResultThumbnailProvider',
+						'TitleMatcher',
 					]
 				];
 			}
@@ -1252,7 +1299,7 @@ class SpecialPageFactory {
 	 * @return bool True if a special page exists with this name
 	 */
 	public function exists( $name ) {
-		list( $title, /*...*/ ) = $this->resolveAlias( $name );
+		[ $title, /*...*/ ] = $this->resolveAlias( $name );
 
 		$specialPageList = $this->getPageList();
 		return isset( $specialPageList[$title] );
@@ -1265,7 +1312,7 @@ class SpecialPageFactory {
 	 * @return SpecialPage|null SpecialPage object or null if the page doesn't exist
 	 */
 	public function getPage( $name ) {
-		list( $realName, /*...*/ ) = $this->resolveAlias( $name );
+		[ $realName, /*...*/ ] = $this->resolveAlias( $name );
 
 		$specialPageList = $this->getPageList();
 
@@ -1480,38 +1527,43 @@ class SpecialPageFactory {
 		$wgRequest = $context->getRequest();
 		$wgUser = $context->getUser();
 		$wgLang = $context->getLanguage();
-		$main->setTitle( $title );
+		// FIXME: Once reasonably certain that no SpecialPage subclasses
+		// rely on direct RequestContext::getMain instead of their local
+		// context getters, these can be removed (T323184)
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		@$main->setTitle( $title );
 		$main->setOutput( $context->getOutput() );
 		$main->setRequest( $context->getRequest() );
 		$main->setUser( $context->getUser() );
 		$main->setLanguage( $context->getLanguage() );
 
-		// The useful part
-		$ret = $this->executePath( $page, $context, true, $linkRenderer );
-
-		// Restore old globals and context
-		$wgTitle = $glob['title'];
-		$wgOut = $glob['output'];
-		$wgRequest = $glob['request'];
-		$wgUser = $glob['user'];
-		$wgLang = $glob['language'];
-		$main->setTitle( $ctx['title'] );
-		$main->setOutput( $ctx['output'] );
-		$main->setRequest( $ctx['request'] );
-		$main->setUser( $ctx['user'] );
-		$main->setLanguage( $ctx['language'] );
-		if ( isset( $ctx['wikipage'] ) ) {
-			$main->setWikiPage( $ctx['wikipage'] );
+		try {
+			// The useful part
+			return $this->executePath( $page, $context, true, $linkRenderer );
+		} finally {
+			// Restore old globals and context
+			$wgTitle = $glob['title'];
+			$wgOut = $glob['output'];
+			$wgRequest = $glob['request'];
+			$wgUser = $glob['user'];
+			$wgLang = $glob['language'];
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			@$main->setTitle( $ctx['title'] );
+			$main->setOutput( $ctx['output'] );
+			$main->setRequest( $ctx['request'] );
+			$main->setUser( $ctx['user'] );
+			$main->setLanguage( $ctx['language'] );
+			if ( isset( $ctx['wikipage'] ) ) {
+				$main->setWikiPage( $ctx['wikipage'] );
+			}
 		}
-
-		return $ret;
 	}
 
 	/**
 	 * Get the local name for a specified canonical name
 	 *
 	 * @param string $name
-	 * @param string|bool $subpage
+	 * @param string|false $subpage
 	 * @return string
 	 */
 	public function getLocalNameFor( $name, $subpage = false ) {
@@ -1568,7 +1620,7 @@ class SpecialPageFactory {
 	 * @return Title|null Title or null if there is no such alias
 	 */
 	public function getTitleForAlias( $alias ) {
-		list( $name, $subpage ) = $this->resolveAlias( $alias );
+		[ $name, $subpage ] = $this->resolveAlias( $alias );
 		if ( $name != null ) {
 			return SpecialPage::getTitleFor( $name, $subpage );
 		}

@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Rueter",
+			"Сантяй"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Каршо вал",
+	"discussiontools-replylink": "пандомс кевкстеманть",
+	"discussiontools-replywidget-advanced": "Седе домка",
+	"discussiontools-replywidget-cancel": "Саемс мекев",
+	"discussiontools-replywidget-mode-source": "Салава тешкс",
+	"discussiontools-replywidget-mode-visual": "Ланга ваннозь",
+	"discussiontools-replywidget-placeholder-reply": "Максомс {{BIDI:$1}}-нень каршовал",
+	"discussiontools-replywidget-preview": "Икелепелень ваннома",
+	"discussiontools-replywidget-reply": "Пандомс кевкстеманть",
+	"discussiontools-replywidget-summary": "Нурькинестэ",
+	"discussiontools-replywidget-watchthis": "Путомс те лопанть тонь [[Special:Watchlist|ваномань лемлувс]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|ломань|ломанть}} кортавтомасо",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|мельполадкс|мельполадкст}}",
+	"discussiontools-topicheader-latestcomment": "Меельце нурька сёрмась: $1",
+	"discussiontools-topicsubscription-button-subscribe": "сёрмадстомс",
+	"discussiontools-topicsubscription-button-subscribe-label": "Сёрмадстомс",
+	"discussiontools-topicsubscription-button-unsubscribe": "лоткавтомс прянь сёрмадстоманть",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Лоткавтомс прянь сёрмадстоманть",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Сёрмадстык прят!"
+}

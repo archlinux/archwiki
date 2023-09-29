@@ -111,7 +111,7 @@ class JobQueueMemory extends JobQueue {
 	/**
 	 * @see JobQueue::doPop
 	 *
-	 * @return RunnableJob|bool
+	 * @return RunnableJob|false
 	 */
 	protected function doPop() {
 		if ( $this->doGetSize() == 0 ) {
@@ -124,8 +124,7 @@ class JobQueueMemory extends JobQueue {
 		if ( $this->order === 'random' ) {
 			$key = array_rand( $unclaimed );
 		} else {
-			reset( $unclaimed );
-			$key = key( $unclaimed );
+			$key = array_key_first( $unclaimed );
 		}
 
 		$spec = $unclaimed[$key];
@@ -134,8 +133,7 @@ class JobQueueMemory extends JobQueue {
 
 		$job = $this->jobFromSpecInternal( $spec );
 
-		end( $claimed );
-		$job->setMetadata( 'claimId', key( $claimed ) );
+		$job->setMetadata( 'claimId', array_key_last( $claimed ) );
 
 		return $job;
 	}
@@ -169,7 +167,7 @@ class JobQueueMemory extends JobQueue {
 	/**
 	 * @see JobQueue::getAllQueuedJobs
 	 *
-	 * @return Iterator of Job objects.
+	 * @return Iterator<RunnableJob> of Job objects.
 	 */
 	public function getAllQueuedJobs() {
 		$unclaimed = $this->getQueueData( 'unclaimed' );
@@ -188,7 +186,7 @@ class JobQueueMemory extends JobQueue {
 	/**
 	 * @see JobQueue::getAllAcquiredJobs
 	 *
-	 * @return Iterator of Job objects.
+	 * @return Iterator<RunnableJob> of Job objects.
 	 */
 	public function getAllAcquiredJobs() {
 		$claimed = $this->getQueueData( 'claimed' );

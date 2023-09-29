@@ -28,7 +28,10 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -1278,7 +1281,9 @@ class ApiPageSet extends ApiBase {
 				unset( $this->mPendingRedirectIDs[$rdfrom] );
 				if ( $to->isExternal() ) {
 					$this->mInterwikiTitles[$to->getPrefixedText()] = $to->getInterwiki();
-				} elseif ( !isset( $this->mAllPages[$to->getNamespace()][$to->getDBkey()] ) ) {
+				} elseif ( !isset( $this->mAllPages[$to->getNamespace()][$to->getDBkey()] )
+					&& !( $this->mConvertTitles && isset( $this->mConvertedTitles[$to->getPrefixedText()] ) )
+				) {
 					$titlesToResolve[] = $to;
 				}
 				$this->mRedirectTitles[$from] = $to;
@@ -1429,7 +1434,7 @@ class ApiPageSet extends ApiBase {
 								$context->setTitle( $titleObj );
 								$context->setRequest( new FauxRequest );
 								$special->setContext( $context );
-								list( /* $alias */, $subpage ) = $this->specialPageFactory->resolveAlias( $dbkey );
+								[ /* $alias */, $subpage ] = $this->specialPageFactory->resolveAlias( $dbkey );
 								$target = $special->getRedirect( $subpage );
 							}
 						}

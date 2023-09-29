@@ -21,6 +21,7 @@
 namespace MediaWiki\Minerva\Skins;
 
 use IContextSource;
+use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
 use Title;
 use User;
@@ -30,6 +31,11 @@ class SkinUserPageHelper {
 	 * @var UserNameUtils
 	 */
 	private $userNameUtils;
+
+	/**
+	 * @var UserFactory
+	 */
+	private $userFactory;
 
 	/**
 	 * @var Title|null
@@ -42,7 +48,7 @@ class SkinUserPageHelper {
 	private $fetchedData = false;
 
 	/**
-	 * @var User
+	 * @var User|null
 	 */
 	private $pageUser;
 
@@ -53,11 +59,18 @@ class SkinUserPageHelper {
 
 	/**
 	 * @param UserNameUtils $userNameUtils
+	 * @param UserFactory $userFactory
 	 * @param Title|null $title
 	 * @param IContextSource|null $context
 	 */
-	public function __construct( UserNameUtils $userNameUtils, Title $title = null, IContextSource $context = null ) {
+	public function __construct(
+		UserNameUtils $userNameUtils,
+		UserFactory $userFactory,
+		Title $title = null,
+		IContextSource $context = null
+	) {
 		$this->userNameUtils = $userNameUtils;
+		$this->userFactory = $userFactory;
 		$this->title = $title;
 		$this->context = $context;
 	}
@@ -86,12 +99,12 @@ class SkinUserPageHelper {
 		$titleText = $title->getText();
 
 		if ( $this->userNameUtils->isIP( $titleText ) ) {
-			return User::newFromAnyId( null, $titleText, null );
+			return $this->userFactory->newAnonymous( $titleText );
 		}
 
-		$pageUserId = User::idFromName( $titleText );
-		if ( $pageUserId ) {
-			return User::newFromId( $pageUserId );
+		$user = $this->userFactory->newFromName( $titleText );
+		if ( $user && $user->isRegistered() ) {
+			return $user;
 		}
 
 		return null;

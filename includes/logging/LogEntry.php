@@ -1,7 +1,5 @@
 <?php
 /**
- * Contains a class for dealing with individual log entries
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,18 +16,21 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @author Niklas Laxström
- * @license GPL-2.0-or-later
- * @since 1.19
  */
 
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 
 /**
- * Interface for log entries. Every log entry has these methods.
+ * An individual log entry.
  *
- * @unstable for implementation, extensions should subclass LogEntryBase instead.
+ * This is the basis for methods that all log entries support.
+ *
+ * Must not be implemented directly by extensions, extend LogEntryBase instead.
+ *
+ * @stable to type
  * @since 1.19
+ * @author Niklas Laxström
  */
 interface LogEntry {
 
@@ -77,7 +78,7 @@ interface LogEntry {
 	/**
 	 * Get the timestamp when the action was executed.
 	 *
-	 * @return string
+	 * @return string TS_MW timestamp, a string with 14 digits
 	 */
 	public function getTimestamp();
 

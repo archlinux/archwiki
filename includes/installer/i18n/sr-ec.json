@@ -57,7 +57,6 @@
 	"config-env-good": "Окружење је проверено.\nМожете да инсталирате Медијавики.",
 	"config-env-bad": "Окружење је проверено.\nНе можете да инсталирате Медијавики.",
 	"config-env-php": "PHP $1 је инсталиран.",
-	"config-unicode-using-intl": "Користи се [https://php.net/manual/en/book.intl.php додатак PHP intl] за нормализацију Уникода.",
 	"config-outdated-sqlite": "<strong>Упозорење:</strong> имате SQLite $2, који је нижи од најмање тражене верзије $1. SQLite ће бити недоступан.",
 	"config-no-fts3": "<strong>Упозорење:</strong> SQLite је компајлиран без [//sqlite.org/fts3.html FTS3 модула], функције претраге биће недоступне на овој бази података.",
 	"config-pcre-old": "<strong>Неотклоњива грешка:</strong> Неопходан је PCRE $1 или новији.\nВаш бинарни PHP је повезан са PCRE $2.\n[https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Errors_and_symptoms/PCRE Више информација].",
@@ -275,6 +274,7 @@
 	"config-screenshot": "снимак екрана",
 	"config-extension-not-found": "Није могуће пронаћи датотеку регистрације за додатак „$1”",
 	"config-extension-dependency": "Дошло је до грешке зависности при инсталирању додатка „$1”: $2",
+	"config-ext-skins-more-info": "више информација",
 	"mainpagetext": "<strong>MediaWiki је инсталиран.</strong>",
 	"mainpagedocfooter": "Погледајте [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents Водич за кориснике] за више информација о томе како користити вики софтвер.\n\n== Увод ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Списак поставки конфигурације]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Честа питања о MediaWiki-ју]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ Дописна листа о издањима софтвера MediaWiki]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Локализујте MediaWiki на ваш језик]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Сазнајте како да се борите против непожељног садржаја на свом викију]"
 }

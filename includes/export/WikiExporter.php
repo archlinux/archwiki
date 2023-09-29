@@ -27,6 +27,7 @@
  * @defgroup Dump Dump
  */
 
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
@@ -92,6 +93,9 @@ class WikiExporter {
 	/** @var HookRunner */
 	private $hookRunner;
 
+	/** @var CommentStore */
+	private $commentStore;
+
 	/**
 	 * Returns the default export schema version, as defined by the XmlDumpSchemaVersion setting.
 	 * @return string
@@ -103,6 +107,7 @@ class WikiExporter {
 
 	/**
 	 * @param IDatabase $db
+	 * @param CommentStore $commentStore
 	 * @param HookContainer $hookContainer
 	 * @param RevisionStore $revisionStore
 	 * @param TitleParser $titleParser
@@ -116,6 +121,7 @@ class WikiExporter {
 	 */
 	public function __construct(
 		$db,
+		CommentStore $commentStore,
 		HookContainer $hookContainer,
 		RevisionStore $revisionStore,
 		TitleParser $titleParser,
@@ -124,10 +130,14 @@ class WikiExporter {
 		$limitNamespaces = null
 	) {
 		$this->db = $db;
+		$this->commentStore = $commentStore;
 		$this->history = $history;
-		// TODO: add a $hookContainer parameter to XmlDumpWriter so that we can inject
-		// and then be able to convert the factory test to a unit test
-		$this->writer = new XmlDumpWriter( $text, self::schemaVersion() );
+		$this->writer = new XmlDumpWriter(
+			$text,
+			self::schemaVersion(),
+			$hookContainer,
+			$commentStore
+		);
 		$this->sink = new DumpOutput();
 		$this->text = $text;
 		$this->limitNamespaces = $limitNamespaces;
@@ -274,20 +284,20 @@ class WikiExporter {
 		// rev_deleted
 
 		$revQuery = $this->revisionStore->getQueryInfo( [ 'page' ] );
-		$res = $this->db->select(
-			$revQuery['tables'],
-			[
+		$res = $this->db->newSelectQueryBuilder()
+			->select( [
 				'rev_user_text' => $revQuery['fields']['rev_user_text'],
 				'rev_user' => $revQuery['fields']['rev_user'],
-			],
-			[
+			] )
+			->tables( $revQuery['tables'] )
+			->where( [
 				$this->db->bitAnd( 'rev_deleted', RevisionRecord::DELETED_USER ) . ' = 0',
 				$cond,
-			],
-			__METHOD__,
-			[ 'DISTINCT' ],
-			$revQuery['joins']
-		);
+			] )
+			->joinConds( $revQuery['joins'] )
+			->distinct()
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		foreach ( $res as $row ) {
 			$this->author_list .= "<contributor>" .
@@ -331,9 +341,8 @@ class WikiExporter {
 		if ( $cond ) {
 			$where[] = $cond;
 		}
-		$result = null; // Assuring $result is not undefined, if exception occurs early
 
-		$commentQuery = CommentStore::getStore()->getJoin( 'log_comment' );
+		$commentQuery = $this->commentStore->getJoin( 'log_comment' );
 
 		$tables = array_merge(
 			[ 'logging', 'actor' ], $commentQuery['tables']
@@ -457,7 +466,6 @@ class WikiExporter {
 			throw new MWException( __METHOD__ . " given invalid history dump type." );
 		}
 
-		$result = null; // Assuring $result is not undefined, if exception occurs early
 		$done = false;
 		$lastRow = null;
 		$revPage = 0;

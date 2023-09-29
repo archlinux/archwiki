@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"APPER",
+			"Brettchenweber",
 			"G.Hagedorn",
 			"Inkowik",
 			"Jcornelius",
@@ -73,7 +74,6 @@
 	"visualeditor-command-dialog-confirm": "Änderung bestätigen",
 	"visualeditor-command-dialog-focus-context": "Den Fokus auf das kontextbezogene Popup verschieben",
 	"visualeditor-commentannotationcontextitem-comment": "Kommentieren",
-	"visualeditor-commentinspector-edit": "Kommentar bearbeiten",
 	"visualeditor-commentinspector-title": "Kommentar",
 	"visualeditor-commentinspector-tooltip": "Kommentar",
 	"visualeditor-content-select-all": "Alle auswählen",
@@ -96,7 +96,7 @@
 	"visualeditor-dialog-action-goback": "Zurück",
 	"visualeditor-dialog-action-insert": "Einfügen",
 	"visualeditor-dialog-command-help-title": "Tastaturkürzel",
-	"visualeditor-dialog-error": "Etwas ist schief gelaufen …",
+	"visualeditor-dialog-error": "Etwas ist schiefgelaufen …",
 	"visualeditor-dialog-error-dismiss": "Zurück",
 	"visualeditor-dialog-language-auto-direction": "Automatisch",
 	"visualeditor-dialog-language-search-title": "Sprache auswählen",

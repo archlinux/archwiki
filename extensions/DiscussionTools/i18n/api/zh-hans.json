@@ -1,0 +1,43 @@
+{
+	"@metadata": {
+		"authors": [
+			"AYZ04",
+			"GuoPC",
+			"Shizhao",
+			"Stang",
+			"Zhang8569",
+			"列维劳德",
+			"Lakejason0"
+		]
+	},
+	"apierror-discussiontools-commentid-notfound": "未找到ID为“$1”的留言。",
+	"apierror-discussiontools-commentname-ambiguous": "找到多个名称为“$1”的留言，必须提供<var>commentid</var>。",
+	"apierror-discussiontools-commentname-notfound": "未找到名为“$1”的留言。",
+	"apierror-discussiontools-formtoken-used": "留言已成功发布。请重新加载此页面以查看。",
+	"apierror-discussiontools-subscription-failed-add": "无法订阅此话题。",
+	"apierror-discussiontools-subscription-failed-remove": "无法退订此话题。",
+	"apihelp-discussiontoolscompare-summary": "获取两个页面修订之间有关留言更改的信息。",
+	"apihelp-discussiontoolsedit-param-commentid": "要回复的留言的ID。仅在<var>paction</var>为<var>addcomment</var>时使用。覆盖<var>commentname</var>。",
+	"apihelp-discussiontoolsedit-param-commentname": "要回复的留言的名称。仅在<var>paction</var>为<var>addcomment</var>时使用。",
+	"apihelp-discussiontoolsedit-param-formtoken": "一个客户端生成的可选唯一ID，以避免重复发布",
+	"apihelp-discussiontoolsedit-param-html": "要作为HTML发布的内容。不能与<var>wikitext</var>一起使用。",
+	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}}仅在<var>paction</var>为<var>addtopic</var>时使用。",
+	"apihelp-discussiontoolsedit-param-wikitext": "要作为wikitext发布的内容。不能与<var>html</var>一起使用。",
+	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "请对一个已存在的留言以回复的形式添加一个新留言。",
+	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "添加一个新的讨论区和其中的第一个留言。",
+	"apihelp-discussiontoolsedit-summary": "在讨论页面上发布消息。",
+	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "被检查的话题名称",
+	"apihelp-discussiontoolsgetsubscriptions-summary": "获取所提供话题的订阅状态",
+	"apihelp-discussiontoolspageinfo-param-oldid": "要使用的修订版本号（默认为最新修订版本）。",
+	"apihelp-discussiontoolspageinfo-param-prop": "要获取的属性：",
+	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "从页面解析的讨论串表示",
+	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "哪些其他页面的留言已被嵌入",
+	"apihelp-discussiontoolspageinfo-summary": "返回初始化讨论工具所需的元数据。",
+	"apihelp-discussiontoolspreview-param-type": "要预览的消息类型",
+	"apihelp-discussiontoolspreview-param-wikitext": "要预览的内容，如wikitext。",
+	"apihelp-discussiontoolspreview-summary": "在讨论页上预览消息。",
+	"apihelp-discussiontoolssubscribe-param-commentname": "要订阅（或退订）的话题名称",
+	"apihelp-discussiontoolssubscribe-param-page": "出现此话题的页面",
+	"apihelp-discussiontoolssubscribe-param-subscribe": "True为订阅，false为退订",
+	"apihelp-discussiontoolssubscribe-summary": "订阅（或取消订阅）以接收（或不接收）有关话题的通知。"
+}

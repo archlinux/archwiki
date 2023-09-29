@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Ency",
+			"Jdx",
 			"Rail",
-			"Woytecr",
-			"Jdx"
+			"Woytecr"
 		]
 	},
 	"apihelp-templatedata-description": "Pobierz dane zapisane przez rozszerzenie TemplateData.",

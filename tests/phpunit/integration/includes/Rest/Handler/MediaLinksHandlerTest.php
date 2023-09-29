@@ -5,7 +5,8 @@ namespace MediaWiki\Tests\Rest\Handler;
 use MediaWiki\Rest\Handler\MediaLinksHandler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
-use Title;
+use MediaWiki\Title\Title;
+use RequestContext;
 use Wikimedia\Message\MessageValue;
 
 /**
@@ -23,7 +24,7 @@ class MediaLinksHandlerTest extends \MediaWikiIntegrationTestCase {
 
 	private function newHandler() {
 		return new MediaLinksHandler(
-			$this->getServiceContainer()->getDBLoadBalancer(),
+			$this->getServiceContainer()->getDBLoadBalancerFactory(),
 			$this->makeMockRepoGroup( [ 'Existing.jpg' ] ),
 			$this->getServiceContainer()->getPageStore()
 		);
@@ -39,6 +40,12 @@ class MediaLinksHandlerTest extends \MediaWikiIntegrationTestCase {
 	public function testExecute() {
 		$title = __CLASS__ . '_Foo';
 		$request = new RequestData( [ 'pathParams' => [ 'title' => $title ] ] );
+
+		$user = RequestContext::getMain()->getUser();
+		$userOptionsManager = $this->getServiceContainer()->getUserOptionsManager();
+		$this->setMwGlobals( 'wgImageLimits', [
+			$userOptionsManager->getIntOption( $user, 'imagesize' ) => [ 100, 100 ],
+		] );
 
 		$handler = $this->newHandler();
 		$data = $this->executeHandlerAndGetBodyData( $handler, $request );
@@ -66,8 +73,8 @@ class MediaLinksHandlerTest extends \MediaWikiIntegrationTestCase {
 			'preferred' => [
 				'mediatype' => 'test',
 				'size' => null,
-				'width' => 64,
-				'height' => 64,
+				'width' => 100,
+				'height' => 67,
 				'duration' => 678,
 				'url' => 'https://media.example.com/static/thumb/Existing.jpg',
 			],

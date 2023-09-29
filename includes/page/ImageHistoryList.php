@@ -19,8 +19,11 @@
  */
 
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 
 /**
  * Builds the image revision log shown on image pages
@@ -82,10 +85,9 @@ class ImageHistoryList extends ContextSource {
 	}
 
 	/**
-	 * @param string $navLinks
 	 * @return string
 	 */
-	public function beginImageHistoryList( $navLinks = '' ) {
+	public function beginImageHistoryList() {
 		// Styles for class=history-deleted
 		$this->getOutput()->addModuleStyles( 'mediawiki.interface.helpers.styles' );
 
@@ -107,23 +109,15 @@ class ImageHistoryList extends ContextSource {
 			}
 		}
 
-		return Html::element( 'h2', [ 'id' => 'filehistory' ], $this->msg( 'filehist' )->text() )
-			. "\n"
-			. Html::openElement( 'div', [ 'id' => 'mw-imagepage-section-filehistory' ] ) . "\n"
-			. $this->msg( 'filehist-help' )->parseAsBlock()
-			. $navLinks . "\n"
-			. Html::openElement( 'table', [ 'class' => 'wikitable filehistory' ] ) . "\n"
+		return Html::openElement( 'table', [ 'class' => 'wikitable filehistory' ] ) . "\n"
 			. Html::rawElement( 'tr', [], $html ) . "\n";
 	}
 
 	/**
-	 * @param string $navLinks
 	 * @return string
 	 */
-	public function endImageHistoryList( $navLinks = '' ) {
-		return Html::closeElement( 'table' ) . "\n" .
-			$navLinks . "\n" .
-			Html::closeElement( 'div' ) . "\n";
+	public function endImageHistoryList() {
+		return Html::closeElement( 'table' ) . "\n";
 	}
 
 	/**
@@ -148,36 +142,32 @@ class ImageHistoryList extends ContextSource {
 		// Deletion link
 		if ( $local && ( $this->getAuthority()->isAllowedAny( 'delete', 'deletedhistory' ) ) ) {
 			$row .= Html::openElement( 'td' );
+			# Link to hide content. Don't show useless link to people who cannot hide revisions.
+			if ( !$iscur && $this->getAuthority()->isAllowed( 'deleterevision' ) ) {
+				// If file is top revision, is missing or locked from this user, don't link
+				if ( !$file->userCan( File::DELETED_RESTRICTED, $user ) || !$file->exists() ) {
+					$row .= Html::check( 'deleterevisions', false, [ 'disabled' => 'disabled' ] );
+				} else {
+					$row .= Html::check( 'ids[' . explode( '!', $img, 2 )[0] . ']', false );
+				}
+				if ( $this->getAuthority()->isAllowed( 'delete' ) ) {
+					$row .= ' ';
+				}
+			}
 			# Link to remove from history
 			if ( $this->getAuthority()->isAllowed( 'delete' ) ) {
-				$row .= $linkRenderer->makeKnownLink(
-					$this->title,
-					$this->msg( $iscur ? 'filehist-deleteall' : 'filehist-deleteone' )->text(),
-					[],
-					[ 'action' => 'delete', 'oldimage' => $iscur ? null : $img ]
-				);
-			}
-			# Link to hide content. Don't show useless link to people who cannot hide revisions.
-			$canHide = $this->getAuthority()->isAllowed( 'deleterevision' );
-			if ( $canHide || ( $this->getAuthority()->isAllowed( 'deletedhistory' )
-					&& $file->getVisibility() ) ) {
-				if ( $this->getAuthority()->isAllowed( 'delete' ) ) {
-					$row .= Html::element( 'br' );
-				}
-				// If file is top revision or locked from this user, don't link
-				if ( $iscur || !$file->userCan( File::DELETED_RESTRICTED, $user ) ) {
-					$row .= Linker::revDeleteLinkDisabled( $canHide );
-				} else {
-					$row .= Linker::revDeleteLink(
-						[
-							'type' => 'oldimage',
-							'target' => $this->title->getPrefixedText(),
-							'ids' => explode( '!', $img, 2 )[0],
-						],
-						$file->isDeleted( File::DELETED_RESTRICTED ),
-						$canHide
+				if ( $file->exists() ) {
+					$row .= $linkRenderer->makeKnownLink(
+						$this->title,
+						$this->msg( $iscur ? 'filehist-deleteall' : 'filehist-deleteone' )->text(),
+						[],
+						[ 'action' => 'delete', 'oldimage' => $iscur ? null : $img ]
 					);
+				} else {
+					// T244567: Non-existing file can not be deleted.
+					$row .= $this->msg( 'filehist-missing' )->escaped();
 				}
+
 			}
 			$row .= Html::closeElement( 'td' );
 		}
@@ -191,6 +181,9 @@ class ImageHistoryList extends ContextSource {
 		) {
 			if ( $file->isDeleted( File::DELETED_FILE ) ) {
 				$row .= $this->msg( 'filehist-revert' )->escaped();
+			} elseif ( !$file->exists() ) {
+				// T328112: Lost file, in this case there's no version to revert back to.
+				$row .= $this->msg( 'filehist-missing' )->escaped();
 			} else {
 				$row .= $linkRenderer->makeKnownLink(
 					$this->title,
@@ -316,6 +309,7 @@ class ImageHistoryList extends ContextSource {
 			[
 				'width' => '120',
 				'height' => '120',
+				'loading' => 'lazy',
 				'isFilePageThumb' => $iscur  // old revisions are already versioned
 			]
 		);

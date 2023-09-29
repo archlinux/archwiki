@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Macofe",
-			"Mostafadaneshvar"
+			"Mostafadaneshvar",
+			"Moshtank"
 		]
 	},
 	"math_failure": "تجزیه پروش وارت",
@@ -10,7 +11,6 @@
 	"math_unknown_error": "ناشناسین حطا",
 	"math_unknown_function": "ناشناس عملگر",
 	"mw_math_mathml": "MathML اگر ممکن انت (آزمایشی)",
-	"mw_math_png": "یکسره PNG تحویل دی",
-	"mw_math_source": "آیء په داب LaTeX بل (په بروززان متنی)",
+	"mw_math_source": "LaTeX ءِ سرچممگ (پہ نبشتانکانءِ بروزرا)",
 	"prefs-math": "ریاضی"
 }

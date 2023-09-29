@@ -53,7 +53,7 @@ class DisableOATHForUser extends FormSpecialPage {
 	public function alterForm( HTMLForm $form ) {
 		$form->setMessagePrefix( 'oathauth' );
 		$form->setWrapperLegendMsg( 'oathauth-disable-for-user' );
-		$form->setPreText( $this->msg( 'oathauth-disable-intro' )->parse() );
+		$form->setPreHtml( $this->msg( 'oathauth-disable-intro' )->parse() );
 		$form->getOutput()->setPageTitle( $this->msg( 'oathauth-disable-for-user' ) );
 	}
 

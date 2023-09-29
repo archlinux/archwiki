@@ -26,8 +26,8 @@
 require_once __DIR__ . '/Maintenance.php';
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\ActorMigration;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILBFactory;
 
 /**
  * Maintenance script that rebuilds recent changes from scratch.
@@ -67,12 +67,11 @@ class RebuildRecentchanges extends Maintenance {
 			$this->fatalError( "Both 'from' and 'to' must be given, or neither" );
 		}
 
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-		$this->rebuildRecentChangesTablePass1( $lbFactory );
-		$this->rebuildRecentChangesTablePass2( $lbFactory );
-		$this->rebuildRecentChangesTablePass3( $lbFactory );
-		$this->rebuildRecentChangesTablePass4( $lbFactory );
-		$this->rebuildRecentChangesTablePass5( $lbFactory );
+		$this->rebuildRecentChangesTablePass1();
+		$this->rebuildRecentChangesTablePass2();
+		$this->rebuildRecentChangesTablePass3();
+		$this->rebuildRecentChangesTablePass4();
+		$this->rebuildRecentChangesTablePass5();
 		if ( !( $this->hasOption( 'from' ) && $this->hasOption( 'to' ) ) ) {
 			$this->purgeFeeds();
 		}
@@ -81,12 +80,10 @@ class RebuildRecentchanges extends Maintenance {
 
 	/**
 	 * Rebuild pass 1: Insert `recentchanges` entries for page revisions.
-	 *
-	 * @param ILBFactory $lbFactory
 	 */
-	private function rebuildRecentChangesTablePass1( ILBFactory $lbFactory ) {
+	private function rebuildRecentChangesTablePass1() {
 		$dbw = $this->getDB( DB_PRIMARY );
-		$commentStore = CommentStore::getStore();
+		$commentStore = MediaWikiServices::getInstance()->getCommentStore();
 
 		if ( $this->hasOption( 'from' ) && $this->hasOption( 'to' ) ) {
 			$this->cutoffFrom = (int)wfTimestamp( TS_UNIX, $this->getOption( 'from' ) );
@@ -117,7 +114,7 @@ class RebuildRecentchanges extends Maintenance {
 		);
 		foreach ( array_chunk( $rcids, $this->getBatchSize() ) as $rcidBatch ) {
 			$dbw->delete( 'recentchanges', [ 'rc_id' => $rcidBatch ], __METHOD__ );
-			$lbFactory->waitForReplication();
+			$this->waitForReplication();
 		}
 
 		$this->output( "Loading from page and revision tables...\n" );
@@ -180,7 +177,7 @@ class RebuildRecentchanges extends Maintenance {
 			);
 
 			if ( ( ++$inserted % $this->getBatchSize() ) == 0 ) {
-				$lbFactory->waitForReplication();
+				$this->waitForReplication();
 			}
 		}
 	}
@@ -188,10 +185,8 @@ class RebuildRecentchanges extends Maintenance {
 	/**
 	 * Rebuild pass 2: Enhance entries for page revisions with references to the previous revision
 	 * (rc_last_oldid, rc_new etc.) and size differences (rc_old_len, rc_new_len).
-	 *
-	 * @param ILBFactory $lbFactory
 	 */
-	private function rebuildRecentChangesTablePass2( ILBFactory $lbFactory ) {
+	private function rebuildRecentChangesTablePass2() {
 		$dbw = $this->getDB( DB_PRIMARY );
 
 		$this->output( "Updating links and size differences...\n" );
@@ -272,7 +267,7 @@ class RebuildRecentchanges extends Maintenance {
 				$lastSize = $size;
 
 				if ( ( ++$updated % $this->getBatchSize() ) == 0 ) {
-					$lbFactory->waitForReplication();
+					$this->waitForReplication();
 				}
 			}
 		}
@@ -280,14 +275,12 @@ class RebuildRecentchanges extends Maintenance {
 
 	/**
 	 * Rebuild pass 3: Insert `recentchanges` entries for action logs.
-	 *
-	 * @param ILBFactory $lbFactory
 	 */
-	private function rebuildRecentChangesTablePass3( ILBFactory $lbFactory ) {
+	private function rebuildRecentChangesTablePass3() {
 		global $wgLogRestrictions, $wgFilterLogTypes;
 
 		$dbw = $this->getDB( DB_PRIMARY );
-		$commentStore = CommentStore::getStore();
+		$commentStore = MediaWikiServices::getInstance()->getCommentStore();
 		$nonRCLogs = array_merge( array_keys( $wgLogRestrictions ),
 			array_keys( $wgFilterLogTypes ),
 			[ 'create' ] );
@@ -316,7 +309,7 @@ class RebuildRecentchanges extends Maintenance {
 				'log_type' => array_diff( LogPage::validTypes(), $nonRCLogs ),
 			],
 			__METHOD__,
-			[ 'ORDER BY' => 'log_timestamp DESC' ],
+			[ 'ORDER BY' => [ 'log_timestamp DESC', 'log_id DESC' ] ],
 			$commentQuery['joins']
 		);
 
@@ -361,7 +354,7 @@ class RebuildRecentchanges extends Maintenance {
 			);
 
 			if ( ( ++$inserted % $this->getBatchSize() ) == 0 ) {
-				$lbFactory->waitForReplication();
+				$this->waitForReplication();
 			}
 		}
 	}
@@ -397,10 +390,8 @@ class RebuildRecentchanges extends Maintenance {
 
 	/**
 	 * Rebuild pass 4: Mark bot and autopatrolled entries.
-	 *
-	 * @param ILBFactory $lbFactory
 	 */
-	private function rebuildRecentChangesTablePass4( ILBFactory $lbFactory ) {
+	private function rebuildRecentChangesTablePass4() {
 		global $wgUseRCPatrol, $wgUseNPPatrol, $wgUseFilePatrol, $wgMiserMode;
 
 		$dbw = $this->getDB( DB_PRIMARY );
@@ -428,7 +419,7 @@ class RebuildRecentchanges extends Maintenance {
 					[ 'rc_id' => $rcidBatch ],
 					__METHOD__
 				);
-				$lbFactory->waitForReplication();
+				$this->waitForReplication();
 			}
 		}
 
@@ -456,7 +447,7 @@ class RebuildRecentchanges extends Maintenance {
 					[ 'rc_id' => $rcidBatch ],
 					__METHOD__
 				);
-				$lbFactory->waitForReplication();
+				$this->waitForReplication();
 			}
 		}
 	}
@@ -464,10 +455,8 @@ class RebuildRecentchanges extends Maintenance {
 	/**
 	 * Rebuild pass 5: Delete duplicate entries where we generate both a page revision and a log
 	 * entry for a single action (upload, move, protect, import, etc.).
-	 *
-	 * @param ILBFactory $lbFactory
 	 */
-	private function rebuildRecentChangesTablePass5( ILBFactory $lbFactory ) {
+	private function rebuildRecentChangesTablePass5() {
 		$dbw = $this->getDB( DB_PRIMARY );
 
 		$this->output( "Removing duplicate revision and logging entries...\n" );
@@ -506,7 +495,7 @@ class RebuildRecentchanges extends Maintenance {
 			);
 
 			if ( ( ++$updates % $this->getBatchSize() ) == 0 ) {
-				$lbFactory->waitForReplication();
+				$this->waitForReplication();
 			}
 		}
 	}

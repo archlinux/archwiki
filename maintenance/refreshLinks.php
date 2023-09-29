@@ -1,7 +1,5 @@
 <?php
 /**
- * Refresh link tables.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,29 +16,34 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance
  */
 
+use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
-use Wikimedia\Rdbms\IDatabase;
+use MediaWiki\Title\Title;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 require_once __DIR__ . '/Maintenance.php';
 
 /**
- * Maintenance script to refresh link tables.
+ * Refresh link tables.
  *
  * @ingroup Maintenance
  */
 class RefreshLinks extends Maintenance {
 	private const REPORTING_INTERVAL = 100;
 
-	/** @var int|bool */
+	/** @var int|false */
 	protected $namespace = false;
+
+	/** @var string|false */
+	protected $beforeTimestamp = false;
 
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Refresh link tables' );
+		$this->addOption( 'verbose', 'Output information about link refresh progress', false, false, 'v' );
 		$this->addOption( 'dfn-only', 'Delete links from nonexistent articles only' );
 		$this->addOption( 'new-only', 'Only affect articles with just a single edit' );
 		$this->addOption( 'redirects-only', 'Only fix redirects, not all links' );
@@ -51,6 +54,8 @@ class RefreshLinks extends Maintenance {
 		$this->addOption( 'namespace', 'Only fix pages in this namespace', false, true );
 		$this->addOption( 'category', 'Only fix pages in this category', false, true );
 		$this->addOption( 'tracking-category', 'Only fix pages in this tracking category', false, true );
+		$this->addOption( 'before-timestamp', 'Only fix pages that were last updated before this timestamp',
+			false, true );
 		$this->addArg( 'start', 'Page_id to start from, default 1', false );
 		$this->setBatchSize( 100 );
 	}
@@ -70,6 +75,7 @@ class RefreshLinks extends Maintenance {
 		} else {
 			$this->namespace = (int)$ns;
 		}
+		$this->beforeTimestamp = $this->getOption( 'before-timestamp', false );
 
 		if ( $this->hasOption( 'category' ) ) {
 			$category = $this->getOption( 'category' );
@@ -79,7 +85,12 @@ class RefreshLinks extends Maintenance {
 			}
 			$this->refreshCategory( $title );
 		} elseif ( $this->hasOption( 'tracking-category' ) ) {
-			$this->refreshTrackingCategory( $this->getOption( 'trackingcategory' ) );
+			$category = $this->getOption( 'tracking-category' );
+			$title = Title::makeTitleSafe( NS_CATEGORY, $category );
+			if ( !$title ) {
+				$this->fatalError( "'$category' is an invalid category name!\n" );
+			}
+			$this->refreshTrackingCategory( $this->getOption( 'tracking-category' ) );
 		} elseif ( !$this->hasOption( 'dfn-only' ) ) {
 			$new = $this->hasOption( 'new-only' );
 			$redir = $this->hasOption( 'redirects-only' );
@@ -118,7 +129,6 @@ class RefreshLinks extends Maintenance {
 		$this->getHookRunner()->onMaintenanceRefreshLinksInit( $this );
 
 		$what = $redirectsOnly ? "redirects" : "links";
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 
 		if ( $oldRedirectsOnly ) {
 			# This entire code path is cut-and-pasted from below.  Hurrah.
@@ -145,7 +155,7 @@ class RefreshLinks extends Maintenance {
 			foreach ( $res as $row ) {
 				if ( !( ++$i % self::REPORTING_INTERVAL ) ) {
 					$this->output( "$i\n" );
-					$lbFactory->waitForReplication();
+					$this->waitForReplication();
 				}
 				$this->fixRedirect( $row->page_id );
 			}
@@ -166,12 +176,12 @@ class RefreshLinks extends Maintenance {
 			foreach ( $res as $row ) {
 				if ( !( ++$i % self::REPORTING_INTERVAL ) ) {
 					$this->output( "$i\n" );
-					$lbFactory->waitForReplication();
+					$this->waitForReplication();
 				}
 				if ( $redirectsOnly ) {
 					$this->fixRedirect( $row->page_id );
 				} else {
-					self::fixLinksFromArticle( $row->page_id, $this->namespace );
+					self::fixLinksFromArticle( $row->page_id, $this->namespace, $this->beforeTimestamp );
 				}
 			}
 		} else {
@@ -186,7 +196,7 @@ class RefreshLinks extends Maintenance {
 			for ( $id = $start; $id <= $end; $id++ ) {
 				if ( !( $id % self::REPORTING_INTERVAL ) ) {
 					$this->output( "$id\n" );
-					$lbFactory->waitForReplication();
+					$this->waitForReplication();
 				}
 				$this->fixRedirect( $id );
 			}
@@ -198,9 +208,9 @@ class RefreshLinks extends Maintenance {
 				for ( $id = $start; $id <= $end; $id++ ) {
 					if ( !( $id % self::REPORTING_INTERVAL ) ) {
 						$this->output( "$id\n" );
-						$lbFactory->waitForReplication();
+						$this->waitForReplication();
 					}
-					self::fixLinksFromArticle( $id, $this->namespace );
+					self::fixLinksFromArticle( $id, $this->namespace, $this->beforeTimestamp );
 				}
 			}
 		}
@@ -233,6 +243,10 @@ class RefreshLinks extends Maintenance {
 			&& !$page->getTitle()->inNamespace( $this->namespace )
 		) {
 			return;
+		} elseif ( $this->beforeTimestamp !== false
+			&& $page->getLinksTimestamp() >= $this->beforeTimestamp
+		) {
+			return;
 		}
 
 		$rt = null;
@@ -260,8 +274,9 @@ class RefreshLinks extends Maintenance {
 	 * Run LinksUpdate for all links on a given page_id
 	 * @param int $id The page_id
 	 * @param int|bool $ns Only fix links if it is in this namespace
+	 * @param string|false $beforeTimestamp Only fix links if it was last updated before this timestamp
 	 */
-	public static function fixLinksFromArticle( $id, $ns = false ) {
+	public static function fixLinksFromArticle( $id, $ns = false, $beforeTimestamp = false ) {
 		$services = MediaWikiServices::getInstance();
 		$page = $services->getWikiPageFactory()->newFromID( $id );
 
@@ -270,7 +285,12 @@ class RefreshLinks extends Maintenance {
 		if ( $page === null ) {
 			return;
 		} elseif ( $ns !== false
-			&& !$page->getTitle()->inNamespace( $ns ) ) {
+			&& !$page->getTitle()->inNamespace( $ns )
+		) {
+			return;
+		} elseif ( $beforeTimestamp !== false
+			&& $page->getLinksTimestamp() >= $beforeTimestamp
+		) {
 			return;
 		}
 
@@ -298,7 +318,7 @@ class RefreshLinks extends Maintenance {
 	private function deleteLinksFromNonexistent( $start = null, $end = null, $batchSize = 100,
 		$chunkSize = 100000
 	) {
-		MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->waitForReplication();
+		$this->waitForReplication();
 		$this->output( "Deleting illegal entries from the links tables...\n" );
 		$dbr = $this->getDB( DB_REPLICA, [ 'vslow' ] );
 		do {
@@ -357,7 +377,6 @@ class RefreshLinks extends Maintenance {
 			'page_props' => 'pp_page',
 		];
 
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		foreach ( $linksTables as $table => $field ) {
 			$this->output( "    $table: 0" );
 			$tableStart = $start;
@@ -380,7 +399,7 @@ class RefreshLinks extends Maintenance {
 					$dbw->delete( $table, [ $field => $ids ], __METHOD__ );
 					$this->output( ", $counter" );
 					$tableStart = $ids[$numIds - 1] + 1;
-					$lbFactory->waitForReplication();
+					$this->waitForReplication();
 				}
 
 			} while ( $numIds >= $batchSize && ( $end === null || $tableStart <= $end ) );
@@ -395,13 +414,13 @@ class RefreshLinks extends Maintenance {
 	 * By specifying a null $start or $end, it is also possible to create
 	 * half-bounded or unbounded intervals using this function.
 	 *
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @param string $var Field name
 	 * @param mixed $start First value to include or null
 	 * @param mixed $end Last value to include or null
 	 * @return string
 	 */
-	private static function intervalCond( IDatabase $db, $var, $start, $end ) {
+	private static function intervalCond( IReadableDatabase $db, $var, $start, $end ) {
 		if ( $start === null && $end === null ) {
 			return "$var IS NOT NULL";
 		} elseif ( $end === null ) {
@@ -427,7 +446,7 @@ class RefreshLinks extends Maintenance {
 		}
 
 		foreach ( $cats as $cat ) {
-			$this->refreshCategory( $cat );
+			$this->refreshCategory( Title::newFromLinkTarget( $cat ) );
 		}
 	}
 
@@ -443,20 +462,17 @@ class RefreshLinks extends Maintenance {
 		$conds = [
 			'page_id=cl_from',
 			'cl_to' => $category->getDBkey(),
-		];
-		if ( $this->namespace !== false ) {
-			$conds['page_namespace'] = $this->namespace;
-		}
+		] + $this->namespaceCond();
 
 		$i = 0;
 		$timestamp = '';
 		$lastId = 0;
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		do {
 			$finalConds = $conds;
-			$timestamp = $dbr->addQuotes( $timestamp );
-			$finalConds[] =
-				"(cl_timestamp > $timestamp OR (cl_timestamp = $timestamp AND cl_from > $lastId))";
+			$finalConds[] = $dbr->buildComparison( '>', [
+				'cl_timestamp' => $timestamp,
+				'cl_from' => $lastId,
+			] );
 			$res = $dbr->select( [ 'page', 'categorylinks' ],
 				[ 'page_id', 'cl_timestamp' ],
 				$finalConds,
@@ -467,14 +483,21 @@ class RefreshLinks extends Maintenance {
 				]
 			);
 
+			if ( $this->hasOption( 'verbose' ) ) {
+				$this->output( "Refreshing links for {$res->numRows()} pages\n" );
+			}
+
 			foreach ( $res as $row ) {
 				if ( !( ++$i % self::REPORTING_INTERVAL ) ) {
 					$this->output( "$i\n" );
-					$lbFactory->waitForReplication();
+					$this->waitForReplication();
 				}
 				$lastId = $row->page_id;
 				$timestamp = $row->cl_timestamp;
-				self::fixLinksFromArticle( $row->page_id );
+				if ( $this->hasOption( 'verbose' ) ) {
+					$this->output( "Refreshing links for page ID {$row->page_id}\n" );
+				}
+				self::fixLinksFromArticle( $row->page_id, false, $this->beforeTimestamp );
 			}
 
 		} while ( $res->numRows() == $this->getBatchSize() );
@@ -484,7 +507,7 @@ class RefreshLinks extends Maintenance {
 	 * Returns a list of possible categories for a given tracking category key
 	 *
 	 * @param string $categoryKey
-	 * @return Title[]
+	 * @return LinkTarget[]
 	 */
 	private function getPossibleCategories( $categoryKey ) {
 		$cats = MediaWikiServices::getInstance()->getTrackingCategories()->getTrackingCategories();

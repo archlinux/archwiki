@@ -23,6 +23,7 @@
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Title\Title;
 use Wikimedia\IPUtils;
 
 /**
@@ -136,7 +137,7 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 	/**
 	 * @see TitleFormatter::formatTitle()
 	 *
-	 * @param int|bool $namespace The namespace ID (or false, if the namespace should be ignored)
+	 * @param int|false $namespace The namespace ID (or false, if the namespace should be ignored)
 	 * @param string $text The page title. Should be valid. Only minimal normalization is applied.
 	 *        Underscores will be replaced.
 	 * @param string $fragment The fragment name (may be empty).
@@ -375,9 +376,6 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 		}
 
 		# Clean up whitespace
-		# Note: use of the /u option on preg_replace here will cause
-		# input with invalid UTF-8 sequences to be nullified out in PHP 5.2.x,
-		# conveniently disabling them.
 		$dbkey = preg_replace(
 			'/[ _\xA0\x{1680}\x{180E}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u',
 			'_',
@@ -499,15 +497,15 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 		# reachable due to the way web browsers deal with 'relative' URLs.
 		# Also, they conflict with subpage syntax.  Forbid them explicitly.
 		if (
-			strpos( $dbkey, '.' ) !== false &&
+			str_contains( $dbkey, '.' ) &&
 			(
 				$dbkey === '.' || $dbkey === '..' ||
-				strpos( $dbkey, './' ) === 0 ||
-				strpos( $dbkey, '../' ) === 0 ||
-				strpos( $dbkey, '/./' ) !== false ||
-				strpos( $dbkey, '/../' ) !== false ||
-				substr( $dbkey, -2 ) == '/.' ||
-				substr( $dbkey, -3 ) == '/..'
+				str_starts_with( $dbkey, './' ) ||
+				str_starts_with( $dbkey, '../' ) ||
+				str_contains( $dbkey, '/./' ) ||
+				str_contains( $dbkey, '/../' ) ||
+				str_ends_with( $dbkey, '/.' ) ||
+				str_ends_with( $dbkey, '/..' )
 			)
 		) {
 			$exception = ( $this->createMalformedTitleException )( 'title-invalid-relative', $text );
@@ -554,7 +552,7 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 		// there are numerous ways to present the same IP. Having sp:contribs scan
 		// them all is silly and having some show the edits and others not is
 		// inconsistent. Same for talk/userpages. Keep them normalized instead.
-		if ( $parts['namespace'] === NS_USER || $parts['namespace'] === NS_USER_TALK ) {
+		if ( $dbkey !== '' && ( $parts['namespace'] === NS_USER || $parts['namespace'] === NS_USER_TALK ) ) {
 			$dbkey = IPUtils::sanitizeIP( $dbkey );
 			// IPUtils::sanitizeIP return null only for bad input
 			'@phan-var string $dbkey';

@@ -10,8 +10,8 @@ Licensed under GNU GPL 2.0 or any later version. See COPYING for more license in
 2. How to install
    a. Download this tarbell and extract the contents to $IP/extensions/ParserFunctions/
       where $IP is your root wiki install
-   b. Add 'wfLoadExtension( 'ParserFunctions' );' to the end of your LocalSettings
-      (without the single quotes)
+   b. Add "wfLoadExtension( 'ParserFunctions' );" to the end of your LocalSettings
+      (without the double quotes)
    c. Enjoy
 
 3. Tests

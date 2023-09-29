@@ -167,12 +167,7 @@ ve.ui.MWExportWikitextDialog.prototype.getTeardownProcess = function ( data ) {
 ve.ui.MWExportWikitextDialog.prototype.export = function () {
 	var wikitext = this.wikitextLayout.textInput.getValue(),
 		title = this.titleInput.getMWTitle(),
-		importTitle = ve.init.target.getImportTitle(),
-		submitUrl = ( new mw.Uri( title.getUrl() ) )
-			.extend( {
-				action: 'submit',
-				veswitched: 1
-			} );
+		importTitle = ve.init.target.getImportTitle();
 
 	var $form = $( '<form>' ).attr( { method: 'post', enctype: 'multipart/form-data' } ).addClass( 'oo-ui-element-hidden' );
 	var params = {
@@ -202,6 +197,10 @@ ve.ui.MWExportWikitextDialog.prototype.export = function () {
 	}
 	// Submit the form, mimicking a traditional edit
 	// Firefox requires the form to be attached
+	var submitUrl = title.getUrl( {
+		action: 'submit',
+		veswitched: '1'
+	} );
 	$form.attr( 'action', submitUrl ).appendTo( 'body' ).trigger( 'submit' );
 };
 

@@ -23,10 +23,13 @@
  * @since 1.19
  */
 
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 
 /**
@@ -446,14 +449,11 @@ class LogFormatter {
 			// case 'suppress' --private log -- aaron  (so we know who to blame in a few years :-D)
 			// default:
 		}
-		if ( $text === null ) {
-			$text = $this->getPlainActionText();
-		}
 
 		$this->plaintext = false;
 		$this->irctext = false;
 
-		return $text;
+		return $text ?? $this->getPlainActionText();
 	}
 
 	/**
@@ -541,7 +541,7 @@ class LogFormatter {
 			if ( strpos( $key, ':' ) === false ) {
 				continue;
 			}
-			list( $index, $type, ) = explode( ':', $key, 3 );
+			[ $index, $type, ] = explode( ':', $key, 3 );
 			if ( ctype_digit( $index ) ) {
 				$params[(int)$index - 1] = $this->formatParameterValue( $type, $value );
 			}
@@ -727,7 +727,8 @@ class LogFormatter {
 	 */
 	public function getComment() {
 		if ( $this->canView( LogPage::DELETED_COMMENT ) ) {
-			$comment = Linker::commentBlock( $this->entry->getComment() );
+			$comment = MediaWikiServices::getInstance()->getCommentFormatter()
+				->formatBlock( $this->entry->getComment() );
 			// No hard coded spaces thanx
 			$element = ltrim( $comment );
 			if ( $this->entry->isDeleted( LogPage::DELETED_COMMENT ) ) {
@@ -751,10 +752,7 @@ class LogFormatter {
 			return $this->msg( $message )->text();
 		}
 
-		$content = $this->msg( $message )->escaped();
-		$attribs = [ 'class' => 'history-deleted' ];
-
-		return Html::rawElement( 'span', $attribs, $content );
+		return $this->styleRestrictedElement( $this->msg( $message )->escaped() );
 	}
 
 	/**
@@ -766,7 +764,10 @@ class LogFormatter {
 		if ( $this->plaintext ) {
 			return $content;
 		}
-		$attribs = [ 'class' => 'history-deleted' ];
+		$attribs = [ 'class' => [ 'history-deleted' ] ];
+		if ( $this->entry->isDeleted( LogPage::DELETED_RESTRICTED ) ) {
+			$attribs['class'][] = 'mw-history-suppressed';
+		}
 
 		return Html::rawElement( 'span', $attribs, $content );
 	}

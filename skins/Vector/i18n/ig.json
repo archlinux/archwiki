@@ -4,13 +4,13 @@
 			"Amire80",
 			"Edith Nwobu",
 			"Ifexin",
+			"Karen",
 			"Oby Ezeilo",
 			"Pasjoesscc",
 			"Timzy D'Great",
 			"Tochiprecious",
 			"Ukabia",
-			"Uzoma Ozurumba",
-			"Karen"
+			"Uzoma Ozurumba"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 asụsụ}}",
@@ -27,8 +27,8 @@
 	"vector-view-viewsource": "Lee ebeosi",
 	"vector-more-actions": "Ọzọ",
 	"vector-searchsuggest-containing": "Chọọ peeji ndị gụnyere <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-toc-heading": "Ndịna",
-	"vector-toc-toggle-position-sidebar": "Ga na nootu akụkụ",
-	"vector-toc-toggle-position-title": "zoo",
-	"vector-toc-toggle-button-label": "Chọba ndịnisiokwu $1"
+	"vector-toc-label": "Ndịna",
+	"vector-toc-toggle-button-label": "Chọba ndịnisiokwu $1",
+	"vector-pin-element-label": "Ga na nootu akụkụ",
+	"vector-unpin-element-label": "zoo"
 }

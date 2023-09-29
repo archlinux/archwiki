@@ -138,19 +138,21 @@ class Hooks {
 		$generatorUsed = RequestContext::getMain()->getRequest()->getBool( 'TemplateDataGeneratorUsed' );
 		$userEditCount = MediaWikiServices::getInstance()->getUserEditTracker()->getUserEditCount( $user );
 		// Note: We know that irrelevant changes (e.g. whitespace changes) aren't logged here
-		EventLogging::logEvent(
-			'TemplateDataEditor',
-			-1,
+		EventLogging::submit(
+			'eventlogging_TemplateDataEditor',
 			[
-				// Note: The "Done" button is disabled unless something changed, which means it's
-				// very likely (but not guaranteed) the generator was used to make the changes
-				'action' => $generatorUsed ? 'save-tag-edit-generator-used' : 'save-tag-edit-no-generator',
-				'page_id' => $pageId,
-				'page_namespace' => $page->getNamespace(),
-				'page_title' => $page->getDBkey(),
-				'rev_id' => $revisionRecord->getId() ?? 0,
-				'user_edit_count' => $userEditCount ?? 0,
-				'user_id' => $user->getId(),
+				'$schema' => '/analytics/legacy/templatedataeditor/1.0.0',
+				'event' => [
+					// Note: The "Done" button is disabled unless something changed, which means it's
+					// very likely (but not guaranteed) the generator was used to make the changes
+					'action' => $generatorUsed ? 'save-tag-edit-generator-used' : 'save-tag-edit-no-generator',
+					'page_id' => $pageId,
+					'page_namespace' => $page->getNamespace(),
+					'page_title' => $page->getDBkey(),
+					'rev_id' => $revisionRecord->getId() ?? 0,
+					'user_edit_count' => $userEditCount ?? 0,
+					'user_id' => $user->getId(),
+				],
 			]
 		);
 	}
@@ -222,7 +224,25 @@ class Hooks {
 
 		$localizer = new TemplateDataMessageLocalizer( $userLang );
 		$formatter = new TemplateDataHtmlFormatter( $localizer, $userLang->getCode() );
-		return $formatter->getHtml( $ti );
+		return $formatter->getHtml( $ti, $frame->getTitle(), !$parser->getOptions()->getIsPreview() );
+	}
+
+	/**
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/OutputPageBeforeHTML
+	 *
+	 * @param OutputPage $output
+	 * @param string &$text
+	 */
+	public static function onOutputPageBeforeHTML( $output, &$text ) {
+		$services = MediaWikiServices::getInstance();
+		$props = $services->getPageProps()->getProperties( $output->getTitle(), 'templatedata' );
+		if ( !empty( $props ) ) {
+			$lang = $output->getLanguage();
+			$localizer = new TemplateDataMessageLocalizer( $lang );
+			$formatter = new TemplateDataHtmlFormatter( $localizer, $lang->getCode() );
+			$formatter->replaceEditLink( $text );
+
+		}
 	}
 
 	/**

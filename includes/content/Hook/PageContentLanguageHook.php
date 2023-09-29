@@ -3,7 +3,7 @@
 namespace MediaWiki\Content\Hook;
 
 use Language;
-use Title;
+use MediaWiki\Title\Title;
 
 /**
  * This is a hook handler interface, see docs/Hooks.md.
@@ -20,9 +20,7 @@ interface PageContentLanguageHook {
 	 * @since 1.35
 	 *
 	 * @param Title $title
-	 * @param Language|string &$pageLang Page content language. Input can be anything (under control of
-	 *   hook subscribers), but hooks should return Language objects. Language code
-	 *   strings are deprecated.
+	 * @param Language &$pageLang Page content language
 	 * @param Language $userLang User language
 	 * @return bool|void True or no return value to continue or false to abort
 	 */

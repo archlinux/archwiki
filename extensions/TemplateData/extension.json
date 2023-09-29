@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"APIModules": {
 		"templatedata": "MediaWiki\\Extension\\TemplateData\\Api\\ApiTemplateData"
@@ -29,7 +29,8 @@
 		"MultiContentSave": "MediaWiki\\Extension\\TemplateData\\Hooks::onMultiContentSave",
 		"ResourceLoaderRegisterModules": "MediaWiki\\Extension\\TemplateData\\Hooks::onResourceLoaderRegisterModules",
 		"EditPage::showEditForm:initial": "MediaWiki\\Extension\\TemplateData\\Hooks::onEditPage",
-		"ParserFetchTemplateData": "MediaWiki\\Extension\\TemplateData\\Hooks::onParserFetchTemplateData"
+		"ParserFetchTemplateData": "MediaWiki\\Extension\\TemplateData\\Hooks::onParserFetchTemplateData",
+		"OutputPageBeforeHTML": "MediaWiki\\Extension\\TemplateData\\Hooks::onOutputPageBeforeHTML"
 	},
 	"MessagesDirs": {
 		"TemplateData": [
@@ -85,6 +86,7 @@
 			],
 			"dependencies": [
 				"mediawiki.api",
+				"mediawiki.user",
 				"oojs-ui-core",
 				"oojs-ui-widgets",
 				"oojs-ui-windows",
@@ -95,7 +97,8 @@
 				"ext.templateData.images",
 				"ext.templateDataGenerator.data",
 				"jquery.uls.data",
-				"jquery.textSelection"
+				"jquery.textSelection",
+				"web2017-polyfills"
 			],
 			"messages": [
 				"comma-separator",
@@ -152,7 +155,7 @@
 				"templatedata-modal-table-param-aliases",
 				"templatedata-modal-table-param-autovalue",
 				"templatedata-modal-table-param-suggestedvalues",
-				"templatedata-modal-table-param-suggestedvalues-placeholder",
+				"templatedata-modal-placeholder-multiselect",
 				"templatedata-modal-table-param-default",
 				"templatedata-modal-table-param-deprecated",
 				"templatedata-modal-table-param-deprecatedValue",
@@ -221,12 +224,6 @@
 		]
 	},
 	"attributes": {
-		"EventLogging": {
-			"Schemas": {
-				"TemplateDataEditor": "/analytics/legacy/templatedataeditor/1.0.0",
-				"TemplateDataApi": "/analytics/legacy/templatedataapi/1.0.0"
-			}
-		},
 		"VisualEditor": {
 			"PluginModules": [
 				"ext.templateDataGenerator.editPage"

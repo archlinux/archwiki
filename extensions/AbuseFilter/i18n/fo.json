@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"EileenSanda"
+			"EileenSanda",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Brúkar sjálvvirkandi filtur til rættingar",
@@ -10,7 +11,7 @@
 	"abusefilter-intro": "Vælkomin til markamótið til handfaring av misnýtslufilturinum.\nMisnýtslufilturið er ein sjálvvirkandi mekanisma í ritbúnaðinum, sum fremur sjálvvirkandi eftirlit við øllum sum fer fram.\nHetta markamótið vísir ein lista við útgreinaðum filtrum, og ger tað møguligt at broyta tey.",
 	"abusefilter-warning": "'''Ávaring:''' Henda handlingin er sjálvvirkandi blivin sædd sum skaðilig.\nRættingar ið ikki eru konstruktivar verða skjótt afturstillaðar, \nog ekstremar ella endurtiknar ikki brúkbarar rættingar fara at føra til at tín IP adressa verður sperrað.\nUm tú meinar, at tað ið tú ger er konstuktivt, so kanst tú goyma enna einaferð fyri at vátta tað.\nEin stutt frágreiðing um tann misnýtsluregulin, ið tín handling passaði saman við er: $1",
 	"abusefilter-disallowed": "Henda gerð er sjálvvirkandi blivin fráboðað sum skaðilig, og verður tí ikki loyvd.\nUm tú meinar, at tað ið tú gjørdi var brúkbart, vinarliga boða so einum administatori frá um tað ið tú ætlaði tær at gera.\nEin stutt frágreiðing um misnýtsluregulin, sum tín gerð passaði saman við er: $1",
-	"abusefilter-blocked-display": "Tað ið tú gjørdi er sjálvvirkandi blivið identifiserað sum skaðiligt,  \nog tú sleppur ikki at fremja tað í verki.\nHarumframt, fyri at verja {{SITENAME}}, er tín brúkarakonta og allar IP adressur, sum kunnu setast í samband við hana, blivin sperrað, so tú ikki sleppur at rætta.\nUm hetta er hent av misgáum, vinarliga set teg so í samband við ein administrator.\nEin stutt frágreiðing um tað slagið av misnýtslu, ið tín handling passaði saman við er: $1",
+	"abusefilter-blocked-display": "Tað ið tú gjørdi er sjálvvirkandi blivið identifiserað sum skaðiligt,\nog tú sleppur ikki at fremja tað í verki.\nHarumframt, fyri at verja {{SITENAME}}, er tín brúkarakonta og allar IP adressur, sum kunnu setast í samband við hana, blivin sperrað, so tú ikki sleppur at rætta.\nUm hetta er hent av misgáum, vinarliga set teg so í samband við ein administrator.\nEin stutt frágreiðing um tað slagið av misnýtslu, ið tín handling passaði saman við er: $1",
 	"abusefilter-degrouped": "Henda handlingin er sjálvvirkandi blivin skrásett sum skaðilig.\nTí varð hon ikki loyvd, og sum avleiðing av at tín konta er undir illgruna fyri at vera misbrúkt, hevur kontan hjá tær mist øll rættindi.\nUm tú heldur, at hetta er ein feilur, vinarliga set teg í samband við ein embætismann (byrokrat) har ið tú greiður frá um hesa hending, so kann tað henda, at tú fært tíni rættindi aftur.\nHer er ein stutt frágreiðing av misnýtsluregluni, ið tín handling útloysti: $1",
 	"abusefilter-blocker": "Misnýtslufiltur",
 	"abusefilter-blockreason": "Sjálvvirkandi sperrað av misnýtslufilturi.\nFrágreiðing av passandi reglu: $1",

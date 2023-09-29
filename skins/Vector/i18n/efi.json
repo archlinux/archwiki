@@ -3,7 +3,8 @@
 		"authors": [
 			"Samatics",
 			"Emmikweok",
-			"Maryeren"
+			"Maryeren",
+			"Amire80"
 		]
 	},
 	"vector-languages": "Mme usem",
@@ -11,10 +12,16 @@
 	"vector-no-language-button-label": "Dian mme usem",
 	"vector-action-addsection": "Dian ibuotikọ",
 	"vector-action-delete": "Sọhi",
+	"vector-action-move": "Men ka",
+	"vector-action-protect": "Kpeme",
 	"vector-view-create": "Bot",
 	"vector-view-history": "Se se ẹma ẹkenanam",
 	"vector-view-view": "Kot",
-	"vector-more-actions": "Eñwen",
+	"vector-more-actions": "En̄wen",
 	"vector-searchsuggest-containing": "Yom mme ikpehe <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>ọdọn̄ọde",
-	"vector-toc-beginning": "Editọñọ"
+	"vector-toc-label": "Se Isịnede",
+	"vector-toc-beginning": "Editọñọ",
+	"vector-page-tools-label": "N̄kpọ utom",
+	"vector-page-tools-general-label": "Ke ofụri ofụri",
+	"vector-unpin-element-label": "dịbe"
 }

@@ -1,8 +1,0 @@
-{
-	"@metadata": {
-		"authors": [
-			"Siebrand"
-		]
-	},
-	"renameuser-error-same-user": "Je kunt geen gebruiker hernoemen naar dezelfde naam."
-}

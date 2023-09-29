@@ -18,7 +18,7 @@
 			"color": "#d33"
 		},
 		"warning": {
-			"color": "#fc3"
+			"color": "#edab00"
 		},
 		"success": {
 			"color": "#14866d"
@@ -66,6 +66,12 @@
 				"ltr": "images/icons/speechBubbles-ltr.svg",
 				"rtl": "images/icons/speechBubbles-rtl.svg"
 			}
+		},
+		"success": {
+			"file": "images/icons/success.svg",
+			"variants": [
+				"success"
+			]
 		},
 		"tray": {
 			"file": "images/icons/tray.svg"

@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Integration;
 
-use EchoEvent;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry;
 use MediaWiki\Extension\AbuseFilter\EchoNotifier;
 use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
+use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWikiIntegrationTestCase;
 use Title;
 
@@ -73,7 +73,7 @@ class EchoNotifierTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::notifyForFilter
 	 */
 	public function testNotifyForFilter() {
-		if ( !class_exists( EchoEvent::class ) ) {
+		if ( !class_exists( Event::class ) ) {
 			$this->markTestSkipped( 'Echo not loaded' );
 		}
 		$notifier = new EchoNotifier(
@@ -81,7 +81,7 @@ class EchoNotifierTest extends MediaWikiIntegrationTestCase {
 			$this->createMock( ConsequencesRegistry::class ),
 			true
 		);
-		$this->assertInstanceOf( EchoEvent::class, $notifier->notifyForFilter( 1 ) );
+		$this->assertInstanceOf( Event::class, $notifier->notifyForFilter( 1 ) );
 	}
 
 	/**

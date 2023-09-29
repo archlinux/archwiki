@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 
 /**
@@ -103,7 +104,7 @@ class UserGroupMembership {
 	 */
 	public static function getLink( $ugm, IContextSource $context, $format, $userName = null ) {
 		if ( $format !== 'wiki' && $format !== 'html' ) {
-			throw new MWException( 'UserGroupMembership::getLink() $format parameter should be ' .
+			throw new InvalidArgumentException( 'UserGroupMembership::getLink() $format parameter should be ' .
 				"'wiki' or 'html'" );
 		}
 
@@ -115,10 +116,11 @@ class UserGroupMembership {
 			$group = $ugm;
 		}
 
+		$uiLanguage = $context->getLanguage();
 		if ( $userName !== null ) {
-			$groupName = self::getGroupMemberName( $group, $userName );
+			$groupName = $uiLanguage->getGroupMemberName( $group, $userName );
 		} else {
-			$groupName = self::getGroupName( $group );
+			$groupName = $uiLanguage->getGroupName( $group );
 		}
 
 		// link to the group description page, if it exists
@@ -141,7 +143,6 @@ class UserGroupMembership {
 
 		if ( $expiry ) {
 			// format the expiry to a nice string
-			$uiLanguage = $context->getLanguage();
 			$uiUser = $context->getUser();
 			$expiryDT = $uiLanguage->userTimeAndDate( $expiry, $uiUser );
 			$expiryD = $uiLanguage->userDate( $expiry, $uiUser );
@@ -151,6 +152,7 @@ class UserGroupMembership {
 				return $context->msg( 'group-membership-link-with-expiry' )
 					->params( $groupLink, $expiryDT, $expiryD, $expiryT )->text();
 			} else {
+				// @phan-suppress-next-line SecurityCheck-XSS False positive, only XSS if wiki format
 				$groupLink = Message::rawParam( $groupLink );
 				return $context->msg( 'group-membership-link-with-expiry' )
 					->params( $groupLink, $expiryDT, $expiryD, $expiryT )->escaped();
@@ -178,6 +180,8 @@ class UserGroupMembership {
 	 * @param string $group Internal group name
 	 * @param string|UserIdentity $member Username or UserIdentity of member for gender
 	 * @return string Localized name for group member
+	 * @deprecated since 1.40, use Language::getGroupMemberName or
+	 *   Message::objectParm with instance of UserGroupMembershipParam
 	 */
 	public static function getGroupMemberName( $group, $member ) {
 		return RequestContext::getMain()->getLanguage()->getGroupMemberName( $group, $member );
@@ -188,7 +192,7 @@ class UserGroupMembership {
 	 * of the group appears in the UI, it can link to this page.
 	 *
 	 * @param string $group Internal group name
-	 * @return Title|bool Title of the page if it exists, false otherwise
+	 * @return Title|false Title of the page if it exists, false otherwise
 	 */
 	public static function getGroupPage( $group ) {
 		$msg = wfMessage( "grouppage-$group" )->inContentLanguage();

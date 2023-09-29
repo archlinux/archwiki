@@ -22,5 +22,7 @@
 	"vector-jumptonavigation": "Nå navigaty springen",
 	"vector-jumptosearch": "Nå söken springen",
 	"vector-more-actions": "Meyr",
-	"vector-main-menu-tooltip": "Höyvdmenü"
+	"vector-main-menu-tooltip": "Höyvdmenü",
+	"vector-main-menu-label": "Höyvdmenü",
+	"empty-language-selector-body": "Sydinhold wördt neet understöänd in andere språken."
 }

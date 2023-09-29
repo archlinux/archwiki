@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Assele"
+			"Assele",
+			"З. ӘЙЛЕ"
 		]
 	},
-	"poem-desc": "Шиғырҙарҙы форматлау өсөн <code>&lt;poem&gt;</code> билдәһен өҫтәй"
+	"poem-desc": "Шиғырҙарҙы форматлау өсөн <code>&lt;poem&gt;</code> тамғаһын өҫтәй"
 }

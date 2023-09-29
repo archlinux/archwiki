@@ -9,16 +9,16 @@ const theWatchstarShouldNotBeSelected = () => {
 		'the watched element should not be present' );
 };
 
-const theWatchstarShouldBeSelected = () => {
-	ArticlePage.watched_element.waitForExist();
-	const watchstar = ArticlePage.watched_element;
-	assert.strictEqual( watchstar.isDisplayed(), true );
+const theWatchstarShouldBeSelected = async () => {
+	await ArticlePage.watched_element.waitForExist();
+	const watchstar = await ArticlePage.watched_element;
+	assert.strictEqual( await watchstar.isDisplayed(), true );
 };
 
-const iClickTheWatchstar = () => {
-	ArticlePage.waitUntilResourceLoaderModuleReady( 'skins.minerva.scripts' );
-	ArticlePage.watch_element.waitForExist();
-	ArticlePage.watch_element.click();
+const iClickTheWatchstar = async () => {
+	await ArticlePage.waitUntilResourceLoaderModuleReady( 'skins.minerva.scripts' );
+	await ArticlePage.watch_element.waitForExist();
+	await ArticlePage.watch_element.click();
 };
 
 const iClickTheUnwatchStar = () => {

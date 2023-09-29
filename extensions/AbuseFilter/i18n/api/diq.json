@@ -5,7 +5,8 @@
 			"Asmen",
 			"Kumkumuk",
 			"Mirzali",
-			"Orbot707"
+			"Orbot707",
+			"Amire80"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "Ratena Fiktrandê nengan dı têversanayış esto se, filtrey nengan de vurnayış vurnayışi kontrol kerê \n\nVurnayoğê RCID ya na LOGID eger ke icab krno se karêno",
@@ -30,7 +31,7 @@
 	"apihelp-abusefilterunblockautopromote-description": "Filtreya nengan karberi neticeya bloqe bıyayışa cı otomatik kerdau gêriya ya",
 	"apihelp-abusefilterunblockautopromote-summary": "Seba parzûnê istısmari ra gırewtışê qıseykerdışê otomatiki ra yew karberi kılit keno.",
 	"apihelp-abusefilterunblockautopromote-param-user": "Şıma qayılê ke bloqey kanci bamaey karberi wedarne.",
-	"apihelp-abusefilterunblockautopromote-example-1": "Otomatik  [[User:Example]] bloqey cı wedarnê",
+	"apihelp-abusefilterunblockautopromote-example-1": "Otomatik [[User:Example]] bloqey cı wedarnê",
 	"apihelp-query+abusefilters-description": "Detaya filtreya nengan bıvin",
 	"apihelp-query+abusefilters-summary": "Detayanê parzûnê istısmari bımocne.",
 	"apihelp-query+abusefilters-param-startid": "Kamiya filtre nımre kerdışmra start ke",
@@ -44,7 +45,7 @@
 	"apihelp-query+abuselog-summary": "Parzûnanê istısmari ra yewo ke weqeyi tepıştê, bımocne.",
 	"apihelp-query+abuselog-param-logid": "Deyaye kamiye roceka yew ronıştış bımocne",
 	"apihelp-query+abuselog-param-start": "Mora zemani nımre kerdışmra start ke",
-	"apihelp-query+abuselog-param-end": "Mora zemani  nımre kedışi vındarn",
+	"apihelp-query+abuselog-param-end": "Mora zemani nımre kedışi vındarn",
 	"apihelp-query+abuselog-param-user": "Teyna qeydé dekerdena grotena IP adresa karberi bıvin",
 	"apihelp-query+abuselog-param-title": "Dekerdenanê perer teyna bıvin",
 	"apihelp-query+abuselog-param-filter": "Teyna dekerdenanê kamiya filtrande tepêştena grotışa bıvin. Pey blokana abırne u parzûnê $1ya verole cıkuye",

@@ -30,8 +30,10 @@ ve.ui.MWLazyMultilineTextInputWidget = function VeUiMWLazyMultilineTextInputWidg
 
 	// Check autosize is set, but if it isn't you probably shouldn't be using this widget!
 	if ( this.autosize ) {
+		this.$input.addClass( 've-ui-mwLazyMultilineTextInputWidget-collapsed' );
 		this.autosize = false;
 		this.$input.one( 'focus', function () {
+			widget.$input.removeClass( 've-ui-mwLazyMultilineTextInputWidget-collapsed' );
 			widget.autosize = true;
 			widget.adjustSize();
 		} );

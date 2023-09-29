@@ -30,6 +30,7 @@
 	"vector-jumptosearch": "सदा खातीर उडकी मार",
 	"vector-jumptocontent": "मजकूराशीं उडकी मार",
 	"vector-more-actions": "आनीक",
+	"vector-toc-label": "विशय सुची",
 	"vector-toc-beginning": "सुरवात",
 	"vector-toc-toggle-button-label": "$1 उपविभाग दाखय / लिपय",
 	"vector-anon-user-menu-pages-learn": "अदीक शिकून घे",
@@ -37,5 +38,11 @@
 	"vector-main-menu-tooltip": "मुखेल वळेरी",
 	"vector-toc-menu-tooltip": "विशय सुची",
 	"vector-toc-collapsible-button-label": "विशय सुची दाखय / लिपय",
-	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|भासाभास]]"
+	"vector-main-menu-label": "मुखेल वळेरी",
+	"vector-limited-width-toggle": "पानाची रुंदाय पूर्ण वो थारावीक",
+	"vector-page-tools-label": "साधनां",
+	"vector-pin-element-label": "देग-पट्टियेचेर वर",
+	"vector-unpin-element-label": "लिपय",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|भासाभास]]",
+	"empty-language-selector-body": "पानाचो मजकूर हेर भासानी समर्थीत ना."
 }

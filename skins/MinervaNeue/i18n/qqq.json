@@ -20,7 +20,7 @@
 	"minerva-watchlist-cta": "Appears when you click watchlist icon when not logged in. First link is to login form, 2nd to sign up form. Links are created in JavaScript.",
 	"minerva-talk-add-topic": "Label for button which shows at top of talk pages in mobile view prompting addition of topic",
 	"mobile-frontend-cookies-required": "Error message shown when user attempts to switch site modes and cookies are not enabled.",
-	"mobile-frontend-editor-edit": "Caption for the link showing edit form. (In the imperative mood)\n{{Identical|Edit}}",
+	"mobile-frontend-editor-edit": "Caption for the link showing edit form.\n{{Identical|Edit}}",
 	"minerva-download": "Caption for the download button (in the imperative mood).\n{{Identical|Download}}",
 	"mobile-frontend-editor-redlink-create": "Label for a create page button.\n{{Identical|Create page}}",
 	"mobile-frontend-editor-redlink-explain": "Question for the user, if he want to edit a page, which link he clicked and that does not exist yet, or not.",

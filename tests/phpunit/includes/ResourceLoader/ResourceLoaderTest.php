@@ -5,9 +5,9 @@ namespace MediaWiki\Tests\ResourceLoader;
 use EmptyResourceLoader;
 use Exception;
 use ExtensionRegistry;
-use FauxRequest;
 use InvalidArgumentException;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\ResourceLoader\Context;
 use MediaWiki\ResourceLoader\FileModule;
 use MediaWiki\ResourceLoader\ResourceLoader;
@@ -349,7 +349,7 @@ class ResourceLoaderTest extends ResourceLoaderTestCase {
 		$rl = new EmptyResourceLoader;
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'must have a "loadScript" key' );
-		$rl->addSource( 'foo',  [ 'x' => 'https://example.org/w/load.php' ] );
+		$rl->addSource( 'foo', [ 'x' => 'https://example.org/w/load.php' ] );
 	}
 
 	public static function provideLoaderImplement() {
@@ -523,13 +523,9 @@ END
 			'packageFiles' => [],
 		];
 		$rl = TestingAccessWrapper::newFromClass( ResourceLoader::class );
-		$context = new Context( new EmptyResourceLoader(), new FauxRequest( [
-			'debug' => 'true',
-		] ) );
 		$this->assertEquals(
 			$case['expected'],
 			$rl->makeLoaderImplementScript(
-				$context,
 				$case['name'],
 				( $case['wrap'] && is_string( $case['scripts'] ) )
 					? new XmlJsCode( $case['scripts'] )
@@ -546,9 +542,7 @@ END
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'Script must be a' );
 		$rl = TestingAccessWrapper::newFromClass( ResourceLoader::class );
-		$context = new Context( new EmptyResourceLoader(), new FauxRequest() );
 		$rl->makeLoaderImplementScript(
-			$context,
 			'test', // name
 			123, // scripts
 			null, // styles
@@ -818,7 +812,7 @@ END
 
 		$response = $rl->makeModuleResponse( $context, [] );
 		$this->assertSame( [], $rl->getErrors(), 'Errors' );
-		$this->assertRegExp( '/^\/\*.+no modules were requested.+\*\/$/ms', $response );
+		$this->assertMatchesRegularExpression( '/^\/\*.+no modules were requested.+\*\/$/ms', $response );
 	}
 
 	/**
@@ -848,7 +842,7 @@ END
 		$errors = $rl->getErrors();
 
 		$this->assertCount( 1, $errors );
-		$this->assertRegExp( '/Ferry not found/', $errors[0] );
+		$this->assertMatchesRegularExpression( '/Ferry not found/', $errors[0] );
 		$this->assertEquals(
 			"foo();\nbar();\n" . 'mw.loader.state({
     "ferry": "error",
@@ -886,8 +880,8 @@ END
 		$errors = $rl->getErrors();
 
 		$this->assertCount( 2, $errors );
-		$this->assertRegExp( '/Ferry not found/', $errors[0] );
-		$this->assertRegExp( '/Problem.+"ferry":\s*"error"/ms', $errors[1] );
+		$this->assertMatchesRegularExpression( '/Ferry not found/', $errors[0] );
+		$this->assertMatchesRegularExpression( '/Problem.+"ferry":\s*"error"/ms', $errors[1] );
 		$this->assertEquals(
 			'.foo{}.bar{}',
 			$response
@@ -937,19 +931,19 @@ END
 		$response = $rl->makeModuleResponse( $context, $modules );
 		$errors = $rl->getErrors();
 
-		$this->assertRegExp( '/Ferry not found/', $errors[0] ?? '' );
+		$this->assertMatchesRegularExpression( '/Ferry not found/', $errors[0] ?? '' );
 		$this->assertCount( 1, $errors );
-		$this->assertRegExp(
+		$this->assertMatchesRegularExpression(
 			'/isCompatible.*window\.RLQ/s',
 			$response,
 			'startup response undisrupted (T152266)'
 		);
-		$this->assertRegExp(
+		$this->assertMatchesRegularExpression(
 			'/register\([^)]+"ferry",\s*""/s',
 			$response,
 			'startup response registers broken module'
 		);
-		$this->assertRegExp(
+		$this->assertMatchesRegularExpression(
 			'/state\([^)]+"ferry":\s*"error"/s',
 			$response,
 			'startup response sets state to error'

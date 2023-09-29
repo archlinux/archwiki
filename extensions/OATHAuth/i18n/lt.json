@@ -15,6 +15,7 @@
 	"oathauth-enable": "Įgalinti dviejų veiksnių autentifikavimą",
 	"oathauth-token": "Prieigos raktas",
 	"oathauth-disable": "Išjungti dviejų veiksnių autentifikavimą",
+	"oathauth-failedtovalidateoath": "Nepavyko patvirtinti dviejų veiksnių kredencialų",
 	"oathauth-disabledoath": "Išjungtas dviejų veiksnių autentifikavimas.",
 	"oathauth-prefs-label": "Dviejų veiksnių autentifikavimas:",
 	"oathauth-step1": "1 žingsnis: atsisiųskite dviejų veiksnių autentifikavimo programą",
@@ -83,5 +84,5 @@
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} turi įgalintą dviejų veiksnių autentifikavimą.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} neturi įjungto dviejų veiksnių autentifikavimo.",
 	"oathauth-prefs-disabledgroups": "Išjungta {{PLURAL:$1|grupė|grupės}}:",
-	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Jūsų narystė}} {{PLURAL:$1|šioje grupėje|šiose grupėse}} yra sustabdyta, kol neįjungsite [[Special\n:Manage Two-factor authentication|dviejų veiksnių autentifikavimo]]."
+	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Jūsų narystė}} {{PLURAL:$1|šioje grupėje|šiose grupėse}} yra sustabdyta, kol neįjungsite [[Special:Manage Two-factor authentication|dviejų veiksnių autentifikavimo]]."
 }

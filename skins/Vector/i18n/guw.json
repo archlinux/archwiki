@@ -23,6 +23,9 @@
 	"vector-view-view": "Hia",
 	"vector-more-actions": "Dogọ",
 	"vector-searchsuggest-containing": "Dín weda he bẹ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> hẹn lẹ",
-	"vector-toc-heading": "Nuhe e bẹhẹn lẹ",
-	"vector-anon-user-menu-pages-learn": "Plọnnu dogọ"
+	"vector-toc-label": "Nuhe e bẹhẹn lẹ",
+	"vector-anon-user-menu-pages-learn": "Plọnnu dogọ",
+	"vector-page-tools-label": "Azọ́nwanu lẹ",
+	"vector-page-tools-general-label": "Dopọ",
+	"vector-unpin-element-label": "whlá"
 }

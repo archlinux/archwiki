@@ -16,14 +16,14 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup JobQueue
  */
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 
 /**
- * Job for pruning recent changes
+ * Puurge expired rows from the recentchanges table.
  *
  * @ingroup JobQueue
  * @since 1.25

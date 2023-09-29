@@ -113,6 +113,13 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 		$this->assertStringEndsWith( $expected, $url );
 	}
 
+	public function testGetPath() {
+		$handler = $this->newHandler();
+		$request = new RequestData();
+		$this->initHandler( $handler, $request, [ 'path' => 'just/some/path' ] );
+		$this->assertSame( 'just/some/path', $handler->getPath() );
+	}
+
 	public function testGetResponseFactory() {
 		$handler = $this->newHandler();
 		$this->initHandler( $handler, new RequestData() );
@@ -318,7 +325,7 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 		$request = new RequestData( $requestData );
 
 		$handler = $this->newHandler();
-		$this->initHandler( $handler, $request, [], [], null, true );
+		$this->initHandler( $handler, $request, [], [], null, $this->getSession( true ) );
 
 		$validator = $this->getMockValidator( [], [ 'token' => 'TOKEN' ] );
 		$handler->validate( $validator );
@@ -341,7 +348,7 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 	public function testCsrfUnsafeSessionProviderRejection() {
 		$handler = $this->newHandler( [ 'requireSafeAgainstCsrf' ] );
 		$handler->method( 'requireSafeAgainstCsrf' )->willReturn( true );
-		$this->initHandler( $handler, new RequestData() );
+		$this->initHandler( $handler, new RequestData(), [], [], null, $this->getSession( false ) );
 
 		try {
 			$handler->checkSession();
@@ -386,8 +393,57 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 
 		$response = new Response();
 		$handler->applyConditionalResponseHeaders( $response );
-		$this->assertEmpty( $response->getHeaderLine( 'ETag' ) );
-		$this->assertEmpty( $response->getHeaderLine( 'Last-Modified' ) );
+		$this->assertSame( '', $response->getHeaderLine( 'ETag' ) );
+		$this->assertSame( '', $response->getHeaderLine( 'Last-Modified' ) );
+	}
+
+	public function provideCacheControl() {
+		yield 'nothing' => [
+			'GET',
+			[],
+			''
+		];
+
+		yield 'cookie' => [
+			'GET',
+			[
+				'Set-Cookie' => 'foo=bar',
+				'Cache-Control' => 'max-age=123'
+			],
+			'private,no-cache,s-maxage=0'
+		];
+
+		yield 'POST with cache control' => [
+			'POST',
+			[
+				'Cache-Control' => 'max-age=123'
+			],
+			'max-age=123'
+		];
+
+		yield 'POST use default cache control' => [
+			'POST',
+			[],
+			'private,no-cache,s-maxage=0'
+		];
+	}
+
+	/**
+	 * @dataProvider provideCacheControl
+	 */
+	public function testCacheControl( string $method, array $headers, $expected ) {
+		$response = new Response();
+
+		foreach ( $headers as $name => $value ) {
+			$response->setHeader( $name, $value );
+		}
+
+		$handler = $this->newHandler( [ 'getRequest' ] );
+		$handler->method( 'getRequest' )->willReturn( new RequestData( [ 'method' => $method ] ) );
+
+		$handler->applyCacheControl( $response );
+
+		$this->assertSame( $expected, $response->getHeaderLine( 'Cache-Control' ) );
 	}
 
 }

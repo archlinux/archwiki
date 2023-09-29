@@ -1,8 +1,6 @@
 <?php
 /** Catalan (català)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -97,6 +95,7 @@ $specialPageAliases = [
 	'Randomredirect'            => [ 'Redirecció_aleatòria' ],
 	'Recentchanges'             => [ 'Canvis_recents' ],
 	'Recentchangeslinked'       => [ 'Seguiment' ],
+	'Renameuser'                => [ 'Reanomena_usuari' ],
 	'Revisiondelete'            => [ 'Esborra_versió' ],
 	'Search'                    => [ 'Cerca' ],
 	'Shortpages'                => [ 'Pàgines_curtes' ],

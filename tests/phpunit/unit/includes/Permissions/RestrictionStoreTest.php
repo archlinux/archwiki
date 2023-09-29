@@ -13,22 +13,25 @@ use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\Title\Title;
 use MediaWikiUnitTestCase;
+use MockTitleTrait;
 use ReflectionClass;
 use ReflectionMethod;
 use RuntimeException;
-use Title;
 use UnexpectedValueException;
 use WANObjectCache;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * @coversDefaultClass \MediaWiki\Permissions\RestrictionStore
  */
 class RestrictionStoreTest extends MediaWikiUnitTestCase {
 	use DummyServicesTrait;
+	use MockTitleTrait;
 
 	private const DEFAULT_RESTRICTION_TYPES = [ 'create', 'edit', 'move', 'upload' ];
 
@@ -56,7 +59,10 @@ class RestrictionStoreTest extends MediaWikiUnitTestCase {
 
 		$dbs = [];
 		foreach ( $expectedCalls as $index => $calls ) {
-			$dbs[$index] = $this->createNoOpMock( IDatabase::class, array_keys( $calls ) );
+			$dbs[$index] = $this->createNoOpMock(
+				IDatabase::class,
+				array_merge( array_keys( $calls ), [ 'newSelectQueryBuilder' ] )
+			);
 			foreach ( $calls as $method => $callback ) {
 				$count = 1;
 				if ( is_array( $callback ) ) {
@@ -65,6 +71,11 @@ class RestrictionStoreTest extends MediaWikiUnitTestCase {
 				$dbs[$index]->expects( $count < 0 ? $this->any() : $this->exactly( $count ) )
 					->method( $method )->willReturnCallback( $callback );
 			}
+			$dbs[$index]
+				->method( 'newSelectQueryBuilder' )
+				->willReturnCallback( static function () use ( $dbs, $index ) {
+					return new SelectQueryBuilder( $dbs[$index] );
+				} );
 		}
 
 		$lb = $this->createMock( ILoadBalancer::class, [ 'getConnectionRef' ] );
@@ -722,7 +733,7 @@ class RestrictionStoreTest extends MediaWikiUnitTestCase {
 				PageIdentityValue::localIdentity( 1, NS_MAIN, 'X' ),
 			],
 			'Nonexistent file' => [
-				[ 'create', 'upload' ],
+				[ 'create' ],
 				PageIdentityValue::localIdentity( 0, NS_FILE, 'X' ),
 			],
 			'Existing file' => [
@@ -767,7 +778,7 @@ class RestrictionStoreTest extends MediaWikiUnitTestCase {
 				[ MainConfigNames::RestrictionTypes => $expandedRestrictions ],
 			],
 			'Nonexistent file with extra type' => [
-				[ 'create', 'upload' ],
+				[ 'create' ],
 				PageIdentityValue::localIdentity( 0, NS_FILE, 'X' ),
 				[ MainConfigNames::RestrictionTypes => $expandedRestrictions ],
 			],
@@ -823,7 +834,7 @@ class RestrictionStoreTest extends MediaWikiUnitTestCase {
 		return [
 			'Exists' => [ [ 'edit', 'move', 'upload' ], [ true ] ],
 			'Default is exists' => [ [ 'edit', 'move', 'upload' ], [] ],
-			'Nonexistent' => [ [ 'create', 'upload' ], [ false ] ],
+			'Nonexistent' => [ [ 'create' ], [ false ] ],
 
 			'Exists with extra restriction type' => [
 				[ 'edit', 'move', 'upload', 'solidify' ],
@@ -836,7 +847,7 @@ class RestrictionStoreTest extends MediaWikiUnitTestCase {
 				[ MainConfigNames::RestrictionTypes => $expandedRestrictions ],
 			],
 			'Nonexistent with extra restriction type' => [
-				[ 'create', 'upload' ],
+				[ 'create' ],
 				[ false ],
 				[ MainConfigNames::RestrictionTypes => $expandedRestrictions ],
 			],
@@ -852,7 +863,7 @@ class RestrictionStoreTest extends MediaWikiUnitTestCase {
 				[ MainConfigNames::RestrictionTypes => [ 'create' ] ],
 			],
 			'Nonexistent with no create' => [
-				[ 'upload' ],
+				[],
 				[ false ],
 				[ MainConfigNames::RestrictionTypes => [ 'edit', 'move', 'upload', 'solidify' ] ],
 			],
@@ -977,6 +988,24 @@ class RestrictionStoreTest extends MediaWikiUnitTestCase {
 		[ $sources, $restrictions ] = $obj->getCascadeProtectionSources( $page );
 		$this->assertCount( 1, $sources );
 		$this->assertArrayHasKey( 'edit', $restrictions );
+	}
+
+	/**
+	 * @covers ::getCascadeProtectionSources
+	 * @covers ::getCascadeProtectionSourcesInternal
+	 */
+	public function testGetCascadeProtectionSourcesSpecialPage() {
+		$obj = $this->newRestrictionStore( [ 'db' => [ DB_REPLICA => [ 'select' => [
+			static function () {
+				return [];
+			},
+			0
+		] ] ] ] );
+
+		$page = $this->makeMockTitle( 'Whatlinkshere', [ 'namespace' => NS_SPECIAL ] );
+		[ $sources, $restrictions ] = $obj->getCascadeProtectionSources( $page );
+		$this->assertCount( 0, $sources );
+		$this->assertCount( 0, $restrictions );
 	}
 
 }

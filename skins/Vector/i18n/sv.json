@@ -2,14 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
+			"Larske",
 			"Lokal Profil",
 			"Martinwiss",
 			"Najami",
 			"Sabelöga",
 			"Skalman",
 			"Sturban",
-			"WikiPhoenix",
-			"Larske"
+			"WikiPhoenix"
 		]
 	},
 	"skinname-vector": "Vector, äldre (2010)",
@@ -46,9 +46,7 @@
 	"vector-search-loader": "Laddar in sökförslag",
 	"vector-searchsuggest-containing": "Sök efter sidor som innehåller <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduktion",
-	"vector-toc-heading": "Innehåll",
-	"vector-toc-toggle-position-sidebar": "flytta till sidofältet",
-	"vector-toc-toggle-position-title": "dölj",
+	"vector-toc-label": "Innehåll",
 	"vector-toc-beginning": "Inledning",
 	"vector-toc-toggle-button-label": "Växla underavsnittet $1",
 	"vector-anon-user-menu-pages": "Sidor för utloggade redigerade",
@@ -57,8 +55,17 @@
 	"vector-main-menu-tooltip": "Huvudmeny",
 	"vector-toc-menu-tooltip": "Innehållsförteckning",
 	"vector-toc-collapsible-button-label": "Växla innehållsförteckningen",
-	"vector-article-tools-nav-label": "Verktyg",
 	"vector-site-nav-label": "Webbplats",
+	"vector-main-menu-label": "Huvudmeny",
+	"vector-limited-width-toggle": "Aktivera/inaktivera begränsad bredd på innehåll",
+	"vector-page-tools-label": "Verktyg",
+	"vector-page-tools-general-label": "Allmänt",
+	"vector-page-tools-actions-label": "Åtgärder",
+	"vector-pin-element-label": "flytta till sidofältet",
+	"vector-unpin-element-label": "dölj",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Diskussion]]",
-	"tooltip-vector-anon-user-menu-title": "Fler alternativ"
+	"tooltip-vector-anon-user-menu-title": "Fler alternativ",
+	"vector-prefs-limited-width": "Aktivera läget med begränsad bredd",
+	"vector-prefs-limited-width-help": "Aktivera läget med begränsad bredd för förbättrad läsupplevelse.",
+	"empty-language-selector-body": "Sidans innehåll stöds inte på andra språk."
 }

@@ -15,17 +15,13 @@ describe( 'Special:Watchlist', function () {
 		bot = await Api.bot();
 	} );
 
-	beforeEach( function () {
-		LoginPage.loginAdmin();
+	beforeEach( async function () {
+		await LoginPage.loginAdmin();
 	} );
 
-	it( 'should show page with new edit', async function () {
+	// Skipped on 2022-12-07 because of T324237
+	it.skip( 'should show page with new edit @daily', async function () {
 		const title = Util.getTestString( 'Title-' );
-
-		// Don't try to run wikitext-specific tests if the test namespace isn't wikitext by default.
-		if ( await Util.isTargetNotWikitext( title ) ) {
-			this.skip();
-		}
 
 		// create
 		await bot.edit( title, Util.getTestString() );

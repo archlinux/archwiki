@@ -13,7 +13,7 @@
  * @constructor
  * @param {ve.ui.Context} context Context item is in
  * @param {ve.dm.Model} model Model item is related to
- * @param {Object} config Configuration options
+ * @param {Object} [config]
  */
 ve.ui.MWInternalLinkContextItem = function VeUiMWInternalLinkContextItem() {
 	// Parent constructor
@@ -45,10 +45,10 @@ ve.ui.MWInternalLinkContextItem.static.modelClasses = [ ve.dm.MWInternalLinkAnno
  * @return {jQuery} The jQuery object of the link context item
  */
 ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, model, htmlDoc, context ) {
-	var title = model.getAttribute( 'lookupTitle' ),
+	var lookupTitle = model.getAttribute( 'lookupTitle' ),
 		normalizedTitle = model.getAttribute( 'normalizedTitle' ),
 		href = model.getHref(),
-		titleObj = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( href ) ),
+		title = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( href ) ),
 		fragment = model.getFragment(),
 		usePageImages = mw.config.get( 'wgVisualEditorConfig' ).usePageImages,
 		usePageDescriptions = mw.config.get( 'wgVisualEditorConfig' ).usePageDescriptions,
@@ -57,13 +57,15 @@ ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, mode
 			.addClass( 've-ui-linkContextItem-link' )
 			.text( normalizedTitle )
 			.attr( {
-				href: titleObj.getUrl(),
 				target: '_blank',
 				rel: 'noopener'
 			} );
 
+	// T322704
+	ve.setAttributeSafe( $link[ 0 ], 'href', title.getUrl(), '#' );
+
 	// Style based on link cache information
-	ve.init.platform.linkCache.styleElement( title, $link, fragment );
+	ve.init.platform.linkCache.styleElement( lookupTitle, $link, fragment );
 	// Don't style as a self-link in the context menu (but do elsewhere)
 	$link.removeClass( 'mw-selflink' );
 
@@ -82,7 +84,7 @@ ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, mode
 	}
 
 	if ( usePageImages || usePageDescriptions ) {
-		linkCache.get( title ).then( function ( linkData ) {
+		linkCache.get( lookupTitle ).then( function ( linkData ) {
 			if ( usePageImages ) {
 				if ( linkData.imageUrl ) {
 					icon.$element

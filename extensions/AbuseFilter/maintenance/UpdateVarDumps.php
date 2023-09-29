@@ -12,34 +12,31 @@ use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\MediaWikiServices;
 use Title;
 use UnexpectedValueException;
-use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
-/**
- * Performs several tasks aiming to update the stored var dumps for filter hits.
- * See T213006 for a list.
- *
- * @ingroup Maintenance
- */
 // @codeCoverageIgnoreStart
-if ( getenv( 'MW_INSTALL_PATH' ) ) {
-	$IP = getenv( 'MW_INSTALL_PATH' );
-} else {
+$IP = getenv( 'MW_INSTALL_PATH' );
+if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
 // @codeCoverageIgnoreEnd
 
 /**
+ * Performs several tasks aiming to update the stored var dumps for filter hits.
+ *
+ * See T213006 for a list.
+ *
  * @codeCoverageIgnore
  * This script used to be covered by a test, but it was removed: the script was single-use, so
  * no more testing is needed. OTOH, maintaining the test was too hard because we needed to create
  * with serialized classes, which quickly becomes unsustainable.
  */
 class UpdateVarDumps extends LoggedUpdateMaintenance {
-	/** @var Database A connection to replica */
+	/** @var IMaintainableDatabase A connection to replica */
 	private $dbr;
-	/** @var Database A connection to the primary database */
+	/** @var IMaintainableDatabase A connection to the primary database */
 	private $dbw;
 	/** @var bool Whether we're performing a dry run */
 	private $dryRun = false;
@@ -101,8 +98,8 @@ class UpdateVarDumps extends LoggedUpdateMaintenance {
 		$this->varBlobStore = AbuseFilterServices::getVariablesBlobStore();
 
 		// Faulty rows aren't inserted anymore, hence we can query the replica and update the primary database.
-		$this->dbr = wfGetDB( DB_REPLICA );
-		$this->dbw = wfGetDB( DB_PRIMARY );
+		$this->dbr = $this->getDB( DB_REPLICA );
+		$this->dbw = $this->getDB( DB_PRIMARY );
 
 		// Control batching with the primary key to keep the queries performant and allow gaps
 		$this->allRowsCount = (int)$this->dbr->selectField(
@@ -165,7 +162,7 @@ class UpdateVarDumps extends LoggedUpdateMaintenance {
 			$res = $this->doFixMissingDumps( $brokenRows );
 			$deleted += $res['deleted'];
 			$rebuilt += $res['rebuilt'];
-			MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->waitForReplication();
+			$this->waitForReplication();
 			$this->maybeSleep();
 		} while ( $prevID <= $this->allRowsCount );
 
@@ -292,7 +289,7 @@ class UpdateVarDumps extends LoggedUpdateMaintenance {
 			$result = $this->doMoveToText( $res );
 			$changeRows += $result['change'];
 			$truncatedDumps += $result['truncated'];
-			MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->waitForReplication();
+			$this->waitForReplication();
 			$this->maybeSleep();
 		} while ( $prevID <= $this->allRowsCount );
 
@@ -507,7 +504,7 @@ class UpdateVarDumps extends LoggedUpdateMaintenance {
 
 			if ( !$this->dryRun ) {
 				$this->doUpdateText( $res, $esAccess );
-				MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->waitForReplication();
+				$this->waitForReplication();
 			}
 			$this->maybeSleep();
 		} while ( $prevID <= $this->allRowsCount );
@@ -689,7 +686,7 @@ class UpdateVarDumps extends LoggedUpdateMaintenance {
 			} else {
 				$this->dbw->update( ...$args );
 				$numRows += $this->dbw->affectedRows();
-				MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->waitForReplication();
+				$this->waitForReplication();
 			}
 
 			$prevID = $curID;

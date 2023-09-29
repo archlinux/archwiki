@@ -9,7 +9,6 @@ use FallbackContent;
 use HashBagOStuff;
 use IDBAccessObject;
 use InvalidArgumentException;
-use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -26,16 +25,16 @@ use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\BlobStore;
 use MediaWiki\Storage\SqlBlobStore;
+use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use MWTimestamp;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Log\NullLogger;
 use StatusValue;
 use TestUserRegistry;
 use TextContent;
-use Title;
-use TitleFactory;
 use User;
 use WANObjectCache;
 use Wikimedia\Assert\PreconditionException;
@@ -55,6 +54,7 @@ use WikitextContent;
  * @group RevisionStore
  */
 class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
+	use DummyServicesTrait;
 
 	/**
 	 * @var Title
@@ -102,7 +102,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		}
 
 		$title = $pageTitle === null ? $this->getTestPageTitle() : Title::newFromText( $pageTitle );
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
 		if ( !$page->exists() ) {
 			// Make sure we don't write to the live db.
@@ -139,8 +139,13 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			->getMock();
 
 		$lb->method( 'reallyOpenConnection' )->willReturnCallback(
-			function () use ( $server ) {
-				return $this->getDatabaseMock( $server );
+			function ( $i, DatabaseDomain $domain, array $lbInfo ) use ( $server ) {
+				$conn = $this->getDatabaseMock( $server );
+				foreach ( $lbInfo as $k => $v ) {
+					$conn->setLBInfo( $k, $v );
+				}
+
+				return $conn;
 			}
 		);
 
@@ -211,9 +216,6 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 				'srvCache' => new HashBagOStuff(),
 				'profiler' => null,
 				'trxProfiler' => new TransactionProfiler(),
-				'connLogger' => new NullLogger(),
-				'queryLogger' => new NullLogger(),
-				'replLogger' => new NullLogger(),
 				'errorLogger' => static function () {
 				},
 				'deprecationLogger' => static function () {
@@ -394,7 +396,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		yield 'Multi-slot revision insertion' => [
 			[
 				'content' => [
-					'main' => new WikitextContent( 'Chicken' ),
+					SlotRecord::MAIN => new WikitextContent( 'Chicken' ),
 					'aux' => new TextContent( 'Egg' ),
 				],
 				'page' => true,
@@ -635,13 +637,13 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function provideNewNullRevision() {
 		yield [
 			Title::newFromText( 'UTPage_notAutoCreated' ),
-			[ 'content' => [ 'main' => new WikitextContent( 'Flubber1' ) ] ],
+			[ 'content' => [ SlotRecord::MAIN => new WikitextContent( 'Flubber1' ) ] ],
 			CommentStoreComment::newUnsavedComment( __METHOD__ . ' comment1' ),
 			true,
 		];
 		yield [
 			Title::newFromText( 'UTPage_notAutoCreated' ),
-			[ 'content' => [ 'main' => new WikitextContent( 'Flubber2' ) ] ],
+			[ 'content' => [ SlotRecord::MAIN => new WikitextContent( 'Flubber2' ) ] ],
 			CommentStoreComment::newUnsavedComment( __METHOD__ . ' comment2', [ 'a' => 1 ] ),
 			false,
 		];
@@ -649,7 +651,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			Title::newFromText( 'UTPage_notAutoCreated' ),
 			[
 				'content' => [
-					'main' => new WikitextContent( 'Chicken' ),
+					SlotRecord::MAIN => new WikitextContent( 'Chicken' ),
 					'aux' => new WikitextContent( 'Omelet' ),
 				],
 			],
@@ -663,7 +665,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testNewNullRevision( Title $title, $revDetails, $comment, $minor = false ) {
 		$user = TestUserRegistry::getMutableTestUser( __METHOD__ )->getUser();
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
 		if ( !$page->exists() ) {
 			$page->doUserEditContent(
@@ -741,8 +743,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getTestUser()->getUser(),
 			__METHOD__
 		);
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->getRevisionById( $revRecord->getId() );
@@ -767,8 +768,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$sysop,
 			__METHOD__
 		);
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->getRevisionById( $revRecord->getId() );
@@ -788,8 +788,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getTestSysop()->getUser(),
 			__METHOD__
 		);
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->getRevisionById( $revRecord->getId() );
@@ -809,8 +808,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getTestSysop()->getUser(),
 			__METHOD__
 		);
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->getRevisionById( $revRecord->getId() );
@@ -831,12 +829,11 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getTestSysop()->getUser(),
 			__METHOD__
 		);
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 		$revId = $revRecord->getId();
 
 		// Pretend the local test DB is a sister site
-		$wikiId = $this->db->getDomainID();
+		$wikiId = $this->getDb()->getDomainID();
 		$store = $this->getServiceContainer()->getRevisionStoreFactory()
 			->getRevisionStore( $wikiId );
 
@@ -863,8 +860,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getTestSysop()->getUser(),
 			__METHOD__
 		);
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 		$revId = $revRecord->getId();
 		$pageId = $revRecord->getPageId();
 
@@ -873,7 +869,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$this->setService( 'TitleFactory', $noOpTitleFactory );
 
 		// Pretend the local test DB is a sister site
-		$wikiId = $this->db->getDomainID();
+		$wikiId = $this->getDb()->getDomainID();
 		$store = $this->getServiceContainer()->getRevisionStoreFactory()
 			->getRevisionStore( $wikiId );
 
@@ -899,15 +895,9 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getTestSysop()->getUser(),
 			__METHOD__
 		);
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 
-		$mockContentHandlerFactory =
-			$this->createNoOpMock( IContentHandlerFactory::class, [ 'isDefinedModel' ] );
-
-		$mockContentHandlerFactory->method( 'isDefinedModel' )
-			->willReturn( false );
-
+		$mockContentHandlerFactory = $this->getDummyContentHandlerFactory();
 		$this->setService( 'ContentHandlerFactory', $mockContentHandlerFactory );
 		$store = $this->getServiceContainer()->getRevisionStore();
 
@@ -935,8 +925,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getTestSysop()->getUser(),
 			__METHOD__
 		);
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->getRevisionByTitle( $title );
@@ -949,10 +938,10 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function provideRevisionByTitle() {
 		return [
 			[ function () {
-				return $this->getTestPage()->getTitle();
+				return $this->getTestPageTitle();
 			} ],
 			[ function () {
-				return $this->getTestPage()->getTitle()->toPageIdentity();
+				return $this->getTestPageTitle()->toPageIdentity();
 			} ]
 		];
 	}
@@ -1002,8 +991,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$page = $this->getTestPage();
 		$status = $this->editPage( $page, __METHOD__ );
 		$this->assertStatusGood( $status, 'edited a page' );
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 		$dbDomain = 'some_foreign_wiki';
 		$this->executeWithForeignStore(
 			$dbDomain,
@@ -1029,8 +1017,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getTestSysop()->getUser(),
 			$comment
 		);
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 		$dbDomain = 'some_foreign_wiki';
 		$this->executeWithForeignStore(
 			$dbDomain,
@@ -1060,8 +1047,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getTestSysop()->getUser(),
 			__METHOD__
 		);
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->getRevisionByPageId( $page->getId() );
@@ -1090,8 +1076,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 			$this->getTestSysop()->getUser(),
 			__METHOD__
 		);
-		/** @var RevisionRecord $revRecord */
-		$revRecord = $status->value['revision-record'];
+		$revRecord = $status->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->getRevisionByTimestamp(
@@ -1107,26 +1092,26 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function provideRevisionByTimestamp() {
 		return [
 			[ function () {
-				return $this->getTestPage()->getTitle();
+				return $this->getTestPageTitle();
 			} ],
 			[ function () {
-				return $this->getTestPage()->getTitle()->toPageIdentity();
+				return $this->getTestPageTitle()->toPageIdentity();
 			} ]
 		];
 	}
 
 	protected function revisionRecordToRow( RevisionRecord $revRecord, $options = [ 'page', 'user', 'comment' ] ) {
 		// XXX: the WikiPage object loads another RevisionRecord from the database. Not great.
-		$page = WikiPage::factory( $revRecord->getPage() );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $revRecord->getPage() );
 
 		$revUser = $revRecord->getUser();
 		$actorId = $this->getServiceContainer()
-			->getActorNormalization()->findActorId( $revUser, $this->db );
+			->getActorNormalization()->findActorId( $revUser, $this->getDb() );
 
 		$fields = [
 			'rev_id' => (string)$revRecord->getId(),
 			'rev_page' => (string)$revRecord->getPageId(),
-			'rev_timestamp' => $this->db->timestamp( $revRecord->getTimestamp() ),
+			'rev_timestamp' => $this->getDb()->timestamp( $revRecord->getTimestamp() ),
 			'rev_actor' => $actorId,
 			'rev_user_text' => $revUser ? $revUser->getName() : '',
 			'rev_user' => (string)( $revUser ? $revUser->getId() : 0 ) ?: null,
@@ -1179,16 +1164,15 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function testNewRevisionFromRowAndSlots_getQueryInfo() {
 		$page = $this->getTestPage();
 		$text = __METHOD__ . 'o-ö';
-		/** @var RevisionRecord $revRecord */
 		$revRecord = $page->doUserEditContent(
 			new WikitextContent( $text ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__ . 'a'
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$info = $store->getQueryInfo();
-		$row = $this->db->selectRow(
+		$row = $this->getDb()->selectRow(
 			$info['tables'],
 			$info['fields'],
 			[ 'rev_id' => $revRecord->getId() ],
@@ -1198,7 +1182,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$info = $store->getSlotsQueryInfo( [ 'content' ] );
-		$slotRows = $this->db->select(
+		$slotRows = $this->getDb()->select(
 			$info['tables'],
 			$info['fields'],
 			[ 'slot_revision_id' => $revRecord->getId() ],
@@ -1225,16 +1209,15 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function testNewRevisionFromRow_getQueryInfo() {
 		$page = $this->getTestPage();
 		$text = __METHOD__ . 'a-ä';
-		/** @var RevisionRecord $revRecord */
 		$revRecord = $page->doUserEditContent(
 			new WikitextContent( $text ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__ . 'a'
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$info = $store->getQueryInfo();
-		$row = $this->db->selectRow(
+		$row = $this->getDb()->selectRow(
 			$info['tables'],
 			$info['fields'],
 			[ 'rev_id' => $revRecord->getId() ],
@@ -1258,12 +1241,11 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function testNewRevisionFromRow_anonEdit() {
 		$page = $this->getTestPage();
 		$text = __METHOD__ . 'a-ä';
-		/** @var RevisionRecord $revRecord */
 		$revRecord = $page->doUserEditContent(
 			new WikitextContent( $text ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__ . 'a'
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->newRevisionFromRow(
@@ -1283,12 +1265,11 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$this->overrideConfigValue( MainConfigNames::LegacyEncoding, 'windows-1252' );
 		$page = $this->getTestPage();
 		$text = __METHOD__ . 'a-ä';
-		/** @var RevisionRecord $revRecord */
 		$revRecord = $page->doUserEditContent(
 			new WikitextContent( $text ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__ . 'a'
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->newRevisionFromRow(
@@ -1307,12 +1288,11 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function testNewRevisionFromRow_userEdit() {
 		$page = $this->getTestPage();
 		$text = __METHOD__ . 'b-ä';
-		/** @var RevisionRecord $revRecord */
 		$revRecord = $page->doUserEditContent(
 			new WikitextContent( $text ),
 			$this->getTestUser()->getUser(),
 			__METHOD__ . 'b'
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->newRevisionFromRow(
@@ -1326,13 +1306,12 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 
 	private function buildRevisionStore( string $text, PageIdentity $pageIdentity ) {
 		$store = $this->getServiceContainer()->getRevisionStore();
-		$page = WikiPage::factory( $pageIdentity );
-		/** @var RevisionRecord $orig */
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $pageIdentity );
 		$orig = $page->doUserEditContent(
 			new WikitextContent( $text ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 		$this->deletePage( $page );
 
 		$db = wfGetDB( DB_PRIMARY );
@@ -1344,7 +1323,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$this->assertIsObject( $res, 'query failed' );
 
 		$info = $store->getSlotsQueryInfo( [ 'content' ] );
-		$slotRows = $this->db->select(
+		$slotRows = $this->getDb()->select(
 			$info['tables'],
 			$info['fields'],
 			[ 'slot_revision_id' => $orig->getId() ],
@@ -1365,7 +1344,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function testNewRevisionFromArchiveRowAndSlots_getArchiveQueryInfo() {
 		$text = __METHOD__ . '-bä';
 		$title = Title::newFromText( __METHOD__ );
-		list( $store, $row, $slotRows, $orig ) = $this->buildRevisionStore( $text, $title );
+		[ $store, $row, $slotRows, $orig ] = $this->buildRevisionStore( $text, $title );
 		$storeRecord = $store->newRevisionFromArchiveRowAndSlots(
 			$row,
 			iterator_to_array( $slotRows )
@@ -1392,7 +1371,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function testNewRevisionFromArchiveRowAndSlots_getArchiveQueryInfoWithTitle( $getPageIdentity ) {
 		$text = __METHOD__ . '-bä';
 		$page = $getPageIdentity();
-		list( $store, $row, $slotRows, $orig ) = $this->buildRevisionStore( $text, $page );
+		[ $store, $row, $slotRows, $orig ] = $this->buildRevisionStore( $text, $page );
 		$storeRecord = $store->newRevisionFromArchiveRowAndSlots(
 			$row,
 			iterator_to_array( $slotRows ),
@@ -1426,7 +1405,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function testNewRevisionFromArchiveRowAndSlots_getArchiveQueryInfoWithTitleInArray( $array ) {
 		$text = __METHOD__ . '-bä';
 		$page = $array[ 'title' ];
-		list( $store, $row, $slotRows, $orig ) = $this->buildRevisionStore( $text, $page );
+		[ $store, $row, $slotRows, $orig ] = $this->buildRevisionStore( $text, $page );
 		$storeRecord = $store->newRevisionFromArchiveRowAndSlots(
 			$row,
 			iterator_to_array( $slotRows ),
@@ -1448,13 +1427,12 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$title = Title::newFromText( __METHOD__ );
 		$text = __METHOD__ . '-bä';
-		$page = WikiPage::factory( $title );
-		/** @var RevisionRecord $orig */
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$orig = $page->doUserEditContent(
 			new WikitextContent( $text ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 		$this->deletePage( $page );
 
 		$db = wfGetDB( DB_PRIMARY );
@@ -1482,13 +1460,12 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$title = Title::newFromText( __METHOD__ );
 		$text = __METHOD__ . '-bä';
-		$page = WikiPage::factory( $title );
-		/** @var RevisionRecord $orig */
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$orig = $page->doUserEditContent(
 			new WikitextContent( $text ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 		$this->deletePage( $page );
 
 		$db = wfGetDB( DB_PRIMARY );
@@ -1574,12 +1551,12 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		];
 
 		// create an actor row for the empty user name (see also T225469)
-		$this->db->insert( 'actor', [ [
+		$this->getDb()->insert( 'actor', [ [
 			'actor_user' => $row->ar_user,
 			'actor_name' => $row->ar_user_text,
 		] ] );
 
-		$row->ar_actor = $this->db->insertId();
+		$row->ar_actor = $this->getDb()->insertId();
 
 		$record = @$store->newRevisionFromArchiveRow( $row );
 
@@ -1634,7 +1611,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$page = $this->getExistingTestPage();
 
 		$info = $store->getQueryInfo();
-		$row = $this->db->selectRow(
+		$row = $this->getDb()->selectRow(
 			$info['tables'],
 			$info['fields'],
 			[ 'rev_page' => $page->getId(), 'rev_id' => $page->getLatest() ],
@@ -1664,14 +1641,14 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$this->setService( 'TitleFactory', $noOpTitleFactory );
 
 		// Pretend the local test DB is a sister site
-		$wikiId = $this->db->getDomainID();
+		$wikiId = $this->getDb()->getDomainID();
 		$store = $this->getServiceContainer()->getRevisionStoreFactory()
 			->getRevisionStore( $wikiId );
 
 		$page = $this->getExistingTestPage();
 
 		$info = $store->getQueryInfo();
-		$row = $this->db->selectRow(
+		$row = $this->getDb()->selectRow(
 			$info['tables'],
 			$info['fields'],
 			[ 'rev_page' => $page->getId(), 'rev_id' => $page->getLatest() ],
@@ -1698,15 +1675,14 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function testInsertRevisionOn_archive( $getPageIdentity ) {
 		// This is a round trip test for deletion and undeletion of a
 		// revision row via the archive table.
-		list( $title, $pageIdentity ) = $getPageIdentity();
+		[ $title, $pageIdentity ] = $getPageIdentity();
 		$store = $this->getServiceContainer()->getRevisionStore();
 
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$user = $this->getTestSysop()->getUser();
-		/** @var RevisionRecord $orig */
 		$page->doUserEditContent( new WikitextContent( "First" ), $user, __METHOD__ . '-first' );
 		$orig = $page->doUserEditContent( new WikitextContent( "Foo" ), $user, __METHOD__ )
-			->value['revision-record'];
+			->getNewRevision();
 		$this->deletePage( $page );
 
 		// re-create page, so we can later load revisions for it
@@ -1769,19 +1745,17 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Revision\RevisionStore::getRevisionSizes
 	 */
 	public function testGetParentLengths() {
-		$page = WikiPage::factory( Title::newFromText( __METHOD__ ) );
-		/** @var RevisionRecord $revRecordOne */
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( Title::newFromText( __METHOD__ ) );
 		$revRecordOne = $page->doUserEditContent(
 			new WikitextContent( __METHOD__ ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
-		/** @var RevisionRecord $revRecordTwo */
+		)->getNewRevision();
 		$revRecordTwo = $page->doUserEditContent(
 			new WikitextContent( __METHOD__ . '2' ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$this->assertSame(
@@ -1805,19 +1779,17 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Revision\RevisionStore::getPreviousRevision
 	 */
 	public function testGetPreviousRevision() {
-		$page = WikiPage::factory( Title::newFromText( __METHOD__ ) );
-		/** @var RevisionRecord $revRecordOne */
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( Title::newFromText( __METHOD__ ) );
 		$revRecordOne = $page->doUserEditContent(
 			new WikitextContent( __METHOD__ ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
-		/** @var RevisionRecord $revRecordTwo */
+		)->getNewRevision();
 		$revRecordTwo = $page->doUserEditContent(
 			new WikitextContent( __METHOD__ . '2' ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$this->assertNull(
@@ -1837,19 +1809,17 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Revision\RevisionStore::getNextRevision
 	 */
 	public function testGetNextRevision() {
-		$page = WikiPage::factory( Title::newFromText( __METHOD__ ) );
-		/** @var RevisionRecord $revRecordOne */
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( Title::newFromText( __METHOD__ ) );
 		$revRecordOne = $page->doUserEditContent(
 			new WikitextContent( __METHOD__ ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
-		/** @var RevisionRecord $revRecordTwo */
+		)->getNewRevision();
 		$revRecordTwo = $page->doUserEditContent(
 			new WikitextContent( __METHOD__ . '2' ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$this->assertSame(
@@ -1906,12 +1876,11 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testGetTimestampFromId_found() {
 		$page = $this->getTestPage();
-		/** @var RevisionRecord $revRecord */
 		$revRecord = $page->doUserEditContent(
 			new WikitextContent( __METHOD__ ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$result = $store->getTimestampFromId( $revRecord->getId() );
@@ -1924,12 +1893,11 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testGetTimestampFromId_notFound() {
 		$page = $this->getTestPage();
-		/** @var RevisionRecord $revRecord */
 		$revRecord = $page->doUserEditContent(
 			new WikitextContent( __METHOD__ ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$result = $store->getTimestampFromId( $revRecord->getId() + 1 );
@@ -1942,7 +1910,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testCountRevisionsByPageId() {
 		$store = $this->getServiceContainer()->getRevisionStore();
-		$page = WikiPage::factory( Title::newFromText( __METHOD__ ) );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( Title::newFromText( __METHOD__ ) );
 		$user = $this->getTestSysop()->getUser();
 
 		$this->assertSame(
@@ -1966,7 +1934,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testCountRevisionsByTitle() {
 		$store = $this->getServiceContainer()->getRevisionStore();
-		$page = WikiPage::factory( Title::newFromText( __METHOD__ ) );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( Title::newFromText( __METHOD__ ) );
 		$user = $this->getTestSysop()->getUser();
 
 		$this->assertSame(
@@ -2036,12 +2004,11 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testGetKnownCurrentRevision( $getPageIdentity ) {
 		$page = $this->getTestPage();
-		/** @var RevisionRecord $revRecord */
 		$revRecord = $page->doUserEditContent(
 			new WikitextContent( __METHOD__ . 'b' ),
 			$this->getTestUser()->getUser(),
 			__METHOD__ . 'b'
-		)->value['revision-record'];
+		)->getNewRevision();
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->getKnownCurrentRevision(
 			$getPageIdentity(),
@@ -2053,10 +2020,10 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function provideGetKnownCurrentRevision() {
 		return [
 			[ function () {
-				return $this->getTestPage()->getTitle();
+				return $this->getTestPageTitle();
 			} ],
 			[ function () {
-				return $this->getTestPage()->getTitle()->toPageIdentity();
+				return $this->getTestPageTitle()->toPageIdentity();
 			} ]
 		];
 	}
@@ -2093,10 +2060,10 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 
 		// Change the user name in the database, "behind the back" of the cache
 		$newUserName = "Renamed $userNameBefore";
-		$this->db->update( 'user',
+		$this->getDb()->update( 'user',
 			[ 'user_name' => $newUserName ],
 			[ 'user_id' => $rev->getUser()->getId() ] );
-		$this->db->update( 'actor',
+		$this->getDb()->update( 'actor',
 			[ 'actor_name' => $newUserName ],
 			[ 'actor_user' => $rev->getUser()->getId() ] );
 
@@ -2166,7 +2133,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$deletedBefore = $rev->getVisibility();
 
 		// Change the deleted bitmask in the database, "behind the back" of the cache
-		$this->db->update( 'revision',
+		$this->getDb()->update( 'revision',
 			[ 'rev_deleted' => RevisionRecord::DELETED_TEXT ],
 			[ 'rev_id' => $rev->getId() ] );
 
@@ -2188,12 +2155,11 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function testNewRevisionFromRow_userNameChange() {
 		$page = $this->getTestPage();
 		$text = __METHOD__;
-		/** @var RevisionRecord $revRecord */
 		$revRecord = $page->doUserEditContent(
 			new WikitextContent( $text ),
 			$this->getMutableTestUser()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->newRevisionFromRow(
@@ -2207,10 +2173,10 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 
 		// Change the user name in the database
 		$newUserName = "Renamed $userNameBefore";
-		$this->db->update( 'user',
+		$this->getDb()->update( 'user',
 			[ 'user_name' => $newUserName ],
 			[ 'user_id' => $storeRecord->getUser()->getId() ] );
-		$this->db->update( 'actor',
+		$this->getDb()->update( 'actor',
 			[ 'actor_name' => $newUserName ],
 			[ 'actor_user' => $storeRecord->getUser()->getId() ] );
 
@@ -2238,12 +2204,11 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function testNewRevisionFromRow_revDelete() {
 		$page = $this->getTestPage();
 		$text = __METHOD__;
-		/** @var RevisionRecord $revRecord */
 		$revRecord = $page->doUserEditContent(
 			new WikitextContent( $text ),
 			$this->getTestSysop()->getUser(),
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$storeRecord = $store->newRevisionFromRow(
@@ -2256,7 +2221,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$deletedBefore = $storeRecord->getVisibility();
 
 		// Change the deleted bitmask in the database
-		$this->db->update( 'revision',
+		$this->getDb()->update( 'revision',
 			[ 'rev_deleted' => RevisionRecord::DELETED_TEXT ],
 			[ 'rev_id' => $storeRecord->getId() ] );
 
@@ -2292,14 +2257,12 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$text = __METHOD__ . 'b-ä';
 		$editStatus = $this->editPage( $page1->getTitle()->getPrefixedDBkey(), $text . '1' );
 		$this->assertStatusGood( $editStatus, 'must create revision 1' );
-		/** @var RevisionRecord $revRecord1 */
-		$revRecord1 = $editStatus->getValue()['revision-record'];
+		$revRecord1 = $editStatus->getNewRevision();
 
 		$page2 = $this->getTestPage( $page1->getTitle()->getPrefixedText() . '_other' );
 		$editStatus = $this->editPage( $page2->getTitle()->getPrefixedDBkey(), $text . '2' );
 		$this->assertStatusGood( $editStatus, 'must create revision 2' );
-		/** @var RevisionRecord $revRecord2 */
-		$revRecord2 = $editStatus->getValue()['revision-record'];
+		$revRecord2 = $editStatus->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$result = $store->getContentBlobsForBatch(
@@ -2350,15 +2313,13 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$text = __METHOD__ . 'b-ä';
 		$editStatus = $this->editPage( $page1->getTitle()->getPrefixedDBkey(), $text . '1' );
 		$this->assertStatusGood( $editStatus, 'must create revision 1' );
-		/** @var RevisionRecord $revRecord1 */
-		$revRecord1 = $editStatus->getValue()['revision-record'];
+		$revRecord1 = $editStatus->getNewRevision();
 		$this->deletePage( $page1 );
 
 		$page2 = $this->getTestPage( $page1->getTitle()->getPrefixedText() . '_other' );
 		$editStatus = $this->editPage( $page2->getTitle()->getPrefixedDBkey(), $text . '2' );
 		$this->assertStatusGood( $editStatus, 'must create revision 2' );
-		/** @var RevisionRecord $revRecord2 */
-		$revRecord2 = $editStatus->getValue()['revision-record'];
+		$revRecord2 = $editStatus->getNewRevision();
 		$this->deletePage( $page2 );
 
 		$store = $this->getServiceContainer()->getRevisionStore();
@@ -2477,14 +2438,12 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$text = __METHOD__ . 'b-ä';
 		$editStatus = $this->editPage( $page1->getTitle()->getPrefixedDBkey(), $text . '1' );
 		$this->assertStatusGood( $editStatus, 'must create revision 1' );
-		/** @var RevisionRecord $revRecord1 */
-		$revRecord1 = $editStatus->getValue()['revision-record'];
+		$revRecord1 = $editStatus->getNewRevision();
 
 		$page2 = $this->getTestPage( $otherPageTitle );
 		$editStatus = $this->editPage( $page2->getTitle()->getPrefixedDBkey(), $text . '2' );
 		$this->assertStatusGood( $editStatus, 'must create revision 2' );
-		/** @var RevisionRecord $revRecord2 */
-		$revRecord2 = $editStatus->getValue()['revision-record'];
+		$revRecord2 = $editStatus->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 		$result = $store->newRevisionsFromBatch(
@@ -2537,27 +2496,25 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$otherPageTitle = null,
 		array $options = []
 	) {
-		list( $title1, $pageIdentity ) = $getPageIdentity();
+		[ $title1, $pageIdentity ] = $getPageIdentity();
 		$text1 = __METHOD__ . '-bä';
-		$page1 = WikiPage::factory( $title1 );
+		$page1 = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title1 );
 
 		$title2 = $otherPageTitle ? Title::newFromText( $otherPageTitle ) : $title1;
 		$text2 = __METHOD__ . '-bö';
-		$page2 = $otherPageTitle ? WikiPage::factory( $title2 ) : $page1;
+		$page2 = $otherPageTitle ? $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title2 ) : $page1;
 
 		$sysop = $this->getTestSysop()->getUser();
-		/** @var RevisionRecord $revRecord1 */
-		/** @var RevisionRecord $revRecord2 */
 		$revRecord1 = $page1->doUserEditContent(
 			new WikitextContent( $text1 ),
 			$sysop,
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 		$revRecord2 = $page2->doUserEditContent(
 			new WikitextContent( $text2 ),
 			$sysop,
 			__METHOD__
-		)->value['revision-record'];
+		)->getNewRevision();
 		$this->deletePage( $page1 );
 
 		if ( $page2 !== $page1 ) {
@@ -2567,7 +2524,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$store = $this->getServiceContainer()->getRevisionStore();
 
 		$queryInfo = $store->getArchiveQueryInfo();
-		$rows = $this->db->select(
+		$rows = $this->getDb()->select(
 			$queryInfo['tables'],
 			$queryInfo['fields'],
 			[ 'ar_rev_id' => [ $revRecord1->getId(), $revRecord2->getId() ] ],
@@ -2635,8 +2592,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$text = __METHOD__ . 'b-ä';
 		$editStatus = $this->editPage( $page1->getTitle()->getPrefixedDBkey(), $text . '1' );
 		$this->assertStatusGood( $editStatus, 'must create revision 1' );
-		/** @var RevisionRecord $rev1 */
-		$revRecord1 = $editStatus->getValue()['revision-record'];
+		$revRecord1 = $editStatus->getNewRevision();
 
 		$this->expectException( InvalidArgumentException::class );
 		$this->getServiceContainer()->getRevisionStore()
@@ -2656,8 +2612,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$text = __METHOD__ . 'b-ä';
 		$editStatus = $this->editPage( $page1->getTitle()->getPrefixedDBkey(), $text . '1' );
 		$this->assertStatusGood( $editStatus, 'must create revision 1' );
-		/** @var RevisionRecord $revRecord1 */
-		$revRecord1 = $editStatus->getValue()['revision-record'];
+		$revRecord1 = $editStatus->getNewRevision();
 
 		$status = $this->getServiceContainer()->getRevisionStore()
 			->newRevisionsFromBatch(
@@ -2682,8 +2637,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		for ( $revNum = 0; $revNum < $NUM; $revNum++ ) {
 			$editStatus = $this->editPage( $page->getTitle()->getPrefixedDBkey(), 'Revision ' . $revNum );
 			$this->assertStatusGood( $editStatus, 'must create revision ' . $revNum );
-			$newRevision = $editStatus->getValue()['revision-record'];
-			/** @var RevisionRecord $newRevision */
+			$newRevision = $editStatus->getNewRevision();
 			$revisions[] = $newRevision;
 			$revisionIds[] = $newRevision->getId();
 		}
@@ -2779,7 +2733,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		for ( $revNum = 0; $revNum < $NUM; $revNum++ ) {
 			$editStatus = $this->editPage( $page->getTitle()->getPrefixedDBkey(), 'Revision ' . $revNum );
 			$this->assertStatusGood( $editStatus, 'must create revision ' . $revNum );
-			$revisions[] = $editStatus->getValue()['revision-record'];
+			$revisions[] = $editStatus->getNewRevision();
 		}
 
 		$revisionStore = $this->getServiceContainer()->getRevisionStore();
@@ -2835,7 +2789,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 				NS_MAIN,
 				$users[$revNum] );
 			$this->assertStatusGood( $editStatus, 'must create revision ' . $revNum );
-			$revisions[] = $editStatus->getValue()['revision-record'];
+			$revisions[] = $editStatus->getNewRevision();
 		}
 
 		$revisionStore = $this->getServiceContainer()->getRevisionStore();
@@ -2884,10 +2838,10 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$page2 = $this->getTestPage( 'Other_Page' );
 		$editStatus = $this->editPage( $page1->getTitle()->getPrefixedDBkey(), 'Revision 1' );
 		$this->assertStatusGood( $editStatus, 'must create revision 1' );
-		$rev1 = $editStatus->getValue()['revision-record'];
+		$rev1 = $editStatus->getNewRevision();
 		$editStatus = $this->editPage( $page2->getTitle()->getPrefixedDBkey(), 'Revision 1' );
 		$this->assertStatusGood( $editStatus, 'must create revision 1' );
-		$rev2 = $editStatus->getValue()['revision-record'];
+		$rev2 = $editStatus->getNewRevision();
 
 		$this->expectException( InvalidArgumentException::class );
 		$this->getServiceContainer()->getRevisionStore()
@@ -2920,15 +2874,15 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 * @param callable $getPageIdentity
 	 */
 	public function testGetFirstRevision( $getPageIdentity ) {
-		list( $pageTitle, $pageIdentity ) = $getPageIdentity();
+		[ $pageTitle, $pageIdentity ] = $getPageIdentity();
 		$editStatus = $this->editPage( $pageTitle->getPrefixedDBkey(), 'First Revision' );
 		$this->assertStatusGood( $editStatus, 'must create first revision' );
-		$firstRevId = $editStatus->getValue()['revision-record']->getID();
+		$firstRevId = $editStatus->getNewRevision()->getId();
 		$editStatus = $this->editPage( $pageTitle->getPrefixedText(), 'New Revision' );
 		$this->assertStatusGood( $editStatus, 'must create new revision' );
 		$this->assertNotSame(
 			$firstRevId,
-			$editStatus->getValue()['revision-record']->getID(),
+			$editStatus->getNewRevision()->getId(),
 			'new revision must have different id'
 		);
 		$this->assertSame(
@@ -2981,7 +2935,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$user = $userInitCallback( $this->getServiceContainer(), $ip );
 
 		$actorNormalization = $this->getServiceContainer()->getActorNormalization();
-		$actorId = $actorNormalization->findActorId( $user, $this->db );
+		$actorId = $actorNormalization->findActorId( $user, $this->getDb() );
 		$this->assertNull( $actorId, 'New actor has no actor_id' );
 
 		$page = $this->getTestPage();
@@ -2989,13 +2943,13 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$rev->setTimestamp( '20180101000000' )
 			->setComment( CommentStoreComment::newUnsavedComment( 'test' ) )
 			->setUser( $user )
-			->setContent( 'main', new WikitextContent( 'Text' ) )
+			->setContent( SlotRecord::MAIN, new WikitextContent( 'Text' ) )
 			->setPageId( $page->getId() );
 
-		$return = $this->getServiceContainer()->getRevisionStore()->insertRevisionOn( $rev, $this->db );
+		$return = $this->getServiceContainer()->getRevisionStore()->insertRevisionOn( $rev, $this->getDb() );
 		$this->assertSame( $ip, $return->getUser()->getName() );
 
-		$actorId = $actorNormalization->findActorId( $user, $this->db );
+		$actorId = $actorNormalization->findActorId( $user, $this->getDb() );
 		$this->assertNotNull( $actorId );
 	}
 
@@ -3052,7 +3006,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testInsertRevisionOn_T202032() {
 		// This test only makes sense for MySQL
-		if ( $this->db->getType() !== 'mysql' ) {
+		if ( $this->getDb()->getType() !== 'mysql' ) {
 			$this->assertTrue( true );
 			return;
 		}
@@ -3060,12 +3014,12 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		// NOTE: must be done before checking MAX(rev_id)
 		$page = $this->getTestPage();
 
-		$maxRevId = $this->db->selectField( 'revision', 'MAX(rev_id)' );
+		$maxRevId = $this->getDb()->selectField( 'revision', 'MAX(rev_id)' );
 
 		// Construct a slot row that will conflict with the insertion of the next revision ID,
 		// to emulate the failure mode described in T202032. Nothing will ever read this row,
 		// we just need it to trigger a primary key conflict.
-		$this->db->insert( 'slots', [
+		$this->getDb()->insert( 'slots', [
 			'slot_revision_id' => $maxRevId + 1,
 			'slot_role_id' => 1,
 			'slot_content_id' => 0,
@@ -3076,11 +3030,11 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$rev->setTimestamp( '20180101000000' )
 			->setComment( CommentStoreComment::newUnsavedComment( 'test' ) )
 			->setUser( $this->getTestUser()->getUser() )
-			->setContent( 'main', new WikitextContent( 'Text' ) )
+			->setContent( SlotRecord::MAIN, new WikitextContent( 'Text' ) )
 			->setPageId( $page->getId() );
 
 		$store = $this->getServiceContainer()->getRevisionStore();
-		$return = $store->insertRevisionOn( $rev, $this->db );
+		$return = $store->insertRevisionOn( $rev, $this->getDb() );
 
 		$this->assertSame( $maxRevId + 2, $return->getId() );
 
@@ -3106,8 +3060,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$text = __METHOD__ . 'b-ä';
 		$editStatus = $this->editPage( $page1->getTitle()->getPrefixedDBkey(), $text . '1' );
 		$this->assertStatusGood( $editStatus, 'must create revision 1' );
-		/** @var RevisionRecord $revRecord1 */
-		$revRecord1 = $editStatus->getValue()['revision-record'];
+		$revRecord1 = $editStatus->getNewRevision();
 
 		$contentAddress = $revRecord1->getSlot( SlotRecord::MAIN )->getAddress();
 		$blobStatus = StatusValue::newGood( [] );
@@ -3159,8 +3112,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$text = __METHOD__ . 'b-ä';
 		$editStatus = $this->editPage( $page1->getTitle()->getPrefixedDBkey(), $text . '1' );
 		$this->assertStatusGood( $editStatus, 'must create revision 1' );
-		/** @var RevisionRecord $revRecord1 */
-		$revRecord1 = $editStatus->getValue()['revision-record'];
+		$revRecord1 = $editStatus->getNewRevision();
 
 		$contentAddress = $revRecord1->getSlot( SlotRecord::MAIN )->getAddress();
 		$mockBlobStore = $this->createMock( SqlBlobStore::class );
@@ -3197,12 +3149,11 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 	public function testNewRevisionsFromBatch_error() {
 		$page = $this->getTestPage();
 		$text = __METHOD__ . 'b-ä';
-		/** @var RevisionRecord $revRecord1 */
 		$revRecord1 = $page->doUserEditContent(
 			new WikitextContent( $text . '1' ),
 			$this->getTestUser()->getUser(),
 			__METHOD__ . 'b'
-		)->value['revision-record'];
+		)->getNewRevision();
 
 		$invalidRow = $this->revisionRecordToRow( $revRecord1 );
 		$invalidRow->rev_id = 100500;
@@ -3240,8 +3191,7 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$text = __METHOD__ . 'b-ä';
 		$editStatus = $this->editPage( $page1->getTitle()->getPrefixedDBkey(), $text . '1' );
 		$this->assertStatusGood( $editStatus, 'must create revision 1' );
-		/** @var RevisionRecord $revRecord1 */
-		$revRecord1 = $editStatus->getValue()['revision-record'];
+		$revRecord1 = $editStatus->getNewRevision();
 
 		$contentAddress = $revRecord1->getSlot( SlotRecord::MAIN )->getAddress();
 		$mockBlobStore = $this->createMock( SqlBlobStore::class );
@@ -3284,13 +3234,13 @@ class RevisionStoreDbTest extends MediaWikiIntegrationTestCase {
 		$page = $this->getExistingTestPage( __METHOD__ );
 		$status = $this->editPage( $page, 'Content 1' );
 		$this->assertStatusGood( $status, 'edit 1' );
-		$originalRev = $status->value[ 'revision-record' ];
+		$originalRev = $status->getNewRevision();
 
 		$this->assertTrue( $this->editPage( $page, 'Content 2' )->isGood(), 'edit 2' );
 
 		$status = $this->editPage( $page, 'Content 1' );
 		$this->assertStatusGood( $status, 'edit 3' );
-		$latestRev = $status->value[ 'revision-record' ];
+		$latestRev = $status->getNewRevision();
 
 		$store = $this->getServiceContainer()->getRevisionStore();
 

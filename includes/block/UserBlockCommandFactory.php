@@ -24,11 +24,11 @@ namespace MediaWiki\Block;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerInterface;
-use TitleFactory;
 
 class UserBlockCommandFactory implements BlockUserFactory, UnblockUserFactory {
 	/**
@@ -134,10 +134,6 @@ class UserBlockCommandFactory implements BlockUserFactory, UnblockUserFactory {
 		array $blockRestrictions = [],
 		$tags = []
 	): BlockUser {
-		if ( $tags === null ) {
-			$tags = [];
-		}
-
 		return new BlockUser(
 			$this->options,
 			$this->blockRestrictionStore,
@@ -156,7 +152,7 @@ class UserBlockCommandFactory implements BlockUserFactory, UnblockUserFactory {
 			$reason,
 			$blockOptions,
 			$blockRestrictions,
-			$tags
+			$tags ?? []
 		);
 	}
 

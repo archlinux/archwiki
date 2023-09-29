@@ -6,14 +6,15 @@
 		"Brion Vibber",
 		"Moritz Schubotz",
 		"Derk-Jan Hartman",
-		"André Greiner-Petter"
+		"André Greiner-Petter",
+		"Johannes Stegmüller"
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:Math",
 	"descriptionmsg": "math-desc",
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Math\\": "src/"
@@ -21,7 +22,10 @@
 	"TestAutoloadClasses": {
 		"DummyPropertyDataTypeLookup": "tests/phpunit/DummyPropertyDataTypeLookup.php",
 		"MediaWiki\\Extension\\Math\\Tests\\MathWikibaseConnectorTestFactory": "tests/phpunit/unit/MathWikibaseConnectorTestFactory.php",
-		"MediaWiki\\Extension\\Math\\Tests\\MathMockHttpTrait": "tests/phpunit/MathMockHttpTrait.php"
+		"MediaWiki\\Extension\\Math\\Tests\\MathMockHttpTrait": "tests/phpunit/MathMockHttpTrait.php",
+		"MediaWiki\\Extension\\Math\\TexVC\\MMLmappings\\Util\\MMLTestUtilHTML": "tests/phpunit/unit/TexVC/MMLTestUtilHTML.php",
+		"MediaWiki\\Extension\\Math\\TexVC\\MMLmappings\\Util\\MMLTestUtil": "tests/phpunit/unit/TexVC/MMLTestUtil.php",
+		"MediaWiki\\Extension\\Math\\TexVC\\MMLmappings\\Util\\MMLComparator": "tests/phpunit/unit/TexVC/MMLComparator.php"
 	},
 	"DefaultUserOptions": {
 		"math": "mathml"
@@ -35,7 +39,8 @@
 			"class": "MediaWiki\\Extension\\Math\\HookHandlers\\ParserHooksHandler",
 			"services": [
 				"Math.RendererFactory",
-				"UserOptionsLookup"
+				"UserOptionsLookup",
+				"HookContainer"
 			]
 		},
 		"PreferencesHooksHandler": {
@@ -102,6 +107,10 @@
 			"description": "Fallback value for wbEntitySelector if wbRepo is not configured. See https://www.mediawiki.org/wiki/Manual:CORS for cross wiki communication.",
 			"value": "https://www.wikidata.org/w/api.php"
 		},
+		"MathTexVCService": {
+			"description": "Determine which TexVC variant is used, currently available: 'mathoid', 'restbase' (default) and 'local'.",
+			"value": "restbase"
+		},
 		"MathLaTeXMLTimeout": {
 			"value": 240
 		},
@@ -163,6 +172,11 @@
 		}
 	},
 	"attributes": {
+		"Popups": {
+			"PluginModules": [
+				"ext.math.popup"
+			]
+		},
 		"VisualEditor": {
 			"PluginModules": [
 				"ext.math.visualEditor"
@@ -195,7 +209,22 @@
 			]
 		},
 		"ext.math.scripts": {
-			"scripts": "ext.math.js"
+			"scripts": "ext.math.js",
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		},
+		"ext.math.popup": {
+			"es6": true,
+			"packageFiles": "ext.math.popup.js",
+			"dependencies": [
+				"mediawiki.api"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
 		},
 		"mw.widgets.MathWbEntitySelector": {
 			"scripts": "mw.widgets.MathWbEntitySelector.js",
@@ -206,6 +235,10 @@
 				"mw.config.values.wbRepo",
 				"mediawiki.ForeignApi",
 				"mediawiki.widgets"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
 			]
 		},
 		"ext.math.visualEditor": {
@@ -298,26 +331,30 @@
 				"mobile"
 			]
 		},
-		"ext.math.visualEditor.mathSymbolsData": {
-			"class": "MediaWiki\\Extension\\Math\\MathMathSymbolsDataModule"
-		},
 		"ext.math.visualEditor.mathSymbols": {
+			"packageFiles": [
+				"ve-math/mathSymbols.js",
+				"ve-math/mathSymbols.json"
+			],
 			"styles": [
 				"ve-math/ve.ui.MWMathSymbols.css"
 			],
-			"dependencies": [
-				"ext.math.visualEditor.mathSymbolsData"
+			"targets": [
+				"desktop",
+				"mobile"
 			]
 		},
-		"ext.math.visualEditor.chemSymbolsData": {
-			"class": "MediaWiki\\Extension\\Math\\MathChemSymbolsDataModule"
-		},
 		"ext.math.visualEditor.chemSymbols": {
+			"packageFiles": [
+				"ve-math/chemSymbols.js",
+				"ve-math/chemSymbols.json"
+			],
 			"styles": [
 				"ve-math/ve.ui.MWChemSymbols.css"
 			],
-			"dependencies": [
-				"ext.math.visualEditor.chemSymbolsData"
+			"targets": [
+				"desktop",
+				"mobile"
 			]
 		}
 	},
@@ -359,6 +396,7 @@
 			"services": [
 				"Math.WikibaseConnector",
 				"LanguageFactory",
+				"LanguageNameUtils",
 				"TitleFactory"
 			]
 		}

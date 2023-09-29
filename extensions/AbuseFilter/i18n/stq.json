@@ -3,7 +3,8 @@
 		"authors": [
 			"1233qwer1234qwer4",
 			"Matma Rex",
-			"Pyt"
+			"Pyt",
+			"Murma174"
 		]
 	},
 	"abusefilter-desc": "Woant automatiske Heuristike ap Annerengen an.",
@@ -39,7 +40,7 @@
 	"abusefilter-log-search-user": "Benutser:",
 	"abusefilter-log-search-filter": "Sieuwe-ID:",
 	"abusefilter-log-search-title": "Tittel:",
-	"abusefilter-log-search-submit": "Säike (uk ap Düütsk5)",
+	"abusefilter-log-search-submit": "Säike (uk ap Düütsk)",
 	"abusefilter-log-entry": "$1: $2 löösde ne Misbruuks-Sieuwe uut, truch dät hie \"$3\" ap $4 moakede.\nAktion: $5;\nSieuwe-Beskrieuwenge: $6",
 	"abusefilter-log-detailedentry-meta": "$1: $2 häd ju $3 uutlöösd, wät n $4 ap $5 feruurseeked.\nÄrgriepene Mäitenoamen: $6;\nSieuwebeskrieuwenge: $7 ($8)",
 	"abusefilter-log-detailedentry-local": "Sieuwe $1",

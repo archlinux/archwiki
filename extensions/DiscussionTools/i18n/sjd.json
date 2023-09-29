@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Merrahtar"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Вуэсстлэгк",
+	"discussiontools-emptystate-button": "Оа̄лкхэ са̄ррнмуж",
+	"discussiontools-notification-removed-topic-disable": "Эле ва̄лльтэ мугка тӣдҍхэмужэтҍ",
+	"discussiontools-pagetitle-reply": "Вуэсстлэмушш лыстэсьт «$1»",
+	"discussiontools-replylink": "вуэсстлэ",
+	"discussiontools-replywidget-cancel": "Е̄ссктэ",
+	"discussiontools-replywidget-mode-source": "Ко̄дт",
+	"discussiontools-replywidget-mode-visual": "Визуальнэ",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} вуэсстлэ",
+	"discussiontools-replywidget-preview": "Э̄ввткӣһчмушш",
+	"discussiontools-replywidget-reply": "Вуэсстлэ",
+	"discussiontools-topicheader-latestcomment": "Маӈьмусс соа̄гк: $1",
+	"discussiontools-topicsubscription-button-subscribe": "кырьйхуввэ",
+	"discussiontools-topicsubscription-button-subscribe-label": "Кырьйхуввэ",
+	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Вуэсстлэгк]"
+}

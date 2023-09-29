@@ -62,14 +62,14 @@
 					left: 0;
 					width: 16px;
 					height: 32px;
-					.transition( ~'transform 100ms' );
+					transition: transform 100ms;
 
 					body.ltr & {
-						.transform( rotate( -90deg ) );
+						transform: rotate( -90deg );
 					}
 
 					body.rtl & {
-						.transform( rotate( 90deg ) );
+						transform: rotate( 90deg );
 					}
 				}
 			}
@@ -89,7 +89,7 @@
 				&:before {
 					body.ltr &,
 					body.rtl & {
-						.transform( rotate( 0 ) );
+						transform: rotate( 0 );
 					}
 				}
 			}
@@ -175,7 +175,7 @@
 			}
 
 			&.options-shown .label:after {
-				.transform( rotate( 180deg ) );
+				transform: rotate( 180deg );
 			}
 
 			.options {

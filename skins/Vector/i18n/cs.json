@@ -2,17 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
+			"Blahma",
+			"Draceane",
 			"Dvorapa",
 			"Fraxinus.cs",
 			"Jaroslav Cerny",
 			"Kareyac",
+			"Martin Urbanec (WMF)",
 			"Matěj Suchánek",
 			"Mormegil",
 			"Patriccck",
-			"Patrik L.",
-			"Martin Urbanec (WMF)",
-			"Blahma",
-			"Draceane"
+			"Patrik L."
 		]
 	},
 	"skinname-vector": "Starý Vektor (2010)",
@@ -51,9 +51,7 @@
 	"vector-search-loader": "Načítají se návrhy pro hledání",
 	"vector-searchsuggest-containing": "Vyhledat stránky obsahující „<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>“",
 	"vector-intro-page": "Help:Úvod",
-	"vector-toc-heading": "Obsah",
-	"vector-toc-toggle-position-sidebar": "přesunout do postranního panelu",
-	"vector-toc-toggle-position-title": "skrýt",
+	"vector-toc-label": "Obsah",
 	"vector-toc-beginning": "Začátek",
 	"vector-toc-toggle-button-label": "Přepnout podsekci $1",
 	"vector-anon-user-menu-pages": "Stránky pro odhlášené editory",
@@ -63,6 +61,16 @@
 	"vector-toc-menu-tooltip": "Obsah",
 	"vector-toc-collapsible-button-label": "Přepnout obsah",
 	"vector-site-nav-label": "Projekt",
+	"vector-main-menu-label": "Hlavní menu",
+	"vector-limited-width-toggle": "Přepnout omezenou šířku obsahu",
+	"vector-page-tools-label": "Nástroje",
+	"vector-page-tools-general-label": "Obecné",
+	"vector-page-tools-actions-label": "Akce",
+	"vector-pin-element-label": "přesunout do postranního panelu",
+	"vector-unpin-element-label": "skrýt",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Diskuse]]",
-	"tooltip-vector-anon-user-menu-title": "Další možnosti"
+	"tooltip-vector-anon-user-menu-title": "Další možnosti",
+	"vector-prefs-limited-width": "Zapnout režim omezené šířky",
+	"vector-prefs-limited-width-help": "Zapnout režim omezené šířky pro lepší zážitek ze čtení.",
+	"empty-language-selector-body": "Obsah stránky není podporován v jiných jazycích."
 }

@@ -9,6 +9,7 @@ use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentMetadataCollectorCompat;
+use Wikimedia\Parsoid\Core\TOCData;
 
 /**
  * Minimal implementation of a ContentMetadataCollector which just
@@ -53,7 +54,8 @@ class StubMetadataCollector implements ContentMetadataCollector {
 
 	/** @inheritDoc */
 	public function addCategory( $c, $sort = '' ): void {
-		$this->collect( 'categories', $c, $sort, self::MERGE_STRATEGY_WRITE_ONCE );
+		// Numeric strings often become an `int` when passed to addCategory()
+		$this->collect( 'categories', (string)$c, $sort, self::MERGE_STRATEGY_WRITE_ONCE );
 	}
 
 	/** @inheritDoc */
@@ -122,6 +124,11 @@ class StubMetadataCollector implements ContentMetadataCollector {
 	public function setLimitReportData( string $key, $value ): void {
 		// XXX maybe need to JSON-encode $value
 		$this->collect( 'limitreportdata', $key, $value, self::MERGE_STRATEGY_WRITE_ONCE );
+	}
+
+	/** @inheritDoc */
+	public function setTOCData( TOCData $tocData ): void {
+		$this->collect( 'tocdata', '', $tocData, self::MERGE_STRATEGY_WRITE_ONCE );
 	}
 
 	/**
@@ -241,9 +248,37 @@ class StubMetadataCollector implements ContentMetadataCollector {
 	 * @return ?string
 	 */
 	public function getPageProperty( string $name ): ?string {
-		// Note that core returns `false` (instead of null) for a
-		// missing key, which is something we should probably fix
-		// before 1.38 is released.
 		return $this->get( 'properties', $name, self::MERGE_STRATEGY_WRITE_ONCE );
+	}
+
+	/**
+	 * Return the collected extension data under the given key.
+	 * @param string $key
+	 * @return mixed|null
+	 */
+	public function getExtensionData( string $key ) {
+		return $this->get( 'extensiondata', $key, self::MERGE_STRATEGY_WRITE_ONCE );
+	}
+
+	/**
+	 * Return the active output flags.
+	 * @return string[]
+	 */
+	public function getOutputFlags() {
+		$result = [];
+		foreach ( $this->get( 'outputflags', null ) as $key => $value ) {
+			if ( $value ) {
+				$result[] = $key;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Return the collected TOC data, or null if no TOC data was collected.
+	 * @return ?TOCData
+	 */
+	public function getTOCData(): ?TOCData {
+		return $this->get( 'tocdata', '', self::MERGE_STRATEGY_WRITE_ONCE );
 	}
 }

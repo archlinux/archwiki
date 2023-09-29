@@ -25,7 +25,14 @@
 	"vector-view-viewsource": "Хьалххе бӀаргтохара разметкага хьажар",
 	"vector-more-actions": "Кхы а",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> чулоацам бола оагӀонаш лахар",
+	"vector-toc-label": "Чулоацам",
+	"vector-toc-beginning": "Духь",
 	"vector-anon-user-menu-pages": "Авторизаци яь йоацача доакъашхошта йола оагӀонаш",
 	"vector-anon-user-menu-pages-learn": "дукхагӀа хá",
-	"vector-main-menu-tooltip": "Керттера меню"
+	"vector-main-menu-tooltip": "Керттера меню",
+	"vector-main-menu-label": "Керттера меню",
+	"vector-page-tools-label": "Кечалаш",
+	"vector-page-tools-general-label": "Юкъара",
+	"vector-pin-element-label": "дехьаяккха аьттехьа",
+	"vector-unpin-element-label": "хьуладе"
 }

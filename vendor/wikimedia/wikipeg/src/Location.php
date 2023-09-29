@@ -30,7 +30,8 @@ class Location implements \JsonSerializable {
 	 * Emit a JSON serialization similar to JS, for testing
 	 * @return array
 	 */
-	public function jsonSerialize() {
+	#[\ReturnTypeWillChange]
+	public function jsonSerialize(): array {
 		return [
 			'offset' => $this->offset,
 			'line' => $this->line,
@@ -38,6 +39,3 @@ class Location implements \JsonSerializable {
 		];
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( Location::class, 'WikiPEG\Location' );

@@ -10,12 +10,12 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionSlots;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use stdClass;
 use TextContent;
-use Title;
 use TitleValue;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\Timestamp\TimestampException;
@@ -140,7 +140,7 @@ class RevisionStoreRecordTest extends MediaWikiIntegrationTestCase {
 	 * @param CommentStoreComment $comment
 	 * @param stdClass $row
 	 * @param RevisionSlots $slots
-	 * @param bool $wikiId
+	 * @param string|false $wikiId
 	 * @param string|null $expectedException
 	 */
 	public function testConstructorAndGetters(
@@ -267,7 +267,7 @@ class RevisionStoreRecordTest extends MediaWikiIntegrationTestCase {
 	 * @param CommentStoreComment $comment
 	 * @param stdClass $row
 	 * @param RevisionSlots $slots
-	 * @param bool $wikiId
+	 * @param string|false $wikiId
 	 */
 	public function testConstructorFailure(
 		PageIdentity $page,

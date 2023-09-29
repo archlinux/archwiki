@@ -228,7 +228,7 @@ interface Document extends Node, DocumentAndElementEventHandlers, DocumentOrShad
 	 * @param NodeFilter|callable|null $filter
 	 * @return NodeIterator
 	 */
-	public function createNodeIterator( /* Node */ $root, int $whatToShow = 0xFFFFFFFF, /* ?mixed */ $filter = null );
+	public function createNodeIterator( /* Node */ $root, int $whatToShow = -1, /* ?mixed */ $filter = null );
 
 	/**
 	 * @param Node $root
@@ -236,7 +236,7 @@ interface Document extends Node, DocumentAndElementEventHandlers, DocumentOrShad
 	 * @param NodeFilter|callable|null $filter
 	 * @return TreeWalker
 	 */
-	public function createTreeWalker( /* Node */ $root, int $whatToShow = 0xFFFFFFFF, /* ?mixed */ $filter = null );
+	public function createTreeWalker( /* Node */ $root, int $whatToShow = -1, /* ?mixed */ $filter = null );
 
 	/**
 	 * @return Location|null

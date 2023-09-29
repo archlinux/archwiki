@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Metalhead64",
-			"Justman10000"
+			"Justman10000",
+			"Metalhead64"
 		]
 	},
 	"apihelp-query+extracts-description": "Gibt den Klartext oder beschränkte HTML-Auszüge der angegebenen Seiten zurück.",

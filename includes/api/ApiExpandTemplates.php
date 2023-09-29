@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -248,6 +249,6 @@ class ApiExpandTemplates extends ApiBase {
 	}
 
 	public function getHelpUrls() {
-		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Parsing_wikitext#expandtemplates';
+		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Expandtemplates';
 	}
 }

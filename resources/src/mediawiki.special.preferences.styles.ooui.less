@@ -1,5 +1,6 @@
 @import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
+@import 'mediawiki.ui/variables';
 
 /* Uses standard message block colors, compare mediawiki.legacy/shared.css */
 .mw-email-not-authenticated .oo-ui-labelWidget,
@@ -25,31 +26,27 @@
 .mw-email-authenticated .oo-ui-labelWidget { }
 */
 
-/*
- * Use `position: sticky` on supported browsers, degrades gracefully in
- * all others, therefore no `@supports` feature query to reduce code complexity.
- */
-.mw-prefs-buttons {
-	background-color: #fff;
-	.position-sticky();
-	bottom: 0;
-	margin-top: -1px;
-	border-top: 1px solid #c8ccd1;
-	padding: 1em 0;
-	// Add top box shadow on top only to emphasize content is scrollable underneath `sticky`.
-	box-shadow: 0 -4px 4px -4px rgba( 0, 0, 0, 0.25 );
-}
-
-// Support Edge: The `position: sticky` rule above causes the buttons to
-// disappear in RTL languages on Microsoft Edge. This magically fixes the issue. See T220706.
+// Non-dialog styling for footer buttons
 #preferences {
+	// Support Edge: The `position: sticky` rule above causes the buttons to
+	// disappear in RTL languages on Microsoft Edge. This magically fixes the issue. See T220706.
 	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	filter: brightness( 1 );
-}
 
-/* This is needed because add extra buttons in a weird way */
-.mw-prefs-buttons .mw-htmlform-submit-buttons {
-	margin: 0;
+	/*
+	 * Use `position: sticky` on supported browsers, degrades gracefully in
+	 * all others, therefore no `@supports` feature query to reduce code complexity.
+	 */
+	.mw-htmlform-submit-buttons {
+		.position-sticky();
+		bottom: 0;
+		margin: -1px -1em -1em -1em;
+		padding: 1em;
+		background-color: #fff;
+		border-top: 1px solid #c8ccd1;
+		// Add top box shadow on top only to emphasize content is scrollable underneath `sticky`.
+		box-shadow: 0 -4px 4px -4px rgba( 0, 0, 0, 0.25 );
+	}
 }
 
 /*
@@ -72,6 +69,91 @@
 		&:last-child {
 			padding-bottom: 0;
 		}
+	}
+
+	&.mw-prefs-tabs-searching {
+		// Prevent "Save" bar getting too close to results
+		min-height: 30em;
+
+		/* Tab panels */
+		.oo-ui-tabPanelLayout:not( .mw-prefs-search-matched ),
+		/* Fields */
+		[ class^='mw-htmlform-field-' ]:not( .mw-prefs-search-matched ),
+		/* Wrappers */
+		.mw-prefs-fieldset-wrapper:not( .mw-prefs-search-matched ) {
+			display: none;
+		}
+
+		.oo-ui-tabPanelLayout.mw-prefs-search-matched {
+			// stylelint-disable-next-line declaration-no-important
+			display: block !important;
+
+			> fieldset > legend {
+				background: #eaecf0;
+				padding: 5px 10px;
+				margin: 0 0 10px 0;
+				max-width: none;
+
+				> .oo-ui-labelElement-label {
+					display: inline;
+					margin: 0;
+				}
+			}
+		}
+
+		.oo-ui-indexLayout-stackLayout > .oo-ui-panelLayout {
+			padding: 0;
+			margin: 0;
+		}
+
+		.mw-prefs-search-matched {
+			margin: 0 20px 10px 20px;
+			padding: 0;
+		}
+	}
+}
+
+// Highlight could be in an overlay
+.mw-prefs-search-highlight {
+	background: #eaf3ff !important; /* stylelint-disable-line declaration-no-important */
+	outline: 3px solid #eaf3ff !important; /* stylelint-disable-line declaration-no-important */
+	border-radius: 2px !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.mw-prefs-noresults {
+	margin: 20px;
+	font-style: italic;
+}
+
+/* TODO: Support mobile */
+.skin-minerva .mw-prefs-search { /* stylelint-disable-line selector-class-pattern */
+	display: none;
+}
+
+.mw-prefs-search.oo-ui-fieldLayout {
+	margin: 8px 0;
+}
+
+@media all and ( min-width: @width-breakpoint-tablet ) {
+	.mw-prefs-search.oo-ui-fieldLayout {
+		width: 20em;
+	}
+
+	.mw-special-Preferences .mw-specialpage-summary {
+		margin-right: 21em;
+
+		& + .mw-prefs-search.oo-ui-fieldLayout {
+			float: right;
+			margin: -36px 0 8px 0;
+		}
+	}
+}
+
+@media all and ( max-width: ( @width-breakpoint-tablet - 1 ) ) {
+	.mw-prefs-search.oo-ui-fieldLayout {
+		position: sticky;
+		top: 0;
+		z-index: 1;
 	}
 }
 
@@ -114,30 +196,46 @@
 			margin-bottom: 1em;
 		}
 	}
-}
-
-/* JavaScript enabled */
-.client-js .mw-prefs-tabs {
-	.oo-ui-tabPanelLayout {
-		// Panels don't need borders as the IndexLayout is inside a framed wrapper.
-		border: 0;
-
-		// Hide section legend, only used in nojs mode
-		> fieldset > legend {
+	// Show preference section content on mobile
+	#mw-prefs-container.mw-mobile-preferences-container {
+		.mw-prefs-content-head {
 			display: none;
 		}
 	}
+}
 
-	// Hide all but the first panel before infusion
-	&:not( .mw-prefs-tabs-infused ) {
-		.oo-ui-tabPanelLayout:not( :first-child ) {
+/* JavaScript enabled */
+.client-js {
+	.mw-prefs-tabs {
+		.oo-ui-tabPanelLayout {
+			// Panels don't need borders as the IndexLayout is inside a framed wrapper.
+			border: 0;
+
+			// Hide duplicate section legend (we have tabs instead),
+			// except in search mode, where we hide the tabs
+			&:not( .mw-prefs-search-matched ) > fieldset > legend {
+				display: none;
+			}
+		}
+
+		// Hide all but the first panel before infusion
+		&:not( .mw-prefs-tabs-infused ) {
+			.oo-ui-tabPanelLayout:not( :first-child ) {
+				display: none;
+			}
+		}
+	}
+
+	// Hide mobile sections since they will be displayed in windows
+	#mw-prefs-container.mw-mobile-preferences-container {
+		.mw-prefs-content-page {
 			display: none;
 		}
 	}
 }
 
 // Highlight section header when linking to a section, e.g. Special:Preferences#mw-prefsection-editing-preview.
-.oo-ui-fieldsetLayout:target > .oo-ui-fieldsetLayout-header > .oo-ui-labelElement-label {
+.mw-prefs-tabs:not( .mw-prefs-tabs-searching ) .oo-ui-fieldsetLayout:target > .oo-ui-fieldsetLayout-header > .oo-ui-labelElement-label {
 	width: 100%;
 	background-color: #eaf3ff;
 	outline: 4px solid #eaf3ff;
@@ -184,4 +282,155 @@
 
 #wpTimeCorrection .oo-ui-textInputWidget {
 	margin-top: 0.5em;
+}
+
+/* T311717 - Styles for Special:Preferences on mobile
+These are used when users navigate to Special:Preferences
+with params ?useskin=vector&useformat=mobile
+*/
+
+#mw-prefs-container.mw-mobile-preferences-container {
+	position: relative;
+}
+
+.mw-mobile-prefsection {
+	padding-top: 0.3125em;
+	border-bottom: 0.0625em solid @colorGray12;
+
+	// Style section headers as buttons when JS is enabled
+	.client-js & {
+		cursor: pointer;
+
+		&:hover {
+			background-color: @colorGray15;
+		}
+	}
+
+	&:last-child {
+		border-bottom: none; // stylelint-disable-line declaration-property-value-disallowed-list
+	}
+}
+
+.oo-ui-iconWidget.mw-prefs-icon {
+	color: @colorGray2;
+	margin: 0.5em 0.5em 0 0.5em;
+	width: 1.25em;
+	height: 1.25em;
+}
+
+.mw-prefs-title {
+	font-weight: normal;
+	font-size: 1em;
+	line-height: 1.25em;
+	color: @colorGray2;
+}
+
+.mw-prefs-description {
+	font-weight: normal;
+	font-size: 0.875em;
+	line-height: 1.25em;
+	padding: 0 2.7em;
+	color: @colorGray7;
+	margin-top: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.mw-prefs-header-container {
+	display: flex;
+}
+
+/* Override default inline styles for 'larger' dialog */
+.oo-ui-windowManager-modal > .oo-ui-dialog.oo-ui-window-active.mw-mobile-pref-window {
+	padding-top: 0;
+}
+
+/* Overriding default inline styles for 'larger' dialog */
+.mw-mobile-pref-window > .oo-ui-window-frame {
+	width: auto !important; /* stylelint-disable-line declaration-no-important */
+	height: 100% !important; /* stylelint-disable-line declaration-no-important */
+	max-height: 100% !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.oo-ui-window-body.mw-mobile-pref-dialog-body {
+	> div.oo-ui-widget-enabled > div {
+		padding: 16px;
+	}
+
+	/* T317110: sub-section title  */
+	.mw-prefs-fieldset-wrapper {
+		.oo-ui-fieldsetLayout-header {
+			border-bottom: 1px #000 solid;
+			max-width: 100%;
+
+			.oo-ui-labelElement-label {
+				font-size: 1em;
+				font-weight: bold;
+				line-height: 1.25em;
+				margin-bottom: 12px;
+			}
+		}
+
+		/* T317110: sub-section and sub-sub-section titles  */
+		.mw-prefs-fieldset-wrapper .oo-ui-fieldsetLayout-header {
+			border-bottom: 0;
+		}
+	}
+
+	/* T317110: preference separation  */
+	[ class^='mw-htmlform-field' ] {
+		padding: 12px 0;
+		margin: 0;
+		border-bottom: 1px #eaecf0 solid;
+
+		&:last-child {
+			border-bottom: 0;
+		}
+	}
+
+	/* T317110: preference label  */
+	.oo-ui-labelElement-label {
+		line-height: 1.25em;
+	}
+
+	/* T317110: help text  */
+	.oo-ui-inline-help {
+		font-size: 0.875em;
+		line-height: 1.25em;
+	}
+
+	/* T317110: non-interactive text */
+	.mw-htmlform-field-HTMLInfoField {
+		color: #72777d;
+	}
+}
+
+// Dialog styling for footer buttons
+.oo-ui-window-foot .mw-htmlform-submit-buttons {
+	margin: 0;
+	padding: 16px;
+}
+
+.oo-ui-window-body .oo-ui-fieldLayout-messages {
+	background-color: #fff;
+}
+
+.oo-ui-iconWidget.mw-prefs-header-icon {
+	color: @colorGray2;
+	cursor: pointer;
+	width: 1.25em;
+	height: 1.25em;
+	margin: 0 16px 0 17px;
+}
+
+.mw-prefs-header-title {
+	display: inline-flex;
+}
+
+// stylelint-disable-next-line selector-class-pattern
+.content p {
+	margin: 0 0 0.75em 0 !important; // stylelint-disable-line declaration-no-important
+}
+
+// stylelint-disable-next-line selector-class-pattern
+.content h5 {
+	padding-bottom: 0.25em !important; // stylelint-disable-line declaration-no-important
 }

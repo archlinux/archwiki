@@ -179,6 +179,11 @@ ve.ui.MWSyntaxHighlightWindow.prototype.updateMwData = function ( mwData ) {
 		startLine = this.startLineNumber.getValue();
 
 	mwData.attrs.lang = language || undefined;
-	mwData.attrs.line = showLines ? '1' : undefined;
+	if ( !showLines ) {
+		delete mwData.attrs.line;
+	// Keep whatever value was there before to not cause dirty diffs
+	} else if ( !( 'line' in mwData.attrs ) ) {
+		mwData.attrs.line = '1';
+	}
 	mwData.attrs.start = startLine !== '' ? startLine : undefined;
 };

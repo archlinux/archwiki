@@ -202,8 +202,18 @@ class SiteConfig extends ApiSiteConfig {
 		return $this->allowedExternalImagePrefixes;
 	}
 
-	public function responsiveReferences(): array {
-		return $this->responsiveReferences;
+	/** @inheritDoc */
+	public function getMWConfigValue( string $key ) {
+		switch ( $key ) {
+			case 'CiteResponsiveReferences':
+				return $this->responsiveReferences['enabled'];
+
+			case 'CiteResponsiveReferencesThreshold':
+				return $this->responsiveReferences['threshold'];
+
+			default:
+				return null;
+		}
 	}
 
 	/**

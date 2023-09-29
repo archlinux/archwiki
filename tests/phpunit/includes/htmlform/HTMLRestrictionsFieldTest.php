@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Title\Title;
+
 /**
  * @covers HTMLRestrictionsField
  */
@@ -8,7 +11,10 @@ class HTMLRestrictionsFieldTest extends PHPUnit\Framework\TestCase {
 	use MediaWikiCoversValidator;
 
 	public function testConstruct() {
-		$field = new HTMLRestrictionsField( [ 'fieldname' => 'restrictions' ] );
+		$htmlForm = $this->createMock( HTMLForm::class );
+		$htmlForm->method( 'msg' )->willReturnCallback( 'wfMessage' );
+
+		$field = new HTMLRestrictionsField( [ 'fieldname' => 'restrictions', 'parent' => $htmlForm ] );
 		$this->assertNotEmpty( $field->getLabel(), 'has a default label' );
 		$this->assertNotEmpty( $field->getHelpText(), 'has a default help text' );
 		$this->assertEquals( MWRestrictions::newDefault(), $field->getDefault(),
@@ -19,6 +25,7 @@ class HTMLRestrictionsFieldTest extends PHPUnit\Framework\TestCase {
 			'label' => 'foo',
 			'help' => 'bar',
 			'default' => 'baz',
+			'parent' => $htmlForm,
 		] );
 		$this->assertEquals( 'foo', $field->getLabel(), 'label can be customized' );
 		$this->assertEquals( 'bar', $field->getHelpText(), 'help text can be customized' );
@@ -35,7 +42,7 @@ class HTMLRestrictionsFieldTest extends PHPUnit\Framework\TestCase {
 		$form = HTMLForm::factory( 'ooui', [
 			'restrictions' => [ 'class' => HTMLRestrictionsField::class ],
 		], $context );
-		$form->setTitle( Title::newFromText( 'Main Page' ) )->setSubmitCallback( static function () {
+		$form->setTitle( Title::makeTitle( NS_MAIN, 'Main Page' ) )->setSubmitCallback( static function () {
 			return true;
 		} )->prepareForm();
 		$status = $form->trySubmit();

@@ -8,11 +8,11 @@
 	{{/data-collapse-icon}}
 	{{/is-collapsible}}
 	<div>
-		{{#is-legacy}}
+		{{#has-label}}
 			<h3 {{{html-user-language-attributes}}}>
 				<label{{#is-primary}} for="searchInput"{{/is-primary}}>{{msg-search}}</label>
 			</h3>
-		{{/is-legacy}}
+		{{/has-label}}
 		<form action="{{form-action}}" id="{{form-id}}"
 			class="vector-search-box-form">
 			<div {{#is-primary}}id="simpleSearch"{{/is-primary}}

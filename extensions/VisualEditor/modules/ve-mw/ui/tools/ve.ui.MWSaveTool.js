@@ -34,6 +34,7 @@ OO.inheritClass( ve.ui.MWSaveTool, ve.ui.Tool );
 /* Static properties */
 
 ve.ui.MWSaveTool.static.name = 'showSave';
+// eslint-disable-next-line es-x/no-regexp-prototype-flags
 ve.ui.MWSaveTool.static.flags = [ 'primary', 'progressive' ];
 ve.ui.MWSaveTool.static.displayBothIconAndLabel = true;
 ve.ui.MWSaveTool.static.group = 'save';

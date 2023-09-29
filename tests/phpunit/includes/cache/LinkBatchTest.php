@@ -5,6 +5,7 @@ use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -20,6 +21,7 @@ class LinkBatchTest extends MediaWikiIntegrationTestCase {
 	 * @covers LinkBatch::isEmpty()
 	 */
 	public function testConstructEmpty() {
+		$this->filterDeprecated( '/LinkBatch::__construct without providing all services is deprecated/' );
 		$batch = new LinkBatch();
 
 		$this->assertTrue( $batch->isEmpty() );
@@ -32,6 +34,7 @@ class LinkBatchTest extends MediaWikiIntegrationTestCase {
 	 * @covers LinkBatch::isEmpty()
 	 */
 	public function testConstruct() {
+		$this->filterDeprecated( '/LinkBatch::__construct without providing all services is deprecated/' );
 		$batch = new LinkBatch( [
 			new TitleValue( NS_MAIN, 'Foo' ),
 			new TitleValue( NS_TALK, 'Bar' ),

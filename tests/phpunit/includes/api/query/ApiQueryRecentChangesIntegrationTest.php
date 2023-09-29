@@ -2,6 +2,7 @@
 
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Title\Title;
 
 /**
  * @group API
@@ -35,7 +36,7 @@ class ApiQueryRecentChangesIntegrationTest extends ApiTestCase {
 
 	private function doMinorPageEdit( User $user, LinkTarget $target, $summary ) {
 		$title = Title::newFromLinkTarget( $target );
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$page->doUserEditContent(
 			ContentHandler::makeContent( __CLASS__, $title ),
 			$user,
@@ -46,7 +47,7 @@ class ApiQueryRecentChangesIntegrationTest extends ApiTestCase {
 
 	private function doBotPageEdit( User $user, LinkTarget $target, $summary ) {
 		$title = Title::newFromLinkTarget( $target );
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$page->doUserEditContent(
 			ContentHandler::makeContent( __CLASS__, $title ),
 			$user,
@@ -57,7 +58,7 @@ class ApiQueryRecentChangesIntegrationTest extends ApiTestCase {
 
 	private function doAnonPageEdit( LinkTarget $target, $summary ) {
 		$title = Title::newFromLinkTarget( $target );
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$page->doUserEditContent(
 			ContentHandler::makeContent( __CLASS__, $title ),
 			User::newFromId( 0 ),

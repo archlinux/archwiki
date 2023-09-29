@@ -56,7 +56,6 @@
 	"math_unknown_function": "funziona scanusciuta \"$1\".",
 	"mw_math_latexml": "LaTeXML (sperimentale; aùsa MathML)",
 	"mw_math_mathml": "MathML cu SVG o PNG fallback (raccummandate pe' browser muderne e strumiente d'accesso)",
-	"mw_math_png": "Immaggene PNG",
 	"mw_math_source": "Sorgente LaTeX (p' 'e browser 'e testo)",
 	"prefs-math": "Math",
 	"mathstatus": "Stato d' 'o Math",

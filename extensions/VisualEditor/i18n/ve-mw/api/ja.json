@@ -6,10 +6,10 @@
 			"Foomin10",
 			"Fryed-peach",
 			"Los688",
+			"Omotecho",
 			"Shirayuki",
 			"SkyDaisy9",
-			"Takot",
-			"Omotecho"
+			"Takot"
 		]
 	},
 	"apierror-visualeditor-difffailed": "差分の取得ができませんでした",
@@ -35,7 +35,7 @@
 	"apihelp-visualeditoredit-param-html": "ウィキテキストを出力として得るために、Parsoidに送るHTML",
 	"apihelp-visualeditoredit-param-minor": "細部の編集のしるし。",
 	"apihelp-visualeditoredit-param-needcheck": "保存する際に、この版にroundtrip問題がある場合はこのパラメーターを使用する。その場合、編集はタグ付けされます。",
-	"apihelp-visualeditoredit-param-oldid": "使用する版番号。既定では最新版です。新しいページには 0 を使用します。",
+	"apihelp-visualeditoredit-param-oldid": "使用する版番号。既定では最新版です。",
 	"apihelp-visualeditoredit-param-page": "操作を実行したいページ",
 	"apihelp-visualeditoredit-param-sectiontitle": "新しい節の名前です。",
 	"apihelp-visualeditoredit-param-starttimestamp": "保存する際に、ページが読み込まれた時のタイムスタンプとしてこれがセットされます。編集競合を検出するのに利用されます。",

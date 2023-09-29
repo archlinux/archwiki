@@ -7,14 +7,15 @@
 			"Jojit fb",
 			"Matma Rex",
 			"Mrkczr",
-			"Sky Harbor"
+			"Sky Harbor",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Naghahain ng mga kusang gabay-aral/heuristiko sa mga pamamatnugot",
 	"abusefilter": "Pamamahala ng pansala ng pang-aabuso",
 	"abuselog": "Tala ng pansala ng pang-aabuso",
 	"abusefilter-intro": "Maligayang pagdating sa ugnayang-hangganan ng pamamahala ng Pansala ng Pang-aabuso.\nAng Pansala ng Pang-aabuso ay isang kusang mekanismo ng sopwer ng paggamit ng automatikong tulong ng pagkatuto sa lahat ng mga kilos.\nNagpapakita ang ugnayang-hangganang ito ng isang talaan ng binigyang kahulugang mga pansala, at nagpapahintulot na mabago ang mga ito.",
-	"abusefilter-warning": "'''Babala''': Ang galaw na ito ay kusang kinilala bilang mapanganib.  Mabilisang ibabalik sa dati ang hindi nakapagpapainam na pagbabago, at magbubunga ang kapansin-pansin at paulit-ulit na hindi maiinam na pagbabago ng pagharang sa akawnt o adres ng IP.  Kung sa tingin mong mainam ang pagbabagong ito, maaaring mong pindutin uli ang Ipasa upang tiyakin ito.  Isang maikling paglalarawan ng alituntunin sa pang-aabuso na tumugma sa iyong galaw ang: $1",
+	"abusefilter-warning": "'''Babala''': Ang galaw na ito ay kusang kinilala bilang mapanganib. Mabilisang ibabalik sa dati ang hindi nakapagpapainam na pagbabago, at magbubunga ang kapansin-pansin at paulit-ulit na hindi maiinam na pagbabago ng pagharang sa akawnt o adres ng IP. Kung sa tingin mong mainam ang pagbabagong ito, maaaring mong pindutin uli ang Ipasa upang tiyakin ito. Isang maikling paglalarawan ng alituntunin sa pang-aabuso na tumugma sa iyong galaw ang: $1",
 	"abusefilter-disallowed": "Ang kilos na ito ay kusang nakilala bilang makakapinsala,\nkaya't hindi pinahintulutan.\nKung naniniwala kang mabuti ang iyong ginawang pagbabago, makipag-ugnayan sa isang tagapangasiwa, at ipagbigay-alam sa kanila ang kung ano ang sinusubok mong gawin.\nIsang maiksing paglalarawan ng alituntunin sa pang-aabuso na tumugma sa kilos mo ang: $1",
 	"abusefilter-blocked-display": "Ang kilos na ito ay kusang nakilala bilang makakapinsala,\nat pinigilan ang pagsasakatuparan mo nito.\nBilang karagdagan, upang mapagsanggalang ang {{SITENAME}}, hinadlangan sa paggawa ng mga pagbabago ang iyong akawnt at lahat ng mga kaugnay na adres ng IP.\nKung naganap ito dahil sa isang pagkakamali, makipag-ugnayan sa isang tagapangasiwa.\nIsang maiksing paglalarawan ng alituntunin sa pang-aabuso na tumugma sa kilos mo ang: $1",
 	"abusefilter-degrouped": "Ang aksyon na ito ay kusang nakilala bilang makakapinsala.\nBilang kinahinatnan, hindi ito pinahintulutan, at, dahil sa pinaghihinalaang nalantad sa kapahamakan ang account mo, pinawalan ng bisa ang lahat ng mga karapatan.\nKung naniniwala kang isa itong pagkakamali, makipag-ugnayan sa isang burokrato na may isang paliwanag hinggil sa kilos na ito, at maaaring maibalik sa dati ang mga karapatan mo.\nIsang maiksing paglalarawan ng alituntunin sa pang-aabuso na tumugma sa aksyon mo ang: $1",

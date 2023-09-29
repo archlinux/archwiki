@@ -1,0 +1,21 @@
+{
+	"@metadata": {
+		"authors": [
+			"Festina90",
+			"Mainframe98",
+			"Mar(c)",
+			"McDutchie",
+			"PiefPafPier",
+			"Sjoerddebruin",
+			"Woodcutterty"
+		]
+	},
+	"echo-category-title-login-fail": "Mislukte aanmeldpogingen",
+	"echo-pref-tooltip-login-fail": "Meld mij wanneer er voor mijn account mislukte aanmeldpogingen plaatsvinden.",
+	"echo-category-title-login-success": "Aanmelding vanaf onbekend apparaat",
+	"echo-pref-tooltip-login-success": "Meld mij wanneer iemand zich met mijn account aanmeldt vanaf een onbekend apparaat en IP-adres.",
+	"loginnotify-primary-link": "Hulp",
+	"notification-loginnotify-login-fail-email-subject": "{{PLURAL:$2|Mislukte aanmeldingspoging|Meerdere mislukte aanmeldingspogingen}} op {{SITENAME}} als $1",
+	"notification-loginnotify-login-success-email-subject": "Er is aangemeld op {{SITENAME}} als $1 vanaf een apparaat dat {{GENDER:$1|u}} niet recentelijk hebt gebruikt",
+	"notification-header-login-success": "Iemand (waarschijnlijk {{GENDER:$1|u}}) heeft recentelijk vanaf een nieuw apparaat op uw account ingelogd. Als u dit zelf was, kunt u dit bericht negeren. Als u dit niet was, dan raden wij u aan uw wachtwoord te veranderen en de activiteit van uw account te controleren."
+}

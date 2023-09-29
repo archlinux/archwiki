@@ -122,7 +122,7 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, config ) {
 		$( '<span>' )
 			.addClass( 've-ui-mwParameterPage-undocumentedLabel' )
 			.text( ve.msg( 'visualeditor-dialog-transclusion-param-undocumented' ) )
-			.insertAfter( labelElement.$element );
+			.appendTo( labelElement.$element );
 	}
 
 	this.$element

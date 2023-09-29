@@ -78,6 +78,7 @@ ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converte
 	var typeofAttrs = container.getAttribute( 'typeof' ).trim().split( /\s+/ );
 	var errorIndex = typeofAttrs.indexOf( 'mw:Error' );
 	var isError = errorIndex !== -1;
+	var errorText = isError ? img.textContent : null;
 	var width = img.getAttribute( isError ? 'data-width' : 'width' );
 	var height = img.getAttribute( isError ? 'data-height' : 'height' );
 
@@ -99,7 +100,8 @@ ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converte
 			src: img.getAttribute( 'src' ) || img.getAttribute( 'poster' ),
 			width: width !== null && width !== '' ? +width : null,
 			height: height !== null && height !== '' ? +height : null,
-			isError: isError
+			isError: isError,
+			errorText: errorText
 		}
 	};
 
@@ -143,7 +145,7 @@ ve.dm.MWGalleryImageNode.static.toDomElements = function ( data, doc ) {
 	if ( attributes.isError ) {
 		img.classList.add( 'mw-broken-media' );
 		var filename = mw.libs.ve.normalizeParsoidResourceName( attributes.resource || '' );
-		img.appendChild( doc.createTextNode( filename ) );
+		img.appendChild( doc.createTextNode( attributes.errorText ? attributes.errorText : filename ) );
 	} else {
 		var srcAttr = ve.dm.MWImageNode.static.tagsToSrcAttrs[ img.nodeName.toLowerCase() ];
 		img.setAttribute( srcAttr, attributes.src );

@@ -213,9 +213,23 @@ final class MinervaPagePermissions implements IMinervaPagePermissions {
 	 * @return bool
 	 */
 	protected function isCurrentPageContentModelEditable() {
-		return $this->contentHandler
-			&& $this->contentHandler->supportsDirectEditing()
-			&& $this->contentHandler->supportsDirectApiEditing();
+		if ( !$this->contentHandler ) {
+			return false;
+		}
+
+		if (
+			$this->contentHandler->supportsDirectEditing() &&
+			$this->contentHandler->supportsDirectApiEditing()
+		) {
+			return true;
+		}
+
+		// For content types with custom action=edit handlers, let them do their thing
+		if ( array_key_exists( 'edit', $this->contentHandler->getActionOverrides() ?? [] ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

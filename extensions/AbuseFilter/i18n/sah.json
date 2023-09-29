@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"HalanTul",
-			"Matma Rex"
+			"Matma Rex",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Көннөрүүлэргэ эвристика сиидэлэрин (фильтрдарын) туһанарга туттуллар",
@@ -104,10 +105,10 @@
 	"abusefilter-tools-reautoconfirm": "«autoconfirmed» туругу төннөр",
 	"abusefilter-tools-reautoconfirm-user": "Кыттааччы:",
 	"abusefilter-tools-reautoconfirm-submit": "Хат бигэргэтии",
-	"abusefilter-reautoconfirm-none": "Бу  {{GENDER:$1|эр киһи|дьахтар}} аптамаатынан бигэргэтиитэ араарыллыбатах.",
+	"abusefilter-reautoconfirm-none": "Бу {{GENDER:$1|эр киһи|дьахтар}} аптамаатынан бигэргэтиитэ араарыллыбатах.",
 	"abusefilter-reautoconfirm-notallowed": "Аптамаатынан бигэргэтиини туруорар кыаҕыҥ суох.",
 	"abusefilter-reautoconfirm-done": "Ааты аптамаатынан бигэргэтии кыаҕа төннөрүлүннэ",
-	"abusefilter-status": "$1 {{PLURAL:$1|бүтэһик дьайыыттан|бүтэһик дьайыылартан}}, $2 ($3%)  хааччахтыыр $4 көрдөбүлгэ {{PLURAL:$2|түбэспит|түбэспиттэр}}, оттон $5 ($6%) билигин арахсан турар сиидэҕэ {{PLURAL:$5|сөп түбэһэр|сөп түбэһэллэр}}.",
+	"abusefilter-status": "$1 {{PLURAL:$1|бүтэһик дьайыыттан|бүтэһик дьайыылартан}}, $2 ($3%) хааччахтыыр $4 көрдөбүлгэ {{PLURAL:$2|түбэспит|түбэспиттэр}}, оттон $5 ($6%) билигин арахсан турар сиидэҕэ {{PLURAL:$5|сөп түбэһэр|сөп түбэһэллэр}}.",
 	"abusefilter-edit": "Сиидэни уларытыы",
 	"abusefilter-edit-subtitle": "$1 сиидэни уларытыы",
 	"abusefilter-edit-subtitle-new": "Сиидэ оҥоруу",
@@ -291,7 +292,7 @@
 	"abusefilter-exception-dividebyzero": "$1 позицияҕа $2 нуулга түҥэтии оҥоһулла сатаата.",
 	"abusefilter-exception-unrecognisedvar": "$1 позицияҕа биллибэт $2 переменнай",
 	"abusefilter-exception-notenoughargs": "$1 позицияҕа тахсар $2 функция аргуменнара тиийбэттэр.\n$3 {{PLURAL:$3|аргумент кэтэһиллэр|аргуменнаах буолуохтаах}}, $4 {{PLURAL:$4|ылыллыбыт|ылыллынна}}",
-	"abusefilter-exception-regexfailure": "«$3»  регулярнай выражение $1 позицияҕа алҕаһа: «$2»",
+	"abusefilter-exception-regexfailure": "«$3» регулярнай выражение $1 позицияҕа алҕаһа: «$2»",
 	"abusefilter-action-tag": "Бэлиэ (тег)",
 	"abusefilter-action-throttle": "Ылҕааһын (сужение, throttle)",
 	"abusefilter-action-warn": "Сэрэтии",
@@ -308,7 +309,7 @@
 	"abusefilter-revert-periodend": "Бүтүүтэ:",
 	"abusefilter-revert-search": "Дьайыылары талыы",
 	"abusefilter-revert-filter": "Сиидэ:",
-	"abusefilter-revert-preview-intro": "Аллара омсо сиидэтэ оҥорбут дьайыыларыттан төннөрүллэллэрэ көрдөрүлүннэ.\nБука диэн сыныйан көрөн баран \"{{int:abusefilter-revert-confirm}}\"  диэни баттаа.",
+	"abusefilter-revert-preview-intro": "Аллара омсо сиидэтэ оҥорбут дьайыыларыттан төннөрүллэллэрэ көрдөрүлүннэ.\nБука диэн сыныйан көрөн баран \"{{int:abusefilter-revert-confirm}}\" диэни баттаа.",
 	"abusefilter-revert-confirm": "Бигэргэтии",
 	"abusefilter-revert-success": "[[Special:AbuseFilter/$1|$2 сиидэ]] оҥорбут дьайыыларын барытын көтүрдүҥ.",
 	"abusefilter-revert-reason": "$1 сиидэ оҥорбут дьайыыларын аптамаатынан көтүрүү.\nЫйыллыбыт төрүөтэ: $2",

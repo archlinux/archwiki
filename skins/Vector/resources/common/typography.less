@@ -57,6 +57,10 @@ pre,
 			font-family: @font-family-sans--fallback;
 		}
 
+		&:lang( ckb ) { /* See T306317 */
+			font-family: 'Scheherazade', @font-family-serif;
+		}
+
 		/* Burmese (Myanmar) language headlines would be cropped with set `line-height` */
 		/* See T193270 */
 		&:lang( my ) {
@@ -141,14 +145,26 @@ pre,
 
 // External links
 // Use of `a` element selector for limiting generic class scope due to `.external` widespread usage.
-.mw-parser-output a.external {
-	// Use copy of Codex/OOUI WikimediaUI theme's 'linkExternal' icon in progressive color.
-	// Note that CSSJanus is flipping the `ltr` in the URL to `rtl`.
-	// Therefore make sure that both icons are available and up-to-date.
-	background-image: url( images/link-external-small-ltr-progressive.svg );
-	background-position: center right;
-	background-repeat: no-repeat;
-	// Equivalent of `12px` at calculation base of `14px` is `0.857em`.
-	background-size: 0.857em;
-	padding-right: 1em;
+.mw-parser-output {
+	a {
+		// Deal with long links (T327334, inspired by Minerva solution T62387)
+		word-wrap: break-word;
+	}
+
+	a.external {
+		// Use copy of Codex/OOUI WikimediaUI theme's 'linkExternal' icon in progressive color.
+		// Note that CSSJanus is flipping the `ltr` in the URL to `rtl`.
+		// Therefore make sure that both icons are available and up-to-date.
+		background-image: url( images/link-external-small-ltr-progressive.svg );
+		background-position: center right;
+		background-repeat: no-repeat;
+		// Equivalent of `12px` at calculation base of `14px` is `0.857em`.
+		background-size: 0.857em;
+		padding-right: 1em;
+
+		// See T330712 for better understanding of this class and any future changes.
+		&.free {
+			word-break: break-all;
+		}
+	}
 }

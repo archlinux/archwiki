@@ -8,6 +8,7 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Math\MathFormatter;
 use MediaWiki\Extension\Math\MathWikibaseConnector;
 use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Languages\LanguageNameUtils;
 use MediaWikiUnitTestCase;
 use Psr\Log\LoggerInterface;
 use Site;
@@ -75,12 +76,17 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 		$languageFactoryMock->method( 'getLanguage' )
 			->with( 'en' )
 			->willReturn( $languageMock );
+		$languageNameUtilsMock = self::createMock( LanguageNameUtils::class );
+		$languageNameUtilsMock->method( 'isValidCode' )
+			->with( 'en' )
+			->willReturn( true );
 		$fallbackLabelDescriptionLookupFactoryMock->method( 'newLabelDescriptionLookup' )
 			->with( $languageMock )
 			->willReturnCallback( [ $this, 'newLabelDescriptionLookup' ] );
 
 		return self::getWikibaseConnector(
 			$languageFactoryMock,
+			$languageNameUtilsMock,
 			$fallbackLabelDescriptionLookupFactoryMock,
 			$revisionLookupMock,
 			$logger,
@@ -90,6 +96,7 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 
 	public function getWikibaseConnector(
 		LanguageFactory $languageFactory = null,
+		LanguageNameUtils $languageNameUtils = null,
 		FallbackLabelDescriptionLookupFactory $labelDescriptionLookupFactory = null,
 		EntityRevisionLookup $entityRevisionLookupMock = null,
 		LoggerInterface $logger = null,
@@ -102,6 +109,10 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 			self::createMock( EntityRevisionLookup::class );
 
 		$languageFactory = $languageFactory ?: self::createMock( LanguageFactory::class );
+		if ( !$languageNameUtils ) {
+			$languageNameUtils = self::createMock( LanguageNameUtils::class );
+			$languageNameUtils->method( 'isValidCode' )->willReturn( true );
+		}
 
 		$site = self::createMock( Site::class );
 		$site->method( 'getGlobalId' )->willReturn( '' );
@@ -129,6 +140,7 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 			] ),
 			$repoConnector,
 			$languageFactory,
+			$languageNameUtils,
 			$entityRevisionLookup,
 			$labelDescriptionLookupFactory,
 			$site,

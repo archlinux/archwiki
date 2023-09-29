@@ -2,9 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"BadDog",
+			"Kizule",
 			"Obsuser",
 			"Rancher",
-			"Kizule"
+			"Milicevic01"
 		]
 	},
 	"skinname-monobook": "Монобук",
@@ -16,6 +17,7 @@
 	"monobook-jumptonavigation": "Иди на навигацију",
 	"monobook-jumptosearch": "Иди на претрагу",
 	"monobook-more-actions": "Више",
+	"cactions-mobile": "Радње за страницу",
 	"monobook-cactions-label": "Радње за страницу",
 	"monobook-notifications-link": "Обавештења ($1)",
 	"monobook-notifications-link-none": "Обавештења",

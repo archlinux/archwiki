@@ -316,6 +316,7 @@ class Cite {
 			$arguments['group'] = $this->inReferencesGroup ?? self::DEFAULT_GROUP;
 		}
 
+		// @phan-suppress-next-line PhanParamTooFewUnpack No good way to document it.
 		$status->merge( $this->validateRef( $text, ...array_values( $arguments ) ) );
 
 		if ( !$status->isGood() && $this->inReferencesGroup !== null ) {
@@ -371,6 +372,7 @@ class Cite {
 			return $this->errorReporter->halfParsed( $parser, $error['message'], ...$error['params'] );
 		}
 
+		// @phan-suppress-next-line PhanParamTooFewUnpack No good way to document it.
 		$ref = $this->referenceStack->pushRef(
 			$parser, $parser->getStripState(), $text, $argv, ...array_values( $arguments ) );
 		return $ref

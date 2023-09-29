@@ -41,6 +41,7 @@
 	"apihelp-visualeditoredit-param-html": "HTML za pošiljanje Parsoidu za pretvorbo v vikibesedilo.",
 	"apihelp-visualeditoredit-param-minor": "Oznaka za manjše urejanje.",
 	"apihelp-visualeditoredit-param-needcheck": "Pri shranjevanju nastavite ta parameter, če bi redakcija lahjo imela težave z nasprotno pretvorbo. To bo povzročilo označitev urejanja.",
+	"apihelp-visualeditoredit-param-oldid": "Številka redakcije za uporabo (po privzetem zadnja redakcija).",
 	"apihelp-visualeditoredit-param-paction": "Dejanje za izvedbo.",
 	"apihelp-visualeditoredit-param-page": "Stran, na kateri bodo dejanja izvedena.",
 	"apihelp-visualeditoredit-param-section": "Razdelek, na katerem bo dejanje opravljeno.",

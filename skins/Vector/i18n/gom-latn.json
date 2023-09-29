@@ -28,6 +28,7 @@
 	"vector-jumptosearch": "Soda khatir uddki mar",
 	"vector-jumptocontent": "Mozkuraxim uddki mar",
 	"vector-more-actions": "Anik",
+	"vector-toc-label": "Vixoi suchi",
 	"vector-toc-beginning": "Survat",
 	"vector-toc-toggle-button-label": "$1 upvibhag dakhoi / lipoi",
 	"vector-anon-user-menu-pages-learn": "odik xikun ghe",
@@ -35,5 +36,12 @@
 	"vector-main-menu-tooltip": "Mukhel volleri",
 	"vector-toc-menu-tooltip": "Vixoi suchi",
 	"vector-toc-collapsible-button-label": "Vixoi suchi dakhoi / lipoi",
-	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Bhasabhas]]"
+	"vector-main-menu-label": "Mukhel volleri",
+	"vector-limited-width-toggle": "Panachi rundai purnn vo tharavik",
+	"vector-page-tools-label": "Avtam",
+	"vector-page-tools-actions-label": "Kornnio",
+	"vector-pin-element-label": "deg-pott'ttiecher vor",
+	"vector-unpin-element-label": "lipoi",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Bhasabhas]]",
+	"empty-language-selector-body": "Panacho mozkur her bhasani somorthit na."
 }

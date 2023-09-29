@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"HalanTul",
+			"MARKSDNW"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "хоруй",
+	"discussiontools-replywidget-advanced": "Дириҥник",
+	"discussiontools-replywidget-cancel": "Салҕаама",
+	"discussiontools-replywidget-mode-source": "Код",
+	"discussiontools-replywidget-mode-visual": "Көстүү",
+	"discussiontools-replywidget-preview": "Хайдах буолара",
+	"discussiontools-replywidget-summary": "Быһаарыы",
+	"discussiontools-replywidget-watchthis": "Бу сирэйи [[Special:Watchlist|watchlist]] эб",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|киһи|дьон}} кэпсэтэр сиримҥэ",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ырытыы|ырытыылар}}",
+	"discussiontools-topicheader-latestcomment": "Тиһэх суруйуу: $1",
+	"discussiontools-topicsubscription-button-subscribe": "сурутуу",
+	"discussiontools-topicsubscription-button-subscribe-label": "Сурутуу",
+	"discussiontools-topicsubscription-button-unsubscribe": "сурутууттан аккаастан",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "сурутууттан аккаастан"
+}

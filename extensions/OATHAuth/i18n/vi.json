@@ -4,8 +4,8 @@
 			"Minh Nguyen",
 			"NguoiDungKhongDinhDanh",
 			"NguyenHung",
-			"Vinhtantran",
-			"Tryvix1509"
+			"Tryvix1509",
+			"Vinhtantran"
 		]
 	},
 	"oathauth-desc": "Cho phép xác nhận dùng các mật khẩu một lần dựa trên mã xác thực thông điệp được băm (HMAC)",

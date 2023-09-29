@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Search\SearchWidgets;
 
-use Html;
 use ISearchResultSet;
+use MediaWiki\Html\Html;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Title\Title;
 use OOUI;
 use SpecialSearch;
-use Title;
 
 /**
  * Renders one or more ISearchResultSets into a sidebar grouped by

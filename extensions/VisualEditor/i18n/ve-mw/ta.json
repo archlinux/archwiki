@@ -57,7 +57,6 @@
 	"visualeditor-dialog-meta-settings-label": "பக்க அமைப்புகள்",
 	"visualeditor-dialog-transclusion-add-template": "வார்ப்புருவைச் சேர்",
 	"visualeditor-dialog-transclusion-filter-placeholder": "புலத்தைக் கண்டறியவும்",
-	"visualeditor-dialog-transclusion-placeholder": "ஒரு வார்ப்புருவைச் சேர்க்கவும்",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "பின் செல்லவும்",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "எப்படியிருப்பினும் தொடர்க",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "தாங்கள் நிச்சயமாக $1 {{PLURAL:$2|parameter|parameters}}ஐ நிரப்பாமல் தொடர விரும்புகிறீர்களா?",

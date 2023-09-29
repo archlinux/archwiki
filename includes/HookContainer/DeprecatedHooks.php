@@ -35,25 +35,14 @@ class DeprecatedHooks {
 	 */
 	private $deprecatedHooks = [
 		'AddNewAccount' => [ 'deprecatedVersion' => '1.27', 'silent' => true ],
-		'BaseTemplateAfterPortlet' => [ 'deprecatedVersion' => '1.35' ],
-		'BeforeParserFetchTemplateAndtitle' => [ 'deprecatedVersion' => '1.36' ],
-		'BeforeParserrenderImageGallery' => [ 'deprecatedVersion' => '1.35' ],
 		'EditPageBeforeEditToolbar' => [ 'deprecatedVersion' => '1.36' ],
-		'InternalParseBeforeSanitize' => [ 'deprecatedVersion' => '1.35' ],
-		'LinksUpdateConstructed' => [ 'deprecatedVersion' => '1.38' ],
-		'LinksUpdateAfterInsert' => [ 'deprecatedVersion' => '1.38' ],
 		'LocalFile::getHistory' => [ 'deprecatedVersion' => '1.37' ],
 		'MagicWordwgVariableIDs' => [ 'deprecatedVersion' => '1.35', 'silent' => true ],
 		'PageContentSave' => [ 'deprecatedVersion' => '1.35', 'silent' => true ],
-		'ParserSectionCreate' => [ 'deprecatedVersion' => '1.35' ],
 		'ParserTestTables' => [ 'deprecatedVersion' => '1.36', 'silent' => true ],
 		'PrefixSearchBackend' => [ 'deprecatedVersion' => '1.27', 'silent' => true ],
 		'ProtectionForm::buildForm' => [ 'deprecatedVersion' => '1.36', 'silent' => true ],
-		'ResourceLoaderTestModules' => [ 'deprecatedVersion' => '1.33' ],
 		'RollbackComplete' => [ 'deprecatedVersion' => '1.36', 'silent' => true ],
-		'SpecialMuteSubmit' => [ 'deprecatedVersion' => '1.35', 'silent' => true ],
-		'UserLoadFromDatabase' => [ 'deprecatedVersion' => '1.37' ],
-		'UserSetCookies' => [ 'deprecatedVersion' => '1.27' ],
 		'WikiPageDeletionUpdates' => [ 'deprecatedVersion' => '1.32', 'silent' => true ],
 		'userCan' => [ 'deprecatedVersion' => '1.37' ],
 		'ArticleDelete' => [ 'deprecatedVersion' => '1.37', 'silent' => true ],
@@ -61,6 +50,8 @@ class DeprecatedHooks {
 		'SkinTemplateNavigation' => [ 'deprecatedVersion' => '1.39' ],
 		'SkinTemplateNavigation::SpecialPage' => [ 'deprecatedVersion' => '1.39' ],
 		'PersonalUrls' => [ 'deprecatedVersion' => '1.39' ],
+		'SearchDataForIndex' => [ 'deprecatedVersion' => '1.40', 'silent' => true ],
+		'ArticleUndelete' => [ 'deprecatedVersion' => '1.40', 'silent' => true ],
 	];
 
 	/**

@@ -20,6 +20,7 @@
  */
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Title\Title;
 
 /**
  * An IContextSource implementation which will inherit context from another source
@@ -46,9 +47,9 @@ class DerivativeContext extends ContextSource implements MutableContext {
 	private $wikipage;
 
 	/**
-	 * @var string
+	 * @var string|null|false
 	 */
-	private $action;
+	private $action = false;
 
 	/**
 	 * @var OutputPage
@@ -108,17 +109,6 @@ class DerivativeContext extends ContextSource implements MutableContext {
 	}
 
 	/**
-	 * @deprecated since 1.27 use a StatsdDataFactory from MediaWikiServices (preferably injected).
-	 *  Hard deprecated since 1.39.
-	 *
-	 * @return IBufferingStatsdDataFactory
-	 */
-	public function getStats() {
-		wfDeprecated( __METHOD__, '1.27' );
-		return MediaWikiServices::getInstance()->getStatsdDataFactory();
-	}
-
-	/**
 	 * @return Timing
 	 */
 	public function getTiming() {
@@ -144,6 +134,7 @@ class DerivativeContext extends ContextSource implements MutableContext {
 	 */
 	public function setTitle( Title $title ) {
 		$this->title = $title;
+		$this->action = null;
 	}
 
 	/**
@@ -183,6 +174,7 @@ class DerivativeContext extends ContextSource implements MutableContext {
 			$this->setTitle( $pageTitle );
 		}
 		$this->wikipage = $wikiPage;
+		$this->action = null;
 	}
 
 	/**
@@ -217,7 +209,15 @@ class DerivativeContext extends ContextSource implements MutableContext {
 	 * @return string Action
 	 */
 	public function getActionName(): string {
-		return $this->action ?: $this->getContext()->getActionName();
+		if ( $this->action === false ) {
+			return $this->getContext()->getActionName();
+		}
+
+		$this->action ??= MediaWikiServices::getInstance()
+			->getActionFactory()
+			->getActionName( $this );
+
+		return $this->action;
 	}
 
 	/**

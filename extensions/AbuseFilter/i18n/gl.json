@@ -9,7 +9,8 @@
 			"Iváns",
 			"Maria zaos",
 			"Matma Rex",
-			"Toliño"
+			"Toliño",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Aplica heurísticas automáticas ás edicións",
@@ -261,7 +262,7 @@
 	"abusefilter-edit-tag-placeholder": "Engade etiquetas (unha por unha ou separadas por comas)",
 	"abusefilter-edit-tag-hidden-placeholder": "Engade etiquetas (separadas por comas)",
 	"abusefilter-edit-block-anon-durations": "Duración do bloqueo pra os usuarios anónimos:",
-	"abusefilter-edit-block-user-durations": "Duración do bloqueo pra os usuarios rexistados:",
+	"abusefilter-edit-block-user-durations": "Duración do bloqueo para os usuarios rexistrados:",
 	"abusefilter-block-anon": "Bloquear usuarios anónimos",
 	"abusefilter-block-user": "Bloquear usuarios rexistrados",
 	"abusefilter-block-talk": "páxina de conversa bloqueada",
@@ -488,7 +489,7 @@
 	"abusefilter-action-disallow": "Impedir",
 	"abusefilter-revert-title": "Reverter todos os cambios feitos polo filtro $1",
 	"abusefilter-revert-intro": "Este formulario permítelle reverter todos os cambios feitos polo filtro de abusos $1.\nPor favor, teña coidado con esta ferramenta.",
-	"abusefilter-revert-preview-item": "$1: $2  {{GENDER:$7|fixo}} un $3 en $4. Accións a ser revertidas: $5 ($6)",
+	"abusefilter-revert-preview-item": "$1: $2 {{GENDER:$7|fixo}} un $3 en $4. Accións a ser revertidas: $5 ($6)",
 	"abusefilter-revert-search-legend": "Seleccione as accións do filtro de abusos que quere reverter",
 	"abusefilter-revert-periodstart": "Comezo do período:",
 	"abusefilter-revert-periodend": "Fin do período:",
@@ -575,8 +576,12 @@
 	"log-description-abusefilterprivatedetails": "Este rexistro amosa unha lista das veces que o usuario consultou os detalles privados dun rexistro de abusos.",
 	"abusefilter-noreason": "Aviso: Para ver os detalles privados deste rexistro, debe fornecer un motivo.",
 	"abusefilter-log-ip-not-available": "Non dispoñíbel",
-	"abusefilter-tag-reserved": "O elemento <code>abusefilter-condition-limit</code> está reservado para uso interno polo Filtro de Abusos.",
-	"tag-abusefilter-condition-limit": "limite de condicións atinxido",
+	"abusefilter-tag-reserved": "O elemento <code>abusefilter-condition-limit</code> está reservado para uso interno do filtro de abusos.",
+	"tag-abusefilter-condition-limit": "límite de condicións atinxido",
 	"tag-abusefilter-condition-limit-description": "Edicións ou outros acontecementos que non puideron ser verificados por todos os [[Special:AbuseFilter|filtros de abuso]] activos ([[mw:Extension:AbuseFilter/Conditions|axuda]]).",
+	"notification-header-throttle-filter": "O filtro de abusos $2 que {{GENDER:$1|editou}} recentemente foi limitado.",
+	"notification-header-throttle-filter-actions": "O filtro de abusos $2 que {{GENDER:$1|editou}} recentemente tivo unha taxa alta de coincidencias e {{PLURAL:$4|a seguinte acción desactivouse|as seguintes accións desactiváronse}} automaticamente: $3.",
+	"notification-header-throttle-filter-no-actions": "O filtro de abusos $2 que {{GENDER:$1|editou}} recentemente tivo unha taxa alta de coincidencias, pero non se desactivou automaticamente ningunha acción.",
+	"notification-subject-throttle-filter": "Un filtro de abusos que {{GENDER:$1|editou}} foi limitado en {{SITENAME}}",
 	"notification-link-text-show-filter": "Amosar o filtro"
 }

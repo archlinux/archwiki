@@ -1,8 +1,6 @@
 <?php
 /** Arabic (العربية)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -335,6 +333,7 @@ $specialPageAliases = [
 	'ChangePassword'            => [ 'تغيير_كلمة_السر', 'ضبط_كلمة_السر' ],
 	'ComparePages'              => [ 'مقارنة_الصفحات' ],
 	'Confirmemail'              => [ 'تأكيد_البريد' ],
+	'Contribute'                => [ 'ساهم' ],
 	'Contributions'             => [ 'مساهمات' ],
 	'CreateAccount'             => [ 'إنشاء_حساب' ],
 	'Deadendpages'              => [ 'صفحات_نهاية_مسدودة' ],
@@ -383,6 +382,7 @@ $specialPageAliases = [
 	'Mute'                      => [ 'كتم' ],
 	'Mycontributions'           => [ 'مساهماتي' ],
 	'MyLanguage'                => [ 'لغتي' ],
+	'Mylog'                     => [ 'سجلي' ],
 	'Mypage'                    => [ 'صفحتي' ],
 	'Mytalk'                    => [ 'نقاشي' ],
 	'Myuploads'                 => [ 'مرفوعاتي', 'ملفاتي' ],
@@ -411,6 +411,7 @@ $specialPageAliases = [
 	'Recentchangeslinked'       => [ 'أحدث_التغييرات_الموصولة', 'تغييرات_مرتبطة' ],
 	'Redirect'                  => [ 'تحويل' ],
 	'RemoveCredentials'         => [ 'إزالة_الاعتمادات' ],
+	'Renameuser'                => [ 'إعادة_تسمية_مستخدم' ],
 	'ResetTokens'               => [ 'إعادة_ضبط_المفاتيح' ],
 	'Revisiondelete'            => [ 'حذف_مراجعة', 'حذف_نسخة' ],
 	'RunJobs'                   => [ 'تشغيل_الوظائف' ],

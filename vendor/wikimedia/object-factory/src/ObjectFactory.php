@@ -84,7 +84,7 @@ use UnexpectedValueException;
 class ObjectFactory {
 
 	/** @var ContainerInterface Service container */
-	protected $serviceContainer;
+	protected ContainerInterface $serviceContainer;
 
 	/**
 	 * @param ContainerInterface $serviceContainer Service container
@@ -102,7 +102,7 @@ class ObjectFactory {
 	 * @phan-template T
 	 * @phpcs:disable Generic.Files.LineLength
 	 * @phan-param class-string<T>|callable(mixed ...$args):T|array{class?:class-string<T>,factory?:callable(mixed ...$args):T,args?:array,services?:array<string|null>,optional_services?:array<string|null>,calls?:string[],closure_expansion?:bool,spec_is_arg?:bool} $spec
-	 * @phan-param array{allowClassName?:bool,allowCallable?:bool,specIsArg?:bool,extraArgs?:array,assertClass?:string} $options
+	 * @phan-param array{allowClassName?:bool,allowCallable?:bool,extraArgs?:array,assertClass?:string} $options
 	 * @phpcs:enable
 	 * @phan-return T|object
 	 *
@@ -133,9 +133,6 @@ class ObjectFactory {
 	 *    In this case, it will be treated as if it were `[ 'class' => $spec ]`.
 	 *  - 'allowCallable': (bool) If set and truthy, $spec may be a callable. In this
 	 *    case, it will be treated as if it were `[ 'factory' => $spec ]`.
-	 *  - 'specIsArg': (bool) If set and truthy, default $spec['spec_is_arg'] = true
-	 *    if it is unset. This is mainly intended for backwards compatibility with existing
-	 *    code that uses a near-clone of ObjectFactory with those semantics.
 	 *  - 'extraArgs': (array) Extra arguments to pass to the constructor/callable. These
 	 *    will come before services and normal args.
 	 *  - 'assertClass': (string) Throw an UnexpectedValueException if the spec
@@ -158,7 +155,7 @@ class ObjectFactory {
 	 * @phan-template T
 	 * @phpcs:disable Generic.Files.LineLength
 	 * @phan-param class-string<T>|callable(mixed ...$args):T|array{class?:class-string<T>,factory?:callable(mixed ...$args):T,args?:array,services?:array<string|null>,optional_services?:array<string|null>,calls?:string[],closure_expansion?:bool,spec_is_arg?:bool} $spec
-	 * @phan-param array{allowClassName?:bool,allowCallable?:bool,specIsArg?:bool,extraArgs?:array,assertClass?:string,serviceContainer?:ContainerInterface} $options
+	 * @phan-param array{allowClassName?:bool,allowCallable?:bool,extraArgs?:array,assertClass?:string,serviceContainer?:ContainerInterface} $options
 	 * @phpcs:enable
 	 * @phan-return T|object
 	 *
@@ -175,10 +172,6 @@ class ObjectFactory {
 	 */
 	public static function getObjectFromSpec( $spec, array $options = [] ) {
 		$spec = static::validateSpec( $spec, $options );
-
-		if ( !empty( $options['specIsArg'] ) ) {
-			$spec += [ 'spec_is_arg' => true ];
-		}
 
 		$expandArgs = !isset( $spec['closure_expansion'] ) || $spec['closure_expansion'];
 
@@ -280,7 +273,7 @@ class ObjectFactory {
 	 * @throws InvalidArgumentException when object specification does not
 	 *  contain 'class' or 'factory' keys
 	 */
-	protected static function validateSpec( $spec, array $options ) {
+	protected static function validateSpec( $spec, array $options ): array {
 		if ( is_callable( $spec ) ) {
 			if ( empty( $options['allowCallable'] ) ) {
 				throw new InvalidArgumentException(
@@ -309,16 +302,17 @@ class ObjectFactory {
 	 * Iterate a list and call any closures it contains.
 	 *
 	 * @param array $list List of things
+	 *
 	 * @return array List with any Closures replaced with their output
 	 */
-	protected static function expandClosures( $list ) {
+	protected static function expandClosures( array $list ): array {
 		return array_map( static function ( $value ) {
-			if ( is_object( $value ) && $value instanceof Closure ) {
+			if ( $value instanceof Closure ) {
 				// If $value is a Closure, call it.
 				return $value();
-			} else {
-				return $value;
 			}
+
+			return $value;
 		}, $list );
 	}
 

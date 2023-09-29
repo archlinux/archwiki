@@ -5,11 +5,12 @@
 			"Dalibor Bosits",
 			"MaGa",
 			"Roberta F.",
-			"SpeedyGonsales"
+			"SpeedyGonsales",
+			"Ponor"
 		]
 	},
 	"syntaxhighlight-desc": "Omogućava bojanje sintakse <code>&lt;syntaxhighlight&gt;</code> korištenjem [http://pygments.org/ Pygments-a]",
-	"syntaxhighlight-error-category": "Stranice s pogrješkama u isticanju sintakse",
+	"syntaxhighlight-error-category": "Stranice s pogreškama u isticanju sintakse",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kôd",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Jezik",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Prikaži brojeve redova",

@@ -114,7 +114,6 @@
 	"visualeditor-dialog-transclusion-no-template-description": "თანგის „$1“ დიო ხოლო ვაუღუ ეჭარუა, მარა შილებე დოგორათ მუდგაინი ინფორმაცია [[$2|თანგიშ ხასჷლას]].",
 	"visualeditor-dialog-transclusion-param-default": "დაჭყაფური: $1",
 	"visualeditor-dialog-transclusion-param-example-long": "სამანგა: $1",
-	"visualeditor-dialog-transclusion-placeholder": "თანგიშ გეძინა",
 	"visualeditor-dialog-transclusion-required-parameter": "უციო ვე",
 	"visualeditor-dialog-transclusion-required-parameter-description": "ვე უციო რე",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "უკახალე დორთინა",

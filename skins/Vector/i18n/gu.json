@@ -36,10 +36,17 @@
 	"vector-more-actions": "વધુ",
 	"vector-search-loader": "શોધ સૂચનો લાવો",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ધરાવતા પાનાઓ શોધો",
+	"vector-toc-label": "વિગતો",
 	"vector-toc-beginning": "શરૂઆત",
 	"vector-anon-user-menu-pages-learn": "વધુ જાણો",
 	"vector-main-menu-tooltip": "મુખ્ય મેનુ",
 	"vector-toc-menu-tooltip": "અનુક્રમણિકા",
+	"vector-main-menu-label": "મુખ્ય મેનુ",
+	"vector-page-tools-label": "સાધનો",
+	"vector-page-tools-general-label": "સામાન્ય",
+	"vector-page-tools-actions-label": "ક્રિયાઓ",
+	"vector-pin-element-label": "બાજુમાં ખસેડો",
+	"vector-unpin-element-label": "છુપાવો",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|ચર્ચા]]",
 	"tooltip-vector-anon-user-menu-title": "વધુ વિકલ્પો"
 }

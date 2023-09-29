@@ -1,8 +1,6 @@
 <?php
 /** Divehi (ދިވެހިބަސް)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -62,6 +60,7 @@ $specialPageAliases = [
 	'Protectedtitles'           => [ 'ދިފާޢުކުރެވިފައިވާ_ނަންތައް' ],
 	'Randompage'                => [ 'ކޮންމެވެސް_ސަފްޙާއެއް' ],
 	'Recentchanges'             => [ 'އެންމެ_ފަހުގެ_ބަދަލުތައް' ],
+	'Renameuser'                => [ 'މެމްބަރުގެ_ނަން_ބަދަލު_ކުރައްވާ' ],
 	'Search'                    => [ 'ހޯއްދަވާ' ],
 	'Shortpages'                => [ 'ކުރު_ސަފްޙާތައް' ],
 	'Specialpages'              => [ 'ޙާއްސަ_ސަފްޙާތައް' ],

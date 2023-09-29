@@ -25,10 +25,15 @@ use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Specials\Contribute\ContributeFactory;
+use MediaWiki\Specials\SpecialUserRights;
+use MediaWiki\Title\Title;
+use MediaWiki\User\ActorMigration;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
@@ -188,6 +193,7 @@ class SpecialContributions extends IncludableSpecialPage {
 		), static function ( $el ) {
 			return $el !== '';
 		} );
+		$this->opts['tagInvert'] = $request->getBool( 'tagInvert' );
 
 		// Allows reverts to have the bot flag in recent changes. It is just here to
 		// be passed in the form at the top of the page
@@ -195,15 +201,10 @@ class SpecialContributions extends IncludableSpecialPage {
 			$this->opts['bot'] = '1';
 		}
 
-		$skip = $request->getText( 'offset' ) || $request->getText( 'dir' ) == 'prev';
-		# Offset overrides year/month selection
-		if ( !$skip ) {
-			$this->opts['year'] = $request->getIntOrNull( 'year' );
-			$this->opts['month'] = $request->getIntOrNull( 'month' );
-
-			$this->opts['start'] = $request->getVal( 'start' );
-			$this->opts['end'] = $request->getVal( 'end' );
-		}
+		$this->opts['year'] = $request->getIntOrNull( 'year' );
+		$this->opts['month'] = $request->getIntOrNull( 'month' );
+		$this->opts['start'] = $request->getVal( 'start' );
+		$this->opts['end'] = $request->getVal( 'end' );
 
 		$id = 0;
 		if ( ExternalUserNames::isExternal( $target ) ) {
@@ -420,7 +421,7 @@ class SpecialContributions extends IncludableSpecialPage {
 			if ( !$this->userNameUtils->isIP( $userObj->getName() )
 				&& !IPUtils::isValidRange( $userObj->getName() )
 			) {
-				$this->getOutput()->addHtml( Html::warningBox(
+				$this->getOutput()->addHTML( Html::warningBox(
 					$this->getOutput()->msg( 'contributions-userdoesnotexist',
 						wfEscapeWikiText( $userObj->getName() ) )->parse(),
 					'mw-userpage-userdoesnotexist'
@@ -514,8 +515,9 @@ class SpecialContributions extends IncludableSpecialPage {
 			}
 		}
 
+		$unused = null; // T330138
 		return Html::rawElement( 'div', [ 'class' => 'mw-contributions-user-tools' ],
-			$this->msg( 'contributions-subtitle' )->rawParams( $user )->params( $userObj->getName() )
+			$this->msg( 'contributions-subtitle' )->rawParams( $user, $unused )->params( $userObj->getName() )
 			. ' ' . $links
 		);
 	}
@@ -537,8 +539,8 @@ class SpecialContributions extends IncludableSpecialPage {
 		HookRunner $hookRunner = null
 	) {
 		// Fallback to global state, if not provided
-		$permissionManager = $permissionManager ?? MediaWikiServices::getInstance()->getPermissionManager();
-		$hookRunner = $hookRunner ?? Hooks::runner();
+		$permissionManager ??= MediaWikiServices::getInstance()->getPermissionManager();
+		$hookRunner ??= Hooks::runner();
 
 		$id = $target->getId();
 		$username = $target->getName();
@@ -630,13 +632,23 @@ class SpecialContributions extends IncludableSpecialPage {
 		}
 
 		# Add a link to change user rights for privileged users
-		$userrightsPage = new UserrightsPage();
+		$userrightsPage = new SpecialUserRights();
 		$userrightsPage->setContext( $sp->getContext() );
 		if ( $userrightsPage->userCanChangeRights( $target ) ) {
 			$tools['userrights'] = $linkRenderer->makeKnownLink(
 				SpecialPage::getTitleFor( 'Userrights', $username ),
 				$sp->msg( 'sp-contributions-userrights', $username )->text(),
 				[ 'class' => 'mw-contributions-link-user-rights' ]
+			);
+		}
+
+		# Add a link to rename the user
+		if ( $id && $permissionManager->userHasRight( $sp->getUser(), 'renameuser' ) ) {
+			$tools['renameuser'] = $sp->getLinkRenderer()->makeKnownLink(
+				SpecialPage::getTitleFor( 'Renameuser' ),
+				$sp->msg( 'renameuser-linkoncontribs', $userpage->getText() )->text(),
+				[ 'title' => $sp->msg( 'renameuser-linkoncontribs-text', $userpage->getText() )->parse() ],
+				[ 'oldusername' => $userpage->getText() ]
 			);
 		}
 
@@ -648,7 +660,7 @@ class SpecialContributions extends IncludableSpecialPage {
 	/**
 	 * Generates the namespace selector form with hidden attributes.
 	 * @param array $pagerOptions with keys contribs, user, deletedOnly, limit, target, topOnly,
-	 *  newOnly, hideMinor, namespace, associated, nsInvert, tagfilter, year, start, end
+	 *  newOnly, hideMinor, namespace, associated, nsInvert, tagfilter, tagInvert, year, start, end
 	 * @return string HTML fragment
 	 */
 	protected function getForm( array $pagerOptions ) {
@@ -656,7 +668,6 @@ class SpecialContributions extends IncludableSpecialPage {
 		$this->getOutput()->addModules( [
 			'mediawiki.special.contributions',
 		] );
-		$this->getOutput()->addModuleStyles( 'mediawiki.widgets.DateInputWidget.styles' );
 		$this->getOutput()->enableOOUI();
 		$fields = [];
 
@@ -675,6 +686,7 @@ class SpecialContributions extends IncludableSpecialPage {
 			'hideMinor',
 			'associated',
 			'tagfilter',
+			'tagInvert',
 			'title',
 		];
 
@@ -735,6 +747,14 @@ class SpecialContributions extends IncludableSpecialPage {
 			'label-message' => [ 'tag-filter', 'parse' ],
 			'name' => 'tagfilter',
 			'size' => 20,
+			'section' => 'contribs-top',
+		];
+		$fields['tagInvert'] = [
+			'type' => 'check',
+			'id' => 'tagInvert',
+			'label' => $this->msg( 'invert' ),
+			'name' => 'tagInvert',
+			'hide-if' => [ '===', 'tagfilter', '' ],
 			'section' => 'contribs-top',
 		];
 
@@ -828,11 +848,6 @@ class SpecialContributions extends IncludableSpecialPage {
 			->setSubmitTextMsg( 'sp-contributions-submit' )
 			->setWrapperLegendMsg( 'sp-contributions-search' );
 
-		$explain = $this->msg( 'sp-contributions-explain' );
-		if ( !$explain->isBlank() ) {
-			$htmlForm->addFooterText( "<p id='mw-sp-contributions-explain'>{$explain->parse()}</p>" );
-		}
-
 		$htmlForm->prepareForm();
 
 		// Submission is handled elsewhere, but do this to check for and display errors
@@ -884,6 +899,7 @@ class SpecialContributions extends IncludableSpecialPage {
 				'hideMinor' => $this->opts['hideMinor'],
 				'nsInvert' => $this->opts['nsInvert'],
 				'associated' => $this->opts['associated'],
+				'tagInvert' => $this->opts['tagInvert'],
 			];
 
 			$this->pager = new ContribsPager(
@@ -906,5 +922,31 @@ class SpecialContributions extends IncludableSpecialPage {
 
 	protected function getGroupName() {
 		return 'users';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getShortDescription( string $path = '' ): string {
+		return $this->msg( 'special-tab-contributions-short' )->text();
+	}
+
+	/**
+	 * @inheritDoc
+	 * @throws MWException
+	 */
+	public function getAssociatedNavigationLinks(): array {
+		if (
+			ContributeFactory::isEnabledOnCurrentSkin(
+				$this->getSkin(),
+				$this->getConfig()->get( 'SpecialContributeSkinsEnabled' )
+			)
+		) {
+			return ContributeFactory::getAssociatedNavigationLinks(
+				$this->getUser(),
+				$this->getSkin()->getRelevantUser()
+			);
+		}
+		return [];
 	}
 }

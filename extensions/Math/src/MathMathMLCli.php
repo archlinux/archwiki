@@ -20,7 +20,7 @@ class MathMathMLCli extends MathMathML {
 	 */
 	public static function batchEvaluate( array $renderers ) {
 		$req = [];
-		foreach ( $renderers as $key => $renderer ) {
+		foreach ( $renderers as $renderer ) {
 			'@phan-var MathMathMLCli $renderer';
 			// checking if the rendering is in the database is no security issue since only the md5
 			// hash of the user input string will be sent to the database
@@ -33,7 +33,7 @@ class MathMathMLCli extends MathMathML {
 		}
 		$exitCode = 1;
 		$res = self::evaluateWithCli( $req, $exitCode );
-		foreach ( $renderers as $key => $renderer ) {
+		foreach ( $renderers as $renderer ) {
 			'@phan-var MathMathMLCli $renderer';
 			if ( !$renderer->isInDatabase() ) {
 				$renderer->initializeFromCliResponse( $res );
@@ -116,7 +116,7 @@ class MathMathMLCli extends MathMathML {
 
 	/**
 	 * @param mixed $req request
-	 * @param int|null &$exitCode exit code
+	 * @param int|null &$exitCode
 	 * @return mixed
 	 * @throws MWException
 	 */
@@ -153,7 +153,7 @@ class MathMathMLCli extends MathMathML {
 		return true;
 	}
 
-	protected function doCheck() {
+	protected function doCheck(): bool {
 		// avoid that restbase is called if check is set to always
 		return $this->texSecure;
 	}

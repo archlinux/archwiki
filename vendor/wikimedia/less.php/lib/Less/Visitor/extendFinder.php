@@ -1,20 +1,16 @@
 <?php
-
 /**
- * Extend Finder Visitor
- *
- * @package Less
- * @subpackage visitor
+ * @private
  */
 class Less_Visitor_extendFinder extends Less_Visitor {
 
-	public $contexts = array();
+	public $contexts = [];
 	public $allExtendsStack;
 	public $foundExtends;
 
 	public function __construct() {
-		$this->contexts = array();
-		$this->allExtendsStack = array( array() );
+		$this->contexts = [];
+		$this->allExtendsStack = [ [] ];
 		parent::__construct();
 	}
 
@@ -40,7 +36,7 @@ class Less_Visitor_extendFinder extends Less_Visitor {
 			return;
 		}
 
-		$allSelectorsExtendList = array();
+		$allSelectorsExtendList = [];
 
 		// get &:extend(.a); rules which apply to all selectors in this ruleset
 		if ( $rulesetNode->rules ) {
@@ -69,9 +65,9 @@ class Less_Visitor_extendFinder extends Less_Visitor {
 		$this->contexts[] = $rulesetNode->selectors;
 	}
 
-	public function allExtendsStackPush( $rulesetNode, $selectorPath, $extend, &$j ) {
+	public function allExtendsStackPush( $rulesetNode, $selectorPath, Less_Tree_Extend $extend, &$j ) {
 		$this->foundExtends = true;
-		$extend = clone $extend;
+		$extend = $extend->clone();
 		$extend->findSelfSelectors( $selectorPath );
 		$extend->ruleset = $rulesetNode;
 		if ( $j === 0 ) {
@@ -90,7 +86,7 @@ class Less_Visitor_extendFinder extends Less_Visitor {
 	}
 
 	public function visitMedia( $mediaNode ) {
-		$mediaNode->allExtends = array();
+		$mediaNode->allExtends = [];
 		$this->allExtendsStack[] =& $mediaNode->allExtends;
 	}
 
@@ -99,7 +95,7 @@ class Less_Visitor_extendFinder extends Less_Visitor {
 	}
 
 	public function visitDirective( $directiveNode ) {
-		$directiveNode->allExtends = array();
+		$directiveNode->allExtends = [];
 		$this->allExtendsStack[] =& $directiveNode->allExtends;
 	}
 

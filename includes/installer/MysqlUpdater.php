@@ -32,97 +32,12 @@ use Wikimedia\Rdbms\MySQLField;
 class MysqlUpdater extends DatabaseUpdater {
 	protected function getCoreUpdateList() {
 		return [
-			// 1.35 but it must come first
-			[ 'addField', 'revision', 'rev_actor', 'patch-revision-rev_actor.sql' ],
-
-			// 1.31
-			[ 'addField', 'image', 'img_description_id', 'patch-image-img_description_id.sql' ],
-			[ 'migrateComments' ],
-
-			[ 'addTable', 'slots', 'patch-slots.sql' ],
-			[ 'addField', 'slots', 'slot_origin', 'patch-slot-origin.sql' ],
-			[ 'addTable', 'content', 'patch-content.sql' ],
-			[ 'addTable', 'slot_roles', 'patch-slot_roles.sql' ],
-			[ 'addTable', 'content_models', 'patch-content_models.sql' ],
-			[ 'migrateArchiveText' ],
-			[ 'addTable', 'actor', 'patch-actor-table.sql' ],
-			[ 'addField', 'archive', 'ar_actor', 'patch-archive-ar_actor.sql' ],
-			[ 'addField', 'ipblocks', 'ipb_by_actor', 'patch-ipblocks-ipb_by_actor.sql' ],
-			[ 'addField', 'image', 'img_actor', 'patch-image-img_actor.sql' ],
-			[ 'addField', 'oldimage', 'oi_actor', 'patch-oldimage-oi_actor.sql' ],
-			[ 'addField', 'filearchive', 'fa_actor', 'patch-filearchive-fa_actor.sql' ],
-			[ 'addField', 'recentchanges', 'rc_actor', 'patch-recentchanges-rc_actor.sql' ],
-			[ 'addField', 'logging', 'log_actor', 'patch-logging-log_actor.sql' ],
-			[ 'migrateActors' ],
-
-			// Adds a default value to the rev_text_id field to allow Multi Content
-			// Revisions migration to happen where rows will have to be added to the
-			// revision table with no rev_text_id.
-			[ 'setDefault', 'revision', 'rev_text_id', 0 ],
-			[ 'modifyTable', 'site_stats', 'patch-site_stats-modify.sql' ],
-			[ 'populateArchiveRevId' ],
-			[ 'addIndex', 'recentchanges', 'rc_namespace_title_timestamp',
-				'patch-recentchanges-nttindex.sql' ],
-
-			// 1.32
-			[ 'addTable', 'change_tag_def', 'patch-change_tag_def.sql' ],
-			[ 'populateExternallinksIndex60' ],
-			[ 'dropDefault', 'externallinks', 'el_index_60' ],
-			[ 'runMaintenance', DeduplicateArchiveRevId::class, 'maintenance/deduplicateArchiveRevId.php' ],
-			[ 'addField', 'change_tag', 'ct_tag_id', 'patch-change_tag-tag_id.sql' ],
-			[ 'addIndex', 'archive', 'ar_revid_uniq', 'patch-archive-ar_rev_id-unique.sql' ],
-			[ 'populateContentTables' ],
-			[ 'addIndex', 'logging', 'log_type_action', 'patch-logging-log-type-action-index.sql' ],
-			[ 'dropIndex', 'logging', 'type_action', 'patch-logging-drop-type-action-index.sql' ],
-			[ 'renameIndex', 'interwiki', 'iw_prefix', 'PRIMARY', false, 'patch-interwiki-fix-pk.sql' ],
-			[ 'renameIndex', 'page_props', 'pp_page_propname', 'PRIMARY', false,
-				'patch-page_props-fix-pk.sql' ],
-			[ 'renameIndex', 'protected_titles', 'pt_namespace_title', 'PRIMARY', false,
-				'patch-protected_titles-fix-pk.sql' ],
-			[ 'renameIndex', 'site_identifiers', 'site_ids_type', 'PRIMARY', false,
-				'patch-site_identifiers-fix-pk.sql' ],
-			[ 'addIndex', 'recentchanges', 'rc_this_oldid', 'patch-recentchanges-rc_this_oldid-index.sql' ],
-			[ 'dropTable', 'transcache' ],
-			[ 'runMaintenance', PopulateChangeTagDef::class, 'maintenance/populateChangeTagDef.php' ],
-			[ 'dropIndex', 'change_tag', 'change_tag_rc_tag', 'patch-change_tag-change_tag_rc_tag_id.sql' ],
-			[ 'addField', 'ipblocks', 'ipb_sitewide', 'patch-ipb_sitewide.sql' ],
-			[ 'addTable', 'ipblocks_restrictions', 'patch-ipblocks_restrictions-table.sql' ],
-			[ 'migrateImageCommentTemp' ],
-
-			// 1.33
-			[ 'dropField', 'change_tag', 'ct_tag', 'patch-drop-ct_tag.sql' ],
-			[ 'dropTable', 'valid_tag' ],
-			[ 'dropTable', 'tag_summary' ],
-			[ 'dropField', 'archive', 'ar_comment', 'patch-archive-drop-ar_comment.sql' ],
-			[ 'dropField', 'ipblocks', 'ipb_reason', 'patch-ipblocks-drop-ipb_reason.sql' ],
-			[ 'dropField', 'image', 'img_description', 'patch-image-drop-img_description.sql' ],
-			[ 'dropField', 'oldimage', 'oi_description', 'patch-oldimage-drop-oi_description.sql' ],
-			[ 'dropField', 'filearchive', 'fa_description', 'patch-filearchive-drop-fa_description.sql' ],
-			[ 'dropField', 'recentchanges', 'rc_comment', 'patch-recentchanges-drop-rc_comment.sql' ],
-			[ 'dropField', 'logging', 'log_comment', 'patch-logging-drop-log_comment.sql' ],
-			[ 'dropField', 'protected_titles', 'pt_reason', 'patch-protected_titles-drop-pt_reason.sql' ],
-			[ 'modifyTable', 'job', 'patch-job-params-mediumblob.sql' ],
-
-			// 1.34
-			[ 'dropIndex', 'archive', 'ar_usertext_timestamp',
-				'patch-drop-archive-ar_usertext_timestamp.sql' ],
-			[ 'dropIndex', 'archive', 'usertext_timestamp', 'patch-drop-archive-usertext_timestamp.sql' ],
-			[ 'dropField', 'archive', 'ar_user', 'patch-drop-archive-user-fields.sql' ],
-			[ 'dropField', 'ipblocks', 'ip_by', 'patch-drop-ipblocks-user-fields.sql' ],
-			[ 'dropIndex', 'image', 'img_user_timestamp', 'patch-drop-image-img_user_timestamp.sql' ],
-			[ 'dropField', 'image', 'img_user', 'patch-drop-image-user-fields.sql' ],
-			[ 'dropField', 'oldimage', 'oi_user', 'patch-drop-oldimage-user-fields.sql' ],
-			[ 'dropField', 'filearchive', 'fa_user', 'patch-drop-filearchive-user-fields.sql' ],
-			[ 'dropField', 'recentchanges', 'rc_user', 'patch-drop-recentchanges-user-fields.sql' ],
-			[ 'dropField', 'logging', 'log_user', 'patch-drop-logging-user-fields.sql' ],
-			[ 'addIndex', 'user_newtalk', 'un_user_ip', 'patch-rename-mysql-user_newtalk-indexes.sql' ],
-
 			// 1.35
+			[ 'addField', 'revision', 'rev_actor', 'patch-revision-actor-comment-MCR.sql' ],
 			[ 'addTable', 'watchlist_expiry', 'patch-watchlist_expiry.sql' ],
 			[ 'modifyField', 'page', 'page_restrictions', 'patch-page_restrictions-null.sql' ],
 			[ 'renameIndex', 'ipblocks', 'ipb_address', 'ipb_address_unique', false,
 				'patch-ipblocks-rename-ipb_address.sql' ],
-			[ 'dropField', 'revision', 'rev_text_id', 'patch-revision-actor-comment-MCR.sql' ],
 			[ 'dropField', 'archive', 'ar_text_id', 'patch-archive-MCR.sql' ],
 			[ 'doLanguageLinksLengthSync' ],
 			[ 'doFixIpbAddressUniqueIndex' ],
@@ -224,6 +139,9 @@ class MysqlUpdater extends DatabaseUpdater {
 			[ 'migrateTemplatelinks' ],
 			[ 'modifyField', 'templatelinks', 'tl_namespace', 'patch-templatelinks-tl_title-nullable.sql' ],
 			[ 'dropField', 'templatelinks', 'tl_title', 'patch-templatelinks-drop-tl_title.sql' ],
+
+			// 1.40
+			[ 'addField', 'externallinks', 'el_to_path', 'patch-externallinks-el_to_path.sql' ],
 		];
 	}
 

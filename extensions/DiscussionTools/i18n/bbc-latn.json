@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bennylin",
+			"27christian11"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Alusi",
+	"discussiontools-replywidget-advanced": "Timbul",
+	"discussiontools-replywidget-cancel": "Sundati",
+	"discussiontools-replywidget-mode-source": "Mual na",
+	"discussiontools-replywidget-mode-visual": "Visual",
+	"discussiontools-replywidget-preview": "Andorang pataridahon",
+	"discussiontools-replywidget-summary": "Panimpulan",
+	"discussiontools-replywidget-watchthis": "Tambahon alaman on tu [[Special:Watchlist|siparrohahon]] muna",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|halak}} dibagasan sirarion",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|comment|pandapot}}",
+	"discussiontools-topicheader-latestcomment": "Pandapot na imbaru: $1",
+	"discussiontools-topicsubscription-button-subscribe": "tobo",
+	"discussiontools-topicsubscription-button-subscribe-label": "Tobo",
+	"discussiontools-topicsubscription-button-unsubscribe": "marsadi tobo",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Marsadi tobo"
+}

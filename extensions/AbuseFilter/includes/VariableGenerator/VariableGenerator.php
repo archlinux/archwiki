@@ -174,9 +174,11 @@ class VariableGenerator {
 	/**
 	 * @param WikiPage $page
 	 * @param UserIdentity $userIdentity The current user
+	 * @param bool $forFilter Whether the variables should be computed for an ongoing action
+	 *   being filtered
 	 * @return $this For chaining
 	 */
-	public function addEditVars( WikiPage $page, UserIdentity $userIdentity ): self {
+	public function addEditVars( WikiPage $page, UserIdentity $userIdentity, bool $forFilter = true ): self {
 		$this->vars->setLazyLoadVar( 'edit_diff', 'diff',
 			[ 'oldtext-var' => 'old_wikitext', 'newtext-var' => 'new_wikitext' ] );
 		$this->vars->setLazyLoadVar( 'edit_diff_pst', 'diff',
@@ -206,12 +208,14 @@ class VariableGenerator {
 			[
 				'text-var' => 'new_wikitext',
 				'article' => $page,
+				'forFilter' => $forFilter,
 				'contextUserIdentity' => $userIdentity
 			] );
 		$this->vars->setLazyLoadVar( 'old_links', 'links-from-wikitext-or-database',
 			[
 				'article' => $page,
 				'text-var' => 'old_wikitext',
+				'forFilter' => $forFilter,
 				'contextUserIdentity' => $userIdentity
 			] );
 		$this->vars->setLazyLoadVar( 'new_pst', 'parse-wikitext',

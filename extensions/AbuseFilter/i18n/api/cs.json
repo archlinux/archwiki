@@ -3,10 +3,11 @@
 		"authors": [
 			"Cvanca",
 			"Dvorapa",
+			"Jaroslav Cerny",
 			"Matěj Suchánek",
 			"Mormegil",
 			"Slepi",
-			"Jaroslav Cerny"
+			"Martin Urbanec"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "Zkontrolovat, zda filtr zneužití odpovídá sadě proměnných, editaci nebo změně zaznamenané ve filtru.\n\nJe vyžadována právě jedna z následujících možností: vars, rcid nebo logid.",
@@ -51,9 +52,12 @@
 	"apihelp-query+abuselog-param-wiki": "Wiki, na nichž došlo k zásahům filtrů.",
 	"apihelp-query+abuselog-example-1": "Zobrazit poslední záznamy protokolu",
 	"apihelp-query+abuselog-example-2": "Zobrazit poslední záznamy protokolu pro stránku [[API]]",
+	"apihelp-abuselogprivatedetails-summary": "Zobrazit tajné detaily záznamu v protokolu zneužití",
+	"apihelp-abuselogprivatedetails-param-logid": "ID záznamu v protokolech zneužití ke kontrole",
 	"apihelp-abuselogprivatedetails-param-reason": "Platný důvod k provedení kontroly.",
 	"apierror-abusefilter-canttest": "Nemáte oprávnění testovat filtry zneužití.",
 	"apierror-abusefilter-cantcheck": "Nemáte oprávnění kontrolovat syntaxi filtrů zneužití.",
+	"apierror-abusefilter-canteval": "Nemáte oprávnění vyhodnotit výrazy filtrů zneužití.",
 	"apierror-abusefilter-nosuchlogid": "Žádný záznam filtrů zneužití nemá id $1.",
 	"apierror-abusefilter-badsyntax": "Filtr má neplatnou syntaxi."
 }

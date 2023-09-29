@@ -37,6 +37,12 @@ class BigTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( '{\\big a}', $big->render(), 'Should create a basic function' );
 	}
 
+	public function testGetters() {
+		$big = new Big( '\\big', 'a' );
+		$this->assertNotEmpty( $big->getArg() );
+		$this->assertNotEmpty( $big->getFname() );
+	}
+
 	public function testExtractIdentifiersBig() {
 		$big = new Big( '\\big', 'a' );
 		$this->assertEquals( [], $big->extractIdentifiers(), 'Should extract identifiers' );
@@ -45,5 +51,10 @@ class BigTest extends MediaWikiUnitTestCase {
 	public function testCurliesBig() {
 		$big = new Big( '\\big', 'a' );
 		$this->assertEquals( '{\\big a}', $big->inCurlies(), 'Should create exactly one set of curlies' );
+	}
+
+	public function testRenderMML() {
+		$big = new Big( '\\big', 'a' );
+		$this->assertStringContainsString( '</mrow>', $big->renderMML(), 'Should render to MathML' );
 	}
 }

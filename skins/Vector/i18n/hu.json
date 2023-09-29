@@ -44,8 +44,7 @@
 	"vector-more-actions": "Több",
 	"vector-search-loader": "Keresési javaslatok betöltése…",
 	"vector-searchsuggest-containing": "Olyan oldalak keresése, amelyek tartalmazzák a következőt: <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-toc-heading": "Tartalomjegyzék",
-	"vector-toc-toggle-position-title": "elrejtés",
+	"vector-toc-label": "Tartalomjegyzék",
 	"vector-toc-beginning": "Bevezető",
 	"vector-toc-toggle-button-label": "A(z) $1 alszakasz kinyitása/becsukása",
 	"vector-anon-user-menu-pages": "Lapok kijelentkezett szerkesztőknek",
@@ -54,7 +53,16 @@
 	"vector-main-menu-tooltip": "Főmenü",
 	"vector-toc-menu-tooltip": "Tartalomjegyzék",
 	"vector-toc-collapsible-button-label": "Tartalomjegyzék kinyitása/becsukása",
-	"vector-article-tools-nav-label": "Eszközök",
 	"vector-site-nav-label": "Wiki",
-	"tooltip-vector-anon-user-menu-title": "További lehetőségek"
+	"vector-main-menu-label": "Főmenü",
+	"vector-limited-width-toggle": "Korlátozott tartalomszélesség ki/be",
+	"vector-page-tools-label": "Eszközök",
+	"vector-page-tools-general-label": "Általános",
+	"vector-page-tools-actions-label": "Műveletek",
+	"vector-pin-element-label": "áthelyezés az oldalsávba",
+	"vector-unpin-element-label": "elrejtés",
+	"tooltip-vector-anon-user-menu-title": "További lehetőségek",
+	"vector-prefs-limited-width": "Korlátozott szélességű mód bekapcsolása",
+	"vector-prefs-limited-width-help": "A tartalom szélességének korlátozása a kényelmesebb olvasás érdekében.",
+	"empty-language-selector-body": "Az oldal más nyelven nem elérhető."
 }

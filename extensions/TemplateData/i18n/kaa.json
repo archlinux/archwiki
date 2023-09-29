@@ -5,6 +5,7 @@
 			"Nurlan"
 		]
 	},
+	"templatedata-desc": "Úlgi parametrleri ushın maǵlıwmatlardı saqlawdı ámelge asıradı (JSON járdeminde)",
 	"templatedata-doc-desc-empty": "Sıpatlaması joq.",
 	"templatedata-doc-param-default": "Standart",
 	"templatedata-doc-param-example": "Mısalı",
@@ -28,6 +29,8 @@
 	"templatedata-doc-param-type-wiki-template-name": "Úlgi",
 	"templatedata-doc-param-type-wiki-user-name": "Paydalanıwshı",
 	"templatedata-doc-params": "Úlgi parametrleri",
+	"templatedata-editbutton": "Úlgi maǵlıwmatların redaktorlaw",
+	"templatedata-helplink": "Úlgi maǵlıwmatları haqqında informaciya",
 	"templatedata-modal-button-add-language": "Til qosıw",
 	"templatedata-modal-button-addparam": "Parametr qosıw",
 	"templatedata-modal-button-back": "Artqa",

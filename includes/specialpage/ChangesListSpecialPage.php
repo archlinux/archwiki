@@ -1,7 +1,5 @@
 <?php
 /**
- * Special page which uses a ChangesList to show query results.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,10 +16,10 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup SpecialPage
  */
 
-use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Html\FormOptions;
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\ResourceLoader as RL;
@@ -34,7 +32,8 @@ use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Special page which uses a ChangesList to show query results.
- * @todo Way too many public functions, most of them should be protected
+ *
+ * @todo Most of the functions here should be protected instead of public.
  *
  * @ingroup SpecialPage
  */
@@ -442,6 +441,28 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 							return $rc->getAttribute( 'rc_source' ) === RecentChange::SRC_LOG;
 						}
 					],
+					[
+						'name' => 'hidenewuserlog',
+						'label' => 'rcfilters-filter-newuserlogactions-label',
+						'description' => 'rcfilters-filter-newuserlogactions-description',
+						'default' => false,
+						'priority' => -6,
+						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
+							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+						) {
+							$conds[] = $dbr->makeList(
+								[
+									'rc_log_type != ' . $dbr->addQuotes( 'newusers' ),
+									'rc_log_type' => null
+								],
+								IDatabase::LIST_OR
+							);
+						},
+						'cssClassSuffix' => 'src-mw-newuserlog',
+						'isRowApplicableCallable' => static function ( IContextSource $ctx, RecentChange $rc ) {
+							return $rc->getAttribute( 'rc_log_type' ) === "newusers";
+						},
+					],
 				],
 			],
 
@@ -601,7 +622,10 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	public function execute( $subpage ) {
 		$this->rcSubpage = $subpage;
 
-		$this->considerActionsForDefaultSavedQuery( $subpage );
+		if ( $this->considerActionsForDefaultSavedQuery( $subpage ) ) {
+			// Don't bother rendering the page if we'll be performing a redirect (T330100).
+			return;
+		}
 
 		// Enable OOUI and module for the clock icon.
 		if ( $this->getConfig()->get( MainConfigNames::WatchlistExpiry ) ) {
@@ -669,14 +693,6 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			$this->outputTimeout();
 		}
 
-		if ( $this->getConfig()->get( MainConfigNames::EnableWANCacheReaper ) ) {
-			// Clean up any bad page entries for titles showing up in RC
-			DeferredUpdates::addUpdate( new WANCacheReapUpdate(
-				$this->getDB(),
-				LoggerFactory::getInstance( 'objectcache' )
-			) );
-		}
-
 		$this->includeRcFiltersApp();
 	}
 
@@ -686,10 +702,11 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 * redirect properly with all necessary query parameters.
 	 *
 	 * @param string $subpage
+	 * @return bool Whether a redirect will be performed.
 	 */
 	protected function considerActionsForDefaultSavedQuery( $subpage ) {
 		if ( !$this->isStructuredFilterUiEnabled() || $this->including() ) {
-			return;
+			return false;
 		}
 
 		$knownParams = $this->getRequest()->getValues(
@@ -735,6 +752,10 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 					$query = array_merge( $this->getRequest()->getValues(), $query );
 					unset( $query[ 'title' ] );
 					$this->getOutput()->redirect( $this->getPageTitle( $subpage )->getCanonicalURL( $query ) );
+
+					// Signal that we only need to redirect to the full URL
+					// and can skip rendering the actual page (T330100).
+					return true;
 				} else {
 					// There's a default, but the version is not 2, and the server can't
 					// actually recognize the query itself. This happens if it is before
@@ -751,10 +772,12 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 				}
 			}
 		}
+
+		return false;
 	}
 
 	/**
-	 * @see docs/Configuration.md for information on the RCLinkDays and RCFilterByAge settings.
+	 * @see \MediaWiki\MainConfigSchema::RCLinkDays and \MediaWiki\MainConfigSchema::RCFilterByAge.
 	 * @return int[]
 	 */
 	protected function getLinkDays() {
@@ -952,6 +975,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 
 		$changeTypeGroup = $this->getFilterGroup( 'changeType' );
 
+		$categoryFilter = null;
 		if ( $this->getConfig()->get( MainConfigNames::RCWatchCategoryMembership ) ) {
 			$transformedHideCategorizationDef = $this->transformFilterDefinition(
 				$this->hideCategorizationFilterDefinition
@@ -959,7 +983,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 
 			$transformedHideCategorizationDef['group'] = $changeTypeGroup;
 
-			$hideCategorization = new ChangesListBooleanFilter(
+			$categoryFilter = new ChangesListBooleanFilter(
 				$transformedHideCategorizationDef
 			);
 		}
@@ -974,14 +998,13 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		$registered->setAsSupersetOf( $userExperienceLevel->getFilter( 'learner' ) );
 		$registered->setAsSupersetOf( $userExperienceLevel->getFilter( 'experienced' ) );
 
-		$categoryFilter = $changeTypeGroup->getFilter( 'hidecategorization' );
 		$logactionsFilter = $changeTypeGroup->getFilter( 'hidelog' );
+		$lognewuserFilter = $changeTypeGroup->getFilter( 'hidenewuserlog' );
 		$pagecreationFilter = $changeTypeGroup->getFilter( 'hidenewpages' );
 
 		$significanceTypeGroup = $this->getFilterGroup( 'significance' );
 		$hideMinorFilter = $significanceTypeGroup->getFilter( 'hideminor' );
 
-		// categoryFilter is conditional; see registerFilters
 		if ( $categoryFilter !== null ) {
 			$hideMinorFilter->conflictsWith(
 				$categoryFilter,
@@ -992,6 +1015,12 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		}
 		$hideMinorFilter->conflictsWith(
 			$logactionsFilter,
+			'rcfilters-hideminor-conflicts-typeofchange-global',
+			'rcfilters-hideminor-conflicts-typeofchange',
+			'rcfilters-typeofchange-conflicts-hideminor'
+		);
+		$hideMinorFilter->conflictsWith(
+			$lognewuserFilter,
 			'rcfilters-hideminor-conflicts-typeofchange-global',
 			'rcfilters-hideminor-conflicts-typeofchange',
 			'rcfilters-typeofchange-conflicts-hideminor'
@@ -1113,10 +1142,12 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		}
 
 		$opts->add( 'namespace', '', FormOptions::STRING );
+		// TODO: Rename this option to 'invertnamespaces'?
 		$opts->add( 'invert', false );
 		$opts->add( 'associated', false );
 		$opts->add( 'urlversion', 1 );
 		$opts->add( 'tagfilter', '' );
+		$opts->add( 'inverttags', false );
 
 		$opts->add( 'days', $this->getDefaultDays(), FormOptions::FLOAT );
 		$opts->add( 'limit', $this->getDefaultLimit(), FormOptions::INT );
@@ -1180,7 +1211,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			return $b->getPriority() <=> $a->getPriority();
 		} );
 
-		foreach ( $this->filterGroups as $groupName => $group ) {
+		foreach ( $this->filterGroups as $group ) {
 			$groupOutput = $group->getJsData();
 			if ( $groupOutput !== null ) {
 				$output['messageKeys'] = array_merge(
@@ -1491,11 +1522,12 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			$conds,
 			$join_conds,
 			$query_options,
-			''
+			'',
+			$opts[ 'inverttags' ]
 		);
 
-		if ( !$this->runMainQueryHook( $tables, $fields, $conds, $query_options, $join_conds,
-			$opts )
+		if (
+			!$this->runMainQueryHook( $tables, $fields, $conds, $query_options, $join_conds, $opts )
 		) {
 			return false;
 		}

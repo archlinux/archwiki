@@ -6,9 +6,9 @@ use Html;
 use MediaWiki\Extension\Math\MathWikibaseConnector;
 use MediaWiki\Extension\Math\MathWikibaseInfo;
 use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Rest\Response;
 use MediaWiki\Rest\SimpleHandler;
-use MWException;
 use Title;
 use TitleFactory;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -21,21 +21,27 @@ class Popup extends SimpleHandler {
 	/** @var LanguageFactory */
 	private $languageFactory;
 
+	/** @var LanguageNameUtils */
+	private $languageNameUtils;
+
 	/** @var Title|null */
 	private $specialPageTitle;
 
 	/**
 	 * @param MathWikibaseConnector $wikibase
 	 * @param LanguageFactory $languageFactory
+	 * @param LanguageNameUtils $languageNameUtils
 	 * @param TitleFactory $titleFactory
 	 */
 	public function __construct(
 		MathWikibaseConnector $wikibase,
 		LanguageFactory $languageFactory,
+		LanguageNameUtils $languageNameUtils,
 		TitleFactory $titleFactory
 	) {
 		$this->wikibase = $wikibase;
 		$this->languageFactory = $languageFactory;
+		$this->languageNameUtils = $languageNameUtils;
 		$this->specialPageTitle = $titleFactory->newFromText( 'Special:MathWikibase' );
 	}
 
@@ -45,9 +51,9 @@ class Popup extends SimpleHandler {
 			$uselang = 'en';
 		}
 		$rf = $this->getResponseFactory();
-		try {
+		if ( $this->languageNameUtils->isValidCode( $uselang ) ) {
 			$langObj = $this->languageFactory->getLanguage( $uselang );
-		} catch ( MWException $e ) {
+		} else {
 			return $rf->createHttpError( 400, [ 'message' => 'Invalid language code.' ] );
 		}
 
@@ -108,7 +114,7 @@ class Popup extends SimpleHandler {
 			'qid' => [
 				self::PARAM_SOURCE => 'path',
 				ParamValidator::PARAM_TYPE => 'integer',
-				ParamValidator::PARAM_REQUIRED => true,
+				ParamValidator::PARAM_REQUIRED => true
 			]
 		];
 	}

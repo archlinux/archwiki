@@ -43,10 +43,10 @@ class ComposerStaticInit_mediawiki_vendor
             'Wikimedia\\Equivset\\' => 19,
             'Wikimedia\\Composer\\Merge\\V2\\' => 28,
             'Wikimedia\\CommonPasswords\\' => 26,
+            'Wikimedia\\Bcp47Code\\' => 20,
             'Wikimedia\\AtEase\\' => 17,
             'Wikimedia\\Assert\\' => 17,
             'Wikimedia\\' => 10,
-            'WikiPEG\\' => 8,
         ),
         'S' => 
         array (
@@ -57,16 +57,11 @@ class ComposerStaticInit_mediawiki_vendor
         ),
         'P' => 
         array (
-            'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
             'Psr\\Container\\' => 14,
             'Pleo\\BloomFilter\\' => 17,
-        ),
-        'O' => 
-        array (
-            'Opis\\JsonSchema\\' => 16,
         ),
         'M' => 
         array (
@@ -174,6 +169,10 @@ class ComposerStaticInit_mediawiki_vendor
         array (
             0 => __DIR__ . '/..' . '/wikimedia/common-passwords/src/CommonPasswords',
         ),
+        'Wikimedia\\Bcp47Code\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/wikimedia/bcp-47-code/src',
+        ),
         'Wikimedia\\AtEase\\' => 
         array (
             0 => __DIR__ . '/..' . '/wikimedia/at-ease/src/Wikimedia/AtEase',
@@ -191,10 +190,6 @@ class ComposerStaticInit_mediawiki_vendor
             4 => __DIR__ . '/..' . '/wikimedia/wait-condition-loop/src',
             5 => __DIR__ . '/..' . '/wikimedia/wrappedstring/src',
         ),
-        'WikiPEG\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/wikimedia/wikipeg/src',
-        ),
         'Symfony\\Polyfill\\Php81\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php81',
@@ -210,10 +205,6 @@ class ComposerStaticInit_mediawiki_vendor
         'Shellbox\\' => 
         array (
             0 => __DIR__ . '/..' . '/wikimedia/shellbox/src',
-        ),
-        'Psr\\SimpleCache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
         'Psr\\Log\\' => 
         array (
@@ -235,10 +226,6 @@ class ComposerStaticInit_mediawiki_vendor
         'Pleo\\BloomFilter\\' => 
         array (
             0 => __DIR__ . '/..' . '/pleonasm/bloom-filter/src',
-        ),
-        'Opis\\JsonSchema\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/opis/json-schema/src',
         ),
         'Monolog\\' => 
         array (
@@ -761,60 +748,6 @@ class ComposerStaticInit_mediawiki_vendor
         'OOUI\\Widget' => __DIR__ . '/..' . '/oojs/oojs-ui/php/Widget.php',
         'OOUI\\WikimediaUITheme' => __DIR__ . '/..' . '/oojs/oojs-ui/php/themes/WikimediaUITheme.php',
         'OS_Guess' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/OS/Guess.php',
-        'Opis\\JsonSchema\\Exception\\AbstractSchemaException' => __DIR__ . '/..' . '/opis/json-schema/src/Exception/AbstractSchemaException.php',
-        'Opis\\JsonSchema\\Exception\\DuplicateSchemaException' => __DIR__ . '/..' . '/opis/json-schema/src/Exception/DuplicateSchemaException.php',
-        'Opis\\JsonSchema\\Exception\\FilterNotFoundException' => __DIR__ . '/..' . '/opis/json-schema/src/Exception/FilterNotFoundException.php',
-        'Opis\\JsonSchema\\Exception\\InvalidJsonPointerException' => __DIR__ . '/..' . '/opis/json-schema/src/Exception/InvalidJsonPointerException.php',
-        'Opis\\JsonSchema\\Exception\\InvalidSchemaDraftException' => __DIR__ . '/..' . '/opis/json-schema/src/Exception/InvalidSchemaDraftException.php',
-        'Opis\\JsonSchema\\Exception\\InvalidSchemaException' => __DIR__ . '/..' . '/opis/json-schema/src/Exception/InvalidSchemaException.php',
-        'Opis\\JsonSchema\\Exception\\InvalidSchemaIdException' => __DIR__ . '/..' . '/opis/json-schema/src/Exception/InvalidSchemaIdException.php',
-        'Opis\\JsonSchema\\Exception\\SchemaDraftNotSupportedException' => __DIR__ . '/..' . '/opis/json-schema/src/Exception/SchemaDraftNotSupportedException.php',
-        'Opis\\JsonSchema\\Exception\\SchemaKeywordException' => __DIR__ . '/..' . '/opis/json-schema/src/Exception/SchemaKeywordException.php',
-        'Opis\\JsonSchema\\Exception\\SchemaNotFoundException' => __DIR__ . '/..' . '/opis/json-schema/src/Exception/SchemaNotFoundException.php',
-        'Opis\\JsonSchema\\Exception\\UnknownMediaTypeException' => __DIR__ . '/..' . '/opis/json-schema/src/Exception/UnknownMediaTypeException.php',
-        'Opis\\JsonSchema\\FilterContainer' => __DIR__ . '/..' . '/opis/json-schema/src/FilterContainer.php',
-        'Opis\\JsonSchema\\FormatContainer' => __DIR__ . '/..' . '/opis/json-schema/src/FormatContainer.php',
-        'Opis\\JsonSchema\\Formats\\AbstractFormat' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/AbstractFormat.php',
-        'Opis\\JsonSchema\\Formats\\Date' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/Date.php',
-        'Opis\\JsonSchema\\Formats\\DateTime' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/DateTime.php',
-        'Opis\\JsonSchema\\Formats\\Email' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/Email.php',
-        'Opis\\JsonSchema\\Formats\\Hostname' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/Hostname.php',
-        'Opis\\JsonSchema\\Formats\\IPv4' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/IPv4.php',
-        'Opis\\JsonSchema\\Formats\\IPv6' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/IPv6.php',
-        'Opis\\JsonSchema\\Formats\\IdnEmail' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/IdnEmail.php',
-        'Opis\\JsonSchema\\Formats\\IdnHostname' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/IdnHostname.php',
-        'Opis\\JsonSchema\\Formats\\Iri' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/Iri.php',
-        'Opis\\JsonSchema\\Formats\\IriReference' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/IriReference.php',
-        'Opis\\JsonSchema\\Formats\\JsonPointer' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/JsonPointer.php',
-        'Opis\\JsonSchema\\Formats\\Regex' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/Regex.php',
-        'Opis\\JsonSchema\\Formats\\RelativeJsonPointer' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/RelativeJsonPointer.php',
-        'Opis\\JsonSchema\\Formats\\Time' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/Time.php',
-        'Opis\\JsonSchema\\Formats\\Uri' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/Uri.php',
-        'Opis\\JsonSchema\\Formats\\UriReference' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/UriReference.php',
-        'Opis\\JsonSchema\\Formats\\UriTemplate' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/UriTemplate.php',
-        'Opis\\JsonSchema\\Formats\\Uuid' => __DIR__ . '/..' . '/opis/json-schema/src/Formats/Uuid.php',
-        'Opis\\JsonSchema\\IFilter' => __DIR__ . '/..' . '/opis/json-schema/src/IFilter.php',
-        'Opis\\JsonSchema\\IFilterContainer' => __DIR__ . '/..' . '/opis/json-schema/src/IFilterContainer.php',
-        'Opis\\JsonSchema\\IFormat' => __DIR__ . '/..' . '/opis/json-schema/src/IFormat.php',
-        'Opis\\JsonSchema\\IFormatContainer' => __DIR__ . '/..' . '/opis/json-schema/src/IFormatContainer.php',
-        'Opis\\JsonSchema\\IMediaType' => __DIR__ . '/..' . '/opis/json-schema/src/IMediaType.php',
-        'Opis\\JsonSchema\\IMediaTypeContainer' => __DIR__ . '/..' . '/opis/json-schema/src/IMediaTypeContainer.php',
-        'Opis\\JsonSchema\\ISchema' => __DIR__ . '/..' . '/opis/json-schema/src/ISchema.php',
-        'Opis\\JsonSchema\\ISchemaLoader' => __DIR__ . '/..' . '/opis/json-schema/src/ISchemaLoader.php',
-        'Opis\\JsonSchema\\IValidator' => __DIR__ . '/..' . '/opis/json-schema/src/IValidator.php',
-        'Opis\\JsonSchema\\IValidatorHelper' => __DIR__ . '/..' . '/opis/json-schema/src/IValidatorHelper.php',
-        'Opis\\JsonSchema\\JsonPointer' => __DIR__ . '/..' . '/opis/json-schema/src/JsonPointer.php',
-        'Opis\\JsonSchema\\Loaders\\File' => __DIR__ . '/..' . '/opis/json-schema/src/Loaders/File.php',
-        'Opis\\JsonSchema\\Loaders\\Memory' => __DIR__ . '/..' . '/opis/json-schema/src/Loaders/Memory.php',
-        'Opis\\JsonSchema\\MediaTypeContainer' => __DIR__ . '/..' . '/opis/json-schema/src/MediaTypeContainer.php',
-        'Opis\\JsonSchema\\MediaTypes\\Json' => __DIR__ . '/..' . '/opis/json-schema/src/MediaTypes/Json.php',
-        'Opis\\JsonSchema\\MediaTypes\\Text' => __DIR__ . '/..' . '/opis/json-schema/src/MediaTypes/Text.php',
-        'Opis\\JsonSchema\\Schema' => __DIR__ . '/..' . '/opis/json-schema/src/Schema.php',
-        'Opis\\JsonSchema\\URI' => __DIR__ . '/..' . '/opis/json-schema/src/URI.php',
-        'Opis\\JsonSchema\\ValidationError' => __DIR__ . '/..' . '/opis/json-schema/src/ValidationError.php',
-        'Opis\\JsonSchema\\ValidationResult' => __DIR__ . '/..' . '/opis/json-schema/src/ValidationResult.php',
-        'Opis\\JsonSchema\\Validator' => __DIR__ . '/..' . '/opis/json-schema/src/Validator.php',
-        'Opis\\JsonSchema\\ValidatorHelper' => __DIR__ . '/..' . '/opis/json-schema/src/ValidatorHelper.php',
         'PEAR' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/PEAR.php',
         'PEAR_ErrorStack' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/PEAR/ErrorStack.php',
         'PEAR_Exception' => __DIR__ . '/..' . '/pear/pear_exception/PEAR/Exception.php',
@@ -853,9 +786,6 @@ class ComposerStaticInit_mediawiki_vendor
         'Psr\\Log\\Test\\DummyTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/DummyTest.php',
         'Psr\\Log\\Test\\LoggerInterfaceTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/LoggerInterfaceTest.php',
         'Psr\\Log\\Test\\TestLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/TestLogger.php',
-        'Psr\\SimpleCache\\CacheException' => __DIR__ . '/..' . '/psr/simple-cache/src/CacheException.php',
-        'Psr\\SimpleCache\\CacheInterface' => __DIR__ . '/..' . '/psr/simple-cache/src/CacheInterface.php',
-        'Psr\\SimpleCache\\InvalidArgumentException' => __DIR__ . '/..' . '/psr/simple-cache/src/InvalidArgumentException.php',
         'ReturnTypeWillChange' => __DIR__ . '/..' . '/symfony/polyfill-php81/Resources/stubs/ReturnTypeWillChange.php',
         'Shellbox\\Action\\CallAction' => __DIR__ . '/..' . '/wikimedia/shellbox/src/Action/CallAction.php',
         'Shellbox\\Action\\MultipartAction' => __DIR__ . '/..' . '/wikimedia/shellbox/src/Action/MultipartAction.php',
@@ -946,6 +876,8 @@ class ComposerStaticInit_mediawiki_vendor
         'Wikimedia\\Assert\\PreconditionException' => __DIR__ . '/..' . '/wikimedia/assert/src/PreconditionException.php',
         'Wikimedia\\Assert\\UnreachableException' => __DIR__ . '/..' . '/wikimedia/assert/src/UnreachableException.php',
         'Wikimedia\\AtEase\\AtEase' => __DIR__ . '/..' . '/wikimedia/at-ease/src/Wikimedia/AtEase/AtEase.php',
+        'Wikimedia\\Bcp47Code\\Bcp47Code' => __DIR__ . '/..' . '/wikimedia/bcp-47-code/src/Bcp47Code.php',
+        'Wikimedia\\Bcp47Code\\Bcp47CodeValue' => __DIR__ . '/..' . '/wikimedia/bcp-47-code/src/Bcp47CodeValue.php',
         'Wikimedia\\CommonPasswords\\CommonPasswords' => __DIR__ . '/..' . '/wikimedia/common-passwords/src/CommonPasswords/CommonPasswords.php',
         'Wikimedia\\Composer\\Merge\\V2\\ExtraPackage' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/ExtraPackage.php',
         'Wikimedia\\Composer\\Merge\\V2\\Logger' => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src/Logger.php',
@@ -1561,7 +1493,9 @@ class ComposerStaticInit_mediawiki_vendor
         'Wikimedia\\Parsoid\\Core\\PageBundle' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Core/PageBundle.php',
         'Wikimedia\\Parsoid\\Core\\ResourceLimitExceededException' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Core/ResourceLimitExceededException.php',
         'Wikimedia\\Parsoid\\Core\\Sanitizer' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Core/Sanitizer.php',
+        'Wikimedia\\Parsoid\\Core\\SectionMetadata' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Core/SectionMetadata.php',
         'Wikimedia\\Parsoid\\Core\\SelserData' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Core/SelserData.php',
+        'Wikimedia\\Parsoid\\Core\\TOCData' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Core/TOCData.php',
         'Wikimedia\\Parsoid\\DOM\\Attr' => __DIR__ . '/..' . '/wikimedia/parsoid/src/DOM/Attr.php',
         'Wikimedia\\Parsoid\\DOM\\CharacterData' => __DIR__ . '/..' . '/wikimedia/parsoid/src/DOM/CharacterData.php',
         'Wikimedia\\Parsoid\\DOM\\Comment' => __DIR__ . '/..' . '/wikimedia/parsoid/src/DOM/Comment.php',
@@ -1605,6 +1539,7 @@ class ComposerStaticInit_mediawiki_vendor
         'Wikimedia\\Parsoid\\Ext\\Poem\\PoemProcessor' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Ext/Poem/PoemProcessor.php',
         'Wikimedia\\Parsoid\\Ext\\Pre\\Pre' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Ext/Pre/Pre.php',
         'Wikimedia\\Parsoid\\Ext\\Utils' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Ext/Utils.php',
+        'Wikimedia\\Parsoid\\Ext\\WTSUtils' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Ext/WTSUtils.php',
         'Wikimedia\\Parsoid\\Ext\\WTUtils' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Ext/WTUtils.php',
         'Wikimedia\\Parsoid\\Html2Wt\\ConstrainedText\\AutoURLLinkText' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Html2Wt/ConstrainedText/AutoURLLinkText.php',
         'Wikimedia\\Parsoid\\Html2Wt\\ConstrainedText\\ConstrainedText' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Html2Wt/ConstrainedText/ConstrainedText.php',
@@ -1649,6 +1584,7 @@ class ComposerStaticInit_mediawiki_vendor
         'Wikimedia\\Parsoid\\Html2Wt\\DiffUtils' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Html2Wt/DiffUtils.php',
         'Wikimedia\\Parsoid\\Html2Wt\\LanguageVariantHandler' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Html2Wt/LanguageVariantHandler.php',
         'Wikimedia\\Parsoid\\Html2Wt\\LinkHandlerUtils' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Html2Wt/LinkHandlerUtils.php',
+        'Wikimedia\\Parsoid\\Html2Wt\\RemoveRedLinks' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Html2Wt/RemoveRedLinks.php',
         'Wikimedia\\Parsoid\\Html2Wt\\SelectiveSerializer' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Html2Wt/SelectiveSerializer.php',
         'Wikimedia\\Parsoid\\Html2Wt\\Separators' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Html2Wt/Separators.php',
         'Wikimedia\\Parsoid\\Html2Wt\\SerializerState' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Html2Wt/SerializerState.php',
@@ -1729,6 +1665,7 @@ class ComposerStaticInit_mediawiki_vendor
         'Wikimedia\\Parsoid\\Utils\\DTState' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Utils/DTState.php',
         'Wikimedia\\Parsoid\\Utils\\PHPUtils' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Utils/PHPUtils.php',
         'Wikimedia\\Parsoid\\Utils\\PipelineUtils' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Utils/PipelineUtils.php',
+        'Wikimedia\\Parsoid\\Utils\\ScriptUtils' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Utils/ScriptUtils.php',
         'Wikimedia\\Parsoid\\Utils\\Timing' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Utils/Timing.php',
         'Wikimedia\\Parsoid\\Utils\\Title' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Utils/Title.php',
         'Wikimedia\\Parsoid\\Utils\\TitleException' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Utils/TitleException.php',
@@ -1751,7 +1688,7 @@ class ComposerStaticInit_mediawiki_vendor
         'Wikimedia\\Parsoid\\Wt2Html\\PP\\Handlers\\LiFixups' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Wt2Html/PP/Handlers/LiFixups.php',
         'Wikimedia\\Parsoid\\Wt2Html\\PP\\Handlers\\TableFixups' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Wt2Html/PP/Handlers/TableFixups.php',
         'Wikimedia\\Parsoid\\Wt2Html\\PP\\Handlers\\UnpackDOMFragments' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Wt2Html/PP/Handlers/UnpackDOMFragments.php',
-        'Wikimedia\\Parsoid\\Wt2Html\\PP\\Processors\\AddLinkClasses' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Wt2Html/PP/Processors/AddLinkClasses.php',
+        'Wikimedia\\Parsoid\\Wt2Html\\PP\\Processors\\AddLinkAttributes' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Wt2Html/PP/Processors/AddLinkAttributes.php',
         'Wikimedia\\Parsoid\\Wt2Html\\PP\\Processors\\AddMediaInfo' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Wt2Html/PP/Processors/AddMediaInfo.php',
         'Wikimedia\\Parsoid\\Wt2Html\\PP\\Processors\\AddRedLinks' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Wt2Html/PP/Processors/AddRedLinks.php',
         'Wikimedia\\Parsoid\\Wt2Html\\PP\\Processors\\AnnotationDOMRangeBuilder' => __DIR__ . '/..' . '/wikimedia/parsoid/src/Wt2Html/PP/Processors/AnnotationDOMRangeBuilder.php',

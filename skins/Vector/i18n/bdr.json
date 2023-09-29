@@ -4,7 +4,10 @@
 			"Tofeiku"
 		]
 	},
+	"vector-languages": "Ling",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ling}}",
+	"vector-no-language-button-label": "Ngenopon tuturan",
+	"vector-action-addsection": "Namba serita'",
 	"vector-action-delete": "Penelanyap",
 	"vector-action-move": "Pinali",
 	"vector-action-protect": "Sindung",
@@ -13,5 +16,10 @@
 	"vector-view-history": "Ngenda' kisa dau-dau",
 	"vector-view-view": "Boso",
 	"vector-more-actions": "Iko",
-	"vector-searchsuggest-containing": "Penemia laman yang bengen <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Penemia laman yang bengen <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Isi",
+	"vector-toc-beginning": "Nimpoon",
+	"vector-page-tools-label": "Pekakas",
+	"vector-page-tools-general-label": "Umum",
+	"vector-unpin-element-label": "tenapuk"
 }

@@ -5,9 +5,8 @@ namespace MediaWiki\Extension\AbuseFilter\Maintenance;
 use Maintenance;
 
 // @codeCoverageIgnoreStart
-if ( getenv( 'MW_INSTALL_PATH' ) ) {
-	$IP = getenv( 'MW_INSTALL_PATH' );
-} else {
+$IP = getenv( 'MW_INSTALL_PATH' );
+if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
@@ -56,13 +55,13 @@ class SearchFilters extends Maintenance {
 	 * @param string|false $dbname Name of database, or false if the wiki is not part of a wikifarm
 	 */
 	public function getMatchingFilters( $dbname = false ) {
-		$dbr = wfGetDB( DB_REPLICA, [], $dbname );
+		$dbr = $this->getDB( DB_REPLICA, [], $dbname );
 		$pattern = $dbr->addQuotes( $this->getOption( 'pattern' ) );
 
 		if ( $dbr->tableExists( 'abuse_filter' ) ) {
 			$rows = $dbr->select(
 				'abuse_filter',
-				'DATABASE() AS dbname, af_id',
+				[ 'dbname' => 'DATABASE()', 'af_id' ],
 				[
 					"af_pattern RLIKE $pattern"
 				]

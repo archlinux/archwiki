@@ -155,7 +155,6 @@
 	"visualeditor-dialog-transclusion-no-template-description": "თარგს „$1“ ჯერ კიდევ არ აქვს აღწერა, თუმცა შესაძლოა იპოვოთ რაიმე ინფორმაცია [[$2|თარგის გვერდზე]].",
 	"visualeditor-dialog-transclusion-param-default": "ნაგულისხმები: $1",
 	"visualeditor-dialog-transclusion-param-example-long": "მაგალითი: $1",
-	"visualeditor-dialog-transclusion-placeholder": "თარგის დამატება",
 	"visualeditor-dialog-transclusion-required-parameter": "სავალდებულო ველი",
 	"visualeditor-dialog-transclusion-required-parameter-description": "ველი აუცილებელია.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "უკან დაბრუნება",

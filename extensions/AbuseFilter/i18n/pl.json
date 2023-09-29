@@ -35,7 +35,8 @@
 			"Ty221",
 			"Vengir",
 			"WaldiSt",
-			"Woytecr"
+			"Woytecr",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Zastosowanie automatycznej heurystyki do edycji",
@@ -104,7 +105,7 @@
 	"abusefilter-log-search-action-taken-any": "Dowolna",
 	"abusefilter-log-search-submit": "Szukaj",
 	"abusefilter-log-entry": "$1: $2 {{GENDER:$8|uruchomił|uruchomiła|uruchomił(a)}} filtr nadużyć, {{GENDER:$8|wykonując}} „$3” na $4.\nPodjęte działania: $5;\nOpis filtru: $6",
-	"abusefilter-log-entry-withdiff": "$1: $2  {{GENDER:$8|uruchomił|uruchomiła|uruchomił(a)}} filtr nadużyć, {{GENDER:$8|wykonując}} „$3” na $4.\nPodjęte działania: $5;\nOpis filtru: $6 ($7)",
+	"abusefilter-log-entry-withdiff": "$1: $2 {{GENDER:$8|uruchomił|uruchomiła|uruchomił(a)}} filtr nadużyć, {{GENDER:$8|wykonując}} „$3” na $4.\nPodjęte działania: $5;\nOpis filtru: $6 ($7)",
 	"abusefilter-log-detailedentry-meta": "$1: $2 {{GENDER:$9|uruchomił|uruchomił|uruchomił(a)}} $3, {{GENDER:$9|wykonując}} „$4” na $5.\nPodjęte działania: $6;\nOpis filtru: $7 ($8)",
 	"abusefilter-log-detailedentry-global": "filtr globalny $1",
 	"abusefilter-log-detailedentry-local": "filtr $1",
@@ -216,7 +217,7 @@
 	"abusefilter-reautoconfirm-none": "{{GENDER:$1|Ten użytkownik|Ta użytkowniczka}} nie ma zawieszonego statusu automatycznie {{GENDER:$1|zatwierdzonego|zatwierdzonej}}.",
 	"abusefilter-reautoconfirm-notallowed": "Nie masz uprawnień, aby przywrócić statusu automatycznie zatwierdzonego.",
 	"abusefilter-reautoconfirm-done": "Został przywrócony status automatycznego zatwierdzania zmian wykonywanych przez użytkowników",
-	"abusefilter-status": "Z {{PLURAL:$1|ostatniej $1 akcji|ostatnich $1 akcji}}, $2 {{PLURAL:$2|osiągnęła|osiągnęły|osiągnęło}} ($3%) stan limitu $4. $5  {{PLURAL:$5|pasował|pasowały|pasowało}} ($6%) do jednego z obecnie włączonych filtrów.",
+	"abusefilter-status": "Z {{PLURAL:$1|ostatniej $1 akcji|ostatnich $1 akcji}}, $2 {{PLURAL:$2|osiągnęła|osiągnęły|osiągnęło}} ($3%) stan limitu $4. $5 {{PLURAL:$5|pasował|pasowały|pasowało}} ($6%) do jednego z obecnie włączonych filtrów.",
 	"abusefilter-edit": "Edytujesz filtr nadużyć",
 	"abusefilter-edit-subtitle": "Edytowanie filtru $1",
 	"abusefilter-edit-subtitle-new": "Tworzenie filtru",

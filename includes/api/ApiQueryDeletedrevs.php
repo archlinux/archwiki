@@ -22,13 +22,16 @@
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\NameTableAccessException;
 use MediaWiki\Storage\NameTableStore;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 /**
@@ -250,31 +253,21 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 		}
 
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$op = ( $dir == 'newer' ? '>' : '<' );
+			$op = ( $dir == 'newer' ? '>=' : '<=' );
 			if ( $mode == 'all' || $mode == 'revs' ) {
-				$this->dieContinueUsageIf( count( $cont ) != 4 );
-				$ns = (int)$cont[0];
-				$this->dieContinueUsageIf( strval( $ns ) !== $cont[0] );
-				$title = $db->addQuotes( $cont[1] );
-				$ts = $db->addQuotes( $db->timestamp( $cont[2] ) );
-				$ar_id = (int)$cont[3];
-				$this->dieContinueUsageIf( strval( $ar_id ) !== $cont[3] );
-				$this->addWhere( "ar_namespace $op $ns OR " .
-					"(ar_namespace = $ns AND " .
-					"(ar_title $op $title OR " .
-					"(ar_title = $title AND " .
-					"(ar_timestamp $op $ts OR " .
-					"(ar_timestamp = $ts AND " .
-					"ar_id $op= $ar_id)))))" );
+				$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'int', 'string', 'timestamp', 'int' ] );
+				$this->addWhere( $db->buildComparison( $op, [
+					'ar_namespace' => $cont[0],
+					'ar_title' => $cont[1],
+					'ar_timestamp' => $db->timestamp( $cont[2] ),
+					'ar_id' => $cont[3],
+				] ) );
 			} else {
-				$this->dieContinueUsageIf( count( $cont ) != 2 );
-				$ts = $db->addQuotes( $db->timestamp( $cont[0] ) );
-				$ar_id = (int)$cont[1];
-				$this->dieContinueUsageIf( strval( $ar_id ) !== $cont[1] );
-				$this->addWhere( "ar_timestamp $op $ts OR " .
-					"(ar_timestamp = $ts AND " .
-					"ar_id $op= $ar_id)" );
+				$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'timestamp', 'int' ] );
+				$this->addWhere( $db->buildComparison( $op, [
+					'ar_timestamp' => $db->timestamp( $cont[0] ),
+					'ar_id' => $cont[1],
+				] ) );
 			}
 		}
 
@@ -485,6 +478,10 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 				],
 				ParamValidator::PARAM_DEFAULT => 'older',
 				ApiBase::PARAM_HELP_MSG => 'api-help-param-direction',
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [
+					'newer' => 'api-help-paramvalue-direction-newer',
+					'older' => 'api-help-paramvalue-direction-older',
+				],
 				ApiBase::PARAM_HELP_MSG_INFO => [ [ 'modes', 1, 3 ] ],
 			],
 			'from' => [
@@ -530,7 +527,11 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 					'token',
 					'tags'
 				],
-				ParamValidator::PARAM_ISMULTI => true
+				ParamValidator::PARAM_ISMULTI => true,
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
+				EnumDef::PARAM_DEPRECATED_VALUES => [
+					'token' => true,
+				],
 			],
 			'limit' => [
 				ParamValidator::PARAM_DEFAULT => 10,
@@ -546,17 +547,28 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 	}
 
 	protected function getExamplesMessages() {
-		return [
-			'action=query&list=deletedrevs&titles=Main%20Page|Talk:Main%20Page&' .
-				'drprop=user|comment|content'
-				=> 'apihelp-query+deletedrevs-example-mode1',
+		$title = Title::newMainPage();
+		$talkTitle = $title->getTalkPageIfDefined();
+		$examples = [];
+
+		if ( $talkTitle ) {
+			$title = rawurlencode( $title->getPrefixedText() );
+			$talkTitle = rawurlencode( $talkTitle->getPrefixedText() );
+			$examples = [
+				"action=query&list=deletedrevs&titles={$title}|{$talkTitle}&" .
+					'drprop=user|comment|content'
+					=> 'apihelp-query+deletedrevs-example-mode1',
+			];
+		}
+
+		return array_merge( $examples, [
 			'action=query&list=deletedrevs&druser=Bob&drlimit=50'
 				=> 'apihelp-query+deletedrevs-example-mode2',
 			'action=query&list=deletedrevs&drdir=newer&drlimit=50'
 				=> 'apihelp-query+deletedrevs-example-mode3-main',
 			'action=query&list=deletedrevs&drdir=newer&drlimit=50&drnamespace=1&drunique='
 				=> 'apihelp-query+deletedrevs-example-mode3-talk',
-		];
+		] );
 	}
 
 	public function getHelpUrls() {

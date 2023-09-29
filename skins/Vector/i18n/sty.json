@@ -17,5 +17,8 @@
 	"vector-view-history": "Тариҡны ҡарағалы",
 	"vector-view-view": "Уғығалы",
 	"vector-more-actions": "Тағын",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> эцтәлегентә парын питләрне эстәү"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> эцтәлегентә парын питләрне эстәү",
+	"vector-page-tools-label": "Ҡораллар",
+	"vector-page-tools-general-label": "Умумий",
+	"vector-unpin-element-label": "йәшергәле"
 }

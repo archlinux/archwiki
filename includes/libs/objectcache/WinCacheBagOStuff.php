@@ -29,7 +29,7 @@
  */
 class WinCacheBagOStuff extends MediumSpecificBagOStuff {
 	public function __construct( array $params = [] ) {
-		$params['segmentationSize'] = $params['segmentationSize'] ?? INF;
+		$params['segmentationSize'] ??= INF;
 		parent::__construct( $params );
 
 		if ( PHP_SAPI === 'cli' ) {
@@ -114,7 +114,7 @@ class WinCacheBagOStuff extends MediumSpecificBagOStuff {
 		return true;
 	}
 
-	public function makeKeyInternal( $keyspace, $components ) {
+	protected function makeKeyInternal( $keyspace, $components ) {
 		// WinCache keys have a maximum length of 150 characters. From that,
 		// subtract the number of characters we need for the keyspace and for
 		// the separator character needed for each argument. To handle some
@@ -162,33 +162,5 @@ class WinCacheBagOStuff extends MediumSpecificBagOStuff {
 		wincache_unlock( $key );
 
 		return $newValue;
-	}
-
-	public function incr( $key, $value = 1, $flags = 0 ) {
-		return $this->doIncr( $key, $value, $flags );
-	}
-
-	public function decr( $key, $value = 1, $flags = 0 ) {
-		return $this->doIncr( $key, -$value, $flags );
-	}
-
-	private function doIncr( $key, $value = 1, $flags = 0 ) {
-		// optimize with FIFO lock
-		if ( !wincache_lock( $key ) ) {
-			return false;
-		}
-
-		$n = $this->doGet( $key );
-		if ( $this->isInteger( $n ) ) {
-			$n = max( $n + (int)$value, 0 );
-			$oldTTL = wincache_ucache_info( false, $key )["ucache_entries"][1]["ttl_seconds"];
-			$this->doSet( $key, $n, $oldTTL );
-		} else {
-			$n = false;
-		}
-
-		wincache_unlock( $key );
-
-		return $n;
 	}
 }

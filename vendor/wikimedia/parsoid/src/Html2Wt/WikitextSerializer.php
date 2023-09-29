@@ -8,6 +8,7 @@ use Exception;
 use stdClass;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Core\InternalException;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -311,7 +312,7 @@ class WikitextSerializer {
 				// start tags, but we wouldn't be here if it was autoInsertedEnd
 				// anyways.
 				isset( Consts::$Sanitizer['AllowedLiteralTags'][$token->getName()] ) &&
-				!empty( $token->dataAttribs->autoInsertedEnd )
+				!empty( $token->dataParsoid->autoInsertedEnd )
 			)
 		) {
 			return "&lt;{$inner}&gt;";
@@ -343,7 +344,7 @@ class WikitextSerializer {
 			return $this->state->getOrigSrc( $dsr->start, $dsr->innerStart() ) ?? '';
 		}
 
-		$da = $token->dataAttribs;
+		$da = $token->dataParsoid;
 		if ( !empty( $da->autoInsertedStart ) ) {
 			return '';
 		}
@@ -383,12 +384,12 @@ class WikitextSerializer {
 		}
 
 		// srcTagName cannot be '' so, it is okay to use ?? operator
-		$tokenName = $token->dataAttribs->srcTagName ?? $token->getName();
+		$tokenName = $token->dataParsoid->srcTagName ?? $token->getName();
 		$ret = '';
 
-		if ( empty( $token->dataAttribs->autoInsertedEnd )
+		if ( empty( $token->dataParsoid->autoInsertedEnd )
 			&& !Utils::isVoidElement( $token->getName() )
-			&& empty( $token->dataAttribs->selfClose )
+			&& empty( $token->dataParsoid->selfClose )
 		) {
 			$ret = $this->wrapAngleBracket( $token, "/{$tokenName}" );
 		}
@@ -512,13 +513,13 @@ class WikitextSerializer {
 		//
 		// 'a' data attribs -- look for attributes that were removed
 		// as part of sanitization and add them back
-		$dataAttribs = $token->dataAttribs;
-		if ( isset( $dataAttribs->a ) && isset( $dataAttribs->sa ) ) {
-			$aKeys = array_keys( $dataAttribs->a );
+		$dataParsoid = $token->dataParsoid;
+		if ( isset( $dataParsoid->a ) && isset( $dataParsoid->sa ) ) {
+			$aKeys = array_keys( $dataParsoid->a );
 			foreach ( $aKeys as $k ) {
 				// Attrib not present -- sanitized away!
 				if ( !KV::lookupKV( $attribs, (string)$k ) ) {
-					$v = $dataAttribs->sa[$k] ?? null;
+					$v = $dataParsoid->sa[$k] ?? null;
 					// PORT-FIXME check type
 					if ( $v !== null && $v !== '' ) {
 						$out[] = $k . '="' . str_replace( '"', '&quot;', $v ) . '"';
@@ -790,8 +791,16 @@ class WikitextSerializer {
 			// that's still considered a valid parameter.
 			if ( property_exists( $param, 'wt' ) ) {
 				$value = $param->wt;
-			} else {
+			} elseif ( property_exists( $param, 'html' ) ) {
 				$value = $this->htmlToWikitext( [ 'env' => $this->env ], $param->html );
+			} else {
+				$this->env->log(
+					'error',
+					"params in data-mw part is missing wt/html for $key. " .
+						"Serializing as empty string.",
+					"data-mw part: " . json_encode( $part )
+				);
+				$value = "";
 			}
 
 			Assert::invariant( is_string( $value ), "For param: $key, wt property should be a string '
@@ -1029,7 +1038,7 @@ class WikitextSerializer {
 
 		// Serialize extension attributes in normalized form as:
 		// key='value'
-		// FIXME: with no dataAttribs, shadow info will mark it as new
+		// FIXME: with no dataParsoid, shadow info will mark it as new
 		$attrs = (array)( $dataMw->attrs ?? [] );
 		$extTok = new TagTk( $extName, array_map( static function ( $key ) use ( $attrs ) {
 			return new KV( $key, $attrs[$key] );
@@ -1294,6 +1303,7 @@ class WikitextSerializer {
 	 * @return ?Node
 	 */
 	public function serializeNode( Node $node ): ?Node {
+		$nodeName = DOMCompat::nodeName( $node );
 		$domHandler = $method = null;
 		$domHandlerFactory = new DOMHandlerFactory();
 		$state = $this->state;
@@ -1362,18 +1372,21 @@ class WikitextSerializer {
 				$state->appendSep( WTSUtils::commentWT( $node->nodeValue ) );
 				return $node->nextSibling;
 			default:
-				Assert::invariant( 'Unhandled node type: ', $node->nodeType );
+				throw new InternalException( 'Unhandled node type: ' . $node->nodeType );
 		}
 
 		$prev = DOMUtils::previousNonSepSibling( $node ) ?: $node->parentNode;
+		$this->env->log( 'debug/wts', 'Before constraints for ' . $nodeName );
 		$state->separators->updateSeparatorConstraints(
 			$prev, $domHandlerFactory->getDOMHandler( $prev ),
 			$node, $domHandler
 		);
 
+		$this->env->log( 'debug/wts', 'Calling serialization handler for ' . $nodeName );
 		$nextNode = call_user_func( $method, $node, $domHandler );
 
 		$next = DOMUtils::nextNonSepSibling( $node ) ?: $node->parentNode;
+		$this->env->log( 'debug/wts', 'After constraints for ' . $nodeName );
 		$state->separators->updateSeparatorConstraints(
 			$node, $domHandler,
 			$next, $domHandlerFactory->getDOMHandler( $next )
@@ -1673,7 +1686,6 @@ class WikitextSerializer {
 	/**
 	 * @note Porting note: this replaces the pattern $serializer->env->log( $serializer->logType, ... )
 	 * @param mixed ...$args
-	 * @deprecated Use PSR-3 logging instead
 	 */
 	public function trace( ...$args ) {
 		$this->env->log( $this->logType, ...$args );

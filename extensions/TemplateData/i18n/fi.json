@@ -11,9 +11,9 @@
 			"Pyscowicz",
 			"Silvonen",
 			"Stryn",
+			"Valtlai",
 			"Valtlait",
-			"Veikk0.ma",
-			"Valtlai"
+			"Veikk0.ma"
 		]
 	},
 	"templatedata-desc": "Toteuta tietovarasto mallinen parametreille (käyttäen JSON:ia)",
@@ -49,7 +49,7 @@
 	"templatedata-doc-params": "Mallineen parametrit",
 	"templatedata-editbutton": "Hallitse TemplateDataa",
 	"templatedata-exists-on-related-page": "Huomaa: liittyvällä sivulla ”[[$1]]” on jo TemplateData-lohko.",
-	"templatedata-helplink": "Tietoa TemplateDatasta",
+	"templatedata-helplink": "Tietoa mallineen datasta",
 	"templatedata-invalid-duplicate-value": "Ominaisuus ”$1” (”$3”) on ominaisuuden ”$2” kaksoiskappale.",
 	"templatedata-invalid-empty-array": "Ominaisuudella ”$1” on oltava vähintään yksi arvo.",
 	"templatedata-invalid-format": "Ominaisuuden ”$1” oletetaan olevan joko ”inline”, ”block” tai kelvollinen muotoilumerkkijono.",
@@ -99,7 +99,7 @@
 	"templatedata-modal-table-param-suggested": "Suositeltava",
 	"templatedata-modal-table-param-type": "Tyyppi",
 	"templatedata-modal-table-param-uneditablefield": "Ei muokattavissa",
-	"templatedata-modal-title": "Mallineen dokumentaation muokkain",
+	"templatedata-modal-title": "Mallineen datan muokkain",
 	"templatedata-modal-title-addparam": "Lisää uusi parametri",
 	"templatedata-modal-title-choose-language": "Valitse kieli",
 	"templatedata-modal-title-language": "Kieli",

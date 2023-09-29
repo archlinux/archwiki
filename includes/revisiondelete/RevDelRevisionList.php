@@ -25,6 +25,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\LBFactory;
@@ -52,9 +53,6 @@ class RevDelRevisionList extends RevDelList {
 	/** @var RevisionStore */
 	private $revisionStore;
 
-	/** @var WANObjectCache */
-	private $wanObjectCache;
-
 	/** @var int */
 	public $currentRevId;
 
@@ -66,7 +64,6 @@ class RevDelRevisionList extends RevDelList {
 	 * @param HookContainer $hookContainer
 	 * @param HtmlCacheUpdater $htmlCacheUpdater
 	 * @param RevisionStore $revisionStore
-	 * @param WANObjectCache $wanObjectCache
 	 */
 	public function __construct(
 		IContextSource $context,
@@ -75,15 +72,13 @@ class RevDelRevisionList extends RevDelList {
 		LBFactory $lbFactory,
 		HookContainer $hookContainer,
 		HtmlCacheUpdater $htmlCacheUpdater,
-		RevisionStore $revisionStore,
-		WANObjectCache $wanObjectCache
+		RevisionStore $revisionStore
 	) {
 		parent::__construct( $context, $page, $ids, $lbFactory );
 		$this->lbFactory = $lbFactory;
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->htmlCacheUpdater = $htmlCacheUpdater;
 		$this->revisionStore = $revisionStore;
-		$this->wanObjectCache = $wanObjectCache;
 	}
 
 	public function getType() {
@@ -210,13 +205,13 @@ class RevDelRevisionList extends RevDelList {
 			return new RevDelArchivedRevisionItem( $this, $row );
 		} else {
 			// This shouldn't happen. :)
-			throw new MWException( 'Invalid row type in RevDelRevisionList' );
+			throw new InvalidArgumentException( 'Invalid row type in RevDelRevisionList' );
 		}
 	}
 
 	public function getCurrent() {
 		if ( $this->currentRevId === null ) {
-			$dbw = $this->lbFactory->getMainLB()->getConnectionRef( DB_PRIMARY );
+			$dbw = $this->lbFactory->getPrimaryDatabase();
 			$this->currentRevId = $dbw->selectField(
 				'page',
 				'page_latest',
@@ -247,9 +242,6 @@ class RevDelRevisionList extends RevDelList {
 			Title::castFromPageIdentity( $this->page ),
 			$this->ids,
 			$visibilityChangeMap
-		);
-		$this->wanObjectCache->touchCheckKey(
-			"RevDelRevisionList:page:{$this->page->getID()}}"
 		);
 
 		return Status::newGood();

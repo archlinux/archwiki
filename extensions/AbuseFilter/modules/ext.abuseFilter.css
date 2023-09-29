@@ -157,9 +157,11 @@ fieldset.mw-abusefilter-edit-buttons {
 	display: none;
 }
 
+/* Needs reinforced CSS selectors to override MonoBook's .special li */
+/* @see T78304, T331211 */
 #mw-abusefilter-syntaxresult,
-ul li.mw-abusefilter-changeslist-nomatch,
-ul li.mw-abusefilter-changeslist-match {
+#mw-content-text li.mw-abusefilter-changeslist-nomatch,
+#mw-content-text li.mw-abusefilter-changeslist-match {
 	/* Do not consolidate these into a "background:" rule; it will override the background-image: settings in above rulesets */
 	background-repeat: no-repeat;
 	padding-left: 25px;

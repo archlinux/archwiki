@@ -24,6 +24,8 @@
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Linker\Linker;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -184,7 +186,7 @@ class SpecialMIMESearch extends QueryPage {
 		$this->addHelpLink( 'Help:Managing_files' );
 		$this->mime = $par ?: $this->getRequest()->getText( 'mime' );
 		$this->mime = trim( $this->mime );
-		list( $this->major, $this->minor ) = File::splitMime( $this->mime );
+		[ $this->major, $this->minor ] = File::splitMime( $this->mime );
 
 		if ( $this->major == '' || $this->minor == '' || $this->minor == 'unknown' ||
 			!self::isValidType( $this->major )

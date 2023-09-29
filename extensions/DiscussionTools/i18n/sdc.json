@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"F Samaritani"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Ripundì",
+	"discussiontools-newtopic-placeholder-title": "Oggettu",
+	"discussiontools-postedit-confirmation-published": "La to' mudìfigga è isthadda prubbiggadda.",
+	"discussiontools-replylink": "ripundi",
+	"discussiontools-replywidget-advanced": "Abanzaddu",
+	"discussiontools-replywidget-cancel": "Canzillà",
+	"discussiontools-replywidget-loading": "Carrigghendi...",
+	"discussiontools-replywidget-mode-source": "Orìgini",
+	"discussiontools-replywidget-mode-visual": "Visuàri",
+	"discussiontools-replywidget-newtopic": "Aggiungì oggettu",
+	"discussiontools-replywidget-placeholder-newtopic": "Deschrizioni",
+	"discussiontools-replywidget-placeholder-reply": "Ripundì\ta {{BIDI:$1}}",
+	"discussiontools-replywidget-preferences": "Prifirenzi",
+	"discussiontools-replywidget-preview": "Antiprimma",
+	"discussiontools-replywidget-reply": "Ripundì",
+	"discussiontools-replywidget-summary": "Dettàgliu",
+	"discussiontools-topicsubscription-pager-actions": "Azioni",
+	"discussiontools-topicsubscription-pager-page": "Pàgina"
+}

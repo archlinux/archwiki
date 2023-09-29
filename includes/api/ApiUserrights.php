@@ -25,6 +25,7 @@
 
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Specials\SpecialUserRights;
 use MediaWiki\User\UserGroupManager;
 use Wikimedia\ParamValidator\ParamValidator;
 
@@ -67,12 +68,7 @@ class ApiUserrights extends ApiBase {
 		$params = $this->extractRequestParams();
 
 		// Figure out expiry times from the input
-		// $params['expiry'] is not set in CentralAuth's ApiGlobalUserRights subclass
-		if ( isset( $params['expiry'] ) ) {
-			$expiry = (array)$params['expiry'];
-		} else {
-			$expiry = [ 'infinity' ];
-		}
+		$expiry = (array)$params['expiry'];
 		$add = (array)$params['add'];
 		if ( !$add ) {
 			$expiry = [];
@@ -92,7 +88,7 @@ class ApiUserrights extends ApiBase {
 		$groupExpiries = [];
 		foreach ( $expiry as $index => $expiryValue ) {
 			$group = $add[$index];
-			$groupExpiries[$group] = UserrightsPage::expiryToTimestamp( $expiryValue );
+			$groupExpiries[$group] = SpecialUserRights::expiryToTimestamp( $expiryValue );
 
 			if ( $groupExpiries[$group] === false ) {
 				$this->dieWithError( [ 'apierror-invalidexpiry', wfEscapeWikiText( $expiryValue ) ] );
@@ -116,12 +112,12 @@ class ApiUserrights extends ApiBase {
 			}
 		}
 
-		$form = new UserrightsPage();
+		$form = new SpecialUserRights();
 		$form->setContext( $this->getContext() );
 		$r = [];
 		$r['user'] = $user->getName();
 		$r['userid'] = $user->getId();
-		list( $r['added'], $r['removed'] ) = $form->doSaveUserGroups(
+		[ $r['added'], $r['removed'] ] = $form->doSaveUserGroups(
 			// Don't pass null to doSaveUserGroups() for array params, cast to empty array
 			$user, $add, (array)$params['remove'],
 			$params['reason'], (array)$tags, $groupExpiries
@@ -146,7 +142,7 @@ class ApiUserrights extends ApiBase {
 
 		$user = $params['user'] ?? '#' . $params['userid'];
 
-		$form = new UserrightsPage();
+		$form = new SpecialUserRights();
 		$form->setContext( $this->getContext() );
 		$status = $form->fetchUser( $user );
 		if ( !$status->isOK() ) {

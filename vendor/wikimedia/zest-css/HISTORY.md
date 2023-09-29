@@ -1,5 +1,10 @@
 # Release History
 
+## zest-css 3.0.0 (2023-02-27)
+* Drop PHP 7.2 and PHP 7.3 support.
+* PHP 8 compatibility fixes.
+* Dependency updates.
+
 ## zest-css 2.0.2 (2021-10-14)
 * Update wikimedia/remex-html to 2.3.2 (dev dependency)
 * Add a compilation cache to speed up repeated matches.

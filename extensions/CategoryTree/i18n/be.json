@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Artsiom91",
+			"Maksim L.",
 			"Mechanizatar",
 			"Mikalai Udodau",
+			"Plaga med",
 			"Тест",
 			"Чаховіч Уладзіслаў",
-			"Maksim L.",
-			"Plaga med"
+			"ZlyiLev"
 		]
 	},
 	"categorytree": "Дрэва катэгорый",
@@ -31,7 +32,7 @@
 	"categorytree-num-empty": "пуста",
 	"categorytree-load": "загрузіць",
 	"categorytree-loading": "загрузка…",
-	"categorytree-nothing-found": "Гэта катэгорыя не ўтрымлівае падкатэгорый.",
+	"categorytree-nothing-found": "Гэта катэгорыя не змяшчае падкатэгорый.",
 	"categorytree-no-subcategories": "няма падкатэгорый",
 	"categorytree-no-parent-categories": "няма бацькоўскіх катэгорый",
 	"categorytree-no-pages": "няма артыкулаў і падкатэгорый",

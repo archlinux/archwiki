@@ -8,7 +8,8 @@
 			"Odisha1",
 			"Psubhashish",
 			"Shisir 1945",
-			"ଆଶୁତୋଷ କର"
+			"ଆଶୁତୋଷ କର",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "ଆପେଆପେ ଅଧିକତର ସମ୍ଭାବନା ସମ୍ପାଦନାରେ ଯୋଡ଼ିଥାଏ",
@@ -46,7 +47,7 @@
 	"abusefilter-log-search-wiki": "ଉଇକି:",
 	"abusefilter-log-search-submit": "ଖୋଜନ୍ତୁ",
 	"abusefilter-log-entry": "$1: $2 ଅପବ୍ୟବହାର ଛଣା ଭାବରେ ଚିହ୍ନିତ ହେଲା, $4ରେ \"$3\" କାମଟି କରୁଛୁ ।\nକରାଯାଇଥିବା କାମ: $5;\nଛଣାବିବରଣୀ: $6",
-	"abusefilter-log-detailedentry-meta": "$1: $2, $3କୁ  \"$4\" କାମଟି $5ରେ କରିବାକୁ ବଳାଇଲା ।\nକରାଯାଇଥିବା କାମ: $6;\nଛଣା ବିବରଣୀ: $7 ($8)",
+	"abusefilter-log-detailedentry-meta": "$1: $2, $3କୁ \"$4\" କାମଟି $5ରେ କରିବାକୁ ବଳାଇଲା ।\nକରାଯାଇଥିବା କାମ: $6;\nଛଣା ବିବରଣୀ: $7 ($8)",
 	"abusefilter-log-detailedentry-global": "ସାର୍ବଜନୀନ ଛଣା $1",
 	"abusefilter-log-detailedentry-local": "ଛଣା $1",
 	"abusefilter-log-detailslink": "ଆହୁରି ଅଧିକ",

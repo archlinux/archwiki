@@ -6,6 +6,7 @@ use HtmlArmor;
 use IContextSource;
 use Linker;
 use LogFormatter;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use OldChangesList;
 use RecentChange;
@@ -119,13 +120,15 @@ class AbuseFilterChangesList extends OldChangesList {
 		if ( $this->isDeleted( $rc, RevisionRecord::DELETED_COMMENT ) ) {
 			if ( $this->userCan( $rc, RevisionRecord::DELETED_COMMENT ) ) {
 				return ' <span class="history-deleted">' .
-					Linker::commentBlock( $rc->getAttribute( 'rc_comment' ), $rc->getTitle() ) . '</span>';
+					MediaWikiServices::getInstance()->getCommentFormatter()
+						->formatBlock( $rc->getAttribute( 'rc_comment' ), $rc->getTitle() ) . '</span>';
 			} else {
 				return ' <span class="history-deleted">' .
 					$this->msg( 'rev-deleted-comment' )->escaped() . '</span>';
 			}
 		} else {
-			return Linker::commentBlock( $rc->getAttribute( 'rc_comment' ), $rc->getTitle() );
+			return MediaWikiServices::getInstance()->getCommentFormatter()
+				->formatBlock( $rc->getAttribute( 'rc_comment' ), $rc->getTitle() );
 		}
 	}
 

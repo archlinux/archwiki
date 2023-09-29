@@ -62,13 +62,13 @@ QUnit.test( 'reduplicateStyles/deduplicateStyles', ( assert ) => {
 	];
 
 	stylesCases.forEach( ( caseItem ) => {
-		const doc = ve.parseXhtml( caseItem.deduplicated );
+		const doc = ve.createDocumentFromHtml( caseItem.deduplicated );
 
 		// Test that we can re-duplicate styles, which were de-duplicated in Parsoid HTML
 		mw.libs.ve.reduplicateStyles( doc.body );
 		assert.equalDomElement(
 			doc.body,
-			ve.parseXhtml( caseItem.reduplicated ).body,
+			ve.createDocumentFromHtml( caseItem.reduplicated ).body,
 			caseItem.msg + ' (reduplicated)'
 		);
 
@@ -76,22 +76,157 @@ QUnit.test( 'reduplicateStyles/deduplicateStyles', ( assert ) => {
 		mw.libs.ve.deduplicateStyles( doc.body );
 		assert.equalDomElement(
 			doc.body,
-			ve.parseXhtml( caseItem.deduplicated ).body,
+			ve.createDocumentFromHtml( caseItem.deduplicated ).body,
 			caseItem.msg + ' (deduplicated)'
 		);
 	} );
 } );
 
 QUnit.test( 'getTargetDataFromHref', ( assert ) => {
-	const doc = ve.parseXhtml( '<p></p>' );
+	const doc = ve.createDocumentFromHtml( ve.test.utils.makeBaseTag( ve.dm.mwExample.baseUri ) );
+	mw.config.set( {
+		wgScript: '/w/index.php',
+		wgArticlePath: '/wiki/$1'
+	} );
+
 	const hrefCases = [
+		{
+			msg: 'Parsoid link',
+			href: './Foo',
+			expected: {
+				title: 'Foo',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Parsoid red link',
+			href: './Foo?action=edit&redlink=1',
+			expected: {
+				title: 'Foo',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Parsoid link with fragment',
+			href: './Foo#Bar',
+			expected: {
+				title: 'Foo#Bar',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Parsoid red link with fragment',
+			href: './Foo?action=edit&redlink=1#Bar',
+			expected: {
+				title: 'Foo#Bar',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Old parser link',
+			href: '/wiki/Foo',
+			expected: {
+				title: 'Foo',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Old parser red link',
+			href: '/w/index.php?title=Foo&action=edit&redlink=1',
+			expected: {
+				title: 'Foo',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Old parser link with fragment',
+			href: '/wiki/Foo#Bar',
+			expected: {
+				title: 'Foo#Bar',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Old parser red link with fragment (old parser does not actually generate links like this, but we recognize them)',
+			href: '/w/index.php?title=Foo&action=edit&redlink=1#Bar',
+			expected: {
+				title: 'Foo#Bar',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Full URL link to current wiki',
+			href: 'http://example.com/wiki/Foo',
+			expected: {
+				title: 'Foo',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Full URL red link to current wiki',
+			href: 'http://example.com/w/index.php?title=Foo&action=edit&redlink=1',
+			expected: {
+				title: 'Foo',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Full URL link to current wiki with different protocol',
+			href: 'https://example.com/wiki/Foo',
+			expected: {
+				title: 'Foo',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Full URL link to current wiki, but with no title',
+			href: 'http://example.com/wiki/',
+			expected: {
+				title: '',
+				isInternal: true
+			}
+		},
+		{
+			msg: 'Full URL link to current wiki, but with extra parameters (1)',
+			href: 'http://example.com/wiki/Foo?action=history',
+			expected: {
+				isInternal: false
+			}
+		},
+		{
+			msg: 'Full URL link to current wiki, but with extra parameters (2)',
+			href: 'http://example.com/w/index.php?title=Foo&action=edit&redlink=1&preload=Blah',
+			expected: {
+				isInternal: false
+			}
+		},
+		{
+			msg: 'Full URL link to current wiki that may be valid, but uses a weird URL pattern',
+			href: 'http://example.com/wiki/?title=Foo',
+			expected: {
+				isInternal: false
+			}
+		},
+		{
+			msg: 'Full URL link to another wiki',
+			href: 'http://example.net/wiki/Foo',
+			expected: {
+				isInternal: false
+			}
+		},
+		{
+			msg: 'Full URL red link to another wiki',
+			href: 'http://example.net/w/index.php?title=Foo&action=edit&redlink=1',
+			expected: {
+				isInternal: false
+			}
+		},
 		{
 			/* eslint-disable no-script-url */
 			msg: 'Invalid protocol is handled as internal link',
 			href: 'javascript:alert()',
-			expectedInfo: {
+			expected: {
 				title: 'javascript:alert()',
-				rawTitle: 'javascript:alert()',
 				isInternal: true
 			}
 			/* eslint-enable no-script-url */
@@ -99,33 +234,28 @@ QUnit.test( 'getTargetDataFromHref', ( assert ) => {
 		{
 			msg: 'Invalid protocol is handled as internal link',
 			href: 'not-a-protocol:Some%20text',
-			expectedInfo: {
+			expected: {
 				title: 'not-a-protocol:Some text',
-				rawTitle: 'not-a-protocol:Some%20text',
 				isInternal: true
 			}
 		},
 		{
 			msg: 'Valid protocol is handled as external link',
 			href: 'https://example.net/',
-			expectedInfo: {
-				title: 'https://example.net/',
-				rawTitle: 'https://example.net/',
+			expected: {
 				isInternal: false
 			}
 		},
 		{
 			msg: 'Valid protocol is handled as external link',
 			href: 'mailto:example@example.net',
-			expectedInfo: {
-				title: 'mailto:example@example.net',
-				rawTitle: 'mailto:example@example.net',
+			expected: {
 				isInternal: false
 			}
 		}
 	];
 	hrefCases.forEach( ( caseItem ) => {
 		const actualInfo = mw.libs.ve.getTargetDataFromHref( caseItem.href, doc );
-		assert.deepEqual( actualInfo, caseItem.expectedInfo, caseItem.msg );
+		assert.deepEqual( actualInfo, caseItem.expected, caseItem.msg );
 	} );
 } );

@@ -1,9 +1,18 @@
+var SKIN_MINERVA_TALK_SIMPLIFIED_CLASS = 'skin-minerva--talk-simplified';
+
+/**
+ * @return {boolean}
+ */
+function isSimplifiedViewEnabled() {
+	// eslint-disable-next-line no-jquery/no-class-state
+	return $( document.body ).hasClass( SKIN_MINERVA_TALK_SIMPLIFIED_CLASS );
+}
+
 /**
  * @param {Object} mobile mobileFrontend component library
  */
-module.exports = function ( mobile ) {
+function init( mobile ) {
 	var
-		SKIN_MINERVA_TALK_SIMPLIFIED_CLASS = 'skin-minerva--talk-simplified',
 		toast = mobile.toast,
 		currentPage = mobile.currentPage(),
 		api = new mw.Api(),
@@ -169,19 +178,11 @@ module.exports = function ( mobile ) {
 	}
 
 	/**
-	 * @return {boolean}
-	 */
-	function isSimplifiedViewEnabled() {
-		// eslint-disable-next-line no-jquery/no-class-state
-		return $( document.body ).hasClass( SKIN_MINERVA_TALK_SIMPLIFIED_CLASS );
-	}
-
-	/**
 	 * Sets up necessary event handlers related to the talk page and talk buttons.
 	 * Also renders the "Read as wikipage" button for the simplified mode
 	 * (T230695).
 	 */
-	function init() {
+	function doInit() {
 		var promise,
 			// eslint-disable-next-line no-jquery/no-global-selector
 			$addTalk = $( '.minerva-talk-add-button' );
@@ -211,6 +212,11 @@ module.exports = function ( mobile ) {
 	}
 
 	if ( talkTitle ) {
-		init();
+		doInit();
 	}
+}
+
+module.exports = {
+	init: init,
+	isSimplifiedViewEnabled: isSimplifiedViewEnabled
 };

@@ -49,6 +49,12 @@ class CurlyTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( '{hello world}', $curly->render(), 'Should render a list' );
 	}
 
+	public function testGetters() {
+		$curly = new Curly( new TexArray( new Literal( 'b' ) ) );
+		$this->assertNotEmpty( $curly->getArgs() );
+		$this->assertNotEmpty( $curly->getArg() );
+	}
+
 	public function testNoExtraCurliesDQ() {
 		$dq = new DQ( new Literal( 'a' ),
 			new Curly( new TexArray( new Literal( 'b' ) ) ) );

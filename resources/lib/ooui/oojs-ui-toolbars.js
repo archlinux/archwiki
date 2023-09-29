@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.44.5
+ * OOUI v0.46.3
  * https://www.mediawiki.org/wiki/OOUI
  *
  * Copyright 2011–2023 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2023-02-06T22:04:43Z
+ * Date: 2023-02-07T00:43:59Z
  */
 ( function ( OO ) {
 
@@ -1471,11 +1471,7 @@ OO.ui.ToolGroup.prototype.populate = function () {
 		this.removeItems( remove );
 	}
 	// Update emptiness state
-	if ( add.length ) {
-		this.$element.removeClass( 'oo-ui-toolGroup-empty' );
-	} else {
-		this.$element.addClass( 'oo-ui-toolGroup-empty' );
-	}
+	this.$element.toggleClass( 'oo-ui-toolGroup-empty', !add.length );
 	// Re-add tools (moving existing ones to new locations)
 	this.addItems( add );
 	// Disabled state may depend on items

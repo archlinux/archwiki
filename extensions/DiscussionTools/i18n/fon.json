@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Mahuton"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Gblɔn ɖéwu",
+	"discussiontools-replylink": "gblɔn ɖéwu",
+	"discussiontools-replywidget-advanced": "Nu yǐ nukɔn",
+	"discussiontools-replywidget-cancel": "Súnsún",
+	"discussiontools-replywidget-mode-source": "Ɖoɖonu",
+	"discussiontools-replywidget-mode-visual": "Nukunmɔn nu",
+	"discussiontools-replywidget-placeholder-reply": "Yi gbé nu {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Nú mɔ sɛ ɖo",
+	"discussiontools-replywidget-reply": "Gblɔn ɖéwu",
+	"discussiontools-replywidget-summary": "Kowun tɔn",
+	"discussiontools-replywidget-watchthis": "Sɔ wéma élɔ ɖo [[Special:Watchlist|nukunɖéji]] wéma towé lɛ mɛ",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|mɛ|mɛ bi}} é ɖo xoɖiɖɔ ɔ mɛ lɛ é",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|xo ɖo gɔ nu xo|Xo ɖo gɔ nu xo lɛ}}",
+	"discussiontools-topicheader-latestcomment": "Xo ɖɔ gɔ nu $1 xo gudo tɔn",
+	"discussiontools-topicsubscription-button-subscribe": "ɖo nyikɔ wéma mɛ",
+	"discussiontools-topicsubscription-button-subscribe-label": "Ɖo nyikɔ wéma mɛ",
+	"discussiontools-topicsubscription-button-unsubscribe": "ɖé nyikɔ towé sin wéma ɔ mɛ",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Ɖé nyikɔ towé sin wéma ɔ mɛ",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Mɛ ɖé ɖɔ xo gɔ nu xo yɔyɔ ɖébu ɔ, mi na mɔn xa ɖo fi",
+	"discussiontools-topicsubscription-notify-subscribed-title": "My ɖo nyinkɔ mitɔn wéma mɛ!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Bɛ sin ɖin ɔ, mɛ ɖébu ɖɔ xo gɔ nu xo yɔyɔ ɖébu ɔ, mi na lɛ ɖɔn ayi mitɔn ɖéji a",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "My ɖé nyinkɔ mitɔn sin wéma ɔ mɛ!"
+}

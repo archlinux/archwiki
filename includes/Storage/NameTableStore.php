@@ -31,8 +31,8 @@ use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\RequestTimeout\TimeoutException;
 
 /**
- * @author Addshore
  * @since 1.31
+ * @author Addshore
  */
 class NameTableStore {
 
@@ -201,7 +201,7 @@ class NameTableStore {
 				// As store returned an ID we know we inserted so delete from WAN cache
 				$dbw = $this->getDBConnection( DB_PRIMARY );
 				$dbw->onTransactionPreCommitOrIdle( function () {
-					$this->cache->delete( $this->getCacheKey() );
+					$this->cache->delete( $this->getCacheKey(), WANObjectCache::HOLDOFF_TTL_NONE );
 				}, __METHOD__ );
 			}
 			$this->tableCache = $table;
@@ -365,16 +365,14 @@ class NameTableStore {
 	 * @return string[]
 	 */
 	private function loadTable( IDatabase $db ) {
-		$result = $db->select(
-			$this->table,
-			[
+		$result = $db->newSelectQueryBuilder()
+			->select( [
 				'id' => $this->idField,
 				'name' => $this->nameField
-			],
-			[],
-			__METHOD__,
-			[ 'ORDER BY' => 'id' ]
-		);
+			] )
+			->from( $this->table )
+			->orderBy( 'id' )
+			->caller( __METHOD__ )->fetchResultSet();
 
 		$assocArray = [];
 		foreach ( $result as $row ) {

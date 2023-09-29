@@ -41,7 +41,7 @@
 	"vector-search-loader": "Зареждане на предложенията за търсене",
 	"vector-searchsuggest-containing": "Търсене на страници съдържащи <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Въведение",
-	"vector-toc-toggle-position-title": "скриване",
+	"vector-toc-label": "Съдържание",
 	"vector-toc-beginning": "Начало",
 	"vector-toc-toggle-button-label": "Превключване на подраздел $1",
 	"vector-anon-user-menu-pages": "Страници за излезли от системата редактори",
@@ -51,6 +51,16 @@
 	"vector-toc-menu-tooltip": "Съдържание",
 	"vector-toc-collapsible-button-label": "Скриване/показване на съдържанието",
 	"vector-site-nav-label": "Сайт",
+	"vector-main-menu-label": "Главно меню",
+	"vector-limited-width-toggle": "Превключване на ограничена дължина на съдържанието",
+	"vector-page-tools-label": "Инструменти",
+	"vector-page-tools-general-label": "Основни",
+	"vector-page-tools-actions-label": "Действия",
+	"vector-pin-element-label": "преместване към страничната лента",
+	"vector-unpin-element-label": "скриване",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Дискусия]]",
-	"tooltip-vector-anon-user-menu-title": "Допълнителни опции"
+	"tooltip-vector-anon-user-menu-title": "Допълнителни опции",
+	"vector-prefs-limited-width": "Включване на режим с ограничена ширина",
+	"vector-prefs-limited-width-help": "Включете режима с ограничена ширина за подобрено четене.",
+	"empty-language-selector-body": "Съдържанието на страницата не се поддържа на други езици."
 }

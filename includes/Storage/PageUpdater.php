@@ -1,7 +1,5 @@
 <?php
 /**
- * Controller-like object for creating and updating pages by creating new revisions.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,21 +16,19 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- *
- * @author Daniel Kinzler
  */
 
 namespace MediaWiki\Storage;
 
 use AtomicSectionUpdate;
 use ChangeTags;
-use CommentStoreComment;
 use Content;
 use ContentHandler;
 use DeferredUpdates;
 use InvalidArgumentException;
 use LogicException;
 use ManualLogEntry;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\ValidationParams;
@@ -46,6 +42,7 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
@@ -53,8 +50,6 @@ use MWException;
 use Psr\Log\LoggerInterface;
 use RecentChange;
 use RuntimeException;
-use Status;
-use Title;
 use TitleFormatter;
 use User;
 use Wikimedia\Assert\Assert;
@@ -72,13 +67,13 @@ use WikiPage;
  * This allows application logic to safely perform edit conflict resolution using the parent
  * revision's content.
  *
- * @see docs/pageupdater.md for more information.
- *
  * MCR migration note: this replaces the relevant methods in WikiPage.
+ *
+ * @see docs/pageupdater.md for more information.
  *
  * @since 1.32
  * @ingroup Page
- * @phan-file-suppress PhanTypeArraySuspiciousNullable Cannot read type of $this->status->value
+ * @author Daniel Kinzler
  */
 class PageUpdater {
 
@@ -184,7 +179,7 @@ class PageUpdater {
 	private $slotsUpdate;
 
 	/**
-	 * @var Status|null
+	 * @var PageUpdateStatus|null
 	 */
 	private $status = null;
 
@@ -324,6 +319,8 @@ class PageUpdater {
 		$this->setFlags( $flags );
 
 		// Load the data from the primary database if needed. Needed to check flags.
+		$this->derivedDataUpdater->setCause( 'edit-page', $this->author->getName() );
+
 		$this->grabParentRevision();
 		if ( !$this->derivedDataUpdater->isUpdatePrepared() ) {
 			// Avoid statsd noise and wasted cycles check the edit stash (T136678)
@@ -547,7 +544,7 @@ class PageUpdater {
 	/**
 	 * Set the new content for the given slot role
 	 *
-	 * @param string $role A slot role name (such as "main")
+	 * @param string $role A slot role name (such as SlotRecord::MAIN)
 	 * @param Content $content
 	 * @return $this
 	 */
@@ -603,7 +600,7 @@ class PageUpdater {
 	 * preventing the new revision, and any subsequent revisions, from
 	 * inheriting the slot with this role.
 	 *
-	 * @param string $role A slot role name (but not "main")
+	 * @param string $role A slot role name (but not SlotRecord::MAIN)
 	 */
 	public function removeSlot( $role ) {
 		$this->ensureRoleNotRequired( $role );
@@ -850,7 +847,7 @@ class PageUpdater {
 		}
 
 		// NOTE: slots can be inherited even if the role is not "allowed" on the title.
-		$status = Status::newGood();
+		$status = PageUpdateStatus::newGood();
 		$this->checkAllRolesAllowed(
 			$this->slotsUpdate->getModifiedRoles(),
 			$status
@@ -872,7 +869,7 @@ class PageUpdater {
 			if ( !$roleHandler->isAllowedModel( $slot->getModel(), $this->getPage() ) ) {
 				$contentHandler = $this->contentHandlerFactory
 					->getContentHandler( $slot->getModel() );
-				$this->status = Status::newFatal( 'content-not-allowed-here',
+				$this->status = PageUpdateStatus::newFatal( 'content-not-allowed-here',
 					ContentHandler::getLocalizedName( $contentHandler->getModelID() ),
 					$this->titleFormatter->getPrefixedText( $this->getPage() ),
 					wfMessage( $roleHandler->getNameMessageKey() )
@@ -896,7 +893,7 @@ class PageUpdater {
 
 		// Trigger pre-save hook (using provided edit summary)
 		$renderedRevision = $this->derivedDataUpdater->getRenderedRevision();
-		$hookStatus = Status::newGood( [] );
+		$hookStatus = PageUpdateStatus::newGood( [] );
 		$allowedByHook = $this->hookRunner->onMultiContentSave(
 			$renderedRevision, $this->author, $summary, $this->flags, $hookStatus
 		);
@@ -954,8 +951,8 @@ class PageUpdater {
 		$this->status = $status;
 
 		// TODO: replace bad status with Exceptions!
-		return ( $this->status && $this->status->isOK() )
-			? $this->status->value['revision-record']
+		return $this->status
+			? $this->status->getNewRevision()
 			: null;
 	}
 
@@ -982,7 +979,7 @@ class PageUpdater {
 			throw new RuntimeException( 'Something is trying to edit an article with an empty title' );
 		}
 
-		$status = Status::newGood();
+		$status = PageUpdateStatus::newGood();
 		$this->checkAllRolesAllowed(
 			$this->slotsUpdate->getModifiedRoles(),
 			$status
@@ -1018,7 +1015,7 @@ class PageUpdater {
 			if ( !$roleHandler->isAllowedModel( $slot->getModel(), $this->getPage() ) ) {
 				$contentHandler = $this->contentHandlerFactory
 					->getContentHandler( $slot->getModel() );
-				$this->status = Status::newFatal(
+				$this->status = PageUpdateStatus::newFatal(
 					'content-not-allowed-here',
 					ContentHandler::getLocalizedName( $contentHandler->getModelID() ),
 					$this->titleFormatter->getPrefixedText( $this->getPage() ),
@@ -1046,8 +1043,8 @@ class PageUpdater {
 	}
 
 	/**
-	 * The Status object indicating whether saveRevision() was successful, or null if
-	 * saveRevision() was not yet called on this instance.
+	 * The Status object indicating whether saveRevision() was successful.
+	 * Must not be called before saveRevision() or updateRevision() was called on this instance.
 	 *
 	 * @note This is here for compatibility with WikiPage::doUserEditContent. It may be deprecated
 	 * soon.
@@ -1066,9 +1063,14 @@ class PageUpdater {
 	 *     new: Boolean indicating if the function attempted to create a new article.
 	 *     revision-record: The RevisionRecord object for the inserted revision, or null.
 	 *
-	 * @return null|Status
+	 * @return PageUpdateStatus
 	 */
-	public function getStatus() {
+	public function getStatus(): PageUpdateStatus {
+		if ( !$this->status ) {
+			throw new LogicException(
+				'getStatus() is undefined before saveRevision() or updateRevision() have been called'
+			);
+		}
 		return $this->status;
 	}
 
@@ -1090,7 +1092,7 @@ class PageUpdater {
 	 * @return bool
 	 */
 	public function isNew() {
-		return $this->status && $this->status->isOK() && $this->status->value['new'];
+		return $this->status && $this->status->wasPageCreated();
 	}
 
 	/**
@@ -1135,8 +1137,7 @@ class PageUpdater {
 	 */
 	public function wasRevisionCreated(): bool {
 		return $this->status
-			&& $this->status->isOK()
-			&& $this->status->value['revision-record'] !== null;
+			&& $this->status->wasRevisionCreated();
 	}
 
 	/**
@@ -1146,8 +1147,8 @@ class PageUpdater {
 	 * @return RevisionRecord|null
 	 */
 	public function getNewRevision() {
-		return ( $this->status && $this->status->isOK() )
-			? $this->status->value['revision-record']
+		return $this->status
+			? $this->status->getNewRevision()
 			: null;
 	}
 
@@ -1160,13 +1161,13 @@ class PageUpdater {
 	 * The $status parameter is updated with any errors or warnings found by Content::prepareSave().
 	 *
 	 * @param CommentStoreComment $comment
-	 * @param Status $status
+	 * @param PageUpdateStatus $status
 	 *
 	 * @return MutableRevisionRecord
 	 */
 	private function makeNewRevision(
 		CommentStoreComment $comment,
-		Status $status
+		PageUpdateStatus $status
 	) {
 		$wikiPage = $this->getWikiPage();
 		$title = $this->getTitle();
@@ -1257,25 +1258,25 @@ class PageUpdater {
 	 * of the caller.
 	 *
 	 * @param RevisionRecord $revision
-	 * @return Status
+	 * @return PageUpdateStatus
 	 */
-	private function doUpdate( RevisionRecord $revision ): Status {
+	private function doUpdate( RevisionRecord $revision ): PageUpdateStatus {
 		$currentRevision = $this->grabParentRevision();
 		if ( !$currentRevision ) {
 			// Article gone missing
-			return Status::newFatal( 'edit-gone-missing' );
+			return PageUpdateStatus::newFatal( 'edit-gone-missing' );
 		}
 
 		$dbw = $this->getDBConnectionRef( DB_PRIMARY );
 		$dbw->startAtomic( __METHOD__ );
 
-		$slots = $this->revisionStore->updateslotsOn( $revision, $this->slotsUpdate, $dbw );
+		$slots = $this->revisionStore->updateSlotsOn( $revision, $this->slotsUpdate, $dbw );
 
 		$dbw->endAtomic( __METHOD__ );
 
 		// Return the slots and revision to the caller
 		$newRevisionRecord = MutableRevisionRecord::newUpdatedRevisionRecord( $revision, $slots );
-		$status = Status::newGood( [
+		$status = PageUpdateStatus::newGood( [
 			'revision-record' => $newRevisionRecord,
 			'slots' => $slots,
 		] );
@@ -1310,15 +1311,13 @@ class PageUpdater {
 	 * @param CommentStoreComment $summary The edit summary
 	 *
 	 * @throws MWException
-	 * @return Status
+	 * @return PageUpdateStatus
 	 */
-	private function doModify( CommentStoreComment $summary ) {
+	private function doModify( CommentStoreComment $summary ): PageUpdateStatus {
 		$wikiPage = $this->getWikiPage(); // TODO: use for legacy hooks only!
 
 		// Update article, but only if changed.
-		$status = Status::newGood(
-			[ 'new' => false, 'revision-record' => null ]
-		);
+		$status = PageUpdateStatus::newEmpty( false );
 
 		$oldRev = $this->grabParentRevision();
 		$oldid = $oldRev ? $oldRev->getId() : 0;
@@ -1437,7 +1436,7 @@ class PageUpdater {
 			$dbw->endAtomic( __METHOD__ );
 
 			// Return the new revision to the caller
-			$status->value['revision-record'] = $newRevisionRecord;
+			$status->setNewRevision( $newRevisionRecord );
 		} else {
 			// T34948: revision ID must be set to page {{REVISIONID}} and
 			// related variables correctly. Likewise for {{REVISIONUSER}} (T135261).
@@ -1477,9 +1476,9 @@ class PageUpdater {
 	 *
 	 * @throws DBUnexpectedError
 	 * @throws MWException
-	 * @return Status
+	 * @return PageUpdateStatus
 	 */
-	private function doCreate( CommentStoreComment $summary ) {
+	private function doCreate( CommentStoreComment $summary ): PageUpdateStatus {
 		if ( $this->preventChange ) {
 			throw new LogicException(
 				"Content was changed even though preventChange() was called."
@@ -1491,9 +1490,7 @@ class PageUpdater {
 			throw new PageUpdateException( 'Must provide a main slot when creating a page!' );
 		}
 
-		$status = Status::newGood(
-			[ 'new' => true, 'revision-record' => null ]
-		);
+		$status = PageUpdateStatus::newEmpty( true );
 
 		$newRevisionRecord = $this->makeNewRevision(
 			$summary,
@@ -1578,7 +1575,7 @@ class PageUpdater {
 		$dbw->endAtomic( __METHOD__ );
 
 		// Return the new revision to the caller
-		$status->value['revision-record'] = $newRevisionRecord;
+		$status->setNewRevision( $newRevisionRecord );
 
 		// Do secondary updates once the main changes have been committed...
 		DeferredUpdates::addUpdate(
@@ -1690,9 +1687,9 @@ class PageUpdater {
 
 	/**
 	 * @param array $roles
-	 * @param Status $status
+	 * @param PageUpdateStatus $status
 	 */
-	private function checkAllRolesAllowed( array $roles, Status $status ) {
+	private function checkAllRolesAllowed( array $roles, PageUpdateStatus $status ) {
 		$allowedRoles = $this->getAllowedSlotRoles();
 
 		$forbidden = array_diff( $roles, $allowedRoles );
@@ -1707,9 +1704,9 @@ class PageUpdater {
 
 	/**
 	 * @param array $roles
-	 * @param Status $status
+	 * @param PageUpdateStatus $status
 	 */
-	private function checkAllRolesDerived( array $roles, Status $status ) {
+	private function checkAllRolesDerived( array $roles, PageUpdateStatus $status ) {
 		$notDerived = array_filter(
 			$roles,
 			function ( $role ) {
@@ -1727,9 +1724,9 @@ class PageUpdater {
 
 	/**
 	 * @param array $roles
-	 * @param Status $status
+	 * @param PageUpdateStatus $status
 	 */
-	private function checkNoRolesRequired( array $roles, Status $status ) {
+	private function checkNoRolesRequired( array $roles, PageUpdateStatus $status ) {
 		$requiredRoles = $this->getRequiredSlotRoles();
 
 		$needed = array_diff( $roles, $requiredRoles );
@@ -1744,9 +1741,9 @@ class PageUpdater {
 
 	/**
 	 * @param array $roles
-	 * @param Status $status
+	 * @param PageUpdateStatus $status
 	 */
-	private function checkAllRequiredRoles( array $roles, Status $status ) {
+	private function checkAllRequiredRoles( array $roles, PageUpdateStatus $status ) {
 		$requiredRoles = $this->getRequiredSlotRoles();
 
 		$missing = array_diff( $requiredRoles, $roles );

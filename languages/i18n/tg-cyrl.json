@@ -22,7 +22,8 @@
 			"Vashgird",
 			"Vlad5250",
 			"לערי ריינהארט",
-			"아라"
+			"아라",
+			"Zolgoyo"
 		]
 	},
 	"tog-underline": "Пайвандҳо хаткашида:",
@@ -1465,7 +1466,7 @@
 	"enotif_lastvisited": "Барои дидани ҳамаи тағйирот аз охирин боре, ки сар задаед $1ро бубинед.",
 	"enotif_lastdiff": "Барои намоиши ин тағйир $1ро бубинед.",
 	"enotif_anon_editor": "корбари ношинос $1",
-	"enotif_body": "Мӯҳтарам $WATCHINGUSERNAME,\n\n\nСаҳифаи $PAGETITLE дар {{SITENAME}} аз тарафаи $PAGEEDITOR дар $PAGEEDITDATE  $CHANGEDORCREATED шуд, барои нусхаи кунунӣ, нигаред ба $PAGETITLE_URL.\n\n$NEWPAGE\n\nТавзеҳи вироишгар: $PAGESUMMARY $PAGEMINOREDIT\n\nТамос бо вироишгар:\nпочати электронӣ: $PAGEEDITOR_EMAIL\nвики: $PAGEEDITOR_WIKI\n\nТо ҳангоме, ки ба саҳифа сар назадаед, дар сурати рух додани эҳтимолӣ, тағйироти бештар эълоне барои шумо фиристода нахоҳад шуд. Шумо ҳамчунин метавонед дар саҳифаи пайгириҳои худ парчамҳои марбут огоҳирасонии тариқи почтаи электониро сифр кунед.\n\n             Хоксори шумо {{SITENAME}} сомонаи огоҳирасонӣ\n\n--\nБарои танзимоти феҳристи пайгириҳоятон биравед ба\n{{canonicalurl:{{#special:EditWatchlist}}}}\n\nПешниҳодот ва кӯмаки бештар:\n$HELPPAGE",
+	"enotif_body": "Мӯҳтарам $WATCHINGUSERNAME,\n\n$PAGEINTRO $NEWPAGE\n\nТавзеҳи вироишгар: $PAGESUMMARY $PAGEMINOREDIT\n\nТамос бо вироишгар:\nпочати электронӣ: $PAGEEDITOR_EMAIL\nвики: $PAGEEDITOR_WIKI\n\nТо ҳангоме, ки ба саҳифа сар назадаед, дар сурати рух додани эҳтимолӣ, тағйироти бештар эълоне барои шумо фиристода нахоҳад шуд. Шумо ҳамчунин метавонед дар саҳифаи пайгириҳои худ парчамҳои марбут огоҳирасонии тариқи почтаи электониро сифр кунед.\n\nХоксори шумо {{SITENAME}} сомонаи огоҳирасонӣ\n\n--\nБарои танзимоти феҳристи пайгириҳоятон биравед ба\n{{canonicalurl:{{#special:EditWatchlist}}}}\n\nПешниҳодот ва кӯмаки бештар:\n$HELPPAGE",
 	"created": "эҷод шуд",
 	"changed": "тағйирёфта",
 	"deletepage-submit": "Ҳазфи саҳифа",
@@ -2138,5 +2139,26 @@
 	"skin-action-protect": "Ҳифз кардан",
 	"skin-action-undelete": "Эҳё",
 	"skin-action-delete": "Ҳазф",
-	"skin-action-move": "Кӯчонидан"
+	"skin-action-move": "Кӯчонидан",
+	"renameuser": "Тағйири номи корбарӣ",
+	"renameuserold": "Номи корбари феълӣ:",
+	"renameusernew": "Номи корбари ҷадид:",
+	"renameuserreason": "Сабаб:",
+	"renameusermove": "Саҳифаи корбарӣ ва саҳифаи баҳси корбар (ва зерсаҳифаҳои он)ро интиқол бидеҳ",
+	"renameuserreserve": "Бастани номи корбарии куҳна аз истифодаи оянда",
+	"renameuserwarnings": "Ҳушдорҳо:",
+	"renameuserconfirm": "Бале, номи корбариро тағйир бидеҳ",
+	"renameusersubmit": "Сабт",
+	"renameusererrordoesnotexist": "Номи корбарӣ \"<nowiki>$1</nowiki>\" вуҷуд надорад.",
+	"renameusererrorexists": "Номи корбарӣ \"<nowiki>$1</nowiki>\" истифода шудааст.",
+	"renameusererrorinvalid": "Номи корбарӣ \"<nowiki>$1</nowiki>\" ғайри миҷоз аст.",
+	"renameuser-error-request": "Дар дарёфти дархост мушкилие пеш омад. Лутфан ба саҳифаи қаблӣ бозгардед ва дубора талош кунед.",
+	"renameuser-error-same-user": "Шумо наметавонед номи як корбарро ба ҳамон номи қаблиаш тағйир диҳед.",
+	"renameusersuccess": "Номи корбар \"<nowiki>$1</nowiki>\" ба \"<nowiki>$2</nowiki>\" тағйир ёфт.",
+	"renameuser-page-exists": "Саҳифаи $1 аллакай вуҷуд дорда ва ба таври худкор қобили бознависӣ нест.",
+	"renameuser-page-moved": "Саҳифаи $1 ба $2 кӯчонида шуд.",
+	"renameuser-page-unmoved": "Имкони кӯчонидани саҳифаи $1 ба $2 вуҷуд надорад.",
+	"log-name-renameuser": "Гузориши тағйири номи корбар",
+	"renameuser-move-log": "Саҳифа дар вақти тағйири номи корбар  \"[[User:$1|$1]]\" ба \"[[User:$2|$2]]\" ба таври худкор кӯчонида шуд",
+	"right-renameuser": "Тағйири номи корбарон"
 }

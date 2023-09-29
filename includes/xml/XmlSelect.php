@@ -20,6 +20,8 @@
  * @file
  */
 
+use MediaWiki\Html\Html;
+
 /**
  * Class for generating HTML <select> or <datalist> elements.
  */
@@ -151,7 +153,7 @@ class XmlSelect {
 				$option = "$option:$option";
 			}
 			// Extract the two parts.
-			list( $label, $value ) = explode( ':', $option );
+			[ $label, $value ] = explode( ':', $option );
 			$options[ trim( $label ) ] = trim( $value );
 		}
 		return $options;

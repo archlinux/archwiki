@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"P. S. F. Freitas"
+		]
+	},
+	"abusefilter-log-search-impact-all": "Opaite tembiapo",
+	"abusefilter-edit-warn-actions": "Tembiapoː",
+	"abusefilter-edit-disallow-actions": "Tembiapoː",
+	"abusefilter-edit-restricted": "Ndaikatúi remohenda ko mboguaha, oguerekógui peteĩ térã hetave tembiapo ojokóva hese.\nEjeruremi peteĩ puruhárape omoĩkuaáva tembiapo ojejokóva ojapo hag̃ua ndéve g̃uarã pe ñemoambue.",
+	"abusefilter-edit-export": "Eguerahauka ko mboguaha viki ambuévape",
+	"abusefilter-history-actions": "Tembiapo",
+	"abusefilter-test-search-type-all": "Opaite tembiapo",
+	"abusefilter-test-search-type-upload": "Mba'ejupi"
+}

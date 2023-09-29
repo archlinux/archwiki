@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Afalau",
 			"Lloffiwr",
-			"Robin Owain",
-			"Afalau"
+			"Robin Owain"
 		]
 	},
 	"templatedata-desc": "Gweithredu storio data ar gyfer paramedrau nodynnau (gan ddefnyddio JSON)",

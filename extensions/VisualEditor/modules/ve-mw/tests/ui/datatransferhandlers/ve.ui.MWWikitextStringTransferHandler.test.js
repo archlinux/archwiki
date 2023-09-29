@@ -19,7 +19,7 @@ QUnit.module( 've.ui.MWWikitextStringTransferHandler', ve.test.utils.newMwEnviro
 
 /* Tests */
 
-ve.test.utils.runWikitextStringHandlerTest = ( assert, server, string, mimeType, expectedResponse, expectedData, annotations, assertDom, msg ) => {
+ve.test.utils.runWikitextStringHandlerTest = ( assert, server, string, mimeType, expectedResponse, expectedData, annotations, assertDom, base, msg ) => {
 	const done = assert.async(),
 		item = ve.ui.DataTransferItem.static.newFromString( string, mimeType ),
 		doc = ve.dm.Document.static.newBlankDocument(),
@@ -31,6 +31,8 @@ ve.test.utils.runWikitextStringHandlerTest = ( assert, server, string, mimeType,
 			},
 			createProgress: () => ve.createDeferred().promise()
 		};
+
+	ve.fixBase( doc.getHtmlDocument(), doc.getHtmlDocument(), base );
 
 	// Preprocess the expectedData array
 	for ( let i = 0; i < expectedData.length; i++ ) {
@@ -72,9 +74,7 @@ ve.test.utils.runWikitextStringHandlerTest = ( assert, server, string, mimeType,
 		server.respond( [ 200, { 'Content-Type': 'application/json' }, JSON.stringify( {
 			visualeditor: {
 				result: 'success',
-				content: '<body lang="en" class="mw-content-ltr sitedir-ltr ltr mw-body mw-body-content mediawiki" dir="ltr">' +
-					expectedResponse +
-					'</body>'
+				content: expectedResponse
 			}
 		} ) ] );
 	}
@@ -85,7 +85,7 @@ QUnit.test( 'convert', function ( assert ) {
 			{
 				msg: 'Simple link',
 				// Put link in the middle of text to verify that the
-				// start-of-line and end-or-line anchors on the heading
+				// start-of-line and end-of-line anchors on the heading
 				// identification pattern don't affect link identification
 				pasteString: 'some [[Foo]] text',
 				pasteType: 'text/plain',
@@ -95,7 +95,6 @@ QUnit.test( 'convert', function ( assert ) {
 					attributes: {
 						lookupTitle: 'Foo',
 						normalizedTitle: 'Foo',
-						origTitle: 'Foo',
 						title: 'Foo'
 					}
 				} ],
@@ -129,7 +128,6 @@ QUnit.test( 'convert', function ( assert ) {
 					attributes: {
 						lookupTitle: 'Foo',
 						normalizedTitle: 'Foo',
-						origTitle: 'Foo',
 						title: 'Foo'
 					}
 				} ],
@@ -261,10 +259,14 @@ QUnit.test( 'convert', function ( assert ) {
 			}
 		];
 
+	mw.config.set( {
+		wgArticlePath: '/wiki/$1'
+	} );
 	for ( let i = 0; i < cases.length; i++ ) {
 		ve.test.utils.runWikitextStringHandlerTest(
 			assert, this.server, cases[ i ].pasteString, cases[ i ].pasteType, cases[ i ].parsoidResponse,
-			cases[ i ].expectedData, cases[ i ].annotations, cases[ i ].assertDom, cases[ i ].msg
+			cases[ i ].expectedData, cases[ i ].annotations, cases[ i ].assertDom, ve.dm.mwExample.baseUri,
+			cases[ i ].msg
 		);
 	}
 } );

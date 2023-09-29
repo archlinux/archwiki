@@ -89,7 +89,6 @@
 	"visualeditor-dialog-transclusion-loading": "Betöltés…",
 	"visualeditor-dialog-transclusion-no-template-description": "A(z) „$1” sablonnak még nincs leírása, de a [[$2|lapja]] további információkkal szolgálhat.",
 	"visualeditor-dialog-transclusion-param-default": "Alapértelmezett: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Sablon hozzáadása",
 	"visualeditor-dialog-transclusion-required-parameter": "Kötelező mező",
 	"visualeditor-dialog-transclusion-required-parameter-description": "A mező kitöltése kötelező.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Vissza",

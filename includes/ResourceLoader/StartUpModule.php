@@ -46,7 +46,6 @@ use Wikimedia\RequestTimeout\TimeoutException;
  * @internal
  */
 class StartUpModule extends Module {
-	protected $targets = [ 'desktop', 'mobile' ];
 
 	private $groupIds = [
 		// These reserved numbers MUST start at 0 and not skip any. These are preset
@@ -131,7 +130,7 @@ class StartUpModule extends Module {
 	 * @phan-param array<string,array{version:string,dependencies:array,group:?string,source:string}> &$registryData
 	 */
 	public static function compileUnresolvedDependencies( array &$registryData ): void {
-		foreach ( $registryData as $name => &$data ) {
+		foreach ( $registryData as &$data ) {
 			$dependencies = $data['dependencies'];
 			try {
 				foreach ( $data['dependencies'] as $dependency ) {

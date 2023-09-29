@@ -187,7 +187,6 @@
 	"visualeditor-dialog-transclusion-param-selection-aria-description": "Pritisnite razmaknicu za dodavanje ili uklanjanje parametara. Pritisnite Enter da biste dodali parametar i odmah uredili njegovu vrijednost. Kada je parametar već odabran, pritisnite Enter za uređivanje vrijednosti.",
 	"visualeditor-dialog-transclusion-param-selection-aria-label": "Parametri u $1",
 	"visualeditor-dialog-transclusion-param-undocumented": "(Nedokumentirani parametar)",
-	"visualeditor-dialog-transclusion-placeholder": "Dodaj šablon",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Traži predložak",
 	"visualeditor-dialog-transclusion-required-parameter": "Obavezno polje",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Polje je obavezno.",

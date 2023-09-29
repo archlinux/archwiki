@@ -8,10 +8,14 @@
  * @ingroup Extensions
  */
 
+namespace MediaWiki\Extension\ConfirmEdit\QuestyCaptcha;
+
+use Html;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\Extension\ConfirmEdit\Store\CaptchaStore;
+use Xml;
 
 class QuestyCaptcha extends SimpleCaptcha {
 	// used for questycaptcha-edit, questycaptcha-addurl, questycaptcha-badlogin,
@@ -140,3 +144,5 @@ class QuestyCaptcha extends SimpleCaptcha {
 		$formDescriptor['captchaWord']['label-message'] = null;
 	}
 }
+
+class_alias( QuestyCaptcha::class, 'QuestyCaptcha' );

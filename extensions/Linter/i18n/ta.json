@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Balajijagadesh",
+			"ElangoRamanujam",
+			"Siddhan"
+		]
+	},
+	"linter-lints-prefix-search-page-desc": "பக்க தலைப்பு முன்னொட்டு அல்லது முழுமையான தலைப்பின் மூலம் சிறிய பிழைகள் உள்ள பக்கங்களைத் தேடவும்",
+	"linter-form-exact-match": "ஒரு குறிப்பிட்ட பக்க தலைப்பை தேடவும்",
+	"linter-form-prefix-match": "தலைப்பு முற்சேர்க்கையுடன் பொருந்தக்கூடிய அனைத்து பதக்கங்களையும் தேடுக",
+	"linter-form-exact-or-prefix": "ஒரு குறிப்பிட்ட பக்க தலைப்பு அல்லது பொதுவான தலைப்பு முன்னொட்டுடன் அனைத்து பக்கங்களையும் தேடவும்",
+	"linter-form-title-prefix": "தலைப்பின் முற்சேர்க்கை அல்லது முழுமையான தலைப்பை உள்ளிடவும்:",
+	"linter-page-viewsource": "மூலத்தை காட்டுக",
+	"linter-pager-missing-end-tag-details": "முடிவுக் குறிச்சொல் காணவில்லை",
+	"linter-pager-self-closed-tag-details": "சுய-மூடப்பட்ட குறி",
+	"linter-prefix-search-subpage": "தலைப்பு முன்னொட்டு அல்லது முழுமையான தலைப்புடன் பொருந்தக்கூடிய சிறிய பிழைகள் உள்ள பக்கங்கள்: $1"
+}

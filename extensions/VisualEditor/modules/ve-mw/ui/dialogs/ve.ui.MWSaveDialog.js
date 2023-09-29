@@ -213,7 +213,8 @@ ve.ui.MWSaveDialog.prototype.showPreview = function ( response ) {
 			$( '<em>' ).append( response )
 		);
 	} else {
-		var data = response.parse;
+		var data = response.parse,
+			config = mw.config.get( 'wgVisualEditor' );
 
 		mw.config.set( data.jsconfigvars );
 		mw.loader.using( ( data.modules || [] ).concat( data.modulestyles || [] ) );
@@ -226,9 +227,13 @@ ve.ui.MWSaveDialog.prototype.showPreview = function ( response ) {
 			// * mw-content-ltr
 			// * mw-content-rtl
 			// eslint-disable-next-line no-jquery/no-html
-			$( '<div>' ).addClass( 'mw-content-' + mw.config.get( 'wgVisualEditor' ).pageLanguageDir ).html(
-				data.text
-			),
+			$( '<div>' )
+				.addClass( 'mw-content-' + config.pageLanguageDir )
+				.attr( {
+					lang: config.pageLanguageCode,
+					dir: config.pageLanguageDir
+				} )
+				.html( data.text ),
 			data.categorieshtml
 		);
 

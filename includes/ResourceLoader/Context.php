@@ -23,10 +23,10 @@
 namespace MediaWiki\ResourceLoader;
 
 use Config;
-use FauxRequest;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserRigorOptions;
 use Message;
@@ -51,7 +51,8 @@ class Context implements MessageLocalizer {
 	public const DEBUG_OFF = 0;
 	/** @internal For use in ResourceLoader classes. */
 	public const DEBUG_LEGACY = 1;
-	private const DEBUG_MAIN = 2;
+	/** @internal For use in SpecialJavaScriptTest. */
+	public const DEBUG_MAIN = 2;
 
 	/** @var ResourceLoader */
 	protected $resourceLoader;
@@ -369,7 +370,7 @@ class Context implements MessageLocalizer {
 	 * If this is a request for an image, get the Image object.
 	 *
 	 * @since 1.25
-	 * @return Image|bool false if a valid object cannot be created
+	 * @return Image|false false if a valid object cannot be created
 	 */
 	public function getImageObj() {
 		if ( $this->imageObj === null ) {
@@ -502,12 +503,17 @@ class Context implements MessageLocalizer {
 		// and allows URLs to mostly remain readable.
 		$jsonFlags = JSON_UNESCAPED_SLASHES |
 			JSON_UNESCAPED_UNICODE |
+			JSON_PARTIAL_OUTPUT_ON_ERROR |
 			JSON_HEX_TAG |
 			JSON_HEX_AMP;
 		if ( $this->getDebug() ) {
 			$jsonFlags |= JSON_PRETTY_PRINT;
 		}
-		return json_encode( $data, $jsonFlags );
+		$json = json_encode( $data, $jsonFlags );
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			trigger_error( __METHOD__ . ' partially failed: ' . json_last_error_msg(), E_USER_WARNING );
+		}
+		return $json;
 	}
 }
 

@@ -65,9 +65,11 @@ ve.ce.MWMagicLinkNode.static.getDescription = function ( model ) {
  */
 ve.ce.MWMagicLinkNode.prototype.onUpdate = function () {
 	this.$link
-		.attr( 'href', this.model.getHref() )
 		.attr( 'rel', this.model.getRel() )
 		.text( this.model.getAttribute( 'content' ) );
+
+	// T322704
+	ve.setAttributeSafe( this.$link[ 0 ], 'href', this.model.getHref(), '#' );
 };
 
 /* Registration */

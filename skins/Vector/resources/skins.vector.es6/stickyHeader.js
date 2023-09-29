@@ -8,9 +8,8 @@ const
 	STICKY_HEADER_APPENDED_PARAM = [ 'wvprov', 'sticky-header' ],
 	STICKY_HEADER_VISIBLE_CLASS = 'vector-sticky-header-visible',
 	STICKY_HEADER_USER_MENU_CONTAINER_CLASS = 'vector-sticky-header-icon-end',
-	TOC_ID = 'mw-panel-toc',
 	FIRST_HEADING_ID = 'firstHeading',
-	USER_MENU_ID = 'p-personal',
+	USER_LINKS_DROPDOWN_ID = 'vector-user-links-dropdown',
 	ULS_STICKY_CLASS = 'uls-dialog-sticky',
 	ULS_HIDE_CLASS = 'uls-dialog-sticky-hide',
 	VECTOR_USER_LINKS_SELECTOR = '.vector-user-links',
@@ -46,36 +45,6 @@ function show() {
 function hide() {
 	document.body.classList.remove( STICKY_HEADER_VISIBLE_CLASS );
 	document.body.classList.add( ULS_HIDE_CLASS );
-}
-
-/**
- * Moves the TOC element to a new parent container.
- *
- * @param {string} position The position to move the TOC into: sidebar or stickyheader
- */
-function moveToc( position ) {
-	const toc = document.getElementById( TOC_ID );
-	const currTocContainer = toc && toc.parentElement;
-	if ( !toc || !currTocContainer ) {
-		return;
-	}
-
-	// FIXME: Remove after Ia263c606dce5a6060b6b29fbaedc49cef3e17a5c has been in prod for 5 days
-	const isCachedHtml = document.querySelector( '.mw-table-of-contents-container.mw-sticky-header-element' );
-
-	let newTocContainer;
-	const sidebarTocContainerClass = isCachedHtml ? 'mw-table-of-contents-container' : 'vector-sticky-toc-container';
-	const stickyHeaderTocContainerClass = 'vector-menu-content';
-	// Avoid moving TOC if unnecessary
-	if ( !currTocContainer.classList.contains( sidebarTocContainerClass ) && position === 'sidebar' ) {
-		newTocContainer = document.querySelector( `.${sidebarTocContainerClass}` );
-	} else if ( !currTocContainer.classList.contains( stickyHeaderTocContainerClass ) && position === 'stickyheader' ) {
-		newTocContainer = document.querySelector( `.vector-sticky-header-toc .${stickyHeaderTocContainerClass}` );
-	}
-
-	if ( newTocContainer ) {
-		newTocContainer.insertAdjacentElement( 'beforeend', toc );
-	}
 }
 
 /**
@@ -413,56 +382,71 @@ function addVisualEditorHooks( stickyIntersection, observer ) {
 }
 
 /**
- * @param {Element} userMenu
- * @return {Element} cloned userMenu
+ * Clones the existing user menu (excluding items added by gadgets) and adds to the sticky header
+ * ensuring it is not focusable and that elements are no longer collapsible (since the sticky header
+ * itself collapses at low resolutions) and updates click tracking event names. Also wires up the
+ * logout link so it works in a single click.
+ *
+ * @param {Element} userLinksDropdown
+ * @return {Element} cloned userLinksDropdown
  */
-function prepareUserMenu( userMenu ) {
+function prepareUserLinksDropdown( userLinksDropdown ) {
 	const
 		// Type declaration needed because of https://github.com/Microsoft/TypeScript/issues/3734#issuecomment-118934518
-		userMenuClone = /** @type {Element} */( userMenu.cloneNode( true ) ),
-		userMenuStickyElementsWithIds = userMenuClone.querySelectorAll( '[ id ], [ data-event-name ]' );
+		userLinksDropdownClone = /** @type {Element} */( userLinksDropdown.cloneNode( true ) ),
+		userLinksDropdownStickyElementsWithIds = userLinksDropdownClone.querySelectorAll( '[ id ], [ data-event-name ]' );
 	// Update all ids of the cloned user menu to make them unique.
-	makeNodeTrackable( userMenuClone );
-	userMenuStickyElementsWithIds.forEach( makeNodeTrackable );
+	makeNodeTrackable( userLinksDropdownClone );
+	userLinksDropdownStickyElementsWithIds.forEach( makeNodeTrackable );
 	// Remove portlet links added by gadgets using mw.util.addPortletLink, T291426
-	removeNodes( userMenuClone.querySelectorAll( '.mw-list-item-js' ) );
+	removeNodes( userLinksDropdownClone.querySelectorAll( '.mw-list-item-js' ) );
 	removeClassFromNodes(
-		userMenuClone.querySelectorAll( '.user-links-collapsible-item' ),
+		userLinksDropdownClone.querySelectorAll( '.user-links-collapsible-item' ),
 		'user-links-collapsible-item'
 	);
 	// Prevents user menu from being focusable, T290201
-	const userMenuCheckbox = userMenuClone.querySelector( 'input' );
-	if ( userMenuCheckbox ) {
-		userMenuCheckbox.setAttribute( 'tabindex', '-1' );
+	const userLinksDropdownCheckbox = userLinksDropdownClone.querySelector( 'input' );
+	if ( userLinksDropdownCheckbox ) {
+		userLinksDropdownCheckbox.setAttribute( 'tabindex', '-1' );
 	}
-	return userMenuClone;
+
+	// Make the logout go through the API (T324638)
+	const logoutLink = userLinksDropdownClone.querySelector( '#pt-logout-sticky-header a' );
+	if ( logoutLink ) {
+		logoutLink.addEventListener( 'click', function ( ev ) {
+			ev.preventDefault();
+			// @ts-ignore
+			mw.hook( 'skin.logout' ).fire( this.href );
+		} );
+	}
+	return userLinksDropdownClone;
 }
 
 /**
  * Makes sticky header functional for modern Vector.
  *
  * @param {Element} header
- * @param {Element} userMenu
- * @param {Element} userMenuStickyContainer
+ * @param {Element} userLinksDropdown
+ * @param {Element} userLinksDropdownStickyContainer
  * @param {IntersectionObserver} stickyObserver
  * @param {Element} stickyIntersection
  * @param {boolean} disableEditIcons
  */
 function makeStickyHeaderFunctional(
 	header,
-	userMenu,
-	userMenuStickyContainer,
+	userLinksDropdown,
+	userLinksDropdownStickyContainer,
 	stickyObserver,
 	stickyIntersection,
 	disableEditIcons
 ) {
 	const
-		userMenuStickyContainerInner = userMenuStickyContainer
+		userLinksDropdownStickyContainerInner = userLinksDropdownStickyContainer
 			.querySelector( VECTOR_USER_LINKS_SELECTOR );
 
 	// Clone the updated user menu to the sticky header.
-	if ( userMenuStickyContainerInner ) {
-		userMenuStickyContainerInner.appendChild( prepareUserMenu( userMenu ) );
+	if ( userLinksDropdownStickyContainerInner ) {
+		userLinksDropdownStickyContainerInner.appendChild( prepareUserLinksDropdown( userLinksDropdown ) );
 	}
 
 	let namespaceName = mw.config.get( 'wgCanonicalNamespace' );
@@ -497,7 +481,8 @@ function makeStickyHeaderFunctional(
 		document.body.classList.remove( STICKY_HEADER_VISIBLE_CLASS );
 		stickyObserver.unobserve( stickyIntersection );
 	};
-	const addSection = document.querySelector( '#ca-addsection a' );
+	// When VectorPromoteAddTopic is set, #ca-addsection is the link itself
+	const addSection = document.querySelector( '#ca-addsection a' ) || document.querySelector( 'a#ca-addsection' );
 
 	prepareEditIcons(
 		header,
@@ -534,10 +519,11 @@ function setupSearchIfNeeded( header ) {
  * @return {boolean}
  */
 function isAllowedNamespace( namespaceNumber ) {
-	// Corresponds to Main, Main talk, User, User talk, Wikipedia,
-	// Template, Help, Category, Portal, Module.
-	const allowedNamespaceNumbers = [ 0, 1, 2, 3, 4, 10, 12, 14, 100, 828 ];
-	return allowedNamespaceNumbers.indexOf( namespaceNumber ) > -1;
+	// Corresponds to Main, User, Wikipedia, Template, Help, Category, Portal, Module.
+	const allowedNamespaceNumbers = [ 0, 2, 4, 10, 12, 14, 100, 828 ];
+	// Also allow on all talk namespaces (compare NamespaceInfo::isTalk()).
+	const isAllowedTalk = namespaceNumber > 0 && namespaceNumber % 2 !== 0;
+	return isAllowedTalk || allowedNamespaceNumbers.indexOf( namespaceNumber ) > -1;
 }
 
 /**
@@ -555,7 +541,7 @@ function isAllowedAction( action ) {
 /**
  * @typedef {Object} StickyHeaderProps
  * @property {Element} header
- * @property {Element} userMenu
+ * @property {Element} userLinksDropdown
  * @property {IntersectionObserver} observer
  * @property {Element} stickyIntersection
  * @property {boolean} disableEditIcons
@@ -565,14 +551,14 @@ function isAllowedAction( action ) {
  * @param {StickyHeaderProps} props
  */
 function initStickyHeader( props ) {
-	const userMenuStickyContainer = document.getElementsByClassName(
+	const userLinksDropdownStickyContainer = document.getElementsByClassName(
 		STICKY_HEADER_USER_MENU_CONTAINER_CLASS
 	)[ 0 ];
 
 	makeStickyHeaderFunctional(
 		props.header,
-		props.userMenu,
-		userMenuStickyContainer,
+		props.userLinksDropdown,
+		userLinksDropdownStickyContainer,
 		props.observer,
 		props.stickyIntersection,
 		props.disableEditIcons
@@ -605,14 +591,13 @@ function initStickyHeader( props ) {
 module.exports = {
 	show,
 	hide,
-	moveToc,
-	prepareUserMenu,
+	prepareUserLinksDropdown,
 	isAllowedNamespace,
 	isAllowedAction,
 	initStickyHeader,
 	STICKY_HEADER_ID,
 	FIRST_HEADING_ID,
-	USER_MENU_ID,
+	USER_LINKS_DROPDOWN_ID,
 	STICKY_HEADER_EDIT_EXPERIMENT_NAME,
 	STICKY_HEADER_EXPERIMENT_NAME
 };

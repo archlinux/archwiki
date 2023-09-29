@@ -187,7 +187,7 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 
 	/**
 	 * Generate a new request object
-	 * @deprecated since 1.34, use HttpRequestFactory instead
+	 * @deprecated since 1.34, use HttpRequestFactory instead. Hard-deprecated since 1.40.
 	 * @param string $url Url to use
 	 * @param array|null $options (optional) extra params to pass (see HttpRequestFactory::create())
 	 * @param string $caller The method making this request, for profiling
@@ -196,11 +196,9 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 	 * @see MWHttpRequest::__construct
 	 */
 	public static function factory( $url, array $options = null, $caller = __METHOD__ ) {
-		if ( $options === null ) {
-			$options = [];
-		}
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getHttpRequestFactory()
-			->create( $url, $options, $caller );
+			->create( $url, $options ?? [], $caller );
 	}
 
 	/**
@@ -491,7 +489,7 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 		if ( (int)$this->respStatus > 0 && (int)$this->respStatus < 400 ) {
 			$this->status->setResult( true, (int)$this->respStatus );
 		} else {
-			list( $code, $message ) = explode( " ", $this->respStatus, 2 );
+			[ $code, $message ] = explode( " ", $this->respStatus, 2 );
 			$this->status->setResult( false, (int)$this->respStatus );
 			$this->status->fatal( "http-bad-status", $code, $message );
 		}

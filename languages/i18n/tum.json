@@ -160,6 +160,7 @@
 	"permalink": "Link yakukhalilila",
 	"print": "Printani",
 	"view": "Kuona",
+	"viewcontribs": "Woneska vyakulemba",
 	"skin-view-view": "Ŵelengani",
 	"skin-view-foreign": "Bekani pa $1",
 	"edit": "Kulemba",
@@ -176,6 +177,8 @@
 	"skin-action-unprotect": "Kusintha matchinjilizgo",
 	"unprotect": "Kusintha matchinjilizgo",
 	"newpage": "Jani lanyuwani",
+	"newpage-desc": "Yambiska jani liphya pa mutu uwo wapempheka",
+	"view-missing-pages": "Woneska majani ghakusoŵa",
 	"talkpagelinktext": "pakuchezgela",
 	"specialpage": "Jani lakupatulika",
 	"personaltools": "Vilwelo vyako",
@@ -374,6 +377,7 @@
 	"newarticletext": "Mwalondezga link iyo peji lake palije dankha.\nKuti mulilembe, yambani kulemba mu box pasi apa (onani [$1 peji laovwili] mwa vinandi).\nPala mwizapo mwangozi, dofyani batani la browser winu <strong>back</strong>.",
 	"noarticletext": "Palije dankha mazgo pa jani lino.\nMunga [[Special:Search/{{PAGENAME}}|penja jani lino]] mu viyowoyelo vinyake,\n<span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} penja mu ma log nghakupokelelapo],\npanji[{{fullurl:{{FULLPAGENAME}}|action=edit}} yatani jani lino]</span>.",
 	"noarticletext-nopermission": "Pasono palije dankha mazgo ghalighose pa jani lino.\nMunga [[Special:Search/{{PAGENAME}}|penja mutu uwo]] mu majani ghanyake, panji <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} mungapenja mu mathala ghanyake]</span>, kwene mulije chilolezo chakuyata jani lino.",
+	"userpage-userdoesnotexist-view": "Akaunti ya mgwiliski \"$1\" indalembeske pa wiki yino.",
 	"previewnote": "<strong>Kumbukilani kuti ichi ntchiyelezgelo waka.</strong>\nMundazomelezge dankha kusintha!",
 	"continue-editing": "Luta pakulembela",
 	"creating": "Kulemba $1",
@@ -686,5 +690,12 @@
 	"nstab-mainpage": "Jani likulu",
 	"skin-action-protect": "Kutchinjilizga",
 	"skin-action-delete": "Fufuta",
-	"skin-action-move": "Ithya"
+	"skin-action-move": "Ithya",
+	"blockedtext-made-by": "Walikukanizga ni $1.",
+	"blockedtext-reason-comment": "Chifukwa ntchakuti <em>$1</em>",
+	"blockedtext-start-time": "Kwamba kwakukanizga: $1",
+	"blockedtext-expiration-time": "Kumala kwa kukanizga: $1",
+	"blockedtext-contact-blocker-admin": "Mungafumba $1 panji  [[{{MediaWiki:Grouppage-sysop}}|administrator]] zakuti mulongosolelane.",
+	"blockedtext-block-id": "Ndipo block ID ni #$1.",
+	"blockedtext-include-details-queries": "Chonde sazgani vose ivo vili pachanya pakufumba ovwili."
 }

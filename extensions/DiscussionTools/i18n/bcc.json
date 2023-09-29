@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Moshtank"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "جواب",
+	"discussiontools-replywidget-advanced": "دݔمارپتگݔن/اڈوانسݔن",
+	"discussiontools-replywidget-cancel": "بججگ",
+	"discussiontools-replywidget-mode-source": "سرچممگ",
+	"discussiontools-replywidget-mode-visual": "گندگی",
+	"discussiontools-replywidget-preview": "پݔشسۏج",
+	"discussiontools-replywidget-summary": "کمݔن",
+	"discussiontools-replywidget-watchthis": "اے تاکا وتی [[Special:Watchlist|چارگءِ لیستا]] ھۏر کن",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|جِند}} مہ گپان",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|گپ|گپان}}",
+	"discussiontools-topicheader-latestcomment": "گُڈی گپ: $1",
+	"discussiontools-topicsubscription-button-subscribe": "امراھداری",
+	"discussiontools-topicsubscription-button-subscribe-label": "امراھداری",
+	"discussiontools-topicsubscription-button-unsubscribe": "امراھداری نکنگ",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "امراھداری نکنگ"
+}

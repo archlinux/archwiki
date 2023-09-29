@@ -21,27 +21,32 @@
 use MediaWiki\Tests\Unit\Libs\Rdbms\AddQuoterMock;
 use Wikimedia\Rdbms\Platform\MySQLPlatform;
 
+/**
+ * @covers \Wikimedia\Rdbms\Platform\MySQLPlatform
+ */
 class MySQLPlatformTest extends PHPUnit\Framework\TestCase {
 
 	use MediaWikiCoversValidator;
 
-	/**
-	 * @dataProvider provideDiapers
-	 * @covers \Wikimedia\Rdbms\Platform\MySQLPlatform::addIdentifierQuotes
-	 */
-	public function testAddIdentifierQuotes( $expected, $in ) {
-		$platform = new MySQLPlatform( new AddQuoterMock() );
-		$quoted = $platform->addIdentifierQuotes( $in );
-		$this->assertEquals( $expected, $quoted );
+	/** @var SqlitePlatform */
+	private $platform;
+
+	protected function setUp(): void {
+		parent::setUp();
+		$this->platform = new MySQLPlatform( new AddQuoterMock() );
 	}
 
 	/**
-	 * @covers \Wikimedia\Rdbms\Platform\MySQLPlatform::addIdentifierQuotes
+	 * @dataProvider provideDiapers
 	 */
+	public function testAddIdentifierQuotes( $expected, $in ) {
+		$quoted = $this->platform->addIdentifierQuotes( $in );
+		$this->assertEquals( $expected, $quoted );
+	}
+
 	public function testAddIdentifierQuotesNull() {
-		$platform = new MySQLPlatform( new AddQuoterMock() );
 		// Ignore PHP 8.1+ warning about null to str_replace()
-		$quoted = @$platform->addIdentifierQuotes( null );
+		$quoted = @$this->platform->addIdentifierQuotes( null );
 		$this->assertEquals( '``', $quoted );
 	}
 

@@ -3,6 +3,13 @@
 namespace Wikimedia\Rdbms;
 
 /**
+ * A query builder for SELECT queries with a fluent interface.
+ *
+ * Any particular query builder object should only be used for a single database query,
+ * and not be reused afterwards. However, to run multiple similar queries,
+ * you can create a “template” query builder to set up most of the query,
+ * and then clone the object (and potentially modify the clone) for each individual query.
+ *
  * Note that none of the methods in this class are stable to override.
  * The goal of extending this class is creating specialized query builders,
  * like {@link \MediaWiki\Page\PageSelectQueryBuilder}
@@ -47,7 +54,8 @@ class SelectQueryBuilder extends JoinGroupBase {
 	protected $db;
 
 	/**
-	 * @internal
+	 * Only for use in subclasses. To create a SelectQueryBuilder instance,
+	 * use `$db->newSelectQueryBuilder()` instead.
 	 *
 	 * @param IDatabase $db
 	 */
@@ -682,7 +690,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Run the constructed SELECT query, and return the first result row. If
 	 * there were no results, return false.
 	 *
-	 * @return bool|\stdClass
+	 * @return \stdClass|false
 	 */
 	public function fetchRow() {
 		return $this->db->selectRow( $this->tables, $this->fields, $this->conds, $this->caller,
@@ -736,6 +744,8 @@ class SelectQueryBuilder extends JoinGroupBase {
 	/**
 	 * Run the SELECT query with the FOR UPDATE option. The field list is ignored.
 	 *
+	 * @deprecated since 1.40, use $this->forUpdate()->fetchRowCount() if you need
+	 *   the return value or $this->forUpdate()->acquireRowLocks() if you don't.
 	 * @return int
 	 */
 	public function lockForUpdate() {
@@ -797,5 +807,29 @@ class SelectQueryBuilder extends JoinGroupBase {
 		];
 		$info[ $joinsName ] = $this->joinConds;
 		return $info;
+	}
+
+	/**
+	 * Execute the query, but throw away the results. This is intended for
+	 * locking select queries. By calling this method, the caller is indicating
+	 * that the query is only done to acquire locks on the selected rows. The
+	 * field list is optional.
+	 *
+	 * Either forUpdate() or lockInShareMode() must be called before calling
+	 * this method.
+	 *
+	 * @see self::forUpdate()
+	 * @see self::lockInShareMode()
+	 *
+	 * @since 1.40
+	 */
+	public function acquireRowLocks(): void {
+		if ( !array_intersect( $this->options, [ 'FOR UPDATE', 'LOCK IN SHARE MODE' ] ) ) {
+			throw new \UnexpectedValueException( __METHOD__ . ' can only be called ' .
+				'after forUpdate() or lockInShareMode()' );
+		}
+		$fields = $this->fields ?: '1';
+		$this->db->select( $this->tables, $fields, $this->conds, $this->caller,
+			$this->options, $this->joinConds );
 	}
 }

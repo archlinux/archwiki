@@ -2,20 +2,29 @@
 	"@metadata": {
 		"authors": [
 			"Metsavend",
-			"Numulunj pilgae"
+			"Numulunj pilgae",
+			"Валгриш"
 		]
 	},
+	"vector-languages": "Кяльхть",
 	"vector-language-button-label": "{{PLURAL:$1|$1 кяль|$1 кяльхть}}",
+	"vector-no-language-button-label": "Поладомс кяльхть",
 	"vector-action-addsection": "Поладомс мезень колга корхтамс",
 	"vector-action-delete": "Нардамс",
-	"vector-action-move": "Шашфтомс",
+	"vector-action-move": "Лиякс лемдемс",
 	"vector-action-protect": "Араламс",
 	"vector-action-undelete": "Мърдафтомс",
 	"vector-action-unprotect": "Араламать полафтомс",
-	"vector-view-create": "Тиемс",
+	"vector-view-create": "Тиемс-ладямс",
 	"vector-view-edit": "Петнемс",
-	"vector-view-history": "История няфтемс",
+	"vector-view-history": "Ваномс эряма пингть",
 	"vector-view-view": "Морафтомс",
 	"vector-view-viewsource": "Лисьма няфтемс",
-	"vector-more-actions": "Сяда лама"
+	"vector-more-actions": "Сяда лама",
+	"vector-searchsuggest-containing": "Вешендемс лопат, конатнень эса <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Потмось",
+	"vector-toc-beginning": "Ушеткссь",
+	"vector-page-tools-label": "Кядьёнкст",
+	"vector-page-tools-general-label": "Марстонь",
+	"vector-unpin-element-label": "Кяшемс"
 }

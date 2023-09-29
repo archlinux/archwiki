@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Category\Category;
 use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Deferred\LinksUpdate\LinksDeletionUpdate;
 use MediaWiki\Edit\PreparedEdit;
@@ -13,6 +14,7 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\RevisionSlotsUpdate;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\Title;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\TestingAccessWrapper;
@@ -104,14 +106,14 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 			$page = $this->newPage( $page, $model );
 		}
 
-		$performer = $performer ?? $this->getTestUser()->getUser();
+		$performer ??= $this->getTestUser()->getUser();
 
 		if ( is_string( $content ) ) {
 			$content = ContentHandler::makeContent( $content, $page->getTitle(), $model );
 		}
 
 		if ( !is_array( $content ) ) {
-			$content = [ 'main' => $content ];
+			$content = [ SlotRecord::MAIN => $content ];
 		}
 
 		$updater = $page->newPageUpdater( $performer );
@@ -296,9 +298,9 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 
 		$this->assertStatusOK( $status, 'OK' );
 		$this->assertTrue( $status->value['new'], 'new' );
-		$this->assertNotNull( $status->value['revision-record'], 'revision-record' );
+		$this->assertNotNull( $status->getNewRevision(), 'revision-record' );
 
-		$statusRevRecord = $status->value['revision-record'];
+		$statusRevRecord = $status->getNewRevision();
 		$this->assertSame( $statusRevRecord->getId(), $page->getRevisionRecord()->getId() );
 		$this->assertSame( $statusRevRecord->getSha1(), $page->getRevisionRecord()->getSha1() );
 		$this->assertTrue(
@@ -354,7 +356,7 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 		$status = $page->doUserEditContent( $content, $user2, 'This changes nothing', EDIT_UPDATE, false );
 		$this->assertStatusOK( $status, 'OK' );
 		$this->assertFalse( $status->value['new'], 'new' );
-		$this->assertNull( $status->value['revision-record'], 'revision-record' );
+		$this->assertNull( $status->getNewRevision(), 'revision-record' );
 		$this->assertNotNull( $page->getRevisionRecord() );
 		$this->assertTrue(
 			$page->getRevisionRecord()->getContent( SlotRecord::MAIN )->equals( $content ),
@@ -372,8 +374,8 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 		$status = $page->doUserEditContent( $content, $user1, "testing 2", EDIT_UPDATE );
 		$this->assertStatusOK( $status, 'OK' );
 		$this->assertFalse( $status->value['new'], 'new' );
-		$this->assertNotNull( $status->value['revision-record'], 'revision-record' );
-		$statusRevRecord = $status->value['revision-record'];
+		$this->assertNotNull( $status->getNewRevision(), 'revision-record' );
+		$statusRevRecord = $status->getNewRevision();
 		$this->assertSame( $statusRevRecord->getId(), $page->getRevisionRecord()->getId() );
 		$this->assertSame( $statusRevRecord->getSha1(), $page->getRevisionRecord()->getSha1() );
 		$this->assertFalse(
@@ -453,7 +455,7 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 	 */
 	public function testDoUserEditContent_twice() {
 		$title = Title::newFromText( __METHOD__ );
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$content = ContentHandler::makeContent( '$1 van $2', $title );
 
 		$user = $this->getTestUser()->getUser();
@@ -466,8 +468,8 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 		$this->assertStatusOK( $status1, 'OK' );
 		$this->assertStatusOK( $status2, 'OK' );
 
-		$this->assertTrue( isset( $status1->value['revision-record'] ), 'OK' );
-		$this->assertFalse( isset( $status2->value['revision-record'] ), 'OK' );
+		$this->assertNotNull( $status1->getNewRevision(), 'OK' );
+		$this->assertNull( $status2->getNewRevision(), 'OK' );
 	}
 
 	/**
@@ -719,7 +721,7 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 		$page = new WikiPage( Title::newFromText( __METHOD__ ) );
 		$page = $this->createPage(
 			$page,
-			[ 'main' => $mainContent1 ]
+			[ SlotRecord::MAIN => $mainContent1 ]
 		);
 
 		$dataUpdates = $page->getDeletionUpdates( $page->getRevisionRecord() );
@@ -818,7 +820,7 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 				'WikiPageTest_testGetRedirectTarget_4',
 				CONTENT_MODEL_WIKITEXT,
 				'#REDIRECT [[Foobar#🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿]]',
-				'Foobar#🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬...'
+				'Foobar#🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬󠁦󠁲󠁿🏴󠁮󠁬'
 			]
 		];
 	}
@@ -829,7 +831,11 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 	 * @covers \Mediawiki\Page\RedirectLookup::getRedirectTarget
 	 */
 	public function testGetRedirectTarget( $title, $model, $text, $target ) {
-		$this->overrideConfigValue( MainConfigNames::CapitalLinks, true );
+		$this->overrideConfigValues( [
+			MainConfigNames::CapitalLinks => true,
+			// The file redirect can trigger http request with UseInstantCommons = true
+			MainConfigNames::ForeignFileRepos => [],
+		] );
 
 		$page = $this->createPage( $title, $text, $model );
 
@@ -848,6 +854,9 @@ class WikiPageDbTest extends MediaWikiLangTestCase {
 	 * @covers WikiPage::isRedirect
 	 */
 	public function testIsRedirect( $title, $model, $text, $target ) {
+		// The file redirect can trigger http request with UseInstantCommons = true
+		$this->overrideConfigValue( MainConfigNames::ForeignFileRepos, [] );
+
 		$page = $this->createPage( $title, $text, $model );
 		$this->assertEquals( $target !== null, $page->isRedirect() );
 	}
@@ -1362,6 +1371,7 @@ more stuff
 	 * @covers WikiPage::factory
 	 */
 	public function testWikiPageFactory() {
+		$this->hideDeprecated( 'WikiPage::factory' );
 		$title = Title::makeTitle( NS_FILE, 'Someimage.png' );
 		$page = WikiPage::factory( $title );
 		$this->assertEquals( WikiFilePage::class, get_class( $page ) );
@@ -1386,7 +1396,7 @@ more stuff
 	 */
 	public function testLoadPageData() {
 		$title = Title::makeTitle( NS_MAIN, 'SomePage' );
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
 		$this->assertFalse( $page->wasLoadedFrom( IDBAccessObject::READ_NORMAL ) );
 		$this->assertFalse( $page->wasLoadedFrom( IDBAccessObject::READ_LATEST ) );
@@ -1665,6 +1675,7 @@ more stuff
 	 * @param callable $assertions
 	 */
 	public function testNewFromRow( $row, $assertions ) {
+		$this->hideDeprecated( 'WikiPage::newFromRow' );
 		$page = WikiPage::newFromRow( $row, WikiPage::READ_NORMAL );
 		$assertions( $page, $this );
 	}
@@ -1679,6 +1690,7 @@ more stuff
 	 * @dataProvider provideTestNewFromId_returnsNullOnBadPageId
 	 */
 	public function testNewFromId_returnsNullOnBadPageId( $pageId ) {
+		$this->hideDeprecated( 'WikiPage::newFromID' );
 		$this->assertNull( WikiPage::newFromID( $pageId ) );
 	}
 
@@ -1686,6 +1698,7 @@ more stuff
 	 * @covers WikiPage::newFromID
 	 */
 	public function testNewFromId_appearsToFetchCorrectRow() {
+		$this->hideDeprecated( 'WikiPage::newFromID' );
 		$createdPage = $this->createPage( __METHOD__, 'Xsfaij09' );
 		$fetchedPage = WikiPage::newFromID( $createdPage->getId() );
 		$this->assertSame( $createdPage->getId(), $fetchedPage->getId() );
@@ -1699,6 +1712,7 @@ more stuff
 	 * @covers WikiPage::newFromID
 	 */
 	public function testNewFromId_returnsNullOnNonExistingId() {
+		$this->hideDeprecated( 'WikiPage::newFromID' );
 		$this->assertNull( WikiPage::newFromID( 2147483647 ) );
 	}
 
@@ -2204,6 +2218,7 @@ more stuff
 	 * @throws MWException
 	 */
 	public function testWikiPageFactoryHookValid() {
+		$this->hideDeprecated( 'WikiPage::factory' );
 		$isCalled = false;
 		$expectedWikiPage = $this->createMock( WikiPage::class );
 

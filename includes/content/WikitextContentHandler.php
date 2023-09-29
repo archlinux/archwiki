@@ -27,8 +27,12 @@ use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreloadTransformParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\Languages\LanguageNameUtils;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
+use Wikimedia\UUID\GlobalIdGenerator;
 
 /**
  * Content handler for wiki text pages.
@@ -37,8 +41,44 @@ use MediaWiki\Parser\ParserOutputFlags;
  */
 class WikitextContentHandler extends TextContentHandler {
 
-	public function __construct( $modelId = CONTENT_MODEL_WIKITEXT ) {
+	/** @var TitleFactory */
+	private $titleFactory;
+
+	/** @var ParserFactory */
+	private $parserFactory;
+
+	/** @var GlobalIdGenerator */
+	private $globalIdGenerator;
+
+	/** @var LanguageNameUtils */
+	private $languageNameUtils;
+
+	/** @var MagicWordFactory */
+	private $magicWordFactory;
+
+	/**
+	 * @param string $modelId
+	 * @param TitleFactory $titleFactory
+	 * @param ParserFactory $parserFactory
+	 * @param GlobalIdGenerator $globalIdGenerator
+	 * @param LanguageNameUtils $languageNameUtils
+	 * @param MagicWordFactory $magicWordFactory
+	 */
+	public function __construct(
+		string $modelId,
+		TitleFactory $titleFactory,
+		ParserFactory $parserFactory,
+		GlobalIdGenerator $globalIdGenerator,
+		LanguageNameUtils $languageNameUtils,
+		MagicWordFactory $magicWordFactory
+	) {
+		// $modelId should always be CONTENT_MODEL_WIKITEXT
 		parent::__construct( $modelId, [ CONTENT_FORMAT_WIKITEXT ] );
+		$this->titleFactory = $titleFactory;
+		$this->parserFactory = $parserFactory;
+		$this->globalIdGenerator = $globalIdGenerator;
+		$this->languageNameUtils = $languageNameUtils;
+		$this->magicWordFactory = $magicWordFactory;
 	}
 
 	protected function getContentClass() {
@@ -58,14 +98,11 @@ class WikitextContentHandler extends TextContentHandler {
 	public function makeRedirectContent( Title $destination, $text = '' ) {
 		$optionalColon = '';
 
-		$services = MediaWikiServices::getInstance();
 		if ( $destination->getNamespace() === NS_CATEGORY ) {
 			$optionalColon = ':';
 		} else {
 			$iw = $destination->getInterwiki();
-			if ( $iw && $services
-					->getLanguageNameUtils()
-					->getLanguageName( $iw,
+			if ( $iw && $this->languageNameUtils->getLanguageName( $iw,
 						LanguageNameUtils::AUTONYMS,
 						LanguageNameUtils::DEFINED )
 			) {
@@ -73,7 +110,7 @@ class WikitextContentHandler extends TextContentHandler {
 			}
 		}
 
-		$mwRedir = $services->getMagicWordFactory()->get( 'redirect' );
+		$mwRedir = $this->magicWordFactory->get( 'redirect' );
 		$redirectText = $mwRedir->getSynonym( 0 ) .
 			' [[' . $optionalColon . $destination->getFullText() . ']]';
 
@@ -130,7 +167,14 @@ class WikitextContentHandler extends TextContentHandler {
 	 * @return FileContentHandler
 	 */
 	protected function getFileHandler() {
-		return new FileContentHandler();
+		return new FileContentHandler(
+			$this->getModelID(),
+			$this->titleFactory,
+			$this->parserFactory,
+			$this->globalIdGenerator,
+			$this->languageNameUtils,
+			$this->magicWordFactory
+		);
 	}
 
 	public function getFieldsForSearchIndex( SearchEngine $engine ) {
@@ -157,9 +201,10 @@ class WikitextContentHandler extends TextContentHandler {
 	public function getDataForSearchIndex(
 		WikiPage $page,
 		ParserOutput $parserOutput,
-		SearchEngine $engine
+		SearchEngine $engine,
+		?RevisionRecord $revision = null
 	) {
-		$fields = parent::getDataForSearchIndex( $page, $parserOutput, $engine );
+		$fields = parent::getDataForSearchIndex( $page, $parserOutput, $engine, $revision );
 
 		$structure = new WikiTextStructure( $parserOutput );
 		$fields['heading'] = $structure->headings();
@@ -168,11 +213,12 @@ class WikitextContentHandler extends TextContentHandler {
 		$fields['text'] = $structure->getMainText(); // overwrites one from ContentHandler
 		$fields['auxiliary_text'] = $structure->getAuxiliaryText();
 		$fields['defaultsort'] = $structure->getDefaultSort();
+		$fields['file_text'] = null;
 
 		// Until we have full first-class content handler for files, we invoke it explicitly here
 		if ( $page->getTitle()->getNamespace() === NS_FILE ) {
 			$fields = array_merge( $fields,
-					$this->getFileHandler()->getDataForSearchIndex( $page, $parserOutput, $engine ) );
+					$this->getFileHandler()->getDataForSearchIndex( $page, $parserOutput, $engine, $revision ) );
 		}
 		return $fields;
 	}
@@ -214,10 +260,9 @@ class WikitextContentHandler extends TextContentHandler {
 		}
 
 		'@phan-var WikitextContent $content';
-
 		$text = $content->getText();
 
-		$parser = MediaWikiServices::getInstance()->getParserFactory()->getInstance();
+		$parser = $this->parserFactory->getInstance();
 		$pst = $parser->preSaveTransform(
 			$text,
 			$pstParams->getPage(),
@@ -261,9 +306,9 @@ class WikitextContentHandler extends TextContentHandler {
 		}
 
 		'@phan-var WikitextContent $content';
-
 		$text = $content->getText();
-		$plt = MediaWikiServices::getInstance()->getParserFactory()->getInstance()
+
+		$plt = $this->parserFactory->getInstance()
 			->getPreloadText(
 				$text,
 				$pltParams->getPage(),
@@ -290,15 +335,15 @@ class WikitextContentHandler extends TextContentHandler {
 		ParserOutput &$parserOutput
 	) {
 		'@phan-var WikitextContent $content';
-		$services = MediaWikiServices::getInstance();
-		$title = $services->getTitleFactory()->castFromPageReference( $cpoParams->getPage() );
+		$title = $this->titleFactory->castFromPageReference( $cpoParams->getPage() );
 		$parserOptions = $cpoParams->getParserOptions();
 		$revId = $cpoParams->getRevId();
 
-		list( $redir, $text ) = $content->getRedirectTargetAndText();
-		$parserOutput = $services->getParserFactory()->getInstance()
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
-			->parse( $text, $title, $parserOptions, true, true, $revId );
+		[ $redir, $text ] = $content->getRedirectTargetAndText();
+
+		$parser = $this->parserFactory->getInstance();
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
+		$parserOutput = $parser->parse( $text, $title, $parserOptions, true, true, $revId );
 
 		// Add redirect indicator at the top
 		if ( $redir ) {

@@ -157,6 +157,49 @@ class SQLPlatform implements ISQLPlatform {
 		return $sqlfunc . '(' . implode( ',', $encValues ) . ')';
 	}
 
+	public function buildComparison( string $op, array $conds ): string {
+		if ( !in_array( $op, [ '>', '>=', '<', '<=' ] ) ) {
+			throw new InvalidArgumentException( "Comparison operator must be one of '>', '>=', '<', '<='" );
+		}
+		if ( count( $conds ) === 0 ) {
+			throw new InvalidArgumentException( "Empty input" );
+		}
+
+		// Construct a condition string by starting with the least significant part of the index, and
+		// adding more significant parts progressively to the left of the string.
+		//
+		// For example, given $conds = [ 'a' => 4, 'b' => 7, 'c' => 1 ], this will generate a condition
+		// like this:
+		//
+		//   WHERE  a > 4
+		//      OR (a = 4 AND (b > 7
+		//                 OR (b = 7 AND (c > 1))))
+		//
+		// …which is equivalent to the following, which might be easier to understand:
+		//
+		//   WHERE a > 4
+		//      OR a = 4 AND b > 7
+		//      OR a = 4 AND b = 7 AND c > 1
+		//
+		// …and also equivalent to the following, using tuple comparison syntax, which is most intuitive
+		// but apparently performs worse:
+		//
+		//   WHERE (a, b, c) > (4, 7, 1)
+
+		$sql = '';
+		foreach ( array_reverse( $conds ) as $field => $value ) {
+			$encValue = $this->quoter->addQuotes( $value );
+			if ( $sql === '' ) {
+				$sql = "$field $op $encValue";
+				// Change '>=' to '>' etc. for remaining fields, as the equality is handled separately
+				$op = rtrim( $op, '=' );
+			} else {
+				$sql = "$field $op $encValue OR ($field = $encValue AND ($sql))";
+			}
+		}
+		return $sql;
+	}
+
 	public function makeList( array $a, $mode = self::LIST_COMMA ) {
 		$first = true;
 		$list = '';
@@ -673,7 +716,7 @@ class SQLPlatform implements ISQLPlatform {
 			$from = '';
 		}
 
-		list( $startOpts, $preLimitTail, $postLimitTail ) = $this->makeSelectOptions( $options );
+		[ $startOpts, $preLimitTail, $postLimitTail ] = $this->makeSelectOptions( $options );
 
 		if ( is_array( $conds ) ) {
 			$where = $this->makeList( $conds, self::LIST_AND );
@@ -839,7 +882,7 @@ class SQLPlatform implements ISQLPlatform {
 			// Is there a JOIN clause for this table?
 			if ( isset( $join_conds[$alias] ) ) {
 				Assert::parameterType( 'array', $join_conds[$alias], "join_conds[$alias]" );
-				list( $joinType, $conds ) = $join_conds[$alias];
+				[ $joinType, $conds ] = $join_conds[$alias];
 				$tableClause = $this->normalizeJoinType( $joinType );
 				$tableClause .= ' ' . $joinedTable;
 				if ( isset( $use_index[$alias] ) ) { // has USE INDEX?
@@ -989,7 +1032,7 @@ class SQLPlatform implements ISQLPlatform {
 		}
 
 		# Split database and table into proper variables.
-		list( $database, $schema, $prefix, $table ) = $this->qualifiedTableComponents( $name );
+		[ $database, $schema, $prefix, $table ] = $this->qualifiedTableComponents( $name );
 
 		# Quote $table and apply the prefix if not quoted.
 		# $tableName might be empty if this is called from Database::replaceVars()
@@ -1023,18 +1066,18 @@ class SQLPlatform implements ISQLPlatform {
 			$currentDomainPrefix = null;
 		}
 		if ( count( $dbDetails ) == 3 ) {
-			list( $database, $schema, $table ) = $dbDetails;
+			[ $database, $schema, $table ] = $dbDetails;
 			# We don't want any prefix added in this case
 			$prefix = '';
 		} elseif ( count( $dbDetails ) == 2 ) {
-			list( $database, $table ) = $dbDetails;
+			[ $database, $table ] = $dbDetails;
 			# We don't want any prefix added in this case
 			$prefix = '';
 			# In dbs that support it, $database may actually be the schema
 			# but that doesn't affect any of the functionality here
 			$schema = '';
 		} else {
-			list( $table ) = $dbDetails;
+			[ $table ] = $dbDetails;
 			if ( isset( $this->tableAliases[$table] ) ) {
 				$database = $this->tableAliases[$table]['dbname'];
 				$schema = is_string( $this->tableAliases[$table]['schema'] )
@@ -1353,7 +1396,7 @@ class SQLPlatform implements ISQLPlatform {
 
 	public function insertSqlText( $table, array $rows ) {
 		$encTable = $this->tableName( $table );
-		list( $sqlColumns, $sqlTuples ) = $this->makeInsertLists( $rows );
+		[ $sqlColumns, $sqlTuples ] = $this->makeInsertLists( $rows );
 
 		return "INSERT INTO $encTable ($sqlColumns) VALUES $sqlTuples";
 	}
@@ -1366,10 +1409,11 @@ class SQLPlatform implements ISQLPlatform {
 	 *
 	 * @param array[] $rows Non-empty list of (column => value) maps
 	 * @param string $aliasPrefix Optional prefix to prepend to the magic alias names
+	 * @param string[] $typeByColumn Optional map of (column => data type)
 	 * @return array (comma-separated columns, comma-separated tuples, comma-separated aliases)
 	 * @since 1.35
 	 */
-	public function makeInsertLists( array $rows, $aliasPrefix = '' ) {
+	public function makeInsertLists( array $rows, $aliasPrefix = '', array $typeByColumn = [] ) {
 		$firstRow = $rows[0];
 		if ( !is_array( $firstRow ) || !$firstRow ) {
 			throw new DBLanguageError( 'Got an empty row list or empty row' );
@@ -1405,8 +1449,8 @@ class SQLPlatform implements ISQLPlatform {
 
 	public function insertNonConflictingSqlText( $table, array $rows ) {
 		$encTable = $this->tableName( $table );
-		list( $sqlColumns, $sqlTuples ) = $this->makeInsertLists( $rows );
-		list( $sqlVerb, $sqlOpts ) = $this->makeInsertNonConflictingVerbAndOptions();
+		[ $sqlColumns, $sqlTuples ] = $this->makeInsertLists( $rows );
+		[ $sqlVerb, $sqlOpts ] = $this->makeInsertNonConflictingVerbAndOptions();
 
 		return rtrim( "$sqlVerb $encTable ($sqlColumns) VALUES $sqlTuples $sqlOpts" );
 	}
@@ -1430,7 +1474,7 @@ class SQLPlatform implements ISQLPlatform {
 		array $selectOptions,
 		$selectJoinConds
 	) {
-		list( $sqlVerb, $sqlOpts ) = $this->isFlagInOptions( 'IGNORE', $insertOptions )
+		[ $sqlVerb, $sqlOpts ] = $this->isFlagInOptions( 'IGNORE', $insertOptions )
 			? $this->makeInsertNonConflictingVerbAndOptions()
 			: [ 'INSERT INTO', '' ];
 		$encDstTable = $this->tableName( $destTable );
@@ -1711,6 +1755,12 @@ class SQLPlatform implements ISQLPlatform {
 		) {
 			return false;
 		}
+
+		$this->logger->warning( __METHOD__ . ' fallback to regex', [
+			'exception' => new RuntimeException(),
+			'db_log_category' => 'sql',
+		] );
+
 		// Treat SELECT queries without FOR UPDATE queries as non-writes. This matches
 		// how MySQL enforces read_only (FOR SHARE and LOCK IN SHADE MODE are allowed).
 		// Handle (SELECT ...) UNION (SELECT ...) queries in a similar fashion.
@@ -1947,6 +1997,10 @@ class SQLPlatform implements ISQLPlatform {
 		array $identityKey,
 		array $rows
 	) {
+		if ( !$set ) {
+			throw new DBLanguageError( "Update assignment list can't be empty for upsert" );
+		}
+
 		// Sloppy callers might construct the SET array using the ROW array, leaving redundant
 		// column definitions for identity key columns. Detect this for backwards compatibility.
 		$soleRow = ( count( $rows ) == 1 ) ? reset( $rows ) : null;

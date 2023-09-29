@@ -437,7 +437,10 @@ class LinkHandlerUtils {
 		Env $env, string $linkTarget, stdClass $linkData
 	): string {
 		$linkTitle = $env->makeTitleFromText( $linkTarget );
-		if ( ( $linkTitle->getNamespace()->isCategory() || $linkTitle->getNamespace()->isFile() ) &&
+		$categoryNs = $env->getSiteConfig()->canonicalNamespaceId( 'category' );
+		$fileNs = $env->getSiteConfig()->canonicalNamespaceId( 'file' );
+
+		if ( ( $linkTitle->getNamespaceId() === $categoryNs || $linkTitle->getNamespaceId() === $fileNs ) &&
 			$linkData->type === 'mw:WikiLink' &&
 			$linkTarget[0] !== ':' ) {
 			// Escape category and file links
@@ -893,7 +896,7 @@ class LinkHandlerUtils {
 				$state->emitChunk( new MagicLinkText( $serialized, $node ), $node );
 			}
 			return;
-		} else { // There is an interwiki for RFCs, but strangely none for PMIDs.
+		} else {
 			// serialize as auto-numbered external link
 			// [http://example.com]
 			$linktext = null;
@@ -917,7 +920,7 @@ class LinkHandlerUtils {
 	 * @param Element $node
 	 */
 	public static function linkHandler( SerializerState $state, Element $node ): void {
-		// TODO: handle internal/external links etc using RDFa and dataAttribs
+		// TODO: handle internal/external links etc using RDFa and dataParsoid
 		// Also convert unannotated html links without advanced attributes to
 		// external wiki links for html import. Might want to consider converting
 		// relative links without path component and file extension to wiki links.

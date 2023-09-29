@@ -9,9 +9,9 @@
 			"Robert Važan",
 			"Rudko",
 			"Sudo77(new)",
-			"Yardom78",
 			"Teslaton",
-			"Vegetator"
+			"Vegetator",
+			"Yardom78"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -45,6 +45,7 @@
 	"vector-more-actions": "Viac",
 	"vector-search-loader": "Načítavajú sa návrhy pre vyhľadávanie",
 	"vector-searchsuggest-containing": "Hľadať stránky obsahujúce <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Obsah",
 	"vector-toc-beginning": "Začiatok",
 	"vector-anon-user-menu-pages": "Stránky pre odhlásených redaktorov",
 	"vector-anon-user-menu-pages-learn": "zistiť viac",
@@ -52,5 +53,9 @@
 	"vector-main-menu-tooltip": "Hlavné menu",
 	"vector-toc-menu-tooltip": "Obsah",
 	"vector-toc-collapsible-button-label": "Prepnúť obsah",
-	"tooltip-vector-anon-user-menu-title": "Ďalšie možnosti"
+	"vector-page-tools-label": "Nástroje",
+	"vector-unpin-element-label": "skryť",
+	"tooltip-vector-anon-user-menu-title": "Ďalšie možnosti",
+	"vector-prefs-limited-width": "Povoliť režim obmedzenej šírky",
+	"vector-prefs-limited-width-help": "Povoliť režim obmedzenej šírky pre lepšiu čitateľnosť."
 }

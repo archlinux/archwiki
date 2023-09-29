@@ -1,8 +1,6 @@
 <?php
 /** Banjar (Bahasa Banjar)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -107,6 +105,7 @@ $specialPageAliases = [
 	'Randomredirect'            => [ 'Paugahan_babarang' ],
 	'Recentchanges'             => [ 'Paubahan_pahanyarnya' ],
 	'Recentchangeslinked'       => [ 'Paubahan_tarait' ],
+	'Renameuser'                => [ 'Ganti_ngaran_pamakai' ],
 	'Revisiondelete'            => [ 'Hapus_ralatan' ],
 	'Search'                    => [ 'Panggagaian' ],
 	'Shortpages'                => [ 'Tungkaran_handap' ],

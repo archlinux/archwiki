@@ -92,6 +92,7 @@
 	"math_unknown_function": "okänd funktion \"$1\"",
 	"mw_math_latexml": "LaTeXML (experimentell; använder MathML)",
 	"mw_math_mathml": "SVG (MathML kan aktiveras via insticksmodul till webbläsaren)",
+	"mw_math_native": "MathML (experimentell; inga bilder)",
 	"mw_math_source": "LaTeX-källa (för textbaserade webbläsare)",
 	"prefs-math": "Matematik",
 	"mathstatus": "Math-status",

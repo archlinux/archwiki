@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"1233qwer1234qwer4",
 			"Albinus",
 			"Amire80",
 			"BadDog",
@@ -25,8 +26,7 @@
 			"Subasmurmu",
 			"আফতাবুজ্জামান",
 			"ᱥᱟᱹᱜᱩᱱ ᱗",
-			"아라",
-			"1233qwer1234qwer4"
+			"아라"
 		]
 	},
 	"tog-underline": "ᱡᱚᱱᱚᱲ ᱞᱟᱛᱟᱨᱨᱮ ᱫᱟᱜᱽ ᱩᱫᱩᱜᱽᱢᱮ:",
@@ -515,10 +515,10 @@
 	"loginreqlink": "ᱵᱚᱞᱚᱜ ᱢᱮ",
 	"loginreqpagetext": "ᱮᱴᱟᱜ ᱥᱟᱦᱴᱟᱠᱳ ᱧᱮᱞ ᱞᱟᱹᱜᱤᱛᱛᱮ ᱫᱚ ᱟᱢ $1 ᱦᱩᱭᱩᱜ ᱡᱟᱹᱨᱩᱲᱛᱟᱢᱟ᱾",
 	"accmailtitle": "ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫᱽ ᱠᱩᱞ ᱦᱩᱭᱱᱟ",
-	"accmailtext": "[[User talk:$1|$1]] ᱞᱟᱹᱜᱤᱫᱛᱮ ᱟᱡᱛᱮ ᱵᱮᱱᱟᱣᱮᱱ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫᱽ ᱫᱚ $2 ᱴᱷᱮᱱ ᱠᱳᱞ  ᱦᱩᱭᱮᱱᱟ᱾ ᱱᱚᱶᱟ ᱫᱚ <em>[[Special:ChangePassword|ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫᱽ ᱵᱚᱫᱚᱞ]]<em> ᱥᱟᱦᱴᱟ ᱵᱚᱞᱚ ᱠᱟᱛᱮᱢ ᱵᱚᱫᱚᱞ ᱫᱟᱲᱮᱭᱟᱜᱼᱟ᱾",
+	"accmailtext": "[[User talk:$1|$1]] ᱞᱟᱹᱜᱤᱫᱛᱮ ᱟᱡᱛᱮ ᱵᱮᱱᱟᱣᱮᱱ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫᱽ ᱫᱚ $2 ᱴᱷᱮᱱ ᱠᱳᱞ ᱦᱩᱭᱮᱱᱟ᱾ ᱱᱚᱶᱟ ᱫᱚ <em>[[Special:ChangePassword|ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫᱽ ᱵᱚᱫᱚᱞ]]<em> ᱥᱟᱦᱴᱟ ᱵᱚᱞᱚ ᱠᱟᱛᱮᱢ ᱵᱚᱫᱚᱞ ᱫᱟᱲᱮᱭᱟᱜᱼᱟ᱾",
 	"newarticle": "(ᱱᱟᱣᱟᱱᱟᱜ)",
 	"newarticletext": "ᱟᱢ ᱚᱠᱟ ᱥᱟᱦᱴᱟ ᱨᱮᱱᱟᱜ ᱡᱚᱱᱟᱲᱮᱢ ᱯᱟᱸᱡᱟᱸ ᱟᱹᱜᱩᱭᱫᱟ ᱚᱱᱚ ᱫᱚ ᱵᱟᱱᱩᱜ-ᱟ᱾\nᱚᱱᱟ ᱥᱟᱦᱴᱟ ᱛᱮᱭᱟᱨ ᱞᱟᱹᱜᱤᱛ ᱛᱮ, ᱞᱟᱛᱟᱨ ᱵᱟᱠᱥᱚ ᱵᱷᱤᱛᱨᱤᱨᱮ ᱚᱞ ᱮᱦᱚᱵ ᱢᱮ (ᱟᱨᱦᱚᱸ ᱡᱟᱹᱥᱛᱤ ᱵᱟᱰᱟᱭ ᱞᱟᱹᱜᱤᱛᱴᱮ [$1 ᱜᱚᱸᱲᱚᱸ ᱥᱟᱦᱴᱟ] ᱯᱟᱸᱡᱚᱸᱭᱢᱮ)᱾\nᱟᱢ ᱵᱷᱩᱞᱛᱮ ᱱᱚᱸᱰᱮᱢ ᱦᱮᱡ ᱟᱠᱟᱱ ᱠᱷᱟᱡ, ᱟᱢᱟᱜ ᱵᱨᱟᱣᱡᱟᱨ ᱨᱮᱱᱟᱜ '''ᱛᱟᱭᱚᱢ''' ᱵᱟᱴᱚᱱ ᱞᱤᱱᱢᱮ᱾",
-	"anontalkpagetext": "----\n\n<em>ᱱᱚᱶᱟ ᱫᱚ ᱜᱟᱞᱚᱪ ᱥᱟᱦᱴᱟ ᱠᱟᱱᱟ ᱩᱠᱩᱧᱩᱛᱩᱢ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱠᱚᱣᱟᱜ ᱡᱟᱦᱟᱸᱭ ᱫᱚ ᱮᱠᱟᱶᱩᱴ ᱵᱟᱭ ᱛᱮᱭᱟᱨ ᱟᱠᱟᱫᱟ ᱱᱤᱛ ᱦᱟᱹᱵᱤᱡ, ᱟᱨᱵᱟᱝ ᱡᱟᱦᱟᱸᱭ ᱵᱮᱵᱷᱟᱨ ᱟᱠᱟᱫᱟ ᱱᱚᱶᱟ ᱾</em>\nᱚᱱᱟᱛᱮ ᱟᱞᱮ ᱮᱞᱮᱞ IP ᱞᱮ ᱵᱮᱵᱷᱟᱨᱮᱜ-ᱟ ᱩᱱᱤ ᱪᱤᱱᱦᱟᱹᱣ ᱞᱟᱹᱜᱤᱫ ᱾\nᱚᱱᱠᱟᱱ IP ᱵᱩᱴᱟᱹ ᱫᱚ ᱦᱟᱹᱴᱤᱧ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ ᱛᱤᱢᱤᱱ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱫᱟᱨᱟᱭᱛᱮ ᱾\nᱡᱩᱫᱤ ᱟᱢ ᱩᱠᱩᱧᱩᱛᱩᱢ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱠᱟᱱᱟᱢ ᱟᱨ ᱵᱷᱟᱹᱵᱤᱭᱮᱜ-ᱟᱢ ᱵᱟᱝ ᱡᱚᱲᱟᱣᱟᱱ ᱠᱟᱛᱷᱟ ᱟᱢᱮ ᱩᱫᱩᱜᱢᱮ ᱠᱟᱱᱟ, ᱮᱱᱠᱷᱟᱱ  [[Special:CreateAccount|ᱮᱠᱟᱶᱴ ᱛᱮᱭᱟᱨᱢᱮ]] ᱟᱨᱵᱟᱝ [[Special:UserLogin|ᱞᱚᱜᱤᱱ]] ᱢᱮ ᱫᱟᱨᱟᱭ ᱵᱷᱮᱣᱱᱟ ᱠᱚ ᱥᱟᱦᱟᱭ ᱞᱟᱹᱜᱤᱫ ᱮᱴᱟᱜ ᱩᱠᱩᱧᱩᱛᱩᱢ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱠᱚ ᱥᱟᱶ ᱾",
+	"anontalkpagetext": "----\n\n<em>ᱱᱚᱶᱟ ᱫᱚ ᱜᱟᱞᱚᱪ ᱥᱟᱦᱴᱟ ᱠᱟᱱᱟ ᱩᱠᱩᱧᱩᱛᱩᱢ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱠᱚᱣᱟᱜ ᱡᱟᱦᱟᱸᱭ ᱫᱚ ᱮᱠᱟᱶᱩᱴ ᱵᱟᱭ ᱛᱮᱭᱟᱨ ᱟᱠᱟᱫᱟ ᱱᱤᱛ ᱦᱟᱹᱵᱤᱡ, ᱟᱨᱵᱟᱝ ᱡᱟᱦᱟᱸᱭ ᱵᱮᱵᱷᱟᱨ ᱟᱠᱟᱫᱟ ᱱᱚᱶᱟ ᱾</em>\nᱚᱱᱟᱛᱮ ᱟᱞᱮ ᱮᱞᱮᱞ IP ᱞᱮ ᱵᱮᱵᱷᱟᱨᱮᱜ-ᱟ ᱩᱱᱤ ᱪᱤᱱᱦᱟᱹᱣ ᱞᱟᱹᱜᱤᱫ ᱾\nᱚᱱᱠᱟᱱ IP ᱵᱩᱴᱟᱹ ᱫᱚ ᱦᱟᱹᱴᱤᱧ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ ᱛᱤᱢᱤᱱ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱫᱟᱨᱟᱭᱛᱮ ᱾\nᱡᱩᱫᱤ ᱟᱢ ᱩᱠᱩᱧᱩᱛᱩᱢ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱠᱟᱱᱟᱢ ᱟᱨ ᱵᱷᱟᱹᱵᱤᱭᱮᱜ-ᱟᱢ ᱵᱟᱝ ᱡᱚᱲᱟᱣᱟᱱ ᱠᱟᱛᱷᱟ ᱟᱢᱮ ᱩᱫᱩᱜᱢᱮ ᱠᱟᱱᱟ, ᱮᱱᱠᱷᱟᱱ [[Special:CreateAccount|ᱮᱠᱟᱶᱴ ᱛᱮᱭᱟᱨᱢᱮ]] ᱟᱨᱵᱟᱝ [[Special:UserLogin|ᱞᱚᱜᱤᱱ]] ᱢᱮ ᱫᱟᱨᱟᱭ ᱵᱷᱮᱣᱱᱟ ᱠᱚ ᱥᱟᱦᱟᱭ ᱞᱟᱹᱜᱤᱫ ᱮᱴᱟᱜ ᱩᱠᱩᱧᱩᱛᱩᱢ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱠᱚ ᱥᱟᱶ ᱾",
 	"noarticletext": "ᱱᱮᱛᱚᱜ ᱱᱚᱣᱟ ᱥᱟᱦᱴᱟᱨᱮ ᱪᱮᱫᱜᱮ ᱵᱟᱹᱱᱩᱜ-ᱟ᱾\nᱮᱴᱟᱜ ᱥᱟᱦᱴᱟᱨᱮᱢ [[Special:Search/{{PAGENAME}}|ᱱᱚᱶᱟ ᱥᱟᱦᱴᱟ ᱧᱩᱛᱩᱢ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ]],\n<span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} ᱡᱚᱲᱟᱣᱟᱱ ᱞᱚᱜᱽ ᱠᱚ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ],\nor [{{fullurl:{{FULLPAGENAME}}|action=edit}} ᱱᱚᱶᱟ ᱥᱟᱦᱴᱟ ᱥᱟᱯᱲᱟᱣ ᱢᱮ]</span>.",
 	"noarticletext-nopermission": "ᱱᱚᱣᱟ ᱥᱟᱦᱴᱟᱨᱮ ᱱᱤᱛᱚᱜ ᱪᱮᱫᱜᱮ ᱚᱞ ᱵᱟᱹᱱᱩᱜ-ᱟ᱾\n\nᱟᱢ [[Special:Search/{{PAGENAME}}|ᱱᱚᱭᱟ ᱥᱟᱦᱴᱟᱨᱮᱱᱟᱜ ᱧᱤᱛᱩᱢᱮᱢ ᱥᱮᱸᱫᱽᱨᱟ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ]] ᱮᱴᱟᱜ ᱥᱟᱦᱴᱟ ᱠᱚᱨᱮᱦᱚᱸ,\nᱟᱨᱵᱟᱝ <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} search the related logs]</span>.",
 	"userpage-userdoesnotexist": "\"<nowiki>$1</nowiki>\" ᱧᱩᱛᱩᱢᱟᱱ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱮᱠᱟᱶᱴ ᱨᱮᱥᱴᱨᱤ ᱵᱟᱝ ᱦᱩᱭ ᱟᱠᱟᱱᱟ᱾\nᱫᱟᱭᱟᱠᱟᱛᱮ ᱵᱤᱰᱟᱹᱣ ᱠᱟᱛᱮᱫ ᱧᱮᱞᱢᱮ ᱱᱚᱣᱟ ᱥᱟᱦᱴᱟ ᱫᱚ ᱵᱮᱱᱟᱣ/ᱥᱟᱯᱲᱟᱣ ᱥᱟᱱᱟᱭᱮᱫ ᱢᱮᱭᱟ ᱥᱮ ᱵᱟᱝ᱾",
@@ -1180,7 +1180,7 @@
 	"bad_image_list": "ᱯᱷᱚᱨᱢᱮᱴ ᱫᱚ ᱞᱟᱛᱟᱨ ᱨᱮ ᱞᱮᱠᱟ:\n\nᱠᱷᱟᱹᱞᱤ ᱛᱟᱹᱞᱠᱟᱹ ᱟᱭᱴᱮᱢᱠᱳ (ᱞᱟᱭᱤᱱ ᱮᱛᱦᱚᱵᱚ ᱟᱜ *) ᱦᱟᱛᱟᱣᱚᱜ-ᱟ᱾\nᱯᱩᱭᱞᱩ ᱡᱚᱱᱚᱲ ᱞᱟᱭᱤᱱ ᱫᱚ ᱢᱤᱫᱴᱮᱱ ᱵᱟᱹᱲᱤᱡ ᱨᱮᱫ ᱨᱮ᱾\nᱮᱴᱟᱜ subsequent ᱡᱚᱱᱚᱲᱠᱩ ᱚᱱᱟ ᱞᱟᱭᱤᱱ ᱨᱮᱜᱮ ᱦᱟᱛᱟᱣᱚᱜ-ᱟ ᱵᱮᱛᱤᱠᱨᱚᱢ ᱠᱷᱟᱹᱛᱤᱨ, i.e. ᱥᱟᱦᱴᱟᱠᱳ ᱡᱟᱸᱦᱟᱸᱨᱮ ᱨᱮᱫ ᱨᱮᱱᱟᱜ ᱞᱟᱭᱤᱱ ᱠᱩ᱾",
 	"metadata": "ᱢᱮᱴᱟ ᱥᱟᱹᱠᱷᱭᱟᱹᱛ",
 	"metadata-help": "ᱱᱚᱣᱟ ᱨᱮᱫ ᱨᱮᱫᱚ ᱵᱟᱹᱲᱛᱤ ᱠᱟᱛᱷᱟᱠᱚ ᱢᱮᱱᱟᱜ-ᱟ, ᱯᱟᱥᱮᱡ ᱱᱚᱣᱟ ᱫᱚ ᱰᱤᱡᱤᱴᱟᱞ ᱠᱮᱢᱨᱟ ᱥᱮ ᱮᱥᱠᱮᱱᱟᱨ ᱵᱮᱵᱦᱟᱨ ᱠᱟᱛᱮ ᱰᱤᱡᱤᱴᱟᱞ ᱟᱠᱟᱫᱟᱠᱚ᱾ ᱡᱩᱫᱤ ᱱᱚᱣᱟ ᱨᱮᱫ ᱨᱮᱭᱟᱜ ᱵᱩᱱᱤᱭᱟᱹᱫ ᱠᱷᱚᱱ ᱱᱟᱣᱟ ᱥᱩᱫᱷᱨᱟᱣ ᱞᱮᱱᱠᱷᱟᱱ, ᱯᱟᱥᱮᱡ ᱥᱟᱱᱟᱢᱠᱚ ᱛᱷᱚᱲᱟ ᱵᱟᱝᱠᱩ ᱥᱚᱫᱚᱨᱚᱜ-ᱟ ᱱᱚᱣᱟ ᱨᱮᱫ ᱨᱮᱫᱚ᱾",
-	"metadata-fields": "Image metadata fields listed in this message will be included on image page display when the metadata table is collapsed.\nOthers will be hidden by default.\n* make\n* model\n* datetimeoriginal\n* exposuretime\n* fnumber\n* isospeedratings\n* focallength\n* artist\n* copyright\n* imagedescription\n* gpslatitude\n* gpslongitude\n* gpsaltitude",
+	"metadata-fields": "Image metadata fields listed in this message will be included on image page display when the metadata table is collapsed.\nOthers will be hidden by default.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
 	"namespacesall": "ᱡᱚᱛᱚ",
 	"monthsall": "ᱡᱚᱛᱚ",
 	"confirm-purge-title": "ᱥᱟᱦᱴᱟ ᱯᱷᱟᱸᱰᱜᱟᱨ ᱢᱮ",

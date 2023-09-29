@@ -130,6 +130,23 @@ describe( 'Revision', () => {
 
 			assert.strictEqual( status, 404 );
 		} );
+
+		it( 'should perform variant conversion', async () => {
+			const { headers, text } = await client.get( `/revision/${newrevid}/with_html`, null, {
+				'accept-language': 'en-x-piglatin'
+			} );
+
+			assert.match( text, /Ellohay/ );
+			assert.match( text, /Orldway/ );
+			assert.match( headers.vary, /\bAccept-Language\b/i );
+			assert.match( headers.etag, /en-x-piglatin/i );
+			// Since with_html returns JSON, content language is not set
+			// but if its set, we expect it to be set correctly.
+			const contentLanguageHeader = headers[ 'content-language' ];
+			if ( contentLanguageHeader ) {
+				assert.match( headers[ 'content-language' ], /en-x-piglatin/i );
+			}
+		} );
 	} );
 
 	describe( 'GET /revision/{id}/html', () => {
@@ -149,6 +166,18 @@ describe( 'Revision', () => {
 			const { status } = await client.get( '/revision/99999999/html' );
 
 			assert.strictEqual( status, 404 );
+		} );
+
+		it( 'should perform variant conversion', async () => {
+			const { headers, text } = await client.get( `/revision/${newrevid}/html`, null, {
+				'accept-language': 'en-x-piglatin'
+			} );
+
+			assert.match( text, /Ellohay/ );
+			assert.match( text, /Orldway/ );
+			assert.match( headers.vary, /\bAccept-Language\b/i );
+			assert.match( headers[ 'content-language' ], /en-x-piglatin/i );
+			assert.match( headers.etag, /en-x-piglatin/i );
 		} );
 	} );
 

@@ -10,6 +10,7 @@
 			"Hamilton Abreu",
 			"Luckas",
 			"Macofe",
+			"Re demz",
 			555
 		]
 	},
@@ -89,7 +90,7 @@
 	"math_unknown_function": "função desconhecida '$1'",
 	"mw_math_latexml": "LaTeXML (experimental; usa MathML)",
 	"mw_math_mathml": "MathML com retorno SVG ou PNG (recomendado para navegadores modernos e ferramentas de acessibilidade)",
-	"mw_math_png": "Imagens PNG",
+	"mw_math_native": "MathML (experimental; sem imagens)",
 	"mw_math_source": "Fonte LaTeX (para navegadores de texto)",
 	"prefs-math": "Matemática",
 	"mathstatus": "Status matemáticos",

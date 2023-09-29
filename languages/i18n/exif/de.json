@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"Church of emacs",
 			"Didym",
 			"Kghbln",
@@ -13,8 +14,7 @@
 			"Tobi 406",
 			"Umherirrender",
 			"Umlaut",
-			"W (aka Wuzur)",
-			"Brettchenweber"
+			"W (aka Wuzur)"
 		]
 	},
 	"exif-imagewidth": "Breite",

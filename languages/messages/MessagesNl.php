@@ -1,8 +1,6 @@
 <?php
 /** Dutch (Nederlands)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  *
@@ -348,6 +346,7 @@ $specialPageAliases = [
 	'Recentchanges'             => [ 'RecenteWijzigingen' ],
 	'Recentchangeslinked'       => [ 'RecenteWijzigingenGelinkt', 'VerwanteWijzigingen' ],
 	'Redirect'                  => [ 'Doorverwijzen' ],
+	'Renameuser'                => [ 'GebruikerHernoemen' ],
 	'ResetTokens'               => [ 'TokensOpnieuwInstellen' ],
 	'Revisiondelete'            => [ 'VersieVerwijderen', 'HerzieningVerwijderen', 'RevisieVerwijderen' ],
 	'RunJobs'                   => [ 'TakenUitvoeren' ],

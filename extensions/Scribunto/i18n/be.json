@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Chadyka",
+			"Maksim L.",
 			"Mechanizatar",
 			"No Sleep till Krupki",
 			"Wizardist",
-			"Чаховіч Уладзіслаў",
-			"Maksim L."
+			"Чаховіч Уладзіслаў"
 		]
 	},
 	"scribunto-desc": "Фрэймворк для выкарыстання скрыптавых моў на старонках MediaWiki",

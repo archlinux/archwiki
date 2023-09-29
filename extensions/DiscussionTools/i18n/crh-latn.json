@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": [
+			"TayfunEt.",
+			"Don Alessandro",
+			"Zolgoyo"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Cevap berüv",
+	"discussiontools-replylink": "cevap berüv",
+	"discussiontools-replywidget-advanced": "Daa çoq",
+	"discussiontools-replywidget-cancel": "Lâğu",
+	"discussiontools-replywidget-mode-source": "Menba",
+	"discussiontools-replywidget-mode-visual": "Körsel",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} cavap berüv",
+	"discussiontools-replywidget-preview": "Baqıp çıquv",
+	"discussiontools-replywidget-reply": "Cevap berüv",
+	"discussiontools-replywidget-summary": "Qısqa tarif",
+	"discussiontools-topicheader-authorcount": "muzakerede $1 kişi",
+	"discussiontools-topicsubscription-button-subscribe": "abune ol",
+	"discussiontools-topicsubscription-button-subscribe-label": "Abune ol",
+	"discussiontools-topicsubscription-button-unsubscribe": "abunelikten çıq",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Abunelikten çıq"
+}

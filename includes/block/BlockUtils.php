@@ -116,7 +116,7 @@ class BlockUtils {
 
 		// Consider the possibility that this is not a username at all
 		// but actually an old subpage (T31797)
-		if ( strpos( $target, '/' ) !== false ) {
+		if ( str_contains( $target, '/' ) ) {
 			// An old subpage, drill down to the user behind it
 			$target = explode( '/', $target )[0];
 		}
@@ -154,7 +154,7 @@ class BlockUtils {
 	 * @return Status
 	 */
 	public function validateTarget( $value ): Status {
-		list( $target, $type ) = $this->parseBlockTarget( $value );
+		[ $target, $type ] = $this->parseBlockTarget( $value );
 
 		$status = Status::newGood( $target );
 
@@ -169,7 +169,7 @@ class BlockUtils {
 				break;
 
 			case AbstractBlock::TYPE_RANGE:
-				list( $ip, $range ) = explode( '/', $target, 2 );
+				[ $ip, $range ] = explode( '/', $target, 2 );
 
 				if ( IPUtils::isIPv4( $ip ) ) {
 					$status->merge( $this->validateIPv4Range( (int)$range ) );

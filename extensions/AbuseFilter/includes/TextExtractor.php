@@ -11,6 +11,7 @@ use TextContent;
 /**
  * This service provides an interface to convert RevisionRecord and Content objects to some text
  * suitable for running abuse filters.
+ *
  * @internal No external code should rely on this representation
  */
 class TextExtractor {

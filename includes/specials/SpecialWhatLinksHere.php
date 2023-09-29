@@ -22,9 +22,12 @@
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Html\FormOptions;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Navigation\PagerNavigationBuilder;
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -34,7 +37,7 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  *
  * @ingroup SpecialPage
  */
-class SpecialWhatLinksHere extends IncludableSpecialPage {
+class SpecialWhatLinksHere extends FormSpecialPage {
 	/** @var FormOptions */
 	protected $opts;
 
@@ -83,6 +86,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		LinksMigration $linksMigration
 	) {
 		parent::__construct( 'Whatlinkshere' );
+		$this->mIncludable = true;
 		$this->loadBalancer = $loadBalancer;
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->contentHandlerFactory = $contentHandlerFactory;
@@ -92,17 +96,24 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		$this->linksMigration = $linksMigration;
 	}
 
-	public function execute( $par ) {
-		$out = $this->getOutput();
+	/**
+	 * Get a better-looking target title from the subpage syntax.
+	 * @param string|null $par
+	 */
+	protected function setParameter( $par ) {
+		if ( $par ) {
+			// The only difference that subpage syntax can have is the underscore.
+			$par = str_replace( '_', ' ', $par );
+		}
+		parent::setParameter( $par );
+	}
 
-		$this->setHeaders();
-		$this->outputHeader();
-		$this->addHelpLink( 'Help:What links here' );
-		$out->addModuleStyles( 'mediawiki.special' );
-
+	/**
+	 * We want the result displayed after the form, so we use this instead of onSubmit()
+	 */
+	public function onSuccess() {
 		$opts = new FormOptions();
 
-		$opts->add( 'target', '' );
 		$opts->add( 'namespace', '', FormOptions::INTNULL );
 		$opts->add( 'limit', $this->getConfig()->get( MainConfigNames::QueryPageDefaultLimit ) );
 		$opts->add( 'offset', '' );
@@ -117,25 +128,12 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		$opts->fetchValuesFromRequest( $this->getRequest() );
 		$opts->validateIntBounds( 'limit', 0, 5000 );
 
-		// Give precedence to subpage syntax
-		if ( $par !== null ) {
-			$opts->setValue( 'target', $par );
-		}
-
 		// Bind to member variable
 		$this->opts = $opts;
 
-		$this->target = Title::newFromText( $opts->getValue( 'target' ) );
-		if ( !$this->target ) {
-			if ( !$this->including() ) {
-				$out->addHTML( $this->whatlinkshereForm() );
-			}
-
-			return;
-		}
-
 		$this->getSkin()->setRelevantTitle( $this->target );
 
+		$out = $this->getOutput();
 		$out->setPageTitle( $this->msg( 'whatlinkshere-title', $this->target->getPrefixedText() ) );
 		$out->addBacklinkSubtitle( $this->target );
 
@@ -256,14 +254,22 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		$conds['imagelinks']['il_from_namespace'] = $namespaces;
 
 		if ( $offsetPageID ) {
-			$rel = $dir === 'prev' ? '<' : '>';
-			$conds['redirect'][] = "rd_from $rel $offsetPageID";
-			$conds['templatelinks'][] = "(tl_from_namespace = $offsetNamespace AND tl_from $rel $offsetPageID " .
-				"OR tl_from_namespace $rel $offsetNamespace)";
-			$conds['pagelinks'][] = "(pl_from_namespace = $offsetNamespace AND pl_from $rel $offsetPageID " .
-				"OR pl_from_namespace $rel $offsetNamespace)";
-			$conds['imagelinks'][] = "(il_from_namespace = $offsetNamespace AND il_from $rel $offsetPageID " .
-				"OR il_from_namespace $rel $offsetNamespace)";
+			$op = $dir === 'prev' ? '<' : '>';
+			$conds['redirect'][] = $dbr->buildComparison( $op, [
+				'rd_from' => $offsetPageID,
+			] );
+			$conds['templatelinks'][] = $dbr->buildComparison( $op, [
+				'tl_from_namespace' => $offsetNamespace,
+				'tl_from' => $offsetPageID,
+			] );
+			$conds['pagelinks'][] = $dbr->buildComparison( $op, [
+				'pl_from_namespace' => $offsetNamespace,
+				'pl_from' => $offsetPageID,
+			] );
+			$conds['imagelinks'][] = $dbr->buildComparison( $op, [
+				'il_from_namespace' => $offsetNamespace,
+				'il_from' => $offsetPageID,
+			] );
 		}
 
 		if ( $hideredirs ) {
@@ -341,9 +347,13 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			&& ( $hideimages || !$ilRes->numRows() )
 		) {
 			if ( $level == 0 && !$this->including() ) {
-				$out->addHTML( $this->whatlinkshereForm() );
-
-				$msgKey = is_int( $namespace ) ? 'nolinkshere-ns' : 'nolinkshere';
+				if ( $hidelinks || $hidetrans || $hideredirs ) {
+					$msgKey = 'nolinkshere-filter';
+				} elseif ( is_int( $namespace ) ) {
+					$msgKey = 'nolinkshere-ns';
+				} else {
+					$msgKey = 'nolinkshere';
+				}
 				$link = $this->getLinkRenderer()->makeLink(
 					$this->target,
 					null,
@@ -459,8 +469,6 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		$lb->execute();
 
 		if ( $level == 0 && !$this->including() ) {
-			$out->addHTML( $this->whatlinkshereForm() );
-
 			$link = $this->getLinkRenderer()->makeLink(
 				$this->target,
 				null,
@@ -632,21 +640,18 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		return $navBuilder->getHtml();
 	}
 
-	private function whatlinkshereForm() {
-		// We get nicer value from the title object
-		$this->opts->consumeValue( 'target' );
-		$target = $this->target ? $this->target->getPrefixedText() : '';
-		$this->opts->consumeValue( 'namespace' );
-		$this->opts->consumeValue( 'invert' );
+	protected function getFormFields() {
+		$this->addHelpLink( 'Help:What links here' );
+		$this->getOutput()->addModuleStyles( 'mediawiki.special' );
 
 		$fields = [
 			'target' => [
 				'type' => 'title',
 				'name' => 'target',
-				'default' => $target,
 				'id' => 'mw-whatlinkshere-target',
 				'label-message' => 'whatlinkshere-page',
 				'section' => 'whatlinkshere-target',
+				'creatable' => true,
 			],
 			'namespace' => [
 				'type' => 'namespaceselect',
@@ -670,13 +675,9 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 		];
 
 		$filters = [ 'hidetrans', 'hidelinks', 'hideredirs' ];
-		if ( $this->target instanceof Title &&
-			$this->target->getNamespace() == NS_FILE ) {
-			$filters[] = 'hideimages';
-		}
 
 		// Combined message keys: 'whatlinkshere-hideredirs', 'whatlinkshere-hidetrans',
-		// 'whatlinkshere-hidelinks', 'whatlinkshere-hideimages'
+		// 'whatlinkshere-hidelinks'
 		// To be sure they will be found by grep
 		foreach ( $filters as $filter ) {
 			// Parameter only provided for backwards-compatibility with old translations
@@ -690,13 +691,51 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			];
 		}
 
-		$form = HTMLForm::factory( 'ooui', $fields, $this->getContext() )
-			->setMethod( 'GET' )
-			->setTitle( $this->getPageTitle() )
-			->setWrapperLegendMsg( 'whatlinkshere' )
-			->setSubmitTextMsg( 'whatlinkshere-submit' );
+		return $fields;
+	}
 
-		return $form->prepareForm()->getHTML( false );
+	protected function alterForm( HTMLForm $form ) {
+		// This parameter from the subpage syntax is only added after constructing the form,
+		// so we should add the dynamic field that depends on the user input here.
+
+		// TODO: This looks not good. Ideally we can initialize it in onSubmit().
+		// Maybe extend the hide-if feature to match prefixes on the client side.
+		$this->target = Title::newFromText( $this->getRequest()->getText( 'target' ) );
+		if ( $this->target && $this->target->getNamespace() == NS_FILE ) {
+			$hide = $this->msg( 'hide' )->text();
+			$msg = $this->msg( 'whatlinkshere-hideimages', $hide )->text();
+			$form->addFields( [
+				'hideimages' => [
+					'type' => 'check',
+					'name' => 'hideimages',
+					'label' => $msg,
+					'section' => 'whatlinkshere-filter',
+				]
+			] );
+		}
+
+		$form->setWrapperLegendMsg( 'whatlinkshere' )
+			->setSubmitTextMsg( 'whatlinkshere-submit' );
+	}
+
+	protected function getShowAlways() {
+		return true;
+	}
+
+	protected function getSubpageField() {
+		return 'target';
+	}
+
+	public function onSubmit( array $data ) {
+		return true;
+	}
+
+	public function requiresPost() {
+		return false;
+	}
+
+	protected function getDisplayFormat() {
+		return 'ooui';
 	}
 
 	/**

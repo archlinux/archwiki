@@ -466,6 +466,7 @@ ve.Filibuster.static.clonePlain = function ( val, seen ) {
 	var filibusterStatic = this;
 
 	if ( seen === undefined ) {
+		// eslint-disable-next-line es-x/no-set
 		seen = new Set();
 	}
 	if ( Array.isArray( val ) ) {

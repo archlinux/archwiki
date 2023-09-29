@@ -26,7 +26,7 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\User\ActorMigration;
 use Wikimedia\IPUtils;
 
 /**
@@ -69,7 +69,6 @@ TEXT
 			$this->fatalError( 'ip_changes table does not exist' );
 		}
 
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$dbr = $this->getDB( DB_REPLICA, [ 'vslow' ] );
 		$throttle = intval( $this->getOption( 'throttle', 0 ) );
 		$maxRevId = intval( $this->getOption( 'max-rev-id', 0 ) );
@@ -134,7 +133,7 @@ TEXT
 				$inserted += $dbw->affectedRows();
 			}
 
-			$lbFactory->waitForReplication();
+			$this->waitForReplication();
 			usleep( $throttle * 1000 );
 
 			$blockStart = $blockEnd + 1;

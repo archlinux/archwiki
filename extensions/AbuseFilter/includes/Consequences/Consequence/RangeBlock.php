@@ -18,8 +18,6 @@ class RangeBlock extends BlockingConsequence {
 	private $rangeBlockSize;
 	/** @var int[] */
 	private $blockCIDRLimit;
-	/** @var string */
-	private $requestIP;
 
 	/**
 	 * @param Parameters $parameters
@@ -30,7 +28,6 @@ class RangeBlock extends BlockingConsequence {
 	 * @param LoggerInterface $logger
 	 * @param array $rangeBlockSize
 	 * @param array $blockCIDRLimit
-	 * @param string $requestIP
 	 */
 	public function __construct(
 		Parameters $parameters,
@@ -40,22 +37,21 @@ class RangeBlock extends BlockingConsequence {
 		MessageLocalizer $messageLocalizer,
 		LoggerInterface $logger,
 		array $rangeBlockSize,
-		array $blockCIDRLimit,
-		string $requestIP
+		array $blockCIDRLimit
 	) {
 		parent::__construct( $parameters, $expiry, $blockUserFactory, $filterUser, $messageLocalizer, $logger );
 		$this->rangeBlockSize = $rangeBlockSize;
 		$this->blockCIDRLimit = $blockCIDRLimit;
-		$this->requestIP = $requestIP;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function execute(): bool {
-		$type = IPUtils::isIPv6( $this->requestIP ) ? 'IPv6' : 'IPv4';
+		$requestIP = $this->parameters->getActionSpecifier()->getIP();
+		$type = IPUtils::isIPv6( $requestIP ) ? 'IPv6' : 'IPv4';
 		$CIDRsize = max( $this->rangeBlockSize[$type], $this->blockCIDRLimit[$type] );
-		$blockCIDR = $this->requestIP . '/' . $CIDRsize;
+		$blockCIDR = $requestIP . '/' . $CIDRsize;
 
 		$target = IPUtils::sanitizeRange( $blockCIDR );
 		$status = $this->doBlockInternal(

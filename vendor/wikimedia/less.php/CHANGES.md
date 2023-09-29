@@ -1,70 +1,100 @@
-# 3.1.0
-- [All Changes](https://github.com/wikimedia/less.php/compare/v3.0.0...v3.1.0)
-* PHP 8.0 support: Drop use of curly braces for sub-string eval (James D. Forrester)
+# Changelog
+
+## 4.0.0
+
+* [All changes](https://gerrit.wikimedia.org/g/mediawiki/libs/less.php/+log/v4.0.0)
+* Remove support for PHP 7.2 and 7.3. Raise requirement to PHP 7.4+.
+* Remove support for `cache_method=php` and `cache_method=var_export`, only the faster and more secure `cache_method=serialize` is now available. The built-in cache remains disabled by default.
+* Fix `url(#myid)` to be treated as absolute URL. [T331649](https://phabricator.wikimedia.org/T331688)
+* Fix "Undefined property" PHP 8.1 warning when `calc()` is used with CSS `var()`. [T331688](https://phabricator.wikimedia.org/T331688)
+* Less_Parser: Improve performance by removing MatchFuncs and NewObj overhead. (Timo Tijhof)
+
+## 3.2.1
+
+* [All changes](https://gerrit.wikimedia.org/g/mediawiki/libs/less.php/+log/v3.2.1)
+* Tree_Ruleset: Fix support for nested parent selectors (Timo Tijhof) [T204816](https://phabricator.wikimedia.org/T204816)
+* Fix ParseError when interpolating variable after colon in selector (Timo Tijhof) [T327163](https://phabricator.wikimedia.org/T327163)
+* Functions: Fix "Undefined property" warning on bad minmax arg
+* Tree_Call: Include previous exception when catching functions (Robert Frunzke)
+
+## 3.2.0
+
+* [All changes](https://github.com/wikimedia/less.php/compare/v3.1.0...v3.2.0)
+* Fix "Implicit conversion" PHP 8.1 warnings (Ayokunle Odusan)
+* Fix "Creation of dynamic property" PHP 8.2 warnings (Bas Couwenberg)
+* Fix "Creation of dynamic property" PHP 8.2 warnings (Rajesh Kumar)
+* Tree_Url: Add support for "Url" type to `Parser::getVariables()` (ciroarcadio) [#51](https://github.com/wikimedia/less.php/pull/51)
+* Tree_Import: Add support for importing URLs without file extension (Timo Tijhof) [#27](https://github.com/wikimedia/less.php/issues/27)
+
+## 3.1.0
+
+* [All changes](https://github.com/wikimedia/less.php/compare/v3.0.0...v3.1.0)
+* Add PHP 8.0 support: Drop use of curly braces for sub-string eval (James D. Forrester)
 * Make `Directive::__construct` $rules arg optional (fix PHP 7.4 warning) (Sam Reed)
 * ProcessExtends: Improve performance by using a map for selectors and parents (Andrey Legayev)
-* build: Run CI tests on PHP 8.0 too (James D. Forrester)
-* code: Fix PSR12.Properties.ConstantVisibility.NotFound (Sam Reed)
 
-# 3.0.0
-- [All Changes](https://github.com/wikimedia/less.php/compare/v2.0.0...v3.0.0)
-- Raise PHP requirement from 7.1 to 7.2.9 (James Forrester)
-- build: Upgrade phpunit to ^8.5 and make pass  (James Forrester)
-- build: Install php-parallel-lint  (James Forrester)
-- build: Install minus-x and make pass  (James Forrester)
+## 3.0.0
 
-# 2.0.0
-- [All Changes](https://github.com/wikimedia/less.php/compare/1.8.2...v2.0.0)
-- Relax PHP requirement down to 7.1, from 7.2.9 (Franz Liedke)
-- Reflect recent breaking changes properly with the semantic versioning (James Forrester)
+* [All changes](https://github.com/wikimedia/less.php/compare/v2.0.0...v3.0.0)
+* Raise PHP requirement from 7.1 to 7.2.9 (James Forrester)
 
-# 1.8.2
-- [All Changes](https://github.com/wikimedia/less.php/compare/1.8.1...1.8.2)
-- Require PHP 7.2.9+, up from 5.3+ (James Forrester)
-- Release: Update Version.php with the current release ID (COBadger)
-- Fix access array offset on value of type null (Michele Locati)
-- Fixed test suite on PHP 7.4 (Sergei Morozov)
-- docs: Fix 1.8.1 "All changes" link (Timo Tijhof)
+## 2.0.0
 
-# 1.8.1
-- [All Changes](https://github.com/wikimedia/less.php/compare/v1.8.0...1.8.1)
-- Another PHP 7.3 compatibility tweak
+* [All changes](https://github.com/wikimedia/less.php/compare/v1.8.2...v2.0.0)
+* Relax PHP requirement down to 7.1, from 7.2.9 (Franz Liedke)
+* Reflect recent breaking changes properly with the semantic versioning (James Forrester)
 
-# 1.8.0
-- [All Changes](https://github.com/Asenar/less.php/compare/v1.7.0.13...v1.8.0)
-- Wikimedia fork
-- Supports up to PHP 7.3
-- No longer tested against PHP 5, though it's still remains allowed in `composer.json` for HHVM compatibility
-- Switched to [semantic versioning](https://semver.org/), hence version numbers now use 3 digits
+## 1.8.2
 
-# 1.7.0.13
- - [All Changes](https://github.com/Asenar/less.php/compare/v1.7.0.12...v1.7.0.13)
- - Fix composer.json (PSR-4 was invalid)
+* [All changes](https://github.com/wikimedia/less.php/compare/v1.8.1...v1.8.2)
+* Require PHP 7.2.9+, up from 5.3+ (James Forrester)
+* release: Update Version.php with the current release ID (COBadger)
+* Fix access array offset on value of type null (Michele Locati)
+* Fix test suite on PHP 7.4 (Sergei Morozov)
 
-# 1.7.0.12
- - [All Changes](https://github.com/Asenar/less.php/compare/v1.7.0.11...v1.7.0.12)
- - set bin/lessc bit executable
- - Add 'gettingVariables' method in Less_Parser
+## 1.8.1
 
-# 1.7.0.11
- - [All Changes](https://github.com/Asenar/less.php/compare/v1.7.0.10...v1.7.0.11)
- - Fix realpath issue (windows)
- - Set Less_Tree_Call property back to public ( Fix 258 266 267 issues from oyejorge/less.php)
+* [All changes](https://github.com/wikimedia/less.php/compare/v1.8.0...v1.8.1)
+* Another PHP 7.3 compatibility tweak
 
-# 1.7.0.10
+## 1.8.0
 
- - [All Changes](https://github.com/oyejorge/less.php/compare/v1.7.0.9...v1.7.10)
- - Add indentation option
- - Add 'optional' modifier for @import
- - fix $color in Exception messages
- - don't use set_time_limit when running cli
- - take relative-url into account when building the cache filename
- - urlArgs should be string no array()
- - add bug-report fixtures [#6dc898f](https://github.com/oyejorge/less.php/commit/6dc898f5d75b447464906bdf19d79c2e19d95e33)
- - fix #269, missing on NameValue type [#a8dac63](https://github.com/oyejorge/less.php/commit/a8dac63d93fb941c54fb78b12588abf635747c1b)
+Library forked by Wikimedia, from [oyejorge/less.php](https://github.com/oyejorge/less.php).
 
-# 1.7.0.9
+* [All changes](https://github.com/wikimedia/less.php/compare/v1.7.0.13...v1.8.0)
+* Supports up to PHP 7.3
+* No longer tested against PHP 5, though it's still remains allowed in `composer.json` for HHVM compatibility
+* Switched to [semantic versioning](https://semver.org/), hence version numbers now use 3 digits
 
- - [All Changes](https://github.com/oyejorge/less.php/compare/v1.7.0.8...v1.7.0.9)
- - Remove space at beginning of Version.php
- - Revert require() paths in test interface
+## 1.7.0.13
+
+* [All changes](https://github.com/wikimedia/less.php/compare/v1.7.0.12...v1.7.0.13)
+* Fix composer.json (PSR-4 was invalid)
+
+## 1.7.0.12
+
+* [All changes](https://github.com/wikimedia/less.php/compare/v1.7.0.11...v1.7.0.12)
+* set bin/lessc bit executable
+* Add `gettingVariables` method to `Less_Parser`
+
+## 1.7.0.11
+
+* [All changes](https://github.com/wikimedia/less.php/compare/v1.7.0.10...v1.7.0.11)
+* Fix realpath issue (windows)
+* Set Less_Tree_Call property back to public ( Fix 258 266 267 issues from oyejorge/less.php)
+
+## 1.7.0.10
+
+* [All changes](https://github.com/wikimedia/less.php/compare/v1.7.0.9...v1.7.10)
+* Add indentation option
+* Add `optional` modifier for `@import`
+* Fix $color in Exception messages
+* take relative-url into account when building the cache filename
+* urlArgs should be string no array()
+* fix missing on NameValue type [#269](https://github.com/oyejorge/less.php/issues/269)
+
+## 1.7.0.9
+
+* [All changes](https://github.com/wikimedia/less.php/compare/v1.7.0.8...v1.7.0.9)
+* Remove space at beginning of Version.php
+* Revert require() paths in test interface

@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Deryck Chan",
 			"Hello903hello",
 			"Ktchankt",
 			"Moon0319",
 			"OmniBus",
 			"Roy17",
 			"Waihorace",
-			"Yueman",
-			"Deryck Chan"
+			"Yueman"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -43,12 +43,12 @@
 	"vector-more-actions": "多啲",
 	"vector-search-loader": "載入緊搜索提議",
 	"vector-searchsuggest-containing": "搵包含 <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> 嘅版",
-	"vector-toc-heading": "目錄",
-	"vector-toc-toggle-position-title": "收埋",
+	"vector-toc-label": "目錄",
 	"vector-toc-beginning": "文頭",
 	"vector-anon-user-menu-pages-learn": "知多啲",
 	"vector-main-menu-tooltip": "主目錄",
 	"vector-toc-menu-tooltip": "內容一覽",
 	"vector-toc-collapsible-button-label": "開/收內容一覽",
-	"vector-site-nav-label": "站點"
+	"vector-site-nav-label": "站點",
+	"vector-unpin-element-label": "收埋"
 }

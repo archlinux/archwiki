@@ -206,8 +206,8 @@ class PasswordReset implements LoggerAwareInterface {
 			return StatusValue::newFatal( 'badipaddress' );
 		}
 
-		$username = $username ?? '';
-		$email = $email ?? '';
+		$username ??= '';
+		$email ??= '';
 
 		$resetRoutes = $this->config->get( MainConfigNames::PasswordResetRoutes )
 			+ [ 'username' => false, 'email' => false ];
@@ -355,11 +355,8 @@ class PasswordReset implements LoggerAwareInterface {
 	 * @since 1.30
 	 */
 	private function isBlocked( User $user ) {
-		$block = $user->getBlock() ?: $user->getGlobalBlock();
-		if ( !$block ) {
-			return false;
-		}
-		return $block->appliesToPasswordReset();
+		$block = $user->getBlock();
+		return $block && $block->appliesToPasswordReset();
 	}
 
 	/**

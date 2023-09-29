@@ -4,7 +4,8 @@
 			"Aefgh39622",
 			"Horus",
 			"Supasate",
-			"Taweetham"
+			"Taweetham",
+			"RidJasper"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "หนังสือ",
@@ -34,7 +35,7 @@
 	"cite-ve-dialog-referenceslist-title": "รายการอ้างอิง",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "ปรับปรุงเนื้อหาของคุณโดยเพิ่มแหล่งข้อมูล คุณสามารถอ้างอิงจากในหนังสือ หนังสือพิมพ์ และเว็บไซต์ต่าง ๆ ได้",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "การอ้างอิง",
-	"cite-ve-dialogbutton-reference-full-label": "รูปแบบพื้นฐาน",
+	"cite-ve-dialogbutton-reference-full-label": "พื้นฐาน",
 	"cite-ve-dialogbutton-reference-title": "แหล่งอ้างอิง",
 	"cite-ve-dialogbutton-reference-tooltip": "พื้นฐาน",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "รายการอ้างอิง",

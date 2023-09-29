@@ -26,6 +26,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -99,6 +100,15 @@ class FixDoubleRedirects extends Maintenance {
 		foreach ( $res as $row ) {
 			$titleA = Title::makeTitle( $row->pa_namespace, $row->pa_title );
 			$titleB = Title::makeTitle( $row->pb_namespace, $row->pb_title );
+			if ( !$titleA->canExist() || !$titleB->canExist() ) {
+				$this->error( "Cannot fix redirect from" .
+					( $titleA->canExist() ? "" : " invalid" ) . " title " . $titleA->getPrefixedText()
+					. " to new" .
+					( $titleB->canExist() ? "" : " invalid" ) . " target " . $titleB->getPrefixedText()
+					. "\n"
+				);
+				continue;
+			}
 
 			$processedTitles .= "* [[$titleA]]\n";
 

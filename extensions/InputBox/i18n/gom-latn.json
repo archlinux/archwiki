@@ -5,5 +5,9 @@
 		]
 	},
 	"inputbox-tryexact": "Dil'lech utram sod",
-	"inputbox-movearticle": "Pan haloi"
+	"inputbox-createarticle": "Pan roch",
+	"inputbox-movearticle": "Pan haloi",
+	"inputbox-postcomment": "Novo vibhag",
+	"inputbox-postcommenttitle": "Novo vibhag",
+	"inputbox-ns-main": "Mukhel"
 }

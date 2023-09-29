@@ -33,7 +33,7 @@ ve.dm.MWInternalLinkAnnotation.static.name = 'link/mwInternal';
 ve.dm.MWInternalLinkAnnotation.static.matchRdfaTypes = [ 'mw:WikiLink', 'mw:MediaLink' ];
 
 // mw:MediaLink to non-existent files come with typeof="mw:Error"
-ve.dm.MWInternalLinkAnnotation.static.allowedRdfaTypes = [ 'mw:Error' ];
+ve.dm.MWInternalLinkAnnotation.static.allowedRdfaTypes = [ 'mw:Error', 'mw:LocalizedAttrs' ];
 
 ve.dm.MWInternalLinkAnnotation.static.toDataElement = function ( domElements, converter ) {
 	var resource = domElements[ 0 ].getAttribute( 'resource' );
@@ -57,8 +57,7 @@ ve.dm.MWInternalLinkAnnotation.static.toDataElement = function ( domElements, co
 		attributes: {
 			title: targetData.title,
 			normalizedTitle: this.normalizeTitle( targetData.title ),
-			lookupTitle: this.getLookupTitle( targetData.title ),
-			origTitle: targetData.rawTitle
+			lookupTitle: this.getLookupTitle( targetData.title )
 		}
 	};
 };
@@ -67,10 +66,9 @@ ve.dm.MWInternalLinkAnnotation.static.toDataElement = function ( domElements, co
  * Build element from a given mw.Title and raw title
  *
  * @param {mw.Title} title The title to link to.
- * @param {string} [rawTitle] String from which the title was created
  * @return {Object} The element.
  */
-ve.dm.MWInternalLinkAnnotation.static.dataElementFromTitle = function ( title, rawTitle ) {
+ve.dm.MWInternalLinkAnnotation.static.dataElementFromTitle = function ( title ) {
 	var target = title.toText();
 
 	if ( title.getFragment() ) {
@@ -86,10 +84,6 @@ ve.dm.MWInternalLinkAnnotation.static.dataElementFromTitle = function ( title, r
 		}
 	};
 
-	if ( rawTitle ) {
-		element.attributes.origTitle = rawTitle;
-	}
-
 	return element;
 };
 
@@ -97,11 +91,10 @@ ve.dm.MWInternalLinkAnnotation.static.dataElementFromTitle = function ( title, r
  * Build a ve.dm.MWInternalLinkAnnotation from a given mw.Title.
  *
  * @param {mw.Title} title The title to link to.
- * @param {string} [rawTitle] String from which the title was created
  * @return {ve.dm.MWInternalLinkAnnotation} The annotation.
  */
-ve.dm.MWInternalLinkAnnotation.static.newFromTitle = function ( title, rawTitle ) {
-	var element = this.dataElementFromTitle( title, rawTitle );
+ve.dm.MWInternalLinkAnnotation.static.newFromTitle = function ( title ) {
+	var element = this.dataElementFromTitle( title );
 
 	return new ve.dm.MWInternalLinkAnnotation( element );
 };
@@ -114,31 +107,16 @@ ve.dm.MWInternalLinkAnnotation.static.toDomElements = function () {
 };
 
 ve.dm.MWInternalLinkAnnotation.static.getHref = function ( dataElement ) {
-	var encodedTitle,
-		title = dataElement.attributes.title,
-		origTitle = dataElement.attributes.origTitle;
-	if ( origTitle !== undefined && mw.libs.ve.decodeURIComponentIntoArticleTitle( origTitle ) === title ) {
-		// Restore href from origTitle
-		encodedTitle = origTitle;
-	} else {
-		// Don't escape slashes in the title; they represent subpages.
-		// Don't escape colons to work around a Parsoid bug with interwiki links (T95850)
-		// TODO: Maybe this should be using mw.util.wikiUrlencode(), which also doesn't escape them?
-		encodedTitle = title.split( /(\/|#|:)/ ).map( function ( part ) {
-			if ( part === '/' || part === '#' || part === ':' ) {
-				return part;
-			} else {
-				return encodeURIComponent( part );
-			}
-		} ).join( '' );
-	}
-	if ( encodedTitle.slice( 0, 1 ) === '#' ) {
+	var title = dataElement.attributes.title;
+
+	if ( title.slice( 0, 1 ) === '#' ) {
 		// Special case: For a newly created link to a #fragment with
 		// no explicit title use the current title as prefix (T218581)
 		// TODO: Pass a 'doc' param to getPageName
-		encodedTitle = ve.init.target.getPageName() + encodedTitle;
+		title = ve.init.target.getPageName() + title;
 	}
-	return './' + encodedTitle;
+
+	return mw.libs.ve.encodeParsoidResourceName( title );
 };
 
 /**

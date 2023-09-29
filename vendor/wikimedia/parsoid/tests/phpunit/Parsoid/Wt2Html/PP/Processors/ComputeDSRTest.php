@@ -33,11 +33,11 @@ class ComputeDSRTest extends TestCase {
 
 		$dp = DOMDataUtils::getDataParsoid( $elts[0] );
 		if ( $spec['dsrContent'] === null ) {
-			$this->assertTrue( empty( $dp->dsr ) );
+			$this->assertObjectNotHasAttribute( 'dsr', $dp );
 			return;
 		}
+		$this->assertObjectHasAttribute( 'dsr', $dp );
 		$dsr = $dp->dsr;
-		$this->assertTrue( !empty( $dsr ) );
 		$this->assertInstanceOf( DomSourceRange::class, $dsr );
 
 		$this->assertSubstring( $spec['dsrContent'][0], $wt, $dsr->start, $dsr->length(),
@@ -337,6 +337,17 @@ class ComputeDSRTest extends TestCase {
 				]
 			],
 
+			// Mixed HTML and native-wikitext tags
+			'html quote end tag' => [
+				'wt' => "'''x</b>",
+				'specs' => [
+					[
+						'selector' => 'body > p > b',
+						'dsrContent' => [ "'''x</b>", "'''", '</b>' ]
+					]
+				],
+			],
+
 			// Links
 			'link 1' => [
 				'wt' => 'Foo https://en.wikipedia.org/ bar',
@@ -416,11 +427,20 @@ class ComputeDSRTest extends TestCase {
 			],
 			'comment 2' => [
 				// Misnesting is a way to get the comment length to appear in the output
-				'wt' => "<div><b><i>AAA</b><!--BBB--></i></div>",
+				'wt' => '<div><b><i>AAA</b><!--BBB--></i></div>',
 				'specs' => [
 					[
 						'selector' => 'body > div',
 						'dsrContent' => [ '<div><b><i>AAA</b><!--BBB--></i></div>', '<div>', '</div>' ]
+					]
+				]
+			],
+			'unclosed comment' => [
+				'wt' => '{{1x|<div>a}}\n\nb\n<!--\nx',
+				'specs' => [
+					[
+						'selector' => 'body > div',
+						'dsrContent' => [ '{{1x|<div>a}}\n\nb\n<!--\nx', null, '' ]
 					]
 				]
 			],

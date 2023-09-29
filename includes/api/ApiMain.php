@@ -22,13 +22,19 @@
  */
 
 use MediaWiki\Api\Validator\ApiParamValidator;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequestUpload;
 use MediaWiki\Rest\HeaderParser\Origin;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\User\UserRigorOptions;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Timestamp\TimestampException;
@@ -40,7 +46,7 @@ use Wikimedia\Timestamp\TimestampException;
  * and use formatter to print results.
  * In case of an exception, an error message will be printed using the same formatter.
  *
- * To use API from another application, run it using FauxRequest object, in which
+ * To use API from another application, run it using MediaWiki\Request\FauxRequest object, in which
  * case any internal exceptions will not be handled but passed up to the caller.
  * After successful execution, use getResult() for the resulting data.
  *
@@ -516,7 +522,7 @@ class ApiMain extends ApiBase {
 	 *
 	 * @stable to call
 	 * @param IContextSource|WebRequest|null $context If this is an instance of
-	 *    FauxRequest, errors are thrown and no printing occurs
+	 *    MediaWiki\Request\FauxRequest, errors are thrown and no printing occurs
 	 * @param bool $enableWrite Should be set to true if the api may modify data
 	 */
 	public function __construct( $context = null, $enableWrite = false ) {
@@ -577,7 +583,6 @@ class ApiMain extends ApiBase {
 			if ( $uselang === 'content' ) {
 				$uselang = $services->getContentLanguage()->getCode();
 			}
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable getRawVal does not return null
 			$code = RequestContext::sanitizeLangCode( $uselang );
 			$derivativeContext->setLanguage( $code );
 			if ( !$this->mInternalMode ) {
@@ -629,7 +634,7 @@ class ApiMain extends ApiBase {
 	}
 
 	/**
-	 * Return true if the API was started by other PHP code using FauxRequest
+	 * Return true if the API was started by other PHP code using MediaWiki\Request\FauxRequest
 	 * @return bool
 	 */
 	public function isInternalMode() {
@@ -1628,9 +1633,9 @@ class ApiMain extends ApiBase {
 		}
 		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable $etag is declared when $ifNoneMatch is true
 		if ( $ifNoneMatch && $etag !== null ) {
-			$test = substr( $etag, 0, 2 ) === 'W/' ? substr( $etag, 2 ) : $etag;
+			$test = str_starts_with( $etag, 'W/' ) ? substr( $etag, 2 ) : $etag;
 			$match = array_map( static function ( $s ) {
-				return substr( $s, 0, 2 ) === 'W/' ? substr( $s, 2 ) : $s;
+				return str_starts_with( $s, 'W/' ) ? substr( $s, 2 ) : $s;
 			}, $ifNoneMatch );
 			$return304 = in_array( $test, $match, true );
 		} else {
@@ -1742,7 +1747,7 @@ class ApiMain extends ApiBase {
 
 		if ( $module->isWriteMode()
 			&& $this->getUser()->isBot()
-			&& MediaWikiServices::getInstance()->getDBLoadBalancer()->getServerCount() > 1
+			&& MediaWikiServices::getInstance()->getDBLoadBalancer()->hasReplicaServers()
 		) {
 			$this->checkBotReadOnly();
 		}
@@ -1849,11 +1854,9 @@ class ApiMain extends ApiBase {
 		}
 
 		// See if custom printer is used
-		$this->mPrinter = $module->getCustomPrinter();
-		if ( $this->mPrinter === null ) {
-			// Create an appropriate printer
-			$this->mPrinter = $this->createPrinterByName( $params['format'] );
-		}
+		$this->mPrinter = $module->getCustomPrinter() ??
+			// Create an appropriate printer if not set
+			$this->createPrinterByName( $params['format'] );
 
 		if ( $request->getProtocol() === 'http' &&
 			(
@@ -1914,16 +1917,21 @@ class ApiMain extends ApiBase {
 	 * @param ApiBase $module
 	 */
 	protected function setRequestExpectations( ApiBase $module ) {
-		$limits = $this->getConfig()->get( MainConfigNames::TrxProfilerLimits );
+		$request = $this->getRequest();
+
+		$trxLimits = $this->getConfig()->get( MainConfigNames::TrxProfilerLimits );
 		$trxProfiler = Profiler::instance()->getTransactionProfiler();
-		$trxProfiler->setLogger( LoggerFactory::getInstance( 'DBPerformance' ) );
-		if ( $this->getRequest()->hasSafeMethod() ) {
-			$trxProfiler->setExpectations( $limits['GET'], __METHOD__ );
-		} elseif ( $this->getRequest()->wasPosted() && !$module->isWriteMode() ) {
-			$trxProfiler->setExpectations( $limits['POST-nonwrite'], __METHOD__ );
-			$this->getRequest()->markAsSafeRequest();
+		$trxProfiler->setLogger( LoggerFactory::getInstance( 'rdbms' ) );
+		$statsFactory = MediaWikiServices::getInstance()->getStatsdDataFactory();
+		$trxProfiler->setStatsdDataFactory( $statsFactory );
+		$trxProfiler->setRequestMethod( $request->getMethod() );
+		if ( $request->hasSafeMethod() ) {
+			$trxProfiler->setExpectations( $trxLimits['GET'], __METHOD__ );
+		} elseif ( $request->wasPosted() && !$module->isWriteMode() ) {
+			$trxProfiler->setExpectations( $trxLimits['POST-nonwrite'], __METHOD__ );
+			$request->markAsSafeRequest();
 		} else {
-			$trxProfiler->setExpectations( $limits['POST'], __METHOD__ );
+			$trxProfiler->setExpectations( $trxLimits['POST'], __METHOD__ );
 		}
 	}
 

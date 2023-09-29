@@ -6,6 +6,7 @@
 			"Avilena",
 			"Cocu",
 			"Danmichaelo",
+			"EdoAug",
 			"Emilbk",
 			"Event",
 			"Gloria sah",
@@ -18,8 +19,7 @@
 			"Njardarlogar",
 			"Orf3us",
 			"TMg",
-			"Tarjeimo",
-			"EdoAug"
+			"Tarjeimo"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -173,6 +173,7 @@
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Parameternavn",
 	"visualeditor-dialog-transclusion-add-param-save": "Legg til",
 	"visualeditor-dialog-transclusion-add-template": "Legg til mal",
+	"visualeditor-dialog-transclusion-add-template-button": "Legg til mal",
 	"visualeditor-dialog-transclusion-add-template-save": "Legg til",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Legg til udokumentert parameter",
 	"visualeditor-dialog-transclusion-back-confirmation-prompt": "Gå tilbake til søk? Endringene dine vil gå tapt og kan ikke hentes tilbake igjen.",
@@ -204,7 +205,6 @@
 	"visualeditor-dialog-transclusion-param-selection-aria-description": "Trykk mellomrom for å legge til eller fjerne parametre. Trykk enter for å legge til en parameter og redigere verdien dens. Når en parameter allerede er valgt, trykk enter for å redigere verdien.",
 	"visualeditor-dialog-transclusion-param-selection-aria-label": "Parametre i $1",
 	"visualeditor-dialog-transclusion-param-undocumented": "(Udokumentert parameter)",
-	"visualeditor-dialog-transclusion-placeholder": "Legg til en mal",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Finn mal",
 	"visualeditor-dialog-transclusion-required-parameter": "Obligatorisk felt",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Feltet er påkrevd.",
@@ -329,7 +329,7 @@
 	"visualeditor-preference-tabs-prefer-ve": "Bruk alltid visuell redigering når det er mulig",
 	"visualeditor-preference-tabs-prefer-wt": "Bruk alltid kilderedigering",
 	"visualeditor-preference-tabs-remember-last": "Husk min sist brukte editor",
-	"visualeditor-preference-visualdiffpage-description": "Aktiver den nye visuelle modusen for sammenligning av revisjoner.",
+	"visualeditor-preference-visualdiffpage-description": "Aktiver den nye visuelle modusen for sammenligning av sideversjoner.",
 	"visualeditor-preference-visualdiffpage-label": "Visuelle forskjeller",
 	"visualeditor-rebase-client-export": "Eksporter",
 	"visualeditor-rebase-client-export-start": "Eksporter …",

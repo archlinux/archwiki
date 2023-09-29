@@ -21,8 +21,10 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Tidy\TidyDriverBase;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsLookup;
 
 /**
@@ -125,8 +127,8 @@ class SpecialExpandTemplates extends SpecialPage {
 
 			$out->addHTML( $tmp );
 
-			$pout = $this->generateHtml( $title, $output );
-			$rawhtml = $pout->getText();
+			$pout = $this->parser->parse( $output, $title, $options );
+			$rawhtml = $pout->getText( [ 'enableSectionEditLinks' => false ] );
 			if ( $generateRawHtml && strlen( $rawhtml ) > 0 ) {
 				// @phan-suppress-next-line SecurityCheck-DoubleEscaped Wanted here to display the html
 				$out->addHTML( $this->makeOutput( $rawhtml, 'expand_templates_html_output' ) );
@@ -200,7 +202,7 @@ class SpecialExpandTemplates extends SpecialPage {
 		$form
 			->setSubmitTextMsg( 'expand_templates_ok' )
 			->setWrapperLegendMsg( 'expandtemplates' )
-			->setHeaderText( $this->msg( 'expand_templates_intro' )->parse() )
+			->setHeaderHtml( $this->msg( 'expand_templates_intro' )->parse() )
 			->setSubmitCallback( [ $this, 'onSubmitInput' ] )
 			->showAlways();
 	}
@@ -227,19 +229,6 @@ class SpecialExpandTemplates extends SpecialPage {
 		);
 
 		return $out;
-	}
-
-	/**
-	 * Renders the supplied wikitext as html
-	 *
-	 * @param Title $title
-	 * @param string $text
-	 * @return ParserOutput
-	 */
-	private function generateHtml( Title $title, $text ) {
-		$popts = ParserOptions::newFromContext( $this->getContext() );
-		$popts->setTargetLanguage( $title->getPageLanguage() );
-		return $this->parser->parse( $text, $title, $popts );
 	}
 
 	/**
@@ -286,7 +275,7 @@ class SpecialExpandTemplates extends SpecialPage {
 			'dir' => $lang->getDir(),
 			'lang' => $lang->getHtmlCode(),
 		] ) );
-		$out->addParserOutputContent( $pout );
+		$out->addParserOutputContent( $pout, [ 'enableSectionEditLinks' => false ] );
 		$out->addHTML( Html::closeElement( 'div' ) );
 		$out->setCategoryLinks( $pout->getCategories() );
 	}

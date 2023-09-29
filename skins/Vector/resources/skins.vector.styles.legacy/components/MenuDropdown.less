@@ -30,9 +30,9 @@
 		font-weight: normal;
 
 		&:after {
-			.mixin-vector-menu-heading-arrow();
+			.mixin-vector-legacy-menu-heading-arrow();
 			// Modify the color of the image from the default #202122 to approx. #404244 to match the text.
-			opacity: 0.84;
+			opacity: @opacity-icon-base;
 		}
 
 		&:hover,
@@ -40,7 +40,7 @@
 			color: @color-base;
 
 			&:after {
-				opacity: 1;
+				opacity: @opacity-icon-base--selected;
 			}
 		}
 	}
@@ -56,11 +56,13 @@
 		box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.1 );
 		transition-property: opacity;
 		transition-duration: @transition-duration-base;
+		// The menu content should not be narrower than the menu button.
+		min-width: 100%;
 	}
 
 	// Open the dropdown container via hover.
 	&:hover .vector-menu-content {
-		opacity: 1;
+		opacity: @opacity-base;
 		visibility: visible;
 		height: auto;
 	}
@@ -74,6 +76,9 @@
 		}
 
 		a {
+			// displays all links in a single column.
+			display: block;
+			white-space: nowrap;
 			padding: 0.625em;
 			color: @color-link;
 		}

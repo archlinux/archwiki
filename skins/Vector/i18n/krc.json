@@ -20,5 +20,9 @@
 	"vector-view-view": "Окъу",
 	"vector-view-viewsource": "Кодха къара",
 	"vector-more-actions": "Энтда",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ичинде болгъан бетлени изле"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ичинде болгъан бетлени изле",
+	"vector-main-menu-label": "Баш меню",
+	"vector-limited-width-toggle": "Чекленнген контентни кенглигин алмашдыр",
+	"vector-page-tools-label": "Адырла",
+	"vector-prefs-limited-width-help": "Джазылгъан тынч окъулурча, кенгликни чеклениу режимин джандырыгъыз."
 }

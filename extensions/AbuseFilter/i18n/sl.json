@@ -7,7 +7,8 @@
 			"Janezdrilc",
 			"Matma Rex",
 			"RStular",
-			"Upwinxp"
+			"Upwinxp",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Uporaba samodejne hevristike pri urejanjih",
@@ -487,7 +488,7 @@
 	"abusefilter-action-disallow": "preprečitev",
 	"abusefilter-revert-title": "Povrni vse spremembe filtra $1",
 	"abusefilter-revert-intro": "Ta obrazec omogoča vračanje vseh sprememb filtra zlorab zaradi filtra $1.\nProsimo, bodite previdni pri uporabi tega orodja.",
-	"abusefilter-revert-preview-item": "$1: $2 je na strani $4  {{GENDER:$7|storil|storila|storil_a}} $3.\nDejanja, ki bodo vrnjena: $5 ($6)",
+	"abusefilter-revert-preview-item": "$1: $2 je na strani $4 {{GENDER:$7|storil|storila|storil_a}} $3.\nDejanja, ki bodo vrnjena: $5 ($6)",
 	"abusefilter-revert-search-legend": "Izberite dejanja filtra zlorab, ki naj bodo vrnjena",
 	"abusefilter-revert-periodstart": "Začetek obdobja:",
 	"abusefilter-revert-periodend": "Konec obdobja:",

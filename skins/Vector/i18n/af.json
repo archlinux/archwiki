@@ -35,8 +35,7 @@
 	"vector-search-loader": "Laai tans soekvoorstelle",
 	"vector-searchsuggest-containing": "Soek vir bladsye wat <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> bevat",
 	"vector-intro-page": "Help:Inleiding",
-	"vector-toc-heading": "Inhoud",
-	"vector-toc-toggle-position-title": "versteek",
+	"vector-toc-label": "Inhoud",
 	"vector-toc-beginning": "Inleiding",
 	"vector-toc-toggle-button-label": "Wissel $1 subafdeling",
 	"vector-anon-user-menu-pages": "Bladsye vir uitgemelde redakteurs",
@@ -46,5 +45,13 @@
 	"vector-toc-menu-tooltip": "Inhoudsopgawe",
 	"vector-toc-collapsible-button-label": "Wissel die inhoudsopgawe",
 	"vector-site-nav-label": "Werf",
-	"tooltip-vector-anon-user-menu-title": "Meer opsies"
+	"vector-main-menu-label": "Hoofkieslys",
+	"vector-limited-width-toggle": "Wissel beperkte inhoudwydte",
+	"vector-page-tools-label": "Gereedskap",
+	"vector-page-tools-general-label": "Algemeen",
+	"vector-pin-element-label": "skuif na kantbalk",
+	"vector-unpin-element-label": "versteek",
+	"tooltip-vector-anon-user-menu-title": "Meer opsies",
+	"vector-prefs-limited-width": "Aktiveer beperkte breedte-modus",
+	"vector-prefs-limited-width-help": "Aktiveer beperkte wydte-modus vir 'n verbeterde lees ervaring."
 }

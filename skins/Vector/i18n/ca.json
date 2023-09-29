@@ -47,7 +47,7 @@
 	"vector-search-loader": "Carregant els suggeriments de cerca",
 	"vector-searchsuggest-containing": "Cerca les pàgines que continguin <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introducció",
-	"vector-toc-heading": "Contingut",
+	"vector-toc-label": "Contingut",
 	"vector-toc-beginning": "Inici",
 	"vector-toc-toggle-button-label": "Commuta la subsecció $1",
 	"vector-anon-user-menu-pages": "Pàgines per a editors no registrats",
@@ -56,8 +56,17 @@
 	"vector-main-menu-tooltip": "Menú principal",
 	"vector-toc-menu-tooltip": "Taula de continguts",
 	"vector-toc-collapsible-button-label": "Commuta la taula de continguts.",
-	"vector-article-tools-nav-label": "Eines",
 	"vector-site-nav-label": "Lloc",
+	"vector-main-menu-label": "Menú principal",
+	"vector-limited-width-toggle": "Commuta la limitació d'amplada del contingut",
+	"vector-page-tools-label": "Eines",
+	"vector-page-tools-general-label": "General",
+	"vector-page-tools-actions-label": "Accions",
+	"vector-pin-element-label": "mou a la barra lateral",
+	"vector-unpin-element-label": "amaga",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Discussió]]",
-	"tooltip-vector-anon-user-menu-title": "Més opcions"
+	"tooltip-vector-anon-user-menu-title": "Més opcions",
+	"vector-prefs-limited-width": "Activa el mode d'amplada limitada",
+	"vector-prefs-limited-width-help": "Activa el mode d'amplada limitada per una millor experiència de lectura.",
+	"empty-language-selector-body": "El contingut de la pàgina no s'admet en altres llengües."
 }

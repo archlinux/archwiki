@@ -1,12 +1,5 @@
 <?php
-
-use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
-use MediaWiki\Site\MediaWikiPageNameNormalizer;
-
 /**
- * Represents a single site.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -22,15 +15,21 @@ use MediaWiki\Site\MediaWikiPageNameNormalizer;
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @since 1.21
- *
  * @file
- * @ingroup Site
+ */
+
+use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Site\MediaWikiPageNameNormalizer;
+
+/**
+ * Represents a single site.
  *
- * @license GPL-2.0-or-later
+ * @since 1.21
+ * @ingroup Site
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  */
-class Site implements Serializable {
+class Site {
 	public const TYPE_UNKNOWN = 'unknown';
 	public const TYPE_MEDIAWIKI = 'mediawiki';
 
@@ -149,16 +148,9 @@ class Site implements Serializable {
 	 * Sets the global site identifier (ie enwiktionary).
 	 *
 	 * @since 1.21
-	 *
 	 * @param string|null $globalId
-	 *
-	 * @throws MWException
 	 */
-	public function setGlobalId( $globalId ) {
-		if ( $globalId !== null && !is_string( $globalId ) ) {
-			throw new MWException( '$globalId needs to be string or null' );
-		}
-
+	public function setGlobalId( ?string $globalId ) {
 		$this->globalId = $globalId;
 	}
 
@@ -188,16 +180,9 @@ class Site implements Serializable {
 	 * Sets the group of the site (ie wikipedia).
 	 *
 	 * @since 1.21
-	 *
 	 * @param string $group
-	 *
-	 * @throws MWException
 	 */
-	public function setGroup( $group ) {
-		if ( !is_string( $group ) ) {
-			throw new MWException( '$group needs to be a string' );
-		}
-
+	public function setGroup( string $group ) {
 		$this->group = $group;
 	}
 
@@ -216,16 +201,9 @@ class Site implements Serializable {
 	 * Sets the source of the site data (ie 'local', 'wikidata', 'my-magical-repo').
 	 *
 	 * @since 1.21
-	 *
 	 * @param string $source
-	 *
-	 * @throws MWException
 	 */
-	public function setSource( $source ) {
-		if ( !is_string( $source ) ) {
-			throw new MWException( '$source needs to be a string' );
-		}
-
+	public function setSource( string $source ) {
 		$this->source = $source;
 	}
 
@@ -246,16 +224,9 @@ class Site implements Serializable {
 	 * the actual site, where "key" is the local identifier.
 	 *
 	 * @since 1.21
-	 *
 	 * @param bool $shouldForward
-	 *
-	 * @throws MWException
 	 */
-	public function setForward( $shouldForward ) {
-		if ( !is_bool( $shouldForward ) ) {
-			throw new MWException( '$shouldForward needs to be a boolean' );
-		}
-
+	public function setForward( bool $shouldForward ) {
 		$this->forward = $shouldForward;
 	}
 
@@ -287,8 +258,6 @@ class Site implements Serializable {
 	 * Returns the protocol of the site.
 	 *
 	 * @since 1.21
-	 *
-	 * @throws MWException
 	 * @return string
 	 */
 	public function getProtocol() {
@@ -302,7 +271,7 @@ class Site implements Serializable {
 
 		// Malformed URL
 		if ( $protocol === false ) {
-			throw new MWException( "failed to parse URL '$path'" );
+			throw new UnexpectedValueException( "failed to parse URL '$path'" );
 		}
 
 		// No schema
@@ -315,20 +284,18 @@ class Site implements Serializable {
 	}
 
 	/**
-	 * Sets the path used to construct links with.
+	 * Set the path used to construct links with.
+	 *
 	 * Shall be equivalent to setPath( getLinkPathType(), $fullUrl ).
 	 *
 	 * @param string $fullUrl
-	 *
 	 * @since 1.21
-	 *
-	 * @throws MWException
 	 */
 	public function setLinkPath( $fullUrl ) {
 		$type = $this->getLinkPathType();
 
 		if ( $type === null ) {
-			throw new MWException( "This Site does not support link paths." );
+			throw new RuntimeException( "This Site does not support link paths." );
 		}
 
 		$this->setPath( $type, $fullUrl );
@@ -363,8 +330,9 @@ class Site implements Serializable {
 	}
 
 	/**
-	 * Returns the full URL for the given page on the site.
-	 * Or null if the needed information is not known.
+	 * Get the full URL for the given page on the site.
+	 *
+	 * Returns null if the needed information is not known.
 	 *
 	 * This generated URL is usually based upon the path returned by getLinkPath(),
 	 * but this is not a requirement.
@@ -372,9 +340,7 @@ class Site implements Serializable {
 	 * This implementation returns a URL constructed using the path returned by getLinkPath().
 	 *
 	 * @since 1.21
-	 *
-	 * @param bool|string $pageName
-	 *
+	 * @param string|false $pageName
 	 * @return string|null
 	 */
 	public function getPageUrl( $pageName = false ) {
@@ -592,21 +558,15 @@ class Site implements Serializable {
 	}
 
 	/**
-	 * Sets the path used to construct links with.
+	 * Set the path used to construct links with.
+	 *
 	 * Shall be equivalent to setPath( getLinkPathType(), $fullUrl ).
 	 *
 	 * @since 1.21
-	 *
 	 * @param string $pathType
 	 * @param string $fullUrl
-	 *
-	 * @throws MWException
 	 */
-	public function setPath( $pathType, $fullUrl ) {
-		if ( !is_string( $fullUrl ) ) {
-			throw new MWException( '$fullUrl needs to be a string' );
-		}
-
+	public function setPath( $pathType, string $fullUrl ) {
 		if ( !array_key_exists( 'paths', $this->extraData ) ) {
 			$this->extraData['paths'] = [];
 		}
@@ -615,7 +575,7 @@ class Site implements Serializable {
 	}
 
 	/**
-	 * Returns the path of the provided type or false if there is no such path.
+	 * Returns the path of the provided type or null if there is no such path.
 	 *
 	 * @since 1.21
 	 *
@@ -674,17 +634,6 @@ class Site implements Serializable {
 	/**
 	 * @see Serializable::serialize
 	 *
-	 * @since 1.21
-	 *
-	 * @return string
-	 */
-	public function serialize(): string {
-		return serialize( $this->__serialize() );
-	}
-
-	/**
-	 * @see Serializable::serialize
-	 *
 	 * @since 1.38
 	 *
 	 * @return array
@@ -702,17 +651,6 @@ class Site implements Serializable {
 			'forward' => $this->forward,
 			'internalid' => $this->internalId,
 		];
-	}
-
-	/**
-	 * @see Serializable::unserialize
-	 *
-	 * @since 1.21
-	 *
-	 * @param string $serialized
-	 */
-	public function unserialize( $serialized ): void {
-		$this->__unserialize( unserialize( $serialized ) );
 	}
 
 	/**

@@ -9,5 +9,6 @@
 			"Викиней"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Көрсөтмөлүү оңдоо]]"
+	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Көрсөтмөлүү оңдоо]]",
+	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|визуалдык режиминде түзөтүлө баштап, викитекст режиминде жарыяланды]]"
 }

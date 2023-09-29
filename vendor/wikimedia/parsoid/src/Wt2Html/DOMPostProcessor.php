@@ -29,7 +29,7 @@ use Wikimedia\Parsoid\Wt2Html\PP\Handlers\Headings;
 use Wikimedia\Parsoid\Wt2Html\PP\Handlers\LiFixups;
 use Wikimedia\Parsoid\Wt2Html\PP\Handlers\TableFixups;
 use Wikimedia\Parsoid\Wt2Html\PP\Handlers\UnpackDOMFragments;
-use Wikimedia\Parsoid\Wt2Html\PP\Processors\AddLinkClasses;
+use Wikimedia\Parsoid\Wt2Html\PP\Processors\AddLinkAttributes;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\AddMediaInfo;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\AddRedLinks;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\ComputeDSR;
@@ -145,16 +145,16 @@ class DOMPostProcessor extends PipelineStage {
 				foreach ( $p['handlers'] as $h ) {
 					$t->addHandler( $h['nodeName'], $h['action'] );
 				}
-				$p['proc'] = function ( ...$args ) use ( $t ) {
-					return $t->run( $this->env, ...$args );
+				$p['proc'] = function ( Node $workNode, array $options, bool $atTopLevel ) use ( $t ) {
+					return $t->run( $this->env, $workNode, $options, $atTopLevel );
 				};
 			} else {
 				$classNameOrSpec = $p['Processor'];
 				if ( empty( $p['isExtPP'] ) ) {
 					// Internal processor w/ ::run() method, class name given
 					$c = new $classNameOrSpec();
-					$p['proc'] = function ( ...$args ) use ( $c ) {
-						return $c->run( $this->env, ...$args );
+					$p['proc'] = function ( Node $workNode, array $options, bool $atTopLevel ) use ( $c ) {
+						return $c->run( $this->env, $workNode, $options, $atTopLevel );
 					};
 				} else {
 					// Extension post processor, object factory spec given
@@ -163,8 +163,8 @@ class DOMPostProcessor extends PipelineStage {
 						'allowClassName' => true,
 						'assertClass' => ExtDOMProcessor::class,
 					] );
-					$p['proc'] = function ( ...$args ) use ( $c ) {
-						return $c->wtPostprocess( $this->extApi, ...$args );
+					$p['proc'] = function ( Node $workNode, array $options, bool $atTopLevel ) use ( $c ) {
+						return $c->wtPostprocess( $this->extApi, $workNode, $options, $atTopLevel );
 					};
 				}
 			}
@@ -235,13 +235,24 @@ class DOMPostProcessor extends PipelineStage {
 				'Processor' => AddMediaInfo::class,
 				'shortcut' => 'media'
 			],
-			// Run this after 'ProcessTreeBuilderFixups' because the mw:StartTag
-			// and mw:EndTag metas would otherwise interfere with the
-			// firstChild/lastChild check that this pass does.
-			// FIXME: those metas no longer exist
+			// Run this after:
+			// * ProcessTreeBuilderFixups because this pass needs
+			//   autoInsertedStart / autoInsertedEnd information.
+			// * PWrap because PWrap can add additional opportunities
+			//   for meta migration which we will miss if we run this
+			//   before p-wrapping.
+			//
+			// We could potentially move this just before WrapTemplates
+			// by seeing this as a preprocessing pass for that. But, we
+			// will have to update the pass to update DSR properties
+			// where required.
+			//
+			// In summary, this can at most be moved before AddMediaInfo or
+			// after MigrateTrailingNLs without needing any other changes.
 			[
 				'Processor' => MigrateTemplateMarkerMetas::class,
-				'shortcut' => 'migrate-metas'
+				'shortcut' => 'migrate-metas',
+				'omit' => $options['inTemplate']
 			],
 			[
 				'Processor' => MigrateTrailingNLs::class,
@@ -507,7 +518,7 @@ class DOMPostProcessor extends PipelineStage {
 				]
 			],
 			[
-				'Processor' => AddLinkClasses::class,
+				'Processor' => AddLinkAttributes::class,
 				'shortcut' => 'linkclasses',
 				// Note that embedded content doesn't get these classes
 				'skipNested' => true
@@ -744,11 +755,11 @@ class DOMPostProcessor extends PipelineStage {
 		}
 
 		// PageConfig guarantees language will always be non-null.
-		$lang = $env->getPageConfig()->getPageLanguage();
+		$lang = $env->getPageConfig()->getPageLanguageBcp47();
 		$body = DOMCompat::getBody( $document );
-		$body->setAttribute( 'lang', Utils::bcp47n( $lang ) );
+		$body->setAttribute( 'lang', $lang->toBcp47Code() );
 		$this->updateBodyClasslist( $body, $env );
-		$env->getSiteConfig()->exportMetadataToHead(
+		$env->getSiteConfig()->exportMetadataToHeadBcp47(
 			$document, $env->getMetadata(),
 			$env->getPageConfig()->getTitle(), $lang
 		);
@@ -757,7 +768,13 @@ class DOMPostProcessor extends PipelineStage {
 		// caches can split on variant (if necessary)
 		DOMUtils::appendToHead( $document, 'meta', [
 				'http-equiv' => 'content-language',
-				'content' => $env->htmlContentLanguage()
+				// Note that this is "wrong": we should be returning
+				// $env->htmlContentLanguageBcp47()->toBcp47Code() directly
+				// but for back-compat we'll return the "old" mediawiki-internal
+				// code for now
+				'content' => Utils::bcp47ToMwCode( # T323052: remove this call
+					$env->htmlContentLanguageBcp47()->toBcp47Code()
+				),
 			]
 		);
 		DOMUtils::appendToHead( $document, 'meta', [
@@ -810,6 +827,8 @@ class DOMPostProcessor extends PipelineStage {
 			if ( !empty( $pp['skipNested'] ) && !$this->atTopLevel ) {
 				continue;
 			}
+
+			// error_log("RUNNING " . ($pp['shortcut'] ?? $pp['name']));
 
 			if ( !empty( $pp['withAnnotations'] ) && !$this->env->hasAnnotations ) {
 				continue;

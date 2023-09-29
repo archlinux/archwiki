@@ -7,8 +7,10 @@
 
 ve.dm.citeExample = {};
 
-ve.dm.citeExample.createExampleDocument = function ( name, store ) {
-	return ve.dm.example.createExampleDocumentFromObject( name, store, ve.dm.citeExample );
+ve.dm.citeExample.baseUri = 'http://example.com/wiki/';
+
+ve.dm.citeExample.createExampleDocument = function ( name, store, base ) {
+	return ve.dm.example.createExampleDocumentFromObject( name, store, ve.dm.citeExample, base || ve.dm.citeExample.baseUri );
 };
 
 ve.dm.citeExample.refListItemClipboard = function ( text ) {
@@ -158,7 +160,6 @@ ve.dm.citeExample.domToDataCases = {
 						'</li>' +
 					'</ol>' +
 			'</div>',
-		head: '<base href="http://example.com" />',
 		data: [
 			{ type: 'paragraph' },
 			'F', 'o', 'o',
@@ -289,7 +290,6 @@ ve.dm.citeExample.domToDataCases = {
 					type: 'link/mwInternal',
 					attributes: {
 						title: 'Bar',
-						origTitle: 'Bar',
 						normalizedTitle: 'Bar',
 						lookupTitle: 'Bar'
 					}
@@ -301,7 +301,6 @@ ve.dm.citeExample.domToDataCases = {
 					type: 'link/mwInternal',
 					attributes: {
 						title: 'Bar',
-						origTitle: 'Bar',
 						normalizedTitle: 'Bar',
 						lookupTitle: 'Bar'
 					}
@@ -313,7 +312,6 @@ ve.dm.citeExample.domToDataCases = {
 					type: 'link/mwInternal',
 					attributes: {
 						title: 'Bar',
-						origTitle: 'Bar',
 						normalizedTitle: 'Bar',
 						lookupTitle: 'Bar'
 					}
@@ -379,7 +377,6 @@ ve.dm.citeExample.domToDataCases = {
 					'<a style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a>' +
 				'</sup>' +
 			'</p>',
-		head: '<base href="http://example.com" />',
 		data: [
 			{ type: 'paragraph' },
 			'F', 'o', 'o',
@@ -420,7 +417,6 @@ ve.dm.citeExample.domToDataCases = {
 					type: 'link/mwInternal',
 					attributes: {
 						title: 'Bar',
-						origTitle: 'Bar',
 						normalizedTitle: 'Bar',
 						lookupTitle: 'Bar'
 					}
@@ -432,7 +428,6 @@ ve.dm.citeExample.domToDataCases = {
 					type: 'link/mwInternal',
 					attributes: {
 						title: 'Bar',
-						origTitle: 'Bar',
 						normalizedTitle: 'Bar',
 						lookupTitle: 'Bar'
 					}
@@ -444,7 +439,6 @@ ve.dm.citeExample.domToDataCases = {
 					type: 'link/mwInternal',
 					attributes: {
 						title: 'Bar',
-						origTitle: 'Bar',
 						normalizedTitle: 'Bar',
 						lookupTitle: 'Bar'
 					}
@@ -475,7 +469,6 @@ ve.dm.citeExample.domToDataCases = {
 			'{&quot;html&quot;:&quot;Foo<!-- bar -->&quot;},&quot;name&quot;:&quot;ref&quot;}" ' +
 			' class="mw-ref reference">' +
 			'<a style="counter-reset: mw-Ref 1;"><span class="mw-reflink-text">[1]</span></a></sup></p>',
-		head: '<base href="http://example.com" />',
 		data: [
 			{ type: 'paragraph' },
 			{

@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Bugirbiig",
-			"Amire80"
+			"Amire80",
+			"Bugirbiig"
 		]
 	},
 	"vector-languages": "Buudi piana'ad",
@@ -17,5 +17,8 @@
 	"vector-view-history": "Gɔsim linɛ dɛŋin maal",
 	"vector-view-view": "Karim",
 	"vector-more-actions": "iem paas",
-	"vector-searchsuggest-containing": "Iem lakir banɛ mɔri <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Iem lakir banɛ mɔri <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-page-tools-label": "La'ad",
+	"vector-page-tools-general-label": "Li wʋsa",
+	"vector-unpin-element-label": "su'am"
 }

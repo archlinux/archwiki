@@ -22,13 +22,16 @@
  */
 
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Html\Html;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Storage\NameTableAccessException;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\Database;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class ChangeTags {
@@ -135,6 +138,8 @@ class ChangeTags {
 	 */
 	private const CHANGE_TAG_DEF = 'change_tag_def';
 
+	public const DISPLAY_TABLE_ALIAS = 'changetagdisplay';
+
 	/**
 	 * If true, this class attempts to avoid reopening database tables within the same query,
 	 * to avoid the "Can't reopen table" error when operating on temporary tables while running
@@ -181,7 +186,7 @@ class ChangeTags {
 	 * Creates HTML for the given tags
 	 *
 	 * @param string $tags Comma-separated list of tags
-	 * @param string $page Unused
+	 * @param null|string $unused Unused (formerly: $page)
 	 * @param MessageLocalizer|null $localizer
 	 * @note Even though it takes null as a valid argument, a MessageLocalizer is preferred
 	 *       in a new code, as the null value is subject to change in the future
@@ -190,7 +195,7 @@ class ChangeTags {
 	 *   - classes: Array of strings: CSS classes used in the generated html, one class for each tag
 	 * @return-taint onlysafefor_htmlnoent
 	 */
-	public static function formatSummaryRow( $tags, $page, MessageLocalizer $localizer = null ) {
+	public static function formatSummaryRow( $tags, $unused, MessageLocalizer $localizer = null ) {
 		if ( $tags === '' || $tags === null ) {
 			return [ '', [] ];
 		}
@@ -248,7 +253,7 @@ class ChangeTags {
 	 * @since 1.34
 	 * @param string $tag
 	 * @param MessageLocalizer $context
-	 * @return Message|bool Tag description, or false if tag is to be hidden.
+	 * @return Message|false Tag description, or false if tag is to be hidden.
 	 */
 	public static function tagShortDescriptionMessage( $tag, MessageLocalizer $context ) {
 		$msg = $context->msg( "tag-$tag" );
@@ -277,7 +282,7 @@ class ChangeTags {
 	 *
 	 * @param string $tag
 	 * @param MessageLocalizer $context
-	 * @return string|bool Tag description or false if tag is to be hidden.
+	 * @return string|false Tag description or false if tag is to be hidden.
 	 * @since 1.25 Returns false if tag is to be hidden.
 	 */
 	public static function tagDescription( $tag, MessageLocalizer $context ) {
@@ -294,7 +299,7 @@ class ChangeTags {
 	 *
 	 * @param string $tag
 	 * @param MessageLocalizer $context
-	 * @return Message|bool Message object of the tag long description or false if
+	 * @return Message|false Message object of the tag long description or false if
 	 *  there is no description.
 	 */
 	public static function tagLongDescriptionMessage( $tag, MessageLocalizer $context ) {
@@ -322,7 +327,6 @@ class ChangeTags {
 	 * @param RecentChange|null $rc Recent change, in case the tagging accompanies the action
 	 * (this should normally be the case)
 	 *
-	 * @throws MWException
 	 * @return bool False if no changes are made, otherwise true
 	 */
 	public static function addTags( $tags, $rc_id = null, $rev_id = null,
@@ -355,7 +359,6 @@ class ChangeTags {
 	 * the action
 	 * @param UserIdentity|null $user Tagging user, in case the tagging is subsequent to the tagged action
 	 *
-	 * @throws MWException When $rc_id, $rev_id and $log_id are all null
 	 * @return array Index 0 is an array of tags actually added, index 1 is an
 	 * array of tags actually removed, index 2 is an array of tags present on the
 	 * revision or log entry before any changes were made
@@ -380,7 +383,7 @@ class ChangeTags {
 		);
 
 		if ( !$rc_id && !$rev_id && !$log_id ) {
-			throw new MWException( 'At least one of: RCID, revision ID, and log ID MUST be ' .
+			throw new BadMethodCallException( 'At least one of: RCID, revision ID, and log ID MUST be ' .
 				'specified when adding or removing a tag from a change!' );
 		}
 
@@ -544,19 +547,18 @@ class ChangeTags {
 	 * Return all the tags associated with the given recent change ID,
 	 * revision ID, and/or log entry ID, along with any data stored with the tag.
 	 *
-	 * @param IDatabase $db the database to query
+	 * @param IReadableDatabase $db the database to query
 	 * @param int|null $rc_id
 	 * @param int|null $rev_id
 	 * @param int|null $log_id
-	 * @throws MWException When $rc_id, $rev_id and $log_id are all null
 	 * @return string[] Tag name => data. Data format is tag-specific.
 	 * @since 1.36
 	 */
 	public static function getTagsWithData(
-		IDatabase $db, $rc_id = null, $rev_id = null, $log_id = null
+		IReadableDatabase $db, $rc_id = null, $rev_id = null, $log_id = null
 	) {
 		if ( !$rc_id && !$rev_id && !$log_id ) {
-			throw new MWException( 'At least one of: RCID, revision ID, and log ID MUST be ' .
+			throw new BadMethodCallException( 'At least one of: RCID, revision ID, and log ID MUST be ' .
 				'specified when loading tags from a change!' );
 		}
 
@@ -588,13 +590,13 @@ class ChangeTags {
 	 * Return all the tags associated with the given recent change ID,
 	 * revision ID, and/or log entry ID.
 	 *
-	 * @param IDatabase $db the database to query
+	 * @param IReadableDatabase $db the database to query
 	 * @param int|null $rc_id
 	 * @param int|null $rev_id
 	 * @param int|null $log_id
 	 * @return string[]
 	 */
-	public static function getTags( IDatabase $db, $rc_id = null, $rev_id = null, $log_id = null ) {
+	public static function getTags( IReadableDatabase $db, $rc_id = null, $rev_id = null, $log_id = null ) {
 		return array_keys( self::getTagsWithData( $db, $rc_id, $rev_id, $log_id ) );
 	}
 
@@ -793,12 +795,6 @@ class ChangeTags {
 	public static function updateTagsWithChecks( $tagsToAdd, $tagsToRemove,
 		$rc_id, $rev_id, $log_id, $params, string $reason, Authority $performer
 	) {
-		if ( $tagsToAdd === null ) {
-			$tagsToAdd = [];
-		}
-		if ( $tagsToRemove === null ) {
-			$tagsToRemove = [];
-		}
 		if ( !$tagsToAdd && !$tagsToRemove ) {
 			// no-op, don't bother
 			return Status::newGood( (object)[
@@ -807,6 +803,9 @@ class ChangeTags {
 				'removedTags' => [],
 			] );
 		}
+
+		$tagsToAdd ??= [];
+		$tagsToRemove ??= [];
 
 		// are we allowed to do this?
 		$result = self::canUpdateTags( $tagsToAdd, $tagsToRemove, $performer );
@@ -817,12 +816,12 @@ class ChangeTags {
 
 		// basic rate limiting
 		$user = MediaWikiServices::getInstance()->getUserFactory()->newFromAuthority( $performer );
-		if ( $user->pingLimiter( 'changetag' ) ) {
+		if ( $user->pingLimiter( 'changetags' ) ) {
 			return Status::newFatal( 'actionthrottledtext' );
 		}
 
 		// do it!
-		list( $tagsAdded, $tagsRemoved, $initialTags ) = self::updateTags( $tagsToAdd,
+		[ $tagsAdded, $tagsRemoved, $initialTags ] = self::updateTags( $tagsToAdd,
 			$tagsToRemove, $rc_id, $rev_id, $log_id, $params, null, $user );
 		if ( !$tagsAdded && !$tagsRemoved ) {
 			// no-op, don't log it
@@ -901,7 +900,6 @@ class ChangeTags {
 	 * @param string|array|false|null $filter_tag Tag(s) to select on (OR)
 	 * @param bool $exclude If true, exclude tag(s) from $filter_tag (NOR)
 	 *
-	 * @throws MWException When unable to determine appropriate JOIN condition for tagging
 	 */
 	public static function modifyDisplayQuery( &$tables, &$fields, &$conds,
 		&$join_conds, &$options, $filter_tag = '', bool $exclude = false
@@ -916,18 +914,21 @@ class ChangeTags {
 		$options = (array)$options;
 
 		$fields['ts_tags'] = self::makeTagSummarySubquery( $tables );
+		// We use an alias and qualify the conditions in case there are
+		// multiple joins to this table.
+		// In particular for compatibility with the RC filters that extension Translate does.
 
 		// Figure out which ID field to use
 		if ( in_array( 'recentchanges', $tables ) ) {
-			$join_cond = 'ct_rc_id=rc_id';
+			$join_cond = self::DISPLAY_TABLE_ALIAS . '.ct_rc_id=rc_id';
 		} elseif ( in_array( 'logging', $tables ) ) {
-			$join_cond = 'ct_log_id=log_id';
+			$join_cond = self::DISPLAY_TABLE_ALIAS . '.ct_log_id=log_id';
 		} elseif ( in_array( 'revision', $tables ) ) {
-			$join_cond = 'ct_rev_id=rev_id';
+			$join_cond = self::DISPLAY_TABLE_ALIAS . '.ct_rev_id=rev_id';
 		} elseif ( in_array( 'archive', $tables ) ) {
-			$join_cond = 'ct_rev_id=ar_rev_id';
+			$join_cond = self::DISPLAY_TABLE_ALIAS . '.ct_rev_id=ar_rev_id';
 		} else {
-			throw new MWException( 'Unable to determine appropriate JOIN condition for tagging.' );
+			throw new InvalidArgumentException( 'Unable to determine appropriate JOIN condition for tagging.' );
 		}
 
 		if ( !$useTagFilter ) {
@@ -954,18 +955,18 @@ class ChangeTags {
 
 			if ( $exclude ) {
 				if ( $filterTagIds !== [] ) {
-					$tables[] = $tagTable;
-					$join_conds[$tagTable] = [
+					$tables[self::DISPLAY_TABLE_ALIAS] = $tagTable;
+					$join_conds[self::DISPLAY_TABLE_ALIAS] = [
 						'LEFT JOIN',
-						[ $join_cond, 'ct_tag_id' => $filterTagIds ]
+						[ $join_cond, self::DISPLAY_TABLE_ALIAS . '.ct_tag_id' => $filterTagIds ]
 					];
-					$conds[] = "ct_tag_id IS NULL";
+					$conds[] = self::DISPLAY_TABLE_ALIAS . ".ct_tag_id IS NULL";
 				}
 			} else {
-				$tables[] = $tagTable;
-				$join_conds[$tagTable] = [ 'JOIN', $join_cond ];
+				$tables[self::DISPLAY_TABLE_ALIAS] = $tagTable;
+				$join_conds[self::DISPLAY_TABLE_ALIAS] = [ 'JOIN', $join_cond ];
 				if ( $filterTagIds !== [] ) {
-					$conds['ct_tag_id'] = $filterTagIds;
+					$conds[self::DISPLAY_TABLE_ALIAS . '.ct_tag_id'] = $filterTagIds;
 				} else {
 					// all tags were invalid, return nothing
 					$conds[] = '0=1';
@@ -1025,7 +1026,6 @@ class ChangeTags {
 	 * @param string|array $tables Table names, see Database::select
 	 *
 	 * @return string tag summary subqeury
-	 * @throws MWException When unable to determine appropriate JOIN condition for tagging
 	 */
 	public static function makeTagSummarySubquery( $tables ) {
 		// Normalize to arrays
@@ -1041,7 +1041,7 @@ class ChangeTags {
 		} elseif ( in_array( 'archive', $tables ) ) {
 			$join_cond = 'ct_rev_id=ar_rev_id';
 		} else {
-			throw new MWException( 'Unable to determine appropriate JOIN condition for tagging.' );
+			throw new InvalidArgumentException( 'Unable to determine appropriate JOIN condition for tagging.' );
 		}
 
 		$tagTables = [ self::CHANGE_TAG, self::CHANGE_TAG_DEF ];

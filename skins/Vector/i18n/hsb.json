@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Michawiki",
 			"J budissin",
-			"Martin Urbanec (WMF)"
+			"Martin Urbanec (WMF)",
+			"Michawiki"
 		]
 	},
 	"vector-opt-out": "Wróćo k staremu napohladej",
@@ -30,9 +30,7 @@
 	"vector-jumptocontent": "K wobsahej skočić",
 	"vector-more-actions": "Wjace",
 	"vector-search-loader": "Pytanske namjety začitać",
-	"vector-toc-heading": "Wobsah",
-	"vector-toc-toggle-position-sidebar": "Do bóčnicy přesunyć",
-	"vector-toc-toggle-position-title": "schować",
+	"vector-toc-label": "Wobsah",
 	"vector-toc-beginning": "Spočatk",
 	"vector-toc-toggle-button-label": "Podwotrězk $1 přešaltować",
 	"vector-anon-user-menu-pages": "Strony za wotzjewjenych wužiwarjow",
@@ -42,5 +40,8 @@
 	"vector-toc-menu-tooltip": "Zapis wobsaha",
 	"vector-toc-collapsible-button-label": "Zapis wobsaha přešaltować",
 	"vector-site-nav-label": "Webstrona",
-	"tooltip-vector-anon-user-menu-title": "Wjace opcijow"
+	"vector-pin-element-label": "Do bóčnicy přesunyć",
+	"vector-unpin-element-label": "schować",
+	"tooltip-vector-anon-user-menu-title": "Wjace opcijow",
+	"vector-prefs-limited-width": "Modus wobmjezowaneje šěrokosće zaswěćić"
 }

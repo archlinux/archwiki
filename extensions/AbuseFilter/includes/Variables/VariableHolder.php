@@ -13,9 +13,6 @@ class VariableHolder {
 	 */
 	private $mVars = [];
 
-	/** @var bool Whether this object is being used for an ongoing action being filtered */
-	public $forFilter = false;
-
 	/**
 	 * Utility function to translate an array with shape [ varname => value ] into a self instance
 	 *

@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Balyozxane",
 			"Bikarhêner",
 			"Ferhengvan",
 			"George Animal",
-			"Gomada",
-			"Balyozxane"
+			"Gomada"
 		]
 	},
 	"skinname-vector": "Vector legacy (2010)",
@@ -14,7 +14,7 @@
 	"vector-skin-desc": "2 rûyên Vectorê peyda dike:\n* 2011 - Guhartoya nûjen a MonoBook bi dîmeneke nû û gelek çêtirkirinên bikaranînê.\n* 2022 - Vektora ku wekî beşeke ji projeya WMF ya [[mw:Desktop Improvements]] hatiye çêkirin.",
 	"prefs-vector-enable-vector-1-label": "Legacy Vector Bi Kar Bîne",
 	"prefs-vector-enable-vector-1-help": "Di nav çend salên pêşî de, em ê hêdî hêdî rûyê Vectorê nû bikin. Legacy Vector dê bihêle ku hûn guhartoya kevn a Vectorê (ji kanûna pêşîn 2019an ve) bibînin. Ji bo bêtir agahdarî li ser nûkirinan, herin [[mw:Reading/Web/Desktop_Improvements|rûpela projeyê]].",
-	"vector-opt-out": "Rûya kevn bi kar bîne",
+	"vector-opt-out": "Rûyê kevn biemilîne",
 	"vector-opt-out-tooltip": "Mîhengên xwe biguhêre ji bo vegerîna rûyê kevn (legacy Vector)",
 	"vector.css": "/* Hemû CSS-a li vir dê ji bo bikarhênerên rûyê Vectorê were barkirin */",
 	"vector.js": "/* Hemû JavaScript -a li vir dê ji bo bikarhênerên rûyê Vectorê were barkirin */",
@@ -44,6 +44,7 @@
 	"vector-search-loader": "Pêşniyazên lêgerînê tê barkirin",
 	"vector-searchsuggest-containing": "Li rûpelên ku <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> dihewînin bigere",
 	"vector-intro-page": "Help:Gavên pêşîn",
+	"vector-toc-label": "Naverok",
 	"vector-toc-beginning": "Destpêk",
 	"vector-toc-toggle-button-label": "Binêbeşa $1 bigire/veke",
 	"vector-anon-user-menu-pages": "Rûpelên ji bo edîtorên derketî",
@@ -53,6 +54,16 @@
 	"vector-toc-menu-tooltip": "Tabloya naverokê",
 	"vector-toc-collapsible-button-label": "Tabloya naverokê bigre/veke",
 	"vector-site-nav-label": "Malper",
+	"vector-main-menu-label": "Menuya esasî",
+	"vector-limited-width-toggle": "Firehiya naveroka sînordar biguhêre",
+	"vector-page-tools-label": "Amûr",
+	"vector-page-tools-general-label": "Giştî",
+	"vector-page-tools-actions-label": "Aksîyon",
+	"vector-pin-element-label": "Here menuya kêlekê",
+	"vector-unpin-element-label": "veşêre",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Gotûbêj]]",
-	"tooltip-vector-anon-user-menu-title": "Zêdetir opsiyon"
+	"tooltip-vector-anon-user-menu-title": "Zêdetir opsiyon",
+	"vector-prefs-limited-width": "Moda firehiya sînorkirî çalak bike",
+	"vector-prefs-limited-width-help": "Ji bo tecrûbeya xwendinê ya baştir moda firehiya sînorkirî çalak bike",
+	"empty-language-selector-body": "Naverokên rûpelê bi zimanên din nayê destekkirin."
 }

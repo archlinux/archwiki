@@ -26,13 +26,22 @@
 }
 
 ol.references {
-	/* Resetting *any* counter on an <ol> element messes the build-in numbering in Firefox up.
-	   Explicitely resetting the build-in "list-item" counter fixes this. */
-	counter-reset: mw-ref-extends-parent list-item;
+	/**
+	 * Resetting *any* counter on an <ol> element messes up the built-in numbering in Firefox.
+	 * Explicitly resetting the built-in "list-item" counter fixes this.
+	 *
+	 * We have 2 counters for Parsoid HTML for different functionality.
+	 * Make sure both are reset!
+	 **/
+	counter-reset: mw-ref-extends-parent mw-references list-item;
 }
 
 ol.references > li {
-	counter-increment: mw-ref-extends-parent;
+	/**
+	 * We have 2 counters for Parsoid HTML for different functionality.
+	 * Make sure both are incremented!
+	 **/
+	counter-increment: mw-ref-extends-parent mw-references;
 	counter-reset: mw-ref-extends-child;
 }
 

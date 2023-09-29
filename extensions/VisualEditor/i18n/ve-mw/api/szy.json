@@ -9,7 +9,6 @@
 	"apierror-visualeditor-badcachekey": "pisaungay kya mima-sabuhat caay katepa kalamkam-miala a pasalaylay lacul",
 	"apierror-visualeditor-difffailed": "sasutili’ay sasizuma mungangaw",
 	"apierror-visualeditor-docserver": "misiket tu calay-zazan(wanglu) Parsoid/RESTBase sefu-kikay mungangaw",
-	"apierror-visualeditor-latestnotfound": "caykatepa satangahan capi nu ayaway a sumad",
 	"apihelp-visualeditor-description": "nay Parsoid papikuli maminay tu cacay kasabelih a HTML5.",
 	"apihelp-visualeditor-param-basetimestamp": "i misuped sa, pisetin kya kasabelih mikawaway-kalumyiti a nisulitan tu tuki. sapisedap mikawaway-kalumyiti sasula’cus.",
 	"apihelp-visualeditor-param-cachekey": "amipasalaylay saca baziyong sasutili’ay, pisaungay serializeforcache milunguc a heci atu tina sabuhat. mitahap $1html.",

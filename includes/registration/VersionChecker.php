@@ -159,8 +159,7 @@ class VersionChecker {
 					case ExtensionRegistry::MEDIAWIKI_CORE:
 						$mwError = $this->handleDependency(
 							$this->coreVersion,
-							$values,
-							$extension
+							$values
 						);
 						if ( $mwError !== false ) {
 							$errors[] = [
@@ -179,8 +178,7 @@ class VersionChecker {
 								// PHP version
 								$phpError = $this->handleDependency(
 									$this->phpVersion,
-									$constraint,
-									$extension
+									$constraint
 								);
 								if ( $phpError !== false ) {
 									$errors[] = [
@@ -272,12 +270,11 @@ class VersionChecker {
 	 * Handle a simple dependency to MediaWiki core or PHP. See handleMediaWikiDependency and
 	 * handlePhpDependency for details.
 	 *
-	 * @param Constraint|bool $version The version installed
+	 * @param Constraint|false $version The version installed
 	 * @param string $constraint The required version constraint for this dependency
-	 * @param string $checkedExt The Extension, which depends on this dependency
 	 * @return bool false if no error, true else
 	 */
-	private function handleDependency( $version, $constraint, $checkedExt ) {
+	private function handleDependency( $version, $constraint ) {
 		if ( $version === false ) {
 			// Couldn't parse the version, so we can't check anything
 			return false;

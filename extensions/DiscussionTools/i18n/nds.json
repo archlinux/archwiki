@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Slomox",
+			"Wikiundeplattsnacker"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Anter",
+	"discussiontools-replylink": "antern",
+	"discussiontools-replywidget-advanced": "Verwiedert",
+	"discussiontools-replywidget-cancel": "Afbreken",
+	"discussiontools-replywidget-mode-source": "Born",
+	"discussiontools-replywidget-mode-visual": "Genauet Afbild",
+	"discussiontools-replywidget-preview": "Vörschau",
+	"discussiontools-replywidget-reply": "Antern",
+	"discussiontools-replywidget-summary": "Tosomenfooten",
+	"discussiontools-replywidget-watchthis": "Do disse Siet to dien [[Special:Watchlist|Oppasslist]] dorto",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|een|lüüd}} snackt darum",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|Kommentar|Kommentaren}}",
+	"discussiontools-topicheader-latestcomment": "Letzten Kommentar: $1",
+	"discussiontools-topicsubscription-button-subscribe": "Indragen",
+	"discussiontools-topicsubscription-button-subscribe-label": "Inschrieben",
+	"discussiontools-topicsubscription-button-unsubscribe": "utschrieben",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Utschrieben"
+}

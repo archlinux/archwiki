@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Apundung",
+			"Bennylin",
+			"IHLubis",
 			"NoiX180",
 			"Salomo Christian Hutajulu",
 			"Simartampua",
-			"Amire80",
-			"Bennylin",
-			"IHLubis",
 			"Veracious"
 		]
 	},
@@ -282,14 +282,14 @@
 	"showdiff": "Patidaon parubaan",
 	"anoneditwarning": "<strong>Paringatan:</strong> Amu indape masuk. Alamat IP Muyu nangkan tarida sacara publik molo Amu mambaen pangeditan. Molo Amu <strong>[$1 masuk]</strong> sanga <strong>[$2 mambaen akun]</ strong>, hasil pangeditan Muyu nangkan ikaitkon dohot gorar pamake Muyu, rap dohot manfaat lainna.",
 	"blockedtitle": "Ni pamake i blokir",
-	"blockedtext": "<strong>Alamat IP muyu madung iblokir sacara otomatis arani ipake ni pamake nalain,.</strong>\n\nNa iblokir ni $1.\nPamvlokiran ibaen arani <em>$2</em>.\n\n* Iblokir sian: $8\n* Blokir kadaluarsa i: $6\n* Sasarab pamblokiran: $7\n\nAmu bisa mayapai $1 sanga [[{{MediaWiki:Grouppage-sysop}}|administrator]] lainna tuna mamokatkon hal on.\n\nAmu inda bisa mamake fitur \"{{int:emailuser}}\" kacuali amu madung mamasukkon alamat surel na sah i [[Special:Preferences|preferensi akun]] dot amu inda iblokir mamakena.\n\nAlama IP muyu saonnari ima $3, dot ID pamblokiran ima #$5.\nTolong baen informasi-informasi in i satiop parsapaan muyu.",
+	"blockedtext": "<strong>Golar ni pangguna namu sangape alamat IP namu mandaung i blokir.</strong>\n\n{{int:blockedtext-made-by|$1}}\n{{int:blockedtext-reason-comment|$2}}.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-contact-blocker-admin|$1}}\nHamu bisa mamake \"{{int:emailuser}}\" fiktur on pula alamat email na valid na itontuon sia on hamu [[Special:Preferences|preferences]] baru hamu inda iblokir anso mamakena.\n{{int:blockedtext-block-ip|$3}}, and the block ID is #$5.\n{{int:blockedtext-include-details-queries}}",
 	"autoblockedtext": "Alamat IP mu nangkan otomatis iblokir arani ipake pamake nalain, na madung iblokir ni $1.\nAlasanna ima:\n\n:<em>$2</em>\n\n* Muloi i blokir: $8\n* Kadaluarsa blokir: $6\n* Blokir na ituju: $7\n\nSapai amuma $1 sanga sada tingon nalainnai [[{{MediaWiki:Grouppage-sysop}}|administrators]] giot mamokatkon blokiran on.\n\nRoaon molo Amu inda tola mamake fitur \"{{int: emailuser}}\" kacuali Amu puna alamat surel valid na tardaftar i [[Special:Preferences|preferensi pamake]] dot Amu indape iblokir mamakena.\n\nAlamat IP mu sonnari ima $3, dot blokir ID ima #$5.\nIaropkon baen sude rincian na iginjang singkop molo mambaen parsaapaan na ibaen muyu.",
 	"loginreqlink": "masuk log",
 	"newarticletext": "Amu madung paiut tautan tu alaman na so adong dope. Giot mambaen alaman, muloima mangetik i kotak i toru on (ligin [$1 alaman bantuan] giot info lobi lanjut). Molo Amu adong i son arani kasalahan, klik tombol <strong> mulam </ strong> i browser Muyu.",
 	"anontalkpagetext": "---- \n<em>On ima alaman marpokat tu pangguna anonim naso mambaen akun dope, sanga na indape mamakena.</em>\nArani i ami angkon mamake alamat IP numerik tu mangidentifikasi ia.\nSongon alamat IP bisa ibagi ni bahat pengguna. Molo Amu ima pangguna anonim dot marasa molo komentar na inda relevan madung iarahkon tu Amu, kehemamu [[Special:CreateAccount|baen akun]] sanga [[Special:UserLogin|masuk log]] tu mangilakkon gamang i tu jolo niari dohot pengguna anonim laina.",
 	"noarticletext": "Saonnari inda adong teks i alaman on. Amu bisa [[Special:Search/{{PAGENAME}}|manjalai judul alaman on]] i alaman lain, <span class=\"plainlinks\"> [{{fullurl: {{#Special:Log}}|page={{FULLPAGENAMEE}}}} telusuri log terkait], atau [{{fullurl:{{FULLPAGENAME}}|action=edit}} baen alaman on]</span>.",
 	"noarticletext-nopermission": "Saonnari inda adong teks i alaman on. Amu bisa [[Special:Search/{{PAGENAME}}|manjalai judul alaman on]] i alaman lain, sanga <span class=\"plainlinks\"> [{{fullurl:{{#Special:Log}}|alaman={{FULLPAGENAMEE}}}} jalai log tarkait]</span>, tai Amu inda puna izin giot mambaen alaman on.",
-	"userpage-userdoesnotexist-view": "Akun pangguna ''$1'' inda tardaftar",
+	"userpage-userdoesnotexist-view": "Akun pangguna \"$1\" inda tardaftar sian i wiki on",
 	"clearyourcache": "<strong> Catatan: </strong> Sidung manyimpan, Amu mungkin angkon malewati cache browser Muyu anso mangida parubaanna. \n* <strong> Firefox/Safari:</strong> Tahan <em> Shift </em> atia mangklik <em> Reload </em>, sanga pisat <em> Ctrl-F5 </em> sanga <em> Ctrl-R </em> (<em> ⌘-R </ em> pada Mac) \n* <strong> Google Chrome: </strong> Pisat <em> Ctrl-Shift-R </em> (<em> ⌘ -Shift-R </em> i Mac) \n* <strong> Internet Explorer: </strong> Tahan <em> Ctrl </em> atia mangklik <em> Segarkon </em>, sanga pisat <em> Ctrl-F5 </em> \n* <strong> Opera: </ strong> Kei tu <em> Menu → Pangaturan </em> (<em> Opera → Preferensi </ em> i Mac) dot sidungi ke <em> Privasi & kaamanan → Apus data panjalajahan → Tembolok gambar dot file </em>.",
 	"previewnote": "<strong>Ingot molo on umna pratinjau. </strong> Parubaan Muyu indape isimpan on!",
 	"continue-editing": "Kei tu ganan pangeditan",
@@ -660,7 +660,7 @@
 	"show-big-image-size": "$1 × $2 piksel",
 	"metadata": "Metadata",
 	"metadata-help": "Berkas on marisi informasi tambahan, mungkin itambaon tingon kamera digital sanga pamindai na ipake tu mambaen sanga mandigitalkonna. Molo berkas madung imodifikasi tingon kaadaan aslina, sadebana detail mungkin inda sudena mancerminkon berkas na imodifikasi.",
-	"metadata-fields": "Bidang metadata gambar na tarcantum i tona on nangkan ibaenkon i tampilan alaman gambar atia tabel metadata iciutkon. \nNalain nangkan ibunion sacara default.\n* make\n* model\n* datetimeoriginal\n* exposuretime\n* fnumber\n* isospeedratings\n* focallength\n* artist\n* copyright\n* imagedescription\n* gpslatitude\n* gpslongitude\n* gpsaltitude",
+	"metadata-fields": "Bidang metadata gambar na tarcantum i tona on nangkan ibaenkon i tampilan alaman gambar atia tabel metadata iciutkon. \nNalain nangkan ibunion sacara default.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
 	"namespacesall": "Sude",
 	"monthsall": "sude",
 	"imgmultipageprev": "← ligi alaman na mandung lewat",
@@ -709,5 +709,13 @@
 	"nstab-mainpage": "Alaman utamo",
 	"skin-view-edit-local": "Baen deskeipsi lokal",
 	"skin-action-delete": "Apus",
-	"skin-action-move": "Pindah"
+	"skin-action-move": "Pindah",
+	"blockedtext-made-by": "Blok on ibaen sian $1.",
+	"blockedtext-reason-comment": "Alasan na ilehen ima <em>$1</em>",
+	"blockedtext-start-time": "Parjolo sian on mamblokirna: $1",
+	"blockedtext-expiration-time": "Abis maso ni blok on: $1",
+	"blockedtext-intended-blockee": "Manarimo na i blokir: $1",
+	"blockedtext-contact-blocker-admin": "Ho bisa manghubungi kontak $1 sangape [[{{MediaWiki:Grouppage-sysop}}|administrator]] lain anso mambahas aha na i blokir on.",
+	"blockedtext-block-ip": "Alamat KU P Ho pas atia sannari $1",
+	"blockedtext-include-details-queries": "On jolo tarmasuk ma sudena detail sian tingon ginjang i bangasan satiop parsapaan na hamu mambuat."
 }

@@ -7,22 +7,27 @@ const assert = require( 'assert' ),
 
 describe( 'Filter editing', function () {
 	describe( 'The editing interface', function () {
-		it( 'is not visible to logged-out users', function () {
-			ViewEditPage.open( 'new' );
-			assert( ViewEditPage.error.isDisplayed() );
+		it( 'is not visible to logged-out users', async function () {
+			await ViewEditPage.open( 'new' );
+			assert( await ViewEditPage.error.isDisplayed() );
 		} );
 
-		it( 'is visible to logged-in admins', function () {
-			LoginPage.loginAdmin();
-			ViewEditPage.open( 'new' );
-			assert( ViewEditPage.name.isDisplayed() );
+		it( 'is visible to logged-in admins', async function () {
+			await LoginPage.loginAdmin();
+			await ViewEditPage.open( 'new' );
+			assert( await ViewEditPage.name.isDisplayed() );
 		} );
 	} );
 
 	describe( 'Trying to open a non-existing filter', function () {
-		it( 'I should receive an error', function () {
-			ViewEditPage.open( 1234567 );
-			assert( ViewEditPage.error.isDisplayed() );
+		before( async function () {
+			await LoginPage.loginAdmin();
+		} );
+
+		it( 'I should receive an error', async function () {
+			await ViewEditPage.open( 1234567 );
+			assert( await ViewEditPage.error.isDisplayed() );
+			assert.strictEqual( await ViewEditPage.error.getText(), 'The filter you specified does not exist' );
 		} );
 	} );
 
@@ -34,108 +39,126 @@ describe( 'Filter editing', function () {
 	};
 	let filterID, historyID;
 
-	function assertFirstVersionSaved() {
-		assert.strictEqual( ViewEditPage.name.getValue(), filterSpecs.name );
-		assert.strictEqual( ViewEditPage.rules.getValue(), filterSpecs.rules + '\n' );
-		assert.strictEqual( ViewEditPage.comments.getValue(), filterSpecs.comments + '\n' );
-		ViewEditPage.warnCheckbox.isSelected();
-		assert.strictEqual( ViewEditPage.warnOtherMessage.getValue(), filterSpecs.warnMsg );
+	async function assertFirstVersionSaved() {
+		assert.strictEqual( await ViewEditPage.name.getValue(), filterSpecs.name );
+		assert.strictEqual( await ViewEditPage.rules.getValue(), filterSpecs.rules + '\n' );
+		assert.strictEqual( await ViewEditPage.comments.getValue(), filterSpecs.comments + '\n' );
+		await ViewEditPage.warnCheckbox.isSelected();
+		assert.strictEqual( await ViewEditPage.warnOtherMessage.getValue(), filterSpecs.warnMsg );
 	}
 
 	describe( 'Creating a new filter', function () {
-		before( function () {
-			ViewEditPage.open( 'new' );
+		before( async function () {
+			await LoginPage.loginAdmin();
+			await ViewEditPage.open( 'new' );
 		} );
 
-		it( 'edit can be saved (1)', function () {
-			ViewEditPage.switchEditor();
+		it( 'edit can be saved (1)', async function () {
+			await ViewEditPage.switchEditor();
 
-			ViewEditPage.name.setValue( filterSpecs.name );
-			ViewEditPage.rules.setValue( filterSpecs.rules );
-			ViewEditPage.comments.setValue( filterSpecs.comments );
-			ViewEditPage.warnCheckbox.click();
-			ViewEditPage.setWarningMessage( filterSpecs.warnMsg );
+			await ViewEditPage.name.setValue( filterSpecs.name );
+			await ViewEditPage.rules.setValue( filterSpecs.rules );
+			await ViewEditPage.comments.setValue( filterSpecs.comments );
+			await ViewEditPage.warnCheckbox.click();
+			await ViewEditPage.setWarningMessage( filterSpecs.warnMsg );
+			await ViewEditPage.submit();
 
-			ViewEditPage.submit();
-			assert( ViewListPage.filterSavedNotice.isDisplayed() );
-			filterID = ViewListPage.savedFilterID;
+			assert( await ViewListPage.filterSavedNotice.isDisplayed() );
+
+			filterID = await ViewListPage.savedFilterID();
 			assert.ok( filterID );
-			historyID = ViewListPage.savedFilterHistoryID;
+			historyID = await ViewListPage.savedFilterHistoryID();
 			assert.ok( historyID );
 		} );
 
-		it( 'saved data is retained (1)', function () {
-			ViewEditPage.open( filterID );
-			assertFirstVersionSaved();
+		it( 'saved data is retained (1)', async function () {
+			await ViewEditPage.open( filterID );
+			await assertFirstVersionSaved();
 		} );
 	} );
 
 	describe( 'Editing an existing filter', function () {
+		before( async function () {
+			await LoginPage.loginAdmin();
+			await ViewEditPage.open( filterID );
+		} );
+
 		const newName = 'New filter name',
 			newNotes = 'More filter notes';
 
-		it( 'edit can be saved (2)', function () {
-			ViewEditPage.name.setValue( newName );
-			ViewEditPage.comments.addValue( newNotes );
-			ViewEditPage.submit();
-			assert( ViewListPage.filterSavedNotice.isDisplayed() );
+		it( 'edit can be saved (2)', async function () {
+			await ViewEditPage.name.setValue( newName );
+			await ViewEditPage.comments.addValue( newNotes );
+			await ViewEditPage.submit();
+			assert( await ViewListPage.filterSavedNotice.isDisplayed() );
 		} );
 
-		it( 'saved data is retained (2)', function () {
-			ViewEditPage.open( filterID );
-			assert.strictEqual( ViewEditPage.name.getValue(), newName );
-			assert.strictEqual( ViewEditPage.comments.getValue(), newNotes + filterSpecs.comments + '\n' );
+		it( 'saved data is retained (2)', async function () {
+			await ViewEditPage.open( filterID );
+			assert.strictEqual( await ViewEditPage.name.getValue(), newName );
+			assert.strictEqual( await ViewEditPage.comments.getValue(), newNotes + filterSpecs.comments + '\n' );
 		} );
 	} );
 
 	describe( 'Restoring an old version of a filter', function () {
-		it( 'edit can be saved (3)', function () {
-			ViewEditPage.open( 'history/' + filterID + '/item/' + historyID );
-			ViewEditPage.submit();
-			assert( ViewListPage.filterSavedNotice.isDisplayed() );
+		before( async function () {
+			await LoginPage.loginAdmin();
 		} );
 
-		it( 'saved data is retained (3)', function () {
-			ViewEditPage.open( filterID );
-			assertFirstVersionSaved();
+		it( 'edit can be saved (3)', async function () {
+			await ViewEditPage.open( 'history/' + filterID + '/item/' + historyID );
+			await ViewEditPage.submit();
+			assert( await ViewListPage.filterSavedNotice.isDisplayed() );
+		} );
+
+		it( 'saved data is retained (3)', async function () {
+			await ViewEditPage.open( filterID );
+			await assertFirstVersionSaved();
 		} );
 	} );
 
 	describe( 'CSRF protection', function () {
+		before( async function () {
+			await LoginPage.loginAdmin();
+			await ViewEditPage.open( 'new' );
+		} );
+
 		const filterName = 'Testing CSRF';
 
-		it( 'a CSRF token is required to save the filter', function () {
-			ViewEditPage.invalidateToken();
-			ViewEditPage.name.setValue( filterName );
-			ViewEditPage.submit();
-			assert( ViewEditPage.warning.isDisplayed() );
+		it( 'a CSRF token is required to save the filter', async function () {
+			await ViewEditPage.invalidateToken();
+			await ViewEditPage.name.setValue( filterName );
+			await ViewEditPage.submit();
+			assert( await ViewEditPage.warning.isDisplayed() );
 		} );
-		it( 'even if the token is invalid, the ongoing edit is not lost', function () {
-			assert.strictEqual( ViewEditPage.name.getValue(), filterName );
+		it( 'even if the token is invalid, the ongoing edit is not lost', async function () {
+			assert.strictEqual( await ViewEditPage.name.getValue(), filterName );
 		} );
 	} );
 
 	describe( 'Trying to save a filter with bad data', function () {
-		before( function () {
-			ViewEditPage.open( 'new' );
+		before( async function () {
+			await LoginPage.loginAdmin();
+			await ViewEditPage.open( 'new' );
 		} );
 
-		it( 'cannot save an empty filter', function () {
-			ViewEditPage.submit();
-			assert( ViewEditPage.error.isDisplayed() );
+		it( 'cannot save an empty filter', async function () {
+			await ViewEditPage.submit();
+			assert( await ViewEditPage.error.isDisplayed() );
 		} );
 
-		const rules = 'null';
+		const rules = 'action === "edit"';
 
-		it( 'cannot save a filter with rules but no name', function () {
-			ViewEditPage.switchEditor();
-			ViewEditPage.rules.setValue( rules );
-			ViewEditPage.submit();
-			assert( ViewEditPage.error.isDisplayed() );
+		it( 'cannot save a filter with rules but no name', async function () {
+			await ViewEditPage.switchEditor();
+			await ViewEditPage.rules.setValue( rules );
+			await ViewEditPage.submit();
+			assert( await ViewEditPage.error.isDisplayed() );
 		} );
 
-		it( 'data is retained if saving fails', function () {
-			assert.strictEqual( ViewEditPage.rules.getValue(), rules + '\n' );
+		it( 'data is retained if saving fails', async function () {
+			const rulesValue = await ViewEditPage.rules.getValue();
+			assert.strictEqual( rulesValue, rules + '\n' );
 		} );
 	} );
 } );

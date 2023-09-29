@@ -122,7 +122,6 @@
 	"visualeditor-dialog-transclusion-loading": "Hleður…",
 	"visualeditor-dialog-transclusion-no-template-description": "Sniðið „$1“ hefur ekki ennþá lýsingu, en það gætu verið einhverjar upplýsingar á [[$2|síðu sniðsins]].",
 	"visualeditor-dialog-transclusion-param-default": "Sjálfgefið: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Bæta við sniði",
 	"visualeditor-dialog-transclusion-required-parameter": "Verður að gefa upp",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Verður að gefa eitthvað upp.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Fara til baka",

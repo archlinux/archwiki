@@ -1,8 +1,6 @@
 <?php
 /** Estonian (eesti)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -107,6 +105,7 @@ $specialPageAliases = [
 	'Recentchanges'             => [ 'Viimased_muudatused' ],
 	'Recentchangeslinked'       => [ 'Seotud_muudatused' ],
 	'Redirect'                  => [ 'Ümbersuunamine' ],
+	'Renameuser'                => [ 'Kasutaja_ümbernimetamine' ],
 	'ResetTokens'               => [ 'Lubade_lähtestamine' ],
 	'Revisiondelete'            => [ 'Muudatuse_kustutamine', 'Kustuta_muudatus' ],
 	'Search'                    => [ 'Otsimine', 'Otsi' ],

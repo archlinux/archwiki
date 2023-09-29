@@ -30,7 +30,6 @@ use ExtensionRegistry;
 use FormatJson;
 use Html;
 use IContextSource;
-use LinkBatch;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
 use OutputPage;
@@ -44,11 +43,10 @@ use Title;
  * to display the category structure of a wiki
  */
 class CategoryTree {
-	public $mOptions = [];
+	/** @var array */
+	private $mOptions = [];
 
-	/**
-	 * @var LinkRenderer
-	 */
+	/** @var LinkRenderer */
 	private $linkRenderer;
 
 	/**
@@ -358,14 +356,14 @@ class CategoryTree {
 
 		$title = self::makeTitle( $category );
 
-		if ( $title === false || $title === null ) {
+		if ( $title === null ) {
 			return false;
 		}
 
 		if ( isset( $attr['class'] ) ) {
 			$attr['class'] .= ' CategoryTreeTag';
 		} else {
-			$attr['class'] = ' CategoryTreeTag';
+			$attr['class'] = 'CategoryTreeTag';
 		}
 
 		$attr['data-ct-mode'] = $this->mOptions['mode'];
@@ -398,7 +396,7 @@ class CategoryTree {
 	public function renderChildren( Title $title, $depth = 1 ) {
 		global $wgCategoryTreeMaxChildren, $wgCategoryTreeUseCategoryTable;
 
-		if ( $title->getNamespace() !== NS_CATEGORY ) {
+		if ( !$title->inNamespace( NS_CATEGORY ) ) {
 			// Non-categories can't have children. :)
 			return '';
 		}
@@ -464,13 +462,11 @@ class CategoryTree {
 		) && ExtensionRegistry::getInstance()->isLoaded( 'Translate' );
 
 		if ( $suppressTranslations ) {
-			$lb = new LinkBatch();
+			$lb = MediaWikiServices::getInstance()->getLinkBatchFactory()->newLinkBatch();
 			foreach ( $res as $row ) {
 				$title = Title::newFromText( $row->page_title, $row->page_namespace );
 				// Page name could have slashes, check the subpage for valid language built-in codes
-				$isValidLangCode = $title->getSubpageText();
-
-				if ( $title !== null && $isValidLangCode ) {
+				if ( $title !== null && $title->getSubpageText() ) {
 					$lb->addObj( $title->getBaseTitle() );
 				}
 			}
@@ -568,7 +564,7 @@ class CategoryTree {
 	public function renderNode( Title $title, $children = 0 ) {
 		global $wgCategoryTreeUseCategoryTable;
 
-		if ( $wgCategoryTreeUseCategoryTable && $title->getNamespace() === NS_CATEGORY
+		if ( $wgCategoryTreeUseCategoryTable && $title->inNamespace( NS_CATEGORY )
 			&& !$this->isInverse()
 		) {
 			$cat = Category::newFromTitle( $title );
@@ -590,7 +586,7 @@ class CategoryTree {
 	public function renderNodeInfo( Title $title, Category $cat = null, $children = 0 ) {
 		$mode = $this->getOption( 'mode' );
 
-		$ns = $title->getNamespace();
+		$isInCatNS = $title->inNamespace( NS_CATEGORY );
 		$key = $title->getDBkey();
 
 		$hideprefix = $this->getOption( 'hideprefix' );
@@ -600,7 +596,7 @@ class CategoryTree {
 		} elseif ( $hideprefix === CategoryTreeHidePrefix::AUTO ) {
 			$hideprefix = ( $mode === CategoryTreeMode::CATEGORIES );
 		} elseif ( $hideprefix === CategoryTreeHidePrefix::CATEGORIES ) {
-			$hideprefix = ( $ns === NS_CATEGORY );
+			$hideprefix = $isInCatNS;
 		} else {
 			$hideprefix = true;
 		}
@@ -628,7 +624,7 @@ class CategoryTree {
 
 		$attr = [ 'class' => 'CategoryTreeBullet' ];
 
-		if ( $ns === NS_CATEGORY ) {
+		if ( $isInCatNS ) {
 			if ( $cat ) {
 				if ( $mode === CategoryTreeMode::CATEGORIES ) {
 					$count = $cat->getSubcatCount();
@@ -677,7 +673,7 @@ class CategoryTree {
 			]
 		);
 
-		if ( $ns === NS_CATEGORY && $children > 0 ) {
+		if ( $isInCatNS && $children > 0 ) {
 			$children = $this->renderChildren( $title, $children );
 			if ( $children === '' ) {
 				switch ( $mode ) {
@@ -776,7 +772,7 @@ class CategoryTree {
 		# The title must be in the category namespace
 		# Ignore a leading Category: if there is one
 		$t = Title::newFromText( $title, NS_CATEGORY );
-		if ( !$t || $t->getNamespace() !== NS_CATEGORY || $t->getInterwiki() !== '' ) {
+		if ( !$t || !$t->inNamespace( NS_CATEGORY ) || $t->isExternal() ) {
 			// If we were given something like "Wikipedia:Foo" or "Template:",
 			// try it again but forced.
 			$title = "Category:$title";

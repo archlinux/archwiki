@@ -7,6 +7,7 @@ use MediaWiki\Extension\Math\MathConfig;
 use MediaWiki\Extension\Math\MathLaTeXML;
 use MediaWiki\Extension\Math\MathMathML;
 use MediaWiki\Extension\Math\MathMathMLCli;
+use MediaWiki\Extension\Math\MathNativeMML;
 use MediaWiki\Extension\Math\MathRenderer;
 use MediaWiki\Extension\Math\MathSource;
 use MediaWiki\User\UserOptionsLookup;
@@ -88,6 +89,9 @@ class RendererFactory {
 		switch ( $mode ) {
 			case MathConfig::MODE_SOURCE:
 				$renderer = new MathSource( $tex, $params );
+				break;
+			case MathConfig::MODE_NATIVE_MML:
+				$renderer = new MathNativeMML( $tex, $params );
 				break;
 			case MathConfig::MODE_LATEXML:
 				$renderer = new MathLaTeXML( $tex, $params );

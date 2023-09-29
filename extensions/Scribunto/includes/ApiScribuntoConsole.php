@@ -145,6 +145,10 @@ class ApiScribuntoConsole extends ApiBase {
 		];
 	}
 
+	public function needsToken() {
+		return 'csrf';
+	}
+
 	public function isInternal() {
 		return true;
 	}

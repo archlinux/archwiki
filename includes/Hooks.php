@@ -40,19 +40,17 @@ class Hooks {
 	/**
 	 * Attach an event handler to a given hook in both legacy and non-legacy hook systems
 	 *
+	 * @see HookContainer::register()
+	 *
 	 * @param string $name Name of hook
-	 * @param callable $callback Callback function to attach
-	 * @deprecated since 1.35. use HookContainer::register() instead
+	 * @param mixed $handler Hooks handler to attay
+	 * @deprecated since 1.35. use HookContainer::register() instead, emitting warnings since 1.40
 	 * @since 1.18
 	 */
-	public static function register( $name, $callback ) {
-		if ( !defined( 'MW_SERVICE_BOOTSTRAP_COMPLETE' ) ) {
-			wfDeprecatedMsg( 'Registering handler for ' . $name .
-				' before MediaWiki bootstrap complete was deprecated in MediaWiki 1.35',
-				'1.35' );
-		}
+	public static function register( $name, $handler ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		$hookContainer = MediaWikiServices::getInstance()->getHookContainer();
-		$hookContainer->register( $name, $callback );
+		$hookContainer->register( $name, $handler );
 	}
 
 	/**
@@ -64,13 +62,12 @@ class Hooks {
 	 * @since 1.21
 	 * @deprecated since 1.35. Instead of using Hooks::register() and Hooks::clear(),
 	 * use HookContainer::scopedRegister() instead to register a temporary hook
-	 * @throws MWException If not in testing mode.
 	 * @codeCoverageIgnore
 	 */
 	public static function clear( $name ) {
 		wfDeprecated( __METHOD__, '1.35' );
 		if ( !defined( 'MW_PHPUNIT_TEST' ) && !defined( 'MW_PARSER_TEST' ) ) {
-			throw new MWException( 'Cannot reset hooks in operation.' );
+			throw new BadMethodCallException( 'Cannot reset hooks in operation.' );
 		}
 		$hookContainer = MediaWikiServices::getInstance()->getHookContainer();
 		$hookContainer->clear( $name );

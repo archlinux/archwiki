@@ -28,8 +28,7 @@
 function urlGenerator( config ) {
 	// TODO: This is a placeholder for enabling customization of the URL generator.
 	// wgVectorSearchUrlGenerator has not been defined as a config variable yet.
-	const customGenerator = config.get( 'wgVectorSearchUrlGenerator' );
-	return customGenerator || {
+	return config.get( 'wgVectorSearchUrlGenerator', {
 		/**
 		 * @type {generateUrl}
 		 */
@@ -52,7 +51,7 @@ function urlGenerator( config ) {
 
 			return articlePath + '?' + $.param( $.extend( {}, params, { search: suggestion } ) );
 		}
-	};
+	} );
 }
 
 /** @module urlGenerator */

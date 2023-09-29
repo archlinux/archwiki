@@ -1,8 +1,11 @@
 <?php
 
+use MediaWiki\EditPage\EditPage;
 use MediaWiki\EditPage\SpamChecker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Title\Title;
 
 /**
  * Integration tests for the various edit constraints, ensuring
@@ -72,7 +75,8 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 		}
 		$this->assertNotNull( $title );
 
-		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
+		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
+		$page = $wikiPageFactory->newFromTitle( $title );
 
 		if ( $user == null ) {
 			$user = $this->getTestUser()->getUser();
@@ -146,7 +150,7 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 			"Expected result code mismatch. $message"
 		);
 
-		return WikiPage::factory( $title );
+		return $wikiPageFactory->newFromTitle( $title );
 	}
 
 	/** AccidentalRecreationConstraint integration */
@@ -155,7 +159,7 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 		$this->getExistingTestPage( 'AccidentalRecreationConstraintPage' );
 
 		// And now delete it, so that there is a deletion log
-		$page = $this->getNonExistingTestPage( 'AccidentalRecreationConstraintPage' );
+		$page = $this->getNonexistingTestPage( 'AccidentalRecreationConstraintPage' );
 		$title = $page->getTitle();
 
 		// Set the time of the deletion to be a specific time, so we can be sure to start the
@@ -167,7 +171,7 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 			[ 'log_timestamp' => $dbw->timestamp( '20200101000000' ) ],
 			[
 				'log_namespace' => $title->getNamespace(),
-				'log_title' => $title->getDBKey(),
+				'log_title' => $title->getDBkey(),
 				'log_type' => 'delete',
 				'log_action' => 'delete'
 			],
@@ -262,7 +266,7 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 			'format' => CONTENT_FORMAT_TEXT,
 		];
 
-		$title = Title::newFromText( 'Example', NS_MAIN );
+		$title = Title::makeTitle( NS_MAIN, 'Example' );
 		$this->assertSame(
 			CONTENT_MODEL_WIKITEXT,
 			$title->getContentModel(),
@@ -448,7 +452,7 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 			'wpSummary' => 'Summary'
 		];
 
-		$title = Title::newFromText( 'Example.jpg', NS_FILE );
+		$title = Title::makeTitle( NS_FILE, 'Example.jpg' );
 		$this->assertEdit(
 			$title,
 			null,
@@ -619,9 +623,9 @@ class EditPageConstraintsTest extends MediaWikiLangTestCase {
 	public function testSpamRegexConstraint() {
 		$spamChecker = $this->createMock( SpamChecker::class );
 		$spamChecker->method( 'checkContent' )
-			->will( $this->returnArgument( 0 ) );
+			->willReturnArgument( 0 );
 		$spamChecker->method( 'checkSummary' )
-			->will( $this->returnArgument( 0 ) );
+			->willReturnArgument( 0 );
 		$this->setService( 'SpamChecker', $spamChecker );
 
 		$edit = [

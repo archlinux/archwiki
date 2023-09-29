@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Sagan",
+			"Гизатуллина",
+			"Янмурза Баки",
+			"З. ӘЙЛЕ"
+		]
+	},
+	"apihelp-flowthank-description": "Flow comment өсөн йәмәғәтселек алдында рәхмәт белдерергә",
+	"apihelp-flowthank-param-postid": "Рәхмәт әйтеү кәрәк булған UUID хәбәрҙәре.",
+	"apihelp-flowthank-example-1": "<kbd>UUID xyz789</kbd> комментарийы өсөн рәхмәт әйтергә",
+	"apihelp-thank-description": "Мөхәрриргә ҡотлау хәбәре ебәрергә.",
+	"apihelp-thank-param-rev": "Авторға рәхмәт әйтергә кәрәк булған ID-өлгөләр. Ул йәки 'журнал' күрһәтелергә тейеш.",
+	"apihelp-thank-param-source": "Һоратыу сығанағын тасуирлаған ҡыҫҡа юл, мәҫәлән <kbd>diff</kbd> йәки <kbd>history</kbd>.",
+	"apihelp-thank-example-1": "Өлгөләрҙең айырмаһын күрһәткән битте сығанаҡ итеп алып, <kbd>ID 456</kbd> өлгөһө өсөн рәхмәт әйтергә"
+}

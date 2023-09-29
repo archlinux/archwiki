@@ -6,8 +6,11 @@
 			"Элдин беги"
 		]
 	},
-	"mobile-frontend-editor-edit": "Оңдоо",
+	"minerva-last-modified-date": "Соңку жолу $1, саат $2 түзөтүлгөн",
+	"mobile-frontend-editor-edit": "Түзөтүү",
+	"minerva-download": "PDF жүктөп алуу",
 	"mobile-frontend-editor-redlink-create": "Барак түзүү",
+	"mobile-frontend-editor-redlink-leave": "Жок, рахмат.",
 	"mobile-frontend-history": "Бул барактын түзөтүү тарыхын көрүү.",
 	"mobile-frontend-home-button": "Башкы барак",
 	"mobile-frontend-language-article-heading": "Башка тилинде окуу",
@@ -17,5 +20,7 @@
 	"mobile-frontend-main-menu-settings": "Ырастоолор",
 	"mobile-frontend-main-menu-watchlist": "Көзөмөл тизмеси",
 	"mobile-frontend-placeholder": "{{SITENAME}} издөө",
-	"mobile-frontend-random-button": "Тушкелди"
+	"mobile-frontend-random-button": "Тушкелди",
+	"mobile-frontend-user-page-talk": "Талкуу",
+	"skin-minerva-mobile-option-MinervaShowCategories": "Категориялар"
 }

@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Rul1902"
+			"Rul1902",
+			"Amire80"
 		]
 	},
-	"abusefilter-blocker": "သုံႋအင်းတ်ုဖၠ  ယောဝ်ႋဆၟိုဝ်စဏေဝ့်",
+	"abusefilter-blocker": "သုံႋအင်းတ်ုဖၠ ယောဝ်ႋဆၟိုဝ်စဏေဝ့်",
 	"abusefilter-log-search-title": "ခေါဟ်တင်လ်ုဖး",
 	"abusefilter-log-search-submit": "မ်ုအင်းၰူ့",
 	"abusefilter-log-noactions": "အှ်ဏင်မိင်အေ",

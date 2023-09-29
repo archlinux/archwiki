@@ -16,9 +16,9 @@ function RealtimePreview() {
 	this.twoPaneLayout = new TwoPaneLayout();
 	this.pagePreview = require( 'mediawiki.page.preview' );
 	// @todo This shouldn't be required, but the preview element is added in PHP
-	// and can have attributes with values that aren't easily accessible from here,
+	// and can have attributes with values (such as `dir`) that aren't easily accessible from here,
 	// and we need to duplicate here what Live Preview does in core.
-	var $previewContent = $( '#wikiPreview' ).clone().html();
+	var $previewContent = $( '#wikiPreview .mw-content-ltr, #wikiPreview .mw-content-rtl' ).first().clone();
 	this.$previewNode = $( '<div>' )
 		.addClass( 'ext-WikiEditor-realtimepreview-preview' )
 		.append( $previewContent );
@@ -104,6 +104,7 @@ RealtimePreview.prototype.getToolbarButton = function ( context ) {
 	} );
 	this.button.connect( this, { change: [ this.toggle, true ] } );
 	if ( !this.isScreenWideEnough() ) {
+		this.enabled = false;
 		this.button.toggle( false );
 		this.onboardingPopup.toggle( false );
 	}

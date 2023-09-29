@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Debenben",
+			"Justman10000",
 			"Kghbln",
-			"Metalhead64",
-			"Justman10000"
+			"Metalhead64"
 		]
 	},
 	"apihelp-titleblacklist-description": "Überprüft einen Seiten-, Datei- oder Benutzernamen gegen die Titel-Negativliste.",

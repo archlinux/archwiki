@@ -169,6 +169,7 @@ class VariablesManager {
 			'user-age',
 			'user-block',
 			'revision-text-by-id',
+			'content-model-by-id',
 		];
 
 		/** @var LazyLoadedVariable[] $missingVars */

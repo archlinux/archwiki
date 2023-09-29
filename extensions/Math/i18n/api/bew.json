@@ -4,8 +4,8 @@
 			"Bangrapip"
 		]
 	},
-	"apihelp-query+mathwbextracts-example-1": "Minta' rangkuman butir Wikibase matimatika.",
-	"apihelp-query+mathwbextracts-summary": "Minta' rangkuman butir Wikibase matimatika dalem HTML.",
+	"apihelp-query+mathwbextracts-example-1": "Minta' rangkuman butir Wikipendaringan ètung-ètungan.",
+	"apihelp-query+mathwbextracts-summary": "Minta' rangkuman butir Wikipendaringan ètung-ètungan dalem HTML.",
 	"apihelp-query+mathwbextracts-param-qid": "QID butir Wikibase nyang bakal diminta'.",
 	"apihelp-query+mathwbextracts-param-uselang": "Basa nyang kudu diminta' bakal butir Wikibase. Basa Inggris – nilé bawaannya."
 }

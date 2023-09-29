@@ -1,7 +1,7 @@
 import { htmlUserLanguageAttributes } from './utils';
 import { placeholder } from './utils';
 
-import { articleToolbarTemplate, ARTICLE_TOOLBAR_TEMPLATE_DATA_LEGACY } from './ArticleToolbar.stories.data';
+import { pageToolbarTemplate, PAGE_TOOLBAR_TEMPLATE_DATA_LEGACY } from './PageToolbar.stories.data';
 import { userLinksTemplateLegacy } from './UserLinks.stories.data';
 import { menuTemplate, legacyMenuTemplate } from './Menu.stories.data';
 import { PERSONAL_MENU_TEMPLATE_DATA } from './UserLinks.stories.data';
@@ -15,32 +15,32 @@ import { logoTemplate } from './Logo.stories.data';
 
 export const NAVIGATION_TEMPLATE_DATA = {
 	loggedInWithVariantsAndOptOut: Object.assign( {}, {
-		'data-portlets': Object.assign( {}, ARTICLE_TOOLBAR_TEMPLATE_DATA_LEGACY[ 'data-portlets' ], {
+		'data-portlets': Object.assign( {}, PAGE_TOOLBAR_TEMPLATE_DATA_LEGACY[ 'data-portlets' ], {
 			'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedInWithEcho,
 			'data-variants': variantsData
 		} ),
 		'data-search-box': searchBoxData,
-		'data-portlets-sidebar': SIDEBAR_DATA.withPortals,
+		'data-portlets-main-menu': SIDEBAR_DATA.withPortals,
 		'msg-navigation-heading': 'Navigation menu',
 		'html-logo-attributes': `class="mw-wiki-logo" href="/wiki/Main_Page" title="Visit the main page"`
 	}, OPT_OUT_DATA ),
 	loggedOutWithVariants: {
-		'data-portlets': Object.assign( {}, ARTICLE_TOOLBAR_TEMPLATE_DATA_LEGACY[ 'data-portlets' ], {
+		'data-portlets': Object.assign( {}, PAGE_TOOLBAR_TEMPLATE_DATA_LEGACY[ 'data-portlets' ], {
 			'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedOut,
 			'data-variants': variantsData
 		} ),
 		'data-search-box': searchBoxData,
-		'data-portlets-sidebar': SIDEBAR_DATA.withPortals,
+		'data-portlets-main-menu': SIDEBAR_DATA.withPortals,
 		'msg-navigation-heading': 'Navigation menu',
 		'html-logo-attributes': `class="mw-wiki-logo" href="/wiki/Main_Page" title="Visit the main page"`
 	},
 	loggedInWithMoreActions: {
-		'data-portlets': Object.assign( {}, ARTICLE_TOOLBAR_TEMPLATE_DATA_LEGACY[ 'data-portlets' ], {
+		'data-portlets': Object.assign( {}, PAGE_TOOLBAR_TEMPLATE_DATA_LEGACY[ 'data-portlets' ], {
 			'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedInWithEcho,
 			'data-actions': moreData
 		} ),
 		'data-search-box': searchBoxData,
-		'data-portlets-sidebar': SIDEBAR_DATA.withPortals,
+		'data-portlets-main-menu': SIDEBAR_DATA.withPortals,
 		'msg-navigation-heading': 'Navigation menu',
 		'html-logo-attributes': `class="mw-wiki-logo" href="/wiki/Main_Page" title="Visit the main page"`
 	}
@@ -48,7 +48,7 @@ export const NAVIGATION_TEMPLATE_DATA = {
 
 export const TEMPLATE_PARTIALS = Object.assign( {}, SIDEBAR_TEMPLATE_PARTIALS, {
 	Logo: logoTemplate,
-	ArticleToolbar: articleToolbarTemplate,
+	ArticleToolbar: pageToolbarTemplate,
 	SearchBox: searchBoxTemplate,
 	LegacySidebar: sidebarLegacyTemplate,
 	Sidebar: sidebarTemplate,

@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Tests\Unit\DummyServicesTrait;
+
 /**
  * @covers LanguageCode
  * @group Language
@@ -7,6 +10,7 @@
  * @author Thiemo Kreuz
  */
 class LanguageCodeTest extends MediaWikiUnitTestCase {
+	use DummyServicesTrait;
 
 	public function testConstructor() {
 		$instance = new LanguageCode();
@@ -193,6 +197,39 @@ class LanguageCodeTest extends MediaWikiUnitTestCase {
 			[ 'zh-hans', 'zh-Hans' ],
 			[ 'zh-hant', 'zh-Hant' ],
 		];
+	}
+
+	/**
+	 * @covers LanguageCode::bcp47()
+	 * @covers LanguageCode::bcp47ToInternal()
+	 * @dataProvider provideSupportedLanguageCodes()
+	 */
+	public function testBcp47ToInternal( $internalCode ) {
+		if ( $internalCode === 'egl' ) {
+			# 'egl' was added as an internal code prematurely; 'eml' hasn't
+			# been added to the deprecated list yet (T36217) and so only
+			# 'eml' is a "real" internal code.
+			$internalCode = 'eml';
+		}
+		// Test that ::bcp47 and ::bcp47ToInternal are inverses.
+		$bcp47 = LanguageCode::bcp47( $internalCode );
+		$result = LanguageCode::bcp47ToInternal( $bcp47 );
+		$this->assertEquals( $internalCode, $result );
+		// Verify case-insensitivity
+		$result = LanguageCode::bcp47ToInternal( strtolower( $bcp47 ) );
+		$this->assertEquals( $internalCode, $result );
+		$result = LanguageCode::bcp47ToInternal( strtoupper( $bcp47 ) );
+		$this->assertEquals( $internalCode, $result );
+	}
+
+	public function provideSupportedLanguageCodes() {
+		$lnu = $this->getDummyLanguageNameUtils();
+		$languages = $lnu->getLanguageNames(
+			LanguageNameUtils::AUTONYMS, LanguageNameUtils::SUPPORTED
+		);
+		foreach ( $languages as $code => $autonym ) {
+			yield [ $code ];
+		}
 	}
 
 	/**

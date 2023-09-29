@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Matma Rex",
-			"Purodha"
+			"Purodha",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Dä Meßbruchsfelter deit Änderunge aan Sigge met Heurestikke pröfe.",
@@ -272,7 +273,7 @@
 	"abusefilter-edit-builder-vars-file-sha1": "De <code lang=\"en\">SHA1</code> Prööfsumm vum Enhalt vun dä Dattei",
 	"abusefilter-edit-builder-vars-file-size": "De Aanzahl <i lang=\"en\" xml:lang=\"en\">Bytes</i> en dä Dattei.",
 	"abusefilter-edit-builder-vars-file-mime": "De <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"Multi-Purpose Internet Mail Extensions\">MIME</i>-Zoot fun dä Dattei.",
-	"abusefilter-edit-builder-vars-file-mediatype": "Mehije-Zoot  vun dä Dattei",
+	"abusefilter-edit-builder-vars-file-mediatype": "Mehije-Zoot vun dä Dattei",
 	"abusefilter-edit-builder-vars-file-width": "De Wigde en Pixelle",
 	"abusefilter-edit-builder-vars-file-height": "De Hühde en Pixelle",
 	"abusefilter-edit-builder-vars-file-bits-per-channel": "De Bits pro Klöhre-Kannahl",
@@ -322,7 +323,7 @@
 	"abusefilter-action-disallow": "Verbeede",
 	"abusefilter-revert-title": "Alle Änderonge opjrund fun dä Felter-Räjel $1 retuhr mache",
 	"abusefilter-revert-intro": "Övver dat Fommulaa kanns De alle Änderunge zeröck nämme,\ndi dä Meßbruchsfelter opjrund fun dä Felter-Räjel $1 jemaat hät.\nBes ävver förseschtesch met esu jet!",
-	"abusefilter-revert-preview-item": "$1: {{GENDER:$8|dä|et|dä Metmaacher|dat|de}} $2  hät e $3 op $4 jemaat.\nÄnderunge, di zeröck jenumme wähde: $5 ($6)",
+	"abusefilter-revert-preview-item": "$1: {{GENDER:$8|dä|et|dä Metmaacher|dat|de}} $2 hät e $3 op $4 jemaat.\nÄnderunge, di zeröck jenumme wähde: $5 ($6)",
 	"abusefilter-revert-search-legend": "Söhk dem Meßbruchsfelter sing Änderonge uß, di De retuhr jemaat han wells",
 	"abusefilter-revert-periodstart": "Dä Aanfang fum Zigkroum zom Ophävve:",
 	"abusefilter-revert-periodend": "Et Engk fun däm Zigkroum zom Ophävve:",

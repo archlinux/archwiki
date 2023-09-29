@@ -19,19 +19,17 @@ class TagTest extends MediaWikiUnitTestCase {
 	 */
 	public function testExecute() {
 		$tagsToAdd = [ 'tag1', 'tag2' ];
-		$accountName = 'foobar';
+		$specifier = $this->createMock( ActionSpecifier::class );
+		$params = $this->createMock( Parameters::class );
+		$params->expects( $this->once() )->method( 'getActionSpecifier' )
+			->willReturn( $specifier );
 		$tagger = $this->createMock( ChangeTagger::class );
-		$addTags = function ( ActionSpecifier $specs, $tags ) use ( $tagsToAdd, $accountName ) {
-			$this->assertSame( $tagsToAdd, $tags );
-			$this->assertSame( $accountName, $specs->getAccountName() );
-		};
-		$tagger->expects( $this->once() )->method( 'addTags' )->willReturnCallback( $addTags );
-		$tag = new Tag(
-			$this->createMock( Parameters::class ),
-			$accountName,
-			$tagsToAdd,
-			$tagger
-		);
+		$tagger->expects( $this->once() )->method( 'addTags' )
+			->with(
+				$this->identicalTo( $specifier ),
+				$this->identicalTo( $tagsToAdd )
+			);
+		$tag = new Tag( $params, $tagsToAdd, $tagger );
 		$this->assertTrue( $tag->execute() );
 	}
 }

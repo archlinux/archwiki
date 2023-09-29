@@ -7,10 +7,13 @@ use ApiMain;
 use FauxRequest;
 use File;
 use IContextSource;
+use MapCacheLRU;
 use MediaWiki\Api\Hook\ApiOpenSearchSuggestHook;
+use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\InfoActionHook;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\UserOptionsLookup;
 use OutputPage;
 use Skin;
 use Title;
@@ -55,6 +58,19 @@ class PageImages implements
 	 */
 	public const PROP_NAME_FREE = 'page_image_free';
 
+	/** @var UserOptionsLookup */
+	private $userOptionsLookup;
+
+	/** @var MapCacheLRU */
+	private static $cache = null;
+
+	/**
+	 * @param UserOptionsLookup $userOptionsLookup
+	 */
+	public function __construct( UserOptionsLookup $userOptionsLookup ) {
+		$this->userOptionsLookup = $userOptionsLookup;
+	}
+
 	/**
 	 * Get property name used in page_props table. When a page image
 	 * is stored it will be stored under this property name on the corresponding
@@ -86,15 +102,30 @@ class PageImages implements
 	}
 
 	/**
-	 * Returns page image for a given title
+	 * Return page image for a given title
 	 *
 	 * @param Title $title Title to get page image for
-	 *
 	 * @return File|bool
 	 */
 	public static function getPageImage( Title $title ) {
-		// Do not query for special pages or other titles never in the database
+		self::$cache ??= new MapCacheLRU( 100 );
+
+		$file = self::$cache->getWithSetCallback(
+			CacheKeyHelper::getKeyForPage( $title ),
+			fn() => self::fetchPageImage( $title )
+		);
+
+		// Cast any cacheable null to false
+		return $file ?? false;
+	}
+
+	/**
+	 * @param Title $title Title to get page image for
+	 * @return File|null|bool
+	 */
+	private static function fetchPageImage( Title $title ) {
 		if ( !$title->canExist() ) {
+			// Optimization: Do not query for special pages or other titles never in the database
 			return false;
 		}
 
@@ -102,28 +133,29 @@ class PageImages implements
 			return MediaWikiServices::getInstance()->getRepoGroup()->findFile( $title );
 		}
 
-		if ( !$title->exists() ) {
+		$pageId = $title->getArticleID();
+		if ( !$pageId ) {
 			// No page id to select from
-			return false;
+			// Allow caching, cast null to false later
+			return null;
 		}
 
 		$dbr = wfGetDB( DB_REPLICA );
 		$fileName = $dbr->selectField( 'page_props',
 			'pp_value',
 			[
-				'pp_page' => $title->getArticleID(),
+				'pp_page' => $pageId,
 				'pp_propname' => [ self::PROP_NAME, self::PROP_NAME_FREE ]
 			],
 			__METHOD__,
 			[ 'ORDER BY' => 'pp_propname' ]
 		);
-
-		$file = false;
-		if ( $fileName ) {
-			$file = MediaWikiServices::getInstance()->getRepoGroup()->findFile( $fileName );
+		if ( !$fileName ) {
+			// Allow caching, cast null to false later
+			return false;
 		}
 
-		return $file;
+		return MediaWikiServices::getInstance()->getRepoGroup()->findFile( $fileName );
 	}
 
 	/**
@@ -143,8 +175,7 @@ class PageImages implements
 			return;
 		}
 
-		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
-		$thumbSetting = $userOptionsLookup->getOption( $context->getUser(), 'thumbsize' );
+		$thumbSetting = $this->userOptionsLookup->getOption( $context->getUser(), 'thumbsize' );
 		$thumbSize = $wgThumbLimits[$thumbSetting];
 
 		$thumb = $imageFile->transform( [ 'width' => $thumbSize ] );

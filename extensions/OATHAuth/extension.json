@@ -10,7 +10,7 @@
 	"descriptionmsg": "oathauth-desc",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"license-name": "GPL-2.0-or-later AND GPL-3.0-or-later",
 	"attributes": {
@@ -42,7 +42,7 @@
 	},
 	"Hooks": {
 		"AuthChangeFormFields": "main",
-		"LoadExtensionSchemaUpdates": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\LoadExtensionSchemaUpdates\\UpdateTables::callback",
+		"LoadExtensionSchemaUpdates": "updater",
 		"GetPreferences": "main",
 		"getUserPermissionsErrors": "main",
 		"UserEffectiveGroups": "main",
@@ -58,6 +58,9 @@
 				"MainConfig",
 				"UserGroupManager"
 			]
+		},
+		"updater": {
+			"class": "MediaWiki\\Extension\\OATHAuth\\Hook\\UpdateTables"
 		}
 	},
 	"MessagesDirs": {
@@ -121,7 +124,7 @@
 			"class": "\\MediaWiki\\Extension\\OATHAuth\\Special\\OATHManage",
 			"services": [
 				"OATHUserRepository",
-				"OATHAuth"
+				"OATHAuthModuleRegistry"
 			]
 		},
 		"VerifyOATHForUser": {

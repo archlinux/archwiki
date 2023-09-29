@@ -1,12 +1,5 @@
 <?php
 /**
- * Created on Mar 29, 2009
- *
- * AbuseFilter extension
- *
- * Copyright © 2008 Alex Z. mrzmanwiki AT gmail DOT com
- * Based mostly on code by Bryan Tong Minh and Roan Kattouw
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -35,6 +28,9 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 /**
  * Query module to list abuse filter details.
+ *
+ * @copyright 2009 Alex Z. <mrzmanwiki AT gmail DOT com>
+ * Based mostly on code by Bryan Tong Minh and Roan Kattouw
  *
  * @ingroup API
  * @ingroup Extensions

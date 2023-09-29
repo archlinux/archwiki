@@ -23,26 +23,32 @@
 
 namespace HtmlFormatter;
 
+use DOMDocument;
+use DOMElement;
+use DOMNodeList;
+use DOMXPath;
+use Exception;
+
 class HtmlFormatter {
 	/**
-	 * @var \DOMDocument
+	 * @var ?DOMDocument
 	 */
-	private $doc;
+	private ?DOMDocument $doc = null;
 
 	/**
 	 * @var string
 	 */
-	private $html;
+	private string $html;
 
 	/**
 	 * @var string[]
 	 */
-	private $itemsToRemove = [];
+	private array $itemsToRemove = [];
 
 	/**
 	 * @var string[]
 	 */
-	private $elementsToFlatten = [];
+	private array $elementsToFlatten = [];
 
 	/**
 	 * Whether a libxml_disable_entity_loader() call is needed
@@ -52,17 +58,17 @@ class HtmlFormatter {
 	/**
 	 * @var bool
 	 */
-	protected $removeMedia = false;
+	protected bool $removeMedia = false;
 
 	/**
 	 * @var bool
 	 */
-	protected $removeComments = false;
+	protected bool $removeComments = false;
 
 	/**
 	 * @param string $html Text to process
 	 */
-	public function __construct( $html ) {
+	public function __construct( string $html ) {
 		$this->html = $html;
 	}
 
@@ -71,8 +77,8 @@ class HtmlFormatter {
 	 * @param string $html HTML to wrap
 	 * @return string
 	 */
-	public static function wrapHTML( $html ) {
-		return '<!doctype html><html><head></head><body>' . $html . '</body></html>';
+	public static function wrapHTML( string $html ): string {
+		return '<!doctype html><html><head><meta charset="UTF-8"/></head><body>' . $html . '</body></html>';
 	}
 
 	/**
@@ -80,35 +86,44 @@ class HtmlFormatter {
 	 * @param string $html HTML to process
 	 * @return string Processed HTML
 	 */
-	protected function onHtmlReady( $html ) {
+	#[\ReturnTypeWillChange]
+	protected function onHtmlReady( string $html ): string {
 		return $html;
 	}
 
 	/**
-	 * @return \DOMDocument DOM to manipulate
+	 * @return DOMDocument DOM to manipulate
 	 */
-	public function getDoc() {
+	#[\ReturnTypeWillChange]
+	public function getDoc(): DOMDocument {
 		if ( !$this->doc ) {
-			// DOMDocument::loadHTML apparently isn't very good with encodings, so
-			// convert input to ASCII by encoding everything above 128 as entities.
-			$html = \mb_convert_encoding( $this->html, 'HTML-ENTITIES', 'UTF-8' );
+			$html = $this->html;
+			if ( !str_starts_with( $html, '<!doctype html>' ) ) {
+				// DOMDocument::loadHTML defaults to ASCII for partial html
+				// Parse as full html with encoding
+				$html = self::wrapHTML( $html );
+			}
 
 			// Workaround for bug that caused spaces before references
 			// to disappear during processing: https://phabricator.wikimedia.org/T55086
 			$html = str_replace( ' <', '&#32;<', $html );
 
 			\libxml_use_internal_errors( true );
+			$loader = false;
 			if ( self::DISABLE_LOADER ) {
+				// @codeCoverageIgnoreStart
 				$loader = \libxml_disable_entity_loader();
+				// @codeCoverageIgnoreEnd
 			}
-			$this->doc = new \DOMDocument();
+			$this->doc = new DOMDocument();
 			$this->doc->strictErrorChecking = false;
 			$this->doc->loadHTML( $html );
 			if ( self::DISABLE_LOADER ) {
+				// @codeCoverageIgnoreStart
 				\libxml_disable_entity_loader( $loader );
+				// @codeCoverageIgnoreEnd
 			}
 			\libxml_use_internal_errors( false );
-			$this->doc->encoding = 'UTF-8';
 		}
 		return $this->doc;
 	}
@@ -117,7 +132,7 @@ class HtmlFormatter {
 	 * Sets whether comments should be removed from output
 	 * @param bool $flag Whether to remove or not
 	 */
-	public function setRemoveComments( $flag = true ) {
+	public function setRemoveComments( bool $flag = true ): void {
 		$this->removeComments = $flag;
 	}
 
@@ -125,7 +140,7 @@ class HtmlFormatter {
 	 * Sets whether images/videos/sounds should be removed from output
 	 * @param bool $flag Whether to remove or not
 	 */
-	public function setRemoveMedia( $flag = true ) {
+	public function setRemoveMedia( bool $flag = true ): void {
 		$this->removeMedia = $flag;
 	}
 
@@ -140,27 +155,27 @@ class HtmlFormatter {
 	 *
 	 * @param string[]|string $selectors Selector(s) of stuff to remove
 	 */
-	public function remove( $selectors ) {
+	public function remove( $selectors ): void {
 		$this->itemsToRemove = array_merge( $this->itemsToRemove, (array)$selectors );
 	}
 
 	/**
 	 * Adds one or more element name to the list to flatten (remove tag, but not its content)
-	 * Can accept undelimited regexes
+	 * Can accept non-delimited regexes
 	 *
 	 * Note this interface may fail in surprising unexpected ways due to usage of regexes,
 	 * so should not be relied on for HTML markup security measures.
 	 *
 	 * @param string[]|string $elements Name(s) of tag(s) to flatten
 	 */
-	public function flatten( $elements ) {
+	public function flatten( $elements ): void {
 		$this->elementsToFlatten = array_merge( $this->elementsToFlatten, (array)$elements );
 	}
 
 	/**
 	 * Instructs the formatter to flatten all tags, and remove comments
 	 */
-	public function flattenAllTags() {
+	public function flattenAllTags(): void {
 		$this->flatten( '[?!]?[a-z0-9]+' );
 		$this->setRemoveComments( true );
 	}
@@ -168,14 +183,15 @@ class HtmlFormatter {
 	/**
 	 * Removes content we've chosen to remove.  The text of the removed elements can be
 	 * extracted with the getText method.
-	 * @return \DOMElement[] Array of removed DOMElements
+	 * @return DOMElement[] Array of removed DOMElements
 	 */
-	public function filterContent() {
+	#[\ReturnTypeWillChange]
+	public function filterContent(): array {
 		$removals = $this->parseItemsToRemove();
 
 		// Bail out early if nothing to do
 		if ( \array_reduce( $removals,
-			function ( $carry, $item ) {
+			static function ( $carry, $item ) {
 				return $carry && !$item;
 			},
 			true
@@ -214,13 +230,13 @@ class HtmlFormatter {
 
 		// CSS Classes
 		$domElemsToRemove = [];
-		$xpath = new \DOMXPath( $doc );
+		$xpath = new DOMXPath( $doc );
 		foreach ( $removals['CLASS'] as $classToRemove ) {
 			// Use spaces to avoid matching for unrelated classnames (T231160)
 			// https://stackoverflow.com/a/1604480/319266
 			$elements = $xpath->query( '//*[contains(concat(" ", @class, " "), " ' . $classToRemove . ' ")]' );
 
-			/** @var $element \DOMElement */
+			/** @var $element DOMElement */
 			foreach ( $elements as $element ) {
 				$classes = $element->getAttribute( 'class' );
 				if ( \preg_match( "/\b$classToRemove\b/", $classes ) && $element->parentNode ) {
@@ -230,6 +246,7 @@ class HtmlFormatter {
 		}
 		$removed = \array_merge( $removed, $this->removeElements( $domElemsToRemove ) );
 
+		$return = [];
 		// Tags with CSS Classes
 		foreach ( $removals['TAG_CLASS'] as $classToRemove ) {
 			$parts = explode( '.', $classToRemove );
@@ -237,26 +254,26 @@ class HtmlFormatter {
 			$elements = $xpath->query(
 				'//' . $parts[0] . '[@class="' . $parts[1] . '"]'
 			);
-			$removed = array_merge( $removed, $this->removeElements( $elements ) );
+			$return[] = $this->removeElements( $elements );
 		}
 
-		return $removed;
+		return array_merge( array_merge( ...$return ), $removed );
 	}
 
 	/**
-	 * Removes a list of elelments from DOMDocument
-	 * @param \DOMElement[]|\DOMNodeList $elements
-	 * @return \DOMElement[] Array of removed elements
+	 * Removes a list of elements from DOMDocument
+	 * @param DOMElement[]|DOMNodeList $elements
+	 * @return DOMElement[] Array of removed elements
 	 */
-	private function removeElements( $elements ) {
+	private function removeElements( $elements ): array {
 		$list = $elements;
-		if ( $elements instanceof \DOMNodeList ) {
+		if ( $elements instanceof DOMNodeList ) {
 			$list = [];
 			foreach ( $elements as $element ) {
 				$list[] = $element;
 			}
 		}
-		/** @var $element \DOMElement */
+		/** @var $element DOMElement */
 		foreach ( $list as $element ) {
 			if ( $element->parentNode ) {
 				$element->parentNode->removeChild( $element );
@@ -266,59 +283,27 @@ class HtmlFormatter {
 	}
 
 	/**
-	 * libxml in its usual pointlessness converts many chars to entities - this function
-	 * perfoms a reverse conversion
-	 * @param string $html
-	 * @return string
-	 */
-	private function fixLibXML( $html ) {
-		// We don't include rules like '&#34;' => '&amp;quot;' because entities had already been
-		// normalized by libxml. Using this function with input not sanitized by libxml is UNSAFE!
-		$replacements = [
-			'&quot;' => '&amp;quot;',
-			'&amp;' => '&amp;amp;',
-			'&lt;' => '&amp;lt;',
-			'&gt;' => '&amp;gt;',
-		];
-		$html = strtr( $html, $replacements );
-
-		// Just in case the conversion in getDoc() above used named
-		// entities that aren't known to html_entity_decode().
-		$html = \mb_convert_encoding( $html, 'UTF-8', 'HTML-ENTITIES' );
-		return $html;
-	}
-
-	/**
 	 * Performs final transformations and returns resulting HTML.  Note that if you want to call this
 	 * both without an element and with an element you should call it without an element first.  If you
 	 * specify the $element in the method it'll change the underlying dom and you won't be able to get
 	 * it back.
 	 *
-	 * @param \DOMElement|string|null $element ID of element to get HTML from or
+	 * @param DOMElement|string|null $element ID of element to get HTML from or
 	 *   false to get it from the whole tree
 	 * @return string Processed HTML
 	 */
-	public function getText( $element = null ) {
+	#[\ReturnTypeWillChange]
+	public function getText( $element = null ): string {
 		if ( $this->doc ) {
-			if ( $element !== null && !( $element instanceof \DOMElement ) ) {
+			if ( $element !== null && !( $element instanceof DOMElement ) ) {
 				$element = $this->doc->getElementById( $element );
 			}
-			if ( $element ) {
-				$body = $this->doc->getElementsByTagName( 'body' )->item( 0 );
-				$nodesArray = [];
-				foreach ( $body->childNodes as $node ) {
-					$nodesArray[] = $node;
-				}
-				foreach ( $nodesArray as $nodeArray ) {
-					$body->removeChild( $nodeArray );
-				}
-				$body->appendChild( $element );
+			if ( !$element ) {
+				$element = $this->doc->getElementsByTagName( 'body' )->item( 0 );
 			}
-			$html = $this->doc->saveHTML();
-
-			$html = $this->fixLibXml( $html );
+			$html = $this->doc->saveHTML( $element );
 			if ( PHP_EOL === "\r\n" ) {
-				// Cleanup for CRLF misprocessing of unknown origin on Windows.
+				// Cleanup for CRLF mis-processing of unknown origin on Windows.
 				$html = str_replace( '&#13;', '', $html );
 			}
 		} else {
@@ -348,9 +333,9 @@ class HtmlFormatter {
 	 * @param string &$type The type of selector (ID, CLASS, TAG_CLASS, or TAG)
 	 * @param string &$rawName The raw name of the selector
 	 * @return bool Whether the selector was successfully recognised
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	protected function parseSelector( $selector, &$type, &$rawName ) {
+	protected function parseSelector( string $selector, string &$type, string &$rawName ): bool {
 		$firstChar = substr( $selector, 0, 1 );
 		if ( $firstChar === '.' ) {
 			$type = 'CLASS';
@@ -365,7 +350,7 @@ class HtmlFormatter {
 			$type = 'TAG';
 			$rawName = $selector;
 		} else {
-			throw new \Exception( __METHOD__ . "(): unrecognized selector '$selector'" );
+			throw new Exception( __METHOD__ . "(): unrecognized selector '$selector'" );
 		}
 
 		return true;
@@ -376,7 +361,8 @@ class HtmlFormatter {
 	 * processing by filterContent()
 	 * @return array
 	 */
-	protected function parseItemsToRemove() {
+	#[\ReturnTypeWillChange]
+	protected function parseItemsToRemove(): array {
 		$removals = [
 			'ID' => [],
 			'TAG' => [],

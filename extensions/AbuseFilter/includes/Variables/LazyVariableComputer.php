@@ -11,7 +11,9 @@ use MediaWiki\Extension\AbuseFilter\TextExtractor;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\RevisionLookup;
+use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Revision\SlotRecord;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
@@ -214,7 +216,7 @@ class LazyVariableComputer {
 				// this inference is ugly, but the name isn't accessible from here
 				// and we only want this for debugging
 				$varName = strpos( $parameters['text-var'], 'old_' ) === 0 ? 'old_links' : 'all_links';
-				if ( $vars->forFilter ) {
+				if ( $parameters['forFilter'] ?? false ) {
 					$this->logger->debug( "Loading $varName from DB" );
 					$links = $this->getLinksFromDB( $article );
 				} elseif ( $article->getContentModel() === CONTENT_MODEL_WIKITEXT ) {
@@ -375,6 +377,10 @@ class LazyVariableComputer {
 				$v2 = $getVarCB( $parameters['val2-var'] )->toInt();
 				$result = $v1 - $v2;
 				break;
+			case 'content-model-by-id':
+				$revRec = $this->revisionLookup->getRevisionById( $parameters['revid'] );
+				$result = $this->getContentModelFromRevision( $revRec );
+				break;
 			case 'revision-text-by-id':
 				$revRec = $this->revisionLookup->getRevisionById( $parameters['revid'] );
 				$result = $this->textExtractor->revisionToString( $revRec, $parameters['contextUser'] );
@@ -471,6 +477,20 @@ class LazyVariableComputer {
 				return array_keys( $users );
 			}
 		);
+	}
+
+	/**
+	 * @param ?RevisionRecord $revision
+	 * @return string
+	 */
+	private function getContentModelFromRevision( ?RevisionRecord $revision ): string {
+		// this is consistent with what is done on various places in RunVariableGenerator
+		// and RCVariableGenerator
+		if ( $revision !== null ) {
+			$content = $revision->getContent( SlotRecord::MAIN, RevisionRecord::RAW );
+			return $content->getModel();
+		}
+		return '';
 	}
 
 	/**

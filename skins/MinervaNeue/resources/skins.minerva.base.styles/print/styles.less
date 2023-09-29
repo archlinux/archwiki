@@ -2,13 +2,20 @@
 @import '../../../minerva.less/minerva.mixins.less';
 
 @media print {
+	.mw-editsection,
 	.noprint,
 	.banner-container,
 	.minerva-header,
+	.minerva-footer,
 	.minerva__tab-container,
 	.page-actions-menu,
 	.post-content {
 		display: none;
+	}
+
+	.printfooter {
+		display: block;
+		padding-top: 1em;
 	}
 
 	h1,

@@ -497,6 +497,9 @@ ve.init.Target.prototype.onTargetKeyDown = function ( e ) {
  * Handle toolbar resize events
  */
 ve.init.Target.prototype.onToolbarResize = function () {
+	if ( !this.getSurface() ) {
+		return;
+	}
 	this.getSurface().setPadding( {
 		top: this.getToolbar().getHeight() + this.toolbarScrollOffset
 	} );
@@ -522,7 +525,7 @@ ve.init.Target.prototype.createTargetWidget = function ( config ) {
  * @return {ve.ui.Surface}
  */
 ve.init.Target.prototype.createSurface = function ( dmDocOrSurface, config ) {
-	return new ve.ui.Surface( dmDocOrSurface, this.getSurfaceConfig( config ) );
+	return new ve.ui.Surface( this, dmDocOrSurface, this.getSurfaceConfig( config ) );
 };
 
 /**
