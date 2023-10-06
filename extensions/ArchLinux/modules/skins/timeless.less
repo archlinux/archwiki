@@ -4,6 +4,10 @@
 #p-logo {
     display: none !important;
 }
+/* hide logo text, but keep its box in the layout */
+#p-logo-text {
+    visibility: hidden;
+}
 
 /* make room for archnavbar and disable fixed searchbar */
 body, #mw-content-container {
@@ -89,6 +93,9 @@ body, #mw-content-container {
     }
 }
 @media screen and (min-width:851px) and (max-width:1099px) {
+    #p-logo-text {
+        display: none;
+    }
     #mw-footer {
         padding-left: 1em;
     }
@@ -97,10 +104,13 @@ body, #mw-content-container {
     }
 }
 @media screen and (max-width:850px) {
+    #p-logo-text {
+        display: none;
+    }
     #mw-footer {
         padding-left: 1em;
     }
-    #p-logo-text, #site-navigation h2, #site-tools h2, #user-tools h2 {
+    #site-navigation h2, #site-tools h2, #user-tools h2 {
         top: 75px;
     }
     .sidebar-inner, .dropdown {
