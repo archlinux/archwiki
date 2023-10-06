@@ -64,6 +64,23 @@ body, #mw-content-container {
     }
 }
 
+/* reset special border of the page title */
+.mw-body {
+    h1.firstHeading {
+        border-bottom: solid 3px #c8ccd1;
+    }
+}
+
+/* change MediaWiki's @blue color to Arch's blue */
+.suggestions {
+    .suggestions-result-current {
+        background-color: @link-color-normal;
+    }
+}
+.tools-inline li.selected {
+    border-bottom-color: @link-color-normal;
+}
+
 
 /* fixes for specific widths */
 @media screen and (max-width:1339px) {
@@ -91,5 +108,9 @@ body, #mw-content-container {
     }
     #menus-cover {
         top: 65px;
+    }
+    /* reset background for the box with category links (placed below the content) */
+    #mw-content-block {
+        background: @body-background-color;
     }
 }
