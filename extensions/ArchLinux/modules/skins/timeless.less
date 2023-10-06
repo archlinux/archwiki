@@ -33,11 +33,6 @@ body, #mw-content-container {
     background: transparent;
 }
 
-/* z-order fix */
-#personal-inner {
-    z-index: 200;
-}
-
 /* integrate footer into page background */
 #mw-footer {
     padding-left: 16em;
@@ -101,6 +96,40 @@ body, #mw-content-container {
     }
     #mw-content {
         margin-top: 1.75em;
+    }
+    /* avoid relative and absolute positioning, set the layout using grid */
+    #mw-content-block {
+        position: unset;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto;
+        /* content takes all columns on second row */
+        #mw-content-wrapper {
+            grid-row: 2;
+            grid-column-start: 1;
+            grid-column-end: -1;
+            /* remove margin that was for relative/absolute positioning */
+            #mw-content {
+                margin-top: 0;
+            }
+        }
+        /* Navigation, Wiki tools and Page tools take columns in the first row */
+        #mw-site-navigation, #mw-related-navigation {
+            grid-row: 1;
+            position: unset;
+            top: unset;
+            left: unset;
+            right: unset;
+        }
+        /* align navigation to the search box */
+        #mw-site-navigation {
+            margin-left: 2em;
+        }
+        /* Swap left and right margins since it is aligned to the left */
+        #mw-related-navigation > * {
+            margin-left: 0em;
+            margin-right: 1em;
+        }
     }
 }
 @media screen and (max-width:850px) {
