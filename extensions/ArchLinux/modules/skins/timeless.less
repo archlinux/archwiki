@@ -9,8 +9,13 @@
     visibility: hidden;
 }
 
+/* let body take the full height so its background applies in dark mode */
+body {
+    height: 100%;
+}
+
 /* make room for archnavbar and disable fixed searchbar */
-body, #mw-content-container {
+#mw-content-container {
     margin-top: 0;
 }
 #mw-content-container {
