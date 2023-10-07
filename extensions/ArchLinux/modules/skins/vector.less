@@ -84,9 +84,29 @@ body.skin-vector-2022 {
   }
 
   // keep padding as we are using a visual border
-  @media screen and (min-width: 1000px) {
+  @media screen {
     .mw-body {
-      padding-left: 0.5em;
+      padding: 1.5em;
+    }
+    .mw-ui-icon-flush-left {
+      margin-left: 0;
+    }
+    .mw-ui-icon-flush-right {
+      margin-right: 0;
+    }
+  }
+  @media screen and (max-width: 999px) {
+    // move horizontal padding from .mw-page-container to .mw-body and .mw-footer
+    .mw-page-container {
+      padding-left: 0;
+      padding-right: 0;
+    }
+    .mw-body, .mw-footer {
+      padding: 0.5em;
+    }
+    // increase max-width from 60em to 100%
+    .mw-content-container {
+      max-width: 100%;
     }
   }
 
@@ -107,6 +127,12 @@ body.skin-vector-2022 {
   #p-lang-btn.mw-portlet-empty {
     display: block;
     float: right;
+  }
+
+  // Align the language selector
+  .vector-page-titlebar > .mw-ui-button:last-child,
+  .vector-page-titlebar > .mw-portlet-lang:last-child {
+    margin-right: auto;
   }
 }
 
