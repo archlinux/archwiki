@@ -8,7 +8,8 @@
   "license-name": "GPL-2.0+",
   "type": "skin",
   "AutoloadClasses": {
-    "MediaWiki\\Extensions\\ArchLinux\\Hooks": "ArchLinux.hooks.php"
+    "MediaWiki\\Extensions\\ArchLinux\\Hooks": "ArchLinux.hooks.php",
+    "OOUI\\ArchLinuxTheme": "oojs-ui/php/themes/ArchLinuxTheme.php"
   },
   "Hooks": {
     "BeforePageDisplay": [
@@ -40,6 +41,21 @@
   "ResourceFileModulePaths": {
     "localBasePath": "modules",
     "remoteExtPath": "ArchLinux/modules"
+  },
+  "SkinOOUIThemes": {
+    "timeless": "ArchLinux",
+    "vector": "ArchLinux",
+    "vector-2022": "ArchLinux",
+    "monobook": "ArchLinux"
+  },
+  "OOUIThemePaths": {
+    "ArchLinux": {
+      "localBasePath": "oojs-ui/dist",
+      "remoteSkinPath": "ArchLinux/oojs-ui/dist",
+      "scripts": "oojs-ui-archlinux.js",
+      "styles": "oojs-ui-{module}-archlinux.css",
+      "images": "themes/archlinux/{module}.json"
+    }
   },
   "ConfigRegistry": {
     "archlinux": "GlobalVarConfig::newInstance"

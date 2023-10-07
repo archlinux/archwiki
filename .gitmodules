@@ -34,3 +34,6 @@
 	path = extensions/NativeSvgHandler
 	url = https://github.com/wikimedia/mediawiki-extensions-NativeSvgHandler.git
 	branch = REL1_40
+[submodule "extensions/ArchLinux/oojs-ui"]
+	path = extensions/ArchLinux/oojs-ui
+	url = https://github.com/lahwaacz/oojs-ui.git
