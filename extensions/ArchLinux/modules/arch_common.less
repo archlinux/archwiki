@@ -98,36 +98,38 @@ body {
     font-weight: normal;
 }
 
-/* Colors of links in the content, MediaWiki navigation and the footer */
-#content,
-header.mw-header li:not(.new), // Vector
-#mw-panel-toc,                // Vector
-#mw-navigation li:not(.new),  // Legacy Vector
-#mw-panel li:not(.new),       // Legacy Vector
-#column-one li:not(.new),     // MonoBook
-#footer {
+// Colors of links in the content, footer and MediaWiki UI elements
+#globalWrapper,     // Monobook (contains all page elements except archnavbar)
+#mw-wrapper,        // Timeless (contains all page elements except archnavbar)
+.mw-page-container, // Vector (contains all page elements except archnavbar)
+.mw-body,           // Legacy Vector
+#mw-navigation,     // Legacy Vector
+.mw-footer          // Legacy Vector
+{
     a:not([role=button]) {
         .arch-link-color();
     }
 }
 
-/* Color of visited links for content and left column
- * (not for MediaWiki navigation elements above the page) */
+// Color of visited links for content, left sidebar and right sidebar
+// (not for MediaWiki UI elements and the footer)
 #content,
-#mw-panel li:not(.new),       // Legacy Vector
-#p-navigation li:not(.new),   // MonoBook
-#p-tb li:not(.new)            // MonoBook
+#p-navigation li:not(.new),         // MonoBook, Timeless
+#p-tb li:not(.new),                 // MonoBook, Timeless
+.vector-main-menu-container,        // Vector
+#mw-panel-toc,                      // Vector
+.vector-legacy-sidebar li:not(.new) // Legacy Vector
 {
-  a:not(.new):not([role=button]):visited {
-    color: @link-color-visited !important;
-  }
+    a:not(.new):visited {
+        color: @link-color-visited !important;
+    }
 }
 
-/* Color for links to inexistent pages */
+// Color for links to inexistent pages
 a.new,
 a.new:visited,
-#mw-navigation li.new a,         // Vector
-#mw-navigation li.new a:visited  // Vector
+#mw-navigation li.new a,         // tabs in Legacy Vector, Monotbook, Timeless
+#mw-navigation li.new a:visited  // tabs in Legacy Vector, Monotbook, Timeless
 {
     color: @link-color-new !important;
 }
