@@ -86,6 +86,23 @@ body {
     border-bottom-color: @link-color-normal;
 }
 
+// reset hardcoded white-on-blue colors to black-on-gray as in Vector
+// (this affects e.g. the "Compare selected revisions" button on the history page)
+body.skin-timeless form:not( .oo-ui-layout ) {
+    button,
+    input[ type='submit' ] {
+        background-color: #f8f9fa;
+        color: #202122;
+        border-color: #a2a9b1;
+
+        &:not( :disabled ):hover,
+        &:not( :disabled ):active {
+            background-color: #ffffff;
+            color: #404244;
+        }
+    }
+}
+
 
 /* fixes for specific widths */
 @media screen and (max-width:1339px) {
