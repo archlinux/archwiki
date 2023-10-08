@@ -106,23 +106,9 @@ header.mw-header li:not(.new), // Vector
 #mw-panel li:not(.new),       // Legacy Vector
 #column-one li:not(.new),     // MonoBook
 #footer {
-  a:not([role=button]) {
-    &:not(.new) {
-      text-decoration: none;
-      color: @link-color-normal !important;
-      &:hover {
-        text-decoration: underline;
-        background-color: transparent;
-        color: @link-color-hover !important;
-      }
+    a:not([role=button]) {
+        .arch-link-color();
     }
-
-    &:active, &:focus,
-    /* a:hover overrides a:active, which we don't want' */
-    &:active:hover, &:focus:hover {
-      color: @link-color-active !important;
-    }
-  }
 }
 
 /* Color of visited links for content and left column

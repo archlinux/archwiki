@@ -20,3 +20,24 @@
 @link-color-active: #e90;
 @link-color-visited: #666;
 @link-color-new: #b00;
+
+// Mixin for styling links
+.arch-link-color() {
+    &:not(.new) {
+        text-decoration: none;
+        color: @link-color-normal !important;
+        &:hover {
+            text-decoration: underline;
+            background-color: transparent;
+            color: @link-color-hover !important;
+        }
+    }
+
+    &:active,
+    &:focus,
+    &:active:hover,  // a:hover overrides a:active, which we do not want
+    &:focus:hover  // a:hover overrides a:focus, which we do not want
+    {
+        color: @link-color-active !important;
+    }
+}
