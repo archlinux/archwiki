@@ -73,6 +73,22 @@ body {
         border-color: @link-color-normal;
         box-shadow: inset 0 0 0 1px @link-color-normal;
     }
+
+    // Color overrides for deprecated "MW-UI" buttons (e.g. login form on Special:UserLogin)
+    .mw-ui-input:not(:disabled):focus {
+        border-color: @link-color-normal;
+        box-shadow: inset 0 0 0 1px @link-color-normal;
+    }
+    .mw-ui-button.mw-ui-progressive:not(.mw-ui-quiet):not(:disabled) {
+        &, &:active {
+            background-color: @link-color-normal;
+            border-color: @link-color-normal;
+        }
+        &:hover, &:active:hover {
+            background-color: transparent;
+            color: @link-color-hover;
+        }
+    }
 }
 
 /*
