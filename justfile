@@ -65,4 +65,33 @@ compose-run *args:
 php *args='-h':
 	{{PHP-RUN}} php {{args}}
 
+update version:
+	#!/usr/bin/env bash
+	set -euo pipefail
+
+	TMPDIR=$(mktemp -d)
+
+	version={{version}}
+	branch=${version%.*}
+
+	pushd $TMPDIR >/dev/null
+	wget https://releases.wikimedia.org/mediawiki/${branch}/mediawiki-{{version}}.tar.gz{,.sig}
+	gpg --verify-files mediawiki-{{version}}.tar.gz.sig
+	popd >/dev/null
+
+	shopt -s extglob
+	rm -rf !("justfile"|"favicon.ico"|".gitmodules"|".gitignore"|"sitemaps"|".git"|"docker"|".idea"|"extensions")
+	pushd extensions >/dev/null
+	rm -rf !("ArchLinux"|"BounceHandler"|"CheckUser"|"CodeMirror"|"DarkMode"|"FlarumAuth"|"Lockdown"|"NativeSvgHandler"|"TitleKey"|"UserMerge")
+	popd >/dev/null
+	shopt -u extglob
+
+	tar -xz --strip-components=1 -f $TMPDIR/mediawiki-{{version}}.tar.gz
+
+	rm -rf $TMPDIR
+
+	git submodule update
+	git submodule foreach git checkout REL${branch/./_}
+	git submodule foreach git pull
+
 # vim: set ft=make :
