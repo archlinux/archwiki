@@ -10,7 +10,7 @@
 	"descriptionmsg": "oathauth-desc",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"license-name": "GPL-2.0-or-later AND GPL-3.0-or-later",
 	"attributes": {
@@ -21,7 +21,8 @@
 		}
 	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\OATHAuth\\": "src/"
+		"MediaWiki\\Extension\\OATHAuth\\": "src/",
+		"MediaWiki\\Extension\\OATHAuth\\Maintenance\\": "maintenance/"
 	},
 	"TestAutoloadNamespaces": {
 		"MediaWiki\\Extension\\OATHAuth\\Tests\\": "tests/phpunit/"
@@ -47,7 +48,7 @@
 		"getUserPermissionsErrors": "main",
 		"UserEffectiveGroups": "main",
 		"UserGetRights": "main",
-		"BeforeCreateEchoEvent": "\\MediaWiki\\Extension\\OATHAuth\\Notifications\\Manager::onBeforeCreateEchoEvent"
+		"BeforeCreateEchoEvent": "echo"
 	},
 	"HookHandlers": {
 		"main": {
@@ -61,6 +62,9 @@
 		},
 		"updater": {
 			"class": "MediaWiki\\Extension\\OATHAuth\\Hook\\UpdateTables"
+		},
+		"echo": {
+			"class": "MediaWiki\\Extension\\OATHAuth\\Hook\\EchoHandler"
 		}
 	},
 	"MessagesDirs": {
@@ -84,6 +88,9 @@
 		},
 		"OATHRequiredForGroups": {
 			"value": []
+		},
+		"OATHAuthMultipleDevicesMigrationStage": {
+			"value": 768
 		}
 	},
 	"ResourceModules": {

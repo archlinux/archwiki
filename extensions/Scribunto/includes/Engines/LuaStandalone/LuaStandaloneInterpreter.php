@@ -2,13 +2,15 @@
 
 namespace MediaWiki\Extension\Scribunto\Engines\LuaStandalone;
 
+use InvalidArgumentException;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaError;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreter;
+use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreterNotExecutableError;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreterNotFoundError;
 use MediaWiki\Extension\Scribunto\ScribuntoException;
-use MWException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use RuntimeException;
 use UtfNormal\Validator;
 
 class LuaStandaloneInterpreter extends LuaInterpreter {
@@ -63,7 +65,6 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 	/**
 	 * @param LuaStandaloneEngine $engine
 	 * @param array $options
-	 * @throws MWException
 	 * @throws LuaInterpreterNotFoundError
 	 * @throws ScribuntoException
 	 */
@@ -101,7 +102,7 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 			$options['luaPath'] = __DIR__ . "/binaries/$path";
 
 			if ( !is_executable( $options['luaPath'] ) ) {
-				throw new MWException(
+				throw new LuaInterpreterNotExecutableError(
 					sprintf( 'The lua binary (%s) is not executable.', $options['luaPath'] )
 				);
 			}
@@ -259,10 +260,10 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 	/** @inheritDoc */
 	public function callFunction( $func, ...$args ) {
 		if ( !( $func instanceof LuaStandaloneInterpreterFunction ) ) {
-			throw new MWException( __METHOD__ . ': invalid function type' );
+			throw new InvalidArgumentException( __METHOD__ . ': invalid function type' );
 		}
 		if ( $func->interpreterId !== $this->id ) {
-			throw new MWException( __METHOD__ . ': function belongs to a different interpreter' );
+			throw new InvalidArgumentException( __METHOD__ . ': function belongs to a different interpreter' );
 		}
 		$args = func_get_args();
 		unset( $args[0] );
@@ -527,11 +528,10 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 	 * @param int $level
 	 *
 	 * @return string
-	 * @throws MWException
 	 */
 	protected function encodeLuaVar( $var, $level = 0 ) {
 		if ( $level > 100 ) {
-			throw new MWException( __METHOD__ . ': recursion depth limit exceeded' );
+			throw new RuntimeException( __METHOD__ . ': recursion depth limit exceeded' );
 		}
 		$type = gettype( $var );
 		switch ( $type ) {
@@ -550,7 +550,7 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 					if ( $var === -INF ) {
 						return '(-1/0)';
 					}
-					throw new MWException( __METHOD__ . ': cannot convert non-finite number' );
+					throw new InvalidArgumentException( __METHOD__ . ': cannot convert non-finite number' );
 				}
 				return sprintf( '%.17g', $var );
 			case 'string':
@@ -582,21 +582,21 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 				return $s;
 			case 'object':
 				if ( !( $var instanceof LuaStandaloneInterpreterFunction ) ) {
-					throw new MWException( __METHOD__ . ': unable to convert object of type ' .
+					throw new InvalidArgumentException( __METHOD__ . ': unable to convert object of type ' .
 						get_class( $var ) );
 				} elseif ( $var->interpreterId !== $this->id ) {
-					throw new MWException(
+					throw new InvalidArgumentException(
 						__METHOD__ . ': unable to convert function belonging to a different interpreter'
 					);
 				} else {
 					return 'chunks[' . intval( $var->id ) . ']';
 				}
 			case 'resource':
-				throw new MWException( __METHOD__ . ': unable to convert resource' );
+				throw new InvalidArgumentException( __METHOD__ . ': unable to convert resource' );
 			case 'NULL':
 				return 'nil';
 			default:
-				throw new MWException( __METHOD__ . ': unable to convert variable of unknown type' );
+				throw new InvalidArgumentException( __METHOD__ . ': unable to convert variable of unknown type' );
 		}
 	}
 
@@ -647,7 +647,7 @@ class LuaStandaloneInterpreter extends LuaInterpreter {
 			$status = proc_get_status( $this->proc );
 			// XXX: Should proc_get_status docs be changed so that
 			// its documented as possibly returning false?
-			// @phan-suppress-next-line PhanTypeComparisonFromArray
+			'@phan-var array|false $status';
 			if ( $status === false ) {
 				// WTF? Let the caller throw an appropriate error.
 				return;

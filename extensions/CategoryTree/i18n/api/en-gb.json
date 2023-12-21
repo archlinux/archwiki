@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Dejavu",
-			"Mako001"
+			"Mako001",
+			"Piano1forte2"
 		]
 	},
 	"apierror-categorytree-invalidjson": "Options must be a valid JSON object."

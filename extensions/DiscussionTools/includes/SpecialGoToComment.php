@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
+use MediaWiki\Title\Title;
 use RedirectSpecialPage;
 use SpecialPage;
-use Title;
 
 class SpecialGoToComment extends RedirectSpecialPage {
 

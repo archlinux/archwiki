@@ -9,6 +9,7 @@
 			"Mark85296341",
 			"Roc michael",
 			"Sheepy",
+			"Winston Sung",
 			"Wrightbus",
 			"捍粵者"
 		]
@@ -31,6 +32,7 @@
 	"replacetext_choosepagesforedit": "將下列{{PLURAL:$3|頁面|$3 個頁面}}內容中的 \"$1\" 取代為 \"$2\"：",
 	"replacetext_choosepagesformove": "將下列{{PLURAL:$3|頁面|$3 個頁面}}標題中的 \"$1\" 取代為 \"$2\"：",
 	"replacetext_cannotmove": "無法移動以下{{PLURAL:$1|頁面|$1 個頁面}}：",
+	"replacetext_cannotedit": "無法編輯以下 {{PLURAL:$1|1|$1}} 個頁面：",
 	"replacetext_formovedpages": "已移動頁面：",
 	"replacetext_savemovedpages": "建立舊標題重新導向頁面至新標題",
 	"replacetext_watchmovedpages": "監視這些頁面",
@@ -44,7 +46,7 @@
 	"replacetext_warning": "'''警告：'''目前已有 $1 個頁面包含取代的字串 \"$2\"，若您進行取代將無法區別原本存在的字串以及取代的字串。",
 	"replacetext_blankwarning": "'''警告：'''因取代的字串為空白，此操作將無法還原。",
 	"replacetext_continue": "繼續",
-	"replacetext_announce": "透過 $1 與監視清單來通知這些編輯。",
+	"replacetext_botedit": "將變更標記為機器人編輯",
 	"replacetext_editsummary": "文字取代 - \"$1\" 取代為 \"$2\"",
 	"replacetext_reminder": "要同時變動在其它頁面上連至此頁面的連結，請前往 $1。",
 	"replacetext_cfg_error": "ReplaceText 設置錯誤",

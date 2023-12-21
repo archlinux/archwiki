@@ -15,15 +15,17 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { Embed } = require( 'mmv.ui.reuse.shareembed' );
+
 ( function () {
 	var $qf = $( '#qunit-fixture' );
 
 	QUnit.module( 'mmv.ui.reuse.Embed', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf );
+		var embed = new Embed( $qf );
 
-		assert.true( embed instanceof mw.mmv.ui.reuse.Embed, 'Embed UI element is created.' );
+		assert.true( embed instanceof Embed, 'Embed UI element is created.' );
 		assert.strictEqual( embed.$pane.length, 1, 'Pane div is created.' );
 		assert.true( embed.embedTextHtml instanceof OO.ui.Element, 'Html snipped text area created.' );
 		assert.true( embed.embedTextWikitext instanceof OO.ui.Element, 'Wikitext snipped text area created.' );
@@ -39,7 +41,7 @@
 	} );
 
 	QUnit.test( 'changeSize(): Skip if no item selected.', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf ),
+		var embed = new Embed( $qf ),
 			width = 10,
 			height = 20;
 
@@ -59,12 +61,12 @@
 	} );
 
 	QUnit.test( 'changeSize(): HTML size menu item selected.', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf ),
+		var embed = new Embed( $qf ),
 			width = 10,
 			height = 20;
 
 		embed.embedSwitch.findSelectedItem = function () {
-			return { getData: function () { return 'html'; } };
+			return { getData: () => 'html' };
 		};
 		embed.updateEmbedHtml = function ( thumb, w, h ) {
 			assert.strictEqual( thumb.url, undefined, 'Empty thumbnail passed.' );
@@ -82,12 +84,12 @@
 	} );
 
 	QUnit.test( 'changeSize(): Wikitext size menu item selected.', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf ),
+		var embed = new Embed( $qf ),
 			width = 10,
 			height = 20;
 
 		embed.embedSwitch.findSelectedItem = function () {
-			return { getData: function () { return 'wikitext'; } };
+			return { getData: () => 'wikitext' };
 		};
 		embed.updateEmbedHtml = function () {
 			assert.true( false, 'Dealing with wikitext menu, this should not have been called.' );
@@ -103,7 +105,7 @@
 	} );
 
 	QUnit.test( 'updateEmbedHtml(): Do nothing if set() not called before.', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf ),
+		var embed = new Embed( $qf ),
 			width = 10,
 			height = 20;
 
@@ -116,7 +118,7 @@
 	} );
 
 	QUnit.test( 'updateEmbedHtml():', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf ),
+		var embed = new Embed( $qf ),
 			url = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
 			thumbUrl = 'https://upload.wikimedia.org/wikipedia/thumb/Foobar.jpg',
 			imageInfo = { url: url },
@@ -156,7 +158,7 @@
 	} );
 
 	QUnit.test( 'updateEmbedWikitext(): Do nothing if set() not called before.', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf ),
+		var embed = new Embed( $qf ),
 			width = 10;
 
 		assert.expect( 0 );
@@ -168,7 +170,7 @@
 	} );
 
 	QUnit.test( 'updateEmbedWikitext():', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf ),
+		var embed = new Embed( $qf ),
 			imageInfo = {},
 			repoInfo = {},
 			caption = '-',
@@ -189,7 +191,7 @@
 	} );
 
 	QUnit.test( 'getPossibleImageSizesForWikitext()', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf ),
+		var embed = new Embed( $qf ),
 			exampleSizes = [
 				// Big wide image
 				{
@@ -227,7 +229,7 @@
 	} );
 
 	QUnit.test( 'set():', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf ),
+		var embed = new Embed( $qf ),
 			title = mw.Title.newFromText( 'File:Foobar.jpg' ),
 			src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
 			url = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg',
@@ -266,7 +268,7 @@
 	} );
 
 	QUnit.test( 'empty():', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf ),
+		var embed = new Embed( $qf ),
 			width = 15,
 			height = 20;
 
@@ -291,7 +293,7 @@
 	} );
 
 	QUnit.test( 'attach()/unattach():', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf ),
+		var embed = new Embed( $qf ),
 			title = mw.Title.newFromText( 'File:Foobar.jpg' ),
 			src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
 			url = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg',
@@ -354,7 +356,7 @@
 	} );
 
 	QUnit.test( 'handleTypeSwitch():', function ( assert ) {
-		var embed = new mw.mmv.ui.reuse.Embed( $qf );
+		var embed = new Embed( $qf );
 
 		assert.strictEqual( embed.isSizeMenuDefaultReset, false, 'Reset flag intialized correctly.' );
 
@@ -363,7 +365,7 @@
 		};
 
 		// HTML selected
-		embed.handleTypeSwitch( { getData: function () { return 'html'; } } );
+		embed.handleTypeSwitch( { getData: () => 'html' } );
 
 		assert.strictEqual( embed.isSizeMenuDefaultReset, true, 'Reset flag updated correctly.' );
 		assert.strictEqual( embed.embedSizeSwitchWikitext.getMenu().isVisible(), false, 'Wikitext size menu should be hidden.' );
@@ -373,7 +375,7 @@
 		};
 
 		// Wikitext selected, we are done resetting defaults
-		embed.handleTypeSwitch( { getData: function () { return 'wikitext'; } } );
+		embed.handleTypeSwitch( { getData: () => 'wikitext' } );
 
 		assert.strictEqual( embed.isSizeMenuDefaultReset, true, 'Reset flag updated correctly.' );
 		assert.strictEqual( embed.embedSizeSwitchHtml.getMenu().isVisible(), false, 'HTML size menu should be hidden.' );
@@ -383,9 +385,9 @@
 		var embed,
 			oldUserIsAnon = mw.user.isAnon;
 
-		mw.user.isAnon = function () { return true; };
+		mw.user.isAnon = () => true;
 
-		embed = new mw.mmv.ui.reuse.Embed( $qf );
+		embed = new Embed( $qf );
 
 		embed.attach();
 

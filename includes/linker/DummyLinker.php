@@ -6,8 +6,8 @@ use IContextSource;
 use Language;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use Parser;
-use User;
 
 /**
  * @since 1.18
@@ -444,4 +444,7 @@ class DummyLinker {
 
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( DummyLinker::class, 'DummyLinker' );

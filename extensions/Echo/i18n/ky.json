@@ -84,6 +84,7 @@
 	"echo-notification-notice-text-only": "Кабарламалар",
 	"echo-overlay-link": "Бардык кабарламалар",
 	"echo-overlay-title": "<b>Кабарламалар</b>",
+	"echo-mark-all-as-read": "{{PLURAL:$1|Баарын}} окулду деп белгилөө",
 	"echo-mark-all-as-read-confirmation": "$1 {{PLURAL:$1|кабарлама}} окулду деп белгиленген",
 	"echo-displaysnippet-title": "Жаңы кабарлама",
 	"echo-date-today": "Бүгүнкү",

@@ -26,7 +26,7 @@
  */
 
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Status\Status;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -45,7 +45,7 @@ class CleanupUploadStash extends Maintenance {
 	}
 
 	public function execute() {
-		$repo = MediaWikiServices::getInstance()->getRepoGroup()->getLocalRepo();
+		$repo = $this->getServiceContainer()->getRepoGroup()->getLocalRepo();
 		$tempRepo = $repo->getTempRepo();
 
 		$dbr = $repo->getReplicaDB();
@@ -68,7 +68,7 @@ class CleanupUploadStash extends Maintenance {
 			// finish the read before starting writes.
 			$keys = [];
 			foreach ( $res as $row ) {
-				array_push( $keys, $row->us_key );
+				$keys[] = $row->us_key;
 			}
 
 			$this->output( 'Removing ' . count( $keys ) . " file(s)...\n" );

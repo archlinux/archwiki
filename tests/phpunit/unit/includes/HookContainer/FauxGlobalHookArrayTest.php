@@ -29,11 +29,13 @@ class FauxGlobalHookArrayTest extends \MediaWikiUnitTestCase {
 		$container = new HookContainer( $registry, $factory );
 		$hooks = new FauxGlobalHookArray( $container );
 
+		$this->expectDeprecationAndContinue( '/getHandlerCallbacks/' );
+
 		// Register a handler via the array
 		$hooks['FirstHook'][] = $handler;
 
 		$this->assertTrue( $container->isRegistered( 'FirstHook' ) );
-		$this->assertCount( 1, $container->getLegacyHandlers( 'FirstHook' ) );
+		$this->assertCount( 1, $container->getHandlerCallbacks( 'FirstHook' ) );
 
 		$this->assertTrue( isset( $hooks['FirstHook'] ) );
 		$this->assertCount( 1, $hooks['FirstHook'] );

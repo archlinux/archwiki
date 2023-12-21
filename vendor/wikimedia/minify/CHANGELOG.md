@@ -1,5 +1,28 @@
 # Changelog
 
+## 2.5.1 (2023-10-06)
+
+* Fix source map output for multi-line templates. (Tim Starling) [T348280](https://phabricator.wikimedia.org/T348280)
+
+## 2.5.0 (2023-08-11)
+
+Added:
+
+* bin: Add `css-remap` command. (Timo Tijhof)
+* IdentityMinifierState and JavaScriptMinifier::createIdentityMinifier(). (Tim Starling)
+* MinifierState::ensureNewline()
+* IndexMap class, for generating a combined source map
+
+## 2.4.0 (2023-03-20)
+
+Added:
+
+* JavaScriptMinifier: Add ES2016 syntax support. (Siddharth VP) [T277675](https://phabricator.wikimedia.org/T277675)
+
+Changed:
+
+* package: Require `ext-fileinfo` in composer.json. (Sam Reed)
+
 ## 2.3.0 (2022-04-19)
 
 Added:

@@ -1,11 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"V.narsikar",
-			"Amire80"
+			"Amire80",
+			"V.narsikar"
 		]
 	},
-	"apihelp-echomarkread-description": "सध्याच्या सदस्यासाठी अधिसूचनांवर वाचले अशी खूण करा.",
 	"apihelp-echomarkread-summary": "सध्याच्या सदस्यासाठी अधिसूचनांवर वाचले अशी खूण करा.",
 	"apihelp-echomarkread-param-list": "वाचले म्हणून खूण करण्यास अधिसूचना ओळखणींची यादी.",
 	"apihelp-echomarkread-param-unreadlist": "वाचले नाही अशी खूण करण्यास अधिसूचनांच्या ओळखणींची यादी.",
@@ -14,11 +13,9 @@
 	"apihelp-echomarkread-example-1": "अधिसूचना क्रमांक ८ वर वाचले अशी खूण करा",
 	"apihelp-echomarkread-example-2": "सर्व अधिसूचना वाचल्यात अशी खूण करा",
 	"apihelp-echomarkread-example-3": "अधिसूचना १ वर वाचले नाही अशी खूण करा",
-	"apihelp-echomarkseen-description": "सध्याच्या सदस्यास अधिसूचना बघितल्या अशी खूण करा.",
 	"apihelp-echomarkseen-summary": "सध्याच्या सदस्याच्या अधिसूचना बघितल्या अशी खूण करा.",
 	"apihelp-echomarkseen-example-1": "सर्व प्रकारच्या अधिसूचना बघितल्या अशी खूण करा",
 	"apihelp-echomarkseen-param-type": "बघितले अशी खूण करण्यास, अधिसूचनेचे प्रकार:'सजगता', 'संदेश' किंवा 'सर्व'.",
-	"apihelp-query+notifications-description": "सध्याच्या सदस्यासाठी ताटकळत असलेल्या अधिसूचना प्राप्त करा.",
 	"apihelp-query+notifications-summary": "सध्याच्या सदस्यासाठी ताटकळत असलेल्या अधिसूचना प्राप्त करा.",
 	"apihelp-query+notifications-param-prop": "विनंती करावयाचा तपशिल.",
 	"apihelp-query+notifications-param-sections": "पृच्छा करावयासाठीचे विभाग (म्हणजे - 'सजगता' व 'संदेश' यांची सरमिसळ).",

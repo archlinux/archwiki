@@ -43,7 +43,7 @@ class LanguageDataTest extends IntegrationTestCase {
 		static::assertEquals( $expectedData, $data );
 	}
 
-	public function provideLocalData(): array {
+	public static function provideLocalData(): array {
 		return [
 			// Boring
 			[ 'en', [], '../cases/datatest-en.json' ],

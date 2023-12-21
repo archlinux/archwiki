@@ -5,7 +5,6 @@
 			"SemanticPioneer"
 		]
 	},
-	"apihelp-query+extracts-description": "Zwraca zwykły tekst lub fragmenty HTML podanych stron.",
 	"apihelp-query+extracts-summary": "Zwraca zwykły tekst lub fragmenty HTML podanych stron.",
 	"apihelp-query+extracts-param-chars": "Ile znaków ma zostać zwróconych. Rzeczywisty zwracany tekst może być nieco dłuższy.",
 	"apihelp-query+extracts-param-sentences": "Jak wiele zdań ma zostać zwróconych.",

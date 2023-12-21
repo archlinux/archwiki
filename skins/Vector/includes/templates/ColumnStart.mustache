@@ -1,0 +1,16 @@
+{{#is-zebra-enabled}}<div class="vector-column-start">{{/is-zebra-enabled}}
+	{{>MainMenuPinned}}
+	{{#data-toc}}
+	<input type="checkbox" id="vector-toc-collapsed-checkbox" class="vector-menu-checkbox">
+	<nav id="mw-panel-toc" role="navigation" aria-label="{{ msg-vector-toc-label }}" data-event-name="ui.sidebar-toc" class="mw-table-of-contents-container vector-toc-landmark vector-sticky-pinned-container">
+		{{! T313060 Additional container div needed to prevent the sticky element from being siblings with the footer }}
+		{{#data-toc-pinnable-container}}
+		{{>PinnableContainer/Pinned/Open}}
+			{{#is-pinned}}
+				{{#data-toc}}{{>TableOfContents}}{{/data-toc}}
+			{{/is-pinned}}
+		{{>PinnableContainer/Close}}
+		{{/data-toc-pinnable-container}}
+	</nav>
+	{{/data-toc}}
+{{#is-zebra-enabled}}</div>{{/is-zebra-enabled}}

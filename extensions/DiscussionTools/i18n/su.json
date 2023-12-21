@@ -6,14 +6,14 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Bales",
-	"discussiontools-replylink": "bales",
+	"discussiontools-replylink": "{{GENDER:|balesan}}",
 	"discussiontools-replywidget-advanced": "Lengkep",
 	"discussiontools-replywidget-cancel": "Bolay",
 	"discussiontools-replywidget-mode-source": "Sumber",
 	"discussiontools-replywidget-mode-visual": "Pisual",
-	"discussiontools-replywidget-placeholder-reply": "Bales ka {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Bales}} ka {{BIDI: $1 }}",
 	"discussiontools-replywidget-preview": "Pramidang",
-	"discussiontools-replywidget-reply": "Bales",
+	"discussiontools-replywidget-reply": "{{GENDER:|Balesan}}",
 	"discussiontools-replywidget-summary": "Ringkesna",
 	"discussiontools-replywidget-watchthis": "Tambahkeun kaca ieu kana [[Special:Watchlist|daptar awaskeuneun]] anjeun",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1| jalma|jalma}} dina diskusi",
@@ -23,7 +23,8 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "Ngalanggan",
 	"discussiontools-topicsubscription-button-unsubscribe": "Eureun ngalanggan",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Eureun ngalanggan",
-	"discussiontools-topicsubscription-notify-subscribed-body": "Anjeun bakal nampa iber lamun aya nu mairan ieu jejer.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "Anjeun geus ngalanggan!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "Anjeun moal nampa deui iber lamun aya anu mairan dina ieu jejer."
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Anjeun}} bakal nampa béwara ngeunaan koméntar anyar dina topik ieu.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Anjeun}} geus ngalanggan!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Anjeun}} moal nampi bewara deui ngeunaan koméntar anyar dina topik ieu.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Anjeun}} geus eureun ngalanggan."
 }

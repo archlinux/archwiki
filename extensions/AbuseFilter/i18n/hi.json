@@ -3,6 +3,7 @@
 		"authors": [
 			"Abijeet Patro",
 			"Akansha",
+			"Amire80",
 			"Ansumang",
 			"ArmouredCyborg",
 			"BaRaN6161 TURK",
@@ -24,8 +25,7 @@
 			"Smtchahal",
 			"Wikiuser13",
 			"गोपाल",
-			"संजीव कुमार",
-			"Amire80"
+			"संजीव कुमार"
 		]
 	},
 	"abusefilter-desc": "संपादनों पर स्वतः शोध प्रणाली का प्रयोग लागू करता है",
@@ -408,5 +408,11 @@
 	"abusefilter-view-privatedetails-legend": "व्यक्तिगत विवरण देखें",
 	"abusefilter-view-privatedetails-reason": "निजी विवरण तक पहुंचने का कारण",
 	"abusefilter-invalid-request-noid": "अमान्य अनुरोध! आपको दुर्व्यवहार लॉग विवरण पृष्ठ पर फ़ॉर्म के माध्यम से निजी लॉग विवरण एक्सेस करना होगा और एक कारण प्रदान करना होगा।",
+	"abusefilter-blocked-domains-notes": "टिप्पणियाँ",
+	"abusefilter-blocked-domains-notes-header": "टिप्पणियाँ",
+	"abusefilter-blocked-domains-actions-header": "क्रियाएँ",
+	"abusefilter-blocked-domains-remove": "हटाएँ",
+	"abusefilter-blocked-domains-remove-reason": "कारण",
+	"abusefilter-blocked-domains-remove-submit": "हटाएँ",
 	"abusefilter-log-ip-not-available": "उपलब्ध नहीं है"
 }

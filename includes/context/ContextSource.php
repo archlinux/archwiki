@@ -18,9 +18,13 @@
  * @file
  */
 
+use MediaWiki\Config\Config;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\CsrfTokenSet;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use Wikimedia\NonSerializable\NonSerializableTrait;
 
 /**

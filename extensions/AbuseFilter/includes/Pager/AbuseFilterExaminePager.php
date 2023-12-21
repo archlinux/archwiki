@@ -4,10 +4,10 @@ namespace MediaWiki\Extension\AbuseFilter\Pager;
 
 use MediaWiki\Extension\AbuseFilter\AbuseFilterChangesList;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Title\Title;
 use RecentChange;
 use ReverseChronologicalPager;
 use stdClass;
-use Title;
 use Wikimedia\Rdbms\IDatabase;
 
 class AbuseFilterExaminePager extends ReverseChronologicalPager {
@@ -56,14 +56,12 @@ class AbuseFilterExaminePager extends ReverseChronologicalPager {
 	 */
 	public function getQueryInfo() {
 		$rcQuery = RecentChange::getQueryInfo();
-		$info = [
+		return [
 			'tables' => $rcQuery['tables'],
 			'fields' => $rcQuery['fields'],
 			'conds' => $this->conds,
 			'join_conds' => $rcQuery['joins'],
 		];
-
-		return $info;
 	}
 
 	/**

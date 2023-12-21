@@ -17,6 +17,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+use Wikimedia\Equivset\Command\BenchmarkEquivset;
 use Wikimedia\Equivset\Command\GenerateEquivset;
 use Symfony\Component\Console\Application;
 
@@ -24,5 +25,6 @@ require __DIR__.'/../vendor/autoload.php';
 
 $application = new Application();
 $application->add(new GenerateEquivset());
+$application->add(new BenchmarkEquivset());
 
 $application->run();

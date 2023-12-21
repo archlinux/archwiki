@@ -1,17 +1,16 @@
-@import 'mediawiki.ui/variables.less';
+@import 'mediawiki.skin.variables.less';
 
 .ext-WikiEditor-realtimepreview-button:hover {
-	background-color: @colorGray14;
+	background-color: @background-color-interactive;
 }
 
 .ext-WikiEditor-realtimepreview-button.oo-ui-toggleWidget-on .oo-ui-labelElement-label {
-	color: @color-primary;
+	color: @color-progressive;
 }
 
 /* stylelint-disable selector-max-id */
 .ext-WikiEditor-realtimepreview-textbox#wpTextbox1,
 .mw-editform .ext-WikiEditor-realtimepreview-textbox#wpTextbox1 {
-	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	resize: none;
 	height: 100%;
 	min-height: auto;
@@ -28,10 +27,10 @@
 }
 
 .ext-WikiEditor-ResizingDragBar-ns {
-	border-top: 1px solid @colorGray12;
+	border-top: @border-width-base @border-style-base @border-color-subtle;
 }
 
-@loadingbar-width: 20%;
+@width-loading-bar: 20%;
 
 .ext-WikiEditor-realtimepreview-loadingbar div {
 	position: absolute;
@@ -39,23 +38,22 @@
 	display: block;
 	opacity: 1;
 	content: ' ';
-	background-color: @color-primary;
-	width: @loadingbar-width;
+	background-color: @background-color-progressive;
+	width: @width-loading-bar;
 	height: 4px;
 	// Hide the loading bar to start with; it'll be shown if the loading state persists for more than 1s.
 	visibility: hidden;
-	animation: loadingbar 1.5s 1s infinite linear alternate;
+	animation: loading-bar 1.5s 1s infinite linear alternate;
 }
 
-@keyframes loadingbar {
+@keyframes loading-bar {
 	0% {
 		visibility: visible;
 		left: 0;
 	}
 
 	100% {
-		// stylelint-disable-next-line plugin/no-unsupported-browser-features
-		left: calc( 100% - @loadingbar-width );
+		left: calc( 100% - @width-loading-bar );
 	}
 }
 

@@ -5,7 +5,6 @@
 			"Jon Harald Søby"
 		]
 	},
-	"apihelp-scribunto-console-description": "Intern modul for å behandle XHR-forespørsler fra Scribunto-konsollen.",
 	"apihelp-scribunto-console-summary": "Intern modul for å betjene XHR-forespørsler fra Scribunto-konsollen.",
 	"apihelp-scribunto-console-param-title": "Tittelen til modulen som testes",
 	"apihelp-scribunto-console-param-content": "Det nye innholdet til modulen",

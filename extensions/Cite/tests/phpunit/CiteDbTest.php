@@ -2,12 +2,9 @@
 
 namespace Cite\Tests;
 
-use Cite\Cite;
-use Language;
 use MediaWiki\MediaWikiServices;
-use Parser;
+use MediaWiki\Title\Title;
 use ParserOptions;
-use Title;
 
 /**
  * @group Database
@@ -15,6 +12,8 @@ use Title;
  * @license GPL-2.0-or-later
  */
 class CiteDbTest extends \MediaWikiIntegrationTestCase {
+	/** @inheritDoc */
+	protected $tablesUsed = [ 'page' ];
 
 	/**
 	 * Edge case where a parser call within `<ref>` parse clears the original parser state.
@@ -44,20 +43,6 @@ class CiteDbTest extends \MediaWikiIntegrationTestCase {
 			$parserOutput->getText(),
 			'Internal counter should not reset to 1 for text #3'
 		);
-	}
-
-	private function newCite(): Cite {
-		$mockOptions = $this->createMock( ParserOptions::class );
-		$mockOptions->method( 'getIsPreview' )->willReturn( false );
-		$mockOptions->method( 'getIsSectionPreview' )->willReturn( false );
-		$mockOptions->method( 'getUserLangObj' )->willReturn(
-			$this->createMock( Language::class ) );
-		$mockParser = $this->createMock( Parser::class );
-		$mockParser->method( 'getOptions' )->willReturn( $mockOptions );
-		$mockParser->method( 'getContentLanguage' )->willReturn(
-			$this->createMock( Language::class ) );
-		/** @var Parser $mockParser */
-		return new Cite( $mockParser );
 	}
 
 }

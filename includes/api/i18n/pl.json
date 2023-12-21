@@ -3,6 +3,7 @@
 		"authors": [
 			"1233qwer1234qwer4",
 			"Alan ffm",
+			"Amire80",
 			"Chrumps",
 			"CiaPan",
 			"Darellur",
@@ -10,6 +11,7 @@
 			"InternerowyGołąb",
 			"Jdx",
 			"Macofe",
+			"MarMi wiki",
 			"Matma Rex",
 			"Msz2001",
 			"Odder",
@@ -22,10 +24,8 @@
 			"Sethakill",
 			"The Polish",
 			"Vlad5250",
-			"Woytecr",
-			"MarMi wiki",
-			"Amire80",
-			"WaldiSt"
+			"WaldiSt",
+			"Woytecr"
 		]
 	},
 	"apihelp-main-extended-description": "<div class=\"hlist plainlinks api-main-links\">\n* [[mw:Special:MyLanguage/API:Main_page|Dokumentacja]]\n* [[mw:Special:MyLanguage/API:Etiquette|Etykieta i wytyczne użytkowania]]\n* [[mw:Special:MyLanguage/API:FAQ|FAQ]]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api.lists.wikimedia.org/ Lista dyskusyjna]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/ Ogłoszenia dotyczące API]\n* [https://phabricator.wikimedia.org/maniphest/query/GebfyV4uCaLd/#R Błędy i propozycje]\n</div>\n<strong>Stan:</strong> API MediaWiki jest ugruntowanym i stabilnym interfejsem, który jest aktywnie wspierany i ulepszany. Mimo iż staramy się tego unikać, czasami mogą mieć miejsce drastyczne zmiany; subskrybuj [https://lists.wikimedia.org/hyperkitty/list/mediawiki-api-announce@lists.wikimedia.org/ listę dyskusyjną mediawiki-api-announce], aby być na bieżąco ze zmianami.\n\n<strong>Błędne żądania:</strong> Gdy zostanie wysłane błędne żądanie do API, zostanie wysłany w odpowiedzi nagłówek HTTP z kluczem „MediaWiki-API-Error” i zarówno jego wartość jak i wartość kodu błędu wysłanego w odpowiedzi będą miały taką samą wartość. Aby uzyskać więcej informacji, zobacz [[mw:Special:MyLanguage/API:Errors_and_warnings|API: Błędy i ostrzeżenia]].\n\n<p class=\"mw-apisandbox-link\"><strong>Testowanie:</strong> Aby łatwo testować żądania API, zobacz [[Special:ApiSandbox]].</p>",
@@ -783,6 +783,7 @@
 	"apihelp-userrights-param-expiry": "Sygnatury czasowe wygaśnięcia. Mogą być względne (np. <kbd>5 months</kbd> lub <kbd>2 weeks</kbd>) lub bezwzględne (np. <kbd>2014-09-18T12:34:56Z</kbd>). Jeśli ustawiona jest tylko jedna sygnatura, to zostanie zastosowana do wszystkich grup podanych w parametrze <var>$1add</var>. Użyj <kbd>infinite</kbd>, <kbd>indefinite</kbd>, <kbd>infinity</kbd> lub <kbd>never</kbd> aby grupa nigdy nie wygasła.",
 	"apihelp-userrights-param-remove": "Usuń użytkownika z tych grup.",
 	"apihelp-userrights-param-reason": "Powód zmiany.",
+	"apihelp-userrights-param-watchuser": "Obserwuj strony osobiste i strony dyskusji tego użytkownika.",
 	"apihelp-validatepassword-param-password": "Hasło do walidacji.",
 	"apihelp-watch-summary": "Dodaj strony do listy obserwowanych obecnego użytkownika lub usuń je z niej.",
 	"apihelp-watch-param-unwatch": "Po ustawieniu strona będzie usuwana z listy obserwowanych a nie dodawana.",

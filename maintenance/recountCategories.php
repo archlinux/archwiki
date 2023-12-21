@@ -134,32 +134,29 @@ TEXT
 		$this->output( "Finding up to {$this->getBatchSize()} drifted rows " .
 			"greater than cat_id {$this->minimumId}...\n" );
 
-		$countingConds = [ 'cl_to = cat_title' ];
+		$dbr = $this->getDB( DB_REPLICA, 'vslow' );
+		$queryBuilder = $dbr->newSelectQueryBuilder()
+			->select( 'COUNT(*)' )
+			->from( 'categorylinks' )
+			->where( 'cl_to = cat_title' );
 		if ( $mode === 'subcats' ) {
-			$countingConds['cl_type'] = 'subcat';
+			$queryBuilder->andWhere( [ 'cl_type' => 'subcat' ] );
 		} elseif ( $mode === 'files' ) {
-			$countingConds['cl_type'] = 'file';
+			$queryBuilder->andWhere( [ 'cl_type' => 'file' ] );
 		}
 
-		$dbr = $this->getDB( DB_REPLICA, 'vslow' );
-		$countingSubquery = $dbr->selectSQLText( 'categorylinks',
-			'COUNT(*)',
-			$countingConds,
-			__METHOD__ );
+		$countingSubquery = $queryBuilder->caller( __METHOD__ )->getSQL();
 
 		// First, let's find out which categories have drifted and need to be updated.
 		// The query counts the categorylinks for each category on the replica DB,
 		// but this data can't be used for updating the master, so we don't include it
 		// in the results.
-		$idsToUpdate = $dbr->selectFieldValues( 'category',
-			'cat_id',
-			[
-				'cat_id > ' . (int)$this->minimumId,
-				"cat_{$mode} != ($countingSubquery)"
-			],
-			__METHOD__,
-			[ 'LIMIT' => $this->getBatchSize() ]
-		);
+		$idsToUpdate = $dbr->newSelectQueryBuilder()
+			->select( 'cat_id' )
+			->from( 'category' )
+			->where( [ 'cat_id > ' . (int)$this->minimumId, "cat_{$mode} != ($countingSubquery)" ] )
+			->limit( $this->getBatchSize() )
+			->caller( __METHOD__ )->fetchFieldValues();
 		if ( !$idsToUpdate ) {
 			return false;
 		}
@@ -174,10 +171,11 @@ TEXT
 
 		// Now, on master, find the correct counts for these categories.
 		$dbw = $this->getDB( DB_PRIMARY );
-		$res = $dbw->select( 'category',
-			[ 'cat_id', 'count' => "($countingSubquery)" ],
-			[ 'cat_id' => $idsToUpdate ],
-			__METHOD__ );
+		$res = $dbw->newSelectQueryBuilder()
+			->select( [ 'cat_id', 'count' => "($countingSubquery)" ] )
+			->from( 'category' )
+			->where( [ 'cat_id' => $idsToUpdate ] )
+			->caller( __METHOD__ )->fetchResultSet();
 
 		// Update the category counts on the rows we just identified.
 		// This logic is equivalent to Category::refreshCounts, except here, we

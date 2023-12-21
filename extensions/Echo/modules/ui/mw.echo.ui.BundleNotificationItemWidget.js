@@ -98,23 +98,6 @@
 	/**
 	 * @inheritdoc
 	 */
-	mw.echo.ui.BundleNotificationItemWidget.prototype.onPrimaryLinkClick = function () {
-		// Log notification click
-
-		mw.echo.logger.logInteraction(
-			mw.echo.Logger.static.actions.notificationClick,
-			mw.echo.Logger.static.context.popup,
-			this.getModel().getId(),
-			this.getModel().getCategory(),
-			false,
-			// Source of this notification if it is cross-wiki
-			this.bundle ? this.getModel().getSource() : ''
-		);
-	};
-
-	/**
-	 * @inheritdoc
-	 */
 	mw.echo.ui.BundleNotificationItemWidget.prototype.markRead = function ( isRead ) {
 		this.controller.markEntireListModelRead( this.model.getModelName(), isRead );
 	};
@@ -160,8 +143,6 @@
 	 * Only fetch the first time we expand.
 	 */
 	mw.echo.ui.BundleNotificationItemWidget.prototype.expand = function () {
-		var widget = this;
-
 		this.toggleExpanded( !this.expanded );
 		this.updateExpandButton();
 
@@ -170,14 +151,6 @@
 		if ( !this.expanded ) {
 			return;
 		}
-
-		// Log the expand action
-		mw.echo.logger.logInteraction(
-			mw.echo.Logger.static.actions.notificationBundleExpand,
-			mw.echo.Logger.static.context.popup,
-			widget.getModel().getId(),
-			widget.getModel().getCategory()
-		);
 	};
 
 	/**

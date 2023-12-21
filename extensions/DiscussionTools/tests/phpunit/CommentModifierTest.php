@@ -62,7 +62,7 @@ class CommentModifierTest extends IntegrationTestCase {
 		// removeAddedListItem is not implemented on the server
 	}
 
-	public function provideAddListItem(): array {
+	public static function provideAddListItem(): array {
 		return static::getJson( '../cases/modified.json' );
 	}
 
@@ -106,7 +106,7 @@ class CommentModifierTest extends IntegrationTestCase {
 		static::assertEquals( $expectedDoc->saveHtml(), $doc->saveHtml(), $name );
 	}
 
-	public function provideAddReplyLink(): array {
+	public static function provideAddReplyLink(): array {
 		return static::getJson( '../cases/reply.json' );
 	}
 
@@ -123,7 +123,7 @@ class CommentModifierTest extends IntegrationTestCase {
 		static::assertEquals( $expected, DOMCompat::getInnerHTML( $container ) );
 	}
 
-	public function provideUnwrapList(): array {
+	public static function provideUnwrapList(): array {
 		return static::getJson( '../cases/unwrap.json' );
 	}
 
@@ -145,7 +145,7 @@ class CommentModifierTest extends IntegrationTestCase {
 		);
 	}
 
-	public function provideAppendSignature(): array {
+	public static function provideAppendSignature(): array {
 		return static::getJson( '../cases/appendSignature.json' );
 	}
 
@@ -173,7 +173,7 @@ class CommentModifierTest extends IntegrationTestCase {
 		);
 	}
 
-	public function provideSanitizeWikitextLinebreaks(): array {
+	public static function provideSanitizeWikitextLinebreaks(): array {
 		return static::getJson( '../cases/sanitize-wikitext-linebreaks.json' );
 	}
 }

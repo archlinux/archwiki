@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Gadgets;
 
 use InvalidArgumentException;
 use MediaWiki\Linker\LinkTarget;
-use Title;
+use MediaWiki\Title\Title;
 
 abstract class GadgetRepo {
 

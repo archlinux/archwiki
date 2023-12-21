@@ -19,8 +19,6 @@ The LoginNotify extension notifies you when someone logs into your account. It c
 	"LoginNotifyCheckKnownIPs": true,
 	"@doc": "Whether to trigger a notification after successful logins from unknown IPs.",
 	"LoginNotifyEnableOnSuccess": true,
-	"@doc": "Set different default notification preferences for different user groups. For user groups that have any of the user rights listed in this array, the preferences specified in Hooks:getOverriddenOptions() are on by default.",
-	"LoginNotifyEnableForPriv": [ "editinterface", "userrights" ],
 	"@doc": "Override this to use a different secret than $wgSecretKey",
 	"LoginNotifySecretKey": null,
 	"@doc": "Expiry in seconds. Default is 180 days",

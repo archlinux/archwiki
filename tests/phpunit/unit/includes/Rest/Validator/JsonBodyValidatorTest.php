@@ -5,6 +5,8 @@ namespace MediaWiki\Tests\Rest;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\Validator\JsonBodyValidator;
+use Wikimedia\Message\ListParam;
+use Wikimedia\Message\ListType;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 
@@ -13,27 +15,13 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 class JsonBodyValidatorTest extends \MediaWikiUnitTestCase {
 
-	public function provideValidateBody() {
+	public static function provideValidateBody() {
 		yield 'empty object' => [
 			[],
 			new RequestData( [
 				'bodyContents' => json_encode( (object)[] ),
 			] ),
 			[]
-		];
-
-		yield 'extra data' => [
-			[],
-			new RequestData( [
-				'bodyContents' => json_encode( (object)[
-					'kittens' => 'cute',
-					'number' => 5,
-				] ),
-			] ),
-			[
-				'kittens' => 'cute',
-				'number' => 5
-			]
 		];
 
 		yield 'missing optional' => [
@@ -44,12 +32,9 @@ class JsonBodyValidatorTest extends \MediaWikiUnitTestCase {
 				]
 			],
 			new RequestData( [
-				'bodyContents' => json_encode( (object)[
-					'kittens' => 'cute',
-				] ),
+				'bodyContents' => json_encode( (object)[] ),
 			] ),
 			[
-				'kittens' => 'cute',
 				'number' => null,
 			]
 		];
@@ -80,7 +65,7 @@ class JsonBodyValidatorTest extends \MediaWikiUnitTestCase {
 		$this->assertArrayEquals( $expected, $actual, false, true );
 	}
 
-	public function provideValidateBody_failure() {
+	public static function provideValidateBody_failure() {
 		yield 'empty body' => [
 			[],
 			new RequestData( [
@@ -118,6 +103,28 @@ class JsonBodyValidatorTest extends \MediaWikiUnitTestCase {
 				] ),
 			] ),
 			new LocalizedHttpException( new MessageValue( 'rest-missing-body-field' ), 400 ),
+		];
+
+		yield 'extraneous parameters' => [
+			[
+				'foo' => [
+					ParamValidator::PARAM_TYPE => 'integer',
+					ParamValidator::PARAM_REQUIRED => false,
+				]
+			],
+			new RequestData( [
+				'bodyContents' => json_encode( (object)[
+					'f00' => 123,
+					'bar' => 456,
+				] ),
+			] ),
+			new LocalizedHttpException(
+				new MessageValue(
+					'rest-extraneous-body-fields',
+					[ new ListParam( ListType::COMMA, [ 'f00', 'bar' ] ) ]
+				),
+				400
+			),
 		];
 	}
 

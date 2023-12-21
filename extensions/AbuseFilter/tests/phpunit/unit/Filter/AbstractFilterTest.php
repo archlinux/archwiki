@@ -120,7 +120,7 @@ class AbstractFilterTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array[]
 	 */
-	public function provideActions() {
+	public static function provideActions() {
 		return [
 			'array' => [
 				[ 'foo' => [] ],

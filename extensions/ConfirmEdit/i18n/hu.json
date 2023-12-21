@@ -10,7 +10,6 @@
 	"captcha-edit": "A lap szerkesztéséhez meg kell, hogy kérjünk, írd be a lenti dobozba az alábbi feladat eredményét ([[Special:Captcha/help|segítség]]):",
 	"captcha-edit-fail": "Hibás vagy hiányzó CAPTCHA.",
 	"captcha-desc": "CAPTCHA-technológiák a spamek és a jelszókitalálási technikák ellen",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "A CAPTCHA megoldása.",
 	"captcha-info-help": "A CAPTCHA leírása.",
 	"captcha-id-label": "CAPTCHA-azonosító",

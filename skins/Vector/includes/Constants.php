@@ -47,24 +47,7 @@ final class Constants {
 	/**
 	 * @var string
 	 */
-	public const CONFIG_KEY_DEFAULT_SIDEBAR_VISIBLE_FOR_AUTHORISED_USER =
-		'VectorDefaultSidebarVisibleForAuthorisedUser';
-
-	/**
-	 * @var string
-	 */
-	public const CONFIG_KEY_DEFAULT_SIDEBAR_VISIBLE_FOR_ANONYMOUS_USER =
-		'VectorDefaultSidebarVisibleForAnonymousUser';
-
-	/**
-	 * @var string
-	 */
 	public const PREF_KEY_SKIN = 'skin';
-
-	/**
-	 * @var string
-	 */
-	public const PREF_KEY_SIDEBAR_VISIBLE = 'VectorSidebarVisible';
 
 	// These are used in the Feature Management System.
 	/**
@@ -87,11 +70,6 @@ final class Constants {
 	 * @var string
 	 */
 	public const FEATURE_LANGUAGE_IN_HEADER = 'LanguageInHeader';
-
-	/**
-	 * @var string
-	 */
-	public const CONFIG_KEY_DISABLE_SIDEBAR_PERSISTENCE = 'VectorDisableSidebarPersistence';
 
 	/**
 	 * @var string
@@ -173,37 +151,7 @@ final class Constants {
 	/**
 	 * @var string
 	 */
-	public const REQUIREMENT_LANGUAGE_ALERT_IN_SIDEBAR = 'LanguageAlertInSidebar';
-
-	/**
-	 * @var string
-	 */
-	public const CONFIG_LANGUAGE_ALERT_IN_SIDEBAR = 'VectorLanguageAlertInSidebar';
-
-	/**
-	 * @var string
-	 */
-	public const FEATURE_LANGUAGE_ALERT_IN_SIDEBAR = 'LanguageAlertInSidebar';
-
-	/**
-	 * @var string
-	 */
 	public const WEB_AB_TEST_ARTICLE_ID_FACTORY_SERVICE = 'WikimediaEvents.WebABTestArticleIdFactory';
-
-	/**
-	 * @var string
-	 */
-	public const CONFIG_PAGE_TOOLS = 'VectorPageTools';
-
-	/**
-	 * @var string
-	 */
-	public const REQUIREMENT_PAGE_TOOLS = 'PageTools';
-
-	/**
-	 * @var string
-	 */
-	public const FEATURE_PAGE_TOOLS = 'PageTools';
 
 	/**
 	 * @var string
@@ -279,6 +227,73 @@ final class Constants {
 	 * @var bool
 	 */
 	public const CONFIG_DEFAULT_LIMITED_WIDTH = 1;
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_ZEBRA_DESIGN = 'ZebraDesign';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_ZEBRA_DESIGN = 'ZebraDesign';
+
+	/**
+	 * @var string
+	 */
+	public const CONFIG_ZEBRA_DESIGN = 'VectorZebraDesign';
+
+	/**
+	 * Requirement that checks the value of ABTestEnrollment.
+	 *
+	 * @var string
+	 */
+	public const REQUIREMENT_ZEBRA_AB_TEST = 'VectorZebraDesign';
+
+	/**
+	 * @var string
+	 */
+	public const PREF_KEY_FONT_SIZE = 'vector-font-size';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_FONT_SIZE = 'CustomFontSize';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_FONT_SIZE = 'CustomFontSize';
+
+	/**
+	 * @var string
+	 */
+	public const CONFIG_KEY_CLIENT_PREFERENCES = 'VectorClientPreferences';
+
+	/**
+	 * @var string
+	 */
+	public const PREF_KEY_TYPOGRAPHY_SURVEY = 'vector-typography-survey';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_TYPOGRAPHY_SURVEY = 'TypographySurvey';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_TYPOGRAPHY_SURVEY = 'TypographySurvey';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_CLIENT_PREFERENCES = 'ClientPreferences';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_CLIENT_PREFERENCES = 'ClientPreferences';
 
 	/**
 	 * This class is for namespacing constants only. Forbid construction.

@@ -2,6 +2,8 @@
 namespace MediaWiki\Extension\Math\TexVC\MMLmappings\Util;
 
 use IntlChar;
+use MediaWiki\Extension\Math\TexVC\Nodes\Curly;
+use MediaWiki\Extension\Math\TexVC\Nodes\Literal;
 
 /**
  * Utility Methods for parsing Tex to MathML
@@ -10,6 +12,7 @@ use IntlChar;
 class MMLutil {
 	/**
 	 * Splits a regular expression in the form '\operatorname {someparams}
+	 * Also recognizes succeeding parentheses '\operatorname (' as params
 	 * @param string $input tex expression
 	 * @return array|null found groups or null
 	 */
@@ -72,6 +75,83 @@ class MMLutil {
 	}
 
 	/**
+	 * Assumes the input curly contains an TexArray of literals, squashes the TexArray characters to a string.
+	 * @param Curly $node curly containing a TexArray of literals
+	 * @return ?string squashed string in example "2mu", "-3mu" etc. Null if no TexArray inside curly.
+	 */
+	public static function squashLitsToUnit( Curly $node ): ?string {
+		$unit = "";
+		foreach ( $node->getArg()->getArgs() as $literal ) {
+			if ( !$literal instanceof Literal ) {
+				continue;
+			}
+			$unit .= $literal->getArg();
+		}
+
+		return $unit;
+	}
+
+	/**
+	 * em or other dimensional unit gets multiplied by pre-operator.
+	 * @param string $size input size i.e-123em
+	 * @param string $operator "plus (+) or minus (-)
+	 * @return string ++ => + , -- => +, -+ => -
+	 */
+	public static function addPreOperator( string $size, string $operator ): string {
+		$emtr = trim( $size );
+
+		$ok = preg_match( "/^([+\-])$/", $operator );
+		if ( !$ok ) {
+			return '';
+		}
+		switch ( $emtr[0] ) {
+			case "-":
+				if ( $operator == "+" ) {
+					return $emtr;
+				} elseif ( $operator == "-" ) {
+					$emtr[0] = "+";
+					return $emtr;
+				}
+				break;
+			case "+":
+				if ( $operator == "+" ) {
+					return $emtr;
+				} elseif ( $operator == "-" ) {
+					$emtr[0] = "-";
+					return $emtr;
+				}
+				break;
+			default:
+				return $operator . $emtr;
+		}
+		return $emtr;
+	}
+
+	/**
+	 * Convert a length dimension to em format
+	 * currently supports "mu: math unit and forwards em"
+	 * @param string $dimen input for length dimension  like "-2mu" or "3 em"
+	 * @return string|null converted string i.e. "0.333em"  or null if error
+	 */
+	public static function dimen2em( string $dimen ): ?string {
+		$matches = [];
+		$matched = preg_match( '/([+-]?)(\d*\.*\d+)\s*(mu|em)/', $dimen, $matches );
+
+		if ( !$matched ) {
+			return null;
+		}
+		if ( $matches[3] == "mu" ) {
+			$ret = self::size2em( strval( intval( $matches[2] ) / 18 ) );
+		} elseif ( $matches[3] == "em" ) {
+			$ret = $matches[2] . "em";
+		} else {
+			return null;
+		}
+
+		return ( $matches[1] == "-" ? "-" : "" ) . $ret;
+	}
+
+	/**
 	 * Some common steps of processing an input string before passing it as a key to the mappings.
 	 * @param string $input string to be processed
 	 * @return string prepared input string
@@ -80,9 +160,10 @@ class MMLutil {
 		$input = trim( $input );
 		if ( str_starts_with( $input, "\\" ) && strlen( $input ) >= 2 ) {
 			$input = substr( $input, 1 );
-			// This is an edge case where S can be a Literal OR an Operator
-			if ( $input === "S" ) {
-				$input = "\\S";
+			// These are edge cases where input can be a Literal OR an Operator
+			$edgeCases = [ "S", "P", ";", ",", "!", "'", ">" ];
+			if ( in_array( $input, $edgeCases, true ) ) {
+				$input = "\\" . $input;
 			}
 		}
 		return $input;

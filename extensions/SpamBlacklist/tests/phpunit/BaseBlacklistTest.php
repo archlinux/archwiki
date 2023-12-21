@@ -20,6 +20,7 @@
  */
 
 use MediaWiki\Extension\SpamBlacklist\BaseBlacklist;
+use MediaWiki\Title\Title;
 
 /**
  * @covers \MediaWiki\Extension\SpamBlacklist\BaseBlacklist

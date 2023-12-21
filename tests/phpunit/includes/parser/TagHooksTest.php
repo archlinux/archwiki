@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 /**
  * @group Database
@@ -64,7 +65,7 @@ class TagHooksTest extends MediaWikiIntegrationTestCase {
 	public function testBadTagHooks( $tag ) {
 		$parser = $this->getServiceContainer()->getParserFactory()->create();
 
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$parser->setHook( $tag, [ $this, 'tagCallback' ] );
 	}
 

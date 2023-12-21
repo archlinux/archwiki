@@ -4,16 +4,16 @@
 			"Assele",
 			"Haqmar",
 			"Sagan",
+			"З. ӘЙЛЕ",
 			"Ләйсән",
 			"Янмурза Баки",
-			"ҒатаУлла",
-			"З. ӘЙЛЕ"
+			"ҒатаУлла"
 		]
 	},
 	"categorytree": "Категориялар тармағы",
 	"categorytree-portlet": "Категориялар",
 	"categorytree-legend": "Категориялар тармағын күрһәтергә",
-	"categorytree-desc": "[[Special:Категориялар тармағы|Категориялар структураһы]] буйлап йүнәлеш",
+	"categorytree-desc": "[[Special:CategoryTree|category structure]] бәйынса әүҙем навигация",
 	"categorytree-header": "Эстәлеген тармаҡлы структурала күрһәтеү өсөн категорияның исемен керетегеҙ.\n(JavaScript кәрәк буласаҡ).",
 	"categorytree-category": "Категория:",
 	"categorytree-go": "Категория тармағын күрһәтергә",

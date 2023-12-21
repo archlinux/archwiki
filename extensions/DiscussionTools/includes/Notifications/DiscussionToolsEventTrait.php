@@ -10,15 +10,18 @@
 namespace MediaWiki\Extension\DiscussionTools\Notifications;
 
 use EchoDiscussionParser;
+use Language;
+use MediaWiki\Extension\Notifications\Formatters\EchoPresentationModelSection;
+use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Revision\RevisionRecord;
-use WikiMap;
+use MediaWiki\WikiMap\WikiMap;
 
 /**
  * This trait must be only used on EchoEventPresentationModel subclasses.
  *
- * @property \EchoEvent $event
- * @property \Language $language
- * @property \EchoPresentationModelSection $section
+ * @property Event $event
+ * @property Language $language
+ * @property EchoPresentationModelSection $section
  */
 trait DiscussionToolsEventTrait {
 
@@ -34,7 +37,7 @@ trait DiscussionToolsEventTrait {
 	abstract protected function isBundled();
 
 	/**
-	 * @return \EchoEvent[]
+	 * @return Event[]
 	 */
 	abstract protected function getBundledEvents();
 
@@ -80,7 +83,10 @@ trait DiscussionToolsEventTrait {
 			$bundledEvents = $this->getBundledEvents();
 			$oldestEvent = end( $bundledEvents );
 			$params = [ 'dtnewcommentssince' => $oldestEvent->getExtraParam( 'comment-id' ) ];
-			if ( $this->event->getExtraParam( 'subscribed-comment-name' ) ) {
+			if ( $this->event->getType() === 'dt-added-topic' ) {
+				// New topics notifications: Tell client to only highlight topics **started** since this one
+				$params[ 'dtsincethread' ] = 1;
+			} elseif ( $this->event->getExtraParam( 'subscribed-comment-name' ) ) {
 				// Topic notifications: Tell client to restrict highlights to this thread
 				$params[ 'dtinthread' ] = 1;
 			}

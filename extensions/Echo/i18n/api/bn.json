@@ -5,7 +5,6 @@
 			"আফতাবুজ্জামান"
 		]
 	},
-	"apihelp-echomarkread-description": "বর্তমান ব্যবহারকারীর জন্য বিজ্ঞপ্তি পঠিত হিসাবে চিহ্নিত করে।",
 	"apihelp-echomarkread-example-1": "বিজ্ঞপ্তি ৮ দেখা হয়েছে হিসাবে চিহ্নিত করে",
 	"apihelp-echomarkread-example-2": "সকল বিজ্ঞপ্তি পঠিত হিসেবে চিহ্নিত করুন",
 	"apihelp-echomarkseen-example-1": "সব ধরনের বিজ্ঞপ্তি দেখা হয়েছে হিসাবে চিহ্নিত করে",

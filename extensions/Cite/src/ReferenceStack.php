@@ -43,25 +43,20 @@ class ReferenceStack {
 	 *
 	 * @var array[][]
 	 */
-	private $refs = [];
+	private array $refs = [];
 
 	/**
 	 * Auto-incrementing sequence number for all <ref>, no matter which group
-	 *
-	 * @var int
 	 */
-	private $refSequence = 0;
+	private int $refSequence = 0;
 
 	/**
 	 * Counter for the number of refs in each group.
 	 * @var int[]
 	 */
-	private $groupRefSequence = [];
-
-	/**
-	 * @var int[][]
-	 */
-	private $extendsCount = [];
+	private array $groupRefSequence = [];
+	/** @var int[][] */
+	private array $extendsCount = [];
 
 	/**
 	 * <ref> call stack
@@ -71,17 +66,13 @@ class ReferenceStack {
 	 * @var (array|false)[]
 	 * @phan-var array<array{0:string,1:int,2:string,3:?string,4:?string,5:?string,6:array}|false>
 	 */
-	private $refCallStack = [];
+	private array $refCallStack = [];
 
 	/**
 	 * @deprecated We should be able to push this responsibility to calling code.
-	 * @var ErrorReporter
 	 */
-	private $errorReporter;
+	private ErrorReporter $errorReporter;
 
-	/**
-	 * @param ErrorReporter $errorReporter
-	 */
 	public function __construct( ErrorReporter $errorReporter ) {
 		$this->errorReporter = $errorReporter;
 	}

@@ -4,9 +4,9 @@ namespace MediaWiki\Skin;
 
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
+use MediaWiki\Parser\Sanitizer;
 use Message;
 use MessageLocalizer;
-use Sanitizer;
 
 /**
  * @internal for use inside Skin and SkinTemplate classes only
@@ -115,13 +115,14 @@ class SkinComponentMenu implements SkinComponent {
 			$id = Sanitizer::escapeIdForAttribute( "p-$name" );
 		}
 
-		$isEmptyContent = empty( $this->content );
-		$isEmptyAfterContent = empty( $this->htmlAfterContent );
-		$isEmptyBeforeContent = empty( $this->htmlBeforeContent );
+		$isEmptyContent = !$this->content;
+		$isEmptyAfterContent = !$this->htmlAfterContent;
+		$isEmptyBeforeContent = !$this->htmlBeforeContent;
 		$isEmptyItems = count( $this->items ) === 0;
 		$isEmptyPortlet = ( $isEmptyContent && $isEmptyAfterContent && $isEmptyBeforeContent && $isEmptyItems );
 		$data = [
 			'id' => $id,
+			// Any changes to these classes should be synced with resources/src/mediawiki.util/util.js
 			'class' => 'mw-portlet ' . Sanitizer::escapeClass( "mw-portlet-$name" ),
 			'html-tooltip' => Linker::tooltip( $id ),
 			'html-items' => '',

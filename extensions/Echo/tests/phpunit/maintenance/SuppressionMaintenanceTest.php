@@ -1,10 +1,12 @@
 <?php
 
+use MediaWiki\Extension\Notifications\SuppressionRowUpdateGenerator;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @group Echo
- * @covers \EchoSuppressionRowUpdateGenerator
+ * @covers \MediaWiki\Extension\Notifications\SuppressionRowUpdateGenerator
+ * @group Database
  */
 class SuppressionMaintenanceTest extends MediaWikiIntegrationTestCase {
 
@@ -115,7 +117,7 @@ class SuppressionMaintenanceTest extends MediaWikiIntegrationTestCase {
 	protected static function attachTitleFor( $id, $providedText, $providedNamespace ) {
 		return static function (
 			TestCase $test,
-			EchoSuppressionRowUpdateGenerator $gen
+			SuppressionRowUpdateGenerator $gen
 		) use ( $id, $providedText, $providedNamespace ) {
 			$title = $test->createMock( Title::class );
 			$title->expects( $test->any() )
@@ -134,7 +136,7 @@ class SuppressionMaintenanceTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provider_updateRow
 	 */
 	public function testUpdateRow( $message, array $expected, array $input, callable $callable = null ) {
-		$gen = new EchoSuppressionRowUpdateGenerator;
+		$gen = new SuppressionRowUpdateGenerator;
 		if ( $callable ) {
 			call_user_func( $callable, $this, $gen );
 		}

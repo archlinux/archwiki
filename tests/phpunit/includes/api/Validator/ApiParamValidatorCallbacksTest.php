@@ -8,6 +8,7 @@ use ApiMessage;
 use ApiQueryBase;
 use ApiUploadTestCase;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use Wikimedia\Message\DataMessageValue;
 use Wikimedia\TestingAccessWrapper;
 
@@ -17,9 +18,10 @@ use Wikimedia\TestingAccessWrapper;
  * @group medium
  */
 class ApiParamValidatorCallbacksTest extends ApiUploadTestCase {
+	use MockAuthorityTrait;
 
 	private function getCallbacks( FauxRequest $request ): array {
-		$context = $this->apiContext->newTestContext( $request, $this->getTestUser()->getAuthority() );
+		$context = $this->apiContext->newTestContext( $request, $this->mockRegisteredUltimateAuthority() );
 		$main = new ApiMain( $context );
 		return [ new ApiParamValidatorCallbacks( $main ), $main ];
 	}
@@ -74,7 +76,7 @@ class ApiParamValidatorCallbacksTest extends ApiUploadTestCase {
 		$this->assertSame( [ 'test' ], TestingAccessWrapper::newFromObject( $main )->getParamsUsed() );
 	}
 
-	public function provideGetValue() {
+	public static function provideGetValue() {
 		$obj = (object)[];
 		return [
 			'Basic test' => [ 'foo', 'bar', 'foo', false ],
@@ -209,7 +211,7 @@ class ApiParamValidatorCallbacksTest extends ApiUploadTestCase {
 		);
 	}
 
-	public function provideRecordCondition(): \Generator {
+	public static function provideRecordCondition(): \Generator {
 		yield 'Deprecated param' => [
 			DataMessageValue::new(
 				'paramvalidator-param-deprecated', [],
@@ -278,13 +280,13 @@ class ApiParamValidatorCallbacksTest extends ApiUploadTestCase {
 	}
 
 	public function testUseHighLimits(): void {
-		$context = $this->apiContext->newTestContext( new FauxRequest, $this->getTestUser()->getAuthority() );
+		$context = $this->apiContext->newTestContext( new FauxRequest, $this->mockRegisteredUltimateAuthority() );
 		$main = $this->getMockBuilder( ApiMain::class )
 			->setConstructorArgs( [ $context ] )
 			->onlyMethods( [ 'canApiHighLimits' ] )
 			->getMock();
 
-		$main->method( 'canApiHighLimits' )->will( $this->onConsecutiveCalls( true, false ) );
+		$main->method( 'canApiHighLimits' )->willReturnOnConsecutiveCalls( true, false );
 
 		$callbacks = new ApiParamValidatorCallbacks( $main );
 		$this->assertTrue( $callbacks->useHighLimits( [] ) );

@@ -20,6 +20,9 @@
  * @file
  */
 
+use MediaWiki\Specials\SpecialEmailUser;
+use MediaWiki\Status\Status;
+use MediaWiki\User\User;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -56,7 +59,8 @@ class ApiEmailUser extends ApiBase {
 		$error = SpecialEmailUser::getPermissionsError(
 			$this->getUser(),
 			$params['token'],
-			$this->getConfig()
+			$this->getConfig(),
+			true // authorize!
 		);
 		if ( $error ) {
 			$this->dieWithError( $error );

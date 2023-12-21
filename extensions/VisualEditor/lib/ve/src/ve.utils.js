@@ -309,42 +309,18 @@ ve.extendObject = $.extend;
  *
  * Should work in Chrome>=24, FF>=29 & IE>=11
  *
+ * @deprecated Always set to true
  * @private
  * @property {boolean}
  */
-ve.supportsIntl = !!(
-	// TODO: Drop support for browsers which don't have Intl.Collator
-	// eslint-disable-next-line compat/compat
-	window.Intl && typeof Intl.Collator === 'function'
-);
+ve.supportsIntl = true;
 
 /**
+ * @deprecated Always set to true
  * @private
  * @property {boolean}
  */
-ve.supportsSplice = ( function () {
-	// Support: Safari 8
-	// This returns false in Safari 8
-	var a = new Array( 100000 );
-	a.splice( 30, 0, 'x' );
-	a.splice( 20, 1 );
-	if ( a.indexOf( 'x' ) !== 29 ) {
-		return false;
-	}
-
-	// Support: Opera 12.15
-	// This returns false in Opera 12.15
-	a = [];
-	var n = 256;
-	a[ n ] = 'a';
-	a.splice( n + 1, 0, 'b' );
-	if ( a[ n ] !== 'a' ) {
-		return false;
-	}
-
-	// Splice is supported
-	return true;
-}() );
+ve.supportsSplice = true;
 
 /**
  * Splice one array into another.
@@ -377,25 +353,7 @@ ve.batchSplice = function ( arr, offset, remove, data ) {
 	if ( !Array.isArray( arr ) ) {
 		splice = arr.splice;
 	} else {
-		if ( ve.supportsSplice ) {
-			splice = Array.prototype.splice;
-		} else {
-			// Standard Array.prototype.splice() function implemented using .slice() and .push().
-			splice = function ( off, rem /* , d */ ) {
-				var d = Array.prototype.slice.call( arguments, 2 );
-
-				var begin = this.slice( 0, off );
-				var remd = this.slice( off, off + rem );
-				var end = this.slice( off + rem );
-
-				this.length = 0;
-				ve.batchPush( this, begin );
-				ve.batchPush( this, d );
-				ve.batchPush( this, end );
-
-				return remd;
-			};
-		}
+		splice = Array.prototype.splice;
 	}
 
 	if ( data.length === 0 ) {
@@ -889,16 +847,8 @@ ve.resolveAttributes = function ( elementsOrJQuery, doc, attrs ) {
 	function resolveAttribute( el ) {
 		var nodeInDoc = doc.createElement( el.nodeName );
 		nodeInDoc.setAttribute( attr, el.getAttribute( attr ) );
-		try {
-			if ( nodeInDoc[ attr ] ) {
-				el.setAttribute( attr, nodeInDoc[ attr ] );
-			}
-		} catch ( e ) {
-			// Support: IE
-			// IE can throw exceptions if the URL is malformed,
-			// so just leave them as is, as there's no way to
-			// resolve them and hopefully they are absolute
-			// URLs. T148858.
+		if ( nodeInDoc[ attr ] ) {
+			el.setAttribute( attr, nodeInDoc[ attr ] );
 		}
 	}
 
@@ -987,51 +937,11 @@ ve.safeDecodeURIComponent = function ( s ) {
  * Wrapper for node.normalize(). The native implementation is broken in IE,
  * so we use our own implementation in that case.
  *
+ * @deprecated Use Node#normalize
  * @param {Node} node Node to normalize
  */
 ve.normalizeNode = function ( node ) {
-	if ( ve.isNormalizeBroken === undefined ) {
-		// Support: IE11
-		// Feature-detect IE11's broken .normalize() implementation.
-		// We know that it fails to remove the empty text node at the end
-		// in this example, but for mysterious reasons it also fails to merge
-		// text nodes in other cases and we don't quite know why. So if we detect
-		// that .normalize() is broken, fall back to a completely manual version.
-		var p = document.createElement( 'p' );
-		p.appendChild( document.createTextNode( 'Foo' ) );
-		p.appendChild( document.createTextNode( 'Bar' ) );
-		p.appendChild( document.createTextNode( '' ) );
-		// eslint-disable-next-line es-x/no-string-prototype-normalize
-		p.normalize();
-		ve.isNormalizeBroken = p.childNodes.length !== 1;
-	}
-
-	if ( ve.isNormalizeBroken ) {
-		// Perform normalization manually
-		var nodeIterator = node.ownerDocument.createNodeIterator(
-			node,
-			NodeFilter.SHOW_TEXT,
-			function () { return NodeFilter.FILTER_ACCEPT; },
-			false
-		);
-		var textNode;
-		while ( ( textNode = nodeIterator.nextNode() ) ) {
-			// Remove if empty
-			if ( textNode.data === '' ) {
-				textNode.parentNode.removeChild( textNode );
-				continue;
-			}
-			// Merge in any adjacent text nodes
-			while ( textNode.nextSibling && textNode.nextSibling.nodeType === Node.TEXT_NODE ) {
-				textNode.appendData( textNode.nextSibling.data );
-				textNode.parentNode.removeChild( textNode.nextSibling );
-			}
-		}
-	} else {
-		// Use native implementation
-		// eslint-disable-next-line es-x/no-string-prototype-normalize
-		node.normalize();
-	}
+	node.normalize();
 };
 
 /**
@@ -1412,15 +1322,4 @@ ve.countEdgeMatches = function ( before, after, equals ) {
 		}
 	}
 	return { start: start, end: end };
-};
-
-/**
- * Repeat a string n times
- *
- * @param {string} str The string to repeat
- * @param {number} n The number of times to repeat
- * @return {string} The string, repeated n times
- */
-ve.repeatString = function ( str, n ) {
-	return new Array( n + 1 ).join( str );
 };

@@ -2,6 +2,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\WikiMap\WikiMap;
 
 class FileTest extends MediaWikiMediaTestCase {
@@ -18,7 +19,7 @@ class FileTest extends MediaWikiMediaTestCase {
 		$this->assertEquals( $expected, $file->canAnimateThumbIfAppropriate() );
 	}
 
-	public function providerCanAnimate() {
+	public static function providerCanAnimate() {
 		return [
 			[ 'nonanimated.gif', true ],
 			[ 'jpeg-comment-utf.jpg', true ],
@@ -58,7 +59,7 @@ class FileTest extends MediaWikiMediaTestCase {
 			$data['message'] );
 	}
 
-	public function getThumbnailBucketProvider() {
+	public static function getThumbnailBucketProvider() {
 		$defaultBuckets = [ 256, 512, 1024, 2048, 4096 ];
 
 		return [
@@ -185,7 +186,7 @@ class FileTest extends MediaWikiMediaTestCase {
 		$reflection_property->setValue( $fileMock, $handlerMock );
 
 		if ( $data['tmpBucketedThumbCache'] !== null ) {
-			foreach ( $data['tmpBucketedThumbCache'] as $bucket => &$tmpBucketed ) {
+			foreach ( $data['tmpBucketedThumbCache'] as &$tmpBucketed ) {
 				$tmpBucketed = str_replace( '/tmp', $tempDir, $tmpBucketed );
 			}
 			$reflection_property = $reflection->getProperty( 'tmpBucketedThumbCache' );
@@ -203,7 +204,7 @@ class FileTest extends MediaWikiMediaTestCase {
 		);
 	}
 
-	public function getThumbnailSourceProvider() {
+	public static function getThumbnailSourceProvider() {
 		return [
 			[ [
 				'supportsBucketing' => true,
@@ -410,7 +411,7 @@ class FileTest extends MediaWikiMediaTestCase {
 		$this->assertEquals( $expected, $actual );
 	}
 
-	public function providerGetDisplayWidthHeight() {
+	public static function providerGetDisplayWidthHeight() {
 		return [
 			[
 				[ 1024.0, 768.0, 600.0, 600.0 ],
@@ -439,7 +440,7 @@ class FileTest extends MediaWikiMediaTestCase {
 		];
 	}
 
-	public function provideNormalizeTitle() {
+	public static function provideNormalizeTitle() {
 		yield [ 'some name.jpg', 'Some_name.jpg' ];
 		yield [ new TitleValue( NS_FILE, 'Some_name.jpg' ), 'Some_name.jpg' ];
 		yield [ new TitleValue( NS_MEDIA, 'Some_name.jpg' ), 'Some_name.jpg' ];
@@ -457,7 +458,7 @@ class FileTest extends MediaWikiMediaTestCase {
 		$this->assertSame( $expected, $actual->getDBkey() );
 	}
 
-	public function provideNormalizeTitleFails() {
+	public static function provideNormalizeTitleFails() {
 		yield [ '' ];
 		yield [ '#' ];
 		yield [ new TitleValue( NS_USER, 'Some_name.jpg' ) ];

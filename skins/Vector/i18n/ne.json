@@ -60,6 +60,8 @@
 	"vector-site-nav-label": "साइट",
 	"vector-main-menu-label": "मुख्य सूचीपत्र",
 	"vector-limited-width-toggle": "सीमित सामग्री चौडाइ टगल गर्नुहोस्",
+	"vector-limited-width-toggle-on-popup": "तपाईंले आफ्नो लेआउटलाई पूर्ण चौडाइमा बदल्नुभएको छ। सीमित चौडाइमा फर्कन यो बटन थिच्नुहोस्।",
+	"vector-limited-width-toggle-off-popup": "तपाईं यो बटन क्लिक गरेर एक सीमित चौडाइ र पूर्ण चौडाइ बीच टगल गर्न सक्नुहुन्छ।",
 	"vector-page-tools-label": "उपकरणहरू",
 	"vector-page-tools-general-label": "साधारण",
 	"vector-page-tools-actions-label": "कार्यहरू",
@@ -69,5 +71,8 @@
 	"tooltip-vector-anon-user-menu-title": "थप विकल्पहरू",
 	"vector-prefs-limited-width": "सीमित चौडाइ मोड सक्षम गर्नुहोस्",
 	"vector-prefs-limited-width-help": "सुधारिएको पठन अनुभवको लागि सीमित चौडाइ मोड सक्षम गर्नुहोस्।",
-	"empty-language-selector-body": "पृष्ठ सामग्री अन्य भाषाहरूमा समर्थित छैन।"
+	"empty-language-selector-body": "पृष्ठ सामग्री अन्य भाषाहरूमा समर्थित छैन।",
+	"vector-toc-unpinned-popup": "विषयवस्तुको तालिका यहाँ सारिएको छ।",
+	"vector-page-tools-unpinned-popup": "उपकरण साइडपट्टी यहाँ सारिएको छ।",
+	"vector-main-menu-unpinned-popup": "मुख्य साइडपट्टी यहाँ सारिएको छ।"
 }

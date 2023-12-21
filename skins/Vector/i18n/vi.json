@@ -4,6 +4,7 @@
 			"Amire80",
 			"Bluetpp",
 			"CactiStaccingCrane",
+			"Flyplanevn27",
 			"Keo010122",
 			"Minh Nguyen",
 			"Nghiemtrongdai VN",
@@ -18,7 +19,8 @@
 			"Tryvix1509",
 			"Trần Nguyễn Minh Huy",
 			"Vinhtantran",
-			"Withoutaname"
+			"Withoutaname",
+			"Tar Lócesilion"
 		]
 	},
 	"skinname-vector": "Vectơ cũ (2010)",
@@ -78,5 +80,15 @@
 	"tooltip-vector-anon-user-menu-title": "Thêm tùy chọn",
 	"vector-prefs-limited-width": "Bật chế độ giới hạn chiều rộng nội dung",
 	"vector-prefs-limited-width-help": "Bật chế độ giới hạn chiều rộng nội dung để cải thiện trải nghiệm đọc.",
-	"empty-language-selector-body": "Nội dung trang không được hỗ trợ ở ngôn ngữ khác."
+	"empty-language-selector-body": "Nội dung trang không được hỗ trợ ở ngôn ngữ khác.",
+	"vector-main-menu-unpinned-popup": "Trình đơn chính đã được chuyển đến đây.",
+	"vector-readability-survey-title": "Nguyên mẫu các thay đổi về khả năng đọc",
+	"vector-readability-survey-description": "Bài viết trên Wikipedia trông như thế nào là tốt nhất với bạn? Sử dụng các thanh trượt dưới đây để điều chỉnh giao diện. Tìm hiểu thêm về [[mw:Special:MyLanguage/Reading/Web/Accessibility for reading|Khả năng truy cập cho dự án đọc]].",
+	"vector-readability-survey-fontSize": "Kích cỡ font",
+	"vector-readability-survey-lineHeight": "Chiều cao dòng",
+	"vector-readability-survey-paragraphSpacing": "Khoảng cách đoạn văn",
+	"vector-readability-survey-optout": "Nhấn tiếp tục để gửi cho chúng tôi thiết kế của bạn và xuất bản phản hồi của bạn ở trang tiếp theo. [[#close-vector-survey|Click vào đây để loại bỏ công cụ này]].",
+	"vector-readability-survey-randomize": "Chọn ngẫu nhiên",
+	"vector-readability-survey-reset": "Reset",
+	"vector-readability-survey-share": "Tiếp tục"
 }

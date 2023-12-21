@@ -1,3 +1,4 @@
+@import 'mediawiki.skin.variables.less';
 @width-breakpoint-tablet: 720px;
 
 .ext-discussiontools-ui-replyWidget {
@@ -5,10 +6,8 @@
 	position: relative;
 	clear: both;
 	// This is in user language, do not inherit text-align from the content (T306137).
-	// 'initial' is not widely supported, but luckily, browsers that don't support it (IE 11) also
-	// don't suffer from that bug. We can't set 'text-align: left' (and rely on flipping), because
+	// We can't set 'text-align: left' (and rely on flipping), because
 	// that would affect the input field, which is in content language.
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	text-align: initial;
 
 	.skin-monobook & {
@@ -17,7 +16,6 @@
 }
 
 // @supports does not work when nested
-/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 @supports ( display: flow-root ) {
 	.ext-discussiontools-ui-replyWidget {
 		// Allow the widget to be squished next to floating elements (T278476).
@@ -28,15 +26,15 @@
 		//
 		// All of the usual ways to do this (listed on that page) have unwanted side-effects
 		// (in particular, `overflow: hidden` cuts off VE inspectors), so we must use this relatively
-		// recent property, and only apply this fix on supporting browsers, notably excluding IE 11
+		// recent property, and only apply this fix on supporting browsers, notably excluding Safari <13
 		// (https://caniuse.com/?search=flow-root)
 		display: flow-root;
-		min-width: 250px;
+		min-width: 20em;
 		clear: none;
 	}
 }
 
-.ext-discussiontools-ui-replyWidget { /* stylelint-disable-line no-descending-specificity, no-duplicate-selectors */
+.ext-discussiontools-ui-replyWidget { /* stylelint-disable-line no-descending-specificity */
 	&-bodyWrapper > .oo-ui-textInputWidget {
 		max-width: none;
 
@@ -62,7 +60,6 @@
 		left: 50%;
 	}
 
-	// stylelint-disable-next-line no-descending-specificity
 	&-scrollback-top,
 	&-scrollback-bottom {
 		position: fixed;
@@ -152,16 +149,16 @@
 		// When mode tabs are focussed, the only available option uses the same styles as normal focus
 		// Hovering also adds this class, but is styled upstream with just an underline.
 		.ext-discussiontools-ui-modeTab.oo-ui-optionWidget-highlighted:not( :hover ) {
-			color: #36c;
-			border-radius: 2px;
-			box-shadow: inset 0 0 0 2px #36c;
+			color: @color-progressive;
+			border-radius: @border-radius-base;
+			box-shadow: @box-shadow-inset-medium @box-shadow-color-progressive-selected;
 		}
 
 		// The unavailable option in mode tabs is disabled, to make it un-interactable, but we want it
 		// to look as if it was selected
 		.ext-discussiontools-ui-modeTab.oo-ui-widget-disabled {
-			color: #36c;
-			box-shadow: inset 0 -2px 0 0 #36c;
+			color: @color-progressive;
+			box-shadow: @box-shadow-inset-medium-vertical @box-shadow-color-progressive-selected;
 		}
 	}
 
@@ -198,18 +195,17 @@
 		}
 	}
 
-	.skin-minerva &-advanced:not( .oo-ui-element-hidden ) + &-actionsWrapper &-actions {
+	.skin-minerva &-advanced:not( .oo-ui-element-hidden ) ~ &-actionsWrapper &-actions {
 		margin-top: 0;
 	}
 
-	// stylelint-disable-next-line no-descending-specificity
 	&-footer {
 		// Preferred width; if there isn't enough space, this wraps under the actions
 		flex-basis: 20em;
 		// Stretch to all available space
 		flex-grow: 1;
 		font-size: 0.75em;
-		color: #54595d;
+		color: @color-subtle;
 
 		> * {
 			&:first-child {
@@ -232,11 +228,11 @@
 			li {
 				display: inline;
 
-				&:after {
+				&::after {
 					content: ' • ';
 				}
 
-				&:last-child:after {
+				&:last-child::after {
 					content: '';
 				}
 			}
@@ -259,7 +255,7 @@
 			padding: 0;
 		}
 
-		&:before {
+		&::before {
 			content: attr( data-label );
 			color: #808080;
 		}
@@ -293,6 +289,15 @@
 		.section-heading .indicator { /* stylelint-disable-line selector-class-pattern */
 			display: none;
 		}
+
+		// ... and expand sections
+		.collapsible-block[ hidden ] { /* stylelint-disable-line selector-class-pattern */
+			// If hidden=until-found is supported, this will set content-visibility: hidden;
+			content-visibility: visible;
+			// otherwise it will set display: none;
+			display: block;
+		}
+		// TODO: Consider doing this via's Toggler.js's APIs, rather than CSS overrides.
 	}
 
 	&-bodyWrapper {

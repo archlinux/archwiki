@@ -72,7 +72,7 @@ ve.translateRect = function ( rect, x, y ) {
  * The start rectangle is the top-most, and the end rectangle is the bottom-most.
  *
  * @param {Object[]|null} rects Full list of rectangles
- * @return {Object|null} Object containing two rectangles: start and end, or null if there are no rectangles
+ * @return {Object.<string,Object>|null} Object containing two rectangles: start and end, or null if there are no rectangles
  */
 ve.getStartAndEndRects = function ( rects ) {
 	if ( !rects || !rects.length ) {
@@ -103,6 +103,90 @@ ve.getStartAndEndRects = function ( rects ) {
 		start: startRect,
 		end: endRect
 	};
+};
+
+/**
+ * Minimize a set of rectangles by discarding ones which are contained by others
+ *
+ * @param {Object[]} rects Full list of rectangles
+ * @param {number} [allowedErrorOffset=3] Allowed error offset, the pixel error amount
+ *  used in coordinate comparisons.
+ * @return {Object[]} Minimized list of rectangles
+ */
+ve.minimizeRects = function ( rects, allowedErrorOffset ) {
+	if ( allowedErrorOffset === undefined ) {
+		allowedErrorOffset = 3;
+	}
+
+	// Check if rect1 contains rect2
+	function contains( rect1, rect2 ) {
+		return rect2.left >= rect1.left - allowedErrorOffset &&
+			rect2.top >= rect1.top - allowedErrorOffset &&
+			rect2.right <= rect1.right + allowedErrorOffset &&
+			rect2.bottom <= rect1.bottom + allowedErrorOffset;
+	}
+
+	function merge( rect1, rect2 ) {
+		var rect = {
+			top: Math.min( rect1.top, rect2.top ),
+			left: Math.min( rect1.left, rect2.left ),
+			bottom: Math.max( rect1.bottom, rect2.bottom ),
+			right: Math.max( rect1.right, rect2.right )
+		};
+		rect.width = rect.right - rect.left;
+		rect.height = rect.bottom - rect.top;
+		return rect;
+	}
+
+	function isApprox( a, b ) {
+		return Math.abs( a - b ) < allowedErrorOffset;
+	}
+
+	var minimalRects = [];
+	rects.forEach( function ( rect ) {
+		var keep = true;
+		for ( var i = 0, il = minimalRects.length; i < il; i++ ) {
+			// This rect is contained by an existing rect, discard
+			if ( contains( minimalRects[ i ], rect ) ) {
+				keep = false;
+				break;
+			}
+			// An existing rect is contained by this rect, discard the existing rect
+			if ( contains( rect, minimalRects[ i ] ) ) {
+				minimalRects.splice( i, 1 );
+				i--;
+				il--;
+				break;
+			}
+			// Rect is horizontally adjacent to an existing rect, merge
+			if (
+				isApprox( rect.top, minimalRects[ i ].top ) && isApprox( rect.bottom, minimalRects[ i ].bottom ) && (
+					isApprox( rect.left, minimalRects[ i ].right ) || isApprox( rect.right, minimalRects[ i ].left )
+				)
+			) {
+				keep = false;
+				minimalRects[ i ] = merge( minimalRects[ i ], rect );
+				break;
+			}
+			// Rect is vertically adjacent to an existing rect, merge
+			if (
+				isApprox( rect.left, minimalRects[ i ].left ) && isApprox( rect.right, minimalRects[ i ].right ) && (
+					isApprox( rect.top, minimalRects[ i ].bottom ) || isApprox( rect.bottom, minimalRects[ i ].top )
+				)
+			) {
+				keep = false;
+				minimalRects[ i ] = merge( minimalRects[ i ], rect );
+				break;
+			}
+			// TODO: Consider case where a rect bridges two existing minimalRects, and so requires two
+			// merges in one step. As rects are usually returned in order, this is unlikely to happen.
+		}
+		if ( keep ) {
+			minimalRects.push( rect );
+		}
+	} );
+
+	return minimalRects;
 };
 
 /**
@@ -207,47 +291,25 @@ ve.fixSelectionNodes = function ( selection ) {
 /**
  * Register a passive event listener
  *
+ * @deprecated Pass { passive: true } directly to addEventListener
  * @param {HTMLElement} elem Element to register event on
  * @param {string} event Name of event to register
  * @param {Function} handler Event handler (which cannot call event.preventDefault)
  */
 ve.addPassiveEventListener = function ( elem, event, handler ) {
-	elem.addEventListener( event, handler, ve.isPassiveEventsSupported() ? { passive: true } : false );
+	elem.addEventListener( event, handler, { passive: true } );
 };
 
 /**
  * Remove a passive event listener
  *
+ * @deprecated Pass { passive: true } directly to removeEventListener
  * @param {HTMLElement} elem Element to remove event from
  * @param {string} event Name of event to remove
  * @param {Function} handler Event handler to remove
  */
 ve.removePassiveEventListener = function ( elem, event, handler ) {
-	elem.removeEventListener( event, handler, ve.isPassiveEventsSupported() ? { passive: true } : false );
-};
-
-/**
- * Test whether passive event listeners are supported
- *
- * @return {boolean} Whether passive event listeners are supported
- */
-ve.isPassiveEventsSupported = function () {
-	if ( ve.isPassiveEventsSupported.supported === undefined ) {
-		try {
-			var opts = Object.defineProperty( {}, 'passive', {
-				// eslint-disable-next-line getter-return
-				get: function () {
-					ve.isPassiveEventsSupported.supported = true;
-				}
-			} );
-			window.addEventListener( 'testPassive', null, opts );
-			window.removeEventListener( 'testPassive', null, opts );
-		} catch ( e ) {}
-		if ( ve.isPassiveEventsSupported.supported !== true ) {
-			ve.isPassiveEventsSupported.supported = false;
-		}
-	}
-	return ve.isPassiveEventsSupported.supported;
+	elem.removeEventListener( event, handler, { passive: true } );
 };
 
 /**

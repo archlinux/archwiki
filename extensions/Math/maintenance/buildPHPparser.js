@@ -67,6 +67,7 @@ const useStatements =
 	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Fun2;\n' +
 	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Fun2nb;\n' +
 	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Fun2sq;\n' +
+	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Fun4;\n' +
 	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Infix;\n' +
 	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Literal;\n' +
 	'use MediaWiki\\Extension\\Math\\TexVC\\Nodes\\Lr;\n' +

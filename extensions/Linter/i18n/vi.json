@@ -3,13 +3,15 @@
 		"authors": [
 			"Minh Nguyen",
 			"NguoiDungKhongDinhDanh",
-			"Vinhtantran",
-			"Thienhau2003"
+			"Thienhau2003",
+			"Vinhtantran"
 		]
 	},
 	"linterrors": "Lỗi cú pháp",
 	"linter-category-bogus-image-options": "Tùy chọn tập tin không có thật",
 	"linter-category-bogus-image-options-desc": "Những trang này có tập tin với những tùy chọn không có thật.",
+	"linter-category-large-tables": "Bảng lớn khó xem trên thiết bị di động",
+	"linter-category-large-tables-desc": "Những trang này có các bảng khó xem trên thiết bị di động",
 	"linter-category-deletable-table-tag": "Thẻ bảng cần xóa",
 	"linter-category-deletable-table-tag-desc": "Các trang này chứa thẻ bảng cần được xóa.",
 	"linter-category-fostered": "Nội dung được nhận nuôi",
@@ -53,6 +55,7 @@
 	"linter-page-title-edit": "$1 ($2)",
 	"linter-page-viewsource": "xem mã nguồn",
 	"linter-pager-bogus-image-options-details": "Tùy chọn tập tin giả",
+	"linter-pager-large-tables-details": "Bảng có kích cỡ lớn để xem trên thiết bị di động",
 	"linter-pager-category-header": "Thể loại",
 	"linter-pager-deletable-table-tag-details": "Thẻ bảng cần xóa",
 	"linter-pager-details-header": "Thông tin thêm",
@@ -60,6 +63,7 @@
 	"linter-pager-misc-tidy-replacement-issues-details": "Lỗi mã đánh dấu khác",
 	"linter-pager-misnested-tag-details": "Thẻ lồng sai phải được lồng chính xác",
 	"linter-pager-missing-end-tag-details": "Thiếu thẻ kết thúc",
+	"linter-pager-missing-end-tag-in-heading-details": "Thiếu thẻ kết thúc trong đề mục",
 	"linter-pager-multi-colon-escape-details": "Thoát nhiều dấu hai chấm",
 	"linter-pager-multiline-html-table-in-list-details": "Bảng HTML5 đa dòng trong danh sách",
 	"linter-pager-multiple-unclosed-formatting-tags-details": "Nhiều thẻ định dạng không đóng trong trang",

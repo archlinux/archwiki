@@ -113,16 +113,13 @@ interface ContentMetadataCollector {
 	 * ::setLanguageLinks() / ::addLanguageLink()
 	 *   T296019: This *should* accept an array of LinkTargets; see above re:
 	 *   Title-related types.
+	 *   See also includes/deferred/LinksUpdate/LangLinksTable.php, which
+	 *   has its own ideas about the ParserOuput format for language links
 	 * ::setTitleText()
 	 *   T293514: This contains the title in HTML and is redundant with
 	 *   ::setDisplayTitle()
 	 * ::setSections()
 	 *   T296025: Should be more structured
-	 * ::setIndicator()
-	 *   Probably should be 'appendIndicator' for consistency? The `content`
-	 *   parameter is a string, but we'd probably want a DOM?  If it's a
-	 *   DOM object we need to be able to JSON serialize and unserialize
-	 *   it for ParserCache. (T300980)
 	 * ::addExtraCSPDefaultSrc()
 	 * ::addExtraCSPStyleSrc()
 	 * ::addExtraCSPScriptSrc()
@@ -179,6 +176,18 @@ interface ContentMetadataCollector {
 	 * @param bool $val
 	 */
 	public function setOutputFlag( string $name, bool $val = true ): void;
+
+	/**
+	 * Provides a uniform interface to various appendable lists of strings
+	 * stored in the content metadata. Strings internal to MediaWiki core should
+	 * have names which are constants in ParserOutputStrings.  Extensions
+	 * should use ::setExtensionData() rather than creating new keys here
+	 * in order to prevent namespace conflicts.
+	 *
+	 * @param string $name A string name
+	 * @param string[] $value
+	 */
+	public function appendOutputStrings( string $name, array $value ): void;
 
 	/**
 	 * Set a property to be stored in the page_props database table.
@@ -398,4 +407,17 @@ interface ContentMetadataCollector {
 	 * @param TOCData $tocData
 	 */
 	public function setTOCData( TOCData $tocData ): void;
+
+	/**
+	 * Set the content for an indicator.
+	 *
+	 * @param string $name
+	 * @param string $content
+	 */
+	public function setIndicator( $name, $content ): void;
+
+	/**
+	 * @return array
+	 */
+	public function getIndicators(): array;
 }

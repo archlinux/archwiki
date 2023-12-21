@@ -6,9 +6,9 @@
 			"Vikytinta"
 		]
 	},
-	"tooltip-ca-createsource": "Aka pajinan chimpu fuente-p uñstayama",
-	"tooltip-ca-editsource": "Aka pajinan chimpu fuente-p askichaña",
 	"tooltip-ca-ve-edit": "Editor Visual ukamp aka pajin askichaña",
+	"tooltip-ca-editsource": "Aka pajinan chimpu fuente-p askichaña",
+	"tooltip-ca-createsource": "Aka pajinan chimpu fuente-p uñstayama",
 	"visualeditor-advancedsettings-tool": "Sarantayat mayjt’ayäwi",
 	"visualeditor-ca-createsource": "Fuente uñstayaña",
 	"visualeditor-ca-editsource": "Chimp askichaña",
@@ -96,8 +96,6 @@
 	"visualeditor-linknodeinspector-add-label": "Sutinchat yapxataña",
 	"visualeditor-linknodeinspector-title": "Jasa waythapiri",
 	"visualeditor-meta-tool": "Ajllinaka",
-	"visualeditor-mweditmodesource-warning-cancel": "Suyt'ayaña",
-	"visualeditor-mweditmodesource-warning-switch-discard": "Mayjt'ayäwinak chhaqtayaña",
 	"visualeditor-savedialog-label-resolve-conflict": "Jan walt'aw askichaña",
 	"visualeditor-savedialog-label-review": "Turkakipawim uñakipaña",
 	"visualeditor-savedialog-label-review-good": "Imañar kutt'aña",

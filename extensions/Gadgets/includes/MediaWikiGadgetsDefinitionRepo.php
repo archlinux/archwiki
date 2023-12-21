@@ -6,9 +6,9 @@ use InvalidArgumentException;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use ObjectCache;
 use TextContent;
-use Title;
 use WANObjectCache;
 use Wikimedia\Rdbms\Database;
 
@@ -35,7 +35,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 			throw new InvalidArgumentException( "No gadget registered for '$id'" );
 		}
 
-		return $gadgets[$id];
+		return new Gadget( $gadgets[$id] );
 	}
 
 	public function getGadgetIds(): array {
@@ -48,7 +48,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	}
 
 	public function handlePageUpdate( LinkTarget $target ): void {
-		if ( $target->getNamespace() === NS_MEDIAWIKI && $target->getText() == 'Gadgets-definition' ) {
+		if ( $target->getNamespace() === NS_MEDIAWIKI && $target->getText() === 'Gadgets-definition' ) {
 			$this->purgeDefinitionCache();
 		}
 	}
@@ -81,9 +81,16 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	/**
 	 * Get list of gadgets.
 	 *
-	 * @return Gadget[] List of Gadget objects
+	 * @return array[] List of Gadget objects
 	 */
 	protected function loadGadgets(): array {
+		if ( defined( 'MW_PHPUNIT_TEST' ) && MediaWikiServices::getInstance()->isStorageDisabled() ) {
+			// Bail out immediately if storage is disabled. This should never happen in normal operations, but can
+			// happen a lot in tests: this method is called from the UserGetDefaultOptions hook handler, so any test
+			// that uses UserOptionsLookup will end up reaching this code, which is problematic if the test is not
+			// in the Database group (T155147).
+			return [];
+		}
 		// From back to front:
 		//
 		// 3. wan cache (e.g. memcached)
@@ -114,6 +121,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 							return $this->fetchStructuredList();
 						},
 						[
+							'version' => 2,
 							// Avoid database stampede
 							'lockTSE' => 300,
 						 ]
@@ -128,7 +136,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	 * Fetch list of gadgets and returns it as associative array of sections with gadgets
 	 * e.g. [ $name => $gadget1, etc. ]
 	 * @param string|null $forceNewText Injected text of MediaWiki:gadgets-definition [optional]
-	 * @return array
+	 * @return array[]
 	 */
 	public function fetchStructuredList( $forceNewText = null ) {
 		if ( $forceNewText === null ) {
@@ -162,9 +170,9 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 	 * Generates a structured list of Gadget objects from a definition
 	 *
 	 * @param string $definition
-	 * @return Gadget[] List of Gadget objects indexed by the gadget's name.
+	 * @return array[] List of Gadget objects indexed by the gadget's name.
 	 */
-	private function listFromDefinition( $definition ) {
+	private function listFromDefinition( $definition ): array {
 		$definition = preg_replace( '/<!--.*?-->/s', '', $definition );
 		$lines = preg_split( '/(\r\n|\r|\n)+/', $definition );
 
@@ -178,7 +186,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 			} else {
 				$gadget = $this->newFromDefinition( $line, $section );
 				if ( $gadget ) {
-					$gadgets[$gadget->getName()] = $gadget;
+					$gadgets[$gadget->getName()] = $gadget->toArray();
 				}
 			}
 		}
@@ -206,7 +214,7 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 		// Also, title-normalization applies.
 		$info = [ 'category' => $category ];
 		$info['name'] = trim( str_replace( ' ', '_', $m[1] ) );
-		// If the name is too long, then RL will throw an MWException when
+		// If the name is too long, then RL will throw an exception when
 		// we try to register the module
 		if ( !Gadget::isValidGadgetID( $info['name'] ) ) {
 			return false;
@@ -248,6 +256,12 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 					break;
 				case 'skins':
 					$info['requiredSkins'] = $params;
+					break;
+				case 'namespaces':
+					$info['requiredNamespaces'] = $params;
+					break;
+				case 'contentModels':
+					$info['requiredContentModels'] = $params;
 					break;
 				case 'default':
 					$info['onByDefault'] = true;

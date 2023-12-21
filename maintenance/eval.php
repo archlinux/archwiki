@@ -30,6 +30,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Logger\ConsoleSpi;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
@@ -102,7 +103,7 @@ class MWEval extends Maintenance {
 			$__historyFile = null;
 		}
 
-		Hooks::runner()->onMaintenanceShellStart();
+		( new HookRunner( $this->getServiceContainer()->getHookContainer() ) )->onMaintenanceShellStart();
 
 		$__e = null; // PHP exception
 		while ( ( $__line = Maintenance::readconsole() ) !== false ) {
@@ -120,7 +121,8 @@ class MWEval extends Maintenance {
 				readline_write_history( $__historyFile );
 			}
 			try {
-				// @phan-suppress-next-line SecurityCheck-RCE
+				// @phan-suppress-next-next-line SecurityCheck-RCE
+				// phpcs:ignore MediaWiki.Usage.ForbiddenFunctions.eval
 				$__val = eval( $__line . ";" );
 			} catch ( Exception $__e ) {
 				fwrite( STDERR, "Caught exception " . get_class( $__e ) .

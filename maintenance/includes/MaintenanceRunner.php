@@ -2,10 +2,13 @@
 
 namespace MediaWiki\Maintenance;
 
+use DeferredUpdates;
 use Exception;
 use LCStoreNull;
 use LogicException;
 use Maintenance;
+use MediaWiki;
+use MediaWiki\Config\Config;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -33,7 +36,7 @@ class MaintenanceRunner {
 	/**
 	 * The class name of the script to execute.
 	 *
-	 * @var ?string
+	 * @var ?class-string<Maintenance>
 	 */
 	private $scriptClass = null;
 
@@ -52,6 +55,9 @@ class MaintenanceRunner {
 	/** @var bool */
 	private bool $withoutLocalSettings = false;
 
+	/** @var ?Config */
+	private ?Config $config = null;
+
 	/**
 	 * Default constructor. Children should call this *first* if implementing
 	 * their own constructors
@@ -61,6 +67,14 @@ class MaintenanceRunner {
 	public function __construct() {
 		$this->parameters = new MaintenanceParameters();
 		$this->addDefaultParams();
+	}
+
+	private function getConfig() {
+		if ( $this->config === null ) {
+			$this->config = $this->getServiceContainer()->getMainConfig();
+		}
+
+		return $this->config;
 	}
 
 	/**
@@ -366,6 +380,9 @@ class MaintenanceRunner {
 		// Preloading failed. Let findScriptClass() try to find the script later.
 	}
 
+	/**
+	 * @return class-string<Maintenance>
+	 */
 	protected function getScriptClass(): string {
 		if ( $this->scriptClass === null ) {
 			if ( $this->runFromWrapper ) {
@@ -386,7 +403,7 @@ class MaintenanceRunner {
 	 * @internal
 	 * @param string $script
 	 *
-	 * @return string
+	 * @return class-string<Maintenance>
 	 */
 	protected function findScriptClass( string $script ): string {
 		[ $extName, $scriptName ] = $this->splitScript( $script );
@@ -580,12 +597,13 @@ class MaintenanceRunner {
 	public static function emulateConfig( SettingsBuilder $settings ) {
 		// NOTE: The config schema is already loaded at this point, so default values are known.
 
-		// Server must be set, but we don't care to what
-		$settings->overrideConfigValue( 'Server', 'https://unknown.invalid' );
-
-		// If InvalidateCacheOnLocalSettingsChange is enabled, filemtime( MW_CONFIG_FILE ),
-		// which will produce a warning if there is no settings file.
-		$settings->overrideConfigValue( 'InvalidateCacheOnLocalSettingsChange', false );
+		$settings->overrideConfigValues( [
+			// Server must be set, but we don't care to what
+			MainConfigNames::Server => 'https://unknown.invalid',
+			// If InvalidateCacheOnLocalSettingsChange is enabled, filemtime( MW_CONFIG_FILE ),
+			// which will produce a warning if there is no settings file.
+			MainConfigNames::InvalidateCacheOnLocalSettingsChange => false,
+		] );
 	}
 
 	/**
@@ -626,6 +644,10 @@ class MaintenanceRunner {
 		$this->scriptObject->finalSetup( $settingsBuilder );
 	}
 
+	private function getServiceContainer(): MediaWikiServices {
+		return MediaWikiServices::getInstance();
+	}
+
 	/**
 	 * Run the maintenance script.
 	 *
@@ -641,7 +663,7 @@ class MaintenanceRunner {
 	 *         passed through from Maintenance::execute().
 	 */
 	public function run(): bool {
-		$config = MediaWikiServices::getInstance()->getMainConfig();
+		$config = $this->getConfig();
 
 		// Apply warning thresholds and output mode to Profiler.
 		// This MUST happen after Setup.php calls MaintenanceRunner::setup,
@@ -685,7 +707,7 @@ class MaintenanceRunner {
 				print_r( $GLOBALS );
 			}
 
-			$this->scriptObject->shutdown();
+			$this->shutdown();
 
 			return $success;
 		} catch ( Exception $ex ) {
@@ -767,6 +789,48 @@ class MaintenanceRunner {
 	public function cleanup() {
 		if ( $this->scriptObject ) {
 			$this->scriptObject->cleanupChanneled();
+		}
+	}
+
+	/**
+	 * Call before exiting CLI process for the last DB commit, and flush
+	 * any remaining buffers and other deferred work.
+	 *
+	 * Equivalent to MediaWiki::restInPeace which handles shutdown for web requests,
+	 * and should perform the same operations and in the same order.
+	 *
+	 * @since 1.41
+	 */
+	private function shutdown() {
+		$lbFactory = null;
+		if (
+			$this->scriptObject->getDbType() !== Maintenance::DB_NONE &&
+			// Service might be disabled, e.g. when running install.php
+			!$this->getServiceContainer()->isServiceDisabled( 'DBLoadBalancerFactory' )
+		) {
+			$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
+			if ( $lbFactory->isReadyForRoundOperations() ) {
+				$lbFactory->commitPrimaryChanges( get_class( $this ) );
+			}
+
+			DeferredUpdates::doUpdates();
+		}
+
+		// Handle profiler outputs
+		// NOTE: MaintenanceRunner ensures Profiler::setAllowOutput() during setup
+		$profiler = Profiler::instance();
+		$profiler->logData();
+		$profiler->logDataPageOutputOnly();
+
+		MediaWiki::emitBufferedStatsdData(
+			$this->getServiceContainer()->getStatsdDataFactory(),
+			$this->getConfig()
+		);
+
+		if ( $lbFactory ) {
+			if ( $lbFactory->isReadyForRoundOperations() ) {
+				$lbFactory->shutdown( $lbFactory::SHUTDOWN_NO_CHRONPROT );
+			}
 		}
 	}
 

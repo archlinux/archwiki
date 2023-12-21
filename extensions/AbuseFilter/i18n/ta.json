@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Balajijagadesh",
 			"ElangoRamanujam",
 			"Kanags",
@@ -12,7 +13,7 @@
 			"கௌசிக் பிரபு",
 			"செல்வா",
 			"மதனாஹரன்",
-			"Amire80"
+			"Fahimrazick"
 		]
 	},
 	"abusefilter-desc": "தொகுப்புகள் தானியங்கியாய் முறைவரிசைப்படுத்துதலைச் செயற்படுத்தும்",
@@ -88,7 +89,7 @@
 	"abusefilter-list-options-deleted-only": "நீக்கப்பட்ட வடிகட்டிகளை மட்டும் காட்டவும்",
 	"abusefilter-list-options-deleted-hide": "அழிக்கப்பட்ட வடிகட்டல்களை மறைக்கவும்",
 	"abusefilter-list-options-deleted-show": "அழிக்கப்பட்ட வடிகட்டல்களைச் சேர்த்துக் கொள்ளவும்",
-	"abusefilter-list-options-scope": "வடிக்கட்டிகளைக் காட்டுக",
+	"abusefilter-list-options-scope": "வடிகட்டிகளைக் காட்டு:",
 	"abusefilter-list-options-scope-local": "உள் விக்கி",
 	"abusefilter-list-options-scope-global": "உலக விதிகள்",
 	"abusefilter-list-options-hidedisabled": "செயலிழக்கம் செய்யப்பட்ட வடிகட்டிகளை மறைக்கவும்",
@@ -103,7 +104,7 @@
 	"abusefilter-edit-subtitle-new": "வடிகட்டியை உருவாக்குகிறது",
 	"abusefilter-edit-status-label": "புள்ளிவிவரங்கள்:",
 	"abusefilter-edit-new": "புதிய வடிகட்டி",
-	"abusefilter-edit-save": "வடிகட்டியைச் சேமிக்கவும்",
+	"abusefilter-edit-save": "வடிகட்டியைச் சேமி",
 	"abusefilter-edit-id": "வடிகட்டியின் அடையாள எண்:",
 	"abusefilter-edit-description": "விபரிப்பு:\n:''(அனைவரும் காணக்கூடியது)''",
 	"abusefilter-edit-group": "வடிகட்டிக் குழு:",
@@ -176,7 +177,7 @@
 	"abusefilter-edit-builder-funcs-norm": "இயல்புநிலையாக்கு (norm)",
 	"abusefilter-edit-builder-funcs-count": "Y-என்னும் சொற்றொடரில் X-என்னும் சொற்றொடர் இத்தனை முறை காணப்படுகிறது (count)",
 	"abusefilter-edit-builder-funcs-rmwhitespace": "வெள்ளை இடைவெளிகளை நீக்கு (rmwhitespace)",
-	"abusefilter-edit-builder-funcs-rmspecials": "சிறப்பு எழுத்துக்களை நீக்கவும் (rmspecials)",
+	"abusefilter-edit-builder-funcs-rmspecials": "சிறப்பு வரியுருக்களை அகற்று (rmspecials)",
 	"abusefilter-edit-builder-funcs-ip_in_range": "ஐ.பி. அதன் வரையறையில் உள்ளதா ? (ip_in_range)",
 	"abusefilter-edit-builder-funcs-contains-any": "பல சரக்கூறுகளைத் தேடுதற்கான சரம்",
 	"abusefilter-edit-builder-funcs-substr": "துணைச்சொற்றொடர் (substr)",
@@ -252,7 +253,7 @@
 	"abusefilter-changeslist-examine": "ஆய்வு செய்",
 	"abusefilter-examine": "தனியொரு மாற்றங்களை ஆராயவும்",
 	"abusefilter-examine-legend": "மாற்றங்களைத் தேர்ந்தெடுக்கவும்",
-	"abusefilter-examine-submit": "தேடுக",
+	"abusefilter-examine-submit": "தேடு",
 	"abusefilter-examine-test-button": "சோதனை வடிகட்டி",
 	"abusefilter-examine-match": "வடிகட்டியானது இந்த மாற்றத்துடன் ஒத்துப்போகிறது",
 	"abusefilter-examine-nomatch": "வடிகட்டியானது இந்த மாற்றத்துடன் ஒத்துவரவில்லை.",

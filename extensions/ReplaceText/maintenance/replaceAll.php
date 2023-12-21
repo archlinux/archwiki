@@ -33,7 +33,6 @@ namespace MediaWiki\Extension\ReplaceText;
 use Maintenance;
 use MediaWiki\MediaWikiServices;
 use MWException;
-use TitleArrayFromResult;
 
 $IP = getenv( 'MW_INSTALL_PATH' ) ?: __DIR__ . '/../../..';
 if ( !is_readable( "$IP/maintenance/Maintenance.php" ) ) {
@@ -55,10 +54,11 @@ class ReplaceAll extends Maintenance {
 	private $namespaces;
 	private $category;
 	private $prefix;
+	private $pageLimit;
 	private $useRegex;
 	private $titles;
 	private $defaultContinue;
-	private $doAnnounce;
+	private $botEdit;
 	private $rename;
 
 	public function __construct() {
@@ -88,13 +88,15 @@ class ReplaceAll extends Maintenance {
 			false, true, 'c' );
 		$this->addOption( 'prefix', 'Search only pages whose names start with this string.',
 			false, true, 'p' );
+		$this->addOption( 'pageLimit', 'Maximum number of pages to return from the search.',
+			false, true, 'p' );
 		$this->addOption( 'replacements', 'File containing the list of ' .
 			'replacements to be made.  Fields in the file are tab-separated. ' .
 			'See --show-file-format for more information.', false, true, 'f' );
 		$this->addOption( 'show-file-format', 'Show a description of the ' .
 			'file format to use with --replacements.', false, false );
-		$this->addOption( 'no-announce', 'Do not announce edits on Special:RecentChanges or ' .
-			'watchlists.', false, false, 'm' );
+		$this->addOption( 'bot-edit', 'Mark changes as bot edits.',
+			false, false, 'b' );
 		$this->addOption( 'debug', 'Display replacements being made.', false, false );
 		$this->addOption( 'listns', 'List out the namespaces on this wiki.',
 			false, false );
@@ -183,7 +185,7 @@ class ReplaceAll extends Maintenance {
 			plain();
 		if ( $this->getOption( 'summary' ) !== null ) {
 			$msg = str_replace( [ '%f', '%r' ],
-				[ $this->target, $this->replacement ],
+				[ $target, $replacement ],
 				$this->getOption( 'summary' ) );
 		}
 		return $msg;
@@ -266,6 +268,10 @@ EOF;
 		return $this->getOption( 'prefix' );
 	}
 
+	private function getPageLimit() {
+		return $this->getOption( 'pageLimit' );
+	}
+
 	private function useRegex() {
 		return [ $this->getOption( 'regex' ) ];
 	}
@@ -275,13 +281,26 @@ EOF;
 	}
 
 	private function listTitles( $titles, $target, $replacement, $regex, $rename ) {
-		foreach ( $titles as $title ) {
+		$skippedTitles = [];
+		foreach ( $titles as $prefixedText => $title ) {
+			if ( $title === null ) {
+				$skippedTitles[] = $prefixedText;
+				continue;
+			}
+
 			if ( $rename ) {
 				$newTitle = Search::getReplacedTitle( $title, $target, $replacement, $regex );
 				// Implicit conversion of objects to strings
 				$this->output( "$title\t->\t$newTitle\n" );
 			} else {
 				$this->output( "$title\n" );
+			}
+		}
+
+		if ( $skippedTitles ) {
+			$this->output( "\nExtension hook filtered out the following titles from being moved:\n" );
+			foreach ( $skippedTitles as $prefixedTitle ) {
+				$this->output( "$prefixedTitle\n" );
 			}
 		}
 	}
@@ -294,7 +313,7 @@ EOF;
 				'use_regex'       => $useRegex,
 				'user_id'         => $this->user->getId(),
 				'edit_summary'    => $this->getSummary( $target, $replacement ),
-				'doAnnounce'      => $this->doAnnounce
+				'botEdit'         => $this->botEdit
 			];
 
 			if ( $rename ) {
@@ -342,6 +361,7 @@ EOF;
 		$this->namespaces = $this->getNamespaces();
 		$this->category = $this->getCategory();
 		$this->prefix = $this->getPrefix();
+		$this->pageLimit = $this->getPageLimit();
 		$this->rename = $this->getRename();
 
 		return true;
@@ -354,7 +374,7 @@ EOF;
 		global $wgShowExceptionDetails;
 		$wgShowExceptionDetails = true;
 
-		$this->doAnnounce = true;
+		$this->botEdit = false;
 		if ( !$this->localSetup() ) {
 			return;
 		}
@@ -363,6 +383,7 @@ EOF;
 			$this->fatalError( 'No matching namespaces.' );
 		}
 
+		$hookHelper = new HookHelper( MediaWikiServices::getInstance()->getHookContainer() );
 		foreach ( $this->target as $index => $target ) {
 			$replacement = $this->replacement[$index];
 			$useRegex = $this->useRegex[$index];
@@ -381,31 +402,33 @@ EOF;
 					$this->namespaces,
 					$this->category,
 					$this->prefix,
+					$this->pageLimit,
 					$useRegex
 				);
+				$titlesToProcess = $hookHelper->filterPageTitlesForRename( $res );
 			} else {
 				$res = Search::doSearchQuery(
 					$target,
 					$this->namespaces,
 					$this->category,
 					$this->prefix,
+					$this->pageLimit,
 					$useRegex
 				);
+				$titlesToProcess = $hookHelper->filterPageTitlesForEdit( $res );
 			}
 
-			$titles = new TitleArrayFromResult( $res );
-
-			if ( count( $titles ) === 0 ) {
+			if ( count( $titlesToProcess ) === 0 ) {
 				$this->fatalError( 'No targets found to replace.' );
 			}
 
 			if ( $this->getOption( 'dry-run' ) ) {
-				$this->listTitles( $titles, $target, $replacement, $useRegex, $this->rename );
+				$this->listTitles( $titlesToProcess, $target, $replacement, $useRegex, $this->rename );
 				continue;
 			}
 
 			if ( !$this->shouldContinueByDefault() ) {
-				$this->listTitles( $titles, $target, $replacement, $useRegex, $this->rename );
+				$this->listTitles( $titlesToProcess, $target, $replacement, $useRegex, $this->rename );
 				if ( !$this->getReply( 'Replace instances on these pages?' ) ) {
 					return;
 				}
@@ -415,8 +438,8 @@ EOF;
 			if ( $this->getOption( 'user', null ) === null ) {
 				$comment = ' (Use --user to override)';
 			}
-			if ( $this->getOption( 'no-announce', false ) ) {
-				$this->doAnnounce = false;
+			if ( $this->getOption( 'bot-edit', false ) ) {
+				$this->botEdit = true;
 			}
 			if ( !$this->getReply(
 				"Attribute changes to the user '{$this->user}'?$comment"
@@ -424,9 +447,7 @@ EOF;
 				return;
 			}
 
-			$this->replaceTitles(
-				$titles, $target, $replacement, $useRegex, $this->rename
-			);
+			$this->replaceTitles( $titlesToProcess, $target, $replacement, $useRegex, $this->rename );
 		}
 	}
 }

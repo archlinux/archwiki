@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"John Reid"
+			"John Reid",
+			"CiphriusKane"
 		]
 	},
-	"nuke-linkoncontribs": "nuke-delyte",
-	"nuke-linkoncontribs-text": "nuke-delyte pages whaur this uiser is the yinlie writer"
+	"nuke-linkoncontribs": "nuke-delete",
+	"nuke-linkoncontribs-text": "nuke-delete pages whaur {{GENDER:$1|this uiser}} is the anely owther"
 }

@@ -20,13 +20,16 @@
  * @file
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\ProcOpenError;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Shell\Shell;
 use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\Utils\UrlUtils;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
@@ -486,8 +489,8 @@ function wfGetUrlUtils(): UrlUtils {
 }
 
 /**
- * Expand a potentially local URL to a fully-qualified URL. Assumes $wgServer
- * is correct.
+ * Expand a potentially local URL to a fully-qualified URL using $wgServer
+ * (or one of its alternatives).
  *
  * The meaning of the PROTO_* constants is as follows:
  * PROTO_HTTP: Output a URL starting with http://
@@ -499,10 +502,16 @@ function wfGetUrlUtils(): UrlUtils {
  *    For protocol-relative URLs, use the protocol of $wgCanonicalServer
  * PROTO_INTERNAL: Like PROTO_CANONICAL, but uses $wgInternalServer instead of $wgCanonicalServer
  *
+ * If $url specifies a protocol, or $url is domain-relative and $wgServer
+ * specifies a protocol, PROTO_HTTP, PROTO_HTTPS, PROTO_RELATIVE and
+ * PROTO_CURRENT do not change that.
+ *
+ * Parent references (/../) in the path are resolved (as in wfRemoveDotSegments).
+ *
  * @deprecated since 1.39, use UrlUtils::expand()
- * @param string $url Either fully-qualified or a local path + query
- * @param string|int|null $defaultProto One of the PROTO_* constants. Determines the
- *    protocol to use if $url or $wgServer is protocol-relative
+ * @param string $url An URL; can be absolute (e.g. http://example.com/foo/bar),
+ *    protocol-relative (//example.com/foo/bar) or domain-relative (/foo/bar).
+ * @param string|int|null $defaultProto One of the PROTO_* constants, as described above.
  * @return string|false Fully-qualified URL, current-path-relative URL or false if
  *    no valid URL can be constructed
  */
@@ -536,7 +545,7 @@ function wfGetServerUrl( $proto ) {
  * @return string URL assembled from its component parts
  */
 function wfAssembleUrl( $urlParts ) {
-	return wfGetUrlUtils()->assemble( (array)$urlParts );
+	return UrlUtils::assemble( (array)$urlParts );
 }
 
 /**
@@ -544,14 +553,13 @@ function wfAssembleUrl( $urlParts ) {
  * '/a/./b/../c/' becomes '/a/c/'.  For details on the algorithm, please see
  * RFC3986 section 5.2.4.
  *
- * @since 1.19
- *
  * @deprecated since 1.39, use UrlUtils::removeDotSegments()
+ * @since 1.19
  * @param string $urlPath URL path, potentially containing dot-segments
  * @return string URL path with all dot-segments removed
  */
 function wfRemoveDotSegments( $urlPath ) {
-	return wfGetUrlUtils()->removeDotSegments( (string)$urlPath );
+	return UrlUtils::removeDotSegments( (string)$urlPath );
 }
 
 /**
@@ -822,6 +830,7 @@ function wfLogWarning( $msg, $callerOffset = 1, $level = E_USER_WARNING ) {
 /**
  * Return a Language object from $langcode
  *
+ * @deprecated since 1.41, use MediaWiki\Languages\LanguageFactory::getLanguage instead.
  * @param Language|string|bool $langcode Either:
  *                  - a Language object
  *                  - code of the language to get the message for, if it is
@@ -835,6 +844,7 @@ function wfLogWarning( $msg, $callerOffset = 1, $level = E_USER_WARNING ) {
  * @return Language|StubUserLang
  */
 function wfGetLangObj( $langcode = false ) {
+	wfDeprecated( __FUNCTION__, '1.41' );
 	# Identify which language to get or create a language object for.
 	# Using is_object here due to Stub objects.
 	if ( is_object( $langcode ) ) {
@@ -976,12 +986,16 @@ function wfHostname() {
  * hostname of the server handling the request.
  *
  * @deprecated since 1.40
- * @param string|null $nonce Value from OutputPage->getCSP()->getNonce()
+ * @param string|null $nonce Unused
+ * @param bool $triggerWarnings introduced in 1.41 whether to trigger deprecation notice.
  * @return string|WrappedString HTML
  */
-function wfReportTime( $nonce = null ) {
+function wfReportTime( $nonce = null, $triggerWarnings = true ) {
 	global $wgShowHostnames;
 
+	if ( $triggerWarnings ) {
+		wfDeprecated( __FUNCTION__, '1.40' );
+	}
 	$elapsed = ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] );
 	// seconds to milliseconds
 	$responseTime = round( $elapsed * 1000 );
@@ -992,8 +1006,7 @@ function wfReportTime( $nonce = null ) {
 
 	return (
 		ResourceLoader::makeInlineScript(
-			ResourceLoader::makeConfigSetScript( $reportVars ),
-			$nonce
+			ResourceLoader::makeConfigSetScript( $reportVars )
 		)
 	);
 }
@@ -1082,7 +1095,7 @@ function wfGetCaller( $level = 2 ) {
  * Return a string consisting of callers in the stack. Useful sometimes
  * for profiling specific points.
  *
- * @param int $limit The maximum depth of the stack frame to return, or false for the entire stack.
+ * @param int|false $limit The maximum depth of the stack frame to return, or false for the entire stack.
  * @return string
  */
 function wfGetAllCallers( $limit = 3 ) {
@@ -1107,21 +1120,6 @@ function wfFormatStackFrame( $frame ) {
 	return isset( $frame['class'] ) && isset( $frame['type'] ) ?
 		$frame['class'] . $frame['type'] . $frame['function'] :
 		$frame['function'];
-}
-
-/* Some generic result counters, pulled out of SearchEngine */
-
-/**
- * @todo document
- *
- * @deprecated with warnings since 1.40
- * @param int $offset
- * @param int $limit
- * @return string
- */
-function wfShowingResults( $offset, $limit ) {
-	wfDeprecated( __FUNCTION__, '1.40' );
-	return wfMessage( 'showingresults' )->numParams( $limit, $offset + 1 )->parse();
 }
 
 /**
@@ -1308,8 +1306,11 @@ function wfHttpError( $code, $label, $desc ) {
  *
  * The optional $resetGzipEncoding parameter controls suppression of
  * the Content-Encoding header sent by ob_gzhandler; by default it
- * is left. See comments for wfClearOutputBuffers() for why it would
- * be used.
+ * is left. This should be used for HTTP 304 responses, where you need to
+ * preserve the Content-Encoding header of the real result, but
+ * also need to suppress the output of ob_gzhandler to keep to spec
+ * and avoid breaking Firefox in rare cases where the headers and
+ * body are broken over two packets.
  *
  * Note that some PHP configuration options may add output buffer
  * layers which cannot be removed; these are left in place.
@@ -1351,25 +1352,6 @@ function wfResetOutputBuffers( $resetGzipEncoding = true ) {
 }
 
 /**
- * More legible than passing a 'false' parameter to wfResetOutputBuffers():
- *
- * Clear away output buffers, but keep the Content-Encoding header
- * produced by ob_gzhandler, if any.
- *
- * This should be used for HTTP 304 responses, where you need to
- * preserve the Content-Encoding header of the real result, but
- * also need to suppress the output of ob_gzhandler to keep to spec
- * and avoid breaking Firefox in rare cases where the headers and
- * body are broken over two packets.
- *
- * @deprecated since 1.36
- */
-function wfClearOutputBuffers() {
-	wfDeprecated( __FUNCTION__, '1.36' );
-	wfResetOutputBuffers( false );
-}
-
-/**
  * Get a timestamp string in one of various formats
  *
  * @param mixed $outputtype Output format, one of the TS_* constants. Defaults to
@@ -1391,8 +1373,8 @@ function wfTimestamp( $outputtype = TS_UNIX, $ts = 0 ) {
  * Return a formatted timestamp, or null if input is null.
  * For dealing with nullable timestamp columns in the database.
  *
- * @param int $outputtype
- * @param string|null $ts
+ * @param mixed $outputtype
+ * @param mixed|null $ts
  * @return string|false|null Null if called with null, otherwise the result of wfTimestamp()
  */
 function wfTimestampOrNull( $outputtype = TS_UNIX, $ts = null ) {
@@ -1498,7 +1480,6 @@ function wfRecursiveRemoveDir( $dir ) {
 				}
 			}
 		}
-		reset( $objects );
 		rmdir( $dir );
 	}
 }
@@ -1681,7 +1662,8 @@ function wfShellWikiCmd( $script, array $parameters = [], array $options = [] ) 
 	global $wgPhpCli;
 	// Give site config file a chance to run the script in a wrapper.
 	// The caller may likely want to call wfBasename() on $script.
-	Hooks::runner()->onWfShellWikiCmd( $script, $parameters, $options );
+	( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
+		->onWfShellWikiCmd( $script, $parameters, $options );
 	$cmd = [ $options['php'] ?? $wgPhpCli ];
 	if ( isset( $options['wrapper'] ) ) {
 		$cmd[] = $options['wrapper'];
@@ -1902,11 +1884,12 @@ function wfGetDB( $db, $groups = [], $wiki = false ) {
 }
 
 /**
- * Get the path to a specified script file, respecting file
- * extensions; this is a wrapper around $wgScriptPath etc.
- * except for 'index' and 'load' which use $wgScript/$wgLoadScript
+ * Get the URL path to a MediaWiki entry point.
  *
- * @param string $script Script filename, sans extension
+ * This is a wrapper to respect $wgScript and $wgLoadScript overrides.
+ *
+ * @see MW_ENTRY_POINT
+ * @param string $script Name of entrypoint, without `.php` extension.
  * @return string
  */
 function wfScript( $script = 'index' ) {

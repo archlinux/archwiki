@@ -5,7 +5,6 @@
 			"Gitartha.bordoloi"
 		]
 	},
-	"apihelp-visualeditor-description": "এখন পৃষ্ঠাৰ HTML5 পৰা পেৰাছইড সেৱালৈ ঘুৰি যাওক।",
 	"apihelp-visualeditor-param-basetimestamp": "সংৰক্ষণৰ সময়ত, সম্পাদনা কৰিব পৰা পুনঃনিৰীক্ষণৰ সময়সাঁচত ইয়াক ৰাখক। প্ৰত্যক্ষ সম্পাদনা কনফ্লিক্ট ব্যৱহাৰ কৰক।",
 	"apihelp-visualeditor-param-cachekey": "ক্ৰমবৰ্ধ বা পাৰ্থক্যৰ বাবে, এই চাবিৰ সহায়ত এটা পূৰ্ৱবতী serializeforcache অনুৰোধৰ ফলাফল ব্যৱহাৰ কৰক। $1html অভাৰৰাইড কৰক।",
 	"apihelp-visualeditor-param-etag": "পঠিয়াবৰ বাবে ETag।",

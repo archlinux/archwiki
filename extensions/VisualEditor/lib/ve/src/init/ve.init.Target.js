@@ -39,7 +39,6 @@ ve.init.Target = function VeInitTarget( config ) {
 	this.surfaces = [];
 	this.surface = null;
 	this.toolbar = null;
-	this.actionsToolbar = null;
 	this.toolbarConfig = config.toolbarConfig || {};
 	this.toolbarGroups = config.toolbarGroups || this.constructor.static.toolbarGroups;
 	this.actionGroups = config.actionGroups || this.constructor.static.actionGroups;
@@ -60,19 +59,6 @@ ve.init.Target = function VeInitTarget( config ) {
 
 	// Initialization
 	this.$element.addClass( 've-init-target' );
-
-	var isIe = ve.init.platform.constructor.static.isInternetExplorer(),
-		isEdge = ve.init.platform.constructor.static.isEdge();
-
-	if ( isIe ) {
-		this.$element.addClass( 've-init-target-ie' );
-	}
-
-	// We don't have any Edge CSS bugs that aren't present in IE, so
-	// use a combined class to simplify selectors.
-	if ( isIe || isEdge ) {
-		this.$element.addClass( 've-init-target-ie-or-edge' );
-	}
 
 	if ( ve.init.platform.constructor.static.isIos() ) {
 		this.$element.addClass( 've-init-target-ios' );
@@ -114,10 +100,17 @@ OO.mixinClass( ve.init.Target, OO.EventEmitter );
  */
 ve.init.Target.static.modes = [ 'visual' ];
 
+/**
+ * Toolbar definition, passed to ve.ui.Toolbar#setup
+ *
+ * @static
+ * @property {Array}
+ * @inheritable
+ */
 ve.init.Target.static.toolbarGroups = [
 	{
 		name: 'history',
-		include: [ 'undo', 'redo' ]
+		include: [ { group: 'history' } ]
 	},
 	{
 		name: 'format',
@@ -172,10 +165,18 @@ ve.init.Target.static.toolbarGroups = [
 		title: OO.ui.deferMsg( 'visualeditor-pagemenu-tooltip' ),
 		label: OO.ui.deferMsg( 'visualeditor-pagemenu-tooltip' ),
 		invisibleLabel: true,
-		include: [ 'findAndReplace', 'changeDirectionality', 'commandHelp' ]
+		include: [ { group: 'utility' }, { group: 'help' } ]
 	}
 ];
 
+/**
+ * Toolbar definition for the actions side of the toolbar
+ *
+ * @deprecated Use align:'after' in the regular toolbarGroups instead.
+ * @static
+ * @property {Array}
+ * @inheritable
+ */
 ve.init.Target.static.actionGroups = [];
 
 /**
@@ -640,14 +641,14 @@ ve.init.Target.prototype.getToolbar = function () {
 /**
  * Get the actions toolbar
  *
- * @return {ve.ui.TargetToolbar} Actions toolbar
+ * @deprecated
+ * @return {ve.ui.TargetToolbar} Actions toolbar (same as the normal toolbar)
  */
 ve.init.Target.prototype.getActions = function () {
+	OO.ui.warnDeprecation( 'Target#getActions: Use #getToolbar instead ' +
+		'(actions toolbar has been merged into the normal toolbar)' );
 	if ( !this.actionsToolbar ) {
-		this.actionsToolbar = new ve.ui.TargetToolbar( this, {
-			position: this.toolbarConfig.position,
-			$overlay: this.toolbarConfig.$overlay
-		} );
+		this.actionsToolbar = this.getToolbar();
 	}
 	return this.actionsToolbar;
 };
@@ -659,17 +660,17 @@ ve.init.Target.prototype.getActions = function () {
  */
 ve.init.Target.prototype.setupToolbar = function ( surface ) {
 	var toolbar = this.getToolbar();
+	if ( this.actionGroups.length ) {
+		// Backwards-compatibility
+		if ( !this.actionsToolbar ) {
+			this.actionsToolbar = this.getToolbar();
+		}
+	}
 
 	toolbar.connect( this, {
 		resize: 'onToolbarResize',
 		active: 'onToolbarActive'
 	} );
-
-	var actions;
-	if ( this.actionGroups.length ) {
-		actions = this.getActions();
-		actions.connect( this, { active: 'onToolbarActive' } );
-	}
 
 	if ( surface.nullSelectionOnBlur ) {
 		toolbar.$element
@@ -700,11 +701,12 @@ ve.init.Target.prototype.setupToolbar = function ( surface ) {
 			} );
 	}
 
-	toolbar.setup( this.toolbarGroups, surface );
-	if ( actions ) {
-		actions.setup( this.actionGroups, surface );
-		toolbar.$actions.append( actions.$element );
-	}
+	this.actionGroups.forEach( function ( group ) {
+		group.align = 'after';
+	} );
+	var groups = [].concat( this.toolbarGroups, this.actionGroups );
+
+	toolbar.setup( groups, surface );
 	this.attachToolbar();
 	var rAF = window.requestAnimationFrame || setTimeout;
 	rAF( this.onContainerScrollHandler );
@@ -768,7 +770,6 @@ ve.init.Target.prototype.teardownToolbar = function () {
 		this.toolbar = null;
 	}
 	if ( this.actionsToolbar ) {
-		this.actionsToolbar.destroy();
 		this.actionsToolbar = null;
 	}
 	return ve.createDeferred().resolve().promise();
@@ -781,7 +782,4 @@ ve.init.Target.prototype.attachToolbar = function () {
 	var toolbar = this.getToolbar();
 	toolbar.$element.insertBefore( toolbar.getSurface().$element );
 	toolbar.initialize();
-	if ( this.actionsToolbar ) {
-		this.actionsToolbar.initialize();
-	}
 };

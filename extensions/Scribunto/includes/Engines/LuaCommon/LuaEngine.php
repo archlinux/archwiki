@@ -10,11 +10,11 @@ use MediaWiki\Extension\Scribunto\Scribunto;
 use MediaWiki\Extension\Scribunto\ScribuntoEngineBase;
 use MediaWiki\Extension\Scribunto\ScribuntoException;
 use MediaWiki\MediaWikiServices;
-use MWException;
+use MediaWiki\Title\Title;
 use ObjectCache;
 use Parser;
 use PPFrame;
-use Title;
+use RuntimeException;
 use Wikimedia\ScopedCallback;
 
 abstract class LuaEngine extends ScribuntoEngineBase {
@@ -367,7 +367,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 
 		$mtime = filemtime( $fileName );
 		if ( $mtime === false ) {
-			throw new MWException( 'Lua file does not exist: ' . $fileName );
+			throw new RuntimeException( 'Lua file does not exist: ' . $fileName );
 		}
 
 		$cacheKey = $cache->makeGlobalKey( __CLASS__, $fileName );
@@ -383,7 +383,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 		if ( !$code ) {
 			$code = file_get_contents( $fileName );
 			if ( $code === false ) {
-				throw new MWException( 'Lua file does not exist: ' . $fileName );
+				throw new RuntimeException( 'Lua file does not exist: ' . $fileName );
 			}
 			$cache->set( $cacheKey, [ $code, $mtime ], 60 * 5 );
 		}
@@ -513,7 +513,6 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @param string $name
 	 * @param array|string $def
 	 * @param bool $loadDeferred
-	 * @throws MWException
 	 * @return array|null
 	 */
 	private function instantiatePHPLibrary( $name, $def, $loadDeferred ) {
@@ -527,7 +526,7 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 			if ( isset( $def['class'] ) ) {
 				$class = new $def['class']( $this );
 			} else {
-				throw new MWException( "No class for library \"$name\"" );
+				throw new RuntimeException( "No class for library \"$name\"" );
 			}
 		}
 		return $class->register();
@@ -761,7 +760,6 @@ abstract class LuaEngine extends ScribuntoEngineBase {
 	 * @param string $frameId
 	 * @param string $function
 	 * @param array $args
-	 * @throws MWException
 	 * @throws LuaError
 	 * @return array
 	 * @suppress PhanImpossibleCondition

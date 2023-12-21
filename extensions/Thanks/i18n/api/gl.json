@@ -7,11 +7,9 @@
 			"Toliño"
 		]
 	},
-	"apihelp-flowthank-description": "Enviar unha notificación pública de agradecemento por un comentario en Flow.",
 	"apihelp-flowthank-summary": "Enviar unha notificación pública de agradecemento por un comentario en Flow.",
 	"apihelp-flowthank-param-postid": "O UUID da publicación que agradecer.",
 	"apihelp-flowthank-example-1": "Enviar un agradecemento ao comentario co <kbd>UUID xyz789</kbd>",
-	"apihelp-thank-description": "Enviar unha notificación de agradecemento a un editor.",
 	"apihelp-thank-summary": "Enviar unha notificación de agradecemento a un editor.",
 	"apihelp-thank-param-rev": "Identificador (ID) da revisión a agradecer a alguén. Ten que ser fornecido este identificador, ou 'log'.",
 	"apihelp-thank-param-log": "Identificador (ID) do rexisto a agradecer a alguén. Ten que ser fornecido este identificador, ou 'rev'.",

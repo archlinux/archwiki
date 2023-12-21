@@ -11,7 +11,8 @@
 			"SPQRobin",
 			"Saruman",
 			"Siebrand",
-			"Sjoerddebruin"
+			"Sjoerddebruin",
+			"McDutchie"
 		]
 	},
 	"scribunto-desc": "Framework voor het inbedden van scripttalen in pagina's",
@@ -57,7 +58,7 @@
 	"scribunto-luastandalone-signal": "Luafout: interne fout: de verwerkingsmodule is gestopt met het signaal \"$2\".",
 	"scribunto-luastandalone-exited": "Luafout: interne fout: de verwerkingsmodule is gestopt met de status $2.",
 	"scribunto-module-with-errors-category": "Scribuntomodules met fouten",
-	"scribunto-module-with-errors-category-desc": "Deze module bevat een fout.",
+	"scribunto-module-with-errors-category-desc": "Er zit een fout in de module.",
 	"scribunto-limitreport-timeusage": "Tijdgebruik door Lua",
 	"scribunto-limitreport-timeusage-value": "$1/$2 seconden",
 	"scribunto-limitreport-virtmemusage": "Virtuele grootte van Lua",

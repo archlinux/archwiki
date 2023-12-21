@@ -21,14 +21,13 @@ namespace Wikimedia\Rdbms;
 
 use FSLockManager;
 use LockManager;
-use MediaWiki\MediaWikiServices;
 use NullLockManager;
 use PDO;
 use PDOException;
 use PDOStatement;
 use RuntimeException;
-use Wikimedia\Rdbms\Platform\ISQLPlatform;
 use Wikimedia\Rdbms\Platform\SqlitePlatform;
+use Wikimedia\Rdbms\Platform\SQLPlatform;
 use Wikimedia\Rdbms\Replication\ReplicationReporter;
 
 /**
@@ -45,9 +44,6 @@ class DatabaseSqlite extends Database {
 	protected $dbPath;
 	/** @var string Transaction mode */
 	protected $trxMode;
-
-	/** @var int The number of rows affected as an integer */
-	protected $lastAffectedRowCount;
 
 	/** @var PDO|null */
 	protected $conn;
@@ -74,7 +70,7 @@ class DatabaseSqlite extends Database {
 		'mmap_size' => 'integer'
 	];
 
-	/** @var ISQLPlatform */
+	/** @var SQLPlatform */
 	protected $platform;
 
 	/**
@@ -133,7 +129,7 @@ class DatabaseSqlite extends Database {
 		$p['schema'] = null;
 		$p['tablePrefix'] = '';
 		/** @var DatabaseSqlite $db */
-		$db = MediaWikiServices::getInstance()->getDatabaseFactory()->create( 'sqlite', $p );
+		$db = ( new DatabaseFactory() )->create( 'sqlite', $p );
 		'@phan-var DatabaseSqlite $db';
 
 		return $db;
@@ -382,11 +378,8 @@ class DatabaseSqlite extends Database {
 	}
 
 	protected function doSingleStatementQuery( string $sql ): QueryStatus {
-		$conn = $this->getBindingHandle();
-
-		$res = $conn->query( $sql );
-		$this->lastAffectedRowCount = $res ? $res->rowCount() : 0;
-
+		$res = $this->getBindingHandle()->query( $sql );
+		// Note that rowCount() returns 0 for SELECT for SQLite
 		return new QueryStatus(
 			$res instanceof PDOStatement ? new SqliteResultWrapper( $res ) : $res,
 			$res ? $res->rowCount() : 0,
@@ -430,14 +423,9 @@ class DatabaseSqlite extends Database {
 		return true;
 	}
 
-	/**
-	 * This must be called after nextSequenceVal
-	 *
-	 * @return int
-	 */
-	public function insertId() {
+	protected function lastInsertId() {
 		// PDO::lastInsertId yields a string :(
-		return intval( $this->getBindingHandle()->lastInsertId() );
+		return (int)$this->getBindingHandle()->lastInsertId();
 	}
 
 	/**
@@ -468,13 +456,6 @@ class DatabaseSqlite extends Database {
 		return 0;
 	}
 
-	/**
-	 * @return int
-	 */
-	protected function fetchAffectedRowCount() {
-		return $this->lastAffectedRowCount;
-	}
-
 	public function tableExists( $table, $fname = __METHOD__ ) {
 		$tableRaw = $this->tableName( $table, 'raw' );
 		if ( isset( $this->sessionTempTables[$tableRaw] ) ) {
@@ -488,7 +469,7 @@ class DatabaseSqlite extends Database {
 			self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE
 		);
 
-		return $res->numRows() ? true : false;
+		return (bool)$res->numRows();
 	}
 
 	/**
@@ -502,7 +483,7 @@ class DatabaseSqlite extends Database {
 	 * @return array|false
 	 */
 	public function indexInfo( $table, $index, $fname = __METHOD__ ) {
-		$sql = 'PRAGMA index_info(' . $this->addQuotes( $this->indexName( $index ) ) . ')';
+		$sql = 'PRAGMA index_info(' . $this->addQuotes( $this->platform->indexName( $index ) ) . ')';
 		$res = $this->query( $sql, $fname, self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE );
 		if ( !$res || $res->numRows() == 0 ) {
 			return false;
@@ -525,7 +506,7 @@ class DatabaseSqlite extends Database {
 		$row = $this->selectRow( 'sqlite_master', '*',
 			[
 				'type' => 'index',
-				'name' => $this->indexName( $index ),
+				'name' => $this->platform->indexName( $index ),
 			], $fname );
 		if ( !$row || !isset( $row->sql ) ) {
 			return null;
@@ -542,10 +523,16 @@ class DatabaseSqlite extends Database {
 		return in_array( 'UNIQUE', $options );
 	}
 
-	protected function doReplace( $table, array $identityKey, array $rows, $fname ) {
+	public function replace( $table, $uniqueKeys, $rows, $fname = __METHOD__ ) {
+		$this->platform->normalizeUpsertParams( $uniqueKeys, $rows );
+		if ( !$rows ) {
+			return;
+		}
 		$encTable = $this->tableName( $table );
 		[ $sqlColumns, $sqlTuples ] = $this->platform->makeInsertLists( $rows );
 		// https://sqlite.org/lang_insert.html
+		// Note that any auto-increment columns on conflicting rows will be reassigned
+		// due to combined DELETE+INSERT semantics. This will be reflected in insertId().
 		$this->query(
 			"REPLACE INTO $encTable ($sqlColumns) VALUES $sqlTuples",
 			$fname,
@@ -928,9 +915,20 @@ class DatabaseSqlite extends Database {
 	protected function getBindingHandle() {
 		return parent::getBindingHandle();
 	}
-}
 
-/**
- * @deprecated since 1.29
- */
-class_alias( DatabaseSqlite::class, 'DatabaseSqlite' );
+	protected function getInsertIdColumnForUpsert( $table ) {
+		$tableRaw = $this->tableName( $table, 'raw' );
+		$res = $this->query(
+			'PRAGMA table_info(' . $this->addQuotes( $tableRaw ) . ')',
+			__METHOD__,
+			self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE
+		);
+		foreach ( $res as $row ) {
+			if ( $row->pk && strtolower( $row->type ) === 'integer' ) {
+				return $row->name;
+			}
+		}
+
+		return null;
+	}
+}

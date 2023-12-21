@@ -11,6 +11,10 @@
 			"아라"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck hesab edir ki, səhifəyə yeni məzmun əlavə olunub",
+	"tag-editcheck-newreference-description": "Səhifəyə istinad əlavə edildi",
+	"tag-editcheck-references-description": "EditCheck hesab edir ki, istinad lazım ola bilər",
+	"tag-editcheck-references-activated-description": "EditCheck istinad lazım olduğunu düşünür və interfeys göstərilir",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizual redaktor]]",
 	"tag-visualeditor-description": "Redaktə [[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizual redaktorun]] köməyi ilə edilib",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizual redaktor: Yoxla]]",

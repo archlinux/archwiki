@@ -8,14 +8,15 @@
 			"Muhebbet",
 			"SolidBlock",
 			"StephDC",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"物灵"
 		]
 	},
 	"tooltip-ca-ve-edit": "纂是頁",
 	"visualeditor-ca-createlocaldescriptionsource": "增地言",
 	"visualeditor-ca-createsource": "立碼",
-	"visualeditor-ca-editsource": "溯源",
-	"visualeditor-ca-editsource-section": "溯源",
+	"visualeditor-ca-editsource": "纂碼",
+	"visualeditor-ca-editsource-section": "纂碼",
 	"visualeditor-categories-tool": "類",
 	"visualeditor-descriptionpagelink": "Project:呈纂",
 	"visualeditor-dialog-media-info-moreinfo": "益訊",

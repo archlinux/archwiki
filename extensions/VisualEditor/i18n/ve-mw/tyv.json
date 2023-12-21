@@ -2,15 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Agilight",
+			"Karak-Kyzyl",
 			"Riverman",
 			"Көпек",
-			"Монгуш Салим",
-			"Karak-Kyzyl"
+			"Монгуш Салим"
 		]
 	},
-	"tooltip-ca-createsource": "Үндезин сөзүглелдер \"эдикчизи\"-биле арынны чаяар",
-	"tooltip-ca-editsource": "Арынның үндезин сөзүглелин эдер",
 	"tooltip-ca-ve-edit": "Бо арынны эдер",
+	"tooltip-ca-editsource": "Арынның үндезин сөзүглелин эдер",
+	"tooltip-ca-createsource": "Үндезин сөзүглелдер \"эдикчизи\"-биле арынны чаяар",
 	"visualeditor-ca-createlocaldescriptionsource": "Локалдыг тайылбыр код кылдыр кылыр",
 	"visualeditor-ca-createsource": "Код чаяар",
 	"visualeditor-ca-editsource": "Вики-сөзүглелди эдер",
@@ -33,8 +33,6 @@
 	"visualeditor-dialog-meta-settings-newsectioneditlink-force": "Ийе",
 	"visualeditor-dialog-table-sortable": "Эде салыр",
 	"visualeditor-dialog-table-wikitable": "Стильчиткен (wikitable)",
-	"visualeditor-mweditmodesource-warning-cancel": "Ойталал",
-	"visualeditor-mweditmodesource-warning-switch-discard": "Өскертилгелерни ойталаар",
 	"visualeditor-mwgallerydialog-title": "Галерея",
 	"visualeditor-savedialog-title-save": "Өскертилгеңер шыгжаар"
 }

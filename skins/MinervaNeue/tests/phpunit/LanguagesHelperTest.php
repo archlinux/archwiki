@@ -5,10 +5,10 @@ namespace MediaWiki\Minerva;
 use ILanguageConverter;
 use Language;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use OutputPage;
 use PHPUnit\Framework\MockObject\Invocation;
-use Title;
 
 /**
  * @package Tests\MediaWiki\Minerva

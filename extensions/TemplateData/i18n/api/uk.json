@@ -3,13 +3,13 @@
 		"authors": [
 			"DDPAT",
 			"Ice bulldog",
-			"Piramidion"
+			"Piramidion",
+			"Movses"
 		]
 	},
-	"apihelp-templatedata-description": "Отримати дані, що зберігаються розширенням TemplateData.",
 	"apihelp-templatedata-summary": "Отримати дані, що зберігаються розширенням TemplateData.",
-	"apihelp-templatedata-example-1": "Вивести TemplateData для [[Template:Stub]] та [[Template:Example]] з результатами, якщо шаблони не існують, або таки існують, але в них відсутні TemplateData",
-	"apihelp-templatedata-example-2": "Вивести TemplateData для [[Template:Stub]] та [[Template:Example]] з результатами, якщо шаблони не існують, або таки існують, але в них відсутні TemplateData",
+	"apihelp-templatedata-example-1": "Вивести TemplateData для [[Template:Foobar]] з результатами, якщо шаблон не існує, або існує та в ньому відсутні TemplateData",
+	"apihelp-templatedata-example-2": "Вивести TemplateData для [[Template:Phabricator]] без результатів, якщо шаблон не існує, або існує та в ньому відсутні TemplateData",
 	"apihelp-templatedata-param-includeMissingTitles": "Вивести дані про назви, навіть якщо ці назви відсутні чи не мають TemplateData. За замовчуванням назви виводяться лише якщо вони існують та мають TemplateData.",
 	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "Вивести дані про назви, навіть якщо вони відсутні чи їм бракує TemplateData. За замовчуванням (для зворотньої сумісності) назви виводяться лише якщо вони існують та мають TemplateData.",
 	"apihelp-templatedata-param-lang": "Повернути локалізовані значення цією мовою. За замовчуванням повертаються всі доступні переклади.",

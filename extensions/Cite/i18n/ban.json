@@ -13,5 +13,9 @@
 	"cite_references_link_many_accessibility_label": "Makecos nuju:",
 	"cite_references_link_accessibility_back_label": "Makecos walik",
 	"cite_section_preview_references": "Pracingak pustaka",
-	"cite_warning": "Paingetan anggit: $1"
+	"cite_warning": "Paingetan anggit: $1",
+	"cite-wikieditor-tool-reference": "Pustaka",
+	"cite-wikieditor-help-page-references": "Pustaka",
+	"cite-wikieditor-help-content-reference-description": "Pustaka",
+	"cite-wikieditor-help-content-reference-example-ref-id": "tést"
 }

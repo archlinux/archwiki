@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
 use Message;
-use RawMessage;
 
 class MessageLibrary extends LibraryBase {
 	public function register() {

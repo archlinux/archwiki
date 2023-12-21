@@ -29,8 +29,8 @@
 namespace MediaWiki\Html;
 
 use ArrayAccess;
+use MediaWiki\Request\WebRequest;
 use MWException;
-use WebRequest;
 
 /**
  * Helper class to keep track of options when mixing links and form elements.
@@ -184,6 +184,8 @@ class FormOptions implements ArrayAccess {
 	 *
 	 * @param string $name Option name
 	 * @return mixed
+	 * @return-taint tainted This actually depends on the type of the option, but there's no way to determine that
+	 * statically.
 	 */
 	public function getValue( $name ) {
 		$this->validateName( $name, true );
@@ -271,20 +273,20 @@ class FormOptions implements ArrayAccess {
 	 * @param string $name Option name
 	 * @param int|float $min Minimum value
 	 * @param int|float $max Maximum value
-	 * @throws MWException If option is not of type INT
+	 * @throws MWException If the option's type is not numeric
 	 */
 	public function validateBounds( $name, $min, $max ) {
 		$this->validateName( $name, true );
 		$type = $this->options[$name]['type'];
 
-		if ( $type !== self::INT && $type !== self::FLOAT ) {
-			throw new MWException( "Option $name is not of type INT or FLOAT" );
+		if ( $type !== self::INT && $type !== self::INTNULL && $type !== self::FLOAT ) {
+			throw new MWException( "Type of option $name is not numeric" );
 		}
 
 		$value = $this->getValueReal( $this->options[$name] );
-		$value = max( $min, min( $max, $value ) );
-
-		$this->setValue( $name, $value );
+		if ( $type !== self::INTNULL || $value !== null ) {
+			$this->setValue( $name, max( $min, min( $max, $value ) ) );
+		}
 	}
 
 	/**
@@ -376,6 +378,11 @@ class FormOptions implements ArrayAccess {
 					break;
 				case self::ARR:
 					$value = $r->getArray( $name );
+
+					if ( $value !== null ) {
+						// Reject nested arrays (T344931)
+						$value = array_filter( $value, 'is_scalar' );
+					}
 					break;
 				default:
 					throw new MWException( 'Unsupported datatype' );
@@ -433,4 +440,7 @@ class FormOptions implements ArrayAccess {
 	// endregion -- end of ArrayAccess functions
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( FormOptions::class, 'FormOptions' );

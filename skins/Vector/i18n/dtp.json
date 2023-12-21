@@ -3,7 +3,9 @@
 		"authors": [
 			"FRANCIS5091",
 			"FRANELYA",
-			"Meqqal"
+			"Meqqal",
+			"CorrelMoris38",
+			"Jilorisa"
 		]
 	},
 	"vector-languages": "Boros",
@@ -17,14 +19,15 @@
 	"vector-action-unprotect": "Alanai tingolig",
 	"vector-view-create": "Pomonsoi",
 	"vector-view-edit": "Idito",
-	"vector-view-history": "Intaai susuyan",
+	"vector-view-history": "Intangai sajara",
 	"vector-view-view": "Basao",
 	"vector-view-viewsource": "Intaai wowonod",
-	"vector-more-actions": "Suai",
+	"vector-more-actions": "Lobi ogumu",
 	"vector-searchsuggest-containing": "Ihumo bolikan di haro <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Tonsi",
 	"vector-toc-beginning": "Kotimpuunan",
-	"vector-page-tools-label": "Tangakakamot",
+	"vector-main-menu-label": "Natad tagayo",
+	"vector-page-tools-label": "Kakamot",
 	"vector-page-tools-general-label": "Gumuan",
 	"vector-unpin-element-label": "polisoko'"
 }

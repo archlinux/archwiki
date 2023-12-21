@@ -1,6 +1,3 @@
-@import '../../common/variables.less';
-@import 'mediawiki.mixins.less';
-
 .mw-logo {
 	.flex-display();
 	// If icon is not configured, ensure that the logo still takes up available
@@ -13,12 +10,7 @@
 	// 226px @ 16 provides correct spacing between the right edge of logo container + left edge of searchbox input.
 	min-width: 13.875em; // 222px @ 16
 
-	.vector-feature-page-tools-disabled & {
-		// The logo is 24px from the main menu button icon
-		margin-left: 24px;
-	}
-
-	.vector-feature-page-tools-enabled.vector-feature-main-menu-pinned-disabled & {
+	.vector-feature-main-menu-pinned-disabled & {
 		// The logo is 40px from the page container.
 		// Main menu button width (20px) + 20px = 40px
 		margin-left: 20px;

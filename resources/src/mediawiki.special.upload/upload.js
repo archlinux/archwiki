@@ -6,41 +6,31 @@
  * @singleton
  */
 
-/* global Uint8Array */
-
 ( function () {
-	var uploadWarning, uploadTemplatePreview,
-		NS_FILE = mw.config.get( 'wgNamespaceIds' ).file,
-		$license = $( '#wpLicense' );
+	var uploadWarning, uploadTemplatePreview, $warningBox,
+		NS_FILE = mw.config.get( 'wgNamespaceIds' ).file;
 
 	window.wgUploadWarningObj = uploadWarning = {
-		responseCache: { '': '&nbsp;' },
-		nameToCheck: '',
-		typing: false,
-		delay: 500, // ms
-		timeoutID: false,
 
-		checkNow: function ( fname ) {
-			if ( this.timeoutID ) {
-				clearTimeout( this.timeoutID );
-			}
-			this.nameToCheck = fname;
-			this.timeout();
-		},
-
-		timeout: function () {
-			var $spinnerDestCheck, title;
-			if ( this.nameToCheck.trim() === '' ) {
+		checkNow: function ( nameToCheck ) {
+			var $spinnerDestCheck, title, requestTitle;
+			if ( nameToCheck.trim() === '' ) {
 				return;
 			}
 			$spinnerDestCheck = $.createSpinner().insertAfter( '#wpDestFile' );
-			title = mw.Title.newFromText( this.nameToCheck, NS_FILE );
+			title = mw.Title.newFromText( nameToCheck, NS_FILE );
+			// If title is null, user input is invalid, the API call will produce details about why,
+			// but it needs the namespace to produce errors related to files (when starts with interwiki)
+			if ( !title || title.getNamespaceId() !== NS_FILE ) {
+				requestTitle = mw.config.get( 'wgFormattedNamespaces' )[ NS_FILE ] + ':' + nameToCheck;
+			} else {
+				requestTitle = title.getPrefixedText();
+			}
 
 			( new mw.Api() ).get( {
 				formatversion: 2,
 				action: 'query',
-				// If title is empty, user input is invalid, the API call will produce details about why
-				titles: [ title ? title.getPrefixedText() : this.nameToCheck ],
+				titles: requestTitle,
 				prop: 'imageinfo',
 				iiprop: 'uploadwarning',
 				errorformat: 'html',
@@ -54,21 +44,15 @@
 				} else if ( page.invalidreason ) {
 					resultOut = page.invalidreason.html;
 				}
-				uploadWarning.processResult( resultOut, uploadWarning.nameToCheck );
+				uploadWarning.setWarning( resultOut );
 				$spinnerDestCheck.remove();
 			} ).catch( function () {
 				$spinnerDestCheck.remove();
 			} );
 		},
 
-		processResult: function ( result, fileName ) {
-			this.setWarning( result );
-			this.responseCache[ fileName ] = result;
-		},
-
 		setWarning: function ( warning ) {
-			var $warningBox = $( '#wpDestFile-warning' ),
-				$warning = $( $.parseHTML( warning ) );
+			var $warning = $( $.parseHTML( warning ) );
 			mw.hook( 'wikipage.content' ).fire( $warning );
 			$warningBox.empty().append( $warning );
 
@@ -135,14 +119,14 @@
 		} );
 		// Insert a row where the warnings will be displayed just below the
 		// wpDestFile row
+		$warningBox = $( '<td>' )
+			.attr( 'id', 'wpDestFile-warning' )
+			.attr( 'colspan', 2 );
 		$( '#mw-htmlform-description tbody' ).append(
-			$( '<tr>' ).append(
-				$( '<td>' )
-					.attr( 'id', 'wpDestFile-warning' )
-					.attr( 'colspan', 2 )
-			)
+			$( '<tr>' ).append( $warningBox )
 		);
 
+		var $license = $( '#wpLicense' );
 		if ( mw.config.get( 'wgAjaxLicensePreview' ) && $license.length ) {
 			// License selector check
 			$license.on( 'change', function () {
@@ -251,13 +235,11 @@
 		 *
 		 * TODO: Is there a way we can ask the browser what's supported in `<img>`s?
 		 *
-		 * TODO: Put SVG back after working around Firefox 7 bug <https://phabricator.wikimedia.org/T33643>
-		 *
 		 * @param {File} file
 		 * @return {boolean}
 		 */
 		function fileIsPreviewable( file ) {
-			var known = [ 'image/png', 'image/gif', 'image/jpeg', 'image/svg+xml' ],
+			var known = [ 'image/png', 'image/gif', 'image/jpeg', 'image/svg+xml', 'image/webp' ],
 				tooHuge = 10 * 1024 * 1024;
 			return ( known.indexOf( file.type ) !== -1 ) && file.size > 0 && file.size < tooHuge;
 		}
@@ -312,7 +294,6 @@
 				// So, this is going to be an ugly conversion.
 				reader.onload = function () {
 					var i,
-						// eslint-disable-next-line es-x/no-typed-arrays
 						buffer = new Uint8Array( reader.result ),
 						string = '';
 					for ( i = 0; i < buffer.byteLength; i++ ) {

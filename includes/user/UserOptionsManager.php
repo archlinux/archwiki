@@ -27,6 +27,7 @@ use HTMLMultiSelectField;
 use IContextSource;
 use InvalidArgumentException;
 use LanguageCode;
+use LanguageConverter;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
@@ -34,8 +35,8 @@ use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerInterface;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * A service class to control user options
@@ -56,25 +57,14 @@ class UserOptionsManager extends UserOptionsLookup {
 	 */
 	public const MAX_BYTES_OPTION_VALUE = 65530;
 
-	/** @var ServiceOptions */
-	private $serviceOptions;
+	private ServiceOptions $serviceOptions;
+	private DefaultOptionsLookup $defaultOptionsLookup;
+	private LanguageConverterFactory $languageConverterFactory;
+	private IConnectionProvider $dbProvider;
+	private UserFactory $userFactory;
+	private LoggerInterface $logger;
 
-	/** @var DefaultOptionsLookup */
-	private $defaultOptionsLookup;
-
-	/** @var LanguageConverterFactory */
-	private $languageConverterFactory;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var UserFactory */
-	private $userFactory;
-
-	/** @var LoggerInterface */
-	private $logger;
-
-	/** @var array options modified withing this request */
+	/** @var array options modified within this request */
 	private $modifiedOptions = [];
 
 	/**
@@ -90,38 +80,42 @@ class UserOptionsManager extends UserOptionsLookup {
 	 */
 	private $optionsFromDb = [];
 
-	/** @var HookRunner */
-	private $hookRunner;
+	private HookRunner $hookRunner;
 
 	/** @var array Query flags used to retrieve options from database */
 	private $queryFlagsUsedForCaching = [];
+
+	private UserNameUtils $userNameUtils;
 
 	/**
 	 * @param ServiceOptions $options
 	 * @param DefaultOptionsLookup $defaultOptionsLookup
 	 * @param LanguageConverterFactory $languageConverterFactory
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LoggerInterface $logger
 	 * @param HookContainer $hookContainer
 	 * @param UserFactory $userFactory
+	 * @param UserNameUtils $userNameUtils
 	 */
 	public function __construct(
 		ServiceOptions $options,
 		DefaultOptionsLookup $defaultOptionsLookup,
 		LanguageConverterFactory $languageConverterFactory,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LoggerInterface $logger,
 		HookContainer $hookContainer,
-		UserFactory $userFactory
+		UserFactory $userFactory,
+		UserNameUtils $userNameUtils
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->serviceOptions = $options;
 		$this->defaultOptionsLookup = $defaultOptionsLookup;
 		$this->languageConverterFactory = $languageConverterFactory;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->logger = $logger;
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->userFactory = $userFactory;
+		$this->userNameUtils = $userNameUtils;
 	}
 
 	/**
@@ -392,7 +386,7 @@ class UserOptionsManager extends UserOptionsLookup {
 	 * @param UserIdentity $user
 	 */
 	public function saveOptions( UserIdentity $user ) {
-		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+		$dbw = $this->dbProvider->getPrimaryDatabase();
 		$changed = $this->saveOptionsInternal( $user, $dbw );
 		$legacyUser = $this->userFactory->newFromUserIdentity( $user );
 		// Before UserOptionsManager, User::saveSettings was used for user options
@@ -418,8 +412,8 @@ class UserOptionsManager extends UserOptionsLookup {
 	 * @internal only public for use in User::saveSettings
 	 */
 	public function saveOptionsInternal( UserIdentity $user, IDatabase $dbw ): bool {
-		if ( !$user->isRegistered() ) {
-			throw new InvalidArgumentException( __METHOD__ . ' was called on anon user' );
+		if ( !$user->isRegistered() || $this->userNameUtils->isTemp( $user->getName() ) ) {
+			throw new InvalidArgumentException( __METHOD__ . ' was called on anon or temporary user' );
 		}
 
 		$userKey = $this->getCacheKey( $user );
@@ -460,18 +454,19 @@ class UserOptionsManager extends UserOptionsLookup {
 
 		// Do the DELETE
 		if ( $keysToDelete ) {
-			$dbw->delete(
-				'user_properties',
-				[
-					'up_user' => $user->getId(),
-					'up_property' => $keysToDelete
-				],
-				__METHOD__
-			);
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'user_properties' )
+				->where( [ 'up_user' => $user->getId() ] )
+				->andWhere( [ 'up_property' => $keysToDelete ] )
+				->caller( __METHOD__ )->execute();
 		}
 		if ( $rowsToInsert ) {
 			// Insert the new preference rows
-			$dbw->insert( 'user_properties', $rowsToInsert, __METHOD__, [ 'IGNORE' ] );
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'user_properties' )
+				->ignore()
+				->rows( $rowsToInsert )
+				->caller( __METHOD__ )->execute();
 		}
 
 		// It's pretty cheap to recalculate new original later
@@ -536,13 +531,12 @@ class UserOptionsManager extends UserOptionsLookup {
 		if ( $prefetchedOptions === null ) {
 			$this->logger->debug( 'Loading options from database', [ 'user_id' => $user->getId() ] );
 			[ $dbr, $options ] = $this->getDBAndOptionsForQueryFlags( $queryFlags );
-			$res = $dbr->select(
-				'user_properties',
-				[ 'up_property', 'up_value' ],
-				[ 'up_user' => $user->getId() ],
-				__METHOD__,
-				$options
-			);
+			$res = $dbr->newSelectQueryBuilder()
+				->select( [ 'up_property', 'up_value' ] )
+				->from( 'user_properties' )
+				->where( [ 'up_user' => $user->getId() ] )
+				->options( $options )
+				->caller( __METHOD__ )->fetchResultSet();
 		} else {
 			$res = [];
 			foreach ( $prefetchedOptions as $name => $value ) {
@@ -602,7 +596,7 @@ class UserOptionsManager extends UserOptionsLookup {
 	): array {
 		$userKey = $this->getCacheKey( $user );
 		$defaultOptions = $this->defaultOptionsLookup->getDefaultOptions();
-		if ( !$user->isRegistered() ) {
+		if ( !$user->isRegistered() || $this->userNameUtils->isTemp( $user->getName() ) ) {
 			// For unlogged-in users, load language/variant options from request.
 			// There's no need to do it for logged-in users: they can set preferences,
 			// and handling of page content is done by $pageLang->getPreferredVariant() and such,
@@ -623,8 +617,17 @@ class UserOptionsManager extends UserOptionsLookup {
 		}
 
 		$options = $this->loadOptionsFromDb( $user, $queryFlags, $data ) + $defaultOptions;
+
 		// Replace deprecated language codes
 		$options['language'] = LanguageCode::replaceDeprecatedCodes( $options['language'] );
+		$options['variant'] = LanguageCode::replaceDeprecatedCodes( $options['variant'] );
+		foreach ( LanguageConverter::$languagesWithVariants as $langCode ) {
+			$variant = "variant-$langCode";
+			if ( isset( $options[$variant] ) ) {
+				$options[$variant] = LanguageCode::replaceDeprecatedCodes( $options[$variant] );
+			}
+		}
+
 		// Fix up timezone offset (Due to DST it can change from what was stored in the DB)
 		// ZoneInfo|offset|TimeZoneName
 		if ( isset( $options['timecorrection'] ) ) {
@@ -650,7 +653,11 @@ class UserOptionsManager extends UserOptionsLookup {
 	 * @return string
 	 */
 	private function getCacheKey( UserIdentity $user ): string {
-		return $user->isRegistered() ? "u:{$user->getId()}" : 'anon';
+		if ( !$user->isRegistered() || $this->userNameUtils->isTemp( $user->getName() ) ) {
+			return 'anon';
+		} else {
+			return "u:{$user->getId()}";
+		}
 	}
 
 	/**
@@ -659,7 +666,7 @@ class UserOptionsManager extends UserOptionsLookup {
 	 */
 	private function getDBAndOptionsForQueryFlags( $queryFlags ): array {
 		[ $mode, $options ] = DBAccessObjectUtils::getDBOptions( $queryFlags );
-		return [ $this->loadBalancer->getConnectionRef( $mode, [] ), $options ];
+		return [ DBAccessObjectUtils::getDBFromIndex( $this->dbProvider, $mode ), $options ];
 	}
 
 	/**
@@ -669,8 +676,8 @@ class UserOptionsManager extends UserOptionsLookup {
 	 * @return bool
 	 */
 	private function canUseCachedValues( UserIdentity $user, int $queryFlags ): bool {
-		if ( !$user->isRegistered() ) {
-			// Anon users don't have options stored in the database,
+		if ( !$user->isRegistered() || $this->userNameUtils->isTemp( $user->getName() ) ) {
+			// Anon & temp users don't have options stored in the database,
 			// so $queryFlags are ignored.
 			return true;
 		}

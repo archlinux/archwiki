@@ -1,15 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Янмурза Баки",
-			"З. ӘЙЛЕ"
+			"З. ӘЙЛЕ",
+			"Янмурза Баки"
 		]
 	},
-	"apihelp-query+gadgetcategories-description": "Гаджеттар категориялары исемлеген кире ҡайтара.",
 	"apihelp-query+gadgetcategories-param-names": "Кире ҡайтарыла торған категориялар исемлеге.",
 	"apihelp-query+gadgetcategories-example-1": "Гаджеттарҙың барлыҡ ғәмәлдәге категорияларының исемлеген алырға",
 	"apihelp-query+gadgetcategories-example-2": "«Foo» һәм «Bar» атамалары булған категориялар тураһында барлыҡ мәғлүмәтте алырға",
-	"apihelp-query+gadgets-description": "Был викила ҡулланылған, гаджеттар исемлеген кире ҡайтара.",
 	"apihelp-query+gadgets-param-categories": "Ниндәй категорияларҙан гаджеттар алырға.",
 	"apihelp-query+gadgets-param-ids": "Алыу өсөн гаджеттарҙың идентификаторҙары.",
 	"apihelp-query+gadgets-param-allowedonly": "Әлеге ҡатнашыусыға рөхсәт ителгән гаджеттарҙы ғына һанап сығарға.",

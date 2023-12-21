@@ -26,6 +26,7 @@
  * @ingroup Media
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Shell\Shell;
@@ -231,7 +232,8 @@ abstract class TransformationalImageHandler extends ImageHandler {
 		// Try a hook. Called "Bitmap" for historical reasons.
 		/** @var MediaTransformOutput $mto */
 		$mto = null;
-		Hooks::runner()->onBitmapHandlerTransform( $this, $image, $scalerParams, $mto );
+		( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
+			->onBitmapHandlerTransform( $this, $image, $scalerParams, $mto );
 		if ( $mto !== null ) {
 			wfDebug( __METHOD__ . ": Hook to BitmapHandlerTransform created an mto" );
 			$scaler = 'hookaborted';
@@ -463,14 +465,13 @@ abstract class TransformationalImageHandler extends ImageHandler {
 	 *
 	 * @param string $path The file path
 	 * @param string|false $scene The scene specification, or false if there is none
-	 * @throws MWException
 	 * @return string
 	 */
 	protected function escapeMagickInput( $path, $scene = false ) {
 		# Die on initial metacharacters (caller should prepend path)
 		$firstChar = substr( $path, 0, 1 );
 		if ( $firstChar === '~' || $firstChar === '@' ) {
-			throw new MWException( __METHOD__ . ': cannot escape this path name' );
+			throw new InvalidArgumentException( __METHOD__ . ': cannot escape this path name' );
 		}
 
 		# Escape glob chars
@@ -498,7 +499,6 @@ abstract class TransformationalImageHandler extends ImageHandler {
 	 *
 	 * @param string $path The file path
 	 * @param string|false $scene The scene specification, or false if there is none
-	 * @throws MWException
 	 * @return string
 	 */
 	protected function escapeMagickPath( $path, $scene = false ) {
@@ -509,7 +509,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 				// OK, it's a drive letter
 				// ImageMagick has a similar exception, see IsMagickConflict()
 			} else {
-				throw new MWException( __METHOD__ . ': unexpected colon character in path name' );
+				throw new InvalidArgumentException( __METHOD__ . ': unexpected colon character in path name' );
 			}
 		}
 
@@ -627,7 +627,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 
 		# For historical reasons, hook starts with BitmapHandler
 		$checkImageAreaHookResult = null;
-		Hooks::runner()->onBitmapHandlerCheckImageArea(
+		( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onBitmapHandlerCheckImageArea(
 			$file, $params, $checkImageAreaHookResult );
 
 		if ( $checkImageAreaHookResult !== null ) {

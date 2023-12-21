@@ -40,11 +40,6 @@
 	"wikieditor-toolbar-tool-file-insert": "Insertar",
 	"wikieditor-toolbar-tool-file-cancel": "Anular",
 	"wikieditor-toolbar-tool-file-upload": "Kargar",
-	"wikieditor-toolbar-tool-reference": "Refero",
-	"wikieditor-toolbar-tool-reference-cancel": "Anular",
-	"wikieditor-toolbar-tool-reference-title": "Inkluzar refero",
-	"wikieditor-toolbar-tool-reference-insert": "Adjuntar",
-	"wikieditor-toolbar-tool-reference-text": "Texto por refero",
 	"wikieditor-toolbar-section-advanced": "Plura utensili",
 	"wikieditor-toolbar-tool-heading": "Titulo",
 	"wikieditor-toolbar-tool-heading-1": "Nivelo 1",
@@ -81,11 +76,7 @@
 	"wikieditor-toolbar-help-page-list": "Listi",
 	"wikieditor-toolbar-help-page-file": "Arkivi",
 	"wikieditor-toolbar-help-content-ilink-description": "Interna ligilo",
-	"wikieditor-toolbar-help-content-ilink-syntax": "[[Titulo di la pagino]]<br />[[Titulo di la pagino|Etiketo dil ligilo]]",
-	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Titulo di la pagino</a><br /><a href='#'>Etiketo dil ligilo</a>",
 	"wikieditor-toolbar-help-content-xlink-description": "Extera ligilo",
-	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.example.org Etiketo dil ligilo]<br />[http://www.example.org]<br />http://www.example.org",
-	"wikieditor-toolbar-help-content-xlink-result": "<a href='#' class='external'>Etiketo dil ligilo</a><br /><a href='#' class='external autonumber'>[1]</a><br /><a href='#' class='external'>http://www.example.org</a>",
 	"wikieditor-toolbar-help-content-signature-description": "Signaturo",
 	"wikieditor-realtimepreview-manual": "Kliktez nun, por previdar la rezulto di vua redakturi."
 }

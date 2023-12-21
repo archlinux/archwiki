@@ -238,4 +238,16 @@ class ApiTest extends MediaWikiUnitTestCase {
 			[ 'usemhchem' => true, 'oldmhchem' => true ] );
 		$this->assertEquals( ']_{x}^{2}', $result['output'] );
 	}
+
+	public function mhchemtexifiedTest() {
+		$result = $this->texVC->check( '\\longleftrightarrows',
+			[ 'usemhchemtexified' => true ] );
+		$this->assertEquals( '\\longleftrightarrows', $result['output'] );
+	}
+
+	public function mhchemtexifiedTestFail() {
+		$result = $this->texVC->check( '\\longleftrightarrows' );
+		$this->assertEquals( 'C', $result['status'] );
+		$this->assertFalse( $result['success'] );
+	}
 }

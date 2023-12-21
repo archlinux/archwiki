@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Bada Kaji",
 			"Bhawani Gautam",
 			"Bhawani Gautam Rhk",
@@ -13,8 +14,7 @@
 			"बिप्लब आनन्द",
 			"राम प्रसाद जोशी",
 			"सरोज कुमार ढकाल",
-			"हिमाल सुबेदी",
-			"Amire80"
+			"हिमाल सुबेदी"
 		]
 	},
 	"abusefilter-desc": "स्वचालित अनुमानित सम्पादनहरुकोनिम्ति लागु हुन्छ",
@@ -189,8 +189,8 @@
 	"abusefilter-edit-builder-vars-page-ns": "पृष्ठको नामपद",
 	"abusefilter-edit-builder-vars-page-prefixedtitle": "पूर्ण पृष्ठको शीर्षक",
 	"abusefilter-edit-builder-vars-movedfrom-id": "सारिएको श्रोत पृष्ठको पृष्ठ आइडी",
-	"abusefilter-edit-builder-vars-movedfrom-ns": "सारिएको श्रोत पृष्ठको नामपद",
-	"abusefilter-edit-builder-vars-movedfrom-title": "सारिएको श्रोत पृष्ठको शिर्षक",
+	"abusefilter-edit-builder-vars-movedfrom-ns": "स्रोत पृष्ठको नामस्थान स्थानान्तरण",
+	"abusefilter-edit-builder-vars-movedfrom-title": "स्रोत पृष्ठको शीर्षक",
 	"abusefilter-edit-builder-vars-movedfrom-prefixedtitle": "सारिएको श्रोत पृष्ठको पूर्ण शीर्षक",
 	"abusefilter-edit-builder-vars-movedto-id": "सारिएको श्रोत पृष्ठको पृष्ठ गन्तव्य",
 	"abusefilter-edit-builder-vars-movedto-ns": "सार्दाको गन्तव्य पृष्ठको नामपद",
@@ -290,5 +290,11 @@
 	"abusefilter-diff-next": "नयाँ परिवर्तन",
 	"abusefilter-import-submit": "आँकड़ा ल्याउने",
 	"abusefilter-group-default": "पूर्वनिर्धारित",
-	"abusefilter-http-error": "एचटिटिपि त्रुटि उत्पन्न भयो: $1"
+	"abusefilter-http-error": "एचटिटिपि त्रुटि उत्पन्न भयो: $1",
+	"blockedexternaldomains": "अवरुद्ध बाह्य डोमेनहरू",
+	"abusefilter-blocked-domains-title": "अवरुद्ध बाह्य डोमेनहरू",
+	"abusefilter-blocked-domains-intro": "यो सूचीसँग मिल्ने बाह्य कडीहरू पृष्ठमा थप्दा अवरुद्ध हुनेछन्। यी डोमेनहरू [[मीडियाविकि:BlockedExternalDomains.json]]मा भण्डारण गरिएका छन्।",
+	"abusefilter-blocked-domains-notes": "टिप्पणीहरू",
+	"abusefilter-blocked-domains-domain-header": "डोमेन",
+	"abusefilter-blocked-domains-notes-header": "टिप्पणीहरू"
 }

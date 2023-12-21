@@ -9,6 +9,10 @@
 			"아라"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck мисли дека на страницата е додадена нова содржина",
+	"tag-editcheck-newreference-description": "На страницата е додадена нова содржина",
+	"tag-editcheck-references-description": "EditCheck мисли дека треба навод",
+	"tag-editcheck-references-activated-description": "Проверката на уредувања смета дека може да треба навод, и се покажа корисничкиот посредник",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Нагледно уредување]]",
 	"tag-visualeditor-description": "Уредување направено со [[{{MediaWiki:visualeditor-descriptionpagelink}}|нагледниот уредник]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Нагледен уредник: Проверка]]",

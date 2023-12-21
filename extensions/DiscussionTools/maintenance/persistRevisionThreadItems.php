@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Maintenance;
 
-use IDatabase;
 use Language;
 use Maintenance;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
@@ -10,10 +9,11 @@ use MediaWiki\Extension\DiscussionTools\ThreadItemStore;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Shell\Shell;
+use MediaWiki\Title\Title;
 use MWExceptionRenderer;
 use stdClass;
 use Throwable;
-use Title;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 $IP = getenv( 'MW_INSTALL_PATH' );
@@ -24,7 +24,7 @@ require_once "$IP/maintenance/Maintenance.php";
 
 class PersistRevisionThreadItems extends Maintenance {
 
-	private IDatabase $dbr;
+	private IReadableDatabase $dbr;
 	private ThreadItemStore $itemStore;
 	private RevisionStore $revStore;
 	private Language $lang;
@@ -35,9 +35,12 @@ class PersistRevisionThreadItems extends Maintenance {
 		$this->addDescription( 'Persist thread item information for the given pages/revisions' );
 		$this->addOption( 'rev', 'Revision ID to process', false, true, false, true );
 		$this->addOption( 'page', 'Page title to process', false, true, false, true );
+		$this->addOption( 'namespace', 'Namespace number to process', false, true, false, true );
 		$this->addOption( 'all', 'Process the whole wiki' );
 		$this->addOption( 'current', 'Process current revisions only' );
 		$this->addOption( 'start', 'Restart from this position (as printed by the script)', false, true );
+		$this->addOption( 'touched-after', 'Only process pages touched after this timestamp', false, true );
+		$this->addOption( 'touched-before', 'Only process pages touched before this timestamp', false, true );
 		$this->setBatchSize( 100 );
 	}
 
@@ -55,6 +58,9 @@ class PersistRevisionThreadItems extends Maintenance {
 
 		if ( $this->getOption( 'all' ) ) {
 			// Do nothing
+
+		} elseif ( $this->getOption( 'namespace' ) ) {
+			$qb->where( [ 'page_namespace' => $this->getOption( 'namespace' ) ] );
 
 		} elseif ( $this->getOption( 'page' ) ) {
 			$linkBatch = $services->getLinkBatchFactory()->newLinkBatch();
@@ -88,11 +94,23 @@ class PersistRevisionThreadItems extends Maintenance {
 				[ $nsInfo, 'wantSignatures' ]
 			) ),
 			'pp_propname IS NOT NULL',
-		], IDatabase::LIST_OR ) );
+		], IReadableDatabase::LIST_OR ) );
 
 		if ( $this->getOption( 'current' ) ) {
 			$qb->where( 'rev_id = page_latest' );
 			$index = [ 'page_id' ];
+
+			if ( $this->getOption( 'touched-after' ) ) {
+				$qb->where( $this->dbr->buildComparison( '>', [
+					'page_touched' => $this->dbr->timestamp( $this->getOption( 'touched-after' ) )
+				] ) );
+			}
+			if ( $this->getOption( 'touched-before' ) ) {
+				$qb->where( $this->dbr->buildComparison( '<', [
+					'page_touched' => $this->dbr->timestamp( $this->getOption( 'touched-before' ) )
+				] ) );
+			}
+
 		} else {
 			// Process in order by page and time to avoid confusing results while the script is running
 			$index = [ 'rev_page', 'rev_timestamp', 'rev_id' ];
@@ -187,7 +205,7 @@ class PersistRevisionThreadItems extends Maintenance {
 			if ( HookUtils::isAvailableForTitle( $title ) ) {
 				$threadItemSet = HookUtils::parseRevisionParsoidHtml( $rev, false );
 
-				// Store permalink data
+				// Store permalink data (even when store is disabled - T334258)
 				$changed = $this->itemStore->insertThreadItems( $rev, $threadItemSet );
 			}
 		} catch ( Throwable $e ) {

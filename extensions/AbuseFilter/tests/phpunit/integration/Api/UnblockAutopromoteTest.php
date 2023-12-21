@@ -4,25 +4,25 @@ namespace MediaWiki\Extension\AbuseFilter\Tests\Integration\Api;
 
 use ApiTestCase;
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
-use MediaWiki\MediaWikiServices;
-use MediaWiki\User\UserIdentity;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\User\UserIdentityValue;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Api\UnblockAutopromote
  * @covers ::__construct
  * @group medium
+ * @group Database
  */
 class UnblockAutopromoteTest extends ApiTestCase {
+	use MockAuthorityTrait;
 
 	/**
 	 * @covers ::execute
 	 */
 	public function testExecute_noPermissions() {
-		$this->setExpectedApiException( [
-			'apierror-permissiondenied',
-			wfMessage( 'action-abusefilter-modify' )
-		] );
+		$this->expectApiErrorCode( 'permissiondenied' );
 
 		$store = $this->createMock( BlockAutopromoteStore::class );
 		$store->expects( $this->never() )->method( 'unblockAutopromote' );
@@ -31,7 +31,7 @@ class UnblockAutopromoteTest extends ApiTestCase {
 		$this->doApiRequestWithToken( [
 			'action' => 'abusefilterunblockautopromote',
 			'user' => 'User'
-		], null, self::getTestUser()->getUser(), 'csrf' );
+		], null, $this->mockRegisteredAuthorityWithoutPermissions( [ 'abusefilter-modify' ] ), 'csrf' );
 	}
 
 	/**
@@ -39,11 +39,7 @@ class UnblockAutopromoteTest extends ApiTestCase {
 	 */
 	public function testExecute_invalidUser() {
 		$invalid = 'invalid#username';
-		$this->setExpectedApiException( [
-			'apierror-baduser',
-			'user',
-			$invalid
-		] );
+		$this->expectApiErrorCode( 'baduser' );
 
 		$store = $this->createMock( BlockAutopromoteStore::class );
 		$store->expects( $this->never() )->method( 'unblockAutopromote' );
@@ -52,29 +48,33 @@ class UnblockAutopromoteTest extends ApiTestCase {
 		$this->doApiRequestWithToken( [
 			'action' => 'abusefilterunblockautopromote',
 			'user' => $invalid
-		], null, self::getTestUser()->getUser(), 'csrf' );
+		], null, $this->mockRegisteredNullAuthority(), 'csrf' );
 	}
 
 	/**
 	 * @covers ::execute
 	 */
 	public function testExecute_blocked() {
-		$this->setExpectedApiException( 'apierror-blocked', 'blocked' );
-		$user = self::getTestUser( [ 'sysop' ] )->getUser();
+		$this->expectApiErrorCode( 'blocked' );
+
+		$block = $this->createMock( DatabaseBlock::class );
+		$block->method( 'getExpiry' )->willReturn( wfTimestamp( TS_MW, time() + 100000 ) );
+		$block->method( 'isSitewide' )->willReturn( true );
+		$block->method( 'getReasonComment' )->willReturn( CommentStoreComment::newUnsavedComment( 'test' ) );
+		$blockedUser = $this->mockUserAuthorityWithBlock(
+			new UserIdentityValue( 42, 'Blocked user' ),
+			$block,
+			[ 'writeapi', 'abusefilter-modify' ]
+		);
 
 		$store = $this->createMock( BlockAutopromoteStore::class );
 		$store->expects( $this->never() )->method( 'unblockAutopromote' );
 		$this->setService( BlockAutopromoteStore::SERVICE_NAME, $store );
 
-		$block = new DatabaseBlock( [ 'expiry' => '1 day' ] );
-		$block->setTarget( $user );
-		$block->setBlocker( self::getTestSysop()->getUser() );
-		MediaWikiServices::getInstance()->getDatabaseBlockStore()->insertBlock( $block );
-
 		$this->doApiRequestWithToken( [
 			'action' => 'abusefilterunblockautopromote',
 			'user' => 'User'
-		], null, $user, 'csrf' );
+		], null, $blockedUser, 'csrf' );
 	}
 
 	/**
@@ -82,13 +82,12 @@ class UnblockAutopromoteTest extends ApiTestCase {
 	 */
 	public function testExecute_nothingToDo() {
 		$target = 'User';
-		$user = self::getTestUser( [ 'sysop' ] )->getUser();
-		$this->setExpectedApiException( [ 'abusefilter-reautoconfirm-none', $target ] );
+		$user = $this->mockRegisteredUltimateAuthority();
+		$this->expectApiErrorCode( 'notsuspended' );
 
 		$store = $this->createMock( BlockAutopromoteStore::class );
 		$store->expects( $this->once() )
 			->method( 'unblockAutopromote' )
-			->with( $this->isInstanceOf( UserIdentity::class ), $user, $this->anything() )
 			->willReturn( false );
 		$this->setService( BlockAutopromoteStore::SERVICE_NAME, $store );
 
@@ -103,12 +102,11 @@ class UnblockAutopromoteTest extends ApiTestCase {
 	 */
 	public function testExecute_success() {
 		$target = 'User';
-		$user = self::getTestUser( [ 'sysop' ] )->getUser();
+		$user = $this->mockRegisteredUltimateAuthority();
 
 		$store = $this->createMock( BlockAutopromoteStore::class );
 		$store->expects( $this->once() )
 			->method( 'unblockAutopromote' )
-			->with( $this->isInstanceOf( UserIdentity::class ), $user, $this->anything() )
 			->willReturn( true );
 		$this->setService( BlockAutopromoteStore::SERVICE_NAME, $store );
 

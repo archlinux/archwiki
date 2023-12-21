@@ -20,7 +20,7 @@
 
 namespace MediaWiki\Extension\CategoryTree;
 
-use Category;
+use MediaWiki\Category\Category;
 use MediaWiki\Linker\LinkTarget;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IResultWrapper;

@@ -37,7 +37,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $input );
 	}
 
-	public function provideOnLinkerMakeExternalLink() {
+	public static function provideOnLinkerMakeExternalLink() {
 		return [
 			[ 'http://test.localhost/', 'http://test.localhost/' ],
 			[ 'http://en.wikipedia.org/wiki/Main_Page', 'https://en.wikipedia.org/wiki/Main_Page' ],

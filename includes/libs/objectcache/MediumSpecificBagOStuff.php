@@ -174,7 +174,7 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 	public function set( $key, $value, $exptime = 0, $flags = 0 ) {
 		$entry = $this->makeValueOrSegmentList( $key, $value, $exptime, $flags, $ok );
 		// Only when all segments (if any) are stored should the main key be changed
-		return $ok ? $this->doSet( $key, $entry, $exptime, $flags ) : false;
+		return $ok && $this->doSet( $key, $entry, $exptime, $flags );
 	}
 
 	/**
@@ -236,7 +236,7 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 	public function add( $key, $value, $exptime = 0, $flags = 0 ) {
 		$entry = $this->makeValueOrSegmentList( $key, $value, $exptime, $flags, $ok );
 		// Only when all segments (if any) are stored should the main key be changed
-		return $ok ? $this->doAdd( $key, $entry, $exptime, $flags ) : false;
+		return $ok && $this->doAdd( $key, $entry, $exptime, $flags );
 	}
 
 	/**
@@ -358,7 +358,7 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 
 		$entry = $this->makeValueOrSegmentList( $key, $value, $exptime, $flags, $ok );
 		// Only when all segments (if any) are stored should the main key be changed
-		return $ok ? $this->doCas( $casToken, $key, $entry, $exptime, $flags ) : false;
+		return $ok && $this->doCas( $casToken, $key, $entry, $exptime, $flags );
 	}
 
 	/**
@@ -831,10 +831,6 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 		return $mainValue;
 	}
 
-	final public function addBusyCallback( callable $workCallback ) {
-		wfDeprecated( __METHOD__, '1.39' );
-	}
-
 	/**
 	 * Check if a value should use a segmentation wrapper due to its size
 	 *
@@ -990,39 +986,6 @@ abstract class MediumSpecificBagOStuff extends BagOStuff {
 		$integer = (int)$value;
 
 		return ( $value === (string)$integer );
-	}
-
-	public function makeGlobalKey( $collection, ...$components ) {
-		return $this->makeKeyInternal( self::GLOBAL_KEYSPACE, func_get_args() );
-	}
-
-	public function makeKey( $collection, ...$components ) {
-		return $this->makeKeyInternal( $this->keyspace, func_get_args() );
-	}
-
-	/**
-	 * Make a cache key for the given keyspace and components
-	 *
-	 * Long components might be converted to respective hashes due to size constraints.
-	 * In extreme cases, all of them might be combined into a single hash component.
-	 *
-	 * @param string $keyspace Keyspace component
-	 * @param string[]|int[] $components Key components (key collection name first)
-	 * @return string Keyspace-prepended list of encoded components as a colon-separated value
-	 * @since 1.27
-	 */
-	abstract protected function makeKeyInternal( $keyspace, $components );
-
-	protected function convertGenericKey( $key ) {
-		$components = $this->componentsFromGenericKey( $key );
-		if ( count( $components ) < 2 ) {
-			// Legacy key not from makeKey()/makeGlobalKey(); keep it as-is
-			return $key;
-		}
-
-		$keyspace = array_shift( $components );
-
-		return $this->makeKeyInternal( $keyspace, $components );
 	}
 
 	public function getQoS( $flag ) {

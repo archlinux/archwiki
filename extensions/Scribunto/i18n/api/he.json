@@ -4,7 +4,6 @@
 			"Amire80"
 		]
 	},
-	"apihelp-scribunto-console-description": "יחידה פנימית לשירות בקשות XHR ממסוף Scribunto.",
 	"apihelp-scribunto-console-summary": "יחידה פנימית להבאת בקשות XHR ממסוף Scribunto.",
 	"apihelp-scribunto-console-param-title": "שם היחידה לבדיקה.",
 	"apihelp-scribunto-console-param-content": "התוכן החדש ליחידה.",

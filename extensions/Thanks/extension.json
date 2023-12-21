@@ -11,7 +11,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.40.0",
+		"MediaWiki": ">= 1.41",
 		"extensions": {
 			"Echo": "*"
 		}
@@ -29,7 +29,12 @@
 		}
 	},
 	"SpecialPages": {
-		"Thanks": "MediaWiki\\Extension\\Thanks\\SpecialThanks"
+		"Thanks": {
+			"class": "MediaWiki\\Extension\\Thanks\\SpecialThanks",
+			"services": [
+				"UserFactory"
+			]
+		}
 	},
 	"LogTypes": [
 		"thanks"
@@ -41,7 +46,15 @@
 		"thanks/*": "MediaWiki\\Extension\\Thanks\\ThanksLogFormatter"
 	},
 	"APIModules": {
-		"thank": "MediaWiki\\Extension\\Thanks\\ApiCoreThank"
+		"thank": {
+			"class": "MediaWiki\\Extension\\Thanks\\Api\\ApiCoreThank",
+			"services": [
+				"PermissionManager",
+				"RevisionStore",
+				"UserFactory",
+				"ThanksLogStore"
+			]
+		}
 	},
 	"MessagesDirs": {
 		"Thanks": [
@@ -58,7 +71,7 @@
 	"ResourceModules": {
 		"ext.thanks.images": {
 			"class": "ResourceLoaderImageModule",
-			"selector": ".mw-ui-icon-thanks-{name}:before",
+			"selector": ".mw-ui-icon-thanks-{name}",
 			"defaultColor": "#fff",
 			"images": {
 				"userTalk": {
@@ -177,19 +190,24 @@
 		]
 	},
 	"Hooks": {
-		"ApiMain::moduleManager": "MediaWiki\\Extension\\Thanks\\Hooks::onApiMainModuleManager",
+		"ApiMain::moduleManager": "main",
 		"BeforeCreateEchoEvent": "MediaWiki\\Extension\\Thanks\\Hooks::onBeforeCreateEchoEvent",
-		"BeforePageDisplay": "MediaWiki\\Extension\\Thanks\\Hooks::onBeforePageDisplay",
+		"BeforePageDisplay": "main",
 		"BeforeSpecialMobileDiffDisplay": "MediaWiki\\Extension\\Thanks\\Hooks::onBeforeSpecialMobileDiffDisplay",
-		"DiffTools": "MediaWiki\\Extension\\Thanks\\Hooks::onDiffTools",
-		"DifferenceEngineViewHeader": "MediaWiki\\Extension\\Thanks\\Hooks::onDifferenceEngineViewHeader",
+		"DiffTools": "main",
+		"DifferenceEngineViewHeader": "main",
 		"EchoGetBundleRules": "MediaWiki\\Extension\\Thanks\\Hooks::onEchoGetBundleRules",
-		"GetAllBlockActions": "MediaWiki\\Extension\\Thanks\\Hooks::onGetAllBlockActions",
-		"GetLogTypesOnUser": "MediaWiki\\Extension\\Thanks\\Hooks::onGetLogTypesOnUser",
-		"HistoryTools": "MediaWiki\\Extension\\Thanks\\Hooks::onHistoryTools",
-		"LocalUserCreated": "MediaWiki\\Extension\\Thanks\\Hooks::onAccountCreated",
-		"LogEventsListLineEnding": "MediaWiki\\Extension\\Thanks\\Hooks::onLogEventsListLineEnding",
-		"PageHistoryBeforeList": "MediaWiki\\Extension\\Thanks\\Hooks::onPageHistoryBeforeList"
+		"GetAllBlockActions": "main",
+		"GetLogTypesOnUser": "main",
+		"HistoryTools": "main",
+		"LocalUserCreated": "main",
+		"LogEventsListLineEnding": "main",
+		"PageHistoryBeforeList": "main"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\Thanks\\Hooks"
+		}
 	},
 	"ServiceWiringFiles": [
 		"ServiceWiring.php"

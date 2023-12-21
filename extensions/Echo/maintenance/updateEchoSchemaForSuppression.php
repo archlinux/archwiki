@@ -5,6 +5,10 @@
  *
  * @ingroup Maintenance
  */
+
+use MediaWiki\Extension\Notifications\DbFactory;
+use MediaWiki\Extension\Notifications\SuppressionRowUpdateGenerator;
+
 require_once getenv( 'MW_INSTALL_PATH' ) !== false
 	? getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php'
 	: __DIR__ . '/../../../maintenance/Maintenance.php';
@@ -38,7 +42,7 @@ class UpdateEchoSchemaForSuppression extends LoggedUpdateMaintenance {
 
 	public function doDBUpdates() {
 		global $wgEchoCluster;
-		$lbFactory = MWEchoDbFactory::newFromDefault();
+		$lbFactory = DbFactory::newFromDefault();
 
 		$dbr = $lbFactory->getEchoDb( DB_REPLICA );
 		$dbw = $lbFactory->getEchoDb( DB_PRIMARY );
@@ -63,7 +67,7 @@ class UpdateEchoSchemaForSuppression extends LoggedUpdateMaintenance {
 		$updater = new BatchRowUpdate(
 			$reader,
 			$writer,
-			new EchoSuppressionRowUpdateGenerator
+			new SuppressionRowUpdateGenerator
 		);
 		$updater->setOutput( function ( $text ) {
 			$this->output( $text );

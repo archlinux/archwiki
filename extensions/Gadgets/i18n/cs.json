@@ -27,7 +27,7 @@
 	"gadgets-uses": "používá",
 	"gadgets-required-rights": "Vyžaduje následující {{PLURAL:$2|oprávnění}}:\n\n$1",
 	"gadgets-required-skins": "Dostupné {{PLURAL:$2|pro vzhled $1|pro následující vzhledy: $1}}.",
-	"gadgets-required-actions": "Funguje na {{PLURAL:$2|akci stránky „$1“|následující akce stránky: $1}}.",
+	"gadgets-required-actions": "Omezeno na {{PLURAL:$2|akci stránky „$1“|následující akce stránky: $1}}.",
 	"gadgets-default": "Implicitně zapnuto všem.",
 	"gadgets-legacy": "Udělátko se nenačítá. Převeďte ho prosím na ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Více informací])",
 	"gadgets-packaged": "Toto udělátko používá [https://www.mediawiki.org/wiki/ResourceLoader/Package_files balíčky], vstupním bodem je $1",

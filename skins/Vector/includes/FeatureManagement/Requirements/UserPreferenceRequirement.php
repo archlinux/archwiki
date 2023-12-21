@@ -22,8 +22,8 @@
 namespace MediaWiki\Skins\Vector\FeatureManagement\Requirements;
 
 use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsLookup;
-use Title;
 use User;
 
 /**
@@ -98,10 +98,13 @@ final class UserPreferenceRequirement implements Requirement {
 	public function isPreferenceEnabled() {
 		$user = $this->user;
 		$userOptionsLookup = $this->userOptionsLookup;
-		$isEnabled = $userOptionsLookup->getBoolOption(
+		$optionValue = $userOptionsLookup->getOption(
 			$user,
 			$this->optionName
 		);
+		// Check for 0, '0' or 'disabled'.
+		// Any other value will be handled as enabled.
+		$isEnabled = (bool)$optionValue && $optionValue !== 'disabled';
 
 		return $this->title && $isEnabled;
 	}

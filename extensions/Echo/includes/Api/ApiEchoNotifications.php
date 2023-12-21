@@ -5,20 +5,20 @@ namespace MediaWiki\Extension\Notifications\Api;
 use ApiBase;
 use ApiQuery;
 use ApiQueryBase;
-use Bundler;
 use Config;
-use EchoAttributeManager;
-use EchoDataOutputFormatter;
-use EchoForeignNotifications;
-use EchoSeenTime;
-use EchoServices;
+use MediaWiki\Extension\Notifications\AttributeManager;
+use MediaWiki\Extension\Notifications\Bundler;
 use MediaWiki\Extension\Notifications\Controller\NotificationController;
+use MediaWiki\Extension\Notifications\DataOutputFormatter;
+use MediaWiki\Extension\Notifications\ForeignNotifications;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Model\Notification;
-use MWEchoNotifUser;
-use Title;
+use MediaWiki\Extension\Notifications\NotifUser;
+use MediaWiki\Extension\Notifications\SeenTime;
+use MediaWiki\Extension\Notifications\Services;
+use MediaWiki\Title\Title;
+use MediaWiki\WikiMap\WikiMap;
 use User;
-use WikiMap;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -127,7 +127,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 					}
 				}
 			} else {
-				$attributeManager = EchoServices::getInstance()->getAttributeManager();
+				$attributeManager = Services::getInstance()->getAttributeManager();
 				$result = $this->getPropList(
 					$user,
 					$attributeManager->getUserEnabledEventsBySections( $user, $params['notifiertypes'],
@@ -140,7 +140,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 				// we pass ALL to consider all foreign notifications
 				$section = count( $params['sections'] ) === 1
 					? reset( $params['sections'] )
-					: EchoAttributeManager::ALL;
+					: AttributeManager::ALL;
 				if ( $this->crossWikiSummary ) {
 					$foreignNotification = $this->makeForeignNotification( $user, $params['format'], $section );
 					if ( $foreignNotification ) {
@@ -193,7 +193,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 		$bundle = false,
 		array $notifierTypes = [ 'web' ]
 	) {
-		$attributeManager = EchoServices::getInstance()->getAttributeManager();
+		$attributeManager = Services::getInstance()->getAttributeManager();
 		$sectionEvents = $attributeManager->getUserEnabledEventsBySections( $user, $notifierTypes, [ $section ] );
 
 		if ( !$sectionEvents ) {
@@ -320,7 +320,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 		while ( $notifs !== [] ) {
 			/** @var Notification $notif */
 			$notif = array_shift( $notifs );
-			$output = EchoDataOutputFormatter::formatOutput( $notif, $format, $user, $this->getLanguage() );
+			$output = DataOutputFormatter::formatOutput( $notif, $format, $user, $this->getLanguage() );
 			if ( $output !== false ) {
 				$result['list'][] = $output;
 			} elseif ( $bundler && $notif->getBundledNotifications() ) {
@@ -350,7 +350,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 	 */
 	protected function getPropCount( User $user, array $sections, $groupBySection ) {
 		$result = [];
-		$notifUser = MWEchoNotifUser::newFromUser( $user );
+		$notifUser = NotifUser::newFromUser( $user );
 		$global = $this->crossWikiSummary ? 'preference' : false;
 
 		$totalRawCount = 0;
@@ -377,7 +377,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 	 */
 	protected function getPropSeenTime( User $user, array $sections, $groupBySection ) {
 		$result = [];
-		$seenTimeHelper = EchoSeenTime::newFromUser( $user );
+		$seenTimeHelper = SeenTime::newFromUser( $user );
 
 		if ( $groupBySection ) {
 			foreach ( $sections as $section ) {
@@ -403,7 +403,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 	protected function makeForeignNotification(
 		User $user,
 		$format,
-		$section = EchoAttributeManager::ALL
+		$section = AttributeManager::ALL
 	) {
 		$wikis = $this->getForeignNotifications()->getWikis( $section );
 		$count = $this->getForeignNotifications()->getCount( $section );
@@ -445,12 +445,12 @@ class ApiEchoNotifications extends ApiQueryBase {
 
 		// Format output like any other notification
 		$notif = Notification::newFromRow( $row );
-		$output = EchoDataOutputFormatter::formatOutput( $notif, $format, $user, $this->getLanguage() );
+		$output = DataOutputFormatter::formatOutput( $notif, $format, $user, $this->getLanguage() );
 
 		// Add cross-wiki-specific data
 		$output['section'] = $section ?: 'all';
 		$output['count'] = $count;
-		$output['sources'] = EchoForeignNotifications::getApiEndpoints( $wikis );
+		$output['sources'] = ForeignNotifications::getApiEndpoints( $wikis );
 		// Add timestamp information
 		foreach ( $output['sources'] as $wiki => &$data ) {
 			$data['ts'] = $timestampsByWiki[$wiki]->getTimestamp( TS_ISO_8601 );
@@ -505,7 +505,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 		};
 
 		if ( $groupBySection ) {
-			foreach ( EchoAttributeManager::$sections as $section ) {
+			foreach ( AttributeManager::$sections as $section ) {
 				if ( !isset( $primary[$section]['list'] ) ) {
 					$primary[$section]['list'] = [];
 				}
@@ -535,7 +535,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 	 */
 	protected function mergeCount( array $primary, array $results, $groupBySection ) {
 		if ( $groupBySection ) {
-			foreach ( EchoAttributeManager::$sections as $section ) {
+			foreach ( AttributeManager::$sections as $section ) {
 				if ( !isset( $primary[$section]['rawcount'] ) ) {
 					$primary[$section]['rawcount'] = 0;
 				}
@@ -560,7 +560,7 @@ class ApiEchoNotifications extends ApiQueryBase {
 	}
 
 	public function getAllowedParams() {
-		$sections = EchoAttributeManager::$sections;
+		$sections = AttributeManager::$sections;
 
 		$params = $this->getCrossWikiParams() + [
 			'filter' => [

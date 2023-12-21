@@ -20,6 +20,7 @@
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\IDatabase;
@@ -119,12 +120,12 @@ class LocalFileMoveBatch {
 		$this->oldCount = 0;
 		$archiveNames = [];
 
-		$result = $this->db->select( 'oldimage',
-			[ 'oi_archive_name', 'oi_deleted' ],
-			[ 'oi_name' => $this->oldName ],
-			__METHOD__,
-			[ 'FOR UPDATE' ] // ignore snapshot
-		);
+		$result = $this->db->newSelectQueryBuilder()
+			->select( [ 'oi_archive_name', 'oi_deleted' ] )
+			->forUpdate() // ignore snapshot
+			->from( 'oldimage' )
+			->where( [ 'oi_name' => $this->oldName ] )
+			->caller( __METHOD__ )->fetchResultSet();
 
 		foreach ( $result as $row ) {
 			$archiveNames[] = $row->oi_archive_name;
@@ -374,24 +375,25 @@ class LocalFileMoveBatch {
 		$dbw = $this->db;
 
 		// Update current image
-		$dbw->update(
-			'image',
-			[ 'img_name' => $this->newName ],
-			[ 'img_name' => $this->oldName ],
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'image' )
+			->set( [ 'img_name' => $this->newName ] )
+			->where( [ 'img_name' => $this->oldName ] )
+			->caller( __METHOD__ )->execute();
 
 		// Update old images
-		$dbw->update(
-			'oldimage',
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'oldimage' )
+			->set( [
 				'oi_name' => $this->newName,
-				'oi_archive_name = ' . $dbw->strreplace( 'oi_archive_name',
-					$dbw->addQuotes( $this->oldName ), $dbw->addQuotes( $this->newName ) ),
-			],
-			[ 'oi_name' => $this->oldName ],
-			__METHOD__
-		);
+				'oi_archive_name = ' . $dbw->strreplace(
+					'oi_archive_name',
+					$dbw->addQuotes( $this->oldName ),
+					$dbw->addQuotes( $this->newName )
+				),
+			] )
+			->where( [ 'oi_name' => $this->oldName ] )
+			->caller( __METHOD__ )->execute();
 	}
 
 	/**

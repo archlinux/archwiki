@@ -25,7 +25,6 @@ abstract class Theme {
 
 	/**
 	 * @return Theme
-	 * @throws Exception
 	 */
 	public static function singleton() {
 		if ( !self::$singleton ) {

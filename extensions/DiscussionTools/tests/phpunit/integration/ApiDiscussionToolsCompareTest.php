@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
 use ApiTestCase;
-use Title;
+use MediaWiki\Title\Title;
 
 /**
  * @group medium

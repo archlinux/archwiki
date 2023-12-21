@@ -22,6 +22,7 @@
  * @ingroup Media
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -109,20 +110,21 @@ class ThumbnailImage extends MediaTransformOutput {
 	 *     parser-extlink-*   Attributes added by parser for external links:
 	 *          parser-extlink-rel: add rel="nofollow"
 	 *          parser-extlink-target: link target, but overridden by custom-target-link
+	 *     magnify-resource   To set the HTML resource attribute, when necessary
 	 *
 	 * For images, desc-link and file-link are implemented as a click-through. For
 	 * sounds and videos, they may be displayed in other ways.
 	 *
-	 * @throws MWException
 	 * @return string
 	 */
 	public function toHtml( $options = [] ) {
-		$mainConfig = MediaWikiServices::getInstance()->getMainConfig();
+		$services = MediaWikiServices::getInstance();
+		$mainConfig = $services->getMainConfig();
 		$nativeImageLazyLoading = $mainConfig->get( MainConfigNames::NativeImageLazyLoading );
 		$enableLegacyMediaDOM = $mainConfig->get( MainConfigNames::ParserEnableLegacyMediaDOM );
 
 		if ( func_num_args() === 2 ) {
-			throw new MWException( __METHOD__ . ' called in the old style' );
+			throw new BadMethodCallException( __METHOD__ . ' called in the old style' );
 		}
 
 		$query = $options['desc-query'] ?? '';
@@ -134,6 +136,16 @@ class ThumbnailImage extends MediaTransformOutput {
 		// parameter if it's explicitly requested.
 		if ( isset( $options['alt'] ) ) {
 			$attribs['alt'] = $options['alt'];
+		}
+
+		// Description links get the mw-file-description class and link
+		// to the file description page, making the resource redundant
+		if (
+			!$enableLegacyMediaDOM &&
+			isset( $options['magnify-resource'] ) &&
+			!( $options['desc-link'] ?? false )
+		) {
+			$attribs['resource'] = $options['magnify-resource'];
 		}
 
 		$attribs += [
@@ -203,11 +215,12 @@ class ThumbnailImage extends MediaTransformOutput {
 		// Additional densities for responsive images, if specified.
 		// If any of these urls is the same as src url, it'll be excluded.
 		$responsiveUrls = array_diff( $this->responsiveUrls, [ $this->url ] );
-		if ( !empty( $responsiveUrls ) ) {
+		if ( $responsiveUrls ) {
 			$attribs['srcset'] = Html::srcSet( $responsiveUrls );
 		}
 
-		Hooks::runner()->onThumbnailBeforeProduceHTML( $this, $attribs, $linkAttribs );
+		( new HookRunner( $services->getHookContainer() ) )
+			->onThumbnailBeforeProduceHTML( $this, $attribs, $linkAttribs );
 
 		return $this->linkWrap( $linkAttribs, Xml::element( 'img', $attribs ) );
 	}

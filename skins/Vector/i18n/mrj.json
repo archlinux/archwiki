@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amdf"
+			"Amdf",
+			"Nadezhda"
 		]
 	},
 	"vector-action-delete": "Карангдаш",
@@ -11,5 +12,7 @@
 	"vector-view-edit": "Тӧрлӹмӓш",
 	"vector-view-history": "Историм анжымаш",
 	"vector-view-view": "Лыдмаш",
-	"vector-view-viewsource": "Сек пӹтӓриш кодым анжалаш"
+	"vector-view-viewsource": "Сек пӹтӓриш кодым анжалаш",
+	"vector-readability-survey-fontSize": "Шрифтӹн размержӹ",
+	"vector-readability-survey-paragraphSpacing": "Абзацвлӓ лошты интервал"
 }

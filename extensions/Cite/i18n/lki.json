@@ -21,5 +21,11 @@
 	"cite_error_references_no_key": "برچسپ <code>&lt;ref&gt;</code> درون <code>&lt;references&gt;</code> صفت نام را ندارد.",
 	"cite_error_empty_references_define": "برچسپ <code>&lt;ref&gt;</code> تعریف شده درون <code>&lt;references&gt;</code> با نام «$1» محتوایی ندارد.",
 	"cite_references_link_accessibility_label": "پرش به بالا",
-	"cite_references_link_many_accessibility_label": "پرش به بالا به:"
+	"cite_references_link_many_accessibility_label": "پرش به بالا به:",
+	"cite-wikieditor-tool-reference": "بنچەک(منبع)",
+	"cite-wikieditor-help-page-references": "بن چۀکةل/منابع",
+	"cite-wikieditor-help-content-reference-description": "بنچەک(منبع)",
+	"cite-wikieditor-help-content-named-reference-description": "منبع نامگذای‌شده",
+	"cite-wikieditor-help-content-rereference-description": "استفادهٔ دوباره از همان منبع",
+	"cite-wikieditor-help-content-showreferences-description": "نمایش منابع"
 }

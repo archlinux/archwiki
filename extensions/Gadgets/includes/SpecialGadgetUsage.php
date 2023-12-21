@@ -265,7 +265,7 @@ class SpecialGadgetUsage extends QueryPage {
 				$name = substr( $row->title, 7 );
 
 				// Only pick gadgets which are in the list $gadgetIds to make sure they exist
-				if ( !in_array( $name, $defaultGadgets ) && in_array( $name, $gadgetIds ) ) {
+				if ( !in_array( $name, $defaultGadgets, true ) && in_array( $name, $gadgetIds, true ) ) {
 					$line = $this->formatResult( $skin, $row );
 					if ( $line ) {
 						$out->addHTML( $line );

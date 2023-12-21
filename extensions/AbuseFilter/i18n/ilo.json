@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Lam-ang",
-			"Matma Rex",
-			"Amire80"
+			"Matma Rex"
 		]
 	},
 	"abusefilter-desc": "Agipakat kadagiti automatiko a panagsolbar iti parikut kadagiti panagurnos",
@@ -371,7 +371,6 @@
 	"abusefilter-test-page": "Dagiti binalbaliwan iti panid:",
 	"abusefilter-test-shownegative": "Iparang dagiti binaliwan a saan a maipada iti sagat",
 	"abusefilter-test-syntaxerr": "Ti inkabilmo a sagat ket naglaon ti biddut ti sintaksis.\nMakaawatka ti napno a palawag babaen ti panagpindut ti buton ti \"{{int:abusefilter-edit-check}}\" .",
-	"abusefilter-test-badtitle": "Imbalido ti inkabilmo a titulo ti panid. Mabalin nga aglaon ti maysa wenno dagiti ad-adu a karakter a saan a mabalin a mausar kadagitoy a titulo.",
 	"abusefilter-changeslist-examine": "sukimaten",
 	"abusefilter-examine": "Sukimaten dagiti tigga maysa a binalbaliwan",
 	"abusefilter-examine-intro": "Daytoy a panid ket mangipalubos kenka nga agsukimat kadagiti sabsabali a pinataud babaen ti Sagat ti Panagabuso para iti agmaymaysa a panagbaliw, ken subokanna daytoy kadagiti sagat.",

@@ -217,7 +217,7 @@ class ReplicatedBagOStuff extends BagOStuff {
 		return $this->writeStore->proxyCall(
 			__FUNCTION__,
 			self::ARG0_KEYMAP,
-			self::RES_KEYMAP,
+			self::RES_NONKEY,
 			func_get_args(),
 			$this
 		);
@@ -257,27 +257,6 @@ class ReplicatedBagOStuff extends BagOStuff {
 			func_get_args(),
 			$this
 		);
-	}
-
-	protected function makeKeyInternal( $keyspace, $components ) {
-		return $this->genericKeyFromComponents( $keyspace, ...$components );
-	}
-
-	public function makeKey( $collection, ...$components ) {
-		return $this->genericKeyFromComponents( $this->keyspace, $collection, ...$components );
-	}
-
-	public function makeGlobalKey( $collection, ...$components ) {
-		return $this->genericKeyFromComponents( self::GLOBAL_KEYSPACE, $collection, ...$components );
-	}
-
-	protected function convertGenericKey( $key ) {
-		// short-circuit; already uses "generic" keys
-		return $key;
-	}
-
-	public function addBusyCallback( callable $workCallback ) {
-		return $this->writeStore->addBusyCallback( $workCallback );
 	}
 
 	public function setMockTime( &$time ) {

@@ -22,7 +22,6 @@
 namespace MediaWiki\Block;
 
 use ChangeTags;
-use MalformedTitleException;
 use ManualLogEntry;
 use MediaWiki\Block\Restriction\AbstractRestriction;
 use MediaWiki\Block\Restriction\ActionRestriction;
@@ -33,15 +32,17 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
+use MediaWiki\User\TempUser\TempUserConfig;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use Message;
 use Psr\Log\LoggerInterface;
 use RevisionDeleteUser;
-use Status;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -101,6 +102,9 @@ class BlockUser {
 
 	/** @var TitleFactory */
 	private $titleFactory;
+
+	/** @var TempUserConfig */
+	private $tempUserConfig;
 
 	/** @var BlockActionInfo */
 	private $blockActionInfo;
@@ -163,7 +167,7 @@ class BlockUser {
 	 * even within this class. If you want to determine whether the block will be partial,
 	 * use $this->isPartial().
 	 */
-	private $isPartialRaw = false;
+	private $isPartialRaw;
 
 	/** @var AbstractRestriction[] */
 	private $blockRestrictions = [];
@@ -186,6 +190,7 @@ class BlockUser {
 	 * @param UserEditTracker $userEditTracker
 	 * @param LoggerInterface $logger
 	 * @param TitleFactory $titleFactory
+	 * @param TempUserConfig $tempUserConfig
 	 * @param string|UserIdentity $target Target of the block
 	 * @param Authority $performer Performer of the block
 	 * @param string $expiry Expiry of the block (timestamp or 'infinity')
@@ -194,14 +199,14 @@ class BlockUser {
 	 *    Valid options:
 	 *    - isCreateAccountBlocked      : Are account creations prevented?
 	 *    - isEmailBlocked              : Is emailing other users prevented?
-	 *    - isHardBlock                 : Are registered users prevented from editing?
+	 *    - isHardBlock                 : Are named (non-temporary) users prevented from editing?
 	 *    - isAutoblocking              : Should this block spread to others to
 	 *                                    limit block evasion?
-	 *    - isUserTalkEditBlocked       : Is editing blocked user's own talkpage allowed?
+	 *    - isUserTalkEditBlocked       : Is editing blocked user's own talk page prevented?
 	 *    - isHideUser                  : Should blocked user's name be hidden (needs hideuser)?
 	 *    - isPartial                   : Is this block partial? This is ignored when
 	 *                                    blockRestrictions is not an empty array.
-	 * @param array $blockRestrictions
+	 * @param AbstractRestriction[] $blockRestrictions
 	 * @param string[] $tags Tags that should be assigned to the log entry
 	 */
 	public function __construct(
@@ -216,6 +221,7 @@ class BlockUser {
 		UserEditTracker $userEditTracker,
 		LoggerInterface $logger,
 		TitleFactory $titleFactory,
+		TempUserConfig $tempUserConfig,
 		$target,
 		Authority $performer,
 		string $expiry,
@@ -240,6 +246,7 @@ class BlockUser {
 		$this->userEditTracker = $userEditTracker;
 		$this->logger = $logger;
 		$this->titleFactory = $titleFactory;
+		$this->tempUserConfig = $tempUserConfig;
 		$this->blockActionInfo = $blockActionInfo;
 
 		// Process block target
@@ -270,14 +277,7 @@ class BlockUser {
 			}
 		}
 
-		// This needs to be called after $this->blockRestrictions is set, as
-		// $this->isPartial() makes use of it.
-		if (
-			isset( $blockOptions['isPartial'] ) &&
-			!$this->isPartial()
-		) {
-			$this->isPartialRaw = $blockOptions['isPartial'];
-		}
+		$this->isPartialRaw = !empty( $blockOptions['isPartial'] ) && !$blockRestrictions;
 
 		if (
 			!$this->isPartial() ||
@@ -307,7 +307,8 @@ class BlockUser {
 
 		if (
 			isset( $blockOptions['isHideUser'] ) &&
-			$this->targetType === AbstractBlock::TYPE_USER
+			$this->targetType === AbstractBlock::TYPE_USER &&
+			!$this->tempUserConfig->isTempName( $this->target->getName() )
 		) {
 			$this->isHideUser = $blockOptions['isHideUser'];
 		}
@@ -360,8 +361,8 @@ class BlockUser {
 	/**
 	 * Configure DatabaseBlock according to class properties
 	 *
-	 * @param DatabaseBlock|null $sourceBlock Copy any options from this block,
-	 *                                        null to construct a new one.
+	 * @param DatabaseBlock|null $sourceBlock Copy any options from this block.
+	 *   Null to construct a new one.
 	 *
 	 * @return DatabaseBlock
 	 */
@@ -404,12 +405,12 @@ class BlockUser {
 	}
 
 	/**
-	 * Places a block with checking permissions
+	 * Place a block, checking permissions
 	 *
 	 * @param bool $reblock Should this reblock?
 	 *
 	 * @return Status If the block is successful, the value of the returned
-	 * Status is an instance of a newly placed block.
+	 *   Status is an instance of a newly placed block.
 	 */
 	public function placeBlock( bool $reblock = false ): Status {
 		$priorBlock = DatabaseBlock::newFromTarget( $this->target, null, /*fromPrimary=*/true );
@@ -437,7 +438,6 @@ class BlockUser {
 		}
 
 		if ( $this->tags !== [] ) {
-			// TODO: Use DI, see T245964
 			$status = ChangeTags::canAddTagsAccompanyingChange(
 				$this->tags,
 				$this->performer
@@ -467,12 +467,12 @@ class BlockUser {
 	}
 
 	/**
-	 * Places a block without any sort of permissions checks.
+	 * Place a block without any sort of permissions checks.
 	 *
 	 * @param bool $reblock Should this reblock?
 	 *
 	 * @return Status If the block is successful, the value of the returned
-	 * Status is an instance of a newly placed block.
+	 *   Status is an instance of a newly placed block.
 	 */
 	public function placeBlockUnsafe( bool $reblock = false ): Status {
 		$status = $this->blockUtils->validateTarget( $this->target );
@@ -681,7 +681,7 @@ class BlockUser {
 		if ( $this->isPartial() ) {
 			$pageRestrictions = $this->getPageRestrictions();
 			$namespaceRestrictions = $this->getNamespaceRestrictions();
-			$actionRestriction = $this->getActionRestrictions();
+			$actionRestrictions = $this->getActionRestrictions();
 
 			if ( count( $pageRestrictions ) > 0 ) {
 				$logParams['7::restrictions']['pages'] = $pageRestrictions;
@@ -689,8 +689,8 @@ class BlockUser {
 			if ( count( $namespaceRestrictions ) > 0 ) {
 				$logParams['7::restrictions']['namespaces'] = $namespaceRestrictions;
 			}
-			if ( count( $actionRestriction ) ) {
-				$logParams['7::restrictions']['actions'] = $actionRestriction;
+			if ( count( $actionRestrictions ) ) {
+				$logParams['7::restrictions']['actions'] = $actionRestrictions;
 			}
 		}
 		return $logParams;

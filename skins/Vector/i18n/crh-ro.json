@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Zolgoyo",
-			"Amire80"
+			"Amire80",
+			"Zolgoyo"
 		]
 	},
 	"vector-languages": "Tíller",
@@ -10,7 +10,7 @@
 	"vector-no-language-button-label": "Tíl koş",
 	"vector-action-addsection": "Mewzu koş",
 	"vector-action-delete": "Yok et",
-	"vector-action-move": "Atînî degíştír",
+	"vector-action-move": "Atînî deñíştír",
 	"vector-action-protect": "Kolla",
 	"vector-view-create": "Yarat",
 	"vector-view-history": "Keşmíş",

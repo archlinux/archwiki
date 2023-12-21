@@ -1,5 +1,8 @@
 # Release History
 
+## v4.1.1
+* Catch a ValueError from DateTime::createFromFormat
+
 ## v4.1.0
 * Add add(), sub() methods for date interval arithmetic
 * setFakeTime: add $step parameter

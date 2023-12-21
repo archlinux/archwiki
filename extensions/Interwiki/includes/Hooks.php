@@ -3,9 +3,10 @@
 namespace MediaWiki\Extension\Interwiki;
 
 use MediaWiki\MediaWikiServices;
-use WikiMap;
+use MediaWiki\Permissions\Hook\UserGetAllRightsHook;
+use MediaWiki\WikiMap\WikiMap;
 
-class Hooks {
+class Hooks implements UserGetAllRightsHook {
 	/** @var bool */
 	private static $shouldSkipIWCheck = false;
 	/** @var bool */
@@ -48,7 +49,7 @@ class Hooks {
 	/**
 	 * @param array &$rights
 	 */
-	public static function onUserGetAllRights( array &$rights ) {
+	public function onUserGetAllRights( &$rights ) {
 		global $wgInterwikiViewOnly;
 		if ( !$wgInterwikiViewOnly ) {
 			// New user right, required to modify the interwiki table through Special:Interwiki

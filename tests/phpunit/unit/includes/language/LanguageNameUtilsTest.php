@@ -31,6 +31,7 @@ class LanguageNameUtilsTest extends MediaWikiUnitTestCase {
 					MainConfigNames::ExtraLanguageNames => [],
 					MainConfigNames::LanguageCode => 'en',
 					MainConfigNames::UsePigLatinVariant => true,
+					MainConfigNames::UseXssLanguage => false,
 				]
 			),
 			$this->hookContainer
@@ -39,6 +40,10 @@ class LanguageNameUtilsTest extends MediaWikiUnitTestCase {
 
 	protected function setLanguageTemporaryHook( string $hookName, $handler ): void {
 		$this->hookContainer->register( $hookName, $handler );
+	}
+
+	protected function clearLanguageHook( string $hookName ): void {
+		$this->hookContainer->clear( $hookName );
 	}
 
 	private function isSupportedLanguage( $code ) {

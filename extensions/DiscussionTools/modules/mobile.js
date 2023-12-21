@@ -24,8 +24,8 @@ function onViewportChange() {
 	wasKeyboardOpen = isKeyboardOpen;
 }
 
-function init( $container ) {
-	// For compatibility with Minerva click tracking (T295490)
+function init( $container, pageThreads ) {
+	// For compatibility with MobileWebUIActionsTracking logging (T295490)
 	$container.find( '.section-heading' ).attr( 'data-event-name', 'talkpage.section' );
 
 	// Keyboard body classes
@@ -38,26 +38,46 @@ function init( $container ) {
 
 	// Mobile overflow menu
 	mw.loader.using( [ 'oojs-ui-widgets', 'oojs-ui.styles.icons-editing-core' ] ).then( function () {
+		// TODO: Replace with .ext-discussiontools-init-section-overflowMenuButton
+		//  after parser cache is updated
 		$container.find( '.ext-discussiontools-init-section-ellipsisButton' ).each( function () {
-			var buttonMenu = OO.ui.infuse( this, { menu: {
-				horizontalPosition: 'end',
-				items: [
-					new OO.ui.MenuOptionWidget( {
-						data: 'edit',
-						icon: 'edit',
-						label: mw.msg( 'skin-view-edit' )
-					} )
-				]
-			} } );
-			buttonMenu.getMenu().on( 'choose', function ( menuOption ) {
-				switch ( menuOption.getData() ) {
-					case 'edit':
-						// Click the hidden section-edit link
-						buttonMenu.$element.closest( '.ext-discussiontools-init-section' ).find( '.mw-editsection > a' ).trigger( 'click' );
-						break;
+			// Comment ellipsis
+			var $threadMarker = $( this ).closest( '[data-mw-thread-id]' );
+			if ( !$threadMarker.length ) {
+				// Heading ellipsis
+				$threadMarker = $( this ).closest( '.ext-discussiontools-init-section' ).find( '[data-mw-thread-id]' );
+			}
+			var threadItem = pageThreads.findCommentById( $threadMarker.data( 'mw-thread-id' ) );
+
+			var buttonMenu = OO.ui.infuse( this, {
+				$overlay: true,
+				menu: {
+					classes: [ 'ext-discussiontools-init-section-overflowMenu' ],
+					horizontalPosition: threadItem.type === 'heading' ? 'end' : 'start'
 				}
 			} );
+
+			mw.loader.using( buttonMenu.getData().resourceLoaderModules || [] ).then( function () {
+				var itemConfigs = buttonMenu.getData().itemConfigs;
+				if ( !itemConfigs ) {
+					// We should never have missing itemConfigs, but if this happens, hide the empty menu
+					buttonMenu.toggle( false );
+					return;
+				}
+				var overflowMenuItemWidgets = itemConfigs.map( function ( itemConfig ) {
+					return new OO.ui.MenuOptionWidget( itemConfig );
+				} );
+				buttonMenu.getMenu().addItems( overflowMenuItemWidgets );
+				buttonMenu.getMenu().items.forEach( function ( menuItem ) {
+					mw.hook( 'discussionToolsOverflowMenuOnAddItem' ).fire( menuItem.getData().id, menuItem, threadItem );
+				} );
+			} );
+
+			buttonMenu.getMenu().on( 'choose', function ( menuItem ) {
+				mw.hook( 'discussionToolsOverflowMenuOnChoose' ).fire( menuItem.getData().id, menuItem, threadItem );
+			} );
 		} );
+
 		$container.find( '.ext-discussiontools-init-section-bar' ).on( 'click', function ( e ) {
 			// Don't toggle section when clicking on bar
 			e.stopPropagation();
@@ -83,7 +103,11 @@ function init( $container ) {
 				mw.track( 'webuiactions_log.click', 'lede-button' );
 			} );
 		} );
+		mw.track( 'webuiactions_log.show', 'lede-button' );
 	}
+
+	// eslint-disable-next-line no-jquery/no-global-selector
+	var $newTopicWrapper = $( '.ext-discussiontools-init-new-topic' );
 
 	if (
 		!newTopicButton &&
@@ -92,17 +116,15 @@ function init( $container ) {
 	) {
 		// eslint-disable-next-line no-jquery/no-global-selector
 		newTopicButton = OO.ui.infuse( $( '.ext-discussiontools-init-new-topic-button' ) );
-		// For compatibility with Minerva click tracking (T295490)
+		// For compatibility with MobileWebUIActionsTracking logging (T295490)
 		newTopicButton.$element.attr( 'data-event-name', 'talkpage.add-topic' );
-		// eslint-disable-next-line no-jquery/no-global-selector
-		var $newTopicWrapper = $( '.ext-discussiontools-init-new-topic' );
 		var $scrollContainer = $( OO.ui.Element.static.getClosestScrollableContainer( document.body ) );
 		var $scrollListener = $scrollContainer.is( 'html, body' ) ? $( OO.ui.Element.static.getWindow( $scrollContainer[ 0 ] ) ) : $scrollContainer;
 		var lastScrollTop = $scrollContainer.scrollTop();
 		var wasScrollDown = null;
 		var $body = $( document.body );
-		// TODO: Use ve.addPassiveEventListener
-		$scrollListener.on( 'scroll', OO.ui.throttle( function () {
+		// This block of code is only run once, so we don't need to remove this listener ever
+		$scrollListener[ 0 ].addEventListener( 'scroll', OO.ui.throttle( function () {
 			// Round negative values up to 0 to ignore iOS scroll bouncing (T323400)
 			var scrollTop = Math.max( $scrollContainer.scrollTop(), 0 );
 			var isScrollDown = scrollTop > lastScrollTop;
@@ -132,10 +154,10 @@ function init( $container ) {
 
 			lastScrollTop = scrollTop;
 			wasScrollDown = isScrollDown;
-		}, 200 ) );
+		}, 200 ), { passive: true } );
 	}
 	if ( !$readAsWikiPage ) {
-		// Read as wiki page button, copied from renderReadAsWikiPageButton in Minerva
+		// Read as wiki page button, copied from old MobileFrontend/Minerva feature (removed in T319145)
 		$readAsWikiPage = $( '<button>' )
 			.addClass( 'ext-discussiontools-init-readAsWikiPage' )
 			.attr( 'data-event-name', 'talkpage.readAsWiki' )
@@ -147,7 +169,7 @@ function init( $container ) {
 
 	/* eslint-disable no-jquery/no-global-selector */
 	if ( newTopicButton ) {
-		$( '.ext-discussiontools-init-new-topic' ).after( $readAsWikiPage );
+		$newTopicWrapper.after( $readAsWikiPage );
 	} else {
 		$( '#mw-content-text' ).append( $readAsWikiPage );
 	}
@@ -162,10 +184,33 @@ function init( $container ) {
 		$( '.return-link' ).length
 	) {
 		$readAsWikiPage.addClass( 'ext-discussiontools-init-button-notFlush' );
+		$newTopicWrapper.addClass( 'ext-discussiontools-init-button-notFlush' );
 	}
 	/* eslint-enable no-jquery/no-global-selector */
 }
 
+// Handler for "edit" link in overflow menu, only setup once as the hook is global
+mw.hook( 'discussionToolsOverflowMenuOnChoose' ).add( function ( id, menuItem, threadItem ) {
+	if ( id === 'edit' ) {
+		// Click the hidden section-edit link
+		$( threadItem.getNativeRange().commonAncestorContainer )
+			.closest( '.ext-discussiontools-init-section' ).find( '.mw-editsection > a' ).trigger( 'click' );
+	}
+} );
+
+/**
+ * Close the lede section dialog if it is open.
+ *
+ * @return {jQuery.Promise} Promise resolved when the dialog is closed (or if it wasn't open)
+ */
+function closeLedeSectionDialog() {
+	if ( ledeSectionDialog && ledeSectionDialog.isOpened() ) {
+		return ledeSectionDialog.close().closed;
+	}
+	return $.Deferred().resolve();
+}
+
 module.exports = {
-	init: init
+	init: init,
+	closeLedeSectionDialog: closeLedeSectionDialog
 };

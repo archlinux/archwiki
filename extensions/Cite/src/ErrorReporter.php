@@ -13,19 +13,9 @@ use Sanitizer;
  */
 class ErrorReporter {
 
-	/**
-	 * @var ReferenceMessageLocalizer
-	 */
-	private $messageLocalizer;
+	private ReferenceMessageLocalizer $messageLocalizer;
+	private ?Language $cachedInterfaceLanguage = null;
 
-	/**
-	 * @var Language
-	 */
-	private $cachedInterfaceLanguage = null;
-
-	/**
-	 * @param ReferenceMessageLocalizer $messageLocalizer
-	 */
 	public function __construct( ReferenceMessageLocalizer $messageLocalizer ) {
 		$this->messageLocalizer = $messageLocalizer;
 	}

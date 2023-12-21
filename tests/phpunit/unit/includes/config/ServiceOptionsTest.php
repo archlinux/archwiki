@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
 
 /**
@@ -28,7 +29,7 @@ class ServiceOptionsTest extends MediaWikiUnitTestCase {
 		$this->assertTrue( true );
 	}
 
-	public function provideConstructor() {
+	public static function provideConstructor() {
 		$testObj = (object)[];
 		return [
 			'No keys' => [ [], [], [ 'a' => 'aval' ] ],

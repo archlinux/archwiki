@@ -24,6 +24,11 @@
  * @ingroup Installer
  */
 
+use GuzzleHttp\Psr7\Header;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\GlobalVarConfig;
+use MediaWiki\Config\HashConfig;
+use MediaWiki\Config\MultiConfig;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\StaticHookRegistry;
 use MediaWiki\Interwiki\NullInterwikiLookup;
@@ -31,8 +36,10 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Settings\SettingsBuilder;
+use MediaWiki\Status\Status;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use Wikimedia\AtEase\AtEase;
 
 /**
@@ -57,14 +64,6 @@ use Wikimedia\AtEase\AtEase;
  * @since 1.17
  */
 abstract class Installer {
-
-	/**
-	 * The oldest version of PCRE we can support.
-	 *
-	 * Defining this is necessary because PHP may be linked with a system version
-	 * of PCRE, which may be older than that bundled with the minimum PHP version.
-	 */
-	public const MINIMUM_PCRE_VERSION = '7.2';
 
 	/**
 	 * URL to mediawiki-announce list summary page
@@ -151,6 +150,7 @@ abstract class Installer {
 		'envCheckServer',
 		'envCheckPath',
 		'envCheckUploadsDirectory',
+		'envCheckUploadsServerResponse',
 		'envCheck64Bit',
 	];
 
@@ -560,8 +560,8 @@ abstract class Installer {
 	 * that the wiki will primarily run under. In that case, the subclass should
 	 * initialise variables such as wgScriptPath, before calling this function.
 	 *
-	 * Under the web subclass, it can already be assumed that PHP 5+ is in use
-	 * and that sessions are working.
+	 * It can already be assumed that a supported PHP version is in use. Under
+	 * the web subclass, it can also be assumed that sessions are working.
 	 *
 	 * @return Status
 	 */
@@ -571,17 +571,10 @@ abstract class Installer {
 		$this->showMessage( 'config-env-php', PHP_VERSION );
 
 		$good = true;
-		// Must go here because an old version of PCRE can prevent other checks from completing
-		$pcreVersion = explode( ' ', PCRE_VERSION, 2 )[0];
-		if ( version_compare( $pcreVersion, self::MINIMUM_PCRE_VERSION, '<' ) ) {
-			$this->showError( 'config-pcre-old', self::MINIMUM_PCRE_VERSION, $pcreVersion );
-			$good = false;
-		} else {
-			foreach ( $this->envChecks as $check ) {
-				$status = $this->$check();
-				if ( $status === false ) {
-					$good = false;
-				}
+		foreach ( $this->envChecks as $check ) {
+			$status = $this->$check();
+			if ( $status === false ) {
+				$good = false;
 			}
 		}
 
@@ -878,7 +871,7 @@ abstract class Installer {
 
 		$databases = array_flip( $databases );
 		$ok = true;
-		foreach ( array_keys( $databases ) as $db ) {
+		foreach ( $databases as $db => $_ ) {
 			$installer = $this->getDBInstaller( $db );
 			$status = $installer->checkPrerequisites();
 			if ( !$status->isGood() ) {
@@ -901,37 +894,22 @@ abstract class Installer {
 	}
 
 	/**
-	 * Environment check for the PCRE module.
+	 * Check for known PCRE-related compatibility issues.
 	 *
-	 * @note If this check were to fail, the parser would
-	 *   probably throw an exception before the result
-	 *   of this check is shown to the user.
+	 * @note We don't bother checking for Unicode support here. If it were
+	 *   missing, the parser would probably throw an exception before the
+	 *   result of this check is shown to the user.
+	 *
 	 * @return bool
 	 */
 	protected function envCheckPCRE() {
-		AtEase::suppressWarnings();
-		$regexd = preg_replace( '/[\x{0430}-\x{04FF}]/iu', '', '-АБВГД-' );
-		// Need to check for \p support too, as PCRE can be compiled
-		// with utf8 support, but not unicode property support.
-		// check that \p{Zs} (space separators) matches
-		// U+3000 (Ideographic space)
-		$regexprop = preg_replace( '/\p{Zs}/u', '', "-\u{3000}-" );
-		AtEase::restoreWarnings();
-		if ( $regexd != '--' || $regexprop != '--' ) {
-			$this->showError( 'config-pcre-no-utf8' );
-
-			return false;
-		}
-
-		// PCRE must be compiled using PCRE_CONFIG_NEWLINE other than -1 (any)
-		// otherwise it will misidentify some unicode characters containing 0x85
-		// code with break lines
+		// PCRE2 must be compiled using NEWLINE_DEFAULT other than 4 (ANY);
+		// otherwise, it will misidentify UTF-8 trailing byte value 0x85
+		// as a line ending character when in non-UTF mode.
 		if ( preg_match( '/^b.*c$/', 'bąc' ) === 0 ) {
 			$this->showError( 'config-pcre-invalid-newline' );
-
 			return false;
 		}
-
 		return true;
 	}
 
@@ -1101,6 +1079,41 @@ abstract class Installer {
 
 		if ( !$safe ) {
 			$this->showMessage( 'config-uploads-not-safe', $dir );
+		}
+
+		return true;
+	}
+
+	protected function envCheckUploadsServerResponse() {
+		$url = $this->getVar( 'wgServer' ) . $this->getVar( 'wgScriptPath' ) . '/images/README';
+		$httpRequestFactory = MediaWikiServices::getInstance()->getHttpRequestFactory();
+		$status = null;
+
+		$req = $httpRequestFactory->create(
+			$url,
+			[
+				'method' => 'GET',
+				'timeout' => 3,
+				'followRedirects' => true
+			],
+			__METHOD__
+		);
+		try {
+			$status = $req->execute();
+		} catch ( Exception $e ) {
+			// HttpRequestFactory::get can throw with allow_url_fopen = false and no curl
+			// extension.
+		}
+
+		if ( !$status || !$status->isGood() ) {
+			$this->showMessage( 'config-uploads-security-requesterror', 'X-Content-Type-Options: nosniff' );
+			return true;
+		}
+
+		$headerValue = $req->getResponseHeader( 'X-Content-Type-Options' ) ?? '';
+		$responseList = Header::splitList( $headerValue );
+		if ( !in_array( 'nosniff', $responseList, true ) ) {
+			$this->showMessage( 'config-uploads-security-headers', 'X-Content-Type-Options: nosniff' );
 		}
 
 		return true;
@@ -1458,6 +1471,17 @@ abstract class Installer {
 	 */
 	public function getDefaultSkin( array $skinNames ) {
 		$defaultSkin = $GLOBALS['wgDefaultSkin'];
+
+		if ( in_array( 'vector', $skinNames ) ) {
+			$skinNames[] = 'vector-2022';
+		}
+
+		// T346332: Minerva skin uses different name from its directory name
+		if ( in_array( 'minervaneue', $skinNames ) ) {
+			$minervaNeue = array_search( 'minervaneue', $skinNames );
+			$skinNames[$minervaNeue] = 'minerva';
+		}
+
 		if ( !$skinNames || in_array( $defaultSkin, $skinNames ) ) {
 			return $defaultSkin;
 		} else {

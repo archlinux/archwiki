@@ -8,7 +8,6 @@
 	"captcha-edit": "Pa editar esta páxina, resuelvi la siguiente operación y pon la rempuesta nel caxellu ([[Special:Captcha/help|más información]]):",
 	"captcha-edit-fail": "CAPTCHA incorreutu o ausente.",
 	"captcha-desc": "Ufre téuniques de CAPTCHA pa protexese escontra'l spam y descubrimientu de contraseñes",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Solución del CAPTCHA.",
 	"captcha-info-help": "Descripción del CAPTCHA.",
 	"captcha-id-label": "ID del CAPTCHA",

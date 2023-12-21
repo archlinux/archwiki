@@ -19,6 +19,9 @@
  * @ingroup Pager
  */
 
+namespace MediaWiki\Pager;
+
+use IContextSource;
 use MediaWiki\Block\BlockActionInfo;
 use MediaWiki\Block\BlockRestrictionStore;
 use MediaWiki\Block\BlockUtils;
@@ -34,9 +37,12 @@ use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Utils\MWTimestamp;
+use stdClass;
 use Wikimedia\IPUtils;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -53,26 +59,13 @@ class BlockListPager extends TablePager {
 	 */
 	protected $restrictions = [];
 
-	/** @var BlockActionInfo */
-	private $blockActionInfo;
-
-	/** @var BlockRestrictionStore */
-	private $blockRestrictionStore;
-
-	/** @var BlockUtils */
-	private $blockUtils;
-
-	/** @var CommentStore */
-	private $commentStore;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var RowCommentFormatter */
-	private $rowCommentFormatter;
-
-	/** @var SpecialPageFactory */
-	private $specialPageFactory;
+	private BlockActionInfo $blockActionInfo;
+	private BlockRestrictionStore $blockRestrictionStore;
+	private BlockUtils $blockUtils;
+	private CommentStore $commentStore;
+	private LinkBatchFactory $linkBatchFactory;
+	private RowCommentFormatter $rowCommentFormatter;
+	private SpecialPageFactory $specialPageFactory;
 
 	/** @var string[] */
 	private $formattedComments = [];
@@ -85,7 +78,7 @@ class BlockListPager extends TablePager {
 	 * @param CommentStore $commentStore
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param LinkRenderer $linkRenderer
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param RowCommentFormatter $rowCommentFormatter
 	 * @param SpecialPageFactory $specialPageFactory
 	 * @param array $conds
@@ -98,13 +91,13 @@ class BlockListPager extends TablePager {
 		CommentStore $commentStore,
 		LinkBatchFactory $linkBatchFactory,
 		LinkRenderer $linkRenderer,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		RowCommentFormatter $rowCommentFormatter,
 		SpecialPageFactory $specialPageFactory,
 		$conds
 	) {
 		// Set database before parent constructor to avoid setting it there with wfGetDB
-		$this->mDb = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		$this->mDb = $dbProvider->getReplicaDatabase();
 		parent::__construct( $context, $linkRenderer );
 		$this->blockActionInfo = $blockActionInfo;
 		$this->blockRestrictionStore = $blockRestrictionStore;
@@ -381,7 +374,7 @@ class BlockListPager extends TablePager {
 			}
 		}
 
-		if ( empty( $items ) ) {
+		if ( !$items ) {
 			return '';
 		}
 
@@ -457,13 +450,11 @@ class BlockListPager extends TablePager {
 	 */
 	public function getTotalAutoblocks() {
 		$dbr = $this->getDatabase();
-		return (int)$dbr->selectField( 'ipblocks', 'COUNT(*)',
-			[
-				'ipb_auto' => '1',
-				'ipb_expiry >= ' . $dbr->addQuotes( $dbr->timestamp() ),
-			],
-			__METHOD__
-		);
+		return (int)$dbr->newSelectQueryBuilder()
+			->select( 'COUNT(*)' )
+			->from( 'ipblocks' )
+			->where( [ 'ipb_auto' => '1', 'ipb_expiry >= ' . $dbr->addQuotes( $dbr->timestamp() ), ] )
+			->caller( __METHOD__ )->fetchField();
 	}
 
 	protected function getTableClass() {
@@ -502,7 +493,7 @@ class BlockListPager extends TablePager {
 			}
 
 			if ( !$row->ipb_sitewide ) {
-				$partialBlocks[] = $row->ipb_id;
+				$partialBlocks[] = (int)$row->ipb_id;
 			}
 		}
 
@@ -530,3 +521,9 @@ class BlockListPager extends TablePager {
 	}
 
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( BlockListPager::class, 'BlockListPager' );

@@ -653,9 +653,6 @@ class ExprParser {
 				$right = array_pop( $stack );
 				$left = array_pop( $stack );
 				$result = pow( $left, $right );
-				if ( $result === false ) {
-					throw new ExprError( 'division_by_zero', self::NAMES[$op] );
-				}
 				$stack[] = $result;
 				break;
 			case self::EXPR_SQRT:

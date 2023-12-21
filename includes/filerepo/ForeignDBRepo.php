@@ -31,7 +31,7 @@ use Wikimedia\Rdbms\IDatabase;
  *
  * @ingroup FileRepo
  */
-class ForeignDBRepo extends LocalRepo {
+class ForeignDBRepo extends LocalRepo implements IForeignRepoWithDB {
 	/** @var string */
 	protected $dbType;
 
@@ -115,6 +115,7 @@ class ForeignDBRepo extends LocalRepo {
 	}
 
 	protected function assertWritableRepo() {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new MWException( static::class . ': write operations are not supported.' );
 	}
 

@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Search\TitleMatcher;
@@ -7,6 +8,7 @@ use MediaWiki\Title\Title;
 
 /**
  * @covers \MediaWiki\Search\TitleMatcher
+ * @group Database
  */
 class TitleMatcherTest extends MediaWikiIntegrationTestCase {
 	use LinkCacheTestTrait;
@@ -17,7 +19,7 @@ class TitleMatcherTest extends MediaWikiIntegrationTestCase {
 		$this->overrideConfigValue( MainConfigNames::UsePigLatinVariant, false );
 	}
 
-	public function nearMatchProvider() {
+	public static function nearMatchProvider() {
 		return [
 			'empty request returns nothing' => [ null, 'en', '', 'Near Match Test' ],
 			'with a hash returns nothing' => [ null, 'en', '#near match test', 'Near Match Test' ],
@@ -87,7 +89,9 @@ class TitleMatcherTest extends MediaWikiIntegrationTestCase {
 			$services->getHookContainer(),
 			$services->getWikiPageFactory(),
 			$services->getUserNameUtils(),
-			$services->getRepoGroup() );
+			$services->getRepoGroup(),
+			$services->getTitleFactory()
+		);
 	}
 
 	/**
@@ -106,7 +110,7 @@ class TitleMatcherTest extends MediaWikiIntegrationTestCase {
 		$this->addGoodLinkObject( 42, Title::newFromText( $titleText ) );
 
 		$config = new HashConfig( [
-			'EnableSearchContributorsByIP' => $enableSearchContributorsByIP,
+			MainConfigNames::EnableSearchContributorsByIP => $enableSearchContributorsByIP,
 		] );
 
 		$matcher = $this->getTitleMatcher( $config, $langCode );
@@ -114,7 +118,7 @@ class TitleMatcherTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected, $title === null ? null : (string)$title );
 	}
 
-	public function hooksProvider() {
+	public static function hooksProvider() {
 		return [
 			'SearchGetNearMatchBefore' => [ 'SearchGetNearMatchBefore' ],
 			'SearchAfterNoDirectMatch' => [ 'SearchAfterNoDirectMatch' ],
@@ -129,7 +133,7 @@ class TitleMatcherTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testNearMatch_Hooks( $hook ) {
 		$config = new HashConfig( [
-			'EnableSearchContributorsByIP' => false,
+			MainConfigNames::EnableSearchContributorsByIP => false,
 		] );
 
 		$this->setTemporaryHook( $hook, static function ( $term, &$title ) {
@@ -154,7 +158,7 @@ class TitleMatcherTest extends MediaWikiIntegrationTestCase {
 		$this->addGoodLinkObject( 42, Title::makeTitle( NS_MAIN, "Test Link" ) );
 
 		$config = new HashConfig( [
-			'EnableSearchContributorsByIP' => false,
+			MainConfigNames::EnableSearchContributorsByIP => false,
 		] );
 
 		$matcher = $this->getTitleMatcher( $config, 'en' );

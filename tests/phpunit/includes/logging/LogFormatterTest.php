@@ -3,7 +3,9 @@
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\SimpleAuthority;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 
 /**
@@ -367,7 +369,7 @@ class LogFormatterTest extends MediaWikiLangTestCase {
 		}
 	}
 
-	public function provideLogElement() {
+	public static function provideLogElement() {
 		return [
 			[ 'none', 'view' ],
 			[ 'deleted', 'none' ],

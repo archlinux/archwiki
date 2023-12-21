@@ -20,5 +20,10 @@
 	"cite_error_references_missing_group": "O tag <code>&lt;ref&gt;</code> definiu en <code>&lt;references&gt;</code> incluye l'atributo \"$1\" no declarau en o texto precedente.",
 	"cite_error_references_missing_key": "O tag <code>&lt;ref&gt;</code> con nombre \"$1\" definiu en <code>&lt;references&gt;</code> no s'emplega en o texto precedente.",
 	"cite_error_references_no_key": "O tag <code>&lt;ref&gt;</code> definiu en <code>&lt;references&gt;</code> no tiene garra atributo de nombre.",
-	"cite_error_empty_references_define": "O tag <code>&lt;ref&gt;</code> definiu en <code>&lt;references&gt;</code> con nombre \"$1\" no tiene garra conteniu."
+	"cite_error_empty_references_define": "O tag <code>&lt;ref&gt;</code> definiu en <code>&lt;references&gt;</code> con nombre \"$1\" no tiene garra conteniu.",
+	"cite-wikieditor-tool-reference": "Referencia",
+	"cite-wikieditor-help-page-references": "Referencias",
+	"cite-wikieditor-help-content-reference-description": "Referencia",
+	"cite-wikieditor-help-content-rereference-description": "Uso adicional d'a mesma referencia",
+	"cite-wikieditor-help-content-showreferences-description": "Amostrar as referencias"
 }

@@ -24,6 +24,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|ein weiterer|$1 weitere}} Urheber",
 	"multimediaviewer-multiple-authors-combine": "$1 und $2",
 	"multimediaviewer-metadata-error": "Die Einzelheiten des Bildes konnten nicht geladen werden (Fehler: $1)",
+	"multimediaviewer-file-not-found-error": "Leider kann die Datei $1 nicht angezeigt werden, da sie auf der aktuellen Seite nicht vorhanden ist.",
 	"multimediaviewer-thumbnail-error": "Leider kann die Datei nicht angezeigt werden",
 	"multimediaviewer-thumbnail-error-description": "Es scheint ein technisches Problem zu geben. Du kannst es $1, falls es weiterhin besteht. Fehler: $2",
 	"multimediaviewer-thumbnail-error-retry": "erneut versuchen",

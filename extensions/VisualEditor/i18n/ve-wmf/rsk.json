@@ -4,6 +4,7 @@
 			"Keresturec"
 		]
 	},
+	"tag-editcheck-references-description": "EditCheck трима же референца можебуц була потребна у тей пременки",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|визуалне ушорйованє]]",
 	"tag-visualeditor-description": "Пременка направена зоз [[{{MediaWiki:visualeditor-descriptionpagelink}}|визуалним едитором]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Визуални едитор: превериц]]",

@@ -27,11 +27,11 @@ use DeferredUpdates;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Title\Title;
-use MediaWiki\Title\TitleArray;
+use MediaWiki\Title\TitleArrayFromResult;
 use MWException;
-use ReadOnlyMode;
 use stdClass;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
  * Category objects are immutable, strictly speaking. If you call methods that change the database,
@@ -66,15 +66,15 @@ class Category {
 	public const COUNT_ALL_MEMBERS = 0;
 	public const COUNT_CONTENT_PAGES = 1;
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
+	/** @var IConnectionProvider */
+	private $dbProvider;
 
 	/** @var ReadOnlyMode */
 	private $readOnlyMode;
 
 	private function __construct() {
 		$services = MediaWikiServices::getInstance();
-		$this->loadBalancer = $services->getDBLoadBalancer();
+		$this->dbProvider = $services->getDBLoadBalancerFactory();
 		$this->readOnlyMode = $services->getReadOnlyMode();
 	}
 
@@ -96,7 +96,7 @@ class Category {
 			return true;
 		}
 
-		$row = $this->loadBalancer->getConnectionRef( DB_REPLICA )->newSelectQueryBuilder()
+		$row = $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
 			->select( [ 'cat_id', 'cat_title', 'cat_pages', 'cat_subcats', 'cat_files' ] )
 			->from( 'category' )
 			->where( $where )
@@ -320,10 +320,10 @@ class Category {
 	 * category sort key $offset.
 	 * @param int|false $limit
 	 * @param string $offset
-	 * @return TitleArray TitleArray object for category members.
+	 * @return TitleArrayFromResult Title objects for category members.
 	 */
 	public function getMembers( $limit = false, $offset = '' ) {
-		$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$queryBuilder = $dbr->newSelectQueryBuilder();
 		$queryBuilder->select( [ 'page_id', 'page_namespace', 'page_title', 'page_len',
 				'page_is_redirect', 'page_latest' ] )
@@ -340,7 +340,7 @@ class Category {
 			$queryBuilder->andWhere( $dbr->buildComparison( '>', [ 'cl_sortkey' => $offset ] ) );
 		}
 
-		$result = TitleArray::newFromResult( $queryBuilder->caller( __METHOD__ )->fetchResultSet() );
+		$result = new TitleArrayFromResult( $queryBuilder->caller( __METHOD__ )->fetchResultSet() );
 
 		return $result;
 	}
@@ -373,7 +373,7 @@ class Category {
 			return false;
 		}
 
-		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+		$dbw = $this->dbProvider->getPrimaryDatabase();
 		# Avoid excess contention on the same category (T162121)
 		$name = __METHOD__ . ':' . md5( $this->mName );
 		$scopedLock = $dbw->getScopedLockAndFlush( $name, __METHOD__, 0 );
@@ -435,32 +435,31 @@ class Category {
 					->caller( __METHOD__ )->execute();
 			} else {
 				# The category is empty and has no description page, delete it
-				$dbw->delete(
-					'category',
-					[ 'cat_title' => $this->mName ],
-					__METHOD__
-				);
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'category' )
+					->where( [ 'cat_title' => $this->mName ] )
+					->caller( __METHOD__ )->execute();
 				$this->mID = false;
 			}
 		} elseif ( $shouldExist ) {
 			# The category row doesn't exist but should, so create it. Use
 			# upsert in case of races.
-			$dbw->upsert(
-				'category',
-				[
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'category' )
+				->row( [
 					'cat_title' => $this->mName,
 					'cat_pages' => $result->pages,
 					'cat_subcats' => $result->subcats,
 					'cat_files' => $result->files
-				],
-				'cat_title',
-				[
+				] )
+				->onDuplicateKeyUpdate()
+				->uniqueIndexFields( [ 'cat_title' ] )
+				->set( [
 					'cat_pages' => $result->pages,
 					'cat_subcats' => $result->subcats,
-					'cat_files' => $result->files
-				],
-				__METHOD__
-			);
+					 'cat_files' => $result->files
+				] )
+				->caller( __METHOD__ )->execute();
 			// @todo: Should we update $this->mID here? Or not since Category
 			// objects tend to be short lived enough to not matter?
 		}
@@ -504,7 +503,7 @@ class Category {
 	 * @since 1.34
 	 */
 	public function refreshCountsIfSmall( $maxSize = self::ROW_COUNT_SMALL ) {
-		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+		$dbw = $this->dbProvider->getPrimaryDatabase();
 		$dbw->startAtomic( __METHOD__ );
 
 		$typeOccurances = $dbw->newSelectQueryBuilder()
@@ -544,4 +543,7 @@ class Category {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( Category::class, 'Category' );

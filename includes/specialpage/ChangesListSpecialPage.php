@@ -18,16 +18,29 @@
  * @file
  */
 
+namespace MediaWiki\SpecialPage;
+
+use ChangesListBooleanFilter;
+use ChangesListBooleanFilterGroup;
+use ChangesListFilterGroup;
+use ChangesListStringOptionsFilterGroup;
+use ChangeTags;
+use FormatJson;
+use IContextSource;
+use LogFormatter;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\User\UserIdentity;
+use MWExceptionHandler;
 use OOUI\IconWidget;
+use RecentChange;
 use Wikimedia\Rdbms\DBQueryTimeoutError;
 use Wikimedia\Rdbms\FakeResultWrapper;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -102,7 +115,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'showHideSuffix' => 'showhideliu',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds['actor_user'] = null;
 							$join_conds['recentchanges_actor'] = [ 'JOIN', 'actor_id=rc_actor' ];
@@ -117,7 +130,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'showHideSuffix' => 'showhideanons',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds[] = 'actor_user IS NOT NULL';
 							$join_conds['recentchanges_actor'] = [ 'JOIN', 'actor_id=rc_actor' ];
@@ -212,7 +225,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'showHideSuffix' => 'showhidemine',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$user = $ctx->getUser();
 							$conds[] = 'actor_name<>' . $dbr->addQuotes( $user->getName() );
@@ -229,7 +242,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'description' => 'rcfilters-filter-editsbyother-description',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$user = $ctx->getUser();
 							if ( $user->isAnon() ) {
@@ -261,7 +274,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'showHideSuffix' => 'showhidebots',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds['rc_bot'] = 0;
 						},
@@ -276,7 +289,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'description' => 'rcfilters-filter-humans-description',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds['rc_bot'] = 1;
 						},
@@ -305,7 +318,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'showHideSuffix' => 'showhideminor',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_minor = 0';
 						},
@@ -320,7 +333,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'description' => 'rcfilters-filter-major-description',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_minor = 1';
 						},
@@ -344,7 +357,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'description' => 'rcfilters-filter-lastrevision-description',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) use ( $nonRevisionTypes ) {
 							$conds[] = $dbr->makeList(
 								[
@@ -365,7 +378,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'description' => 'rcfilters-filter-previousrevision-description',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) use ( $nonRevisionTypes ) {
 							$conds[] = $dbr->makeList(
 								[
@@ -397,7 +410,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'default' => false,
 						'priority' => -2,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_type != ' . $dbr->addQuotes( RC_EDIT );
 						},
@@ -413,7 +426,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'default' => false,
 						'priority' => -3,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_type != ' . $dbr->addQuotes( RC_NEW );
 						},
@@ -432,7 +445,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'default' => false,
 						'priority' => -5,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_type != ' . $dbr->addQuotes( RC_LOG );
 						},
@@ -448,14 +461,14 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'default' => false,
 						'priority' => -6,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds[] = $dbr->makeList(
 								[
 									'rc_log_type != ' . $dbr->addQuotes( 'newusers' ),
 									'rc_log_type' => null
 								],
-								IDatabase::LIST_OR
+								IReadableDatabase::LIST_OR
 							);
 						},
 						'cssClassSuffix' => 'src-mw-newuserlog',
@@ -481,7 +494,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'showHideSuffix' => 'showhidepatr',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds['rc_patrolled'] = RecentChange::PRC_UNPATROLLED;
 						},
@@ -491,7 +504,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'name' => 'hideunpatrolled',
 						'default' => false,
 						'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-							IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+							IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_patrolled != ' . RecentChange::PRC_UNPATROLLED;
 						},
@@ -539,7 +552,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 				],
 				'default' => ChangesListStringOptionsFilterGroup::NONE,
 				'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-					IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds, $selected
+					IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds, $selected
 				) {
 					if ( $selected === [] ) {
 						return;
@@ -567,7 +580,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			'default' => false,
 			'priority' => -4,
 			'queryCallable' => static function ( string $specialClassName, IContextSource $ctx,
-				IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
+				IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds
 			) {
 				$conds[] = 'rc_type != ' . $dbr->addQuotes( RC_CATEGORIZE );
 			},
@@ -628,7 +641,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		}
 
 		// Enable OOUI and module for the clock icon.
-		if ( $this->getConfig()->get( MainConfigNames::WatchlistExpiry ) ) {
+		if ( $this->getConfig()->get( MainConfigNames::WatchlistExpiry ) && !$this->including() ) {
 			$this->getOutput()->enableOOUI();
 			$this->getOutput()->addModules( 'mediawiki.special.changeslist.watchlistexpiry' );
 		}
@@ -1431,11 +1444,11 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 * Sets appropriate tables, fields, conditions, etc. depending on which filters
 	 * the user requested.
 	 *
-	 * @param array &$tables Array of tables; see IDatabase::select $table
-	 * @param array &$fields Array of fields; see IDatabase::select $vars
-	 * @param array &$conds Array of conditions; see IDatabase::select $conds
-	 * @param array &$query_options Array of query options; see IDatabase::select $options
-	 * @param array &$join_conds Array of join conditions; see IDatabase::select $join_conds
+	 * @param array &$tables Array of tables; see IReadableDatabase::select $table
+	 * @param array &$fields Array of fields; see IReadableDatabase::select $vars
+	 * @param array &$conds Array of conditions; see IReadableDatabase::select $conds
+	 * @param array &$query_options Array of query options; see IReadableDatabase::select $options
+	 * @param array &$join_conds Array of join conditions; see IReadableDatabase::select $join_conds
 	 * @param FormOptions $opts
 	 */
 	protected function buildQuery( &$tables, &$fields, &$conds, &$query_options,
@@ -1500,11 +1513,11 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	/**
 	 * Process the query
 	 *
-	 * @param array $tables Array of tables; see IDatabase::select $table
-	 * @param array $fields Array of fields; see IDatabase::select $vars
-	 * @param array $conds Array of conditions; see IDatabase::select $conds
-	 * @param array $query_options Array of query options; see IDatabase::select $options
-	 * @param array $join_conds Array of join conditions; see IDatabase::select $join_conds
+	 * @param array $tables Array of tables; see IReadableDatabase::select $table
+	 * @param array $fields Array of fields; see IReadableDatabase::select $vars
+	 * @param array $conds Array of conditions; see IReadableDatabase::select $conds
+	 * @param array $query_options Array of query options; see IReadableDatabase::select $options
+	 * @param array $join_conds Array of join conditions; see IReadableDatabase::select $join_conds
 	 * @param FormOptions $opts
 	 * @return bool|IResultWrapper Result or false
 	 */
@@ -1552,12 +1565,12 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	}
 
 	/**
-	 * Return a IDatabase object for reading
+	 * Which database to use for read queries
 	 *
-	 * @return IDatabase
+	 * @return IReadableDatabase
 	 */
-	protected function getDB() {
-		return wfGetDB( DB_REPLICA );
+	protected function getDB(): IReadableDatabase {
+		return MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
 	}
 
 	/**
@@ -1685,7 +1698,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			$context->msg( 'recentchanges-label-plusminus' )->text()
 		) . "\n";
 		// Watchlist expiry clock icon.
-		if ( $context->getConfig()->get( MainConfigNames::WatchlistExpiry ) ) {
+		if ( $context->getConfig()->get( MainConfigNames::WatchlistExpiry ) && !$this->including() ) {
 			$widget = new IconWidget( [
 				'icon' => 'clock',
 				'classes' => [ 'mw-changesList-watchlistExpiry' ],
@@ -1756,12 +1769,12 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 *
 	 * @param string $specialPageClassName Class name of current special page
 	 * @param IContextSource $context Context, for e.g. user
-	 * @param IDatabase $dbr Database, for addQuotes, makeList, and similar
-	 * @param array &$tables Array of tables; see IDatabase::select $table
-	 * @param array &$fields Array of fields; see IDatabase::select $vars
-	 * @param array &$conds Array of conditions; see IDatabase::select $conds
-	 * @param array &$query_options Array of query options; see IDatabase::select $options
-	 * @param array &$join_conds Array of join conditions; see IDatabase::select $join_conds
+	 * @param IReadableDatabase $dbr Database, for addQuotes, makeList, and similar
+	 * @param array &$tables Array of tables; see IReadableDatabase::select $table
+	 * @param array &$fields Array of fields; see IReadableDatabase::select $vars
+	 * @param array &$conds Array of conditions; see IReadableDatabase::select $conds
+	 * @param array &$query_options Array of query options; see IReadableDatabase::select $options
+	 * @param array &$join_conds Array of join conditions; see IReadableDatabase::select $join_conds
 	 * @param array $selectedExpLevels The allowed active values, sorted
 	 * @param int $now Number of seconds since the UNIX epoch, or 0 if not given
 	 *   (optional)
@@ -1817,23 +1830,23 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			[
 				'user_editcount >= ' . intval( $config->get( MainConfigNames::LearnerEdits ) ),
 				$dbr->makeList( [
-					'user_registration IS NULL',
+					'user_registration' => null,
 					'user_registration <= ' . $dbr->addQuotes( $dbr->timestamp( $learnerCutoff ) ),
-				], IDatabase::LIST_OR ),
+				], IReadableDatabase::LIST_OR ),
 			],
-			IDatabase::LIST_AND
+			IReadableDatabase::LIST_AND
 		);
 
 		$aboveLearner = $dbr->makeList(
 			[
 				'user_editcount >= ' . intval( $config->get( MainConfigNames::ExperiencedUserEdits ) ),
 				$dbr->makeList( [
-					'user_registration IS NULL',
+					'user_registration' => null,
 					'user_registration <= ' .
 						$dbr->addQuotes( $dbr->timestamp( $experiencedUserCutoff ) ),
-				], IDatabase::LIST_OR ),
+				], IReadableDatabase::LIST_OR ),
 			],
-			IDatabase::LIST_AND
+			IReadableDatabase::LIST_AND
 		);
 
 		$conditions = [];
@@ -1849,7 +1862,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		} elseif ( $selectedExpLevels === [ 'learner' ] ) {
 			$conditions[] = $dbr->makeList(
 				[ $aboveNewcomer, "NOT ( $aboveLearner )" ],
-				IDatabase::LIST_AND
+				IReadableDatabase::LIST_AND
 			);
 		} elseif ( $selectedExpLevels === [ 'experienced' ] ) {
 			$conditions[] = $aboveLearner;
@@ -1858,7 +1871,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		} elseif ( $selectedExpLevels === [ 'experienced', 'newcomer' ] ) {
 			$conditions[] = $dbr->makeList(
 				[ "NOT ( $aboveNewcomer )", $aboveLearner ],
-				IDatabase::LIST_OR
+				IReadableDatabase::LIST_OR
 			);
 		} elseif ( $selectedExpLevels === [ 'experienced', 'learner' ] ) {
 			$conditions[] = $aboveNewcomer;
@@ -1868,7 +1881,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		}
 
 		if ( count( $conditions ) > 1 ) {
-			$conds[] = $dbr->makeList( $conditions, IDatabase::LIST_OR );
+			$conds[] = $dbr->makeList( $conditions, IReadableDatabase::LIST_OR );
 		} elseif ( count( $conditions ) === 1 ) {
 			$conds[] = reset( $conditions );
 		}
@@ -1980,3 +1993,9 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		return array_unique( $namespaces );
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( ChangesListSpecialPage::class, 'ChangesListSpecialPage' );

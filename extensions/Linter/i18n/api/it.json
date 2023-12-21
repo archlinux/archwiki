@@ -5,7 +5,6 @@
 			"Bultro"
 		]
 	},
-	"apihelp-query+linterrors-description": "Ottieni lista di errori di Lint",
 	"apihelp-query+linterrors-summary": "Ottieni lista di errori di Lint",
 	"apihelp-query+linterrors-param-categories": "Categorie di errori di Lint",
 	"apihelp-query+linterrors-param-limit": "Numero risultati da richiedere",
@@ -14,7 +13,6 @@
 	"apihelp-query+linterrors-param-pageid": "Includi solo errori di Lint da ID pagine specificati",
 	"apihelp-query+linterrors-param-title": "Includi solo errori di Lint dai titoli pagine specificati",
 	"apihelp-query+linterrors-example-1": "Ottieni tutti gli errori di Lint della categoria \"obsolete-tag\"",
-	"apihelp-query+linterstats-description": "Ottieni il numero di errori di Lint in ciascuna categoria",
 	"apihelp-query+linterstats-summary": "Ottieni il numero di errori di Lint in ciascuna categoria",
 	"apihelp-query+linterstats-example-1": "Ottieni il numero di errori di Lint in ciascuna categoria"
 }

@@ -21,17 +21,34 @@
  * @ingroup SpecialPage
  */
 
-use MediaWiki\Mail\EmailUser;
+namespace MediaWiki\Specials;
+
+use ErrorPageError;
+use HTMLForm;
+use IContextSource;
+use MediaWiki\Config\Config;
+use MediaWiki\Mail\EmailUserFactory;
+use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
+use MediaWiki\User\User;
+use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserOptionsLookup;
+use Message;
+use PermissionsError;
+use StatusValue;
+use ThrottledError;
+use UserBlockedError;
 
 /**
  * A special page that allows users to send e-mails to other users
  *
  * @ingroup SpecialPage
  */
-class SpecialEmailUser extends UnlistedSpecialPage {
+class SpecialEmailUser extends SpecialPage {
 	protected $mTarget;
 
 	/**
@@ -39,29 +56,32 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	 */
 	protected $mTargetObj;
 
-	/** @var UserNameUtils */
-	private $userNameUtils;
-
-	/** @var UserNamePrefixSearch */
-	private $userNamePrefixSearch;
-
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
+	private UserNameUtils $userNameUtils;
+	private UserNamePrefixSearch $userNamePrefixSearch;
+	private UserOptionsLookup $userOptionsLookup;
+	private EmailUserFactory $emailUserFactory;
+	private UserFactory $userFactory;
 
 	/**
 	 * @param UserNameUtils $userNameUtils
 	 * @param UserNamePrefixSearch $userNamePrefixSearch
 	 * @param UserOptionsLookup $userOptionsLookup
+	 * @param EmailUserFactory $emailUserFactory
+	 * @param UserFactory $userFactory
 	 */
 	public function __construct(
 		UserNameUtils $userNameUtils,
 		UserNamePrefixSearch $userNamePrefixSearch,
-		UserOptionsLookup $userOptionsLookup
+		UserOptionsLookup $userOptionsLookup,
+		EmailUserFactory $emailUserFactory,
+		UserFactory $userFactory
 	) {
 		parent::__construct( 'Emailuser' );
 		$this->userNameUtils = $userNameUtils;
 		$this->userNamePrefixSearch = $userNamePrefixSearch;
 		$this->userOptionsLookup = $userOptionsLookup;
+		$this->emailUserFactory = $emailUserFactory;
+		$this->userFactory = $userFactory;
 	}
 
 	public function doesWrites() {
@@ -69,12 +89,12 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	}
 
 	public function getDescription() {
-		$target = self::getTarget( $this->mTarget, $this->getUser() );
+		$target = self::getTarget( $this->mTarget ?? '', $this->getUser() );
 		if ( !$target instanceof User ) {
-			return $this->msg( 'emailuser-title-notarget' )->text();
+			return $this->msg( 'emailuser-title-notarget' );
 		}
 
-		return $this->msg( 'emailuser-title-target', $target->getName() )->text();
+		return $this->msg( 'emailuser-title-target', $target->getName() );
 	}
 
 	protected function getFormFields() {
@@ -139,7 +159,7 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 		$this->setHeaders();
 		$this->outputHeader();
 
-		// error out if sending user cannot do this
+		// Error out if sending user cannot do this. Don't authorize yet.
 		$error = self::getPermissionsError(
 			$this->getUser(),
 			$this->getRequest()->getVal( 'wpEditToken' ),
@@ -166,7 +186,7 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 				throw new ErrorPageError( $title, $msg, $params );
 		}
 
-		// A little hack: HTMLForm will check $this->mTarget only, if the form was posted, not
+		// A little hack: HTMLForm will check wpTarget only, if the form was posted, not
 		// if the user opens Special:EmailUser/Florian (e.g.). So check, if the user did that
 		// and show the "Send email to user" form directly, if so. Show the "enter username"
 		// form, otherwise.
@@ -186,9 +206,24 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	 * @param string $target Target user name
 	 * @param User $sender User sending the email
 	 * @return User|string User object on success or a string on error
+	 * @todo Deprecate this once we have a better factory/lookup for UserEmailContact
 	 */
 	public static function getTarget( $target, User $sender ) {
-		return EmailUser::getTarget( $target, $sender );
+		$targetObject = MediaWikiServices::getInstance()->getUserFactory()->newFromName( $target );
+		if ( !$targetObject instanceof User ) {
+			return 'notarget';
+		}
+
+		$status = MediaWikiServices::getInstance()->getEmailUserFactory()
+			->newEmailUser( $sender )
+			->validateTarget( $targetObject );
+		if ( !$status->isGood() ) {
+			$msg = $status->getErrors()[0]['message'];
+			$ret = $msg === 'emailnotarget' ? 'notarget' : preg_replace( '/text$/', '', $msg );
+		} else {
+			$ret = $targetObject;
+		}
+		return $ret;
 	}
 
 	/**
@@ -198,9 +233,22 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	 * @param User $sender User sending the email
 	 * @return string Error message or empty string if valid.
 	 * @since 1.30
+	 * @deprecated since 1.41 Use EmailUser::validateTarget()
 	 */
 	public static function validateTarget( $target, User $sender ) {
-		return EmailUser::validateTarget( $target, $sender );
+		if ( !$target instanceof User ) {
+			return 'notarget';
+		}
+		$status = MediaWikiServices::getInstance()->getEmailUserFactory()
+			->newEmailUser( $sender )
+			->validateTarget( $target );
+		if ( $status->isGood() ) {
+			$ret = '';
+		} else {
+			$msg = $status->getErrors()[0]['message'];
+			$ret = $msg === 'emailnotarget' ? 'notarget' : preg_replace( '/text$/', '', $msg );
+		}
+		return $ret;
 	}
 
 	/**
@@ -209,11 +257,34 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	 * @param User $user
 	 * @param string $editToken
 	 * @param Config|null $config optional for backwards compatibility
+	 * @param bool $authorize whether to authorize the immediate sending of mails,
+	 *        rather than just checking beforehand.
+	 *
 	 * @return null|string|array Null on success, string on error, or array on
 	 *  hook error
+	 * @deprecated since 1.41 Use EmailUser::canSend() or EmailUser::authorizeSend()
 	 */
-	public static function getPermissionsError( $user, $editToken, Config $config = null ) {
-		return EmailUser::getPermissionsError( $user, $editToken, $config );
+	public static function getPermissionsError( $user, $editToken, Config $config = null, $authorize = false ) {
+		$emailUser = MediaWikiServices::getInstance()->getEmailUserFactory()->newEmailUserBC( $user, $config );
+		$emailUser->setEditToken( (string)$editToken );
+		$status = $authorize ? $emailUser->authorizeSend() : $emailUser->canSend();
+
+		if ( $status->isGood() ) {
+			return null;
+		}
+		foreach ( $status->getErrors() as $err ) {
+			$errKey = $err['message'] instanceof Message ? $err['message']->getKey() : $err['message'];
+			if ( strpos( $errKey, 'blockedtext' ) !== false ) {
+				// BC for block messages
+				return "blockedemailuser";
+			}
+		}
+		$error = $status->getErrors()[0];
+		if ( $status->getValue() !== null ) {
+			// BC for hook errors intended to be used with ErrorPageError
+			return [ $status->getValue(), $error['message'], $error['params'] ];
+		}
+		return $error['message'];
 	}
 
 	/**
@@ -227,17 +298,23 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 				'type' => 'user',
 				'exists' => true,
 				'required' => true,
-				'label' => $this->msg( 'emailusername' )->text(),
+				'label-message' => 'emailusername',
 				'id' => 'emailusertarget',
 				'autofocus' => true,
-				'value' => $name,
+				// Skip validation when visit directly without subpage (T347854)
+				'default' => '',
+				// Prefill for subpage syntax and old target param.
+				'filter-callback' => static function ( $value ) use ( $name ) {
+					return str_replace( '_', ' ',
+						( $value !== '' && $value !== false && $value !== null ) ? $value : $name );
+				}
 			]
 		], $this->getContext() );
 
 		$htmlForm
+			->setMethod( 'GET' )
 			->setTitle( $this->getPageTitle() ) // Remove subpage
 			->setSubmitCallback( [ $this, 'sendEmailForm' ] )
-			->setFormIdentifier( 'userForm' )
 			->setId( 'askusername' )
 			->setWrapperLegendMsg( 'emailtarget' )
 			->setSubmitTextMsg( 'emailusernamesubmit' )
@@ -247,12 +324,11 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	public function sendEmailForm() {
 		$out = $this->getOutput();
 
-		$ret = $this->mTargetObj;
-		if ( !$ret instanceof User ) {
+		if ( !$this->mTargetObj instanceof User ) {
 			if ( $this->mTarget != '' ) {
-				// Messages used here: notargettext, noemailtext, nowikiemailtext
-				$ret = ( $ret == 'notarget' ) ? 'emailnotarget' : ( $ret . 'text' );
-				return Status::newFatal( $ret );
+				// Messages used here: noemailtext, nowikiemailtext
+				$msg = ( $this->mTargetObj === 'notarget' ) ? 'emailnotarget' : ( $this->mTargetObj . 'text' );
+				return Status::newFatal( $msg );
 			}
 			return false;
 		}
@@ -263,8 +339,7 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 			->setTitle( $this->getPageTitle() ) // Remove subpage
 			->addPreHtml( $this->msg( 'emailpagetext', $this->mTarget )->parse() )
 			->setSubmitTextMsg( 'emailsend' )
-			->setSubmitCallback( [ __CLASS__, 'submit' ] )
-			->setFormIdentifier( 'sendEmailForm' )
+			->setSubmitCallback( [ $this, 'onFormSubmit' ] )
 			->setWrapperLegendMsg( 'email-legend' )
 			->prepareForm();
 
@@ -275,11 +350,49 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 		$result = $htmlForm->show();
 
 		if ( $result === true || ( $result instanceof Status && $result->isGood() ) ) {
-			$out->setPageTitle( $this->msg( 'emailsent' ) );
+			$out->setPageTitleMsg( $this->msg( 'emailsent' ) );
 			$out->addWikiMsg( 'emailsenttext', $this->mTarget );
-			$out->returnToMain( false, $ret->getUserPage() );
+			$out->returnToMain( false, $this->mTargetObj->getUserPage() );
 		}
 		return true;
+	}
+
+	/**
+	 * @param array $data
+	 * @return StatusValue|false
+	 * @internal Only public because it's used as an HTMLForm callback.
+	 */
+	public function onFormSubmit( array $data ) {
+		$target = $this->userFactory->newFromName( $data['Target'] );
+		if ( !$target instanceof User ) {
+			return StatusValue::newFatal( 'emailnotarget' );
+		}
+
+		$emailUser = $this->emailUserFactory->newEmailUser( $this->getAuthority() );
+		$emailUser->setEditToken( $this->getRequest()->getVal( 'wpEditToken' ) );
+
+		// Fully authorize on sending emails.
+		$status = $emailUser->authorizeSend();
+
+		if ( !$status->isOK() ) {
+			return $status;
+		}
+
+		$res = $emailUser->sendEmailUnsafe(
+			$target,
+			$data['Subject'],
+			$data['Text'],
+			$data['CCMe'],
+			$this->getLanguage()->getCode()
+		);
+		if ( $res->hasMessage( 'hookaborted' ) ) {
+			// BC: The method could previously return false if the EmailUser hook set the error to false. Preserve
+			// that behaviour until we replace the hook.
+			$res = false;
+		} else {
+			$res = Status::wrap( $res );
+		}
+		return $res;
 	}
 
 	/**
@@ -290,10 +403,35 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 	 * @param array $data
 	 * @param IContextSource $context
 	 * @return Status|false
-	 * @throws MWException if EmailUser hook sets the error to something unsupported
+	 * @deprecated since 1.41 Use EmailUser::sendEmailUnsafe()
 	 */
 	public static function submit( array $data, IContextSource $context ) {
-		return EmailUser::submit( $data, $context );
+		$target = MediaWikiServices::getInstance()->getUserFactory()->newFromName( (string)$data['Target'] );
+		if ( !$target instanceof User ) {
+			return Status::newFatal( 'emailnotarget' );
+		}
+
+		$emailUser = MediaWikiServices::getInstance()->getEmailUserFactory()
+			->newEmailUserBC( $context->getAuthority(), $context->getConfig() );
+
+		$ret = $emailUser->sendEmailUnsafe(
+			$target,
+			(string)$data['Subject'],
+			(string)$data['Text'],
+			(bool)$data['CCMe'],
+			$context->getLanguage()->getCode()
+		);
+		if ( $ret->hasMessage( 'hookaborted' ) ) {
+			// BC: The method could previously return false if the EmailUser hook set the error to false.
+			$ret = false;
+		} elseif ( $ret->hasMessage( 'noemailtarget' ) ) {
+			// BC: The previous implementation would use notargettext even if noemailtarget would be the right
+			// message to use here.
+			return Status::newFatal( 'notargettext' );
+		} else {
+			$ret = Status::wrap( $ret );
+		}
+		return $ret;
 	}
 
 	/**
@@ -315,7 +453,19 @@ class SpecialEmailUser extends UnlistedSpecialPage {
 			->search( UserNamePrefixSearch::AUDIENCE_PUBLIC, $search, $limit, $offset );
 	}
 
+	/**
+	 * @return bool
+	 */
+	public function isListed() {
+		return $this->getConfig()->get( MainConfigNames::EnableUserEmail );
+	}
+
 	protected function getGroupName() {
 		return 'users';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialEmailUser::class, 'SpecialEmailUser' );

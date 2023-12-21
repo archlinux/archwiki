@@ -5,10 +5,12 @@
 			"Umherirrender"
 		]
 	},
-	"apihelp-query+pageimages-description": "{{doc-apihelp-description|query+pageimages}}",
 	"apihelp-query+pageimages-summary": "{{doc-apihelp-summary|query+pageimages}}",
 	"apihelp-query+pageimages-example-1": "{{doc-apihelp-example|query+pageimages}}",
 	"apihelp-query+pageimages-param-prop": "{{doc-apihelp-param|query+pageimages|prop}}",
+	"apihelp-query+pageimages-paramvalue-prop-thumbnail": "{{doc-apihelp-paramvalue|query+pageimages|prop|thumbnail}}",
+	"apihelp-query+pageimages-paramvalue-prop-original": "{{doc-apihelp-paramvalue|query+pageimages|prop|original}}",
+	"apihelp-query+pageimages-paramvalue-prop-name": "{{doc-apihelp-paramvalue|query+pageimages|prop|name}}",
 	"apihelp-query+pageimages-param-thumbsize": "{{doc-apihelp-param|query+pageimages|thumbsize}}",
 	"apihelp-query+pageimages-param-langcode": "{{doc-apihelp-param|query+pageimages|langcode}}",
 	"apihelp-query+pageimages-param-limit": "{{doc-apihelp-param|query+pageimages|limit}}",

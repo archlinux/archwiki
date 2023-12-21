@@ -6,11 +6,9 @@
 			"Macofe"
 		]
 	},
-	"apihelp-flowthank-description": "Send en offentlig takk for en Flow-kommentar.",
 	"apihelp-flowthank-summary": "Send en offentlig takk for en Flow-kommentar.",
 	"apihelp-flowthank-param-postid": "UUID-en til posten det skal takkes for.",
 	"apihelp-flowthank-example-1": "Send takk for kommentaren med <kbd>UUID xyz789</kbd>",
-	"apihelp-thank-description": "Send en takk til en skribent.",
 	"apihelp-thank-summary": "Send et takkevarsel til en bidragsyter.",
 	"apihelp-thank-param-rev": "Sideversjons-ID å takke noen for. Denne eller 'log' må oppgis.",
 	"apihelp-thank-param-log": "Logg-ID å takke noen for. Denne eller 'rev' må oppgis.",

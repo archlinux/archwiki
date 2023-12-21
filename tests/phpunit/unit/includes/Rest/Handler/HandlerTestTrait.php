@@ -112,12 +112,8 @@ trait HandlerTestTrait {
 	 */
 	private function getMockValidator( array $queryPathParams, array $bodyParams ): Validator {
 		$validator = $this->createNoOpMock( Validator::class, [ 'validateParams', 'validateBody' ] );
-		if ( $queryPathParams ) {
-			$validator->method( 'validateParams' )->willReturn( $queryPathParams );
-		}
-		if ( $bodyParams ) {
-			$validator->method( 'validateBody' )->willReturn( $bodyParams );
-		}
+		$validator->method( 'validateParams' )->willReturn( $queryPathParams );
+		$validator->method( 'validateBody' )->willReturn( $bodyParams );
 		return $validator;
 	}
 
@@ -199,10 +195,8 @@ trait HandlerTestTrait {
 		$response = $this->executeHandler( $handler, $request, $config, $hooks,
 			$validatedParams, $validatedBody, $authority, $session );
 
-		$this->assertTrue(
-			$response->getStatusCode() >= 200 && $response->getStatusCode() < 300,
-			'Status should be in 2xx range.'
-		);
+		$this->assertGreaterThanOrEqual( 200, $response->getStatusCode() );
+		$this->assertLessThan( 300, $response->getStatusCode() );
 		$this->assertSame( 'application/json', $response->getHeaderLine( 'Content-Type' ) );
 
 		$data = json_decode( $response->getBody(), true );

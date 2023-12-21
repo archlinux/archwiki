@@ -6,10 +6,10 @@ use IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Hooks\Handlers\ToolLinksHandler;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Title\Title;
 use MediaWikiUnitTestCase;
 use Message;
 use SpecialPage;
-use Title;
 use User;
 use WebRequest;
 

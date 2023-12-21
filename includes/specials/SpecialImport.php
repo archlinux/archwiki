@@ -24,8 +24,20 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use Exception;
+use HTMLForm;
+use ImportReporter;
+use ImportStreamSource;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
+use PermissionsError;
+use ReadOnlyError;
+use UnexpectedValueException;
+use WikiImporterFactory;
 
 /**
  * MediaWiki page data importer
@@ -36,11 +48,8 @@ class SpecialImport extends SpecialPage {
 	/** @var array */
 	private $importSources;
 
-	/** @var PermissionManager */
-	private $permManager;
-
-	/** @var WikiImporterFactory */
-	private $wikiImporterFactory;
+	private PermissionManager $permManager;
+	private WikiImporterFactory $wikiImporterFactory;
 
 	/**
 	 * @param PermissionManager $permManager
@@ -354,11 +363,11 @@ class SpecialImport extends SpecialPage {
 			$htmlForm->setSubmitTextMsg( 'uploadbtn' );
 			$htmlForm->prepareForm()->displayForm( false );
 
-		} elseif ( empty( $this->importSources ) ) {
+		} elseif ( !$this->importSources ) {
 			$out->addWikiMsg( 'importnosources' );
 		}
 
-		if ( $this->permManager->userHasRight( $user, 'import' ) && !empty( $this->importSources ) ) {
+		if ( $this->permManager->userHasRight( $user, 'import' ) && $this->importSources ) {
 
 			$projects = [];
 			$needSubprojectField = false;
@@ -469,3 +478,8 @@ class SpecialImport extends SpecialPage {
 		return 'pagetools';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialImport::class, 'SpecialImport' );

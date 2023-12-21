@@ -3,7 +3,9 @@
 use MediaWiki\Html\Html;
 use MediaWiki\Html\TemplateParser;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 
 /**
@@ -47,7 +49,6 @@ class EnhancedChangesList extends ChangesList {
 	/**
 	 * @param IContextSource $context
 	 * @param ChangesListFilterGroup[] $filterGroups Array of ChangesListFilterGroup objects (currently optional)
-	 * @throws MWException
 	 */
 	public function __construct( $context, array $filterGroups = [] ) {
 		parent::__construct( $context, $filterGroups );
@@ -67,11 +68,7 @@ class EnhancedChangesList extends ChangesList {
 	 */
 	public function beginRecentChangesList() {
 		$this->getOutput()->addModuleStyles( [
-			'mediawiki.icon',
 			'mediawiki.special.changeslist.enhanced',
-		] );
-		$this->getOutput()->addModules( [
-			'jquery.makeCollapsible',
 		] );
 
 		parent::beginRecentChangesList();
@@ -151,13 +148,12 @@ class EnhancedChangesList extends ChangesList {
 	 * Enhanced RC group
 	 * @param RCCacheEntry[] $block
 	 * @return string
-	 * @throws DomainException
 	 */
 	protected function recentChangesBlockGroup( $block ) {
 		$recentChangesFlags = $this->getConfig()->get( MainConfigNames::RecentChangesFlags );
 
 		# Add the namespace and title of the block as part of the class
-		$tableClasses = [ 'mw-collapsible', 'mw-collapsed', 'mw-enhanced-rc', 'mw-changeslist-line' ];
+		$tableClasses = [ 'mw-enhanced-rc', 'mw-changeslist-line' ];
 		if ( $block[0]->mAttribs['rc_log_type'] ) {
 			# Log entry
 			$tableClasses[] = 'mw-changeslist-log';
@@ -227,7 +223,7 @@ class EnhancedChangesList extends ChangesList {
 				$formattedCount = $this->msg( 'ntimes' )->numParams( $count )->escaped();
 				$text .= ' ' . $this->msg( 'parentheses' )->rawParams( $formattedCount )->escaped();
 			}
-			array_push( $users, $text );
+			$users[] = $text;
 		}
 
 		# Article link
@@ -286,7 +282,7 @@ class EnhancedChangesList extends ChangesList {
 		$block = array_values( $block );
 		$filterClasses = array_values( $filterClasses );
 
-		if ( empty( $block ) || !$lines ) {
+		if ( !$block || !$lines ) {
 			// if we can't show anything, don't display this block altogether
 			return '';
 		}
@@ -322,6 +318,7 @@ class EnhancedChangesList extends ChangesList {
 		}
 
 		$templateParams = [
+			'checkboxId' => 'mw-checkbox-' . base64_encode( random_bytes( 3 ) ),
 			'articleLink' => $articleLink,
 			'charDifference' => $charDifference,
 			'collectedRcFlags' => $this->recentChangesFlags( $collectedRcFlags ),
@@ -351,9 +348,6 @@ class EnhancedChangesList extends ChangesList {
 	 * @param RCCacheEntry $rcObj
 	 * @param array $queryParams
 	 * @return array
-	 * @throws Exception
-	 * @throws FatalError
-	 * @throws MWException
 	 */
 	protected function getLineData( array $block, RCCacheEntry $rcObj, array $queryParams = [] ) {
 		$RCShowChangedSize = $this->getConfig()->get( MainConfigNames::RCShowChangedSize );
@@ -424,7 +418,7 @@ class EnhancedChangesList extends ChangesList {
 			}
 		}
 
-		if ( $rcObj->mAttribs['rc_type'] == RC_LOG ) {
+		if ( $type == RC_LOG ) {
 			$data['logEntry'] = $this->insertLogEntry( $rcObj );
 		} elseif ( $this->isCategorizationWithoutRevision( $rcObj ) ) {
 			$data['comment'] = $this->insertComment( $rcObj );
@@ -433,10 +427,12 @@ class EnhancedChangesList extends ChangesList {
 			$data['userLink'] = $rcObj->userlink;
 			$data['userTalkLink'] = $rcObj->usertalklink;
 			$data['comment'] = $this->insertComment( $rcObj );
+			if ( $type == RC_CATEGORIZE ) {
+				$data['historyLink'] = $this->getDiffHistLinks( $rcObj, false );
+			}
+			# Rollback, thanks etc...
+			$data['rollback'] = $this->getRollback( $rcObj );
 		}
-
-		# Rollback, thanks etc...
-		$data['rollback'] = $this->getRollback( $rcObj );
 
 		# Tags
 		$data['tags'] = $this->getTags( $rcObj, $classes );
@@ -488,7 +484,7 @@ class EnhancedChangesList extends ChangesList {
 	 * @return string
 	 */
 	protected function getLogText( $block, $queryParams, $allLogs, $isnew, $namehidden ) {
-		if ( empty( $block ) ) {
+		if ( !$block ) {
 			return '';
 		}
 

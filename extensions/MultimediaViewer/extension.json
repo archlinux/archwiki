@@ -28,7 +28,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"MessagesDirs": {
 		"MultimediaViewer": [
@@ -40,7 +40,8 @@
 	},
 	"ResourceModules": {
 		"mmv": {
-			"scripts": [
+			"packageFiles": [
+				"mmv/mmv.js",
 				"mmv/logging/mmv.logging.ViewLogger.js",
 				"mmv/model/mmv.model.js",
 				"mmv/model/mmv.model.IwTitle.js",
@@ -51,6 +52,7 @@
 				"mmv/model/mmv.model.TaskQueue.js",
 				"mmv/model/mmv.model.ThumbnailWidth.js",
 				"mmv/mmv.lightboximage.js",
+				"mmv/provider/mmv.provider.js",
 				"mmv/provider/mmv.provider.Api.js",
 				"mmv/provider/mmv.provider.ImageInfo.js",
 				"mmv/provider/mmv.provider.FileRepoInfo.js",
@@ -58,10 +60,10 @@
 				"mmv/provider/mmv.provider.GuessedThumbnailInfo.js",
 				"mmv/provider/mmv.provider.Image.js",
 				"mmv/mmv.ThumbnailWidthCalculator.js",
+				"mmv/ui/index.js",
 				"mmv/ui/mmv.ui.js",
 				"mmv/ui/mmv.ui.dialog.js",
 				"mmv/ui/mmv.ui.reuse.dialog.js",
-				"mmv/ui/mmv.ui.download.js",
 				"mmv/ui/mmv.ui.download.dialog.js",
 				"mmv/ui/mmv.ui.description.js",
 				"mmv/ui/mmv.ui.viewingOptions.js",
@@ -73,8 +75,7 @@
 				"mmv/ui/mmv.ui.truncatableTextField.js",
 				"mmv/ui/mmv.ui.metadataPanel.js",
 				"mmv/ui/mmv.ui.metadataPanelScroller.js",
-				"mmv/mmv.lightboxinterface.js",
-				"mmv/mmv.js"
+				"mmv/mmv.lightboxinterface.js"
 			],
 			"styles": [
 				"mmv/ui/mmv.ui.dialog.less",
@@ -101,13 +102,11 @@
 				"mediawiki.user",
 				"mediawiki.util",
 				"oojs",
-				"jquery.fullscreen",
-				"jquery.color",
-				"jquery.tipsy",
 				"mmv.bootstrap",
 				"mmv.head"
 			],
 			"messages": [
+				"license-header",
 				"multimediaviewer-file-page",
 				"multimediaviewer-options-learn-more",
 				"multimediaviewer-options-dialog-header",
@@ -123,6 +122,7 @@
 				"multimediaviewer-enable-submit-button",
 				"multimediaviewer-enable-confirmation-header",
 				"multimediaviewer-enable-confirmation-text",
+				"multimediaviewer-file-not-found-error",
 				"multimediaviewer-thumbnail-error",
 				"multimediaviewer-thumbnail-error-description",
 				"multimediaviewer-thumbnail-error-retry",
@@ -210,7 +210,8 @@
 			]
 		},
 		"mmv.ui.ondemandshareddependencies": {
-			"scripts": [
+			"packageFiles": [
+				"mmv.ui.ondemandshareddependencies/index.js",
 				"mmv.ui.ondemandshareddependencies/mmv.EmbedFileFormatter.js",
 				"mmv.ui.ondemandshareddependencies/mmv.ui.utils.js"
 			],
@@ -232,15 +233,14 @@
 			]
 		},
 		"mmv.ui.download.pane": {
-			"scripts": [
+			"packageFiles": [
 				"mmv.ui.download.pane/mmv.ui.download.pane.js"
 			],
 			"styles": [
 				"mmv.ui.download.pane/mmv.ui.download.pane.less"
 			],
 			"dependencies": [
-				"mediawiki.ui",
-				"mediawiki.ui.button",
+				"codex-styles",
 				"mediawiki.widgets",
 				"mmv",
 				"mmv.ui.ondemandshareddependencies",
@@ -265,7 +265,8 @@
 			]
 		},
 		"mmv.ui.reuse.shareembed": {
-			"scripts": [
+			"packageFiles": [
+				"mmv.ui.reuse.shareembed/index.js",
 				"mmv.ui.reuse.shareembed/mmv.ui.reuse.tab.js",
 				"mmv.ui.reuse.shareembed/mmv.ui.reuse.share.js",
 				"mmv.ui.reuse.shareembed/mmv.ui.reuse.embed.js"
@@ -275,7 +276,6 @@
 				"mmv.ui.reuse.shareembed/mmv.ui.reuse.embed.less"
 			],
 			"dependencies": [
-				"jquery.tipsy",
 				"oojs",
 				"oojs-ui",
 				"mediawiki.user",
@@ -308,33 +308,19 @@
 				"multimediaviewer-embed-dimensions-separated"
 			]
 		},
-		"mmv.ui.tipsyDialog": {
-			"scripts": [
-				"mmv.ui.tipsyDialog/mmv.ui.tipsyDialog.js"
-			],
-			"styles": [
-				"mmv.ui.tipsyDialog/mmv.ui.tipsyDialog.less"
-			],
-			"dependencies": [
-				"mmv",
-				"oojs",
-				"jquery.tipsy"
-			]
-		},
 		"mmv.bootstrap": {
-			"scripts": [
+			"packageFiles": [
+				"mmv.bootstrap/mmv.bootstrap.js",
 				"mmv.bootstrap/mmv.Config.js",
-				"mmv.bootstrap/mmv.HtmlUtils.js",
-				"mmv.bootstrap/mmv.bootstrap.js"
+				"mmv.bootstrap/mmv.HtmlUtils.js"
 			],
 			"styles": [
 				"mmv.bootstrap/mmv.bootstrap.less"
 			],
 			"dependencies": [
+				"codex-search-styles",
 				"mediawiki.api",
 				"mediawiki.router",
-				"mediawiki.ui.button",
-				"mediawiki.ui.icon",
 				"mediawiki.Title",
 				"mediawiki.user",
 				"mediawiki.storage",
@@ -349,7 +335,7 @@
 			]
 		},
 		"mmv.bootstrap.autostart": {
-			"scripts": [
+			"packageFiles": [
 				"mmv.bootstrap.autostart/mmv.bootstrap.autostart.js"
 			],
 			"dependencies": [
@@ -358,9 +344,9 @@
 			]
 		},
 		"mmv.head": {
-			"scripts": [
-				"mmv.head/base.js",
-				"mmv.head/mmv.head.js"
+			"packageFiles": [
+				"mmv.head/mmv.head.js",
+				"mmv.head/base.js"
 			],
 			"dependencies": [
 				"mediawiki.user",
@@ -375,7 +361,8 @@
 	"QUnitTestModule": {
 		"localBasePath": "",
 		"remoteExtPath": "MultimediaViewer",
-		"scripts": [
+		"packageFiles": [
+			"tests/qunit/mmv/index.js",
 			"tests/qunit/mmv/mmv.bootstrap.test.js",
 			"tests/qunit/mmv/mmv.test.js",
 			"tests/qunit/mmv/mmv.lightboxinterface.test.js",
@@ -412,7 +399,6 @@
 			"tests/qunit/mmv/ui/mmv.ui.reuse.share.test.js",
 			"tests/qunit/mmv/ui/mmv.ui.reuse.tab.test.js",
 			"tests/qunit/mmv/ui/mmv.ui.reuse.utils.test.js",
-			"tests/qunit/mmv/ui/mmv.ui.tipsyDialog.test.js",
 			"tests/qunit/mmv/ui/mmv.ui.truncatableTextField.test.js",
 			"tests/qunit/mmv/ui/mmv.ui.viewingOptions.test.js",
 			"tests/qunit/mmv/mmv.testhelpers.js"
@@ -423,24 +409,24 @@
 			"mmv",
 			"mmv.ui.ondemandshareddependencies",
 			"mmv.ui.reuse.shareembed",
-			"mmv.ui.download.pane",
-			"mmv.ui.tipsyDialog"
+			"mmv.ui.download.pane"
 		]
 	},
 	"Hooks": {
-		"UserGetDefaultOptions": "MediaWiki\\Extension\\MultimediaViewer\\Hooks::onUserGetDefaultOptions",
-		"GetPreferences": "MediaWiki\\Extension\\MultimediaViewer\\Hooks::onGetPreferences",
-		"BeforePageDisplay": "MediaWiki\\Extension\\MultimediaViewer\\Hooks::onBeforePageDisplay",
-		"CategoryPageView": "MediaWiki\\Extension\\MultimediaViewer\\Hooks::onCategoryPageView",
-		"ResourceLoaderGetConfigVars": "MediaWiki\\Extension\\MultimediaViewer\\Hooks::onResourceLoaderGetConfigVars",
+		"UserGetDefaultOptions": "main",
+		"GetPreferences": "main",
+		"BeforePageDisplay": "main",
+		"CategoryPageView": "main",
+		"ResourceLoaderGetConfigVars": "main",
 		"MakeGlobalVariablesScript": "main",
-		"ThumbnailBeforeProduceHTML": "MediaWiki\\Extension\\MultimediaViewer\\Hooks::onThumbnailBeforeProduceHTML"
+		"ThumbnailBeforeProduceHTML": "main"
 	},
 	"HookHandlers": {
 		"main": {
 			"class": "MediaWiki\\Extension\\MultimediaViewer\\Hooks",
 			"services": [
-				"UserOptionsLookup"
+				"UserOptionsLookup",
+				"SpecialPageFactory"
 			]
 		}
 	},

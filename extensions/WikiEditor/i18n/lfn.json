@@ -12,7 +12,6 @@
 	"wikieditor-toolbar-tool-link-insert": "Inserta lia",
 	"wikieditor-toolbar-tool-file-title": "Inserta fix",
 	"wikieditor-toolbar-tool-file-insert": "Inserta",
-	"wikieditor-toolbar-tool-reference": "Refere",
 	"wikieditor-toolbar-section-advanced": "Avansada",
 	"wikieditor-toolbar-tool-big": "Grande",
 	"wikieditor-toolbar-tool-small": "Peti",
@@ -24,8 +23,6 @@
 	"wikieditor-toolbar-section-help": "Aida",
 	"wikieditor-toolbar-help-heading-description": "Descrive",
 	"wikieditor-toolbar-help-page-link": "Lias",
-	"wikieditor-toolbar-help-page-reference": "Referes",
 	"wikieditor-toolbar-help-content-italic-description": "Italica",
-	"wikieditor-toolbar-help-content-bold-description": "Spesa",
-	"wikieditor-toolbar-help-content-reference-description": "Refere"
+	"wikieditor-toolbar-help-content-bold-description": "Spesa"
 }

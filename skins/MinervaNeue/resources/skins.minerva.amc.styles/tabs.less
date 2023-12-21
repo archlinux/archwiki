@@ -5,7 +5,7 @@
 	.minerva__tab {
 		font-size: @taglineFontSize;
 		margin: 0 10px 0 0;
-		color: @colorGray5;
+		color: @color-subtle;
 		font-weight: bold;
 		padding-bottom: 6px;
 		display: inline-block;
@@ -29,7 +29,7 @@
 
 		// note core doesn't use BEM.
 		&.selected {
-			border-bottom: (@pageActionBorder * 2) solid @colorGray5;
+			border-bottom: @border-width-thick @border-style-base #54595d;
 		}
 	}
 }

@@ -25,32 +25,14 @@
  */
 class BanConverter extends LanguageConverterIcu {
 
-	/**
-	 * Get Main language code.
-	 *
-	 * @since 1.36
-	 * @return string
-	 */
 	public function getMainCode(): string {
 		return 'ban';
 	}
 
-	/**
-	 * Get supported variants of the language.
-	 *
-	 * @since 1.36
-	 * @return array
-	 */
 	public function getLanguageVariants(): array {
 		return [ 'ban', 'ban-bali', 'ban-x-dharma', 'ban-x-palmleaf', 'ban-x-pku' ];
 	}
 
-	/**
-	 * Get language variants fallbacks.
-	 *
-	 * @since 1.36
-	 * @return array
-	 */
 	public function getVariantsFallbacks(): array {
 		return [
 			'ban-bali' => 'ban',
@@ -1047,7 +1029,7 @@ EOF;
 	 * @return bool True if $text appears to be written in $variant
 	 */
 	public function guessVariant( $text, $variant ) {
-		$hasBalinese = preg_match( "/[\x{1B00}-\x{1B7F}]/u", $text, $dummy );
+		$hasBalinese = preg_match( "/[\x{1B00}-\x{1B7F}]/u", $text );
 		return ( $variant == 'ban-bali' ) == $hasBalinese;
 	}
 

@@ -17,7 +17,6 @@
 		]
 	},
 	"collabpad-import-subtitle": "Ye fa firi $1",
-	"tooltip-ca-edit": "Fa wikitext sesa saa krataa fa yi",
 	"tooltip-ca-ve-edit": "Sesa ɛfa yi",
 	"visualeditor-advancedsettings-tool": "Nhyehyeɛ a ɛdi anim",
 	"visualeditor-autosave-modified-prompt-accept": "San kɔ sesa",
@@ -28,7 +27,6 @@
 	"visualeditor-autosave-recovered-text": "Wonsa atumi aka ɛnsesaɛ a w'anfa ansie no.",
 	"visualeditor-autosave-recovered-title": "Yɛnsa aka nsesaeɛ no",
 	"visualeditor-backbutton-tooltip": "Kɔ akyire",
-	"visualeditor-beta-warning": "Sɛ wo yɛ nsesaeɛ yi na wo kɔ to ɛhaw biara a bɔ yɛn amaneɛ.",
 	"visualeditor-ca-createsource": "Create source",
 	"visualeditor-ca-editsource": "Edit source",
 	"visualeditor-ca-editsource-section": "edit source",
@@ -116,7 +114,6 @@
 	"visualeditor-linkinspector-convert-link-pmid": "Sesa kɔ PMID link mu",
 	"visualeditor-linkinspector-convert-link-rfc": "Sesa kz RFC mu",
 	"visualeditor-media-title-image": "Mfoni",
-	"visualeditor-mweditmodesource-warning-cancel": "Twa mu",
 	"visualeditor-mwgallerydialog-card-images": "Nnfoni",
 	"visualeditor-mwgallerydialog-search-button-label": "Fa mfoni foforo ka ho",
 	"visualeditor-preference-tabs-prefer-ve": "Sɛ ɛbɛ yɛ yie a ma me visual editor da biara",

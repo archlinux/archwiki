@@ -242,9 +242,9 @@ ve.ui.MWMetaDialog.prototype.getSetupProcess = function ( data ) {
 			};
 
 			// Let each page set itself up ('languages' page doesn't need this yet)
-			promises.push( this.categoriesPage.setup( surfaceModel.metaList, config ) );
-			promises.push( this.settingsPage.setup( surfaceModel.metaList, config ) );
-			promises.push( this.advancedSettingsPage.setup( surfaceModel.metaList, config ) );
+			promises.push( this.categoriesPage.setup( surfaceModel.getFragment(), config ) );
+			promises.push( this.settingsPage.setup( surfaceModel.getFragment(), config ) );
+			promises.push( this.advancedSettingsPage.setup( surfaceModel.getFragment(), config ) );
 			return ve.promiseAll( promises );
 		}, this )
 		.next( function () {

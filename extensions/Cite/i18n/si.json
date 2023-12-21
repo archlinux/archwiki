@@ -23,5 +23,10 @@
 	"cite_error_references_missing_group": "<code>&lt;references&gt;</code> හි <code>&lt;ref&gt;</code> ටැගය පෙර පෙළෙහි නොතිබූ \"$1\" නම් සමූහ ගුණාංගයක් දරයි.",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code> හි \"$1\" නමැති <code>&lt;ref&gt;</code> ටැගය පෙර පෙළෙහි භාවිතා වූයේ නැත.",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code> හි <code>&lt;ref&gt;</code> ටැගයට නමක් ආදේශකොට නැත.",
-	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> හි \"$1\" නමැති <code>&lt;ref&gt;</code> ටැගයට අන්තර්ගතයක් නැත."
+	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> හි \"$1\" නමැති <code>&lt;ref&gt;</code> ටැගයට අන්තර්ගතයක් නැත.",
+	"cite-wikieditor-tool-reference": "යොමුව",
+	"cite-wikieditor-help-page-references": "යොමුවන්",
+	"cite-wikieditor-help-content-reference-description": "යොමුව",
+	"cite-wikieditor-help-content-rereference-description": "එකම ‍යොමුව අමතර භාවිතය",
+	"cite-wikieditor-help-content-showreferences-description": "යොමුවන් පෙන්වන්න"
 }

@@ -88,7 +88,7 @@ class MathConfig {
 			return self::NEVER;
 		}
 		$setting = strtolower( $setting );
-		if ( in_array( $setting, [ self::NEVER, self::ALWAYS, self::NEW ] ) ) {
+		if ( in_array( $setting, [ self::NEVER, self::ALWAYS, self::NEW ], true ) ) {
 			return $setting;
 		}
 		return self::ALWAYS;
@@ -100,7 +100,7 @@ class MathConfig {
 	 * @return string[]
 	 */
 	public function getValidRenderingModes(): array {
-		// NOTE: this method is copy-pasted into Hooks::onLoadExtensionSchemaUpdates
+		// NOTE: this method is copy-pasted into HookHandlers\SchemaHooksHandler::onLoadExtensionSchemaUpdates
 		// since we can't inject services in there.
 
 		$modes = array_map(
@@ -154,7 +154,7 @@ class MathConfig {
 	 * @return bool
 	 */
 	public function isValidRenderingMode( string $mode ): bool {
-		return in_array( $mode, $this->getValidRenderingModes() );
+		return in_array( $mode, $this->getValidRenderingModes(), true );
 	}
 
 	/**
@@ -169,7 +169,7 @@ class MathConfig {
 			return $userOptionToMode[$mode] ?? $default;
 		}
 		$mode = strtolower( $mode );
-		if ( in_array( $mode, self::SUPPORTED_MODES ) ) {
+		if ( in_array( $mode, self::SUPPORTED_MODES, true ) ) {
 			return $mode;
 		}
 		return $default;

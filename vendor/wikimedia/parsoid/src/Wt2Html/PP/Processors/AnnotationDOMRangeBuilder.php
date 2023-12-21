@@ -58,6 +58,21 @@ class AnnotationDOMRangeBuilder extends DOMRangeBuilder {
 			if ( $range->endElem !== $range->end ) {
 				$this->moveRangeEnd( $range, $range->end );
 			}
+
+			// It can happen that marking range uneditable adds another layer of nesting that is not captured
+			// by the initial range detection (since it's not there at that time). To avoid that, we check whether
+			// both nodes have the same parent and, if not, we hoist them to a common ancestor.
+			$startParent = DOMCompat::getParentElement( $range->start );
+			$endParent = DOMCompat::getParentElement( $range->end );
+			if ( $startParent !== $endParent ) {
+				$correctedRange = self::findEnclosingRange( $range->start, $range->end );
+				if ( $range->start !== $correctedRange->start ) {
+					$this->moveRangeStart( $range, $correctedRange->start );
+				}
+				if ( $range->end !== $correctedRange->end ) {
+					$this->moveRangeEnd( $range, $correctedRange->end );
+				}
+			}
 		}
 	}
 
@@ -74,24 +89,33 @@ class AnnotationDOMRangeBuilder extends DOMRangeBuilder {
 
 		$node = $range->startElem;
 		$inline = true;
-		while ( $node !== $range->endElem ) {
-			$node = $node->nextSibling;
-			if ( $node instanceof Element && DOMUtils::hasBlockTag( $node ) ) {
+		while ( $node !== $range->endElem && $node !== null ) {
+			if ( DOMUtils::hasBlockTag( $node ) ) {
 				$inline = false;
 				break;
 			}
+			$node = $node->nextSibling;
+		}
+		if ( $inline && $node !== null && DOMUtils::hasBlockTag( $node ) ) {
+			$inline = false;
 		}
 
 		$wrap = $parent->ownerDocument->createElement( $inline ? 'span' : 'div' );
 		$parent->insertBefore( $wrap, $range->startElem );
 
 		$toMove = $range->startElem;
-		while ( $toMove !== $range->endElem ) {
+		while ( $toMove !== $range->endElem && $toMove !== null ) {
 			$nextToMove = $toMove->nextSibling;
 			$wrap->appendChild( $toMove );
 			$toMove = $nextToMove;
 		}
-		$wrap->appendChild( $toMove );
+
+		if ( $toMove !== null ) {
+			$wrap->appendChild( $toMove );
+		} else {
+			$this->env->log( 'warn', "End of annotation range [$actualRangeStart, $actualRangeEnd] not found. " .
+				"Document marked uneditable until its end." );
+		}
 
 		$wrap->setAttribute( "typeof", "mw:ExtendedAnnRange" );
 

@@ -23,13 +23,15 @@
 			"Tlustulimu",
 			"Tradukisto",
 			"Yekrats",
-			"Zarisi"
+			"Zarisi",
+			"Ziko"
 		]
 	},
 	"abusefilter-desc": "Aplikas aŭtomatan heŭristikon al redaktoj.",
 	"abusefilter": "Administrado de filtriloj de misuzo",
 	"abuselog": "Protokolo pri Filtrilo de Misuzo",
 	"abusefilter-intro": "Bonvenon al la administra interfaco de la Misuzada Filtrilo.\nLa Misuzada Filtrilo estas aŭtomata programara ilo por apliki aŭtomata heŭristiko al ĉiuj agoj.\nĈi tiu interfaco montras liston de difinitaj filtriloj, kaj permesas ilin esti modifita.",
+	"abusefilter-mustviewprivateoredit": "Pro sekurecaj kialoj, nur uzantoj kun la rajto vidi privatajn misuzajn filtrilojn aŭ modifi filtrilojn povas uzi ĉi tiun interfacon.",
 	"abusefilter-warning": "'''Averto''': Ĉi tiu ago estis aŭtomate identigita kiel malhelpema.\nMalkonstruktivaj redaktoj rapide estos malfaritaj,\nkaj ĉi tia ega aŭ ripetita malkonstruktiva redaktado rezultos, ke via konto aŭ komputilo estos forbarita.\nSe vi kredas ke ĉi tiu redakto estas ja konstruktiva, vi povas klaki Konservi denove por konfirmi ĝin.\nMallonga priskribo pri la regulo de misuzado kiun via ago kongruis estas: $1",
 	"abusefilter-disallowed": "Ĉi tiu ago estis aŭtomate identigita kiel damaĝa, kaj do estis malpermesita.\nSe vi kredas ke via redakto estis konstruktiva, bonvolu kontakti administranton, kaj informi lin pri kion vi provis fari.\nMallonga priskribo de la misuza regulo, kiun via ago kongruis, estas: $1",
 	"abusefilter-blocked-display": "Ĉi tiu ago estis aŭtomate taksita kiel malhelpa,\nkaj vi estis preventita farinte ĝin.\nPlue, por protekti {{SITENAME}}n, via uzanto-konto kaj ĉiuj ĉi-ligitaj IP-adresoj estis forbaritaj de redaktado.\nSe ĉi tiu okazis erare, bonvolu kontakti administranton.\nMallonga priskribo de la regulo de misuzado kiun via ago kongruis estas: $1",

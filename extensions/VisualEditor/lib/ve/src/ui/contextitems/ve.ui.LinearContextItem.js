@@ -12,8 +12,8 @@
  * @mixins OO.ui.mixin.PendingElement
  *
  * @constructor
- * @param {ve.ui.Context} context Context item is in
- * @param {ve.dm.Model} [model] Model item is related to
+ * @param {ve.ui.LinearContext} context Context the item is in
+ * @param {ve.dm.Model} [model] Model the item is related to
  * @param {Object} [config] Configuration options
  */
 ve.ui.LinearContextItem = function VeUiLinearContextItem( context, model, config ) {
@@ -178,7 +178,14 @@ ve.ui.LinearContextItem.prototype.setup = function () {
 	}
 	this.$element.toggleClass( 've-ui-linearContextItem-empty', isEmpty );
 
-	ve.track( 'activity.' + this.constructor.static.name, { action: 'context-show' } );
+	var fragment = this.getFragment();
+	if ( !( fragment && fragment.isNull() ) ) {
+		// A null fragment here means that this is most-likely a persistent
+		// context item that's persisting through text deselection; in that
+		// case we shouldn't log context-show again (akin to how moving the
+		// cursor doesn't re-show the context)
+		ve.track( 'activity.' + this.constructor.static.name, { action: 'context-show' } );
+	}
 
 	return this;
 };

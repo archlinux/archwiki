@@ -121,7 +121,7 @@ class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 		// between so keep track of that, and backtrack when necessary.
 		while ( $sibling ) {
 			if ( !WTUtils::isTplStartMarkerMeta( $sibling ) &&
-				( WTUtils::hasParsoidAboutId( $sibling ) ||
+				( WTUtils::isEncapsulatedDOMForestRoot( $sibling ) ||
 					DOMUtils::isMarkerMeta( $sibling, 'mw:TransclusionShadow' )
 				)
 			) {
@@ -176,6 +176,7 @@ class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 				$inPTag = DOMUtils::hasNameOrHasAncestorOfName( $c->parentNode, 'p' );
 				$fosterContentHolder = self::getFosterContentHolder( $c->ownerDocument, $inPTag );
 
+				$fosteredElements = [];
 				// mark as fostered until we hit the table
 				while ( $sibling &&
 					( !( $sibling instanceof Element ) || DOMCompat::nodeName( $sibling ) !== 'table' )
@@ -186,14 +187,14 @@ class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 						// This can likely be combined in some more maintainable way.
 						if (
 							DOMUtils::isRemexBlockNode( $sibling ) ||
-							WTUtils::emitsSolTransparentSingleLineWT( $sibling )
+							PWrap::pWrapOptional( $sibling )
 						) {
 							// Block nodes don't need to be wrapped in a p-tag either.
 							// Links, includeonly directives, and other rendering-transparent
 							// nodes dont need wrappers. sol-transparent wikitext generate
 							// rendering-transparent nodes and we use that helper as a proxy here.
 							DOMDataUtils::getDataParsoid( $sibling )->fostered = true;
-
+							$fosteredElements[] = $sibling;
 							// If the foster content holder is not empty,
 							// close it and get a new content holder.
 							if ( $fosterContentHolder->hasChildNodes() ) {
@@ -231,6 +232,13 @@ class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 					self::insertTransclusionMetas( $env, $c, $table );
 				}
 
+				// this needs to happen after inserting the transclusion meta so that they get
+				// included in the transclusion
+				foreach ( $fosteredElements as $elem ) {
+					'@phan-var Element $elem';
+					self::moveEndAnnotationsAfter( $elem, $table );
+				}
+
 				// remove the foster box
 				$c->parentNode->removeChild( $c );
 
@@ -243,6 +251,29 @@ class MarkFosteredContent implements Wt2HtmlDOMProcessor {
 			}
 
 			$c = $sibling;
+		}
+	}
+
+	/**
+	 * @param Element $fosteredElement
+	 * @param Element $table
+	 * @return void
+	 */
+	private static function moveEndAnnotationsAfter( Element $fosteredElement, Element $table ) {
+		$elem = $fosteredElement->firstChild;
+		$tableSibling = $table->nextSibling;
+		while ( $elem ) {
+			$nextSibling = $elem->nextSibling;
+			if ( WTUtils::isAnnotationEndMarkerMeta( $elem ) ) {
+				// We do not need to worry about template continuity because this comes before
+				// template wrapping.
+				$table->parentNode->insertBefore( $elem, $tableSibling );
+				'@phan-var Element $elem';
+				DOMDataUtils::getDataParsoid( $elem )->wasMoved = true;
+			} elseif ( $elem instanceof Element ) {
+				self::moveEndAnnotationsAfter( $elem, $table );
+			}
+			$elem = $nextSibling;
 		}
 	}
 

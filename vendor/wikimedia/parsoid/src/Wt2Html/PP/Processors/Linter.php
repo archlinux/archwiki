@@ -14,6 +14,7 @@ use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
+use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -165,8 +166,8 @@ class Linter implements Wt2HtmlDOMProcessor {
 			return null;
 		}
 
-		if ( DOMUtils::nextNonSepSibling( $node ) ) {
-			return $this->leftMostMisnestedDescendent( DOMUtils::nextNonSepSibling( $node ), $match );
+		if ( DiffDOMUtils::nextNonSepSibling( $node ) ) {
+			return $this->leftMostMisnestedDescendent( DiffDOMUtils::nextNonSepSibling( $node ), $match );
 		}
 
 		return $this->getMatchingMisnestedNode( $node->parentNode, $match );
@@ -199,8 +200,16 @@ class Linter implements Wt2HtmlDOMProcessor {
 			return null;
 		}
 		$dmw = DOMDataUtils::getDataMw( $tplInfo->first );
+		// This count check is conservative in that link suffixes and prefixes
+		// could artifically add an extra element to the parts array but we
+		// don't have a good way of distinguishing that right now. It will require
+		// a non-string representation for them and a change in spec along with
+		// a version bump and all that song and dance. If linting accuracy in these
+		// scenarios become a problem, we can revisit this.
 		if ( !empty( $dmw->parts ) && count( $dmw->parts ) === 1 ) {
 			$p0 = $dmw->parts[0];
+			// If just a single part (guaranteed with count above), it will be stdclass
+			'@phan-var \stdClass $p0';
 			$name = null;
 			if ( !empty( $p0->template->target->href ) ) { // Could be "function"
 				// PORT-FIXME: Should that be SiteConfig::relativeLinkPrefix() rather than './'?
@@ -281,14 +290,14 @@ class Linter implements Wt2HtmlDOMProcessor {
 			return false;
 		}
 
-		$next = DOMUtils::nextNonSepSibling( $node );
+		$next = DiffDOMUtils::nextNonSepSibling( $node );
 		if ( !$next ) {
 			return $this->hasMisnestableContent( $node->parentNode, $name );
 		}
 
 		$contentNode = null;
 		if ( DOMCompat::nodeName( $next ) === 'p' && !WTUtils::isLiteralHTMLNode( $next ) ) {
-			$contentNode = DOMUtils::firstNonSepChild( $next );
+			$contentNode = DiffDOMUtils::firstNonSepChild( $next );
 		} else {
 			$contentNode = $next;
 		}
@@ -338,7 +347,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * @return Node|null
 	 */
 	private function getHeadingAncestor( Node $node ): ?Node {
-		while ( $node && !preg_match( '/^h[1-6]$/D', DOMCompat::nodeName( $node ) ) ) {
+		while ( $node && !DOMUtils::isHeading( $node ) ) {
 			$node = $node->parentNode;
 		}
 		return $node;
@@ -429,7 +438,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 		//
 		// 2. c is tbody (FIXME: don't remember why we have this exception)
 		//
-		// 3. c is not an HTML element (unless they are i/b quotes)
+		// 3. c is not an HTML element (unless they are i/b quotes or tables)
 		//
 		// 4. c doesn't have DSR info and doesn't come from a template either
 		$cNodeName = DOMCompat::nodeName( $c );
@@ -437,7 +446,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 		$isHtmlElement = WTUtils::hasLiteralHTMLMarker( $dp );
 		if ( !Utils::isVoidElement( $cNodeName ) &&
 			$cNodeName !== 'tbody' &&
-			( $isHtmlElement || DOMUtils::isQuoteElt( $c ) ) &&
+			( $isHtmlElement || DOMUtils::isQuoteElt( $c ) || $cNodeName === 'table' ) &&
 			( $tplInfo !== null || $dsr !== null )
 		) {
 			if ( !empty( $dp->selfClose ) && $cNodeName !== 'meta' ) {
@@ -502,7 +511,16 @@ class Linter implements Wt2HtmlDOMProcessor {
 						$env->recordLint( 'misnested-tag', $lintObj );
 					} elseif ( !$this->endTagOptional( $c ) && empty( $dp->autoInsertedStart ) ) {
 						$lintObj['params']['inTable'] = DOMUtils::hasNameOrHasAncestorOfName( $c, 'table' );
-						$env->recordLint( 'missing-end-tag', $lintObj );
+						$category = $this->getHeadingAncestor( $c ) ?
+							'missing-end-tag-in-heading' : 'missing-end-tag';
+						$next = DiffDOMUtils::nextNonSepSibling( $c );
+						if (
+							// Skip if covered by deletable-table-tag
+							!( $cNodeName === 'table' && $next &&
+							( DOMCompat::nodeName( $c ) === 'table' ) )
+						) {
+							$env->recordLint( $category, $lintObj );
+						}
 						if ( isset( Consts::$HTML['FormattingTags'][DOMCompat::nodeName( $c )] ) &&
 							$this->matchedOpenTagPairExists( $c, $dp )
 						) {
@@ -557,7 +575,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 		// other errors downstream. So, walk back to that first node
 		// and ignore this fostered content error. The new node will
 		// trigger fostered content lint error.
-		if ( !$tplInfo && WTUtils::hasParsoidAboutId( $maybeTable ) &&
+		if ( !$tplInfo && WTUtils::isEncapsulatedDOMForestRoot( $maybeTable ) &&
 			!WTUtils::isFirstEncapsulationWrapperNode( $maybeTable )
 		) {
 			$tplNode = WTUtils::findFirstEncapsulationWrapperNode( $maybeTable );
@@ -738,7 +756,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 		Env $env, Node $c, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		if ( DOMCompat::nodeName( $c ) === 'table' ) {
-			$prev = DOMUtils::previousNonSepSibling( $c );
+			$prev = DiffDOMUtils::previousNonSepSibling( $c );
 			if ( $prev instanceof Element && DOMCompat::nodeName( $prev ) === 'table' &&
 				!empty( DOMDataUtils::getDataParsoid( $prev )->autoInsertedEnd )
 			) {
@@ -855,7 +873,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 			return;
 		}
 
-		$fc = DOMUtils::firstNonSepChild( $node );
+		$fc = DiffDOMUtils::firstNonSepChild( $node );
 		if ( !$fc instanceof Element || DOMCompat::nodeName( $fc ) !== 'div' ) {
 			return;
 		}
@@ -1207,6 +1225,97 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
+	 * @param Env $env
+	 * @param stdClass|null $tplInfo
+	 * @param Element $node
+	 * @param int $numColumns
+	 * @param int $columnsMax
+	 * @return void
+	 */
+	private function logLargeTableEntry(
+		Env $env, ?stdClass $tplInfo, Element $node, int $numColumns, int $columnsMax ) {
+		$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+		$lintObj = [
+			'dsr' => $this->findLintDSR(
+				$templateInfo, $tplInfo, DOMDataUtils::getDataParsoid( $node )->dsr ?? null
+			),
+			'templateInfo' => $templateInfo,
+			'params' => [
+				'name' => 'table',
+				'columns' => $numColumns,
+				'columnsMax' => $columnsMax,
+			],
+		];
+		$env->recordLint( 'large-tables', $lintObj );
+	}
+
+	/**
+	 * TODO: In the future, this may merit being moved to DOMUtils
+	 * along with its "previous" variant.
+	 *
+	 * @param ?Node $n
+	 * @return ?Element
+	 */
+	private function skipNonElementNodes( ?Node $n ): ?Element {
+		while ( $n && !( $n instanceof Element ) ) {
+			$n = $n->nextSibling;
+		}
+		return $n;
+	}
+
+	/**
+	 * Log large tables
+	 *
+	 * we need to identify the articles having such tables
+	 * to help editors optimize their articles
+	 *
+	 * @param Env $env
+	 * @param Element $node
+	 * @param DataParsoid $dp
+	 * @param ?stdClass $tplInfo
+	 */
+	private function logLargeTables( Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo ) {
+		if ( DOMCompat::nodeName( $node ) !== 'table' ) {
+			return;
+		}
+
+		// Skip tables that have nested tables in them as they are likely
+		// to be used for layout and not for data representation.
+		// We may check nested tables in the next iteration of this lint.
+		$nestedTables = $node->getElementsByTagName( 'table' );
+		if ( $nestedTables->length > 0 ) {
+			return;
+		}
+
+		$maxColumns = $env->getSiteConfig()->getMaxTableColumnLintHeuristic();
+		$maxRowsToCheck = $env->getSiteConfig()->getMaxTableRowsToCheckLintHeuristic();
+
+		$trCount = 0;
+		$tbody = DOMCompat::querySelector( $node, 'tbody' );
+		// empty table
+		if ( !$tbody ) {
+			return;
+		}
+		$tr = self::skipNonElementNodes( $tbody->firstChild );
+		while ( $tr && $trCount < $maxRowsToCheck ) {
+			$numTh = $tr->getElementsByTagName( 'th' )->length;
+			if ( $numTh > $maxColumns ) {
+				$this->logLargeTableEntry( $env, $tplInfo, $node, $numTh, $maxColumns );
+				return;
+			}
+
+			$numTd = $tr->getElementsByTagName( 'td' )->length;
+			if ( $numTd > $maxColumns ) {
+				$this->logLargeTableEntry( $env, $tplInfo, $node, $numTd, $maxColumns );
+				return;
+			}
+
+			$tr = self::skipNonElementNodes( $tr->nextSibling );
+			$trCount++;
+		}
+	}
+
+	/**
 	 * Log wikitext fixups
 	 * @param Element $node
 	 * @param Env $env
@@ -1232,9 +1341,18 @@ class Linter implements Wt2HtmlDOMProcessor {
 		// HTML5 parser fix it another way (list expands to rest of the page!)
 		$this->logPHPParserBug( $env, $node, $dp, $tplInfo );
 		$this->logWikilinksInExtlinks( $env, $node, $dp, $tplInfo );
+		$this->logLargeTables( $env, $node, $dp, $tplInfo );
 
 		// Log fostered content, but skip rendering-transparent nodes
-		if ( !empty( $dp->fostered ) && !WTUtils::isRenderingTransparentNode( $node ) ) {
+		if (
+			!empty( $dp->fostered ) &&
+			!WTUtils::isRenderingTransparentNode( $node ) &&
+			// TODO: Section tags are rendering transparent but not sol transparent,
+			// and that method only considers WTUtils::isSolTransparentLink, though
+			// there is a FIXME to consider all link nodes.
+			!( DOMCompat::nodeName( $node ) === 'link' &&
+				DOMUtils::hasTypeOf( $node, 'mw:Extension/section' ) )
+		) {
 			return $this->logFosteredContent( $env, $node, $dp, $tplInfo );
 		} else {
 			return null;
@@ -1283,12 +1401,17 @@ class Linter implements Wt2HtmlDOMProcessor {
 			// Let native extensions lint their content
 			$nativeExt = WTUtils::getNativeExt( $env, $node );
 			if ( $nativeExt ) {
+				if ( !$this->extApi ) {
+					$this->extApi = new ParsoidExtensionAPI( $env );
+				}
 				$nextNode = $nativeExt->lintHandler(
 					$this->extApi,
 					$node,
 					function ( $extRootNode ) use ( $env, $tplInfo ) {
-						return $this->findLints( $extRootNode, $env,
-							empty( $tplInfo->isTemplated ) ? null : $tplInfo );
+						$this->findLints(
+							$extRootNode, $env,
+							empty( $tplInfo->isTemplated ) ? null : $tplInfo
+						);
 					}
 				);
 			}
@@ -1321,11 +1444,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 	public function run(
 		Env $env, Node $root, array $options = [], bool $atTopLevel = false
 	): void {
-		// Skip linting if we cannot lint it
-		if ( !$env->getPageConfig()->hasLintableContentModel() ) {
-			return;
-		}
-
 		// Track time spent linting so we can evaluate benefits
 		// of migrating this code off the critical path to its own
 		// post processor.
@@ -1335,7 +1453,6 @@ class Linter implements Wt2HtmlDOMProcessor {
 			$timer = Timing::start( $metrics );
 		}
 
-		$this->extApi = new ParsoidExtensionAPI( $env );
 		$this->findLints( $root, $env );
 		$this->postProcessLints( $env->getLints(), $env );
 

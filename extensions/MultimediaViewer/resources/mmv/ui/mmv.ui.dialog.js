@@ -15,238 +15,232 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const UiElement = require( './mmv.ui.js' );
+
 ( function () {
-	// Shortcut for prototype later
-	var DP;
 
 	/**
 	 * Represents a dialog and the link to open it.
-	 *
-	 * @class mw.mmv.ui.Dialog
-	 * @extends mw.mmv.ui.Element
-	 * @param {jQuery} $container the element to which the dialog will be appended
-	 * @param {jQuery} $openButton the button which opens the dialog. Only used for positioning.
-	 * @param {mw.mmv.Config} config
 	 */
-	function Dialog( $container, $openButton, config ) {
-		mw.mmv.ui.Element.call( this, $container );
-
-		/** @property {boolean} isOpen Whether or not the dialog is open. */
-		this.isOpen = false;
-
+	class Dialog extends UiElement {
 		/**
-		 * @property {string[]} loadDependencies Dependencies to load before showing the dialog.
+		 * @param {jQuery} $container the element to which the dialog will be appended
+		 * @param {jQuery} $openButton the button which opens the dialog. Only used for positioning.
+		 * @param {Config} config
 		 */
-		this.loadDependencies = [];
+		constructor( $container, $openButton, config ) {
+			super( $container );
 
-		/**
-		 * @property {string} eventPrefix Prefix specific to the class to be applied to events.
-		 */
-		this.eventPrefix = '';
-		/** @property {mw.mmv.Config} config - */
-		this.config = config;
+			/** @property {boolean} isOpen Whether or not the dialog is open. */
+			this.isOpen = false;
 
-		/** @property {jQuery} $openButton The click target which opens the dialog. */
-		this.$openButton = $openButton;
+			/**
+			 * @property {string[]} loadDependencies Dependencies to load before showing the dialog.
+			 */
+			this.loadDependencies = [];
 
-		/** @type {jQuery} $dialog The main dialog container */
-		this.$dialog = $( '<div>' )
-			.addClass( 'mw-mmv-dialog' );
+			/**
+			 * @property {string} eventPrefix Prefix specific to the class to be applied to events.
+			 */
+			this.eventPrefix = '';
+			/** @property {Config} config - */
+			this.config = config;
 
-		/**
-		 * @property {jQuery} $downArrow Tip of the dialog pointing to $openButton. Called
-		 * downArrow for historical reasons although it does not point down anymore.
-		 */
-		this.$downArrow = $( '<div>' )
-			.addClass( 'mw-mmv-dialog-down-arrow' )
-			.appendTo( this.$dialog );
+			/** @property {jQuery} $openButton The click target which opens the dialog. */
+			this.$openButton = $openButton;
 
-		this.initWarning();
+			/** @property {jQuery} $dialog The main dialog container */
+			this.$dialog = $( '<div>' )
+				.addClass( 'mw-mmv-dialog' );
 
-		this.$dialog.appendTo( this.$container );
-	}
+			/**
+			 * @property {jQuery} $downArrow Tip of the dialog pointing to $openButton. Called
+			 * downArrow for historical reasons although it does not point down anymore.
+			 */
+			this.$downArrow = $( '<div>' )
+				.addClass( 'mw-mmv-dialog-down-arrow' )
+				.appendTo( this.$dialog );
 
-	OO.inheritClass( Dialog, mw.mmv.ui.Element );
-	DP = Dialog.prototype;
+			this.initWarning();
 
-	/**
-	 * Creates the DOM element that setWarning()/clearWarning() will operate on.
-	 *
-	 * @private
-	 */
-	DP.initWarning = function () {
-		this.$warning = $( '<div>' )
-			.addClass( 'mw-mmv-dialog-warning' )
-			.hide()
-			.on( 'click', function ( e ) {
-				// prevent other click handlers such as the download CTA from intercepting clicks at the warning
-				e.stopPropagation();
-			} )
-			.appendTo( this.$dialog );
-	};
-
-	/**
-	 * Handles click on link that opens/closes the dialog.
-	 *
-	 * @param {jQuery.Event} openEvent Event object for the mmv-$dialog-open event.
-	 * @param {jQuery.Event} e Event object for the click event.
-	 * @return {boolean} False to cancel the default event
-	 */
-	DP.handleOpenCloseClick = function ( openEvent, e ) {
-		var dialog = this;
-
-		mw.loader.using( this.loadDependencies, function () {
-			dialog.dependenciesLoaded = true;
-			dialog.toggleDialog( e );
-		}, function ( error ) {
-			mw.log.error( 'mw.loader.using error when trying to load dialog dependencies', error );
-		} );
-
-		return false;
-	};
-
-	/**
-	 * Toggles the open state on the dialog.
-	 *
-	 * @param {jQuery.Event} [e] Event object when the close action is caused by a user
-	 *   action, as opposed to closing the window or something.
-	 */
-	DP.toggleDialog = function ( e ) {
-		if ( this.isOpen ) {
-			this.closeDialog( e );
-		} else {
-			this.openDialog();
+			this.$dialog.appendTo( this.$container );
 		}
-	};
 
-	/**
-	 * Opens a dialog.
-	 */
-	DP.openDialog = function () {
-		this.startListeningToOutsideClick();
-		this.$dialog.show();
-		this.isOpen = true;
-		this.$openButton.addClass( 'mw-mmv-dialog-open' );
-	};
+		/**
+		 * Creates the DOM element that setWarning()/clearWarning() will operate on.
+		 *
+		 * @private
+		 */
+		initWarning() {
+			this.$warning = $( '<div>' )
+				.addClass( 'mw-mmv-dialog-warning' )
+				.hide()
+				.on( 'click', ( e ) => {
+					// prevent other click handlers such as the download CTA from intercepting clicks at the warning
+					e.stopPropagation();
+				} )
+				.appendTo( this.$dialog );
+		}
 
-	/**
-	 * Closes a dialog.
-	 */
-	DP.closeDialog = function () {
-		this.stopListeningToOutsideClick();
-		this.$dialog.hide();
-		this.isOpen = false;
-		this.$openButton.removeClass( 'mw-mmv-dialog-open' );
-	};
+		/**
+		 * Handles click on link that opens/closes the dialog.
+		 *
+		 * @param {jQuery.Event} openEvent Event object for the mmv-$dialog-open event.
+		 * @param {jQuery.Event} e Event object for the click event.
+		 * @return {boolean} False to cancel the default event
+		 */
+		handleOpenCloseClick( openEvent, e ) {
+			mw.loader.using( this.loadDependencies, () => {
+				this.dependenciesLoaded = true;
+				this.toggleDialog( e );
+			}, ( error ) => {
+				mw.log.error( 'mw.loader.using error when trying to load dialog dependencies', error );
+			} );
 
-	/**
-	 * Sets up the event handler which closes the dialog when the user clicks outside.
-	 */
-	DP.startListeningToOutsideClick = function () {
-		var dialog = this;
+			return false;
+		}
 
-		this.outsideClickHandler = this.outsideClickHandler || function ( e ) {
-			var $clickTarget = $( e.target );
+		/**
+		 * Toggles the open state on the dialog.
+		 *
+		 * @param {jQuery.Event} [e] Event object when the close action is caused by a user
+		 *   action, as opposed to closing the window or something.
+		 */
+		toggleDialog( e ) {
+			if ( this.isOpen ) {
+				this.closeDialog( e );
+			} else {
+				this.openDialog();
+			}
+		}
 
-			// Don't close the dialog if the click inside a dialog or on an navigation arrow
-			if (
-				$clickTarget.closest( dialog.$dialog ).length ||
-				$clickTarget.closest( '.mw-mmv-next-image' ).length ||
-				$clickTarget.closest( '.mw-mmv-prev-image' ).length ||
-				e.which === 3
-			) {
-				return;
+		/**
+		 * Opens a dialog.
+		 */
+		openDialog() {
+			this.startListeningToOutsideClick();
+			this.$dialog.show();
+			this.isOpen = true;
+			this.$openButton.addClass( 'mw-mmv-dialog-open' );
+		}
+
+		/**
+		 * Closes a dialog.
+		 */
+		closeDialog() {
+			this.stopListeningToOutsideClick();
+			this.$dialog.hide();
+			this.isOpen = false;
+			this.$openButton.removeClass( 'mw-mmv-dialog-open' );
+		}
+
+		/**
+		 * Sets up the event handler which closes the dialog when the user clicks outside.
+		 */
+		startListeningToOutsideClick() {
+			this.outsideClickHandler = this.outsideClickHandler || ( ( e ) => {
+				const $clickTarget = $( e.target );
+
+				// Don't close the dialog if the click inside a dialog or on an navigation arrow
+				if (
+					$clickTarget.closest( this.$dialog ).length ||
+					$clickTarget.closest( '.mw-mmv-next-image' ).length ||
+					$clickTarget.closest( '.mw-mmv-prev-image' ).length ||
+					e.which === 3
+				) {
+					return;
+				}
+
+				this.closeDialog();
+				return false;
+			} );
+			$( document ).on( `click.mmv.${this.eventPrefix}`, this.outsideClickHandler );
+		}
+
+		/**
+		 * Removes the event handler set up by startListeningToOutsideClick().
+		 */
+		stopListeningToOutsideClick() {
+			$( document ).off( `click.mmv.${this.eventPrefix}`, this.outsideClickHandler );
+		}
+
+		/**
+		 * Clears listeners.
+		 */
+		unattach() {
+			super.unattach();
+
+			this.stopListeningToOutsideClick();
+		}
+
+		/**
+		 * @inheritdoc
+		 */
+		empty() {
+			this.closeDialog();
+			this.clearWarning();
+		}
+
+		/**
+		 * Displays a warning ribbon.
+		 *
+		 * @param {string} content Content of the warning (can be HTML,
+		 *   setWarning does no escaping).
+		 */
+		setWarning( content ) {
+			this.$warning
+				.empty()
+				.append( content )
+				.show();
+			this.$dialog.addClass( 'mw-mmv-warning-visible' );
+		}
+
+		/**
+		 * Removes the warning ribbon.
+		 */
+		clearWarning() {
+			this.$warning.hide();
+			this.$dialog.removeClass( 'mw-mmv-warning-visible' );
+		}
+
+		/**
+		 * @param {Image} image
+		 * @return {string[]}
+		 */
+		getImageWarnings( image ) {
+			const warnings = [];
+
+			if ( image.deletionReason ) {
+				warnings.push( mw.message( 'multimediaviewer-reuse-warning-deletion' ).plain() );
+				// Don't inform about other warnings (they may be the cause of the deletion)
+				return warnings;
 			}
 
-			dialog.closeDialog();
-			return false;
-		};
-		$( document ).on( 'click.mmv.' + this.eventPrefix, this.outsideClickHandler );
-	};
+			if ( !image.license || image.license.needsAttribution() && !image.author && !image.attribution ) {
+				warnings.push( mw.message( 'multimediaviewer-reuse-warning-noattribution' ).plain() );
+			}
 
-	/**
-	 * Removes the event handler set up by startListeningToOutsideClick().
-	 */
-	DP.stopListeningToOutsideClick = function () {
-		$( document ).off( 'click.mmv.' + this.eventPrefix, this.outsideClickHandler );
-	};
+			if ( image.license && !image.license.isFree() ) {
+				warnings.push( mw.message( 'multimediaviewer-reuse-warning-nonfree' ).plain() );
+			}
 
-	/**
-	 * Clears listeners.
-	 */
-	DP.unattach = function () {
-		mw.mmv.ui.Element.prototype.unattach.call( this );
-
-		this.stopListeningToOutsideClick();
-	};
-
-	/**
-	 * @inheritdoc
-	 */
-	DP.empty = function () {
-		this.closeDialog();
-		this.clearWarning();
-	};
-
-	/**
-	 * Displays a warning ribbon.
-	 *
-	 * @param {string} content Content of the warning (can be HTML,
-	 *   setWarning does no escaping).
-	 */
-	DP.setWarning = function ( content ) {
-		this.$warning
-			.empty()
-			.append( content )
-			.show();
-		this.$dialog.addClass( 'mw-mmv-warning-visible' );
-	};
-
-	/**
-	 * Removes the warning ribbon.
-	 */
-	DP.clearWarning = function () {
-		this.$warning.hide();
-		this.$dialog.removeClass( 'mw-mmv-warning-visible' );
-	};
-
-	/**
-	 * @param {mw.mmv.model.Image} image
-	 * @return {string[]}
-	 */
-	DP.getImageWarnings = function ( image ) {
-		var warnings = [];
-
-		if ( image.deletionReason ) {
-			warnings.push( mw.message( 'multimediaviewer-reuse-warning-deletion' ).plain() );
-			// Don't inform about other warnings (they may be the cause of the deletion)
 			return warnings;
 		}
 
-		if ( !image.license || image.license.needsAttribution() && !image.author && !image.attribution ) {
-			warnings.push( mw.message( 'multimediaviewer-reuse-warning-noattribution' ).plain() );
+		/**
+		 * @param {Image} image
+		 */
+		showImageWarnings( image ) {
+			const warnings = this.getImageWarnings( image );
+
+			if ( warnings.length > 0 ) {
+				warnings.push( mw.message( 'multimediaviewer-reuse-warning-generic', image.descriptionUrl ).parse() );
+				this.setWarning( warnings.join( '<br />' ) );
+			} else {
+				this.clearWarning();
+			}
 		}
+	}
 
-		if ( image.license && !image.license.isFree() ) {
-			warnings.push( mw.message( 'multimediaviewer-reuse-warning-nonfree' ).plain() );
-		}
-
-		return warnings;
-	};
-
-	/**
-	 * @param {mw.mmv.model.Image} image
-	 */
-	DP.showImageWarnings = function ( image ) {
-		var warnings = this.getImageWarnings( image );
-
-		if ( warnings.length > 0 ) {
-			warnings.push( mw.message( 'multimediaviewer-reuse-warning-generic', image.descriptionUrl ).parse() );
-			this.setWarning( warnings.join( '<br />' ) );
-		} else {
-			this.clearWarning();
-		}
-	};
-
-	mw.mmv.ui.Dialog = Dialog;
+	module.exports = Dialog;
 }() );

@@ -22,18 +22,11 @@
 	"mobile-frontend-main-menu-nearby": "Гаьна доаццаш",
 	"mobile-frontend-main-menu-settings": "Оттамаш",
 	"mobile-frontend-main-menu-watchlist": "Зем",
-	"mobile-frontend-meta-data-issues-header-talk": "Укх оагӀонах лаьца",
-	"mobile-frontend-meta-data-issues-talk": "Къамаьла оагӀонах бола хоам",
 	"mobile-frontend-pageaction-edit-tooltip": "Нийсде укх оагIон хьалхе латта дакъа",
 	"mobile-frontend-placeholder": "Лаха Википеде чу",
 	"mobile-frontend-random-button": "Цаховш нийсъеннар",
 	"mobile-frontend-redirected-from": "Хьахьожадаьд «[[$1]]» яхача оагIона тIара",
 	"mobile-frontend-user-page-contributions": "Къахьегам",
 	"mobile-frontend-user-page-talk": "Дувцар",
-	"minerva-page-actions-overflow": "Кхы а",
-	"minerva-page-actions-info": "Укх оагӀонах лаьца",
-	"minerva-page-actions-permalink": "Даим бола тӏатовжам",
-	"minerva-page-actions-backlinks": "Тӏатовжамаш укхазахьа",
-	"minerva-page-actions-cite": "ОагIув белгалъяр",
-	"minerva-page-actions-move": "ЦӀи хувца"
+	"minerva-page-actions-overflow": "Кхы а"
 }

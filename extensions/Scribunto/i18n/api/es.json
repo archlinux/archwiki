@@ -8,7 +8,6 @@
 			"Ryo567"
 		]
 	},
-	"apihelp-scribunto-console-description": "Módulo interno para el mantenimiento de XHR las solicitudes de los Scribunto de la consola.",
 	"apihelp-scribunto-console-param-title": "El título del módulo que probar.",
 	"apihelp-scribunto-console-param-content": "El nuevo contenido del módulo.",
 	"apihelp-scribunto-console-param-session": "Ficha de sesión.",

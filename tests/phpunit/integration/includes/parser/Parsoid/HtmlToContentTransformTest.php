@@ -66,14 +66,18 @@ class HtmlToContentTransformTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	private function createHtmlToContentTransformWithOriginalData( $html = '' ) {
+	private function createHtmlToContentTransformWithOriginalData( $html = '', array $options = null ) {
 		$transform = $this->createHtmlToContentTransform( $html );
 
+		if ( $options === null ) {
+			$options = [
+				'contentmodel' => 'wikitext',
+				'offsetType' => 'byte',
+			];
+		}
+
 		// Set some options to assert on $transform object.
-		$transform->setOptions( [
-			'contentmodel' => 'wikitext',
-			'offsetType' => 'byte',
-		] );
+		$transform->setOptions( $options );
 
 		$this->setOriginalData( $transform );
 
@@ -229,14 +233,44 @@ class HtmlToContentTransformTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( CONTENT_MODEL_JSON, $transform->getContentModel() );
 	}
 
-	public function testGetContentModel() {
-		$transform = $this->createHtmlToContentTransformWithOriginalData();
+	public function testOptions() {
+		$transform = $this->createHtmlToContentTransformWithOriginalData( '', [] );
+
 		$this->assertSame( 'wikitext', $transform->getContentModel() );
+		$this->assertSame( 'byte', $transform->getOffsetType() );
+
+		$transform->setOptions( [
+			'contentmodel' => 'text',
+			'offsetType' => 'ucs2',
+		] );
+
+		$this->assertSame( 'text', $transform->getContentModel() );
+		$this->assertSame( 'ucs2', $transform->getOffsetType() );
 	}
 
-	public function testGetEnvOpts() {
-		$transform = $this->createHtmlToContentTransformWithOriginalData();
+	/**
+	 * Assert that in case we set only one of the options, the other(s)
+	 * should fall back to their correct defaults.
+	 */
+	public function testOptionsForIndividualDefaults() {
+		$transform = $this->createHtmlToContentTransformWithOriginalData( '', [] );
+
+		$this->assertSame( 'wikitext', $transform->getContentModel() );
 		$this->assertSame( 'byte', $transform->getOffsetType() );
+
+		$transform = $this->createHtmlToContentTransformWithOriginalData( '', [] );
+		// Set only content model
+		$transform->setOptions( [ 'contentmodel' => 'text' ] );
+
+		$this->assertSame( 'text', $transform->getContentModel() );
+		$this->assertSame( 'byte', $transform->getOffsetType() );
+
+		$transform = $this->createHtmlToContentTransformWithOriginalData( '', [] );
+		// Set only offset type
+		$transform->setOptions( [ 'offsetType' => 'ucs2' ] );
+
+		$this->assertSame( 'wikitext', $transform->getContentModel() );
+		$this->assertSame( 'ucs2', $transform->getOffsetType() );
 	}
 
 	private function getTextFromFile( string $name ): string {

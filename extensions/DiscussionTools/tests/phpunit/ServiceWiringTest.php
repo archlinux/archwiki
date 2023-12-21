@@ -24,7 +24,7 @@ class ServiceWiringTest extends IntegrationTestCase {
 		$this->addToAssertionCount( 1 );
 	}
 
-	public function provideService() {
+	public static function provideService() {
 		$wiring = require __DIR__ . '/../../includes/ServiceWiring.php';
 		foreach ( $wiring as $name => $_ ) {
 			yield $name => [ $name ];

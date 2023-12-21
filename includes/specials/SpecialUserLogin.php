@@ -21,9 +21,15 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use LoginHelper;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\SpecialPage\LoginSignupSpecialPage;
+use MediaWiki\SpecialPage\SpecialPage;
+use StatusValue;
 
 /**
  * Implements Special:UserLogin
@@ -67,14 +73,14 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 	}
 
 	public function getDescription() {
-		return $this->msg( 'login' )->text();
+		return $this->msg( 'login' );
 	}
 
 	public function setHeaders() {
 		// override the page title if we are doing a forced reauthentication
 		parent::setHeaders();
 		if ( $this->securityLevel && $this->getUser()->isRegistered() ) {
-			$this->getOutput()->setPageTitle( $this->msg( 'login-security' ) );
+			$this->getOutput()->setPageTitleMsg( $this->msg( 'login-security' ) );
 		}
 	}
 
@@ -151,7 +157,7 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 	}
 
 	protected function clearToken() {
-		return $this->getRequest()->getSession()->resetToken( 'login' );
+		$this->getRequest()->getSession()->resetToken( 'login' );
 	}
 
 	protected function getTokenName() {
@@ -170,3 +176,9 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 		] );
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialUserLogin::class, 'SpecialUserLogin' );

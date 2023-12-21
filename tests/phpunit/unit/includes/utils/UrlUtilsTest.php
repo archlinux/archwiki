@@ -65,14 +65,7 @@ class UrlUtilsTest extends MediaWikiUnitTestCase {
 	 * @param string $expected
 	 */
 	public function testAssemble( array $bits, string $expected ): void {
-		$urlUtils = new UrlUtils( [ UrlUtils::VALID_PROTOCOLS => [
-			'//',
-			'http://',
-			'https://',
-			'file://',
-			'mailto:',
-		] ] );
-		$this->assertSame( $expected, $urlUtils->assemble( $bits ) );
+		$this->assertSame( $expected, UrlUtils::assemble( $bits ) );
 	}
 
 	/**
@@ -82,7 +75,7 @@ class UrlUtilsTest extends MediaWikiUnitTestCase {
 	 * @param string $expected
 	 */
 	public function testRemoveDotSegments( string $input, string $expected ): void {
-		$this->assertSame( $expected, ( new UrlUtils )->removeDotSegments( $input ) );
+		$this->assertSame( $expected, UrlUtils::removeDotSegments( $input ) );
 	}
 
 	/**
@@ -116,6 +109,7 @@ class UrlUtilsTest extends MediaWikiUnitTestCase {
 			'https://',
 			'file://',
 			'mailto:',
+			'news:',
 		] ] );
 		$actual = $urlUtils->parse( $url );
 		if ( $expected ) {

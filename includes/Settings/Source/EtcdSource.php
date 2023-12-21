@@ -159,9 +159,7 @@ class EtcdSource implements CacheableSource {
 	public function load(): array {
 		$lastException = false;
 
-		foreach ( ( $this->resolver )() as $server ) {
-			[ $host, $port ] = $server;
-
+		foreach ( ( $this->resolver )() as [ $host, $port ] ) {
 			try {
 				return $this->loadFromEtcdServer( $host, $port );
 			} catch ( ConnectException | ServerException $e ) {
@@ -240,7 +238,7 @@ class EtcdSource implements CacheableSource {
 		$settings = [];
 
 		try {
-			$resp = $this->format->decode( $response->getBody() );
+			$resp = $this->format->decode( $response->getBody()->getContents() );
 
 			if (
 				!isset( $resp['node'] ) || !is_array( $resp['node'] )

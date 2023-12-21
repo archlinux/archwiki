@@ -48,9 +48,6 @@ abstract class ParserTestCase extends MediaWikiUnitTestCase {
 	protected function getParser( LoggerInterface $logger = null ) {
 		// We're not interested in caching or logging; tests should call respectively setCache
 		// and setLogger if they want to test any of those.
-		$contLang = $this->getLanguageMock();
-		$cache = new EmptyBagOStuff();
-		$logger = $logger ?? new \Psr\Log\NullLogger();
 		$keywordsManager = new KeywordsManager( $this->createMock( AbuseFilterHookRunner::class ) );
 		$varManager = new VariablesManager(
 			$keywordsManager,
@@ -60,9 +57,9 @@ abstract class ParserTestCase extends MediaWikiUnitTestCase {
 		$equivset->method( 'normalize' )->willReturnArgument( 0 );
 
 		$evaluator = new FilterEvaluator(
-			$contLang,
-			$cache,
-			$logger,
+			$this->getLanguageMock(),
+			new EmptyBagOStuff(),
+			$logger ?? new \Psr\Log\NullLogger(),
 			$keywordsManager,
 			$varManager,
 			new NullStatsdDataFactory(),
@@ -132,7 +129,7 @@ abstract class ParserTestCase extends MediaWikiUnitTestCase {
 	 *
 	 * @return Language|MockObject
 	 */
-	protected function getLanguageMock() {
+	private function getLanguageMock() {
 		$lang = $this->createMock( LanguageEn::class );
 		$lang->method( 'uc' )
 			->willReturnCallback( static function ( $x ) {

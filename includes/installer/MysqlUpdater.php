@@ -20,14 +20,13 @@
  * @file
  * @ingroup Installer
  */
-use Wikimedia\Rdbms\MySQLField;
 
 /**
  * Mysql update list and mysql-specific update functions.
  *
  * @ingroup Installer
  * @since 1.17
- * @property Wikimedia\Rdbms\DatabaseMysqlBase $db
+ * @property Wikimedia\Rdbms\DatabaseMySQL $db
  */
 class MysqlUpdater extends DatabaseUpdater {
 	protected function getCoreUpdateList() {
@@ -142,30 +141,21 @@ class MysqlUpdater extends DatabaseUpdater {
 
 			// 1.40
 			[ 'addField', 'externallinks', 'el_to_path', 'patch-externallinks-el_to_path.sql' ],
+
+			// 1.41
+			[ 'addField', 'user', 'user_is_temp', 'patch-user-user_is_temp.sql' ],
+			[ 'runMaintenance', MigrateRevisionCommentTemp::class, 'maintenance/migrateRevisionCommentTemp.php' ],
+			[ 'dropTable', 'revision_comment_temp' ],
+			[ 'runMaintenance', MigrateExternallinks::class, 'maintenance/migrateExternallinks.php' ],
+			[ 'modifyField', 'externallinks', 'el_to', 'patch-externallinks-el_to_default.sql' ],
+			[ 'addField', 'pagelinks', 'pl_target_id', 'patch-pagelinks-target_id.sql' ],
+			[ 'dropField', 'externallinks', 'el_to', 'patch-externallinks-drop-el_to.sql' ],
+			[ 'runMaintenance', FixInconsistentRedirects::class, 'maintenance/fixInconsistentRedirects.php' ],
+			[ 'modifyField', 'image', 'img_size', 'patch-image-img_size_to_bigint.sql' ],
+			[ 'modifyField', 'filearchive', 'fa_size', 'patch-filearchive-fa_size_to_bigint.sql' ],
+			[ 'modifyField', 'oldimage', 'oi_size', 'patch-oldimage-oi_size_to_bigint.sql' ],
+			[ 'modifyField', 'uploadstash', 'us_size', 'patch-uploadstash-us_size_to_bigint.sql' ],
 		];
-	}
-
-	/**
-	 * MW 1.4 betas were missing the 'binary' marker from logging.log_title,
-	 * which caused a MySQL collation mismatch error.
-	 *
-	 * @param string $table Table name
-	 * @param string $field Field name to check
-	 * @param string $patchFile Path to the patch to correct the field
-	 * @return bool
-	 */
-	protected function checkBin( $table, $field, $patchFile ) {
-		if ( !$this->doTable( $table ) ) {
-			return true;
-		}
-
-		/** @var MySQLField $fieldInfo */
-		$fieldInfo = $this->db->fieldInfo( $table, $field );
-		if ( $fieldInfo->isBinary() ) {
-			$this->output( "...$table table has correct $field encoding.\n" );
-		} else {
-			$this->applyPatch( $patchFile, false, "Fixing $field encoding on $table table" );
-		}
 	}
 
 	/**

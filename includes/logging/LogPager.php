@@ -23,13 +23,18 @@
  * @file
  */
 
+namespace MediaWiki\Pager;
+
+use DatabaseLogEntry;
+use LogEventsList;
+use LogFormatter;
+use LogPage;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ActorNormalization;
-use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * @ingroup Pager
@@ -91,7 +96,6 @@ class LogPager extends ReverseChronologicalPager {
 	 * @param string $action Specific action (subtype) requested
 	 * @param int $logId Log entry ID, to limit to a single log entry.
 	 * @param LinkBatchFactory|null $linkBatchFactory
-	 * @param ILoadBalancer|null $loadBalancer
 	 * @param ActorNormalization|null $actorNormalization
 	 * @param bool $tagInvert whether tags are filtered for (false) or out (true)
 	 */
@@ -99,7 +103,6 @@ class LogPager extends ReverseChronologicalPager {
 		$pattern = false, $conds = [], $year = false, $month = false, $day = false,
 		$tagFilter = '', $action = '', $logId = 0,
 		LinkBatchFactory $linkBatchFactory = null,
-		ILoadBalancer $loadBalancer = null,
 		ActorNormalization $actorNormalization = null,
 		$tagInvert = false
 	) {
@@ -153,6 +156,7 @@ class LogPager extends ReverseChronologicalPager {
 			return $filters;
 		}
 
+		// FIXME: This is broken, values from HTMLForm should be used.
 		$wpfilters = $this->getRequest()->getArray( "wpfilters" );
 		$filterLogTypes = $this->getConfig()->get( MainConfigNames::FilterLogTypes );
 
@@ -329,7 +333,6 @@ class LogPager extends ReverseChronologicalPager {
 		$actions = $this->getConfig()->get( MainConfigNames::ActionFilteredLogs );
 		if ( isset( $actions[$type] ) ) {
 			// log type can be filtered by actions
-			$this->mLogEventsList->setAllowedActions( array_keys( $actions[$type] ) );
 			if ( $action !== '' && isset( $actions[$type][$action] ) ) {
 				// add condition to query
 				$this->mConds['log_action'] = $actions[$type][$action];
@@ -355,28 +358,23 @@ class LogPager extends ReverseChronologicalPager {
 	 * @return array
 	 */
 	public function getQueryInfo() {
-		$basic = DatabaseLogEntry::getSelectQueryData();
-
-		$tables = $basic['tables'];
-		$fields = $basic['fields'];
-		$conds = $basic['conds'];
-		$options = $basic['options'];
-		$joins = $basic['join_conds'];
+		$queryBuilder = DatabaseLogEntry::newSelectQueryBuilder( $this->mDb )
+			->where( $this->mConds );
 
 		# Add log_search table if there are conditions on it.
 		# This filters the results to only include log rows that have
 		# log_search records with the specified ls_field and ls_value values.
 		if ( array_key_exists( 'ls_field', $this->mConds ) ) {
-			$tables[] = 'log_search';
-			$options['IGNORE INDEX'] = [ 'log_search' => 'ls_log_id' ];
-			$options['USE INDEX'] = [ 'logging' => 'PRIMARY' ];
+			$queryBuilder->join( 'log_search', null, 'ls_log_id=log_id' );
+			$queryBuilder->ignoreIndex( [ 'log_search' => 'ls_log_id' ] );
+			$queryBuilder->useIndex( [ 'logging' => 'PRIMARY' ] );
 			if ( !$this->hasEqualsClause( 'ls_field' )
 				|| !$this->hasEqualsClause( 'ls_value' )
 			) {
 				# Since (ls_field,ls_value,ls_logid) is unique, if the condition is
 				# to match a specific (ls_field,ls_value) tuple, then there will be
 				# no duplicate log rows. Otherwise, we need to remove the duplicates.
-				$options[] = 'DISTINCT';
+				$queryBuilder->distinct();
 			}
 		} elseif ( array_key_exists( 'log_actor', $this->mConds ) ) {
 			// Optimizer doesn't pick the right index when a user has lots of log actions (T303089)
@@ -387,34 +385,31 @@ class LogPager extends ReverseChronologicalPager {
 					break;
 				}
 			}
-			$options['USE INDEX'] = [ 'logging' => $index ];
+			$queryBuilder->useIndex( [ 'logging' => $index ] );
 		}
-		# Don't show duplicate rows when using log_search
-		$joins['log_search'] = [ 'JOIN', 'ls_log_id=log_id' ];
 
 		// T221458: MySQL/MariaDB (10.1.37) can sometimes irrationally decide that querying `actor` before
 		// `logging` and filesorting is somehow better than querying $limit+1 rows from `logging`.
 		// Tell it not to reorder the query. But not when tag filtering or log_search was used, as it
 		// seems as likely to be harmed as helped in that case.
 		if ( $this->mTagFilter === '' && !array_key_exists( 'ls_field', $this->mConds ) ) {
-			$options[] = 'STRAIGHT_JOIN';
+			$queryBuilder->option( 'STRAIGHT_JOIN' );
 		}
 
-		$options['MAX_EXECUTION_TIME'] = $this->getConfig()
-			->get( MainConfigNames::MaxExecutionTimeForExpensiveQueries );
+		$maxExecTime = $this->getConfig()->get( MainConfigNames::MaxExecutionTimeForExpensiveQueries );
+		if ( $maxExecTime ) {
+			$queryBuilder->setMaxExecutionTime( $maxExecTime );
+		}
 
-		$info = [
-			'tables' => $tables,
-			'fields' => $fields,
-			'conds' => array_merge( $conds, $this->mConds ),
-			'options' => $options,
-			'join_conds' => $joins,
-		];
 		# Add ChangeTags filter query
-		ChangeTags::modifyDisplayQuery( $info['tables'], $info['fields'], $info['conds'],
-			$info['join_conds'], $info['options'], $this->mTagFilter, $this->mTagInvert );
+		MediaWikiServices::getInstance()->getChangeTagsStore()->modifyDisplayQueryBuilder(
+			$queryBuilder,
+			'logging',
+			$this->mTagFilter,
+			$this->mTagInvert
+		);
 
-		return $info;
+		return $queryBuilder->getQueryInfo();
 	}
 
 	/**
@@ -433,24 +428,18 @@ class LogPager extends ReverseChronologicalPager {
 		return [ [ 'log_timestamp', 'log_id' ] ];
 	}
 
-	protected function getStartBody() {
-		# Do a link batch query
-		if ( $this->getNumRows() > 0 ) {
-			$lb = $this->linkBatchFactory->newLinkBatch();
-			foreach ( $this->mResult as $row ) {
-				$lb->add( $row->log_namespace, $row->log_title );
-				$lb->add( NS_USER, $row->log_user_text );
-				$lb->add( NS_USER_TALK, $row->log_user_text );
-				$formatter = LogFormatter::newFromRow( $row );
-				foreach ( $formatter->getPreloadTitles() as $title ) {
-					$lb->addObj( $title );
-				}
+	protected function doBatchLookups() {
+		$lb = $this->linkBatchFactory->newLinkBatch();
+		foreach ( $this->mResult as $row ) {
+			$lb->add( $row->log_namespace, $row->log_title );
+			$lb->add( NS_USER, $row->log_user_text );
+			$lb->add( NS_USER_TALK, $row->log_user_text );
+			$formatter = LogFormatter::newFromRow( $row );
+			foreach ( $formatter->getPreloadTitles() as $title ) {
+				$lb->addObj( $title );
 			}
-			$lb->execute();
-			$this->mResult->seek( 0 );
 		}
-
-		return '';
+		$lb->execute();
 	}
 
 	public function formatRow( $row ) {
@@ -541,3 +530,9 @@ class LogPager extends ReverseChronologicalPager {
 		}
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( LogPager::class, 'LogPager' );

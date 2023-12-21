@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hakka",
 			"Amire80",
+			"Hakka",
 			"Masiziva"
 		]
 	},
@@ -464,6 +464,7 @@
 	"missingcommenttext": "Tinokumbira muise komendi.",
 	"summary-preview": "Chipandwa chepfupiso yechinjiurdzo:",
 	"blockedtitle": "Mushandisi akapingirwa",
+	"blockedtext": "*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-contact-blocker-admin|$1}}\nUnokwanisa kushandisa ficha ye \"{{int:emailuser}}\" kana paine keri ye tsambambozha kwayo yakananganiswa [[Special:Preferences|muzvinosarudzwa]] zvako uye usina kudziviswa kuti uyishandise.\n{{int:blockedtext-block-ip|$3}} {{int:blockedtext-block-id|$5}}\n{{int:blockedtext-include-details-queries}}",
 	"blockednoreason": "hapana chikonzero chakapuhwa",
 	"whitelistedittext": "Tinokumbira u $1 kuti uchinjirudze mazanhu.",
 	"nosuchsectiontitle": "Chikamu hachina kuwanika",
@@ -515,7 +516,6 @@
 	"slot-name-main": "Huru",
 	"content-model-wikitext": "wikichinyorwa",
 	"content-model-text": "chinyorwa sezvachiri",
-	"content-model-javascript": "JavaScript",
 	"post-expand-template-inclusion-warning": "<strong>Yambiro:</strong> makuriro ekusanganisa doodzerwa akakurisa.\nMamwe madoodzerwa haazosanganiswi.",
 	"template-equals-category": "Mazanhi anoshandisa = sedoodzerwa",
 	"parser-template-loop-warning": "Chishwe chedoodzerwa chadzumbunurwa: [[$1]]",
@@ -579,6 +579,7 @@
 	"mergehistory-go": "Rakidza zvichinjirudzo zvinobatanidzika",
 	"mergehistory-submit": "Batanidza zvidzokororo",
 	"mergehistory-empty": "Hapana zvidzokororo zvinokwanisa kubatanidzwa.",
+	"mergehistory-done": "$4 \n{{PLURAL:$4|dzokororo ye|zvidzokororo zve}} $1 {{PLURAL:$4|yakabatanidzwa|zvakabatanidzwa}} mu[[:$2]]. \n$3.",
 	"mergehistory-fail": "Hatina kukwanisa kubatanidza nhoroondo. Tapota kutimutarise zanhi ne maparamita enguva zve.",
 	"mergehistory-fail-invalid-source": "Zanhi remabviro harisiro.",
 	"mergehistory-fail-invalid-dest": "Zanhi remutondwe harisiro.",
@@ -607,6 +608,7 @@
 	"showhideselectedfileversions": "Shandura kuoneka kwe zvihlovo zvefayera rakasarudzwa",
 	"editundo": "dzorerashure",
 	"diff-empty": "(Hapana musiyano)",
+	"diff-multi-sameuser": "(Hapana kurakidzwa {{PLURAL:$1|wongororo imwechete yechipakati yakaitwa|$1 zviongororo zvechipakati zvakaitwa}} na {{GENDER:$3|mushandisi}})",
 	"diff-multi-otherusers": "(Hapana kurakidzwa {{PLURAL:$1|wongororo imwechete yechipakati yakaitwa|$1 zviongororo zvechipakati zvakaitwa}} na {{PLURAL:$2|mumwewo mushandisi mumwe|$2 vashandisi}})",
 	"diff-paragraph-moved-tonew": "Ndima yakachichimurwa. Dzvanya kuti usvetuke kuimwe nzvimbo.",
 	"diff-paragraph-moved-toold": "Ndima yakachichinurwa. Dzvanya kuti usvetuke kunzvimbo yekare.",
@@ -651,7 +653,6 @@
 	"search-thumbnail-alt": "Mfananoudoko we $1",
 	"searchrelated": "zvinoenderana",
 	"searchall": "zvose",
-	"showingresults": "Pazasi parikurakidzwa {{PLURAL:$1|<strong>1</strong> mhedzisiro inotanga\n|<strong>$1</strong> mhedzisiro dzinotanga}} na #<strong>$2</strong>.",
 	"search-showingresults": "{{PLURAL:$4|Mhedzisiro <strong>$1</strong> ye <strong>$3</strong>|Mhedzisiro <strong>$1 – $2</strong> ye <strong>$3</strong>}}",
 	"search-nonefound": "Hapana mhedzisiro dzawanikwa dzinoenderana nechabvunzwa.",
 	"search-nonefound-thiswiki": "Pangapasina mhedzisiro dzanga dzichienderana nechabvunzwa pasayiti ino.",
@@ -1137,5 +1138,6 @@
 	"blockedtext-start-time": "Kutanga kwe chipingo: $1",
 	"blockedtext-expiration-time": "Kupera kwe chipingo: $1",
 	"blockedtext-intended-blockee": "Mudziviswa anga achitarisirwa: $1",
+	"blockedtext-block-ip": "Kero ye DD (IP) yako izvozvi i $1 .",
 	"renameuserconfirm": "Hongu, tumidzai mushandisi rimwezita"
 }

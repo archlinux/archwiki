@@ -4,7 +4,6 @@
 			"Hamilton Abreu"
 		]
 	},
-	"apihelp-query+extracts-description": "Fornece extratos do conteúdo das páginas indicadas, em texto simples ou HTML limitado.",
 	"apihelp-query+extracts-summary": "Fornece extratos do conteúdo das páginas indicadas, em texto simples ou HTML limitado.",
 	"apihelp-query+extracts-param-chars": "Quantos caracteres devem ser devolvidos. O texto devolvido pode ser ligeiramente mais longo.",
 	"apihelp-query+extracts-param-sentences": "Quantas frases devem ser devolvidas.",

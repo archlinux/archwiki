@@ -8,15 +8,17 @@ use ApiUsageException;
 use Config;
 use ConfigFactory;
 use DerivativeContext;
-use DerivativeRequest;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
 use MediaWiki\Extension\VisualEditor\ApiParsoidTrait;
 use MediaWiki\Extension\VisualEditor\VisualEditorParsoidClientFactory;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Request\DerivativeRequest;
 use MediaWiki\Revision\RevisionLookup;
+use MediaWiki\Title\Title;
+use MediaWiki\User\TempUser\TempUserCreator;
+use MediaWiki\User\UserFactory;
 use SkinFactory;
-use Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\StringDef;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -29,6 +31,8 @@ class ApiDiscussionToolsEdit extends ApiBase {
 	private CommentParser $commentParser;
 	private VisualEditorParsoidClientFactory $parsoidClientFactory;
 	private SubscriptionStore $subscriptionStore;
+	private TempUserCreator $tempUserCreator;
+	private UserFactory $userFactory;
 	private SkinFactory $skinFactory;
 	private Config $config;
 	private RevisionLookup $revisionLookup;
@@ -39,6 +43,8 @@ class ApiDiscussionToolsEdit extends ApiBase {
 		VisualEditorParsoidClientFactory $parsoidClientFactory,
 		CommentParser $commentParser,
 		SubscriptionStore $subscriptionStore,
+		TempUserCreator $tempUserCreator,
+		UserFactory $userFactory,
 		SkinFactory $skinFactory,
 		ConfigFactory $configFactory,
 		RevisionLookup $revisionLookup
@@ -47,6 +53,8 @@ class ApiDiscussionToolsEdit extends ApiBase {
 		$this->parsoidClientFactory = $parsoidClientFactory;
 		$this->commentParser = $commentParser;
 		$this->subscriptionStore = $subscriptionStore;
+		$this->tempUserCreator = $tempUserCreator;
+		$this->userFactory = $userFactory;
 		$this->skinFactory = $skinFactory;
 		$this->config = $configFactory->makeConfig( 'discussiontools' );
 		$this->revisionLookup = $revisionLookup;
@@ -62,9 +70,10 @@ class ApiDiscussionToolsEdit extends ApiBase {
 		$title = Title::newFromText( $params['page'] );
 		$result = null;
 
-		$autoSubscribe =
-			$this->config->get( 'DiscussionToolsAutoTopicSubEditor' ) === 'discussiontoolsapi' &&
-			HookUtils::shouldAddAutoSubscription( $this->getUser(), $title );
+		$autoSubscribe = $params['autosubscribe'] === 'yes' ||
+			( $this->config->get( 'DiscussionToolsAutoTopicSubEditor' ) === 'discussiontoolsapi' &&
+			HookUtils::shouldAddAutoSubscription( $this->getUser(), $title ) &&
+			$params['autosubscribe'] === 'default' );
 		$subscribableHeadingName = null;
 		$subscribableSectionTitle = '';
 
@@ -80,7 +89,7 @@ class ApiDiscussionToolsEdit extends ApiBase {
 		if ( $formToken ) {
 			$session = $this->getContext()->getRequest()->getSession();
 			$usedFormTokens = $session->get( $usedFormTokensKey ) ?? [];
-			if ( in_array( $formToken, $usedFormTokens ) ) {
+			if ( in_array( $formToken, $usedFormTokens, true ) ) {
 				$this->dieWithError( [ 'apierror-discussiontools-formtoken-used' ] );
 			}
 		}
@@ -106,7 +115,7 @@ class ApiDiscussionToolsEdit extends ApiBase {
 		$previewContainer = DOMCompat::getBody( DOMUtils::parseHTML( $previewResultHtml ) );
 		$previewThreadItemSet = $this->commentParser->parse( $previewContainer, $title->getTitleValue() );
 		if ( CommentUtils::isSingleCommentSignedBy(
-			$previewThreadItemSet, $this->getUser()->getName(), $previewContainer
+			$previewThreadItemSet, $this->getUserForPreview()->getName(), $previewContainer
 		) ) {
 			$signature = null;
 		} else {
@@ -117,6 +126,39 @@ class ApiDiscussionToolsEdit extends ApiBase {
 			case 'addtopic':
 				$wikitext = $params['wikitext'];
 				$html = $params['html'];
+
+				$previewHeading = null;
+				$previewHeadings = $previewThreadItemSet->getThreads();
+				if ( count( $previewHeadings ) > 0 && !$previewHeadings[ 0 ]->isPlaceholderHeading() ) {
+					$previewHeading = $previewHeadings[ 0 ];
+				}
+
+				if ( !$params['allownosectiontitle'] ) {
+					// Check if the preview HTML starts with a section title. Note that even if the provided
+					// 'sectiontitle' param is empty, a heading could been included in the message body, and
+					// that's acceptable (T338390). Heading levels other than the default level 2 are also
+					// acceptable (T267288).
+					if ( !$previewHeading ) {
+						$this->dieWithError( [ 'discussiontools-newtopic-missing-title' ] );
+					}
+				}
+
+				if ( isset( $params['summary'] ) ) {
+					$summary = $params['summary'];
+				} else {
+					// Generate an edit summary from the heading in the preview HTML, rather than from the
+					// 'sectiontitle' param like the action=edit API would. This has two benefits:
+					// * Works when the heading is included in the message body instead of the param (T338390)
+					// * Works better for complicated markup in the heading, e.g. templates (T335200)
+					if ( $previewHeading ) {
+						$sectionTitle = $previewHeading->getLinkableTitle();
+						$summary = $this->msg( 'newsectionsummary' )->plaintextParams( $sectionTitle )
+							->inContentLanguage()->text();
+					} else {
+						// TODO: Should we generate something here? (T275702)
+						$summary = '';
+					}
+				}
 
 				if ( $wikitext !== null ) {
 					if ( $signature !== null ) {
@@ -151,16 +193,21 @@ class ApiDiscussionToolsEdit extends ApiBase {
 							'page' => $params['page'],
 							'token' => $params['token'],
 							'wikitext' => $wikitext,
-							// A default is provided automatically by the Edit API
-							// for new sections when the summary is empty.
-							'summary' => $params['summary'],
+							'summary' => $summary,
 							'section' => 'new',
 							'sectiontitle' => $params['sectiontitle'],
 							'starttimestamp' => wfTimestampNow(),
 							'useskin' => $params['useskin'],
 							'watchlist' => $params['watchlist'],
 							'captchaid' => $params['captchaid'],
-							'captchaword' => $params['captchaword']
+							'captchaword' => $params['captchaword'],
+							'nocontent' => $params['nocontent'],
+							// NOTE: Must use getText() to work; PHP array from $params['tags'] is not understood
+							// by the visualeditoredit API.
+							'tags' => $this->getRequest()->getText( 'tags' ),
+							'returnto' => $params['returnto'],
+							'returntoquery' => $params['returntoquery'],
+							'returntoanchor' => $params['returntoanchor'],
 						] + $mobileFormatParams,
 						/* was posted? */ true
 					)
@@ -319,7 +366,14 @@ class ApiDiscussionToolsEdit extends ApiBase {
 							'useskin' => $params['useskin'],
 							'watchlist' => $params['watchlist'],
 							'captchaid' => $params['captchaid'],
-							'captchaword' => $params['captchaword']
+							'captchaword' => $params['captchaword'],
+							'nocontent' => $params['nocontent'],
+							// NOTE: Must use getText() to work; PHP array from $params['tags'] is not understood
+							// by the visualeditoredit API.
+							'tags' => $this->getRequest()->getText( 'tags' ),
+							'returnto' => $params['returnto'],
+							'returntoquery' => $params['returntoquery'],
+							'returntoanchor' => $params['returntoanchor'],
 						],
 						/* was posted? */ true
 					)
@@ -385,6 +439,14 @@ class ApiDiscussionToolsEdit extends ApiBase {
 				ApiBase::PARAM_HELP_MSG => 'apihelp-visualeditoredit-param-paction',
 				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
+			'autosubscribe' => [
+				ParamValidator::PARAM_TYPE => [
+					'yes',
+					'no',
+					'default'
+				],
+				ParamValidator::PARAM_DEFAULT => 'default',
+			],
 			'page' => [
 				ParamValidator::PARAM_REQUIRED => true,
 				ApiBase::PARAM_HELP_MSG => 'apihelp-visualeditoredit-param-page',
@@ -414,6 +476,7 @@ class ApiDiscussionToolsEdit extends ApiBase {
 			'sectiontitle' => [
 				ParamValidator::PARAM_TYPE => 'string',
 			],
+			'allownosectiontitle' => false,
 			'useskin' => [
 				ParamValidator::PARAM_TYPE => array_keys( $this->skinFactory->getInstalledSkins() ),
 				ApiBase::PARAM_HELP_MSG => 'apihelp-parse-param-useskin',
@@ -427,6 +490,27 @@ class ApiDiscussionToolsEdit extends ApiBase {
 			'captchaword' => [
 				ApiBase::PARAM_HELP_MSG => 'apihelp-visualeditoredit-param-captchaword',
 			],
+			'nocontent' => [
+				ApiBase::PARAM_HELP_MSG => 'apihelp-visualeditoredit-param-nocontent',
+			],
+			'tags' => [
+				ParamValidator::PARAM_ISMULTI => true,
+				ApiBase::PARAM_HELP_MSG => 'apihelp-visualeditoredit-param-tags',
+			],
+			'returnto' => [
+				ParamValidator::PARAM_TYPE => 'title',
+				ApiBase::PARAM_HELP_MSG => 'apihelp-edit-param-returnto',
+			],
+			'returntoquery' => [
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_DEFAULT => '',
+				ApiBase::PARAM_HELP_MSG => 'apihelp-edit-param-returntoquery',
+			],
+			'returntoanchor' => [
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_DEFAULT => '',
+				ApiBase::PARAM_HELP_MSG => 'apihelp-edit-param-returntoanchor',
+			],
 		];
 	}
 
@@ -435,13 +519,6 @@ class ApiDiscussionToolsEdit extends ApiBase {
 	 */
 	public function needsToken() {
 		return 'csrf';
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function isInternal() {
-		return true;
 	}
 
 	/**

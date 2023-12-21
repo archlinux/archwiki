@@ -311,6 +311,10 @@ $( function () {
 	if ( mw.config.get( 'wgMFMode' ) ) {
 		initMobile();
 	} else {
-		initDesktop();
+		// Echo is intentionally disable for the Minerva desktop skin (https://phabricator.wikimedia.org/T343839)
+		// The suggested fix is documented in https://phabricator.wikimedia.org/T343838,
+		if ( mw.config.get( 'skin' ) !== 'minerva' ) {
+			initDesktop();
+		}
 	}
 } );

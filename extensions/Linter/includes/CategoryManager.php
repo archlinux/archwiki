@@ -31,6 +31,7 @@ class CategoryManager {
 	private const HIGH = 'high';
 	private const MEDIUM = 'medium';
 	private const LOW = 'low';
+	private const NONE = 'none';
 
 	/**
 	 * Map of category names to their hardcoded
@@ -47,6 +48,7 @@ class CategoryManager {
 		self::HIGH => [],
 		self::MEDIUM => [],
 		self::LOW => [],
+		self::NONE => [],
 	];
 
 	/**
@@ -95,6 +97,7 @@ class CategoryManager {
 		sort( $this->categories[self::HIGH] );
 		sort( $this->categories[self::MEDIUM] );
 		sort( $this->categories[self::LOW] );
+		sort( $this->categories[self::NONE] );
 	}
 
 	/**
@@ -143,6 +146,13 @@ class CategoryManager {
 	}
 
 	/**
+	 * @return string[]
+	 */
+	public function getNonePriority() {
+		return $this->categories[self::NONE];
+	}
+
+	/**
 	 * Categories that are configured to be displayed to users
 	 *
 	 * @return string[]
@@ -152,6 +162,17 @@ class CategoryManager {
 			$this->categories[self::HIGH],
 			$this->categories[self::MEDIUM],
 			$this->categories[self::LOW]
+		);
+	}
+
+	/**
+	 * Categories that are configured to be displayed to users
+	 *
+	 * @return string[]
+	 */
+	public function getInvisibleCategories() {
+		return array_merge(
+			$this->categories[self::NONE]
 		);
 	}
 

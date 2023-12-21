@@ -19,19 +19,20 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 
 	private $autoloaderState;
 
+	/** @var ?ExtensionRegistry */
+	private $originalExtensionRegistry = null;
+
 	protected function setUp(): void {
+		// phpcs:disable MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgHooks
 		global $wgHooks;
 
 		parent::setUp();
-
-		// For the purpose of this test, make $wgHooks behave like a real global config array.
-		// The FauxGlobalHooksArray will be restored by the testing framework automatically.
-		$wgHooks = [];
 
 		$this->autoloaderState = AutoLoader::getState();
 
 		// Make sure to restore globals
 		$this->stashMwGlobals( [
+			'wgHooks',
 			'wgAutoloadClasses',
 			'wgNamespaceProtection',
 			'wgNamespaceModels',
@@ -39,10 +40,18 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 			'wgAuthManagerAutoConfig',
 			'wgGroupPermissions',
 		] );
+
+		// For the purpose of this test, make $wgHooks behave like a real global config array.
+		$wgHooks = [];
 	}
 
 	protected function tearDown(): void {
 		AutoLoader::restoreState( $this->autoloaderState );
+
+		if ( $this->originalExtensionRegistry ) {
+			$this->setExtensionRegistry( $this->originalExtensionRegistry );
+		}
+
 		parent::tearDown();
 	}
 
@@ -75,27 +84,47 @@ class ExtensionRegistrationTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayHasKey( 1300, $GLOBALS['wgNamespaceContentModels'] );
 	}
 
+	private function setExtensionRegistry( ExtensionRegistry $registry ) {
+		$class = new \ReflectionClass( ExtensionRegistry::class );
+
+		if ( !$this->originalExtensionRegistry ) {
+			$this->originalExtensionRegistry = $class->getStaticPropertyValue( 'instance' );
+		}
+
+		$class->setStaticPropertyValue( 'instance', $registry );
+	}
+
+	public static function onAnEvent() {
+		// no-op
+	}
+
+	public static function onBooEvent() {
+		// no-op
+	}
+
 	public function testExportHooks() {
 		$manifest = [
 			'Hooks' => [
-				'AnEvent' => 'FooBarClass::onAnEvent',
+				'AnEvent' => self::class . '::onAnEvent',
 				'BooEvent' => 'main',
 			],
-			'HookHandler' => [
-				'main' => [ 'class' => 'Whatever' ]
+			'HookHandlers' => [
+				'main' => [ 'class' => self::class ]
 			],
 		];
 
 		$file = $this->makeManifestFile( $manifest );
 
 		$registry = new ExtensionRegistry();
+		$this->setExtensionRegistry( $registry );
+
 		$registry->queue( $file );
 		$registry->loadFromQueue();
 
 		$this->resetServices();
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
-		$this->assertTrue( $hookContainer->isRegistered( 'AnEvent' ) );
-		$this->assertTrue( $hookContainer->isRegistered( 'BooEvent' ) );
+		$this->assertTrue( $hookContainer->isRegistered( 'AnEvent' ), 'AnEvent' );
+		$this->assertTrue( $hookContainer->isRegistered( 'BooEvent' ), 'BooEvent' );
 	}
 
 	public function testExportAutoload() {

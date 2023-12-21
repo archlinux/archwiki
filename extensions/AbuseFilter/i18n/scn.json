@@ -406,7 +406,6 @@
 	"abusefilter-test-page": "Canciamenti fatti ntâ pàggina:",
 	"abusefilter-test-shownegative": "Ammustra li canciamenti ca nun fannu scattari lu filtru",
 	"abusefilter-test-syntaxerr": "Lu filtru ca scrivisti avìa n'erruri di sintassi.\nPoi ottèniri na spiegazzioni cumpleta cliccannu lu buttuni «{{int:abusefilter-edit-check}}».",
-	"abusefilter-test-badtitle": "Lu tìtulu di pàggina ca scrivisti nun era bonu. Purrìa cuntèniri unu o cchiossai caràttiri chi nun si ponnu adupirari ntê tìtuli.",
 	"abusefilter-test-action": "Tipu d'azzioni:",
 	"abusefilter-test-search-type-all": "Tutti li azzioni",
 	"abusefilter-test-search-type-edit": "Canciamenti",

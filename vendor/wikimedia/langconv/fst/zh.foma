@@ -1,0 +1,333 @@
+# FOMA script for zh-* conversions
+# Generates .att files when run from this directory using:
+#   foma -f zh.foma
+# Then generate executable .pfst files with:
+#   ../tools/build-langconv-fst.js -l zh-tw zh-cn zh-hans
+#   ../tools/build-langconv-fst.js -l zh-hk zh-hans
+#   ../tools/build-langconv-fst.js -l zh-mo zh-hans
+#   ../tools/build-langconv-fst.js -l zh-hant zh-hans
+#   ../tools/build-langconv-fst.js -l zh-cn zh-tw zh-hant
+#   ../tools/build-langconv-fst.js -l zh-sg zh-hant
+#   ../tools/build-langconv-fst.js -l zh-my zh-hant
+#   ../tools/build-langconv-fst.js -l zh-hans zh-hant
+echo EXPECT 52
+
+source brackets.foma
+source util.foma
+source safety.foma
+
+# THE EXCEPTION LISTS ARE ENCODED DIRECTLY AS DECOMPOSED UTF8 BYTES
+# This is done to workaround space/time complexity problems when foma
+# processes graphs with large numbers of outgoing edges; in the UTF8
+# encoding the usual maximum number of outgoing edges is 64 (there are
+# 128 possible edges for the low-ascii characters, but zh typically
+# doesn't use those).  This means we don't need to `byte machine`
+# convert the result -- but we also need to use LONGSAFEUTF8 to ensure
+# that bracket boundaries correspond to character boundaries.
+
+# But even so, the initial longest-leftmost compilation of the exception
+# lists into a transducer can't be compiled with foma :( but works fine
+# with hfst-xfst.  See zh-hfst.foma for the source of these precompiled
+# FSTs.
+#source zh-exceptions.foma
+#define CONVERT'ZH'HANS [ TABLE'ZH'HANS @-> ];
+#define CONVERT'ZH'HANT [ TABLE'ZH'HANT @-> ];
+#define CONVERT'ZH'CN [ TABLE'ZH'CN @-> ];
+#define CONVERT'ZH'HK [ TABLE'ZH'HK @-> ];
+#define CONVERT'ZH'MO [ TABLE'ZH'MO @-> ];
+#define CONVERT'ZH'MY [ TABLE'ZH'MY @-> ];
+#define CONVERT'ZH'SG [ TABLE'ZH'SG @-> ];
+#define CONVERT'ZH'TW [ TABLE'ZH'TW @-> ];
+
+read att trans-zh-hans.att
+echo EXPECT[trans-zh-hans functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+define CONVERT'ZH'HANS;
+
+read att trans-zh-hant.att
+echo EXPECT[trans-zh-hant functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+define CONVERT'ZH'HANT;
+
+read att trans-zh-cn.att
+echo EXPECT[trans-zh-cn functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+define CONVERT'ZH'CN;
+
+read att trans-zh-hk.att
+echo EXPECT[trans-zh-hk functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+define CONVERT'ZH'HK;
+
+read att trans-zh-mo.att
+echo EXPECT[trans-zh-mo functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+define CONVERT'ZH'MO;
+
+read att trans-zh-my.att
+echo EXPECT[trans-zh-my functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+define CONVERT'ZH'MY;
+
+read att trans-zh-sg.att
+echo EXPECT[trans-zh-sg functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+define CONVERT'ZH'SG;
+
+read att trans-zh-tw.att
+echo EXPECT[trans-zh-tw functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+define CONVERT'ZH'TW;
+clear stack
+
+# Bracketing functions.
+
+source utf8.foma
+source utf8x.foma
+
+# Test for upper-universal (but don't get hung up by invalid UTF8)
+define TESTUU(x) NO'BRACKETS .o. VALID'UTF8 .o. [~[[x].u]];
+define TESTRT(a,b) TESTUU(ROUNDTRIP(a,b) .o. VALID'UTF8);
+
+define SAFE'STAR(rt) _somenonfinal( [\BRACKETS]* .o. [~NOTSAFE(rt)] );
+define APPROX'SAFE(x,rt) [
+  ?+ .o. NO'BRACKETS .o. VALID'UTF8 .o. x .o. SAFE'STAR(rt)
+]+;
+define ZH'BRACK(A,B) [
+  VALID'UTF8 .o. LONGSAFEUTF8(VALID'UTF8 .o. SAFE(A .o. B))
+];
+define ZH'BRACK'A(AMT,A,B) [
+  VALID'UTF8 .o. LONGSAFEUTF8(APPROX'SAFE(AMT,ROUNDTRIP(A,B)))
+];
+define ZH'BRACK'OK(A,B,BRACKFUNC) [
+  NO'BRACKETS .o. VALID'UTF8 .o. BRACK'NOT'OK(A .o. B,BRACKFUNC)
+];
+
+#----------- HANS/HANT
+
+regex TESTRT(CONVERT'ZH'HANS,CONVERT'ZH'HANT);
+echo EXPECT[zh-hans -> zh-hant produces valid utf8]: 1 (1 = TRUE, 0 = FALSE)
+test null
+clear stack
+
+define BRACK'HANS'HANT ZH'BRACK'A(?^<7,CONVERT'ZH'HANS,CONVERT'ZH'HANT);
+regex ZH'BRACK'OK(CONVERT'ZH'HANS,CONVERT'ZH'HANT,BRACK'HANS'HANT);
+echo EXPECT[brack-zh-hans-zh-hant safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'HANS'HANT;
+echo EXPECT[brack-zh-hans-zh-hant functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-hans-zh-hant.att
+clear stack
+
+define BRACK'HANS'NOOP ZH'BRACK(CONVERT'ZH'HANS,IDENTITY);
+regex ZH'BRACK'OK(CONVERT'ZH'HANS,IDENTITY,BRACK'HANS'NOOP);
+echo EXPECT[brack-zh-hans-noop safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'HANS'NOOP;
+echo EXPECT[brack-zh-hans-noop functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-hans-noop.att
+clear stack
+
+regex TESTRT(CONVERT'ZH'HANT,CONVERT'ZH'HANS);
+echo EXPECT[zh-hant -> zh-hans produces valid utf8]: 1 (1 = TRUE, 0 = FALSE)
+test null
+clear stack
+
+define BRACK'HANT'HANS ZH'BRACK'A(?^<7,CONVERT'ZH'HANT,CONVERT'ZH'HANS);
+regex ZH'BRACK'OK(CONVERT'ZH'HANT,CONVERT'ZH'HANS,BRACK'HANT'HANS);
+echo EXPECT[brack-zh-hant-zh-hans safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'HANT'HANS;
+echo EXPECT[brack-zh-hant-zh-hans functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-hant-zh-hans.att
+clear stack
+
+define BRACK'HANT'NOOP ZH'BRACK(CONVERT'ZH'HANT,IDENTITY);
+regex ZH'BRACK'OK(CONVERT'ZH'HANT,IDENTITY,BRACK'HANT'NOOP);
+echo EXPECT[brack-zh-hant-noop safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'HANT'NOOP;
+echo EXPECT[brack-zh-hant-noop functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-hant-noop.att
+clear stack
+
+#----------- CN/TW
+
+regex TESTRT(CONVERT'ZH'CN,CONVERT'ZH'TW);
+echo EXPECT[zh-cn -> zh-tw produces valid utf8]: 1 (1 = TRUE, 0 = FALSE)
+test null
+clear stack
+
+define BRACK'CN'TW ZH'BRACK'A(?^<7,CONVERT'ZH'CN,CONVERT'ZH'TW);
+regex ZH'BRACK'OK(CONVERT'ZH'CN,CONVERT'ZH'TW,BRACK'CN'TW);
+echo EXPECT[brack-zh-cn-zh-tw safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'CN'TW;
+echo EXPECT[brack-zh-cn-zh-tw functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-cn-zh-tw.att
+clear stack
+
+define BRACK'CN'HANT ZH'BRACK'A(?^<7,CONVERT'ZH'CN,CONVERT'ZH'HANT);
+regex ZH'BRACK'OK(CONVERT'ZH'CN,CONVERT'ZH'HANT,BRACK'CN'HANT);
+echo EXPECT[brack-zh-cn-zh-hant safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'CN'HANT;
+echo EXPECT[brack-zh-cn-zh-hant functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-cn-zh-hant.att
+clear stack
+
+define BRACK'CN'NOOP ZH'BRACK(CONVERT'ZH'CN,IDENTITY);
+regex ZH'BRACK'OK(CONVERT'ZH'CN,IDENTITY,BRACK'CN'NOOP);
+echo EXPECT[brack-zh-cn-noop safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'CN'NOOP;
+echo EXPECT[brack-zh-cn-noop functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-cn-noop.att
+clear stack
+
+regex TESTRT(CONVERT'ZH'TW,CONVERT'ZH'CN);
+echo EXPECT[zh-tw -> zh-cn produces valid utf8]: 1 (1 = TRUE, 0 = FALSE)
+test null
+clear stack
+
+define BRACK'TW'CN ZH'BRACK'A(?^<7,CONVERT'ZH'TW,CONVERT'ZH'CN);
+regex ZH'BRACK'OK(CONVERT'ZH'TW,CONVERT'ZH'CN,BRACK'TW'CN);
+echo EXPECT[brack-zh-tw-zh-cn safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'TW'CN;
+echo EXPECT[brack-zh-tw-zh-cn functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-tw-zh-cn.att
+clear stack
+
+define BRACK'TW'HANS ZH'BRACK'A(?^<7,CONVERT'ZH'TW,CONVERT'ZH'HANS);
+regex ZH'BRACK'OK(CONVERT'ZH'TW,CONVERT'ZH'HANS,BRACK'TW'HANS);
+echo EXPECT[brack-zh-tw-zh-hans safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'TW'HANS;
+echo EXPECT[brack-zh-tw-zh-hans functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-tw-zh-hans.att
+clear stack
+
+define BRACK'TW'NOOP ZH'BRACK(CONVERT'ZH'TW,IDENTITY);
+regex ZH'BRACK'OK(CONVERT'ZH'TW,IDENTITY,BRACK'TW'NOOP);
+echo EXPECT[brack-zh-tw-noop safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'TW'NOOP;
+echo EXPECT[brack-zh-tw-noop functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-tw-noop.att
+clear stack
+
+## sg/my
+
+regex TESTRT(CONVERT'ZH'SG,CONVERT'ZH'HANT);
+echo EXPECT[zh-sg -> zh-hant produces valid utf8]: 1 (1 = TRUE, 0 = FALSE)
+test null
+clear stack
+
+define BRACK'SG'HANT ZH'BRACK'A(?^<7,CONVERT'ZH'SG,CONVERT'ZH'HANT);
+regex ZH'BRACK'OK(CONVERT'ZH'SG,CONVERT'ZH'HANT,BRACK'SG'HANT);
+echo EXPECT[brack-zh-sg-zh-hant safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'SG'HANT;
+echo EXPECT[brack-zh-sg-zh-hant functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-sg-zh-hant.att
+clear stack
+
+define BRACK'SG'NOOP ZH'BRACK(CONVERT'ZH'SG,IDENTITY);
+regex ZH'BRACK'OK(CONVERT'ZH'SG,IDENTITY,BRACK'SG'NOOP);
+echo EXPECT[brack-zh-sg-noop safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'SG'NOOP;
+echo EXPECT[brack-zh-sg-noop functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-sg-noop.att
+clear stack
+
+regex TESTRT(CONVERT'ZH'MY,CONVERT'ZH'HANT);
+echo EXPECT[zh-my -> zh-hant produces valid utf8]: 1 (1 = TRUE, 0 = FALSE)
+test null
+clear stack
+
+define BRACK'MY'HANT ZH'BRACK'A(?^<7,CONVERT'ZH'MY,CONVERT'ZH'HANT);
+regex ZH'BRACK'OK(CONVERT'ZH'MY,CONVERT'ZH'HANT,BRACK'MY'HANT);
+echo EXPECT[brack-zh-my-zh-hant safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'MY'HANT;
+echo EXPECT[brack-zh-my-zh-hant functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-my-zh-hant.att
+clear stack
+
+define BRACK'MY'NOOP ZH'BRACK(CONVERT'ZH'MY,IDENTITY);
+regex ZH'BRACK'OK(CONVERT'ZH'MY,IDENTITY,BRACK'MY'NOOP);
+echo EXPECT[brack-zh-my-noop safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'MY'NOOP;
+echo EXPECT[brack-zh-my-noop functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-my-noop.att
+clear stack
+
+
+## hk/mo
+
+regex TESTRT(CONVERT'ZH'HK,CONVERT'ZH'HANS);
+echo EXPECT[zh-hk -> zh-hans produces valid utf8]: 1 (1 = TRUE, 0 = FALSE)
+test null
+clear stack
+
+define BRACK'HK'HANS ZH'BRACK'A(?^<7,CONVERT'ZH'HK,CONVERT'ZH'HANS);
+regex ZH'BRACK'OK(CONVERT'ZH'HK,CONVERT'ZH'HANS,BRACK'HK'HANS);
+echo EXPECT[brack-zh-hk-zh-hans safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'HK'HANS;
+echo EXPECT[brack-zh-hk-zh-hans functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-hk-zh-hans.att
+clear stack
+
+define BRACK'HK'NOOP ZH'BRACK(CONVERT'ZH'HK,IDENTITY);
+regex ZH'BRACK'OK(CONVERT'ZH'HK,IDENTITY,BRACK'HK'NOOP);
+echo EXPECT[brack-zh-hk-noop safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'HK'NOOP;
+echo EXPECT[brack-zh-hk-noop functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-hk-noop.att
+clear stack
+
+regex TESTRT(CONVERT'ZH'MO,CONVERT'ZH'HANS);
+echo EXPECT[zh-mo -> zh-hans produces valid utf8]: 1 (1 = TRUE, 0 = FALSE)
+test null
+clear stack
+
+define BRACK'MO'HANS ZH'BRACK'A(?^<7,CONVERT'ZH'MO,CONVERT'ZH'HANS);
+regex ZH'BRACK'OK(CONVERT'ZH'MO,CONVERT'ZH'HANS,BRACK'MO'HANS);
+echo EXPECT[brack-zh-mo-zh-hans safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'MO'HANS;
+echo EXPECT[brack-zh-mo-zh-hans functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-mo-zh-hans.att
+clear stack
+
+define BRACK'MO'NOOP ZH'BRACK(CONVERT'ZH'MO,IDENTITY);
+regex ZH'BRACK'OK(CONVERT'ZH'MO,IDENTITY,BRACK'MO'NOOP);
+echo EXPECT[brack-zh-mo-noop safe]: 1 (1 = TRUE, 0 = FALSE)
+test null
+regex BRACK'MO'NOOP;
+echo EXPECT[brack-zh-mo-noop functional]: 1 (1 = TRUE, 0 = FALSE)
+test functional
+write att brack-zh-mo-noop.att
+clear stack

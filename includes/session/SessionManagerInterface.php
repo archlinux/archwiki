@@ -23,9 +23,9 @@
 
 namespace MediaWiki\Session;
 
+use MediaWiki\Request\WebRequest;
+use MediaWiki\User\User;
 use Psr\Log\LoggerAwareInterface;
-use User;
-use WebRequest;
 
 /**
  * This exists to make IDEs happy, so they don't see the
@@ -91,13 +91,10 @@ interface SessionManagerInterface extends LoggerAwareInterface {
 	 *
 	 * The return value is such that someone could theoretically do this:
 	 * @code
-	 * foreach ( $provider->getVaryHeaders() as $header => $options ) {
-	 *   $outputPage->addVaryHeader( $header, $options );
+	 * foreach ( $provider->getVaryHeaders() as $header ) {
+	 *   $outputPage->addVaryHeader( $header );
 	 * }
 	 * @endcode
-	 *
-	 * Note that the $options argument to OutputPage::addVaryHeader() has
-	 * been deprecated and should always be null.
 	 *
 	 * @return array
 	 */

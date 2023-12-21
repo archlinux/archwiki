@@ -1,18 +1,20 @@
 <?php
 
+use MediaWiki\Extension\Notifications\DbFactory;
+use MediaWiki\Extension\Notifications\UnreadWikis;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * Tests for unread wiki database access
  *
  * @group Database
- * @covers \EchoUnreadWikis
+ * @covers \MediaWiki\Extension\Notifications\UnreadWikis
  */
 class UnreadWikisTest extends MediaWikiIntegrationTestCase {
 
 	public function testUpdateCount() {
-		$unread = TestingAccessWrapper::newFromObject( new EchoUnreadWikis( 1 ) );
-		$unread->dbFactory = $this->mockMWEchoDbFactory( $this->db );
+		$unread = TestingAccessWrapper::newFromObject( new UnreadWikis( 1 ) );
+		$unread->dbFactory = $this->mockDbFactory( $this->db );
 		$unread->updateCount(
 			'foobar',
 			2,
@@ -32,8 +34,8 @@ class UnreadWikisTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testUpdateCountFalse() {
-		$unread = TestingAccessWrapper::newFromObject( new EchoUnreadWikis( 1 ) );
-		$unread->dbFactory = $this->mockMWEchoDbFactory( $this->db );
+		$unread = TestingAccessWrapper::newFromObject( new UnreadWikis( 1 ) );
+		$unread->dbFactory = $this->mockDbFactory( $this->db );
 		$unread->updateCount(
 			'foobar',
 			3,
@@ -53,15 +55,15 @@ class UnreadWikisTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * Mock object of MWEchoDbFactory
+	 * Mock object of DbFactory
 	 * @param \Wikimedia\Rdbms\IDatabase $db
-	 * @return MWEchoDbFactory
+	 * @return DbFactory
 	 */
-	protected function mockMWEchoDbFactory( $db ) {
-		$dbFactory = $this->createMock( MWEchoDbFactory::class );
+	protected function mockDbFactory( $db ) {
+		$dbFactory = $this->createMock( DbFactory::class );
 		$dbFactory->expects( $this->any() )
 			->method( 'getSharedDb' )
-			->will( $this->returnValue( $db ) );
+			->willReturn( $db );
 
 		return $dbFactory;
 	}

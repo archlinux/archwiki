@@ -29,7 +29,7 @@ class AbstractMapperTest extends MediaWikiUnitTestCase {
 
 	public function testAttachListenerWithException() {
 		$mapper = new EchoAbstractMapperStub();
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$mapper->attachListener( 'nonExistingMethod', 'key_a', static function () {
 		} );
 	}
@@ -53,7 +53,7 @@ class AbstractMapperTest extends MediaWikiUnitTestCase {
 		/** @var AbstractMapper $mapper */
 		$mapper = $data['mapper'];
 
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$mapper->getMethodListeners( 'nonExistingMethod' );
 	}
 

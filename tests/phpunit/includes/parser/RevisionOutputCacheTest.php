@@ -12,8 +12,9 @@ use MediaWiki\Parser\RevisionOutputCache;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Tests\Json\JsonUnserializableSuperClass;
+use MediaWiki\User\User;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
-use MWTimestamp;
 use NullStatsdDataFactory;
 use ParserOptions;
 use ParserOutput;
@@ -21,7 +22,6 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 use TestLogger;
-use User;
 use WANObjectCache;
 use Wikimedia\TestingAccessWrapper;
 
@@ -282,7 +282,7 @@ class RevisionOutputCacheTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideCorruptData() {
+	public static function provideCorruptData() {
 		yield 'JSON serialization, bad data' => [ 'bla bla' ];
 		yield 'JSON serialization, no _class_' => [ '{"test":"test"}' ];
 		yield 'JSON serialization, non-existing _class_' => [ '{"_class_":"NonExistentBogusClass"}' ];

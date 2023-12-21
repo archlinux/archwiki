@@ -5,10 +5,12 @@ namespace MediaWiki\Extension\DiscussionTools;
 use IContextSource;
 use InvalidArgumentException;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Title\Title;
 use OOUI;
 use TablePager;
-use Title;
 
 class TopicSubscriptionsPager extends TablePager {
 
@@ -73,11 +75,28 @@ class TopicSubscriptionsPager extends TablePager {
 
 		switch ( $field ) {
 			case '_topic':
-				$titleSection = Title::makeTitleSafe( $row->sub_namespace, $row->sub_title, $row->sub_section );
-				return $linkRenderer->makeLink( $titleSection, $row->sub_section );
+				if ( str_starts_with( $row->sub_item, 'p-topics-' ) ) {
+					return '<em>' .
+						$this->msg( 'discussiontools-topicsubscription-pager-newtopics-label' )->escaped() .
+					'</em>';
+				} else {
+					$titleSection = Title::makeTitleSafe( $row->sub_namespace, $row->sub_title, $row->sub_section );
+					if ( !$titleSection ) {
+						// Handle invalid titles (T345648)
+						return htmlspecialchars( $row->sub_section );
+					}
+					return $linkRenderer->makeLink( $titleSection, $row->sub_section );
+				}
 
 			case '_page':
 				$title = Title::makeTitleSafe( $row->sub_namespace, $row->sub_title );
+				if ( !$title ) {
+					// Handle invalid titles (T345648)
+					return Html::element( 'span', [ 'class' => 'mw-invalidtitle' ],
+						Linker::getInvalidTitleDescription(
+							$this->getContext(), $row->sub_namespace, $row->sub_title )
+						);
+				}
 				return $linkRenderer->makeLink( $title, $title->getPrefixedText() );
 
 			case 'sub_created':
@@ -90,6 +109,12 @@ class TopicSubscriptionsPager extends TablePager {
 
 			case '_unsubscribe':
 				$title = Title::makeTitleSafe( $row->sub_namespace, $row->sub_title );
+				if ( !$title ) {
+					// Handle invalid titles (T345648)
+					// The title isn't checked when unsubscribing, as long as it's a valid title,
+					// so specify something to make it possible to unsubscribe from the buggy entries.
+					$title = Title::newMainPage();
+				}
 				return (string)new OOUI\ButtonWidget( [
 					'label' => $this->msg( 'discussiontools-topicsubscription-pager-unsubscribe-button' )->text(),
 					'classes' => [ 'ext-discussiontools-special-unsubscribe-button' ],

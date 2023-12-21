@@ -1,7 +1,6 @@
 <?php
 
 use MediaWiki\MainConfigNames;
-use Wikimedia\Rdbms\LoadBalancerSingle;
 
 /**
  * @group Search
@@ -32,8 +31,9 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 		if ( !$dbSupported ) {
 			$this->markTestSkipped( "MySQL or SQLite with FTS3 only" );
 		}
+		$dbProvider = $this->getServiceContainer()->getDBLoadBalancerFactory();
 
-		$searchType = SearchEngineFactory::getSearchEngineClass( $this->db );
+		$searchType = SearchEngineFactory::getSearchEngineClass( $dbProvider );
 		$this->overrideConfigValues( [
 			MainConfigNames::SearchType => $searchType,
 			MainConfigNames::CapitalLinks => true,
@@ -42,8 +42,7 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 			],
 		] );
 
-		$lb = LoadBalancerSingle::newFromConnection( $this->db );
-		$this->search = new $searchType( $lb );
+		$this->search = new $searchType( $dbProvider );
 		$this->search->setHookContainer( $this->getServiceContainer()->getHookContainer() );
 	}
 
@@ -200,7 +199,7 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 		$phrase = "smithee is one who smiths";
 		$res = $this->search->searchText( "\"$phrase\"" );
 		$match = $res->getIterator()->current();
-		$snippet = "A <span class='searchmatch'>" . $phrase . "</span>";
+		$snippet = 'A <span class="searchmatch">' . $phrase . '</span>';
 		$this->assertStringStartsWith( $snippet,
 			$match->getTextSnippet(),
 			"Highlight a phrase search" );
@@ -245,7 +244,7 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 			"Title power search" );
 	}
 
-	public function provideCompletionSearchMustRespectCapitalLinkOverrides() {
+	public static function provideCompletionSearchMustRespectCapitalLinkOverrides() {
 		return [
 			'Searching for "smithee" finds Smithee on NS_MAIN' => [
 				'smithee',
@@ -354,7 +353,7 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 		$this->markTestSkippedIfDbType( 'sqlite' );
 
 		$this->search->setHookContainer(
-			$this->createHookContainer( [ 'SearchResultsAugment' => [ [ $this, 'addAugmentors' ] ] ] )
+			$this->createHookContainer( [ 'SearchResultsAugment' => [ $this, 'addAugmentors' ] ] )
 		);
 
 		$this->search->setNamespaces( [ 0, 1, 4 ] );
@@ -404,8 +403,8 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 			if ( $i % 2 == 0 ) {
 				$this->editPage(
 					$title,
-					new WikitextContent( 'UTContent' ),
-					'UTPageSummary',
+					new WikitextContent( 'TestFiltersMissing content' ),
+					'TestFiltersMissing summary',
 					NS_MAIN,
 					$user
 				);
@@ -426,7 +425,7 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 		$this->assertFalse( $results->hasMoreResults() );
 	}
 
-	public function provideDataForParseNamespacePrefix() {
+	public static function provideDataForParseNamespacePrefix() {
 		return [
 			'noop' => [
 				[

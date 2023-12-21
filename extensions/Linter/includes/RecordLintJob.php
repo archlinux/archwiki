@@ -21,7 +21,7 @@
 namespace MediaWiki\Linter;
 
 use Job;
-use Title;
+use MediaWiki\Title\Title;
 
 class RecordLintJob extends Job {
 	/**

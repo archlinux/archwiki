@@ -23,7 +23,7 @@
 
 namespace MediaWiki\Request;
 
-use Config;
+use MediaWiki\Config\Config;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 
@@ -45,7 +45,7 @@ class FauxResponse extends WebResponse {
 	 * @param null|int $http_response_code Forces the HTTP response code to the specified value.
 	 */
 	public function header( $string, $replace = true, $http_response_code = null ) {
-		if ( substr( $string, 0, 5 ) == 'HTTP/' ) {
+		if ( str_starts_with( $string, 'HTTP/' ) ) {
 			$parts = explode( ' ', $string, 3 );
 			$this->code = intval( $parts[1] );
 		} else {
@@ -188,4 +188,7 @@ class FauxResponse extends WebResponse {
 
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( FauxResponse::class, 'FauxResponse' );

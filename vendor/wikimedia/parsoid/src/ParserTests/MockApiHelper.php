@@ -84,12 +84,27 @@ class MockApiHelper extends ApiHelper {
 			'duration' => 4.3666666666667,
 			'mime' => 'video/ogg; codecs="theora"',
 			'mediatype' => 'VIDEO',
-			'title' => 'Original Ogg file, 320 × 240 (590 kbps)',
-			'shorttitle' => 'Ogg source',
 			# hacky way to get seek parameters to return the correct info
 			'extraParams' => [
 				'seek=1.2' => 'seek%3D1.2',
 				'seek=85' => 'seek%3D3.3666666666667', # hard limited by duration
+			],
+		],
+		'Transcode.webm' => [
+			'size' => 12345,
+			'width' => 492,
+			'height' => 360,
+			'bits' => 0,
+			'duration' => 4,
+			'mime' => 'video/webm; codecs="vp8, vorbis"',
+			'mediatype' => 'VIDEO',
+			'derivatives' => [
+				[
+					'type' => 'video/webm; codecs="vp9, opus"',
+					'transcodekey' => '240p.vp9.webm',
+					'width' => 328,
+					'height' => 240,
+				],
 			],
 		],
 		'Audio.oga' => [
@@ -102,8 +117,6 @@ class MockApiHelper extends ApiHelper {
 			'duration' => 0.99875,
 			'mime' => 'audio/ogg; codecs="vorbis"',
 			'mediatype' => 'AUDIO',
-			'title' => 'Original Ogg file (41 kbps)',
-			'shorttitle' => 'Ogg source',
 		]
 	];
 
@@ -411,6 +424,7 @@ class MockApiHelper extends ApiHelper {
 		'File:Thumb.png' => 'Thumb.png',
 		'File:LoremIpsum.djvu' => 'LoremIpsum.djvu',
 		'File:Video.ogv' => 'Video.ogv',
+		'File:Transcode.webm' => 'Transcode.webm',
 		'File:Audio.oga' => 'Audio.oga',
 		'File:Bad.jpg' => 'Bad.jpg',
 	];
@@ -763,21 +777,26 @@ class MockApiHelper extends ApiHelper {
 				}
 			}
 		}
-		// Make this look like a TMH response
-		if ( isset( $props['title'] ) || isset( $props['shorttitle'] ) ) {
+
+		if ( isset( $props['derivatives'] ) ) {
 			$info['derivatives'] = [
 				[
 					'src' => $info['url'],
 					'type' => $info['mime'],
 					'width' => strval( $info['width'] ),
 					'height' => strval( $info['height'] ),
-				]
+				],
 			];
-			if ( isset( $props['title'] ) ) {
-				$info['derivatives'][0]['title'] = $props['title'];
-			}
-			if ( isset( $props['shorttitle'] ) ) {
-				$info['derivatives'][0]['shorttitle'] = $props['shorttitle'];
+			foreach ( $props['derivatives'] as $derivative ) {
+				$info['derivatives'][] = [
+					'src' => self::IMAGE_BASE_URL . '/transcoded/' .
+						$md5prefix . $normFileName . '/' .
+						$normFileName . '.' . $derivative['transcodekey'],
+					'type' => $derivative['type'],
+					'transcodekey' => $derivative['transcodekey'],
+					'width' => strval( $derivative['width'] ),
+					'height' => strval( $derivative['height'] ),
+				];
 			}
 		}
 
@@ -795,7 +814,7 @@ class MockApiHelper extends ApiHelper {
 		if ( ( $params['meta'] ?? null ) === 'siteinfo' ) {
 			if ( !isset( $this->cachedConfigs[$this->prefix] ) ) {
 				$this->cachedConfigs[$this->prefix] = json_decode(
-					file_get_contents( __DIR__ . "/../../baseconfig/2/$this->prefix.json" ), true );
+					file_get_contents( __DIR__ . "/../../baseconfig/$this->prefix.json" ), true );
 			}
 			return $this->cachedConfigs[$this->prefix];
 		}

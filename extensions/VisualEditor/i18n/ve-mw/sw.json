@@ -9,10 +9,9 @@
 			"Wangombe"
 		]
 	},
-	"tooltip-ca-createsource": "Anzisha chanzo msimbo za ukurasa huu",
-	"tooltip-ca-editsource": "Hariri chanzo msimbo za ukurasa huu",
 	"tooltip-ca-ve-edit": "Hariri ukurasa huu na VisualEditor",
-	"visualeditor-beta-warning": "VisualEditor ipo katika 'beta'. Kwa hiyo labda utakuta matatizo ya bidhaa pepe unapohariri na kushindwa kuhariri mengine. Bonyeza \"{{int:visualeditor-ca-editsource}}\" ili kutumia njia ya kuhariri ya kimsingi - ila kumbuka kuhifadhi ulichofanya tayari kabla ya kubadilisha njia ya kuhariri, ili mabadiliko yako yasipotee.",
+	"tooltip-ca-editsource": "Hariri chanzo msimbo za ukurasa huu",
+	"tooltip-ca-createsource": "Anzisha chanzo msimbo za ukurasa huu",
 	"visualeditor-browserwarning": "Unatumia kivinjari ambacho hakiendani rasmi na VisualEditor.",
 	"visualeditor-ca-createlocaldescriptionsource": "Ongeza chanzo cha maelezo ya eneo lako",
 	"visualeditor-ca-createsource": "Weka chanzo",
@@ -65,7 +64,6 @@
 	"visualeditor-linkinspector-illegal-title": "Jina la kurasa batili",
 	"visualeditor-linknodeinspector-title": "Kiungo sahili",
 	"visualeditor-meta-tool": "Chaguzi",
-	"visualeditor-mweditmodesource-warning-cancel": "Batilisha",
 	"visualeditor-savedialog-label-resolve-conflict": "Tatua mgongano",
 	"visualeditor-savedialog-label-review": "Pitia mabadiliko yako",
 	"visualeditor-savedialog-label-review-good": "Rudia katika ukurasa wa kuhifadhi",

@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Quintino Lopes Castro Tavares",
 			"Waldir",
-			"Waldyrious",
-			"Amire80"
+			"Waldyrious"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 língua}}",

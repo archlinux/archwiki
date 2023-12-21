@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Ilja.mos",
-			"Mashoi7"
+			"Mashoi7",
+			"Ruppijeva"
 		]
 	},
-	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|passiboiče}}}}",
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|kiitä}}}}",
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|passiboičit}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Passiboiče}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Passiboičit}}}}",

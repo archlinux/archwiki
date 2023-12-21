@@ -61,5 +61,6 @@
 	"notification-flow-thanks-post-link": "via komento",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|dankis}} {{GENDER:$5|vin}} pro via komento en «<strong>$3</strong>».",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|dankis}} {{GENDER:$3|vin}}.",
-	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Unu homo|$1 homoj|100=99+ homoj}} dankis {{GENDER:$3|vin}} pro via komento sur <strong>$2</strong>."
+	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Unu homo|$1 homoj|100=99+ homoj}} dankis {{GENDER:$3|vin}} pro via komento sur <strong>$2</strong>.",
+	"ipb-action-thanks": "Dankado"
 }

@@ -38,6 +38,9 @@
 				:value="wprov"
 			>
 		</template>
+		<template #search-results-pending>
+			{{ $i18n( 'vector-search-loader' ).text() }}
+		</template>
 		<!-- eslint-disable-next-line vue/no-template-shadow -->
 		<template #search-footer-text="{ searchQuery }">
 			<span v-i18n-html:vector-searchsuggest-containing="[ searchQuery ]"></span>
@@ -46,7 +49,6 @@
 </template>
 
 <script>
-/* global AbortableSearchFetch, SearchSubmitEvent */
 const { CdxTypeaheadSearch } = require( '@wikimedia/codex-search' ),
 	{ defineComponent, nextTick } = require( 'vue' ),
 	client = require( './restSearchClient.js' ),
@@ -70,7 +72,8 @@ module.exports = exports = defineComponent( {
 			required: true
 		},
 		autocapitalizeValue: {
-			type: String
+			type: String,
+			default: undefined
 		},
 		searchPageTitle: {
 			type: String,
@@ -85,42 +88,40 @@ module.exports = exports = defineComponent( {
 			default: ''
 		},
 		/** The keyboard shortcut to focus search. */
-		// eslint-disable-next-line vue/require-default-prop
 		searchAccessKey: {
-			type: String
+			type: String,
+			default: undefined
 		},
 		/** The access key informational tip for search. */
-		// eslint-disable-next-line vue/require-default-prop
 		searchTitle: {
-			type: String
+			type: String,
+			default: undefined
 		},
 		/** The ghost text shown when no search query is entered. */
-		// eslint-disable-next-line vue/require-default-prop
 		searchPlaceholder: {
-			type: String
+			type: String,
+			default: undefined
 		},
 		/**
 		 * The search query string taken from the server-side rendered input immediately before
 		 * client render.
 		 */
-		// eslint-disable-next-line vue/require-default-prop
 		searchQuery: {
-			type: String
+			type: String,
+			default: undefined
 		},
 		showThumbnail: {
 			type: Boolean,
-			// eslint-disable-next-line vue/no-boolean-default
-			default: true
+			required: true,
+			default: false
 		},
 		showDescription: {
 			type: Boolean,
-			// eslint-disable-next-line vue/no-boolean-default
-			default: true
+			default: false
 		},
 		highlightQuery: {
 			type: Boolean,
-			// eslint-disable-next-line vue/no-boolean-default
-			default: true
+			default: false
 		},
 		autoExpandWidth: {
 			type: Boolean,
@@ -227,7 +228,9 @@ module.exports = exports = defineComponent( {
 							this.suggestions = [];
 						}
 						this.suggestions.push(
-							...instrumentation.addWprovToSearchResultUrls( data.results, this.suggestions.length )
+							...instrumentation.addWprovToSearchResultUrls(
+								data.results, this.suggestions.length
+							)
 						);
 						this.searchFooterUrl = urlGenerator.generateUrl( query );
 					}

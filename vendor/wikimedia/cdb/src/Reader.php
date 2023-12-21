@@ -26,17 +26,12 @@ namespace Cdb;
  */
 abstract class Reader {
 	/**
-	 * The file handle
-	 */
-	protected $handle;
-
-	/**
 	 * Open a file and return a subclass instance
 	 *
 	 * @param string $fileName
 	 * @return Reader
 	 */
-	public static function open( $fileName ) {
+	public static function open( $fileName ): Reader {
 		return self::haveExtension() ?
 			new Reader\DBA( $fileName ) :
 			new Reader\PHP( $fileName );
@@ -48,34 +43,25 @@ abstract class Reader {
 	 * @return bool
 	 * @codeCoverageIgnore
 	 */
-	public static function haveExtension() {
+	public static function haveExtension(): bool {
 		if ( !function_exists( 'dba_handlers' ) ) {
 			return false;
 		}
 		$handlers = dba_handlers();
-		if ( !in_array( 'cdb', $handlers ) || !in_array( 'cdb_make', $handlers ) ) {
-			return false;
-		}
 
-		return true;
+		return in_array( 'cdb', $handlers ) && in_array( 'cdb_make', $handlers );
 	}
-
-	/**
-	 * Create the object and open the file
-	 *
-	 * @param string $fileName
-	 */
-	abstract public function __construct( $fileName );
 
 	/**
 	 * Close the file. Optional, you can just let the variable go out of scope.
 	 */
-	abstract public function close();
+	abstract public function close(): void;
 
 	/**
 	 * Get a value with a given key. Only string values are supported.
 	 *
-	 * @param string $key
+	 * @param string|int $key
+	 * @return string|false
 	 */
 	abstract public function get( $key );
 
@@ -83,16 +69,21 @@ abstract class Reader {
 	 * Check whether key exists
 	 *
 	 * @param string $key
+	 * @return bool
 	 */
-	abstract public function exists( $key );
+	abstract public function exists( $key ): bool;
 
 	/**
 	 * Fetch first key
+	 *
+	 * @return string|false
 	 */
 	abstract public function firstkey();
 
 	/**
 	 * Fetch next key
+	 *
+	 * @return string|false
 	 */
 	abstract public function nextkey();
 }

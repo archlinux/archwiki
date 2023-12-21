@@ -26,7 +26,7 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
-use NamespaceInfo;
+use MediaWiki\Title\NamespaceInfo;
 use Skin;
 use Wikimedia\Assert\Assert;
 
@@ -45,38 +45,40 @@ class DefaultOptionsLookup extends UserOptionsLookup {
 		MainConfigNames::NamespacesToBeSearchedDefault
 	];
 
-	/** @var ServiceOptions */
-	private $serviceOptions;
-
-	/** @var Language */
-	private $contentLang;
-
-	/** @var NamespaceInfo */
-	protected $nsInfo;
+	private ServiceOptions $serviceOptions;
+	private Language $contentLang;
+	private NamespaceInfo $nsInfo;
 
 	/** @var array|null Cached default options */
 	private $defaultOptions = null;
 
-	/** @var HookRunner */
-	private $hookRunner;
+	private HookRunner $hookRunner;
+
+	/**
+	 * @var bool Whether a database-less test is being executed.
+	 */
+	private bool $isDatabaselessTest;
 
 	/**
 	 * @param ServiceOptions $options
 	 * @param Language $contentLang
 	 * @param HookContainer $hookContainer
 	 * @param NamespaceInfo $nsInfo
+	 * @param bool $isDatabaselessTest
 	 */
 	public function __construct(
 		ServiceOptions $options,
 		Language $contentLang,
 		HookContainer $hookContainer,
-		NamespaceInfo $nsInfo
+		NamespaceInfo $nsInfo,
+		bool $isDatabaselessTest
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->serviceOptions = $options;
 		$this->contentLang = $contentLang;
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->nsInfo = $nsInfo;
+		$this->isDatabaselessTest = $isDatabaselessTest;
 	}
 
 	/**
@@ -151,10 +153,17 @@ class DefaultOptionsLookup extends UserOptionsLookup {
 	 * It only makes sense in an installer context when UserOptionsManager cannot be yet instantiated
 	 * as the database is not available. Thus, this can only be called for an anon user,
 	 * calling under different circumstances indicates a bug.
+	 * The only exception to this is database-less PHPUnit tests, where sometimes fake registered users are
+	 * used and end up being passed to this class. This should not be considered a bug, and using the default
+	 * preferences in this scenario is probably the intended behaviour.
+	 *
 	 * @param UserIdentity $user
 	 * @param string $fname
 	 */
 	private function verifyUsable( UserIdentity $user, string $fname ) {
-		Assert::precondition( !$user->isRegistered(), "$fname called on a registered user " );
+		Assert::precondition(
+			$this->isDatabaselessTest || !$user->isRegistered(),
+			"$fname called on a registered user "
+		);
 	}
 }

@@ -23,7 +23,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ūtanweard hlenca",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Innanweard hlenca",
 	"wikieditor-toolbar-tool-file-example": "Bysen.jpg",
-	"wikieditor-toolbar-tool-reference": "Fruma",
 	"wikieditor-toolbar-tool-heading-1": "1. emnet",
 	"wikieditor-toolbar-tool-heading-2": "2. emnet",
 	"wikieditor-toolbar-tool-heading-3": "3. emnet",
@@ -41,8 +40,6 @@
 	"wikieditor-toolbar-help-page-link": "Hlencan",
 	"wikieditor-toolbar-help-page-discussion": "Mōtung",
 	"wikieditor-toolbar-help-content-bold-description": "Þicce",
-	"wikieditor-toolbar-help-content-bold-syntax": "'''Þicce traht'''",
-	"wikieditor-toolbar-help-content-bold-result": "<strong>Þicce traht</strong>",
-	"wikieditor-toolbar-help-content-ilink-description": "Inweard hlenca",
-	"wikieditor-toolbar-help-content-reference-description": "Fruma"
+	"wikieditor-toolbar-help-content-bold-example": "Þicce traht",
+	"wikieditor-toolbar-help-content-ilink-description": "Inweard hlenca"
 }

@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Kizule",
 			"Macofe",
 			"Milicevic01",
 			"Obsuser",
 			"Prevodim",
 			"Srdjan m",
 			"Srđan",
-			"Сербијана",
-			"Kizule"
+			"Сербијана"
 		]
 	},
 	"echo-desc": "Sistem za obaveštavanje korisnika o događajima i porukama",
@@ -40,7 +40,7 @@
 	"echo-pref-notifications-page-linked-title-muted-list": "Ne prikazuj obaveštenja o povezivanju sledećih stranica. ([[mw:Special:MyLanguage/Help:Notifications#mute|detaljnije]])",
 	"echo-pref-dont-email-read-notifications": "Ne uključuj pročitana obaveštenja u e-porukama sa rezimeom",
 	"echo-learn-more": "Saznajte više",
-	"echo-log": "Javni dnevnik",
+	"echo-log": "Javan dnevnik",
 	"echo-new-messages": "Imate nove poruke",
 	"echo-category-title-edit-user-talk": "{{PLURAL:$1|Izmena|Izmene}} na mojoj stranici za razgovor",
 	"echo-category-title-article-linked": "{{PLURAL:$1|Veza|Veze}} ka stranici",

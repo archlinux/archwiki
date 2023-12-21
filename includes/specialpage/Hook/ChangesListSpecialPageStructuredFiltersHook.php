@@ -2,7 +2,7 @@
 
 namespace MediaWiki\SpecialPage\Hook;
 
-use ChangesListSpecialPage;
+use MediaWiki\SpecialPage\ChangesListSpecialPage;
 
 /**
  * This is a hook handler interface, see docs/Hooks.md.
@@ -14,7 +14,7 @@ use ChangesListSpecialPage;
 interface ChangesListSpecialPageStructuredFiltersHook {
 	/**
 	 * Use this hook to register filters for pages inheriting from ChangesListSpecialPage
-	 * (in core: RecentChanges,vRecentChangesLinked, and Watchlist). Generally, you will
+	 * (in core: RecentChanges, RecentChangesLinked, and Watchlist). Generally, you will
 	 * want to construct new ChangesListBooleanFilter or ChangesListStringOptionsFilter objects.
 	 * When constructing them, you specify which group they belong to. You can reuse
 	 * existing groups (accessed through $special->getFilterGroup), or create your own

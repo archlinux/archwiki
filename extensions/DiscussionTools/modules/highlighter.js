@@ -27,7 +27,7 @@ function Highlight( comments ) {
 		// when it shifts (e.g. collapsing the table of contents), and disappears when it is hidden (e.g.
 		// opening visual editor).
 		var range = comment.getNativeRange();
-		// Support: Firefox, IE 11
+		// Support: Firefox
 		// The highlight node must be inserted after the start marker node (data-mw-comment-start), not
 		// before, otherwise Node#getBoundingClientRect() returns wrong results.
 		range.insertNode( $highlight[ 0 ] );
@@ -59,6 +59,15 @@ function Highlight( comments ) {
 	// Events
 	this.updateDebounced = OO.ui.debounce( this.update.bind( this ), 500 );
 	window.addEventListener( 'resize', this.updateDebounced );
+
+	if ( OO.ui.isMobile() ) {
+		// In MobileFrontend, ensure the section we are highlighting within is expanded. This is
+		// often the case as we add the hash fragment to our notification URLs, but not when we highlight
+		// comments across multiple threads.
+		// HACK: Ideally MF would expose Toggler as a public API, but for now just find the correct DOM
+		// node and trigger a fake click.
+		this.$element.parents( '.collapsible-block' ).prev( '.collapsible-heading:not( .open-block )' ).trigger( 'click' );
+	}
 
 	this.update();
 }
@@ -202,8 +211,11 @@ function highlightTargetComment( threadItemSet, noScroll ) {
 		threadItemSet,
 		noScroll,
 		url.searchParams.get( 'dtnewcomments' ) && url.searchParams.get( 'dtnewcomments' ).split( '|' ),
-		url.searchParams.get( 'dtnewcommentssince' ),
-		url.searchParams.get( 'dtinthread' )
+		{
+			newCommentsSinceId: url.searchParams.get( 'dtnewcommentssince' ),
+			inThread: url.searchParams.get( 'dtinthread' ),
+			sinceThread: url.searchParams.get( 'dtsincethread' )
+		}
 	);
 }
 
@@ -288,26 +300,30 @@ function highlightPublishedComment( threadItemSet, threadItemId ) {
  * @param {ThreadItemSet} threadItemSet
  * @param {boolean} [noScroll] Don't scroll to the topmost highlighted comment, e.g. on popstate
  * @param {string[]} [newCommentIds] A list of comment IDs to highlight
- * @param {string} [newCommentsSinceId] Highlight all comments after the comment with this ID
- * @param {boolean} [inThread] When using newCommentsSinceId, only highlight comments in the same thread
+ * @param {Object} [options] Extra options
+ * @param {string} [options.newCommentsSinceId] Highlight all comments after the comment with this ID
+ * @param {boolean} [options.inThread] When using newCommentsSinceId, only highlight comments in the same thread
+ * @param {boolean} [options.sinceThread] When using newCommentsSinceId, only highlight comments in threads
+ *  created since that comment was posted.
  */
-function highlightNewComments( threadItemSet, noScroll, newCommentIds, newCommentsSinceId, inThread ) {
+function highlightNewComments( threadItemSet, noScroll, newCommentIds, options ) {
 	if ( highlightedTarget ) {
 		highlightedTarget.destroy();
 		highlightedTarget = null;
 	}
 
 	newCommentIds = newCommentIds || [];
+	options = options || {};
 
-	var highlightsRequested = newCommentIds.length || newCommentsSinceId;
-	var highlightsRequestedSingle = !newCommentsSinceId && newCommentIds.length === 1;
+	var highlightsRequested = newCommentIds.length || options.newCommentsSinceId;
+	var highlightsRequestedSingle = !options.newCommentsSinceId && newCommentIds.length === 1;
 
-	if ( newCommentsSinceId ) {
-		var newCommentsSince = threadItemSet.findCommentById( newCommentsSinceId );
+	if ( options.newCommentsSinceId ) {
+		var newCommentsSince = threadItemSet.findCommentById( options.newCommentsSinceId );
 		if ( newCommentsSince && newCommentsSince instanceof CommentItem ) {
 			var sinceTimestamp = newCommentsSince.timestamp;
 			var threadItems;
-			if ( inThread ) {
+			if ( options.inThread ) {
 				var heading = newCommentsSince.getSubscribableHeading() || newCommentsSince.getHeading();
 				threadItems = heading.getThreadItemsBelow();
 			} else {
@@ -318,6 +334,15 @@ function highlightNewComments( threadItemSet, noScroll, newCommentIds, newCommen
 					threadItem instanceof CommentItem &&
 					threadItem.timestamp >= sinceTimestamp
 				) {
+					if ( options.sinceThread ) {
+						// Check that we are in a thread that is newer than `sinceTimestamp`.
+						// Thread age is determined by looking at getOldestReply.
+						var itemHeading = threadItem.getSubscribableHeading() || threadItem.getHeading();
+						var oldestReply = itemHeading.getOldestReply();
+						if ( !( oldestReply && oldestReply.timestamp >= sinceTimestamp ) ) {
+							return;
+						}
+					}
 					newCommentIds.push( threadItem.id );
 				}
 			} );
@@ -393,6 +418,7 @@ function clearHighlightTargetComment( threadItemSet ) {
 		url.searchParams.delete( 'dtnewcomments' );
 		url.searchParams.delete( 'dtnewcommentssince' );
 		url.searchParams.delete( 'dtinthread' );
+		url.searchParams.delete( 'dtsincethread' );
 		history.pushState( null, '', url );
 		highlightTargetComment( threadItemSet );
 	} else if ( highlightedTarget ) {

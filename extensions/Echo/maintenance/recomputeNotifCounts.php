@@ -4,6 +4,10 @@
  *
  * @ingroup Maintenance
  */
+
+use MediaWiki\Extension\Notifications\DbFactory;
+use MediaWiki\Extension\Notifications\NotifUser;
+
 require_once getenv( 'MW_INSTALL_PATH' ) !== false
 	? getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php'
 	: __DIR__ . '/../../../maintenance/Maintenance.php';
@@ -31,8 +35,7 @@ class RecomputeNotifCounts extends Maintenance {
 	}
 
 	public function execute() {
-		$dbFactory = MWEchoDbFactory::newFromDefault();
-		$dbwEcho = $dbFactory->getEchoDb( DB_PRIMARY );
+		$dbFactory = DbFactory::newFromDefault();
 		$dbrEcho = $dbFactory->getEchoDb( DB_REPLICA );
 		$dbr = wfGetDB( DB_REPLICA );
 
@@ -77,7 +80,7 @@ class RecomputeNotifCounts extends Maintenance {
 				} else {
 					$user = User::newFromId( is_object( $rowOrID ) ? $rowOrID->notification_user : $rowOrID );
 				}
-				$notifUser = MWEchoNotifUser::newFromUser( $user );
+				$notifUser = NotifUser::newFromUser( $user );
 				$notifUser->resetNotificationCount();
 			}
 			$count += count( $batch );

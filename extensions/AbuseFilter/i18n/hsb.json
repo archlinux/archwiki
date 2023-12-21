@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"J budissin",
 			"Matma Rex",
-			"Michawiki",
-			"Amire80"
+			"Michawiki"
 		]
 	},
 	"abusefilter-desc": "Nałožuje awtomatisku heuristiku na změny.",
@@ -341,7 +341,6 @@
 	"abusefilter-test-page": "Změny přewjedźene na stronje:",
 	"abusefilter-test-shownegative": "Změny pokazać, kotrež filtrej njewotpowěduja",
 	"abusefilter-test-syntaxerr": "Filter, kotryž sy zapodał, je syntaksowy zmylk wobsahował.\nPřez kliknjenje na tłóčatko \"{{int:abusefilter-edit-check}}\" móžeš połne wujasnjenje dóstać.",
-	"abusefilter-test-badtitle": "Titul strony, kotryž sy zapodał, je njepłaćiwy był. Wobsahuje snano znamješka, kotrež njehodźa so w titulu wužiwać.",
 	"abusefilter-test-search-type-upload": "Nahrate dataje",
 	"abusefilter-changeslist-examine": "přepytować",
 	"abusefilter-examine": "Jednotliwe změny přepytować",

@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"27christian11",
+			"Bennylin",
 			"Daniel Harahap",
 			"NoiX180",
 			"Salomo Christian Hutajulu",
 			"WBT003Bugari",
 			"WBT006Hendra",
-			"WBT009Anju",
-			"Bennylin",
-			"27christian11"
+			"WBT009Anju"
 		]
 	},
 	"vector-languages": "Parhataan",
@@ -16,7 +16,7 @@
 	"vector-no-language-button-label": "Tambai parhataan",
 	"vector-action-addsection": "Bagian na imbaru",
 	"vector-action-delete": "Bolonghon",
-	"vector-action-move": "Pahusor",
+	"vector-action-move": "Paunsat",
 	"vector-action-protect": "Ramoti",
 	"vector-action-undelete": "unang sesa",
 	"vector-action-unprotect": "Uba parlindungan",

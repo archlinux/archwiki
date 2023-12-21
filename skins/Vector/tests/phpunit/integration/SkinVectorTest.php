@@ -2,13 +2,16 @@
 namespace MediaWiki\Skins\Vector\Tests\Integration;
 
 use Exception;
+use LinkCache;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Skins\Vector\SkinVector22;
 use MediaWiki\Skins\Vector\SkinVectorLegacy;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\Title;
+use MediaWiki\User\TalkPageNotificationManager;
 use MediaWikiIntegrationTestCase;
 use ReflectionMethod;
 use RequestContext;
-use Title;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -18,11 +21,19 @@ use Wikimedia\TestingAccessWrapper;
  * @group Skins
  */
 class SkinVectorTest extends MediaWikiIntegrationTestCase {
+	use MockAuthorityTrait;
+
+	protected function setUp(): void {
+		parent::setUp();
+		// Mock TalkPageNotificationManager to avoid DB queries
+		$this->setService( 'TalkPageNotificationManager', $this->createMock( TalkPageNotificationManager::class ) );
+		$this->clearHooks();
+	}
 
 	/**
 	 * @return SkinVectorLegacy
 	 */
-	private function provideVectorTemplateObject() {
+	private static function provideVectorTemplateObject() {
 		$skinFactory = MediaWikiServices::getInstance()->getSkinFactory();
 		$template = $skinFactory->makeSkin( 'vector' );
 		return $template;
@@ -51,12 +62,17 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Skins\Vector\SkinVectorLegacy::getTemplateData
 	 */
 	public function testGetTemplateData() {
-		$title = Title::newFromText( 'SkinVector' );
-		$context = RequestContext::newExtraneousContext( $title );
+		$this->setService( 'LinkCache', $this->createMock( LinkCache::class ) );
+		$title = Title::makeTitle( NS_MAIN, 'SkinVector' );
+		$title->resetArticleID( 0 );
+		$context = new RequestContext();
+		$context->setTitle( $title );
+		$context->setAuthority( $this->mockAnonNullAuthority() );
 		$context->setLanguage( 'fr' );
+		$context->setActionName( 'view' );
 		$vectorTemplate = $this->provideVectorTemplateObject();
 		$vectorTemplate->setContext( $context );
-		$this->setTemporaryHook( 'SkinTemplateNavigation::Universal', [
+		$this->setTemporaryHook( 'SkinTemplateNavigation::Universal',
 			static function ( &$skinTemplate, &$content_navigation ) {
 				$content_navigation['actions'] = [
 					'action-1' => []
@@ -78,7 +94,7 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 					'pt-1' => [ 'text' => 'pt1' ],
 				];
 			}
-		] );
+		);
 		$openVectorTemplate = TestingAccessWrapper::newFromObject( $vectorTemplate );
 
 		$props = $openVectorTemplate->getTemplateData()['data-portlets'];
@@ -138,7 +154,7 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 	 * Standard config for Language Alert in Sidebar
 	 * @return array
 	 */
-	private function enableLanguageAlertFeatureConfig(): array {
+	private static function enableLanguageInHeaderFeatureConfig(): array {
 		return [
 			'VectorLanguageInHeader' => [
 				'logged_in' => true,
@@ -148,14 +164,10 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 				'logged_in' => false,
 				'logged_out' => false
 			],
-			'VectorLanguageAlertInSidebar' => [
-				'logged_in' => true,
-				'logged_out' => true
-			],
 		];
 	}
 
-	public function providerLanguageAlertRequirements() {
+	public static function providerLanguageAlertRequirements() {
 		$testTitle = Title::makeTitle( NS_MAIN, 'Test' );
 		$testTitleMainPage = Title::makeTitle( NS_MAIN, 'MAIN_PAGE' );
 		return [
@@ -174,23 +186,9 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 				false
 			],
 			'When the feature is enabled and languages should be hidden, do not show alert' => [
-				$this->enableLanguageAlertFeatureConfig(),
+				self::enableLanguageInHeaderFeatureConfig(),
 				$testTitle,
 				[], true, true, false
-			],
-			'When the language alert feature is disabled, do not show alert' => [
-				[
-					'VectorLanguageInHeader' => [
-						'logged_in' => true,
-						'logged_out' => true
-					],
-					'VectorLanguageAlertInSidebar' => [
-						'logged_in' => false,
-						'logged_out' => false
-					]
-				],
-				$testTitle,
-				[ 'fr', 'en', 'ko' ], true, false, false
 			],
 			'When the language in header feature is disabled, do not show alert' => [
 				[
@@ -198,21 +196,17 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 						'logged_in' => false,
 						'logged_out' => false
 					],
-					'VectorLanguageAlertInSidebar' => [
-						'logged_in' => true,
-						'logged_out' => true
-					]
 				],
 				$testTitle,
 				[ 'fr', 'en', 'ko' ], true, false, false
 			],
 			'When it is a main page, feature is enabled, and there are no languages, do not show alert' => [
-				$this->enableLanguageAlertFeatureConfig(),
+				self::enableLanguageInHeaderFeatureConfig(),
 				$testTitleMainPage,
 				[], true, true, false
 			],
 			'When it is a non-main page, feature is enabled, and there are no languages, do not show alert' => [
-				$this->enableLanguageAlertFeatureConfig(),
+				self::enableLanguageInHeaderFeatureConfig(),
 				$testTitle,
 				[], true, true, false
 			],
@@ -222,45 +216,27 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 						'logged_in' => false,
 						'logged_out' => false
 					],
-					'VectorLanguageAlertInSidebar' => [
-						'logged_in' => true,
-						'logged_out' => true
-					]
 				],
 				$testTitleMainPage,
 				[ 'fr', 'en', 'ko' ], true, true, false
 			],
-			'When it is a non-main page, alert feature is disabled, there are languages, do not show alert' => [
-				[
-					'VectorLanguageInHeader' => [
-						'logged_in' => true,
-						'logged_out' => true
-					],
-					'VectorLanguageAlertInSidebar' => [
-						'logged_in' => false,
-						'logged_out' => false
-					]
-				],
-				$testTitle,
-				[ 'fr', 'en', 'ko' ], true, true, false
-			],
 			'When most requirements are present but languages are not at the top, do not show alert' => [
-				$this->enableLanguageAlertFeatureConfig(),
+				self::enableLanguageInHeaderFeatureConfig(),
 				$testTitle,
 				[ 'fr', 'en', 'ko' ], false, false, false
 			],
 			'When most requirements are present but languages should be hidden, do not show alert' => [
-				$this->enableLanguageAlertFeatureConfig(),
+				self::enableLanguageInHeaderFeatureConfig(),
 				$testTitle,
 				[ 'fr', 'en', 'ko' ], true, true, false
 			],
 			'When it is a main page, features are enabled, and there are languages, show alert' => [
-				$this->enableLanguageAlertFeatureConfig(),
+				self::enableLanguageInHeaderFeatureConfig(),
 				$testTitleMainPage,
 				[ 'fr', 'en', 'ko' ], true, false, true
 			],
 			'When all the requirements are present on a non-main page, show alert' => [
-				$this->enableLanguageAlertFeatureConfig(),
+				self::enableLanguageInHeaderFeatureConfig(),
 				$testTitle,
 				[ 'fr', 'en', 'ko' ], true, false, true
 			],

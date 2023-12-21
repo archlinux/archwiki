@@ -3,7 +3,7 @@
 namespace phpunit\unit\includes\Settings;
 
 use ExtensionRegistry;
-use HashConfig;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Settings\Config\ArrayConfigBuilder;
 use MediaWiki\Settings\Config\PhpIniSink;
@@ -62,7 +62,7 @@ class WikiFarmSettingsLoaderTest extends TestCase {
 		return $mock;
 	}
 
-	public function provideWikiFarmSettings() {
+	public static function provideWikiFarmSettings() {
 		yield [
 			[
 				'WikiFarmSettingsDirectory' => __DIR__ . '/fixtures/sites',

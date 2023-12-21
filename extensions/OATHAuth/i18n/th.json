@@ -35,6 +35,6 @@
 	"oathauth-disable-page-title": "ปิดใช้งาน $1",
 	"oathauth-enable-page-title": "เปิดใช้งาน $1",
 	"oathauth-disable-method-warning-button-label": "ยืนยันและดำเนินการต่อ",
-	"notification-header-oathauth-enabled": "การยืนยันตัวตนสองขั้นตอนเปิดใช้งานแล้วใน {{GENDER:$2|บัญชีของคุณ}}",
-	"oathauth-notifications-enabled-help": "ช่วยเหลือ"
+	"notification-header-oathauth-enable": "การยืนยันตัวตนสองขั้นตอนเปิดใช้งานแล้วใน {{GENDER:$2|บัญชีของคุณ}}",
+	"oathauth-notifications-enable-help": "ช่วยเหลือ"
 }

@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Pikne"
+		]
+	},
+	"tag-editcheck-reference-decline-common-knowledge": "Muudatuse kontroll (viited) tagasi lükatud (üldteada)",
+	"tag-editcheck-reference-decline-common-knowledge-description": "EditChecki viide tagasi lükatud, kuna väide on üldteada.",
+	"tag-editcheck-reference-decline-irrelevant": "Muudatuse kontroll (viited) tagasi lükatud (ebavajalik)",
+	"tag-editcheck-reference-decline-irrelevant-description": "EditChecki viide tagasi lükatud, kuna väide ei vaja viidet.",
+	"tag-editcheck-reference-decline-other": "Muudatuse kontroll (viited) tagasi lükatud (muu)",
+	"tag-editcheck-reference-decline-other-description": "EditChecki viide tagasi lükatud loetelus ära toomata põhjusel.",
+	"tag-editcheck-reference-decline-uncertain": "Muudatuse kontroll (viited) tagasi lükatud (ebakindel)",
+	"tag-editcheck-reference-decline-uncertain-description": "EditChecki viide tagasi lükatud, kuna kasutaja ei ole kindel."
+}

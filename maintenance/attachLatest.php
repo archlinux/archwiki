@@ -24,7 +24,6 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Title\Title;
 
@@ -59,7 +58,7 @@ class AttachLatest extends Maintenance {
 			->caller( __METHOD__ )
 			->fetchResultSet();
 
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$dbDomain = $services->getDBLoadBalancerFactory()->getLocalDomainID();
 		$wikiPageFactory = $services->getWikiPageFactory();
 		$revisionLookup = $services->getRevisionLookup();
@@ -70,7 +69,7 @@ class AttachLatest extends Maintenance {
 			$title = Title::makeTitle( $row->page_namespace, $row->page_title );
 			$name = $title->getPrefixedText();
 			$latestTime = $dbw->newSelectQueryBuilder()
-				->select( 'MAX(rev_timestamp' )
+				->select( 'MAX(rev_timestamp)' )
 				->from( 'revision' )
 				->where( [ 'rev_page' => $pageId ] )
 				->caller( __METHOD__ )

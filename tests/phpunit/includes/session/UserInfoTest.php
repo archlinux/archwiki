@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Session;
 
+use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use User;
 
 /**
  * @group Session
  * @group Database
- * @covers MediaWiki\Session\UserInfo
+ * @covers \MediaWiki\Session\UserInfo
  */
 class UserInfoTest extends MediaWikiIntegrationTestCase {
 
@@ -26,7 +26,10 @@ class UserInfoTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNewFromId() {
-		$id = wfGetDB( DB_PRIMARY )->selectField( 'user', 'MAX(user_id)' ) + 1;
+		$id = $this->getDb()->newSelectQueryBuilder()
+			->select( 'MAX(user_id)' )
+			->from( 'user' )
+			->fetchField() + 1;
 		try {
 			UserInfo::newFromId( $id );
 			$this->fail( 'Expected exception not thrown' );
@@ -34,7 +37,7 @@ class UserInfoTest extends MediaWikiIntegrationTestCase {
 			$this->assertSame( 'Invalid ID', $ex->getMessage() );
 		}
 
-		$user = User::newFromName( 'UTSysop' );
+		$user = $this->getTestSysop()->getUser();
 		$userinfo = UserInfo::newFromId( $user->getId() );
 		$this->assertFalse( $userinfo->isAnon() );
 		$this->assertFalse( $userinfo->isVerified() );
@@ -69,7 +72,7 @@ class UserInfoTest extends MediaWikiIntegrationTestCase {
 		}
 
 		// User name that exists
-		$user = User::newFromName( 'UTSysop' );
+		$user = $this->getTestSysop()->getUser();
 		$userinfo = UserInfo::newFromName( $user->getName() );
 		$this->assertFalse( $userinfo->isAnon() );
 		$this->assertFalse( $userinfo->isVerified() );
@@ -124,7 +127,7 @@ class UserInfoTest extends MediaWikiIntegrationTestCase {
 
 	public function testNewFromUser() {
 		// User that exists
-		$user = User::newFromName( 'UTSysop' );
+		$user = $this->getTestSysop()->getUser();
 		$userinfo = UserInfo::newFromUser( $user );
 		$this->assertFalse( $userinfo->isAnon() );
 		$this->assertFalse( $userinfo->isVerified() );

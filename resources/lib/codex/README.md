@@ -1,8 +1,8 @@
 # Codex
 
-Codex is a toolkit for building user interfaces within the Wikimedia Design System. Codex contains:
-- Vue components, in this package
-- Design tokens, in the `@wikimedia/codex-tokens` package
+Codex is the design system for Wikimedia. Codex contains:
+- Vue and CSS-only components, in this package
+- Design tokens, in the `@wikimedia/codex-design-tokens` package
 - Icons, in the `@wikimedia/codex-icons` package
 
 For more details, read the [Codex documentation](https://doc.wikimedia.org/codex/latest/).
@@ -22,7 +22,7 @@ then pass it into the `components` option of your Vue component:
 ```
 <template>
 	<div>
-		<cdx-button action="progressive" type="primary">
+		<cdx-button action="progressive" weight="primary">
 			Click me!
 		</cdx-button>
 	</div>

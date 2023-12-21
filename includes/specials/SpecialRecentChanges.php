@@ -21,14 +21,31 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use ChangesList;
+use ChangesListBooleanFilter;
+use ChangesListStringOptionsFilterGroup;
+use ChangeTags;
+use HtmlArmor;
+use IContextSource;
+use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\SpecialPage\ChangesListSpecialPage;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserOptionsLookup;
-use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Utils\MWTimestamp;
+use MessageCache;
+use OOUI\ButtonWidget;
+use OOUI\HtmlSnippet;
+use RecentChange;
+use WatchedItemStoreInterface;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
+use Xml;
 
 /**
  * A special page that lists last changes made to the wiki
@@ -39,43 +56,32 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 
 	private $watchlistFilterGroupDefinition;
 
-	/** @var WatchedItemStoreInterface */
-	private $watchedItemStore;
-
-	/** @var MessageCache */
-	private $messageCache;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
-
-	/** @var IDatabase */
-	private $db;
+	private WatchedItemStoreInterface $watchedItemStore;
+	private MessageCache $messageCache;
+	private UserOptionsLookup $userOptionsLookup;
 
 	/** @var int */
 	public $denseRcSizeThreshold = 10000;
+	private ChangeTagsStore $changeTagsStore;
 
 	/**
 	 * @param WatchedItemStoreInterface|null $watchedItemStore
 	 * @param MessageCache|null $messageCache
-	 * @param ILoadBalancer|null $loadBalancer
 	 * @param UserOptionsLookup|null $userOptionsLookup
 	 */
 	public function __construct(
 		WatchedItemStoreInterface $watchedItemStore = null,
 		MessageCache $messageCache = null,
-		ILoadBalancer $loadBalancer = null,
-		UserOptionsLookup $userOptionsLookup = null
+		UserOptionsLookup $userOptionsLookup = null,
+		ChangeTagsStore $changeTagsStore = null
 	) {
 		parent::__construct( 'Recentchanges', '' );
 		// This class is extended and therefor fallback to global state - T265310
 		$services = MediaWikiServices::getInstance();
 		$this->watchedItemStore = $watchedItemStore ?? $services->getWatchedItemStore();
 		$this->messageCache = $messageCache ?? $services->getMessageCache();
-		$this->loadBalancer = $loadBalancer ?? $services->getDBLoadBalancer();
 		$this->userOptionsLookup = $userOptionsLookup ?? $services->getUserOptionsLookup();
+		$this->changeTagsStore = $changeTagsStore ?? $services->getChangeTagsStore();
 
 		$this->watchlistFilterGroupDefinition = [
 			'name' => 'watchlist',
@@ -117,7 +123,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 			],
 			'default' => ChangesListStringOptionsFilterGroup::NONE,
 			'queryCallable' => function ( string $specialClassName, IContextSource $ctx,
-				IDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds, $selectedValues
+				IReadableDatabase $dbr, &$tables, &$fields, &$conds, &$query_options, &$join_conds, $selectedValues
 			) {
 				sort( $selectedValues );
 				$notwatchedCond = 'wl_user IS NULL';
@@ -321,13 +327,13 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	 *
 	 * SpecialRecentChangesLinked should also be updated accordingly when something changed here.
 	 *
-	 * @param IDatabase $dbr
+	 * @param IReadableDatabase $dbr
 	 * @param string[] &$tables
 	 * @param string[] &$fields
 	 * @param mixed[] &$joinConds
 	 * @param mixed[] &$conds
 	 */
-	protected function addWatchlistJoins( IDatabase $dbr, &$tables, &$fields, &$joinConds, &$conds ) {
+	protected function addWatchlistJoins( IReadableDatabase $dbr, &$tables, &$fields, &$joinConds, &$conds ) {
 		if ( !$this->needsWatchlistFeatures() ) {
 			return;
 		}
@@ -372,7 +378,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		$join_conds['page'] = [ 'LEFT JOIN', 'rc_cur_id=page_id' ];
 
 		$tagFilter = $opts['tagfilter'] !== '' ? explode( '|', $opts['tagfilter'] ) : [];
-		ChangeTags::modifyDisplayQuery(
+		$this->changeTagsStore->modifyDisplayQuery(
 			$tables,
 			$fields,
 			$conds,
@@ -407,7 +413,7 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		}
 
 		if ( in_array( 'DISTINCT', $query_options ) ) {
-			// ChangeTags::modifyDisplayQuery() adds DISTINCT when filtering on multiple tags.
+			// ChangeTagsStore::modifyDisplayQuery() adds DISTINCT when filtering on multiple tags.
 			// In order to prevent DISTINCT from causing query performance problems,
 			// we have to GROUP BY the primary key. This in turn requires us to add
 			// the primary key to the end of the ORDER BY, and the old ORDER BY to the
@@ -451,15 +457,12 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	 * @return bool
 	 */
 	protected function isDenseTagFilter( $tagIds, $limit ) {
-		$miserMode = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::MiserMode );
-
 		$dbr = $this->getDB();
 		if ( !$tagIds
 			// This is a MySQL-specific hack
 			|| $dbr->getType() !== 'mysql'
 			// Unnecessary for small wikis
-			|| !$miserMode
+			|| !$this->getConfig()->get( MainConfigNames::MiserMode )
 		) {
 			return false;
 		}
@@ -499,13 +502,6 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 		wfDebug( __METHOD__ . ": rcSize = $rcSize, tagCount = $tagCount, limit = $limit => " .
 			( $isDense ? 'dense' : 'sparse' ) );
 		return $isDense;
-	}
-
-	protected function getDB() {
-		if ( !$this->db ) {
-			$this->db = $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
-		}
-		return $this->db;
 	}
 
 	public function outputFeedLinks() {
@@ -760,9 +756,9 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 					' mw-recentchanges-toplinks-collapsed' : '';
 
 				$this->getOutput()->enableOOUI();
-				$contentTitle = new OOUI\ButtonWidget( [
+				$contentTitle = new ButtonWidget( [
 					'classes' => [ 'mw-recentchanges-toplinks-title' ],
-					'label' => new OOUI\HtmlSnippet( $this->msg( 'rcfilters-other-review-tools' )->parse() ),
+					'label' => new HtmlSnippet( $this->msg( 'rcfilters-other-review-tools' )->parse() ),
 					'framed' => false,
 					'indicator' => $collapsedState !== 'expanded' ? 'down' : 'up',
 					'flags' => [ 'progressive' ],
@@ -832,7 +828,10 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	 */
 	public function checkLastModified() {
 		$dbr = $this->getDB();
-		$lastmod = $dbr->selectField( 'recentchanges', 'MAX(rc_timestamp)', '', __METHOD__ );
+		$lastmod = $dbr->newSelectQueryBuilder()
+			->select( 'MAX(rc_timestamp)' )
+			->from( 'recentchanges' )
+			->caller( __METHOD__ )->fetchField();
 
 		return $lastmod;
 	}
@@ -1073,3 +1072,9 @@ class SpecialRecentChanges extends ChangesListSpecialPage {
 	}
 
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialRecentChanges::class, 'SpecialRecentChanges' );

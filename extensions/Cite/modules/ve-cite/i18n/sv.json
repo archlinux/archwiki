@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Ainali",
+			"André Costa (WMSE)",
 			"Bengtsson96",
 			"Dan Koehl",
 			"Haxpett",
@@ -42,6 +43,8 @@
 	"cite-ve-citationneeded-title": "Källa behövs",
 	"cite-ve-dialog-reference-editing-reused": "Denna referens används {{PLURAL:$1|en gång|2=två gånger|$1 gånger}} på denna sida.",
 	"cite-ve-dialog-reference-editing-reused-long": "Denna referens används {{PLURAL:$1|en gång|2=två gånger|$1 gånger}} på denna sida. Ändringar här kommer att tillämpas på alla ställen som denna referens återanvänds.",
+	"cite-ve-dialog-reference-editing-extends": "Detta är en utökning av en annan referens.",
+	"cite-ve-dialog-reference-editing-extends-long": "Detta är en utökning av en annan referens \"$1\".",
 	"cite-ve-dialog-reference-options-group-label": "Använd den här gruppen",
 	"cite-ve-dialog-reference-options-group-placeholder": "Allmänna referenser",
 	"cite-ve-dialog-reference-options-name-label": "Använd med detta namn igen",
@@ -64,7 +67,7 @@
 	"cite-ve-referenceslist-isempty-default": "Det finns inga referenser på denna sida att inkludera i denna lista.",
 	"cite-ve-referenceslist-missingref": "Den här källan är definierad i en mall eller ett annat genererat block och kan bara redigeras i wikitext.",
 	"cite-ve-referenceslist-missingref-in-list": "Denna referens definieras i en mall eller annat genererat block och kan för tillfället endast visas i källäge.",
-	"cite-ve-referenceslist-missingreflist": "Denna referenslista genererades av en mall och kan för tillfället endast redigeras i källäge.",
+	"cite-ve-referenceslist-missingreflist": "Denna referenslista genererades av en mall.",
 	"cite-ve-toolbar-group-label": "Ange källa",
 	"cite-ve-othergroup-item": "$1 referens",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referenser",

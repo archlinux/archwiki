@@ -22,7 +22,7 @@ class NotificationServiceClientUnitTest extends MediaWikiUnitTestCase {
 		$mock->sendCheckEchoRequests( $subscriptions );
 	}
 
-	public function sendCheckEchoRequestsProvider(): array {
+	public static function sendCheckEchoRequestsProvider(): array {
 		$row = (object)[
 			'eps_token' => 'JKL123',
 			'epp_name' => 'fcm',

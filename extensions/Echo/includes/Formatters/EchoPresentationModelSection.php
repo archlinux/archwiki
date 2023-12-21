@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use EchoDiscussionParser;
+use BadMethodCallException;
 use Language;
+use MediaWiki\Extension\Notifications\DiscussionParser;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Revision\RevisionRecord;
-use MWException;
+use MediaWiki\Title\Title;
 use Parser;
-use Title;
 use User;
 
 /**
@@ -88,10 +88,10 @@ class EchoPresentationModelSection {
 			$this->parsedSectionTitle = false;
 			return false;
 		}
-		$this->parsedSectionTitle = EchoDiscussionParser::getTextSnippet(
+		$this->parsedSectionTitle = DiscussionParser::getTextSnippet(
 			$rawSectionTitle,
 			$this->language,
-			EchoDiscussionParser::DEFAULT_SNIPPET_LENGTH,
+			DiscussionParser::DEFAULT_SNIPPET_LENGTH,
 			$this->event->getTitle(),
 			// linestart=false, because this wikitext was inside a heading like `== … ==`,
 			// so start-of-line markup like `*` should not be parsed (T299572)
@@ -119,7 +119,7 @@ class EchoPresentationModelSection {
 	public function getTitleWithSection() {
 		$title = $this->event->getTitle();
 		if ( $title === null ) {
-			throw new MWException( 'Event #' . $this->event->getId() . ' with no title' );
+			throw new BadMethodCallException( 'Event #' . $this->event->getId() . ' with no title' );
 		}
 		$section = $this->getParsedSectionTitle();
 		if ( $section ) {

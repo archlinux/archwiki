@@ -1,11 +1,12 @@
 <?php
 
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Specials\SpecialMIMESearch;
 use MediaWiki\Title\Title;
 
 /**
  * @group Database
- * @covers SpecialMIMESearch
+ * @covers \MediaWiki\Specials\SpecialMIMESearch
  */
 class SpecialMIMESearchTest extends MediaWikiIntegrationTestCase {
 
@@ -17,7 +18,7 @@ class SpecialMIMESearchTest extends MediaWikiIntegrationTestCase {
 
 		$services = $this->getServiceContainer();
 		$this->page = new SpecialMIMESearch(
-			$services->getDBLoadBalancer(),
+			$services->getDBLoadBalancerFactory(),
 			$services->getLinkBatchFactory(),
 			$services->getLanguageConverterFactory()
 		);
@@ -45,7 +46,7 @@ class SpecialMIMESearchTest extends MediaWikiIntegrationTestCase {
 		$this->assertContains( 'image', $qi['tables'] );
 	}
 
-	public function providerMimeFiltering() {
+	public static function providerMimeFiltering() {
 		return [
 			[ 'image/gif', 'image', 'gif' ],
 			[ 'image/png', 'image', 'png' ],

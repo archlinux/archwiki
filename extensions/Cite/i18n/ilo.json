@@ -30,5 +30,11 @@
 	"cite_references_link_accessibility_back_label": "Mapan iti ngato",
 	"cite_section_preview_references": "Panangipadas kadagiti nagibasaran",
 	"cite_warning": "Ballaag ti Cite: $1",
-	"cite_warning_sectionpreview_no_text": "Ti etiketa ti <code>&lt;ref&gt;</code> nga agraman iti nagan iti <code>$1</code> ket saan a maipadas gapu ta naipalawag iti ruar ti agdama a seksion wenno saan amin a naipalawag."
+	"cite_warning_sectionpreview_no_text": "Ti etiketa ti <code>&lt;ref&gt;</code> nga agraman iti nagan iti <code>$1</code> ket saan a maipadas gapu ta naipalawag iti ruar ti agdama a seksion wenno saan amin a naipalawag.",
+	"cite-wikieditor-tool-reference": "Reperensia",
+	"cite-wikieditor-help-page-references": "Dagiti reperensia",
+	"cite-wikieditor-help-content-reference-description": "Reperensia",
+	"cite-wikieditor-help-content-named-reference-description": "Nanaganan a reperensia",
+	"cite-wikieditor-help-content-rereference-description": "Maipatinayon nga usar iti isu met laeng a reperensia",
+	"cite-wikieditor-help-content-showreferences-description": "Iparang dagiti reperensia"
 }

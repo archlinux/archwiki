@@ -1,10 +1,13 @@
+const { License, ImageModel, Repo } = require( 'mmv' );
+const { EmbedFileFormatter } = require( 'mmv.ui.ondemandshareddependencies' );
+
 ( function () {
 	QUnit.module( 'mmv.EmbedFileFormatter', QUnit.newMwEnvironment() );
 
 	function createEmbedFileInfo( options ) {
-		var license = options.licenseShortName ? new mw.mmv.model.License( options.licenseShortName,
+		var license = options.licenseShortName ? new License( options.licenseShortName,
 				options.licenseInternalName, options.licenseLongName, options.licenseUrl ) : undefined,
-			imageInfo = new mw.mmv.model.Image(
+			imageInfo = new ImageModel(
 
 				options.title,
 				options.title.getNameText(),
@@ -36,12 +39,12 @@
 	}
 
 	QUnit.test( 'EmbedFileFormatter constructor sense check', function ( assert ) {
-		var formatter = new mw.mmv.EmbedFileFormatter();
-		assert.true( formatter instanceof mw.mmv.EmbedFileFormatter, 'constructor with no argument works' );
+		var formatter = new EmbedFileFormatter();
+		assert.true( formatter instanceof EmbedFileFormatter, 'constructor with no argument works' );
 	} );
 
 	QUnit.test( 'getByline():', function ( assert ) {
-		var formatter = new mw.mmv.EmbedFileFormatter(),
+		var formatter = new EmbedFileFormatter(),
 			author = '<span class="mw-mmv-author">Homer</span>',
 			source = '<span class="mw-mmv-source">Iliad</span>',
 			attribution = '<span class="mw-mmv-attr">Cat</span>',
@@ -69,9 +72,9 @@
 	} );
 
 	QUnit.test( 'getSiteLink():', function ( assert ) {
-		var repoInfo = new mw.mmv.model.Repo( 'Wikipedia', '//wikipedia.org/favicon.ico', true ),
+		var repoInfo = new Repo( 'Wikipedia', '//wikipedia.org/favicon.ico', true ),
 			info = { imageInfo: {}, repoInfo: repoInfo },
-			formatter = new mw.mmv.EmbedFileFormatter(),
+			formatter = new EmbedFileFormatter(),
 			siteUrl = repoInfo.getSiteLink(),
 			siteLink = formatter.getSiteLink( info );
 
@@ -80,7 +83,7 @@
 	} );
 
 	QUnit.test( 'getThumbnailHtml():', function ( assert ) {
-		var formatter = new mw.mmv.EmbedFileFormatter(),
+		var formatter = new EmbedFileFormatter(),
 			titleText = 'Music Room',
 			title = mw.Title.newFromText( titleText ),
 			imgUrl = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
@@ -116,7 +119,7 @@
 		assert.notStrictEqual( generatedHtml.match( width ), null, 'Width appears in generated HTML' );
 		assert.notStrictEqual( generatedHtml.match( height ), null, 'Height appears in generated HTML' );
 		// .includes() for checking the short url since it contains a ? (bad for regex). Could escape instead.
-		// eslint-disable-next-line no-restricted-syntax
+		// eslint-disable-next-line es-x/no-array-prototype-includes
 		assert.notStrictEqual( generatedHtml.includes( filePageShortUrl ), null, 'Short URL appears in generated HTML' );
 
 		// Bylines, no license and site
@@ -133,7 +136,7 @@
 		assert.notStrictEqual( generatedHtml.match( 'Iliad' ), null, 'Source appears in generated HTML' );
 		assert.notStrictEqual( generatedHtml.match( width ), null, 'Width appears in generated HTML' );
 		assert.notStrictEqual( generatedHtml.match( height ), null, 'Height appears in generated HTML' );
-		// eslint-disable-next-line no-restricted-syntax
+		// eslint-disable-next-line es-x/no-array-prototype-includes
 		assert.notStrictEqual( generatedHtml.includes( filePageShortUrl ), null, 'Short URL appears in generated HTML' );
 
 		// No bylines, license and site
@@ -151,7 +154,7 @@
 		assert.strictEqual( generatedHtml.match( 'Iliad' ), null, 'Source should not appear in generated HTML' );
 		assert.notStrictEqual( generatedHtml.match( width ), null, 'Width appears in generated HTML' );
 		assert.notStrictEqual( generatedHtml.match( height ), null, 'Height appears in generated HTML' );
-		// eslint-disable-next-line no-restricted-syntax
+		// eslint-disable-next-line es-x/no-array-prototype-includes
 		assert.notStrictEqual( generatedHtml.includes( filePageShortUrl ), null, 'Short URL appears in generated HTML' );
 
 		// No bylines, no license and site
@@ -167,13 +170,13 @@
 		assert.strictEqual( generatedHtml.match( 'Iliad' ), null, 'Source should not appear in generated HTML' );
 		assert.notStrictEqual( generatedHtml.match( width ), null, 'Width appears in generated HTML' );
 		assert.notStrictEqual( generatedHtml.match( height ), null, 'Height appears in generated HTML' );
-		// eslint-disable-next-line no-restricted-syntax
+		// eslint-disable-next-line es-x/no-array-prototype-includes
 		assert.notStrictEqual( generatedHtml.includes( filePageShortUrl ), null, 'Short URL appears in generated HTML' );
 
 	} );
 
 	QUnit.test( 'getThumbnailWikitext():', function ( assert ) {
-		var formatter = new mw.mmv.EmbedFileFormatter(),
+		var formatter = new EmbedFileFormatter(),
 			title = mw.Title.newFromText( 'File:Foobar.jpg' ),
 			imgUrl = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
 			filePageUrl = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg',
@@ -212,7 +215,7 @@
 	} );
 
 	QUnit.test( 'getCreditText():', function ( assert ) {
-		var txt, formatter = new mw.mmv.EmbedFileFormatter();
+		var txt, formatter = new EmbedFileFormatter();
 
 		txt = formatter.getCreditText( {
 			repoInfo: {
@@ -255,7 +258,7 @@
 	} );
 
 	QUnit.test( 'getCreditHtml():', function ( assert ) {
-		var html, formatter = new mw.mmv.EmbedFileFormatter();
+		var html, formatter = new EmbedFileFormatter();
 
 		html = formatter.getCreditHtml( {
 			repoInfo: {

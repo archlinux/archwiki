@@ -98,9 +98,20 @@ class PHPUnitMaintClass {
 			// or when T227900 is resolved.
 			$args[] = '--configuration=' . __DIR__ . '/suite.xml';
 		}
+		$args[] = '--bootstrap=' . __DIR__ . '/bootstrap.maintenance.php';
 		$command->run( $args, true );
 	}
 }
+
+$deprecationMsg = <<<EOT
+*******************************************************************************
+DEPRECATED: The tests/phpunit/phpunit.php entry point has been deprecated. Use
+            `composer phpunit:entrypoint` instead.
+*******************************************************************************
+
+EOT;
+
+fwrite( STDERR, $deprecationMsg );
 
 if ( defined( 'MEDIAWIKI' ) ) {
 	exit( 'Wrong entry point?' );

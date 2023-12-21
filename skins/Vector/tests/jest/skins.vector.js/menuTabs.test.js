@@ -4,7 +4,6 @@ describe( 'menuTabs', () => {
 	beforeEach( () => {
 		/** @type {Function} */
 		let callback;
-		// @ts-ignore
 		jest.spyOn( mw, 'hook' ).mockImplementation( () => {
 			return {
 				add: function ( fn ) {
@@ -44,7 +43,6 @@ describe( 'menuTabs', () => {
 		`;
 		const menuItem = document.getElementById( 'test-id' );
 		menuTabs();
-		// @ts-ignore
 		mw.hook( 'util' ).fire( menuItem, { id: 'test-id' } );
 
 		expect( document.body.innerHTML ).toMatchSnapshot();
@@ -52,7 +50,7 @@ describe( 'menuTabs', () => {
 
 	test( 'does not add vector-tab-noicon class to li element when not part of tabs', () => {
 		document.body.innerHTML = `
-			<div id="p-variants" class="vector-menu mw-portlet mw-portlet-variants vector-menu-dropdown">
+			<div id="p-variants" class="vector-menu mw-portlet mw-portlet-variants">
 				<div class="vector-menu-content">
 					<ul class="vector-menu-content-list">
 						<li class="mw-list-item mw-list-item-js" id="test-id">
@@ -68,7 +66,6 @@ describe( 'menuTabs', () => {
 		`;
 		const menuItem = document.getElementById( 'test-id' );
 		menuTabs();
-		// @ts-ignore
 		mw.hook( 'util' ).fire( menuItem, { id: 'test-id' } );
 
 		expect( document.body.innerHTML ).toMatchSnapshot();

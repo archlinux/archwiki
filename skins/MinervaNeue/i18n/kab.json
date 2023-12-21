@@ -5,7 +5,6 @@
 		]
 	},
 	"minerva-last-modified-date": "Abeddel aneggaru di $1, ɣef $2",
-	"minerva-talk-add-topic": "Rnu asqerdec",
 	"mobile-frontend-cookies-required": "Inagan n tuqqna laqen akken ad tedduḍ gar iskaren n uskan. Rmed-iten sakin ɛreḍ tikelt-nniḍen.",
 	"mobile-frontend-editor-edit": "Ẓreg",
 	"mobile-frontend-editor-redlink-create": "Rnu asebter",
@@ -25,8 +24,6 @@
 	"mobile-frontend-meta-data-issues": "Uguren n usebter",
 	"mobile-frontend-meta-data-issues-categories": "Ɣef taggayt-agi",
 	"mobile-frontend-meta-data-issues-header": "Uguren",
-	"mobile-frontend-meta-data-issues-header-talk": "Ɣef usebter-agi",
-	"mobile-frontend-meta-data-issues-talk": "Ɣef usebter-agi n usqerdec",
 	"mobile-frontend-notifications-filter": "Imzizdig",
 	"mobile-frontend-pageaction-edit-tooltip": " reg tigezmi n tezwart n usebter-agi",
 	"mobile-frontend-placeholder": "Nadi {{SITENAME}}",

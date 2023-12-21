@@ -1,8 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Soul Train"
+			"Soul Train",
+			"Римма"
 		]
 	},
-	"mobile-frontend-language-article-heading": "Кыв"
+	"mobile-frontend-history": "Виздӧтны эта листбоклісь вежсьӧммез",
+	"mobile-frontend-home-button": "Шӧр",
+	"mobile-frontend-language-article-heading": "Кыв",
+	"mobile-frontend-main-menu-login": "Пырны ним увтын",
+	"mobile-frontend-main-menu-nearby": "Матын",
+	"mobile-frontend-main-menu-settings": "Лӧсьӧтаннэз",
+	"mobile-frontend-placeholder": "Кошшыны {{SITENAME}}",
+	"mobile-frontend-random-button": "Одзвыв думайттӧг"
 }

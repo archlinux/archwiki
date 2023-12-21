@@ -14,12 +14,12 @@ use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Title\Title;
+use MediaWiki\WikiMap\WikiMap;
 use ReverseChronologicalPager;
 use Sanitizer;
 use SpecialPage;
 use stdClass;
-use Title;
-use WikiMap;
 use Wikimedia\Rdbms\IResultWrapper;
 use Xml;
 
@@ -188,7 +188,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 			}
 		} else {
 			$escaped_comments = Sanitizer::escapeHtmlAllowEntities(
-				$row->af_public_comments );
+				$row->af_public_comments ?? '' );
 			$filter_hidden = $row->af_hidden;
 		}
 

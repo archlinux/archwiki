@@ -3,8 +3,11 @@
 namespace MediaWiki\Extension\Math\Tests\TexVC\Nodes;
 
 use ArgumentCountError;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmrow;
+use MediaWiki\Extension\Math\TexVC\Nodes\Curly;
 use MediaWiki\Extension\Math\TexVC\Nodes\DQ;
 use MediaWiki\Extension\Math\TexVC\Nodes\Literal;
+use MediaWiki\Extension\Math\TexVC\Nodes\TexArray;
 use MediaWiki\Extension\Math\TexVC\Nodes\TexNode;
 use MediaWikiUnitTestCase;
 use RuntimeException;
@@ -48,4 +51,10 @@ class DQTest extends MediaWikiUnitTestCase {
 		$dq = new DQ( new TexNode(), new Literal( 'b' ) );
 		$this->assertEquals( '_{b}', $dq->render(), 'Should create an empty base dq' );
 	}
+
+	public function testRenderEmptyDq() {
+		$dq = new DQ( new Curly( new TexArray() ), new Literal( 'b' ) );
+		$this->assertStringContainsString( ( new MMLmrow() )->getEmpty(), $dq->renderMML() );
+	}
+
 }

@@ -23,6 +23,15 @@
  * @ingroup Pager
  */
 
+namespace MediaWiki\Pager;
+
+use HTMLForm;
+use HTMLHiddenField;
+use HTMLInfoField;
+use HTMLSelectField;
+use HTMLSubmitField;
+use HTMLUserTextField;
+use IContextSource;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
@@ -31,10 +40,12 @@ use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserGroupManager;
+use MediaWiki\User\UserGroupMembership;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserIdentityValue;
-use Wikimedia\Rdbms\ILoadBalancer;
+use stdClass;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * This class is used to get a list of user. The ones with specials
@@ -68,23 +79,16 @@ class UsersPager extends AlphabeticPager {
 	/** @var string */
 	protected $requestedUser;
 
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var UserGroupManager */
-	private $userGroupManager;
-
-	/** @var UserIdentityLookup */
-	private $userIdentityLookup;
+	private HookRunner $hookRunner;
+	private LinkBatchFactory $linkBatchFactory;
+	private UserGroupManager $userGroupManager;
+	private UserIdentityLookup $userIdentityLookup;
 
 	/**
 	 * @param IContextSource $context
 	 * @param HookContainer $hookContainer
 	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param UserGroupManager $userGroupManager
 	 * @param UserIdentityLookup $userIdentityLookup
 	 * @param string|null $par
@@ -95,7 +99,7 @@ class UsersPager extends AlphabeticPager {
 		IContextSource $context,
 		HookContainer $hookContainer,
 		LinkBatchFactory $linkBatchFactory,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		UserGroupManager $userGroupManager,
 		UserIdentityLookup $userIdentityLookup,
 		$par,
@@ -143,7 +147,7 @@ class UsersPager extends AlphabeticPager {
 		}
 
 		// Set database before parent constructor to avoid setting it there with wfGetDB
-		$this->mDb = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		$this->mDb = $dbProvider->getReplicaDatabase();
 		parent::__construct();
 		$this->userGroupManager = $userGroupManager;
 		$this->hookRunner = new HookRunner( $hookContainer );
@@ -167,7 +171,7 @@ class UsersPager extends AlphabeticPager {
 
 		// Don't show hidden names
 		if ( !$this->canSeeHideuser() ) {
-			$conds[] = 'ipb_deleted IS NULL OR ipb_deleted = 0';
+			$conds['ipb_deleted'] = [ null, 0 ];
 		}
 
 		$options = [];
@@ -299,7 +303,7 @@ class UsersPager extends AlphabeticPager {
 		foreach ( $this->mResult as $row ) {
 			$batch->add( NS_USER, $row->user_name );
 			$batch->add( NS_USER_TALK, $row->user_name );
-			$userIds[] = $row->user_id;
+			$userIds[] = (int)$row->user_id;
 		}
 
 		// Lookup groups for all the users
@@ -492,6 +496,12 @@ class UsersPager extends AlphabeticPager {
 	 * @return string
 	 */
 	protected function buildGroupLink( $group, $username ) {
-		return UserGroupMembership::getLink( $group, $this->getContext(), 'html', $username );
+		return UserGroupMembership::getLinkHTML( $group, $this->getContext(), $username );
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( UsersPager::class, 'UsersPager' );

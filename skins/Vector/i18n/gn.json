@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Hugo.arg",
-			"P. S. F. Freitas",
-			"Amire80"
+			"P. S. F. Freitas"
 		]
 	},
 	"vector-skin-desc": "Proporciona dos apariencias de Vector:\n* 2011 - Versión moderna de MonoBook, con un aspecto actualizado y muchas mejoras de usabilidad\n* 2022 - Vector construido como parte del proyecto [[mw:Desktop Improvements|Mejoras a la IU de escritorio]] de la Fundación Wikimedia.",
@@ -17,6 +17,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 ñe'ẽ}}",
 	"vector-no-language-button-label": "Emoĩve ñe'ẽnguéra",
 	"vector-no-language-button-aria-label": "Ko kuatia oĩ ko ñe'ẽme añoite. Emoĩve ko kuatia ambue ñe'ẽme g̃uarã",
+	"vector-language-redirect-to-top": "Umi ñe'ẽ joajuha oĩ ko kuatia yvate gotyo pe héra rovái.",
 	"vector-language-variant-switcher-label": "Emoambue ñe'ẽ hesegua",
 	"vector-action-addsection": "Embojoapy téma",
 	"vector-action-delete": "Embogue",
@@ -48,6 +49,8 @@
 	"vector-site-nav-label": "Tenda",
 	"vector-main-menu-label": "Poravorã tenondegua",
 	"vector-limited-width-toggle": "Embojopyru mba'éicha oñemboapýra kuatia tuichakue",
+	"vector-limited-width-toggle-on-popup": "Ko'ãga kuatia tuichakue ojepysopa. Remboguevisérõ oñemboapýra kuatia tuichakuépe, ejopy ko'ápe.",
+	"vector-limited-width-toggle-off-popup": "Ikatu rembojopyru rejopývo ko'ápe rehecha hag̃ua oñemboapýra kuatia tuichakue térã kuatia tuichakue ojepysopáva.",
 	"vector-page-tools-label": "Tembiporu",
 	"vector-page-tools-general-label": "Opavave",
 	"vector-page-tools-actions-label": "Tembiapo",
@@ -57,5 +60,8 @@
 	"tooltip-vector-anon-user-menu-title": "Hetave poravorã",
 	"vector-prefs-limited-width": "Emboguata mba'éicha oñemboapýra tuichakue",
 	"vector-prefs-limited-width-help": "Emboguata mba'éicha oñemboapýra tuichakue oñemyatyrõ hag̃ua ñemoñe'ẽrã.",
-	"empty-language-selector-body": "Kuatia retepy ndaipóri ambue ñe'ẽme."
+	"empty-language-selector-body": "Kuatia retepy ndaipóri ambue ñe'ẽme.",
+	"vector-toc-unpinned-popup": "Ápe oĩ marandu rechaukaha ko'ãga.",
+	"vector-page-tools-unpinned-popup": "Ápe oĩ tembiporukuéra ko'ãga.",
+	"vector-main-menu-unpinned-popup": "Ápe oĩ poravorã tenondegua ko'ãga."
 }

@@ -65,7 +65,7 @@
 
 		if ( mw.config.get( 'wgMinervaReadOnly' ) ) {
 			// eslint-disable-next-line no-jquery/no-global-selector
-			$( '#ca-edit' )
+			$( '#ca-edit,#ca-editsource,#ca-ve-edit' )
 				.removeClass( enabledClass )
 				.addClass( disabledClass );
 		}

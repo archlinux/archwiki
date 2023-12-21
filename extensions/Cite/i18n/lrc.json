@@ -15,5 +15,8 @@
 	"cite_error_included_ref": "Closing <code>&lt;/ref&gt;</code> گم بیه سی <code>&lt;ref&gt;</code> سردیس",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> سردیسی سی دسه ای که د\"$1\" نوم دیاره , ولی دیاری نکرده<code>&lt;دسه سرچشمه=\"$1\"/&gt;</code> tag پیدا نبی, یا بسته بیه<code>&lt;/ref&gt;</code> گم بیه",
 	"cite_references_link_accessibility_label": "بالا پرسن",
-	"cite_references_link_many_accessibility_label": "پرستن د"
+	"cite_references_link_many_accessibility_label": "پرستن د",
+	"cite-wikieditor-tool-reference": "سرچشمه",
+	"cite-wikieditor-help-content-reference-description": "سرچشمه",
+	"cite-wikieditor-help-content-showreferences-description": "نشو دئن سرچشمه یا"
 }

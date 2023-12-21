@@ -53,8 +53,6 @@ describe( 'fetch() using window.fetch', () => {
 	test( '200 without init param passed', async () => {
 		const { fetch } = fetchJson( url );
 		const json = await fetch;
-
-		// eslint-disable-next-line compat/compat
 		const controller = new AbortController();
 		expect( json ).toStrictEqual( { pages: [] } );
 

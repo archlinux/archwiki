@@ -9,27 +9,8 @@ require( '../cases/modified.json' ).forEach( function ( caseItem ) {
 	var testName = '#addListItem/#removeAddedListItem (' + caseItem.name + ')';
 	// This should be one test with many cases, rather than multiple tests, but the cases are large
 	// enough that processing all of them at once causes timeouts in Karma test runner.
-	// FIXME: Actually, even single test cases cause timeouts now. Skip the slowest ones.
-	var skipTests = [
-		'enwiki oldparser',
-		'enwiki parsoid',
-		'enwiki oldparser (bullet indentation)',
-		'enwiki parsoid (bullet indentation)'
-	];
+	var skipTests = require( '../skip.json' )[ 'cases/modified.json' ];
 	if ( skipTests.indexOf( caseItem.name ) !== -1 ) {
-		QUnit.skip( testName );
-		return;
-	}
-	// These tests depend on #getTranscludedFrom(), which we didn't implement in JS
-	var haveTranscludedComments = [
-		'arwiki no-paragraph parsoid',
-		'enwiki parsoid',
-		'Many comments consisting of a block template and a paragraph',
-		'Comment whose range almost exactly matches a template, but is not considered transcluded (T313100)',
-		'Accidental complex transclusion (T265528)',
-		'Accidental complex transclusion (T313093)'
-	];
-	if ( haveTranscludedComments.indexOf( caseItem.name ) !== -1 ) {
 		QUnit.skip( testName );
 		return;
 	}

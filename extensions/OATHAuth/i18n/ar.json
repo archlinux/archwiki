@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Alshamiri1",
 			"FiberAhmed",
 			"Meno25",
 			"MuratTheTurkish",
+			"أيوب",
 			"أَحمد",
 			"ديفيد",
 			"علاء",
-			"محمد أحمد عبد الفتاح",
-			"Alshamiri1",
-			"أيوب"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"oathauth-desc": "يوفر دعم المصادقة باستخدام كلمات مرور لمرة واحدة تستند إلى HMAC",
@@ -41,8 +41,8 @@
 	"action-oathauth-disable-for-user": "تعطيل التوثيق ذي العاملين لمستخدم",
 	"right-oathauth-verify-user": "تحقق مما إذا كان المستخدم قد تم تمكين المصادقة ذات العاملين",
 	"action-oathauth-verify-user": "تحقق مما إذا كان المستخدم قد تم تمكين المصادقة ذات العاملين",
-	"right-oathauth-view-log": "الوصول إلى سجل تغييرات التوثيق ذي العاملين",
-	"action-oathauth-view-log": "الوصول إلى سجل تغييرات التوثيق ذي العاملين",
+	"right-oathauth-view-log": "الوصول إلى سجل تغييرات المصادقة الثنائية",
+	"action-oathauth-view-log": "الوصول إلى سجل تغييرات المصادقة الثنائية",
 	"oathauth-disable-intro": "مع السلطة العظيمة، تأتي مسؤولية عظيمة",
 	"oathauth-enteruser": "اسم المستخدم:",
 	"oathauth-enterdisablereason": "سبب التعطيل:",
@@ -96,9 +96,9 @@
 	"notification-body-oathauth-disable": "إذا لم تكن {{GENDER:$2|أنت|أنتِ}} من قام بهذا، فإن {{GENDER:$2|حسابكَ|حسابكِ}} ربما تم اختراقه.",
 	"notification-body-oathauth-disable-other": "إذا كان {{GENDER:$2| أنت}} لم تطلب هذا ، {{GENDER:$2| يجب عليك}} الاتصال بالمسؤول.",
 	"oathauth-notifications-disable-help": "مساعدة",
-	"notification-header-oathauth-enabled": "تم تمكين المصادقة الثنائية على {{GENDER:$2| الحساب الخاص بك}}.",
-	"notification-body-oathauth-enabled": "إذا لم تكن {{GENDER:$2|أنت|أنتِ}} من قام بهذا، فإن {{GENDER:$2|حسابكَ|حسابكِ}} ربما تم اختراقه.",
-	"oathauth-notifications-enabled-help": "مساعدة",
+	"notification-header-oathauth-enable": "تم تمكين المصادقة الثنائية على {{GENDER:$2| الحساب الخاص بك}}.",
+	"notification-body-oathauth-enable": "إذا لم تكن {{GENDER:$2|أنت|أنتِ}} من قام بهذا، فإن {{GENDER:$2|حسابكَ|حسابكِ}} ربما تم اختراقه.",
+	"oathauth-notifications-enable-help": "مساعدة",
 	"oathauth-verify-enabled": "{{GENDER:$1| تم تمكين المصادقة الثنائية $1 }}.",
 	"oathauth-verify-disabled": "{{GENDER:$1| لم يتم تمكين المصادقة الثنائية $1 }}.",
 	"oathauth-prefs-disabledgroups": "معطل {{PLURAL:$1| مجموعة | مجموعات}}:"

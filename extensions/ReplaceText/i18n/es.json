@@ -48,7 +48,6 @@
 	"replacetext_warning": "'''Advertencia:''' hay {{PLURAL:$1|una página que ya contiene|$1 páginas que ya contienen}} la cadena de sustitución, \"$2\". Si realizas esta sustitución, no podrás separar tus sustituciones de estas cadenas.",
 	"replacetext_blankwarning": "'''Advertencia:''' como la cadena de reemplazo está vacía, esta operación no podrá revertirse.",
 	"replacetext_continue": "Continuar",
-	"replacetext_announce": "Anunciar estas ediciones mediante $1 y las listas de seguimiento",
 	"replacetext_editsummary": "Texto reemplazado: «$1» por «$2»",
 	"replacetext_reminder": "Para modificar también los enlaces a esta página en otras páginas por favor ve a $1.",
 	"right-replacetext": "Reemplazar cadenas de texto en toda la wiki",

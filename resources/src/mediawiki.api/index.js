@@ -33,8 +33,8 @@
 	 *
 	 * @class mw.Api
 	 * @constructor
-	 * @param {Object} [options] See #defaultOptions documentation above. Can also be overridden for
-	 *  each individual request by passing them to #get or #post (or directly #ajax) later on.
+	 * @param {Object} [options] See #defaultOptions documentation above. This can also be overridden for
+	 *  each request by passing them to #get or #post (or directly #ajax) later on.
 	 */
 	mw.Api = function ( options ) {
 		var defaults = $.extend( {}, options ),
@@ -104,14 +104,15 @@
 	// Pre-populate with fake ajax promises to avoid HTTP requests for tokens that
 	// we already have on the page from the embedded user.options module (T36733).
 	promises[ defaultOptions.ajax.url ] = {};
-	// eslint-disable-next-line no-jquery/no-each-util
-	$.each( mw.user.tokens.get(), function ( key, value ) {
+	var tokens = mw.user.tokens.get();
+	for ( var tokenKey in tokens ) {
+		var value = tokens[ tokenKey ];
 		// This requires #getToken to use the same key as mw.user.tokens.
 		// Format: token-type + "Token" (eg. csrfToken, patrolToken, watchToken).
-		promises[ defaultOptions.ajax.url ][ key ] = $.Deferred()
+		promises[ defaultOptions.ajax.url ][ tokenKey ] = $.Deferred()
 			.resolve( value )
 			.promise( { abort: function () {} } );
-	} );
+	}
 
 	mw.Api.prototype = {
 		/**
@@ -161,7 +162,7 @@
 		 *
 		 * @private
 		 * @param {Object} parameters (modified in-place)
-		 * @param {boolean} useUS Whether to use U+001F when joining multi-valued parameters.
+		 * @param {boolean} useUS Whether to use U+001F when joining multivalued parameters.
 		 */
 		preprocessParameters: function ( parameters, useUS ) {
 			var key;
@@ -268,7 +269,7 @@
 			// Make the AJAX request
 			xhr = $.ajax( ajaxOptions )
 				// If AJAX fails, reject API call with error code 'http'
-				// and details in second argument.
+				// and the details in the second argument.
 				.fail( function ( jqXHR, textStatus, exception ) {
 					apiDeferred.reject( 'http', {
 						xhr: jqXHR,
@@ -312,9 +313,9 @@
 		},
 
 		/**
-		 * Post to API with specified type of token. If we have no token, get one and try to post.
-		 * If we have a cached token try using that, and if it fails, blank out the
-		 * cached token and start over. For example to change an user option you could do:
+		 * Post to API with the specified type of token. If we have no token, get one and try to post.
+		 * If we already have a cached token, try using that, and if the request fails using the cached token,
+		 * blank it out and start over. For example, to change a user option, you could do:
 		 *
 		 *     new mw.Api().postWithToken( 'csrf', {
 		 *         action: 'options',
@@ -420,7 +421,7 @@
 						if ( !res.query ) {
 							return reject( 'query-missing', res );
 						}
-						// If token type is unknown, it is omitted from the response
+						// If the token type is unknown, it is omitted from the response
 						if ( !res.query.tokens[ type + 'token' ] ) {
 							return $.Deferred().reject( 'token-missing', res );
 						}
@@ -492,7 +493,7 @@
 				// The #ajax method returns the data like this, it's not my fault...
 				data === 'OK response but empty result (check HTTP headers?)'
 			) {
-				// Server failed so horribly it did not even set a HTTP error status
+				// The server failed so horribly that it did not set a HTTP error status
 				return $( '<div>' ).append( mw.message( 'api-clientside-error-invalidresponse' ).parseDom() );
 
 			} else if ( data.xhr ) {
@@ -500,7 +501,7 @@
 					// Hit the timeout (as defined above in defaultOptions)
 					return $( '<div>' ).append( mw.message( 'api-clientside-error-timeout' ).parseDom() );
 				} else if ( data.textStatus === 'abort' ) {
-					// Request cancelled by calling the abort() method on the promise
+					// The request was cancelled by calling the abort() method on the promise
 					return $( '<div>' ).append( mw.message( 'api-clientside-error-aborted' ).parseDom() );
 				} else if ( data.textStatus === 'parsererror' ) {
 					// Server returned invalid JSON
@@ -530,7 +531,7 @@
 				} ) );
 
 			} else {
-				// Server returned some valid but bogus JSON that probably doesn't even come from our API,
+				// The server returned some valid but bogus JSON that probably doesn't even come from our API,
 				// or this method was called incorrectly (e.g. with a successful response)
 				mw.log.warn( 'mw.Api#getErrorMessage could not handle the response:', data );
 				return $( '<div>' ).append( mw.message( 'api-clientside-error-invalidresponse' ).parseDom() );

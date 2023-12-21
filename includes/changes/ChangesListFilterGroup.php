@@ -27,7 +27,8 @@
 // setUnidirectionalConflict protected.
 
 use MediaWiki\Html\FormOptions;
-use Wikimedia\Rdbms\IDatabase;
+use MediaWiki\SpecialPage\ChangesListSpecialPage;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * Represents a filter group (used on ChangesListSpecialPage and descendants)
@@ -433,7 +434,7 @@ abstract class ChangesListFilterGroup {
 	 * The modification is only done if the filter group is in effect.  This means that
 	 * one or more valid and allowed filters were selected.
 	 *
-	 * @param IDatabase $dbr Database, for addQuotes, makeList, and similar
+	 * @param IReadableDatabase $dbr Database, for addQuotes, makeList, and similar
 	 * @param ChangesListSpecialPage $specialPage Current special page
 	 * @param array &$tables Array of tables; see IDatabase::select $table
 	 * @param array &$fields Array of fields; see IDatabase::select $vars
@@ -443,7 +444,7 @@ abstract class ChangesListFilterGroup {
 	 * @param FormOptions $opts Wrapper for the current request options and their defaults
 	 * @param bool $isStructuredFiltersEnabled True if the Structured UI is currently enabled
 	 */
-	abstract public function modifyQuery( IDatabase $dbr, ChangesListSpecialPage $specialPage,
+	abstract public function modifyQuery( IReadableDatabase $dbr, ChangesListSpecialPage $specialPage,
 		&$tables, &$fields, &$conds, &$query_options, &$join_conds,
 		FormOptions $opts, $isStructuredFiltersEnabled );
 

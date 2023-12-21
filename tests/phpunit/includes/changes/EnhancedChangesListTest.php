@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
+use MediaWiki\Utils\MWTimestamp;
 
 /**
  * @covers EnhancedChangesList
@@ -28,12 +30,6 @@ class EnhancedChangesListTest extends MediaWikiLangTestCase {
 		$styleModules = $enhancedChangesList->getOutput()->getModuleStyles();
 
 		$this->assertContains(
-			'mediawiki.icon',
-			$styleModules,
-			'has mediawiki.icon'
-		);
-
-		$this->assertContains(
 			'mediawiki.special.changeslist',
 			$styleModules,
 			'has mediawiki.special.changeslist'
@@ -44,15 +40,6 @@ class EnhancedChangesListTest extends MediaWikiLangTestCase {
 			$styleModules,
 			'has mediawiki.special.changeslist.enhanced'
 		);
-	}
-
-	public function testBeginRecentChangesList_jsModules() {
-		$enhancedChangesList = $this->newEnhancedChangesList();
-		$enhancedChangesList->beginRecentChangesList();
-
-		$modules = $enhancedChangesList->getOutput()->getModules();
-
-		$this->assertContains( 'jquery.makeCollapsible', $modules, 'has jquery.makeCollapsible' );
 	}
 
 	public function testBeginRecentChangesList_html() {

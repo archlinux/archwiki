@@ -12,7 +12,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 bhas|$1 bhaso}}",
 	"vector-no-language-button-label": "Bhaso zodd",
 	"vector-no-language-button-aria-label": "Ho lekh fokot hea bhasent ostitvant asa. Her bhasani lekh zodd.",
-	"vector-language-redirect-to-top": "Hea {{SITENAME}} -cher bhasecheo duve lekhachea mathallea samkar panachea voilea bhagant asat. [[#p-lang-btn|Voir voch]].",
+	"vector-language-redirect-to-top": "Bhasecheo duve panachea voilea bhagant lekhachea mathallea samkar asat.",
 	"vector-action-addsection": "Vixoi zodd",
 	"vector-action-delete": "Kadd",
 	"vector-action-move": "Zago bodol",

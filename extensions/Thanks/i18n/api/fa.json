@@ -7,11 +7,9 @@
 			"Macofe"
 		]
 	},
-	"apihelp-flowthank-description": "ارسال آگاه‌سازی عمومی سپاسگزاری از شما برای یک نظر Flow",
 	"apihelp-flowthank-summary": "ارسال آگاه‌سازی عمومی سپاسگزاری از شما برای یک نظر Flow",
 	"apihelp-flowthank-param-postid": "UUIDی پست مشکور",
 	"apihelp-flowthank-example-1": "تشکر کردن از نظر با <kbd>UUID xyz789</kbd>",
-	"apihelp-thank-description": "فرستادن یک اعلان تشکر به یک ویرایشگر.",
 	"apihelp-thank-summary": "پیام تشکری به یک ویرایشگر ارسال کنید.",
 	"apihelp-thank-param-rev": "شناسهٔ نسخه‌ای که بابت آن از کسی تشکر می‌کنید. یا این شناسه و یا مقدار متغیر «log» باید ارائه شود.",
 	"apihelp-thank-param-log": "شناسهٔ سیاهه‌ایی که بابت آن از کسی تشکر می‌کنید. یا این شناسه و یا مقدار متغیر «rev» باید ارائه شود.",

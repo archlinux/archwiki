@@ -2,6 +2,8 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
+use InvalidArgumentException;
+
 /**
  * This class runs a callback when the extension is registered, right after configuration has been
  * loaded (not really a hook, but almost).
@@ -13,7 +15,8 @@ class RegistrationCallback {
 		global $wgAbuseFilterProfile,
 			$wgAbuseFilterProfiling, $wgAbuseFilterPrivateLog, $wgAbuseFilterForceSummary,
 			$wgGroupPermissions, $wgAbuseFilterRestrictions, $wgAbuseFilterDisallowGlobalLocalBlocks,
-			$wgAbuseFilterActionRestrictions, $wgAbuseFilterLocallyDisabledGlobalActions;
+			$wgAbuseFilterActionRestrictions, $wgAbuseFilterLocallyDisabledGlobalActions,
+			$wgAbuseFilterActorTableSchemaMigrationStage;
 
 		// @todo Remove this in a future release (added in 1.33)
 		if ( isset( $wgAbuseFilterProfile ) || isset( $wgAbuseFilterProfiling ) ) {
@@ -86,6 +89,20 @@ class RegistrationCallback {
 		if ( isset( $wgAbuseFilterRestrictions ) ) {
 			wfWarn( '$wgAbuseFilterRestrictions has been renamed to $wgAbuseFilterActionRestrictions.' );
 			$wgAbuseFilterActionRestrictions = $wgAbuseFilterRestrictions;
+		}
+
+		// in order
+		$allowedStages = [
+			SCHEMA_COMPAT_OLD,
+			SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD,
+			SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_NEW,
+			SCHEMA_COMPAT_NEW,
+		];
+		if ( !in_array( $wgAbuseFilterActorTableSchemaMigrationStage, $allowedStages ) ) {
+			throw new InvalidArgumentException(
+				'$wgAbuseFilterActorTableSchemaMigrationStage must specify a supported ' .
+				'combination of schema compatibility flags'
+			);
 		}
 	}
 

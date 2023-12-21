@@ -1,5 +1,5 @@
 !! options
-parsoid-compatible
+parsoid-compatible=wt2html,wt2wt
 version=2
 !! end
 
@@ -100,7 +100,7 @@ parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 var a;
 </source>
 !! html
-<div class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><pre><span></span><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span>
+<div class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="nx">a</span><span class="p">;</span>
 </pre></div>
 !! end
 
@@ -128,7 +128,7 @@ parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 <source lang="javascript" id="foo" class="bar" dir="rtl" style="font-size: larger;">var a;</source>
 !! html
-<div id="foo" class="bar mw-highlight mw-highlight-lang-javascript mw-content-rtl" style="font-size: larger;" dir="rtl"><pre><span></span><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span>
+<div id="foo" class="bar mw-highlight mw-highlight-lang-javascript mw-content-rtl" style="font-size: larger;" dir="rtl"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="nx">a</span><span class="p">;</span>
 </pre></div>
 !! end
 
@@ -141,10 +141,10 @@ parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 Text <source lang="javascript" inline>var a;</source>.
 !! html/php
-<p>Text <code class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span></code>.
+<p>Text <code class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><span class="kd">var</span><span class="w"> </span><span class="nx">a</span><span class="p">;</span></code>.
 </p>
 !! html/parsoid
-<p>Text <code class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr" about="#mwt1" typeof="mw:Extension/source" data-mw='{"name":"source","attrs":{"lang":"javascript","inline":""},"body":{"extsrc":"var a;"}}'><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span></code>.</p>
+<p>Text <code class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr" about="#mwt1" typeof="mw:Extension/source" data-mw='{"name":"source","attrs":{"lang":"javascript","inline":""},"body":{"extsrc":"var a;"}}'><span class="kd">var</span><span class="w"> </span><span class="nx">a</span><span class="p">;</span></code>.</p>
 !! end
 
 !! test
@@ -154,12 +154,14 @@ parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 Text <source lang="javascript" enclose="none">var a;</source>.
 !! html
-<p>Text <code class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span></code>.
+<p>Text <code class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><span class="kd">var</span><span class="w"> </span><span class="nx">a</span><span class="p">;</span></code>.
 </p>
 !! end
 
 !! test
 Enclose with nowiki
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 {{#tag:syntaxhighlight|<nowiki>foo</nowiki>|lang="text"|inline=none}}
 !! html/php
@@ -211,10 +213,10 @@ function doSomething() {
 	if (baz) {
 </syntaxhighlight>
 !! html
-<div class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><pre><span></span><span class="kd">function</span> <span class="nx">doSomething</span><span class="p">()</span> <span class="p">{</span>
-<span class="hll">	<span class="kd">var</span>	<span class="nx">foo</span><span class="p">,</span>
-</span><span class="hll">		<span class="nx">bar</span><span class="p">;</span>
-</span>	<span class="k">if</span> <span class="p">(</span><span class="nx">baz</span><span class="p">)</span> <span class="p">{</span>
+<div class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><pre><span></span><span class="kd">function</span><span class="w"> </span><span class="nx">doSomething</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="hll"><span class="w">	</span><span class="kd">var</span><span class="w">	</span><span class="nx">foo</span><span class="p">,</span>
+</span><span class="hll"><span class="w">		</span><span class="nx">bar</span><span class="p">;</span>
+</span><span class="w">	</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">baz</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </pre></div>
 !! end
 

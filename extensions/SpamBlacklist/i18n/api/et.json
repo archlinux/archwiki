@@ -4,7 +4,6 @@
 			"Pikne"
 		]
 	},
-	"apihelp-spamblacklist-description": "Ühe või enama internetiaadressi valideerimine rämpsposti blokeerimisnimekirja vastu.",
 	"apihelp-spamblacklist-example-1": "Kontrolli kaht internetiaadressi blokeerimisnimekirja vastu",
 	"apihelp-spamblacklist-param-url": "Internetiaadressid, mida blokeerimisnimekirja vastu valideerida."
 }

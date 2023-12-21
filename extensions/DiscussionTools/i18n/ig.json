@@ -49,8 +49,6 @@
 	"discussiontools-limitreport-errorreqid": "Akọrọngwa eji akpa nkata adịghị mma nata ikike",
 	"discussiontools-limitreport-timeusage": "Oge iji Akọrọngwa eji akpa nkata",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|second|seconds}}",
-	"discussiontools-newtopic-legacy-hint": "<strong>Ụzọ ọhụụ iji bido isiokwu dị ebe a.</strong> Mmelite a ga-enyere gị aka ịtinye isiokwu site n'iji ụdị usoro dị iche ma were ụzọ mkpirisi ọhụụ mee ka ndị ọzọ mara  . Ị nwekwara ike [$1 switch back to the legacy experience].",
-	"discussiontools-newtopic-legacy-hint-return": "<strong>Ugbu a ị na-ahụ arụmarụ nketa.</strong> ị nwere ike [$1 return to the new experience] maọbụ jee hụ nke mmasịrị gị  ị ji wee [$2 set the legacy experience as your default].",
 	"discussiontools-newtopic-missing-title": "Biko wepụta isiokwu ihe ị na-ekwu/ede maka ya. Ọbụrụ na -ịpịa aka na {{int:discussiontools-replywidget-newtopic}}\" A ga-agbakwụnye ihe ị dere/kwuru na-enweghị isiokwu.",
 	"discussiontools-newtopic-placeholder-title": "Isiokwu",
 	"discussiontools-notification-removed-topic-body": "E nwere ike, I gaghizi anata ozi gbasara {{PLURAL:$1| isiokwu a|isiokwu ndị a}}.",

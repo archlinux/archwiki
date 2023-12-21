@@ -31,55 +31,60 @@ use Cdb\Util;
 class PHP extends Reader {
 	/**
 	 * The file name of the CDB file.
-	 * @var string $fileName
+	 * @var string
 	 */
 	protected $fileName;
 
 	/**
-	 * @var string $index
+	 * The file handle
+	 */
+	protected $handle;
+
+	/**
+	 * @var string
 	 * First 2048 bytes of CDB file, containing pointers to hash table.
 	 */
 	protected $index;
 
 	/**
 	 * Offset in file where value of found key starts.
-	 * @var int $dataPos
+	 * @var int
 	 */
 	protected $dataPos;
 
 	/**
 	 * Byte length of found key's value.
-	 * @var int $dataLen
+	 * @var int
 	 */
 	protected $dataLen;
 
 	/**
 	 * File position indicator when iterating over keys.
-	 * @var int $keyIterPos
+	 * @var int
 	 */
 	protected $keyIterPos = 2048;
 
 	/**
 	 * Offset in file where hash tables start.
-	 * @var int $keyIterStop
+	 * @var int
 	 */
 	protected $keyIterStop;
 
 	/**
 	 * Read buffer for CDB file.
-	 * @var string $buf
+	 * @var string
 	 */
 	protected $buf;
 
 	/**
 	 * File offset where read buffer starts.
-	 * @var int $bufStart
+	 * @var int
 	 */
 	protected $bufStart;
 
 	/**
 	 * File handle position indicator.
-	 * @var int $filePos
+	 * @var int
 	 */
 	protected $filePos = 2048;
 
@@ -88,7 +93,7 @@ class PHP extends Reader {
 	 * @throws Exception If CDB file cannot be opened or if it contains fewer
 	 *   than 2048 bytes of data.
 	 */
-	public function __construct( $fileName ) {
+	public function __construct( string $fileName ) {
 		$this->fileName = $fileName;
 		$this->handle = fopen( $fileName, 'rb' );
 		if ( !$this->handle ) {
@@ -103,22 +108,21 @@ class PHP extends Reader {
 	/**
 	 * Close the handle on the CDB file.
 	 */
-	public function close() {
-		if ( isset( $this->handle ) ) {
+	public function close(): void {
+		if ( $this->handle ) {
 			fclose( $this->handle );
 		}
-		unset( $this->handle );
+		$this->handle = null;
 	}
 
 	/**
 	 * Get the value of a key.
 	 *
-	 * @param mixed $key
-	 * @return bool|string The key's value or false if not found.
+	 * @param string|int $key
+	 * @return string|false The key's value or false if not found
 	 */
 	public function get( $key ) {
-		// strval is required
-		if ( $this->find( strval( $key ) ) ) {
+		if ( $this->find( (string)$key ) ) {
 			return $this->read( $this->dataPos, $this->dataLen );
 		}
 
@@ -128,9 +132,8 @@ class PHP extends Reader {
 	/**
 	 * Read data from the CDB file.
 	 *
-	 * @throws Exception When attempting to read past the end of the file.
-	 * @param int $start Start reading from this position.
-	 * @param int $len Number of bytes to read.
+	 * @param int $start Start reading from this position
+	 * @param int $len Number of bytes to read
 	 * @return string Read data.
 	 */
 	protected function read( $start, $len ) {
@@ -295,11 +298,11 @@ class PHP extends Reader {
 	/**
 	 * Check if a key exists in the CDB file.
 	 *
-	 * @param string $key
+	 * @param string|int $key
 	 * @return bool Whether the key exists.
 	 */
-	public function exists( $key ) {
-		return $this->find( strval( $key ) );
+	public function exists( $key ): bool {
+		return $this->find( (string)$key );
 	}
 
 	/**

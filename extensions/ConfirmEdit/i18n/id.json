@@ -16,7 +16,6 @@
 	"captcha-edit": "Untuk menyunting halaman ini, harap pecahkan pekerjaan sederhana di bawah ini dan masukkan jawabannya di kotak yang tersedia ([[Special:Captcha/help|info lengkap]]):",
 	"captcha-edit-fail": "Kode CAPTCHA salah atau belum diisi.",
 	"captcha-desc": "Menyediakan teknik captcha untuk melindungi terhadap spam dan penebakan sandi",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Solusi CAPTCHA.",
 	"captcha-info-help": "Deskripsi CAPTCHA.",
 	"captcha-id-label": "ID CAPTCHA",

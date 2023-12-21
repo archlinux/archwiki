@@ -6,7 +6,6 @@
 			"Urbalazs"
 		]
 	},
-	"apihelp-templatedata-description": "A TemplateData kiterjesztés által tárolt adatok lekérdezése.",
 	"apihelp-templatedata-summary": "A TemplateData kiterjesztés által tárolt adatok lekérdezése.",
 	"apihelp-templatedata-example-1": "[[Template:Stub]] és [[Template:Example]] sablonadatainak visszaadása eredményekkel, ha a sablon nem létezik, vagy létezik ugyan, de nincs sablonadata",
 	"apihelp-templatedata-param-lang": "Lokalizált értékek visszaadása ezen a nyelven. Alapértelmezetten minden elérhető fordítást visszaad az API.",

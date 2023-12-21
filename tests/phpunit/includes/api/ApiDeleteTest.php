@@ -2,6 +2,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 /**
  * Tests for MediaWiki api.php?action=delete.
@@ -27,23 +28,23 @@ class ApiDeleteTest extends ApiTestCase {
 	}
 
 	public function testDelete() {
-		$name = 'Help:' . ucfirst( __FUNCTION__ );
+		$title = Title::makeTitle( NS_HELP, 'TestDelete' );
 
 		// create new page
-		$this->editPage( $name, 'Some text' );
+		$this->editPage( $title, 'Some text' );
 
 		// test deletion
 		$apiResult = $this->doApiRequestWithToken( [
 			'action' => 'delete',
-			'title' => $name,
+			'title' => $title->getPrefixedText(),
 		] )[0];
 
 		$this->assertArrayHasKey( 'delete', $apiResult );
 		$this->assertArrayHasKey( 'title', $apiResult['delete'] );
-		$this->assertSame( $name, $apiResult['delete']['title'] );
+		$this->assertSame( $title->getPrefixedText(), $apiResult['delete']['title'] );
 		$this->assertArrayHasKey( 'logid', $apiResult['delete'] );
 
-		$this->assertFalse( Title::newFromText( $name )->exists() );
+		$this->assertFalse( $title->exists( Title::READ_LATEST ) );
 	}
 
 	public function testBatchedDelete() {
@@ -51,19 +52,19 @@ class ApiDeleteTest extends ApiTestCase {
 			MainConfigNames::DeleteRevisionsBatchSize, 1
 		);
 
-		$name = 'Help:' . ucfirst( __FUNCTION__ );
+		$title = Title::makeTitle( NS_HELP, 'TestBatchedDelete' );
 		for ( $i = 1; $i <= 3; $i++ ) {
-			$this->editPage( $name, "Revision $i" );
+			$this->editPage( $title, "Revision $i" );
 		}
 
 		$apiResult = $this->doApiRequestWithToken( [
 			'action' => 'delete',
-			'title' => $name,
+			'title' => $title->getPrefixedText(),
 		] )[0];
 
 		$this->assertArrayHasKey( 'delete', $apiResult );
 		$this->assertArrayHasKey( 'title', $apiResult['delete'] );
-		$this->assertSame( $name, $apiResult['delete']['title'] );
+		$this->assertSame( $title->getPrefixedText(), $apiResult['delete']['title'] );
 		$this->assertArrayHasKey( 'scheduled', $apiResult['delete'] );
 		$this->assertTrue( $apiResult['delete']['scheduled'] );
 		$this->assertArrayNotHasKey( 'logid', $apiResult['delete'] );
@@ -71,12 +72,11 @@ class ApiDeleteTest extends ApiTestCase {
 		// Run the jobs
 		$this->runJobs();
 
-		$this->assertFalse( Title::newFromText( $name )->exists( Title::READ_LATEST ) );
+		$this->assertFalse( $title->exists( Title::READ_LATEST ) );
 	}
 
 	public function testDeleteNonexistent() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( "The page you specified doesn't exist." );
+		$this->expectApiErrorCode( 'missingtitle' );
 
 		$this->doApiRequestWithToken( [
 			'action' => 'delete',
@@ -85,126 +85,108 @@ class ApiDeleteTest extends ApiTestCase {
 	}
 
 	public function testDeleteAssociatedTalkPage() {
-		$title = 'Help:' . ucfirst( __FUNCTION__ );
-		$talkPage = 'Help_talk:' . ucfirst( __FUNCTION__ );
+		$title = Title::makeTitle( NS_HELP, 'TestDeleteAssociatedTalkPage' );
+		$talkPage = $title->getTalkPageIfDefined();
 		$this->editPage( $title, 'Some text' );
 		$this->editPage( $talkPage, 'Some text' );
 		$apiResult = $this->doApiRequestWithToken( [
 			'action' => 'delete',
-			'title' => $title,
+			'title' => $title->getPrefixedText(),
 			'deletetalk' => true,
 		] )[0];
 
-		$this->assertSame( $title, $apiResult['delete']['title'] );
-		$this->assertFalse( Title::newFromText( $talkPage )->exists( Title::READ_LATEST ) );
+		$this->assertSame( $title->getPrefixedText(), $apiResult['delete']['title'] );
+		$this->assertFalse( $talkPage->exists( Title::READ_LATEST ) );
 	}
 
 	public function testDeleteAssociatedTalkPageNonexistent() {
-		$title = 'Help:' . ucfirst( __FUNCTION__ );
+		$title = Title::makeTitle( NS_HELP, 'TestDeleteAssociatedTalkPageNonexistent' );
 		$this->editPage( $title, 'Some text' );
 		$apiResult = $this->doApiRequestWithToken( [
 			'action' => 'delete',
-			'title' => $title,
+			'title' => $title->getPrefixedText(),
 			'deletetalk' => true,
 		] )[0];
 
-		$this->assertSame( $title, $apiResult['delete']['title'] );
+		$this->assertSame( $title->getPrefixedText(), $apiResult['delete']['title'] );
 		$this->assertArrayHasKey( 'warnings', $apiResult );
 	}
 
 	public function testDeletionWithoutPermission() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage(
-			// Two error messages are possible depending on the number of groups in the wiki with deletion rights:
-			// - The action you have requested is limited to users in the group:
-			// - The action you have requested is limited to users in one of the groups:
-			'The action you have requested is limited to users in'
-		);
+		$this->expectApiErrorCode( 'permissiondenied' );
 
-		$name = 'Help:' . ucfirst( __FUNCTION__ );
+		$title = Title::makeTitle( NS_HELP, 'TestDeletionWithoutPermission' );
 
 		// create new page
-		$this->editPage( $name, 'Some text' );
+		$this->editPage( $title, 'Some text' );
 
 		// test deletion without permission
 		try {
 			$user = new User();
-			$apiResult = $this->doApiRequest( [
+			$this->doApiRequest( [
 				'action' => 'delete',
-				'title' => $name,
+				'title' => $title->getPrefixedText(),
 				'token' => $user->getEditToken(),
 			], null, null, $user );
 		} finally {
-			$this->assertTrue( Title::newFromText( $name )->exists() );
+			$this->assertTrue( $title->exists( Title::READ_LATEST ) );
 		}
 	}
 
 	public function testDeleteWithTag() {
-		$name = 'Help:' . ucfirst( __FUNCTION__ );
+		$title = Title::makeTitle( NS_HELP, 'TestDeleteWithTag' );
 
-		ChangeTags::defineTag( 'custom tag' );
+		$this->getServiceContainer()->getChangeTagsStore()->defineTag( 'custom tag' );
 
-		$this->editPage( $name, 'Some text' );
+		$this->editPage( $title, 'Some text' );
 
 		$this->doApiRequestWithToken( [
 			'action' => 'delete',
-			'title' => $name,
+			'title' => $title->getPrefixedText(),
 			'tags' => 'custom tag',
 		] );
 
-		$this->assertFalse( Title::newFromText( $name )->exists() );
+		$this->assertFalse( $title->exists( Title::READ_LATEST ) );
 
-		$dbw = wfGetDB( DB_PRIMARY );
-		$this->assertSame( 'custom tag', $dbw->selectField(
-			[ 'change_tag', 'logging', 'change_tag_def' ],
-			'ctd_name',
-			[
-				'log_namespace' => NS_HELP,
-				'log_title' => ucfirst( __FUNCTION__ ),
-			],
-			__METHOD__,
-			[],
-			[
-				'change_tag' => [ 'JOIN', 'ct_log_id = log_id' ],
-				'change_tag_def' => [ 'JOIN', 'ctd_id = ct_tag_id' ]
-			]
-		) );
+		$this->assertSame( 'custom tag', $this->getDb()->newSelectQueryBuilder()
+			->select( 'ctd_name' )
+			->from( 'logging' )
+			->join( 'change_tag', null, 'ct_log_id = log_id' )
+			->join( 'change_tag_def', null, 'ctd_id = ct_tag_id' )
+			->where( [ 'log_namespace' => $title->getNamespace(), 'log_title' => $title->getDBkey(), ] )
+			->caller( __METHOD__ )->fetchField() );
 	}
 
 	public function testDeleteWithoutTagPermission() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage(
-			'You do not have permission to apply change tags along with your changes.'
-		);
+		$this->expectApiErrorCode( 'tags-apply-no-permission' );
 
-		$name = 'Help:' . ucfirst( __FUNCTION__ );
+		$title = Title::makeTitle( NS_HELP, 'TestDeleteWithoutTagPermission' );
 
-		ChangeTags::defineTag( 'custom tag' );
+		$this->getServiceContainer()->getChangeTagsStore()->defineTag( 'custom tag' );
 		$this->overrideConfigValue(
 			MainConfigNames::RevokePermissions,
 			[ 'user' => [ 'applychangetags' => true ] ]
 		);
 
-		$this->editPage( $name, 'Some text' );
+		$this->editPage( $title, 'Some text' );
 
 		try {
 			$this->doApiRequestWithToken( [
 				'action' => 'delete',
-				'title' => $name,
+				'title' => $title->getPrefixedText(),
 				'tags' => 'custom tag',
 			] );
 		} finally {
-			$this->assertTrue( Title::newFromText( $name )->exists() );
+			$this->assertTrue( $title->exists( Title::READ_LATEST ) );
 		}
 	}
 
 	public function testDeleteAbortedByHook() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'Deletion aborted by hook. It gave no explanation.' );
+		$this->expectApiErrorCode( 'delete-hook-aborted' );
 
-		$name = 'Help:' . ucfirst( __FUNCTION__ );
+		$title = Title::makeTitle( NS_HELP, 'TestDeleteAbortedByHook' );
 
-		$this->editPage( $name, 'Some text' );
+		$this->editPage( $title, 'Some text' );
 
 		$this->setTemporaryHook( 'ArticleDelete',
 			static function () {
@@ -213,51 +195,55 @@ class ApiDeleteTest extends ApiTestCase {
 		);
 
 		try {
-			$this->doApiRequestWithToken( [ 'action' => 'delete', 'title' => $name ] );
+			$this->doApiRequestWithToken( [ 'action' => 'delete', 'title' => $title->getPrefixedText() ] );
 		} finally {
-			$this->assertTrue( Title::newFromText( $name )->exists() );
+			$this->assertTrue( $title->exists( Title::READ_LATEST ) );
 		}
 	}
 
 	public function testDeleteWatch() {
-		$name = 'Help:' . ucfirst( __FUNCTION__ );
-		$user = self::$users['sysop']->getUser();
+		$title = Title::makeTitle( NS_HELP, 'TestDeleteWatch' );
+		$page = $this->getExistingTestPage( $title );
+		$performer = $this->getTestSysop()->getUser();
 		$watchlistManager = $this->getServiceContainer()->getWatchlistManager();
 
-		$this->editPage( $name, 'Some text' );
-		$this->assertTrue( Title::newFromText( $name )->exists() );
-		$this->assertFalse( $watchlistManager->isWatched( $user, Title::newFromText( $name ) ) );
+		$this->assertFalse( $watchlistManager->isWatched( $performer, $page ) );
 
-		$this->doApiRequestWithToken( [
-			'action' => 'delete',
-			'title' => $name,
-			'watch' => '',
-			'watchlistexpiry' => '99990123000000',
-		] );
+		$res = $this->doApiRequestWithToken(
+			[
+				'action' => 'delete',
+				'title' => $title->getPrefixedText(),
+				'watch' => '',
+				'watchlistexpiry' => '99990123000000',
+			],
+			null,
+			$performer
+		);
+		$this->assertArrayHasKey( 'delete', $res[0] );
+		$page->clear();
 
-		$title = Title::newFromText( $name );
-		$this->assertFalse( $title->exists() );
-		$this->assertTrue( $watchlistManager->isWatched( $user, $title ) );
-		$this->assertTrue( $watchlistManager->isTempWatched( $user, $title ) );
+		$this->assertFalse( $page->exists() );
+		$this->assertTrue( $watchlistManager->isWatched( $performer, $page ) );
+		$this->assertTrue( $watchlistManager->isTempWatched( $performer, $page ) );
 	}
 
 	public function testDeleteUnwatch() {
-		$name = 'Help:' . ucfirst( __FUNCTION__ );
+		$title = Title::makeTitle( NS_HELP, 'TestDeleteUnwatch' );
 		$user = $this->getTestSysop()->getUser();
 
-		$this->editPage( $name, 'Some text' );
-		$this->assertTrue( Title::newFromText( $name )->exists() );
+		$this->editPage( $title, 'Some text' );
+		$this->assertTrue( $title->exists( Title::READ_LATEST ) );
 		$watchlistManager = $this->getServiceContainer()->getWatchlistManager();
-		$watchlistManager->addWatch( $user, Title::newFromText( $name ) );
-		$this->assertTrue( $watchlistManager->isWatched( $user, Title::newFromText( $name ) ) );
+		$watchlistManager->addWatch( $user, $title );
+		$this->assertTrue( $watchlistManager->isWatched( $user, $title ) );
 
 		$this->doApiRequestWithToken( [
 			'action' => 'delete',
-			'title' => $name,
+			'title' => $title->getPrefixedText(),
 			'watchlist' => 'unwatch',
 		] );
 
-		$this->assertFalse( Title::newFromText( $name )->exists() );
-		$this->assertFalse( $watchlistManager->isWatched( $user, Title::newFromText( $name ) ) );
+		$this->assertFalse( $title->exists( Title::READ_LATEST ) );
+		$this->assertFalse( $watchlistManager->isWatched( $user, $title ) );
 	}
 }

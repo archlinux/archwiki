@@ -16,13 +16,8 @@
 	padding: 2px !important; /* stylelint-disable-line declaration-no-important */
 }
 
-/*
- * .ve-ce-linkAnnotation.ve-ce-annotation-active has as higher specificity
- * than .external, so we need to re-override right padding
- */
 /* stylelint-disable-next-line selector-class-pattern */
 .ve-ce-linkAnnotation.ve-ce-annotation-active.external {
-	padding-right: 13px;
 	/* Reset -2px from VE-core */
 	margin-right: 0;
 }

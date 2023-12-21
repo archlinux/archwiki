@@ -1,25 +1,27 @@
 <?php
 
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use Wikimedia\ScopedCallback;
 
 /**
  * @covers ParserOptions
+ * @group Database
  */
 class ParserOptionsTest extends MediaWikiLangTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->overrideConfigValue( MainConfigNames::RenderHashAppend, '' );
-		$this->overrideConfigValue( MainConfigNames::UsePigLatinVariant, false );
-
-		// This is crazy, but registering false, null, or other falsey values
-		// as a hook callback "works".
-		$this->setTemporaryHook( 'PageRenderingHash', null );
+		$this->overrideConfigValues( [
+			MainConfigNames::RenderHashAppend => '',
+			MainConfigNames::UsePigLatinVariant => false,
+		] );
+		$this->setTemporaryHook( 'PageRenderingHash', HookContainer::NOOP );
 	}
 
 	protected function tearDown(): void {
@@ -28,7 +30,7 @@ class ParserOptionsTest extends MediaWikiLangTestCase {
 	}
 
 	public function testNewCanonical() {
-		$user = $this->getMutableTestUser()->getUser();
+		$user = $this->createMock( User::class );
 		$userLang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'fr' );
 		$contLang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'qqx' );
 
@@ -139,7 +141,7 @@ class ParserOptionsTest extends MediaWikiLangTestCase {
 		$usedOptions, $expect, $options, $globals = [], $hookFunc = null
 	) {
 		$this->overrideConfigValues( $globals );
-		$this->setTemporaryHook( 'PageRenderingHash', $hookFunc );
+		$this->setTemporaryHook( 'PageRenderingHash', $hookFunc ?: HookContainer::NOOP );
 
 		$popt = ParserOptions::newFromAnon();
 		foreach ( $options as $name => $value ) {
@@ -175,7 +177,7 @@ class ParserOptionsTest extends MediaWikiLangTestCase {
 				'canonical!wgRenderHashAppend!onPageRenderingHash',
 				[],
 				[ MainConfigNames::RenderHashAppend => '!wgRenderHashAppend' ],
-				[ __CLASS__ . '::onPageRenderingHash' ],
+				__CLASS__ . '::onPageRenderingHash',
 			],
 		];
 	}
@@ -328,10 +330,10 @@ class ParserOptionsTest extends MediaWikiLangTestCase {
 	}
 
 	public function testAllCacheVaryingOptions() {
-		$this->setTemporaryHook( 'ParserOptionsRegister', null );
+		$this->setTemporaryHook( 'ParserOptionsRegister', HookContainer::NOOP );
 		$this->assertSame( [
 			'dateformat', 'printable',
-			'thumbsize', 'userlang'
+			'thumbsize', 'useParsoid', 'userlang',
 		], ParserOptions::allCacheVaryingOptions() );
 
 		ParserOptions::clearStaticCache();
@@ -349,7 +351,7 @@ class ParserOptionsTest extends MediaWikiLangTestCase {
 		} );
 		$this->assertSame( [
 			'dateformat', 'foo', 'printable',
-			'thumbsize', 'userlang'
+			'thumbsize', 'useParsoid', 'userlang',
 		], ParserOptions::allCacheVaryingOptions() );
 	}
 

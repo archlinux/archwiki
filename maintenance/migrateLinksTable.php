@@ -1,8 +1,8 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
-
 require_once __DIR__ . '/Maintenance.php';
+
+use MediaWiki\Title\TitleValue;
 
 /**
  * Maintenance script that populates normalization column in links tables.
@@ -100,7 +100,7 @@ class MigrateLinksTable extends LoggedUpdateMaintenance {
 				->select( [ $mapping[$table]['ns'], $mapping[$table]['title'] ] )
 				->from( $table )
 				->where( [
-					$targetColumn => null,
+					$targetColumn => [ null, 0 ],
 					"$pageIdColumn BETWEEN $lowPageId AND $highPageId"
 				] )
 				->limit( 1 )
@@ -115,9 +115,9 @@ class MigrateLinksTable extends LoggedUpdateMaintenance {
 			$title = new TitleValue( (int)$ns, $titleString );
 			$this->output( "Starting backfill of $ns:$titleString " .
 				"title on pages between $lowPageId and $highPageId\n" );
-			$id = MediaWikiServices::getInstance()->getLinkTargetLookup()->acquireLinkTargetId( $title, $dbw );
+			$id = $this->getServiceContainer()->getLinkTargetLookup()->acquireLinkTargetId( $title, $dbw );
 			$conds = [
-				$targetColumn => null,
+				$targetColumn => [ null, 0 ],
 				$mapping[$table]['ns'] => $ns,
 				$mapping[$table]['title'] => $titleString,
 				"$pageIdColumn BETWEEN $lowPageId AND $highPageId"

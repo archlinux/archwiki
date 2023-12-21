@@ -50,11 +50,12 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 	}
 
 	/**
-	 * Construct a cache key.
+	 * Format a cache key.
 	 *
 	 * @since 1.27
+	 * @see BagOStuff::makeKeyInternal
 	 * @param string $keyspace
-	 * @param array $components
+	 * @param string[]|int[] $components
 	 * @return string
 	 */
 	protected function makeKeyInternal( $keyspace, $components ) {
@@ -89,6 +90,10 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 		}
 
 		return $keyspace . ':' . implode( ':', $components );
+	}
+
+	protected function requireConvertGenericKey(): bool {
+		return true;
 	}
 
 	/**
@@ -134,9 +139,8 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 			return $key;
 		}
 
-		$prefixLength = strlen( $this->routingPrefix );
-		if ( substr( $key, 0, $prefixLength ) === $this->routingPrefix ) {
-			return substr( $key, $prefixLength );
+		if ( str_starts_with( $key, $this->routingPrefix ) ) {
+			return substr( $key, strlen( $this->routingPrefix ) );
 		}
 
 		return $key;

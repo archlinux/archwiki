@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * VisualEditor ContentEditable MWReferenceNode class.
  *
@@ -110,12 +112,12 @@ ve.ce.MWReferenceNode.prototype.onAttributeChange = function ( key ) {
  * @inheritdoc ve.ce.FocusableNode
  */
 ve.ce.MWReferenceNode.prototype.executeCommand = function () {
-	var items = ve.ui.contextItemFactory.getRelatedItems( [ this.model ] );
+	const items = ve.ui.contextItemFactory.getRelatedItems( [ this.model ] );
 
 	if ( items.length ) {
-		var contextItem = ve.ui.contextItemFactory.lookup( items[ 0 ].name );
+		const contextItem = ve.ui.contextItemFactory.lookup( items[ 0 ].name );
 		if ( contextItem ) {
-			var command = this.getRoot().getSurface().getSurface().commandRegistry.lookup( contextItem.static.commandName );
+			const command = this.getRoot().getSurface().getSurface().commandRegistry.lookup( contextItem.static.commandName );
 			if ( command ) {
 				command.execute( this.focusableSurface.getSurface() );
 			}
@@ -128,13 +130,9 @@ ve.ce.MWReferenceNode.prototype.executeCommand = function () {
  */
 ve.ce.MWReferenceNode.prototype.update = function () {
 	this.$text.text( this.model.getIndexLabel() );
-	this.$link.css( 'counterReset', 'mw-Ref ' + this.model.getIndex() );
-	var group = this.model.getGroup();
-	if ( group ) {
-		this.$link.attr( 'data-mw-group', group );
-	} else {
-		this.$link.removeAttr( 'data-mw-group' );
-	}
+	this.$link
+		.css( 'counterReset', 'mw-Ref ' + this.model.getIndex() )
+		.attr( 'data-mw-group', this.model.getGroup() || null );
 	this.$element.toggleClass( 've-ce-mwReferenceNode-placeholder', !!this.model.getAttribute( 'placeholder' ) );
 };
 

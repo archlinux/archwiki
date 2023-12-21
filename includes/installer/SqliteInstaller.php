@@ -22,6 +22,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Status\Status;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\DatabaseFactory;
 use Wikimedia\Rdbms\DatabaseSqlite;
@@ -360,12 +361,11 @@ EOT;
 		global $IP;
 
 		$module = DatabaseSqlite::getFulltextSearchModule();
-		$searchIndexSql = (string)$this->db->selectField(
-			$this->db->addIdentifierQuotes( 'sqlite_master' ),
-			'sql',
-			[ 'tbl_name' => $this->db->tableName( 'searchindex', 'raw' ) ],
-			__METHOD__
-		);
+		$searchIndexSql = (string)$this->db->newSelectQueryBuilder()
+			->select( 'sql' )
+			->from( $this->db->addIdentifierQuotes( 'sqlite_master' ) )
+			->where( [ 'tbl_name' => $this->db->tableName( 'searchindex', 'raw' ) ] )
+			->caller( __METHOD__ )->fetchField();
 		$fts3tTable = ( stristr( $searchIndexSql, 'fts' ) !== false );
 
 		if ( $fts3tTable && !$module ) {

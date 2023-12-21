@@ -21,13 +21,16 @@
  * @ingroup Parser
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\StubObject\StubObject;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -85,6 +88,7 @@ class ParserOptions {
 		'thumbsize' => true,
 		'printable' => true,
 		'userlang' => true,
+		'useParsoid' => true,
 	];
 
 	/**
@@ -667,6 +671,27 @@ class ParserOptions {
 	}
 
 	/**
+	 * Parsoid-format HTML output, or legacy wikitext parser HTML?
+	 * @see T300191
+	 * @unstable
+	 * @since 1.41
+	 * @return bool
+	 */
+	public function getUseParsoid(): bool {
+		return $this->getOption( 'useParsoid' );
+	}
+
+	/**
+	 * Request Parsoid-format HTML output.
+	 * @see T300191
+	 * @unstable
+	 * @since 1.41
+	 */
+	public function setUseParsoid() {
+		$this->setOption( 'useParsoid', true );
+	}
+
+	/**
 	 * Date format index
 	 * @return string
 	 */
@@ -1124,7 +1149,7 @@ class ParserOptions {
 	 */
 	public static function clearStaticCache() {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) && !defined( 'MW_PARSER_TEST' ) ) {
-			throw new RuntimeException( __METHOD__ . ' is just for testing' );
+			throw new LogicException( __METHOD__ . ' is just for testing' );
 		}
 		self::$defaults = null;
 		self::$lazyOptions = null;
@@ -1180,12 +1205,13 @@ class ParserOptions {
 				'speculativeRevId' => null,
 				'speculativePageIdCallback' => null,
 				'speculativePageId' => null,
+				'useParsoid' => false,
 			];
 
 			self::$cacheVaryingOptionsHash = self::$initialCacheVaryingOptionsHash;
 			self::$lazyOptions = self::$initialLazyOptions;
 
-			Hooks::runner()->onParserOptionsRegister(
+			( new HookRunner( $services->getHookContainer() ) )->onParserOptionsRegister(
 				self::$defaults,
 				self::$cacheVaryingOptionsHash,
 				self::$lazyOptions
@@ -1328,7 +1354,7 @@ class ParserOptions {
 	 * Record that an option was internally accessed.
 	 *
 	 * This calls the watcher set by ParserOptions::registerWatcher().
-	 * Typically, the watcher callback is ParserOutput::registerOption().
+	 * Typically, the watcher callback is ParserOutput::recordOption().
 	 * The information registered this way is consumed by ParserCache::save().
 	 *
 	 * @param string $optionName Name of the option
@@ -1428,7 +1454,7 @@ class ParserOptions {
 		$user = $services->getUserFactory()->newFromUserIdentity( $this->getUserIdentity() );
 		// Give a chance for extensions to modify the hash, if they have
 		// extra options or other effects on the parser cache.
-		Hooks::runner()->onPageRenderingHash(
+		( new HookRunner( $services->getHookContainer() ) )->onPageRenderingHash(
 			$confstr,
 			$user,
 			$forOptions

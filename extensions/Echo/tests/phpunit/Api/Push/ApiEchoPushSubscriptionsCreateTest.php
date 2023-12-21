@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Extension\Notifications\Push\Utils;
+use MediaWiki\Extension\Notifications\Services;
 
 /**
  * @group medium
@@ -42,7 +43,7 @@ class ApiEchoPushSubscriptionsCreateTest extends ApiTestCase {
 		$this->assertEquals( 'Success', $result[0]['create']['result'] );
 
 		// Explicitly verify that the oldest token was removed
-		$subscriptionManager = EchoServices::getInstance()->getPushSubscriptionManager();
+		$subscriptionManager = Services::getInstance()->getPushSubscriptionManager();
 		$subscriptions = $subscriptionManager->getSubscriptionsForUser( Utils::getPushUserId( $this->user ) );
 		foreach ( $subscriptions as $subscription ) {
 			$this->assertNotEquals( 'XYZ789', $subscription->getToken() );
@@ -84,7 +85,7 @@ class ApiEchoPushSubscriptionsCreateTest extends ApiTestCase {
 	}
 
 	private function createTestData(): void {
-		$subscriptionManager = EchoServices::getInstance()->getPushSubscriptionManager();
+		$subscriptionManager = Services::getInstance()->getPushSubscriptionManager();
 		$userId = Utils::getPushUserId( $this->user );
 		$subscriptionManager->create( 'fcm', 'XYZ789', $userId );
 	}

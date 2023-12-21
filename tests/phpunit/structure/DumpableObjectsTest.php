@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\User\User;
+
 /**
  * Integration test for T277618.
  *
@@ -22,13 +24,13 @@ class DumpableObjectsTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testUser() {
-		$u = $this->getTestUser()->getUser();
+		$u = new User();
 		$u->isAllowed( 'read' );
 		$this->assertLessThan( 100000, $this->dumpSize( $u ) );
 	}
 
 	public function testTitle() {
-		$object = Title::newFromText( 'Test' );
+		$object = Title::makeTitle( NS_MAIN, 'Test' );
 		$this->assertLessThan( 100000, $this->dumpSize( $object ) );
 	}
 

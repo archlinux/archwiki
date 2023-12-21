@@ -23,7 +23,7 @@
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
-use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 
 /**
  * @group API
@@ -39,19 +39,19 @@ class ApiParseTest extends ApiTestCase {
 	protected static $revIds = [];
 
 	public function addDBDataOnce() {
-		$title = Title::newFromText( __CLASS__ );
-
-		$status = $this->editPage( __CLASS__, 'Test for revdel' );
+		$page = $this->getServiceContainer()->getWikiPageFactory()
+			->newFromLinkTarget( new TitleValue( NS_MAIN, __CLASS__ ) );
+		$status = $this->editPage( $page, 'Test for revdel' );
 		self::$pageId = $status->getNewRevision()->getPageId();
 		self::$revIds['revdel'] = $status->getNewRevision()->getId();
 
-		$status = $this->editPage( __CLASS__, 'Test for suppressed' );
+		$status = $this->editPage( $page, 'Test for suppressed' );
 		self::$revIds['suppressed'] = $status->getNewRevision()->getId();
 
-		$status = $this->editPage( __CLASS__, 'Test for oldid' );
+		$status = $this->editPage( $page, 'Test for oldid' );
 		self::$revIds['oldid'] = $status->getNewRevision()->getId();
 
-		$status = $this->editPage( __CLASS__, 'Test for latest' );
+		$status = $this->editPage( $page, 'Test for latest' );
 		self::$revIds['latest'] = $status->getNewRevision()->getId();
 
 		$this->revisionDelete( self::$revIds['revdel'] );
@@ -62,8 +62,6 @@ class ApiParseTest extends ApiTestCase {
 				RevisionRecord::DELETED_RESTRICTED => 1
 			]
 		);
-
-		Title::clearCaches(); // Otherwise it has the wrong latest revision for some reason
 	}
 
 	/**
@@ -110,7 +108,7 @@ class ApiParseTest extends ApiTestCase {
 			$this->assertSame( $expectedEnd, substr( $html, -strlen( $expectedEnd ) ) );
 
 			$unexpectedEnd = '#<!-- \nNewPP limit report|' .
-				'<!--\nTransclusion expansion time report#s';
+				'<!--\nTransclusion expansion time report#';
 			$this->assertDoesNotMatchRegularExpression( $unexpectedEnd, $html );
 
 			$html = substr( $html, 0, strlen( $html ) - strlen( $expectedEnd ) );
@@ -137,8 +135,7 @@ class ApiParseTest extends ApiTestCase {
 	 * Set up an interwiki entry for testing.
 	 */
 	protected function setupInterwiki() {
-		$dbw = wfGetDB( DB_PRIMARY );
-		$dbw->insert(
+		$this->getDb()->insert(
 			'interwiki',
 			[
 				'iw_prefix' => 'madeuplanguage',
@@ -225,8 +222,7 @@ class ApiParseTest extends ApiTestCase {
 	}
 
 	public function testRevDelNoPermission() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( "You don't have permission to view deleted text or changes between deleted revisions." );
+		$this->expectApiErrorCode( 'permissiondenied' );
 
 		$this->doApiRequest( [
 			'action' => 'parse',
@@ -256,7 +252,7 @@ class ApiParseTest extends ApiTestCase {
 
 			$this->fail( "API did not return an error when parsing a nonexistent page" );
 		} catch ( ApiUsageException $ex ) {
-			$this->assertExceptionHasError( $ex, 'missingtitle' );
+			$this->assertApiErrorCode( 'missingtitle', $ex );
 		}
 	}
 
@@ -286,8 +282,7 @@ class ApiParseTest extends ApiTestCase {
 	}
 
 	public function testInvalidSection() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'The "section" parameter must be a valid section ID or "new".' );
+		$this->expectApiErrorCode( 'invalidsection' );
 
 		$this->doApiRequest( [
 			'action' => 'parse',
@@ -301,10 +296,7 @@ class ApiParseTest extends ApiTestCase {
 		$status = $this->editPage( $name,
 			"Intro\n\n== Section 1 ==\n\nContent 1\n\n== Section 2 ==\n\nContent 2" );
 
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage(
-			"Missing content for page ID {$status->getNewRevision()->getPageId()}."
-		);
+		$this->expectApiErrorCode( 'missingcontent-pageid' );
 
 		$this->db->delete( 'revision', [ 'rev_id' => $status->getNewRevision()->getId() ] );
 
@@ -317,11 +309,7 @@ class ApiParseTest extends ApiTestCase {
 	}
 
 	public function testNewSectionWithPage() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage(
-			'"section=new" cannot be combined with the "oldid", "pageid" or "page" ' .
-				'parameters. Please use "title" and "text".'
-		);
+		$this->expectApiErrorCode( 'invalidparammix' );
 
 		$this->doApiRequest( [
 			'action' => 'parse',
@@ -331,8 +319,7 @@ class ApiParseTest extends ApiTestCase {
 	}
 
 	public function testNonexistentOldId() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'There is no revision with ID 2147483647.' );
+		$this->expectApiErrorCode( 'nosuchrevid' );
 
 		$this->doApiRequest( [
 			'action' => 'parse',
@@ -417,8 +404,7 @@ class ApiParseTest extends ApiTestCase {
 	}
 
 	public function testInvalidTitle() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'Bad title "|".' );
+		$this->expectApiErrorCode( 'invalidtitle' );
 
 		$this->doApiRequest( [
 			'action' => 'parse',
@@ -427,8 +413,7 @@ class ApiParseTest extends ApiTestCase {
 	}
 
 	public function testTitleWithNonexistentRevId() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'There is no revision with ID 2147483647.' );
+		$this->expectApiErrorCode( 'nosuchrevid' );
 
 		$this->doApiRequest( [
 			'action' => 'parse',
@@ -494,8 +479,7 @@ class ApiParseTest extends ApiTestCase {
 	}
 
 	public function testSerializationError() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'Content serialization failed: Could not unserialize content' );
+		$this->expectApiErrorCode( 'parseerror' );
 
 		$this->mergeMwGlobalArrayValue( 'wgContentHandlers',
 			[ 'testing-serialize-error' => 'DummySerializeErrorContentHandler' ] );
@@ -583,6 +567,35 @@ class ApiParseTest extends ApiTestCase {
 			] ],
 			$res[0]
 		);
+	}
+
+	/** @dataProvider providerTestParsoid */
+	public function testParsoid( $parsoid, $existing, $expected ) {
+		# For simplicity, ensure that [[Foo]] isn't a redlink.
+		$this->editPage( "Foo", __FUNCTION__ );
+		$res = $this->doApiRequest( [
+			# check that we're using the contents of 'text' not the contents of
+			# [[<title>]] by using pre-existing title __CLASS__ sometimes
+			'title' => $existing ? __CLASS__ : 'Bar',
+			'action' => 'parse',
+			'text' => "[[Foo]]",
+			'contentmodel' => 'wikitext',
+			'parsoid' => $parsoid ?: null,
+			'disablelimitreport' => true,
+		] );
+
+		$this->assertParsedToRegexp( $expected, $res );
+	}
+
+	public static function providerTestParsoid() {
+		// Legacy parses, with and without pre-existing content.
+		$expected = '!^<p><a href="[^"]*" title="Foo">Foo</a>\n</p>$!';
+		yield [ false, false, $expected ];
+		yield [ false, true, $expected ];
+		// Parsoid parses, with and without pre-existing content.
+		$expected = '!^<section[^>]*><p[^>]*><a rel="mw:WikiLink" href="./Foo" title="Foo"[^>]*>Foo</a></p></section>!';
+		yield [ true, false, $expected ];
+		yield [ true, true, $expected ];
 	}
 
 	public function testHeadHtml() {
@@ -835,8 +848,7 @@ class ApiParseTest extends ApiTestCase {
 	}
 
 	public function testParseTreeNonWikitext() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( '"prop=parsetree" is only supported for wikitext content.' );
+		$this->expectApiErrorCode( 'notwikitext' );
 
 		$this->doApiRequest( [
 			'action' => 'parse',
@@ -903,7 +915,7 @@ class ApiParseTest extends ApiTestCase {
 			] );
 			$this->fail( "API did not return an error when concurrency exceeded" );
 		} catch ( ApiUsageException $ex ) {
-			$this->assertExceptionHasError( $ex, 'concurrency-limit' );
+			$this->assertApiErrorCode( 'concurrency-limit', $ex );
 		}
 	}
 
@@ -924,15 +936,8 @@ class ApiParseTest extends ApiTestCase {
 			] );
 			$this->fail( "API did not return an error when concurrency exceeded" );
 		} catch ( ApiUsageException $ex ) {
-			$this->assertExceptionHasError( $ex, 'concurrency-limit' );
+			$this->assertApiErrorCode( 'concurrency-limit', $ex );
 		}
-	}
-
-	private function assertExceptionHasError( $ex, $error ) {
-		$this->assertTrue( ApiTestCase::apiExceptionHasCode( $ex, $error ),
-		"Parse request for nonexistent page must give '$error' error: "
-			. var_export( self::getErrorFormatter()->arrayFromStatus( $ex->getStatusValue() ), true )
-		);
 	}
 
 	public function testDisplayTitle() {
@@ -962,8 +967,7 @@ class ApiParseTest extends ApiTestCase {
 	}
 
 	public function testIncompatFormat() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'The requested format application/json is not supported for content model wikitext' );
+		$this->expectApiErrorCode( 'badformat-generic' );
 
 		$this->doApiRequest( [
 			'action' => 'parse',
@@ -984,4 +988,13 @@ class ApiParseTest extends ApiTestCase {
 		$this->assertArrayHasKey( 'wikitext', $res[0]['parse'] );
 	}
 
+	public function testShouldCastNumericImageLinksToString(): void {
+		$res = $this->doApiRequest( [
+			'action' => 'parse',
+			'title' => __CLASS__,
+			'prop' => 'images',
+			'text' => '[[File:1]]',
+		] );
+		$this->assertSame( [ '1' ], $res[0]['parse']['images'] );
+	}
 }

@@ -1,5 +1,6 @@
 var checkboxShift = require( './checkboxShift.js' );
 var config = require( './config.json' );
+var teleportTarget = require( './teleportTarget.js' );
 
 // Break out of framesets
 if ( mw.config.get( 'wgBreakFrames' ) ) {
@@ -44,6 +45,9 @@ mw.hook( 'wikipage.content' ).add( function ( $content ) {
 				$collapsible.makeCollapsible();
 			}
 		} );
+	}
+	if ( $content[ 0 ] && $content[ 0 ].isConnected === false ) {
+		mw.log.warn( 'wikipage.content hook should not be fired on unattached content' );
 	}
 
 	checkboxShift( $content.find( 'input[type="checkbox"]:not(.noshiftselect)' ) );
@@ -94,11 +98,9 @@ $( function () {
 	// do not display any content (T259577).
 	if ( $content.length ) {
 		/**
-		 * Fired when wiki content is being added to the DOM
+		 * Fired when wiki content has been added to the DOM.
 		 *
-		 * It is encouraged to fire it before the main DOM is changed (when $content
-		 * is still detached).  However, this order is not defined either way, so you
-		 * should only rely on $content itself.
+		 * This should only be fired after $content has been attached.
 		 *
 		 * This includes the ready event on a page load (including post-edit loads)
 		 * and when content has been previewed with LivePreview.
@@ -203,6 +205,8 @@ $( function () {
 		e.preventDefault();
 	} );
 	fixViewportForTabletDevices();
+
+	teleportTarget.attach();
 } );
 
 /**
@@ -217,7 +221,7 @@ $( function () {
  */
 function isSearchInput( element ) {
 	return element.id === 'searchInput' ||
-		/(^|\s)mw-searchInput($|\s)/.test( element.className );
+		element.classList.contains( 'mw-searchInput' );
 }
 
 /**
@@ -233,7 +237,6 @@ function loadSearchModule( moduleName ) {
 	// Vue search isn't loaded through this function so we are only collecting
 	// legacy search performance metrics here.
 
-	/* eslint-disable compat/compat */
 	var shouldTestSearch = !!( moduleName === 'mediawiki.searchSuggest' &&
 		mw.config.get( 'skin' ) === 'vector' &&
 		window.performance &&
@@ -242,7 +245,6 @@ function loadSearchModule( moduleName ) {
 		performance.getEntriesByName ),
 		loadStartMark = 'mwVectorLegacySearchLoadStart',
 		loadEndMark = 'mwVectorLegacySearchLoadEnd';
-	/* eslint-enable compat/compat */
 
 	function requestSearchModule() {
 		if ( shouldTestSearch ) {
@@ -280,7 +282,16 @@ if ( config.search ) {
 	loadSearchModule( 'mediawiki.searchSuggest' );
 }
 
+try {
+	// Load the post-edit notification module if a notification has been scheduled.
+	// Use `sessionStorage` directly instead of 'mediawiki.storage' to minimize dependencies.
+	if ( sessionStorage.getItem( 'mw-PostEdit' + mw.config.get( 'wgPageName' ) ) ) {
+		mw.loader.load( 'mediawiki.action.view.postEdit' );
+	}
+} catch ( err ) {}
+
 module.exports = {
 	loadSearchModule: loadSearchModule,
-	checkboxHack: require( './checkboxHack.js' )
+	checkboxHack: require( './checkboxHack.js' ),
+	teleportTarget: teleportTarget.target
 };

@@ -63,6 +63,7 @@ class AMSMappings {
 		"varXi" => [ '\u039E', [ "mathvariant" => Variants::ITALIC ] ],
 		"varPi" => [ '\u03A0', [ "mathvariant" => Variants::ITALIC ] ],
 		"varSigma" => [ '\u03A3', [ "mathvariant" => Variants::ITALIC ] ],
+		"varStigma" => [ '\u03DB', [ "mathvariant" => Variants::ITALIC ] ],
 		"varUpsilon" => [ '\u03A5', [ "mathvariant" => Variants::ITALIC ] ],
 		"varPhi" => [ '\u03A6', [ "mathvariant" => Variants::ITALIC ] ],
 		"varPsi" => [ '\u03A8', [ "mathvariant" => Variants::ITALIC ] ],
@@ -124,7 +125,7 @@ class AMSMappings {
 		"boxdot" => '\u22A1',
 		"circledcirc" => '\u229A',
 		"boxplus" => '\u229E',
-		"centerdot" => [ '\u22C5',[ "variantForm" => "True" ] ], // actually: "variantForm" => "True"
+		"centerdot" => [ '\u22C5', [ "variantForm" => "True" ] ], // actually: "variantForm" => "True"
 		"divideontimes" => '\u22C7',
 		"intercal" => '\u22BA',
 		"leqq" => '\u2266',

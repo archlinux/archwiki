@@ -22,19 +22,17 @@
 
 namespace MediaWiki\User;
 
-use BotPassword;
-use CentralIdLookup;
 use DBAccessObjectUtils;
 use FormatJson;
 use IDBAccessObject;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
+use MediaWiki\User\CentralId\CentralIdLookup;
 use MWCryptRand;
 use MWRestrictions;
 use Password;
 use PasswordFactory;
 use StatusValue;
-use User;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\LBFactory;
 
@@ -53,14 +51,9 @@ class BotPasswordStore implements IDBAccessObject {
 		MainConfigNames::BotPasswordsDatabase,
 	];
 
-	/** @var ServiceOptions */
-	private $options;
-
-	/** @var LBFactory */
-	private $lbFactory;
-
-	/** @var CentralIdLookup */
-	private $centralIdLookup;
+	private ServiceOptions $options;
+	private LBFactory $lbFactory;
+	private CentralIdLookup $centralIdLookup;
 
 	/**
 	 * @param ServiceOptions $options
@@ -143,13 +136,12 @@ class BotPasswordStore implements IDBAccessObject {
 
 		[ $index, $options ] = DBAccessObjectUtils::getDBOptions( $flags );
 		$db = $this->getDatabase( $index );
-		$row = $db->selectRow(
-			'bot_passwords',
-			[ 'bp_user', 'bp_app_id', 'bp_token', 'bp_restrictions', 'bp_grants' ],
-			[ 'bp_user' => $centralId, 'bp_app_id' => $appId ],
-			__METHOD__,
-			$options
-		);
+		$row = $db->newSelectQueryBuilder()
+			->select( [ 'bp_user', 'bp_app_id', 'bp_token', 'bp_restrictions', 'bp_grants' ] )
+			->from( 'bot_passwords' )
+			->where( [ 'bp_user' => $centralId, 'bp_app_id' => $appId ] )
+			->options( $options )
+			->caller( __METHOD__ )->fetchRow();
 		return $row ? new BotPassword( $row, true, $flags ) : null;
 	}
 
@@ -237,34 +229,28 @@ class BotPasswordStore implements IDBAccessObject {
 		if ( $password === null ) {
 			$password = PasswordFactory::newInvalidPassword();
 		}
-		$fields = [
-			'bp_user' => $botPassword->getUserCentralId(),
-			'bp_app_id' => $botPassword->getAppId(),
-			'bp_token' => MWCryptRand::generateHex( User::TOKEN_LENGTH ),
-			'bp_restrictions' => $botPassword->getRestrictions()->toJson(),
-			'bp_grants' => FormatJson::encode( $botPassword->getGrants() ),
-			'bp_password' => $password->toString(),
-		];
 
 		$dbw = $this->getDatabase( DB_PRIMARY );
-		$dbw->insert(
-			'bot_passwords',
-			$fields,
-			__METHOD__,
-			[ 'IGNORE' ]
-		);
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'bot_passwords' )
+			->ignore()
+			->row( [
+				'bp_user' => $botPassword->getUserCentralId(),
+				'bp_app_id' => $botPassword->getAppId(),
+				'bp_token' => MWCryptRand::generateHex( User::TOKEN_LENGTH ),
+				'bp_restrictions' => $botPassword->getRestrictions()->toJson(),
+				'bp_grants' => FormatJson::encode( $botPassword->getGrants() ),
+				'bp_password' => $password->toString(),
+			] )
+			->caller( __METHOD__ )->execute();
 
 		$ok = (bool)$dbw->affectedRows();
 		if ( $ok ) {
-			$token = $dbw->selectField(
-				'bot_passwords',
-				'bp_token',
-				[
-					'bp_user' => $botPassword->getUserCentralId(),
-					'bp_app_id' => $botPassword->getAppId(),
-				],
-				__METHOD__
-			);
+			$token = $dbw->newSelectQueryBuilder()
+				->select( 'bp_token' )
+				->from( 'bot_passwords' )
+				->where( [ 'bp_user' => $botPassword->getUserCentralId(), 'bp_app_id' => $botPassword->getAppId(), ] )
+				->caller( __METHOD__ )->fetchField();
 			return StatusValue::newGood( $token );
 		}
 		return StatusValue::newFatal( 'botpasswords-insert-failed', $botPassword->getAppId() );
@@ -302,21 +288,19 @@ class BotPasswordStore implements IDBAccessObject {
 		}
 
 		$dbw = $this->getDatabase( DB_PRIMARY );
-		$dbw->update(
-			'bot_passwords',
-			$fields,
-			$conds,
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'bot_passwords' )
+			->set( $fields )
+			->where( $conds )
+			->caller( __METHOD__ )->execute();
 
 		$ok = (bool)$dbw->affectedRows();
 		if ( $ok ) {
-			$token = $dbw->selectField(
-				'bot_passwords',
-				'bp_token',
-				$conds,
-				__METHOD__
-			);
+			$token = $dbw->newSelectQueryBuilder()
+				->select( 'bp_token' )
+				->from( 'bot_passwords' )
+				->where( $conds )
+				->caller( __METHOD__ )->fetchField();
 			return StatusValue::newGood( $token );
 		}
 		return StatusValue::newFatal( 'botpasswords-update-failed', $botPassword->getAppId() );
@@ -353,14 +337,11 @@ class BotPasswordStore implements IDBAccessObject {
 	 */
 	public function deleteBotPassword( BotPassword $botPassword ): bool {
 		$dbw = $this->getDatabase( DB_PRIMARY );
-		$dbw->delete(
-			'bot_passwords',
-			[
-				'bp_user' => $botPassword->getUserCentralId(),
-				'bp_app_id' => $botPassword->getAppId(),
-			],
-			__METHOD__
-		);
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'bot_passwords' )
+			->where( [ 'bp_user' => $botPassword->getUserCentralId() ] )
+			->andWhere( [ 'bp_app_id' => $botPassword->getAppId() ] )
+			->caller( __METHOD__ )->execute();
 
 		return (bool)$dbw->affectedRows();
 	}
@@ -385,12 +366,11 @@ class BotPasswordStore implements IDBAccessObject {
 		}
 
 		$dbw = $this->getDatabase( DB_PRIMARY );
-		$dbw->update(
-			'bot_passwords',
-			[ 'bp_password' => PasswordFactory::newInvalidPassword()->toString() ],
-			[ 'bp_user' => $centralId ],
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'bot_passwords' )
+			->set( [ 'bp_password' => PasswordFactory::newInvalidPassword()->toString() ] )
+			->where( [ 'bp_user' => $centralId ] )
+			->caller( __METHOD__ )->execute();
 		return (bool)$dbw->affectedRows();
 	}
 
@@ -414,11 +394,10 @@ class BotPasswordStore implements IDBAccessObject {
 		}
 
 		$dbw = $this->getDatabase( DB_PRIMARY );
-		$dbw->delete(
-			'bot_passwords',
-			[ 'bp_user' => $centralId ],
-			__METHOD__
-		);
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'bot_passwords' )
+			->where( [ 'bp_user' => $centralId ] )
+			->caller( __METHOD__ )->execute();
 		return (bool)$dbw->affectedRows();
 	}
 

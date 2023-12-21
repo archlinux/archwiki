@@ -27,8 +27,8 @@ use InvalidArgumentException;
 use LinkCache;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use TablePager;
-use Title;
 use TitleValue;
 
 class LintErrorsPager extends TablePager {
@@ -128,12 +128,13 @@ class LintErrorsPager extends TablePager {
 		if ( $this->categoryId !== null ) {
 			$conds[ 'linter_cat' ] = $this->categoryId;
 		}
+		$mwServices = MediaWikiServices::getInstance();
+		$config = $mwServices->getMainConfig();
+		$dbMaintenance = $mwServices->getDBLoadBalancer()->getMaintenanceConnectionRef( DB_REPLICA );
 		if ( $this->namespace !== null ) {
 			$comp_op = $this->invertNamespace ? '!=' : '=';
-			$mwServices = MediaWikiServices::getInstance();
-			$config = $mwServices->getMainConfig();
 			$enableUseNamespaceColumnStage = $config->get( 'LinterUseNamespaceColumnStage' );
-			$fieldExists = $this->mDb->fieldExists( 'linter', 'linter_namespace', __METHOD__ );
+			$fieldExists = $dbMaintenance->fieldExists( 'linter', 'linter_namespace', __METHOD__ );
 			if ( !$enableUseNamespaceColumnStage || !$fieldExists ) {
 				$conds[] = "page_namespace $comp_op " . $this->mDb->addQuotes( $this->namespace );
 			} else {
@@ -148,10 +149,8 @@ class LintErrorsPager extends TablePager {
 			$conds[] = 'page_title' . $this->mDb->buildLike( $this->title, $this->mDb->anyString() );
 		}
 
-		$mwServices = MediaWikiServices::getInstance();
-		$config = $mwServices->getMainConfig();
 		$enableUserInterfaceTagAndTemplateStage = $config->get( 'LinterUserInterfaceTagAndTemplateStage' );
-		$fieldTagExists = $this->mDb->fieldExists( 'linter', 'linter_tag', __METHOD__ );
+		$fieldTagExists = $dbMaintenance->fieldExists( 'linter', 'linter_tag', __METHOD__ );
 		if ( $enableUserInterfaceTagAndTemplateStage && $fieldTagExists ) {
 			switch ( $this->throughTemplate ) {
 				case 'with':

@@ -4,7 +4,6 @@
 			"StanProg"
 		]
 	},
-	"apihelp-query+linterrors-description": "Списък на всички статични грешки",
 	"apihelp-query+linterrors-summary": "Връща списък на статичните грешки",
 	"apihelp-query+linterrors-param-categories": "Категории на статични грешки",
 	"apihelp-query+linterrors-param-limit": "Брой резултати, върнати от заявката",

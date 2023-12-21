@@ -30,7 +30,7 @@ use MediaWiki\Permissions\GroupPermissionsLookup;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * Query module to enumerate all images.
@@ -44,8 +44,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 	 */
 	protected $mRepo;
 
-	/** @var GroupPermissionsLookup */
-	private $groupPermissionsLookup;
+	private GroupPermissionsLookup $groupPermissionsLookup;
 
 	/**
 	 * @param ApiQuery $query
@@ -69,7 +68,7 @@ class ApiQueryAllImages extends ApiQueryGeneratorBase {
 	 * which may not necessarily be the same as the local DB.
 	 *
 	 * TODO: allow querying non-local repos.
-	 * @return IDatabase
+	 * @return IReadableDatabase
 	 */
 	protected function getDB() {
 		return $this->mRepo->getReplicaDB();

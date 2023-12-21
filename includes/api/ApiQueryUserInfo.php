@@ -20,14 +20,17 @@
  * @file
  */
 
+use MediaWiki\Config\Config;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\PermissionStatus;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\TalkPageNotificationManager;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -47,28 +50,11 @@ class ApiQueryUserInfo extends ApiQueryBase {
 	/** @var array */
 	private $prop = [];
 
-	/**
-	 * @var TalkPageNotificationManager
-	 */
-	private $talkPageNotificationManager;
-
-	/**
-	 * @var WatchedItemStore
-	 */
-	private $watchedItemStore;
-
-	/**
-	 * @var UserEditTracker
-	 */
-	private $userEditTracker;
-
-	/**
-	 * @var UserOptionsLookup
-	 */
-	private $userOptionsLookup;
-
-	/** @var UserGroupManager */
-	private $userGroupManager;
+	private TalkPageNotificationManager $talkPageNotificationManager;
+	private WatchedItemStore $watchedItemStore;
+	private UserEditTracker $userEditTracker;
+	private UserOptionsLookup $userOptionsLookup;
+	private UserGroupManager $userGroupManager;
 
 	/**
 	 * @param ApiQuery $query

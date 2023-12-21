@@ -69,7 +69,7 @@ class RendererFactory {
 		if ( isset( $params['forcemathmode'] ) ) {
 			$mode = $params['forcemathmode'];
 		}
-		if ( !in_array( $mode, $this->mathConfig->getValidRenderingModes() ) ) {
+		if ( !in_array( $mode, $this->mathConfig->getValidRenderingModes(), true ) ) {
 			$mode = $this->userOptionsLookup->getDefaultOption( 'math' );
 		}
 		if ( $this->options->get( 'MathEnableExperimentalInputFormats' ) === true &&
@@ -78,7 +78,7 @@ class RendererFactory {
 		) {
 			// Support of MathML input (experimental)
 			// Currently support for mode 'mathml' only
-			if ( !in_array( $params['type'], [ 'pmml', 'ascii' ] ) ) {
+			if ( !in_array( $params['type'], [ 'pmml', 'ascii' ], true ) ) {
 				unset( $params['type'] );
 			}
 		}

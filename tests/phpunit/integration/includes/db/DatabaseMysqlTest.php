@@ -1,8 +1,7 @@
 <?php
 
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\Database;
-use Wikimedia\Rdbms\DatabaseMysqlBase;
+use Wikimedia\Rdbms\DatabaseMySQL;
 use Wikimedia\Rdbms\DBQueryDisconnectedError;
 use Wikimedia\Rdbms\DBQueryError;
 use Wikimedia\Rdbms\DBQueryTimeoutError;
@@ -19,7 +18,7 @@ use Wikimedia\Rdbms\TransactionManager;
  * @requires extension mysqli
  */
 class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
-	/** @var DatabaseMysqlBase */
+	/** @var DatabaseMySQL */
 	protected $conn;
 
 	protected function setUp(): void {
@@ -151,95 +150,30 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \Wikimedia\Rdbms\Database::queryMulti()
-	 * @covers \Wikimedia\Rdbms\Database::rollback()
-	 * @covers \Wikimedia\Rdbms\Database::flushSession()
+	 * @covers \Wikimedia\Rdbms\Database::getScopedLockAndFlush()
 	 */
-	public function testConnectionLossQueryMulti() {
+	public function testConnectionLossScopedLock() {
 		$row = $this->conn->query( 'SELECT connection_id() AS id', __METHOD__ )->fetchObject();
 		$encId = intval( $row->id );
 
-		$adminConn = $this->newConnection();
-		$adminConn->query( "KILL $encId", __METHOD__ );
-
-		$qsById = $this->conn->queryMulti(
-			[ 'SELECT "x" AS v', 'SELECT "y" AS v', 'SELECT "z" AS v' ],
-			__METHOD__
-		);
-		$row1 = $qsById[0]->res->fetchObject();
-		$row2 = $qsById[1]->res->fetchObject();
-		$row3 = $qsById[2]->res->fetchObject();
-		$this->assertSame( 'x', $row1->v, "Recovered" );
-		$this->assertSame( 'y', $row2->v, "Recovered" );
-		$this->assertSame( 'z', $row3->v, "Recovered" );
-
-		$this->conn->startAtomic( __METHOD__ );
-		$this->assertSame( 1, $this->conn->trxLevel(), "Transaction exists" );
-		$row = $this->conn->query( 'SELECT connection_id() AS id', __METHOD__ )->fetchObject();
-		$encId = intval( $row->id );
-
-		$adminConn->query( "KILL $encId", __METHOD__ );
 		try {
-			$this->conn->queryMulti( [ 'SELECT 1', 'SELECT 2' ], __METHOD__ );
-			$this->fail( "No DBQueryDisconnectedError caught" );
+			( function () use ( $encId ) {
+				$unlocker = $this->conn->getScopedLockAndFlush( 'x', 'fn', 1 );
+
+				$adminConn = $this->newConnection();
+				$adminConn->query( "KILL $encId" );
+
+				$this->conn->query( "SELECT 1" );
+			} )();
+			$this->fail( "Expected DBQueryDisconnectedError" );
 		} catch ( DBQueryDisconnectedError $e ) {
-			$this->assertTrue( $this->conn->isOpen(), "Reconnected" );
-			try {
-				$this->conn->endAtomic( __METHOD__ );
-				$this->fail( "No DBUnexpectedError caught" );
-			} catch ( DBUnexpectedError $e ) {
-				$this->assertInstanceOf( DBUnexpectedError::class, $e );
-			}
-
-			$this->assertSame( TransactionManager::STATUS_TRX_ERROR, $this->conn->trxStatus() );
-			try {
-				$this->conn->queryMulti( [ 'SELECT "x" AS w', 'SELECT "y" AS w' ], __METHOD__ );
-				$this->fail( "No DBTransactionStateError caught" );
-			} catch ( DBTransactionStateError $e ) {
-				$this->assertInstanceOf( DBTransactionStateError::class, $e );
-			}
-
-			$this->assertSame( 0, $this->conn->trxLevel(), "Transaction lost" );
-			$this->conn->rollback( __METHOD__ );
-			$this->assertSame( 0, $this->conn->trxLevel(), "No transaction" );
-
-			$qsById = $this->conn->queryMulti( [ 'SELECT "x" AS z', 'SELECT "y" AS z' ], __METHOD__ );
-			$row1 = $qsById[0]->res->fetchObject();
-			$row2 = $qsById[1]->res->fetchObject();
-			$this->assertSame( 'x', $row1->z, "Recovered" );
-			$this->assertSame( 'y', $row2->z, "Recovered" );
+			// This should report the explicit query that failed,
+			// instead of the (later) implicit query from the $unlocker deref.
+			$this->assertStringContainsString( "SELECT 1", $e->getMessage() );
 		}
 
-		$this->conn->lock( 'session_lock_' . mt_rand(), __METHOD__, 0 );
-		$row = $this->conn->query( 'SELECT connection_id() AS id', __METHOD__ )->fetchObject();
-		$encId = intval( $row->id );
-		$adminConn->query( "KILL $encId", __METHOD__ );
-		try {
-			$this->conn->queryMulti( [ 'SELECT 1', 'SELECT 2' ], __METHOD__ );
-			$this->fail( "No DBQueryDisconnectedError caught" );
-		} catch ( DBQueryDisconnectedError $e ) {
-			$this->assertInstanceOf( DBQueryDisconnectedError::class, $e );
-		}
-
-		$this->assertTrue( $this->conn->isOpen(), "Reconnected" );
-		try {
-			$this->conn->queryMulti( [ 'SELECT "x" AS z', 'SELECT "y" AS z' ], __METHOD__ );
-			$this->fail( "No DBSessionStateError caught" );
-		} catch ( DBSessionStateError $e ) {
-			$this->assertInstanceOf( DBSessionStateError::class, $e );
-		}
-
-		$this->assertTrue( $this->conn->isOpen(), "Connection remains" );
 		$this->conn->rollback( __METHOD__ );
-		$this->conn->flushSession( __METHOD__ );
-
-		$qsById = $this->conn->queryMulti( [ 'SELECT "x" AS z', 'SELECT "y" AS z' ], __METHOD__ );
-		$row1 = $qsById[0]->res->fetchObject();
-		$row2 = $qsById[1]->res->fetchObject();
-		$this->assertSame( 'x', $row1->z, "Recovered" );
-		$this->assertSame( 'y', $row2->z, "Recovered" );
-
-		$adminConn->close( __METHOD__ );
+		$this->conn->unlock( 'x', __METHOD__ );
 	}
 
 	/**
@@ -310,12 +244,12 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @return DatabaseMysqlBase
+	 * @return DatabaseMySQL
 	 */
 	private function newConnection() {
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 		$dbFactory = MediaWikiServices::getInstance()->getDatabaseFactory();
-		/** @var DatabaseMysqlBase $conn */
+		/** @var DatabaseMySQL $conn */
 		$conn = $dbFactory->create(
 			'mysql',
 			array_merge(
@@ -332,185 +266,223 @@ class DatabaseMysqlTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider provideQueryMulti
-	 * @covers Wikimedia\Rdbms\Database::queryMulti
+	 * @covers \Wikimedia\Rdbms\Database::insert()
+	 * @covers \Wikimedia\Rdbms\Database::insertId()
 	 */
-	public function testQueryMulti(
-		array $sqls,
-		int $flags,
-		string $summarySql,
-		?array $resMap,
-		?array $exception
-	) {
-		$row = $this->conn->query( "SELECT 3 as test", __METHOD__ )->fetchObject();
-		$this->assertNotFalse( $row );
-		$this->assertSame( '3', $row->test );
+	public function testInsertIdAfterInsert() {
+		$dTable = $this->createDestTable();
 
-		if ( is_array( $resMap ) ) {
-			$qsMap = $this->conn->queryMulti( $sqls, __METHOD__, $flags, $summarySql );
+		$rows = [ [ 'k' => 'Luca', 'v' => mt_rand( 1, 100 ), 't' => time() ] ];
 
-			reset( $resMap );
-			foreach ( $qsMap as $qs ) {
-				if ( is_iterable( $qs->res ) ) {
-					$this->assertArrayEquals( current( $resMap ), iterator_to_array( $qs->res ) );
-				} else {
-					$this->assertSame( current( $resMap ), $qs->res );
-				}
-				next( $resMap );
-			}
-		} else {
-			[ $class, $message, $code ] = $exception;
+		$this->conn->insert( $dTable, $rows, __METHOD__ );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 1, $this->conn->insertId() );
 
-			try {
-				$this->conn->queryMulti( $sqls, __METHOD__, $flags, $summarySql );
-				$this->fail( "No DBError thrown" );
-			} catch ( DBError $e ) {
-				$this->assertInstanceOf( $class, $e );
-				$this->assertStringContainsString( $message, $e->getMessage() );
-				$this->assertSame( $code, $e->errno );
-			}
-		}
+		$this->assertSame( 1, (int)$this->conn->selectField( $dTable, 'n', [ 'k' => 'Luca' ] ) );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 0, $this->conn->insertId() );
+
+		$this->dropDestTable();
 	}
 
-	public static function provideQueryMulti() {
-		return [
-			[
-				[
-					'SELECT 1 AS v, 2 AS x',
-					'(SELECT 1 AS v) UNION ALL (SELECT 2 AS v) UNION ALL (SELECT 3 AS v)',
-					'SELECT IS_FREE_LOCK("unused_lock") AS free',
-					'SELECT RELEASE_LOCK("unused_lock") AS released'
-				],
-				Database::QUERY_IGNORE_DBO_TRX,
-				'COMPOSITE QUERY 1',
-				[
-					[
-						(object)[ 'v' => '1', 'x' => '2' ]
-					],
-					[
-						(object)[ 'v' => '1' ],
-						(object)[ 'v' => '2' ],
-						(object)[ 'v' => '3' ]
-					],
-					[
-						(object)[ 'free' => '1' ]
-					],
-					[
-						(object)[ 'released' => null ]
-					]
-				],
-				null
-			],
-			[
-				[
-					'SELECT 1 AS v, 2 AS x',
-					'SELECT UNION PARSE_ERROR ()',
-					'SELECT IS_FREE_LOCK("unused_lock") AS free',
-					'SELECT RELEASE_LOCK("unused_lock") AS released'
-				],
-				0,
-				'COMPOSITE QUERY 2',
-				null,
-				[ DBQueryError::class, 'You have an error in your SQL syntax', 1064 ]
-			],
-			[
-				[
-					'SELECT UNION PARSE_ERROR ()',
-					'SELECT 1 AS v, 2 AS x',
-					'SELECT IS_FREE_LOCK("unused_lock") AS free',
-					'SELECT RELEASE_LOCK("unused_lock") AS released'
-				],
-				0,
-				'COMPOSITE QUERY 3',
-				null,
-				[ DBQueryError::class, 'You have an error in your SQL syntax', 1064 ]
-			],
-			[
-				[
-					'SELECT 1 AS v, 2 AS x',
-					'SELECT IS_FREE_LOCK("unused_lock") AS free',
-					'SELECT RELEASE_LOCK("unused_lock") AS released',
-					'SELECT UNION PARSE_ERROR ()',
-				],
-				0,
-				'COMPOSITE QUERY 4',
-				null,
-				[ DBQueryError::class, 'You have an error in your SQL syntax', 1064 ]
-			],
-			[
-				[],
-				0,
-				'COMPOSITE QUERY 5',
-				[],
-				null
-			],
-			[
-				[
-					'SELECT 1 AS v, 2 AS x',
-					'SELECT UNION PARSE_ERROR ()',
-					'SELECT IS_FREE_LOCK("unused_lock") AS free',
-					'SELECT RELEASE_LOCK("unused_lock") AS released'
-				],
-				Database::QUERY_SILENCE_ERRORS,
-				'COMPOSITE QUERY 2I',
-				[
-					[
-						(object)[ 'v' => '1', 'x' => '2' ]
-					],
-					false,
-					false,
-					false
-				],
-				null
-			],
-			[
-				[
-					'SELECT UNION PARSE_ERROR IGNORE ()',
-					'SELECT 1 AS v, 2 AS x',
-					'SELECT IS_FREE_LOCK("unused_lock") AS free',
-					'SELECT RELEASE_LOCK("unused_lock") AS released'
-				],
-				Database::QUERY_SILENCE_ERRORS,
-				'COMPOSITE QUERY 3I',
-				[
-					false,
-					false,
-					false,
-					false
-				],
-				null
-			],
-			[
-				[
-					'SELECT 1 AS v, 2 AS x',
-					'SELECT IS_FREE_LOCK("unused_lock") AS free',
-					'SELECT RELEASE_LOCK("unused_lock") AS released',
-					'SELECT UNION PARSE_ERROR ()',
-				],
-				Database::QUERY_SILENCE_ERRORS,
-				'COMPOSITE QUERY 4I',
-				[
-					[
-						(object)[ 'v' => '1', 'x' => '2' ]
-					],
-					[
-						(object)[ 'free' => '1' ]
-					],
-					[
-						(object)[ 'released' => null ]
-					],
-					false
-				],
-				null
-			],
-			[
-				[],
-				Database::QUERY_SILENCE_ERRORS,
-				'COMPOSITE QUERY 5I',
-				[],
-				null
-			]
+	/**
+	 * @covers \Wikimedia\Rdbms\Database::insert()
+	 * @covers \Wikimedia\Rdbms\Database::insertId()
+	 */
+	public function testInsertIdAfterInsertIgnore() {
+		$dTable = $this->createDestTable();
+
+		$rows = [ [ 'k' => 'Luca', 'v' => mt_rand( 1, 100 ), 't' => time() ] ];
+
+		$this->conn->insert( $dTable, $rows, __METHOD__, 'IGNORE' );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 1, $this->conn->insertId() );
+		$this->assertSame( 1, (int)$this->conn->selectField( $dTable, 'n', [ 'k' => 'Luca' ] ) );
+
+		$this->conn->insert( $dTable, $rows, __METHOD__, 'IGNORE' );
+		$this->assertSame( 0, $this->conn->affectedRows() );
+		$this->assertSame( 0, $this->conn->insertId() );
+
+		$this->assertSame( 1, (int)$this->conn->selectField( $dTable, 'n', [ 'k' => 'Luca' ] ) );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 0, $this->conn->insertId() );
+
+		$this->dropDestTable();
+	}
+
+	/**
+	 * @covers \Wikimedia\Rdbms\Database::replace()
+	 * @covers \Wikimedia\Rdbms\Database::insertId()
+	 */
+	public function testInsertIdAfterReplace() {
+		$dTable = $this->createDestTable();
+
+		$rows = [ [ 'k' => 'Luca', 'v' => mt_rand( 1, 100 ), 't' => time() ] ];
+
+		$this->conn->replace( $dTable, 'k', $rows, __METHOD__ );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 1, $this->conn->insertId() );
+		$this->assertSame( 1, (int)$this->conn->selectField( $dTable, 'n', [ 'k' => 'Luca' ] ) );
+
+		$this->conn->replace( $dTable, 'k', $rows, __METHOD__ );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 2, $this->conn->insertId() );
+
+		$this->assertSame( 2, (int)$this->conn->selectField( $dTable, 'n', [ 'k' => 'Luca' ] ) );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 0, $this->conn->insertId() );
+
+		$this->dropDestTable();
+	}
+
+	/**
+	 * @covers \Wikimedia\Rdbms\Database::upsert()
+	 * @covers \Wikimedia\Rdbms\Database::insertId()
+	 */
+	public function testInsertIdAfterUpsert() {
+		$dTable = $this->createDestTable();
+
+		$rows = [ [ 'k' => 'Luca', 'v' => mt_rand( 1, 100 ), 't' => time() ] ];
+		$set = [
+			'v = ' . $this->conn->buildExcludedValue( 'v' ),
+			't = ' . $this->conn->buildExcludedValue( 't' ) . ' + 1'
 		];
+
+		$this->conn->upsert( $dTable, $rows, 'k', $set, __METHOD__ );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 1, $this->conn->insertId() );
+		$this->assertSame( 1, (int)$this->conn->selectField( $dTable, 'n', [ 'k' => 'Luca' ] ) );
+
+		$this->conn->upsert( $dTable, $rows, 'k', $set, __METHOD__ );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 1, $this->conn->insertId() );
+
+		$this->assertSame( 1, (int)$this->conn->selectField( $dTable, 'n', [ 'k' => 'Luca' ] ) );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 0, $this->conn->insertId() );
+
+		$this->dropDestTable();
 	}
 
+	/**
+	 * @covers \Wikimedia\Rdbms\Database::insertSelect()
+	 * @covers \Wikimedia\Rdbms\Database::insertId()
+	 */
+	public function testInsertIdAfterInsertSelect() {
+		$sTable = $this->createSourceTable();
+		$dTable = $this->createDestTable();
+
+		$rows = [ [ 'sk' => 'Luca', 'sv' => mt_rand( 1, 100 ), 'st' => time() ] ];
+		$this->conn->insert( $sTable, $rows, __METHOD__, 'IGNORE' );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 1, $this->conn->insertId() );
+		$this->assertSame( 1, (int)$this->conn->selectField( $sTable, 'sn', [ 'sk' => 'Luca' ] ) );
+
+		$this->conn->insertSelect(
+			$dTable,
+			$sTable,
+			[ 'k' => 'sk', 'v' => 'sv', 't' => 'st' ],
+			[ 'sk' => 'Luca' ],
+			__METHOD__,
+			'IGNORE'
+		);
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 1, $this->conn->insertId() );
+
+		$this->assertSame( 1, (int)$this->conn->selectField( $dTable, 'n', [ 'k' => 'Luca' ] ) );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 0, $this->conn->insertId() );
+
+		$this->dropSourceTable();
+		$this->dropDestTable();
+	}
+
+	/**
+	 * @covers \Wikimedia\Rdbms\Database::insertSelect()
+	 * @covers \Wikimedia\Rdbms\Database::insertId()
+	 */
+	public function testInsertIdAfterInsertSelectIgnore() {
+		$sTable = $this->createSourceTable();
+		$dTable = $this->createDestTable();
+
+		$rows = [ [ 'sk' => 'Luca', 'sv' => mt_rand( 1, 100 ), 'st' => time() ] ];
+		$this->conn->insert( $sTable, $rows, __METHOD__, 'IGNORE' );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 1, $this->conn->insertId() );
+		$this->assertSame( 1, (int)$this->conn->selectField( $sTable, 'sn', [ 'sk' => 'Luca' ] ) );
+
+		$this->conn->insertSelect(
+			$dTable,
+			$sTable,
+			[ 'k' => 'sk', 'v' => 'sv', 't' => 'st' ],
+			[ 'sk' => 'Luca' ],
+			__METHOD__,
+			'IGNORE'
+		);
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 1, $this->conn->insertId() );
+		$this->assertSame( 1, (int)$this->conn->selectField( $dTable, 'n', [ 'k' => 'Luca' ] ) );
+
+		$this->conn->insertSelect(
+			$dTable,
+			$sTable,
+			[ 'k' => 'sk', 'v' => 'sv', 't' => 'st' ],
+			[ 'sk' => 'Luca' ],
+			__METHOD__,
+			'IGNORE'
+		);
+		$this->assertSame( 0, $this->conn->affectedRows() );
+		$this->assertSame( 0, $this->conn->insertId() );
+
+		$this->assertSame( 1, (int)$this->conn->selectField( $dTable, 'n', [ 'k' => 'Luca' ] ) );
+		$this->assertSame( 1, $this->conn->affectedRows() );
+		$this->assertSame( 0, $this->conn->insertId() );
+
+		$this->dropSourceTable();
+		$this->dropDestTable();
+	}
+
+	private function createSourceTable() {
+		global $wgDBname;
+
+		$this->conn->query( "DROP TABLE IF EXISTS `$wgDBname`.`tmp_src_tbl`" );
+		$this->conn->query(
+			"CREATE TEMPORARY TABLE `$wgDBname`.`tmp_src_tbl` (" .
+			"sn integer not null unique key auto_increment, " .
+			"sk varchar(255) unique, " .
+			"sv integer, " .
+			"st integer" .
+			")"
+		);
+
+		return "$wgDBname.tmp_src_tbl";
+	}
+
+	private function createDestTable() {
+		global $wgDBname;
+
+		$this->conn->query( "DROP TABLE IF EXISTS `$wgDBname`.`tmp_dst_tbl`" );
+		$this->conn->query(
+			"CREATE TEMPORARY TABLE `$wgDBname`.`tmp_dst_tbl` (" .
+			"n integer not null unique key auto_increment, " .
+			"k varchar(255) unique, " .
+			"v integer, " .
+			"t integer" .
+			")"
+		);
+
+		return "$wgDBname.tmp_dst_tbl";
+	}
+
+	private function dropSourceTable() {
+		global $wgDBname;
+
+		$this->conn->query( "DROP TEMPORARY TABLE IF EXISTS `$wgDBname`.`tmp_src_tbl`" );
+	}
+
+	private function dropDestTable() {
+		global $wgDBname;
+
+		$this->conn->query( "DROP TEMPORARY TABLE IF EXISTS `$wgDBname`.`tmp_dst_tbl`" );
+	}
 }

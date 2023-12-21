@@ -8,7 +8,6 @@
 	},
 	"captcha-edit": "Aby ste mohli upravovať túto stránku, vyriešte prosím nižšie uvedenú úlohu a napíšte odpoveď do poľa ([[Special:Captcha/help|viac informácií]]):",
 	"captcha-desc": "Poskytuje techniky captcha na ochranu pred spamom a hádaním hesla",
-	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Vaša úprava obsahuje nové externé odkazy. V záujme ochrany tejto wiki pred  automatickým spamom vyriešte, prosím, nižšie uvedenú úlohu a zadajte odpoveď do poľa na uloženie vašej úpravy ([[Special:Captcha/help|viac informácií]]):",
 	"captcha-badlogin": "V záujme ochrany tejto wiki pred automatizovanými lámaniami hesiel, prosím, vyriešte nižšie uvedenú úlohu a zadajte odpoveď do poľa ([[Special:Captcha/help|viac informácií]]):",
 	"captcha-createaccount": "V záujme ochrany tejto wiki pred automatizovaným vytváraním účtov, prosím, vyriešte nižšie uvedenú úlohu a zadajte odpoveď do poľa ([[Special:Captcha/help|viac informácií]]):",

@@ -123,6 +123,7 @@ class SkinComponentLink implements SkinComponent {
 	 */
 	private function makeLink( $key, $item, $options = [] ) {
 		$html = $item['html'] ?? null;
+		$icon = $item['icon'] ?? null;
 		if ( $html ) {
 			return [
 				'html' => $html
@@ -160,11 +161,13 @@ class SkinComponentLink implements SkinComponent {
 		$linkHtmlAttributes = [];
 		if ( $isLink ) {
 			$attrs = $item;
-			foreach ( [ 'single-id', 'text', 'msg', 'tooltiponly', 'context', 'primary',
-						  // These fields provide context for skins to modify classes.
-						  // They should not be outputted to skin.
-						  'icon', 'button',
-						  'tooltip-params', 'exists', 'link-html' ] as $k ) {
+			foreach ( [
+				'single-id', 'text', 'msg', 'tooltiponly', 'context', 'primary',
+				// These fields provide context for skins to modify classes.
+				// They should not be outputted to skin.
+				'icon', 'button',
+				'tooltip-params', 'exists', 'link-html' ] as $k
+			) {
 				unset( $attrs[$k] );
 			}
 
@@ -180,7 +183,9 @@ class SkinComponentLink implements SkinComponent {
 			$this->applyLinkTitleAttribs( $item, true, $attrs );
 			$class = $attrs['class'] ?? [];
 			if ( isset( $options['link-class'] ) ) {
-				$class = $this->addClassToClassList( $class, $options['link-class'] );
+				$class = SkinComponentUtils::addClassToClassList(
+					$class, $options['link-class']
+				);
 			}
 			$attrs['class'] = is_array( $class ) ? implode( ' ', $class ) : $class;
 			foreach ( $attrs as $key => $value ) {
@@ -200,27 +205,10 @@ class SkinComponentLink implements SkinComponent {
 		}
 		return [
 			'html' => $html,
+			'icon' => $icon,
 			'array-attributes' => count( $linkHtmlAttributes ) > 0 ? $linkHtmlAttributes : null,
 			'text' => trim( $text )
 		];
-	}
-
-	/**
-	 * Adds a class to the existing class value, supporting it as a string
-	 * or array.
-	 *
-	 * @param string|array $class to update.
-	 * @param string $newClass to add.
-	 * @return string|array classes.
-	 */
-	private function addClassToClassList( $class, string $newClass ) {
-		if ( is_array( $class ) ) {
-			$class[] = $newClass;
-		} else {
-			$class .= ' ' . $newClass;
-			$class = trim( $class );
-		}
-		return $class;
 	}
 
 	/**

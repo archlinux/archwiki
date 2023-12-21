@@ -7,7 +7,6 @@
 			"Matteocng"
 		]
 	},
-	"apihelp-echomarkread-description": "Contrassegna tutte le notifiche come lette per l'utente attuale.",
 	"apihelp-echomarkread-summary": "Contrassegna tutte le notifiche come lette per l'utente attuale.",
 	"apihelp-echomarkread-param-list": "Un elenco di ID notifiche da contrassegnare come lette.",
 	"apihelp-echomarkread-param-unreadlist": "Un elenco di ID notifiche da contrassegnare come non lette.",
@@ -16,11 +15,9 @@
 	"apihelp-echomarkread-example-1": "Contrassegna la notifica 8 come letta",
 	"apihelp-echomarkread-example-2": "Contrassegna tutte le notifiche come lette",
 	"apihelp-echomarkread-example-3": "Contrassegna la notifica 1 come non letta",
-	"apihelp-echomarkseen-description": "Contrassegna le notifiche come viste per l'utente attuale.",
 	"apihelp-echomarkseen-summary": "Contrassegna le notifiche come viste per l'utente attuale.",
 	"apihelp-echomarkseen-example-1": "Contrassegna le notifiche di tutti i tipi come viste",
 	"apihelp-echomarkseen-param-type": "Tipo di notifiche da contrassegnare come viste: 'alert', 'message' or 'all'.",
-	"apihelp-query+notifications-description": "Ottieni le notifiche in attesa per l'utente attuale.",
 	"apihelp-query+notifications-summary": "Ottieni le notifiche in attesa per l'utente attuale.",
 	"apihelp-query+notifications-param-prop": "Dettagli da richiedere.",
 	"apihelp-query+notifications-param-sections": "Le sezioni delle notifiche da consultare (per esempio, una combinazione di 'avviso' e 'messaggio').",
@@ -41,7 +38,6 @@
 	"apihelp-query+notifications-param-titles": "Restituisce solo le notifiche per queste pagine. Per ottenere le notifiche non associate ad alcuna pagina, usa [] come titolo.",
 	"apihelp-query+notifications-example-1": "Elenco notifiche",
 	"apihelp-query+notifications-example-2": "Elenco notifiche web, raggruppate per sezione, con i conteggi",
-	"apihelp-query+unreadnotificationpages-description": "Ottieni le pagine per le quali ci sono notifiche non lette per l'utente attuale.",
 	"apihelp-query+unreadnotificationpages-summary": "Ottieni le pagine per le quali ci sono notifiche non lette per l'utente attuale.",
 	"apihelp-query+unreadnotificationpages-param-limit": "Il numero massimo di pagine da restituire.",
 	"apihelp-query+unreadnotificationpages-param-wikis": "Elenco di wiki da cui recuperare le pagine con notifiche non lette (predefinito solo il wiki attuale).",

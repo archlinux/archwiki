@@ -2,6 +2,7 @@
 
 use MediaWiki\Deferred\LinksUpdate\LinksDeletionUpdate;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
+use MediaWiki\Title\TitleValue;
 
 /**
  * @covers \MediaWiki\Deferred\LinksUpdate\LinksDeletionUpdate
@@ -72,7 +73,11 @@ class LinksDeletionUpdateTest extends MediaWikiLangTestCase {
 			'templatelinks' => 'tl_from',
 		];
 		foreach ( $tables as $table => $fromField ) {
-			$res = $this->db->select( $table, [ 1 ], [ $fromField => $id ], __METHOD__ );
+			$res = $this->db->newSelectQueryBuilder()
+				->select( [ 1 ] )
+				->from( $table )
+				->where( [ $fromField => $id ] )
+				->caller( __METHOD__ )->fetchResultSet();
 			$this->assertSame( 1, $res->numRows(), "Number of rows in table $table" );
 		}
 
@@ -83,7 +88,11 @@ class LinksDeletionUpdateTest extends MediaWikiLangTestCase {
 		$linksDeletionUpdate->doUpdate();
 
 		foreach ( $tables as $table => $fromField ) {
-			$res = $this->db->select( $table, [ 1 ], [ $fromField => $id ], __METHOD__ );
+			$res = $this->db->newSelectQueryBuilder()
+				->select( [ 1 ] )
+				->from( $table )
+				->where( [ $fromField => $id ] )
+				->caller( __METHOD__ )->fetchResultSet();
 			$this->assertSame( 0, $res->numRows(), "Number of rows in table $table" );
 		}
 	}

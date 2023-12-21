@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\MainConfigNames;
 
@@ -29,3 +31,9 @@ class SpecialRemoveCredentials extends SpecialChangeCredentials {
 		return $this->getConfig()->get( MainConfigNames::RemoveCredentialsBlacklist );
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialRemoveCredentials::class, 'SpecialRemoveCredentials' );

@@ -4,8 +4,8 @@
 			"Joanmp17"
 		]
 	},
-	"tooltip-ca-createsource": "ናይዚ ገጽ ምንጪ ኮድ ፍጠር",
 	"tooltip-ca-ve-edit": "እዚ ገጽ ኣመዓራርይ",
+	"tooltip-ca-createsource": "ናይዚ ገጽ ምንጪ ኮድ ፍጠር",
 	"visualeditor-advancedsettings-tool": "ዝማዕበሉ ምምዕርራያት",
 	"visualeditor-backbutton-tooltip": "ተመለስ",
 	"visualeditor-ca-createsource": "ኮድ ፍጠር",
@@ -79,7 +79,6 @@
 	"visualeditor-media-title-image": "ምስሊ",
 	"visualeditor-media-title-video": "ቪድዮ",
 	"visualeditor-meta-tool": "ኣማራጽታት",
-	"visualeditor-mweditmodesource-warning-cancel": "ኣትርፍ",
 	"visualeditor-mweditmodeve-showagain": "ነዚ መልእኽቲ እንደገና ኣይተርእይ",
 	"visualeditor-mwgallerycontext-description": "$1 {{PLURAL:$1|ምስሊ|ምስልታት}}",
 	"visualeditor-mwgallerydialog-card-images": "ምስልታት",

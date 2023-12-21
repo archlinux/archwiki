@@ -15,7 +15,7 @@ define( 'MW_USE_CONFIG_SCHEMA_CLASS', 1 );
 /**
  * Maintenance script that generates configuration schema files:
  * - includes/MainConfigNames.php: name constants for config settings
- * - includes/config-vars.php: dummy variable declarations for config settings
+ * - docs/config-vars.php: dummy variable declarations for config settings
  * - includes/config-schema.php: an optimized config schema for use by Setup.php
  * - docs/config-schema.yaml: a JSON Schema of the config settings
  *
@@ -71,6 +71,10 @@ class GenerateConfigSchema extends Maintenance {
 			false,
 			true
 		);
+	}
+
+	public function canExecuteWithoutLocalSettings(): bool {
+		return true;
 	}
 
 	public function getDbType() {
@@ -229,7 +233,7 @@ class GenerateConfigSchema extends Maintenance {
 			" * the respective config setting.\n" .
 			" *\n" .
 			" * @note this class is generated automatically by maintenance/generateConfigSchema.php\n" .
-			" * @since 1.38\n" .
+			" * @since 1.39\n" .
 			" */\n";
 
 		$code .= "class MainConfigNames {\n";

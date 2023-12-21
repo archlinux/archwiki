@@ -13,13 +13,17 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Edit\SimpleParsoidOutputStash;
 use MediaWiki\Hook\ParserLogLinterDataHook;
+use MediaWiki\Logger\Spi as LoggerSpi;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageRecord;
+use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Parser\ParserCacheFactory;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
+use MediaWiki\Parser\Parsoid\ParsoidParser;
+use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
 use MediaWiki\Parser\Parsoid\ParsoidRenderID;
 use MediaWiki\Parser\RevisionOutputCache;
 use MediaWiki\Rest\Handler\Helper\HtmlOutputRendererHelper;
@@ -30,16 +34,17 @@ use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Status\Status;
+use MediaWiki\User\User;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
-use MWTimestamp;
 use NullStatsdDataFactory;
 use ParserCache;
 use ParserOptions;
 use ParserOutput;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
-use Status;
-use User;
+use Psr\Log\NullLogger;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Parsoid\Core\ClientError;
@@ -83,12 +88,24 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
+	 * @param LoggerInterface|null $logger
+	 *
+	 * @return LoggerSpi
+	 */
+	private function getLoggerSpi( $logger = null ) {
+		$logger = $logger ?: new NullLogger();
+		$spi = $this->createNoOpMock( LoggerSpi::class, [ 'getLogger' ] );
+		$spi->method( 'getLogger' )->willReturn( $logger );
+		return $spi;
+	}
+
+	/**
 	 * @return MockObject|ParsoidOutputAccess
 	 */
 	public function newMockParsoidOutputAccess(): ParsoidOutputAccess {
 		$expectedCalls = [
 			'getParserOutput' => null,
-			'parse' => null,
+			'parseUncacheable' => null,
 			'getParsoidRenderID' => null
 		];
 
@@ -114,13 +131,14 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		$parsoid->method( 'getParsoidRenderID' )
 			->willReturnCallback( [ $this, 'getParsoidRenderID' ] );
 
-		$parsoid->expects( $this->exactlyOrAny( $expectedCalls[ 'parse' ] ) )
-			->method( 'parse' )
+		$parsoid->expects( $this->exactlyOrAny( $expectedCalls[ 'parseUncacheable' ] ) )
+			->method( 'parseUncacheable' )
 			->willReturnCallback( function (
 				PageIdentity $page,
 				ParserOptions $parserOpts,
-				array $envOptions,
-				$rev
+				$rev,
+				bool $lenientRevHandling,
+				array $envOptions = []
 			) {
 				$html = $this->getMockHtml( $rev, $envOptions );
 
@@ -162,6 +180,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 	 * @param string $html
 	 * @param RevisionRecord|int|null $rev
 	 * @param PageIdentity $page
+	 * @param string|null $version
 	 *
 	 * @return ParserOutput
 	 */
@@ -169,10 +188,12 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		ParserOptions $parserOpts,
 		string $html,
 		$rev,
-		PageIdentity $page
+		PageIdentity $page,
+		string $version = null
 	): ParserOutput {
 		$lang = $parserOpts->getTargetLanguage();
 		$lang = $lang ? $lang->getCode() : 'en';
+		$version ??= Parsoid::defaultHTMLVersion();
 
 		$html = "<!DOCTYPE html><html lang=\"$lang\"><body><div id='t3s7'>$html</div></body></html>";
 
@@ -188,7 +209,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 				't3s7' => [ 'dsr' => [ 0, 0, 0, 0 ] ],
 			] ],
 			'mw' => [ 'ids' => [] ],
-			'version' => '08-15',
+			'version' => $version,
 			'headers' => [
 				'content-language' => $lang
 			]
@@ -199,8 +220,6 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-
-		$this->markTestSkippedIfExtensionNotLoaded( 'Parsoid' );
 
 		$this->overrideConfigValue( MainConfigNames::CacheEpoch, self::CACHE_EPOCH );
 
@@ -281,7 +300,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		return [ $page, $rev ];
 	}
 
-	public function provideRevisionReferences() {
+	public static function provideRevisionReferences() {
 		return [
 			'current' => [ null, [ 'html' => self::HTML, 'timestamp' => self::TIMESTAMP ] ],
 			'old' => [ 'first', [ 'html' => self::HTML_OLD, 'timestamp' => self::TIMESTAMP_OLD ] ],
@@ -314,6 +333,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testGetHtmlWithVariant() {
+		$this->overrideConfigValue( MainConfigNames::UsePigLatinVariant, true );
 		$page = $this->getExistingTestPage( __METHOD__ );
 
 		$helper = $this->newHelper();
@@ -356,6 +376,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testGetPageBundleWithOptions() {
+		$this->markTestSkipped( 'T347426: Support for non-default output content major version has been disabled.' );
 		$page = $this->getExistingTestPage( __METHOD__ );
 
 		$helper = $this->newHelper();
@@ -363,14 +384,13 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 
 		// Calling setParsoidOptions must disable caching and force the ETag to null
 		$helper->setOutputProfileVersion( '999.0.0' );
-		$helper->setOffsetType( 'ucs2' );
 
 		$pb = $helper->getPageBundle();
 
 		// NOTE: Check that the options are present in the HTML.
 		//       We don't do real parsing, so this is how they are represented in the output.
 		$this->assertStringContainsString( '"outputContentVersion":"999.0.0"', $pb->html );
-		$this->assertStringContainsString( '"offsetType":"ucs2"', $pb->html );
+		$this->assertStringContainsString( '"offsetType":"byte"', $pb->html );
 
 		$response = new Response();
 		$helper->putHeaders( $response, true );
@@ -470,6 +490,35 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		$helper->getHtml();
 	}
 
+	public function testInteractionOfStashAndFlavor() {
+		$page = $this->getExistingTestPage( __METHOD__ );
+
+		$helper = $this->newHelper();
+
+		$user = $this->newUser( [ 'pingLimiter' => true ] );
+		$helper->init( $page, self::PARAM_DEFAULTS, $user );
+
+		// Assert that the initial flavor is "view"
+		$this->assertSame( 'view', $helper->getFlavor() );
+
+		// Assert that we can change the flavor to "edit"
+		$helper->setFlavor( 'edit' );
+		$this->assertSame( 'edit', $helper->getFlavor() );
+
+		// Assert that enabling stashing will force the flavor to be "stash"
+		$helper->setStashingEnabled( true );
+		$this->assertSame( 'stash', $helper->getFlavor() );
+
+		// Assert that disabling stashing will reset the flavor to "view"
+		$helper->setStashingEnabled( false );
+		$this->assertSame( 'view', $helper->getFlavor() );
+
+		// Assert that we cannot change the flavor to "view" when stashing is enabled
+		$helper->setStashingEnabled( true );
+		$helper->setFlavor( 'view' );
+		$this->assertSame( 'stash', $helper->getFlavor() );
+	}
+
 	public function testGetHtmlFragment() {
 		$page = $this->getExistingTestPage();
 
@@ -480,9 +529,9 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		$htmlresult = $helper->getHtml()->getRawText();
 
 		$this->assertStringContainsString( 'fragment', $helper->getETag() );
-
 		$this->assertStringContainsString( self::MOCK_HTML, $htmlresult );
-		$this->assertStringContainsString( '"body_only":true', $htmlresult );
+		$this->assertStringNotContainsString( "<body", $htmlresult );
+		$this->assertStringNotContainsString( "<section", $htmlresult );
 	}
 
 	public function testGetHtmlForEdit() {
@@ -556,19 +605,20 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Rest\Handler\HtmlOutputRendererHelper::init
-	 * @covers \MediaWiki\Parser\Parsoid\ParsoidOutputAccess::parse
+	 * @covers \MediaWiki\Rest\Handler\Helper\HtmlOutputRendererHelper::init
+	 * @covers \MediaWiki\Parser\Parsoid\ParsoidOutputAccess::parseUncacheable
 	 */
 	public function testEtagLastModifiedWithPageIdentity() {
 		[ $fakePage, $fakeRevision ] = $this->getNonExistingPageWithFakeRevision( __METHOD__ );
 		$poa = $this->createMock( ParsoidOutputAccess::class );
 		$poa->expects( $this->once() )
-			->method( 'parse' )
+			->method( 'parseUncacheable' )
 			->willReturnCallback( function (
 				PageIdentity $page,
 				ParserOptions $parserOpts,
-				array $envOptions,
-				$rev = null
+				$rev,
+				bool $lenientRevHandling,
+				array $envOptions = []
 			) use ( $fakePage, $fakeRevision ) {
 				self::assertSame( $page, $fakePage, '$page and $fakePage should be the same' );
 				self::assertSame( $rev, $fakeRevision, '$rev and $fakeRevision should be the same' );
@@ -597,7 +647,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideETagSuffix() {
+	public static function provideETagSuffix() {
 		yield 'stash + html' =>
 		[ [ 'stash' => true ], 'html', '/stash/html' ];
 
@@ -640,7 +690,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringEndsWith( $suffix, $etag );
 	}
 
-	public function provideHandlesParsoidError() {
+	public static function provideHandlesParsoidError() {
 		yield 'ClientError' => [
 			new ClientError( 'TEST_TEST' ),
 			new LocalizedHttpException(
@@ -673,14 +723,35 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	private function newRealParsoidOutputAccess( $overrides = [] ) {
-		if ( isset( $overrides['parsoid'] ) ) {
-			$parsoid = $overrides['parsoid'];
-		} else {
-			$parsoid = $this->createNoOpMock( Parsoid::class, [ 'wikitext2html' ] );
-			$parsoid->method( 'wikitext2html' )
+	private function resetServicesWithMockedParsoid( ?Parsoid $mockParsoid = null ): void {
+		$services = $this->getServiceContainer();
+
+		// Init mock Parsoid object
+		if ( !$mockParsoid ) {
+			$mockParsoid = $this->createNoOpMock( Parsoid::class, [ 'wikitext2html' ] );
+			$mockParsoid->method( 'wikitext2html' )
 				->willReturn( new PageBundle( 'This is HTML' ) );
 		}
+
+		// Install it in the ParsoidParser object
+		$parsoidParser = new ParsoidParser(
+			$mockParsoid,
+			$services->getParsoidPageConfigFactory(),
+			$services->getLanguageConverterFactory(),
+			$services->getParserFactory(),
+			$services->getGlobalIdGenerator()
+		);
+
+		// Create a mock Parsoid factory that returns the ParsoidParser object
+		// with the mocked Parsoid object.
+		$mockParsoidParserFactory = $this->createNoOpMock( ParsoidParserFactory::class, [ 'create' ] );
+		$mockParsoidParserFactory->method( 'create' )->willReturn( $parsoidParser );
+
+		$this->setService( 'ParsoidParserFactory', $mockParsoidParserFactory );
+	}
+
+	private function newRealParsoidOutputAccess( $overrides = [] ): ParsoidOutputAccess {
+		$services = $this->getServiceContainer();
 
 		if ( isset( $overrides['parserCache'] ) ) {
 			$parserCache = $overrides['parserCache'];
@@ -704,8 +775,17 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		);
 		$parserCacheFactory->method( 'getParserCache' )->willReturn( $parserCache );
 		$parserCacheFactory->method( 'getRevisionOutputCache' )->willReturn( $revisionCache );
-
-		$services = $this->getServiceContainer();
+		$parserOutputAccess = new ParserOutputAccess(
+			$parserCacheFactory,
+			$services->getRevisionLookup(),
+			$services->getRevisionRenderer(),
+			new NullStatsdDataFactory(),
+			$services->getDBLoadBalancerFactory(),
+			$services->getChronologyProtector(),
+			$this->getLoggerSpi(),
+			$services->getWikiPageFactory(),
+			$services->getTitleFormatter()
+		);
 
 		return new ParsoidOutputAccess(
 			new ServiceOptions(
@@ -713,14 +793,11 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 				$services->getMainConfig(),
 				[ 'ParsoidWikiID' => 'MyWiki' ]
 			),
-			$parserCacheFactory,
+			$services->getParsoidParserFactory(),
+			$parserOutputAccess,
 			$services->getPageStore(),
 			$services->getRevisionLookup(),
-			$services->getGlobalIdGenerator(),
-			new NullStatsdDataFactory(),
-			$parsoid,
 			$services->getParsoidSiteConfig(),
-			$services->getParsoidPageConfigFactory(),
 			$services->getContentHandlerFactory()
 		);
 	}
@@ -738,10 +815,13 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		$parsoid->method( 'wikitext2html' )
 			->willThrowException( $parsoidException );
 
-		/** @var ParsoidOutputAccess|MockObject $access */
-		$access = $this->newRealParsoidOutputAccess( [
-			'parsoid' => $parsoid
-		] );
+		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'get', 'makeParserOutputKey', 'getMetadata' ] );
+		$parserCache->method( 'get' )->willReturn( false );
+		$parserCache->expects( $this->once() )->method( 'getMetadata' );
+		$parserCache->expects( $this->atLeastOnce() )->method( 'makeParserOutputKey' );
+
+		$this->resetServicesWithMockedParsoid( $parsoid );
+		$access = $this->newRealParsoidOutputAccess( [ 'parserCache' => $parserCache ] );
 
 		$helper = $this->newHelper( null, $access );
 		$helper->init( $page, self::PARAM_DEFAULTS, $this->newUser() );
@@ -758,13 +838,16 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		$page = PageIdentityValue::localIdentity( $page->getId(), $page->getNamespace(), $page->getDBkey() );
 
 		// This is the key assertion in this test case: get() and save() are both called.
-		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'get', 'save' ] );
+		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'get', 'save', 'getMetadata', 'makeParserOutputKey' ] );
 		$parserCache->expects( $this->once() )->method( 'get' )->willReturn( false );
 		$parserCache->expects( $this->once() )->method( 'save' );
+		$parserCache->expects( $this->once() )->method( 'getMetadata' );
+		$parserCache->expects( $this->atLeastOnce() )->method( 'makeParserOutputKey' );
 
+		$this->resetServicesWithMockedParsoid();
 		$access = $this->newRealParsoidOutputAccess( [
 			'parserCache' => $parserCache,
-			'revisionCache' => $this->createNoOpMock( RevisionOutputCache::class ),
+			'revisionCache' => $this->createNoOpMock( RevisionOutputCache::class )
 		] );
 
 		$helper = $this->newHelper( null, $access );
@@ -778,10 +861,12 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 
 		// NOTE: The save() method is not supported and will throw!
 		//       The point of this test case is asserting that save() isn't called.
-		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'get' ] );
+		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'get', 'getMetadata', 'makeParserOutputKey' ] );
 		$parserCache->method( 'get' )->willReturn( false );
+		$parserCache->expects( $this->once() )->method( 'getMetadata' );
+		$parserCache->expects( $this->atLeastOnce() )->method( 'makeParserOutputKey' );
 
-		/** @var ParsoidOutputAccess|MockObject $access */
+		$this->resetServicesWithMockedParsoid();
 		$access = $this->newRealParsoidOutputAccess( [
 			'parserCache' => $parserCache,
 			'revisionCache' => $this->createNoOpMock( RevisionOutputCache::class ),
@@ -801,10 +886,12 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		// NOTE: The get() method is not supported and will throw!
 		//       The point of this test case is asserting that get() isn't called.
 		//       We also check that save() is still called.
-		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'save' ] );
+		$parserCache = $this->createNoOpMock( ParserCache::class, [ 'save', 'getMetadata', 'makeParserOutputKey' ] );
 		$parserCache->expects( $this->once() )->method( 'save' );
+		$parserCache->expects( $this->once() )->method( 'getMetadata' );
+		$parserCache->expects( $this->atLeastOnce() )->method( 'makeParserOutputKey' );
 
-		/** @var ParsoidOutputAccess|MockObject $access */
+		$this->resetServicesWithMockedParsoid();
 		$access = $this->newRealParsoidOutputAccess( [
 			'parserCache' => $parserCache,
 			'revisionCache' => $this->createNoOpMock( RevisionOutputCache::class ),
@@ -816,20 +903,6 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		// Set read = false, write = true
 		$helper->setUseParserCache( false, true );
 		$helper->getHtml();
-	}
-
-	/**
-	 * Mock the language class based on a language code.
-	 *
-	 * @param string $langCode
-	 *
-	 * @return Language|Language&MockObject|MockObject
-	 */
-	private function getLanguageMock( string $langCode ) {
-		$language = $this->createMock( Language::class );
-		$language->method( 'getCode' )->willReturn( $langCode );
-
-		return $language;
 	}
 
 	public function testGetParserOutputWithLanguageOverride() {
@@ -847,6 +920,41 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		$output = $helper->getHtml();
 		$html = $output->getRawText();
 		$this->assertStringContainsString( 'lang="ar"', $html );
+	}
+
+	public function testGetParserOutputWithRedundantPageLanguage() {
+		$poa = $this->createMock( ParsoidOutputAccess::class );
+		$poa->expects( $this->once() )
+			->method( 'getParserOutput' )
+			->willReturnCallback( function (
+				PageIdentity $page,
+				ParserOptions $parserOpts,
+				$revision = null,
+				int $options = 0
+			) {
+				$usedOptions = [ 'targetLanguage' ];
+				self::assertNull( $parserOpts->getTargetLanguage(), 'No target language should be set in ParserOptions' );
+				self::assertTrue( $parserOpts->isSafeToCache( $usedOptions ) );
+
+				$html = $this->getMockHtml( $revision );
+				$pout = $this->makeParserOutput( $parserOpts, $html, $revision, $page );
+				return Status::newGood( $pout );
+			} );
+		$poa->method( 'getParsoidRenderID' )
+			->willReturnCallback( [ $this, 'getParsoidRenderID' ] );
+
+		$helper = $this->newHelper( null, $poa );
+
+		$page = $this->getExistingTestPage();
+
+		$helper->init( $page, [], $this->newUser() );
+
+		// Explicitly set the page language to the default.
+		$pageLanguage = $page->getTitle()->getPageLanguage();
+		$helper->setPageLanguage( $pageLanguage );
+
+		// Trigger parsing, so the assertions in the mock are executed.
+		$helper->getHtml();
 	}
 
 	public function provideInit() {
@@ -869,7 +977,9 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 			]
 		];
 
-		$rev = $this->createNoOpMock( RevisionRecord::class );
+		$rev = $this->createNoOpMock( RevisionRecord::class, [ 'getId' ] );
+		$rev->method( 'getId' )->willReturn( 7 );
+
 		$lang = $this->createNoOpMock( Language::class );
 		yield 'Revision and Language' => [
 			$page,
@@ -954,6 +1064,7 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider providePutHeaders
 	 */
 	public function testPutHeaders( ?string $targetLanguage, bool $setContentLanguageHeader ) {
+		$this->overrideConfigValue( MainConfigNames::UsePigLatinVariant, true );
 		$page = $this->getExistingTestPage( __METHOD__ );
 		$expectedCalls = [];
 
@@ -963,17 +1074,23 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		if ( $targetLanguage ) {
 			$helper->setVariantConversionLanguage( new Bcp47CodeValue( $targetLanguage ) );
 			$expectedCalls['addHeader'] = [ [ 'Vary', 'Accept-Language' ] ];
+		}
 
-			if ( $setContentLanguageHeader ) {
-				$expectedCalls['setHeader'] = [ [ 'Content-Language', $targetLanguage ] ];
-			}
+		if ( $setContentLanguageHeader ) {
+			$expectedCalls['setHeader'][] = [ 'Content-Language', $targetLanguage ?: 'en' ];
+
+			$version = Parsoid::defaultHTMLVersion();
+			$expectedCalls['setHeader'][] = [
+				'Content-Type',
+				'text/html; charset=utf-8; profile="https://www.mediawiki.org/wiki/Specs/HTML/' . $version . '"',
+			];
 		}
 
 		$responseInterface = $this->getResponseInterfaceMock( $expectedCalls );
 		$helper->putHeaders( $responseInterface, $setContentLanguageHeader );
 	}
 
-	public function providePutHeaders() {
+	public static function providePutHeaders() {
 		yield 'no target variant language' => [ null, true ];
 		yield 'target language is set but setContentLanguageHeader is false' => [ 'en-x-piglatin', false ];
 		yield 'target language and setContentLanguageHeader flag is true' =>
@@ -992,16 +1109,20 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		return $responseInterface;
 	}
 
-	public function provideFlavorsForBadModelOutput() {
+	public static function provideFlavorsForBadModelOutput() {
 		yield 'view' => [ 'view' ];
 		yield 'edit' => [ 'edit' ];
-		yield 'fragment' => [ 'fragment' ];
+		// fragment mode is only for posted wikitext fragments not part of a revision
+		// and should not be used with real revisions
+		//
+		// yield 'fragment' => [ 'fragment' ];
 	}
 
 	/**
 	 * @dataProvider provideFlavorsForBadModelOutput
 	 */
 	public function testDummyContentForBadModel( string $flavor ) {
+		$this->resetServicesWithMockedParsoid();
 		$helper = $this->newHelper( new HashBagOStuff(), $this->newRealParsoidOutputAccess() );
 
 		$page = $this->getNonexistingTestPage( __METHOD__ );
@@ -1013,6 +1134,40 @@ class HtmlOutputRendererHelperTest extends MediaWikiIntegrationTestCase {
 		$output = $helper->getHtml();
 		$this->assertStringContainsString( 'Dummy output', $output->getText() );
 		$this->assertSame( '0/dummy-output', $output->getExtensionData( 'parsoid-render-id' ) );
+	}
+
+	/**
+	 * HtmlOutputRendererHelper should force a reparse if getParserOuput doesn't
+	 * return Parsoid's default version.
+	 */
+	public function testForceDefault() {
+		$page = $this->getExistingTestPage();
+
+		$poa = $this->createMock( ParsoidOutputAccess::class );
+		$poa->method( 'getParserOutput' )
+			->willReturnCallback( function (
+				PageIdentity $page,
+				ParserOptions $parserOpts,
+				$revision = null,
+				int $options = 0
+			) {
+				static $first = true;
+				if ( $first ) {
+					$version = '1.1.1'; // Not the default
+					$first = false;
+				} else {
+					$version = Parsoid::defaultHTMLVersion();
+					$this->assertGreaterThan( 0, $options & ParserOutputAccess::OPT_FORCE_PARSE );
+				}
+				$html = $this->getMockHtml( $revision );
+				$pout = $this->makeParserOutput( $parserOpts, $html, $revision, $page, $version );
+				return Status::newGood( $pout );
+			} );
+
+		$helper = $this->newHelper( null, $poa );
+		$helper->init( $page, [], $this->newUser() );
+		$pb = $helper->getPageBundle();
+		$this->assertSame( $pb->version, Parsoid::defaultHTMLVersion() );
 	}
 
 }

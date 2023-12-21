@@ -13,10 +13,10 @@ use DeferrableUpdate;
 use MediaWiki\Extension\DiscussionTools\ThreadItemStore;
 use MediaWiki\Revision\RenderedRevision;
 use MediaWiki\Storage\Hook\RevisionDataUpdatesHook;
+use MediaWiki\Title\Title;
 use MWCallableUpdate;
 use MWExceptionHandler;
 use Throwable;
-use Title;
 
 class DataUpdatesHooks implements RevisionDataUpdatesHook {
 
@@ -45,7 +45,9 @@ class DataUpdatesHooks implements RevisionDataUpdatesHook {
 			$updates[] = new MWCallableUpdate( function () use ( $rev, $method ) {
 				try {
 					$threadItemSet = HookUtils::parseRevisionParsoidHtml( $rev, $method );
-					$this->threadItemStore->insertThreadItems( $rev, $threadItemSet );
+					if ( !$this->threadItemStore->isDisabled() ) {
+						$this->threadItemStore->insertThreadItems( $rev, $threadItemSet );
+					}
 				} catch ( Throwable $e ) {
 					// Catch errors, so that they don't cause other updates to fail (T315383), but log them.
 					MWExceptionHandler::logException( $e );

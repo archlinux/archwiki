@@ -10,13 +10,14 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\Specials\SpecialLog;
 use MediaWiki\Title\TitleFactory;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use Psr\Log\LoggerInterface;
 use RenameUserJob;
-use SpecialLog;
-use User;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * Class which performs the actual renaming of users
@@ -189,16 +190,16 @@ class RenameuserSQL {
 		// Rename and touch the user before re-attributing edits to avoid users still being
 		// logged in and making new edits (under the old name) while being renamed.
 		$this->debug( "Starting rename of {$this->old} to {$this->new}" );
-		$dbw->update( 'user',
-			[ 'user_name' => $this->new, 'user_touched' => $dbw->timestamp() ],
-			[ 'user_name' => $this->old, 'user_id' => $this->uid ],
-			__METHOD__
-		);
-		$dbw->update( 'actor',
-			[ 'actor_name' => $this->new ],
-			[ 'actor_name' => $this->old, 'actor_user' => $this->uid ],
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'user' )
+			->set( [ 'user_name' => $this->new, 'user_touched' => $dbw->timestamp() ] )
+			->where( [ 'user_name' => $this->old, 'user_id' => $this->uid ] )
+			->caller( __METHOD__ )->execute();
+		$dbw->newUpdateQueryBuilder()
+			->update( 'actor' )
+			->set( [ 'actor_name' => $this->new ] )
+			->where( [ 'actor_name' => $this->old, 'actor_user' => $this->uid ] )
+			->caller( __METHOD__ )->execute();
 
 		// Reset token to break login with central auth systems.
 		// Again, avoids user being logged in with old name.
@@ -211,11 +212,12 @@ class RenameuserSQL {
 		$user->invalidateCache();
 
 		// Update ipblock list if this user has a block in there.
-		$dbw->update( 'ipblocks',
-			[ 'ipb_address' => $this->new ],
-			[ 'ipb_user' => $this->uid, 'ipb_address' => $this->old ],
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'ipblocks' )
+			->set( [ 'ipb_address' => $this->new ] )
+			->where( [ 'ipb_user' => $this->uid, 'ipb_address' => $this->old ] )
+			->caller( __METHOD__ )->execute();
+
 		// Update this users block/rights log. Ideally, the logs would be historical,
 		// but it is really annoying when users have "clean" block logs by virtue of
 		// being renamed, which makes admin tasks more of a pain...
@@ -226,36 +228,36 @@ class RenameuserSQL {
 		// Exclude user renames per T200731
 		$logTypesOnUser = array_diff( SpecialLog::getLogTypesOnUser(), [ 'renameuser' ] );
 
-		$dbw->update( 'logging',
-			[ 'log_title' => $newTitle->getDBkey() ],
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'logging' )
+			->set( [ 'log_title' => $newTitle->getDBkey() ] )
+			->where( [
 				'log_type' => $logTypesOnUser,
 				'log_namespace' => NS_USER,
 				'log_title' => $oldTitle->getDBkey()
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )->execute();
 
 		$this->debug( "Updating recentchanges table for {$this->old} to {$this->new}" );
-		$dbw->update( 'recentchanges',
-			[ 'rc_title' => $newTitle->getDBkey() ],
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'recentchanges' )
+			->set( [ 'rc_title' => $newTitle->getDBkey() ] )
+			->where( [
 				'rc_type' => RC_LOG,
 				'rc_log_type' => $logTypesOnUser,
 				'rc_namespace' => NS_USER,
 				'rc_title' => $oldTitle->getDBkey()
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )->execute();
 
 		// Do immediate re-attribution table updates...
 		foreach ( $this->tables as $table => $fieldSet ) {
-			list( $nameCol, $userCol ) = $fieldSet;
-			$dbw->update( $table,
-				[ $nameCol => $this->new ],
-				[ $nameCol => $this->old, $userCol => $this->uid ],
-				__METHOD__
-			);
+			[ $nameCol, $userCol ] = $fieldSet;
+			$dbw->newUpdateQueryBuilder()
+				->update( $table )
+				->set( [ $nameCol => $this->new ] )
+				->where( [ $nameCol => $this->old, $userCol => $this->uid ] )
+				->caller( __METHOD__ )->execute();
 		}
 
 		/** @var RenameUserJob[] $jobs */
@@ -272,12 +274,12 @@ class RenameuserSQL {
 			$userIDC = $params[self::UID_COL]; // some *_user column
 			$timestampC = $params[self::TIME_COL]; // some *_timestamp column
 
-			$res = $dbw->select( $table,
-				[ $timestampC ],
-				[ $userTextC => $this->old, $userIDC => $this->uid ],
-				__METHOD__,
-				[ 'ORDER BY' => "$timestampC ASC" ]
-			);
+			$res = $dbw->newSelectQueryBuilder()
+				->select( [ $timestampC ] )
+				->from( $table )
+				->where( [ $userTextC => $this->old, $userIDC => $this->uid ] )
+				->orderBy( $timestampC, SelectQueryBuilder::SORT_ASC )
+				->caller( __METHOD__ )->fetchResultSet();
 
 			$jobParams = [];
 			$jobParams['table'] = $table;
@@ -372,12 +374,11 @@ class RenameuserSQL {
 	 * @return int Returns 0 if no row was found
 	 */
 	private function lockUserAndGetId( $name ) {
-		return (int)$this->loadBalancer->getConnection( DB_PRIMARY )->selectField(
-			'user',
-			'user_id',
-			[ 'user_name' => $name ],
-			__METHOD__,
-			[ 'FOR UPDATE' ]
-		);
+		return (int)$this->loadBalancer->getConnection( DB_PRIMARY )->newSelectQueryBuilder()
+			->select( 'user_id' )
+			->forUpdate()
+			->from( 'user' )
+			->where( [ 'user_name' => $name ] )
+			->caller( __METHOD__ )->fetchField();
 	}
 }

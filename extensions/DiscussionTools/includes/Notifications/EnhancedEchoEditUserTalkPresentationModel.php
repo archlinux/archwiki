@@ -10,8 +10,8 @@
 namespace MediaWiki\Extension\DiscussionTools\Notifications;
 
 use EchoEditUserTalkPresentationModel;
+use MediaWiki\Language\RawMessage;
 use Message;
-use RawMessage;
 use Wikimedia\Timestamp\TimestampException;
 
 class EnhancedEchoEditUserTalkPresentationModel extends EchoEditUserTalkPresentationModel {

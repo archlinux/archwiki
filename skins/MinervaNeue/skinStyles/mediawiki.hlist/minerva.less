@@ -25,7 +25,7 @@ ul.hlist,
 }
 
 .hlist-separated {
-	li:after {
+	li::after {
 		// Make sure we override any site styles
 		content: '•' !important;
 		padding-left: 8px;
@@ -33,7 +33,7 @@ ul.hlist,
 		line-height: 1;
 	}
 
-	:last-child:after {
+	:last-child::after {
 		content: none !important;
 	}
 }

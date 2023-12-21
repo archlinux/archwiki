@@ -1,5 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications;
+
+use BatchRowIterator;
+use Language;
+use MailAddress;
 use MediaWiki\Extension\Notifications\Formatters\EchoHtmlDigestEmailFormatter;
 use MediaWiki\Extension\Notifications\Formatters\EchoPlainTextDigestEmailFormatter;
 use MediaWiki\Extension\Notifications\Mapper\EventMapper;
@@ -7,12 +12,15 @@ use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserOptionsManager;
+use stdClass;
+use User;
+use UserMailer;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Handle user email batch ( daily/ weekly )
  */
-class MWEchoEmailBatch {
+class EmailBatch {
 
 	/**
 	 * @var User the user to be notified
@@ -76,14 +84,14 @@ class MWEchoEmailBatch {
 	 *  1 - once everyday
 	 *  7 - once every 7 days
 	 * @param int $userId
-	 * @param bool $enforceFrequency Whether or not email sending frequency should
+	 * @param bool $enforceFrequency Whether email sending frequency should
 	 *  be enforced.
 	 *
 	 *  When true, today's notifications won't be returned if they are
 	 *  configured to go out tonight or at the end of the week.
 	 *
 	 *  When false, all pending notifications will be returned.
-	 * @return MWEchoEmailBatch|false
+	 * @return EmailBatch|false
 	 */
 	public static function newFromUserId( $userId, $enforceFrequency = true ) {
 		$user = User::newFromId( (int)$userId );
@@ -172,7 +180,7 @@ class MWEchoEmailBatch {
 	 * @return bool true if event exists false otherwise
 	 */
 	protected function setLastEvent() {
-		$dbr = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_REPLICA );
+		$dbr = DbFactory::newFromDefault()->getEchoDb( DB_REPLICA );
 		$res = $dbr->selectField(
 			[ 'echo_email_batch' ],
 			'MAX( eeb_event_id )',
@@ -218,7 +226,7 @@ class MWEchoEmailBatch {
 		// composite index, favor insert performance, storage space over read
 		// performance in this case
 		if ( $validEvents ) {
-			$dbr = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_REPLICA );
+			$dbr = DbFactory::newFromDefault()->getEchoDb( DB_REPLICA );
 
 			$conds = [
 				'eeb_user_id' => $this->mUser->getId(),
@@ -282,7 +290,7 @@ class MWEchoEmailBatch {
 	public function clearProcessedEvent() {
 		global $wgUpdateRowsPerQuery;
 		$eventMapper = new EventMapper();
-		$dbFactory = MWEchoDbFactory::newFromDefault();
+		$dbFactory = DbFactory::newFromDefault();
 		$dbw = $dbFactory->getEchoDb( DB_PRIMARY );
 		$dbr = $dbFactory->getEchoDb( DB_REPLICA );
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
@@ -323,7 +331,7 @@ class MWEchoEmailBatch {
 		global $wgPasswordSender, $wgNoReplyAddress;
 
 		if ( $this->userOptionsManager->getOption( $this->mUser, 'echo-email-frequency' )
-			== EchoEmailFrequency::WEEKLY_DIGEST
+			== EmailFrequency::WEEKLY_DIGEST
 		) {
 			$frequency = 'weekly';
 			$emailDeliveryMode = 'weekly_digest';
@@ -340,8 +348,8 @@ class MWEchoEmailBatch {
 			return;
 		}
 
-		$format = MWEchoNotifUser::newFromUser( $this->mUser )->getEmailFormat();
-		if ( $format == EchoEmailFormat::HTML ) {
+		$format = NotifUser::newFromUser( $this->mUser )->getEmailFormat();
+		if ( $format == EmailFormat::HTML ) {
 			$htmlEmailDigestFormatter = new EchoHtmlDigestEmailFormatter( $this->mUser, $this->language, $frequency );
 			$htmlContent = $htmlEmailDigestFormatter->format( $this->events, 'email' );
 
@@ -360,7 +368,6 @@ class MWEchoEmailBatch {
 
 		// @Todo Push the email to job queue or just send it out directly?
 		UserMailer::send( $toAddress, $fromAddress, $content['subject'], $content['body'], [ 'replyTo' => $replyTo ] );
-		MWEchoEventLogging::logSchemaEchoMail( $this->mUser, $emailDeliveryMode );
 	}
 
 	/**
@@ -376,7 +383,7 @@ class MWEchoEmailBatch {
 			return;
 		}
 
-		$dbw = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_PRIMARY );
+		$dbw = DbFactory::newFromDefault()->getEchoDb( DB_PRIMARY );
 
 		$row = [
 			'eeb_user_id' => $userId,
@@ -402,7 +409,7 @@ class MWEchoEmailBatch {
 	 * @return IResultWrapper|bool
 	 */
 	public static function getUsersToNotify( $startUserId, $batchSize ) {
-		$dbr = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_REPLICA );
+		$dbr = DbFactory::newFromDefault()->getEchoDb( DB_REPLICA );
 		$res = $dbr->select(
 			[ 'echo_email_batch' ],
 			[ 'eeb_user_id' ],

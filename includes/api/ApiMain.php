@@ -28,15 +28,21 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Profiler\ProfilingContext;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Request\WebRequestUpload;
 use MediaWiki\Rest\HeaderParser\Origin;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\StubObject\StubGlobalUser;
+use MediaWiki\User\User;
 use MediaWiki\User\UserRigorOptions;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 use Wikimedia\Timestamp\TimestampException;
 
 /**
@@ -125,15 +131,16 @@ class ApiMain extends ApiBase {
 			'class' => ApiQuery::class,
 			'services' => [
 				'ObjectFactory',
-				'DBLoadBalancer',
 				'WikiExporterFactory',
+				'TitleFormatter',
+				'TitleFactory',
 			]
 		],
 		'expandtemplates' => [
 			'class' => ApiExpandTemplates::class,
 			'services' => [
 				'RevisionStore',
-				'Parser',
+				'ParserFactory',
 			]
 		],
 		'parse' => [
@@ -145,11 +152,15 @@ class ApiMain extends ApiBase {
 				'LinkBatchFactory',
 				'LinkCache',
 				'ContentHandlerFactory',
-				'Parser',
+				'ParserFactory',
 				'WikiPageFactory',
 				'ContentRenderer',
 				'ContentTransformer',
 				'CommentFormatter',
+				'TempUserCreator',
+				'UserFactory',
+				'UrlUtils',
+				'TitleFormatter',
 			]
 		],
 		'stashedit' => [
@@ -160,6 +171,8 @@ class ApiMain extends ApiBase {
 				'RevisionLookup',
 				'StatsdDataFactory',
 				'WikiPageFactory',
+				'TempUserCreator',
+				'UserFactory',
 			]
 		],
 		'opensearch' => [
@@ -168,6 +181,7 @@ class ApiMain extends ApiBase {
 				'LinkBatchFactory',
 				'SearchEngineConfig',
 				'SearchEngineFactory',
+				'UrlUtils',
 			]
 		],
 		'feedcontributions' => [
@@ -178,9 +192,8 @@ class ApiMain extends ApiBase {
 				'LinkRenderer',
 				'LinkBatchFactory',
 				'HookContainer',
-				'DBLoadBalancer',
+				'DBLoadBalancerFactory',
 				'NamespaceInfo',
-				'ActorMigration',
 				'UserFactory',
 				'CommentFormatter',
 			]
@@ -194,7 +207,7 @@ class ApiMain extends ApiBase {
 		'feedwatchlist' => [
 			'class' => ApiFeedWatchlist::class,
 			'services' => [
-				'Parser',
+				'ParserFactory',
 			]
 		],
 		'help' => [
@@ -216,10 +229,13 @@ class ApiMain extends ApiBase {
 			'class' => ApiComparePages::class,
 			'services' => [
 				'RevisionStore',
+				'ArchivedRevisionLookup',
 				'SlotRoleRegistry',
 				'ContentHandlerFactory',
 				'ContentTransformer',
 				'CommentFormatter',
+				'TempUserCreator',
+				'UserFactory',
 			]
 		],
 		'checktoken' => [
@@ -247,9 +263,11 @@ class ApiMain extends ApiBase {
 		'setnotificationtimestamp' => [
 			'class' => ApiSetNotificationTimestamp::class,
 			'services' => [
-				'DBLoadBalancer',
+				'DBLoadBalancerFactory',
 				'RevisionStore',
 				'WatchedItemStore',
+				'TitleFormatter',
+				'TitleFactory',
 			]
 		],
 		'rollback' => [
@@ -306,6 +324,9 @@ class ApiMain extends ApiBase {
 				'BlockPermissionCheckerFactory',
 				'UnblockUserFactory',
 				'UserIdentityLookup',
+				'WatchedItemStore',
+				'WatchlistManager',
+				'UserOptionsLookup',
 			]
 		],
 		'move' => [
@@ -327,6 +348,8 @@ class ApiMain extends ApiBase {
 				'WatchlistManager',
 				'UserOptionsLookup',
 				'RedirectLookup',
+				'TempUserCreator',
+				'UserFactory',
 			]
 		],
 		'upload' => [
@@ -350,6 +373,7 @@ class ApiMain extends ApiBase {
 			'class' => ApiWatch::class,
 			'services' => [
 				'WatchlistManager',
+				'TitleFormatter',
 			]
 		],
 		'patrol' => [
@@ -374,6 +398,9 @@ class ApiMain extends ApiBase {
 			'class' => ApiUserrights::class,
 			'services' => [
 				'UserGroupManager',
+				'WatchedItemStore',
+				'WatchlistManager',
+				'UserOptionsLookup',
 			]
 		],
 		'options' => [
@@ -388,6 +415,7 @@ class ApiMain extends ApiBase {
 			'services' => [
 				'RepoGroup',
 				'TempFSFileFactory',
+				'TitleFactory',
 			]
 		],
 		'revisiondelete' => [
@@ -399,8 +427,9 @@ class ApiMain extends ApiBase {
 		'tag' => [
 			'class' => ApiTag::class,
 			'services' => [
-				'DBLoadBalancer',
+				'DBLoadBalancerFactory',
 				'RevisionStore',
+				'ChangeTagsStore',
 			]
 		],
 		'mergehistory' => [
@@ -412,7 +441,7 @@ class ApiMain extends ApiBase {
 		'setpagelanguage' => [
 			'class' => ApiSetPageLanguage::class,
 			'services' => [
-				'DBLoadBalancer',
+				'DBLoadBalancerFactory',
 				'LanguageNameUtils',
 			]
 		],
@@ -421,6 +450,12 @@ class ApiMain extends ApiBase {
 			'services' => [
 				'ContentHandlerFactory',
 				'ContentModelChangeFactory',
+			]
+		],
+		'acquiretempusername' => [
+			'class' => ApiAcquireTempUserName::class,
+			'services' => [
+				'TempUserCreator',
 			]
 		],
 	];
@@ -662,20 +697,13 @@ class ApiMain extends ApiBase {
 		$request = $this->getRequest();
 
 		// JSONP mode
-		if ( $request->getCheck( 'callback' ) ) {
-			$this->lacksSameOriginSecurity = true;
-			return true;
-		}
-
-		// Anonymous CORS
-		if ( $request->getVal( 'origin' ) === '*' ) {
-			$this->lacksSameOriginSecurity = true;
-			return true;
-		}
-
-		// Header to be used from XMLHTTPRequest when the request might
-		// otherwise be used for XSS.
-		if ( $request->getHeader( 'Treat-as-Untrusted' ) !== false ) {
+		if ( $request->getCheck( 'callback' ) ||
+			// Anonymous CORS
+			$request->getVal( 'origin' ) === '*' ||
+			// Header to be used from XMLHTTPRequest when the request might
+			// otherwise be used for XSS.
+			$request->getHeader( 'Treat-as-Untrusted' ) !== false
+		) {
 			$this->lacksSameOriginSecurity = true;
 			return true;
 		}
@@ -1311,7 +1339,7 @@ class ApiMain extends ApiBase {
 			// None of the rest have any messages for non-error types
 		} else {
 			// TODO: Avoid embedding arbitrary class names in the error code.
-			$class = preg_replace( '#^Wikimedia\\\Rdbms\\\#', '', get_class( $e ) );
+			$class = preg_replace( '#^Wikimedia\\\\Rdbms\\\\#', '', get_class( $e ) );
 			$code = 'internal_api_error_' . $class;
 			$data = [ 'errorclass' => get_class( $e ) ];
 			if ( MWExceptionRenderer::shouldShowExceptionDetails() ) {
@@ -1387,7 +1415,7 @@ class ApiMain extends ApiBase {
 			$path = null;
 		}
 		if ( $e instanceof ApiUsageException ) {
-			$link = wfExpandUrl( wfScript( 'api' ) );
+			$link = (string)MediaWikiServices::getInstance()->getUrlUtils()->expand( wfScript( 'api' ) );
 			$result->addContentValue(
 				$path,
 				'docref',
@@ -1471,7 +1499,6 @@ class ApiMain extends ApiBase {
 	/**
 	 * Set up the module for response
 	 * @return ApiBase The module that will handle this action
-	 * @throws MWException
 	 * @throws ApiUsageException
 	 */
 	protected function setupModule() {
@@ -1490,14 +1517,14 @@ class ApiMain extends ApiBase {
 
 		// Check token, if necessary
 		if ( $module->needsToken() === true ) {
-			throw new MWException(
+			throw new LogicException(
 				"Module '{$module->getModuleName()}' must be updated for the new token handling. " .
 				'See documentation for ApiBase::needsToken for details.'
 			);
 		}
 		if ( $module->needsToken() ) {
 			if ( !$module->mustBePosted() ) {
-				throw new MWException(
+				throw new LogicException(
 					"Module '{$module->getModuleName()}' must require POST to use tokens."
 				);
 			}
@@ -1883,6 +1910,7 @@ class ApiMain extends ApiBase {
 		$this->mModule = $module;
 
 		if ( !$this->mInternalMode ) {
+			ProfilingContext::singleton()->init( MW_ENTRY_POINT, $module->getModuleName() );
 			$this->setRequestExpectations( $module );
 		}
 
@@ -1929,7 +1957,6 @@ class ApiMain extends ApiBase {
 			$trxProfiler->setExpectations( $trxLimits['GET'], __METHOD__ );
 		} elseif ( $request->wasPosted() && !$module->isWriteMode() ) {
 			$trxProfiler->setExpectations( $trxLimits['POST-nonwrite'], __METHOD__ );
-			$request->markAsSafeRequest();
 		} else {
 			$trxProfiler->setExpectations( $trxLimits['POST'], __METHOD__ );
 		}
@@ -2196,11 +2223,13 @@ class ApiMain extends ApiBase {
 			],
 			'smaxage' => [
 				ParamValidator::PARAM_TYPE => 'integer',
-				ParamValidator::PARAM_DEFAULT => 0
+				ParamValidator::PARAM_DEFAULT => 0,
+				IntegerDef::PARAM_MIN => 0,
 			],
 			'maxage' => [
 				ParamValidator::PARAM_TYPE => 'integer',
-				ParamValidator::PARAM_DEFAULT => 0
+				ParamValidator::PARAM_DEFAULT => 0,
+				IntegerDef::PARAM_MIN => 0,
 			],
 			'assert' => [
 				ParamValidator::PARAM_TYPE => [ 'anon', 'user', 'bot' ]
@@ -2343,7 +2372,7 @@ class ApiMain extends ApiBase {
 					'anchor' => 'main/datatypes',
 					'line' => $header,
 					'number' => implode( '.', $tocnumber ),
-					'index' => false,
+					'index' => '',
 				];
 			}
 
@@ -2372,7 +2401,7 @@ class ApiMain extends ApiBase {
 					'anchor' => 'main/templatedparams',
 					'line' => $header,
 					'number' => implode( '.', $tocnumber ),
-					'index' => false,
+					'index' => '',
 				];
 			}
 
@@ -2400,7 +2429,7 @@ class ApiMain extends ApiBase {
 					'anchor' => 'main/credits',
 					'line' => $header,
 					'number' => implode( '.', $tocnumber ),
-					'index' => false,
+					'index' => '',
 				];
 			}
 		}

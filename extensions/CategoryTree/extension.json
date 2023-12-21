@@ -6,7 +6,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"ConfigRegistry": {
 		"categorytree": "GlobalVarConfig::newInstance"
@@ -24,6 +24,7 @@
 			"class": "MediaWiki\\Extension\\CategoryTree\\ApiCategoryTree",
 			"services": [
 				"ConfigFactory",
+				"DBLoadBalancerFactory",
 				"LanguageConverterFactory",
 				"MainWANObjectCache"
 			]

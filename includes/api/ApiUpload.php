@@ -20,8 +20,11 @@
  * @file
  */
 
+use MediaWiki\Config\Config;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -39,8 +42,7 @@ class ApiUpload extends ApiBase {
 
 	protected $mParams;
 
-	/** @var JobQueueGroup */
-	private $jobQueueGroup;
+	private JobQueueGroup $jobQueueGroup;
 
 	/**
 	 * @param ApiMain $mainModule
@@ -159,12 +161,6 @@ class ApiUpload extends ApiBase {
 		} elseif ( $this->mParams['stash'] ) {
 			// Stash the file and get stash result
 			return $this->getStashResult( $warnings );
-		}
-
-		// Check throttle after we've handled warnings
-		if ( UploadBase::isThrottled( $this->getUser() )
-		) {
-			$this->dieWithError( 'apierror-ratelimited' );
 		}
 
 		// This is the most common case -- a normal upload with no warnings
@@ -590,7 +586,7 @@ class ApiUpload extends ApiBase {
 		$permission = $this->mUpload->isAllowed( $user );
 
 		if ( $permission !== true ) {
-			if ( !$user->isRegistered() ) {
+			if ( !$user->isNamed() ) {
 				$this->dieWithError( [ 'apierror-mustbeloggedin', $this->msg( 'action-upload' ) ] );
 			}
 

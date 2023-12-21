@@ -5,6 +5,7 @@ namespace MediaWiki\Tests\ResourceLoader;
 use LogicException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\ResourceLoader\FileModule;
+use MediaWiki\ResourceLoader\MessageBlobStore;
 use MediaWiki\ResourceLoader\Module;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use ReflectionMethod;
@@ -19,6 +20,9 @@ class ModuleTest extends ResourceLoaderTestCase {
 
 	public function testGetVersionHash() {
 		$context = $this->getResourceLoaderContext( [ 'debug' => 'false' ] );
+		$msgBlobStore = $this->createMock( MessageBlobStore::class );
+		$msgBlobStore->method( 'getBlob' )->willReturn( '{}' );
+		$context->getResourceLoader()->setMessageBlobStore( $msgBlobStore );
 
 		$baseParams = [
 			'scripts' => [ 'foo.js', 'bar.js' ],
@@ -156,64 +160,105 @@ class ModuleTest extends ResourceLoaderTestCase {
 		);
 	}
 
-	public function testValidateScriptFile() {
+	public static function provideValidateScripts() {
+		yield 'valid ES5' => [ "\n'valid';" ];
+
+		yield 'valid ES6/ES2015 for-of' => [
+			"var x = ['a', 'b']; for (var key of x) { console.log(key); }",
+			'Parse error: Unexpected token; token ; expected in file \'input\' on line 1'
+		];
+
+		yield 'valid ES2016 exponentiation' => [
+			"var x = 2; var y = 3; console.log(x ** y);",
+			'Parse error: Missing ) in parenthetical in file \'input\' on line 1'
+		];
+
+		yield 'valid ES2017 async-await' => [
+			"var foo = async function(x) { return await x.fetch(); }",
+			'Parse error: Missing ; before statement in file \'input\' on line 1'
+		];
+
+		yield 'valid ES2018 spread in object literal' => [
+			"var x = {b: 2, c: 3}; var y = {a: 1, ...x};",
+			'Parse error: Invalid property name in file \'input\' on line 1'
+		];
+
+		yield 'SyntaxError' => [
+			"var a = 'this is';\n {\ninvalid",
+			'Parse error: Unexpected token; token } expected in file \'input\' on line 3"'
+		];
+
+		// If an implementation matches inputs using a regex with runaway backtracking,
+		// then inputs with more than ~3072 repetitions are likely to fail (T299537).
+		$input = '"' . str_repeat( 'x', 10000 ) . '";';
+		yield 'double quote string 10K' => [ $input, ];
+		$input = '\'' . str_repeat( 'x', 10000 ) . '\';';
+		yield 'single quote string 10K' => [ $input ];
+		$input = '"' . str_repeat( '\u0021', 100 ) . '";';
+		yield 'escaping string 100' => [ $input ];
+		$input = '"' . str_repeat( '\u0021', 10000 ) . '";';
+		yield 'escaping string 10K' => [ $input ];
+		$input = '/' . str_repeat( 'x', 1000 ) . '/;';
+		yield 'regex 1K' => [ $input ];
+		$input = '/' . str_repeat( 'x', 10000 ) . '/;';
+		yield 'regex 10K' => [ $input ];
+		$input = '/' . str_repeat( '\u0021', 100 ) . '/;';
+		yield 'escaping regex 100' => [ $input ];
+		$input = '/' . str_repeat( '\u0021', 10000 ) . '/;';
+		yield 'escaping regex 10K' => [ $input ];
+	}
+
+	/**
+	 * @dataProvider provideValidateScripts
+	 * @covers JSMinPlus
+	 * @covers JSParser
+	 */
+	public function testValidateScriptFile( $input, $error = null ) {
 		$this->overrideConfigValue( MainConfigNames::ResourceLoaderValidateJS, true );
 
 		$context = $this->getResourceLoaderContext();
 
 		$module = new ResourceLoaderTestModule( [
 			'mayValidateScript' => true,
-			'script' => "var a = 'this is';\n {\ninvalid"
+			'script' => $input
 		] );
 		$module->setConfig( $context->getResourceLoader()->getConfig() );
-		$this->assertEquals(
-			'mw.log.error(' .
-				'"JavaScript parse error (scripts need to be valid ECMAScript 5): ' .
-				'Parse error: Unexpected token; token } expected in file \'input\' on line 3"' .
-			');',
-			$module->getScript( $context ),
-			'Replace invalid syntax with error logging'
-		);
 
-		$module = new ResourceLoaderTestModule( [
-			'script' => "\n'valid';"
-		] );
-		$this->assertEquals(
-			"\n'valid';",
-			$module->getScript( $context ),
-			'Leave valid scripts as-is'
-		);
+		$result = $module->getScript( $context );
+		if ( $error ) {
+			$this->assertStringContainsString( 'mw.log.error(', $result, 'log error' );
+			$this->assertStringContainsString( $error, $result, 'error message' );
+		} else {
+			$this->assertEquals(
+				$input,
+				$module->getScript( $context ),
+				'Leave valid scripts as-is'
+			);
+		}
 	}
 
 	public static function provideBuildContentScripts() {
 		return [
 			[
 				"mw.foo()",
-				"mw.foo()\n",
 			],
 			[
 				"mw.foo();",
-				"mw.foo();\n",
 			],
 			[
 				"mw.foo();\n",
-				"mw.foo();\n",
 			],
 			[
-				"mw.foo()\n",
 				"mw.foo()\n",
 			],
 			[
 				"mw.foo()\n// mw.bar();",
-				"mw.foo()\n// mw.bar();\n",
 			],
 			[
 				"mw.foo()\n// mw.bar()",
-				"mw.foo()\n// mw.bar()\n",
 			],
 			[
 				"mw.foo()// mw.bar();",
-				"mw.foo()// mw.bar();\n",
 			],
 		];
 	}
@@ -221,7 +266,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 	/**
 	 * @dataProvider provideBuildContentScripts
 	 */
-	public function testBuildContentScripts( $raw, $build, $message = '' ) {
+	public function testBuildContentScripts( $raw, $message = '' ) {
 		$context = $this->getResourceLoaderContext();
 		$module = new ResourceLoaderTestModule( [
 			'script' => $raw
@@ -229,7 +274,7 @@ class ModuleTest extends ResourceLoaderTestCase {
 		$module->setName( "" );
 		$this->assertEquals( $raw, $module->getScript( $context ), 'Raw script' );
 		$this->assertEquals(
-			$build,
+			[ 'plainScripts' => [ [ 'content' => $raw ] ] ],
 			$module->getModuleContent( $context )[ 'scripts' ],
 			$message
 		);
@@ -304,4 +349,47 @@ class ModuleTest extends ResourceLoaderTestCase {
 			'Preload two resources'
 		);
 	}
+
+	public static function provideGetDeprecationWarning() {
+		return [
+			[
+				null,
+				'normalModule',
+				null,
+			],
+			[
+				true,
+				'deprecatedModule',
+				'This page is using the deprecated ResourceLoader module "deprecatedModule".',
+			],
+			[
+				'Will be removed tomorrow.',
+				'deprecatedTomorrow',
+				"This page is using the deprecated ResourceLoader module \"deprecatedTomorrow\".\n" .
+				"Will be removed tomorrow.",
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetDeprecationWarning
+	 *
+	 * @param string|bool|null $deprecated
+	 * @param string $name
+	 * @param string $expected
+	 */
+	public function testGetDeprecationWarning( $deprecated, $name, $expected ) {
+		$module = new ResourceLoaderTestModule( [ 'deprecated' => $deprecated ] );
+		$module->setName( $name );
+		$this->assertSame( $expected, $module->getDeprecationWarning() );
+
+		$this->hideDeprecated( 'MediaWiki\ResourceLoader\Module::getDeprecationInformation' );
+		$info = $module->getDeprecationInformation( $this->getResourceLoaderContext() );
+		if ( !$expected ) {
+			$this->assertSame( '', $info );
+		} else {
+			$this->assertSame( 'mw.log.warn(' . json_encode( $expected ) . ');', $info );
+		}
+	}
+
 }

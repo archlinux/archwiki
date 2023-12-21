@@ -314,7 +314,7 @@ class DumpAsserter {
 	}
 
 	/**
-	 * Asserts that the xml reader is at an closing element of given name, and optionally
+	 * Asserts that the xml reader is at a closing element of given name, and optionally
 	 * skips past it. If the reader is at a whitespace element, the whitespace is
 	 * skipped first.
 	 *
@@ -678,7 +678,7 @@ class DumpAsserter {
 	 */
 	public function stripTestTags( $text ) {
 		$text = preg_replace( '@<!--.*?-->@s', '', $text );
-		$text = preg_replace( '@</?test:[^>]+>@s', '', $text );
+		$text = preg_replace( '@</?test:[^>]+>@', '', $text );
 		return $text;
 	}
 

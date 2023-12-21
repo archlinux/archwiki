@@ -172,6 +172,8 @@ def pick_word(words, badwordlist, verbose, nwords, min_length, max_length):
 	sys.exit("Unable to find valid word combinations")
 
 def read_wordlist(filename):
+	if not os.path.isfile(filename):
+		return []
 	f = open(filename)
 	words = [x.strip().lower() for x in f.readlines()]
 	f.close()

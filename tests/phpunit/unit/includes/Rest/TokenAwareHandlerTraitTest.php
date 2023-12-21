@@ -8,8 +8,8 @@ use MediaWiki\Rest\TokenAwareHandlerTrait;
 use MediaWiki\Session\Session;
 use MediaWiki\Session\SessionProvider;
 use MediaWiki\Session\Token;
+use MediaWiki\User\User;
 use MediaWikiUnitTestCase;
-use User;
 
 /**
  * @covers \MediaWiki\Rest\TokenAwareHandlerTrait
@@ -41,7 +41,7 @@ class TokenAwareHandlerTraitTest extends MediaWikiUnitTestCase {
 		}
 	}
 
-	public function provideValidateToken() {
+	public static function provideValidateToken() {
 		$secret = 'foo';
 		$anotherSecret = 'bar';
 		$token = strval( new Token( $secret, '' ) );

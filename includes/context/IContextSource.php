@@ -18,9 +18,13 @@
  * @file
  */
 
+use MediaWiki\Config\Config;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\CsrfTokenSetProvider;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 /**
  * Interface for objects which can provide a MediaWiki context on request

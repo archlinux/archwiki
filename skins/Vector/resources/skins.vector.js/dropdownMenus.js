@@ -1,21 +1,21 @@
 /** @interface CheckboxHack */
 
-var
+const
 	checkboxHack = /** @type {CheckboxHack} */ require( /** @type {string} */( 'mediawiki.page.ready' ) ).checkboxHack,
-	CHECKBOX_HACK_CONTAINER_SELECTOR = '.vector-menu-dropdown',
-	CHECKBOX_HACK_CHECKBOX_SELECTOR = '.vector-menu-checkbox',
-	CHECKBOX_HACK_BUTTON_SELECTOR = '.vector-menu-heading',
-	CHECKBOX_HACK_TARGET_SELECTOR = '.vector-menu-content';
+	CHECKBOX_HACK_CONTAINER_SELECTOR = '.vector-dropdown',
+	CHECKBOX_HACK_CHECKBOX_SELECTOR = '.vector-dropdown-checkbox',
+	CHECKBOX_HACK_BUTTON_SELECTOR = '.vector-dropdown-label',
+	CHECKBOX_HACK_TARGET_SELECTOR = '.vector-dropdown-content';
 
 /**
  * Enhance dropdownMenu functionality and accessibility using core's checkboxHack.
  */
 function bind() {
 	// Search for all dropdown containers using the CHECKBOX_HACK_CONTAINER_SELECTOR.
-	var containers = document.querySelectorAll( CHECKBOX_HACK_CONTAINER_SELECTOR );
+	const containers = document.querySelectorAll( CHECKBOX_HACK_CONTAINER_SELECTOR );
 
 	Array.prototype.forEach.call( containers, function ( container ) {
-		var
+		const
 			checkbox = container.querySelector( CHECKBOX_HACK_CHECKBOX_SELECTOR ),
 			button = container.querySelector( CHECKBOX_HACK_BUTTON_SELECTOR ),
 			target = container.querySelector( CHECKBOX_HACK_TARGET_SELECTOR );
@@ -39,7 +39,7 @@ function bind() {
  */
 function createIconElement( menuElement, parentElement, id ) {
 	// Only the p-personal menu in the user links dropdown supports icons
-	var isIconCapable = menuElement &&
+	const isIconCapable = menuElement &&
 		[
 			'p-personal',
 			'p-personal-sticky-header'
@@ -49,8 +49,8 @@ function createIconElement( menuElement, parentElement, id ) {
 		return;
 	}
 
-	var iconElement = document.createElement( 'span' );
-	iconElement.classList.add( 'mw-ui-icon' );
+	const iconElement = document.createElement( 'span' );
+	iconElement.classList.add( 'vector-icon' );
 
 	if ( id ) {
 		// The following class allows gadgets developers to style or hide an icon.
@@ -72,7 +72,7 @@ function createIconElement( menuElement, parentElement, id ) {
  *                  if remaining space is negative.
  */
 function getAvailableViewMenuWidth() {
-	var
+	const
 		// Vector toolbar containing namespace, views, more menu etc.
 		toolbar = document.querySelector( '.vector-page-toolbar-container' ),
 		// Assumes all left-side menus are wrapped in a single nav element.
@@ -99,7 +99,7 @@ function getAvailableViewMenuWidth() {
 	);
 }
 
-var /** @type {Array<HTMLElement>} */handledLinks = [];
+const /** @type {Array<HTMLElement>} */handledLinks = [];
 
 /**
  * Adds icon placeholder for gadgets to use.
@@ -112,12 +112,8 @@ var /** @type {Array<HTMLElement>} */handledLinks = [];
  * @param {PortletLinkData} data
  */
 function addPortletLinkHandler( item, data ) {
-	var
-		link,
-		$menu,
-		menuElement,
-		linkIsHandled = handledLinks.indexOf( item ),
-		iconElement;
+	const linkIsHandled = handledLinks.indexOf( item );
+	let iconElement;
 
 	if ( linkIsHandled >= 0 ) {
 		return;
@@ -126,9 +122,13 @@ function addPortletLinkHandler( item, data ) {
 	}
 
 	// assign variables after early return.
-	link = item.querySelector( 'a' );
-	$menu = $( item ).parents( '.vector-menu' );
-	menuElement = $menu.length && $menu.get( 0 ) || null;
+	const link = item.querySelector( 'a' );
+	const menuElement = /** @type {HTMLElement} */(
+		item.closest( '.vector-menu' )
+	);
+	if ( !menuElement ) {
+		return;
+	}
 
 	if ( data.id ) {
 		iconElement = createIconElement( menuElement, link, data.id );
@@ -136,9 +136,9 @@ function addPortletLinkHandler( item, data ) {
 
 	// The views menu has limited space so we need to decide whether there is space
 	// to accommodate the new item and if not to redirect to the more dropdown.
-	if ( $menu.prop( 'id' ) === 'p-views' ) {
-		var availableWidth = getAvailableViewMenuWidth();
-		var moreDropdown = document.querySelector( '#p-cactions ul' );
+	if ( menuElement.id === 'p-views' ) {
+		const availableWidth = getAvailableViewMenuWidth();
+		const moreDropdown = document.querySelector( '#p-cactions ul' );
 
 		if ( moreDropdown && !availableWidth ) {
 			moreDropdown.appendChild( item );
@@ -147,8 +147,7 @@ function addPortletLinkHandler( item, data ) {
 		}
 	}
 
-	// Check link.prepend exists for older browser since this is ES5 code
-	if ( link && iconElement && link.prepend ) {
+	if ( link && iconElement ) {
 		link.prepend( iconElement );
 	}
 }

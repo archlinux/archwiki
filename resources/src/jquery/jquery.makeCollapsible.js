@@ -108,8 +108,8 @@
 			) {
 				// Don't fire if a link was clicked (for premade togglers)
 				return;
-			} else if ( e.type === 'keypress' && e.which !== 13 && e.which !== 32 ) {
-				// Only handle keypresses on the "Enter" or "Space" keys
+			} else if ( e.type === 'keydown' && e.which !== 13 && e.which !== 32 ) {
+				// Only handle the "Enter" or "Space" keys
 				return;
 			} else {
 				e.preventDefault();
@@ -244,7 +244,7 @@
 			var collapseText = options.collapseText || $collapsible.attr( 'data-collapsetext' ) || mw.msg( 'collapsible-collapse' );
 			var expandText = options.expandText || $collapsible.attr( 'data-expandtext' ) || mw.msg( 'collapsible-expand' );
 
-			// Default click/keypress handler and toggle link to use when none is present
+			// Default click/keydown handler and toggle link to use when none is present
 			var actionHandler = function ( e, opts ) {
 				var defaultOpts = {
 					toggleClasses: true,
@@ -257,15 +257,11 @@
 
 			// Default toggle link. Only build it when needed to avoid jQuery memory leaks (event data).
 			var buildDefaultToggleLink = function () {
-				return $( '<a>' )
+				return $( '<span>' )
 					.addClass( 'mw-collapsible-text' )
 					.text( collapseText )
-					.wrap( '<span class="mw-collapsible-toggle mw-collapsible-toggle-default"></span>' )
-					.parent()
-					.attr( {
-						role: 'button',
-						tabindex: 0
-					} );
+					.wrap( '<button type="button" class="mw-collapsible-toggle mw-collapsible-toggle-default"></button>' )
+					.parent();
 			};
 
 			// Check if this element has a custom position for the toggle link
@@ -305,7 +301,7 @@
 					// as opposed to the first row
 					var $caption = $collapsible.find( '> caption' );
 					if ( $caption.length ) {
-						$toggle = $caption.find( '> .mw-collapsible-toggle' );
+						$toggle = $caption.find( '> .mw-collapsible-toggle, .mw-collapsible-toggle-placeholder' ).first();
 
 						// If there is no toggle link, add it to the end of the caption
 						if ( !$toggle.length ) {
@@ -314,7 +310,7 @@
 					} else {
 						// The toggle-link will be in one of the cells (td or th) of the first row
 						$firstItem = $collapsible.find( 'tr' ).first().find( 'th, td' );
-						$toggle = $firstItem.find( '> .mw-collapsible-toggle' );
+						$toggle = $firstItem.find( '> .mw-collapsible-toggle, .mw-collapsible-toggle-placeholder' ).first();
 
 						// If theres no toggle link, add it to the last cell
 						if ( !$toggle.length ) {
@@ -324,7 +320,7 @@
 
 				} else if ( $collapsible.parent().is( 'li' ) &&
 					$collapsible.parent().children( '.mw-collapsible' ).length === 1 &&
-					$collapsible.find( '> .mw-collapsible-toggle' ).length === 0
+					$collapsible.find( '> .mw-collapsible-toggle, .mw-collapsible-toggle-placeholder' ).length === 0
 				) {
 					// special case of one collapsible in <li> tag
 					$toggle = buildDefaultToggleLink();
@@ -332,7 +328,7 @@
 				} else if ( $collapsible.is( 'ul' ) || $collapsible.is( 'ol' ) ) {
 					// The toggle-link will be in the first list-item
 					$firstItem = $collapsible.find( 'li' ).first();
-					$toggle = $firstItem.find( '> .mw-collapsible-toggle' );
+					$toggle = $firstItem.find( '> .mw-collapsible-toggle, .mw-collapsible-toggle-placeholder' ).first();
 
 					// If theres no toggle link, add it
 					if ( !$toggle.length ) {
@@ -350,7 +346,7 @@
 				} else { // <div>, <p> etc.
 
 					// The toggle-link will be the first child of the element
-					$toggle = $collapsible.find( '> .mw-collapsible-toggle' );
+					$toggle = $collapsible.find( '> .mw-collapsible-toggle, .mw-collapsible-toggle-placeholder' ).first();
 
 					// If a direct child .content-wrapper does not exists, create it
 					if ( !$collapsible.find( '> .mw-collapsible-content' ).length ) {
@@ -364,8 +360,16 @@
 				}
 			}
 
+			// If the toggle is just a placeholder, replace it with a real one
+			// eslint-disable-next-line no-jquery/no-class-state
+			if ( $toggle.hasClass( 'mw-collapsible-toggle-placeholder' ) ) {
+				var $realToggle = buildDefaultToggleLink();
+				$toggle.replaceWith( $realToggle );
+				$toggle = $realToggle;
+			}
+
 			// Attach event handlers to togglelink
-			$toggle.on( 'click.mw-collapsible keypress.mw-collapsible', actionHandler )
+			$toggle.on( 'click.mw-collapsible keydown.mw-collapsible', actionHandler )
 				.attr( 'aria-expanded', 'true' )
 				.prop( 'tabIndex', 0 );
 

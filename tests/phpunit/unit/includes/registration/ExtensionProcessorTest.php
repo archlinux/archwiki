@@ -54,6 +54,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 			'AnAttribute' => [ 'omg' ],
 			'AutoloadClasses' => [ 'FooBar' => 'includes/FooBar.php' ],
 			'AutoloadNamespaces' => [ '\Foo\Bar\\' => 'includes/foo/bar/' ],
+			'ForeignResourcesDir' => 'lib',
 			'SpecialPages' => [ 'Foo' => 'SpecialFoo' ],
 			'callback' => 'FooBar::onRegistration',
 		], 1 );
@@ -67,6 +68,10 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 		$this->assertArrayHasKey( 'autoloaderPaths', $extracted );
 		$this->assertArrayHasKey( 'autoloaderClasses', $extracted );
 		$this->assertArrayHasKey( 'autoloaderNS', $extracted );
+		$this->assertSame(
+			[ 'FooBar' => dirname( $this->extensionPath ) . '/lib' ],
+			$attributes['ForeignResourcesDir']
+		);
 		$this->assertSame(
 			[ 'FooBar' => 'FooBar::onRegistration' ],
 			$extracted['callbacks']
@@ -130,7 +135,6 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testExtractSkins() {
-		$this->expectDeprecation();
 		$processor = new ExtensionProcessor();
 		$processor->extractInfo( $this->extensionPath, self::$default + [
 			'ValidSkinNames' => [
@@ -147,14 +151,6 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 						[]
 					]
 				],
-				'test-vector-core-relative' => [
-					'class' => 'SkinTestVector',
-					'args' => [
-						[
-							'templateDirectory' => 'skins/Vector/templates',
-						]
-					]
-				],
 				'test-vector-skin-relative' => [
 					'class' => 'SkinTestVector',
 					'args' => [
@@ -163,13 +159,13 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 						]
 					]
 				],
+				'test-vector-string' => 'TestVector',
 			]
 		], 1 );
 		$extracted = $processor->getExtractedInfo();
 		$validSkins = $extracted['globals']['wgValidSkinNames'];
 
 		$this->assertArrayHasKey( 'test-vector', $validSkins );
-		$this->assertArrayHasKey( 'test-vector-core-relative', $validSkins );
 		$this->assertArrayHasKey( 'test-vector-empty-args', $validSkins );
 		$this->assertArrayHasKey( 'test-vector-skin-relative', $validSkins );
 		$this->assertSame(
@@ -178,15 +174,11 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 			'A sensible default is provided.'
 		);
 		$this->assertSame(
-			'skins/Vector/templates',
-			$validSkins['test-vector-core-relative']['args'][0]['templateDirectory'],
-			'unmodified'
-		);
-		$this->assertSame(
 			$this->dirname . '/templates',
 			$validSkins['test-vector-skin-relative']['args'][0]['templateDirectory'],
 			'modified'
 		);
+		$this->assertSame( 'TestVector', $validSkins['test-vector-string'] );
 	}
 
 	public function testExtractNamespaces() {
@@ -255,6 +247,58 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 		// A has subpages, X does not
 		$this->assertTrue( $extracted['globals']['wgNamespacesWithSubpages'][332200] );
 		$this->assertArrayNotHasKey( 123456, $extracted['globals']['wgNamespacesWithSubpages'] );
+	}
+
+	public function testRateLimits() {
+		$processor = new ExtensionProcessor();
+		$processor->extractInfo(
+			'',
+			[
+				'name' => 'Foo',
+				'RateLimits' => [
+					'test1' => [
+						"user" => [ 1, 7200 ]
+					],
+					'test2' => [
+						"user" => [ 2, 7200 ]
+					],
+				],
+				'AvailableRights' => [
+					'test2',
+				]
+			] + self::$default,
+			2
+		);
+
+		$processor->extractInfo(
+			'Bar',
+			[
+				'name' => 'Bar',
+				'RateLimits' => [
+					'test3' => [
+						"user" => [ 1, 7200 ]
+					],
+				],
+			] + self::$default,
+			2
+		);
+
+		$extracted = $processor->getExtractedInfo();
+
+		$this->assertArrayHasKey( 'wgRateLimits', $extracted['globals'] );
+		$this->assertArrayHasKey( 'wgImplicitRights', $extracted['globals'] );
+		$this->assertArrayHasKey( 'wgAvailableRights', $extracted['globals'] );
+
+		$this->assertArrayHasKey( 'test1', $extracted['globals']['wgRateLimits'] );
+		$this->assertArrayHasKey( 'test2', $extracted['globals']['wgRateLimits'] );
+		$this->assertArrayHasKey( 'test3', $extracted['globals']['wgRateLimits'] );
+
+		$this->assertContains( 'test2', $extracted['globals']['wgAvailableRights'] );
+		$this->assertNotContains( 'test1', $extracted['globals']['wgAvailableRights'] );
+
+		$this->assertContains( 'test1', $extracted['globals']['wgImplicitRights'] );
+		$this->assertContains( 'test3', $extracted['globals']['wgImplicitRights'] );
+		$this->assertNotContains( 'test2', $extracted['globals']['wgImplicitRights'] );
 	}
 
 	public function provideMixedStyleHooks() {
@@ -446,7 +490,7 @@ class ExtensionProcessorTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	public function provideLegacyHooks() {
+	public static function provideLegacyHooks() {
 		$merge = [ ExtensionRegistry::MERGE_STRATEGY => 'array_merge_recursive' ];
 		// Format:
 		// Current $wgHooks

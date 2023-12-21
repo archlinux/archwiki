@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Utils\MWTimestamp;
+
 /**
  * @group API
  * @group Database
@@ -9,8 +11,6 @@
 class ApiQueryUserInfoTest extends ApiTestCase {
 
 	/**
-	 * @throws MWContentSerializationException
-	 * @throws MWException
 	 * @covers ApiQueryUserInfo::getLatestContributionTime
 	 */
 	public function testTimestamp() {

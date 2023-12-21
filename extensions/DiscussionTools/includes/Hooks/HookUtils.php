@@ -13,6 +13,7 @@ use ExtensionRegistry;
 use IContextSource;
 use IDBAccessObject;
 use LqtDispatch;
+use MediaWiki\Extension\DiscussionTools\CommentParser;
 use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\ContentThreadItemSet;
 use MediaWiki\Extension\Gadgets\GadgetRepo;
@@ -20,14 +21,15 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use OutputPage;
 use ParserOptions;
 use RequestContext;
 use RuntimeException;
-use Title;
 use TitleValue;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
@@ -44,7 +46,6 @@ class HookUtils {
 
 	/**
 	 * @var string[] List of all sub-features. Will be used to generate:
-	 *  - Feature override global: $wgDiscussionTools_FEATURE
 	 *  - Body class: ext-discussiontools-FEATURE-enabled
 	 *  - User option: discussiontools-FEATURE
 	 */
@@ -60,11 +61,27 @@ class HookUtils {
 		self::VISUALENHANCEMENTS_PAGEFRAME,
 	];
 
+	/**
+	 * @var string[] List of configurable sub-features, used to generate:
+	 *  - Feature override global: $wgDiscussionTools_FEATURE
+	 */
+	public const CONFIGS = [
+		self::VISUALENHANCEMENTS,
+		self::VISUALENHANCEMENTS_REPLY,
+		self::VISUALENHANCEMENTS_PAGEFRAME,
+	];
+
 	public const FEATURES_CONFLICT_WITH_GADGET = [
 		self::REPLYTOOL,
 	];
 
-	protected static array $propCache = [];
+	private const CACHED_PAGE_PROPS = [
+		'newsectionlink',
+		'nonewsectionlink',
+		'notalk',
+		'archivedtalk',
+	];
+	private static array $propCache = [];
 
 	/**
 	 * Check if a title has a page prop, and use an in-memory cache to avoid extra queries
@@ -74,16 +91,19 @@ class HookUtils {
 	 * @return bool Title has page property
 	 */
 	public static function hasPagePropCached( Title $title, string $prop ): bool {
+		Assert::parameter(
+			in_array( $prop, static::CACHED_PAGE_PROPS, true ),
+			'$prop',
+			'must be one of the cached properties'
+		);
 		$id = $title->getArticleId();
 		if ( !isset( static::$propCache[ $id ] ) ) {
-			static::$propCache[ $id ] = [];
-		}
-		if ( !isset( static::$propCache[ $id ][ $prop ] ) ) {
 			$services = MediaWikiServices::getInstance();
-			$props = $services->getPageProps()->getProperties( $title, $prop );
-			static::$propCache[ $id ][ $prop ] = isset( $props[ $id ] );
+			// Always fetch all of our properties, we need to check several of them on most requests
+			static::$propCache +=
+				$services->getPageProps()->getProperties( $title, static::CACHED_PAGE_PROPS );
 		}
-		return static::$propCache[ $id ][ $prop ];
+		return isset( static::$propCache[ $id ][ $prop ] );
 	}
 
 	/**
@@ -96,6 +116,7 @@ class HookUtils {
 	 *        so we can track what is causing parser cache writes.
 	 *
 	 * @return ContentThreadItemSet
+	 * @throws ResourceLimitExceededException
 	 */
 	public static function parseRevisionParsoidHtml(
 		RevisionRecord $revRecord,
@@ -137,6 +158,11 @@ class HookUtils {
 
 		if ( !$status->isOK() ) {
 			[ 'message' => $key, 'params' => $params ] = $status->getErrors()[0];
+			// XXX: HtmlOutputRendererHelper checks for a resource limit exceeded message as well,
+			// maybe we shouldn't be catching that so low down.  Re-throw for callers.
+			if ( $status->hasMessage( 'parsoid-resource-limit-exceeded' ) ) {
+				throw new ResourceLimitExceededException( $params[0] ?? '' );
+			}
 			$message = wfMessage( $key, ...$params );
 			throw new RuntimeException( $message->inLanguage( 'en' )->useDatabase( false )->text() );
 		}
@@ -152,6 +178,7 @@ class HookUtils {
 		// comments in the sections to be treated as transcluded from another page.
 		CommentUtils::unwrapParsoidSections( $container );
 
+		/** @var CommentParser $parser */
 		$parser = $services->getService( 'DiscussionTools.CommentParser' );
 		$title = TitleValue::newFromPage( $revRecord->getPage() );
 		return $parser->parse( $container, $title );
@@ -170,14 +197,14 @@ class HookUtils {
 			return false;
 		}
 
-		if ( !in_array( $feature, static::FEATURES_CONFLICT_WITH_GADGET ) ) {
+		if ( !in_array( $feature, static::FEATURES_CONFLICT_WITH_GADGET, true ) ) {
 			return false;
 		}
 
 		$extensionRegistry = ExtensionRegistry::getInstance();
 		if ( $extensionRegistry->isLoaded( 'Gadgets' ) ) {
 			$gadgetsRepo = GadgetRepo::singleton();
-			$match = array_search( $gadgetName, $gadgetsRepo->getGadgetIds() );
+			$match = array_search( $gadgetName, $gadgetsRepo->getGadgetIds(), true );
 			if ( $match !== false ) {
 				try {
 					return $gadgetsRepo->getGadget( $gadgetName )
@@ -202,14 +229,12 @@ class HookUtils {
 		$services = MediaWikiServices::getInstance();
 		$dtConfig = $services->getConfigFactory()->makeConfig( 'discussiontools' );
 
-		if ( !$dtConfig->get( 'DiscussionToolsEnable' ) ) {
-			return false;
-		}
-
+		$userIdentityUtils = $services->getUserIdentityUtils();
 		if (
 			( $feature === static::TOPICSUBSCRIPTION || $feature === static::AUTOTOPICSUB ) &&
 			// Users must be logged in to use topic subscription, and Echo must be installed (T322498)
-			( !$user->isRegistered() || !ExtensionRegistry::getInstance()->isLoaded( 'Echo' ) )
+			( !$user->isRegistered() || $userIdentityUtils->isTemp( $user ) ||
+				!ExtensionRegistry::getInstance()->isLoaded( 'Echo' ) )
 		) {
 			return false;
 		}
@@ -218,17 +243,18 @@ class HookUtils {
 
 		if ( $feature ) {
 			// Feature-specific override
+			if ( !in_array( $feature, static::CONFIGS, true ) ) {
+				// Feature is not configurable, always available
+				return true;
+			}
 			if ( $dtConfig->get( 'DiscussionTools_' . $feature ) !== 'default' ) {
 				// Feature setting can be 'available' or 'unavailable', overriding any BetaFeatures settings
 				return $dtConfig->get( 'DiscussionTools_' . $feature ) === 'available';
 			}
 		} else {
-			// Non-feature-specific override, check for any feature
-			foreach ( static::FEATURES as $feat ) {
-				if ( $dtConfig->get( 'DiscussionTools_' . $feat ) === 'available' ) {
-					return true;
-				}
-			}
+			// Some features are always available, so if no feature is
+			// specified (i.e. checking for any feature), always return true.
+			return true;
 		}
 
 		// Being in the "test" group for this feature means it's enabled. This
@@ -247,9 +273,6 @@ class HookUtils {
 			return (bool)$betaenabled;
 		}
 
-		// Assume that if BetaFeature is turned off, or user has it enabled, that
-		// some features are available.
-		// If this isn't the case, then DiscussionToolsEnable should have been set to false.
 		return true;
 	}
 
@@ -300,27 +323,18 @@ class HookUtils {
 	 */
 	public static function determineUserABTestBucket( UserIdentity $user, ?string $feature = null ): string {
 		$services = MediaWikiServices::getInstance();
-		$optionsManager = $services->getUserOptionsManager();
 		$dtConfig = $services->getConfigFactory()->makeConfig( 'discussiontools' );
 
 		$abtest = $dtConfig->get( 'DiscussionToolsABTest' );
+		if ( !$abtest ) {
+			return '';
+		}
 
-		if ( $feature ? ( $abtest == $feature ) : (bool)$abtest ) {
-			if ( $user->isRegistered() ) {
-				return $user->getId() % 2 == 0 ? 'test' : 'control';
-			}
-			// logged out
-			$req = RequestContext::getMain()->getRequest();
-			$cookie = $req->getCookie( 'DTAB', '' );
-			if ( $cookie ) {
-				return $cookie;
-			}
-			// we just want to remember this across all calls in this request
-			static $bucket = false;
-			if ( !$bucket ) {
-				$bucket = rand( 0, 1 ) <= 0.5 ? 'test' : 'control';
-			}
-			return $bucket;
+		if (
+			( $feature ? in_array( $feature, (array)$abtest, true ) : (bool)$abtest ) &&
+			$user->isRegistered()
+		) {
+			return $user->getId() % 2 === 0 ? 'test' : 'control';
 		}
 		return '';
 	}
@@ -349,11 +363,32 @@ class HookUtils {
 			return false;
 		}
 
+		// ARCHIVEDTALK/NOTALK magic words
+		if ( self::hasPagePropCached( $title, 'notalk' ) ) {
+			return false;
+		}
+		if (
+			$feature === static::REPLYTOOL &&
+			self::hasPagePropCached( $title, 'archivedtalk' )
+		) {
+			return false;
+		}
+
 		$services = MediaWikiServices::getInstance();
 
 		if ( $feature === static::VISUALENHANCEMENTS ) {
-			// Visual enhancements are only enabled on talk namespaces (T325417)
-			return $title->isTalkPage();
+			$dtConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'discussiontools' );
+			// Visual enhancements are only enabled on talk namespaces (T325417) ...
+			return $title->isTalkPage() || (
+				$dtConfig->get( 'DiscussionTools_visualenhancements_newsectionlink_enable' ) &&
+				// ... or __NEWSECTIONLINK__ pages (T331635)
+				static::hasPagePropCached( $title, 'newsectionlink' ) &&
+				// excluding the main namespace, unless it has been configured for signatures
+				(
+					$title->getNamespace() !== NS_MAIN ||
+					$services->getNamespaceInfo()->wantSignatures( $title->getNamespace() )
+				)
+			);
 		}
 
 		// Check that the page supports discussions.
@@ -363,7 +398,6 @@ class HookUtils {
 			$services->getNamespaceInfo()->wantSignatures( $title->getNamespace() ) ||
 			// Treat pages with __NEWSECTIONLINK__ as talk pages (T245890)
 			static::hasPagePropCached( $title, 'newsectionlink' )
-			// TODO: Consider not loading if forceHideNewSectionLink is true.
 		);
 	}
 
@@ -381,8 +415,14 @@ class HookUtils {
 			// Don't try to call $output->getActionName if testing for NEWTOPICTOOL as we use
 			// the hook onGetActionName to override the action for the tool on empty pages.
 			// If we tried to call it here it would set up infinite recursion (T312689)
-			$feature !== static::NEWTOPICTOOL &&
-			!in_array( $output->getActionName(), [ 'view', 'edit', 'submit' ] )
+			$feature !== static::NEWTOPICTOOL && !(
+				in_array( $output->getActionName(), [ 'view', 'edit', 'submit' ], true ) ||
+				// Subscriptions (specifically page-level subscriptions) are available on history pages (T345096)
+				(
+					$output->getActionName() === 'history' &&
+					$feature === static::TOPICSUBSCRIPTION
+				)
+			)
 		) {
 			return false;
 		}
@@ -436,23 +476,16 @@ class HookUtils {
 		$dtConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'discussiontools' );
 
 		if ( $isMobile ) {
-			// Enabling mobile removes MobileFrontend's reply and new topic tools, so always
-			// enable these tools as a replacement.
-			return (
-				$dtConfig->get( 'DiscussionToolsEnableMobile' ) ||
-				static::determineUserABTestBucket( $output->getUser(), 'mobile' ) === 'test'
-			) && (
-				$feature === null ||
+			return $feature === null ||
 				$feature === static::REPLYTOOL ||
 				$feature === static::NEWTOPICTOOL ||
 				$feature === static::SOURCEMODETOOLBAR ||
 				// Even though mobile ignores user preferences, TOPICSUBSCRIPTION must
 				// still be disabled if the user isn't registered.
-				( $feature === static::TOPICSUBSCRIPTION && $output->getUser()->isRegistered() ) ||
+				( $feature === static::TOPICSUBSCRIPTION && $output->getUser()->isNamed() ) ||
 				$feature === static::VISUALENHANCEMENTS ||
 				$feature === static::VISUALENHANCEMENTS_REPLY ||
-				$feature === static::VISUALENHANCEMENTS_PAGEFRAME
-			);
+				$feature === static::VISUALENHANCEMENTS_PAGEFRAME;
 		}
 
 		return static::isFeatureEnabledForUser( $output->getUser(), $feature );
@@ -561,7 +594,7 @@ class HookUtils {
 		$namespaceInfo = $services->getNamespaceInfo();
 		Assert::precondition( $namespaceInfo->isTalk( $talkPage->getNamespace() ), "Page is a talk page" );
 
-		if ( $talkPage->getNamespace() === NS_USER_TALK && strpos( $talkPage->getText(), '/' ) === false ) {
+		if ( $talkPage->getNamespace() === NS_USER_TALK && !str_contains( $talkPage->getText(), '/' ) ) {
 			if ( $services->getUserNameUtils()->isIP( $talkPage->getText() ) ) {
 				return true;
 			}

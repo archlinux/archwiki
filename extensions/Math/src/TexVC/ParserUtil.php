@@ -35,6 +35,7 @@ class ParserUtil {
 		$optionsBase = [
 			'usemathrm' => false,
 			'usemhchem' => false,
+			'usemhchemtexified' => false,
 			'oldtexvc' => false,
 			'oldmhchem' => false,
 			'debug' => false,

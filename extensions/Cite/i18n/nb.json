@@ -39,5 +39,14 @@
 	"cite_references_link_accessibility_back_label": "Hopp tilbake",
 	"cite_section_preview_references": "Forhåndsvisning av referanser",
 	"cite_warning": "Siteringsadvarsel: $1",
-	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code>-taggen med navn <code>$1</code> kan ikke forhåndsvises fordi den enten er definert utenfor det åpne avsnittet eller ikke definert i det hele tatt."
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code>-taggen med navn <code>$1</code> kan ikke forhåndsvises fordi den enten er definert utenfor det åpne avsnittet eller ikke definert i det hele tatt.",
+	"cite-wikieditor-tool-reference": "Referanse",
+	"cite-wikieditor-help-page-references": "Referanser",
+	"cite-wikieditor-help-content-reference-description": "Referanse",
+	"cite-wikieditor-help-content-named-reference-description": "Navngitt referanse",
+	"cite-wikieditor-help-content-rereference-description": "Ytterligere bruk av samme referanse",
+	"cite-wikieditor-help-content-showreferences-description": "Vis referanser",
+	"cite-wikieditor-help-content-reference-example-text1": "Sidetekst.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Lenketekst], ekstra tekst.",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Lenketekst]"
 }

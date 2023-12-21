@@ -4,6 +4,10 @@
 			"Bangrapip"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck nyananya ada isi baru nyang ditambahin ke halaman",
+	"tag-editcheck-newreference-description": "Ada ruju'an nyang ditambahin ke halaman",
+	"tag-editcheck-references-description": "EditCheck nyananya ruju'an barangkali dibutuhin",
+	"tag-editcheck-references-activated-description": "EditCheck nyananya ruju'an diperluin, èn telampangan pemaké (TP)-nya dikasi unjuk",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Permak delengan]]",
 	"tag-visualeditor-description": "Permakan dikeja paké [[{{MediaWiki:visualeditor-descriptionpagelink}}|pemermak delengan]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Permak pisual: Perèksa]]",

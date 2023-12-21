@@ -5,7 +5,6 @@
 			"Lokal Profil"
 		]
 	},
-	"apihelp-query+extracts-description": "Returnerar klartext eller begränsad HTML-extrakt av de givna sidorna.",
 	"apihelp-query+extracts-summary": "Returnerar ren text eller begränsade HTML-utdrag av de angivna sidorna.",
 	"apihelp-query+extracts-param-chars": "Antalet tecken att returnera. Den faktiska text som returneras kan vara något längre.",
 	"apihelp-query+extracts-param-sentences": "Antalet meningar som ska returneras.",

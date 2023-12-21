@@ -31,6 +31,7 @@ ve.ui.MWCategoryWidget = function VeUiMWCategoryWidget( config ) {
 
 	var categoryNamespace = mw.config.get( 'wgNamespaceIds' ).category;
 	// Properties
+	this.fragment = null;
 	this.categories = {};
 	// Source -> target
 	this.categoryRedirects = {};
@@ -94,6 +95,15 @@ OO.mixinClass( ve.ui.MWCategoryWidget, OO.ui.mixin.DraggableGroupElement );
 /* Methods */
 
 /**
+ * Surface fragment for modifying meta list
+ *
+ * @param {ve.dm.SurfaceFragment|null} fragment Surface fragment
+ */
+ve.ui.MWCategoryWidget.prototype.setFragment = function ( fragment ) {
+	this.fragment = fragment;
+};
+
+/**
  * Handle input 'choose' event.
  *
  * @param {OO.ui.MenuOptionWidget} item Selected item
@@ -109,7 +119,7 @@ ve.ui.MWCategoryWidget.prototype.onInputChoose = function ( item ) {
 			// Remove existing items by name
 			var toRemove = mw.Title.newFromText( categoryItem.name ).getMainText();
 			if ( Object.prototype.hasOwnProperty.call( widget.categories, toRemove ) ) {
-				widget.categories[ toRemove ].metaItem.remove();
+				widget.fragment.removeMeta( widget.categories[ toRemove ].metaItem );
 			}
 			categoryItem.name = widget.normalizedTitles[ categoryItem.name ];
 			widget.emit( 'newCategory', categoryItem );
@@ -184,7 +194,7 @@ ve.ui.MWCategoryWidget.prototype.reorder = function ( item, newIndex ) {
 	// could be off by one
 	var beforeCategory = this.items[ newIndex ] && this.items[ newIndex ].metaItem;
 	if ( Object.prototype.hasOwnProperty.call( this.categories, item.value ) ) {
-		this.categories[ item.value ].metaItem.remove();
+		this.fragment.removeMeta( this.categories[ item.value ].metaItem );
 	}
 
 	this.emit( 'newCategory', item, beforeCategory );
@@ -196,7 +206,7 @@ ve.ui.MWCategoryWidget.prototype.reorder = function ( item, newIndex ) {
  * @param {string} name Removed category name
  */
 ve.ui.MWCategoryWidget.prototype.onRemoveCategory = function ( name ) {
-	this.categories[ name ].metaItem.remove();
+	this.fragment.removeMeta( this.categories[ name ].metaItem );
 	delete this.categories[ name ];
 };
 

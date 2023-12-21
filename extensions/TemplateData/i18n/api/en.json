@@ -5,7 +5,6 @@
 			"Zoranzoki21"
 		]
 	},
-	"apihelp-templatedata-description": "Fetch data stored by the TemplateData extension.",
 	"apihelp-templatedata-summary": "Fetch data stored by the TemplateData extension.",
 	"apihelp-templatedata-example-1": "Return TemplateData for [[Template:Foobar]], with results if the template does not exist or exists but has no TemplateData",
 	"apihelp-templatedata-example-2": "Return TemplateData for [[Template:Phabricator]], with no results if the template does not exist or exists but has no TemplateData",

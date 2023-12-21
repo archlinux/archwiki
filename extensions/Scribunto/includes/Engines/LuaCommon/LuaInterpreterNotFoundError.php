@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
-use MWException;
+use Exception;
 
-class LuaInterpreterNotFoundError extends MWException {
+class LuaInterpreterNotFoundError extends Exception {
 }

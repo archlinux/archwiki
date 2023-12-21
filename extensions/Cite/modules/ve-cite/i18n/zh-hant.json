@@ -20,7 +20,8 @@
 			"Spring Roll Conan",
 			"Vincent Liu",
 			"Waihorace",
-			"Zhxy 519"
+			"Zhxy 519",
+			"SunAfterRain"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "書籍",
@@ -41,6 +42,8 @@
 	"cite-ve-citationneeded-title": "引用所需",
 	"cite-ve-dialog-reference-editing-reused": "此頁面已使用此參考文獻 {{PLURAL:$1|1|2=2|$1}} 次。",
 	"cite-ve-dialog-reference-editing-reused-long": "此參考文獻在此頁面上被使用了 {{PLURAL:$1|1|2=2|$1}} 次。在此做出的更改將會套用到該參考文獻所有被重複引用到的地方。",
+	"cite-ve-dialog-reference-editing-extends": "這是另一個參考的擴充。",
+	"cite-ve-dialog-reference-editing-extends-long": "這是另一參考資料「$1」的擴充。",
 	"cite-ve-dialog-reference-options-group-label": "使用此群組",
 	"cite-ve-dialog-reference-options-group-placeholder": "一般參考文獻",
 	"cite-ve-dialog-reference-options-name-label": "以此名稱再使用",
@@ -63,7 +66,7 @@
 	"cite-ve-referenceslist-isempty-default": "此頁面目前無任何參考文獻可加入引用清單。",
 	"cite-ve-referenceslist-missingref": "此參考文獻已定義於模板或其它產生的區塊上，目前只能使用原始碼模式來編輯。",
 	"cite-ve-referenceslist-missingref-in-list": "此參考文獻已定義於模板或其它產生的區塊上，目前只能使用原始碼模式來預覽。",
-	"cite-ve-referenceslist-missingreflist": "此參考文獻清單是由模板所產生，並僅可在原始碼模式下編輯。",
+	"cite-ve-referenceslist-missingreflist": "此參考資料列表由模板生成。",
 	"cite-ve-toolbar-group-label": "引用",
 	"cite-ve-othergroup-item": "$1 參考文獻",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "參考文獻",

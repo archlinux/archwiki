@@ -5,7 +5,6 @@
 			"Eleassar"
 		]
 	},
-	"apihelp-fancycaptchareload-description": "Pridobi novo FancyCaptcha.",
 	"apihelp-fancycaptchareload-summary": "Pridobi nov FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Pridobi novo FancyCaptcha"
 }

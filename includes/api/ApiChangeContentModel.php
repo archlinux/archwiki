@@ -16,11 +16,8 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 class ApiChangeContentModel extends ApiBase {
 
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/** @var ContentModelChangeFactory */
-	private $contentModelChangeFactory;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private ContentModelChangeFactory $contentModelChangeFactory;
 
 	/**
 	 * @param ApiMain $main
@@ -75,15 +72,11 @@ class ApiChangeContentModel extends ApiBase {
 		}
 
 		// Everything passed, make the conversion
-		try {
-			$status = $changer->doContentModelChange(
-				$this->getContext(),
-				$params['summary'],
-				$params['bot']
-			);
-		} catch ( ThrottledError $te ) {
-			$this->dieWithError( 'apierror-ratelimited' );
-		}
+		$status = $changer->doContentModelChange(
+			$this->getContext(),
+			$params['summary'] ?? '',
+			$params['bot']
+		);
 
 		if ( !$status->isGood() ) {
 			// Failed

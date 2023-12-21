@@ -35,7 +35,7 @@ class RangeBlockTest extends MediaWikiUnitTestCase {
 		return $ml;
 	}
 
-	public function provideExecute(): iterable {
+	public static function provideExecute(): iterable {
 		yield 'IPv4 range block' => [
 			'1.2.3.4',
 			[

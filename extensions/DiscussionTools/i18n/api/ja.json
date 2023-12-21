@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Kokage si",
 			"Object＊tofu",
 			"Omotecho",
 			"Shirayuki",
 			"TAKAHASHI Shuuji",
 			"しぃ",
-			"ネイ",
-			"Kokage si"
+			"ネイ"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "ID「$1」のコメントが見つかりませんでした。",

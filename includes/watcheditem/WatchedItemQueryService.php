@@ -6,11 +6,13 @@ use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserOptionsLookup;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * Class performing complex database queries related to WatchedItems.
@@ -59,9 +61,9 @@ class WatchedItemQueryService {
 	public const SORT_DESC = 'DESC';
 
 	/**
-	 * @var ILoadBalancer
+	 * @var IConnectionProvider
 	 */
-	private $loadBalancer;
+	private $dbProvider;
 
 	/** @var WatchedItemQueryServiceExtension[]|null */
 	private $extensions = null;
@@ -89,7 +91,7 @@ class WatchedItemQueryService {
 	private $maxQueryExecutionTime;
 
 	public function __construct(
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		CommentStore $commentStore,
 		WatchedItemStoreInterface $watchedItemStore,
 		HookContainer $hookContainer,
@@ -97,7 +99,7 @@ class WatchedItemQueryService {
 		bool $expiryEnabled = false,
 		int $maxQueryExecutionTime = 0
 	) {
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->commentStore = $commentStore;
 		$this->watchedItemStore = $watchedItemStore;
 		$this->hookRunner = new HookRunner( $hookContainer );
@@ -115,13 +117,6 @@ class WatchedItemQueryService {
 			$this->hookRunner->onWatchedItemQueryServiceExtensions( $this->extensions, $this );
 		}
 		return $this->extensions;
-	}
-
-	/**
-	 * @return IDatabase
-	 */
-	private function getConnection() {
-		return $this->loadBalancer->getConnectionRef( DB_REPLICA );
 	}
 
 	/**
@@ -218,7 +213,7 @@ class WatchedItemQueryService {
 			);
 		}
 
-		$db = $this->getConnection();
+		$db = $this->dbProvider->getReplicaDatabase();
 
 		$tables = $this->getWatchedItemsWithRCInfoQueryTables( $options );
 		$fields = $this->getWatchedItemsWithRCInfoQueryFields( $options );
@@ -327,7 +322,7 @@ class WatchedItemQueryService {
 			'must be provided if any of "from", "until", "startFrom" options is provided'
 		);
 
-		$db = $this->getConnection();
+		$db = $this->dbProvider->getReplicaDatabase();
 
 		$conds = $this->getWatchedItemsForUserQueryConds( $db, $user, $options );
 		$dbOptions = $this->getWatchedItemsForUserQueryDbOptions( $options );

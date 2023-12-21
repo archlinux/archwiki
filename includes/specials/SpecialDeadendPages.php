@@ -21,9 +21,13 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\SpecialPage\PageQueryPage;
+use MediaWiki\Title\NamespaceInfo;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * A special page that list pages that contain no link to other pages
@@ -32,24 +36,23 @@ use Wikimedia\Rdbms\ILoadBalancer;
  */
 class SpecialDeadendPages extends PageQueryPage {
 
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
+	private NamespaceInfo $namespaceInfo;
 
 	/**
 	 * @param NamespaceInfo $namespaceInfo
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param LanguageConverterFactory $languageConverterFactory
 	 */
 	public function __construct(
 		NamespaceInfo $namespaceInfo,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory,
 		LanguageConverterFactory $languageConverterFactory
 	) {
 		parent::__construct( 'Deadendpages' );
 		$this->namespaceInfo = $namespaceInfo;
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 		$this->setLinkBatchFactory( $linkBatchFactory );
 		$this->setLanguageConverter( $languageConverterFactory->getLanguageConverter( $this->getContentLanguage() ) );
 	}
@@ -86,7 +89,7 @@ class SpecialDeadendPages extends PageQueryPage {
 				'title' => 'page_title',
 			],
 			'conds' => [
-				'pl_from IS NULL',
+				'pl_from' => null,
 				'page_namespace' => $this->namespaceInfo->getContentNamespaces(),
 				'page_is_redirect' => 0
 			],
@@ -113,3 +116,8 @@ class SpecialDeadendPages extends PageQueryPage {
 		return 'maintenance';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialDeadendPages::class, 'SpecialDeadendPages' );

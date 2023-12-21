@@ -2,27 +2,36 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
-use MediaWiki\CheckUser\Hook\CheckUserInsertChangesRow;
-use MediaWiki\CheckUser\Hook\CheckUserInsertLogEventRow;
-use MediaWiki\CheckUser\Hook\CheckUserInsertPrivateEventRow;
+use MediaWiki\CheckUser\Hook\CheckUserInsertChangesRowHook;
+use MediaWiki\CheckUser\Hook\CheckUserInsertLogEventRowHook;
+use MediaWiki\CheckUser\Hook\CheckUserInsertPrivateEventRowHook;
 use MediaWiki\Extension\AbuseFilter\FilterUser;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityUtils;
 use RecentChange;
 
 class CheckUserHandler implements
-	CheckUserInsertChangesRow,
-	CheckUserInsertPrivateEventRow,
-	CheckUserInsertLogEventRow
+	CheckUserInsertChangesRowHook,
+	CheckUserInsertPrivateEventRowHook,
+	CheckUserInsertLogEventRowHook
 {
 
 	/** @var FilterUser */
 	private $filterUser;
 
+	/** @var UserIdentityUtils */
+	private $userIdentityUtils;
+
 	/**
 	 * @param FilterUser $filterUser
+	 * @param UserIdentityUtils $userIdentityUtils
 	 */
-	public function __construct( FilterUser $filterUser ) {
+	public function __construct(
+		FilterUser $filterUser,
+		UserIdentityUtils $userIdentityUtils
+	) {
 		$this->filterUser = $filterUser;
+		$this->userIdentityUtils = $userIdentityUtils;
 	}
 
 	/**
@@ -35,7 +44,7 @@ class CheckUserHandler implements
 		string &$ip, &$xff, array &$row, UserIdentity $user, ?RecentChange $rc
 	) {
 		if (
-			$user->isRegistered() &&
+			$this->userIdentityUtils->isNamed( $user ) &&
 			$this->filterUser->getUserIdentity()->getId() == $user->getId()
 		) {
 			$ip = '127.0.0.1';
@@ -54,7 +63,7 @@ class CheckUserHandler implements
 		string &$ip, &$xff, array &$row, UserIdentity $user, int $id, ?RecentChange $rc
 	) {
 		if (
-			$user->isRegistered() &&
+			$this->userIdentityUtils->isNamed( $user ) &&
 			$this->filterUser->getUserIdentity()->getId() == $user->getId()
 		) {
 			$ip = '127.0.0.1';
@@ -73,7 +82,7 @@ class CheckUserHandler implements
 		string &$ip, &$xff, array &$row, UserIdentity $user, ?RecentChange $rc
 	) {
 		if (
-			$user->isRegistered() &&
+			$this->userIdentityUtils->isNamed( $user ) &&
 			$this->filterUser->getUserIdentity()->getId() == $user->getId()
 		) {
 			$ip = '127.0.0.1';

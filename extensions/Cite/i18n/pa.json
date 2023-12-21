@@ -5,5 +5,10 @@
 			"Satdeep gill"
 		]
 	},
-	"cite_error": "ਹਵਾਲੇ ਵਿੱਚ ਗਲਤੀ:$1"
+	"cite_error": "ਹਵਾਲੇ ਵਿੱਚ ਗਲਤੀ:$1",
+	"cite-wikieditor-tool-reference": "ਹਵਾਲਾ",
+	"cite-wikieditor-help-page-references": "ਹਵਾਲੇ",
+	"cite-wikieditor-help-content-reference-description": "ਹਵਾਲਾ",
+	"cite-wikieditor-help-content-rereference-description": "ਉਸੇ ਹਵਾਲੇ ਦੀ ਵਧੀਕ ਵਰਤੋਂ",
+	"cite-wikieditor-help-content-showreferences-description": "ਹਵਾਲੇ ਵਿਖਾਓ"
 }

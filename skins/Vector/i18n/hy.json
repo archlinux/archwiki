@@ -43,5 +43,8 @@
 	"vector-page-tools-actions-label": "Գործողություններ",
 	"vector-pin-element-label": "տեղափոխել կողագոտի",
 	"vector-unpin-element-label": "թաքցնել",
-	"tooltip-vector-anon-user-menu-title": "Այլ ընտրանքներ"
+	"tooltip-vector-anon-user-menu-title": "Այլ ընտրանքներ",
+	"vector-readability-survey-fontSize": "Տառաչափ",
+	"vector-readability-survey-lineHeight": "Տողի բարձրությունը",
+	"vector-readability-survey-share": "շարունակել"
 }

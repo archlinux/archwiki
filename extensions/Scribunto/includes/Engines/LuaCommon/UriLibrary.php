@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
 use CoreParserFunctions;
-use Title;
+use MediaWiki\Title\Title;
 
 class UriLibrary extends LibraryBase {
 	public function register() {

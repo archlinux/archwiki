@@ -4,6 +4,9 @@
 			"Гусейн"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck hisob kardə ki bə səhifə nujə kontent əlovə kardə byə",
+	"tag-editcheck-newreference-description": "Bə səhifə link əlovə kardə byə",
+	"tag-editcheck-references-description": "EditCheck hisob kardə ki ijo link lozim bəbe",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Vində redaktor]]",
 	"tag-visualeditor-description": "Ovaxtə byə de [[{{MediaWiki:visualeditor-descriptionpagelink}}|vində redaktori]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vində redaktor]]: osə karde",

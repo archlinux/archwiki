@@ -2,13 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Crucifunked",
-			"Julio Nepote",
-			"HackerPunki"
+			"HackerPunki",
+			"Julio Nepote"
 		]
 	},
 	"mobile-frontend-editor-edit": "Eital",
+	"mobile-frontend-history": "Vel estorial de edicionis d'esta página",
 	"mobile-frontend-home-button": "Encetu",
 	"mobile-frontend-language-article-heading": "Idioma",
-	"mobile-frontend-random-button": "Aleatóriu",
-	"minerva-page-actions-info": "Informacionis dela página"
+	"mobile-frontend-main-menu-nearby": "Cercanus",
+	"mobile-frontend-main-menu-settings": "Ajustis",
+	"mobile-frontend-placeholder": "Precural {{SITENAME}}",
+	"mobile-frontend-random-button": "Aleatóriu"
 }

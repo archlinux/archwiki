@@ -28,10 +28,10 @@ namespace MediaWiki\Storage;
 use AppendIterator;
 use DBAccessObjectUtils;
 use ExternalStoreAccess;
+use ExternalStoreException;
 use HistoryBlobUtils;
 use IDBAccessObject;
 use InvalidArgumentException;
-use MWException;
 use StatusValue;
 use WANObjectCache;
 use Wikimedia\Assert\Assert;
@@ -206,40 +206,39 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 	 * @return string an address that can be used with getBlob() to retrieve the data.
 	 */
 	public function storeBlob( $data, $hints = [] ) {
-		try {
-			$flags = $this->compressData( $data );
+		$flags = $this->compressData( $data );
 
-			# Write to external storage if required
-			if ( $this->useExternalStore ) {
-				// Store and get the URL
+		# Write to external storage if required
+		if ( $this->useExternalStore ) {
+			// Store and get the URL
+			try {
 				$data = $this->extStoreAccess->insert( $data, [ 'domain' => $this->dbDomain ] );
-				if ( !$data ) {
-					throw new BlobAccessException( "Failed to store text to external storage" );
-				}
-				if ( $flags ) {
-					$flags .= ',';
-				}
-				$flags .= 'external';
-
-				// TODO: we could also return an address for the external store directly here.
-				// That would mean bypassing the text table entirely when the external store is
-				// used. We'll need to assess expected fallout before doing that.
+			} catch ( ExternalStoreException $e ) {
+				throw new BlobAccessException( $e->getMessage(), 0, $e );
 			}
+			if ( !$data ) {
+				throw new BlobAccessException( "Failed to store text to external storage" );
+			}
+			if ( $flags ) {
+				$flags .= ',';
+			}
+			$flags .= 'external';
 
-			$dbw = $this->getDBConnection( DB_PRIMARY );
-
-			$dbw->insert(
-				'text',
-				[ 'old_text' => $data, 'old_flags' => $flags ],
-				__METHOD__
-			);
-
-			$textId = $dbw->insertId();
-
-			return self::makeAddressFromTextId( $textId );
-		} catch ( MWException $e ) {
-			throw new BlobAccessException( $e->getMessage(), 0, $e );
+			// TODO: we could also return an address for the external store directly here.
+			// That would mean bypassing the text table entirely when the external store is
+			// used. We'll need to assess expected fallout before doing that.
 		}
+
+		$dbw = $this->getDBConnection( DB_PRIMARY );
+
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'text' )
+			->row( [ 'old_text' => $data, 'old_flags' => $flags ] )
+			->caller( __METHOD__ )->execute();
+
+		$textId = $dbw->insertId();
+
+		return self::makeAddressFromTextId( $textId );
 	}
 
 	/**
@@ -391,13 +390,12 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 			DBAccessObjectUtils::getDBOptions( $queryFlags );
 		// Text data is immutable; check replica DBs first.
 		$dbConnection = $this->getDBConnection( $index );
-		$rows = $dbConnection->select(
-			'text',
-			[ 'old_id', 'old_text', 'old_flags' ],
-			[ 'old_id' => $textIds ],
-			__METHOD__,
-			$options
-		);
+		$rows = $dbConnection->newSelectQueryBuilder()
+			->select( [ 'old_id', 'old_text', 'old_flags' ] )
+			->from( 'text' )
+			->where( [ 'old_id' => $textIds ] )
+			->options( $options )
+			->caller( __METHOD__ )->fetchResultSet();
 		$numRows = 0;
 		if ( $rows instanceof IResultWrapper ) {
 			$numRows = $rows->numRows();
@@ -412,13 +410,12 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 			}
 			$missingTextIds = array_diff( $textIds, $fetchedTextIds );
 			$dbConnection = $this->getDBConnection( $fallbackIndex );
-			$rowsFromFallback = $dbConnection->select(
-				'text',
-				[ 'old_id', 'old_text', 'old_flags' ],
-				[ 'old_id' => $missingTextIds ],
-				__METHOD__,
-				$fallbackOptions
-			);
+			$rowsFromFallback = $dbConnection->newSelectQueryBuilder()
+				->select( [ 'old_id', 'old_text', 'old_flags' ] )
+				->from( 'text' )
+				->where( [ 'old_id' => $missingTextIds ] )
+				->options( $fallbackOptions )
+				->caller( __METHOD__ )->fetchResultSet();
 			$appendIterator = new AppendIterator();
 			$appendIterator->append( $rows );
 			$appendIterator->append( $rowsFromFallback );

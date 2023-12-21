@@ -6,7 +6,6 @@
 @import '../minerva.less/minerva.mixins.less';
 @import '../minerva.less/minerva.variables.less';
 @import 'mediawiki.ui/mixins.buttons.less';
-@import 'mediawiki.ui/variables.less';
 @import 'mediawiki.mixins.less';
 
 // Decrease the font-size of the advanced filters module (see T229360).
@@ -78,8 +77,8 @@ ul.mw-contributions-list li > * {
 	margin-right: 0.5em;
 }
 
-.mw-changeslist-line-inner:before,
-.mw-changeslist-line-inner:after {
+.mw-changeslist-line-inner::before,
+.mw-changeslist-line-inner::after {
 	.clearfix();
 }
 
@@ -92,15 +91,15 @@ ul.mw-contributions-list li > * {
  * Colored watchlist and recent changes numbers.
  */
 .mw-plusminus-pos {
-	color: @wmui-color-green30;
+	color: @color-success;
 }
 
 .mw-plusminus-neg {
-	color: @wmui-color-red30;
+	color: @color-destructive;
 }
 
 .mw-plusminus-null {
-	color: @wmui-color-grey30;
+	color: @color-subtle;
 }
 
 /*
@@ -129,8 +128,8 @@ ul.mw-contributions-list li > * {
 	display: inline-block;
 	box-sizing: border-box;
 	height: 1.6em;
-	border: 1px solid #a2a9b1;
-	border-radius: 1.6em;
+	border: @border-base;
+	border-radius: @border-radius-pill;
 	line-height: 1.6em;
 	padding: 0 0.6em;
 	vertical-align: middle;
@@ -163,11 +162,25 @@ ul.mw-contributions-list li .mw-rollback-link {
 		float: none;
 	}
 
-	.mw-userlink:before,
-	.mw-usertoollinks:after {
+	.mw-userlink::before,
+	.mw-usertoollinks::after {
 		content: '';
 		display: table;
 		width: 100%;
+	}
+
+	.mw-tempuserlink {
+		background-color: transparent;
+		padding: 0;
+
+		// Since the user link is split over two lines,
+		// add the background color on the bdi instead
+		bdi {
+			// @background-color-interactive
+			background-color: #eaecf0;
+			padding: 2px 8px 2px 8px;
+			border-radius: @border-radius-base;
+		}
 	}
 }
 

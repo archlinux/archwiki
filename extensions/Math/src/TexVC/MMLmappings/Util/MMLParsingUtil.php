@@ -3,7 +3,11 @@
 namespace MediaWiki\Extension\Math\TexVC\MMLmappings\Util;
 
 use MediaWiki\Extension\Math\TexVC\MMLmappings\TexConstants\Tag;
+use MediaWiki\Extension\Math\TexVC\MMLmappings\TexConstants\TexClass;
 use MediaWiki\Extension\Math\TexVC\MMLmappings\TexConstants\Variants;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmpadded;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmrow;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmtext;
 
 /**
  * This class contains functionalities for MML-node
@@ -87,5 +91,16 @@ class MMLParsingUtil {
 		}
 
 		return $returnObj;
+	}
+
+	/**
+	 * Creates a negation block in MathML, usually preceding the negated statement
+	 * @return string negation block as MathML
+	 */
+	public static function createNot() {
+		$mmlMrow = new MMLmrow( TexClass::REL );
+		$mpadded = new MMLmpadded( "", [ "width" => "0" ] );
+		$mtext = new MMLmtext();
+		return $mmlMrow->encapsulateRaw( $mpadded->encapsulateRaw( $mtext->encapsulateRaw( "&#x29F8;" ) ) );
 	}
 }

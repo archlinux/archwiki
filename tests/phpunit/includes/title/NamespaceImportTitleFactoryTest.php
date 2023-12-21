@@ -19,6 +19,8 @@
  * @author This, that and the other
  */
 
+use MediaWiki\Title\ForeignTitle;
+use MediaWiki\Title\NamespaceImportTitleFactory;
 use MediaWiki\Title\Title;
 
 /**
@@ -36,7 +38,7 @@ class NamespaceImportTitleFactoryTest extends MediaWikiIntegrationTestCase {
 		$this->setContentLang( 'en' );
 	}
 
-	public function basicProvider() {
+	public static function basicProvider() {
 		return [
 			[
 				new ForeignTitle( 0, '', 'MainNamespaceArticle' ),

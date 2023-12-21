@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bean49",
 			"Misibacsi",
 			"TK-999",
 			"Tacsipacsi",
-			"Tgr",
-			"Bean49"
+			"Tgr"
 		]
 	},
 	"scribunto-desc": "Keretrendszer a parancsnyelvek MediaWiki-lapokba történő beágyazására",

@@ -5,7 +5,6 @@
 			"Ruthven"
 		]
 	},
-	"apihelp-visualeditor-description": "Tuorna HTML5 pe na pàggena 'a 'o servizio Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Quanno se stesse a sarvà, mpustate stu parametro a 'o timestamp d' 'a verziona ca se steva a cagnà. Ausato pe' putè scummiglià cunflitte 'e cagnamiento.",
 	"apihelp-visualeditor-param-cachekey": "Pe' putè serializzà o ffà 'o diff, ausate 'o risultato d' 'a serializeforcache 'e primma cu sta chiave. Sovrascrive $1html.",
 	"apihelp-visualeditor-param-etag": "ETag a mannà.",
@@ -16,7 +15,6 @@
 	"apihelp-visualeditor-param-pst": "Sarva primma 'e mannà 'o wikitesto a 'o Parsoid (paction=parsefragment).",
 	"apihelp-visualeditor-param-starttimestamp": "Quanno se stesse a sarvà, mpustate stu parametro a 'o timestamp 'e quann' 'a paggena è stata carrecata. Chest'è ausato pe' putè scummiglià cunflitte 'e cagnamiento.",
 	"apihelp-visualeditor-param-wikitext": "Wikitesto 'a mannà a 'o Parsoid p' 'o ffà addeventà HTML (paction=parsefragment).",
-	"apihelp-visualeditoredit-description": "Sarva na paggena HTML5 a MediaWiki (addeventata wikitesto pe' bbìa d' 'o servizio Parsoid).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Quanno se stesse a sarvà, mpustate stu parametro a 'o timestamp d' 'a verziona ca se steva a cagnà. Ausato pe' putè scummiglià cunflitte 'e cagnamiento.",
 	"apihelp-visualeditoredit-param-cachekey": "Ausà 'o risultato d' 'e serializeforcache 'e primma cu sta chiave. Sovrascrive $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha ID (quanno se stesse a sarvà cu na risposta captcha).",

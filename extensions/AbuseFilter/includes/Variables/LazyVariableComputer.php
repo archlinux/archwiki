@@ -3,33 +3,36 @@
 namespace MediaWiki\Extension\AbuseFilter\Variables;
 
 use ContentHandler;
-use Diff;
 use Language;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Parser\AFPData;
 use MediaWiki\Extension\AbuseFilter\TextExtractor;
+use MediaWiki\ExternalLinks\ExternalLinksLookup;
+use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Storage\PreparedUpdate;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
-use MWException;
-use Parser;
+use ParserFactory;
 use ParserOptions;
 use Psr\Log\LoggerInterface;
 use stdClass;
 use StringUtils;
 use TextContent;
-use Title;
-use UnifiedDiffFormatter;
+use UnexpectedValueException;
 use User;
 use WANObjectCache;
+use Wikimedia\Diff\Diff;
+use Wikimedia\Diff\UnifiedDiffFormatter;
 use Wikimedia\Rdbms\Database;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\LBFactory;
 use WikiPage;
 
 /**
@@ -54,8 +57,8 @@ class LazyVariableComputer {
 	/** @var LoggerInterface */
 	private $logger;
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
+	/** @var LBFactory */
+	private $lbFactory;
 
 	/** @var WANObjectCache */
 	private $wanCache;
@@ -69,8 +72,8 @@ class LazyVariableComputer {
 	/** @var Language */
 	private $contentLanguage;
 
-	/** @var Parser */
-	private $parser;
+	/** @var ParserFactory */
+	private $parserFactory;
 
 	/** @var UserEditTracker */
 	private $userEditTracker;
@@ -91,12 +94,12 @@ class LazyVariableComputer {
 	 * @param TextExtractor $textExtractor
 	 * @param AbuseFilterHookRunner $hookRunner
 	 * @param LoggerInterface $logger
-	 * @param ILoadBalancer $loadBalancer
+	 * @param LBFactory $lbFactory
 	 * @param WANObjectCache $wanCache
 	 * @param RevisionLookup $revisionLookup
 	 * @param RevisionStore $revisionStore
 	 * @param Language $contentLanguage
-	 * @param Parser $parser
+	 * @param ParserFactory $parserFactory
 	 * @param UserEditTracker $userEditTracker
 	 * @param UserGroupManager $userGroupManager
 	 * @param PermissionManager $permissionManager
@@ -107,12 +110,12 @@ class LazyVariableComputer {
 		TextExtractor $textExtractor,
 		AbuseFilterHookRunner $hookRunner,
 		LoggerInterface $logger,
-		ILoadBalancer $loadBalancer,
+		LBFactory $lbFactory,
 		WANObjectCache $wanCache,
 		RevisionLookup $revisionLookup,
 		RevisionStore $revisionStore,
 		Language $contentLanguage,
-		Parser $parser,
+		ParserFactory $parserFactory,
 		UserEditTracker $userEditTracker,
 		UserGroupManager $userGroupManager,
 		PermissionManager $permissionManager,
@@ -122,12 +125,12 @@ class LazyVariableComputer {
 		$this->textExtractor = $textExtractor;
 		$this->hookRunner = $hookRunner;
 		$this->logger = $logger;
-		$this->loadBalancer = $loadBalancer;
+		$this->lbFactory = $lbFactory;
 		$this->wanCache = $wanCache;
 		$this->revisionLookup = $revisionLookup;
 		$this->revisionStore = $revisionStore;
 		$this->contentLanguage = $contentLanguage;
-		$this->parser = $parser;
+		$this->parserFactory = $parserFactory;
 		$this->userEditTracker = $userEditTracker;
 		$this->userGroupManager = $userGroupManager;
 		$this->permissionManager = $permissionManager;
@@ -145,7 +148,6 @@ class LazyVariableComputer {
 	 * @param callable $getVarCB
 	 * @phan-param callable(string $name):AFPData $getVarCB
 	 * @return AFPData
-	 * @throws MWException
 	 */
 	public function compute( LazyLoadedVariable $var, VariableHolder $vars, callable $getVarCB ) {
 		$parameters = $var->getParameters();
@@ -203,7 +205,9 @@ class LazyVariableComputer {
 						null,
 						$parameters['contextUserIdentity']
 					);
-					$result = array_keys( $editInfo->output->getExternalLinks() );
+					$result = LinkFilter::getIndexedUrlsNonReversed(
+						array_keys( $editInfo->output->getExternalLinks() )
+					);
 					self::$profilingExtraTime += ( microtime( true ) - $startTime );
 					break;
 				}
@@ -211,17 +215,17 @@ class LazyVariableComputer {
 			case 'links-from-wikitext-or-database':
 				// TODO: use Content object instead, if available!
 				/** @var WikiPage $article */
-				$article = $article ?? $parameters['article'];
+				$article ??= $parameters['article'];
 
 				// this inference is ugly, but the name isn't accessible from here
 				// and we only want this for debugging
-				$varName = strpos( $parameters['text-var'], 'old_' ) === 0 ? 'old_links' : 'all_links';
+				$textVar = $parameters['text-var'];
+				$varName = strpos( $textVar, 'old_' ) === 0 ? 'old_links' : 'all_links';
 				if ( $parameters['forFilter'] ?? false ) {
 					$this->logger->debug( "Loading $varName from DB" );
 					$links = $this->getLinksFromDB( $article );
 				} elseif ( $article->getContentModel() === CONTENT_MODEL_WIKITEXT ) {
 					$this->logger->debug( "Loading $varName from Parser" );
-					$textVar = $parameters['text-var'];
 
 					$wikitext = $getVarCB( $textVar )->toString();
 					$editInfo = $this->parseNonEditWikitext(
@@ -229,7 +233,9 @@ class LazyVariableComputer {
 						$article,
 						$parameters['contextUserIdentity']
 					);
-					$links = array_keys( $editInfo->output->getExternalLinks() );
+					$links = LinkFilter::getIndexedUrlsNonReversed(
+						array_keys( $editInfo->output->getExternalLinks() )
+					);
 				} else {
 					// TODO: Get links from Content object. But we don't have the content object.
 					// And for non-text content, $wikitext is usually not going to be a valid
@@ -238,6 +244,22 @@ class LazyVariableComputer {
 				}
 
 				$result = $links;
+				break;
+			case 'links-from-update':
+				/** @var PreparedUpdate $update */
+				$update = $parameters['update'];
+				// Shared with the edit, don't count it in profiling
+				$startTime = microtime( true );
+				$result = LinkFilter::getIndexedUrlsNonReversed(
+					array_keys( $update->getParserOutputForMetaData()->getExternalLinks() )
+				);
+				self::$profilingExtraTime += ( microtime( true ) - $startTime );
+				break;
+			case 'links-from-database':
+				/** @var WikiPage $article */
+				$article = $parameters['article'];
+				$this->logger->debug( 'Loading old_links from DB' );
+				$result = $this->getLinksFromDB( $article );
 				break;
 			case 'link-diff-added':
 			case 'link-diff-removed':
@@ -282,6 +304,14 @@ class LazyVariableComputer {
 				} else {
 					$result = '';
 				}
+				break;
+			case 'html-from-update':
+				/** @var PreparedUpdate $update */
+				$update = $parameters['update'];
+				// Shared with the edit, don't count it in profiling
+				$startTime = microtime( true );
+				$result = $update->getCanonicalParserOutput()->getText();
+				self::$profilingExtraTime += ( microtime( true ) - $startTime );
 				break;
 			case 'strip-html':
 				$htmlVar = $parameters['html-var'];
@@ -345,12 +375,9 @@ class LazyVariableComputer {
 				if ( !$user->isRegistered() ) {
 					$result = 0;
 				} else {
-					$registration = $user->getRegistration();
 					// HACK: If there's no registration date, assume 2008-01-15, Wikipedia Day
 					// in the year before the new user log was created. See T243469.
-					if ( $registration === null ) {
-						$registration = "20080115000000";
-					}
+					$registration = $user->getRegistration() ?? "20080115000000";
 					$result = (int)wfTimestamp( TS_UNIX, $asOf ) - (int)wfTimestamp( TS_UNIX, $registration );
 				}
 				break;
@@ -398,7 +425,7 @@ class LazyVariableComputer {
 					$parameters,
 					$result
 				) ) {
-					throw new MWException( 'Unknown variable compute type ' . $varMethod );
+					throw new UnexpectedValueException( 'Unknown variable compute type ' . $varMethod );
 				}
 		}
 
@@ -410,19 +437,15 @@ class LazyVariableComputer {
 	 * @return array
 	 */
 	private function getLinksFromDB( WikiPage $article ) {
-		// Stolen from ConfirmEdit, SimpleCaptcha::getLinksFromTracker
 		$id = $article->getId();
 		if ( !$id ) {
 			return [];
 		}
 
-		$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
-		return $dbr->selectFieldValues(
-			'externallinks',
-			'el_to',
-			[ 'el_from' => $id ],
-			__METHOD__,
-			[ 'DISTINCT' ]
+		return ExternalLinksLookup::getExternalLinksForPage(
+			$id,
+			$this->lbFactory->getReplicaDatabase(),
+			__METHOD__
 		);
 	}
 
@@ -442,7 +465,7 @@ class LazyVariableComputer {
 			$this->wanCache->makeKey( 'last-10-authors', 'revision', $title->getLatestRevID() ),
 			WANObjectCache::TTL_MINUTE,
 			function ( $oldValue, &$ttl, array &$setOpts ) use ( $title, $fname ) {
-				$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+				$dbr = $this->lbFactory->getReplicaDatabase();
 
 				$setOpts += Database::getCacheSetOptions( $dbr );
 				// Get the last 100 edit authors with a trivial query (avoid T116557)
@@ -510,7 +533,7 @@ class LazyVariableComputer {
 		if ( !isset( $cache[$cacheKey] ) ) {
 			$options = ParserOptions::newFromUser( $userIdentity );
 			$cache[$cacheKey] = (object)[
-				'output' => $this->parser->parse( $wikitext, $article->getTitle(), $options )
+				'output' => $this->parserFactory->getInstance()->parse( $wikitext, $article->getTitle(), $options )
 			];
 		}
 

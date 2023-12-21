@@ -8,8 +8,8 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler.static.name = 'confirmEditNoCaptchaReCaptcha';
 
 		ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler.static.getReadyPromise = function () {
-			var onLoadFn = 'onRecaptchaLoadCallback' + Date.now(),
-				deferred, config, scriptURL, params;
+			const onLoadFn = 'onRecaptchaLoadCallback' + Date.now();
+			let deferred, config, scriptURL, params;
 
 			if ( !this.readyPromise ) {
 				deferred = $.Deferred();
@@ -27,13 +27,13 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		};
 
 		ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler.static.matchFunction = function ( data ) {
-			var captchaData = ve.getProp( data, 'visualeditoredit', 'edit', 'captcha' );
+			const captchaData = ve.getProp( data, 'visualeditoredit', 'edit', 'captcha' );
 
 			return !!( captchaData && captchaData.type === 'recaptchanocaptcha' );
 		};
 
 		ve.init.mw.NoCaptchaReCaptchaSaveErrorHandler.static.process = function ( data, target ) {
-			var self = this,
+			const self = this,
 				config = mw.config.get( 'wgConfirmEditConfig' ),
 				siteKey = config.reCaptchaSiteKey,
 				$container = $( '<div>' );

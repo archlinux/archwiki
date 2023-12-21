@@ -25,5 +25,10 @@
 	"cite_references_link_many_accessibility_label": "ארויפשפרינגען קיין:",
 	"cite_section_preview_references": "פאראויסקוק פון רעפערענצן",
 	"cite_warning": "ציטיר ווארענונג: $1",
-	"cite_warning_sectionpreview_no_text": "מען קען נישט מאַכן קיין פֿארויסשטעלונג פֿאַרן טאַג <code>&lt;ref&gt;</code> מיטן נאָמען <code>$1</code> ווייל ער איז דעפֿינירט אדער אינדרויסן פֿון דעם לויפֿיגן אָפטייל אדער אינגאַנצן נישט."
+	"cite_warning_sectionpreview_no_text": "מען קען נישט מאַכן קיין פֿארויסשטעלונג פֿאַרן טאַג <code>&lt;ref&gt;</code> מיטן נאָמען <code>$1</code> ווייל ער איז דעפֿינירט אדער אינדרויסן פֿון דעם לויפֿיגן אָפטייל אדער אינגאַנצן נישט.",
+	"cite-wikieditor-tool-reference": "רעפערענץ",
+	"cite-wikieditor-help-page-references": "רעפערענצן",
+	"cite-wikieditor-help-content-reference-description": "רעפערענץ",
+	"cite-wikieditor-help-content-rereference-description": "נאך א ניץ פונעם זעלבן רעפערענץ",
+	"cite-wikieditor-help-content-showreferences-description": "ווייַזן רעפֿערענצן"
 }

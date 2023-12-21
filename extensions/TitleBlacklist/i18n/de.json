@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"Debenben",
 			"Geitost",
 			"Giftpflanze",
@@ -12,8 +13,7 @@
 			"Raimond Spekking",
 			"The Evil IP address",
 			"Umherirrender",
-			"Wnme",
-			"Brettchenweber"
+			"Wnme"
 		]
 	},
 	"action-tboverride": "die Negativliste unerwünschter Seiten- oder Benutzernamen außer Kraft zu setzen",
@@ -35,5 +35,5 @@
 	"titleblacklist-warning": "<strong>Warnung: Diese Seite kann nur von Administratoren und anderen Benutzern mit dem <code>tboverride</code>-Recht bearbeitet werden, da sie mit dem folgenden Eintrag in der Titel-Negativliste übereinstimmt:</strong><br /><code>$1</code>",
 	"right-tboverride": "Die Negativliste unerwünschter Seiten- oder Benutzernamen außer Kraft setzen",
 	"right-tboverride-account": "Die Negativliste unerwünschter Benutzernamen außer Kraft setzen",
-	"right-titleblacklistlog": "Das Titel-Negativliste-Logbuch ansehen"
+	"right-titleblacklistlog": "Das Logbuch der Liste der nicht zugelassenen Titel ansehen"
 }

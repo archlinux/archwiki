@@ -39,5 +39,11 @@
 	"cite_references_link_accessibility_back_label": "اقفز للخلف",
 	"cite_section_preview_references": "معاينة المراجع",
 	"cite_warning": "تحذير استشهاد: $1",
-	"cite_warning_sectionpreview_no_text": "لا يمكن معاينة الوسم <code>&lt;ref&gt;</code> الذي يحمل اسم  <code>$1</code> لأنه معرف خارج القسم الحالي أو غير معرف على الإطلاق."
+	"cite_warning_sectionpreview_no_text": "لا يمكن معاينة الوسم <code>&lt;ref&gt;</code> الذي يحمل اسم  <code>$1</code> لأنه معرف خارج القسم الحالي أو غير معرف على الإطلاق.",
+	"cite-wikieditor-tool-reference": "مرجع",
+	"cite-wikieditor-help-page-references": "مراجع",
+	"cite-wikieditor-help-content-reference-description": "مرجع",
+	"cite-wikieditor-help-content-named-reference-description": "مرجع مسمى",
+	"cite-wikieditor-help-content-rereference-description": "استخدام نفس المرجع مرة أخرى",
+	"cite-wikieditor-help-content-showreferences-description": "اعرض المراجع"
 }

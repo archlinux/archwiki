@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\Notifications\Api;
 // This is a GET module, not a POST module, for multi-DC support. See T222851.
 // Note that this module doesn't write to the database, only to the seentime cache.
 use ApiBase;
-use EchoSeenTime;
+use MediaWiki\Extension\Notifications\SeenTime;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiEchoMarkSeen extends ApiBase {
@@ -21,7 +21,7 @@ class ApiEchoMarkSeen extends ApiBase {
 
 		$params = $this->extractRequestParams();
 		$timestamp = wfTimestamp( TS_MW );
-		$seenTime = EchoSeenTime::newFromUser( $user );
+		$seenTime = SeenTime::newFromUser( $user );
 		$seenTime->setTime( $timestamp, $params['type'] );
 
 		if ( $params['timestampFormat'] === 'ISO_8601' ) {

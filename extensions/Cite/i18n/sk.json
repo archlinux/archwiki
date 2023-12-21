@@ -31,5 +31,10 @@
 	"cite_references_link_many_accessibility_label": "Prejsť nahor k:",
 	"cite_section_preview_references": "Náhľad referencií",
 	"cite_warning": "Upozornenie k citácii: $1",
-	"cite_warning_sectionpreview_no_text": "Nemožno zobraziť náhľad značky <code>&lt;ref&gt;</code> s názvom <code>$1</code>, pretože je definovaná mimo aktuálnu sekciu alebo nie je definovaná vôbec."
+	"cite_warning_sectionpreview_no_text": "Nemožno zobraziť náhľad značky <code>&lt;ref&gt;</code> s názvom <code>$1</code>, pretože je definovaná mimo aktuálnu sekciu alebo nie je definovaná vôbec.",
+	"cite-wikieditor-tool-reference": "Referencia",
+	"cite-wikieditor-help-page-references": "Referencie",
+	"cite-wikieditor-help-content-reference-description": "Referencie",
+	"cite-wikieditor-help-content-rereference-description": "Ďalšie použitie rovnakej referencie",
+	"cite-wikieditor-help-content-showreferences-description": "Zobraziť referencie"
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80"
+			"Amire80",
+			"Piano1forte2"
 		]
 	},
 	"linter-category-tidy-font-bug-desc": "Previously, these font tags were moved inside links to change link colour",

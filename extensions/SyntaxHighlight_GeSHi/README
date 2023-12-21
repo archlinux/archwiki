@@ -39,7 +39,7 @@ html text
 == Parameters ==
 
 For details information of these parameters, see the documentation of Pygments'
-HtmlFormatter at <http://pygments.org/docs/formatters/#HtmlFormatter>.
+HtmlFormatter at <https://pygments.org/docs/formatters/#HtmlFormatter>.
 
 * lang;	      Defines the language.
 * line;	      Corresponds to linenos="inline" option.

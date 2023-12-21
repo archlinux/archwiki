@@ -39,6 +39,7 @@
 	"scribunto-lua-error-location": "Erro de Lua $1: $2.",
 	"scribunto-lua-error": "Erro de Lua: $2.",
 	"scribunto-lua-notarrayreturn": "Erro de script: O módulo devolveu o valor $2. Debería devolver unha táboa de exportación.",
+	"scribunto-lua-warning": "Advertencia de script: $1",
 	"scribunto-luastandalone-proc-error": "Erro de Lua: Non se pode crear o proceso.",
 	"scribunto-luastandalone-proc-error-msg": "Erro de Lua: Non se pode crear o proceso: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Erro de Lua: Non se pode crear o proceso: proc_open non está dispoñible. Comprobe a directiva de configuración \"disable_functions\" do PHP.",

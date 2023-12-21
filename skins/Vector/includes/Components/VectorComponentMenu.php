@@ -36,7 +36,6 @@ class VectorComponentMenu implements VectorComponent, Countable {
 			'label' => '',
 			'html-tooltip' => '',
 			'label-class' => '',
-			'heading-class' => '',
 			'html-before-portal' => '',
 			'html-items' => '',
 			'html-after-portal' => '',

@@ -49,7 +49,7 @@
 	"cite-ve-referenceslist-isempty": "Nincsenek megjeleníthető forráshivatkozások a(z) „$1” csoportban ezen az oldalon.",
 	"cite-ve-referenceslist-isempty-default": "Nincs a lapon forráshivatkozás a lapon, amit szerepelhetne ebben a listában.",
 	"cite-ve-referenceslist-missingref": "Ez a forráshivatkozás egy sablonban vagy más generált blokkban van definiálva, és jelenleg csak forrásnézetben szerkeszthető.",
-	"cite-ve-referenceslist-missingreflist": "Ez a forráshivatkozás-lista egy sablonnal készült, és jelenleg csak forrásnézetben szerkeszthető.",
+	"cite-ve-referenceslist-missingreflist": "Ez a forráshivatkozás-lista egy sablonnal készült.",
 	"cite-ve-toolbar-group-label": "Forráshivatkozás",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "Forráshivatkozások",
 	"visualeditor-internal-list-diff-group-name-mwreference": "„$1” forráshivatkozás-csoport"

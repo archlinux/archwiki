@@ -7,6 +7,7 @@ use Psr\Log\NullLogger;
 /**
  * @group Test
  * @group AbuseFilter
+ * @group Database
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\FilterUser
  * @covers ::__construct()
  * @todo Make a unit test once DI is possible for User::newSystemUser

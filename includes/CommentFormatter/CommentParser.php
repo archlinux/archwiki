@@ -7,21 +7,22 @@ use HtmlArmor;
 use Language;
 use LinkBatch;
 use LinkCache;
-use MalformedTitleException;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Title\MalformedTitleException;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleParser;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\WikiMap\WikiMap;
-use NamespaceInfo;
 use Parser;
 use RepoGroup;
 use StringUtils;
-use TitleParser;
-use TitleValue;
 
 /**
  * The text processing backend for CommentFormatter.
@@ -172,7 +173,7 @@ class CommentParser {
 		$comment = strtr( $comment, "\n\x1b", "  " );
 		// Allow HTML entities (for T15815)
 		if ( !$unsafe ) {
-			$comment = \Sanitizer::escapeHtmlAllowEntities( $comment );
+			$comment = Sanitizer::escapeHtmlAllowEntities( $comment );
 		}
 		if ( $enableSectionLinks ) {
 			$comment = $this->doSectionLinks( $comment, $selfLinkTarget, $samePage, $wikiId );

@@ -3,10 +3,10 @@
 		"authors": [
 			"Assele",
 			"Вильданова Гюзель",
+			"З. ӘЙЛЕ",
 			"Лилиә",
 			"Ләйсән",
-			"Янмурза Баки",
-			"З. ӘЙЛЕ"
+			"Янмурза Баки"
 		]
 	},
 	"cite-desc": "Төшөрмәләр өсөн <code>&lt;ref[ name=id]&gt;</code> һәм <code>&lt;references/&gt;</code> тамғаларын өҫтәй",
@@ -33,5 +33,11 @@
 	"cite_references_link_many_accessibility_label": "Ҡабат өҫкә күсергә",
 	"cite_section_preview_references": "Иҫкәрмәләрҙе ҡарап сығыу",
 	"cite_warning": "Өҙөмтә тураһында иҫкәртергә: $1",
-	"cite_warning_sectionpreview_no_text": "<code>$1</code> исемле <code>&lt;ref&gt;</code> тамғаны ҡарап сығып булмай, сөнки ул икенсе бүлектә билдәләнгән йәки бөтөнләй билдәләнмәгән."
+	"cite_warning_sectionpreview_no_text": "<code>$1</code> исемле <code>&lt;ref&gt;</code> тамғаны ҡарап сығып булмай, сөнки ул икенсе бүлектә билдәләнгән йәки бөтөнләй билдәләнмәгән.",
+	"cite-wikieditor-tool-reference": "Иҫкәрмә",
+	"cite-wikieditor-help-page-references": "Иҫкәрмәләр",
+	"cite-wikieditor-help-content-reference-description": "Иҫкәрмә",
+	"cite-wikieditor-help-content-named-reference-description": "Исемләнгән иҫкәрмә",
+	"cite-wikieditor-help-content-rereference-description": "Бер үк иҫкәрмәне ҡабаттан ҡулланыу",
+	"cite-wikieditor-help-content-showreferences-description": "Иҫкәрмәләрҙе күрһәтергә"
 }

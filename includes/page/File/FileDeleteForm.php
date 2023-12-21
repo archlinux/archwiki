@@ -24,15 +24,15 @@
 
 namespace MediaWiki\Page\File;
 
-use Hooks;
 use LocalFile;
 use ManualLogEntry;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\DeletePage;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MWException;
-use Status;
 
 /**
  * File deletion user interface
@@ -65,6 +65,7 @@ class FileDeleteForm {
 		$tags = [],
 		bool $deleteTalk = false
 	): Status {
+		$services = MediaWikiServices::getInstance();
 		if ( $oldimage ) {
 			$page = null;
 			$status = $file->deleteOldFile( $oldimage, $reason, $user, $suppress );
@@ -92,7 +93,6 @@ class FileDeleteForm {
 			$status = Status::newFatal( 'cannotdelete',
 				wfEscapeWikiText( $title->getPrefixedText() )
 			);
-			$services = MediaWikiServices::getInstance();
 			$page = $services->getWikiPageFactory()->newFromTitle( $title );
 			'@phan-var \WikiFilePage $page';
 			$deleter = $services->getUserFactory()->newFromUserIdentity( $user );
@@ -104,7 +104,7 @@ class FileDeleteForm {
 				}
 				$deletePage->setDeleteAssociatedTalk( true );
 			}
-			$dbw = wfGetDB( DB_PRIMARY );
+			$dbw = $services->getDBLoadBalancerFactory()->getPrimaryDatabase();
 			$dbw->startAtomic( __METHOD__, $dbw::ATOMIC_CANCELABLE );
 			// delete the associated article first
 			$deleteStatus = $deletePage
@@ -152,10 +152,10 @@ class FileDeleteForm {
 		}
 
 		if ( $status->isOK() ) {
-			$legacyUser = MediaWikiServices::getInstance()
-				->getUserFactory()
+			$legacyUser = $services->getUserFactory()
 				->newFromUserIdentity( $user );
-			Hooks::runner()->onFileDeleteComplete( $file, $oldimage, $page, $legacyUser, $reason );
+			( new HookRunner( $services->getHookContainer() ) )
+				->onFileDeleteComplete( $file, $oldimage, $page, $legacyUser, $reason );
 		}
 
 		return $status;
@@ -174,4 +174,7 @@ class FileDeleteForm {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( FileDeleteForm::class, 'FileDeleteForm' );

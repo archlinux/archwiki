@@ -106,45 +106,62 @@ ve.ce.MWSignatureNode.prototype.onTeardown = function () {
  * @inheritdoc ve.ce.GeneratedContentNode
  */
 ve.ce.MWSignatureNode.prototype.generateContents = function () {
-	// Parsoid doesn't support pre-save transforms. PHP parser doesn't support Parsoid's
-	// meta attributes (that may or may not be required).
-
-	// We could try hacking up one (or even both) of these, but just calling the two parsers
-	// in order seems slightly saner.
-
-	// We must have only one top-level node, this is the easiest way.
-	var wikitext = '<span>~~~~</span>';
 	var doc = this.getModel().getDocument();
+	var abortable, aborted;
+	var abortedPromise = ve.createDeferred().reject( 'http',
+		{ textStatus: 'abort', exception: 'abort' } ).promise();
 
-	var deferred = ve.createDeferred();
-	var xhr = ve.init.target.getContentApi( doc ).post( {
-		action: 'parse',
-		text: wikitext,
-		contentmodel: 'wikitext',
-		prop: 'text',
-		onlypst: true
-	} )
-		.done( function ( resp ) {
-			var wt = ve.getProp( resp, 'parse', 'text' );
-			if ( wt ) {
-				ve.init.target.parseWikitextFragment( wt, true, doc ).then( function ( response ) {
-					if ( ve.getProp( response, 'visualeditor', 'result' ) !== 'success' ) {
-						deferred.reject();
-						return;
-					}
+	function abort() {
+		aborted = true;
+		if ( abortable && abortable.abort ) {
+			abortable.abort();
+		}
+	}
 
-					// Simplified case of template rendering, don't need to worry about filtering etc
-					deferred.resolve( $( response.visualeditor.content ).contents().toArray() );
-				} );
-			} else {
-				deferred.reject();
+	// Acquire a temporary user username before previewing, so that signatures
+	// display the temp user instead of IP user. (T331397)
+	return mw.user.acquireTempUserName()
+		.then( function () {
+			if ( aborted ) {
+				return abortedPromise;
 			}
-		} )
-		.fail( function () {
-			deferred.reject();
-		} );
 
-	return deferred.promise( { abort: xhr.abort } );
+			// We must have only one top-level node, this is the easiest way.
+			var wikitext = '<span>~~~~</span>';
+
+			// Parsoid doesn't support pre-save transforms. PHP parser doesn't support Parsoid's
+			// meta attributes (that may or may not be required).
+			// We could try hacking up one (or even both) of these, but just calling the two parsers
+			// in order seems slightly saner.
+			return ( abortable = ve.init.target.getContentApi( doc ).post( {
+				action: 'parse',
+				text: wikitext,
+				contentmodel: 'wikitext',
+				prop: 'text',
+				onlypst: true
+			} ) );
+		} )
+		.then( function ( pstResponse ) {
+			if ( aborted ) {
+				return abortedPromise;
+			}
+			var wikitext = ve.getProp( pstResponse, 'parse', 'text' );
+			if ( !wikitext ) {
+				return ve.createDeferred().reject();
+			}
+			return ( abortable = ve.init.target.parseWikitextFragment( wikitext, true, doc ) );
+		} )
+		.then( function ( parseResponse ) {
+			if ( aborted ) {
+				return abortedPromise;
+			}
+			if ( ve.getProp( parseResponse, 'visualeditor', 'result' ) !== 'success' ) {
+				return ve.createDeferred().reject();
+			}
+			// Simplified case of template rendering, don't need to worry about filtering etc
+			return $( parseResponse.visualeditor.content ).contents().toArray();
+		} )
+		.promise( { abort: abort } );
 };
 
 /* Registration */

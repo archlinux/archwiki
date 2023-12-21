@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Tests\Rest\Handler;
 
+use MediaWiki\MainConfigNames;
 use MediaWiki\Rest\Handler\MediaLinksHandler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
@@ -43,7 +44,7 @@ class MediaLinksHandlerTest extends \MediaWikiIntegrationTestCase {
 
 		$user = RequestContext::getMain()->getUser();
 		$userOptionsManager = $this->getServiceContainer()->getUserOptionsManager();
-		$this->setMwGlobals( 'wgImageLimits', [
+		$this->overrideConfigValue( MainConfigNames::ImageLimits, [
 			$userOptionsManager->getIntOption( $user, 'imagesize' ) => [ 100, 100 ],
 		] );
 
@@ -102,7 +103,7 @@ class MediaLinksHandlerTest extends \MediaWikiIntegrationTestCase {
 
 	public function testCacheControl() {
 		$title = Title::newFromText( __METHOD__ );
-		$this->editPage( $title->getPrefixedDBkey(), 'First' );
+		$this->editPage( $title, 'First' );
 
 		$request = new RequestData( [ 'pathParams' => [ 'title' => $title->getPrefixedDBkey() ] ] );
 
@@ -115,7 +116,7 @@ class MediaLinksHandlerTest extends \MediaWikiIntegrationTestCase {
 			$response->getHeaderLine( 'Last-Modified' )
 		);
 
-		$this->editPage( $title->getPrefixedDBkey(), 'Second' );
+		$this->editPage( $title, 'Second' );
 
 		Title::clearCaches();
 		$handler = $this->newHandler();
@@ -140,4 +141,25 @@ class MediaLinksHandlerTest extends \MediaWikiIntegrationTestCase {
 		$this->executeHandler( $handler, $request );
 	}
 
+	public function testMaxNumLinks() {
+		$title = __CLASS__ . '_Foo';
+
+		$handler = new class (
+			$this->getServiceContainer()->getDBLoadBalancerFactory(),
+			$this->makeMockRepoGroup( [ 'Existing.jpg' ] ),
+			$this->getServiceContainer()->getPageStore()
+		) extends MediaLinksHandler {
+			protected function getMaxNumLinks(): int {
+				return 1;
+			}
+		};
+
+		$request = new RequestData( [ 'pathParams' => [ 'title' => $title ] ] );
+
+		$this->expectExceptionObject(
+			new LocalizedHttpException( new MessageValue( 'rest-media-too-many-links' ), 400 )
+		);
+
+		$data = $this->executeHandlerAndGetBodyData( $handler, $request );
+	}
 }

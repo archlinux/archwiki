@@ -9,13 +9,11 @@
 			"Tyler Romeo <tylerromeo@gmail.com>"
 		]
 	},
-	"apihelp-query+oath-description": "Check to see if two-factor authentication (OATH) is enabled for a user.",
 	"apihelp-query+oath-summary": "Check to see if two-factor authentication (OATH) is enabled for a user.",
 	"apihelp-query+oath-param-user": "User to get information about. Defaults to the current user.",
 	"apihelp-query+oath-param-reason": "Reason for querying the OATH status.",
 	"apihelp-query+oath-example-1": "Get information about the current user",
 	"apihelp-query+oath-example-2": "Get information about user <kbd>Example</kbd>",
-	"apihelp-oathvalidate-description": "Validate a two-factor authentication (OATH) token.",
 	"apihelp-oathvalidate-summary": "Validate a two-factor authentication (OATH) token.",
 	"apihelp-oathvalidate-param-user": "User to validate token for. Defaults to the current user.",
 	"apihelp-oathvalidate-example-1": "Validate JSON data for the current user",

@@ -31,8 +31,6 @@
 	"discussiontools-error-noswitchtove-title": "Kulemba mwakuona kwakanizgika",
 	"discussiontools-limitreport-errorreqid": "VilweloVyakudumbizgilana vasangika na suzgo na ID",
 	"discussiontools-limitreport-timeusage": "Magwiliskilo VilweloVyakudumbizgilana",
-	"discussiontools-newtopic-legacy-hint": "<strong>Nthowa iphya yakuyamba mutu uphya ili pano.</strong> Update iyi ikumuvwilani kusazga miti na kusazgako ŵanthu wakudumula. Kweneso [$1 mungawelelaso kwakale].",
-	"discussiontools-newtopic-legacy-hint-return": "<strong>Mukuona mwachikale.</strong> Munga [$1 welela mwakuona kuphya] panji lutani pakulungisila [$2 kuti muike kuoneka kwa kale kuti ndiko mugwiliskenge nyengo zose].",
 	"discussiontools-newtopic-missing-title": "Chonde sazganipo mutu wa vakudumbizgana vinu. Pla mwadofya \"{{int:discussiontools-replywidget-newtopic}}\", nkhani yinu iŵevyenge mutu.",
 	"discussiontools-newtopic-placeholder-title": "Mutu",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|wazgola}} ku \"<strong>$4</strong>\".",

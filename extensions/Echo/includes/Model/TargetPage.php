@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\Notifications\Model;
 
-use MWException;
+use InvalidArgumentException;
+use MediaWiki\Title\Title;
 use stdClass;
-use Title;
 
 /**
  * Map a title to an echo event so that we can mark a notification as read
@@ -71,7 +71,6 @@ class TargetPage extends AbstractEntity {
 	 *
 	 * @param stdClass $row
 	 * @return TargetPage
-	 * @throws MWException
 	 */
 	public static function newFromRow( $row ) {
 		$requiredFields = [
@@ -80,7 +79,7 @@ class TargetPage extends AbstractEntity {
 		];
 		foreach ( $requiredFields as $field ) {
 			if ( !isset( $row->$field ) || !$row->$field ) {
-				throw new MWException( $field . ' is not set in the row!' );
+				throw new InvalidArgumentException( $field . ' is not set in the row!' );
 			}
 		}
 		$obj = new self();

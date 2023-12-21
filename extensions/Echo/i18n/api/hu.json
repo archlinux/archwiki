@@ -6,7 +6,6 @@
 			"Tgr"
 		]
 	},
-	"apihelp-echomarkread-description": "Értesítések olvasottnak jelölése az aktuális felhasználó számára.",
 	"apihelp-echomarkread-summary": "A jelenlegi felhasználó értesítéseinek olvasottnak jelölése.",
 	"apihelp-echomarkread-param-list": "Az olvasottnak jelölendő értesítések ID-inek listája.",
 	"apihelp-echomarkread-param-unreadlist": "Olvasatlannak jelölendő értesítésazonosítók listája.",
@@ -16,12 +15,10 @@
 	"apihelp-echomarkread-example-1": "A 8-as számú értesítés olvasottnak jelölése",
 	"apihelp-echomarkread-example-2": "Az összes értesítés olvasottnak jelölése",
 	"apihelp-echomarkread-example-3": "1-es azonosítójú értesítés megjelölése olvasatlanként",
-	"apihelp-echomarkseen-description": "Értesítések látottnak jelölése az aktuális felhasználó számára.",
 	"apihelp-echomarkseen-summary": "Értesítések látottnak jelölése az aktuális felhasználó számára.",
 	"apihelp-echomarkseen-example-1": "Az összes fajta értesítés látottnak jelölése.",
 	"apihelp-echomarkseen-param-type": "A látottnak jelölendő értesítések típusa: 'alert', 'message' vagy 'all'.",
 	"apihelp-echomarkseen-param-timestampFormat": "A kimenetben használandó időbélyeg-formátum, „ISO_8601” vagy „MW”. Az „MW” elavult itt, minden kliensnek „ISO_8601”-re kellene váltania. Ez a paraméter el lesz távolítva, és az „ISO_8601” lesz az egyetlen kimeneti formátum.",
-	"apihelp-echomute-description": "Értesítések némítása vagy engedélyezése bizonyos felhasználóktól vagy bizonyos lapokhoz kapcsolódóan.",
 	"apihelp-echomute-summary": "Értesítések némítása vagy engedélyezése bizonyos felhasználóktól vagy bizonyos lapokhoz kapcsolódóan.",
 	"apihelp-echomute-param-type": "A módosítandó némításlista",
 	"apihelp-echomute-param-mute": "A listához adandó lapok vagy felhasználók",
@@ -36,7 +33,6 @@
 	"apihelp-echopushsubscriptions+delete-param-providertoken": "A törlendő feliratkozáshoz kapcsolódó token.",
 	"apihelp-echopushsubscriptions+delete-param-centraluserid": "A törlendő feliratkozáshoz kapcsolódó központi felhasználóazonosító.",
 	"apihelp-echopushsubscriptions+delete-example": "Egy leküldéses feliratkozás törlése a jelenlegi felhasználónak.",
-	"apihelp-query+notifications-description": "Az aktuális felhasználónak szóló értesítések lekérdezése.",
 	"apihelp-query+notifications-summary": "Az aktuális felhasználónak szóló várakozó értesítések lekérdezése.",
 	"apihelp-query+notifications-param-prop": "A lekérdezendő részletek.",
 	"apihelp-query+notifications-param-sections": "A lekérdezendő szakaszok ('alert' és/vagy 'message').",

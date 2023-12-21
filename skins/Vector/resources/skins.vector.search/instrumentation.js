@@ -1,4 +1,3 @@
-/* global FetchEndEvent, SuggestionClickEvent, SearchSubmitEvent */
 /**
  * The value of the `inputLocation` property of any and all SearchSatisfaction events sent by the
  * corresponding instrumentation.
@@ -10,17 +9,11 @@ const INPUT_LOCATION_MOVED = 'header-moved',
 	// mediawiki.searchSuggest performance. Marks and Measures will only be
 	// recorded on the Vector skin and only if browser supported.
 	shouldTestSearchPerformance = !!( window.performance &&
-		// @ts-ignore
-		window.requestAnimationFrame &&
-		/* eslint-disable compat/compat */
-		// @ts-ignore
-		performance.mark &&
-		// @ts-ignore
-		performance.measure &&
-		// @ts-ignore
-		performance.getEntriesByName &&
+		!!window.requestAnimationFrame &&
+		!!performance.mark &&
+		!!performance.measure &&
+		!!performance.getEntriesByName &&
 		performance.clearMarks ),
-	/* eslint-enable compat/compat */
 	loadStartMark = 'mwVectorVueSearchLoadStart',
 	queryMark = 'mwVectorVueSearchQuery',
 	renderMark = 'mwVectorVueSearchRender',
@@ -40,7 +33,6 @@ function onFetchStart() {
 		performance.clearMarks( queryMark );
 	}
 
-	/* eslint-disable-next-line compat/compat */
 	performance.mark( queryMark );
 }
 

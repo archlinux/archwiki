@@ -37,7 +37,7 @@ use Wikimedia\Assert\ParameterAssertionException;
  */
 class PageStoreRecordTest extends MediaWikiUnitTestCase {
 
-	public function goodConstructorProvider() {
+	public static function goodConstructorProvider() {
 		return [
 			'local' => [
 				(object)[
@@ -106,7 +106,7 @@ class PageStoreRecordTest extends MediaWikiUnitTestCase {
 		}
 	}
 
-	public function badConstructorProvider() {
+	public static function badConstructorProvider() {
 		$row = [
 			'page_id' => 1,
 			'page_namespace' => NS_MAIN,
@@ -157,7 +157,7 @@ class PageStoreRecordTest extends MediaWikiUnitTestCase {
 		$pageRecord->getLatest( 'xyzzy' );
 	}
 
-	public function provideToString() {
+	public static function provideToString() {
 		$row = [
 			'page_id' => 7,
 			'page_namespace' => NS_MAIN,
@@ -189,7 +189,7 @@ class PageStoreRecordTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideIsSamePageAs() {
+	public static function provideIsSamePageAs() {
 		$row = [
 			'page_id' => 7,
 			'page_namespace' => NS_MAIN,

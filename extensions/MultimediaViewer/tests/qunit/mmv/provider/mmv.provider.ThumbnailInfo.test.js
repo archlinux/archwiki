@@ -15,14 +15,73 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { ThumbnailInfo } = require( 'mmv' );
+
 ( function () {
-	QUnit.module( 'mmv.provider.ThumbnailInfo', QUnit.newMwEnvironment() );
+	QUnit.module( 'mmv.provider.ThumbnailInfo', QUnit.newMwEnvironment( {
+		// mw.Title relies on these three config vars
+		// Restore them after each test run
+		config: {
+			wgFormattedNamespaces: {
+				'-2': 'Media',
+				'-1': 'Special',
+				0: '',
+				1: 'Talk',
+				2: 'User',
+				3: 'User talk',
+				4: 'Wikipedia',
+				5: 'Wikipedia talk',
+				6: 'File',
+				7: 'File talk',
+				8: 'MediaWiki',
+				9: 'MediaWiki talk',
+				10: 'Template',
+				11: 'Template talk',
+				12: 'Help',
+				13: 'Help talk',
+				14: 'Category',
+				15: 'Category talk',
+				// testing custom / localized namespace
+				100: 'Penguins'
+			},
+			wgNamespaceIds: {
+				/* eslint-disable camelcase */
+				media: -2,
+				special: -1,
+				'': 0,
+				talk: 1,
+				user: 2,
+				user_talk: 3,
+				wikipedia: 4,
+				wikipedia_talk: 5,
+				file: 6,
+				file_talk: 7,
+				mediawiki: 8,
+				mediawiki_talk: 9,
+				template: 10,
+				template_talk: 11,
+				help: 12,
+				help_talk: 13,
+				category: 14,
+				category_talk: 15,
+				image: 6,
+				image_talk: 7,
+				project: 4,
+				project_talk: 5,
+				// Testing custom namespaces and aliases
+				penguins: 100,
+				antarctic_waterfowl: 100
+				/* eslint-enable camelcase */
+			},
+			wgCaseSensitiveNamespaces: []
+		}
+	} ) );
 
 	QUnit.test( 'ThumbnailInfo constructor sense check', function ( assert ) {
 		var api = { get: function () {} },
-			thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api );
+			thumbnailInfoProvider = new ThumbnailInfo( api );
 
-		assert.true( thumbnailInfoProvider instanceof mw.mmv.provider.ThumbnailInfo );
+		assert.true( thumbnailInfoProvider instanceof ThumbnailInfo );
 	} );
 
 	QUnit.test( 'ThumbnailInfo get test', function ( assert ) {
@@ -31,11 +90,11 @@
 				apiCallCount++;
 				return $.Deferred().resolve( {
 					query: {
-						pages: {
-							'-1': {
+						pages: [
+							{
 								ns: 6,
 								title: 'File:Stuff.jpg',
-								missing: '',
+								missing: true,
 								imagerepository: 'shared',
 								imageinfo: [
 									{
@@ -47,12 +106,12 @@
 									}
 								]
 							}
-						}
+						]
 					}
 				} );
 			} },
 			file = new mw.Title( 'File:Stuff.jpg' ),
-			thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api );
+			thumbnailInfoProvider = new ThumbnailInfo( api );
 
 		return thumbnailInfoProvider.get( file, 100 ).then( function ( thumbnail ) {
 			assert.strictEqual( thumbnail.url,
@@ -83,7 +142,7 @@
 			} },
 			file = new mw.Title( 'File:Stuff.jpg' ),
 			done = assert.async(),
-			thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api );
+			thumbnailInfoProvider = new ThumbnailInfo( api );
 
 		thumbnailInfoProvider.get( file, 100 ).fail( function () {
 			assert.true( true, 'promise rejected when no data is returned' );
@@ -95,17 +154,17 @@
 		var api = { get: function () {
 				return $.Deferred().resolve( {
 					query: {
-						pages: {
-							'-1': {
+						pages: [
+							{
 								title: 'File:Stuff.jpg'
 							}
-						}
+						]
 					}
 				} );
 			} },
 			file = new mw.Title( 'File:Stuff.jpg' ),
 			done = assert.async(),
-			thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api );
+			thumbnailInfoProvider = new ThumbnailInfo( api );
 
 		thumbnailInfoProvider.get( file, 100 ).fail( function () {
 			assert.true( true, 'promise rejected when imageinfo is missing' );
@@ -117,19 +176,19 @@
 		var api = { get: function () {
 				return $.Deferred().resolve( {
 					query: {
-						pages: {
-							'-1': {
+						pages: [
+							{
 								title: 'File:Stuff.jpg',
-								missing: '',
+								missing: true,
 								imagerepository: ''
 							}
-						}
+						]
 					}
 				} );
 			} },
 			file = new mw.Title( 'File:Stuff.jpg' ),
 			done = assert.async(),
-			thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api );
+			thumbnailInfoProvider = new ThumbnailInfo( api );
 
 		thumbnailInfoProvider.get( file ).fail( function ( errorMessage ) {
 			assert.strictEqual( errorMessage, 'file does not exist: File:Stuff.jpg',
@@ -142,20 +201,20 @@
 		var api = { get: function () {
 				return $.Deferred().resolve( {
 					query: {
-						pages: {
-							'-1': {
+						pages: [
+							{
 								title: 'File:Stuff.jpg',
 								imageinfo: [
 									{}
 								]
 							}
-						}
+						]
 					}
 				} );
 			} },
 			file = new mw.Title( 'File:Stuff.jpg' ),
 			done = assert.async(),
-			thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api );
+			thumbnailInfoProvider = new ThumbnailInfo( api );
 
 		thumbnailInfoProvider.get( file, 100 ).fail( function () {
 			assert.true( true, 'promise rejected when thumbnail info is missing' );

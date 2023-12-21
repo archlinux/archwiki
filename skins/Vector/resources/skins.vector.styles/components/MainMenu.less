@@ -1,15 +1,7 @@
-@import '../../common/variables.less';
-@import '../../common/mixins.less';
-@import 'mediawiki.mixins.less';
-@import '../layouts/screen.less';
-@import './checkboxHack.less';
-
 // Ensure there is only 1 main menu landmark at anytime
-.vector-main-menu-landmark {
-	.vector-feature-page-tools-enabled.vector-feature-main-menu-pinned-enabled .vector-header-start &,
-	.vector-feature-page-tools-enabled.vector-feature-main-menu-pinned-disabled .vector-main-menu-container & {
-		display: none;
-	}
+&.vector-feature-main-menu-pinned-enabled .vector-header-start .vector-main-menu-landmark,
+&.vector-feature-main-menu-pinned-disabled .vector-main-menu-container .vector-main-menu-landmark {
+	display: none;
 }
 
 .vector-main-menu {
@@ -19,9 +11,7 @@
 	#p-navigation .vector-menu-heading {
 		display: none;
 	}
-}
 
-.vector-feature-page-tools-enabled .vector-main-menu {
 	// Match styles of .mw-list-item a in PinnableElement.less
 	.vector-main-menu-action-opt-out a,
 	.vector-main-menu-action-lang-alert .vector-main-menu-action-content {
@@ -36,6 +26,13 @@
 		padding-top: 0;
 	}
 
+	// Hide the sidebar alert if there are no languages and JavaScript is disabled (T326185)
+	.vector-main-menu-action-lang-alert.vector-main-menu-action-lang-alert-empty {
+		.client-nojs& {
+			display: none;
+		}
+	}
+
 	.vector-language-sidebar-alert {
 		// Override default .mw-message-box styles
 		padding: 8px;
@@ -44,7 +41,7 @@
 }
 
 // Main menu when pinned in the sidebar
-.vector-feature-page-tools-enabled #vector-main-menu-pinned-container .vector-main-menu {
+#vector-main-menu-pinned-container .vector-main-menu {
 	// Align the left edge of the text with the page container
 	margin-left: -@padding-horizontal-dropdown-menu-item;
 	// Align border under pinnable header with border under page title
@@ -64,78 +61,5 @@
 #vector-main-menu-unpinned-container .vector-main-menu {
 	.vector-language-sidebar-alert {
 		margin-bottom: 6px;
-	}
-}
-
-.vector-feature-page-tools-disabled {
-	@media ( max-width: @max-width-tablet ) {
-		.vector-main-menu {
-			// Makes the sidebar full screen at lower resolutions.
-			width: 100%;
-		}
-	}
-	// Hide sidebar entirely when the checkbox is disabled
-	@{selector-main-menu-closed} ~ .vector-main-menu-container .vector-main-menu {
-		display: none;
-	}
-}
-
-.vector-feature-page-tools-disabled .vector-main-menu {
-	// Temporary magic number, will be calculated after TOC specs are finalized
-	padding: 12px 19px 12px 9px;
-	background-color: @background-color-secondary--modern;
-
-	@media ( min-width: @min-width-desktop ) {
-		// Magic number from the edge of the main menu to the start of the main menu text.
-		margin-left: -28px;
-	}
-}
-
-.vector-feature-page-tools-disabled .vector-main-menu-action {
-	// Styles for MainMenuAction template.
-	.vector-main-menu-action-item {
-		// Align with the portal heading/links
-		// `.portal` + `.portal .body`
-		margin-top: 4px;
-		margin-bottom: 4px;
-
-		.vector-main-menu-action-heading {
-			margin-bottom: 0.75em;
-		}
-
-		.vector-main-menu-action-content {
-			> * {
-				font-size: @font-size-portal-list-item;
-			}
-
-			> a {
-				font-weight: bold;
-			}
-		}
-
-		// T295555 style overrides for temporary language switch alert (can be removed later ).
-		.vector-language-sidebar-alert {
-			padding: 0.75em;
-		}
-	}
-}
-
-#mw-sidebar-button {
-	&:before {
-		/* @embed */
-		.vector-feature-page-tools-disabled & {
-			background-image: url( images/chevronHorizontal-ltr.svg );
-		}
-
-		.vector-feature-page-tools-disabled @{selector-main-menu-closed} ~ .mw-header & {
-			/* @embed */
-			background-image: url( images/menu.svg );
-		}
-	}
-
-	&:hover {
-		&:before {
-			opacity: 1;
-		}
 	}
 }

@@ -2,8 +2,11 @@
 
 namespace MediaWiki\Auth;
 
+use MediaWiki\Config\HashConfig;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Tests\Unit\Auth\AuthenticationProviderTestTrait;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
 use Wikimedia\TestingAccessWrapper;
 
@@ -37,14 +40,14 @@ class ConfirmLinkSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 	}
 
 	public function testBeginSecondaryAuthentication() {
-		$user = \User::newFromName( 'UTSysop' );
+		$user = $this->createMock( User::class );
 		$obj = new \stdClass;
 
 		$mock = $this->getMockBuilder( ConfirmLinkSecondaryAuthenticationProvider::class )
 			->onlyMethods( [ 'beginLinkAttempt', 'continueLinkAttempt' ] )
 			->getMock();
 		$mock->expects( $this->once() )->method( 'beginLinkAttempt' )
-			->with( $this->identicalTo( $user ), $this->identicalTo( 'AuthManager::authnState' ) )
+			->with( $this->identicalTo( $user ), $this->identicalTo( AuthManager::AUTHN_STATE ) )
 			->willReturn( $obj );
 		$mock->expects( $this->never() )->method( 'continueLinkAttempt' );
 
@@ -52,7 +55,7 @@ class ConfirmLinkSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 	}
 
 	public function testContinueSecondaryAuthentication() {
-		$user = \User::newFromName( 'UTSysop' );
+		$user = $this->createMock( User::class );
 		$obj = new \stdClass;
 		$reqs = [ new \stdClass ];
 
@@ -63,7 +66,7 @@ class ConfirmLinkSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 		$mock->expects( $this->once() )->method( 'continueLinkAttempt' )
 			->with(
 				$this->identicalTo( $user ),
-				$this->identicalTo( 'AuthManager::authnState' ),
+				$this->identicalTo( AuthManager::AUTHN_STATE ),
 				$this->identicalTo( $reqs )
 			)
 			->willReturn( $obj );
@@ -72,14 +75,14 @@ class ConfirmLinkSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 	}
 
 	public function testBeginSecondaryAccountCreation() {
-		$user = \User::newFromName( 'UTSysop' );
+		$user = $this->createMock( User::class );
 		$obj = new \stdClass;
 
 		$mock = $this->getMockBuilder( ConfirmLinkSecondaryAuthenticationProvider::class )
 			->onlyMethods( [ 'beginLinkAttempt', 'continueLinkAttempt' ] )
 			->getMock();
 		$mock->expects( $this->once() )->method( 'beginLinkAttempt' )
-			->with( $this->identicalTo( $user ), $this->identicalTo( 'AuthManager::accountCreationState' ) )
+			->with( $this->identicalTo( $user ), $this->identicalTo( AuthManager::ACCOUNT_CREATION_STATE ) )
 			->willReturn( $obj );
 		$mock->expects( $this->never() )->method( 'continueLinkAttempt' );
 
@@ -87,7 +90,7 @@ class ConfirmLinkSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 	}
 
 	public function testContinueSecondaryAccountCreation() {
-		$user = \User::newFromName( 'UTSysop' );
+		$user = $this->createMock( User::class );
 		$obj = new \stdClass;
 		$reqs = [ new \stdClass ];
 
@@ -98,7 +101,7 @@ class ConfirmLinkSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 		$mock->expects( $this->once() )->method( 'continueLinkAttempt' )
 			->with(
 				$this->identicalTo( $user ),
-				$this->identicalTo( 'AuthManager::accountCreationState' ),
+				$this->identicalTo( AuthManager::ACCOUNT_CREATION_STATE ),
 				$this->identicalTo( $reqs )
 			)
 			->willReturn( $obj );
@@ -133,7 +136,7 @@ class ConfirmLinkSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 		$badReq->method( 'getUniqueId' )
 			->willReturn( "BadReq" );
 
-		$user = \User::newFromName( 'UTSysop' );
+		$user = $this->createMock( User::class );
 		$provider = new ConfirmLinkSecondaryAuthenticationProvider;
 		$providerPriv = TestingAccessWrapper::newFromObject( $provider );
 		$request = new \MediaWiki\Request\FauxRequest();
@@ -200,7 +203,7 @@ class ConfirmLinkSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 	}
 
 	public function testContinueLinkAttempt() {
-		$user = \User::newFromName( 'UTSysop' );
+		$user = $this->createMock( User::class );
 		$obj = new \stdClass;
 		$reqs = $this->getLinkRequests();
 
@@ -235,8 +238,8 @@ class ConfirmLinkSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 			->willReturnCallback( static function ( $req ) use ( &$done ) {
 				$done[$req->id] = true;
 			} );
-		$config = new \HashConfig( [
-			'AuthManagerConfig' => [
+		$config = new HashConfig( [
+			MainConfigNames::AuthManagerConfig => [
 				'preauth' => [],
 				'primaryauth' => [],
 				'secondaryauth' => [
@@ -288,7 +291,7 @@ class ConfirmLinkSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 		] );
 		$this->assertEquals(
 			AuthenticationResponse::newPass(),
-			$res = $provider->continueLinkAttempt( $user, 'state', [ $req ] )
+			$provider->continueLinkAttempt( $user, 'state', [ $req ] )
 		);
 		$this->assertSame( [ false, false, false ], $done );
 

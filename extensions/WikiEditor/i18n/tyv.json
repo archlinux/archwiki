@@ -24,8 +24,6 @@
 	"wikieditor-toolbar-tool-file-insert": "Салыр",
 	"wikieditor-toolbar-tool-file-cancel": "Ойталал",
 	"wikieditor-toolbar-tool-file-upload": "Чүдүрүг",
-	"wikieditor-toolbar-tool-reference-cancel": "Ойталал",
-	"wikieditor-toolbar-tool-reference-insert": "Салыр",
 	"wikieditor-toolbar-section-advanced": "Немей",
 	"wikieditor-toolbar-tool-redirect": "Көжүрүг",
 	"wikieditor-toolbar-tool-big": "Улуг",
@@ -42,5 +40,5 @@
 	"wikieditor-toolbar-section-characters": "Тускай демдектер",
 	"wikieditor-toolbar-section-help": "Дуза медээлел",
 	"wikieditor-toolbar-help-content-bold-description": "Карарткан",
-	"wikieditor-toolbar-help-content-bold-syntax": "'''Карарткан сөзүглел'''"
+	"wikieditor-toolbar-help-content-bold-example": "Карарткан сөзүглел"
 }

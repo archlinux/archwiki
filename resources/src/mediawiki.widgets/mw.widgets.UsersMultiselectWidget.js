@@ -72,7 +72,7 @@
 		// Events
 		// When list of selected usernames changes, update hidden input
 		this.connect( this, {
-			change: 'onMultiselectChange'
+			change: 'updateHiddenInput'
 		} );
 
 		// API init
@@ -213,13 +213,15 @@
 	};
 
 	/**
-	 * React to the 'change' event.
+	 * We have an empty menu when the input is empty, override the implementation from
+	 * MenuTagMultiselectWidget to avoid error and make tags editable.
 	 *
-	 * Updates the hidden input and clears the text from the text box.
+	 * Only editable when the input is empty.
 	 */
-	mw.widgets.UsersMultiselectWidget.prototype.onMultiselectChange = function () {
-		this.updateHiddenInput();
-		this.input.setValue( '' );
+	mw.widgets.UsersMultiselectWidget.prototype.onTagSelect = function () {
+		if ( this.hasInput && !this.input.getValue() ) {
+			OO.ui.TagMultiselectWidget.prototype.onTagSelect.apply( this, arguments );
+		}
 	};
 
 }() );

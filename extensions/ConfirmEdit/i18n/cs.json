@@ -13,7 +13,6 @@
 	"captcha-edit": "Abyste mohli editovat tuto stránku, musíte vyřešit následující úkol níže a napsat výsledek do políčka ([[Special:Captcha/help|Co tohle znamená?]]):",
 	"captcha-edit-fail": "Chybějící či neplatný potvrzovací kód.",
 	"captcha-desc": "Poskytuje techniky CAPTCHA pro ochranu před spamem a hádáním hesel",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Řešení CAPTCHA.",
 	"captcha-info-help": "Popis CAPTCHA.",
 	"captcha-id-label": "ID CAPTCHA",

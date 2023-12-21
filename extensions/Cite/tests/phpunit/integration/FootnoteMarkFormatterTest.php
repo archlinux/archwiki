@@ -49,7 +49,7 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 				return $msg;
 			}
 		);
-		$mockParser = $this->createMock( Parser::class );
+		$mockParser = $this->createNoOpMock( Parser::class, [ 'recursiveTagParse' ] );
 		$mockParser->method( 'recursiveTagParse' )->willReturnArgument( 0 );
 		$formatter = new FootnoteMarkFormatter(
 			$mockErrorReporter,
@@ -61,17 +61,16 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSame( $expectedOutput, $output );
 	}
 
-	public function provideLinkRef() {
+	public static function provideLinkRef() {
 		return [
 			'Default label' => [
 				'',
 				[
 					'name' => null,
-					'number' => 3,
-					'key' => 4,
-					'count' => -1,
+					'number' => 50003,
+					'key' => 50004,
 				],
-				'(cite_reference_link|4+|4|3)'
+				'(cite_reference_link|50004+|50004|50003)'
 			],
 			'Default label, named group' => [
 				'bar',
@@ -79,7 +78,6 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 					'name' => null,
 					'number' => 3,
 					'key' => 4,
-					'count' => -1,
 				],
 				'(cite_reference_link|4+|4|bar 3)'
 			],
@@ -89,7 +87,6 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 					'name' => null,
 					'number' => 3,
 					'key' => 4,
-					'count' => -1,
 				],
 				'(cite_reference_link|4+|4|c)'
 			],
@@ -99,7 +96,6 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 					'name' => null,
 					'number' => 10,
 					'key' => 4,
-					'count' => -1,
 				],
 				'(cite_reference_link|4+|4|' .
 					'cite_error_no_link_label_group&#124;foo&#124;cite_link_label_group-foo)'
@@ -110,6 +106,7 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 					'name' => 'a',
 					'number' => 3,
 					'key' => 4,
+					// Count is only meaningful on named refs; 0 means not reused
 					'count' => 0,
 				],
 				'(cite_reference_link|a+4-0|a-4|3)'
@@ -120,9 +117,9 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 					'name' => 'a',
 					'number' => 3,
 					'key' => 4,
-					'count' => 2,
+					'count' => 50002,
 				],
-				'(cite_reference_link|a+4-2|a-4|3)'
+				'(cite_reference_link|a+4-50002|a-4|3)'
 			],
 			'Subreference' => [
 				'',
@@ -130,11 +127,10 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 					'name' => null,
 					'number' => 3,
 					'key' => 4,
-					'count' => -1,
 					'extends' => 'b',
-					'extendsIndex' => 2,
+					'extendsIndex' => 50002,
 				],
-				'(cite_reference_link|4+|4|3.2)'
+				'(cite_reference_link|4+|4|3.50002)'
 			],
 		];
 	}
@@ -167,12 +163,12 @@ class FootnoteMarkFormatterTest extends \MediaWikiIntegrationTestCase {
 			$mockMessageLocalizer
 		) );
 
-		$output = $formatter->getLinkLabel(
-			$this->createMock( Parser::class ), $group, $offset );
+		$parser = $this->createNoOpMock( Parser::class );
+		$output = $formatter->getLinkLabel( $parser, $group, $offset );
 		$this->assertSame( $expectedLabel, $output );
 	}
 
-	public function provideGetLinkLabel() {
+	public static function provideGetLinkLabel() {
 		yield [ null, 1, '', null ];
 		yield [ null, 2, '', null ];
 		yield [ null, 1, 'foo', null ];

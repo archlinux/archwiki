@@ -28,13 +28,13 @@ use LogFormatter;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
-use OutputPage;
+use MediaWiki\User\User;
 use RequestContext;
 use TextContent;
-use User;
 use UtfNormal;
 
 /**
@@ -141,8 +141,8 @@ class FeedUtils {
 	 * @param string $actiontext Text of the action; in case of log event
 	 * @return string
 	 */
-	public static function formatDiffRow2( $title, $oldid, $newid, $timestamp,
-										  $formattedComment, $actiontext = ''
+	public static function formatDiffRow2(
+		$title, $oldid, $newid, $timestamp, $formattedComment, $actiontext = ''
 	) {
 		$feedDiffCutoff = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::FeedDiffCutoff );
 
@@ -320,4 +320,7 @@ class FeedUtils {
 
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( FeedUtils::class, 'FeedUtils' );

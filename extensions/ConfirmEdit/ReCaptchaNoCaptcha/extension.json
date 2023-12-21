@@ -43,8 +43,13 @@
 			]
 		}
 	},
+	"HookHandlers": {
+		"ReCaptchaHooks": {
+			"class": "MediaWiki\\Extension\\ConfirmEdit\\ReCaptchaNoCaptcha\\Hooks"
+		}
+	},
 	"Hooks": {
-		"ResourceLoaderGetConfigVars": "MediaWiki\\Extension\\ConfirmEdit\\ReCaptchaNoCaptcha\\Hooks::onResourceLoaderGetConfigVars"
+		"ResourceLoaderGetConfigVars": "ReCaptchaHooks"
 	},
 	"attributes": {
 		"VisualEditor": {

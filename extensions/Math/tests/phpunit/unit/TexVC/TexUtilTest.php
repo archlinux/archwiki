@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\Math\Tests\TexVC;
 
+use InvalidArgumentException;
 use MediaWiki\Extension\Math\TexVC\TexUtil;
 use MediaWikiUnitTestCase;
 
@@ -22,6 +23,14 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 		// Testing other functions
 		$this->assertTrue( $tu->mhchem_macro_2pc( "\\color" ) );
 		$this->assertFalse( $tu->mhchem_macro_2pc( "not listed" ) );
+	}
+
+	public function testInvalidCall() {
+		TexUtil::removeInstance();
+		$tu = TexUtil::getInstance();
+		// Testing all functions
+		$this->expectException( InvalidArgumentException::class );
+		$tu->__call( '\\notlisted', [] );
 	}
 
 	/**
@@ -47,6 +56,7 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 			'fun_ar1opt',
 			'fun_ar2',
 			'fun_ar2nb',
+			'fun_ar4',
 			'fun_infix',
 			'fun_mhchem',
 			'hline_function',
@@ -61,6 +71,7 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 			'mhchem_macro_2pc',
 			'mhchem_macro_2pu',
 			'mhchem_required',
+			'mhchemtexified_required',
 			'mhchem_single_macro',
 			'nullary_macro',
 			'nullary_macro_in_mbox',
@@ -68,6 +79,7 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 			'other_delimiters2',
 			'right_function',
 			'teubner_required',
+			'stix_required',
 		];
 
 		// Reading data from TexUtil.
@@ -107,12 +119,15 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 		}
 
 		// Loading local json file
-		$file = file_get_contents( __DIR__ . '/texutil.json' );
+		$file = TexUtil::getJsonFile();
 		$fileP = str_replace( [ "\n", "\t", " " ], "", $file );
 
 		$encP = json_encode( $out );
 		$hashOutput = $this->getHash( $encP );
 		$hashFile = $this->getHash( $fileP );
+		// uncomment the following lines to spot differences in your IDE
+		// $this->assertEquals( str_replace( "\t", "    ", $file ), json_encode($out,
+		// JSON_PRETTY_PRINT) . "\n" );
 		$this->assertEquals( $hashFile, $hashOutput );
 	}
 

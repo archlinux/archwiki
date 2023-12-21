@@ -24,19 +24,19 @@
 
 namespace MediaWiki\Extension\CategoryTree;
 
-use Category;
 use Exception;
 use ExtensionRegistry;
 use FormatJson;
-use Html;
 use IContextSource;
+use MediaWiki\Category\Category;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
-use OutputPage;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\Title;
 use Parser;
 use RequestContext;
-use SpecialPage;
-use Title;
 
 /**
  * Core functions for the CategoryTree extension, an AJAX based gadget
@@ -314,15 +314,12 @@ class CategoryTree {
 	 * @return mixed
 	 */
 	public function getOptionsAsJsStructure( $depth = null ) {
+		$opt = $this->mOptions;
 		if ( $depth !== null ) {
-			$opt = $this->mOptions;
 			$opt['depth'] = $depth;
-			$s = self::encodeOptions( $opt, 'json' );
-		} else {
-			$s = self::encodeOptions( $this->mOptions, 'json' );
 		}
 
-		return $s;
+		return self::encodeOptions( $opt, 'json' );
 	}
 
 	/**
@@ -401,7 +398,7 @@ class CategoryTree {
 			return '';
 		}
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
 
 		$inverse = $this->isInverse();
 		$mode = $this->getOption( 'mode' );
@@ -522,7 +519,7 @@ class CategoryTree {
 	public function renderParents( Title $title ) {
 		global $wgCategoryTreeMaxChildren;
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
 
 		$res = $dbr->select(
 			'categorylinks',

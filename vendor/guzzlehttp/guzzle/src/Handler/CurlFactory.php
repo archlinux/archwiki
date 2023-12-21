@@ -224,7 +224,7 @@ class CurlFactory implements CurlFactoryInterface
             \CURLOPT_URL            => (string) $easy->request->getUri()->withFragment(''),
             \CURLOPT_RETURNTRANSFER => false,
             \CURLOPT_HEADER         => false,
-            \CURLOPT_CONNECTTIMEOUT => 150,
+            \CURLOPT_CONNECTTIMEOUT => 300,
         ];
 
         if (\defined('CURLOPT_PROTOCOLS')) {
@@ -443,7 +443,9 @@ class CurlFactory implements CurlFactoryInterface
                 $scheme = $easy->request->getUri()->getScheme();
                 if (isset($options['proxy'][$scheme])) {
                     $host = $easy->request->getUri()->getHost();
-                    if (!isset($options['proxy']['no']) || !Utils::isHostInNoProxy($host, $options['proxy']['no'])) {
+                    if (isset($options['proxy']['no']) && Utils::isHostInNoProxy($host, $options['proxy']['no'])) {
+                        unset($conf[\CURLOPT_PROXY]);
+                    } else {
                         $conf[\CURLOPT_PROXY] = $options['proxy'][$scheme];
                     }
                 }

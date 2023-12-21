@@ -27,6 +27,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Diff\Diff;
 
 /**
  * Content object implementation for representing flat text.
@@ -48,7 +49,6 @@ class TextContent extends AbstractContent {
 	 * @stable to call
 	 * @param string $text
 	 * @param string $model_id
-	 * @throws MWException
 	 */
 	public function __construct( $text, $model_id = CONTENT_MODEL_TEXT ) {
 		parent::__construct( $model_id );
@@ -61,7 +61,7 @@ class TextContent extends AbstractContent {
 		}
 
 		if ( !is_string( $text ) ) {
-			throw new MWException( "TextContent expects a string in the constructor." );
+			throw new InvalidArgumentException( "TextContent expects a string in the constructor." );
 		}
 
 		$this->mText = $text;

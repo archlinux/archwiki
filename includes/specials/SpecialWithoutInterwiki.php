@@ -22,10 +22,15 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\SpecialPage\PageQueryPage;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Special page lists pages without language links
@@ -35,24 +40,23 @@ use Wikimedia\Rdbms\ILoadBalancer;
 class SpecialWithoutInterwiki extends PageQueryPage {
 	private $prefix = '';
 
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
+	private NamespaceInfo $namespaceInfo;
 
 	/**
 	 * @param NamespaceInfo $namespaceInfo
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param LanguageConverterFactory $languageConverterFactory
 	 */
 	public function __construct(
 		NamespaceInfo $namespaceInfo,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory,
 		LanguageConverterFactory $languageConverterFactory
 	) {
 		parent::__construct( 'Withoutinterwiki' );
 		$this->namespaceInfo = $namespaceInfo;
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 		$this->setLinkBatchFactory( $linkBatchFactory );
 		$this->setLanguageConverter( $languageConverterFactory->getLanguageConverter( $this->getContentLanguage() ) );
 	}
@@ -113,14 +117,14 @@ class SpecialWithoutInterwiki extends PageQueryPage {
 				'title' => 'page_title',
 			],
 			'conds' => [
-				'll_title IS NULL',
+				'll_title' => null,
 				'page_namespace' => $this->namespaceInfo->getContentNamespaces(),
 				'page_is_redirect' => 0
 			],
 			'join_conds' => [ 'langlinks' => [ 'LEFT JOIN', 'll_from = page_id' ] ]
 		];
 		if ( $this->prefix ) {
-			$dbr = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_REPLICA );
+			$dbr = $this->getDatabaseProvider()->getReplicaDatabase();
 			$query['conds'][] = 'page_title ' . $dbr->buildLike( $this->prefix, $dbr->anyString() );
 		}
 
@@ -131,3 +135,9 @@ class SpecialWithoutInterwiki extends PageQueryPage {
 		return 'maintenance';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialWithoutInterwiki::class, 'SpecialWithoutInterwiki' );

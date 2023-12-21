@@ -8,16 +8,16 @@
 
 namespace MediaWiki\Extension\Math;
 
-use Hooks;
 use Html;
+use MediaWiki\Extension\Math\Hooks\HookRunner;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use Psr\Log\LoggerInterface;
 use SpecialPage;
 use StatusValue;
 use stdClass;
 use Throwable;
-use Title;
 use Xml;
 use XmlTypeCheck;
 
@@ -61,7 +61,7 @@ class MathMathML extends MathRenderer {
 		$this->host = $wgMathMathMLUrl;
 		if ( isset( $params['type'] ) ) {
 			$allowedTypes = [ 'pmml', 'ascii', 'chem' ];
-			if ( in_array( $params['type'], $allowedTypes ) ) {
+			if ( in_array( $params['type'], $allowedTypes, true ) ) {
 				$this->inputType = $params['type'];
 			}
 			if ( $params['type'] == 'pmml' ) {
@@ -142,8 +142,8 @@ class MathMathML extends MathRenderer {
 	public function render() {
 		global $wgMathFullRestbaseURL;
 		try {
-			if ( in_array( $this->inputType, $this->restbaseInputTypes ) &&
-				 in_array( $this->mode, $this->restbaseRenderingModes )
+			if ( in_array( $this->inputType, $this->restbaseInputTypes, true ) &&
+				 in_array( $this->mode, $this->restbaseRenderingModes, true )
 			) {
 				if ( !$this->rbi ) {
 					$this->rbi =
@@ -340,7 +340,7 @@ class MathMathML extends MathRenderer {
 			$name = $xmlObject->getRootElement();
 			$elementSplit = explode( ':', $name );
 			$localName = end( $elementSplit );
-			if ( in_array( $localName, $this->getAllowedRootElements() ) ) {
+			if ( in_array( $localName, $this->getAllowedRootElements(), true ) ) {
 				$out = true;
 			} else {
 				$this->logger->error( "Got wrong root element: $name" );
@@ -442,7 +442,9 @@ class MathMathML extends MathRenderer {
 		} else {
 			$class .= 'inline';
 		}
-		if ( !$fallback ) {
+		if ( $fallback ) {
+			$class .= ' mw-invert';
+		} else {
 			$class .= ' mwe-math-mathml-a11y';
 		}
 		return $class;
@@ -466,9 +468,7 @@ class MathMathML extends MathRenderer {
 		$hyperlink = null;
 		if ( isset( $this->params['qid'] ) && preg_match( '/Q\d+/', $this->params['qid'] ) ) {
 			$attribs['data-qid'] = $this->params['qid'];
-			// TODO: SpecialPage::getTitleFor uses the depcrated method Title::newFromTitleValue and
-			// declares a never thrown MWException. Once this SpecialPage is updated, update the next line.
-			$titleObj = Title::newFromLinkTarget( SpecialPage::getTitleValueFor( 'MathWikibase' ) );
+			$titleObj = SpecialPage::getTitleFor( 'MathWikibase' );
 			$hyperlink = $titleObj->getLocalURL( [ 'qid' => $this->params['qid'] ] );
 		}
 		$output = Html::openElement( $element, $attribs );
@@ -548,8 +548,8 @@ class MathMathML extends MathRenderer {
 			}
 			// Avoid PHP 7.1 warning from passing $this by reference
 			$renderer = $this;
-			Hooks::run( 'MathRenderingResultRetrieved',
-				[ &$renderer, &$jsonResult ]
+			( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onMathRenderingResultRetrieved(
+				$renderer, $jsonResult
 			); // Enables debugging of server results
 			return StatusValue::newGood(); // FIXME: empty?
 		} else {

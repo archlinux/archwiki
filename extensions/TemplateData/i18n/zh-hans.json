@@ -17,7 +17,8 @@
 			"Xiaomingyan",
 			"Xiplus",
 			"Yfdyh000",
-			"沈澄心"
+			"沈澄心",
+			"星海"
 		]
 	},
 	"templatedata-desc": "实现模板参数的数据存储（使用JSON）",
@@ -58,6 +59,7 @@
 	"templatedata-errormsg-insertblank": "您确定要插入没有信息的模板数据吗？",
 	"templatedata-exists-on-related-page": "请注意：关联页面“[[$1]]”上已存在模板数据代码块。",
 	"templatedata-helplink": "关于模板数据的信息",
+	"templatedata-invalid-unnamed-parameter": "参数名称不能为空。要记录未命名参数，请使用其内部编号“1”、“2”等。",
 	"templatedata-invalid-duplicate-value": "属性“$1”（“$3”）与“$2”重复。",
 	"templatedata-invalid-empty-array": "属性“$1”的数组中必须有至少一个值。",
 	"templatedata-invalid-format": "属性“$1”应为“inline”“block”或有效的格式字符串。",
@@ -99,7 +101,6 @@
 	"templatedata-modal-placeholder-mapinfo": "此模板没有映射对象",
 	"templatedata-modal-placeholder-prompt-map-name": "输入映射名称",
 	"templatedata-modal-search-input-placeholder": "按语言的名称或代码搜索",
-	"templatedata-modal-table-param-actions": "操作",
 	"templatedata-modal-table-param-aliases": "别名",
 	"templatedata-modal-table-param-autovalue": "自动值",
 	"templatedata-modal-table-param-default": "默认值（$1）",
@@ -116,7 +117,6 @@
 	"templatedata-modal-table-param-suggestedvalues": "推荐值",
 	"templatedata-modal-placeholder-multiselect": "添加值...",
 	"templatedata-modal-table-param-type": "类型",
-	"templatedata-modal-table-param-uneditablefield": "不可编辑",
 	"templatedata-modal-title": "模板数据编辑器",
 	"templatedata-modal-title-addparam": "添加新参数",
 	"templatedata-modal-title-choose-language": "选择语言",

@@ -20,6 +20,7 @@
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\PageLookup;
+use MediaWiki\Page\PageRecord;
 use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
@@ -27,6 +28,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @ingroup JobQueue
+ * @internal
+ * @since 1.40
  */
 class ParsoidCachePrewarmJob extends Job {
 	private LoggerInterface $logger;
@@ -57,27 +60,39 @@ class ParsoidCachePrewarmJob extends Job {
 
 	/**
 	 * @param int $revisionId
-	 * @param int $pageId
+	 * @param PageRecord $page
 	 * @param array $params Additional options for the job. Known keys:
 	 * - causeAction: Indicate what action caused the job to be scheduled. Used for monitoring.
 	 * - options: Flags to be passed to ParsoidOutputAccess:getParserOutput.
-	 *   May be set to ParsoidOutputAccess::OPT_FORCE_PARSE to force a parsing even if there
+	 *   May be set to ParserOutputAccess::OPT_FORCE_PARSE to force a parsing even if there
 	 *   already is cached output.
 	 *
 	 * @return JobSpecification
 	 */
 	public static function newSpec(
 		int $revisionId,
-		int $pageId,
+		PageRecord $page,
 		array $params = []
 	): JobSpecification {
+		$pageId = $page->getId();
+		$pageTouched = $page->getTouched();
+
 		$params += [ 'options' => 0 ];
+
+		$params += self::newRootJobParams(
+			"parsoidCachePrewarm:$pageId:$revisionId:$pageTouched:{$params['options']}"
+		);
+
+		$opts = [ 'removeDuplicates' => true ];
+
 		return new JobSpecification(
 			'parsoidCachePrewarm',
 			[
 				'revId' => $revisionId,
-				'pageId' => $pageId
-			] + $params
+				'pageId' => $pageId,
+				'page_touched' => $pageTouched,
+			] + $params,
+			$opts
 		);
 	}
 
@@ -120,12 +135,7 @@ class ParsoidCachePrewarmJob extends Job {
 		$options = $this->params['options'] ?? 0;
 
 		// getParserOutput() will write to ParserCache.
-		$status = $this->parsoidOutputAccess->getParserOutput(
-			$page,
-			$parserOpts,
-			$rev,
-			$options | ParsoidOutputAccess::OPT_LOG_LINT_DATA
-		);
+		$status = $this->parsoidOutputAccess->getParserOutput( $page, $parserOpts, $rev, $options );
 
 		if ( !$status->isOK() ) {
 			$this->logger->error( __METHOD__ . ': Parsoid error', [

@@ -71,7 +71,7 @@ class Fun1 extends TexNode {
 			$args = [ $this->arg ];
 		}
 		$letterMods = array_keys( $this->tu->getBaseElements()['is_letter_mod'] );
-		if ( in_array( $this->fname, $letterMods ) ) {
+		if ( in_array( $this->fname, $letterMods, true ) ) {
 			$ident = $this->arg->getModIdent();
 			if ( !isset( $ident[0] ) ) {
 				return parent::extractIdentifiers( $args );
@@ -97,7 +97,7 @@ class Fun1 extends TexNode {
 	private function getSubs( $subs ) {
 		$letterMods = array_keys( $this->tu->getBaseElements()['is_letter_mod'] );
 
-		if ( isset( $subs[0] ) && in_array( $this->fname, $letterMods ) ) {
+		if ( isset( $subs[0] ) && in_array( $this->fname, $letterMods, true ) ) {
 			// in difference to javascript code: taking first element of array here.
 			return [ $this->fname . '{' . $subs[0] . '}' ];
 		}

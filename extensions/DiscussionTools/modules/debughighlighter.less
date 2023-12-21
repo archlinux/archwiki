@@ -5,7 +5,7 @@
 	border-radius: 6px;
 	margin: -2px;
 
-	&:hover:after {
+	&:hover::after {
 		content: ' ' attr( title );
 	}
 }
@@ -63,7 +63,7 @@
 			pointer-events: all;
 		}
 
-		&:before {
+		&::before {
 			content: '⚠';
 			color: #000;
 			background: #fff;

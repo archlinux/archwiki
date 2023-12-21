@@ -4,7 +4,6 @@
 			"Tacsipacsi"
 		]
 	},
-	"apihelp-query+extracts-description": "A megadott lapok egyszerű szöveges vagy korlátozott HTML kivonatát adja vissza.",
 	"apihelp-query+extracts-param-chars": "A visszaadandó karakterek száma. A tényleges visszaadott szöveg lehet valamivel hosszabb.",
 	"apihelp-query+extracts-param-sentences": "A visszaadandó mondatok száma.",
 	"apihelp-query+extracts-param-limit": "A visszaadandó kivonatok száma. (Több kivonat csak akkor adható vissza, ha az <var>exintro</var> meg van adva.)",

@@ -30,7 +30,7 @@
 	"vector-language-button-label": "$1 bahasa",
 	"vector-no-language-button-label": "Tambah bahasa",
 	"vector-no-language-button-aria-label": "Artikel ini hanya tersedia dalam bahasa ini. Terjemahkan artikelnya ke dalam bahasa lain",
-	"vector-language-redirect-to-top": "Di {{SITENAME}} ini, pranala bahasa terletak di bagian atas halaman di sebelah judul artikel. [[#p-lang-btn|Pergi ke paling atas]].",
+	"vector-language-redirect-to-top": "Pranala bahasa ada di bagian atas halaman, di seberang judul.",
 	"vector-language-variant-switcher-label": "Ubah varian bahasa",
 	"vector-action-addsection": "Bagian baru",
 	"vector-action-delete": "Hapus",
@@ -67,5 +67,8 @@
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Diskusi]]",
 	"tooltip-vector-anon-user-menu-title": "Opsi lainnya",
 	"vector-prefs-limited-width": "Aktifkan mode lebar terbatas",
-	"empty-language-selector-body": "Konten halaman tidak didukung dalam bahasa lain."
+	"empty-language-selector-body": "Konten halaman tidak didukung dalam bahasa lain.",
+	"vector-toc-unpinned-popup": "Daftar isi telah dipindahkan ke sini.",
+	"vector-page-tools-unpinned-popup": "Menu perkakas telah dipindahkan ke sini.",
+	"vector-main-menu-unpinned-popup": "Menu utama telah dipindahkan ke sini."
 }

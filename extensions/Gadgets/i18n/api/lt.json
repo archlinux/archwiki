@@ -5,13 +5,11 @@
 			"Nokeoo"
 		]
 	},
-	"apihelp-query+gadgetcategories-description": "Grąžina įrankių kategorijų sąrašą.",
 	"apihelp-query+gadgetcategories-summary": "Grąžina įrankių kategorijų sąrašą.",
 	"apihelp-query+gadgetcategories-param-prop": "Kurių įrankių kategorijų informaciją gauti:\n;name:Vidinis kategorijos vardas.\n;title:Kategorijos pavadinimas.\n;members:Įrankių skaičius kategorijoje.",
 	"apihelp-query+gadgetcategories-param-names": "Vardai kategorijų, kurias gauti.",
 	"apihelp-query+gadgetcategories-example-1": "Gauti sąrašą egzistuojančių įrankių kategorijų",
 	"apihelp-query+gadgetcategories-example-2": "Gauti visą informaciją apie kategorijas pavadintas \"foo\" ir \"bar\"",
-	"apihelp-query+gadgets-description": "Grąžina sąrašą įrankių, naudojamų šiame vikyje.",
 	"apihelp-query+gadgets-summary": "Grąžina sąrašą įrankių, naudojamų šiame viki.",
 	"apihelp-query+gadgets-param-prop": "Kurią įrankių informaciją gauti:\n;id:Vidinis įrankio ID.\n;metadata:Įrankio metaduomenys.\n;desc:Įrankio aprašymas transformuotas į HTML (gali veikti lėtai, naudoti tik jeigu iš tiesų reikia).",
 	"apihelp-query+gadgets-param-categories": "Iš kurių kategorijų gauti įrankius.",

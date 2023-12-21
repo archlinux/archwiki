@@ -24,7 +24,6 @@
 	"captcha-edit": "Pour modifier cette page, résolvez la tâche ci-dessous et inscrivez la réponse dans le champ ([[Special:Captcha/help|plus d’informations]]) :",
 	"captcha-edit-fail": "CAPTCHA incorrect ou manquant.",
 	"captcha-desc": "Fournit les techniques CAPTCHA pour protéger contre le pollupostage et la découverte des mots de passe",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Solution du CAPTCHA.",
 	"captcha-info-help": "Description du CAPTCHA.",
 	"captcha-id-label": "Identifiant du CAPTCHA",

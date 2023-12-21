@@ -6,15 +6,14 @@
 			"Garas",
 			"Homo",
 			"Matasg",
+			"Nokeoo",
 			"Tomasdd",
-			"Zygimantus",
-			"Nokeoo"
+			"Zygimantus"
 		]
 	},
 	"captcha-edit": "Kad redaguotumėte šį straipsnį, išspręskite pateiktą užduotį ir įveskite atsakymą į laukelį ([[Special:Captcha/help|daugiau informacijos]]):",
 	"captcha-edit-fail": "Neteisingas arba nenurodytas patvirtinimo kodas.",
 	"captcha-desc": "Pateikia CAPTCHA metodikas, kaip apsisaugoti nuo brukalo ir slaptažodžių spėliojimo",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "CAPTCHA sprendimas.",
 	"captcha-info-help": "CAPTCHA aprašymas.",
 	"captcha-id-label": "CAPTCHA ID",

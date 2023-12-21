@@ -5,7 +5,6 @@
 			"София"
 		]
 	},
-	"apihelp-visualeditor-description": "Возвращает HTML5 для страницы с сервиса Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Бигэргэтэргэ көннөрүү кэмин бэлиэтээ. Сөп түбэһиспэт көннөрүүлэри булан ыларга туһалыа.",
 	"apihelp-visualeditor-param-etag": "Ыытыллыахтаах ETag.",
 	"apihelp-visualeditor-param-html": "Биики тиэкискэ уларытарга Parsoid-ка ыытыллар HTML.",
@@ -15,7 +14,6 @@
 	"apihelp-visualeditor-param-pst": "Бастаан Parsoid (paction=parsefragment) ыытыан иннинэ уларытыыны биики-тиэкискэ бигэргэт.",
 	"apihelp-visualeditor-param-starttimestamp": "Бигэргэтэргэ хачайдааһын кэмин бэлиэтээ. Сөп түбэһиспэт көннөрүүлэри булан ыларга туһалыа.",
 	"apihelp-visualeditor-param-wikitext": "Биики-тиэкис HTML-га (paction=parsefragment) кэмпиэртэнэригэр Parsoid-ка ыыт.",
-	"apihelp-visualeditoredit-description": "HTML5-сирэйи Медиа-биикигэ бигэргэт(биики-тиэкиһи Parsoid  көмөтүнэн кэмпиэртээ).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Бигэргэтэргэ көннөрүү кэмин бэлиэтээ. Сөп түбэһиспэт көннөрүүлэри булан ыларга туһалыа.",
 	"apihelp-visualeditoredit-param-cachekey": "Инники serializeforcache ыйытык түмүгүн бу күлүүһүнэн туһан. $1html солбуйар.",
 	"apihelp-visualeditoredit-param-captchaid": "Капча ID-та (капчалаах бигэргэтэр буоллаҕына).",

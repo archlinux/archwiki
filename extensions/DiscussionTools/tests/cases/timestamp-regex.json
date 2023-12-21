@@ -43,5 +43,10 @@
 		"format": "H:i💩 j F Y",
 		"expected": "(\\d{2})[\\u200E\\u200F]?:[\\u200E\\u200F]?(\\d{2})[\\u200E\\u200F]?💩[\\u200E\\u200F]? [\\u200E\\u200F]?(\\d{1,2})[\\u200E\\u200F]? [\\u200E\\u200F]?(January|February|March|April|May|June|July|August|September|October|November|December)[\\u200E\\u200F]? [\\u200E\\u200F]?(\\d{4})[\\u200E\\u200F]? [\\u200E\\u200F]?\\((UTC)\\)",
 		"message": "(en) UTF-16 multibyte characters survive"
+	},
+	{
+		"format": "xnY-xnm-xnd\"T\"xnH:xni:xns",
+		"expected": "[\\u200E\\u200F]?([0-9]{4})[\\u200E\\u200F]?\\-[\\u200E\\u200F]?[\\u200E\\u200F]?([0-9]{2})[\\u200E\\u200F]?\\-[\\u200E\\u200F]?[\\u200E\\u200F]?([0-9]{2})[\\u200E\\u200F]?T[\\u200E\\u200F]?[\\u200E\\u200F]?([0-9]{2})[\\u200E\\u200F]?:[\\u200E\\u200F]?[\\u200E\\u200F]?([0-9]{2})[\\u200E\\u200F]?:[\\u200E\\u200F]?[\\u200E\\u200F]?([0-9]{2})[\\u200E\\u200F]? [\\u200E\\u200F]?\\((UTC)\\)",
+		"message": "ISO 8601"
 	}
 ]

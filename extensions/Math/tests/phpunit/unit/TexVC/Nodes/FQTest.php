@@ -3,8 +3,11 @@
 namespace MediaWiki\Extension\Math\Tests\TexVC\Nodes;
 
 use ArgumentCountError;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmrow;
+use MediaWiki\Extension\Math\TexVC\Nodes\Curly;
 use MediaWiki\Extension\Math\TexVC\Nodes\FQ;
 use MediaWiki\Extension\Math\TexVC\Nodes\Literal;
+use MediaWiki\Extension\Math\TexVC\Nodes\TexArray;
 use MediaWikiUnitTestCase;
 use TypeError;
 
@@ -43,4 +46,8 @@ class FQTest extends MediaWikiUnitTestCase {
 		$this->assertNotEmpty( $fq->getDown() );
 	}
 
+	public function testRenderEmptyDq() {
+		$fq = new FQ( new Curly( new TexArray() ), new Literal( 'b' ), new Literal( 'c' ) );
+		$this->assertStringContainsString( ( new MMLmrow() )->getEmpty(), $fq->renderMML() );
+	}
 }

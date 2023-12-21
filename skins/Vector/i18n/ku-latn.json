@@ -24,7 +24,7 @@
 	"vector-language-button-label": "Bi {{PLURAL:$1|zimanekî din|$1 zimanên din}}",
 	"vector-no-language-button-label": "Zimanekî lê zêde bike",
 	"vector-no-language-button-aria-label": "Ev gotar tenê bi vî zimanî heye. Gotarê ji bo zimanên din zêde bikin",
-	"vector-language-redirect-to-top": "Di vê {{SITENAME}}yê de lînkên zimanî li serê rûpelê li hemberî sernavê gotarê ne. [[#p-lang-btn|Here herî jor]].",
+	"vector-language-redirect-to-top": "Lînkên zimanî li serê rûpelê li hemberî sernavê gotarê ne.",
 	"vector-language-variant-switcher-label": "Varyanta zimanî biguhêre",
 	"vector-action-addsection": "Mijarekê lê zêde bike",
 	"vector-action-delete": "Jê bibe",
@@ -56,6 +56,8 @@
 	"vector-site-nav-label": "Malper",
 	"vector-main-menu-label": "Menuya esasî",
 	"vector-limited-width-toggle": "Firehiya naveroka sînordar biguhêre",
+	"vector-limited-width-toggle-on-popup": "Te sîstema xwe guhertiye firehiya temam. Ji bo vegerî ber bi firehiya sînorkirî, pêlî vê bişkojê bike.",
+	"vector-limited-width-toggle-off-popup": "Tu dikarî bi pêlkirina vê bûtonê di navbera firehiya temam û firehiya sînorkirî de herî û werî.",
 	"vector-page-tools-label": "Amûr",
 	"vector-page-tools-general-label": "Giştî",
 	"vector-page-tools-actions-label": "Aksîyon",
@@ -65,5 +67,8 @@
 	"tooltip-vector-anon-user-menu-title": "Zêdetir opsiyon",
 	"vector-prefs-limited-width": "Moda firehiya sînorkirî çalak bike",
 	"vector-prefs-limited-width-help": "Ji bo tecrûbeya xwendinê ya baştir moda firehiya sînorkirî çalak bike",
-	"empty-language-selector-body": "Naverokên rûpelê bi zimanên din nayê destekkirin."
+	"empty-language-selector-body": "Naverokên rûpelê bi zimanên din nayê destekkirin.",
+	"vector-toc-unpinned-popup": "Tabloya naverokan neqlê vir kirine.",
+	"vector-page-tools-unpinned-popup": "Menûya amûran neqlê vir kirine.",
+	"vector-main-menu-unpinned-popup": "Menûya esasî neqlê vir kirine."
 }

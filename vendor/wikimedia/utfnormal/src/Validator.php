@@ -35,7 +35,7 @@ define( 'NORMALIZE_INTL', function_exists( 'normalizer_normalize' ) );
 
 /**
  * Unicode normalization routines for working with UTF-8 strings.
- * Currently assumes that input strings are valid UTF-8!
+ * Currently, it assumes that input strings are valid UTF-8!
  *
  * Not as fast as I'd like, but should be usable for most purposes.
  * UtfNormal\Validator::toNFC() will bail early if given ASCII text or text
@@ -48,12 +48,32 @@ define( 'NORMALIZE_INTL', function_exists( 'normalizer_normalize' ) );
  * @ingroup UtfNormal
  */
 class Validator {
-	public static $utfCombiningClass = null;
-	public static $utfCanonicalComp = null;
-	public static $utfCanonicalDecomp = null;
 
-	# Load compatibility decompositions on demand if they are needed.
-	public static $utfCompatibilityDecomp = null;
+	/**
+	 * @var array
+	 */
+	public static $utfCombiningClass;
+
+	/**
+	 * @var array
+	 */
+	public static $utfCanonicalComp;
+
+	/**
+	 * @var array
+	 */
+	public static $utfCanonicalDecomp;
+
+	/**
+	 * Load compatibility decompositions on demand if they are needed.
+	 *
+	 * @var array
+	 */
+	public static $utfCompatibilityDecomp;
+
+	/**
+	 * @var array|null
+	 */
 	public static $utfCheckNFC;
 
 	/**
@@ -70,10 +90,18 @@ class Validator {
 		if ( NORMALIZE_INTL ) {
 			$string = self::replaceForNativeNormalize( $string );
 			$norm = normalizer_normalize( $string, Normalizer::FORM_C );
+			// T303790 - Can be simplified (remove === null) check when support >= PHP 8.1
 			if ( $norm === null || $norm === false ) {
 				# normalizer_normalize will either return false or null
 				# (depending on which doc you read) if invalid utf8 string.
 				# quickIsNFCVerify cleans up invalid sequences.
+				#
+				# < PHP 8.1
+				# https://github.com/php/php-src/blob/PHP-8.0.17/ext/intl/normalizer/normalizer_normalize.c
+				# >= PHP 8.1
+				# https://www.php.net/manual/en/normalizer.normalize.php says return false
+				# https://github.com/php/php-src/blob/PHP-8.1.0/ext/intl/normalizer/normalizer_normalize.c
+				# Changed in https://github.com/php/php-src/commit/5dc995df375571489d9149fdccf258c0bd123317
 
 				if ( self::quickIsNFCVerify( $string ) ) {
 					# if that's true, the string is actually already normal.
@@ -187,6 +215,7 @@ class Validator {
 		}
 
 		self::loadData();
+
 		$len = strlen( $string );
 		for ( $i = 0; $i < $len; $i++ ) {
 			$c = $string[$i];
@@ -490,6 +519,7 @@ class Validator {
 	 */
 	public static function fastDecompose( $string, $map ) {
 		self::loadData();
+
 		$len = strlen( $string );
 		$out = '';
 		for ( $i = 0; $i < $len; $i++ ) {
@@ -552,6 +582,7 @@ class Validator {
 	 */
 	public static function fastCombiningSort( $string ) {
 		self::loadData();
+
 		$len = strlen( $string );
 		$out = '';
 		$combiners = [];
@@ -606,12 +637,14 @@ class Validator {
 	 */
 	public static function fastCompose( $string ) {
 		self::loadData();
+
 		$len = strlen( $string );
 		$out = '';
 		$lastClass = -1;
 		$lastHangul = 0;
 		$startChar = '';
 		$combining = '';
+
 		// Optim: ord() ignores everything after the first byte
 		$x1 = ord( Constants::UTF8_HANGUL_VBASE );
 		$x2 = ord( Constants::UTF8_HANGUL_TEND );
@@ -759,7 +792,8 @@ class Validator {
 		$string = preg_replace(
 			'/[\x00-\x08\x0b\x0c\x0e-\x1f]/',
 			Constants::UTF8_REPLACEMENT,
-			$string );
+			$string
+		);
 		return str_replace( [ Constants::UTF8_FFFE, Constants::UTF8_FFFF ], Constants::UTF8_REPLACEMENT, $string );
 	}
 }

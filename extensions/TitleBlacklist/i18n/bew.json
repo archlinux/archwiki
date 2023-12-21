@@ -12,5 +12,6 @@
 	"titleblacklist-override": "Kesampingin daptar judul nyang kaga' diboléin kalo cocok",
 	"titleblacklist-override-help": "Pemaké dengen keistimèwaan nyang cukup bisa nyetèl ni bakal nyuèkin pemerèksaan daptar judul nyang kaga' diboléin.",
 	"right-tboverride": "kesampingin daptar judul ama nama pemaké nyang kaga' diboléin",
-	"right-tboverride-account": "kesampingin daptar nama pemaké nyang kaga' diboléin"
+	"right-tboverride-account": "kesampingin daptar nama pemaké nyang kaga' diboléin",
+	"right-titleblacklistlog": "Deleng rekeman daptar judul nyang kaga' diboléin"
 }

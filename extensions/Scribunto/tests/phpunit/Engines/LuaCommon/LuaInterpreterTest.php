@@ -100,7 +100,7 @@ abstract class LuaInterpreterTest extends TestCase {
 		return $args;
 	}
 
-	public function provideRoundtrip() {
+	public static function provideRoundtrip() {
 		return [
 			[ 1 ],
 			[ true ],

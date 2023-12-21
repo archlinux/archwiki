@@ -31,6 +31,12 @@ use Wikimedia\Rdbms\Platform\ISQLPlatform;
  * @ingroup Database
  */
 interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
+
+	/** @var bool Parameter to unionQueries() for UNION ALL */
+	public const UNION_ALL = true;
+	/** @var bool Parameter to unionQueries() for UNION DISTINCT */
+	public const UNION_DISTINCT = false;
+
 	/**
 	 * Get a human-readable string describing the current software version
 	 *
@@ -55,14 +61,6 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 * @return string The previous db schema
 	 */
 	public function dbSchema( $schema = null );
-
-	/**
-	 * Get the last query that sent on account of IDatabase::query()
-	 *
-	 * @deprecated since 1.40 without replacement
-	 * @return string SQL text or empty string if there was no such query
-	 */
-	public function lastQuery();
 
 	/**
 	 * @return bool Whether a connection to the database open
@@ -143,6 +141,19 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	public function newSelectQueryBuilder(): SelectQueryBuilder;
 
 	/**
+	 * Create an empty UnionQueryBuilder which can be used to run queries
+	 * against this connection.
+	 *
+	 * @note A new query builder must be created per query. Query builders
+	 *   should not be reused since this uses a fluent interface and the state of
+	 *   the builder changes during the query which may cause unexpected results.
+	 *
+	 * @since 1.41
+	 * @return UnionQueryBuilder
+	 */
+	public function newUnionQueryBuilder(): UnionQueryBuilder;
+
+	/**
 	 * A SELECT wrapper which returns a single field from a single result row
 	 *
 	 * If no result rows are returned from the query, false is returned.
@@ -150,15 +161,24 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 * New callers should use {@link newSelectQueryBuilder} with {@link SelectQueryBuilder::fetchField}
 	 * instead, which is more readable and less error-prone.
 	 *
+	 * @internal callers outside of rdbms library should use SelectQueryBuilder instead.
+	 *
 	 * @param string|array $table Table name. {@see select} for details.
+	 * @param-taint $table exec_sql
 	 * @param string|array $var The field name to select. This must be a valid SQL fragment: do not
 	 *  use unvalidated user input. Can be an array, but must contain exactly 1 element then.
 	 *  {@see select} for details.
+	 * @param-taint $var exec_sql
 	 * @param string|array $cond The condition array. {@see select} for details.
+	 * @param-taint $cond exec_sql_numkey
 	 * @param string $fname The function name of the caller.
+	 * @param-taint $fname exec_sql
 	 * @param string|array $options The query options. {@see select} for details.
+	 * @param-taint $options none This is special-cased in MediaWikiSecurityCheckPlugin
 	 * @param string|array $join_conds The query join conditions. {@see select} for details.
+	 * @param-taint $join_conds none This is special-cased in MediaWikiSecurityCheckPlugin
 	 * @return mixed|false The value from the field, or false if nothing was found
+	 * @return-taint tainted
 	 * @throws DBError If an error occurs, {@see query}
 	 */
 	public function selectField(
@@ -173,15 +193,24 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 * New callers should use {@link newSelectQueryBuilder} with {@link SelectQueryBuilder::fetchFieldValues}
 	 * instead, which is more readable and less error-prone.
 	 *
+	 * @internal callers outside of rdbms library should use SelectQueryBuilder instead.
+	 *
 	 * @param string|array $table Table name. {@see select} for details.
+	 * @param-taint $table exec_sql
 	 * @param string $var The field name to select. This must be a valid SQL
 	 *   fragment: do not use unvalidated user input.
+	 * @param-taint $var exec_sql
 	 * @param string|array $cond The condition array. {@see select} for details.
+	 * @param-taint $cond exec_sql_numkey
 	 * @param string $fname The function name of the caller.
+	 * @param-taint $fname exec_sql
 	 * @param string|array $options The query options. {@see select} for details.
+	 * @param-taint $options none This is special-cased in MediaWikiSecurityCheckPlugin
 	 * @param string|array $join_conds The query join conditions. {@see select} for details.
+	 * @param-taint $join_conds none This is special-cased in MediaWikiSecurityCheckPlugin
 	 *
 	 * @return array The values from the field in the order they were returned from the DB
+	 * @return-taint tainted
 	 * @throws DBError If an error occurs, {@see query}
 	 * @since 1.25
 	 */
@@ -196,6 +225,7 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 * instead, which is more readable and less error-prone.
 	 *
 	 * @param string|array $table Table name(s)
+	 * @param-taint $table exec_sql
 	 *
 	 * May be either an array of table names, or a single string holding a table
 	 * name. If an array is given, table aliases can be specified, for example:
@@ -231,6 +261,7 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 * not have characters outside of the Basic multilingual plane.
 	 *
 	 * @param string|array $vars Field name(s)
+	 * @param-taint $vars exec_sql
 	 *
 	 * May be either a field name or an array of field names. The field names
 	 * can be complete fragments of SQL, for direct inclusion into the SELECT
@@ -246,6 +277,7 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 * Untrusted user input must not be passed to this parameter.
 	 *
 	 * @param string|array $conds
+	 * @param-taint $conds exec_sql_numkey
 	 *
 	 * May be either a string containing a single condition, or an array of
 	 * conditions. If an array is given, the conditions constructed from each
@@ -289,8 +321,10 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 *     'actor' => [ 'JOIN', 'rev_actor = actor_id' ],
 	 *
 	 * @param string $fname Caller function name
+	 * @param-taint $fname exec_sql
 	 *
 	 * @param string|array $options Query options
+	 * @param-taint $options none This is special-cased in MediaWikiSecurityCheckPlugin
 	 *
 	 * Optional: Array of query options. Boolean options are specified by
 	 * including them in the array as a string value with a numeric key, for
@@ -321,7 +355,7 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 *   - GROUP BY: May be either an SQL fragment string naming a field or
 	 *     expression to group by, or an array of such SQL fragments.
 	 *
-	 *   - HAVING: May be either an string containing a HAVING clause or an array of
+	 *   - HAVING: May be either a string containing a HAVING clause or an array of
 	 *     conditions building the HAVING clause. If an array is given, the conditions
 	 *     constructed from each element are combined with AND.
 	 *
@@ -356,6 +390,7 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 *    - SQL_CALC_FOUND_ROWS
 	 *
 	 * @param string|array $join_conds Join conditions
+	 * @param-taint $join_conds none This is special-cased in MediaWikiSecurityCheckPlugin
 	 *
 	 * Optional associative array of table-specific join conditions.
 	 * Simple conditions can also be specified in the regular $conds,
@@ -369,7 +404,9 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 *
 	 *    [ 'page' => [ 'LEFT JOIN', 'page_latest=rev_id' ] ]
 	 *
+	 * @internal
 	 * @return IResultWrapper Resulting rows
+	 * @return-taint tainted
 	 * @throws DBError If an error occurs, {@see query}
 	 */
 	public function select(
@@ -391,13 +428,21 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 * New callers should use {@link newSelectQueryBuilder} with {@link SelectQueryBuilder::fetchRow}
 	 * instead, which is more readable and less error-prone.
 	 *
+	 * @internal
 	 * @param string|array $table Table name
+	 * @param-taint $table exec_sql
 	 * @param string|array $vars Field names
+	 * @param-taint $vars exec_sql
 	 * @param string|array $conds Conditions
+	 * @param-taint $conds exec_sql_numkey
 	 * @param string $fname Caller function name
+	 * @param-taint $fname exec_sql
 	 * @param string|array $options Query options
+	 * @param-taint $options none This is special-cased in MediaWikiSecurityCheckPlugin
 	 * @param array|string $join_conds Join conditions
+	 * @param-taint $join_conds none This is special-cased in MediaWikiSecurityCheckPlugin
 	 * @return stdClass|false
+	 * @return-taint tainted
 	 * @throws DBError If an error occurs, {@see query}
 	 */
 	public function selectRow(
@@ -425,6 +470,7 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 * New callers should use {@link newSelectQueryBuilder} with {@link SelectQueryBuilder::estimateRowCount}
 	 * instead, which is more readable and less error-prone.
 	 *
+	 * @internal
 	 * @param string|string[] $tables Table name(s)
 	 * @param string $var Column for which NULL values are not counted [default "*"]
 	 * @param array|string $conds Filters on the table
@@ -450,13 +496,21 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	 *
 	 * @since 1.27 Added $join_conds parameter
 	 *
+	 * @internal
 	 * @param string|string[] $tables Table name(s)
+	 * @param-taint $tables exec_sql
 	 * @param string $var Column for which NULL values are not counted [default "*"]
+	 * @param-taint $var exec_sql
 	 * @param array|string $conds Filters on the table
+	 * @param-taint $conds exec_sql_numkey
 	 * @param string $fname Function name for profiling
+	 * @param-taint $fname exec_sql
 	 * @param array $options Options for select
+	 * @param-taint $options none This is special-cased in MediaWikiSecurityCheckPlugin
 	 * @param array $join_conds Join conditions (since 1.27)
+	 * @param-taint $join_conds none This is special-cased in MediaWikiSecurityCheckPlugin
 	 * @return int Row count
+	 * @return-taint none
 	 * @throws DBError If an error occurs, {@see query}
 	 */
 	public function selectRowCount(
@@ -523,40 +577,11 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	public function wasDeadlock();
 
 	/**
-	 * Determines if the last failure was due to a lock timeout
-	 *
-	 * Note that during a lock wait timeout, the prior transaction will have been lost
-	 *
-	 * @return bool
-	 */
-	public function wasLockTimeout();
-
-	/**
-	 * Determines if the last query error was due to a dropped connection
-	 *
-	 * Note that during a connection loss, the prior transaction will have been lost
-	 *
-	 * @return bool
-	 * @since 1.31
-	 */
-	public function wasConnectionLoss();
-
-	/**
 	 * Determines if the last failure was due to the database being read-only
 	 *
 	 * @return bool
 	 */
 	public function wasReadOnlyError();
-
-	/**
-	 * Determines if the last query error was due to something outside of the query itself
-	 *
-	 * Note that the transaction may have been lost, discarding prior writes and results
-	 *
-	 * @return bool
-	 * @deprecated Since 1.40
-	 */
-	public function wasErrorReissuable();
 
 	/**
 	 * Wait for the replica server to catch up to a given primary server position
@@ -593,7 +618,7 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	public function ping();
 
 	/**
-	 * Get the amount of replication lag for this database server
+	 * Get the seconds of replication lag on this database server
 	 *
 	 * Callers should avoid using this method while a transaction is active
 	 *
@@ -603,13 +628,12 @@ interface IReadableDatabase extends ISQLPlatform, DbQuoter, IDatabaseFlags {
 	public function getLag();
 
 	/**
-	 * Get the replica server lag when the current transaction started
-	 * or a general lag estimate if not transaction is active
+	 * Get a cached estimate of the seconds of replication lag on this database server,
+	 * using the estimate obtained at the start of the current transaction if one is active
 	 *
-	 * This is useful when transactions might use snapshot isolation
-	 * (e.g. REPEATABLE-READ in innodb), so the "real" lag of that data
-	 * is this lag plus transaction duration. If they don't, it is still
-	 * safe to be pessimistic. In AUTOCOMMIT mode, this still gives an
+	 * This is useful when transactions might use snapshot isolation (e.g. REPEATABLE-READ in
+	 * innodb), so the "real" lag of that data is this lag plus transaction duration. If they
+	 * don't, it is still safe to be pessimistic. In AUTOCOMMIT mode, this still gives an
 	 * indication of the staleness of subsequent reads.
 	 *
 	 * @return array ('lag': seconds or false on error, 'since': UNIX timestamp of BEGIN)

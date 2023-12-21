@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Extension\Notifications\Push\Utils;
+use MediaWiki\Extension\Notifications\Services;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -17,7 +18,7 @@ class SubscriptionManagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testManagePushSubscriptions(): void {
-		$subscriptionManagerBase = EchoServices::getInstance()->getPushSubscriptionManager();
+		$subscriptionManagerBase = Services::getInstance()->getPushSubscriptionManager();
 		$subscriptionManager = TestingAccessWrapper::newFromObject( $subscriptionManagerBase );
 
 		$user = $this->getTestUser()->getUser();

@@ -24,9 +24,15 @@ use MediaWiki\Minerva\Menu\Entries\IMenuEntry;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
 use MediaWiki\Minerva\Menu\Group;
 use MediaWiki\Minerva\Permissions\IMinervaPagePermissions;
+use MediaWiki\Title\Title;
 use MessageLocalizer;
 
 class DefaultOverflowBuilder implements IOverflowBuilder {
+
+	/**
+	 * @var Title
+	 */
+	private $title;
 
 	/**
 	 * @var MessageLocalizer
@@ -41,15 +47,30 @@ class DefaultOverflowBuilder implements IOverflowBuilder {
 	/**
 	 * Initialize Default overflow menu Group
 	 *
+	 * @param Title $title
 	 * @param MessageLocalizer $messageLocalizer
 	 * @param IMinervaPagePermissions $permissions Minerva permissions system
 	 */
 	public function __construct(
+		Title $title,
 		MessageLocalizer $messageLocalizer,
 		IMinervaPagePermissions $permissions
 	) {
+		$this->title = $title;
 		$this->messageLocalizer = $messageLocalizer;
 		$this->permissions = $permissions;
+	}
+
+	public function getTitle(): Title {
+		return $this->title;
+	}
+
+	public function getMessageLocalizer(): MessageLocalizer {
+		return $this->messageLocalizer;
+	}
+
+	public function isAllowed( string $permission ): bool {
+		return $this->permissions->isAllowed( $permission );
 	}
 
 	/**
@@ -57,29 +78,29 @@ class DefaultOverflowBuilder implements IOverflowBuilder {
 	 */
 	public function getGroup( array $toolbox, array $actions ): Group {
 		$group = new Group( 'p-tb' );
-		// T285567: Make sure admins can unprotect the page afterwards
-		$permissionChangeAction = array_key_exists( 'unprotect', $actions ) ?
-			$this->build( 'unprotect', 'unLock', 'unprotect', $actions ) :
-			$this->build( 'protect', 'lock', 'protect', $actions );
 
-		$possibleEntries = array_filter( [
-			$this->build( 'info', 'infoFilled', 'info', $toolbox ),
-			$this->build( 'permalink', 'link', 'permalink', $toolbox ),
-			$this->build( 'backlinks', 'articleRedirect', 'whatlinkshere', $toolbox ),
-			$this->build( 'wikibase', 'logoWikidata', 'wikibase', $toolbox ),
-			$this->build( 'cite', 'quotes', 'citethispage', $toolbox ),
-			$this->permissions->isAllowed( IMinervaPagePermissions::MOVE ) ?
-				$this->build( 'move', 'move', 'move', $actions ) : null,
-			$this->permissions->isAllowed( IMinervaPagePermissions::DELETE ) ?
-				$this->build( 'delete', 'trash', 'delete', $actions ) : null,
-			$this->permissions->isAllowed( IMinervaPagePermissions::PROTECT ) ?
-				$permissionChangeAction : null
-		] );
-
-		foreach ( $possibleEntries as $menuEntry ) {
-			$group->insertEntry( $menuEntry );
+		$override = $this->isAllowed( IMinervaPagePermissions::EDIT_OR_CREATE ) ? [
+			'editfull' => [
+				'icon' => 'edit',
+				'text' => $this->messageLocalizer->msg( 'minerva-page-actions-editfull' ),
+				'href' => $this->title->getLocalURL( [ 'action' => 'edit', 'section' => 'all' ] ),
+				'class' => 'edit-link',
+			],
+		] : [];
+		// watch icon appears in page actions rather than here.
+		$combinedMenu = array_merge( $toolbox, $override, $actions );
+		unset( $combinedMenu[ 'watch' ] );
+		unset( $combinedMenu[ 'unwatch' ] );
+		foreach ( $combinedMenu as $key => $definition ) {
+			$icon = $definition['icon'] ?? null;
+			// Only menu items with icons can be displayed here.
+			if ( $icon ) {
+				$entry = $this->build( $key, $icon, $key, $combinedMenu );
+				if ( $entry ) {
+					$group->insertEntry( $entry );
+				}
+			}
 		}
-
 		return $group;
 	}
 
@@ -94,13 +115,16 @@ class DefaultOverflowBuilder implements IOverflowBuilder {
 	 */
 	private function build( $name, $icon, $toolboxIdx, array $toolbox ) {
 		$href = $toolbox[$toolboxIdx]['href'] ?? null;
+		$originalMsg = $toolbox[$toolboxIdx]['text'] ??
+			$this->messageLocalizer->msg( $toolboxIdx )->text();
 
-		return $href ?
-			SingleMenuEntry::create(
-				'page-actions-overflow-' . $name,
-				$this->messageLocalizer->msg( 'minerva-page-actions-' . $name )->text(),
-				$href
-			)->setIcon( $icon, 'before' )
-			->trackClicks( $name ) : null;
+		$entry = new SingleMenuEntry(
+			'page-actions-overflow-' . $name,
+			$originalMsg,
+			$href,
+			$toolbox[$name]['class'] ?? false
+		);
+
+		return $href ? $entry->setIcon( $icon )->trackClicks( $name ) : null;
 	}
 }

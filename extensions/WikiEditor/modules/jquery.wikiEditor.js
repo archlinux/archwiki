@@ -33,6 +33,39 @@
 		}() );
 
 	/**
+	 * Helper function to mark the automatic message functionality in
+	 * the autoMsg and autoSafeMsg functions as deprecated.
+	 *
+	 * @param {string} property
+	 * @param {string} key
+	 */
+	function deprecateAutoMsg( property, key ) {
+		var searchParam = mw.config.get( 'wgSearchType' ) === 'CirrusSearch' ?
+			'insource:/' + property + 'Msg: \'' + key + '\'/' :
+			property + 'Msg: ' + key;
+		var searchUri = mw.config.get( 'wgServer' ) +
+			mw.util.getUrl(
+				'Special:Search',
+				{ search: searchParam, ns2: 1, ns8: 1 }
+			);
+		if ( searchUri.slice( 0, 2 ) === '//' ) {
+			searchUri = location.protocol + searchUri;
+		}
+
+		var messageMethod;
+		if ( property === 'html' || property === 'text' || property === 'title' ) {
+			messageMethod = 'mw.message( ' + JSON.stringify( key ) + ' ).parse()';
+		} else {
+			messageMethod = 'mw.msg( ' + JSON.stringify( key ) + ' )';
+		}
+		var deprecationMsg = mw.log.makeDeprecated(
+			'wikiEditor_autoMsg',
+			'WikiEditor: Use `' + property + ': ' + messageMethod + '` instead of `' + property + 'Msg: ' + JSON.stringify( key ) + '`.\nSearch: ' + searchUri
+		);
+		deprecationMsg();
+	}
+
+	/**
 	 * Global static object for wikiEditor that provides generally useful functionality to all modules and contexts.
 	 */
 	$.wikiEditor = {
@@ -90,6 +123,8 @@
 		 *        special need instead?
 		 * FIXME: Also, this is ludicrously complex. Just use mw.message().text() directly.
 		 *
+		 * @deprecated Since v0.5.4. Use mw.message() directly instead of <key>Msg
+		 *
 		 * @param {Object} object Object to extract messages from
 		 * @param {string} property String of name of property which contains the message. This should be the base name of the
 		 * property, which means that in the case of the object { this: 'that', fooMsg: 'bar' }, passing property as 'this'
@@ -112,8 +147,10 @@
 			} else if ( property + 'Msg' in object ) {
 				var p = object[ property + 'Msg' ];
 				if ( Array.isArray( p ) && p.length >= 2 ) {
+					deprecateAutoMsg( property, p[ 0 ] );
 					return mw.message.apply( mw.message, p ).text();
 				} else {
+					deprecateAutoMsg( property, p );
 					// eslint-disable-next-line mediawiki/msg-doc
 					return mw.message( p ).text();
 				}
@@ -126,6 +163,8 @@
 		 * Provides a way to extract messages from objects. Wraps a mw.message( ... ).escaped() call.
 		 *
 		 * FIXME: This is ludicrously complex. Just use mw.message().escaped() directly.
+		 *
+		 * @deprecated Since v0.5.4. Use mw.message() directly instead of <key>Msg
 		 *
 		 * @param {Object} object Object to extract messages from
 		 * @param {string} property String of name of property which contains the message. This should be the base name of the
@@ -149,8 +188,10 @@
 			} else if ( property + 'Msg' in object ) {
 				var p = object[ property + 'Msg' ];
 				if ( Array.isArray( p ) && p.length >= 2 ) {
+					deprecateAutoMsg( property, p[ 0 ] );
 					return mw.message.apply( mw.message, p ).escaped();
 				} else {
+					deprecateAutoMsg( property, p );
 					// eslint-disable-next-line mediawiki/msg-doc
 					return mw.message( p ).escaped();
 				}
@@ -406,7 +447,7 @@
 					}
 					// Automatically add the previously not-needed wikitext tab
 					if ( !context.$tabs.children().length ) {
-						addTab( { name: 'wikitext', titleMsg: 'wikieditor-wikitext-tab' } );
+						addTab( { name: 'wikitext', title: mw.message( 'wikieditor-wikitext-tab' ).parse() } );
 					}
 					// Add the tab for the view we were actually asked to add
 					addTab( options );

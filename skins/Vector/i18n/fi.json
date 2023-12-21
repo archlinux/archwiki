@@ -61,6 +61,8 @@
 	"vector-toc-menu-tooltip": "Sisällysluettelo",
 	"vector-site-nav-label": "Sivusto",
 	"vector-main-menu-label": "Päävalikko",
+	"vector-limited-width-toggle": "Vaihda rajoitettu sisällön leveys",
+	"vector-limited-width-toggle-on-popup": "Olet vaihtanut sivun asettelusi täyteen leveyteen. Voit palata rajoitettuun leveyteen painamalla tätä nappia.",
 	"vector-page-tools-label": "Työkalut",
 	"vector-page-tools-general-label": "Yleinen",
 	"vector-page-tools-actions-label": "Toiminnot",
@@ -69,5 +71,8 @@
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Keskustelu]]",
 	"tooltip-vector-anon-user-menu-title": "Lisää valintoja",
 	"vector-prefs-limited-width": "Ota rajoitettu leveystila käyttöön",
-	"vector-prefs-limited-width-help": "Ota käyttöön rajoitettu leveystila parantaaksesi lukukokemusta."
+	"vector-prefs-limited-width-help": "Ota käyttöön rajoitettu leveystila parantaaksesi lukukokemusta.",
+	"vector-toc-unpinned-popup": "Sisällysluettelo on siirretty tänne.",
+	"vector-page-tools-unpinned-popup": "Työkaluvalikko on siirretty tänne.",
+	"vector-main-menu-unpinned-popup": "Päävalikko on siirretty tänne."
 }

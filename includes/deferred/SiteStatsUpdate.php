@@ -19,6 +19,7 @@
  */
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\SiteStats\SiteStats;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Rdbms\IDatabase;
 
@@ -114,7 +115,7 @@ class SiteStatsUpdate implements DeferrableUpdate, MergeableUpdate {
 		}
 
 		( new AutoCommitUpdate(
-			$services->getDBLoadBalancer()->getConnectionRef( DB_PRIMARY ),
+			$services->getDBLoadBalancerFactory()->getPrimaryDatabase(),
 			__METHOD__,
 			static function ( IDatabase $dbw, $fname ) use ( $deltaByType, $shards ) {
 				$set = [];
@@ -145,15 +146,19 @@ class SiteStatsUpdate implements DeferrableUpdate, MergeableUpdate {
 
 				if ( $set ) {
 					if ( $hasNegativeDelta ) {
-						$dbw->update( 'site_stats', $set, [ 'ss_row_id' => $shard ], $fname );
+						$dbw->newUpdateQueryBuilder()
+							->update( 'site_stats' )
+							->set( $set )
+							->where( [ 'ss_row_id' => $shard ] )
+							->caller( $fname )->execute();
 					} else {
-						$dbw->upsert(
-							'site_stats',
-							array_merge( [ 'ss_row_id' => $shard ], $initValues ),
-							'ss_row_id',
-							$set,
-							$fname
-						);
+						$dbw->newInsertQueryBuilder()
+							->insertInto( 'site_stats' )
+							->row( array_merge( [ 'ss_row_id' => $shard ], $initValues ) )
+							->onDuplicateKeyUpdate()
+							->uniqueIndexFields( [ 'ss_row_id' ] )
+							->set( $set )
+							->caller( $fname )->execute();
 					}
 				}
 			}
@@ -171,7 +176,7 @@ class SiteStatsUpdate implements DeferrableUpdate, MergeableUpdate {
 		$services = MediaWikiServices::getInstance();
 		$config = $services->getMainConfig();
 
-		$dbr = $services->getDBLoadBalancer()->getConnectionRef( DB_REPLICA, 'vslow' );
+		$dbr = $services->getDBLoadBalancerFactory()->getReplicaDatabase( false, 'vslow' );
 		# Get non-bot users than did some recent action other than making accounts.
 		# If account creation is included, the number gets inflated ~20+ fold on enwiki.
 		$activeUsers = $dbr->newSelectQueryBuilder()
@@ -188,12 +193,11 @@ class SiteStatsUpdate implements DeferrableUpdate, MergeableUpdate {
 			] )
 			->caller( __METHOD__ )
 			->fetchField();
-		$dbw->update(
-			'site_stats',
-			[ 'ss_active_users' => intval( $activeUsers ) ],
-			[ 'ss_row_id' => 1 ],
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'site_stats' )
+			->set( [ 'ss_active_users' => intval( $activeUsers ) ] )
+			->where( [ 'ss_row_id' => 1 ] )
+			->caller( __METHOD__ )->execute();
 
 		// Invalid cache used by parser functions
 		SiteStats::unload();

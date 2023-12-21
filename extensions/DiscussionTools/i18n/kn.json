@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"~aanzx",
 			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ"
 		]
 	},
@@ -15,7 +16,7 @@
 	"discussiontools-replywidget-placeholder-newtopic": "ವಿವರಣೆ",
 	"discussiontools-replywidget-preferences": "ಪ್ರಾಶಸ್ತ್ಯಗಳು",
 	"discussiontools-replywidget-preview": "ಮುನ್ನೋಟ",
-	"discussiontools-replywidget-reply": "ಪ್ರತಿಕ್ರಿಯೆ",
+	"discussiontools-replywidget-reply": "{{GENDER:|ಪ್ರತ್ಯುತ್ತರ}}",
 	"discussiontools-replywidget-summary": "ಸಾರಾಂಶ",
 	"discussiontools-topicsubscription-pager-actions": "ಕ್ರಿಯೆಗಳು",
 	"discussiontools-topicsubscription-pager-page": "ಪುಟ",

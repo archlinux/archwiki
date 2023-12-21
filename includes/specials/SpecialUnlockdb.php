@@ -21,7 +21,14 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use ErrorPageError;
+use HTMLForm;
 use MediaWiki\MainConfigNames;
+use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\Status\Status;
+use MediaWiki\User\User;
 use Wikimedia\AtEase\AtEase;
 
 /**
@@ -97,3 +104,9 @@ class SpecialUnlockdb extends FormSpecialPage {
 		return 'wiki';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialUnlockdb::class, 'SpecialUnlockdb' );

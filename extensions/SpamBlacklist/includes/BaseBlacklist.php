@@ -5,9 +5,9 @@ namespace MediaWiki\Extension\SpamBlacklist;
 use Exception;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use ObjectCache;
 use TextContent;
-use Title;
 use User;
 
 /**
@@ -296,6 +296,11 @@ abstract class BaseBlacklist {
 		if ( !$this->files ) {
 			# No lists
 			wfDebugLog( 'SpamBlacklist', "no files specified\n" );
+			return [];
+		}
+
+		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+			wfDebugLog( 'SpamBlacklist', 'remote loading disabled during PHPUnit test' );
 			return [];
 		}
 

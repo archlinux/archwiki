@@ -1,13 +1,12 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
-use Title;
+use MediaWiki\Title\Title;
 
 /**
  * VectorComponentLanguageButton component
  */
 class VectorComponentLanguageDropdown implements VectorComponent {
-	private const CLASS_PROGRESSIVE = 'mw-ui-progressive';
 	/** @var string */
 	private $label;
 	/** @var string */
@@ -58,22 +57,22 @@ class VectorComponentLanguageDropdown implements VectorComponent {
 		// display a less prominent "language" button, without a label, and
 		// quiet instead of progressive. For this reason some default values
 		// should be updated for this case. (T316559)
+		$buttonClasses = 'cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet';
 		if ( !$isSubjectPage ) {
 			$icon = 'language';
-			$label = '';
-			$headingClass = 'mw-ui-button mw-ui-quiet mw-portlet-lang-heading-empty';
+			$this->class .= ' mw-portlet-lang-icon-only';
+			$labelClass = $buttonClasses . ' cdx-button--icon-only mw-portlet-lang-heading-empty';
 			$checkboxClass = 'mw-interlanguage-selector-empty';
 		} else {
 			$icon = 'language-progressive';
-			$label = $this->label;
-			$headingClass = 'mw-ui-button mw-ui-quiet '
-				. self::CLASS_PROGRESSIVE . ' mw-portlet-lang-heading-' . strval( $this->numLanguages );
+			$labelClass = $buttonClasses . ' cdx-button--action-progressive'
+				. ' mw-portlet-lang-heading-' . strval( $this->numLanguages );
 			$checkboxClass = 'mw-interlanguage-selector';
 		}
-		$dropdown = new VectorComponentDropdown( 'p-lang-btn', $label, $this->class );
+		$dropdown = new VectorComponentDropdown( 'p-lang-btn', $this->label, $this->class );
 		$dropdownData = $dropdown->getTemplateData();
 		// override default heading class.
-		$dropdownData['heading-class'] = $headingClass;
+		$dropdownData['label-class'] = $labelClass;
 		// ext.uls.interface attaches click handler to this selector.
 		$dropdownData['checkbox-class'] = $checkboxClass;
 		$dropdownData['icon'] = $icon;

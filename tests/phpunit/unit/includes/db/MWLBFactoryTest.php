@@ -19,8 +19,9 @@
  */
 
 use MediaWiki\Config\ServiceOptions;
+use Wikimedia\Rdbms\ChronologyProtector;
+use Wikimedia\Rdbms\ConfiguredReadOnlyMode;
 use Wikimedia\Rdbms\DatabaseDomain;
-use Wikimedia\Rdbms\DatabaseFactory;
 use Wikimedia\Rdbms\LBFactorySimple;
 use Wikimedia\RequestTimeout\CriticalSectionProvider;
 use Wikimedia\RequestTimeout\RequestTimeout;
@@ -36,12 +37,12 @@ class MWLBFactoryTest extends MediaWikiUnitTestCase {
 		return new MWLBFactory(
 			new ServiceOptions( [], [] ),
 			new ConfiguredReadOnlyMode( 'Test' ),
-			new EmptyBagOStuff(),
+			new ChronologyProtector(),
 			new EmptyBagOStuff(),
 			new WANObjectCache( [ 'cache' => new EmptyBagOStuff() ] ),
 			new CriticalSectionProvider( RequestTimeout::singleton(), 1, null, null ),
 			new NullStatsdDataFactory(),
-			new DatabaseFactory()
+			[]
 		);
 	}
 
@@ -56,7 +57,7 @@ class MWLBFactoryTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function getLBFactoryClassProvider() {
+	public static function getLBFactoryClassProvider() {
 		yield 'undercore alias default' => [
 			[ 'class' => 'LBFactory_Simple' ],
 			Wikimedia\Rdbms\LBFactorySimple::class,
@@ -88,7 +89,7 @@ class MWLBFactoryTest extends MediaWikiUnitTestCase {
 		$rawDomain = rtrim( "$dbname-$prefix", '-' );
 		$this->assertEquals(
 			$expectedDomain,
-			$lbFactory->resolveDomainID( $rawDomain ),
+			$lbFactory->getMainLB()->resolveDomainID( $rawDomain ),
 			'Domain aliases set'
 		);
 	}

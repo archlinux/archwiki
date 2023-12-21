@@ -6,7 +6,6 @@
 			"Toliño"
 		]
 	},
-	"apihelp-templatedata-description": "Obter os datos almacenador pola extensión TemplateData.",
 	"apihelp-templatedata-summary": "Obter os datos almacenador pola extensión TemplateData.",
 	"apihelp-templatedata-example-1": "Devolver TemplateData para [[Template:Stub]] e [[Template:Example]], cos resultados se os modelos non existen ou existen pero non teñen TemplateData",
 	"apihelp-templatedata-example-2": "Devolver TemplateData para [[Template:Stub]] e [[Template:Example]], sen resultados se os modelos non existen ou existen pero non teñen TemplateData",

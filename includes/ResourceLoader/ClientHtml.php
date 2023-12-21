@@ -60,9 +60,8 @@ class ClientHtml {
 	 * @param array $options [optional] Array of options
 	 *  - 'target': Parameter for modules=startup request, see StartUpModule.
 	 *  - 'safemode': Parameter for modules=startup request, see StartUpModule.
-	 *  - 'nonce': From OutputPage->getCSP->getNonce().
-	 *  - 'clientPrefEnabled': See $wgResourceLoaderClientPreferences.
-	 *  - 'clientPrefCookiePrefix': See $wgResourceLoaderClientPreferences.
+	 *  - 'clientPrefEnabled': See Skin options.
+	 *  - 'clientPrefCookiePrefix': See $wgCookiePrefix.
 	 */
 	public function __construct( Context $context, array $options = [] ) {
 		$this->context = $context;
@@ -70,7 +69,6 @@ class ClientHtml {
 		$this->options = $options + [
 			'target' => null,
 			'safemode' => null,
-			'nonce' => null,
 			'clientPrefEnabled' => false,
 			'clientPrefCookiePrefix' => '',
 		];
@@ -135,7 +133,7 @@ class ClientHtml {
 				'styles' => [],
 				'general' => [],
 			],
-			// Deprecations for style-only modules
+			// Deprecation warnings for style-only modules
 			'styleDeprecations' => [],
 		];
 
@@ -161,7 +159,7 @@ class ClientHtml {
 				//   url to the client that has the 'user' and 'version' parameters
 				//   filled in. Without this, the client would wrongly use the static
 				//   version hash, per T64602.
-				// - For shouldEmbed=true:  Embed via mw.loader.implement, per T36907.
+				// - For shouldEmbed=true:  Embed via mw.loader.impl, per T36907.
 				$data['embed']['general'][] = $name;
 				// Avoid duplicate request from mw.loader
 				$data['states'][$name] = 'loading';
@@ -222,7 +220,7 @@ class ClientHtml {
 				// Load from load.php?only=styles via <link rel=stylesheet>
 				$data['styles'][] = $name;
 			}
-			$deprecation = $module->getDeprecationInformation( $context );
+			$deprecation = $module->getDeprecationWarning();
 			if ( $deprecation ) {
 				$data['styleDeprecations'][] = $deprecation;
 			}
@@ -251,34 +249,28 @@ class ClientHtml {
 		//
 		// See also Skin:getHtmlElementAttributes() and startup/startup.js.
 		//
-		// Optimisation: Produce shorter and faster JS by only writing to DOM. Avoid reading
-		// HTMLElement.className and executing JS regexes by doing the string replace in PHP.
+		// Optimisation: Produce shorter and faster JS by only writing to DOM.
 		// This is possible because Skin informs RL about the final value of <html class>, and
 		// because RL already controls the first element in HTML <head> for performance reasons.
+		// - Avoid reading HTMLElement.className
+		// - Avoid executing JS regexes in the common case, by doing the string replace in PHP.
 		$nojsClass ??= $this->getDocumentAttributes()['class'];
 		$jsClass = preg_replace( '/(^|\s)client-nojs(\s|$)/', '$1client-js$2', $nojsClass );
 		$jsClassJson = $this->context->encodeJson( $jsClass );
-		$script = "
-document.documentElement.className = {$jsClassJson};
-";
 
+		// Apply client preferences stored by mw.user.clientPrefs as "class1,class2", where each
+		// item is an <html> class following the pattern "<key>-clientpref-<value>" (T339268)
 		if ( $this->options['clientPrefEnabled'] ) {
 			$cookiePrefix = $this->options['clientPrefCookiePrefix'];
-			$script .= <<<JS
-( function () {
-	var cookie = document.cookie.match( /(?:^|; ){$cookiePrefix}mwclientprefs=([^;]+)/ );
-	// For now, only support disabling a feature
-	// Only supports a single feature (modifying a single class) at this stage.
-	// In future this may be expanded to multiple once this has been proven as viable.
-	if ( cookie ) {
-		var featureName = cookie[1];
-		document.documentElement.className = document.documentElement.className.replace(
-			featureName + '-enabled',
-			featureName + '-disabled'
-		);
-	}
-} () );
-JS;
+			$script = strtr(
+				file_get_contents( MW_INSTALL_PATH . '/resources/src/startup/clientprefs.js' ),
+				[
+					'$VARS.jsClass' => $jsClassJson,
+					'__COOKIE_PREFIX__' => $cookiePrefix,
+				]
+			);
+		} else {
+			$script = "document.documentElement.className = {$jsClassJson};";
 		}
 
 		return $script;
@@ -300,10 +292,6 @@ JS;
 	 * @return string|WrappedStringList HTML
 	 */
 	public function getHeadHtml( $nojsClass = null ) {
-		$nonce = $this->options['nonce'];
-		$data = $this->getData();
-		$chunks = [];
-
 		$script = $this->getDocumentClassNameScript( $nojsClass );
 
 		// Inline script: Declare mw.config variables for this page.
@@ -313,6 +301,8 @@ JS;
 RLCONF = {$confJson};
 ";
 		}
+
+		$data = $this->getData();
 
 		// Inline script: Declare initial module states for this page.
 		$states = array_merge( $this->exemptStates, $data['states'] );
@@ -335,14 +325,14 @@ RLPAGEMODULES = {$pageModulesJson};
 			$script = ResourceLoader::filter( 'minify-js', $script, [ 'cache' => false ] );
 		}
 
-		$chunks[] = Html::inlineScript( $script, $nonce );
+		$chunks = [];
+		$chunks[] = Html::inlineScript( $script );
 
 		// Inline RLQ: Embedded modules
 		if ( $data['embed']['general'] ) {
 			$chunks[] = $this->getLoad(
 				$data['embed']['general'],
-				Module::TYPE_COMBINED,
-				$nonce
+				Module::TYPE_COMBINED
 			);
 		}
 
@@ -350,8 +340,7 @@ RLPAGEMODULES = {$pageModulesJson};
 		if ( $data['styles'] ) {
 			$chunks[] = $this->getLoad(
 				$data['styles'],
-				Module::TYPE_STYLES,
-				$nonce
+				Module::TYPE_STYLES
 			);
 		}
 
@@ -359,8 +348,7 @@ RLPAGEMODULES = {$pageModulesJson};
 		if ( $data['embed']['styles'] ) {
 			$chunks[] = $this->getLoad(
 				$data['embed']['styles'],
-				Module::TYPE_STYLES,
-				$nonce
+				Module::TYPE_STYLES
 			);
 		}
 
@@ -375,7 +363,6 @@ RLPAGEMODULES = {$pageModulesJson};
 		$chunks[] = $this->getLoad(
 			'startup',
 			Module::TYPE_SCRIPTS,
-			$nonce,
 			$startupQuery
 		);
 
@@ -391,10 +378,11 @@ RLPAGEMODULES = {$pageModulesJson};
 
 		// Deprecations for only=styles modules
 		if ( $data['styleDeprecations'] ) {
-			$chunks[] = ResourceLoader::makeInlineScript(
-				implode( '', $data['styleDeprecations'] ),
-				$this->options['nonce']
-			);
+			$calls = '';
+			foreach ( $data['styleDeprecations'] as $warning ) {
+				$calls .= Html::encodeJsCall( 'mw.log.warn', [ $warning ] );
+			}
+			$chunks[] = ResourceLoader::makeInlineScript( $calls );
 		}
 
 		return WrappedString::join( "\n", $chunks );
@@ -404,8 +392,8 @@ RLPAGEMODULES = {$pageModulesJson};
 		return self::makeContext( $this->context, $group, $type );
 	}
 
-	private function getLoad( $modules, $only, $nonce, array $extraQuery = [] ) {
-		return self::makeLoad( $this->context, (array)$modules, $only, $extraQuery, $nonce );
+	private function getLoad( $modules, $only, array $extraQuery = [] ) {
+		return self::makeLoad( $this->context, (array)$modules, $only, $extraQuery );
 	}
 
 	private static function makeContext( Context $mainContext, $group, $type,
@@ -432,12 +420,10 @@ RLPAGEMODULES = {$pageModulesJson};
 	 * @param string[] $modules One or more module names
 	 * @param string $only Module TYPE_ class constant
 	 * @param array $extraQuery [optional] Array with extra query parameters for the request
-	 * @param string|null $nonce [optional] Content-Security-Policy nonce
-	 *  (from OutputPage->getCSP->getNonce())
 	 * @return string|WrappedStringList HTML
 	 */
 	public static function makeLoad( Context $mainContext, array $modules, $only,
-		array $extraQuery = [], $nonce = null
+		array $extraQuery = []
 	) {
 		$rl = $mainContext->getResourceLoader();
 		$chunks = [];
@@ -448,7 +434,7 @@ RLPAGEMODULES = {$pageModulesJson};
 		if ( $mainContext->getDebug() && count( $modules ) > 1 ) {
 			// Recursively call us for every item
 			foreach ( $modules as $name ) {
-				$chunks[] = self::makeLoad( $mainContext, [ $name ], $only, $extraQuery, $nonce );
+				$chunks[] = self::makeLoad( $mainContext, [ $name ], $only, $extraQuery );
 			}
 			return new WrappedStringList( "\n", $chunks );
 		}
@@ -484,18 +470,16 @@ RLPAGEMODULES = {$pageModulesJson};
 					$moduleSetNames = array_keys( $moduleSet );
 					$context->setModules( $moduleSetNames );
 					if ( $embed ) {
+						$response = $rl->makeModuleResponse( $context, $moduleSet );
 						// Decide whether to use style or script element
 						if ( $only == Module::TYPE_STYLES ) {
-							$chunks[] = Html::inlineStyle(
-								$rl->makeModuleResponse( $context, $moduleSet )
-							);
+							$chunks[] = Html::inlineStyle( $response );
 						} else {
-							$chunks[] = ResourceLoader::makeInlineScript(
-								$rl->makeModuleResponse( $context, $moduleSet ),
-								$nonce
-							);
+							$chunks[] = ResourceLoader::makeInlineScript( $response );
 						}
 					} else {
+						// Not embedded
+
 						// Special handling for the user group; because users might change their stuff
 						// on-wiki like user pages, or user preferences; we need to find the highest
 						// timestamp of these user-changeable modules so we can ensure cache misses on change
@@ -522,8 +506,7 @@ RLPAGEMODULES = {$pageModulesJson};
 							] );
 						} else {
 							$chunk = ResourceLoader::makeInlineScript(
-								'mw.loader.load(' . $mainContext->encodeJson( $url ) . ');',
-								$nonce
+								'mw.loader.load(' . $mainContext->encodeJson( $url ) . ');'
 							);
 						}
 

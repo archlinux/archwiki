@@ -3,6 +3,7 @@
 		"authors": [
 			"2nd-player",
 			"Afaz",
+			"Anonymoususer12321",
 			"Aotake",
 			"Ficell",
 			"Fryed-peach",
@@ -13,7 +14,6 @@
 			"Shirayuki",
 			"Sujiniku",
 			"Yusuke1109",
-			"Anonymoususer12321",
 			"春春眠眠"
 		]
 	},
@@ -44,5 +44,11 @@
 	"cite_references_link_accessibility_back_label": "最後の位置に戻る",
 	"cite_section_preview_references": "脚注プレビュー",
 	"cite_warning": "引用に関する警告: $1",
-	"cite_warning_sectionpreview_no_text": "name が <code>$1</code> の <code>&lt;ref&gt;</code> タグは、現在の節の外で定義されているかまたはどこでも定義されていないため、プレビューできません。"
+	"cite_warning_sectionpreview_no_text": "name が <code>$1</code> の <code>&lt;ref&gt;</code> タグは、現在の節の外で定義されているかまたはどこでも定義されていないため、プレビューできません。",
+	"cite-wikieditor-tool-reference": "注釈",
+	"cite-wikieditor-help-page-references": "注釈",
+	"cite-wikieditor-help-content-reference-description": "注釈",
+	"cite-wikieditor-help-content-named-reference-description": "名前付き注釈",
+	"cite-wikieditor-help-content-rereference-description": "同じ注釈の追加利用",
+	"cite-wikieditor-help-content-showreferences-description": "脚注の表示"
 }

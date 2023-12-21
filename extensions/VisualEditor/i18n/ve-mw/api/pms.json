@@ -5,7 +5,6 @@
 			"Dragonòt"
 		]
 	},
-	"apihelp-visualeditor-description": "A rëspond con n'HTML5 për na pàgina dal sërvissi Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Durant l'argistrassion, ch'a ampòsta sòn con lë stamp orari dla revision ch'a l'é stàita modificà. Dovrà për trové ij conflit ëd modìfica.",
 	"apihelp-visualeditor-param-cachekey": "Për la serialisassion o ël dif, dovré l'arzultà 'd n'arcesta serializeforcache precedenta con sta ciav. A coata $1html.",
 	"apihelp-visualeditor-param-html": "HTML da mandé a Parsoid për convertì an test wiki.",
@@ -15,6 +14,5 @@
 	"apihelp-visualeditor-param-pst": "A pre-argistra 'l test wiki trasformà prima 'd mandelo a Parsoid (paction=parsefragment).",
 	"apihelp-visualeditor-param-starttimestamp": "Durant l'argistrassion, ch'a ampòsta sòn a lë stamp orari ëd quand la pàgina a l'é stàita carià. Dovrà për trové ij conflit ëd modìfica.",
 	"apihelp-visualeditor-param-wikitext": "Test wiki da mandé a Parsoid për convertilo an HTML (paction=parsefragment).",
-	"apihelp-visualeditoredit-description": "Salvé na pàgina HTML5 vers MediaWiki (convertìa an test wiki con ël servissi Parsoid).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Durant l'argistrassion, ch'a ampòsta sòn a lë stamp orari dla revision ch'a l'é stàita modificà. Dovrà për trové ij conflit ëd modìfica."
 }

@@ -35,7 +35,6 @@
 	"replacetext_warning": "I a $1 fichièr{{PLURAL:$1| que conten|s que contenon}} ja la cadena de remplaçament « $2 ».\nS'efectuatz aquesta substitucion, poiretz pas separar vòstres cambiaments a partir d'aquestas cadenas.",
 	"replacetext_blankwarning": "Perque la cadena de remplaçament es voida, aquesta operacion serà irreversibla ; volètz contunhar ?",
 	"replacetext_continue": "Contunhar",
-	"replacetext_announce": "Anonciar aquelas modificacions via $1 e via las listas de seguit.",
 	"replacetext_editsummary": "Remplaçament de tèxte — « $1 » per « $2 »",
 	"right-replacetext": "Far de remplaçaments de tèxte dins tot lo wiki"
 }

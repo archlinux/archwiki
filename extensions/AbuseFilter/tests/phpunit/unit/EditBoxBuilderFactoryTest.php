@@ -48,7 +48,7 @@ class EditBoxBuilderFactoryTest extends MediaWikiUnitTestCase {
 			: $this->assertInstanceOf( PlainEditBoxBuiler::class, $builder );
 	}
 
-	public function provideNewEditBoxBuilder(): array {
+	public static function provideNewEditBoxBuilder(): array {
 		return [
 			[ true ],
 			[ false ]

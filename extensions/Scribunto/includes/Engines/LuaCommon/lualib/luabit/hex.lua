@@ -6,7 +6,7 @@ Hex conversion lib for lua.
 How to use:
  hex.to_hex(n) -- convert a number to a hex string
  hex.to_dec(hex) -- convert a hex string(prefix with '0x' or '0X') to number
- 
+
 Part of LuaBit(http://luaforge.net/projects/bit/).
 
 Under the MIT license.
@@ -18,7 +18,7 @@ copyright(c) 2006~2007 hanzhao (abrash_han@hotmail.com)
 
 local bit = require 'bit'
 
-do 
+do
 
 local function to_hex(n)
  if(type(n) ~= "number") then
@@ -36,11 +36,11 @@ local function to_hex(n)
   n = bit.tonumb(n)
  end
 
- hex_tbl = {'A', 'B', 'C', 'D', 'E', 'F'}
- hex_str = ""
+ local hex_tbl = {'A', 'B', 'C', 'D', 'E', 'F'}
+ local hex_str = ""
 
  while(n ~= 0) do
-  last = math.mod(n, 16)
+  local last = math.mod(n, 16)
   if(last < 10) then
    hex_str = tostring(last) .. hex_str
   else
@@ -59,15 +59,13 @@ local function to_dec(hex)
   error("non-string type passed in.")
  end
 
- head = string.sub(hex, 1, 2)
- 
+ local head = string.sub(hex, 1, 2)
+
  if( head ~= "0x" and head ~= "0X") then
   error("wrong hex format, should lead by 0x or 0X.")
  end
 
- v = tonumber(string.sub(hex, 3), 16)
-
- return v;
+ return tonumber(string.sub(hex, 3), 16)
 end
 
 --------------------
@@ -88,11 +86,10 @@ h = to_hex(d)
 print(h)
 print(to_dec(h))
 
-
 for i = 1, 100000 do
  h = hex.to_hex(i)
  d = hex.to_dec(h)
- if(d ~= i) then 
+ if(d ~= i) then
   error("failed " .. i .. ", " .. h)
  end
 end

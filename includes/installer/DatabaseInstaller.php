@@ -22,6 +22,7 @@
  */
 
 use MediaWiki\Html\Html;
+use MediaWiki\Status\Status;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DatabaseDomain;
@@ -413,8 +414,8 @@ abstract class DatabaseInstaller {
 	/**
 	 * Perform database upgrades
 	 *
-	 * @suppress SecurityCheck-XSS Escaping provided by $this->outputHandler
 	 * @return bool
+	 * @suppress SecurityCheck-XSS Escaping provided by $this->outputHandler
 	 */
 	public function doUpgrade() {
 		$this->setupSchemaVars();

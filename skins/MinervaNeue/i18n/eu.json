@@ -13,7 +13,6 @@
 		]
 	},
 	"minerva-last-modified-date": "Azken aldaketa $1(e)an, $2(e)tan",
-	"minerva-talk-add-topic": "Eztabaida gehitu",
 	"mobile-frontend-cookies-required": "Cookie-ak behar dira ikuspegi moduak aldatzeko. Gaitu itzazu eta saiatu berriro.",
 	"mobile-frontend-editor-edit": "Aldatu",
 	"minerva-download": "Deskargatu PDF formatuan",
@@ -34,8 +33,6 @@
 	"mobile-frontend-meta-data-issues": "Orriaren arazoak",
 	"mobile-frontend-meta-data-issues-categories": "Kategoria honi buruz",
 	"mobile-frontend-meta-data-issues-header": "Orrialdearen arazoak",
-	"mobile-frontend-meta-data-issues-header-talk": "Orrialde honi buruz",
-	"mobile-frontend-meta-data-issues-talk": "Eztabaida orrialde honi buruz",
 	"mobile-frontend-notifications-filter": "Iragazkia",
 	"mobile-frontend-pageaction-edit-tooltip": "Orrialde honetako sarrera atala editatu",
 	"mobile-frontend-placeholder": "{{SITENAME}} wikian bilatu",

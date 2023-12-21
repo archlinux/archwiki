@@ -24,12 +24,12 @@
 	"categorytree-num-files": "$1 B",
 	"categorytree-num-empty": "kosong",
 	"categorytree-load": "muatin",
-	"categorytree-loading": "muat...",
+	"categorytree-loading": "munggah...",
 	"categorytree-nothing-found": "kaga' ketemu",
 	"categorytree-no-subcategories": "kaga' ada anakkatègori",
 	"categorytree-no-parent-categories": "kaga' ada katègori induk",
 	"categorytree-no-pages": "kaga' ada halaman atawa anakkatègori",
 	"categorytree-not-found": "Katègori <i>$1</i> kaga' ketemu",
-	"categorytree-error": "Masalah pas muat data.",
+	"categorytree-error": "Masalah pas munggah data.",
 	"categorytree-retry": "Tunggu bentaran dah, terus jal lagi."
 }

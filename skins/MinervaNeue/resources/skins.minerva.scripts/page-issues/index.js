@@ -5,7 +5,6 @@
 		KEYWORD_ALL_SECTIONS = 'all',
 		config = mw.config,
 		NS_MAIN = 0,
-		NS_TALK = 1,
 		NS_CATEGORY = 14,
 		CURRENT_NS = config.get( 'wgNamespaceNumber' ),
 		features = mw.config.get( 'wgMinervaFeatures', {} ),
@@ -132,7 +131,7 @@
 			allIssues = {},
 			label,
 			$lead = pageHTMLParser.getLeadSectionElement(),
-			issueOverlayShowAll = CURRENT_NS === NS_CATEGORY || CURRENT_NS === NS_TALK || !$lead,
+			issueOverlayShowAll = CURRENT_NS === NS_CATEGORY || !$lead,
 			inline = newTreatmentEnabled && CURRENT_NS === 0;
 
 		// set A-B test class.
@@ -141,10 +140,10 @@
 			$( document.documentElement ).addClass( 'issues-group-B' );
 		}
 
-		if ( CURRENT_NS === NS_TALK || CURRENT_NS === NS_CATEGORY ) {
+		if ( CURRENT_NS === NS_CATEGORY ) {
 			section = KEYWORD_ALL_SECTIONS;
 			// e.g. Template:English variant category; Template:WikiProject
-			issueSummaries = insertBannersOrNotice( pageHTMLParser, mw.msg( 'mobile-frontend-meta-data-issues-header-talk' ),
+			issueSummaries = insertBannersOrNotice( pageHTMLParser, mw.msg( 'mobile-frontend-meta-data-issues-header' ),
 				section, inline, overlayManager ).issueSummaries;
 			allIssues[ section ] = issueSummaries;
 		} else if ( CURRENT_NS === NS_MAIN ) {
@@ -168,7 +167,9 @@
 					pageHTMLParser.$el.find( PageHTMLParser.HEADING_SELECTOR ).each(
 						function ( i, headingEl ) {
 							var $headingEl = $( headingEl ),
-								sectionNum = $headingEl.find( '.edit-page' ).data( 'section' );
+								// section number is absent on protected pages, when this is the case use i,
+								// otherwise icon will not show (T340910)
+								sectionNum = $headingEl.find( '.edit-page' ).data( 'section' ) || i;
 
 							// Note certain headings matched using
 							// PageHTMLParser.HEADING_SELECTOR may not be headings and will

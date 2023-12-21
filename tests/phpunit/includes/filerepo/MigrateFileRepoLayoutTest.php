@@ -2,6 +2,8 @@
 
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\FakeResultWrapper;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * @covers MigrateFileRepoLayout
@@ -31,7 +33,7 @@ class MigrateFileRepoLayoutTest extends MediaWikiIntegrationTestCase {
 			]
 		] );
 
-		$dbMock = $this->createMock( Wikimedia\Rdbms\IDatabase::class );
+		$dbMock = $this->createMock( IDatabase::class );
 
 		$imageRow = (object)[
 			'img_name' => $filename,
@@ -39,14 +41,15 @@ class MigrateFileRepoLayoutTest extends MediaWikiIntegrationTestCase {
 		];
 
 		$dbMock->method( 'select' )
-			->will( $this->onConsecutiveCalls(
+			->willReturnOnConsecutiveCalls(
 				new FakeResultWrapper( [ $imageRow ] ), // image
 				new FakeResultWrapper( [] ), // image
 				new FakeResultWrapper( [] ) // filearchive
-			) );
+			);
+		$dbMock->method( 'newSelectQueryBuilder' )->willReturnCallback( fn () => new SelectQueryBuilder( $dbMock ) );
 
 		$repoMock = $this->getMockBuilder( LocalRepo::class )
-			->onlyMethods( [ 'getPrimaryDB' ] )
+			->onlyMethods( [ 'getPrimaryDB', 'getReplicaDB' ] )
 			->setConstructorArgs( [ [
 					'name' => 'migratefilerepolayouttest',
 					'backend' => $backend
@@ -56,6 +59,9 @@ class MigrateFileRepoLayoutTest extends MediaWikiIntegrationTestCase {
 		$repoMock
 			->method( 'getPrimaryDB' )
 			->willReturn( $dbMock );
+		$replicaDB = $this->createMock( IDatabase::class );
+		$replicaDB->method( 'getSessionLagStatus' )->willReturn( [ 'lag' => 0, 'since' => time() ] );
+		$repoMock->method( 'getReplicaDB' )->willReturn( $replicaDB );
 
 		$this->migratorMock = $this->getMockBuilder( MigrateFileRepoLayout::class )
 			->onlyMethods( [ 'getRepo' ] )->getMock();

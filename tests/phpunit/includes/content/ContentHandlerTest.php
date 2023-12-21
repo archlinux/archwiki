@@ -2,10 +2,13 @@
 
 use MediaWiki\Content\ValidationParams;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\Hook\OpportunisticLinksUpdateHook;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use Wikimedia\TestingAccessWrapper;
@@ -38,7 +41,9 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 						'ParserFactory',
 						'GlobalIdGenerator',
 						'LanguageNameUtils',
+						'LinkRenderer',
 						'MagicWordFactory',
+						'ParsoidParserFactory',
 					],
 				],
 				CONTENT_MODEL_JAVASCRIPT => JavaScriptContentHandler::class,
@@ -93,18 +98,6 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 	public function testGetDefaultModelFor( $title, $expectedModelId ) {
 		$title = Title::newFromText( $title );
 		$this->assertEquals( $expectedModelId, ContentHandler::getDefaultModelFor( $title ) );
-	}
-
-	/**
-	 * @dataProvider dataGetDefaultModelFor
-	 * @covers ContentHandler::getForTitle
-	 */
-	public function testGetForTitle( $title, $expectedContentModel ) {
-		$this->hideDeprecated( 'ContentHandler::getForTitle' );
-		$title = Title::newFromText( $title );
-		$this->getServiceContainer()->getLinkCache()->addBadLinkObj( $title );
-		$handler = ContentHandler::getForTitle( $title );
-		$this->assertEquals( $expectedContentModel, $handler->getModelID() );
 	}
 
 	public static function dataGetLocalizedName() {
@@ -333,7 +326,7 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->setContentLang( 'en' );
 
 		$content = new DummyContentHandlerForTesting( CONTENT_MODEL_WIKITEXT );
-		$title = Title::newFromText( 'Help:Test' );
+		$title = Title::makeTitle( NS_HELP, 'Test' );
 		// Create a new content object with no content
 		$newContent = ContentHandler::makeContent( '', $title, CONTENT_MODEL_WIKITEXT, null );
 		// first check, if we become a blank page created summary with the right bitmask
@@ -389,7 +382,7 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 		return true;
 	}
 
-	public function provideGetModelForID() {
+	public static function provideGetModelForID() {
 		return [
 			[ CONTENT_MODEL_WIKITEXT, WikitextContentHandler::class ],
 			[ CONTENT_MODEL_JAVASCRIPT, JavaScriptContentHandler::class ],
@@ -444,7 +437,7 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testDataIndexFields() {
 		$mockEngine = $this->createMock( SearchEngine::class );
-		$title = Title::newFromText( 'Not_Main_Page', NS_MAIN );
+		$title = Title::makeTitle( NS_MAIN, 'Not_Main_Page' );
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
 		$this->setTemporaryHook( 'SearchDataForIndex',
@@ -473,7 +466,16 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 	 * @covers ContentHandler::getParserOutputForIndexing
 	 */
 	public function testParserOutputForIndexing() {
-		$title = Title::newFromText( 'Smithee', NS_MAIN );
+		$opportunisticUpdateHook =
+			$this->createMock( OpportunisticLinksUpdateHook::class );
+		// WikiPage::triggerOpportunisticLinksUpdate should not be triggered when
+		// getParserOutputForIndexing is called
+		$opportunisticUpdateHook->expects( $this->never() )
+			->method( 'onOpportunisticLinksUpdate' )
+			->willReturn( false );
+		$this->setTemporaryHook( 'OpportunisticLinksUpdate', $opportunisticUpdateHook );
+
+		$title = Title::makeTitle( NS_MAIN, 'Smithee' );
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$revision = $page->getRevisionRecord();
 
@@ -507,7 +509,9 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 			$this->createMock( ParserFactory::class ),
 			$this->createMock( GlobalIdGenerator::class ),
 			$this->createMock( LanguageNameUtils::class ),
-			$this->createMock( MagicWordFactory::class )
+			$this->createMock( LinkRenderer::class ),
+			$this->createMock( MagicWordFactory::class ),
+			$this->createMock( ParsoidParserFactory::class )
 		);
 		$slotDiffRenderer = $contentHandler->getSlotDiffRenderer( RequestContext::getMain() );
 		$this->assertInstanceOf( TextSlotDiffRenderer::class, $slotDiffRenderer );
@@ -562,6 +566,7 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 		$customContentHandler2->method( 'getSlotDiffRendererInternal' )
 			->willReturn( $customSlotDiffRenderer );
 		/** @var ContentHandler $customContentHandler2 */
+		$this->hideDeprecated( 'ContentHandler::getSlotDiffRendererInternal' );
 		$slotDiffRenderer = $customContentHandler2->getSlotDiffRenderer( RequestContext::getMain() );
 		$this->assertSame( $customSlotDiffRenderer, $slotDiffRenderer );
 	}
@@ -605,13 +610,16 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 				$slotDiffRenderer = $customSlotDiffRenderer2;
 			} );
 
+		$this->hideDeprecated( 'ContentHandler::getSlotDiffRendererInternal' );
 		$slotDiffRenderer = $customContentHandler->getSlotDiffRenderer( RequestContext::getMain() );
 		$this->assertSame( $customSlotDiffRenderer2, $slotDiffRenderer );
+
+		$this->hideDeprecated( 'ContentHandler::getSlotDiffRendererInternal' );
 		$slotDiffRenderer = $customContentHandler2->getSlotDiffRenderer( RequestContext::getMain() );
 		$this->assertSame( $customSlotDiffRenderer2, $slotDiffRenderer );
 	}
 
-	public function providerGetPageViewLanguage() {
+	public static function providerGetPageViewLanguage() {
 		yield [ NS_FILE, 'sr', 'sr-ec', 'sr-ec' ];
 		yield [ NS_FILE, 'sr', 'sr', 'sr' ];
 		yield [ NS_MEDIAWIKI, 'sr-ec', 'sr', 'sr-ec' ];
@@ -627,7 +635,7 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 			->disableOriginalConstructor()
 			->getMockForAbstractClass();
 
-		$title = Title::newFromText( "SimpleTitle", $namespace );
+		$title = Title::makeTitle( $namespace, 'SimpleTitle' );
 
 		$this->overrideConfigValue( MainConfigNames::DefaultLanguageVariant, $variant );
 
@@ -638,7 +646,7 @@ class ContentHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected, $pageViewLanguage->getCode() );
 	}
 
-	public function provideValidateSave() {
+	public static function provideValidateSave() {
 		yield 'wikitext' => [
 			new WikitextContent( 'hello world' ),
 			true

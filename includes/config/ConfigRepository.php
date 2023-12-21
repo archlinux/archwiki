@@ -31,7 +31,7 @@ use Wikimedia\Services\SalvageableService;
  * @since 1.32
  */
 class ConfigRepository implements SalvageableService {
-	/** @var \ConfigFactory */
+	/** @var ConfigFactory */
 	private $configFactory;
 
 	/** @var array */
@@ -41,9 +41,9 @@ class ConfigRepository implements SalvageableService {
 	];
 
 	/**
-	 * @param \ConfigFactory $configFactory
+	 * @param ConfigFactory $configFactory
 	 */
-	public function __construct( \ConfigFactory $configFactory ) {
+	public function __construct( ConfigFactory $configFactory ) {
 		$this->configFactory = $configFactory;
 	}
 
@@ -65,11 +65,11 @@ class ConfigRepository implements SalvageableService {
 	 *
 	 * @param string $name The name of the configuration option to get
 	 * @return array
-	 * @throws \ConfigException
+	 * @throws ConfigException
 	 */
 	public function get( $name ) {
 		if ( !$this->has( $name, true ) ) {
-			throw new \ConfigException( 'The configuration option ' . $name . ' does not exist.' );
+			throw new ConfigException( 'The configuration option ' . $name . ' does not exist.' );
 		}
 
 		return $this->configItems['public'][$name] ?? $this->configItems['private'][$name];
@@ -96,23 +96,6 @@ class ConfigRepository implements SalvageableService {
 	 */
 	public function getPublic() {
 		return $this->configItems['public'];
-	}
-
-	/**
-	 * Returns the current value of the configuration option. If no ConfigRegistry was provided
-	 * when the config was added to the repository, the default value will be returned.
-	 *
-	 * @param string $name The name of the configuration option to get the value of
-	 * @return mixed
-	 * @throws \ConfigException
-	 */
-	public function getValueOf( $name ) {
-		$config = $this->get( $name );
-		if ( !isset( $config['configregistry'] ) ) {
-			return $config['value'];
-		}
-
-		return $this->configFactory->makeConfig( $config['configregistry'] )->get( $name );
 	}
 
 	/**
@@ -147,11 +130,11 @@ class ConfigRepository implements SalvageableService {
 	 *  - description: the not localized description of this config option, optional
 	 *  - descriptionmsg: The message key of the localized description of this configuration
 	 *    option, optional
-	 * @throws \ConfigException
+	 * @throws ConfigException
 	 */
 	public function add( $name, array $config ) {
 		if ( $this->has( $name ) ) {
-			throw new \ConfigException( 'A configuration with the name ' . $name .
+			throw new ConfigException( 'A configuration with the name ' . $name .
 				'does already exist. It is provided by: ' .
 				$this->get( $name )['providedby'] );
 		}

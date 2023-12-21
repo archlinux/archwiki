@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * VisualEditor DataModel Cite-specific Transaction tests.
  *
@@ -9,7 +11,7 @@ QUnit.module( 've.dm.Transaction (Cite)', ve.test.utils.newMwEnvironment() );
 
 // FIXME: Duplicates test runner; should be using a data provider
 QUnit.test( 'newFromDocumentInsertion with references', function ( assert ) {
-	var complexDoc = ve.dm.citeExample.createExampleDocument( 'complexInternalData' ),
+	const complexDoc = ve.dm.citeExample.createExampleDocument( 'complexInternalData' ),
 		withReference = [
 			{ type: 'paragraph' },
 			'B', 'a', 'r',
@@ -69,15 +71,15 @@ QUnit.test( 'newFromDocumentInsertion with references', function ( assert ) {
 		];
 
 	cases.forEach( function ( caseItem ) {
-		var doc = ve.dm.citeExample.createExampleDocument( caseItem.doc );
-		var doc2, removalOps;
+		const doc = ve.dm.citeExample.createExampleDocument( caseItem.doc );
+		let doc2, removalOps;
 		if ( caseItem.newDocData ) {
 			doc2 = new ve.dm.Document( caseItem.newDocData );
 			removalOps = [];
 		} else if ( caseItem.range ) {
 			doc2 = doc.cloneFromRange( caseItem.range );
 			caseItem.modify( doc2 );
-			var removalTx = ve.dm.TransactionBuilder.static.newFromRemoval( doc, caseItem.range, true );
+			const removalTx = ve.dm.TransactionBuilder.static.newFromRemoval( doc, caseItem.range, true );
 			doc.commit( removalTx );
 			removalOps = removalTx.getOperations();
 		}
@@ -86,15 +88,15 @@ QUnit.test( 'newFromDocumentInsertion with references', function ( assert ) {
 			removalOps, caseItem.removalOps, caseItem.msg + ': removal'
 		);
 
-		var tx = ve.dm.TransactionBuilder.static.newFromDocumentInsertion(
+		const tx = ve.dm.TransactionBuilder.static.newFromDocumentInsertion(
 			doc, caseItem.offset, doc2
 		);
 		assert.deepEqualWithDomElements(
 			tx.getOperations(), caseItem.expectedOps, caseItem.msg + ': transaction'
 		);
 
-		var expectedStoreItems = caseItem.expectedStoreItems || [];
-		var actualStoreItems = expectedStoreItems.map( function ( item ) {
+		const expectedStoreItems = caseItem.expectedStoreItems || [];
+		const actualStoreItems = expectedStoreItems.map( function ( item ) {
 			return doc.store.value( OO.getHash( item ) );
 		} );
 		assert.deepEqual( actualStoreItems, expectedStoreItems, caseItem.msg + ': store items' );

@@ -41,7 +41,6 @@
 	"replacetext_warning": "\"$2\" 문자열을 포함하고 있는 문서 $1개가 이미 있습니다. 이 찾아 바꾸기를 실행하면, 이미 존재하는 \"$2\" 문자열과 더 이상 구분되지 않을 것입니다.\n찾아 바꾸기를 계속하겠습니까?",
 	"replacetext_blankwarning": "바꿀 문자열이 비어 있으므로 이 동작은 되돌릴 수 없습니다.\n계속하시겠습니까?",
 	"replacetext_continue": "계속",
-	"replacetext_announce": "$1과 주시문서 목록을 통해 이 편집을 알립니다.",
 	"replacetext_editsummary": "문자열 찾아 바꾸기 - \"$1\" 문자열을 \"$2\" 문자열로",
 	"replacetext_reminder": "또, 다른 문서에서 이 문서를 가리키는 링크를 수정하려면 $1(으)로 이동하십시오.",
 	"right-replacetext": "위키 전체에서 찾아 바꾸기",

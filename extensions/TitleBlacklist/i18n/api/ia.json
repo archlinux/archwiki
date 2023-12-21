@@ -4,7 +4,6 @@
 			"McDutchie"
 		]
 	},
-	"apihelp-titleblacklist-description": "Validar un titulo de pagina, nomine de file, o nomine de usator contra le lista de titulos prohibite.",
 	"apihelp-titleblacklist-summary": "Validar un titulo de pagina, nomine de file, o nomine de usator contra le lista de titulos prohibite.",
 	"apihelp-titleblacklist-param-title": "Le catena a validar contra le lista de titulos prohibite.",
 	"apihelp-titleblacklist-param-action": "Le action a verificar.",

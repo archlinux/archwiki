@@ -8,7 +8,7 @@ use Flow\Model\Workflow;
 /**
  * Integration tests for the Thanks Flow api module
  *
- * @covers \MediaWiki\Extension\Thanks\ApiFlowThank
+ * @covers \MediaWiki\Extension\Thanks\Api\ApiFlowThank
  *
  * @group Thanks
  * @group Database
@@ -115,8 +115,7 @@ class ApiFlowThankIntegrationTest extends ApiTestCase {
 	}
 
 	public function testRequestWithoutToken() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'The "token" parameter must be set.' );
+		$this->expectApiErrorCode( 'missingparam' );
 		$this->doApiRequest( [
 			'action' => 'flowthank',
 			'postid' => UUID::create( '42' )->getAlphadecimal(),
@@ -124,8 +123,7 @@ class ApiFlowThankIntegrationTest extends ApiTestCase {
 	}
 
 	public function testInvalidRequest() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'The "postid" parameter must be set.' );
+		$this->expectApiErrorCode( 'missingparam' );
 		$this->doApiRequestWithToken( [ 'action' => 'flowthank' ] );
 	}
 
@@ -138,8 +136,7 @@ class ApiFlowThankIntegrationTest extends ApiTestCase {
 	}
 
 	public function testRequestWithInvalidId() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'Post ID is not valid' );
+		$this->expectApiErrorCode( 'invalidpostid' );
 		$this->doApiRequestWithToken( [
 			'action' => 'flowthank',
 			'postid' => UUID::create( '42' )->getAlphadecimal(),
@@ -147,8 +144,7 @@ class ApiFlowThankIntegrationTest extends ApiTestCase {
 	}
 
 	public function testRequestWithOwnId() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'You cannot thank yourself' );
+		$this->expectApiErrorCode( 'invalidrecipient' );
 		$this->doApiRequestWithToken( [
 			'action' => 'flowthank',
 			'postid' => $this->postByMe->getPostId()->getAlphadecimal(),

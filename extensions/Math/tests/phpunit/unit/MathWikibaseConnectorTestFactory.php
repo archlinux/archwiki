@@ -57,7 +57,7 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 		LoggerInterface $logger = null,
 		EntityIdParser $parser = null
 	): MathWikibaseConnector {
-		$revisionLookupMock = self::createMock( EntityRevisionLookup::class );
+		$revisionLookupMock = $this->createMock( EntityRevisionLookup::class );
 		$revisionLookupMock->method( 'getEntityRevision' )->willReturnCallback(
 			static function ( EntityId $entityId ) use ( $entityRevision, $storageExceptionOnQ3 ) {
 				if ( $storageExceptionOnQ3 && $entityId->getSerialization() === 'Q3' ) {
@@ -70,13 +70,13 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 		$revisionLookupMock->expects( self::atLeastOnce() )
 			->method( 'getEntityRevision' );
 
-		$fallbackLabelDescriptionLookupFactoryMock = self::createMock( FallbackLabelDescriptionLookupFactory::class );
-		$languageMock = self::createMock( Language::class );
-		$languageFactoryMock = self::createMock( LanguageFactory::class );
+		$fallbackLabelDescriptionLookupFactoryMock = $this->createMock( FallbackLabelDescriptionLookupFactory::class );
+		$languageMock = $this->createMock( Language::class );
+		$languageFactoryMock = $this->createMock( LanguageFactory::class );
 		$languageFactoryMock->method( 'getLanguage' )
 			->with( 'en' )
 			->willReturn( $languageMock );
-		$languageNameUtilsMock = self::createMock( LanguageNameUtils::class );
+		$languageNameUtilsMock = $this->createMock( LanguageNameUtils::class );
 		$languageNameUtilsMock->method( 'isValidCode' )
 			->with( 'en' )
 			->willReturn( true );
@@ -103,28 +103,28 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 		EntityIdParser $parser = null
 	): MathWikibaseConnector {
 		$labelDescriptionLookupFactory = $labelDescriptionLookupFactory ?:
-			self::createMock( FallbackLabelDescriptionLookupFactory::class );
+			$this->createMock( FallbackLabelDescriptionLookupFactory::class );
 
 		$entityRevisionLookup = $entityRevisionLookupMock ?:
-			self::createMock( EntityRevisionLookup::class );
+			$this->createMock( EntityRevisionLookup::class );
 
-		$languageFactory = $languageFactory ?: self::createMock( LanguageFactory::class );
+		$languageFactory = $languageFactory ?: $this->createMock( LanguageFactory::class );
 		if ( !$languageNameUtils ) {
-			$languageNameUtils = self::createMock( LanguageNameUtils::class );
+			$languageNameUtils = $this->createMock( LanguageNameUtils::class );
 			$languageNameUtils->method( 'isValidCode' )->willReturn( true );
 		}
 
-		$site = self::createMock( Site::class );
+		$site = $this->createMock( Site::class );
 		$site->method( 'getGlobalId' )->willReturn( '' );
 		$site->method( 'getPageUrl' )->willReturn( self::EXAMPLE_URL );
 
-		$repoConnector = self::createMock( RepoLinker::class );
+		$repoConnector = $this->createMock( RepoLinker::class );
 		$repoConnector->method( 'getEntityUrl' )
 			->willReturnCallback( static function ( ItemId $itemId ) {
-				return self::EXAMPLE_URL . 'wiki/Special:EntityPage/' . $itemId->serialize();
+				return self::EXAMPLE_URL . 'wiki/Special:EntityPage/' . $itemId->getSerialization();
 			} );
 
-		$mathFormatter = self::createMock( MathFormatter::class );
+		$mathFormatter = $this->createMock( MathFormatter::class );
 		$mathFormatter->method( 'format' )
 			->willReturnCallback( static function ( StringValue $value ) {
 				return self::getExpectedMathML( $value->getValue() );
@@ -161,7 +161,7 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 			$itemId = new ItemId( $key );
 			$items[ $key ] = new Item( $itemId );
 
-			$siteLinkMock = self::createMock( SiteLink::class );
+			$siteLinkMock = $this->createMock( SiteLink::class );
 			$siteLinkMock->method( 'getSiteId' )->willReturn( '' );
 			$siteLinkMock->method( 'getPageName' )->willReturn( '' );
 			$items[ $key ]->addSiteLink( $siteLinkMock );
@@ -197,7 +197,7 @@ class MathWikibaseConnectorTestFactory extends MediaWikiUnitTestCase {
 	}
 
 	public function newLabelDescriptionLookup(): FallbackLabelDescriptionLookup {
-		$lookup = self::createMock( FallbackLabelDescriptionLookup::class );
+		$lookup = $this->createMock( FallbackLabelDescriptionLookup::class );
 
 		$lookup->method( 'getLabel' )
 			->willReturnCallback( static function ( EntityId $entityId ) {

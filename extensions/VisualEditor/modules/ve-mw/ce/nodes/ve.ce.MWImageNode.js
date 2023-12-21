@@ -173,9 +173,5 @@ ve.ce.MWImageNode.prototype.onParseError = function ( deferred ) {
  * Update rendering when media type changes
  */
 ve.ce.MWImageNode.prototype.updateMediaType = function () {
-	if ( this.model.getMediaType() === 'AUDIO' ) {
-		this.$image.addClass( 've-ce-mwImageNode-audioPlayer' );
-	} else {
-		this.$image.removeClass( 've-ce-mwImageNode-audioPlayer' );
-	}
+	this.$image.toggleClass( 've-ce-mwImageNode-audioPlayer', this.model.getMediaType() === 'AUDIO' );
 };

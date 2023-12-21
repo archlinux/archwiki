@@ -20,13 +20,11 @@
 
 namespace MediaWiki\Linter\Test;
 
-use ContentHandler;
 use MediaWiki\Linter\Database;
 use MediaWiki\Linter\LintError;
 use MediaWiki\Linter\RecordLintJob;
+use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
-use Title;
-use User;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
@@ -40,20 +38,11 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 	 * @return array
 	 */
 	private function createTitleAndPage( string $titleText, ?int $ns = 0 ) {
-		$userName = 'LinterUser';
-		$baseText = 'wikitext test content';
-
 		$title = Title::newFromText( $titleText, $ns );
-		$user = User::newFromName( $userName );
-		if ( $user->getId() === 0 ) {
-			$user->addToDatabase();
-		}
-		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
+		$page = $this->getExistingTestPage( $title );
 
-		$content = ContentHandler::makeContent( $baseText, $title );
-		$page->doUserEditContent( $content, $user, "base text for test" );
-
-		return [ 'title' => $title,
+		return [
+			'title' => $title,
 			'pageID' => $page->getRevisionRecord()->getPageId(),
 			'revID' => $page->getRevisionRecord()->getID()
 		];
@@ -121,7 +110,6 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 		] );
 		$this->assertTrue( $job->run() );
 		$db = new Database( $titleAndPage[ 'pageID' ] );
-		/** @var LintError[] $errorsFromDb */
 		$errorsFromDb = array_values( $db->getForPage() );
 		$this->assertCount( 1, $errorsFromDb );
 		$this->assertInstanceOf( LintError::class, $errorsFromDb[ 0 ] );
@@ -416,7 +404,6 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 			'revision' => $titleAndPage[ 'revID' ]
 		] );
 		$this->assertTrue( $job->run() );
-		/** @var LintError[] $errorsFromDb */
 		$errorsFromDb = array_values( ( new Database( $titleAndPage['pageID'] ) )->getForPage() );
 		$this->assertCount( 0, $errorsFromDb );
 	}

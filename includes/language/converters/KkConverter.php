@@ -33,22 +33,10 @@ define( 'H_HAMZA', 'ٴ' ); # U+0674 ARABIC LETTER HIGH HAMZA
  */
 class KkConverter extends LanguageConverterSpecific {
 
-	/**
-	 * Get Main language code.
-	 * @since 1.36
-	 *
-	 * @return string
-	 */
 	public function getMainCode(): string {
 		return 'kk';
 	}
 
-	/**
-	 * Get supported variants of the language.
-	 * @since 1.36
-	 *
-	 * @return array
-	 */
 	public function getLanguageVariants(): array {
 		return [
 			'kk',
@@ -61,12 +49,6 @@ class KkConverter extends LanguageConverterSpecific {
 		];
 	}
 
-	/**
-	 * Get language variants fallbacks.
-	 * @since 1.36
-	 *
-	 * @return array
-	 */
 	public function getVariantsFallbacks(): array {
 		return [
 			'kk' => 'kk-cyrl',
@@ -79,9 +61,9 @@ class KkConverter extends LanguageConverterSpecific {
 		];
 	}
 
-	protected function loadDefaultTables() {
+	protected function loadDefaultTables(): array {
 		// require __DIR__."/../../includes/KkConversion.php";
-		// Placeholder for future implementing. Remove variables declarations
+		// Placeholder for future implementing. Remove the variables declarations
 		// after generating KkConversion.php
 		$kk2Cyrl = [];
 		$kk2Latn = [];
@@ -90,7 +72,7 @@ class KkConverter extends LanguageConverterSpecific {
 		$kk2TR = [];
 		$kk2CN = [];
 
-		$this->mTables = [
+		return [
 			'kk-cyrl' => new ReplacementArray( $kk2Cyrl ),
 			'kk-latn' => new ReplacementArray( $kk2Latn ),
 			'kk-arab' => new ReplacementArray( $kk2Arab ),
@@ -101,10 +83,10 @@ class KkConverter extends LanguageConverterSpecific {
 		];
 	}
 
-	protected function postLoadTables() {
-		$this->mTables['kk-kz']->merge( $this->mTables['kk-cyrl'] );
-		$this->mTables['kk-tr']->merge( $this->mTables['kk-latn'] );
-		$this->mTables['kk-cn']->merge( $this->mTables['kk-arab'] );
+	protected function postLoadTables( &$tables ) {
+		$tables['kk-kz']->merge( $tables['kk-cyrl'] );
+		$tables['kk-tr']->merge( $tables['kk-latn'] );
+		$tables['kk-cn']->merge( $tables['kk-arab'] );
 	}
 
 	/**
@@ -259,14 +241,6 @@ class KkConverter extends LanguageConverterSpecific {
 		];
 	}
 
-	/**
-	 *  It translates text into variant
-	 *
-	 * @param string $text
-	 * @param string $toVariant
-	 *
-	 * @return string
-	 */
 	public function translate( $text, $toVariant ) {
 		$text = parent::translate( $text, $toVariant );
 
@@ -275,14 +249,17 @@ class KkConverter extends LanguageConverterSpecific {
 			case 'kk-kz':
 				$letters = KK_L_UC . KK_L_LC . 'ʺʹ#0123456789';
 				break;
+
 			case 'kk-latn':
 			case 'kk-tr':
 				$letters = KK_C_UC . KK_C_LC . '№0123456789';
 				break;
+
 			case 'kk-arab':
 			case 'kk-cn':
 				$letters = KK_C_UC . KK_C_LC . /*KK_L_UC.KK_L_LC.'ʺʹ'.*/',;\?%\*№0123456789';
 				break;
+
 			default:
 				return $text;
 		}
@@ -348,6 +325,7 @@ class KkConverter extends LanguageConverterSpecific {
 					$text = preg_replace( $pat, $rep, $text );
 				}
 				return $text;
+
 			case 'kk-latn':
 			case 'kk-tr':
 				$mCyrl2Latn = $this->getMCyrl2Latn();
@@ -355,6 +333,7 @@ class KkConverter extends LanguageConverterSpecific {
 					$text = preg_replace( $pat, $rep, $text );
 				}
 				return $text;
+
 			case 'kk-cyrl':
 			case 'kk-kz':
 				$mLatn2Cyrl = $this->getMLatn2Cyrl();
@@ -362,15 +341,12 @@ class KkConverter extends LanguageConverterSpecific {
 					$text = preg_replace( $pat, $rep, $text );
 				}
 				return $text;
+
 			default:
 				return $text;
 		}
 	}
 
-	/**
-	 * @param string $key
-	 * @return string
-	 */
 	public function convertCategoryKey( $key ) {
 		return $this->autoConvert( $key, 'kk' );
 	}

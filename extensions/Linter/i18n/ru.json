@@ -81,6 +81,7 @@
 	"linter-pager-misc-tidy-replacement-issues-details": "Различные ошибки разметки",
 	"linter-pager-misnested-tag-details": "Неверно вложенный тег, который должен быть правильно вложен",
 	"linter-pager-missing-end-tag-details": "Отсутствующий закрывающий тег",
+	"linter-pager-missing-end-tag-in-heading-details": "Отсутствует конечный тег в заголовке",
 	"linter-pager-multi-colon-escape-details": "Многократное экранирование двоеточием",
 	"linter-pager-multiline-html-table-in-list-details": "Многострочная таблица HTML5 внутри списка",
 	"linter-pager-multiple-unclosed-formatting-tags-details": "Несколько незакрытых тегов форматирования на странице",

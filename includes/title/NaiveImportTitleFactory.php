@@ -18,8 +18,9 @@
  * @file
  */
 
-use MediaWiki\Title\Title;
-use MediaWiki\Title\TitleFactory;
+namespace MediaWiki\Title;
+
+use Language;
 
 /**
  * A class to convert page titles on a foreign wiki (ForeignTitle objects) into
@@ -90,3 +91,9 @@ class NaiveImportTitleFactory implements ImportTitleFactory {
 		return $this->titleFactory->makeTitleSafe( 0, $foreignTitle->getFullText() );
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( NaiveImportTitleFactory::class, 'NaiveImportTitleFactory' );

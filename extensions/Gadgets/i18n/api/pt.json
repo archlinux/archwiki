@@ -4,13 +4,11 @@
 			"Hamilton Abreu"
 		]
 	},
-	"apihelp-query+gadgetcategories-description": "Devolve uma lista de categorias de ''gadgets''.",
 	"apihelp-query+gadgetcategories-summary": "Devolve uma lista de categorias de ''gadgets''.",
 	"apihelp-query+gadgetcategories-param-prop": "A informação de categorias de ''gadget'' a obter:\n;name:Nome interno da categoria.\n;title:Título da categoria.\n;members:Número de ''gadgets'' na categoria.",
 	"apihelp-query+gadgetcategories-param-names": "Nomes das categorias a obter.",
 	"apihelp-query+gadgetcategories-example-1": "Obter uma lista das categorias de ''gadgets'' existentes",
 	"apihelp-query+gadgetcategories-example-2": "Obter todas as informações sobre as categorias de nome \"foo\" e \"bar\"",
-	"apihelp-query+gadgets-description": "Devolve uma lista dos ''gadgets'' usados nesta wiki.",
 	"apihelp-query+gadgets-summary": "Devolve uma lista dos ''gadgets'' usados nesta wiki.",
 	"apihelp-query+gadgets-param-prop": "As informações do ''gadget'' a obter:\n;id:Identificador interno do ''gadget''.\n;metadata:Os metadados do ''gadget''.\n;desc:Descrição do ''gadget'' transformada em HTML (pode ser lento, usar só se absolutamente necessário).",
 	"apihelp-query+gadgets-param-categories": "Categorias dos ''gadgets'' a obter.",

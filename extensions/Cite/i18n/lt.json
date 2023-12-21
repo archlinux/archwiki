@@ -7,9 +7,9 @@
 			"Homo",
 			"Manvydasz",
 			"Matasg",
+			"Nokeoo",
 			"Tomasdd",
-			"Zygimantus",
-			"Nokeoo"
+			"Zygimantus"
 		]
 	},
 	"cite-desc": "Prideda <code>&lt;ref&gt;</code> ir <code>&lt;references&gt;</code> žymes citavimui",
@@ -39,5 +39,11 @@
 	"cite_references_link_many_accessibility_label": "Šokti į:",
 	"cite_section_preview_references": "Nuorodų peržiūra",
 	"cite_warning": "Cituoti įspėjimą: $1",
-	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> žymė su vardu <code>$1</code> negali būti peržiūrėta, nes ji apibrėžta už dabartinės sekcijos ribų arba nėra apibrėžta apskritai."
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> žymė su vardu <code>$1</code> negali būti peržiūrėta, nes ji apibrėžta už dabartinės sekcijos ribų arba nėra apibrėžta apskritai.",
+	"cite-wikieditor-tool-reference": "Išnaša",
+	"cite-wikieditor-help-page-references": "Išnašos",
+	"cite-wikieditor-help-content-reference-description": "Išnaša",
+	"cite-wikieditor-help-content-named-reference-description": "Nuoroda su pavadinimu",
+	"cite-wikieditor-help-content-rereference-description": "Papildomas tos pačios išnašos naudojimas",
+	"cite-wikieditor-help-content-showreferences-description": "Rodyti išnašas"
 }

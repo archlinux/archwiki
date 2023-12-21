@@ -1,6 +1,6 @@
 {
 	"name": "ParserFunctions",
-	"version": "1.6.0",
+	"version": "1.6.1",
 	"author": [
 		"Tim Starling",
 		"Robert Rohde",
@@ -12,7 +12,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.35.0"
 	},
 	"config": {
 		"PFEnableStringFunctions": {

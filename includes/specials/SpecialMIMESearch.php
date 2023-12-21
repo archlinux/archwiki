@@ -22,11 +22,21 @@
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  */
 
+namespace MediaWiki\Specials;
+
+use File;
+use HtmlArmor;
+use HTMLForm;
+use ILanguageConverter;
+use LocalFile;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Linker\Linker;
+use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Skin;
+use stdClass;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Searches the database for files of the requested MIME type, comparing this with the
@@ -36,21 +46,20 @@ use Wikimedia\Rdbms\ILoadBalancer;
 class SpecialMIMESearch extends QueryPage {
 	protected $major, $minor, $mime;
 
-	/** @var ILanguageConverter */
-	private $languageConverter;
+	private ILanguageConverter $languageConverter;
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param LanguageConverterFactory $languageConverterFactory
 	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory,
 		LanguageConverterFactory $languageConverterFactory
 	) {
 		parent::__construct( 'MIMEsearch' );
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 		$this->setLinkBatchFactory( $linkBatchFactory );
 		$this->languageConverter = $languageConverterFactory->getLanguageConverter( $this->getContentLanguage() );
 	}
@@ -156,18 +165,17 @@ class SpecialMIMESearch extends QueryPage {
 	}
 
 	protected function getSuggestionsForTypes() {
-		$dbr = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_REPLICA );
-		$lastMajor = null;
-		$suggestions = [];
-		$result = $dbr->select(
-			[ 'image' ],
+		$queryBuilder = $this->getDatabaseProvider()->getReplicaDatabase()->newSelectQueryBuilder();
+		$queryBuilder
 			// We ignore img_media_type, but using it in the query is needed for MySQL to choose a
 			// sensible execution plan
-			[ 'img_media_type', 'img_major_mime', 'img_minor_mime' ],
-			[],
-			__METHOD__,
-			[ 'GROUP BY' => [ 'img_media_type', 'img_major_mime', 'img_minor_mime' ] ]
-		);
+			->select( [ 'img_media_type', 'img_major_mime', 'img_minor_mime' ] )
+			->from( 'image' )
+			->groupBy( [ 'img_media_type', 'img_major_mime', 'img_minor_mime' ] );
+		$result = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
+
+		$lastMajor = null;
+		$suggestions = [];
 		foreach ( $result as $row ) {
 			$major = $row->img_major_mime;
 			$minor = $row->img_minor_mime;
@@ -262,3 +270,9 @@ class SpecialMIMESearch extends QueryPage {
 		return 'media';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialMIMESearch::class, 'SpecialMIMESearch' );

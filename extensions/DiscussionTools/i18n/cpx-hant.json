@@ -12,5 +12,7 @@
 	"discussiontools-topicsubscription-button-subscribe": "訂閱",
 	"discussiontools-topicsubscription-button-subscribe-label": "訂閱",
 	"discussiontools-topicsubscription-button-unsubscribe": "取消訂閱",
-	"discussiontools-topicsubscription-button-unsubscribe-label": "取消訂閱"
+	"discussiontools-topicsubscription-button-unsubscribe-label": "取消訂閱",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|汝}}會收着者個話題中央新留言兮通知。",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|汝}}訂閱咯！"
 }

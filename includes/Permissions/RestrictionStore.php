@@ -16,12 +16,12 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use stdClass;
-use TitleValue;
 use WANObjectCache;
 use Wikimedia\Rdbms\Database;
-use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * Class RestrictionStore
@@ -150,8 +150,7 @@ class RestrictionStore {
 	 * @param PageIdentity $page Must be local
 	 * @param string $action
 	 * @return ?string 14-char timestamp, or 'infinity' if the page is protected forever or not
-	 *   protected at all, or null if the action is not recognized. NOTE: This returns null for
-	 *   unrecognized actions, unlike Title::getRestrictionExpiry which returns false.
+	 *   protected at all, or null if the action is not recognized.
 	 */
 	public function getRestrictionExpiry( PageIdentity $page, string $action ): ?string {
 		$page->assertWiki( PageIdentity::LOCAL );
@@ -202,11 +201,10 @@ class RestrictionStore {
 		$page->assertWiki( PageIdentity::LOCAL );
 
 		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
-		$dbw->delete(
-			'protected_titles',
-			[ 'pt_namespace' => $page->getNamespace(), 'pt_title' => $page->getDBkey() ],
-			__METHOD__
-		);
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'protected_titles' )
+			->where( [ 'pt_namespace' => $page->getNamespace(), 'pt_title' => $page->getDBkey() ] )
+			->caller( __METHOD__ )->execute();
 		$this->cache[CacheKeyHelper::getKeyForPage( $page )]['create_protection'] = null;
 	}
 
@@ -313,8 +311,7 @@ class RestrictionStore {
 
 		if ( $this->hookContainer->isRegistered( 'TitleGetRestrictionTypes' ) ) {
 			$this->hookRunner->onTitleGetRestrictionTypes(
-				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
-				Title::castFromPageIdentity( $page ), $types );
+				Title::newFromPageIdentity( $page ), $types );
 		}
 
 		return $types;
@@ -372,7 +369,7 @@ class RestrictionStore {
 		$id = $page->getId();
 		if ( $id ) {
 			$fname = __METHOD__;
-			$loadRestrictionsFromDb = static function ( IDatabase $dbr ) use ( $fname, $id ) {
+			$loadRestrictionsFromDb = static function ( IReadableDatabase $dbr ) use ( $fname, $id ) {
 				return iterator_to_array(
 					$dbr->newSelectQueryBuilder()
 					->select( [ 'pr_type', 'pr_expiry', 'pr_level', 'pr_cascade' ] )
@@ -546,9 +543,7 @@ class RestrictionStore {
 	 * @param PageIdentity $page Must be local
 	 * @return array[] Two elements: First is an array of PageIdentity objects of the pages from
 	 *   which cascading restrictions have come, which may be empty. Second is an array like that
-	 *   returned by getAllRestrictions(). NOTE: The first element of the return is always an
-	 *   array, unlike Title::getCascadeProtectionSources where the first element is false if there
-	 *   are no sources.
+	 *   returned by getAllRestrictions().
 	 */
 	public function getCascadeProtectionSources( PageIdentity $page ): array {
 		$page->assertWiki( PageIdentity::LOCAL );

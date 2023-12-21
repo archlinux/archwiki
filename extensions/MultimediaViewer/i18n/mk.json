@@ -16,6 +16,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|уште еден автор|уште $1 автори}}",
 	"multimediaviewer-multiple-authors-combine": "$1 и $2",
 	"multimediaviewer-metadata-error": "Не можев да ги вчитам податоците за сликата. (грешка: $1)",
+	"multimediaviewer-file-not-found-error": "За жал, податотеката $1 не може да се прикаже бидејќи ја нема на тековната страница.",
 	"multimediaviewer-thumbnail-error": "За жал, не можев да ја прикажам податотеката",
 	"multimediaviewer-thumbnail-error-description": "Имаме технички проблем. Можете да $1 ако упорно се јавува. Грешка: $2",
 	"multimediaviewer-thumbnail-error-retry": "пробај пак",

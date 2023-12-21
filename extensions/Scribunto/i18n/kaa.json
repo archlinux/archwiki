@@ -4,6 +4,9 @@
 			"Ajiniyaz Nurniyazov"
 		]
 	},
+	"scribunto-parser-dialog-title": "Skript qátesi",
+	"scribunto-error-short": "Skript qátesi: $1",
+	"scribunto-error-long": "Skript qátesi:\n\n$1",
 	"scribunto-doc-page-does-not-exist": "''Bul moduldiń hújjetin [[$1]] betinde jarata alasız''",
 	"scribunto-doc-page-header": "'''Bul [[$1]] moduline arnalǵan hújjet beti'''"
 }

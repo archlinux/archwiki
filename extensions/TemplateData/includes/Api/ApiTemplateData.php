@@ -1,10 +1,4 @@
 <?php
-/**
- * Implement the 'templatedata' query module in the API.
- * Format JSON only.
- *
- * @file
- */
 
 namespace MediaWiki\Extension\TemplateData\Api;
 
@@ -21,16 +15,16 @@ use TextContent;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
+ * Implement the 'templatedata' query module in the API.
+ * Format JSON only.
+ * @license GPL-2.0-or-later
  * @ingroup API
  * @emits error.code templatedata-corrupt
  * @todo Support continuation (see I1a6e51cd)
  */
 class ApiTemplateData extends ApiBase {
 
-	/**
-	 * @var ApiPageSet|null
-	 */
-	private $mPageSet = null;
+	private ?ApiPageSet $mPageSet = null;
 
 	/**
 	 * For backwards compatibility, this module needs to output format=json when
@@ -47,13 +41,8 @@ class ApiTemplateData extends ApiBase {
 		return null;
 	}
 
-	/**
-	 * @return ApiPageSet
-	 */
 	private function getPageSet(): ApiPageSet {
-		if ( $this->mPageSet === null ) {
-			$this->mPageSet = new ApiPageSet( $this );
-		}
+		$this->mPageSet ??= new ApiPageSet( $this );
 		return $this->mPageSet;
 	}
 
@@ -78,14 +67,11 @@ class ApiTemplateData extends ApiBase {
 
 		$pageSet = $this->getPageSet();
 		$pageSet->execute();
-		$titles = $pageSet->getGoodTitles(); // page_id => Title object
-		$missingTitles = $pageSet->getMissingTitles(); // page_id => Title object
+		$titles = $pageSet->getGoodPages();
+		$missingTitles = $pageSet->getMissingPages();
 
-		$includeMissingTitles = $this->getParameter( 'includeMissingTitles' );
-		$doNotIgnoreMissingTitles = $this->getParameter( 'doNotIgnoreMissingTitles' );
-		if ( $doNotIgnoreMissingTitles ) {
-			$includeMissingTitles = $doNotIgnoreMissingTitles;
-		}
+		$includeMissingTitles = $this->getParameter( 'doNotIgnoreMissingTitles' ) ?:
+			$this->getParameter( 'includeMissingTitles' );
 
 		if ( !$titles && ( !$includeMissingTitles || !$missingTitles ) ) {
 			$result->addValue( null, 'pages', (object)[] );
@@ -286,4 +272,5 @@ class ApiTemplateData extends ApiBase {
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:TemplateData';
 	}
+
 }

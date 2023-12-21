@@ -12,9 +12,9 @@
 			"Викиней"
 		]
 	},
-	"tooltip-ca-createsource": "Fontem huius paginae creare",
-	"tooltip-ca-editsource": "Fontem huius paginae recensere",
 	"tooltip-ca-ve-edit": "Hanc paginam recensere",
+	"tooltip-ca-editsource": "Fontem huius paginae recensere",
+	"tooltip-ca-createsource": "Fontem huius paginae creare",
 	"visualeditor-ca-createsource": "Fontem creare",
 	"visualeditor-ca-editsource": "Fontem recensere",
 	"visualeditor-ca-editsource-section": "fontem recensere",
@@ -57,7 +57,6 @@
 	"visualeditor-languages-tool": "Linguae",
 	"visualeditor-linkinspector-illegal-title": "Titulus non idoneus",
 	"visualeditor-meta-tool": "Modi deligendi",
-	"visualeditor-preference-core-label": "Editor visualis",
 	"visualeditor-savedialog-label-save-short": "Servare",
 	"visualeditor-version-label": "Versio",
 	"visualeditor-wikitext-progress": "Convertere vicitextum"

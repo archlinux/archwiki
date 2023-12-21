@@ -168,8 +168,7 @@ class UrlUtilsProviders {
 	}
 
 	public static function provideGetServer(): Generator {
-		foreach ( self::provideExpand() as $desc => [ $input, $options, $defaultProto, $expected ]
-		) {
+		foreach ( self::provideExpand() as $desc => [ $input, $options, $defaultProto, $expected ] ) {
 			if ( $input !== '/wiki/FooBar' ) {
 				continue;
 			}
@@ -407,6 +406,15 @@ class UrlUtilsProviders {
 			]
 		];
 		yield [
+			'file:///',
+			[
+				'scheme' => 'file',
+				'delimiter' => '://',
+				'host' => '',
+				'path' => '/',
+			]
+		];
+		yield [
 			'file://example.org/etc/php.ini',
 			[
 				'scheme' => 'file',
@@ -434,12 +442,20 @@ class UrlUtilsProviders {
 			]
 		];
 		yield [
+			'file://example.org',
+			[
+				'scheme' => 'file',
+				'delimiter' => '://',
+				'host' => 'example.org',
+			]
+		];
+		yield [
 			'mailto:id@example.org',
 			[
 				'scheme' => 'mailto',
 				'delimiter' => ':',
-				'host' => 'id@example.org',
-				'path' => '',
+				'host' => '',
+				'path' => 'id@example.org',
 			]
 		];
 		yield [
@@ -447,8 +463,8 @@ class UrlUtilsProviders {
 			[
 				'scheme' => 'mailto',
 				'delimiter' => ':',
-				'host' => 'id@example.org',
-				'path' => '',
+				'host' => '',
+				'path' => 'id@example.org',
 				'query' => 'subject=Foo',
 			]
 		];
@@ -458,7 +474,6 @@ class UrlUtilsProviders {
 				'scheme' => 'mailto',
 				'delimiter' => ':',
 				'host' => '',
-				'path' => '',
 				'query' => 'subject=Foo',
 			]
 		];
@@ -513,6 +528,15 @@ class UrlUtilsProviders {
 		yield [
 			'http:///test.com',
 			null,
+		];
+		yield [
+			'news:test.1234afc@news.test.com',
+			[
+				'scheme' => 'news',
+				'delimiter' => ':',
+				'host' => '',
+				'path' => 'test.1234afc@news.test.com'
+			]
 		];
 		// T294559
 		yield [

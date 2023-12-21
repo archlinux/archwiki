@@ -87,6 +87,8 @@
 	 *     useful in cases where the expanded calendar is larger than its container. The specified
 	 *     overlay layer is usually on top of the container and has a larger area. By default, the
 	 *     calendar uses relative positioning.
+	 * @cfg {Object} [calendar] Configuration options for the this input's
+	 *     {@link mw.widgets.CalendarWidget CalendarWidget}.
 	 */
 	mw.widgets.DateInputWidget = function MWWDateInputWidget( config ) {
 		var placeholderDateFormat, mustBeAfter, mustBeBefore, $overlay;
@@ -124,12 +126,12 @@
 			placeholder: placeholderDateFormat,
 			validate: this.validateDate.bind( this )
 		} );
-		this.calendar = new mw.widgets.CalendarWidget( {
+		this.calendar = new mw.widgets.CalendarWidget( $.extend( {
 			lazyInitOnToggle: true,
 			// Can't pass `$floatableContainer: this.$element` here, the latter is not set yet.
 			// Instead we call setFloatableContainer() below.
 			precision: config.precision
-		} );
+		}, config.calendar ) );
 		this.inCalendar = 0;
 		this.inTextInput = 0;
 		this.closing = false;
@@ -285,9 +287,10 @@
 	 * @private
 	 */
 	mw.widgets.DateInputWidget.prototype.onTextInputChange = function () {
-		var mom,
+		var
 			widget = this,
 			value = this.textInput.getValue(),
+			mom = moment( value, this.getInputFormat() ),
 			valid = this.isValidDate( value );
 		this.inTextInput++;
 
@@ -296,7 +299,6 @@
 			widget.setValue( '' );
 		} else if ( valid ) {
 			// Well-formed date value, parse and set it
-			mom = moment( value, widget.getInputFormat() );
 			// Use English locale to avoid number formatting
 			widget.setValue( mom.locale( 'en' ).format( widget.getInternalFormat() ) );
 		} else {
@@ -306,7 +308,7 @@
 			// right for weird formats. So limit this trick to only when we're using the default
 			// 'inputFormat', which is the same as the internal format, 'YYYY-MM-DD'.
 			if ( widget.getInputFormat() === widget.getInternalFormat() ) {
-				widget.calendar.setDate( widget.textInput.getValue() );
+				widget.calendar.setMoment( mom );
 			}
 		}
 		widget.inTextInput--;

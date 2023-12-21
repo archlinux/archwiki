@@ -14,6 +14,7 @@ use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\NodeData\TemplateInfo;
@@ -192,32 +193,9 @@ class DOMRangeBuilder {
 	private function getDOMRange(
 		Element $startElem, Element $endMeta, Element $endElem
 	) {
-		$range = new DOMRangeInfo;
+		$range = $this->findEnclosingRange( $startElem, $endElem );
 		$range->startElem = $startElem;
 		$range->endElem = $endMeta;
-		$range->id = Utils::stripParsoidIdPrefix( $this->getRangeId( $startElem ) );
-		$range->startOffset = DOMDataUtils::getDataParsoid( $startElem )->tsr->start;
-
-		// Find common ancestor of startElem and endElem
-		$startAncestors = DOMUtils::pathToRoot( $startElem );
-		$elem = $endElem;
-		$parentNode = $endElem->parentNode;
-		while ( $parentNode && $parentNode->nodeType !== XML_DOCUMENT_NODE ) {
-			$i = array_search( $parentNode, $startAncestors, true );
-			if ( $i === 0 ) {
-				// the common ancestor is startElem
-				// widen the scope to include the full subtree
-				$range->start = $startElem->firstChild;
-				$range->end = $startElem->lastChild;
-				break;
-			} elseif ( $i > 0 ) {
-				$range->start = $startAncestors[$i - 1];
-				$range->end = $elem;
-				break;
-			}
-			$elem = $parentNode;
-			$parentNode = $elem->parentNode;
-		}
 
 		$startsInFosterablePosn = DOMUtils::isFosterablePosition( $range->start );
 		$next = $range->start->nextSibling;
@@ -893,7 +871,9 @@ class DOMRangeBuilder {
 
 			$this->ensureElementsInRange( $range );
 
-			$tplArray = $this->compoundTpls[$range->id];
+			$tplArray = $this->compoundTpls[$range->id] ?? null;
+			Assert::invariant( (bool)$tplArray, 'No parts for template range!' );
+
 			$encapTgt = self::findEncapTarget( $range );
 			$encapValid = false;
 			$encapDP = DOMDataUtils::getDataParsoid( $encapTgt );
@@ -951,7 +931,6 @@ class DOMRangeBuilder {
 					$dp1DSR->end >= $dp1DSR->start;
 			}
 
-			Assert::invariant( (bool)$tplArray, 'No parts for template range!' );
 			if ( $encapValid ) {
 				// Find transclusion info from the array (skip past a wikitext element)
 				/** @var CompoundTemplateInfo $firstTplInfo */
@@ -1008,7 +987,7 @@ class DOMRangeBuilder {
 				}
 
 				// Set up dsr->start, dsr->end, and data-mw on the target node
-				$encapDataMw = (object)[ 'parts' => $parts ];
+				$encapDataMw = new DataMw( [ 'parts' => $parts ] );
 				// FIXME: This is going to clobber any data-mw on $encapTgt, see T214241
 				DOMDataUtils::setDataMw( $encapTgt, $encapDataMw );
 				$encapDP->pi = $pi;
@@ -1302,5 +1281,40 @@ class DOMRangeBuilder {
 			$nonOverlappingRanges = $this->findTopLevelNonOverlappingRanges( $root, $tplRanges );
 			$this->encapsulateTemplates( $nonOverlappingRanges );
 		}
+	}
+
+	/**
+	 * Creates a range that encloses $startElem and $endElem
+	 * @param Element $startElem
+	 * @param Element $endElem
+	 * @return DOMRangeInfo
+	 */
+	protected function findEnclosingRange( Element $startElem, Element $endElem ): DOMRangeInfo {
+		$range = new DOMRangeInfo;
+		$range->id = Utils::stripParsoidIdPrefix( $this->getRangeId( $startElem ) );
+		$range->startOffset = DOMDataUtils::getDataParsoid( $startElem )->tsr->start;
+
+		// Find common ancestor of startElem and endElem
+		$startAncestors = DOMUtils::pathToRoot( $startElem );
+		$elem = $endElem;
+		$parentNode = $endElem->parentNode;
+		while ( $parentNode && $parentNode->nodeType !== XML_DOCUMENT_NODE ) {
+			$i = array_search( $parentNode, $startAncestors, true );
+			if ( $i === 0 ) {
+				// the common ancestor is startElem
+				// widen the scope to include the full subtree
+				$range->start = $startElem->firstChild;
+				$range->end = $startElem->lastChild;
+				break;
+			} elseif ( $i > 0 ) {
+				$range->start = $startAncestors[$i - 1];
+				$range->end = $elem;
+				break;
+			}
+			$elem = $parentNode;
+			$parentNode = $elem->parentNode;
+		}
+
+		return $range;
 	}
 }

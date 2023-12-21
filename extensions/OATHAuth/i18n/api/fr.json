@@ -8,13 +8,11 @@
 			"Wladek92"
 		]
 	},
-	"apihelp-query+oath-description": "Vérifier si l’authentification à deux facteurs (OATH) est activée pour un utilisateur.",
 	"apihelp-query+oath-summary": "Vérifie si l’authentification à deux facteurs (OATH) est activée chez un utilisateur.",
 	"apihelp-query+oath-param-user": "Utilisateur au sujet duquel obtenir des informations. Par défaut, l’utilisateur actuel.",
 	"apihelp-query+oath-param-reason": "Motif pour lequel vous demandez l’état OATH.",
 	"apihelp-query+oath-example-1": "Obtenir des informations sur l’utilisateur actuel",
 	"apihelp-query+oath-example-2": "Obtenir des informations sur l’utilisateur <kbd>Example</kbd>",
-	"apihelp-oathvalidate-description": "Valider un jeton d’authentification à deux facteurs (OATH).",
 	"apihelp-oathvalidate-summary": "Valider un jeton d’authentification à deux facteurs (OATH).",
 	"apihelp-oathvalidate-param-user": "Utilisateur pour lequel valider le jeton. Par défaut, l’utilisateur actuel.",
 	"apihelp-oathvalidate-example-1": "Valider les données JSON pour l’utilisateur actuel",

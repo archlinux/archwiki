@@ -29,7 +29,6 @@ require_once __DIR__ . '/../Maintenance.php';
 require_once __DIR__ . '/../../includes/export/WikiExporter.php';
 
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\IMaintainableDatabase;
@@ -217,10 +216,6 @@ abstract class BackupDumper extends Maintenance {
 		$register( $this );
 	}
 
-	public function execute() {
-		throw new MWException( 'execute() must be overridden in subclasses' );
-	}
-
 	/**
 	 * Processes arguments and sets $this->$sink accordingly
 	 */
@@ -330,7 +325,7 @@ abstract class BackupDumper extends Maintenance {
 		$this->initProgress( $history );
 
 		$db = $this->backupDb();
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$exporter = $services->getWikiExporterFactory()->getWikiExporter(
 			$db,
 			$history,
@@ -377,7 +372,7 @@ abstract class BackupDumper extends Maintenance {
 
 	/**
 	 * Initialise starting time and maximum revision count.
-	 * We'll make ETA calculations based an progress, assuming relatively
+	 * We'll make ETA calculations based on progress, assuming relatively
 	 * constant per-revision rate.
 	 * @param int $history WikiExporter::CURRENT or WikiExporter::FULL
 	 */
@@ -389,7 +384,10 @@ abstract class BackupDumper extends Maintenance {
 		if ( $this->forcedDb === null ) {
 			$dbr = $this->getDB( DB_REPLICA, [ 'dump' ] );
 		}
-		$this->maxCount = $dbr->selectField( $table, "MAX($field)", '', __METHOD__ );
+		$this->maxCount = $dbr->newSelectQueryBuilder()
+			->select( "MAX($field)" )
+			->from( $table )
+			->caller( __METHOD__ )->fetchField();
 		$this->startTime = microtime( true );
 		$this->lastTime = $this->startTime;
 		$this->ID = getmypid();
@@ -406,7 +404,7 @@ abstract class BackupDumper extends Maintenance {
 			return $this->forcedDb;
 		}
 
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
 		$this->lb = $lbFactory->newMainLB();
 		$db = $this->lb->getMaintenanceConnectionRef( DB_REPLICA, 'dump' );
 

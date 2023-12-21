@@ -25,7 +25,7 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
 
 /**
@@ -54,8 +54,15 @@ class CreateAndPromote extends Maintenance {
 			true
 		);
 
-		$this->addArg( "username", "Username of new user" );
-		$this->addArg( "password", "Password to set", false );
+		$this->addOption(
+			'reason',
+			'Reason for account creation and user rights assignment to log to wiki',
+			false,
+			true
+		);
+
+		$this->addArg( 'username', 'Username of new user' );
+		$this->addArg( 'password', 'Password to set', false );
 	}
 
 	public function execute() {
@@ -63,19 +70,19 @@ class CreateAndPromote extends Maintenance {
 		$password = $this->getArg( 1 );
 		$force = $this->hasOption( 'force' );
 		$inGroups = [];
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 
 		$user = $services->getUserFactory()->newFromName( $username );
 		if ( !is_object( $user ) ) {
-			$this->fatalError( "invalid username." );
+			$this->fatalError( 'invalid username.' );
 		}
 
 		$exists = ( $user->idForName() !== 0 );
 
 		if ( $exists && !$force ) {
-			$this->fatalError( "Account exists. Perhaps you want the --force option?" );
+			$this->fatalError( 'Account exists. Perhaps you want the --force option?' );
 		} elseif ( !$exists && !$password ) {
-			$this->error( "Argument <password> required!" );
+			$this->error( 'Argument <password> required!' );
 			$this->maybeHelp( true );
 		} elseif ( $exists ) {
 			$inGroups = $services->getUserGroupManager()->getUserGroups( $user );
@@ -117,9 +124,20 @@ class CreateAndPromote extends Maintenance {
 		}
 
 		if ( !$exists ) {
+			// Verify the password meets the password requirements before creating.
+			// This check is repeated below to account for differences between
+			// the password policy for regular users and for users in certain groups.
+			if ( $password ) {
+				$status = $user->checkPasswordValidity( $password );
+
+				if ( !$status->isGood() ) {
+					$this->fatalError( $status->getMessage( false, false, 'en' )->text() );
+				}
+			}
+
 			// Create the user via AuthManager as there may be various side
 			// effects that are performed by the configured AuthManager chain.
-			$status = MediaWikiServices::getInstance()->getAuthManager()->autoCreateUser(
+			$status = $this->getServiceContainer()->getAuthManager()->autoCreateUser(
 				$user,
 				MediaWiki\Auth\AuthManager::AUTOCREATE_SOURCE_MAINT,
 				false
@@ -127,6 +145,15 @@ class CreateAndPromote extends Maintenance {
 			if ( !$status->isGood() ) {
 				$this->fatalError( $status->getMessage( false, false, 'en' )->text() );
 			}
+		}
+
+		if ( $promotions ) {
+			// Add groups before changing password, as the password policy for certain groups has
+			// stricter requirements.
+			$userGroupManager = $services->getUserGroupManager();
+			$userGroupManager->addUserToMultipleGroups( $user, $promotions );
+			$reason = $this->getOption( 'reason' ) ?: '';
+			$this->addLogEntry( $user, $inGroups, array_merge( $inGroups, $promotions ), $reason );
 		}
 
 		if ( $password ) {
@@ -145,13 +172,9 @@ class CreateAndPromote extends Maintenance {
 					$user->saveSettings();
 				}
 			} catch ( PasswordError $pwe ) {
-				$this->fatalError( $pwe->getText() );
+				$this->fatalError( 'Setting the password failed: ' . $pwe->getMessage() );
 			}
 		}
-
-		$userGroupManager = $services->getUserGroupManager();
-		# Promote user
-		$userGroupManager->addUserToMultipleGroups( $user, $promotions );
 
 		if ( !$exists ) {
 			# Increment site_stats.ss_users
@@ -160,6 +183,29 @@ class CreateAndPromote extends Maintenance {
 		}
 
 		$this->output( "done.\n" );
+	}
+
+	/**
+	 * Add a rights log entry for an action.
+	 *
+	 * @param User $user
+	 * @param array $oldGroups
+	 * @param array $newGroups
+	 * @param string $reason
+	 *
+	 * @throws MWException
+	 */
+	private function addLogEntry( $user, array $oldGroups, array $newGroups, string $reason ) {
+		$logEntry = new ManualLogEntry( 'rights', 'rights' );
+		$logEntry->setPerformer( User::newSystemUser( User::MAINTENANCE_SCRIPT_USER, [ 'steal' => true ] ) );
+		$logEntry->setTarget( $user->getUserPage() );
+		$logEntry->setComment( $reason );
+		$logEntry->setParameters( [
+			'4::oldgroups' => $oldGroups,
+			'5::newgroups' => $newGroups
+		] );
+		$logid = $logEntry->insert();
+		$logEntry->publish( $logid );
 	}
 }
 

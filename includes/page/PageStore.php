@@ -8,18 +8,19 @@ use InvalidArgumentException;
 use Iterator;
 use LinkCache;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
-use MalformedTitleException;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
-use NamespaceInfo;
+use MediaWiki\Title\MalformedTitleException;
+use MediaWiki\Title\NamespaceInfo;
+use MediaWiki\Title\TitleParser;
 use NullStatsdDataFactory;
 use stdClass;
-use TitleParser;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * @since 1.36
@@ -393,13 +394,13 @@ class PageStore implements PageLookup {
 	/**
 	 * @unstable
 	 *
-	 * @param IDatabase|int $dbOrFlags The database connection to use, or a READ_XXX constant
+	 * @param IReadableDatabase|int $dbOrFlags The database connection to use, or a READ_XXX constant
 	 *        indicating what kind of database connection to use.
 	 *
 	 * @return PageSelectQueryBuilder
 	 */
 	public function newSelectQueryBuilder( $dbOrFlags = self::READ_NORMAL ): PageSelectQueryBuilder {
-		if ( $dbOrFlags instanceof IDatabase ) {
+		if ( $dbOrFlags instanceof IReadableDatabase ) {
 			$db = $dbOrFlags;
 			$options = [];
 		} else {

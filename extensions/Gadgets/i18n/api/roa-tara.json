@@ -4,13 +4,11 @@
 			"Joetaras"
 		]
 	},
-	"apihelp-query+gadgetcategories-description": "Tuèrne 'n'elenghe de le categorije de le accessore.",
 	"apihelp-query+gadgetcategories-summary": "Tuèrne 'n'elenghe de le categorije de le accessore.",
 	"apihelp-query+gadgetcategories-param-prop": "C'è categorije de 'mbormaziune d'u gadget vue ccu pigghie:\n;name:Nome 'nderne d'a categorije.\n;title:Titole d'a categorije.\n;members:Numere de gadget jndr'à categorije.",
 	"apihelp-query+gadgetcategories-param-names": "Nome de le categorije da recuperà.",
 	"apihelp-query+gadgetcategories-example-1": "Pigghie l'elenghe de le categorije de accessore esistende",
 	"apihelp-query+gadgetcategories-example-2": "Pigghie le 'mbormaziune sus a le categorije chiamate \"foo\" e \"bar\"",
-	"apihelp-query+gadgets-description": "Tuèrne 'n'elenghe de accessore ausate sus a sta uicchi.",
 	"apihelp-query+gadgets-summary": "Tuèrne 'n'elenghe de accessore ausate sus a sta uicchi.",
 	"apihelp-query+gadgets-param-prop": "Cè 'mbormaziune d'u gadget vuè ccu pigghie:\n;id:ID 'nderne d'u gadget.\n;metadata:'U metadate d'u gadget.\n;desc:Descrizione d'u gadget trasformate jndr'à l'HTML (pò essere lende, ausale sulamende ce te serve avveramende).",
 	"apihelp-query+gadgets-param-categories": "Da ce categorije a pigghià le gadget.",

@@ -5,11 +5,12 @@ namespace MediaWiki\User\TempUser;
 use ExtensionRegistry;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\Throttler;
+use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\Session;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserRigorOptions;
 use UnexpectedValueException;
-use WebRequest;
 use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
@@ -23,32 +24,15 @@ use Wikimedia\ObjectFactory\ObjectFactory;
  * @since 1.39
  */
 class TempUserCreator implements TempUserConfig {
-	/** @var RealTempUserConfig */
-	private $config;
-
-	/** @var UserFactory */
-	private $userFactory;
-
-	/** @var AuthManager */
-	private $authManager;
-
-	/** @var Throttler|null */
-	private $throttler;
-
-	/** @var array */
-	private $serialProviderConfig;
-
-	/** @var array */
-	private $serialMappingConfig;
-
-	/** @var ObjectFactory */
-	private $objectFactory;
-
-	/** @var SerialProvider|null */
-	private $serialProvider;
-
-	/** @var SerialMapping|null */
-	private $serialMapping;
+	private RealTempUserConfig $config;
+	private UserFactory $userFactory;
+	private AuthManager $authManager;
+	private ?Throttler $throttler;
+	private array $serialProviderConfig;
+	private array $serialMappingConfig;
+	private ObjectFactory $objectFactory;
+	private ?SerialProvider $serialProvider;
+	private ?SerialMapping $serialMapping;
 
 	/** ObjectFactory specs for the core serial providers */
 	private const SERIAL_PROVIDERS = [
@@ -150,12 +134,24 @@ class TempUserCreator implements TempUserConfig {
 		return $this->config->isAutoCreateAction( $action );
 	}
 
+	public function shouldAutoCreate( Authority $authority, string $action ) {
+		return $this->config->shouldAutoCreate( $authority, $action );
+	}
+
+	public function isTempName( string $name ) {
+		return $this->config->isTempName( $name );
+	}
+
 	public function isReservedName( string $name ) {
 		return $this->config->isReservedName( $name );
 	}
 
 	public function getPlaceholderName(): string {
 		return $this->config->getPlaceholderName();
+	}
+
+	public function getMatchPattern(): Pattern {
+		return $this->config->getMatchPattern();
 	}
 
 	/**
@@ -175,7 +171,7 @@ class TempUserCreator implements TempUserConfig {
 	 * @return SerialProvider
 	 */
 	private function getSerialProvider(): SerialProvider {
-		if ( !$this->serialProvider ) {
+		if ( !isset( $this->serialProvider ) ) {
 			$this->serialProvider = $this->createSerialProvider();
 		}
 		return $this->serialProvider;
@@ -215,7 +211,7 @@ class TempUserCreator implements TempUserConfig {
 	 * @return SerialMapping
 	 */
 	private function getSerialMapping(): SerialMapping {
-		if ( !$this->serialMapping ) {
+		if ( !isset( $this->serialMapping ) ) {
 			$this->serialMapping = $this->createSerialMapping();
 		}
 		return $this->serialMapping;
@@ -268,5 +264,20 @@ class TempUserCreator implements TempUserConfig {
 		$session->set( 'TempUser:name', $name );
 		$session->save();
 		return $name;
+	}
+
+	/**
+	 * Return a possible acquired and stashed username in a session.
+	 * Do not acquire or create the user.
+	 *
+	 * If this method is called with the same session ID as function acquireAndStashName(),
+	 * it returns the previously stashed username.
+	 *
+	 * @since 1.41
+	 * @param Session $session
+	 * @return ?string The username, if it was already acquired
+	 */
+	public function getStashedName( Session $session ): ?string {
+		return $session->get( 'TempUser:name' );
 	}
 }

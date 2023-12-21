@@ -21,9 +21,11 @@ function mwtext.setupInterface( opts )
 end
 
 function mwtext.trim( s, charset )
-	charset = charset or '\t\r\n\f '
-	s = mw.ustring.gsub( s, '^[' .. charset .. ']*(.-)[' .. charset .. ']*$', '%1' )
-	return s
+	if not charset then
+		return string.match( s, '^()%s*$' ) and '' or string.match( s, '^%s*(.*%S)' )
+	else
+		return ( mw.ustring.gsub( s, '^[' .. charset .. ']*(.-)[' .. charset .. ']*$', '%1' ) )
+	end
 end
 
 local htmlencode_map = {

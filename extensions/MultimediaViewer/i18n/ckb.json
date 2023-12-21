@@ -5,9 +5,11 @@
 			"Lost Whispers",
 			"Pirehelokan",
 			"Sarchia",
-			"Épine"
+			"Épine",
+			"Aram"
 		]
 	},
+	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About چاولێکەری میدیا]</span> چالاک بکە",
 	"multimediaviewer-repository-local": "وردەکاریی زیاتر",
 	"multimediaviewer-datetime-created": "دروست کراوە لە: $1",
 	"multimediaviewer-datetime-uploaded": "بارکراوە لە: $1",

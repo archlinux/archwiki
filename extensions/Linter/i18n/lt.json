@@ -5,6 +5,8 @@
 			"Nokeoo"
 		]
 	},
+	"linter-category-large-tables": "Didelės lentelės, kurias sunku peržiūrėti mobiliajame",
+	"linter-category-large-tables-desc": "Šie puslapiai turi lenteles, kurias sunku peržiūrėti mobiliuosiuose",
 	"linter-category-deletable-table-tag": "Lentelių žymės, kurias reikia ištrinti",
 	"linter-category-deletable-table-tag-desc": "Šie puslapiai turi lentelių žymes, kurias reikėtų ištrinti.",
 	"linter-category-misc-tidy-replacement-issues": "Įvairios problemos",
@@ -34,6 +36,7 @@
 	"linter-page-edit": "redaguoti",
 	"linter-page-history": "istorija",
 	"linter-page-viewsource": "žiūrėti šaltinį",
+	"linter-pager-large-tables-details": "Lentelė, kuri yra per didelė mobiliai peržiūrai",
 	"linter-pager-category-header": "Kategorija",
 	"linter-pager-deletable-table-tag-details": "Lentelės žyma, kurią reikia ištrinti",
 	"linter-pager-details-header": "Papildoma informacija",

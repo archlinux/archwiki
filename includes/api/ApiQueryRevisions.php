@@ -28,12 +28,14 @@ use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRoleRegistry;
+use MediaWiki\Status\Status;
 use MediaWiki\Storage\NameTableAccessException;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ActorMigration;
+use MediaWiki\User\TempUser\TempUserCreator;
+use MediaWiki\User\UserFactory;
 use Wikimedia\ParamValidator\ParamValidator;
-use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
 /**
  * A query action to enumerate revisions of a given page, or show top revisions
@@ -45,14 +47,9 @@ use Wikimedia\Rdbms\Platform\ISQLPlatform;
  */
 class ApiQueryRevisions extends ApiQueryRevisionsBase {
 
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var NameTableStore */
-	private $changeTagDefStore;
-
-	/** @var ActorMigration */
-	private $actorMigration;
+	private RevisionStore $revisionStore;
+	private NameTableStore $changeTagDefStore;
+	private ActorMigration $actorMigration;
 
 	/**
 	 * @param ApiQuery $query
@@ -66,6 +63,8 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 	 * @param ContentRenderer $contentRenderer
 	 * @param ContentTransformer $contentTransformer
 	 * @param CommentFormatter $commentFormatter
+	 * @param TempUserCreator $tempUserCreator
+	 * @param UserFactory $userFactory
 	 */
 	public function __construct(
 		ApiQuery $query,
@@ -78,7 +77,9 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 		ActorMigration $actorMigration,
 		ContentRenderer $contentRenderer,
 		ContentTransformer $contentTransformer,
-		CommentFormatter $commentFormatter
+		CommentFormatter $commentFormatter,
+		TempUserCreator $tempUserCreator,
+		UserFactory $userFactory
 	) {
 		parent::__construct(
 			$query,
@@ -90,7 +91,9 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 			$slotRoleRegistry,
 			$contentRenderer,
 			$contentTransformer,
-			$commentFormatter
+			$commentFormatter,
+			$tempUserCreator,
+			$userFactory
 		);
 		$this->revisionStore = $revisionStore;
 		$this->changeTagDefStore = $changeTagDefStore;
@@ -157,14 +160,13 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 		$useIndex = [];
 		if ( $resultPageSet === null ) {
 			$this->parseParameters( $params );
-			$opts = [ 'page' ];
+			$queryBuilder = $this->revisionStore->newSelectQueryBuilder( $db )
+				->joinComment()
+				->joinPage();
 			if ( $this->fld_user ) {
-				$opts[] = 'user';
+				$queryBuilder->joinUser();
 			}
-			$revQuery = $this->revisionStore->getQueryInfo( $opts );
-			$this->addTables( $revQuery['tables'] );
-			$this->addFields( $revQuery['fields'] );
-			$this->addJoinConds( $revQuery['joins'] );
+			$this->getQueryBuilder()->merge( $queryBuilder );
 		} else {
 			$this->limit = $this->getParameter( 'limit' ) ?: 10;
 			// Always join 'page' so orphaned revisions are filtered out
@@ -245,21 +247,20 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 			}
 			if ( $revids ) {
 				$db = $this->getDB();
-				$sql = $db->unionQueries( [
-					$db->selectSQLText(
-						'revision',
-						[ 'id' => 'rev_id', 'ts' => 'rev_timestamp' ],
-						[ 'rev_id' => $revids ],
-						__METHOD__
-					),
-					$db->selectSQLText(
-						'archive',
-						[ 'id' => 'ar_rev_id', 'ts' => 'ar_timestamp' ],
-						[ 'ar_rev_id' => $revids ],
-						__METHOD__
-					),
-				], $db::UNION_DISTINCT );
-				$res = $db->query( $sql, __METHOD__, ISQLPlatform::QUERY_CHANGE_NONE );
+				$uqb = $db->newUnionQueryBuilder();
+				$uqb->add(
+					$db->newSelectQueryBuilder()
+						->select( [ 'id' => 'rev_id', 'ts' => 'rev_timestamp' ] )
+						->from( 'revision' )
+						->where( [ 'rev_id' => $revids ] )
+				);
+				$uqb->add(
+					$db->newSelectQueryBuilder()
+						->select( [ 'id' => 'ar_rev_id', 'ts' => 'ar_timestamp' ] )
+						->from( 'archive' )
+						->where( [ 'ar_rev_id' => $revids ] )
+				);
+				$res = $uqb->caller( __METHOD__ )->fetchResultSet();
 				foreach ( $res as $row ) {
 					if ( (int)$row->id === (int)$params['startid'] ) {
 						$params['start'] = $row->ts;
@@ -341,8 +342,7 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 				// Paranoia: avoid brute force searches (T19342)
 				if ( !$this->getAuthority()->isAllowed( 'deletedhistory' ) ) {
 					$bitmask = RevisionRecord::DELETED_USER;
-				} elseif ( !$this->getAuthority()->isAllowedAny( 'suppressrevision', 'viewsuppressed' )
-				) {
+				} elseif ( !$this->getAuthority()->isAllowedAny( 'suppressrevision', 'viewsuppressed' ) ) {
 					$bitmask = RevisionRecord::DELETED_USER | RevisionRecord::DELETED_RESTRICTED;
 				} else {
 					$bitmask = 0;
@@ -360,7 +360,9 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 			$this->addWhereFld( 'rev_id', array_keys( $revs ) );
 
 			if ( $params['continue'] !== null ) {
-				$this->addWhere( 'rev_id >= ' . (int)$params['continue'] );
+				$this->addWhere( $db->buildComparison( '>=', [
+					'rev_id' => (int)$params['continue']
+				] ) );
 			}
 			$this->addOption( 'ORDER BY', 'rev_id' );
 		} elseif ( $pageCount > 0 ) {

@@ -3,7 +3,7 @@
 
 // style that applies only to minerva footer
 .minerva-footer {
-	border-top: solid 1px @footerBorderColor;
+	border-top: @border-subtle;
 	overflow: auto;
 	padding-bottom: 6px;
 }
@@ -20,7 +20,7 @@
 
 	// links should be separated by same color
 	.hlist {
-		li:after {
+		li::after {
 			color: @color-link;
 		}
 	}
@@ -34,15 +34,23 @@
 		}
 
 		.minerva-footer-logo {
-			border-bottom: solid 1px @footerBorderColor;
+			border-bottom: @border-subtle;
 			padding-bottom: 10px;
 			margin-top: 42px;
 			font-size: 1em;
 			font-weight: bold;
 
+			// FIXME: Remove when cache has cleared for I55a25dfb8aba3d1b589a36ba4cba3bba0fe710a1
 			&:first-child {
 				margin-top: 0;
 			}
+		}
+
+		// No margin top on logo needed if it follows the #p-lang element and nothing has been loaded
+		// above languages e.g. RelatedArticles.
+		/* stylelint-disable selector-max-id */
+		#p-lang:not( :target ):first-child + .minerva-footer-logo {
+			margin-top: 0;
 		}
 
 		.hlist,

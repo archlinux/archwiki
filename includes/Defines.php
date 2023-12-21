@@ -33,7 +33,7 @@ use Wikimedia\Rdbms\IDatabase;
  *
  * @since 1.35 (also backported to 1.33.3 and 1.34.1)
  */
-define( 'MW_VERSION', '1.40.1' );
+define( 'MW_VERSION', '1.41.0' );
 
 /** @{
  * Obsolete IDatabase::makeList() constants
@@ -152,13 +152,11 @@ define( 'MW_SUPPORTS_RESOURCE_MODULES', 1 );
  * - Parser::OT_HTML
  * - Parser::OT_WIKI
  * - Parser::OT_PREPROCESS
- * - Parser::OT_MSG
  * - Parser::OT_PLAIN
  */
 define( 'OT_HTML', 1 );
 define( 'OT_WIKI', 2 );
 define( 'OT_PREPROCESS', 3 );
-define( 'OT_MSG', 3 );  // b/c alias for OT_PREPROCESS
 define( 'OT_PLAIN', 4 );
 /** @} */
 

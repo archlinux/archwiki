@@ -1,14 +1,19 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\MainConfigNames;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\User\UserOptionsManager;
 use Psr\Log\NullLogger;
 use Wikimedia\Rdbms\DBConnRef;
+use Wikimedia\Rdbms\DeleteQueryBuilder;
 use Wikimedia\Rdbms\FakeResultWrapper;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\InsertQueryBuilder;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -27,7 +32,7 @@ class UserOptionsManagerTest extends UserOptionsLookupTest {
 	 * @param array $overrides supported keys:
 	 *  - 'language' - string language code
 	 *  - 'defaults' - array default preferences
-	 *  - 'lb' - ILoadBalancer
+	 *  - 'dbp' - IConnectionProvider
 	 *  - 'hookContainer' - HookContainer
 	 * @return UserOptionsManager
 	 */
@@ -37,8 +42,8 @@ class UserOptionsManagerTest extends UserOptionsLookupTest {
 			new ServiceOptions(
 				UserOptionsManager::CONSTRUCTOR_OPTIONS,
 				new HashConfig( [
-					'HiddenPrefs' => [ 'hidden_user_option' ],
-					'LocalTZoffset' => 0,
+					MainConfigNames::HiddenPrefs => [ 'hidden_user_option' ],
+					MainConfigNames::LocalTZoffset => 0,
 				] )
 			),
 			$this->getDefaultManager(
@@ -46,10 +51,11 @@ class UserOptionsManagerTest extends UserOptionsLookupTest {
 				$overrides['defaults'] ?? []
 			),
 			$services->getLanguageConverterFactory(),
-			$overrides['lb'] ?? $services->getDBLoadBalancer(),
+			$overrides['dbp'] ?? $services->getDBLoadBalancerFactory(),
 			new NullLogger(),
 			$overrides['hookContainer'] ?? $services->getHookContainer(),
-			$services->getUserFactory()
+			$services->getUserFactory(),
+			$services->getUserNameUtils()
 		);
 	}
 
@@ -288,13 +294,15 @@ class UserOptionsManagerTest extends UserOptionsLookupTest {
 					'up_property' => 'test_option',
 				]
 			] ) );
-		$mockLoadBalancer = $this->createMock( ILoadBalancer::class );
-		$mockLoadBalancer
-			->method( 'getConnectionRef' )
+		$mockDb->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $mockDb ) );
+		$mockDb->method( 'newInsertQueryBuilder' )->willReturnCallback( static fn () => new InsertQueryBuilder( $mockDb ) );
+		$mockDbProvider = $this->createMock( IConnectionProvider::class );
+		$mockDbProvider
+			->method( 'getPrimaryDatabase' )
 			->willReturn( $mockDb );
 		$user = $this->getTestUser()->getUser();
 		$manager = $this->getManager( [
-			'lb' => $mockLoadBalancer,
+			'dbp' => $mockDbProvider,
 		] );
 		$manager->getOption(
 			$user,
@@ -321,13 +329,17 @@ class UserOptionsManagerTest extends UserOptionsLookupTest {
 			] ) );
 		$mockDb->expects( $this->never() ) // This is critical what we are testing
 			->method( 'delete' );
-		$mockLoadBalancer = $this->createMock( ILoadBalancer::class );
-		$mockLoadBalancer
-			->method( 'getConnectionRef' )
+		$mockDb->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $mockDb ) );
+		$mockDbProvider = $this->createMock( IConnectionProvider::class );
+		$mockDbProvider
+			->method( 'getPrimaryDatabase' )
+			->willReturn( $mockDb );
+		$mockDbProvider
+			->method( 'getReplicaDatabase' )
 			->willReturn( $mockDb );
 		$user = $this->getTestUser()->getUser();
 		$manager = $this->getManager( [
-			'lb' => $mockLoadBalancer,
+			'dbp' => $mockDbProvider,
 			'defaults' => [
 				'set_default' => 'default',
 				'set_default_null' => null,
@@ -342,6 +354,9 @@ class UserOptionsManagerTest extends UserOptionsLookupTest {
 	public function testOptionsDeleteSetDefaultValue() {
 		$user = $this->getTestUser()->getUser();
 		$mockDb = $this->createMock( DBConnRef::class );
+		$mockDb
+			->method( 'newDeleteQueryBuilder' )
+			->willReturnCallback( static fn () => new DeleteQueryBuilder( $mockDb ) );
 		$mockDb->expects( $this->once() )
 			->method( 'select' )
 			->willReturn( new FakeResultWrapper( [
@@ -371,12 +386,16 @@ class UserOptionsManagerTest extends UserOptionsLookupTest {
 					'up_property' => [ 'set_default', 'set_default_null', 'set_default_not_null' ]
 				]
 			);
-		$mockLoadBalancer = $this->createMock( ILoadBalancer::class );
-		$mockLoadBalancer
-			->method( 'getConnectionRef' )
+		$mockDb->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $mockDb ) );
+		$mockDbProvider = $this->createMock( IConnectionProvider::class );
+		$mockDbProvider
+			->method( 'getPrimaryDatabase' )
+			->willReturn( $mockDb );
+		$mockDbProvider
+			->method( 'getReplicaDatabase' )
 			->willReturn( $mockDb );
 		$manager = $this->getManager( [
-			'lb' => $mockLoadBalancer,
+			'dbp' => $mockDbProvider,
 			'defaults' => [
 				'set_default' => 'default',
 				'set_default_null' => null,

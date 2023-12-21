@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\Math;
 use Exception;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
-use MWException;
+use RuntimeException;
 use stdClass;
 
 /**
@@ -16,7 +16,6 @@ class MathMathMLCli extends MathMathML {
 	/**
 	 * @param MathRenderer[] $renderers
 	 * @return bool
-	 * @throws MWException
 	 */
 	public static function batchEvaluate( array $renderers ) {
 		$req = [];
@@ -118,7 +117,6 @@ class MathMathMLCli extends MathMathML {
 	 * @param mixed $req request
 	 * @param int|null &$exitCode
 	 * @return mixed
-	 * @throws MWException
 	 */
 	private static function evaluateWithCli( $req, &$exitCode = null ) {
 		global $wgMathoidCli;
@@ -135,11 +133,11 @@ class MathMathMLCli extends MathMathML {
 				'conf' => var_export( $wgMathoidCli, true ),
 				'res' => var_export( $result, true ),
 			] );
-			throw new MWException( "Failed to execute Mathoid cli '$wgMathoidCli[0]', reason: $errorMsg" );
+			throw new RuntimeException( "Failed to execute Mathoid cli '$wgMathoidCli[0]', reason: $errorMsg" );
 		}
 		$res = json_decode( $result->getStdout() );
 		if ( !$res ) {
-			throw new MWException( "Mathoid cli response '$res' is no valid JSON file." );
+			throw new RuntimeException( "Mathoid cli response '$res' is no valid JSON file." );
 		}
 
 		return $res;

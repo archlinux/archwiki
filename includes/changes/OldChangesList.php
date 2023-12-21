@@ -23,6 +23,8 @@
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\SpecialPage\SpecialPage;
 
 class OldChangesList extends ChangesList {
 

@@ -20,14 +20,14 @@ class ArticlePage extends MinervaPage {
 	get talk_tab_element() { return $( '.minerva__tab-container a[rel="discussion"]' ); }
 	get mask_element() { return $( '.mw-mf-page-center__mask' ); }
 	get drawer_mask_element() { return $( '.drawer-container__mask--visible' ); }
-	get watched_element() { return $( '.mw-ui-icon-wikimedia-unStar-progressive, .mw-ui-icon-mf-watched' ); }
+	get watched_element() { return $( '.minerva-icon--unStar-progressive' ); }
 	get menu_button_element() { return $( '#mw-mf-main-menu-button' ); }
 	get search_icon_element() { return $( '#searchIcon' ); }
 	get menu_element() { return $( 'nav' ); }
 	get user_links_element() { return $( '.user-links' ); }
 	get notifications_button_element() { return $( '#pt-notifications-alert' ); }
 	get drawer_element() { return $( '.drawer' ); }
-	get edit_link_element() { return $( '#ca-edit' ); }
+	get edit_link_element() { return $( '#ca-editsource, #ca-createsource, #ca-edit, #ca-create' ); }
 	get first_heading_element() { return $( 'h1.mw-first-heading' ); }
 	get notification_element() { return $( '.mw-notification-area .mw-notification' ); }
 	get overlay_heading_element() { return $( '.overlay-title h2' ); }

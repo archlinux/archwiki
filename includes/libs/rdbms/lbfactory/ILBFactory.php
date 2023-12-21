@@ -62,7 +62,6 @@ interface ILBFactory extends IConnectionProvider {
 	 *  - cpStash: BagOStuff instance for ChronologyProtector store [optional]
 	 *    See [ChronologyProtector requirements](@ref ChronologyProtector-storage-requirements).
 	 *  - wanCache: WANObjectCache instance [optional]
-	 *  - databaseFactory: DatabaseFactory instance [optional]
 	 *  - cliMode: Whether the execution context is a CLI script. [optional]
 	 *  - profiler: Callback that takes a profile section name and returns a ScopedCallback
 	 *     that ends the profile section in its destructor [optional]
@@ -98,13 +97,6 @@ interface ILBFactory extends IConnectionProvider {
 	 * @since 1.32
 	 */
 	public function getLocalDomainID();
-
-	/**
-	 * @param DatabaseDomain|string|false $domain Database domain
-	 * @return string Value of $domain if provided or the local domain otherwise
-	 * @since 1.32
-	 */
-	public function resolveDomainID( $domain );
 
 	/**
 	 * Close all connections and redefine the local database domain
@@ -342,9 +334,7 @@ interface ILBFactory extends IConnectionProvider {
 	 * By default this waits on all DB clusters actually used in this request.
 	 * This makes sense when lag being waiting on is caused by the code that does this check.
 	 * In that case, setting "ifWritesSince" can avoid the overhead of waiting for clusters
-	 * that were not changed since the last wait check. To forcefully wait on a specific cluster
-	 * for a given domain, use the 'domain' parameter. To forcefully wait on an "external" cluster,
-	 * use the "cluster" parameter.
+	 * that were not changed since the last wait check.
 	 *
 	 * Never call this function after a large DB write that is *still* in a transaction.
 	 * It only makes sense to call this after the possible lag inducing changes were committed.
@@ -352,8 +342,6 @@ interface ILBFactory extends IConnectionProvider {
 	 * This only applies to the instantiated tracked load balancer instances.
 	 *
 	 * @param array $opts Optional fields that include:
-	 *   - domain: Wait on the load balancer DBs that handles the given domain ID.
-	 *   - cluster: Wait on the given external load balancer DBs.
 	 *   - timeout: Max wait time. Default: 60 seconds for CLI, 1 second for web.
 	 *   - ifWritesSince: Only wait if writes were done since this UNIX timestamp.
 	 * @return bool True on success, false if a timeout or error occurred while waiting
@@ -369,14 +357,6 @@ interface ILBFactory extends IConnectionProvider {
 	 * @param callable|null $callback Use null to unset a callback
 	 */
 	public function setWaitForReplicationListener( $name, callable $callback = null );
-
-	/**
-	 * Get the UNIX timestamp when the client last touched the DB, if they did so recently
-	 *
-	 * @param DatabaseDomain|string|false $domain Domain ID, or false for the current domain
-	 * @return float|false UNIX timestamp; false if not recent or on record
-	 */
-	public function getChronologyProtectorTouched( $domain = false );
 
 	/**
 	 * Disable the ChronologyProtector on all instantiated tracked load balancer instances
@@ -406,26 +386,12 @@ interface ILBFactory extends IConnectionProvider {
 	public function setAgentName( $agent );
 
 	/**
-	 * Append ?cpPosIndex parameter to a URL for ChronologyProtector purposes if needed
+	 * Whether it has streaming replica servers.
 	 *
-	 * Note that unlike cookies, this works across domains.
-	 *
-	 * @param string $url
-	 * @param int $index Write counter index
-	 * @return string
+	 * @since 1.41
+	 * @return bool
 	 */
-	public function appendShutdownCPIndexAsQuery( $url, $index );
-
-	/**
-	 * Inject HTTP request header/cookie information during setup of this instance
-	 *
-	 * @param array $info Map of fields, including:
-	 *   - IPAddress : IP address
-	 *   - UserAgent : User-Agent HTTP header
-	 *   - ChronologyProtection : cookie/header value specifying ChronologyProtector usage
-	 *   - ChronologyPositionIndex: timestamp used to get up-to-date DB positions for the agent
-	 */
-	public function setRequestInfo( array $info );
+	public function hasStreamingReplicaServers();
 
 	/**
 	 * Set the default timeout for replication wait checks

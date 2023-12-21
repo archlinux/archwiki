@@ -20,10 +20,18 @@
  * @file
  * @author Daniel Kinzler
  */
+
+namespace MediaWiki\Title;
+
+use GenderCache;
+use InvalidArgumentException;
+use Language;
+use LogicException;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageReference;
-use MediaWiki\Title\Title;
+use MediaWiki\Parser\Sanitizer;
+use Message;
 use Wikimedia\IPUtils;
 
 /**
@@ -101,7 +109,7 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 	public function overrideCreateMalformedTitleExceptionCallback( callable $callback ) {
 		// @codeCoverageIgnoreStart
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new RuntimeException( __METHOD__ . ' can only be used in tests' );
+			throw new LogicException( __METHOD__ . ' can only be used in tests' );
 		}
 		// @codeCoverageIgnoreEnd
 		$this->createMalformedTitleException = $callback;
@@ -383,7 +391,7 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 		);
 		$dbkey = trim( $dbkey, '_' );
 
-		if ( strpos( $dbkey, UtfNormal\Constants::UTF8_REPLACEMENT ) !== false ) {
+		if ( strpos( $dbkey, \UtfNormal\Constants::UTF8_REPLACEMENT ) !== false ) {
 			# Contained illegal UTF-8 sequences or forbidden Unicode chars.
 			$exception = ( $this->createMalformedTitleException )( 'title-invalid-utf8', $text );
 			throw $exception;
@@ -482,7 +490,7 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 			$dbkey = substr( $dbkey, 0, strlen( $dbkey ) - strlen( $fragment ) );
 			# remove whitespace again: prevents "Foo_bar_#"
 			# becoming "Foo_bar_"
-			$dbkey = preg_replace( '/_*$/', '', $dbkey );
+			$dbkey = rtrim( $dbkey, "_" );
 		}
 
 		# Reject illegal characters.
@@ -611,3 +619,9 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 		return $rxTc;
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( MediaWikiTitleCodec::class, 'MediaWikiTitleCodec' );

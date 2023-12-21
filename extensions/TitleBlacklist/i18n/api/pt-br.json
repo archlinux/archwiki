@@ -4,7 +4,6 @@
 			"Felipe L. Ewald"
 		]
 	},
-	"apihelp-titleblacklist-description": "Valide um título de página, nome de arquivo ou nome de usuário no TitleBlacklist.",
 	"apihelp-titleblacklist-summary": "Valide um título de página, nome de arquivo ou nome de usuário no TitleBlacklist.",
 	"apihelp-titleblacklist-param-title": "A string para validar contra a lista negra.",
 	"apihelp-titleblacklist-param-action": "A ação a ser verificada.",

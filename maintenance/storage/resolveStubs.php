@@ -23,7 +23,6 @@
  */
 
 use MediaWiki\Maintenance\UndoLog;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Storage\SqlBlobStore;
 
 require_once __DIR__ . '/../Maintenance.php';
@@ -46,7 +45,10 @@ class ResolveStubs extends Maintenance {
 	public function execute() {
 		$dbw = $this->getDB( DB_PRIMARY );
 		$dbr = $this->getDB( DB_REPLICA );
-		$maxID = $dbr->selectField( 'text', 'MAX(old_id)', '', __METHOD__ );
+		$maxID = $dbr->newSelectQueryBuilder()
+			->select( 'MAX(old_id)' )
+			->from( 'text' )
+			->caller( __METHOD__ )->fetchField();
 		$blockSize = $this->getBatchSize();
 		$dryRun = $this->getOption( 'dry-run' );
 		$this->setUndoLog( new UndoLog( $this->getOption( 'undo' ), $dbw ) );
@@ -54,7 +56,7 @@ class ResolveStubs extends Maintenance {
 		$numBlocks = intval( $maxID / $blockSize ) + 1;
 		$numResolved = 0;
 		$numTotal = 0;
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
 
 		for ( $b = 0; $b < $numBlocks; $b++ ) {
 			$lbFactory->waitForReplication();
@@ -63,12 +65,16 @@ class ResolveStubs extends Maintenance {
 			$start = $blockSize * $b + 1;
 			$end = $blockSize * ( $b + 1 );
 
-			$res = $dbr->select( 'text', [ 'old_id', 'old_text', 'old_flags' ],
-				"old_id>=$start AND old_id<=$end " .
-				"AND old_flags LIKE '%object%' AND old_flags NOT LIKE '%external%' " .
-				// LOWER() doesn't work on binary text, need to convert
-				'AND LOWER(CONVERT(LEFT(old_text,22) USING latin1)) = \'o:15:"historyblobstub"\'',
-				__METHOD__ );
+			$res = $dbr->newSelectQueryBuilder()
+				->select( [ 'old_id', 'old_text', 'old_flags' ] )
+				->from( 'text' )
+				->where(
+					"old_id>=$start AND old_id<=$end " .
+					"AND old_flags LIKE '%object%' AND old_flags NOT LIKE '%external%' " .
+					// LOWER() doesn't work on binary text, need to convert
+					'AND LOWER(CONVERT(LEFT(old_text,22) USING latin1)) = \'o:15:"historyblobstub"\''
+				)
+				->caller( __METHOD__ )->fetchResultSet();
 			foreach ( $res as $row ) {
 				$numResolved += $this->resolveStub( $row, $dryRun ) ? 1 : 0;
 				$numTotal++;
@@ -114,12 +120,11 @@ class ResolveStubs extends Maintenance {
 		}
 
 		# Get the main text row
-		$mainTextRow = $dbr->selectRow(
-			'text',
-			[ 'old_text', 'old_flags' ],
-			[ 'old_id' => $mainId ],
-			__METHOD__
-		);
+		$mainTextRow = $dbr->newSelectQueryBuilder()
+			->select( [ 'old_text', 'old_flags' ] )
+			->from( 'text' )
+			->where( [ 'old_id' => $mainId ] )
+			->caller( __METHOD__ )->fetchRow();
 
 		if ( !$mainTextRow ) {
 			print "Error at old_id $id: can't find main text row old_id $mainId\n";

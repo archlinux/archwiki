@@ -57,5 +57,8 @@
 	"tooltip-vector-anon-user-menu-title": "بعد اختيارات",
 	"vector-prefs-limited-width": "شعل وضع العرض المحدود",
 	"vector-prefs-limited-width-help": "فعل وضع العرض المحدود لتجربة قراءة محسنة.",
-	"empty-language-selector-body": "محتوى الصفحه مو موجود بغير لغات"
+	"empty-language-selector-body": "محتوى الصفحه مو موجود بغير لغات",
+	"vector-toc-unpinned-popup": "جدول المحتوى انتقل هنا.",
+	"vector-page-tools-unpinned-popup": "قائمة الأدوات انتقلت هنا",
+	"vector-main-menu-unpinned-popup": "الصفحه الرئيسيه"
 }

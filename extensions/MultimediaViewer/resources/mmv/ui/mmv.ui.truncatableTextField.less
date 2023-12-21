@@ -1,3 +1,4 @@
+@import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
 @import '../mmv.variables.less';
 @import '../mmv.mixins.less';
@@ -36,7 +37,7 @@
 		height: 1em; // make it scale with the font
 		width: 1.5em; // SVG image has ~1.5 aspect ratio
 		text-indent: -9999px;
-		border-radius: @border-radius;
+		border-radius: @border-radius-base;
 		background-size: contain;
 		background-position: center center;
 		background-repeat: no-repeat;
@@ -61,7 +62,7 @@
 			background-image: url( img/ellipsis_darkgray.svg );
 		}
 
-		&:before {
+		&::before {
 			@fade-length: 2em;
 			display: block;
 			content: '';

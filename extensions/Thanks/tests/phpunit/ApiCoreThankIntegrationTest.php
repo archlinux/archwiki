@@ -1,12 +1,9 @@
 <?php
 
-use MediaWiki\Revision\RevisionRecord;
-use MediaWiki\Revision\SlotRecord;
-
 /**
  * Integration tests for the Thanks API module
  *
- * @covers \MediaWiki\Extension\Thanks\ApiCoreThank
+ * @covers \MediaWiki\Extension\Thanks\Api\ApiCoreThank
  *
  * @group Thanks
  * @group Database
@@ -35,37 +32,23 @@ class ApiCoreThankIntegrationTest extends ApiTestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->uploader = $this->getTestUser( [ 'uploader' ] )->getUser();
+		$this->uploader = $this->getTestUser()->getUser();
 		$user = $this->uploader;
+
+		// Here comes the hack! Make sure to create a random, useless revision with ID 1, so that the one created below
+		// that we will use to send thanks has an ID other than 1. Why? Because ApiCoreThank::getRevisionFromId thinks
+		// rev ID = 1 means invalid input, see T344475. Yay!
+		$this->getExistingTestPage( 'Why the heck is revID = 1 considered invalid?' );
 
 		$pageName = __CLASS__;
 		$content = __CLASS__;
-		$pageTitle = Title::newFromText( $pageName );
-
-		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
-
-		// If the page already exists, delete it, otherwise our edit will not result in a new revision
-		if ( $pageTitle->exists() ) {
-			$wikiPage = $wikiPageFactory->newFromTitle( $pageTitle );
-			$wikiPage->doDeleteArticleReal( '', $user );
-		}
-		$result = $this->editPage( $pageName, $content, 'Summary', NS_MAIN, $user );
-		/** @var Status $result */
-		$result = $result->getValue();
-		/** @var RevisionRecord $revisionRecord */
-		$revisionRecord = $result['revision-record'];
-		$this->revId = $revisionRecord->getId();
+		// Make sure the page doesn't exist, otherwise our edit will not result in a new revision
+		$page = $this->getNonexistingTestPage( $pageName );
+		$result = $this->editPage( $page, $content, 'Summary', NS_MAIN, $user );
+		$this->revId = $result->getNewRevision()->getId();
 
 		// Create a 2nd page and delete it, so we can thank for the log entry.
-		$pageToDeleteTitle = Title::newFromText( 'Page to delete' );
-		$pageToDelete = $wikiPageFactory->newFromTitle( $pageToDeleteTitle );
-
-		$updater = $pageToDelete->newPageUpdater( $user );
-		$updater->setcontent(
-			SlotRecord::MAIN,
-			ContentHandler::makeContent( '', $pageToDeleteTitle )
-		);
-		$updater->saveRevision( CommentStoreComment::newUnsavedComment( '' ) );
+		$pageToDelete = $this->getExistingTestPage( 'Page to delete' );
 
 		$deleteStatus = $pageToDelete->doDeleteArticleReal( '', $user );
 		$this->logId = $deleteStatus->getValue();
@@ -74,8 +57,7 @@ class ApiCoreThankIntegrationTest extends ApiTestCase {
 	}
 
 	public function testRequestWithoutToken() {
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage( 'The "token" parameter must be set.' );
+		$this->expectApiErrorCode( 'missingparam' );
 		$this->doApiRequest( [
 			'action' => 'thank',
 			'source' => 'someSource',
@@ -101,9 +83,7 @@ class ApiCoreThankIntegrationTest extends ApiTestCase {
 
 	public function testLogRequestWithDisallowedLogType() {
 		$this->setMwGlobals( [ 'wgThanksAllowedLogTypes' => [] ] );
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage(
-			"Log type 'delete' is not in the list of permitted log types." );
+		$this->expectApiErrorCode( 'thanks-error-invalid-log-type' );
 		$this->doApiRequestWithToken( [
 			'action' => 'thank',
 			'log' => $this->logId,
@@ -131,9 +111,7 @@ class ApiCoreThankIntegrationTest extends ApiTestCase {
 
 		$sysop = $this->getTestSysop()->getUser();
 		// Then try to thank for it, and we should get an exception.
-		$this->expectException( ApiUsageException::class );
-		$this->expectExceptionMessage(
-			"The requested log entry has been deleted and thanks cannot be given for it." );
+		$this->expectApiErrorCode( 'thanks-error-log-deleted' );
 		$this->doApiRequestWithToken( [
 			'action' => 'thank',
 			'log' => $this->logId,

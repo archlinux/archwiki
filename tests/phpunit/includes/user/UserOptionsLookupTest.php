@@ -1,6 +1,8 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\MainConfigNames;
 use MediaWiki\User\DefaultOptionsLookup;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
@@ -34,13 +36,13 @@ abstract class UserOptionsLookupTest extends MediaWikiIntegrationTestCase {
 			new ServiceOptions(
 				DefaultOptionsLookup::CONSTRUCTOR_OPTIONS,
 				new HashConfig( [
-					'DefaultSkin' => 'test',
-					'DefaultUserOptions' => array_merge( [
+					MainConfigNames::DefaultSkin => 'test',
+					MainConfigNames::DefaultUserOptions => array_merge( [
 						'default_string_option' => 'string_value',
 						'default_int_option' => 1,
 						'default_bool_option' => true
 					], $defaultOptionsOverrides ),
-					'NamespacesToBeSearchedDefault' => [
+					MainConfigNames::NamespacesToBeSearchedDefault => [
 						NS_MAIN => true,
 						NS_TALK => true,
 						NS_MEDIAWIKI => false,
@@ -49,7 +51,8 @@ abstract class UserOptionsLookupTest extends MediaWikiIntegrationTestCase {
 			),
 			$lang,
 			$this->getServiceContainer()->getHookContainer(),
-			$this->getServiceContainer()->getNamespaceInfo()
+			$this->getServiceContainer()->getNamespaceInfo(),
+			!$this->needsDB()
 		);
 	}
 

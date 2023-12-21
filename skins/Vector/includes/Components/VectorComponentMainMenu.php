@@ -31,6 +31,7 @@ class VectorComponentMainMenu implements VectorComponent {
 	/**
 	 * @param array $sidebarData
 	 * @param bool $shouldLanguageAlertBeInSidebar
+	 * @param int $numLanguages
 	 * @param array $languageData
 	 * @param MessageLocalizer $localizer
 	 * @param User $user
@@ -40,6 +41,7 @@ class VectorComponentMainMenu implements VectorComponent {
 	public function __construct(
 		array $sidebarData,
 		bool $shouldLanguageAlertBeInSidebar,
+		int $numLanguages,
 		array $languageData,
 		MessageLocalizer $localizer,
 		User $user,
@@ -51,21 +53,18 @@ class VectorComponentMainMenu implements VectorComponent {
 		$this->localizer = $localizer;
 		$this->isPinned = $featureManager->isFeatureEnabled( Constants::FEATURE_MAIN_MENU_PINNED );
 
+		$this->pinnableHeader = new VectorComponentPinnableHeader(
+			$this->localizer,
+			$this->isPinned,
+			self::ID,
+			'main-menu-pinned'
+		);
+
 		if ( $user->isRegistered() ) {
 			$this->optOut = new VectorComponentMainMenuActionOptOut( $skin );
-
-			$isPageToolsEnabled = $featureManager->isFeatureEnabled( Constants::FEATURE_PAGE_TOOLS );
-			if ( $isPageToolsEnabled ) {
-				$this->pinnableHeader = new VectorComponentPinnableHeader(
-					$this->localizer,
-					$this->isPinned,
-					self::ID,
-					'main-menu-pinned'
-				);
-			}
 		}
 		if ( $shouldLanguageAlertBeInSidebar ) {
-			$this->alert = new VectorComponentMainMenuActionLanguageSwitchAlert( $skin );
+			$this->alert = new VectorComponentMainMenuActionLanguageSwitchAlert( $skin, $numLanguages );
 		}
 	}
 

@@ -4,8 +4,10 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\PP\Processors;
 
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -102,7 +104,7 @@ class MigrateTemplateMarkerMetas implements Wt2HtmlDOMProcessor {
 	 *   wt2wt corruption implications if done incorrectly. So, we
 	 *   aren't considering this possibility right now.
 	 *
-	 * @param Node $node
+	 * @param Element|DocumentFragment $node
 	 * @param Env $env
 	 */
 	private function doMigrate( Node $node, Env $env ): void {
@@ -110,6 +112,7 @@ class MigrateTemplateMarkerMetas implements Wt2HtmlDOMProcessor {
 		while ( $c ) {
 			$sibling = $c->nextSibling;
 			if ( $c->hasChildNodes() ) {
+				'@phan-var Element $c';  // @var Element $c
 				$this->doMigrate( $c, $env );
 			}
 			$c = $sibling;
@@ -120,7 +123,10 @@ class MigrateTemplateMarkerMetas implements Wt2HtmlDOMProcessor {
 			return;
 		}
 
-		$firstChild = DOMUtils::firstNonSepChild( $node );
+		// Check if $node is a fostered node
+		$fostered = !empty( DOMDataUtils::getDataParsoid( $node )->fostered );
+
+		$firstChild = DiffDOMUtils::firstNonSepChild( $node );
 		if ( $firstChild && $this->migrateFirstChild( $firstChild ) ) {
 			// We can migrate the meta-tag across this node's start-tag barrier only
 			// if that start-tag is zero-width, or auto-inserted.
@@ -133,13 +139,18 @@ class MigrateTemplateMarkerMetas implements Wt2HtmlDOMProcessor {
 				do {
 					$firstChild = $node->firstChild;
 					$node->parentNode->insertBefore( $firstChild, $node );
+					if ( $fostered && $firstChild instanceof Element ) {
+						// $firstChild is being migrated out of a fostered node
+						// So, mark $lastChild itself fostered!
+						DOMDataUtils::getDataParsoid( $firstChild )->fostered = true;
+					}
 				} while ( $sentinel !== $firstChild );
 
 				$this->updateDepths( $firstChild );
 			}
 		}
 
-		$lastChild = DOMUtils::lastNonSepChild( $node );
+		$lastChild = DiffDOMUtils::lastNonSepChild( $node );
 		if ( $lastChild && $this->migrateLastChild( $lastChild ) ) {
 			// We can migrate the meta-tag across this node's end-tag barrier only
 			// if that end-tag is zero-width, or auto-inserted.
@@ -157,6 +168,11 @@ class MigrateTemplateMarkerMetas implements Wt2HtmlDOMProcessor {
 				do {
 					$lastChild = $node->lastChild;
 					$node->parentNode->insertBefore( $lastChild, $node->nextSibling );
+					if ( $fostered && $lastChild instanceof Element ) {
+						// $lastChild is being migrated out of a fostered node
+						// So, mark $lastChild itself fostered!
+						DOMDataUtils::getDataParsoid( $lastChild )->fostered = true;
+					}
 				} while ( $sentinel !== $lastChild );
 
 				$this->updateDepths( $lastChild );
@@ -170,6 +186,8 @@ class MigrateTemplateMarkerMetas implements Wt2HtmlDOMProcessor {
 	public function run(
 		Env $env, Node $root, array $options = [], bool $atTopLevel = false
 	): void {
-		$this->doMigrate( $root, $env );
+		if ( $root instanceof Element || $root instanceof DocumentFragment ) {
+			$this->doMigrate( $root, $env );
+		}
 	}
 }

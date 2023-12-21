@@ -10,7 +10,7 @@ use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\Watcher\EmergencyWatcher;
 use MediaWikiUnitTestCase;
 use MWTimestamp;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\LBFactory;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Watcher\EmergencyWatcher
@@ -60,7 +60,7 @@ class EmergencyWatcherTest extends MediaWikiUnitTestCase {
 		return $lookup;
 	}
 
-	public function provideFiltersToThrottle(): array {
+	public static function provideFiltersToThrottle(): array {
 		return [
 			'throttled, default group' => [
 				/* timestamp */ '20201016010000',
@@ -159,7 +159,7 @@ class EmergencyWatcherTest extends MediaWikiUnitTestCase {
 		MWTimestamp::setFakeTime( $timestamp );
 		$watcher = new EmergencyWatcher(
 			$this->getEmergencyCache( $cacheData, $group ),
-			$this->createMock( ILoadBalancer::class ),
+			$this->createMock( LBFactory::class ),
 			$this->getFilterLookup( $filterData ),
 			$this->createMock( EchoNotifier::class ),
 			$this->getOptions()
@@ -180,7 +180,7 @@ class EmergencyWatcherTest extends MediaWikiUnitTestCase {
 	public function testConstruct() {
 		$watcher = new EmergencyWatcher(
 			$this->createMock( EmergencyCache::class ),
-			$this->createMock( ILoadBalancer::class ),
+			$this->createMock( LBFactory::class ),
 			$this->createMock( FilterLookup::class ),
 			$this->createMock( EchoNotifier::class ),
 			$this->getOptions()

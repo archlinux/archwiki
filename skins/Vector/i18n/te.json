@@ -43,5 +43,7 @@
 	"vector-unpin-element-label": "దాచు",
 	"vector-prefs-limited-width": "లిమిటెడ్ విడ్త్ మోడ్‌ను చేతనం చెయ్యి",
 	"vector-prefs-limited-width-help": "చదవడంలో మెరుగైన అనుభూతి కోసం లిమిటెడ్ విడ్త్ మోడ్‌ను చేతనం చేసుకోండి",
-	"empty-language-selector-body": "ఈ పేజీ లోని కంటెంటులకు ఇతర భాషలలో మద్దతు లేదు."
+	"empty-language-selector-body": "ఈ పేజీ లోని కంటెంటులకు ఇతర భాషలలో మద్దతు లేదు.",
+	"vector-page-tools-unpinned-popup": "సాధనాల మెను ఇక్కడికి తరలించబడింది.",
+	"vector-main-menu-unpinned-popup": "ప్రధాన మెనూ ఇక్కడికి తరలించబడింది."
 }

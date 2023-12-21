@@ -6,8 +6,8 @@ use MediaWiki\Extension\DiscussionTools\ContentThreadItemSet;
 use MediaWiki\Extension\DiscussionTools\Notifications\EventDispatcher;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use Title;
 
 class MockEventDispatcher extends EventDispatcher {
 

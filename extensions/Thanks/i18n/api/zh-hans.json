@@ -5,11 +5,9 @@
 			"Macofe"
 		]
 	},
-	"apihelp-flowthank-description": "为一条Flow评论公开发送感谢通知。",
 	"apihelp-flowthank-summary": "为一条Flow评论公开发送感谢通知。",
 	"apihelp-flowthank-param-postid": "要感谢的帖子的UUID。",
 	"apihelp-flowthank-example-1": "为<kbd>UUID xyz789</kbd>的评论发送感谢",
-	"apihelp-thank-description": "向一名编辑者发送感谢通知。",
 	"apihelp-thank-summary": "向一名编辑者发送感谢通知。",
 	"apihelp-thank-param-rev": "要感谢某人的修订版本ID。必须提供此参数或“log”参数。",
 	"apihelp-thank-param-log": "要感谢某人的日志ID。必须提供此参数或“rev”参数。",

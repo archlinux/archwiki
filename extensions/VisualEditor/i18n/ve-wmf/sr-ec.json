@@ -10,6 +10,9 @@
 			"Сербијана"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck мисли да је нов садржај додат страници",
+	"tag-editcheck-newreference-description": "Референца је додата на страницу",
+	"tag-editcheck-references-description": "EditCheck мисли да је потребна референца",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Визуелно уређивање]]",
 	"tag-visualeditor-description": "Измена начињена [[{{MediaWiki:visualeditor-descriptionpagelink}}|Визуелним уређивачем]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Визуелни уређивач: проверити]]",
@@ -23,7 +26,7 @@
 	"visualeditor-help-label": "Кориснички водич",
 	"visualeditor-help-title": "Водич за употребу уређивача",
 	"visualeditor-welcomedialog-action": "Започни уређивање",
-	"visualeditor-welcomedialog-content": "Овде свако може да уређује и побољшава садржај.",
+	"visualeditor-welcomedialog-content": "Овде свако може да уређује и унапређује садржај.",
 	"visualeditor-welcomedialog-content-thanks": "Хвала вам што помажете у ширењу знања!",
 	"visualeditor-welcomedialog-switch": "Пребаци ме на уређивање извора",
 	"visualeditor-welcomedialog-switch-ve": "Пребаци ме на визуелни уређивач",

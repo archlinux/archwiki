@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"*Surak*",
+			"Brettchenweber",
 			"ChrisiPK",
 			"Das Schäfchen",
 			"Druesenfieber",
@@ -37,8 +38,7 @@
 			"Urhixidur",
 			"Vogone",
 			"Wnme",
-			"Zabe",
-			"Brettchenweber"
+			"Zabe"
 		]
 	},
 	"tog-underline": "Links unterstreichen:",
@@ -56,7 +56,6 @@
 	"tog-watchdeletion": "Selbst gelöschte Seiten und Dateien automatisch beobachten",
 	"tog-watchuploads": "Selbst hochgeladene Dateien automatisch beobachten",
 	"tog-watchrollback": "Seiten, bei denen ich eine Zurücksetzung durchgeführt habe, automatisch beobachten",
-	"tog-minordefault": "Eigene Änderungen standardmäßig als geringfügig markieren",
 	"tog-previewontop": "Vorschau oberhalb des Bearbeitungsfensters anzeigen",
 	"tog-previewonfirst": "Vorschau beim ersten Bearbeiten immer anzeigen",
 	"tog-enotifrevealaddr": "Ihre E-Mail-Adresse in Benachrichtigungs-E-Mails anzeigen",
@@ -157,7 +156,6 @@
 	"mainpage": "Hauptseite",
 	"mainpage-description": "Hauptseite",
 	"policy-url": "Project:Richtlinien",
-	"portal": "Gemeinschafts&shy;portal",
 	"portal-url": "Project:Gemeinschaftsportal",
 	"privacy": "Datenschutz",
 	"privacypage": "Project:Datenschutz",
@@ -301,9 +299,9 @@
 	"missingcommenttext": "Ihr Abschnitt enthält keinen Text.",
 	"missingcommentheader": "'''Achtung:''' Sie haben kein Betreff/Überschrift eingegeben. Wenn Sie erneut auf „$1“ klicken, wird Ihre Bearbeitung ohne Überschrift veröffentlicht.",
 	"previewerrortext": "Beim Versuch, eine Vorschau Ihrer Änderungen anzuzeigen, ist ein Fehler aufgetreten.",
+	"blockedtext": "<strong>Ihr Benutzername oder Ihre IP-Adresse wurde gesperrt.</strong>\n\n{{int:blockedtext-made-by|$1}}\n{{int:blockedtext-reason-comment|$2}}.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-contact-blocker-admin|$1}}\nSie können die „{{int:emailuser}}“-Funktion nutzen, wenn eine gültige E-Mail-Adresse in Ihren [[Special:Preferences|Benutzerkonto-Einstellungen]] eingetragen ist und diese Funktion für Sie nicht gesperrt wurde.\n{{int:blockedtext-block-ip|$3}} {{int:blockedtext-block-id|$5}}\n{{int:blockedtext-include-details-queries}}",
 	"blockedtext-partial": "<strong>Ihr Benutzerkonto oder Ihre IP-Adresse ist für das Durchführen dieser Aktion gesperrt. Sie können möglicherweise noch andere Sachen in diesem Wiki, wie z. B. bestimmte Seiten, bearbeiten.</strong>\n\nSie können die vollständigen Einzelheiten in Ihren [[Special:MyContributions|Benutzerbeiträgen]] einsehen.\n\n{{int:blockedtext-made-by|$1}}\n\n{{int:blockedtext-reason-comment|$2}}.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n*{{int:blockedtext-block-id|$5}}",
-	"blockedtext": "<strong>'''Ihr Benutzername oder Ihre IP-Adresse wurde gesperrt.'''</strong>\n\nDie Sperrung wurde vom Administrator $1 durchgeführt.\nAls Grund wurde <em>''$2''</em> angegeben.\n\n* Beginn der Sperre: $8\n* Ende der Sperre: $6\n* Sperre betrifft: $7\n\nSie könnten $1 oder einen der anderen [[{{MediaWiki:Grouppage-sysop}}|Administratoren]] kontaktieren, um über die Sperre zu diskutieren.\nSie können die „{{int:emailuser}}“-Funktion nutzen, wenn eine gültige E-Mail-Adresse in Ihren [[Special:Preferences|Benutzerkonto-Einstellungen]] eingetragen ist und diese Funktion für Sie nicht gesperrt wurde.\nIhre aktuelle IP-Adresse ist $3 und die Sperrkennung lautet $5.\nBitte fügen Sie alle Informationen jeder Anfrage hinzu, die Sie stellen.",
-	"autoblockedtext": "Ihre IP-Adresse wurde automatisch gesperrt, da sie von einem anderen Benutzer genutzt wurde, der von $1 gesperrt wurde.\nAls Grund wurde angegeben:\n\n:<em>$2</em>\n\n* Beginn der Sperre: $8\n* Ende der Sperre: $6\n* Sperre betrifft: $7\n\nSie können $1 oder einen der anderen [[{{MediaWiki:Grouppage-sysop}}|Administratoren]] kontaktieren, um über die Sperre zu diskutieren.\n\nSie können die „{{int:emailuser}}“-Funktion nutzen, wenn eine gültige E-Mail-Adresse in Ihren [[Special:Preferences|Benutzerkonto-Einstellungen]] eingetragen ist und diese Funktion für Sie nicht gesperrt wurde.\n\nIhre aktuelle IP-Adresse ist $3, und die Sperr-ID ist $5.\nBitte fügen Sie alle Informationen jeder Anfrage hinzu, die Sie stellen.",
+	"autoblockedtext": "Ihre IP-Adresse wurde automatisch gesperrt, da sie von einem anderen Benutzer genutzt wurde, der von $1 gesperrt wurde.\nAls Grund wurde angegeben:\n\n:<em>$2</em>.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-contact-blocker-admin|$1}} \n\nSie können die „{{int:emailuser}}“-Funktion nutzen, wenn eine gültige E-Mail-Adresse in Ihren [[Special:Preferences|Benutzerkonto-Einstellungen]] eingetragen ist und diese Funktion für Sie nicht gesperrt wurde.\n\n{{int:blockedtext-block-ip|$3}} {{int:blockedtext-block-id|$5}}\n{{int:blockedtext-include-details-queries}}",
 	"systemblockedtext": "Ihr Benutzername oder Ihre IP-Adresse wurde von MediaWiki automatisch gesperrt.\nDer angegebene Grund ist:\n\n:<em>$2</em>\n\n* Beginn der Sperre: $8\n* Ablauf der Sperre: $6\n* Sperre betrifft: $7\n\nIhre aktuelle IP-Adresse ist $3.\nBitte geben Sie alle oben stehenden Details in jeder Anfrage an.",
 	"blockedtext-composite": "<strong>Ihr Benutzername oder Ihre IP-Adresse wurde gesperrt.</strong>\n\nDer Angegebene Grund ist:\n\n:<em>$2</em>\n\n* Beginn der Sperre: $8\n* Ablauf der längsten Sperre: $6\n\n* $5\n\nIhre aktuelle IP-Adresse ist $3.\nBitte geben Sie alle oben stehenden Details in jeder Anfrage an.",
 	"blockedtext-composite-ids": "Relevante Sperr-IDs: $1 (Ihre IP-Adresse könnte ebenfalls in einer Sperrliste eingetragen sein.)",
@@ -592,7 +590,6 @@
 	"tooltip-watchlist-expiry": "Diese Seite vorübergehend zu Ihrer Beobachtungsliste hinzufügen",
 	"tooltip-summary": "Geben Sie eine kurze Zusammenfassung ein.",
 	"spamprotectiontext": "Der Text, den Sie veröffentlichen möchten, wurde vom Spamschutzfilter blockiert.\nDas liegt wahrscheinlich an einem Link auf eine verbotene externe Seite.",
-	"pageinfo-toolboxlink": "Seiten­informationen",
 	"markedaspatrollederrortext": "Sie müssen eine Seitenänderung auswählen.",
 	"mediawarning": "<strong>Warnung:</strong> Dieser Dateityp kann böswilligen Programmcode enthalten.\nDurch das Herunterladen und Öffnen der Datei kann Ihr Computer beschädigt werden.",
 	"show-big-image": "Originaldatei",

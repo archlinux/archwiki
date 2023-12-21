@@ -201,7 +201,7 @@
 						'codeeditor-main': {
 							tools: {
 								codeEditor: {
-									labelMsg: 'codeeditor-toolbar-toggle',
+									label: mw.msg( 'codeeditor-toolbar-toggle' ),
 									type: 'toggle',
 									oouiIcon: 'markup',
 									action: {
@@ -214,7 +214,7 @@
 						'codeeditor-format': {
 							tools: {
 								indent: {
-									labelMsg: 'codeeditor-indent',
+									label: mw.msg( 'codeeditor-indent' ),
 									type: 'button',
 									oouiIcon: 'indent',
 									action: {
@@ -223,7 +223,7 @@
 									}
 								},
 								outdent: {
-									labelMsg: 'codeeditor-outdent',
+									label: mw.msg( 'codeeditor-outdent' ),
 									type: 'button',
 									oouiIcon: 'outdent',
 									action: {
@@ -237,7 +237,7 @@
 						'codeeditor-style': {
 							tools: {
 								invisibleChars: {
-									labelMsg: 'codeeditor-invisibleChars-toggle',
+									label: mw.msg( 'codeeditor-invisibleChars-toggle' ),
 									type: 'toggle',
 									oouiIcon: 'pilcrow',
 									action: {
@@ -246,7 +246,7 @@
 									}
 								},
 								lineWrapping: {
-									labelMsg: 'codeeditor-lineWrapping-toggle',
+									label: mw.msg( 'codeeditor-lineWrapping-toggle' ),
 									type: 'toggle',
 									oouiIcon: 'wrapping',
 									action: {
@@ -255,7 +255,7 @@
 									}
 								},
 								gotoLine: {
-									labelMsg: 'codeeditor-gotoline',
+									label: mw.msg( 'codeeditor-gotoline' ),
 									type: 'button',
 									oouiIcon: 'gotoLine',
 									action: {
@@ -264,7 +264,7 @@
 									}
 								},
 								toggleSearchReplace: {
-									labelMsg: 'codeeditor-searchReplace-toggle',
+									label: mw.msg( 'codeeditor-searchReplace-toggle' ),
 									type: 'button',
 									oouiIcon: 'articleSearch',
 									action: {
@@ -299,11 +299,6 @@
 				context.fn.updateButtonIcon( 'lineWrapping', context.fn.isLineWrappingActive );
 			},
 			setCodeEditorPreference: function ( prefValue ) {
-				// Do not try to save options for anonymous user
-				if ( mw.user.isAnon() ) {
-					return;
-				}
-
 				// Abort any previous request
 				api.abort();
 
@@ -311,6 +306,10 @@
 					.fail( function ( code, result ) {
 						if ( code === 'http' && result.textStatus === 'abort' ) {
 							// Request was aborted. Ignore error
+							return;
+						}
+						if ( code === 'notloggedin' ) {
+							// Expected for non-registered users
 							return;
 						}
 
@@ -400,6 +399,11 @@
 					} );
 
 					mw.hook( 'codeEditor.configure' ).fire( session );
+
+					// Add an Ace change handler to pass changes to Edit Recovery.
+					mw.hook( 'editRecovery.loadEnd' ).add( function ( data ) {
+						session.on( 'change', data.fieldChangeHandler );
+					} );
 
 					ace.config.loadModule( 'ace/ext/modelist', function ( modelist ) {
 						if ( !modelist || !modelist.modesByName[ lang ] ) {
@@ -735,6 +739,16 @@
 			},
 
 			/**
+			 * Replace the current selection with the given text.
+			 * DO NOT CALL THIS DIRECTLY, use $.textSelection( 'functionname', options ) instead
+			 *
+			 * @param {string} text
+			 */
+			replaceSelection: function ( text ) {
+				context.codeEditor.insert( text );
+			},
+
+			/**
 			 * Inserts text at the begining and end of a text selection, optionally inserting text at the caret when
 			 * selection is empty.
 			 * DO NOT CALL THIS DIRECTLY, use $.textSelection( 'functionname', options ) instead
@@ -772,9 +786,24 @@
 			/**
 			 * Gets the position (in resolution of bytes not nessecarily characters) in a textarea
 			 * DO NOT CALL THIS DIRECTLY, use $.textSelection( 'functionname', options ) instead
+			 *
+			 * @param {Object} options
+			 * @param {Object} [options.startAndEnd=false] Return range of the selection rather than just start
+			 * @return {number|number[]} If options.startAndEnd is true, returns an array holding the start and
+			 * end of the selection, else returns only the start of the selection as a single number.
 			 */
-			getCaretPosition: function () {
-				mw.log( 'codeEditor stub function getCaretPosition called' );
+			getCaretPosition: function ( options ) {
+				var selection = context.codeEditor.getSelection(),
+					range = selection.getRange(),
+					doc = context.codeEditor.getSession().getDocument(),
+					startOffset = doc.positionToIndex( range.start );
+
+				if ( options.startAndEnd ) {
+					var endOffset = doc.positionToIndex( range.end );
+					return [ startOffset, endOffset ];
+				}
+
+				return startOffset;
 			},
 
 			/**

@@ -7,6 +7,7 @@
 	},
 	"categorytree-portlet": "ꠙꠖꠣꠁꠘ",
 	"categorytree-category": "ꠙꠖ ꠪",
+	"categorytree-parents": "ꠃꠙꠞꠞ",
 	"categorytree-mode-label": "ꠝꠥꠒ ꠪",
 	"categorytree-mode-categories": "ꠈꠣꠟꠤ ꠙꠖꠣꠁꠘ",
 	"categorytree-mode-all": "ꠢꠇ꠆ꠇꠟ ꠙꠣꠔꠣꠁꠘ",
@@ -21,5 +22,7 @@
 	"categorytree-loading": "ꠟꠣꠝꠦꠞ ...",
 	"categorytree-nothing-found": "ꠇꠤꠌ꠆ꠌꠥ ꠝꠤꠟ꠆ꠍꠦꠘꠣ",
 	"categorytree-no-subcategories": "ꠃꠙꠙꠖꠣꠁꠘ ꠘꠣꠁ",
-	"categorytree-no-parent-categories": "ꠃꠙꠞꠞ ꠙꠖꠣꠁꠘ ꠘꠣꠁ"
+	"categorytree-no-parent-categories": "ꠃꠙꠞꠞ ꠙꠖꠣꠁꠘ ꠘꠣꠁ",
+	"categorytree-not-found": "ꠙꠖ <i>$1</i> ꠝꠤꠟꠍꠥ ꠘꠣ",
+	"categorytree-retry": "ꠕꠥꠞꠣ ꠛꠣꠞ ꠌꠣꠁꠀ ꠢꠤꠞꠛꠣꠞ ꠖꠦꠈꠃꠇ꠆ꠇꠣ ⁕"
 }

@@ -4,7 +4,6 @@
 			"З. ӘЙЛЕ"
 		]
 	},
-	"apihelp-abusefilterchecksyntax-description": "AbuseFilter фильтры синтаксисын тикшереү",
 	"apihelp-abusefilterunblockautopromote-param-user": "Һеҙ блокировкаһын алырға теләгән ҡатнашыусының исеме (логин).",
 	"apihelp-query+abusefilters-param-prop": "Ниндәй үҙенсәлекте мотлаҡ алырға:",
 	"apihelp-query+abuselog-param-limit": "Исемлектәге яҙмаларҙың иң ҙур күләме.",

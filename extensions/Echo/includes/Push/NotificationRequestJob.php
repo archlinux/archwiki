@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Push;
 
-use EchoServices;
 use Job;
+use MediaWiki\Extension\Notifications\Services;
 
 class NotificationRequestJob extends Job {
 
@@ -12,7 +12,7 @@ class NotificationRequestJob extends Job {
 	 */
 	public function run(): bool {
 		$centralId = $this->params['centralId'];
-		$echoServices = EchoServices::getInstance();
+		$echoServices = Services::getInstance();
 		$subscriptionManager = $echoServices->getPushSubscriptionManager();
 		$subscriptions = $subscriptionManager->getSubscriptionsForUser( $centralId );
 		if ( count( $subscriptions ) === 0 ) {

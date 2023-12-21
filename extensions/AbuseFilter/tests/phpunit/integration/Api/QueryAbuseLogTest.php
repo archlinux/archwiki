@@ -7,6 +7,7 @@ use ApiTestCase;
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Api\QueryAbuseLog
  * @group medium
+ * @group Database
  * @todo Extend this
  */
 class QueryAbuseLogTest extends ApiTestCase {
@@ -18,7 +19,7 @@ class QueryAbuseLogTest extends ApiTestCase {
 		$this->doApiRequest( [
 			'action' => 'query',
 			'list' => 'abuselog',
-		], null, null, self::getTestUser()->getUser() );
+		] );
 		$this->addToAssertionCount( 1 );
 	}
 

@@ -17,7 +17,7 @@ namespace MediaWiki;
  * the respective config setting.
  *
  * @note this class is generated automatically by maintenance/generateConfigSchema.php
- * @since 1.38
+ * @since 1.39
  */
 class MainConfigNames {
 
@@ -268,6 +268,7 @@ class MainConfigNames {
 	/**
 	 * Name constant for the IllegalFileChars setting, for use with Config::get()
 	 * @see MainConfigSchema::IllegalFileChars
+	 * @deprecated since 1.41; no longer customizable
 	 */
 	public const IllegalFileChars = 'IllegalFileChars';
 
@@ -648,6 +649,18 @@ class MainConfigNames {
 	 * @see MainConfigSchema::SVGMetadataCutoff
 	 */
 	public const SVGMetadataCutoff = 'SVGMetadataCutoff';
+
+	/**
+	 * Name constant for the SVGNativeRendering setting, for use with Config::get()
+	 * @see MainConfigSchema::SVGNativeRendering
+	 */
+	public const SVGNativeRendering = 'SVGNativeRendering';
+
+	/**
+	 * Name constant for the SVGNativeRenderingSizeLimit setting, for use with Config::get()
+	 * @see MainConfigSchema::SVGNativeRenderingSizeLimit
+	 */
+	public const SVGNativeRenderingSizeLimit = 'SVGNativeRenderingSizeLimit';
 
 	/**
 	 * Name constant for the MediaInTargetLanguage setting, for use with Config::get()
@@ -1226,22 +1239,28 @@ class MainConfigNames {
 	public const MaxExecutionTimeForExpensiveQueries = 'MaxExecutionTimeForExpensiveQueries';
 
 	/**
+	 * Name constant for the VirtualDomainsMapping setting, for use with Config::get()
+	 * @see MainConfigSchema::VirtualDomainsMapping
+	 */
+	public const VirtualDomainsMapping = 'VirtualDomainsMapping';
+
+	/**
 	 * Name constant for the TemplateLinksSchemaMigrationStage setting, for use with Config::get()
 	 * @see MainConfigSchema::TemplateLinksSchemaMigrationStage
 	 */
 	public const TemplateLinksSchemaMigrationStage = 'TemplateLinksSchemaMigrationStage';
 
 	/**
-	 * Name constant for the ExternalLinksSchemaMigrationStage setting, for use with Config::get()
-	 * @see MainConfigSchema::ExternalLinksSchemaMigrationStage
+	 * Name constant for the PageLinksSchemaMigrationStage setting, for use with Config::get()
+	 * @see MainConfigSchema::PageLinksSchemaMigrationStage
 	 */
-	public const ExternalLinksSchemaMigrationStage = 'ExternalLinksSchemaMigrationStage';
+	public const PageLinksSchemaMigrationStage = 'PageLinksSchemaMigrationStage';
 
 	/**
-	 * Name constant for the CommentTempTableSchemaMigrationStage setting, for use with Config::get()
-	 * @see MainConfigSchema::CommentTempTableSchemaMigrationStage
+	 * Name constant for the ExternalLinksDomainGaps setting, for use with Config::get()
+	 * @see MainConfigSchema::ExternalLinksDomainGaps
 	 */
-	public const CommentTempTableSchemaMigrationStage = 'CommentTempTableSchemaMigrationStage';
+	public const ExternalLinksDomainGaps = 'ExternalLinksDomainGaps';
 
 	/**
 	 * Name constant for the ContentHandlers setting, for use with Config::get()
@@ -1315,6 +1334,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::ExternalDiffEngine
 	 */
 	public const ExternalDiffEngine = 'ExternalDiffEngine';
+
+	/**
+	 * Name constant for the Wikidiff2Options setting, for use with Config::get()
+	 * @see MainConfigSchema::Wikidiff2Options
+	 */
+	public const Wikidiff2Options = 'Wikidiff2Options';
 
 	/**
 	 * Name constant for the RequestTimeLimit setting, for use with Config::get()
@@ -1501,6 +1526,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::ChronologyProtectorStash
 	 */
 	public const ChronologyProtectorStash = 'ChronologyProtectorStash';
+
+	/**
+	 * Name constant for the ChronologyProtectorSecret setting, for use with Config::get()
+	 * @see MainConfigSchema::ChronologyProtectorSecret
+	 */
+	public const ChronologyProtectorSecret = 'ChronologyProtectorSecret';
 
 	/**
 	 * Name constant for the ParserCacheExpireTime setting, for use with Config::get()
@@ -1870,6 +1901,12 @@ class MainConfigNames {
 	public const VariantArticlePath = 'VariantArticlePath';
 
 	/**
+	 * Name constant for the UseXssLanguage setting, for use with Config::get()
+	 * @see MainConfigSchema::UseXssLanguage
+	 */
+	public const UseXssLanguage = 'UseXssLanguage';
+
+	/**
 	 * Name constant for the LoginLanguageSelector setting, for use with Config::get()
 	 * @see MainConfigSchema::LoginLanguageSelector
 	 */
@@ -1978,12 +2015,6 @@ class MainConfigNames {
 	public const SkipSkins = 'SkipSkins';
 
 	/**
-	 * Name constant for the ResourceLoaderClientPreferences setting, for use with Config::get()
-	 * @see MainConfigSchema::ResourceLoaderClientPreferences
-	 */
-	public const ResourceLoaderClientPreferences = 'ResourceLoaderClientPreferences';
-
-	/**
 	 * Name constant for the DisableOutputCompression setting, for use with Config::get()
 	 * @see MainConfigSchema::DisableOutputCompression
 	 */
@@ -2036,6 +2067,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::EnableCanonicalServerLink
 	 */
 	public const EnableCanonicalServerLink = 'EnableCanonicalServerLink';
+
+	/**
+	 * Name constant for the InterwikiLogoOverride setting, for use with Config::get()
+	 * @see MainConfigSchema::InterwikiLogoOverride
+	 */
+	public const InterwikiLogoOverride = 'InterwikiLogoOverride';
 
 	/**
 	 * Name constant for the ResourceModules setting, for use with Config::get()
@@ -2110,6 +2147,12 @@ class MainConfigNames {
 	public const ResourceLoaderStorageVersion = 'ResourceLoaderStorageVersion';
 
 	/**
+	 * Name constant for the ResourceLoaderEnableSourceMapLinks setting, for use with Config::get()
+	 * @see MainConfigSchema::ResourceLoaderEnableSourceMapLinks
+	 */
+	public const ResourceLoaderEnableSourceMapLinks = 'ResourceLoaderEnableSourceMapLinks';
+
+	/**
 	 * Name constant for the AllowSiteCSSOnRestrictedPages setting, for use with Config::get()
 	 * @see MainConfigSchema::AllowSiteCSSOnRestrictedPages
 	 */
@@ -2160,6 +2203,7 @@ class MainConfigNames {
 	/**
 	 * Name constant for the LegalTitleChars setting, for use with Config::get()
 	 * @see MainConfigSchema::LegalTitleChars
+	 * @deprecated since 1.41; use Extension:TitleBlacklist to customize
 	 */
 	public const LegalTitleChars = 'LegalTitleChars';
 
@@ -2335,14 +2379,22 @@ class MainConfigNames {
 	/**
 	 * Name constant for the ParserEnableLegacyMediaDOM setting, for use with Config::get()
 	 * @see MainConfigSchema::ParserEnableLegacyMediaDOM
+	 * @deprecated since 1.41
 	 */
 	public const ParserEnableLegacyMediaDOM = 'ParserEnableLegacyMediaDOM';
 
 	/**
 	 * Name constant for the UseContentMediaStyles setting, for use with Config::get()
 	 * @see MainConfigSchema::UseContentMediaStyles
+	 * @deprecated since 1.41
 	 */
 	public const UseContentMediaStyles = 'UseContentMediaStyles';
+
+	/**
+	 * Name constant for the UseLegacyMediaStyles setting, for use with Config::get()
+	 * @see MainConfigSchema::UseLegacyMediaStyles
+	 */
+	public const UseLegacyMediaStyles = 'UseLegacyMediaStyles';
 
 	/**
 	 * Name constant for the RawHtml setting, for use with Config::get()
@@ -2481,6 +2533,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::CentralIdLookupProvider
 	 */
 	public const CentralIdLookupProvider = 'CentralIdLookupProvider';
+
+	/**
+	 * Name constant for the UserRegistrationProviders setting, for use with Config::get()
+	 * @see MainConfigSchema::UserRegistrationProviders
+	 */
+	public const UserRegistrationProviders = 'UserRegistrationProviders';
 
 	/**
 	 * Name constant for the PasswordPolicy setting, for use with Config::get()
@@ -2831,6 +2889,12 @@ class MainConfigNames {
 	 * @see MainConfigSchema::AvailableRights
 	 */
 	public const AvailableRights = 'AvailableRights';
+
+	/**
+	 * Name constant for the ImplicitRights setting, for use with Config::get()
+	 * @see MainConfigSchema::ImplicitRights
+	 */
+	public const ImplicitRights = 'ImplicitRights';
 
 	/**
 	 * Name constant for the DeleteRevisionsLimit setting, for use with Config::get()
@@ -3843,12 +3907,6 @@ class MainConfigNames {
 	public const ExtensionEntryPointListFiles = 'ExtensionEntryPointListFiles';
 
 	/**
-	 * Name constant for the ParserOutputHooks setting, for use with Config::get()
-	 * @see MainConfigSchema::ParserOutputHooks
-	 */
-	public const ParserOutputHooks = 'ParserOutputHooks';
-
-	/**
 	 * Name constant for the EnableParserLimitReporting setting, for use with Config::get()
 	 * @see MainConfigSchema::EnableParserLimitReporting
 	 */
@@ -4163,12 +4221,6 @@ class MainConfigNames {
 	public const APIUselessQueryPages = 'APIUselessQueryPages';
 
 	/**
-	 * Name constant for the AjaxUploadDestCheck setting, for use with Config::get()
-	 * @see MainConfigSchema::AjaxUploadDestCheck
-	 */
-	public const AjaxUploadDestCheck = 'AjaxUploadDestCheck';
-
-	/**
 	 * Name constant for the AjaxLicensePreview setting, for use with Config::get()
 	 * @see MainConfigSchema::AjaxLicensePreview
 	 */
@@ -4395,5 +4447,11 @@ class MainConfigNames {
 	 * @see MainConfigSchema::SpecialContributeSkinsEnabled
 	 */
 	public const SpecialContributeSkinsEnabled = 'SpecialContributeSkinsEnabled';
+
+	/**
+	 * Name constant for the EnableEditRecovery setting, for use with Config::get()
+	 * @see MainConfigSchema::EnableEditRecovery
+	 */
+	public const EnableEditRecovery = 'EnableEditRecovery';
 
 }

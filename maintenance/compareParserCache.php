@@ -21,8 +21,9 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
+use Wikimedia\Diff\Diff;
+use Wikimedia\Diff\UnifiedDiffFormatter;
 
 /**
  * @ingroup Maintenance
@@ -44,27 +45,29 @@ class CompareParserCache extends Maintenance {
 		$scanned = 0;
 		$withcache = 0;
 		$withdiff = 0;
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$parserCache = $services->getParserCache();
 		$renderer = $services->getRevisionRenderer();
 		$wikiPageFactory = $services->getWikiPageFactory();
 		while ( $pages-- > 0 ) {
-			$row = $dbr->selectRow( 'page',
+			$row = $dbr->newSelectQueryBuilder()
 				// @todo Title::selectFields() or Title::getQueryInfo() or something
-				[
-					'page_namespace', 'page_title', 'page_id',
-					'page_len', 'page_is_redirect', 'page_latest',
-				],
-				[
+				->select( [
+					'page_namespace',
+					'page_title',
+					'page_id',
+					'page_len',
+					'page_is_redirect',
+					'page_latest',
+				] )
+				->from( 'page' )
+				->where( [
 					'page_namespace' => $this->getOption( 'namespace' ),
 					'page_is_redirect' => 0,
 					'page_random >= ' . wfRandom()
-				],
-				__METHOD__,
-				[
-					'ORDER BY' => 'page_random',
-				]
-			);
+				] )
+				->orderBy( 'page_random' )
+				->caller( __METHOD__ )->fetchRow();
 
 			if ( !$row ) {
 				continue;

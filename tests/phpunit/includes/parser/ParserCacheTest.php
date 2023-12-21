@@ -14,8 +14,10 @@ use MediaWiki\Page\PageStoreRecord;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Tests\Json\JsonUnserializableSuperClass;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
+use MediaWiki\User\User;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
-use MWTimestamp;
 use NullStatsdDataFactory;
 use ParserCache;
 use ParserOptions;
@@ -24,7 +26,6 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 use TestLogger;
-use User;
 use Wikimedia\TestingAccessWrapper;
 use WikiPage;
 
@@ -82,6 +83,12 @@ class ParserCacheTest extends MediaWikiIntegrationTestCase {
 		LoggerInterface $logger = null,
 		WikiPageFactory $wikiPageFactory = null
 	): ParserCache {
+		if ( !$wikiPageFactory ) {
+			$wikiPageMock = $this->createMock( WikiPage::class );
+			$wikiPageMock->method( 'getContentModel' )->willReturn( CONTENT_MODEL_WIKITEXT );
+			$wikiPageFactory = $this->createMock( WikiPageFactory::class );
+			$wikiPageFactory->method( 'newFromTitle' )->willReturn( $wikiPageMock );
+		}
 		return new ParserCache(
 			'test',
 			$storage ?: new HashBagOStuff(),
@@ -90,8 +97,8 @@ class ParserCacheTest extends MediaWikiIntegrationTestCase {
 			new JsonCodec(),
 			new NullStatsdDataFactory(),
 			$logger ?: new NullLogger(),
-			$this->getServiceContainer()->getTitleFactory(),
-			$wikiPageFactory ?: $this->getServiceContainer()->getWikiPageFactory()
+			$this->createMock( TitleFactory::class ),
+			$wikiPageFactory
 		);
 	}
 
@@ -477,9 +484,9 @@ class ParserCacheTest extends MediaWikiIntegrationTestCase {
 		$options->setOption( $this->getDummyUsedOptions()[0], 'value1' );
 
 		$wikiPageMock = $this->createMock( WikiPage::class );
-		$wikiPageMock->method( 'getContentModel' )->willReturn( 'wikitext' );
-		$wikiPageFactoryMock = $this->createMock( WikiPageFactory::class );
-		$wikiPageFactoryMock->method( 'newFromTitle' )
+		$wikiPageMock->method( 'getContentModel' )->willReturn( CONTENT_MODEL_WIKITEXT );
+		$wikiPageFactory = $this->createMock( WikiPageFactory::class );
+		$wikiPageFactory->method( 'newFromTitle' )
 			->with( $this->page )
 			->willReturn( $wikiPageMock );
 		$hookContainer = $this->createHookContainer( [
@@ -492,7 +499,7 @@ class ParserCacheTest extends MediaWikiIntegrationTestCase {
 					return false;
 				}
 		] );
-		$cache = $this->createParserCache( $hookContainer, null, null, $wikiPageFactoryMock );
+		$cache = $this->createParserCache( $hookContainer, null, null, $wikiPageFactory );
 		$cache->save( $parserOutput, $this->page, $options, $this->cacheTime );
 		$this->assertFalse( $cache->get( $this->page, $options ) );
 	}
@@ -571,7 +578,7 @@ class ParserCacheTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideCorruptData() {
+	public static function provideCorruptData() {
 		yield 'JSON serialization, bad data' => [ 'bla bla' ];
 		yield 'JSON serialization, no _class_' => [ '{"test":"test"}' ];
 		yield 'JSON serialization, non-existing _class_' => [ '{"_class_":"NonExistentBogusClass"}' ];
@@ -647,6 +654,10 @@ class ParserCacheTest extends MediaWikiIntegrationTestCase {
 	public function testMigrationToJson() {
 		$bagOStuff = new HashBagOStuff();
 
+		$wikiPageMock = $this->createMock( WikiPage::class );
+		$wikiPageMock->method( 'getContentModel' )->willReturn( CONTENT_MODEL_WIKITEXT );
+		$wikiPageFactory = $this->createMock( WikiPageFactory::class );
+		$wikiPageFactory->method( 'newFromTitle' )->willReturn( $wikiPageMock );
 		$cache = $this->getMockBuilder( ParserCache::class )
 			->setConstructorArgs( [
 				'test',
@@ -656,8 +667,8 @@ class ParserCacheTest extends MediaWikiIntegrationTestCase {
 				new JsonCodec(),
 				new NullStatsdDataFactory(),
 				new NullLogger(),
-				$this->getServiceContainer()->getTitleFactory(),
-				$this->getServiceContainer()->getWikiPageFactory()
+				$this->createMock( TitleFactory::class ),
+				$wikiPageFactory
 			] )
 			->onlyMethods( [ 'convertForCache' ] )
 			->getMock();

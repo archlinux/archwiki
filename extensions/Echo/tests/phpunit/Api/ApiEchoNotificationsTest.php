@@ -3,6 +3,7 @@
 /**
  * @group medium
  * @group API
+ * @group Database
  * @covers \MediaWiki\Extension\Notifications\Api\ApiEchoNotifications
  */
 class ApiEchoNotificationsTest extends ApiTestCase {

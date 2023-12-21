@@ -5,9 +5,9 @@
 			"Si Gam Acèh"
 		]
 	},
-	"tooltip-ca-createsource": "Peugöt kode nè laman nyoë",
-	"tooltip-ca-editsource": "Peusaneut kode nè laman nyoë",
 	"tooltip-ca-ve-edit": "Peusaneut ôn nyoe",
+	"tooltip-ca-editsource": "Peusaneut kode nè laman nyoë",
+	"tooltip-ca-createsource": "Peugöt kode nè laman nyoë",
 	"visualeditor-autosave-modified-prompt-accept": "Peusaneut lom",
 	"visualeditor-browserwarning": "Droëneuh neungui ''browser'' nyang hana jidukông raseumi lé VisualEditor",
 	"visualeditor-ca-createlocaldescriptionsource": "Tamah asai surah atra droe",
@@ -51,7 +51,6 @@
 	"visualeditor-languages-tool": "Bahsa",
 	"visualeditor-linkinspector-illegal-title": "Nan laman hana sah",
 	"visualeditor-meta-tool": "Atô laman",
-	"visualeditor-preference-core-label": "VisualEditor",
 	"visualeditor-rebase-client-import-name": "Nan laman",
 	"visualeditor-savedialog-label-publish-short": "Peuteubiet",
 	"visualeditor-savedialog-label-publish-short-start": "Peuteubiet...",
@@ -59,5 +58,5 @@
 	"visualeditor-savedialog-label-review": "Pubandéng hasé peusaneut",
 	"visualeditor-savedialog-label-save-short-start": "Keubah...",
 	"visualeditor-savedialog-title-review": "Pubandéng hasé peusaneut",
-	"visualeditor-savedialog-title-save": "Keubah neuubah Droëneuh"
+	"visualeditor-savedialog-title-save": "Keubah atra neupeugöt"
 }

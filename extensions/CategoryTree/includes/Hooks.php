@@ -24,8 +24,7 @@
 
 namespace MediaWiki\Extension\CategoryTree;
 
-use Config;
-use Html;
+use MediaWiki\Config\Config;
 use MediaWiki\Hook\CategoryViewer__doCategoryQueryHook;
 use MediaWiki\Hook\CategoryViewer__generateLinkHook;
 use MediaWiki\Hook\OutputPageMakeCategoryLinksHook;
@@ -33,15 +32,17 @@ use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Hook\SkinBuildSidebarHook;
 use MediaWiki\Hook\SpecialTrackingCategories__generateCatLinkHook;
 use MediaWiki\Hook\SpecialTrackingCategories__preprocessHook;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkTarget;
-use OutputPage;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\ResourceLoader as RL;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\Title;
 use Parser;
 use PPFrame;
 use RequestContext;
-use Sanitizer;
 use Skin;
-use SpecialPage;
-use Title;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -236,13 +237,13 @@ class Hooks implements
 	 * Get exported data for the "ext.categoryTree" ResourceLoader module.
 	 *
 	 * @internal For use in extension.json only.
+	 * @param RL\Context $context
+	 * @param Config $config
 	 * @return array Data to be serialised as data.json
 	 */
-	public static function getDataForJs() {
-		global $wgCategoryTreeCategoryPageOptions;
-
+	public static function getDataForJs( RL\Context $context, Config $config ) {
 		// Look, this is pretty bad but CategoryTree is just whacky, it needs to be rewritten
-		$ct = new CategoryTree( $wgCategoryTreeCategoryPageOptions );
+		$ct = new CategoryTree( $config->get( 'CategoryTreeCategoryPageOptions' ) );
 
 		return [
 			'defaultCtOptions' => $ct->getOptionsAsJsStructure(),

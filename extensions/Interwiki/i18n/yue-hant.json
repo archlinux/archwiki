@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"Yueman"
 		]
 	},
 	"interwiki": "去睇同編輯跨維基資料",
@@ -13,7 +14,10 @@
 	"interwiki-local-label": "定義呢個做一個本地wiki:",
 	"interwiki_trans": "容許跨維基包含",
 	"interwiki-trans-label": "容許跨維基包含:",
+	"interwiki_1": "係",
+	"interwiki_0": "唔係",
 	"interwiki_error": "錯誤: 跨維基表係空、又或者有其它嘢出錯。",
+	"interwiki_edit": "改",
 	"interwiki_reasonfield": "原因：",
 	"interwiki_deleting": "你而家拎走緊前綴 \"$1\"。",
 	"interwiki_deleted": "前綴 \"$1\" 已經成功噉響個跨維基表度拎走咗。",

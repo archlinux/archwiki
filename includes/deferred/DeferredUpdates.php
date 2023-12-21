@@ -1,7 +1,5 @@
 <?php
 /**
- * Interface and manager for deferred updates.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -20,74 +18,79 @@
  * @file
  */
 
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
-use MediaWiki\JobQueue\JobQueueGroupFactory;
 use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\MediaWikiServices;
-use Psr\Log\LoggerInterface;
-use Wikimedia\Rdbms\DBTransactionError;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\ScopedCallback;
 
 /**
- * Class for managing the deferral of updates within the scope of a PHP script invocation
+ * Defer callable updates to run later in the PHP process
  *
- * In web request mode, deferred updates run at the end of request execution, after the main
- * database transaction round ends, and either before (PRESEND) or after (POSTSEND) the HTTP
- * response has been sent. If an update runs after the HTTP response is sent, it will not block
- * clients. Otherwise, the client will not see the response until the update finishes. Use the
- * PRESEND and POSTSEND class constants to specify when an update should run. POSTSEND is the
- * default for DeferredUpdates::addUpdate() and DeferredUpdates::addCallableUpdate(). An update
- * that might need to alter the HTTP response output must use PRESEND. The control flow with
- * regard to deferred updates during a typical state changing web request is as follows:
- *   - 1) Main transaction round starts
- *   - 2) Various writes to RBMS/file/blob stores and deferred updates enqueued
- *   - 3) Main transaction round ends
- *   - 4) PRESEND pending update queue is B1...BN
- *   - 5) B1 runs, resulting PRESEND updates iteratively run in FIFO order; likewise for B2..BN
- *   - 6) The web response is sent out to the client
- *   - 7) POSTSEND pending update queue is A1...AM
- *   - 8) A1 runs, resulting updates iteratively run in FIFO order; likewise for A2..AM
+ * This is a performance feature that enables MediaWiki to produce faster web responses.
+ * It allows you to postpone non-blocking work (e.g. work that does not change the web
+ * response) to after the HTTP response has been sent to the client (i.e. web browser).
  *
- * @see MediaWiki::restInPeace()
+ * Once the response is finalized and sent to the browser, the webserver process stays
+ * for a little while longer (detached from the web request) to run your POSTSEND tasks.
  *
- * In CLI mode, no distinction is made between PRESEND and POSTSEND deferred updates and all of
- * them will run during the following occasions:
- *   - a) During DeferredUpdates::addUpdate() if no LBFactory DB handles have writes pending
- *   - b) On commit of an LBFactory DB handle if no other such handles have writes pending
- *   - c) During an LBFactory::waitForReplication call if no LBFactory DBs have writes pending
- *   - d) When the queue is large and an LBFactory DB handle commits (EnqueueableDataUpdate only)
- *   - e) Upon the completion of Maintenance::execute() via Maintenance::shutdown()
+ * There is also a PRESEND option, which runs your task right before the finalized response
+ * is sent to the browser. This is for critical tasks that does need to block the response,
+ * but where you'd like to benefit from other DeferredUpdates features. Such as:
  *
- * @see MWLBFactory::applyGlobalState()
+ * - MergeableUpdate: batch updates from different components without coupling
+ *   or awareness of each other.
+ * - Automatic cancellation: pass a IDatabase object (for any wiki or database) to
+ *   DeferredUpdates::addCallableUpdate or AtomicSectionUpdate.
+ * - Reducing lock contention: if the response is likely to take several seconds
+ *   (e.g. uploading a large file to FileBackend, or saving an edit to a large article)
+ *   much of that work may overlap with a database transaction that is staying open for
+ *   the entire duration. By moving contentious writes out to a PRESEND update, these
+ *   get their own transaction (after the main one is committed), which give up some
+ *   atomicity for improved throughput.
  *
- * If DeferredUpdates::doUpdates() is currently running a deferred update, then the public
- * DeferredUpdates interface operates on the PRESEND/POSTSEND "sub"-queues that correspond to
- * the innermost in-progress deferred update. Otherwise, the public interface operates on the
- * PRESEND/POSTSEND "top"-queues. Affected methods include:
- *   - DeferredUpdates::addUpdate()
- *   - DeferredUpdates::addCallableUpdate()
- *   - DeferredUpdates::doUpdates()
- *   - DeferredUpdates::tryOpportunisticExecute()
- *   - DeferredUpdates::pendingUpdatesCount()
- *   - DeferredUpdates::getPendingUpdates()
- *   - DeferredUpdates::clearPendingUpdates()
+ * ## Expectation and comparison to job queue
  *
- * Updates that work through this system will be more likely to complete by the time the
- * client makes their next request after this request than with the JobQueue system.
+ * When scheduling a POSTSEND via the DeferredUpdates system you can generally expect
+ * it to complete well before the client makes their next request. Updates runs directly after
+ * the web response is sent, from the same process on the same server. This unlike the JobQueue,
+ * where jobs may need to wait in line for some minutes or hours.
+ *
+ * If your update fails, this failure is not known to the client and gets no retry. For updates
+ * that need re-tries for system consistency or data integrity, it is recommended to implement
+ * it as a job instead and use JobQueueGroup::lazyPush. This has the caveat of being delayed
+ * by default, the same as any other job.
+ *
+ * A hybrid solution is available via the EnqueueableDataUpdate interface. By implementing
+ * this interface, you can queue your update via the DeferredUpdates first, and if it fails,
+ * the system will automatically catch this and queue it as a job instead.
+ *
+ * ## How it works during web requests
+ *
+ * 1. Your request route is executed (e.g. Action or SpecialPage class, or API).
+ * 2. Output is finalized and main database transaction is committed.
+ * 3. PRESEND updates run via DeferredUpdates::doUpdates.
+ * 5. The web response is sent to the browser.
+ * 6. POSTSEND updates run via DeferredUpdates::doUpdates.
+ *
+ * @see MediaWiki::preOutputCommit
+ * @see MediaWiki::restInPeace
+ *
+ * ## How it works for Maintenance scripts
+ *
+ * In CLI mode, no distinction is made between PRESEND and POSTSEND deferred updates,
+ * and the queue is periodically executed throughout the process.
+ *
+ * @see DeferredUpdates::tryOpportunisticExecute
+ *
+ * ## How it works internally
+ *
+ * Each update is added via DeferredUpdates::addUpdate and stored in either the PRESEND or
+ * POSTSEND queue. If an update gets queued while another update is already running, then
+ * we store in a "sub"-queue associated with the current update. This allows nested updates
+ * to be completed before other updates, which improves ordering for process caching.
  *
  * @since 1.19
  */
 class DeferredUpdates {
-	/** @var DeferredUpdatesScopeStack|null Queue states based on recursion level */
-	private static $scopeStack;
-
-	/**
-	 * @var int Nesting level for preventOpportunisticUpdates()
-	 */
-	private static $preventOpportunisticUpdates = 0;
-
 	/** @var int Process all updates; in web requests, use only after flushing output buffer */
 	public const ALL = 0;
 	/** @var int Specify/process updates that should run before flushing output buffer */
@@ -100,6 +103,33 @@ class DeferredUpdates {
 
 	/** @var int Queue size threshold for converting updates into jobs */
 	private const BIG_QUEUE_SIZE = 100;
+
+	/** @var DeferredUpdatesScopeStack|null Queue states based on recursion level */
+	private static $scopeStack;
+
+	/**
+	 * @var int Nesting level for preventOpportunisticUpdates()
+	 */
+	private static $preventOpportunisticUpdates = 0;
+
+	/**
+	 * @return DeferredUpdatesScopeStack
+	 */
+	private static function getScopeStack(): DeferredUpdatesScopeStack {
+		self::$scopeStack ??= new DeferredUpdatesScopeMediaWikiStack();
+		return self::$scopeStack;
+	}
+
+	/**
+	 * @param DeferredUpdatesScopeStack $scopeStack
+	 * @internal Only for use in tests.
+	 */
+	public static function setScopeStack( DeferredUpdatesScopeStack $scopeStack ): void {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new LogicException( 'Cannot reconfigure DeferredUpdates outside tests' );
+		}
+		self::$scopeStack = $scopeStack;
+	}
 
 	/**
 	 * Add an update to the pending update queue for execution at the appropriate time
@@ -122,28 +152,17 @@ class DeferredUpdates {
 	 * @since 1.28 Added the $stage parameter
 	 */
 	public static function addUpdate( DeferrableUpdate $update, $stage = self::POSTSEND ) {
-		$commandLineMode = MediaWikiServices::getInstance()->getMainConfig()->get( 'CommandLineMode' );
-
 		self::getScopeStack()->current()->addUpdate( $update, $stage );
-		// If CLI mode is active and no RDBMs transaction round is in the way, then run all
-		// the pending updates now. This is needed for scripts that never, or rarely, use the
-		// RDBMs layer, but that do modify systems via deferred updates. This logic avoids
-		// excessive pending update queue sizes when long-running scripts never trigger the
-		// basic RDBMs hooks for running pending updates.
-		if ( $commandLineMode ) {
-			self::tryOpportunisticExecute();
-		}
+		self::tryOpportunisticExecute();
 	}
 
 	/**
 	 * Add an update to the pending update queue that invokes the specified callback when run
 	 *
-	 * @see DeferredUpdates::addUpdate()
-	 * @see MWCallableUpdate::__construct()
-	 *
 	 * @param callable $callable
 	 * @param int $stage One of (DeferredUpdates::PRESEND, DeferredUpdates::POSTSEND)
-	 * @param IDatabase|IDatabase[]|null $dbw Abort if this DB is rolled back [optional]
+	 * @param IDatabase|IDatabase[]|null $dbw Cancel the update if a DB transaction
+	 *  is rolled back [optional]
 	 * @since 1.27 Added $stage parameter
 	 * @since 1.28 Added the $dbw parameter
 	 */
@@ -152,12 +171,67 @@ class DeferredUpdates {
 	}
 
 	/**
+	 * Run an update, and, if an error was thrown, catch/log it and enqueue the update as
+	 * a job in the job queue system if possible (e.g. implements EnqueueableDataUpdate)
+	 *
+	 * @param DeferrableUpdate $update
+	 * @return Throwable|null
+	 */
+	private static function run( DeferrableUpdate $update ): ?Throwable {
+		$logger = LoggerFactory::getInstance( 'DeferredUpdates' );
+
+		$type = get_class( $update )
+			. ( $update instanceof DeferrableCallback ? '_' . $update->getOrigin() : '' );
+		$updateId = spl_object_id( $update );
+		$logger->debug( __METHOD__ . ": started $type #$updateId" );
+
+		$updateException = null;
+
+		$startTime = microtime( true );
+		try {
+			self::attemptUpdate( $update );
+		} catch ( Throwable $updateException ) {
+			MWExceptionHandler::logException( $updateException );
+			$logger->error(
+				"Deferred update '{deferred_type}' failed to run.",
+				[
+					'deferred_type' => $type,
+					'exception' => $updateException,
+				]
+			);
+			self::getScopeStack()->onRunUpdateFailed( $update );
+		} finally {
+			$walltime = microtime( true ) - $startTime;
+			$logger->debug( __METHOD__ . ": ended $type #$updateId, processing time: $walltime" );
+		}
+
+		// Try to push the update as a job so it can run later if possible
+		if ( $updateException && $update instanceof EnqueueableDataUpdate ) {
+			try {
+				self::getScopeStack()->queueDataUpdate( $update );
+			} catch ( Throwable $jobException ) {
+				MWExceptionHandler::logException( $jobException );
+				$logger->error(
+					"Deferred update '{deferred_type}' failed to enqueue as a job.",
+					[
+						'deferred_type' => $type,
+						'exception' => $jobException,
+					]
+				);
+				self::getScopeStack()->onRunUpdateFailed( $update );
+			}
+		}
+
+		return $updateException;
+	}
+
+	/**
 	 * Consume and execute all pending updates
 	 *
 	 * Note that it is rarely the case that this method should be called outside of a few
 	 * select entry points. For simplicity, that kind of recursion is discouraged. Recursion
 	 * cannot happen if an explicit transaction round is active, which limits usage to updates
-	 * with TRX_ROUND_ABSENT that do not leave open an transactions round of their own during
+	 * with TRX_ROUND_ABSENT that do not leave open any transactions round of their own during
 	 * the call to this method.
 	 *
 	 * In the less-common case of this being called within an in-progress DeferrableUpdate,
@@ -170,15 +244,6 @@ class DeferredUpdates {
 	 *  (DeferredUpdates::PRESEND, DeferredUpdates::POSTSEND, DeferredUpdates::ALL)
 	 */
 	public static function doUpdates( $stage = self::ALL ) {
-		$services = MediaWikiServices::getInstance();
-		$stats = $services->getStatsdDataFactory();
-		$lbf = $services->getDBLoadBalancerFactory();
-		$logger = LoggerFactory::getInstance( 'DeferredUpdates' );
-		$jobQueueGroupFactory = $services->getJobQueueGroupFactory();
-		$httpMethod = $services->getMainConfig()->get( 'CommandLineMode' )
-			? 'cli'
-			: strtolower( RequestContext::getMain()->getRequest()->getMethod() );
-
 		/** @var ErrorPageError $guiError First presentable client-level error thrown */
 		$guiError = null;
 		/** @var Throwable $exception First of any error thrown */
@@ -204,13 +269,11 @@ class DeferredUpdates {
 
 		$scope->processUpdates(
 			$stage,
-			function ( DeferrableUpdate $update, $activeStage )
-				use ( $lbf, $logger, $stats, $jobQueueGroupFactory, $httpMethod, &$guiError, &$exception )
-			{
+			static function ( DeferrableUpdate $update, $activeStage ) use ( &$guiError, &$exception ) {
 				$scopeStack = self::getScopeStack();
 				$childScope = $scopeStack->descend( $activeStage, $update );
 				try {
-					$e = self::run( $update, $lbf, $logger, $stats, $jobQueueGroupFactory, $httpMethod );
+					$e = self::run( $update );
 					$guiError = $guiError ?: ( $e instanceof ErrorPageError ? $e : null );
 					$exception = $exception ?: $e;
 					// Any addUpdate() calls between descend() and ascend() used the sub-queue.
@@ -220,10 +283,8 @@ class DeferredUpdates {
 					// queues as appropriate...
 					$childScope->processUpdates(
 						$activeStage,
-						function ( DeferrableUpdate $subUpdate )
-							use ( $lbf, $logger, $stats, $jobQueueGroupFactory, $httpMethod, &$guiError, &$exception )
-						{
-							$e = self::run( $subUpdate, $lbf, $logger, $stats, $jobQueueGroupFactory, $httpMethod );
+						static function ( DeferrableUpdate $sub ) use ( &$guiError, &$exception ) {
+							$e = self::run( $sub );
 							$guiError = $guiError ?: ( $e instanceof ErrorPageError ? $e : null );
 							$exception = $exception ?: $e;
 						}
@@ -250,16 +311,35 @@ class DeferredUpdates {
 	}
 
 	/**
-	 * Consume and execute all pending updates unless an update is already
-	 * in progress or the ILBFactory service instance has "busy" DB handles
+	 * Consume and execute pending updates now if possible, instead of waiting.
 	 *
-	 * A DB handle is considered "busy" if it has an unfinished transaction that cannot safely
-	 * be flushed or the parent ILBFactory instance has an unfinished transaction round that
-	 * cannot safely be flushed. If the number of pending updates reaches BIG_QUEUE_SIZE and
-	 * there are still busy DB handles, then EnqueueableDataUpdate updates might be enqueued
-	 * as jobs. This avoids excessive memory use and risk of losing updates due to failures.
+	 * In web requests, updates are always deferred until the end of the request.
 	 *
-	 * Note that this method operates on updates from all stages and thus should not be called
+	 * In CLI mode, updates run earlier and more often. This is important for long-running
+	 * Maintenance scripts that would otherwise grow an excessively large queue, which increases
+	 * memory use, and risks losing all updates if the script ends early or crashes.
+	 *
+	 * The folllowing conditions are required for updates to run early in CLI mode:
+	 *
+	 * - No update is already in progress (ensure linear flow, recursion guard).
+	 * - LBFactory indicates that we don't have any "busy" database connections, i.e.
+	 *   there are no pending writes or otherwise active and uncommitted transactions,
+	 *   except if the transaction is empty and merely used for primary DB read queries,
+	 *   in which case the transaction (and its repeatable-read snapshot) can be safely flushed.
+	 *
+	 * How this works:
+	 *
+	 * - When a maintenance script commits a change or waits for replication, such as
+	 *   via. IConnectionProvider::commitAndWaitForReplication, then ILBFactory calls
+	 *   tryOpportunisticExecute(). This is injected via MWLBFactory::applyGlobalState.
+	 *
+	 * - For maintenance scripts that don't do much with the database, we also call
+	 *   tryOpportunisticExecute() after every addUpdate() call.
+	 *
+	 * - Upon the completion of Maintenance::execute() via Maintenance::shutdown(),
+	 *   any remaining updates are run.
+	 *
+	 * Note that this method runs both PRESEND and POSTSEND updates and thus should not be called
 	 * during web requests. It is only intended for long-running Maintenance scripts.
 	 *
 	 * @internal For use by Maintenance
@@ -275,25 +355,25 @@ class DeferredUpdates {
 			return false;
 		}
 
-		// Run the updates for this context if they will have outer transaction scope
-		if ( !self::areDatabaseTransactionsActive() ) {
+		if ( self::getScopeStack()->allowOpportunisticUpdates() ) {
 			self::doUpdates( self::ALL );
-
 			return true;
 		}
 
 		if ( self::pendingUpdatesCount() >= self::BIG_QUEUE_SIZE ) {
 			// There are a large number of pending updates and none of them can run yet.
-			// The odds of losing updates due to an error increase when executing long queues
+			// The odds of losing updates due to an error increases when executing long queues
 			// and when large amounts of time pass while tasks are queued. Mitigate this by
-			// trying to migrate updates to the job queue system (where applicable).
+			// trying to eagerly move updates to the JobQueue when possible.
+			//
+			// TODO: Do we still need this now maintenance scripts automatically call
+			// tryOpportunisticExecute from addUpdate, from every commit, and every
+			// waitForReplication call?
 			self::getScopeStack()->current()->consumeMatchingUpdates(
 				self::ALL,
 				EnqueueableDataUpdate::class,
 				static function ( EnqueueableDataUpdate $update ) {
-					$spec = $update->getAsJobSpecification();
-					MediaWikiServices::getInstance()->getJobQueueGroupFactory()
-						->makeJobQueueGroup( $spec['domain'] )->push( $spec['job'] );
+					self::getScopeStack()->queueDataUpdate( $update );
 				}
 			);
 		}
@@ -366,141 +446,22 @@ class DeferredUpdates {
 	}
 
 	/**
-	 * Run an update, and, if an error was thrown, catch/log it and enqueue the update as
-	 * a job in the job queue system if possible (e.g. implements EnqueueableDataUpdate)
+	 * Attempt to run an update with the appropriate transaction round state if needed
+	 *
+	 * It is allowed for a DeferredUpdate to directly execute one or more other DeferredUpdate
+	 * instances without queueing them by calling this method. In that case, the outer update
+	 * must use TransactionRoundAwareUpdate::TRX_ROUND_ABSENT, e.g. by extending
+	 * TransactionRoundDefiningUpdate, so that this method can give each update its own
+	 * transaction round.
 	 *
 	 * @param DeferrableUpdate $update
-	 * @param ILBFactory $lbFactory
-	 * @param LoggerInterface $logger
-	 * @param StatsdDataFactoryInterface $stats
-	 * @param JobQueueGroupFactory $jobQueueGroupFactory
-	 * @param string $httpMethod
-	 * @return Throwable|null
-	 */
-	private static function run(
-		DeferrableUpdate $update,
-		ILBFactory $lbFactory,
-		LoggerInterface $logger,
-		StatsdDataFactoryInterface $stats,
-		JobQueueGroupFactory $jobQueueGroupFactory,
-		$httpMethod
-	): ?Throwable {
-		$suffix = $update instanceof DeferrableCallback ? '_' . $update->getOrigin() : '';
-		$type = get_class( $update ) . $suffix;
-		$stats->increment( "deferred_updates.$httpMethod.$type" );
-		$updateId = spl_object_id( $update );
-		$logger->debug( __METHOD__ . ": started $type #$updateId" );
-
-		$updateException = null;
-
-		$startTime = microtime( true );
-		try {
-			self::attemptUpdate( $update, $lbFactory );
-		} catch ( Throwable $updateException ) {
-			MWExceptionHandler::logException( $updateException );
-			$logger->error(
-				"Deferred update '{deferred_type}' failed to run.",
-				[
-					'deferred_type' => $type,
-					'exception' => $updateException,
-				]
-			);
-			$lbFactory->rollbackPrimaryChanges( __METHOD__ );
-		} finally {
-			$walltime = microtime( true ) - $startTime;
-			$logger->debug( __METHOD__ . ": ended $type #$updateId, processing time: $walltime" );
-		}
-
-		// Try to push the update as a job so it can run later if possible
-		if ( $updateException && $update instanceof EnqueueableDataUpdate ) {
-			try {
-				$spec = $update->getAsJobSpecification();
-				$jobQueueGroupFactory->makeJobQueueGroup( $spec['domain'] )->push( $spec['job'] );
-			} catch ( Throwable $jobException ) {
-				MWExceptionHandler::logException( $jobException );
-				$logger->error(
-					"Deferred update '{deferred_type}' failed to enqueue as a job.",
-					[
-						'deferred_type' => $type,
-						'exception' => $jobException,
-					]
-				);
-				$lbFactory->rollbackPrimaryChanges( __METHOD__ );
-			}
-		}
-
-		return $updateException;
-	}
-
-	/**
-	 * Attempt to run an update with the appropriate transaction round state it expects
-	 *
-	 * DeferredUpdate classes that wrap the execution of bundles of other DeferredUpdate
-	 * instances can use this method to run the updates. Any such wrapper class should
-	 * always use TRX_ROUND_ABSENT itself.
-	 *
-	 * @param DeferrableUpdate $update
-	 * @param ILBFactory $lbFactory
 	 * @since 1.34
 	 */
-	public static function attemptUpdate( DeferrableUpdate $update, ILBFactory $lbFactory ) {
-		$ticket = $lbFactory->getEmptyTransactionTicket( __METHOD__ );
-		if ( !$ticket || $lbFactory->hasTransactionRound() ) {
-			throw new DBTransactionError( null, "A database transaction round is pending." );
-		}
+	public static function attemptUpdate( DeferrableUpdate $update ) {
+		self::getScopeStack()->onRunUpdateStart( $update );
 
-		if ( $update instanceof DataUpdate ) {
-			$update->setTransactionTicket( $ticket );
-		}
-
-		// Designate $update::doUpdate() as the write round owner
-		$fnameTrxOwner = ( $update instanceof DeferrableCallback )
-			? $update->getOrigin()
-			: get_class( $update ) . '::doUpdate';
-		// Determine whether the write round will be explicit or implicit
-		$useExplicitTrxRound = !(
-			$update instanceof TransactionRoundAwareUpdate &&
-			$update->getTransactionRoundRequirement() == $update::TRX_ROUND_ABSENT
-		);
-
-		// Flush any pending changes left over from an implicit transaction round
-		if ( $useExplicitTrxRound ) {
-			$lbFactory->beginPrimaryChanges( $fnameTrxOwner ); // new explicit round
-		} else {
-			$lbFactory->commitPrimaryChanges( $fnameTrxOwner ); // new implicit round
-		}
-		// Run the update after any stale primary DB view snapshots have been flushed
 		$update->doUpdate();
-		// Commit any pending changes from the explicit or implicit transaction round
-		$lbFactory->commitPrimaryChanges( $fnameTrxOwner );
-	}
 
-	/**
-	 * @return bool If a transaction round is active or connection is not ready for commit()
-	 */
-	private static function areDatabaseTransactionsActive() {
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-		if ( $lbFactory->hasTransactionRound() || !$lbFactory->isReadyForRoundOperations() ) {
-			return true;
-		}
-
-		foreach ( $lbFactory->getAllLBs() as $lb ) {
-			if ( $lb->hasPrimaryChanges() || $lb->explicitTrxActive() ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * @return DeferredUpdatesScopeStack
-	 */
-	private static function getScopeStack() {
-		if ( self::$scopeStack === null ) {
-			self::$scopeStack = new DeferredUpdatesScopeStack();
-		}
-
-		return self::$scopeStack;
+		self::getScopeStack()->onRunUpdateEnd( $update );
 	}
 }

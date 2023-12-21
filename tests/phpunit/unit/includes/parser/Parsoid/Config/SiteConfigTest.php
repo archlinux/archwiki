@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Tests\Unit\Parser\Parsoid\Config;
 
-use HashConfig;
 use ILanguageConverter;
 use Language;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Languages\LanguageConverterFactory;
@@ -16,14 +16,15 @@ use MediaWiki\Parser\MagicWordArray;
 use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\Parser\Parsoid\Config\SiteConfig;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Utils\UrlUtils;
 use MediaWikiUnitTestCase;
 use MessageCache;
 use MWException;
-use NamespaceInfo;
 use NullStatsdDataFactory;
 use Parser;
+use ParserFactory;
 use UnexpectedValueException;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\TestingAccessWrapper;
@@ -103,12 +104,14 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 			$this->createMockOrOverride( LanguageConverterFactory::class, $serviceOverrides ),
 			$this->createMockOrOverride( LanguageNameUtils::class, $serviceOverrides ),
 			$this->createMockOrOverride( UrlUtils::class, $serviceOverrides ),
-			$this->createMockOrOverride( Parser::class, $serviceOverrides ),
-			new HashConfig( $configOverrides )
+			[],
+			$this->createMockOrOverride( ParserFactory::class, $serviceOverrides ),
+			new HashConfig( $configOverrides ),
+			false
 		);
 	}
 
-	public function provideConfigParameterPassed(): iterable {
+	public static function provideConfigParameterPassed(): iterable {
 		yield 'galleryOptions' => [
 			[ MainConfigNames::GalleryOptions => [ 'blabla' ] ],
 			'galleryOptions',
@@ -214,16 +217,16 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expectedValue, $config->$method() );
 	}
 
-	public function provideParsoidSettingPassed() {
-		yield 'nativeGalleryEnabled' => [
-			[ 'nativeGalleryEnabled' => true ],
-			'nativeGalleryEnabled',
+	public static function provideParsoidSettingPassed() {
+		yield 'linting' => [
+			[ 'linting' => true ],
+			'linting',
 			true
 		];
 	}
 
 	/**
-	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::nativeGalleryEnabled()
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::linting()
 	 * @dataProvider provideParsoidSettingPassed
 	 * @param array $settings
 	 * @param string $method
@@ -239,7 +242,7 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expectedValue, $config->$method() );
 	}
 
-	public function provideServiceMethodProxied() {
+	public static function provideServiceMethodProxied() {
 		yield 'canonicalNamespaceId' => [
 			NamespaceInfo::class, 'getCanonicalIndex', [ 'blabla_arg' ], 42, 'canonicalNamespaceId', 42
 		];
@@ -283,14 +286,14 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 			MagicWordFactory::class, 'getVariableIDs', [], [ 'blabla' ], 'getVariableIDs', [ 'blabla' ]
 		];
 		yield 'getFunctionSynonyms' => [
-			Parser::class, 'getFunctionSynonyms', [], [ 0 => [ 'blabla' ], 1 => [ 'blabla' ] ],
+			[ ParserFactory::class, 'getMainInstance' ], [ Parser::class, 'getFunctionSynonyms' ], [], [ 0 => [ 'blabla' ], 1 => [ 'blabla' ] ],
 			'getFunctionSynonyms', [ 0 => [ 'blabla' ], 1 => [ 'blabla' ] ]
 		];
 		yield 'getMagicWords' => [
 			Language::class, 'getMagicWords', [], [ 'blabla' ], 'getMagicWords', [ 'blabla' ]
 		];
 		yield 'getNonNativeExtensionTags' => [
-			Parser::class, 'getTags', [], [ 'blabla' ], 'getNonNativeExtensionTags', [ 'blabla' => true ]
+			[ ParserFactory::class, 'getMainInstance' ], [ Parser::class, 'getTags' ], [], [ 'blabla' ], 'getNonNativeExtensionTags', [ 'blabla' => true ]
 		];
 	}
 
@@ -311,24 +314,36 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::getFunctionSynonyms
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::getMagicWords
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::getNonNativeExtensionTags
-	 * @param string $serviceClass
-	 * @param ?string $serviceMethod
+	 * @param string|array $serviceClassSpec
+	 * @param ?string|array $serviceMethodSpec
 	 * @param array $arguments
 	 * @param mixed $returnValue
 	 * @param string $method
 	 * @param mixed $expectedValue
 	 */
 	public function testServiceMethodProxied(
-		string $serviceClass,
-		?string $serviceMethod,
+		$serviceClassSpec,
+		$serviceMethodSpec,
 		array $arguments,
 		$returnValue,
 		string $method,
 		$expectedValue
 	) {
+		$serviceClass = is_array( $serviceClassSpec ) ? $serviceClassSpec[0] : $serviceClassSpec;
 		$serviceMock = $this->createMock( $serviceClass );
-		if ( $serviceMethod ) {
-			$serviceMock
+		if ( $serviceMethodSpec ) {
+			if ( is_array( $serviceMethodSpec ) ) {
+				// Service mock is a factory, create a object and let the factory return that object
+				$mock = $this->createMock( $serviceMethodSpec[0] );
+				$serviceMock->method( $serviceClassSpec[1] )->willReturn( $mock );
+				$serviceMethod = $serviceMethodSpec[1];
+			} else {
+				// No factory, use the service mock directly
+				$mock = $serviceMock;
+				$serviceMethod = $serviceMethodSpec;
+			}
+			// Let the mock return the expected arguments
+			$mock
 				->expects( $this->once() )
 				->method( $serviceMethod )
 				->with( ...$arguments )
@@ -344,7 +359,7 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expectedValue, $config->$method( ...$arguments ) );
 	}
 
-	public function provideArticlePath_exception() {
+	public static function provideArticlePath_exception() {
 		yield 'No $1' => [ '/test/test' ];
 		yield 'Wrong path' => [ 'test\\test/$1' ];
 	}
@@ -358,9 +373,15 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	 */
 	public function testArticlePath_exception( string $articlePath ) {
 		$this->expectException( UnexpectedValueException::class );
-		$config = $this->createSiteConfig( [
-			MainConfigNames::ArticlePath => $articlePath
-		] );
+		$config = $this->createSiteConfig(
+			[
+				MainConfigNames::ArticlePath => $articlePath
+			],
+			[],
+			[
+				UrlUtils::class => $this->createMock( UrlUtils::class )
+			]
+		);
 		$config->baseURI();
 	}
 
@@ -370,10 +391,16 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::relativeLinkPrefix
 	 */
 	public function testArticlePath_nopath() {
-		$config = $this->createSiteConfig( [
-			MainConfigNames::ArticlePath => '$1',
-			MainConfigNames::Server => 'https://localhost'
-		] );
+		$config = $this->createSiteConfig(
+			[
+				MainConfigNames::ArticlePath => '$1',
+				MainConfigNames::Server => 'https://localhost'
+			],
+			[],
+			[
+				UrlUtils::class => new UrlUtils()
+			]
+		);
 		$this->assertSame( 'https://localhost/', $config->baseURI() );
 		$this->assertSame( './', $config->relativeLinkPrefix() );
 	}
@@ -384,10 +411,16 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::relativeLinkPrefix
 	 */
 	public function testArticlePath() {
-		$config = $this->createSiteConfig( [
-			MainConfigNames::ArticlePath => '/wiki/$1',
-			MainConfigNames::Server => 'https://localhost'
-		] );
+		$config = $this->createSiteConfig(
+			[
+				MainConfigNames::ArticlePath => '/wiki/$1',
+				MainConfigNames::Server => 'https://localhost'
+			],
+			[],
+			[
+				UrlUtils::class => new UrlUtils()
+			]
+		);
 		$this->assertSame( './', $config->relativeLinkPrefix() );
 		$this->assertSame( 'https://localhost/wiki/', $config->baseURI() );
 	}
@@ -643,7 +676,7 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::langConverterEnabled
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::langConverterEnabledBcp47
 	 */
 	public function testLangConverterEnabled_exception() {
 		$langFactoryMock = $this->createMock( LanguageFactory::class );
@@ -659,31 +692,67 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 			LanguageFactory::class => $langFactoryMock,
 			LanguageConverterFactory::class => $langConverterFactoryMock,
 		] );
-		$this->assertFalse( $config->langConverterEnabled( 'zh' ) );
+		$this->assertFalse( $config->langConverterEnabledBcp47( new Bcp47CodeValue( 'zh' ) ) );
 	}
 
 	/**
-	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::variants
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::variantsFor
 	 */
-	public function testVariants_disabled() {
-		$langConverterFactoryMock = $this->createMock( LanguageConverterFactory::class );
-		$langConverterFactoryMock
-			->method( 'isConversionDisabled' )
-			->willReturn( true );
-		$config = $this->createSiteConfig( [], [], [
-			LanguageConverterFactory::class => $langConverterFactoryMock,
-		] );
-		$this->assertSame( [], $config->variants() );
-	}
-
-	/**
-	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::variants
-	 */
-	public function testVariants() {
+	public function testVariantsFor_disabled() {
 		$langFactoryMock = $this->createMock( LanguageFactory::class );
 		$langFactoryMock
 			->method( 'getLanguage' )
 			->willReturnCallback( function ( $code ) {
+				if ( !is_string( $code ) ) {
+					$code = strtolower( $code->toBcp47Code() );
+				}
+				$langMock = $this->createMock( Language::class );
+				$langMock->method( 'getCode' )
+					->willReturn( $code );
+				return $langMock;
+			} );
+		$converterMock = $this->createMock( ILanguageConverter::class );
+		$converterMock
+			->method( 'hasVariants' )
+			->willReturn( true );
+		$converterMock
+			->method( 'getVariants' )
+			->willReturn( [ 'zh-hans' ] );
+		$converterMock
+			->method( 'getVariantFallbacks' )
+			->willReturn( 'zh-fallback' );
+		$langConverterFactoryMock = $this->createMock( LanguageConverterFactory::class );
+		$langConverterFactoryMock
+			->method( 'isConversionDisabled' )
+			->willReturn( true );
+		$langConverterFactoryMock
+			->method( 'getLanguageConverter' )
+			->willReturnCallback( function ( $l ) use ( $converterMock ) {
+				if ( $l->getCode() === 'zh' ) {
+					return $converterMock;
+				}
+				return $this->createMock( ILanguageConverter::class );
+			} );
+		$config = $this->createSiteConfig( [], [], [
+			LanguageFactory::class => $langFactoryMock,
+			LanguageConverterFactory::class => $langConverterFactoryMock,
+		] );
+		$this->assertNull(
+						$config->variantsFor( new Bcp47CodeValue( 'zh-Hans' ) )
+		);
+	}
+
+	/**
+	 * @covers \MediaWiki\Parser\Parsoid\Config\SiteConfig::variantsFor
+	 */
+	public function testVariantsFor() {
+		$langFactoryMock = $this->createMock( LanguageFactory::class );
+		$langFactoryMock
+			->method( 'getLanguage' )
+			->willReturnCallback( function ( $code ) {
+				if ( !is_string( $code ) ) {
+					$code = strtolower( $code->toBcp47Code() );
+				}
 				$langMock = $this->createMock( Language::class );
 				$langMock->method( 'getCode' )
 					->willReturn( $code );
@@ -715,10 +784,15 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 			LanguageFactory::class => $langFactoryMock,
 			LanguageConverterFactory::class => $langConverterFactoryMock
 		] );
-		$this->assertSame(
-			[ 'zh-hans' => [ 'base' => 'zh', 'fallbacks' => [ 'zh-fallback' ] ] ],
-			$config->variants()
-		);
+		$variantsForZh = $config->variantsFor( new Bcp47CodeValue( 'zh-Hans' ) );
+		$this->assertIsArray( $variantsForZh );
+		$this->assertArrayHasKey( 'base', $variantsForZh );
+		$this->assertEquals( 'zh', $variantsForZh['base']->getCode() );
+		$this->assertArrayHasKey( 'fallbacks', $variantsForZh );
+		$fallbacks = $variantsForZh['fallbacks'];
+		$this->assertIsArray( $fallbacks );
+		$this->assertCount( 1, $fallbacks );
+		$this->assertEquals( 'zh-fallback', $fallbacks[0]->getCode() );
 	}
 
 	/**

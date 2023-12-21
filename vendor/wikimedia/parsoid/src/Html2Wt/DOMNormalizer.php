@@ -10,6 +10,7 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\ContentUtils;
+use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -82,8 +83,8 @@ class DOMNormalizer {
 	 */
 	private static function similar( Node $a, Node $b ): bool {
 		if ( DOMCompat::nodeName( $a ) === 'a' ) {
-			// FIXME: Similar to 1ce6a98, DOMUtils.nextNonDeletedSibling is being
-			// used in this file where maybe DOMUtils.nextNonSepSibling belongs.
+			// FIXME: Similar to 1ce6a98, DiffDOMUtils::nextNonDeletedSibling is being
+			// used in this file where maybe DiffDOMUtils::nextNonSepSibling belongs.
 			return $a instanceof Element && $b instanceof Element &&
 				DiffUtils::attribsEquals( $a, $b, self::IGNORABLE_ATTRS, self::$specializedAttribHandlers );
 		} else {
@@ -124,9 +125,9 @@ class DOMNormalizer {
 	 * @return bool
 	 */
 	private static function swappable( Node $a, Node $b ): bool {
-		return DOMUtils::numNonDeletedChildNodes( $a ) === 1
-			&& self::similar( $a, DOMUtils::firstNonDeletedChild( $a ) )
-			&& self::mergable( DOMUtils::firstNonDeletedChild( $a ), $b );
+		return DiffDOMUtils::numNonDeletedChildNodes( $a ) === 1
+			&& self::similar( $a, DiffDOMUtils::firstNonDeletedChild( $a ) )
+			&& self::mergable( DiffDOMUtils::firstNonDeletedChild( $a ), $b );
 	}
 
 	/**
@@ -135,7 +136,7 @@ class DOMNormalizer {
 	 * @return Node|null
 	 */
 	private static function firstChild( Node $node, bool $rtl ): ?Node {
-		return $rtl ? DOMUtils::lastNonDeletedChild( $node ) : DOMUtils::firstNonDeletedChild( $node );
+		return $rtl ? DiffDOMUtils::lastNonDeletedChild( $node ) : DiffDOMUtils::firstNonDeletedChild( $node );
 	}
 
 	/**
@@ -144,7 +145,7 @@ class DOMNormalizer {
 	 */
 	private function isInsertedContent( Node $node ): bool {
 		while ( true ) {
-			if ( DiffUtils::hasInsertedDiffMark( $node, $this->state->getEnv() ) ) {
+			if ( DiffUtils::hasInsertedDiffMark( $node ) ) {
 				return true;
 			}
 			if ( DOMUtils::atTheTop( $node ) ) {
@@ -190,21 +191,22 @@ class DOMNormalizer {
 	 * @param bool $dontRecurse
 	 */
 	public function addDiffMarks( Node $node, string $mark, bool $dontRecurse = false ): void {
-		$env = $this->state->getEnv();
-		if ( !$this->state->selserMode || DiffUtils::hasDiffMark( $node, $env, $mark ) ) {
+		if ( !$this->state->selserMode || DiffUtils::hasDiffMark( $node, $mark ) ) {
 			return;
 		}
 
 		// Don't introduce nested inserted markers
-		if ( $this->inInsertedContent && $mark === 'inserted' ) {
+		if ( $this->inInsertedContent && $mark === DiffMarkers::INSERTED ) {
 			return;
 		}
+
+		$env = $this->state->getEnv();
 
 		// Newly added elements don't need diff marks
 		if ( !WTUtils::isNewElt( $node ) ) {
 			DiffUtils::addDiffMark( $node, $env, $mark );
-			if ( $mark === 'inserted' || $mark === 'deleted' ) {
-				DiffUtils::addDiffMark( $node->parentNode, $env, 'children-changed' );
+			if ( $mark === DiffMarkers::INSERTED || $mark === DiffMarkers::DELETED ) {
+				DiffUtils::addDiffMark( $node->parentNode, $env, DiffMarkers::CHILDREN_CHANGED );
 			}
 		}
 
@@ -215,11 +217,11 @@ class DOMNormalizer {
 		// Walk up the subtree and add 'subtree-changed' markers
 		$node = $node->parentNode;
 		while ( $node instanceof Element && !DOMUtils::atTheTop( $node ) ) {
-			if ( DiffUtils::hasDiffMark( $node, $env, 'subtree-changed' ) ) {
+			if ( DiffUtils::hasDiffMark( $node, DiffMarkers::SUBTREE_CHANGED ) ) {
 				return;
 			}
 			if ( !WTUtils::isNewElt( $node ) ) {
-				DiffUtils::setDiffMark( $node, $env, 'subtree-changed' );
+				DiffUtils::addDiffMark( $node, $env, DiffMarkers::SUBTREE_CHANGED );
 			}
 			$node = $node->parentNode;
 		}
@@ -249,21 +251,21 @@ class DOMNormalizer {
 		DOMCompat::normalize( $a );
 
 		// Update diff markers
-		$this->addDiffMarks( $a->parentNode, 'children-changed' ); // $b was removed
-		$this->addDiffMarks( $a, 'children-changed' ); // $a got more children
+		$this->addDiffMarks( $a->parentNode, DiffMarkers::CHILDREN_CHANGED ); // $b was removed
+		$this->addDiffMarks( $a, DiffMarkers::CHILDREN_CHANGED ); // $a got more children
 		if ( !DOMUtils::isRemoved( $sentinel ) ) {
 			// Nodes starting at 'sentinal' were inserted into 'a'
 			// b, which was a's sibling was deleted
 			// Only addDiffMarks to sentinel, if it is still part of the dom
 			// (and hasn't been deleted by the call to a.normalize() )
 			if ( $sentinel->parentNode ) {
-				$this->addDiffMarks( $sentinel, 'moved', true );
+				$this->addDiffMarks( $sentinel, DiffMarkers::MOVED, true );
 			}
 		}
 		if ( $a->nextSibling ) {
 			// FIXME: Hmm .. there is an API hole here
 			// about ability to add markers after last child
-			$this->addDiffMarks( $a->nextSibling, 'moved', true );
+			$this->addDiffMarks( $a->nextSibling, DiffMarkers::MOVED, true );
 		}
 
 		return $a;
@@ -282,13 +284,13 @@ class DOMNormalizer {
 
 		// Mark a's subtree, a, and b as all having moved
 		if ( $a->firstChild !== null ) {
-			$this->addDiffMarks( $a->firstChild, 'moved', true );
+			$this->addDiffMarks( $a->firstChild, DiffMarkers::MOVED, true );
 		}
-		$this->addDiffMarks( $a, 'moved', true );
-		$this->addDiffMarks( $b, 'moved', true );
-		$this->addDiffMarks( $a, 'children-changed', true );
-		$this->addDiffMarks( $b, 'children-changed', true );
-		$this->addDiffMarks( $b->parentNode, 'children-changed' );
+		$this->addDiffMarks( $a, DiffMarkers::MOVED, true );
+		$this->addDiffMarks( $b, DiffMarkers::MOVED, true );
+		$this->addDiffMarks( $a, DiffMarkers::CHILDREN_CHANGED, true );
+		$this->addDiffMarks( $b, DiffMarkers::CHILDREN_CHANGED, true );
+		$this->addDiffMarks( $b->parentNode, DiffMarkers::CHILDREN_CHANGED );
 
 		return $b;
 	}
@@ -303,9 +305,9 @@ class DOMNormalizer {
 
 		while ( $sibling ) {
 			$next = $rtl
-				? DOMUtils::previousNonDeletedSibling( $sibling )
-				: DOMUtils::nextNonDeletedSibling( $sibling );
-			if ( !DOMUtils::isContentNode( $sibling ) ) {
+				? DiffDOMUtils::previousNonDeletedSibling( $sibling )
+				: DiffDOMUtils::nextNonDeletedSibling( $sibling );
+			if ( !DiffDOMUtils::isContentNode( $sibling ) ) {
 				// Nothing to do, continue.
 			} elseif ( !WTUtils::isRenderingTransparentNode( $sibling ) ||
 				WTUtils::isEncapsulationWrapper( $sibling )
@@ -323,7 +325,7 @@ class DOMNormalizer {
 			$move = self::firstChild( $node, $rtl );
 			$firstNode = $move;
 			while ( $move !== $sibling ) {
-				$refnode = $rtl ? DOMUtils::nextNonDeletedSibling( $node ) : $node;
+				$refnode = $rtl ? DiffDOMUtils::nextNonDeletedSibling( $node ) : $node;
 				$node->parentNode->insertBefore( $move, $refnode );
 				$move = self::firstChild( $node, $rtl );
 			}
@@ -334,12 +336,12 @@ class DOMNormalizer {
 			}
 
 			// Update diff markers
-			$this->addDiffMarks( $firstNode, 'moved', true );
+			$this->addDiffMarks( $firstNode, DiffMarkers::MOVED, true );
 			if ( $sibling ) {
-				$this->addDiffMarks( $sibling, 'moved', true );
+				$this->addDiffMarks( $sibling, DiffMarkers::MOVED, true );
 			}
-			$this->addDiffMarks( $node, 'children-changed', true );
-			$this->addDiffMarks( $node->parentNode, 'children-changed' );
+			$this->addDiffMarks( $node, DiffMarkers::CHILDREN_CHANGED, true );
+			$this->addDiffMarks( $node->parentNode, DiffMarkers::CHILDREN_CHANGED );
 		}
 	}
 
@@ -348,12 +350,12 @@ class DOMNormalizer {
 	 * @return Node|null
 	 */
 	public function stripIfEmpty( Element $node ): ?Node {
-		$next = DOMUtils::nextNonDeletedSibling( $node );
+		$next = DiffDOMUtils::nextNonDeletedSibling( $node );
 		$dp = DOMDataUtils::getDataParsoid( $node );
 		$autoInserted = isset( $dp->autoInsertedStart ) || isset( $dp->autoInsertedEnd );
 
 		$strippable =
-			DOMUtils::nodeEssentiallyEmpty( $node, false );
+			DiffDOMUtils::nodeEssentiallyEmpty( $node, false );
 			// Ex: "<a..>..</a><b></b>bar"
 			// From [[Foo]]<b/>bar usage found on some dewiki pages.
 			// FIXME: Should we enable this?
@@ -361,7 +363,7 @@ class DOMNormalizer {
 
 		if ( $strippable ) {
 			// Update diff markers (before the deletion)
-			$this->addDiffMarks( $node, 'deleted', true );
+			$this->addDiffMarks( $node, DiffMarkers::DELETED, true );
 			$node->parentNode->removeChild( $node );
 			return $next;
 		} else {
@@ -373,8 +375,8 @@ class DOMNormalizer {
 	 * @param Node $node
 	 */
 	public function moveTrailingSpacesOut( Node $node ): void {
-		$next = DOMUtils::nextNonDeletedSibling( $node );
-		$last = DOMUtils::lastNonDeletedChild( $node );
+		$next = DiffDOMUtils::nextNonDeletedSibling( $node );
+		$last = DiffDOMUtils::lastNonDeletedChild( $node );
 		$matches = null;
 		if ( $last instanceof Text &&
 			preg_match( '/\s+$/D', $last->nodeValue, $matches ) > 0
@@ -390,10 +392,10 @@ class DOMNormalizer {
 				}
 				$next->nodeValue = $trailing . $next->nodeValue;
 				// next (a text node) is new / had new content added to it
-				$this->addDiffMarks( $next, 'inserted', true );
+				$this->addDiffMarks( $next, DiffMarkers::INSERTED, true );
 			}
-			$this->addDiffMarks( $last, 'inserted', true );
-			$this->addDiffMarks( $node->parentNode, 'children-changed' );
+			$this->addDiffMarks( $last, DiffMarkers::INSERTED, true );
+			$this->addDiffMarks( $node->parentNode, DiffMarkers::CHILDREN_CHANGED );
 		}
 	}
 
@@ -450,14 +452,14 @@ class DOMNormalizer {
 
 			if ( $newLength === 0 ) {
 				// Remove empty text nodes to keep DOM in normalized form
-				$ret = DOMUtils::nextNonDeletedSibling( $node );
+				$ret = DiffDOMUtils::nextNonDeletedSibling( $node );
 				$node->parentNode->removeChild( $node );
-				$this->addDiffMarks( $node, 'deleted' );
+				$this->addDiffMarks( $node, DiffMarkers::DELETED );
 				return $ret;
 			}
 
 			// Treat modified node as having been newly inserted
-			$this->addDiffMarks( $node, 'inserted' );
+			$this->addDiffMarks( $node, DiffMarkers::INSERTED );
 		}
 		return $node;
 	}
@@ -474,15 +476,15 @@ class DOMNormalizer {
 		if ( DOMCompat::nodeName( $node ) !== 'a' ) {
 			return $node;
 		}
-		$sibling = DOMUtils::nextNonDeletedSibling( $node );
+		$sibling = DiffDOMUtils::nextNonDeletedSibling( $node );
 		if ( $sibling ) {
 			$this->normalizeSiblingPair( $node, $sibling );
 		}
 
-		$firstChild = DOMUtils::firstNonDeletedChild( $node );
+		$firstChild = DiffDOMUtils::firstNonDeletedChild( $node );
 		$fcNextSibling = null;
 		if ( $firstChild ) {
-			$fcNextSibling = DOMUtils::nextNonDeletedSibling( $firstChild );
+			$fcNextSibling = DiffDOMUtils::nextNonDeletedSibling( $firstChild );
 		}
 
 		if ( !$node->hasAttribute( 'href' ) ) {
@@ -502,9 +504,10 @@ class DOMNormalizer {
 			// possible simple-wiki-link scenarios that isSimpleWikiLink in link handler tackles
 			$node->textContent === PHPUtils::stripPrefix( $nodeHref, './' )
 		) {
-			for ( $child = DOMUtils::firstNonDeletedChild( $node );
-				 DOMUtils::isFormattingElt( $child );
-				 $child = DOMUtils::firstNonDeletedChild( $node )
+			for (
+				$child = DiffDOMUtils::firstNonDeletedChild( $node );
+				DOMUtils::isFormattingElt( $child );
+				$child = DiffDOMUtils::firstNonDeletedChild( $node )
 			) {
 				'@phan-var Element $child'; // @var Element $child
 				$this->swap( $node, $child );
@@ -573,7 +576,7 @@ class DOMNormalizer {
 		// Skip unmodified content
 		if ( $this->state->selserMode && !DOMUtils::atTheTop( $node ) &&
 			!$this->inInsertedContent &&
-			!DiffUtils::hasDiffMarkers( $node, $this->state->getEnv() ) &&
+			!DiffUtils::hasDiffMarkers( $node ) &&
 			// If orig-src is not valid, this in effect becomes
 			// an edited node and needs normalizations applied to it.
 			WTSUtils::origSrcValidInEditedContext( $this->state, $node )
@@ -582,7 +585,7 @@ class DOMNormalizer {
 		}
 
 		// Headings
-		if ( preg_match( '/^h[1-6]$/D', DOMCompat::nodeName( $node ) ) ) {
+		if ( DOMUtils::isHeading( $node ) ) {
 			'@phan-var Element $node'; // @var Element $node
 			$this->hoistLinks( $node, false );
 			$this->hoistLinks( $node, true );
@@ -597,7 +600,7 @@ class DOMNormalizer {
 			// Anchors
 		} elseif ( DOMCompat::nodeName( $node ) === 'a' ) {
 			'@phan-var Element $node'; // @var Element $node
-			$next = DOMUtils::nextNonDeletedSibling( $node );
+			$next = DiffDOMUtils::nextNonDeletedSibling( $node );
 			// We could have checked for !mw:ExtLink but in
 			// the case of links without any annotations,
 			// the positive test is semantically safer than the
@@ -621,33 +624,33 @@ class DOMNormalizer {
 			// won't have escapable prefixes.
 			$stx = $dp->stx ?? null;
 			if ( $stx === 'html' ||
-				( DOMUtils::firstNonSepChild( $node->parentNode ) !== $node && $stx === 'row' ) ) {
+				( DiffDOMUtils::firstNonSepChild( $node->parentNode ) !== $node && $stx === 'row' ) ) {
 				return $node;
 			}
 
-			$first = DOMUtils::firstNonDeletedChild( $node );
+			$first = DiffDOMUtils::firstNonDeletedChild( $node );
 			// Emit a space before escapable prefix
 			// This is preferable to serializing with a nowiki.
 			if ( $first instanceof Text && strspn( $first->nodeValue, '-+}', 0, 1 ) ) {
 				$first->nodeValue = ' ' . $first->nodeValue;
-				$this->addDiffMarks( $first, 'inserted', true );
+				$this->addDiffMarks( $first, DiffMarkers::INSERTED, true );
 			}
 
 			return $node;
 
 			// Font tags without any attributes
 		} elseif ( DOMCompat::nodeName( $node ) === 'font' && DOMDataUtils::noAttrs( $node ) ) {
-			$next = DOMUtils::nextNonDeletedSibling( $node );
+			$next = DiffDOMUtils::nextNonDeletedSibling( $node );
 			DOMUtils::migrateChildren( $node, $node->parentNode, $node );
 			$node->parentNode->removeChild( $node );
 
 			return $next;
 		} elseif ( $node instanceof Element && DOMCompat::nodeName( $node ) === 'p'
 			&& !WTUtils::isLiteralHTMLNode( $node ) ) {
-			$next = DOMUtils::nextNonSepSibling( $node );
+			$next = DiffDOMUtils::nextNonSepSibling( $node );
 			// Normalization of <p></p>, <p><br/></p>, <p><meta/></p> and the like to avoid
 			// extraneous new lines
-			if ( DOMUtils::hasNChildren( $node, 1 ) &&
+			if ( DiffDOMUtils::hasNChildren( $node, 1 ) &&
 				WTUtils::isMarkerAnnotation( $node->firstChild )
 			) {
 				// Converts <p><meta /></p> (where meta is an annotation tag) to <meta /> without
@@ -662,10 +665,10 @@ class DOMNormalizer {
 				// were generated through deletions or other normalizations.
 				// FIXME: This trick fails for non-selser mode since
 				// diff markers are only added in selser mode.
-				DOMUtils::hasNChildren( $node, 0, true ) &&
+				DiffDOMUtils::hasNChildren( $node, 0, true ) &&
 				// FIXME: Also, skip if this is the only child.
 				// Eliminates spurious test failures in non-selser mode.
-				!DOMUtils::hasNChildren( $node->parentNode, 1 )
+				!DiffDOMUtils::hasNChildren( $node->parentNode, 1 )
 			) {
 				// T184755: Convert sequences of <p></p> nodes to sequences of
 				// <br/>, <p><br/>..other content..</p>, <p><br/><p/> to ensure
@@ -682,11 +685,11 @@ class DOMNormalizer {
 
 					// Avoid nested insertion markers
 					if ( !$this->isInsertedContent( $next ) ) {
-						$this->addDiffMarks( $br, 'inserted' );
+						$this->addDiffMarks( $br, DiffMarkers::INSERTED );
 					}
 
 					// Delete node
-					$this->addDiffMarks( $node->parentNode, 'deleted' );
+					$this->addDiffMarks( $node->parentNode, DiffMarkers::DELETED );
 					$node->parentNode->removeChild( $node );
 				}
 			} else {
@@ -724,7 +727,7 @@ class DOMNormalizer {
 		if ( self::swappable( $a, $b ) ) {
 			'@phan-var Element $a'; // @var Element $a
 			'@phan-var Element $b'; // @var Element $b
-			$firstNonDeletedChild = DOMUtils::firstNonDeletedChild( $a );
+			$firstNonDeletedChild = DiffDOMUtils::firstNonDeletedChild( $a );
 			'@phan-var Element $firstNonDeletedChild'; // @var Element $firstNonDeletedChild
 			$a = $this->merge( $this->swap( $a, $firstNonDeletedChild ), $b );
 			// Again, a has new children, but the grandkids have already
@@ -736,7 +739,7 @@ class DOMNormalizer {
 		if ( self::swappable( $b, $a ) ) {
 			'@phan-var Element $a'; // @var Element $a
 			'@phan-var Element $b'; // @var Element $b
-			$firstNonDeletedChild = DOMUtils::firstNonDeletedChild( $b );
+			$firstNonDeletedChild = DiffDOMUtils::firstNonDeletedChild( $b );
 			'@phan-var Element $firstNonDeletedChild'; // @var Element $firstNonDeletedChild
 			$a = $this->merge( $a, $this->swap( $b, $firstNonDeletedChild ) );
 			// Again, a has new children, but the grandkids have already
@@ -754,7 +757,7 @@ class DOMNormalizer {
 	 */
 	public function processSubtree( Node $node, bool $recurse ): void {
 		// Process the first child outside the loop.
-		$a = DOMUtils::firstNonDeletedChild( $node );
+		$a = DiffDOMUtils::firstNonDeletedChild( $node );
 		if ( !$a ) {
 			return;
 		}
@@ -762,7 +765,7 @@ class DOMNormalizer {
 		$a = $this->processNode( $a, $recurse );
 		while ( $a ) {
 			// We need a pair of adjacent siblings for tag minimization.
-			$b = DOMUtils::nextNonDeletedSibling( $a );
+			$b = DiffDOMUtils::nextNonDeletedSibling( $a );
 			if ( !$b ) {
 				return;
 			}
@@ -772,7 +775,7 @@ class DOMNormalizer {
 
 			// If we skipped over a bunch of nodes in the middle,
 			// we no longer have a pair of adjacent siblings.
-			if ( $b && DOMUtils::previousNonDeletedSibling( $b ) === $a ) {
+			if ( $b && DiffDOMUtils::previousNonDeletedSibling( $b ) === $a ) {
 				// Process the pair.
 				$a = $this->normalizeSiblingPair( $a, $b );
 			} else {
@@ -804,7 +807,7 @@ class DOMNormalizer {
 			}
 
 			// Set insertion marker
-			$insertedSubtree = DiffUtils::hasInsertedDiffMark( $node, $this->state->getEnv() );
+			$insertedSubtree = DiffUtils::hasInsertedDiffMark( $node );
 			if ( $insertedSubtree ) {
 				if ( $this->inInsertedContent ) {
 					// Dump debugging info

@@ -2,10 +2,12 @@
 
 namespace MediaWiki\Extension\TemplateData;
 
-use MediaWiki\MediaWikiServices;
 use Status;
 use stdClass;
 
+/**
+ * @license GPL-2.0-or-later
+ */
 class TemplateDataValidator {
 
 	public const PREDEFINED_FORMATS = [
@@ -53,12 +55,15 @@ class TemplateDataValidator {
 		'wiki-template-name',
 	];
 
-	private const DEPRECATED_TYPES_MAP = [
-		'string/line' => 'line',
-		'string/wiki-page-name' => 'wiki-page-name',
-		'string/wiki-user-name' => 'wiki-user-name',
-		'string/wiki-file-name' => 'wiki-file-name',
-	];
+	/** @var string[] */
+	private array $validParameterTypes;
+
+	/**
+	 * @param string[] $additionalParameterTypes
+	 */
+	public function __construct( array $additionalParameterTypes ) {
+		$this->validParameterTypes = array_merge( self::VALID_TYPES, $additionalParameterTypes );
+	}
 
 	/**
 	 * @param mixed $data
@@ -86,21 +91,17 @@ class TemplateDataValidator {
 				return Status::newFatal( 'templatedata-invalid-type', 'description',
 					'string|object' );
 			}
-			$data->description = $this->normaliseInterfaceText( $data->description );
-		} else {
-			$data->description = null;
 		}
 
 		// Root.format
-		if ( !isset( $data->format ) ) {
-			$data->format = null;
-		} elseif ( !is_string( $data->format ) ||
-			// @phan-suppress-next-line PhanImpossibleCondition
-			!( isset( self::PREDEFINED_FORMATS[$data->format] ) ||
-				$this->isValidCustomFormatString( $data->format )
-			)
-		) {
-			return Status::newFatal( 'templatedata-invalid-format', 'format' );
+		if ( isset( $data->format ) ) {
+			if ( !is_string( $data->format ) ||
+				!( isset( self::PREDEFINED_FORMATS[$data->format] ) ||
+					$this->isValidCustomFormatString( $data->format )
+				)
+			) {
+				return Status::newFatal( 'templatedata-invalid-format', 'format' );
+			}
 		}
 
 		// Root.params
@@ -112,32 +113,11 @@ class TemplateDataValidator {
 			return Status::newFatal( 'templatedata-invalid-type', 'params', 'object' );
 		}
 
-		// Deep clone
-		// We need this to determine whether a property was originally set
-		// to decide whether 'inherits' will add it or not.
-		$unnormalizedParams = unserialize( serialize( $data->params ) );
-
-		$status = $this->validateParameters( $data->params );
-		if ( $status ) {
-			return $status;
-		}
-
-		foreach ( $data->params as $paramName => $param ) {
-			if ( isset( $param->inherits ) ) {
-				$parentParam = $data->params->{ $param->inherits };
-				foreach ( $parentParam as $key => $value ) {
-					if ( !isset( $unnormalizedParams->$paramName->$key ) ) {
-						$param->$key = is_object( $value ) ? clone $value : $value;
-					}
-				}
-				unset( $param->inherits );
-			}
-		}
-
-		return $this->validateParameterOrder( $data->paramOrder ?? null, $data->params ) ??
-			$this->validateSets( $data->sets, $data->params ) ??
-			$this->validateMaps( $data->maps, $data->params ) ??
-			Status::newGood();
+		return $this->validateParameters( $data->params ) ??
+			$this->validateParameterOrder( $data->paramOrder ?? null, $data->params ) ??
+			$this->validateSets( $data->sets ?? [], $data->params ) ??
+			$this->validateMaps( $data->maps ?? (object)[], $data->params ) ??
+			Status::newGood( $data );
 	}
 
 	/**
@@ -146,6 +126,10 @@ class TemplateDataValidator {
 	 */
 	private function validateParameters( stdClass $params ): ?Status {
 		foreach ( $params as $paramName => $param ) {
+			if ( trim( $paramName ) === '' ) {
+				return Status::newFatal( 'templatedata-invalid-unnamed-parameter' );
+			}
+
 			if ( !( $param instanceof stdClass ) ) {
 				return Status::newFatal( 'templatedata-invalid-type', "params.{$paramName}",
 					'object' );
@@ -184,9 +168,6 @@ class TemplateDataValidator {
 				return Status::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.label", 'string|object' );
 			}
-			$param->label = $this->normaliseInterfaceText( $param->label );
-		} else {
-			$param->label = null;
 		}
 
 		// Param.required
@@ -195,8 +176,6 @@ class TemplateDataValidator {
 				return Status::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.required", 'boolean' );
 			}
-		} else {
-			$param->required = false;
 		}
 
 		// Param.suggested
@@ -205,8 +184,6 @@ class TemplateDataValidator {
 				return Status::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.suggested", 'boolean' );
 			}
-		} else {
-			$param->suggested = false;
 		}
 
 		// Param.description
@@ -215,9 +192,6 @@ class TemplateDataValidator {
 				return Status::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.description", 'string|object' );
 			}
-			$param->description = $this->normaliseInterfaceText( $param->description );
-		} else {
-			$param->description = null;
 		}
 
 		// Param.example
@@ -226,9 +200,6 @@ class TemplateDataValidator {
 				return Status::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.example", 'string|object' );
 			}
-			$param->example = $this->normaliseInterfaceText( $param->example );
-		} else {
-			$param->example = null;
 		}
 
 		// Param.deprecated
@@ -237,8 +208,6 @@ class TemplateDataValidator {
 				return Status::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.deprecated", 'boolean|string' );
 			}
-		} else {
-			$param->deprecated = false;
 		}
 
 		// Param.aliases
@@ -247,16 +216,12 @@ class TemplateDataValidator {
 				return Status::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.aliases", 'array' );
 			}
-			foreach ( $param->aliases as $i => &$alias ) {
-				if ( is_int( $alias ) ) {
-					$alias = (string)$alias;
-				} elseif ( !is_string( $alias ) ) {
+			foreach ( $param->aliases as $i => $alias ) {
+				if ( !is_int( $alias ) && !is_string( $alias ) ) {
 					return Status::newFatal( 'templatedata-invalid-type',
 						"params.{$paramName}.aliases[$i]", 'int|string' );
 				}
 			}
-		} else {
-			$param->aliases = [];
 		}
 
 		// Param.autovalue
@@ -266,8 +231,6 @@ class TemplateDataValidator {
 				return Status::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.autovalue", 'string' );
 			}
-		} else {
-			$param->autovalue = null;
 		}
 
 		// Param.default
@@ -276,9 +239,6 @@ class TemplateDataValidator {
 				return Status::newFatal( 'templatedata-invalid-type',
 					"params.{$paramName}.default", 'string|object' );
 			}
-			$param->default = $this->normaliseInterfaceText( $param->default );
-		} else {
-			$param->default = null;
 		}
 
 		// Param.type
@@ -288,17 +248,10 @@ class TemplateDataValidator {
 					"params.{$paramName}.type", 'string' );
 			}
 
-			// Map deprecated types to newer versions
-			if ( isset( self::DEPRECATED_TYPES_MAP[ $param->type ] ) ) {
-				$param->type = self::DEPRECATED_TYPES_MAP[ $param->type ];
-			}
-
-			if ( !in_array( $param->type, self::VALID_TYPES ) ) {
+			if ( !in_array( $param->type, $this->validParameterTypes ) ) {
 				return Status::newFatal( 'templatedata-invalid-value',
 					'params.' . $paramName . '.type' );
 			}
-		} else {
-			$param->type = 'unknown';
 		}
 
 		// Param.suggestedvalues
@@ -313,8 +266,6 @@ class TemplateDataValidator {
 						"params.{$paramName}.suggestedvalues[$i]", 'string' );
 				}
 			}
-		} else {
-			$param->suggestedvalues = [];
 		}
 
 		return null;
@@ -332,8 +283,9 @@ class TemplateDataValidator {
 		} elseif ( !is_array( $paramOrder ) ) {
 			return Status::newFatal( 'templatedata-invalid-type', 'paramOrder', 'array' );
 		} elseif ( count( $paramOrder ) < count( (array)$params ) ) {
-			$firstMissing = count( $paramOrder );
-			return Status::newFatal( 'templatedata-invalid-missing', "paramOrder[$firstMissing]" );
+			$missing = array_diff( array_keys( (array)$params ), $paramOrder );
+			return Status::newFatal( 'templatedata-invalid-missing',
+				'paramOrder[ "' . implode( '", "', $missing ) . '" ]' );
 		}
 
 		// Validate each of the values corresponds to a parameter and that there are no
@@ -341,7 +293,7 @@ class TemplateDataValidator {
 		$seen = [];
 		foreach ( $paramOrder as $i => $param ) {
 			if ( !isset( $params->$param ) ) {
-				return Status::newFatal( 'templatedata-invalid-value', "paramOrder[$i]" );
+				return Status::newFatal( 'templatedata-invalid-value', "paramOrder[ \"$param\" ]" );
 			}
 			if ( isset( $seen[$param] ) ) {
 				return Status::newFatal( 'templatedata-invalid-duplicate-value',
@@ -354,16 +306,13 @@ class TemplateDataValidator {
 	}
 
 	/**
-	 * @param mixed &$sets
+	 * @param mixed $sets
 	 * @param stdClass $params
 	 *
 	 * @return Status|null
 	 */
-	private function validateSets( &$sets, stdClass $params ): ?Status {
-		if ( $sets === null ) {
-			$sets = [];
-			return null;
-		} elseif ( !is_array( $sets ) ) {
+	private function validateSets( $sets, stdClass $params ): ?Status {
+		if ( !is_array( $sets ) ) {
 			return Status::newFatal( 'templatedata-invalid-type', 'sets', 'array' );
 		}
 
@@ -381,8 +330,6 @@ class TemplateDataValidator {
 				return Status::newFatal( 'templatedata-invalid-type', "sets.{$setNr}.label",
 					'string|object' );
 			}
-
-			$setObj->label = $this->normaliseInterfaceText( $setObj->label );
 
 			if ( !isset( $setObj->params ) ) {
 				return Status::newFatal( 'templatedata-invalid-missing', "sets.{$setNr}.params",
@@ -411,16 +358,13 @@ class TemplateDataValidator {
 	}
 
 	/**
-	 * @param mixed &$maps
+	 * @param mixed $maps
 	 * @param stdClass $params
 	 *
 	 * @return Status|null
 	 */
-	private function validateMaps( &$maps, stdClass $params ): ?Status {
-		if ( $maps === null ) {
-			$maps = (object)[];
-			return null;
-		} elseif ( !( $maps instanceof stdClass ) ) {
+	private function validateMaps( $maps, stdClass $params ): ?Status {
+		if ( !( $maps instanceof stdClass ) ) {
 			return Status::newFatal( 'templatedata-invalid-type', 'maps', 'object' );
 		}
 
@@ -472,10 +416,6 @@ class TemplateDataValidator {
 		return null;
 	}
 
-	/**
-	 * @param string|null $format
-	 * @return bool
-	 */
 	private function isValidCustomFormatString( ?string $format ): bool {
 		return $format && preg_match( '/^\n?{{ *_+\n? *\|\n? *_+ *= *_+\n? *}}\n?$/', $format );
 	}
@@ -502,19 +442,6 @@ class TemplateDataValidator {
 		}
 
 		return is_string( $text );
-	}
-
-	/**
-	 * Normalise a InterfaceText field in the TemplateData blob.
-	 * @param stdClass|string $text
-	 * @return stdClass
-	 */
-	private function normaliseInterfaceText( $text ): stdClass {
-		if ( is_string( $text ) ) {
-			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
-			return (object)[ $contLang->getCode() => $text ];
-		}
-		return $text;
 	}
 
 }

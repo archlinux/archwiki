@@ -5,22 +5,18 @@ namespace MediaWiki\Extension\TemplateData;
 use Html;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use MessageLocalizer;
 use stdClass;
-use Title;
 
+/**
+ * @license GPL-2.0-or-later
+ */
 class TemplateDataHtmlFormatter {
 
-	/** @var MessageLocalizer */
-	private $localizer;
+	private MessageLocalizer $localizer;
+	private string $languageCode;
 
-	/** @var string */
-	private $languageCode;
-
-	/**
-	 * @param MessageLocalizer $localizer
-	 * @param string $languageCode
-	 */
 	public function __construct( MessageLocalizer $localizer, string $languageCode = 'en' ) {
 		$this->localizer = $localizer;
 		$this->languageCode = $languageCode;
@@ -57,7 +53,7 @@ class TemplateDataHtmlFormatter {
 			}
 		}
 
-		$sorting = count( (array)$data->params ) > 1 ? " sortable" : "";
+		$sorting = count( (array)$data->params ) > 1 ? ' sortable' : '';
 		$html = '<header>'
 			. Html::element( 'p',
 				[
@@ -72,16 +68,16 @@ class TemplateDataHtmlFormatter {
 			. '</header>'
 			. '<table class="wikitable mw-templatedata-doc-params' . $sorting . '">'
 			. Html::rawElement( 'caption', [],
-				// Edit interface is only loaded in the template namespace (see Hooks::onEditPage)
-				( $showEditLink && $frameTitle->inNamespace( NS_TEMPLATE ) ?
-					Html::element( 'mw:edittemplatedata', [
-						'page' => $frameTitle->getPrefixedText()
-					] ) :
-					''
-				) .
-				Html::element( 'p',
+				Html::rawElement( 'p',
 					[ 'class' => 'mw-templatedata-caption' ],
-					$this->localizer->msg( 'templatedata-doc-params' )->text()
+					$this->localizer->msg( 'templatedata-doc-params' )->escaped() .
+					// Edit interface is only loaded in the template namespace (see Hooks::onEditPage)
+					( $showEditLink && $frameTitle->inNamespace( NS_TEMPLATE ) ?
+						Html::element( 'mw:edittemplatedata', [
+							'page' => $frameTitle->getPrefixedText()
+						] ) :
+						''
+					)
 				)
 				. ( $formatMsg ?
 					Html::rawElement( 'p', [],
@@ -138,12 +134,12 @@ class TemplateDataHtmlFormatter {
 	 *
 	 * @param string &$text
 	 */
-	public function replaceEditLink( string &$text ) {
+	public function replaceEditLink( string &$text ): void {
 		$localizer = $this->localizer;
 		$text = preg_replace_callback(
 			// Based on EDITSECTION_REGEX in ParserOutput
 			'#<mw:edittemplatedata page="(.*?)"></mw:edittemplatedata>#s',
-			static function ( $m ) use ( $localizer ) {
+			static function ( array $m ) use ( $localizer ): string {
 				$editsectionPage = Title::newFromText( htmlspecialchars_decode( $m[1] ) );
 
 				if ( !is_object( $editsectionPage ) ) {
@@ -217,7 +213,7 @@ class TemplateDataHtmlFormatter {
 			. Html::element( 'th', [], $param->label ?? $paramName )
 			// Parameters and aliases
 			. Html::rawElement( 'td', [ 'class' => 'mw-templatedata-doc-param-name' ],
-				implode( $this->localizer->msg( 'word-separator' )->escaped(), $allParamNames )
+				implode( ' ', $allParamNames )
 			)
 			// Description
 			. Html::rawElement( 'td', [],
@@ -234,7 +230,7 @@ class TemplateDataHtmlFormatter {
 						$this->localizer->msg( 'templatedata-doc-param-suggestedvalues' )->text()
 					)
 					. Html::rawElement( 'dd', [],
-						implode( $this->localizer->msg( 'word-separator' )->escaped(), $suggestedValues )
+						implode( ' ', $suggestedValues )
 					) ) : '' ) .
 					// Default
 					( $param->default !== null ? ( Html::element( 'dt', [],

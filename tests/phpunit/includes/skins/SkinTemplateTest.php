@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Title\Title;
 use Wikimedia\TestingAccessWrapper;
 
@@ -12,9 +13,9 @@ class SkinQuickTemplateTest extends QuickTemplate {
 
 /**
  * @covers SkinTemplate
- *
- * @group Output
- *
+ * @covers Skin
+ * @group Skin
+ * @group Database
  * @author Bene* < benestar.wikimedia@gmail.com >
  */
 class SkinTemplateTest extends MediaWikiIntegrationTestCase {
@@ -35,7 +36,7 @@ class SkinTemplateTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function makeListItemProvider() {
+	public static function makeListItemProvider() {
 		return [
 			[
 				'<li class="class mw-list-item" title="itemtitle"><a href="url" title="title">text</a></li>',
@@ -68,7 +69,7 @@ class SkinTemplateTest extends MediaWikiIntegrationTestCase {
 		return $mock;
 	}
 
-	public function provideGetDefaultModules() {
+	public static function provideGetDefaultModules() {
 		return [
 			[
 				false,
@@ -93,7 +94,7 @@ class SkinTemplateTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	public function provideGetFooterIcons() {
+	public static function provideGetFooterIcons() {
 		return [
 			// Test case 1
 			[
@@ -164,7 +165,6 @@ class SkinTemplateTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers SkinTemplate::getFooterIcons
 	 * @dataProvider provideGetFooterIcons
 	 */
 	public function testGetFooterIcons( $globals, $expected, $msg ) {
@@ -176,7 +176,6 @@ class SkinTemplateTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers Skin::getDefaultModules
 	 * @dataProvider provideGetDefaultModules
 	 */
 	public function testgetDefaultModules( $isSyndicated, $html, array $expectedModuleStyles ) {
@@ -195,9 +194,7 @@ class SkinTemplateTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers SkinTemplate::injectLegacyMenusIntoPersonalTools
 	 * @dataProvider provideContentNavigation
-	 *
 	 * @param array $contentNavigation
 	 * @param array $expected
 	 */
@@ -213,7 +210,7 @@ class SkinTemplateTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideContentNavigation(): array {
+	public static function provideContentNavigation(): array {
 		return [
 			'No userpage set' => [
 				'contentNavigation' => [
@@ -310,16 +307,12 @@ class SkinTemplateTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers SkinTemplate::prepareQuickTemplate
-	 * @covers SkinTemplate::generateHTML
-	 */
 	public function testGenerateHTML() {
 		$wrapper = TestingAccessWrapper::newFromObject(
 			new SkinTemplate( [ 'template' => 'SkinQuickTemplateTest', 'name' => 'test' ] )
 		);
 
-		$wrapper->getContext()->setTitle( Title::newFromText( 'PrepareQuickTemplateTest' ) );
+		$wrapper->getContext()->setTitle( Title::makeTitle( NS_MAIN, 'PrepareQuickTemplateTest' ) );
 		$tpl = $wrapper->prepareQuickTemplate();
 		$contentNav = $tpl->get( 'content_navigation' );
 

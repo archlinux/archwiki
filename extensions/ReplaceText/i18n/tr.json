@@ -38,7 +38,6 @@
 	"replacetext_warning": "'''Uyarı:''' {{PLURAL:$1|zaten içeren bir sayfa|zaten içeren bir sayfa}} yedek dizgiyi, \"$1\" içeren bir $2 sayfa var. Bu değişimi yaparsanız, değiştirmelerinizi bu dizelerden ayıramazsınız.",
 	"replacetext_blankwarning": "Değiştirme dizgisi boş olduğu için bu işlem geri alınamayacak.\nDevam etmek istiyor musunuz?",
 	"replacetext_continue": "Devam et",
-	"replacetext_announce": "Bu düzenlemeleri $1 ve izleme listeleriyle duyurun",
 	"replacetext_editsummary": "Metin değiştirme - \"$1\" yerine \"$2\"",
 	"replacetext_reminder": "Bu sayfadaki bağlantıları diğer sayfalarda da değiştirmek için $1 gidin.",
 	"replacetext_cfg_error": "MetinDeğiştir yapılandırma hatası",

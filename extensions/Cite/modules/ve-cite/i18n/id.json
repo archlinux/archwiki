@@ -20,7 +20,8 @@
 			"Presidenvolksraad",
 			"Raynasution",
 			"Rv77ax",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Veracious"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Buku",
@@ -41,6 +42,7 @@
 	"cite-ve-citationneeded-title": "Diperlukan kutipan",
 	"cite-ve-dialog-reference-editing-reused": "Referensi ini dipakai {{PLURAL:$1|sekali\n|$1 kali}} pada halaman ini.",
 	"cite-ve-dialog-reference-editing-reused-long": "Referensi ini dipakai {{PLURAL:$1|sekali|$1 kali}} pada halaman ini. Perubahan yang dilakukan di sini akan diterapkan di semua tempat referensi ini dipakai.",
+	"cite-ve-dialog-reference-editing-extends": "Ini adalah ekstensi referensi lainnya.",
 	"cite-ve-dialog-reference-options-group-label": "Pakai kelompok ini",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referensi umum",
 	"cite-ve-dialog-reference-options-name-label": "Pakai ulang dengan nama ini",

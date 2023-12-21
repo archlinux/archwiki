@@ -29,12 +29,12 @@ use MediaWiki\ResourceLoader\WikiModule;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\User\UserFactory;
 use Message;
-use NamespaceInfo;
 use SearchUpdate;
 use SiteStatsUpdate;
-use Status;
 use StatusValue;
 use Wikimedia\IPUtils;
 use Wikimedia\Message\ITextFormatter;
@@ -302,7 +302,7 @@ class DeletePage {
 	 */
 	public function setIsDeletePageUnitTest( bool $test ): void {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new BadMethodCallException( __METHOD__ . ' can only be used in tests!' );
+			throw new LogicException( __METHOD__ . ' can only be used in tests!' );
 		}
 		$this->isDeletePageUnitTest = $test;
 	}
@@ -629,23 +629,30 @@ class DeletePage {
 		// in the job queue to avoid simultaneous deletion operations would add overhead.
 		// Number of archived revisions cannot be known beforehand, because edits can be made
 		// while deletion operations are being processed, changing the number of archivals.
-		$archivedRevisionCount = $dbw->selectRowCount(
-			'archive',
-			'*',
-			[
+		$archivedRevisionCount = $dbw->newSelectQueryBuilder()
+			->select( '*' )
+			->from( 'archive' )
+			->where( [
 				'ar_namespace' => $title->getNamespace(),
 				'ar_title' => $title->getDBkey(),
 				'ar_page_id' => $id
-			], __METHOD__
-		);
+			] )
+			->caller( __METHOD__ )->fetchRowCount();
 
+		// Look up the redirect target before deleting the page to avoid inconsistent state (T348881).
+		// The cloning business below is specifically to allow hook handlers to check the redirect
+		// status before the deletion (see I715046dc8157047aff4d5bd03ea6b5a47aee58bb).
+		$page->getRedirectTarget();
 		// Clone the title and wikiPage, so we have the information we need when
 		// we log and run the ArticleDeleteComplete hook.
 		$logTitle = clone $title;
 		$wikiPageBeforeDelete = clone $page;
 
 		// Now that it's safely backed up, delete it
-		$dbw->delete( 'page', [ 'page_id' => $id ], __METHOD__ );
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'page' )
+			->where( [ 'page_id' => $id ] )
+			->caller( __METHOD__ )->execute();
 
 		// Log the deletion, if the page was suppressed, put it in the suppression log instead
 		$logtype = $this->suppress ? 'suppress' : 'delete';
@@ -765,7 +772,7 @@ class DeletePage {
 		$rowsInsert = [];
 		$revids = [];
 
-		/** @var int[] Revision IDs of edits that were made by IPs */
+		/** @var int[] $ipRevIds Revision IDs of edits that were made by IPs */
 		$ipRevIds = [];
 
 		$done = true;
@@ -802,15 +809,21 @@ class DeletePage {
 
 		if ( count( $revids ) > 0 ) {
 			// Copy them into the archive table
-			$dbw->insert( 'archive', $rowsInsert, __METHOD__ );
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'archive' )
+				->rows( $rowsInsert )
+				->caller( __METHOD__ )->execute();
 
-			$dbw->delete( 'revision', [ 'rev_id' => $revids ], __METHOD__ );
-			if ( $this->commentStore->getTempTableMigrationStage( 'rev_comment' ) & SCHEMA_COMPAT_WRITE_OLD ) {
-				$dbw->delete( 'revision_comment_temp', [ 'revcomment_rev' => $revids ], __METHOD__ );
-			}
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'revision' )
+				->where( [ 'rev_id' => $revids ] )
+				->caller( __METHOD__ )->execute();
 			// Also delete records from ip_changes as applicable.
 			if ( count( $ipRevIds ) > 0 ) {
-				$dbw->delete( 'ip_changes', [ 'ipc_rev_id' => $ipRevIds ], __METHOD__ );
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'ip_changes' )
+					->where( [ 'ipc_rev_id' => $ipRevIds ] )
+					->caller( __METHOD__ )->execute();
 			}
 		}
 
@@ -818,7 +831,6 @@ class DeletePage {
 	}
 
 	/**
-	 * @private Public for BC only
 	 * Do some database updates after deletion
 	 *
 	 * @param WikiPage $page
@@ -826,7 +838,7 @@ class DeletePage {
 	 *   deletion, used when determining the required updates. This may be needed because
 	 *   $page->getRevisionRecord() may already return null when the page proper was deleted.
 	 */
-	public function doDeleteUpdates( WikiPage $page, RevisionRecord $revRecord ): void {
+	private function doDeleteUpdates( WikiPage $page, RevisionRecord $revRecord ): void {
 		try {
 			$countable = $page->isCountable();
 		} catch ( TimeoutException $e ) {
@@ -838,17 +850,14 @@ class DeletePage {
 		}
 
 		// Update site status
-		if ( !$this->isDeletePageUnitTest ) {
-			// TODO Remove conditional once DeferredUpdates is servicified (T265749)
-			DeferredUpdates::addUpdate( SiteStatsUpdate::factory(
-				[ 'edits' => 1, 'articles' => $countable ? -1 : 0, 'pages' => -1 ]
-			) );
+		DeferredUpdates::addUpdate( SiteStatsUpdate::factory(
+			[ 'edits' => 1, 'articles' => $countable ? -1 : 0, 'pages' => -1 ]
+		) );
 
-			// Delete pagelinks, update secondary indexes, etc
-			$updates = $this->getDeletionUpdates( $page, $revRecord );
-			foreach ( $updates as $update ) {
-				DeferredUpdates::addUpdate( $update );
-			}
+		// Delete pagelinks, update secondary indexes, etc
+		$updates = $this->getDeletionUpdates( $page, $revRecord );
+		foreach ( $updates as $update ) {
+			DeferredUpdates::addUpdate( $update );
 		}
 
 		// Reparse any pages transcluding this page
@@ -886,15 +895,11 @@ class DeletePage {
 		// Reset the page object and the Title object
 		$page->loadFromRow( false, WikiPage::READ_LATEST );
 
-		if ( !$this->isDeletePageUnitTest ) {
-			// TODO Remove conditional once DeferredUpdates is servicified (T265749)
-			// Search engine
-			DeferredUpdates::addUpdate( new SearchUpdate( $page->getId(), $page->getTitle() ) );
-		}
+		// Search engine
+		DeferredUpdates::addUpdate( new SearchUpdate( $page->getId(), $page->getTitle() ) );
 	}
 
 	/**
-	 * @private Public for BC only
 	 * Returns a list of updates to be performed when the page is deleted. The
 	 * updates should remove any information about this page from secondary data
 	 * stores such as links tables.
@@ -903,7 +908,11 @@ class DeletePage {
 	 * @param RevisionRecord $rev The revision being deleted.
 	 * @return DeferrableUpdate[]
 	 */
-	public function getDeletionUpdates( WikiPage $page, RevisionRecord $rev ): array {
+	private function getDeletionUpdates( WikiPage $page, RevisionRecord $rev ): array {
+		if ( $this->isDeletePageUnitTest ) {
+			// Hack: LinksDeletionUpdate reads from the global state in the constructor
+			return [];
+		}
 		$slotContent = array_map( static function ( SlotRecord $slot ) {
 			return $slot->getContent();
 		}, $rev->getSlots()->getSlots() );

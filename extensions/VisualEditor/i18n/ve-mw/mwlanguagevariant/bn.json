@@ -29,7 +29,9 @@
 	"visualeditor-mwlanguagevariantinspector-filter-text-label": "বিষয়বস্তু",
 	"visualeditor-mwlanguagevariantinspector-filter-text-placeholder": "ফিল্টার করা পাঠ্য",
 	"visualeditor-mwlanguagevariantinspector-oneway-from-text-placeholder": "উত্স পাঠ্য",
+	"visualeditor-mwlanguagevariantinspector-oneway-to-text-placeholder": "বৈকল্পিক পাঠ্য",
 	"visualeditor-mwlanguagevariantinspector-title-disabled": "বৈকল্পিক রূপান্তর নিষ্ক্রিয় করা",
+	"visualeditor-mwlanguagevariantinspector-title-filter": "বৈকল্পিক ছাঁকনি",
 	"visualeditor-mwlanguagevariantinspector-title-name": "ভাষার নাম",
 	"visualeditor-mwlanguagevariantinspector-title-oneway": "একমুখী রূপান্তরের নীতি",
 	"visualeditor-mwlanguagevariantinspector-title-twoway": "ভাষা রূপান্তরের নীতি"

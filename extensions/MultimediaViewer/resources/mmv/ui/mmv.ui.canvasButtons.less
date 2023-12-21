@@ -1,4 +1,6 @@
+@import 'mediawiki.skin.variables.less';
 @import '../mmv.variables.less';
+@import 'mediawiki.mixins.less';
 @import '../mmv.mixins.less';
 
 .mw-mmv-download-button,
@@ -22,7 +24,7 @@
 		opacity: 1;
 	}
 
-	.unselectable;
+	.user-select( none );
 }
 
 .mw-mmv-download-button.hidden,

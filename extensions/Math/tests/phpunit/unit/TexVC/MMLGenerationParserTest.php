@@ -26,7 +26,7 @@ final class MMLGenerationParserTest extends MediaWikiUnitTestCase {
 	private static $FILTERSTART = 0;
 	private static $FILTERLENGTH = 50;
 
-	private static $GENERATEHTML = true;
+	private static $GENERATEHTML = false;
 	private static $GENERATEDHTMLFILE = __DIR__ . "/MMLGenerationParserTest-Output.html";
 
 	protected function setUp(): void {

@@ -96,6 +96,7 @@ Parser.prototype.getTimestampRegexp = function ( contLangVariant, format, digits
 	var parser = this;
 
 	var s = '';
+	var raw = false;
 	// Adapted from Language::sprintfDate()
 	for ( var p = 0; p < format.length; p++ ) {
 		var num = false;
@@ -117,6 +118,9 @@ Parser.prototype.getTimestampRegexp = function ( contLangVariant, format, digits
 					'july-gen', 'august-gen', 'september-gen', 'october-gen', 'november-gen',
 					'december-gen'
 				] ) );
+				break;
+			case 'xn':
+				raw = true;
 				break;
 			case 'd':
 				num = '2';
@@ -148,6 +152,9 @@ Parser.prototype.getTimestampRegexp = function ( contLangVariant, format, digits
 					'sep', 'oct', 'nov', 'dec'
 				] ) );
 				break;
+			case 'm':
+				num = '2';
+				break;
 			case 'n':
 				num = '1,2';
 				break;
@@ -164,6 +171,9 @@ Parser.prototype.getTimestampRegexp = function ( contLangVariant, format, digits
 				num = '2';
 				break;
 			case 'i':
+				num = '2';
+				break;
+			case 's':
 				num = '2';
 				break;
 			case '\\':
@@ -197,7 +207,12 @@ Parser.prototype.getTimestampRegexp = function ( contLangVariant, format, digits
 				p += char.length - 1;
 		}
 		if ( num !== false ) {
-			s += regexpGroup( digitsRegexp + '{' + num + '}' );
+			if ( raw ) {
+				s += regexpGroup( '[0-9]{' + num + '}' );
+				raw = false;
+			} else {
+				s += regexpGroup( digitsRegexp + '{' + num + '}' );
+			}
 		}
 		// Ignore some invisible Unicode characters that often sneak into copy-pasted timestamps (T308448)
 		s += '[\\u200E\\u200F]?';
@@ -237,6 +252,7 @@ Parser.prototype.getTimestampParser = function ( contLangVariant, format, digits
 
 		switch ( code ) {
 			case 'xx':
+			case 'xn':
 				break;
 			case 'xg':
 			case 'd':
@@ -245,12 +261,14 @@ Parser.prototype.getTimestampParser = function ( contLangVariant, format, digits
 			case 'l':
 			case 'F':
 			case 'M':
+			case 'm':
 			case 'n':
 			case 'Y':
 			case 'xkY':
 			case 'G':
 			case 'H':
 			case 'i':
+			case 's':
 				matchingGroups.push( code );
 				break;
 			case '\\':
@@ -340,6 +358,7 @@ Parser.prototype.getTimestampParser = function ( contLangVariant, format, digits
 						'sep', 'oct', 'nov', 'dec'
 					] ).indexOf( text );
 					break;
+				case 'm':
 				case 'n':
 					monthIdx = Number( untransformDigits( text ) ) - 1;
 					break;
@@ -356,6 +375,9 @@ Parser.prototype.getTimestampParser = function ( contLangVariant, format, digits
 					break;
 				case 'i':
 					minute = Number( untransformDigits( text ) );
+					break;
+				case 's':
+					// Seconds - unused, because most timestamp formats omit them
 					break;
 				default:
 					throw new Error( 'Not implemented' );
@@ -454,20 +476,24 @@ function acceptOnlyNodesAllowingComments( node ) {
 		if ( node.id === 'toc' ) {
 			return NodeFilter.FILTER_REJECT;
 		}
+		// Don't detect comments within quotes (T275881)
+		if (
+			tagName === 'blockquote' ||
+			tagName === 'cite' ||
+			tagName === 'q'
+		) {
+			return NodeFilter.FILTER_REJECT;
+		}
+		// Don't attempt to parse blocks marked 'mw-notalk'
+		if ( node.classList.contains( 'mw-notalk' ) ) {
+			return NodeFilter.FILTER_REJECT;
+		}
 		// Don't detect comments within references. We can't add replies to them without bungling up
 		// the structure in some cases (T301213), and you're not supposed to do that anyway…
 		if (
 			// <ol class="references"> is the only reliably consistent thing between the two parsers
 			tagName === 'ol' &&
 			node.classList.contains( 'references' )
-		) {
-			return NodeFilter.FILTER_REJECT;
-		}
-		// Don't detect comments within quotes (T275881)
-		if (
-			tagName === 'blockquote' ||
-			tagName === 'cite' ||
-			tagName === 'q'
 		) {
 			return NodeFilter.FILTER_REJECT;
 		}
@@ -491,13 +517,18 @@ function acceptOnlyNodesAllowingComments( node ) {
  *   - {number} parserIndex Which of the regexps matched
  *   - {Array} matchData Regexp match data, which specifies the location of the match,
  *     and which can be parsed using #getLocalTimestampParsers
+ *   - {Object} range Range-like object covering the timestamp
  */
 Parser.prototype.findTimestamp = function ( node, timestampRegexps ) {
 	var matchData, i,
 		nodeText = '',
-		offset = 0;
+		offset = 0,
+		// Searched nodes (reverse order)
+		nodes = [];
+
 	while ( node ) {
 		nodeText = node.nodeValue + nodeText;
+		nodes.push( node );
 
 		// In Parsoid HTML, entities are represented as a 'mw:Entity' node, rather than normal HTML
 		// entities. On Arabic Wikipedia, the "UTC" timezone name contains some non-breaking spaces,
@@ -510,6 +541,7 @@ Parser.prototype.findTimestamp = function ( node, timestampRegexps ) {
 		) {
 			nodeText = node.previousSibling.firstChild.nodeValue + nodeText;
 			offset += node.previousSibling.firstChild.nodeValue.length;
+			nodes.push( node.previousSibling.firstChild );
 
 			// If the entity is followed by more text, do this again
 			if (
@@ -533,9 +565,43 @@ Parser.prototype.findTimestamp = function ( node, timestampRegexps ) {
 		// have links), so we only concern ourselves with the first match.
 		matchData = nodeText.match( timestampRegexps[ i ] );
 		if ( matchData ) {
+			var timestampLength = matchData[ 0 ].length;
+			// Bytes at the end of the last node which aren't part of the match
+			var tailLength = nodeText.length - timestampLength - matchData.index;
+			// We are moving right to left, but we start to the right of the end of
+			// the timestamp if there is trailing garbage, so that is a negative offset.
+			var count = -tailLength;
+			var endContainer = nodes[ 0 ];
+			var endOffset = endContainer.nodeValue.length - tailLength;
+
+			var startContainer, startOffset;
+			// eslint-disable-next-line no-loop-func
+			nodes.some( function ( n ) {
+				count += n.nodeValue.length;
+				// If we have counted to beyond the start of the timestamp, we are in the
+				// start node of the timestamp
+				if ( count >= timestampLength ) {
+					startContainer = n;
+					// Offset is how much we overshot the start by
+					startOffset = count - timestampLength;
+					return true;
+				}
+				return false;
+			} );
+
+			var range = {
+				startContainer: startContainer,
+				startOffset: startOffset,
+				endContainer: endContainer,
+				endOffset: endOffset
+			};
+
 			return {
 				matchData: matchData,
+				// Bytes at the start of the first node which aren't part of the match
+				// TODO: Remove this and use 'range' instead
 				offset: offset,
+				range: range,
 				parserIndex: i
 			};
 		}
@@ -547,7 +613,9 @@ Parser.prototype.findTimestamp = function ( node, timestampRegexps ) {
  * Given a link node (`<a>`), if it's a link to a user-related page, return their username.
  *
  * @param {HTMLElement} link
- * @return {string|null}
+ * @return {Object|null} Object, or null:
+ * - {string} username Username
+ * - {string|null} displayName Display name (link text if link target was in the user namespace)
  */
 Parser.prototype.getUsernameFromLink = function ( link ) {
 	var title;
@@ -562,6 +630,7 @@ Parser.prototype.getUsernameFromLink = function ( link ) {
 	}
 
 	var username;
+	var displayName = null;
 	var namespaceId = title.getNamespaceId();
 	var mainText = title.getMainText();
 	var namespaceIds = mw.config.get( 'wgNamespaceIds' );
@@ -573,6 +642,14 @@ Parser.prototype.getUsernameFromLink = function ( link ) {
 		username = mainText;
 		if ( username.indexOf( '/' ) !== -1 ) {
 			return null;
+		}
+		if ( namespaceId === namespaceIds.user ) {
+			// Use regex trim for consistency with PHP implementation
+			var text = link.textContent.replace( /^[\s]+/, '' ).replace( /[\s]+$/, '' );
+			// Record the display name if it has been customised beyond changing case
+			if ( text && text.toLowerCase() !== username.toLowerCase() ) {
+				displayName = text;
+			}
 		}
 	} else if ( namespaceId === namespaceIds.special ) {
 		var parts = mainText.split( '/' );
@@ -592,7 +669,10 @@ Parser.prototype.getUsernameFromLink = function ( link ) {
 		// Bot-generated links "Preceding unsigned comment added by" have non-standard case
 		username = username.toUpperCase();
 	}
-	return username;
+	return {
+		username: username,
+		displayName: displayName
+	};
 };
 
 /**
@@ -614,6 +694,7 @@ Parser.prototype.getUsernameFromLink = function ( link ) {
 Parser.prototype.findSignature = function ( timestampNode, until ) {
 	var parser = this;
 	var sigUsername = null;
+	var sigDisplayName = null;
 	var length = 0;
 	var lastLinkNode = timestampNode;
 
@@ -643,14 +724,17 @@ Parser.prototype.findSignature = function ( timestampNode, until ) {
 			//
 			// Handle links nested in formatting elements.
 			if ( event === 'leave' && node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === 'a' ) {
-				var username = parser.getUsernameFromLink( node );
-				if ( username ) {
+				var user = parser.getUsernameFromLink( node );
+				if ( user ) {
 					// Accept the first link to the user namespace, then only accept links to that user
 					if ( sigUsername === null ) {
-						sigUsername = username;
+						sigUsername = user.username;
 					}
-					if ( username === sigUsername ) {
+					if ( user.username === sigUsername ) {
 						lastLinkNode = node;
+						if ( user.displayName ) {
+							sigDisplayName = user.displayName;
+						}
 					}
 				}
 				// Keep looking if a node with links wasn't a link to a user page
@@ -680,7 +764,8 @@ Parser.prototype.findSignature = function ( timestampNode, until ) {
 
 	return {
 		nodes: sigNodes,
-		username: sigUsername
+		username: sigUsername,
+		displayName: sigDisplayName
 	};
 };
 
@@ -736,7 +821,7 @@ Parser.prototype.nextInterestingLeafNode = function ( node ) {
  * @param {Node[]} sigNodes
  * @param {Object} match
  * @param {Text} node
- * @return {Object}
+ * @return {Object} Range-like object
  */
 function adjustSigRange( sigNodes, match, node ) {
 	var firstSigNode = sigNodes[ sigNodes.length - 1 ];
@@ -806,7 +891,10 @@ Parser.prototype.buildThreadItems = function () {
 			}
 
 			var sigRanges = [];
+			var timestampRanges = [];
+
 			sigRanges.push( adjustSigRange( foundSignature.nodes, match, node ) );
+			timestampRanges.push( match.range );
 
 			// Everything from the last comment up to here is the next comment
 			var startNode = this.nextInterestingLeafNode( curCommentEnd );
@@ -842,6 +930,7 @@ Parser.prototype.buildThreadItems = function () {
 						foundSignature2 = this.findSignature( n, node );
 						if ( foundSignature2.username ) {
 							sigRanges.push( adjustSigRange( foundSignature2.nodes, match2, n ) );
+							timestampRanges.push( match2.range );
 						}
 					}
 					if ( event === 'leave' ) {
@@ -879,8 +968,10 @@ Parser.prototype.buildThreadItems = function () {
 				level,
 				range,
 				sigRanges,
+				timestampRanges,
 				dateTime,
-				author
+				author,
+				foundSignature.displayName
 			);
 			curComment.rootNode = this.rootNode;
 			if ( warnings.length ) {

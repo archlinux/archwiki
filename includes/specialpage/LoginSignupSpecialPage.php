@@ -21,17 +21,37 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\SpecialPage;
+
+use DerivativeContext;
+use ErrorPageError;
+use Exception;
+use FatalError;
+use HTMLForm;
+use LogicException;
+use LoginHelper;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PasswordAuthenticationRequest;
 use MediaWiki\Html\Html;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\Status\Status;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
+use Message;
+use MWException;
+use PermissionsError;
+use ReadOnlyError;
+use RequestContext;
+use Skin;
+use StatusValue;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -44,6 +64,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	protected $mPosted;
 	protected $mAction;
 	protected $mLanguage;
+	protected $mVariant;
 	protected $mReturnToQuery;
 	protected $mToken;
 	protected $mStickHTTPS;
@@ -86,15 +107,6 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 	 */
 	abstract protected function logAuthResult( $success, $status = null );
 
-	public function __construct( $name, $restriction = '' ) {
-		// phpcs:ignore MediaWiki.Usage.ExtendClassUsage.FunctionConfigUsage
-		global $wgUseMediaWikiUIEverywhere;
-		parent::__construct( $name, $restriction );
-
-		// Override UseMediaWikiEverywhere to true, to force login and create form to use mw ui
-		$wgUseMediaWikiUIEverywhere = true;
-	}
-
 	protected function setRequest( array $data, $wasPosted = null ) {
 		parent::setRequest( $data, $wasPosted );
 		$this->mLoadedRequest = false;
@@ -118,6 +130,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			|| ( !$this->mFromHTTP && $request->getProtocol() === 'https' )
 			|| $request->getBool( 'wpForceHttps', false );
 		$this->mLanguage = $request->getText( 'uselang' );
+		$this->mVariant = $request->getText( 'variant' );
 		$this->mReturnTo = $request->getVal( 'returnto', '' );
 		$this->mReturnToQuery = $request->getVal( 'returntoquery', '' );
 	}
@@ -161,6 +174,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 				'returnto' => $this->mReturnTo,
 				'returntoquery' => $this->mReturnToQuery,
 				'uselang' => $this->mLanguage ?: null,
+				'variant' => $this->mVariant ?: null,
 				'fromhttp' => $this->getConfig()->get( MainConfigNames::SecureLogin ) &&
 					$this->mFromHTTP ? '1' : null,
 			]
@@ -445,7 +459,11 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$type, $title, $msgname, $injected_html, $extraMessages
 	) {
 		$out = $this->getOutput();
-		$out->setPageTitle( $title );
+		if ( is_string( $title ) ) {
+			wfDeprecated( __METHOD__ . ' with string title', '1.41' ); // T343849
+			$title = ( new RawMessage( '$1' ) )->rawParams( $title );
+		}
+		$out->setPageTitleMsg( $title );
 		if ( $msgname ) {
 			$out->addWikiMsg( $msgname, wfEscapeWikiText( $this->getUser()->getName() ) );
 		}
@@ -535,10 +553,6 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 
 		// Generic styles and scripts for both login and signup form
 		$out->addModuleStyles( [
-			'mediawiki.ui',
-			'mediawiki.ui.button',
-			'mediawiki.ui.checkbox',
-			'mediawiki.ui.input',
 			'mediawiki.special.userlogin.common.styles'
 		] );
 		if ( $this->isSignup() ) {
@@ -700,11 +714,14 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			$context = new DerivativeContext( $this->getContext() );
 			$context->setRequest( $this->getRequest() );
 		}
-		$form = HTMLForm::factory( 'vform', $formDescriptor, $context );
+		$form = HTMLForm::factory( 'codex', $formDescriptor, $context );
 
 		$form->addHiddenField( 'authAction', $this->authAction );
 		if ( $this->mLanguage ) {
 			$form->addHiddenField( 'uselang', $this->mLanguage );
+		}
+		if ( $this->mVariant ) {
+			$form->addHiddenField( 'variant', $this->mVariant );
 		}
 		$form->addHiddenField( 'force', $this->securityLevel );
 		$form->addHiddenField( $this->getTokenName(), $this->getToken()->toString() );
@@ -767,13 +784,13 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		if ( $this->mSecureLoginUrl ) {
 			$secureLoginLink = Html::element( 'a', [
 				'href' => $this->mSecureLoginUrl,
-				'class' => 'mw-ui-flush-right mw-secure',
+				'class' => 'mw-login-flush-right mw-secure',
 			], $this->msg( 'userlogin-signwithsecure' )->text() );
 		}
 		$usernameHelpLink = '';
 		if ( !$this->msg( 'createacct-helpusername' )->isDisabled() ) {
 			$usernameHelpLink = Html::rawElement( 'span', [
-				'class' => 'mw-ui-flush-right',
+				'class' => 'mw-login-flush-right',
 			], $this->msg( 'createacct-helpusername' )->parse() );
 		}
 
@@ -870,6 +887,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					'label-message' => 'createacct-realname',
 					'cssclass' => 'loginText',
 					'size' => 20,
+					'placeholder-message' => 'createacct-realname',
 					'id' => 'wpRealName',
 					'autocomplete' => 'name',
 				],
@@ -999,7 +1017,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$fieldDefinitions['username'] += [
 			'type' => 'text',
 			'name' => 'wpName',
-			'cssclass' => 'loginText',
+			'cssclass' => 'loginText mw-userlogin-username',
 			'size' => 20,
 			'autocomplete' => 'username',
 			// 'required' => true,
@@ -1008,7 +1026,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			'type' => 'password',
 			// 'label-message' => 'userlogin-yourpassword', // would override the changepassword label
 			'name' => 'wpPassword',
-			'cssclass' => 'loginPassword',
+			'cssclass' => 'loginPassword mw-userlogin-password',
 			'size' => 20,
 			// 'required' => true,
 		];
@@ -1083,6 +1101,9 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 				if ( $this->mLanguage ) {
 					$linkq .= '&uselang=' . urlencode( $this->mLanguage );
 				}
+				if ( $this->mVariant ) {
+					$linkq .= '&variant=' . urlencode( $this->mVariant );
+				}
 				$isLoggedIn = $this->getUser()->isRegistered()
 					&& !$this->getUser()->isTemp();
 
@@ -1091,6 +1112,9 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 					'raw' => true,
 					'linkQuery' => $linkq,
 					'default' => function ( $params ) use ( $isLoggedIn, $linkTitle ) {
+						$buttonClasses = 'cdx-button cdx-button--action-progressive '
+							. 'cdx-button--fake-button cdx-button--fake-button--enabled';
+
 						return Html::rawElement( 'div',
 							[ 'id' => 'mw-createaccount' . ( !$isLoggedIn ? '-cta' : '' ),
 								'class' => ( $isLoggedIn ? 'mw-form-related-link-container' : 'mw-ui-vform-field' ) ],
@@ -1099,7 +1123,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 								[
 									'id' => 'mw-createaccount-join' . ( $isLoggedIn ? '-loggedin' : '' ),
 									'href' => $linkTitle->getLocalURL( $params['linkQuery'] ),
-									'class' => ( $isLoggedIn ? '' : 'mw-ui-button' ),
+									'class' => $isLoggedIn ? '' : $buttonClasses,
 									'tabindex' => 100,
 								],
 								$this->msg(
@@ -1202,6 +1226,9 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			return htmlspecialchars( $text );
 		}
 		$query = [ 'uselang' => $lang ];
+		if ( $this->mVariant ) {
+			$query['variant'] = $this->mVariant;
+		}
 		if ( $this->mReturnTo !== '' ) {
 			$query['returnto'] = $this->mReturnTo;
 			$query['returntoquery'] = $this->mReturnToQuery;
@@ -1267,3 +1294,9 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 		$this->addTabIndex( $formDescriptor );
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( LoginSignupSpecialPage::class, 'LoginSignupSpecialPage' );

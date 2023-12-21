@@ -21,7 +21,16 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use ErrorPageError;
+use HTMLForm;
 use MediaWiki\MainConfigNames;
+use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\Status\Status;
+use MediaWiki\User\PasswordReset;
+use MediaWiki\User\User;
+use ThrottledError;
 
 /**
  * Special page for requesting a password reset email.
@@ -136,8 +145,6 @@ class SpecialPasswordReset extends FormSpecialPage {
 	 * userCanExecute(), and if the data array contains 'Username', etc, then Username
 	 * resets are allowed.
 	 * @param array $data
-	 * @throws MWException
-	 * @throws ThrottledError|PermissionsError
 	 * @return Status
 	 */
 	public function onSubmit( array $data ) {
@@ -197,6 +204,12 @@ class SpecialPasswordReset extends FormSpecialPage {
 	}
 
 	protected function getGroupName() {
-		return 'users';
+		return 'login';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialPasswordReset::class, 'SpecialPasswordReset' );

@@ -4,11 +4,9 @@
 			"Mirin"
 		]
 	},
-	"apihelp-flowthank-description": "Publike danki pro Flow-komento.",
 	"apihelp-flowthank-summary": "Publike danki pro Flow-komento.",
 	"apihelp-flowthank-param-postid": "La UUID de la afiŝo kies afiŝinto estas dankota.",
 	"apihelp-flowthank-example-1": "Danki pro komento de <kbd>UUID xyz789</kbd>",
-	"apihelp-thank-description": "Danki redaktinton.",
 	"apihelp-thank-summary": "Danki redaktinton.",
 	"apihelp-thank-param-rev": "Numero de versio kies redaktinto estas dankota. Aŭ tiu aŭ 'log' devas esti specifita.",
 	"apihelp-thank-param-log": "Numero de protokolero, kies protokolinto estas dankota. Aŭ tiu aŭ 'rev' devas esti specifita.",

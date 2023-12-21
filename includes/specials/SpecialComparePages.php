@@ -23,10 +23,15 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use DifferenceEngine;
+use HTMLForm;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 
 /**
@@ -36,11 +41,8 @@ use MediaWiki\Title\Title;
  */
 class SpecialComparePages extends SpecialPage {
 
-	/** @var RevisionLookup */
-	private $revisionLookup;
-
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
+	private RevisionLookup $revisionLookup;
+	private IContentHandlerFactory $contentHandlerFactory;
 
 	/** @var DifferenceEngine */
 	private $differenceEngine;
@@ -183,3 +185,8 @@ class SpecialComparePages extends SpecialPage {
 		return 'pagetools';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialComparePages::class, 'SpecialComparePages' );

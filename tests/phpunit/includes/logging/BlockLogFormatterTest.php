@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Title\TitleValue;
+
 /**
  * @covers BlockLogFormatter
  */
@@ -573,7 +575,7 @@ class BlockLogFormatterTest extends LogFormatterTestCase {
 		$this->doTestLogFormatter( $row, $extra );
 	}
 
-	public function providePartialBlockLogDatabaseRows() {
+	public static function providePartialBlockLogDatabaseRows() {
 		return [
 			[
 				[

@@ -18,7 +18,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 iaith}}",
 	"vector-no-language-button-label": "Ychwanegu ieithoedd",
 	"vector-no-language-button-aria-label": "Mae'r erthygl hon ar gael yn yr iaith hon yn unig. Ychwanegwch yr erthygl mewn ieithoedd eraill",
-	"vector-language-redirect-to-top": "Ar {{SITENAME}}, lleolir dolenni iaith ar frig y dudalen yn y cyfeiriad ar draws teitl yr erthygl. [[#p-lang-btn|Ewch i'r brig]].",
+	"vector-language-redirect-to-top": "Lleolir dolenni iaith ar frig y dudalen ar draws y teitl.",
 	"vector-language-variant-switcher-label": "Newid amrywiad iaith",
 	"vector-action-addsection": "Ychwanegu pwnc",
 	"vector-action-delete": "Dileu",
@@ -50,6 +50,8 @@
 	"vector-site-nav-label": "Safle",
 	"vector-main-menu-label": "Prif ddewislen",
 	"vector-limited-width-toggle": "Toglo lled cynnwys cyfyngedig",
+	"vector-limited-width-toggle-on-popup": "Rydych chi wedi newid eich gwedd i led llawn. Er mwyn mynd yn ôl i led cyfyngedig, cliciwch ar y botwm hwn.",
+	"vector-limited-width-toggle-off-popup": "Gallwch newid rhwng lled cyfyngedig a lled llawn trwy glicio ar y botwm hwn.",
 	"vector-page-tools-label": "Blwch offer",
 	"vector-page-tools-general-label": "Cyffredinol",
 	"vector-page-tools-actions-label": "Gweithredoedd",
@@ -59,5 +61,8 @@
 	"tooltip-vector-anon-user-menu-title": "Rhagor o opsiynau",
 	"vector-prefs-limited-width": "Galluogi modd lled cyfyngedig",
 	"vector-prefs-limited-width-help": "Galluogi modd lled cyfyngedig i wella profiad darllen.",
-	"empty-language-selector-body": "Ni chefnogir cynnwys y dudalen mewn ieithoedd eraill."
+	"empty-language-selector-body": "Ni chefnogir cynnwys y dudalen mewn ieithoedd eraill.",
+	"vector-toc-unpinned-popup": "Mae'r tabl cynnwys wedi cael ei symud yma.",
+	"vector-page-tools-unpinned-popup": "Mae'r blwch offer wedi cael ei symud yma.",
+	"vector-main-menu-unpinned-popup": "Mae'r brif ddewislen wedi cael ei symud yma."
 }

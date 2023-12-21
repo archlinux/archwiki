@@ -24,7 +24,7 @@ namespace MediaWiki\Skins\Vector\FeatureManagement\Requirements;
 use Config;
 use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
-use Title;
+use MediaWiki\Title\Title;
 use WebRequest;
 
 /**

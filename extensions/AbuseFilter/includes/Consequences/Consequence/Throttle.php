@@ -6,10 +6,10 @@ use BagOStuff;
 use InvalidArgumentException;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequenceNotPrecheckedException;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use Psr\Log\LoggerInterface;
-use Title;
 use Wikimedia\IPUtils;
 
 /**
@@ -200,9 +200,7 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 				break;
 			default:
 				// Should never happen
-				// @codeCoverageIgnoreStart
 				throw new InvalidArgumentException( "Invalid throttle type $type." );
-				// @codeCoverageIgnoreEnd
 		}
 
 		return "$type-$identifier";

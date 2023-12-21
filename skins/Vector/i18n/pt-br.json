@@ -15,6 +15,7 @@
 			"Jaideraf",
 			"Luan",
 			"Opraco",
+			"Re demz",
 			"YuriNikolai",
 			555
 		]
@@ -64,6 +65,8 @@
 	"vector-toc-collapsible-button-label": "Alternar o índice",
 	"vector-site-nav-label": "Site",
 	"vector-main-menu-label": "Menu principal",
+	"vector-limited-width-toggle-on-popup": "Você mudou o layout para largura total. Para voltar à largura limitada aperte esse botão.",
+	"vector-limited-width-toggle-off-popup": "Você pode alternar entre largura limitada e largura total clicando esse botão.",
 	"vector-page-tools-label": "Ferramentas",
 	"vector-page-tools-general-label": "Geral",
 	"vector-page-tools-actions-label": "Ações",

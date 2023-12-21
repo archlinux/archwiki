@@ -1,8 +1,7 @@
 'use strict';
 
-var util,
-	config = require( './config.json' ),
-	portletLinkOptions = require( './portletLinkOptions.json' );
+var config = require( './config.json' );
+var portletLinkOptions = require( './portletLinkOptions.json' );
 
 require( './jquery.accessKeyLabel.js' );
 
@@ -48,28 +47,12 @@ function escapeIdInternal( str, mode ) {
 }
 
 /**
- * Takes a string (str) and returns string repeated count times
- *
- * @ignore
- * @param {string} str String to be repeated
- * @param {number} count Number of times to repeat string
- * @return {string} String repeated count times
- */
-function repeatString( str, count ) {
-	var repeatedString = '';
-	for ( var i = 0; i < count; i++ ) {
-		repeatedString += str;
-	}
-	return repeatedString;
-}
-
-/**
  * Utility library provided by the `mediawiki.util` module.
  *
  * @class mw.util
  * @singleton
  */
-util = {
+var util = {
 
 	/**
 	 * Encode the string like PHP's rawurlencode
@@ -317,7 +300,7 @@ util = {
 	},
 
 	/**
-	 * Get URL to a MediaWiki server entry point.
+	 * Get URL to a MediaWiki entry point.
 	 *
 	 * Similar to `wfScript()` in PHP.
 	 *
@@ -373,6 +356,7 @@ util = {
 	 */
 	getParamValue: function ( param, url ) {
 		// Get last match, stop at hash
+		// eslint-disable-next-line security/detect-non-literal-regexp
 		var re = new RegExp( '^[^#]*[&?]' + util.escapeRegExp( param ) + '=([^&#]*)' ),
 			m = re.exec( url !== undefined ? url : location.href );
 
@@ -388,6 +372,43 @@ util = {
 			}
 		}
 		return null;
+	},
+
+	/**
+	 * Get the value for an array query parameter, combined according to similar rules as PHP uses.
+	 * Currently this does not handle associative or multi-dimensional arrays, but that may be
+	 * improved in the future.
+	 *
+	 *     mw.util.getArrayParam( 'foo', new URLSearchParams( '?foo[0]=a&foo[1]=b' ) ); // [ 'a', 'b' ]
+	 *     mw.util.getArrayParam( 'foo', new URLSearchParams( '?foo[]=a&foo[]=b' ) ); // [ 'a', 'b' ]
+	 *     mw.util.getArrayParam( 'foo', new URLSearchParams( '?foo=a' ) ); // null
+	 *
+	 * @param {string} param The parameter name.
+	 * @param {URLSearchParams} [params] Parsed URL parameters to search through, defaulting to the current browsing location.
+	 * @return {string[]|null} Parameter value, or null if parameter was not found.
+	 */
+	getArrayParam: function ( param, params ) {
+		// eslint-disable-next-line security/detect-non-literal-regexp
+		var paramRe = new RegExp( '^' + util.escapeRegExp( param ) + '\\[(\\d*)\\]$' );
+
+		if ( !params ) {
+			params = new URLSearchParams( location.search );
+		}
+
+		var arr = [];
+		params.forEach( function ( v, k ) {
+			var paramMatch = k.match( paramRe );
+			if ( paramMatch ) {
+				var i = paramMatch[ 1 ];
+				if ( i === '' ) {
+					// If no explicit index, append at the end
+					i = arr.length;
+				}
+				arr[ i ] = v;
+			}
+		} );
+
+		return arr.length ? arr : null;
 	},
 
 	/**
@@ -476,19 +497,59 @@ util = {
 	},
 
 	/**
-	 * The added element and associated HTML ID.
+	 * Creates a detached portlet Element in the skin with no elements.
 	 *
-	 * This allows skins to make transformations to menu items (for example adding icons).
-	 *
-	 * This event is fired by #addPortletLink after it adds a link to the DOM. If the
-	 * link parameters was invalid, or the menu not found, then this hook is not fired.
-	 *
-	 * @event util_addPortletLink
-	 * @param {HTMLElement} item
-	 * @param {Object} options
-	 * @param {string|undefined} options.id
+	 * @param {string} id of the new portlet.
+	 * @param {string} [label] of the new portlet.
+	 * @param {string} [before] selector of the element preceding the new portlet. If not passed
+	 *  the caller is responsible for appending the element to the DOM before using addPortletLink.
+	 * @return {HTMLElement|null} will be null if it was not possible to create an portlet with
+	 *  the required information e.g. the selector given in before parameter could not be resolved
+	 *  to an existing element in the page.
 	 */
-
+	addPortlet: function ( id, label, before ) {
+		const portlet = document.createElement( 'div' );
+		// These classes should be kept in sync with includes/skins/components/SkinComponentMenu.php.
+		// eslint-disable-next-line mediawiki/class-doc
+		portlet.classList.add( 'mw-portlet', 'mw-portlet-' + id, 'emptyPortlet',
+			// Additional class is added to allow skins to track portlets added via this mechanism.
+			'mw-portlet-js'
+		);
+		portlet.id = id;
+		if ( label ) {
+			const labelNode = document.createElement( 'label' );
+			labelNode.textContent = label;
+			portlet.appendChild( labelNode );
+		}
+		const listWrapper = document.createElement( 'div' );
+		const list = document.createElement( 'ul' );
+		listWrapper.appendChild( list );
+		portlet.appendChild( listWrapper );
+		if ( before ) {
+			var referenceNode;
+			try {
+				referenceNode = document.querySelector( before );
+			} catch ( e ) {
+				// CSS selector not supported by browser.
+			}
+			if ( referenceNode ) {
+				const parentNode = referenceNode.parentNode;
+				parentNode.insertBefore( portlet, referenceNode );
+			} else {
+				return null;
+			}
+		}
+		/**
+		 * @event util.addPortlet
+		 *
+		 * Fires when a portlet is successfully created.
+		 *
+		 * @param {HTMLElement} portlet the portlet that was created.
+		 * @param {string|null} before the css selector used to append to the DOM.
+		 */
+		mw.hook( 'util.addPortlet' ).fire( portlet, before );
+		return portlet;
+	},
 	/**
 	 * Add a link to a portlet menu on the page, such as:
 	 *
@@ -518,7 +579,7 @@ util = {
 	 *
 	 *     var node = mw.util.addPortletLink(
 	 *         'p-tb',
-	 *         new mw.Title( 'Special:Example' ).getUrl(),
+	 *         mw.util.getUrl( 'Special:Example' ),
 	 *         'Example'
 	 *     );
 	 *     $( node ).on( 'click', function ( e ) {
@@ -736,6 +797,7 @@ util = {
 
 		block = allowBlock ? '(?:\\/(?:3[0-2]|[12]?\\d))?' : '';
 
+		// eslint-disable-next-line security/detect-non-literal-regexp
 		return ( new RegExp( '^' + RE_IP_ADD + block + '$' ).test( address ) );
 	},
 
@@ -781,6 +843,7 @@ util = {
 				'){7}' +
 			')';
 
+		// eslint-disable-next-line security/detect-non-literal-regexp
 		if ( new RegExp( '^' + RE_IPV6_ADD + block + '$' ).test( address ) ) {
 			return true;
 		}
@@ -793,6 +856,7 @@ util = {
 			'){1,6}';
 
 		return (
+			// eslint-disable-next-line security/detect-non-literal-regexp
 			new RegExp( '^' + RE_IPV6_ADD + block + '$' ).test( address ) &&
 			/::/.test( address ) &&
 			!/::.*::/.test( address )
@@ -847,6 +911,7 @@ util = {
 				// /<hash prefix>/<name>/[<options>-]<width>-<name*>[.<ext>]
 				// where <name*> could be the filename, 'thumbnail.<ext>' (for long filenames)
 				// or the base-36 SHA1 of the filename.
+				// eslint-disable-next-line security/detect-unsafe-regex
 				/\/[\da-f]\/[\da-f]{2}\/([^\s/]+)\/(?:[^\s/]+-)?(\d+)px-(?:\1|thumbnail|[a-z\d]{31})(\.[^\s/]+)?$/,
 
 				// Full size images
@@ -855,6 +920,7 @@ util = {
 
 				// Thumbnails in non-hashed upload directories
 				// /<name>/[<options>-]<width>-<name*>[.<ext>]
+				// eslint-disable-next-line security/detect-unsafe-regex
 				/\/([^\s/]+)\/(?:[^\s/]+-)?(\d+)px-(?:\1|thumbnail|[a-z\d]{31})[^\s/]*$/,
 
 				// Full-size images in non-hashed upload directories
@@ -919,12 +985,13 @@ util = {
 	},
 
 	/**
-	 * This functionality has been adapted from \Wikimedia\IPUtils::sanitizeIP()
-	 *
 	 * Convert an IP into a verbose, uppercase, normalized form.
+	 *
 	 * Both IPv4 and IPv6 addresses are trimmed. Additionally,
 	 * IPv6 addresses in octet notation are expanded to 8 words;
 	 * IPv4 addresses have leading zeros, in each octet, removed.
+	 *
+	 * This functionality has been adapted from \Wikimedia\IPUtils::sanitizeIP()
 	 *
 	 * @param {string} ip IP address in quad or octet form (CIDR or not).
 	 * @return {string|null}
@@ -944,9 +1011,9 @@ util = {
 			return ip.replace( /(^|\.)0+(\d)/g, '$1$2' );
 		}
 		ip = ip.toUpperCase();
-		var abbrevPos = ip.search( /::/ );
+		var abbrevPos = ip.indexOf( '::' );
 		if ( abbrevPos !== -1 ) {
-			var CIDRStart = ip.search( /\// );
+			var CIDRStart = ip.indexOf( '/' );
 			var addressEnd = ( CIDRStart !== -1 ) ? CIDRStart - 1 : ip.length - 1;
 			var repeatStr, extra, pad;
 			if ( abbrevPos === 0 ) {
@@ -962,18 +1029,18 @@ util = {
 				extra = ':';
 				pad = 8;
 			}
-			ip = ip.replace( '::',
-				repeatString( repeatStr, pad - ( ip.split( ':' ).length - 1 ) ) + extra
-			);
+			var count = pad - ( ip.split( ':' ).length - 1 );
+			ip = ip.replace( '::', repeatStr.repeat( count ) + extra );
 		}
 		return ip.replace( /(^|:)0+(([0-9A-Fa-f]{1,4}))/g, '$1$2' );
 	},
 
 	/**
-	 * This functionality has been adapted from \Wikimedia\IPUtils::prettifyIP()
-	 *
 	 * Prettify an IP for display to end users.
+	 *
 	 * This will make it more compact and lower-case.
+	 *
+	 * This functionality has been adapted from \Wikimedia\IPUtils::prettifyIP()
 	 *
 	 * @param {string} ip IP address in quad or octet form (CIDR or not).
 	 * @return {string|null}
@@ -985,7 +1052,7 @@ util = {
 		}
 		if ( this.isIPv6Address( ip, true ) ) {
 			var cidr, matches, ipCidrSplit, i, replaceZeros;
-			if ( ip.search( /\// ) !== -1 ) {
+			if ( ip.indexOf( '/' ) !== -1 ) {
 				ipCidrSplit = ip.split( '/', 2 );
 				ip = ipCidrSplit[ 0 ];
 				cidr = ipCidrSplit[ 1 ];
@@ -1012,9 +1079,9 @@ util = {
 	},
 
 	/**
-	 * This functionality has been adapted from MediaWiki\User\TempUser\Pattern::isMatch()
+	 * Does given username match $wgAutoCreateTempUser?
 	 *
-	 * Checks if the pattern matches the given username
+	 * This functionality has been adapted from MediaWiki\User\TempUser\Pattern::isMatch()
 	 *
 	 * @param {string} username
 	 * @return {boolean}
@@ -1038,7 +1105,7 @@ util = {
 			match = ( username.indexOf( prefix ) === 0 );
 		}
 		if ( match && suffix !== '' ) {
-			match = ( username.indexOf( suffix, username.length - suffix.length ) !== -1 ) &&
+			match = ( username.slice( -suffix.length ) === suffix ) &&
 				( username.length >= prefix.length + suffix.length );
 		}
 		return match;
@@ -1073,9 +1140,7 @@ mw.log.deprecate( mw.RegExp, 'escape', util.escapeRegExp, 'Use mw.util.escapeReg
 if ( window.QUnit ) {
 	// Not allowed outside unit tests
 	util.setOptionsForTest = function ( opts ) {
-		var oldConfig = config;
-		config = $.extend( {}, config, opts );
-		return oldConfig;
+		config = !opts ? require( './config.json' ) : $.extend( {}, config, opts );
 	};
 	util.init = init;
 } else {

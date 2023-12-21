@@ -10,7 +10,6 @@
 	},
 	"captcha-edit": "Untuk menyunting laman ini, sila selesaikan kira-kira di bawah dan masukkan jawapannya dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
 	"captcha-desc": "Menyediakan teknik CAPTCHA untuk melindungi daripada spam dan teka kata laluan",
-	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Suntingan anda mengandungi pautan luar baru.\nUntuk melindungi wiki daripada spam automatik, anda diminta supaya menyelesaikan kira-kira di bawah dan memasukkan jawapannya dalam kotak yang disediakan untuk menyimpan suntingan anda ([[Special:Captcha/help|maklumat lanjut]]):",
 	"captcha-badlogin": "Untuk melindungi wiki daripada kegiatan meneka kata laluan secara automatik, anda diminta supaya menyelesaikan kira-kira di bawah dan masukkan jawapannya dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",
 	"captcha-createaccount": "Untuk melindungi wiki daripada pembukaan akaun secara automatik, anda diminta supaya menyelesaikan kira-kira di bawah dan masukkan jawapannya dalam kotak yang disediakan ([[Special:Captcha/help|maklumat lanjut]]):",

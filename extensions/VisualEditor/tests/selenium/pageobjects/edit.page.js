@@ -8,8 +8,8 @@ class EditPage extends Page {
 	get content() { return $( '#content' ); }
 	get edited() { return $( '*=Your edit was saved' ); }
 	get formatParagraphElement() { return $( '.ve-ui-toolbar-group-format' ); }
-	get helpPopup() { return $( '.ve-ui-mwHelpPopupTool-items' ); }
-	get helpElement() { return $( '.oo-ui-tool-name-help' ); }
+	get helpPopup() { return $( '.ve-ui-mwHelpListToolGroup-tools' ); }
+	get helpElement() { return $( '.ve-ui-toolbar-group-help' ); }
 	get insert() { return $( '.ve-ui-toolbar-group-insert' ); }
 	get insertMenu() { return $( '.oo-ui-tool-name-media' ); }
 	get insertTableElement() { return $( '.oo-ui-tool-name-insertTable' ); }

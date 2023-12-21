@@ -5,9 +5,9 @@
 			"Michawiki"
 		]
 	},
-	"tooltip-ca-createsource": "Žrědłowy kode toś togo boka napóraś",
-	"tooltip-ca-editsource": "Žrědłowy kode toś togo boka wobźěłaś",
 	"tooltip-ca-ve-edit": "Toś ten bok z VisualEditor wobźěłaś",
+	"tooltip-ca-editsource": "Žrědłowy kode toś togo boka wobźěłaś",
+	"tooltip-ca-createsource": "Žrědłowy kode toś togo boka napóraś",
 	"visualeditor-advancedsettings-tool": "Rozšyrjone nastajenja",
 	"visualeditor-browserwarning": "Wužywaš wobglědowak, kótaryž njepódpěra se oficielnje pśez VisualEditor.",
 	"visualeditor-ca-createsource": "Žrědło napóraś",
@@ -91,11 +91,6 @@
 	"visualeditor-linkinspector-illegal-title": "Njepłaśiwy bokowy titel",
 	"visualeditor-meta-tool": "Nastajenja",
 	"visualeditor-mwgallerydialog-title": "Galerija",
-	"visualeditor-preference-betatempdisable": "VisualEditor nachylu znjemóžniś, tak dłuko ako jo betawersija",
-	"visualeditor-preference-core-description": "VisualEditor zmóžniś. Njebuźo na diskusijnych bokach a někotarych drugich mjenjowych rumach k dispoziciji stojaś.",
-	"visualeditor-preference-core-label": "VisualEditor",
-	"visualeditor-preference-enable": "VisualEditor zmóžniś. Njebuźo na diskusijnych bokach a někotarych drugich mjenjowych rumach k dispoziciji stojaś.",
-	"visualeditor-savedialog-error-badtoken": "Njejsmy mógli twóju změnu wobźěłaś, dokulaž pósejźenje wěcej njejo płaśiwe.",
 	"visualeditor-savedialog-identify-user": "Sy něnto ako [[User:$1|$1]] pśizjawjony. Twója změna zwěza se z toś tym kontom, jolic składujoš toś tu změnu.",
 	"visualeditor-savedialog-label-resolve-conflict": "Konflikt rozwězaś",
 	"visualeditor-savedialog-label-review": "Twóje změny pśeglědaś",

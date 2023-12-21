@@ -24,10 +24,15 @@ QUnit.test( 'getDomHash/getDomText (with ve.dm.Converter)', function ( assert ) 
 		},
 		{
 			msg: 'About grouped aliens produce one pair of snowmen',
-			html: '<p>Foo ' +
-				'<span about="g1" rel="ve:Alien">Alien</span>' +
-				'<span about="g1" rel="ve:Alien">Aliens</span>' +
-				'<span about="g1" rel="ve:Alien">Alien³</span> bar</p>',
+			html: ve.dm.example.singleLine`
+				<p>
+					Foo
+					 <span about="g1" rel="ve:Alien">Alien</span>
+					<span about="g1" rel="ve:Alien">Aliens</span>
+					<span about="g1" rel="ve:Alien">Alien³</span>
+					 bar
+				</p>
+			`,
 			hash: '<DIV><P>#<SPAN>#</SPAN><SPAN>#</SPAN><SPAN>#</SPAN>#</P></DIV>',
 			text: 'Foo ☃☃ bar'
 		},
@@ -337,6 +342,9 @@ QUnit.test( 'fakeImes', function ( assert ) {
 
 	// TODO: make this function actually affect the events triggered
 	var fakePreventDefault = function () {};
+	var fakeIsPreventDefault = function () {
+		return false;
+	};
 
 	ve.ce.imetests.forEach( function ( caseItem ) {
 		var testName = caseItem[ 0 ];
@@ -358,6 +366,7 @@ QUnit.test( 'fakeImes', function ( assert ) {
 				if ( action === 'sendEvent' ) {
 					// TODO: make preventDefault work
 					args[ 1 ].preventDefault = fakePreventDefault;
+					args[ 1 ].isDefaultPrevented = fakeIsPreventDefault;
 				}
 				try {
 					testRunner[ action ].apply( testRunner, args );
@@ -445,7 +454,7 @@ QUnit.test( 'isAfterAnnotationBoundary', function ( assert ) {
 		assert.strictEqual(
 			ve.ce.isAfterAnnotationBoundary( node, caseItem.offset ),
 			caseItem.expected,
-			'node=' + caseItem.path.join( ',' ) + ' offset=' + caseItem.offset
+			`node=${caseItem.path.join( ',' )} offset=${caseItem.offset}`
 		);
 	} );
 } );

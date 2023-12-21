@@ -4,11 +4,9 @@
 			"GinawaSaHapon"
 		]
 	},
-	"apihelp-flowthank-description": "Magpadala ng pasasalamat para sa isang komento sa Flow.",
 	"apihelp-flowthank-summary": "Magpadala ng pasasalamat para sa isang komento sa Flow.",
 	"apihelp-flowthank-param-postid": "Ang UUID ng post na pasasalamatan mo.",
 	"apihelp-flowthank-example-1": "Magpadala ng pasasalamat para sa komentong may <kbd>UUID xyz789</kbd>",
-	"apihelp-thank-description": "Magpadala ng pasasalamat sa isang editor.",
 	"apihelp-thank-summary": "Magpadala ng pasasalamat sa isang editor.",
 	"apihelp-thank-param-rev": "ID ng rev pasasalamatan mo. Kailangang maibigay ito o ang 'log'.",
 	"apihelp-thank-param-log": "ID ng log na pasasalamatan mo. Kailangang maibigay ito o ang 'rev'.",

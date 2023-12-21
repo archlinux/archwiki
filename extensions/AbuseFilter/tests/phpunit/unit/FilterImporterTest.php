@@ -44,8 +44,6 @@ class FilterImporterTest extends MediaWikiUnitTestCase {
 		bool $isCentral = null,
 		array $actions = null
 	): FilterImporter {
-		$groups = $groups ?? [ 'default' ];
-		$isCentral = $isCentral ?? false;
 		$actions = array_fill_keys( $actions ?? [ 'warn', 'disallow', 'block' ], true );
 		$registry = new ConsequencesRegistry(
 			$this->createMock( AbuseFilterHookRunner::class ),
@@ -55,8 +53,8 @@ class FilterImporterTest extends MediaWikiUnitTestCase {
 			new ServiceOptions(
 				FilterImporter::CONSTRUCTOR_OPTIONS,
 				[
-					'AbuseFilterValidGroups' => $groups,
-					'AbuseFilterIsCentral' => $isCentral
+					'AbuseFilterValidGroups' => $groups ?? [ 'default' ],
+					'AbuseFilterIsCentral' => $isCentral ?? false,
 				]
 			),
 			$registry
@@ -85,10 +83,7 @@ class FilterImporterTest extends MediaWikiUnitTestCase {
 		$importer->decodeData( $data );
 	}
 
-	/**
-	 * @return array
-	 */
-	public function provideInvalidData() {
+	public static function provideInvalidData() {
 		$cases = [
 			'non-object' => 'foo',
 			'bad top-level keys' => (object)[ 'foo' => 1 ],
@@ -140,7 +135,7 @@ class FilterImporterTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return Generator
 	 */
-	public function provideRoundTrip(): Generator {
+	public static function provideRoundTrip(): Generator {
 		$actions = [
 			'block' => [],
 			'warn' => []

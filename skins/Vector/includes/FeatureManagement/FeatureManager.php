@@ -137,8 +137,27 @@ class FeatureManager {
 		return array_map( static function ( $featureName ) use ( $featureManager ) {
 			// switch to lower case and switch from camel case to hyphens
 			$featureClass = ltrim( strtolower( preg_replace( '/[A-Z]([A-Z](?![a-z]))*/', '-$0', $featureName ) ), '-' );
+
+			// Client side preferences
+			switch ( $featureClass ) {
+				case 'toc-pinned':
+				case 'limited-width':
+					$suffixEnabled = 'clientpref-1';
+					$suffixDisabled = 'clientpref-0';
+					break;
+				case 'custom-font-size':
+					$suffixEnabled = 'clientpref-enabled';
+					$suffixDisabled = 'clientpref-disabled';
+					break;
+				default:
+					// FIXME: Eventually this should not be necessary.
+					$suffixEnabled = 'enabled';
+					$suffixDisabled = 'disabled';
+					break;
+			}
 			$prefix = 'vector-feature-' . $featureClass . '-';
-			return $featureManager->isFeatureEnabled( $featureName ) ? $prefix . 'enabled' : $prefix . 'disabled';
+			return $featureManager->isFeatureEnabled( $featureName ) ?
+				$prefix . $suffixEnabled : $prefix . $suffixDisabled;
 		}, array_keys( $this->features ) );
 	}
 

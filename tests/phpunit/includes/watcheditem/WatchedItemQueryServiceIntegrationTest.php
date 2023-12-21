@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\User;
 use MediaWiki\User\UserOptionsLookup;
 
 /**
@@ -92,14 +94,14 @@ class WatchedItemQueryServiceIntegrationTest extends MediaWikiIntegrationTestCas
 
 		// Add two watched items, one of which is already expired, and check that only 1 is returned.
 		$userEditTarget1 = new TitleValue( 0, __METHOD__ . ' no expiry 1' );
-		$this->editPage( $userEditTarget1->getDBkey(), 'First revision' );
+		$this->editPage( $userEditTarget1, 'First revision' );
 		$store->addWatch(
 			$user,
 			$userEditTarget1
 		);
 
 		$userEditTarget2 = new TitleValue( 0, __METHOD__ . ' expired a week ago or in a week' );
-		$this->editPage( $userEditTarget2->getDBkey(), 'First revision' );
+		$this->editPage( $userEditTarget2, 'First revision' );
 		$store->addWatch(
 			$user,
 			$userEditTarget2,
@@ -111,14 +113,14 @@ class WatchedItemQueryServiceIntegrationTest extends MediaWikiIntegrationTestCas
 
 		// Add another of each type of item, and make sure the new results are as expected.
 		$userEditTarget3 = new TitleValue( 0, __METHOD__ . ' no expiry 2' );
-		$this->editPage( $userEditTarget3->getDBkey(), 'First revision' );
+		$this->editPage( $userEditTarget3, 'First revision' );
 		$store->addWatch(
 			$user,
 			$userEditTarget3
 		);
 
 		$userEditTarget4 = new TitleValue( 0, __METHOD__ . ' expired a week ago 2' );
-		$this->editPage( $userEditTarget4->getDBkey(), 'First revision' );
+		$this->editPage( $userEditTarget4, 'First revision' );
 		$store->addWatch(
 			$user,
 			$userEditTarget4,
@@ -146,7 +148,7 @@ class WatchedItemQueryServiceIntegrationTest extends MediaWikiIntegrationTestCas
 		$this->assertCount( $initialCount + 4, $result4 );
 	}
 
-	public function invalidWatchlistTokenProvider() {
+	public static function invalidWatchlistTokenProvider() {
 		return [
 			[ 'wrongToken' ],
 			[ '' ],

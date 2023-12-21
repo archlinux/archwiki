@@ -10,7 +10,7 @@
 	"descriptionmsg": "linter-desc",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Linter\\": "includes/"
@@ -188,6 +188,17 @@
 					"enabled": false,
 					"priority": "high",
 					"no-params": true
+				},
+				"large-tables": {
+					"dbid": 20,
+					"enabled": true,
+					"priority": "none"
+				},
+				"missing-end-tag-in-heading": {
+					"dbid": 21,
+					"enabled": true,
+					"priority": "none",
+					"has-name": true
 				}
 			}
 		},

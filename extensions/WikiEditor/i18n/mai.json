@@ -38,7 +38,5 @@
 	"wikieditor-toolbar-tool-replace": "ताकी आ परिवर्तित करी",
 	"wikieditor-toolbar-tool-replace-title": "ताकी आ परिवर्तित करी",
 	"wikieditor-toolbar-help-content-signature-description": "हस्ताक्षर",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>सदस्यनाम</a> (<a href='#' title='$2:Username'>वार्ता</a>)",
-	"wikieditor-toolbar-help-content-indent-description": "इनडेन्ट",
-	"wikieditor-toolbar-help-content-indent-syntax": "सामान्य लेख<br />:इनडेन्टेड लेख<br />::इनडेन्टेड लेख"
+	"wikieditor-toolbar-help-content-indent-description": "इनडेन्ट"
 }

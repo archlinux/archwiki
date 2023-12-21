@@ -4,7 +4,6 @@
 			"McDutchie"
 		]
 	},
-	"apihelp-scribunto-console-description": "Modulo interne pro responder a requestas XHR ab le consola Scribunto.",
 	"apihelp-scribunto-console-summary": "Modulo interne pro responder a requestas XHR ab le consola Scribunto.",
 	"apihelp-scribunto-console-param-title": "Le titulo del modulo a testar.",
 	"apihelp-scribunto-console-param-content": "Le nove contento del modulo.",

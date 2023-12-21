@@ -73,32 +73,4 @@ class Manager {
 			'agent' => $oUser->getUser()
 		] );
 	}
-
-	/**
-	 * Hook: BeforeCreateEchoEvent
-	 *
-	 * Configure our notification types. We don't register a category since
-	 * these are all "system" messages that cannot be disabled.
-	 *
-	 * @param array &$notifications
-	 */
-	public static function onBeforeCreateEchoEvent( &$notifications ) {
-		$notifications['oathauth-disable'] = [
-			'category' => 'system',
-			'group' => 'negative',
-			'section' => 'alert',
-			'presentation-model' => DisablePresentationModel::class,
-			'canNotifyAgent' => true,
-			'user-locators' => [ 'EchoUserLocator::locateEventAgent' ],
-		];
-
-		$notifications['oathauth-enable'] = [
-			'category' => 'system',
-			'group' => 'positive',
-			'section' => 'alert',
-			'presentation-model' => EnablePresentationModel::class,
-			'canNotifyAgent' => true,
-			'user-locators' => [ 'EchoUserLocator::locateEventAgent' ],
-		];
-	}
 }

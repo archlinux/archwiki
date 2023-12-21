@@ -29,19 +29,18 @@ class AnchorFormatterTest extends \MediaWikiIntegrationTestCase {
 		$mockMessageLocalizer->method( 'msg' )->willReturnCallback(
 			function ( ...$args ) {
 				$msg = $this->createMock( Message::class );
-				$msg->method( 'plain' )->willReturn( '(plain:' . implode( '|', $args ) . ')' );
-				$msg->method( 'text' )->willReturn( '(text:' . implode( '|', $args ) . ')' );
+				$msg->method( 'plain' )->willReturn( '(' . implode( '|', $args ) . ')' );
 				return $msg;
 			}
 		);
 		$formatter = new AnchorFormatter( $mockMessageLocalizer );
 
 		$this->assertSame(
-			'(text:cite_reference_link_prefix)key(text:cite_reference_link_suffix)',
+			'(cite_reference_link_prefix)key(cite_reference_link_suffix)',
 			$formatter->refKey( 'key', null ) );
 		$this->assertSame(
-			'(text:cite_reference_link_prefix)' .
-				'(plain:cite_reference_link_key_with_num&#124;key&#124;2)(text:cite_reference_link_suffix)',
+			'(cite_reference_link_prefix)' .
+				'(cite_reference_link_key_with_num&#124;key&#124;2)(cite_reference_link_suffix)',
 			$formatter->refKey( 'key', '2' ) );
 	}
 
@@ -53,7 +52,7 @@ class AnchorFormatterTest extends \MediaWikiIntegrationTestCase {
 		$mockMessageLocalizer->method( 'msg' )->willReturnCallback(
 			function ( ...$args ) {
 				$msg = $this->createMock( Message::class );
-				$msg->method( 'text' )->willReturn( '(' . implode( '|', $args ) . ')' );
+				$msg->method( 'plain' )->willReturn( '(' . implode( '|', $args ) . ')' );
 				return $msg;
 			}
 		);
@@ -76,7 +75,7 @@ class AnchorFormatterTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $formatter->normalizeKey( $key ) );
 	}
 
-	public function provideKeyNormalizations() {
+	public static function provideKeyNormalizations() {
 		return [
 			[ 'a b', 'a_b' ],
 			[ 'a  __  b', 'a_b' ],

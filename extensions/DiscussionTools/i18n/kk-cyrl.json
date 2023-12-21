@@ -3,9 +3,9 @@
 		"authors": [
 			"Ajiniyaz Nurniyazov",
 			"Arystanbek",
+			"Batyrbek.kz",
 			"Hedeyohu22",
-			"СеніңШешең",
-			"Batyrbek.kz"
+			"СеніңШешең"
 		]
 	},
 	"discussiontools": "Талқылау құралдары",
@@ -50,8 +50,6 @@
 	"discussiontools-limitreport-errorreqid": "DiscussionTools қате сұрау идентификаторы",
 	"discussiontools-limitreport-timeusage": "Талқылау құралдары уақыт қолданылуы",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|секунд}}",
-	"discussiontools-newtopic-legacy-hint": "<strong>Тақырыптарды бастаудың жаңа жолы мұнда.</strong> Бұл жаңарту кірістірілген пішінді пайдаланып тақырыптарды қосуға және жаңа тіркесіммен басқаларды атап өтуге мүмкіндік береді. Сіз тағы [$1 ескі тәжірибеге кері ауыса] аласыз.",
-	"discussiontools-newtopic-legacy-hint-return": "<strong>Ескі тәжірибені көріп тұрсыз.</strong> [$1 Жаңа тәжірибеге қайта] аласыз не баптауларыңыздан [$2 ескі тәжірибені әдепкі] ретінде ортата аласыз.",
 	"discussiontools-newtopic-missing-title": "Талқылау тақырыбыңызға атау көрсетіңіз. Егер сіз {{int:discussiontools-replywidget-newtopic}}\" шертсеңіз, сіздің тақырыбыңыз атаусыз қосылады.",
 	"discussiontools-newtopic-placeholder-title": "Тақырып",
 	"discussiontools-notification-removed-topic-body": "Мүмкін {{PLURAL:$1|осы тақырыптан}} ендігәрі хабарлама алмайсыз.",
@@ -160,6 +158,7 @@
 	"echo-category-title-dt-subscription-archiving": "Талқылау бетін {{PLURAL:$1|мұрағаттау}}",
 	"echo-pref-tooltip-dt-subscription": "Біреу мен жазылған тақырыпқа жаңа пікір жазғанда маған хабарла.",
 	"echo-pref-tooltip-dt-subscription-archiving": "Мен жазылған тақырып мұрағатталғанда немесе беттен жойылғанда немесе сол тақырыпта жарияланған жаңа пікірлер туралы хабарландыруларды басқа себептермен жіберу мүмкін болмаса маған хабарла.",
+	"minerva-talk-full-page": "Уики бет ретінде оқу",
 	"tag-discussiontools-added-comment-description": "Бұл өңдемеде талқылау бетіне пікір қосылды",
 	"tag-discussiontools-description": "Өңдеме DiscussionTools қолданып жасалған",
 	"tag-discussiontools-edit": "Өңделген пікір",

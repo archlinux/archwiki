@@ -20,7 +20,7 @@
 
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Permissions\Authority;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * @ingroup API
@@ -60,7 +60,7 @@ trait ApiQueryBlockInfoTrait {
 
 		// Don't show hidden names
 		if ( !$this->getAuthority()->isAllowed( 'hideuser' ) ) {
-			$this->addWhere( 'ipb_deleted = 0 OR ipb_deleted IS NULL' );
+			$this->addWhere( [ 'ipb_deleted' => [ 0, null ] ] );
 		}
 	}
 
@@ -70,7 +70,7 @@ trait ApiQueryBlockInfoTrait {
 
 	/**
 	 * @see ApiBase::getDB
-	 * @return IDatabase
+	 * @return IReadableDatabase
 	 */
 	abstract protected function getDB();
 

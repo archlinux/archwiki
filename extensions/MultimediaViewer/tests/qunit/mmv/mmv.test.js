@@ -1,8 +1,17 @@
+const { MultimediaViewer, Thumbnail } = require( 'mmv' );
+const { getMultimediaViewer } = require( './mmv.testhelpers.js' );
+const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
+
 ( function () {
-	QUnit.module( 'mmv', QUnit.newMwEnvironment() );
+	QUnit.module( 'mmv', QUnit.newMwEnvironment( {
+		beforeEach: function () {
+			// prevent a real "back" navigation from taking place
+			this.sandbox.stub( require( 'mediawiki.router' ), 'back' );
+		}
+	} ) );
 
 	QUnit.test( 'eachPreloadableLightboxIndex()', function ( assert ) {
-		var viewer = mw.mmv.testHelpers.getMultimediaViewer(),
+		var viewer = getMultimediaViewer(),
 			expectedIndices,
 			i;
 
@@ -29,84 +38,9 @@
 		} );
 	} );
 
-	QUnit.test( 'Hash handling', function ( assert ) {
-		var oldUnattach,
-			viewer = mw.mmv.testHelpers.getMultimediaViewer(),
-			ui = new mw.mmv.LightboxInterface(),
-			imageSrc = 'Foo bar.jpg',
-			image = { filePageTitle: new mw.Title( 'File:' + imageSrc ) };
-
-		// animation would keep running, conflict with other tests
-		this.sandbox.stub( $.fn, 'animate' ).returnsThis();
-
-		location.hash = '';
-
-		viewer.setupEventHandlers();
-		oldUnattach = ui.unattach;
-
-		ui.unattach = function () {
-			assert.true( true, 'Lightbox was unattached' );
-			oldUnattach.call( this );
-		};
-
-		viewer.ui = ui;
-		viewer.close();
-
-		assert.strictEqual( viewer.isOpen, false, 'Viewer is closed' );
-
-		viewer.loadImageByTitle( image.filePageTitle );
-
-		// Verify that passing an invalid mmv hash when the mmv is open triggers unattach()
-		location.hash = 'Foo';
-
-		// Verify that mmv doesn't reset a foreign hash
-		assert.strictEqual( location.hash, '#Foo', 'Foreign hash remains intact' );
-		assert.strictEqual( viewer.isOpen, false, 'Viewer is closed' );
-
-		ui.unattach = function () {
-			assert.true( false, 'Lightbox was not unattached' );
-			oldUnattach.call( this );
-		};
-
-		// Verify that passing an invalid mmv hash when the mmv is closed doesn't trigger unattach()
-		location.hash = 'Bar';
-
-		// Verify that mmv doesn't reset a foreign hash
-		assert.strictEqual( location.hash, '#Bar', 'Foreign hash remains intact' );
-
-		viewer.ui = { images: [ image ], disconnect: function () {} };
-
-		$( '#qunit-fixture' ).append( '<a class="image"><img src="' + imageSrc + '"></a>' );
-
-		viewer.loadImageByTitle = function ( title ) {
-			assert.strictEqual( title.getPrefixedText(), 'File:' + imageSrc, 'The title matches' );
-		};
-
-		// Open a valid mmv hash link and check that the right image is requested.
-		// imageSrc contains a space without any encoding on purpose
-		location.hash = '/media/File:' + imageSrc;
-
-		// Reset the hash, because for some browsers switching from the non-URI-encoded to
-		// the non-URI-encoded version of the same text with a space will not trigger a hash change
-		location.hash = '';
-
-		// Try again with an URI-encoded imageSrc containing a space
-		location.hash = '/media/File:' + encodeURIComponent( imageSrc );
-
-		// Reset the hash
-		location.hash = '';
-
-		// Try again with a legacy hash
-		location.hash = 'mediaviewer/File:' + imageSrc;
-
-		viewer.cleanupEventHandlers();
-
-		location.hash = '';
-	} );
-
 	QUnit.test( 'Progress', function ( assert ) {
 		var imageDeferred = $.Deferred(),
-			viewer = mw.mmv.testHelpers.getMultimediaViewer(),
+			viewer = getMultimediaViewer(),
 			fakeImage = {
 				filePageTitle: new mw.Title( 'File:Stuff.jpg' ),
 				extraStatsDeferred: $.Deferred().reject()
@@ -119,7 +53,7 @@
 		viewer.setImage = function () {};
 		viewer.scroll = function () {};
 		viewer.preloadFullscreenThumbnail = function () {};
-		viewer.fetchSizeIndependentLightboxInfo = function () { return $.Deferred().resolve( {} ); };
+		viewer.fetchSizeIndependentLightboxInfo = () => $.Deferred().resolve( {} );
 		viewer.ui = {
 			setFileReuseData: function () {},
 			setupForLoad: function () {},
@@ -135,15 +69,16 @@
 					animateMetadataOnce: function () {}
 				},
 				progressBar: {
+					hide: this.sandbox.stub(),
 					animateTo: this.sandbox.stub(),
 					jumpTo: this.sandbox.stub()
 				}
 			},
 			open: function () {} };
 
-		viewer.imageProvider.get = function () { return imageDeferred.promise(); };
-		viewer.imageInfoProvider.get = function () { return $.Deferred().resolve( {} ); };
-		viewer.thumbnailInfoProvider.get = function () { return $.Deferred().resolve( {} ); };
+		viewer.imageProvider.get = () => imageDeferred.promise();
+		viewer.imageInfoProvider.get = () => $.Deferred().resolve( {} );
+		viewer.thumbnailInfoProvider.get = () => $.Deferred().resolve( {} );
 
 		// loadImage will call setupProgressBar, which will attach done, fail &
 		// progress handlers
@@ -182,7 +117,7 @@
 				filePageTitle: new mw.Title( 'File:Second.jpg' ),
 				extraStatsDeferred: $.Deferred().reject()
 			},
-			viewer = mw.mmv.testHelpers.getMultimediaViewer(),
+			viewer = getMultimediaViewer(),
 			// custom clock ensures progress handlers execute in correct sequence
 			clock = this.sandbox.useFakeTimers();
 
@@ -196,7 +131,7 @@
 		viewer.preloadFullscreenThumbnail = function () {};
 		viewer.preloadImagesMetadata = function () {};
 		viewer.preloadThumbnails = function () {};
-		viewer.fetchSizeIndependentLightboxInfo = function () { return $.Deferred().resolve( {} ); };
+		viewer.fetchSizeIndependentLightboxInfo = () => $.Deferred().resolve( {} );
 		viewer.ui = {
 			setFileReuseData: function () {},
 			setupForLoad: function () {},
@@ -220,8 +155,8 @@
 			open: function () {},
 			empty: function () {} };
 
-		viewer.imageInfoProvider.get = function () { return $.Deferred().resolve( {} ); };
-		viewer.thumbnailInfoProvider.get = function () { return $.Deferred().resolve( {} ); };
+		viewer.imageInfoProvider.get = () => $.Deferred().resolve( {} );
+		viewer.thumbnailInfoProvider.get = () => $.Deferred().resolve( {} );
 
 		// load some image
 		viewer.imageProvider.get = this.sandbox.stub().returns( firstImageDeferred );
@@ -290,7 +225,7 @@
 	} );
 
 	QUnit.test( 'resetBlurredThumbnailStates', function ( assert ) {
-		var viewer = mw.mmv.testHelpers.getMultimediaViewer();
+		var viewer = getMultimediaViewer();
 
 		// animation would keep running, conflict with other tests
 		this.sandbox.stub( $.fn, 'animate' ).returnsThis();
@@ -308,7 +243,7 @@
 	} );
 
 	QUnit.test( 'Placeholder first, then real thumbnail', function ( assert ) {
-		var viewer = mw.mmv.testHelpers.getMultimediaViewer();
+		var viewer = getMultimediaViewer();
 
 		viewer.setImage = function () {};
 		viewer.ui = { canvas: {
@@ -330,7 +265,7 @@
 	} );
 
 	QUnit.test( 'Placeholder first, then real thumbnail - missing size', function ( assert ) {
-		var viewer = mw.mmv.testHelpers.getMultimediaViewer();
+		var viewer = getMultimediaViewer();
 
 		viewer.currentIndex = 1;
 		viewer.setImage = function () {};
@@ -353,7 +288,7 @@
 	} );
 
 	QUnit.test( 'Real thumbnail first, then placeholder', function ( assert ) {
-		var viewer = mw.mmv.testHelpers.getMultimediaViewer();
+		var viewer = getMultimediaViewer();
 
 		viewer.setImage = function () {};
 		viewer.ui = {
@@ -375,7 +310,7 @@
 	} );
 
 	QUnit.test( 'displayRealThumbnail', function ( assert ) {
-		var viewer = mw.mmv.testHelpers.getMultimediaViewer();
+		var viewer = getMultimediaViewer();
 
 		viewer.setImage = function () {};
 		viewer.ui = { canvas: {
@@ -394,7 +329,7 @@
 	} );
 
 	QUnit.test( 'New image loaded while another one is loading', function ( assert ) {
-		var viewer = mw.mmv.testHelpers.getMultimediaViewer(),
+		var viewer = getMultimediaViewer(),
 			firstImageDeferred = $.Deferred(),
 			secondImageDeferred = $.Deferred(),
 			firstLigthboxInfoDeferred = $.Deferred(),
@@ -428,6 +363,7 @@
 					animateMetadataOnce: function () {}
 				},
 				progressBar: {
+					hide: this.sandbox.stub(),
 					animateTo: this.sandbox.stub(),
 					jumpTo: this.sandbox.stub()
 				},
@@ -439,8 +375,8 @@
 		viewer.eachPreloadableLightboxIndex = function () {};
 		viewer.animateMetadataDivOnce = this.sandbox.stub().returns( $.Deferred().reject() );
 		viewer.imageProvider.get = this.sandbox.stub();
-		viewer.imageInfoProvider.get = function () { return $.Deferred().reject(); };
-		viewer.thumbnailInfoProvider.get = function () { return $.Deferred().resolve( {} ); };
+		viewer.imageInfoProvider.get = () => $.Deferred().reject( {} );
+		viewer.thumbnailInfoProvider.get = () => $.Deferred().resolve( {} );
 
 		viewer.imageProvider.get.returns( firstImageDeferred.promise() );
 		viewer.fetchSizeIndependentLightboxInfo.returns( firstLigthboxInfoDeferred.promise() );
@@ -464,7 +400,7 @@
 		clock.tick( 10 );
 		assert.strictEqual( viewer.displayRealThumbnail.called, false, 'The first image being done loading should have no effect' );
 
-		viewer.displayRealThumbnail = this.sandbox.spy( function () { viewer.close(); } );
+		viewer.displayRealThumbnail = this.sandbox.spy( () => viewer.close() );
 		secondImageDeferred.resolve( {}, {} );
 		secondLigthboxInfoDeferred.resolve( {} );
 		clock.tick( 10 );
@@ -475,7 +411,7 @@
 
 	QUnit.test( 'Events are not trapped after the viewer is closed', function ( assert ) {
 		var i, j, k, eventParameters,
-			viewer = mw.mmv.testHelpers.getMultimediaViewer(),
+			viewer = getMultimediaViewer(),
 			$document = $( document ),
 			$qf = $( '#qunit-fixture' ),
 			eventTypes = [ 'keydown', 'keyup', 'keypress', 'click', 'mousedown', 'mouseup' ],
@@ -489,14 +425,16 @@
 		// animation would keep running, conflict with other tests
 		this.sandbox.stub( $.fn, 'animate' ).returnsThis();
 
-		$.scrollTo = function () { return { scrollTop: function () {}, on: function () {}, off: function () {} }; };
+		$.scrollTo = function () {
+			return { scrollTop: () => {}, on: () => {}, off: () => {} };
+		};
 
 		viewer.setupEventHandlers();
 
-		viewer.imageProvider.get = function () { return $.Deferred().reject(); };
-		viewer.imageInfoProvider.get = function () { return $.Deferred().reject(); };
-		viewer.thumbnailInfoProvider.get = function () { return $.Deferred().reject(); };
-		viewer.fileRepoInfoProvider.get = function () { return $.Deferred().reject(); };
+		viewer.imageProvider.get = () => $.Deferred().reject();
+		viewer.imageInfoProvider.get = () => $.Deferred().reject();
+		viewer.thumbnailInfoProvider.get = () => $.Deferred().reject();
+		viewer.fileRepoInfoProvider.get = () => $.Deferred().reject();
 
 		viewer.preloadFullscreenThumbnail = function () {};
 		viewer.initWithThumbs( [] );
@@ -504,7 +442,7 @@
 		viewer.loadImage(
 			{
 				filePageTitle: new mw.Title( 'File:Stuff.jpg' ),
-				thumbnail: new mw.mmv.model.Thumbnail( 'foo', 10, 10 ),
+				thumbnail: new Thumbnail( 'foo', 10, 10 ),
 				extraStatsDeferred: $.Deferred().reject()
 			},
 			new Image()
@@ -558,7 +496,7 @@
 		var title, expectedWidth,
 			reuestedWidth = 1000,
 			originalWidth = 50,
-			viewer = mw.mmv.testHelpers.getMultimediaViewer();
+			viewer = getMultimediaViewer();
 
 		viewer.thumbnailInfoProvider.get = function ( fileTitle, width ) {
 			assert.strictEqual( width, expectedWidth );
@@ -582,7 +520,7 @@
 			imageStub,
 			promise,
 			useThumbnailGuessing,
-			viewer = new mw.mmv.MultimediaViewer( { imageQueryParameter: function () {}, language: function () {}, recordVirtualViewBeaconURI: function () {}, extensions: function () { return { jpg: 'default' }; }, useThumbnailGuessing: function () { return useThumbnailGuessing; } } ),
+			viewer = new MultimediaViewer( { imageQueryParameter: function () {}, language: function () {}, recordVirtualViewBeaconURI: function () {}, extensions: function () { return { jpg: 'default' }; }, useThumbnailGuessing: () => useThumbnailGuessing } ),
 			sandbox = this.sandbox,
 			file = new mw.Title( 'File:Copyleft.svg' ),
 			sampleURL = 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Copyleft.svg/300px-Copyleft.svg.png',
@@ -689,14 +627,15 @@
 	} );
 
 	QUnit.test( 'document.title', function ( assert ) {
-		var viewer = mw.mmv.testHelpers.getMultimediaViewer(),
-			bootstrap = new mw.mmv.MultimediaViewerBootstrap(),
+		var viewer = getMultimediaViewer(),
+			bootstrap = new MultimediaViewerBootstrap(),
 			title = new mw.Title( 'File:This_should_show_up_in_document_title.png' ),
 			oldDocumentTitle = document.title;
 
+		this.sandbox.stub( mw.loader, 'using' ).returns( $.Deferred().resolve( viewer ) );
 		viewer.currentImageFileTitle = title;
 		bootstrap.setupEventHandlers();
-		viewer.setMediaHash();
+		viewer.setTitle();
 
 		assert.notStrictEqual( document.title.match( title.getNameText() ), null, 'File name is visible in title' );
 

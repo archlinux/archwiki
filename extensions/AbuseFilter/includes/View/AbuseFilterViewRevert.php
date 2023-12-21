@@ -18,11 +18,12 @@ use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\User\UserFactory;
 use Message;
-use MWException;
 use PermissionsError;
 use SpecialPage;
 use TitleValue;
+use UnexpectedValueException;
 use UserBlockedError;
+use Wikimedia\Rdbms\LBFactory;
 use Xml;
 
 class AbuseFilterViewRevert extends AbuseFilterView {
@@ -40,6 +41,10 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 	 * @var string|null The reason provided for the revert
 	 */
 	private $reason;
+	/**
+	 * @var LBFactory
+	 */
+	private $lbFactory;
 	/**
 	 * @var UserFactory
 	 */
@@ -62,6 +67,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 	private $specsFormatter;
 
 	/**
+	 * @param LBFactory $lbFactory
 	 * @param UserFactory $userFactory
 	 * @param AbuseFilterPermissionManager $afPermManager
 	 * @param FilterLookup $filterLookup
@@ -74,6 +80,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 	 * @param array $params
 	 */
 	public function __construct(
+		LBFactory $lbFactory,
 		UserFactory $userFactory,
 		AbuseFilterPermissionManager $afPermManager,
 		FilterLookup $filterLookup,
@@ -86,6 +93,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 		array $params
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, $params );
+		$this->lbFactory = $lbFactory;
 		$this->userFactory = $userFactory;
 		$this->filterLookup = $filterLookup;
 		$this->consequencesFactory = $consequencesFactory;
@@ -121,7 +129,8 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 		$filter = $this->filter;
 
 		$out->addWikiMsg( 'abusefilter-revert-intro', Message::numParam( $filter ) );
-		$out->setPageTitle( $this->msg( 'abusefilter-revert-title' )->numParams( $filter ) );
+		// Parse wikitext in this message to allow formatting of numero signs (T343994#9209383)
+		$out->setPageTitle( $this->msg( 'abusefilter-revert-title' )->numParams( $filter )->parse() );
 
 		// First, the search form. Limit dates to avoid huge queries
 		$RCMaxAge = $this->getConfig()->get( 'RCMaxAge' );
@@ -251,7 +260,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 		$periodStart = $this->periodStart;
 		$periodEnd = $this->periodEnd;
 		$filter = $this->filter;
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->lbFactory->getReplicaDatabase();
 
 		// Only hits from local filters can be reverted
 		$conds = [ 'afl_filter_id' => $filter, 'afl_global' => 0 ];
@@ -365,7 +374,6 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 	 * @param string $action
 	 * @param array $result
 	 * @return ReversibleConsequence
-	 * @throws MWException
 	 */
 	private function getConsequence( string $action, array $result ): ReversibleConsequence {
 		$params = new Parameters(
@@ -383,7 +391,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 			case 'degroup':
 				return $this->consequencesFactory->newDegroup( $params, $result['vars'] );
 			default:
-				throw new MWException( "Invalid action $action" );
+				throw new UnexpectedValueException( "Invalid action $action" );
 		}
 	}
 
@@ -391,7 +399,6 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 	 * @param string $action
 	 * @param array $result
 	 * @return bool
-	 * @throws MWException
 	 */
 	public function revertAction( string $action, array $result ): bool {
 		$message = $this->msg(

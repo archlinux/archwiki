@@ -40,12 +40,11 @@ class ReferenceStackTest extends \MediaWikiUnitTestCase {
 	) {
 		$mockStripState = $this->createMock( StripState::class );
 		$mockStripState->method( 'unstripBoth' )->willReturnArgument( 0 );
-		/** @var StripState $mockStripState */
 		$stack = $this->newStack();
 
 		for ( $i = 0; $i < count( $refs ); $i++ ) {
 			$result = $stack->pushRef(
-				$this->createMock( Parser::class ),
+				$this->createNoOpMock( Parser::class ),
 				$mockStripState,
 				...$refs[$i]
 			);
@@ -59,7 +58,7 @@ class ReferenceStackTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( $finalCallStack, $stack->refCallStack );
 	}
 
-	public function providePushRef() {
+	public static function providePushRef() {
 		return [
 			'Anonymous ref in default group' => [
 				[
@@ -849,7 +848,7 @@ class ReferenceStackTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( $expectedRefs, $stack->refs );
 	}
 
-	public function provideRollbackRefs() {
+	public static function provideRollbackRefs() {
 		return [
 			'Empty stack' => [
 				'initialCallStack' => [],
@@ -991,9 +990,8 @@ class ReferenceStackTest extends \MediaWikiUnitTestCase {
 
 		$mockStripState = $this->createMock( StripState::class );
 		$mockStripState->method( 'unstripBoth' )->willReturnArgument( 0 );
-		/** @var StripState $mockStripState */
 		$stack->pushRef(
-			$this->createMock( Parser::class ),
+			$this->createNoOpMock( Parser::class ),
 			$mockStripState,
 			'text', [],
 			'foo', null, 'a', null, 'rtl'
@@ -1069,7 +1067,6 @@ class ReferenceStackTest extends \MediaWikiUnitTestCase {
 	private function newStack() {
 		$errorReporter = $this->createMock( ErrorReporter::class );
 		$errorReporter->method( 'plain' )->willReturnArgument( 1 );
-		/** @var ErrorReporter $errorReporter */
 		return TestingAccessWrapper::newFromObject( new ReferenceStack( $errorReporter ) );
 	}
 

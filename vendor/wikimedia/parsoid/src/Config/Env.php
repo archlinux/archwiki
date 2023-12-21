@@ -97,6 +97,9 @@ class Env {
 	/** @var string */
 	private $currentOffsetType = 'byte';
 
+	/** @var bool */
+	private $skipLanguageConversionPass = false;
+
 	/** @var array<string,mixed> */
 	private $behaviorSwitches = [];
 
@@ -254,13 +257,15 @@ class Env {
 	 *  - offsetType: 'byte' (default), 'ucs2', 'char'
 	 *                See `Parsoid\Wt2Html\PP\Processors\ConvertOffsets`.
 	 *  - logLinterData: (bool) Should we log linter data if linting is enabled?
-	 *  - htmlVariantLanguage: string|Bcp47Code|null
+	 *  - skipLanguageConversionPass: (bool) Should we skip the language
+	 *      conversion pass? (defaults to false)
+	 *  - htmlVariantLanguage: Bcp47Code|null
 	 *      If non-null, the language variant used for Parsoid HTML
-	 *      as a MediaWiki-internal language code string or BCP 47 object;
-	 *      we convert to this if wt2html, or from this if html2wt.
-	 *  - wtVariantLanguage: string|Bcp47Code|null
+	 *      as a BCP 47 object.
+	 *      We convert to this if wt2html, or from this if html2wt.
+	 *  - wtVariantLanguage: Bcp47Code|null
 	 *      If non-null, the language variant to be used for wikitext
-	 *      as a MediaWiki-internal language code string or BCP 47 object.
+	 *      as a BCP 47 object.
 	 *      If null, heuristics will be used to identify the original
 	 *      wikitext variant in wt2html mode, and in html2wt mode new
 	 *      or edited HTML will be left unconverted.
@@ -299,10 +304,20 @@ class Env {
 			throw new \UnexpectedValueException(
 				$this->outputContentVersion . ' is not an available content version.' );
 		}
+		$this->skipLanguageConversionPass =
+			$options['skipLanguageConversionPass'] ?? false;
 		$this->htmlVariantLanguage = !empty( $options['htmlVariantLanguage'] ) ?
-			Utils::mwCodeToBcp47( $options['htmlVariantLanguage'] ) : null;
+			Utils::mwCodeToBcp47(
+				$options['htmlVariantLanguage'],
+				// Be strict in what we accept here.
+				true, $this->siteConfig->getLogger()
+			) : null;
 		$this->wtVariantLanguage = !empty( $options['wtVariantLanguage'] ) ?
-			Utils::mwCodeToBcp47( $options['wtVariantLanguage'] ) : null;
+			Utils::mwCodeToBcp47(
+				$options['wtVariantLanguage'],
+				// Be strict in what we accept here.
+				true, $this->siteConfig->getLogger()
+			) : null;
 		$this->nativeTemplateExpansion = !empty( $options['nativeTemplateExpansion'] );
 		$this->discardDataParsoid = !empty( $options['discardDataParsoid'] );
 		$this->requestOffsetType = $options['offsetType'] ?? 'byte';
@@ -579,7 +594,7 @@ class Env {
 		// Resolve lonely fragments (important if the current page is a subpage,
 		// otherwise the relative link will be wrong)
 		if ( $str !== '' && $str[0] === '#' ) {
-			$str = $pageConfig->getTitle() . $str;
+			return $pageConfig->getTitle() . $str;
 		}
 
 		// Default return value
@@ -590,6 +605,10 @@ class Env {
 			if ( preg_match( '!^(?:\.\./)+!', $str, $relUp ) ) {
 				$levels = strlen( $relUp[0] ) / 3;  // Levels are indicated by '../'.
 				$titleBits = explode( '/', $pageConfig->getTitle() );
+				if ( $titleBits[0] === '' ) {
+					// FIXME: Punt on subpages of titles starting with "/" for now
+					return $origName;
+				}
 				if ( count( $titleBits ) <= $levels ) {
 					// Too many levels -- invalid relative link
 					return $origName;
@@ -1068,34 +1087,10 @@ class Env {
 	 * If non-null, the language variant used for Parsoid HTML; we convert
 	 * to this if wt2html, or from this (if html2wt).
 	 *
-	 * @return string|null a MediaWiki-internal language code
-	 * @deprecated Use ::getHtmlVariantLanguageBcp47() (T320662)
-	 */
-	public function getHtmlVariantLanguage(): ?string {
-		return Utils::bcp47ToMwCode( $this->htmlVariantLanguage );
-	}
-
-	/**
-	 * If non-null, the language variant used for Parsoid HTML; we convert
-	 * to this if wt2html, or from this (if html2wt).
-	 *
 	 * @return ?Bcp47Code a BCP-47 language code
 	 */
 	public function getHtmlVariantLanguageBcp47(): ?Bcp47Code {
 		return $this->htmlVariantLanguage; // Stored as BCP-47
-	}
-
-	/**
-	 * If non-null, the language variant to be used for wikitext.  If null,
-	 * heuristics will be used to identify the original wikitext variant
-	 * in wt2html mode, and in html2wt mode new or edited HTML will be left
-	 * unconverted.
-	 *
-	 * @return string|null a MediaWiki-internal language code
-	 * @deprecated Use ::getWtVariantLanguageBcp47() (T320662)
-	 */
-	public function getWtVariantLanguage(): ?string {
-		return Utils::bcp47ToMwCode( $this->wtVariantLanguage );
 	}
 
 	/**
@@ -1110,6 +1105,10 @@ class Env {
 		return $this->wtVariantLanguage;
 	}
 
+	public function getSkipLanguageConversionPass(): bool {
+		return $this->skipLanguageConversionPass;
+	}
+
 	/**
 	 * Determine appropriate vary headers for the HTML form of this page.
 	 * @return string
@@ -1122,15 +1121,6 @@ class Env {
 
 		sort( $varies );
 		return implode( ', ', $varies );
-	}
-
-	/**
-	 * Determine an appropriate content-language for the HTML form of this page.
-	 * @return string a MediaWiki-internal language code
-	 * @deprecated Use ::htmlContentLanguageBcp47() (T320662)
-	 */
-	public function htmlContentLanguage(): string {
-		return Utils::bcp47ToMwCode( $this->htmlContentLanguageBcp47() );
 	}
 
 	/**

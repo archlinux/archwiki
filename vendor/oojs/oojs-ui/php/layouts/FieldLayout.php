@@ -80,7 +80,7 @@ class FieldLayout extends Layout {
 	protected $helpInline;
 
 	/**
-	 * @param Widget $fieldWidget Field widget
+	 * @param Widget $fieldWidget Field widget. An exception is thrown if no widget is specified.
 	 * @param array $config Configuration options
 	 *      - string $config['align'] Alignment mode, either 'left', 'right', 'top' or 'inline'
 	 *          (default: 'left')
@@ -90,7 +90,6 @@ class FieldLayout extends Layout {
 	 *      - string|HtmlSnippet $config['help'] Explanatory text shown as a '?' icon, or inline.
 	 *      - bool $config['helpInline'] Whether or not the help should be inline,
 	 *          or shown when the "help" icon is clicked. (default: false)
-	 * @throws Exception An exception is thrown if no widget is specified
 	 */
 	public function __construct( $fieldWidget, array $config = [] ) {
 		// Allow passing positional parameters inside the config array

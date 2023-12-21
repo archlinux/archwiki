@@ -1,7 +1,5 @@
 <?php
 /**
- * Holds tests for LBFactory abstract MediaWiki class.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -28,8 +26,9 @@ use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DatabaseDomain;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\IMaintainableDatabase;
-use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LBFactoryMulti;
 use Wikimedia\Rdbms\LBFactorySimple;
 use Wikimedia\Rdbms\LoadBalancer;
@@ -39,17 +38,26 @@ use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Database
+ * @covers \Wikimedia\Rdbms\ChronologyProtector
+ * @covers \Wikimedia\Rdbms\DatabaseMySQL
+ * @covers \Wikimedia\Rdbms\DatabasePostgres
+ * @covers \Wikimedia\Rdbms\DatabaseSqlite
  * @covers \Wikimedia\Rdbms\LBFactory
- * @covers \Wikimedia\Rdbms\LBFactorySimple
+ * @covers \Wikimedia\Rdbms\LBFactory
  * @covers \Wikimedia\Rdbms\LBFactoryMulti
+ * @covers \Wikimedia\Rdbms\LBFactorySimple
+ * @covers \Wikimedia\Rdbms\LoadBalancer
  */
 class LBFactoryTest extends MediaWikiIntegrationTestCase {
 
 	private function getPrimaryServerConfig() {
-		global $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBtype, $wgSQLiteDataDir;
+		global $wgDBserver, $wgDBport, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBtype;
+		global $wgSQLiteDataDir;
+
 		return [
 			'serverName'  => 'db1',
 			'host'        => $wgDBserver,
+			'port'        => $wgDBport,
 			'dbname'      => $wgDBname,
 			'user'        => $wgDBuser,
 			'password'    => $wgDBpassword,
@@ -60,10 +68,6 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\LBFactory::getLocalDomainID()
-	 * @covers \Wikimedia\Rdbms\LBFactory::resolveDomainID()
-	 */
 	public function testLBFactorySimpleServer() {
 		$servers = [ $this->getPrimaryServerConfig() ];
 		$factory = new LBFactorySimple( [ 'servers' => $servers ] );
@@ -78,8 +82,6 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 			$dbr::ROLE_STREAMING_MASTER, $dbw->getTopologyRole(), 'replica shows as replica' );
 
 		$this->assertSame( 'DEFAULT', $lb->getClusterName() );
-		$this->assertSame( 'my_test_wiki', $factory->resolveDomainID( 'my_test_wiki' ) );
-		$this->assertSame( $factory->getLocalDomainID(), $factory->resolveDomainID( false ) );
 
 		$factory->shutdown();
 	}
@@ -200,7 +202,8 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function newLBFactoryMultiLBs() {
-		global $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBtype, $wgSQLiteDataDir;
+		global $wgDBserver, $wgDBport, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBtype;
+		global $wgSQLiteDataDir;
 
 		return new LBFactoryMulti( [
 			'sectionsByDB' => [
@@ -218,6 +221,7 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 				]
 			],
 			'serverTemplate' => [
+				'port' => $wgDBport,
 				'dbname' => $wgDBname,
 				'user' => $wgDBuser,
 				'password' => $wgDBpassword,
@@ -270,8 +274,6 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 				return $hasChangesFunc( $mockDB1 );
 			}
 		);
-		$lb1->method( 'getPrimaryPos' )->willReturn( $m1Pos );
-		$lb1->method( 'getReplicaResumePos' )->willReturn( $m1Pos );
 		$lb1->method( 'getServerName' )->with( 0 )->willReturn( 'master1' );
 		// Primary DB 2
 		/** @var IDatabase|\PHPUnit\Framework\MockObject\MockObject $mockDB2 */
@@ -291,19 +293,15 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 				return $hasChangesFunc( $mockDB2 );
 			}
 		);
-		$lb2->method( 'getPrimaryPos' )->willReturn( $m2Pos );
-		$lb2->method( 'getReplicaResumePos' )->willReturn( $m2Pos );
 		$lb2->method( 'getServerName' )->with( 0 )->willReturn( 'master2' );
 
 		$bag = new HashBagOStuff();
-		$cp = new ChronologyProtector(
-			$bag,
-			[
-				'ip' => '127.0.0.1',
-				'agent' => "Totally-Not-FireFox"
-			],
-			null
-		);
+		$cp = new ChronologyProtector( $bag, null, false );
+		$cp->setRequestInfo( [
+			'IPAddress' => '127.0.0.1',
+			'UserAgent' => 'Totally-Not-Firefox',
+			'ChronologyClientId' => 'random_id',
+		] );
 
 		$mockDB1->expects( $this->once() )->method( 'writesOrCallbacksPending' );
 		$mockDB1->expects( $this->once() )->method( 'lastDoneWrites' );
@@ -311,8 +309,8 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$mockDB2->expects( $this->once() )->method( 'lastDoneWrites' );
 
 		// Nothing to wait for on first HTTP request start
-		$sPos1 = $cp->yieldSessionPrimaryPos( $lb1 );
-		$sPos2 = $cp->yieldSessionPrimaryPos( $lb2 );
+		$sPos1 = $cp->getSessionPrimaryPos( $lb1 );
+		$sPos2 = $cp->getSessionPrimaryPos( $lb2 );
 		// Record positions in stash on first HTTP request end
 		$cp->stageSessionPrimaryPos( $lb1 );
 		$cp->stageSessionPrimaryPos( $lb2 );
@@ -338,18 +336,18 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$lb2->method( 'hasStreamingReplicaServers' )->willReturn( true );
 		$lb2->method( 'getServerName' )->with( 0 )->willReturn( 'master2' );
 
-		$cp = new ChronologyProtector(
-			$bag,
-			[
-				'ip' => '127.0.0.1',
-				'agent' => "Totally-Not-FireFox"
-			],
-			$cpIndex
-		);
+		$cp = new ChronologyProtector( $bag, null, false );
+		$cp->setRequestInfo(
+		[
+			'IPAddress' => '127.0.0.1',
+			'UserAgent' => 'Totally-Not-Firefox',
+			'ChronologyClientId' => 'random_id',
+			'ChronologyPositionIndex' => $cpIndex
+		] );
 
 		// Get last positions to be reached on second HTTP request start
-		$sPos1 = $cp->yieldSessionPrimaryPos( $lb1 );
-		$sPos2 = $cp->yieldSessionPrimaryPos( $lb2 );
+		$sPos1 = $cp->getSessionPrimaryPos( $lb1 );
+		$sPos2 = $cp->getSessionPrimaryPos( $lb2 );
 		// Shutdown (nothing to record)
 		$cp->stageSessionPrimaryPos( $lb1 );
 		$cp->stageSessionPrimaryPos( $lb2 );
@@ -362,7 +360,7 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $m2Pos->__toString(), $sPos2->__toString() );
 		$this->assertNull( $cpIndex, "CP write index retained" );
 
-		$this->assertEquals( '45e93a9c215c031d38b7c42d8e4700ca', $cp->getClientId() );
+		$this->assertEquals( 'random_id', $cp->getClientId() );
 	}
 
 	private function newLBFactoryMulti( array $baseOverride = [], array $serverOverride = [] ) {
@@ -394,14 +392,10 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		] );
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\LoadBalancer::getConnection
-	 * @covers \Wikimedia\Rdbms\DatabaseMysqlBase::doSelectDomain
-	 */
 	public function testNiceDomains() {
 		global $wgDBname;
 
-		if ( wfGetDB( DB_PRIMARY )->databasesAreIndependent() ) {
+		if ( $this->getDb()->databasesAreIndependent() ) {
 			self::markTestSkipped( "Skipping tests about selecting DBs: not applicable" );
 			return;
 		}
@@ -477,14 +471,10 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$factory->destroy();
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\LoadBalancer::getConnection
-	 * @covers \Wikimedia\Rdbms\DatabaseMysqlBase::doSelectDomain
-	 */
 	public function testTrickyDomain() {
 		global $wgDBname;
 
-		if ( wfGetDB( DB_PRIMARY )->databasesAreIndependent() ) {
+		if ( $this->getDb()->databasesAreIndependent() ) {
 			self::markTestSkipped( "Skipping tests about selecting DBs: not applicable" );
 			return;
 		}
@@ -547,12 +537,8 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$factory->destroy();
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\LoadBalancer::getConnection
-	 * @covers \Wikimedia\Rdbms\DatabaseMysqlBase::doSelectDomain
-	 */
 	public function testInvalidSelectDB() {
-		if ( wfGetDB( DB_PRIMARY )->databasesAreIndependent() ) {
+		if ( $this->getDb()->databasesAreIndependent() ) {
 			$this->markTestSkipped( "Not applicable per databasesAreIndependent()" );
 		}
 
@@ -571,10 +557,6 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$db->selectDomain( 'garbagedb' );
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\DatabaseSqlite::doSelectDomain
-	 * @covers \Wikimedia\Rdbms\DatabasePostgres::doSelectDomain
-	 */
 	public function testInvalidSelectDBIndependent() {
 		$dbname = 'unittest-domain'; // explodes if DB is selected
 		$factory = $this->newLBFactoryMulti(
@@ -596,10 +578,6 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$this->assertNotNull( $lb->getConnectionInternal( DB_PRIMARY, [], $lb::DOMAIN_ANY ) );
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\DatabaseSqlite::doSelectDomain
-	 * @covers \Wikimedia\Rdbms\DatabasePostgres::doSelectDomain
-	 */
 	public function testInvalidSelectDBIndependent2() {
 		$dbname = 'unittest-domain'; // explodes if DB is selected
 		$factory = $this->newLBFactoryMulti(
@@ -621,15 +599,10 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$db->selectDomain( 'garbage-db' );
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\LoadBalancer::getConnection
-	 * @covers \Wikimedia\Rdbms\LoadBalancer::redefineLocalDomain
-	 * @covers \Wikimedia\Rdbms\DatabaseMysqlBase::doSelectDomain
-	 */
 	public function testRedefineLocalDomain() {
 		global $wgDBname;
 
-		if ( wfGetDB( DB_PRIMARY )->databasesAreIndependent() ) {
+		if ( $this->getDb()->databasesAreIndependent() ) {
 			self::markTestSkipped( "Skipping tests about selecting DBs: not applicable" );
 			return;
 		}
@@ -669,7 +642,56 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		$factory->destroy();
 	}
 
-	private function quoteTable( IDatabase $db, $table ) {
+	public function testVirtualDomains() {
+		$baseOverrides = [
+			'localDomain' => ( new DatabaseDomain( 'localdomain', null, '' ) )->getId(),
+			'sectionLoads' => [
+				'DEFAULT' => [
+					'test-db1' => 1,
+				],
+				'shareddb' => [
+					'test-db1' => 1,
+				],
+			],
+			'externalLoads' => [
+				'extension1' => [
+					'test-db1' => 1,
+				],
+			],
+			'virtualDomains' => [ 'virtualdomain1', 'virtualdomain2', 'virtualdomain3', 'virtualdomain4' ],
+			'virtualDomainsMapping' => [
+				'virtualdomain1' => [ 'db' => 'extdomain', 'cluster' => 'extension1' ],
+				'virtualdomain2' => [ 'db' => false, 'cluster' => 'extension1' ],
+				'virtualdomain3' => [ 'db' => 'shareddb' ],
+			]
+		];
+		$factory = $this->newLBFactoryMulti( $baseOverrides );
+		$db1 = $factory->getPrimaryDatabase( 'virtualdomain1' );
+		$this->assertEquals(
+			'extdomain',
+			$db1->getDomainID()
+		);
+
+		$db2 = $factory->getPrimaryDatabase( 'virtualdomain2' );
+		$this->assertEquals(
+			'localdomain',
+			$db2->getDomainID()
+		);
+
+		$db3 = $factory->getPrimaryDatabase( 'virtualdomain3' );
+		$this->assertEquals(
+			'shareddb',
+			$db3->getDomainID()
+		);
+
+		$db3 = $factory->getPrimaryDatabase( 'virtualdomain4' );
+		$this->assertEquals(
+			'localdomain',
+			$db3->getDomainID()
+		);
+	}
+
+	private function quoteTable( IReadableDatabase $db, $table ) {
 		if ( $db->getType() === 'sqlite' ) {
 			return $table;
 		} else {
@@ -677,128 +699,30 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
-	/**
-	 * @covers \Wikimedia\Rdbms\LBFactory::makeCookieValueFromCPIndex()
-	 * @covers \Wikimedia\Rdbms\LBFactory::getCPInfoFromCookieValue()
-	 */
-	public function testCPPosIndexCookieValues() {
-		$time = 1526522031;
-		$agentId = md5( 'Ramsey\'s Loyal Presa Canario' );
-
-		$this->assertEquals(
-			'3@542#c47dcfb0566e7d7bc110a6128a45c93a',
-			LBFactory::makeCookieValueFromCPIndex( 3, 542, $agentId )
-		);
-
-		$lbFactory = $this->newLBFactoryMulti();
-		$lbFactory->setRequestInfo( [ 'IPAddress' => '10.64.24.52', 'UserAgent' => 'meow' ] );
-		$this->assertEquals(
-			'1@542#c47dcfb0566e7d7bc110a6128a45c93a',
-			LBFactory::makeCookieValueFromCPIndex( 1, 542, $agentId )
-		);
-
-		$this->assertSame(
-			null,
-			LBFactory::getCPInfoFromCookieValue( "5#$agentId", $time - 10 )['index'],
-			'No time set'
-		);
-		$this->assertSame(
-			null,
-			LBFactory::getCPInfoFromCookieValue( "5@$time", $time - 10 )['index'],
-			'No agent set'
-		);
-		$this->assertSame(
-			null,
-			LBFactory::getCPInfoFromCookieValue( "0@$time#$agentId", $time - 10 )['index'],
-			'Bad index'
-		);
-
-		$this->assertSame(
-			2,
-			LBFactory::getCPInfoFromCookieValue( "2@$time#$agentId", $time - 10 )['index'],
-			'Fresh'
-		);
-		$this->assertSame(
-			2,
-			LBFactory::getCPInfoFromCookieValue( "2@$time#$agentId", $time + 9 - 10 )['index'],
-			'Almost stale'
-		);
-		$this->assertSame(
-			null,
-			LBFactory::getCPInfoFromCookieValue( "0@$time#$agentId", $time + 9 - 10 )['index'],
-			'Almost stale; bad index'
-		);
-		$this->assertSame(
-			null,
-			LBFactory::getCPInfoFromCookieValue( "2@$time#$agentId", $time + 11 - 10 )['index'],
-			'Stale'
-		);
-
-		$this->assertSame(
-			$agentId,
-			LBFactory::getCPInfoFromCookieValue( "5@$time#$agentId", $time - 10 )['clientId'],
-			'Live (client ID)'
-		);
-		$this->assertSame(
-			null,
-			LBFactory::getCPInfoFromCookieValue( "5@$time#$agentId", $time + 11 - 10 )['clientId'],
-			'Stale (client ID)'
-		);
-	}
-
-	/**
-	 * @covers \Wikimedia\Rdbms\LBFactory::setDomainAliases()
-	 * @covers \Wikimedia\Rdbms\LBFactory::resolveDomainID()
-	 */
-	public function testSetDomainAliases() {
-		$lb = $this->newLBFactoryMulti();
-		$origDomain = $lb->getLocalDomainID();
-
-		$this->assertEquals( $origDomain, $lb->resolveDomainID( false ) );
-		$this->assertEquals( "db-prefix_", $lb->resolveDomainID( "db-prefix_" ) );
-
-		$lb->setDomainAliases( [
-			'alias-db' => 'realdb',
-			'alias-db-prefix_' => 'realdb-realprefix_'
-		] );
-
-		$this->assertEquals( 'realdb', $lb->resolveDomainID( 'alias-db' ) );
-		$this->assertEquals( "realdb-realprefix_", $lb->resolveDomainID( "alias-db-prefix_" ) );
-	}
-
-	/**
-	 * @covers \Wikimedia\Rdbms\ChronologyProtector
-	 * @covers \Wikimedia\Rdbms\LBFactory
-	 */
 	public function testGetChronologyProtectorTouched() {
 		$store = new HashBagOStuff;
-		$lbFactory = $this->newLBFactoryMulti( [
-			'cpStash' => $store,
-			'cliMode' => false
-		] );
-		$lbFactory->setRequestInfo( [ 'ChronologyClientId' => 'ii' ] );
+		$chronologyProtector = new ChronologyProtector( $store, '', false );
+		$chronologyProtector->setRequestInfo( [ 'ChronologyClientId' => 'ii' ] );
 
 		// 2019-02-05T05:03:20Z
 		$mockWallClock = 1549343000.0;
 		$priorTime = $mockWallClock; // reference time
-		$lbFactory->setMockTime( $mockWallClock );
+		$chronologyProtector->setMockTime( $mockWallClock );
 
-		$lbWrap = TestingAccessWrapper::newFromObject( $lbFactory );
-		$cpWrap = TestingAccessWrapper::newFromObject( $lbWrap->getChronologyProtector() );
+		$cpWrap = TestingAccessWrapper::newFromObject( $chronologyProtector );
 		$cpWrap->store->set(
 			$cpWrap->key,
 			$cpWrap->mergePositions(
 				false,
 				[],
-				[
-					$lbFactory::CLUSTER_MAIN_DEFAULT => $priorTime
-				]
+				[ ILBFactory::CLUSTER_MAIN_DEFAULT => $priorTime ]
 			),
 			3600
 		);
 
+		$lbFactory = $this->newLBFactoryMulti( [ 'chronologyProtector' => $chronologyProtector ] );
 		$mockWallClock += 1.0;
-		$touched = $lbFactory->getChronologyProtectorTouched();
+		$touched = $chronologyProtector->getTouched( $lbFactory->getMainLB() );
 		$this->assertEquals( $priorTime, $touched );
 	}
 

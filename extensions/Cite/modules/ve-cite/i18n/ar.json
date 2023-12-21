@@ -3,6 +3,7 @@
 		"authors": [
 			"Abanima",
 			"Asaifm",
+			"Asma",
 			"Bachounda",
 			"Ciphers",
 			"Claw eg",
@@ -43,6 +44,8 @@
 	"cite-ve-citationneeded-title": "بحاجة لمصدر",
 	"cite-ve-dialog-reference-editing-reused": "هذا المرجع مستخدم {{PLURAL:$1|مرة واحدة|مرتين|$1 مرات|$1 مرة}} في هذه الصفحة.",
 	"cite-ve-dialog-reference-editing-reused-long": "هذا المرجع مستخدم {{PLURAL:$1|مرة واحدة|2=مرتان|$1 مرات}} في هذه الصفحة، سيتم تطبيق التغييرات التي تم إجراؤها هنا في جميع الأماكن التي تتم فيها إعادة استخدام هذا المرجع.",
+	"cite-ve-dialog-reference-editing-extends": "هذا امتداد لمرجع آخر.",
+	"cite-ve-dialog-reference-editing-extends-long": "هذا امتداد لمرجع آخر \" $1 \".",
 	"cite-ve-dialog-reference-options-group-label": "استخدم هذه المجموعة",
 	"cite-ve-dialog-reference-options-group-placeholder": "مراجع عامة",
 	"cite-ve-dialog-reference-options-name-label": "أعد استخدامها بهذا الاسم",

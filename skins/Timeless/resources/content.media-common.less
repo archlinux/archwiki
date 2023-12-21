@@ -6,7 +6,7 @@
 
 figure[ typeof~='mw:File' ],
 figure[ typeof~='mw:File/Frameless' ] {
-	margin: 0;  // Maybe belongs in element.css for figure
+	margin: 0; // Maybe belongs in element.css for figure
 
 	> a {
 		// The addition of the class is needed for higher specificity
@@ -56,11 +56,10 @@ figure[ typeof~='mw:File/Frameless' ] {
 
 figure[ typeof~='mw:File/Thumb' ],
 figure[ typeof~='mw:File/Frame' ] {
-	margin: 0;  // Maybe belongs in element.css for figure
-	margin-bottom: @margin-bottom-thumb;
 	display: table;
 	text-align: center;
 	border-collapse: collapse;
+	line-height: 0;
 
 	> a {
 		// The addition of the class is needed for higher specificity
@@ -69,6 +68,12 @@ figure[ typeof~='mw:File/Frame' ] {
 			border: 0;
 		}
 	}
+
+	// Default where page content language is not set
+	// Allow to flip
+	margin: @margin-tright;
+	clear: right;
+	float: right;
 
 	// Defaults for page content language
 
@@ -128,9 +133,8 @@ figure[ typeof~='mw:File/Frame' ] {
 		float: none;
 	}
 
-	> a:first-child,
-	> span:first-child {
-		> *:first-child {
+	> :not( figcaption ) {
+		.mw-file-element {
 			margin: 0.75em;
 			margin-bottom: 0.5em;
 		}
@@ -138,10 +142,10 @@ figure[ typeof~='mw:File/Frame' ] {
 		/**
 		 * Broken media get a span instead.
 		 */
-		> span.mw-broken-media {
+		.mw-broken-media {
 			display: inline-block;
-			margin: 0.75em;
-			margin-bottom: 0.5em;
+			line-height: 1.5;
+			word-break: break-word; // Same as in the figcaption
 			/* This is hardcoded in Linker::makeThumbLink2 for broken media */
 			width: 180px;
 		}
@@ -165,7 +169,7 @@ figure[ typeof~='mw:File/Frame' ] {
 		 *
 		 * https://drafts.csswg.org/css-text-3/#word-break-property
 		 *
-		 * So, we should use that.  However, support for "anywhere" is lagging
+		 * So, we should use that. However, support for "anywhere" is lagging
 		 * at just 72.39%, with Safari being a notable miss.
 		 * https://caniuse.com/mdn-css_properties_overflow-wrap_anywhere
 		 *
@@ -174,6 +178,12 @@ figure[ typeof~='mw:File/Frame' ] {
 		 * From https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-wrap
 		 */
 		word-break: break-word;
+
+		// Default where page content language is not set
+		// Allow to flip
+		text-align: left;
+
+		// Defaults for page content language
 
 		.mw-content-ltr & {
 			/* @noflip */
@@ -193,67 +203,41 @@ figure[ typeof~='mw:File/Frame' ] {
 // Remove bogus padding from framed images without captions
 // However, it's still necessary for thumbs because the magnifying icon is present
 figure[ typeof~='mw:File/Frame' ] > figcaption:empty {
-	padding-bottom: 0.25em;  // Accounts for the difference in margin-bottom above
+	padding-bottom: 0.25em; // Accounts for the difference in margin-bottom above
 	min-height: 0;
 }
 
 /**
  * Inline media items
  */
-span:first-child,
-a:first-child {
-	> *:first-child {
-		.mw-valign-middle > & {
-			vertical-align: middle;
-		}
-
-		.mw-valign-baseline > & {
-			vertical-align: baseline;
-		}
-
-		.mw-valign-sub > & {
-			vertical-align: sub;
-		}
-
-		.mw-valign-super > & {
-			vertical-align: super;
-		}
-
-		.mw-valign-top > & {
-			vertical-align: top;
-		}
-
-		.mw-valign-text-top > & {
-			vertical-align: text-top;
-		}
-
-		.mw-valign-bottom > & {
-			vertical-align: bottom;
-		}
-
-		.mw-valign-text-bottom > & {
-			vertical-align: text-bottom;
-		}
-	}
+.mw-valign-middle .mw-file-element {
+	vertical-align: middle;
 }
 
-/**
- * Avoid the need to calculate paddings individually
- * https://stackoverflow.com/a/7310398
- *
- * FIXME: This would be better in mediawiki.page.gallery.styles,
- * but let's wait until wgParserEnableLegacyMediaDOM is removed
- */
-.mw-gallery-traditional .gallerybox > .thumb {
-	&:before {
-		content: '';
-		vertical-align: middle;
-		display: inline-block;
-		height: 100%;
-	}
+.mw-valign-baseline .mw-file-element {
+	vertical-align: baseline;
+}
 
-	> * {
-		vertical-align: middle;
-		display: inline-block;
-	}
+.mw-valign-sub .mw-file-element {
+	vertical-align: sub;
+}
+
+.mw-valign-super .mw-file-element {
+	vertical-align: super;
+}
+
+.mw-valign-top .mw-file-element {
+	vertical-align: top;
+}
+
+.mw-valign-text-top .mw-file-element {
+	vertical-align: text-top;
+}
+
+.mw-valign-bottom .mw-file-element {
+	vertical-align: bottom;
+}
+
+.mw-valign-text-bottom .mw-file-element {
+	vertical-align: text-bottom;
 }

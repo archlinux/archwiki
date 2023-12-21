@@ -28,9 +28,9 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\User\User;
 use Psr\Log\LoggerInterface;
-use User;
-use WebRequest;
 use Wikimedia\AtEase\AtEase;
 
 /**
@@ -301,7 +301,7 @@ final class SessionBackend {
 			$this->store->delete( $this->store->makeKey( 'MWSession', $oldId ) );
 		}
 
-		return $this->id;
+		return (string)$this->id;
 	}
 
 	/**
@@ -683,6 +683,11 @@ final class SessionBackend {
 
 		// Ensure the user has a token
 		// @codeCoverageIgnoreStart
+		if ( !$anon && defined( 'MW_PHPUNIT_TEST' ) && MediaWikiServices::getInstance()->isStorageDisabled() ) {
+			// Avoid making DB queries in non-database tests. We don't need to save the token when using
+			// fake users, and it would probably be ignored anyway.
+			return;
+		}
 		if ( !$anon && !$this->user->getToken( false ) ) {
 			$this->logger->debug(
 				'SessionBackend "{session}" creating token for user {user} on save',

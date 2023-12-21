@@ -20,15 +20,25 @@
  * @file
  */
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\EditPage\IntroMessageBuilder;
+use MediaWiki\EditPage\PreloadedContentBuilder;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\PageReference;
 use MediaWiki\ParamValidator\TypeDef\TitleDef;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\Revision\RevisionLookup;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
+use MediaWiki\Title\TitleFormatter;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\TempUser\TempUserCreator;
+use MediaWiki\Utils\UrlUtils;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 
@@ -39,29 +49,27 @@ use Wikimedia\ParamValidator\TypeDef\EnumDef;
  */
 class ApiQueryInfo extends ApiQueryBase {
 
-	/** @var ILanguageConverter */
-	private $languageConverter;
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-	/** @var TitleFactory */
-	private $titleFactory;
-	/** @var TitleFormatter */
-	private $titleFormatter;
-	/** @var WatchedItemStore */
-	private $watchedItemStore;
-	/** @var RestrictionStore */
-	private $restrictionStore;
-	/** @var LinksMigration */
-	private $linksMigration;
+	private ILanguageConverter $languageConverter;
+	private LinkBatchFactory $linkBatchFactory;
+	private NamespaceInfo $namespaceInfo;
+	private TitleFactory $titleFactory;
+	private TitleFormatter $titleFormatter;
+	private WatchedItemStore $watchedItemStore;
+	private RestrictionStore $restrictionStore;
+	private LinksMigration $linksMigration;
+	private TempUserCreator $tempUserCreator;
+	private IntroMessageBuilder $introMessageBuilder;
+	private PreloadedContentBuilder $preloadedContentBuilder;
+	private RevisionLookup $revisionLookup;
+	private UrlUtils $urlUtils;
 
 	private $fld_protection = false, $fld_talkid = false,
 		$fld_subjectid = false, $fld_url = false,
 		$fld_readable = false, $fld_watched = false,
 		$fld_watchers = false, $fld_visitingwatchers = false,
 		$fld_notificationtimestamp = false,
-		$fld_preload = false, $fld_displaytitle = false, $fld_varianttitles = false;
+		$fld_preload = false, $fld_preloadcontent = false, $fld_editintro = false,
+		$fld_displaytitle = false, $fld_varianttitles = false;
 
 	/**
 	 * @var bool Whether to include link class information for the
@@ -76,11 +84,11 @@ class ApiQueryInfo extends ApiQueryBase {
 
 	private $params;
 
-	/** @var Title[] */
+	/** @var PageIdentity[] */
 	private $titles;
-	/** @var Title[] */
+	/** @var PageIdentity[] */
 	private $missing;
-	/** @var Title[] */
+	/** @var PageIdentity[] */
 	private $everything;
 
 	private $pageIsRedir, $pageIsNew, $pageTouched,
@@ -117,6 +125,11 @@ class ApiQueryInfo extends ApiQueryBase {
 	 * @param LanguageConverterFactory $languageConverterFactory
 	 * @param RestrictionStore $restrictionStore
 	 * @param LinksMigration $linksMigration
+	 * @param TempUserCreator $tempUserCreator
+	 * @param IntroMessageBuilder $introMessageBuilder
+	 * @param PreloadedContentBuilder $preloadedContentBuilder
+	 * @param RevisionLookup $revisionLookup
+	 * @param UrlUtils $urlUtils
 	 */
 	public function __construct(
 		ApiQuery $queryModule,
@@ -129,7 +142,12 @@ class ApiQueryInfo extends ApiQueryBase {
 		WatchedItemStore $watchedItemStore,
 		LanguageConverterFactory $languageConverterFactory,
 		RestrictionStore $restrictionStore,
-		LinksMigration $linksMigration
+		LinksMigration $linksMigration,
+		TempUserCreator $tempUserCreator,
+		IntroMessageBuilder $introMessageBuilder,
+		PreloadedContentBuilder $preloadedContentBuilder,
+		RevisionLookup $revisionLookup,
+		UrlUtils $urlUtils
 	) {
 		parent::__construct( $queryModule, $moduleName, 'in' );
 		$this->languageConverter = $languageConverterFactory->getLanguageConverter( $contentLanguage );
@@ -140,6 +158,11 @@ class ApiQueryInfo extends ApiQueryBase {
 		$this->watchedItemStore = $watchedItemStore;
 		$this->restrictionStore = $restrictionStore;
 		$this->linksMigration = $linksMigration;
+		$this->tempUserCreator = $tempUserCreator;
+		$this->introMessageBuilder = $introMessageBuilder;
+		$this->preloadedContentBuilder = $preloadedContentBuilder;
+		$this->revisionLookup = $revisionLookup;
+		$this->urlUtils = $urlUtils;
 	}
 
 	/**
@@ -176,6 +199,8 @@ class ApiQueryInfo extends ApiQueryBase {
 			$this->fld_url = isset( $prop['url'] );
 			$this->fld_readable = isset( $prop['readable'] );
 			$this->fld_preload = isset( $prop['preload'] );
+			$this->fld_preloadcontent = isset( $prop['preloadcontent'] );
+			$this->fld_editintro = isset( $prop['editintro'] );
 			$this->fld_displaytitle = isset( $prop['displaytitle'] );
 			$this->fld_varianttitles = isset( $prop['varianttitles'] );
 			$this->fld_linkclasses = isset( $prop['linkclasses'] );
@@ -183,10 +208,21 @@ class ApiQueryInfo extends ApiQueryBase {
 		}
 
 		$pageSet = $this->getPageSet();
-		$this->titles = $pageSet->getGoodTitles();
-		$this->missing = $pageSet->getMissingTitles();
+		$this->titles = $pageSet->getGoodPages();
+		$this->missing = $pageSet->getMissingPages();
 		$this->everything = $this->titles + $this->missing;
 		$result = $this->getResult();
+
+		if (
+			( $this->fld_preloadcontent || $this->fld_editintro ) &&
+			( count( $this->everything ) > 1 || count( $this->getPageSet()->getRevisionIDs() ) > 1 )
+		) {
+			// This is relatively slow, so disallow doing it for multiple pages, just in case.
+			// (Also, handling multiple revisions would be tricky.)
+			$this->dieWithError(
+				[ 'apierror-info-singlepagerevision', $this->getModulePrefix() ], 'invalidparammix'
+			);
+		}
 
 		uasort( $this->everything, [ Title::class, 'compare' ] );
 		if ( $this->params['continue'] !== null ) {
@@ -195,8 +231,8 @@ class ApiQueryInfo extends ApiQueryBase {
 			$cont = $this->parseContinueParamOrDie( $this->params['continue'], [ 'int', 'string' ] );
 			$conttitle = $this->titleFactory->makeTitleSafe( $cont[0], $cont[1] );
 			$this->dieContinueUsageIf( !$conttitle );
-			foreach ( $this->everything as $pageid => $title ) {
-				if ( Title::compare( $title, $conttitle ) >= 0 ) {
+			foreach ( $this->everything as $pageid => $page ) {
+				if ( Title::compare( $page, $conttitle ) >= 0 ) {
 					break;
 				}
 				unset( $this->titles[$pageid] );
@@ -249,17 +285,17 @@ class ApiQueryInfo extends ApiQueryBase {
 			$this->getLinkClasses( $this->params['linkcontext'] );
 		}
 
-		/** @var Title $title */
-		foreach ( $this->everything as $pageid => $title ) {
-			$pageInfo = $this->extractPageInfo( $pageid, $title );
+		/** @var PageIdentity $page */
+		foreach ( $this->everything as $pageid => $page ) {
+			$pageInfo = $this->extractPageInfo( $pageid, $page );
 			$fit = $pageInfo !== null && $result->addValue( [
 				'query',
 				'pages'
 			], $pageid, $pageInfo );
 			if ( !$fit ) {
 				$this->setContinueEnumParameter( 'continue',
-					$title->getNamespace() . '|' .
-					$title->getText() );
+					$page->getNamespace() . '|' .
+					$this->titleFormatter->getText( $page ) );
 				break;
 			}
 		}
@@ -268,15 +304,16 @@ class ApiQueryInfo extends ApiQueryBase {
 	/**
 	 * Get a result array with information about a title
 	 * @param int $pageid Page ID (negative for missing titles)
-	 * @param Title $title
+	 * @param PageIdentity $page
 	 * @return array|null
 	 */
-	private function extractPageInfo( $pageid, $title ) {
+	private function extractPageInfo( $pageid, $page ) {
+		$title = $this->titleFactory->newFromPageIdentity( $page );
 		$pageInfo = [];
-		// $title->exists() needs pageid, which is not set for all title objects
-		$titleExists = $pageid > 0;
-		$ns = $title->getNamespace();
-		$dbkey = $title->getDBkey();
+		// $page->exists() needs pageid, which is not set for all title objects
+		$pageExists = $pageid > 0;
+		$ns = $page->getNamespace();
+		$dbkey = $page->getDBkey();
 
 		$pageInfo['contentmodel'] = $title->getContentModel();
 
@@ -285,7 +322,7 @@ class ApiQueryInfo extends ApiQueryBase {
 		$pageInfo['pagelanguagehtmlcode'] = $pageLanguage->getHtmlCode();
 		$pageInfo['pagelanguagedir'] = $pageLanguage->getDir();
 
-		if ( $titleExists ) {
+		if ( $pageExists ) {
 			$pageInfo['touched'] = wfTimestamp( TS_ISO_8601, $this->pageTouched[$pageid] );
 			$pageInfo['lastrevid'] = (int)$this->pageLatest[$pageid];
 			$pageInfo['length'] = (int)$this->pageLength[$pageid];
@@ -360,21 +397,27 @@ class ApiQueryInfo extends ApiQueryBase {
 
 		if ( $this->fld_associatedpage && $ns >= NS_MAIN ) {
 			$pageInfo['associatedpage'] = $this->titleFormatter->getPrefixedText(
-				$this->namespaceInfo->getAssociatedPage( $title )
+				$this->namespaceInfo->getAssociatedPage( TitleValue::newFromPage( $page ) )
 			);
 		}
 
 		if ( $this->fld_url ) {
-			$pageInfo['fullurl'] = wfExpandUrl( $title->getFullURL(), PROTO_CURRENT );
-			$pageInfo['editurl'] = wfExpandUrl( $title->getFullURL( 'action=edit' ), PROTO_CURRENT );
-			$pageInfo['canonicalurl'] = wfExpandUrl( $title->getFullURL(), PROTO_CANONICAL );
+			$pageInfo['fullurl'] = (string)$this->urlUtils->expand(
+				$title->getFullURL(), PROTO_CURRENT
+			);
+			$pageInfo['editurl'] = (string)$this->urlUtils->expand(
+				$title->getFullURL( 'action=edit' ), PROTO_CURRENT
+			);
+			$pageInfo['canonicalurl'] = (string)$this->urlUtils->expand(
+				$title->getFullURL(), PROTO_CANONICAL
+			);
 		}
 		if ( $this->fld_readable ) {
-			$pageInfo['readable'] = $this->getAuthority()->definitelyCan( 'read', $title );
+			$pageInfo['readable'] = $this->getAuthority()->definitelyCan( 'read', $page );
 		}
 
 		if ( $this->fld_preload ) {
-			if ( $titleExists ) {
+			if ( $pageExists ) {
 				$pageInfo['preload'] = '';
 			} else {
 				$text = null;
@@ -385,9 +428,81 @@ class ApiQueryInfo extends ApiQueryBase {
 			}
 		}
 
+		if ( $this->fld_preloadcontent ) {
+			$newSection = $this->params['preloadnewsection'];
+			// Preloaded content is not supported for already existing pages or sections.
+			// The actual page/section content should be shown for editing (from prop=revisions API).
+			if ( !$pageExists || $newSection ) {
+				$content = $this->preloadedContentBuilder->getPreloadedContent(
+					$title->toPageIdentity(),
+					$this->getAuthority(),
+					$this->params['preloadcustom'],
+					$this->params['preloadparams'] ?? [],
+					$newSection ? 'new' : null
+				);
+				$defaultContent = $newSection ? null :
+					$this->preloadedContentBuilder->getDefaultContent( $title->toPageIdentity() );
+				$contentIsDefault = $defaultContent ? $content->equals( $defaultContent ) : $content->isEmpty();
+				// Adapted from ApiQueryRevisionsBase::extractAllSlotInfo.
+				// The preloaded content fills the main slot.
+				$pageInfo['preloadcontent']['contentmodel'] = $content->getModel();
+				$pageInfo['preloadcontent']['contentformat'] = $content->getDefaultFormat();
+				ApiResult::setContentValue( $pageInfo['preloadcontent'], 'content', $content->serialize() );
+				// If the preloaded content generated from these parameters is the same as
+				// the default page content, the user should be discouraged from saving the page
+				// (e.g. by disabling the save button until changes are made, or displaying a warning).
+				$pageInfo['preloadisdefault'] = $contentIsDefault;
+			}
+		}
+
+		if ( $this->fld_editintro ) {
+			// Use $page as the context page in every processed message (T300184)
+			$localizerWithPage = new class( $this, $page ) implements MessageLocalizer {
+				private MessageLocalizer $base;
+				private PageReference $page;
+
+				public function __construct( MessageLocalizer $base, PageReference $page ) {
+					$this->base = $base;
+					$this->page = $page;
+				}
+
+				/**
+				 * @inheritDoc
+				 */
+				public function msg( $key, ...$params ) {
+					return $this->base->msg( $key, ...$params )->page( $this->page );
+				}
+			};
+
+			$styleParamMap = [
+				'lessframes' => IntroMessageBuilder::LESS_FRAMES,
+				'moreframes' => IntroMessageBuilder::MORE_FRAMES,
+			];
+			// If we got here, there is exactly one page and revision in the query
+			$revId = array_key_first( $this->getPageSet()->getLiveRevisionIDs() );
+			$revRecord = $revId ? $this->revisionLookup->getRevisionById( $revId ) : null;
+
+			$messages = $this->introMessageBuilder->getIntroMessages(
+				$styleParamMap[ $this->params['editintrostyle'] ],
+				$this->params['editintroskip'] ?? [],
+				$localizerWithPage,
+				$title->toPageIdentity(),
+				$revRecord,
+				$this->getAuthority(),
+				$this->params['editintrocustom'],
+				// Maybe expose these as parameters in the future, but for now it doesn't seem worth it:
+				null,
+				false
+			);
+			ApiResult::setIndexedTagName( $messages, 'ei' );
+			ApiResult::setArrayType( $messages, 'kvp', 'key' );
+
+			$pageInfo['editintro'] = $messages;
+		}
+
 		if ( $this->fld_displaytitle ) {
 			$pageInfo['displaytitle'] = $this->displaytitles[$pageid] ??
-				htmlspecialchars( $title->getPrefixedText(), ENT_NOQUOTES );
+				htmlspecialchars( $this->titleFormatter->getPrefixedText( $page ), ENT_NOQUOTES );
 		}
 
 		if ( $this->fld_varianttitles && isset( $this->variantTitles[$pageid] ) ) {
@@ -416,16 +531,25 @@ class ApiQueryInfo extends ApiQueryBase {
 				$this->countTestedActions++;
 
 				if ( $detailLevel === 'boolean' ) {
-					$pageInfo['actions'][$action] = $this->getAuthority()->authorizeRead( $action, $title );
+					$pageInfo['actions'][$action] = $this->getAuthority()->authorizeRead( $action, $page );
 				} else {
 					$status = new PermissionStatus();
 					if ( $detailLevel === 'quick' ) {
-						$this->getAuthority()->probablyCan( $action, $title, $status );
+						$this->getAuthority()->probablyCan( $action, $page, $status );
 					} else {
-						$this->getAuthority()->definitelyCan( $action, $title, $status );
+						$this->getAuthority()->definitelyCan( $action, $page, $status );
 					}
 					$this->addBlockInfoToStatus( $status );
 					$pageInfo['actions'][$action] = $errorFormatter->arrayFromStatus( $status );
+				}
+			}
+
+			if ( $this->params['testactionsautocreate'] ) {
+				$pageInfo['wouldautocreate'] = [];
+				foreach ( $this->params['testactions'] as $action ) {
+					// Copied from EditPage::maybeActivateTempUserCreate
+					$pageInfo['wouldautocreate'][$action] =
+						$this->tempUserCreator->shouldAutoCreate( $this->getUser(), $action );
 				}
 			}
 		}
@@ -450,8 +574,8 @@ class ApiQueryInfo extends ApiQueryBase {
 
 			$res = $this->select( __METHOD__ );
 			foreach ( $res as $row ) {
-				/** @var Title $title */
-				$title = $this->titles[$row->pr_page];
+				/** @var PageReference $page */
+				$page = $this->titles[$row->pr_page];
 				$a = [
 					'type' => $row->pr_type,
 					'level' => $row->pr_level,
@@ -460,7 +584,7 @@ class ApiQueryInfo extends ApiQueryBase {
 				if ( $row->pr_cascade ) {
 					$a['cascade'] = true;
 				}
-				$this->protections[$title->getNamespace()][$title->getDBkey()][] = $a;
+				$this->protections[$page->getNamespace()][$page->getDBkey()][] = $a;
 			}
 		}
 
@@ -484,15 +608,15 @@ class ApiQueryInfo extends ApiQueryBase {
 		// Separate good and missing titles into files and other pages
 		// and populate $this->restrictionTypes
 		$images = $others = [];
-		foreach ( $this->everything as $title ) {
-			if ( $title->getNamespace() === NS_FILE ) {
-				$images[] = $title->getDBkey();
+		foreach ( $this->everything as $page ) {
+			if ( $page->getNamespace() === NS_FILE ) {
+				$images[] = $page->getDBkey();
 			} else {
-				$others[] = $title;
+				$others[] = $page;
 			}
 			// Applicable protection types
-			$this->restrictionTypes[$title->getNamespace()][$title->getDBkey()] =
-				array_values( $this->restrictionStore->listApplicableRestrictionTypes( $title ) );
+			$this->restrictionTypes[$page->getNamespace()][$page->getDBkey()] =
+				array_values( $this->restrictionStore->listApplicableRestrictionTypes( $page ) );
 		}
 
 		[ $blNamespace, $blTitle ] = $this->linksMigration->getTitleFields( 'templatelinks' );
@@ -556,14 +680,14 @@ class ApiQueryInfo extends ApiQueryBase {
 		$getTitles = $this->talkids = $this->subjectids = [];
 		$nsInfo = $this->namespaceInfo;
 
-		/** @var Title $t */
-		foreach ( $this->everything as $t ) {
-			if ( $nsInfo->isTalk( $t->getNamespace() ) ) {
+		/** @var PageReference $page */
+		foreach ( $this->everything as $page ) {
+			if ( $nsInfo->isTalk( $page->getNamespace() ) ) {
 				if ( $this->fld_subjectid ) {
-					$getTitles[] = $t->getSubjectPage();
+					$getTitles[] = $nsInfo->getSubjectPage( TitleValue::newFromPage( $page ) );
 				}
 			} elseif ( $this->fld_talkid ) {
-				$getTitles[] = $t->getTalkPage();
+				$getTitles[] = $nsInfo->getTalkPage( TitleValue::newFromPage( $page ) );
 			}
 		}
 		if ( $getTitles === [] ) {
@@ -631,10 +755,10 @@ class ApiQueryInfo extends ApiQueryBase {
 		// $classes (being careful to maintain space separation).
 		$classes = [];
 		$pagemap = [];
-		foreach ( $this->titles as $pageId => $title ) {
-			$pdbk = $title->getPrefixedDBkey();
+		foreach ( $this->titles as $pageId => $page ) {
+			$pdbk = $this->titleFormatter->getPrefixedDBkey( $page );
 			$pagemap[$pageId] = $pdbk;
-			$classes[$pdbk] = $title->isRedirect() ? 'mw-redirect' : '';
+			$classes[$pdbk] = isset( $this->pageIsRedir[$pageId] ) && $this->pageIsRedir[$pageId] ? 'mw-redirect' : '';
 		}
 		// legacy hook requires a real Title, not a LinkTarget
 		$context_title = $this->titleFactory->newFromLinkTarget(
@@ -649,8 +773,8 @@ class ApiQueryInfo extends ApiQueryBase {
 		//  (b) a proper array of strings (possibly zero-length),
 		//      not a single space-separated string (possibly the empty string)
 		$this->linkClasses = [];
-		foreach ( $this->titles as $pageId => $title ) {
-			$pdbk = $title->getPrefixedDBkey();
+		foreach ( $this->titles as $pageId => $page ) {
+			$pdbk = $this->titleFormatter->getPrefixedDBkey( $page );
 			$this->linkClasses[$pageId] = preg_split(
 				'/\s+/', $classes[$pdbk] ?? '', -1, PREG_SPLIT_NO_EMPTY
 			);
@@ -662,10 +786,10 @@ class ApiQueryInfo extends ApiQueryBase {
 			return;
 		}
 		$this->variantTitles = [];
-		foreach ( $this->titles as $pageId => $t ) {
+		foreach ( $this->titles as $pageId => $page ) {
 			$this->variantTitles[$pageId] = isset( $this->displaytitles[$pageId] )
 				? $this->getAllVariants( $this->displaytitles[$pageId] )
-				: $this->getAllVariants( $t->getText(), $t->getNamespace() );
+				: $this->getAllVariants( $this->titleFormatter->getText( $page ), $page->getNamespace() );
 		}
 	}
 
@@ -789,7 +913,7 @@ class ApiQueryInfo extends ApiQueryBase {
 				$timestamps[$row->page_namespace][$row->page_title] = (int)$revTimestamp - $age;
 			}
 			$titlesWithThresholds = array_map(
-				static function ( LinkTarget $target ) use ( $timestamps ) {
+				static function ( PageReference $target ) use ( $timestamps ) {
 					return [
 						$target, $timestamps[$target->getNamespace()][$target->getDBkey()]
 					];
@@ -802,7 +926,7 @@ class ApiQueryInfo extends ApiQueryBase {
 			$titlesWithThresholds = array_merge(
 				$titlesWithThresholds,
 				array_map(
-					static function ( LinkTarget $target ) {
+					static function ( PageReference $target ) {
 						return [ $target, null ];
 					},
 					$this->missing
@@ -855,6 +979,8 @@ class ApiQueryInfo extends ApiQueryBase {
 					'url',
 					'readable', # private
 					'preload',
+					'preloadcontent', # private: checks current user's permissions
+					'editintro', # private: checks current user's permissions
 					'displaytitle',
 					'varianttitles',
 					'linkclasses', # private: stub length (and possibly hook colors)
@@ -864,6 +990,7 @@ class ApiQueryInfo extends ApiQueryBase {
 				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 				EnumDef::PARAM_DEPRECATED_VALUES => [
 					'readable' => true, // Since 1.32
+					'preload' => true, // Since 1.41
 				],
 			],
 			'linkcontext' => [
@@ -879,6 +1006,38 @@ class ApiQueryInfo extends ApiQueryBase {
 				ParamValidator::PARAM_TYPE => [ 'boolean', 'full', 'quick' ],
 				ParamValidator::PARAM_DEFAULT => 'boolean',
 				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
+			],
+			'testactionsautocreate' => false,
+			'preloadcustom' => [
+				// This should be a valid and existing page title, but we don't want to validate it here,
+				// because it's usually someone else's fault. It could emit a warning in the future.
+				ParamValidator::PARAM_TYPE => 'string',
+				ApiBase::PARAM_HELP_MSG_INFO => [ [ 'preloadcontentonly' ] ],
+			],
+			'preloadparams' => [
+				ParamValidator::PARAM_ISMULTI => true,
+				ApiBase::PARAM_HELP_MSG_INFO => [ [ 'preloadcontentonly' ] ],
+			],
+			'preloadnewsection' => [
+				ParamValidator::PARAM_TYPE => 'boolean',
+				ParamValidator::PARAM_DEFAULT => false,
+				ApiBase::PARAM_HELP_MSG_INFO => [ [ 'preloadcontentonly' ] ],
+			],
+			'editintrostyle' => [
+				ParamValidator::PARAM_TYPE => [ 'lessframes', 'moreframes' ],
+				ParamValidator::PARAM_DEFAULT => 'moreframes',
+				ApiBase::PARAM_HELP_MSG_INFO => [ [ 'editintroonly' ] ],
+			],
+			'editintroskip' => [
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_ISMULTI => true,
+				ApiBase::PARAM_HELP_MSG_INFO => [ [ 'editintroonly' ] ],
+			],
+			'editintrocustom' => [
+				// This should be a valid and existing page title, but we don't want to validate it here,
+				// because it's usually someone else's fault. It could emit a warning in the future.
+				ParamValidator::PARAM_TYPE => 'string',
+				ApiBase::PARAM_HELP_MSG_INFO => [ [ 'editintroonly' ] ],
 			],
 			'continue' => [
 				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',

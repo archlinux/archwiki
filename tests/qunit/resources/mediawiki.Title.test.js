@@ -430,9 +430,9 @@
 		mw.Title.exist.set( [ 'Does_not_exist', 'User:John', 'Foobar' ], false );
 
 		title = new mw.Title( 'Project:Sandbox rules' );
-		assert.assertTrue( title.exists(), 'Return true for page titles marked as existing' );
+		assert.true( title.exists(), 'Return true for page titles marked as existing' );
 		title = new mw.Title( 'Foobar' );
-		assert.assertFalse( title.exists(), 'Return false for page titles marked as nonexistent' );
+		assert.false( title.exists(), 'Return false for page titles marked as nonexistent' );
 
 	} );
 
@@ -736,7 +736,7 @@
 			}
 		];
 
-		if ( mw.config.get( 'wgIllegalFileChars', '' ).indexOf( ':' ) > -1 ) {
+		if ( mw.config.get( 'wgIllegalFileChars', '' ).includes( ':' ) ) {
 			// ":" is automatically replaced with "-". Only test this if it is present
 			// in wgIllegalFileChars. Bug: T196480
 			cases.push( {

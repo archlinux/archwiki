@@ -55,7 +55,7 @@ function wfWebStartNoLocalSettings( SettingsBuilder $settings ) {
 	# LocalSettings.php is the per-site customization file. If it does not exist
 	# the wiki installer needs to be launched or the generated file uploaded to
 	# the root wiki directory. Give a hint, if it is not readable by the server.
-	require_once __DIR__ . '/NoLocalSettings.php';
+	require_once __DIR__ . '/Output/NoLocalSettings.php';
 	die();
 }
 
@@ -80,7 +80,7 @@ function wfWebStartSetup( SettingsBuilder $settings ) {
 		// premature sending of HTTP headers due to output from PHP warnings and notices.
 		// They also can be used to implement gzip support in PHP without the webserver knowing
 		// which requests yield HTML and which yield large files that can be streamed.
-		ob_start( 'MediaWiki\\OutputHandler::handle' );
+		ob_start( [ MediaWiki\Output\OutputHandler::class, 'handle' ] );
 	}
 }
 

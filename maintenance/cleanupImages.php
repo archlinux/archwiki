@@ -25,7 +25,7 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;
 
 require_once __DIR__ . '/TableCleanup.php';
@@ -57,7 +57,8 @@ class CleanupImages extends TableCleanup {
 			// Ye olde empty rows. Just kill them.
 			$this->killRow( $source );
 
-			return $this->progress( 1 );
+			$this->progress( 1 );
+			return;
 		}
 
 		$cleaned = $source;
@@ -68,7 +69,7 @@ class CleanupImages extends TableCleanup {
 		// We also have some HTML entities there
 		$cleaned = Sanitizer::decodeCharReferences( $cleaned );
 
-		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$contLang = $this->getServiceContainer()->getContentLanguage();
 
 		// Some are old latin-1
 		$cleaned = $contLang->checkTitleEncoding( $cleaned );
@@ -82,11 +83,13 @@ class CleanupImages extends TableCleanup {
 			$this->output( "page $source ($cleaned) is illegal.\n" );
 			$safe = $this->buildSafeTitle( $cleaned );
 			if ( $safe === false ) {
-				return $this->progress( 0 );
+				$this->progress( 0 );
+				return;
 			}
 			$this->pokeFile( $source, $safe );
 
-			return $this->progress( 1 );
+			$this->progress( 1 );
+			return;
 		}
 
 		if ( $title->getDBkey() !== $source ) {
@@ -94,10 +97,11 @@ class CleanupImages extends TableCleanup {
 			$this->output( "page $source ($munged) doesn't match self.\n" );
 			$this->pokeFile( $source, $munged );
 
-			return $this->progress( 1 );
+			$this->progress( 1 );
+			return;
 		}
 
-		return $this->progress( 0 );
+		$this->progress( 0 );
 	}
 
 	/**
@@ -121,7 +125,7 @@ class CleanupImages extends TableCleanup {
 	 */
 	private function filePath( $name ) {
 		if ( $this->repo === null ) {
-			$this->repo = MediaWikiServices::getInstance()->getRepoGroup()->getLocalRepo();
+			$this->repo = $this->getServiceContainer()->getRepoGroup()->getLocalRepo();
 		}
 
 		return $this->repo->getRootDirectory() . '/' . $this->repo->getHashPath( $name ) . $name;

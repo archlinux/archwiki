@@ -3,10 +3,8 @@
 namespace MediaWiki\Skins\Vector;
 
 use Config;
-use IContextSource;
 use MediaWiki\Auth\Hook\LocalUserCreatedHook;
 use MediaWiki\Hook\MakeGlobalVariablesScriptHook;
-use MediaWiki\Hook\RequestContextCreateSkinHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\ResourceLoader as RL;
@@ -15,7 +13,6 @@ use MediaWiki\ResourceLoader\Hook\ResourceLoaderSiteStylesModulePagesHook;
 use MediaWiki\Skins\Hook\SkinPageReadyConfigHook;
 use OutputPage;
 use RuntimeException;
-use Skin;
 use SkinTemplate;
 use User;
 
@@ -33,7 +30,6 @@ class Hooks implements
 	MakeGlobalVariablesScriptHook,
 	ResourceLoaderSiteModulePagesHook,
 	ResourceLoaderSiteStylesModulePagesHook,
-	RequestContextCreateSkinHook,
 	SkinPageReadyConfigHook
 {
 	/**
@@ -50,10 +46,14 @@ class Hooks implements
 	}
 
 	/**
+	 * @param RL\Context $context
 	 * @param Config $config
 	 * @return array
 	 */
-	private static function getActiveABTest( $config ) {
+	public static function getActiveABTest(
+		RL\Context $context,
+		Config $config
+	) {
 		$ab = $config->get(
 			Constants::CONFIG_WEB_AB_TEST_ENROLLMENT
 		);
@@ -85,22 +85,6 @@ class Hooks implements
 	}
 
 	/**
-	 * Passes config variables to Vector (modern) ResourceLoader module.
-	 * @param RL\Context $context
-	 * @param Config $config
-	 * @return array
-	 */
-	public static function getVectorResourceLoaderConfig(
-		RL\Context $context,
-		Config $config
-	) {
-		return [
-			'wgVectorSearchApiUrl' => $config->get( 'VectorSearchApiUrl' ),
-			'wgVectorWebABTestEnrollment' => self::getActiveABTest( $config ),
-		];
-	}
-
-	/**
 	 * Generates config variables for skins.vector.search Resource Loader module (defined in
 	 * skin.json).
 	 *
@@ -112,11 +96,17 @@ class Hooks implements
 		RL\Context $context,
 		Config $config
 	): array {
-		$result = $config->get( 'VectorWvuiSearchOptions' );
-		$result['highlightQuery'] =
-			VectorServices::getLanguageService()->canWordsBeSplitSafely( $context->getLanguage() );
+		$vectorSearchConfig = [
+			'highlightQuery' =>
+				VectorServices::getLanguageService()->canWordsBeSplitSafely( $context->getLanguage() )
+		];
 
-		return $result;
+		MediaWikiServices::getInstance()->getHookContainer()->run(
+			'VectorSearchResourceLoaderConfig',
+			[ &$vectorSearchConfig ]
+		);
+
+		return array_merge( $config->get( 'VectorWvuiSearchOptions' ), $vectorSearchConfig );
 	}
 
 	/**
@@ -144,8 +134,6 @@ class Hooks implements
 		// and from its point of view they are the same thing.
 		// Please see the modules `skins.vector.js` and `skins.vector.legacy.js`
 		// for the wire up of search.
-		// The related method self::getVectorResourceLoaderConfig handles which
-		// search to load.
 		$config['search'] = false;
 	}
 
@@ -182,6 +170,7 @@ class Hooks implements
 	private static function updateViewsMenuIcons( &$content_navigation, $isLegacy ) {
 		$featureManager = VectorServices::getFeatureManager();
 
+		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 		foreach ( $content_navigation['views'] as $key => $item ) {
 			$icon = $item['icon'] ?? null;
 			if ( $icon ) {
@@ -194,7 +183,7 @@ class Hooks implements
 					// Force the item as a button with hidden text.
 					$item['button'] = true;
 					$item['text-hidden'] = true;
-					$item = self::updateMenuItemData( $item, true );
+					$item = self::updateMenuItemData( $item, false );
 				}
 			} elseif ( !$isLegacy ) {
 				// The vector-tab-noicon class is only used in Vector-22.
@@ -332,11 +321,10 @@ class Hooks implements
 		$overflow = 'vector-user-menu-overflow';
 		$content_navigation[$overflow] = [];
 		$featureManager = VectorServices::getFeatureManager();
-
 		// Logged in and logged out overflow items
-		if ( isset( $content_navigation['user-interface-preferences']['uls'] ) ) {
-			$content_navigation[$overflow]['uls'] = array_merge(
-				$content_navigation['user-interface-preferences']['uls'], [
+		foreach ( $content_navigation['user-interface-preferences'] ?? [] as $key => $item ) {
+			$content_navigation[$overflow][ $key ] = array_merge(
+				$content_navigation['user-interface-preferences'][ $key ], [
 				'collapsible' => true,
 			] );
 		}
@@ -457,7 +445,7 @@ class Hooks implements
 	 */
 	public static function makeIcon( $name ) {
 		// Html::makeLink will pass this through rawElement
-		return '<span class="mw-ui-icon mw-ui-icon-' . $name . ' mw-ui-icon-wikimedia-' . $name . '"></span>';
+		return '<span class="vector-icon mw-ui-icon-' . $name . ' mw-ui-icon-wikimedia-' . $name . '"></span>';
 	}
 
 	/**
@@ -467,16 +455,20 @@ class Hooks implements
 	 * @param array $item data to update
 	 * @param string $buttonClassProp property to append button classes
 	 * @param string $iconHtmlProp property to set icon HTML
-	 * @param bool $isSmallIcon when set a small icon will be applied rather than the standard icon size
+	 * @param bool $unsetIcon should the icon field be unset?
 	 * @return array $item Updated data
 	 */
-	private static function updateItemData( $item, $buttonClassProp, $iconHtmlProp, $isSmallIcon = false ) {
+	private static function updateItemData(
+		$item, $buttonClassProp, $iconHtmlProp, $unsetIcon = true
+	) {
 		$hasButton = $item['button'] ?? false;
 		$hideText = $item['text-hidden'] ?? false;
 		$isCollapsible = $item['collapsible'] ?? false;
 		$icon = $item['icon'] ?? '';
+		if ( $unsetIcon ) {
+			unset( $item['icon'] );
+		}
 		unset( $item['button'] );
-		unset( $item['icon'] );
 		unset( $item['text-hidden'] );
 		unset( $item['collapsible'] );
 
@@ -484,24 +476,20 @@ class Hooks implements
 			self::makeMenuItemCollapsible( $item );
 		}
 		if ( $hasButton ) {
-			self::appendClassToItem( $item[ $buttonClassProp ], [ 'mw-ui-button', 'mw-ui-quiet' ] );
+			// Hardcoded button classes, this should be fixed by replacing Hooks.php with VectorComponentButton.php
+			self::appendClassToItem( $item[ $buttonClassProp ], [
+				'cdx-button',
+				'cdx-button--fake-button',
+				'cdx-button--fake-button--enabled',
+				'cdx-button--weight-quiet'
+			] );
 		}
 		if ( $icon ) {
-			if ( $hideText ) {
-				$iconElementClasses = [ 'mw-ui-icon', 'mw-ui-icon-element',
-					// Some extensions declare icons without the wikimedia- prefix. e.g. Echo
-					'mw-ui-icon-' . $icon,
-					// FIXME: Some icon names are prefixed with `wikimedia-`.
-					// We should seek to remove all these instances.
-					'mw-ui-icon-wikimedia-' . $icon
-				];
-				if ( $isSmallIcon ) {
-					$iconElementClasses[] = 'mw-ui-icon-small';
-				}
-				self::appendClassToItem( $item[ $buttonClassProp ], $iconElementClasses );
-			} else {
-				$item[ $iconHtmlProp ] = self::makeIcon( $icon );
+			if ( $hideText && $hasButton ) {
+				self::appendClassToItem( $item[ $buttonClassProp ], [ 'cdx-button--icon-only' ] );
 			}
+
+			$item[ $iconHtmlProp ] = self::makeIcon( $icon );
 		}
 		return $item;
 	}
@@ -511,13 +499,13 @@ class Hooks implements
 	 *
 	 * @internal used inside Hooks::updateMenuItems ::updateViewsMenuIcons and ::updateUserLinksDropdownItems
 	 * @param array $item menu item data to update
-	 * @param bool $isSmallIcon when set a small icon will be applied rather than the standard icon size
+	 * @param bool $unsetIcon should the icon field be unset?
 	 * @return array $item Updated menu item data
 	 */
-	public static function updateMenuItemData( $item, $isSmallIcon = false ) {
+	public static function updateMenuItemData( $item, $unsetIcon = true ) {
 		$buttonClassProp = 'link-class';
 		$iconHtmlProp = 'link-html';
-		return self::updateItemData( $item, $buttonClassProp, $iconHtmlProp, $isSmallIcon );
+		return self::updateItemData( $item, $buttonClassProp, $iconHtmlProp, $unsetIcon );
 	}
 
 	/**
@@ -548,6 +536,7 @@ class Hooks implements
 	private static function createMoreOverflowMenu( &$content_navigation ) {
 		$clonedViews = [];
 		foreach ( array_keys( $content_navigation['views'] ?? [] ) as $key ) {
+			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 			$newItem = $content_navigation['views'][$key];
 			self::makeMenuItemCollapsible(
 				$newItem,
@@ -623,19 +612,15 @@ class Hooks implements
 	}
 
 	/**
-	 * Adds the persistent sidebar hidden API preference.
+	 * Adds Vector specific user preferences that can only be accessed via API.
 	 *
 	 * @param User $user User whose preferences are being modified.
 	 * @param array[] &$prefs Preferences description array, to be fed to a HTMLForm object.
 	 */
 	public function onGetPreferences( $user, &$prefs ): void {
-		$config = MediaWikiServices::getInstance()->getMainConfig();
 		$vectorPrefs = [
-			Constants::PREF_KEY_SIDEBAR_VISIBLE => [
-				'type' => 'api',
-				'default' => $config->get(
-					Constants::CONFIG_KEY_DEFAULT_SIDEBAR_VISIBLE_FOR_AUTHORISED_USER
-				),
+			Constants::PREF_KEY_FONT_SIZE => [
+				'type' => 'api'
 			],
 			Constants::PREF_KEY_PAGE_TOOLS_PINNED => [
 				'type' => 'api'
@@ -652,7 +637,10 @@ class Hooks implements
 				'section' => 'rendering/skin/skin-prefs',
 				'help-message' => 'vector-prefs-limited-width-help',
 				'hide-if' => [ '!==', 'skin', Constants::SKIN_NAME_MODERN ],
-			]
+			],
+			Constants::PREF_KEY_TYPOGRAPHY_SURVEY => [
+				'type' => 'api'
+			],
 		];
 		$prefs += $vectorPrefs;
 	}
@@ -678,31 +666,6 @@ class Hooks implements
 	}
 
 	/**
-	 * Temporary RequestContextCreateSkin hook handler.
-	 * Switches to new Vector on certain pages.
-	 *
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/RequestContextCreateSkin
-	 *
-	 * @param IContextSource $context The RequestContext object the skin is being created for.
-	 * @param Skin|null|string &$skin A variable reference you may set a Skin instance or string
-	 *                                key on to override the skin that will be used for the context.
-	 * @return bool|void
-	 */
-	public function onRequestContextCreateSkin( $context, &$skin ) {
-		if ( !$skin ) {
-			// user is anonymous
-			$user = $context->getUser();
-			$config = $context->getConfig();
-			$titles = $config->get( 'Vector2022PreviewPages' );
-			$title = $context->getTitle();
-			$titleText = $title ? $title->getPrefixedText() : null;
-			if ( $titleText && $user->isAnon() && in_array( $titleText, $titles ) ) {
-				$skin = 'vector-2022';
-			}
-		}
-	}
-
-	/**
 	 * NOTE: Please use ResourceLoaderGetConfigVars hook instead if possible
 	 * for adding config to the page.
 	 * Adds config variables to JS that depend on current page/request.
@@ -721,15 +684,6 @@ class Hooks implements
 		}
 		$config = $out->getConfig();
 		$user = $out->getUser();
-
-		if ( $user->isRegistered() && self::isSkinVersionLegacy( $skinName ) ) {
-			$vars[ 'wgVectorDisableSidebarPersistence' ] =
-				$config->get(
-					Constants::CONFIG_KEY_DISABLE_SIDEBAR_PERSISTENCE
-				);
-		}
-		// Must be exposed to CentralNotice banners via mw.config
-		$vars[ 'wgVector2022PreviewPages' ] = $config->get( 'Vector2022PreviewPages' );
 	}
 
 	/**

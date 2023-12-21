@@ -33,5 +33,10 @@
 	"cite_references_link_accessibility_back_label": "Umakyat pabalik",
 	"cite_section_preview_references": "Pasilip ng sanggunian",
 	"cite_warning": "Babala sa pagsipi: $1",
-	"cite_warning_sectionpreview_no_text": "Hindi masisilip ang <code>&lt;ref&gt;</code> tag na may pangalang <code>$1</code> dahil binigyang-kahulugan ito sa labas ng kasalukuyang bahagi, o di kaya'y wala itong kahulugan."
+	"cite_warning_sectionpreview_no_text": "Hindi masisilip ang <code>&lt;ref&gt;</code> tag na may pangalang <code>$1</code> dahil binigyang-kahulugan ito sa labas ng kasalukuyang bahagi, o di kaya'y wala itong kahulugan.",
+	"cite-wikieditor-tool-reference": "Sanggunian",
+	"cite-wikieditor-help-page-references": "Mga sanggunian",
+	"cite-wikieditor-help-content-reference-description": "Sanggunian",
+	"cite-wikieditor-help-content-rereference-description": "Karagdagang paggamit na gayun ding sanggunian",
+	"cite-wikieditor-help-content-showreferences-description": "Ipakita ang mga sanggunian"
 }

@@ -184,6 +184,7 @@ class CommentParser {
 	): string {
 		$formatLength = strlen( $format );
 		$s = '';
+		$raw = false;
 		// Adapted from Language::sprintfDate()
 		for ( $p = 0; $p < $formatLength; $p++ ) {
 			$num = false;
@@ -203,6 +204,9 @@ class CommentParser {
 					$s .= static::regexpAlternateGroup(
 						$this->getMessages( $contLangVariant, Language::MONTH_GENITIVE_MESSAGES )
 					);
+					break;
+				case 'xn':
+					$raw = true;
 					break;
 				case 'd':
 					$num = '2';
@@ -230,6 +234,9 @@ class CommentParser {
 						$this->getMessages( $contLangVariant, Language::MONTH_ABBREVIATED_MESSAGES )
 					);
 					break;
+				case 'm':
+					$num = '2';
+					break;
 				case 'n':
 					$num = '1,2';
 					break;
@@ -246,6 +253,9 @@ class CommentParser {
 					$num = '2';
 					break;
 				case 'i':
+					$num = '2';
+					break;
+				case 's':
 					$num = '2';
 					break;
 				case '\\':
@@ -279,7 +289,12 @@ class CommentParser {
 					$p += strlen( $char ) - 1;
 			}
 			if ( $num !== false ) {
-				$s .= '(' . $digitsRegexp . '{' . $num . '})';
+				if ( $raw ) {
+					$s .= '([0-9]{' . $num . '})';
+					$raw = false;
+				} else {
+					$s .= '(' . $digitsRegexp . '{' . $num . '})';
+				}
 			}
 			// Ignore some invisible Unicode characters that often sneak into copy-pasted timestamps (T308448)
 			$s .= '[\\x{200E}\\x{200F}]?';
@@ -315,7 +330,7 @@ class CommentParser {
 			return preg_replace_callback(
 				'/[' . implode( '', $digits ) . ']/u',
 				static function ( array $m ) use ( $digits ) {
-					return (string)array_search( $m[0], $digits );
+					return (string)array_search( $m[0], $digits, true );
 				},
 				$text
 			);
@@ -334,6 +349,7 @@ class CommentParser {
 
 			switch ( $code ) {
 				case 'xx':
+				case 'xn':
 					break;
 				case 'xg':
 				case 'd':
@@ -342,12 +358,14 @@ class CommentParser {
 				case 'l':
 				case 'F':
 				case 'M':
+				case 'm':
 				case 'n':
 				case 'Y':
 				case 'xkY':
 				case 'G':
 				case 'H':
 				case 'i':
+				case 's':
 					$matchingGroups[] = $code;
 					break;
 				case '\\':
@@ -391,7 +409,8 @@ class CommentParser {
 					case 'xg':
 						$monthIdx = array_search(
 							$text,
-							$this->getMessages( $contLangVariant, Language::MONTH_GENITIVE_MESSAGES )
+							$this->getMessages( $contLangVariant, Language::MONTH_GENITIVE_MESSAGES ),
+							true
 						);
 						break;
 					case 'd':
@@ -405,15 +424,18 @@ class CommentParser {
 					case 'F':
 						$monthIdx = array_search(
 							$text,
-							$this->getMessages( $contLangVariant, Language::MONTH_MESSAGES )
+							$this->getMessages( $contLangVariant, Language::MONTH_MESSAGES ),
+							true
 						);
 						break;
 					case 'M':
 						$monthIdx = array_search(
 							$text,
-							$this->getMessages( $contLangVariant, Language::MONTH_ABBREVIATED_MESSAGES )
+							$this->getMessages( $contLangVariant, Language::MONTH_ABBREVIATED_MESSAGES ),
+							true
 						);
 						break;
+					case 'm':
 					case 'n':
 						$monthIdx = intval( $untransformDigits( $text ) ) - 1;
 						break;
@@ -430,6 +452,9 @@ class CommentParser {
 						break;
 					case 'i':
 						$minute = intval( $untransformDigits( $text ) );
+						break;
+					case 's':
+						// Seconds - unused, because most timestamp formats omit them
 						break;
 					default:
 						throw new LogicException( 'Not implemented' );
@@ -524,9 +549,11 @@ class CommentParser {
 	 * Given a link node (`<a>`), if it's a link to a user-related page, return their username.
 	 *
 	 * @param Element $link
-	 * @return string|null Username, or null
+	 * @return array|null Array, or null:
+	 * - string 'username' Username
+	 * - string|null 'displayName' Display name (link text if link target was in the user namespace)
 	 */
-	private function getUsernameFromLink( Element $link ): ?string {
+	private function getUsernameFromLink( Element $link ): ?array {
 		// Selflink: use title of current page
 		if ( DOMCompat::getClassList( $link )->contains( 'mw-selflink' ) ) {
 			$title = $this->title;
@@ -540,13 +567,22 @@ class CommentParser {
 		}
 
 		$username = null;
+		$displayName = null;
 		$namespaceId = $title->getNamespace();
 		$mainText = $title->getText();
 
 		if ( $namespaceId === NS_USER || $namespaceId === NS_USER_TALK ) {
 			$username = $mainText;
-			if ( strpos( $username, '/' ) !== false ) {
+			if ( str_contains( $username, '/' ) ) {
 				return null;
+			}
+			if ( $namespaceId === NS_USER ) {
+				// Use regex trim for consistency with JS implementation
+				$text = preg_replace( [ '/^[\s]+/u', '/[\s]+$/u' ], '', $link->textContent ?? '' );
+				// Record the display name if it has been customised beyond changing case
+				if ( $text && mb_strtolower( $text ) !== mb_strtolower( $username ) ) {
+					$displayName = $text;
+				}
 			}
 		} elseif ( $namespaceId === NS_SPECIAL ) {
 			$parts = explode( '/', $mainText );
@@ -566,7 +602,10 @@ class CommentParser {
 			// Bot-generated links "Preceding unsigned comment added by" have non-standard case
 			$username = strtoupper( $username );
 		}
-		return $username;
+		return [
+			'username' => $username,
+			'displayName' => $displayName,
+		];
 	}
 
 	/**
@@ -586,13 +625,14 @@ class CommentParser {
 	 */
 	private function findSignature( Text $timestampNode, ?Node $until = null ): array {
 		$sigUsername = null;
+		$sigDisplayName = null;
 		$length = 0;
 		$lastLinkNode = $timestampNode;
 
 		CommentUtils::linearWalkBackwards(
 			$timestampNode,
 			function ( string $event, Node $node ) use (
-				&$sigUsername, &$lastLinkNode, &$length,
+				&$sigUsername, &$sigDisplayName, &$lastLinkNode, &$length,
 				$until, $timestampNode
 			) {
 				if ( $event === 'enter' && $node === $until ) {
@@ -618,14 +658,17 @@ class CommentParser {
 				//
 				// Handle links nested in formatting elements.
 				if ( $event === 'leave' && $node instanceof Element && strtolower( $node->tagName ) === 'a' ) {
-					$username = $this->getUsernameFromLink( $node );
-					if ( $username ) {
+					$user = $this->getUsernameFromLink( $node );
+					if ( $user ) {
 						// Accept the first link to the user namespace, then only accept links to that user
 						if ( $sigUsername === null ) {
-							$sigUsername = $username;
+							$sigUsername = $user['username'];
 						}
-						if ( $username === $sigUsername ) {
+						if ( $user['username'] === $sigUsername ) {
 							$lastLinkNode = $node;
+							if ( $user['displayName'] ) {
+								$sigDisplayName = $user['displayName'];
+							}
 						}
 					}
 					// Keep looking if a node with links wasn't a link to a user page
@@ -654,7 +697,8 @@ class CommentParser {
 
 		return [
 			'nodes' => $sigNodes,
-			'username' => $sigUsername
+			'username' => $sigUsername,
+			'displayName' => $sigDisplayName,
 		];
 	}
 
@@ -672,20 +716,25 @@ class CommentParser {
 			if ( $node->getAttribute( 'id' ) === 'toc' ) {
 				return NodeFilter::FILTER_REJECT;
 			}
+			// Don't detect comments within quotes (T275881)
+			if (
+				$tagName === 'blockquote' ||
+				$tagName === 'cite' ||
+				$tagName === 'q'
+			) {
+				return NodeFilter::FILTER_REJECT;
+			}
+			$classList = DOMCompat::getClassList( $node );
+			// Don't attempt to parse blocks marked 'mw-notalk'
+			if ( $classList->contains( 'mw-notalk' ) ) {
+				return NodeFilter::FILTER_REJECT;
+			}
 			// Don't detect comments within references. We can't add replies to them without bungling up
 			// the structure in some cases (T301213), and you're not supposed to do that anyway…
 			if (
 				// <ol class="references"> is the only reliably consistent thing between the two parsers
 				$tagName === 'ol' &&
 				DOMCompat::getClassList( $node )->contains( 'references' )
-			) {
-				return NodeFilter::FILTER_REJECT;
-			}
-			// Don't detect comments within quotes (T275881)
-			if (
-				$tagName === 'blockquote' ||
-				$tagName === 'cite' ||
-				$tagName === 'q'
 			) {
 				return NodeFilter::FILTER_REJECT;
 			}
@@ -699,6 +748,17 @@ class CommentParser {
 	}
 
 	/**
+	 * Convert a byte offset within a text node to a unicode codepoint offset
+	 *
+	 * @param Text $node Text node
+	 * @param int $byteOffset Byte offset
+	 * @return int Codepoint offset
+	 */
+	private static function getCodepointOffset( Text $node, int $byteOffset ): int {
+		return mb_strlen( substr( $node->nodeValue ?? '', 0, $byteOffset ) );
+	}
+
+	/**
 	 * Find a timestamps in a given text node
 	 *
 	 * @param Text $node
@@ -708,13 +768,17 @@ class CommentParser {
 	 *   - int 'parserIndex' Which of the regexps matched
 	 *   - array 'matchData' Regexp match data, which specifies the location of the match,
 	 *     and which can be parsed using getLocalTimestampParsers() (offsets are in bytes)
+	 *   - ImmutableRange 'range' Range covering the timestamp
 	 */
 	public function findTimestamp( Text $node, array $timestampRegexps ): ?array {
 		$nodeText = '';
 		$offset = 0;
+		// Searched nodes (reverse order)
+		$nodes = [];
 
 		while ( $node ) {
 			$nodeText = $node->nodeValue . $nodeText;
+			$nodes[] = $node;
 
 			// In Parsoid HTML, entities are represented as a 'mw:Entity' node, rather than normal HTML
 			// entities. On Arabic Wikipedia, the "UTC" timezone name contains some non-breaking spaces,
@@ -727,6 +791,7 @@ class CommentParser {
 			) {
 				$nodeText = $previousSibling->firstChild->nodeValue . $nodeText;
 				$offset += strlen( $previousSibling->firstChild->nodeValue ?? '' );
+				$nodes[] = $previousSibling->firstChild;
 
 				// If the entity is preceded by more text, do this again
 				if (
@@ -747,9 +812,41 @@ class CommentParser {
 			$matchData = null;
 			// Allows us to mimic match.index in #getComments
 			if ( preg_match( $timestampRegexp, $nodeText, $matchData, PREG_OFFSET_CAPTURE ) ) {
+				$timestampLength = strlen( $matchData[0][0] );
+				// Bytes at the end of the last node which aren't part of the match
+				$tailLength = strlen( $nodeText ) - $timestampLength - $matchData[0][1];
+				// We are moving right to left, but we start to the right of the end of
+				// the timestamp if there is trailing garbage, so that is a negative offset.
+				$count = -$tailLength;
+				$endNode = $nodes[0];
+				$endOffset = strlen( $endNode->nodeValue ?? '' ) - $tailLength;
+
+				foreach ( $nodes as $n ) {
+					$count += strlen( $n->nodeValue ?? '' );
+					// If we have counted to beyond the start of the timestamp, we are in the
+					// start node of the timestamp
+					if ( $count >= $timestampLength ) {
+						$startNode = $n;
+						// Offset is how much we overshot the start by
+						$startOffset = $count - $timestampLength;
+						break;
+					}
+				}
+				Assert::precondition( $endNode instanceof Node, 'endNode of timestamp is a Node' );
+				Assert::precondition( $startNode instanceof Node, 'startNode of timestamp range found' );
+				Assert::precondition( is_int( $startOffset ), 'startOffset of timestamp range found' );
+
+				$startOffset = static::getCodepointOffset( $startNode, $startOffset );
+				$endOffset = static::getCodepointOffset( $endNode, $endOffset );
+
+				$range = new ImmutableRange( $startNode, $startOffset, $endNode, $endOffset );
+
 				return [
 					'matchData' => $matchData,
+					// Bytes at the start of the first node which aren't part of the match
+					// TODO: Remove this and use 'range' instead
 					'offset' => $offset,
+					'range' => $range,
 					'parserIndex' => $i,
 				];
 			}
@@ -771,7 +868,7 @@ class CommentParser {
 		$lastSigNodeOffsetByteOffset =
 			$match['matchData'][0][1] + strlen( $match['matchData'][0][0] ) - $match['offset'];
 		$lastSigNodeOffset = $lastSigNode === $node ?
-			mb_strlen( substr( $node->nodeValue ?? '', 0, $lastSigNodeOffsetByteOffset ) ) :
+			static::getCodepointOffset( $node, $lastSigNodeOffsetByteOffset ) :
 			CommentUtils::childIndexOf( $lastSigNode ) + 1;
 		$sigRange = new ImmutableRange(
 			$firstSigNode->parentNode,
@@ -822,7 +919,10 @@ class CommentParser {
 				}
 
 				$sigRanges = [];
+				$timestampRanges = [];
+
 				$sigRanges[] = $this->adjustSigRange( $foundSignature['nodes'], $match, $node );
+				$timestampRanges[] = $match['range'];
 
 				// Everything from the last comment up to here is the next comment
 				$startNode = $this->nextInterestingLeafNode( $curCommentEnd );
@@ -841,7 +941,7 @@ class CommentParser {
 				CommentUtils::linearWalk(
 					$lastSigNode,
 					function ( string $event, Node $n ) use (
-						&$endNode, &$sigRanges,
+						&$endNode, &$sigRanges, &$timestampRanges,
 						$treeWalker, $timestampRegexps, $node
 					) {
 						if ( CommentUtils::isBlockElement( $n ) || CommentUtils::isCommentSeparator( $n ) ) {
@@ -859,6 +959,7 @@ class CommentParser {
 							$foundSignature2 = $this->findSignature( $n, $node );
 							if ( $foundSignature2['username'] ) {
 								$sigRanges[] = $this->adjustSigRange( $foundSignature2['nodes'], $match2, $n );
+								$timestampRanges[] = $match2['range'];
 							}
 						}
 						if ( $event === 'leave' ) {
@@ -899,8 +1000,10 @@ class CommentParser {
 					$level,
 					$range,
 					$sigRanges,
+					$timestampRanges,
 					$dateTime,
-					$author
+					$author,
+					$foundSignature['displayName']
 				);
 				$curComment->setRootNode( $this->rootNode );
 				if ( $warnings ) {

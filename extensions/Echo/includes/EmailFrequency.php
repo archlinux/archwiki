@@ -1,6 +1,8 @@
 <?php
 
-class EchoEmailFrequency {
+namespace MediaWiki\Extension\Notifications;
+
+class EmailFrequency {
 	/**
 	 * Never send email notifications
 	 */

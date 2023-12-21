@@ -16,14 +16,14 @@ use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Storage\PageUpdaterFactory;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWikiUnitTestCase;
-use NamespaceInfo;
 use Psr\Log\NullLogger;
-use ReadOnlyMode;
 use RepoGroup;
 use Wikimedia\Message\ITextFormatter;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\ReadOnlyMode;
 use WikiPage;
 
 /**
@@ -81,10 +81,9 @@ class UndeletePageTest extends MediaWikiUnitTestCase {
 		$res = $this->getUndeletePage( $page, $wpFactory, $nsInfo, $archivedRevisionLookup )
 			->canProbablyUndeleteAssociatedTalk();
 		if ( $expectedMsg === null ) {
-			$this->assertTrue( $res->isGood(), $res->__toString() );
+			$this->assertStatusGood( $res );
 		} else {
-			$this->assertFalse( $res->isOK() );
-			$this->assertTrue( $res->hasMessage( $expectedMsg ) );
+			$this->assertStatusError( $expectedMsg, $res );
 		}
 	}
 
@@ -111,7 +110,7 @@ class UndeletePageTest extends MediaWikiUnitTestCase {
 			$ret->method( 'hasArchivedRevisions' )->willReturn( $hasDeletedRevs );
 			return $ret;
 		};
-		$nsInfo = new NamespaceInfo( $this->createMock( ServiceOptions::class ), $this->createHookContainer() );
+		$nsInfo = new NamespaceInfo( $this->createMock( ServiceOptions::class ), $this->createHookContainer(), [], [] );
 
 		$talkPage = new PageIdentityValue( 42, NS_TALK, 'Test talk page', PageIdentity::LOCAL );
 		yield 'Talk page' => [

@@ -7,6 +7,7 @@ use Content;
 use DeferredUpdates;
 use IBufferingStatsdDataFactory;
 use IContextSource;
+use MediaWiki\Extension\AbuseFilter\BlockedDomainFilter;
 use MediaWiki\Extension\AbuseFilter\EditRevUpdater;
 use MediaWiki\Extension\AbuseFilter\FilterRunnerFactory;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
@@ -16,10 +17,11 @@ use MediaWiki\Hook\UploadStashFileHook;
 use MediaWiki\Hook\UploadVerifyUploadHook;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\Hook\ArticleDeleteHook;
+use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\Hook\ParserOutputStashForEditHook;
+use MediaWiki\Title\Title;
 use Status;
-use Title;
 use UploadBase;
 use User;
 use WikiPage;
@@ -43,23 +45,31 @@ class FilteredActionsHandler implements
 	private $variableGeneratorFactory;
 	/** @var EditRevUpdater */
 	private $editRevUpdater;
+	private PermissionManager $permissionManager;
+	private BlockedDomainFilter $blockedDomainFilter;
 
 	/**
 	 * @param IBufferingStatsdDataFactory $statsDataFactory
 	 * @param FilterRunnerFactory $filterRunnerFactory
 	 * @param VariableGeneratorFactory $variableGeneratorFactory
 	 * @param EditRevUpdater $editRevUpdater
+	 * @param BlockedDomainFilter $blockedDomainFilter
+	 * @param PermissionManager $permissionManager
 	 */
 	public function __construct(
 		IBufferingStatsdDataFactory $statsDataFactory,
 		FilterRunnerFactory $filterRunnerFactory,
 		VariableGeneratorFactory $variableGeneratorFactory,
-		EditRevUpdater $editRevUpdater
+		EditRevUpdater $editRevUpdater,
+		BlockedDomainFilter $blockedDomainFilter,
+		PermissionManager $permissionManager
 	) {
 		$this->statsDataFactory = $statsDataFactory;
 		$this->filterRunnerFactory = $filterRunnerFactory;
 		$this->variableGeneratorFactory = $variableGeneratorFactory;
 		$this->editRevUpdater = $editRevUpdater;
+		$this->blockedDomainFilter = $blockedDomainFilter;
+		$this->permissionManager = $permissionManager;
 	}
 
 	/**
@@ -76,7 +86,6 @@ class FilteredActionsHandler implements
 		string $slot = SlotRecord::MAIN
 	) {
 		$startTime = microtime( true );
-
 		if ( !$status->isOK() ) {
 			// Investigate what happens if we skip filtering here (T211680)
 			LoggerFactory::getInstance( 'AbuseFilter' )->info(
@@ -146,6 +155,14 @@ class FilteredActionsHandler implements
 
 		$this->editRevUpdater->setLastEditPage( $page );
 
+		if ( $this->permissionManager->userHasRight( $user, 'abusefilter-bypass-blocked-external-domains' ) ) {
+			return Status::newGood();
+		}
+		$blockedDomainFilterResult = $this->blockedDomainFilter->filter( $vars, $user, $title );
+		if ( $blockedDomainFilterResult instanceof Status ) {
+			return $blockedDomainFilterResult;
+		}
+
 		return Status::newGood();
 	}
 
@@ -158,7 +175,7 @@ class FilteredActionsHandler implements
 		$statusForApi = Status::newGood();
 
 		foreach ( $status->getErrors() as $error ) {
-			list( $filterDescription, $filter ) = $error['params'];
+			[ $filterDescription, $filter ] = $error['params'];
 			$actionsTaken = $allActionsTaken[ $filter ];
 
 			$code = ( $actionsTaken === [ 'warn' ] ) ? 'abusefilter-warning' : 'abusefilter-disallowed';
@@ -275,6 +292,15 @@ class FilteredActionsHandler implements
 			$filterResultApi = self::getApiStatus( $filterResult );
 			// @todo Return all errors instead of only the first one
 			$error = $filterResultApi->getErrors()[0]['message'];
+		} else {
+			if ( $this->permissionManager->userHasRight( $user, 'abusefilter-bypass-blocked-external-domains' ) ) {
+				return true;
+			}
+			$blockedDomainFilterResult = $this->blockedDomainFilter->filter( $vars, $user, $title );
+			if ( $blockedDomainFilterResult instanceof Status ) {
+				$error = $blockedDomainFilterResult->getErrors()[0]['message'];
+				return $blockedDomainFilterResult->isOK();
+			}
 		}
 
 		return $filterResult->isOK();

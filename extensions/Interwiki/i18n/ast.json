@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Xuacu"
+			"Xuacu",
+			"YoaR"
 		]
 	},
 	"interwiki": "Ver y editar los datos d'interwiki",
@@ -43,7 +44,7 @@
 	"interwiki_editintro": "Tas editando un prefixu d'interwiki.\nRecuerda qu'esto pue francer enllaces esistentes.",
 	"interwiki_edited": "El prefixu «$1» camudóse na tabla d'interwikis.",
 	"interwiki_editerror": "El prefixu «$1» nun se pudo camudar na tabla d'interwiki.\nSeique nun esista.",
-	"interwiki-badprefix": "El prefixu d'interwiki conseñáu «$1» contien caráuteres inválidos",
+	"interwiki-badprefix": "El prefixu d'interwiki conseñáu «$1» contién caráuteres inválidos",
 	"interwiki-cannotaddlocallanguage": "El prefixu «$1» casa con un códigu de llingua conocíu. Amestar prefixos interllingüísticos llocales ta desactivao cuando s'usa una base de datos interllingüística global.",
 	"interwiki-submit-empty": "El prefixu y la URL nun puen tar baleros.",
 	"interwiki-submit-invalidurl": "El protocolu de la URL nun ye válidu.",

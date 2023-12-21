@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
+use MediaWiki\Extension\DiscussionTools\SubscriptionItem;
 use MediaWiki\Extension\DiscussionTools\SubscriptionStore;
 use MediaWiki\User\UserIdentity;
 

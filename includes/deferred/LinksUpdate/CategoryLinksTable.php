@@ -7,8 +7,8 @@ use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use NamespaceInfo;
 use ParserOutput;
 use PurgeJobUtils;
 
@@ -104,14 +104,14 @@ class CategoryLinksTable extends TitleLinksTable {
 		$this->newLinks = [];
 		$sourceTitle = Title::castFromPageIdentity( $this->getSourcePage() );
 		$sortKeyInputs = [];
-		foreach ( $parserOutput->getCategories() as $name => $sortKeyPrefix ) {
-			// Fix the type of numeric strings
-			$name = (string)$name;
+		foreach ( $parserOutput->getCategoryNames() as $name ) {
+			$sortKey = $parserOutput->getCategorySortKey( $name );
+			'@phan-var string $sortKey'; // sort key will never be null
 
 			// If the sort key is longer then 255 bytes, it is truncated by DB,
 			// and then doesn't match when comparing existing vs current
 			// categories, causing T27254.
-			$sortKeyPrefix = mb_strcut( $sortKeyPrefix, 0, 255 );
+			$sortKeyPrefix = mb_strcut( $sortKey, 0, 255 );
 
 			$targetTitle = Title::makeTitle( NS_CATEGORY, $name );
 			$this->languageConverter->findVariantLink( $name, $targetTitle, true );
@@ -301,8 +301,7 @@ class CategoryLinksTable extends TitleLinksTable {
 		$lbf = $this->getLBFactory();
 		$size = $this->getBatchSize();
 		// T163801: try to release any row locks to reduce contention
-		$lbf->commitAndWaitForReplication(
-			__METHOD__, $this->getTransactionTicket(), [ 'domain' => $domainId ] );
+		$lbf->commitAndWaitForReplication( __METHOD__, $this->getTransactionTicket() );
 
 		if ( count( $insertedLinks ) + count( $deletedLinks ) < $size ) {
 			$wp->updateCategoryCounts(
@@ -310,15 +309,13 @@ class CategoryLinksTable extends TitleLinksTable {
 				$deletedLinks,
 				$this->getSourcePageId()
 			);
-			$lbf->commitAndWaitForReplication(
-				__METHOD__, $this->getTransactionTicket(), [ 'domain' => $domainId ] );
+			$lbf->commitAndWaitForReplication( __METHOD__, $this->getTransactionTicket() );
 		} else {
 			$addedChunks = array_chunk( $insertedLinks, $size );
 			foreach ( $addedChunks as $chunk ) {
 				$wp->updateCategoryCounts( $chunk, [], $this->getSourcePageId() );
 				if ( count( $addedChunks ) > 1 ) {
-					$lbf->commitAndWaitForReplication(
-						__METHOD__, $this->getTransactionTicket(), [ 'domain' => $domainId ] );
+					$lbf->commitAndWaitForReplication( __METHOD__, $this->getTransactionTicket() );
 				}
 			}
 
@@ -326,8 +323,7 @@ class CategoryLinksTable extends TitleLinksTable {
 			foreach ( $deletedChunks as $chunk ) {
 				$wp->updateCategoryCounts( [], $chunk, $this->getSourcePageId() );
 				if ( count( $deletedChunks ) > 1 ) {
-					$lbf->commitAndWaitForReplication(
-						__METHOD__, $this->getTransactionTicket(), [ 'domain' => $domainId ] );
+					$lbf->commitAndWaitForReplication( __METHOD__, $this->getTransactionTicket() );
 				}
 			}
 

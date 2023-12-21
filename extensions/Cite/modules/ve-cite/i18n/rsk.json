@@ -23,6 +23,8 @@
 	"cite-ve-citationneeded-title": "Потребна референца",
 	"cite-ve-dialog-reference-editing-reused": "Тота референца похаснована {{PLURAL:$1|1=раз|2=два раз|$1 раз}} на тим боку.",
 	"cite-ve-dialog-reference-editing-reused-long": "Тота референца похаснована {{PLURAL:$1|раз|2=два раз|$1 раз}} на тим боку. Пременки хтори ше ту зроби буду применєни на шицких местох дзе ше тота референца ознова хаснує.",
+	"cite-ve-dialog-reference-editing-extends": "То преширенє другей референци.",
+	"cite-ve-dialog-reference-editing-extends-long": "То преширенє другей референци \"$1\".",
 	"cite-ve-dialog-reference-options-group-label": "Похаснуй тоту ґрупу",
 	"cite-ve-dialog-reference-options-group-placeholder": "Общи референци",
 	"cite-ve-dialog-reference-options-name-label": "Ознова похаснуй под тим меном",

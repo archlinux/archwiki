@@ -1,11 +1,27 @@
 {
 	"@metadata": {
 		"authors": [
-			"Laetitia Kb"
+			"Laetitia Kb",
+			"EritajGwadloup",
+			"Histnou"
 		]
 	},
+	"prefs-vector-enable-vector-1-label": "Fo ou sévi èvê Legacy Vector",
+	"vector-languages": "Lang",
+	"vector-language-button-label": "{{PLURAL:$1| lang}}",
+	"vector-no-language-button-label": "Bouté lang",
+	"vector-action-addsection": "Ajouté on sijé",
+	"vector-action-move": "Ba-y on nouvo non",
+	"vector-view-create": "Kréyé",
 	"vector-view-edit": "Modifyé",
 	"vector-view-history": "Historik-la",
 	"vector-view-view": "Li",
-	"vector-more-actions": "Plis"
+	"vector-more-actions": "Plis",
+	"vector-searchsuggest-containing": "Chèché paj ki ni <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Kontni",
+	"vector-toc-beginning": "Konmansman",
+	"vector-main-menu-label": "Méni prensipal",
+	"vector-page-tools-label": "Zouti",
+	"vector-page-tools-general-label": "Jénéral",
+	"vector-unpin-element-label": "Kaché"
 }

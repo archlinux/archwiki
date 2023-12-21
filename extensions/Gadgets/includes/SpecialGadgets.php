@@ -15,9 +15,9 @@ use Html;
 use HTMLForm;
 use InvalidArgumentException;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use Sanitizer;
 use SpecialPage;
-use Title;
 use Xml;
 
 class SpecialGadgets extends SpecialPage {
@@ -31,7 +31,7 @@ class SpecialGadgets extends SpecialPage {
 	public function execute( $par ) {
 		$parts = $par !== null ? explode( '/', $par ) : [];
 
-		if ( count( $parts ) == 2 && $parts[0] == 'export' ) {
+		if ( count( $parts ) === 2 && $parts[0] === 'export' ) {
 			$this->showExportForm( $parts[1] );
 		} else {
 			$this->showMainForm();
@@ -227,27 +227,24 @@ class SpecialGadgets extends SpecialPage {
 
 				// Portion: Show required skins (optional)
 				$requiredSkins = $gadget->getRequiredSkins();
-				// $requiredSkins can be an array, or true (if all skins are supported)
-				if ( is_array( $requiredSkins ) ) {
-					$skins = [];
-					$validskins = $skinFactory->getSkinNames();
-					foreach ( $requiredSkins as $skinid ) {
-						if ( isset( $validskins[$skinid] ) ) {
-							$skins[] = $this->msg( "skinname-$skinid" )->plain();
-						} else {
-							$skins[] = $skinid;
-						}
+				$skins = [];
+				$validskins = $skinFactory->getSkinNames();
+				foreach ( $requiredSkins as $skinid ) {
+					if ( isset( $validskins[$skinid] ) ) {
+						$skins[] = $this->msg( "skinname-$skinid" )->plain();
+					} else {
+						$skins[] = $skinid;
 					}
-					if ( $skins ) {
-						if ( $needLineBreakAfter ) {
-							$output->addHTML( '<br />' );
-						}
-						$output->addHTML(
-							$this->msg( 'gadgets-required-skins', $lang->commaList( $skins ) )
-								->numParams( count( $skins ) )->parse()
-						);
-						$needLineBreakAfter = true;
+				}
+				if ( $skins ) {
+					if ( $needLineBreakAfter ) {
+						$output->addHTML( '<br />' );
 					}
+					$output->addHTML(
+						$this->msg( 'gadgets-required-skins', $lang->commaList( $skins ) )
+							->numParams( count( $skins ) )->parse()
+					);
+					$needLineBreakAfter = true;
 				}
 
 				// Portion: Show required actions (optional)
@@ -261,6 +258,37 @@ class SpecialGadgets extends SpecialPage {
 							->numParams( count( $actions ) )->parse()
 					);
 					$needLineBreakAfter = true;
+				}
+
+				// Portion: Show required namespaces (optional)
+				$namespaces = $gadget->getRequiredNamespaces();
+				if ( $namespaces ) {
+					if ( $needLineBreakAfter ) {
+						$output->addHTML( '<br />' );
+					}
+					$output->addHTML(
+						$this->msg(
+							'gadgets-required-namespaces',
+							$lang->commaList( array_map( function ( int $ns ) use ( $lang ) {
+								return $ns == NS_MAIN
+									? $this->msg( 'blanknamespace' )->text()
+									: $lang->getFormattedNsText( $ns );
+							}, $namespaces ) )
+						)->numParams( count( $namespaces ) )->parse()
+					);
+					$needLineBreakAfter = true;
+				}
+
+				// Portion: Show required content models (optional)
+				$contentModels = $gadget->getRequiredContentModels();
+				if ( $contentModels ) {
+					if ( $needLineBreakAfter ) {
+						$output->addHTML( '<br />' );
+					}
+					$output->addHTML(
+						$this->msg( 'gadgets-required-contentmodels', $lang->commaList( $contentModels ) )
+							->numParams( count( $contentModels ) )->parse()
+					);
 				}
 
 				if ( $gadget->supportsUrlLoad() ) {

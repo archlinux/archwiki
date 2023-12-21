@@ -21,7 +21,6 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
@@ -69,7 +68,7 @@ class DeleteLocalPasswords extends Maintenance {
 			$this->fatalError( "Exactly one of the 'delete', 'prefix', 'unprefix' options must be used\n" );
 		}
 		if ( $this->hasOption( 'prefix' ) || $this->hasOption( 'unprefix' ) ) {
-			$passwordHashTypes = MediaWikiServices::getInstance()->getPasswordFactory()->getTypes();
+			$passwordHashTypes = $this->getServiceContainer()->getPasswordFactory()->getTypes();
 			if (
 				!isset( $passwordHashTypes['null'] )
 				|| $passwordHashTypes['null']['class'] !== InvalidPassword::class
@@ -86,7 +85,7 @@ ERROR
 
 		$user = $this->getOption( 'user', false );
 		if ( $user !== false ) {
-			$userNameUtils = MediaWikiServices::getInstance()->getUserNameUtils();
+			$userNameUtils = $this->getServiceContainer()->getUserNameUtils();
 			$this->user = $userNameUtils->getCanonical( $user );
 			if ( $this->user === false ) {
 				$this->fatalError( "Invalid user name\n" );
@@ -169,18 +168,13 @@ ERROR
 		$dbw = $this->getDB( DB_PRIMARY );
 		do {
 			$this->output( "\t ... querying from '$lastUsername'\n" );
-			$users = $dbw->selectFieldValues(
-				'user',
-				'user_name',
-				[
-					'user_name > ' . $dbw->addQuotes( $lastUsername ),
-				],
-				__METHOD__,
-				[
-					'LIMIT' => $this->getBatchSize(),
-					'ORDER BY' => 'user_name ASC',
-				]
-			);
+			$users = $dbw->newSelectQueryBuilder()
+				->select( 'user_name' )
+				->from( 'user' )
+				->where( [ 'user_name > ' . $dbw->addQuotes( $lastUsername ) ] )
+				->orderBy( 'user_name ASC' )
+				->limit( $this->getBatchSize() )
+				->caller( __METHOD__ )->fetchFieldValues();
 			if ( $users ) {
 				yield $users;
 				$lastUsername = end( $users );

@@ -1,28 +1,20 @@
 .vector-pinnable-header {
-	.vector-feature-page-tools-enabled & {
-		.mixin-vector-dropdown-menu-item();
-		// Override display: flex applied by .mixin-vector-dropdown-menu-item()
-		display: block;
-	}
+	.mixin-vector-dropdown-menu-item();
+	// Override display: flex applied by .mixin-vector-dropdown-menu-item()
+	display: block;
 }
 
-.vector-pinnable-header[ hidden ] {
-	display: none;
-}
-
-.vector-page-tools,
-.vector-toc {
-	.vector-feature-page-tools-enabled .vector-pinned-container & .vector-pinnable-header {
-		// Match styles with tabs in page toolbar to ensure TOC and Page Tools pinnable headers
-		// align with page toolbar border
-		padding: @padding-vertical-tabs;
-		margin-bottom: -1px;
-	}
+.vector-pinned-container .vector-page-tools .vector-pinnable-header,
+.vector-pinned-container .vector-toc .vector-pinnable-header {
+	// Match styles with tabs in page toolbar to ensure TOC and Page Tools pinnable headers
+	// align with page toolbar border
+	padding: @padding-vertical-tabs;
+	margin-bottom: -1px;
 }
 
 .vector-pinnable-header-label {
 	display: inline-block;
-	color: @color-base--subtle;
+	color: @color-subtle;
 	font-size: unit( 14 / @font-size-browser, rem );
 	margin: 0;
 	padding: 0;
@@ -35,28 +27,31 @@
 	border: 0;
 	padding: 0;
 	background-color: transparent;
-	color: @color-primary;
+	color: @color-progressive;
 	cursor: pointer;
+	text-align: left;
 
 	&:hover {
-		color: @color-primary--hover;
+		color: @color-progressive--hover;
 	}
 
-	&:before {
+	&::before {
 		content: '@{msg-brackets-start}';
-		color: @color-base--subtle;
+		color: @color-subtle;
 	}
 
-	&:after {
+	&::after {
 		content: '@{msg-brackets-end}';
-		color: @color-base--subtle;
+		color: @color-subtle;
 	}
 }
 
-.client-js {
-	// Pinnable behavior is only enabled when JS is on
-	.vector-pinnable-header-unpinned .vector-pinnable-header-pin-button,
-	.vector-pinnable-header-pinned .vector-pinnable-header-unpin-button {
-		display: inline-block;
+// Pinnable behavior is only enabled when JS is enabled and on larger viewports
+@media ( min-width: @min-width-desktop ) {
+	&.client-js {
+		.vector-pinnable-header-unpinned .vector-pinnable-header-pin-button,
+		.vector-pinnable-header-pinned .vector-pinnable-header-unpin-button {
+			display: inline-block;
+		}
 	}
 }

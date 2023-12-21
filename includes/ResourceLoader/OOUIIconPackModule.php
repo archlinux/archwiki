@@ -54,7 +54,7 @@ class OOUIIconPackModule extends OOUIImageModule {
 			$data[$theme] = [];
 			// Load and merge the JSON data for all "icons-foo" modules
 			foreach ( self::$knownImagesModules as $module ) {
-				if ( substr( $module, 0, 5 ) === 'icons' ) {
+				if ( str_starts_with( $module, 'icons' ) ) {
 					$moreData = $this->readJSONFile( $this->getThemeImagesPath( $theme, $module ) );
 					if ( $moreData ) {
 						$data[$theme] = array_replace_recursive( $data[$theme], $moreData );
@@ -67,7 +67,7 @@ class OOUIIconPackModule extends OOUIImageModule {
 
 		// Filter out the data for all other icons, leaving only the ones we want for this module
 		$iconsNames = $this->getIcons();
-		foreach ( array_keys( $definition['images'] ) as $iconName ) {
+		foreach ( $definition['images'] as $iconName => $_ ) {
 			if ( !in_array( $iconName, $iconsNames ) ) {
 				unset( $definition['images'][$iconName] );
 			}

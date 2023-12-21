@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * VisualEditor DataModel MWReferencesListNode class.
  *
@@ -84,9 +86,9 @@ ve.dm.MWReferencesListNode.static.matchFunction = function ( domElement ) {
 ve.dm.MWReferencesListNode.static.preserveHtmlAttributes = false;
 
 ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, converter ) {
-	var type = domElements[ 0 ].getAttribute( 'typeof' ) || '';
+	const type = domElements[ 0 ].getAttribute( 'typeof' ) || '';
 
-	var refListNode;
+	let refListNode;
 	// We may have matched a mw:Transclusion wrapping a reference list, so pull out the refListNode
 	if ( type.indexOf( 'mw:Extension/references' ) !== -1 ) {
 		refListNode = domElements[ 0 ];
@@ -96,15 +98,15 @@ ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, conver
 			domElements[ 1 ].querySelector( '[typeof*="mw:Extension/references"]' );
 	}
 
-	var mwDataJSON = refListNode.getAttribute( 'data-mw' );
-	var mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
-	var refGroup = ve.getProp( mwData, 'attrs', 'group' ) || '';
-	var responsiveAttr = ve.getProp( mwData, 'attrs', 'responsive' );
-	var listGroup = 'mwReference/' + refGroup;
-	var templateGenerated = type.indexOf( 'mw:Transclusion' ) !== -1;
-	var isResponsiveDefault = mw.config.get( 'wgCiteResponsiveReferences' );
+	const mwDataJSON = refListNode.getAttribute( 'data-mw' );
+	const mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
+	const refGroup = ve.getProp( mwData, 'attrs', 'group' ) || '';
+	const responsiveAttr = ve.getProp( mwData, 'attrs', 'responsive' );
+	const listGroup = 'mwReference/' + refGroup;
+	const templateGenerated = type.indexOf( 'mw:Transclusion' ) !== -1;
+	const isResponsiveDefault = mw.config.get( 'wgCiteResponsiveReferences' );
 
-	var referencesListData = {
+	let referencesListData = {
 		type: this.name,
 		attributes: {
 			mw: mwData,
@@ -118,9 +120,9 @@ ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, conver
 	if ( mwData.body && mwData.body.html && !templateGenerated ) {
 		// Process the nodes in .body.html as if they were this node's children
 		// Don't process template-generated reflists, that mangles the content (T209493)
-		var contentsDiv = domElements[ 0 ].ownerDocument.createElement( 'div' );
+		const contentsDiv = domElements[ 0 ].ownerDocument.createElement( 'div' );
 		contentsDiv.innerHTML = mwData.body.html;
-		var contentsData = converter.getDataFromDomClean( contentsDiv );
+		const contentsData = converter.getDataFromDomClean( contentsDiv );
 		referencesListData = [ referencesListData ]
 			.concat( contentsData )
 			.concat( [ { type: '/' + this.name } ] );
@@ -129,9 +131,9 @@ ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, conver
 };
 
 ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converter ) {
-	var isForParser = converter.isForParser(),
-		dataElement = data[ 0 ],
-		attrs = dataElement.attributes;
+	const isForParser = converter.isForParser();
+	const dataElement = data[ 0 ];
+	const attrs = dataElement.attributes;
 
 	// If we are sending a template generated ref back to Parsoid, output it as a template.
 	// This works because the dataElement already has mw, originalMw and originalDomIndex properties.
@@ -139,13 +141,13 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 		return ve.dm.MWTransclusionNode.static.toDomElements.call( this, dataElement, doc, converter );
 	}
 
-	var els;
+	let els;
 	if ( !isForParser ) {
 		// Output needs to be read so re-render
-		var modelNode = ve.dm.nodeFactory.createFromElement( dataElement );
+		const modelNode = ve.dm.nodeFactory.createFromElement( dataElement );
 		// Build from original doc's internal list to get all refs (T186407)
 		modelNode.setDocument( converter.originalDocInternalList.getDocument() );
-		var viewNode = ve.ce.nodeFactory.createFromModel( modelNode );
+		const viewNode = ve.ce.nodeFactory.createFromModel( modelNode );
 		viewNode.modified = true;
 		viewNode.update();
 		els = [ doc.createElement( 'div' ) ];
@@ -159,7 +161,7 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 		els = [ doc.createElement( 'div' ) ];
 	}
 
-	var mwData = attrs.mw ? ve.copy( attrs.mw ) : {};
+	const mwData = attrs.mw ? ve.copy( attrs.mw ) : {};
 
 	mwData.name = 'references';
 
@@ -169,10 +171,10 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 		delete mwData.attrs.refGroup;
 	}
 
-	var originalMw = attrs.originalMw;
-	var originalMwData = originalMw && JSON.parse( originalMw );
-	var originalResponsiveAttr = ve.getProp( originalMwData, 'attrs', 'responsive' );
-	var isResponsiveDefault = mw.config.get( 'wgCiteResponsiveReferences' );
+	const originalMw = attrs.originalMw;
+	const originalMwData = originalMw && JSON.parse( originalMw );
+	const originalResponsiveAttr = ve.getProp( originalMwData, 'attrs', 'responsive' );
+	const isResponsiveDefault = mw.config.get( 'wgCiteResponsiveReferences' );
 
 	if ( !(
 		// The original "responsive" attribute hasn't had its meaning changed
@@ -193,8 +195,8 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 		// the document.
 		// TODO: it would be better to do this without needing to fish through
 		// the converter's linear data. Use the DM tree instead?
-		var nextIndex = converter.documentData.indexOf( data[ data.length - 1 ] ) + 1;
-		var nextElement;
+		let nextIndex = converter.documentData.indexOf( data[ data.length - 1 ] ) + 1;
+		let nextElement;
 		while ( ( nextElement = converter.documentData[ nextIndex ] ) ) {
 			if ( nextElement.type[ 0 ] !== '/' ) {
 				break;
@@ -206,16 +208,16 @@ ve.dm.MWReferencesListNode.static.toDomElements = function ( data, doc, converte
 		}
 	}
 
-	var el = els[ 0 ];
+	const el = els[ 0 ];
 	el.setAttribute( 'typeof', 'mw:Extension/references' );
 
-	var contentsData = data.slice( 1, -1 );
+	const contentsData = data.slice( 1, -1 );
 	if ( contentsData.length > 2 ) {
-		var wrapper = doc.createElement( 'div' );
+		const wrapper = doc.createElement( 'div' );
 		converter.getDomSubtreeFromData( data.slice( 1, -1 ), wrapper );
-		var contentsHtml = wrapper.innerHTML; // Returns '' if wrapper is empty
-		var originalHtml = ve.getProp( mwData, 'body', 'html' ) || '';
-		var originalHtmlWrapper = doc.createElement( 'div' );
+		const contentsHtml = wrapper.innerHTML; // Returns '' if wrapper is empty
+		const originalHtml = ve.getProp( mwData, 'body', 'html' ) || '';
+		const originalHtmlWrapper = doc.createElement( 'div' );
 		originalHtmlWrapper.innerHTML = originalHtml;
 		// Only set body.html if contentsHtml and originalHtml are actually different
 		if ( !originalHtmlWrapper.isEqualNode( wrapper ) ) {

@@ -1,12 +1,13 @@
 /*!
  * Styles shared across various special pages.
  */
-@import 'mediawiki.ui/variables.less';
+@import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
 
-/* Special:AllMessages */
+/* Special:AllMessages & Special:ListFiles */
 /* Visually hide repeating text, but leave in for better form navigation on screen readers */
-.mw-special-Allmessages .mw-htmlform-ooui .oo-ui-fieldsetLayout:first-child .oo-ui-fieldsetLayout-header {
+.mw-special-Allmessages .mw-htmlform-ooui .oo-ui-fieldsetLayout:first-child .oo-ui-fieldsetLayout-header,
+.mw-special-Listfiles .mw-htmlform-ooui .oo-ui-fieldsetLayout:first-child .oo-ui-fieldsetLayout-header {
 	.mixin-screen-reader-text();
 }
 
@@ -106,8 +107,8 @@
 
 /* Special:EditWatchlist */
 .mw-watchlistexpiry-msg {
+	color: @color-subtle;
 	margin-left: 0.3em;
-	color: @color-base--subtle;
 }
 
 /* Special:EmailUser */
@@ -129,6 +130,11 @@
 /* stylelint-disable-next-line selector-class-pattern */
 .listgrouprights-revoked {
 	text-decoration: line-through;
+}
+
+/* Special:MergeHistory */
+.mw-special-MergeHistory .mw-mergehistory-explanation {
+	margin-top: 0;
 }
 
 /* Special:MovePage */

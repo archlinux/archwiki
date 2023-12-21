@@ -26,19 +26,14 @@ namespace Cdb;
  */
 abstract class Writer {
 	/**
-	 * The file handle
-	 */
-	protected $handle;
-
-	/**
 	 * File we'll be writing to when we're done
-	 * @var string $realFileName
+	 * @var string
 	 */
 	protected $realFileName;
 
 	/**
 	 * File we write to temporarily until we're done
-	 * @var string $tmpFileName
+	 * @var string
 	 */
 	protected $tmpFileName;
 
@@ -56,32 +51,24 @@ abstract class Writer {
 	}
 
 	/**
-	 * Create the object and open the file
-	 *
-	 * @param string $fileName
-	 */
-	abstract public function __construct( $fileName );
-
-	/**
 	 * Set a key to a given value. The value will be converted to string.
+	 *
 	 * @param string $key
 	 * @param string $value
 	 */
-	abstract public function set( $key, $value );
+	abstract public function set( $key, $value ): void;
 
 	/**
 	 * Close the writer object. You should call this function before the object
 	 * goes out of scope, to write out the final hashtables.
 	 */
-	abstract public function close();
+	abstract public function close(): void;
 
 	/**
 	 * If the object goes out of scope, close it
 	 */
 	public function __destruct() {
-		if ( isset( $this->handle ) ) {
-			$this->close();
-		}
+		$this->close();
 	}
 
 	/**

@@ -22,11 +22,11 @@ use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
-use NamespaceInfo;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\Message\ITextFormatter;
 use Wikimedia\Rdbms\IDatabase;
@@ -290,7 +290,7 @@ class DeletePageTest extends MediaWikiUnitTestCase {
 			);
 			return $wpFactory;
 		};
-		$nsInfo = new NamespaceInfo( $this->createMock( ServiceOptions::class ), $this->createHookContainer() );
+		$nsInfo = new NamespaceInfo( $this->createMock( ServiceOptions::class ), $this->createHookContainer(), [], [] );
 
 		$talkPage = new PageIdentityValue( 42, NS_TALK, 'Test talk page', PageIdentity::LOCAL );
 		yield 'Talk page' => [ $talkPage, $getWpFactory( false ), $nsInfo, 'delete-error-associated-alreadytalk' ];

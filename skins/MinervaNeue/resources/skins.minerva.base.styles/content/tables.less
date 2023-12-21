@@ -49,9 +49,9 @@
 // Move out of .content selector to avoid increased
 // specificty conflicts e.g. with tablesorter (T205945)
 .wikitable {
-	border: 1px solid @colorGray5;
-	// Note older browsers will fall back to @grayLight
-	border-color: fade( @colorGray5, 30 );
+	border: @border-width-base @border-style-base #54595d;
+	// Note older browsers will fall back to @border-color-subtle
+	border-color: fade( #54595d, 30 );
 
 	// We only style cells that are direct children of the wikitable table since
 	// table tags may be used for non-table purposes within the cells.
@@ -59,16 +59,16 @@
 	> tr > td,
 	> * > tr > th,
 	> * > tr > td {
-		border: 1px solid @colorGray5;
-		// Note older browsers will fall back to @grayLight
-		border-color: fade( @colorGray5, 30 );
+		border: @border-width-base @border-style-base #54595d;
+		// Note older browsers will fall back to @border-color-subtle
+		border-color: fade( #54595d, 30 );
 		padding: 0.2em;
 	}
 
 	// Make headings distinguishable
 	> tr > th,
 	> * > tr > th {
-		background-color: @grayLightest;
+		background-color: @background-color-light;
 		text-align: center;
 	}
 }

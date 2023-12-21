@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\SpecialPage\SpecialPage;
 
 /**
  * Mark a revision as patrolled on a page
@@ -29,8 +30,7 @@ use MediaWiki\Linker\LinkRenderer;
  */
 class MarkpatrolledAction extends FormAction {
 
-	/** @var LinkRenderer */
-	private $linkRenderer;
+	private LinkRenderer $linkRenderer;
 
 	/**
 	 * @param Article $article
@@ -128,7 +128,7 @@ class MarkpatrolledAction extends FormAction {
 		$return = SpecialPage::getTitleFor( $returnTo );
 
 		if ( in_array( [ 'markedaspatrollederror-noautopatrol' ], $errors ) ) {
-			$this->getOutput()->setPageTitle( $this->msg( 'markedaspatrollederror' ) );
+			$this->getOutput()->setPageTitleMsg( $this->msg( 'markedaspatrollederror' ) );
 			$this->getOutput()->addWikiMsg( 'markedaspatrollederror-noautopatrol' );
 			$this->getOutput()->returnToMain( null, $return );
 			return true;
@@ -142,7 +142,7 @@ class MarkpatrolledAction extends FormAction {
 			return $errors;
 		}
 
-		$this->getOutput()->setPageTitle( $this->msg( 'markedaspatrolled' ) );
+		$this->getOutput()->setPageTitleMsg( $this->msg( 'markedaspatrolled' ) );
 		$this->getOutput()->addWikiMsg( 'markedaspatrolledtext', $rc->getTitle()->getPrefixedText() );
 		$this->getOutput()->returnToMain( null, $return );
 		return true;

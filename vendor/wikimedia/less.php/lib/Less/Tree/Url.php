@@ -71,7 +71,7 @@ class Less_Tree_Url extends Less_Tree {
 			}
 		}
 
-		return new Less_Tree_URL( $val, $this->currentFileInfo, true );
+		return new Less_Tree_Url( $val, $this->currentFileInfo, true );
 	}
 
 }

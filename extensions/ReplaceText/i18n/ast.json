@@ -35,7 +35,6 @@
 	"replacetext_warning": "'''Avisu:''' Hai {{PLURAL:$1|una páxina|$1 páxines}} que yá {{PLURAL:$1|contién|contienen}} la cadena de sustitución «$2». Si faes esta sustitución nun podrás distinguir los tos cambios d'estes cadenes.",
 	"replacetext_blankwarning": "'''Avisu:''' Como la cadena de sustitución ta balera, esta operación nun sedrá reversible.",
 	"replacetext_continue": "Siguir",
-	"replacetext_announce": "Anunciar eses ediciones per $1 y llistes de siguimientu",
 	"replacetext_editsummary": "Sustitución de testu - de «$1» a «$2»",
 	"replacetext_reminder": "Pa cambiar tamién los enllaces a esta páxina n'otres páxines, por favor, visita $1.",
 	"right-replacetext": "Facer les sustituciones de la cadena na wiki ensembre",

@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"GroupPermissions": {
 		"*": {
@@ -105,10 +105,10 @@
 		"TitleReadWhitelist": "ConfirmEditHooks",
 		"AlternateEditPreview": "ConfirmEditHooks",
 		"ResourceLoaderRegisterModules": "ConfirmEditHooks",
-		"EditPage::showEditForm:fields": "MediaWiki\\Extension\\ConfirmEdit\\Hooks::showEditFormFields",
-		"EditFilterMergedContent": "MediaWiki\\Extension\\ConfirmEdit\\Hooks::confirmEditMerged",
-		"APIGetAllowedParams": "MediaWiki\\Extension\\ConfirmEdit\\Hooks::onAPIGetAllowedParams",
-		"AuthChangeFormFields": "MediaWiki\\Extension\\ConfirmEdit\\Hooks::onAuthChangeFormFields"
+		"EditPage::showEditForm:fields": "ConfirmEditHooks",
+		"EditFilterMergedContent": "ConfirmEditHooks",
+		"APIGetAllowedParams": "ConfirmEditHooks",
+		"AuthChangeFormFields": "ConfirmEditHooks"
 	},
 	"AuthManagerAutoConfig": {
 		"preauth": {

@@ -8,7 +8,6 @@
 
 @amboxPadding: 8px;
 @amboxIconPadding: @amboxPadding * 4;
-@amboxBackground: @colorGray15;
 
 .ambox,
 /* Be more specific than .content table styles in Minerva */
@@ -27,8 +26,8 @@ table.ambox {
 .client-js .ambox {
 	cursor: pointer;
 	width: auto;
-	background: @amboxBackground;
-	color: @colorGray5;
+	background: @background-color-lightest;
+	color: @color-subtle;
 	margin-bottom: 1px;
 
 	tbody {
@@ -57,9 +56,11 @@ table.ambox {
 		padding: 0 !important;
 	}
 
-	td {
+	td,
+	div.mbox-text {
 		position: relative;
-		padding: @amboxPadding @amboxPadding @amboxPadding @amboxIconPadding;
+		// Override !important above if this is a div
+		padding: @amboxPadding @amboxPadding @amboxPadding @amboxIconPadding !important;
 
 		> div,
 		> span {
@@ -102,7 +103,7 @@ table.ambox {
 		display: none;
 	}
 
-	.mw-ui-icon {
+	.mf-icon {
 		position: absolute;
 		left: @amboxPadding;
 		top: 11px;
@@ -117,7 +118,7 @@ table.ambox {
 		line-height: @line-height-content; // sets height for fade & aligns "learn more" to ambox text.
 
 		/* creates a fade under the "learn more" button to avoid overlapping text. */
-		&:before {
+		&::before {
 			content: '';
 			position: absolute;
 			z-index: @z-indexOccluded;
@@ -127,7 +128,7 @@ table.ambox {
 			height: 100%;
 			box-sizing: content-box; // explicitly setting box-sizing so padding extends beyond 100%.
 			padding-left: 4em;
-			background: linear-gradient( to right, fade( @amboxBackground, 0 ) 0, @amboxBackground 3em );
+			background: linear-gradient( to right, fade( @background-color-lightest, 0 ) 0, @background-color-lightest 3em );
 		}
 	}
 
@@ -145,7 +146,7 @@ table.ambox {
 
 			// Move blur to far right last line
 			// https://phabricator.wikimedia.org/T197931#4475197
-			&:before {
+			&::before {
 				top: unit( -@line-height-content, em );
 				width: 10px;
 			}

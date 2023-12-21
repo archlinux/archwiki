@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\Nuke\Hooks;
 
 use MediaWiki\HookContainer\HookContainer;
-use Title;
+use MediaWiki\Title\Title;
 
 /**
  * Handle running Nuke's hooks

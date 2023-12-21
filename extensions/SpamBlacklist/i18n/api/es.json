@@ -5,7 +5,6 @@
 			"MarcoAurelio"
 		]
 	},
-	"apihelp-spamblacklist-description": "Validar uno o más URL contra la lista negra de spam.",
 	"apihelp-spamblacklist-example-1": "Verificar dos URL contra la lista negra",
 	"apihelp-spamblacklist-param-url": "URL que validar contra la lista negra.",
 	"apihelp-spamblacklist-summary": "Validar una o más URLs contra la lista negra de spam."

@@ -3,9 +3,9 @@
 namespace MediaWiki\Extension\Notifications\Gateway;
 
 use Config;
+use MediaWiki\Extension\Notifications\DbFactory;
+use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\User\UserIdentity;
-use MWEchoDbFactory;
-use MWEchoNotifUser;
 
 /**
  * Database gateway which handles direct database interaction with the
@@ -15,7 +15,7 @@ use MWEchoNotifUser;
 class UserNotificationGateway {
 
 	/**
-	 * @var MWEchoDbFactory
+	 * @var DbFactory
 	 */
 	protected $dbFactory;
 
@@ -45,10 +45,10 @@ class UserNotificationGateway {
 
 	/**
 	 * @param UserIdentity $user
-	 * @param MWEchoDbFactory $dbFactory
+	 * @param DbFactory $dbFactory
 	 * @param Config $config
 	 */
-	public function __construct( UserIdentity $user, MWEchoDbFactory $dbFactory, Config $config ) {
+	public function __construct( UserIdentity $user, DbFactory $dbFactory, Config $config ) {
 		$this->user = $user;
 		$this->dbFactory = $dbFactory;
 		$this->config = $config;
@@ -128,7 +128,7 @@ class UserNotificationGateway {
 	}
 
 	/**
-	 * Mark all notification as read, use MWEchoNotifUser::markAllRead() instead
+	 * Mark all notification as read, use NotifUser::markAllRead() instead
 	 * @deprecated may need this when running in a job or revive this when we
 	 * have updateJoin()
 	 */
@@ -161,7 +161,7 @@ class UserNotificationGateway {
 	public function getCappedNotificationCount(
 		$dbSource,
 		array $eventTypesToLoad = [],
-		$cap = MWEchoNotifUser::MAX_BADGE_COUNT
+		$cap = NotifUser::MAX_BADGE_COUNT
 	) {
 		// double check
 		if ( !in_array( $dbSource, [ DB_REPLICA, DB_PRIMARY ] ) ) {
@@ -196,7 +196,7 @@ class UserNotificationGateway {
 	/**
 	 * IMPORTANT: should only call this function if the number of unread notification
 	 * is reasonable, for example, unread notification count is less than the max
-	 * display defined in MWEchoNotifUser::MAX_BADGE_COUNT
+	 * display defined in oNotifUser::MAX_BADGE_COUNT
 	 * @param string $type
 	 * @return int[]
 	 */

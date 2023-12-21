@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Page\DeletePage;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 
 /**
@@ -61,7 +62,7 @@ class JobRunnerTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expectedVal, $results['reached'] );
 	}
 
-	public function provideTestRun() {
+	public static function provideTestRun() {
 		return [
 			[ [], 'none-ready' ],
 			[ [ 'type' => true ], 'none-possible' ],

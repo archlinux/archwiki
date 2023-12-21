@@ -25,7 +25,7 @@ class SkinVector22Test extends \MediaWikiUnitTestCase {
 		'id' => 'p-wikibase-otherprojects',
 	];
 
-	public function provideExtractPageToolsFromSidebar() {
+	public static function provideExtractPageToolsFromSidebar() {
 		return [
 			[
 				[],

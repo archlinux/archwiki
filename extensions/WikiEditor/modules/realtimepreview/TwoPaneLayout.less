@@ -1,21 +1,21 @@
-@import 'mediawiki.ui/variables.less';
+@import 'mediawiki.skin.variables.less';
 
 .ext-WikiEditor-twopanes-TwoPaneLayout {
-	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	display: flex;
 
 	.ext-WikiEditor-twopanes-pane1 {
-		border: 1px solid @colorGray12;
-		border-width: 0 1px 0 0;
+		border-color: @border-color-subtle;
+		border-style: @border-style-base;
+		border-width: 0 @border-width-base 0 0;
 		// Offset by half the difference in padding and the UI affordance.
-		// stylelint-disable-next-line plugin/no-unsupported-browser-features
 		width: ~'calc( 50% - 9px )';
 	}
 
 	.ext-WikiEditor-twopanes-pane2 {
 		position: relative;
-		border: 1px solid @colorGray12;
-		border-width: 0 0 0 1px;
+		border-color: @border-color-subtle;
+		border-style: @border-style-base;
+		border-width: 0 0 0 @border-width-base;
 		flex: 1 1 0;
 		padding: 0;
 		display: flex;

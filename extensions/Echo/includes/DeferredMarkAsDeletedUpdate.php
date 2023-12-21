@@ -1,5 +1,9 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications;
+
+use DeferrableUpdate;
+use DeferredUpdates;
 use MediaWiki\Extension\Notifications\Controller\ModerationController;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Logger\LoggerFactory;
@@ -8,7 +12,7 @@ use MediaWiki\Logger\LoggerFactory;
  * Mark event notifications as deleted at the end of a request.  Used to queue up
  * individual events to mark due to formatting failures.
  */
-class EchoDeferredMarkAsDeletedUpdate implements DeferrableUpdate {
+class DeferredMarkAsDeletedUpdate implements DeferrableUpdate {
 	/**
 	 * @var Event[]
 	 */
@@ -42,7 +46,7 @@ class EchoDeferredMarkAsDeletedUpdate implements DeferrableUpdate {
 					// unrenderable because of replica lag.
 					// Do not moderate it at this time.
 					LoggerFactory::getInstance( 'Echo' )->debug(
-						'EchoDeferredMarkAsDeletedUpdate: Event {eventId} was found unrenderable' .
+						'DeferredMarkAsDeletedUpdate: Event {eventId} was found unrenderable' .
 							' but its associated title exists on primary database. Skipping.',
 						[
 							'eventId' => $event->getId(),

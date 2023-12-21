@@ -5,12 +5,16 @@ namespace MediaWiki\Extension\DiscussionTools;
 use ApiMain;
 use ApiResult;
 use DerivativeContext;
-use DerivativeRequest;
 use IContextSource;
 use MediaWiki\Extension\VisualEditor\ParsoidClient;
 use MediaWiki\Extension\VisualEditor\VisualEditorParsoidClientFactory;
+use MediaWiki\Request\DerivativeRequest;
 use MediaWiki\Revision\RevisionRecord;
-use Title;
+use MediaWiki\Title\Title;
+use MediaWiki\User\TempUser\TempUserCreator;
+use MediaWiki\User\UserFactory;
+use User;
+use WebRequest;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
@@ -19,6 +23,8 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
  *
  * @property VisualEditorParsoidClientFactory $parsoidClientFactory
  * @property CommentParser $commentParser
+ * @property TempUserCreator $tempUserCreator
+ * @property UserFactory $userFactory
  */
 trait ApiDiscussionToolsTrait {
 
@@ -119,6 +125,20 @@ trait ApiDiscussionToolsTrait {
 	}
 
 	/**
+	 * @see ApiParse::getUserForPreview
+	 * @return User
+	 */
+	private function getUserForPreview() {
+		$user = $this->getUser();
+		if ( $this->tempUserCreator->shouldAutoCreate( $user, 'edit' ) ) {
+			return $this->userFactory->newUnsavedTempUser(
+				$this->tempUserCreator->getStashedName( $this->getRequest()->getSession() )
+			);
+		}
+		return $user;
+	}
+
+	/**
 	 * @see VisualEditorParsoidClientFactory
 	 * @return ParsoidClient
 	 */
@@ -152,5 +172,15 @@ trait ApiDiscussionToolsTrait {
 	 * @return IContextSource
 	 */
 	abstract public function getContext();
+
+	/**
+	 * @return User
+	 */
+	abstract public function getUser();
+
+	/**
+	 * @return WebRequest
+	 */
+	abstract public function getRequest();
 
 }

@@ -3,17 +3,21 @@
 namespace Wikimedia\Rdbms;
 
 /**
- * A query builder for SELECT queries with a fluent interface.
+ * Build SELECT queries with a fluent interface.
  *
- * Any particular query builder object should only be used for a single database query,
- * and not be reused afterwards. However, to run multiple similar queries,
- * you can create a “template” query builder to set up most of the query,
- * and then clone the object (and potentially modify the clone) for each individual query.
+ * Each query builder object must be used for a single database query only,
+ * and not be reused afterwards. To run multiple similar queries, you can
+ * create a query builder to set up most of your query, which you can use
+ * as a "template" to clone. You can then modify the cloned object for
+ * each individual query.
  *
- * Note that none of the methods in this class are stable to override.
- * The goal of extending this class is creating specialized query builders,
- * like {@link \MediaWiki\Page\PageSelectQueryBuilder}
+ * Note that the methods in this class are not stable to override.
+ * This class may be extended to create query builders for specific database
+ * tables, such {@link \MediaWiki\Page\PageSelectQueryBuilder}, whilst still
+ * providing the same fluent interface for adding arbitrary additional
+ * conditions and such.
  *
+ * @since 1.35
  * @stable to extend
  * @ingroup Database
  */
@@ -26,22 +30,22 @@ class SelectQueryBuilder extends JoinGroupBase {
 	public const SORT_DESC = 'DESC';
 
 	/**
-	 * @var array The fields to be passed to IDatabase::select()
+	 * @var array The fields to be passed to IReadableDatabase::select()
 	 */
 	private $fields = [];
 
 	/**
-	 * @var array The conditions to be passed to IDatabase::select()
+	 * @var array The conditions to be passed to IReadableDatabase::select()
 	 */
 	private $conds = [];
 
 	/**
-	 * @var string The caller (function name) to be passed to IDatabase::select()
+	 * @var string The caller (function name) to be passed to IReadableDatabase::select()
 	 */
 	private $caller = __CLASS__;
 
 	/**
-	 * @var array The options to be passed to IDatabase::select()
+	 * @var array The options to be passed to IReadableDatabase::select()
 	 */
 	protected $options = [];
 
@@ -50,27 +54,32 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 */
 	private $nextAutoAlias = 1;
 
-	/** @var IDatabase */
-	protected $db;
+	/**
+	 * @var bool True if $this->caller has been set
+	 */
+	private $isCallerOverridden = false;
+
+	/** @var IReadableDatabase */
+	protected IReadableDatabase $db;
 
 	/**
 	 * Only for use in subclasses. To create a SelectQueryBuilder instance,
 	 * use `$db->newSelectQueryBuilder()` instead.
 	 *
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 */
-	public function __construct( IDatabase $db ) {
+	public function __construct( IReadableDatabase $db ) {
 		$this->db = $db;
 	}
 
 	/**
-	 * Change the IDatabase object the query builder is bound to. The specified
-	 * IDatabase will subsequently be used to execute the query.
+	 * Change the IReadableDatabase object the query builder is bound to. The specified
+	 * IReadableDatabase will subsequently be used to execute the query.
 	 *
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @return $this
 	 */
-	public function connection( IDatabase $db ) {
+	public function connection( IReadableDatabase $db ) {
 		if ( $this->db->getType() !== $db->getType() ) {
 			throw new \InvalidArgumentException( __METHOD__ .
 				' cannot switch to a database of a different type.' );
@@ -95,6 +104,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 *   - join_conds: The join conditions
 	 *   - joins: Alias for join_conds. If both joins and join_conds are
 	 *     specified, the values will be merged.
+	 *   - caller: The caller signature
 	 *
 	 * @return $this
 	 */
@@ -116,6 +126,9 @@ class SelectQueryBuilder extends JoinGroupBase {
 		}
 		if ( isset( $info['joins'] ) ) {
 			$this->joinConds( (array)$info['joins'] );
+		}
+		if ( isset( $info['caller'] ) ) {
+			$this->caller( $info['caller'] );
 		}
 		return $this;
 	}
@@ -145,6 +158,26 @@ class SelectQueryBuilder extends JoinGroupBase {
 	}
 
 	/**
+	 * Merge another query builder with this one. Append the other builder's
+	 * tables, joins, fields, conditions and options to this one.
+	 *
+	 * @since 1.41
+	 * @param SelectQueryBuilder $builder
+	 * @return $this
+	 */
+	public function merge( SelectQueryBuilder $builder ) {
+		$this->rawTables( $builder->tables );
+		$this->fields( $builder->fields );
+		$this->where( $builder->conds );
+		$this->options( $builder->options );
+		$this->joinConds( $builder->joinConds );
+		if ( $builder->isCallerOverridden ) {
+			$this->caller( $builder->caller );
+		}
+		return $this;
+	}
+
+	/**
 	 * Get an empty SelectQueryBuilder which can be used to build a subquery
 	 * of this query.
 	 * @return SelectQueryBuilder
@@ -157,7 +190,9 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Add a single table to the SELECT query. Alias for table().
 	 *
 	 * @param string $table The table name
+	 * @param-taint $table exec_sql
 	 * @param string|null $alias The table alias, or null for no alias
+	 * @param-taint $alias exec_sql
 	 * @return $this
 	 */
 	public function from( $table, $alias = null ) {
@@ -168,6 +203,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Add multiple tables. It's recommended to use join() and leftJoin() instead in new code.
 	 *
 	 * @param string[] $tables
+	 * @param-taint $tables exec_sql
 	 * @return $this
 	 */
 	public function tables( $tables ) {
@@ -186,9 +222,10 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * fragment. If the array key is non-numeric, the key is taken to be an
 	 * alias for the field.
 	 *
-	 * @see IDatabase::select()
+	 * @see IReadableDatabase::select()
 	 *
 	 * @param string|string[] $fields
+	 * @param-taint $fields exec_sql
 	 * @return $this
 	 */
 	public function fields( $fields ) {
@@ -204,6 +241,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Add a field or an array of fields to the query. Alias for fields().
 	 *
 	 * @param string|string[] $fields
+	 * @param-taint $fields exec_sql
 	 * @return $this
 	 */
 	public function select( $fields ) {
@@ -215,7 +253,9 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * an SQL fragment. It is unsafe to pass user input to this function.
 	 *
 	 * @param string $field
+	 * @param-taint $field exec_sql
 	 * @param string|null $alias
+	 * @param-taint $alias exec_sql
 	 * @return $this
 	 */
 	public function field( $field, $alias = null ) {
@@ -228,10 +268,21 @@ class SelectQueryBuilder extends JoinGroupBase {
 	}
 
 	/**
+	 * Remove all fields from the query.
+	 *
+	 * @return $this
+	 */
+	public function clearFields() {
+		$this->fields = [];
+		return $this;
+	}
+
+	/**
 	 * Add conditions to the query. The supplied conditions will be appended
 	 * to the existing conditions, separated by AND.
 	 *
 	 * @param string|array $conds
+	 * @param-taint $conds exec_sql_numkey
 	 *
 	 * May be either a string containing a single condition, or an array of
 	 * conditions. If an array is given, the conditions constructed from each
@@ -253,13 +304,13 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Note that expressions are often DBMS-dependent in their syntax.
 	 * DBMS-independent wrappers are provided for constructing several types of
 	 * expression commonly used in condition queries. See:
-	 *    - IDatabase::buildLike()
-	 *    - IDatabase::conditional()
+	 *    - IReadableDatabase::buildLike()
+	 *    - IReadableDatabase::conditional()
 	 *
 	 * Untrusted user input is safe in the values of string keys, however untrusted
 	 * input must not be used in the array key names or in the values of numeric keys.
 	 * Escaping of untrusted input used in values of numeric keys should be done via
-	 * IDatabase::addQuotes()
+	 * IReadableDatabase::addQuotes()
 	 *
 	 * @return $this
 	 */
@@ -272,7 +323,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 					// @phan-suppress-previous-line PhanTypeMismatchDimFetch
 					// T288882
 					$this->conds[] = $this->db->makeList(
-						[ $key => $cond ], IDatabase::LIST_AND );
+						[ $key => $cond ], IReadableDatabase::LIST_AND );
 				} else {
 					$this->conds[$key] = $cond;
 				}
@@ -287,6 +338,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Add conditions to the query. Alias for where().
 	 *
 	 * @param string|array $conds
+	 * @param-taint $conds exec_sql_numkey
 	 * @return $this
 	 */
 	public function andWhere( $conds ) {
@@ -297,6 +349,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Add conditions to the query. Alias for where().
 	 *
 	 * @param string|array $conds
+	 * @param-taint $conds exec_sql_numkey
 	 * @return $this
 	 */
 	public function conds( $conds ) {
@@ -305,7 +358,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 
 	/**
 	 * Manually append to the $join_conds array which will be passed to
-	 * IDatabase::select(). This is not recommended for new code. Instead,
+	 * IReadableDatabase::select(). This is not recommended for new code. Instead,
 	 * join() and leftJoin() should be used.
 	 *
 	 * @param array $joinConds
@@ -425,7 +478,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	}
 
 	/**
-	 * Add a HAVING clause. May be either an string containing a HAVING clause
+	 * Add a HAVING clause. May be either a string containing a HAVING clause
 	 * or an array of conditions building the HAVING clause. If an array is
 	 * given, the conditions constructed from each element are combined with
 	 * AND.
@@ -488,7 +541,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * If a string is given, the index hint is applied to the most recently
 	 * appended table or alias. If an array is given, it is assumed to be an
 	 * associative array with the alias names in the keys and the indexes in
-	 * the values, as in the USE INDEX option to IDatabase::select(). The
+	 * the values, as in the USE INDEX option to IReadableDatabase::select(). The
 	 * array will be merged with the existing value.
 	 *
 	 * @param string|string[] $index
@@ -505,7 +558,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * If a string is given, the index hint is applied to the most recently
 	 * appended table or alias. If an array is given, it is assumed to be an
 	 * associative array with the alias names in the keys and the indexes in
-	 * the values, as in the IGNORE INDEX option to IDatabase::select(). The
+	 * the values, as in the IGNORE INDEX option to IReadableDatabase::select(). The
 	 * array will be merged with the existing value.
 	 *
 	 * @param string|string[] $index
@@ -604,7 +657,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 
 	/**
 	 * Manually set an option in the $options array to be passed to
-	 * IDatabase::select()
+	 * IReadableDatabase::select()
 	 *
 	 * @param string $name The option name
 	 * @param mixed $value The option value, or null for a boolean option
@@ -621,7 +674,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 
 	/**
 	 * Manually set multiple options in the $options array to be passed to
-	 * IDatabase::select().
+	 * IReadableDatabase::select().
 	 *
 	 * @param array $options
 	 * @return $this
@@ -635,10 +688,12 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Set the method name to be included in an SQL comment.
 	 *
 	 * @param string $fname
+	 * @param-taint $fname exec_sql
 	 * @return $this
 	 */
 	public function caller( $fname ) {
 		$this->caller = $fname;
+		$this->isCallerOverridden = true;
 		return $this;
 	}
 
@@ -646,6 +701,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Run the constructed SELECT query and return all results.
 	 *
 	 * @return IResultWrapper
+	 * @return-taint tainted
 	 */
 	public function fetchResultSet() {
 		return $this->db->select( $this->tables, $this->fields, $this->conds, $this->caller,
@@ -658,6 +714,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * has been added to the builder.
 	 *
 	 * @return mixed
+	 * @return-taint tainted
 	 */
 	public function fetchField() {
 		if ( count( $this->fields ) !== 1 ) {
@@ -675,6 +732,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * be called when only one field has been added to the builder.
 	 *
 	 * @return array
+	 * @return-taint tainted
 	 */
 	public function fetchFieldValues() {
 		if ( count( $this->fields ) !== 1 ) {
@@ -691,6 +749,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * there were no results, return false.
 	 *
 	 * @return \stdClass|false
+	 * @return-taint tainted
 	 */
 	public function fetchRow() {
 		return $this->db->selectRow( $this->tables, $this->fields, $this->conds, $this->caller,
@@ -701,6 +760,11 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 * Run the SELECT query, and return the number of results. This typically
 	 * uses a subquery to discard the actual results on the server side, and
 	 * is useful when counting rows with a limit.
+	 *
+	 * To count rows without a limit, it's more efficient to use a normal
+	 * COUNT() expression, for example:
+	 *
+	 *   $queryBuilder->select( 'COUNT(*)' )->from( 'page' )->fetchField()
 	 *
 	 * @return int
 	 */
@@ -739,18 +803,6 @@ class SelectQueryBuilder extends JoinGroupBase {
 			throw new \UnexpectedValueException(
 				__METHOD__ . ' expects the query to have at most one field' );
 		}
-	}
-
-	/**
-	 * Run the SELECT query with the FOR UPDATE option. The field list is ignored.
-	 *
-	 * @deprecated since 1.40, use $this->forUpdate()->fetchRowCount() if you need
-	 *   the return value or $this->forUpdate()->acquireRowLocks() if you don't.
-	 * @return int
-	 */
-	public function lockForUpdate() {
-		return $this->db->lockForUpdate( $this->tables, $this->conds, $this->caller,
-			$this->options, $this->joinConds );
 	}
 
 	/**
@@ -797,6 +849,7 @@ class SelectQueryBuilder extends JoinGroupBase {
 	 *   - join_conds: The join conditions. This can also be given a different
 	 *     name by passing a $joinsName parameter, since some legacy code uses
 	 *     the name "joins".
+	 *   - caller: The caller signature
 	 */
 	public function getQueryInfo( $joinsName = 'join_conds' ) {
 		$info = [
@@ -805,6 +858,9 @@ class SelectQueryBuilder extends JoinGroupBase {
 			'conds' => $this->conds,
 			'options' => $this->options,
 		];
+		if ( $this->caller !== __CLASS__ ) {
+			$info['caller'] = $this->caller;
+		}
 		$info[ $joinsName ] = $this->joinConds;
 		return $info;
 	}

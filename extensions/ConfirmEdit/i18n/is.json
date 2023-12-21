@@ -9,7 +9,6 @@
 	},
 	"captcha-edit": "Til að breyta þessari síðu, vinsamlegast leystu verkefnið að neðan og skrifaðu svarið í\nreitinn ([[Special:Captcha/help|frekari upplýsingar]]):",
 	"captcha-edit-fail": "Staðfestingarkóðinn var rangur eða ekki til staðar.",
-	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Breyting þín felur í sér viðbætta ytri tengla. Til að verjast sjálfvirku\nauglýsingarusli, biðjum við þig vinsamlegast að leysa verkefnið að neðan og skrifa svarið í reitinn til að vista breytinguna þína. ([[Special:Captcha/help|frekari upplýsingar]]):",
 	"captcha-badlogin": "Til að verjast sjálfvirkum leyniorðaárásum, biðjum við þig vinsamlegast að leysa verkefnið að neðan og skrifa svarið í reitinn ([[Special:Captcha/help|frekari upplýsingar]]):",
 	"captcha-createaccount": "Til að verjast sjálfvirkri stofnun aðganga, biðjum þig vinsamlegast að leysa verkefnið að neðan og skrifa svarið í reitinn ([[Special:Captcha/help|frekari upplýsingar]]):",

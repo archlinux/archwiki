@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"André Costa (WMSE)",
 			"Boivie",
 			"Fluff",
 			"GameOn",
+			"Jon Harald Søby",
 			"Jopparn",
 			"Lejonel",
 			"Lokal Profil",
@@ -12,9 +14,7 @@
 			"Najami",
 			"Sabelöga",
 			"Skalman",
-			"WikiPhoenix",
-			"Jon Harald Søby",
-			"André Costa (WMSE)"
+			"WikiPhoenix"
 		]
 	},
 	"cite-desc": "Lägger till märkena <code>&lt;ref&gt;</code> och <code>&lt;references&gt;</code> för referenser till källor",
@@ -46,5 +46,14 @@
 	"cite_references_link_accessibility_back_label": "Hoppa längst upp",
 	"cite_section_preview_references": "Förhandsgranskning av referenser",
 	"cite_warning": "Referensvarning: $1",
-	"cite_warning_sectionpreview_no_text": "Taggen <code>&lt;ref&gt;</code> med namnet <code>$1</code> kan inte förhandsgranskas då den definieras utanför det aktuella avsnittet eller inte har definierats alls."
+	"cite_warning_sectionpreview_no_text": "Taggen <code>&lt;ref&gt;</code> med namnet <code>$1</code> kan inte förhandsgranskas då den definieras utanför det aktuella avsnittet eller inte har definierats alls.",
+	"cite-wikieditor-tool-reference": "Referens",
+	"cite-wikieditor-help-page-references": "Referenser",
+	"cite-wikieditor-help-content-reference-description": "Referens",
+	"cite-wikieditor-help-content-named-reference-description": "Namngiven referens",
+	"cite-wikieditor-help-content-rereference-description": "Ytterligare användning av samma referens",
+	"cite-wikieditor-help-content-showreferences-description": "Visa referenser",
+	"cite-wikieditor-help-content-reference-example-text1": "Sidtext.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Länktext], ytterligare text.",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Länktext]"
 }

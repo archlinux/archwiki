@@ -23,21 +23,21 @@
 
 namespace MediaWiki\Session;
 
-use BadMethodCallException;
 use BagOStuff;
 use CachedBagOStuff;
-use Config;
+use LogicException;
+use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
 use MWException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
-use User;
-use WebRequest;
 
 /**
  * This serves as the entry point to the MediaWiki session handling system.
@@ -442,7 +442,7 @@ class SessionManager implements SessionManagerInterface {
 	 * The intention is that the named account will never again be usable for
 	 * normal login (i.e. there is no way to undo the prevention of access).
 	 *
-	 * @internal For use from \User::newSystemUser only
+	 * @internal For use from \MediaWiki\User\User::newSystemUser only
 	 * @param string $username
 	 */
 	public function preventSessionsForUser( $username ) {
@@ -473,7 +473,7 @@ class SessionManager implements SessionManagerInterface {
 			$this->sessionProviders = [];
 			$objectFactory = MediaWikiServices::getInstance()->getObjectFactory();
 			foreach ( $this->config->get( MainConfigNames::SessionProviders ) as $spec ) {
-				/** @var SessionProvider */
+				/** @var SessionProvider $provider */
 				$provider = $objectFactory->createObject( $spec );
 				$provider->init(
 					$this->logger,
@@ -1010,7 +1010,7 @@ class SessionManager implements SessionManagerInterface {
 	public static function resetCache() {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) && !defined( 'MW_PARSER_TEST' ) ) {
 			// @codeCoverageIgnoreStart
-			throw new BadMethodCallException( __METHOD__ . ' may only be called from unit tests!' );
+			throw new LogicException( __METHOD__ . ' may only be called from unit tests!' );
 			// @codeCoverageIgnoreEnd
 		}
 
@@ -1067,7 +1067,7 @@ class SessionManager implements SessionManagerInterface {
 			return;
 		}
 		$mwuser = $session->getRequest()->getCookie( 'mwuser-sessionId' );
-		$now = (int)\MWTimestamp::now( TS_UNIX );
+		$now = (int)\MediaWiki\Utils\MWTimestamp::now( TS_UNIX );
 
 		// Record (and possibly log) that the IP is using the current session.
 		// Don't touch the stored data unless we are changing the IP or re-adding an expired one.

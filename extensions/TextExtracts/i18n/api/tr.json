@@ -5,7 +5,6 @@
 			"SaldırganSincap"
 		]
 	},
-	"apihelp-query+extracts-description": "Verilen sayfaların düz metin veya sınırlı HTML alıntılarını döndürür.",
 	"apihelp-query+extracts-summary": "Verilen sayfaların düz metin veya sınırlı HTML alıntılarını döndürür.",
 	"apihelp-query+extracts-param-chars": "Döndürülecek karakter sayısı. Döndürülen gerçek metin biraz daha uzun olabilir.",
 	"apihelp-query+extracts-param-sentences": "Geri döndürecek birçok cümle.",

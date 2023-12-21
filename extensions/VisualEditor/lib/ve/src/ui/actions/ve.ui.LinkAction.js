@@ -12,6 +12,7 @@
  * @extends ve.ui.Action
  * @constructor
  * @param {ve.ui.Surface} surface Surface to act on
+ * @param {string} [source]
  */
 ve.ui.LinkAction = function VeUiLinkAction() {
 	// Parent constructor
@@ -183,6 +184,7 @@ ve.ui.actionFactory.register( ve.ui.LinkAction );
 // Delayed initialization (wait until ve.init.platform exists)
 ve.init.Platform.static.initializedPromise.then( function () {
 	ve.ui.LinkAction.static.autolinkRegExp =
+		// eslint-disable-next-line security/detect-non-literal-regexp
 		new RegExp(
 			'\\b' + ve.init.platform.getUnanchoredExternalLinkUrlProtocolsRegExp().source + '\\S+$',
 			'i'

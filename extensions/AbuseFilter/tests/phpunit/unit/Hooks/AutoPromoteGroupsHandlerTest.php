@@ -22,7 +22,7 @@ class AutoPromoteGroupsHandlerTest extends MediaWikiUnitTestCase {
 		return $registry;
 	}
 
-	public function provideOnGetAutoPromoteGroups_nothingToDo(): array {
+	public static function provideOnGetAutoPromoteGroups_nothingToDo(): array {
 		return [
 			[ true, [] ],
 			[ false, [] ],
@@ -48,7 +48,7 @@ class AutoPromoteGroupsHandlerTest extends MediaWikiUnitTestCase {
 		$this->assertFalse( $cache->hasKey( 'local:abusefilter:blockautopromote:quick:1' ) );
 	}
 
-	public function provideOnGetAutoPromoteGroups(): array {
+	public static function provideOnGetAutoPromoteGroups(): array {
 		return [
 			[ 0, [ 'autoconfirmed' ], [ 'autoconfirmed' ] ],
 			[ 1000, [ 'autoconfirmed' ], [] ],

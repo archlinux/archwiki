@@ -4,7 +4,6 @@
 			"Xuacu"
 		]
 	},
-	"apihelp-echomarkread-description": "Marcar les notificaciones como lleíes pal usuariu actual.",
 	"apihelp-echomarkread-summary": "Marcar les notificaciones como lleíes pal usuariu actual.",
 	"apihelp-echomarkread-param-list": "Llista d'IDs de notificaciones pa marcar como lleíes.",
 	"apihelp-echomarkread-param-unreadlist": "Llista d'IDs de notificaciones pa marcar como non lleíes.",
@@ -13,12 +12,10 @@
 	"apihelp-echomarkread-example-1": "Marcar la notificación 8 como lleída.",
 	"apihelp-echomarkread-example-2": "Marcar toles notificaciones como lleíes",
 	"apihelp-echomarkread-example-3": "Marcar la notificación 1 como non lleída",
-	"apihelp-echomarkseen-description": "Marcar les notificaciones como vistes pal usuariu actual.",
 	"apihelp-echomarkseen-summary": "Marcar les notificaciones como vistes pal usuariu actual.",
 	"apihelp-echomarkseen-example-1": "Marcar los avisos de tolos tipos como lleíos",
 	"apihelp-echomarkseen-param-type": "Tipu d'avisos pa marcar como lleíos: 'alert' (alerta), 'message' (mensaxe) o 'all' (toos).",
 	"apihelp-echomarkseen-param-timestampFormat": "Formatu de la marca de tiempu a usar pa la salida, 'ISO_8601' o 'MW'. 'MW' tá anticuao equí, de mou que tolos clientes tendríen de cambiase a 'ISO_8601'. Esti parámetru va desaniciase, y 'ISO_8601' sedrá l'únicu formatu de salida.",
-	"apihelp-query+notifications-description": "Recibir les notificaciones n'espera pal usuariu actual.",
 	"apihelp-query+notifications-summary": "Recibir les notificaciones n'espera pal usuariu actual.",
 	"apihelp-query+notifications-param-prop": "Detalles a solicitar.",
 	"apihelp-query+notifications-param-sections": "Les secciones d'avisu a consultar (esto ye, dalguna combinación de 'alert' y 'message').",
@@ -41,7 +38,6 @@
 	"apihelp-query+notifications-param-bundle": "Si hai qu'amosar los avisos compatibles con agrupamientu non lleíos acordies coles regles d'agrupamientu de tipos de notificación.",
 	"apihelp-query+notifications-example-1": "Llista d'avisos",
 	"apihelp-query+notifications-example-2": "Llista d'avisos, agrupaos por seición, incluyendo contadores",
-	"apihelp-query+unreadnotificationpages-description": "Llograr les páxines pa les qu'hai notificaciones ensin lleer pal usuariu actual.",
 	"apihelp-query+unreadnotificationpages-summary": "Llograr les páxines pa les qu'hai notificaciones ensin lleer pal usuariu actual.",
 	"apihelp-query+unreadnotificationpages-param-grouppages": "Agrupar les páxines d'alderique xunto coles sos páxines principales, y agrupar los avisos non asociaos con una páxina xuntos colos de la páxina del usuariu actual.",
 	"apihelp-query+unreadnotificationpages-param-limit": "Númberu máximu de páxines a devolver.",

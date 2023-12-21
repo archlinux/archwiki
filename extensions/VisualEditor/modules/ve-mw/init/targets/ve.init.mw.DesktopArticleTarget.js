@@ -88,36 +88,51 @@ OO.inheritClass( ve.init.mw.DesktopArticleTarget, ve.init.mw.ArticleTarget );
 
 /* Static Properties */
 
-ve.init.mw.DesktopArticleTarget.static.actionGroups = [
+ve.init.mw.DesktopArticleTarget.static.toolbarGroups = ve.copy( ve.init.mw.DesktopArticleTarget.static.toolbarGroups );
+ve.init.mw.DesktopArticleTarget.static.toolbarGroups.push(
 	{
 		name: 'help',
-		include: [ 'help', 'notices' ]
+		align: 'after',
+		type: 'mwHelpList',
+		icon: 'help',
+		indicator: null,
+		include: [ { group: 'help' } ],
+		promote: [ 'mwUserGuide' ]
+	},
+	{
+		name: 'notices',
+		align: 'after',
+		include: [ { group: 'notices' } ]
 	},
 	{
 		name: 'pageMenu',
+		align: 'after',
 		type: 'list',
 		icon: 'menu',
 		indicator: null,
 		title: ve.msg( 'visualeditor-pagemenu-tooltip' ),
 		label: ve.msg( 'visualeditor-pagemenu-tooltip' ),
 		invisibleLabel: true,
-		include: [ 'meta', 'categories', 'settings', 'advancedSettings', 'languages', 'templatesUsed', 'changeDirectionality', 'findAndReplace' ]
+		include: [ { group: 'utility' } ],
+		demote: [ 'changeDirectionality', 'findAndReplace' ]
 	},
 	{
 		name: 'editMode',
+		align: 'after',
 		type: 'list',
 		icon: 'edit',
 		title: ve.msg( 'visualeditor-mweditmode-tooltip' ),
 		label: ve.msg( 'visualeditor-mweditmode-tooltip' ),
 		invisibleLabel: true,
-		include: [ 'editModeVisual', 'editModeSource' ]
+		include: [ { group: 'editMode' } ]
 	},
 	{
 		name: 'save',
+		align: 'after',
 		type: 'bar',
-		include: [ 'showSave' ]
+		include: [ { group: 'save' } ]
 	}
-];
+);
 
 /**
  * Compatibility map used with jQuery.client to decide if a browser should
@@ -268,7 +283,7 @@ ve.init.mw.DesktopArticleTarget.prototype.attachToolbar = function () {
 	// Make sure notices actually exists, because this might be a mode-switch and
 	// we've already removed it.
 	var editNotices = this.getEditNotices(),
-		actionTools = this.actionsToolbar.tools;
+		actionTools = this.toolbar.tools;
 	if ( editNotices && editNotices.length && actionTools.notices ) {
 		actionTools.notices.setNotices( editNotices );
 	} else if ( actionTools.notices ) {
@@ -295,7 +310,7 @@ ve.init.mw.DesktopArticleTarget.prototype.attachToolbar = function () {
  * @inheritdoc
  */
 ve.init.mw.DesktopArticleTarget.prototype.setupToolbarSaveButton = function () {
-	this.toolbarSaveButton = this.actionsToolbar.getToolGroupByName( 'save' ).items[ 0 ];
+	this.toolbarSaveButton = this.toolbar.getToolGroupByName( 'save' ).items[ 0 ];
 };
 
 /**
@@ -418,6 +433,10 @@ ve.init.mw.DesktopArticleTarget.prototype.activate = function ( dataPromise ) {
 
 		$( 'html' ).addClass( 've-activating' );
 		ve.promiseAll( [ this.activatingDeferred, this.toolbarSetupDeferred ] ).done( function () {
+			if ( !target.suppressNormalStartupDialogs ) {
+				target.maybeShowWelcomeDialog();
+				target.maybeShowMetaDialog();
+			}
 			target.afterActivate();
 		} ).fail( function () {
 			$( 'html' ).removeClass( 've-activating' );
@@ -646,7 +665,8 @@ ve.init.mw.DesktopArticleTarget.prototype.teardown = function ( trackMechanism )
 
 		// Event tracking
 		if ( trackMechanism ) {
-			ve.track( 'mwedit.abort', {
+			ve.track( 'editAttemptStep', {
+				action: 'abort',
 				type: abortType,
 				mechanism: trackMechanism,
 				mode: abortedMode
@@ -736,7 +756,7 @@ ve.init.mw.DesktopArticleTarget.prototype.surfaceReady = function () {
 		} );
 	}
 
-	var metaList = this.getSurface().getModel().getMetaList();
+	var metaList = this.getSurface().getModel().getDocument().getMetaList();
 
 	metaList.connect( this, {
 		insert: 'onMetaItemInserted',
@@ -750,7 +770,7 @@ ve.init.mw.DesktopArticleTarget.prototype.surfaceReady = function () {
 	// Parent method
 	ve.init.mw.DesktopArticleTarget.super.prototype.surfaceReady.apply( this, arguments );
 
-	var redirectMetaItems = this.getSurface().getModel().getMetaList().getItemsInGroup( 'mwRedirect' );
+	var redirectMetaItems = metaList.getItemsInGroup( 'mwRedirect' );
 	if ( redirectMetaItems.length ) {
 		this.setFakeRedirectInterface( redirectMetaItems[ 0 ].getAttribute( 'title' ) );
 	} else {
@@ -758,10 +778,6 @@ ve.init.mw.DesktopArticleTarget.prototype.surfaceReady = function () {
 	}
 
 	this.setupUnloadHandlers();
-	if ( !this.suppressNormalStartupDialogs ) {
-		this.maybeShowWelcomeDialog();
-		this.maybeShowMetaDialog();
-	}
 
 	this.activatingDeferred.resolve();
 	this.events.trackActivationComplete();
@@ -778,7 +794,7 @@ ve.init.mw.DesktopArticleTarget.prototype.onMetaItemInserted = function ( metaIt
 			this.setFakeRedirectInterface( metaItem.getAttribute( 'title' ) );
 			break;
 		case 'mwCategory':
-			var metaList = this.getSurface().getModel().getMetaList();
+			var metaList = this.getSurface().getModel().getDocument().getMetaList();
 			this.rebuildCategories( metaList.getItemsInGroup( 'mwCategory' ) );
 			break;
 	}
@@ -797,7 +813,7 @@ ve.init.mw.DesktopArticleTarget.prototype.onMetaItemRemoved = function ( metaIte
 			this.setFakeRedirectInterface( null );
 			break;
 		case 'mwCategory':
-			var metaList = this.getSurface().getModel().getMetaList();
+			var metaList = this.getSurface().getModel().getDocument().getMetaList();
 			this.rebuildCategories( metaList.getItemsInGroup( 'mwCategory' ) );
 			break;
 	}
@@ -851,16 +867,11 @@ ve.init.mw.DesktopArticleTarget.prototype.onViewTabClick = function ( e ) {
  * @inheritdoc
  */
 ve.init.mw.DesktopArticleTarget.prototype.saveComplete = function ( data ) {
-	// Desktop post-edit notification
-	if ( this.pageExists && !this.restoring && data.newrevid !== undefined ) {
-		// Append postEdit module to the list that will be loaded in the parent method
-		data.modules = data.modules.concat( [ 'mediawiki.action.view.postEdit' ] );
-	}
-
 	// Parent method
 	ve.init.mw.DesktopArticleTarget.super.prototype.saveComplete.apply( this, arguments );
 
-	if ( this.pageExists && !this.restoring ) {
+	// If there is no content, then parent method will reload the whole page
+	if ( !data.nocontent ) {
 		// Fix permalinks
 		if ( data.newrevid !== undefined ) {
 			$( '#t-permalink' ).add( '#coll-download-as-rl' ).find( 'a' ).each( function () {
@@ -872,12 +883,7 @@ ve.init.mw.DesktopArticleTarget.prototype.saveComplete = function ( data ) {
 
 		// Actually fire the postEdit hook now that the save is complete
 		if ( data.newrevid !== undefined ) {
-			mw.hook( 'postEdit' ).fire( {
-				// The following messages are used here:
-				// * postedit-confirmation-published
-				// * postedit-confirmation-saved
-				message: ve.msg( 'postedit-confirmation-' + ( mw.config.get( 'wgEditSubmitButtonLabelPublish' ) ? 'published' : 'saved' ), mw.user )
-			} );
+			require( 'mediawiki.action.view.postEdit' ).fireHook( 'saved' );
 		}
 	}
 };
@@ -984,24 +990,32 @@ ve.init.mw.DesktopArticleTarget.prototype.teardownToolbar = function () {
  */
 ve.init.mw.DesktopArticleTarget.prototype.changeDocumentTitle = function () {
 	var title = mw.Title.newFromText( this.getPageName() );
-
-	// Use the real title if we loaded a view page, otherwise reconstruct it
-	this.originalDocumentTitle = this.isViewPage ? document.title : ve.msg( 'pagetitle', title.getPrefixedText() );
-
-	// Reconstruct an edit title
-	document.title = ve.msg( 'pagetitle',
+	var pageTitleMsg = mw.message( 'pagetitle',
 		ve.msg(
 			this.pageExists ? 'editing' : 'creating',
 			title.getPrefixedText()
 		)
 	);
+
+	// T317600
+	if ( pageTitleMsg.isParseable() ) {
+		// Use the real title if we loaded a view page, otherwise reconstruct it
+		this.originalDocumentTitle = this.isViewPage ? document.title : ve.msg( 'pagetitle', title.getPrefixedText() );
+		// Reconstruct an edit title
+		document.title = pageTitleMsg.text();
+	} else {
+		mw.log.warn( 'VisualEditor: MediaWiki:Pagetitle contains unsupported syntax. ' +
+			'https://www.mediawiki.org/wiki/Manual:Messages_API#Feature_support_in_JavaScript' );
+	}
 };
 
 /**
  * Restore the original document title.
  */
 ve.init.mw.DesktopArticleTarget.prototype.restoreDocumentTitle = function () {
-	document.title = this.originalDocumentTitle;
+	if ( this.originalDocumentTitle ) {
+		document.title = this.originalDocumentTitle;
+	}
 };
 
 /**
@@ -1085,8 +1099,8 @@ ve.init.mw.DesktopArticleTarget.prototype.updateHistoryState = function () {
 	var veaction = this.getDefaultMode() === 'visual' ? 'edit' : 'editsource',
 		section = this.section;
 
-	// Push veaction=edit(source) url in history (if not already. If we got here by a veaction=edit(source)
-	// permalink then it will be there already and the constructor called #activate)
+	// Push veaction=edit(source) url in history (if not already present).
+	// If we got here from DesktopArticleTarget.init, then it will be already present.
 	if (
 		!this.actFromPopState &&
 		(
@@ -1168,6 +1182,13 @@ ve.init.mw.DesktopArticleTarget.prototype.restorePage = function () {
 			// We have an oldid in the query string but it's the most recent one, so remove it
 			url.searchParams.delete( 'oldid' );
 		}
+
+		// Remove parameters which are only intended for the editor, not for read mode
+		url.searchParams.delete( 'editintro' );
+		url.searchParams.delete( 'preload' );
+		url.searchParams.delete( 'preloadparams[]' );
+		url.searchParams.delete( 'preloadtitle' );
+		url.searchParams.delete( 'summary' );
 
 		// If there are any other query parameters left, re-use that URL object.
 		// Otherwise use the canonical style view URL (T44553, T102363).
@@ -1338,16 +1359,16 @@ ve.init.mw.DesktopArticleTarget.prototype.maybeShowMetaDialog = function () {
 				) {
 					// Show "switched" popup
 					var popup = new mw.libs.ve.SwitchPopupWidget( 'visual' );
-					target.actionsToolbar.tools.editModeSource.toolGroup.$element.append( popup.$element );
+					target.toolbar.tools.editModeSource.toolGroup.$element.append( popup.$element );
 					popup.toggle( true );
-				} else if ( target.actionsToolbar.tools.notices ) {
+				} else if ( target.toolbar.tools.notices ) {
 					// Show notices
-					target.actionsToolbar.tools.notices.getPopup().toggle( true );
+					target.toolbar.tools.notices.getPopup().toggle( true );
 				}
 			} );
 	}
 
-	var redirectMetaItems = this.getSurface().getModel().getMetaList().getItemsInGroup( 'mwRedirect' );
+	var redirectMetaItems = this.getSurface().getModel().getDocument().getMetaList().getItemsInGroup( 'mwRedirect' );
 	if ( redirectMetaItems.length ) {
 		var windowAction = ve.ui.actionFactory.create( 'window', this.getSurface() );
 		windowAction.open( 'meta', { page: 'settings' } );
@@ -1387,7 +1408,8 @@ ve.init.mw.DesktopArticleTarget.prototype.onBeforeUnload = function () {
  */
 ve.init.mw.DesktopArticleTarget.prototype.onUnload = function () {
 	if ( !this.submitting ) {
-		ve.track( 'mwedit.abort', {
+		ve.track( 'editAttemptStep', {
+			action: 'abort',
 			type: this.edited ? 'unknown-edited' : 'unknown',
 			mechanism: 'navigate',
 			mode: this.surface ? this.surface.getMode() : this.getDefaultMode()
@@ -1439,7 +1461,12 @@ ve.init.mw.DesktopArticleTarget.prototype.switchToFallbackWikitextEditor = funct
 
 	if ( !modified ) {
 		ve.track( 'activity.editor-switch', { action: 'source-desktop' } );
-		ve.track( 'mwedit.abort', { type: 'switchnochange', mechanism: 'navigate', mode: 'visual' } );
+		ve.track( 'editAttemptStep', {
+			action: 'abort',
+			type: 'switchnochange',
+			mechanism: 'navigate',
+			mode: 'visual'
+		} );
 		this.submitting = true;
 		return prefPromise.then( function () {
 			var url = new URL( target.viewUrl );
@@ -1462,7 +1489,12 @@ ve.init.mw.DesktopArticleTarget.prototype.switchToFallbackWikitextEditor = funct
 	} else {
 		return this.serialize( this.getDocToSave() ).then( function ( data ) {
 			ve.track( 'activity.editor-switch', { action: 'source-desktop' } );
-			ve.track( 'mwedit.abort', { type: 'switchwith', mechanism: 'navigate', mode: 'visual' } );
+			ve.track( 'editAttemptStep', {
+				action: 'abort',
+				type: 'switchwith',
+				mechanism: 'navigate',
+				mode: 'visual'
+			} );
 			target.submitWithSaveFields( { wpDiff: true, wpAutoSummary: '' }, data.content );
 		} );
 	}

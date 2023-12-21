@@ -7,7 +7,6 @@
 			"Toniher"
 		]
 	},
-	"apihelp-visualeditor-description": "Torna a HTML5 per a una pàgina des del servei Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "En guardar-ho, s'estableix la data i hora de la revisió que s'ha editat. S'utilitza per detectar conflictes d'edició.",
 	"apihelp-visualeditor-param-cachekey": "Per serialitzar or comparar les versions, utilitza el resultat d'una sol·licitud anterior de serialització amb aquesta constrasenya. Anul·la $1html.",
 	"apihelp-visualeditor-param-etag": "ETag a enviar.",
@@ -18,7 +17,6 @@
 	"apihelp-visualeditor-param-pst": "Pre-desar transformar wikitext abans d'enviar-lo a Parsoid (paction=parsefragment).",
 	"apihelp-visualeditor-param-starttimestamp": "En desar-ho, s'estableix la data i hora de la revisió que s'ha editat. S'utilitza per detectar conflictes d'edició.",
 	"apihelp-visualeditor-param-wikitext": "Wikitext per enviar a Parsoid per convertir-ho a HTML (paction=parsefragment).",
-	"apihelp-visualeditoredit-description": "Desa una pàgina HTML5 a MediaWiki (convertit a wikitext amb el servei Parsoid)",
 	"apihelp-visualeditoredit-param-basetimestamp": "En desar-ho, s'estableix la data i hora de la revisió que s'ha editat. S'utilitza per detectar conflictes d'edició.",
 	"apihelp-visualeditoredit-param-cachekey": "Utilitzar el resultat d'una anterior serializeforcache petició amb aquesta clau. Anul·la $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "ID del captcha (en desar amb una resposta de captcha),",

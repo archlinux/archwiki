@@ -44,51 +44,29 @@ class Cite {
 	 */
 	public const BOOK_REF_PROPERTY = 'ref-extends';
 
-	/**
-	 * @var bool
-	 */
-	private $isSectionPreview;
-
-	/**
-	 * @var FootnoteMarkFormatter
-	 */
-	private $footnoteMarkFormatter;
-
-	/**
-	 * @var ReferencesFormatter
-	 */
-	private $referencesFormatter;
-
-	/**
-	 * @var ErrorReporter
-	 */
-	private $errorReporter;
+	private bool $isSectionPreview;
+	private FootnoteMarkFormatter $footnoteMarkFormatter;
+	private ReferencesFormatter $referencesFormatter;
+	private ErrorReporter $errorReporter;
 
 	/**
 	 * True when a <ref> tag is being processed.
 	 * Used to avoid infinite recursion
-	 *
-	 * @var bool
 	 */
-	private $mInCite = false;
+	private bool $mInCite = false;
 
 	/**
 	 * @var null|string The current group name while parsing nested <ref> in <references>. Null when
 	 *  parsing <ref> outside of <references>. Warning, an empty string is a valid group name!
 	 */
-	private $inReferencesGroup = null;
+	private ?string $inReferencesGroup = null;
 
 	/**
 	 * Error stack used when defining refs in <references>
-	 *
 	 * @var string[]
 	 */
-	private $mReferencesErrors = [];
-
-	/**
-	 * @var ReferenceStack
-	 */
-	private $referenceStack;
+	private array $mReferencesErrors = [];
+	private ReferenceStack $referenceStack;
 
 	/**
 	 * @param Parser $parser
@@ -118,11 +96,11 @@ class Cite {
 	 * @param ?string $text Raw, untrimmed wikitext content of the <ref> tag, if any
 	 * @param string[] $argv Arguments as given in <ref name=…>, already trimmed
 	 *
-	 * @return string|false False in case a <ref> tag is not allowed in the current context
+	 * @return string|null Null in case a <ref> tag is not allowed in the current context
 	 */
-	public function ref( Parser $parser, ?string $text, array $argv ) {
+	public function ref( Parser $parser, ?string $text, array $argv ): ?string {
 		if ( $this->mInCite ) {
-			return false;
+			return null;
 		}
 
 		$this->mInCite = true;
@@ -184,7 +162,7 @@ class Cite {
 			return StatusValue::newFatal( 'cite_error_ref_too_many_keys' );
 		}
 
-		if ( $dir !== null && !in_array( strtolower( $dir ), [ 'ltr', 'rtl' ] ) ) {
+		if ( $dir !== null && !in_array( strtolower( $dir ), [ 'ltr', 'rtl' ], true ) ) {
 			return StatusValue::newFatal( 'cite_error_ref_invalid_dir', $dir );
 		}
 
@@ -394,7 +372,7 @@ class Cite {
 
 		if ( count( $allValues ) > $maxCount ) {
 			// A <ref> must have a name (can be null), but <references> can't have one
-			$status->fatal( in_array( 'name', $allowedAttributes )
+			$status->fatal( in_array( 'name', $allowedAttributes, true )
 				? 'cite_error_ref_too_many_keys'
 				: 'cite_error_references_invalid_parameters'
 			);
@@ -410,11 +388,11 @@ class Cite {
 	 * @param ?string $text Raw, untrimmed wikitext content of the <references> tag, if any
 	 * @param string[] $argv Arguments as given in <references …>, already trimmed
 	 *
-	 * @return string|false False in case a <references> tag is not allowed in the current context
+	 * @return string|null Null in case a <references> tag is not allowed in the current context
 	 */
-	public function references( Parser $parser, ?string $text, array $argv ) {
+	public function references( Parser $parser, ?string $text, array $argv ): ?string {
 		if ( $this->mInCite || $this->inReferencesGroup !== null ) {
-			return false;
+			return null;
 		}
 
 		$ret = $this->guardedReferences( $parser, $text, $argv );
@@ -442,7 +420,7 @@ class Cite {
 		$this->inReferencesGroup = $group ?? self::DEFAULT_GROUP;
 
 		if ( $text !== null && trim( $text ) !== '' ) {
-			if ( substr_count( $text, Parser::MARKER_PREFIX . "-references-" ) ) {
+			if ( str_contains( $text, Parser::MARKER_PREFIX . "-references-" ) ) {
 				return $this->errorReporter->halfParsed( $parser, 'cite_error_included_references' );
 			}
 

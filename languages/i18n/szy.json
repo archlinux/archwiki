@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Akamycoco",
+			"Amire80",
 			"BaRaN6161 TURK",
 			"Benel",
 			"Bunukwiki",
@@ -9,8 +10,7 @@
 			"Iyumu",
 			"Matma Rex",
 			"Tokoabibi",
-			"Xiplus",
-			"Amire80"
+			"Xiplus"
 		]
 	},
 	"tog-underline": "nu sasaan sacuzu’ masasiket:",
@@ -576,7 +576,7 @@
 	"previewerrortext": "mitanam pataayaway miazih sumad nu misu sa mungangaw.",
 	"blockedtitle": "misaungayay malangat tuway",
 	"blockedtext": "<strong> misaungayay a kalungangan nu misu saca IP puenengan malangat tuway.</strong>\n\nmalangat tu kisu nay $1,\nmahicaay ku <em>$2</em>.\n\n*  milangat miteka a tuki ：$8\n*  milangat pahezek a tuki ：$6\n*  mahizaay malangat a tukusay：$7\n\nkapah kisu patakus $1 saca zumaay a [[{{MediaWiki:Grouppage-sysop}}|mikuwanay]] matatengil malangatay a mahizaay a munday.\namahica kisu i [[Special:Preferences|setin tu kanamuhan]] misetin tu cacay kapahay a imyiyo(email) puenengan, zumasatu caay henay malangat tigami sasahicaan, kya taneng kisu micaliw \" imyiyo(Email) patakus tina misaungayay \" a sasahicaan apatakus mahizaay mikuwanay.\nIP puenengan nu misu ayzasa ku $3, tina malangatay a ID ku #$5.\nanu palita kisu sa, pakeliten ipabaway a pulita kalunasulitan.",
-	"autoblockedtext": "zayhan nasawniay zuma a cacay misaungayay malangat nu $1, IP puenengan nu misu lunuk  malangat tuway.\nkya mahicaay saku:\n\n:<em>$2</em>\n\n*  milangat miteka a tuki ：$8\n*  milangat pahezek a tuki ：$6\n*  mahizaay malangat a tusukay：$7\n\nkapah kisu patakus $1 saca zumaay a [[{{MediaWiki:Grouppage-sysop}}|mikuwanay]] matatengil milangatay a mahizaay munday.\namahica kisu i [[Special:Preferences|setin tu kanamuhan]] misetin tu cacay silaheciay a imyiyo(email) puenengan, zumasatu caay henay malangat tigami sasahicaan, kya taneng kisu micaliw \" imyiyo(Email) patakus tina misaungayay \" a sasahicaan apatakus mahizaay mikuwanay. \nIP puenengan nu misu ayzasa ku $3, tina malangatay a ID ku #$5.\nanu palita kisu sa, pakeliten ipabaway a pulita kalunasulitan",
+	"autoblockedtext": "zayhan nasawniay zuma a cacay misaungayay malangat nu $1, IP puenengan nu misu lunuk malangat tuway.\nkya mahicaay saku:\n\n:<em>$2</em>\n\n* milangat miteka a tuki ：$8\n* milangat pahezek a tuki ：$6\n* mahizaay malangat a tusukay：$7\n\nkapah kisu patakus $1 saca zumaay a [[{{MediaWiki:Grouppage-sysop}}|mikuwanay]] matatengil milangatay a mahizaay munday.\namahica kisu i [[Special:Preferences|setin tu kanamuhan]] misetin tu cacay silaheciay a imyiyo(email) puenengan, zumasatu caay henay malangat tigami sasahicaan, kya taneng kisu micaliw \" imyiyo(Email) patakus tina misaungayay \" a sasahicaan apatakus mahizaay mikuwanay. \nIP puenengan nu misu ayzasa ku $3, tina malangatay a ID ku #$5.\nanu palita kisu sa, pakeliten ipabaway a pulita kalunasulitan",
 	"systemblockedtext": "misaungayay a kalungangan nu misu saca IP puenengan nay MediaWiki lunuk malangat tuway，mahicaay mahiza isasa’：\n\n:<em>$2</em>\n\n* milangat miteka a tuki: $8\n* milangat pahezek a tuki: $6\n* malangatay a misaungayay: $7\n\nIP puenengan nu misu ayza sa ku $3.\npipabeli ku ipabaway a cesyun i mipalita",
 	"blockednoreason": "caay pasaheci tu mahicaay",
 	"whitelistedittext": "piayawen $1 sakapah mikawaway-kalumyiti kasabelih.",
@@ -668,7 +668,6 @@
 	"slot-name-main": "sausi",
 	"content-model-wikitext": "Wikitext",
 	"content-model-text": "sulit a dada’",
-	"content-model-javascript": "JavaScript",
 	"content-json-empty-object": "inayi’ay a tuutuud",
 	"content-json-empty-array": "inayi’ay a papazengan tu nisulitan",
 	"duplicate-args-warning": "<strong>patalaw:</strong> [[:$1]] miawza [[:$2]] a \"$3\" aazihen-sulyang pisaungay mangsiw tu cacay，pisaungay dada’ nipabeli sazikuzay a aazihen-sulyang sulyang.",
@@ -698,8 +697,8 @@
 	"undo-failure": "nay mikawaway-kalumyiti a sumad izaw sasula’cus，tina mikawaway-kalumyiti caay patiku.",
 	"undo-norev": "uyni mikawaway-kalumyiti inayi’ saca masipu tuway, la’cus patiku",
 	"undo-nochange": "tina mikawaway-kalumyiti mapatiku tuway.",
-	"undo-summary": "palawpes nay [[Special:Contributions/$2|$2]] ([[User talk:$2|sasukamu]]) sapisanga’ay a sumad $1",
-	"undo-summary-username-hidden": "patiku midimut misaungayay sumad $1",
+	"undo-summary": "palawpes nay [[Special:Contributions/$2|$2]] ([[User talk:$2|sasukamu]]) sapisanga’ay a sumad [[Special:Diff/$1|$1]]",
+	"undo-summary-username-hidden": "patiku midimut misaungayay sumad [[Special:Diff/$1|$1]]",
 	"viewpagelogs": "ciwsace kina kasabelih a nasulitan nakawawan",
 	"nohistory": "tina kasabilih inayi’ amahicahica tu sumad a nasulitan.",
 	"currentrev": "sabaluhay masumad",
@@ -870,7 +869,6 @@
 	"search-interwiki-more-results": "sayadahay a heci",
 	"search-relatedarticle": "mahizaay",
 	"searchall": "hamin",
-	"showingresults": "isasa’ay paazih nay saka <strong>$2</strong> miteka, pulung {{PLURAL:$1|<strong>1</strong>ku heci|<strong>$1</strong> ku heci}}",
 	"showingresultsinrange": "isasa’ paazih nay saka <strong>$2</strong> ta saka <strong>$3</strong> a {{PLURAL:$1|<strong>$1</strong> heci}}:",
 	"search-showingresults": "{{PLURAL:$4|saka <strong>$1</strong> a heci, pulung <strong>$3</strong>|saka <strong>$1-$2</strong> a heci, pulung <strong>$3</strong>}}",
 	"search-nonefound": "nayi’ matatungusay palalitemuh tu kawaw maheciay.",

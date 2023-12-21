@@ -11,7 +11,7 @@
 			curElement = form.elements[ i ];
 
 			if ( curElement.type === 'checkbox' && curElement.id !== 'create-redirect' &&
-				curElement.id !== 'watch-pages' && curElement.id !== 'doAnnounce' ) {
+				curElement.id !== 'watch-pages' && curElement.id !== 'botEdit' ) {
 				curElement.checked = !curElement.checked;
 			}
 		}

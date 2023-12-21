@@ -6,7 +6,6 @@
 			"Sfic"
 		]
 	},
-	"apihelp-echomarkread-description": "वर्तमान सदस्य की अधिसूचनाओं पढ़ी गई रेखांकित करें।",
 	"apihelp-echomarkread-summary": "वर्तमान सदस्य के लिए अधिसूचनाओं को पठित चिह्नित करें।",
 	"apihelp-echomarkread-param-list": "अधिसूचनाओं के आई०डी० की सूची जिन्हें पढ़े जाने के तौर पर रेखांकित करना है।",
 	"apihelp-echomarkread-param-unreadlist": "अपठित चिह्नित करने के लिए अधिसूचना ID-ओं की एक सूची।",
@@ -16,12 +15,10 @@
 	"apihelp-echomarkread-example-1": "अधिसूचना ८ को पढ़े जाने के तौर पर चिन्हित करें",
 	"apihelp-echomarkread-example-2": "सभी अधिसूचनाओं को पढ़े जाने के तौर पर चिन्हित करें",
 	"apihelp-echomarkread-example-3": "अधिसूचना 1 को अपठित चिह्नित करें",
-	"apihelp-echomarkseen-description": "वर्तमान सदस्य की अधिसूचनाओं पढ़ी गई रेखांकित करें।",
 	"apihelp-echomarkseen-summary": "वर्तमान सदस्य के लिए अधिसूचनाओं को देखा गया चिह्नित करें।",
 	"apihelp-echomarkseen-example-1": "अधिसूचनाओं को देखे जाने के तौर पर चिन्हित करें",
 	"apihelp-echomarkseen-param-type": "देखा गया चिह्नित करने के लिए अधिसूचनाओं के प्रकार: 'alert', 'message', या 'all'।",
 	"apihelp-echomarkseen-param-timestampFormat": "आउटपुट के लिए प्रयुक्त टाइमस्टैम्प प्रारूप, 'ISO_8601' या 'MW'। 'MW' यहाँ पर कालग्रस्त है, तो सभी क्लाइंट्स को 'ISO_8601' में बदल लेना चाहिए। यह पैरामीटर हटा दिया जाएगा, और 'ISO_8601' एकमात्र आउटपुट प्रारूप बन जाएगा।",
-	"apihelp-echomute-description": "विशिष्ट सदस्यों या पृष्ठों से अधिसूचनाएँ म्यूट या अनम्यूट करें",
 	"apihelp-echomute-summary": "विशिष्ट सदस्यों या पृष्ठों से अधिसूचनाएँ म्यूट या अनम्यूट करें।",
 	"apihelp-echomute-param-type": "किस म्यूट सूची पर जोड़ना है या जिससे हटाना है",
 	"apihelp-echomute-param-mute": "म्यूट सूची पर जोड़ने के लिए पृष्ठ या सदस्य",

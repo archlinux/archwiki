@@ -28,6 +28,9 @@
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Profiler\ProfilingContext;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use Wikimedia\AtEase\AtEase;
 
@@ -43,6 +46,8 @@ wfThumbMain();
 
 function wfThumbMain() {
 	global $wgTrivialMimeDetection, $wgRequest;
+
+	ProfilingContext::singleton()->init( MW_ENTRY_POINT, 'stream' );
 
 	// Don't use fancy MIME detection, just check the file extension for jpg/gif/png
 	$wgTrivialMimeDetection = true;
@@ -272,7 +277,7 @@ function wfStreamThumb( array $params ) {
 	// Get the normalized thumbnail name from the parameters...
 	try {
 		$thumbName = $img->thumbName( $params );
-		if ( !strlen( $thumbName ) ) { // invalid params?
+		if ( !strlen( $thumbName ?? '' ) ) { // invalid params?
 			throw new MediaTransformInvalidParametersException(
 				'Empty return from File::thumbName'
 			);
@@ -359,7 +364,7 @@ function wfStreamThumb( array $params ) {
 
 	$thumbProxyUrl = $img->getRepo()->getThumbProxyUrl();
 
-	if ( strlen( $thumbProxyUrl ) ) {
+	if ( strlen( $thumbProxyUrl ?? '' ) ) {
 		wfProxyThumbnailRequest( $img, $thumbName );
 		// No local fallback when in proxy mode
 		return;
@@ -422,12 +427,12 @@ function wfProxyThumbnailRequest( $img, $thumbName ) {
 	$secret = $img->getRepo()->getThumbProxySecret();
 
 	// Pass a secret key shared with the proxied service if any
-	if ( strlen( $secret ) ) {
+	if ( strlen( $secret ?? '' ) ) {
 		$req->setHeader( 'X-Swift-Secret', $secret );
 	}
 
 	// Send request to proxied service
-	$status = $req->execute();
+	$req->execute();
 
 	\MediaWiki\Request\HeaderCallback::warnIfHeadersSent();
 
@@ -564,7 +569,7 @@ function wfExtractThumbRequestInfo( $thumbRel ) {
 	// Check if this is a thumbnail of an original in the local file repo
 	if ( preg_match( "!^((archive/)?$hashDirReg([^/]*)/([^/]*))$!", $thumbRel, $m ) ) {
 		[ /*all*/, $rel, $archOrTemp, $filename, $thumbname ] = $m;
-	// Check if this is a thumbnail of an temp file in the local file repo
+	// Check if this is a thumbnail of a temp file in the local file repo
 	} elseif ( preg_match( "!^(temp/)($hashDirReg([^/]*)/([^/]*))$!", $thumbRel, $m ) ) {
 		[ /*all*/, $archOrTemp, $rel, $filename, $thumbname ] = $m;
 	} else {
@@ -622,7 +627,7 @@ function wfExtractThumbParams( $file, $params ) {
 
 	// As a last ditch fallback, use the traditional common parameters
 	if ( preg_match( '!^(page(\d*)-)*(\d*)px-[^/]*$!', $thumbname, $matches ) ) {
-		list( /* all */, /* pagefull */, $pagenum, $size ) = $matches;
+		[ /* all */, /* pagefull */, $pagenum, $size ] = $matches;
 		$params['width'] = $size;
 		if ( $pagenum ) {
 			$params['page'] = $pagenum;

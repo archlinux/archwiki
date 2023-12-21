@@ -10,7 +10,8 @@
 			"Rxy",
 			"Shirayuki",
 			"Sujiniku",
-			"Yuukin0248"
+			"Yuukin0248",
+			"Ant176"
 		]
 	},
 	"syntaxhighlight-desc": "[http://pygments.org/ Pygments - Python 構文ハイライト機能] を利用したタグ <code>&lt;syntaxhighlight&gt;</code> を提供する",
@@ -19,7 +20,7 @@
 	"syntaxhighlight-enclose-category": "非推奨のenclose引数を使用しているページ",
 	"syntaxhighlight-enclose-category-desc": "構文ハイライトで非推奨のenclose引数を使用しているページ。",
 	"syntaxhighlight-source-category": "非推奨のsourceタグを使用しているページ",
-	"syntaxhighlight-source-category-desc": "構文ハイライトで非推奨のsoueceタグを使用しているページ。",
+	"syntaxhighlight-source-category-desc": "構文ハイライトで非推奨のsourceタグを使用しているページ。",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "コード",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "言語",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(なし)",

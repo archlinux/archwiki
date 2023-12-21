@@ -328,6 +328,17 @@
 	"abusefilter-http-error": "http ߝߎ߬ߕߎ߲߬ߕߌ ߓߘߊ߫ ߟߊߞߏߟߐ߲߫: $1",
 	"abusefilter-view-privatedetails-submit": "ߜߎ߲߬ߘߎ߬ߘߐ߬ ߝߊߙߊ߲ߝߊ߯ߛߌ ߟߎ߬ ߦߋ߫",
 	"abusefilter-view-privatedetails-legend": "ߜߎ߲߬ߘߎ߬ߘߐ߬ ߝߊߙߊ߲ߝߊ߯ߛߌ ߟߎ߬ ߦߋ߫",
+	"abusefilter-blocked-domains-notes": "ߦߟߌߣߐ ߟߎ߬",
+	"abusefilter-blocked-domains-add-submit": "ߊ߬ ߞߙߊߓߊ߫",
+	"abusefilter-blocked-domains-domain-header": "ߡߊ߬ߘߎ߮:",
+	"abusefilter-blocked-domains-notes-header": "ߦߟߌߣߐ ߟߎ߬",
+	"abusefilter-blocked-domains-actions-header": "ߞߍߟߌ ߟߎ߬",
+	"abusefilter-blocked-domains-remove": "ߊ߬ ߛߋ߲߬ߓߐ߫",
+	"abusefilter-blocked-domains-remove-title": "ߘߊߞߎ߲߫ ߓߟߏߕߍ߰ߣߍ߲ ߘߏ߫ ߛߋ߲߬ߓߐ߫",
+	"abusefilter-blocked-domains-remove-explanation-initial": "ߒ߬ߓߊ߬ ߌ ߞߍߕߐ߫ ߦߋ߫ ߘߊߞߎ߲߫ ߓߟߏߕߍ߰ߣߍ߲ ߠߎ߬ ߟߋ߬ ߦߋ߫ ߟߊ߫ ߛߙߍߘߍ ߣߌ߲߬ ߘߐ߫",
+	"abusefilter-blocked-domains-remove-reason": "ߊ߬ ߞߎ߲߭",
+	"abusefilter-blocked-domains-remove-submit": "ߊ߬ ߛߋ߲߬ߓߐ߫",
+	"abusefilter-blocked-domains-attempted": "ߌ ߦߋ߫ ߛߓߍߟߌ ߡߍ߲ ߠߊߥߊ߲߬ߞߊ߬ߞߏ ߘߐ߫ ߣߌ߲߬، ߏ߬ ߓߟߏߕߍ߰ߣߍ߲߬ ߦߴߊ߲ ߠߊ߫ ߛߍ߲ߛߍ߲ߟߊ߲ ߓߟߏ߫ ߟߋ߬. ߘߊߞߎ߲ ߢߌ߲߬ ߠߎ߬ ߓߟߏߕߍ߰ߣߍ߲߬ ߦߋ߫ ߟߋ߬߸ ߓߊߏ߬ ߊ߬ߟߎ߬ ߓߘߊ߫: $1 ߝߊ߬ߙߊ߫",
 	"abusefilter-log-ip-not-available": "ߏ߬ ߕߴߦߋ߲߬",
 	"notification-link-text-show-filter": "ߛߍ߲ߛߍ߲ߟߊ߲ ߦߌ߬ߘߊ߬"
 }

@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * VisualEditor UserInterface MediaWiki UseExistingReferenceCommand class.
  *
@@ -36,9 +38,9 @@ ve.ui.MWUseExistingReferenceCommand.prototype.isExecutable = function ( fragment
 		return false;
 	}
 
-	var groups = fragment.getDocument().getInternalList().getNodeGroups();
-	for ( var groupName in groups ) {
-		if ( groupName.lastIndexOf( 'mwReference/' ) === 0 && groups[ groupName ].indexOrder.length ) {
+	const groups = fragment.getDocument().getInternalList().getNodeGroups();
+	for ( const groupName in groups ) {
+		if ( groupName.indexOf( 'mwReference/' ) === 0 && groups[ groupName ].indexOrder.length ) {
 			return true;
 		}
 	}

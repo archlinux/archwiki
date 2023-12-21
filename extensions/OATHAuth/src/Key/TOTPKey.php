@@ -187,7 +187,7 @@ class TOTPKey implements IAuthKey {
 		foreach ( $this->scratchTokens as $i => $scratchToken ) {
 			if ( hash_equals( $token, $scratchToken ) ) {
 				// If we used a scratch token, remove it from the scratch token list.
-				// This is saved below via OATHUserRepository::persist, TOTP::getDataFromUser.
+				// This is saved below via OATHUserRepository::persist
 				array_splice( $this->scratchTokens, $i, 1 );
 
 				$logger->info( 'OATHAuth user {user} used a scratch token from {clientip}', [
@@ -200,8 +200,8 @@ class TOTPKey implements IAuthKey {
 
 				/** @var OATHUserRepository $userRepo */
 				$userRepo = MediaWikiServices::getInstance()->getService( 'OATHUserRepository' );
-				$user->addKey( $this );
-				$user->setModule( $module );
+				// TODO: support for multiple keys
+				$user->setKeys( [ $this ] );
 				$userRepo->persist( $user, $clientIP );
 
 				return true;

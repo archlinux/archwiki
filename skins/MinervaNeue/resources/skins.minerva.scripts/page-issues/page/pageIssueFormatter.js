@@ -21,7 +21,7 @@
 			$clickContainer = multiple ? issue.$el.parents( '.mbox-text' ) : issue.$el;
 
 		$issueContainer.prepend(
-			issue.issue.icon.$el.clone().addClass( 'mw-ui-icon-small' )
+			issue.issue.icon.$el.clone()
 		);
 		$issueContainer.prepend( $learnMoreEl );
 
@@ -34,7 +34,7 @@
 	/**
 	 * Modifies the page DOM to insert a page-issue notice below the title of the page,
 	 * containing a link with a message like "this page has issues".
-	 * Used on talk & category namespaces, or when page-issue banners have been disabled.s
+	 * Used on category namespaces, or when page-issue banners have been disabled.
 	 *
 	 * @param {string} labelText
 	 * @param {string} section

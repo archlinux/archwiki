@@ -8,7 +8,6 @@
 			"Felipe L. Ewald"
 		]
 	},
-	"apihelp-query+extracts-description": "Retorna texto simples ou extratos de HTML limitados das páginas dadas.",
 	"apihelp-query+extracts-summary": "Retorna texto simples ou extratos de HTML limitados das páginas dadas.",
 	"apihelp-query+extracts-param-chars": "Quantos caracteres retornar. O texto real retornado pode ser um pouco mais longo.",
 	"apihelp-query+extracts-param-sentences": "Quantas sentenças retornar.",

@@ -1,12 +1,17 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications;
+
+use CentralIdLookup;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserIdentity;
+use MWTimestamp;
+use Wikimedia\Rdbms\IDatabase;
 
 /**
  * Manages what wikis a user has unread notifications on
  */
-class EchoUnreadWikis {
+class UnreadWikis {
 
 	private const DEFAULT_TS = '00000000000000';
 	private const DEFAULT_TS_DB = '00010101010101';
@@ -17,7 +22,7 @@ class EchoUnreadWikis {
 	private $id;
 
 	/**
-	 * @var MWEchoDbFactory
+	 * @var DbFactory
 	 */
 	private $dbFactory;
 
@@ -26,14 +31,14 @@ class EchoUnreadWikis {
 	 */
 	public function __construct( $id ) {
 		$this->id = $id;
-		$this->dbFactory = MWEchoDbFactory::newFromDefault();
+		$this->dbFactory = DbFactory::newFromDefault();
 	}
 
 	/**
 	 * Use the user id provided by the CentralIdLookup
 	 *
 	 * @param UserIdentity $user
-	 * @return EchoUnreadWikis|false
+	 * @return UnreadWikis|false
 	 */
 	public static function newFromUser( UserIdentity $user ) {
 		$id = MediaWikiServices::getInstance()
@@ -48,7 +53,8 @@ class EchoUnreadWikis {
 
 	/**
 	 * @param int $index DB_* constant
-	 * @return bool|\Wikimedia\Rdbms\IDatabase
+	 *
+	 * @return bool|IDatabase
 	 */
 	private function getDB( $index ) {
 		return $this->dbFactory->getSharedDb( $index );
@@ -81,12 +87,12 @@ class EchoUnreadWikis {
 				continue;
 			}
 			$wikis[$row->euw_wiki] = [
-				EchoAttributeManager::ALERT => [
+				AttributeManager::ALERT => [
 					'count' => $row->euw_alerts,
 					'ts' => wfTimestamp( TS_MW, $row->euw_alerts_ts ) === static::DEFAULT_TS_DB ?
 						static::DEFAULT_TS : wfTimestamp( TS_MW, $row->euw_alerts_ts ),
 				],
-				EchoAttributeManager::MESSAGE => [
+				AttributeManager::MESSAGE => [
 					'count' => $row->euw_messages,
 					'ts' => wfTimestamp( TS_MW, $row->euw_messages_ts ) === static::DEFAULT_TS_DB ?
 						static::DEFAULT_TS : wfTimestamp( TS_MW, $row->euw_messages_ts ),

@@ -1,5 +1,11 @@
 <?php
 
+use MediaWiki\Auth\LocalPasswordPrimaryAuthenticationProvider;
+use MediaWiki\Auth\TemporaryPasswordPrimaryAuthenticationProvider;
+use MediaWiki\Logger\LegacySpi;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Session\CookieSessionProvider;
+
 /**
  * Common code for test environment initialisation and teardown
  */
@@ -73,7 +79,7 @@ class TestSetup {
 		// Note that MediaWikiLoggerPHPUnitTestListener may wrap this in
 		// a MediaWiki\Logger\LogCapturingSpi at run-time.
 		$wgMWLoggerDefaultSpi = [
-			'class' => \MediaWiki\Logger\LegacySpi::class,
+			'class' => LegacySpi::class,
 		];
 
 		$wgUseDatabaseMessages = false; # Set for future resets
@@ -93,7 +99,7 @@ class TestSetup {
 		// cookies to show up in a MediaWiki\Request\FauxRequest somewhere.
 		$wgSessionProviders = [
 			[
-				'class' => MediaWiki\Session\CookieSessionProvider::class,
+				'class' => CookieSessionProvider::class,
 				'args' => [ [
 					'priority' => 30,
 				] ],
@@ -108,9 +114,9 @@ class TestSetup {
 			'preauth' => [],
 			'primaryauth' => [
 				[
-					'class' => MediaWiki\Auth\TemporaryPasswordPrimaryAuthenticationProvider::class,
+					'class' => TemporaryPasswordPrimaryAuthenticationProvider::class,
 					'services' => [
-						'DBLoadBalancer',
+						'DBLoadBalancerFactory',
 						'UserOptionsLookup',
 					],
 					'args' => [ [
@@ -118,9 +124,9 @@ class TestSetup {
 					] ],
 				],
 				[
-					'class' => MediaWiki\Auth\LocalPasswordPrimaryAuthenticationProvider::class,
+					'class' => LocalPasswordPrimaryAuthenticationProvider::class,
 					'services' => [
-						'DBLoadBalancer',
+						'DBLoadBalancerFactory',
 					],
 					'args' => [ [
 						'authoritative' => true,
@@ -152,26 +158,102 @@ class TestSetup {
 	 * @param string $fileName the file to include
 	 */
 	public static function requireOnceInGlobalScope( string $fileName ): void {
-		$originalGlobals = $GLOBALS;
-		foreach ( array_keys( $GLOBALS ) as $key ) {
-			if ( $key === 'fileName' || $key === 'originalGlobals' ) {
-				continue;
-			}
-			// phpcs:ignore MediaWiki.VariableAnalysis.UnusedGlobalVariables.UnusedGlobal$key,MediaWiki.NamingConventions.ValidGlobalName.allowedPrefix
+		$ignore = [
+			'fileName' => true,
+			'originalGlobalsMap' => true,
+			'key' => true,
+			'_' => true,
+			'ignore' => true,
+			'wgAutoloadClasses' => true,
+			'wgWikimediaJenkinsCI' => true,
+		];
+
+		// Import $GLOBALS into local scope for the file.
+		// Modifications to these from the required file automatically affect the real global.
+		foreach ( $GLOBALS as $key => $_ ) {
+			$ignore[$key] = true;
+			// phpcs:ignore MediaWiki.VariableAnalysis.UnusedGlobalVariables,MediaWiki.NamingConventions.ValidGlobalName.allowedPrefix
 			global $$key;
 		}
 
+		// phpcs:disable MediaWiki.VariableAnalysis.UnusedGlobalVariables
+		// Setup.php creates this variable, but we cannot wait for the below code to make it global,
+		// because Setup.php (and MW_SETUP_CALLBACK -> TestsAutoLoader.php) needs this to be a
+		// global during its execution (not just after).
+		global $wgAutoloadClasses;
+		// $wgWikimediaJenkinsCI is not a config variable and is therefore not made explicitly global
+		// in Setup.php when checking wgScopeTest. Do that here instead, as the variable might be
+		// read in an extension before the code below is executed (T341731).
+		global $wgWikimediaJenkinsCI;
+		// phpcs:enable MediaWiki.VariableAnalysis.UnusedGlobalVariables
+
 		require_once $fileName;
 
+		// Create any new variables as actual globals.
 		foreach ( get_defined_vars() as $varName => $value ) {
-			if ( $varName === 'fileName' || $varName === 'originalGlobals' || $varName === 'key' ) {
-				continue;
-			}
-			if ( array_key_exists( $varName, $originalGlobals ) ) {
+			// Skip our own internal variables, and variables that were already global.
+			if ( array_key_exists( $varName, $ignore ) ) {
 				continue;
 			}
 			$GLOBALS[$varName] = $value;
 		}
 	}
 
+	/**
+	 * Verifies that the composer.lock file is up-to-date, unless this check is disabled.
+	 */
+	public static function maybeCheckComposerLockUpToDate(): void {
+		if ( !getenv( 'MW_SKIP_EXTERNAL_DEPENDENCIES' ) ) {
+			$composerLockUpToDate = new CheckComposerLockUpToDate();
+			$composerLockUpToDate->loadParamsAndArgs( 'phpunit', [ 'quiet' => true ] );
+			$composerLockUpToDate->execute();
+		}
+	}
+
+	public static function loadSettingsFiles(): void {
+		// phpcs:ignore MediaWiki.Usage.ForbiddenFunctions.define
+		define( 'MW_SETUP_CALLBACK', [ self::class, 'setupCallback' ] );
+		self::requireOnceInGlobalScope( MW_INSTALL_PATH . "/includes/Setup.php" );
+	}
+
+	/**
+	 * @internal Should only be used in self::loadSettingsFiles
+	 */
+	public static function setupCallback() {
+		global $wgDBadminuser, $wgDBadminpassword;
+		global $wgDBuser, $wgDBpassword, $wgDBservers, $wgLBFactoryConf;
+
+		// These are already set in the PHPUnit config, but set them again in case they were changed in a settings file
+		ini_set( 'memory_limit', '-1' );
+		ini_set( 'max_execution_time', '0' );
+
+		if ( isset( $wgDBadminuser ) ) {
+			$wgDBuser = $wgDBadminuser;
+			$wgDBpassword = $wgDBadminpassword;
+
+			if ( $wgDBservers ) {
+				/**
+				 * @var array $wgDBservers
+				 */
+				foreach ( $wgDBservers as $i => $server ) {
+					$wgDBservers[$i]['user'] = $wgDBuser;
+					$wgDBservers[$i]['password'] = $wgDBpassword;
+				}
+			}
+			if ( isset( $wgLBFactoryConf['serverTemplate'] ) ) {
+				$wgLBFactoryConf['serverTemplate']['user'] = $wgDBuser;
+				$wgLBFactoryConf['serverTemplate']['password'] = $wgDBpassword;
+			}
+			$service = MediaWikiServices::getInstance()->peekService( 'DBLoadBalancerFactory' );
+			if ( $service ) {
+				$service->destroy();
+			}
+		}
+
+		self::requireOnceInGlobalScope( __DIR__ . '/TestsAutoLoader.php' );
+
+		self::applyInitialConfig();
+
+		ExtensionRegistry::getInstance()->setLoadTestClassesAndNamespaces( true );
+	}
 }

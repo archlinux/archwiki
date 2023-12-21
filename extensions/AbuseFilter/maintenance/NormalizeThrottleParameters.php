@@ -59,7 +59,7 @@ class NormalizeThrottleParameters extends LoggedUpdateMaintenance {
 	 *
 	 * @param string $msg The message of the error
 	 */
-	protected function fail( $msg ) {
+	private function fail( $msg ) {
 		$this->rollbackTransaction( $this->dbw, __METHOD__ );
 		$this->fatalError( $msg );
 	}
@@ -147,8 +147,9 @@ class NormalizeThrottleParameters extends LoggedUpdateMaintenance {
 	 *
 	 * @return int Amount of normalized rows
 	 */
-	protected function normalizeParameters() {
+	private function normalizeParameters() {
 		$user = AbuseFilterServices::getFilterUser()->getUserIdentity();
+		$actorMigration = AbuseFilterServices::getActorMigration();
 		$dryRun = $this->hasOption( 'dry-run' );
 
 		// IDs of filters with invalid rate (count or period)
@@ -270,10 +271,8 @@ class NormalizeThrottleParameters extends LoggedUpdateMaintenance {
 					$this->dbw->update(
 						'abuse_filter',
 						[
-							'af_user' => $user->getId(),
-							'af_user_text' => $user->getName(),
 							'af_timestamp' => $timestamps[ $id ]
-						],
+						] + $actorMigration->getInsertValues( $this->dbw, 'af_user', $user ),
 						[ 'af_id' => $id ],
 						__METHOD__
 					);
@@ -306,8 +305,6 @@ class NormalizeThrottleParameters extends LoggedUpdateMaintenance {
 					$this->dbw->update(
 						'abuse_filter',
 						[
-							'af_user' => $user->getId(),
-							'af_user_text' => $user->getName(),
 							'af_timestamp' => $timestamps[ $id ],
 							// Use string replacement so that we can avoid an extra query to retrieve the
 							// value and then explode, remove throttle and implode again.
@@ -316,7 +313,7 @@ class NormalizeThrottleParameters extends LoggedUpdateMaintenance {
 								"'throttle'",
 								"''"
 							)
-						],
+						] + $actorMigration->getInsertValues( $this->dbw, 'af_user', $user ),
 						[ 'af_id' => $id ],
 						__METHOD__
 					);
@@ -375,12 +372,11 @@ class NormalizeThrottleParameters extends LoggedUpdateMaintenance {
 			}
 
 			$newHistoryRows[] = [
-				'afh_user' => $user->getId(),
-				'afh_user_text' => $user->getName(),
 				'afh_timestamp' => $timestamp,
 				'afh_changed_fields' => 'actions',
 				'afh_actions' => serialize( $actions )
-			] + get_object_vars( $histRow );
+			] + get_object_vars( $histRow )
+				+ $actorMigration->getInsertValues( $this->dbw, 'afh_user', $user );
 			$changeHistoryFilters[] = $filter;
 		}
 
@@ -414,7 +410,7 @@ class NormalizeThrottleParameters extends LoggedUpdateMaintenance {
 	 *
 	 * @return int Amount of beautified rows
 	 */
-	protected function beautifyHistory() {
+	private function beautifyHistory() {
 		$dryRun = $this->hasOption( 'dry-run' );
 
 		// We need any row containing throttle, but there's no

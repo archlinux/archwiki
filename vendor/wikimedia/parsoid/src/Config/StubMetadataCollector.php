@@ -74,6 +74,13 @@ class StubMetadataCollector implements ContentMetadataCollector {
 	}
 
 	/** @inheritDoc */
+	public function appendOutputStrings( string $name, array $value ): void {
+		foreach ( $value as $v ) {
+			$this->collect( 'outputstrings', $name, $v );
+		}
+	}
+
+	/** @inheritDoc */
 	public function setPageProperty( string $name, $value ): void {
 		$this->collect( 'properties', $name, $value, self::MERGE_STRATEGY_WRITE_ONCE );
 	}
@@ -206,7 +213,7 @@ class StubMetadataCollector implements ContentMetadataCollector {
 		}
 		$result = [];
 		foreach ( ( $this->storage[$which] ?? [] ) as $key => $ignore ) {
-			$result[$key] = $this->get( $which, $key );
+			$result[$key] = $this->get( $which, (string)$key );
 		}
 		return $result;
 	}
@@ -238,9 +245,19 @@ class StubMetadataCollector implements ContentMetadataCollector {
 		return $result;
 	}
 
-	/** @return array<string,string> */
-	public function getCategories(): array {
-		return $this->get( 'categories' );
+	/** @return list<string> */
+	public function getCategoryNames(): array {
+		// array keys can get converted to int if numeric, so ensure
+		// return value is all strings.
+		return array_map( 'strval', array_keys( $this->get( 'categories' ) ) );
+	}
+
+	/**
+	 * @param string $name Category name
+	 * @return ?string Sort key
+	 */
+	public function getCategorySortKey( string $name ): ?string {
+		return $this->get( 'categories', $name );
 	}
 
 	/**
@@ -280,5 +297,22 @@ class StubMetadataCollector implements ContentMetadataCollector {
 	 */
 	public function getTOCData(): ?TOCData {
 		return $this->get( 'tocdata', '', self::MERGE_STRATEGY_WRITE_ONCE );
+	}
+
+	/**
+	 * Set the content for an indicator.
+	 * @param string $name
+	 * @param string $content
+	 */
+	public function setIndicator( $name, $content ): void {
+		$this->collect( 'indicators', $name, $content, self::MERGE_STRATEGY_WRITE_ONCE );
+	}
+
+	/**
+	 * Return a "name" => "content-id" mapping of recorded indicators
+	 * @return array
+	 */
+	public function getIndicators(): array {
+		return $this->get( 'indicators' );
 	}
 }

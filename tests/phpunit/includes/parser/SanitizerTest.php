@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\Sanitizer;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -206,7 +207,7 @@ class SanitizerTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayEquals( $attribs, array_keys( $actual ) );
 	}
 
-	public function provideAttributesAllowed() {
+	public static function provideAttributesAllowed() {
 		/** [ <element>, [ <good attribute 1>, <good attribute 2>, ...] ] */
 		return [
 			[ 'math', [ 'class', 'style', 'id', 'title' ] ],
@@ -241,7 +242,7 @@ class SanitizerTest extends MediaWikiIntegrationTestCase {
 		self::assertEquals( $expected, $escaped );
 	}
 
-	public function provideEscapeIdForStuff() {
+	public static function provideEscapeIdForStuff() {
 		// Test inputs and outputs
 		$text = 'foo тест_#%!\'()[]:<>&&amp;&amp;amp;%F0';
 		$legacyEncoded = 'foo_.D1.82.D0.B5.D1.81.D1.82_.23.25.21.27.28.29.5B.5D:.3C.3E' .
@@ -324,22 +325,24 @@ class SanitizerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * Test escapeIdReferenceList for consistency with escapeIdForAttribute
+	 * Test escapeIdReferenceListInternal for consistency with escapeIdForAttribute
 	 *
-	 * @dataProvider provideEscapeIdReferenceList
-	 * @covers Sanitizer::escapeIdReferenceList
+	 * @dataProvider provideEscapeIdReferenceListInternal
+	 * @covers Sanitizer::escapeIdReferenceListInternal
 	 */
-	public function testEscapeIdReferenceList( $referenceList, $id1, $id2 ) {
-		$this->hideDeprecated( 'Sanitizer::escapeIdReferenceList' );
+	public function testEscapeIdReferenceListInternal( $referenceList, $id1, $id2 ) {
+		$sanitizer = TestingAccessWrapper::newFromClass( Sanitizer::class );
+		$actual = $sanitizer->escapeIdReferenceListInternal( $referenceList );
+
 		$this->assertEquals(
-			Sanitizer::escapeIdReferenceList( $referenceList ),
+			$actual,
 			Sanitizer::escapeIdForAttribute( $id1 )
 			. ' '
 			. Sanitizer::escapeIdForAttribute( $id2 )
 		);
 	}
 
-	public static function provideEscapeIdReferenceList() {
+	public static function provideEscapeIdReferenceListInternal() {
 		/** [ <reference list>, <individual id 1>, <individual id 2> ] */
 		return [
 			[ 'foo bar', 'foo', 'bar' ],

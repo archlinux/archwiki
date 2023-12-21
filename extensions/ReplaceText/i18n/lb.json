@@ -3,7 +3,8 @@
 		"authors": [
 			"Les Meloures",
 			"Robby",
-			"Soued031"
+			"Soued031",
+			"Volvox"
 		]
 	},
 	"replacetext": "Text ersetzen",
@@ -24,6 +25,7 @@
 	"replacetext_choosepagesforedit": "Wielt wgl. d'{{PLURAL:$3|Säit op där|Säiten op deenen}} Dir \"$1\" duerch \"$2\" ersetze wëllt:",
 	"replacetext_choosepagesformove": "'$1' duerch '$2' am Titel vun {{PLURAL:$3|dëser Säit|dëse Säiten}} ersetzen:",
 	"replacetext_cannotmove": "Dës {{PLURAL:$1|Säit kann|Säite kënne}} net geréckelt ginn:",
+	"replacetext_cannotedit": "Déi follgend {{PLURAL:$1|Säit kann|Säite kënnen}} net geännert ginn:",
 	"replacetext_formovedpages": "Fir geréckelt Säiten:",
 	"replacetext_savemovedpages": "Déi al Titelen als Viruleedung op déi nei Titele späicheren",
 	"replacetext_watchmovedpages": "Dës Säiten iwwerwaachen",

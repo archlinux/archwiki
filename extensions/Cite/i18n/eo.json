@@ -37,5 +37,10 @@
 	"cite_references_link_accessibility_back_label": "Resalti supren",
 	"cite_section_preview_references": "Antaŭrigardo de  referencoj",
 	"cite_warning": "Averto pri citado:  $1",
-	"cite_warning_sectionpreview_no_text": "La marko <code>&lt;ref&gt;</code> kun la nomo <code>$1</code> ne povas esti antaŭrigardita,  ĉar ĝi estas difinita ekster la kuranta sekcio aŭ tute ne difinita."
+	"cite_warning_sectionpreview_no_text": "La marko <code>&lt;ref&gt;</code> kun la nomo <code>$1</code> ne povas esti antaŭrigardita,  ĉar ĝi estas difinita ekster la kuranta sekcio aŭ tute ne difinita.",
+	"cite-wikieditor-tool-reference": "Piednoto",
+	"cite-wikieditor-help-page-references": "Referencoj",
+	"cite-wikieditor-help-content-reference-description": "Piednoto",
+	"cite-wikieditor-help-content-rereference-description": "Reuzo de la sama piednoto.",
+	"cite-wikieditor-help-content-showreferences-description": "Montri piednotojn"
 }

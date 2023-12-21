@@ -21,7 +21,6 @@
 	"captcha-edit": "Чтобы отредактировать эту страницу, пожалуйста, решите следующее задание и введите ответ в текстовое поле ([[Special:Captcha/help|подробнее]]):",
 	"captcha-edit-fail": "Код подтверждения неправильный или отсутствует.",
 	"captcha-desc": "Предоставляет методы CAPTCHA для защиты от спама и подбора пароля",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Решение CAPTCHA.",
 	"captcha-info-help": "Описание CAPTCHA.",
 	"captcha-id-label": "Идентификатор CAPTCHA.",

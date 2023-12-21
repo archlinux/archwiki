@@ -5,6 +5,8 @@
 		]
 	},
 	"prefs-blocknotificationslist": "ꠎꠦꠔꠣ ꠛꠦꠛꠀꠞꠇꠞ꠆ꠞꠣꠞ ꠝꠥꠈ ꠛꠘ",
+	"echo-pref-email": "ꠁꠝꠦꠁꠟ",
+	"echo-learn-more": "ꠀꠞꠅ ꠢꠤꠇꠂꠘ",
 	"echo-displaynotificationsconfiguration-enabled-default-new-users-legend": "ꠘꠄꠀ ꠛꠦꠛꠀꠞꠇꠞ꠆ꠞꠣꠅꠇꠟ",
 	"echo-specialpage": "ꠎꠣꠘꠣꠅꠞꠣꠁꠘ",
 	"echo-specialpage-markasread-invalid-id": "ꠛꠦꠎꠣꠔ ꠇꠥꠞ ꠀꠁꠒꠤ",
@@ -24,5 +26,8 @@
 	"notification-link-text-view-mention-failure": "{{PLURAL:$1|ꠀꠙꠘꠣꠞꠦ ꠔꠥꠟꠤ ꠝꠣꠔ ꠖꠦꠈꠂꠘ|ꠀꠙꠘꠣꠞꠦ ꠔꠥꠟꠤ ꠝꠣꠔꠣꠁꠘ ꠖꠦꠈꠂꠘ}}",
 	"notification-link-text-view-changes": "{{GENDER:$1|ꠖꠦꠈꠂꠘ}} ꠛꠖꠟꠣꠁꠟꠉꠥꠘ",
 	"notification-link-text-view-page": "ꠙꠣꠔꠣ ꠖꠦꠈꠂꠘ",
-	"notification-link-text-what-links-here": "ꠢꠇꠟꠔꠣ ꠅꠃ ꠙꠣꠔꠣꠔ ꠀꠁꠘ ꠟꠣꠉꠌꠦ"
+	"notification-link-text-what-links-here": "ꠢꠇꠟꠔꠣ ꠅꠃ ꠙꠣꠔꠣꠔ ꠀꠁꠘ ꠟꠣꠉꠌꠦ",
+	"notification-welcome-linktext": "ꠀꠃꠇ꠆ꠇꠣ !",
+	"notification-timestamp-today": "ꠀꠁꠎꠇꠥ",
+	"notification-inbox-filter-all": "ꠢꠇꠟ"
 }

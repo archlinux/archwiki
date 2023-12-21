@@ -1,6 +1,7 @@
 @import '../../minerva.less/minerva.variables.less';
 @import '../../minerva.less/minerva.mixins.less';
 @import 'mediawiki.mixins.less';
+@import 'icons.less';
 
 /* stylelint-disable no-descending-specificity */
 html,
@@ -18,7 +19,7 @@ html {
 
 body {
 	background-color: @background-color-base;
-	color: @colorGray2;
+	color: @color-base;
 	// Support All Browsers: Remove `margin` (normalized)
 	margin: 0;
 }
@@ -30,7 +31,7 @@ main {
 
 .mw-body {
 	// avoid margin collapsing (see T147956)
-	border-top: 1px solid transparent;
+	border-top: @border-width-base @border-style-base @border-color-transparent;
 	padding-bottom: 32px;
 }
 
@@ -66,8 +67,9 @@ main {
 	height: @siteHeaderHeight;
 	white-space: nowrap;
 	// When banners are present we want to easily distinguish between them and the header so add border
-	border-top: 1px solid @colorGray12;
-	margin-top: @headerMarginTop;
+	border-top: @border-subtle;
+	// Hide the header border top when a banner is not present.
+	margin-top: -@border-width-base;
 }
 
 //
@@ -92,23 +94,23 @@ main {
 	@size-modifier-border: unit( 1 / @font-size-browser, em );
 	@padding-vertical-search: 8px - @border-width-base;
 	@padding-start-search-icon: @size-icon-search + ( 2 * @size-icon-search-gutter ) - @size-modifier-border;
-	background-color: #fff; // Support Fennec, Opera Mini: Remove default background, see T38490.
+	background-color: @background-color-base; // Support Fennec, Opera Mini: Remove default background, see T38490.
 	background-position: left @size-icon-search-gutter center;
 	background-repeat: no-repeat;
 	background-size: @size-icon-search;
 	// Support Safari: Get rid of rounded corners.
-	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	-webkit-appearance: none;
 	width: 100%;
 	margin-top: 0;
 	height: 2.25em;
-	border: @border-width-base solid #fff;
+	border: @border-width-base @border-style-base @border-color-inverted;
 	border-radius: @border-radius-base;
 	padding: @padding-vertical-search 0 @padding-vertical-search @padding-start-search-icon;
 	box-shadow: 0 1px 1px rgba( 0, 0, 0, 0.05 );
 	// Keyboard focus is taken care of below at `.search:focus`.
 	outline: 0;
-	transition: border-color @transition-duration-medium, box-shadow @transition-duration-medium;
+	transition-property: border-color, box-shadow;
+	transition-duration: @transition-duration-medium;
 
 	// [T139928] Hide all pseudo-elements added to search inputs in WebKit.
 	&::-webkit-search-decoration,
@@ -122,14 +124,19 @@ main {
 // Provide focus styles only in non-JS and overlay to prevent double transition.
 .client-nojs .search-box .search:focus,
 .search-overlay .search-box .search:focus {
-	border-color: @colorProgressive;
-	box-shadow: inset 0 0 0 1px @colorProgressive, 0 1px 1px rgba( 0, 0, 0, 0.05 );
+	border-color: @border-color-progressive--focus;
+	box-shadow: @box-shadow-inset-small @box-shadow-color-progressive--focus, 0 1px 1px rgba( 0, 0, 0, 0.05 );
 }
 
 .content {
 	h2 {
 		// Clear table of contents and any other floated elements in desktop Minerva.
 		clear: left;
+
+		.edit-page {
+			/* stylelint-disable-next-line unit-disallowed-list */
+			font-size: 1rem;
+		}
 	}
 
 	.collapsible-heading .edit-page {
@@ -145,7 +152,7 @@ main {
 
 	.mw-parser-output > h2,
 	.section-heading {
-		border-bottom: 1px solid @colorGray14;
+		border-bottom: @border-width-base @border-style-base #eaecf0;
 		margin-bottom: @headingMargin;
 	}
 
@@ -169,6 +176,11 @@ main {
 				// Negative margins to prevent the edit icon from affecting the height of the heading
 				margin-top: -1em;
 				margin-bottom: -1em;
+
+				.cdx-button:last-child {
+					.cdx-mixin-button-layout-flush( 'end', true, 'large' );
+					font-size: 1rem; // stylelint-disable-line unit-disallowed-list
+				}
 			}
 		}
 	}
@@ -200,7 +212,6 @@ main {
 	padding-right: @contentPadding;
 }
 
-.talk-overlay .comment .comment-content,
 .image-list,
 .minerva-anon-talk-message,
 .pre-content,

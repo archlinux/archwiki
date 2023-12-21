@@ -88,6 +88,7 @@ class InputCheckFactory {
 	 */
 	public function newLocalChecker( string $input, string $type ): LocalChecker {
 		return new LocalChecker(
+			$this->cache,
 			$input,
 			$type
 		);

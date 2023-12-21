@@ -9,7 +9,6 @@
 		]
 	},
 	"minerva-last-modified-date": "ᱢᱩᱪᱟᱹᱫ ᱥᱟᱯᱲᱟᱣ ᱟᱠᱟᱱ $1, $2 ᱨᱮ",
-	"minerva-talk-add-topic": "ᱜᱟᱞᱢᱟᱨᱟᱣ ᱥᱮᱞᱮᱫ",
 	"mobile-frontend-editor-edit": "ᱥᱟᱯᱲᱟᱣ",
 	"minerva-download": "ᱟᱹᱛᱩᱨᱟᱬᱜᱚ",
 	"mobile-frontend-editor-redlink-create": "ᱥᱟᱦᱴᱟ ᱛᱮᱭᱟᱨ",
@@ -29,8 +28,6 @@
 	"mobile-frontend-meta-data-issues": "ᱥᱟᱦᱴᱟ ᱥᱟᱛᱚᱢᱞᱩ",
 	"mobile-frontend-meta-data-issues-categories": "ᱱᱚᱣᱟ ᱛᱷᱚᱠ ᱵᱟᱵᱚᱫᱽ ᱛᱮ",
 	"mobile-frontend-meta-data-issues-header": "ᱥᱟᱦᱴᱟ ᱟᱱᱟᱴᱠᱚ",
-	"mobile-frontend-meta-data-issues-header-talk": "ᱱᱚᱣᱟ ᱥᱟᱦᱴᱟ ᱵᱟᱵᱚᱫᱽ ᱛᱮ",
-	"mobile-frontend-meta-data-issues-talk": "ᱱᱚᱣᱟ ᱨᱚᱲ ᱥᱟᱦᱴᱟ ᱵᱟᱵᱚᱫᱽ ᱛᱮ",
 	"mobile-frontend-notifications-filter": "ᱪᱷᱟᱹᱱᱤ",
 	"mobile-frontend-pageaction-edit-tooltip": "ᱱᱚᱣᱟ ᱥᱟᱦᱴᱟ ᱨᱮᱱᱟᱜ ᱪᱮᱛᱟᱱ ᱦᱟᱹᱴᱤᱧ ᱥᱟᱯᱲᱟᱣ ᱢᱮ",
 	"mobile-frontend-placeholder": "ᱥᱮᱸᱫᱽᱨᱟ {{SITENAME}}",

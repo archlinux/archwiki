@@ -5,7 +5,8 @@
 			"Har-wradim",
 			"Joystick",
 			"Pacha Tchernof",
-			"פוילישער"
+			"פוילישער",
+			"וויקיפּעדלער"
 		]
 	},
 	"skinname-vector": "וועקטאר אלט (2010)",
@@ -28,12 +29,16 @@
 	"vector-view-view": "לייענען",
 	"vector-view-viewsource": "ווײַזן מקור",
 	"vector-more-actions": "נאָך",
+	"vector-searchsuggest-containing": "זוכן בלעטער מיט<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "אינהאַלט",
 	"vector-toc-beginning": "אָנפֿאַנג",
 	"vector-main-menu-tooltip": "הויפט־מעניו",
 	"vector-toc-menu-tooltip": "אינהאַלט טאַבעלע",
+	"vector-main-menu-label": "הויפט־מעניו",
 	"vector-page-tools-label": "געצייג",
 	"vector-page-tools-general-label": "אַלגעמיין",
 	"vector-pin-element-label": "אַריבערפיֿרן צו זייט־פאַס",
-	"vector-unpin-element-label": "באַהאַלטן"
+	"vector-unpin-element-label": "באַהאַלטן",
+	"vector-toc-unpinned-popup": "די אינהאַלט־טאַבעלע האט מען אַריבערגעפֿירט אַהער.",
+	"vector-main-menu-unpinned-popup": "דעם הויפט־מעניו האט מען אַריבערגעפֿירט אַהער."
 }

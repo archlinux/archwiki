@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Aefgh39622",
-			"Passawuth",
-			"Lookruk"
+			"Lookruk",
+			"Passawuth"
 		]
 	},
 	"categorytree": "ໂຄງສ້າງໝວດ",
 	"categorytree-legend": "ສະແດງແຜນຜັງໝວດ",
-	"categorytree-header": "ພິມຊື່ໝວດໃສ່ ເພື່ອເບິ່ງໂຄງສ້າງມັນ. ຟັງຊັງຕ້ອງການໃຊ້ AJAX ໃນ JavaScript. ຖ້າ ທ່ານ ໃຊ້ໂປຣແກຣມທ່ອງເວັບເກົ່າ ຫຼື ບໍ່ອະນຸຍາດ JavaScript, ມັນກໍ່ຈະບໍ່ເຮັດວຽກ.",
+	"categorytree-header": "ໃສ່ຊື່ໝວດເພື່ອເບິ່ງເນື້ອໃນເປັນໂຄງສ້າງຕົ້ນໄມ້ (ຕ້ອງໃຊ້ JavaScript)",
 	"categorytree-category": "ໝວດ",
 	"categorytree-go": "ສະແດງໂຄງສ້າງ",
 	"categorytree-parents": "ໝວດແມ່",
@@ -25,7 +25,7 @@
 	"categorytree-nothing-found": "ບໍ່ພົບຫຍັງ",
 	"categorytree-no-subcategories": "ບໍ່ມີໝວດຍ່ອຍ",
 	"categorytree-no-pages": "ບໍ່ມີໜ້າ ຫຼື ໝວດຍ່ອຍ",
-	"categorytree-not-found": "ບໍ່ເຫັນ",
+	"categorytree-not-found": "ບໍ່ພົບໝວດ <i>$1</i>",
 	"categorytree-error": "ການໂຫຼດຂໍ້ມູນມີບັນຫາ",
 	"categorytree-retry": "ກະລຸນາຮອສັກຄູ່ ແລ້ວລອງໂຫຼດໃໝ່"
 }

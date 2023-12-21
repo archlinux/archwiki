@@ -1,12 +1,15 @@
 {
 	"name": "ImageMap",
-	"author": "Tim Starling",
+	"author": [
+		"Tim Starling",
+		"Arlo Breault"
+	],
 	"url": "https://www.mediawiki.org/wiki/Extension:ImageMap",
 	"descriptionmsg": "imagemap_desc",
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"MessagesDirs": {
 		"ImageMap": [
@@ -24,5 +27,25 @@
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\ImageMap\\": "includes/"
 	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": "ImageMap"
+	},
+	"ResourceModules": {
+		"ext.imagemap": {
+			"packageFiles": [
+				"resources/ext.imagemap.js"
+			],
+			"dependencies": [
+				"ext.imagemap.styles"
+			]
+		},
+		"ext.imagemap.styles": {
+			"styles": "resources/ext.imagemap.styles.less"
+		}
+	},
+	"ParsoidModules": [
+		"MediaWiki\\Extension\\ImageMap\\ParsoidImageMap"
+	],
 	"manifest_version": 2
 }

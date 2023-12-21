@@ -142,7 +142,7 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		$this->assertStatusMessageParams( $expected, $validator->checkRequiredFields( $filter ) );
 	}
 
-	public function provideRequiredFields(): array {
+	public static function provideRequiredFields(): array {
 		return [
 			'valid' => [ '0', '0', null ],
 			'no rules' => [ '', 'bar', 'abusefilter-edit-missingfields' ],
@@ -162,7 +162,7 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		$this->assertStatusMessageParams( $expected, $this->getFilterValidator()->checkEmptyMessages( $filter ) );
 	}
 
-	public function provideEmptyMessages(): array {
+	public static function provideEmptyMessages(): array {
 		return [
 			'valid' => [ [ 'warn' => [ 'foo' ], 'disallow' => [ 'bar' ] ], null ],
 			'empty warn' => [ [ 'warn' => [ '' ], 'disallow' => [ 'bar' ] ], 'abusefilter-edit-invalid-warn-message' ],
@@ -186,7 +186,7 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		$this->assertStatusMessageParams( $expected, $this->getFilterValidator()->checkConflictingFields( $filter ) );
 	}
 
-	public function provideConflictingFields(): array {
+	public static function provideConflictingFields(): array {
 		return [
 			'valid' => [ true, false, null ],
 			'invalid' => [ true, true, 'abusefilter-edit-deleting-enabled' ]
@@ -216,7 +216,7 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		$this->assertStatusMessageParams( $expected, $actual );
 	}
 
-	public function provideCheckGlobalFilterEditPermission(): array {
+	public static function provideCheckGlobalFilterEditPermission(): array {
 		return [
 			'none' => [ false, false, 'abusefilter-edit-notallowed-global' ],
 			'cur only' => [ true, false, 'abusefilter-edit-notallowed-global' ],
@@ -241,7 +241,7 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideMessagesOnGlobalFilters(): array {
+	public static function provideMessagesOnGlobalFilters(): array {
 		return [
 			'valid' => [
 				[ 'warn' => [ 'abusefilter-warning' ], 'disallow' => [ 'abusefilter-disallowed' ] ],
@@ -342,7 +342,7 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 	 * Data provider for testCheckThrottleParameters
 	 * @return array
 	 */
-	public function provideThrottleParameters() {
+	public static function provideThrottleParameters() {
 		return [
 			[ [ '1', '5,23', 'user', 'ip', 'page,range', 'ip,user', 'range,ip' ], null ],
 			[ [ '1', '5.3,23', 'user', 'ip' ], 'abusefilter-edit-invalid-throttlecount' ],
@@ -470,7 +470,7 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideGroups(): Generator {
+	public static function provideGroups(): Generator {
 		$allowed = [ 'default' ];
 		yield 'Default, pass' => [ 'default', $allowed, null ];
 		$extraGroup = 'foobar';

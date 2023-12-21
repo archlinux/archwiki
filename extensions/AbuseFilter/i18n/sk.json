@@ -491,7 +491,6 @@
 	"abusefilter-test-page": "Dotknutá stránka:",
 	"abusefilter-test-shownegative": "Zobraziť aj úpravy, ktoré filtru nezodpovedajú",
 	"abusefilter-test-syntaxerr": "Filter, ktorý ste zadali obsahoval syntaktickú chybu.\nÚplné vysvetlenie dostanete po kliknutí na tlačidlo „{{int:abusefilter-edit-check}}“.",
-	"abusefilter-test-badtitle": "Zadaný názov stránky je neplatný. Možno obsahuje jeden či viac znakov, ktoré nie je možné používať v názvoch stránok.",
 	"abusefilter-test-action": "Typ akcie:",
 	"abusefilter-test-search-type-all": "Všetky akcie",
 	"abusefilter-test-search-type-edit": "Úpravy",

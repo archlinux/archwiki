@@ -5,7 +5,6 @@
 			"Դավիթ Սարոյան"
 		]
 	},
-	"apihelp-visualeditor-description": "Էջի համար Parsoid-ի համակարգից վերադարձնում է HTML5-ը:",
 	"apihelp-visualeditor-param-basetimestamp": "Պահպանելու ժամանակ դիր սա վերանայման պիտակին, որը խմբագրվել է: Սա օգտագործվում է խմբագրման ընդհարումները հայտնաբերելու համար:",
 	"apihelp-visualeditor-param-cachekey": "Օգտագործիր serializeforcache-ի նախորդ արդյունքն այս բանալիով: Անտեսում է $1html-ը:",
 	"apihelp-visualeditor-param-etag": "ETag ուղարկելու համար",
@@ -16,7 +15,6 @@
 	"apihelp-visualeditor-param-pst": "Parsoid-ին ուղարկելուց առաջ պահպանիր վիքիտեքստը:",
 	"apihelp-visualeditor-param-starttimestamp": "Պահպանելու ժամանակ դիր սա վերանայման պիտակին, երբ էջը բացվում է: Սա օգտագործվում է խմբագրման ընդհարումները հայտնաբերելու համար:",
 	"apihelp-visualeditor-param-wikitext": "Վիքիտեքստը փոխանցվել է Parsoid, որպեսզի փոխի HTML:",
-	"apihelp-visualeditoredit-description": "Պահպանիր HTML5 էջը ՄեդիաՎիքիում:",
 	"apihelp-visualeditoredit-param-basetimestamp": "Պահպանելու ժամանակ դիր սա վերանայման պիտակին, որը խմբագրվել է: Սա օգտագործվում է խմբագրման ընդհարումները հայտնաբերելու համար:",
 	"apihelp-visualeditoredit-param-cachekey": "Օգտագործիր serializeforcache-ի նախորդ արդյունքն այս բանալիով: Անտեսում է $1html-ը:",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha ID:",

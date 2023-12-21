@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"BPositive",
 			"Htt",
 			"Mahitgar",
@@ -12,8 +13,7 @@
 			"V.narsikar",
 			"Ydyashad",
 			"ज्ञानदा गद्रे-फडके",
-			"संतोष दहिवळ",
-			"Amire80"
+			"संतोष दहिवळ"
 		]
 	},
 	"abusefilter-desc": "संपादन गाळणी सर्व संपादनांचा सांगितल्याप्रमाणे स्वयंशोध घेते.",
@@ -331,7 +331,6 @@
 	"abusefilter-test-page": "बदल तपासावयाच्या पानाचे शीर्षक:",
 	"abusefilter-test-shownegative": "संपादन गाळणीशी जुळत नसलेले बदल दाखवा",
 	"abusefilter-test-syntaxerr": "आपण टाकलेल्या गाळणीच्या नावात वाक्यरचना दोष आहे.\"{{int:abusefilter-edit-check}}\" कळीवर टिचकल्यावर याचे पूर्ण स्पष्टीकरण मिळेल.",
-	"abusefilter-test-badtitle": "आपण टाकलेले लेखनाव अवैध आहे.त्यात एक किंवा एकाधिक असे वर्ण आहेत जे शीर्षकात वापरल्या जात नाहीत.",
 	"abusefilter-changeslist-examine": "तपासा",
 	"abusefilter-examine": "प्रत्येक बदल तपासा",
 	"abusefilter-examine-intro": "हे पान, आपणास दुरुपयोग गाळणीने उत्पादित नेमक्या बदलाचे 'व्हॅरिएबल्स' तपासण्यास व गाळणीत त्याच्या चाचणीस परवानगी देते.",

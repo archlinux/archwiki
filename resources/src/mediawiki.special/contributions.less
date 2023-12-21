@@ -1,7 +1,7 @@
 /*!
  * Styling for Special:Contributions
  */
-@import 'mediawiki.ui/variables.less';
+@import 'mediawiki.skin.variables.less';
 
 // OOUIHTMLForm styles.
 @ooui-font-size-browser: 16; // Assumed browser default of `16px`.
@@ -41,7 +41,7 @@
 	}
 
 	// Clearfix for floated `.mw-htmlform-field-HTMLDateTimeField` below.
-	#mw-htmlform-contribs-date:after {
+	#mw-htmlform-contribs-date::after {
 		content: '';
 		clear: both;
 		display: block;

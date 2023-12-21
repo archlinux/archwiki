@@ -4,7 +4,6 @@
 			"Xuacu"
 		]
 	},
-	"apihelp-templatedata-description": "Traer los datos almacenaos pola estensión TemplateData.",
 	"apihelp-templatedata-summary": "Traer los datos almacenaos pola estensión TemplateData.",
 	"apihelp-templatedata-example-1": "Devolver TemplateData pa [[Template:Stub]] y [[Template:Example]], con resultaos si les plantíes nun existen o existen pero nun tienen TemplateData",
 	"apihelp-templatedata-example-2": "Devolver TemplateData pa [[Template:Stub]] y [[Template:Example]], sin resultaos si les plantíes nun existen o existen pero nun tienen TemplateData",

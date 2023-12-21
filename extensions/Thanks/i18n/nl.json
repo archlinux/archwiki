@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bas dehaan",
 			"Dinosaur918",
 			"Elroy",
 			"HanV",
@@ -20,8 +21,7 @@
 			"SPQRobin",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Southparkfan",
-			"Bas dehaan"
+			"Southparkfan"
 		]
 	},
 	"thanks-desc": "Voegt koppelingen toe voor het bedanken van gebruikers voor bewerkingen, reacties, enzovoort.",

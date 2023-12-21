@@ -66,17 +66,15 @@ ve.init.mw.CollabTarget.static.toolbarGroups.splice( 4, 0, {
 ve.init.mw.CollabTarget.static.toolbarGroups = ve.init.mw.CollabTarget.static.toolbarGroups.filter( function ( group ) {
 	return group.name !== 'reference';
 } );
-
-ve.init.mw.CollabTarget.static.importRules = ve.copy( ve.init.mw.CollabTarget.static.importRules );
-ve.init.mw.CollabTarget.static.importRules.external.blacklist[ 'link/mwExternal' ] = false;
-
-ve.init.mw.CollabTarget.static.actionGroups = [
+ve.init.mw.CollabTarget.static.toolbarGroups.push(
 	{
 		name: 'help',
+		align: 'after',
 		include: [ 'help' ]
 	},
 	{
 		name: 'pageMenu',
+		align: 'after',
 		type: 'list',
 		icon: 'menu',
 		indicator: null,
@@ -87,13 +85,18 @@ ve.init.mw.CollabTarget.static.actionGroups = [
 	},
 	{
 		name: 'authorList',
+		align: 'after',
 		include: [ 'authorList' ]
 	},
 	{
 		name: 'export',
+		align: 'after',
 		include: [ 'export' ]
 	}
-];
+);
+
+ve.init.mw.CollabTarget.static.importRules = ve.copy( ve.init.mw.CollabTarget.static.importRules );
+ve.init.mw.CollabTarget.static.importRules.external.blacklist[ 'link/mwExternal' ] = false;
 
 /* Methods */
 

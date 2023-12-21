@@ -35,7 +35,7 @@ class MessagesStructureTest extends MediaWikiUnitTestCase {
 		$vars = $this->readFile( $path );
 		$unknownVars = array_diff(
 			array_keys( $vars ),
-			LocalisationCache::$allKeys
+			LocalisationCache::ALL_KEYS
 		);
 		$this->assertSame( [], $unknownVars, 'unknown variables' );
 
@@ -90,6 +90,15 @@ class MessagesStructureTest extends MediaWikiUnitTestCase {
 			if ( $id !== NS_MAIN ) {
 				$this->assertNotSame( '', $name );
 			}
+			$this->assertStringNotContainsString( ' ', $name, 'Use underscores in namespace names' );
+		}
+	}
+
+	private function validateNamespaceAliases( $aliases ) {
+		foreach ( $aliases as $alias => $id ) {
+			$this->assertIsString( $alias );
+			$this->assertNotSame( '', $alias );
+			$this->assertStringNotContainsString( ' ', $alias, 'Use underscores in namespace aliases' );
 		}
 	}
 
@@ -131,6 +140,7 @@ class MessagesStructureTest extends MediaWikiUnitTestCase {
 				$this->assertIsString( $alias, "$pageName alias $i should be string" );
 				$this->assertNotSame( '', $alias,
 					"$pageName alias $i should not be empty" );
+				$this->assertStringNotContainsString( ' ', $alias, 'Use underscores in specialpage alias' );
 			}
 		}
 	}

@@ -57,6 +57,8 @@
 	"vector-site-nav-label": "Mrežno mjesto",
 	"vector-main-menu-label": "Glavni izbornik",
 	"vector-limited-width-toggle": "Ograničenje širine teksta",
+	"vector-limited-width-toggle-on-popup": "Prebacili ste se na punu širinu teksta. Pritiskom na tipku vratit ćete se na ograničenu širinu.",
+	"vector-limited-width-toggle-off-popup": "Ovom tipkom prebacujete se između ograničene i pune širine teksta.",
 	"vector-page-tools-label": "Pomagala",
 	"vector-page-tools-general-label": "Razno",
 	"vector-page-tools-actions-label": "Radnje",
@@ -66,5 +68,8 @@
 	"tooltip-vector-anon-user-menu-title": "Više mogućnosti",
 	"vector-prefs-limited-width": "Ograniči širinu teksta",
 	"vector-prefs-limited-width-help": "Ograničava širinu teksta u člancima radi bolje čitljivosti.",
-	"empty-language-selector-body": "Stranica ne postoji na drugim jezicima."
+	"empty-language-selector-body": "Stranica ne postoji na drugim jezicima.",
+	"vector-toc-unpinned-popup": "Sadržaj je premješten ovdje.",
+	"vector-page-tools-unpinned-popup": "Pomagala su premještena ovdje.",
+	"vector-main-menu-unpinned-popup": "Glavni izbornik premješten je ovdje."
 }

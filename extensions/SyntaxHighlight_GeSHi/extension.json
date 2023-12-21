@@ -14,7 +14,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.40.0",
+		"MediaWiki": ">= 1.41",
 		"platform": {
 			"ability-shell": true
 		}
@@ -55,7 +55,6 @@
 			]
 		},
 		"ext.geshi.visualEditor": {
-			"class": "MediaWiki\\SyntaxHighlight\\ResourceLoaderSyntaxHighlightVisualEditorModule",
 			"scripts": [
 				"ve-syntaxhighlight/ve.dm.MWSyntaxHighlightNode.js",
 				"ve-syntaxhighlight/ve.dm.MWBlockSyntaxHighlightNode.js",
@@ -67,7 +66,11 @@
 				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightDialog.js",
 				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightDialogTool.js",
 				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightInspector.js",
-				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightInspectorTool.js"
+				"ve-syntaxhighlight/ve.ui.MWSyntaxHighlightInspectorTool.js",
+				{
+					"name": "ve-syntaxhighlight/ve.MWSyntaxHighlightConfig.js",
+					"callback": "MediaWiki\\SyntaxHighlight\\VisualEditorConfig::makeScript"
+				}
 			],
 			"styles": [
 				"ve-syntaxhighlight/ve.ce.MWSyntaxHighlightNode.css",
@@ -93,10 +96,15 @@
 		}
 	},
 	"Hooks": {
-		"ParserFirstCallInit": "MediaWiki\\SyntaxHighlight\\SyntaxHighlight::onParserFirstCallInit",
-		"ContentGetParserOutput": "MediaWiki\\SyntaxHighlight\\SyntaxHighlight::onContentGetParserOutput",
-		"ApiFormatHighlight": "MediaWiki\\SyntaxHighlight\\SyntaxHighlight::onApiFormatHighlight",
-		"SoftwareInfo": "MediaWiki\\SyntaxHighlight\\SyntaxHighlight::onSoftwareInfo"
+		"ParserFirstCallInit": "main",
+		"ContentGetParserOutput": "main",
+		"ApiFormatHighlight": "main",
+		"SoftwareInfo": "main"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\SyntaxHighlight\\SyntaxHighlight"
+		}
 	},
 	"ParsoidModules": [
 		"MediaWiki\\SyntaxHighlight\\ParsoidExt"

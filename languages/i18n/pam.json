@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Amiel Guanlao",
+			"Amire80",
 			"DannyS712",
 			"Geitost",
 			"Kaganer",
@@ -12,8 +13,7 @@
 			"Urhixidur",
 			"Val2397",
 			"Vlad5250",
-			"아라",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Gulisan lang panglalam deng suglung:",
@@ -418,7 +418,7 @@
 	"undo-success": "E maliaring iurung ing pamag-edit a ini. Pakilawe mo reng pikumparang bersion king lalam ba mung akit nung ini pin ing buri mung gawan, at kaibat, i-save mo retang miyalilan bang mayari ing pamanurung king edit.",
 	"undo-failure": "E maliaring iurung ing edit a ini uling e la mipapareu deng minunang me-edit.",
 	"undo-norev": "E maliaring iurung ing edit a ini uling ala yu o mebura ya.",
-	"undo-summary": "Iurung ya ing miyalilan $1 nang [[Special:Contributions/$2|$2]] ([[User talk:$2|Talk]])",
+	"undo-summary": "Iurung ya ing miyalilan [[Special:Diff/$1|$1]] nang [[Special:Contributions/$2|$2]] ([[User talk:$2|Talk]])",
 	"viewpagelogs": "Lon la reng log para king bulung a ini",
 	"nohistory": "Alang amlat ning pamag-edit (edit history) para king bulung a ini.",
 	"currentrev": "Kasalungsungan a pangayalili",
@@ -526,7 +526,6 @@
 	"search-relatedarticle": "Kamaganak",
 	"searchrelated": "kaugne",
 	"searchall": "eganagana",
-	"showingresults": "Ing/ding {{PLURAL:$1|'''1''' a resulta|'''$1''' resulta}} manibatan king #'''$2'''.",
 	"powersearch-legend": "Espesial a pamanintun",
 	"powersearch-ns": "Maintun ka kareng namespace:",
 	"search-external": "Pamanintun king kilual",
@@ -983,8 +982,6 @@
 	"enotif_lastdiff": "Lon me ing $1 ba meng akit ining miyalilan.",
 	"enotif_anon_editor": "talagamit a e migpakilala $1",
 	"enotif_body": "Kakaluguran kung $WATCHINGUSERNAME,\n\n$PAGEINTRO $NEWPAGE\n\nSampulung ning talapatuntun (Editor's summary): $PAGESUMMARY $PAGEMINOREDIT\n\nSulatanan ya ing talapatuntun:\nmail: $PAGEEDITOR_EMAIL\nwiki: $PAGEEDITOR_WIKI\n\nAlang aliwang kapabaluan nung ating karagdagang mibayu, puera namu nung puntalan me ing bulung a ini.\nMaliari mo muring isubli king sadia (reset) deng markang pamipabalu (notification flag) karen ngang bulung a babanten mu king kekang tala ring babanten (watchlist).\n\nIng talabie kapabaluan ning {{SITENAME}} a magmalasakit keka\n--\nBa mong ayalilan deng pakatuldu king kekang tala ring babanten (watchlist settings), munta ka king\n{{canonicalurl:{{#special:EditWatchlist}}}}\n\nKeni ka magparalang puna/komentu at maniad karagdagang saup:\n$HELPPAGE",
-	"created": "melalang",
-	"changed": "miyalilan",
 	"deletepage-submit": "Buran ya ing bulung",
 	"confirm": "Patutuan/kumpirman",
 	"excontent": "ini ing laman na: '$1'",

@@ -1,10 +1,17 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Request\WebResponse;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
 use Wikimedia\TestingAccessWrapper;
 
+/**
+ * @group Database
+ */
 class MediaWikiTest extends MediaWikiIntegrationTestCase {
 	private $oldServer, $oldGet, $oldPost;
 
@@ -30,6 +37,9 @@ class MediaWikiTest extends MediaWikiIntegrationTestCase {
 		$_SERVER = $this->oldServer;
 		$_GET = $this->oldGet;
 		$_POST = $this->oldPost;
+		// The MediaWiki class writes to $wgTitle. Revert any writes done in this test to make
+		// sure that they don't leak into other tests (T341951)
+		$GLOBALS['wgTitle'] = null;
 		parent::tearDown();
 	}
 
@@ -191,6 +201,118 @@ class MediaWikiTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
+	public static function provideParseTitle() {
+		return [
+			"No title means main page" => [
+				'query' => [],
+				'expected' => 'Main Page',
+			],
+			"Empty title also means main page" => [
+				'query' => wfCgiToArray( '?title=' ),
+				'expected' => 'Main Page',
+			],
+			"Valid title" => [
+				'query' => wfCgiToArray( '?title=Foo' ),
+				'expected' => 'Foo',
+			],
+			"Invalid title" => [
+				'query' => wfCgiToArray( '?title=[INVALID]' ),
+				'expected' => false,
+			],
+			"Invalid 'oldid'… means main page? (we show an error elsewhere)" => [
+				'query' => wfCgiToArray( '?oldid=9999999' ),
+				'expected' => 'Main Page',
+			],
+			"Invalid 'diff'… means main page? (we show an error elsewhere)" => [
+				'query' => wfCgiToArray( '?diff=9999999' ),
+				'expected' => 'Main Page',
+			],
+			"Invalid 'curid'" => [
+				'query' => wfCgiToArray( '?curid=9999999' ),
+				'expected' => false,
+			],
+			"'search' parameter with no title provided forces Special:Search" => [
+				'query' => wfCgiToArray( '?search=foo' ),
+				'expected' => 'Special:Search',
+			],
+			"'action=revisiondelete' forces Special:RevisionDelete even with title" => [
+				'query' => wfCgiToArray( '?action=revisiondelete&title=Unused' ),
+				'expected' => 'Special:RevisionDelete',
+			],
+			"'action=historysubmit&revisiondelete=1' forces Special:RevisionDelete even with title" => [
+				'query' => wfCgiToArray( '?action=historysubmit&revisiondelete=1&title=Unused' ),
+				'expected' => 'Special:RevisionDelete',
+			],
+			"'action=editchangetags' forces Special:EditTags even with title" => [
+				'query' => wfCgiToArray( '?action=editchangetags&title=Unused' ),
+				'expected' => 'Special:EditTags',
+			],
+			"'action=historysubmit&editchangetags=1' forces Special:EditTags even with title" => [
+				'query' => wfCgiToArray( '?action=historysubmit&editchangetags=1&title=Unused' ),
+				'expected' => 'Special:EditTags',
+			],
+			"No title with 'action' still means main page" => [
+				'query' => wfCgiToArray( '?action=history' ),
+				'expected' => 'Main Page',
+			],
+			"No title with 'action=delete' does not mean main page, because we want to discourage deleting it by accident :D" => [
+				'query' => wfCgiToArray( '?action=delete' ),
+				'expected' => false,
+			],
+		];
+	}
+
+	private function doTestParseTitle( array $query, $expected ): void {
+		if ( $expected === false ) {
+			$this->expectException( MalformedTitleException::class );
+		}
+
+		$req = new FauxRequest( $query );
+		$mw = new MediaWiki();
+
+		$method = new ReflectionMethod( $mw, 'parseTitle' );
+		$method->setAccessible( true );
+		$ret = $method->invoke( $mw, $req );
+
+		$this->assertEquals(
+			$expected,
+			$ret->getPrefixedText()
+		);
+	}
+
+	/**
+	 * @dataProvider provideParseTitle
+	 * @covers MediaWiki::parseTitle
+	 */
+	public function testParseTitle( $query, $expected ) {
+		$this->doTestParseTitle( $query, $expected );
+	}
+
+	public static function provideParseTitleExistingPage(): array {
+		return [
+			"Valid 'oldid'" => [
+				static fn ( WikiPage $page ): array => wfCgiToArray( '?oldid=' . $page->getRevisionRecord()->getId() ),
+			],
+			"Valid 'diff'" => [
+				static fn ( WikiPage $page ): array => wfCgiToArray( '?diff=' . $page->getRevisionRecord()->getId() ),
+			],
+			"Valid 'curid'" => [
+				static fn ( WikiPage $page ): array => wfCgiToArray( '?curid=' . $page->getId() ),
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideParseTitleExistingPage
+	 * @covers MediaWiki::parseTitle
+	 */
+	public function testParseTitle__existingPage( callable $queryBuildCallback ) {
+		$pageTitle = 'TestParseTitle test page';
+		$page = $this->getExistingTestPage( $pageTitle );
+		$query = $queryBuildCallback( $page );
+		$this->doTestParseTitle( $query, $pageTitle );
+	}
+
 	/**
 	 * Test a post-send job can not set cookies (T191537).
 	 * @coversNothing
@@ -253,7 +375,7 @@ class MediaWikiTest extends MediaWikiIntegrationTestCase {
 		] );
 		$req->setRequestURL( $specialTitle->getFullUrl() );
 
-		$context = RequestContext::getMain();
+		$context = new RequestContext();
 		$context->setRequest( $req );
 		$context->setTitle( $specialTitle );
 

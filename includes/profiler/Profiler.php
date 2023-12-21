@@ -39,8 +39,6 @@ abstract class Profiler {
 	protected $profileID = false;
 	/** @var array All of the params passed from $wgProfiler */
 	protected $params = [];
-	/** @var IContextSource Current request context */
-	protected $context = null;
 	/** @var TransactionProfiler */
 	protected $trxProfiler;
 	/** @var LoggerInterface */
@@ -78,7 +76,7 @@ abstract class Profiler {
 
 		// Avoid global func wfIsCLI() during setup
 		$isCLI = ( PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg' );
-		$inSample = $params['sampling'] === 1 ? true : ( mt_rand( 0, $params['sampling'] - 1 ) === 0 );
+		$inSample = $params['sampling'] === 1 || mt_rand( 0, $params['sampling'] - 1 ) === 0;
 		if (
 			!$inSample ||
 			// On CLI, profiling is disabled by default, and can be explicitly enabled
@@ -102,7 +100,6 @@ abstract class Profiler {
 	}
 
 	/**
-	 * Singleton
 	 * @return Profiler
 	 */
 	final public static function instance() {
@@ -115,9 +112,11 @@ abstract class Profiler {
 	}
 
 	/**
+	 * @deprecated since 1.41, unused. Can override this base class.
 	 * @param string $id
 	 */
 	public function setProfileID( $id ) {
+		wfDeprecated( __METHOD__, '1.41' );
 		$this->profileID = $id;
 	}
 
@@ -130,26 +129,6 @@ abstract class Profiler {
 		} else {
 			return $this->profileID;
 		}
-	}
-
-	/**
-	 * @internal
-	 * @param IContextSource $context
-	 * @since 1.25
-	 */
-	public function setContext( $context ) {
-		wfDeprecated( __METHOD__, '1.38' );
-		$this->context = $context;
-	}
-
-	/**
-	 * @internal
-	 * @return IContextSource
-	 * @since 1.25
-	 */
-	public function getContext() {
-		wfDeprecated( __METHOD__, '1.38' );
-		return $this->context ?? RequestContext::getMain();
 	}
 
 	/**
@@ -299,10 +278,13 @@ abstract class Profiler {
 	/**
 	 * Whether appending profiles is allowed.
 	 *
+	 * @deprecated since 1.41. Unused.
+	 *
 	 * @since 1.34
 	 * @return bool
 	 */
 	public function getAllowOutput() {
+		wfDeprecated( __METHOD__, '1.41' );
 		return $this->allowOutput;
 	}
 

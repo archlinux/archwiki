@@ -21,8 +21,20 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
 use MediaWiki\Language\RawMessage;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\SpecialPage\UnlistedSpecialPage;
+use MediaWiki\Status\Status;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
+use PermissionsError;
+use Profiler;
+use ReadOnlyError;
+use UserNotLoggedIn;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -35,8 +47,7 @@ use Wikimedia\ScopedCallback;
  */
 class SpecialConfirmEmail extends UnlistedSpecialPage {
 
-	/** @var UserFactory */
-	private $userFactory;
+	private UserFactory $userFactory;
 
 	/**
 	 * @param UserFactory $userFactory
@@ -75,7 +86,7 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 		}
 
 		if ( $code === null || $code === '' ) {
-			$this->requireLogin( 'confirmemail_needlogin' );
+			$this->requireNamedUser( 'confirmemail_needlogin' );
 			if ( Sanitizer::validateEmail( $this->getUser()->getEmail() ) ) {
 				$this->showRequestForm();
 			} else {
@@ -166,7 +177,11 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 		);
 
 		if ( !is_object( $user ) ) {
-			$this->getOutput()->addWikiMsg( 'confirmemail_invalid' );
+			if ( User::isWellFormedConfirmationToken( $code ) ) {
+				$this->getOutput()->addWikiMsg( 'confirmemail_invalid' );
+			} else {
+				$this->getOutput()->addWikiMsg( 'confirmemail_invalid_format' );
+			}
 
 			return;
 		}
@@ -181,12 +196,17 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 		$userLatest = $user->getInstanceForUpdate();
 		$userLatest->confirmEmail();
 		$userLatest->saveSettings();
-		$message = $this->getUser()->isRegistered() ? 'confirmemail_loggedin' : 'confirmemail_success';
+		$message = $this->getUser()->isNamed() ? 'confirmemail_loggedin' : 'confirmemail_success';
 		$this->getOutput()->addWikiMsg( $message );
 
-		if ( !$this->getUser()->isRegistered() ) {
+		if ( !$this->getUser()->isNamed() ) {
 			$title = SpecialPage::getTitleFor( 'Userlogin' );
 			$this->getOutput()->returnToMain( true, $title );
 		}
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialConfirmEmail::class, 'SpecialConfirmEmail' );

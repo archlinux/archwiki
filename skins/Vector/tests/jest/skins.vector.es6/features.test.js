@@ -1,4 +1,4 @@
-const features = require( '../../../resources/skins.vector.es6/features.js' );
+const features = require( '../../../resources/skins.vector.js/features.js' );
 
 describe( 'features', () => {
 	beforeEach( () => {

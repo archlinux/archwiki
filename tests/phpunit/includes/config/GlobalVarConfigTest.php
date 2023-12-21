@@ -1,10 +1,13 @@
 <?php
 
+use MediaWiki\Config\ConfigException;
+use MediaWiki\Config\GlobalVarConfig;
+
+/**
+ * @covers \MediaWiki\Config\GlobalVarConfig
+ */
 class GlobalVarConfigTest extends MediaWikiIntegrationTestCase {
 
-	/**
-	 * @covers GlobalVarConfig::newInstance
-	 */
 	public function testNewInstance() {
 		$config = GlobalVarConfig::newInstance();
 		$this->assertInstanceOf( GlobalVarConfig::class, $config );
@@ -14,7 +17,6 @@ class GlobalVarConfigTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers GlobalVarConfig::__construct
 	 * @dataProvider provideConstructor
 	 */
 	public function testConstructor( $prefix ) {
@@ -35,10 +37,6 @@ class GlobalVarConfigTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers GlobalVarConfig::has
-	 * @covers GlobalVarConfig::hasWithPrefix
-	 */
 	public function testHas() {
 		$this->setMwGlobals( 'wgGlobalVarConfigTestHas', 'testvalue' );
 		$config = new GlobalVarConfig();
@@ -69,8 +67,6 @@ class GlobalVarConfigTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideGet
-	 * @covers GlobalVarConfig::get
-	 * @covers GlobalVarConfig::getWithPrefix
 	 * @param string $name
 	 * @param string $prefix
 	 * @param string $expected

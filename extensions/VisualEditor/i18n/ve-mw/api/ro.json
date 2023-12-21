@@ -7,7 +7,6 @@
 		]
 	},
 	"apierror-visualeditor-difffailed": "Diff eșuat",
-	"apihelp-visualeditor-description": "Întoarce pentru HTML5 pagina cu servicii Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Cand salvați, setați timestampul revisie care a fost editată. Folosit ca să detecteze conflicturi de editare.",
 	"apihelp-visualeditor-param-cachekey": "Pentru serializarea sau de a vedea diferențele, folosiți rezultatul anterior solicitării serializeforcache cu această cheie. Neglijează $1html.",
 	"apihelp-visualeditor-param-etag": "ETag de trimis.",
@@ -18,7 +17,6 @@
 	"apihelp-visualeditor-param-pst": "Pre-salvați modificările Wiki-text înainte de a-l trimite în Parsoid (paction=parsefragment).",
 	"apihelp-visualeditor-param-starttimestamp": "Cand salvați, setați timestampul pentru revisia care a fost editată. Folosit ca să detecteze conflicturi de editare.",
 	"apihelp-visualeditor-param-wikitext": "Wikitext pentru a trimite în Parsoid și a converti în codul HTML (paction=parsefragment).",
-	"apihelp-visualeditoredit-description": "Salvați o pagină HTML5, în MediaWiki (convertibilă în wikitext cu serviciu Parsoid).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Cand salvați, setați timestampul revisie care a fost editată. Folosit ca să detecteze conflicturi de editare.",
 	"apihelp-visualeditoredit-param-cachekey": "Pentru serializarea sau de a vedea diferențele, folosiți rezultatul anterior solicitării serializeforcache cu această cheie. Neglijează $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "ID captcha (menținând în același timp cu răspunsul captcha).",

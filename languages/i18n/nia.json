@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Anugrahgori",
+			"Bennylin",
 			"NoiX180",
 			"Slaia"
 		]
@@ -627,9 +628,14 @@
 	"summary-preview": "Khala-khala garutua wamulö'ö:",
 	"previewerrortext": "So zi fasala me edöna te'oroma'ö hadia nibulö'ö.",
 	"blockedtitle": "No teba'agö zangoguna andre",
+	"blockedtext": "<strong>Töi zangoguna ma alamat IP-mö no toba'agö.</strong>\n\n{{int:blockedtext-made-by|$1}}\n{{int:blockedtext-reason-comment|$2}}.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-contact-blocker-admin|$1}}\n\nTola ö'oguna'ö \"{{int:emailuser}}\" na no öbe'e email bakha ba [[Special:Preferences|preferensi]] ba lö göi teba'agö ndra'ugö ba wangoguna'ö ya'ia.\n{{int:blockedtext-block-ip|$3}} {{int:blockedtext-block-id|$5}}\n{{int:blockedtext-include-details-queries}}",
 	"blockedtext-partial": "<strong>No teba'agö döi zangogunamö ma zui nomoro IP-mö ba wamalua da'a. Te tola sa öfalua hadia ia bö'ö, simane famulö'ö fasambua nga'örö.</strong>\n\nTola öfaigi detail womba'agö ba [[Special:MyContributions|kontribusi akun]].\n\n{{int:blockedtext-made-by|$1}}\n\n{{int:blockedtext-reason-comment|$2}}.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n*{{int:blockedtext-block-id|$5}}",
-	"blockedtext": "<strong>Töi zangoguna ma alamat IP-mö no toba'agö.</strong>\n\nSame ba'a-ba'a $1.\nBörö <em>$2</em>.\n\n* Tebörögö mba'a-ba'a: $8\n* Irugi: $6\n* Niba'agö: $7\n\nSura khö 1 ma zui [[{{MediaWiki:Grouppage-sysop}}|administrator]] tanö bö'ö ba wamatunö womba'agö andre.\nOguna'ö \"{{int:emailuser}}\" na no öbe alamat emailmö ba  [[Special:Preferences|preferensi]] ba na lö niba'agö ndra'ugö wangoguna'ö email andrö.\nAlamat IP-mö $3, ba ID womba'agö #$5.\nFaogö fefu da'a yaŵa ero ösura wanofumö.",
+	"autoblockedtext": "No otomatis teba'agö nomoro IP-mö, börö no i'oguna'ö ia sangoguna bö'ö si no teba'agö $1.\nBörö nibe'e:\n\n:<em>$2</em>.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-contact-blocker-admin|$1}} \n\nTola öfa'ohe'ö fitur \"{{int:emailuser}}\" na no öbe'e alamat emailmö ba [[Special:Preferences|preferences]] ba lö niba'agö ndra'ugö ba wangoguna'ö ya'ia.\n\n{{int:blockedtext-block-ip|$3}} {{int:blockedtext-block-id|$5}}\n{{int:blockedtext-include-details-queries}}",
+	"systemblockedtext": "No otomatis iba'agö nomoro IP-mö MediaWiki.\nBörö nibe'e:\n\n:<em>$2</em>.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-block-ip|$3}}\n{{int:blockedtext-include-details-queries}}",
+	"blockedtext-tempuser": "<strong>No teba'agö döi zangoguna andrö ma zui nomoro IP-mö.</strong>\n\n{{int:blockedtext-made-by|$1}}\n{{int:blockedtext-reason-comment|$2}}.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-contact-blocker-admin|$1}}\n\n{{int:blockedtext-block-ip|$3}} {{int:blockedtext-block-id|$5}}\n{{int:blockedtext-include-details-queries}}",
+	"autoblockedtext-tempuser": "No otomatis teba'agö nomoro IP-mö, börö no i'oguna'ö ia sangoguna bö'ö si no iba'agö $1.\nBörö nibe'e:\n\n:<em>$2</em>.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-contact-blocker-admin|$1}}\n\n{{int:blockedtext-block-ip|$3}} {{int:blockedtext-block-id|$5}}\n{{int:blockedtext-include-details-queries}}",
 	"blockednoreason": "lö nibe'e mbörö",
+	"blockedtext-composite": "<strong>No teba'agö döi zangoguna ma zui nomoro IP-mö.</strong>\n\nBörö nibe'e:\n\n:<em>$2</em>.\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-longest-block|$6}}\n\n* $5\n\n{{int:blockedtext-block-ip|$3}}\n{{int:blockedtext-include-details-queries}}",
 	"blockedtext-composite-ids": "Blok ID si fakhai: $1 (tola wa oroma nomoro IP-mö ba gangolita IP niba'agö)",
 	"blockedtext-composite-no-ids": "Tesöndra nomoro IP-mö ba mato ha'uga gangolifa womba'agö",
 	"blockedtext-composite-reason": "So mato ha'uga womba'agö nigönagö ba akun-mö ma zui nomoro IP-mö",
@@ -719,7 +725,7 @@
 	"compareselectedversions": "Faedogö wamulö'ö nifili",
 	"editundo": "fuli furi",
 	"diff-empty": "(Lö sifabö'ö)",
-	"diff-multi-sameuser": "(Lö te'oroma'ö {{PLURAL:$1|sambua revisi gotalua|$1 revisi ba gotalua}} nibulö'ö zangoguna andre)",
+	"diff-multi-sameuser": "(Lö te'oroma'ö {{PLURAL:$1|sambua revisi gotalua|$1 revisi ba gotalua}} nibulö'ö {{GENDER:$3|zangoguna}} andre)",
 	"diff-multi-otherusers": "(Lö te'oroma'ö {{PLURAL:$1|sambua revisi ba gotalua|$1 revisi ba gotalua}} nifalua {{PLURAL:$2|samösa zangoguna|$2 zangoguna}})",
 	"searchresults": "Nisöndra ba wangalui",
 	"searchresults-title": "Nisöndra ba wangalui \"$1\"",
@@ -1094,5 +1100,6 @@
 	"blockedtext-expiration-time": "Ahori womba'agö: $1",
 	"blockedtext-intended-blockee": "Niba'agö: $1",
 	"blockedtext-contact-blocker-admin": "Tola öfahuhuosi womba'agö andre khö $1 ma zui [[{{MediaWiki:Grouppage-sysop}}|administrator]].",
+	"blockedtext-block-ip": "Nomoro IP-mö iada'a ya'ia $1.",
 	"blockedtext-include-details-queries": "Faogö fefu da'ö yaŵa bakha ba ero wanofu sedöna öfa'ema."
 }

@@ -360,7 +360,7 @@ class ImageModule extends Module {
 
 	/**
 	 * This method must not be used by getDefinitionSummary as doing so would cause
-	 * an infinite loop (we use ResourceLoaderImage::getUrl below which calls
+	 * an infinite loop (we use Image::getUrl below which calls
 	 * Module:getVersionHash, which calls Module::getDefinitionSummary).
 	 *
 	 * @param Context $context
@@ -378,21 +378,18 @@ class ImageModule extends Module {
 		$imageDataUri = $this->useDataURI ? $image->getDataUri( $context, $variant, 'original' ) : false;
 		$primaryUrl = $imageDataUri ?: $image->getUrl( $context, $script, $variant, 'original' );
 		$declarations = $this->getCssDeclarations(
-			$primaryUrl,
-			$image->getUrl( $context, $script, $variant, 'rasterized' )
+			$primaryUrl
 		);
 		return implode( "\n\t", $declarations );
 	}
 
 	/**
-	 * This method formerly provided fallback rasterized images for browsers that do not support SVG.
-	 * Now kept for backwards-compatibility.
+	 * Format the CSS declaration for the image as a background-image property.
 	 *
 	 * @param string $primary Primary URI
-	 * @param string $fallback Fallback URI (unused)
-	 * @return string[] CSS declarations to use given URIs as background-image
+	 * @return string[] CSS declarations
 	 */
-	protected function getCssDeclarations( $primary, $fallback ): array {
+	protected function getCssDeclarations( $primary ): array {
 		$primaryUrl = CSSMin::buildUrlValue( $primary );
 		return [
 			"background-image: $primaryUrl;",

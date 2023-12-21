@@ -46,6 +46,7 @@
 	"echo-notification-notice-text-only": "通知",
 	"echo-overlay-link": "全部通知",
 	"echo-overlay-title": "<b>通知</b>",
+	"echo-mark-all-as-read": "全部標做讀過",
 	"echo-date-today": "今日",
 	"echo-date-yesterday": "尋日",
 	"echo-email-batch-link-text-view-all-notifications": "睇所有通知"

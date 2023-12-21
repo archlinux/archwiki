@@ -21,6 +21,9 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
 use MediaWiki\Block\BlockActionInfo;
 use MediaWiki\Block\BlockRestrictionStore;
 use MediaWiki\Block\BlockUtils;
@@ -29,9 +32,11 @@ use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Html\Html;
+use MediaWiki\Pager\BlockListPager;
+use MediaWiki\SpecialPage\SpecialPage;
 use Wikimedia\IPUtils;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * A special page that lists existing blocks
@@ -45,31 +50,18 @@ class SpecialBlockList extends SpecialPage {
 
 	protected $blockType;
 
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var BlockRestrictionStore */
-	private $blockRestrictionStore;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var CommentStore */
-	private $commentStore;
-
-	/** @var BlockUtils */
-	private $blockUtils;
-
-	/** @var BlockActionInfo */
-	private $blockActionInfo;
-
-	/** @var RowCommentFormatter */
-	private $rowCommentFormatter;
+	private LinkBatchFactory $linkBatchFactory;
+	private BlockRestrictionStore $blockRestrictionStore;
+	private IConnectionProvider $dbProvider;
+	private CommentStore $commentStore;
+	private BlockUtils $blockUtils;
+	private BlockActionInfo $blockActionInfo;
+	private RowCommentFormatter $rowCommentFormatter;
 
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
 		BlockRestrictionStore $blockRestrictionStore,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		CommentStore $commentStore,
 		BlockUtils $blockUtils,
 		BlockActionInfo $blockActionInfo,
@@ -79,7 +71,7 @@ class SpecialBlockList extends SpecialPage {
 
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->blockRestrictionStore = $blockRestrictionStore;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->commentStore = $commentStore;
 		$this->blockUtils = $blockUtils;
 		$this->blockActionInfo = $blockActionInfo;
@@ -94,7 +86,7 @@ class SpecialBlockList extends SpecialPage {
 		$this->outputHeader();
 		$this->addHelpLink( 'Help:Blocking_users' );
 		$out = $this->getOutput();
-		$out->setPageTitle( $this->msg( 'ipblocklist' ) );
+		$out->setPageTitleMsg( $this->msg( 'ipblocklist' ) );
 		$out->addModuleStyles( [ 'mediawiki.special' ] );
 
 		$request = $this->getRequest();
@@ -107,17 +99,17 @@ class SpecialBlockList extends SpecialPage {
 		$action = $request->getText( 'action' );
 
 		if ( $action == 'unblock' || $action == 'submit' && $request->wasPosted() ) {
-			# B/C @since 1.18: Unblock interface is now at Special:Unblock
+			// B/C @since 1.18: Unblock interface is now at Special:Unblock
 			$title = $this->getSpecialPageFactory()->getTitleForAlias( 'Unblock/' . $this->target );
 			$out->redirect( $title->getFullURL() );
 
 			return;
 		}
 
-		# setup BlockListPager here to get the actual default Limit
+		// Setup BlockListPager here to get the actual default Limit
 		$pager = $this->getBlockListPager();
 
-		# Just show the block list
+		// Just show the block list
 		$fields = [
 			'Target' => [
 				'type' => 'user',
@@ -181,7 +173,7 @@ class SpecialBlockList extends SpecialPage {
 	protected function getBlockListPager() {
 		$conds = [];
 		$db = $this->getDB();
-		# Is the user allowed to see hidden blocks?
+		// Is the user allowed to see hidden blocks?
 		if ( !$this->getAuthority()->isAllowed( 'hideuser' ) ) {
 			$conds['ipb_deleted'] = 0;
 		}
@@ -215,13 +207,13 @@ class SpecialBlockList extends SpecialPage {
 			}
 		}
 
-		# Apply filters
+		// Apply filters
 		if ( in_array( 'userblocks', $this->options ) ) {
 			$conds['ipb_user'] = 0;
 		}
 		if ( in_array( 'autoblocks', $this->options ) ) {
 			// ipb_parent_block_id = 0 because of T282890
-			$conds[] = "ipb_parent_block_id IS NULL OR ipb_parent_block_id = 0";
+			$conds['ipb_parent_block_id'] = [ null, 0 ];
 		}
 		if ( in_array( 'addressblocks', $this->options ) ) {
 			$conds[] = "ipb_user != 0 OR ipb_range_end > ipb_range_start";
@@ -255,7 +247,7 @@ class SpecialBlockList extends SpecialPage {
 			$this->commentStore,
 			$this->linkBatchFactory,
 			$this->getLinkRenderer(),
-			$this->loadBalancer,
+			$this->dbProvider,
 			$this->rowCommentFormatter,
 			$this->getSpecialPageFactory(),
 			$conds
@@ -269,12 +261,12 @@ class SpecialBlockList extends SpecialPage {
 	protected function showList( BlockListPager $pager ) {
 		$out = $this->getOutput();
 
-		# Check for other blocks, i.e. global/tor blocks
+		// Check for other blocks, i.e. global/tor blocks
 		$otherBlockLink = [];
 		$this->getHookRunner()->onOtherBlockLogLink( $otherBlockLink, $this->target );
 
-		# Show additional header for the local block only when other blocks exists.
-		# Not necessary in a standard installation without such extensions enabled
+		// Show additional header for the local block only when other blocks exists.
+		// Not necessary in a standard installation without such extensions enabled
 		if ( count( $otherBlockLink ) ) {
 			$out->addHTML(
 				Html::element( 'h2', [], $this->msg( 'ipblocklist-localblock' )->text() ) . "\n"
@@ -319,6 +311,11 @@ class SpecialBlockList extends SpecialPage {
 	 * @return IDatabase
 	 */
 	protected function getDB() {
-		return $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		return $this->dbProvider->getReplicaDatabase();
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialBlockList::class, 'SpecialBlockList' );

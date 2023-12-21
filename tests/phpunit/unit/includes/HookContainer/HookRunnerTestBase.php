@@ -15,14 +15,34 @@ use ReflectionParameter;
  * @package MediaWiki\Tests\HookContainer
  */
 abstract class HookRunnerTestBase extends MediaWikiUnitTestCase {
-
 	/**
 	 * @return Generator|array
 	 */
-	abstract public function provideHookRunners();
+	 // abstract public static function provideHookRunners();
 
 	/**
-	 * @dataProvider provideHookRunners
+	 * Temporary override to make provideHookRunners static.
+	 * See T332865.
+	 *
+	 * @return Generator|array
+	 */
+	final public static function provideHookRunnersStatically() {
+		$reflectionMethod = new ReflectionMethod( static::class, 'provideHookRunners' );
+		if ( $reflectionMethod->isStatic() ) {
+			return $reflectionMethod->invoke( null );
+		}
+
+		trigger_error(
+			'overriding provideHookRunners as an instance method is deprecated. (' .
+			$reflectionMethod->getFileName() . ':' . $reflectionMethod->getEndLine() . ')',
+			E_USER_DEPRECATED
+		);
+
+		return $reflectionMethod->invoke( new static() );
+	}
+
+	/**
+	 * @dataProvider provideHookRunnersStatically
 	 */
 	public function testAllMethodsInheritedFromInterface( string $hookRunnerClass ) {
 		$hookRunnerReflectionClass = new ReflectionClass( $hookRunnerClass );
@@ -44,22 +64,36 @@ abstract class HookRunnerTestBase extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @dataProvider provideHookRunners
+	 * @dataProvider provideHookRunnersStatically
 	 */
-	public function testHookInterfacesHaveUniqueMethods( string $hookRunnerClass ) {
+	public function testHookInterfacesConvention( string $hookRunnerClass ) {
 		$hookRunnerReflectionClass = new ReflectionClass( $hookRunnerClass );
 		$hookInterfaces = $hookRunnerReflectionClass->getInterfaces();
 		$hookMethods = [];
 		foreach ( $hookInterfaces as $interface ) {
-			$this->assertCount( 1, $interface->getMethods(),
+			$name = $interface->getName();
+
+			$this->assertStringEndsWith( 'Hook', $name,
+				"Interface name '$name' must have the suffix 'Hook'." );
+
+			$methods = $interface->getMethods();
+			$this->assertCount( 1, $methods,
 				'Hook interface should have one method' );
-			array_push( $hookMethods, $interface->getMethods()[0]->getName() );
+
+			$method = $methods[0];
+			$methodName = $method->getName();
+			$this->assertStringStartsWith( 'on', $methodName,
+				"Interface method '$methodName' must have prefix 'on'." );
+			$this->assertTrue( $method->isPublic(), "Interface method '$methodName' should public" );
+			$this->assertFalse( $method->isStatic(), "Interface method '$methodName' should not static." );
+
+			$hookMethods[] = $methodName;
 		}
 		$this->assertArrayEquals( $hookMethods, array_unique( $hookMethods ) );
 	}
 
-	public function provideHookMethods() {
-		foreach ( $this->provideHookRunners() as $name => [ $hookRunnerClass ] ) {
+	public static function provideHookMethods() {
+		foreach ( self::provideHookRunnersStatically() as $name => [ $hookRunnerClass ] ) {
 			$hookRunnerReflectionClass = new ReflectionClass( $hookRunnerClass );
 			foreach ( $hookRunnerReflectionClass->getInterfaces() as $hookInterface ) {
 				yield $name . ':' . $hookInterface->getName()
@@ -71,7 +105,7 @@ abstract class HookRunnerTestBase extends MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideHookMethods
 	 */
-	public function testAllArgumentsArePassed(
+	public function testHookContainerArguments(
 		string $hookRunnerClass,
 		ReflectionMethod $hookMethod
 	) {
@@ -85,35 +119,53 @@ abstract class HookRunnerTestBase extends MediaWikiUnitTestCase {
 				$params[] = $bogusValue;
 			}
 		}
+		$hookMethodName = $hookMethod->getName();
 		$mockContainer = $this->createNoOpMock( HookContainer::class, [ 'run' ] );
 		$mockContainer
 			->expects( $this->once() )
 			->method( 'run' )
-			->willReturnCallback( function ( string $hookName, array $hookCallParams ) use ( $params ) {
-				$this->assertNotSame( '', $hookName );
+			->willReturnCallback( function ( string $hookName, array $hookCallParams ) use ( $hookMethodName, $params ) {
+				// HookContainer builds the method from the hook name with some normalisation,
+				// so the passed hook name and the method must be equal
+				// This is not a function in HookContainer as hooks are hot path
+				// and just avoid the extra call for performance
+				$expectedFuncName = 'on' . strtr( ucfirst( $hookName ), ':-', '__' );
+				$this->assertSame( $expectedFuncName, $hookMethodName,
+					'Interface function must named "on<hook name>" with : or - replaced by _' );
 				$this->assertSame( $params, $hookCallParams );
 				return true;
 			} );
 		$hookRunner = new $hookRunnerClass( $mockContainer );
-		$hookMethodName = $hookMethod->getName();
 		$hookRunner->$hookMethodName( ...$params );
 	}
 
 	protected function getMockedParamValue( ReflectionParameter $param ) {
 		$paramType = $param->getType();
-		if ( !$paramType || $paramType->getName() === 'string' ) {
+		if ( !$paramType ) {
 			// Return a string for all the untyped parameters, good enough for our purposes.
 			return $param->getName();
 		}
-		if ( $paramType->getName() === 'array' ) {
+		$paramName = $paramType->getName();
+		if ( $paramName === 'string' ) {
+			return $param->getName();
+		}
+		if ( $paramName === 'array' ) {
 			return [];
 		}
-		if ( $paramType->getName() === 'bool' ) {
+		if ( $paramName === 'bool' ) {
 			return false;
 		}
-		if ( $paramType->getName() === 'int' ) {
+		if ( $paramName === 'int' ) {
 			return 42;
 		}
-		return $this->createNoOpMock( $paramType->getName() );
+		if ( $paramName === 'float' ) {
+			return 42.0;
+		}
+		if ( $paramName === 'callable' ) {
+			return static function () {
+				// No-op
+			};
+		}
+		return $this->createNoOpMock( $paramName );
 	}
 }

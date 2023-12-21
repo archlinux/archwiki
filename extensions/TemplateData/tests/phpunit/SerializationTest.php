@@ -1,12 +1,13 @@
 <?php
 
-use MediaWiki\Extension\TemplateData\Hooks as TemplateDataHooks;
+use MediaWiki\Extension\TemplateData\TemplateDataStatus;
 
 /**
- * @group TemplateData
- * @covers \MediaWiki\Extension\TemplateData\Hooks
+ * @covers \MediaWiki\Extension\TemplateData\TemplateDataStatus
+ * @license GPL-2.0-or-later
  */
 class SerializationTest extends MediaWikiIntegrationTestCase {
+
 	public function testParserOutputPersistenceForwardCompatibility() {
 		$output = new ParserOutput();
 
@@ -17,10 +18,10 @@ class SerializationTest extends MediaWikiIntegrationTestCase {
 		// Set JSONified state. Should work before we set JSON-serializable data,
 		// to be robust against old code reading new data after a rollback.
 		$output->setExtensionData( 'TemplateDataStatus',
-			TemplateDataHooks::jsonSerializeStatus( $status )
+			TemplateDataStatus::jsonSerialize( $status )
 		);
 
-		$result = TemplateDataHooks::getStatusFromParserOutput( $output );
+		$result = TemplateDataStatus::newFromJson( $output->getExtensionData( 'TemplateDataStatus' ) );
 		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
 		$this->assertSame( (string)$status, (string)$result );
 	}
@@ -35,12 +36,12 @@ class SerializationTest extends MediaWikiIntegrationTestCase {
 		// Set the object directly. Should still work once we normally set JSON-serializable data.
 		$output->setExtensionData( 'TemplateDataStatus', $status );
 
-		$result = TemplateDataHooks::getStatusFromParserOutput( $output );
+		$result = TemplateDataStatus::newFromJson( $output->getExtensionData( 'TemplateDataStatus' ) );
 		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
 		$this->assertSame( (string)$status, (string)$result );
 	}
 
-	public function provideStatus() {
+	public static function provideStatus() {
 		yield [ Status::newGood() ];
 		$status = Status::newFatal( 'a', 'b', 'c' );
 		$status->fatal( 'f' );
@@ -53,8 +54,8 @@ class SerializationTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testParserOutputPersistenceRoundTrip( Status $status ) {
 		$parserOutput = new ParserOutput();
-		TemplateDataHooks::setStatusToParserOutput( $parserOutput, $status );
-		$result = TemplateDataHooks::getStatusFromParserOutput( $parserOutput );
+		$parserOutput->setExtensionData( 'TemplateDataStatus', TemplateDataStatus::jsonSerialize( $status ) );
+		$result = TemplateDataStatus::newFromJson( $parserOutput->getExtensionData( 'TemplateDataStatus' ) );
 		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
 		$this->assertSame( (string)$status, (string)$result );
 	}
@@ -63,9 +64,10 @@ class SerializationTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideStatus
 	 */
 	public function testJsonRoundTrip( Status $status ) {
-		$json = TemplateDataHooks::jsonSerializeStatus( $status );
-		$result = TemplateDataHooks::newStatusFromJson( $json );
+		$json = TemplateDataStatus::jsonSerialize( $status );
+		$result = TemplateDataStatus::newFromJson( $json );
 		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
 		$this->assertSame( (string)$status, (string)$result );
 	}
+
 }

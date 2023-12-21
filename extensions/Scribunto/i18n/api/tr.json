@@ -4,7 +4,6 @@
 			"BaRaN6161 TURK"
 		]
 	},
-	"apihelp-scribunto-console-description": "Scribunto konsolundan XHR taleplerine hizmet vermek için dahili modül.",
 	"apihelp-scribunto-console-summary": "Scribunto konsolundan XHR taleplerine hizmet vermek için dahili modül.",
 	"apihelp-scribunto-console-param-title": "Test edilecek modülün adı.",
 	"apihelp-scribunto-console-param-content": "Modülün yeni içeriği.",

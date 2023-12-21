@@ -31,6 +31,9 @@ use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\TempUser\TempUserCreator;
+use MediaWiki\User\User;
+use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -55,23 +58,13 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 class ApiEditPage extends ApiBase {
 	use ApiWatchlistTrait;
 
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/** @var RevisionLookup */
-	private $revisionLookup;
-
-	/** @var WatchedItemStoreInterface */
-	private $watchedItemStore;
-
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
-
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
-
-	/** @var RedirectLookup */
-	private $redirectLookup;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private RevisionLookup $revisionLookup;
+	private WatchedItemStoreInterface $watchedItemStore;
+	private WikiPageFactory $wikiPageFactory;
+	private RedirectLookup $redirectLookup;
+	private TempUserCreator $tempUserCreator;
+	private UserFactory $userFactory;
 
 	/**
 	 * Sends a cookie so anons get talk message notifications, mirroring SubmitAction (T295910)
@@ -90,6 +83,8 @@ class ApiEditPage extends ApiBase {
 	 * @param WatchlistManager|null $watchlistManager
 	 * @param UserOptionsLookup|null $userOptionsLookup
 	 * @param RedirectLookup|null $redirectLookup
+	 * @param TempUserCreator|null $tempUserCreator
+	 * @param UserFactory|null $userFactory
 	 */
 	public function __construct(
 		ApiMain $mainModule,
@@ -100,7 +95,9 @@ class ApiEditPage extends ApiBase {
 		WikiPageFactory $wikiPageFactory = null,
 		WatchlistManager $watchlistManager = null,
 		UserOptionsLookup $userOptionsLookup = null,
-		RedirectLookup $redirectLookup = null
+		RedirectLookup $redirectLookup = null,
+		TempUserCreator $tempUserCreator = null,
+		UserFactory $userFactory = null
 	) {
 		parent::__construct( $mainModule, $moduleName );
 
@@ -118,6 +115,22 @@ class ApiEditPage extends ApiBase {
 		$this->watchlistManager = $watchlistManager ?? $services->getWatchlistManager();
 		$this->userOptionsLookup = $userOptionsLookup ?? $services->getUserOptionsLookup();
 		$this->redirectLookup = $redirectLookup ?? $services->getRedirectLookup();
+		$this->tempUserCreator = $tempUserCreator ?? $services->getTempUserCreator();
+		$this->userFactory = $userFactory ?? $services->getUserFactory();
+	}
+
+	/**
+	 * @see EditPage::getUserForPermissions
+	 * @return User
+	 */
+	private function getUserForPermissions() {
+		$user = $this->getUser();
+		if ( $this->tempUserCreator->shouldAutoCreate( $user, 'edit' ) ) {
+			return $this->userFactory->newUnsavedTempUser(
+				$this->tempUserCreator->getStashedName( $this->getRequest()->getSession() )
+			);
+		}
+		return $user;
 	}
 
 	public function execute() {
@@ -207,7 +220,7 @@ class ApiEditPage extends ApiBase {
 		$this->checkTitleUserPermissions(
 			$titleObj,
 			'edit',
-			[ 'autoblock' => true ]
+			[ 'autoblock' => true, 'user' => $this->getUserForPermissions() ]
 		);
 
 		$toMD5 = $params['text'];
@@ -585,6 +598,34 @@ class ApiEditPage extends ApiBase {
 					}
 				}
 				$this->persistGlobalSession();
+
+				if ( isset( $result['savedTempUser'] ) ) {
+					$returnToQuery = $params['returntoquery'];
+					$returnToAnchor = $params['returntoanchor'];
+					if ( str_starts_with( $returnToQuery, '?' ) ) {
+						// Remove leading '?' if provided (both ways work, but this is more common elsewhere)
+						$returnToQuery = substr( $returnToQuery, 1 );
+					}
+					if ( $returnToAnchor !== '' && !str_starts_with( $returnToAnchor, '#' ) ) {
+						// Add leading '#' if missing (it's required)
+						$returnToAnchor = '#' . $returnToAnchor;
+					}
+					$r['tempusercreated'] = true;
+					$url = $titleObj->getFullURL();
+					$redirectUrl = $url;
+					$this->getHookRunner()->onTempUserCreatedRedirect(
+						$this->getRequest()->getSession(),
+						$result['savedTempUser'],
+						$params['returnto'] ?? $titleObj->getPrefixedDBkey(),
+						$params['returntoquery'],
+						$params['returntoanchor'],
+						$redirectUrl
+					);
+					if ( $redirectUrl !== $url ) {
+						$r['tempusercreatedredirect'] = $redirectUrl;
+					}
+				}
+
 				break;
 
 			default:
@@ -739,6 +780,17 @@ class ApiEditPage extends ApiBase {
 			],
 			'contentmodel' => [
 				ParamValidator::PARAM_TYPE => $this->contentHandlerFactory->getContentModels(),
+			],
+			'returnto' => [
+				ParamValidator::PARAM_TYPE => 'title',
+			],
+			'returntoquery' => [
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_DEFAULT => '',
+			],
+			'returntoanchor' => [
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_DEFAULT => '',
 			],
 			'token' => [
 				// Standard definition automatically inserted

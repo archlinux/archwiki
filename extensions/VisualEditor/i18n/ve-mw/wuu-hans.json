@@ -9,10 +9,9 @@
 			"飞舞回堂前"
 		]
 	},
-	"tooltip-ca-createsource": "创建该只页面个源码",
-	"tooltip-ca-edit": "用维基文本编辑该只页面",
-	"tooltip-ca-editsource": "编辑该只页面个源码",
 	"tooltip-ca-ve-edit": "编辑箇页",
+	"tooltip-ca-editsource": "编辑该只页面个源码",
+	"tooltip-ca-createsource": "创建该只页面个源码",
 	"visualeditor-ca-createlocaldescriptionsource": "添加本地说明源码",
 	"visualeditor-ca-createsource": "创建源码",
 	"visualeditor-ca-editsource": "编辑源码",

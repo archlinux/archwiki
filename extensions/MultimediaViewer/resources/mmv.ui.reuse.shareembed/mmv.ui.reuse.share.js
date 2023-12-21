@@ -15,89 +15,88 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { getMediaHash } = require( 'mmv.head' );
+const Tab = require( './mmv.ui.reuse.tab.js' );
+
 ( function () {
-	// Shortcut for prototype later
-	var SP;
 
 	/**
 	 * Represents the file reuse dialog and link to open it.
-	 *
-	 * @class mw.mmv.ui.reuse.Share
-	 * @extends mw.mmv.ui.reuse.Tab
-	 * @param {jQuery} $container
 	 */
-	function Share( $container ) {
-		mw.mmv.ui.reuse.Tab.call( this, $container );
-		this.init();
+	class Share extends Tab {
+		/**
+		 * @param {jQuery} $container
+		 */
+		constructor( $container ) {
+			super( $container );
+			this.init();
+		}
+		init() {
+			this.$pane.addClass( 'mw-mmv-share-pane' )
+				.appendTo( this.$container );
+
+			this.pageInput = new mw.widgets.CopyTextLayout( {
+				help: mw.message( 'multimediaviewer-share-explanation' ).text(),
+				helpInline: true,
+				align: 'top',
+				textInput: {
+					placeholder: mw.message( 'multimediaviewer-reuse-loading-placeholder' ).text()
+				},
+				button: {
+					label: '',
+					title: mw.msg( 'multimediaviewer-reuse-copy-share' )
+				}
+			} );
+
+			this.$pageLink = $( '<a>' )
+				.addClass( 'mw-mmv-share-page-link' )
+				.prop( 'alt', mw.message( 'multimediaviewer-link-to-page' ).text() )
+				.prop( 'target', '_blank' )
+				.text( '\u00A0' )
+				.appendTo( this.$pane );
+
+			this.pageInput.$element.appendTo( this.$pane );
+
+			this.$pane.appendTo( this.$container );
+		}
+
+		/**
+		 * Shows the pane.
+		 */
+		show() {
+			super.show();
+			this.select();
+		}
+
+		/**
+		 * @inheritdoc
+		 * @param {Image} image
+		 */
+		set( image ) {
+			const url = image.descriptionUrl + getMediaHash( image.title );
+
+			this.pageInput.textInput.setValue( url );
+
+			this.select();
+
+			this.$pageLink.prop( 'href', url );
+		}
+
+		/**
+		 * @inheritdoc
+		 */
+		empty() {
+			this.pageInput.textInput.setValue( '' );
+			this.$pageLink.prop( 'href', null );
+		}
+
+		/**
+		 * Selects the text in the readonly textbox.
+		 */
+		select() {
+			this.pageInput.selectText();
+		}
 	}
-	OO.inheritClass( Share, mw.mmv.ui.reuse.Tab );
-	SP = Share.prototype;
 
-	SP.init = function () {
-		this.$pane.addClass( 'mw-mmv-share-pane' )
-			.appendTo( this.$container );
-
-		this.pageInput = new mw.widgets.CopyTextLayout( {
-			help: mw.message( 'multimediaviewer-share-explanation' ).text(),
-			helpInline: true,
-			align: 'top',
-			textInput: {
-				placeholder: mw.message( 'multimediaviewer-reuse-loading-placeholder' ).text()
-			},
-			button: {
-				label: '',
-				title: mw.msg( 'multimediaviewer-reuse-copy-share' )
-			}
-		} );
-
-		this.$pageLink = $( '<a>' )
-			.addClass( 'mw-mmv-share-page-link' )
-			.prop( 'alt', mw.message( 'multimediaviewer-link-to-page' ).text() )
-			.prop( 'target', '_blank' )
-			.html( '&nbsp;' )
-			.appendTo( this.$pane );
-
-		this.pageInput.$element.appendTo( this.$pane );
-
-		this.$pane.appendTo( this.$container );
-	};
-
-	/**
-	 * Shows the pane.
-	 */
-	SP.show = function () {
-		mw.mmv.ui.reuse.Tab.prototype.show.call( this );
-		this.select();
-	};
-
-	/**
-	 * @inheritdoc
-	 * @param {mw.mmv.model.Image} image
-	 */
-	SP.set = function ( image ) {
-		var url = image.descriptionUrl + mw.mmv.getMediaHash( image.title );
-
-		this.pageInput.textInput.setValue( url );
-
-		this.select();
-
-		this.$pageLink.prop( 'href', url );
-	};
-
-	/**
-	 * @inheritdoc
-	 */
-	SP.empty = function () {
-		this.pageInput.textInput.setValue( '' );
-		this.$pageLink.prop( 'href', null );
-	};
-
-	/**
-	 * Selects the text in the readonly textbox.
-	 */
-	SP.select = function () {
-		this.pageInput.selectText();
-	};
-
-	mw.mmv.ui.reuse.Share = Share;
+	module.exports = Share;
 }() );

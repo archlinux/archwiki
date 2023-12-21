@@ -21,6 +21,7 @@
  * @ingroup Cache
  */
 
+use MediaWiki\Http\Telemetry;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -66,6 +67,12 @@ use MediaWiki\WikiMap\WikiMap;
 class ObjectCache {
 	/** @var BagOStuff[] Map of (id => BagOStuff) */
 	public static $instances = [];
+
+	/**
+	 * @internal for ObjectCacheTest
+	 * @var string
+	 */
+	public static $localServerCacheClass;
 
 	/**
 	 * Get a cached instance of the specified type of cache object.
@@ -216,6 +223,9 @@ class ObjectCache {
 				$params['caches'][$i] = self::newFromParams( $cacheInfo, $services );
 			}
 		}
+		if ( is_a( $class, RESTBagOStuff::class, true ) ) {
+			$params['telemetry'] = Telemetry::getInstance();
+		}
 
 		return new $class( $params );
 	}
@@ -234,16 +244,26 @@ class ObjectCache {
 	 * @return BagOStuff
 	 */
 	public static function newAnything( $params ) {
+		return self::getInstance( self::getAnythingId() );
+	}
+
+	/**
+	 * Get the ID that will be used for CACHE_ANYTHING
+	 * @return string|int
+	 */
+	private static function getAnythingId() {
 		global $wgMainCacheType, $wgMessageCacheType, $wgParserCacheType;
 		$candidates = [ $wgMainCacheType, $wgMessageCacheType, $wgParserCacheType ];
 		foreach ( $candidates as $candidate ) {
-			if ( $candidate !== CACHE_NONE && $candidate !== CACHE_ANYTHING ) {
-				$cache = self::getInstance( $candidate );
+			if ( $candidate === CACHE_ACCEL ) {
 				// CACHE_ACCEL might default to nothing if no APCu
 				// See includes/ServiceWiring.php
-				if ( !( $cache instanceof EmptyBagOStuff ) ) {
-					return $cache;
+				$class = self::getLocalServerCacheClass();
+				if ( $class !== EmptyBagOStuff::class ) {
+					return $candidate;
 				}
+			} elseif ( $candidate !== CACHE_NONE && $candidate !== CACHE_ANYTHING ) {
+				return $candidate;
 			}
 		}
 
@@ -259,8 +279,7 @@ class ObjectCache {
 		} else {
 			$candidate = CACHE_DB;
 		}
-
-		return self::getInstance( $candidate );
+		return $candidate;
 	}
 
 	/**
@@ -303,6 +322,32 @@ class ObjectCache {
 	}
 
 	/**
+	 * Determine whether a config ID would access the database
+	 *
+	 * @param string|int $id A key in $wgObjectCaches
+	 * @return bool
+	 */
+	public static function isDatabaseId( $id ) {
+		global $wgObjectCaches;
+		if ( !isset( $wgObjectCaches[$id] ) ) {
+			return false;
+		}
+		$cache = $wgObjectCaches[$id];
+		if ( ( $cache['class'] ?? '' ) === SqlBagOStuff::class ) {
+			return true;
+		}
+		// Ideally we would inspect the config, but it's complicated. The ID is suggestive.
+		if ( $id === 'db-replicated' ) {
+			return true;
+		}
+		if ( ( $cache['factory'] ?? '' ) === 'ObjectCache::newAnything' ) {
+			$id = self::getAnythingId();
+			return self::isDatabaseId( $id );
+		}
+		return false;
+	}
+
+	/**
 	 * Clear all the cached instances.
 	 */
 	public static function clear() {
@@ -329,15 +374,28 @@ class ObjectCache {
 			// Even simple caches must use a keyspace (T247562)
 			'keyspace' => self::getDefaultKeyspace(),
 		];
+		$class = self::getLocalServerCacheClass();
+		return new $class( $params );
+	}
+
+	/**
+	 * Get the class which will be used for the local server cache
+	 * @return string
+	 */
+	private static function getLocalServerCacheClass() {
+		if ( self::$localServerCacheClass !== null ) {
+			return self::$localServerCacheClass;
+		}
 		if ( function_exists( 'apcu_fetch' ) ) {
 			// Make sure the APCu methods actually store anything
 			if ( PHP_SAPI !== 'cli' || ini_get( 'apc.enable_cli' ) ) {
-				return new APCUBagOStuff( $params );
+				return APCUBagOStuff::class;
+
 			}
 		} elseif ( function_exists( 'wincache_ucache_get' ) ) {
-			return new WinCacheBagOStuff( $params );
+			return WinCacheBagOStuff::class;
 		}
 
-		return new EmptyBagOStuff( $params );
+		return EmptyBagOStuff::class;
 	}
 }

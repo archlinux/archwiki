@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2010 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
+ * Copyright © 2010 Roan Kattouw <roan.kattouw@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -38,10 +39,7 @@ class ApiQueryQueryPage extends ApiQueryGeneratorBase {
 	 */
 	private $queryPages;
 
-	/**
-	 * @var SpecialPageFactory
-	 */
-	private $specialPageFactory;
+	private SpecialPageFactory $specialPageFactory;
 
 	/**
 	 * @param ApiQuery $query

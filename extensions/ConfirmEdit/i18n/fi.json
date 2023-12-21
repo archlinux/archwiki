@@ -22,7 +22,6 @@
 	"captcha-edit": "Ratkaise alla oleva laskutoimitus muokataksesi tätä sivua ([[Special:Captcha/help|lisätietoja]]):",
 	"captcha-edit-fail": "Virheellinen tai puuttuva CAPTCHA.",
 	"captcha-desc": "Tarjoaa CAPTCHA-tekniikoita suojaamaan mainoslinkkejä ja salasana-arvailua vastaan.",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "CAPTCHAn ratkaisu",
 	"captcha-info-help": "CAPTCHAn kuvaus",
 	"captcha-id-label": "CAPTCHA-tunnus",

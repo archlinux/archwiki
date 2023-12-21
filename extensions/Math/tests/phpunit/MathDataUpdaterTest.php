@@ -43,7 +43,6 @@ class MathDataUpdaterTest extends MediaWikiIntegrationTestCase {
 			'addModules',
 			'addModuleStyles',
 		] )->getMock();
-		$parserOutput->expects( $this->never() )->method( 'addModules' );
 		$parserOutput->expects( $this->never() )->method( 'addModuleStyles' );
 		/** @var ParserOutput $parserOutput */
 		$updater->updateParserOutput( $parserOutput );
@@ -58,7 +57,6 @@ class MathDataUpdaterTest extends MediaWikiIntegrationTestCase {
 			'addModules',
 			'addModuleStyles',
 		] )->getMock();
-		$parserOutput->expects( $this->once() )->method( 'addModules' );
 		$parserOutput->expects( $this->once() )->method( 'addModuleStyles' );
 		/** @var ParserOutput $parserOutput */
 		$updater->updateParserOutput( $parserOutput );

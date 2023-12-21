@@ -25,7 +25,7 @@ class UserNameUtilsTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideIsValid() {
+	public static function provideIsValid() {
 		return [
 			'Empty string' => [ '', false ],
 			'Blank space' => [ ' ', false ],
@@ -72,12 +72,14 @@ class UserNameUtilsTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideIsUsable() {
+	public static function provideIsUsable() {
 		return [
 			'Only valid user names are creatable' => [ '', false ],
 			'Reserved names cannot be used' => [ 'MediaWiki default', false ],
 			'Names can also be reserved via msg: ' => [ 'reserved-user', false ],
 			'User names with no issues can be used' => [ 'FooBar', true ],
+			'Reserved temp users' => [ '!Unregistered 1234', false ],
+			'Real temp users' => [ '*Unregistered 1234', true ],
 		];
 	}
 
@@ -249,7 +251,7 @@ class UserNameUtilsTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideIPs() {
+	public static function provideIPs() {
 		return [
 			'Empty string' => [ '', false ],
 			'Blank space' => [ ' ', false ],
@@ -280,7 +282,7 @@ class UserNameUtilsTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideIPRanges() {
+	public static function provideIPRanges() {
 		return [
 			[ '116.17.184.5/32', true ],
 			[ '0.17.184.5/30', true ],

@@ -1,7 +1,9 @@
 <?php
 
+use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Controller\NotificationController;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Extension\Notifications\UserLocator;
 use MediaWiki\User\UserOptionsLookup;
 use Wikimedia\TestingAccessWrapper;
 
@@ -10,7 +12,7 @@ use Wikimedia\TestingAccessWrapper;
  */
 class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 
-	public function evaluateUserLocatorsProvider() {
+	public static function evaluateUserLocatorsProvider() {
 		return [
 			[
 				'With no options no users are notified',
@@ -59,14 +61,14 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 				[ [ 123 ] ],
 				// event user locator config
 				[
-					[ [ EchoUserLocator::class, 'locateFromEventExtra' ], [ 'other-user' ] ],
+					[ [ UserLocator::class, 'locateFromEventExtra' ], [ 'other-user' ] ],
 				],
 				// additional setup
 				static function ( $test, $event ) {
 					$event->expects( $test->any() )
 						->method( 'getExtraParam' )
 						->with( 'other-user' )
-						->will( $test->returnValue( 123 ) );
+						->willReturn( 123 );
 				}
 			],
 		];
@@ -79,7 +81,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 		$this->setMwGlobals( [
 			'wgEchoNotifications' => [
 				'unit-test' => [
-					EchoAttributeManager::ATTR_LOCATORS => $locatorConfigForEventType
+					AttributeManager::ATTR_LOCATORS => $locatorConfigForEventType
 				],
 			],
 		] );
@@ -92,7 +94,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 			$setup( $this, $event );
 		}
 
-		$result = NotificationController::evaluateUserCallable( $event, EchoAttributeManager::ATTR_LOCATORS );
+		$result = NotificationController::evaluateUserCallable( $event, AttributeManager::ATTR_LOCATORS );
 		$this->assertEquals( $expect, array_map( 'array_keys', $result ), $message );
 	}
 
@@ -105,14 +107,14 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 			return [];
 		};
 
-		self::testEvaluateUserLocators(
+		$this->testEvaluateUserLocators(
 			__FUNCTION__,
 			[ [] ],
 			[ [ $callback, 'first', 'second' ] ]
 		);
 	}
 
-	public function getUsersToNotifyForEventProvider() {
+	public static function getUsersToNotifyForEventProvider() {
 		return [
 			[
 				'Filters anonymous users',
@@ -151,7 +153,7 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 		$this->setMwGlobals( [
 			'wgEchoNotifications' => [
 				'unit-test' => [
-					EchoAttributeManager::ATTR_LOCATORS => static function () use ( $users ) {
+					AttributeManager::ATTR_LOCATORS => static function () use ( $users ) {
 						return $users;
 					},
 				],
@@ -283,13 +285,11 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 
 		$event = $this->createMock( Event::class );
 		$event->method( 'getExtraParam' )
-			->will( $this->returnValueMap(
-				[
-					[ 'delay', null, 120 ],
-					[ 'rootJobSignature', null, 'test-signature' ],
-					[ 'rootJobTimestamp', null,  wfTimestamp() ]
-				]
-			) );
+			->willReturnMap( [
+				[ 'delay', null, 120 ],
+				[ 'rootJobSignature', null, 'test-signature' ],
+				[ 'rootJobTimestamp', null, wfTimestamp() ]
+			] );
 		$event->expects( $this->once() )
 			->method( 'getTitle' )
 			->willReturn( Title::newFromText( 'test-title' ) );
@@ -306,13 +306,11 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 
 		$event = $this->createMock( Event::class );
 		$event->method( 'getExtraParam' )
-			->will( $this->returnValueMap(
-				[
-					[ 'delay', null, 10 ],
-					[ 'rootJobSignature', null, 'test-signature' ],
-					[ 'rootJobTimestamp', null,  $rootJobTimestamp ]
-				]
-			) );
+			->willReturnMap( [
+				[ 'delay', null, 10 ],
+				[ 'rootJobSignature', null, 'test-signature' ],
+				[ 'rootJobTimestamp', null, $rootJobTimestamp ]
+			] );
 		$event->expects( $this->once() )
 			->method( 'getId' )
 			->willReturn( 42 );
@@ -329,13 +327,15 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider PageLinkedTitleMutedByUserDataProvider
-	 * @param Title $title
-	 * @param User $user
-	 * @param UserOptionsLookup $userOptionsLookup
+	 * @param int $mockArticleID
+	 * @param int[] $mockMutedTitlePreferences
 	 * @param bool $expected
 	 */
 	public function testIsPageLinkedTitleMutedByUser(
-		Title $title, User $user, UserOptionsLookup $userOptionsLookup, $expected ): void {
+		int $mockArticleID, array $mockMutedTitlePreferences, $expected ): void {
+		$title = $this->getMockTitle( $mockArticleID );
+		$user = $this->getMockUser();
+		$userOptionsLookup = $this->getUserOptionsLookupMock( $mockMutedTitlePreferences );
 		$wrapper = TestingAccessWrapper::newFromClass( NotificationController::class );
 		$wrapper->mutedPageLinkedTitlesCache = $this->createMock( MapCacheLRU::class );
 		$this->setService( 'UserOptionsLookup', $userOptionsLookup );
@@ -345,24 +345,21 @@ class NotificationControllerTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function PageLinkedTitleMutedByUserDataProvider(): array {
+	public static function PageLinkedTitleMutedByUserDataProvider(): array {
 		return [
 			[
-				$this->getMockTitle( 123 ),
-				$this->getMockUser(),
-				$this->getUserOptionsLookupMock( [] ),
+				123,
+				[],
 				false
 			],
 			[
-				$this->getMockTitle( 123 ),
-				$this->getMockUser(),
-				$this->getUserOptionsLookupMock( [ 123, 456, 789 ] ),
+				123,
+				[ 123, 456, 789 ],
 				true
 			],
 			[
-				$this->getMockTitle( 456 ),
-				$this->getMockUser(),
-				$this->getUserOptionsLookupMock( [ 489 ] ),
+				456,
+				[ 489 ],
 				false
 			]
 

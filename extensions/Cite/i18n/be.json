@@ -36,5 +36,11 @@
 	"cite_references_link_accessibility_back_label": "Вярнуцца назад",
 	"cite_section_preview_references": "Перадпрагляд зносак",
 	"cite_warning": "Папярэджанне пра цытаванне: $1",
-	"cite_warning_sectionpreview_no_text": "Тэг <code>&lt;ref&gt;</code> з імем <code>$1</code> не можа быць перадпрагледжаны, бо ён вызначаны за межамі рэдагуемага раздзела або не вызначаны ўвогуле."
+	"cite_warning_sectionpreview_no_text": "Тэг <code>&lt;ref&gt;</code> з імем <code>$1</code> не можа быць перадпрагледжаны, бо ён вызначаны за межамі рэдагуемага раздзела або не вызначаны ўвогуле.",
+	"cite-wikieditor-tool-reference": "Зноска",
+	"cite-wikieditor-help-page-references": "Зноскі",
+	"cite-wikieditor-help-content-reference-description": "Зноска",
+	"cite-wikieditor-help-content-named-reference-description": "Зноска з назвай",
+	"cite-wikieditor-help-content-rereference-description": "Шматразовае карыстанне зноскай",
+	"cite-wikieditor-help-content-showreferences-description": "Паказаць зноскі"
 }

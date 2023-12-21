@@ -306,6 +306,7 @@
 				q = {};
 				// using replace to iterate over a string
 				if ( uri.query ) {
+					// eslint-disable-next-line security/detect-unsafe-regex
 					uri.query.replace( /(?:^|&)([^&=]*)(?:(=)([^&]*))?/g, function ( match, k, eq, v ) {
 						var arrayKeyMatch, i;
 						if ( k ) {
@@ -398,8 +399,8 @@
 			getQueryString: function () {
 				var args = [],
 					arrayParams = this.arrayParams;
-				// eslint-disable-next-line no-jquery/no-each-util
-				$.each( this.query, function ( key, val ) {
+				Object.keys( this.query ).forEach( function ( key ) {
+					var val = this.query[ key ];
 					var k = Uri.encode( key ),
 						isArrayParam = Array.isArray( val ),
 						vals = isArrayParam ? val : [ val ];
@@ -416,7 +417,7 @@
 							args.push( ki + '=' + Uri.encode( v ) );
 						}
 					} );
-				} );
+				}.bind( this ) );
 				return args.join( '&' );
 			},
 

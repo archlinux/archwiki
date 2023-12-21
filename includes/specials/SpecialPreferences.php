@@ -21,10 +21,18 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
+use IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\PreferencesFactory;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\User;
 use MediaWiki\User\UserOptionsManager;
+use PermissionsError;
+use PreferencesFormOOUI;
 
 /**
  * A special page that allows users to change their preferences
@@ -33,11 +41,8 @@ use MediaWiki\User\UserOptionsManager;
  */
 class SpecialPreferences extends SpecialPage {
 
-	/** @var PreferencesFactory */
-	private $preferencesFactory;
-
-	/** @var UserOptionsManager */
-	private $userOptionsManager;
+	private PreferencesFactory $preferencesFactory;
+	private UserOptionsManager $userOptionsManager;
 
 	/**
 	 * @param PreferencesFactory|null $preferencesFactory
@@ -188,6 +193,12 @@ class SpecialPreferences extends SpecialPage {
 	}
 
 	protected function getGroupName() {
-		return 'users';
+		return 'login';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialPreferences::class, 'SpecialPreferences' );

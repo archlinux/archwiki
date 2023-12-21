@@ -4,6 +4,7 @@
 			"Pavanaja",
 			"Shubha",
 			"Vikashegde",
+			"~aanzx",
 			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ"
 		]
 	},
@@ -25,6 +26,7 @@
 	"echo-learn-more": "ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ",
 	"echo-new-messages": "ನಿಮಗೆ ಹೊಸ ಸಂದೇಶಗಳಿವೆ",
 	"echo-category-title-edit-user-talk": "ಚರ್ಚಾಪುಟ {{PLURAL:$1|message|messages}}",
+	"echo-category-title-edit-user-page": "ನನ್ನ ಬಳಕೆದಾರ ಪುಟಕ್ಕೆ {{PLURAL:$1|ಸಂಪಾದನೆ|ಸಂಪಾದನೆಗಳು}}",
 	"echo-category-title-article-linked": "ಪುಟ {{PLURAL:$1|link|links}}",
 	"echo-category-title-reverted": "{{PLURAL:$1|revert|reverts}} ಸಂಪಾದಿಸಿ",
 	"echo-category-title-mention": "{{PLURAL:$1|Mention|Mentions}}",

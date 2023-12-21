@@ -3,8 +3,6 @@
 namespace MediaWiki\Parser\Parsoid;
 
 use Language;
-use MediaWiki\MainConfigNames;
-use MediaWiki\MainConfigSchema;
 use MediaWiki\Page\PageIdentity;
 use MediaWikiIntegrationTestCase;
 use ParserOutput;
@@ -17,7 +15,11 @@ use Wikimedia\Parsoid\Parsoid;
  * @covers MediaWiki\Parser\Parsoid\LanguageVariantConverter
  */
 class LanguageVariantConverterTest extends MediaWikiIntegrationTestCase {
-	public function provideConvertPageBundleVariant() {
+	public function setUp(): void {
+		$this->overrideConfigValue( 'UsePigLatinVariant', true );
+	}
+
+	public static function provideConvertPageBundleVariant() {
 		yield 'No source or base, rely on page language (en)' => [
 			new PageBundle(
 				'<p>test language conversion</p>',
@@ -259,7 +261,6 @@ class LanguageVariantConverterTest extends MediaWikiIntegrationTestCase {
 			$pageIdentity,
 			$this->getServiceContainer()->getParsoidPageConfigFactory(),
 			$this->getServiceContainer()->getService( '_Parsoid' ),
-			MainConfigSchema::getDefaultValue( MainConfigNames::ParsoidSettings ),
 			$this->getServiceContainer()->getParsoidSiteConfig(),
 			$this->getServiceContainer()->getTitleFactory(),
 			$this->getServiceContainer()->getLanguageConverterFactory(),

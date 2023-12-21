@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"AguzulH",
 			"Amara-Amaziɣ",
 			"Ayour2002",
 			"Dalinanir",
-			"Lhoussine AIT TAYFST",
-			"AguzulH"
+			"Lhoussine AIT TAYFST"
 		]
 	},
 	"vector-languages": "Tutlayin",
@@ -23,6 +23,7 @@
 	"vector-view-view": "Ɣr",
 	"vector-view-viewsource": "Ẓr aɣbalu",
 	"vector-more-actions": "Uggar",
+	"vector-searchsuggest-containing": "Siggl tasniwin ɣ illa <strong class=\"cdx-typeahead-search__search-footer__query\"></strong>",
 	"vector-page-tools-label": "Imassn",
 	"vector-unpin-element-label": "ssntl"
 }

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Asma",
 			"Claw eg",
 			"Kassem7899",
 			"Maroen1990",
@@ -23,6 +24,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|مؤلف واحد آخر|$1 مؤلفين آخرين}}",
 	"multimediaviewer-multiple-authors-combine": "$1 و$2",
 	"multimediaviewer-metadata-error": "خطأ: تعذر تحميل بيانات الصورة(خطا: $1)",
+	"multimediaviewer-file-not-found-error": "عذرًا ، لا يمكن عرض الملف $1 لأنه غير موجود في الصفحة الحالية.",
 	"multimediaviewer-thumbnail-error": "خطأ: تعذر تحميل الملف معطل",
 	"multimediaviewer-thumbnail-error-description": "يبدو أن هناك مشكلة فنية، يمكنك $1 إذا استمرت، الخطأ: $2",
 	"multimediaviewer-thumbnail-error-retry": "إعادة المحاولة",

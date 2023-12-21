@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Les Meloures",
 			"Matma Rex",
 			"Robby",
 			"Soued031",
 			"Talex42",
-			"Volvox",
-			"Amire80"
+			"Volvox"
 		]
 	},
 	"abusefilter-desc": "Applizéiert automatesch Heuristiken op Ännerungen",
@@ -184,7 +184,7 @@
 	"abusefilter-edit-warn-edit": "De gewielte Systemmessage uleeën/änneren",
 	"abusefilter-edit-disallow-other": "Anere Systemmessage",
 	"abusefilter-edit-disallow-actions": "Aktiounen:",
-	"abusefilter-edit-block-anon-durations": "Dauer vun der Spär fir anonym Benotzer:",
+	"abusefilter-edit-block-anon-durations": "Dauer vun der Spär fir net-registréiert Benotzer:",
 	"abusefilter-edit-block-user-durations": "Dauer vun der Spär fir registréiert Benotzer:",
 	"abusefilter-block-anon": "Anonym Benotzer spären",
 	"abusefilter-block-user": "registréiert Benotzer spären",
@@ -219,7 +219,7 @@
 	"abusefilter-edit-builder-op-arithmetic-pow": "Potenz (**)",
 	"abusefilter-edit-builder-group-op-comparison": "Operateure fir ze vergläichen",
 	"abusefilter-edit-builder-op-comparison-equal": "Wäert selwecht wéi (==)",
-	"abusefilter-edit-builder-op-comparison-equal-strict": "Wäert an Typ deselwechte wéi (!==)",
+	"abusefilter-edit-builder-op-comparison-equal-strict": "Wäert an Typ deselwechte wéi (===)",
 	"abusefilter-edit-builder-op-comparison-notequal": "Wäert verschidde vun (!=)",
 	"abusefilter-edit-builder-op-comparison-notequal-strict": "Wäert an Typ verschidde vu(n) (!==)",
 	"abusefilter-edit-builder-op-comparison-lt": "Manner wéi (<)",
@@ -376,7 +376,6 @@
 	"abusefilter-test-page": "Ännerungen, déi op dëser Säit gemaach goufen:",
 	"abusefilter-test-shownegative": "Ännerunge weisen, déi net op de Filter passen",
 	"abusefilter-test-syntaxerr": "Am Filter deen Dir aginn hutt ass e Syntaxfeeler.\nDir kënnt eng komplett Erklärung kréie wann Dir op de Knäppche \"{{int:abusefilter-edit-check}}\" klickt.",
-	"abusefilter-test-badtitle": "De Säitentitel deen Dir aginn hutt ass net valabel. Et ka sinn datt een oder méi Buschtawen dra sinn déi an Titelen net benotzt kënne ginn.",
 	"abusefilter-test-search-type-all": "All Aktiounen",
 	"abusefilter-test-search-type-edit": "Ännerungen",
 	"abusefilter-test-search-type-delete": "Läschungen",
@@ -422,6 +421,11 @@
 	"abusefilter-http-error": "Et ass en HTTP-Feeler geschitt: $1.",
 	"abusefilter-view-privatedetails-submit": "Privat Detailer weisen",
 	"abusefilter-view-privatedetails-legend": "Privat Detailer weisen",
+	"abusefilter-blocked-domains-actions-header": "Aktiounen",
+	"abusefilter-blocked-domains-remove": "ewechhuelen",
+	"abusefilter-blocked-domains-remove-reason": "Grond",
+	"abusefilter-blocked-domains-remove-submit": "Ewechhuelen",
+	"abusefilter-blocked-domains-json-error": "JSON soll een Array sinn",
 	"abusefilter-log-ip-not-available": "Net disponibel",
 	"notification-link-text-show-filter": "Filter weisen"
 }

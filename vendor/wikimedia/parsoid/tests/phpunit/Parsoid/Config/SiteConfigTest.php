@@ -3,6 +3,7 @@
 namespace Test\Parsoid\Config;
 
 use PHPUnit\Framework\MockObject\MockObject;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\TestingAccessWrapper;
 
@@ -33,8 +34,8 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	public function testUcfirst() {
-		$siteConfig = $this->getSiteConfig( [ 'lang' ] );
-		$siteConfig->method( 'lang' )->willReturn( 'en' );
+		$siteConfig = $this->getSiteConfig( [ 'langBcp47' ] );
+		$siteConfig->method( 'langBcp47' )->willReturn( new Bcp47CodeValue( 'en' ) );
 
 		$this->assertSame( 'Foo', $siteConfig->ucfirst( 'Foo' ) );
 		$this->assertSame( 'Foo', $siteConfig->ucfirst( 'foo' ) );
@@ -42,8 +43,8 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		$this->assertSame( 'Iii', $siteConfig->ucfirst( 'iii' ) );
 
 		foreach ( [ 'tr', 'kaa', 'kk', 'az' ] as $lang ) {
-			$siteConfig = $this->getSiteConfig( [ 'lang' ] );
-			$siteConfig->method( 'lang' )->willReturn( $lang );
+			$siteConfig = $this->getSiteConfig( [ 'langBcp47' ] );
+			$siteConfig->method( 'langBcp47' )->willReturn( new Bcp47CodeValue( $lang ) );
 			$this->assertSame( 'İii', $siteConfig->ucfirst( 'iii' ), "Special logic for $lang" );
 		}
 	}
@@ -302,25 +303,6 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		$siteConfig->method( 'getVariableIDs' )->willReturn( $vars );
 
 		return $siteConfig;
-	}
-
-	public function testMagicWords() {
-		// FIXME: Given that Parsoid proxies {{..}} wikitext to core for expansion,
-		// some of these tests don't mean a while lot right now. There are known
-		// bugs in SiteConfig right now.
-		$siteConfig = $this->setupMagicWordTestConfig();
-		// Expected results
-		$mwMap = [
-			'lossy=$1'             => [ true, 'img_lossy' ],
-			'numberofwikis'        => [ false, 'numberofwikis' ],
-			'lcfirst:'             => [ false, 'lcfirst' ],
-			'expr'                 => [ false, 'expr' ],
-			'__NOGLOBAL__'         => [ true, 'noglobal' ],
-			'DEFAULTSORT:'         => [ true, 'defaultsort' ],
-			'DEFAULTSORTKEY:'      => [ true, 'defaultsort' ],
-			'DEFAULTCATEGORYSORT:' => [ true, 'defaultsort' ]
-		];
-		$this->assertSame( $mwMap, $siteConfig->magicWords() );
 	}
 
 	public function testMwAliases() {

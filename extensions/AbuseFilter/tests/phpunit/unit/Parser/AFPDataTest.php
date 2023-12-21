@@ -85,7 +85,7 @@ class AFPDataTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public function providePHPVars() {
+	public static function providePHPVars() {
 		return [
 			[ 15, new AFPData( AFPData::DINT, 15 ) ],
 			[ '42', new AFPData( AFPData::DSTRING, '42' ) ],
@@ -131,7 +131,7 @@ class AFPDataTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideMissingCastTypes() {
+	public static function provideMissingCastTypes() {
 		return [
 			[ new AFPData( AFPData::DINT, 1 ), AFPData::DNULL, new AFPData( AFPData::DNULL ) ],
 			[ new AFPData( AFPData::DBOOL, false ), AFPData::DNULL, new AFPData( AFPData::DNULL ) ],
@@ -190,7 +190,7 @@ class AFPDataTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideToNative() {
+	public static function provideToNative() {
 		return [
 			[ new AFPData( AFPData::DFLOAT, 1.2345 ), 1.2345 ],
 			[ new AFPData( AFPData::DFLOAT, 0.1 ), 0.1 ],
@@ -206,7 +206,6 @@ class AFPDataTest extends ParserTestCase {
 				),
 				[ 'foo', true ]
 			],
-			[ new AFPData( AFPData::DEMPTY ), null ],
 		];
 	}
 
@@ -229,7 +228,7 @@ class AFPDataTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideDUNDEFINEDEquals() {
+	public static function provideDUNDEFINEDEquals() {
 		$undefined = new AFPData( AFPData::DUNDEFINED );
 		$nonempty = new AFPData( AFPData::DSTRING, 'foo' );
 		return [
@@ -274,7 +273,7 @@ class AFPDataTest extends ParserTestCase {
 	/**
 	 * Provider for testHasUndefined
 	 */
-	public function provideHasUndefined() {
+	public static function provideHasUndefined() {
 		return [
 			[ new AFPData( AFPData::DUNDEFINED ), true ],
 			[ new AFPData( AFPData::DNULL ), false ],
@@ -297,7 +296,7 @@ class AFPDataTest extends ParserTestCase {
 	/**
 	 * Provider for testHasUndefined
 	 */
-	public function provideCloneAsUndefinedReplacedWithNull() {
+	public static function provideCloneAsUndefinedReplacedWithNull() {
 		return [
 			[
 				new AFPData( AFPData::DUNDEFINED ),

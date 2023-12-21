@@ -9,11 +9,24 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
-use EchoEvent;
+use EchoUserLocator;
+use MediaWiki\Extension\DiscussionTools\Notifications\AddedTopicPresentationModel;
+use MediaWiki\Extension\DiscussionTools\Notifications\EnhancedEchoEditUserTalkPresentationModel;
+use MediaWiki\Extension\DiscussionTools\Notifications\EnhancedEchoMentionPresentationModel;
 use MediaWiki\Extension\DiscussionTools\Notifications\EventDispatcher;
+use MediaWiki\Extension\DiscussionTools\Notifications\RemovedTopicPresentationModel;
+use MediaWiki\Extension\DiscussionTools\Notifications\SubscribedNewCommentPresentationModel;
+use MediaWiki\Extension\Notifications\Hooks\BeforeCreateEchoEventHook;
+use MediaWiki\Extension\Notifications\Hooks\EchoGetBundleRulesHook;
+use MediaWiki\Extension\Notifications\Hooks\EchoGetEventsForRevisionHook;
+use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Revision\RevisionRecord;
 
-class EchoHooks {
+class EchoHooks implements
+	BeforeCreateEchoEventHook,
+	EchoGetBundleRulesHook,
+	EchoGetEventsForRevisionHook
+{
 	/**
 	 * Add notification events to Echo
 	 *
@@ -21,7 +34,7 @@ class EchoHooks {
 	 * @param array &$notificationCategories
 	 * @param array &$icons
 	 */
-	public static function onBeforeCreateEchoEvent(
+	public function onBeforeCreateEchoEvent(
 		array &$notifications,
 		array &$notificationCategories,
 		array &$icons
@@ -35,19 +48,18 @@ class EchoHooks {
 			'group' => 'interactive',
 			'section' => 'message',
 			'user-locators' => [
-				'MediaWiki\\Extension\\DiscussionTools\\Notifications\\EventDispatcher::locateSubscribedUsers'
+				[ [ EventDispatcher::class, 'locateSubscribedUsers' ] ]
 			],
 			// Exclude mentioned users and talk page owner from our notification, to avoid
 			// duplicate notifications for a single comment
 			'user-filters' => [
 				[
-					"EchoUserLocator::locateFromEventExtra",
-					[ "mentioned-users" ]
+					[ EchoUserLocator::class, 'locateFromEventExtra' ],
+					[ 'mentioned-users' ]
 				],
-				"EchoUserLocator::locateTalkPageOwner"
+				[ [ EchoUserLocator::class, 'locateTalkPageOwner' ] ],
 			],
-			'presentation-model' =>
-				'MediaWiki\\Extension\\DiscussionTools\\Notifications\\SubscribedNewCommentPresentationModel',
+			'presentation-model' => SubscribedNewCommentPresentationModel::class,
 			'bundle' => [
 				'web' => true,
 				'email' => true,
@@ -64,10 +76,23 @@ class EchoHooks {
 			'group' => 'interactive',
 			'section' => 'message',
 			'user-locators' => [
-				'MediaWiki\\Extension\\DiscussionTools\\Notifications\\EventDispatcher::locateSubscribedUsers'
+				[ [ EventDispatcher::class, 'locateSubscribedUsers' ] ]
 			],
-			'presentation-model' =>
-				'MediaWiki\\Extension\\DiscussionTools\\Notifications\\RemovedTopicPresentationModel',
+			'presentation-model' => RemovedTopicPresentationModel::class,
+			'bundle' => [
+				'web' => true,
+				'email' => true,
+				'expandable' => true,
+			],
+		];
+		$notifications['dt-added-topic'] = [
+			'category' => 'dt-subscription',
+			'group' => 'interactive',
+			'section' => 'message',
+			'user-locators' => [
+				[ [ EventDispatcher::class, 'locateSubscribedUsers' ] ]
+			],
+			'presentation-model' => AddedTopicPresentationModel::class,
 			'bundle' => [
 				'web' => true,
 				'email' => true,
@@ -76,28 +101,25 @@ class EchoHooks {
 		];
 
 		// Override default handlers
-		$notifications['edit-user-talk']['presentation-model'] =
-			'MediaWiki\\Extension\\DiscussionTools\\Notifications\\EnhancedEchoEditUserTalkPresentationModel';
-		$notifications['mention']['presentation-model'] =
-			'MediaWiki\\Extension\\DiscussionTools\\Notifications\\EnhancedEchoMentionPresentationModel';
+		$notifications['edit-user-talk']['presentation-model'] = EnhancedEchoEditUserTalkPresentationModel::class;
+		$notifications['mention']['presentation-model'] = EnhancedEchoMentionPresentationModel::class;
 	}
 
 	/**
-	 * @param EchoEvent $event
+	 * @param Event $event
 	 * @param string &$bundleString
-	 * @return bool
 	 */
-	public static function onEchoGetBundleRules( EchoEvent $event, string &$bundleString ): bool {
+	public function onEchoGetBundleRules( Event $event, string &$bundleString ) {
 		switch ( $event->getType() ) {
 			case 'dt-subscribed-new-comment':
 				$bundleString = $event->getType() . '-' . $event->getExtraParam( 'subscribed-comment-name' );
 				break;
+			case 'dt-added-topic':
 			case 'dt-removed-topic':
 				$bundleString = $event->getType() . '-' . $event->getTitle()->getNamespace()
 					. '-' . $event->getTitle()->getDBkey();
 				break;
 		}
-		return true;
 	}
 
 	/**
@@ -105,7 +127,7 @@ class EchoHooks {
 	 * @param RevisionRecord $revision
 	 * @param bool $isRevert
 	 */
-	public static function onEchoGetEventsForRevision( array &$events, RevisionRecord $revision, bool $isRevert ) {
+	public function onEchoGetEventsForRevision( array &$events, RevisionRecord $revision, bool $isRevert ) {
 		if ( $isRevert ) {
 			return;
 		}

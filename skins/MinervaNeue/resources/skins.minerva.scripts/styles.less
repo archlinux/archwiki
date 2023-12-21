@@ -1,8 +1,8 @@
 @import '../../minerva.less/minerva.variables.less';
 @import '../../minerva.less/minerva.mixins.less';
 @import 'mediawiki.mixins.less';
-
-@animationDuration: 0.3s;
+@import 'toc.less';
+@import 'watchStar.less';
 
 .mw-mf-page-center__mask {
 	position: absolute;
@@ -25,39 +25,24 @@
 	}
 }
 
-// Flip the arrow in table of contents when toggled
-.toctogglecheckbox:checked ~ .toctitle .mw-ui-icon:last-child {
-	&:before {
-		transform: rotate( -180deg );
-	}
-}
-
 // Last modified bar styles
-.last-modified-bar {
-	&.active {
-		background-color: @lastModifiedBarActiveBackgroundColor;
-		color: #fff;
+.last-modified-bar.active {
+	background-color: @lastModifiedBarActiveBackgroundColor;
+	color: @color-inverted;
 
-		.last-modified-text-accent,
-		a {
-			color: #fff;
-		}
+	.last-modified-text-accent,
+	a {
+		color: @color-inverted;
+	}
+
+	.minerva-icon {
+		background-color: @color-inverted;
 	}
 }
 
 // Used by last modified bar and in MobileFrontend (i.e. MobileSpecialPageFeed.php, ImageCarousel.js)
 .truncated-text {
 	.text-overflow( @visible: false );
-}
-
-@-webkit-keyframes fadeInImage {
-	from {
-		opacity: 0;
-	}
-
-	to {
-		opacity: 1;
-	}
 }
 
 @keyframes fadeInImage {
@@ -73,5 +58,5 @@
 // When the image has loaded transition background color and image opacity
 // for a fade-in effect
 img.image-lazy-loaded {
-	animation: fadeInImage @animationDuration ease-in;
+	animation: fadeInImage 300ms ease-in;
 }

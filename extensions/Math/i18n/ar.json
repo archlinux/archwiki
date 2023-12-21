@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Abanima",
+			"Alshamiri1",
 			"Ciphers",
 			"FShbib",
 			"Macofe",
@@ -15,8 +16,7 @@
 			"Tala Ali",
 			"ديفيد",
 			"زكريا",
-			"محمد أحمد عبد الفتاح",
-			"Alshamiri1"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"math-desc": "حوِّل الصيغ الرياضية بين وسمي <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",

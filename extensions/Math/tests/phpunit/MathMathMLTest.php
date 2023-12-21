@@ -44,8 +44,8 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testChangeRootElemts() {
 		$mml = new MathMathML( '<mo>sin</mo>', [ 'type' => 'invalid' ] );
-		$mml->setAllowedRootElements( [ 'a','b' ] );
-		$this->assertSame( [ 'a','b' ], $mml->getAllowedRootElements() );
+		$mml->setAllowedRootElements( [ 'a', 'b' ] );
+		$this->assertSame( [ 'a', 'b' ], $mml->getAllowedRootElements() );
 	}
 
 	/**
@@ -64,14 +64,9 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 
 		$renderer = new MathMathML();
 		$requestReturn = $renderer->makeRequest();
-		$this->assertFalse( $requestReturn->isGood(),
-			"requestReturn is false if MediaWiki\\Http\\HttpRequestFactory::post returns false." );
 		$this->assertNull( $requestReturn->getValue(),
 			"result value is null if MediaWiki\\Http\\HttpRequestFactory::post returns false." );
-		$this->assertTrue(
-			$requestReturn->hasMessage(
-				wfMessage( 'math_invalidresponse', '', $url, 'Method Not Allowed' )
-			),
+		$this->assertStatusError( 'math_invalidresponse', $requestReturn,
 			"return an error if MediaWiki\\Http\\HttpRequestFactory::post returns false"
 		);
 	}
@@ -88,9 +83,8 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 		$renderer = new MathMathML();
 
 		$requestReturn = $renderer->makeRequest();
-		$this->assertTrue( $requestReturn->isGood(), "successful call return" );
+		$this->assertStatusGood( $requestReturn, 'successful call return' );
 		$this->assertSame( 'test content', $requestReturn->getValue(), 'successful call' );
-		$this->assertArrayEquals( [], $requestReturn->getErrors(), "successful call error-message" );
 	}
 
 	/**
@@ -109,10 +103,8 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 		$renderer = new MathMathML();
 
 		$requestReturn = $renderer->makeRequest();
-		$this->assertFalse( $requestReturn->isGood(), "timeout call return" );
 		$this->assertNull( $requestReturn->getValue(), "timeout call return" );
-		$this->assertTrue(
-			$requestReturn->hasMessage( wfMessage( 'math_timeout', '', $url ) ),
+		$this->assertStatusError( 'math_timeout', $requestReturn,
 			"timeout call errormessage"
 		);
 	}
@@ -212,7 +204,6 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 		// TODO: Once render returns status, we won't need TestingAccessWrapper anymore.
 		$math = TestingAccessWrapper::newFromObject( new MathMathML( '' ) );
 		$renderStatus = $math->doRender();
-		$this->assertFalse( $renderStatus->isGood() );
-		$this->assertTrue( $renderStatus->hasMessage( 'math_empty_tex' ) );
+		$this->assertStatusError( 'math_empty_tex', $renderStatus );
 	}
 }

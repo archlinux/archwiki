@@ -22,19 +22,18 @@
 
 namespace MediaWiki\ResourceLoader;
 
-use Config;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserRigorOptions;
 use Message;
 use MessageLocalizer;
 use MessageSpecifier;
 use Psr\Log\LoggerInterface;
-use User;
-use WebRequest;
 
 /**
  * Context object that contains information about the state of a specific
@@ -80,6 +79,8 @@ class Context implements MessageLocalizer {
 	protected $version;
 	/** @var bool */
 	protected $raw;
+	/** @var bool */
+	protected $sourcemap;
 	/** @var string|null */
 	protected $image;
 	/** @var string|null */
@@ -120,6 +121,7 @@ class Context implements MessageLocalizer {
 		$this->only = $request->getRawVal( 'only' );
 		$this->version = $request->getRawVal( 'version' );
 		$this->raw = $request->getFuzzyBool( 'raw' );
+		$this->sourcemap = $request->getFuzzyBool( 'sourcemap' );
 
 		// Image requests
 		$this->image = $request->getRawVal( 'image' );
@@ -180,17 +182,6 @@ class Context implements MessageLocalizer {
 
 	public function getResourceLoader(): ResourceLoader {
 		return $this->resourceLoader;
-	}
-
-	/**
-	 * @deprecated since 1.34 Use Module::getConfig instead inside module
-	 *   methods. Use ResourceLoader::getConfig elsewhere.
-	 * @return Config
-	 * @codeCoverageIgnore
-	 */
-	public function getConfig() {
-		wfDeprecated( __METHOD__, '1.34' );
-		return $this->getResourceLoader()->getConfig();
 	}
 
 	public function getRequest(): WebRequest {
@@ -343,6 +334,14 @@ class Context implements MessageLocalizer {
 
 	public function getRaw(): bool {
 		return $this->raw;
+	}
+
+	/**
+	 * @since 1.41
+	 * @return bool
+	 */
+	public function isSourceMap(): bool {
+		return $this->sourcemap;
 	}
 
 	/**

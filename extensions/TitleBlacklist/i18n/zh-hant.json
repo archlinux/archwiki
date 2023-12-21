@@ -35,5 +35,5 @@
 	"titleblacklist-warning": "<strong>警告：此頁面符合下列禁止的標題清單項目，僅可由管理員或擁有 <code>tboverride</code> 權限的使用者編輯：</strong><br /><code>$1</code>",
 	"right-tboverride": "忽略禁止的標題或使用者名稱清單",
 	"right-tboverride-account": "忽略禁止的使用者名稱清單",
-	"right-titleblacklistlog": "檢視禁止的標題清單日誌"
+	"right-titleblacklistlog": "檢視禁止標題清單的日誌"
 }

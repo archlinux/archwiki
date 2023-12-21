@@ -20,7 +20,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 
 /**
@@ -52,7 +52,7 @@ class ChangeTagsLogItem extends RevisionItemBase {
 
 	public function canView() {
 		return LogEventsList::userCan(
-			$this->row, RevisionRecord::SUPPRESSED_ALL, $this->list->getAuthority()
+			$this->row, LogPage::DELETED_RESTRICTED, $this->list->getAuthority()
 		);
 	}
 

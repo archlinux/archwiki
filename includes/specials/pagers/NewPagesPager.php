@@ -19,15 +19,34 @@
  * @ingroup Pager
  */
 
+namespace MediaWiki\Pager;
+
+use ChangesList;
+use ChangeTags;
+use HtmlArmor;
+use IContextSource;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\ChangeTags\ChangeTagsStore;
+use MediaWiki\CommentFormatter\RowCommentFormatter;
+use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\FormOptions;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
+use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\GroupPermissionsLookup;
+use MediaWiki\Revision\MutableRevisionRecord;
+use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\User\UserIdentityValue;
+use RecentChange;
+use stdClass;
 
 /**
+ * @internal For use by SpecialNewPages
  * @ingroup Pager
  */
 class NewPagesPager extends ReverseChronologicalPager {
@@ -37,49 +56,49 @@ class NewPagesPager extends ReverseChronologicalPager {
 	 */
 	protected $opts;
 
-	/**
-	 * @var SpecialNewpages
-	 */
-	protected $mForm;
+	/** @var string[] */
+	private $formattedComments = [];
 
-	/** @var GroupPermissionsLookup */
-	private $groupPermissionsLookup;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
+	private GroupPermissionsLookup $groupPermissionsLookup;
+	private HookRunner $hookRunner;
+	private LinkBatchFactory $linkBatchFactory;
+	private NamespaceInfo $namespaceInfo;
+	private ChangeTagsStore $changeTagsStore;
+	private RowCommentFormatter $rowCommentFormatter;
+	private IContentHandlerFactory $contentHandlerFactory;
 
 	/**
-	 * @param SpecialNewpages $form
+	 * @param IContextSource $context
+	 * @param LinkRenderer $linkRenderer
 	 * @param GroupPermissionsLookup $groupPermissionsLookup
 	 * @param HookContainer $hookContainer
 	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param ILoadBalancer $loadBalancer
 	 * @param NamespaceInfo $namespaceInfo
+	 * @param ChangeTagsStore $changeTagsStore
+	 * @param RowCommentFormatter $rowCommentFormatter
+	 * @param IContentHandlerFactory $contentHandlerFactory
 	 * @param FormOptions $opts
 	 */
 	public function __construct(
-		SpecialNewpages $form,
+		IContextSource $context,
+		LinkRenderer $linkRenderer,
 		GroupPermissionsLookup $groupPermissionsLookup,
 		HookContainer $hookContainer,
 		LinkBatchFactory $linkBatchFactory,
-		ILoadBalancer $loadBalancer,
 		NamespaceInfo $namespaceInfo,
+		ChangeTagsStore $changeTagsStore,
+		RowCommentFormatter $rowCommentFormatter,
+		IContentHandlerFactory $contentHandlerFactory,
 		FormOptions $opts
 	) {
-		// Set database before parent constructor to avoid setting it there with wfGetDB
-		$this->mDb = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
-		parent::__construct( $form->getContext() );
+		parent::__construct( $context, $linkRenderer );
 		$this->groupPermissionsLookup = $groupPermissionsLookup;
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->namespaceInfo = $namespaceInfo;
-		$this->mForm = $form;
+		$this->changeTagsStore = $changeTagsStore;
+		$this->rowCommentFormatter = $rowCommentFormatter;
+		$this->contentHandlerFactory = $contentHandlerFactory;
 		$this->opts = $opts;
 	}
 
@@ -143,13 +162,14 @@ class NewPagesPager extends ReverseChronologicalPager {
 		];
 
 		// Modify query for tags
-		ChangeTags::modifyDisplayQuery(
+		$this->changeTagsStore->modifyDisplayQuery(
 			$info['tables'],
 			$info['fields'],
 			$info['conds'],
 			$info['join_conds'],
 			$info['options'],
-			$this->opts['tagfilter']
+			$this->opts['tagfilter'],
+			$this->opts['tagInvert']
 		);
 
 		return $info;
@@ -200,11 +220,151 @@ class NewPagesPager extends ReverseChronologicalPager {
 	}
 
 	public function formatRow( $row ) {
-		return $this->mForm->formatRow( $row );
+		$title = Title::newFromRow( $row );
+
+		// Revision deletion works on revisions,
+		// so cast our recent change row to a revision row.
+		$revRecord = $this->revisionFromRcResult( $row, $title );
+
+		$classes = [];
+		$attribs = [ 'data-mw-revid' => $row->rev_id ];
+
+		$lang = $this->getLanguage();
+		$dm = $lang->getDirMark();
+
+		$spanTime = Html::element( 'span', [ 'class' => 'mw-newpages-time' ],
+			$lang->userTimeAndDate( $row->rc_timestamp, $this->getUser() )
+		);
+		$linkRenderer = $this->getLinkRenderer();
+		$time = $linkRenderer->makeKnownLink(
+			$title,
+			new HtmlArmor( $spanTime ),
+			[],
+			[ 'oldid' => $row->rc_this_oldid ]
+		);
+
+		$query = $title->isRedirect() ? [ 'redirect' => 'no' ] : [];
+
+		$plink = $linkRenderer->makeKnownLink(
+			$title,
+			null,
+			[ 'class' => 'mw-newpages-pagename' ],
+			$query
+		);
+		$linkArr = [];
+		$linkArr[] = $linkRenderer->makeKnownLink(
+			$title,
+			$this->msg( 'hist' )->text(),
+			[ 'class' => 'mw-newpages-history' ],
+			[ 'action' => 'history' ]
+		);
+		if ( $this->contentHandlerFactory->getContentHandler( $title->getContentModel() )
+			->supportsDirectEditing()
+		) {
+			$linkArr[] = $linkRenderer->makeKnownLink(
+				$title,
+				$this->msg( 'editlink' )->text(),
+				[ 'class' => 'mw-newpages-edit' ],
+				[ 'action' => 'edit' ]
+			);
+		}
+		$links = $this->msg( 'parentheses' )->rawParams( $this->getLanguage()
+			->pipeList( $linkArr ) )->escaped();
+
+		$length = Html::rawElement(
+			'span',
+			[ 'class' => 'mw-newpages-length' ],
+			$this->msg( 'brackets' )->rawParams(
+				$this->msg( 'nbytes' )->numParams( $row->length )->escaped()
+			)->escaped()
+		);
+
+		$ulink = Linker::revUserTools( $revRecord );
+		$rc = RecentChange::newFromRow( $row );
+		if ( ChangesList::userCan( $rc, RevisionRecord::DELETED_COMMENT, $this->getAuthority() ) ) {
+			$comment = $this->formattedComments[$rc->mAttribs['rc_id']];
+		} else {
+			$comment = '<span class="comment">' . $this->msg( 'rev-deleted-comment' )->escaped() . '</span>';
+		}
+		if ( ChangesList::isDeleted( $rc, RevisionRecord::DELETED_COMMENT ) ) {
+			$deletedClass = 'history-deleted';
+			if ( ChangesList::isDeleted( $rc, RevisionRecord::DELETED_RESTRICTED ) ) {
+				$deletedClass .= ' mw-history-suppressed';
+			}
+			$comment = '<span class="' . $deletedClass . ' comment">' . $comment . '</span>';
+		}
+
+		if ( $this->getUser()->useNPPatrol() && !$row->rc_patrolled ) {
+			$classes[] = 'not-patrolled';
+		}
+
+		# Add a class for zero byte pages
+		if ( $row->length == 0 ) {
+			$classes[] = 'mw-newpages-zero-byte-page';
+		}
+
+		# Tags, if any.
+		if ( isset( $row->ts_tags ) ) {
+			[ $tagDisplay, $newClasses ] = ChangeTags::formatSummaryRow(
+				$row->ts_tags,
+				'newpages',
+				$this->getContext()
+			);
+			$classes = array_merge( $classes, $newClasses );
+		} else {
+			$tagDisplay = '';
+		}
+
+		# Display the old title if the namespace/title has been changed
+		$oldTitleText = '';
+		$oldTitle = Title::makeTitle( $row->rc_namespace, $row->rc_title );
+
+		if ( !$title->equals( $oldTitle ) ) {
+			$oldTitleText = $oldTitle->getPrefixedText();
+			$oldTitleText = Html::rawElement(
+				'span',
+				[ 'class' => 'mw-newpages-oldtitle' ],
+				$this->msg( 'rc-old-title' )->params( $oldTitleText )->escaped()
+			);
+		}
+
+		$ret = "{$time} {$dm}{$plink} {$links} {$dm}{$length} {$dm}{$ulink} {$comment} "
+			. "{$tagDisplay} {$oldTitleText}";
+
+		// Let extensions add data
+		$this->hookRunner->onNewPagesLineEnding(
+			$this, $ret, $row, $classes, $attribs );
+		$attribs = array_filter( $attribs,
+			[ Sanitizer::class, 'isReservedDataAttribute' ],
+			ARRAY_FILTER_USE_KEY
+		);
+
+		if ( $classes ) {
+			$attribs['class'] = $classes;
+		}
+
+		return Html::rawElement( 'li', $attribs, $ret ) . "\n";
 	}
 
-	protected function getStartBody() {
-		# Do a batch existence check on pages
+	/**
+	 * @param stdClass $result Result row from recent changes
+	 * @param Title $title
+	 * @return RevisionRecord
+	 */
+	protected function revisionFromRcResult( stdClass $result, Title $title ): RevisionRecord {
+		$revRecord = new MutableRevisionRecord( $title );
+		$revRecord->setVisibility( (int)$result->rc_deleted );
+
+		$user = new UserIdentityValue(
+			(int)$result->rc_user,
+			$result->rc_user_text
+		);
+		$revRecord->setUser( $user );
+
+		return $revRecord;
+	}
+
+	protected function doBatchLookups() {
 		$linkBatch = $this->linkBatchFactory->newLinkBatch();
 		foreach ( $this->mResult as $row ) {
 			$linkBatch->add( NS_USER, $row->rc_user_text );
@@ -213,6 +373,12 @@ class NewPagesPager extends ReverseChronologicalPager {
 		}
 		$linkBatch->execute();
 
+		$this->formattedComments = $this->rowCommentFormatter->formatRows(
+			$this->mResult, 'rc_comment', 'rc_namespace', 'rc_title', 'rc_id', true
+		);
+	}
+
+	protected function getStartBody() {
 		return '<ul>';
 	}
 
@@ -220,3 +386,9 @@ class NewPagesPager extends ReverseChronologicalPager {
 		return '</ul>';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( NewPagesPager::class, 'NewPagesPager' );

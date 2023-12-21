@@ -1,15 +1,19 @@
 .header-container {
-	border-bottom: 1px solid @colorGray12;
+	border-bottom: @border-subtle;
 	padding: 0 @contentPadding;
 
 	&.header-chrome {
-		background-color: @chromeColor;
+		background-color: @background-color-light;
 		border: 0;
 		box-shadow: inset 0 -1px 3px rgba( 0, 0, 0, 0.08 );
 	}
 }
 
 .minerva-header {
+	.navigation-drawer .toggle-list__toggle {
+		.cdx-mixin-button-layout-flush( 'start', true, 'large' );
+	}
+
 	.branding-box {
 		opacity: @opacity-icon-subtle; // T251135
 
@@ -18,7 +22,7 @@
 			margin-left: 5px;
 			font-size: 1em;
 			text-decoration: none;
-			color: @colorGray2;
+			color: @color-base;
 
 			span {
 				line-height: 0;
@@ -30,7 +34,7 @@
 			}
 
 			sup {
-				color: @colorGray5;
+				color: @color-subtle;
 				display: none;
 
 				.beta & {

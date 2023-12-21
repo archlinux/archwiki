@@ -27,7 +27,6 @@
  */
 
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Title\Title;
@@ -86,7 +85,7 @@ abstract class DumpIterator extends Maintenance {
 				. "Use - and provide it on stdin on the meantime." );
 		}
 
-		$importer = MediaWikiServices::getInstance()
+		$importer = $this->getServiceContainer()
 			->getWikiImporterFactory()
 			->getWikiImporter( $source );
 
@@ -120,6 +119,7 @@ abstract class DumpIterator extends Maintenance {
 		if ( $this->getDbType() == Maintenance::DB_NONE ) {
 			// TODO: Allow hooks to be registered via SettingsBuilder as well!
 			//       This matches the idea of unifying SettingsBuilder with ExtensionRegistry.
+			// phpcs:disable MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgHooks
 			global $wgHooks;
 			$wgHooks['InterwikiLoadPrefix'][] = 'DumpIterator::disableInterwikis';
 

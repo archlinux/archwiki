@@ -28,9 +28,6 @@
 	"wikieditor-toolbar-file-format-none": "يوق",
 	"wikieditor-toolbar-tool-file-insert": "قىستۇر",
 	"wikieditor-toolbar-tool-file-cancel": "ۋاز كەچ",
-	"wikieditor-toolbar-tool-reference": "نەقىل",
-	"wikieditor-toolbar-tool-reference-cancel": "ۋاز كەچ",
-	"wikieditor-toolbar-tool-reference-insert": "قىستۇر",
 	"wikieditor-toolbar-section-advanced": "ئالىي",
 	"wikieditor-toolbar-tool-heading": "ماۋزۇ",
 	"wikieditor-toolbar-tool-heading-1": "دەرىجە 1",
@@ -65,13 +62,11 @@
 	"wikieditor-toolbar-help-page-link": "ئۇلانما",
 	"wikieditor-toolbar-help-page-list": "تىزىملار",
 	"wikieditor-toolbar-help-page-file": "ھۆججەتلەر",
-	"wikieditor-toolbar-help-page-reference": "نەقىل",
 	"wikieditor-toolbar-help-page-discussion": "مۇنازىرە",
 	"wikieditor-toolbar-help-content-italic-description": "يانتۇ",
 	"wikieditor-toolbar-help-content-bold-description": "توم",
 	"wikieditor-toolbar-help-content-ilink-description": "ئىچكى ئۇلانما",
 	"wikieditor-toolbar-help-content-file-description": "سىڭدۈرمە ھۆججەت",
-	"wikieditor-toolbar-help-content-reference-description": "نەقىل",
 	"wikieditor-toolbar-help-content-signature-description": "ئىمزا",
 	"wikieditor-toolbar-help-content-indent-description": "تارتىلىش"
 }

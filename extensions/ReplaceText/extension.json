@@ -1,6 +1,6 @@
 {
 	"name": "Replace Text",
-	"version": "1.7",
+	"version": "1.8",
 	"author": [
 		"Yaron Koren",
 		"Niklas Laxström",
@@ -10,7 +10,7 @@
 	"descriptionmsg": "replacetext-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"type": "specialpage",
 	"GroupPermissions": {
@@ -25,10 +25,13 @@
 		"ReplaceText": {
 			"class": "MediaWiki\\Extension\\ReplaceText\\SpecialReplaceText",
 			"services": [
+				"HookContainer",
 				"ContentLanguage",
+				"JobQueueGroup",
 				"LinkRenderer",
 				"MovePageFactory",
 				"NamespaceInfo",
+				"ReadOnlyMode",
 				"SearchEngineConfig",
 				"SlotRoleStore",
 				"UserFactory",
@@ -67,9 +70,7 @@
 		"MediaWiki\\Extension\\ReplaceText\\": "src/"
 	},
 	"Hooks": {
-		"AdminLinks": [
-			"MediaWiki\\Extension\\ReplaceText\\Hooks::addToAdminLinks"
-		],
+		"AdminLinks": "adminlinks",
 		"SpecialMovepageAfterMove": "main",
 		"UserGetReservedNames": "main"
 	},
@@ -80,6 +81,9 @@
 				"MainConfig",
 				"SpecialPageFactory"
 			]
+		},
+		"adminlinks": {
+			"class": "MediaWiki\\Extension\\ReplaceText\\AdminLinksHooks"
 		}
 	},
 	"config": {

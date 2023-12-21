@@ -21,10 +21,14 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Linker\LinksMigration;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\SpecialPage\PageQueryPage;
+use MediaWiki\Title\NamespaceInfo;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * A special page looking for articles with no article linking to them,
@@ -34,29 +38,26 @@ use Wikimedia\Rdbms\ILoadBalancer;
  */
 class SpecialLonelyPages extends PageQueryPage {
 
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var LinksMigration */
-	private $linksMigration;
+	private NamespaceInfo $namespaceInfo;
+	private LinksMigration $linksMigration;
 
 	/**
 	 * @param NamespaceInfo $namespaceInfo
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param LanguageConverterFactory $languageConverterFactory
 	 * @param LinksMigration $linksMigration
 	 */
 	public function __construct(
 		NamespaceInfo $namespaceInfo,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory,
 		LanguageConverterFactory $languageConverterFactory,
 		LinksMigration $linksMigration
 	) {
 		parent::__construct( 'Lonelypages' );
 		$this->namespaceInfo = $namespaceInfo;
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 		$this->setLinkBatchFactory( $linkBatchFactory );
 		$this->setLanguageConverter( $languageConverterFactory->getLanguageConverter( $this->getContentLanguage() ) );
 		$this->linksMigration = $linksMigration;
@@ -87,10 +88,10 @@ class SpecialLonelyPages extends PageQueryPage {
 		[ $ns, $title ] = $this->linksMigration->getTitleFields( 'templatelinks' );
 		$tables = array_merge( [ 'page', 'pagelinks' ], $queryInfo['tables'] );
 		$conds = [
-			'pl_namespace IS NULL',
+			'pl_namespace' => null,
 			'page_namespace' => $this->namespaceInfo->getContentNamespaces(),
 			'page_is_redirect' => 0,
-			'tl_from IS NULL'
+			'tl_from' => null,
 		];
 		$joinConds = [
 			'pagelinks' => [
@@ -140,3 +141,8 @@ class SpecialLonelyPages extends PageQueryPage {
 		return 'maintenance';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialLonelyPages::class, 'SpecialLonelyPages' );

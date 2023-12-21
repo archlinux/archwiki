@@ -29,64 +29,8 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
-	public function provideOnResourceLoaderGetConfigVars() {
+	public static function provideOnResourceLoaderGetConfigVars() {
 		// TODO: test a lot more config!
-
-		yield 'restbaseUrl: No VRS modules, DefaultParsoidClient=vrs' => [
-			[
-				'VirtualRestConfig' => [ 'modules' => [] ],
-				'VisualEditorRestbaseURL' => 'parsoid-url',
-				'VisualEditorFullRestbaseURL' => 'full-parsoid-url',
-				'VisualEditorDefaultParsoidClient' => 'vrs',
-			],
-			[
-				'restbaseUrl' => false,
-				'fullRestbaseUrl' => false,
-			]
-		];
-		yield 'restbaseUrl: VRS modules available, DefaultParsoidClient=vrs' => [
-			[
-				'VirtualRestConfig' => [ 'modules' => [
-					'parsoid' => true,
-				] ],
-				'VisualEditorRestbaseURL' => 'parsoid-url',
-				'VisualEditorFullRestbaseURL' => 'full-parsoid-url',
-				'VisualEditorDefaultParsoidClient' => 'vrs',
-			],
-			[
-				'restbaseUrl' => 'parsoid-url',
-				'fullRestbaseUrl' => 'full-parsoid-url',
-			]
-		];
-		yield 'restbaseUrl: VRS modules available, but no direct access URLs. DefaultParsoidClient=vrs' => [
-			[
-				'VirtualRestConfig' => [ 'modules' => [
-					'parsoid' => true,
-				] ],
-				'VisualEditorRestbaseURL' => 'parsoid-url',
-				'VisualEditorFullRestbaseURL' => 'full-parsoid-url',
-				'VisualEditorDefaultParsoidClient' => 'vrs',
-			],
-			[
-				'restbaseUrl' => 'parsoid-url',
-				'fullRestbaseUrl' => 'full-parsoid-url',
-			]
-		];
-
-		yield 'restbaseUrl: VRS modules available, but DefaultParsoidClient=direct' => [
-			[
-				'VirtualRestConfig' => [ 'modules' => [
-					'parsoid' => true,
-				] ],
-				'VisualEditorRestbaseURL' => 'parsoid-url',
-				'VisualEditorFullRestbaseURL' => 'full-parsoid-url',
-				'VisualEditorDefaultParsoidClient' => 'direct',
-			],
-			[
-				'restbaseUrl' => false,
-				'fullRestbaseUrl' => false,
-			]
-		];
 	}
 
 }

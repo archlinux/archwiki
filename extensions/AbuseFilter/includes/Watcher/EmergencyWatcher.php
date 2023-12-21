@@ -10,7 +10,7 @@ use MediaWiki\Extension\AbuseFilter\EchoNotifier;
 use MediaWiki\Extension\AbuseFilter\EmergencyCache;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\LBFactory;
 
 /**
  * Service for monitoring filters with restricted actions and preventing them
@@ -30,8 +30,8 @@ class EmergencyWatcher implements Watcher {
 	/** @var EmergencyCache */
 	private $cache;
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
+	/** @var LBFactory */
+	private $lbFactory;
 
 	/** @var FilterLookup */
 	private $filterLookup;
@@ -44,21 +44,21 @@ class EmergencyWatcher implements Watcher {
 
 	/**
 	 * @param EmergencyCache $cache
-	 * @param ILoadBalancer $loadBalancer
+	 * @param LBFactory $lbFactory
 	 * @param FilterLookup $filterLookup
 	 * @param EchoNotifier $notifier
 	 * @param ServiceOptions $options
 	 */
 	public function __construct(
 		EmergencyCache $cache,
-		ILoadBalancer $loadBalancer,
+		LBFactory $lbFactory,
 		FilterLookup $filterLookup,
 		EchoNotifier $notifier,
 		ServiceOptions $options
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->cache = $cache;
-		$this->loadBalancer = $loadBalancer;
+		$this->lbFactory = $lbFactory;
 		$this->filterLookup = $filterLookup;
 		$this->notifier = $notifier;
 		$this->options = $options;
@@ -139,7 +139,7 @@ class EmergencyWatcher implements Watcher {
 
 		DeferredUpdates::addUpdate(
 			new AutoCommitUpdate(
-				$this->loadBalancer->getConnection( DB_PRIMARY ),
+				$this->lbFactory->getPrimaryDatabase(),
 				__METHOD__,
 				static function ( IDatabase $dbw, $fname ) use ( $throttleFilters ) {
 					$dbw->update(

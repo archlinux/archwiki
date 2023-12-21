@@ -19,7 +19,9 @@
  * @ingroup Media
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Status\Status;
 
 /**
  * @defgroup Media Media
@@ -293,7 +295,7 @@ abstract class MediaHandler {
 	 */
 	public static function getMetadataVersion() {
 		$version = [ '2' ]; // core metadata version
-		Hooks::runner()->onGetMetadataVersion( $version );
+		( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onGetMetadataVersion( $version );
 
 		return implode( ';', $version );
 	}

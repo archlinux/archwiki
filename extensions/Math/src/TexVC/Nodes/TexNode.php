@@ -63,6 +63,18 @@ class TexNode {
 		return $child;
 	}
 
+	public function isEmpty() {
+		foreach ( $this->args ?? [] as $arg ) {
+			if ( $arg instanceof TexNode && !$arg->isEmpty() ) {
+				return false;
+			}
+			if ( is_string( $arg ) && $arg !== '' ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public function getLength(): ?int {
 		if ( isset( $this->args[0] ) ) {
 			return count( $this->args );

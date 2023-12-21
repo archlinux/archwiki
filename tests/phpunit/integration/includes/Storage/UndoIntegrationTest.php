@@ -5,15 +5,15 @@ namespace MediaWiki\Tests\Storage;
 use Article;
 use McrUndoAction;
 use MediaWiki\EditPage\EditPage;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use OutputPage;
 use RequestContext;
-use User;
 use WikiPage;
 use WikitextContent;
 
@@ -23,7 +23,7 @@ use WikitextContent;
  *
  * @covers McrUndoAction
  * @covers WikiPage
- * @covers EditPage
+ * @covers MediaWiki\EditPage\EditPage
  *
  * @group Database
  * @group medium
@@ -191,7 +191,7 @@ class UndoIntegrationTest extends MediaWikiIntegrationTestCase {
 	 *
 	 * @return array[]
 	 */
-	public function provideUndos() {
+	public static function provideUndos() {
 		return [
 			'undoing a single revision' => [
 				[ '1', '2' ],
@@ -252,7 +252,7 @@ class UndoIntegrationTest extends MediaWikiIntegrationTestCase {
 	 *
 	 * @return array[]
 	 */
-	public function provideIncompleteUndos() {
+	public static function provideIncompleteUndos() {
 		return [
 			'undoing a revision without undoafter param' => [
 				[ '1', '2' ],

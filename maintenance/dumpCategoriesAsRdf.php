@@ -21,7 +21,7 @@ use MediaWiki\Category\CategoriesRdf;
 use MediaWiki\MainConfigNames;
 use Wikimedia\Purtle\RdfWriter;
 use Wikimedia\Purtle\RdfWriterFactory;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -55,11 +55,11 @@ class DumpCategoriesAsRdf extends Maintenance {
 
 	/**
 	 * Produce row iterator for categories.
-	 * @param IDatabase $dbr Database connection
+	 * @param IReadableDatabase $dbr
 	 * @param string $fname Name of the calling function
 	 * @return RecursiveIterator
 	 */
-	public function getCategoryIterator( IDatabase $dbr, $fname ) {
+	public function getCategoryIterator( IReadableDatabase $dbr, $fname ) {
 		$it = new BatchRowIterator(
 			$dbr,
 			[ 'page', 'page_props', 'category' ],
@@ -94,12 +94,12 @@ class DumpCategoriesAsRdf extends Maintenance {
 
 	/**
 	 * Get iterator for links for categories.
-	 * @param IDatabase $dbr
+	 * @param IReadableDatabase $dbr
 	 * @param int[] $ids List of page IDs
 	 * @param string $fname Name of the calling function
 	 * @return Traversable
 	 */
-	public function getCategoryLinksIterator( IDatabase $dbr, array $ids, $fname ) {
+	public function getCategoryLinksIterator( IReadableDatabase $dbr, array $ids, $fname ) {
 		$it = new BatchRowIterator(
 			$dbr,
 			'categorylinks',
@@ -120,9 +120,10 @@ class DumpCategoriesAsRdf extends Maintenance {
 	 */
 	public function addDumpHeader( $timestamp ) {
 		$licenseUrl = $this->getConfig()->get( MainConfigNames::RightsUrl );
-		if ( substr( $licenseUrl, 0, 2 ) == '//' ) {
+		if ( str_starts_with( $licenseUrl, '//' ) ) {
 			$licenseUrl = 'https:' . $licenseUrl;
 		}
+		$urlUtils = $this->getServiceContainer()->getUrlUtils();
 		$this->rdfWriter->about( $this->categoriesRdf->getDumpURI() )
 			->a( 'schema', 'Dataset' )
 			->a( 'owl', 'Ontology' )
@@ -130,7 +131,7 @@ class DumpCategoriesAsRdf extends Maintenance {
 			->say( 'schema', 'softwareVersion' )->value( CategoriesRdf::FORMAT_VERSION )
 			->say( 'schema', 'dateModified' )
 			->value( wfTimestamp( TS_ISO_8601, $timestamp ), 'xsd', 'dateTime' )
-			->say( 'schema', 'isPartOf' )->is( wfExpandUrl( '/', PROTO_CANONICAL ) )
+			->say( 'schema', 'isPartOf' )->is( (string)$urlUtils->expand( '/', PROTO_CANONICAL ) )
 			->say( 'owl', 'imports' )->is( CategoriesRdf::OWL_URL );
 	}
 

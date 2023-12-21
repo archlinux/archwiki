@@ -13,7 +13,6 @@
 	"captcha-edit": "Skriv inn summen i boksen nedenfor for å kunne redigere denne siden ([[Special:Captcha/help|mer informasjon]]):",
 	"captcha-edit-fail": "Feil eller manglende CAPTCHA.",
 	"captcha-desc": "Gir tilgang til CAPTCHA-teknikker for å beskytte mot søppel og passordgjetting",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Løsning på CAPTCHA-en.",
 	"captcha-info-help": "Beskrivelse av CAPTCHA-en.",
 	"captcha-id-label": "CAPTCHA-ID",

@@ -30,7 +30,7 @@ interface EquivsetInterface {
 	 *
 	 * @return array An associative array of equivalent characters.
 	 */
-	public function all();
+	public function all(): array;
 
 	/**
 	 * Normalize a string.
@@ -39,7 +39,7 @@ interface EquivsetInterface {
 	 *
 	 * @return string
 	 */
-	public function normalize( $value );
+	public function normalize( string $value ): string;
 
 	/**
 	 * Determine if the two strings are visually equal.
@@ -49,7 +49,7 @@ interface EquivsetInterface {
 	 *
 	 * @return bool
 	 */
-	public function isEqual( $str1, $str2 );
+	public function isEqual( string $str1, string $str2 ): bool;
 
 	/**
 	 * Determine if an equivalent character exists.
@@ -58,7 +58,7 @@ interface EquivsetInterface {
 	 *
 	 * @return bool If the character has an equivalent.
 	 */
-	public function has( $key );
+	public function has( string $key ): bool;
 
 	/**
 	 * Get an equivalent character.
@@ -69,5 +69,5 @@ interface EquivsetInterface {
 	 *
 	 * @throws LogicException If character does not exist.
 	 */
-	public function get( $key );
+	public function get( string $key ): string;
 }

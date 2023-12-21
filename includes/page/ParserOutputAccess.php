@@ -22,10 +22,13 @@ namespace MediaWiki\Page;
 use IBufferingStatsdDataFactory;
 use InvalidArgumentException;
 use MediaWiki\Logger\Spi as LoggerSpi;
+use MediaWiki\Parser\ParserCacheFactory;
 use MediaWiki\Parser\RevisionOutputCache;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionRenderer;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\TitleFormatter;
 use ParserCache;
 use ParserOptions;
 use ParserOutput;
@@ -33,9 +36,8 @@ use PoolCounterWork;
 use PoolWorkArticleView;
 use PoolWorkArticleViewCurrent;
 use PoolWorkArticleViewOld;
-use Status;
-use TitleFormatter;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\ILBFactory;
 
 /**
@@ -75,6 +77,12 @@ class ParserOutputAccess {
 	 */
 	public const OPT_NO_CACHE = self::OPT_NO_UPDATE_CACHE | self::OPT_NO_CHECK_CACHE;
 
+	/**
+	 * @var int Do perform an opportunistic LinksUpdate on cache miss
+	 * @since 1.41
+	 */
+	public const OPT_LINKS_UPDATE = 8;
+
 	/** @var string Do not read or write any cache */
 	private const CACHE_NONE = 'none';
 
@@ -84,18 +92,12 @@ class ParserOutputAccess {
 	/** @var string Use secondary cache */
 	private const CACHE_SECONDARY = 'secondary';
 
-	/** @var ParserCache */
-	private $primaryCache;
-
-	/**
-	 * @var RevisionOutputCache
-	 */
-	private $secondaryCache;
+	private ParserCacheFactory $parserCacheFactory;
 
 	/**
 	 * In cases that an extension tries to get the same ParserOutput of
 	 * the page right after it was parsed (T301310).
-	 * @var ParserOutput[]
+	 * @var ParserOutput[][]
 	 */
 	private $localCache = [];
 
@@ -110,6 +112,7 @@ class ParserOutputAccess {
 
 	/** @var ILBFactory */
 	private $lbFactory;
+	private ChronologyProtector $chronologyProtector;
 
 	/** @var LoggerSpi */
 	private $loggerSpi;
@@ -121,33 +124,33 @@ class ParserOutputAccess {
 	private $titleFormatter;
 
 	/**
-	 * @param ParserCache $primaryCache
-	 * @param RevisionOutputCache $secondaryCache
+	 * @param ParserCacheFactory $parserCacheFactory
 	 * @param RevisionLookup $revisionLookup
 	 * @param RevisionRenderer $revisionRenderer
 	 * @param IBufferingStatsdDataFactory $statsDataFactory
 	 * @param ILBFactory $lbFactory
+	 * @param ChronologyProtector $chronologyProtector
 	 * @param LoggerSpi $loggerSpi
 	 * @param WikiPageFactory $wikiPageFactory
 	 * @param TitleFormatter $titleFormatter
 	 */
 	public function __construct(
-		ParserCache $primaryCache,
-		RevisionOutputCache $secondaryCache,
+		ParserCacheFactory $parserCacheFactory,
 		RevisionLookup $revisionLookup,
 		RevisionRenderer $revisionRenderer,
 		IBufferingStatsdDataFactory $statsDataFactory,
 		ILBFactory $lbFactory,
+		ChronologyProtector $chronologyProtector,
 		LoggerSpi $loggerSpi,
 		WikiPageFactory $wikiPageFactory,
 		TitleFormatter $titleFormatter
 	) {
-		$this->primaryCache = $primaryCache;
-		$this->secondaryCache = $secondaryCache;
+		$this->parserCacheFactory = $parserCacheFactory;
 		$this->revisionLookup = $revisionLookup;
 		$this->revisionRenderer = $revisionRenderer;
 		$this->statsDataFactory = $statsDataFactory;
 		$this->lbFactory = $lbFactory;
+		$this->chronologyProtector = $chronologyProtector;
 		$this->loggerSpi = $loggerSpi;
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->titleFormatter = $titleFormatter;
@@ -210,21 +213,23 @@ class ParserOutputAccess {
 	): ?ParserOutput {
 		$isOld = $revision && $revision->getId() !== $page->getLatest();
 		$useCache = $this->shouldUseCache( $page, $revision );
-		$classCacheKey = $this->primaryCache->makeParserOutputKey( $page, $parserOptions );
+		$primaryCache = $this->getPrimaryCache( $parserOptions );
+		$classCacheKey = $primaryCache->makeParserOutputKey( $page, $parserOptions );
 
 		if ( $useCache === self::CACHE_PRIMARY ) {
-			if ( isset( $this->localCache[$classCacheKey] ) && !$isOld ) {
-				return $this->localCache[$classCacheKey];
+			if ( isset( $this->localCache[$classCacheKey][$page->getLatest()] ) && !$isOld ) {
+				return $this->localCache[$classCacheKey][$page->getLatest()];
 			}
-			$output = $this->primaryCache->get( $page, $parserOptions );
+			$output = $primaryCache->get( $page, $parserOptions );
 		} elseif ( $useCache === self::CACHE_SECONDARY && $revision ) {
-			$output = $this->secondaryCache->get( $revision, $parserOptions );
+			$secondaryCache = $this->getSecondaryCache( $parserOptions );
+			$output = $secondaryCache->get( $revision, $parserOptions );
 		} else {
 			$output = null;
 		}
 
 		if ( $output && !$isOld ) {
-			$this->localCache[$classCacheKey] = $output;
+			$this->localCache[$classCacheKey] = [ $page->getLatest() => $output ];
 		}
 
 		if ( $output ) {
@@ -301,8 +306,9 @@ class ParserOutputAccess {
 		Assert::postcondition( $output || !$status->isOK(), 'Worker returned invalid status' );
 
 		if ( $output && !$isOld ) {
-			$classCacheKey = $this->primaryCache->makeParserOutputKey( $page, $parserOptions );
-			$this->localCache[$classCacheKey] = $output;
+			$primaryCache = $this->getPrimaryCache( $parserOptions );
+			$classCacheKey = $primaryCache->makeParserOutputKey( $page, $parserOptions );
+			$this->localCache[$classCacheKey] = [ $page->getLatest() => $output ];
 		}
 
 		if ( $status->isGood() ) {
@@ -334,7 +340,7 @@ class ParserOutputAccess {
 
 		if ( !( $options & self::OPT_NO_UPDATE_CACHE ) && $revision && !$revision->getId() ) {
 			throw new InvalidArgumentException(
-				'The revision does not have a known ID. Use NO_CACHE.'
+				'The revision does not have a known ID. Use OPT_NO_CACHE.'
 			);
 		}
 
@@ -379,8 +385,9 @@ class ParserOutputAccess {
 		switch ( $useCache ) {
 			case self::CACHE_PRIMARY:
 				$this->statsDataFactory->increment( 'ParserOutputAccess.PoolWork.Current' );
-				$parserCacheMetadata = $this->primaryCache->getMetadata( $page );
-				$cacheKey = $this->primaryCache->makeParserOutputKey( $page, $parserOptions,
+				$primaryCache = $this->getPrimaryCache( $parserOptions );
+				$parserCacheMetadata = $primaryCache->getMetadata( $page );
+				$cacheKey = $primaryCache->makeParserOutputKey( $page, $parserOptions,
 					$parserCacheMetadata ? $parserCacheMetadata->getUsedOptions() : null
 				);
 
@@ -392,19 +399,22 @@ class ParserOutputAccess {
 					$revision,
 					$parserOptions,
 					$this->revisionRenderer,
-					$this->primaryCache,
+					$primaryCache,
 					$this->lbFactory,
+					$this->chronologyProtector,
 					$this->loggerSpi,
 					$this->wikiPageFactory,
-					!( $options & self::OPT_NO_UPDATE_CACHE )
+					!( $options & self::OPT_NO_UPDATE_CACHE ),
+					(bool)( $options & self::OPT_LINKS_UPDATE )
 				);
 
 			case self::CACHE_SECONDARY:
 				$this->statsDataFactory->increment( 'ParserOutputAccess.PoolWork.Old' );
-				$workKey = $this->secondaryCache->makeParserOutputKey( $revision, $parserOptions );
+				$secondaryCache = $this->getSecondaryCache( $parserOptions );
+				$workKey = $secondaryCache->makeParserOutputKey( $revision, $parserOptions );
 				return new PoolWorkArticleViewOld(
 					$workKey,
-					$this->secondaryCache,
+					$secondaryCache,
 					$revision,
 					$parserOptions,
 					$this->revisionRenderer,
@@ -413,7 +423,8 @@ class ParserOutputAccess {
 
 			default:
 				$this->statsDataFactory->increment( 'ParserOutputAccess.PoolWork.Uncached' );
-				$workKey = $this->secondaryCache->makeParserOutputKeyOptionalRevId( $revision, $parserOptions );
+				$secondaryCache = $this->getSecondaryCache( $parserOptions );
+				$workKey = $secondaryCache->makeParserOutputKeyOptionalRevId( $revision, $parserOptions );
 				return new PoolWorkArticleView(
 					$workKey,
 					$revision,
@@ -424,6 +435,34 @@ class ParserOutputAccess {
 		}
 
 		// unreachable
+	}
+
+	private function getPrimaryCache( ParserOptions $pOpts ): ParserCache {
+		if ( $pOpts->getUseParsoid() ) {
+			// T331148: This is different from
+			// ParsoidOutputAccess::PARSOID_PARSER_CACHE_NAME; will be
+			// renamed once the contents cached on the read-views and
+			// the REST path are identical.
+			return $this->parserCacheFactory->getParserCache(
+				'parsoid-' . ParserCacheFactory::DEFAULT_NAME
+			);
+		}
+
+		return $this->parserCacheFactory->getParserCache(
+			ParserCacheFactory::DEFAULT_NAME
+		);
+	}
+
+	private function getSecondaryCache( ParserOptions $pOpts ): RevisionOutputCache {
+		if ( $pOpts->getUseParsoid() ) {
+			return $this->parserCacheFactory->getRevisionOutputCache(
+				'parsoid-' . ParserCacheFactory::DEFAULT_RCACHE_NAME
+			);
+		}
+
+		return $this->parserCacheFactory->getRevisionOutputCache(
+			ParserCacheFactory::DEFAULT_RCACHE_NAME
+		);
 	}
 
 }

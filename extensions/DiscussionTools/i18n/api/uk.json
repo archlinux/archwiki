@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Andriy.v",
 			"Base",
 			"DDPAT",
 			"Ice bulldog",
-			"Ата",
-			"Andriy.v"
+			"Ата"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Коментаря з ідентифікатором «$1» не знайдено.",

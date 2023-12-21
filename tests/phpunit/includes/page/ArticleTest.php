@@ -4,7 +4,9 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 /**
  * @group Database
@@ -108,7 +110,7 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSame( $expectedResult, $article->showPatrolFooter() );
 	}
 
-	public function provideShowPatrolFooter() {
+	public static function provideShowPatrolFooter() {
 		yield 'UserAllowedRevExist' => [
 			'sysop',
 			Title::makeTitle( NS_MAIN, 'Page1' ),
@@ -200,8 +202,9 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 			[ 'WarmParsoidParserCache' => true ]
 			+ MainConfigSchema::getDefaultValue( MainConfigNames::ParsoidCacheConfig )
 		);
-
 		$title = $this->getExistingTestPage()->getTitle();
+		// Run any jobs enqueued by the creation of the test page
+		$this->runJobs( [ 'minJobs' => 0 ] );
 
 		$parserOutputAccess = $this->createNoOpMock(
 			ParserOutputAccess::class,
@@ -212,6 +215,21 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 		$parserOutputAccess
 			->expects( $this->once() ) // This is the key assertion in this test case.
 			->method( 'getParserOutput' )
+			->with(
+				$this->anything(),
+				$this->callback( function ( ParserOptions $parserOptions ) {
+					$this->assertSame( 'page-view', $parserOptions->getRenderReason() );
+					return true;
+				} ),
+				$this->anything(),
+				$this->callback( function ( $options ) {
+					$this->assertTrue( (bool)( $options & ParserOutputAccess::OPT_NO_CHECK_CACHE ),
+						"The cache is not checked again" );
+					$this->assertTrue( (bool)( $options & ParserOutputAccess::OPT_LINKS_UPDATE ),
+						"WikiPage::triggerOpportunisticLinksUpdate is attempted" );
+					return true;
+				} )
+			)
 			->willReturn( Status::newGood( new ParserOutput( 'Old Kittens' ) ) );
 
 		$parsoidOutputAccess = $this->createNoOpMock(

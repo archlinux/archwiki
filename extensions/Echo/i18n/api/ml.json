@@ -4,17 +4,14 @@
 			"Praveenp"
 		]
 	},
-	"apihelp-echomarkread-description": "ഇപ്പോഴത്തെ ഉപയോക്താവിന്റെ അറിയിപ്പുകൾ വായിച്ചതായി അടയാളപ്പെടുത്തുക.",
 	"apihelp-echomarkread-summary": "ഇപ്പോഴത്തെ ഉപയോക്താവിന്റെ അറിയിപ്പുകൾ വായിച്ചതായി അടയാളപ്പെടുത്തുക.",
 	"apihelp-echomarkread-param-list": "വായിച്ചതായി അടയാളപ്പെടുത്തേണ്ട അറിയിപ്പ് ഐ.ഡി.കളുടെ പട്ടിക.",
 	"apihelp-echomarkread-param-all": "സജ്ജമെങ്കിൽ ഉപയോക്താവിനുള്ള അറിയിപ്പുകളെല്ലാം വായിച്ചതായി അടയാളപ്പെടുത്തുക.",
 	"apihelp-echomarkread-param-sections": "വായിച്ചതായി അടയാളപ്പെടുത്തേണ്ട ഭാഗങ്ങളുടെ പട്ടിക.",
 	"apihelp-echomarkread-example-1": "അറിയിപ്പ് 8 വായിച്ചതായി അടയാളപ്പെടുത്തുക",
 	"apihelp-echomarkread-example-2": "എല്ലാ അറിയിപ്പുകളും വായിച്ചതായി അടയാളപ്പെടുത്തുക",
-	"apihelp-echomarkseen-description": "ഇപ്പോഴത്തെ ഉപയോക്താവ് കണ്ടെന്ന് അറിയിപ്പുകളിൽ അടയാളപ്പെടുത്തുക.",
 	"apihelp-echomarkseen-example-1": "എല്ലാ തരത്തിലുമുള്ള അറിയിപ്പുകളും കണ്ടെന്ന് അടയാളപ്പെടുത്തുക",
 	"apihelp-echomarkseen-param-type": "കണ്ടതായി അടയാളപ്പെടുത്തേണ്ട അറിയിപ്പുകളുടെ തരം: 'അറിയിപ്പ്', 'സന്ദേശം', 'എല്ലാം'.",
-	"apihelp-query+notifications-description": "ഇപ്പോഴത്തെ ഉപയോക്താവിനായി കാത്തുനിൽക്കുന്ന അറിയിപ്പുകൾ ലഭ്യമാക്കുക.",
 	"apihelp-query+notifications-param-prop": "അഭ്യർത്ഥനയുടെ വിശദാംശങ്ങൾ.",
 	"apihelp-query+notifications-param-sections": "ചോദിക്കേണ്ട അറിയിപ്പ് ഭാഗങ്ങൾ (അതായത് 'അറിയിപ്പ്', 'സന്ദേശം' എന്നിവയുടെ മിശ്രണം).",
 	"apihelp-query+notifications-param-groupbysection": "ഫലങ്ങൾ വിഭാഗമനുസരിച്ച് വർഗ്ഗീകരിക്കണോ. സജ്ജമെങ്കിൽ ഓരോ ഭാഗവും വ്യത്യസ്തമായിട്ടാവും എടുക്കുക.",

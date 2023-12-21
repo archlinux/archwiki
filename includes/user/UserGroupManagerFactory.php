@@ -20,7 +20,6 @@
 
 namespace MediaWiki\User;
 
-use ConfiguredReadOnlyMode;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\JobQueue\JobQueueGroupFactory;
@@ -28,6 +27,7 @@ use MediaWiki\Permissions\GroupPermissionsLookup;
 use MediaWiki\User\TempUser\TempUserConfig;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\ILBFactory;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
  * Factory service for UserGroupManager instances. This allows UserGroupManager to be created for
@@ -36,39 +36,23 @@ use Wikimedia\Rdbms\ILBFactory;
  * @since 1.35
  */
 class UserGroupManagerFactory {
-	/** @var ServiceOptions */
-	private $options;
-
-	/** @var ConfiguredReadOnlyMode */
-	private $configuredReadOnlyMode;
-
-	/** @var ILBFactory */
-	private $dbLoadBalancerFactory;
-
-	/** @var UserEditTracker */
-	private $userEditTracker;
-
-	/** @var GroupPermissionsLookup */
-	private $groupPermissionLookup;
-
-	/** @var JobQueueGroupFactory */
-	private $jobQueueGroupFactory;
-
-	/** @var LoggerInterface */
-	private $logger;
+	private ServiceOptions $options;
+	private ReadOnlyMode $readOnlyMode;
+	private ILBFactory $dbLoadBalancerFactory;
+	private UserEditTracker $userEditTracker;
+	private GroupPermissionsLookup $groupPermissionLookup;
+	private JobQueueGroupFactory $jobQueueGroupFactory;
+	private LoggerInterface $logger;
 
 	/** @var callable[] */
 	private $clearCacheCallbacks;
 
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var TempUserConfig */
-	private $tempUserConfig;
+	private HookContainer $hookContainer;
+	private TempUserConfig $tempUserConfig;
 
 	/**
 	 * @param ServiceOptions $options
-	 * @param ConfiguredReadOnlyMode $configuredReadOnlyMode
+	 * @param ReadOnlyMode $readOnlyMode
 	 * @param ILBFactory $dbLoadBalancerFactory
 	 * @param HookContainer $hookContainer
 	 * @param UserEditTracker $userEditTracker
@@ -80,7 +64,7 @@ class UserGroupManagerFactory {
 	 */
 	public function __construct(
 		ServiceOptions $options,
-		ConfiguredReadOnlyMode $configuredReadOnlyMode,
+		ReadOnlyMode $readOnlyMode,
 		ILBFactory $dbLoadBalancerFactory,
 		HookContainer $hookContainer,
 		UserEditTracker $userEditTracker,
@@ -91,7 +75,7 @@ class UserGroupManagerFactory {
 		array $clearCacheCallbacks = []
 	) {
 		$this->options = $options;
-		$this->configuredReadOnlyMode = $configuredReadOnlyMode;
+		$this->readOnlyMode = $readOnlyMode;
 		$this->dbLoadBalancerFactory = $dbLoadBalancerFactory;
 		$this->hookContainer = $hookContainer;
 		$this->userEditTracker = $userEditTracker;
@@ -103,23 +87,27 @@ class UserGroupManagerFactory {
 	}
 
 	/**
-	 * @param string|false $dbDomain
+	 * @param string|false $wikiId
 	 * @return UserGroupManager
 	 */
-	public function getUserGroupManager( $dbDomain = false ): UserGroupManager {
-		// TODO: Once UserRightsProxy is removed, cache the instance per domain.
+	public function getUserGroupManager( $wikiId = UserIdentity::LOCAL ): UserGroupManager {
+		if ( is_string( $wikiId ) && $this->dbLoadBalancerFactory->getLocalDomainID() === $wikiId ) {
+			$wikiId = UserIdentity::LOCAL;
+		}
+
+		// TODO: Once UserRightsProxy is removed, cache the instance per wiki.
 		return new UserGroupManager(
 			$this->options,
-			$this->configuredReadOnlyMode,
+			$this->readOnlyMode,
 			$this->dbLoadBalancerFactory,
 			$this->hookContainer,
 			$this->userEditTracker,
 			$this->groupPermissionLookup,
-			$this->jobQueueGroupFactory->makeJobQueueGroup( $dbDomain ),
+			$this->jobQueueGroupFactory->makeJobQueueGroup( $wikiId ),
 			$this->logger,
 			$this->tempUserConfig,
 			$this->clearCacheCallbacks,
-			$dbDomain
+			$wikiId
 		);
 	}
 }

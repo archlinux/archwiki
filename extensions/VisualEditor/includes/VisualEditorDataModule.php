@@ -12,7 +12,7 @@ namespace MediaWiki\Extension\VisualEditor;
 
 use MediaWiki\ResourceLoader\Context as ResourceLoaderContext;
 use MediaWiki\ResourceLoader\Module as ResourceLoaderModule;
-use Title;
+use MediaWiki\Title\Title;
 
 class VisualEditorDataModule extends ResourceLoaderModule {
 

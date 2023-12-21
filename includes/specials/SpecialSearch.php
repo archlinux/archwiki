@@ -23,21 +23,37 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use DeferredUpdates;
+use ISearchResultSet;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Html\Html;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Search\SearchResultThumbnailProvider;
 use MediaWiki\Search\SearchWidgets\BasicSearchResultSetWidget;
+use MediaWiki\Search\SearchWidgets\DidYouMeanWidget;
 use MediaWiki\Search\SearchWidgets\FullSearchResultWidget;
 use MediaWiki\Search\SearchWidgets\InterwikiSearchResultSetWidget;
 use MediaWiki\Search\SearchWidgets\InterwikiSearchResultWidget;
-use MediaWiki\Search\SearchWidgets\SimpleSearchResultSetWidget;
-use MediaWiki\Search\SearchWidgets\SimpleSearchResultWidget;
+use MediaWiki\Search\SearchWidgets\SearchFormWidget;
 use MediaWiki\Search\TitleMatcher;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsManager;
+use Message;
+use RepoGroup;
+use SearchEngine;
+use SearchEngineConfig;
+use SearchEngineFactory;
+use Wikimedia\Rdbms\ReadOnlyMode;
+use Xml;
 
 /**
  * implements Special:Search - Run text & title search and display the output
@@ -100,33 +116,15 @@ class SpecialSearch extends SpecialPage {
 	 */
 	protected $searchConfig;
 
-	/** @var SearchEngineFactory */
-	private $searchEngineFactory;
-
-	/** @var NamespaceInfo */
-	private $nsInfo;
-
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/** @var InterwikiLookup */
-	private $interwikiLookup;
-
-	/** @var ReadOnlyMode */
-	private $readOnlyMode;
-
-	/** @var UserOptionsManager */
-	private $userOptionsManager;
-
-	/** @var LanguageConverterFactory */
-	private $languageConverterFactory;
-
-	/** @var RepoGroup */
-	private $repoGroup;
-
-	/** @var SearchResultThumbnailProvider */
-	private $thumbnailProvider;
-
+	private SearchEngineFactory $searchEngineFactory;
+	private NamespaceInfo $nsInfo;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private InterwikiLookup $interwikiLookup;
+	private ReadOnlyMode $readOnlyMode;
+	private UserOptionsManager $userOptionsManager;
+	private LanguageConverterFactory $languageConverterFactory;
+	private RepoGroup $repoGroup;
+	private SearchResultThumbnailProvider $thumbnailProvider;
 	private TitleMatcher $titleMatcher;
 
 	/**
@@ -406,7 +404,7 @@ class SpecialSearch extends SpecialPage {
 
 		$out = $this->getOutput();
 		$widgetOptions = $this->getConfig()->get( MainConfigNames::SpecialSearchFormOptions );
-		$formWidget = new MediaWiki\Search\SearchWidgets\SearchFormWidget(
+		$formWidget = new SearchFormWidget(
 			$this,
 			$this->searchConfig,
 			$this->getHookContainer(),
@@ -497,7 +495,7 @@ class SpecialSearch extends SpecialPage {
 
 		// did you mean... suggestions
 		if ( $textMatches ) {
-			$dymWidget = new MediaWiki\Search\SearchWidgets\DidYouMeanWidget( $this );
+			$dymWidget = new DidYouMeanWidget( $this );
 			$out->addHTML( $dymWidget->render( $term, $textMatches ) );
 		}
 
@@ -566,34 +564,26 @@ class SpecialSearch extends SpecialPage {
 			$this->userOptionsManager
 		);
 
-		// Default (null) on. Can be explicitly disabled.
-		if ( $engine->getFeatureData( 'enable-new-crossproject-page' ) !== false ) {
-			$sidebarResultWidget = new InterwikiSearchResultWidget( $this, $linkRenderer );
-			$sidebarResultsWidget = new InterwikiSearchResultSetWidget(
-				$this,
-				$sidebarResultWidget,
-				$linkRenderer,
-				$this->interwikiLookup,
-				$engine->getFeatureData( 'show-multimedia-search-results' )
-			);
-		} else {
-			$sidebarResultWidget = new SimpleSearchResultWidget( $this, $linkRenderer );
-			$sidebarResultsWidget = new SimpleSearchResultSetWidget(
-				$this,
-				$sidebarResultWidget,
-				$linkRenderer,
-				$this->interwikiLookup
-			);
-		}
+		$sidebarResultWidget = new InterwikiSearchResultWidget( $this, $linkRenderer );
+		$sidebarResultsWidget = new InterwikiSearchResultSetWidget(
+			$this,
+			$sidebarResultWidget,
+			$linkRenderer,
+			$this->interwikiLookup,
+			$engine->getFeatureData( 'show-multimedia-search-results' )
+		);
 
 		$widget = new BasicSearchResultSetWidget( $this, $mainResultWidget, $sidebarResultsWidget );
+
+		$out->addHTML( '<div class="mw-search-visualclear"></div>' );
+		$this->prevNextLinks( $totalRes, $textMatches, $term, 'mw-search-pager-top', $out );
 
 		$out->addHTML( $widget->render(
 			$term, $this->offset, $titleMatches, $textMatches
 		) );
 
 		$out->addHTML( '<div class="mw-search-visualclear"></div>' );
-		$this->prevNextLinks( $totalRes, $textMatches, $term, $out );
+		$this->prevNextLinks( $totalRes, $textMatches, $term, 'mw-search-pager-bottom', $out );
 
 		// Close <div class='searchresults'>
 		$out->addHTML( "</div>" );
@@ -672,7 +662,7 @@ class SpecialSearch extends SpecialPage {
 		$this->addHelpLink( 'Help:Searching' );
 
 		if ( strval( $term ) !== '' ) {
-			$out->setPageTitle( $this->msg( 'searchresults' ) );
+			$out->setPageTitleMsg( $this->msg( 'searchresults' ) );
 			$out->setHTMLTitle( $this->msg( 'pagetitle' )
 				->plaintextParams( $this->msg( 'searchresults-title' )->plaintextParams( $term )->text() )
 				->inContentLanguage()->text()
@@ -704,8 +694,8 @@ class SpecialSearch extends SpecialPage {
 		$out->addJsConfigVars( [ 'searchTerm' => $term ] );
 		$out->addModules( 'mediawiki.special.search' );
 		$out->addModuleStyles( [
-			'mediawiki.special', 'mediawiki.special.search.styles', 'mediawiki.ui', 'mediawiki.ui.button',
-			'mediawiki.ui.input', 'mediawiki.widgets.SearchInputWidget.styles',
+			'mediawiki.special', 'mediawiki.special.search.styles',
+			'mediawiki.widgets.SearchInputWidget.styles',
 		] );
 	}
 
@@ -897,9 +887,16 @@ class SpecialSearch extends SpecialPage {
 	 * @param null|int $totalRes
 	 * @param null|ISearchResultSet $textMatches
 	 * @param string $term
+	 * @param string $class
 	 * @param OutputPage $out
 	 */
-	private function prevNextLinks( ?int $totalRes, ?ISearchResultSet $textMatches, string $term, OutputPage $out ) {
+	private function prevNextLinks(
+		?int $totalRes,
+		?ISearchResultSet $textMatches,
+		string $term,
+		string $class,
+		OutputPage $out
+	) {
 		if ( $totalRes > $this->limit || $this->offset ) {
 			// Allow matches to define the correct offset, as interleaved
 			// AB testing may require a different next page offset.
@@ -920,7 +917,7 @@ class SpecialSearch extends SpecialPage {
 				$this->buildPrevNextNavigation( $offset, $this->limit,
 					$this->powerSearchOptions() + [ 'search' => $newSearchTerm ],
 					$this->limit + $this->offset >= $totalRes );
-			$out->addHTML( "<div class='mw-search-pager-bottom'>{$prevNext}</div>\n" );
+			$out->addHTML( "<div class='{$class}'>{$prevNext}</div>\n" );
 		}
 	}
 
@@ -928,3 +925,9 @@ class SpecialSearch extends SpecialPage {
 		return 'pages';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialSearch::class, 'SpecialSearch' );

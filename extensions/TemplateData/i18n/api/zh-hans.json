@@ -6,7 +6,6 @@
 			"Shizhao"
 		]
 	},
-	"apihelp-templatedata-description": "获取由模板数据扩展存储的数据。",
 	"apihelp-templatedata-summary": "获取由模板数据扩展存储的数据。",
 	"apihelp-templatedata-example-1": "返回[[Template:Foobar]]的模板数据，如果模板不存在，或存在但没有模板数据就返回结果",
 	"apihelp-templatedata-example-2": "返回[[Template:Phabricator]]的模板数据，如果模板不存在，或存在但没有模板数据就不返回结果",

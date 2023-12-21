@@ -156,7 +156,7 @@ describe( 'Filter editing', function () {
 			assert( await ViewEditPage.error.isDisplayed() );
 		} );
 
-		it( 'data is retained if saving fails', async function () {
+		it.skip( 'data is retained if saving fails', async function () {
 			const rulesValue = await ViewEditPage.rules.getValue();
 			assert.strictEqual( rulesValue, rules + '\n' );
 		} );

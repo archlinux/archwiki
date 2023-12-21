@@ -17,8 +17,6 @@
 	"wikieditor-toolbar-tool-link-insert": "Wstôwi lënka",
 	"wikieditor-toolbar-tool-link-cancel": "Anulujë",
 	"wikieditor-toolbar-tool-file-example": "Przëmiôr.jpg",
-	"wikieditor-toolbar-tool-reference-cancel": "Anulujë",
-	"wikieditor-toolbar-tool-reference-insert": "Wstôwi",
 	"wikieditor-toolbar-section-advanced": "Awansowóné",
 	"wikieditor-toolbar-tool-heading-1": "Równiô 1",
 	"wikieditor-toolbar-tool-heading-2": "Równiô 2",
@@ -40,8 +38,7 @@
 	"wikieditor-toolbar-section-help": "Pòmòc",
 	"wikieditor-toolbar-help-heading-description": "Òpis",
 	"wikieditor-toolbar-help-content-italic-description": "Kùrsywa",
-	"wikieditor-toolbar-help-content-italic-syntax": "''Kùrsywa''",
-	"wikieditor-toolbar-help-content-italic-result": "<em>Kùrsywa</em>",
+	"wikieditor-toolbar-help-content-italic-example": "Kùrsywa",
 	"wikieditor-toolbar-help-content-bold-description": "Grëbi",
 	"wikieditor-toolbar-help-content-ilink-description": "Bënowi lënk",
 	"wikieditor-toolbar-help-content-xlink-description": "Bùtnowé lënczi"

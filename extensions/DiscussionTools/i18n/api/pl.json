@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Matma Rex",
-			"Rail",
-			"Woytecr",
 			"Nux",
-			"Amire80"
+			"Rail",
+			"Woytecr"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Nie odnaleziono komentarza z ID „$1”.",
@@ -24,6 +24,8 @@
 	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "Dodaj nowy komentarz jako odpowiedź do istniejącego komentarza.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Dodaj nową sekcję dyskusji i pierwszy komentarz w niej.",
 	"apihelp-discussiontoolsedit-summary": "Wyślij wiadomość na stronie dyskusji.",
+	"apihelp-discussiontoolsfindcomment-summary": "Znajdź komentarz o danym identyfikatorze lub nazwie.",
+	"apihelp-discussiontoolsfindcomment-param-idorname": "Identyfikator lub nazwa komentarza",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Nazwy tematów, które sprawdzić",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Sprawdź status subskrypcji podanych tematów.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Numer wersji do użycia (domyślnie ostatnia wersja).",

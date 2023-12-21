@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * VisualEditor MWReferenceContextItem class.
  *
@@ -12,8 +14,8 @@
  * @extends ve.ui.LinearContextItem
  *
  * @constructor
- * @param {ve.ui.Context} context Context item is in
- * @param {ve.dm.Model} model Model item is related to
+ * @param {ve.ui.LinearContext} context Context the item is in
+ * @param {ve.dm.Model} model Model the item is related to
  * @param {Object} [config]
  */
 ve.ui.MWReferenceContextItem = function VeUiMWReferenceContextItem() {
@@ -49,7 +51,7 @@ ve.ui.MWReferenceContextItem.static.commandName = 'reference';
  * @return {jQuery} DOM rendering of reference
  */
 ve.ui.MWReferenceContextItem.prototype.getRendering = function () {
-	var refNode = this.getReferenceNode();
+	const refNode = this.getReferenceNode();
 	if ( refNode ) {
 		this.view = new ve.ui.MWPreviewElement( refNode );
 
@@ -72,16 +74,33 @@ ve.ui.MWReferenceContextItem.prototype.getRendering = function () {
  * @return {jQuery|null}
  */
 ve.ui.MWReferenceContextItem.prototype.getReuseWarning = function () {
-	var refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model ),
-		group = this.getFragment().getDocument().getInternalList()
-			.getNodeGroup( refModel.getListGroup() );
-	if ( ve.getProp( group, 'keyedNodes', refModel.getListKey(), 'length' ) > 1 ) {
+	const refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model );
+	const group = this.getFragment().getDocument().getInternalList()
+		.getNodeGroup( refModel.getListGroup() );
+	const nodes = ve.getProp( group, 'keyedNodes', refModel.getListKey() );
+	const usages = nodes && nodes.filter( function ( node ) {
+		return !node.findParent( ve.dm.MWReferencesListNode );
+	} ).length;
+	if ( usages > 1 ) {
 		return $( '<div>' )
 			.addClass( 've-ui-mwReferenceContextItem-muted' )
-			.text( mw.msg(
-				'cite-ve-dialog-reference-editing-reused',
-				group.keyedNodes[ refModel.getListKey() ].length
-			) );
+			.text( mw.msg( 'cite-ve-dialog-reference-editing-reused', usages ) );
+	}
+};
+
+/**
+ * Get a DOM rendering of a warning if this reference is an extension.
+ *
+ * @private
+ * @return {jQuery|null}
+ */
+ve.ui.MWReferenceContextItem.prototype.getExtendsWarning = function () {
+	const refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model );
+
+	if ( refModel.extendsRef ) {
+		return $( '<div>' )
+			.addClass( 've-ui-mwReferenceContextItem-muted' )
+			.text( mw.msg( 'cite-ve-dialog-reference-editing-extends' ) );
 	}
 };
 
@@ -95,7 +114,7 @@ ve.ui.MWReferenceContextItem.prototype.getReferenceNode = function () {
 		return null;
 	}
 	if ( !this.referenceNode ) {
-		var refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model );
+		const refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model );
 		this.referenceNode = this.getFragment().getDocument().getInternalList().getItemNode( refModel.getListIndex() );
 	}
 	return this.referenceNode;
@@ -109,10 +128,26 @@ ve.ui.MWReferenceContextItem.prototype.getDescription = function () {
 };
 
 /**
+ * Get the text of the parent reference.
+ *
+ * @private
+ * @return {string|null}
+ */
+ve.ui.MWReferenceContextItem.prototype.getParentRef = function () {
+	const refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model );
+	if ( !refModel.extendsRef ) {
+		return null;
+	}
+	const list = this.getFragment().getDocument().getInternalList();
+	const index = list.keys.indexOf( 'literal/' + refModel.extendsRef );
+	return list.getItemNode( index ).element.attributes.originalHtml;
+};
+
+/**
  * @inheritdoc
  */
 ve.ui.MWReferenceContextItem.prototype.renderBody = function () {
-	this.$body.empty().append( this.getRendering(), this.getReuseWarning() );
+	this.$body.empty().append( this.getParentRef(), this.getRendering(), this.getReuseWarning(), this.getExtendsWarning() );
 };
 
 /**

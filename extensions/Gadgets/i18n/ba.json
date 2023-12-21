@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"З. ӘЙЛЕ",
 			"Лилиә",
 			"Ләйсән",
 			"Рустам Нурыев",
 			"Янмурза Баки",
-			"ҒатаУлла",
-			"З. ӘЙЛЕ"
+			"ҒатаУлла"
 		]
 	},
 	"gadgets-desc": "Ҡатнашыусыларға үҙҙәренең [[Special:Preferences#mw-prefsection-gadgets|көйләүҙәрендә ]]теге йәки был [[Special:Gadgets|CSS һәм JavaScript гаджетты]]һайларға мөмкинлек бирә.",
@@ -20,10 +20,10 @@
 	"gadgetusage-activeusers": "Әүҙем ҡатнашыусылар",
 	"gadgetusage-default": "Программа көйләгәнсә",
 	"gadgets-title": "Гаджеттар",
-	"gadgets-pagetext": "Ошо [[MediaWiki:Gadgets-definition|билдәләмә]] битендәге исемлеккә ярашлы, түбәндә гаджеттарҙың исемлеге килтерелгән, ҡатнашыусылар уларҙы  [[Special:Preferences#mw-prefsection\n-gadgets|бит көйләүҙәренә]] индерә ала.\nБыл исемлек гаджеттарҙың сығанаҡ кодтарын һәм тасуирламаһын билдәләгән система хәбәрҙәренең битенә еңел индереү мөмкинлеген бирә.",
+	"gadgets-pagetext": "Түбәндә[[MediaWiki:Gadgets-definition|билдәләмә]] битендәге исемлеккә ярашлы, ҡатнашыусылар [[Special:Preferences#mw-prefsection-gadgets|бит көйләүҙәренә]] ҡабыҙа алған гаджеттарҙың исемлеге килтерелгән. \nУл гаджеттарҙың сығанаҡ кодтарын һәм тасуирламаһын билдәләгән система хәбәрҙәренең битенә еңел инеү мөмкинлеге бирә.",
 	"gadgets-uses": "Ҡулланыла",
 	"gadgets-required-rights": "Түбәндәге {{PLURAL:$2|1=хоҡуҡ|хоҡуҡтар}} талап ителә:\n\n$1",
-	"gadgets-required-skins": "{{PLURAL:$2|1=«$1» биҙәү темаһында|түбәндәге биҙәү темаларында: $1}} рөхсәт ителә.",
+	"gadgets-required-skins": "{{PLURAL:$2|1=«$1» биҙәлеш темаһы|түбәндәге биҙәлеш темалары: $1}} өсөн рөхсәт ителә.",
 	"gadgets-default": "Барыһы өсөн дә программа көйләүе буйынса ҡабыҙылған.",
 	"gadgets-legacy": "Гаджет йөкләнмәгән. ResourceLoader-ға күсегеҙ. ([https\n://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Тулыраҡ мәғлүмәт])",
 	"gadgets-export": "Сығарырға",

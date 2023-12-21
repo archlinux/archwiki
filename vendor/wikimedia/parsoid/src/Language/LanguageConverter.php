@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 /**
  * A bidirectional Language Converter, capable of round-tripping variant
@@ -307,8 +308,8 @@ class LanguageConverter {
 			);
 		}
 
-		$ct = new ConversionTraverser( $targetVariant, $guesser, $langconv->getMachine() );
-		$ct->traverse( $env, $rootNode );
+		$ct = new ConversionTraverser( $env, $targetVariant, $guesser, $langconv->getMachine() );
+		$ct->traverse( null, $rootNode );
 
 		// HACK: to avoid data-parsoid="{}" in the output, set the isNew flag
 		// on synthetic spans
@@ -335,7 +336,7 @@ class LanguageConverter {
 	 * @param Bcp47Code $targetVariant The variant to be checked for implementation
 	 * @return bool
 	 */
-	public static function implementsLanguageConversion( Env $env, Bcp47Code $targetVariant ): bool {
+	public static function implementsLanguageConversionBcp47( Env $env, Bcp47Code $targetVariant ): bool {
 		$targetVariantMw = Utils::bcp47ToMwCode( $targetVariant );
 		$pageLangCode = $env->getPageConfig()->getPageLanguageBcp47();
 		$lang = self::loadLanguage( $env, $pageLangCode );

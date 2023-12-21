@@ -1,16 +1,22 @@
 <?php
 
+// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
+
 namespace MediaWiki\Extension\ConfirmEdit;
 
 use ApiBase;
 use Content;
-use EditPage;
 use ExtensionRegistry;
 use Html;
 use HTMLForm;
+use IContextSource;
 use MailAddress;
+use MediaWiki\Api\Hook\APIGetAllowedParamsHook;
+use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\Hook\AlternateEditPreviewHook;
+use MediaWiki\Hook\EditFilterMergedContentHook;
+use MediaWiki\Hook\EditPage__showEditForm_fieldsHook;
 use MediaWiki\Hook\EditPageBeforeEditButtonsHook;
 use MediaWiki\Hook\EmailUserFormHook;
 use MediaWiki\Hook\EmailUserHook;
@@ -19,16 +25,16 @@ use MediaWiki\Permissions\Hook\TitleReadWhitelistHook;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\Hook\AuthChangeFormFieldsHook;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MessageSpecifier;
 use OutputPage;
 use ParserOutput;
-use RequestContext;
 use SpecialPage;
 use Status;
-use Title;
 use User;
 use Wikimedia\IPUtils;
 use WikiPage;
@@ -40,7 +46,11 @@ class Hooks implements
 	EmailUserHook,
 	TitleReadWhitelistHook,
 	ResourceLoaderRegisterModulesHook,
-	PageSaveCompleteHook
+	PageSaveCompleteHook,
+	EditPage__showEditForm_fieldsHook,
+	EditFilterMergedContentHook,
+	APIGetAllowedParamsHook,
+	AuthChangeFormFieldsHook
 {
 
 	protected static $instanceCreated = false;
@@ -63,7 +73,7 @@ class Hooks implements
 	}
 
 	/**
-	 * @param RequestContext $context
+	 * @param IContextSource $context
 	 * @param Content $content
 	 * @param Status $status
 	 * @param string $summary
@@ -71,8 +81,8 @@ class Hooks implements
 	 * @param bool $minorEdit
 	 * @return bool
 	 */
-	public static function confirmEditMerged( $context, $content, $status, $summary, $user,
-		$minorEdit
+	public function onEditFilterMergedContent( IContextSource $context, Content $content, Status $status,
+		$summary, User $user, $minorEdit
 	) {
 		return self::getInstance()->confirmEditMerged( $context, $content, $status, $summary,
 			$user, $minorEdit );
@@ -121,7 +131,7 @@ class Hooks implements
 	 * @param EditPage $editPage
 	 * @param OutputPage $out
 	 */
-	public static function showEditFormFields( EditPage $editPage, OutputPage $out ) {
+	public function onEditPage__showEditForm_fields( $editPage, $out ) {
 		self::getInstance()->showEditFormFields( $editPage, $out );
 	}
 
@@ -140,7 +150,7 @@ class Hooks implements
 	 *
 	 * @param MailAddress &$to MailAddress object of receiving user
 	 * @param MailAddress &$from MailAddress object of sending user
-	 * @param MailAddress &$subject subject of the mail
+	 * @param string &$subject subject of the mail
 	 * @param string &$text text of the mail
 	 * @param bool|Status|MessageSpecifier|array &$error Out-param for an error.
 	 *   Should be set to a Status object or boolean false.
@@ -158,7 +168,7 @@ class Hooks implements
 	 * @param int $flags
 	 * @return bool
 	 */
-	public static function onAPIGetAllowedParams( ApiBase $module, &$params, $flags = 1 ) {
+	public function onAPIGetAllowedParams( $module, &$params, $flags ) {
 		return self::getInstance()->apiGetAllowedParams( $module, $params, $flags );
 	}
 
@@ -168,17 +178,17 @@ class Hooks implements
 	 * @param array &$formDescriptor
 	 * @param string $action
 	 */
-	public static function onAuthChangeFormFields(
-		array $requests, array $fieldInfo, array &$formDescriptor, $action
+	public function onAuthChangeFormFields(
+		$requests, $fieldInfo, &$formDescriptor, $action
 	) {
 		self::getInstance()->onAuthChangeFormFields( $requests, $fieldInfo, $formDescriptor, $action );
 	}
 
 	public static function confirmEditSetup() {
-		global $wgCaptchaTriggers, $wgWikimediaJenkinsCI;
+		global $wgCaptchaTriggers;
 
 		// There is no need to run (core) tests with enabled ConfirmEdit - bug T44145
-		if ( defined( 'MW_PHPUNIT_TEST' ) || ( isset( $wgWikimediaJenkinsCI ) && $wgWikimediaJenkinsCI === true ) ) {
+		if ( defined( 'MW_PHPUNIT_TEST' ) || defined( 'MW_QUIBBLE_CI' ) ) {
 			$wgCaptchaTriggers = array_fill_keys( array_keys( $wgCaptchaTriggers ), false );
 		}
 	}

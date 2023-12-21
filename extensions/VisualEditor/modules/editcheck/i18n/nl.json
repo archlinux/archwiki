@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mainframe98"
+		]
+	},
+	"editcheck-dialog-action-no": "Nee",
+	"editcheck-dialog-action-yes": "Ja",
+	"editcheck-dialog-addref-reject-question": "Waarom voegt u geen referentie toe?",
+	"editcheck-dialog-addref-reject-uncertain": "Ik weet niet zeker welke referentie ik moet toevoegen",
+	"editcheck-dialog-addref-reject-other": "Anders",
+	"editcheck-dialog-addref-success-notify": "Bedankt voor het toevoegen van een referentie!",
+	"editcheck-dialog-addref-title": "Referentie toevoegen"
+}

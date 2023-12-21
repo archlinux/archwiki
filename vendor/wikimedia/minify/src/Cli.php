@@ -59,6 +59,9 @@ final class Cli {
 			case 'css':
 				$this->runCss( ...$this->params );
 				break;
+			case 'css-remap':
+				$this->runCssRemap( ...$this->params );
+				break;
 			case 'js':
 				$this->runJs( ...$this->params );
 				break;
@@ -85,6 +88,17 @@ final class Cli {
 
 	private function runCss( string $file = null ): void {
 		$data = $file === null ? stream_get_contents( $this->in ) : file_get_contents( $file );
+		$this->output( CSSMin::minify( $data ) );
+	}
+
+	private function runCssRemap( string $file = null ): void {
+		if ( $file === null ) {
+			$this->error( 'Remapping requires a filepath' );
+			return;
+		}
+		$fulldir = dirname( realpath( $file ) );
+		$data = file_get_contents( $file );
+		$data = CSSMin::remap( $data, $fulldir, $fulldir );
 		$this->output( CSSMin::minify( $data ) );
 	}
 
@@ -116,6 +130,8 @@ usage: {$this->self} <command>
 commands:
    css [<file>]        Minify input data as CSS code, and write to output.
                        Reads from stdin by default, or can read from a file.
+   css-remap <file>    Remap and process any "@embed" comments in a CSS file,
+                       and write the minified code to output.
    js  [<file>]        Minify input data as JavaScript code, write to output.
                        Reads from stdin by default, or can read from a file.
    jsmap-raw [<file>]  Minify JavaScript code and write a raw source map to

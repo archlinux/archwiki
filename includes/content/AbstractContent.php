@@ -31,9 +31,12 @@ use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreloadTransformParamsValue;
 use MediaWiki\Content\Transform\PreSaveTransformParamsValue;
 use MediaWiki\Content\ValidationParams;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\MagicWord;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 /**
  * Base implementation for content objects.
@@ -183,8 +186,9 @@ abstract class AbstractContent implements Content {
 	 * @stable to override
 	 * @since 1.21
 	 *
-	 * @deprecated since 1.33 use getText() for TextContent instances.
+	 * @deprecated since 1.33. Use getText() for TextContent instances.
 	 *             For other content models, use specialized getters.
+	 *             Emitting deprecation warnings since 1.41.
 	 *
 	 * @return mixed The native representation of the content. Could be a
 	 *    string, a nested array structure, an object, a binary blob...
@@ -194,6 +198,7 @@ abstract class AbstractContent implements Content {
 	 * @note Caller must be aware of content model!
 	 */
 	public function getNativeData() {
+		wfDeprecated( __METHOD__, '1.33' );
 		throw new LogicException( __METHOD__ . ': not implemented' );
 	}
 
@@ -290,27 +295,6 @@ abstract class AbstractContent implements Content {
 	}
 
 	/**
-	 * @since 1.21
-	 * @deprecated since 1.38, use getRedirectTarget() instead.
-	 *   Emitting deprecation warnings since 1.39.
-	 *   Support for redirect chains has been removed.
-	 *
-	 * @return Title[]|null
-	 *
-	 * @see Content::getRedirectChain
-	 */
-	public function getRedirectChain() {
-		wfDeprecated( __METHOD__, '1.38' );
-
-		$title = $this->getRedirectTarget();
-		if ( $title === null ) {
-			return null;
-		} else {
-			return [ $title ];
-		}
-	}
-
-	/**
 	 * Subclasses that implement redirects should override this.
 	 *
 	 * @stable to override
@@ -322,24 +306,6 @@ abstract class AbstractContent implements Content {
 	 */
 	public function getRedirectTarget() {
 		return null;
-	}
-
-	/**
-	 * @note Migrated here from Title::newFromRedirectRecurse.
-	 *
-	 * @since 1.21
-	 * @deprecated since 1.38, use getRedirectTarget() instead.
-	 *   Emitting deprecation warnings since 1.39.
-	 *   Support for redirect chains has been removed.
-	 *
-	 * @return Title|null
-	 *
-	 * @see Content::getUltimateRedirectTarget
-	 */
-	public function getUltimateRedirectTarget() {
-		wfDeprecated( __METHOD__, '1.38' );
-
-		return $this->getRedirectTarget();
 	}
 
 	/**
@@ -531,7 +497,8 @@ abstract class AbstractContent implements Content {
 		$lossy = ( $lossy === 'lossy' ); // string flag, convert to boolean for convenience
 		$result = false;
 
-		Hooks::runner()->onConvertContent( $this, $toModel, $lossy, $result );
+		( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
+			->onConvertContent( $this, $toModel, $lossy, $result );
 
 		return $result;
 	}
@@ -580,7 +547,8 @@ abstract class AbstractContent implements Content {
 			$po = new ParserOutput();
 			$options->registerWatcher( [ $po, 'recordOption' ] );
 
-			if ( Hooks::runner()->onContentGetParserOutput(
+			$hookRunner = new HookRunner( MediaWikiServices::getInstance()->getHookContainer() );
+			if ( $hookRunner->onContentGetParserOutput(
 				$this, $title, $revId, $options, $generateHtml, $po )
 			) {
 				// Save and restore the old value, just in case something is reusing
@@ -591,7 +559,7 @@ abstract class AbstractContent implements Content {
 				$options->setRedirectTarget( $oldRedir );
 			}
 
-			Hooks::runner()->onContentAlterParserOutput( $this, $title, $po );
+			$hookRunner->onContentAlterParserOutput( $this, $title, $po );
 			$options->registerWatcher( null );
 
 			return $po;
@@ -630,6 +598,6 @@ abstract class AbstractContent implements Content {
 	) {
 		wfDeprecated( __METHOD__, '1.38' );
 		$cpoParams = new ContentParseParams( $title, $revId, $options, $generateHtml );
-		return $this->getContentHandler()->fillParserOutputInternal( $this, $cpoParams, $output );
+		$this->getContentHandler()->fillParserOutputInternal( $this, $cpoParams, $output );
 	}
 }

@@ -5,6 +5,7 @@
 			"Eitvys200",
 			"Hugo.arg",
 			"Manvydasz",
+			"Nokeoo",
 			"Pofka",
 			"Tomasdd",
 			"Zygimantus"
@@ -82,7 +83,6 @@
 	"templatedata-modal-notice-import-numparams": "$1 {{PLURAL:$1|naujas parametras buvo importuotas|nauji parametrai buvo importuoti}}: $2",
 	"templatedata-modal-placeholder-paramkey": "Parametro pavadinimas",
 	"templatedata-modal-search-input-placeholder": "Ieškoti pagal kalbos pavadinimą arba kodą",
-	"templatedata-modal-table-param-actions": "Veiksmai",
 	"templatedata-modal-table-param-aliases": "Alternatyvūs vardai (kableliais atskirti)",
 	"templatedata-modal-table-param-autovalue": "Automatinė reikšmė",
 	"templatedata-modal-table-param-default": "Pagal nutylėjimą ($1)",
@@ -97,7 +97,6 @@
 	"templatedata-modal-table-param-required": "Privaloma",
 	"templatedata-modal-table-param-suggested": "Siūlomas",
 	"templatedata-modal-table-param-type": "Tipas",
-	"templatedata-modal-table-param-uneditablefield": "Nekeičiamas",
 	"templatedata-modal-title": "Šablono dokumentacijos redaktorius",
 	"templatedata-modal-title-addparam": "Pridėti naują parametrą",
 	"templatedata-modal-title-choose-language": "Pasirinkti kalbą",

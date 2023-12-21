@@ -9,7 +9,6 @@
 		]
 	},
 	"apierror-visualeditor-docserver": "Hiba a Parsoid/RESTBase-szerverhez csatlakozáskor (nincs válasz)",
-	"apihelp-visualeditor-description": "A Parsoid szolgáltatástól kapott oldalból HTML5 oldalt készít.",
 	"apihelp-visualeditor-param-basetimestamp": "Mentésnél állítsd a szerkesztett lapváltozat időbélyegére. Szerkesztési ütközések felismerésére szolgál.",
 	"apihelp-visualeditor-param-cachekey": "A szerializáláshoz vagy a különbség megmutatásához használd az előző serializeforcache kérés eredményét ezzel a kulccsal. Felülírja a $1html eredményét.",
 	"apihelp-visualeditor-param-editintro": "Az értesítésekhez adandó figyelmeztetés (<code>editintro</code>).",
@@ -24,7 +23,6 @@
 	"apihelp-visualeditor-param-starttimestamp": "Mentésnél állítsd a szerkesztett lapváltozat időbélyegére. Szerkesztési ütközések felismerésére szolgál.",
 	"apihelp-visualeditor-param-wikitext": "A Parsoidnak HTML-lé konvertálásra küldendő wikiszöveg (paction=parsefragment).",
 	"apihelp-visualeditor-summary": "A Parsoid szolgáltatástól kapott oldalból HTML5 oldalt készít.",
-	"apihelp-visualeditoredit-description": "HTML5 oldal elmentése a wikiben (a Parsoid szolgáltatással wikiszöveggé konvertálva).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Mentésnél állítsd a szerkesztett lapváltozat időbélyegére. Szerkesztési ütközések felismerésére szolgál.",
 	"apihelp-visualeditoredit-param-cachekey": "Az előző, megadott kulcsú serializeforcache kérés eredményének használata. Felülírja a $1html eredményét.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha azonosító (amikor captcha megválaszolásával mentesz).",

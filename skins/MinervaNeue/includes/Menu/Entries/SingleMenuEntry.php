@@ -17,7 +17,6 @@
 
 namespace MediaWiki\Minerva\Menu\Entries;
 
-use MediaWiki\Minerva\MinervaUI;
 use Message;
 
 /**
@@ -50,9 +49,16 @@ class SingleMenuEntry implements IMenuEntry {
 		$menuClass = 'menu__item--' . $name;
 
 		$this->attributes = [
-			'icon' => null,
+			'data-icon' => [
+				'icon' => null,
+			],
+			'data-event-name' => null,
+			'title' => null,
+			'id' => null,
 			'text' => $text,
 			'href' => $url,
+			'role' => '',
+			'data-mw' => 'interface',
 			'class' => is_array( $className ) ?
 				implode( ' ', $className + [ $menuClass ] ) :
 					ltrim( $className . ' ' . $menuClass ),
@@ -66,7 +72,7 @@ class SingleMenuEntry implements IMenuEntry {
 	 * @return $this
 	 */
 	public function overrideIcon( $icon ) {
-		$this->setIcon( str_replace( 'minerva-', '', $icon ) );
+		$this->setIcon( $icon );
 		return $this;
 	}
 
@@ -122,7 +128,26 @@ class SingleMenuEntry implements IMenuEntry {
 	 * @inheritDoc
 	 */
 	public function getComponents(): array {
-		return [ $this->attributes ];
+		$attrs = [];
+		foreach ( [ 'id', 'href', 'data-event-name', 'data-mw', 'role' ] as $key ) {
+			$value = $this->attributes[$key];
+			if ( $value ) {
+				$attrs[] = [
+					'key' => $key,
+					'value' => $value,
+				];
+			}
+		}
+
+		$btn = [
+			'tag-name' => 'a',
+			'label' => $this->attributes['text'],
+			'array-attributes' => $attrs,
+			'classes' => $this->attributes['class'],
+			'data-icon' => $this->attributes['data-icon'],
+		];
+
+		return [ $btn ];
 	}
 
 	/**
@@ -138,25 +163,13 @@ class SingleMenuEntry implements IMenuEntry {
 	/**
 	 * Set the Menu entry icon
 	 * @param string|null $iconName
-	 * @param string $iconType
-	 * @param string $additionalClassNames Additional classes
-	 * @param string $iconPrefix either `wikimedia` or `minerva`
 	 * @return $this
 	 */
-	public function setIcon( $iconName,
-		$iconType = 'before',
-		$additionalClassNames = '',
-		$iconPrefix = 'minerva'
-	) {
-		if ( $iconType === 'before' ) {
-			$this->attributes['icon'] = $iconPrefix . '-' . $iconName;
+	public function setIcon( $iconName ) {
+		if ( $iconName !== null ) {
+			$this->attributes['data-icon']['icon'] = $iconName;
 		} else {
-			$this->attributes['class'] .= ' ' . MinervaUI::iconClass(
-				$iconName,
-				$iconType,
-				$additionalClassNames,
-				$iconPrefix
-			);
+			$this->attributes['data-icon'] = null;
 		}
 		return $this;
 	}

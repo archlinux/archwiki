@@ -21,24 +21,33 @@
 namespace MediaWiki\User;
 
 use Iterator;
+use MediaWiki\User\TempUser\TempUserConfig;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\PreconditionException;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class UserSelectQueryBuilder extends SelectQueryBuilder {
 
 	/** @var ActorStore */
 	private $actorStore;
+	private TempUserConfig $tempUserConfig;
 
 	/**
 	 * @internal
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @param ActorStore $actorStore
+	 * @param TempUserConfig $tempUserConfig
 	 */
-	public function __construct( IDatabase $db, ActorStore $actorStore ) {
+	public function __construct(
+		IReadableDatabase $db,
+		ActorStore $actorStore,
+		TempUserConfig $tempUserConfig
+	) {
 		parent::__construct( $db );
+
 		$this->actorStore = $actorStore;
+		$this->tempUserConfig = $tempUserConfig;
 		$this->table( 'actor' );
 	}
 
@@ -102,8 +111,7 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 		if ( !isset( $this->options['LIMIT'] ) ) {
 			throw new PreconditionException( 'Must set a limit when using a user name prefix' );
 		}
-		$like = $this->db->buildLike( $prefix, $this->db->anyString() );
-		$this->conds( "actor_name{$like}" );
+		$this->conds( 'actor_name' . $this->db->buildLike( $prefix, $this->db->anyString() ) );
 		return $this;
 	}
 
@@ -163,6 +171,42 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	}
 
 	/**
+	 * Only return named users.
+	 *
+	 * @return UserSelectQueryBuilder
+	 */
+	public function named(): self {
+		if ( !$this->tempUserConfig->isEnabled() ) {
+			// nothing to do: getMatchPattern throws if temp accounts aren't enabled
+			return $this;
+		}
+
+		$this->conds( [
+			'actor_name NOT ' . $this->tempUserConfig->getMatchPattern()
+				->buildLike( $this->db )
+		] );
+		return $this;
+	}
+
+	/**
+	 * Only return temp users
+	 *
+	 * @return UserSelectQueryBuilder
+	 */
+	public function temp(): self {
+		if ( !$this->tempUserConfig->isEnabled() ) {
+			// nothing to do: getMatchPattern throws if temp accounts aren't enabled
+			return $this;
+		}
+
+		$this->conds( [
+			'actor_name ' . $this->tempUserConfig->getMatchPattern()
+				->buildLike( $this->db )
+		] );
+		return $this;
+	}
+
+	/**
 	 * Filter based on user hidden status
 	 *
 	 * @since 1.38
@@ -176,7 +220,7 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 			$this->conds( [ 'ipb_deleted = 1' ] );
 		} else {
 			// filter out hidden users
-			$this->conds( [ 'ipb_deleted = 0 OR ipb_deleted IS NULL' ] );
+			$this->conds( [ 'ipb_deleted' => [ 0, null ] ] );
 		}
 		return $this;
 	}

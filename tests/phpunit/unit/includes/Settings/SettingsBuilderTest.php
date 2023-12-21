@@ -5,6 +5,7 @@ namespace phpunit\unit\includes\Settings;
 use BagOStuff;
 use ExtensionRegistry;
 use InvalidArgumentException;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\Settings\Cache\CacheableSource;
 use MediaWiki\Settings\Config\ArrayConfigBuilder;
@@ -165,7 +166,7 @@ class SettingsBuilderTest extends TestCase {
 		$setting->apply();
 	}
 
-	public function provideConfigDefaults() {
+	public static function provideConfigDefaults() {
 		yield 'sets a value from a single settings file' => [
 			'settingsBatches' => [
 				[ 'config' => [ 'MySetting' => 'MyValue', ], ],
@@ -373,7 +374,7 @@ class SettingsBuilderTest extends TestCase {
 		$setting->registerHookHandlers( [ $hookName => [ 'strtolower' ] ] );
 
 		$config = $setting->getConfig();
-		$this->assertArrayHasKey( $hookName, $config->get( 'Hooks' ) );
+		$this->assertArrayHasKey( $hookName, $config->get( MainConfigNames::Hooks ) );
 	}
 
 	public function testApplyPurgesState() {
@@ -456,7 +457,7 @@ class SettingsBuilderTest extends TestCase {
 		$this->assertSame( [ 'x' ], $config->get( 'X' ) );
 	}
 
-	public function provideValidate() {
+	public static function provideValidate() {
 		yield 'all good' => [
 			'settings' => [
 				'config-schema' => [ 'foo' => [ 'type' => 'string', ], ],

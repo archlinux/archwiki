@@ -1,7 +1,10 @@
 <?php
 
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\SpecialPage\ChangesListSpecialPage;
 
 /**
  * Abstract base class for shared logic when testing ChangesListSpecialPage
@@ -116,7 +119,7 @@ abstract class AbstractChangesListSpecialPageTestCase extends MediaWikiIntegrati
 		// depending on which other extensions are running.
 		$this->setTemporaryHook(
 			'ChangesListSpecialPageStructuredFilters',
-			null
+			HookContainer::NOOP
 		);
 
 		// Give users patrol permissions so we can test that.

@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\User\ExternalUserNames;
 use MediaWiki\Widget\UserInputWidget;
 use Wikimedia\IPUtils;
 
@@ -9,6 +11,7 @@ use Wikimedia\IPUtils;
  *
  * Optional parameters:
  * 'exists' - Whether to validate that the user already exists
+ * 'external' - Whether an external user (imported actor) is interpreted as "valid"
  * 'ipallowed' - Whether an IP address is interpreted as "valid"
  * 'iprange' - Whether an IP address range is interpreted as "valid"
  * 'iprangelimits' - Specifies the valid IP ranges for IPv4 and IPv6 in an array.
@@ -24,6 +27,7 @@ class HTMLUserTextField extends HTMLTextField {
 	public function __construct( $params ) {
 		$params = wfArrayPlus2d( $params, [
 				'exists' => false,
+				'external' => false,
 				'ipallowed' => false,
 				'iprange' => false,
 				'iprangelimits' => [
@@ -48,7 +52,7 @@ class HTMLUserTextField extends HTMLTextField {
 		}
 
 		// check if the input is a valid username
-		$user = User::newFromName( $value );
+		$user = MediaWikiServices::getInstance()->getUserFactory()->newFromName( $value );
 		if ( $user ) {
 			// check if the user exists, if requested
 			if ( $this->mParams['exists'] && !(
@@ -61,6 +65,10 @@ class HTMLUserTextField extends HTMLTextField {
 		} else {
 			// not a valid username
 			$valid = false;
+			// check if the input is a valid external user
+			if ( $this->mParams['external'] && ExternalUserNames::isExternal( $value ) ) {
+				$valid = true;
+			}
 			// check if the input is a valid IP address
 			if ( $this->mParams['ipallowed'] && IPUtils::isValid( $value ) ) {
 				$valid = true;

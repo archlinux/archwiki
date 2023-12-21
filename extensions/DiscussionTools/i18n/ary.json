@@ -5,6 +5,7 @@
 			"Reda Benkhadra"
 		]
 	},
+	"discussiontools-autotopicsubpopup-dismiss": "وخا، صافي!",
 	"discussiontools-emptystate-button": "بدا مداكرة",
 	"discussiontools-emptystate-desc-user": "لخدايميا يقدّو يصاوبو محتوى ف {{SITENAME}} ب [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|صفحات النقاش]] على أحسن وجه. بداو مداكرة جديدة على ود تّواصل ؤ تّعاون {{GENDER:{{PAGENAME}}|معا}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. داكشي لي كيتّكتب هنا غادي يكون موتاح علنياً ل أي واحد.",
 	"discussiontools-emptystate-desc-user-anon": "لخدايميا يقدّو يصاوبو محتوى ف {{SITENAME}} ب [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|صفحات النقاش]] على أحسن وجه. بداو مداكرة جديدة على مناقشة تّعديلات لي تدارو من هاد لأيپي. داكشي لي كيتّكتب هنا غادي يكون موتاح علنياً ل أي واحد. بزاف د لأيپيات كيتبدلو بشكل دوري، ؤ يقدرو يكونو مخدّمين من طاراف شحال من واحد.",

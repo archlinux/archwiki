@@ -80,19 +80,14 @@
 	 *  of pages with the number of unread notifications per wiki
 	 */
 	mw.echo.api.APIHandler.prototype.fetchUnreadNotificationPages = function ( sources ) {
+		sources = sources || '*';
 		var params = {
 			action: 'query',
 			meta: 'unreadnotificationpages',
 			uselang: this.userLang,
-			unpgrouppages: true
+			unpgrouppages: true,
+			unpwikis: sources
 		};
-
-		if ( !sources || sources === '*' ) {
-			params.unpwikis = '*';
-		} else {
-			sources = Array.isArray( sources ) ? sources : [ sources ];
-			params.unpwikis = sources.join( '|' );
-		}
 
 		return this.api.get( params );
 	};
@@ -142,7 +137,7 @@
 			}, this.getTypeParams( type ) );
 
 		if ( !this.isSourceLocal( sources ) ) {
-			params.notwikis = sources.join( '|' );
+			params.notwikis = sources;
 			params.notfilter = '!read';
 			fetchingSource = 'foreign';
 		}

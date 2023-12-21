@@ -39,9 +39,9 @@ class LCStoreDB implements LCStore {
 
 	/** @var IDatabase|null */
 	private $dbw;
-	/** @var bool Whether a batch of writes were recently written */
+	/** @var bool Whether write batch was recently written */
 	private $writesDone = false;
-	/** @var bool Whether the DB is read-only or otherwise unavailable for writes */
+	/** @var bool Whether the DB is read-only or otherwise unavailable for writing */
 	private $readOnly = false;
 
 	public function __construct( $params ) {
@@ -58,12 +58,11 @@ class LCStoreDB implements LCStore {
 			$db = wfGetDB( DB_REPLICA );
 		}
 
-		$value = $db->selectField(
-			'l10n_cache',
-			'lc_value',
-			[ 'lc_lang' => $code, 'lc_key' => $key ],
-			__METHOD__
-		);
+		$value = $db->newSelectQueryBuilder()
+			->select( 'lc_value' )
+			->from( 'l10n_cache' )
+			->where( [ 'lc_lang' => $code, 'lc_key' => $key ] )
+			->caller( __METHOD__ )->fetchField();
 
 		return ( $value !== false ) ? unserialize( $db->decodeBlob( $value ) ) : null;
 	}
@@ -93,14 +92,20 @@ class LCStoreDB implements LCStore {
 		$dbw = $this->getWriteConnection();
 		$dbw->startAtomic( __METHOD__ );
 		try {
-			$dbw->delete( 'l10n_cache', [ 'lc_lang' => $this->code ], __METHOD__ );
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'l10n_cache' )
+				->where( [ 'lc_lang' => $this->code ] )
+				->caller( __METHOD__ )->execute();
 			foreach ( array_chunk( $this->batch, 500 ) as $rows ) {
-				$dbw->insert( 'l10n_cache', $rows, __METHOD__ );
+				$dbw->newInsertQueryBuilder()
+					->insertInto( 'l10n_cache' )
+					->rows( $rows )
+					->caller( __METHOD__ )->execute();
 			}
 			$this->writesDone = true;
 		} catch ( DBQueryError $e ) {
 			if ( $dbw->wasReadOnlyError() ) {
-				$this->readOnly = true; // just avoid site down time
+				$this->readOnly = true; // just avoid site downtime
 			} else {
 				throw $e;
 			}

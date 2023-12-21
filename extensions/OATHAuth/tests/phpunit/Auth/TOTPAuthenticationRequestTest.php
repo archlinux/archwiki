@@ -14,7 +14,7 @@ class TOTPAuthenticationRequestTest extends AuthenticationRequestTestCase {
 		return new TOTPAuthenticationRequest();
 	}
 
-	public function provideLoadFromSubmission() {
+	public static function provideLoadFromSubmission() {
 		return [
 			[ [], [], false ],
 			[ [], [ 'OATHToken' => '123456' ], [ 'OATHToken' => '123456' ] ],

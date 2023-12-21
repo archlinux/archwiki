@@ -30,7 +30,16 @@
 	"cite_references_link_accessibility_label": "Taèk",
 	"cite_references_link_many_accessibility_label": "Taèk ke:",
 	"cite_references_link_accessibility_back_label": "Balik ke atas",
-	"cite_section_preview_references": "Pradeleng ruju'an",
+	"cite_section_preview_references": "Terawangan ruju'an",
 	"cite_warning": "Wanti-wanti tukilan: $1",
-	"cite_warning_sectionpreview_no_text": "Tenger <code>&lt;ref&gt;</code> dengen nama <code>$1</code> kaga' bisa dipradelengin sebab lantaran dita'rip di luar bagèan nyang sekarang atawa kaga' dita'rip acan."
+	"cite_warning_sectionpreview_no_text": "Tenger <code>&lt;ref&gt;</code> dengen nama <code>$1</code> kaga' bisa dipradelengin sebab lantaran dita'rip di luar bagèan nyang sekarang atawa kaga' dita'rip acan.",
+	"cite-wikieditor-tool-reference": "Ruju'an",
+	"cite-wikieditor-help-page-references": "Ruju'an",
+	"cite-wikieditor-help-content-reference-description": "Ruju'an",
+	"cite-wikieditor-help-content-named-reference-description": "Ruju'an nyang namanya",
+	"cite-wikieditor-help-content-rereference-description": "Pemakéan lagi ruju'an nyang sama",
+	"cite-wikieditor-help-content-showreferences-description": "Pampangin ruju'an",
+	"cite-wikieditor-help-content-reference-example-text1": "Halaman tèks.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Tèks sènggètan], tèks tambahan.",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Tèks sènggètan]"
 }

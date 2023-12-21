@@ -7,8 +7,8 @@ use LogicException;
 use MediaWiki\Extension\DiscussionTools\CommentModifier;
 use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\ImmutableRange;
+use MediaWiki\Title\Title;
 use Sanitizer;
-use Title;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -65,9 +65,17 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 		) {
 			if ( $comment instanceof ContentCommentItem ) {
 				$author = $comment->getAuthor();
-				if ( $author ) {
-					$authors[ $author ] = true;
+				if ( !isset( $authors[ $author] ) ) {
+					$authors[ $author ] = [
+						'username' => $author,
+						'displayNames' => [],
+					];
 				}
+				$displayName = $comment->getDisplayName();
+				if ( $displayName && !in_array( $displayName, $authors[ $author ][ 'displayNames' ], true ) ) {
+					$authors[ $author ][ 'displayNames' ][] = $displayName;
+				}
+
 				if (
 					!$oldestReply ||
 					( $comment->getTimestamp() < $oldestReply->getTimestamp() )
@@ -91,7 +99,7 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 
 		ksort( $authors );
 
-		$this->authors = array_keys( $authors );
+		$this->authors = array_values( $authors );
 		$this->commentCount = $commentCount;
 		$this->oldestReply = $oldestReply;
 		$this->latestReply = $latestReply;
@@ -102,7 +110,7 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 	 *
 	 * Usually called on a HeadingItem to find all authors in a thread.
 	 *
-	 * @return string[] Author usernames
+	 * @return array[] Authors, with `username` and `displayNames` (list of display names) properties.
 	 */
 	public function getAuthorsBelow(): array {
 		$this->calculateThreadSummary();
@@ -253,6 +261,10 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 						// (T289873)
 						// Continue examining the other ranges.
 						break;
+					} elseif ( !$simpleTransclTitle->canExist() ) {
+						// Special page transclusion, probably accidental (T344622). Don't return the title,
+						// since it's useless for replying, and can't be stored in the permalink database.
+						return true;
 					} else {
 						return $simpleTransclTitle->getPrefixedText();
 					}
@@ -270,6 +282,10 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 				case 'contained':
 					// Comment is contained within the transclusion
 					if ( $simpleTransclTitle === null ) {
+						return true;
+					} elseif ( !$simpleTransclTitle->canExist() ) {
+						// Special page transclusion, probably accidental (T344622). Don't return the title,
+						// since it's useless for replying, and can't be stored in the permalink database.
 						return true;
 					} else {
 						return $simpleTransclTitle->getPrefixedText();

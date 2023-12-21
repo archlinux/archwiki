@@ -21,7 +21,6 @@ namespace MediaWiki\Rest\Handler\Helper;
 
 use Content;
 use InvalidArgumentException;
-use Language;
 use LanguageCode;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Edit\ParsoidOutputStash;
@@ -39,10 +38,11 @@ use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\ResponseInterface;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Status\Status;
 use MWUnknownContentModelException;
 use ParserOptions;
 use ParserOutput;
-use Status;
+use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Parsoid\Core\ClientError;
@@ -74,9 +74,6 @@ class HtmlInputTransformHelper {
 
 	/** @var StatsdDataFactoryInterface */
 	private $stats;
-
-	/** @var array|null */
-	private $parameters = null;
 
 	/**
 	 * @var HtmlToContentTransform
@@ -281,7 +278,7 @@ class HtmlInputTransformHelper {
 	 * @param array|string $body Body structure, or an HTML string
 	 * @param array $parameters
 	 * @param RevisionRecord|null $originalRevision
-	 * @param Language|null $pageLanguage
+	 * @param Bcp47Code|null $pageLanguage
 	 *
 	 * @throws HttpException
 	 */
@@ -290,7 +287,7 @@ class HtmlInputTransformHelper {
 		$body,
 		array $parameters,
 		?RevisionRecord $originalRevision = null,
-		?Language $pageLanguage = null
+		?Bcp47Code $pageLanguage = null
 	) {
 		if ( is_string( $body ) ) {
 			$body = [ 'html' => $body ];
@@ -299,7 +296,6 @@ class HtmlInputTransformHelper {
 		self::normalizeParameters( $body, $parameters );
 
 		$this->page = $page;
-		$this->parameters = $parameters;
 
 		if ( !isset( $body['html'] ) ) {
 			throw new HttpException( 'Expected `html` key in body' );
@@ -318,7 +314,7 @@ class HtmlInputTransformHelper {
 		// NOTE: Env::getContentModel will fall back to the page's recorded content model
 		//       if none is set here.
 		$this->transform->setOptions( [
-			'contentmodel' => $this->parameters['contentmodel'] ?? null,
+			'contentmodel' => $parameters['contentmodel'] ?? null,
 			'offsetType' => $body['offsetType'] ?? $this->envOptions['offsetType'],
 		] );
 
@@ -687,6 +683,3 @@ class HtmlInputTransformHelper {
 	}
 
 }
-
-/** @deprecated since 1.40, remove in 1.41 */
-class_alias( HtmlInputTransformHelper::class, "MediaWiki\\Rest\\Handler\\HtmlInputTransformHelper" );

@@ -1,6 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
+			"Atzerritik",
+			"Izendegi",
 			"Joseba",
 			"Theklan"
 		]
@@ -38,7 +40,7 @@
 	"discussiontools-preference-replytool": "Erantzun azkarrak gaitu",
 	"discussiontools-preference-sourcemodetoolbar": "Kode moduan aldaketa tresnak gaitu",
 	"discussiontools-preference-topicsubscription": "Gaien harpidetza gaitu",
-	"discussiontools-replylink": "erantzun",
+	"discussiontools-replylink": "{{GENDER:|Erantzun}}",
 	"discussiontools-replywidget-abandon": "Ziur zaude idazten ari zaren iruzkina baztertu nahi duzula?",
 	"discussiontools-replywidget-abandon-discard": "Iruzkina baztertu",
 	"discussiontools-replywidget-abandon-keep": "Idazten jarraitu",
@@ -58,9 +60,9 @@
 	"discussiontools-replywidget-mode-visual": "Ikusizkoa",
 	"discussiontools-replywidget-newtopic": "Gehitu gaia",
 	"discussiontools-replywidget-placeholder-newtopic": "Deskribapena",
-	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} lankideari erantzun",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Erantzun}} {{BIDI:$1}}ri",
 	"discussiontools-replywidget-preview": "Aurreikuspena",
-	"discussiontools-replywidget-reply": "Erantzun",
+	"discussiontools-replywidget-reply": "{{GENDER:|Erantzun}}",
 	"discussiontools-replywidget-signature-body": "$1 aldatu dugu zure sinaduraren ordez. Hau desegiteko, sakatu $2. Ez duzu zertan sinatu behar tresna honekin. Zure sinadura automatikoki gehituko da.",
 	"discussiontools-replywidget-signature-title": "Sinadura kodea atzeman da",
 	"discussiontools-replywidget-summary": "Laburpena",
@@ -81,7 +83,7 @@
 	"discussiontools-topicsubscription-button-unsubscribe-tooltip": "Harpidetza kendu iruzkinak jasotzeari uzteko.",
 	"discussiontools-topicsubscription-error-not-found-body": "URLan aipatutako harpidetza ez da aurkitu.",
 	"discussiontools-topicsubscription-error-not-found-title": "Harpidetza ez da aurkitu",
-	"discussiontools-topicsubscription-notify-subscribed-body": "Gai honi buruz uzten diren iruzkinei buruzko ohartarazpenak jasoko dituzu.",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Zuk}} gai honetan egindako iruzkin berrien jakinarazpenak jasoko dituzu.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "Harpidetu zara!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "Gai honi buruz uzten diren iruzkinei buruzko ohartarazpen gehiagorik ez duzu jasoko.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "Harpidetza kendu duzu.",

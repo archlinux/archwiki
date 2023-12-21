@@ -2,6 +2,7 @@
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Status\Status;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\TestingAccessWrapper;
 
@@ -910,7 +911,7 @@ class FileBackendIntegrationTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
-	public function provider_quickOperations() {
+	public static function provider_quickOperations() {
 		$base = self::baseStorePath();
 		$files = [
 			"$base/unittest-cont1/e/fileA.a",
@@ -1305,9 +1306,9 @@ class FileBackendIntegrationTest extends MediaWikiIntegrationTestCase {
 				array_keys( $contents ),
 				"Contents in right order ($backendName)."
 			);
-			$this->assertSame(
-				count( $source ),
-				count( $contents ),
+			$this->assertSameSize(
+				$source,
+				$contents,
 				"Contents array size correct ($backendName)."
 			);
 		} else {
@@ -1379,9 +1380,9 @@ class FileBackendIntegrationTest extends MediaWikiIntegrationTestCase {
 				array_keys( $tmpFiles ),
 				"Local copies in right order ($backendName)."
 			);
-			$this->assertSame(
-				count( $source ),
-				count( $tmpFiles ),
+			$this->assertSameSize(
+				$source,
+				$tmpFiles,
 				"Local copies array size correct ($backendName)."
 			);
 		} else {
@@ -1464,9 +1465,9 @@ class FileBackendIntegrationTest extends MediaWikiIntegrationTestCase {
 				array_keys( $tmpFiles ),
 				"Local refs in right order ($backendName)."
 			);
-			$this->assertSame(
-				count( $source ),
-				count( $tmpFiles ),
+			$this->assertSameSize(
+				$source,
+				$tmpFiles,
 				"Local refs array size correct ($backendName)."
 			);
 		} else {
@@ -1514,11 +1515,11 @@ class FileBackendIntegrationTest extends MediaWikiIntegrationTestCase {
 
 		$tmpFile = $this->backend->getLocalCopy( [
 			'src' => "$base/unittest-cont1/not-there" ] );
-		$this->assertNull( $tmpFile, "Local copy of not existing file is null ($backendName)." );
+		$this->assertFalse( $tmpFile, "Local copy of not existing file is false ($backendName)." );
 
 		$tmpFile = $this->backend->getLocalReference( [
 			'src' => "$base/unittest-cont1/not-there" ] );
-		$this->assertNull( $tmpFile, "Local ref of not existing file is null ($backendName)." );
+		$this->assertFalse( $tmpFile, "Local ref of not existing file is false ($backendName)." );
 	}
 
 	/**
@@ -2130,7 +2131,7 @@ class FileBackendIntegrationTest extends MediaWikiIntegrationTestCase {
 
 		$iter = $this->backend->getFileList( [ 'dir' => "$base/unittest-cont1/not/exists" ] );
 		$this->assertNotNull( $iter );
-		foreach ( $iter as $iter ) {
+		foreach ( $iter as $item ) {
 			// no errors
 		}
 	}

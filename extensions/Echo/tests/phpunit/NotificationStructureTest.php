@@ -27,7 +27,7 @@ class NotificationStructureTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
-	public function provideNotificationTypes() {
+	public static function provideNotificationTypes() {
 		global $wgEchoNotifications;
 
 		$result = [];

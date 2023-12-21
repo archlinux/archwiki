@@ -7,11 +7,17 @@ use MediaWiki\ResourceLoader\Module;
 use MediaWiki\ResourceLoader\StartUpModule;
 use ResourceLoaderTestCase;
 use ResourceLoaderTestModule;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * @covers \MediaWiki\ResourceLoader\StartUpModule
  */
 class StartUpModuleTest extends ResourceLoaderTestCase {
+
+	protected function setUp(): void {
+		parent::setUp();
+		$this->setService( 'DBLoadBalancer', $this->createMock( ILoadBalancer::class ) );
+	}
 
 	protected static function expandPlaceholders( $text ) {
 		return strtr( $text, [
@@ -19,7 +25,7 @@ class StartUpModuleTest extends ResourceLoaderTestCase {
 		] );
 	}
 
-	public function provideGetModuleRegistrations() {
+	public static function provideGetModuleRegistrations() {
 		return [
 			[ [
 				'msg' => 'Empty registry',
@@ -502,7 +508,7 @@ mw.loader.addSource({
 mw.loader.register([
     [
         "test.es6",
-        "!"
+        ""
     ]
 ]);',
 			] ],
@@ -677,7 +683,7 @@ mw.loader.register([
     ],
     [
         "test.es6",
-        "!"
+        ""
     ]
 ]);'
 			] ],
@@ -722,9 +728,7 @@ mw.loader.register([
 					'factory' => function () {
 						$mock = $this->getMockBuilder( ResourceLoaderTestModule::class )
 							->onlyMethods( [ 'getModuleContent' ] )->getMock();
-						$mock->method( 'getModuleContent' )->will(
-							$this->throwException( new Exception )
-						);
+						$mock->method( 'getModuleContent' )->willThrowException( new Exception );
 						return $mock;
 					}
 				]
@@ -744,9 +748,7 @@ mw.loader.register([
 							] )
 							->getMock();
 						$mock->method( 'enableModuleContentVersion' )->willReturn( false );
-						$mock->method( 'getDefinitionSummary' )->will(
-							$this->throwException( new Exception )
-						);
+						$mock->method( 'getDefinitionSummary' )->willThrowException( new Exception );
 						return $mock;
 					}
 				]

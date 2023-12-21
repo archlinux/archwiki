@@ -1,7 +1,3 @@
-var NotificationBadge = require( './NotificationBadge.js' );
-
-var NOTIFICATIONS_PATH = '/notifications';
-
 /**
  * @fires echo.mobile every time the notifications overlay is opened
  */
@@ -21,16 +17,15 @@ function onCloseNotificationsOverlay() {
  * with the Toast notifications defined by common/toast.js.
  */
 function init() {
-	var badge,
+	var
 		notificationsFilterOverlay = require( './notificationsFilterOverlay.js' ),
 		notificationsOverlay = require( './overlay.js' ),
-		router = require( 'mediawiki.router' ),
 		overlayManager = mw.mobileFrontend.require( 'mobile.startup' ).OverlayManager.getSingleton(),
 		initialized = false;
 
 	function showNotificationOverlay() {
-		var overlay = notificationsOverlay( badge.setCount.bind( badge ),
-			badge.markAsSeen.bind( badge ), function ( exit ) {
+		var overlay = notificationsOverlay(
+			function ( exit ) {
 				onCloseNotificationsOverlay();
 				exit();
 			} );
@@ -39,19 +34,9 @@ function init() {
 		return overlay;
 	}
 
-	// Once the DOM is loaded hijack the notifications button to display an overlay rather
-	// than linking to Special:Notifications.
+	// Once the DOM is loaded add the overlay and overlay manager. Minerva will handle the
+	// notification button that will link to Special:Notifications.
 	$( function () {
-		badge = new NotificationBadge( {
-			onClick: function ( ev ) {
-				router.navigate( '#' + NOTIFICATIONS_PATH );
-				// prevent navigation to original Special:Notifications URL
-				// DO NOT USE stopPropagation or you'll break click tracking in WikimediaEvents
-				ev.preventDefault();
-			},
-			// eslint-disable-next-line no-jquery/no-global-selector
-			el: $( '.minerva-user-notifications ul' ).parent()
-		} );
 		overlayManager.add( /^\/notifications$/, showNotificationOverlay );
 
 		/**
@@ -118,4 +103,3 @@ function init() {
 }
 
 module.exports.init = init;
-module.exports.NotificationBadge = NotificationBadge;

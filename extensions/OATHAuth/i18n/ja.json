@@ -6,13 +6,13 @@
 			"MathXplore",
 			"Ochaochaocha3",
 			"Omotecho",
+			"Ryoya3",
 			"Shirayuki",
 			"Siglite3",
 			"Suyama",
 			"Yusuke1109",
 			"ネイ",
-			"春春眠眠",
-			"Ryoya3"
+			"春春眠眠"
 		]
 	},
 	"oathauth-desc": "HMAC に基づいたワンタイムパスワードを使用する認証機能を提供する",
@@ -77,8 +77,8 @@
 	"notification-header-oathauth-disable": "{{GENDER:$2|あなたのアカウント}}で二段階認証が無効になりました。",
 	"notification-body-oathauth-disable": "もし{{GENDER:$2|あなた}}がこれを行わなかった場合、{{GENDER:$2|あなたのアカウント}}が侵害された可能性があります。",
 	"oathauth-notifications-disable-help": "ヘルプ",
-	"notification-body-oathauth-enabled": "もし{{GENDER:$2|あなた}}がこれを行わなかった場合、{{GENDER:$2|あなたのアカウント}}が侵害された可能性があります。",
-	"oathauth-notifications-enabled-help": "ヘルプ",
+	"notification-body-oathauth-enable": "もし{{GENDER:$2|あなた}}がこれを行わなかった場合、{{GENDER:$2|あなたのアカウント}}が侵害された可能性があります。",
+	"oathauth-notifications-enable-help": "ヘルプ",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}}は二要素認証を有効化しています。",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}}は二要素認証を有効化していません。"
 }

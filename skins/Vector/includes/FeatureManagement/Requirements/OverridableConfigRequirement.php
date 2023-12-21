@@ -21,7 +21,6 @@
 
 namespace MediaWiki\Skins\Vector\FeatureManagement\Requirements;
 
-use CentralIdLookup;
 use Config;
 use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
 use User;
@@ -37,7 +36,6 @@ use WebRequest;
  *     $config,
  *     $user,
  *     $request,
- *     $centralIdLookup,
  *     MainConfigNames::Sitename,
  *     'requirementName',
  *     'overrideName',
@@ -83,11 +81,6 @@ final class OverridableConfigRequirement implements Requirement {
 	private $request;
 
 	/**
-	 * @var CentralIdLookup|null
-	 */
-	private $centralIdLookup;
-
-	/**
 	 * @var string
 	 */
 	private $configName;
@@ -103,42 +96,28 @@ final class OverridableConfigRequirement implements Requirement {
 	private $overrideName;
 
 	/**
-	 * @var string|null
-	 */
-	private $configTestName;
-
-	/**
 	 * This constructor accepts all dependencies needed to determine whether
 	 * the overridable config is enabled for the current user and request.
 	 *
 	 * @param Config $config
 	 * @param User $user
 	 * @param WebRequest $request
-	 * @param CentralIdLookup|null $centralIdLookup
 	 * @param string $configName Any `Config` key. This name is used to query `$config` state.
 	 * @param string $requirementName The name of the requirement presented to FeatureManager.
-	 * @param string|null $overrideName The name of the override presented to FeatureManager, i.e. query parameter.
-	 *   When not set defaults to lowercase version of config key.
-	 * @param string|null $configTestName The name of the AB test config presented to FeatureManager if applicable.
 	 */
 	public function __construct(
 		Config $config,
 		User $user,
 		WebRequest $request,
-		?CentralIdLookup $centralIdLookup,
 		string $configName,
-		string $requirementName,
-		?string $overrideName = null,
-		?string $configTestName = null
+		string $requirementName
 	) {
 		$this->config = $config;
 		$this->user = $user;
 		$this->request = $request;
-		$this->centralIdLookup = $centralIdLookup;
 		$this->configName = $configName;
 		$this->requirementName = $requirementName;
-		$this->overrideName = $overrideName === null ? strtolower( $configName ) : $overrideName;
-		$this->configTestName = $configTestName;
+		$this->overrideName = strtolower( $configName );
 	}
 
 	/**
@@ -160,24 +139,8 @@ final class OverridableConfigRequirement implements Requirement {
 		if ( $this->request->getCheck( $this->overrideName ) ) {
 			return $this->request->getBool( $this->overrideName );
 		}
-
-		// Check if there's config for AB testing.
-		if (
-			!empty( $this->configTestName ) &&
-			(bool)$this->config->get( $this->configTestName ) &&
-			$this->user->isRegistered()
-		) {
-			$id = null;
-			if ( $this->centralIdLookup ) {
-				$id = $this->centralIdLookup->centralIdFromLocalUser( $this->user );
-			}
-
-			// $id will be 0 if the central ID lookup failed.
-			if ( !$id ) {
-				$id = $this->user->getId();
-			}
-
-			return $id % 2 === 0;
+		if ( $this->request->getCheck( $this->configName ) ) {
+			return $this->request->getBool( $this->configName );
 		}
 
 		// If AB test is not enabled, fallback to checking config state.

@@ -84,7 +84,7 @@ class MathDatabaseTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Checks the creation of the math table.
-	 * @covers \MediaWiki\Extension\Math\Hooks::onLoadExtensionSchemaUpdates
+	 * @covers \MediaWiki\Extension\Math\HookHandlers\SchemaHooksHandler::onLoadExtensionSchemaUpdates
 	 */
 	public function testCreateTable() {
 		$this->markTestSkippedIfDbType( 'postgres' );

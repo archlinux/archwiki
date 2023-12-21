@@ -10,12 +10,16 @@ use Skin;
 class VectorComponentMainMenuActionLanguageSwitchAlert implements VectorComponent {
 	/** @var Skin */
 	private $skin;
+	/** @var int */
+	private $numLanguages;
 
 	/**
 	 * @param Skin $skin
+	 * @param int $numLanguages
 	 */
-	public function __construct( Skin $skin ) {
+	public function __construct( Skin $skin, int $numLanguages ) {
 		$this->skin = $skin;
+		$this->numLanguages = $numLanguages;
 	}
 
 	/**
@@ -34,7 +38,8 @@ class VectorComponentMainMenuActionLanguageSwitchAlert implements VectorComponen
 		];
 
 		$component = new VectorComponentMainMenuAction(
-			'lang-alert', $skin, $languageSwitchAlert, $headingOptions
+			'lang-alert', $skin, $languageSwitchAlert, $headingOptions,
+			( $this->numLanguages === 0 ? 'vector-main-menu-action-lang-alert-empty' : '' )
 		);
 		return $component->getTemplateData();
 	}

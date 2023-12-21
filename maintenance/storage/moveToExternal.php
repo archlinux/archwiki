@@ -23,7 +23,6 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Maintenance\UndoLog;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Storage\SqlBlobStore;
 use Wikimedia\AtEase\AtEase;
 
@@ -85,7 +84,10 @@ class MoveToExternal extends Maintenance {
 
 		$maxID = $this->getOption( 'end' );
 		if ( $maxID === null ) {
-			$maxID = $dbw->selectField( 'text', 'MAX(old_id)', '', __METHOD__ );
+			$maxID = $dbw->newSelectQueryBuilder()
+				->select( 'MAX(old_id)' )
+				->from( 'text' )
+				->caller( __METHOD__ )->fetchField();
 		}
 		$this->maxID = (int)$maxID;
 		$this->minID = (int)$this->getOption( 'start', 1 );
@@ -133,8 +135,8 @@ class MoveToExternal extends Maintenance {
 		$numBlocks = ceil( $count / $blockSize );
 		print "Moving text rows from {$this->minID} to {$this->maxID} to external storage\n";
 
-		$esFactory = MediaWikiServices::getInstance()->getExternalStoreFactory();
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$esFactory = $this->getServiceContainer()->getExternalStoreFactory();
+		$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
 		$extStore = $esFactory->getStore( $this->esType );
 		$numMoved = 0;
 		$stubIDs = [];
@@ -148,16 +150,16 @@ class MoveToExternal extends Maintenance {
 				$lbFactory->waitForReplication();
 			}
 
-			$res = $dbr->select( 'text', [ 'old_id', 'old_flags', 'old_text' ],
-				[
-					"old_id BETWEEN $blockStart AND $blockEnd",
-					'old_flags NOT ' . $dbr->buildLike( $dbr->anyString(), 'external', $dbr->anyString() ),
-				], __METHOD__
-			);
+			$res = $dbr->newSelectQueryBuilder()
+				->select( [ 'old_id', 'old_flags', 'old_text' ] )
+				->from( 'text' )
+				->where( $this->getConditions( $blockStart, $blockEnd, $dbr ) )
+				->caller( __METHOD__ )->fetchResultSet();
 			foreach ( $res as $row ) {
 				$text = $row->old_text;
 				$id = $row->old_id;
 				$flags = SqlBlobStore::explodeFlags( $row->old_flags );
+				[ $text, $flags ] = $this->resolveText( $text, $flags );
 
 				if ( in_array( 'error', $flags ) ) {
 					continue;
@@ -171,7 +173,8 @@ class MoveToExternal extends Maintenance {
 						continue;
 					} elseif ( $obj instanceof HistoryBlobCurStub ) {
 						// Copy cur text to ES
-						[ $text, $flags ] = $this->compress( $obj->getText(), [ 'utf-8' ] );
+						[ $text, $flags ] = $this->resolveLegacyEncoding( $obj->getText(), [] );
+						[ $text, $flags ] = $this->compress( $text, $flags );
 					} elseif ( $obj instanceof ConcatenatedGzipHistoryBlob ) {
 						// Store as is
 					} else {
@@ -233,6 +236,14 @@ class MoveToExternal extends Maintenance {
 			&& !in_array( 'utf-8', $flags )
 			&& !in_array( 'utf8', $flags )
 		) {
+			// First decompress the entry so we don't try to convert a binary gzip to utf-8
+			if ( in_array( 'gzip', $flags ) ) {
+				if ( !$this->gzip ) {
+					return [ $text, $flags ];
+				}
+				$flags = array_diff( $flags, [ 'gzip' ] );
+				$text = gzinflate( $text );
+			}
 			AtEase::suppressWarnings();
 			$text = iconv( $this->legacyEncoding, 'UTF-8//IGNORE', $text );
 			AtEase::restoreWarnings();
@@ -248,17 +259,16 @@ class MoveToExternal extends Maintenance {
 		}
 
 		$dbr = $this->getDB( DB_REPLICA );
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
 		$this->output( "Resolving " . count( $stubIDs ) . " stubs\n" );
 		$numResolved = 0;
 		$numTotal = 0;
 		foreach ( array_chunk( $stubIDs, $this->getBatchSize() ) as $stubBatch ) {
-			$res = $dbr->select(
-				'text',
-				[ 'old_id', 'old_flags', 'old_text' ],
-				[ 'old_id' => $stubBatch ],
-				__METHOD__
-			);
+			$res = $dbr->newSelectQueryBuilder()
+				->select( [ 'old_id', 'old_flags', 'old_text' ] )
+				->from( 'text' )
+				->where( [ 'old_id' => $stubBatch ] )
+				->caller( __METHOD__ )->fetchResultSet();
 			foreach ( $res as $row ) {
 				$numResolved += $this->resolveStubs->resolveStub( $row, $this->dryRun ) ? 1 : 0;
 				$numTotal++;
@@ -271,6 +281,17 @@ class MoveToExternal extends Maintenance {
 			}
 		}
 		$this->output( "$numResolved of $numTotal stubs resolved\n" );
+	}
+
+	protected function getConditions( $blockStart, $blockEnd, $dbr ) {
+		return [
+			"old_id BETWEEN $blockStart AND $blockEnd",
+			'old_flags NOT ' . $dbr->buildLike( $dbr->anyString(), 'external', $dbr->anyString() ),
+		];
+	}
+
+	protected function resolveText( $text, $flags ) {
+		return [ $text, $flags ];
 	}
 }
 

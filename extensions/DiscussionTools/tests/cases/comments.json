@@ -238,5 +238,13 @@
 		"expected": "../cases/signatures-comments/signatures-contribs-alias-underscore.json",
 		"config": "../data/huwiki-config.json",
 		"data": "../data/huwiki-data.json"
+	},
+	{
+		"name": "suppressed talk classes",
+		"title": "User_talk:ESanders_(WMF)/suppressed-talk",
+		"dom": "cases/suppressed-talk/suppressed-talk.html",
+		"expected": "../cases/suppressed-talk/suppressed-talk.json",
+		"config": "../data/enwiki-config.json",
+		"data": "../data/enwiki-data.json"
 	}
 ]

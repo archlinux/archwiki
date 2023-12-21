@@ -34,5 +34,11 @@
 	"cite_references_link_accessibility_back_label": "Wer omheechspringe",
 	"cite_section_preview_references": "Proefbyld fan 'e referinsjes",
 	"cite_warning": "Sitearwarskôging: $1",
-	"cite_warning_sectionpreview_no_text": "Fan de <code>&lt;ref&gt;</code>-oantsjutting mei de namme <code>$1</code> kin gjin proefbyld besjoen wurde, meidat er bûten dizze seksje definiearre is, of hielendal net definiearre."
+	"cite_warning_sectionpreview_no_text": "Fan de <code>&lt;ref&gt;</code>-oantsjutting mei de namme <code>$1</code> kin gjin proefbyld besjoen wurde, meidat er bûten dizze seksje definiearre is, of hielendal net definiearre.",
+	"cite-wikieditor-tool-reference": "Referinsje",
+	"cite-wikieditor-help-page-references": "Referinsjes",
+	"cite-wikieditor-help-content-reference-description": "Referinsje",
+	"cite-wikieditor-help-content-named-reference-description": "Neamde referinsje",
+	"cite-wikieditor-help-content-rereference-description": "Fierder gebrûk fan deselde referinsje",
+	"cite-wikieditor-help-content-showreferences-description": "Referinsjes werjaan"
 }

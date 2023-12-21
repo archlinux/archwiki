@@ -4,7 +4,6 @@
 			"Bjankuloski06"
 		]
 	},
-	"apihelp-templatedata-description": "Преземање на податоци складирани од додатокот „Предложни податоци“ (TemplateData).",
 	"apihelp-templatedata-summary": "Преземање на податоци складирани од додатокот „Предложни податоци“ (TemplateData).",
 	"apihelp-templatedata-example-1": "Дај податоци за [[Template:Foobar]], со исходот ако предлошката не постои или постои без да има предложни податоци",
 	"apihelp-templatedata-example-2": "Дај податоци за [[Template:Phabricator]], со исходот ако предлошката не постои или постои без да има предложни податоци",

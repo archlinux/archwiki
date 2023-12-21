@@ -50,8 +50,17 @@ class InputCheckFactoryTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testInvalidLocalChecker() {
-		$checker = $this->newServiceInstance( InputCheckFactory::class, [] )
-			->newLocalChecker( 'FORMULA', 'INVALIDTYPE' );
+		$myFactory = new InputCheckFactory(
+			new ServiceOptions( InputCheckFactory::CONSTRUCTOR_OPTIONS, [
+				'MathMathMLUrl' => 'something',
+				'MathTexVCService' => 'local',
+				'MathLaTeXMLTimeout' => 240
+			] ),
+			$this->fakeWAN,
+			$this->fakeHTTP,
+			LoggerFactory::getInstance( 'Math' )
+		);
+		$checker = $myFactory->newLocalChecker( 'FORMULA', 'INVALIDTYPE' );
 		$this->assertInstanceOf( LocalChecker::class, $checker );
 		$this->assertInstanceOf( Message::class, $checker->getError() );
 		$this->assertFalse( $checker->isValid() );

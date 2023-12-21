@@ -12,6 +12,7 @@ use Wikimedia\Parsoid\Mocks\MockPageConfig;
 use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Mocks\MockSiteConfig;
 use Wikimedia\Parsoid\Parsoid;
+use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
@@ -321,7 +322,7 @@ class RegressionSpecsTest extends TestCase {
 		$node = DOMCompat::nodeName( $docBody->firstChild );
 		$this->assertEquals( "p",  $node, $description );
 
-		$node = DOMCompat::nodeName( DOMUtils::nextNonSepSibling( $docBody->firstChild ) );
+		$node = DOMCompat::nodeName( DiffDOMUtils::nextNonSepSibling( $docBody->firstChild ) );
 		$this->assertEquals( "figure",  $node, $description );
 	}
 
@@ -391,6 +392,43 @@ EOT;
 		$selserData = new SelserData( $wt, $html );
 		$editedWt = $parsoid->html2wikitext( $pageConfig, $editedHtml, [], $selserData );
 		$this->assertEquals( "Ha ha <ref follow=\"123\">hi ho</ref>\n\n", $editedWt );
+	}
+
+	/**
+	 * @covers \Wikimedia\Parsoid\Ext\Gallery\Gallery::domToWikitext
+	 */
+	public function testGalleryLineWithTemplatestyleInCaption(): void {
+		$description = "Deduplicated templatestyles shouldn't lead to differing alt and caption text.";
+		$wt = <<<EOT
+The first instance ensures the one in the caption is deduped <templatestyles src="Template:Quote/styles.css" />
+<gallery>
+File:Foobar.jpg|caption with <templatestyles src="Template:Quote/styles.css" />
+</gallery>
+EOT;
+		$docBody = $this->parseWT( $wt );
+
+		$siteConfig = new MockSiteConfig( [] );
+		$dataAccess = new MockDataAccess( [] );
+		$parsoid = new Parsoid( $siteConfig, $dataAccess );
+		$content = new MockPageContent( [ 'main' => $wt ] );
+		$pageConfig = new MockPageConfig( [], $content );
+
+		$editedWt = $parsoid->html2wikitext( $pageConfig, DOMCompat::getOuterHTML( $docBody ), [], null );
+
+		$this->assertEquals( $wt, $editedWt );
+	}
+
+	/**
+	 * @covers \Wikimedia\Parsoid\Config\SiteConfig::getMagicWordForMediaOption
+	 */
+	public function testSub(): void {
+		$wt = <<<EOT
+[[File:Foobar.jpg|sub|caption]]
+EOT;
+		$docBody = $this->parseWT( $wt );
+		$figure = DOMCompat::querySelector( $docBody, 'span[typeof~="mw:File"]' );
+		$this->assertInstanceOf( Element::class, $figure );
+		$this->assertTrue( DOMCompat::getClassList( $figure )->contains( 'mw-valign-sub' ) );
 	}
 
 }

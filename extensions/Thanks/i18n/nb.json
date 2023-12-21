@@ -4,11 +4,11 @@
 			"AnB",
 			"Chameleon222",
 			"Danmichaelo",
+			"EdoAug",
 			"Jeblad",
 			"Jon Harald Søby",
 			"Macofe",
-			"Njardarlogar",
-			"EdoAug"
+			"Njardarlogar"
 		]
 	},
 	"thanks-desc": "Legger til lenker for å takke brukere for redigeringer, kommentarer, etc.",
@@ -40,7 +40,7 @@
 	"thanks": "Send takk",
 	"thanks-submit": "Send takk",
 	"echo-pref-subscription-edit-thank": "Takker meg for en redigering",
-	"echo-pref-tooltip-edit-thank": "Varsle meg når noen takker meg for en redgering jeg har gjort.",
+	"echo-pref-tooltip-edit-thank": "Varsle meg når noen takker meg for en redigering jeg har gjort.",
 	"echo-category-title-edit-thank": "Takk",
 	"notification-thanks-diff-link": "redigeringen din",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|takket}} for redigeringen {{GENDER:$4|din}} på <strong>$3</strong>.",

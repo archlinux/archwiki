@@ -1,15 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Sagan",
 			"Айсар",
-			"Лилиә",
-			"Янмурза Баки",
 			"З. ӘЙЛЕ",
-			"Amire80"
+			"Лилиә",
+			"Янмурза Баки"
 		]
 	},
-	"apihelp-echomarkread-description": "Ҡулланыусы өсөн барлыҡ белдереүҙәрҙее уҡылған тип билдәләү",
 	"apihelp-echomarkread-param-list": "Уҡылғандар тип билдәләү өсөн ID белдереүҙәр исемлеге.",
 	"apihelp-echomarkread-param-unreadlist": "Уҡылмағандар тип билдәләү өсөн ID белдереүҙәр исемлеге.",
 	"apihelp-echomarkread-param-all": "Әгәр күрһәтелһә, ҡатнашыусының барлыҡ белдереүҙәрен уҡылған тип билдәләй.",
@@ -17,10 +16,8 @@
 	"apihelp-echomarkread-example-1": "8-се белдереүҙе уҡылған тип билдәләргә",
 	"apihelp-echomarkread-example-2": "Барлыҡ белдереүҙәрҙе уҡылған тип билдәләргә",
 	"apihelp-echomarkread-example-3": "1-се белдереүҙе уҡылмаған тип билдәләргә",
-	"apihelp-echomarkseen-description": "Был ҡулланыусы өсөн барлыҡ белдереүҙәрҙе уҡылған тип билдәләү",
 	"apihelp-echomarkseen-example-1": "Бөтә төр белдереүҙәрҙе уҡылған тип билдәләргә",
 	"apihelp-echomarkseen-param-type": "Уҡылған белдереүҙәрҙе билдәләү төрө: 'иҫкәртеү', 'хәбәр' йәки 'барыһы ла'.",
-	"apihelp-query+notifications-description": "Ағымдағы ҡатнашыусыны көткән, белдереүҙәрҙе алырға",
 	"apihelp-query+notifications-param-prop": "Һоратыу нескәлектәре.",
 	"apihelp-query+notifications-param-sections": "Һоратыу өсөн белдереү бүлектәре (йәғни 'иҫкәртеү' һәм 'хәбәр' берлеге)",
 	"apihelp-query+notifications-param-groupbysection": "Бүлектәр буйынса һөҙөмтәне төркөмләргә кәрәкме. Алдан күрһәтелһә, һәр бүлек айырым сығарыла.",

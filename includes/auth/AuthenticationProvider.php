@@ -23,9 +23,6 @@
 
 namespace MediaWiki\Auth;
 
-use Config;
-use MediaWiki\HookContainer\HookContainer;
-
 /**
  * An AuthenticationProvider is used by AuthManager when authenticating users.
  *
@@ -37,44 +34,6 @@ use MediaWiki\HookContainer\HookContainer;
  * @since 1.27
  */
 interface AuthenticationProvider {
-
-	/**
-	 * Set AuthManager
-	 * @deprecated since 1.37. For extension-defined authentication providers
-	 * that were using this method to trigger other work, please override
-	 * AbstractAuthenticationProvider::postInitSetup instead. If your extension
-	 * was using this to explicitly change the AuthManager (or Config, or
-	 * HookContainer) of an existing AuthenticationProvider object, please
-	 * file a report on phabricator - there is no non-deprecated way to do this
-	 * anymore.
-	 * @param AuthManager $manager
-	 */
-	public function setManager( AuthManager $manager );
-
-	/**
-	 * Set configuration
-	 * @deprecated since 1.37. For extension-defined authentication providers
-	 * that were using this method to trigger other work, please override
-	 * AbstractAuthenticationProvider::postInitSetup instead. If your extension
-	 * was using this to explicitly change the AuthManager (or Config, or
-	 * HookContainer) of an existing AuthenticationProvider object, please
-	 * file a report on phabricator - there is no non-deprecated way to do this
-	 * anymore.
-	 * @param Config $config
-	 */
-	public function setConfig( Config $config );
-
-	/**
-	 * @deprecated since 1.37. For extension-defined authentication providers
-	 * that were using this method to trigger other work, please override
-	 * AbstractAuthenticationProvider::postInitSetup instead. If your extension
-	 * was using this to explicitly change the AuthManager (or Config, or
-	 * HookContainer) of an existing AuthenticationProvider object, please
-	 * file a report on phabricator - there is no non-deprecated way to do this
-	 * anymore.
-	 * @param HookContainer $hookContainer
-	 */
-	public function setHookContainer( HookContainer $hookContainer );
 
 	/**
 	 * Return a unique identifier for this instance
@@ -108,15 +67,15 @@ interface AuthenticationProvider {
 	 * @see AuthManager::getAuthenticationRequests()
 	 * @param string $action
 	 * @param array $options Options are:
-	 *  - username: User name related to the action, or null/unset if anon.
+	 *  - username: Username related to the action, or null/unset if anon.
 	 *    - ACTION_LOGIN: The currently logged-in user, if any.
 	 *    - ACTION_CREATE: The account creator, if non-anonymous.
 	 *    - ACTION_LINK: The local user being linked to.
 	 *    - ACTION_CHANGE: The user having data changed.
 	 *    - ACTION_REMOVE: The user having data removed.
 	 *    If you leave the username property of the returned requests empty, this
-	 *    will automatically be copied there (except for ACTION_CREATE where it
-	 *    wouldn't really make sense).
+	 *    will automatically be copied there (except for ACTION_CREATE and
+	 *    ACTION_LOGIN).
 	 * @return AuthenticationRequest[]
 	 */
 	public function getAuthenticationRequests( $action, array $options );

@@ -29,11 +29,11 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\WikiPageFactory;
-use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRenderer;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRoleRegistry;
+use MediaWiki\Title\TitleFormatter;
 use MediaWiki\User\TalkPageNotificationManager;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
@@ -42,7 +42,6 @@ use MediaWiki\User\UserNameUtils;
 use MessageCache;
 use ParserCache;
 use Psr\Log\LoggerInterface;
-use TitleFormatter;
 use WANObjectCache;
 use Wikimedia\Rdbms\ILBFactory;
 use WikiPage;
@@ -142,15 +141,11 @@ class PageUpdaterFactory {
 	/** @var string[] */
 	private $softwareTags;
 
-	/** @var ParsoidOutputAccess */
-	private $parsoidOutputAccess;
-
 	/**
 	 * @param RevisionStore $revisionStore
 	 * @param RevisionRenderer $revisionRenderer
 	 * @param SlotRoleRegistry $slotRoleRegistry
 	 * @param ParserCache $parserCache
-	 * @param ParsoidOutputAccess $parsoidOutputAccess
 	 * @param JobQueueGroup $jobQueueGroup
 	 * @param MessageCache $messageCache
 	 * @param Language $contLang
@@ -177,7 +172,6 @@ class PageUpdaterFactory {
 		RevisionRenderer $revisionRenderer,
 		SlotRoleRegistry $slotRoleRegistry,
 		ParserCache $parserCache,
-		ParsoidOutputAccess $parsoidOutputAccess,
 		JobQueueGroup $jobQueueGroup,
 		MessageCache $messageCache,
 		Language $contLang,
@@ -205,7 +199,6 @@ class PageUpdaterFactory {
 		$this->revisionRenderer = $revisionRenderer;
 		$this->slotRoleRegistry = $slotRoleRegistry;
 		$this->parserCache = $parserCache;
-		$this->parsoidOutputAccess = $parsoidOutputAccess;
 		$this->jobQueueGroup = $jobQueueGroup;
 		$this->messageCache = $messageCache;
 		$this->contLang = $contLang;
@@ -277,7 +270,7 @@ class PageUpdaterFactory {
 			$user,
 			$page, // NOTE: eventually, PageUpdater should not know about WikiPage
 			$derivedPageDataUpdater,
-			$this->loadbalancerFactory->getMainLB(),
+			$this->loadbalancerFactory,
 			$this->revisionStore,
 			$this->slotRoleRegistry,
 			$this->contentHandlerFactory,
@@ -318,7 +311,6 @@ class PageUpdaterFactory {
 			$this->revisionRenderer,
 			$this->slotRoleRegistry,
 			$this->parserCache,
-			$this->parsoidOutputAccess,
 			$this->jobQueueGroup,
 			$this->messageCache,
 			$this->contLang,

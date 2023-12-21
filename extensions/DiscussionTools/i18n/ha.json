@@ -45,8 +45,6 @@
 	"discussiontools-limitreport-errorreqid": "Kuskuren Makaman aiki na neman ID",
 	"discussiontools-limitreport-timeusage": "KayanAikin Tattaunawa na amfanin lokaci",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|second|dakikoki}}",
-	"discussiontools-newtopic-legacy-hint": "<strong>Sabuwar hanyar fara batutuwa tana nan.</strong> Wannan sabuntawa yana ba ku damar ƙara batutuwa ta amfani da fom ɗin layi da kuma buga wasu tare da sabon gajeriyar hanya.  Hakanan zaka iya [$1 canzawa zuwa ƙwarewar gado].",
-	"discussiontools-newtopic-legacy-hint-return": "<strong>Yanzu kuna kallon ƙwarewar gado.</strong> Kuna iya [$1 komawa zuwa sabuwar ƙwarewa] ko ziyarci abubuwan da kuka zaɓa zuwa [$2 saita ƙwarewar gado azaman tsoho]",
 	"discussiontools-newtopic-missing-title": "Kuyi hakuri kuba da take don batun tattaunawar ku.  Ku danna \"{{int:discussiontools-replywidget-newtopic}}\", za ku ƙara batun ku ba tare da take ba.",
 	"discussiontools-newtopic-placeholder-title": "Take",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|amsa}} a cikin \"<strong>$4</strong>\".",
@@ -90,5 +88,6 @@
 	"discussiontools-topicsubscription-pager-unsubscribe-button": "Rashin samun dama",
 	"discussiontools-topicsubscription-special-title": "Maudu'an da aka zaba",
 	"echo-category-title-dt-subscription": "Shafin magana{{PLURAL:$1|}}",
-	"echo-pref-tooltip-dt-subscription": "ku sanar dani idan wani ya wallafa sabon tsokaci akan maudu'in dana zaba"
+	"echo-pref-tooltip-dt-subscription": "ku sanar dani idan wani ya wallafa sabon tsokaci akan maudu'in dana zaba",
+	"minerva-talk-full-page": "Karanta amatsayin shafi na wiki"
 }

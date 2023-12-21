@@ -176,21 +176,11 @@ class RedisBagOStuff extends MediumSpecificBagOStuff {
 	}
 
 	protected function doGetMulti( array $keys, $flags = 0 ) {
-		/** @var RedisConnRef[]|Redis[] $conns */
-		$conns = [];
-		$batches = [];
-		foreach ( $keys as $key ) {
-			$conn = $this->getConnection( $key );
-			if ( $conn ) {
-				$server = $conn->getServer();
-				$conns[$server] = $conn;
-				$batches[$server][] = $key;
-			}
-		}
-
 		$blobsFound = [];
-		foreach ( $batches as $server => $batchKeys ) {
-			$conn = $conns[$server];
+
+		[ $keysByServer, $connByServer ] = $this->getConnectionsForKeys( $keys );
+		foreach ( $keysByServer as $server => $batchKeys ) {
+			$conn = $connByServer[$server];
 
 			$e = null;
 			try {
@@ -240,28 +230,15 @@ class RedisBagOStuff extends MediumSpecificBagOStuff {
 	}
 
 	protected function doSetMulti( array $data, $exptime = 0, $flags = 0 ) {
-		$result = true;
-
-		/** @var RedisConnRef[]|Redis[] $conns */
-		$conns = [];
-		$batches = [];
-		foreach ( $data as $key => $value ) {
-			$conn = $this->getConnection( $key );
-			if ( $conn ) {
-				$server = $conn->getServer();
-				$conns[$server] = $conn;
-				$batches[$server][] = $key;
-			} else {
-				$result = false;
-			}
-		}
-
 		$ttl = $this->getExpirationAsTTL( $exptime );
 		$op = $ttl ? 'setex' : 'set';
 
+		$keys = array_keys( $data );
 		$valueSizesByKey = [];
-		foreach ( $batches as $server => $batchKeys ) {
-			$conn = $conns[$server];
+
+		[ $keysByServer, $connByServer, $result ] = $this->getConnectionsForKeys( $keys );
+		foreach ( $keysByServer as $server => $batchKeys ) {
+			$conn = $connByServer[$server];
 
 			$e = null;
 			try {
@@ -298,24 +275,9 @@ class RedisBagOStuff extends MediumSpecificBagOStuff {
 	}
 
 	protected function doDeleteMulti( array $keys, $flags = 0 ) {
-		$result = true;
-
-		/** @var RedisConnRef[]|Redis[] $conns */
-		$conns = [];
-		$batches = [];
-		foreach ( $keys as $key ) {
-			$conn = $this->getConnection( $key );
-			if ( $conn ) {
-				$server = $conn->getServer();
-				$conns[$server] = $conn;
-				$batches[$server][] = $key;
-			} else {
-				$result = false;
-			}
-		}
-
-		foreach ( $batches as $server => $batchKeys ) {
-			$conn = $conns[$server];
+		[ $keysByServer, $connByServer, $result ] = $this->getConnectionsForKeys( $keys );
+		foreach ( $keysByServer as $server => $batchKeys ) {
+			$conn = $connByServer[$server];
 
 			$e = null;
 			try {
@@ -346,29 +308,14 @@ class RedisBagOStuff extends MediumSpecificBagOStuff {
 	}
 
 	public function doChangeTTLMulti( array $keys, $exptime, $flags = 0 ) {
-		$result = true;
-
-		/** @var RedisConnRef[]|Redis[] $conns */
-		$conns = [];
-		$batches = [];
-		foreach ( $keys as $key ) {
-			$conn = $this->getConnection( $key );
-			if ( $conn ) {
-				$server = $conn->getServer();
-				$conns[$server] = $conn;
-				$batches[$server][] = $key;
-			} else {
-				$result = false;
-			}
-		}
-
 		$relative = $this->isRelativeExpiration( $exptime );
 		$op = ( $exptime == self::TTL_INDEFINITE )
 			? 'persist'
 			: ( $relative ? 'expire' : 'expireAt' );
 
-		foreach ( $batches as $server => $batchKeys ) {
-			$conn = $conns[$server];
+		[ $keysByServer, $connByServer, $result ] = $this->getConnectionsForKeys( $keys );
+		foreach ( $keysByServer as $server => $batchKeys ) {
+			$conn = $connByServer[$server];
 
 			$e = null;
 			try {
@@ -437,28 +384,30 @@ class RedisBagOStuff extends MediumSpecificBagOStuff {
 		}
 
 		$ttl = $this->getExpirationAsTTL( $exptime );
-
 		try {
-			if ( $init === $step && $exptime == self::TTL_INDEFINITE ) {
-				$newValue = $conn->incrBy( $key, $step );
-			} else {
-				$conn->multi( Redis::PIPELINE );
-				$conn->set(
-					$key,
-					(string)( $init - $step ),
-					$ttl ? [ 'nx', 'ex' => $ttl ] : [ 'nx' ]
-				);
-				$conn->incrBy( $key, $step );
-				$batchResult = $conn->exec();
-				$newValue = ( $batchResult === false ) ? false : $batchResult[1];
-				$this->logRequest( 'incrWithInit', $key, $conn->getServer(), $newValue === false );
-			}
+			static $script =
+			/** @lang Lua */
+<<<LUA
+			local key = KEYS[1]
+			local ttl, step, init = unpack( ARGV )
+			if redis.call( 'exists', key ) == 1 then
+				return redis.call( 'incrBy', key, step )
+			end
+			if 1 * ttl ~= 0 then
+				redis.call( 'setex', key, ttl, init )
+			else
+				redis.call( 'set', key, init )
+			end
+			return 1 * init
+LUA;
+			$result = $conn->luaEval( $script, [ $key, $ttl, $step, $init ], 1 );
 		} catch ( RedisException $e ) {
-			$newValue = false;
+			$result = false;
 			$this->handleException( $conn, $e );
 		}
+		$this->logRequest( 'incrWithInit', $key, $conn->getServer(), $result );
 
-		return $newValue;
+		return $result;
 	}
 
 	protected function doChangeTTL( $key, $exptime, $flags ) {
@@ -490,10 +439,80 @@ class RedisBagOStuff extends MediumSpecificBagOStuff {
 	}
 
 	/**
+	 * @param string[] $keys
+	 * @return array ((server => redis handle wrapper), (server => key batch), success)
+	 * @phan-return array{0:array<string,string[]>,1:array<string,RedisConnRef|Redis>,2:bool}
+	 */
+	protected function getConnectionsForKeys( array $keys ) {
+		$keysByServer = [];
+		$connByServer = [];
+		$success = true;
+		foreach ( $keys as $key ) {
+			$candidateTags = $this->getCandidateServerTagsForKey( $key );
+
+			$conn = null;
+			// Find a suitable server for this key...
+			while ( ( $tag = array_shift( $candidateTags ) ) !== null ) {
+				$server = $this->serverTagMap[$tag];
+				// Reuse connection handles for keys mapping to the same server
+				if ( isset( $connByServer[$server] ) ) {
+					$conn = $connByServer[$server];
+				} else {
+					$conn = $this->redisPool->getConnection( $server, $this->logger );
+					if ( !$conn ) {
+						continue;
+					}
+					// If automatic failover is enabled, check that the server's link
+					// to its master (if any) is up -- but only if there are other
+					// viable candidates left to consider. Also, getMasterLinkStatus()
+					// does not work with twemproxy, though $candidates will be empty
+					// by now in such cases.
+					if ( $this->automaticFailover && $candidateTags ) {
+						try {
+							/** @var string[] $info */
+							$info = $conn->info();
+							if ( ( $info['master_link_status'] ?? null ) === 'down' ) {
+								// If the master cannot be reached, fail-over to the next server.
+								// If masters are in data-center A, and replica DBs in data-center B,
+								// this helps avoid the case were fail-over happens in A but not
+								// to the corresponding server in B (e.g. read/write mismatch).
+								continue;
+							}
+						} catch ( RedisException $e ) {
+							// Server is not accepting commands
+							$this->redisPool->handleError( $conn, $e );
+							continue;
+						}
+					}
+					// Use this connection handle
+					$connByServer[$server] = $conn;
+				}
+				// Use this server for this key
+				$keysByServer[$server][] = $key;
+				break;
+			}
+
+			if ( !$conn ) {
+				// No suitable server found for this key
+				$success = false;
+				$this->setLastError( BagOStuff::ERR_UNREACHABLE );
+			}
+		}
+
+		return [ $keysByServer, $connByServer, $success ];
+	}
+
+	/**
 	 * @param string $key
 	 * @return RedisConnRef|Redis|null Redis handle wrapper for the key or null on failure
 	 */
 	protected function getConnection( $key ) {
+		[ , $connByServer ] = $this->getConnectionsForKeys( [ $key ] );
+
+		return reset( $connByServer ) ?: null;
+	}
+
+	private function getCandidateServerTagsForKey( string $key ): array {
 		$candidates = array_keys( $this->serverTagMap );
 
 		if ( count( $this->servers ) > 1 ) {
@@ -503,42 +522,7 @@ class RedisBagOStuff extends MediumSpecificBagOStuff {
 			}
 		}
 
-		while ( ( $tag = array_shift( $candidates ) ) !== null ) {
-			$server = $this->serverTagMap[$tag];
-			$conn = $this->redisPool->getConnection( $server, $this->logger );
-			if ( !$conn ) {
-				continue;
-			}
-
-			// If automatic failover is enabled, check that the server's link
-			// to its master (if any) is up -- but only if there are other
-			// viable candidates left to consider. Also, getMasterLinkStatus()
-			// does not work with twemproxy, though $candidates will be empty
-			// by now in such cases.
-			if ( $this->automaticFailover && $candidates ) {
-				try {
-					/** @var string[] $info */
-					$info = $conn->info();
-					if ( ( $info['master_link_status'] ?? null ) === 'down' ) {
-						// If the master cannot be reached, fail-over to the next server.
-						// If masters are in data-center A, and replica DBs in data-center B,
-						// this helps avoid the case were fail-over happens in A but not
-						// to the corresponding server in B (e.g. read/write mismatch).
-						continue;
-					}
-				} catch ( RedisException $e ) {
-					// Server is not accepting commands
-					$this->redisPool->handleError( $conn, $e );
-					continue;
-				}
-			}
-
-			return $conn;
-		}
-
-		$this->setLastError( BagOStuff::ERR_UNREACHABLE );
-
-		return null;
+		return $candidates;
 	}
 
 	/**
@@ -571,14 +555,5 @@ class RedisBagOStuff extends MediumSpecificBagOStuff {
 	 */
 	public function logRequest( $op, $keys, $server, $e = null ) {
 		$this->debug( "$op($keys) on $server: " . ( $e ? "failure" : "success" ) );
-	}
-
-	protected function makeKeyInternal( $keyspace, $components ) {
-		return $this->genericKeyFromComponents( $keyspace, ...$components );
-	}
-
-	protected function convertGenericKey( $key ) {
-		// short-circuit; already uses "generic" keys
-		return $key;
 	}
 }

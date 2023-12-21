@@ -14,44 +14,68 @@
 	*/
 }
 
-/* @noflip */
-.ve-ce-surface-deactivatedSelection {
+.ve-ce-surface-selections {
 	position: absolute;
-	top: 0;
+	pointer-events: none;
+	/* @noflip */
 	left: 0;
-	opacity: 0.5;
+	top: 0;
+}
+
+.ve-ce-surface-selection > div {
+	position: absolute;
+}
+
+.ve-ce-surface-selections .ve-ce-surface-selection > .ve-ce-surface-selection-label {
+	position: absolute;
+	font-size: 0.8em;
+	font-weight: bold;
+	color: #fff;
+	text-shadow: 0 0 1px #000;
+	padding: 0.2em;
+	margin-top: -1.4em;
+	height: 1em;
+	line-height: 1;
+	white-space: nowrap;
+	max-width: 10em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Review mode */
+
+.ve-ce-surface-reviewMode {
 	pointer-events: none;
 }
 
-.ve-ce-surface-deactivatedSelection-showAsDeactivated {
+.ve-ce-surface-reviewMode-highlightNodes .ve-ce-attachedRootNode > :not( .ve-ce-surface-reviewMode-highlightNode ) {
+	opacity: 0.5;
+}
+
+/* Deactivated selections */
+
+.ve-ce-surface-selections-deactivated {
+	opacity: 0.5;
+}
+
+.ve-ce-surface-selections-deactivated-showAsDeactivated {
 	opacity: 0.15;
 }
 
-.ve-ce-surface-deactivatedSelection > div {
-	position: absolute;
+.ve-ce-surface-selections-deactivated .ve-ce-surface-selection > div {
 	background: #6da9f7;
+	/* Increase vertical height to look more like a system selection */
 	margin-top: -0.15em;
 	padding: 0.15em 0;
 }
 
-.ve-ce-surface-deactivatedSelection-showAsDeactivated > div {
+.ve-ce-surface-selections-deactivated-showAsDeactivated .ve-ce-surface-selection > div {
 	background: #000;
 }
 
-.ve-ce-surface-deactivatedSelection-collapsed {
+.ve-ce-surface-selections-deactivated-collapsed {
 	opacity: 1;
 	/* Color is matched to font in ve.ce.Surface.js */
-}
-
-/* Support: IE, Edge */
-/* Set opacity directly on the highlights, rather than their containers,
-   otherwise the opacity isn't applied at all */
-.ve-init-target-ie-or-edge .ve-ce-surface-deactivatedSelection > div {
-	opacity: 0.5;
-}
-
-.ve-init-target-ie-or-edge .ve-ce-surface-deactivatedSelection-showAsDeactivated > div {
-	opacity: 0.15;
 }
 
 .ve-ce-surface-dropMarker {
@@ -61,46 +85,19 @@
 	position: absolute;
 }
 
-.ve-ce-surface-highlights-user-selections {
+.ve-ce-surface-selections-otherUserSelection {
 	opacity: 0.5;
-	pointer-events: none;
 }
 
-.ve-ce-surface-highlights-user-cursors {
-	pointer-events: none;
+.ve-ce-surface-selections-otherUserCursor .ve-ce-surface-selection > div:not( .ve-ce-surface-selection-label ) {
+	width: 2px !important; /* stylelint-disable-line declaration-no-important */
 }
 
-.ve-ce-surface-highlights-user-selection {
-	position: absolute;
-	background: #faa;
-	box-shadow: inset 0 0 0 1px #a66;
+.ve-ce-surface-selections-otherUserSelection-inactive {
+	opacity: 0.25;
 }
 
-.ve-ce-surface-highlights-user-cursor {
-	position: absolute;
-	background: #a66;
-	width: 2px;
-}
-
-.ve-ce-surface-highlights-user-cursor-label {
-	position: absolute;
-	font-size: 0.8em;
-	font-weight: bold;
-	background: #a66;
-	color: #fff;
-	text-shadow: 0 0 1px #000;
-	padding: 0.2em;
-	top: -1.4em;
-	height: 1em;
-	line-height: 1;
-	white-space: nowrap;
-	max-width: 10em;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.ve-ce-surface-highlights-user-cursor-inactive,
-.ve-ce-surface-highlights-user-selection-inactive {
+.ve-ce-surface-selections-otherUserCursor-inactive {
 	opacity: 0.5;
 }
 
@@ -121,13 +118,6 @@
 
 .ve-ce-surface-paste * {
 	height: 1px !important; /* stylelint-disable-line declaration-no-important */
-}
-
-/* Support: IE */
-/* Prevent IE from wrapping link text in <u> and <font color> tags */
-.ve-init-target-ie-or-edge .ve-ce-surface-paste a {
-	color: #36c;
-	text-decoration: underline !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .ve-ce-cursorHolder {

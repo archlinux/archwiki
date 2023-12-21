@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * @file Temporary tracking to evaluate the impact of Reference Previews on users' interaction with references.
  *
@@ -13,11 +15,10 @@
 
 // EventLogging may not be installed
 mw.loader.using( 'ext.eventLogging' ).then( function () {
-	'use strict';
 
 	$( function () {
-		var isReferencePreviewsEnabled = mw.config.get( 'wgPopupsReferencePreviews', false ),
-			samplingRate = isReferencePreviewsEnabled ? 1 : 1000;
+		const isReferencePreviewsEnabled = mw.config.get( 'wgPopupsReferencePreviews', false );
+		const samplingRate = isReferencePreviewsEnabled ? 1 : 1000;
 
 		if ( !navigator.sendBeacon ||
 			!mw.config.get( 'wgIsArticle' ) ||
@@ -27,7 +28,7 @@ mw.loader.using( 'ext.eventLogging' ).then( function () {
 			return;
 		}
 
-		var loggingTopic = isReferencePreviewsEnabled ?
+		const loggingTopic = isReferencePreviewsEnabled ?
 			'event.ReferencePreviewsCite' :
 			'event.ReferencePreviewsBaseline';
 		// eslint-disable-next-line no-jquery/no-global-selector
@@ -36,7 +37,7 @@ mw.loader.using( 'ext.eventLogging' ).then( function () {
 			// Footnote links, references block in VisualEditor, and reference content links.
 			'.reference a[ href*="#" ], .mw-reference-text a, .reference-text a',
 			function () {
-				var isInReferenceBlock = $( this ).parents( '.references' ).length > 0;
+				const isInReferenceBlock = $( this ).parents( '.references' ).length > 0;
 				mw.track( loggingTopic, {
 					action: ( isInReferenceBlock ?
 						'clickedReferenceContentLink' :

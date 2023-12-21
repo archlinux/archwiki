@@ -2,16 +2,21 @@
 
 namespace MediaWiki\Tests\Integration\Context;
 
+use LogicException;
 use MediaWiki\Actions\ActionFactory;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\PHPSessionHandler;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\Title\Title;
+use MediaWiki\User\StaticUserOptionsLookup;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use RequestContext;
-use User;
+use Skin;
+use SkinFallback;
 
 /**
  * @covers RequestContext
@@ -34,7 +39,7 @@ class RequestContextTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideSanitizeLangCode() {
+	public static function provideSanitizeLangCode() {
 		global $wgLanguageCode;
 
 		yield 'Null' => [ null, $wgLanguageCode ];
@@ -241,5 +246,85 @@ class RequestContextTest extends MediaWikiIntegrationTestCase {
 		@$context->setTitle( $this->createMock( Title::class ) );
 		$this->assertSame( 'bbb', $context->getActionName(), 'second from factory' );
 		$this->assertSame( 'bbb', $context->getActionName(), 'cached second' );
+	}
+
+	private function registerTestSkin() {
+		$skin = $this->createMock( Skin::class );
+
+		$skinFactory = $this->getServiceContainer()->getSkinFactory();
+		$skinFactory->register( 'test', 'test',
+			static function () use ( $skin ) {
+				return $skin;
+			}
+		);
+		return $skin;
+	}
+
+	public function testGetSkinFromDefault() {
+		$this->overrideConfigValue( MainConfigNames::DefaultSkin, 'test' );
+		$skin = $this->registerTestSkin();
+		$context = new RequestContext();
+		$this->assertSame( $skin, $context->getSkin() );
+	}
+
+	public function testGetSkinFromPref() {
+		$optionsLookup = new StaticUserOptionsLookup( [], [ 'skin' => 'test' ] );
+		$this->setService( 'UserOptionsLookup', $optionsLookup );
+
+		$skin = $this->registerTestSkin();
+
+		$context = new RequestContext();
+		$this->assertSame( $skin, $context->getSkin() );
+	}
+
+	public function testGetSkinFromStringHook() {
+		$skin = $this->registerTestSkin();
+		$this->setTemporaryHook(
+			'RequestContextCreateSkin',
+			static function ( $context, &$skin ) {
+				$skin = 'test';
+			}
+		);
+		$context = new RequestContext();
+		$this->assertSame( $skin, $context->getSkin() );
+	}
+
+	public function testGetSkinFromObjectHook() {
+		$skin = $this->createMock( Skin::class );
+		$this->setTemporaryHook(
+			'RequestContextCreateSkin',
+			static function ( $context, &$skinRes ) use ( $skin ) {
+				$skinRes = $skin;
+			}
+		);
+		$context = new RequestContext();
+		$this->assertSame( $skin, $context->getSkin() );
+	}
+
+	public function testGetSkinFromBadPrefs() {
+		// T342733
+		$this->overrideConfigValue( MainConfigNames::DefaultSkin, 'test' );
+		$optionsLookup = new StaticUserOptionsLookup( [], [ 'skin' => '' ] );
+		$this->setService( 'UserOptionsLookup', $optionsLookup );
+		$skin = $this->registerTestSkin();
+
+		$context = new RequestContext();
+		$this->assertSame( $skin, $context->getSkin() );
+	}
+
+	public function testGetSkinFromBadDefault() {
+		$this->overrideConfigValues( [
+			MainConfigNames::DefaultSkin => 'nonexistent',
+			MainConfigNames::HiddenPrefs => [ 'skin' ]
+		] );
+		$context = new RequestContext();
+		$this->assertInstanceOf( SkinFallback::class, $context->getSkin() );
+	}
+
+	public function testCloningNotAllowed() {
+		$context = RequestContext::getMain();
+		$this->expectException( LogicException::class );
+
+		clone $context;
 	}
 }

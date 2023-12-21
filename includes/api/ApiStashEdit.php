@@ -23,6 +23,8 @@ use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\PageEditStash;
+use MediaWiki\User\TempUser\TempUserCreator;
+use MediaWiki\User\UserFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -40,20 +42,13 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 class ApiStashEdit extends ApiBase {
 
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/** @var PageEditStash */
-	private $pageEditStash;
-
-	/** @var RevisionLookup */
-	private $revisionLookup;
-
-	/** @var IBufferingStatsdDataFactory */
-	private $statsdDataFactory;
-
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private PageEditStash $pageEditStash;
+	private RevisionLookup $revisionLookup;
+	private IBufferingStatsdDataFactory $statsdDataFactory;
+	private WikiPageFactory $wikiPageFactory;
+	private TempUserCreator $tempUserCreator;
+	private UserFactory $userFactory;
 
 	/**
 	 * @param ApiMain $main
@@ -63,6 +58,8 @@ class ApiStashEdit extends ApiBase {
 	 * @param RevisionLookup $revisionLookup
 	 * @param IBufferingStatsdDataFactory $statsdDataFactory
 	 * @param WikiPageFactory $wikiPageFactory
+	 * @param TempUserCreator $tempUserCreator
+	 * @param UserFactory $userFactory
 	 */
 	public function __construct(
 		ApiMain $main,
@@ -71,7 +68,9 @@ class ApiStashEdit extends ApiBase {
 		PageEditStash $pageEditStash,
 		RevisionLookup $revisionLookup,
 		IBufferingStatsdDataFactory $statsdDataFactory,
-		WikiPageFactory $wikiPageFactory
+		WikiPageFactory $wikiPageFactory,
+		TempUserCreator $tempUserCreator,
+		UserFactory $userFactory
 	) {
 		parent::__construct( $main, $action );
 
@@ -80,6 +79,8 @@ class ApiStashEdit extends ApiBase {
 		$this->revisionLookup = $revisionLookup;
 		$this->statsdDataFactory = $statsdDataFactory;
 		$this->wikiPageFactory = $wikiPageFactory;
+		$this->tempUserCreator = $tempUserCreator;
+		$this->userFactory = $userFactory;
 	}
 
 	public function execute() {
@@ -191,9 +192,10 @@ class ApiStashEdit extends ApiBase {
 			return;
 		}
 
-		if ( $user->pingLimiter( 'stashedit' ) ) {
+		if ( !$user->authorizeWrite( 'stashedit', $title ) ) {
 			$status = 'ratelimited';
 		} else {
+			$user = $this->getUserForPreview();
 			$updater = $page->newPageUpdater( $user );
 			$status = $this->pageEditStash->parseAndCache( $updater, $content, $user, $params['summary'] );
 			$this->pageEditStash->stashInputText( $text, $textHash );
@@ -208,6 +210,16 @@ class ApiStashEdit extends ApiBase {
 		}
 
 		$this->getResult()->addValue( null, $this->getModuleName(), $ret );
+	}
+
+	private function getUserForPreview() {
+		$user = $this->getUser();
+		if ( $this->tempUserCreator->shouldAutoCreate( $user, 'edit' ) ) {
+			return $this->userFactory->newUnsavedTempUser(
+				$this->tempUserCreator->getStashedName( $this->getRequest()->getSession() )
+			);
+		}
+		return $user;
 	}
 
 	public function getAllowedParams() {

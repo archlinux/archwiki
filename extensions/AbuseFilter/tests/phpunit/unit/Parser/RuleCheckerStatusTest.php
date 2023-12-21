@@ -40,7 +40,7 @@ class RuleCheckerStatusTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $condsUsed, $status->getCondsUsed() );
 	}
 
-	public function provideToArrayException() {
+	public static function provideToArrayException() {
 		yield 'exception instance' => [ new InternalException() ];
 		yield 'null' => [ null ];
 	}

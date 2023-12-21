@@ -10,7 +10,6 @@
 	},
 	"captcha-edit": "For å endre denne sida, ver venleg og løys det enkle reknestykket nedanfor og skriv svaret i ruta ([[Special:Captcha/help|meir informasjon]]):",
 	"captcha-desc": "Enkel implementering av captcha-system.",
-	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Endringa di inkluderer nye lenkjer; som eit vern mot automatisert reklame (spam) er du nøydd til skrive inn orda i dette bildet: <br />([[Special:Captcha/help|Kva er dette?]])",
 	"captcha-badlogin": "For å sikra oss mot automatisk passordtjuveri, ver venleg og skriv inn svaret på det enkle reknestykket i boksen nedanfor ([[Special:Captcha/help|meir informasjon]]):",
 	"captcha-createaccount": "For å verna wikien mot automatisk kontooppretting, bed me deg om at du løyser det enkle reknestykket under og skriv inn svaret i boksen ([[Special:Captcha/help|meir info]]):",

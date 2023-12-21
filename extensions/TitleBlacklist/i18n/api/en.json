@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": []
 	},
-	"apihelp-titleblacklist-description": "Validate a page title, filename, or username against the TitleBlacklist.",
 	"apihelp-titleblacklist-summary": "Validate a page title, filename, or username against the TitleBlacklist.",
 	"apihelp-titleblacklist-param-title": "The string to validate against the blacklist.",
 	"apihelp-titleblacklist-param-action": "The action to be checked.",

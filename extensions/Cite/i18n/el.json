@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Consta",
+			"DesVaMan",
 			"Geraki",
 			"NikosLikomitros",
 			"Nikosgranturismogt",
@@ -9,8 +10,7 @@
 			"Protnet",
 			"Xaris333",
 			"ZaDiak",
-			"Απεργός",
-			"DesVaMan"
+			"Απεργός"
 		]
 	},
 	"cite-desc": "Προσθέτει τις ετικέτες <code>&lt;ref&gt;</code> και <code>&lt;references&gt;</code>, για παραπομπές",
@@ -41,5 +41,14 @@
 	"cite_references_link_accessibility_back_label": "Πήδηξε πίσω",
 	"cite_section_preview_references": "Προεπισκόπηση αναφορών",
 	"cite_warning": "Αναφορά προειδοποίησης: $1",
-	"cite_warning_sectionpreview_no_text": "↓\n<code>&lt;ref&gt;</code> Η ετικέτα με την ονομασία <code>$1</code> δεν μπορεί να προβληθεί διότι καθορίζεται έξω από το τρέχον κομμάτι ή δεν καθορίζεται καθόλου."
+	"cite_warning_sectionpreview_no_text": "↓\n<code>&lt;ref&gt;</code> Η ετικέτα με την ονομασία <code>$1</code> δεν μπορεί να προβληθεί διότι καθορίζεται έξω από το τρέχον κομμάτι ή δεν καθορίζεται καθόλου.",
+	"cite-wikieditor-tool-reference": "Παραπομπή",
+	"cite-wikieditor-help-page-references": "Παραπομπές",
+	"cite-wikieditor-help-content-reference-description": "Παραπομπή",
+	"cite-wikieditor-help-content-named-reference-description": "Ονομασμένη αναφορά",
+	"cite-wikieditor-help-content-rereference-description": "Πρόσθετη χρήση της ίδιας παραπομπής",
+	"cite-wikieditor-help-content-showreferences-description": "Εμφάνιση παραπομπών",
+	"cite-wikieditor-help-content-reference-example-text1": "Κείμενο σελίδας.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Κείμενο συνδέσμου], πρόσθετο κείμενο.",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Κείμενο συνδέσμου]"
 }

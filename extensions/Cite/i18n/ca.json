@@ -32,5 +32,11 @@
 	"cite-tracking-category-cite-error": "Pàgines amb errors a les referències",
 	"cite-tracking-category-cite-error-desc": "Les pàgines en aquesta categoria tenen errors d’ús de les etiquetes de referències.",
 	"cite_section_preview_references": "Previsualització de les referències",
-	"cite_warning": "Advertiment de citació: $1"
+	"cite_warning": "Advertiment de citació: $1",
+	"cite-wikieditor-tool-reference": "Referència",
+	"cite-wikieditor-help-page-references": "Referències",
+	"cite-wikieditor-help-content-reference-description": "Referències",
+	"cite-wikieditor-help-content-named-reference-description": "Referència anomenada",
+	"cite-wikieditor-help-content-rereference-description": "Ús addicional de la mateixa referència",
+	"cite-wikieditor-help-content-showreferences-description": "Mostra les referències"
 }

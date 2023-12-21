@@ -21,5 +21,9 @@
 	"discussiontools-topicsubscription-button-subscribe": "ngendo'",
 	"discussiontools-topicsubscription-button-subscribe-label": "Ngendo'",
 	"discussiontools-topicsubscription-button-unsubscribe": "beranti ngendo'",
-	"discussiontools-topicsubscription-button-unsubscribe-label": "Beranti ngendo'"
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Beranti ngendo'",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Kam}} akan bineraan abar bau.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Kam}} Ai no ngendo'!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Kam}} kam niya' no nerimo abar.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Kam}} ai no beranti ngendo'."
 }

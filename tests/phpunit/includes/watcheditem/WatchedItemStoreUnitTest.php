@@ -10,14 +10,18 @@ use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\Title\TitleFormatter;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentityValue;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\Rdbms\DBConnRef;
+use Wikimedia\Rdbms\DeleteQueryBuilder;
 use Wikimedia\Rdbms\FakeResultWrapper;
-use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\ReplaceQueryBuilder;
 use Wikimedia\Rdbms\SelectQueryBuilder;
+use Wikimedia\Rdbms\UpdateQueryBuilder;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -36,29 +40,10 @@ class WatchedItemStoreUnitTest extends MediaWikiIntegrationTestCase {
 	 */
 	private function getMockDb() {
 		$mock = $this->createMock( DBConnRef::class );
-		$mock->method( 'newSelectQueryBuilder' )
-			->willReturn( new SelectQueryBuilder( $mock ), new SelectQueryBuilder( $mock ), new SelectQueryBuilder( $mock ) );
-		return $mock;
-	}
-
-	/**
-	 * @param DBConnRef $mockDb
-	 * @param string|null $expectedConnectionType
-	 * @return MockObject&ILoadBalancer
-	 */
-	private function getMockLoadBalancer(
-		DBConnRef $mockDb,
-		$expectedConnectionType = null
-	) {
-		$mock = $this->createMock( ILoadBalancer::class );
-		if ( $expectedConnectionType !== null ) {
-			$mock->method( 'getConnectionRef' )
-				->with( $expectedConnectionType )
-				->willReturn( $mockDb );
-		} else {
-			$mock->method( 'getConnectionRef' )
-				->willReturn( $mockDb );
-		}
+		$mock->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $mock ) );
+		$mock->method( 'newUpdateQueryBuilder' )->willReturnCallback( static fn () => new UpdateQueryBuilder( $mock ) );
+		$mock->method( 'newDeleteQueryBuilder' )->willReturnCallback( static fn () => new DeleteQueryBuilder( $mock ) );
+		$mock->method( 'newReplaceQueryBuilder' )->willReturnCallback( static fn () => new ReplaceQueryBuilder( $mock ) );
 		return $mock;
 	}
 
@@ -71,12 +56,13 @@ class WatchedItemStoreUnitTest extends MediaWikiIntegrationTestCase {
 		DBConnRef $mockDb,
 		$expectedConnectionType = null
 	) {
-		$loadBalancer = $this->getMockLoadBalancer( $mockDb, $expectedConnectionType );
 		$mock = $this->createMock( LBFactory::class );
 		$mock->method( 'getLocalDomainID' )
 			->willReturn( 'phpunitdb' );
-		$mock->method( 'getMainLB' )
-			->willReturn( $loadBalancer );
+		$mock->method( 'getPrimaryDatabase' )
+			->willReturn( $mockDb );
+		$mock->method( 'getReplicaDatabase' )
+			 ->willReturn( $mockDb );
 		$mock->method( 'getLBsForOwner' )
 			->willReturn( [] );
 		return $mock;
@@ -155,7 +141,7 @@ class WatchedItemStoreUnitTest extends MediaWikiIntegrationTestCase {
 			$this->createMock( TitleFormatter::class ),
 			$this->createMock( Language::class ),
 			$this->createMock( GenderCache::class ),
-			$this->getMockLoadBalancer( $mockDb ),
+			$this->getMockLBFactory( $mockDb ),
 			$this->createMock( LinksMigration::class ),
 			LoggerFactory::getInstance( 'LinkBatch' )
 		);
@@ -454,7 +440,7 @@ class WatchedItemStoreUnitTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected, $store->countWatchersMultiple( $titleValues ) );
 	}
 
-	public function provideIntWithDbUnsafeVersion() {
+	public static function provideIntWithDbUnsafeVersion() {
 		return [
 			[ 50 ],
 			[ "50; DROP TABLE watchlist;\n--" ],
@@ -1717,7 +1703,7 @@ class WatchedItemStoreUnitTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideDbTypes() {
+	public static function provideDbTypes() {
 		return [
 			[ false, DB_REPLICA ],
 			[ true, DB_PRIMARY ],

@@ -5,9 +5,9 @@ namespace LoginNotify\Maintenance;
 use BatchRowIterator;
 use LoggedUpdateMaintenance;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\WikiMap\WikiMap;
 use RecursiveIteratorIterator;
 use User;
-use WikiMap;
 
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {

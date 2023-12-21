@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"AlesFiala2002",
 			"Danny B.",
 			"Dvorapa",
 			"Ilimanaq29",
@@ -14,8 +15,7 @@
 			"Paxt",
 			"Seb35",
 			"Tchoř",
-			"아라",
-			"AlesFiala2002"
+			"아라"
 		]
 	},
 	"config-desc": "Instalační program pro MediaWiki",
@@ -66,9 +66,7 @@
 	"config-no-db": "Nepodařilo se nalézt vhodný databázový ovladač! Musíte nainstalovat databázový ovladač pro PHP.\n{{PLURAL:$2|Je podporován následující typ databáze|Jsou podporovány následující typy databází}}: $1.\n\nPokud jste si PHP přeložili sami, překonfigurujte ho se zapnutým databázovým klientem, například pomocí <code>./configure --with-mysqli</code>.\nPokud jste PHP nainstalovali z balíčku Debian či Ubuntu, potřebujete nainstalovat také modul <code>php-mysql</code>.",
 	"config-outdated-sqlite": "<strong>Upozornění:</strong> Máte SQLite $2, které je starší než minimálně vyžadovaná verze $1. SQLite nebude dostupné.",
 	"config-no-fts3": "<strong>Upozornění:</strong> SQLite bylo přeloženo bez [//sqlite.org/fts3.html modulu FTS3], funkce pro vyhledávání zde nebudou dostupné.",
-	"config-pcre-old": "<strong>Kritická chyba:</strong> Je vyžadováno PCRE verze $1 nebo novější.\nVaše binárka PHP obsahuje PCRE $2.\n[https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Errors_and_symptoms/PCRE Více informací.]",
-	"config-pcre-no-utf8": "<strong>Kritická chyba:</strong> PHP modul PCRE byl zřejmě přeložen bez podpory PCRE_UTF8.\nMediaWiki vyžaduje ke správné funkci podporu UTF-8.",
-	"config-pcre-invalid-newline": "<strong>Kritická chyba:</strong> PHP modul PCRE byl zřejmě přeložen s PCRE_CONFIG_NEWLINE = -1 pro ANY.\nMediaWiki není s takovou konfigurací kompatibilní.",
+	"config-pcre-invalid-newline": "<strong>Kritická chyba:</strong> Knihovna PCRE2 byla zřejmě přeložena s <code>--enable-newline-is-any</code>.\nMediaWiki není s takovou konfigurací kompatibilní.",
 	"config-memory-raised": "<code>memory_limit</code> v PHP byl nastaven na $1, zvýšen na $2.",
 	"config-memory-bad": "<strong>Upozornění:</strong> <code>memory_limit</code> je v PHP nastaven na $1.\nTo je pravděpodobně příliš málo.\nInstalace může selhat!",
 	"config-apc": "Je nainstalováno [https://www.php.net/apc APC]",
@@ -87,6 +85,8 @@
 	"config-using-server": "Použito jméno serveru „<nowiki>$1</nowiki>“.",
 	"config-using-uri": "Použito URL serveru „<nowiki>$1$2</nowiki>“.",
 	"config-uploads-not-safe": "<strong>Upozornění:</strong> Váš výchozí adresář pro načítání souborů <code>$1</code> umožňuje spouštění libovolných skriptů.\nPřestože MediaWiki všechny načítané soubory kontroluje proti bezpečnostním hrozbám, je důrazně doporučeno [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security tuto bezpečnostní díru zacelit] před povolením načítání souborů.",
+	"config-uploads-security-headers": "<strong>Upozornění:</strong> Požadavky na obrázky ve vašem adresáři pro nahrávání by měly v odpovědi obsahovat HTTP hlavičku <code>$1</code>, aby byly prohlížeče chráněny před potenciálně nebezpečnými soubory.\nDůrazně doporučujeme před povolením nahrávání [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security nakonfigurovat příslušné hlavičky odpovědí na vašem webovém serveru].",
+	"config-uploads-security-requesterror": "<strong>Varování:</strong> Kvůli chybě připojení nebylo možné ověřit, že obrázky ve vašem adresáři pro nahrávání odpovídají s HTTP hlavičkou <code>$1</code>, aby byly prohlížeče chráněny před potenciálně nebezpečnými soubory.\nDůrazně doporučujeme před povolením nahrávání [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security nakonfigurovat příslušné hlavičky odpovědí na vašem webovém serveru].",
 	"config-no-cli-uploads-check": "<strong>Upozornění:</strong> Váš výchozí adresář pro načítané soubory (<code>$1</code>) se při instalaci z příkazového řádku nekontroluje na bezpečnostní hrozbu provádění libovolných skriptů.",
 	"config-using-32bit": "<strong>Upozornění:</strong> Vypadá to, že váš systém běží s 32bitovými celými čísly. To [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit se nedoporučuje].",
 	"config-db-type": "Typ databáze:",
@@ -109,6 +109,7 @@
 	"config-mysql-old": "Je vyžadováno MySQL $1 nebo novější. Vy máte $2.",
 	"config-mariadb-old": "Je vyžadováno MariaDB $1 nebo novější. Vy máte $2.",
 	"config-db-port": "Databázový port:",
+	"config-db-ssl": "Připojit přes SSL",
 	"config-db-schema": "Schéma pro MediaWiki (bez spojovníků):",
 	"config-db-schema-help": "Toto schéma zpravidla stačí.\nMěňte ho, jen pokud víte, že je to potřeba.",
 	"config-pg-test-error": "Nelze se připojit k databázi '''$1''': $2",

@@ -1,13 +1,8 @@
-<header class="mw-header{{^is-page-tools-enabled}} mw-ui-icon-flush-left mw-ui-icon-flush-right{{/is-page-tools-enabled}}">
+<header class="vector-header mw-header">
 	<div class="vector-header-start">
-		{{^is-page-tools-enabled}}
-			{{>deprecated/MainMenuBtn}}
-		{{/is-page-tools-enabled}}
-		{{#is-page-tools-enabled}}
-			<nav class="vector-main-menu-landmark" aria-label="{{msg-vector-site-nav-label}}" role="navigation">
-				{{>MainMenuDropdown}}
-			</nav>
-		{{/is-page-tools-enabled}}
+		<nav class="vector-main-menu-landmark" aria-label="{{msg-vector-site-nav-label}}" role="navigation">
+			{{>MainMenuDropdown}}
+		</nav>
 		{{#data-logos}}{{>Logo}}{{/data-logos}}
 	</div>
 	<div class="vector-header-end">

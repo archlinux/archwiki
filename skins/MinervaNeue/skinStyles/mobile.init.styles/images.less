@@ -1,12 +1,10 @@
 @import '../../minerva.less/minerva.variables.less';
 @import '../../minerva.less/minerva.mixins.less';
 
-@placeholderBackgroundColor: @grayLightest;
-
 // Only applies to mobile Minerva. For this reason these rules should likely be moved to
 // `mobile.init.styles` either as a skin style or default style.
 .lazy-image-placeholder {
-	background-color: @placeholderBackgroundColor;
+	background-color: @background-color-light;
 
 	// If the placeholder itself is inside an inline element do not use block
 	// See https://phabricator.wikimedia.org/T143558

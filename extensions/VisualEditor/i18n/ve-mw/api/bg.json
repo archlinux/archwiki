@@ -6,7 +6,6 @@
 			"Лорд Бъмбъри"
 		]
 	},
-	"apihelp-visualeditor-description": "Връща HTML5 за страница от услугата Parsoid.",
 	"apihelp-visualeditor-param-etag": "ETag за изпращане.",
 	"apihelp-visualeditor-param-paction": "Действие за извършване.",
 	"apihelp-visualeditor-param-page": "Страница, върху която да се извършат действията.",

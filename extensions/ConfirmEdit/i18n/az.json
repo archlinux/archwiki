@@ -10,7 +10,6 @@
 	"captcha-edit": "Bu səhifəni redaktə etmək üçün sizdən aşağıdakı tapşırığı həll etməyinizi və cavabını qutuya yazmağınızı xahiş edirik ([[Special:Captcha/help|daha ətraflı]]):",
 	"captcha-edit-fail": "Səhv və ya mövcud olmayan CAPTCHA.",
 	"captcha-desc": "Spam və parol təxminindən qorunmaq üçün CAPTCHA üsullarını təmin edir",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "CAPTCHA həlli.",
 	"captcha-info-help": "CAPTCHA-nın təsviri.",
 	"captcha-id-label": "CAPTCHA ID",

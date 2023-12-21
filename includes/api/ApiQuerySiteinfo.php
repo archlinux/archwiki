@@ -20,7 +20,6 @@
  * @file
  */
 
-use MediaWiki\ExtensionInfo;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
@@ -29,13 +28,21 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\ResourceLoader\SkinModule;
+use MediaWiki\SiteStats\SiteStats;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Specials\SpecialVersion;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\Utils\ExtensionInfo;
+use MediaWiki\Utils\GitInfo;
+use MediaWiki\Utils\UrlUtils;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
  * A query action to return meta information about the wiki site.
@@ -44,47 +51,21 @@ use Wikimedia\Rdbms\ILoadBalancer;
  */
 class ApiQuerySiteinfo extends ApiQueryBase {
 
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
-
-	/** @var UserGroupManager */
-	private $userGroupManager;
-
-	/** @var LanguageConverterFactory */
-	private $languageConverterFactory;
-
-	/** @var LanguageFactory */
-	private $languageFactory;
-
-	/** @var LanguageNameUtils */
-	private $languageNameUtils;
-
-	/** @var Language */
-	private $contentLanguage;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var InterwikiLookup */
-	private $interwikiLookup;
-
-	/** @var Parser */
-	private $parser;
-
-	/** @var MagicWordFactory */
-	private $magicWordFactory;
-
-	/** @var SpecialPageFactory */
-	private $specialPageFactory;
-
-	/** @var SkinFactory */
-	private $skinFactory;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var ReadOnlyMode */
-	private $readOnlyMode;
+	private UserOptionsLookup $userOptionsLookup;
+	private UserGroupManager $userGroupManager;
+	private LanguageConverterFactory $languageConverterFactory;
+	private LanguageFactory $languageFactory;
+	private LanguageNameUtils $languageNameUtils;
+	private Language $contentLanguage;
+	private NamespaceInfo $namespaceInfo;
+	private InterwikiLookup $interwikiLookup;
+	private ParserFactory $parserFactory;
+	private MagicWordFactory $magicWordFactory;
+	private SpecialPageFactory $specialPageFactory;
+	private SkinFactory $skinFactory;
+	private ILoadBalancer $loadBalancer;
+	private ReadOnlyMode $readOnlyMode;
+	private UrlUtils $urlUtils;
 
 	/**
 	 * @param ApiQuery $query
@@ -97,12 +78,13 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	 * @param Language $contentLanguage
 	 * @param NamespaceInfo $namespaceInfo
 	 * @param InterwikiLookup $interwikiLookup
-	 * @param Parser $parser
+	 * @param ParserFactory $parserFactory
 	 * @param MagicWordFactory $magicWordFactory
 	 * @param SpecialPageFactory $specialPageFactory
 	 * @param SkinFactory $skinFactory
 	 * @param ILoadBalancer $loadBalancer
 	 * @param ReadOnlyMode $readOnlyMode
+	 * @param UrlUtils $urlUtils
 	 */
 	public function __construct(
 		ApiQuery $query,
@@ -115,12 +97,13 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		Language $contentLanguage,
 		NamespaceInfo $namespaceInfo,
 		InterwikiLookup $interwikiLookup,
-		Parser $parser,
+		ParserFactory $parserFactory,
 		MagicWordFactory $magicWordFactory,
 		SpecialPageFactory $specialPageFactory,
 		SkinFactory $skinFactory,
 		ILoadBalancer $loadBalancer,
-		ReadOnlyMode $readOnlyMode
+		ReadOnlyMode $readOnlyMode,
+		UrlUtils $urlUtils
 	) {
 		parent::__construct( $query, $moduleName, 'si' );
 		$this->userOptionsLookup = $userOptionsLookup;
@@ -131,12 +114,13 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		$this->contentLanguage = $contentLanguage;
 		$this->namespaceInfo = $namespaceInfo;
 		$this->interwikiLookup = $interwikiLookup;
-		$this->parser = $parser;
+		$this->parserFactory = $parserFactory;
 		$this->magicWordFactory = $magicWordFactory;
 		$this->specialPageFactory = $specialPageFactory;
 		$this->skinFactory = $skinFactory;
 		$this->loadBalancer = $loadBalancer;
 		$this->readOnlyMode = $readOnlyMode;
+		$this->urlUtils = $urlUtils;
 	}
 
 	public function execute() {
@@ -170,6 +154,9 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 					break;
 				case 'usergroups':
 					$fit = $this->appendUserGroups( $p, $params['numberingroup'] );
+					break;
+				case 'autocreatetempuser':
+					$fit = $this->appendAutoCreateTempUser( $p );
 					break;
 				case 'libraries':
 					$fit = $this->appendInstalledLibraries( $p );
@@ -236,14 +223,14 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		$data = [];
 		$mainPage = Title::newMainPage();
 		$data['mainpage'] = $mainPage->getPrefixedText();
-		$data['base'] = wfExpandUrl( $mainPage->getFullURL(), PROTO_CURRENT );
+		$data['base'] = (string)$this->urlUtils->expand( $mainPage->getFullURL(), PROTO_CURRENT );
 		$data['sitename'] = $config->get( MainConfigNames::Sitename );
 		$data['mainpageisdomainroot'] = (bool)$config->get( MainConfigNames::MainPageIsDomainRoot );
 
 		// A logo can either be a relative or an absolute path
 		// make sure we always return an absolute path
 		$logo = SkinModule::getAvailableLogos( $config );
-		$data['logo'] = wfExpandUrl( $logo['1x'], PROTO_RELATIVE );
+		$data['logo'] = (string)$this->urlUtils->expand( $logo['1x'], PROTO_RELATIVE );
 
 		$data['generator'] = 'MediaWiki ' . MW_VERSION;
 
@@ -258,7 +245,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 			$data['imagewhitelistenabled'] =
 				(bool)$config->get( MainConfigNames::EnableImageWhitelist );
 			$allowFrom = $config->get( MainConfigNames::AllowExternalImagesFrom );
-			$allowException = !empty( $allowFrom );
+			$allowException = (bool)$allowFrom;
 		}
 		if ( $allowException ) {
 			$data['externalimages'] = (array)$allowFrom;
@@ -369,7 +356,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		$favicon = $config->get( MainConfigNames::Favicon );
 		if ( $favicon ) {
 			// Expand any local path to full URL to improve API usability (T77093).
-			$data['favicon'] = wfExpandUrl( $favicon );
+			$data['favicon'] = (string)$this->urlUtils->expand( $favicon );
 		}
 
 		$data['centralidlookupprovider'] =
@@ -560,7 +547,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 				}
 			}
 
-			$val['url'] = wfExpandUrl( $row['iw_url'], PROTO_CURRENT );
+			$val['url'] = (string)$this->urlUtils->expand( $row['iw_url'], PROTO_CURRENT );
 			$val['protorel'] = str_starts_with( $row['iw_url'], '//' );
 			if ( isset( $row['iw_wikiid'] ) && $row['iw_wikiid'] !== '' ) {
 				$val['wikiid'] = $row['iw_wikiid'];
@@ -675,6 +662,25 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		ApiResult::setIndexedTagName( $data, 'group' );
 
 		return $result->addValue( 'query', $property, $data );
+	}
+
+	protected function appendAutoCreateTempUser( $property ) {
+		$config = $this->getConfig()->get( MainConfigNames::AutoCreateTempUser );
+
+		$data = [ 'enabled' => false ];
+		if ( $config['enabled'] ?? false ) {
+			$data['enabled'] = true;
+			$data['actions'] = $config['actions'];
+			$data['genPattern'] = $config['genPattern'];
+			$data['matchPattern'] = $config['matchPattern'] ?? $data['genPattern'];
+			$data['serialProvider'] = $config['serialProvider'];
+			$data['serialMapping'] = $config['serialMapping'];
+		}
+		if ( isset( $config['reservedPattern'] ) ) {
+			$data['reservedPattern'] = $config['reservedPattern'];
+		}
+
+		return $this->getResult()->addValue( 'query', $property, $data );
 	}
 
 	protected function appendFileExtensions( $property ) {
@@ -797,7 +803,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		// The default value is null, but the installer sets it to empty string
 		if ( strlen( (string)$rightsPage ) ) {
 			$title = Title::newFromText( $rightsPage );
-			$url = wfExpandUrl( $title->getLinkURL(), PROTO_CURRENT );
+			$url = (string)$this->urlUtils->expand( $title->getLinkURL(), PROTO_CURRENT );
 		} else {
 			$title = false;
 			$url = $config->get( MainConfigNames::RightsUrl );
@@ -937,7 +943,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 			static function ( $item ) {
 				return "<$item>";
 			},
-			$this->parser->getTags()
+			$this->parserFactory->getMainInstance()->getTags()
 		);
 		ApiResult::setArrayType( $tags, 'BCarray' );
 		ApiResult::setIndexedTagName( $tags, 't' );
@@ -946,7 +952,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	}
 
 	public function appendFunctionHooks( $property ) {
-		$hooks = $this->parser->getFunctionHooks();
+		$hooks = $this->parserFactory->getMainInstance()->getFunctionHooks();
 		ApiResult::setArrayType( $hooks, 'BCarray' );
 		ApiResult::setIndexedTagName( $hooks, 'h' );
 
@@ -988,11 +994,11 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 
 		$data = [];
 		foreach ( $hookNames as $name ) {
-			$subscribers = $hookContainer->getLegacyHandlers( $name );
+			$subscribers = $hookContainer->getHandlerDescriptions( $name );
 
 			$arr = [
 				'name' => $name,
-				'subscribers' => array_map( [ SpecialVersion::class, 'arrayToString' ], $subscribers ),
+				'subscribers' => $subscribers,
 			];
 
 			ApiResult::setArrayType( $arr['subscribers'], 'array' );
@@ -1033,6 +1039,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 					'dbrepllag',
 					'statistics',
 					'usergroups',
+					'autocreatetempuser',
 					'libraries',
 					'extensions',
 					'fileextensions',

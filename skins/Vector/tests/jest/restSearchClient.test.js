@@ -72,7 +72,6 @@ describe( 'restApiSearchClient', () => {
 			2
 		).fetch;
 
-		/* eslint-disable-next-line compat/compat */
 		const controller = new AbortController();
 
 		expect( searchResult.query ).toStrictEqual( 'media' );
@@ -103,7 +102,6 @@ describe( 'restApiSearchClient', () => {
 			'thereIsNothingLikeThis'
 		).fetch;
 
-		/* eslint-disable-next-line compat/compat */
 		const controller = new AbortController();
 		expect( searchResult.query ).toStrictEqual( 'thereIsNothingLikeThis' );
 		expect( searchResult.results ).toBeTruthy();

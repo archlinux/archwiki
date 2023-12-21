@@ -1,17 +1,7 @@
+const { MultimediaViewer } = require( 'mmv' );
+
 ( function () {
 	var MTH = {};
-
-	MTH.enterFullscreenMock = function () {
-		this.first().addClass( 'jq-fullscreened' ).data( 'isFullscreened', true );
-
-		$( document ).trigger( $.Event( 'jq-fullscreen-change', { element: this, fullscreen: true } ) );
-	};
-
-	MTH.exitFullscreenMock = function () {
-		this.first().removeClass( 'jq-fullscreened' ).data( 'isFullscreened', false );
-
-		$( document ).trigger( $.Event( 'jq-fullscreen-change', { element: this, fullscreen: false } ) );
-	};
 
 	/**
 	 * Returns the exception thrown by callback, or undefined if no exception was thrown.
@@ -45,7 +35,7 @@
 	 * @return {mw.SafeStorage} Local storage-like object
 	 */
 	MTH.getUnsupportedLocalStorage = function () {
-		return this.createLocalStorage( undefined );
+		return MTH.createLocalStorage( undefined );
 	};
 
 	/**
@@ -58,7 +48,7 @@
 			throw new Error( 'Error' );
 		};
 
-		return this.createLocalStorage( {
+		return MTH.createLocalStorage( {
 			getItem: e,
 			setItem: e,
 			removeItem: e
@@ -75,7 +65,7 @@
 		var bag = new mw.Map();
 		bag.set( initialData );
 
-		return this.createLocalStorage( {
+		return MTH.createLocalStorage( {
 			getItem: function ( key ) { return bag.get( key ); },
 			setItem: function ( key, value ) { bag.set( key, value ); },
 			removeItem: function ( key ) { bag.set( key, null ); }
@@ -85,10 +75,10 @@
 	/**
 	 * Returns a viewer object with all the appropriate placeholder functions.
 	 *
-	 * @return {mw.mmv.MultimediaViewer}
+	 * @return {MultimediaViewer}
 	 */
 	MTH.getMultimediaViewer = function () {
-		return new mw.mmv.MultimediaViewer( {
+		return new MultimediaViewer( {
 			imageQueryParameter: function () {},
 			language: function () {},
 			recordVirtualViewBeaconURI: function () {},
@@ -160,15 +150,15 @@
 		// in order to give that code a chance to run, we'll add another promise
 		// to the array, that will only resolve at the end of the current call
 		// stack (using setTimeout)
-		this.asyncPromises.push( deferred.promise() );
+		MTH.asyncPromises.push( deferred.promise() );
 		setTimeout( deferred.resolve );
 
-		return QUnit.whenPromisesComplete.apply( null, this.asyncPromises ).then(
+		return QUnit.whenPromisesComplete.apply( null, MTH.asyncPromises ).then(
 			function () {
-				this.asyncPromises = [];
-			}.bind( this )
+				MTH.asyncPromises = [];
+			}
 		);
 	};
 
-	mw.mmv.testHelpers = MTH;
+	module.exports = MTH;
 }() );

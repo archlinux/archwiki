@@ -1,3 +1,5 @@
+@import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
 @import '../mmv.mixins.less';
 
 .mw-mmv-image {
@@ -5,14 +7,14 @@
 	width: 100%;
 	height: 100%;
 	vertical-align: middle;
-	.unselectable;
+	.user-select( none );
 
 	&.empty {
 		display: none;
 	}
 
 	&.error {
-		background-color: #222;
+		background-color: #202122;
 
 		a,
 		a:visited {
@@ -53,9 +55,7 @@
 	cursor: zoom-in;
 
 	&.blurred {
-		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		-webkit-filter: blur( 3px );
-		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		filter: blur( 3px );
 		opacity: 0.8;
 	}

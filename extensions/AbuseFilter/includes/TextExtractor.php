@@ -91,7 +91,6 @@ class TextExtractor {
 		}
 
 		// T22310
-		$text = TextContent::normalizeLineEndings( (string)$text );
-		return $text;
+		return TextContent::normalizeLineEndings( (string)$text );
 	}
 }

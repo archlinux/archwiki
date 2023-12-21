@@ -9,6 +9,11 @@
 			"아라"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck cre que se engadiu contido novo á páxina",
+	"tag-editcheck-newreference-description": "Engadiuse unha referencia á páxina",
+	"tag-editcheck-references-description": "EditCheck cre que cómpre unha referencia",
+	"tag-editcheck-references-activated": "Verificación de modificacións (referencias) activada",
+	"tag-editcheck-references-activated-description": "EditCheck cre que podería ser necesaria unha referencia e mostrouse a interface de usuario",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Edición visual]]",
 	"tag-visualeditor-description": "Edición feita mediante o [[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Editor visual: Comprobar]]",

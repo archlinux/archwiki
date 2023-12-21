@@ -11,7 +11,7 @@ wgParserEnableLegacyMediaDOM=false
 !! metadata
 property[page_image_free]=Foobar.jpg
 !! html
-<p><span class="mw-default-size" typeof="mw:File"><a href="/wiki/File:Foobar.jpg" class="mw-file-description"><img src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" /></a></span>
+<p><span class="mw-default-size" typeof="mw:File"><a href="/wiki/File:Foobar.jpg" class="mw-file-description"><img src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" class="mw-file-element" /></a></span>
 </p>
 !! end
 
@@ -27,8 +27,8 @@ wgParserEnableLegacyMediaDOM=false
 !! metadata
 property[page_image_free]=Foobar.jpg
 !! html
-<p><span class="mw-default-size" typeof="mw:File"><a href="/wiki/File:Thumb.png" class="mw-file-description"><img src="http://example.com/images/e/ea/Thumb.png" decoding="async" width="135" height="135" /></a></span>
-<span class="mw-default-size" typeof="mw:File"><a href="/wiki/File:Foobar.jpg" class="mw-file-description"><img src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" /></a></span>
+<p><span class="mw-default-size" typeof="mw:File"><a href="/wiki/File:Thumb.png" class="mw-file-description"><img src="http://example.com/images/e/ea/Thumb.png" decoding="async" width="135" height="135" class="mw-file-element" /></a></span>
+<span class="mw-default-size" typeof="mw:File"><a href="/wiki/File:Foobar.jpg" class="mw-file-description"><img src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" class="mw-file-element" /></a></span>
 </p>
 !! end
 

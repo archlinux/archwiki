@@ -21,7 +21,7 @@
 namespace MediaWiki\StubObject;
 
 use InvalidArgumentException;
-use User;
+use MediaWiki\User\User;
 
 /**
  * Stub object for the global user ($wgUser) that makes it possible to change the
@@ -154,4 +154,7 @@ class StubGlobalUser extends StubObject {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( StubGlobalUser::class, 'StubGlobalUser' );

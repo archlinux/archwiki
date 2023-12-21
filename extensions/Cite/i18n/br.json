@@ -28,5 +28,11 @@
 	"cite_error_empty_references_define": "Balizenn <code>&lt;ref&gt;</code> gant anv \"$1\" termenet e <code>&lt;references&gt;</code> gant an dezverk group \"$2\" a zo goullo.",
 	"cite_references_link_many_and": " ha",
 	"cite_references_link_accessibility_label": "Lammat",
-	"cite_references_link_many_accessibility_label": "Lammat da :"
+	"cite_references_link_many_accessibility_label": "Lammat da :",
+	"cite-wikieditor-tool-reference": "Daveenn",
+	"cite-wikieditor-help-page-references": "Daveennoù",
+	"cite-wikieditor-help-content-reference-description": "Daveenn",
+	"cite-wikieditor-help-content-named-reference-description": "Dave anvet",
+	"cite-wikieditor-help-content-rereference-description": "Adimplij eus an hevelep daveenn",
+	"cite-wikieditor-help-content-showreferences-description": "Diskwel an daveennoù"
 }

@@ -15,6 +15,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|one more author|$1 more authors}}",
 	"multimediaviewer-multiple-authors-combine": "$1 and $2",
 	"multimediaviewer-metadata-error": "Could not load image details (error: $1)",
+	"multimediaviewer-file-not-found-error": "Sorry, the file $1 cannot be displayed since it is not present on the current page.",
 	"multimediaviewer-thumbnail-error": "Sorry, the file cannot be displayed",
 	"multimediaviewer-thumbnail-error-description": "There seems to be a technical issue. You can $1 if it persists. Error: $2",
 	"multimediaviewer-thumbnail-error-retry": "retry",

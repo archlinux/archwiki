@@ -39,7 +39,6 @@
 	"replacetext_warning": "Ada {{PLURAL:$1|$1 halaman|$1 halaman}} yang telah berisi untaian pengganti, \"$2\". Jika Anda melakukan penggantian ini Anda tidak akan dapat memisahkan pengganti Anda dari untaian ini.",
 	"replacetext_blankwarning": "Karena untaian pengganti kosong, operasi ini tidak dapat dikembalikan.\nApakah ingin dilanjutkan?",
 	"replacetext_continue": "Lanjutkan",
-	"replacetext_announce": "Beritahukan suntingan ini melalui $1 dan daftar pantauan",
 	"replacetext_editsummary": "Penggantian teks - \"$1\" menjadi \"$2\"",
 	"replacetext_reminder": "Untuk memodifikasi pranala ke halaman ini dalam halaman yang lain, tuju ke $1.",
 	"replacetext_cfg_error": "Konfigurasi ReplaceText mengalami galat",

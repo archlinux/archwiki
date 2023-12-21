@@ -158,7 +158,7 @@ class SiteConfig extends ISiteConfig {
 		$this->relativeLinkPrefix = null;
 		// Superclass value reset since parsertests reuse SiteConfig objects
 		$this->linkTrailRegex = false;
-		$this->magicWordMap = null;
+		$this->mwAliases = null;
 		$this->interwikiMapNoNamespaces = null;
 	}
 
@@ -495,9 +495,9 @@ class SiteConfig extends ISiteConfig {
 		return $this->siteData['linktrail'];
 	}
 
-	public function lang(): string {
+	public function langBcp47(): Bcp47Code {
 		$this->loadSiteData();
-		return $this->siteData['lang'];
+		return Utils::mwCodeToBcp47( $this->siteData['lang'] );
 	}
 
 	public function mainpage(): string {
@@ -599,22 +599,9 @@ class SiteConfig extends ISiteConfig {
 	}
 
 	/** @inheritDoc */
-	public function variants(): array {
+	public function variantsFor( Bcp47Code $lang ): ?array {
 		$this->loadSiteData();
-		$result = [];
-		foreach ( $this->variants as $variantKey => $tuple ) {
-			$result[Utils::bcp47ToMwCode( $variantKey )] = [
-				'base' => Utils::bcp47ToMwCode( $tuple['base'] ),
-				'fallbacks' => array_map( [ Utils::class, 'bcp47ToMwCode' ], $tuple['fallbacks'] ),
-			];
-		}
-		return $result;
-	}
-
-	/** @inheritDoc */
-	public function variantsFor( Bcp47Code $lang ): array {
-		$this->loadSiteData();
-		return $this->variants[strtolower( $lang->toBcp47Code() )];
+		return $this->variants[strtolower( $lang->toBcp47Code() )] ?? null;
 	}
 
 	public function widthOption(): int {
@@ -775,32 +762,15 @@ class SiteConfig extends ISiteConfig {
 		return $this->protocols;
 	}
 
-	/**
-	 * @param array $parsoidSettings
-	 * @return SiteConfig
-	 */
-	public static function fromSettings( array $parsoidSettings ): SiteConfig {
-		$opts = [];
-		if ( isset( $parsoidSettings['linting'] ) ) {
-			$opts['linting'] = !empty( $parsoidSettings['linting'] );
-		}
-		if ( isset( $parsoidSettings['wt2htmlLimits'] ) ) {
-			$opts['wt2htmlLimits'] = $parsoidSettings['wt2htmlLimits'];
-		}
-		if ( isset( $parsoidSettings['html2wtLimits'] ) ) {
-			$opts['html2wtLimits'] = $parsoidSettings['html2wtLimits'];
-		}
-		$api = ApiHelper::fromSettings( $parsoidSettings );
-		return new SiteConfig( $api, $opts );
-	}
+	/** @var ?MockMetrics */
+	private $metrics;
 
 	/** @inheritDoc */
 	public function metrics(): ?StatsdDataFactoryInterface {
-		static $metrics = null;
-		if ( $metrics === null ) {
-			$metrics = new MockMetrics();
+		if ( $this->metrics === null ) {
+			$this->metrics = new MockMetrics();
 		}
-		return $metrics;
+		return $this->metrics;
 	}
 
 	/** @inheritDoc */

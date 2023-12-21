@@ -24,7 +24,7 @@ users input ($tex). The equation is displayed in the current text line.
 {\displaystyle $tex } to the user input ($tex).
 
 For testing your installation run
-php tests/phpunit/phpunit.php extensions/Math/tests/
+composer phpunit:entrypoint -- extensions/Math/tests/phpunit/
 from your MediaWiki home path.
 
 == Logging ==

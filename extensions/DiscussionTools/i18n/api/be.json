@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tomato Cream",
 			"Maksim L.",
-			"Plaga med"
+			"Plaga med",
+			"Tomato Cream"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Каментар з ідэнтыфікатарам «$1» не знойдзены.",

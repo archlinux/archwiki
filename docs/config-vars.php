@@ -253,6 +253,7 @@ $wgUploadMaintenance = null;
 /**
  * Config variable stub for the IllegalFileChars setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::IllegalFileChars
+ * @deprecated since 1.41; no longer customizable
  */
 $wgIllegalFileChars = null;
 
@@ -633,6 +634,18 @@ $wgSVGMaxSize = null;
  * @see MediaWiki\MainConfigSchema::SVGMetadataCutoff
  */
 $wgSVGMetadataCutoff = null;
+
+/**
+ * Config variable stub for the SVGNativeRendering setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::SVGNativeRendering
+ */
+$wgSVGNativeRendering = null;
+
+/**
+ * Config variable stub for the SVGNativeRenderingSizeLimit setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::SVGNativeRenderingSizeLimit
+ */
+$wgSVGNativeRenderingSizeLimit = null;
 
 /**
  * Config variable stub for the MediaInTargetLanguage setting, for use by phpdoc and IDEs.
@@ -1211,22 +1224,28 @@ $wgDatabaseReplicaLagCritical = null;
 $wgMaxExecutionTimeForExpensiveQueries = null;
 
 /**
+ * Config variable stub for the VirtualDomainsMapping setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::VirtualDomainsMapping
+ */
+$wgVirtualDomainsMapping = null;
+
+/**
  * Config variable stub for the TemplateLinksSchemaMigrationStage setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::TemplateLinksSchemaMigrationStage
  */
 $wgTemplateLinksSchemaMigrationStage = null;
 
 /**
- * Config variable stub for the ExternalLinksSchemaMigrationStage setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::ExternalLinksSchemaMigrationStage
+ * Config variable stub for the PageLinksSchemaMigrationStage setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::PageLinksSchemaMigrationStage
  */
-$wgExternalLinksSchemaMigrationStage = null;
+$wgPageLinksSchemaMigrationStage = null;
 
 /**
- * Config variable stub for the CommentTempTableSchemaMigrationStage setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::CommentTempTableSchemaMigrationStage
+ * Config variable stub for the ExternalLinksDomainGaps setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::ExternalLinksDomainGaps
  */
-$wgCommentTempTableSchemaMigrationStage = null;
+$wgExternalLinksDomainGaps = null;
 
 /**
  * Config variable stub for the ContentHandlers setting, for use by phpdoc and IDEs.
@@ -1300,6 +1319,12 @@ $wgDiffEngine = null;
  * @see MediaWiki\MainConfigSchema::ExternalDiffEngine
  */
 $wgExternalDiffEngine = null;
+
+/**
+ * Config variable stub for the Wikidiff2Options setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::Wikidiff2Options
+ */
+$wgWikidiff2Options = null;
 
 /**
  * Config variable stub for the RequestTimeLimit setting, for use by phpdoc and IDEs.
@@ -1486,6 +1511,12 @@ $wgParsoidCacheConfig = null;
  * @see MediaWiki\MainConfigSchema::ChronologyProtectorStash
  */
 $wgChronologyProtectorStash = null;
+
+/**
+ * Config variable stub for the ChronologyProtectorSecret setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::ChronologyProtectorSecret
+ */
+$wgChronologyProtectorSecret = null;
 
 /**
  * Config variable stub for the ParserCacheExpireTime setting, for use by phpdoc and IDEs.
@@ -1855,6 +1886,12 @@ $wgDisabledVariants = null;
 $wgVariantArticlePath = null;
 
 /**
+ * Config variable stub for the UseXssLanguage setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::UseXssLanguage
+ */
+$wgUseXssLanguage = null;
+
+/**
  * Config variable stub for the LoginLanguageSelector setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::LoginLanguageSelector
  */
@@ -1963,12 +2000,6 @@ $wgFallbackSkin = null;
 $wgSkipSkins = null;
 
 /**
- * Config variable stub for the ResourceLoaderClientPreferences setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::ResourceLoaderClientPreferences
- */
-$wgResourceLoaderClientPreferences = null;
-
-/**
  * Config variable stub for the DisableOutputCompression setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::DisableOutputCompression
  */
@@ -2021,6 +2052,12 @@ $wgShowRollbackEditCount = null;
  * @see MediaWiki\MainConfigSchema::EnableCanonicalServerLink
  */
 $wgEnableCanonicalServerLink = null;
+
+/**
+ * Config variable stub for the InterwikiLogoOverride setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::InterwikiLogoOverride
+ */
+$wgInterwikiLogoOverride = null;
 
 /**
  * Config variable stub for the ResourceModules setting, for use by phpdoc and IDEs.
@@ -2095,6 +2132,12 @@ $wgResourceLoaderStorageEnabled = null;
 $wgResourceLoaderStorageVersion = null;
 
 /**
+ * Config variable stub for the ResourceLoaderEnableSourceMapLinks setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::ResourceLoaderEnableSourceMapLinks
+ */
+$wgResourceLoaderEnableSourceMapLinks = null;
+
+/**
  * Config variable stub for the AllowSiteCSSOnRestrictedPages setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::AllowSiteCSSOnRestrictedPages
  */
@@ -2145,6 +2188,7 @@ $wgNamespaceAliases = null;
 /**
  * Config variable stub for the LegalTitleChars setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::LegalTitleChars
+ * @deprecated since 1.41; use Extension:TitleBlacklist to customize
  */
 $wgLegalTitleChars = null;
 
@@ -2320,14 +2364,22 @@ $wgParsoidSettings = null;
 /**
  * Config variable stub for the ParserEnableLegacyMediaDOM setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::ParserEnableLegacyMediaDOM
+ * @deprecated since 1.41
  */
 $wgParserEnableLegacyMediaDOM = null;
 
 /**
  * Config variable stub for the UseContentMediaStyles setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::UseContentMediaStyles
+ * @deprecated since 1.41
  */
 $wgUseContentMediaStyles = null;
+
+/**
+ * Config variable stub for the UseLegacyMediaStyles setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::UseLegacyMediaStyles
+ */
+$wgUseLegacyMediaStyles = null;
 
 /**
  * Config variable stub for the RawHtml setting, for use by phpdoc and IDEs.
@@ -2466,6 +2518,12 @@ $wgCentralIdLookupProviders = null;
  * @see MediaWiki\MainConfigSchema::CentralIdLookupProvider
  */
 $wgCentralIdLookupProvider = null;
+
+/**
+ * Config variable stub for the UserRegistrationProviders setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::UserRegistrationProviders
+ */
+$wgUserRegistrationProviders = null;
 
 /**
  * Config variable stub for the PasswordPolicy setting, for use by phpdoc and IDEs.
@@ -2816,6 +2874,12 @@ $wgRemoveGroups = null;
  * @see MediaWiki\MainConfigSchema::AvailableRights
  */
 $wgAvailableRights = null;
+
+/**
+ * Config variable stub for the ImplicitRights setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::ImplicitRights
+ */
+$wgImplicitRights = null;
 
 /**
  * Config variable stub for the DeleteRevisionsLimit setting, for use by phpdoc and IDEs.
@@ -3828,12 +3892,6 @@ $wgMessagesDirs = null;
 $wgExtensionEntryPointListFiles = null;
 
 /**
- * Config variable stub for the ParserOutputHooks setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::ParserOutputHooks
- */
-$wgParserOutputHooks = null;
-
-/**
  * Config variable stub for the EnableParserLimitReporting setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::EnableParserLimitReporting
  */
@@ -4148,12 +4206,6 @@ $wgAPICacheHelpTimeout = null;
 $wgAPIUselessQueryPages = null;
 
 /**
- * Config variable stub for the AjaxUploadDestCheck setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::AjaxUploadDestCheck
- */
-$wgAjaxUploadDestCheck = null;
-
-/**
  * Config variable stub for the AjaxLicensePreview setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::AjaxLicensePreview
  */
@@ -4380,3 +4432,9 @@ $wgSkinsPreferred = null;
  * @see MediaWiki\MainConfigSchema::SpecialContributeSkinsEnabled
  */
 $wgSpecialContributeSkinsEnabled = null;
+
+/**
+ * Config variable stub for the EnableEditRecovery setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::EnableEditRecovery
+ */
+$wgEnableEditRecovery = null;

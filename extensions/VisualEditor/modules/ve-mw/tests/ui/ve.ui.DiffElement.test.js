@@ -24,8 +24,16 @@ QUnit.test( 'Diffing', ( assert ) => {
 						// FIXME: Use DOM modification instead of string replaces
 						.replace( /#mwt1"/g, '#mwt1" data-diff-action="structural-change" data-diff-id="0"' ),
 				expectedDescriptions: [
-					'<div>visualeditor-changedesc-mwtransclusion</div>' +
-					'<div><ul><li>visualeditor-changedesc-changed-diff,1,<span>Hello, <del>world</del><ins>globe</ins>!</span></li></ul></div>'
+					ve.dm.example.singleLine`
+						<div>visualeditor-changedesc-mwtransclusion</div>
+						<div>
+							<ul>
+								<li>
+									visualeditor-changedesc-changed-diff,1,<span>Hello, <del>world</del><ins>globe</ins>!</span>
+								</li>
+							</ul>
+						</div>
+					`
 				]
 			},
 			{
@@ -45,9 +53,13 @@ QUnit.test( 'Diffing', ( assert ) => {
 						.replace( 'href="./Foo"', 'href="' + new URL( './Foo', ve.dm.example.baseUri ) + '"' )
 						.replace( 'foobar"', 'foobar" data-diff-action="structural-change" data-diff-id="0"' ),
 				expectedDescriptions: [
-					'<div>visualeditor-changedesc-image-size,' +
-					'<del>1visualeditor-dimensionswidget-times2visualeditor-dimensionswidget-px</del>,' +
-					'<ins>3visualeditor-dimensionswidget-times2visualeditor-dimensionswidget-px</ins></div>'
+					ve.dm.example.singleLine`
+						<div>
+							visualeditor-changedesc-image-size,
+							<del>1visualeditor-dimensionswidget-times2visualeditor-dimensionswidget-px</del>,
+							<ins>3visualeditor-dimensionswidget-times2visualeditor-dimensionswidget-px</ins>
+						</div>
+					`
 				]
 			}
 		];

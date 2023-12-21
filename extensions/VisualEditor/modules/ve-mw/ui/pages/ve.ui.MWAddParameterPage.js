@@ -111,13 +111,7 @@ ve.ui.MWAddParameterPage.prototype.initialize = function () {
  * @inheritDoc OO.ui.PanelLayout
  */
 ve.ui.MWAddParameterPage.prototype.focus = function () {
-	if ( this.isExpanded ) {
-		this.paramInputField.focus();
-		return;
-	}
-
-	// Parent method
-	ve.ui.MWAddParameterPage.super.prototype.focus.apply( this, arguments );
+	this.togglePlaceholder( true );
 };
 
 /**

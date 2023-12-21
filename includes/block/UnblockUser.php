@@ -26,11 +26,11 @@ use ManualLogEntry;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use RevisionDeleteUser;
-use Status;
-use TitleValue;
 
 /**
  * Backend class for unblocking users

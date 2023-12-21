@@ -3,8 +3,8 @@
 namespace MediaWiki\Extension\Thanks;
 
 use LogFormatter;
+use MediaWiki\Title\Title;
 use Message;
-use Title;
 use User;
 
 /**

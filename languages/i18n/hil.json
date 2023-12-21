@@ -3,6 +3,7 @@
 		"authors": [
 			"Amire80",
 			"Anjoeli9806",
+			"Base",
 			"Berniemack",
 			"DannyS712",
 			"Erythrii",
@@ -17,8 +18,7 @@
 			"Tagimata",
 			"Taylortheturtle",
 			"Vlad5250",
-			"아라",
-			"Base"
+			"아라"
 		]
 	},
 	"tog-underline": "Kuritan sa idalom ang mga tabid:",
@@ -552,8 +552,6 @@
 	"content-not-allowed-here": "\"$1\" nga sulod indi pwede sa panid [[:$2]]",
 	"content-model-wikitext": "tekstong wiki",
 	"content-model-text": "tekstong ordinaryo",
-	"content-model-javascript": "JavaScript",
-	"content-model-css": "CSS",
 	"expensive-parserfunction-warning": "'''Pahibalo:''' Ang ini nga panid may yara sang madamo nga mahal nga pagtawag sang kapusalanan parser.\n\nKinahanglan nga may yara sang manubo sa  $2 nga {{PLURAL:$2|pagtawag|mga pagtawag}}, kay karon may {{PLURAL:$1|$1 ka pagtawag|$1 ka mga pagtawag}}.",
 	"expensive-parserfunction-category": "Mga pahina nga may tuman ka damo nga mahal nga pagtawag sang kapuslanan parser",
 	"post-expand-template-inclusion-warning": "'''Pagpaandam:''' Ang temleyt nga nadala tuman ka dako.\nMay iban nga templeyt indi madala.",
@@ -573,7 +571,7 @@
 	"undo-success": "Ang pag-ilis indi mahuman.\nPalihog lantaw sang pagbaki-baki sa dalom agod to nga mapamatud-an kon amo gid man sini ang imo luyag buhaton, dayon tipona ang mga pagbag-o sa dalom agod to nga matapos ang pagliwat sang pag-ilis.",
 	"undo-failure": "Ang pag-ilis indi na maliwat pa tungod sang nagakonplikto nga mga pang-tunga nga pag-ilis.",
 	"undo-norev": "Ang pag-ilis indii na maliwat pa tungod kay ini wala naga-eksister ukon ginpanas na.",
-	"undo-summary": "Liwaton ang pagbag-o sang $1 sa [[Special:Contributions/$2|$2]] ([[User talk:$2|$2]])",
+	"undo-summary": "Liwaton ang pagbag-o sang [[Special:Diff/$1|$1]] sa [[Special:Contributions/$2|$2]] ([[User talk:$2|$2]])",
 	"viewpagelogs": "Tan-awon ang mga log para sa sini nga pahina",
 	"nohistory": "Wala sang kasaysayan sang pag-ilis sang sini nga panid.",
 	"currentrev": "Mga Inislan Subong",
@@ -724,7 +722,6 @@
 	"search-relatedarticle": "Konektado",
 	"searchrelated": "konektado",
 	"searchall": "tanan",
-	"showingresults": "Ginapakita sa dalom pakadto sa {{PLURAL:$1|'''1''' ka resulta|'''$1''' ka mga resulta}} umpisa ang #'''$2'''.",
 	"search-showingresults": "{{PLURAL:$4|Resulta <strong>$1</strong> sang <strong>$3</strong>|Mga resulta <strong>$1 – $2</strong> of <strong>$3</strong>}}",
 	"search-nonefound": "Wala sang mga resulta nga nagsanto sa imo nga ginapangita.",
 	"powersearch-legend": "Abanse nga pagpangita",

@@ -15,7 +15,6 @@ use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleWarning;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
-use MWException;
 use Psr\Log\LoggerInterface;
 use Sanitizer;
 use Wikimedia\Equivset\Equivset;
@@ -238,12 +237,10 @@ class FilterEvaluator {
 	}
 
 	/**
-	 * @param int $val The amount to increase the conditions count of.
 	 * @throws ConditionLimitException
 	 */
-	private function raiseCondCount( $val = 1 ) {
-		$this->mCondCount += $val;
-
+	private function raiseCondCount() {
+		$this->mCondCount++;
 		if ( $this->condLimitEnabled && $this->mCondCount > $this->conditionsLimit ) {
 			throw new ConditionLimitException();
 		}
@@ -262,7 +259,7 @@ class FilterEvaluator {
 	 * cache if it is changed.
 	 * @return string
 	 */
-	public static function getCacheVersion() {
+	private static function getCacheVersion() {
 		static $version = null;
 		if ( $version !== null ) {
 			return $version;
@@ -284,7 +281,7 @@ class FilterEvaluator {
 	/**
 	 * Resets the state of the parser
 	 */
-	public function resetState() {
+	private function resetState() {
 		$this->mVariables = new VariableHolder();
 		$this->mCondCount = 0;
 		$this->mAllowShort = true;
@@ -448,7 +445,6 @@ class FilterEvaluator {
 	 * @return AFPData|AFPTreeNode|string
 	 * @throws ExceptionBase
 	 * @throws UserVisibleException
-	 * @throws MWException
 	 */
 	private function evalNode( AFPTreeNode $node ) {
 		switch ( $node->type ) {
@@ -632,7 +628,7 @@ class FilterEvaluator {
 				}
 
 				$offset = $this->evalNode( $offset );
-				// @todo If $array has no elements we could already throw an outofbounds. We don'tan
+				// @todo If $array has no elements we could already throw an outofbounds. We don't
 				// know what the index is, though.
 
 				if ( $array->getType() !== AFPData::DUNDEFINED ) {
@@ -704,7 +700,7 @@ class FilterEvaluator {
 	 * @return AFPData The return value of the function
 	 * @throws InvalidArgumentException if given an invalid func
 	 */
-	protected function callFunc( $fname, array $args, int $position ): AFPData {
+	private function callFunc( $fname, array $args, int $position ): AFPData {
 		if ( !array_key_exists( $fname, self::FUNCTIONS ) ) {
 			// @codeCoverageIgnoreStart
 			throw new InvalidArgumentException( "$fname is not a valid function." );
@@ -761,7 +757,7 @@ class FilterEvaluator {
 	 * @param int $position
 	 * @return AFPData
 	 */
-	protected function callKeyword( $kname, AFPData $lhs, AFPData $rhs, int $position ): AFPData {
+	private function callKeyword( $kname, AFPData $lhs, AFPData $rhs, int $position ): AFPData {
 		$func = self::KEYWORDS[$kname];
 		$this->raiseCondCount();
 
@@ -794,7 +790,7 @@ class FilterEvaluator {
 	 * @param string $varname
 	 * @return bool
 	 */
-	protected function varExists( $varname ) {
+	private function varExists( $varname ) {
 		return $this->keywordsManager->isVarInUse( $varname ) ||
 			$this->mVariables->varIsSet( $varname );
 	}
@@ -804,7 +800,7 @@ class FilterEvaluator {
 	 * @return AFPData
 	 * @throws UserVisibleException
 	 */
-	protected function getVarValue( $var ) {
+	private function getVarValue( $var ) {
 		$var = strtolower( $var );
 		$deprecatedVars = $this->keywordsManager->getDeprecatedVariables();
 
@@ -829,7 +825,7 @@ class FilterEvaluator {
 	 * @param mixed $value
 	 * @throws UserVisibleException
 	 */
-	protected function setUserVariable( $name, $value ) {
+	private function setUserVariable( $name, $value ) {
 		$this->mVariables->setVar( $name, $value );
 	}
 
@@ -839,7 +835,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcLc( $args ) {
+	private function funcLc( $args ) {
 		$s = $args[0]->toString();
 
 		return new AFPData( AFPData::DSTRING, $this->contLang->lc( $s ) );
@@ -849,7 +845,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcUc( $args ) {
+	private function funcUc( $args ) {
 		$s = $args[0]->toString();
 
 		return new AFPData( AFPData::DSTRING, $this->contLang->uc( $s ) );
@@ -859,7 +855,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcLen( $args ) {
+	private function funcLen( $args ) {
 		if ( $args[0]->type === AFPData::DARRAY ) {
 			// Don't use toString on arrays, but count
 			$val = count( $args[0]->data );
@@ -874,7 +870,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcSpecialRatio( $args ) {
+	private function funcSpecialRatio( $args ) {
 		$s = $args[0]->toString();
 
 		if ( !strlen( $s ) ) {
@@ -892,7 +888,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcCount( $args ) {
+	private function funcCount( $args ) {
 		if ( $args[0]->type === AFPData::DARRAY && count( $args ) === 1 ) {
 			return new AFPData( AFPData::DINT, count( $args[0]->data ) );
 		}
@@ -920,7 +916,7 @@ class FilterEvaluator {
 	 * @return AFPData
 	 * @throws UserVisibleException
 	 */
-	protected function funcRCount( $args, int $position ) {
+	private function funcRCount( $args, int $position ) {
 		if ( count( $args ) === 1 ) {
 			$count = count( explode( ',', $args[0]->toString() ) );
 		} else {
@@ -954,7 +950,7 @@ class FilterEvaluator {
 	 * @return AFPData An array of matches.
 	 * @throws UserVisibleException
 	 */
-	protected function funcGetMatches( $args, int $position ) {
+	private function funcGetMatches( $args, int $position ) {
 		$needle = $args[0]->toString();
 		$haystack = $args[1]->toString();
 
@@ -998,7 +994,7 @@ class FilterEvaluator {
 	 * @return AFPData
 	 * @throws UserVisibleException
 	 */
-	protected function funcIPInRange( $args, int $position ) {
+	private function funcIPInRange( $args, int $position ) {
 		$ip = $args[0]->toString();
 		$range = $args[1]->toString();
 
@@ -1021,7 +1017,7 @@ class FilterEvaluator {
 	 * @return AFPData
 	 * @throws UserVisibleException
 	 */
-	protected function funcIPInRanges( $args, int $position ) {
+	private function funcIPInRanges( $args, int $position ) {
 		$ip = array_shift( $args )->toString();
 
 		$strRanges = [];
@@ -1046,7 +1042,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcCCNorm( $args ) {
+	private function funcCCNorm( $args ) {
 		$s = $args[0]->toString();
 
 		$s = html_entity_decode( $s, ENT_QUOTES, 'UTF-8' );
@@ -1059,7 +1055,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcSanitize( $args ) {
+	private function funcSanitize( $args ) {
 		$s = $args[0]->toString();
 
 		$s = html_entity_decode( $s, ENT_QUOTES, 'UTF-8' );
@@ -1072,7 +1068,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcContainsAny( $args ) {
+	private function funcContainsAny( $args ) {
 		$s = array_shift( $args );
 
 		return new AFPData( AFPData::DBOOL, $this->contains( $s, $args, true ) );
@@ -1082,7 +1078,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcContainsAll( $args ) {
+	private function funcContainsAll( $args ) {
 		$s = array_shift( $args );
 
 		return new AFPData( AFPData::DBOOL, $this->contains( $s, $args, false, false ) );
@@ -1094,7 +1090,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcCCNormContainsAny( $args ) {
+	private function funcCCNormContainsAny( $args ) {
 		$s = array_shift( $args );
 
 		return new AFPData( AFPData::DBOOL, $this->contains( $s, $args, true, true ) );
@@ -1106,7 +1102,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcCCNormContainsAll( $args ) {
+	private function funcCCNormContainsAll( $args ) {
 		$s = array_shift( $args );
 
 		return new AFPData( AFPData::DBOOL, $this->contains( $s, $args, false, true ) );
@@ -1115,7 +1111,7 @@ class FilterEvaluator {
 	/**
 	 * Search for substrings in a string
 	 *
-	 * Use is_any to determine wether to use logic OR (true) or AND (false).
+	 * Use is_any to determine whether to use logic OR (true) or AND (false).
 	 *
 	 * Use normalize = true to make use of ccnorm and
 	 * normalize both sides of the search.
@@ -1166,7 +1162,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcEqualsToAny( $args ) {
+	private function funcEqualsToAny( $args ) {
 		$s = array_shift( $args );
 
 		return new AFPData( AFPData::DBOOL, self::equalsToAny( $s, $args ) );
@@ -1180,7 +1176,7 @@ class FilterEvaluator {
 	 *
 	 * @return bool
 	 */
-	protected static function equalsToAny( $string, $values ) {
+	private static function equalsToAny( $string, $values ) {
 		foreach ( $values as $needle ) {
 			if ( $string->equals( $needle, true ) ) {
 				return true;
@@ -1202,7 +1198,7 @@ class FilterEvaluator {
 	 * @param string $s
 	 * @return array|string
 	 */
-	protected function rmspecials( $s ) {
+	private function rmspecials( $s ) {
 		return preg_replace( '/[^\p{L}\p{N}\s]/u', '', $s );
 	}
 
@@ -1210,7 +1206,7 @@ class FilterEvaluator {
 	 * @param string $s
 	 * @return array|string
 	 */
-	protected function rmdoubles( $s ) {
+	private function rmdoubles( $s ) {
 		return preg_replace( '/(.)\1+/us', '\1', $s );
 	}
 
@@ -1218,7 +1214,7 @@ class FilterEvaluator {
 	 * @param string $s
 	 * @return array|string
 	 */
-	protected function rmwhitespace( $s ) {
+	private function rmwhitespace( $s ) {
 		return preg_replace( '/\s+/u', '', $s );
 	}
 
@@ -1226,7 +1222,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcRMSpecials( $args ) {
+	private function funcRMSpecials( $args ) {
 		$s = $args[0]->toString();
 
 		return new AFPData( AFPData::DSTRING, $this->rmspecials( $s ) );
@@ -1236,7 +1232,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcRMWhitespace( $args ) {
+	private function funcRMWhitespace( $args ) {
 		$s = $args[0]->toString();
 
 		return new AFPData( AFPData::DSTRING, $this->rmwhitespace( $s ) );
@@ -1246,7 +1242,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcRMDoubles( $args ) {
+	private function funcRMDoubles( $args ) {
 		$s = $args[0]->toString();
 
 		return new AFPData( AFPData::DSTRING, $this->rmdoubles( $s ) );
@@ -1256,7 +1252,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcNorm( $args ) {
+	private function funcNorm( $args ) {
 		$s = $args[0]->toString();
 
 		$s = $this->ccnorm( $s );
@@ -1271,7 +1267,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcSubstr( $args ) {
+	private function funcSubstr( $args ) {
 		$s = $args[0]->toString();
 		$offset = $args[1]->toInt();
 		$length = isset( $args[2] ) ? $args[2]->toInt() : null;
@@ -1285,7 +1281,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcStrPos( $args ) {
+	private function funcStrPos( $args ) {
 		$haystack = $args[0]->toString();
 		$needle = $args[1]->toString();
 		$offset = isset( $args[2] ) ? $args[2]->toInt() : 0;
@@ -1312,7 +1308,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcStrReplace( $args ) {
+	private function funcStrReplace( $args ) {
 		$subject = $args[0]->toString();
 		$search = $args[1]->toString();
 		$replace = $args[2]->toString();
@@ -1325,7 +1321,7 @@ class FilterEvaluator {
 	 * @param int $position
 	 * @return AFPData
 	 */
-	protected function funcStrReplaceRegexp( $args, int $position ) {
+	private function funcStrReplaceRegexp( $args, int $position ) {
 		$subject = $args[0]->toString();
 		$search = $args[1]->toString();
 		$replace = $args[2]->toString();
@@ -1353,7 +1349,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function funcStrRegexEscape( $args ) {
+	private function funcStrRegexEscape( $args ) {
 		$string = $args[0]->toString();
 
 		// preg_quote does not need the second parameter, since rlike takes
@@ -1365,7 +1361,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return mixed
 	 */
-	protected function funcSetVar( $args ) {
+	private function funcSetVar( $args ) {
 		$varName = $args[0]->toString();
 		$value = $args[1];
 
@@ -1381,7 +1377,7 @@ class FilterEvaluator {
 	 * @param AFPData $b
 	 * @return AFPData
 	 */
-	protected function containmentKeyword( AFPData $a, AFPData $b ) {
+	private function containmentKeyword( AFPData $a, AFPData $b ) {
 		$a = $a->toString();
 		$b = $b->toString();
 
@@ -1397,7 +1393,7 @@ class FilterEvaluator {
 	 * @param AFPData $b
 	 * @return AFPData
 	 */
-	protected function keywordIn( AFPData $a, AFPData $b ) {
+	private function keywordIn( AFPData $a, AFPData $b ) {
 		return $this->containmentKeyword( $b, $a );
 	}
 
@@ -1406,7 +1402,7 @@ class FilterEvaluator {
 	 * @param AFPData $b
 	 * @return AFPData
 	 */
-	protected function keywordContains( AFPData $a, AFPData $b ) {
+	private function keywordContains( AFPData $a, AFPData $b ) {
 		return $this->containmentKeyword( $a, $b );
 	}
 
@@ -1415,7 +1411,7 @@ class FilterEvaluator {
 	 * @param AFPData $pattern
 	 * @return AFPData
 	 */
-	protected function keywordLike( AFPData $str, AFPData $pattern ) {
+	private function keywordLike( AFPData $str, AFPData $pattern ) {
 		$str = $str->toString();
 		$pattern = '#^' . strtr( preg_quote( $pattern->toString(), '#' ), AFPData::WILDCARD_MAP ) . '$#u';
 		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
@@ -1432,7 +1428,7 @@ class FilterEvaluator {
 	 * @return AFPData
 	 * @throws Exception
 	 */
-	protected function keywordRegex( AFPData $str, AFPData $regex, $pos, $insensitive = false ) {
+	private function keywordRegex( AFPData $str, AFPData $regex, $pos, $insensitive = false ) {
 		$str = $str->toString();
 		$pattern = $regex->toString();
 
@@ -1465,7 +1461,7 @@ class FilterEvaluator {
 	 * @param int $pos
 	 * @return AFPData
 	 */
-	protected function keywordRegexInsensitive( AFPData $str, AFPData $regex, $pos ) {
+	private function keywordRegexInsensitive( AFPData $str, AFPData $regex, $pos ) {
 		return $this->keywordRegex( $str, $regex, $pos, true );
 	}
 
@@ -1473,7 +1469,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function castString( $args ) {
+	private function castString( $args ) {
 		return AFPData::castTypes( $args[0], AFPData::DSTRING );
 	}
 
@@ -1481,7 +1477,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function castInt( $args ) {
+	private function castInt( $args ) {
 		return AFPData::castTypes( $args[0], AFPData::DINT );
 	}
 
@@ -1489,7 +1485,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function castFloat( $args ) {
+	private function castFloat( $args ) {
 		return AFPData::castTypes( $args[0], AFPData::DFLOAT );
 	}
 
@@ -1497,7 +1493,7 @@ class FilterEvaluator {
 	 * @param array $args
 	 * @return AFPData
 	 */
-	protected function castBool( $args ) {
+	private function castBool( $args ) {
 		return AFPData::castTypes( $args[0], AFPData::DBOOL );
 	}
 
@@ -1534,7 +1530,7 @@ class FilterEvaluator {
 	 * @param string $pattern Already munged
 	 * @param int $position
 	 */
-	protected function checkRegexMatchesEmpty( AFPData $regex, string $pattern, int $position ): void {
+	private function checkRegexMatchesEmpty( AFPData $regex, string $pattern, int $position ): void {
 		if ( $regex->getType() === AFPData::DUNDEFINED ) {
 			// We can't tell, and toString() would return the empty string (T273809)
 			return;

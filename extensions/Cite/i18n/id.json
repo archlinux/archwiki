@@ -9,7 +9,8 @@
 			"IvanLanin",
 			"Iwan Novirion",
 			"Rex",
-			"Sumbukompor"
+			"Sumbukompor",
+			"Veracious"
 		]
 	},
 	"cite-desc": "Menambahkan tag <code>&lt;ref&gt;</code> dan <code>&lt;references&gt;</code> untuk kutipan",
@@ -40,5 +41,12 @@
 	"cite_references_link_accessibility_back_label": "Kembali ke atas",
 	"cite_section_preview_references": "Pratayang referensi",
 	"cite_warning": "Peringatan pengutipan: $1",
-	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> Pratayang tanda dengan nama <code>$1</code> tidak dapat ditampilkan karena didefinisikan di luar bagian saat ini atau tidak didefinisikan sama sekali."
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> Pratayang tanda dengan nama <code>$1</code> tidak dapat ditampilkan karena didefinisikan di luar bagian saat ini atau tidak didefinisikan sama sekali.",
+	"cite-wikieditor-tool-reference": "Referensi",
+	"cite-wikieditor-help-page-references": "Referensi",
+	"cite-wikieditor-help-content-reference-description": "Referensi",
+	"cite-wikieditor-help-content-named-reference-description": "Referensi bernama",
+	"cite-wikieditor-help-content-rereference-description": "Penggunaan kembali referensi yang sama",
+	"cite-wikieditor-help-content-showreferences-description": "Menampilkan referensi",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Teks pranala]"
 }

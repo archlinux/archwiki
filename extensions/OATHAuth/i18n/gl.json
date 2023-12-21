@@ -4,7 +4,8 @@
 			"ArenaL5",
 			"Banjo",
 			"Elisardojm",
-			"Toliño"
+			"Toliño",
+			"Reedy"
 		]
 	},
 	"oathauth-desc": "Proporciona un soporte de autenticación mediante HMAC baseado en contrasinais dunha soa vez",
@@ -42,7 +43,7 @@
 	"oathauth-login-failed": "Fallou a verificación",
 	"oathauth-describe-provider": "Autenticación de dous factores (OATH).",
 	"grant-group-authentication": "Relizar as accións de autenticación para vostede e para outros",
-	"grant-oath": "Acceder á información (OAuth) de autenticación en dous factores para vostede e para outros",
+	"grant-oath": "Acceder á información (OATH) de autenticación en dous factores para vostede e para outros",
 	"right-oathauth-api-all": "Consultar e validar a información OATH para vostede e para outros",
 	"action-oathauth-api-all": "verificar o estado de OATH",
 	"oathauth-user-not-found": "Non se atopou ningunha conta de usuario co nome especificado",

@@ -35,6 +35,7 @@
 	"echo-log": "عوامي لاگ",
 	"echo-new-messages": "توھان لاءِ بحث صفحي تي ھڪ نئون نياپا آھي",
 	"echo-category-title-edit-user-talk": "منھنجي بحث صفحي ۾ {{PLURAL:$1|سنوار|سنوارون}}",
+	"echo-category-title-edit-user-page": "منھنجي واپرائيندڙ صفحي ۾ {{PLURAL:$1|سنوار|سنوارون}}",
 	"echo-category-title-article-linked": "صفحي {{PLURAL:$1|ڳنڍڻو|ڳنڍڻا}}",
 	"echo-category-title-reverted": "{{PLURAL:$1|سنوار موٽائي|سنوارون موٽايون}}",
 	"echo-category-title-mention": "{{PLURAL:$1|ذڪر|ذڪرَ}}",

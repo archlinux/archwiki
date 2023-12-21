@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
+ * Copyright © 2007 Roan Kattouw <roan.kattouw@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Page\DeletePage;
 use MediaWiki\Page\DeletePageFactory;
 use MediaWiki\Page\File\FileDeleteForm;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
@@ -39,11 +40,8 @@ class ApiDelete extends ApiBase {
 
 	use ApiWatchlistTrait;
 
-	/** @var RepoGroup */
-	private $repoGroup;
-
-	/** @var DeletePageFactory */
-	private $deletePageFactory;
+	private RepoGroup $repoGroup;
+	private DeletePageFactory $deletePageFactory;
 
 	/**
 	 * @param ApiMain $mainModule

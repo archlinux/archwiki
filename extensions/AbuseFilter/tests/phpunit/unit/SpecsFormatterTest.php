@@ -56,7 +56,9 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 		$formatter = $this->getFormatter();
 		$ml = $this->createMock( MessageLocalizer::class );
 		$formatter->setMessageLocalizer( $ml );
-		$this->assertSame( $ml, TestingAccessWrapper::newFromObject( $formatter )->messageLocalizer );
+		/** @var SpecsFormatter $wrapper */
+		$wrapper = TestingAccessWrapper::newFromObject( $formatter );
+		$this->assertSame( $ml, $wrapper->messageLocalizer );
 	}
 
 	/**
@@ -74,7 +76,7 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array[]
 	 */
-	public function provideActionDisplay(): array {
+	public static function provideActionDisplay(): array {
 		return [
 			'exists' => [ 'foobar', false, 'abusefilter-action-foobar' ],
 			'does not exist' => [ 'foobar', true, 'foobar' ],
@@ -114,7 +116,7 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $formatter->formatAction( $action, $params, $lang ) );
 	}
 
-	public function provideFormatAction() {
+	public static function provideFormatAction() {
 		yield 'no params' => [ 'foobar', [], 'abusefilter-action-foobar' ];
 		yield 'legacy block' => [ 'block', [], 'abusefilter-action-block' ];
 
@@ -153,7 +155,7 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array
 	 */
-	public function provideFlags(): array {
+	public static function provideFlags(): array {
 		return [
 			'empty' => [ '', '' ],
 			'single' => [ 'foo', 'abusefilter-history-foo' ],
@@ -176,7 +178,7 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $formatter->formatFilterFlags( $filter, $lang ) );
 	}
 
-	public function provideFilterFlags(): Generator {
+	public static function provideFilterFlags(): Generator {
 		$none = MutableFilter::newDefault();
 		$none->setEnabled( false );
 		yield 'none' => [ $none, '' ];
@@ -203,7 +205,7 @@ class SpecsFormatterTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array[]
 	 */
-	public function provideGroup(): array {
+	public static function provideGroup(): array {
 		return [
 			'exists' => [ 'foobar', false, 'abusefilter-group-foobar' ],
 			'does not exist' => [ 'foobar', true, 'foobar' ],

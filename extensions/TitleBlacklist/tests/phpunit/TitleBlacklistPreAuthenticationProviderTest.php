@@ -22,7 +22,7 @@ class TitleBlacklistPreAuthenticationProviderTest extends MediaWikiIntegrationTe
 		$this->assertEquals( $expectedReqs, $reqs );
 	}
 
-	public function provideGetAuthenticationRequests() {
+	public static function provideGetAuthenticationRequests() {
 		return [
 			[ AuthManager::ACTION_LOGIN, null, [] ],
 			[ AuthManager::ACTION_CREATE, null, [] ],

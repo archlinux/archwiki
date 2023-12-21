@@ -1,7 +1,7 @@
 To update the expected outputs, run the PHP tests with the environment variable
 "DISCUSSIONTOOLS_OVERWRITE_TESTS" set to any value, e.g.:
 
-     DISCUSSIONTOOLS_OVERWRITE_TESTS=1 php tests/phpunit/phpunit.php extensions/DiscussionTools/tests/phpunit/
+     DISCUSSIONTOOLS_OVERWRITE_TESTS=1 composer phpunit:entrypoint -- extensions/DiscussionTools/tests/phpunit/
 
 
 The input HTML files were saved from:

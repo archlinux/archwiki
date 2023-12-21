@@ -1,10 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"TayfunEt."
+			"TayfunEt.",
+			"Zolgoyo"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Jogap ber",
+	"discussiontools-newtopicssubscription-button-subscribe-label": "Abuna ýazylyň",
+	"discussiontools-newtopicssubscription-button-unsubscribe-label": "Abunalykdan çykmak",
+	"discussiontools-newtopicssubscription-button-unsubscribe-tooltip": "Bu sahypada täze mowzuklar açylanda habarnamalary almakdan ýüz öwüriň.",
+	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "Bu sahypada täze mowzuklar açylanda size habar berilmez.",
+	"discussiontools-notification-added-topic-view": "Mowzugy gör",
 	"discussiontools-replylink": "jogap ber",
 	"discussiontools-replywidget-advanced": "Giňeldilen",
 	"discussiontools-replywidget-cancel": "Goýbolsun et",
@@ -23,7 +29,13 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "Abuna ýazylyň",
 	"discussiontools-topicsubscription-button-unsubscribe": "abunalykdan çykmak",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Abunalykdan çykmak",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Bu mowzukda täze teswirler barada habarnamalary alarsyňyz.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Abuna ýazyldyňyz!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Indi bu mowzukdaky täze teswirler barada habarnamalary almarsyňyz.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Abunalykdan çykdyňyz.",
 	"discussiontools-topicsubscription-pager-created": "Ilki bilen abuna ýazyldy",
+	"discussiontools-topicsubscription-pager-newtopics-label": "Täze mowzuklar",
 	"discussiontools-topicsubscription-pager-notified": "Iň soňky bildiriş",
-	"discussiontools-topicsubscription-pager-notified-never": "hiç haçan"
+	"discussiontools-topicsubscription-pager-notified-never": "hiç haçan",
+	"minerva-talk-full-page": "Wiki sahypasy hökmünde okaň"
 }

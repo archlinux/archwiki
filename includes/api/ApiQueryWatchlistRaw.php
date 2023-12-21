@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2008 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
+ * Copyright © 2008 Roan Kattouw <roan.kattouw@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,9 @@
  */
 
 use MediaWiki\ParamValidator\TypeDef\UserDef;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -33,17 +35,10 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 
-	/** @var WatchedItemQueryService */
-	private $watchedItemQueryService;
-
-	/** @var Language */
-	private $contentLanguage;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var GenderCache */
-	private $genderCache;
+	private WatchedItemQueryService $watchedItemQueryService;
+	private Language $contentLanguage;
+	private NamespaceInfo $namespaceInfo;
+	private GenderCache $genderCache;
 
 	/**
 	 * @param ApiQuery $query

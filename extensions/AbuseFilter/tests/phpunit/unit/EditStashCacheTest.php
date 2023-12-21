@@ -58,7 +58,7 @@ class EditStashCacheTest extends MediaWikiUnitTestCase {
 		$this->addToAssertionCount( 1 );
 	}
 
-	public function provideRoundTrip() {
+	public static function provideRoundTrip() {
 		$simple = [ 'page_title' => 'Title', 'new_wikitext' => 'Foo Bar' ];
 		yield 'simple' => [ $simple, $simple ];
 		yield 'noisy' => [

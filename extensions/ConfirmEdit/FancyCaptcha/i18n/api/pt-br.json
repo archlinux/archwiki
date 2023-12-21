@@ -5,7 +5,6 @@
 			"Felipe L. Ewald"
 		]
 	},
-	"apihelp-fancycaptchareload-description": "Gerar um novo FancyCaptcha.",
 	"apihelp-fancycaptchareload-summary": "Gerar um novo FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Gerar um novo FancyCaptcha"
 }

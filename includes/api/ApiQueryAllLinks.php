@@ -22,6 +22,7 @@
 
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -40,14 +41,9 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 	private $useIndex = null;
 	private $props = [];
 
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var GenderCache */
-	private $genderCache;
-
-	/** @var LinksMigration */
-	private $linksMigration;
+	private NamespaceInfo $namespaceInfo;
+	private GenderCache $genderCache;
+	private LinksMigration $linksMigration;
 
 	/**
 	 * @param ApiQuery $query

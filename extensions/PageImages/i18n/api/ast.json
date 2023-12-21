@@ -4,7 +4,6 @@
 			"Xuacu"
 		]
 	},
-	"apihelp-query+pageimages-description": "Devuelve información sobro les imaxes de la páxina, como miniatures y presencia de fotos.",
 	"apihelp-query+pageimages-summary": "Devuelve información sobro les imaxes de la páxina, como miniatures y presencia de fotos.",
 	"apihelp-query+pageimages-example-1": "Llograr el nome y una miniatura de <kbd>100</kbd> píxeles d'una imaxe na páxina d'<kbd>Albert Einstein</kbd>.",
 	"apihelp-query+pageimages-param-prop": "Qué información devolver:\n;thumbnail:URL y dimensiones de la miniatura asociada cola páxina, si la hai.\n;original:URL y tamañu orixinal de la imaxe asociada cola páxina, si la hai.\n;name:Títulu de la imaxe.",

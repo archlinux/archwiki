@@ -57,4 +57,14 @@ class BoxTest extends MediaWikiUnitTestCase {
 		$box = new Box( '\\hbox', 'a' );
 		$this->assertStringContainsString( '</mtext>', $box->renderMML(), 'Render MathML as text.' );
 	}
+
+	public function testTrailingSpaceBoxMML() {
+		$box = new Box( '\\hbox', 'a ' );
+		$this->assertStringContainsString( '&#xA0;', $box->renderMML(), 'Should have trailing rendered space' );
+	}
+
+	public function testPrecedingSpaceBoxMML() {
+		$box = new Box( '\\hbox', ' a' );
+		$this->assertStringContainsString( '&#xA0;', $box->renderMML(), 'Should have preceding rendered space' );
+	}
 }

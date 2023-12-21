@@ -5,7 +5,6 @@
 			"Okras"
 		]
 	},
-	"apihelp-titleblacklist-description": "Подтвердите заголовок страницы, имя файла или имя пользователя в списке TitleBlacklist.",
 	"apihelp-titleblacklist-summary": "Подтвердите заголовок страницы, имя файла или имя пользователя в списке TitleBlacklist.",
 	"apihelp-titleblacklist-param-title": "Строка для проверки против черного списка.",
 	"apihelp-titleblacklist-param-action": "Действие, которое должно быть проверено.",

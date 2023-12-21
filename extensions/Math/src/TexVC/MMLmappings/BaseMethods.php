@@ -23,14 +23,13 @@ use MediaWiki\Extension\Math\TexVC\Nodes\TexNode;
  */
 class BaseMethods {
 
-	public static function checkAndParse( $input, $passedArgs, $operatorContent, TexNode $node ) {
+	public static function checkAndParse( $input, $passedArgs, $operatorContent, TexNode $node, $prepareInput = true ) {
 		if ( !is_string( $input ) ) {
 			// just discard these elements, sometimes empty TexArray
 			return null;
 		}
-		$input = trim( $input );
-		if ( str_starts_with( $input, "\\" ) ) {
-			$input = substr( $input, 1 );
+		if ( $prepareInput ) {
+			$input = MMLutil::inputPreparation( $input );
 		}
 
 		// Checking for a named parsing function
@@ -42,11 +41,14 @@ class BaseMethods {
 				// probably refactored later
 				$resFct = AMSMappings::getEnvironmentByKey( $input );
 				if ( $resFct == null ) {
-					$resFct = BaseMappings::getcancelByKey( $input );
+					$resFct = BaseMappings::getCustomByKey( $input );
 					if ( $resFct == null ) {
-						$resFct = BaseMappings::getCustomByKey( $input );
+						$resFct = BaseMappings::getSpecialByKey( $input );
 						if ( $resFct == null ) {
-							$resFct = BaseMappings::getMhChemByKey( $input );
+							$resFct = BaseMappings::getCancelByKey( $input );
+								if ( $resFct == null ) {
+									$resFct = BaseMappings::getMhChemByKey( $input );
+								}
 						}
 					}
 				}
@@ -72,8 +74,11 @@ class BaseMethods {
 		}
 	}
 
-	public function checkAndParseOperator( $input, $node, $passedArgs, $operatorContent ) {
-		$input = MMLutil::inputPreparation( $input );
+	public function checkAndParseOperator( $input, $node, $passedArgs, $operatorContent,
+										   $state, $prepareInput = true ) {
+		if ( $prepareInput ) {
+			$input = MMLutil::inputPreparation( $input );
+		}
 		$resOperator = BaseMappings::getOperatorByKey( $input );
 		if ( $resOperator == null ) {
 
@@ -100,7 +105,7 @@ class BaseMethods {
 			return null;
 		}
 		try {
-			return $this->parseOperator( $node, $passedArgs, $operatorContent, $input, ...$resOperator );
+			return $this->parseOperator( $node, $passedArgs, $operatorContent, $input, $state, ...$resOperator );
 
 		} catch ( ArgumentCountError $errArgcount ) {
 			return null;
@@ -111,34 +116,48 @@ class BaseMethods {
 		// Some custom parsing from operatorDict
 		switch ( $input ) {
 			case ";":
-				$mmlMStyle = new MMLmstyle( "", [ "scriptlevel" => "0" ] );
-				$mSpace = new MMLmspace( "", [ "width" => "0.278em" ] );
-				return $mmlMStyle->encapsulateRaw( $mSpace->encapsulate() );
 			case ",":
 				// this maybe just a default case, this is not rendered when it is the last in row
 				$mmlMo = new MMLmo();
-				return $mmlMo->encapsulate( "," );
+				return $mmlMo->encapsulate( $input );
+			case "<":
+				$mmlMo = new MMLmo();
+				return $mmlMo->encapsulateRaw( "&lt;" );
+			case ">":
+				$mmlMo = new MMLmo();
+				return $mmlMo->encapsulateRaw( "&gt;" );
+			case "\\":
+				 // instead of carriage return, force whitespace here:
+				 // see: https://gerrit.wikimedia.org/r/c/mediawiki/extensions/Math/+/961213
+				$mspace = new MMLmspace( "", [ "width" => "0.5em" ] );
+				return $mspace->getEmpty();
 		}
 		return $input;
 	}
 
-	public function parseOperator( $node, $passedArgs, $operatorContent, $name, $uc = null, $attrs = [] ) {
+	public function parseOperator( $node, $passedArgs, $operatorContent, $name, $state, $uc = null, $attrs = [] ) {
 		// if($name == "equiv" || $name == "dotplus" || $name == "mp"  || $name == "pm"){
 		$attrs = array_merge( $passedArgs, $attrs ); // this is rather a workaround
 		$mo = new MMLmo( "", $attrs );
-		$text = $mo->encapsulateRaw( $uc );
+
+		if ( $state != null && array_key_exists( "not", $state ) && $state["not"] ) {
+			$text = $mo->encapsulateRaw( $uc . "&#x338;" );
+		} else {
+			$text = $mo->encapsulateRaw( $uc );
+		}
 
 		// Some attributes are nnot used which come from the mapping, tbd refactor this
 		$text = str_replace( " largeop=\"\"", "", $text );
 		$text = str_replace( "variantForm=\"True\"", "data-mjx-alternate=\"1\"", $text );
 		$text = str_replace( "variantForm=\"1\"", "data-mjx-alternate=\"1\"", $text );
-
 		$text = str_replace( " movesupsub=\"1\"", "", $text );
 		return str_replace( "texClass", "data-mjx-texclass", $text );
 	}
 
-	public function checkAndParseIdentifier( $input, $node, $passedArgs, $operatorContent ) {
-		$input = MMLutil::inputPreparation( $input );
+	public function checkAndParseIdentifier( $input, $node, $passedArgs, $operatorContent, $prepareInput = true ) {
+		if ( $prepareInput ) {
+			$input = MMLutil::inputPreparation( $input );
+		}
 		$resIdentifier = BaseMappings::getIdentifierByKey( $input );
 		if ( $resIdentifier == null ) {
 			$resIdentifier = AMSMappings::getIdentifierByKey( $input );
@@ -201,9 +220,11 @@ class BaseMethods {
 		return $mo->encapsulateRaw( $resDelimiter[0] );
 	}
 
-	public function checkAndParseMathCharacter( $input, $node, $passedArgs, $operatorContent ) {
-		$inputP = MMLutil::inputPreparation( $input );
-		$resChar = BaseMappings::getCharacterByKey( $inputP );
+	public function checkAndParseMathCharacter( $input, $node, $passedArgs, $operatorContent, $prepareInput = true ) {
+		if ( $prepareInput ) {
+			$input = MMLutil::inputPreparation( $input );
+		}
+		$resChar = BaseMappings::getCharacterByKey( $input );
 		if ( $resChar == null ) {
 			return null;
 		}
@@ -216,13 +237,15 @@ class BaseMethods {
 		return $mi->encapsulateRaw( $enc );
 	}
 
-	public function checkAndParseColor( $input, $node, $passedArgs, $operatorContent ) {
+	public function checkAndParseColor( $input, $node, $passedArgs, $operatorContent, $prepareInput = true ) {
 		// tbd usually this encapsulates the succeeding box element
 		if ( $operatorContent == null ) {
 			return null;
 		}
 
-		$input = MMLutil::inputPreparation( $input );
+		if ( $prepareInput ) {
+			$input = MMLutil::inputPreparation( $input );
+		}
 		if ( !( $input === 'color' || $input === 'pagecolor' ) ) {
 			return null;
 		}

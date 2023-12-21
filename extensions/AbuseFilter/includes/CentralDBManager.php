@@ -11,7 +11,7 @@ class CentralDBManager {
 
 	/** @var LBFactory */
 	private $loadBalancerFactory;
-	/** @var string|null */
+	/** @var string|false */
 	private $dbName;
 	/** @var bool */
 	private $filterIsCentral;
@@ -41,7 +41,7 @@ class CentralDBManager {
 
 		return $this->loadBalancerFactory
 			->getMainLB( $this->dbName )
-			->getConnectionRef( $index, [], $this->dbName );
+			->getConnection( $index, [], $this->dbName );
 	}
 
 	/**

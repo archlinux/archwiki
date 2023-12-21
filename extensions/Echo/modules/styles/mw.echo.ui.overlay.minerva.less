@@ -1,4 +1,4 @@
-@import 'mediawiki.ui/variables';
+@import 'mediawiki.skin.variables.less';
 
 @media all and ( max-width: @width-breakpoint-tablet ) {
 	// On mobile screens position the anchor arrow correctly so it points to the
@@ -21,8 +21,8 @@
 		padding: 0.5em;
 		font-size: 16 / 14em;
 		box-shadow: none;
-		border: 1px solid @colorGray12;
-		border-width: 1px 0 0 0;
+		border: @border-width-base @border-style-base @border-color-subtle;
+		border-width: @border-width-base 0 0 0;
 		// Override the positioning of the menu
 		// so it is "stuck" on the bottom of the
 		// notification overlay panel

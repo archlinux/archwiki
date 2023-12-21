@@ -31,6 +31,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\File\FileDeleteForm;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use OldLocalFile;
 use PermissionsError;
 
@@ -63,6 +64,11 @@ class FileDeleteAction extends DeleteAction {
 		}
 	}
 
+	protected function getPageTitle() {
+		$title = $this->getTitle();
+		return $this->msg( 'filedelete' )->plaintextParams( $title->getText() );
+	}
+
 	protected function tempDelete() {
 		$file = $this->file;
 		/** @var LocalFile $file */'@phan-var LocalFile $file';
@@ -73,10 +79,7 @@ class FileDeleteAction extends DeleteAction {
 		$context = $this->getContext();
 		$title = $this->getTitle();
 
-		$this->runExecuteChecks();
-
 		$outputPage = $context->getOutput();
-		$this->prepareOutput( $context->msg( 'filedelete', $title->getText() ) );
 
 		$request = $context->getRequest();
 
@@ -128,7 +131,7 @@ class FileDeleteAction extends DeleteAction {
 			);
 		}
 		if ( $status->isOK() ) {
-			$outputPage->setPageTitle( $context->msg( 'actioncomplete' ) );
+			$outputPage->setPageTitleMsg( $context->msg( 'actioncomplete' ) );
 			$outputPage->addHTML( $this->prepareMessage( 'filedelete-success' ) );
 			// Return to the main page if we just deleted all versions of the
 			// file, otherwise go back to the description page
@@ -153,7 +156,10 @@ class FileDeleteAction extends DeleteAction {
 	private function showConfirm() {
 		$this->prepareOutputForForm();
 		$this->showFormWarnings();
-		$this->showForm( $this->getDefaultReason() );
+		$form = $this->getForm();
+		if ( $form->show() ) {
+			$this->onSuccess();
+		}
 		$this->showEditReasonsLinks();
 		$this->showLogEntries();
 	}
@@ -176,7 +182,10 @@ class FileDeleteAction extends DeleteAction {
 				wfEscapeWikiText( $this->getTitle()->getText() ),
 				$lang->date( $this->oldFile->getTimestamp(), true ),
 				$lang->time( $this->oldFile->getTimestamp(), true ),
-				wfExpandUrl( $this->file->getArchiveUrl( $this->oldImage ), PROTO_CURRENT )
+				(string)MediaWikiServices::getInstance()->getUrlUtils()->expand(
+					$this->file->getArchiveUrl( $this->oldImage ),
+					PROTO_CURRENT
+				)
 			)->parseAsBlock();
 		} else {
 			return $this->getContext()->msg(
@@ -200,11 +209,8 @@ class FileDeleteAction extends DeleteAction {
 		return $this->getTitle()->getLocalURL( $q );
 	}
 
-	/**
-	 * @inheritDoc
-	 */
-	protected function runExecuteChecks(): void {
-		parent::runExecuteChecks();
+	protected function checkCanExecute( User $user ) {
+		parent::checkCanExecute( $user );
 
 		if ( $this->getContext()->getConfig()->get( MainConfigNames::UploadMaintenance ) ) {
 			throw new ErrorPageError( 'filedelete-maintenance-title', 'filedelete-maintenance' );
@@ -227,13 +233,5 @@ class FileDeleteAction extends DeleteAction {
 			self::MSG_EDIT_REASONS => 'filedelete-edit-reasonlist',
 			self::MSG_EDIT_REASONS_SUPPRESS => 'filedelete-edit-reasonlist-suppress',
 		];
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	protected function getDefaultReason(): string {
-		// TODO Should we autogenerate something for files?
-		return $this->getRequest()->getText( 'wpReason' );
 	}
 }

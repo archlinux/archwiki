@@ -11,7 +11,7 @@ use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaError;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreter;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreterBadVersionError;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreterNotFoundError;
-use MWException;
+use RuntimeException;
 use UtfNormal\Validator;
 
 class LuaSandboxInterpreter extends LuaInterpreter {
@@ -45,7 +45,7 @@ class LuaSandboxInterpreter extends LuaInterpreter {
 				'The luasandbox extension is not present, this engine cannot be used.' );
 		}
 
-		if ( !is_callable( 'LuaSandbox::getVersionInfo' ) ) {
+		if ( !is_callable( [ LuaSandbox::class, 'getVersionInfo' ] ) ) {
 			throw new LuaInterpreterBadVersionError(
 				'The luasandbox extension is too old (version 1.6+ is required), ' .
 					'this engine cannot be used.'
@@ -138,7 +138,7 @@ class LuaSandboxInterpreter extends LuaInterpreter {
 				// Per the documentation on LuaSandboxFunction::call, a return value
 				// of false means that something went wrong and it's PHP's fault,
 				// so throw a "real" exception.
-				throw new MWException(
+				throw new RuntimeException(
 					__METHOD__ . ': LuaSandboxFunction::call returned false' );
 			}
 			return $ret;

@@ -967,3 +967,64 @@ parsoid=wt2html
 !! html/parsoid
 <meta typeof="mw:Param mw:Annotation/dummyanno" about="#mwt1" data-mw='{"parts":[{"templatearg":{"target":{"wt":"1"},"params":{"1":{"wt":"&lt;dummyanno>&lt;!--T:2--> Purge&lt;/dummyanno>"}},"i":0}}],"rangeId":"mwa0","extendedRange":false,"wtOffsets":[5,16]}'/><span about="#mwt1"><!--T:2--></span><pre about="#mwt1">Purge</pre><meta typeof="mw:Annotation/dummyanno/End" about="#mwt1" data-mw='{"wtOffsets":[32,44]}'/>
 !! end
+
+!! test
+Should handle poorly nested range - T325575
+!! options
+annotations=1
+parsoid=wt2html
+!! wikitext
+<dummyanno><ann2><code>hello</ann2></dummyanno></code>
+!! html/parsoid
+<p><span typeof="mw:ExtendedAnnRange" data-parsoid='{"autoInsertedStart":true,"autoInsertedEnd":true}'><meta typeof="mw:Annotation/dummyanno" data-mw='{"rangeId":"mwa0","extendedRange":true,"wtOffsets":[0,11]}'/><span typeof="mw:ExtendedAnnRange" data-parsoid='{"autoInsertedStart":true,"autoInsertedEnd":true}'><meta typeof="mw:Annotation/ann2" data-mw='{"rangeId":"mwa1","extendedRange":true,"wtOffsets":[11,17]}'/><code data-parsoid='{"stx":"html"}'>hello</code><meta typeof="mw:Annotation/ann2/End" data-parsoid='{"wasMoved":true}' data-mw='{"wtOffsets":[28,35]}'/></span><meta typeof="mw:Annotation/dummyanno/End" data-parsoid='{"wasMoved":true}' data-mw='{"wtOffsets":[35,47]}'/></span></p>
+!! end
+
+!! test
+Fostering in div - "end" tag should be after the "start" tag
+!! options
+annotations=1
+parsoid=wt2html
+!! wikitext
+<table>
+<tr>
+<td><dummyanno>some <ann2>stuff</td>
+</tr>
+<div>hello</ann2></dummyanno></div>
+<tr><td>hello</td></tr>
+</table>
+!! html/parsoid
+<div typeof="mw:ExtendedAnnRange" data-parsoid='{"autoInsertedStart":true,"autoInsertedEnd":true}'><meta typeof="mw:Annotation/dummyanno" data-parsoid='{"wasMoved":true}' data-mw='{"rangeId":"mwa0","extendedRange":true,"wtOffsets":[17,28]}'/><div typeof="mw:ExtendedAnnRange" data-parsoid='{"autoInsertedStart":true,"autoInsertedEnd":true}'><meta typeof="mw:Annotation/ann2" data-parsoid='{"wasMoved":true}' data-mw='{"rangeId":"mwa1","extendedRange":true,"wtOffsets":[33,39]}'/><div data-parsoid='{"stx":"html","fostered":true}'>hello</div><table data-parsoid='{"stx":"html"}'>
+<tbody><tr data-parsoid='{"stx":"html"}'>
+<td data-parsoid='{"stx":"html"}'>some stuff</td>
+</tr>
+
+<tr data-parsoid='{"stx":"html"}'><td data-parsoid='{"stx":"html"}'>hello</td></tr>
+</tbody></table><meta typeof="mw:Annotation/ann2/End" data-parsoid='{"wasMoved":true}' data-mw='{"wtOffsets":[66,73]}'/></div><meta typeof="mw:Annotation/dummyanno/End" data-parsoid='{"wasMoved":true}' data-mw='{"wtOffsets":[73,85]}'/></div>
+!! end
+
+# The wt2wt test here is failing because of the start tags (which displays another issue, but which is independent from fostering).
+# But this way we can test that the end tags get included in the transclusion as they should, at least.
+!! test
+Fostering in div with fostered transclusion should extend the transclusion on the end annotation tag
+!! options
+annotations=1
+parsoid=wt2html,wt2wt
+!! wikitext
+<table>
+<tr>
+<td><dummyanno>some <ann2>stuff</td>
+</tr>
+{{1x|transclusion}}
+<div>hello</ann2></dummyanno></div>
+<tr><td>hello</td></tr>
+</table>
+!! html/parsoid
+<div typeof="mw:ExtendedAnnRange" about="#mwt2" data-parsoid='{"autoInsertedStart":true,"autoInsertedEnd":true}'><meta typeof="mw:Annotation/dummyanno" about="#mwt2" data-parsoid='{"wasMoved":true}' data-mw='{"rangeId":"mwa0","extendedRange":true,"wtOffsets":[17,28]}'/><div typeof="mw:ExtendedAnnRange" about="#mwt2" data-parsoid='{"autoInsertedStart":true,"autoInsertedEnd":true}'><meta typeof="mw:Annotation/ann2" about="#mwt2" data-parsoid='{"wasMoved":true}' data-mw='{"rangeId":"mwa1","extendedRange":true,"wtOffsets":[33,39]}'/><p about="#mwt2" typeof="mw:Transclusion" data-parsoid='{"fostered":true,"autoInsertedStart":true,"firstWikitextNode":"TABLE_html","pi":[[{"k":"1"}]]}' data-mw='{"parts":["&lt;table>\n&lt;tr>\n&lt;td>&lt;dummyanno>some &lt;ann2>stuff&lt;/td>\n&lt;/tr>\n",{"template":{"target":{"wt":"1x","href":"./Template:1x"},"params":{"1":{"wt":"transclusion"}},"i":0}},"\n&lt;div>hello&lt;/ann2>&lt;/dummyanno>&lt;/div>\n&lt;tr>&lt;td>hello&lt;/td>&lt;/tr>\n&lt;/table>"]}'>transclusion</p><div about="#mwt2">hello</div><table about="#mwt2">
+<tbody><tr>
+<td>some stuff</td>
+</tr>
+
+
+<tr><td>hello</td></tr>
+</tbody></table><meta typeof="mw:Annotation/ann2/End" about="#mwt2" data-mw='{"wtOffsets":[86,93]}'/></div><meta typeof="mw:Annotation/dummyanno/End" about="#mwt2" data-parsoid='{"wasMoved":true}' data-mw='{"wtOffsets":[93,105]}'/></div>
+!! end

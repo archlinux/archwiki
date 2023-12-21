@@ -249,7 +249,6 @@
 	"moveddeleted-notice": "Ogbá yí e deñ.\nÉ kpaluñ, í déwñ, kpaí mí óla kí ma dú télo Tódú ogbá yí ma dú nwa ugbo ma kí ohaila nwu gwo.",
 	"slot-name-main": "Ògbolo",
 	"content-model-wikitext": "Wikitext",
-	"content-model-javascript": "JavaScript",
 	"undo-failure": "Éwn má nwóché ma néké dabi ché kéñ todo ogu kí dí agbadé ma",
 	"viewpagelogs": "Gí amenwu óla kí dí ogbá yí",
 	"currentrev-asof": "Éyi etitò égbá $1",
@@ -278,7 +277,7 @@
 	"compareselectedversions": "Má mí ojojí éwn má dù na dabi ché",
 	"editundo": "dabiwubi",
 	"diff-empty": "(Ojoji dún)",
-	"diff-multi-sameuser": "({{PLURAL:$1|agbadé oka|$1 agbadé Éwn má dabi kó }} kpaí éné eku ma mà du nwañ)",
+	"diff-multi-sameuser": "({{PLURAL:$1|agbadé oka|$1 agbadé Éwn má dabi kó }} éné alukàté{{GENDER:$3|eneku}} kí ma tí eju gé deñ)",
 	"diff-multi-otherusers": "({{PLURAL:$1|agbadé oka ma dabi kó|$1 amenwu kí da agbadé má dabi kó}} {{PLURAL:$2|éné eku oka ómuné|$2 énéeku}} kí má mà du nwañ)",
 	"searchresults": "Téné oyí",
 	"searchresults-title": "Téné oyí $1",
@@ -617,6 +616,6 @@
 	"blockedtext-expiration-time": "Ekó kí é gbóna a gbojì: $1",
 	"blockedtext-intended-blockee": "Éné kú ma téné gbóna ñwu chí:$1",
 	"blockedtext-contact-blocker-admin": "É neké ka nwí $1 bakí ene ómuné [[{{MediaWiki:Grouppage-sysop}}|administrator]] tódú mé kóla tódù óna kù ma kpa yé í.",
-	"blockedtext-block-ip": "IP address wé abajoí chí $1",
+	"blockedtext-block-ip": "IP address wé abajoí chí $1.",
 	"blockedtext-include-details-queries": "Kí yó jó amenwu ku ma kó ta té yí fu kó té amenwu ké téné kó í"
 }

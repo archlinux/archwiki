@@ -10,6 +10,7 @@
 
 namespace MediaWiki\Extension\VisualEditor;
 
+use MediaWiki\Title\Title;
 use MediaWiki\Widget\TitleInputWidget;
 use OOUI\ActionFieldLayout;
 use OOUI\ButtonWidget;
@@ -17,9 +18,7 @@ use OOUI\FieldsetLayout;
 use OOUI\FormLayout;
 use OOUI\ProgressBarWidget;
 use OOUI\TextInputWidget;
-use SkinTemplate;
 use SpecialPage;
-use Title;
 use User;
 
 class SpecialCollabPad extends SpecialPage {
@@ -146,39 +145,5 @@ class SpecialCollabPad extends SpecialPage {
 			$progressBar->addClasses( [ 'oo-ui-element-hidden' ] );
 		}
 		$output->addHTML( $progressBar . $form );
-	}
-
-	/**
-	 * Get the sub page from the current title
-	 *
-	 * @param Title $title Full title
-	 * @return null|Title Sub page title
-	 */
-	public static function getSubPage( Title $title ) {
-		preg_match( '`^[^/]+/(.*)`', $title->getPrefixedText(), $matches );
-		return count( $matches ) ? Title::newFromText( $matches[ 1 ] ) : null;
-	}
-
-	/**
-	 * @param SkinTemplate &$skin The skin template on which the UI is built.
-	 * @param array &$links Navigation links.
-	 * @return bool Always true.
-	 */
-	public static function onSkinTemplateNavigationSpecialPage( SkinTemplate &$skin, array &$links ) {
-		$title = $skin->getTitle();
-		if ( $title && $title->isSpecial( 'CollabPad' ) ) {
-			$subPage = self::getSubPage( $title );
-			$links['namespaces']['special']['text'] = $skin->msg( 'collabpad' )->text();
-			if ( $subPage ) {
-				$links['namespaces']['special']['href'] =
-					Title::newFromText( 'Special:CollabPad' )->getLocalURL();
-				$links['namespaces']['special']['class'] = '';
-
-				$links['namespaces']['pad']['text'] = $subPage->getPrefixedText();
-				$links['namespaces']['pad']['href'] = '';
-				$links['namespaces']['pad']['class'] = 'selected';
-			}
-		}
-		return true;
 	}
 }

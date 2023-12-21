@@ -8,16 +8,36 @@ namespace Cite\Hooks;
 
 use ApiQuerySiteinfo;
 use Config;
+use ExtensionRegistry;
 use MediaWiki\Api\Hook\APIQuerySiteInfoGeneralInfoHook;
+use MediaWiki\EditPage\EditPage;
+use MediaWiki\Hook\EditPage__showEditForm_initialHook;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook;
 use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
-use Title;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserOptionsLookup;
+use OutputPage;
 
+/**
+ * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
+ */
 class CiteHooks implements
 	ContentHandlerDefaultModelForHook,
 	ResourceLoaderGetConfigVarsHook,
-	APIQuerySiteInfoGeneralInfoHook
+	APIQuerySiteInfoGeneralInfoHook,
+	EditPage__showEditForm_initialHook
 {
+
+	/** @var UserOptionsLookup */
+	private $userOptionsLookup;
+
+	/**
+	 * @param UserOptionsLookup $userOptionsLookup
+	 */
+	public function __construct( UserOptionsLookup $userOptionsLookup ) {
+		$this->userOptionsLookup = $userOptionsLookup;
+	}
+
 	/**
 	 * Convert the content model of a message that is actually JSON to JSON. This
 	 * only affects validation and UI when saving and editing, not loading the
@@ -47,6 +67,7 @@ class CiteHooks implements
 	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
 		$vars['wgCiteVisualEditorOtherGroup'] = $config->get( 'CiteVisualEditorOtherGroup' );
 		$vars['wgCiteResponsiveReferences'] = $config->get( 'CiteResponsiveReferences' );
+		$vars['wgCiteBookReferencing'] = $config->get( 'CiteBookReferencing' );
 	}
 
 	/**
@@ -59,6 +80,31 @@ class CiteHooks implements
 	 */
 	public function onAPIQuerySiteInfoGeneralInfo( $module, &$results ) {
 		$results['citeresponsivereferences'] = $module->getConfig()->get( 'CiteResponsiveReferences' );
+	}
+
+	/**
+	 * Hook: EditPage::showEditForm:initial
+	 *
+	 * Add the module for WikiEditor
+	 *
+	 * @param EditPage $editPage the current EditPage object.
+	 * @param OutputPage $outputPage object.
+	 */
+	public function onEditPage__showEditForm_initial( $editPage, $outputPage ) {
+		if ( $editPage->contentModel !== CONTENT_MODEL_WIKITEXT ) {
+			return;
+		}
+
+		$wikiEditorEnabled = ExtensionRegistry::getInstance()->isLoaded( 'WikiEditor' );
+
+		$user = $editPage->getArticle()->getContext()->getUser();
+
+		if (
+			$wikiEditorEnabled &&
+			$this->userOptionsLookup->getBoolOption( $user, 'usebetatoolbar' )
+		) {
+			$outputPage->addModules( 'ext.cite.wikiEditor' );
+		}
 	}
 
 }

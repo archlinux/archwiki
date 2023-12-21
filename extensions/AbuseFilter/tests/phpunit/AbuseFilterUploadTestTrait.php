@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\FauxRequest;
 
 /**
  * This trait can be used to perform uploads in integration tests.

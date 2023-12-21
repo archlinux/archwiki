@@ -9,7 +9,7 @@ class Less_Environment {
 	 *
 	 * - rootpath: rootpath to append to URLs
 	 *
-	 * @var array|null $currentFileInfo;
+	 * @var array|null $currentFileInfo
 	 */
 	public $currentFileInfo;
 

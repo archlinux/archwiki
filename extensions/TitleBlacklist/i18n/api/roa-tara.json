@@ -4,7 +4,6 @@
 			"Joetaras"
 		]
 	},
-	"apihelp-titleblacklist-description": "Valide 'n u titole d'a pàgene, nome d'u file, o nome utende sus 'a TitleBlackList.",
 	"apihelp-titleblacklist-summary": "Valide 'n u titole d'a pàgene, nome d'u file, o nome utende sus 'a TitleBlackList.",
 	"apihelp-titleblacklist-param-title": "'A stringhe da validà sus 'a lista gnore.",
 	"apihelp-titleblacklist-param-action": "L'azione ha state verificate.",

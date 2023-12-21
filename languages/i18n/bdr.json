@@ -533,6 +533,7 @@
 	"nstab-mainpage": "Tekokon Laman",
 	"skin-action-delete": "Penelanyap",
 	"blockedtext-start-time": "Timpoon halangan: $1",
+	"blockedtext-block-ip": "Alamat IP betiru $1.",
 	"renameusernew": "Oron pengguno bau:",
 	"renameuserreason": "Pasal:",
 	"renameusersubmit": "Ngedede’"

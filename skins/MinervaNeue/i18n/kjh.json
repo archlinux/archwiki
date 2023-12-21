@@ -3,14 +3,16 @@
 		"authors": [
 			"AlexandrL714",
 			"Jolka Kaj",
-			"Joseph"
+			"Joseph",
+			"Oxianboal"
 		]
 	},
-	"mobile-frontend-history": "Пу страницазының тӱзедіглерінің тархынын кӧрерге.",
-	"mobile-frontend-home-button": "Пас",
+	"mobile-frontend-history": "Пу страницаның тӱзедіглер тархынын кӧрерге.",
+	"mobile-frontend-home-button": "Ӧӧн",
 	"mobile-frontend-language-article-heading": "Тіл",
 	"mobile-frontend-main-menu-login": "Кірерге",
+	"mobile-frontend-main-menu-nearby": "Хости",
 	"mobile-frontend-main-menu-settings": "Настройкалар",
-	"mobile-frontend-placeholder": "Тілирге {{SITENAME}}",
+	"mobile-frontend-placeholder": "{{SITENAME}} сайтта тілирге",
 	"mobile-frontend-random-button": "Рандом"
 }

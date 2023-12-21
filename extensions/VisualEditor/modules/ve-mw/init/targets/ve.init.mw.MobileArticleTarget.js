@@ -346,23 +346,6 @@ ve.init.mw.MobileArticleTarget.prototype.adjustContentPadding = function () {
 /**
  * @inheritdoc
  */
-ve.init.mw.MobileArticleTarget.prototype.getSaveButtonLabel = function ( startProcess ) {
-	var suffix = startProcess ? '-start' : '';
-	// The following messages can be used here:
-	// * visualeditor-savedialog-label-publish-short
-	// * visualeditor-savedialog-label-publish-short-start
-	// * visualeditor-savedialog-label-save-short
-	// * visualeditor-savedialog-label-save-short-start
-	if ( mw.config.get( 'wgEditSubmitButtonLabelPublish' ) ) {
-		return OO.ui.deferMsg( 'visualeditor-savedialog-label-publish-short' + suffix );
-	}
-
-	return OO.ui.deferMsg( 'visualeditor-savedialog-label-save-short' + suffix );
-};
-
-/**
- * @inheritdoc
- */
 ve.init.mw.MobileArticleTarget.prototype.switchToFallbackWikitextEditor = function ( modified ) {
 	var dataPromise;
 	if ( modified ) {
@@ -432,13 +415,13 @@ ve.init.mw.MobileArticleTarget.prototype.saveComplete = function ( data ) {
 	var fragment = this.getSectionHashFromPage().slice( 1 );
 
 	this.overlay.sectionId = fragment;
-	this.overlay.onSaveComplete( data.newrevid );
+	this.overlay.onSaveComplete( data.newrevid, data.tempusercreatedredirect, data.tempusercreated );
 };
 
 /**
  * @inheritdoc
  */
-ve.init.mw.MobileArticleTarget.prototype.saveFail = function ( doc, saveData, wasRetry, code, data ) {
+ve.init.mw.MobileArticleTarget.prototype.saveFail = function ( doc, saveData, code, data ) {
 	// parent method
 	ve.init.mw.MobileArticleTarget.super.prototype.saveFail.apply( this, arguments );
 
@@ -450,23 +433,6 @@ ve.init.mw.MobileArticleTarget.prototype.saveFail = function ( doc, saveData, wa
  */
 ve.init.mw.MobileArticleTarget.prototype.tryTeardown = function () {
 	this.overlay.onExitClick( $.Event() );
-};
-
-/**
- * @inheritdoc
- */
-ve.init.mw.MobileArticleTarget.prototype.teardown = function () {
-	var target = this;
-	// Parent method
-	return ve.init.mw.MobileArticleTarget.super.prototype.teardown.call( this ).then( function () {
-		if ( !target.isViewPage ) {
-			var newUrl = new URL( target.viewUrl );
-			if ( mw.config.get( 'wgIsRedirect' ) ) {
-				newUrl.searchParams.set( 'redirect', 'no' );
-			}
-			location.href = newUrl;
-		}
-	} );
 };
 
 /**
@@ -493,15 +459,15 @@ ve.init.mw.MobileArticleTarget.prototype.setupToolbar = function ( surface ) {
 				name: 'editMode',
 				type: 'list',
 				icon: 'edit',
-				title: OO.ui.deferMsg( 'visualeditor-mweditmode-tooltip' ),
-				label: OO.ui.deferMsg( 'visualeditor-mweditmode-tooltip' ),
+				title: ve.msg( 'visualeditor-mweditmode-tooltip' ),
+				label: ve.msg( 'visualeditor-mweditmode-tooltip' ),
 				invisibleLabel: true,
-				include: [ 'editModeVisual', 'editModeSource' ]
+				include: [ { group: 'editMode' } ]
 			},
 			{
 				name: 'save',
 				type: 'bar',
-				include: [ 'showMobileSave' ]
+				include: [ 'showSave' ]
 			}
 		]
 	);
@@ -511,7 +477,6 @@ ve.init.mw.MobileArticleTarget.prototype.setupToolbar = function ( surface ) {
 
 	this.toolbarGroups = originalToolbarGroups;
 
-	this.toolbar.$group.addClass( 've-init-mw-mobileArticleTarget-editTools' );
 	this.toolbar.$element.addClass( 've-init-mw-mobileArticleTarget-toolbar' );
 	this.toolbar.$popups.addClass( 've-init-mw-mobileArticleTarget-toolbar-popups' );
 };
@@ -550,17 +515,3 @@ ve.init.mw.MobileArticleTarget.prototype.done = function () {
 /* Registration */
 
 ve.init.mw.targetFactory.register( ve.init.mw.MobileArticleTarget );
-
-/**
- * Mobile save tool
- */
-ve.ui.MWMobileSaveTool = function VeUiMWMobileSaveTool() {
-	// Parent Constructor
-	ve.ui.MWMobileSaveTool.super.apply( this, arguments );
-};
-OO.inheritClass( ve.ui.MWMobileSaveTool, ve.ui.MWSaveTool );
-ve.ui.MWMobileSaveTool.static.name = 'showMobileSave';
-ve.ui.MWMobileSaveTool.static.icon = 'next';
-ve.ui.MWMobileSaveTool.static.displayBothIconAndLabel = false;
-
-ve.ui.toolFactory.register( ve.ui.MWMobileSaveTool );

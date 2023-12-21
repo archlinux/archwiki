@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
+use MediaWiki\Config\MultiConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Languages\LanguageConverterFactory;
@@ -8,6 +10,7 @@ use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\User\UserIdentityValue;
 use Wikimedia\TestingAccessWrapper;
 
@@ -17,9 +20,6 @@ use Wikimedia\TestingAccessWrapper;
 class LanguageIntegrationTest extends LanguageClassesTestCase {
 	use DummyServicesTrait;
 	use LanguageNameUtilsTestTrait;
-
-	/** @var array Copy of the handlers for LanguageGetTranslatedLanguageNames */
-	private $origHandlers;
 
 	private function newLanguage( $class = Language::class, $code = 'en' ) {
 		// Needed to support the setMwGlobals calls for the various tests, but this should
@@ -41,12 +41,6 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		// Don't allow installed hooks to run, except if a test restores them via origHooks (needed
-		// for testIsKnownLanguageTag_cldr)
-		$this->origHandlers = $this->getServiceContainer()->getHookContainer()
-			->getLegacyHandlers( 'LanguageGetTranslatedLanguageNames' );
-
-		$this->clearHook( 'LanguageGetTranslatedLanguageNames' );
 		$this->overrideConfigValue( MainConfigNames::UsePigLatinVariant, true );
 	}
 
@@ -1595,9 +1589,8 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 		$translateNumerals, $langCode, $number, $noSeparators, $expected
 	) {
 		$this->hideDeprecated( 'Language::formatNum with a non-numeric string' );
-		$this->hideDeprecated( 'Language::factory' );
 		$this->overrideConfigValue( MainConfigNames::TranslateNumerals, $translateNumerals );
-		$lang = Language::factory( $langCode );
+		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( $langCode );
 		if ( $noSeparators ) {
 			$formattedNum = $lang->formatNumNoSeparators( $number );
 		} else {
@@ -1607,7 +1600,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 		$this->assertEquals( $expected, $formattedNum );
 	}
 
-	public function provideFormatNum() {
+	public static function provideFormatNum() {
 		return [
 			[ true, 'en', 100, false, '100' ],
 			[ true, 'en', 101, true, '101' ],
@@ -1666,6 +1659,14 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 			[ false, 'ar', "1234.5", false, "1٬234٫5" ],
 			[ true, 'ar', "1", false, "١" ],
 			[ true, 'ar', "1234.5", false, "١٬٢٣٤٫٥" ],
+
+			// Test minimumGroupingDigits > 1
+			[ false, 'pl', 1, false, '1' ],
+			[ false, 'pl', 100, false, '100' ],
+			[ false, 'pl', 1000, false, '1000' ],
+			[ false, 'pl', 10000, false, "10\u{00A0}000" ],
+			[ false, 'pl', 1000000, false, "1\u{00A0}000\u{00A0}000" ],
+			[ false, 'pl', '1000.1', false, "1000,1" ],
 		];
 	}
 
@@ -1674,8 +1675,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	 * @dataProvider parseFormattedNumberProvider
 	 */
 	public function testParseFormattedNumber( $langCode, $number ) {
-		$this->hideDeprecated( 'Language::factory' );
-		$lang = Language::factory( $langCode );
+		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( $langCode );
 
 		$localisedNum = $lang->formatNum( $number );
 		$normalisedNum = $lang->parseFormattedNumber( $localisedNum );
@@ -1683,7 +1683,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 		$this->assertEquals( $number, $normalisedNum );
 	}
 
-	public function parseFormattedNumberProvider() {
+	public static function parseFormattedNumberProvider() {
 		return [
 			[ 'de', 377.01 ],
 			[ 'fa', 334 ],
@@ -1717,33 +1717,6 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @dataProvider provideGetParentLanguage
-	 * @covers Language::getParentLanguage
-	 */
-	public function testGetParentLanguage( $code, $expected, $comment ) {
-		$this->hideDeprecated( 'Language::factory' );
-		$this->hideDeprecated( 'Language::getParentLanguage' );
-		$lang = Language::factory( $code );
-		if ( $expected === null ) {
-			$this->assertNull( $lang->getParentLanguage(), $comment );
-		} else {
-			$this->assertEquals( $expected, $lang->getParentLanguage()->getCode(), $comment );
-		}
-	}
-
-	public static function provideGetParentLanguage() {
-		return [
-			[ 'zh-cn', 'zh', 'zh is the parent language of zh-cn' ],
-			[ 'zh', 'zh', 'zh is defined as the parent language of zh, '
-				. 'because zh converter can convert zh-cn to zh' ],
-			[ 'zh-invalid', null, 'do not be fooled by arbitrarily composed language codes' ],
-			[ 'de-formal', null, 'de does not have converter' ],
-			[ 'de', null, 'de does not have converter' ],
-			[ 'ike-cans', 'iu', 'do not simply strip out the subcode' ],
-		];
-	}
-
-	/**
 	 * Example of the real localisation files being loaded.
 	 *
 	 * This might be a bit cumbersome to maintain long-term,
@@ -1753,8 +1726,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	 * @covers LocalisationCache
 	 */
 	public function testGetNamespaceAliasesReal() {
-		$this->hideDeprecated( 'Language::factory' );
-		$language = Language::factory( 'zh' );
+		$language = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'zh' );
 		$aliases = $language->getNamespaceAliases();
 		$this->assertSame( NS_FILE, $aliases['文件'] );
 		$this->assertSame( NS_FILE, $aliases['檔案'] );
@@ -1776,7 +1748,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 		] );
 		$this->setService( 'LanguageNameUtils', $langNameUtils );
 
-		$language = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'x-bar' );
+		$language = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'x-bar' );
 
 		$this->assertEquals(
 			[
@@ -1785,7 +1757,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 				'Cat_toots' => NS_FILE_TALK,
 				// inherited from x-foo
 				'Dog' => NS_USER,
-				'Dog' => NS_USER_TALK,
+				'Dog_woofs' => NS_USER_TALK,
 				// add from site configuration
 				'Mouse' => NS_SPECIAL,
 			],
@@ -1794,36 +1766,21 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	/**
-	 * @covers Language::hasVariant
-	 */
-	public function testHasVariant() {
-		$this->hideDeprecated( 'Language::hasVariant' );
-		$this->hideDeprecated( 'Language::factory' );
-		// See LanguageSrTest::testHasVariant() for additional tests
-		$en = Language::factory( 'en' );
-		$this->assertTrue( $en->hasVariant( 'en' ), 'base is always a variant' );
-		$this->assertFalse( $en->hasVariant( 'en-bogus' ), 'bogus en variant' );
-
-		$bogus = Language::factory( 'bogus' );
-		$this->assertTrue( $bogus->hasVariant( 'bogus' ), 'base is always a variant' );
-	}
-
-	/**
 	 * @covers Language::equals
 	 */
 	public function testEquals() {
-		$this->hideDeprecated( 'Language::factory' );
-		$en1 = Language::factory( 'en' );
-		$en2 = Language::factory( 'en' );
+		$languageFactory = $this->getServiceContainer()->getLanguageFactory();
+		$en1 = $languageFactory->getLanguage( 'en' );
+		$en2 = $languageFactory->getLanguage( 'en' );
 		$en3 = $this->newLanguage();
 		$this->assertTrue( $en1->equals( $en2 ), 'en1 equals en2' );
 		$this->assertTrue( $en2->equals( $en3 ), 'en2 equals en3' );
 		$this->assertTrue( $en3->equals( $en1 ), 'en3 equals en1' );
 
-		$fr = Language::factory( 'fr' );
+		$fr = $languageFactory->getLanguage( 'fr' );
 		$this->assertFalse( $en1->equals( $fr ), 'en not equals fr' );
 
-		$ar1 = Language::factory( 'ar' );
+		$ar1 = $languageFactory->getLanguage( 'ar' );
 		$ar2 = $this->newLanguage( LanguageAr::class, 'ar' );
 		$this->assertTrue( $ar1->equals( $ar2 ), 'ar equals ar' );
 	}
@@ -1858,27 +1815,27 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	// The following methods are for LanguageNameUtilsTestTrait
 
 	private function isSupportedLanguage( $code ) {
-		$this->hideDeprecated( 'Language::isSupportedLanguage' );
-		return Language::isSupportedLanguage( $code );
+		return $this->getServiceContainer()->getLanguageNameUtils()->isSupportedLanguage( $code );
 	}
 
 	private function isValidCode( $code ) {
-		$this->hideDeprecated( 'Language::isValidCode' );
-		return Language::isValidCode( $code );
+		return $this->getServiceContainer()->getLanguageNameUtils()->isValidCode( $code );
 	}
 
 	private function isValidBuiltInCode( $code ) {
-		$this->hideDeprecated( 'Language::isValidBuiltInCode' );
-		return Language::isValidBuiltInCode( $code );
+		return $this->getServiceContainer()->getLanguageNameUtils()->isValidBuiltInCode( $code );
 	}
 
 	private function isKnownLanguageTag( $code ) {
-		$this->hideDeprecated( 'Language::isKnownLanguageTag' );
-		return Language::isKnownLanguageTag( $code );
+		return $this->getServiceContainer()->getLanguageNameUtils()->isKnownLanguageTag( $code );
 	}
 
 	protected function setLanguageTemporaryHook( string $hookName, $handler ): void {
 		$this->setTemporaryHook( $hookName, $handler );
+	}
+
+	protected function clearLanguageHook( string $hookName ): void {
+		$this->clearHook( $hookName );
 	}
 
 	/**
@@ -1893,61 +1850,50 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 		if ( $options ) {
 			$this->overrideConfigValues( $options );
 		}
-		$this->hideDeprecated( 'Language::fetchLanguageName' );
-		$this->hideDeprecated( 'Language::fetchLanguageNames' );
+
+		$langNameUtils = MediaWikiServices::getInstance()->getLanguageNameUtils();
 		$this->assertSame( $expected,
-			Language::fetchLanguageNames( ...$otherArgs )[strtolower( $code )] ?? '' );
-		$this->assertSame( $expected, Language::fetchLanguageName( $code, ...$otherArgs ) );
+			$langNameUtils->getLanguageNames( ...$otherArgs )[strtolower( $code )] ?? '' );
+		$this->assertSame( $expected, $langNameUtils->getLanguageName( $code, ...$otherArgs ) );
 	}
 
 	private function getLanguageNames( ...$args ) {
-		$this->hideDeprecated( 'Language::fetchLanguageNames' );
-		return Language::fetchLanguageNames( ...$args );
+		return MediaWikiServices::getInstance()->getLanguageNameUtils()->getLanguageNames( ...$args );
 	}
 
 	private function getLanguageName( ...$args ) {
-		$this->hideDeprecated( 'Language::fetchLanguageName' );
-		return Language::fetchLanguageName( ...$args );
+		return MediaWikiServices::getInstance()->getLanguageNameUtils()->getLanguageName( ...$args );
 	}
 
 	private function getFileName( ...$args ) {
-		$this->hideDeprecated( 'Language::getFileName' );
-		return Language::getFileName( ...$args );
+		return MediaWikiServices::getInstance()->getLanguageNameUtils()->getFileName( ...$args );
 	}
 
 	private function getMessagesFileName( $code ) {
-		$this->hideDeprecated( 'Language::getMessagesFileName' );
-		return Language::getMessagesFileName( $code );
+		return MediaWikiServices::getInstance()->getLanguageNameUtils()->getMessagesFileName( $code );
 	}
 
 	private function getJsonMessagesFileName( $code ) {
-		$this->hideDeprecated( 'Language::getJsonMessagesFileName' );
-		return Language::getJsonMessagesFileName( $code );
+		return MediaWikiServices::getInstance()->getLanguageNameUtils()->getJsonMessagesFileName( $code );
 	}
 
 	/**
 	 * @todo This really belongs in the cldr extension's tests.
 	 *
 	 * @covers MediaWiki\Languages\LanguageNameUtils::isKnownLanguageTag
-	 * @covers Language::isKnownLanguageTag
 	 */
-	public function testIsKnownLanguageTag_cldr() {
-		if ( !class_exists( LanguageNames::class ) ) {
-			$this->markTestSkipped( 'The LanguageNames class is not available. '
-				. 'The CLDR extension is probably not installed.' );
+	public function testCldr() {
+		if ( !ExtensionRegistry::getInstance()->isLoaded( 'CLDR' ) ) {
+			$this->markTestSkipped( 'The CLDR extension is not installed.' );
 		}
 
-		// We need to restore extension's hook handlers.
-		foreach ( $this->origHandlers as $handler ) {
-			$this->setTemporaryHook( 'LanguageGetTranslatedLanguageNames', $handler );
-		}
-		$this->overrideConfigValue( MainConfigNames::Hooks, $this->origHandlers );
-
-		$this->hideDeprecated( 'Language::isKnownLanguageTag' );
+		$languageNameUtils = $this->getServiceContainer()->getLanguageNameUtils();
 
 		// "pal" is an ancient language, which probably will not appear in Names.php, but appears in
 		// CLDR in English
-		$this->assertTrue( Language::isKnownLanguageTag( 'pal' ) );
+		$this->assertTrue( $languageNameUtils->isKnownLanguageTag( 'pal' ) );
+
+		$this->assertSame( 'allemand', $languageNameUtils->getLanguageName( 'de', 'fr' ) );
 	}
 
 	/**
@@ -1968,7 +1914,9 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 		];
 		$nsInfo = new NamespaceInfo(
 			new ServiceOptions( NamespaceInfo::CONSTRUCTOR_OPTIONS, $config, $services->getMainConfig() ),
-			$services->getHookContainer()
+			$services->getHookContainer(),
+			ExtensionRegistry::getInstance()->getAttribute( 'ExtensionNamespaces' ),
+			ExtensionRegistry::getInstance()->getAttribute( 'ImmovableNamespaces' )
 		);
 		/** @var Language $lang */
 		$lang = new $langClass(
@@ -1985,7 +1933,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 		$this->assertArraySubmapSame( $expected, $namespaces );
 	}
 
-	public function provideGetNamespaces() {
+	public static function provideGetNamespaces() {
 		$enNamespaces = [
 			NS_MEDIA            => 'Media',
 			NS_SPECIAL          => 'Special',

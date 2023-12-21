@@ -44,7 +44,7 @@ ve.ui.DiffElement = function VeUiDiffElement( visualDiff, config ) {
 		mousemove: this.onDocumentMouseMove.bind( this )
 	} );
 
-	this.renderDiff( diff.docDiff, diff.internalListDiff );
+	this.renderDiff( diff.docDiff, diff.internalListDiff, diff.metaListDiff );
 
 	if ( visualDiff.timedOut ) {
 		var $warning = this.constructor.static.createWarning( ve.msg( 'visualeditor-diff-timed-out' ) );
@@ -322,8 +322,9 @@ ve.ui.DiffElement.prototype.renderQueue = function ( queue, parentNode, spacerNo
  *
  * @param {Object} diff Object describing the diff
  * @param {Object} internalListDiff Object describing the diff of the internal list
+ * @param {Object} metaListDiff Object describing the diff of the meta list
  */
-ve.ui.DiffElement.prototype.renderDiff = function ( diff, internalListDiff ) {
+ve.ui.DiffElement.prototype.renderDiff = function ( diff, internalListDiff, metaListDiff ) {
 	var documentNode = this.$document[ 0 ],
 		diffQueue = [],
 		internalListDiffQueue = [],
@@ -429,6 +430,9 @@ ve.ui.DiffElement.prototype.renderDiff = function ( diff, internalListDiff ) {
 		this.processQueue( diffQueue ),
 		documentNode, documentSpacerNode
 	);
+
+	this.renderMetaListDiff( metaListDiff, documentNode, documentSpacerNode );
+
 	this.descriptions.addItems( this.descriptionItemsStack );
 	this.descriptionItemsStack = null;
 
@@ -444,6 +448,32 @@ ve.ui.DiffElement.prototype.renderDiff = function ( diff, internalListDiff ) {
 
 	this.$element
 		.toggleClass( 've-ui-diffElement-hasDescriptions', !this.descriptions.isEmpty() );
+};
+
+ve.ui.DiffElement.prototype.renderMetaListDiff = function ( metaListDiff, documentNode, documentSpacerNode ) {
+	var diffElement = this;
+
+	Object.keys( metaListDiff ).forEach( function ( group ) {
+		var handler = ve.ui.metaListDiffRegistry.lookup( group );
+		if ( handler ) {
+			var diffQueue = [];
+			diffElement.iterateDiff( metaListDiff[ group ], {
+				insert: function ( newNode ) {
+					diffQueue.push( [ 'getNodeElements', newNode, 'insert', null ] );
+				},
+				remove: function ( oldNode ) {
+					diffQueue.push( [ 'getNodeElements', oldNode, 'remove', null ] );
+				},
+				move: function ( newNode, move ) {
+					diffQueue.push( [ 'getNodeElements', newNode, 'none', move ] );
+				},
+				changed: function ( nodeDiff, oldNode, newNode, move ) {
+					diffQueue.push( [ 'getChangedNodeElements', nodeDiff, oldNode, newNode, move ] );
+				}
+			} );
+			handler.call( this, diffElement, diffQueue, documentNode, documentSpacerNode );
+		}
+	} );
 };
 
 /**
@@ -936,6 +966,11 @@ ve.ui.DiffElement.prototype.getChangedListNodeData = function ( newListNode, dif
 				// TODO: Consider if the <ol> contains a `start` attribute (not currently handled by DM)
 				var indexInOwnList = listNode.children.indexOf( listItemNode );
 				diffElement.addAttributesToElement( listItemData, 0, { value: indexInOwnList + 1 } );
+			}
+			if ( item.action === 'none' && !item.move ) {
+				diffElement.addAttributesToElement( listItemData, 0, {
+					'data-diff-list-none': ''
+				} );
 			}
 		}
 
@@ -1561,3 +1596,5 @@ ve.ui.DiffElement.prototype.annotateNode = function ( linearDiff ) {
 
 	return annotatedLinearDiff;
 };
+
+ve.ui.metaListDiffRegistry = new OO.Registry();

@@ -1,5 +1,34 @@
-@import '../../common/variables.less';
-@import 'mediawiki.mixins.less';
+// Navigation: Main
+@font-size-nav-main: inherit;
+@font-size-nav-main-heading: unit( 12 / @font-size-browser, em ); // Equals `0.75em`.
+@font-size-nav-main-body: unit( 12 / @font-size-browser, em );
+@margin-start-nav-main-body: 0.5em;
+@border-color-portal-heading-transparent: rgba( red( @border-color-portal-heading ), green( @border-color-portal-heading ), blue( @border-color-portal-heading ), 0 );
+// Margin space from the start of the Portal (left edge in LTR
+// languages).
+@margin-start-portal: 0.7em;
+// Margin space from the end of the Portal (right edge in LTR
+// languages).
+@margin-end-portal: 0.6em;
+// Margin space from the start of the Portal body (left edge in LTR languages).
+@margin-start-portal-body: @margin-start-nav-main-body;
+
+/* Panel */
+.vector-legacy-sidebar {
+	font-size: @font-size-nav-main;
+
+	nav:first-child {
+		background-image: none;
+
+		.vector-menu-heading {
+			display: none;
+		}
+
+		.vector-menu-content {
+			margin-left: @margin-start-nav-main-body;
+		}
+	}
+}
 
 .vector-legacy-sidebar .vector-menu-portal {
 	margin: 0 @margin-end-portal  0 @margin-start-portal;
@@ -8,7 +37,7 @@
 
 	.vector-menu-heading {
 		display: block;
-		color: @color-base--subtle;
+		color: @color-subtle;
 		margin: 0.5em 0 0 ( @margin-start-nav-main-body / @font-size-nav-main-heading );
 		border: 0;
 		padding: 0.25em 0;
@@ -34,7 +63,7 @@
 		li {
 			margin: 0;
 			padding: 0.25em 0;
-			font-size: @font-size-portal-list-item;
+			font-size: @font-size-nav-main-body;
 			line-height: @line-height-nav;
 			word-wrap: break-word;
 

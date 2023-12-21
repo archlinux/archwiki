@@ -26,7 +26,10 @@ use MediaWiki\FileBackend\FSFile\TempFSFileFactory;
 use MediaWiki\FileBackend\LockManager\LockManagerGroupFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Output\StreamFile;
+use MediaWiki\Status\Status;
 use Wikimedia\ObjectFactory\ObjectFactory;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
  * Class to handle file backend registration
@@ -75,7 +78,7 @@ class FileBackendGroup {
 
 	/**
 	 * @param ServiceOptions $options
-	 * @param ConfiguredReadOnlyMode $configuredReadOnlyMode
+	 * @param ReadOnlyMode $readOnlyMode
 	 * @param BagOStuff $srvCache
 	 * @param WANObjectCache $wanCache
 	 * @param MimeAnalyzer $mimeAnalyzer
@@ -85,7 +88,7 @@ class FileBackendGroup {
 	 */
 	public function __construct(
 		ServiceOptions $options,
-		ConfiguredReadOnlyMode $configuredReadOnlyMode,
+		ReadOnlyMode $readOnlyMode,
 		BagOStuff $srvCache,
 		WANObjectCache $wanCache,
 		MimeAnalyzer $mimeAnalyzer,
@@ -102,7 +105,7 @@ class FileBackendGroup {
 		$this->objectFactory = $objectFactory;
 
 		// Register explicitly defined backends
-		$this->register( $options->get( MainConfigNames::FileBackends ), $configuredReadOnlyMode->getReason() );
+		$this->register( $options->get( MainConfigNames::FileBackends ), $readOnlyMode->getConfiguredReason() );
 
 		$autoBackends = [];
 		// Automatically create b/c backends for file repos...
@@ -138,7 +141,7 @@ class FileBackendGroup {
 		}
 
 		// Register implicitly defined backends
-		$this->register( $autoBackends, $configuredReadOnlyMode->getReason() );
+		$this->register( $autoBackends, $readOnlyMode->getConfiguredReason() );
 	}
 
 	/**

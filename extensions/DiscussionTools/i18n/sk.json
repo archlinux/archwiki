@@ -75,6 +75,7 @@
 	"discussiontools-topicsubscription-pager-topic": "Téma",
 	"discussiontools-topicsubscription-pager-unsubscribe-button": "Zrušiť odober",
 	"discussiontools-topicsubscription-special-title": "Odoberané témy",
+	"minerva-talk-full-page": "Čítať ako stránku wiki",
 	"tag-discussiontools-edit": "Upraviť komentár",
 	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} odpoveď]"
 }

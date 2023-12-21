@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Html\Html;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Request\DerivativeRequest;
 
 /**
@@ -348,10 +349,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 		foreach ( $values as $key => $value ) {
 			$fields = $this->getFieldsForKey( $key );
 			foreach ( $fields as $fieldname => $field ) {
-				if ( !array_key_exists( $fieldname, $value ) ) {
-					continue;
-				}
-				if ( $field->isHidden( $alldata ) ) {
+				if ( !array_key_exists( $fieldname, $value ) || $field->isHidden( $alldata ) ) {
 					continue;
 				}
 				$ok = $field->validate( $value[$fieldname], $alldata );

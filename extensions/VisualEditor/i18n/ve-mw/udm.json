@@ -4,9 +4,9 @@
 			"AlnashPiyash2",
 			"Kaganer",
 			"Kotwys",
+			"Udmwiki",
 			"Wadorgurt",
-			"Света Поторочина",
-			"Udmwiki"
+			"Света Поторочина"
 		]
 	},
 	"tooltip-ca-ve-edit": "Та бамез тупатоно",
@@ -18,6 +18,5 @@
 	"visualeditor-dialog-meta-languages-label": "Кылъёс",
 	"visualeditor-dialog-meta-languages-section": "Кылъёс",
 	"visualeditor-languages-tool": "Кылъёс",
-	"visualeditor-preference-core-label": "Визуальной тупатон",
 	"visualeditor-savedialog-label-resume-editing": "Тупатъянэз азьланьтоно"
 }

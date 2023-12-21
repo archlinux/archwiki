@@ -21,5 +21,5 @@
 	"titleblacklist-warning": "<strong>Warning: This page can only be edited by administrators and other users with the <code>tboverride</code> right because it matches the following disallowed titles list entry:</strong><br /><code>$1</code>",
 	"right-tboverride": "Override the disallowed titles or usernames list",
 	"right-tboverride-account": "Override the disallowed usernames list",
-	"right-titleblacklistlog": "View disallowed title list log"
+	"right-titleblacklistlog": "View the disallowed titles list log"
 }

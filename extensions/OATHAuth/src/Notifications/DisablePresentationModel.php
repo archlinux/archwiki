@@ -21,8 +21,8 @@
 namespace MediaWiki\Extension\OATHAuth\Notifications;
 
 use EchoEventPresentationModel;
+use MediaWiki\Title\Title;
 use SpecialPage;
-use Title;
 
 class DisablePresentationModel extends EchoEventPresentationModel {
 	/**
@@ -37,7 +37,7 @@ class DisablePresentationModel extends EchoEventPresentationModel {
 	 */
 	public function getPrimaryLink() {
 		return [
-			'url' => SpecialPage::getTitleFor( 'Preferences' )->getLocalURL(),
+			'url' => SpecialPage::getTitleFor( 'OATHManage' )->getLocalURL(),
 			'label' => $this->msg( 'oathauth-notifications-disable-primary' )->text()
 		];
 	}

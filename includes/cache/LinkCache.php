@@ -27,6 +27,9 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageStoreRecord;
+use MediaWiki\Title\NamespaceInfo;
+use MediaWiki\Title\TitleFormatter;
+use MediaWiki\Title\TitleValue;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -237,39 +240,6 @@ class LinkCache implements LoggerAwareInterface {
 		$entry = $this->entries->get( $key );
 
 		return ( $entry && !$entry[self::ROW] );
-	}
-
-	/**
-	 * Add information about an existing page to the process cache
-	 *
-	 * @deprecated since 1.37, use addGoodLinkObjFromRow() instead. PHPUnit tests
-	 *             must use LinkCacheTestTrait::addGoodLinkObject().
-	 *
-	 * @param int $id Page's ID
-	 * @param LinkTarget|PageReference $page The page to set cached info for.
-	 *        In MediaWiki 1.36 and earlier, only LinkTarget was accepted.
-	 * @param int $len Text's length
-	 * @param int|null $redir Whether the page is a redirect
-	 * @param int $revision Latest revision's ID
-	 * @param string|null $model Latest revision's content model ID
-	 * @param string|null $lang Language code of the page, if not the content language
-	 */
-	public function addGoodLinkObj( $id, $page, $len = -1, $redir = null,
-		$revision = 0, $model = null, $lang = null
-	) {
-		wfDeprecated( __METHOD__, '1.38' );
-		$this->addGoodLinkObjFromRow( $page, (object)[
-			'page_id' => (int)$id,
-			'page_namespace' => $page->getNamespace(),
-			'page_title' => $page->getDBkey(),
-			'page_len' => (int)$len,
-			'page_is_redirect' => (int)$redir,
-			'page_latest' => (int)$revision,
-			'page_content_model' => $model ? (string)$model : null,
-			'page_lang' => $lang ? (string)$lang : null,
-			'page_is_new' => 0,
-			'page_touched' => '',
-		] );
 	}
 
 	/**
@@ -535,11 +505,7 @@ class LinkCache implements LoggerAwareInterface {
 	 */
 	private function getPersistentCacheKey( $page ) {
 		// if no key can be derived, the page isn't cacheable
-		if ( $this->getCacheKey( $page ) === null ) {
-			return null;
-		}
-
-		if ( !$this->usePersistentCache( $page ) ) {
+		if ( $this->getCacheKey( $page ) === null || !$this->usePersistentCache( $page ) ) {
 			return null;
 		}
 

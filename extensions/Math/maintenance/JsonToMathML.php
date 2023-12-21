@@ -83,13 +83,24 @@ class JsonToMathML extends Maintenance {
 					}
 				}
 				$mmlLaTeXML = $this->fetchMathML( $entry['tex'], $entry['type'], 'latexml' );
-
-				$allEntries[] = [
+				$entryToAdd = [
 					"tex" => $entry['tex'],
 					"type" => $entry['type'],
 					"mmlMathoid" => $mmlMathoid,
 					"mmlLaTeXML" => $mmlLaTeXML
 				];
+
+				if ( array_key_exists( "texNew", $entry ) ) {
+					$entryToAdd["texNew"] = $entry["texNew"];
+				}
+				if ( array_key_exists( "typeC", $entry ) ) {
+					$entryToAdd["typeC"] = $entry["typeC"];
+				}
+				if ( array_key_exists( "description", $entry ) ) {
+					$entryToAdd["description"] = $entry["description"];
+				}
+
+				$allEntries[] = $entryToAdd;
 			} catch ( Exception $e ) {
 				$allEntries[] = [
 					"tex" => $entry['tex'],
@@ -137,6 +148,30 @@ class JsonToMathML extends Maintenance {
 					$inputF[] = [
 						"tex" => $tex,
 						"type" => $type,
+					];
+				}
+				break;
+			case 3:
+				// Example file Mhchemv4tex.json
+				foreach ( $fileData as $group => $cases ) {
+					foreach ( $cases as $case ) {
+						$inputF[] = [
+							"description" => $group,
+							"tex" => $case["tex"],
+							"texNew" => $case["texNew"],
+							"type" => "chem",
+							"typeC" => $case["type"]
+						];
+					}
+				}
+				break;
+			case 4:
+				// Example file ExamplesNewCommandsMhchem.json
+				foreach ( $fileData as $entry ) {
+					$inputF[] = [
+						"description" => $entry["description"],
+						"tex" => $entry['tex'],
+						"type" => $entry['type'],
 					];
 				}
 				break;

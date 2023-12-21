@@ -227,6 +227,8 @@ return [
 			'SVGConverterPath' => '',
 			'SVGMaxSize' => 5120,
 			'SVGMetadataCutoff' => 262144,
+			'SVGNativeRendering' => false,
+			'SVGNativeRenderingSizeLimit' => 51200,
 			'MediaInTargetLanguage' => true,
 			'MaxImageArea' => 12500000,
 			'MaxAnimatedGifArea' => 12500000,
@@ -385,9 +387,11 @@ return [
 			'DatabaseReplicaLagWarning' => 10,
 			'DatabaseReplicaLagCritical' => 30,
 			'MaxExecutionTimeForExpensiveQueries' => 0,
+			'VirtualDomainsMapping' => [
+			],
 			'TemplateLinksSchemaMigrationStage' => 768,
-			'ExternalLinksSchemaMigrationStage' => 3,
-			'CommentTempTableSchemaMigrationStage' => [
+			'PageLinksSchemaMigrationStage' => 3,
+			'ExternalLinksDomainGaps' => [
 			],
 			'ContentHandlers' => [
 				'wikitext' => [
@@ -397,7 +401,9 @@ return [
 						1 => 'ParserFactory',
 						2 => 'GlobalIdGenerator',
 						3 => 'LanguageNameUtils',
-						4 => 'MagicWordFactory',
+						4 => 'LinkRenderer',
+						5 => 'MagicWordFactory',
+						6 => 'ParsoidParserFactory',
 					],
 				],
 				'javascript' => 'JavaScriptContentHandler',
@@ -424,6 +430,8 @@ return [
 			'PageLanguageUseDB' => false,
 			'DiffEngine' => null,
 			'ExternalDiffEngine' => false,
+			'Wikidiff2Options' => [
+			],
 			'RequestTimeLimit' => null,
 			'TransactionalTimeLimit' => 120,
 			'CriticalSectionTimeLimit' => 180.0,
@@ -528,6 +536,7 @@ return [
 				'WarmParsoidParserCache' => false,
 			],
 			'ChronologyProtectorStash' => null,
+			'ChronologyProtectorSecret' => '',
 			'ParserCacheExpireTime' => 86400,
 			'OldRevisionParserCacheExpireTime' => 3600,
 			'ObjectCacheSessionExpiry' => 3600,
@@ -613,6 +622,7 @@ return [
 			'DisabledVariants' => [
 			],
 			'VariantArticlePath' => false,
+			'UseXssLanguage' => false,
 			'LoginLanguageSelector' => false,
 			'ForceUIMsgAsContentMsg' => [
 			],
@@ -638,11 +648,10 @@ return [
 			'BrowserFormatDetection' => 'telephone=no',
 			'SkinMetaTags' => [
 			],
-			'DefaultSkin' => 'vector',
+			'DefaultSkin' => 'vector-2022',
 			'FallbackSkin' => 'fallback',
 			'SkipSkins' => [
 			],
-			'ResourceLoaderClientPreferences' => false,
 			'DisableOutputCompression' => false,
 			'FragmentMode' => [
 				0 => 'html5',
@@ -667,6 +676,8 @@ return [
 			'Send404Code' => true,
 			'ShowRollbackEditCount' => 10,
 			'EnableCanonicalServerLink' => false,
+			'InterwikiLogoOverride' => [
+			],
 			'ResourceModules' => [
 			],
 			'ResourceModuleSkinStyles' => [
@@ -683,6 +694,7 @@ return [
 			'ResourceLoaderEnableJSProfiler' => false,
 			'ResourceLoaderStorageEnabled' => true,
 			'ResourceLoaderStorageVersion' => 1,
+			'ResourceLoaderEnableSourceMapLinks' => true,
 			'AllowSiteCSSOnRestrictedPages' => false,
 			'VueDevelopmentMode' => false,
 			'MetaNamespace' => false,
@@ -805,6 +817,7 @@ return [
 			],
 			'ParserEnableLegacyMediaDOM' => false,
 			'UseContentMediaStyles' => false,
+			'UseLegacyMediaStyles' => false,
 			'RawHtml' => false,
 			'ExternalLinkTarget' => false,
 			'NoFollowLinks' => true,
@@ -835,14 +848,22 @@ return [
 			'RevertedTagMaxDepth' => 15,
 			'CentralIdLookupProviders' => [
 				'local' => [
-					'class' => 'LocalIdLookup',
+					'class' => 'MediaWiki\\User\\CentralId\\LocalIdLookup',
 					'services' => [
 						0 => 'MainConfig',
-						1 => 'DBLoadBalancer',
+						1 => 'DBLoadBalancerFactory',
 					],
 				],
 			],
 			'CentralIdLookupProvider' => 'local',
+			'UserRegistrationProviders' => [
+				'local' => [
+					'class' => 'MediaWiki\\User\\Registration\\LocalUserRegistrationProvider',
+					'services' => [
+						0 => 'UserFactory',
+					],
+				],
+			],
 			'PasswordPolicy' => [
 				'policies' => [
 					'bureaucrat' => [
@@ -905,7 +926,7 @@ return [
 					'MediaWiki\\Auth\\TemporaryPasswordPrimaryAuthenticationProvider' => [
 						'class' => 'MediaWiki\\Auth\\TemporaryPasswordPrimaryAuthenticationProvider',
 						'services' => [
-							0 => 'DBLoadBalancer',
+							0 => 'DBLoadBalancerFactory',
 							1 => 'UserOptionsLookup',
 						],
 						'args' => [
@@ -918,7 +939,7 @@ return [
 					'MediaWiki\\Auth\\LocalPasswordPrimaryAuthenticationProvider' => [
 						'class' => 'MediaWiki\\Auth\\LocalPasswordPrimaryAuthenticationProvider',
 						'services' => [
-							0 => 'DBLoadBalancer',
+							0 => 'DBLoadBalancerFactory',
 						],
 						'args' => [
 							0 => [
@@ -940,7 +961,7 @@ return [
 					'MediaWiki\\Auth\\EmailNotificationSecondaryAuthenticationProvider' => [
 						'class' => 'MediaWiki\\Auth\\EmailNotificationSecondaryAuthenticationProvider',
 						'services' => [
-							0 => 'DBLoadBalancer',
+							0 => 'DBLoadBalancerFactory',
 						],
 						'sort' => 200,
 					],
@@ -1033,6 +1054,7 @@ return [
 				'ccmeonemails' => 0,
 				'date' => 'default',
 				'diffonly' => 0,
+				'diff-type' => 'table',
 				'disablemail' => 0,
 				'editfont' => 'monospace',
 				'editondblclick' => 0,
@@ -1045,55 +1067,56 @@ return [
 				'extendwatchlist' => 1,
 				'fancysig' => 0,
 				'forceeditsummary' => 0,
+				'forcesafemode' => 0,
 				'gender' => 'unknown',
+				'hidecategorization' => 1,
 				'hideminor' => 0,
 				'hidepatrolled' => 0,
-				'hidecategorization' => 1,
 				'imagesize' => 2,
 				'minordefault' => 0,
 				'newpageshidepatrolled' => 0,
 				'nickname' => '',
-				'pst-cssjs' => 1,
 				'norollbackdiff' => 0,
+				'prefershttps' => 1,
 				'previewonfirst' => 0,
 				'previewontop' => 1,
+				'pst-cssjs' => 1,
 				'rcdays' => 7,
 				'rcenhancedfilters-disable' => 0,
 				'rclimit' => 50,
+				'requireemail' => 0,
 				'search-match-redirect' => true,
 				'search-special-page' => 'Search',
-				'searchlimit' => 20,
 				'search-thumbnail-extra-namespaces' => true,
+				'searchlimit' => 20,
 				'showhiddencats' => 0,
 				'shownumberswatching' => 1,
 				'showrollbackconfirmation' => 0,
 				'skin' => false,
+				'skin-responsive' => 1,
 				'thumbsize' => 5,
 				'underline' => 2,
+				'useeditwarning' => 1,
 				'uselivepreview' => 0,
 				'usenewrc' => 1,
 				'watchcreations' => 1,
 				'watchdefault' => 1,
 				'watchdeletion' => 0,
-				'watchuploads' => 1,
 				'watchlistdays' => 7,
 				'watchlisthideanons' => 0,
 				'watchlisthidebots' => 0,
+				'watchlisthidecategorization' => 1,
 				'watchlisthideliu' => 0,
 				'watchlisthideminor' => 0,
 				'watchlisthideown' => 0,
 				'watchlisthidepatrolled' => 0,
-				'watchlisthidecategorization' => 1,
 				'watchlistreloadautomatically' => 0,
 				'watchlistunwatchlinks' => 0,
 				'watchmoves' => 0,
 				'watchrollback' => 0,
+				'watchuploads' => 1,
 				'wlenhancedfilters-disable' => 0,
 				'wllimit' => 250,
-				'useeditwarning' => 1,
-				'prefershttps' => 1,
-				'requireemail' => 0,
-				'skin-responsive' => 1,
 			],
 			'HiddenPrefs' => [
 			],
@@ -1130,6 +1153,7 @@ return [
 				],
 				'genPattern' => '*Unregistered $1',
 				'matchPattern' => '*$1',
+				'reservedPattern' => null,
 				'serialProvider' => [
 					'type' => 'local',
 				],
@@ -1157,8 +1181,6 @@ return [
 					'createpage' => true,
 					'createtalk' => true,
 					'writeapi' => true,
-					'viewmywatchlist' => true,
-					'editmywatchlist' => true,
 					'viewmyprivateinfo' => true,
 					'editmyprivateinfo' => true,
 					'editmyoptions' => true,
@@ -1182,11 +1204,12 @@ return [
 					'editmyuserjson' => true,
 					'editmyuserjs' => true,
 					'editmyuserjsredirect' => true,
-					'purge' => true,
 					'sendemail' => true,
 					'applychangetags' => true,
 					'changetags' => true,
 					'editcontentmodel' => true,
+					'viewmywatchlist' => true,
+					'editmywatchlist' => true,
 				],
 				'autoconfirmed' => [
 					'autoconfirmed' => true,
@@ -1331,6 +1354,8 @@ return [
 			'RemoveGroups' => [
 			],
 			'AvailableRights' => [
+			],
+			'ImplicitRights' => [
 			],
 			'DeleteRevisionsLimit' => 0,
 			'DeleteRevisionsBatchSize' => 1000,
@@ -1545,7 +1570,6 @@ return [
 					'ipblock-exempt' => true,
 					'nominornewtalk' => true,
 					'patrolmarks' => true,
-					'purge' => true,
 					'read' => true,
 					'writeapi' => true,
 					'unwatchedpages' => true,
@@ -2023,8 +2047,6 @@ return [
 			],
 			'ExtensionEntryPointListFiles' => [
 			],
-			'ParserOutputHooks' => [
-			],
 			'EnableParserLimitReporting' => true,
 			'ValidSkinNames' => [
 			],
@@ -2043,7 +2065,15 @@ return [
 				'htmlCacheUpdate' => 'HTMLCacheUpdateJob',
 				'sendMail' => 'EmaillingJob',
 				'enotifNotify' => 'EnotifNotifyJob',
-				'fixDoubleRedirect' => 'DoubleRedirectJob',
+				'fixDoubleRedirect' => [
+					'class' => 'DoubleRedirectJob',
+					'services' => [
+						0 => 'RevisionLookup',
+						1 => 'MagicWordFactory',
+						2 => 'WikiPageFactory',
+					],
+					'needsPage' => true,
+				],
 				'AssembleUploadChunks' => 'AssembleUploadChunksJob',
 				'PublishStashedFile' => 'PublishStashedFileJob',
 				'ThumbnailRender' => 'ThumbnailRenderJob',
@@ -2375,7 +2405,6 @@ return [
 				0 => 'MIMEsearch',
 				1 => 'LinkSearch',
 			],
-			'AjaxUploadDestCheck' => true,
 			'AjaxLicensePreview' => true,
 			'CrossSiteAJAXdomains' => [
 			],
@@ -2436,7 +2465,7 @@ return [
 			],
 			'EventRelayerConfig' => [
 				'default' => [
-					'class' => 'EventRelayerNull',
+					'class' => 'Wikimedia\\EventRelayer\\EventRelayerNull',
 				],
 			],
 			'Pingback' => false,
@@ -2453,6 +2482,7 @@ return [
 			],
 			'SpecialContributeSkinsEnabled' => [
 			],
+			'EnableEditRecovery' => false,
 		],
 		'type' => [
 			'ConfigRegistry' => 'object',
@@ -2527,6 +2557,10 @@ return [
 			'ParserTestMediaHandlers' => 'object',
 			'MaxInterlacingAreas' => 'object',
 			'SVGConverters' => 'object',
+			'SVGNativeRendering' => [
+				0 => 'string',
+				1 => 'boolean',
+			],
 			'MaxImageArea' => [
 				0 => 'string',
 				1 => 'integer',
@@ -2591,9 +2625,10 @@ return [
 			],
 			'LBFactoryConf' => 'object',
 			'LocalDatabases' => 'array',
+			'VirtualDomainsMapping' => 'object',
 			'TemplateLinksSchemaMigrationStage' => 'integer',
-			'ExternalLinksSchemaMigrationStage' => 'integer',
-			'CommentTempTableSchemaMigrationStage' => 'object',
+			'PageLinksSchemaMigrationStage' => 'integer',
+			'ExternalLinksDomainGaps' => 'object',
 			'ContentHandlers' => 'object',
 			'NamespaceContentModels' => 'object',
 			'TextModelsToParse' => 'array',
@@ -2613,6 +2648,7 @@ return [
 				0 => 'string',
 				1 => 'boolean',
 			],
+			'Wikidiff2Options' => 'object',
 			'RequestTimeLimit' => [
 				0 => 'integer',
 				1 => 'null',
@@ -2639,6 +2675,7 @@ return [
 				0 => 'string',
 				1 => 'null',
 			],
+			'ChronologyProtectorSecret' => 'string',
 			'PHPSessionHandling' => 'string',
 			'SuspiciousIpExpiry' => [
 				0 => 'integer',
@@ -2669,6 +2706,7 @@ return [
 			'SkipSkins' => 'object',
 			'FragmentMode' => 'array',
 			'FooterIcons' => 'object',
+			'InterwikiLogoOverride' => 'array',
 			'ResourceModules' => 'object',
 			'ResourceModuleSkinStyles' => 'object',
 			'ResourceLoaderSources' => 'object',
@@ -2703,6 +2741,7 @@ return [
 			'RevertedTagMaxDepth' => 'integer',
 			'CentralIdLookupProviders' => 'object',
 			'CentralIdLookupProvider' => 'string',
+			'UserRegistrationProviders' => 'object',
 			'PasswordPolicy' => 'object',
 			'AuthManagerConfig' => [
 				0 => 'object',
@@ -2746,6 +2785,7 @@ return [
 			'AddGroups' => 'object',
 			'RemoveGroups' => 'object',
 			'AvailableRights' => 'array',
+			'ImplicitRights' => 'array',
 			'AccountCreationThrottle' => [
 				0 => 'integer',
 				1 => 'array',
@@ -2840,7 +2880,6 @@ return [
 			'ExtensionMessagesFiles' => 'object',
 			'MessagesDirs' => 'object',
 			'ExtensionEntryPointListFiles' => 'object',
-			'ParserOutputHooks' => 'object',
 			'ValidSkinNames' => 'object',
 			'SpecialPages' => 'object',
 			'ExtensionCredits' => 'object',
@@ -2911,6 +2950,7 @@ return [
 			'FeaturePolicyReportOnly' => 'array',
 			'SkinsPreferred' => 'array',
 			'SpecialContributeSkinsEnabled' => 'array',
+			'EnableEditRecovery' => 'boolean',
 		],
 		'mergeStrategy' => [
 			'TiffThumbnailType' => 'replace',
@@ -3167,6 +3207,9 @@ return [
 		'UploadStashScalerBaseUrl' => [
 			'deprecated' => 'since 1.36 Use thumbProxyUrl in $wgLocalFileRepo',
 		],
+		'IllegalFileChars' => [
+			'deprecated' => 'since 1.41; no longer customizable',
+		],
 		'ThumbnailNamespaces' => [
 			'items' => [
 				'type' => 'integer',
@@ -3188,8 +3231,22 @@ return [
 				'type' => 'string',
 			],
 		],
+		'InterwikiLogoOverride' => [
+			'items' => [
+				'type' => 'string',
+			],
+		],
+		'LegalTitleChars' => [
+			'deprecated' => 'since 1.41; use Extension:TitleBlacklist to customize',
+		],
 		'AllowImageTag' => [
 			'deprecated' => 'since 1.35; register an extension tag named <img> instead.',
+		],
+		'ParserEnableLegacyMediaDOM' => [
+			'deprecated' => 'since 1.41',
+		],
+		'UseContentMediaStyles' => [
+			'deprecated' => 'since 1.41',
 		],
 		'ReauthenticateTime' => [
 			'additionalProperties' => [
@@ -3227,6 +3284,16 @@ return [
 		],
 		'GroupInheritsPermissions' => [
 			'additionalProperties' => [
+				'type' => 'string',
+			],
+		],
+		'AvailableRights' => [
+			'items' => [
+				'type' => 'string',
+			],
+		],
+		'ImplicitRights' => [
+			'items' => [
 				'type' => 'string',
 			],
 		],

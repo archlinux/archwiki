@@ -2,14 +2,15 @@
 
 // phpcs:disable Generic.Files.LineLength -- Long html test examples
 
+use MediaWiki\Extension\Notifications\DiscussionParser;
 use MediaWiki\Extension\Notifications\Model\Event;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \EchoDiscussionParser
+ * @covers \MediaWiki\Extension\Notifications\DiscussionParser
  * @group Echo
  * @group Database
  *
@@ -17,7 +18,7 @@ use Wikimedia\TestingAccessWrapper;
  *  - stripHeader
  *  - stripSignature
  */
-class EchoDiscussionParserTest extends MediaWikiIntegrationTestCase {
+class DiscussionParserTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @var string
@@ -143,17 +144,8 @@ class EchoDiscussionParserTest extends MediaWikiIntegrationTestCase {
 		],
 	];
 
-	protected function setUp(): void {
-		parent::setUp();
-		$this->overrideConfigValue( 'Diff', false );
-	}
-
-	protected function tearDown(): void {
-		parent::tearDown();
-	}
-
 	private function setupAllTestUsers() {
-		foreach ( array_keys( $this->testUsers ) as $username ) {
+		foreach ( $this->testUsers as $username => $_ ) {
 			$this->setupTestUser( $username );
 		}
 	}
@@ -173,11 +165,11 @@ class EchoDiscussionParserTest extends MediaWikiIntegrationTestCase {
 			foreach ( $preferences as $option => $value ) {
 				$userOptionsManager->setOption( $user, $option, $value );
 			}
-			$user->saveSettings();
+			$userOptionsManager->saveOptions( $user );
 		}
 	}
 
-	public function provideHeaderExtractions() {
+	public static function provideHeaderExtractions() {
 		return [
 			[ '', false ],
 			[ '== Grand jury no bill reception ==', 'Grand jury no bill reception' ],
@@ -191,10 +183,10 @@ class EchoDiscussionParserTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideHeaderExtractions
 	 */
 	public function testExtractHeader( $text, $expected ) {
-		$this->assertEquals( $expected, EchoDiscussionParser::extractHeader( $text ) );
+		$this->assertEquals( $expected, DiscussionParser::extractHeader( $text ) );
 	}
 
-	public function generateEventsForRevisionData() {
+	public static function generateEventsForRevisionDataProvider() {
 		return [
 			[
 				'new' => 637638133,
@@ -375,7 +367,7 @@ class EchoDiscussionParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider generateEventsForRevisionData
+	 * @dataProvider generateEventsForRevisionDataProvider
 	 */
 	public function testGenerateEventsForRevision(
 		$newId, $oldId, $username, $lang, $pages, $title, $expected, $precondition = '',
@@ -415,12 +407,12 @@ class EchoDiscussionParserTest extends MediaWikiIntegrationTestCase {
 		] );
 		$this->clearHook( 'EchoGetEventsForRevision' );
 
-		EchoDiscussionParser::generateEventsForRevision( $revision, false );
+		DiscussionParser::generateEventsForRevision( $revision, false );
 
 		$this->assertEquals( $expected, $events );
 	}
 
-	public function provider_generateEventsForRevision_mentionStatus() {
+	public static function provider_generateEventsForRevision_mentionStatus() {
 		return [
 			[
 				'new' => 747747748,
@@ -726,18 +718,20 @@ class EchoDiscussionParserTest extends MediaWikiIntegrationTestCase {
 			}
 		);
 
-		// enable mention failure and success notifications
-		$this->overrideConfigValue( 'EchoMentionStatusNotifications', true );
-		// enable multiple sections mentions
-		$this->overrideConfigValue( 'EchoMentionsOnMultipleSectionEdits', true );
+		$this->overrideConfigValues( [
+			// enable mention failure and success notifications
+			'EchoMentionStatusNotifications' => true,
+			// enable multiple sections mentions
+			'EchoMentionsOnMultipleSectionEdits' => true,
+		] );
 		$this->clearHook( 'EchoGetEventsForRevision' );
 
-		EchoDiscussionParser::generateEventsForRevision( $revision, false );
+		DiscussionParser::generateEventsForRevision( $revision, false );
 
 		$this->assertEquals( $expected, $events );
 	}
 
-	public function provider_extractSections() {
+	public static function provider_extractSections() {
 		return [
 			[
 				'content' => 'Just Text.',
@@ -895,7 +889,7 @@ TEXT
 	 * @dataProvider provider_extractSections
 	 */
 	public function testExtractSections( $content, $result ) {
-		$discussionParser = TestingAccessWrapper::newFromClass( EchoDiscussionParser::class );
+		$discussionParser = TestingAccessWrapper::newFromClass( DiscussionParser::class );
 		$sections = $discussionParser->extractSections( $content );
 
 		$this->assertEquals( $result, $sections );
@@ -935,7 +929,7 @@ TEXT
 		] );
 		$this->clearHook( 'EchoGetEventsForRevision' );
 
-		EchoDiscussionParser::generateEventsForRevision( $revision, false );
+		DiscussionParser::generateEventsForRevision( $revision, false );
 
 		$this->assertEquals( $expected, $events );
 	}
@@ -943,23 +937,22 @@ TEXT
 	private function setupTestRevisionsForEventGeneration( $newId, $oldId, $username, $lang, $pages,
 		$title, $summary = ''
 	) {
-		$store = MediaWikiServices::getInstance()->getRevisionStore();
+		$services = $this->getServiceContainer();
+		$store = $services->getRevisionStore();
 		// Content language is used by the code that interprets the namespace part of titles
 		// (Title::getTitleParser), so should be the fake language ;)
 		$this->setContentLang( $lang );
 		$this->overrideConfigValues( [
 			// this one allows Mediawiki:xyz pages to be set as messages
-			'UseDatabaseMessages' => true
+			MainConfigNames::UseDatabaseMessages => true
 		] );
-
-		$this->resetServices();
 
 		// pages to be created: templates may be used to ping users (e.g.
 		// {{u|...}}) but if we don't have that template, it just won't work!
 		$pages += [ $title => '' ];
 
 		$user = $this->getTestUser()->getUser();
-		$wikiPageFactory = MediaWikiServices::getInstance()->getWikiPageFactory();
+		$wikiPageFactory = $services->getWikiPageFactory();
 		foreach ( $pages as $pageTitle => $pageText ) {
 			$template = $wikiPageFactory->newFromTitle( Title::newFromText( $pageTitle ) );
 			$template->doUserEditContent( new WikitextContent( $pageText ), $user, '' );
@@ -967,7 +960,7 @@ TEXT
 
 		// force i18n messages to be reloaded from MessageCache (from DB, where a new message
 		// might have been created as page)
-		$this->resetServices();
+		$services->resetServiceForTesting( 'MessageCache' );
 
 		// grab revision excerpts (didn't include them in this src file because
 		// they can be pretty long)
@@ -1002,16 +995,17 @@ TEXT
 		$userName = $revision->getUser()->getName();
 
 		// generate diff between 2 revisions
-		$changes = EchoDiscussionParser::getMachineReadableDiff( $oldText, $newText );
-		$output = EchoDiscussionParser::interpretDiff( $changes, $userName, $title );
+		$changes = DiscussionParser::getMachineReadableDiff( $oldText, $newText );
+		$output = DiscussionParser::interpretDiff( $changes, $userName, $title );
 
 		// store diff in some local cache var, to circumvent
-		// EchoDiscussionParser::getChangeInterpretationForRevision's attempt to
+		// DiscussionParser::getChangeInterpretationForRevision's attempt to
 		// retrieve parent revision from DB
-		$class = new ReflectionClass( EchoDiscussionParser::class );
+		$class = new ReflectionClass( DiscussionParser::class );
 		$property = $class->getProperty( 'revisionInterpretationCache' );
 		$property->setAccessible( true );
-		$property->setValue( [ $revision->getId() => $output ] );
+		$cacheKey = $revision->getId() . '|' . $revision->getPage()->getNamespace() . '|' . $revision->getPage()->getDBkey();
+		$property->setValue( [ $cacheKey => $output ] );
 		return $revision;
 	}
 
@@ -1021,25 +1015,25 @@ TEXT
 
 	public function testTimestampRegex() {
 		$exemplarTimestamp = self::EXEMPLAR_TIMESTAMP;
-		$timestampRegex = EchoDiscussionParser::getTimestampRegex();
+		$timestampRegex = DiscussionParser::getTimestampRegex();
 
 		$match = preg_match( '/' . $timestampRegex . '/u', $exemplarTimestamp );
 		$this->assertSame( 1, $match );
 	}
 
 	public function testTimestampRegex_T264922() {
-		$this->overrideConfigValue( 'LanguageCode', 'skr' );
-		$this->assertIsString( EchoDiscussionParser::getTimestampRegex(), 'does not fail' );
+		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'skr' );
+		$this->assertIsString( DiscussionParser::getTimestampRegex(), 'does not fail' );
 	}
 
 	public function testGetTimestampPosition() {
 		$line = 'Hello World. ' . self::EXEMPLAR_TIMESTAMP;
-		$pos = EchoDiscussionParser::getTimestampPosition( $line );
+		$pos = DiscussionParser::getTimestampPosition( $line );
 		$this->assertSame( 13, $pos );
 	}
 
 	/**
-	 * @dataProvider signingDetectionData
+	 * @dataProvider signingDetectionDataProvider
 	 * FIXME some of the app logic is in the test...
 	 */
 	public function testSigningDetection( $line, $expectedUser ) {
@@ -1047,12 +1041,12 @@ TEXT
 			$this->setupTestUser( $expectedUser[1] );
 		}
 
-		if ( !EchoDiscussionParser::isSignedComment( $line ) ) {
+		if ( !DiscussionParser::isSignedComment( $line ) ) {
 			$this->assertFalse( $expectedUser );
 			return;
 		}
 
-		$output = EchoDiscussionParser::getUserFromLine( $line );
+		$output = DiscussionParser::getUserFromLine( $line );
 
 		if ( $output === false ) {
 			$this->assertFalse( $expectedUser );
@@ -1065,7 +1059,7 @@ TEXT
 		}
 	}
 
-	public function signingDetectionData() {
+	public static function signingDetectionDataProvider() {
 		$ts = self::EXEMPLAR_TIMESTAMP;
 
 		return [
@@ -1155,22 +1149,22 @@ TEXT
 				],
 			],
 			// when adding additional tests, make sure to add the non-anon users
-			// to EchoDiscussionParserTest::$testUsers - the DiscussionParser
+			// to DiscussionParserTest::$testUsers - the DiscussionParser
 			// needs the users to exist, because it'll generate a comparison
 			// signature, which is different when the user is considered anon
 		];
 	}
 
-	/** @dataProvider diffData */
+	/** @dataProvider diffDataProvider */
 	public function testDiff( $oldText, $newText, $expected ) {
-		$actual = EchoDiscussionParser::getMachineReadableDiff( $oldText, $newText );
+		$actual = DiscussionParser::getMachineReadableDiff( $oldText, $newText );
 		unset( $actual['_info'] );
 		unset( $expected['_info'] );
 
 		$this->assertEquals( $expected, $actual );
 	}
 
-	public function diffData() {
+	public static function diffDataProvider() {
 		return [
 			[
 				<<<TEXT
@@ -1272,14 +1266,14 @@ line d',
 		];
 	}
 
-	/** @dataProvider annotationData */
+	/** @dataProvider annotationDataProvider */
 	public function testAnnotation( $message, $diff, $user, $expectedAnnotation ) {
 		$this->setupTestUser( $user );
-		$actual = EchoDiscussionParser::interpretDiff( $diff, $user );
+		$actual = DiscussionParser::interpretDiff( $diff, $user );
 		$this->assertEquals( $expectedAnnotation, $actual, $message );
 	}
 
-	public function annotationData() {
+	public static function annotationDataProvider() {
 		$ts = self::EXEMPLAR_TIMESTAMP;
 
 		return [
@@ -1417,7 +1411,7 @@ TEXT
 
 			[
 				'Must detect multiple added comments when multiple sections are edited',
-				EchoDiscussionParser::getMachineReadableDiff(
+				DiscussionParser::getMachineReadableDiff(
 					<<<TEXT
 == Section 1 ==
 I do not like you. [[User:Jorm|Jorm]] ([[User talk:Jorm|talk]]) $ts
@@ -1468,7 +1462,7 @@ TEXT
 
 			[
 				'Bug T78424',
-				EchoDiscussionParser::getMachineReadableDiff(
+				DiscussionParser::getMachineReadableDiff(
 					<<<TEXT
 == Washington Post Reception Source ==
 
@@ -1498,14 +1492,14 @@ TEXT
 				],
 			],
 			// when adding additional tests, make sure to add the non-anon users
-			// to EchoDiscussionParserTest::$testusers - the DiscussionParser
+			// to DiscussionParserTest::$testusers - the DiscussionParser
 			// needs the users to exist, because it'll generate a comparison
 			// signature, which is different when the user is considered anon
 		];
 	}
 
 	public static function provider_detectSectionTitleAndText() {
-		// See EchoDiscussionParserTest::$testUsers
+		// See DiscussionParserTest::$testUsers
 		$name = 'Werdna';
 		$comment = self::signedMessage( $name );
 
@@ -1613,14 +1607,14 @@ $comment
 		$before = str_replace( '%s', '', $format );
 		$after = str_replace( '%s', self::signedMessage( $name ), $format );
 
-		$diff = EchoDiscussionParser::getMachineReadableDiff( $before, $after );
-		$interp = EchoDiscussionParser::interpretDiff( $diff, $name );
+		$diff = DiscussionParser::getMachineReadableDiff( $before, $after );
+		$interp = DiscussionParser::interpretDiff( $diff, $name );
 
 		// There should be a section-text only if there is section-title
 		$expectText = $expect ? self::message( $name ) : '';
 		$this->assertEquals(
 			[ 'section-title' => $expect, 'section-text' => $expectText ],
-			EchoDiscussionParser::detectSectionTitleAndText( $interp ),
+			DiscussionParser::detectSectionTitleAndText( $interp ),
 			$message
 		);
 	}
@@ -1680,7 +1674,7 @@ TEXT
 	 * @dataProvider provider_getFullSection
 	 */
 	public function testGetFullSection( $message, $expect, $lines, $startLineNum ) {
-		$section = EchoDiscussionParser::getFullSection( explode( "\n", $lines ), $startLineNum );
+		$section = DiscussionParser::getFullSection( explode( "\n", $lines ), $startLineNum );
 		$this->assertEquals( $expect, $section, $message );
 	}
 
@@ -1689,11 +1683,11 @@ TEXT
 		$two = "===SubZomg===\nHi there\n";
 		$three = "==Header==\nOh Hai!\n";
 
-		$this->assertSame( 1, EchoDiscussionParser::getSectionCount( $one ) );
-		$this->assertSame( 2, EchoDiscussionParser::getSectionCount( $one . $two ) );
-		$this->assertSame( 2, EchoDiscussionParser::getSectionCount( $one . $three ) );
-		$this->assertSame( 3, EchoDiscussionParser::getSectionCount( $one . $two . $three ) );
-		$this->assertSame( 30, EchoDiscussionParser::getSectionCount(
+		$this->assertSame( 1, DiscussionParser::getSectionCount( $one ) );
+		$this->assertSame( 2, DiscussionParser::getSectionCount( $one . $two ) );
+		$this->assertSame( 2, DiscussionParser::getSectionCount( $one . $three ) );
+		$this->assertSame( 3, DiscussionParser::getSectionCount( $one . $two . $three ) );
+		$this->assertSame( 30, DiscussionParser::getSectionCount(
 			file_get_contents( __DIR__ . '/revision_txt/637638133.txt' )
 		) );
 	}
@@ -1705,11 +1699,11 @@ TEXT
 			'anonymousUsers' => [ '127.0.0.1' ],
 		];
 
-		$discussionParser = TestingAccessWrapper::newFromClass( EchoDiscussionParser::class );
+		$discussionParser = TestingAccessWrapper::newFromClass( DiscussionParser::class );
 		$this->assertSame( 4, $discussionParser->getOverallUserMentionsCount( $userMentions ) );
 	}
 
-	public function provider_getUserMentions() {
+	public static function provider_getUserMentions() {
 		return [
 			[
 				[ 'NotKnown1' => 0 ],
@@ -1737,7 +1731,7 @@ TEXT
 	 */
 	public function testGetUserMentions( $userLinks, $expectedUserMentions, $agent ) {
 		$title = Title::newFromText( 'Test' );
-		$discussionParser = TestingAccessWrapper::newFromClass( EchoDiscussionParser::class );
+		$discussionParser = TestingAccessWrapper::newFromClass( DiscussionParser::class );
 		$this->assertEquals( $expectedUserMentions, $discussionParser->getUserMentions( $title, $agent, $userLinks ) );
 	}
 
@@ -1745,13 +1739,14 @@ TEXT
 		$userName = 'Admin';
 		$this->setupTestUser( $userName );
 		$userId = User::newFromName( $userName )->getId();
+		$otherUserId = $userId + 1;
 		$expectedUserMentions = [
 			'validMentions' => [ $userId => $userId ],
 			'unknownUsers' => [],
 			'anonymousUsers' => [],
 		];
 		$userLinks = [ $userName => $userId ];
-		$this->testGetUserMentions( $userLinks, $expectedUserMentions, 1 );
+		$this->testGetUserMentions( $userLinks, $expectedUserMentions, $otherUserId );
 	}
 
 	public function testGetUserMentions_ownMention() {
@@ -1782,7 +1777,7 @@ TEXT
 		] );
 
 		$title = Title::newFromText( 'Test' );
-		$discussionParser = TestingAccessWrapper::newFromClass( EchoDiscussionParser::class );
+		$discussionParser = TestingAccessWrapper::newFromClass( DiscussionParser::class );
 		$this->assertSame( 4, $discussionParser->getOverallUserMentionsCount( $discussionParser->getUserMentions( $title, 1, $userLinks ) ) );
 	}
 
@@ -1798,29 +1793,29 @@ TEXT
 		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' );
 		$this->assertEquals(
 			'Page001',
-			EchoDiscussionParser::getTextSnippet(
+			DiscussionParser::getTextSnippet(
 				'[[:{{BASEPAGENAME}}]]',
 				$lang,
-				EchoDiscussionParser::DEFAULT_SNIPPET_LENGTH,
+				DiscussionParser::DEFAULT_SNIPPET_LENGTH,
 				Title::newFromText( 'Page001' )
 			)
 		);
 		$this->assertEquals(
 			'Hello',
-			EchoDiscussionParser::getTextSnippet(
+			DiscussionParser::getTextSnippet(
 				'* Hello',
 				$lang,
-				EchoDiscussionParser::DEFAULT_SNIPPET_LENGTH,
+				DiscussionParser::DEFAULT_SNIPPET_LENGTH,
 				null,
 				true
 			)
 		);
 		$this->assertEquals(
 			'* Hello',
-			EchoDiscussionParser::getTextSnippet(
+			DiscussionParser::getTextSnippet(
 				'* Hello',
 				$lang,
-				EchoDiscussionParser::DEFAULT_SNIPPET_LENGTH,
+				DiscussionParser::DEFAULT_SNIPPET_LENGTH,
 				null,
 				false
 			)

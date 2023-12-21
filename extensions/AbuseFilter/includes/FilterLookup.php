@@ -12,10 +12,12 @@ use MediaWiki\Extension\AbuseFilter\Filter\Flags;
 use MediaWiki\Extension\AbuseFilter\Filter\HistoryFilter;
 use MediaWiki\Extension\AbuseFilter\Filter\LastEditInfo;
 use MediaWiki\Extension\AbuseFilter\Filter\Specs;
+use MediaWiki\User\ActorMigrationBase;
+use RuntimeException;
 use stdClass;
 use WANObjectCache;
-use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * This class provides read access to the filters stored in the database.
@@ -28,27 +30,6 @@ class FilterLookup implements IDBAccessObject {
 	// Used in getClosestVersion
 	public const DIR_PREV = 'prev';
 	public const DIR_NEXT = 'next';
-
-	/**
-	 * @var string[] The FULL list of fields in the abuse_filter table
-	 */
-	private const ALL_ABUSE_FILTER_FIELDS = [
-		'af_id',
-		'af_pattern',
-		'af_user',
-		'af_user_text',
-		'af_timestamp',
-		'af_enabled',
-		'af_comments',
-		'af_public_comments',
-		'af_hidden',
-		'af_hit_count',
-		'af_throttled',
-		'af_deleted',
-		'af_actions',
-		'af_global',
-		'af_group'
-	];
 
 	/**
 	 * @var ExistingFilter[] Individual filters cache. Keys can be integer IDs, or global names
@@ -88,19 +69,31 @@ class FilterLookup implements IDBAccessObject {
 	/** @var CentralDBManager */
 	private $centralDBManager;
 
+	/** @var ActorMigrationBase */
+	private $actorMigration;
+
+	/**
+	 * @var bool Flag used in PHPUnit tests to "hide" local filters when testing global ones, so that we can use the
+	 * local database pretending it's not local.
+	 */
+	private bool $localFiltersHiddenForTest = false;
+
 	/**
 	 * @param ILoadBalancer $loadBalancer
 	 * @param WANObjectCache $cache
 	 * @param CentralDBManager $centralDBManager
+	 * @param ActorMigrationBase $actorMigration
 	 */
 	public function __construct(
 		ILoadBalancer $loadBalancer,
 		WANObjectCache $cache,
-		CentralDBManager $centralDBManager
+		CentralDBManager $centralDBManager,
+		ActorMigrationBase $actorMigration
 	) {
 		$this->loadBalancer = $loadBalancer;
 		$this->wanCache = $cache;
 		$this->centralDBManager = $centralDBManager;
+		$this->actorMigration = $actorMigration;
 	}
 
 	/**
@@ -116,13 +109,15 @@ class FilterLookup implements IDBAccessObject {
 		if ( $flags !== self::READ_NORMAL || !isset( $this->cache[$cacheKey] ) ) {
 			[ $dbIndex, $dbOptions ] = DBAccessObjectUtils::getDBOptions( $flags );
 			$dbr = $this->getDBConnection( $dbIndex, $global );
+			$query = $this->getAbuseFilterQueryInfo();
 
 			$row = $dbr->selectRow(
-				'abuse_filter',
-				self::ALL_ABUSE_FILTER_FIELDS,
+				$query['tables'],
+				$query['fields'],
 				[ 'af_id' => $filterID ],
 				__METHOD__,
-				$dbOptions
+				$dbOptions,
+				$query['joins']
 			);
 			if ( !$row ) {
 				throw new FilterNotFoundException( $filterID, $global );
@@ -182,9 +177,14 @@ class FilterLookup implements IDBAccessObject {
 	 * @return ExistingFilter[]
 	 */
 	private function getAllActiveFiltersInGroupFromDB( string $group, bool $global, int $flags ): array {
+		if ( $this->localFiltersHiddenForTest && !$global ) {
+			return [];
+		}
+
 		[ $dbIndex, $dbOptions ] = DBAccessObjectUtils::getDBOptions( $flags );
 		$dbr = $this->getDBConnection( $dbIndex, $global );
 
+		$query = $this->getAbuseFilterQueryInfo();
 		$where = [
 			'af_enabled' => 1,
 			'af_deleted' => 0,
@@ -197,11 +197,12 @@ class FilterLookup implements IDBAccessObject {
 		// Note, excluding individually cached filter now wouldn't help much, so take it as
 		// an occasion to refresh the cache later
 		$rows = $dbr->select(
-			'abuse_filter',
-			self::ALL_ABUSE_FILTER_FIELDS,
+			$query['tables'],
+			$query['fields'],
 			$where,
 			__METHOD__,
-			$dbOptions
+			$dbOptions,
+			$query['joins']
 		);
 
 		$fname = __METHOD__;
@@ -223,24 +224,24 @@ class FilterLookup implements IDBAccessObject {
 	/**
 	 * @param int $dbIndex
 	 * @param bool $global
-	 * @return IDatabase
+	 * @return IReadableDatabase
 	 * @throws CentralDBNotAvailableException
 	 */
-	private function getDBConnection( int $dbIndex, bool $global ): IDatabase {
+	private function getDBConnection( int $dbIndex, bool $global ): IReadableDatabase {
 		if ( $global ) {
 			return $this->centralDBManager->getConnection( $dbIndex );
 		} else {
-			return $this->loadBalancer->getConnectionRef( $dbIndex );
+			return $this->loadBalancer->getConnection( $dbIndex );
 		}
 	}
 
 	/**
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @param string $fname
 	 * @param int $id
 	 * @return array
 	 */
-	private function getActionsFromDB( IDatabase $db, string $fname, int $id ): array {
+	private function getActionsFromDB( IReadableDatabase $db, string $fname, int $id ): array {
 		$res = $db->select(
 			'abuse_filter_action',
 			[ 'afa_consequence', 'afa_parameters' ],
@@ -271,14 +272,16 @@ class FilterLookup implements IDBAccessObject {
 	): HistoryFilter {
 		if ( $flags !== self::READ_NORMAL || !isset( $this->historyCache[$version] ) ) {
 			[ $dbIndex, $dbOptions ] = DBAccessObjectUtils::getDBOptions( $flags );
-			$dbr = $this->loadBalancer->getConnectionRef( $dbIndex );
+			$dbr = $this->loadBalancer->getConnection( $dbIndex );
+			$query = $this->getAbuseFilterHistoryQueryInfo();
 
 			$row = $dbr->selectRow(
-				'abuse_filter_history',
-				'*',
+				$query['tables'],
+				$query['fields'],
 				[ 'afh_id' => $version ],
 				__METHOD__,
-				$dbOptions
+				$dbOptions,
+				$query['joins']
 			);
 			if ( !$row ) {
 				throw new FilterVersionNotFoundException( $version );
@@ -296,13 +299,15 @@ class FilterLookup implements IDBAccessObject {
 	 */
 	public function getLastHistoryVersion( int $filterID ): HistoryFilter {
 		if ( !isset( $this->lastVersionCache[$filterID] ) ) {
-			$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+			$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
+			$query = $this->getAbuseFilterHistoryQueryInfo();
 			$row = $dbr->selectRow(
-				'abuse_filter_history',
-				'*',
+				$query['tables'],
+				$query['fields'],
 				[ 'afh_filter' => $filterID ],
 				__METHOD__,
-				[ 'ORDER BY' => 'afh_id DESC' ]
+				[ 'ORDER BY' => 'afh_id DESC' ],
+				$query['joins']
 			);
 			if ( !$row ) {
 				throw new FilterNotFoundException( $filterID, false );
@@ -325,16 +330,18 @@ class FilterLookup implements IDBAccessObject {
 		if ( !isset( $this->closestVersionsCache[$filterID][$historyID][$direction] ) ) {
 			$comparison = $direction === self::DIR_PREV ? '<' : '>';
 			$order = $direction === self::DIR_PREV ? 'DESC' : 'ASC';
-			$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+			$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
+			$query = $this->getAbuseFilterHistoryQueryInfo();
 			$row = $dbr->selectRow(
-				'abuse_filter_history',
-				'*',
+				$query['tables'],
+				$query['fields'],
 				[
 					'afh_filter' => $filterID,
 					"afh_id $comparison" . $dbr->addQuotes( $historyID ),
 				],
 				__METHOD__,
-				[ 'ORDER BY' => "afh_timestamp $order" ]
+				[ 'ORDER BY' => "afh_timestamp $order" ],
+				$query['joins']
 			);
 			if ( !$row ) {
 				throw new ClosestFilterVersionNotFoundException( $filterID, $historyID );
@@ -356,7 +363,7 @@ class FilterLookup implements IDBAccessObject {
 	 */
 	public function getFirstFilterVersionID( int $filterID ): int {
 		if ( !isset( $this->firstVersionCache[$filterID] ) ) {
-			$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+			$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
 			$historyID = $dbr->selectField(
 				'abuse_filter_history',
 				'MIN(afh_id)',
@@ -481,11 +488,71 @@ class FilterLookup implements IDBAccessObject {
 	}
 
 	/**
+	 * @return array
+	 */
+	private function getAbuseFilterQueryInfo(): array {
+		$actorQuery = $this->actorMigration->getJoin( 'af_user' );
+		return [
+			'tables' => [ 'abuse_filter' ] + $actorQuery['tables'],
+			'fields' => [
+					'af_id',
+					'af_pattern',
+					'af_timestamp',
+					'af_enabled',
+					'af_comments',
+					'af_public_comments',
+					'af_hidden',
+					'af_hit_count',
+					'af_throttled',
+					'af_deleted',
+					'af_actions',
+					'af_global',
+					'af_group'
+				] + $actorQuery['fields'],
+			'joins' => $actorQuery['joins']
+		];
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getAbuseFilterHistoryQueryInfo(): array {
+		$actorQuery = $this->actorMigration->getJoin( 'afh_user' );
+		return [
+			'tables' => [ 'abuse_filter_history' ] + $actorQuery['tables'],
+			'fields' => [
+					'afh_id',
+					'afh_pattern',
+					'afh_timestamp',
+					'afh_filter',
+					'afh_comments',
+					'afh_public_comments',
+					'afh_flags',
+					'afh_actions',
+					'afh_group'
+				] + $actorQuery['fields'],
+			'joins' => $actorQuery['joins']
+		];
+	}
+
+	/**
 	 * @param int $filterID
 	 * @param bool $global
 	 * @return string
 	 */
 	private function getCacheKey( int $filterID, bool $global ): string {
 		return GlobalNameUtils::buildGlobalName( $filterID, $global );
+	}
+
+	/**
+	 * "Hides" local filters when testing global ones, so that we can use the
+	 * local database pretending it's not local.
+	 * @codeCoverageIgnore
+	 */
+	public function hideLocalFiltersForTesting(): void {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new RuntimeException( 'Can only be called in tests' );
+		}
+		$this->localFiltersHiddenForTest = true;
 	}
 }

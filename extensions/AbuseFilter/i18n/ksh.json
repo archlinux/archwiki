@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Matma Rex",
-			"Purodha",
-			"Amire80"
+			"Purodha"
 		]
 	},
 	"abusefilter-desc": "Dä Meßbruchsfelter deit Änderunge aan Sigge met Heurestikke pröfe.",
@@ -346,7 +346,6 @@
 	"abusefilter-test-page": "Änderonge, di aan dä Sigg jemaat woode sin:",
 	"abusefilter-test-shownegative": "Zeisch de Änderonge, di dä Felter nit jrief",
 	"abusefilter-test-syntaxerr": "Ding Räjel för dä Fellter hät en kapodde Süntaks.\nWann De dat jenouer explizehrt han wells, dann donn dä Knopp „{{int:abusefilter-edit-check}}“ klecke.",
-	"abusefilter-test-badtitle": "Do häs en Övverschreff fö di Dattei enjejovve, di mer nit bruche kann. Et künnte Zeische dren sin, di en Övverschreffte nit müjjelesch sin.",
 	"abusefilter-changeslist-examine": "jenou aankike",
 	"abusefilter-examine": "Einzel Änderonge jenou aankike",
 	"abusefilter-examine-intro": "Op dä Sigg heh kanns De de Dahte enspezehre, di dä Meßbruchsfelter uß en beschtemmpte Änderong aam Wikki erußjetrocke hät, un Do kanns domet och einzel Räjelle pröhve.",

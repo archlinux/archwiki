@@ -2,24 +2,22 @@
 
 namespace MediaWiki\Extension\Notifications\Model;
 
-use Bundleable;
-use EchoServices;
 use Exception;
-use Hooks;
 use InvalidArgumentException;
-use MediaWiki\Extension\Notifications\Cache\RevisionLocalCache;
-use MediaWiki\Extension\Notifications\Cache\TitleLocalCache;
+use MediaWiki\Extension\Notifications\Bundleable;
 use MediaWiki\Extension\Notifications\Controller\NotificationController;
+use MediaWiki\Extension\Notifications\DbFactory;
+use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Mapper\EventMapper;
 use MediaWiki\Extension\Notifications\Mapper\TargetPageMapper;
+use MediaWiki\Extension\Notifications\Services;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use MWEchoDbFactory;
-use MWException;
+use RuntimeException;
 use stdClass;
-use Title;
 use User;
 
 /**
@@ -98,7 +96,7 @@ class Event extends AbstractEntity implements Bundleable {
 	## Save the id and timestamp
 	public function __sleep() {
 		if ( !$this->id ) {
-			throw new MWException( "Unable to serialize an uninitialized Event" );
+			throw new RuntimeException( "Unable to serialize an uninitialized Event" );
 		}
 
 		return [ 'id', 'timestamp' ];
@@ -133,15 +131,15 @@ class Event extends AbstractEntity implements Bundleable {
 	 *
 	 * [ 'extra' => Job::newRootJobParams('example') ]
 	 *
-	 * @throws MWException
 	 * @return Event|false False if aborted via hook or Echo DB is read-only
 	 */
 	public static function create( $info = [] ) {
 		global $wgEchoNotifications;
 
+		$services = MediaWikiServices::getInstance();
 		// Do not create event and notifications if write access is locked
-		if ( MediaWikiServices::getInstance()->getReadOnlyMode()->isReadOnly()
-			|| MWEchoDbFactory::newFromDefault()->getEchoDb( DB_PRIMARY )->isReadOnly()
+		if ( $services->getReadOnlyMode()->isReadOnly()
+			|| DbFactory::newFromDefault()->getEchoDb( DB_PRIMARY )->isReadOnly()
 		) {
 			return false;
 		}
@@ -150,7 +148,7 @@ class Event extends AbstractEntity implements Bundleable {
 		static $validFields = [ 'type', 'variant', 'agent', 'title', 'extra' ];
 
 		if ( empty( $info['type'] ) ) {
-			throw new MWException( "'type' parameter is mandatory" );
+			throw new InvalidArgumentException( "'type' parameter is mandatory" );
 		}
 
 		if ( !isset( $wgEchoNotifications[$info['type']] ) ) {
@@ -189,24 +187,25 @@ class Event extends AbstractEntity implements Bundleable {
 
 			// RevisionStore returns UserIdentityValue now, convert to User for passing to hooks.
 			if ( !$obj->agent instanceof User ) {
-				$obj->agent = MediaWikiServices::getInstance()->getUserFactory()->newFromUserIdentity( $obj->agent );
+				$obj->agent = $services->getUserFactory()->newFromUserIdentity( $obj->agent );
 			}
 		}
 
-		if ( !Hooks::run( 'BeforeEchoEventInsert', [ $obj ] ) ) {
+		$hookRunner = new HookRunner( $services->getHookContainer() );
+		if ( !$hookRunner->onBeforeEchoEventInsert( $obj ) ) {
 			return false;
 		}
 
 		// @Todo - Database insert logic should not be inside the model
 		$obj->insert();
 
-		Hooks::run( 'EventInsertComplete', [ $obj ] );
+		$hookRunner->onEventInsertComplete( $obj );
 
 		global $wgEchoUseJobQueue;
 
 		NotificationController::notify( $obj, $wgEchoUseJobQueue );
 
-		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
+		$stats = $services->getStatsdDataFactory();
 		$type = $info['type'];
 		$stats->increment( 'echo.event.all' );
 		$stats->increment( "echo.event.$type" );
@@ -357,11 +356,11 @@ class Event extends AbstractEntity implements Bundleable {
 			);
 		}
 		if ( $row->event_page_id ) {
-			$titleCache = TitleLocalCache::create();
+			$titleCache = Services::getInstance()->getTitleLocalCache();
 			$titleCache->add( (int)$row->event_page_id );
 		}
 		if ( isset( $this->extra['revid'] ) && $this->extra['revid'] ) {
-			$revisionCache = RevisionLocalCache::create();
+			$revisionCache = Services::getInstance()->getRevisionLocalCache();
 			$revisionCache->add( $this->extra['revid'] );
 		}
 
@@ -559,7 +558,7 @@ class Event extends AbstractEntity implements Bundleable {
 			return $this->title;
 		}
 		if ( $this->pageId ) {
-			$titleCache = TitleLocalCache::create();
+			$titleCache = Services::getInstance()->getTitleLocalCache();
 			$title = $titleCache->get( $this->pageId );
 			if ( $title ) {
 				$this->title = $title;
@@ -589,7 +588,7 @@ class Event extends AbstractEntity implements Bundleable {
 		}
 
 		if ( isset( $this->extra['revid'] ) ) {
-			$revisionCache = RevisionLocalCache::create();
+			$revisionCache = Services::getInstance()->getRevisionLocalCache();
 			$revision = $revisionCache->get( $this->extra['revid'] );
 			if ( $revision ) {
 				$this->revision = $revision;
@@ -609,7 +608,7 @@ class Event extends AbstractEntity implements Bundleable {
 	 * @return string
 	 */
 	public function getCategory() {
-		return EchoServices::getInstance()->getAttributeManager()->getNotificationCategory( $this->type );
+		return Services::getInstance()->getAttributeManager()->getNotificationCategory( $this->type );
 	}
 
 	/**
@@ -617,7 +616,7 @@ class Event extends AbstractEntity implements Bundleable {
 	 * @return string
 	 */
 	public function getSection() {
-		return EchoServices::getInstance()->getAttributeManager()->getNotificationSection( $this->type );
+		return Services::getInstance()->getAttributeManager()->getNotificationSection( $this->type );
 	}
 
 	/**

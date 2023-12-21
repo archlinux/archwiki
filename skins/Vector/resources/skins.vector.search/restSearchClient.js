@@ -1,4 +1,4 @@
-/* global RestResult, SearchResult */
+// / <reference lib="@wikimedia/types" />
 /** @module restSearchClient */
 
 const fetchJson = require( './fetch.js' );
@@ -99,8 +99,9 @@ function restSearchClient( config ) {
 			const searchApiUrl = config.get( 'wgVectorSearchApiUrl',
 				config.get( 'wgScriptPath' ) + '/rest.php'
 			);
-			const params = { q, limit };
-			const url = searchApiUrl + '/v1/search/title?' + $.param( params );
+			const params = { q, limit: limit.toString() };
+			const search = new URLSearchParams( params );
+			const url = `${searchApiUrl}/v1/search/title?${search.toString()}`;
 			const result = fetchJson( url, {
 				headers: {
 					accept: 'application/json'

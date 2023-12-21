@@ -1,8 +1,13 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Language\RawMessage;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 /**
  * @covers HTMLForm
@@ -90,7 +95,6 @@ class HTMLFormTest extends MediaWikiIntegrationTestCase {
 	 * @param array $requestData HTTP request data
 	 * @param array|null $tokens User's CSRF tokens in a salt => value format, or null for anon
 	 * @param bool $shouldBeAuthorized
-	 * @throws MWException
 	 */
 	public function testCsrf(
 		?string $formTokenSalt,
@@ -105,7 +109,7 @@ class HTMLFormTest extends MediaWikiIntegrationTestCase {
 				return $tokens && isset( $tokens[$salt] ) && $tokens[$salt] === $token;
 			} );
 		$context = $this->createConfiguredMock( RequestContext::class, [
-			'getConfig' => new HashConfig( [ 'HTMLFormAllowTableFormat' => true ] ),
+			'getConfig' => new HashConfig( [ MainConfigNames::HTMLFormAllowTableFormat => true ] ),
 			'getRequest' => new FauxRequest( $requestData, true ),
 			'getUser' => $user,
 		] );
@@ -120,7 +124,7 @@ class HTMLFormTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $shouldBeAuthorized, $form->tryAuthorizedSubmit() );
 	}
 
-	public function provideCsrf() {
+	public static function provideCsrf() {
 		return [
 			// form token salt, request data, tokens, should be authorized?
 			'Anon user, CSRF token ignored' => [ null, [], null, true ],

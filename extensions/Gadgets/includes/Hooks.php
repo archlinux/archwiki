@@ -25,6 +25,7 @@ namespace MediaWiki\Extension\Gadgets;
 
 use Content;
 use Exception;
+use ExtensionRegistry;
 use HTMLForm;
 use IContextSource;
 use InvalidArgumentException;
@@ -35,6 +36,8 @@ use MediaWiki\Hook\DeleteUnknownPreferencesHook;
 use MediaWiki\Hook\EditFilterMergedContentHook;
 use MediaWiki\Hook\PreferencesGetIconHook;
 use MediaWiki\Hook\PreferencesGetLegendHook;
+use MediaWiki\Html\Html;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\Hook\PageDeleteCompleteHook;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Permissions\Authority;
@@ -45,6 +48,7 @@ use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\Hook\WgQueryPagesHook;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
+use MediaWiki\Title\Title;
 use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
 use OOUI\HtmlSnippet;
 use OutputPage;
@@ -52,7 +56,6 @@ use RequestContext;
 use Skin;
 use SpecialPage;
 use Status;
-use Title;
 use TitleValue;
 use User;
 use Wikimedia\Rdbms\IDatabase;
@@ -146,6 +149,20 @@ class Hooks implements
 	}
 
 	/**
+	 * Check whether the gadget should load on the mobile domain based on its definition.
+	 *
+	 * @return bool
+	 */
+	private static function isMobileView(): bool {
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) ) {
+			$mobileContext = MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' );
+			return $mobileContext->shouldDisplayMobileView();
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * GetPreferences hook handler.
 	 * @param User $user
 	 * @param array &$preferences Preference descriptions
@@ -163,7 +180,18 @@ class Hooks implements
 			'raw' => true,
 		];
 
+		$safeMode = MediaWikiServices::getInstance()->getUserOptionsLookup()->getOption( $user, 'forcesafemode' );
+		if ( $safeMode ) {
+			$preferences['gadgets-safemode'] = [
+				'type' => 'info',
+				'default' => Html::warningBox( wfMessage( 'gadgets-prefstext-safemode' )->parse() ),
+				'section' => 'gadgets',
+				'raw' => true,
+			];
+		}
+
 		$skin = RequestContext::getMain()->getSkin();
+		$isMobileView = self::isMobileView();
 		foreach ( $gadgets as $section => $thisSection ) {
 			$available = [];
 
@@ -171,22 +199,27 @@ class Hooks implements
 			 * @var $gadget Gadget
 			 */
 			foreach ( $thisSection as $gadget ) {
+				// Only show option to enable gadget if it can be enabled
+				$type = 'api';
 				if (
-					!$gadget->isHidden()
+					!$safeMode
+					&& !$gadget->isHidden()
 					&& $gadget->isAllowed( $user )
+					&& $gadget->isTargetSupported( $isMobileView )
 					&& $gadget->isSkinSupported( $skin )
 				) {
-					$gname = $gadget->getName();
-					$sectionLabelMsg = "gadget-section-$section";
-
-					$preferences["gadget-$gname"] = [
-						'type' => 'check',
-						'label-message' => $gadget->getDescriptionMessageKey(),
-						'section' => $section !== '' ? "gadgets/$sectionLabelMsg" : 'gadgets',
-						'default' => $gadget->isEnabled( $user ),
-						'noglobal' => true,
-					];
+					$type = 'check';
 				}
+				$gname = $gadget->getName();
+				$sectionLabelMsg = "gadget-section-$section";
+
+				$preferences["gadget-$gname"] = [
+					'type' => $type,
+					'label-message' => $gadget->getDescriptionMessageKey(),
+					'section' => $section !== '' ? "gadgets/$sectionLabelMsg" : 'gadgets',
+					'default' => $gadget->isEnabled( $user ),
+					'noglobal' => true,
+				];
 			}
 		}
 	}
@@ -243,12 +276,13 @@ class Hooks implements
 	public function onBeforePageDisplay( $out, $skin ): void {
 		$repo = GadgetRepo::singleton();
 		$ids = $repo->getGadgetIds();
+		$isMobileView = self::isMobileView();
 		if ( !$ids ) {
 			return;
 		}
 
 		$enabledLegacyGadgets = [];
-		$conditions = new GadgetLoadConditions( $out );
+		$conditions = new GadgetLoadConditions( $out, $isMobileView );
 
 		/**
 		 * @var $gadget Gadget
@@ -376,23 +410,6 @@ class Hooks implements
 					$model = 'json';
 					return false;
 			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Set the CodeEditor language for Gadget definition pages. It already
-	 * knows the language for Gadget: namespace pages.
-	 *
-	 * @param Title $title
-	 * @param string &$lang
-	 * @return bool
-	 */
-	public static function onCodeEditorGetPageLanguage( Title $title, &$lang ) {
-		if ( $title->hasContentModel( 'GadgetDefinition' ) ) {
-			$lang = 'json';
-			return false;
 		}
 
 		return true;

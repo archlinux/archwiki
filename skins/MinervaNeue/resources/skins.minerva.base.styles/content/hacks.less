@@ -45,9 +45,9 @@ FIXME: Review all of these hacks to see if they still apply.
 	.infobox {
 		font-size: 90%;
 		position: relative;
-		border: 1px solid @colorGray14;
+		border: @border-width-base @border-style-base #eaecf0;
 		margin-bottom: 2em;
-		background-color: @colorGray15;
+		background-color: @background-color-lightest;
 		display: flex;
 		flex: 1 1 100%;
 		flex-flow: column nowrap;
@@ -62,7 +62,7 @@ FIXME: Review all of these hacks to see if they still apply.
 		th, td {
 			vertical-align: top;
 			border: 0;
-			border-bottom: 1px solid @colorGray14;
+			border-bottom: @border-width-base @border-style-base #eaecf0;
 			padding: 7px 10px;
 		}
 
@@ -125,21 +125,21 @@ FIXME: Review all of these hacks to see if they still apply.
 
 // When JavaScript is disabled clarify to the user which reference they clicked on
 .references li:target {
-	background-color: @background-color-primary;
+	background-color: @background-color-progressive-subtle;
 }
 
 .hatnote,
 .dablink,
 .rellink {
 	padding: 5px 7px;
-	color: @colorGray5;
+	color: @color-subtle;
 	font-size: @font-size-minerva-smallest;
-	background-color: @colorGray15;
+	background-color: @background-color-lightest;
 	margin-bottom: 1px;
 	overflow: hidden;
 
 	a {
-		color: @colorProgressive;
+		color: @color-progressive;
 	}
 }
 

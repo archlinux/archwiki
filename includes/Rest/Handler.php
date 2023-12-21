@@ -312,9 +312,13 @@ abstract class Handler {
 	public function applyCacheControl( ResponseInterface $response ) {
 		// NOTE: keep this consistent with the logic in OutputPage::sendCacheControl
 
-		if ( $response->getHeaderLine( 'Set-Cookie' ) ) {
-			// If the response sets cookies, it must not be cached in proxies!
-			$response->setHeader( 'Cache-Control', 'private,no-cache,s-maxage=0' );
+		// If the response sets cookies, it must not be cached in proxies.
+		// If there's an active cookie-based session (logged-in user or anonymous user with
+		// session-scoped cookies), it is not safe to cache either, as the session manager may set
+		// cookies in the response, or the response itself may vary on user-specific variables,
+		// for example on private wikis where the 'read' permission is restricted. (T264631)
+		if ( $response->getHeaderLine( 'Set-Cookie' ) || $this->getSession()->isPersistent() ) {
+			$response->setHeader( 'Cache-Control', 'private,must-revalidate,s-maxage=0' );
 		}
 
 		if ( !$response->getHeaderLine( 'Cache-Control' ) ) {

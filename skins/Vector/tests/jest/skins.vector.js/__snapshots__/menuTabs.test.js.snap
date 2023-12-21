@@ -20,7 +20,7 @@ exports[`menuTabs adds vector-tab-noicon class to li element when part of tabs 1
 
 exports[`menuTabs does not add vector-tab-noicon class to li element when not part of tabs 1`] = `
 "
-			<div id=\\"p-variants\\" class=\\"vector-menu mw-portlet mw-portlet-variants vector-menu-dropdown\\">
+			<div id=\\"p-variants\\" class=\\"vector-menu mw-portlet mw-portlet-variants\\">
 				<div class=\\"vector-menu-content\\">
 					<ul class=\\"vector-menu-content-list\\">
 						<li class=\\"mw-list-item mw-list-item-js\\" id=\\"test-id\\">

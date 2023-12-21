@@ -7,11 +7,12 @@
 			"Soued031",
 			"Tynchtyk Chorotegin",
 			"UV",
-			"Викиней"
+			"Викиней",
+			"Volvox"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuell Ännerung]]",
-	"tag-visualeditor-description": "Ännerung mam [[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuellen Editeur]] gemaach",
+	"tag-visualeditor-description": "Ännerung, déi mam [[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuellen Editeur]] gemaach gouf",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuell änneren: Nokucken]]",
 	"tag-visualeditor-needcheck-description": "Ännerung déi mam  [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuellen Editeur]] gemaach gouf a wou de System eventuell net gewollten Ännerunge gemaach huet.",
 	"tag-visualeditor-wikitext": "2017-Quelltext-Ännerung",

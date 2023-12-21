@@ -25,8 +25,10 @@
 
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
+use MediaWiki\Title\TitleFormatter;
 use Wikimedia\ParamValidator\ParamValidator;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * API interface for setting the wl_notificationtimestamp field
@@ -36,34 +38,37 @@ class ApiSetNotificationTimestamp extends ApiBase {
 
 	private $mPageSet = null;
 
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var WatchedItemStoreInterface */
-	private $watchedItemStore;
+	private RevisionStore $revisionStore;
+	private IConnectionProvider $dbProvider;
+	private WatchedItemStoreInterface $watchedItemStore;
+	private TitleFormatter $titleFormatter;
+	private TitleFactory $titleFactory;
 
 	/**
 	 * @param ApiMain $main
 	 * @param string $action
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param RevisionStore $revisionStore
 	 * @param WatchedItemStoreInterface $watchedItemStore
+	 * @param TitleFormatter $titleFormatter
+	 * @param TitleFactory $titleFactory
 	 */
 	public function __construct(
 		ApiMain $main,
 		$action,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		RevisionStore $revisionStore,
-		WatchedItemStoreInterface $watchedItemStore
+		WatchedItemStoreInterface $watchedItemStore,
+		TitleFormatter $titleFormatter,
+		TitleFactory $titleFactory
 	) {
 		parent::__construct( $main, $action );
 
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->revisionStore = $revisionStore;
 		$this->watchedItemStore = $watchedItemStore;
+		$this->titleFormatter = $titleFormatter;
+		$this->titleFactory = $titleFactory;
 	}
 
 	public function execute() {
@@ -92,7 +97,7 @@ class ApiSetNotificationTimestamp extends ApiBase {
 			);
 		}
 
-		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+		$dbw = $this->dbProvider->getPrimaryDatabase();
 
 		$timestamp = null;
 		if ( isset( $params['timestamp'] ) ) {
@@ -107,7 +112,7 @@ class ApiSetNotificationTimestamp extends ApiBase {
 			if ( $params['entirewatchlist'] || $pageSet->getGoodTitleCount() > 1 ) {
 				$this->dieWithError( [ 'apierror-multpages', $this->encodeParamName( 'torevid' ) ] );
 			}
-			$titles = $pageSet->getGoodTitles();
+			$titles = $pageSet->getGoodPages();
 			$title = reset( $titles );
 			if ( $title ) {
 				// XXX $title isn't actually used, can we just get rid of the previous six lines?
@@ -125,7 +130,7 @@ class ApiSetNotificationTimestamp extends ApiBase {
 			if ( $params['entirewatchlist'] || $pageSet->getGoodTitleCount() > 1 ) {
 				$this->dieWithError( [ 'apierror-multpages', $this->encodeParamName( 'newerthanrevid' ) ] );
 			}
-			$titles = $pageSet->getGoodTitles();
+			$titles = $pageSet->getGoodPages();
 			$title = reset( $titles );
 			if ( $title ) {
 				$timestamp = null;
@@ -175,31 +180,33 @@ class ApiSetNotificationTimestamp extends ApiBase {
 				$result[] = $rev;
 			}
 
-			if ( $pageSet->getPages() ) {
+			$pages = $pageSet->getPages();
+			if ( $pages ) {
 				// Now process the valid titles
 				$this->watchedItemStore->setNotificationTimestampsForUser(
 					$user,
 					$timestamp,
-					$pageSet->getPages()
+					$pages
 				);
 
 				// Query the results of our update
 				$timestamps = $this->watchedItemStore->getNotificationTimestampsBatch(
 					$user,
-					$pageSet->getPages()
+					$pages
 				);
 
 				// Now, put the valid titles into the result
-				/** @var Title $title */
-				foreach ( $pageSet->getTitles() as $title ) {
-					$ns = $title->getNamespace();
-					$dbkey = $title->getDBkey();
+				/** @var \MediaWiki\Page\PageIdentity $page */
+				foreach ( $pages as $page ) {
+					$ns = $page->getNamespace();
+					$dbkey = $page->getDBkey();
 					$r = [
 						'ns' => $ns,
-						'title' => $title->getPrefixedText(),
+						'title' => $this->titleFormatter->getPrefixedText( $page ),
 					];
-					if ( !$title->exists() ) {
+					if ( !$page->exists() ) {
 						$r['missing'] = true;
+						$title = $this->titleFactory->newFromPageIdentity( $page );
 						if ( $title->isKnown() ) {
 							$r['known'] = true;
 						}

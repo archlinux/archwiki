@@ -4,8 +4,8 @@ namespace MediaWiki\Extension\Math\InputCheck;
 
 use MediaWiki\Http\HttpRequestFactory;
 use Message;
-use MWException;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use WANObjectCache;
 
 class MathoidChecker extends BaseChecker {
@@ -83,7 +83,6 @@ class MathoidChecker extends BaseChecker {
 
 	/**
 	 * @return array
-	 * @throws MWException
 	 */
 	public function runCheck(): array {
 		$url = "{$this->url}/texvcinfo";
@@ -97,10 +96,10 @@ class MathoidChecker extends BaseChecker {
 		$req = $this->httpFactory->create( $url, $options, __METHOD__ );
 		$req->execute();
 		$statusCode = $req->getStatus();
-		if ( in_array( $statusCode, self::EXPECTED_RETURN_CODES ) ) {
+		if ( in_array( $statusCode, self::EXPECTED_RETURN_CODES, true ) ) {
 			return [ $statusCode, $req->getContent() ];
 		}
-		$e = new MWException( 'Mathoid check returned unexpected error code.' );
+		$e = new RuntimeException( 'Mathoid check returned unexpected error code.' );
 		$this->logger->error( 'Mathoid check endpoint "{url}" returned ' .
 			'HTTP status code "{statusCode}" for post data "{postData}": {exception}.',
 			[

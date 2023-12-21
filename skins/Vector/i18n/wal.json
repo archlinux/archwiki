@@ -48,5 +48,8 @@
 	"tooltip-vector-anon-user-menu-title": "Aaho doorota",
 	"vector-prefs-limited-width": "Guutta zanana hanotaa oosuwaan peeshsha",
 	"vector-prefs-limited-width-help": "Lo'ida nabbabuwaa meeziyaasi guutta zanana hanotaa oosuwaan peeshsha.",
-	"empty-language-selector-body": "Sinttaa kesoy hara doonatun kaafettibeenna."
+	"empty-language-selector-body": "Sinttaa kesoy hara doonatun kaafettibeenna.",
+	"vector-toc-unpinned-popup": "Kesoti hagawu yuuyyidosona.",
+	"vector-page-tools-unpinned-popup": "Buquratu kesoti hagawu yuuyyidosona.",
+	"vector-main-menu-unpinned-popup": "Huuphe kesoy hagawu yuuyyis."
 }

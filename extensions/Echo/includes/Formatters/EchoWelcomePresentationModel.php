@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use Title;
+use MediaWiki\Title\Title;
 
 class EchoWelcomePresentationModel extends EchoEventPresentationModel {
 

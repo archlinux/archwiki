@@ -6,7 +6,6 @@
 			"唐吉訶德的侍從"
 		]
 	},
-	"apihelp-visualeditor-description": "趁 Parsoid 服務返回頁面其 HTML5。",
 	"apihelp-visualeditor-param-basetimestamp": "敆保存其辰候，起動汝共嚽設置成編輯茲萆修訂版本其時間戳。廮𡅏檢測編輯衝突。",
 	"apihelp-visualeditor-param-cachekey": "對序列化或者版本差異，使以前其serializeforcache請求共茲密鑰產生其結果。覆蓋 $1html。",
 	"apihelp-visualeditor-param-etag": "著發送其 ETag。",
@@ -17,7 +16,6 @@
 	"apihelp-visualeditor-param-pst": "發送遘Parsoid之前預保存著轉換其Wiki文本（paction=parsefragment）。",
 	"apihelp-visualeditor-param-starttimestamp": "保存其辰候，將伊設置成頁面加載辰候其時間戳。廮𡅏檢測編輯衝突。",
 	"apihelp-visualeditor-param-wikitext": "發送遘Parsoid來轉成HTML其Wiki文本",
-	"apihelp-visualeditoredit-description": "共HTML5頁面保存遘MediaWiki（通過Parsoid服務轉成Wiki文本）。",
 	"apihelp-visualeditoredit-param-basetimestamp": "敆保存其辰候，起動汝共嚽設置成編輯茲萆修訂版本其時間戳。廮𡅏檢測編輯衝突。",
 	"apihelp-visualeditoredit-param-cachekey": "使以前其serializeforcache請求共者密鑰產生其結果。覆蓋 $1html。",
 	"apihelp-visualeditoredit-param-captchaid": "驗證碼標識符（帶驗證碼保存其辰候）。",

@@ -28,7 +28,7 @@ use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewList;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewRevert;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewTestBatch;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewTools;
-use Title;
+use MediaWiki\Title\Title;
 use Wikimedia\ObjectFactory\ObjectFactory;
 
 class SpecialAbuseFilter extends AbuseFilterSpecialPage {
@@ -47,6 +47,7 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 			FilterLookup::SERVICE_NAME,
 		],
 		AbuseFilterViewEdit::class => [
+			'DBLoadBalancerFactory',
 			'PermissionManager',
 			AbuseFilterPermissionManager::SERVICE_NAME,
 			FilterProfiler::SERVICE_NAME,
@@ -58,7 +59,7 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 			SpecsFormatter::SERVICE_NAME,
 		],
 		AbuseFilterViewExamine::class => [
-			'DBLoadBalancer',
+			'DBLoadBalancerFactory',
 			AbuseFilterPermissionManager::SERVICE_NAME,
 			FilterLookup::SERVICE_NAME,
 			EditBoxBuilderFactory::SERVICE_NAME,
@@ -85,6 +86,7 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 			CentralDBManager::SERVICE_NAME,
 		],
 		AbuseFilterViewRevert::class => [
+			'DBLoadBalancerFactory',
 			'UserFactory',
 			AbuseFilterPermissionManager::SERVICE_NAME,
 			FilterLookup::SERVICE_NAME,
@@ -93,6 +95,7 @@ class SpecialAbuseFilter extends AbuseFilterSpecialPage {
 			SpecsFormatter::SERVICE_NAME,
 		],
 		AbuseFilterViewTestBatch::class => [
+			'DBLoadBalancerFactory',
 			AbuseFilterPermissionManager::SERVICE_NAME,
 			EditBoxBuilderFactory::SERVICE_NAME,
 			RuleCheckerFactory::SERVICE_NAME,

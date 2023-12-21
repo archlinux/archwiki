@@ -14,6 +14,7 @@ QUnit.test( '#getAuthorsBelow/#getThreadItemsBelow', function ( assert ) {
 		} else {
 			item = new CommentItem();
 			item.author = json.author;
+			item.displayName = json.displayName;
 		}
 		item.id = json.id;
 		item.replies = json.replies.map( newFromJSON );

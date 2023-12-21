@@ -35,7 +35,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 		$mathWikibase = $this->getWikibaseConnector( null, $languageNameUtils );
 
 		$this->expectException( 'InvalidArgumentException' );
-		$this->expectErrorMessage( 'Invalid language code specified.' );
+		$this->expectExceptionMessage( 'Invalid language code specified.' );
 		$mathWikibase->fetchWikibaseFromId( 'Q1', '&' );
 	}
 
@@ -46,14 +46,14 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 		$mathWikibase = $this->getWikibaseConnector( null, null, null, $entityRevisionLookup );
 
 		$this->expectException( 'InvalidArgumentException' );
-		$this->expectErrorMessage( 'Non-existing Wikibase ID.' );
+		$this->expectExceptionMessage( 'Non-existing Wikibase ID.' );
 		$mathWikibase->fetchWikibaseFromId( 'Q1', '&' );
 	}
 
 	public function testFetchNonExistingId() {
 		$mathWikibase = $this->getWikibaseConnector();
 		$this->expectException( 'InvalidArgumentException' );
-		$this->expectErrorMessage( 'Non-existing Wikibase ID.' );
+		$this->expectExceptionMessage( 'Non-existing Wikibase ID.' );
 		$mathWikibase->fetchWikibaseFromId( 'Q1', 'en' );
 	}
 
@@ -88,7 +88,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 
 		// but obviously on non-existing errors when trying to fetch information
 		$this->expectException( 'InvalidArgumentException' );
-		$this->expectErrorMessage( 'Non-existing Wikibase ID.' );
+		$this->expectExceptionMessage( 'Non-existing Wikibase ID.' );
 		$mathWikibase->fetchWikibaseFromId( 'Q1', 'en' );
 	}
 
@@ -106,7 +106,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 
 		$mathWikibase = $this->getWikibaseConnector( null, null, null, null, null, $parserMock );
 		$this->expectException( 'InvalidArgumentException' );
-		$this->expectErrorMessage( 'Invalid Wikibase ID.' );
+		$this->expectExceptionMessage( 'Invalid Wikibase ID.' );
 		$mathWikibase->fetchWikibaseFromId( '1', 'en' );
 	}
 
@@ -115,7 +115,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 		$entityRevisionMock = $this->createMock( EntityRevision::class );
 		$wikibaseConnector = $this->getWikibaseConnectorWithExistingItems( $entityRevisionMock );
 		$this->expectException( 'InvalidArgumentException' );
-		$this->expectErrorMessage( 'The specified Wikibase ID does not represented an item.' );
+		$this->expectExceptionMessage( 'The specified Wikibase ID does not represented an item.' );
 		$wikibaseConnector->fetchWikibaseFromId( 'Q1', 'en' );
 	}
 

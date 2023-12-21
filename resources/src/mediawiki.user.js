@@ -2,9 +2,11 @@
  * @class mw.user
  * @singleton
  */
-/* global Uint16Array */
 ( function () {
-	var userInfoPromise, pageviewRandomId;
+	var userInfoPromise, tempUserNamePromise, pageviewRandomId, sessionId;
+	var CLIENTPREF_COOKIE_NAME = 'mwclientpreferences';
+	var CLIENTPREF_SUFFIX = '-clientpref-';
+	var CLIENTPREF_DELIMITER = ',';
 
 	/**
 	 * Get the current user's groups or rights
@@ -19,8 +21,56 @@
 		return userInfoPromise;
 	}
 
+	/**
+	 * Save the feature value to the client preferences cookie.
+	 *
+	 * @private
+	 * @param {string} feature
+	 * @param {string} value
+	 */
+	function saveClientPrefs( feature, value ) {
+		var existingCookie = mw.cookie.get( CLIENTPREF_COOKIE_NAME ) || '';
+		var data = {};
+		existingCookie.split( CLIENTPREF_DELIMITER ).forEach( function ( keyValuePair ) {
+			var m = keyValuePair.match( /^([\w-]+)-clientpref-(\w+)$/ );
+			if ( m ) {
+				data[ m[ 1 ] ] = m[ 2 ];
+			}
+		} );
+		data[ feature ] = value;
+
+		var newCookie = Object.keys( data ).map( function ( key ) {
+			return key + CLIENTPREF_SUFFIX + data[ key ];
+		} ).join( CLIENTPREF_DELIMITER );
+		mw.cookie.set( CLIENTPREF_COOKIE_NAME, newCookie );
+	}
+
+	/**
+	 * Check if the feature name is composed of valid characters.
+	 *
+	 * A valid feature name may contain letters, numbers, and "-" characters.
+	 *
+	 * @private
+	 * @param {string} value
+	 * @return {boolean}
+	 */
+	function isValidFeatureName( value ) {
+		return value.match( /^[a-zA-Z0-9-]+$/ ) !== null;
+	}
+
+	/**
+	 * Check if the value is composed of valid characters.
+	 *
+	 * @private
+	 * @param {string} value
+	 * @return {boolean}
+	 */
+	function isValidFeatureValue( value ) {
+		return value.match( /^[a-zA-Z0-9]+$/ ) !== null;
+	}
+
 	// mw.user with the properties options and tokens gets defined in mediawiki.base.js.
-	$.extend( mw.user, {
+	Object.assign( mw.user, {
 
 		/**
 		 * Generate a random user session ID.
@@ -42,7 +92,7 @@
 		 * See https://en.wikipedia.org/wiki/Birthday_attack#Mathematics
 		 * n(p;H) = n(0.01,2^80)= sqrt (2 * 2^80 * ln(1/(1-0.01)))
 		 *
-		 * @return {string} 80 bit integer in hex format, padded
+		 * @return {string} 80 bit integer (20 characters) in hex format, padded
 		 */
 		generateRandomSessionId: function () {
 			var rnds, i,
@@ -56,7 +106,7 @@
 			try {
 				// Initialize a typed array containing 5 0-initialized 16-bit integers.
 				// Note that Uint16Array is array-like but does not implement Array.
-				// eslint-disable-next-line es-x/no-typed-arrays
+
 				rnds = new Uint16Array( 5 );
 				// Overwrite the array elements with cryptographically strong random values.
 				// https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues
@@ -138,6 +188,44 @@
 		},
 
 		/**
+		 * Acquire a temporary user username and stash it in the current session, if temp account creation
+		 * is enabled and the current user is logged out. If a name has already been stashed, returns the
+		 * same name.
+		 *
+		 * If the user later performs an action that results in temp account creation, the stashed username
+		 * will be used for their account. It may also be used in previews. However, the account is not
+		 * created yet, and the name is not visible to other users.
+		 *
+		 * @return {jQuery.Promise} Promise resolved with the username if we succeeded,
+		 *   or resolved with `null` if we failed
+		 */
+		acquireTempUserName: function () {
+			if ( tempUserNamePromise !== undefined ) {
+				// Return the existing promise if we already tried. Do not retry even if we failed.
+				return tempUserNamePromise;
+			}
+
+			if ( mw.config.get( 'wgUserId' ) ) {
+				// User is logged in (or has a temporary account), nothing to do
+				tempUserNamePromise = $.Deferred().resolve( null );
+			} else if ( mw.config.get( 'wgTempUserName' ) ) {
+				// Temporary user username already acquired
+				tempUserNamePromise = $.Deferred().resolve( mw.config.get( 'wgTempUserName' ) );
+			} else {
+				var api = new mw.Api();
+				tempUserNamePromise = api.post( { action: 'acquiretempusername' } ).then( function ( resp ) {
+					mw.config.set( 'wgTempUserName', resp.acquiretempusername );
+					return resp.acquiretempusername;
+				} ).catch( function () {
+					// Ignore failures. The temp name should not be necessary for anything to work.
+					return null;
+				} );
+			}
+
+			return tempUserNamePromise;
+		},
+
+		/**
 		 * Get date user registered, if available
 		 *
 		 * @return {boolean|null|Date} False for anonymous users, null if data is
@@ -172,15 +260,19 @@
 		 *
 		 * **Note:** Server-side code must never interpret or modify this value.
 		 *
-		 * @return {string} Random session ID
+		 * @return {string} Random session ID (20 hex characters)
 		 */
 		sessionId: function () {
-			var sessionId = mw.cookie.get( 'mwuser-sessionId' );
-			if ( sessionId === null ) {
-				sessionId = mw.user.generateRandomSessionId();
-				// Setting the `expires` field to `null` means that the cookie should
-				// persist (shared across windows and tabs) until the browser is closed.
-				mw.cookie.set( 'mwuser-sessionId', sessionId, { expires: null } );
+			if ( sessionId === undefined ) {
+				sessionId = mw.cookie.get( 'mwuser-sessionId' );
+				// Validate that the value is 20 hex characters, as it is user-controlled,
+				// and we also used different formats in the past (T283881)
+				if ( sessionId === null || !/^[0-9a-f]{20}$/.test( sessionId ) ) {
+					sessionId = mw.user.generateRandomSessionId();
+					// Setting the `expires` field to `null` means that the cookie should
+					// persist (shared across windows and tabs) until the browser is closed.
+					mw.cookie.set( 'mwuser-sessionId', sessionId, { expires: null } );
+				}
 			}
 			return sessionId;
 		},
@@ -220,6 +312,84 @@
 				function ( userInfo ) { return userInfo.rights; },
 				function () { return []; }
 			).then( callback );
+		},
+
+		/**
+		 * Manage client preferences
+		 *
+		 * For skins that enable the `clientPrefEnabled` option (see Skin class in PHP),
+		 * this feature allows you to store preferences in the browser session that will
+		 * switch one or more the classes on the HTML document.
+		 *
+		 * This is only supported for unregistered users. For registered users, skins
+		 * and extensions must use user preferences (e.g. hidden or API-only options)
+		 * and swap class names server-side through the Skin interface.
+		 *
+		 * This feature is limited to page views by unregistered users. For logged-in requests,
+		 * store preferences in the database instead, via UserOptionsManager or mw.Api#saveOption
+		 * (may be hidden or API-only to exclude from Special:Preferences), and then include the
+		 * desired classes directly in Skin::getHtmlElementAttributes.
+		 *
+		 * Classes toggled by this feature must be named as `<feature>-clientpref-<value>`,
+		 * where `value` contains only alphanumerical characters (a-zA-Z0-9), and `feature`
+		 * can also include hyphens.
+		 *
+		 * @class mw.user.clientPrefs
+		 * @singleton
+		 */
+		clientPrefs: {
+			/**
+			 * Change the class on the HTML document element, and save the value in a cookie
+			 *
+			 * @param {string} feature
+			 * @param {string} value
+			 * @return {boolean} True if feature was stored successfully, false if the value
+			 *   uses a forbidden character or the feature is not recognised
+			 *   e.g. a matching class was not defined on the HTML document element.
+			 */
+			set: function ( feature, value ) {
+				if ( !isValidFeatureName( feature ) || !isValidFeatureValue( value ) ) {
+					return false;
+				}
+				var currentValue = mw.user.clientPrefs.get( feature );
+				// the feature is not recognized
+				if ( !currentValue ) {
+					return false;
+				}
+				var oldFeatureClass = feature + CLIENTPREF_SUFFIX + currentValue;
+				var newFeatureClass = feature + CLIENTPREF_SUFFIX + value;
+				// The following classes are removed here:
+				// * feature-name-clientpref-<old-feature-value>
+				// * e.g. vector-font-size--clientpref-small
+				document.documentElement.classList.remove( oldFeatureClass );
+				// The following classes are added here:
+				// * feature-name-clientpref-<feature-value>
+				// * e.g. vector-font-size--clientpref-xlarge
+				document.documentElement.classList.add( newFeatureClass );
+				saveClientPrefs( feature, value );
+				return true;
+			},
+
+			/**
+			 * Retrieve the current value of the feature from the HTML document element
+			 *
+			 * @param {string} feature
+			 * @return {string|boolean} returns boolean if the feature is not recognized
+			 *  returns string if a feature was found.
+			 */
+			get: function ( feature ) {
+				var featurePrefix = feature + CLIENTPREF_SUFFIX;
+				var docClass = document.documentElement.className;
+				// eslint-disable-next-line security/detect-non-literal-regexp
+				var featureRegEx = new RegExp(
+					'(^| )' + mw.util.escapeRegExp( featurePrefix ) + '([a-zA-Z0-9]+)( |$)'
+				);
+				var match = docClass.match( featureRegEx );
+
+				// check no further matches if we replaced this occurance.
+				var isAmbiguous = docClass.replace( featureRegEx, '$1$3' ).match( featureRegEx ) !== null;
+				return !isAmbiguous && match ? match[ 2 ] : false;
+			}
 		}
 	} );
 

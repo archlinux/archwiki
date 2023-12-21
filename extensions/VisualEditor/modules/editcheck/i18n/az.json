@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"NMW03"
+		]
+	},
+	"editcheck-dialog-action-no": "Xeyr",
+	"editcheck-dialog-action-yes": "Bəli",
+	"editcheck-dialog-addref-description": "Sitat əlavə etməklə oxuculara bu məlumatın haradan gəldiyini anlamağa kömək edin.",
+	"editcheck-dialog-addref-reject-question": "Niyə mənbə əlavə etmirsiniz?",
+	"editcheck-dialog-addref-reject-description": "Digər redaktorlar mənbəni rədd etmək qərarınız haqqında daha çox öyrənməyə dəyər verəcəklər.",
+	"editcheck-dialog-addref-reject-uncertain": "Hansı istinadı əlavə edəcəyimi bilmirəm",
+	"editcheck-dialog-addref-reject-other": "Digər",
+	"editcheck-dialog-addref-success-notify": "İstinad əlavə etdiyiniz üçün təşəkkür edirik!",
+	"editcheck-dialog-addref-title": "İstinad əlavə et",
+	"editcheck-dialog-title": "Yayımlamadan əvvəl"
+}

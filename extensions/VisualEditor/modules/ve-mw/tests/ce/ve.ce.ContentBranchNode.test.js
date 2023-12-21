@@ -32,11 +32,15 @@ QUnit.test( 'getRenderedContents', ( assert ) => {
 				{ type: '/alienInline' },
 				{ type: '/paragraph' }
 			],
-			html:
-				'a<b>b' +
-					'<span class="ve-ce-leafNode ve-ce-mwEntityNode" contenteditable="false">c</span>' +
-					'd<span rel="ve:Alien" class="ve-ce-focusableNode ve-ce-leafNode" contenteditable="false">e</span>' +
-				'</b>'
+			html: ve.dm.example.singleLine`
+				a
+				<b>
+					b
+					<span class="ve-ce-leafNode ve-ce-mwEntityNode" contenteditable="false">c</span>
+					d
+					<span rel="ve:Alien" class="ve-ce-focusableNode ve-ce-leafNode" contenteditable="false">e</span>
+				</b>
+			`
 		} ];
 
 	for ( let i = 0; i < cases.length; i++ ) {

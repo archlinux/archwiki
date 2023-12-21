@@ -1,12 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Alshamiri1",
 			"Claw eg",
 			"DannyS712",
 			"Dr-Taher",
 			"FiberAhmed",
 			"Hasley",
 			"Hhaboh162002",
+			"Hubaishan",
 			"Kuwaity26",
 			"Maroen1990",
 			"Meno25",
@@ -21,9 +23,7 @@
 			"أَحمد",
 			"ديفيد",
 			"روخو",
-			"محمد أحمد عبد الفتاح",
-			"Alshamiri1",
-			"Hubaishan"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"config-desc": "مثبت برمجيات ميدياويكي",
@@ -74,8 +74,6 @@
 	"config-no-db": "لا يمكن العثور على مشغل قاعدة بيانات مناسب! تحتاج إلى تثبيت مشغل قاعدة بيانات PHP، \n{{PLURAL:$2|نوع قاعدة البيانات التالي مدعوم|أنواع قاعدة البيانات التالية مدعومة}} البيانات التالية مدعومة: $1.\n\nإذا قمت بتجميع PHP بنفسك، فقم بتكوينها مع تمكين عميل قاعدة البيانات، على سبيل المثال، باستخدام <code>./configure --with-mysqli</code>.\nإذا قمت بتثبيت PHP من حزمة Debian أو Ubuntu، فستحتاج أيضا إلى تثبيت، على سبيل المثال، حزمة <code>php-mysql</code>.",
 	"config-outdated-sqlite": "<strong>تحذير:</strong> لديك SQLite $2، وهو أقل من الحد الأدنى المطلوب للنسخة $1، SQLite سوف يكون غير متوفر.",
 	"config-no-fts3": "<strong>تحذير:</strong> يتم تجميع SQLite بدون [//sqlite.org/fts3.html FTS3 module]; ستكون ميزات البحث غير متوفرة في هذه الواجهة الخلفية.",
-	"config-pcre-old": "<strong>فادح:</strong> مطلوب إصدار PCRE  رقم $1 أو أحدث،\nترتبط ثنائية PHP الخاصة بك بإصدار PCRE رقم $2.\n[https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Errors_and_symptoms/PCRE مزيد من المعلومات].",
-	"config-pcre-no-utf8": "<strong>فادح:</strong> يبدو أن وحدة PCRE في PHP يتم تجميعها بدون دعم PCRE_UTF8، \nيتطلب ميدياويكي دعم UTF-8 ليعمل بشكل صحيح.",
 	"config-pcre-invalid-newline": "خطأ <strong>فادح:</strong> يبدو أن وحدة PCRE الخاصة بـ PHP قد تم تجميعها باستخدام PCRE_CONFIG_NEWLINE = -1 لـ ANY.! N! MediaWiki غير متوافق مع هذا التكوين.",
 	"config-memory-raised": "<code>memory_limit</code> في PHP $1 ومرتفعة إلى $2.",
 	"config-memory-bad": "<strong>تحذير:</strong> في PHP <code>memory_limit</code> $1،\nهذا على الارجح منخفض جدا;\nقد يفشل التثبيت!",
@@ -116,6 +114,7 @@
 	"config-db-prefix-help": "إذا كنت بحاجة إلى مشاركة قاعدة بيانات واحدة بين ويكيات متعددة، أو بين ميدياويكي وتطبيق آخر على شبكة الإنترنت، يمكنك الاختيار لإضافة بادئة لجميع أسماء الجداول لتجنب النزاعات. لا تستخدم مسافات. وعادة ما يتم ترك هذا الحقل فارغا.",
 	"config-mysql-old": "MySQL $1 أو لاحق مطلوب.لديك $2.",
 	"config-db-port": "منفذ قاعدة البيانات:",
+	"config-db-ssl": "الاتصال عبر SSL",
 	"config-db-schema": "سكيما لميدياويكي (لا شرط):",
 	"config-db-schema-help": "هذا المخطط عادة يكون على ما يرام. غيره إذا كنت تعرف أنك في حاجة إلى هذا فقط.",
 	"config-pg-test-error": "لا يمكن الاتصال بقاعدة البيانات <strong>$1</strong>: $2",

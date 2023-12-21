@@ -14,7 +14,7 @@
 	"linterrors": "Пречишћивање грешака",
 	"linter-category-bogus-image-options": "Богусне опције датотека",
 	"linter-category-bogus-image-options-desc": "Ове странице имају датотеке с богусним опцијама.",
-	"linter-category-deletable-table-tag": "Ознка table коју би требало избрисати",
+	"linter-category-deletable-table-tag": "Ознака table коју би требало избрисати",
 	"linter-category-deletable-table-tag-desc": "Ове странице имају table ознаке које би требало избрисати.",
 	"linter-category-fostered": "Наменски садржај",
 	"linter-category-fostered-desc": "Ове странице имају наменски садржај.",

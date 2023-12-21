@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Diralik",
 			"Mailman",
 			"Marina Melik-Adamyan",
@@ -8,11 +9,9 @@
 			"Mouse21",
 			"Okras",
 			"Putnik",
-			"Sunpriat",
-			"Amire80"
+			"Sunpriat"
 		]
 	},
-	"apihelp-echomarkread-description": "Отметить уведомления как прочитанные для текущего пользователя.",
 	"apihelp-echomarkread-summary": "Отметить уведомления как прочитанные для текущего пользователя.",
 	"apihelp-echomarkread-param-list": "Список ID уведомлений для отметки прочитанными.",
 	"apihelp-echomarkread-param-unreadlist": "Список ID уведомлений для отметки непрочитанными.",
@@ -22,12 +21,10 @@
 	"apihelp-echomarkread-example-1": "Пометить уведомление 8 как прочитанное",
 	"apihelp-echomarkread-example-2": "Отметить все уведомления как прочитанные",
 	"apihelp-echomarkread-example-3": "Пометить уведомление 1 как непрочитанное",
-	"apihelp-echomarkseen-description": "Отметить уведомления как прочитанные для данного пользователя.",
 	"apihelp-echomarkseen-summary": "Отметить уведомления как прочитанные для данного пользователя.",
 	"apihelp-echomarkseen-example-1": "Отметить уведомления всех типов как прочитанные",
 	"apihelp-echomarkseen-param-type": "Тип уведомлений для отметки прочитанными: 'alert', 'message' или 'all'.",
 	"apihelp-echomarkseen-param-timestampFormat": "Формат временной отметки для вывода на печать, 'ISO_8601' или 'MW'. 'MW' устарел здесь, поэтому все клиенты должны переключиться на 'ISO_8601'. Этот параметр будет удалён, а 'ISO_8601' станет единственным выходным форматом.",
-	"apihelp-echomute-description": "Игнорировать или убрать из игнорируемых уведомления от определённых участников или страниц.",
 	"apihelp-echomute-summary": "Игнорировать или убрать из игнорируемых уведомления от определённых участников или страниц.",
 	"apihelp-echomute-param-type": "Из которого списка игнорируемых удалить или добавить",
 	"apihelp-echomute-param-mute": "Страницы или участники для добавления в список игнорируемых",
@@ -41,7 +38,6 @@
 	"apihelp-echopushsubscriptions+delete-summary": "Разрегистрация push-подписок для текущего участника или другого указанного участника.",
 	"apihelp-echopushsubscriptions+delete-param-providertoken": "Токен ассоциирован с push-подпиской к разрегистрации.",
 	"apihelp-echopushsubscriptions+delete-example": "Разрегистрация push-подписки для текущего участника.",
-	"apihelp-query+notifications-description": "Получать уведомления, ожидающие текущего пользователя.",
 	"apihelp-query+notifications-summary": "Получать уведомления, ожидающие текущего пользователя.",
 	"apihelp-query+notifications-param-prop": "Подробности для запроса.",
 	"apihelp-query+notifications-param-sections": "Разделы уведомлений для запроса (т. е. некое сочетание 'alert' и 'message').",
@@ -64,7 +60,6 @@
 	"apihelp-query+notifications-param-bundle": "Является ли показать совместимые с пакетом непрочитанные уведомления в соответствии со стандартами связывания типов уведомлений.",
 	"apihelp-query+notifications-example-1": "Список веб-уведомлений",
 	"apihelp-query+notifications-example-2": "Список веб-уведомлений, сгруппированных по разделам, с указанием количества",
-	"apihelp-query+unreadnotificationpages-description": "Получите страницы, для которых есть непрочитанные уведомления для текущего пользователя.",
 	"apihelp-query+unreadnotificationpages-summary": "Получите страницы, для которых есть непрочитанные уведомления для текущего пользователя.",
 	"apihelp-query+unreadnotificationpages-param-grouppages": "Групповые страницы разговора вместе со своей тематической страницей и групповые уведомления, не связанные со страницей, вместе с пользовательской страницей пользователя.",
 	"apihelp-query+unreadnotificationpages-param-limit": "Максимальное количество страниц для возврата",

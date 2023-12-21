@@ -3,14 +3,14 @@
 	symbols: '᪀' '᪁' '᪂' '᪃' '᪄' '᪅' '᪆' '᪇' '᪈' '᪉';
 }
 
-.mw-ref > a:after {
+.mw-ref > a::after {
 	content: '[' counter( mw-Ref, nod-counter ) ']';
 }
 
-.mw-ref > a[ data-mw-group ]:after {
+.mw-ref > a[ data-mw-group ]::after {
 	content: '[' attr( data-mw-group ) ' ' counter( mw-Ref, nod-counter ) ']';
 }
 
-span[ rel='mw:referencedBy' ] > a:before {
+span[ rel='mw:referencedBy' ] > a::before {
 	content: counter( mw-references, nod-counter ) '.' counter( mw-ref-linkback, nod-counter );
 }

@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Title\Title;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @covers LinkHolderArray
@@ -19,11 +20,15 @@ class LinkHolderArrayTest extends MediaWikiUnitTestCase {
 			$this->createMock( ILanguageConverter::class ),
 			$this->createHookContainer()
 		);
+		/** @var LinkHolderArray $link1 */
+		$link1 = TestingAccessWrapper::newFromObject( $link1 );
 		$link2 = new LinkHolderArray(
 			$this->createMock( Parser::class ),
 			$this->createMock( ILanguageConverter::class ),
 			$this->createHookContainer()
 		);
+		/** @var LinkHolderArray $link2 */
+		$link2 = TestingAccessWrapper::newFromObject( $link2 );
 
 		$link1->internals = [
 			100 => [
@@ -147,6 +152,8 @@ class LinkHolderArrayTest extends MediaWikiUnitTestCase {
 			$this->createMock( ILanguageConverter::class ),
 			$this->createHookContainer()
 		);
+		/** @var LinkHolderArray $linkHolderArray */
+		$linkHolderArray = TestingAccessWrapper::newFromObject( $linkHolderArray );
 		$linkHolderArray->internals = [ 'dummy data' ];
 		$linkHolderArray->interwikis = [ 'dummy data' ];
 		$linkHolderArray->size = -123;
@@ -173,6 +180,8 @@ class LinkHolderArrayTest extends MediaWikiUnitTestCase {
 			$this->createMock( ILanguageConverter::class ),
 			$this->createHookContainer()
 		);
+		/** @var LinkHolderArray $linkHolderArray */
+		$linkHolderArray = TestingAccessWrapper::newFromObject( $linkHolderArray );
 
 		$this->assertSame(
 			$input,
@@ -193,7 +202,7 @@ class LinkHolderArrayTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideReplaceText() {
+	public static function provideReplaceText() {
 		yield [
 			'<!--LINK\'" 101:9--> <!-- <!-- <!--IWLINK\'" 9-->',
 			'<!--LINK\'" 101:9--> <!-- <!-- <!--IWLINK\'" 9-->',
@@ -241,17 +250,19 @@ class LinkHolderArrayTest extends MediaWikiUnitTestCase {
 			$this->createMock( ILanguageConverter::class ),
 			$this->createHookContainer()
 		);
+		/** @var LinkHolderArray $testingAccess */
+		$testingAccess = TestingAccessWrapper::newFromObject( $link );
 		$title = $this->createMock( Title::class );
 		$title->method( 'isExternal' )->willReturn( true );
 
-		$link->interwikis = [
+		$testingAccess->interwikis = [
 			9 => [
 				'title' => $title,
 				'text' => 'text',
 			],
 		];
 		$parser = $this->createMock( Parser::class );
-		$link->parent = $parser;
+		$testingAccess->parent = $parser;
 
 		$parserOutput = $this->createMock( ParserOutput::class );
 		$parser->method( 'getOutput' )->willReturn( $parserOutput );
@@ -264,7 +275,7 @@ class LinkHolderArrayTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $extended, $text );
 	}
 
-	public function provideReplace_external() {
+	public static function provideReplace_external() {
 		yield [
 			'dummy text',
 			'dummy text',

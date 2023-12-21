@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Audriusa",
 			"Eitvys200",
 			"Fitoschido",
@@ -11,12 +12,11 @@
 			"Manvydasz",
 			"Matasg",
 			"Matma Rex",
+			"Nokeoo",
 			"Perkunas",
 			"Tomasdd",
 			"Vogone",
-			"Vpovilaitis",
-			"Nokeoo",
-			"Amire80"
+			"Vpovilaitis"
 		]
 	},
 	"abusefilter-desc": "Pakeitimų tikrinimui naudojamas automatinis euristinis tikrinimas",
@@ -462,7 +462,6 @@
 	"abusefilter-test-page": "Pakeitimai atlikti puslapiui:",
 	"abusefilter-test-shownegative": "Parodyti pakeitimus, kurie neatitinka filtro",
 	"abusefilter-test-syntaxerr": "Filtras, kurį įvedėte, turi sintaksės klaidą.\nJūs galite gauti pilną paaiškinimą, jei paspausite „{{int:abusefilter-edit-check}}“ mygtuką.",
-	"abusefilter-test-badtitle": "Puslapio pavadinimas, kurį įvedėte yra netinkamas. Jame gali būti vienas ar daugiau simbolių, kurie negali būtu naudojami pavadinimuose.",
 	"abusefilter-test-action": "Veiksmo tipas:",
 	"abusefilter-test-search-type-all": "Visi veiksmai",
 	"abusefilter-test-search-type-edit": "Keitimai",

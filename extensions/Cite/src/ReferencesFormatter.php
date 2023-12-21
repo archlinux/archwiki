@@ -18,27 +18,10 @@ class ReferencesFormatter {
 	 * @var string[]|null
 	 */
 	private $backlinkLabels = null;
+	private ErrorReporter $errorReporter;
+	private AnchorFormatter $anchorFormatter;
+	private ReferenceMessageLocalizer $messageLocalizer;
 
-	/**
-	 * @var ErrorReporter
-	 */
-	private $errorReporter;
-
-	/**
-	 * @var AnchorFormatter
-	 */
-	private $anchorFormatter;
-
-	/**
-	 * @var ReferenceMessageLocalizer
-	 */
-	private $messageLocalizer;
-
-	/**
-	 * @param ErrorReporter $errorReporter
-	 * @param AnchorFormatter $anchorFormatter
-	 * @param ReferenceMessageLocalizer $messageLocalizer
-	 */
 	public function __construct(
 		ErrorReporter $errorReporter,
 		AnchorFormatter $anchorFormatter,
@@ -176,11 +159,7 @@ class ReferencesFormatter {
 		// Special case for an incomplete follow="…". This is valid e.g. in the Page:… namespace on
 		// Wikisource. Note this returns a <p>, not an <li> as expected!
 		if ( isset( $val['follow'] ) ) {
-			return $this->messageLocalizer->msg(
-				'cite_references_no_link',
-				$this->anchorFormatter->getReferencesKey( $val['follow'] ),
-				$text
-			)->plain();
+			return '<p id="' . $this->anchorFormatter->getReferencesKey( $val['follow'] ) . '">' . $text . '</p>';
 		}
 
 		// This counts the number of reuses. 0 means the reference appears only 1 time.

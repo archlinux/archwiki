@@ -99,6 +99,7 @@
 	"discussiontools-topicsubscription-special-title": "Abònman sijè yo",
 	"echo-category-title-dt-subscription": "{{PLURAL:$1|Abònman}} paj diskisyon yo",
 	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|Achivaj}} paj diskisyon",
+	"minerva-talk-full-page": "Li kòm paj wiki",
 	"tag-discussiontools-description": "Modifikasyon ki fèt ak DiscussionTools",
 	"tag-discussiontools-edit": "Modifye kòmantè",
 	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Nouvo sijè]",

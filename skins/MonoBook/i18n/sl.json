@@ -19,6 +19,5 @@
 	"monobook-notifications-link": "Obvestila ($1)",
 	"monobook-notifications-link-none": "Obvestila",
 	"monobook-view-history": "Zgodovina",
-	"monobook-action-undelete": "Vrni $1 {{PLURAL:$1|urejanje|urejanji|urejanja|urejanj}}",
-	"monobook-action-addsection": "+"
+	"monobook-action-undelete": "Vrni $1 {{PLURAL:$1|urejanje|urejanji|urejanja|urejanj}}"
 }

@@ -1,7 +1,5 @@
 <?php
 /**
- * Functions to help implement an external link filter for spam control.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -29,24 +27,21 @@ use StringUtils;
 use TextContent;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\LikeMatch;
+use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
 /**
- * Some functions to help implement an external link filter for spam control.
+ * Utilities for formatting and querying the externallinks table.
  *
- * @todo implement the filter. Currently these are just some functions to help
- * maintenance/cleanupSpam.php remove links to a single specified domain. The
- * next thing is to implement functions for checking a given page against a big
- * list of domains.
+ * This is primarily used by \MediaWiki\Deferred\LinksUpdate\ExternalLinksTable
+ * for managing the storage layer, and by SpecialLinkSearch and ApiQueryExtLinksUsage
+ * as query interface.
  *
- * Another cool thing to do would be a web interface for fast spam removal.
+ * For spam removal and anti-spam meausures based on this, see also:
+ * - maintenance/cleanupSpam.php
+ * - SpamBlacklist extension
+ * - AbuseFilter extension (Special:BlockedExternalDomains, T337431)
  */
 class LinkFilter {
-	/**
-	 * Increment this when makeIndexes output changes. It'll cause
-	 * maintenance/refreshExternallinksIndex.php to run from update.php.
-	 */
-	public const VERSION = 1;
-
 	/**
 	 * Check whether $content contains a link to $filterEntry
 	 *
@@ -64,19 +59,17 @@ class LinkFilter {
 		}
 
 		$text = $content->getText();
-
 		$regex = self::makeRegex( $filterEntry, $protocol );
 		return preg_match( $regex, $text );
 	}
 
 	/**
-	 * Builds a regex pattern for $filterEntry.
+	 * Build a regex pattern for $filterEntry.
 	 *
 	 * @todo This doesn't match the rest of the functionality here.
 	 * @param string $filterEntry URL, if it begins with "*.", it'll be
 	 *        replaced to match any subdomain
 	 * @param string $protocol 'http://' or 'https://'
-	 *
 	 * @return string Regex pattern, for preg_match()
 	 */
 	private static function makeRegex( $filterEntry, $protocol ) {
@@ -90,13 +83,13 @@ class LinkFilter {
 	}
 
 	/**
-	 * Canonicalize a hostname for el_index
+	 * Canonicalize a hostname for the externallinks table
+	 *
 	 * @param string $host
+	 * @param bool $reverse whether to reverse the domain name or not
 	 * @return string
 	 */
-	private static function indexifyHost( $host ) {
-		// NOTE: If you change the output of this method, you'll probably have to increment self::VERSION!
-
+	private static function indexifyHost( $host, $reverse = true ) {
 		// Canonicalize.
 		$host = rawurldecode( $host );
 		if ( $host !== '' ) {
@@ -122,6 +115,9 @@ class LinkFilter {
 		if ( preg_match( '/^\[([0-9a-f:*]+)\]$/', rawurldecode( $host ), $m ) ) {
 			$ip = $m[1];
 			if ( IPUtils::isValid( $ip ) ) {
+				if ( !$reverse ) {
+					return '[' . IPUtils::sanitizeIP( $ip ) . ']';
+				}
 				return 'V6.' . implode( '.', explode( ':', IPUtils::sanitizeIP( $ip ) ) ) . '.';
 			}
 			if ( substr( $ip, -2 ) === ':*' ) {
@@ -129,12 +125,18 @@ class LinkFilter {
 				if ( IPUtils::isValid( "{$cutIp}::" ) ) {
 					// Wildcard IP doesn't contain "::", so multiple parts can be wild
 					$ct = count( explode( ':', $ip ) ) - 1;
+					if ( !$reverse ) {
+						return '[' . IPUtils::sanitizeIP( "{$cutIp}::" ) . ']';
+					}
 					return 'V6.' .
 						implode( '.', array_slice( explode( ':', IPUtils::sanitizeIP( "{$cutIp}::" ) ), 0, $ct ) ) .
 						'.*.';
 				}
 				if ( IPUtils::isValid( "{$cutIp}:1" ) ) {
 					// Wildcard IP does contain "::", so only the last part is wild
+					if ( !$reverse ) {
+						return '[' . IPUtils::sanitizeIP( "{$cutIp}:1" ) . ']';
+					}
 					return 'V6.' .
 						substr( implode( '.', explode( ':', IPUtils::sanitizeIP( "{$cutIp}:1" ) ) ), 0, -1 ) .
 						'*.';
@@ -151,26 +153,32 @@ class LinkFilter {
 		// IPv4?
 		$b = '(?:0*25[0-5]|0*2[0-4][0-9]|0*1[0-9][0-9]|0*[0-9]?[0-9])';
 		if ( preg_match( "/^(?:{$b}\.){3}{$b}$|^(?:{$b}\.){1,3}\*$/", $host ) ) {
+			if ( !$reverse ) {
+				return $host;
+			}
 			return 'V4.' . implode( '.', array_map( static function ( $v ) {
 				return $v === '*' ? $v : (int)$v;
 			}, explode( '.', $host ) ) ) . '.';
 		}
 
 		// Must be a host name.
-		return implode( '.', array_reverse( explode( '.', $host ) ) ) . '.';
+		if ( $reverse ) {
+			return implode( '.', array_reverse( explode( '.', $host ) ) ) . '.';
+		} else {
+			return $host;
+		}
 	}
 
 	/**
-	 * Converts a URL into a format for el_index
+	 * Convert given URL to format for the externallinks table
+	 *
 	 * @since 1.33
 	 * @param string $url
-	 * @return string[][] Usually one entry, but might be two in case of
-	 *  protocol-relative URLs. Empty array on error.
+	 * @param bool $reverseDomain
+	 * @return string[][] One entry. Empty array on error.
 	 *  Each entry is an array in form of <host,path>
 	 */
-	public static function makeIndexes( $url ) {
-		// NOTE: If you change the output of this method, you'll probably have to increment self::VERSION!
-
+	public static function makeIndexes( $url, $reverseDomain = true ) {
 		// NOTE: refreshExternallinksIndex.php assumes that only protocol-relative URLs return more
 		// than one index, and that the indexes for protocol-relative URLs only vary in the "http://"
 		// versus "https://" prefix. If you change that, you'll likely need to update
@@ -181,19 +189,31 @@ class LinkFilter {
 			return [];
 		}
 
+		// URI RFC identifies the email/server part of mailto or news protocol as 'path',
+		// while we want to match the email's domain or news server the same way we are
+		// matching hosts for other URLs.
+		if ( in_array( $bits['scheme'], [ 'mailto', 'news' ] ) ) {
+			$bits['host'] = $bits['path'];
+			$bits['path'] = '';
+		}
+
 		// Reverse the labels in the hostname, convert to lower case, unless it's an IP.
 		// For emails turn it into "domain.reversed@localpart"
 		if ( $bits['scheme'] == 'mailto' ) {
 			$mailparts = explode( '@', $bits['host'], 2 );
 			if ( count( $mailparts ) === 2 ) {
-				$domainpart = self::indexifyHost( $mailparts[1] );
+				$domainpart = self::indexifyHost( $mailparts[1], $reverseDomain );
 			} else {
 				// No @, assume it's a local part with no domain
 				$domainpart = '';
 			}
-			$bits['host'] = $domainpart . '@' . $mailparts[0];
+			if ( $reverseDomain ) {
+				$bits['host'] = $domainpart . '@' . $mailparts[0];
+			} else {
+				$bits['host'] = $mailparts[0] . '@' . $domainpart;
+			}
 		} else {
-			$bits['host'] = self::indexifyHost( $bits['host'] );
+			$bits['host'] = self::indexifyHost( $bits['host'], $reverseDomain );
 		}
 
 		// Reconstruct the pseudo-URL
@@ -211,15 +231,79 @@ class LinkFilter {
 		}
 
 		if ( $bits['scheme'] == '' ) {
-			return [ [ "http:$index", $index2 ], [ "https:$index", $index2 ] ];
+			return [ [ "https:$index", $index2 ] ];
 		} else {
 			return [ [ $index, $index2 ] ];
 		}
 	}
 
 	/**
-	 * Return query conditions which will match the specified string. There are
-	 * several kinds of filter entry:
+	 * Converts a set of URLs to be able to compare them with existing indexes
+	 * @since 1.41
+	 * @param string[] $urls List of URLs to be indexed
+	 * @return string[]
+	 */
+	public static function getIndexedUrlsNonReversed( $urls ) {
+		$newLinks = [];
+		foreach ( $urls as $url ) {
+			$indexes = self::makeIndexes( $url, false );
+			if ( !$indexes ) {
+				continue;
+			}
+			foreach ( $indexes as $index ) {
+				$newLinks[] = $index[0] . $index[1];
+			}
+		}
+		return $newLinks;
+	}
+
+	public static function reverseIndexes( $domainIndex ) {
+		$bits = wfParseUrl( $domainIndex );
+		if ( !$bits ) {
+			return '';
+		}
+
+		// Reverse the labels in the hostname, convert to lower case, unless it's an IP.
+		// For emails turn it into "domain.reversed@localpart"
+		if ( $bits['scheme'] == 'mailto' ) {
+			$mailparts = explode( '@', $bits['path'], 2 );
+			if ( count( $mailparts ) === 2 ) {
+				$domainpart = rtrim( self::reverseDomain( $mailparts[0] ), '.' );
+			} else {
+				// No @, assume it's a local part with no domain
+				$domainpart = '';
+			}
+			$bits['host'] = $mailparts[1] . '@' . $domainpart;
+		} else {
+			$bits['host'] = rtrim( self::reverseDomain( $bits['host'] ), '.' );
+		}
+
+		$index = $bits['scheme'] . $bits['delimiter'] . $bits['host'];
+		if ( isset( $bits['port'] ) && $bits['port'] ) {
+			$index .= ':' . $bits['port'];
+		}
+		return $index;
+	}
+
+	private static function reverseDomain( $domain ) {
+		if ( substr( $domain, 0, 3 ) === 'V6.' ) {
+			$ipv6 = str_replace( '.', ':', trim( substr( $domain, 3 ), '.' ) );
+			if ( IPUtils::isValid( $ipv6 ) ) {
+				return '[' . $ipv6 . ']';
+			}
+		} elseif ( substr( $domain, 0, 3 ) === 'V4.' ) {
+			$ipv4 = trim( substr( $domain, 3 ), '.' );
+			if ( IPUtils::isValid( $ipv4 ) ) {
+				return $ipv4;
+			}
+		}
+		return self::indexifyHost( $domain );
+	}
+
+	/**
+	 * Return conditions for the externallinks table from a given filter entry.
+	 *
+	 * There are several ways you can query:
 	 *
 	 *     *.domain.com    -  Matches domain.com and www.domain.com
 	 *     domain.com      -  Matches domain.com or domain.com/ but not www.domain.com
@@ -238,53 +322,68 @@ class LinkFilter {
 	 * @since 1.33
 	 * @param string $filterEntry Filter entry, as described above
 	 * @param array $options Options are:
-	 *   - protocol: (string) Protocol to query (default http://)
-	 *   - oneWildcard: (bool) Stop at the first wildcard (default false)
-	 *   - db: (IDatabase|null) Database to use.
-	 * @return array|false Conditions to be used for the query (to be ANDed) or
-	 *  false on error. To determine if the query is constant on the
-	 *  el_index_60 field, check whether key 'el_index_60' is set.
+	 *   - protocol: (null, string, array) Protocol to query (default: `http://` and `https://`)
+	 *   - oneWildcard: (bool) Stop at the first wildcard (default: false)
+	 *   - db: (IReadableDatabase|null) Database for building SQL text.
+	 * @return array|false Query conditions (to be ANDed) or false on error.
 	 */
 	public static function getQueryConditions( $filterEntry, array $options = [] ) {
 		$options += [
-			'protocol' => 'http://',
+			'protocol' => [ 'http://', 'https://' ],
 			'oneWildcard' => false,
 			'db' => null,
 		];
+		$domainGaps = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::ExternalLinksDomainGaps
+		);
 
-		// First, get the like array
-		$like = self::makeLikeArray( $filterEntry, $options['protocol'] );
-		if ( $like === false ) {
-			return $like;
+		if ( is_string( $options['protocol'] ) ) {
+			$options['protocol'] = [ $options['protocol'] ];
+		} elseif ( $options['protocol'] === null ) {
+			$options['protocol'] = [ 'http://', 'https://' ];
 		}
 
-		// Get the constant prefix (i.e. everything up to the first wildcard)
-		$trimmedLike = self::keepOneWildcard( $like );
-		if ( $options['oneWildcard'] ) {
-			$like = $trimmedLike;
-		}
-		if ( $trimmedLike[count( $trimmedLike ) - 1] instanceof LikeMatch ) {
-			array_pop( $trimmedLike );
-		}
-		$index = implode( '', $trimmedLike );
-		$db = $options['db'] ?: wfGetDB( DB_REPLICA );
+		$domainConditions = [];
+		$db = $options['db'] ?: MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		foreach ( $options['protocol'] as $protocol ) {
+			$like = self::makeLikeArray( $filterEntry, $protocol );
+			if ( $like === false ) {
+				continue;
+			}
+			[ $likeDomain, $likePath ] = $like;
+			$trimmedlikeDomain = self::keepOneWildcard( $likeDomain );
+			if ( $trimmedlikeDomain[count( $trimmedlikeDomain ) - 1] instanceof LikeMatch ) {
+				array_pop( $trimmedlikeDomain );
+			}
+			$index1 = implode( '', $trimmedlikeDomain );
+			$thisDomainConditions = [];
+			if ( $options['oneWildcard'] && $likePath[0] != '/' ) {
+				$thisDomainConditions[] = 'el_to_domain_index = ' . $db->addQuotes( $index1 );
+			} else {
+				$thisDomainConditions[] = "el_to_domain_index" . $db->buildLike( $index1, $db->anyString() );
+			}
+			foreach ( $domainGaps[$index1] ?? [] as $from => $to ) {
+				$thisDomainConditions[] = $db->makeList( [
+					$db->buildComparison( '<', [ 'el_id' => $from ] ),
+					$db->buildComparison( '>', [ 'el_id' => $to ] ),
+				], ISQLPlatform::LIST_OR );
+			}
+			$domainConditions[] = $db->makeList( $thisDomainConditions, ISQLPlatform::LIST_AND );
 
-		// Build the query
-		$l = strlen( $index );
-		if ( $l >= 60 ) {
-			// The constant prefix is larger than el_index_60, so we can use a
-			// constant comparison.
-			return [
-				"el_index_60" => substr( $index, 0, 60 ),
-				"el_index" . $db->buildLike( $like ),
-			];
 		}
+		if ( !$domainConditions ) {
+			return false;
+		}
+		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
+		$trimmedlikePath = self::keepOneWildcard( $likePath );
+		if ( $trimmedlikePath[count( $trimmedlikePath ) - 1] instanceof LikeMatch ) {
+			array_pop( $trimmedlikePath );
+		}
+		$index2 = implode( '', $trimmedlikePath );
 
-		// The constant prefix is smaller than el_index_60, so we use a LIKE
-		// for a prefix search.
 		return [
-			"el_index_60" . $db->buildLike( $index, $db->anyString() ),
-			"el_index" . $db->buildLike( $like ),
+			$db->makeList( $domainConditions, ISQLPlatform::LIST_OR ),
+			"el_to_path" . $db->buildLike( $index2, $db->anyString() ),
 		];
 	}
 
@@ -332,13 +431,22 @@ class LinkFilter {
 	 * @return array|false Array to be passed to Database::buildLike() or false on error
 	 */
 	public static function makeLikeArray( $filterEntry, $protocol = 'http://' ) {
-		$db = wfGetDB( DB_REPLICA );
-		$like = [];
+		$db = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$likeDomain = [];
+		$likePath = [];
 
 		$target = $protocol . $filterEntry;
 		$bits = wfParseUrl( $target );
 		if ( !$bits ) {
 			return false;
+		}
+
+		// URI RFC identifies the email/server part of mailto or news protocol as 'path',
+		// while we want to match the email's domain or news server the same way we are
+		// matching hosts for other URLs.
+		if ( in_array( $bits['scheme'], [ 'mailto', 'news' ] ) ) {
+			$bits['host'] = $bits['path'];
+			$bits['path'] = '';
 		}
 
 		$subdomains = false;
@@ -361,40 +469,36 @@ class LinkFilter {
 			}
 		}
 
-		$like[] = $bits['scheme'] . $bits['delimiter'] . $bits['host'];
+		$likeDomain[] = $bits['scheme'] . $bits['delimiter'] . $bits['host'];
 
 		if ( $subdomains ) {
-			$like[] = $db->anyString();
+			$likeDomain[] = $db->anyString();
 		}
 
 		if ( isset( $bits['port'] ) ) {
-			$like[] = ':' . $bits['port'];
+			$likeDomain[] = ':' . $bits['port'];
 		}
 		if ( isset( $bits['path'] ) ) {
-			$like[] = $bits['path'];
-		} elseif ( !$subdomains ) {
-			$like[] = '/';
+			$likePath[] = $bits['path'];
+		} else {
+			$likePath[] = '/';
 		}
 		if ( isset( $bits['query'] ) ) {
-			$like[] = '?' . $bits['query'];
+			$likePath[] = '?' . $bits['query'];
 		}
 		if ( isset( $bits['fragment'] ) ) {
-			$like[] = '#' . $bits['fragment'];
+			$likePath[] = '#' . $bits['fragment'];
 		}
+		$likePath[] = $db->anyString();
 
 		// Check for stray asterisks: asterisk only allowed at the start of the domain
-		foreach ( $like as $likepart ) {
+		foreach ( array_merge( $likeDomain, $likePath ) as $likepart ) {
 			if ( !( $likepart instanceof LikeMatch ) && strpos( $likepart, '*' ) !== false ) {
 				return false;
 			}
 		}
 
-		if ( !( $like[count( $like ) - 1] instanceof LikeMatch ) ) {
-			// Add wildcard at the end if there isn't one already
-			$like[] = $db->anyString();
-		}
-
-		return $like;
+		return [ $likeDomain, $likePath ];
 	}
 
 	/**
@@ -420,4 +524,7 @@ class LinkFilter {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( LinkFilter::class, 'LinkFilter' );

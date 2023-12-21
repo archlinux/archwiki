@@ -1,9 +1,11 @@
 <?php
 
-// phpcs:disable MediaWiki.Commenting.FunctionComment.ObjectTypeHintParam
-
+use MediaWiki\Block\BlockErrorFormatter;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\DAO\WikiAwareEntity;
+use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\User\User;
+use MediaWiki\Utils\MWTimestamp;
 
 /**
  * Factory for handling the special page list and generating SpecialPage objects.
@@ -26,6 +28,10 @@ use MediaWiki\DAO\WikiAwareEntity;
  * @group SpecialPage
  */
 abstract class FormSpecialPageTestCase extends SpecialPageTestBase {
+	/**
+	 * @return FormSpecialPage
+	 */
+	abstract protected function newSpecialPage();
 
 	/**
 	 * @covers FormSpecialPage::checkExecutePermissions
@@ -34,19 +40,20 @@ abstract class FormSpecialPageTestCase extends SpecialPageTestBase {
 		$special = $this->newSpecialPage();
 		$checkExecutePermissions = $this->getMethod( $special, 'checkExecutePermissions' );
 
+		$blockErrorFormatter = $this->createMock( BlockErrorFormatter::class );
+		$blockErrorFormatter->method( 'getMessage' )
+			->willReturn( $this->getMockMessage( 'test' ) );
+		$this->setService( 'BlockErrorFormatter', $blockErrorFormatter );
+
 		$user = $this->getMockBuilder( User::class )
 			->onlyMethods( [ 'getBlock', 'getWikiId' ] )
 			->getMock();
 		$user->method( 'getWikiId' )->willReturn( WikiAwareEntity::LOCAL );
-		$user->method( 'getBlock' )
-			->willReturn( new DatabaseBlock( [
-				'address' => '127.0.8.1',
-				'by' => $user,
-				'reason' => 'sitewide block',
-				'timestamp' => time(),
-				'sitewide' => true,
-				'expiry' => 10,
-			] ) );
+		$block = $this->createMock( DatabaseBlock::class );
+		$block->method( 'isSitewide' )->willReturn( true );
+		$block->method( 'getTargetUserIdentity' )->willReturn( $user );
+		$block->method( 'getExpiry' )->willReturn( MWTimestamp::convert( TS_MW, 10 ) );
+		$user->method( 'getBlock' )->willReturn( $block );
 
 		$this->expectException( UserBlockedError::class );
 		$checkExecutePermissions( $user );
@@ -59,19 +66,24 @@ abstract class FormSpecialPageTestCase extends SpecialPageTestBase {
 		$special = $this->newSpecialPage();
 		$checkExecutePermissions = $this->getMethod( $special, 'checkExecutePermissions' );
 
+		$blockErrorFormatter = $this->createMock( BlockErrorFormatter::class );
+		$blockErrorFormatter->method( 'getMessage' )
+			->willReturn( $this->getMockMessage( 'test' ) );
+		$this->setService( 'BlockErrorFormatter', $blockErrorFormatter );
+
+		$readOnlyMode = $this->createMock( ReadOnlyMode::class );
+		$readOnlyMode->method( 'isReadOnly' )->willReturn( false );
+		$this->setService( 'ReadOnlyMode', $readOnlyMode );
+
 		$user = $this->getMockBuilder( User::class )
 			->onlyMethods( [ 'getBlock', 'getWikiId' ] )
 			->getMock();
 		$user->method( 'getWikiId' )->willReturn( WikiAwareEntity::LOCAL );
-		$user->method( 'getBlock' )
-			->willReturn( new DatabaseBlock( [
-				'address' => '127.0.8.1',
-				'by' => $user,
-				'reason' => 'partial block',
-				'timestamp' => time(),
-				'sitewide' => false,
-				'expiry' => 10,
-			] ) );
+		$block = $this->createMock( DatabaseBlock::class );
+		$block->method( 'isSitewide' )->willReturn( false );
+		$block->method( 'getTargetUserIdentity' )->willReturn( $user );
+		$block->method( 'getExpiry' )->willReturn( MWTimestamp::convert( TS_MW, 10 ) );
+		$user->method( 'getBlock' )->willReturn( $block );
 
 		$this->assertNull( $checkExecutePermissions( $user ) );
 	}
@@ -79,11 +91,11 @@ abstract class FormSpecialPageTestCase extends SpecialPageTestBase {
 	/**
 	 * Get a protected/private method.
 	 *
-	 * @param object $obj
+	 * @param FormSpecialPage $obj
 	 * @param string $name
 	 * @return callable
 	 */
-	protected function getMethod( object $obj, $name ) {
+	protected function getMethod( FormSpecialPage $obj, $name ) {
 		$method = new ReflectionMethod( $obj, $name );
 		$method->setAccessible( true );
 		return $method->getClosure( $obj );

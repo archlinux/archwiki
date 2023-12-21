@@ -21,14 +21,21 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsLookup;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MessageCache;
+use RecentChange;
+use SearchEngineFactory;
+use WatchedItemStoreInterface;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\Rdbms\Subquery;
+use Xml;
 
 /**
  * This is to display changes made to all articles linked in an article.
@@ -39,35 +46,30 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 	/** @var bool|Title */
 	protected $rclTargetTitle;
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var SearchEngineFactory */
-	private $searchEngineFactory;
+	private SearchEngineFactory $searchEngineFactory;
+	private ChangeTagsStore $changeTagsStore;
 
 	/**
 	 * @param WatchedItemStoreInterface $watchedItemStore
 	 * @param MessageCache $messageCache
-	 * @param ILoadBalancer $loadBalancer
 	 * @param UserOptionsLookup $userOptionsLookup
 	 * @param SearchEngineFactory $searchEngineFactory
 	 */
 	public function __construct(
 		WatchedItemStoreInterface $watchedItemStore,
 		MessageCache $messageCache,
-		ILoadBalancer $loadBalancer,
 		UserOptionsLookup $userOptionsLookup,
-		SearchEngineFactory $searchEngineFactory
+		SearchEngineFactory $searchEngineFactory,
+		ChangeTagsStore $changeTagsStore
 	) {
 		parent::__construct(
 			$watchedItemStore,
 			$messageCache,
-			$loadBalancer,
 			$userOptionsLookup
 		);
 		$this->mName = 'Recentchangeslinked';
-		$this->loadBalancer = $loadBalancer;
 		$this->searchEngineFactory = $searchEngineFactory;
+		$this->changeTagsStore = $changeTagsStore;
 	}
 
 	public function getDefaultOptions() {
@@ -106,7 +108,9 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 			return false;
 		}
 
-		$outputPage->setPageTitle( $this->msg( 'recentchangeslinked-title', $title->getPrefixedText() ) );
+		$outputPage->setPageTitleMsg(
+			$this->msg( 'recentchangeslinked-title' )->plaintextParams( $title->getPrefixedText() )
+		);
 
 		/*
 		 * Ordinary links are in the pagelinks table, while transclusions are
@@ -116,7 +120,7 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 		 * merging the results, but the code we inherit from our parent class
 		 * expects only one result set so we use UNION instead.
 		 */
-		$dbr = $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		$dbr = $this->getDB();
 		$id = $title->getArticleID();
 		$ns = $title->getNamespace();
 		$dbkey = $title->getDBkey();
@@ -135,7 +139,7 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 		$select[] = 'page_latest';
 
 		$tagFilter = $opts['tagfilter'] !== '' ? explode( '|', $opts['tagfilter'] ) : [];
-		ChangeTags::modifyDisplayQuery(
+		$this->changeTagsStore->modifyDisplayQuery(
 			$tables,
 			$select,
 			$conds,
@@ -147,7 +151,7 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 
 		if ( $dbr->unionSupportsOrderAndLimit() ) {
 			if ( in_array( 'DISTINCT', $query_options ) ) {
-				// ChangeTags::modifyDisplayQuery() will have added DISTINCT.
+				// ChangeTagsStore::modifyDisplayQuery() will have added DISTINCT.
 				// To prevent this from causing query performance problems, we need to add
 				// a GROUP BY, and add rc_id to the ORDER BY.
 				$order = [
@@ -377,3 +381,9 @@ class SpecialRecentChangesLinked extends SpecialRecentChanges {
 		}
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialRecentChangesLinked::class, 'SpecialRecentChangesLinked' );

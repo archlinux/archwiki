@@ -9,7 +9,6 @@
 	},
 	"captcha-edit": "For å redigiir siden, skal du djie sware på rejnestøkke nierfor, å åndjie resultate i feltje unje dä. ([[Special:Captcha/help|mier informasjon]]):",
 	"captcha-desc": "Semple captcha implementåsje",
-	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Din redigering tilføjer nye eksterne henvisninger til artiklen. Som beskyttelse mod automatiseret spam, skal du give svaret på regnestyket nedenfor, og angive resultatet i feltet under det. ([[Special:Captcha/help|mere information]]):",
 	"captcha-badlogin": "For å beskøtt wikien mod automatisiirtje adgångskodedjietneng, skal du lös dä enkel rejnestøkke nierfor å skriiw resultate i boksi ([[Special:Captcha/help|flier opløsnenge]]):",
 	"captcha-createaccount": "For at beskytte mod automatisk oprettelse af brugernavne, skal du give svaret på regnestyket nedenfor, og angive resultatet i feltet under det. ([[Special:Captcha/help|mere information]]):",

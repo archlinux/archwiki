@@ -1,3 +1,4 @@
+@import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
 @import '../echo.variables.less';
 
@@ -9,7 +10,7 @@
 			> .oo-ui-popupWidget-head {
 				box-sizing: border-box;
 				height: 3.1428571em; // = 44px as result of 44 / 16 (font-size browser) / 0.875 (OOUI WikimediaUI theme font-size)
-				border-bottom: 1px solid #c8ccd1;
+				border-bottom: @border-width-base @border-style-base @border-color-subtle;
 				margin: 0;
 
 				> .oo-ui-iconWidget {
@@ -51,8 +52,8 @@
 
 					// Compensate for adjusted borders
 					&:focus {
-						box-shadow: inset 0 0 0 2px @color-primary;
-						border-color: #c8ccd1;
+						box-shadow: @box-shadow-inset-medium @box-shadow-color-progressive--focus;
+						border-color: @border-color-subtle;
 					}
 				}
 			}
@@ -60,7 +61,7 @@
 			> .oo-ui-popupWidget-footer {
 				width: 100%;
 				margin: 0; // Override OOUI's popup footer margins (T171302)
-				border-top: 1px solid #c8ccd1;
+				border-top: @border-width-base @border-style-base @border-color-subtle;
 
 				> .oo-ui-buttonGroupWidget {
 					display: block;
@@ -74,7 +75,7 @@
 						flex: 1;
 
 						&:last-child {
-							border-left: 1px solid #c8ccd1;
+							border-left: @border-width-base @border-style-base @border-color-subtle;
 						}
 
 						> .oo-ui-buttonElement-button {
@@ -86,7 +87,7 @@
 
 							// Compensate for hidden borders
 							&:focus {
-								box-shadow: inset 0 0 0 2px @color-primary;
+								box-shadow: @box-shadow-inset-medium @box-shadow-color-progressive--focus;
 							}
 						}
 					}

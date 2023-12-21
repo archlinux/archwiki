@@ -10,7 +10,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"GroupPermissions": {
 		"sysop": {
@@ -44,7 +44,7 @@
 		}
 	},
 	"APIModules": {
-		"titleblacklist": "MediaWiki\\Extension\\TitleBlacklist\\Api\\ApiQueryTitleBlacklist"
+		"titleblacklist": "MediaWiki\\Extension\\TitleBlacklist\\Api\\ApiTitleBlacklist"
 	},
 	"MessagesDirs": {
 		"TitleBlacklist": [
@@ -91,11 +91,14 @@
 		"MovePageCheckPermissions": "TitleBlacklistHookHandler",
 		"EditFilter": "TitleBlacklistHookHandler",
 		"PageSaveComplete": "TitleBlacklistHookHandler",
-		"ScribuntoExternalLibraries": "MediaWiki\\Extension\\TitleBlacklist\\Hooks::onScribuntoExternalLibraries"
+		"ScribuntoExternalLibraries": "TitleBlacklistScribuntoHookHandler"
 	},
 	"HookHandlers": {
 		"TitleBlacklistHookHandler": {
 			"class": "MediaWiki\\Extension\\TitleBlacklist\\Hooks"
+		},
+		"TitleBlacklistScribuntoHookHandler": {
+			"class": "MediaWiki\\Extension\\TitleBlacklist\\ScribuntoHooks"
 		}
 	},
 	"config": {

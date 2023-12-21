@@ -30,5 +30,5 @@
 	"titleblacklist-warning": "<strong>Uyarı: Bu sayfa yalnızca <code>tboverride</code> hakkı olan hizmetliler ve diğer kullanıcılar tarafından düzenlenebilir, çünkü aşağıdaki izin verilmeyen başlıklar listesi girişiyle eşleşir:</strong><br /><code>$1</code>",
 	"right-tboverride": "İzin verilmeyen başlıkları veya kullanıcı adları listesini geçersiz kılın",
 	"right-tboverride-account": "İzin verilmeyen kullanıcı adları listesini geçersiz kılın",
-	"right-titleblacklistlog": "İzin verilmeyen başlık listesi günlüğünü görün"
+	"right-titleblacklistlog": "İzin verilmeyen başlıklar dizelgesi günlüğünü görün"
 }

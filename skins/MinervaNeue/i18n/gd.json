@@ -20,8 +20,6 @@
 	"mobile-frontend-meta-data-issues": "Duilgheadasan duilleige",
 	"mobile-frontend-meta-data-issues-categories": "Mun roinn-seòrsa seo",
 	"mobile-frontend-meta-data-issues-header": "Cùisean",
-	"mobile-frontend-meta-data-issues-header-talk": "Mun duilleag seo",
-	"mobile-frontend-meta-data-issues-talk": "Mu dhuilleag na deasbaireachd seo",
 	"mobile-frontend-pageaction-edit-tooltip": "Deasaich prìomh-earrann na duilleige seo.",
 	"mobile-frontend-placeholder": "Lorg air {{SITENAME}}",
 	"mobile-frontend-random-button": "Air thuaiream",

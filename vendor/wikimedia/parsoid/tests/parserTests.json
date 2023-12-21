@@ -9,6 +9,7 @@
 			"i18nParserTests.txt": {},
 			"langParserTests.txt": {},
 			"sectionWrappingParserTests.txt": {},
+			"regressions.txt": {},
 			"selserWrappingParserTests.txt": {},
 			"separatorTests.txt": {},
 			"tableFixupsParserTests.txt": {}
@@ -16,7 +17,7 @@
 	},
 	"core": {
 		"project": "mediawiki/core",
-		"latestCommit": "4e2d0f1fe50b0d2b2d02b7eabe4b5e620d251b88",
+		"latestCommit": "87066023467bc26102d95aba4948bcae822cf588",
 		"targets": {
 			"comments.txt": {
 				"path": "tests/parser/comments.txt",
@@ -32,11 +33,15 @@
 			},
 			"extLinks.txt": {
 				"path": "tests/parser/extLinks.txt",
-				"expectedSHA1": "10bd2463607a6359049d73745f69724e2c7f5dc3"
+				"expectedSHA1": "57143e301d5eb097e2b24b098f082d6e4a7d2d63"
 			},
 			"indentPre.txt": {
 				"path": "tests/parser/indentPre.txt",
 				"expectedSHA1": "352a1f95bd465d4a3e490cacc18c2012e069958b"
+			},
+			"indicators.txt": {
+				"path": "tests/parser/indicators.txt",
+				"expectedSHA1": "90468470854a6c5b93d147b9505387d3228dd88a"
 			},
 			"interlanguageLinks.txt": {
 				"path": "tests/parser/interlanguageLinks.txt",
@@ -48,7 +53,7 @@
 			},
 			"legacyMedia.txt": {
 				"path": "tests/parser/legacyMedia.txt",
-				"expectedSHA1": "43c682017b3d5114cec5527aaa6b077ab0dbd1c5"
+				"expectedSHA1": "7b142f52ab6caa38080675f5fbe4ffc8cd57e604"
 			},
 			"magicLinks.txt": {
 				"path": "tests/parser/magicLinks.txt",
@@ -56,15 +61,15 @@
 			},
 			"magicWords.txt": {
 				"path": "tests/parser/magicWords.txt",
-				"expectedSHA1": "707fd4a5e74a6c4c3965012526a55c578a01588d"
+				"expectedSHA1": "6f1fb19986cb9d7298d17a612989b63ea87344b9"
 			},
 			"media.txt": {
 				"path": "tests/parser/media.txt",
-				"expectedSHA1": "1939c0339cfc280d66b04ffd4d5eb39fce4ebfc5"
+				"expectedSHA1": "781facccdf3dc2fd8ea15fc6356ffd2f71db06c1"
 			},
 			"parserTests.txt": {
 				"path": "tests/parser/parserTests.txt",
-				"expectedSHA1": "c1884af013715e1ba44475808b2be9543b797845"
+				"expectedSHA1": "8a0c0f59ebb85e51ba0583454189976af690ac9e"
 			},
 			"preTags.txt": {
 				"path": "tests/parser/preTags.txt",
@@ -72,7 +77,7 @@
 			},
 			"pst.txt": {
 				"path": "tests/parser/pst.txt",
-				"expectedSHA1": "c217958bf630f03cf0428ff885d9de95fc7e1305"
+				"expectedSHA1": "6dd365cdea65b122c81b8cc7d8a4b97d7447df0c"
 			},
 			"pWrapping.txt": {
 				"path": "tests/parser/pWrapping.txt",
@@ -88,7 +93,7 @@
 			},
 			"redirects.txt": {
 				"path": "tests/parser/redirects.txt",
-				"expectedSHA1": "e9f5e6ea3481e8acdccfcf9f0737983a6188d42c"
+				"expectedSHA1": "0bdeb1119ff7043550752e9cca49ade2e5698b72"
 			},
 			"tables.txt": {
 				"path": "tests/parser/tables.txt",
@@ -96,7 +101,7 @@
 			},
 			"toc.txt": {
 				"path": "tests/parser/toc.txt",
-				"expectedSHA1": "b526f90e5a5c31af04976a2c7a9b9e6310475d88"
+				"expectedSHA1": "698f88214db25645bd203a9a8f9fb30875931d07"
 			},
 			"wtEscaping.txt": {
 				"path": "tests/parser/wtEscaping.txt",
@@ -106,21 +111,21 @@
 	},
 	"Cite": {
 		"project": "mediawiki/extensions/Cite",
-		"latestCommit": "b30d10bc6097bdbfbf6b4a348366a682f973f1ca",
+		"latestCommit": "b9d5ce77305a275935be9c7c402037541db4d4d0",
 		"targets": {
 			"citeParserTests.txt": {
 				"path": "tests/parser/citeParserTests.txt",
-				"expectedSHA1": "38eea67de43ed7bd879e10542761e128e4177e47"
+				"expectedSHA1": "96cb5380e24346f67b323cf203f4bfcbe7b38c5f"
 			}
 		}
 	},
 	"TMH": {
 		"project": "mediawiki/extensions/TimedMediaHandler",
-		"latestCommit": "ba78bb0eadbcf2e82ca3a2c25404ff2e5fe555ff",
+		"latestCommit": "c51b52367ddd25d7bc67aa8df8413717bcb44600",
 		"targets": {
 			"timedMediaHandlerParserTests.txt": {
 				"path": "tests/parser/parserTests.txt",
-				"expectedSHA1": "291fde4241dca41ad4ee657b27ebb7c1782efba2"
+				"expectedSHA1": "a7ba567819c5d4bbbc2f1c76bb4d48fc57525c7e"
 			}
 		}
 	},
@@ -132,16 +137,6 @@
 				"repo": "Poem",
 				"path": "tests/parser/parserTests.txt",
 				"expectedSHA1": "763b07ff73c231eb0399756ce0776c7a6244e3ed"
-			}
-		}
-	},
-	"ImageMap": {
-		"project": "mediawiki/extensions/ImageMap",
-		"latestCommit": "a4d5daa43f9498fe90f72ae22bdaeef9ac8ee7e6",
-		"targets": {
-			"imageMapParserTests.txt": {
-				"path": "tests/parser/imageMapParserTests.txt",
-				"expectedSHA1": "34b92f5e795d81156b87cdb6bda4d9ee935fbe34"
 			}
 		}
 	}

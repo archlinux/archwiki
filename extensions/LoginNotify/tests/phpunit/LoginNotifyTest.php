@@ -1,55 +1,85 @@
 <?php
 
 use LoginNotify\LoginNotify;
-use Psr\Log\NullLogger;
+use MediaWiki\CheckUser as CU;
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\User\UserFactory;
 use Wikimedia\TestingAccessWrapper;
+
+// phpcs:disable MediaWiki.WhiteSpace.SpaceBeforeSingleLineComment.NewLineComment
 
 /**
  * @covers \LoginNotify\LoginNotify
  * @group LoginNotify
+ * @group Database
  */
 class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 
+	/** @var LoginNotify|TestingAccessWrapper */
 	private $inst;
 
-	public function setUpLoginNotify() {
-		$config = new HashConfig( [
+	/** @var UserFactory */
+	private $userFactory;
+
+	public function setUpLoginNotify( $configValues = [] ) {
+		$day = 86400;
+		$config = new HashConfig( $configValues + [
 			"LoginNotifyAttemptsKnownIP" => 15,
-			"LoginNotifyExpiryKnownIP" => 604800,
+			"LoginNotifyExpiryKnownIP" => 7 * $day,
 			"LoginNotifyAttemptsNewIP" => 5,
-			"LoginNotifyExpiryNewIP" => 1209600,
+			"LoginNotifyExpiryNewIP" => 14 * $day,
 			"LoginNotifyCheckKnownIPs" => true,
 			"LoginNotifyEnableOnSuccess" => true,
-			"LoginNotifyEnableForPriv" => [ "editinterface", "userrights" ],
 			"LoginNotifySecretKey" => "Secret Stuff!",
-			"LoginNotifyCookieExpire" => 15552000,
+			"SecretKey" => "",
+			"LoginNotifyCookieExpire" => 180 * $day,
 			"LoginNotifyCookieDomain" => null,
 			"LoginNotifyMaxCookieRecords" => 6,
-			"LoginNotifyCacheLoginIPExpiry" => 60 * 60 * 24 * 60
+			"LoginNotifyCacheLoginIPExpiry" => 60 * $day,
+			'LoginNotifySeenCluster' => null,
+			"LoginNotifySeenDatabase" => null,
+			"LoginNotifyUseCheckUser" => false,
+			"LoginNotifyUseSeenTable" => true,
+			"LoginNotifySeenExpiry" => 180 * $day,
+			"LoginNotifySeenBucketSize" => 15 * $day,
+			"UpdateRowsPerQuery" => 100,
 		] );
+		$services = $this->getServiceContainer();
 		$this->inst = TestingAccessWrapper::newFromObject(
 			new LoginNotify(
-				$config,
-				new HashBagOStuff
+				new ServiceOptions( LoginNotify::CONSTRUCTOR_OPTIONS, $config ),
+				new HashBagOStuff,
+				LoggerFactory::getInstance( 'LoginNotify' ),
+				$services->getStatsdDataFactory(),
+				$services->getDBLoadBalancerFactory(),
+				$services->getJobQueueGroup(),
+				new LocalIdLookup(
+					new HashConfig( [
+						'SharedDB' => false,
+						'SharedTables' => [],
+						'LocalDatabases' => []
+					] ),
+					$services->getDBLoadBalancerFactory()
+				),
+				$services->getAuthManager()
 			)
 		);
-		$this->inst->setLogger( new NullLogger );
-	}
-
-	public function setUp(): void {
-		parent::setUp();
-		$this->setUpLoginNotify();
+		$this->inst->setLogger( LoggerFactory::getInstance( 'LoginNotify' ) );
+		$this->userFactory = $this->getServiceContainer()->getUserFactory();
 	}
 
 	/**
 	 * @dataProvider provideGetIPNetwork
 	 */
 	public function testGetIPNetwork( $ip, $expected ) {
+		$this->setUpLoginNotify();
 		$actual = $this->inst->getIPNetwork( $ip );
 		$this->assertSame( $expected, $actual );
 	}
 
-	public function provideGetIPNetwork() {
+	public static function provideGetIPNetwork() {
 		return [
 			[ '127.0.0.1', '127.0.0.' ],
 			[ '118.221.191.18', '118.221.191.' ],
@@ -61,6 +91,7 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testGetIPNetworkInvalid() {
+		$this->setUpLoginNotify();
 		$this->expectException( UnexpectedValueException::class );
 		$this->inst->getIPNetwork( 'localhost' );
 	}
@@ -69,11 +100,12 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideGenerateUserCookieRecord
 	 */
 	public function testGenerateUserCookieRecord( $username, $year, $salt, $expected ) {
+		$this->setUpLoginNotify();
 		$actual = $this->inst->generateUserCookieRecord( $username, $year, $salt );
 		$this->assertEquals( $expected, $actual );
 	}
 
-	public function provideGenerateUserCookieRecord() {
+	public static function provideGenerateUserCookieRecord() {
 		return [
 			[ 'Foo', 2011, 'a4321f', '2011-a4321f-8oerxg4l59zpiu0by7m2to1b4cjeer4' ],
 			[ 'Foo', 2011, 'A4321f', '2011-A4321f-in65gc2i9czojfopkeieijc0ek8j5vu' ],
@@ -85,31 +117,38 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideIsUserRecordGivenCookie
 	 */
-	public function testIsUserRecordGivenCookie( User $user, $cookieRecord, $expected, $desc ) {
+	public function testIsUserRecordGivenCookie( $cookieOptions, $expected, $desc ) {
+		$this->setUpLoginNotify();
+		$user = $this->userFactory->newFromName( 'Foo', UserFactory::RIGOR_NONE );
+		if ( is_string( $cookieOptions ) ) {
+			$cookieRecord = $cookieOptions;
+		} else {
+			[ $userName, $year, $salt ] = $cookieOptions + [ false, false, false ];
+			$cookieRecord = $this->inst->generateUserCookieRecord( $userName, $year, $salt );
+		}
 		$actual = $this->inst->isUserRecordGivenCookie( $user, $cookieRecord );
 		$this->assertEquals( $expected, $actual, "For {$user->getName()} on test $desc." );
 	}
 
-	public function provideIsUserRecordGivenCookie() {
-		$this->setUpLoginNotify();
-		$u = User::newFromName( 'Foo', false );
-		$cookie1 = $this->inst->generateUserCookieRecord( 'Foo2' );
-		$cookie2 = $this->inst->generateUserCookieRecord( 'Foo' );
-		$cookie3 = $this->inst->generateUserCookieRecord( 'Foo', gmdate( 'Y' ) - 2 );
-		$cookie4 = $this->inst->generateUserCookieRecord( 'Foo', gmdate( 'Y' ), 'RAND' );
-		$cookie5 = $this->inst->generateUserCookieRecord( 'Foo', gmdate( 'Y' ) - 4 );
+	public static function provideIsUserRecordGivenCookie() {
+		$cookie1 = [ 'Foo2' ];
+		$cookie2 = [ 'Foo' ];
+		$cookie3 = [ 'Foo', gmdate( 'Y' ) - 2 ];
+		$cookie4 = [ 'Foo', gmdate( 'Y' ), 'RAND' ];
+		$cookie5 = [ 'Foo', gmdate( 'Y' ) - 4 ];
 		return [
-			[ $u, '2015-in65gc2i9czojfopkeieijc0ek8j5vu', false, "no salt" ],
-			[ $u, '2011-A4321f-in65gc2i9czojfopkeieijc0ek8j5vu', false, "too old" ],
-			[ $u, $cookie1, false, "name mismatch" ],
-			[ $u, $cookie2, true, "normal" ],
-			[ $u, $cookie3, true, "2 year old" ],
-			[ $u, $cookie4, true, "Specific salt" ],
-			[ $u, $cookie5, false, "4 year old" ],
+			[ '2015-in65gc2i9czojfopkeieijc0ek8j5vu', false, "no salt" ],
+			[ '2011-A4321f-in65gc2i9czojfopkeieijc0ek8j5vu', false, "too old" ],
+			[ $cookie1, false, "name mismatch" ],
+			[ $cookie2, true, "normal" ],
+			[ $cookie3, true, "2 year old" ],
+			[ $cookie4, true, "Specific salt" ],
+			[ $cookie5, false, "4 year old" ],
 		];
 	}
 
 	public function testGetPrevLoginCookie() {
+		$this->setUpLoginNotify();
 		$req = new FauxRequest();
 		$res1 = $this->inst->getPrevLoginCookie( $req );
 		$this->assertSame( '', $res1, "no cookie set" );
@@ -120,10 +159,11 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testGetKey() {
-		$user1 = User::newFromName( 'Foo_bar' );
+		$this->setUpLoginNotify();
+		$user1 = $this->userFactory->newFromName( 'Foo_bar' );
 		// Make sure proper normalization happens.
-		$user2 = User::newFromName( 'Foo__bar' );
-		$user3 = User::newFromName( 'Somebody' );
+		$user2 = $this->userFactory->newFromName( 'Foo__bar' );
+		$user3 = $this->userFactory->newFromName( 'Somebody' );
 
 		$this->assertEquals(
 			'global:loginnotify:new:ok2qitd5efi25tzjy2l3el4n57g6l3l',
@@ -144,6 +184,7 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testCheckAndIncKey() {
+		$this->setUpLoginNotify();
 		$key = 'global:loginnotify:new:tuwpi7e2h9pidovmaxxswk6aq327ewg';
 		for ( $i = 1; $i < 5; $i++ ) {
 			$res = $this->inst->checkAndIncKey( $key, 5, 3600 );
@@ -167,7 +208,8 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideClearCounters
 	 */
 	public function testClearCounters( $key ) {
-		$user = User::newFromName( "Fred" );
+		$this->setUpLoginNotify();
+		$user = $this->userFactory->newFromName( "Fred" );
 		$key = $this->inst->getKey( $user, $key );
 
 		$this->inst->checkAndIncKey( $key, 1, 3600 );
@@ -178,7 +220,7 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 1, $res, "after clear" );
 	}
 
-	public function provideClearCounters() {
+	public static function provideClearCounters() {
 		return [
 			[ 'new' ],
 			[ 'known' ],
@@ -191,12 +233,13 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideCheckAndGenerateCookie
 	 */
 	public function testCheckAndGenerateCookie(
-		User $user,
 		$cookie,
 		$expectedSeenBefore,
 		$expectedNewCookie,
 		$desc
 	) {
+		$this->setUpLoginNotify();
+		$user = $this->userFactory->newFromName( 'Foo' );
 		list( $actualSeenBefore, $actualNewCookie ) =
 			$this->inst->checkAndGenerateCookie( $user, $cookie );
 
@@ -214,27 +257,23 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expectedNewCookie, $newCookieParts[1], "[Cookie] $desc" );
 	}
 
-	public function provideCheckAndGenerateCookie() {
-		$this->setUpLoginNotify();
+	public static function provideCheckAndGenerateCookie() {
 		$y = gmdate( 'Y' );
 		$oldYear = $y - 4;
-		$u1 = User::newFromName( 'Foo' );
 
-		$cookie1 = $this->inst->generateUserCookieRecord( 'Foo' );
-		$cookie2 = $this->inst->generateUserCookieRecord( 'Foo' );
-		$cookieOld = $this->inst->generateUserCookieRecord( 'Foo', 2001 );
+		$cookie1 = '2023-1skf7bc-5j58f37f3t9m7rhwrrpvi4jigsyn750';
+		$cookie2 = '2023-99isim-ab5ms8f8581tpocpumgb78tof6f96yj';
+		$cookieOld = '2001-1skf7bc-48j27cdz9fmkv2yf667axiwvdy9z673';
 		$cookieOtherUser = "$y-1veusdo-tr049njztrrvkkz4tk3kre8rm1zb134";
 		return [
-			[ $u1, '', false, '', "no cookie" ],
+			[ '', false, '', "no cookie" ],
 			[
-				$u1,
-				"$cookieOtherUser",
+				$cookieOtherUser,
 				false,
-				"$cookieOtherUser",
+				$cookieOtherUser,
 				"not in cookie"
 			],
 			[
-				$u1,
 				"$cookieOtherUser.$y-.$y-abcdefg-8oerxg4l59zpiu0by7m2to1b4cjeer4.$oldYear-" .
 					"1234567-tpnsk00419wba6vjh1upif21qtst1cv",
 				false,
@@ -242,21 +281,18 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 				"old values in cookie"
 			],
 			[
-				$u1,
 				$cookieOld,
 				false,
 				"",
 				"Only old value"
 			],
 			[
-				$u1,
 				$cookie1,
 				true,
 				"",
 				"Normal success"
 			],
 			[
-				$u1,
 				"$cookieOtherUser.$cookie1.$cookie2."
 					. "$y-1234567-tpnsk00419wba6vjh1upif21qtst1cv.$cookie1",
 				true,
@@ -264,7 +300,6 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 				"Remove all of current user."
 			],
 			[
-				$u1,
 				"$cookieOtherUser.$cookieOtherUser.$cookieOtherUser."
 					. "$cookieOtherUser.$cookieOtherUser.$cookieOtherUser."
 					. "$cookieOtherUser.$cookieOtherUser.$cookieOtherUser."
@@ -288,10 +323,11 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideValidateCookieRecord
 	 */
 	public function testValidateCookieRecord( $cookie, $expected ) {
+		$this->setUpLoginNotify();
 		$this->assertEquals( $expected, $this->inst->validateCookieRecord( $cookie ) );
 	}
 
-	public function provideValidateCookieRecord() {
+	public static function provideValidateCookieRecord() {
 		$y = gmdate( 'Y' );
 		return [
 			[ 'fdakslnknfaknasf', false ],
@@ -304,7 +340,8 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testUserIsInCache() {
-		$u = User::newFromName( 'Xyzzy' );
+		$this->setUpLoginNotify( [ "LoginNotifyUseCheckUser" => true ] );
+		$u = $this->userFactory->newFromName( 'Xyzzy' );
 		$this->assertSame(
 			LoginNotify::USER_NO_INFO,
 			$this->inst->userIsInCache( $u, new FauxRequest() )
@@ -323,5 +360,297 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 			LoginNotify::USER_NOT_KNOWN,
 			$this->inst->userIsInCache( $u, $request )
 		);
+	}
+
+	public static function provideRecordFailureKnownCacheOrTable() {
+		return [
+			[ 'cache' ],
+			[ 'table' ]
+		];
+	}
+
+	/**
+	 * @dataProvider provideRecordFailureKnownCacheOrTable
+	 * @param string $type
+	 */
+	public function testRecordFailureKnownCacheOrTable( $type ) {
+		$config = [
+			'LoginNotifyUseCheckUser' => $type === 'cache',
+			'LoginNotifyUseSeenTable' => $type !== 'cache'
+		];
+		$this->setupRecordFailure( $config );
+		$user = $this->getTestUser()->getUser();
+		$this->inst->recordKnown( $user );
+
+		// Record a failure, does not notify because the interval is 2
+		$this->inst->recordFailure( $user );
+		$this->assertNotificationCount( $user, 'login-fail-known', 0 );
+
+		// Record a second failure
+		$this->inst->recordFailure( $user );
+		$this->assertNotificationCount( $user, 'login-fail-known', 1 );
+		$this->assertNotificationCount( $user, 'login-fail-new', 0 );
+
+		// None of our jobs are expected
+		$this->runJobs( [ 'numJobs' => 0 ], [ 'type' => 'LoginNotifyChecks' ] );
+	}
+
+	public function testRecordFailureKnownCheckUser() {
+		$this->setupRecordFailureWithCheckUser();
+		$helper = new TestRecentChangesHelper;
+		$user = $this->getTestUser()->getUser();
+
+		// Make a fake edit in CheckUser
+		$rc = $helper->makeEditRecentChange( $user, 'LoginNotifyTest',
+			1, 1, 1, wfTimestampNow(), 0, 0 );
+		CU\Hooks::updateCheckUserData( $rc );
+
+		// Record failed login attempt from the same IP
+		$this->inst->recordFailure( $user );
+		$this->runJobs();
+		$this->assertNotificationCount( $user, 'login-fail-known', 0 );
+
+		// Second failure will send a notification
+		$this->inst->recordFailure( $user );
+		$this->runJobs();
+		$this->assertNotificationCount( $user, 'login-fail-known', 1 );
+		$this->assertNotificationCount( $user, 'login-fail-new', 0 );
+	}
+
+	public function testRecordFailureUnknownCheckUser() {
+		$this->setupRecordFailureWithCheckUser();
+		$helper = new TestRecentChangesHelper;
+		$user = $this->getTestUser()->getUser();
+
+		// Make a fake edit in CheckUser
+		$rc = $helper->makeEditRecentChange( $user, 'LoginNotifyTest',
+			1, 1, 1, wfTimestampNow(), 0, 0 );
+		CU\Hooks::updateCheckUserData( $rc );
+
+		// Change the IP and record a failure
+		RequestContext::getMain()->getRequest()->setIP( '127.1.0.0' );
+		$this->inst->recordFailure( $user );
+		$this->runJobs();
+		$this->assertNotificationCount( $user, 'login-fail-new', 0 );
+
+		// Record another failure and notify the user
+		$this->inst->recordFailure( $user );
+		$this->runJobs();
+		$this->assertNotificationCount( $user, 'login-fail-new', 1 );
+		$this->assertNotificationCount( $user, 'login-fail-known', 0 );
+	}
+
+	public function testRecordFailureSeenExpired() {
+		$this->setupRecordFailure( [
+			'LoginNotifyAttemptsKnownIP' => 1,
+			'LoginNotifyAttemptsNewIP' => 1,
+		] );
+		$user = $this->getTestUser()->getUser();
+		$day = 86400;
+
+		// Mark the IP as known
+		$this->inst->setFakeTime( 2 * $day );
+		$this->inst->recordKnown( $user );
+
+		// 30 days later, still known
+		$this->inst->setFakeTime( 32 * $day );
+		$this->inst->recordFailure( $user );
+		$this->assertNotificationCount( $user, 'login-fail-new', 0 );
+		$this->assertNotificationCount( $user, 'login-fail-known', 1 );
+
+		// 180 days later, rounded up to the nearest bucket, data is expired
+		$this->inst->setFakeTime( 210 * $day );
+		$this->inst->recordFailure( $user );
+		$this->assertNotificationCount( $user, 'login-fail-new', 1 );
+		$this->assertNotificationCount( $user, 'login-fail-known', 1 );
+	}
+
+	public function testRecordFailureNoPassword() {
+		// Don't notify temp users (T329774)
+		$this->setupRecordFailure( [
+			'LoginNotifyAttemptsKnownIP' => 1,
+			'LoginNotifyAttemptsNewIP' => 1,
+		] );
+		$user = $this->getTestUser()->getUser();
+		$this->getDb()->newUpdateQueryBuilder()
+			->update( 'user' )
+			->set( [ 'user_password' => '' ] )
+			->where( [ 'user_id' => $user->getId() ] )
+			->caller( __METHOD__ )
+			->execute();
+		$this->inst->recordFailure( $user );
+		$this->assertNotificationCount( $user, 'login-fail-known', 0 );
+		$this->assertNotificationCount( $user, 'login-fail-new', 0 );
+	}
+
+	public function testSendSuccessNoticeCheckUser() {
+		$this->setupRecordFailureWithCheckUser();
+		$helper = new TestRecentChangesHelper;
+		$user = $this->getTestUser()->getUser();
+		$user->setEmail( 'test@test.mediawiki.org' );
+		$user->confirmEmail();
+		$user->saveSettings();
+
+		$emailSent = false;
+		$this->setTemporaryHook( 'EchoAbortEmailNotification',
+			static function () use ( &$emailSent ) {
+				$emailSent = true;
+				return false;
+			}
+		);
+
+		// Make a fake edit in CheckUser
+		$rc = $helper->makeEditRecentChange( $user, 'LoginNotifyTest',
+			1, 1, 1, wfTimestampNow(), 0, 0 );
+		CU\Hooks::updateCheckUserData( $rc );
+
+		// Change the IP and record a success
+		RequestContext::getMain()->getRequest()->setIP( '127.1.0.0' );
+		$this->inst->sendSuccessNotice( $user );
+		$this->runJobs();
+		$this->assertTrue( $emailSent );
+	}
+
+	public function testSendSuccessNoticeSeen() {
+		$this->setupRecordFailure();
+		$user = $this->getTestUser()->getUser();
+		$user->setEmail( 'test@test.mediawiki.org' );
+		$user->confirmEmail();
+		$user->saveSettings();
+
+		$emailSent = false;
+		$this->setTemporaryHook( 'EchoAbortEmailNotification',
+			static function () use ( &$emailSent ) {
+				$emailSent = true;
+				return false;
+			}
+		);
+
+		// Record 127.0.0.1
+		$this->inst->recordKnown( $user );
+
+		// Change the IP and record a success
+		RequestContext::getMain()->getRequest()->setIP( '127.1.0.0' );
+		$this->inst->sendSuccessNotice( $user );
+		$this->assertTrue( $emailSent );
+	}
+
+	private function setupRecordFailure( $config = [] ) {
+		$config += [
+			'LoginNotifyAttemptsKnownIP' => 2,
+			'LoginNotifyAttemptsNewIP' => 2,
+		];
+		$this->setUpLoginNotify( $config );
+		$this->overrideConfigValues( $config ); // for jobs
+		$this->tablesUsed[] = 'user';
+		$this->tablesUsed[] = 'echo_event';
+		$this->tablesUsed[] = 'echo_notification';
+		if ( $config['LoginNotifyUseSeenTable'] ?? true ) {
+			$this->tablesUsed[] = 'loginnotify_seen_net';
+		}
+	}
+
+	private function setupRecordFailureWithCheckUser() {
+		$this->markTestSkippedIfExtensionNotLoaded( 'CheckUser' );
+		$this->setupRecordFailure( [ 'LoginNotifyUseCheckUser' => true ] );
+		$this->tablesUsed[] = 'comment';
+		$this->tablesUsed[] = 'cu_changes';
+	}
+
+	/**
+	 * Check that the user has been notified the expected number of times
+	 *
+	 * @param User $user
+	 * @param string $type
+	 * @param int $expected
+	 */
+	private function assertNotificationCount( $user, $type, $expected ) {
+		$this->newSelectQueryBuilder()
+			->select( 'COUNT(*)' )
+			->from( 'echo_notification' )
+			->join( 'echo_event', null, 'event_id=notification_event' )
+			->where( [
+				'notification_user' => $user->getId(),
+				'event_type' => $type
+			] )
+			->assertFieldValue( $expected );
+	}
+
+	public static function providePackedSignedInt64ToDecimal() {
+		return [
+			[ '0000000000000000', 0 ],
+			[ '0000000000000001', 1 ],
+			[ 'ffffffffffffffff', -1 ],
+			[ '7fffffffffffffff', '9223372036854775807' ],
+			[ '8000000000000000', '-9223372036854775808' ],
+		];
+	}
+
+	/**
+	 * @dataProvider providePackedSignedInt64ToDecimal
+	 * @param string $hexInput
+	 * @param string|int $expected
+	 */
+	public function testPackedSignedInt64ToDecimal( $hexInput, $expected ) {
+		$class = TestingAccessWrapper::newFromClass( LoginNotify::class );
+		$input = hex2bin( $hexInput );
+		$result = $class->packedSignedInt64ToDecimal( $input );
+		$this->assertSame( (string)$expected, (string)$result );
+	}
+
+	public function testPurgeSeen() {
+		$this->setupLoginNotify( [ 'UpdateRowsPerQuery' => 1 ] );
+		$this->tablesUsed[] = 'user';
+		$this->tablesUsed[] = 'loginnotify_seen_net';
+		$user = $this->getTestUser()->getUser();
+		$day = 86400;
+		$this->inst->setFakeTime( 0 );
+		$this->inst->recordKnown( $user );
+		$this->inst->setFakeTime( 90 * $day );
+		$this->inst->recordKnown( $user );
+		$this->inst->setFakeTime( 210 * $day );
+		$this->inst->recordKnown( $user );
+
+		$this->assertSeenCount( 3 );
+
+		$this->inst->setFakeTime( 300 * $day );
+		$minId = $this->inst->getMinExpiredId();
+		$this->assertGreaterThan( 0, $minId );
+
+		$nextId = $this->inst->purgeSeen( $minId );
+		$this->assertSeenCount( 2 );
+		$this->assertGreaterThan( $minId, $nextId );
+
+		$nextId = $this->inst->purgeSeen( $nextId );
+		$this->assertGreaterThan( $minId, $nextId );
+		$this->assertSeenCount( 1 );
+
+		$nextId = $this->inst->purgeSeen( $nextId );
+		$this->assertNull( $nextId );
+	}
+
+	public function testPurgeViaJob() {
+		$this->setupLoginNotify( [ 'UpdateRowsPerQuery' => 1 ] );
+		$this->tablesUsed[] = 'user';
+		$this->tablesUsed[] = 'loginnotify_seen_net';
+		$user = $this->getTestUser()->getUser();
+
+		$this->inst->setFakeTime( 0 ); // 1970
+		$this->inst->recordUserInSeenTable( $user );
+		$this->assertSeenCount( 1 );
+
+		$this->inst->setFakeTime( null ); // real current time
+		$this->inst->recordUserInSeenTable( $user );
+		$this->assertSeenCount( 2 );
+
+		$this->runJobs();
+		$this->assertSeenCount( 1 );
+	}
+
+	private function assertSeenCount( $expected ) {
+		$this->newSelectQueryBuilder()
+			->select( 'COUNT(*)' )
+			->from( 'loginnotify_seen_net' )
+			->assertFieldValue( $expected );
 	}
 }

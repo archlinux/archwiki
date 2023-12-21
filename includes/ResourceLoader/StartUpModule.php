@@ -47,6 +47,12 @@ use Wikimedia\RequestTimeout\TimeoutException;
  */
 class StartUpModule extends Module {
 
+	/**
+	 * Cache version for client-side ResourceLoader module storage.
+	 * Like ResourceLoaderStorageVersion but not configurable.
+	 */
+	private const STORAGE_VERSION = '2';
+
 	private $groupIds = [
 		// These reserved numbers MUST start at 0 and not skip any. These are preset
 		// for forward compatibility so that they can be safely referenced by mediawiki.js,
@@ -187,6 +193,14 @@ class StartUpModule extends Module {
 			$module = $resourceLoader->getModule( $name );
 			$moduleTargets = $module->getTargets();
 			$moduleSkins = $module->getSkins();
+			$targetMismatch = !in_array( 'mobile', $moduleTargets ) || !in_array( 'desktop', $moduleTargets );
+			$hasValidTarget = in_array( 'mobile', $moduleTargets ) || in_array( 'desktop', $moduleTargets );
+			if ( $hasValidTarget && $targetMismatch ) {
+				wfDeprecated(
+					'Modules must target desktop and mobile. Module name:' . $name,
+					'1.41'
+				);
+			}
 			if (
 				( !$byPassTargetFilter && !in_array( $target, $moduleTargets ) )
 				|| ( $safemode && $module->getOrigin() > Module::ORIGIN_CORE_INDIVIDUAL )
@@ -245,7 +259,6 @@ class StartUpModule extends Module {
 			$registryData[$name] = [
 				'version' => $versionHash,
 				'dependencies' => $module->getDependencies( $context ),
-				'es6' => $module->requiresES6(),
 				'group' => $this->getGroupId( $module->getGroup() ),
 				'source' => $module->getSource(),
 				'skip' => $skipFunction,
@@ -263,10 +276,7 @@ class StartUpModule extends Module {
 			// Call mw.loader.register(name, version, dependencies, group, source, skip)
 			$registrations[] = [
 				$name,
-				// HACK: signify ES6 with a ! added at the end of the version
-				// This avoids having to add another register() parameter, and generating
-				// a bunch of nulls for ES6-only modules
-				$data['version'] . ( $data['es6'] ? '!' : '' ),
+				$data['version'],
 				$data['dependencies'],
 				$data['group'],
 				// Swap default (local) for null
@@ -340,6 +350,7 @@ class StartUpModule extends Module {
 	private function getStoreVary( Context $context ): string {
 		return implode( ':', [
 			$context->getSkin(),
+			self::STORAGE_VERSION,
 			$this->getConfig()->get( MainConfigNames::ResourceLoaderStorageVersion ),
 			$context->getLanguage(),
 		] );
@@ -347,15 +358,17 @@ class StartUpModule extends Module {
 
 	/**
 	 * @param Context $context
-	 * @return string JavaScript code
+	 * @return string|array JavaScript code
 	 */
-	public function getScript( Context $context ): string {
+	public function getScript( Context $context ) {
 		global $IP;
 		$conf = $this->getConfig();
 
 		if ( $context->getOnly() !== 'scripts' ) {
 			return '/* Requires only=scripts */';
 		}
+
+		$enableJsProfiler = $conf->get( MainConfigNames::ResourceLoaderEnableJSProfiler );
 
 		$startupCode = file_get_contents( "$IP/resources/src/startup/startup.js" );
 
@@ -391,31 +404,30 @@ class StartUpModule extends Module {
 			'$VARS.storeVary' => $context->encodeJson( $this->getStoreVary( $context ) ),
 			'$VARS.groupUser' => $context->encodeJson( $this->getGroupId( self::GROUP_USER ) ),
 			'$VARS.groupPrivate' => $context->encodeJson( $this->getGroupId( self::GROUP_PRIVATE ) ),
-			// Only expose private mw.loader.isES6ForTest in test mode.
-			'$CODE.test( isES6Supported )' => $conf->get( MainConfigNames::EnableJavaScriptTest ) ?
-				'(mw.loader.isES6ForTest !== undefined ? mw.loader.isES6ForTest : isES6Supported)' :
-				'isES6Supported',
-			// Only expose private mw.redefineFallbacksForTest in test mode.
-			'$CODE.maybeRedefineFallbacksForTest();' => $conf->get( MainConfigNames::EnableJavaScriptTest ) ?
-				'mw.redefineFallbacksForTest = defineFallbacks;' :
-				'',
+			'$VARS.sourceMapLinks' => $context->encodeJson(
+				$conf->get( MainConfigNames::ResourceLoaderEnableSourceMapLinks )
+			),
+
+			// When profiling is enabled, insert the calls.
+			// When disabled (the default), insert nothing.
+			'$CODE.profileExecuteStart();' => $enableJsProfiler
+				? 'mw.loader.profiler.onExecuteStart( module );'
+				: '',
+			'$CODE.profileExecuteEnd();' => $enableJsProfiler
+				? 'mw.loader.profiler.onExecuteEnd( module );'
+				: '',
+			'$CODE.profileScriptStart();' => $enableJsProfiler
+				? 'mw.loader.profiler.onScriptStart( module );'
+				: '',
+			'$CODE.profileScriptEnd();' => $enableJsProfiler
+				? 'mw.loader.profiler.onScriptEnd( module );'
+				: '',
+
+			// Debug stubs
+			'$CODE.consoleLog();' => $context->getDebug()
+				? 'console.log.apply( console, arguments );'
+				: '',
 		];
-		$profilerStubs = [
-			'$CODE.profileExecuteStart();' => 'mw.loader.profiler.onExecuteStart( module );',
-			'$CODE.profileExecuteEnd();' => 'mw.loader.profiler.onExecuteEnd( module );',
-			'$CODE.profileScriptStart();' => 'mw.loader.profiler.onScriptStart( module );',
-			'$CODE.profileScriptEnd();' => 'mw.loader.profiler.onScriptEnd( module );',
-		];
-		$debugStubs = [
-			'$CODE.consoleLog();' => 'console.log.apply( console, arguments );',
-		];
-		// When profiling is enabled, insert the calls. When disabled (by default), insert nothing.
-		$mwLoaderPairs += $conf->get( MainConfigNames::ResourceLoaderEnableJSProfiler )
-			? $profilerStubs
-			: array_fill_keys( array_keys( $profilerStubs ), '' );
-		$mwLoaderPairs += $context->getDebug()
-			? $debugStubs
-			: array_fill_keys( array_keys( $debugStubs ), '' );
 		$mwLoaderCode = strtr( $mwLoaderCode, $mwLoaderPairs );
 
 		// Perform string replacements for startup.js
@@ -426,7 +438,18 @@ class StartUpModule extends Module {
 		];
 		$startupCode = strtr( $startupCode, $pairs );
 
-		return $startupCode;
+		return [
+			'plainScripts' => [
+				[
+					'virtualFilePath' => new FilePath(
+						'resources/src/startup/startup.js',
+						MW_INSTALL_PATH,
+						$conf->get( MainConfigNames::ResourceBasePath )
+					),
+					'content' => $startupCode,
+				],
+			],
+		];
 	}
 
 	/**

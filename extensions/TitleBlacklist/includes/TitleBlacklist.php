@@ -9,11 +9,11 @@
 
 namespace MediaWiki\Extension\TitleBlacklist;
 
+use BadMethodCallException;
 use MediaWiki\MediaWikiServices;
-use MWException;
+use MediaWiki\Title\Title;
 use ObjectCache;
 use TextContent;
-use Title;
 use User;
 use Wikimedia\AtEase\AtEase;
 
@@ -57,7 +57,7 @@ class TitleBlacklist {
 	 */
 	public static function destroySingleton() {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new MWException(
+			throw new BadMethodCallException(
 				'Can not invoke ' . __METHOD__ . '() ' .
 				'out of tests (MW_PHPUNIT_TEST not set).'
 			);

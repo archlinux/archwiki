@@ -21,5 +21,11 @@
 	"cite_error_references_missing_group": "Бу <code>&lt;references&gt;</code> туттар маннык <code>&lt;ref&gt;</code> тиэгэ бөлөх тиэкиһигэр урут көрсүллүбэтэх \"$1\" атрибуттаах.",
 	"cite_error_references_missing_key": "Бу <code>&lt;references&gt;</code> туттар маннык <code>&lt;ref&gt;</code> \"$1\" диэн тиэгэ бу иннинээҕи тиэкискэ туттуллубат эбит.",
 	"cite_error_references_no_key": "Бу <code>&lt;references&gt;</code> туттар <code>&lt;ref&gt;</code> тиэгэ аатын атрибута суох эбит.",
-	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> туттар <code>&lt;ref&gt;</code> \"$1\" диэн ааттаах тиэгэ иһинээҕитэ суох эбит."
+	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> туттар <code>&lt;ref&gt;</code> \"$1\" диэн ааттаах тиэгэ иһинээҕитэ суох эбит.",
+	"cite-wikieditor-tool-reference": "Быһаарыы",
+	"cite-wikieditor-help-page-references": "Быһаарыылар",
+	"cite-wikieditor-help-content-reference-description": "Быһаарыы",
+	"cite-wikieditor-help-content-named-reference-description": "Ааттаммыт быһааран биэрии",
+	"cite-wikieditor-help-content-rereference-description": "Ити сигэни эбии туттуу",
+	"cite-wikieditor-help-content-showreferences-description": "Быһаарыылары көрдөрүү"
 }

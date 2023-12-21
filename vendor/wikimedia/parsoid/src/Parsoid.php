@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid;
 
+use Composer\InstalledVersions;
 use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
 use InvalidArgumentException;
@@ -25,6 +26,7 @@ use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Utils\Timing;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wikitext\Wikitext;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\AddRedLinks;
@@ -37,7 +39,7 @@ class Parsoid {
 	 * @see https://www.mediawiki.org/wiki/Parsoid/API#Content_Negotiation
 	 * @see https://www.mediawiki.org/wiki/Specs/HTML#Versioning
 	 */
-	public const AVAILABLE_VERSIONS = [ '2.7.0', '999.0.0' ];
+	public const AVAILABLE_VERSIONS = [ '2.8.0', '999.0.0' ];
 
 	private const DOWNGRADES = [
 		[ 'from' => '999.0.0', 'to' => '2.0.0', 'func' => 'downgrade999to2' ],
@@ -58,6 +60,26 @@ class Parsoid {
 	) {
 		$this->siteConfig = $siteConfig;
 		$this->dataAccess = $dataAccess;
+	}
+
+	/**
+	 * Returns the currently-installed version of Parsoid.
+	 * @return string
+	 */
+	public static function version(): string {
+		try {
+			// See https://getcomposer.org/doc/07-runtime.md#knowing-the-version-of-package-x
+			return InstalledVersions::getVersion( 'wikimedia/parsoid' ) ??
+				// From the composer runtime API docs:
+				// "It is nonetheless a good idea to make sure you
+				// handle the null return value as gracefully as
+				// possible for safety."
+				'null';
+		} catch ( \Throwable $t ) {
+			// Belt-and-suspenders protection against parts of the composer
+			// runtime API being absent in production.
+			return 'error';
+		}
 	}
 
 	/**
@@ -158,6 +180,9 @@ class Parsoid {
 		if ( isset( $options['logLinterData'] ) ) {
 			$envOptions['logLinterData'] = !empty( $options['logLinterData'] );
 		}
+		$envOptions['skipLanguageConversionPass'] =
+			$options['skipLanguageConversionPass'] ?? false;
+
 		$env = new Env(
 			$this->siteConfig, $pageConfig, $this->dataAccess, $metadata, $envOptions
 		);
@@ -189,12 +214,9 @@ class Parsoid {
 	 *   'discardDataParsoid'   => (bool) Drop all data-parsoid annotations.
 	 *   'offsetType'           => (string) ucs2, char, byte are valid values
 	 *                                      what kind of source offsets should be emitted?
-	 *   'htmlVariantLanguage'  => (string|Bcp47Code) If non-null, the language variant used for Parsoid HTML.
-	 *                             A MediaWiki-internal language code string (deprecated),
-	 *                             or a Bcp47Code object.
-	 *   'wtVariantLanguage'    => (string|Bcp47Code) If non-null, the language variant used for wikitext.
-	 *                             A MediaWiki-internal language code string (deprecated),
-	 *                             or a Bcp47Code object.
+	 *   'skipLanguageConversionPass'  => (bool) Skip the language variant conversion pass (defaults to false)
+	 *   'htmlVariantLanguage'  => (Bcp47Code) If non-null, the language variant used for Parsoid HTML.
+	 *   'wtVariantLanguage'    => (Bcp47Code) If non-null, the language variant used for wikitext.
 	 *   'logLinterData'        => (bool) Should we log linter data if linting is enabled?
 	 *   'traceFlags'           => (array) associative array with tracing options
 	 *   'dumpFlags'            => (array) associative array with dump options
@@ -213,7 +235,11 @@ class Parsoid {
 		if ( $metadata === null ) {
 			$metadata = new StubMetadataCollector( $this->siteConfig->getLogger() );
 		}
+
+		$parseTiming = Timing::start();
 		[ $env, $doc, $contentmodel ] = $this->parseWikitext( $pageConfig, $metadata, $options );
+		$parseTime = $parseTiming->end();
+
 		// FIXME: Does this belong in parseWikitext so that the other endpoint
 		// is covered as well?  It probably depends on expectations of the
 		// Rest API.  If callers of /page/lint/ assume that will update the
@@ -221,13 +247,26 @@ class Parsoid {
 		if ( $env->getSiteConfig()->linting() ) {
 			( new LintLogger( $env ) )->logLintOutput();
 		}
+
 		$headers = DOMUtils::findHttpEquivHeaders( $doc );
 		$body_only = !empty( $options['body_only'] );
 		$node = $body_only ? DOMCompat::getBody( $doc ) : $doc;
+
 		if ( $env->pageBundle ) {
 			$out = ContentUtils::extractDpAndSerialize( $node, [
 				'innerXML' => $body_only,
 			] );
+		} else {
+			$out = [
+				'html' => ContentUtils::toXML( $node, [
+					'innerXML' => $body_only,
+				] ),
+			];
+		}
+
+		$this->recordParseMetrics( $env, $parseTime, $out );
+
+		if ( $env->pageBundle ) {
 			return new PageBundle(
 				$out['html'],
 				$out['pb']->parsoid, $out['pb']->mw ?? null,
@@ -236,10 +275,62 @@ class Parsoid {
 				$contentmodel
 			);
 		} else {
-			$xml = ContentUtils::toXML( $node, [
-				'innerXML' => $body_only,
-			] );
-			return $xml;
+			return $out['html'];
+		}
+	}
+
+	/**
+	 *
+	 */
+	private function recordParseMetrics(
+		Env $env, float $parseTime, array $out
+	) {
+		$metrics = $this->siteConfig->metrics();
+		if ( !$metrics ) {
+			return;
+		}
+
+		$pageConfig = $env->getPageConfig();
+
+		// This is somewhat suspect because ParsoidHandler::tryToCreatePageConfig
+		// can set a revision id on a MutableRevisionRecord, but it might be simpler
+		// to make that go away
+		if ( $pageConfig->getRevisionId() ) {
+			$mstr = 'pageWithOldid';
+		} else {
+			$mstr = 'wt';
+		}
+
+		$metrics->timing( "entry.wt2html.{$mstr}.parse", $parseTime );
+
+		if ( Semver::satisfies(
+			$env->getOutputContentVersion(), '!=' . self::defaultHTMLVersion()
+		) ) {
+			$metrics->increment( 'entry.wt2html.parse.version.notdefault' );
+		}
+
+		$metrics->timing(
+			"entry.wt2html.{$mstr}.size.input",
+			// @phan-suppress-next-line PhanDeprecatedFunction
+			strlen( $pageConfig->getPageMainContent() )
+		);
+
+		$outSize = strlen( $out['html'] );
+		$metrics->timing( "entry.wt2html.{$mstr}.size.output", $outSize );
+
+		if ( $parseTime > 10 && $outSize > 100 ) {
+			// * Don't bother with this metric for really small parse times
+			//   p99 for initialization time is ~7ms according to grafana.
+			//   So, 10ms ensures that startup overheads don't skew the metrics
+			// * For body_only=false requests, <head> section isn't generated
+			//   and if the output is small, per-request overheads can skew
+			//   the timePerKB metrics.
+			//
+			// NOTE: This is slightly misleading since there are fixed costs
+			// for generating output like the <head> section and should be factored in,
+			// but this is good enough for now as a useful first degree of approxmation.
+			$timePerKB = $parseTime * 1024 / $outSize;
+			$metrics->timing( 'entry.wt2html.timePerKB', $timePerKB );
 		}
 	}
 
@@ -271,12 +362,8 @@ class Parsoid {
 	 *   'offsetType'          => (string) ucs2, char, byte are valid values
 	 *                                     what kind of source offsets are present in the HTML?
 	 *   'contentmodel'        => (string|null) The content model of the input.
-	 *   'htmlVariantLanguage' => (string|Bcp47Code) If non-null, the language variant used for Parsoid HTML.
-	 *                            A MediaWiki-internal language code string (deprecated),
-	 *                            or a Bcp47Code object.
-	 *   'wtVariantLanguage'   => (string|Bcp47Code) If non-null, the language variant used for wikitext.
-	 *                            A MediaWiki-internal language code string (deprecated),
-	 *                            or a Bcp47Code object.
+	 *   'htmlVariantLanguage' => (Bcp47Code) If non-null, the language variant used for Parsoid HTML.
+	 *   'wtVariantLanguage'   => (Bcp47Code) If non-null, the language variant used for wikitext.
 	 *   'traceFlags'          => (array) associative array with tracing options
 	 *   'dumpFlags'           => (array) associative array with dump options
 	 *   'debugFlags'          => (array) associative array with debug options
@@ -303,7 +390,45 @@ class Parsoid {
 		$contentmodel = $options['contentmodel'] ?? null;
 		$handler = $env->getContentHandler( $contentmodel );
 		$extApi = new ParsoidExtensionAPI( $env );
-		return $handler->fromDOM( $extApi, $selserData );
+
+		$serialTiming = Timing::start();
+		$wikitext = $handler->fromDOM( $extApi, $selserData );
+		$serialTime = $serialTiming->end();
+
+		$this->recordSerializationMetrics( $options, $serialTime, $wikitext );
+
+		return $wikitext;
+	}
+
+	/**
+	 *
+	 */
+	private function recordSerializationMetrics(
+		array $options, float $serialTime, string $wikitext
+	) {
+		$metrics = $this->siteConfig->metrics();
+		if ( !$metrics ) {
+			return;
+		}
+
+		$htmlSize = $options['htmlSize'] ?? 0;
+		$metrics->timing( 'entry.html2wt.size.input', $htmlSize );
+
+		if ( isset( $options['inputContentVersion'] ) ) {
+			$metrics->increment(
+				'entry.html2wt.original.version.' . $options['inputContentVersion']
+			);
+		}
+
+		$metrics->timing( 'entry.html2wt.total', $serialTime );
+		$metrics->timing( 'entry.html2wt.size.output', strlen( $wikitext ) );
+
+		if ( $htmlSize ) {  // Avoid division by zero
+			// NOTE: the name timePerInputKB is misleading, since $htmlSize is
+			//       in characters, not bytes.
+			$timePerInputKB = $serialTime * 1024 / $htmlSize;
+			$metrics->timing( 'entry.html2wt.timePerInputKB', $timePerInputKB );
+		}
 	}
 
 	/**
@@ -320,12 +445,16 @@ class Parsoid {
 		?SelserData $selserData = null
 	): string {
 		$doc = DOMUtils::parseHTML( $html, true );
+		if ( !isset( $options['htmlSize'] ) ) {
+			$options['htmlSize'] = mb_strlen( $html );
+		}
 		return $this->dom2wikitext( $pageConfig, $doc, $options, $selserData );
 	}
 
 	/**
 	 * Update the supplied PageBundle based on the `$update` type.
 	 *
+	 *   'convertoffsets': Convert offsets between formats (byte, char, ucs2)
 	 *   'redlinks': Refreshes the classes of known, missing, etc. links.
 	 *   'variant': Converts the HTML based on the supplied variant.
 	 *
@@ -353,42 +482,78 @@ class Parsoid {
 		DOMDataUtils::visitAndLoadDataAttribs(
 			DOMCompat::getBody( $doc ), [ 'markNew' => true ]
 		);
-		ContentUtils::convertOffsets(
-			$env, $doc, $env->getRequestOffsetType(), 'byte'
-		);
-		if ( $update === 'redlinks' ) {
-			( new AddRedLinks() )->run( $env, DOMCompat::getBody( $doc ) );
-		} elseif ( $update === 'variant' ) {
-			// Note that `maybeConvert` could still be a no-op, in case the
-			// __NOCONTENTCONVERT__ magic word is present, or the targetVariant
-			// is a base language code or otherwise invalid.
-			LanguageConverter::maybeConvert(
-				$env, $doc,
-				Utils::mwCodeToBcp47( $options['variant']['target'] ),
-				$options['variant']['source'] ?
-				Utils::mwCodeToBcp47( $options['variant']['source'] ) : null
-			);
-			// Update content-language and vary headers.
-			// This also ensures there is a <head> element.
-			$ensureHeader = static function ( string $h ) use ( $doc ) {
-				$el = DOMCompat::querySelector( $doc, "meta[http-equiv=\"{$h}\"i]" );
-				if ( !$el ) {
-					$el = DOMUtils::appendToHead( $doc, 'meta', [
-						'http-equiv' => $h,
-					] );
+
+		$dataBagPB = DOMDataUtils::getPageBundle( $doc );
+		switch ( $update ) {
+			case 'convertoffsets':
+				ContentUtils::convertOffsets(
+					$env, $doc, $options['inputOffsetType'], $options['outputOffsetType']
+				);
+				$dataBagPB->parsoid['offsetType'] = $options['outputOffsetType'];
+				$dataBagPB->parsoid['counter'] = $pb->parsoid['counter'];
+				break;
+
+			case 'redlinks':
+				ContentUtils::convertOffsets(
+					$env, $doc, $env->getRequestOffsetType(), 'byte'
+				);
+				( new AddRedLinks() )->run( $env, DOMCompat::getBody( $doc ) );
+				( new ConvertOffsets() )->run( $env, DOMCompat::getBody( $doc ), [], true );
+				break;
+
+			// variant-metadata-hack exists to support the hack in core where
+			// Parsoid-unsupported variants are transformed via core's variant converters.
+			// But, that generated HTML needs Parsoid metadata to make it look like
+			// Parsoid HTML. (See includes/parser/Parsoid/LanguageVariantConverter.php)
+			case 'variant-metadata-hack':
+			case 'variant':
+				ContentUtils::convertOffsets(
+					$env, $doc, $env->getRequestOffsetType(), 'byte'
+				);
+
+				if ( $update === 'variant' ) {
+					// Note that `maybeConvert` could still be a no-op, in case the
+					// __NOCONTENTCONVERT__ magic word is present, or the targetVariant
+					// is a base language code or otherwise invalid.
+					LanguageConverter::maybeConvert(
+						$env, $doc,
+						Utils::mwCodeToBcp47(
+							$options['variant']['target'],
+							// Be strict in what we accept.
+							true, $this->siteConfig->getLogger()
+						),
+						$options['variant']['source'] ?
+						Utils::mwCodeToBcp47(
+							$options['variant']['source'],
+							// Be strict in what we accept.
+							true, $this->siteConfig->getLogger()
+						) : null
+					);
 				}
-				return $el;
-			};
-			( $ensureHeader( 'content-language' ) )->setAttribute(
-				'content', $env->htmlContentLanguageBcp47()->toBcp47Code()
-			);
-			( $ensureHeader( 'vary' ) )->setAttribute(
-				'content', $env->htmlVary()
-			);
-		} else {
-			throw new LogicException( 'Unknown transformation.' );
+				// Update content-language and vary headers.
+				// This also ensures there is a <head> element.
+				$ensureHeader = static function ( string $h ) use ( $doc ) {
+					$el = DOMCompat::querySelector( $doc, "meta[http-equiv=\"{$h}\"i]" );
+					if ( !$el ) {
+						$el = DOMUtils::appendToHead( $doc, 'meta', [
+							'http-equiv' => $h,
+						] );
+					}
+					return $el;
+				};
+				( $ensureHeader( 'content-language' ) )->setAttribute(
+					'content', $env->htmlContentLanguageBcp47()->toBcp47Code()
+				);
+				( $ensureHeader( 'vary' ) )->setAttribute(
+					'content', $env->htmlVary()
+				);
+				( new ConvertOffsets() )->run( $env, DOMCompat::getBody( $doc ), [], true );
+				break;
+
+			default:
+				throw new LogicException( $update . 'is an unknown transformation' );
 		}
-		( new ConvertOffsets() )->run( $env, DOMCompat::getBody( $doc ), [], true );
+
 		DOMDataUtils::visitAndStoreDataAttribs(
 			DOMCompat::getBody( $doc ), [
 				'discardDataParsoid' => $env->discardDataParsoid,
@@ -398,7 +563,7 @@ class Parsoid {
 		);
 		$body_only = !empty( $options['body_only'] );
 		$node = $body_only ? DOMCompat::getBody( $doc ) : $doc;
-		DOMDataUtils::injectPageBundle( $doc, DOMDataUtils::getPageBundle( $doc ) );
+		DOMDataUtils::injectPageBundle( $doc, $dataBagPB );
 		$out = ContentUtils::extractDpAndSerialize( $node, [
 			'innerXML' => $body_only,
 		] );
@@ -490,30 +655,19 @@ class Parsoid {
 	 *
 	 * @internal FIXME: Remove once Parsoid's language variant work is completed
 	 * @param PageConfig $pageConfig
-	 * @param string $targetVariantCode Variant code to check
-	 * @return bool
-	 * @deprecated Use ::implementsLanguageConversionBcp47()
-	 */
-	public function implementsLanguageConversion( PageConfig $pageConfig, string $targetVariantCode ): bool {
-		// argh, another interface that doesn't use Bcp47Code :(
-		return $this->implementsLanguageConversionBcp47(
-			$pageConfig, Utils::mwCodeToBcp47( $targetVariantCode )
-		);
-	}
-
-	/**
-	 * Check if language variant conversion is implemented for a language
-	 *
-	 * @internal FIXME: Remove once Parsoid's language variant work is completed
-	 * @param PageConfig $pageConfig
 	 * @param Bcp47Code $targetVariant Variant language to check
 	 * @return bool
 	 */
 	public function implementsLanguageConversionBcp47( PageConfig $pageConfig, Bcp47Code $targetVariant ): bool {
+		// Hardcode disable zh lang conversion support since Parsoid's
+		// implementation is incomplete and not performant.
+		if ( $pageConfig->getPageLanguageBcp47()->toBcp47Code() === 'zh' ) {
+			return false;
+		}
+
 		$metadata = new StubMetadataCollector( $this->siteConfig->getLogger() );
 		$env = new Env( $this->siteConfig, $pageConfig, $this->dataAccess, $metadata );
-
-		return LanguageConverter::implementsLanguageConversion( $env, $targetVariant );
+		return LanguageConverter::implementsLanguageConversionBcp47( $env, $targetVariant );
 	}
 
 	/**

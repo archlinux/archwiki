@@ -27,12 +27,6 @@ interface IModule {
 	public function newKey( array $data );
 
 	/**
-	 * @param OATHUser $user
-	 * @return array
-	 */
-	public function getDataFromUser( OATHUser $user );
-
-	/**
 	 * @return AbstractSecondaryAuthenticationProvider
 	 */
 	public function getSecondaryAuthProvider();

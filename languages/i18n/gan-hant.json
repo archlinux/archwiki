@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"DannyS712",
 			"Ericliu1912",
 			"Fitoschido",
@@ -17,8 +18,7 @@
 			"Vipuser",
 			"Xiaomingyan",
 			"星海",
-			"아라",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "下劃連結",
@@ -425,7 +425,7 @@
 	"post-expand-template-argument-category": "含到略過模板參數嗰頁",
 	"undo-success": "箇隻編輯可以拕取銷。請檢查吖以確定箇係倷想扤嗰，接到保存修改去完成撤銷編輯。",
 	"undo-failure": "半中嗰編輯有人挭仗，箇隻編輯伓可以拕取銷。",
-	"undo-summary": "取消由[[Special:Contributions/$2|$2]] （[[User talk:$2|對話]]）所修訂嗰 $1",
+	"undo-summary": "取消由[[Special:Contributions/$2|$2]] （[[User talk:$2|對話]]）所修訂嗰 [[Special:Diff/$1|$1]]",
 	"viewpagelogs": "眵吖箇頁嗰日誌",
 	"nohistory": "箇頁冇修改歷史。",
 	"currentrev": "眼前嗰修改版本",
@@ -525,7 +525,6 @@
 	"search-interwiki-more": "（更多）",
 	"searchrelated": "相關",
 	"searchall": "所有",
-	"showingresults": "底下從第<b>$2</b>條顯示起先嗰<b>$1</b>條結果:",
 	"search-nonefound": "冇合到嗰查詢結果。",
 	"powersearch-legend": "高級搜尋",
 	"powersearch-ns": "到名子空間裡頭尋：",
@@ -900,8 +899,6 @@
 	"enotif_lastdiff": "想眵改動請去$1。",
 	"enotif_anon_editor": "匿名用戶$1",
 	"enotif_body": "$WATCHINGUSERNAME先生/小姐倷好，\n\n$PAGEINTRO $NEWPAGE\n\n編輯摘要: $PAGESUMMARY $PAGEMINOREDIT\n聯絡箇隻編輯人: mail: $PAGEEDITOR_EMAIL\n\n本站: $PAGEEDITOR_WIKI 今後伓會通知倷將來嗰改動，除非接到來到箇頁。倷也能設過倷全部監視頁嗰通知標記。\n\n{{SITENAME}}通知系統 – 會改卟倷嗰監視列表設置，請去 {{canonicalurl:{{#special:EditWatchlist}}}}\n\n回饋同到別嗰説明: $HELPPAGE",
-	"created": "建正嘞",
-	"changed": "改卟嘞",
 	"deletepage-submit": "刪卟頁面",
 	"confirm": "確認",
 	"excontent": "內容係: '$1'",

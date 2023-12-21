@@ -1,5 +1,8 @@
 <?php
 
+namespace MediaWiki\Pager;
+
+use IContextSource;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
@@ -17,7 +20,7 @@ class PagerTools {
 
 	/**
 	 * Generate a set of tools for a revision.
-	 * Will performs permission checks where necessary.
+	 * Will perform permission checks where necessary.
 	 * @param RevisionRecord $revRecord The revision to generate tools for.
 	 * @param RevisionRecord|null $previousRevRecord The previous revision (if any). Optional.
 	 *   Used to produce undo links.
@@ -107,3 +110,9 @@ class PagerTools {
 		return $s2;
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( PagerTools::class, 'PagerTools' );

@@ -23,7 +23,7 @@ ve.ui.MWAdvancedSettingsPage = function VeUiMWAdvancedSettingsPage( name, config
 	ve.ui.MWAdvancedSettingsPage.super.apply( this, arguments );
 
 	// Properties
-	this.metaList = null;
+	this.fragment = null;
 	this.indexingOptionTouched = false;
 	this.newSectionEditLinkOptionTouched = false;
 
@@ -174,7 +174,7 @@ ve.ui.MWAdvancedSettingsPage.prototype.onIndexingOptionChange = function () {
  * @return {Object|null} Meta item, if any
  */
 ve.ui.MWAdvancedSettingsPage.prototype.getMetaItem = function ( name ) {
-	return this.metaList.getItemsInGroup( name )[ 0 ] || null;
+	return this.fragment.getDocument().getMetaList().getItemsInGroup( name )[ 0 ] || null;
 };
 
 /* New edit section link option methods */
@@ -189,16 +189,16 @@ ve.ui.MWAdvancedSettingsPage.prototype.onNewSectionEditLinkOptionChange = functi
 /**
  * Setup settings page.
  *
- * @param {ve.dm.MetaList} metaList Meta list
+ * @param {ve.dm.SurfaceFragment} fragment Surface fragment
  * @param {Object} config
  * @param {Object} [config.data] Dialog setup data
  * @param {boolean} [config.isReadOnly=false] Dialog is in read-only mode
  * @return {jQuery.Promise}
  */
-ve.ui.MWAdvancedSettingsPage.prototype.setup = function ( metaList, config ) {
+ve.ui.MWAdvancedSettingsPage.prototype.setup = function ( fragment, config ) {
 	var advancedSettingsPage = this;
 
-	this.metaList = metaList;
+	this.fragment = fragment;
 
 	// Indexing items
 	var indexingField = this.indexing.getField();
@@ -262,15 +262,16 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 	if ( this.indexingOptionTouched ) {
 		if ( newIndexingData.data === 'default' ) {
 			if ( currentIndexingItem ) {
-				currentIndexingItem.remove();
+				this.fragment.removeMeta( currentIndexingItem );
 			}
 		} else {
 			var newIndexingItem = { type: 'mwIndex', attributes: { property: newIndexingData.data } };
 
 			if ( !currentIndexingItem ) {
-				this.metaList.insertMeta( newIndexingItem );
+				this.fragment.insertMeta( newIndexingItem );
 			} else if ( currentIndexingItem.getAttribute( 'property' ) !== newIndexingData.data ) {
-				currentIndexingItem.replaceWith(
+				this.fragment.replaceMeta(
+					currentIndexingItem,
 					ve.extendObject( true, {}, currentIndexingItem.getElement(), newIndexingItem )
 				);
 			}
@@ -285,15 +286,16 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 	if ( this.newSectionEditLinkOptionTouched ) {
 		if ( newNewSectionEditLinkData.data === 'default' ) {
 			if ( currentNewSectionEditLinkItem ) {
-				currentNewSectionEditLinkItem.remove();
+				this.fragment.removeMeta( currentNewSectionEditLinkItem );
 			}
 		} else {
 			var newNewSectionEditLinkItem = { type: 'mwNewSectionEdit', attributes: { property: newNewSectionEditLinkData.data } };
 
 			if ( !currentNewSectionEditLinkItem ) {
-				this.metaList.insertMeta( newNewSectionEditLinkItem );
+				this.fragment.insertMeta( newNewSectionEditLinkItem );
 			} else if ( currentNewSectionEditLinkItem.getAttribute( 'property' ) !== newNewSectionEditLinkData.data ) {
-				currentNewSectionEditLinkItem.replaceWith(
+				this.fragment.replaceMeta(
+					currentNewSectionEditLinkItem,
 					ve.extendObject( true, {}, currentNewSectionEditLinkItem.getElement(), newNewSectionEditLinkItem )
 				);
 			}
@@ -314,7 +316,8 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 			if ( newDisplayTitle ) {
 				if ( currentDisplayTitleItem.getAttribute( 'content' ) !== newDisplayTitle ) {
 					// There was a display title and is a new one, but they differ, so replace
-					currentDisplayTitleItem.replaceWith(
+					this.fragment.replaceMeta(
+						currentDisplayTitleItem,
 						ve.extendObject( true, {},
 							currentDisplayTitleItem.getElement(),
 							newDisplayTitleItem
@@ -323,13 +326,13 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 				}
 			} else {
 				// There was a display title and is no new one, so remove
-				currentDisplayTitleItem.remove();
+				this.fragment.removeMeta( currentDisplayTitleItem );
 			}
 		} else {
 			if ( newDisplayTitle ) {
 				// There's no existing display title but there is a new one, so create
 				// HACK: Putting this at position 0 so that it works – T63862
-				this.metaList.insertMeta( newDisplayTitleItem, 0 );
+				this.fragment.insertMeta( newDisplayTitleItem, 0 );
 			}
 		}
 	}
@@ -339,13 +342,13 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 			isSelected = metaItemCheckbox.fieldLayout.getField().isSelected();
 
 		if ( currentItem && !isSelected ) {
-			currentItem.remove();
+			advancedSettingsPage.fragment.removeMeta( currentItem );
 		} else if ( !currentItem && isSelected ) {
-			advancedSettingsPage.metaList.insertMeta( { type: metaItemCheckbox.metaName } );
+			advancedSettingsPage.fragment.insertMeta( { type: metaItemCheckbox.metaName } );
 		}
 	} );
 
-	this.metaList = null;
+	this.fragment = null;
 };
 
 ve.ui.MWAdvancedSettingsPage.prototype.getFieldsets = function () {

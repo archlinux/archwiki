@@ -55,7 +55,7 @@
 #mw-related-navigation {
 	display: inline-block;
 	position: relative;
-	z-index: 99;
+	z-index: ( @z-index-fixed + 2 );
 
 	h2 {
 		font-weight: normal;
@@ -78,7 +78,7 @@
 	border-top: solid 2px @base80;
 	display: block;
 	position: absolute;
-	z-index: 98;
+	z-index: ( @z-index-fixed - 2 );
 	background: @background;
 	width: 100%;
 }
@@ -104,17 +104,17 @@
 #mw-site-navigation .sidebar-chunk h2 span {
 	.dropdown-pokey();
 
-	&:before,
-	&:after {
+	&::before,
+	&::after {
 		right: 1px;
 		display: none;
 	}
 
-	&:before {
+	&::before {
 		top: 34px;
 	}
 
-	&:after {
+	&::after {
 		top: 36px;
 	}
 }
@@ -122,8 +122,8 @@
 #mw-site-navigation .dropdown-active,
 .client-nojs #mw-site-navigation .sidebar-chunk:hover {
 	h2 span {
-		&:before,
-		&:after {
+		&::before,
+		&::after {
 			display: block;
 		}
 	}

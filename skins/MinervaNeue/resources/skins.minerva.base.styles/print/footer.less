@@ -9,11 +9,11 @@
 
 // stylelint-disable selector-max-id
 .minerva-footer {
-	border-top: solid 4px #000;
+	border-top: 4px @border-style-base #000;
 	// Un-hide the last-modified info and license text
 	display: block;
 	padding-top: 23px;
-	background: #fff !important;
+	background: @background-color-base !important;
 
 	.footer-content {
 		display: block !important;
@@ -23,7 +23,7 @@
 		#footer-info-copyright {
 			display: block !important;
 			font-size: 30px;
-			color: @colorPrintSubtle;
+			color: @color-print-subtle;
 			font-weight: normal;
 		}
 

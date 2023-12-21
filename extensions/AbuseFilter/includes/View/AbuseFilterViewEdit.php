@@ -21,11 +21,13 @@ use MediaWiki\Extension\AbuseFilter\FilterStore;
 use MediaWiki\Extension\AbuseFilter\InvalidImportDataException;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\PermissionManager;
-use MWException;
 use OOUI;
 use SpecialBlock;
 use SpecialPage;
+use UnexpectedValueException;
+use Wikimedia\Rdbms\LBFactory;
 use Xml;
 
 class AbuseFilterViewEdit extends AbuseFilterView {
@@ -35,6 +37,9 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 	private $historyID;
 	/** @var int|string */
 	private $filter;
+
+	/** @var LBFactory */
+	private $lbFactory;
 
 	/** @var PermissionManager */
 	private $permissionManager;
@@ -61,6 +66,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 	private $specsFormatter;
 
 	/**
+	 * @param LBFactory $lbFactory
 	 * @param PermissionManager $permissionManager
 	 * @param AbuseFilterPermissionManager $afPermManager
 	 * @param FilterProfiler $filterProfiler
@@ -76,6 +82,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 	 * @param array $params
 	 */
 	public function __construct(
+		LBFactory $lbFactory,
 		PermissionManager $permissionManager,
 		AbuseFilterPermissionManager $afPermManager,
 		FilterProfiler $filterProfiler,
@@ -91,6 +98,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		array $params
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, $params );
+		$this->lbFactory = $lbFactory;
 		$this->permissionManager = $permissionManager;
 		$this->filterProfiler = $filterProfiler;
 		$this->filterLookup = $filterLookup;
@@ -111,7 +119,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		$out = $this->getOutput();
 		$out->enableOOUI();
 		$request = $this->getRequest();
-		$out->setPageTitle( $this->msg( 'abusefilter-edit' ) );
+		$out->setPageTitleMsg( $this->msg( 'abusefilter-edit' ) );
 		$out->addHelpLink( 'Extension:AbuseFilter/Rules format' );
 
 		if ( !is_numeric( $this->filter ) && $this->filter !== null ) {
@@ -121,7 +129,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		$filter = $this->filter ? (int)$this->filter : null;
 		$history_id = $this->historyID;
 		if ( $this->historyID ) {
-			$dbr = wfGetDB( DB_REPLICA );
+			$dbr = $this->lbFactory->getReplicaDatabase();
 			$lastID = (int)$dbr->selectField(
 				'abuse_filter_history',
 				'afh_id',
@@ -259,7 +267,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 	 * @param int|null $filter The filter ID, or null for a new filter
 	 * @param int|null $history_id The history ID of the filter, if applicable. Otherwise null
 	 */
-	protected function buildFilterEditor(
+	private function buildFilterEditor(
 		$error,
 		Filter $filterObj,
 		?int $filter,
@@ -310,6 +318,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		$fields['abusefilter-edit-description'] =
 			new OOUI\TextInputWidget( [
 				'name' => 'wpFilterDescription',
+				'id' => 'mw-abusefilter-edit-description-input',
 				'value' => $filterObj->getName(),
 				'readOnly' => $readOnly
 				]
@@ -616,7 +625,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		switch ( $action ) {
 			case 'throttle':
 				// Throttling is only available via object caching
-				if ( $config->get( 'MainCacheType' ) === CACHE_NONE ) {
+				if ( $config->get( MainConfigNames::MainCacheType ) === CACHE_NONE ) {
 					return '';
 				}
 				$throttleSettings =
@@ -948,7 +957,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 					] );
 
 				$blockOptions = [];
-				if ( $config->get( 'BlockAllowsUTEdit' ) === true ) {
+				if ( $config->get( MainConfigNames::BlockAllowsUTEdit ) === true ) {
 					$talkCheckbox =
 						new OOUI\FieldLayout(
 							new OOUI\CheckboxInputWidget( [
@@ -1035,7 +1044,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 			$formId = 'disallow';
 			$inputName = 'wpFilterDisallowMessage';
 		} else {
-			throw new MWException( "Unexpected action value $action" );
+			throw new UnexpectedValueException( "Unexpected action value $action" );
 		}
 
 		$existingSelector =
@@ -1055,7 +1064,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 			$existingSelector->setDisabled( true );
 		} else {
 			// Find other messages.
-			$dbr = wfGetDB( DB_REPLICA );
+			$dbr = $this->lbFactory->getReplicaDatabase();
 			$pageTitlePrefix = "Abusefilter-$action";
 			$titles = $dbr->selectFieldValues(
 				'page',
@@ -1138,7 +1147,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 	 * @param string $duration
 	 * @return string|int
 	 */
-	protected static function getAbsoluteBlockDuration( $duration ) {
+	private static function getAbsoluteBlockDuration( $duration ) {
 		if ( wfIsInfinity( $duration ) ) {
 			return 'infinity';
 		}
@@ -1196,6 +1205,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 
 		$origFilter = $this->loadFilterData( $filter );
 
+		/** @var MutableFilter $newFilter */
 		$newFilter = $origFilter instanceof MutableFilter
 			? clone $origFilter
 			: MutableFilter::newFromParentFilter( $origFilter );
@@ -1326,7 +1336,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 	/**
 	 * Exports the default warning and disallow messages to a JS variable
 	 */
-	protected function exposeMessages() {
+	private function exposeMessages() {
 		$this->getOutput()->addJsConfigVars(
 			'wgAbuseFilterDefaultWarningMessage',
 			$this->getConfig()->get( 'AbuseFilterDefaultWarningMessage' )

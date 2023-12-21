@@ -100,6 +100,16 @@ final class Group {
 	}
 
 	/**
+	 * Prepend new menu entry
+	 * @param IMenuEntry $entry
+	 * @throws DomainException When the entry already exists
+	 */
+	public function prependEntry( IMenuEntry $entry ) {
+		$this->throwIfNotUnique( $entry->getName() );
+		array_unshift( $this->entries, $entry );
+	}
+
+	/**
 	 * Insert new menu entry
 	 * @param IMenuEntry $entry
 	 * @throws DomainException When the entry already exists

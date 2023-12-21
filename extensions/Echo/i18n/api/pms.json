@@ -4,13 +4,11 @@
 			"Borichèt"
 		]
 	},
-	"apihelp-echomarkread-description": "Marché le notìfiche coma lesùe për l'utent atual.",
 	"apihelp-echomarkread-param-list": "Na lista d'ID ëd notìfica da marché coma lesù.",
 	"apihelp-echomarkread-param-all": "Si definì, a marca tute le notìfiche ëd n'utent coma lesùe.",
 	"apihelp-echomarkread-param-sections": "Na lista ëd session da marché coma lesùe.",
 	"apihelp-echomarkread-example-1": "Marché la notìtica 8 coma lesùa",
 	"apihelp-echomarkread-example-2": "Marché tute le notìfiche coma lesùe",
-	"apihelp-query+notifications-description": "Oten-e le notìfiche an atèisa për l'utent atual.",
 	"apihelp-query+notifications-param-prop": "Detaj da ciamé.",
 	"apihelp-query+notifications-param-sections": "Le session ëd notìfica da ciamé.",
 	"apihelp-query+notifications-param-groupbysection": "S'a venta argropé j'arzultà për session. Minca na session a l'é analisà për sò cont s'a l'é definì.",

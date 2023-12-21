@@ -6,10 +6,9 @@
 			80686
 		]
 	},
-	"tooltip-ca-createsource": "Dr Quälltäxt zue däre Syten aalege",
-	"tooltip-ca-editsource": "Am Quälltäxt vu däre Syte schaffe",
 	"tooltip-ca-ve-edit": "Die Syte bearbeite",
-	"visualeditor-beta-warning": "VisualEditor isch in dr Beta-Version. S cha syy, ass Dir Softwarefähler uffallen un ass Du an Teil vu dr Syte nit chasch schaffe. Druck uf „{{int:visualeditor-ca-editsource}}“ go in dr Wikitäxtmodus chuu. Doderby gehn nit gspychereti Änderige verlore.",
+	"tooltip-ca-editsource": "Am Quälltäxt vu däre Syte schaffe",
+	"tooltip-ca-createsource": "Dr Quälltäxt zue däre Syten aalege",
 	"visualeditor-browserwarning": "Du bruchsch e Browser, wu vum VisualEditor nit offiziäll unterstitzt wird.",
 	"visualeditor-ca-createlocaldescriptionsource": "Lokale Bschrybigsquälltäxt zuefiege",
 	"visualeditor-ca-createsource": "Quälltäxt aalege",

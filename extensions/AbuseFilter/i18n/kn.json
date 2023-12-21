@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Akoppad",
+			"Amire80",
 			"Anoop rao",
+			"Ashay vb",
 			"Dimension10",
 			"Nayvik",
 			"VASANTH S.N.",
 			"~aanzx",
-			"පසිඳු කාවින්ද",
-			"Amire80"
+			"පසිඳු කාවින්ද"
 		]
 	},
 	"abusefilter-disallowed": "ಈ ಕ್ರಿಯೆಯನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಹಾನಿಕಾರಕವೆಂದು ಗುರುತಿಸಲಾಗಿದೆ, ಆದ್ದರಿಂದ ಈ ಸಂಪಾದನೆಯನ್ನು ಅನುಮತಿಸಲಾಗುವುದಿಲ್ಲ. ನಿಮ್ಮ ಕ್ರಿಯೆಯು ರಚನಾತ್ಮಕವಾಗಿದೆ ಎಂದು ನೀವು ಭಾವಿಸಿದರೆ, ದಯವಿಟ್ಟು ನೀವು ಏನು ಮಾಡಲು ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದೀರಿ ಎಂಬುದನ್ನು [[Special:Listusers/sysop|ನಿರ್ವಾಹಕರಿಗೆ]] ತಿಳಿಸಿ. ನಿಮ್ಮ ಕ್ರಿಯೆಗೆ ಹೊಂದಿಕೆಯಾಗುವ ದುರುಪಯೋಗ ನಿಯಮದ ಸಂಕ್ಷಿಪ್ತ ವಿವರಣೆ: $1",
@@ -114,6 +115,7 @@
 	"abusefilter-history-filter": "ಶೋಧಕ ನಿಯಮ",
 	"abusefilter-history-comments": "ಟಿಪ್ಪಣಿಗಳು",
 	"abusefilter-history-actions": "ಕ್ರಿಯೆಗಳು",
+	"abusefilter-history-backedit": "ಫಿಲ್ಟರ್ ಸಂಪಾದಕ",
 	"abusefilter-history-deleted": "ಅಳಿಸಲ್ಪಟ್ಟ",
 	"abusefilter-history-filterid": "ಶೋಧಕ",
 	"abusefilter-history-select-user": "ಬಳಕೆದಾರ:",
@@ -127,5 +129,6 @@
 	"abusefilter-changeslist-examine": "ಪರೀಕ್ಷಿಸು",
 	"abusefilter-examine-legend": "ಬದಲಾವಣೆಗಳನ್ನು ಆಯ್ಕೆಮಾಡು",
 	"abusefilter-examine-submit": "ಹುಡುಕು",
-	"abusefilter-topnav-home": "ಮುಖ್ಯಪುಟ"
+	"abusefilter-topnav-home": "ಮುಖ್ಯಪುಟ",
+	"abusefilter-diff-backhistory": "ಫಿಲ್ಟರ್ ಇತಿಹಾಸ"
 }

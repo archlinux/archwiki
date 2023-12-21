@@ -18,7 +18,10 @@ return [
 		);
 	},
 	'OATHAuthModuleRegistry' => static function ( MediaWikiServices $services ) {
-		return new OATHAuthModuleRegistry();
+		return new OATHAuthModuleRegistry(
+			$services->getService( 'OATHAuthDatabase' ),
+			ExtensionRegistry::getInstance()->getAttribute( 'OATHAuthModules' ),
+		);
 	},
 	'OATHUserRepository' => static function ( MediaWikiServices $services ) {
 		return new OATHUserRepository(

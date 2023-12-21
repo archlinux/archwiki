@@ -14,7 +14,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 mutauro|$1 mitauro}}",
 	"vector-no-language-button-label": "Wedzera mitauro",
 	"vector-no-language-button-aria-label": "Sipwi iri riripo mumutuaro uyu bedzi. Wedzera sipwi kuitira mimwe mitauro.",
-	"vector-language-redirect-to-top": "Pa {{SITENAME}} ino zvikochekero zvemutauro zvirikumusoro kwe zanhi mhiri kwe dumidzo resipwi. [[#p-lang-btn|Enda kumusoro]].",
+	"vector-language-redirect-to-top": "Zvikochekero zvemutauro zvirikumusoro kwezanhi kwakarinfana nedumidzo.",
 	"vector-language-variant-switcher-label": "Shandura chisiyano chemutauro",
 	"vector-action-addsection": "Wedzera ndaba",
 	"vector-action-delete": "Bharanura",
@@ -46,6 +46,8 @@
 	"vector-site-nav-label": "Sayiti",
 	"vector-main-menu-label": "Nhorongoshwa huru",
 	"vector-limited-width-toggle": "Hlogora hupamhi hwezvirozvemo zvakaganhukwa",
+	"vector-limited-width-toggle-on-popup": "Wachinja uwarirwa hwako kuhupamhi huzere. Kuti udzokere kuhupamhi hwakaganhuka, tinya bhatani iri.",
+	"vector-limited-width-toggle-off-popup": "Unokwanisa kuhlogora pakati pehupamhi hwakaganhuka uye hupamhi huzere nekudzvanya bhatani iri.",
 	"vector-page-tools-label": "Maturusi",
 	"vector-page-tools-general-label": "Chikumbi",
 	"vector-page-tools-actions-label": "Zviito",
@@ -55,5 +57,8 @@
 	"tooltip-vector-anon-user-menu-title": "Zvimwe zvisarudzo",
 	"vector-prefs-limited-width": "Baridza mashandiro ehupamhi hwakaganhuka",
 	"vector-prefs-limited-width-help": "Baridza mashandiro ehupamhi hwakaganhuka kuti kuwerenga kwako kuve kurinani.",
-	"empty-language-selector-body": "Zvirozvemo zvezanhi hazvitsigirwe mumimwe mitauro."
+	"empty-language-selector-body": "Zvirozvemo zvezanhi hazvitsigirwe mumimwe mitauro.",
+	"vector-toc-unpinned-popup": "Tafura ye zvirozvemo yachichinurwa pano.",
+	"vector-page-tools-unpinned-popup": "Maturusi enhorongoshwa achichinhurwa pano.",
+	"vector-main-menu-unpinned-popup": "Nhorongoshwa huru yachichinurwa pano."
 }

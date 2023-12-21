@@ -49,7 +49,7 @@ ve.init.mw.Target.static.name = null;
 ve.init.mw.Target.static.toolbarGroups = [
 	{
 		name: 'history',
-		include: [ 'undo', 'redo' ]
+		include: [ { group: 'history' } ]
 	},
 	{
 		name: 'format',
@@ -66,10 +66,10 @@ ve.init.mw.Target.static.toolbarGroups = [
 		title: OO.ui.deferMsg( 'visualeditor-toolbar-style-tooltip' ),
 		label: OO.ui.deferMsg( 'visualeditor-toolbar-style-tooltip' ),
 		invisibleLabel: true,
-		include: [ { group: 'textStyle' }, 'language', 'clear' ],
+		include: [ { group: 'textStyle' } ],
 		forceExpand: [ 'bold', 'italic', 'clear' ],
-		promote: [ 'bold', 'italic' ],
-		demote: [ 'strikethrough', 'code', 'underline', 'language', 'big', 'small', 'clear' ]
+		promote: [ 'bold', 'italic', 'superscript', 'subscript' ],
+		demote: [ 'clear' ]
 	},
 	{
 		name: 'link',
@@ -93,6 +93,10 @@ ve.init.mw.Target.static.toolbarGroups = [
 		name: 'insert',
 		label: OO.ui.deferMsg( 'visualeditor-toolbar-insert' ),
 		title: OO.ui.deferMsg( 'visualeditor-toolbar-insert' ),
+		narrowConfig: {
+			invisibleLabel: true,
+			icon: 'add'
+		},
 		include: '*',
 		forceExpand: [ 'media', 'transclusion', 'insertTable' ],
 		promote: [ 'media', 'transclusion', 'insertTable' ]
@@ -130,8 +134,18 @@ ve.init.mw.Target.static.importRules.external.htmlBlacklist.remove = ve.extendOb
 	'a[ href *= "#cite_note" ]': true
 }, ve.init.mw.Target.static.importRules.external.htmlBlacklist.remove );
 
+// This is required to prevent an invalid insertion (as mwHeading can only be at the root) (T339155)
+// TODO: This should be handled by the DM based on ve.dm.MWHeadingNode.static.suggestedParentNodeTypes,
+// rather than just throwing an exception.
+// This would also not prevent pasting from a VE standalone editor as that is considered
+// an internal paste.
+ve.init.mw.Target.static.importRules.external.htmlBlacklist.unwrap = ve.extendObject( {
+	'li h1, li h2, li h3, li h4, li h5, li h6': true,
+	'blockquote h1, blockquote h2, blockquote h3, blockquote h4, blockquote h5, blockquote h6': true
+}, ve.init.mw.Target.static.importRules.external.htmlBlacklist.unwrap );
+
 /**
- * Type of integration. Used by ve.init.mw.trackSubscriber.js for event tracking.
+ * Type of integration. Used for event tracking.
  *
  * @static
  * @property {string}
@@ -140,24 +154,13 @@ ve.init.mw.Target.static.importRules.external.htmlBlacklist.remove = ve.extendOb
 ve.init.mw.Target.static.integrationType = null;
 
 /**
- * Type of platform. Used by ve.init.mw.trackSubscriber.js for event tracking.
+ * Type of platform. Used for event tracking.
  *
  * @static
  * @property {string}
  * @inheritable
  */
 ve.init.mw.Target.static.platformType = null;
-
-/**
- * Enable conversion of formatted text to wikitext in source mode
- *
- * Unstable, temporary flag.
- *
- * @static
- * @property {boolean}
- * @inheritable
- */
-ve.init.mw.Target.static.convertToWikitextOnPaste = true;
 
 /* Static Methods */
 
@@ -213,8 +216,7 @@ ve.init.mw.Target.static.parseDocument = function ( documentString, mode, sectio
 		// Parent method
 		doc = ve.init.mw.Target.super.static.parseDocument.call( this, documentString, mode );
 	} else {
-		// Parsoid documents are XHTML so we can use parseXhtml which fixed some IE issues.
-		doc = ve.parseXhtml( documentString );
+		doc = ve.createDocumentFromHtml( documentString );
 		if ( section !== undefined ) {
 			if ( onlySection ) {
 				var sectionNode = doc.body.querySelector( '[data-mw-section-id="' + section + '"]' );
@@ -307,7 +309,9 @@ ve.init.mw.Target.prototype.createTargetWidget = function ( config ) {
 		// Reset to visual mode for target widgets
 		modes: [ 'visual' ],
 		defaultMode: 'visual',
-		toolbarGroups: this.toolbarGroups,
+		toolbarGroups: this.toolbarGroups.filter( function ( group ) {
+			return group.align !== 'after';
+		} ),
 		surfaceClasses: this.getSurfaceClasses()
 	}, config ) );
 };
@@ -521,11 +525,10 @@ ve.init.mw.Target.prototype.teardown = function () {
 };
 
 /**
- * Refresh our stored edit/csrf token
+ * Refresh our knowledge about the logged-in user.
  *
- * This should be called in response to a badtoken error, to resolve whether the
- * token was expired / the user changed. If the user did change, this updates
- * the current user.
+ * This should be called in response to a user assertion error, to look up
+ * the new user name, and update the current user variables in mw.config.
  *
  * @param {ve.dm.Document} [doc] Document to associate with the API request
  * @return {jQuery.Promise} Promise resolved with new username, or null if anonymous
@@ -537,10 +540,6 @@ ve.init.mw.Target.prototype.refreshUser = function ( doc ) {
 	} ).then( function ( data ) {
 		var userInfo = data.query && data.query.userinfo;
 
-		if ( !userInfo ) {
-			return ve.createDeferred().reject();
-		}
-
 		if ( userInfo.anon !== undefined ) {
 			// New session is an anonymous user
 			mw.config.set( {
@@ -550,15 +549,18 @@ ve.init.mw.Target.prototype.refreshUser = function ( doc ) {
 				// functions like mw.user.isAnon rely on this.
 				wgUserName: null
 			} );
+
+			// Call this only after clearing wgUserId, otherwise it does nothing
+			return mw.user.acquireTempUserName();
 		} else {
-			// New session is a logged in user
+			// New session is a logged in user (or a temporary user)
 			mw.config.set( {
 				wgUserId: userInfo.id,
 				wgUserName: userInfo.name
 			} );
-		}
 
-		return mw.user.getName();
+			return mw.user.getName();
+		}
 	} );
 };
 
@@ -611,13 +613,41 @@ ve.init.mw.Target.prototype.getWikitextFragment = function ( doc, useRevision ) 
  * @return {jQuery.Promise} Abortable promise
  */
 ve.init.mw.Target.prototype.parseWikitextFragment = function ( wikitext, pst, doc ) {
-	return this.getContentApi( doc ).post( {
-		action: 'visualeditor',
-		paction: 'parsefragment',
-		page: this.getPageName( doc ),
-		wikitext: wikitext,
-		pst: pst
-	} );
+	var target = this;
+	var abortable, aborted;
+	var abortedPromise = ve.createDeferred().reject( 'http',
+		{ textStatus: 'abort', exception: 'abort' } ).promise();
+
+	function abort() {
+		aborted = true;
+		if ( abortable && abortable.abort ) {
+			abortable.abort();
+		}
+	}
+
+	// Acquire a temporary user username before previewing or diffing, so that signatures and
+	// user-related magic words display the temp user instead of IP user in the preview. (T331397)
+	var tempUserNamePromise;
+	if ( pst ) {
+		tempUserNamePromise = mw.user.acquireTempUserName();
+	} else {
+		tempUserNamePromise = ve.createDeferred().resolve( null );
+	}
+
+	return tempUserNamePromise
+		.then( function () {
+			if ( aborted ) {
+				return abortedPromise;
+			}
+			return ( abortable = target.getContentApi( doc ).post( {
+				action: 'visualeditor',
+				paction: 'parsefragment',
+				page: target.getPageName( doc ),
+				wikitext: wikitext,
+				pst: pst
+			} ) );
+		} )
+		.promise( { abort: abort } );
 };
 
 /**

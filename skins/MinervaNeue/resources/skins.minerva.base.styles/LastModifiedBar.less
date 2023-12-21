@@ -4,21 +4,25 @@
 
 .last-modified-bar {
 	display: block;
-	border-bottom: solid 1px @footerBorderColor;
-	background-color: @lastModifiedBarBgColor;
-	color: @lastModifiedBarTextColor;
+	border-bottom: @border-subtle;
+	background-color: @background-color-light;
+	color: @color-subtle;
 	padding-top: @icon-padding-md;
 	padding-bottom: @icon-padding-md;
 	font-size: @font-size-minerva-small;
-	transition: background-color @transition-duration-medium, color @transition-duration-medium;
+	transition-property: background-color, color;
+	transition-duration: @transition-duration-medium;
 
 	a,
 	a:visited,
 	.last-modified-text-accent {
-		color: @colorGray5;
+		// Note: This can be progressively enhanced in skins.minerva.scripts to provide 'recently edited' state.
+		color: @color-subtle;
 	}
 
-	// Note: This can be progressively enhanced in skins.minerva.scripts to provide 'recently edited' state.
+	.minerva-icon {
+		background-color: @color-subtle;
+	}
 }
 
 .last-modified-bar__content {
@@ -27,7 +31,7 @@
 }
 
 .last-modified-bar__text {
-	@end-padding: @iconGutterWidth + @iconGutterWidth + @iconSize;
+	@end-padding: @width-icon-gutter + @width-icon-gutter + @size-icon;
 	padding-right: @end-padding;
 	padding-left: @icon-padding-md;
 	line-height: @line-height-content;

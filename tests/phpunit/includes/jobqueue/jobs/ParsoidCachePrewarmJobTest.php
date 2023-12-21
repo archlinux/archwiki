@@ -51,10 +51,16 @@ class ParsoidCachePrewarmJobTest extends MediaWikiIntegrationTestCase {
 		);
 
 		// Ensure we have the parsoid output in parser cache as an HTML document
-		$this->assertStringContainsString( '<html', $parsoidOutput->getText() );
-		$this->assertStringContainsString( self::NON_JOB_QUEUE_EDIT, $parsoidOutput->getText() );
+		$this->assertStringContainsString( '<html', $parsoidOutput->getRawText() );
+		$this->assertStringContainsString( self::NON_JOB_QUEUE_EDIT, $parsoidOutput->getRawText() );
 
 		$rev2 = $this->editPage( $page, self::JOB_QUEUE_EDIT )->getNewRevision();
+		// Post-edit, reset all services!
+		// ParserOutputAccess has a localCache which can incorrectly return stale
+		// content for the previous revision! Resetting ensures that ParsoidCachePrewarmJob
+		// gets a fresh copy of ParserOutputAccess and ParsoidOutputAccess.
+		$this->resetServices();
+
 		$parsoidPrewarmJob = new ParsoidCachePrewarmJob(
 			[ 'revId' => $rev2->getId(), 'pageId' => $page->getId(), 'causeAction' => 'just for testing' ],
 			$this->getServiceContainer()->getParsoidOutputAccess(),
@@ -63,6 +69,7 @@ class ParsoidCachePrewarmJobTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$jobQueueGroup = $this->getServiceContainer()->getJobQueueGroup();
+		$jobQueueGroup->get( $parsoidPrewarmJob->getType() )->delete();
 		$jobQueueGroup->push( $parsoidPrewarmJob );
 
 		// At this point, we have 1 job scheduled for this job type.
@@ -81,14 +88,49 @@ class ParsoidCachePrewarmJobTest extends MediaWikiIntegrationTestCase {
 		);
 
 		// Ensure we have the parsoid output in parser cache as an HTML document
-		$this->assertStringContainsString( '<html', $parsoidOutput->getText() );
-		$this->assertStringContainsString( self::JOB_QUEUE_EDIT, $parsoidOutput->getText() );
+		$this->assertStringContainsString( '<html', $parsoidOutput->getRawText() );
+		$this->assertStringContainsString( self::JOB_QUEUE_EDIT, $parsoidOutput->getRawText() );
 
 		// Check that the causeAction was looped through as the render reason
 		$this->assertStringContainsString(
 			'triggered because: just for testing',
 			$parsoidOutput->getText( [ 'includeDebugInfo' => true ] )
 		);
+	}
+
+	/**
+	 * @covers ParsoidCachePrewarmJob::newSpec
+	 */
+	public function testEnqueueSpec() {
+		$page = $this->getExistingTestPage( 'ParsoidPrewarmJob' )->toPageRecord();
+		$rev1 = $this->editPage( $page, self::NON_JOB_QUEUE_EDIT )->getNewRevision();
+
+		$parsoidPrewarmSpec = ParsoidCachePrewarmJob::newSpec(
+			$rev1->getId(), $page,
+		);
+
+		$this->assertSame( 'parsoidCachePrewarm', $parsoidPrewarmSpec->getType(), 'getType' );
+
+		$dedupeInfo = $parsoidPrewarmSpec->getDeduplicationInfo();
+		$this->assertTrue( $dedupeInfo['params']['rootJobIsSelf'] );
+		$this->assertSame( $page->getTouched(), $dedupeInfo['params']['page_touched'] );
+		$this->assertSame( $rev1->getId(), $dedupeInfo['params']['revId'] );
+		$this->assertSame( $page->getId(), $dedupeInfo['params']['pageId'] );
+
+		$jobQueueGroup = $this->getServiceContainer()->getJobQueueGroup();
+		$jobQueueGroup->get( $parsoidPrewarmSpec->getType() )->delete();
+
+		$jobQueueGroup->push( $parsoidPrewarmSpec );
+
+		// At this point, we have 1 job scheduled for this job type.
+		$this->assertSame( 1, $jobQueueGroup->getQueueSizes()['parsoidCachePrewarm'] );
+
+		// Push again times, deduplication should apply!
+		$jobQueueGroup->push( $parsoidPrewarmSpec );
+		$jobQueueGroup->push( $parsoidPrewarmSpec );
+
+		// We should still have just 1 job scheduled for this job type.
+		$this->assertSame( 1, $jobQueueGroup->getQueueSizes()['parsoidCachePrewarm'] );
 	}
 
 }

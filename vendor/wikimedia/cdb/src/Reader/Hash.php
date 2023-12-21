@@ -25,32 +25,29 @@ use Cdb\Reader;
  * PHP array (a.k.a "hash").
  */
 class Hash extends Reader {
-	/** @var string $data */
+	/** @var string[] */
 	private $data;
 
 	/**
 	 * A queue of keys to return from nextkey(), initialized by firstkey();
 	 *
-	 * @var string[]|null $keys
+	 * @var string[]|null
 	 */
 	private $keys = null;
 
 	/**
 	 * Create the object and open the file
 	 *
-	 * @param string[] $data An associative PHP array.
+	 * @param string[] $data An associative array
 	 */
-	public function __construct( $data ) {
-		if ( !is_array( $data ) ) {
-			throw new \InvalidArgumentException( __METHOD__ . ': "$data" must be an array.' );
-		}
+	public function __construct( array $data ) {
 		$this->data = $data;
 	}
 
 	/**
 	 * Close the file. Optional, you can just let the variable go out of scope.
 	 */
-	public function close() {
+	public function close(): void {
 		$this->data = [];
 		$this->keys = null;
 	}
@@ -58,29 +55,27 @@ class Hash extends Reader {
 	/**
 	 * Get a value with a given key. Only string values are supported.
 	 *
-	 * @param string $key
-	 *
-	 * @return bool|string The value associated with $key, or false if $key is not known.
+	 * @param string|int $key
+	 * @return string|false The value associated with $key, or false if $key is not known.
 	 */
 	public function get( $key ) {
-		return isset( $this->data[ $key ] ) ? $this->data[ $key ] : false;
+		return $this->data[ $key ] ?? false;
 	}
 
 	/**
 	 * Check whether key exists
 	 *
-	 * @param string $key
-	 *
+	 * @param string|int $key
 	 * @return bool
 	 */
-	public function exists( $key ) {
+	public function exists( $key ): bool {
 		return isset( $this->data[ $key ] );
 	}
 
 	/**
 	 * Fetch first key
 	 *
-	 * @return string
+	 * @return string|false
 	 */
 	public function firstkey() {
 		$this->keys = array_keys( $this->data );
@@ -90,14 +85,14 @@ class Hash extends Reader {
 	/**
 	 * Fetch next key
 	 *
-	 * @return string
+	 * @return string|false
 	 */
 	public function nextkey() {
 		if ( $this->keys === null ) {
 			return $this->firstkey();
 		}
 
-		return empty( $this->keys ) ? false : array_shift( $this->keys );
+		return $this->keys ? array_shift( $this->keys ) : false;
 	}
 
 }

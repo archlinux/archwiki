@@ -33,6 +33,8 @@ use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Title\Title;
+use MediaWiki\User\TempUser\TempUserCreator;
+use MediaWiki\User\UserFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -58,7 +60,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 
 	protected $limit, $diffto, $difftotext, $difftotextpst, $expandTemplates, $generateXML,
 		$section, $parseContent, $fetchContent, $contentFormat, $setParsedLimit = true,
-		$slotRoles = null, $needSlots;
+		$slotRoles = null, $slotContentFormats, $needSlots;
 
 	protected $fld_ids = false, $fld_flags = false, $fld_timestamp = false,
 		$fld_size = false, $fld_slotsize = false, $fld_sha1 = false, $fld_slotsha1 = false,
@@ -72,26 +74,15 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 	 */
 	private $numUncachedDiffs = 0;
 
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/** @var ParserFactory */
-	private $parserFactory;
-
-	/** @var SlotRoleRegistry */
-	private $slotRoleRegistry;
-
-	/** @var ContentRenderer */
-	private $contentRenderer;
-
-	/** @var ContentTransformer */
-	private $contentTransformer;
-
-	/** @var CommentFormatter */
-	private $commentFormatter;
+	private RevisionStore $revisionStore;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private ParserFactory $parserFactory;
+	private SlotRoleRegistry $slotRoleRegistry;
+	private ContentRenderer $contentRenderer;
+	private ContentTransformer $contentTransformer;
+	private CommentFormatter $commentFormatter;
+	private TempUserCreator $tempUserCreator;
+	private UserFactory $userFactory;
 
 	/**
 	 * @since 1.37 Support injection of services
@@ -106,6 +97,8 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 	 * @param ContentRenderer|null $contentRenderer
 	 * @param ContentTransformer|null $contentTransformer
 	 * @param CommentFormatter|null $commentFormatter
+	 * @param TempUserCreator|null $tempUserCreator
+	 * @param UserFactory|null $userFactory
 	 */
 	public function __construct(
 		ApiQuery $queryModule,
@@ -117,7 +110,9 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 		SlotRoleRegistry $slotRoleRegistry = null,
 		ContentRenderer $contentRenderer = null,
 		ContentTransformer $contentTransformer = null,
-		CommentFormatter $commentFormatter = null
+		CommentFormatter $commentFormatter = null,
+		TempUserCreator $tempUserCreator = null,
+		UserFactory $userFactory = null
 	) {
 		parent::__construct( $queryModule, $moduleName, $paramPrefix );
 		// This class is part of the stable interface and
@@ -130,6 +125,8 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 		$this->contentRenderer = $contentRenderer ?? $services->getContentRenderer();
 		$this->contentTransformer = $contentTransformer ?? $services->getContentTransformer();
 		$this->commentFormatter = $commentFormatter ?? $services->getCommentFormatter();
+		$this->tempUserCreator = $tempUserCreator ?? $services->getTempUserCreator();
+		$this->userFactory = $userFactory ?? $services->getUserFactory();
 	}
 
 	public function execute() {
@@ -191,6 +188,12 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 						$this->encodeParamName( $p ),
 						$this->encodeParamName( 'slots' ),
 					], 'invalidparammix' );
+				}
+			}
+			$this->slotContentFormats = [];
+			foreach ( $this->slotRoles as $slotRole ) {
+				if ( isset( $params['contentformat-' . $slotRole] ) ) {
+					$this->slotContentFormats[$slotRole] = $params['contentformat-' . $slotRole];
 				}
 			}
 		}
@@ -493,13 +496,25 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 				// when extractDeprecatedContent() is no more.
 				if ( $content ) {
 					/** @var Content $content */
-					$vals['slots'][$role]['contentmodel'] = $content->getModel();
-					$vals['slots'][$role]['contentformat'] = $content->getDefaultFormat();
-					ApiResult::setContentValue(
-						$vals['slots'][$role],
-						'content',
-						$content->serialize()
-					);
+					$model = $content->getModel();
+					$format = $this->slotContentFormats[$role] ?? $content->getDefaultFormat();
+					if ( !$content->isSupportedFormat( $format ) ) {
+						$this->addWarning( [
+							'apierror-badformat',
+							$format,
+							$model,
+							$this->msg( 'revid', $revision->getId() )
+						] );
+						$vals['slots'][$role]['badcontentformat'] = true;
+					} else {
+						$vals['slots'][$role]['contentmodel'] = $model;
+						$vals['slots'][$role]['contentformat'] = $format;
+						ApiResult::setContentValue(
+							$vals['slots'][$role],
+							'content',
+							$content->serialize( $format )
+						);
+					}
 				}
 			}
 			ApiResult::setArrayType( $vals['slots'], 'kvp', 'role' );
@@ -698,7 +713,7 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 							$difftocontent = $this->contentTransformer->preSaveTransform(
 								$difftocontent,
 								$title,
-								$this->getUser(),
+								$this->getUserForPreview(),
 								$popts
 							);
 						}
@@ -729,6 +744,16 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 		return $vals;
 	}
 
+	private function getUserForPreview() {
+		$user = $this->getUser();
+		if ( $this->tempUserCreator->shouldAutoCreate( $user, 'edit' ) ) {
+			return $this->userFactory->newUnsavedTempUser(
+				$this->tempUserCreator->getStashedName( $this->getRequest()->getSession() )
+			);
+		}
+		return $user;
+	}
+
 	/**
 	 * @stable to override
 	 * @param array $params
@@ -746,7 +771,6 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 	/**
 	 * @stable to override
 	 * @return array
-	 * @throws MWException
 	 */
 	public function getAllowedParams() {
 		$slotRoles = $this->slotRoleRegistry->getKnownRoles();
@@ -803,6 +827,11 @@ abstract class ApiQueryRevisionsBase extends ApiQueryGeneratorBase {
 				ApiBase::PARAM_HELP_MSG => 'apihelp-query+revisions+base-param-slots',
 				ParamValidator::PARAM_ISMULTI => true,
 				ParamValidator::PARAM_ALL => true,
+			],
+			'contentformat-{slot}' => [
+				ApiBase::PARAM_TEMPLATE_VARS => [ 'slot' => 'slots' ],
+				ApiBase::PARAM_HELP_MSG => 'apihelp-query+revisions+base-param-contentformat-slot',
+				ParamValidator::PARAM_TYPE => $this->contentHandlerFactory->getAllContentFormats(),
 			],
 			'limit' => [
 				ParamValidator::PARAM_TYPE => 'limit',

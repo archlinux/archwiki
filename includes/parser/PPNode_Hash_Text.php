@@ -40,10 +40,10 @@ class PPNode_Hash_Text implements PPNode {
 	 * @param int $index
 	 */
 	public function __construct( array $store, $index ) {
-		$this->value = $store[$index];
-		if ( !is_scalar( $this->value ) ) {
-			throw new MWException( __CLASS__ . ' given object instead of string' );
+		if ( !is_scalar( $store[$index] ) ) {
+			throw new InvalidArgumentException( __CLASS__ . ' given object instead of string' );
 		}
+		$this->value = $store[$index];
 		$this->store = $store;
 		$this->index = $index;
 	}
@@ -82,16 +82,16 @@ class PPNode_Hash_Text implements PPNode {
 
 	public function splitArg() {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		throw new MWException( __METHOD__ . ': not supported' );
+		throw new LogicException( __METHOD__ . ': not supported' );
 	}
 
 	public function splitExt() {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		throw new MWException( __METHOD__ . ': not supported' );
+		throw new LogicException( __METHOD__ . ': not supported' );
 	}
 
 	public function splitHeading() {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		throw new MWException( __METHOD__ . ': not supported' );
+		throw new LogicException( __METHOD__ . ': not supported' );
 	}
 }

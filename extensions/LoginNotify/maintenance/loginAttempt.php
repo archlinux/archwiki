@@ -2,12 +2,13 @@
 
 namespace LoginNotify\Maintenance;
 
-use FauxRequest;
-use Hooks;
+use LoginNotify\Hooks\HookRunner;
 use Maintenance;
 use MediaWiki\Auth\AuthenticationResponse;
-use RawMessage;
-use User;
+use MediaWiki\Language\RawMessage;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\User\UserFactory;
 
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
@@ -58,20 +59,22 @@ class LoginAttempt extends Maintenance {
 		$wgRequest->setIP( $ip );
 		$wgRequest->setHeader( 'User-Agent', $ua );
 
-		$user = User::newFromName( $username, 'usable' );
+		$user = $this->getServiceContainer()->getUserFactory()
+			->newFromName( $username, UserFactory::RIGOR_USABLE );
 		if ( !$user || !$user->isRegistered() ) {
 			$this->output( "User {$username} does not exist!\n" );
 			return;
 		}
 
+		$hookRunner = new HookRunner( MediaWikiServices::getInstance()->getHookContainer() );
 		for ( $i = 0; $i < $reps; $i++ ) {
 			if ( $success ) {
 				$res = AuthenticationResponse::newPass( $username );
-				Hooks::run( 'AuthManagerLoginAuthenticateAudit', [ $res, $user, $username, [] ] );
+				$hookRunner->onAuthManagerLoginAuthenticateAudit( $res, $user, $username, [] );
 				$this->output( "A successful login attempt was registered!\n" );
 			} else {
 				$res = AuthenticationResponse::newFail( new RawMessage( 'Well, it failed' ) );
-				Hooks::run( 'AuthManagerLoginAuthenticateAudit', [ $res, null, $username, [] ] );
+				$hookRunner->onAuthManagerLoginAuthenticateAudit( $res, null, $username, [] );
 				$this->output( "A failed login attempt was registered!\n" );
 			}
 		}

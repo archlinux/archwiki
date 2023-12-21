@@ -2,6 +2,7 @@
 
 use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
+use MediaWiki\Title\Title;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -31,7 +32,7 @@ class CaptchaTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expectedResult, $captcha->triggersCaptcha( $action ) );
 	}
 
-	public function provideSimpleTriggersCaptcha() {
+	public static function provideSimpleTriggersCaptcha() {
 		$data = [];
 		$captchaTriggers = new ReflectionClass( CaptchaTriggers::class );
 		$constants = $captchaTriggers->getConstants();
@@ -61,7 +62,7 @@ class CaptchaTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected, $captcha->triggersCaptcha( $trigger, $title ) );
 	}
 
-	public function provideNamespaceOverwrites() {
+	public static function provideNamespaceOverwrites() {
 		return [
 			[ 'edit', true ],
 			[ 'edit', false ],
@@ -86,7 +87,7 @@ class CaptchaTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $value, $captcha->triggersCaptcha( $trigger ) );
 	}
 
-	public function provideAttributeSet() {
+	public static function provideAttributeSet() {
 		return [
 			[ 'test', true ],
 			[ 'test', false ],
@@ -103,7 +104,7 @@ class CaptchaTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected, $captcha->triggersCaptcha( $trigger ) );
 	}
 
-	public function provideAttributeOverwritten() {
+	public static function provideAttributeOverwritten() {
 		return [
 			[ 'edit', true ],
 			[ 'edit', false ],
@@ -123,7 +124,7 @@ class CaptchaTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected, $actual );
 	}
 
-	public function provideCanSkipCaptchaUserright() {
+	public static function provideCanSkipCaptchaUserright() {
 		return [
 			[ true, true ],
 			[ false, false ]
@@ -146,7 +147,7 @@ class CaptchaTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected, $actual );
 	}
 
-	public function provideCanSkipCaptchaMailconfirmed() {
+	public static function provideCanSkipCaptchaMailconfirmed() {
 		return [
 			[ false, false, false ],
 			[ false, true, false ],
@@ -174,7 +175,7 @@ class CaptchaTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expected, $actual );
 	}
 
-	public function provideCanSkipCaptchaIPWhitelisted() {
+	public static function provideCanSkipCaptchaIPWhitelisted() {
 		return ( [
 			[ '127.0.0.1', [ '127.0.0.1', '127.0.0.2' ], true ],
 			[ '127.0.0.1', [], false ]

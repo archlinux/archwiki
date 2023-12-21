@@ -12,9 +12,9 @@ use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
-use SpecialPage;
 use WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\TestingAccessWrapper;
@@ -158,7 +158,7 @@ class RestrictionStoreTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideLoadRestrictions(): array {
+	public static function provideLoadRestrictions(): array {
 		return [
 			'Regular page with restrictions' => [
 				Title::makeTitle( NS_MAIN, 'RestrictionStoreTest_1' ),

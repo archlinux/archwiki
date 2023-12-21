@@ -28,5 +28,5 @@
 	"oathauth-disable-page-title": "Απενεργοποίηση $1",
 	"oathauth-enable-page-title": "Ενεργοποίηση $1",
 	"oathauth-ui-available-modules": "Διαθέσιμες μέθοδοι",
-	"oathauth-notifications-enabled-help": "Βοήθεια"
+	"oathauth-notifications-enable-help": "Βοήθεια"
 }

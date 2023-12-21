@@ -35,7 +35,6 @@
 	"replacetext_warning": "'''Iapre l'uecchije''': {{PLURAL:$1|Ste ggià $1 pàgene ca tène|Stonne ggià $1 pàggene ca tènene}} 'u teste da sostituì, \"$2\". Ce se face sta sostituzione non ge se pò essere in grade de separà le sostituziune da ste teste.",
 	"replacetext_blankwarning": "'''Iapre l'uecchije''': Purcé 'a stringhe de sostituzione jè vacande, sta operazione non g'è reversibbele.",
 	"replacetext_continue": "Condinue",
-	"replacetext_announce": "Annunge ste cangiaminde ausanne $1 e l'elenghe de le pàggene condrollate",
 	"replacetext_editsummary": "Sostituzione d'u teste - \"$1\" cu \"$2\"",
 	"replacetext_reminder": "Pe cangià pure le collegaminde a sta pàgene jndr'à l'otre pàggene, vèje sus a $1.",
 	"replacetext_cfg_error": "Errore de configurazione de ReplaceText",

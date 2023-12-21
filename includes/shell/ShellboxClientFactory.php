@@ -9,7 +9,6 @@ use RuntimeException;
 use Shellbox\Client;
 use Shellbox\RPC\LocalRpcClient;
 use Shellbox\RPC\RpcClient;
-use WebRequest;
 
 /**
  * This is a service which provides a configured client to access a remote
@@ -71,9 +70,6 @@ class ShellboxClientFactory {
 		return new Client(
 			$this->requestFactory->createGuzzleClient( [
 				RequestOptions::TIMEOUT => $options['timeout'] ?? self::DEFAULT_TIMEOUT,
-				RequestOptions::HEADERS => [
-					'X-Request-Id' => WebRequest::getRequestId(),
-				],
 				RequestOptions::HTTP_ERRORS => false,
 			] ),
 			new Uri( $url ),

@@ -20,9 +20,12 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Status\Status;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Wikimedia\Http\TelemetryHeadersInterface;
 
 /**
  * This wrapper class will call out to curl (if available) or fallback
@@ -143,8 +146,6 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 			$this->setOriginalRequest( $options['originalRequest'] );
 		}
 
-		$this->setHeader( 'X-Request-Id', WebRequest::getRequestId() );
-
 		$members = [ "postData", "proxy", "noProxy", "sslVerifyHost", "caInfo",
 				"method", "followRedirects", "maxRedirects", "sslVerifyCert", "callback" ];
 
@@ -186,22 +187,6 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Generate a new request object
-	 * @deprecated since 1.34, use HttpRequestFactory instead. Hard-deprecated since 1.40.
-	 * @param string $url Url to use
-	 * @param array|null $options (optional) extra params to pass (see HttpRequestFactory::create())
-	 * @param string $caller The method making this request, for profiling
-	 * @throws DomainException
-	 * @return MWHttpRequest
-	 * @see MWHttpRequest::__construct
-	 */
-	public static function factory( $url, array $options = null, $caller = __METHOD__ ) {
-		wfDeprecated( __METHOD__, '1.34' );
-		return MediaWikiServices::getInstance()->getHttpRequestFactory()
-			->create( $url, $options ?? [], $caller );
-	}
-
-	/**
 	 * Get the body, or content, of the response to the request
 	 *
 	 * @return string
@@ -218,6 +203,18 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 	 */
 	public function setData( array $args ) {
 		$this->postData = $args;
+	}
+
+	/**
+	 * Add Telemetry information to the request
+	 *
+	 * @param TelemetryHeadersInterface $telemetry
+	 * @return void
+	 */
+	public function addTelemetry( TelemetryHeadersInterface $telemetry ): void {
+		foreach ( $telemetry->getRequestHeaders() as $header => $value ) {
+			$this->setHeader( $header, $value );
+		}
 	}
 
 	/**

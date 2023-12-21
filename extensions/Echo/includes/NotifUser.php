@@ -1,5 +1,9 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications;
+
+use CentralIdLookup;
+use InvalidArgumentException;
 use MediaWiki\Extension\Notifications\Gateway\UserNotificationGateway;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Mapper\TargetPageMapper;
@@ -8,12 +12,17 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\WikiMap\WikiMap;
+use MWTimestamp;
+use ReadOnlyMode;
+use WANObjectCache;
+use WebRequest;
 use Wikimedia\Rdbms\Database;
 
 /**
  * Entity that represents a notification target user
  */
-class MWEchoNotifUser {
+class NotifUser {
 
 	/**
 	 * Notification target user
@@ -46,7 +55,7 @@ class MWEchoNotifUser {
 	private $targetPageMapper;
 
 	/**
-	 * @var EchoForeignNotifications|null
+	 * @var ForeignNotifications|null
 	 */
 	private $foreignNotifications;
 
@@ -121,22 +130,21 @@ class MWEchoNotifUser {
 	}
 
 	/**
-	 * Factory method
+	 * Factory method. The caller should make sure that the user is registered.
 	 * @param UserIdentity $user
-	 * @throws MWException
-	 * @return MWEchoNotifUser
+	 * @return NotifUser
 	 */
 	public static function newFromUser( UserIdentity $user ) {
 		if ( !$user->isRegistered() ) {
-			throw new MWException( 'User must be logged in to view notification!' );
+			throw new InvalidArgumentException( 'User must be logged in to view notification!' );
 		}
 		$services = MediaWikiServices::getInstance();
-		return new MWEchoNotifUser(
+		return new NotifUser(
 			$user,
 			$services->getMainWANObjectCache(),
 			new UserNotificationGateway(
 				$user,
-				MWEchoDbFactory::newFromDefault(),
+				DbFactory::newFromDefault(),
 				$services->getMainConfig()
 			),
 			new NotificationMapper(),
@@ -164,7 +172,7 @@ class MWEchoNotifUser {
 	 * @return int
 	 */
 	public function getMessageCount() {
-		return $this->getNotificationCount( EchoAttributeManager::MESSAGE );
+		return $this->getNotificationCount( AttributeManager::MESSAGE );
 	}
 
 	/**
@@ -173,7 +181,7 @@ class MWEchoNotifUser {
 	 * @return int
 	 */
 	public function getAlertCount() {
-		return $this->getNotificationCount( EchoAttributeManager::ALERT );
+		return $this->getNotificationCount( AttributeManager::ALERT );
 	}
 
 	/**
@@ -183,13 +191,13 @@ class MWEchoNotifUser {
 	 * @param string $section Notification section
 	 * @return int
 	 */
-	public function getLocalNotificationCount( $section = EchoAttributeManager::ALL ) {
+	public function getLocalNotificationCount( $section = AttributeManager::ALL ) {
 		return $this->getNotificationCount( $section, false );
 	}
 
 	/**
 	 * Retrieves number of unread notifications that a user has, would return
-	 * MWEchoNotifUser::MAX_BADGE_COUNT + 1 at most.
+	 * NotifUser::MAX_BADGE_COUNT + 1 at most.
 	 *
 	 * If $wgEchoCrossWikiNotifications is disabled, the $global parameter is ignored.
 	 *
@@ -198,7 +206,7 @@ class MWEchoNotifUser {
 	 *   If set to 'preference', uses the user's preference.
 	 * @return int
 	 */
-	public function getNotificationCount( $section = EchoAttributeManager::ALL, $global = 'preference' ) {
+	public function getNotificationCount( $section = AttributeManager::ALL, $global = 'preference' ) {
 		if ( !$this->mUser->isRegistered() ) {
 			return 0;
 		}
@@ -228,7 +236,7 @@ class MWEchoNotifUser {
 	 * @return bool|MWTimestamp Timestamp of latest unread alert, or false if there are no unread alerts.
 	 */
 	public function getLastUnreadAlertTime() {
-		return $this->getLastUnreadNotificationTime( EchoAttributeManager::ALERT );
+		return $this->getLastUnreadNotificationTime( AttributeManager::ALERT );
 	}
 
 	/**
@@ -237,7 +245,7 @@ class MWEchoNotifUser {
 	 * @return bool|MWTimestamp
 	 */
 	public function getLastUnreadMessageTime() {
-		return $this->getLastUnreadNotificationTime( EchoAttributeManager::MESSAGE );
+		return $this->getLastUnreadNotificationTime( AttributeManager::MESSAGE );
 	}
 
 	/**
@@ -250,7 +258,7 @@ class MWEchoNotifUser {
 	 *   If set to 'preference', uses the user's preference.
 	 * @return bool|MWTimestamp Timestamp of latest unread message, or false if there are no unread messages.
 	 */
-	public function getLastUnreadNotificationTime( $section = EchoAttributeManager::ALL, $global = 'preference' ) {
+	public function getLastUnreadNotificationTime( $section = AttributeManager::ALL, $global = 'preference' ) {
 		if ( !$this->mUser->isRegistered() ) {
 			return false;
 		}
@@ -296,7 +304,7 @@ class MWEchoNotifUser {
 			$talkPageNotificationManager = MediaWikiServices::getInstance()
 				->getTalkPageNotificationManager();
 			if ( $talkPageNotificationManager->userHasNewMessages( $this->mUser ) ) {
-				$attributeManager = EchoServices::getInstance()->getAttributeManager();
+				$attributeManager = Services::getInstance()->getAttributeManager();
 				$categoryMap = $attributeManager->getEventsByCategory();
 				$usertalkTypes = $categoryMap['edit-user-talk'];
 				$unreadEditUserTalk = $this->notifMapper->fetchUnreadByUser(
@@ -338,7 +346,7 @@ class MWEchoNotifUser {
 			$talkPageNotificationManager = MediaWikiServices::getInstance()
 				->getTalkPageNotificationManager();
 			if ( !$talkPageNotificationManager->userHasNewMessages( $this->mUser ) ) {
-				$attributeManager = EchoServices::getInstance()->getAttributeManager();
+				$attributeManager = Services::getInstance()->getAttributeManager();
 				$categoryMap = $attributeManager->getEventsByCategory();
 				$usertalkTypes = $categoryMap['edit-user-talk'];
 				$unreadEditUserTalk = $this->notifMapper->fetchUnreadByUser(
@@ -368,7 +376,7 @@ class MWEchoNotifUser {
 	 * @param string[] $sections
 	 * @return bool
 	 */
-	public function markAllRead( array $sections = [ EchoAttributeManager::ALL ] ) {
+	public function markAllRead( array $sections = [ AttributeManager::ALL ] ) {
 		if ( $this->readOnlyMode->isReadOnly() ) {
 			return false;
 		}
@@ -376,11 +384,11 @@ class MWEchoNotifUser {
 		global $wgEchoMaxUpdateCount;
 
 		// Mark all sections as read if this is the case
-		if ( in_array( EchoAttributeManager::ALL, $sections ) ) {
-			$sections = EchoAttributeManager::$sections;
+		if ( in_array( AttributeManager::ALL, $sections ) ) {
+			$sections = AttributeManager::$sections;
 		}
 
-		$attributeManager = EchoServices::getInstance()->getAttributeManager();
+		$attributeManager = Services::getInstance()->getAttributeManager();
 		$eventTypes = $attributeManager->getUserEnabledEventsBySections( $this->mUser, 'web', $sections );
 
 		$notifs = $this->notifMapper->fetchUnreadByUser( $this->mUser, $wgEchoMaxUpdateCount, null, $eventTypes );
@@ -416,7 +424,7 @@ class MWEchoNotifUser {
 	 * @param WebRequest|null $originalRequest Original request data to be sent with these requests
 	 */
 	public function markReadForeign( array $eventIds, $wiki, ?WebRequest $originalRequest = null ) {
-		$foreignReq = new EchoForeignWikiRequest(
+		$foreignReq = new ForeignWikiRequest(
 			$this->userFactory->newFromUserIdentity( $this->mUser ),
 			[
 				'action' => 'echomarkread',
@@ -438,7 +446,7 @@ class MWEchoNotifUser {
 	 * @return array[] Array of notification data as returned by api.php, keyed by event ID
 	 */
 	public function getForeignNotificationInfo( array $eventIds, $wiki, ?WebRequest $originalRequest = null ) {
-		$foreignReq = new EchoForeignWikiRequest(
+		$foreignReq = new ForeignWikiRequest(
 			$this->userFactory->newFromUserIdentity( $this->mUser ),
 			[
 				'action' => 'query',
@@ -487,18 +495,18 @@ class MWEchoNotifUser {
 				$this->cache->delete( $globalMemcKey );
 			}
 
-			$uw = EchoUnreadWikis::newFromUser( $this->mUser );
+			$uw = UnreadWikis::newFromUser( $this->mUser );
 			if ( $uw ) {
 				// Immediately compute new local counts and timestamps
 				$newLocalData = $this->computeLocalCountsAndTimestamps( DB_PRIMARY );
 				// Write the new values to the echo_unread_wikis table
-				$alertTs = $newLocalData[EchoAttributeManager::ALERT]['timestamp'];
-				$messageTs = $newLocalData[EchoAttributeManager::MESSAGE]['timestamp'];
+				$alertTs = $newLocalData[AttributeManager::ALERT]['timestamp'];
+				$messageTs = $newLocalData[AttributeManager::MESSAGE]['timestamp'];
 				$uw->updateCount(
 					WikiMap::getCurrentWikiId(),
-					$newLocalData[EchoAttributeManager::ALERT]['count'],
+					$newLocalData[AttributeManager::ALERT]['count'],
 					$alertTs === -1 ? false : new MWTimestamp( $alertTs ),
-					$newLocalData[EchoAttributeManager::MESSAGE]['count'],
+					$newLocalData[AttributeManager::MESSAGE]['count'],
 					$messageTs === -1 ? false : new MWTimestamp( $messageTs )
 				);
 				// We could set() $newLocalData into the cache here, but we don't because that seems risky;
@@ -596,11 +604,11 @@ class MWEchoNotifUser {
 	 * @return array[] [ 'alert' => [ 'count' => N, 'timestamp' => TS ], ... ]
 	 */
 	protected function computeLocalCountsAndTimestamps( $dbSource = DB_REPLICA ) {
-		$attributeManager = EchoServices::getInstance()->getAttributeManager();
+		$attributeManager = Services::getInstance()->getAttributeManager();
 		$result = [];
 		$totals = [ 'count' => 0, 'timestamp' => -1 ];
 
-		foreach ( EchoAttributeManager::$sections as $section ) {
+		foreach ( AttributeManager::$sections as $section ) {
 			$eventTypesToLoad = $attributeManager->getUserEnabledEventsBySections(
 				$this->mUser,
 				'web',
@@ -633,7 +641,7 @@ class MWEchoNotifUser {
 			$totals['timestamp'] = max( $totals['timestamp'], $timestamp );
 		}
 		$totals['count'] = self::capNotificationCount( $totals['count'] );
-		$result[EchoAttributeManager::ALL] = $totals;
+		$result[AttributeManager::ALL] = $totals;
 		return $result;
 	}
 
@@ -648,7 +656,7 @@ class MWEchoNotifUser {
 		$localData = $this->getCountsAndTimestamps()['local'];
 		$result = [];
 		$totals = [ 'count' => 0, 'timestamp' => -1 ];
-		foreach ( EchoAttributeManager::$sections as $section ) {
+		foreach ( AttributeManager::$sections as $section ) {
 			$localCount = $localData[$section]['count'];
 			$globalCount = self::capNotificationCount( $localCount + $this->getForeignCount( $section ) );
 			$result[$section]['count'] = $globalCount;
@@ -664,7 +672,7 @@ class MWEchoNotifUser {
 			$totals['timestamp'] = max( $totals['timestamp'], $globalTimestamp );
 		}
 		$totals['count'] = self::capNotificationCount( $totals['count'] );
-		$result[EchoAttributeManager::ALL] = $totals;
+		$result[AttributeManager::ALL] = $totals;
 		return $result;
 	}
 
@@ -679,7 +687,7 @@ class MWEchoNotifUser {
 			return $this->userOptionsLookup->getOption( $this->mUser, 'echo-email-format' );
 		}
 
-		return EchoEmailFormat::PLAIN_TEXT;
+		return EmailFormat::PLAIN_TEXT;
 	}
 
 	/**
@@ -711,23 +719,23 @@ class MWEchoNotifUser {
 	}
 
 	/**
-	 * Lazy-construct an EchoForeignNotifications instance. This instance is force-enabled, so it
+	 * Lazy-construct an ForeignNotifications instance. This instance is force-enabled, so it
 	 * returns information about cross-wiki notifications even if the user has them disabled.
-	 * @return EchoForeignNotifications
+	 * @return ForeignNotifications
 	 */
 	protected function getForeignNotifications() {
 		if ( !$this->foreignNotifications ) {
-			$this->foreignNotifications = new EchoForeignNotifications( $this->mUser, true );
+			$this->foreignNotifications = new ForeignNotifications( $this->mUser, true );
 		}
 		return $this->foreignNotifications;
 	}
 
 	/**
 	 * Get the number of foreign notifications in a given section.
-	 * @param string $section One of EchoAttributeManager::$sections
+	 * @param string $section One of AttributeManager::$sections
 	 * @return int Number of foreign notifications
 	 */
-	protected function getForeignCount( $section = EchoAttributeManager::ALL ) {
+	protected function getForeignCount( $section = AttributeManager::ALL ) {
 		return self::capNotificationCount(
 			$this->getForeignNotifications()->getCount( $section )
 		);
@@ -735,17 +743,17 @@ class MWEchoNotifUser {
 
 	/**
 	 * Get the timestamp of the most recent foreign notification in a given section.
-	 * @param string $section One of EchoAttributeManager::$sections
+	 * @param string $section One of AttributeManager::$sections
 	 * @return MWTimestamp|false Timestamp of the most recent foreign notification, or false if
 	 *  there aren't any
 	 */
-	protected function getForeignTimestamp( $section = EchoAttributeManager::ALL ) {
+	protected function getForeignTimestamp( $section = AttributeManager::ALL ) {
 		return $this->getForeignNotifications()->getTimestamp( $section );
 	}
 
 	/**
 	 * Helper function to produce the capped number of notifications
-	 * based on the value of MWEchoNotifUser::MAX_BADGE_COUNT
+	 * based on the value of NotifUser::MAX_BADGE_COUNT
 	 *
 	 * @param int $number Raw notification count to cap
 	 * @return int Capped notification count

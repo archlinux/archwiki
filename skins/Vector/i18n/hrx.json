@@ -6,7 +6,9 @@
 			"Paul Beppler"
 		]
 	},
+	"vector-languages": "Sproche",
 	"vector-language-button-label": "{{PLURAL:$1|$1 Sproch|$1 Sproche}}",
+	"vector-no-language-button-label": "Sproche draandun",
 	"vector-action-addsection": "Abschnidd addizioneere",
 	"vector-action-delete": "Lösche",
 	"vector-action-move": "Bewehe",
@@ -19,5 +21,11 @@
 	"vector-view-view": "Lese",
 	"vector-view-viewsource": "Quelltext oonzeiche",
 	"vector-more-actions": "Meh",
-	"vector-searchsuggest-containing": "Suche noh Seite wo <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> enthelld."
+	"vector-searchsuggest-containing": "Suche noh Seite wo <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> enthelld.",
+	"vector-toc-label": "Inhaltsferzeichnis",
+	"vector-toc-beginning": "Aanfang",
+	"vector-main-menu-label": "Hauptmenu",
+	"vector-page-tools-label": "Fërramente",
+	"vector-page-tools-general-label": "Allgemeen",
+	"vector-unpin-element-label": "Fersteckle"
 }

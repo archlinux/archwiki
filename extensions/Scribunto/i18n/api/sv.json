@@ -6,7 +6,6 @@
 			"WikiPhoenix"
 		]
 	},
-	"apihelp-scribunto-console-description": "Intern modul för att betjäna XHR-förfrågningar från Scribunto-konsolen.",
 	"apihelp-scribunto-console-summary": "Intern modul för att betjäna XHR-förfrågningar från Scribunto-konsolen.",
 	"apihelp-scribunto-console-param-title": "Titeln på modulen som ska testas.",
 	"apihelp-scribunto-console-param-content": "Modulens nya innehåll.",

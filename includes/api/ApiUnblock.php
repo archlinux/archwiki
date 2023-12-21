@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
+ * Copyright © 2007 Roan Kattouw <roan.kattouw@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,14 @@
 use MediaWiki\Block\BlockPermissionCheckerFactory;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\UnblockUserFactory;
+use MediaWiki\MainConfigNames;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityLookup;
+use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 
 /**
  * API module that facilitates the unblocking of users. Requires API write mode
@@ -36,28 +41,36 @@ use Wikimedia\ParamValidator\ParamValidator;
 class ApiUnblock extends ApiBase {
 
 	use ApiBlockInfoTrait;
+	use ApiWatchlistTrait;
 
-	/** @var BlockPermissionCheckerFactory */
-	private $permissionCheckerFactory;
-
-	/** @var UnblockUserFactory */
-	private $unblockUserFactory;
-
-	/** @var UserIdentityLookup */
-	private $userIdentityLookup;
+	private BlockPermissionCheckerFactory $permissionCheckerFactory;
+	private UnblockUserFactory $unblockUserFactory;
+	private UserIdentityLookup $userIdentityLookup;
+	private WatchedItemStoreInterface $watchedItemStore;
 
 	public function __construct(
 		ApiMain $main,
 		$action,
 		BlockPermissionCheckerFactory $permissionCheckerFactory,
 		UnblockUserFactory $unblockUserFactory,
-		UserIdentityLookup $userIdentityLookup
+		UserIdentityLookup $userIdentityLookup,
+		WatchedItemStoreInterface $watchedItemStore,
+		WatchlistManager $watchlistManager,
+		UserOptionsLookup $userOptionsLookup
 	) {
 		parent::__construct( $main, $action );
 
 		$this->permissionCheckerFactory = $permissionCheckerFactory;
 		$this->unblockUserFactory = $unblockUserFactory;
 		$this->userIdentityLookup = $userIdentityLookup;
+		$this->watchedItemStore = $watchedItemStore;
+
+		// Variables needed in ApiWatchlistTrait trait
+		$this->watchlistExpiryEnabled = $this->getConfig()->get( MainConfigNames::WatchlistExpiry );
+		$this->watchlistMaxDuration =
+			$this->getConfig()->get( MainConfigNames::WatchlistExpiryMaxDuration );
+		$this->watchlistManager = $watchlistManager;
+		$this->userOptionsLookup = $userOptionsLookup;
 	}
 
 	/**
@@ -110,14 +123,34 @@ class ApiUnblock extends ApiBase {
 		}
 
 		$block = $status->getValue();
-		$targetName = $block->getType() === DatabaseBlock::TYPE_AUTO ? '' : $block->getTargetName();
+		$targetType = $block->getType();
+		$targetName = $targetType === DatabaseBlock::TYPE_AUTO ? '' : $block->getTargetName();
 		$targetUserId = $block->getTargetUserIdentity() ? $block->getTargetUserIdentity()->getId() : 0;
+
+		$watchlistExpiry = $this->getExpiryFromParams( $params );
+		$watchuser = $params['watchuser'];
+		$userPage = Title::makeTitle( NS_USER, $targetName );
+		if ( $watchuser && $targetType !== DatabaseBlock::TYPE_RANGE && $targetType !== DatabaseBlock::TYPE_AUTO ) {
+			$this->setWatch( 'watch', $userPage, $this->getUser(), null, $watchlistExpiry );
+		} else {
+			$watchuser = false;
+			$watchlistExpiry = null;
+		}
+
 		$res = [
 			'id' => $block->getId(),
 			'user' => $targetName,
 			'userid' => $targetUserId,
-			'reason' => $params['reason']
+			'reason' => $params['reason'],
+			'watchuser' => $watchuser,
 		];
+		if ( $watchlistExpiry !== null ) {
+			$res['watchlistexpiry'] = $this->getWatchlistExpiry(
+				$this->watchedItemStore,
+				$userPage,
+				$this->getUser()
+			);
+		}
 		$this->getResult()->addValue( null, $this->getModuleName(), $res );
 	}
 
@@ -130,7 +163,7 @@ class ApiUnblock extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		return [
+		$params = [
 			'id' => [
 				ParamValidator::PARAM_TYPE => 'integer',
 			],
@@ -147,7 +180,23 @@ class ApiUnblock extends ApiBase {
 				ParamValidator::PARAM_TYPE => 'tags',
 				ParamValidator::PARAM_ISMULTI => true,
 			],
+			'watchuser' => false,
 		];
+
+		// Params appear in the docs in the order they are defined,
+		// which is why this is here and not at the bottom.
+		// @todo Find better way to support insertion at arbitrary position
+		if ( $this->watchlistExpiryEnabled ) {
+			$params += [
+				'watchlistexpiry' => [
+					ParamValidator::PARAM_TYPE => 'expiry',
+					ExpiryDef::PARAM_MAX => $this->watchlistMaxDuration,
+					ExpiryDef::PARAM_USE_MAX => true,
+				]
+			];
+		}
+
+		return $params;
 	}
 
 	public function needsToken() {

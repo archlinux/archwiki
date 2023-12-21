@@ -68,7 +68,6 @@
 	"templatedata-modal-json-error-replace": "Замяна",
 	"templatedata-modal-placeholder-add-new-map-input": "Добавяне на нова карта...",
 	"templatedata-modal-placeholder-paramkey": "Име на параметъра",
-	"templatedata-modal-table-param-actions": "Действия",
 	"templatedata-modal-table-param-aliases": "Псевдоними",
 	"templatedata-modal-table-param-autovalue": "Автоматична стойност",
 	"templatedata-modal-table-param-default": "По подразбиране ($1)",

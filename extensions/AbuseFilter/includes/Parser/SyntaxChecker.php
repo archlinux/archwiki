@@ -34,7 +34,7 @@ class SyntaxChecker {
 	private $treeRoot;
 
 	/** @var KeywordsManager */
-	protected $keywordsManager;
+	private $keywordsManager;
 
 	public const MCONSERVATIVE = 'MODE_CONSERVATIVE';
 	public const MLIBERAL = 'MODE_LIBERAL';
@@ -640,7 +640,7 @@ class SyntaxChecker {
 	 * @param int $position
 	 * @throws UserVisibleException
 	 */
-	protected function checkArgCount( array $args, string $func, int $position ): void {
+	private function checkArgCount( array $args, string $func, int $position ): void {
 		if ( !array_key_exists( $func, FilterEvaluator::FUNC_ARG_COUNT ) ) {
 			// @codeCoverageIgnoreStart
 			throw new InvalidArgumentException( "$func is not a valid function." );
@@ -669,7 +669,7 @@ class SyntaxChecker {
 	 * @param string $name
 	 * @return bool
 	 */
-	protected function isReservedIdentifier( string $name ): bool {
+	private function isReservedIdentifier( string $name ): bool {
 		return $this->keywordsManager->varExists( $name ) ||
 			array_key_exists( $name, FilterEvaluator::FUNCTIONS ) ||
 			// We need to check for true, false, if/then/else etc. because, even if they have a different

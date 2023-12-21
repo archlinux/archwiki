@@ -9,13 +9,13 @@ use MediaWiki\Extension\Notifications\Controller\NotificationController;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
+use MediaWiki\WikiMap\WikiMap;
 use Message;
 use MessageLocalizer;
 use MessageSpecifier;
 use SpecialPage;
-use Title;
 use User;
-use WikiMap;
 use Wikimedia\Timestamp\TimestampException;
 
 /**
@@ -513,11 +513,11 @@ abstract class EchoEventPresentationModel implements JsonSerializable, MessageLo
 	 *                     ],
 	 *                     'messages' => [
 	 *                         'confirmation' => [
-	 *                         	'title' => 'message (parsed as HTML)',
-	 *                         	'description' => 'optional message (parsed as HTML)'
+	 *                              'title' => 'message (parsed as HTML)',
+	 *                              'description' => 'optional message (parsed as HTML)'
 	 *                         ]
 	 *                     ]
-	 *                 	]
+	 *                 ]
 	 *                 'prioritized' => (bool) true to request the link be placed outside the action menu.
 	 *                                  false or omitted for the default behavior. By default, a link will
 	 *                                  be placed inside the menu, unless there are maxPrioritizedActions
@@ -608,7 +608,7 @@ abstract class EchoEventPresentationModel implements JsonSerializable, MessageLo
 			'label' => $this->language->embedBidi( $truncatedLabel ),
 			'tooltip' => $isTruncated ? $label : '',
 			'description' => '',
-			'icon' => 'userAvatar',
+			'icon' => $user->isTemp() ? 'userTemporary' : 'userAvatar',
 			'prioritized' => true,
 		];
 	}

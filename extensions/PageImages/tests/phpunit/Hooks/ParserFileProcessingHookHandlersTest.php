@@ -4,6 +4,7 @@ namespace PageImages\Tests\Hooks;
 
 use File;
 use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use PageImages\Hooks\ParserFileProcessingHookHandlers;
 use PageImages\PageImageCandidate;
@@ -11,8 +12,9 @@ use PageImages\PageImages;
 use Parser;
 use ParserOptions;
 use RepoGroup;
-use Title;
+use TitleFactory;
 use WANObjectCache;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -131,7 +133,7 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 		}
 	}
 
-	public function provideDoParserAfterTidy() {
+	public static function provideDoParserAfterTidy() {
 		return [
 			// both images are non-free
 			[
@@ -217,6 +219,8 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 					$this->getRepoGroup(),
 					$this->createMock( WANObjectCache::class ),
 					$this->createMock( HttpRequestFactory::class ),
+					$this->createMock( IConnectionProvider::class ),
+					$this->createMock( TitleFactory::class ),
 				] )
 				->onlyMethods( [ 'scoreFromTable', 'fetchFileMetadata', 'getRatio', 'getDenylist' ] )
 				->getMock()
@@ -232,7 +236,7 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 		$this->assertSame( $expected, $score );
 	}
 
-	public function provideGetScore() {
+	public static function provideGetScore() {
 		return [
 			[
 				[ 'filename' => 'A.jpg', 'handler' => [ 'width' => 100 ] ],
@@ -288,7 +292,9 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 			new ParserFileProcessingHookHandlers(
 				$this->getRepoGroup(),
 				$this->createMock( WANObjectCache::class ),
-				$this->createMock( HttpRequestFactory::class )
+				$this->createMock( HttpRequestFactory::class ),
+				$this->createMock( IConnectionProvider::class ),
+				$this->createMock( TitleFactory::class )
 			)
 		);
 
@@ -296,7 +302,7 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 		$this->assertEquals( $expected, $score );
 	}
 
-	public function provideScoreFromTable() {
+	public static function provideScoreFromTable() {
 		global $wgPageImagesScores;
 
 		return [
@@ -352,6 +358,8 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 					$this->getRepoGroup(),
 					$this->createMock( WANObjectCache::class ),
 					$this->createMock( HttpRequestFactory::class ),
+					$this->createMock( IConnectionProvider::class ),
+					$this->createMock( TitleFactory::class ),
 				] )
 				->onlyMethods( [ 'fetchFileMetadata' ] )
 				->getMock()
@@ -362,7 +370,7 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 		$this->assertSame( $expected, $mock->isImageFree( $fileName ) );
 	}
 
-	public function provideIsFreeImage() {
+	public static function provideIsFreeImage() {
 		return [
 			[ 'A.jpg', [], true ],
 			[ 'A.jpg', [ 'NonFree' => [ 'value' => '0' ] ], true ],

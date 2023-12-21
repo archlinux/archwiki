@@ -1,15 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Base",
 			"DDPAT",
 			"Ice bulldog",
 			"Piramidion",
-			"Ата",
-			"Amire80"
+			"Ата"
 		]
 	},
-	"apihelp-echomarkread-description": "Позначити для поточного користувача сповіщення як прочитані.",
 	"apihelp-echomarkread-summary": "Позначити сповіщення як прочитані для поточного користувача.",
 	"apihelp-echomarkread-param-list": "Список ідентифікаторів сповіщень, які позначити як прочитані.",
 	"apihelp-echomarkread-param-unreadlist": "Список ідентифікаторів сповіщень, які треба позначити як непрочитані",
@@ -19,12 +18,10 @@
 	"apihelp-echomarkread-example-1": "Позначити сповіщення 8 як прочитане.",
 	"apihelp-echomarkread-example-2": "Позначити всі сповіщення як прочитані",
 	"apihelp-echomarkread-example-3": "Позначити сповіщення 1 як непрочитане",
-	"apihelp-echomarkseen-description": "Позначити всі сповіщення як прочитані для поточного користувача.",
 	"apihelp-echomarkseen-summary": "Позначити сповіщення як переглянуті для поточного користувача.",
 	"apihelp-echomarkseen-example-1": "Позначити сповіщення усіх типів як переглянуті",
 	"apihelp-echomarkseen-param-type": "Тип сповіщення, яке позначити переглянутим: «alert», «message» або «all».",
 	"apihelp-echomarkseen-param-timestampFormat": "Формат мітки часу, що має бути використаний на виході: 'ISO_8601' або 'MW'. 'MW' тут є застарілим, тому всі клієнти повинні перейти на 'ISO_8601'. Цей параметр буде усунуто, а формат 'ISO_8601' стане єдиним вихідним форматом.",
-	"apihelp-echomute-description": "Приглушити або повернути сповіщення від деяких сторінок чи користувачів.",
 	"apihelp-echomute-summary": "Приглушити або повернути сповіщення від деяких сторінок чи користувачів.",
 	"apihelp-echomute-param-type": "До якого списку приглушення додати чи з якого забрати",
 	"apihelp-echomute-param-mute": "Сторінки чи користувачі, яких додати до списку приглушення",
@@ -40,7 +37,6 @@
 	"apihelp-echopushsubscriptions+delete-param-providertoken": "Токен пов'язаний з push-підпискою, реєстрацію якої необхідно скасувати.",
 	"apihelp-echopushsubscriptions+delete-param-centraluserid": "Центральний ідентифікатор користувача асоційований з підпискою для скасування реєстрації.",
 	"apihelp-echopushsubscriptions+delete-example": "Скасувати реєстрацію push-підписки для поточного користувача.",
-	"apihelp-query+notifications-description": "Отримати сповіщення, які чекають поточного користувача.",
 	"apihelp-query+notifications-summary": "Отримувати сповіщення, що очікують на дію поточного користувача.",
 	"apihelp-query+notifications-param-prop": "Деталі запиту.",
 	"apihelp-query+notifications-param-sections": "Розділи сповіщень для запиту (тобто якась комбінація «alert» та «message»).",
@@ -65,7 +61,6 @@
 	"apihelp-query+notifications-example-1": "Список веб-сповіщень",
 	"apihelp-query+notifications-example-2": "Список веб-сповіщень, згрупованих за розділами, із зазначенням кількостей",
 	"apihelp-query+notifications-example-3": "Список повідомлень ел. поштою",
-	"apihelp-query+unreadnotificationpages-description": "Отримати сторінки, для яких є непрочитані сповіщення для поточного користувача.",
 	"apihelp-query+unreadnotificationpages-summary": "Отримувати сповіщення, щодо яких є непрочитані сповіщення для поточного користувача.",
 	"apihelp-query+unreadnotificationpages-param-grouppages": "Згрупувати сторінки обговорення з їхніми основними сторінками, та згрупувати сповіщення, не пов'язані зі сторінкою, разом зі сторінкою поточного користувача.",
 	"apihelp-query+unreadnotificationpages-param-limit": "Максимальна кількість сторінок для виведення.",

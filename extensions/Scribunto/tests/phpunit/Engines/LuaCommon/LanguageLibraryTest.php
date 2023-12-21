@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon;
 
 use MediaWiki\MediaWikiServices;
-use Title;
+use MediaWiki\Title\Title;
 
 /**
  * @covers \MediaWiki\Extension\Scribunto\Engines\LuaCommon\LanguageLibrary

@@ -1,43 +1,23 @@
-@import '../../common/variables.less';
-@import '../../common/mixins.less';
-@import 'mediawiki.mixins.less';
-
 @spacing-search-title-divider: 30px;
 @font-size-sticky-header-links: unit( 14 / @font-size-browser, em ); // Equals `0.875em`.
 
-.vector-sticky-header {
-	width: 100%;
-	max-width: @max-width-page-container;
-	height: @height-sticky-header;
+.vector-sticky-header-container {
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
 	z-index: @z-index-header;
-	transition: @transition-sticky-header;
-	align-items: center;
-	margin: 0 auto;
-	background: @background-color-base;
-	background-color: #fffffff7;
-	border-bottom: @border-width-base @border-style-base @colorGray14;
-	justify-content: space-between;
-	box-sizing: border-box;
-
-	.vector-feature-limited-width-disabled & {
-		max-width: none;
-	}
-
-	// T317573 Account for page container.
-	padding: 6px @padding-horizontal-page-container-desktop;
-
-	@media ( min-width: @min-width-desktop-wide ) {
-		padding: 6px @padding-horizontal-page-container-desktop-wide;
-	}
-
 	// Hide sticky header until visible class is applied to the body
+	transition: @transition-sticky-header;
 	display: none;
 	transform: translateY( -100% );
 	opacity: 0;
+}
+
+.vector-sticky-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 
 	//
 	// Layout
@@ -87,21 +67,15 @@
 		}
 	}
 
-	&-end {
+	&-buttons {
+		// Reduce language and add topic button font size
 		font-size: @font-size-sticky-header-links;
 	}
 
-	&-end,
+	// Spacing between buttons
 	&-icons,
 	&-buttons {
-		// Spacing between buttons
 		column-gap: 8px;
-	}
-
-	&-buttons > .mw-ui-quiet {
-		// All quiet buttons, even those with labels, should have 5px horizontal padding
-		// TODO: Move this fix upstream?
-		padding: 5px;
 	}
 
 	.vector-search-box {
@@ -135,7 +109,7 @@
 			margin-left: @margin-start-search-box-with-thumbnail;
 
 			.cdx-text-input__start-icon {
-				color: @colorGray2;
+				color: @color-base;
 			}
 		}
 	}
@@ -143,7 +117,7 @@
 
 // T298836 Sticky header is only shown at higher resolutions
 @media ( min-width: @min-width-desktop ) {
-	.client-js.vector-sticky-header-enabled {
+	&.client-js.vector-sticky-header-enabled {
 		// T290518: When the sticky header is enabled (feature flag is on, js is
 		// enabled, and viewport is at higher resolutions), add scroll padding to the
 		// root element. This is needed so that the sticky header does not overlap the
@@ -154,39 +128,37 @@
 		// .vector-sticky-header-visible class to correctly handle situations where the
 		// sticky header isn't visible yet but we still need scroll padding applied
 		// (e.g. when the user navigates to a page with a hash fragment in the URI).
-		scroll-padding-top: ~'calc( @{height-sticky-header} + @{scroll-padding-top} )';
+		scroll-padding-top: ~'calc( @{height-header} + @{scroll-padding-top} )';
 
-		.vector-sticky-header {
+		.vector-sticky-header-container {
 			// Sticky header is only enabled for js users and when feature flag is enabled
 			display: flex;
 		}
 
-		.vector-sticky-header-visible {
-			.vector-sticky-header {
-				// Show sticky header with transition when visible class is applied to the body
-				opacity: @opacity-base;
-				transform: translateY( 0 );
-			}
+		.vector-sticky-header-visible .vector-sticky-header-container {
+			// Show sticky header with transition when visible class is applied to the body
+			opacity: @opacity-base;
+			transform: translateY( 0 );
 		}
 
-		// - T314330 `.vector-feature-toc-pinned-enabled #vector-toc-pinned-container`
+		// - T314330 `.vector-feature-toc-pinned-clientpref-1 #vector-toc-pinned-container`
 		//   Prevent ToC from jumping when sticky header is enabled.
 		// - T289817 `.mw-sticky-header-element` provides an API for template developers
 		//   to make their templates compatible with the Vector 2022 sticky header.
 		//   @stable See the Integration notes for developers section at
 		//   https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements/Features/Sticky_Header
 		// - `.charts-stickyhead th` makes chart and table headers appear below the sticky header.
-		&.vector-feature-toc-pinned-enabled #vector-toc-pinned-container,
+		&.vector-feature-toc-pinned-clientpref-1 #vector-toc-pinned-container,
 		&.vector-feature-page-tools-pinned-enabled .vector-page-tools-landmark,
 		.mw-sticky-header-element,
 		.charts-stickyhead th {
 			/* stylelint-disable-next-line declaration-no-important */
-			top: @height-sticky-header !important;
+			top: @height-header !important;
 		}
 
 		#vector-toc-pinned-container .vector-toc,
 		#vector-page-tools-pinned-container .vector-page-tools {
-			max-height: ~'calc( 100vh - @{height-sticky-header} - @{max-height-bottom-spacing-scroll-indicator} )';
+			max-height: ~'calc( 100vh - @{height-header} - @{max-height-bottom-spacing-scroll-indicator} )';
 		}
 	}
 }

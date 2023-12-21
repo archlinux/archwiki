@@ -22,5 +22,10 @@
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code>ରେ ଦିଆଯାଇଥିବା <code>&lt;ref&gt;</code> ଚିହ୍ନରେ କିଛି ଆଟ୍ରିବୁଟ ନାହିଁ ।",
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code>ରେ ଦିଆଯାଇଥିବା \"$1\" ନାମ ସହ ଥିବା <code>&lt;ref&gt;</code> ଚିହ୍ନରେ କିଛି ଲେଖା ନାହିଁ ।",
 	"cite_references_link_accessibility_label": "ଉପରକୁ ଯାଆନ୍ତୁ",
-	"cite_references_link_many_accessibility_label": "ଏହି ଯାଏ ଉପରକୁ ଯାଆନ୍ତୁ:"
+	"cite_references_link_many_accessibility_label": "ଏହି ଯାଏ ଉପରକୁ ଯାଆନ୍ତୁ:",
+	"cite-wikieditor-tool-reference": "ଆଧାର",
+	"cite-wikieditor-help-page-references": "ଆଧାରମାନ",
+	"cite-wikieditor-help-content-reference-description": "ଆଧାର",
+	"cite-wikieditor-help-content-rereference-description": "ଏକ ଆଧାରର ଅଧିକ ବ୍ୟବହାର",
+	"cite-wikieditor-help-content-showreferences-description": "ଡିସ‌ପ୍ଲେ ଆଧାରସମୂହ"
 }

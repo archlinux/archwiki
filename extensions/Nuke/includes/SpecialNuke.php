@@ -2,35 +2,40 @@
 
 namespace MediaWiki\Extension\Nuke;
 
-use CommentStore;
 use DeletePageJob;
-use FileDeleteForm;
-use Html;
 use HTMLForm;
 use JobQueueGroup;
-use ListToggle;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Extension\Nuke\Hooks\NukeHookRunner;
+use MediaWiki\Html\Html;
+use MediaWiki\Html\ListToggle;
+use MediaWiki\Page\File\FileDeleteForm;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserNamePrefixSearch;
+use MediaWiki\User\UserNameUtils;
 use OOUI\DropdownInputWidget;
 use OOUI\FieldLayout;
 use OOUI\TextInputWidget;
 use PermissionsError;
 use RepoGroup;
-use SpecialPage;
-use Title;
-use User;
 use UserBlockedError;
-use UserNamePrefixSearch;
-use WebRequest;
+use Wikimedia\Rdbms\ILoadBalancer;
 use Xml;
 
 class SpecialNuke extends SpecialPage {
 
-	/** @var NukeHookRunner */
+	/** @var NukeHookRunner|null */
 	private $hookRunner;
 
 	/** @var JobQueueGroup */
 	private $jobQueueGroup;
+
+	/** @var ILoadBalancer */
+	private $loadBalancer;
 
 	/** @var PermissionManager */
 	private $permissionManager;
@@ -38,21 +43,41 @@ class SpecialNuke extends SpecialPage {
 	/** @var RepoGroup */
 	private $repoGroup;
 
+	/** @var UserFactory */
+	private $userFactory;
+
+	/** @var UserNamePrefixSearch */
+	private $userNamePrefixSearch;
+
+	/** @var UserNameUtils */
+	private $userNameUtils;
+
 	/**
 	 * @param JobQueueGroup $jobQueueGroup
+	 * @param ILoadBalancer $loadBalancer
 	 * @param PermissionManager $permissionManager
 	 * @param RepoGroup $repoGroup
+	 * @param UserFactory $userFactory
+	 * @param UserNamePrefixSearch $userNamePrefixSearch
+	 * @param UserNameUtils $userNameUtils
 	 */
 	public function __construct(
 		JobQueueGroup $jobQueueGroup,
+		ILoadBalancer $loadBalancer,
 		PermissionManager $permissionManager,
-		RepoGroup $repoGroup
+		RepoGroup $repoGroup,
+		UserFactory $userFactory,
+		UserNamePrefixSearch $userNamePrefixSearch,
+		UserNameUtils $userNameUtils
 	) {
 		parent::__construct( 'Nuke', 'nuke' );
-		$this->hookRunner = new NukeHookRunner( $this->getHookContainer() );
 		$this->jobQueueGroup = $jobQueueGroup;
+		$this->loadBalancer = $loadBalancer;
 		$this->permissionManager = $permissionManager;
 		$this->repoGroup = $repoGroup;
+		$this->userFactory = $userFactory;
+		$this->userNamePrefixSearch = $userNamePrefixSearch;
+		$this->userNameUtils = $userNameUtils;
 	}
 
 	public function doesWrites() {
@@ -86,7 +111,7 @@ class SpecialNuke extends SpecialPage {
 
 		// Normalise name
 		if ( $target !== '' ) {
-			$user = User::newFromName( $target );
+			$user = $this->userFactory->newFromName( $target );
 			if ( $user ) {
 				$target = $user->getName();
 			}
@@ -318,7 +343,7 @@ class SpecialNuke extends SpecialPage {
 	 * @return array
 	 */
 	protected function getNewPages( $username, $limit, $namespace = null ) {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
 
 		$what = [
 			'rc_namespace',
@@ -375,7 +400,7 @@ class SpecialNuke extends SpecialPage {
 
 		// Allows other extensions to provide pages to be nuked that don't use
 		// the recentchanges table the way mediawiki-core does
-		$this->hookRunner->onNukeGetNewPages( $username, $pattern, $namespace, $limit, $pages );
+		$this->getNukeHookRunner()->onNukeGetNewPages( $username, $pattern, $namespace, $limit, $pages );
 
 		// Re-enforcing the limit *after* the hook because other extensions
 		// may add and/or remove pages. We need to make sure we don't end up
@@ -404,7 +429,7 @@ class SpecialNuke extends SpecialPage {
 			$title = Title::newFromText( $page );
 
 			$deletionResult = false;
-			if ( !$this->hookRunner->onNukeDeletePage( $title, $reason, $deletionResult ) ) {
+			if ( !$this->getNukeHookRunner()->onNukeDeletePage( $title, $reason, $deletionResult ) ) {
 				if ( $deletionResult ) {
 					$res[] = $this->msg( 'nuke-deleted' )
 						->plaintextParams( $title->getPrefixedText() )
@@ -486,14 +511,15 @@ class SpecialNuke extends SpecialPage {
 	 * @return string[] Matching subpages
 	 */
 	public function prefixSearchSubpages( $search, $limit, $offset ) {
-		$user = User::newFromName( $search );
-		if ( !$user ) {
+		$search = $this->userNameUtils->getCanonical( $search );
+		if ( !$search ) {
 			// No prefix suggestion for invalid user
 			return [];
 		}
 
 		// Autocomplete subpage as user list - public to allow caching
-		return UserNamePrefixSearch::search( 'public', $search, $limit, $offset );
+		return $this->userNamePrefixSearch
+			->search( UserNamePrefixSearch::AUDIENCE_PUBLIC, $search, $limit, $offset );
 	}
 
 	/**
@@ -527,5 +553,16 @@ class SpecialNuke extends SpecialPage {
 		} else {
 			return $dropdownSelection;
 		}
+	}
+
+	/**
+	 * @return NukeHookRunner
+	 */
+	private function getNukeHookRunner() {
+		if ( !$this->hookRunner ) {
+			$this->hookRunner = new NukeHookRunner( $this->getHookContainer() );
+		}
+
+		return $this->hookRunner;
 	}
 }

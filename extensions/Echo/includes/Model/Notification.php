@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\Notifications\Model;
 
-use Bundleable;
-use Hooks;
 use InvalidArgumentException;
+use MediaWiki\Extension\Notifications\Bundleable;
+use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
+use MediaWiki\Extension\Notifications\Notifier;
+use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\MediaWikiServices;
-use MWEchoNotifUser;
-use MWException;
 use stdClass;
 use User;
 
@@ -64,7 +64,6 @@ class Notification extends AbstractEntity implements Bundleable {
 	 * @param array $info The following keys are required:
 	 * - 'event' The Event being notified about.
 	 * - 'user' The User being notified.
-	 * @throws MWException
 	 * @return Notification
 	 */
 	public static function create( array $info ) {
@@ -75,7 +74,7 @@ class Notification extends AbstractEntity implements Bundleable {
 			if ( isset( $info[$field] ) ) {
 				$obj->$field = $info[$field];
 			} else {
-				throw new MWException( "Field $field is required" );
+				throw new InvalidArgumentException( "Field $field is required" );
 			}
 		}
 
@@ -108,19 +107,20 @@ class Notification extends AbstractEntity implements Bundleable {
 
 		$notifMapper = new NotificationMapper();
 
+		$services = MediaWikiServices::getInstance();
+		$hookRunner = new HookRunner( $services->getHookContainer() );
 		// Get the bundle key for this event if web bundling is enabled
 		$bundleKey = '';
 		if ( !empty( $wgEchoNotifications[$this->event->getType()]['bundle']['web'] ) ) {
-			Hooks::run( 'EchoGetBundleRules', [ $this->event, &$bundleKey ] );
+			Notifier::getBundleRules( $this->event, $bundleKey );
 		}
 
-		// @phan-suppress-next-line PhanImpossibleCondition May be set by hook
 		if ( $bundleKey ) {
 			$hash = md5( $bundleKey );
 			$this->bundleHash = $hash;
 		}
 
-		$notifUser = MWEchoNotifUser::newFromUser( $this->user );
+		$notifUser = NotifUser::newFromUser( $this->user );
 
 		// Add listener to refresh notification count upon insert
 		$notifMapper->attachListener( 'insert', 'refresh-notif-count',
@@ -132,11 +132,10 @@ class Notification extends AbstractEntity implements Bundleable {
 		$notifMapper->insert( $this );
 
 		if ( $this->event->getCategory() === 'edit-user-talk' ) {
-			MediaWikiServices::getInstance()
-				->getTalkPageNotificationManager()
+			$services->getTalkPageNotificationManager()
 				->setUserHasNewMessages( $this->user );
 		}
-		Hooks::run( 'EchoCreateNotificationComplete', [ $this ] );
+		$hookRunner->onEchoCreateNotificationComplete( $this );
 	}
 
 	/**

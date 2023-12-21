@@ -60,6 +60,7 @@
 	"abusefilter-edit-new": "Nova filtrilo",
 	"abusefilter-edit-save": "Registragar filtrilo",
 	"abusefilter-edit-description": "Deskripto:\n:''(publike videbla)''",
+	"abusefilter-edit-flags": "Flagi:",
 	"abusefilter-edit-rules": "Kondicioni:",
 	"abusefilter-edit-notes": "Noti:",
 	"abusefilter-edit-lastmod-text": "$1 da $2",
@@ -86,6 +87,7 @@
 	"abusefilter-edit-builder-group-misc": "Mixuri",
 	"abusefilter-edit-builder-funcs-ccnorm": "Normaligar konfundebla signi (ccnorm)",
 	"abusefilter-edit-builder-funcs-specialratio": "Specala signi / omna signi (specialratio)",
+	"abusefilter-edit-builder-funcs-rmspecials": "Removar specala literi/signi (rmspecials)",
 	"abusefilter-edit-builder-vars-newsize": "Nova grandeso di la pagino",
 	"abusefilter-edit-builder-vars-oldsize": "Antea grandeso (en bicoki*) di la pagino",
 	"abusefilter-edit-builder-vars-recent-contributors": "Lasta 10 uzeri qui redaktis la pagino",
@@ -99,6 +101,7 @@
 	"abusefilter-history-global": "Globala",
 	"abusefilter-history-timestamp": "Tempo",
 	"abusefilter-history-user": "Uzero",
+	"abusefilter-history-flags": "Flagi",
 	"abusefilter-history-comments": "Komenti",
 	"abusefilter-history-actions": "Agadi",
 	"abusefilter-history-deleted": "Efacita",
@@ -142,5 +145,8 @@
 	"abusefilter-diff-item": "Elemento",
 	"abusefilter-diff-version": "Versiono ye $1 {{GENDER:$3|da}} $2",
 	"abusefilter-group-default": "Normala",
-	"abusefilter-http-error": "Eventis eroro di HTTP: $1."
+	"abusefilter-http-error": "Eventis eroro di HTTP: $1.",
+	"blockedexternaldomains": "Extera domeni blokusita",
+	"abusefilter-blocked-domains-title": "Extera domeni blokusita",
+	"right-abusefilter-bypass-blocked-external-domains": "Preterpasar extera domeni blokusita"
 }

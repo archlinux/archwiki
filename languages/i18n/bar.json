@@ -3,6 +3,7 @@
 		"authors": [
 			"Alexx",
 			"Als-Holder",
+			"Amire80",
 			"Bua333",
 			"DannyS712",
 			"Geitost",
@@ -25,8 +26,7 @@
 			"Wikifan",
 			"bar.wikipedia.org administrators",
 			"✓",
-			"아라",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Links unterstreichen:",
@@ -457,7 +457,7 @@
 	"post-expand-template-inclusion-category": "Seitn, wo d Gress vo de eibundnan Vorlogn ibaschrittn is",
 	"post-expand-template-argument-warning": "'''Obocht:''' De Seitn enthoit mindastns oa Argument in da Vorlog, wo expandiat z grouss is. \nDe Parameta wean ignoriad.",
 	"post-expand-template-argument-category": "Seitn mid ignoriadn Voalognparametan",
-	"undo-summary": "Änderrung $1 voh [[Special:Contributions/$2|$2]] ([[User talk:$2|Diskussión]]) ryckgängig gmocht.",
+	"undo-summary": "Änderrung [[Special:Diff/$1|$1]] voh [[Special:Contributions/$2|$2]] ([[User talk:$2|Diskussión]]) ryckgängig gmocht.",
 	"viewpagelogs": "Logbiacha fia de Datei ozoagn",
 	"currentrev": "Aktuelle Versión",
 	"currentrev-asof": "Letzte Version vo $1",
@@ -858,8 +858,6 @@
 	"enotif_lastdiff": "Schaug auf $1 noch derer Änderrung.",
 	"enotif_anon_editor": "Anonymer Benutzer $1",
 	"enotif_body": "Servas $WATCHINGUSERNAME,\n\n$PAGEINTRO $NEWPAGE\n\nZåmmfossung vom Beorweiter: $PAGESUMMARY $PAGEMINOREDIT\n\nKontakt zum Beorweiter:\nE-Mail: $PAGEEDITOR_EMAIL\nWiki: $PAGEEDITOR_WIKI\n\nEs wern da sólång koane weidern Benoochrichtigungsmails gsendt, bis du dé Seiten wieder ågmödt bsuachst. Auf deiner Beówochtungslisten kåst olle Benoochrichtigunsmarkiarungen zåmm zrucksétzen.\n\nDeih freindlichs {{SITENAME}}-Benoochrichtigungssystém\n\n--\nUm d' Eihstöungen voh da E-Mail-Benoochrichtigung åzpassen, bsuachst {{canonicalurl:{{#special:Preferences}}}}\n\nUm d' Eihstöungen voh deine Beówochtungslisten åzpassen, bsuachst {{canonicalurl:{{#special:EditWatchlist}}}}\n\nUm d' Seiten voh deiner Beówochtungslisten ower z' doah, bsuachst $UNWATCHURL\n\nRyckmödungen und a weidre Hüf: $HELPPAGE",
-	"created": "erstöd",
-	"changed": "gänderd",
 	"deletepage-submit": "Seiten léschen",
 	"confirm": "Bstäting",
 	"excontent": "Inhoid woa: „$1“",

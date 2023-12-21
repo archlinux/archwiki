@@ -6,6 +6,8 @@ use MediaWiki\Extension\Math\Tests\MathMockHttpTrait;
 use Wikibase\DataModel\Entity\NumericPropertyId;
 use Wikibase\DataModel\Snak\PropertyValueSnak;
 use Wikimedia\Purtle\NTriplesRdfWriter;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\LBFactory;
 
 /**
  * Test the MathML RDF formatter
@@ -22,6 +24,11 @@ class MathMLRdfBuilderTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		$this->markTestSkippedIfExtensionNotLoaded( 'WikibaseClient' );
+		$db = $this->createMock( IDatabase::class );
+		$db->method( 'selectRow' )->willReturn( false );
+		$lbFactory = $this->createMock( LBFactory::class );
+		$lbFactory->method( 'getReplicaDatabase' )->willReturn( $db );
+		$this->setService( 'DBLoadBalancerFactory', $lbFactory );
 		parent::setUp();
 	}
 

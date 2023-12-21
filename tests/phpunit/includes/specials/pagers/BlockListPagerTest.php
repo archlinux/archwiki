@@ -10,7 +10,9 @@ use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Pager\BlockListPager;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\TestingAccessWrapper;
@@ -58,7 +60,7 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 		$this->commentStore = $services->getCommentStore();
 		$this->linkBatchFactory = $services->getLinkBatchFactory();
 		$this->linkRenderer = $services->getLinkRenderer();
-		$this->loadBalancer = $services->getDBLoadBalancer();
+		$this->dbProvider = $services->getDBLoadBalancerFactory();
 		$this->rowCommentFormatter = $services->getRowCommentFormatter();
 		$this->specialPageFactory = $services->getSpecialPageFactory();
 	}
@@ -72,7 +74,7 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 			$this->commentStore,
 			$this->linkBatchFactory,
 			$this->linkRenderer,
-			$this->loadBalancer,
+			$this->dbProvider,
 			$this->rowCommentFormatter,
 			$this->specialPageFactory,
 			[]
@@ -103,7 +105,7 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * Test empty values.
 	 */
-	public function formatValueEmptyProvider() {
+	public static function formatValueEmptyProvider() {
 		return [
 			[
 				'test',
@@ -122,12 +124,11 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * Test the default row values.
 	 */
-	public function formatValueDefaultProvider() {
+	public static function formatValueDefaultProvider() {
 		$row = (object)[
 			'ipb_user' => 0,
 			'ipb_address' => '127.0.0.1',
 			'ipb_by_text' => 'Admin',
-			'ipb_create_account' => 1,
 			'ipb_auto' => 0,
 			'ipb_anon_only' => 0,
 			'ipb_create_account' => 1,
@@ -288,9 +289,8 @@ class BlockListPagerTest extends MediaWikiIntegrationTestCase {
 		$pager = $this->getBlockListPager();
 		$pager->preprocessResults( new FakeResultWrapper( [ $row ] ) );
 
-		$this->assertObjectNotHasAttribute( 'ipb_restrictions', $row );
+		$this->assertObjectNotHasProperty( 'ipb_restrictions', $row );
 
-		$pageName = 'Victor Frankenstein';
 		$page = $this->getExistingTestPage( 'Victor Frankenstein' );
 		$title = $page->getTitle();
 

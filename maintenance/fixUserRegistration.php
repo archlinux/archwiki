@@ -23,6 +23,7 @@
  */
 
 use MediaWiki\User\ActorMigration;
+use MediaWiki\User\User;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -44,19 +45,13 @@ class FixUserRegistration extends Maintenance {
 		$lastId = 0;
 		do {
 			// Get user IDs which need fixing
-			$res = $dbw->select(
-				'user',
-				'user_id',
-				[
-					'user_id > ' . $dbw->addQuotes( $lastId ),
-					'user_registration IS NULL'
-				],
-				__METHOD__,
-				[
-					'LIMIT' => $this->getBatchSize(),
-					'ORDER BY' => 'user_id',
-				]
-			);
+			$res = $dbw->newSelectQueryBuilder()
+				->select( 'user_id' )
+				->from( 'user' )
+				->where( [ 'user_id > ' . $dbw->addQuotes( $lastId ), 'user_registration' => null ] )
+				->orderBy( 'user_id' )
+				->limit( $this->getBatchSize() )
+				->caller( __METHOD__ )->fetchResultSet();
 			foreach ( $res as $row ) {
 				$id = $row->user_id;
 				$lastId = $id;

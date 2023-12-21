@@ -5,32 +5,32 @@
 /* fancycaptcha reload button */
 .confirmedit-captcha-reload,
 #mf-captcha-reload-container {
-	border-top: 1px dashed @colorGray12;
+	border-top: @border-width-base dashed @border-color-subtle;
 	display: inline-block;
 	padding: 8px 20px;
 
 	.fancycaptcha-reload,
 	&.fancycaptcha-reload {
-		color: @colorProgressive;
+		color: @color-progressive;
 	}
 }
 // stylelint-enable selector-max-id
 
 .mw-createacct-captcha-assisted {
 	display: block;
-	border-top: solid 1px @colorGray12;
+	border-top: @border-subtle;
 	padding: 0.8em 0.5em;
-	color: @colorGray7;
+	color: @color-subtle;
 }
 
 .mw-ui-container {
 	// CAPTCHA style improvements
 	.captcha {
 		margin: 0.8em 0 0;
-		border: solid 1px @colorGray12;
+		border: @border-subtle;
 		border-radius: @border-radius-base;
 		overflow: hidden;
-		background: #fff;
+		background: @background-color-base;
 		text-align: center;
 
 		input:not( [ type='submit' ] ) {
@@ -45,7 +45,7 @@
 		img,
 		#wpCaptchaWord {
 			border: 0;
-			border-top: solid 1px @colorGray12;
+			border-top: @border-subtle;
 
 			&:first-child {
 				border-top: 0;

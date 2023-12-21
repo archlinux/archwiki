@@ -3,8 +3,8 @@
 		"authors": [
 			"Minh Nguyen",
 			"NguoiDungKhongDinhDanh",
-			"Vinhtantran",
-			"NguyenHung"
+			"NguyenHung",
+			"Vinhtantran"
 		]
 	},
 	"cite-desc": "Thêm các thẻ <code>&lt;ref&gt;</code> và <code>&lt;references&gt;</code> để ghi chú thích hoặc nguồn tham khảo",
@@ -32,5 +32,11 @@
 	"cite_references_link_many_accessibility_label": "Bước lên tới:",
 	"cite_section_preview_references": "Xem trước chú thích",
 	"cite_warning": "Cảnh báo chú thích: $1",
-	"cite_warning_sectionpreview_no_text": "Không thể xem truớc thẻ <code>&lt;ref&gt;</code> có tên <code>$1</code> vì nó được định rõ bên ngoài phần trang này hoặc không được định rõ."
+	"cite_warning_sectionpreview_no_text": "Không thể xem truớc thẻ <code>&lt;ref&gt;</code> có tên <code>$1</code> vì nó được định rõ bên ngoài phần trang này hoặc không được định rõ.",
+	"cite-wikieditor-tool-reference": "Chú thích tham khảo",
+	"cite-wikieditor-help-page-references": "Tham khảo",
+	"cite-wikieditor-help-content-reference-description": "Tham khảo",
+	"cite-wikieditor-help-content-named-reference-description": "Tham chiếu có tên",
+	"cite-wikieditor-help-content-rereference-description": "Sử dụng lại cùng chú thích",
+	"cite-wikieditor-help-content-showreferences-description": "Liệt kê các chú thích"
 }

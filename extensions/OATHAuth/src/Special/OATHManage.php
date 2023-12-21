@@ -85,6 +85,13 @@ class OATHManage extends SpecialPage {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	protected function getGroupName() {
+		return 'login';
+	}
+
+	/**
 	 * @param null|string $subPage
 	 * @return void
 	 */

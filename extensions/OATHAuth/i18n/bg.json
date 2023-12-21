@@ -57,5 +57,5 @@
 	"oathauth-enable-page-title": "Включване на $1",
 	"oathauth-ui-available-modules": "Налични методи",
 	"oathauth-notifications-disable-help": "Помощ",
-	"oathauth-notifications-enabled-help": "Помощ"
+	"oathauth-notifications-enable-help": "Помощ"
 }

@@ -67,5 +67,8 @@
 	"tooltip-vector-anon-user-menu-title": "Больш магчымасцей",
 	"vector-prefs-limited-width": "Уключыць рэжым абмежаванай шырыні",
 	"vector-prefs-limited-width-help": "Уключыце рэжым абмежаванай шырыні для лепшага чытання.",
-	"empty-language-selector-body": "Змест старонкі недаступны на іншых мовах."
+	"empty-language-selector-body": "Змест старонкі недаступны на іншых мовах.",
+	"vector-toc-unpinned-popup": "Змест перанесены сюды.",
+	"vector-page-tools-unpinned-popup": "Меню інструментаў было перанесена сюды.",
+	"vector-main-menu-unpinned-popup": "Галоўнае меню перанесена сюды."
 }

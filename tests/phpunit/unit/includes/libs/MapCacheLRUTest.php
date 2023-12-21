@@ -48,10 +48,6 @@ class MapCacheLRUTest extends PHPUnit\Framework\TestCase {
 		);
 	}
 
-	/**
-	 * @covers MapCacheLRU::__serialize()
-	 * @covers MapCacheLRU::__unserialize()
-	 */
 	public function testSerialize() {
 		$cache = new MapCacheLRU( 3 );
 		$cache->set( 'a', 1 );
@@ -74,9 +70,6 @@ class MapCacheLRUTest extends PHPUnit\Framework\TestCase {
 		);
 	}
 
-	/**
-	 * @covers MapCacheLRU::getWithSetCallback()
-	 */
 	public function testGetWithSetCallback() {
 		$cache = new MapCacheLRU( 3 );
 		$i = 0;
@@ -190,11 +183,6 @@ class MapCacheLRUTest extends PHPUnit\Framework\TestCase {
 		$this->assertNull( $cache->get( 'd', 30 ) );
 	}
 
-	/**
-	 * @covers MapCacheLRU::hasField()
-	 * @covers MapCacheLRU::getField()
-	 * @covers MapCacheLRU::setField()
-	 */
 	public function testFields() {
 		$raw = [ 'a' => 1, 'b' => 2, 'c' => 3 ];
 		$cache = MapCacheLRU::newFromArray( $raw, 3 );
@@ -246,7 +234,6 @@ class MapCacheLRUTest extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * @dataProvider provideInvalidKeys
-	 * @covers MapCacheLRU::has()
 	 */
 	public function testHasInvalidKey( $key ) {
 		$cache = new MapCacheLRU( 3 );
@@ -255,9 +242,22 @@ class MapCacheLRUTest extends PHPUnit\Framework\TestCase {
 		$cache->has( $key );
 	}
 
+	public static function provideMakeKey() {
+		yield [ 'foo', 'foo' ];
+		yield [ 'foo:bar:4:baz:qu%3Aux%2520', 'foo', 'bar', 4, 'baz', 'qu:ux%20' ];
+		yield [ 'qu%3Aux%2520:4', 'qu:ux%20', 4 ];
+	}
+
+	/**
+	 * @dataProvider provideMakeKey
+	 */
+	public function testMakeKey( $expected, ...$params ) {
+		$cache = new MapCacheLRU( 3 );
+		$this->assertSame( $expected, $cache->makeKey( ...$params ) );
+	}
+
 	/**
 	 * @dataProvider provideInvalidKeys
-	 * @covers MapCacheLRU::get()
 	 */
 	public function testGetInvalidKey( $key ) {
 		$cache = new MapCacheLRU( 3 );
@@ -268,7 +268,6 @@ class MapCacheLRUTest extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * @dataProvider provideInvalidKeys
-	 * @covers MapCacheLRU::set()
 	 */
 	public function testSetInvalidKey( $key ) {
 		$cache = new MapCacheLRU( 3 );
@@ -279,7 +278,6 @@ class MapCacheLRUTest extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * @dataProvider provideInvalidKeys
-	 * @covers MapCacheLRU::hasField()
 	 */
 	public function testHasFieldInvalidKey( $field ) {
 		$cache = MapCacheLRU::newFromArray( [ 'key' => [] ], 3 );
@@ -290,7 +288,6 @@ class MapCacheLRUTest extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * @dataProvider provideInvalidKeys
-	 * @covers MapCacheLRU::getField()
 	 */
 	public function testGetFieldInvalidKey( $field ) {
 		$cache = MapCacheLRU::newFromArray( [ 'key' => [] ], 3 );
@@ -301,7 +298,6 @@ class MapCacheLRUTest extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * @dataProvider provideInvalidKeys
-	 * @covers MapCacheLRU::setField()
 	 */
 	public function testSetFieldInvalidKey( $field ) {
 		$cache = new MapCacheLRU( 3 );

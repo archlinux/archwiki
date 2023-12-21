@@ -7,7 +7,8 @@
 			"Lloffiwr",
 			"Rance",
 			"Stephenwanjau",
-			"Wangombe"
+			"Wangombe",
+			"Kisare"
 		]
 	},
 	"right-abusefilter-modify": "Rekebisha cinchungi vya unyanyasaji",
@@ -153,7 +154,7 @@
 	"abusefilter-topnav-home": "Mwanzo",
 	"abusefilter-topnav-examine": "Chunguza hariri zilizopita",
 	"abusefilter-topnav-log": "Kumbukumbu ya matumizi mabaya",
-	"abusefilter-topnav-tools": "Vifaa vya kueua",
+	"abusefilter-topnav-tools": "Zana za kueua",
 	"abusefilter-log-name": "Kumbukumbu ya matumizi mabaya ya chujio",
 	"abusefilter-log-noresults": "Hakuna matokeo",
 	"abusefilter-diff-title": "Tofauti kati ya matokeo",

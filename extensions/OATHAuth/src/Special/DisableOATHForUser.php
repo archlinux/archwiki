@@ -34,6 +34,13 @@ class DisableOATHForUser extends FormSpecialPage {
 		$this->userFactory = $userFactory;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	protected function getGroupName() {
+		return 'users';
+	}
+
 	public function doesWrites() {
 		return true;
 	}

@@ -17,6 +17,5 @@
 	"cactions-mobile": "Бет әрекеттері",
 	"monobook-cactions-label": "Бет әрекеттері",
 	"monobook-view-history": "Тарихы",
-	"monobook-action-undelete": "{{PLURAL:$1|өңдеме|$1 өңдеме}} жойылуын болдырмау",
-	"monobook-action-addsection": "+"
+	"monobook-action-undelete": "{{PLURAL:$1|өңдеме|$1 өңдеме}} жойылуын болдырмау"
 }

@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Flyplanevn27",
 			"Max20091",
 			"Minh Nguyen",
-			"Nguyễn Mạnh An",
-			"Flyplanevn27"
+			"Nguyễn Mạnh An"
 		]
 	},
 	"apihelp-echomarkread-param-list": "Danh sách các ID thông báo để đánh dấu là đã đọc.",

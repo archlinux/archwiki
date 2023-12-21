@@ -42,7 +42,7 @@
 	"notification-timestamp-yesterday": "Dibi",
 	"notification-inbox-filter-read": "Wacén",
 	"echo-overlay-link": "Makasami pikélingan",
-	"echo-mark-all-as-read": "Cihna makasami dados kawacén",
+	"echo-mark-all-as-read": "Cihna {{PLURAL:$1|makasami}} dados kawacén",
 	"echo-mark-all-as-read-confirmation": "$1 {{PLURAL:$1|pambiwara}} sampun kacihna dados kawacén",
 	"echo-date-yesterday": "Dibi"
 }

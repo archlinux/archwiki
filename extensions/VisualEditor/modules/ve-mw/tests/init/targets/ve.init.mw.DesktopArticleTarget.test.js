@@ -64,26 +64,29 @@ QUnit.test( 'init', ( assert ) => {
 				starttimestamp: '20180831122319',
 				oldid: 1804,
 				blockinfo: null,
+				wouldautocreate: false,
 				canEdit: true,
-				content: '<!DOCTYPE html>\n' +
-					'<html prefix="dc: http://purl.org/dc/terms/ mw: http://mediawiki.org/rdf/" about="http://localhost/MediaWiki/core/index.php/Special:Redirect/revision/1804">' +
-						'<head prefix="mwr: http://localhost/MediaWiki/core/index.php/Special:Redirect/"><meta property="mw:TimeUuid" content="a4fc0409-ad18-11e8-9b45-dd8cefbedb6d"/>' +
-							'<meta charset="utf-8"/>' +
-							'<meta property="mw:pageNamespace" content="0"/>' +
-							'<meta property="mw:pageId" content="643"/>' +
-							'<link rel="dc:replaces" resource="mwr:revision/0"/>' +
-							'<meta property="dc:modified" content="2016-11-19T00:51:07.000Z"/>' +
-							'<meta property="mw:revisionSHA1" content="da39a3ee5e6b4b0d3255bfef95601890afd80709"/>' +
-							'<meta property="mw:html:version" content="1.7.0"/>' +
-							'<link rel="dc:isVersionOf" href="http://localhost/MediaWiki/core/index.php/Empty"/>' +
-							'<title>Empty</title>' +
-							'<base href="http://localhost/MediaWiki/core/index.php/"/>' +
-							'<link rel="stylesheet" href="//localhost/MediaWiki/core/load.php?modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.content.parsoid%7Cmediawiki.skinning.interface%7Cskins.vector.styles%7Csite.styles%7Cext.cite.style%7Cext.cite.styles%7Cmediawiki.page.gallery.styles&amp;only=styles&amp;skin=vector"/>' +
-						'</head>' +
-						'<body id="mwAA" lang="he" class="mw-content-rtl sitedir-rtl rtl mw-body-content parsoid-body mediawiki mw-parser-output" dir="rtl">' +
-							'<section data-mw-section-id="0" id="mwAQ"></section>' +
-						'</body>' +
-					'</html>',
+				content: '<!DOCTYPE html>\n' + ve.dm.example.singleLine`
+					<html prefix="dc: http://purl.org/dc/terms/ mw: http://mediawiki.org/rdf/" about="http://localhost/MediaWiki/core/index.php/Special:Redirect/revision/1804">
+						<head prefix="mwr: http://localhost/MediaWiki/core/index.php/Special:Redirect/"><meta property="mw:TimeUuid" content="a4fc0409-ad18-11e8-9b45-dd8cefbedb6d"/>
+							<meta charset="utf-8"/>
+							<meta property="mw:pageNamespace" content="0"/>
+							<meta property="mw:pageId" content="643"/>
+							<link rel="dc:replaces" resource="mwr:revision/0"/>
+							<meta property="dc:modified" content="2016-11-19T00:51:07.000Z"/>
+							<meta property="mw:revisionSHA1" content="da39a3ee5e6b4b0d3255bfef95601890afd80709"/>
+							<meta property="mw:html:version" content="1.7.0"/>
+							<link rel="dc:isVersionOf" href="http://localhost/MediaWiki/core/index.php/Empty"/>
+							<title>Empty</title>
+							<base href="http://localhost/MediaWiki/core/index.php/"/>
+							<link rel="stylesheet" href="//localhost/MediaWiki/core/load.php?modules=mediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.skinning.content.parsoid%7Cmediawiki.skinning.interface%7Cskins.vector.styles%7Csite.styles%7Cext.cite.style%7Cext.cite.styles%7Cmediawiki.page.gallery.styles&amp;only=styles&amp;skin=vector"/>
+						</head>
+						<body id="mwAA" lang="he" class="mw-content-rtl sitedir-rtl rtl mw-body-content parsoid-body mediawiki mw-parser-output" dir="rtl">
+							<section data-mw-section-id="0" id="mwAQ"></section>
+						</body>
+					</html>
+				`,
+				preloaded: false,
 				etag: '"1804/a4fc0409-ad18-11e8-9b45-dd8cefbedb6d"'
 			}
 		},
@@ -96,17 +99,17 @@ QUnit.test( 'init', ( assert ) => {
 		assert.strictEqual( target.getSurface().getModel().getDocument().getDir(), 'rtl', 'Page direction is passed through from config' );
 		target.activatingDeferred.then( async () => {
 			assert.equalDomElement(
-				target.actionsToolbar.tools.notices.noticeItems[ 0 ].$element[ 0 ],
+				target.toolbar.tools.notices.noticeItems[ 0 ].$element[ 0 ],
 				$( '<div class="ve-ui-mwNoticesPopupTool-item"><b>HTML string notice</b> message</div>' )[ 0 ],
 				'HTML string notice message is passed through from API'
 			);
-			assert.strictEqual( target.actionsToolbar.tools.notices.noticeItems[ 0 ].type, undefined, 'Plain text notice type is undefined' );
+			assert.strictEqual( target.toolbar.tools.notices.noticeItems[ 0 ].type, undefined, 'Plain text notice type is undefined' );
 			assert.equalDomElement(
-				target.actionsToolbar.tools.notices.noticeItems[ 1 ].$element[ 0 ],
+				target.toolbar.tools.notices.noticeItems[ 1 ].$element[ 0 ],
 				$( '<div class="ve-ui-mwNoticesPopupTool-item"><b>object notice</b> message</div>' )[ 0 ],
 				'Object notice message is passed through from API'
 			);
-			assert.strictEqual( target.actionsToolbar.tools.notices.noticeItems[ 1 ].type, 'object notice', 'Object notice type is passed through from API' );
+			assert.strictEqual( target.toolbar.tools.notices.noticeItems[ 1 ].type, 'object notice', 'Object notice type is passed through from API' );
 
 			// Open the save dialog and examine it (this bypasses a bunch of stuff, and may fail in funny
 			// ways, but #showSaveDialog has many dependencies that I don't want to simulate here).

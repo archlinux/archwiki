@@ -24,12 +24,17 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
+use Skin;
+use stdClass;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -38,30 +43,25 @@ use Wikimedia\Rdbms\IResultWrapper;
  */
 class SpecialListRedirects extends QueryPage {
 
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
-
-	/** @var RedirectLookup */
-	private $redirectLookup;
+	private LinkBatchFactory $linkBatchFactory;
+	private WikiPageFactory $wikiPageFactory;
+	private RedirectLookup $redirectLookup;
 
 	/**
 	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param WikiPageFactory $wikiPageFactory
 	 * @param RedirectLookup $redirectLookup
 	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		WikiPageFactory $wikiPageFactory,
 		RedirectLookup $redirectLookup
 	) {
 		parent::__construct( 'Listredirects' );
 		$this->linkBatchFactory = $linkBatchFactory;
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->redirectLookup = $redirectLookup;
 	}
@@ -80,25 +80,23 @@ class SpecialListRedirects extends QueryPage {
 
 	public function getQueryInfo() {
 		return [
-			'tables' => [ 'p1' => 'page', 'redirect', 'p2' => 'page' ],
-			'fields' => [ 'namespace' => 'p1.page_namespace',
-				'title' => 'p1.page_title',
+			'tables' => [ 'page', 'redirect' ],
+			'fields' => [ 'namespace' => 'page_namespace',
+				'title' => 'page_title',
 				'rd_namespace',
 				'rd_title',
 				'rd_fragment',
 				'rd_interwiki',
-				'redirid' => 'p2.page_id' ],
-			'conds' => [ 'p1.page_is_redirect' => 1 ],
+			],
+			'conds' => [ 'page_is_redirect' => 1 ],
 			'join_conds' => [ 'redirect' => [
-				'LEFT JOIN', 'rd_from=p1.page_id' ],
-				'p2' => [ 'LEFT JOIN', [
-					'p2.page_namespace=rd_namespace',
-					'p2.page_title=rd_title' ] ] ]
+				'LEFT JOIN', 'rd_from=page_id' ],
+			]
 		];
 	}
 
 	protected function getOrderFields() {
-		return [ 'p1.page_namespace', 'p1.page_title' ];
+		return [ 'page_namespace', 'page_title' ];
 	}
 
 	/**
@@ -189,3 +187,8 @@ class SpecialListRedirects extends QueryPage {
 		return 'pages';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialListRedirects::class, 'SpecialListRedirects' );

@@ -71,8 +71,8 @@
 	"notification-header-oathauth-disable": "Двухфактарная аўтэнтыфікацыя {{GENDER:$2|вашага ўліковага запісу}} адключаная.",
 	"notification-body-oathauth-disable": "Калі {{GENDER:$2|вы}} гэтага не рабілі, то {{GENDER:$2|ваш уліковы запіс}} мог быць узламаны.",
 	"notification-body-oathauth-disable-other": "Калі {{GENDER:$2|вы}} гэтага не запытвалі, то мусіце зьвязацца з адміністратарам.",
-	"notification-header-oathauth-enabled": "Двухфактарная аўтэнтыфікацыя {{GENDER:$2|вашага ўліковага запісу}} ўключаная.",
-	"notification-body-oathauth-enabled": "Калі {{GENDER:$2|вы}} гэтага не рабілі, то {{GENDER:$2|ваш уліковы запіс}} мог быць узламаны.",
+	"notification-header-oathauth-enable": "Двухфактарная аўтэнтыфікацыя {{GENDER:$2|вашага ўліковага запісу}} ўключаная.",
+	"notification-body-oathauth-enable": "Калі {{GENDER:$2|вы}} гэтага не рабілі, то {{GENDER:$2|ваш уліковы запіс}} мог быць узламаны.",
 	"oathauth-verify-enabled": "У {{GENDER:$1|$1}} уключаная двухфактарная аўтэнтыфікацыя.",
 	"oathauth-verify-disabled": "У {{GENDER:$1|$1}} ня ўключаная двухфактарная аўтэнтыфікацыя.",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Вашае сяброўства}} ў {{PLURAL:$1|гэтай групе|гэтых групах}} спыненае, пакуль вы ня ўключыце [[Special:Manage Two-factor authentication|двухфактарную аўтэнтыфікацыю]]."

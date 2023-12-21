@@ -11,7 +11,6 @@
 	"captcha-edit": "כדי לערוך את הדף, נא לפתור את המשימה הבאה ולהקליד את התשובה בתיבה ([[Special:Captcha/help|מידע נוסף]]):",
 	"captcha-edit-fail": "קוד אישור שגוי או חסר.",
 	"captcha-desc": "מתן טכניקות CAPTCHA להגנה נגד ספאם וניחוש סיסמאות",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "פתרון ה־CAPTCHA.",
 	"captcha-info-help": "תיאור של ה־CAPTCHA.",
 	"captcha-id-label": "מזהה ה־CAPTCHA",

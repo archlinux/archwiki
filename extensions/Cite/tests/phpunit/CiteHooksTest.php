@@ -5,6 +5,7 @@ namespace Cite\Tests;
 use ApiQuerySiteinfo;
 use Cite\Hooks\CiteHooks;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\StaticUserOptionsLookup;
 
 /**
  * @coversDefaultClass \Cite\Hooks\CiteHooks
@@ -20,7 +21,8 @@ class CiteHooksTest extends \MediaWikiIntegrationTestCase {
 		$vars = [];
 
 		$config = MediaWikiServices::getInstance()->getMainConfig();
-		$citeHooks = new CiteHooks();
+
+		$citeHooks = new CiteHooks( new StaticUserOptionsLookup( [] ) );
 		$citeHooks->onResourceLoaderGetConfigVars( $vars, 'vector', $config );
 
 		$this->assertArrayHasKey( 'wgCiteVisualEditorOtherGroup', $vars );
@@ -38,7 +40,7 @@ class CiteHooksTest extends \MediaWikiIntegrationTestCase {
 
 		$data = [];
 
-		$citeHooks = new CiteHooks();
+		$citeHooks = new CiteHooks( new StaticUserOptionsLookup( [] ) );
 		$citeHooks->onAPIQuerySiteInfoGeneralInfo( $api, $data );
 
 		$this->assertArrayHasKey( 'citeresponsivereferences', $data );

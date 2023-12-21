@@ -43,7 +43,7 @@ class JavaScriptContentHandler extends CodeContentHandler {
 	}
 
 	/**
-	 * @return string
+	 * @return class-string<JavaScriptContent>
 	 */
 	protected function getContentClass() {
 		return JavaScriptContent::class;
@@ -64,7 +64,7 @@ class JavaScriptContentHandler extends CodeContentHandler {
 		// The parameters are passed as a string so the / is not url-encoded by wfArrayToCgi
 		$url = $destination->getFullURL( 'action=raw&ctype=text/javascript', false, PROTO_RELATIVE );
 		$class = $this->getContentClass();
-		return new $class( '/* #REDIRECT */' . Xml::encodeJsCall( 'mw.loader.load', [ $url ] ) );
+		return new $class( '/* #REDIRECT */' . Html::encodeJsCall( 'mw.loader.load', [ $url ] ) );
 	}
 
 	public function preSaveTransform(

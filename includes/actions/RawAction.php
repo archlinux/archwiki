@@ -32,6 +32,7 @@ use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\User\User;
 
 /**
  * A simple method to retrieve the plain source of an article,
@@ -41,17 +42,10 @@ use MediaWiki\Revision\SlotRecord;
  */
 class RawAction extends FormlessAction {
 
-	/** @var Parser */
-	private $parser;
-
-	/** @var PermissionManager */
-	private $permissionManager;
-
-	/** @var RevisionLookup */
-	private $revisionLookup;
-
-	/** @var RestrictionStore */
-	private $restrictionStore;
+	private Parser $parser;
+	private PermissionManager $permissionManager;
+	private RevisionLookup $revisionLookup;
+	private RestrictionStore $restrictionStore;
 
 	/**
 	 * @param Article $article
@@ -243,7 +237,7 @@ class RawAction extends FormlessAction {
 
 			if ( $content === null ) {
 				// revision or slot not found (or suppressed)
-			} elseif ( !$content instanceof TextContent ) {
+			} elseif ( !$content instanceof TextContent && !method_exists( $content, 'getText' ) ) {
 				// non-text content
 				wfHttpError( 415, "Unsupported Media Type", "The requested page uses the content model `"
 					. $content->getModel() . "` which is not supported via this interface." );

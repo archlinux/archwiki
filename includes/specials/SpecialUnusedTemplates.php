@@ -24,9 +24,15 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Linker\LinksMigration;
+use MediaWiki\SpecialPage\QueryPage;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Skin;
+use stdClass;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * A special page that lists unused templates
@@ -35,19 +41,18 @@ use Wikimedia\Rdbms\ILoadBalancer;
  */
 class SpecialUnusedTemplates extends QueryPage {
 
-	/** @var LinksMigration */
-	private $linksMigration;
+	private LinksMigration $linksMigration;
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinksMigration $linksMigration
 	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinksMigration $linksMigration
 	) {
 		parent::__construct( 'Unusedtemplates' );
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 		$this->linksMigration = $linksMigration;
 	}
 
@@ -91,7 +96,7 @@ class SpecialUnusedTemplates extends QueryPage {
 			],
 			'conds' => [
 				'page_namespace' => NS_TEMPLATE,
-				'tl_from IS NULL',
+				'tl_from' => null,
 				'page_is_redirect' => 0
 			],
 			'join_conds' => array_merge( $joinConds, $queryInfo['joins'] )
@@ -132,3 +137,9 @@ class SpecialUnusedTemplates extends QueryPage {
 		return 'maintenance';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialUnusedTemplates::class, 'SpecialUnusedTemplates' );

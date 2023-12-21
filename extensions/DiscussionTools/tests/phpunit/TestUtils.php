@@ -117,7 +117,7 @@ trait TestUtils {
 		$quotedNewInnerHtml = strtr( $newInnerHtml, [ '\\' => '\\\\', '$' => '\\$' ] );
 
 		if ( strtolower( $container->tagName ) === 'body' ) {
-			if ( strpos( $html, '<body' ) !== false ) {
+			if ( str_contains( $html, '<body' ) ) {
 				$html = preg_replace(
 					'`(<body[^>]*>)(.*)(</body>)`s',
 					'$1' . $quotedNewInnerHtml . '$3',

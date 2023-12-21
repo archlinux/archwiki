@@ -7,7 +7,6 @@
 			"Stam.nikos"
 		]
 	},
-	"apihelp-visualeditor-description": "Επιστρέφει HTML5 για μια σελίδα από την υπηρεσία Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Κατά την αποθήκευση, αυτό να οριστεί στη χρονοσφραγίδα της αναθεώρησης που δέχθηκε επεξεργασία. Χρησιμεύει στην ανίχνευση συγκρούσεων επεξεργασίας.",
 	"apihelp-visualeditor-param-cachekey": "Χρησιμοποιήστε το αποτέλεσμα προηγούμενου αιτήματος σειριοποίησης για κρυφή μνήμη με αυτό το κλειδί. Αντικαθιστά το $1html.",
 	"apihelp-visualeditor-param-html": "Ο κώδικας HTML που αποστέλλεται στο Parsoid για να επιστρέψει κώδικα wiki.",
@@ -18,7 +17,6 @@
 	"apihelp-visualeditor-param-starttimestamp": "Κατά την αποθήκευση, αυτό να οριστεί στη χρονοσφραγίδα της στιγμής φόρτωσης της σελίδας. Χρησιμεύει στην ανίχνευση συγκρούσεων επεξεργασίας.",
 	"apihelp-visualeditor-param-wikitext": "Κώδικας wiki για να σταλεί στο Parsoid για να μετατραπεί σε HTML (paction=parsefragment).",
 	"apihelp-visualeditor-summary": "Επιστρέφει HTML5 για μια σελίδα από την υπηρεσία Parsoid.",
-	"apihelp-visualeditoredit-description": "Αποθηκεύστε μία σελίδα HTML5 στο MediaWiki (που μετατρέπεται σε κώδικα wiki μέσω της υπηρεσίας Parsoid).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Κατά την αποθήκευση, αυτό να οριστεί στη χρονοσφραγίδα της αναθεώρησης που δέχθηκε επεξεργασία. Χρησιμεύει στην ανίχνευση συγκρούσεων επεξεργασίας.",
 	"apihelp-visualeditoredit-param-cachekey": "Χρησιμοποιήστε το αποτέλεσμα προηγούμενου αιτήματος σειριοποίησης για κρυφή μνήμη με αυτό το κλειδί. Αντικαθιστά το $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Αναγνωριστικό captcha (κατά την αποθήκευση με μία απάντηση captcha).",

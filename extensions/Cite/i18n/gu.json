@@ -35,5 +35,10 @@
 	"cite_references_link_accessibility_back_label": "ઉપર પાછા જાવ",
 	"cite_section_preview_references": "સંદર્ભોનું પૂર્વદર્શન",
 	"cite_warning": "સંદર્ભ ક્ષતિ: $1",
-	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> ટેગ <code>$1</code> નામ સાથે પૂર્વદર્શન થઇ શકશે નહી કારણકે તે હાલના વિભાગની બહાર વ્યાખ્યાયિત થયો છે અથવા વ્યાખ્યાયિત થયો જ નથી."
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> ટેગ <code>$1</code> નામ સાથે પૂર્વદર્શન થઇ શકશે નહી કારણકે તે હાલના વિભાગની બહાર વ્યાખ્યાયિત થયો છે અથવા વ્યાખ્યાયિત થયો જ નથી.",
+	"cite-wikieditor-tool-reference": "સંદર્ભ",
+	"cite-wikieditor-help-page-references": "સંદર્ભો",
+	"cite-wikieditor-help-content-reference-description": "સંદર્ભ",
+	"cite-wikieditor-help-content-rereference-description": "તેજ સંદર્ભનો વધારાનો વપરાશ",
+	"cite-wikieditor-help-content-showreferences-description": "સંદર્ભો દર્શાવો"
 }

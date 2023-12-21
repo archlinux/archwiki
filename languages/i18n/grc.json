@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"1233qwer1234qwer4",
+			"Amire80",
 			"AndreasJS",
 			"Crazymadlover",
 			"DannyS712",
@@ -26,8 +27,7 @@
 			"Vlad5250",
 			"Yannos",
 			"ZaDiak",
-			"아라",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Ὑπογραμμίζειν συνδέσμους:",
@@ -241,7 +241,6 @@
 	"versionrequired": "Ἔκδοσις $1 τῆς MediaWiki ἀπαιτεῖται",
 	"versionrequiredtext": "Ἡ ἔκδοσις $1 τῆς MediaWiki ἀναγκαία ἐστὶ τῷ χρῆσθαι τῇδε τῇ δέλτῳ.\nἼδε [[Special:Version|τὴν δέλτον ἐκδόσεως]].",
 	"ok": "εἶεν",
-	"pagetitle": "$1 - {{SITENAME}}",
 	"retrievedfrom": "Ἀνακτηθεῖσα ὑπὸ \"$1\"",
 	"youhavenewmessages": "Ἔχεις $1 ($2).",
 	"youhavenewmessagesfromusers": "{{PLURAL:$4|Ἔχεις}} $1 ἀπὸ {{PLURAL:$3|τινὸς χρωμένου|$3 χρωμένων}} ($2).",
@@ -501,7 +500,7 @@
 	"parser-template-recursion-depth-warning": "Ὅριον μάκρους τῆς ἀναδρομῆς τοῦ προτύπου ὑπερκεκερασμένον ἐστίν ($1)",
 	"undo-failure": "Ἀδύνατος ἡ μεταστροφὴ λόγῳ ἀντικρουομένων ἐνδιαμέσων μεταγραφῶν.",
 	"undo-norev": "Ἀδύνατος ἡ μεταστροφὴ τῆσδε τῆς μεταγραφῆς λόγῳ μὴ ὑπάρξεως ἢ προτέρας διαγραφῆς ταύτης.",
-	"undo-summary": "Ἀναίρεσις μεταγραφῆς $1 ὑπὸ τὸν/τὴν [[Special:Contributions/$2|$2]] ([[User talk:$2|Διάλεξις]])",
+	"undo-summary": "Ἀναίρεσις μεταγραφῆς [[Special:Diff/$1|$1]] ὑπὸ τὸν/τὴν [[Special:Contributions/$2|$2]] ([[User talk:$2|Διάλεξις]])",
 	"viewpagelogs": "Ὁρᾶν καταλόγους διὰ ταύτην τὴν δέλτον",
 	"nohistory": "Οὐκ ἔστι ἱστορικὸν μεταγραφῶν διὰ τήνδε τὴν δέλτον.",
 	"currentrev": "Τὸ νῦν",
@@ -626,7 +625,6 @@
 	"search-relatedarticle": "Σχετικά",
 	"searchrelated": "σχετικά",
 	"searchall": "ἅπασαι",
-	"showingresults": "Δεικνύναι κατωτέρω μέχρι {{PLURAL:$1|'''1''' ἀποτέλεσμα|'''$1''' ἀποτελέσματα}}· ἐκκίνησις ἐκ τοῦ #'''$2'''.",
 	"search-showingresults": "{{PLURAL:$4|Ἀποτέλεσμα <strong>$1</strong> ἀπό <strong>$3</strong>|Ἀποτελέσματα <strong>$1 - $2</strong> ἀπό <strong>$3</strong>}}",
 	"search-nonefound": "Οὐδὲν ἀποτέλεσμα ἀντίστοιχον τῆς πεύσεως.",
 	"powersearch-legend": "Ἀνωτέρα ἀναζήτησις",
@@ -1216,8 +1214,6 @@
 	"enotif_lastdiff": "Ἴδε $1 διὰ τὸ ὁρᾶν τήνδε τὴν ἀλλαγήν.",
 	"enotif_anon_editor": "ἀνώνυμος χρώμενος $1",
 	"enotif_body": "Φίλτατε $WATCHINGUSERNAME,\n\n$PAGEINTRO $NEWPAGE\n\nΣύνοψις: $PAGESUMMARY $PAGEMINOREDIT\n\nΚοινωνῆσαι τὸν μεταγραφέα:\nἠλ.-ταχυδρομεῖον: $PAGEEDITOR_EMAIL\nβίκι: $PAGEEDITOR_WIKI\n\nΟὐχ ὑπάρξουσιν ἕτεραι εἰδήσεις ἐν περιπτώσει περαιτέρω ἀλλαγαὶ προκύψουσι εἰ μὴ σὺ ἐπισκεφθεὶς τὴν δέλτον ᾖς. Δύνασαι ἐπἴσης ἀναρρυθμίσειν τὰ σήματα εἰδήσεως διὰ ἅπασας τὰς ἐφορωμένας ὑπἐσοῦ δέλτους\n\n             Τοῦ φιλικοῦ σου {{SITENAME}} τὸ σύστημα εἰδήσεως\n\n--\nΔιὰ τὸ ἀλλάξειν τὰς ῥυθμίσεις τὴς ἐφοροδιαλογῆς σου, ἐπίσκεψαι τὸ\n{{canonicalurl:{{#special:EditWatchlist}}}}\n\nἈνάδρασις καὶ περαιτέρω βοήθεια:\n$HELPPAGE",
-	"created": "ποιηθέν",
-	"changed": "ἠλλαγμένη",
 	"deletepage-submit": "Διαγράφειν τὴν δέλτον",
 	"confirm": "Κυροῦν",
 	"excontent": "ἡ ὕλη ἦτο: '$1'",

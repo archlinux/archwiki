@@ -2,6 +2,8 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
+use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityValue;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -16,22 +18,19 @@ class WatchedItemStoreIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		self::$users['WatchedItemStoreIntegrationTestUser']
-			= new TestUser( 'WatchedItemStoreIntegrationTestUser' );
-
 		$this->overrideConfigValues( [
 			MainConfigNames::WatchlistExpiry => true,
 			MainConfigNames::WatchlistExpiryMaxDuration => '6 months',
 		] );
 	}
 
-	private function getUser() {
-		return self::$users['WatchedItemStoreIntegrationTestUser']->getUser();
+	private function getUser(): UserIdentity {
+		return new UserIdentityValue( 42, 'WatchedItemStoreIntegrationTestUser' );
 	}
 
 	public function testWatchAndUnWatchItem() {
 		$user = $this->getUser();
-		$title = Title::newFromText( 'WatchedItemStoreIntegrationTestPage' );
+		$title = Title::makeTitle( NS_MAIN, 'WatchedItemStoreIntegrationTestPage' );
 		$store = $this->getServiceContainer()->getWatchedItemStore();
 		// Cleanup after previous tests
 		$store->removeWatch( $user, $title );
@@ -121,7 +120,7 @@ class WatchedItemStoreIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	public function testWatchAndUnWatchItemWithExpiry(): void {
 		$user = $this->getUser();
-		$title = Title::newFromText( 'WatchedItemStoreIntegrationTestPage' );
+		$title = Title::makeTitle( NS_MAIN, 'WatchedItemStoreIntegrationTestPage' );
 		$store = $this->getServiceContainer()->getWatchedItemStore();
 		$initialUserWatchedItems = $store->countWatchedItems( $user );
 
@@ -194,8 +193,8 @@ class WatchedItemStoreIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	public function testWatchAndUnwatchMultipleWithExpiry(): void {
 		$user = $this->getUser();
-		$title1 = Title::newFromText( 'WatchedItemStoreIntegrationTestPage1' );
-		$title2 = Title::newFromText( 'WatchedItemStoreIntegrationTestPage1' );
+		$title1 = Title::makeTitle( NS_MAIN, 'WatchedItemStoreIntegrationTestPage1' );
+		$title2 = Title::makeTitle( NS_MAIN, 'WatchedItemStoreIntegrationTestPage1' );
 		$store = $this->getServiceContainer()->getWatchedItemStore();
 
 		// Use a relative timestamp in the near future to ensure we don't exceed the max.
@@ -225,8 +224,8 @@ class WatchedItemStoreIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	public function testWatchBatchAndClearItems() {
 		$user = $this->getUser();
-		$title1 = Title::newFromText( 'WatchedItemStoreIntegrationTestPage1' );
-		$title2 = Title::newFromText( 'WatchedItemStoreIntegrationTestPage2' );
+		$title1 = Title::makeTitle( NS_MAIN, 'WatchedItemStoreIntegrationTestPage1' );
+		$title2 = Title::makeTitle( NS_MAIN, 'WatchedItemStoreIntegrationTestPage2' );
 		$store = $this->getServiceContainer()->getWatchedItemStore();
 
 		$store->addWatchBatchForUser( $user, [ $title1, $title2 ] );
@@ -242,8 +241,11 @@ class WatchedItemStoreIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	public function testUpdateResetAndSetNotificationTimestamp() {
 		$user = $this->getUser();
-		$otherUser = ( new TestUser( 'WatchedItemStoreIntegrationTestUser_otherUser' ) )->getUser();
-		$title = Title::newFromText( 'WatchedItemStoreIntegrationTestPage' );
+		$otherUser = new UserIdentityValue(
+			$user->getId() + 1,
+			$user->getName() . '_other'
+		);
+		$title = Title::makeTitle( NS_MAIN, 'WatchedItemStoreIntegrationTestPage' );
 		$store = $this->getServiceContainer()->getWatchedItemStore();
 		$store->addWatch( $user, $title );
 		$this->assertNull( $store->loadWatchedItem( $user, $title )->getNotificationTimestamp() );
@@ -344,8 +346,8 @@ class WatchedItemStoreIntegrationTest extends MediaWikiIntegrationTestCase {
 		ConvertibleTimestamp::setFakeTime( '20200527000000' );
 
 		$user = $this->getUser();
-		$titleOld = Title::newFromText( 'WatchedItemStoreIntegrationTestPageOld' );
-		$titleNew = Title::newFromText( 'WatchedItemStoreIntegrationTestPageNew' );
+		$titleOld = Title::makeTitle( NS_MAIN, 'WatchedItemStoreIntegrationTestPageOld' );
+		$titleNew = Title::makeTitle( NS_MAIN, 'WatchedItemStoreIntegrationTestPageNew' );
 		$store = $this->getServiceContainer()->getWatchedItemStore();
 		$store->addWatch( $user, $titleOld->getSubjectPage(), '99990123000000' );
 		$store->addWatch( $user, $titleOld->getTalkPage(), '99990123000000' );
@@ -399,9 +401,9 @@ class WatchedItemStoreIntegrationTest extends MediaWikiIntegrationTestCase {
 
 		// Add three pages, two of which have already expired.
 		$user = $this->getUser();
-		$store->addWatch( $user, Title::newFromText( 'P1' ), '2020-01-25' );
-		$store->addWatch( $user, Title::newFromText( 'P2' ), '20200101000000' );
-		$store->addWatch( $user, Title::newFromText( 'P3' ), '1 month' );
+		$store->addWatch( $user, Title::makeTitle( NS_MAIN, 'P1' ), '2020-01-25' );
+		$store->addWatch( $user, Title::makeTitle( NS_MAIN, 'P2' ), '20200101000000' );
+		$store->addWatch( $user, Title::makeTitle( NS_MAIN, 'P3' ), '1 month' );
 
 		// Test that they can be counted and removed correctly.
 		$this->assertSame( 2, $store->countExpired() );
@@ -420,20 +422,29 @@ class WatchedItemStoreIntegrationTest extends MediaWikiIntegrationTestCase {
 			[ 'we_item' => '100001', 'we_expiry' => $this->db->timestamp( '30300101000000' ) ],
 		];
 		$this->db->insert( 'watchlist_expiry', $orphanRows, __METHOD__ );
-		$initialRowCount = $this->db->selectRowCount( 'watchlist_expiry', '*', [], __METHOD__ );
+		$initialRowCount = $this->db->newSelectQueryBuilder()
+			->select( '*' )
+			->from( 'watchlist_expiry' )
+			->caller( __METHOD__ )->fetchRowCount();
 
 		// Make sure the orphans aren't removed if it's not requested.
 		$store->removeExpired( 10, false );
 		$this->assertSame(
 			$initialRowCount,
-			$this->db->selectRowCount( 'watchlist_expiry', '*', [], __METHOD__ )
+			$this->db->newSelectQueryBuilder()
+				->select( '*' )
+				->from( 'watchlist_expiry' )
+				->caller( __METHOD__ )->fetchRowCount()
 		);
 
 		// Make sure they are removed when requested.
 		$store->removeExpired( 10, true );
 		$this->assertSame(
 			$initialRowCount - 2,
-			$this->db->selectRowCount( 'watchlist_expiry', '*', [], __METHOD__ )
+			$this->db->newSelectQueryBuilder()
+				->select( '*' )
+				->from( 'watchlist_expiry' )
+				->caller( __METHOD__ )->fetchRowCount()
 		);
 	}
 }

@@ -510,8 +510,3 @@ $specialPageAliases['zh-hans'] = [
 $specialPageAliases['zh-hant'] = [
 	'CategoryTree' => [ '分類樹' ],
 ];
-
-/** Chinese (Taiwan) (中文（台灣）) */
-$specialPageAliases['zh-tw'] = [
-	'CategoryTree' => [ '分類樹' ],
-];

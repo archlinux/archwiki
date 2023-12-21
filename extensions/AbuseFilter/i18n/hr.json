@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Bugoslav",
 			"Dalibor Bosits",
 			"Ex13",
@@ -11,8 +12,7 @@
 			"Ponor",
 			"Roberta F.",
 			"SpeedyGonsales",
-			"Vlad5250",
-			"Amire80"
+			"Vlad5250"
 		]
 	},
 	"abusefilter-desc": "Primjenjuje automatsku heuristiku na uređivanja",
@@ -243,7 +243,7 @@
 	"abusefilter-edit-tag-tag": "[[Special:Tags|Oznake]] za primjenu:",
 	"abusefilter-edit-tag-placeholder": "Dodaj oznake (jedna po jedna ili odvojene zarezima)",
 	"abusefilter-edit-tag-hidden-placeholder": "Dodaj oznake (odvojene zarezima)",
-	"abusefilter-edit-block-anon-durations": "Trajanje blokade za anonimne suradnike",
+	"abusefilter-edit-block-anon-durations": "Neprijavljene suradnike blokirati na",
 	"abusefilter-edit-block-user-durations": "Prijavljene suradnike blokirati na",
 	"abusefilter-block-anon": "Blokiraj anonimne suradnike",
 	"abusefilter-block-user": "Blokiraj prijavljene suradnike",
@@ -504,6 +504,7 @@
 	"abusefilter-view-privatedetails-legend": "Vidi privatne detalje",
 	"abusefilter-view-privatedetails-reason": "Razlog pristupu privatnim detaljima:",
 	"abusefilter-log-details-id": "Evidencijski ID",
+	"abusefilter-blocked-domains-attempted": "Tekst koji ste htjeli objaviti blokirao je naš filter. Blokirano je dodavanje sljedeće domene: $1",
 	"abusefilter-log-ip-not-available": "Nije dostupno",
 	"tag-abusefilter-condition-limit": "dostignuta granica uvjeta",
 	"tag-abusefilter-condition-limit-description": "Uređivanja ili druge radnje koje nije bilo moguće provjeriti pomoću svih aktivnih [[Special:AbuseFilter|filtara zloporaba]] ([[mw:Extension:AbuseFilter/Conditions|pomoć]])."

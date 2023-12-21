@@ -19,7 +19,7 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 	 * @covers ::register
 	 */
 	public function testRegister() {
-		$parser = $this->createMock( Parser::class );
+		$parser = $this->createNoOpMock( Parser::class, [ 'setHook' ] );
 		$parser->expects( $this->exactly( 2 ) )
 			->method( 'setHook' )
 			->withConsecutive(
@@ -36,7 +36,7 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 	public function testRef_fails() {
 		$cite = $this->createMock( Cite::class );
 		$cite->method( 'ref' )
-			->willReturn( false );
+			->willReturn( null );
 
 		$parser = $this->createParser();
 		$parser->extCite = $cite;
@@ -80,7 +80,7 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 	public function testReferences_fails() {
 		$cite = $this->createMock( Cite::class );
 		$cite->method( 'references' )
-			->willReturn( false );
+			->willReturn( null );
 
 		$parser = $this->createParser();
 		$parser->extCite = $cite;

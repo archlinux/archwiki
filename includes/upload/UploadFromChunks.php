@@ -2,6 +2,8 @@
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\WebRequestUpload;
+use MediaWiki\Status\Status;
+use MediaWiki\User\User;
 
 /**
  * Backend for uploading files from chunks.
@@ -268,16 +270,15 @@ class UploadFromChunks extends UploadFromFile {
 			$this->getOffset() . ' inx:' . $this->getChunkIndex() );
 
 		$dbw = $this->repo->getPrimaryDB();
-		$dbw->update(
-			'uploadstash',
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'uploadstash' )
+			->set( [
 				'us_status' => 'chunks',
 				'us_chunk_inx' => $this->getChunkIndex(),
 				'us_size' => $this->getOffset()
-			],
-			[ 'us_key' => $this->mFileKey ],
-			__METHOD__
-		);
+			] )
+			->where( [ 'us_key' => $this->mFileKey ] )
+			->caller( __METHOD__ )->execute();
 	}
 
 	/**
@@ -287,16 +288,11 @@ class UploadFromChunks extends UploadFromFile {
 		// get primary db to avoid race conditions.
 		// Otherwise, if chunk upload time < replag there will be spurious errors
 		$dbw = $this->repo->getPrimaryDB();
-		$row = $dbw->selectRow(
-			'uploadstash',
-			[
-				'us_chunk_inx',
-				'us_size',
-				'us_path',
-			],
-			[ 'us_key' => $this->mFileKey ],
-			__METHOD__
-		);
+		$row = $dbw->newSelectQueryBuilder()
+			->select( [ 'us_chunk_inx', 'us_size', 'us_path' ] )
+			->from( 'uploadstash' )
+			->where( [ 'us_key' => $this->mFileKey ] )
+			->caller( __METHOD__ )->fetchRow();
 		// Handle result:
 		if ( $row ) {
 			$this->mChunkIndex = $row->us_chunk_inx;
@@ -356,8 +352,8 @@ class UploadFromChunks extends UploadFromFile {
 					$error = [ 'unknown', 'no error recorded' ];
 				}
 			}
-			throw new UploadChunkFileException( "Error storing file in '$chunkPath': " .
-				implode( '; ', $error ) );
+			throw new UploadChunkFileException( "Error storing file in '{chunkPath}': " .
+				implode( '; ', $error ), [ 'chunkPath' => $chunkPath ] );
 		}
 
 		return $storeStatus;

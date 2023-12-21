@@ -26,9 +26,9 @@
  * e.g. immobile_namespace for namespaces which can't be moved
  */
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -95,7 +95,7 @@ class MoveBatch extends Maintenance {
 
 			$this->output( $source->getPrefixedText() . ' --> ' . $dest->getPrefixedText() );
 			$this->beginTransaction( $dbw, __METHOD__ );
-			$mp = MediaWikiServices::getInstance()->getMovePageFactory()
+			$mp = $this->getServiceContainer()->getMovePageFactory()
 				->newMovePage( $source, $dest );
 			$status = $mp->move( $user, $reason, !$noRedirects );
 			if ( !$status->isOK() ) {

@@ -24,16 +24,19 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\Parser\Parsoid\Config\PageConfigFactory;
+use MediaWiki\Revision\MutableRevisionRecord;
+use MediaWiki\Revision\SlotRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserIdentity;
 use MessageLocalizer;
-use MultiHttpClient;
 use ParserFactory;
 use ParserOptions;
-use ParsoidVirtualRESTService;
-use SpecialPage;
-use VirtualRESTServiceClient;
+use Wikimedia\Parsoid\Parsoid;
+use WikitextContent;
 
 /**
  * @since 1.35
@@ -54,6 +57,8 @@ class SignatureValidator {
 	private $popts;
 	/** @var ParserFactory */
 	private $parserFactory;
+	private Parsoid $parsoid;
+	private PageConfigFactory $pageConfigFactory;
 	/** @var ServiceOptions */
 	private $serviceOptions;
 	/** @var SpecialPageFactory */
@@ -67,6 +72,8 @@ class SignatureValidator {
 	 * @param ?MessageLocalizer $localizer
 	 * @param ParserOptions $popts
 	 * @param ParserFactory $parserFactory
+	 * @param Parsoid $parsoid
+	 * @param PageConfigFactory $pageConfigFactory
 	 * @param SpecialPageFactory $specialPageFactory
 	 * @param TitleFactory $titleFactory
 	 */
@@ -76,6 +83,8 @@ class SignatureValidator {
 		?MessageLocalizer $localizer,
 		ParserOptions $popts,
 		ParserFactory $parserFactory,
+		Parsoid $parsoid,
+		PageConfigFactory $pageConfigFactory,
 		SpecialPageFactory $specialPageFactory,
 		TitleFactory $titleFactory
 	) {
@@ -83,6 +92,8 @@ class SignatureValidator {
 		$this->localizer = $localizer;
 		$this->popts = $popts;
 		$this->parserFactory = $parserFactory;
+		$this->parsoid = $parsoid;
+		$this->pageConfigFactory = $pageConfigFactory;
 		// Configuration
 		$this->serviceOptions = $options;
 		$this->serviceOptions->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
@@ -246,44 +257,18 @@ class SignatureValidator {
 		// This has to use Parsoid because PHP Parser doesn't produce this information,
 		// it just fixes up the result quietly.
 
-		// This request is not cached, but that's okay, because $signature is short (other code checks
-		// the length against $wgMaxSigChars).
+		$page = Title::newMainPage();
+		$fakeRevision = new MutableRevisionRecord( $page );
+		$fakeRevision->setSlot(
+			SlotRecord::newUnsaved(
+				SlotRecord::MAIN,
+				new WikitextContent( $signature )
+			)
+		);
 
-		$vrsConfig = $this->serviceOptions->get( MainConfigNames::VirtualRestConfig );
-		if ( isset( $vrsConfig['modules']['parsoid'] ) ) {
-			$params = $vrsConfig['modules']['parsoid'];
-			if ( isset( $vrsConfig['global'] ) ) {
-				$params = array_merge( $vrsConfig['global'], $params );
-			}
-			$parsoidVrs = new ParsoidVirtualRESTService( $params );
-
-			$vrsClient = new VirtualRESTServiceClient( new MultiHttpClient( [] ) );
-			$vrsClient->mount( '/parsoid/', $parsoidVrs );
-
-			$request = [
-				'method' => 'POST',
-				'url' => '/parsoid/local/v3/transform/wikitext/to/lint',
-				'body' => [
-					'wikitext' => $signature,
-				],
-				'headers' => [
-					// Are both of these are really needed?
-					'User-Agent' => 'MediaWiki/' . MW_VERSION,
-					'Api-User-Agent' => 'MediaWiki/' . MW_VERSION,
-				],
-			];
-
-			$response = $vrsClient->run( $request );
-			if ( $response['code'] === 200 ) {
-				$json = json_decode( $response['body'], true );
-				// $json is an array of error objects
-				if ( $json ) {
-					return $json;
-				}
-			}
-		}
-
-		return [];
+		return $this->parsoid->wikitext2lint(
+			$this->pageConfigFactory->create( $page, null, $fakeRevision )
+		);
 	}
 
 	/**

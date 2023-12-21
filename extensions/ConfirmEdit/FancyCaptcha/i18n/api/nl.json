@@ -5,7 +5,6 @@
 			"Sjoerddebruin"
 		]
 	},
-	"apihelp-fancycaptchareload-description": "Een nieuwe FancyCaptcha ophalen.",
 	"apihelp-fancycaptchareload-summary": "Een nieuwe FancyCaptcha ophalen.",
 	"apihelp-fancycaptchareload-example-1": "Een nieuwe FancyCaptcha ophalen"
 }

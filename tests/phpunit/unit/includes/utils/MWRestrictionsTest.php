@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Status\Status;
 
 class MWRestrictionsTest extends MediaWikiUnitTestCase {
 

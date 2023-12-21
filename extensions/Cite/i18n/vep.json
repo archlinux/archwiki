@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Игорь Бродский"
+			"Игорь Бродский",
+			"Лариса Чиркова"
 		]
 	},
-	"cite_error": "Citiruindan petuz: $1"
+	"cite_error": "Otegen viga: $1"
 }

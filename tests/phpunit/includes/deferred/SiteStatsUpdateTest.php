@@ -1,15 +1,16 @@
 <?php
 
+use MediaWiki\SiteStats\SiteStats;
+use MediaWiki\SiteStats\SiteStatsInit;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Database
+ * @covers SiteStatsUpdate
+ * @covers MediaWiki\SiteStats\SiteStats
+ * @covers MediaWiki\SiteStats\SiteStatsInit
  */
 class SiteStatsUpdateTest extends MediaWikiIntegrationTestCase {
-	/**
-	 * @covers SiteStatsUpdate::factory
-	 * @covers SiteStatsUpdate::merge
-	 */
 	public function testFactoryAndMerge() {
 		$update1 = SiteStatsUpdate::factory( [ 'pages' => 1, 'users' => 2 ] );
 		$update2 = SiteStatsUpdate::factory( [ 'users' => 1, 'images' => 1 ] );
@@ -24,12 +25,8 @@ class SiteStatsUpdateTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 0, $wrapped->articles );
 	}
 
-	/**
-	 * @covers SiteStatsUpdate::doUpdate()
-	 * @covers SiteStatsInit::refresh()
-	 */
 	public function testDoUpdate() {
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = $this->getDb();
 		$statsInit = new SiteStatsInit( $dbw );
 		$statsInit->refresh();
 

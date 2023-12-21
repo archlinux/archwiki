@@ -235,7 +235,7 @@ class SpecialLintErrors extends SpecialPage {
 		}
 
 		$catManager = new CategoryManager();
-		if ( in_array( $par, $catManager->getVisibleCategories() ) ) {
+		if ( in_array( $par, $this->getSubpagesForPrefixSearch() ) ) {
 			$this->category = $par;
 		}
 
@@ -342,7 +342,8 @@ class SpecialLintErrors extends SpecialPage {
 	 * @return string[]
 	 */
 	protected function getSubpagesForPrefixSearch() {
-		return ( new CategoryManager() )->getVisibleCategories();
+		$categoryManager = new CategoryManager();
+		return array_merge( $categoryManager->getVisibleCategories(), $categoryManager->getInvisibleCategories() );
 	}
 
 }

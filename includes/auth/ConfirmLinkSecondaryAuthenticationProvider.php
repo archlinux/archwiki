@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Auth;
 
-use User;
+use MediaWiki\User\User;
 
 /**
  * Links third-party authentication to the user's account
@@ -22,19 +22,19 @@ class ConfirmLinkSecondaryAuthenticationProvider extends AbstractSecondaryAuthen
 	}
 
 	public function beginSecondaryAuthentication( $user, array $reqs ) {
-		return $this->beginLinkAttempt( $user, 'AuthManager::authnState' );
+		return $this->beginLinkAttempt( $user, AuthManager::AUTHN_STATE );
 	}
 
 	public function continueSecondaryAuthentication( $user, array $reqs ) {
-		return $this->continueLinkAttempt( $user, 'AuthManager::authnState', $reqs );
+		return $this->continueLinkAttempt( $user, AuthManager::AUTHN_STATE, $reqs );
 	}
 
 	public function beginSecondaryAccountCreation( $user, $creator, array $reqs ) {
-		return $this->beginLinkAttempt( $user, 'AuthManager::accountCreationState' );
+		return $this->beginLinkAttempt( $user, AuthManager::ACCOUNT_CREATION_STATE );
 	}
 
 	public function continueSecondaryAccountCreation( $user, $creator, array $reqs ) {
-		return $this->continueLinkAttempt( $user, 'AuthManager::accountCreationState', $reqs );
+		return $this->continueLinkAttempt( $user, AuthManager::ACCOUNT_CREATION_STATE, $reqs );
 	}
 
 	/**
@@ -131,9 +131,8 @@ class ConfirmLinkSecondaryAuthenticationProvider extends AbstractSecondaryAuthen
 			return AuthenticationResponse::newPass();
 		}
 
-		$combinedStatus = \Status::newGood();
-		foreach ( $statuses as $data ) {
-			[ $req, $status ] = $data;
+		$combinedStatus = \MediaWiki\Status\Status::newGood();
+		foreach ( $statuses as [ $req, $status ] ) {
 			$descriptionInfo = $req->describeCredentials();
 			$description = wfMessage(
 				'authprovider-confirmlink-option',

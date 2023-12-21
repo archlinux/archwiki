@@ -4,7 +4,6 @@
 			"Xuacu"
 		]
 	},
-	"apihelp-scribunto-console-description": "Módulu internu pa dar serviciu a les solicitúes XHR de la consola de Scribunto.",
 	"apihelp-scribunto-console-summary": "Módulu internu pa dar serviciu a les solicitúes XHR de la consola de Scribunto.",
 	"apihelp-scribunto-console-param-title": "El títulu del módulu a probar.",
 	"apihelp-scribunto-console-param-content": "El conteníu nuevu del módulu.",

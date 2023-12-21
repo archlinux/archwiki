@@ -8,11 +8,11 @@
 			"Ekminarin",
 			"Geonuch",
 			"Horus",
+			"Kaoavi",
 			"Octahedron80",
 			"Patsagorn Y.",
 			"Trisorn Triboon",
-			"Woraponboonkerd",
-			"Kaoavi"
+			"Woraponboonkerd"
 		]
 	},
 	"skinname-vector": "เวกเตอร์แบบเก่า (2553)",
@@ -67,5 +67,8 @@
 	"tooltip-vector-anon-user-menu-title": "ตัวเลือกเพิ่มเติม",
 	"vector-prefs-limited-width": "เปิดใช้งานโหมดจำกัดความกว้าง",
 	"vector-prefs-limited-width-help": "เปิดใช้งานโหมดจำกัดความกว้างสำหรับประสบการณ์อ่านที่ดีขึ้น",
-	"empty-language-selector-body": "ไม่รองรับเนื้อหาของหน้าในภาษาอื่น"
+	"empty-language-selector-body": "ไม่รองรับเนื้อหาของหน้าในภาษาอื่น",
+	"vector-toc-unpinned-popup": "ย้ายเมนูสารบัญมาที่นี่แล้ว",
+	"vector-page-tools-unpinned-popup": "ย้ายเมนูเครื่องมือมาที่นี่แล้ว",
+	"vector-main-menu-unpinned-popup": "ย้ายเมนูหลักมาที่นี่แล้ว"
 }

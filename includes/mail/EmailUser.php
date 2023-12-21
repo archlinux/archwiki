@@ -20,240 +20,361 @@
 
 namespace MediaWiki\Mail;
 
-use Config;
-use Hooks;
-use IContextSource;
 use MailAddress;
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Permissions\Authority;
+use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Preferences\MultiUsernameFilter;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserOptionsLookup;
 use MessageSpecifier;
-use MWException;
-use SpecialPage;
-use Status;
-use ThrottledError;
-use User;
+use StatusValue;
+use UnexpectedValueException;
+use Wikimedia\Message\IMessageFormatterFactory;
+use Wikimedia\Message\ITextFormatter;
+use Wikimedia\Message\MessageValue;
 
 /**
- * Command for sending emails to users.
+ * Command for sending emails to users. This class is stateless and can be used for multiple sends.
  *
  * @since 1.40
- * @unstable
  */
 class EmailUser {
 	/**
-	 * Validate target User
-	 *
-	 * @param string $target Target user name
-	 * @param User $sender User sending the email
-	 * @return User|string User object on success or a string on error
+	 * @internal For use by ServiceWiring
 	 */
-	public static function getTarget( $target, User $sender ) {
-		if ( $target == '' ) {
-			wfDebug( "Target is empty." );
+	public const CONSTRUCTOR_OPTIONS = [
+		MainConfigNames::EnableEmail,
+		MainConfigNames::EnableUserEmail,
+		MainConfigNames::EnableSpecialMute,
+		MainConfigNames::PasswordSender,
+		MainConfigNames::UserEmailUseReplyTo,
+	];
 
-			return 'notarget';
-		}
+	/** @var ServiceOptions */
+	private ServiceOptions $options;
+	/** @var HookRunner */
+	private HookRunner $hookRunner;
+	/** @var UserOptionsLookup */
+	private UserOptionsLookup $userOptionsLookup;
+	/** @var CentralIdLookup */
+	private CentralIdLookup $centralIdLookup;
+	/** @var UserFactory */
+	private UserFactory $userFactory;
+	/** @var IEmailer */
+	private IEmailer $emailer;
+	/** @var IMessageFormatterFactory */
+	private IMessageFormatterFactory $messageFormatterFactory;
+	/** @var ITextFormatter */
+	private ITextFormatter $contLangMsgFormatter;
 
-		$nu = User::newFromName( $target );
-		$error = self::validateTarget( $nu, $sender );
+	/** @var Authority */
+	private Authority $sender;
 
-		return $error ?: $nu;
+	/** @var string Temporary property to support the deprecated EmailUserPermissionsErrors hook */
+	private string $editToken = '';
+
+	/**
+	 * @param ServiceOptions $options
+	 * @param HookContainer $hookContainer
+	 * @param UserOptionsLookup $userOptionsLookup
+	 * @param CentralIdLookup $centralIdLookup
+	 * @param UserFactory $userFactory
+	 * @param IEmailer $emailer
+	 * @param IMessageFormatterFactory $messageFormatterFactory
+	 * @param ITextFormatter $contLangMsgFormatter
+	 * @param Authority $sender
+	 */
+	public function __construct(
+		ServiceOptions $options,
+		HookContainer $hookContainer,
+		UserOptionsLookup $userOptionsLookup,
+		CentralIdLookup $centralIdLookup,
+		UserFactory $userFactory,
+		IEmailer $emailer,
+		IMessageFormatterFactory $messageFormatterFactory,
+		ITextFormatter $contLangMsgFormatter,
+		Authority $sender
+	) {
+		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
+		$this->options = $options;
+		$this->hookRunner = new HookRunner( $hookContainer );
+		$this->userOptionsLookup = $userOptionsLookup;
+		$this->centralIdLookup = $centralIdLookup;
+		$this->userFactory = $userFactory;
+		$this->emailer = $emailer;
+		$this->messageFormatterFactory = $messageFormatterFactory;
+		$this->contLangMsgFormatter = $contLangMsgFormatter;
+
+		$this->sender = $sender;
 	}
 
 	/**
-	 * Validate target User
+	 * @internal
+	 * @todo This method might perhaps be moved to a UserEmailContactLookup or something.
 	 *
-	 * @param User $target Target user
-	 * @param User $sender User sending the email
-	 * @return string Error message or empty string if valid.
+	 * @param UserEmailContact $target Target user
+	 * @return StatusValue
 	 */
-	public static function validateTarget( $target, User $sender ) {
-		if ( !$target instanceof User || !$target->getId() ) {
-			wfDebug( "Target is invalid user." );
+	public function validateTarget( UserEmailContact $target ): StatusValue {
+		$targetIdentity = $target->getUser();
 
-			return 'notarget';
+		if ( !$targetIdentity->getId() ) {
+			return StatusValue::newFatal( 'emailnotarget' );
 		}
 
 		if ( !$target->isEmailConfirmed() ) {
-			wfDebug( "User has no valid email." );
-
-			return 'noemail';
+			return StatusValue::newFatal( 'noemailtext' );
 		}
 
-		if ( !$target->canReceiveEmail() ) {
-			wfDebug( "User does not allow user emails." );
-
-			return 'nowikiemail';
+		$targetUser = $this->userFactory->newFromUserIdentity( $targetIdentity );
+		if ( !$targetUser->canReceiveEmail() ) {
+			return StatusValue::newFatal( 'nowikiemailtext' );
 		}
 
-		$userOptionsLookup = MediaWikiServices::getInstance()
-			->getUserOptionsLookup();
-		if ( !$userOptionsLookup->getOption(
-				$target,
-				'email-allow-new-users'
-			) && $sender->isNewbie()
+		$senderUser = $this->userFactory->newFromAuthority( $this->sender );
+		if (
+			!$this->userOptionsLookup->getOption( $targetIdentity, 'email-allow-new-users' ) &&
+			$senderUser->isNewbie()
 		) {
-			wfDebug( "User does not allow user emails from new users." );
-
-			return 'nowikiemail';
+			return StatusValue::newFatal( 'nowikiemailtext' );
 		}
 
-		$muteList = $userOptionsLookup->getOption(
-			$target,
+		$muteList = $this->userOptionsLookup->getOption(
+			$targetIdentity,
 			'email-blacklist',
 			''
 		);
 		if ( $muteList ) {
 			$muteList = MultiUsernameFilter::splitIds( $muteList );
-			$senderId = MediaWikiServices::getInstance()
-				->getCentralIdLookup()
-				->centralIdFromLocalUser( $sender );
+			$senderId = $this->centralIdLookup->centralIdFromLocalUser( $this->sender->getUser() );
 			if ( $senderId !== 0 && in_array( $senderId, $muteList ) ) {
-				wfDebug( "User does not allow user emails from this user." );
-
-				return 'nowikiemail';
+				return StatusValue::newFatal( 'nowikiemailtext' );
 			}
 		}
 
-		return '';
+		return StatusValue::newGood();
 	}
 
 	/**
-	 * Check whether a user is allowed to send email
+	 * Checks whether email sending is allowed.
 	 *
-	 * @param User $user
-	 * @param string $editToken
-	 * @param Config|null $config optional for backwards compatibility
-	 * @return null|string|array Null on success, string on error, or array on
-	 *  hook error
+	 * @return StatusValue For BC, the StatusValue's value can be set to a string representing
+	 * a message key to use with ErrorPageError. Only SpecialEmailUser should rely on this.
 	 */
-	public static function getPermissionsError( $user, $editToken, Config $config = null ) {
-		if ( $config === null ) {
-			wfDebug( __METHOD__ . ' called without a Config instance passed to it' );
-			$config = MediaWikiServices::getInstance()->getMainConfig();
+	public function canSend(): StatusValue {
+		if (
+			!$this->options->get( MainConfigNames::EnableEmail ) ||
+			!$this->options->get( MainConfigNames::EnableUserEmail )
+		) {
+			return StatusValue::newFatal( 'usermaildisabled' );
 		}
-		if ( !$config->get( MainConfigNames::EnableEmail ) ||
-			!$config->get( MainConfigNames::EnableUserEmail ) ) {
-			return 'usermaildisabled';
-		}
+
+		$user = $this->userFactory->newFromAuthority( $this->sender );
 
 		// Run this before checking 'sendemail' permission
 		// to show appropriate message to anons (T160309)
 		if ( !$user->isEmailConfirmed() ) {
-			return 'mailnologin';
+			return StatusValue::newFatal( 'mailnologin' );
 		}
 
-		if ( !MediaWikiServices::getInstance()
-			->getPermissionManager()
-			->userHasRight( $user, 'sendemail' )
-		) {
-			return 'badaccess';
-		}
-
-		if ( $user->isBlockedFromEmailuser() ) {
-			wfDebug( "User is blocked from sending e-mail." );
-
-			return "blockedemailuser";
-		}
-
-		// Check the ping limiter without incrementing it - we'll check it
-		// again later and increment it on a successful send
-		if ( $user->pingLimiter( 'sendemail', 0 ) ) {
-			wfDebug( "Ping limiter triggered." );
-
-			return 'actionthrottledtext';
+		$status = PermissionStatus::newGood();
+		if ( !$this->sender->isDefinitelyAllowed( 'sendemail', $status ) ) {
+			return $status;
 		}
 
 		$hookErr = false;
 
-		Hooks::runner()->onUserCanSendEmail( $user, $hookErr );
-		Hooks::runner()->onEmailUserPermissionsErrors( $user, $editToken, $hookErr );
+		// TODO Remove deprecated hooks
+		$this->hookRunner->onUserCanSendEmail( $user, $hookErr );
+		$this->hookRunner->onEmailUserPermissionsErrors( $user, $this->editToken, $hookErr );
+		if ( is_array( $hookErr ) ) {
+			// SpamBlacklist uses null for the third element, and there might be more handlers not using an array.
+			$msgParamsArray = is_array( $hookErr[2] ) ? $hookErr[2] : [];
+			$ret = StatusValue::newFatal( $hookErr[1], ...$msgParamsArray );
+			$ret->value = $hookErr[0];
+			return $ret;
+		}
 
-		return $hookErr ?: null;
+		return StatusValue::newGood();
 	}
 
 	/**
-	 * Really send a mail. Permissions should have been checked using
-	 * getPermissionsError(). It is probably also a good
-	 * idea to check the edit token and ping limiter in advance.
+	 * Authorize the email sending, checking permissions etc.
 	 *
-	 * @param array $data
-	 * @param IContextSource $context
-	 * @return Status|false
-	 * @throws MWException if EmailUser hook sets the error to something unsupported
+	 * @return StatusValue For BC, the StatusValue's value can be set to a string representing
+	 * a message key to use with ErrorPageError. Only SpecialEmailUser should rely on this.
 	 */
-	public static function submit( array $data, IContextSource $context ) {
-		$config = $context->getConfig();
-
-		$sender = $context->getUser();
-		$target = self::getTarget( $data['Target'], $sender );
-		if ( !$target instanceof User ) {
-			// Messages used here: notargettext, noemailtext, nowikiemailtext
-			return Status::newFatal( $target . 'text' );
+	public function authorizeSend(): StatusValue {
+		$status = $this->canSend();
+		if ( !$status->isOK() ) {
+			return $status;
 		}
 
+		$status = PermissionStatus::newGood();
+		if ( !$this->sender->authorizeAction( 'sendemail', $status ) ) {
+			return $status;
+		}
+
+		$hookRes = $this->hookRunner->onEmailUserAuthorizeSend( $this->sender, $status );
+		if ( !$hookRes && !$status->isGood() ) {
+			return $status;
+		}
+
+		return StatusValue::newGood();
+	}
+
+	/**
+	 * Really send a mail, without permission checks.
+	 *
+	 * @param UserEmailContact $target
+	 * @param string $subject
+	 * @param string $text
+	 * @param bool $CCMe
+	 * @param string $langCode Code of the language to be used for interface messages
+	 * @return StatusValue
+	 */
+	public function sendEmailUnsafe(
+		UserEmailContact $target,
+		string $subject,
+		string $text,
+		bool $CCMe,
+		string $langCode
+	): StatusValue {
+		$senderIdentity = $this->sender->getUser();
+		$targetStatus = $this->validateTarget( $target );
+		if ( !$targetStatus->isGood() ) {
+			return $targetStatus;
+		}
+
+		$senderUser = $this->userFactory->newFromAuthority( $this->sender );
+
 		$toAddress = MailAddress::newFromUser( $target );
-		$fromAddress = MailAddress::newFromUser( $sender );
-		$subject = $data['Subject'];
-		$text = $data['Text'];
+		$fromAddress = MailAddress::newFromUser( $senderUser );
 
 		// Add a standard footer and trim up trailing newlines
 		$text = rtrim( $text ) . "\n\n-- \n";
-		$text .= $context->msg(
-			'emailuserfooter',
-			$fromAddress->name,
-			$toAddress->name
-		)->inContentLanguage()->text();
+		$text .= $this->contLangMsgFormatter->format(
+			MessageValue::new( 'emailuserfooter', [ $fromAddress->name, $toAddress->name ] )
+		);
 
-		if ( $config->get( MainConfigNames::EnableSpecialMute ) ) {
-			$specialMutePage = SpecialPage::getTitleFor( 'Mute', $sender->getName() );
-			$text .= "\n" . $context->msg(
+		if ( $this->options->get( MainConfigNames::EnableSpecialMute ) ) {
+			$text .= "\n" . $this->contLangMsgFormatter->format(
+				MessageValue::new(
 					'specialmute-email-footer',
-					$specialMutePage->getCanonicalURL(),
-					$sender->getName()
-				)->inContentLanguage()->text();
+					[
+						$this->getSpecialMuteCanonicalURL( $senderIdentity->getName() ),
+						$senderIdentity->getName()
+					]
+				)
+			);
 		}
-
-		// Check and increment the rate limits
-		if ( $sender->pingLimiter( 'sendemail' ) ) {
-			throw new ThrottledError();
-		}
-
-		// Services that are needed, will be injected once this is moved to EmailUserUtils
-		// service, see T265541
-		$hookRunner = Hooks::runner();
-		$emailer = MediaWikiServices::getInstance()->getEmailer();
 
 		$error = false;
-		if ( !$hookRunner->onEmailUser( $toAddress, $fromAddress, $subject, $text, $error ) ) {
-			if ( $error instanceof Status ) {
+		// TODO Remove deprecated ugly hook
+		if ( !$this->hookRunner->onEmailUser( $toAddress, $fromAddress, $subject, $text, $error ) ) {
+			if ( $error instanceof StatusValue ) {
 				return $error;
 			} elseif ( $error === false || $error === '' || $error === [] ) {
 				// Possibly to tell HTMLForm to pretend there was no submission?
-				return false;
+				return StatusValue::newFatal( 'hookaborted' );
 			} elseif ( $error === true ) {
 				// Hook sent the mail itself and indicates success?
-				return Status::newGood();
+				return StatusValue::newGood();
 			} elseif ( is_array( $error ) ) {
-				$status = Status::newGood();
+				$status = StatusValue::newGood();
 				foreach ( $error as $e ) {
 					$status->fatal( $e );
 				}
 				return $status;
 			} elseif ( $error instanceof MessageSpecifier ) {
-				return Status::newFatal( $error );
+				return StatusValue::newFatal( $error );
 			} else {
 				// Setting $error to something else was deprecated in 1.29 and
 				// removed in 1.36, and so an exception is now thrown
 				$type = is_object( $error ) ? get_class( $error ) : gettype( $error );
-				throw new MWException(
+				throw new UnexpectedValueException(
 					'EmailUser hook set $error to unsupported type ' . $type
 				);
 			}
 		}
 
-		if ( $config->get( MainConfigNames::UserEmailUseReplyTo ) ) {
+		$hookStatus = StatusValue::newGood();
+		$hookRes = $this->hookRunner->onEmailUserSendEmail(
+			$this->sender,
+			$fromAddress,
+			$target,
+			$toAddress,
+			$subject,
+			$text,
+			$hookStatus
+		);
+		if ( !$hookRes && !$hookStatus->isGood() ) {
+			return $hookStatus;
+		}
+
+		[ $mailFrom, $replyTo ] = $this->getFromAndReplyTo( $fromAddress );
+
+		$status = $this->emailer->send(
+			$toAddress,
+			$mailFrom,
+			$subject,
+			$text,
+			null,
+			[ 'replyTo' => $replyTo ]
+		);
+
+		if ( !$status->isGood() ) {
+			return $status;
+		}
+
+		// if the user requested a copy of this mail, do this now,
+		// unless they are emailing themselves, in which case one
+		// copy of the message is sufficient.
+		if ( $CCMe && !$toAddress->equals( $fromAddress ) ) {
+			$userMsgFormatter = $this->messageFormatterFactory->getTextFormatter( $langCode );
+			$ccTo = $fromAddress;
+			$ccFrom = $fromAddress;
+			$ccSubject = $userMsgFormatter->format(
+				MessageValue::new( 'emailccsubject' )->plaintextParams(
+					$target->getUser()->getName(),
+					$subject
+				)
+			);
+			$ccText = $text;
+
+			$this->hookRunner->onEmailUserCC( $ccTo, $ccFrom, $ccSubject, $ccText );
+
+			[ $mailFrom, $replyTo ] = $this->getFromAndReplyTo( $ccFrom );
+
+			$ccStatus = $this->emailer->send(
+				$ccTo,
+				$mailFrom,
+				$ccSubject,
+				$ccText,
+				null,
+				[ 'replyTo' => $replyTo ]
+			);
+			$status->merge( $ccStatus );
+		}
+
+		$this->hookRunner->onEmailUserComplete( $toAddress, $fromAddress, $subject, $text );
+
+		return $status;
+	}
+
+	/**
+	 * @param MailAddress $fromAddress
+	 * @return array
+	 * @phan-return array{0:MailAddress,1:?MailAddress}
+	 */
+	private function getFromAndReplyTo( MailAddress $fromAddress ): array {
+		if ( $this->options->get( MainConfigNames::UserEmailUseReplyTo ) ) {
 			/**
 			 * Put the generic wiki autogenerated address in the From:
 			 * header and reserve the user for Reply-To.
@@ -263,8 +384,8 @@ class EmailUser {
 			 * SPF and bounce problems with some mailers (see below).
 			 */
 			$mailFrom = new MailAddress(
-				$config->get( MainConfigNames::PasswordSender ),
-				$context->msg( 'emailsender' )->inContentLanguage()->text()
+				$this->options->get( MainConfigNames::PasswordSender ),
+				$this->contLangMsgFormatter->format( MessageValue::new( 'emailsender' ) )
 			);
 			$replyTo = $fromAddress;
 		} else {
@@ -286,58 +407,28 @@ class EmailUser {
 			$mailFrom = $fromAddress;
 			$replyTo = null;
 		}
-
-		$status = Status::wrap( $emailer->send(
-			$toAddress,
-			$mailFrom,
-			$subject,
-			$text,
-			null,
-			[ 'replyTo' => $replyTo ]
-		) );
-
-		if ( !$status->isGood() ) {
-			return $status;
-		}
-
-		// if the user requested a copy of this mail, do this now,
-		// unless they are emailing themselves, in which case one
-		// copy of the message is sufficient.
-		if ( $data['CCMe'] && $toAddress != $fromAddress ) {
-			$ccTo = $fromAddress;
-			$ccFrom = $fromAddress;
-			$ccSubject = $context->msg( 'emailccsubject' )->plaintextParams(
-				$target->getName(),
-				$subject
-			)->text();
-			$ccText = $text;
-
-			$hookRunner->onEmailUserCC( $ccTo, $ccFrom, $ccSubject, $ccText );
-
-			if ( $config->get( MainConfigNames::UserEmailUseReplyTo ) ) {
-				$mailFrom = new MailAddress(
-					$config->get( MainConfigNames::PasswordSender ),
-					$context->msg( 'emailsender' )->inContentLanguage()->text()
-				);
-				$replyTo = $ccFrom;
-			} else {
-				$mailFrom = $ccFrom;
-				$replyTo = null;
-			}
-
-			$ccStatus = $emailer->send(
-				$ccTo,
-				$mailFrom,
-				$ccSubject,
-				$ccText,
-				null,
-				[ 'replyTo' => $replyTo ]
-			);
-			$status->merge( $ccStatus );
-		}
-
-		$hookRunner->onEmailUserComplete( $toAddress, $fromAddress, $subject, $text );
-
-		return $status;
+		return [ $mailFrom, $replyTo ];
 	}
+
+	/**
+	 * @param string $targetName
+	 * @return string
+	 * XXX This code is still heavily reliant on global state, so temporarily skip it in tests.
+	 * @codeCoverageIgnore
+	 */
+	private function getSpecialMuteCanonicalURL( string $targetName ): string {
+		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+			return "Ceci n'est pas une URL";
+		}
+		return SpecialPage::getTitleFor( 'Mute', $targetName )->getCanonicalURL();
+	}
+
+	/**
+	 * @internal Only for BC with SpecialEmailUser
+	 * @param string $token
+	 */
+	public function setEditToken( string $token ): void {
+		$this->editToken = $token;
+	}
+
 }

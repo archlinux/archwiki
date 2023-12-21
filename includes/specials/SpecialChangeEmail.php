@@ -21,10 +21,19 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use ErrorPageError;
+use HTMLForm;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
+use PermissionsError;
 
 /**
  * Let users change their email address.
@@ -209,6 +218,11 @@ class SpecialChangeEmail extends FormSpecialPage {
 	}
 
 	protected function getGroupName() {
-		return 'users';
+		return 'login';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialChangeEmail::class, 'SpecialChangeEmail' );

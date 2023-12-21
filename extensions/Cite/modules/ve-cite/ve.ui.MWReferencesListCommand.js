@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * VisualEditor UserInterface MediaWiki ReferencesListCommand class.
  *
@@ -34,9 +36,9 @@ OO.inheritClass( ve.ui.MWReferencesListCommand, ve.ui.Command );
  * @inheritdoc
  */
 ve.ui.MWReferencesListCommand.prototype.execute = function ( surface ) {
-	var fragment = surface.getModel().getFragment(),
-		selectedNode = fragment.getSelectedNode(),
-		isReflistNodeSelected = selectedNode && selectedNode instanceof ve.dm.MWReferencesListNode;
+	const fragment = surface.getModel().getFragment();
+	const selectedNode = fragment.getSelectedNode();
+	const isReflistNodeSelected = selectedNode && selectedNode instanceof ve.dm.MWReferencesListNode;
 
 	if ( isReflistNodeSelected ) {
 		return surface.execute( 'window', 'open', 'referencesList' );

@@ -9,14 +9,8 @@ use Sanitizer;
  */
 class AnchorFormatter {
 
-	/**
-	 * @var ReferenceMessageLocalizer
-	 */
-	private $messageLocalizer;
+	private ReferenceMessageLocalizer $messageLocalizer;
 
-	/**
-	 * @param ReferenceMessageLocalizer $messageLocalizer
-	 */
 	public function __construct( ReferenceMessageLocalizer $messageLocalizer ) {
 		$this->messageLocalizer = $messageLocalizer;
 	}
@@ -32,8 +26,8 @@ class AnchorFormatter {
 	 * @return string A key for use in wikitext
 	 */
 	public function refKey( string $key, string $num = null ): string {
-		$prefix = $this->messageLocalizer->msg( 'cite_reference_link_prefix' )->text();
-		$suffix = $this->messageLocalizer->msg( 'cite_reference_link_suffix' )->text();
+		$prefix = $this->messageLocalizer->msg( 'cite_reference_link_prefix' )->plain();
+		$suffix = $this->messageLocalizer->msg( 'cite_reference_link_suffix' )->plain();
 		if ( $num !== null ) {
 			$key = $this->messageLocalizer->msg( 'cite_reference_link_key_with_num', $key, $num )
 				->plain();
@@ -52,8 +46,8 @@ class AnchorFormatter {
 	 * @return string A key for use in wikitext
 	 */
 	public function getReferencesKey( string $key ): string {
-		$prefix = $this->messageLocalizer->msg( 'cite_references_link_prefix' )->text();
-		$suffix = $this->messageLocalizer->msg( 'cite_references_link_suffix' )->text();
+		$prefix = $this->messageLocalizer->msg( 'cite_references_link_prefix' )->plain();
+		$suffix = $this->messageLocalizer->msg( 'cite_references_link_suffix' )->plain();
 
 		return $this->normalizeKey( $prefix . $key . $suffix );
 	}

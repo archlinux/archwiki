@@ -7,10 +7,17 @@ use MediaWiki\ShellDisabledError;
 use Wikimedia\ScopedCallback;
 
 /**
- * The Registry loads JSON files, and uses a Processor
- * to extract information from them. It also registers
- * classes with the autoloader.
+ * @defgroup ExtensionRegistry ExtensionRegistry
  *
+ * For higher level documentation, see <https://www.mediawiki.org/wiki/Manual:Extension_registration/Architecture>.
+ */
+
+/**
+ * Load JSON files, and uses a Processor to extract information.
+ *
+ * This also adds the extension's classes to the AutoLoader.
+ *
+ * @ingroup ExtensionRegistry
  * @since 1.25
  */
 class ExtensionRegistry {
@@ -145,16 +152,41 @@ class ExtensionRegistry {
 	 */
 	private ?SettingsBuilder $settingsBuilder = null;
 
+	private static bool $accessDisabledForUnitTests = false;
+
 	/**
 	 * @codeCoverageIgnore
 	 * @return ExtensionRegistry
 	 */
 	public static function getInstance() {
+		if ( self::$accessDisabledForUnitTests ) {
+			throw new RuntimeException( 'Access is disabled in unit tests' );
+		}
 		if ( self::$instance === null ) {
 			self::$instance = new self();
 		}
 
 		return self::$instance;
+	}
+
+	/**
+	 * @internal
+	 */
+	public static function disableForTest(): void {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new RuntimeException( 'Can only be called in tests' );
+		}
+		self::$accessDisabledForUnitTests = true;
+	}
+
+	/**
+	 * @internal
+	 */
+	public static function enableForTest(): void {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new RuntimeException( 'Can only be called in tests' );
+		}
+		self::$accessDisabledForUnitTests = false;
 	}
 
 	/**
@@ -400,16 +432,6 @@ class ExtensionRegistry {
 				throw new Exception( "$path is not a valid JSON file." );
 			}
 
-			if ( !isset( $info['manifest_version'] ) ) {
-				wfDeprecatedMsg(
-					"{$info['name']}'s extension.json or skin.json does not have manifest_version, " .
-					'this is deprecated since MediaWiki 1.29',
-					'1.29', false, false
-				);
-				$warnings = true;
-				// For backwards-compatibility, assume a version of 1
-				$info['manifest_version'] = 1;
-			}
 			$version = $info['manifest_version'];
 			if ( $version < self::OLDEST_MANIFEST_VERSION || $version > self::MANIFEST_VERSION ) {
 				throw new Exception( "$path: unsupported manifest_version: {$version}" );
@@ -625,7 +647,7 @@ class ExtensionRegistry {
 	public function setAttributeForTest( $name, array $value ) {
 		// @codeCoverageIgnoreStart
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new RuntimeException( __METHOD__ . ' can only be used in tests' );
+			throw new LogicException( __METHOD__ . ' can only be used in tests' );
 		}
 		// @codeCoverageIgnoreEnd
 		if ( isset( $this->testAttributes[$name] ) ) {

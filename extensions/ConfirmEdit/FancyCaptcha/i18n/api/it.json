@@ -5,7 +5,6 @@
 			"Gianfranco"
 		]
 	},
-	"apihelp-fancycaptchareload-description": "Ottieni un nuovo FancyCaptcha.",
 	"apihelp-fancycaptchareload-summary": "Ottieni un nuovo FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Ottieni un nuovo FancyCaptcha"
 }

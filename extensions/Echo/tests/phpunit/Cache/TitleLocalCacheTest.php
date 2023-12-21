@@ -9,11 +9,6 @@ use Wikimedia\TestingAccessWrapper;
  */
 class TitleLocalCacheTest extends MediaWikiIntegrationTestCase {
 
-	public function testCreate() {
-		$cache = TitleLocalCache::create();
-		$this->assertInstanceOf( TitleLocalCache::class, $cache );
-	}
-
 	public function testAdd() {
 		$cache = $this->getMockBuilder( TitleLocalCache::class )
 			->onlyMethods( [ 'resolve' ] )->getMock();

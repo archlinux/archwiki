@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Anson2812",
 			"DannyS712",
 			"Dream hot",
@@ -20,8 +21,7 @@
 			"Xiaomingyan",
 			"唐吉訶德的侍從",
 			"飞舞回堂前",
-			"아라",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Lièn-chiap kâ-tái sien:",
@@ -550,8 +550,6 @@
 	"invalid-content-data": "無效嘅數據內容",
 	"content-model-wikitext": "Wki ngî-fap",
 	"content-model-text": "sùn vùn-sṳ",
-	"content-model-javascript": "JavaScript",
-	"content-model-css": "CSS",
 	"post-expand-template-inclusion-warning": "警告: 包含模板大小過大。\n一兜模板將毋會包含。",
 	"post-expand-template-inclusion-category": "模板包含上限已經超過嘅頁面",
 	"post-expand-template-argument-warning": "警告: 邇隻頁面有最少一隻模參數有過大擴展大細。\n邇兜參數會分略過。",
@@ -559,7 +557,7 @@
 	"undo-success": "邇次編寫可以分撤銷。請檢查下背對比來核實邇確實係汝想做嘅，之後保存下背更改來完成撤銷編寫。",
 	"undo-failure": "由於中途嘅編寫毋一致，本編輯毋做得撤銷。",
 	"undo-norev": "由於其嘅修訂版本毋存在或已刪除，本編寫毋做得撤銷。",
-	"undo-summary": "Chhí-sêu yù [[Special:Contributions/$2|$2]] （[[User talk:$2|tui-fa]]） só chok-chhut ke siû-thin $1",
+	"undo-summary": "Chhí-sêu yù [[Special:Contributions/$2|$2]] （[[User talk:$2|tui-fa]]） só chok-chhut ke siû-thin [[Special:Diff/$1|$1]]",
 	"viewpagelogs": "Chhà-khon liá-chak ya̍p-mien ke ngit-chì",
 	"nohistory": "無本頁嘅修訂版本記錄。",
 	"currentrev": "最新版本",
@@ -655,7 +653,6 @@
 	"search-interwiki-more": "（還較多）",
 	"searchrelated": "相關",
 	"searchall": "chhiòn-phu",
-	"showingresults": "Ha-mien hién-sṳ chhiùng thi-'''$2'''-thiàu khôi-sṳ́ ke '''$1'''-thiàu kiet-kó:",
 	"search-showingresults": "{{PLURAL:$4|thi <strong>$1</strong> pit kiet-kó, khiung <strong>$3</strong> pit |thi <strong>$1 - $2</strong> pit kiet-kó, khiung <strong>$3</strong> pit }}",
 	"search-nonefound": "Chhai chhà-sûn tú mò kiet-kó siông-fù.",
 	"powersearch-legend": "高級搜尋",
@@ -996,8 +993,6 @@
 	"enotif_lastdiff": "請參詳$1查看邇次更改。",
 	"enotif_anon_editor": "匿名用戶$1",
 	"enotif_body": "Chhîn-oi ke $WATCHINGUSERNAME,\n\n$PAGEINTRO $NEWPAGE\n\nphiên-si̍p chak-yeu: $PAGESUMMARY $PAGEMINOREDIT lièn-kiê chhṳ́ phiên-si̍p-chá: email: $PAGEEDITOR_EMAIL pún-chham: $PAGEEDITOR_WIKI chhai ngì fóng-mun chhṳ́-chông chṳ̂-chhièn, chiông-lòi ke kiên-kói vù-nèn hiong ngì thûng-tî. Ngì khó-yî chhûng-sat ngì só-yû kam-sṳ vùn-chông ke thûng-tî phêu-ki. {{SITENAME}} thûng-tî ne-thúng -- yeu kói-pien ngì-ke kam-sṳ lie̍t-péu sat-thin, chhiáng chhâm-siòng {{canonicalurl:{{#special:EditWatchlist}}}} chin-yit-phu ke pông-chhu: $HELPPAGE",
-	"created": "建立矣",
-	"changed": "更改矣",
 	"deletepage-submit": "刪除頁面",
 	"confirm": "確認",
 	"excontent": "內容係:“$1”",

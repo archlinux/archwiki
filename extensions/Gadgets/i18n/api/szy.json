@@ -5,12 +5,10 @@
 			"Bunukwiki"
 		]
 	},
-	"apihelp-query+gadgetcategories-description": "maminay tu adidi’ay sakaluk kakuniza piazihan-tu-sulit.",
 	"apihelp-query+gadgetcategories-param-prop": "amiala u canan adidi’ay sakaluk kakuniza cesyun:\n;name: labuay liyad malecaday a kalungangan\n;title: kakuniza satangahan\n;members: ibalu’ nu kakuniza nikayadah nu adidi’ay a sakaluk.",
 	"apihelp-query+gadgetcategories-param-names": "amaala kakuniza kalungangan.",
 	"apihelp-query+gadgetcategories-example-1": "maala izaway a adidi’ay sakaluk kakuniza piazihan-tu-sulit",
 	"apihelp-query+gadgetcategories-example-2": "maala sacahamin mahizaay kakuniza kalungangan ku \"foo\" atu \"bar\" a cesyun",
-	"apihelp-query+gadgets-description": "maminay tu iniay wiki masaungayay adidi’ay sakaluk piazihan-tu-sulit.",
 	"apihelp-query+gadgets-param-prop": "amiala canan adidi’ay sakaluk cesyun:\n;id: labu adidi’ay sakaluk ID.\n;metadata: adidi’ay sakaluk metadata.\n;desc: adidi’ay sakaluk sapuelac miliyaw ta HTML kese (hakay sasutili’ay haymaw, i maydih a dada’ misaungay).",
 	"apihelp-query+gadgets-param-categories": "nay tina kakuniza maala adidi’ay sakaluk.",
 	"apihelp-query+gadgets-param-ids": "amiala adidi’ay sakaluk a ID.",

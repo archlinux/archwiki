@@ -12,7 +12,6 @@
 	"captcha-edit": "Por redakti ĉi tiun paĝon, bonvolu solvi la jenan tasketon kaj enigi la respondon en la skatolo ([[Special:Captcha/help|plua informo]]):",
 	"captcha-edit-fail": "Neĝusta aŭ mankata CAPTCHA.",
 	"captcha-desc": "Disponigas ilojn de Captcha por kontraŭigi spamaĵojn kaj pasvorto-divenadon",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Solvo de la CAPTCHA.",
 	"captcha-info-help": "Priskribo de la CAPTCHA.",
 	"captcha-id-label": "CAPTCHA-identigilo",

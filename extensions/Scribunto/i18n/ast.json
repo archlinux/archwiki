@@ -48,7 +48,7 @@
 	"scribunto-luastandalone-signal": "Error de Lua: Error internu: L'intérprete acabó cola señal \"$2\".",
 	"scribunto-luastandalone-exited": "Error de Lua: Error internu: L'intérprete acabó col estáu $2.",
 	"scribunto-module-with-errors-category": "Módulos de Scribunto con errores",
-	"scribunto-module-with-errors-category-desc": "El módulu contien un error.",
+	"scribunto-module-with-errors-category-desc": "El módulu contién un error.",
 	"scribunto-limitreport-timeusage": "Tiempu d'usu de Lua",
 	"scribunto-limitreport-timeusage-value": "$1/$2 segundos",
 	"scribunto-limitreport-virtmemusage": "Tamañu virtual de Lua",

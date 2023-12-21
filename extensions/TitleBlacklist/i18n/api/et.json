@@ -4,7 +4,6 @@
 			"Pikne"
 		]
 	},
-	"apihelp-titleblacklist-description": "Lehekülje pealkirja, failinime või kasutajanime valideerimine pealkirjade musta nimekirja vastu.",
 	"apihelp-titleblacklist-param-title": "Sõne, mida musta nimekirja vastu valideerida.",
 	"apihelp-titleblacklist-param-action": "Toiming, mida kontrollida.",
 	"apihelp-titleblacklist-param-nooverride": "Ära ürita pealkirjade musta nimekirja ümber kehtestada.",

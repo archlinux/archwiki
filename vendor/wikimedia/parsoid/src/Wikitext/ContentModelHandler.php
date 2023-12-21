@@ -15,6 +15,7 @@ use Wikimedia\Parsoid\Html2Wt\WikitextSerializer;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\Timing;
 
 class ContentModelHandler extends IContentModelHandler {
@@ -52,7 +53,7 @@ class ContentModelHandler extends IContentModelHandler {
 		// as well as extended annotation wrappers.
 		// This ensures that we can accept HTML from CX / VE
 		// and other clients that might have stripped them.
-		ContentUtils::stripUnnecessaryWrappersAndFallbackIds( $body );
+		ContentUtils::stripUnnecessaryWrappersAndSyntheticNodes( $body );
 
 		$redLinkRemover = new RemoveRedLinks( $this->env );
 		$redLinkRemover->run( $body );
@@ -103,6 +104,8 @@ class ContentModelHandler extends IContentModelHandler {
 		//
 		// So, we're forced to trade off the correctness for usability.
 		if ( $selserData->oldHTML === null ) {
+			$env->log( "warn/html2wt", "Missing selserData->oldHTML. Regenerating." );
+
 			// FIXME(T266838): Create a new Env for this parse?  Something is
 			// needed to avoid this rigmarole.
 			$topLevelDoc = $env->topLevelDoc;
@@ -120,13 +123,51 @@ class ContentModelHandler extends IContentModelHandler {
 	}
 
 	/**
+	 * @param Document $doc
+	 */
+	private function processIndicators( Document $doc, ParsoidExtensionAPI $extApi ): void {
+		// Erroneous indicators without names will be <span>s
+		$indicators = DOMCompat::querySelectorAll( $doc, 'meta[typeof~="mw:Extension/indicator"]' );
+		$iData = [];
+
+		// https://www.mediawiki.org/wiki/Help:Page_status_indicators#Adding_page_status_indicators
+		// says that last one wins. But, that may just be documentation of the
+		// implementation vs. being a deliberate strategy.
+		//
+		// The indicators are ordered by depth-first pre-order DOM traversal.
+		// This ensures that the indicators are in document textual order.
+		// Given that, the for-loop below implements "last-one-wins" semantics
+		// for indicators that use the same name key.
+		foreach ( $indicators as $meta ) {
+			// T214241: indicator data-mw info is clobbered when the indicator
+			// happens to be the transclusion wrapper as well.
+			if ( !DOMUtils::hasTypeOf( $meta, "mw:Transclusion" ) ) {
+				// Since the DOM is in "stored" state, we have to reparse data-mw here.
+				$dmw = DOMDataUtils::getJSONAttribute( $meta, 'data-mw', null );
+				$name = $dmw->attrs->name;
+				$iData[$name] = $dmw->html;
+			}
+		}
+
+		// set indicator metadata for unique keys
+		foreach ( $iData as $name => $html ) {
+			$extApi->getMetadata()->setIndicator( (string)$name,  $html );
+		}
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	public function toDOM( ParsoidExtensionAPI $extApi ): Document {
-		return $this->env->getPipelineFactory()->parse(
+		$doc = $this->env->getPipelineFactory()->parse(
 			// @phan-suppress-next-line PhanDeprecatedFunction not ready for topFrame yet
 			$this->env->getPageConfig()->getPageMainContent()
 		);
+
+		// Hardcoded support for indicators
+		$this->processIndicators( $doc, $extApi );
+
+		return $doc;
 	}
 
 	/**
@@ -143,7 +184,7 @@ class ContentModelHandler extends IContentModelHandler {
 	 * @param Env $env
 	 * @param Document $doc
 	 */
-	private function preprocessDOM( Env $env, Document $doc ): void {
+	private function preprocessEditedDOM( Env $env, Document $doc ): void {
 		$siteConfig = $env->getSiteConfig();
 
 		// Run any registered DOM preprocessors
@@ -172,21 +213,21 @@ class ContentModelHandler extends IContentModelHandler {
 
 		$this->canonicalizeDOM( $env, $env->topLevelDoc );
 
-		$serializerOpts = [ 'env' => $env, 'selserData' => $selserData ];
+		$serializerOpts = [ 'selserData' => $selserData ];
 		if ( $selserData && $selserData->oldText !== null ) {
-			$serializer = new SelectiveSerializer( $serializerOpts );
+			$serializer = new SelectiveSerializer( $env, $serializerOpts );
 			$this->setupSelser( $extApi, $selserData );
 			$wtsType = 'selser';
 		} else {
 			// Fallback
-			$serializer = new WikitextSerializer( $serializerOpts );
+			$serializer = new WikitextSerializer( $env, $serializerOpts );
 			$wtsType = 'noselser';
 		}
 
 		$setupTiming->end( 'html2wt.setup' );
 
 		$preprocTiming = Timing::start( $metrics );
-		$this->preprocessDOM( $env, $env->topLevelDoc );
+		$this->preprocessEditedDOM( $env, $env->topLevelDoc );
 		$preprocTiming->end( 'html2wt.preprocess' );
 
 		$serializeTiming = Timing::start( $metrics );

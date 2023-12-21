@@ -320,6 +320,7 @@
 	"abusefilter-import-intro": "آپ اس انٹرفیس کی مدد سے دوسری ویکیوں سے فلٹر درآمد کر سکتے ہیں۔\nجس ویکی سے درآمد کر رہے ہیں وہاں \"{{int:abusefilter-edit-tools}}\" کے تحت موجود \"{{int:abusefilter-edit-export}}\" پر کلک کریں۔\nایک خانہ نمودار ہوگا، جس میں درج مواد کو نقل کرکے یہاں نیچے موجود خانہ میں چسپاں کریں اور اس کے بعد \"{{int:abusefilter-import-submit}}\" کی بٹن پر کلک کریں۔",
 	"abusefilter-group-default": "پہلے سے طے شدہ",
 	"abusefilter-view-privatedetails-legend": "نجی تفصیلات دیکھیں",
+	"blockedexternaldomains": "ممنوع بیرونی روابط",
 	"abusefilter-log-ip-not-available": "دستیاب نہیں ہے",
 	"tag-abusefilter-condition-limit": "تعداد شرائط کے حدود تک جا پہنچا"
 }

@@ -3,6 +3,7 @@
 namespace Test\Parsoid\Utils;
 
 use PHPUnit\Framework\MockObject\MockObject;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Parsoid\Mocks\MockSiteConfig;
 use Wikimedia\Parsoid\Utils\Title;
 use Wikimedia\Parsoid\Utils\TitleException;
@@ -65,18 +66,24 @@ class TitleTest extends \PHPUnit\Framework\TestCase {
 	private function getMockSiteConfig( string $lang = 'en' ) {
 		$siteConfig = $this->getMockBuilder( MockSiteConfig::class )
 			->setConstructorArgs( [ [] ] )
-			->onlyMethods( [ 'lang', 'namespaceCase', 'specialPageLocalName' ] )
+			->onlyMethods( [ 'langBcp47', 'namespaceCase', 'specialPageLocalName', 'interwikiMap' ] )
 			->getMock();
 		$siteConfig->method( 'namespaceCase' )->willReturnCallback( static function ( $ns ) {
 			return $ns === 15 ? 'case-sensitive' : 'first-letter';
 		} );
-		$siteConfig->method( 'lang' )->willReturn( $lang );
+		$siteConfig->method( 'langBcp47' )->willReturn( new Bcp47CodeValue( $lang ) );
 		$siteConfig->method( 'specialPageLocalName' )->willReturnCallback( static function ( $alias ) {
 			if ( $alias === 'DoesNotExist' ) {
 				return null;
 			}
 			return strtoupper( $alias );
 		} );
+		$siteConfig->method( 'interwikiMap' )->willReturn( [
+			'remotetestiw' => [
+				'prefix' => 'remotetestiw',
+				'url' => 'http://example.com/$1',
+			],
+		] );
 
 		return $siteConfig;
 	}
@@ -211,6 +218,11 @@ class TitleTest extends \PHPUnit\Framework\TestCase {
 			[ [ 'User_Talk:::1' ], '0:0:0:0:0:0:0:1', 3, null ],
 			[ [ 'User_talk:::1' ], '0:0:0:0:0:0:0:1', 3, null ],
 			[ [ 'User_talk:::1/24' ], '0:0:0:0:0:0:0:1/24', 3, null ],
+			// remotetestiw in user (T329690)
+			[ [ 'remotetestiw:', 2 ], 'remotetestiw:', 2, null ],
+			// Colons in talk namespaces (T332903)
+			// phpcs:ignore Generic.Files.LineLength.TooLong
+			[ [ 'Talk:2024:Expressions of Interest/Wikimania 2024 Istanbul, Türkiye' ], '2024:Expressions_of_Interest/Wikimania_2024_Istanbul,_Türkiye', 1, null ],
 		];
 	}
 
@@ -279,8 +291,6 @@ class TitleTest extends \PHPUnit\Framework\TestCase {
 			// Note: Commented out because they are not marked invalid by the PHP test as
 			// Title::newFromText runs Sanitizer::decodeCharReferencesAndNormalize first.
 			// 'A &eacute; B',
-			// 'A &#233; B',
-			// 'A &#x00E9; B',
 			// Subject of NS_TALK does not roundtrip to NS_MAIN
 			[ 'Talk:File:Example.svg', 'title-invalid-talk-namespace' ],
 			// Directory navigation

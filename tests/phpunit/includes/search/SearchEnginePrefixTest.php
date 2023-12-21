@@ -366,7 +366,7 @@ class SearchEnginePrefixTest extends MediaWikiLangTestCase {
 		);
 	}
 
-	public function paginationProvider() {
+	public static function paginationProvider() {
 		$res = [ 'Example', 'Example Bar', 'Example Foo', 'Example Foo/Bar' ];
 		return [
 			'With less than requested results no pagination' => [
@@ -393,7 +393,7 @@ class SearchEnginePrefixTest extends MediaWikiLangTestCase {
 	}
 
 	private function mockSearchWithResults( $titleStrings, $limit = 3 ) {
-		$search = $stub = $this->getMockBuilder( SearchEngine::class )
+		$search = $this->getMockBuilder( SearchEngine::class )
 			->onlyMethods( [ 'completionSearchBackend' ] )->getMock();
 
 		$return = SearchSuggestionSet::fromStrings( $titleStrings );

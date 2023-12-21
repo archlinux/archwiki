@@ -55,7 +55,7 @@ class MutableFilterTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array
 	 */
-	public function provideSetters() {
+	public static function provideSetters() {
 		return [
 			'rules' => [ 'rules', 'setRules', 'getRules' ],
 			'comments' => [ 'comments', 'setComments', 'getComments' ],

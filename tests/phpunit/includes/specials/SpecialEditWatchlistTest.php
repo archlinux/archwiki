@@ -1,11 +1,14 @@
 <?php
 
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\SpecialEditWatchlist;
+
 /**
  * @author Addshore
  *
  * @group Database
  *
- * @covers SpecialEditWatchlist
+ * @covers \MediaWiki\Specials\SpecialEditWatchlist
  */
 class SpecialEditWatchlistTest extends SpecialPageTestBase {
 

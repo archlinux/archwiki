@@ -1,9 +1,5 @@
-@import '../../common/variables.less';
-@import 'mediawiki.mixins.less';
-@import '../../common/mixins.less';
-
 // Flips the chevron so it points up when the dropdown is open.
-.vector-menu-checkbox:checked + .vector-menu-heading:after {
+.vector-menu-checkbox:checked + .vector-menu-heading::after {
 	transform: scaleY( -1 );
 }
 
@@ -20,7 +16,7 @@
 	// menu label with chevron icon.
 	.vector-menu-heading {
 		display: flex;
-		color: @color-base--subtle;
+		color: @color-subtle;
 		font-size: @font-size-tabs;
 		// Tab separator: Outer end (right in LTR) border of "Actions" menu.
 		background-position: right bottom;
@@ -29,7 +25,7 @@
 		padding: 1.25em 8px 6px;
 		font-weight: normal;
 
-		&:after {
+		&::after {
 			.mixin-vector-legacy-menu-heading-arrow();
 			// Modify the color of the image from the default #202122 to approx. #404244 to match the text.
 			opacity: @opacity-icon-base;
@@ -39,16 +35,26 @@
 		&:focus {
 			color: @color-base;
 
-			&:after {
+			&::after {
 				opacity: @opacity-icon-base--selected;
 			}
 		}
 	}
 
 	/**
-	 * Dropdown container.
+	 * Dropdown container. Hidden by default until checkbox is checked.
 	 */
 	.vector-menu-content {
+		position: absolute;
+		top: 100%;
+		left: -@border-width-base;
+		opacity: 0;
+		height: 0;
+		visibility: hidden;
+		overflow: hidden;
+		margin: 0;
+		padding: 0;
+		z-index: @z-index-dropdown;
 		line-height: 1.125em;
 		background-color: @background-color-base;
 		border: @border-width-base @border-style-base @border-color-base;
@@ -60,6 +66,11 @@
 		min-width: 100%;
 	}
 
+	// Dropdown <ul> element.
+	> .vector-menu-content-list {
+		list-style: none;
+	}
+
 	// Open the dropdown container via hover.
 	&:hover .vector-menu-content {
 		opacity: @opacity-base;
@@ -68,14 +79,17 @@
 	}
 
 	.mw-list-item {
+		padding: 0;
+		margin: 0;
 		text-align: left;
 		line-height: 1em;
 
-		a:not( .mw-ui-icon ) {
+		a:not( .vector-icon ) {
 			font-size: @font-size-tabs;
 		}
 
 		a {
+			cursor: pointer;
 			// displays all links in a single column.
 			display: block;
 			white-space: nowrap;
@@ -88,5 +102,42 @@
 			color: @color-link-selected;
 			text-decoration: none;
 		}
+	}
+}
+
+/**
+ * Invisible checkbox covering the dropdown menu handle.
+ */
+.vector-menu-checkbox {
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: @z-index-stacking-1;
+	opacity: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	// Hide the checkbox completely in browsers that don't support :checked
+	display: none;
+
+	// Hide and show menu content based off checked status.
+	&:checked ~ .vector-menu-content {
+		opacity: 1;
+		visibility: visible;
+		height: auto;
+	}
+
+	:not( :checked ) > & {
+		// When the browser supports :checked, display it
+		display: block;
+	}
+
+	// Add focus state to menu dropdown buttons (i.e. #p-variants, #p-cactions)
+	&:focus + .vector-menu-heading:not( .cdx-button ) {
+		// Simulate browser focus ring
+		outline: dotted 1px; // Firefox style
+		outline: auto -webkit-focus-ring-color; // Webkit style
 	}
 }

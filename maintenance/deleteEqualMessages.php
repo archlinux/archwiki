@@ -20,9 +20,10 @@
  */
 
 use MediaWiki\Languages\LanguageNameUtils;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Pager\AllMessagesTablePager;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -49,7 +50,7 @@ class DeleteEqualMessages extends Maintenance {
 	 * @param array &$messageInfo
 	 */
 	protected function fetchMessageInfo( $langCode, array &$messageInfo ) {
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$contLang = $services->getContentLanguage();
 		if ( $langCode ) {
 			$this->output( "\n... fetching message info for language: $langCode" );
@@ -118,7 +119,7 @@ class DeleteEqualMessages extends Maintenance {
 
 		$this->output( 'Checking for pages with default message...' );
 
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		// Load message information
 		if ( $langCode ) {
 			$langCodes = $services->getLanguageNameUtils()
@@ -187,13 +188,14 @@ class DeleteEqualMessages extends Maintenance {
 		$this->output( "\n...deleting equal messages (this may take a long time!)..." );
 		$dbw = $this->getDB( DB_PRIMARY );
 		$wikiPageFactory = $services->getWikiPageFactory();
+		$delPageFactory = $services->getDeletePageFactory();
 		foreach ( $messageInfo['results'] as $result ) {
 			$this->waitForReplication();
 			$dbw->ping();
 			$title = Title::makeTitle( NS_MEDIAWIKI, $result['title'] );
 			$this->output( "\n* [[$title]]" );
 			$page = $wikiPageFactory->newFromTitle( $title );
-			$status = $page->doDeleteArticleReal( 'No longer required', $user );
+			$status = $delPageFactory->newDeletePage( $page, $user )->deleteUnsafe( 'No longer required' );
 			if ( !$status->isOK() ) {
 				$this->output( " (Failed!)" );
 			}
@@ -201,10 +203,8 @@ class DeleteEqualMessages extends Maintenance {
 				$title = Title::makeTitle( NS_MEDIAWIKI_TALK, $result['title'] );
 				$this->output( "\n* [[$title]]" );
 				$page = $wikiPageFactory->newFromTitle( $title );
-				$status = $page->doDeleteArticleReal(
-					'Orphaned talk page of no longer required message',
-					$user
-				);
+				$status = $delPageFactory->newDeletePage( $page, $user )
+					->deleteUnsafe( 'Orphaned talk page of no longer required message' );
 				if ( !$status->isOK() ) {
 					$this->output( " (Failed!)" );
 				}

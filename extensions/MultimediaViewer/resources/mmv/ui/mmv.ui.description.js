@@ -15,55 +15,53 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { HtmlUtils } = require( 'mmv.bootstrap' );
+const UiElement = require( './mmv.ui.js' );
+
 ( function () {
 	/**
 	 * Description element in the UI.
-	 *
-	 * @class mw.mmv.ui.Description
-	 * @extends mw.mmv.ui.Element
-	 * @constructor
-	 * @inheritdoc
 	 */
-	function Description( $container ) {
-		mw.mmv.ui.Element.call( this, $container );
+	class Description extends UiElement {
+		constructor( $container ) {
+			super( $container );
 
-		/** @property {mw.mmv.HtmlUtils} htmlUtils - */
-		this.htmlUtils = new mw.mmv.HtmlUtils();
+			/** @property {HtmlUtils} htmlUtils - */
+			this.htmlUtils = new HtmlUtils();
 
-		this.$imageDescDiv = $( '<div>' )
-			.addClass( 'mw-mmv-image-desc-div empty' )
-			.appendTo( this.$container );
+			this.$imageDescDiv = $( '<div>' )
+				.addClass( 'mw-mmv-image-desc-div empty' )
+				.appendTo( this.$container );
 
-		this.$imageDesc = $( '<p>' )
-			.addClass( 'mw-mmv-image-desc' )
-			.appendTo( this.$imageDescDiv );
+			this.$imageDesc = $( '<p>' )
+				.addClass( 'mw-mmv-image-desc' )
+				.appendTo( this.$imageDescDiv );
+		}
+
+		/**
+		 * Sets data on the element.
+		 * This complements MetadataPanel.setTitle() - information shown there will not be shown here.
+		 *
+		 * @param {string|null} description The text of the description
+		 * @param {string|null} caption The text of the caption
+		 */
+		set( description, caption ) {
+			if ( caption && description ) { // panel header shows the caption - show description here
+				this.$imageDesc.html( this.htmlUtils.htmlToTextWithTags( description ) );
+				this.$imageDescDiv.removeClass( 'empty' );
+			} else { // either there is no description or the paner header already shows it - nothing to do here
+				this.empty();
+			}
+		}
+
+		/**
+		 * @inheritdoc
+		 */
+		empty() {
+			this.$imageDesc.empty();
+			this.$imageDescDiv.addClass( 'empty' );
+		}
 	}
 
-	OO.inheritClass( Description, mw.mmv.ui.Element );
-
-	/**
-	 * Sets data on the element.
-	 * This complements MetadataPanel.setTitle() - information shown there will not be shown here.
-	 *
-	 * @param {string|null} description The text of the description
-	 * @param {string|null} caption The text of the caption
-	 */
-	Description.prototype.set = function ( description, caption ) {
-		if ( caption && description ) { // panel header shows the caption - show description here
-			this.$imageDesc.html( this.htmlUtils.htmlToTextWithTags( description ) );
-			this.$imageDescDiv.removeClass( 'empty' );
-		} else { // either there is no description or the paner header already shows it - nothing to do here
-			this.empty();
-		}
-	};
-
-	/**
-	 * @inheritdoc
-	 */
-	Description.prototype.empty = function () {
-		this.$imageDesc.empty();
-		this.$imageDescDiv.addClass( 'empty' );
-	};
-
-	mw.mmv.ui.Description = Description;
+	module.exports = Description;
 }() );

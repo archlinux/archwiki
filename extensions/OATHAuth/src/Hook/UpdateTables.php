@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\OATHAuth\Hook;
 use ConfigException;
 use DatabaseUpdater;
 use FormatJson;
+use MediaWiki\Extension\OATHAuth\Maintenance\UpdateForMultipleDevicesSupport;
 use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IMaintainableDatabase;
@@ -16,50 +17,65 @@ class UpdateTables implements LoadExtensionSchemaUpdatesHook {
 	 */
 	public function onLoadExtensionSchemaUpdates( $updater ) {
 		$type = $updater->getDB()->getType();
-		$typePath = dirname( __DIR__, 2 ) . "/sql/{$type}";
+		$baseDir = dirname( __DIR__, 2 );
+		$typePath = "$baseDir/sql/$type";
 
 		$updater->addExtensionTable(
-			'oathauth_users',
+			'oathauth_types',
 			"$typePath/tables-generated.sql"
 		);
 
-		switch ( $type ) {
-			case 'mysql':
-			case 'sqlite':
-				// 1.34
-				$updater->addExtensionField(
-					'oathauth_users',
-					'module',
-					"$typePath/patch-add_generic_fields.sql"
-				);
+		// If the old table exists, ensure it's up-to-date so the migration
+		// from the old schema to the new one can be done properly.
+		if ( $updater->tableExists( 'oathauth_users' ) ) {
+			switch ( $type ) {
+				case 'mysql':
+				case 'sqlite':
+					// 1.34
+					$updater->addExtensionField(
+						'oathauth_users',
+						'module',
+						"$typePath/patch-add_generic_fields.sql"
+					);
 
-				$updater->addExtensionUpdate(
-					[ [ __CLASS__, 'schemaUpdateSubstituteForGenericFields' ] ]
-				);
-				$updater->dropExtensionField(
-					'oathauth_users',
-					'secret',
-					"$typePath/patch-remove_module_specific_fields.sql"
-				);
+					$updater->addExtensionUpdate(
+						[ [ __CLASS__, 'schemaUpdateSubstituteForGenericFields' ] ]
+					);
+					$updater->dropExtensionField(
+						'oathauth_users',
+						'secret',
+						"$typePath/patch-remove_module_specific_fields.sql"
+					);
 
-				$updater->addExtensionUpdate(
-					[ [ __CLASS__, 'schemaUpdateTOTPToMultipleKeys' ] ]
-				);
+					$updater->addExtensionUpdate(
+						[ [ __CLASS__, 'schemaUpdateTOTPToMultipleKeys' ] ]
+					);
 
-				$updater->addExtensionUpdate(
-					[ [ __CLASS__, 'schemaUpdateTOTPScratchTokensToArray' ] ]
-				);
+					$updater->addExtensionUpdate(
+						[ [ __CLASS__, 'schemaUpdateTOTPScratchTokensToArray' ] ]
+					);
 
-				break;
+					break;
 
-			case 'postgres':
-				// 1.38
-				$updater->modifyExtensionTable(
-					'oathauth_users',
-					"$typePath/patch-oathauth_users-drop-oathauth_users_id_seq.sql"
-				);
-				break;
+				case 'postgres':
+					// 1.38
+					$updater->modifyExtensionTable(
+						'oathauth_users',
+						"$typePath/patch-oathauth_users-drop-oathauth_users_id_seq.sql"
+					);
+					break;
+			}
+
+			$updater->addExtensionUpdate( [
+				'runMaintenance',
+				UpdateForMultipleDevicesSupport::class,
+				"$baseDir/maintenance/UpdateForMultipleDevicesSupport.php"
+			] );
+
+			$updater->dropExtensionTable( 'oathauth_users' );
 		}
+
+		// add new updates here
 	}
 
 	/**
@@ -77,7 +93,7 @@ class UpdateTables implements LoadExtensionSchemaUpdatesHook {
 
 		return $services->getDBLoadBalancerFactory()
 			->getMainLB( $database )
-			->getConnectionRef( DB_PRIMARY, [], $database );
+			->getMaintenanceConnectionRef( DB_PRIMARY, [], $database );
 	}
 
 	/**

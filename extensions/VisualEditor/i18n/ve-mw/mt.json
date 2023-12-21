@@ -9,7 +9,6 @@
 	},
 	"tooltip-ca-ve-edit": "Immodifika din il-paġna",
 	"visualeditor-advancedsettings-tool": "Konfigurazzjonijiet avvanzati",
-	"visualeditor-beta-warning": "Il-VisualEditor qiegħed fuq 'beta'. Għalhekk tista' tiltaqa' ma' problemi ta' software u ma tkunx tista' timmodifika xi partijiet tal-paġna. Biex taqleb lura għall-modifika mis-sors mingħajr ma titlef il-bidliet li għamilt, iftaħ il-kexxun li jinżel maġenb \"{{int:visualeditor-toolbar-savedialog}}\" u agħżel \"{{int:visualeditor-mweditmodesource-tool}}\".",
 	"visualeditor-browserwarning": "Qiegħed tuża navigatur li mhuwiex uffiċjalemnt kompatibbli mal-VisualEditor.",
 	"visualeditor-ca-createlocaldescriptionsource": "Agħti s-sors tad-deskrizzjoni lokali",
 	"visualeditor-ca-createsource": "Oħloq sors",

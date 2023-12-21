@@ -15,13 +15,15 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const DownloadPane = require( 'mmv.ui.download.pane' );
+
 ( function () {
 	QUnit.module( 'mmv.ui.download.pane', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
-		var download = new mw.mmv.ui.download.Pane( $( '#qunit-fixture' ) );
+		var download = new DownloadPane( $( '#qunit-fixture' ) );
 
-		assert.true( download instanceof mw.mmv.ui.download.Pane, 'download UI element is created.' );
+		assert.true( download instanceof DownloadPane, 'download UI element is created.' );
 		assert.strictEqual( download.$pane.length, 1, 'Pane div created.' );
 		assert.strictEqual( download.$downloadButton.length, 1, 'Download button created.' );
 		assert.strictEqual( download.$selectionArrow.length, 1, 'Download button created.' );
@@ -35,9 +37,9 @@
 	} );
 
 	QUnit.test( 'set()/empty():', function ( assert ) {
-		var download = new mw.mmv.ui.download.Pane( $( '#qunit-fixture' ) ),
+		var download = new DownloadPane( $( '#qunit-fixture' ) ),
 			src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
-			image = { // fake mw.mmv.model.Image
+			image = { // fake ImageModel
 				title: new mw.Title( 'File:Foobar.jpg' ),
 				url: src
 			};
@@ -62,7 +64,7 @@
 
 	QUnit.test( 'attach()/unattach():', function ( assert ) {
 		var hsstub, tstub,
-			download = new mw.mmv.ui.download.Pane( $( '#qunit-fixture' ) ),
+			download = new DownloadPane( $( '#qunit-fixture' ) ),
 			image = {
 				title: new mw.Title( 'File:Foobar.jpg' ),
 				url: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg'
@@ -109,7 +111,7 @@
 	} );
 
 	QUnit.test( 'handleSizeSwitch():', function ( assert ) {
-		var download = new mw.mmv.ui.download.Pane( $( '#qunit-fixture' ) ),
+		var download = new DownloadPane( $( '#qunit-fixture' ) ),
 			newImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/NewFoobar.jpg';
 
 		download.utils.getThumbnailUrlPromise = function () {
@@ -134,7 +136,7 @@
 	} );
 
 	QUnit.test( 'setButtonText() sense check:', function ( assert ) {
-		var download = new mw.mmv.ui.download.Pane( $( '#qunit-fixture' ) ),
+		var download = new DownloadPane( $( '#qunit-fixture' ) ),
 			message;
 
 		download.setButtonText( 'large', 'jpg', 100, 200 );
@@ -146,14 +148,14 @@
 	} );
 
 	QUnit.test( 'getExtensionFromUrl():', function ( assert ) {
-		var download = new mw.mmv.ui.download.Pane( $( '#qunit-fixture' ) );
+		var download = new DownloadPane( $( '#qunit-fixture' ) );
 
 		assert.strictEqual( download.getExtensionFromUrl( 'http://example.com/bing/foo.bar.png' ),
 			'png', 'Extension is parsed correctly' );
 	} );
 
 	QUnit.test( 'setDownloadUrl', function ( assert ) {
-		var download = new mw.mmv.ui.download.Pane( $( '#qunit-fixture' ) ),
+		var download = new DownloadPane( $( '#qunit-fixture' ) ),
 			imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/NewFoobar.jpg';
 
 		download.setDownloadUrl( imageUrl );

@@ -1,5 +1,14 @@
-// Make sure all icons are the correct color https://phabricator.wikimedia.org/T317800
-.mw-ui-icon:before {
-	// `@opacity-icon-base` equals to `#222` on `background-color: #fff`, closest to `#202122`.
-	opacity: @opacity-icon-base;
+.vector-icon {
+	.cdx-mixin-css-icon-background( );
+	.cdx-mixin-css-icon-size( );
+	.cdx-mixin-css-icon-alignment( );
+	font-size: 14px;
+}
+
+// Temporary generic small icon class
+// FIXME: Replace with proper Codex CSS icon usage in T338403
+.vector-icon--x-small {
+	.cdx-mixin-css-icon-background( @size-icon-x-small );
+	.cdx-mixin-css-icon-size( @size-icon-x-small );
+	.cdx-mixin-css-icon-alignment( );
 }

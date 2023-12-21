@@ -34,11 +34,6 @@ class ResourceLoaderHooks implements
 	 * @param Config $config
 	 */
 	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
-		$vars['wgDTSchemaEditAttemptStepSamplingRate'] =
-			$this->config->get( 'DTSchemaEditAttemptStepSamplingRate' );
-		$vars['wgDTSchemaEditAttemptStepOversample'] =
-			$this->config->get( 'DTSchemaEditAttemptStepOversample' );
-
 		$abtest = $this->config->get( 'DiscussionToolsABTest' );
 		if ( $abtest ) {
 			$vars['wgDiscussionToolsABTest'] = $abtest;

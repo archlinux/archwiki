@@ -6,17 +6,15 @@
  * framework or upstreamed from MobileFrotend to core) should be and moved into ./setup.js
  * @todo anything left should be moved to MobileFrontend extension and removed from here.
  */
-var HISTORY_ICON_CLASS = 'mw-ui-icon-wikimedia-history-base20';
-var HISTORY_ARROW_CLASS = 'mw-ui-icon-mf-expand-gray';
+
 module.exports = function () {
 	var
 		// eslint-disable-next-line no-restricted-properties
 		mobile = mw.mobileFrontend.require( 'mobile.startup' ),
-		PageGateway = mobile.PageGateway,
+		PageHTMLParser = mobile.PageHTMLParser,
 		LanguageInfo = mobile.LanguageInfo,
 		permissions = mw.config.get( 'wgMinervaPermissions' ) || {},
 		toast = mobile.toast,
-		Icon = mobile.Icon,
 		time = mobile.time,
 		preInit = require( './preInit.js' ),
 		mobileRedirect = require( './mobileRedirect.js' ),
@@ -24,7 +22,6 @@ module.exports = function () {
 		references = require( './references.js' ),
 		TitleUtil = require( './TitleUtil.js' ),
 		issues = require( './page-issues/index.js' ),
-		talk = require( './talk.js' ),
 		Toolbar = require( './Toolbar.js' ),
 		ToggleList = require( '../../includes/Skins/ToggleList/ToggleList.js' ),
 		TabScroll = require( './TabScroll.js' ),
@@ -35,7 +32,6 @@ module.exports = function () {
 		overlayManager = mobile.OverlayManager.getSingleton(),
 		currentPage = mobile.currentPage(),
 		currentPageHTMLParser = mobile.currentPageHTMLParser(),
-		$redLinks = currentPageHTMLParser.getRedLinks(),
 		api = new mw.Api(),
 		eventBus = mobile.eventBusSingleton,
 		namespaceIDs = mw.config.get( 'wgNamespaceIds' );
@@ -43,18 +39,27 @@ module.exports = function () {
 	/**
 	 * Event handler for clicking on an image thumbnail
 	 *
-	 * @param {jQuery.Event} ev
+	 * @param {MouseEvent} ev
 	 * @ignore
 	 */
 	function onClickImage( ev ) {
-		// Do not interfere with non-left clicks or if modifier keys are pressed.
-		if ( ( ev.button !== 0 && ev.which !== 1 ) ||
-			ev.altKey || ev.ctrlKey || ev.shiftKey || ev.metaKey ) {
+		// Do not interfere when a modifier key is pressed.
+		if ( ev.altKey || ev.ctrlKey || ev.shiftKey || ev.metaKey ) {
+			return;
+		}
+
+		var el = ev.target.closest( PageHTMLParser.THUMB_SELECTOR );
+		if ( !el ) {
+			return;
+		}
+
+		var thumb = currentPageHTMLParser.getThumbnail( $( el ) );
+		if ( !thumb ) {
 			return;
 		}
 
 		ev.preventDefault();
-		routeThumbnail( $( this ).data( 'thumb' ) );
+		routeThumbnail( thumb );
 	}
 
 	/**
@@ -70,12 +75,10 @@ module.exports = function () {
 	 *
 	 * @method
 	 * @ignore
-	 * @param {jQuery.Object} [$container] Optional container to search within
+	 * @param {HTMLElement} container Container to search within
 	 */
-	function initMediaViewer( $container ) {
-		currentPageHTMLParser.getThumbnails( $container ).forEach( function ( thumb ) {
-			thumb.$el.off().data( 'thumb', thumb ).on( 'click', onClickImage );
-		} );
+	function initMediaViewer( container ) {
+		container.addEventListener( 'click', onClickImage );
 	}
 
 	/**
@@ -137,7 +140,7 @@ module.exports = function () {
 	// Routes
 	overlayManager.add( /^\/media\/(.+)$/, makeMediaViewerOverlayIfNeeded );
 	overlayManager.add( /^\/languages$/, function () {
-		return mobile.languageOverlay( new PageGateway( api ) );
+		return mobile.languageOverlay();
 	} );
 	// Register a LanguageInfo overlay which has no built-in functionality;
 	// a hook is fired when a language is selected, and extensions can respond
@@ -154,11 +157,6 @@ module.exports = function () {
 	$( function () {
 		initButton();
 	} );
-
-	// If the MMV module is missing or disabled from the page, initialise our version
-	if ( desktopMMV === null || desktopMMV === 'registered' ) {
-		mw.hook( 'wikipage.content' ).add( initMediaViewer );
-	}
 
 	/**
 	 * Initialisation function for last modified module.
@@ -183,12 +181,6 @@ module.exports = function () {
 			if ( time.isRecent( delta ) ) {
 				$bar = $lastModifiedLink.closest( '.last-modified-bar' );
 				$bar.addClass( 'active' );
-				$bar.find( '.' + HISTORY_ICON_CLASS )
-					.addClass( HISTORY_ICON_CLASS.replace( '-base20', '-invert' ) )
-					.removeClass( HISTORY_ICON_CLASS );
-				$bar.find( '.' + HISTORY_ARROW_CLASS )
-					.addClass( HISTORY_ARROW_CLASS.replace( '-gray', '-invert' ) )
-					.removeClass( HISTORY_ARROW_CLASS );
 			}
 
 			$msg = $( '<span>' )
@@ -322,9 +314,10 @@ module.exports = function () {
 	/**
 	 * Strip the edit action from red links to nonexistent User namespace pages.
 	 *
+	 * @param {jQuery.Object} $redLinks
 	 * @return {void}
 	 */
-	function initUserRedLinks() {
+	function initUserRedLinks( $redLinks ) {
 		$redLinks.filter( function ( _, element ) {
 			// Filter out non-User namespace pages.
 			return isUserUri( element.href );
@@ -341,6 +334,28 @@ module.exports = function () {
 			// Update the element with the new link.
 			element.href = uri.toString();
 		} );
+	}
+
+	/**
+	 * Wires up the notification badge to Echo extension
+	 */
+	function setupEcho() {
+		const echoBtn = document.querySelector( '.minerva-notifications .mw-echo-notification-badge-nojs' );
+		if ( echoBtn ) {
+			echoBtn.addEventListener( 'click', function ( ev ) {
+				router.navigate( '#/notifications' );
+				// prevent navigation to original Special:Notifications URL
+				// DO NOT USE stopPropagation or you'll break click tracking in WikimediaEvents
+				ev.preventDefault();
+
+				// Mark as read.
+				echoBtn.dataset.counterNum = 0;
+				echoBtn.dataset.counterText = mw.msg( 'echo-badge-count',
+					mw.language.convertNumber( 0 )
+				);
+
+			} );
+		}
 	}
 
 	$( function () {
@@ -407,45 +422,46 @@ module.exports = function () {
 		// Pages which dont exist (id 0) cannot have issues
 		if (
 			!currentPage.isMissing &&
-			( !currentPage.titleObj.isTalkPage() || talk.isSimplifiedViewEnabled() )
+			!currentPage.titleObj.isTalkPage()
 		) {
 			issues.init( overlayManager, currentPageHTMLParser );
 		}
-
-		// deprecation notices
-		mw.log.deprecate( router, 'navigate', router.navigate, 'use navigateTo instead' );
 
 		// If MobileFrontend installed we add a table of contents icon to the table of contents.
 		// This should probably be done in the parser.
 		// setup toc icons
 		mw.hook( 'wikipage.content' ).add( function ( $container ) {
+			// If the MMV module is missing or disabled from the page, initialise our version
+			if ( desktopMMV === null || desktopMMV === 'registered' ) {
+				initMediaViewer( $container[ 0 ] );
+			}
+
+			// Mutate TOC.
 			var $toctitle = $container.find( '.toctitle' );
-			new Icon( {
-				glyphPrefix: 'minerva',
-				name: 'listBullet'
-			} ).$el.prependTo( $toctitle );
-			new Icon( {
-				glyphPrefix: 'mf',
-				name: 'expand',
-				isSmall: true
-			} ).$el.appendTo( $toctitle );
+			$( '<span>' ).addClass( 'toc-title-icon' ).prependTo( $toctitle );
+			$( '<span>' ).addClass( 'toc-title-state-icon' ).appendTo( $toctitle );
+
+			// Init red links.
+			var $redLinks = currentPageHTMLParser.getRedLinks();
+			ctaDrawers.initRedlinksCta(
+				$redLinks.filter( function ( _, element ) {
+					// Filter out local User namespace pages.
+					return !isUserUri( element.href );
+				} )
+			);
+			initUserRedLinks( $redLinks );
 		} );
 
-		// wire up talk icon if necessary
-		if ( permissions.talk ) {
-			talk.init( mobile );
-		}
-
 		// wire up watch icon if necessary
-		if ( permissions.watch && mw.user.isAnon() ) {
+		if ( permissions.watchable && !permissions.watch ) {
 			ctaDrawers.initWatchstarCta( $watch );
 		}
-		ctaDrawers.initRedlinksCta(
-			$redLinks.filter( function ( _, element ) {
-				// Filter out local User namespace pages.
-				return !isUserUri( element.href );
-			} )
-		);
-		initUserRedLinks();
+
+		// If Echo is installed, wire it up.
+		const echoState = mw.loader.getState( 'ext.echo.mobile' );
+		// If Echo is installed, set it up.
+		if ( echoState !== null && echoState !== 'registered' ) {
+			setupEcho();
+		}
 	} );
 };

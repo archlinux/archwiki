@@ -3,10 +3,12 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Mocks;
 
+use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use Wikimedia\Bcp47Code\Bcp47Code;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Config\StubMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
@@ -15,7 +17,7 @@ use Wikimedia\Parsoid\Utils\Utils;
 
 class MockSiteConfig extends SiteConfig {
 
-	/** @var int Unix timestamp */
+	/** @var ?int Unix timestamp */
 	private $fakeTimestamp = 946782245; // 2000-01-02T03:04:05Z
 
 	/** @var int */
@@ -213,8 +215,8 @@ class MockSiteConfig extends SiteConfig {
 		return $this->linkTrailRegex;
 	}
 
-	public function lang(): string {
-		return 'en';
+	public function langBcp47(): Bcp47Code {
+		return new Bcp47CodeValue( 'en' );
 	}
 
 	public function mainpage(): string {
@@ -238,8 +240,8 @@ class MockSiteConfig extends SiteConfig {
 	}
 
 	/** @inheritDoc */
-	public function langConverterEnabled( string $lang ): bool {
-		return $lang === 'sr';
+	public function langConverterEnabledBcp47( Bcp47Code $lang ): bool {
+		return $lang->toBcp47Code() === 'sr';
 	}
 
 	public function script(): string {
@@ -258,27 +260,33 @@ class MockSiteConfig extends SiteConfig {
 		return $this->timezoneOffset;
 	}
 
-	public function variants(): array {
-		return [
-			'sr' => [
-				'base' => 'sr',
+	/** @inheritDoc */
+	public function variantsFor( Bcp47Code $lang ): ?array {
+		switch ( $lang->toBcp47Code() ) {
+		case 'sr':
+			return [
+				'base' => new Bcp47CodeValue( 'sr' ),
 				'fallbacks' => [
-					'sr-ec'
+					new Bcp47CodeValue( 'sr-Cyrl' )
 				]
-			],
-			'sr-ec' => [
-				'base' => 'sr',
+			];
+		case 'sr-Cyrl':
+			return [
+				'base' => new Bcp47CodeValue( 'sr' ),
 				'fallbacks' => [
-					'sr'
+					new Bcp47CodeValue( 'sr' )
 				]
-			],
-			'sr-el' => [
-				'base' => 'sr',
+			];
+		case 'sr-Latn':
+			return [
+				'base' => new Bcp47CodeValue( 'sr' ),
 				'fallbacks' => [
-					'sr'
+					new Bcp47CodeValue( 'sr' )
 				]
-			]
-		];
+			];
+		default:
+			return null;
+		}
 	}
 
 	public function widthOption(): int {
@@ -311,6 +319,9 @@ class MockSiteConfig extends SiteConfig {
 			'img_none'        => [ 1, 'none' ],
 			'img_left'        => [ 1, 'left' ],
 			'img_right'       => [ 1, 'right' ],
+			// T345026: 'sub' should follow 'img_sub' to match dewikivoyage
+			'img_sub'         => [ 1, 'sub' ],
+			'sub'             => [ 0, 'sub' ],
 			'notoc'           => [ 0, '__NOTOC__' ],
 			'timedmedia_loop' => [ 0, 'loop' ],
 			'timedmedia_muted' => [ 0, 'muted' ],
@@ -451,5 +462,16 @@ class MockSiteConfig extends SiteConfig {
 	/** @inheritDoc */
 	public function getExternalLinkTarget() {
 		return $this->externalLinkTarget;
+	}
+
+	/** @var ?MockMetrics */
+	private $metrics;
+
+	/** @inheritDoc */
+	public function metrics(): ?StatsdDataFactoryInterface {
+		if ( $this->metrics === null ) {
+			$this->metrics = new MockMetrics();
+		}
+		return $this->metrics;
 	}
 }

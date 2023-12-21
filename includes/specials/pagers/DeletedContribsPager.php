@@ -19,6 +19,11 @@
  * @ingroup Pager
  */
 
+namespace MediaWiki\Pager;
+
+use ChangesList;
+use ChangeTags;
+use IContextSource;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\HookContainer\HookContainer;
@@ -26,11 +31,15 @@ use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionFactory;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use stdClass;
 use Wikimedia\Rdbms\FakeResultWrapper;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -61,23 +70,16 @@ class DeletedContribsPager extends ReverseChronologicalPager {
 	/** @var RevisionRecord[] Cached revisions by ID */
 	private $revisions = [];
 
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var RevisionFactory */
-	private $revisionFactory;
-
-	/** @var CommentFormatter */
-	private $commentFormatter;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
+	private HookRunner $hookRunner;
+	private RevisionFactory $revisionFactory;
+	private CommentFormatter $commentFormatter;
+	private LinkBatchFactory $linkBatchFactory;
 
 	/**
 	 * @param IContextSource $context
 	 * @param HookContainer $hookContainer
 	 * @param LinkRenderer $linkRenderer
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param RevisionFactory $revisionFactory
 	 * @param CommentFormatter $commentFormatter
 	 * @param LinkBatchFactory $linkBatchFactory
@@ -88,7 +90,7 @@ class DeletedContribsPager extends ReverseChronologicalPager {
 		IContextSource $context,
 		HookContainer $hookContainer,
 		LinkRenderer $linkRenderer,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		RevisionFactory $revisionFactory,
 		CommentFormatter $commentFormatter,
 		LinkBatchFactory $linkBatchFactory,
@@ -118,34 +120,25 @@ class DeletedContribsPager extends ReverseChronologicalPager {
 
 	public function getQueryInfo() {
 		$dbr = $this->getDatabase();
-		$userCond = [ 'actor_name' => $this->target ];
-		$conds = array_merge( $userCond, $this->getNamespaceCond() );
+		$queryBuilder = $this->revisionFactory->newArchiveSelectQueryBuilder( $dbr )
+			->joinComment()
+			->where( [ 'actor_name' => $this->target ] )
+			->andWhere( $this->getNamespaceCond() );
 		// Paranoia: avoid brute force searches (T19792)
 		if ( !$this->getAuthority()->isAllowed( 'deletedhistory' ) ) {
-			$conds[] = $dbr->bitAnd( 'ar_deleted', RevisionRecord::DELETED_USER ) . ' = 0';
+			$queryBuilder->andWhere(
+				$dbr->bitAnd( 'ar_deleted', RevisionRecord::DELETED_USER ) . ' = 0'
+			);
 		} elseif ( !$this->getAuthority()->isAllowedAny( 'suppressrevision', 'viewsuppressed' ) ) {
-			$conds[] = $dbr->bitAnd( 'ar_deleted', RevisionRecord::SUPPRESSED_USER ) .
-				' != ' . RevisionRecord::SUPPRESSED_USER;
+			$queryBuilder->andWhere(
+				$dbr->bitAnd( 'ar_deleted', RevisionRecord::SUPPRESSED_USER ) .
+				' != ' . RevisionRecord::SUPPRESSED_USER
+			);
 		}
 
-		$queryInfo = $this->revisionFactory->getArchiveQueryInfo();
-		$queryInfo['conds'] = $conds;
-		$queryInfo['options'] = [];
+		MediaWikiServices::getInstance()->getChangeTagsStore()->modifyDisplayQueryBuilder( $queryBuilder, 'archive' );
 
-		// rename the "joins" field to "join_conds" as expected by the base class.
-		$queryInfo['join_conds'] = $queryInfo['joins'];
-		unset( $queryInfo['joins'] );
-
-		ChangeTags::modifyDisplayQuery(
-			$queryInfo['tables'],
-			$queryInfo['fields'],
-			$queryInfo['conds'],
-			$queryInfo['join_conds'],
-			$queryInfo['options'],
-			''
-		);
-
-		return $queryInfo;
+		return $queryBuilder->getQueryInfo( 'join_conds' );
 	}
 
 	protected function doBatchLookups() {
@@ -438,3 +431,9 @@ class DeletedContribsPager extends ReverseChronologicalPager {
 		return [ $ret, $classes ];
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( DeletedContribsPager::class, 'DeletedContribsPager' );

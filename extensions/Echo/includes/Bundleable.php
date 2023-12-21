@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications;
+
 /**
  * Indicates that an object can be bundled.
  */

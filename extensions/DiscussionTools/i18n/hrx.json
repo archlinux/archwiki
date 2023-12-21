@@ -5,7 +5,7 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Antwort",
-	"discussiontools-replylink": "antworte",
+	"discussiontools-replylink": "beantworte",
 	"discussiontools-replywidget-advanced": "Erweiderd",
 	"discussiontools-replywidget-cancel": "Abbreche",
 	"discussiontools-replywidget-mode-source": "Quell",
@@ -22,8 +22,8 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "Begleede",
 	"discussiontools-topicsubscription-button-unsubscribe": "Abbegleede",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Abbegleede",
-	"discussiontools-topicsubscription-notify-subscribed-body": "Du werst iwer neie Kommentarios zu do dem Tema notifikeerd.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "Du host begleed!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "Du werst net iwer neie Kommentarios zu do dem Tema notifikeerd.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "Du host abbegleed."
+	"discussiontools-topicsubscription-notify-subscribed-body": "Du werst iwer neie Kommentarios zu do dem Tema notifikeerd sin.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Du host dich ingeschribb!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Du werst net iwer neie Kommentarios zu do dem Tema notifikeerd sin.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Du host do das Inschreivung abgemach."
 }

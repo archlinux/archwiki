@@ -1,18 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Arystanbek",
 			"BaRaN6161 TURK",
 			"Hedda",
+			"Joseph",
 			"KorkmazO",
 			"McAang",
 			"MuratTheTurkish",
-			"Sayginer",
-			"Joseph",
-			"Amire80"
+			"Sayginer"
 		]
 	},
-	"apihelp-echomarkread-description": "Bildirimleri geçerli kullanıcı için okundu olarak işaretleyin.",
 	"apihelp-echomarkread-summary": "Bildirimleri geçerli kullanıcı için okundu olarak işaretleyin.",
 	"apihelp-echomarkread-param-list": "Okundu olarak işaretlenecek bildirim kimliklerinin listesi.",
 	"apihelp-echomarkread-param-unreadlist": "Okunmamış olarak işaretlenecek bildirim kimlikleri listesi.",
@@ -22,12 +21,10 @@
 	"apihelp-echomarkread-example-1": "Bildirimi 8 okundu olarak işaretleyin",
 	"apihelp-echomarkread-example-2": "Tüm bildirimleri okundu olarak işaretleyin",
 	"apihelp-echomarkread-example-3": "Bildirimi 1 okunmadı olarak işaretleyin",
-	"apihelp-echomarkseen-description": "Bildirimleri geçerli kullanıcı için göründüğü gibi işaretleyin.",
 	"apihelp-echomarkseen-summary": "Bildirimleri geçerli kullanıcı için göründüğü gibi işaretleyin.",
 	"apihelp-echomarkseen-example-1": "Her türden bildirimleri görüldüğü olarak işaretleyin",
 	"apihelp-echomarkseen-param-type": "Görüldüğü gibi işaretlenecek bildirim türleri: 'alert', 'message' veya 'all'.",
 	"apihelp-echomarkseen-param-timestampFormat": "'ISO_8601' veya 'MW' çıkışı için kullanılacak zaman damgası biçimi. 'MW' burada kullanımdan kaldırılmıştır, bu nedenle tüm istemciler 'ISO_8601' ile geçmelidir. Bu parametre kaldırılacak ve 'ISO_8601' tek çıkış biçimi olacak.",
-	"apihelp-echomute-description": "Belirli kullanıcılardan veya sayfalardan gelen bildirimlerin sesini kapatın veya açın.",
 	"apihelp-echomute-summary": "Belirli kullanıcılardan veya sayfalardan gelen bildirimlerin sesini kapatın veya açın.",
 	"apihelp-echomute-param-type": "Sessiz listesine eklenecek veya listeden kaldırılacağı",
 	"apihelp-echomute-param-mute": "Sessiz listesine eklenecek sayfalar veya kullanıcılar",
@@ -43,7 +40,6 @@
 	"apihelp-echopushsubscriptions+delete-param-providertoken": "Kaydı silmek için push aboneliği ile ilişkili anahtar.",
 	"apihelp-echopushsubscriptions+delete-param-centraluserid": "Kaydı silme aboneliği ile ilişkili merkezi kullanıcı kimliği.",
 	"apihelp-echopushsubscriptions+delete-example": "Geçerli kullanıcı için push aboneliğinin kaydını kaldırın.",
-	"apihelp-query+notifications-description": "Mevcut kullanıcıyı bekleyen bildirimler alın.",
 	"apihelp-query+notifications-summary": "Mevcut kullanıcıyı bekleyen bildirimler alın.",
 	"apihelp-query+notifications-param-prop": "İstek ayrıntıları.",
 	"apihelp-query+notifications-param-sections": "Sorgulanacak bildirim bölümleri (yani, 'alert' ve 'message' bazı kombinasyonları).",
@@ -68,7 +64,6 @@
 	"apihelp-query+notifications-example-1": "Web bildirimleri listeleyin",
 	"apihelp-query+notifications-example-2": "Sayımlarla birlikte bölümlere göre gruplandırılmış web bildirimleri listeleyin",
 	"apihelp-query+notifications-example-3": "E-posta bildirimlerini listele",
-	"apihelp-query+unreadnotificationpages-description": "Geçerli kullanıcı için okunmamış bildirimlerin bulunduğu sayfaları alın.",
 	"apihelp-query+unreadnotificationpages-summary": "Geçerli kullanıcı için okunmamış bildirimlerin bulunduğu sayfaları alın.",
 	"apihelp-query+unreadnotificationpages-param-grouppages": "Tartışma sayfalarını konu sayfalarıyla birlikte gruplandırın ve bir sayfayla ilişkili olmayan grup bildirimlerini geçerli kullanıcının kullanıcı sayfasıyla birlikte gruplandırın.",
 	"apihelp-query+unreadnotificationpages-param-limit": "Döndürülecek maksimum sayfa sayısı.",

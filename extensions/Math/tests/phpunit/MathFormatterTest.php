@@ -5,6 +5,8 @@ use DataValues\StringValue;
 use MediaWiki\Extension\Math\MathFormatter;
 use MediaWiki\Extension\Math\Tests\MathMockHttpTrait;
 use Wikibase\Lib\Formatters\SnakFormatter;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\LBFactory;
 
 /**
  * Test the results of MathFormatter
@@ -22,6 +24,11 @@ class MathFormatterTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		$this->markTestSkippedIfExtensionNotLoaded( 'WikibaseClient' );
+		$db = $this->createMock( IDatabase::class );
+		$db->method( 'selectRow' )->willReturn( false );
+		$lbFactory = $this->createMock( LBFactory::class );
+		$lbFactory->method( 'getReplicaDatabase' )->willReturn( $db );
+		$this->setService( 'DBLoadBalancerFactory', $lbFactory );
 		parent::setUp();
 	}
 

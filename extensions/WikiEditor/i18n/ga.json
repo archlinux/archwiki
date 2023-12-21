@@ -12,9 +12,6 @@
 	"wikieditor-toolbar-file-format": "Formáid:",
 	"wikieditor-toolbar-tool-file-insert": "Ionsáigh",
 	"wikieditor-toolbar-tool-file-cancel": "Cealaigh",
-	"wikieditor-toolbar-tool-reference-example": "Ionsáigh téacs an fhonóta anseo",
-	"wikieditor-toolbar-tool-reference-cancel": "Cealaigh",
-	"wikieditor-toolbar-tool-reference-insert": "Ionsáigh",
 	"wikieditor-toolbar-tool-heading": "Ceannteideal",
 	"wikieditor-toolbar-tool-heading-example": "Téacs an cheannteidil",
 	"wikieditor-toolbar-group-format": "Formáid",
@@ -30,10 +27,8 @@
 	"wikieditor-toolbar-help-page-file": "Comhaid",
 	"wikieditor-toolbar-help-page-discussion": "Plé",
 	"wikieditor-toolbar-help-content-heading2-description": "Ceannteideal leibhéal 2",
-	"wikieditor-toolbar-help-content-heading2-result": "<h2>Téacs an cheannteidil</h2>",
-	"wikieditor-toolbar-help-content-heading3-syntax": "=== Téacs an cheannteidil ===",
+	"wikieditor-toolbar-help-content-heading3-example": "Téacs an cheannteidil",
 	"wikieditor-toolbar-help-content-heading4-description": "Ceannteideal leibhéal 4",
-	"wikieditor-toolbar-help-content-heading4-result": "<h4>Téacs an cheannteidil</h4>",
-	"wikieditor-toolbar-help-content-heading5-syntax": "===== Téacs an cheannteidil =====",
+	"wikieditor-toolbar-help-content-heading5-example": "Téacs an cheannteidil",
 	"wikieditor-toolbar-help-content-signature-description": "Síniú"
 }

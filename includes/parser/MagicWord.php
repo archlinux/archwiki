@@ -65,7 +65,7 @@ use StringUtils;
 class MagicWord {
 	/** #@- */
 
-	/** @var string */
+	/** @var string|null Potentially null for a short time before {@see load} is called */
 	public $mId;
 
 	/** @var string[] */
@@ -74,29 +74,7 @@ class MagicWord {
 	/** @var bool */
 	public $mCaseSensitive;
 
-	/** @var string */
-	private $mRegex = '';
-
-	/** @var string */
-	private $mRegexStart = '';
-
-	/** @var string */
-	private $mRegexStartToEnd = '';
-
-	/** @var string */
-	private $mBaseRegex = '';
-
-	/** @var string */
-	private $mVariableRegex = '';
-
-	/** @var string */
-	private $mVariableStartToEndRegex = '';
-
-	/** @var bool */
-	private $mModified = false;
-
-	/** @var bool */
-	private $mFound = false;
+	private ?string $mBaseRegex = null;
 
 	/** @var Language */
 	private $contLang;
@@ -130,54 +108,8 @@ class MagicWord {
 		$this->mId = $id;
 		$this->contLang->getMagic( $this );
 		if ( !$this->mSynonyms ) {
-			$this->mSynonyms = [ 'brionmademeputthishere' ];
 			throw new MWException( "Error: invalid magic word '$id'" );
 		}
-	}
-
-	/**
-	 * Preliminary initialisation
-	 * @internal
-	 */
-	public function initRegex() {
-		// Sort the synonyms by length, descending, so that the longest synonym
-		// matches in precedence to the shortest
-		$synonyms = $this->mSynonyms;
-		usort( $synonyms, [ $this, 'compareStringLength' ] );
-
-		$escSyn = [];
-		foreach ( $synonyms as $synonym ) {
-			// In case a magic word contains /, like that's going to happen;)
-			$escSyn[] = preg_quote( $synonym, '/' );
-		}
-		$this->mBaseRegex = implode( '|', $escSyn );
-
-		$case = $this->mCaseSensitive ? '' : 'iu';
-		$this->mRegex = "/{$this->mBaseRegex}/{$case}";
-		$this->mRegexStart = "/^(?:{$this->mBaseRegex})/{$case}";
-		$this->mRegexStartToEnd = "/^(?:{$this->mBaseRegex})$/{$case}";
-		$this->mVariableRegex = str_replace( "\\$1", "(.*?)", $this->mRegex );
-		$this->mVariableStartToEndRegex = str_replace(
-			"\\$1",
-			"(.*?)",
-			"/^(?:{$this->mBaseRegex})$/{$case}"
-		);
-	}
-
-	/**
-	 * A comparison function that returns -1, 0 or 1 depending on whether the
-	 * first string is longer, the same length or shorter than the second
-	 * string.
-	 *
-	 * @param string $s1
-	 * @param string $s2
-	 *
-	 * @return int
-	 */
-	public function compareStringLength( $s1, $s2 ) {
-		$l1 = strlen( $s1 );
-		$l2 = strlen( $s2 );
-		return $l2 <=> $l1; // descending
 	}
 
 	/**
@@ -186,10 +118,7 @@ class MagicWord {
 	 * @return string
 	 */
 	public function getRegex() {
-		if ( $this->mRegex == '' ) {
-			$this->initRegex();
-		}
-		return $this->mRegex;
+		return '/' . $this->getBaseRegex() . '/' . $this->getRegexCase();
 	}
 
 	/**
@@ -200,10 +129,6 @@ class MagicWord {
 	 * @return string
 	 */
 	public function getRegexCase() {
-		if ( $this->mRegex === '' ) {
-			$this->initRegex();
-		}
-
 		return $this->mCaseSensitive ? '' : 'iu';
 	}
 
@@ -213,10 +138,7 @@ class MagicWord {
 	 * @return string
 	 */
 	public function getRegexStart() {
-		if ( $this->mRegex == '' ) {
-			$this->initRegex();
-		}
-		return $this->mRegexStart;
+		return '/^(?:' . $this->getBaseRegex() . ')/' . $this->getRegexCase();
 	}
 
 	/**
@@ -226,10 +148,7 @@ class MagicWord {
 	 * @since 1.23
 	 */
 	public function getRegexStartToEnd() {
-		if ( $this->mRegexStartToEnd == '' ) {
-			$this->initRegex();
-		}
-		return $this->mRegexStartToEnd;
+		return '/^(?:' . $this->getBaseRegex() . ')$/' . $this->getRegexCase();
 	}
 
 	/**
@@ -238,8 +157,15 @@ class MagicWord {
 	 * @return string
 	 */
 	public function getBaseRegex() {
-		if ( $this->mRegex == '' ) {
-			$this->initRegex();
+		if ( $this->mBaseRegex === null ) {
+			// Sort the synonyms by length, descending, so that the longest synonym
+			// matches in precedence to the shortest
+			$synonyms = $this->mSynonyms;
+			usort( $synonyms, static fn ( $a, $b ) => strlen( $b ) <=> strlen( $a ) );
+			foreach ( $synonyms as &$synonym ) {
+				$synonym = preg_quote( $synonym, '/' );
+			}
+			$this->mBaseRegex = implode( '|', $synonyms );
 		}
 		return $this->mBaseRegex;
 	}
@@ -256,17 +182,6 @@ class MagicWord {
 	}
 
 	/**
-	 * Returns true if the text starts with the word
-	 *
-	 * @param string $text
-	 *
-	 * @return bool
-	 */
-	public function matchStart( $text ) {
-		return (bool)preg_match( $this->getRegexStart(), $text );
-	}
-
-	/**
 	 * Returns true if the text matched the word
 	 *
 	 * @param string $text
@@ -279,37 +194,6 @@ class MagicWord {
 	}
 
 	/**
-	 * Returns NULL if there's no match, the value of $1 otherwise
-	 * The return code is the matched string, if there's no variable
-	 * part in the regex and the matched variable part ($1) if there
-	 * is one.
-	 *
-	 * @param string $text
-	 *
-	 * @return string|null
-	 */
-	public function matchVariableStartToEnd( $text ) {
-		$matches = [];
-		$matchcount = preg_match( $this->getVariableStartToEndRegex(), $text, $matches );
-		if ( $matchcount == 0 ) {
-			return null;
-		} else {
-			# multiple matched parts (variable match); some will be empty because of
-			# synonyms. The variable will be the second non-empty one so remove any
-			# blank elements and re-sort the indices.
-			# See also T8526
-
-			$matches = array_values( array_filter( $matches ) );
-
-			if ( count( $matches ) == 1 ) {
-				return $matches[0];
-			} else {
-				return $matches[1];
-			}
-		}
-	}
-
-	/**
 	 * Returns true if the text matches the word, and alters the
 	 * input string, removing all instances of the word
 	 *
@@ -318,14 +202,8 @@ class MagicWord {
 	 * @return bool
 	 */
 	public function matchAndRemove( &$text ) {
-		$this->mFound = false;
-		$text = preg_replace_callback(
-			$this->getRegex(),
-			[ $this, 'pregRemoveAndRecord' ],
-			$text
-		);
-
-		return $this->mFound;
+		$text = preg_replace( $this->getRegex(), '', $text, -1, $count );
+		return (bool)$count;
 	}
 
 	/**
@@ -333,24 +211,8 @@ class MagicWord {
 	 * @return bool
 	 */
 	public function matchStartAndRemove( &$text ) {
-		$this->mFound = false;
-		$text = preg_replace_callback(
-			$this->getRegexStart(),
-			[ $this, 'pregRemoveAndRecord' ],
-			$text
-		);
-
-		return $this->mFound;
-	}
-
-	/**
-	 * Used in matchAndRemove()
-	 *
-	 * @return string
-	 */
-	public function pregRemoveAndRecord() {
-		$this->mFound = true;
-		return '';
+		$text = preg_replace( $this->getRegexStart(), '', $text, -1, $count );
+		return (bool)$count;
 	}
 
 	/**
@@ -369,48 +231,7 @@ class MagicWord {
 			$subject,
 			$limit
 		);
-		$this->mModified = $res !== $subject;
 		return $res;
-	}
-
-	/**
-	 * Variable handling: {{SUBST:xxx}} style words
-	 * Calls back a function to determine what to replace xxx with
-	 * Input word must contain $1
-	 *
-	 * @param string $text
-	 * @param callable $callback
-	 *
-	 * @return string
-	 */
-	public function substituteCallback( $text, $callback ) {
-		$res = preg_replace_callback( $this->getVariableRegex(), $callback, $text );
-		$this->mModified = $res !== $text;
-		return $res;
-	}
-
-	/**
-	 * Matches the word, where $1 is a wildcard
-	 *
-	 * @return string
-	 */
-	public function getVariableRegex() {
-		if ( $this->mVariableRegex == '' ) {
-			$this->initRegex();
-		}
-		return $this->mVariableRegex;
-	}
-
-	/**
-	 * Matches the entire string, where $1 is a wildcard
-	 *
-	 * @return string
-	 */
-	public function getVariableStartToEndRegex() {
-		if ( $this->mVariableStartToEndRegex == '' ) {
-			$this->initRegex();
-		}
-		return $this->mVariableStartToEndRegex;
 	}
 
 	/**
@@ -432,29 +253,6 @@ class MagicWord {
 	}
 
 	/**
-	 * Returns true if the last call to replace() or substituteCallback()
-	 * returned a modified text, otherwise false.
-	 *
-	 * @return bool
-	 */
-	public function getWasModified() {
-		return $this->mModified;
-	}
-
-	/**
-	 * Adds all the synonyms of this MagicWord to an array, to allow quick
-	 * lookup in a list of magic words
-	 *
-	 * @param string[] &$array
-	 * @param string $value
-	 */
-	public function addToArray( &$array, $value ) {
-		foreach ( $this->mSynonyms as $syn ) {
-			$array[$this->contLang->lc( $syn )] = $value;
-		}
-	}
-
-	/**
 	 * @return bool
 	 */
 	public function isCaseSensitive() {
@@ -469,4 +267,7 @@ class MagicWord {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( MagicWord::class, 'MagicWord' );

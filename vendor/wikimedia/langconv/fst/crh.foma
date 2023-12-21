@@ -1,0 +1,209 @@
+# FOMA script for crh-latn and crh-cyrl conversions
+# Generates .att files when run from this directory using:
+#   foma -f crh.foma
+# Then generate executable .pfst files with:
+#   ../tools/build-langconv-fst.js -l crh-latn crh-cyrl
+#   ../tools/build-langconv-fst.js -l crh-cyrl crh-latn
+echo EXPECT 0
+
+source brackets.foma
+source roman.foma
+source safety.foma
+
+define WORD'BEGINS [
+  "\r" | " " | "\t" | "\n" | "\'" | "(" | ")" | "-" | "<" | ">" |
+  "[" | "]" | "/" | "." | "," | ":" | ";" | "!" | "?"
+  | {"} # " workaround bad quote-matching
+];
+define WORD'ENDS WORD'BEGINS;
+
+######## Cyrillic #############
+
+# Crimean Tatar Cyrillic uppercase/lowercase and mappings between
+define C'UC'LC [
+  {А}:{а} | {Б}:{б} | {В}:{в} | {Г}:{г} | {Д}:{д} | {Е}:{е} | {Ё}:{ё} |
+  {Ж}:{ж} | {З}:{з} | {И}:{и} | {Й}:{й} | {К}:{к} | {Л}:{л} | {М}:{м} |
+  {Н}:{н} | {О}:{о} | {П}:{п} | {Р}:{р} | {С}:{с} | {Т}:{т} | {У}:{у} |
+  {Ф}:{ф} | {Х}:{х} | {Ц}:{ц} | {Ч}:{ч} | {Ш}:{ш} | {Щ}:{щ} | {Ъ}:{ъ} |
+  {Ы}:{ы} | {Ь}:{ь} | {Э}:{э} | {Ю}:{ю} | {Я}:{я}
+];
+define C'LC'UC C'UC'LC.i;
+define C'UC    C'UC'LC.u;
+define C'LC    C'UC'LC.l;
+
+# Crimean Tatar Cyrillic + CÑ uppercase consonants
+define C'CONS'UC [
+  {Б}|{В}|{Г}|{Д}|{Ж}|{З}|{Й}|{К}|{Л}|{М}|{Н}|{П}|{Р}|{С}|{Т}|{Ф}|{Х}|{Ц}|
+  {Ч}|{Ш}|{Щ}|{C}|{Ñ}
+];
+# Crimean Tatar Cyrillic + CÑ lowercase consonants
+define C'CONS'LC [
+  {б}|{в}|{г}|{д}|{ж}|{з}|{й}|{к}|{л}|{м}|{н}|{п}|{р}|{с}|{т}|{ф}|{х}|{ц}|
+  {ч}|{ш}|{щ}|{c}|{ñ}
+];
+# Crimean Tatar Cyrillic M-type consonants
+define C'M'CONS [{б}|{г}|{к}|{м}|{ш}|{c}|{Б}|{Г}|{К}|{М}|{Ш}|{C}];
+
+######## Crimean Tatar Cyrillic #############
+
+# Crimean Tatar Cyrillic + CÑ consonants
+define C'CONS [
+  {б}|{в}|{г}|{д}|{ж}|{з}|{й}|{к}|{л}|{м}|{н}|{п}|{р}|{с}|{т}|{ф}|{х}|{ц}|
+  {ч}|{ш}|{щ}|{c}|{ñ}|{Б}|{В}|{Г}|{Д}|{Ж}|{З}|{Й}|{К}|{Л}|{М}|{Н}|{П}|{Р}|
+  {С}|{Т}|{Ф}|{Х}|{Ц}|{Ч}|{Ш}|{Щ}|{C}|{Ñ}
+];
+
+######## Latin #############
+
+# Crimean Tatar Latin uppercase/lowercase and mappings between
+define L'UC'LC [
+  {A}:{a} | {Â}:{â} | {B}:{b} | {C}:{c} | {Ç}:{ç} | {D}:{d} | {E}:{e}|
+  {F}:{f} | {G}:{g} | {Ğ}:{ğ} | {H}:{h} | {I}:{ı} | {İ}:{i} | {J}:{j}|
+  {K}:{k} | {L}:{l} | {M}:{m} | {N}:{n} | {Ñ}:{ñ} | {O}:{o} | {Ö}:{ö}|
+  {P}:{p} | {Q}:{q} | {R}:{r} | {S}:{s} | {Ş}:{ş} | {T}:{t} | {U}:{u}|
+  {Ü}:{ü} | {V}:{v} | {Y}:{y} | {Z}:{z}
+];
+define L'LC'UC L'UC'LC.i;
+define L'UC    L'UC'LC.u;
+define L'LC    L'UC'LC.l;
+
+# Crimean Tatar Latin N-type upper case consonants
+define L'N'CONS'UC [{Ç}|{N}|{R}|{S}|{T}|{Z}];
+# Crimean Tatar Latin N-type lower case consonants
+define L'N'CONS'LC [L'LC'UC .o. L'N'CONS'UC].u;
+# Crimean Tatar Latin N-type consonants
+define L'N'CONS [{ç}|{n}|{r}|{s}|{t}|{z}|{Ç}|{N}|{R}|{S}|{T}|{Z}];
+# Crimean Tatar Latin M-type consonants
+define L'M'CONS [{b}|{c}|{g}|{k}|{m}|{p}|{ş}|{B}|{C}|{G}|{K}|{M}|{P}|{Ş}];
+# Crimean Tatar Latin uppercase consonants
+define L'CONS'UC [
+  {B}|{C}|{Ç}|{D}|{F}|{G}|{Ğ}|{H}|{J}|{K}|{L}|{M}|{N}|{Ñ}|
+  {P}|{Q}|{R}|{S}|{Ş}|{T}|{V}|{Z}
+];
+# Crimean Tatar Latin lowercase consonants
+define L'CONS'LC [L'LC'UC .o. L'CONS'UC].u;
+
+# Crimean Tatar Latin consonants
+define L'CONS [ L'CONS'LC | L'CONS'UC ];
+
+# Crimean Tatar Latin uppercase vowels
+define L'VOW'UC [{A}|{Â}|{E}|{I}|{İ}|{O}|{Ö}|{U}|{Ü}];
+# Crimean Tatar Latin vowels
+define L'VOW L'VOW'UC | [L'LC'UC .o. L'VOW'UC].u;
+# Crimean Tatar Latin uppercase front vowels
+define L'F'UC [{E}|{İ}|{Ö}|{Ü}];
+# Crimean Tatar Latin front vowels
+define L'F L'F'UC | [L'LC'UC .o. L'F'UC].u;
+
+
+# Basic conversions, based on PHP source
+define MAP'CYRL'TO'LATN [
+  ## these are independent of location in the word, but have
+  ## to go first so other transforms don't bleed them
+  {гъ} @-> {ğ} ,, {Гъ} @-> {Ğ} ,, {ГЪ} @-> {Ğ} ,,
+  {къ} @-> {q} ,, {Къ} @-> {Q} ,, {КЪ} @-> {Q} ,,
+  {нъ} @-> {ñ} ,, {Нъ} @-> {Ñ} ,, {НЪ} @-> {Ñ} ,,
+  {дж} @-> {c} ,, {Дж} @-> {C} ,, {ДЖ} @-> {C} ,,
+
+  {А} @-> {A} ,, {а} @-> {a} ,, {Б} @-> {B} ,, {б} @-> {b} ,,
+  {В} @-> {V} ,, {в} @-> {v} ,, {Г} @-> {G} ,, {г} @-> {g} ,,
+  {Д} @-> {D} ,, {д} @-> {d} ,, {Ж} @-> {J} ,, {ж} @-> {j} ,,
+  {З} @-> {Z} ,, {з} @-> {z} ,, {И} @-> {İ} ,, {и} @-> {i} ,,
+  {Й} @-> {Y} ,, {й} @-> {y} ,, {К} @-> {K} ,, {к} @-> {k} ,,
+  {Л} @-> {L} ,, {л} @-> {l} ,, {М} @-> {M} ,, {м} @-> {m} ,,
+  {Н} @-> {N} ,, {н} @-> {n} ,, {П} @-> {P} ,, {п} @-> {p} ,,
+  {Р} @-> {R} ,, {р} @-> {r} ,, {С} @-> {S} ,, {с} @-> {s} ,,
+  {Т} @-> {T} ,, {т} @-> {t} ,, {Ф} @-> {F} ,, {ф} @-> {f} ,,
+  {Х} @-> {H} ,, {х} @-> {h} ,, {Ч} @-> {Ç} ,, {ч} @-> {ç} ,,
+  {Ш} @-> {Ş} ,, {ш} @-> {ş} ,, {Ы} @-> {I} ,, {ы} @-> {ı} ,,
+  {Э} @-> {E} ,, {э} @-> {e} ,, {Е} @-> {E} ,, {е} @-> {e} ,,
+  {Я} @-> {Â} ,, {я} @-> {â} ,, {У} @-> {U} ,, {у} @-> {u} ,,
+  {О} @-> {O} ,, {о} @-> {o} ,,
+
+  {Ё} @-> {Yo} ,, {ё} @-> {yo} ,, {Ю} @-> {Yu} ,, {ю} @-> {yu} ,,
+  {Ц} @-> {Ts} ,, {ц} @-> {ts} ,, {Щ} @-> {Şç} ,, {щ} @-> {şç} ,,
+  {Ь} @-> 0 ,, {ь} @-> 0 ,, {Ъ} @-> 0 ,, {ъ} @-> 0
+];
+
+define MAP'LATN'TO'CYRL [
+  {Â} @-> {Я} ,, {â} @-> {я} ,, {B} @-> {Б} ,, {b} @-> {б} ,,
+  {Ç} @-> {Ч} ,, {ç} @-> {ч} ,, {D} @-> {Д} ,, {d} @-> {д} ,,
+  {F} @-> {Ф} ,, {f} @-> {ф} ,, {G} @-> {Г} ,, {g} @-> {г} ,,
+  {H} @-> {Х} ,, {h} @-> {х} ,, {I} @-> {Ы} ,, {ı} @-> {ы} ,,
+  {İ} @-> {И} ,, {i} @-> {и} ,, {J} @-> {Ж} ,, {j} @-> {ж} ,,
+  {K} @-> {К} ,, {k} @-> {к} ,, {L} @-> {Л} ,, {l} @-> {л} ,,
+  {M} @-> {М} ,, {m} @-> {м} ,, {N} @-> {Н} ,, {n} @-> {н} ,,
+  {O} @-> {О} ,, {o} @-> {о} ,, {P} @-> {П} ,, {p} @-> {п} ,,
+  {R} @-> {Р} ,, {r} @-> {р} ,, {S} @-> {С} ,, {s} @-> {с} ,,
+  {Ş} @-> {Ш} ,, {ş} @-> {ш} ,, {T} @-> {Т} ,, {t} @-> {т} ,,
+  {V} @-> {В} ,, {v} @-> {в} ,, {Z} @-> {З} ,, {z} @-> {з} ,,
+
+  {ya} @-> {я} ,, {Ya} @-> {Я} ,, {YA} @-> {Я} ,,
+  {ye} @-> {е} ,, {YE} @-> {Е} ,, {Ye} @-> {Е} ,,
+
+  # hack, hack, hack
+  {A} @-> {А} ,, {a} @-> {а} ,, {E} @-> {Е} ,, {e} @-> {е} ,,
+  {Ö} @-> {Ё} ,, {ö} @-> {ё} ,, {U} @-> {У} ,, {u} @-> {у} ,,
+  {Ü} @-> {Ю} ,, {ü} @-> {ю} ,, {Y} @-> {Й} ,, {y} @-> {й} ,,
+  {C} @-> {Дж} ,, {c} @-> {дж} ,, {Ğ} @-> {Гъ} ,, {ğ} @-> {гъ} ,,
+  {Ñ} @-> {Нъ} ,, {ñ} @-> {нъ} ,, {Q} @-> {Къ} ,, {q} @-> {къ}
+];
+
+define QUOTE'LATN'TO'CYRL {“} @-> {«} ,, {”} @-> {»};
+define QUOTE'CYRL'TO'LATN {«} @-> {"} ,, {»} @-> {"};
+
+# Now we're in LanguageCrh::translate
+define LATN'LETTERS L'UC | L'LC | {'};
+define CYRL'LETTERS C'UC | C'LC ;
+define PHP'WORD'CHARS LATN'LETTERS | CYRL'LETTERS |
+  {_}|{W}|{X}|{w}|{x}|{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9};
+# Add a few characters which are treated specially by the conversion
+define ALL'WORD'CHARS PHP'WORD'CHARS | {-} | {#} | {.};
+# In PHP $breaks is [^\w\x80-\xff]
+define PHP'BREAK \[PHP'WORD'CHARS | BRACKETS ];
+define BREAK \[ALL'WORD'CHARS | BRACKETS ];
+
+## Split input into words
+#define BYWORDS(word,break) (word) [break (word)]*;
+## ensure that `t` applies only to `word`s, and has a identity fallback.
+#define WORDT(word,t) [ word .o. t ] .P. word;
+
+# For crh-cyrl, a "word" is anything other than a bracketed roman numeral
+define TRANSLATE'CYRL(regs) [
+  NO'BRACKETS .o. BRACKETROMAN'CRH(PHP'BREAK) .o. SWAPBRACKETS .o.
+  [ [ [ "[[":0 [\BRACKETS]* "]]":0 ] .o. regs ] | \BRACKETS ]*
+];
+
+# For crh-latn, no roman numeral special-casing is done.
+define TRANSLATE'LATN(regs) NO'BRACKETS .o. regs;
+
+# LanguageCrh::regsConverter
+define REGS'CONVERTER'LATN(latn'exceptions, latn'patterns)
+  latn'exceptions .o. latn'patterns .o.
+  MAP'CYRL'TO'LATN .o. QUOTE'CYRL'TO'LATN;
+
+define REGS'CONVERTER'CYRL(cyrl'exceptions, cyrl'patterns, cyrl'cleanup)
+  cyrl'exceptions .o. cyrl'patterns .o.
+  MAP'LATN'TO'CYRL .o. QUOTE'LATN'TO'CYRL .o.
+  cyrl'cleanup;
+
+# Exceptions (from CrhExceptions.php)
+source crh-exceptions.foma
+
+# To variant: 'crh-latn'
+define CONVERT'CRH'LATN TRANSLATE'LATN(REGS'CONVERTER'LATN(
+  CRH'LATN'EXCEPTIONS, CRH'LATN'PATTERNS(PHP'BREAK)
+));
+
+# To variant: 'crh-cyrl'
+define CONVERT'CRH'CYRL TRANSLATE'CYRL(REGS'CONVERTER'CYRL(
+  CRH'CYRL'EXCEPTIONS, CRH'CYRL'PATTERNS(PHP'BREAK), CYRL'CLEANUP
+));
+
+define CRH'WORD CRH'WORD'HELPER(CONVERT'CRH'CYRL, CONVERT'CRH'LATN);
+
+# Safety approximation functions
+define SAFE'STAR(rt) _somenonfinal( [\BRACKETS]* .o. [~NOTSAFE(rt)] );
+define APPROX'SAFE(x,rt) [?+ .o. NO'BRACKETS .o. x .o. SAFE'STAR(rt)]+;
+
+source crh-write.foma

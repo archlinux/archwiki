@@ -5,10 +5,10 @@
 			"Christian List",
 			"Emilkris33",
 			"Jhertel",
+			"Jon Harald Søby",
 			"Morten LJ",
 			"Peter Alberti",
-			"Saederup92",
-			"Jon Harald Søby"
+			"Saederup92"
 		]
 	},
 	"cite-desc": "Tilføjer <code>&lt;ref[ name=id]&gt;</code> og <code>&lt;references/&gt;</code>-elementer til referencer.",
@@ -37,5 +37,11 @@
 	"cite_references_link_accessibility_back_label": "Spring tilbage op",
 	"cite_section_preview_references": "Forhåndsvisning af referencer",
 	"cite_warning": "Referenceadvarsel: $1",
-	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code>-tag med navnet <code>$1</code> kan ikke forhåndsvises, fordi det er defineret uden for det aktuelle afsnit eller ikke defineret overhovedet."
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code>-tag med navnet <code>$1</code> kan ikke forhåndsvises, fordi det er defineret uden for det aktuelle afsnit eller ikke defineret overhovedet.",
+	"cite-wikieditor-tool-reference": "Fodnote",
+	"cite-wikieditor-help-page-references": "Fodnoter",
+	"cite-wikieditor-help-content-reference-description": "Fodnote",
+	"cite-wikieditor-help-content-named-reference-description": "Navngiven fodnote",
+	"cite-wikieditor-help-content-rereference-description": "Yderligere henvisninger til samme fodnote",
+	"cite-wikieditor-help-content-showreferences-description": "Vis fodnoter"
 }

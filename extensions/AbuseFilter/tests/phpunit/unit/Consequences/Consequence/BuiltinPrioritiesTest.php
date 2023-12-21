@@ -30,8 +30,7 @@ class BuiltinPrioritiesTest extends MediaWikiUnitTestCase {
 			$this->createMock( UserFactory::class ),
 			new NullLogger(),
 			'',
-			false,
-			null
+			false
 		);
 		$warn = new Warn(
 			$this->createMock( Parameters::class ),

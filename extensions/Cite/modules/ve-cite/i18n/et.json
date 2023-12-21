@@ -49,7 +49,7 @@
 	"cite-ve-referenceslist-isempty-default": "Sellel leheküljel puuduvad viited, mida selles loendis näidata.",
 	"cite-ve-referenceslist-missingref": "Selle viite kirjeldus on mallis või muul moel genereeritud plokis ning praegu saab seda redigeerida vaid lähteteksti režiimis.",
 	"cite-ve-referenceslist-missingref-in-list": "See viide on määratletud mallis või muus genereeritud plokis ning praegu saab seda eelvaadelda ainult lähteteksti režiimis.",
-	"cite-ve-referenceslist-missingreflist": "Selle viiteloendi tekitab mall ja praegu saab seda redigeerida ainult lähteteksti režiimis.",
+	"cite-ve-referenceslist-missingreflist": "Selle viiteloendi tekitab mall.",
 	"cite-ve-toolbar-group-label": "Viide",
 	"cite-ve-othergroup-item": "Viide: {{lc:$1}}",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "Viited",

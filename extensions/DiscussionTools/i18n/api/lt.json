@@ -12,6 +12,7 @@
 	"apierror-discussiontools-subscription-failed-remove": "Nepavyko atsisakyti šios temos prenumeratos.",
 	"apihelp-discussiontoolsedit-param-commentid": "Komentaro, į kurį atsakoma, ID. Naudojamas tik tada, kai <var>paction</var> yra <var>addcomment</var>. Nepaiso <var>commentname</var>.",
 	"apihelp-discussiontoolsedit-param-commentname": "Komentaro, į kurį reikia atsakyti, pavadinimas. Naudojamas tik tada, kai <var>paction</var> yra <var>addcomment</var>.",
+	"apihelp-discussiontoolsedit-param-autosubscribe": "Automatiškai nustatyti, kad naudotojas prenumeruotų aptarimo puslapio temą?",
 	"apihelp-discussiontoolsedit-param-formtoken": "Neprivalomas unikalus ID, sugeneruotas kliente, kad būtų išvengta dvigubo paskelbimo.",
 	"apihelp-discussiontoolsedit-param-html": "Skelbtinas turinys kaip HTML. Negalima naudoti kartu su <var>wikitext</var>.",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} Naudojamas tik tada, kai <var>paction</var> yra <var>addtopic</var>.",

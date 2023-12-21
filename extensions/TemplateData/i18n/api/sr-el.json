@@ -2,7 +2,6 @@
 	"@metadata": {
 		"authors": []
 	},
-	"apihelp-templatedata-description": "Pribavlja podatke koje je uskladištilo proširenje TemplateData.",
 	"apihelp-templatedata-summary": "Pribavlja podatke koje je uskladištilo proširenje „Podaci o šablonu”.",
 	"apihelp-templatedata-example-1": "Return TemplateData for [[Template:Foobar]], with results if the template does not exist or exists but has no TemplateData",
 	"apihelp-templatedata-example-2": "Return TemplateData for [[Template:Phabricator]], with no results if the template does not exist or exists but has no TemplateData",

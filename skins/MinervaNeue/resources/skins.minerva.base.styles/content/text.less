@@ -8,8 +8,8 @@
 	}
 
 	hr {
-		// @color used as background-color as exception here.
-		background-color: @colorGray10;
+		// border-color used as background-color as exception here.
+		background-color: @border-color-base;
 		height: 1px;
 		border: 0;
 	}
@@ -42,7 +42,7 @@
 	code,
 	pre {
 		font-family: @font-family-monospace;
-		border: solid 1px @colorGray12;
+		border: @border-subtle;
 		white-space: pre-wrap;
 	}
 
@@ -61,7 +61,7 @@ strong {
 }
 
 blockquote {
-	border-left: 3px solid @colorGray12;
+	border-left: 3px @border-style-base @border-color-subtle;
 	padding: @padding-vertical-blockquote @padding-end-blockquote @padding-vertical-blockquote @padding-start-blockquote;
 	font-family: @font-family-serif;
 	font-size: 1.1em;

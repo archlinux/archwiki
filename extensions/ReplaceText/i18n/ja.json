@@ -42,7 +42,6 @@
 	"replacetext_warning": "'''警告:''' 置換後の文字列「$2」を含むページが既に {{PLURAL:$1|$1 件あります。}}この置換を実行すると、これらの文字列と実際に置換された箇所を区別できなくなります。",
 	"replacetext_blankwarning": "'''警告:''' 置換後文字列が空であるため、この操作は取り消せません。",
 	"replacetext_continue": "続行",
-	"replacetext_announce": "$1とウォッチリストでこれらの編集を知らせる",
 	"replacetext_editsummary": "文字列「$1」を「$2」に置換",
 	"replacetext_reminder": "他のページに存在するこのページへのリンクの修正も行う場合は、$1に進んでください。",
 	"replacetext_cfg_error": "テキスト置換の設定エラー",

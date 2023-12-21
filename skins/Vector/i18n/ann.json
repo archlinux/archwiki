@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Katelem",
-			"Amire80"
+			"Amire80",
+			"Katelem"
 		]
 	},
 	"vector-languages": "Ebi kè Usem",
@@ -20,6 +20,7 @@
 	"vector-searchsuggest-containing": "Wèek ebi kè akpọk ìkakaan̄ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Òkup me emen",
 	"vector-toc-beginning": "Ibebene",
+	"vector-main-menu-label": "Ibot Onineen̄",
 	"vector-page-tools-label": "Nroon̄",
 	"vector-page-tools-general-label": "Eyi otutuuk",
 	"vector-unpin-element-label": "let"

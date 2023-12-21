@@ -122,7 +122,7 @@ class TokenizerTest extends ParserTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideCode() {
+	public static function provideCode() {
 		return [
 			[ '1 === 1' ],
 			[ 'added_lines irlike "test"' ],

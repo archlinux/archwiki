@@ -13,11 +13,10 @@
 			1100100
 		]
 	},
-	"tooltip-ca-createsource": "මෙම පිටුවේ ප්‍රභව කේතයන් නිර්මාණය කරන්න",
-	"tooltip-ca-editsource": "මෙම පිටුවේ ප්‍රභව කේතයන් සංස්කරණය කරන්න",
 	"tooltip-ca-ve-edit": "මෙම පිටුව සංස්කරණය කරන්න",
+	"tooltip-ca-editsource": "මෙම පිටුවේ ප්‍රභව කේතයන් සංස්කරණය කරන්න",
+	"tooltip-ca-createsource": "මෙම පිටුවේ ප්‍රභව කේතයන් නිර්මාණය කරන්න",
 	"visualeditor-advancedsettings-tool": "උසස් සංස්කරණය",
-	"visualeditor-beta-warning": "විෂුවල්එඩිටර් තවමත් 'බීටා' තත්‍වයේ පවතී. You may encounter software issues, and you may not be able to edit parts of the page. Click \"{{int:visualeditor-ca-editsource}}\" to switch to wikitext mode – unsaved changes will be lost.",
 	"visualeditor-browserwarning": "ඔබ දැනට සිටින වෙබ් බ්‍රවුසරය නිල වශයෙන් විෂුවල්එඩිටර් සඳහා සහාය නොදක්වයි.",
 	"visualeditor-ca-createlocaldescriptionsource": "ප්‍රාදේශීය විස්තරයේ මූලාශ්‍රය එක් කරන්න",
 	"visualeditor-ca-createsource": "ප්‍රභව කේතයන් නිර්මාණය කරන්න",

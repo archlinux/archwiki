@@ -32,10 +32,6 @@
 	"wikieditor-toolbar-tool-file-insert": "Lasit",
 	"wikieditor-toolbar-tool-file-cancel": "Gaskkalduhte",
 	"wikieditor-toolbar-tool-file-upload": "Fiilla vurken",
-	"wikieditor-toolbar-tool-reference": "Gáldu",
-	"wikieditor-toolbar-tool-reference-cancel": "Šluhtte",
-	"wikieditor-toolbar-tool-reference-title": "Lasit gáldočujuhusa",
-	"wikieditor-toolbar-tool-reference-insert": "Lasit",
 	"wikieditor-toolbar-tool-heading-1": "Dássi 1",
 	"wikieditor-toolbar-tool-heading-2": "Dássi 2",
 	"wikieditor-toolbar-tool-heading-3": "Dássi 3",
@@ -72,7 +68,11 @@
 	"wikieditor-toolbar-help-page-file": "Fiillat",
 	"wikieditor-toolbar-help-page-discussion": "Ságastallan",
 	"wikieditor-toolbar-help-content-italic-description": "Finjučála",
+	"wikieditor-toolbar-help-content-italic-example": "Finjučálan čállojuvvon teaksta",
 	"wikieditor-toolbar-help-content-bold-description": "Buoiddesčála",
+	"wikieditor-toolbar-help-content-bold-example": "Buoiddesčálan čállojuvvon teaksta",
+	"wikieditor-toolbar-help-content-bolditalic-description": "Buoiddes- ja finjučálan čállojuvvon teaksta",
+	"wikieditor-toolbar-help-content-bolditalic-example": "Buoiddes- ja finjučálan čállojuvvon teaksta",
 	"wikieditor-realtimepreview-preview": "Ovdačájáhus",
 	"wikieditor-realtimepreview-onboarding-button": "Ášši lea čielggas."
 }

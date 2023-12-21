@@ -19,11 +19,11 @@
  */
 namespace MediaWiki\ResourceLoader;
 
-use Config;
-use ConfigException;
 use InvalidArgumentException;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\MainConfigNames;
-use OutputPage;
+use MediaWiki\Output\OutputPage;
 use Wikimedia\Minify\CSSMin;
 
 /**
@@ -107,7 +107,7 @@ class SkinModule extends LessVarFileModule {
 	 *     Default interface styling for indicators.
 	 *
 	 * "interface-message-box":
-	 *     Styles for message boxes.
+	 *     Styles for message boxes. Can be used by skins that do not load Codex styles on page load.
 	 *
 	 * "interface-site-notice":
 	 *     Default interface styling for site notices.
@@ -145,11 +145,7 @@ class SkinModule extends LessVarFileModule {
 			// Reserves whitespace for the logo in a pseudo element.
 			'print' => [ 'resources/src/mediawiki.skinning/logo-print.less' ],
 		],
-		'content-media' => [
-			'all' => [ 'resources/src/mediawiki.skinning/content.thumbnails-common.less' ],
-			'screen' => [ 'resources/src/mediawiki.skinning/content.thumbnails-screen.less' ],
-			'print' => [ 'resources/src/mediawiki.skinning/content.thumbnails-print.less' ],
-		],
+		'content-media' => [],
 		'content-links' => [
 			'screen' => [ 'resources/src/mediawiki.skinning/content.links.less' ]
 		],
@@ -230,7 +226,7 @@ class SkinModule extends LessVarFileModule {
 		'accessibility' => true,
 		'content-body' => true,
 		'interface-core' => true,
-		'toc' => true,
+		'toc' => true
 	];
 
 	/**
@@ -265,7 +261,7 @@ class SkinModule extends LessVarFileModule {
 	 *   after an upgrade until you enable them or implement them by other means.
 	 *
 	 * - lessMessages: Interface message keys to export as LESS variables.
-	 *   See also ResourceLoaderLessVarFileModule.
+	 *   See also LessVarFileModule.
 	 *
 	 * @param string|null $localBasePath
 	 * @param string|null $remoteBasePath
@@ -327,14 +323,14 @@ class SkinModule extends LessVarFileModule {
 		if ( isset( $features[ 'content' ] ) ) {
 			$features[ 'content-media' ] = $features[ 'content' ];
 			unset( $features[ 'content' ] );
-			$messages .= '[1.37] The use of the `content` feature with ResourceLoaderSkinModule'
+			$messages .= '[1.37] The use of the `content` feature with SkinModule'
 				. ' is deprecated. Use `content-media` instead. ';
 		}
 
 		// The `content-thumbnails` feature is mapped to `content-media`.
 		if ( isset( $features[ 'content-thumbnails' ] ) ) {
 			$features[ 'content-media' ] = $features[ 'content-thumbnails' ];
-			$messages .= '[1.37] The use of the `content-thumbnails` feature with ResourceLoaderSkinModule'
+			$messages .= '[1.37] The use of the `content-thumbnails` feature with SkinModule'
 				. ' is deprecated. Use `content-media` instead. ';
 			unset( $features[ 'content-thumbnails' ] );
 		}
@@ -349,7 +345,7 @@ class SkinModule extends LessVarFileModule {
 
 		// The legacy feature no longer exists (T89981) but to avoid fatals in skins is retained.
 		if ( isset( $features['legacy'] ) && $features['legacy'] ) {
-			$messages .= '[1.37] The use of the `legacy` feature with ResourceLoaderSkinModule is deprecated'
+			$messages .= '[1.37] The use of the `legacy` feature with SkinModule is deprecated'
 				. '(T89981) and is a NOOP since 1.39 (T304325). This should be urgently omited to retain compatibility '
 				. 'with future MediaWiki versions';
 		}
@@ -413,25 +409,45 @@ class SkinModule extends LessVarFileModule {
 						);
 					}
 				}
-				if ( $feature === 'content-media' && (
-					!$this->getConfig()->get( MainConfigNames::ParserEnableLegacyMediaDOM ) ||
-					$this->getConfig()->get( MainConfigNames::UseContentMediaStyles )
-				) ) {
-					$featureFilePaths['all'][] = new FilePath(
-						'resources/src/mediawiki.skinning/content.media-common.less',
-						$defaultLocalBasePath,
-						$defaultRemoteBasePath
-					);
-					$featureFilePaths['screen'][] = new FilePath(
-						'resources/src/mediawiki.skinning/content.media-screen.less',
-						$defaultLocalBasePath,
-						$defaultRemoteBasePath
-					);
-					$featureFilePaths['print'][] = new FilePath(
-						'resources/src/mediawiki.skinning/content.media-print.less',
-						$defaultLocalBasePath,
-						$defaultRemoteBasePath
-					);
+
+				if ( $feature === 'content-media' ) {
+					if ( $this->getConfig()->get( MainConfigNames::UseLegacyMediaStyles ) ) {
+						$featureFilePaths['all'][] = new FilePath(
+							'resources/src/mediawiki.skinning/content.thumbnails-common.less',
+							$defaultLocalBasePath,
+							$defaultRemoteBasePath
+						);
+						$featureFilePaths['screen'][] = new FilePath(
+							'resources/src/mediawiki.skinning/content.thumbnails-screen.less',
+							$defaultLocalBasePath,
+							$defaultRemoteBasePath
+						);
+						$featureFilePaths['print'][] = new FilePath(
+							'resources/src/mediawiki.skinning/content.thumbnails-print.less',
+							$defaultLocalBasePath,
+							$defaultRemoteBasePath
+						);
+					}
+					if (
+						!$this->getConfig()->get( MainConfigNames::ParserEnableLegacyMediaDOM ) ||
+						$this->getConfig()->get( MainConfigNames::UseContentMediaStyles )
+					) {
+						$featureFilePaths['all'][] = new FilePath(
+							'resources/src/mediawiki.skinning/content.media-common.less',
+							$defaultLocalBasePath,
+							$defaultRemoteBasePath
+						);
+						$featureFilePaths['screen'][] = new FilePath(
+							'resources/src/mediawiki.skinning/content.media-screen.less',
+							$defaultLocalBasePath,
+							$defaultRemoteBasePath
+						);
+						$featureFilePaths['print'][] = new FilePath(
+							'resources/src/mediawiki.skinning/content.media-print.less',
+							$defaultLocalBasePath,
+							$defaultRemoteBasePath
+						);
+					}
 				}
 			}
 		}

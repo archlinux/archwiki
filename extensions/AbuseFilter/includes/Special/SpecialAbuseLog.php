@@ -28,14 +28,15 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
+use MediaWiki\WikiMap\WikiMap;
 use OOUI\ButtonInputWidget;
 use SpecialPage;
 use Status;
 use stdClass;
-use Title;
-use WikiMap;
+use Wikimedia\Rdbms\LBFactory;
 use Xml;
 
 class SpecialAbuseLog extends AbuseFilterSpecialPage {
@@ -51,55 +52,58 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 	/**
 	 * @var string|null The user whose AbuseLog entries are being searched
 	 */
-	protected $mSearchUser;
+	private $mSearchUser;
 
 	/**
 	 * @var string The start time of the search period
 	 */
-	protected $mSearchPeriodStart;
+	private $mSearchPeriodStart;
 
 	/**
 	 * @var string The end time of the search period
 	 */
-	protected $mSearchPeriodEnd;
+	private $mSearchPeriodEnd;
 
 	/**
 	 * @var string The page of which AbuseLog entries are being searched
 	 */
-	protected $mSearchTitle;
+	private $mSearchTitle;
 
 	/**
 	 * @var string The action performed by the user
 	 */
-	protected $mSearchAction;
+	private $mSearchAction;
 
 	/**
 	 * @var string The action taken by AbuseFilter
 	 */
-	protected $mSearchActionTaken;
+	private $mSearchActionTaken;
 
 	/**
 	 * @var string The wiki name where we're performing the search
 	 */
-	protected $mSearchWiki;
+	private $mSearchWiki;
 
 	/**
 	 * @var string|null The filter IDs we're looking for. Either a single one, or a pipe-separated list
 	 */
-	protected $mSearchFilter;
+	private $mSearchFilter;
 
 	/**
 	 * @var string The visibility of entries we're interested in
 	 */
-	protected $mSearchEntries;
+	private $mSearchEntries;
 
 	/**
 	 * @var string The impact of the user action, i.e. if the change has been saved
 	 */
-	protected $mSearchImpact;
+	private $mSearchImpact;
 
 	/** @var string|null The filter group to search, as defined in $wgAbuseFilterValidGroups */
-	protected $mSearchGroup;
+	private $mSearchGroup;
+
+	/** @var LBFactory */
+	private $lbFactory;
 
 	/** @var LinkBatchFactory */
 	private $linkBatchFactory;
@@ -126,6 +130,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 	private $varManager;
 
 	/**
+	 * @param LBFactory $lbFactory
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param PermissionManager $permissionManager
 	 * @param UserIdentityLookup $userIdentityLookup
@@ -137,6 +142,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 	 * @param VariablesManager $varManager
 	 */
 	public function __construct(
+		LBFactory $lbFactory,
 		LinkBatchFactory $linkBatchFactory,
 		PermissionManager $permissionManager,
 		UserIdentityLookup $userIdentityLookup,
@@ -148,6 +154,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 		VariablesManager $varManager
 	) {
 		parent::__construct( self::PAGE_NAME, 'abusefilter-log', $afPermissionManager );
+		$this->lbFactory = $lbFactory;
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->permissionManager = $permissionManager;
 		$this->userIdentityLookup = $userIdentityLookup;
@@ -189,7 +196,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 	 * An array of size 1: either the URL is like Special:AbuseLog/id where
 	 * the id is log identifier, in which case the details of the log except for
 	 * private bits (e.g. IP address) are shown, or Special:AbuseLog/hide for hiding entries,
-	 * or the URL is incomplete as in Special:AbuseLog/private (without speciying id),
+	 * or the URL is incomplete as in Special:AbuseLog/private (without specifying id),
 	 * in which case a warning is shown to the user
 	 *
 	 * An array of size 0 when URL is like Special:AbuseLog or an array of size
@@ -412,6 +419,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 
 	private function showHideView() {
 		$view = new HideAbuseLog(
+			$this->lbFactory,
 			$this->afPermissionManager,
 			$this->getContext(),
 			$this->getLinkRenderer(),
@@ -442,7 +450,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 			}
 		}
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->lbFactory->getReplicaDatabase();
 		if ( $this->mSearchPeriodStart ) {
 			$conds[] = 'afl_timestamp >= ' .
 				$dbr->addQuotes( $dbr->timestamp( strtotime( $this->mSearchPeriodStart ) ) );
@@ -695,7 +703,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 			'join_conds' => $join_conds,
 		] = $pager->getQueryInfo();
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->lbFactory->getReplicaDatabase();
 		$row = $dbr->selectRow(
 			$tables,
 			$fields,
@@ -812,14 +820,13 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 			$output .= $htmlForm->getHTML( false );
 		}
 
-		// TODO Clarify whether TextSlotDiffRenderer::getTextDiff can return unsafe stuff
-		// @phan-suppress-next-line SecurityCheck-XSS
 		$out->addHTML( Xml::tags( 'fieldset', null, $output ) );
 	}
 
 	/**
 	 * Helper function to select a row with private details and some more context
 	 * for an AbuseLog entry.
+	 * @todo Create a service for this
 	 *
 	 * @param Authority $authority The user who's trying to view the row
 	 * @param int $id The ID of the log entry
@@ -828,7 +835,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 	 */
 	public static function getPrivateDetailsRow( Authority $authority, $id ) {
 		$afPermManager = AbuseFilterServices::getPermissionManager();
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
 
 		$row = $dbr->selectRow(
 			[ 'abuse_filter_log', 'abuse_filter' ],
@@ -870,7 +877,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 	 * @param stdClass $row The row, as returned by self::getPrivateDetailsRow()
 	 * @return string The HTML output
 	 */
-	protected function buildPrivateDetailsTable( $row ) {
+	private function buildPrivateDetailsTable( $row ) {
 		$output = Xml::element(
 			'legend',
 			null,
@@ -1005,8 +1012,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 
 		$output .= Xml::closeElement( 'tbody' ) . Xml::closeElement( 'table' );
 
-		$output = Xml::tags( 'fieldset', null, $output );
-		return $output;
+		return Xml::tags( 'fieldset', null, $output );
 	}
 
 	/**

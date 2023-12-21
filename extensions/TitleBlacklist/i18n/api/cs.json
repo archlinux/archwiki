@@ -5,7 +5,6 @@
 			"Mormegil"
 		]
 	},
-	"apihelp-titleblacklist-description": "Zkontrolovat název stránky, souboru nebo uživatelské jméno vůči černé listině TitleBlacklist.",
 	"apihelp-titleblacklist-param-title": "Řetězec, který se má vůči černé listině zkontrolovat.",
 	"apihelp-titleblacklist-param-action": "Akce, která se má zkontrolovat.",
 	"apihelp-titleblacklist-param-nooverride": "Nepokoušet se o překonání černé listiny názvů.",

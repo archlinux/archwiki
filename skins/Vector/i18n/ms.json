@@ -4,11 +4,11 @@
 			"Amire80",
 			"Anakmalaysia",
 			"Aurora",
+			"Bebudak",
+			"Hakimi97",
 			"Izington",
 			"Pizza1016",
-			"Tofeiku",
-			"Bebudak",
-			"Hakimi97"
+			"Tofeiku"
 		]
 	},
 	"skinname-vector": "Legasi Vektor (2010)",
@@ -27,7 +27,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|satu bahasa|$1 bahasa}}",
 	"vector-no-language-button-label": "Tambahkan bahasa",
 	"vector-no-language-button-aria-label": "Rencana ini hanya wujud dalam bahasa ini. Tambah rencana untuk bahasa lain",
-	"vector-language-redirect-to-top": "Di {{SITENAME}} ini, pautan bahasa di atas laman melintang daripada tajuk rencana. [[#p-lang-btn|Pergi ke atas]].",
+	"vector-language-redirect-to-top": "Pautan bahasa di atas laman melintang daripada rencana.",
 	"vector-language-variant-switcher-label": "Tukar kelainan bahasa",
 	"vector-action-addsection": "Tambah topik",
 	"vector-action-delete": "Hapus",
@@ -59,6 +59,8 @@
 	"vector-site-nav-label": "Tapak",
 	"vector-main-menu-label": "Menu utama",
 	"vector-limited-width-toggle": "Togol lebar kandungan terhad",
+	"vector-limited-width-toggle-on-popup": "Anda telah menukar bentangan kepada lebar penuh. Untuk kembali ke lebar terhad, tekan butang ini.",
+	"vector-limited-width-toggle-off-popup": "Anda boleh menogol antara lebar terhad dan lebar penuh dengan mengklik butang ini.",
 	"vector-page-tools-label": "Peralatan",
 	"vector-page-tools-general-label": "Umum",
 	"vector-page-tools-actions-label": "Tindakan",
@@ -68,5 +70,8 @@
 	"tooltip-vector-anon-user-menu-title": "Lebih pilihan",
 	"vector-prefs-limited-width": "Bolehkan mod lebar terhad",
 	"vector-prefs-limited-width-help": "Bolehkan mod lebar terhad untuk pengalaman membaca yang lebih baik.",
-	"empty-language-selector-body": "Kandungan laman tidak disokong dalam bahasa lain."
+	"empty-language-selector-body": "Kandungan laman tidak disokong dalam bahasa lain.",
+	"vector-toc-unpinned-popup": "Isi kandungan telah dipindahkan ke sini.",
+	"vector-page-tools-unpinned-popup": "Menu alat telah dipindahkan ke sini.",
+	"vector-main-menu-unpinned-popup": "Menu utama telah dipindahkan ke sini."
 }

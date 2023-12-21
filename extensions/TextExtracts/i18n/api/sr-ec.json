@@ -6,7 +6,6 @@
 			"Zoranzoki21"
 		]
 	},
-	"apihelp-query+extracts-description": "Враћа сажетке датих страница у облику чистог текста или ограниченог HTML-а.",
 	"apihelp-query+extracts-summary": "Враћа сажетке датих страница у облику чистог текста или ограниченог HTML-а.",
 	"apihelp-query+extracts-param-chars": "Колико слова треба вратити. Текст који се заправо враћа може бити мало дужи.",
 	"apihelp-query+extracts-param-sentences": "Колико реченица треба вратити.",

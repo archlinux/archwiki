@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Adriendelucca",
 			"Fulup",
 			"Huñvreüs",
 			"Pymouss",
-			"Y-M D",
-			"Adriendelucca"
+			"Y-M D"
 		]
 	},
 	"templatedata-doc-desc-empty": "Deskrivadur ebet.",
@@ -53,7 +53,6 @@
 	"templatedata-modal-notice-import-numparams": "Enporzhiet eo bet $1 {{PLURAL:$1|arventenn}} nevez : $2.",
 	"templatedata-modal-placeholder-add-new-map-input": "Oc'h ouzhpennañ ur gartenn nevez...",
 	"templatedata-modal-placeholder-paramkey": "Anv an arventenn",
-	"templatedata-modal-table-param-actions": "Oberoù",
 	"templatedata-modal-table-param-aliases": "Aliasoù",
 	"templatedata-modal-table-param-default": "Dre ziouer ($1)",
 	"templatedata-modal-table-param-description": "Deskrivadur ($1)",

@@ -19,19 +19,20 @@
  * @ingroup Pager
  */
 
+namespace MediaWiki\Pager;
+
+use IContextSource;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
+use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * @ingroup Pager
  */
 class ProtectedTitlesPager extends AlphabeticPager {
-
-	/**
-	 * @var SpecialProtectedtitles
-	 */
-	public $mForm;
 
 	/**
 	 * @var array
@@ -44,13 +45,13 @@ class ProtectedTitlesPager extends AlphabeticPager {
 	/** @var int|null */
 	private $namespace;
 
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
+	private LinkBatchFactory $linkBatchFactory;
 
 	/**
-	 * @param SpecialProtectedtitles $form
+	 * @param IContextSource $context
+	 * @param LinkRenderer $linkRenderer
 	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param array $conds
 	 * @param string|null $type
 	 * @param string|null $level
@@ -59,9 +60,10 @@ class ProtectedTitlesPager extends AlphabeticPager {
 	 * @param int|null $size
 	 */
 	public function __construct(
-		SpecialProtectedtitles $form,
+		IContextSource $context,
+		LinkRenderer $linkRenderer,
 		LinkBatchFactory $linkBatchFactory,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		$conds,
 		$type,
 		$level,
@@ -70,17 +72,15 @@ class ProtectedTitlesPager extends AlphabeticPager {
 		$size
 	) {
 		// Set database before parent constructor to avoid setting it there with wfGetDB
-		$this->mDb = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
-		$this->mForm = $form;
+		$this->mDb = $dbProvider->getReplicaDatabase();
 		$this->mConds = $conds;
 		$this->level = $level;
 		$this->namespace = $namespace;
-		parent::__construct( $form->getContext() );
+		parent::__construct( $context, $linkRenderer );
 		$this->linkBatchFactory = $linkBatchFactory;
 	}
 
-	protected function getStartBody() {
-		# Do a link batch query
+	protected function doBatchLookups() {
 		$this->mResult->seek( 0 );
 		$lb = $this->linkBatchFactory->newLinkBatch();
 
@@ -89,19 +89,45 @@ class ProtectedTitlesPager extends AlphabeticPager {
 		}
 
 		$lb->execute();
-
-		return '';
-	}
-
-	/**
-	 * @return Title
-	 */
-	public function getTitle() {
-		return $this->mForm->getPageTitle();
 	}
 
 	public function formatRow( $row ) {
-		return $this->mForm->formatRow( $row );
+		$title = Title::makeTitleSafe( $row->pt_namespace, $row->pt_title );
+		if ( !$title ) {
+			return Html::rawElement(
+				'li',
+				[],
+				Html::element(
+					'span',
+					[ 'class' => 'mw-invalidtitle' ],
+					Linker::getInvalidTitleDescription(
+						$this->getContext(),
+						$row->pt_namespace,
+						$row->pt_title
+					)
+				)
+			) . "\n";
+		}
+
+		$link = $this->getLinkRenderer()->makeLink( $title );
+		// Messages: restriction-level-sysop, restriction-level-autoconfirmed
+		$description = $this->msg( 'restriction-level-' . $row->pt_create_perm )->escaped();
+		$lang = $this->getLanguage();
+		$expiry = strlen( $row->pt_expiry ) ?
+			$lang->formatExpiry( $row->pt_expiry, TS_MW ) :
+			'infinity';
+
+		if ( $expiry !== 'infinity' ) {
+			$user = $this->getUser();
+			$description .= $this->msg( 'comma-separator' )->escaped() . $this->msg(
+				'protect-expiring-local',
+				$lang->userTimeAndDate( $expiry, $user ),
+				$lang->userDate( $expiry, $user ),
+				$lang->userTime( $expiry, $user )
+			)->escaped();
+		}
+
+		return '<li>' . $lang->specialList( $link, $description ) . "</li>\n";
 	}
 
 	/**
@@ -132,3 +158,9 @@ class ProtectedTitlesPager extends AlphabeticPager {
 		return [ [ 'pt_timestamp', 'pt_namespace', 'pt_title' ] ];
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( ProtectedTitlesPager::class, 'ProtectedTitlesPager' );

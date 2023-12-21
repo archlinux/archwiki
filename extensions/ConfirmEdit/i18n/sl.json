@@ -9,7 +9,6 @@
 	"captcha-edit": "Če želite urejati stran, prosimo rešite spodnjo nalogo in odgovor vpišite v polje ([[Special:Captcha/help|več informacij]]):",
 	"captcha-edit-fail": "Napačen ali manjkajoč CAPTCHA",
 	"captcha-desc": "Zagotavlja tehnike CAPTCHA za zaščito pred smetjem in ugibanjem gesel",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Rešitev uganke CAPTCHA.",
 	"captcha-info-help": "Opis ugank CAPTCHA.",
 	"captcha-id-label": "ID uganke CAPTCHA",

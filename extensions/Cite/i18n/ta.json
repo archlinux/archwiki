@@ -14,5 +14,10 @@
 	"cite_references_link_accessibility_label": "மேலே குதிக்கவும்",
 	"cite_references_link_many_accessibility_label": "இங்கு மேலே தாவவும்:",
 	"cite_references_link_accessibility_back_label": "பின்னோக்கித் தாவவும்",
-	"cite_section_preview_references": "மேற்கோள்களின் முன்தோற்றம்"
+	"cite_section_preview_references": "மேற்கோள்களின் முன்தோற்றம்",
+	"cite-wikieditor-tool-reference": "# மேற்கோள்\n# முன்மாதிரி",
+	"cite-wikieditor-help-page-references": "மேற்கோள்கள்",
+	"cite-wikieditor-help-content-reference-description": "# மேற்கோள்\n# முன்மாதிரி",
+	"cite-wikieditor-help-content-rereference-description": "அதே மேற்கோளின் கூடுதல் பயன்பாடு",
+	"cite-wikieditor-help-content-showreferences-description": "# மேற்கோள்களைக் காட்டு\n# முன்மாதிரிகளைக் காட்டு"
 }

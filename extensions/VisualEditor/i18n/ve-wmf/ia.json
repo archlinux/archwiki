@@ -4,6 +4,11 @@
 			"McDutchie"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck pensa que nove contento ha essite addite al pagina",
+	"tag-editcheck-newreference-description": "Un referentia ha essite addite al pagina",
+	"tag-editcheck-references-description": "EditCheck pensa que un referentia pote esser necessari",
+	"tag-editcheck-references-activated": "Verification de modification (referentias) activate",
+	"tag-editcheck-references-activated-description": "EditCheck pensa que un referentia poterea haber essite necessari, e le interfacie de usator graphic ha essite monstrate",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Modification visual]]",
 	"tag-visualeditor-description": "Modification facite con le [[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Editor visual: a verificar]]",

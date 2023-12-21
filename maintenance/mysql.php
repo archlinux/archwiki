@@ -23,7 +23,6 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Shell\Shell;
 use Wikimedia\IPUtils;
 
@@ -61,7 +60,7 @@ class MysqlMaintenance extends Maintenance {
 
 	public function execute() {
 		$dbName = $this->getOption( 'wikidb', false );
-		$lbf = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$lbf = $this->getServiceContainer()->getDBLoadBalancerFactory();
 
 		// Pick LB
 		if ( $this->hasOption( 'cluster' ) ) {
@@ -143,7 +142,7 @@ class MysqlMaintenance extends Maintenance {
 			2 => STDERR,
 		];
 
-		// Split host and port as in DatabaseMysqli::mysqlConnect()
+		// Split host and port as in DatabaseMysqlBase::mysqlConnect()
 		$realServer = $info['host'];
 		$hostAndPort = IPUtils::splitHostAndPort( $realServer );
 		$socket = false;
@@ -178,7 +177,7 @@ class MysqlMaintenance extends Maintenance {
 			$args[] = "--port={$port}";
 		}
 
-		$args = array_merge( $args, $this->mArgs );
+		$args = array_merge( $args, $this->getArgs() );
 
 		// Ignore SIGINT if possible, otherwise the wrapper terminates when the user presses
 		// ctrl-C to kill a query.

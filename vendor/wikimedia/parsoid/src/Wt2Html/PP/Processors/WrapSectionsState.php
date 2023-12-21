@@ -8,13 +8,14 @@ use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\InternalException;
 use Wikimedia\Parsoid\Core\Sanitizer;
-use Wikimedia\Parsoid\Core\SectionMetaData;
+use Wikimedia\Parsoid\Core\SectionMetadata;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
@@ -54,7 +55,7 @@ class WrapSectionsState {
 	/** @var int */
 	private $sectionNumber = 0;
 
-	/** @var WrapSectionsTplInfo */
+	/** @var ?WrapSectionsTplInfo */
 	private $tplInfo = null;
 
 	/** @var WrapSectionsTplInfo[] */
@@ -162,9 +163,11 @@ class WrapSectionsState {
 	private function computeSectionMetadata(
 		SectionMetadata $metadata, Element $heading, int $newLevel
 	): void {
-		$tocData = $this->env->getTOCData();
-		$tocData->addSection( $metadata );
-		$tocData->processHeading( $this->oldLevel, $newLevel, $metadata );
+		if ( !$this->env->getPageConfig()->getSuppressTOC() ) {
+			$tocData = $this->env->getTOCData();
+			$tocData->addSection( $metadata );
+			$tocData->processHeading( $this->oldLevel, $newLevel, $metadata );
+		}
 		$this->oldLevel = $newLevel;
 
 		if ( $this->tplInfo !== null ) {
@@ -177,24 +180,29 @@ class WrapSectionsState {
 			} elseif ( count( $dmw->parts ) > 1 ) {
 				// Multi-part content -- cannot pick a title
 				$metadata->fromTitle = null;
-			} elseif ( !empty( $dmw->parts[0]->templatearg ) ) {
-				// Since we currently don't process templates in Parsoid,
-				// this has to be a top-level {{{...}}} and so the content
-				// comes from the current page. But, legacy parser returns 'false'
-				// for this, so we'll return null as well instead of current title.
-				$metadata->fromTitle = null;
-			} elseif ( !empty( $dmw->parts[0]->template->target->href ) ) {
-				// Pick template title, but strip leading "./" prefix
-				$metadata->fromTitle = preg_replace(
-					"#^./#", "", $dmw->parts[0]->template->target->href );
-				if ( $this->sectionNumber >= 0 ) {
-					// Legacy parser sets this to '' in some cases
-					// See "Templated sections (heading from template arg)" parser test
-					$metadata->index = 'T-' . $this->sectionNumber;
-				}
 			} else {
-				// Legacy parser return null here
-				$metadata->fromTitle = null;
+				$p0 = $dmw->parts[0];
+				// If just a single part (guaranteed with count above), it will be stdclass
+				'@phan-var \stdClass $p0';
+				if ( !empty( $p0->templatearg ) ) {
+					// Since we currently don't process templates in Parsoid,
+					// this has to be a top-level {{{...}}} and so the content
+					// comes from the current page. But, legacy parser returns 'false'
+					// for this, so we'll return null as well instead of current title.
+					$metadata->fromTitle = null;
+				} elseif ( !empty( $p0->template->target->href ) ) {
+					// Pick template title, but strip leading "./" prefix
+					$metadata->fromTitle = preg_replace(
+						"#^./#", "", $p0->template->target->href );
+					if ( $this->sectionNumber >= 0 ) {
+						// Legacy parser sets this to '' in some cases
+						// See "Templated sections (heading from template arg)" parser test
+						$metadata->index = 'T-' . $this->sectionNumber;
+					}
+				} else {
+					// Legacy parser return null here
+					$metadata->fromTitle = null;
+				}
 			}
 			$metadata->codepointOffset = null;
 		} elseif ( !WTUtils::isLiteralHTMLNode( $heading ) ) {
@@ -224,7 +232,7 @@ class WrapSectionsState {
 
 		// Additional processing for $anchor
 		$anchor = $clone->textContent; // strip all tags
-		$anchor = Sanitizer::normalizeSectionNameWhitespace( $anchor );
+		$anchor = Sanitizer::normalizeSectionNameWhiteSpace( $anchor );
 		$anchor = Sanitizer::decodeCharReferences( $anchor );
 		try {
 			// Equivalent to calling self::normalizeSectionName( $anchor) in Parser.php
@@ -605,7 +613,7 @@ class WrapSectionsState {
 	 * @param Element $wrapper
 	 * @param array $encapWrappers
 	 */
-	private function collapseWrappers( Element $wrapper, array $encapWrappers ) {
+	private function collapseWrappers( Element $wrapper, array $encapWrappers ): void {
 		$wrapperDp = DOMDataUtils::getDataParsoid( $wrapper );
 
 		// Build up $parts, $pi to set up the combined transclusion info on $wrapper
@@ -630,6 +638,7 @@ class WrapSectionsState {
 					// Assimilate $encapNode's data-mw and data-parsoid pi info
 					$dmw = DOMDataUtils::getDataMw( $encapNode );
 					foreach ( $dmw->parts ?? [] as $part ) {
+						'@phan-var string|\stdClass $part';
 						// Template index is relative to other transclusions.
 						// This index is used to extract whitespace information from
 						// data-parsoid and that array only includes info for templates.
@@ -664,7 +673,7 @@ class WrapSectionsState {
 			DOMUtils::addTypeOf( $wrapper, "mw:Transclusion" );
 			$wrapperDp->pi = $pi;
 			$this->fillDSRGap( $parts, $prevDp->dsr->end, $wrapperDp->dsr->end );
-			DOMDataUtils::setDataMw( $wrapper, (object)[ 'parts' => $parts ] );
+			DOMDataUtils::setDataMw( $wrapper, new DataMw( [ 'parts' => $parts ] ) );
 		} catch ( InternalException $e ) {
 			// We don't have accurate template wrapping information.
 			// Set typeof to 'mw:Placeholder' since 'mw:Transclusion'
@@ -686,7 +695,7 @@ class WrapSectionsState {
 	 * partial overlaps. This method identifies those conflicts and fixes up
 	 * the encapsulation by expanding those ranges as necessary.
 	 */
-	private function resolveTplExtSectionConflicts() {
+	private function resolveTplExtSectionConflicts(): void {
 		$secRanges = [];
 		'@phan-var array[] $secRanges';
 		foreach ( $this->tplsAndExtsToExamine as $tplInfo ) {
@@ -828,5 +837,49 @@ class WrapSectionsState {
 		// Convert byte offsets to codepoint offsets in TOCData
 		// (done in a batch to avoid O(N^2) string traversals)
 		$this->convertTOCOffsets();
+
+		// Add a synthetic TOC at the end of the first section, if necessary
+		$tocBS = $this->env->getBehaviorSwitch( "toc" );
+		$noTocBS = $this->env->getBehaviorSwitch( "notoc" );
+		$forceTocBS = $this->env->getBehaviorSwitch( "forcetoc" );
+
+		$showToc = true;
+		if ( $noTocBS && !$tocBS ) {
+			$showToc = false;
+		}
+		$numHeadings = $this->count - 1; // $this->count is initialized to 1
+		$enoughToc = $showToc && ( $numHeadings >= 4 || $tocBS );
+		if ( $forceTocBS ) {
+			$showToc = true;
+			$enoughToc = true;
+		}
+		if ( $numHeadings == 0 ) {
+			$enoughToc = false;
+		}
+
+		if ( !$this->env->getPageConfig()->getSuppressTOC() ) {
+			if ( $enoughToc ) {
+				// ParserOutputFlags::SHOW_TOC
+				$this->env->getMetadata()->setOutputFlag( 'show-toc' );
+				if ( !$tocBS ) {
+					$syntheticTocMeta = $this->doc->createElement( 'meta' );
+					$syntheticTocMeta->setAttribute( 'property', 'mw:PageProp/toc' );
+					$dmw = DOMDataUtils::getDataMw( $syntheticTocMeta );
+					$dmw->autoGenerated = true;
+					// Set a synthetic zero-length dsr to suppress noisy warnings
+					// from the round trip testing script.
+					$sectionDSR = $this->getDSR( $leadSection->container, false );
+					if ( $sectionDSR !== -1 ) {
+						$dp = DOMDataUtils::getDataParsoid( $syntheticTocMeta );
+						$dp->dsr = new DomSourceRange( $sectionDSR, $sectionDSR, 0, 0 );
+					}
+					$leadSection->container->appendChild( $syntheticTocMeta );
+				}
+			}
+			if ( !$showToc ) {
+				// ParserOutputFlags::NO_TOC
+				$this->env->getMetadata()->setOutputFlag( 'no-toc' );
+			}
+		}
 	}
 }

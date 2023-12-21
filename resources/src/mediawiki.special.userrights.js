@@ -1,18 +1,20 @@
 /*!
  * JavaScript for Special:UserRights
  */
-( function () {
-	var convertmessagebox = require( 'mediawiki.notification.convertmessagebox' ),
-		$wpReason = $( '#wpReason' );
-
+$( function () {
 	// Replace successbox with notifications
-	convertmessagebox();
+	require( 'mediawiki.notification.convertmessagebox' )();
 
 	// Dynamically show/hide the "other time" input under each dropdown
 	$( '.mw-userrights-nested select' ).on( 'change', function ( e ) {
 		$( e.target.parentNode ).find( 'input' ).toggle( $( e.target ).val() === 'other' );
 	} );
 
-	$wpReason.codePointLimit( mw.config.get( 'wgCommentCodePointLimit' ) );
+	$( '#wpReason' ).codePointLimit( mw.config.get( 'wgCommentCodePointLimit' ) );
 
-}() );
+	// Disable the watch field for cross-wiki userright changes
+	var userrightsInterwikiDelimiter = require( './config.json' ).UserrightsInterwikiDelimiter;
+	$( '#username' ).on( 'change', function ( e ) {
+		$( '#wpWatch' ).prop( 'disabled', e.target.value.indexOf( userrightsInterwikiDelimiter ) !== -1 );
+	} ).trigger( 'change' );
+} );

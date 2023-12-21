@@ -25,22 +25,10 @@
  */
 class ZhConverter extends LanguageConverter {
 
-	/**
-	 * Get Main language code.
-	 * @since 1.36
-	 *
-	 * @return string
-	 */
 	public function getMainCode(): string {
 		return 'zh';
 	}
 
-	/**
-	 * Get supported variants of the language.
-	 * @since 1.36
-	 *
-	 * @return array
-	 */
 	public function getLanguageVariants(): array {
 		return [
 			'zh',
@@ -55,12 +43,6 @@ class ZhConverter extends LanguageConverter {
 		];
 	}
 
-	/**
-	 * Get language variants fallbacks.
-	 * @since 1.36
-	 *
-	 * @return array
-	 */
 	public function getVariantsFallbacks(): array {
 		return [
 			'zh' => [
@@ -84,12 +66,6 @@ class ZhConverter extends LanguageConverter {
 		];
 	}
 
-	/**
-	 * Get manual level limits for variants supported by converter.
-	 * @since 1.36
-	 *
-	 * @return array
-	 */
 	public function getAdditionalManualLevel(): array {
 		return [
 			'zh' => 'disable',
@@ -98,32 +74,14 @@ class ZhConverter extends LanguageConverter {
 		];
 	}
 
-	/**
-	 * Get desc. code separator.
-	 * @since 1.36
-	 *
-	 * @return string
-	 */
 	public function getDescCodeSeparator(): string {
 		return '：';
 	}
 
-	/**
-	 * Get desc. var separator.
-	 * @since 1.36
-	 *
-	 * @return string
-	 */
 	public function getDescVarSeparator(): string {
 		return '；';
 	}
 
-	/**
-	 * Get variant names.
-	 * @since 1.36
-	 *
-	 * @return array
-	 */
 	public function getVariantNames(): array {
 		$names = [
 			'zh' => '原文',
@@ -139,8 +97,8 @@ class ZhConverter extends LanguageConverter {
 		return array_merge( parent::getVariantNames(), $names );
 	}
 
-	protected function loadDefaultTables() {
-		$this->mTables = [
+	protected function loadDefaultTables(): array {
+		return [
 			'zh-hans' => new ReplacementArray( MediaWiki\Languages\Data\ZhConversion::$zh2Hans ),
 			'zh-hant' => new ReplacementArray( MediaWiki\Languages\Data\ZhConversion::$zh2Hant ),
 			'zh-cn' => new ReplacementArray( MediaWiki\Languages\Data\ZhConversion::$zh2CN ),
@@ -153,31 +111,27 @@ class ZhConverter extends LanguageConverter {
 		];
 	}
 
-	protected function postLoadTables() {
-		$this->mTables['zh-cn']->setArray(
-			$this->mTables['zh-cn']->getArray() + $this->mTables['zh-hans']->getArray()
+	protected function postLoadTables( &$tables ) {
+		$tables['zh-cn']->setArray(
+			$tables['zh-cn']->getArray() + $tables['zh-hans']->getArray()
 		);
-		$this->mTables['zh-hk']->setArray(
-			$this->mTables['zh-hk']->getArray() + $this->mTables['zh-hant']->getArray()
+		$tables['zh-hk']->setArray(
+			$tables['zh-hk']->getArray() + $tables['zh-hant']->getArray()
 		);
-		$this->mTables['zh-mo']->setArray(
-			$this->mTables['zh-mo']->getArray() + $this->mTables['zh-hant']->getArray()
+		$tables['zh-mo']->setArray(
+			$tables['zh-mo']->getArray() + $tables['zh-hant']->getArray()
 		);
-		$this->mTables['zh-my']->setArray(
-			$this->mTables['zh-my']->getArray() + $this->mTables['zh-hans']->getArray()
+		$tables['zh-my']->setArray(
+			$tables['zh-my']->getArray() + $tables['zh-hans']->getArray()
 		);
-		$this->mTables['zh-sg']->setArray(
-			$this->mTables['zh-sg']->getArray() + $this->mTables['zh-hans']->getArray()
+		$tables['zh-sg']->setArray(
+			$tables['zh-sg']->getArray() + $tables['zh-hans']->getArray()
 		);
-		$this->mTables['zh-tw']->setArray(
-			$this->mTables['zh-tw']->getArray() + $this->mTables['zh-hant']->getArray()
+		$tables['zh-tw']->setArray(
+			$tables['zh-tw']->getArray() + $tables['zh-hant']->getArray()
 		);
 	}
 
-	/**
-	 * @param string $key
-	 * @return string
-	 */
 	public function convertCategoryKey( $key ) {
 		return $this->autoConvert( $key, 'zh' );
 	}

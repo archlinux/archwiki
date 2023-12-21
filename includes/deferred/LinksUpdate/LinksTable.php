@@ -458,26 +458,24 @@ abstract class LinksTable {
 
 		$deleteBatches = array_chunk( $this->rowsToDelete, $batchSize );
 		foreach ( $deleteBatches as $chunk ) {
-			$factoredConds = $db->factorConds( $chunk );
-			$db->delete(
-				$table,
-				$factoredConds,
-				__METHOD__
-			);
+			$db->newDeleteQueryBuilder()
+				->deleteFrom( $table )
+				->where( $db->factorConds( $chunk ) )
+				->caller( __METHOD__ )->execute();
 			if ( count( $deleteBatches ) > 1 ) {
-				$this->lbFactory->commitAndWaitForReplication(
-					__METHOD__, $ticket, [ 'domain' => $domainId ]
-				);
+				$this->lbFactory->commitAndWaitForReplication( __METHOD__, $ticket );
 			}
 		}
 
 		$insertBatches = array_chunk( $this->rowsToInsert, $batchSize );
 		foreach ( $insertBatches as $insertBatch ) {
-			$db->insert( $table, $insertBatch, __METHOD__, $this->getInsertOptions() );
+			$db->newInsertQueryBuilder()
+				->options( $this->getInsertOptions() )
+				->insertInto( $table )
+				->rows( $insertBatch )
+				->caller( __METHOD__ )->execute();
 			if ( count( $insertBatches ) > 1 ) {
-				$this->lbFactory->commitAndWaitForReplication(
-					__METHOD__, $ticket, [ 'domain' => $domainId ]
-				);
+				$this->lbFactory->commitAndWaitForReplication( __METHOD__, $ticket );
 			}
 		}
 	}

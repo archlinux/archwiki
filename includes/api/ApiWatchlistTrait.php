@@ -2,6 +2,7 @@
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
@@ -27,14 +28,12 @@ trait ApiWatchlistTrait {
 	/** @var string Relative maximum expiry. */
 	private $watchlistMaxDuration;
 
-	/** @var WatchlistManager */
-	private $watchlistManager;
-
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
+	private WatchlistManager $watchlistManager;
+	private UserOptionsLookup $userOptionsLookup;
 
 	private function initServices() {
-		if ( $this->watchlistManager !== null && $this->userOptionsLookup !== null ) {
+		// @phan-suppress-next-line PhanRedundantCondition Phan trusts the type hints too much
+		if ( isset( $this->watchlistManager ) && isset( $this->userOptionsLookup ) ) {
 			return;
 		}
 		// This trait is used outside of core and therefor fallback to global state - T263904

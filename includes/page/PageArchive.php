@@ -18,13 +18,16 @@
  * @file
  */
 
+use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\UndeletePage;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * Used to show archived pages and eventually restore them.
@@ -84,7 +87,7 @@ class PageArchive {
 			return self::listPagesByPrefix( $term );
 		}
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
 		$condTitles = array_unique( array_map( static function ( Title $t ) {
 			return $t->getDBkey();
 		}, $results ) );
@@ -108,7 +111,7 @@ class PageArchive {
 	 * @return IResultWrapper|bool
 	 */
 	public static function listPagesByPrefix( $prefix ) {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
 
 		$title = Title::newFromText( $prefix );
 		if ( $title ) {
@@ -129,36 +132,30 @@ class PageArchive {
 	}
 
 	/**
-	 * @param IDatabase $dbr
+	 * @param IReadableDatabase $dbr
 	 * @param string|array $condition
-	 * @return bool|IResultWrapper
+	 * @return IResultWrapper
 	 */
-	protected static function listPages( $dbr, $condition ) {
-		return $dbr->select(
-			[ 'archive' ],
-			[
-				'ar_namespace',
-				'ar_title',
-				'count' => 'COUNT(*)'
-			],
-			$condition,
-			__METHOD__,
-			[
-				'GROUP BY' => [ 'ar_namespace', 'ar_title' ],
-				'ORDER BY' => [ 'ar_namespace', 'ar_title' ],
-				'LIMIT' => 100,
-			]
-		);
+	protected static function listPages( IReadableDatabase $dbr, $condition ) {
+		return $dbr->newSelectQueryBuilder()
+			->select( [ 'ar_namespace', 'ar_title', 'count' => 'COUNT(*)' ] )
+			->from( 'archive' )
+			->where( $condition )
+			->groupBy( [ 'ar_namespace', 'ar_title' ] )
+			->orderBy( [ 'ar_namespace', 'ar_title' ] )
+			->limit( 100 )
+			->caller( __METHOD__ )->fetchResultSet();
 	}
 
 	/**
 	 * List the revisions of the given page. Returns result wrapper with
 	 * various archive table fields.
 	 *
-	 * @deprecated since 1.38 Use ArchivedRevisionLookup::listRevisions
-	 * @return IResultWrapper|bool
+	 * @deprecated since 1.38, hard-deprecated since 1.41. Use ArchivedRevisionLookup::listRevisions
+	 * @return IResultWrapper
 	 */
 	public function listRevisions() {
+		wfDeprecated( __METHOD__, '1.38' );
 		$lookup = MediaWikiServices::getInstance()->getArchivedRevisionLookup();
 		return $lookup->listRevisions( $this->title );
 	}
@@ -176,17 +173,11 @@ class PageArchive {
 			return null;
 		}
 
-		$loadBalancer = MediaWikiServices::getInstance()->getDBLoadBalancer();
-		$dbr = $loadBalancer->getConnectionRef( DB_REPLICA );
-		$fileQuery = ArchivedFile::getQueryInfo();
-		return $dbr->select(
-			$fileQuery['tables'],
-			$fileQuery['fields'],
-			[ 'fa_name' => $this->title->getDBkey() ],
-			__METHOD__,
-			[ 'ORDER BY' => 'fa_timestamp DESC' ],
-			$fileQuery['joins']
-		);
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$queryBuilder = FileSelectQueryBuilder::newForArchivedFile( $dbr );
+		$queryBuilder->where( [ 'fa_name' => $this->title->getDBkey() ] )
+			->orderBy( 'fa_timestamp', SelectQueryBuilder::SORT_DESC );
+		return $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 	}
 
 	/**
@@ -194,11 +185,12 @@ class PageArchive {
 	 *
 	 * @internal only for use in SpecialUndelete
 	 *
-	 * @deprecated since 1.38 Use ArchivedRevisionLookup::getRevisionRecordByTimestamp
+	 * @deprecated since 1.38, hard-deprecated since 1.41. Use ArchivedRevisionLookup::getRevisionRecordByTimestamp
 	 * @param string $timestamp
 	 * @return RevisionRecord|null
 	 */
 	public function getRevisionRecordByTimestamp( $timestamp ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		$lookup = MediaWikiServices::getInstance()->getArchivedRevisionLookup();
 		return $lookup->getRevisionRecordByTimestamp( $this->title, $timestamp );
 	}
@@ -207,12 +199,13 @@ class PageArchive {
 	 * Return the archived revision with the given ID.
 	 *
 	 * @since 1.35
-	 * @deprecated since 1.38 Use ArchivedRevisionLookup::getArchivedRevisionRecord
+	 * @deprecated since 1.38, hard-deprecated since 1.41. Use ArchivedRevisionLookup::getArchivedRevisionRecord
 	 *
 	 * @param int $revId
 	 * @return RevisionRecord|null
 	 */
 	public function getArchivedRevisionRecord( int $revId ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		$lookup = MediaWikiServices::getInstance()->getArchivedRevisionLookup();
 		return $lookup->getArchivedRevisionRecord( $this->title, $revId );
 	}
@@ -225,12 +218,13 @@ class PageArchive {
 	 * unusual time issues.
 	 *
 	 * @since 1.35
-	 * @deprecated since 1.38 Use ArchivedRevisionLookup::getPreviousRevisionRecord
+	 * @deprecated since 1.38, hard-deprecated since 1.41. Use ArchivedRevisionLookup::getPreviousRevisionRecord
 	 *
 	 * @param string $timestamp
 	 * @return RevisionRecord|null Null when there is no previous revision
 	 */
 	public function getPreviousRevisionRecord( string $timestamp ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		$lookup = MediaWikiServices::getInstance()->getArchivedRevisionLookup();
 		return $lookup->getPreviousRevisionRecord( $this->title, $timestamp );
 	}
@@ -238,10 +232,11 @@ class PageArchive {
 	/**
 	 * Returns the ID of the latest deleted revision.
 	 *
-	 * @deprecated since 1.38 Use ArchivedRevisionLookup::getLastRevisionId
+	 * @deprecated since 1.38, hard-deprecated since 1.41. Use ArchivedRevisionLookup::getLastRevisionId
 	 * @return int|false The revision's ID, or false if there is no deleted revision.
 	 */
 	public function getLastRevisionId() {
+		wfDeprecated( __METHOD__, '1.38' );
 		$lookup = MediaWikiServices::getInstance()->getArchivedRevisionLookup();
 		return $lookup->getLastRevisionId( $this->title );
 	}
@@ -250,10 +245,11 @@ class PageArchive {
 	 * Quick check if any archived revisions are present for the page.
 	 * This says nothing about whether the page currently exists in the page table or not.
 	 *
-	 * @deprecated since 1.38 Use ArchivedRevisionLookup::hasArchivedRevisions
+	 * @deprecated since 1.38, hard-deprecated since 1.41. Use ArchivedRevisionLookup::hasArchivedRevisions
 	 * @return bool
 	 */
 	public function isDeleted() {
+		wfDeprecated( __METHOD__, '1.38' );
 		$lookup = MediaWikiServices::getInstance()->getArchivedRevisionLookup();
 		return $lookup->hasArchivedRevisions( $this->title );
 	}
@@ -321,7 +317,7 @@ class PageArchive {
 	}
 
 	/**
-	 * @deprecated since 1.38 The entrypoints in UndeletePage return a StatusValue
+	 * @deprecated since 1.38, hard-deprecated since 1.38. The entrypoints in UndeletePage return a StatusValue
 	 * @return Status|null
 	 */
 	public function getFileStatus() {
@@ -330,7 +326,7 @@ class PageArchive {
 	}
 
 	/**
-	 * @deprecated since 1.38 The entrypoints in UndeletePage return a StatusValue
+	 * @deprecated since 1.38, hard-deprecated since 1.38. The entrypoints in UndeletePage return a StatusValue
 	 * @return Status|null
 	 */
 	public function getRevisionStatus() {

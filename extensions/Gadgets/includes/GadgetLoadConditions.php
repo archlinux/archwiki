@@ -29,24 +29,30 @@ use User;
 class GadgetLoadConditions {
 	/** @var User */
 	private $user;
-	/** @var string */
-	private $target;
 	/** @var Skin */
 	private $skin;
 	/** @var string */
 	private $action;
+	/** @var int */
+	private $namespace;
+	/** @var string */
+	private $contentModel;
+	/** @var bool */
+	private $isMobileView;
 	/** @var string|null */
 	private $withGadgetParam;
 
 	/**
 	 * @param OutputPage $out
 	 */
-	public function __construct( OutputPage $out ) {
+	public function __construct( OutputPage $out, bool $isMobileView = false ) {
 		$this->user = $out->getUser();
-		$this->target = $out->getTarget() ?? 'desktop';
 		$this->skin = $out->getSkin();
 		$this->action = $out->getContext()->getActionName();
+		$this->namespace = $out->getTitle()->getNamespace();
+		$this->contentModel = $out->getTitle()->getContentModel();
 		$this->withGadgetParam = $out->getRequest()->getRawVal( 'withgadget' );
+		$this->isMobileView = $isMobileView;
 	}
 
 	/**
@@ -60,6 +66,8 @@ class GadgetLoadConditions {
 			&& $gadget->isAllowed( $this->user )
 			&& $gadget->isActionSupported( $this->action )
 			&& $gadget->isSkinSupported( $this->skin )
-			&& ( in_array( $this->target, $gadget->getTargets() ) );
+			&& $gadget->isNamespaceSupported( $this->namespace )
+			&& $gadget->isContentModelSupported( $this->contentModel )
+			&& $gadget->isTargetSupported( $this->isMobileView );
 	}
 }

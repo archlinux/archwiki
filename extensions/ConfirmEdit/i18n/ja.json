@@ -18,7 +18,6 @@
 	"captcha-edit": "このページを編集するには、下記の数式を計算してその答えを欄に入力してください ([[Special:Captcha/help|ヘルプ]]):",
 	"captcha-edit-fail": "CAPTCHA が正しくない、または入力されていません。",
 	"captcha-desc": "スパム攻撃やパスワード推定攻撃を防ぐための CAPTCHA 技術を提供する",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "CAPTCHAの解決策。",
 	"captcha-info-help": "CAPTCHAの説明。",
 	"captcha-id-label": "CAPTCHA ID",

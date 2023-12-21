@@ -36,7 +36,7 @@ class UnblockAutopromote extends ApiBase {
 		$params = $this->extractRequestParams();
 		$target = $params['user'];
 
-		$block = $this->getUser()->getBlock();
+		$block = $this->getAuthority()->getBlock();
 		if ( $block && $block->isSitewide() ) {
 			$this->dieBlocked( $block );
 		}

@@ -20,7 +20,7 @@
 
 namespace MediaWiki\Page;
 
-use MWTimestamp;
+use MediaWiki\Utils\MWTimestamp;
 use stdClass;
 use Wikimedia\Assert\Assert;
 
@@ -28,6 +28,8 @@ use Wikimedia\Assert\Assert;
  * Immutable data record representing an editable page on a wiki.
  *
  * Corresponds to a row in the page table.
+ *
+ * @see https://www.mediawiki.org/wiki/Manual:Modeling_pages
  *
  * @since 1.36
  */

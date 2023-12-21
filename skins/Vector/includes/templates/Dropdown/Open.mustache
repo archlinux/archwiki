@@ -2,8 +2,7 @@
 	See @typedef MenuDefinition
 }}
 {{! this template must be used with Dropdown/Close to avoid unclosed HTML tags }}
-{{! DO NOT REMOVE vector-menu class. It is used for click tracking in Extension:WikimediaEvents }}
-<div id="{{id}}" class="vector-menu vector-dropdown vector-menu-dropdown{{#class}} {{.}}{{/class}}" {{{html-tooltip}}} {{{html-user-language-attributes}}}>
+<div id="{{id}}" class="vector-dropdown{{#class}} {{.}}{{/class}}" {{{html-tooltip}}} {{{html-user-language-attributes}}}>
 	{{!
 		Dropdown menus use the checkbox hack and require `input` and `label` elements.
 		The `label` element functions as the "visual" button and is hidden from screenreader users (T325026)
@@ -12,26 +11,24 @@
 		text inside the `label` element, unless an alternative label is provided via the `#aria-label`
 		mustache template data.
 	}}
-	<input type="checkbox"
-		id="{{id}}-checkbox"
-		role="button"
-		aria-haspopup="true"
-		data-event-name="ui.dropdown-{{id}}"
-		class="vector-menu-checkbox{{#checkbox-class}} {{.}}{{/checkbox-class}}"
-		{{#aria-label}}aria-label="{{.}}"{{/aria-label}}
-		{{^aria-label}}aria-label="{{label}}"{{/aria-label}}
-		{{{html-vector-menu-checkbox-attributes}}}
-	/>
-	<label
-		id="{{id}}-label"
-		for="{{id}}-checkbox"
-		class="vector-menu-heading{{#heading-class}} {{.}}{{/heading-class}}"
-		aria-hidden="true"
-		{{{html-vector-menu-heading-attributes}}}
-	>
-		{{#icon}}{{>Icon}}{{/icon}}
-		<span class="vector-menu-heading-label">{{label}}</span>
+	<input {{!
+		}}type="checkbox" {{!
+		}}id="{{id}}-checkbox" {{!
+		}}role="button" {{!
+		}}aria-haspopup="true" {{!
+		}}data-event-name="ui.dropdown-{{id}}" {{!--
+		}}class="vector-dropdown-checkbox{{#checkbox-class}} {{.}}{{/checkbox-class}}" {{!
+		}}{{#aria-label}}aria-label="{{.}}"{{/aria-label}} {{!
+		}}{{^aria-label}}aria-label="{{label}}"{{/aria-label}} {{!
+		}}{{#html-vector-menu-checkbox-attributes}} {{{.}}}{{/html-vector-menu-checkbox-attributes}}>
+	<label {{!
+		}}id="{{id}}-label" {{!
+		}}for="{{id}}-checkbox" {{!
+		}}class="vector-dropdown-label{{#label-class}} {{.}}{{/label-class}}" {{!
+		}}aria-hidden="true" {{!
+		}}{{#html-vector-menu-label-attributes}} {{{.}}}{{/html-vector-menu-label-attributes}}>{{!
+		}}{{#icon}}{{>Icon}}{{/icon}}{{!
+		}}<span class="vector-dropdown-label-text">{{label}}</span>
 	</label>
-	{{! FIXME: Rename this class to vector-dropdown-content. It currently clashes with MenuContents mustache template }}
-	<div class="vector-menu-content vector-dropdown-content">
+	<div class="vector-dropdown-content">
 

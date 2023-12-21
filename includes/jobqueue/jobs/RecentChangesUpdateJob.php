@@ -18,8 +18,10 @@
  * @file
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 
 /**
@@ -73,9 +75,10 @@ class RecentChangesUpdateJob extends Job {
 	}
 
 	protected function purgeExpiredRows() {
-		$rcMaxAge = MediaWikiServices::getInstance()->getMainConfig()->get(
+		$services = MediaWikiServices::getInstance();
+		$rcMaxAge = $services->getMainConfig()->get(
 			MainConfigNames::RCMaxAge );
-		$updateRowsPerQuery = MediaWikiServices::getInstance()->getMainConfig()->get(
+		$updateRowsPerQuery = $services->getMainConfig()->get(
 			MainConfigNames::UpdateRowsPerQuery );
 		$dbw = wfGetDB( DB_PRIMARY );
 		$lockKey = $dbw->getDomainID() . ':recentchanges-prune';
@@ -84,8 +87,9 @@ class RecentChangesUpdateJob extends Job {
 			return;
 		}
 
-		$factory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$factory = $services->getDBLoadBalancerFactory();
 		$ticket = $factory->getEmptyTransactionTicket( __METHOD__ );
+		$hookRunner = new HookRunner( $services->getHookContainer() );
 		$cutoff = $dbw->timestamp( time() - $rcMaxAge );
 		$rcQuery = RecentChange::getQueryInfo();
 		do {
@@ -104,8 +108,11 @@ class RecentChangesUpdateJob extends Job {
 				$rows[] = $row;
 			}
 			if ( $rcIds ) {
-				$dbw->delete( 'recentchanges', [ 'rc_id' => $rcIds ], __METHOD__ );
-				Hooks::runner()->onRecentChangesPurgeRows( $rows );
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'recentchanges' )
+					->where( [ 'rc_id' => $rcIds ] )
+					->caller( __METHOD__ )->execute();
+				$hookRunner->onRecentChangesPurgeRows( $rows );
 				// There might be more, so try waiting for replica DBs
 				if ( !$factory->commitAndWaitForReplication(
 					__METHOD__, $ticket, [ 'timeout' => 3 ]
@@ -128,8 +135,8 @@ class RecentChangesUpdateJob extends Job {
 		// Pull in the full window of active users in this update
 		$window = $activeUserDays * 86400;
 
-		$dbw = wfGetDB( DB_PRIMARY );
 		$factory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$dbw = $factory->getPrimaryDatabase();
 		$ticket = $factory->getEmptyTransactionTicket( __METHOD__ );
 
 		$lockKey = $dbw->getDomainID() . '-activeusers';
@@ -144,11 +151,11 @@ class RecentChangesUpdateJob extends Job {
 
 		$nowUnix = time();
 		// Get the last-updated timestamp for the cache
-		$cTime = $dbw->selectField( 'querycache_info',
-			'qci_timestamp',
-			[ 'qci_type' => 'activeusers' ],
-			__METHOD__
-		);
+		$cTime = $dbw->newSelectQueryBuilder()
+			->select( 'qci_timestamp' )
+			->from( 'querycache_info' )
+			->where( [ 'qci_type' => 'activeusers' ] )
+			->caller( __METHOD__ )->fetchField();
 		$cTimeUnix = $cTime ? (int)wfTimestamp( TS_UNIX, $cTime ) : 1;
 
 		// Pick the date range to fetch from. This is normally from the last
@@ -158,28 +165,21 @@ class RecentChangesUpdateJob extends Job {
 		$eTimestamp = min( $sTimestamp + $window, $nowUnix );
 
 		// Get all the users active since the last update
-		$res = $dbw->select(
-			[ 'recentchanges', 'actor' ],
-			[
-				'actor_name',
-				'lastedittime' => 'MAX(rc_timestamp)'
-			],
-			[
+		$res = $dbw->newSelectQueryBuilder()
+			->select( [ 'actor_name', 'lastedittime' => 'MAX(rc_timestamp)' ] )
+			->from( 'recentchanges' )
+			->join( 'actor', null, 'actor_id=rc_actor' )
+			->where( [
 				'actor_user IS NOT NULL', // actual accounts
 				'rc_type != ' . $dbw->addQuotes( RC_EXTERNAL ), // no wikidata
 				'rc_log_type IS NULL OR rc_log_type != ' . $dbw->addQuotes( 'newusers' ),
-				'rc_timestamp >= ' . $dbw->addQuotes( $dbw->timestamp( $sTimestamp ) ),
-				'rc_timestamp <= ' . $dbw->addQuotes( $dbw->timestamp( $eTimestamp ) )
-			],
-			__METHOD__,
-			[
-				'GROUP BY' => 'actor_name',
-				'ORDER BY' => 'NULL' // avoid filesort
-			],
-			[
-				'actor' => [ 'JOIN', 'actor_id=rc_actor' ]
-			]
-		);
+				$dbw->buildComparison( '>=', [ 'rc_timestamp' => $dbw->timestamp( $sTimestamp ) ] ),
+				$dbw->buildComparison( '<=', [ 'rc_timestamp' => $dbw->timestamp( $eTimestamp ) ] ),
+			] )
+			->groupBy( 'actor_name' )
+			->orderBy( 'NULL' ) // avoid filesort
+			->caller( __METHOD__ )->fetchResultSet();
+
 		$names = [];
 		foreach ( $res as $row ) {
 			$names[$row->actor_name] = $row->lastedittime;
@@ -187,16 +187,16 @@ class RecentChangesUpdateJob extends Job {
 
 		// Find which of the recently active users are already accounted for
 		if ( count( $names ) ) {
-			$res = $dbw->select( 'querycachetwo',
-				[ 'user_name' => 'qcc_title' ],
-				[
+			$res = $dbw->newSelectQueryBuilder()
+				->select( [ 'user_name' => 'qcc_title' ] )
+				->from( 'querycachetwo' )
+				->where( [
 					'qcc_type' => 'activeusers',
 					'qcc_namespace' => NS_USER,
 					'qcc_title' => array_map( 'strval', array_keys( $names ) ),
-					'qcc_value >= ' . $dbw->addQuotes( $nowUnix - $days * 86400 ), // TS_UNIX
-				],
-				__METHOD__
-			);
+					$dbw->buildComparison( '>=', [ 'qcc_value' => $nowUnix - $days * 86400 ] ),
+				] )
+				->caller( __METHOD__ )->fetchResultSet();
 			// Note: In order for this to be actually consistent, we would need
 			// to update these rows with the new lastedittime.
 			foreach ( $res as $row ) {
@@ -228,22 +228,23 @@ class RecentChangesUpdateJob extends Job {
 		$asOfTimestamp = min( $eTimestamp, (int)$dbw->trxTimestamp() );
 
 		// Touch the data freshness timestamp
-		$dbw->replace(
-			'querycache_info',
-			'qci_type',
-			[ 'qci_type' => 'activeusers',
-				'qci_timestamp' => $dbw->timestamp( $asOfTimestamp ) ], // not always $now
-			__METHOD__
-		);
+		$dbw->newReplaceQueryBuilder()
+			->replaceInto( 'querycache_info' )
+			->rows( [
+				'qci_type' => 'activeusers',
+				'qci_timestamp' => $dbw->timestamp( $asOfTimestamp ), // not always $now
+			] )
+			->uniqueIndexFields( [ 'qci_type' ] )
+			->caller( __METHOD__ )->execute();
 
 		// Rotate out users that have not edited in too long (according to old data set)
-		$dbw->delete( 'querycachetwo',
-			[
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'querycachetwo' )
+			->where( [
 				'qcc_type' => 'activeusers',
-				'qcc_value < ' . $dbw->addQuotes( $nowUnix - $days * 86400 ) // TS_UNIX
-			],
-			__METHOD__
-		);
+				$dbw->buildComparison( '<', [ 'qcc_value' => $nowUnix - $days * 86400 ] ) // TS_UNIX
+			] )
+			->caller( __METHOD__ )->execute();
 
 		if ( !MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::MiserMode ) ) {
 			SiteStatsUpdate::cacheUpdate( $dbw );

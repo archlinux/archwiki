@@ -13,7 +13,10 @@
 			"Ladsgroup",
 			"Mojtabakd",
 			"Reza1615",
-			"Zack90"
+			"Zack90",
+			"Tar Lócesilion",
+			"Rulebased",
+			"محک"
 		]
 	},
 	"skinname-vector": "وکتور قدیمی (۲۰۱۰)",
@@ -22,7 +25,7 @@
 	"vector-skin-desc": "ارائه‌دهندهٔ ۲ پوستهٔ وکتور:\n* ۲۰۱۱ - نسخهٔ مدرن مونوبوک به‌همراه نمایی تازه و بهینه‌سازی‌های کاربردی.\n* ۲۰۲۲ - پوستهٔ وکتور ساخته‌شده در قالب بخشی از پروژهٔ [[mw:Desktop Improvements|بهبودهای نمای رایانه]] بنیاد ویکی‌مدیا.",
 	"prefs-vector-enable-vector-1-label": "استفاده از وکتور قدیمی",
 	"prefs-vector-enable-vector-1-help": "در چند سال آینده، ما کم‌کم پوستهٔ وکتور را به‌روزرسانی خواهیم کرد. وکتور قدیمی به شما اجازه می‌دهد تا از نسخهٔ قدیمی وکتور (نسخهٔ دسامبر ۲۰۱۹) استفاده کنید. برای کسب اطلاعات بیشتر در خصوص به‌روزرسانی‌ها، به [[mw:Reading/Web/Desktop_Improvements|صفحهٔ پروژه]] مراجعه کنید.",
-	"vector-opt-out": "بازگشت به ظاهر قدیمی",
+	"vector-opt-out": "ویکیِ قبلی قیافه ره هارشین",
 	"vector-opt-out-tooltip": "تنظیمات‌تان را تغییر دهید تا به نمای قبلی پوسته (وکتور قدیمی) برگردید",
 	"vector.css": "/* دستورات سی‌اس‌اس که در این بخش قرار بگیرد برای کاربرانی که از پوستهٔ وکتور استفاده کنند بارگیری می‌شود */",
 	"vector.js": "/* دستورات جاوااسکریپت که در این بخش قرار بگیرد برای کاربرانی که از پوستهٔ وکتور استفاده کنند بارگیری می‌شود */",
@@ -71,5 +74,14 @@
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|بحث]]",
 	"tooltip-vector-anon-user-menu-title": "گزینه‌های بیشتر",
 	"vector-prefs-limited-width": "فعال‌سازی حالت محدودیت عرض",
-	"vector-prefs-limited-width-help": "فعال‌سازی حالت محدودیت عرض برای بهبود تجربهٔ مطالعه."
+	"vector-prefs-limited-width-help": "فعال‌سازی حالت محدودیت عرض برای بهبود تجربهٔ مطالعه.",
+	"vector-readability-survey-title": "تغییرات آزمایشی در خوانایی",
+	"vector-readability-survey-description": "به نظر شما، بهترین ظاهر برای متون ویکی‌پدیا چیست؟ برای تنظیم ظاهر از اسلایدر های زیر استفاده کنید. در مورد پروژه [[mw:Special:MyLanguage/Reading/Web/Accessibility for reading|بهبود خوانایی]] بیشتر بخوانید.",
+	"vector-readability-survey-fontSize": "اندازه فونت",
+	"vector-readability-survey-lineHeight": "ارتفاع خط",
+	"vector-readability-survey-paragraphSpacing": "فاصله بین بندها",
+	"vector-readability-survey-optout": "بر دکمه «ادامه»‌ کلیک کنید تا بازخورد شما در صفحه بعد منتشر شود. [[#close-vector-survey|بر این پیوند کلیک کنید تا ابزار را حذف کنید]].",
+	"vector-readability-survey-randomize": "تصادفی",
+	"vector-readability-survey-reset": "ریست",
+	"vector-readability-survey-share": "ادامه دهید"
 }

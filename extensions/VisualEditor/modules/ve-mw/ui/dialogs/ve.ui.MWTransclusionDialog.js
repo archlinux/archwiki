@@ -151,6 +151,10 @@ ve.ui.MWTransclusionDialog.prototype.addParameter = function ( e ) {
 		part = this.transclusionModel.getPartFromId( partId );
 	}
 
+	if ( this.transclusionModel.isSingleTemplate() ) {
+		part = this.transclusionModel.getParts()[ 0 ];
+	}
+
 	if ( !( part instanceof ve.dm.MWTemplateModel ) ) {
 		return;
 	}
@@ -543,8 +547,6 @@ ve.ui.MWTransclusionDialog.prototype.initialize = function () {
  * @inheritdoc
  */
 ve.ui.MWTransclusionDialog.prototype.getSetupProcess = function ( data ) {
-	this.onTearDownCallback = data && data.onTearDownCallback;
-
 	return ve.ui.MWTransclusionDialog.super.prototype.getSetupProcess.call( this, data )
 		.next( function () {
 			this.bookletLayout.getOutlineControls().toggle( !this.transclusionModel.isSingleTemplate() );
@@ -562,15 +564,6 @@ ve.ui.MWTransclusionDialog.prototype.getSetupProcess = function ( data ) {
 			// We can do this only after the widget is visible on screen
 			this.sidebar.initializeAllStickyHeaderHeights();
 		}, this );
-};
-
-/** @inheritdoc */
-ve.ui.MWTransclusionDialog.prototype.getTeardownProcess = function () {
-	if ( this.onTearDownCallback ) {
-		this.onTearDownCallback();
-	}
-
-	return ve.ui.MWTransclusionDialog.super.prototype.getTeardownProcess.apply( this, arguments );
 };
 
 /**

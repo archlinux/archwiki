@@ -9,9 +9,9 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
 use Message;
-use RawMessage;
 use Status;
 use WebRequest;
 

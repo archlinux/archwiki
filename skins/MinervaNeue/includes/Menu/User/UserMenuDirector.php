@@ -19,9 +19,8 @@
  */
 namespace MediaWiki\Minerva\Menu\User;
 
-use MediaWiki\Minerva\MinervaUI;
+use MediaWiki\Html\TemplateParser;
 use MessageLocalizer;
-use TemplateParser;
 
 /**
  * Director responsible for building the user menu.
@@ -56,19 +55,42 @@ final class UserMenuDirector {
 		$entries = $group->getEntries();
 
 		$templateParser = new TemplateParser( __DIR__ . '/../../Skins' );
+		$toggleID = 'minerva-user-menu-toggle';
+		$checkboxID = 'minerva-user-menu-checkbox';
 		return empty( $entries )
 			? null
 			: $templateParser->processTemplate( 'ToggleList', [
 				'class' => 'minerva-user-menu',
-				'checkboxID' => 'minerva-user-menu-checkbox',
-				'toggleID' => 'minerva-user-menu-toggle', // See skin.mustache too.
-				'toggleClass' => MinervaUI::iconClass(
-					'userAvatarOutline', 'element'
-				),
+				'checkboxID' => $checkboxID,
+				'toggleID' => $toggleID, // See skin.mustache too.
+				'data-btn' => [
+					'tag-name' => 'label',
+					'data-icon' => [
+						'icon' => 'userAvatarOutline',
+					],
+					'classes' => 'toggle-list__toggle',
+					'array-attributes' => [
+						[
+							'key' => 'id',
+							'value' => $toggleID,
+						],
+						[
+							'key' => 'for',
+							'value' => $checkboxID,
+						],
+						[
+							'key' => 'aria-hidden',
+							'value' => 'true'
+						],
+						[
+							'key' => 'data-event-name',
+							'value' => 'ui.usermenu',
+						],
+					],
+					'label' => $this->localizer->msg( 'minerva-user-menu-button' )->escaped(),
+				],
 				'listID' => $group->getId(),
 				'listClass' => 'minerva-user-menu-list toggle-list__list--drop-down', // See ToggleList/*.less.
-				'text' => $this->localizer->msg( 'minerva-user-menu-button' )->escaped(),
-				'analyticsEventName' => 'ui.usermenu',
 				'items' => $entries
 			] );
 	}

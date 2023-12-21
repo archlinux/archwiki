@@ -1,6 +1,7 @@
+@import 'mediawiki.skin.variables.less';
+@import 'mediawiki.mixins.less';
 @import '../echo.variables.less';
 @import '../echo.mixins.less';
-@import 'mediawiki.mixins.less';
 
 // This is only valid for the Special:Notifications page in no-JS mode,
 // where the formatting of the notifications include the following structure
@@ -51,7 +52,7 @@
 		display: block;
 
 		.mw-echo-title {
-			color: @notification-text-color;
+			color: @color-emphasized;
 		}
 
 		.mw-echo-payload {

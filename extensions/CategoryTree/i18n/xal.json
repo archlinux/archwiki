@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Huuchin"
+			"Huuchin",
+			"Алия"
 		]
 	},
 	"categorytree-expand": "делгх",
-	"categorytree-member-counts": "$1 дед әәшл, $2 халх, болн $3 боомг бәрдг",
+	"categorytree-member-counts": "{{PLURAL:$1|1 дед әңг|$1 дед әңг}}, {{PLURAL:$2|1 халх|$2 халх}}, {{PLURAL:$3|1 файл|$3 файл}} аһулгдҗана.",
 	"categorytree-num-categories": "$1 Ә",
 	"categorytree-num-pages": "$1 Х",
 	"categorytree-num-files": "$1 Б"

@@ -7,6 +7,67 @@ use MediaWiki\Extension\Gadgets\MediaWikiGadgetsDefinitionRepo;
  * @group Gadgets
  */
 class GadgetTest extends MediaWikiUnitTestCase {
+
+	/**
+	 * @covers \MediaWiki\Extension\Gadgets\MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 * @covers \MediaWiki\Extension\Gadgets\Gadget::toArray
+	 */
+	public function testToArray() {
+		$g = GadgetTestUtils::makeGadget( '*bar[ResourceLoader|rights=test]|bar.js|foo.css | foo.json' );
+		$gNewFromSerialized = new Gadget( $g->toArray() );
+		$this->assertArrayEquals( $g->toArray(), $gNewFromSerialized->toArray() );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\Gadgets\Gadget::serializeDefinition
+	 */
+	public function testGadgetFromDefinitionContent() {
+		$gArray = Gadget::serializeDefinition( 'bar', [
+			'settings' => [
+				'rights' => [],
+				'default' => true,
+				'package' => true,
+				'hidden' => false,
+				'actions' => [],
+				'targets' => [ 'desktop' ],
+				'skins' => [],
+				'namespaces' => [],
+				'contentModels' => [],
+				'category' => 'misc',
+				'supportsUrlLoad' => false,
+				'requiresES6' => false,
+			],
+			'module' => [
+				'scripts' => [ 'foo.js' ],
+				'styles' => [ 'bar.css' ],
+				'datas' => [],
+				'dependencies' => [ 'moment' ],
+				'peers' => [],
+				'messages' => [ 'blanknamespace' ],
+				'type' => 'general',
+			]
+		] );
+
+		$g = new Gadget( $gArray );
+
+		$this->assertTrue( $g->isOnByDefault() );
+		$this->assertTrue( $g->isPackaged() );
+		$this->assertFalse( $g->isHidden() );
+		$this->assertFalse( $g->supportsUrlLoad() );
+		$this->assertTrue( $g->supportsResourceLoader() );
+		$this->assertCount( 1, $g->getScripts() );
+		$this->assertCount( 1, $g->getStyles() );
+		$this->assertCount( 0, $g->getJSONs() );
+		$this->assertCount( 1, $g->getDependencies() );
+		$this->assertCount( 1, $g->getMessages() );
+
+		// Ensure parity and internal consistency
+		// between Gadget::serializeDefinition and Gadget::toArray
+		$arr = $g->toArray();
+		unset( $arr['definition'] );
+		$this->assertSame( $arr, $gArray );
+	}
+
 	/**
 	 * @covers \MediaWiki\Extension\Gadgets\MediaWikiGadgetsDefinitionRepo::newFromDefinition
 	 */
@@ -138,13 +199,58 @@ class GadgetTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @covers \MediaWiki\Extension\Gadgets\MediaWikiGadgetsDefinitionRepo::newFromDefinition
-	 * @covers \MediaWiki\Extension\Gadgets\Gadget::getTargets
+	 * @covers \MediaWiki\Extension\Gadgets\Gadget::isNamespaceSupported
 	 */
-	public function testTargets() {
-		$g = GadgetTestUtils::makeGadget( '*foo[ResourceLoader]|foo.js' );
-		$g2 = GadgetTestUtils::makeGadget( '*bar[ResourceLoader|targets=desktop,mobile]|bar.js' );
-		$this->assertEquals( [ 'desktop' ], $g->getTargets() );
-		$this->assertEquals( [ 'desktop', 'mobile' ], $g2->getTargets() );
+	public function testNamespacesTag() {
+		$gUnsetNamespace = GadgetTestUtils::makeGadget( '*foo[ResourceLoader]|foo.js' );
+		$gNamespace0 = GadgetTestUtils::makeGadget( '*bar[ResourceLoader|namespaces=0]|bar.js' );
+		$gNamespace1 = GadgetTestUtils::makeGadget( '*bar[ResourceLoader|namespaces=1]|bar.js' );
+		$gMultiNamespace = GadgetTestUtils::makeGadget( '*bar[ResourceLoader|namespaces=1,2,3,4]|bar.js' );
+
+		$this->assertTrue( $gUnsetNamespace->isNamespaceSupported( 5 ) );
+
+		$this->assertTrue( $gNamespace0->isNamespaceSupported( 0 ) );
+		$this->assertFalse( $gNamespace0->isNamespaceSupported( 2 ) );
+
+		$this->assertTrue( $gNamespace1->isNamespaceSupported( 1 ) );
+		$this->assertFalse( $gNamespace1->isNamespaceSupported( 2 ) );
+
+		$this->assertTrue( $gMultiNamespace->isNamespaceSupported( 1 ) );
+		$this->assertTrue( $gMultiNamespace->isNamespaceSupported( 2 ) );
+		$this->assertFalse( $gMultiNamespace->isNamespaceSupported( 5 ) );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\Gadgets\MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 * @covers \MediaWiki\Extension\Gadgets\Gadget::isContentModelSupported
+	 */
+	public function testContentModelsTags() {
+		$gUnsetModel = GadgetTestUtils::makeGadget( '*foo[ResourceLoader]|foo.js' );
+		$gModelWikitext = GadgetTestUtils::makeGadget( '*bar[ResourceLoader|contentModels=wikitext]|bar.js' );
+		$gModelCode = GadgetTestUtils::makeGadget( '*bar[ResourceLoader|contentModels=javascript,css]|bar.js' );
+
+		$this->assertTrue( $gUnsetModel->isContentModelSupported( 'wikitext' ) );
+
+		$this->assertTrue( $gModelWikitext->isContentModelSupported( 'wikitext' ) );
+		$this->assertFalse( $gModelWikitext->isContentModelSupported( 'javascript' ) );
+
+		$this->assertTrue( $gModelCode->isContentModelSupported( 'javascript' ) );
+		$this->assertTrue( $gModelCode->isContentModelSupported( 'css' ) );
+		$this->assertFalse( $gModelCode->isContentModelSupported( 'wikitext' ) );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\Gadgets\MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 */
+	public function testGadgetTargets() {
+		$gadget = new Gadget( [
+			'targets' => [ 'desktop' ]
+		] );
+
+		$this->assertFalse( $gadget->isTargetSupported( true ),
+			'Desktop-targeted code is not shipped in mobile mode.' );
+		$this->assertTrue( $gadget->isTargetSupported( false ),
+			'Desktop-targeted code is shipped in desktop mode.' );
 	}
 
 	/**

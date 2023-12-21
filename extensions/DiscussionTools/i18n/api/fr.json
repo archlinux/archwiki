@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"DreZhsh",
 			"Gomoko",
 			"Thibaut120094",
-			"Verdy p",
-			"Wladek92",
 			"Urhixidur",
-			"Amire80"
+			"Verdy p",
+			"Wladek92"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Commentaire avec l’ID « $1 » non trouvé.",
@@ -19,17 +19,22 @@
 	"apihelp-discussiontoolscompare-summary": "Obtient des informations au sujet des changements de commentaire entre deux révisions de page.",
 	"apihelp-discussiontoolsedit-param-commentid": "Identifiant du commentaire auquel répondre. Utilisé seulement lorsque <var>paction</var> vaut <var>addcomment</var>. Prévaut sur <var>commentname</var>.",
 	"apihelp-discussiontoolsedit-param-commentname": "Nom du commentaire auquel répondre. Utilisé seulement quand <var>paction</var> vaut <var>addcomment</var>.",
+	"apihelp-discussiontoolsedit-param-autosubscribe": "Inscrire automatiquement l’utilisateur au fil de la page de discussion ?",
 	"apihelp-discussiontoolsedit-param-formtoken": "Un identifiant unique optionnel généré dans le client pour éviter la double publication.",
 	"apihelp-discussiontoolsedit-param-html": "Contenu à publier, en tant que HTML. Ne peut pas être utilisé conjointement avec <var>wikitext</var>.",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} Utilisé seulement lorsque <var>paction</var> est <var>addtopic</var>.",
+	"apihelp-discussiontoolsedit-param-allownosectiontitle": "Permet de poster une nouvelle section sans titre.",
 	"apihelp-discussiontoolsedit-param-wikitext": "Contenu à publier, en tant que wikicode. Ne peut pas être utilisé conjointement avec <var>html</var>.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "Ajouter un nouveau commentaire en tant que réponse à un commentaire existant.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Ajouter une nouvelle section de discussion et y inclure un premier commentaire.",
 	"apihelp-discussiontoolsedit-summary": "Créer un message sur une page de discussion.",
+	"apihelp-discussiontoolsfindcomment-summary": "Trouver un commentaire par son identifiant ou son nom.",
+	"apihelp-discussiontoolsfindcomment-param-idorname": "Identifiant ou nom du commentaire",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Noms des sujets à vérifier",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Obtenir les états d’inscription des sujets donnés.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Le numéro de révision à utiliser (par défaut, la dernière révision).",
 	"apihelp-discussiontoolspageinfo-param-prop": "Quelles propriétés obtenir :",
+	"apihelp-discussiontoolspageinfo-param-excludesignatures": "Exclure les signatures utilisateur des commentaires (en utilisant <var>prop=threaditemshtml</var>).",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-threaditemshtml": "Représentation des fils de commentaires analysés depuis la page",
 	"apihelp-discussiontoolspageinfo-paramvalue-prop-transcludedfrom": "Depuis quelles autres pages les commentaires ont été inclus",
 	"apihelp-discussiontoolspageinfo-summary": "Renvoie les métadonnées nécessaires pour initialiser les outils de discussion.",

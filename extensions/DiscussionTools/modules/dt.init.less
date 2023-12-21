@@ -1,7 +1,6 @@
+@import 'mediawiki.skin.variables.less';
+
 /* stylelint-disable no-descending-specificity */
-
-@import 'mediawiki.ui/variables.less';
-
 span[ data-mw-comment-start ] {
 	// Give comment anchors a negative offset so we don't position
 	// them right at the edge of the page when jumping to them.
@@ -29,8 +28,7 @@ h1, h2, h3, h4, h5, h6 {
 
 	// Add space before the buttons using actual spaces rather than margin, so that they may collapse
 	// when the buttons wrap to a new line (T325416).
-	// (Except on Minerva, which uses block placements for the buttons rather than inline.)
-	body:not( .skin-minerva ) &:before {
+	&::before {
 		// Must use character escapes to avoid CSS minifier messing up the spaces
 		content: '\20\20';
 		white-space: pre-wrap;
@@ -44,9 +42,8 @@ h1, h2, h3, h4, h5, h6 {
 		}
 	}
 
-	// No support for reply links in the mobile talk overlay
-	// stylelint-disable-next-line selector-class-pattern
-	.talk-overlay & {
+	// Archived talk section (T295553)
+	.ext-discussiontools-replytool-enabled .mw-archivedtalk & {
 		display: none;
 	}
 
@@ -57,7 +54,7 @@ h1, h2, h3, h4, h5, h6 {
 
 		// Similar to mw-editsection-bracket
 		&-bracket {
-			color: #54595d;
+			color: @color-subtle;
 
 			.mw-content-ltr &:not( :last-child ),
 			.mw-content-rtl .mw-content-ltr &:not( :last-child ),
@@ -83,7 +80,7 @@ h1, h2, h3, h4, h5, h6 {
 	}
 
 	&.ext-discussiontools-init-replylink-active > .ext-discussiontools-init-replylink-reply {
-		color: #202122;
+		color: @color-base;
 		text-decoration: none;
 	}
 
@@ -104,15 +101,15 @@ h1, h2, h3, h4, h5, h6 {
 .ext-discussiontools-init-replylink-reply,
 .ext-discussiontools-init-section-subscribe-link {
 	&:visited {
-		color: #36c;
+		color: @color-link;
 	}
+}
 
-	.skin-vector-legacy & {
-		color: #0645ad;
-	}
-
-	.skin-monobook & {
-		color: #002bb8;
+.ext-discussiontools-init-timestamplink {
+	&,
+	&:visited,
+	&:active {
+		color: #666;
 	}
 }
 
@@ -124,17 +121,10 @@ h1, h2, h3, h4, h5, h6 {
 	position: absolute;
 	pointer-events: none;
 	opacity: 0;
-}
-
-/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-@supports ( mix-blend-mode: darken ) {
-	.ext-discussiontools-init-highlight {
-		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-		mix-blend-mode: darken;
-		// Support: Safari
-		// Safari doesn't blend this overlay with the text unless GPU rendering is forced.
-		transform: translateZ( 0 );
-	}
+	mix-blend-mode: darken;
+	// Support: Safari
+	// Safari doesn't blend this overlay with the text unless GPU rendering is forced.
+	transform: translateZ( 0 );
 }
 
 .ext-discussiontools-init-highlight-fadein {
@@ -147,42 +137,42 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .ext-discussiontools-init-publishedcomment {
-	// Support: IE11
-	// On supporting browsers, we instead use non-transparent color with mix-blend-mode.
-	// Identical to #ffe29e on white background.
-	background-color: rgba( 255, 198, 60, 0.5 );
-}
-
-/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-@supports ( mix-blend-mode: darken ) {
-	.ext-discussiontools-init-publishedcomment {
-		background-color: #ffe29e;
-	}
+	background-color: #ffe29e;
 }
 
 .ext-discussiontools-init-targetcomment {
-	// Support: IE11, see above
-	background-color: rgba( 216, 235, 255, 0.5 );
-}
-
-/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-@supports ( mix-blend-mode: darken ) {
-	.ext-discussiontools-init-targetcomment {
-		// Same color as the :target selector for references (from Cite).
-		// Not sure if that's a good idea, but it should be different from -publishedcomment.
-		background-color: #eaf3ff;
-	}
+	// Same color as the :target selector for references (from Cite).
+	// Not sure if that's a good idea, but it should be different from -publishedcomment.
+	background-color: #eaf3ff;
 }
 
 // Topic subscriptions (both kinds)
+/* stylelint-disable selector-max-id, selector-class-pattern */
+#ca-dt-page-subscribe,
+.menu__item--page-actions-overflow-t-page-subscribe,
+.ext-discussiontools-init-section-subscribe,
+.ext-discussiontools-init-section-subscribeButton {
+	// If JS is enabled, disable the buttons until it's loaded, so that users don't accidentally
+	// navigate to the no-JS interface.
+	// TODO: These clicks will be ignored, but ideally we would process them once ready (T183720).
+	.client-js:not( .ext-discussiontools-init-ready ) & {
+		pointer-events: none;
+	}
+}
+/* stylelint-enable selector-max-id, selector-class-pattern */
+
 .ext-discussiontools-visualenhancements-enabled .ext-discussiontools-init-section {
 	// Introduce a block formatting context so that floated "subscribe" links/buttons
 	// aren't affected by other floats (T327469). Most skins already include this rule
 	// for headings, but we add the floating stuff outside of headings (since T314714).
 	// https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Block_formatting_context
 	overflow: hidden;
+	// Prevent squishing too much (T335823)
+	min-width: 20em;
 
 	.skin-minerva& {
+		// Prevent the ellipsis button's focus ring from being clipped.
+		// We have no floated links/buttons on mobile, so this is okay.
 		overflow: visible;
 	}
 }
@@ -193,11 +183,6 @@ h1, h2, h3, h4, h5, h6 {
 
 	.ext-discussiontools-topicsubscription-enabled & {
 		display: block;
-
-		// Topic subscriptions currently require JS
-		.client-nojs & {
-			display: none;
-		}
 	}
 
 	// Directional properties must be based on content direction.
@@ -228,7 +213,7 @@ h1, h2, h3, h4, h5, h6 {
 
 	// Similar to mw-editsection-bracket
 	&-bracket {
-		color: #54595d;
+		color: @color-subtle;
 
 		.mw-content-ltr &:first-child,
 		.mw-content-rtl .mw-content-ltr &:first-child,
@@ -269,11 +254,6 @@ h1, h2, h3, h4, h5, h6 {
 
 	.ext-discussiontools-topicsubscription-enabled.ext-discussiontools-visualenhancements-enabled & {
 		display: inline-block;
-
-		// Topic subscriptions currently require JS
-		.client-nojs & {
-			display: none;
-		}
 	}
 
 	// Directional properties must be based on content direction.
@@ -302,7 +282,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 // Visual enhancements disabled
+// TODO: Remove reference to ellipsisButton after parser cache is updated
 .ext-discussiontools-init-section-ellipsisButton.oo-ui-buttonElement,
+.ext-discussiontools-init-section-overflowMenuButton.oo-ui-buttonElement,
 .ext-discussiontools-init-section-bar,
 .ext-discussiontools-init-replybutton.oo-ui-buttonElement,
 .ext-discussiontools-init-readAsWikiPage,
@@ -312,7 +294,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .ext-discussiontools-init-pageframe-latestcomment {
-	color: #666;
+	color: @color-subtle;
 }
 
 // Visual enhancements enabled
@@ -349,9 +331,14 @@ h1, h2, h3, h4, h5, h6 {
 		}
 	}
 
+	// Use block placement for the reply buttons on mobile, to make them easier to tap.
 	&.skin-minerva .ext-discussiontools-init-replylink-buttons {
-		margin-left: 0;
 		display: block;
+
+		&::before {
+			// Remove the spaces that are used for inline placement (T325416), added at the top of this file.
+			content: '';
+		}
 	}
 }
 
@@ -367,16 +354,11 @@ h1, h2, h3, h4, h5, h6 {
 		display: block;
 	}
 
-	// stylelint-disable-next-line selector-class-pattern
-	.sidebar-toc .sidebar-toc-list-item {
-		margin: 8px 0;
-	}
-
 	.ext-discussiontools-init-sidebar-meta {
 		display: block;
-		color: #666;
+		padding-bottom: 6px;
+		color: @color-subtle;
 		white-space: nowrap;
-		font-size: 0.875em;
 	}
 }
 
@@ -389,13 +371,6 @@ h1, h2, h3, h4, h5, h6 {
 	> h2 {
 		flex-grow: 1;
 	}
-
-	// stylelint-disable-next-line selector-class-pattern
-	.client-js .skin-minerva--talk-simplified&.section-heading > h2 {
-		font: inherit;
-		margin: 0;
-		padding: 0;
-	}
 }
 
 .ext-discussiontools-visualenhancements-enabled {
@@ -406,7 +381,7 @@ h1, h2, h3, h4, h5, h6 {
 		// stylelint-disable-next-line declaration-no-important
 		font-family: sans-serif !important;
 		border: 0;
-		border-top: 1px solid #a2a9b1;
+		border-top: @border-width-base @border-style-base @border-color-base;
 
 		&:first-child {
 			border-top: 0;
@@ -440,14 +415,14 @@ h1, h2, h3, h4, h5, h6 {
 
 		&-metaitem {
 			font-weight: normal;
-			color: #666;
+			color: @color-subtle;
 			// Make same height as "unsubscribe" button
 			margin: 7px 0;
 
 			& + .ext-discussiontools-init-section-metaitem {
 				margin-left: 12px;
 				padding-left: 12px;
-				border-left: 1px solid #a2a9b1;
+				border-left: @border-width-base @border-style-base @border-color-base;
 			}
 		}
 	}
@@ -483,7 +458,7 @@ h1, h2, h3, h4, h5, h6 {
 		// The tap-highlight is an odd shape and shows even for cancelled events on -actions,
 		// just hide it.
 		-webkit-tap-highlight-color: transparent;
-		border-top: 1px solid #eaecf0;
+		border-top: @border-width-base @border-style-base #eaecf0;
 
 		> h2,
 		> .mw-headline {
@@ -499,13 +474,17 @@ h1, h2, h3, h4, h5, h6 {
 			font-size: 0.75em;
 		}
 
+		/* TODO: Remove reference to ellipsisButton after parser cache is updated */
 		&-bar,
+		&-overflowMenuButton,
 		&-ellipsisButton {
 			font-size: 0.875em;
 		}
 
+		/* TODO: Remove reference to ellipsisButton after parser cache is updated */
 		// stylelint-disable-next-line selector-class-pattern
 		> .indicator,
+		&-overflowMenuButton,
 		&-ellipsisButton {
 			// Adjust for smaller headings
 			margin-top: -5px;
@@ -536,7 +515,10 @@ h1, h2, h3, h4, h5, h6 {
 				}
 			}
 
+			/* TODO: Remove reference to ellipsisButton after parser cache is updated */
+			&-overflowMenuButton,
 			&-ellipsisButton {
+				font-weight: normal;
 				display: inline-block;
 				margin-right: -5px;
 				// Fix height so MenuWidget appears in the correct place with wrapped text (T311558)
@@ -580,6 +562,14 @@ h1, h2, h3, h4, h5, h6 {
 		}
 	}
 
+	&.skin-minerva .ext-discussiontools-init-section-overflowMenu {
+		// Not sure if this should have custom styles like this…
+		// They were once accidentally inherited from the heading,
+		// before the menu was moved to an overlay.
+		font-weight: bold;
+		font-size: 0.875em;
+	}
+
 	&.skin-minerva .mf-section-0 + .ext-discussiontools-init-section {
 		border-top: 0;
 		margin-top: 0;
@@ -602,7 +592,7 @@ h1, h2, h3, h4, h5, h6 {
 		// Separate from existing (non-discussion) content
 		margin-top: 2em;
 		padding-top: 1em;
-		border-top: 1px solid #a2a9b1;
+		border-top: @border-width-base @border-style-base @border-color-base;
 	}
 }
 
@@ -636,10 +626,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .skin-minerva.ext-discussiontools-emptystate-shown {
-	// The Minerva "Add topic" button is very eye-catching.
+	// The mobile "Add topic" button is very eye-catching.
 	// No need to show it when the empty state banner is shown.
-	// stylelint-disable-next-line selector-class-pattern
-	.minerva-talk-add-button,
 	.ext-discussiontools-init-new-topic {
 		display: none;
 	}
@@ -748,18 +736,10 @@ h1, h2, h3, h4, h5, h6 {
 	}
 }
 
-// DiscussionToolsEnableMobile disables the Minerva simplified talk page
-// (SkinMinerva::isSimplifiedTalkPageEnabled). This is enabled on all pages
-// in the talk namespace (with wikitext content model, but this file is not
-// loaded on non-wikitext pages).
-//
-// DiscussionToolsEnableMobile enables multiple features, including the reply tool.
-//
-// Whenever we detect that DiscussionToolsEnableMobile is disabling the Minerva
-// simplified talk page, hide the lede section, and show a "Read as wiki page" button
+// DiscussionTools automatically enables most features on mobile.
+// When we detect that it's enabled, hide the lede section, and show a "Read as wiki page" button
 // to reveal it.
-//
-// The button will disable all DT features byt remove feature CSS classes.
+// The button will disable all DT features by removing feature CSS classes.
 // stylelint-disable-next-line selector-class-pattern
 .skin-minerva.ns-talk.ext-discussiontools-replytool-enabled {
 	&.ext-discussiontools-init-lede-hidden {
@@ -795,9 +775,9 @@ h1, h2, h3, h4, h5, h6 {
 	width: 100%;
 	padding: 1em;
 	box-sizing: content-box;
-	color: @colorProgressive;
-	background: @colorGray15;
-	border-top: 1px solid @colorGray14;
+	color: @color-progressive;
+	background: @background-color-interactive-subtle;
+	border-top: @border-width-base @border-style-base #eaecf0;
 	text-align: center;
 
 	// Match Minerva styles
@@ -826,7 +806,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .ext-discussiontools-init-new-topic {
 	.minerva-footer-button();
-	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	position: sticky;
 	// Required for IntersectionObserver trick
 	bottom: -1px;
@@ -864,8 +843,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 // Tweak to prevent our footer buttons from overlapping Minerva skin elements (T328452).
-.ext-discussiontools-init-button-notFlush {
+// In cases where the "Read as wiki page" button is not shown:
+.client-nojs .ext-discussiontools-init-new-topic,
+.ext-discussiontools-init-new-topic-pinned.ext-discussiontools-init-button-notFlush {
 	margin-bottom: 32px;
+}
+
+// In cases where the "Read as wiki page" button is shown:
+// stylelint-disable-next-line selector-class-pattern
+.client-js .skin-minerva.ns-talk.ext-discussiontools-replytool-enabled {
+	.ext-discussiontools-init-new-topic-pinned.ext-discussiontools-init-button-notFlush {
+		margin-bottom: -32px;
+	}
+
+	.ext-discussiontools-init-readAsWikiPage.ext-discussiontools-init-button-notFlush {
+		margin-bottom: 32px;
+	}
 }
 
 .ext-discussiontools-init-lede-button-container {
@@ -883,13 +876,13 @@ h1, h2, h3, h4, h5, h6 {
 		font-weight: normal;
 
 		> .oo-ui-labelElement-label {
-			color: #666;
+			color: @color-subtle;
 		}
 
 		// Boost specificity
 		> .oo-ui-iconElement-icon.oo-ui-iconElement-icon.oo-ui-iconElement-icon {
-			// When this opacity is applied to black color, we end up with exactly #666
-			opacity: 0.6;
+			// When this opacity is applied to black color, we end up with exactly @color-subtle (`#54595d`)
+			opacity: @opacity-icon-subtle;
 		}
 	}
 }
@@ -902,7 +895,6 @@ h1, h2, h3, h4, h5, h6 {
 
 // HACK: Fake disabled styles for the .mw-ui-button in Vector sticky header (T307726)
 .ext-discussiontools-fake-disabled {
-	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	filter: saturate( 0 );
 	opacity: 0.8;
 	pointer-events: none;

@@ -94,7 +94,7 @@ class Utils {
 	 * @deprecated since 2.1, use mb_ord()
 	 *
 	 * @param string $char
-	 * @return int
+	 * @return int|false
 	 */
 	public static function utf8ToCodepoint( $char ) {
 		return mb_strlen( $char ) > 1 ? false : mb_ord( $char );
@@ -107,10 +107,12 @@ class Utils {
 	 * @return string Escaped string.
 	 */
 	public static function escapeSingleString( $string ) {
-		return strtr( $string,
+		return strtr(
+			$string,
 			[
 				'\\' => '\\\\',
 				'\'' => '\\\''
-			] );
+			]
+		);
 	}
 }

@@ -36,5 +36,14 @@
 	"cite_references_link_accessibility_back_label": "Skoči višje nazaj",
 	"cite_section_preview_references": "Predogled sklicev",
 	"cite_warning": "Napaka navajanja: $1",
-	"cite_warning_sectionpreview_no_text": "Značke <code>&lt;ref&gt;</code> z imenom <code>$1</code> ne morete predogledati, ker je opredeljena zunaj trenutnega razdelka ali sploh ni opredeljena."
+	"cite_warning_sectionpreview_no_text": "Značke <code>&lt;ref&gt;</code> z imenom <code>$1</code> ne morete predogledati, ker je opredeljena zunaj trenutnega razdelka ali sploh ni opredeljena.",
+	"cite-wikieditor-tool-reference": "Sklic",
+	"cite-wikieditor-help-page-references": "Sklici",
+	"cite-wikieditor-help-content-reference-description": "Sklic",
+	"cite-wikieditor-help-content-named-reference-description": "Poimenovan sklic",
+	"cite-wikieditor-help-content-rereference-description": "Ponovna uporaba istega sklica",
+	"cite-wikieditor-help-content-showreferences-description": "Prikaži sklice",
+	"cite-wikieditor-help-content-reference-example-text1": "Besedilo strani.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Besedilo povezave], dodatno besedilo.",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Besedilo povezave]"
 }

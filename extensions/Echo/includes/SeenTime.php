@@ -1,12 +1,21 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications;
+
+use BagOStuff;
+use CachedBagOStuff;
+use CentralIdLookup;
+use DeferredUpdates;
 use MediaWiki\MediaWikiServices;
+use ObjectCache;
+use UnexpectedValueException;
+use User;
 
 /**
  * A small wrapper around ObjectCache to manage
  * storing the last time a user has seen notifications
  */
-class EchoSeenTime {
+class SeenTime {
 
 	/**
 	 * Allowed notification types
@@ -28,7 +37,7 @@ class EchoSeenTime {
 
 	/**
 	 * @param User $user
-	 * @return EchoSeenTime
+	 * @return SeenTime
 	 */
 	public static function newFromUser( User $user ) {
 		return new self( $user );
@@ -48,7 +57,7 @@ class EchoSeenTime {
 		if ( $wrappedCache === null ) {
 			$cacheConfig = MediaWikiServices::getInstance()->getMainConfig()->get( 'EchoSeenTimeCacheType' );
 			if ( $cacheConfig === null ) {
-				// EchoHooks::initEchoExtension sets EchoSeenTimeCacheType to $wgMainStash if it's
+				// Hooks::initEchoExtension sets EchoSeenTimeCacheType to $wgMainStash if it's
 				// null, so this can only happen if $wgMainStash is also null
 				throw new UnexpectedValueException(
 					'Either $wgEchoSeenTimeCacheType or $wgMainStash must be set'

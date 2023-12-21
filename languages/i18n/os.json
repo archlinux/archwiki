@@ -7,9 +7,9 @@
 			"HalanTul",
 			"Macofe",
 			"Stephanecbisson",
+			"Таймураз",
 			"לערי ריינהארט",
-			"아라",
-			"Таймураз"
+			"아라"
 		]
 	},
 	"tog-underline": "Æрвитæнты бын хахх:",
@@ -586,8 +586,6 @@
 	"slot-name-main": "Сæйраг",
 	"content-model-wikitext": "викитекст",
 	"content-model-text": "хуымæтæг текст",
-	"content-model-javascript": "JavaScript",
-	"content-model-css": "CSS",
 	"content-json-empty-object": "Афтид объект",
 	"content-json-empty-array": "Афтид массив",
 	"post-expand-template-inclusion-warning": "'''Сындæг: ''' Хуызæджы бавæрд бæрц æгæр стыр у.\nКæцыдæр хуызæгтæ нæ бавæд уыдзысты.",
@@ -751,7 +749,6 @@
 	"default": "разæвæрд",
 	"prefs-files": "Файлтæ",
 	"prefs-custom-css": "Хиæвæрд CSS",
-	"prefs-custom-json": "Хицæн JSON",
 	"prefs-custom-js": "Хиæвæрд JavaScript",
 	"prefs-emailconfirm-label": "Бæлвырдгæнинаг эл. посты адрис:",
 	"youremail": "E-mail:",
@@ -1182,7 +1179,6 @@
 	"unwatching": "Цæстдард фæрсты номхыгъдæй аиуварс кæнын...",
 	"enotif_impersonal_salutation": "{{grammar:genitive|{{SITENAME}}}} архайæг",
 	"enotif_anon_editor": "сусæг архайæг $1",
-	"changed": "ивд æрцыд",
 	"deletepage-submit": "Схаф фарс",
 	"confirm": "Афтæ у",
 	"delete-confirm": "Схаф \"$1\"",

@@ -103,6 +103,19 @@ abstract class MinifierState {
 	}
 
 	/**
+	 * Add a line break to the output if the output is non-empty and does not
+	 * end in a line break.
+	 *
+	 * @return $this
+	 */
+	public function ensureNewline() {
+		if ( $this->minifiedOutput !== '' && substr( $this->minifiedOutput, -1 ) !== "\n" ) {
+			$this->addOutput( "\n" );
+		}
+		return $this;
+	}
+
+	/**
 	 * Get the minified output.
 	 *
 	 * @return string

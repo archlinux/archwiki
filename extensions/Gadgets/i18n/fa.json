@@ -16,7 +16,9 @@
 	},
 	"gadgets-desc": "به کاربرها امکان انتخاب [[Special:Gadgets|ابزارهای شخصی سی‌اس‌اس و جاوااسکریپت]] را از طریق صفحهٔ [[Special:Preferences#mw-prefsection-gadgets|ترجیحات]] می‌دهد",
 	"prefs-gadgets": "ابزارها",
+	"prefs-description-gadgets": "ویژگی های بیشتری را برای حساب کاربری خود فعال کنید.",
 	"gadgets-prefstext": "در زیر فهرستی از ابزارهای ویژه‌ای که می‌توانید برای حساب کاربری‌تان فعال کنید را می‌بینید.\nاین ابزارها در بیشتر موارد مبتنی بر جاوااسکریپت هستند، پس برای استفاده از آن‌ها باید جاوااسکرپیت را در مرورگر خودتان فعال کنید.\nتوجه کنید که این ابزارها نمی‌توانند صفحهٔ ترجیحات را تغییر دهند.\n\nهمچنین دقت داشته باشید که این ابزارها جزئی از نرم‌افزار مدیاویکی نیستند، و معمولاً توسط کاربران هر ویکی ساخته و نگهداری می‌شوند.\nمدیران هر ویکی می‌توانند با استفاده از صفحه‌های [[MediaWiki:Gadgets-definition|تعاریف]] و [[Special:Gadgets|توضیحات]] به ویرایش ابزارها بپردازند. تعداد کاربران هر ابزار در این ویکی در [[Special:GadgetUsage|آمار کاربر ابزارها]] فهرست شده‌است.",
+	"gadgets-prefstext-safemode": "از آنجا که حالت امن فعال شده است، ابزارها در حال حاضر در دسترس نیستند. برای استفاده از ابزارها لطفاً [[#mw-input-wpforcesafemode|حالت امن را غیرفعال کنید]].",
 	"gadgets": "ابزارها",
 	"gadgetusage": "آمار کاربرد ابزارها",
 	"gadgetusage-gadget": "ابزار",
@@ -32,7 +34,10 @@
 	"gadgets-viewdescription": "مشاهدهٔ توصیف",
 	"gadgets-uses": "برنامه",
 	"gadgets-required-rights": "به {{PLURAL:$2|امتیاز|امتیازات}} روبرو نیاز است:\n\n$1",
-	"gadgets-required-skins": "قابل دسترس در {{PLURAL:$2|پوستهٔ $1|پوسته‌های $1}}.",
+	"gadgets-required-skins": "در دسترس برای {{PLURAL:$2|پوستهٔ $1|پوسته‌های $1}}.",
+	"gadgets-required-actions": "محدود به {{PLURAL:$2|عمل صفحهٔ «$1»|عمل‌های صفحه‌ای $1}}.",
+	"gadgets-required-namespaces": "محدود به {{PLURAL:$2|فضای نام $1|فضاهای نام $1}}.",
+	"gadgets-required-contentmodels": "محدود به {{PLURAL:$2|مدل محتوای $1|مدل‌های محتوایی $1}}.",
 	"gadgets-default": "به‌طور پیش‌فرض برای همه فعال است.",
 	"gadgets-legacy": "ابزار بارگیری نشده است. لطفاً به ResourceLoader مهاجرت کنید. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) اطلاعات بیشتر])",
 	"gadgets-export": "برون‌بری",
@@ -45,5 +50,6 @@
 	"right-gadgets-edit": "ویرایش صفحه‌های JavaScript و CSS ابزار",
 	"action-gadgets-edit": "ویرایش صفحهٔ جاوااسکریپت و سی‌اس‌اس این ابزار",
 	"right-gadgets-definition-edit": "ویرایش تعریف‌های ابزار",
-	"action-gadgets-definition-edit": "ویرایش تنظیمات این ابزار"
+	"action-gadgets-definition-edit": "ویرایش تنظیمات این ابزار",
+	"gadgets-wrong-contentmodel": "صفحه‌های موجود در فضای نام {{ns:2302}} باید دارای مدل محتوای توضیحات ابزار (GadgetDefinition) باشند."
 }

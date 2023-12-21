@@ -1,18 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
+			"20kdc",
+			"Frzzl",
 			"Gtbot2007",
 			"Keenan Pepper",
 			"LesVisages",
 			"Robin van der Vliet",
 			"Tbodt",
 			"שוקו מוקה",
-			"20kdc",
-			"Frzzl"
+			"Earldridge Jazzed Pineda"
 		]
 	},
 	"vector-languages": "toki",
-	"vector-language-button-label": "toki $1",
+	"vector-language-button-label": "{{PLURAL:$1|toki $1}}",
 	"vector-no-language-button-label": "o sin e lipu toki",
 	"vector-action-addsection": "o pana e ijo toki sin",
 	"vector-action-delete": "o weka",

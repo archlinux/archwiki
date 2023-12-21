@@ -35,6 +35,11 @@ $namespaceNames['an'] = [
 	829 => 'Descusión_módulo',
 ];
 
+$namespaceNames['anp'] = [
+	828 => 'मोड्यूल',
+	829 => 'मोड्यूल_वार्ता',
+];
+
 $namespaceNames['ar'] = [
 	828 => 'وحدة',
 	829 => 'نقاش_الوحدة',
@@ -244,9 +249,19 @@ $namespaceNames['gl'] = [
 	829 => 'Conversa_módulo',
 ];
 
+$namespaceNames['glk'] = [
+	828 => 'ماجۊل',
+	829 => 'ماجۊلˇ_گب',
+];
+
 $namespaceNames['gom-deva'] = [
 	828 => 'एकक',
 	829 => 'एकक_चर्चा',
+];
+
+$namespaceNames['gpe'] = [
+	828 => 'Module',
+	829 => 'Module_talk',
 ];
 
 $namespaceNames['gu'] = [
@@ -322,6 +337,11 @@ $namespaceNames['kn'] = [
 $namespaceNames['ko'] = [
 	828 => '모듈',
 	829 => '모듈토론',
+];
+
+$namespaceNames['ks-arab'] = [
+	828 => 'ماڈیوٗل',
+	829 => 'ماڈیوٗل_کَتھ',
 ];
 
 $namespaceNames['ku'] = [
@@ -622,6 +642,11 @@ $namespaceNames['uk'] = [
 $namespaceNames['ur'] = [
 	828 => 'ماڈیول',
 	829 => 'تبادلۂ_خیال_ماڈیول',
+];
+
+$namespaceNames['uz'] = [
+	828 => 'Modul',
+	829 => 'Modul_munozarasi',
 ];
 
 $namespaceNames['vi'] = [

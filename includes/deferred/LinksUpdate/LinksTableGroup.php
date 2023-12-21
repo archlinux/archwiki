@@ -39,9 +39,6 @@ class LinksTableGroup {
 		],
 		'externallinks' => [
 			'class' => ExternalLinksTable::class,
-			'services' => [
-				'MainConfig'
-			],
 		],
 		'imagelinks' => [
 			'class' => ImageLinksTable::class
@@ -53,7 +50,10 @@ class LinksTableGroup {
 			'class' => LangLinksTable::class
 		],
 		'pagelinks' => [
-			'class' => PageLinksTable::class
+			'class' => PageLinksTable::class,
+			'services' => [
+				'MainConfig'
+			],
 		],
 		'page_props' => [
 			'class' => PagePropsTable::class,

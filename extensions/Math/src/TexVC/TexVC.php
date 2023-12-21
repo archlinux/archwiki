@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace MediaWiki\Extension\Math\TexVC;
 
 use Exception;
+use MediaWiki\Extension\Math\TexVC\Mhchem\MhchemParser;
 use MediaWiki\Extension\Math\TexVC\Nodes\TexArray;
 use stdClass;
 
@@ -54,17 +55,26 @@ class TexVC {
 	 * can also be the output of former parser call
 	 * @param array $options array options for settings of the check
 	 * @param array &$warnings reference on warnings occurring during the check
+	 * @param bool $texifyMhchem create TeX for mhchem in input before checking further
 	 * @return array|string[] output with information status (see above)
 	 * @throws Exception in case of a major problem with the check and activated debug option.
 	 */
-	public function check( $input, $options = [], &$warnings = [] ) {
+	public function check( $input, $options = [], &$warnings = [], bool $texifyMhchem = false ) {
 		try {
+			if ( $texifyMhchem && isset( $options["usemhchem"] ) && $options["usemhchem"] ) {
+				// Parse the chemical equations to TeX with mhChemParser in PHP as preprocessor
+				$mhChemParser = new MHChemParser();
+				$input = $mhChemParser->toTex( $input, "ce", true );
+			}
+
 			$options = ParserUtil::createOptions( $options );
 			if ( is_string( $input ) ) {
 				$input = $this->parser->parse( $input, $options );
 			}
 			$output = $input->render();
+
 			$result = [
+				'inputN' => $input,
 				'status' => '+',
 				'output' => $output,
 				'warnings' => $warnings,
@@ -73,7 +83,7 @@ class TexVC {
 			];
 
 			if ( $options['report_required'] ) {
-				$pkgs = [ 'ams', 'cancel', 'color', 'euro', 'teubner', 'mhchem', 'mathoid' ];
+				$pkgs = [ 'ams', 'cancel', 'color', 'euro', 'teubner', 'mhchem', 'mathoid', 'mhchemtexified' ];
 
 				foreach ( $pkgs as $pkg ) {
 					$pkg .= '_required';
@@ -89,6 +99,16 @@ class TexVC {
 					return [
 						'status' => 'C',
 						'details' => 'mhchem package required.'
+					];
+				}
+			}
+			if ( !$options['usemhchemtexified'] ) {
+				if ( $result['mhchemtexified_required'] ??
+					$input->containsFunc( $this->tu->getBaseElements()['mhchemtexified_required'] )
+				) {
+					return [
+						'status' => 'C',
+						'details' => 'virtual mhchemtexified package required.'
 					];
 				}
 			}

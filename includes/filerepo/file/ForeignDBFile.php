@@ -19,6 +19,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\DBUnexpectedError;
@@ -103,15 +104,11 @@ class ForeignDBFile extends LocalFile {
 			return false;
 		}
 
-		$touched = $this->repo->getReplicaDB()->selectField(
-			'page',
-			'page_touched',
-			[
-				'page_namespace' => NS_FILE,
-				'page_title' => $this->title->getDBkey()
-			],
-			__METHOD__
-		);
+		$touched = $this->repo->getReplicaDB()->newSelectQueryBuilder()
+			->select( 'page_touched' )
+			->from( 'page' )
+			->where( [ 'page_namespace' => NS_FILE, 'page_title' => $this->title->getDBkey() ] )
+			->caller( __METHOD__ )->fetchField();
 		if ( $touched === false ) {
 			return false; // no description page
 		}
@@ -149,15 +146,11 @@ class ForeignDBFile extends LocalFile {
 	 */
 	public function getDescriptionShortUrl() {
 		$dbr = $this->repo->getReplicaDB();
-		$pageId = $dbr->selectField(
-			'page',
-			'page_id',
-			[
-				'page_namespace' => NS_FILE,
-				'page_title' => $this->title->getDBkey()
-			],
-			__METHOD__
-		);
+		$pageId = $dbr->newSelectQueryBuilder()
+			->select( 'page_id' )
+			->from( 'page' )
+			->where( [ 'page_namespace' => NS_FILE, 'page_title' => $this->title->getDBkey() ] )
+			->caller( __METHOD__ )->fetchField();
 
 		if ( $pageId !== false ) {
 			$url = $this->repo->makeUrl( [ 'curid' => $pageId ] );

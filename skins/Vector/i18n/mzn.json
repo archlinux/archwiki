@@ -8,7 +8,8 @@
 	"vector-languages": "زوون",
 	"vector-language-button-label": "{{PLURAL:$1|$1 زوون}}",
 	"vector-no-language-button-label": "زوون اضافه هکردن",
-	"vector-action-addsection": "ترنه گپ بزوئن",
+	"vector-language-redirect-to-top": "این {{SITENAME}} دله دیگر زوون‌هایِ لینک ره مقاله‌یِ بالا یلمبی که مقاله نوم وَر کَته. [[#p-lang-btn|جورته بوردن]].",
+	"vector-action-addsection": "نو گپ بزوئن",
 	"vector-action-delete": "پاک هاکردن",
 	"vector-action-move": "دکش هاکردن",
 	"vector-action-protect": "زلفن بزوئن",
@@ -22,6 +23,8 @@
 	"vector-more-actions": "ویشته",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> دار صفحه‌ئون دله چرخه‌تو هکردن",
 	"vector-toc-beginning": "لید",
+	"vector-main-menu-tooltip": "اصلی رج",
+	"vector-main-menu-label": "اصلی رج",
 	"vector-page-tools-label": "ابزارون",
 	"vector-page-tools-general-label": "عمومی",
 	"vector-unpin-element-label": "پیتی"

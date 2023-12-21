@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Adam-Yourist",
 			"Alexander Yukal",
 			"Amire80",
+			"BerryAVGN",
 			"Ignatus",
 			"Iniquity",
 			"Jack who built the house",
@@ -19,14 +21,15 @@
 			"Sunpriat",
 			"Tanzun",
 			"Thothsum",
+			"Ukhant Erdemt",
 			"Александр Сигачёв",
-			"Adam-Yourist",
-			"BerryAVGN",
-			"З. ӘЙЛЕ"
+			"З. ӘЙЛЕ",
+			"Tar Lócesilion",
+			"Tucvbif"
 		]
 	},
-	"skinname-vector": "Векторная, устаревшая (2010)",
-	"skinname-vector-2022": "Векторная (2022)",
+	"skinname-vector": "Vector, устаревшая (2010)",
+	"skinname-vector-2022": "Vector (2022)",
 	"vector-specialversion-name": "Векторная",
 	"vector-skin-desc": "Предоставляет две векторные темы оформления:\n* 2011: ''Современная'' — версия MonoBook с обновлённым оформлением и многими улучшениями пользовательского опыта.\n* 2022: ''Векторная'' — созданная в рамках проекта Фонда Викимедиа «[[mw:Desktop Improvements]]».",
 	"prefs-vector-enable-vector-1-label": "Использовать Векторную тему оформления прежней версии",
@@ -41,7 +44,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 язык|$1 языка|$1 языков}}",
 	"vector-no-language-button-label": "Добавить языки",
 	"vector-no-language-button-aria-label": "Данная статья существует только на этом языке. Добавьте статью для других языков",
-	"vector-language-redirect-to-top": "На этом сайте языковые ссылки находятся в начале страницы, напротив заголовка статьи. [[#p-lang-btn|Перейти к началу]].",
+	"vector-language-redirect-to-top": "На этом сайте языковые ссылки находятся в начале страницы, напротив заголовка статьи.",
 	"vector-language-variant-switcher-label": "Изменить вариант языка",
 	"vector-action-addsection": "Добавить тему",
 	"vector-action-delete": "Удалить",
@@ -73,6 +76,8 @@
 	"vector-site-nav-label": "Сайт",
 	"vector-main-menu-label": "Главное меню",
 	"vector-limited-width-toggle": "Отобразить/Скрыть ограниченную ширину содержимого",
+	"vector-limited-width-toggle-on-popup": "Вы переключили макет на полную ширину. Чтобы вернуться к ограниченной ширине, нажмите эту кнопку.",
+	"vector-limited-width-toggle-off-popup": "Вы можете переключаться между ограниченной шириной и полной шириной, нажав эту кнопку.",
 	"vector-page-tools-label": "Инструменты",
 	"vector-page-tools-general-label": "Общие",
 	"vector-page-tools-actions-label": "Действия",
@@ -80,7 +85,20 @@
 	"vector-unpin-element-label": "скрыть",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Обсуждение]]",
 	"tooltip-vector-anon-user-menu-title": "Больше возможностей",
+	"vector-page-tools-nav-label": "Инструменты для страниц",
 	"vector-prefs-limited-width": "Включить режим ограниченной ширины",
 	"vector-prefs-limited-width-help": "Включите режим ограниченной ширины для улучшения читательского опыта.",
-	"empty-language-selector-body": "Содержимое страницы недоступно на других языках."
+	"empty-language-selector-body": "Содержимое страницы недоступно на других языках.",
+	"vector-toc-unpinned-popup": "Содержание перенесено сюда.",
+	"vector-page-tools-unpinned-popup": "Меню инструментов было перемещено сюда.",
+	"vector-main-menu-unpinned-popup": "Главное меню перенесено сюда.",
+	"vector-readability-survey-title": "Прототип изменения читаемости",
+	"vector-readability-survey-description": "Как вам больше всего нравится текст в Википедии? Используйте переключатели ниже, чтобы настроить внешний вид. Узнайте больше о проекте [[mw:Special:MyLanguage/Reading/Web/Accessibility for reading|«Доступность для чтения»]].",
+	"vector-readability-survey-fontSize": "Размер кегля",
+	"vector-readability-survey-lineHeight": "Высота линии",
+	"vector-readability-survey-paragraphSpacing": "Интервал между параграфами",
+	"vector-readability-survey-optout": "Нажмите продолжить, чтобы отправить нам свой дизайн и опубликовать свой отзыв на следующей странице. [[#close-vector-survey|Нажмите здесь, чтобы удалить этот инструмент]].",
+	"vector-readability-survey-randomize": "Рандомизировать",
+	"vector-readability-survey-reset": "Сбросить",
+	"vector-readability-survey-share": "Продолжить"
 }

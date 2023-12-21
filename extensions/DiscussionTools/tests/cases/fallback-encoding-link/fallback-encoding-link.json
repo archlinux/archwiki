@@ -26,6 +26,12 @@
 						"4/5/31"
 					]
 				],
+				"timestampRanges": [
+					[
+						"4/5/1",
+						"4/5/31"
+					]
+				],
 				"level": 1,
 				"name": "c-Akela-2009-06-25T10:46:00.000Z",
 				"id": "c-Akela-2009-06-25T10:46:00.000Z-Katona_infobox_sablon_formátuma",
@@ -42,6 +48,12 @@
 						"signatureRanges": [
 							[
 								"6/0/1",
+								"6/0/4/31"
+							]
+						],
+						"timestampRanges": [
+							[
+								"6/0/4/1",
 								"6/0/4/31"
 							]
 						],
@@ -67,6 +79,12 @@
 						"8/6/31"
 					]
 				],
+				"timestampRanges": [
+					[
+						"8/6/1",
+						"8/6/31"
+					]
+				],
 				"level": 1,
 				"name": "c-Hunyadym-2009-06-25T11:04:00.000Z",
 				"id": "c-Hunyadym-2009-06-25T11:04:00.000Z-Katona_infobox_sablon_formátuma",
@@ -87,6 +105,12 @@
 						"9/4/31"
 					]
 				],
+				"timestampRanges": [
+					[
+						"9/4/1",
+						"9/4/31"
+					]
+				],
 				"level": 1,
 				"name": "c-Hunyadym-2009-06-25T11:07:00.000Z",
 				"id": "c-Hunyadym-2009-06-25T11:07:00.000Z-Katona_infobox_sablon_formátuma",
@@ -104,6 +128,12 @@
 				"signatureRanges": [
 					[
 						"10/1",
+						"10/4/31"
+					]
+				],
+				"timestampRanges": [
+					[
+						"10/4/1",
 						"10/4/31"
 					]
 				],
