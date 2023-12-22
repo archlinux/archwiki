@@ -25,6 +25,7 @@
  * @author Daniel Kinzler
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\MagicWord;
@@ -37,7 +38,6 @@ use MediaWiki\Title\Title;
  * @ingroup Content
  */
 class WikitextContent extends TextContent {
-	private $redirectTargetAndText = null;
 
 	/**
 	 * @var string[] flags set by PST
@@ -106,7 +106,8 @@ class WikitextContent extends TextContent {
 			# Inserting a new section
 			$subject = strval( $sectionTitle ) !== '' ? wfMessage( 'newsectionheaderdefaultlevel' )
 					->plaintextParams( $sectionTitle )->inContentLanguage()->text() . "\n\n" : '';
-			if ( Hooks::runner()->onPlaceNewSection( $this, $oldtext, $subject, $text ) ) {
+			$hookRunner = ( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) );
+			if ( $hookRunner->onPlaceNewSection( $this, $oldtext, $subject, $text ) ) {
 				$text = strlen( trim( $oldtext ) ) > 0
 					? "{$oldtext}\n\n{$subject}{$text}"
 					: "{$subject}{$text}";
@@ -141,45 +142,18 @@ class WikitextContent extends TextContent {
 	/**
 	 * Extract the redirect target and the remaining text on the page.
 	 *
-	 * @note migrated here from Title::newFromRedirectInternal()
-	 *
 	 * @since 1.23
+	 * @deprecated since 1.41, use WikitextContentHandler::getRedirectTargetAndText
 	 *
 	 * @return array List of two elements: Title|null and string.
 	 */
 	public function getRedirectTargetAndText() {
-		if ( $this->redirectTargetAndText !== null ) {
-			return $this->redirectTargetAndText;
-		}
+		wfDeprecated( __METHOD__, '1.41' );
 
-		$redir = MediaWikiServices::getInstance()->getMagicWordFactory()->get( 'redirect' );
-		$text = ltrim( $this->getText() );
-		if ( $redir->matchStartAndRemove( $text ) ) {
-			// Extract the first link and see if it's usable
-			// Ensure that it really does come directly after #REDIRECT
-			// Some older redirects included a colon, so don't freak about that!
-			$m = [];
-			if ( preg_match( '!^\s*:?\s*\[{2}(.*?)(?:\|.*?)?\]{2}\s*!', $text, $m ) ) {
-				// Strip preceding colon used to "escape" categories, etc.
-				// and URL-decode links
-				if ( strpos( $m[1], '%' ) !== false ) {
-					// Match behavior of inline link parsing here;
-					$m[1] = rawurldecode( ltrim( $m[1], ':' ) );
-				}
-				$title = Title::newFromText( $m[1] );
-				// If the title is a redirect to bad special pages or is invalid, return null
-				if ( !$title instanceof Title || !$title->isValidRedirectTarget() ) {
-					$this->redirectTargetAndText = [ null, $this->getText() ];
-					return $this->redirectTargetAndText;
-				}
+		$handler = $this->getContentHandler();
+		[ $target, $content ] = $handler->extractRedirectTargetAndText( $this );
 
-				$this->redirectTargetAndText = [ $title, substr( $text, strlen( $m[0] ) ) ];
-				return $this->redirectTargetAndText;
-			}
-		}
-
-		$this->redirectTargetAndText = [ null, $this->getText() ];
-		return $this->redirectTargetAndText;
+		return [ Title::castFromLinkTarget( $target ), $content->getText() ];
 	}
 
 	/**
@@ -190,9 +164,13 @@ class WikitextContent extends TextContent {
 	 * @see Content::getRedirectTarget
 	 */
 	public function getRedirectTarget() {
-		[ $title, ] = $this->getRedirectTargetAndText();
+		// TODO: The redirect target should be injected on construction.
+		//       But that only works if the object is created by WikitextContentHandler.
 
-		return $title;
+		$handler = $this->getContentHandler();
+		[ $target, ] = $handler->extractRedirectTargetAndText( $this );
+
+		return Title::castFromLinkTarget( $target );
 	}
 
 	/**
@@ -252,7 +230,7 @@ class WikitextContent extends TextContent {
 				// @phan-suppress-next-line PhanTypeMismatchArgumentNullable getTitle does not return null here
 				$po = $contentRenderer->getParserOutput( $this, $title, null, null, false );
 				$links = $po->getLinks();
-				$hasLinks = !empty( $links );
+				$hasLinks = $links !== [];
 			}
 
 			return $hasLinks;
@@ -305,5 +283,11 @@ class WikitextContent extends TextContent {
 	 */
 	public function getPreSaveTransformFlags() {
 		return $this->preSaveTransformFlags;
+	}
+
+	public function getContentHandler(): WikitextContentHandler {
+		$handler = parent::getContentHandler();
+		'@phan-var WikitextContentHandler $handler';
+		return $handler;
 	}
 }

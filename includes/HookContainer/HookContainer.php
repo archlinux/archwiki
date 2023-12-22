@@ -26,6 +26,9 @@
 namespace MediaWiki\HookContainer;
 
 use Closure;
+use Error;
+use InvalidArgumentException;
+use LogicException;
 use MWDebug;
 use MWException;
 use UnexpectedValueException;
@@ -34,6 +37,16 @@ use Wikimedia\NonSerializable\NonSerializableTrait;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\ScopedCallback;
 use Wikimedia\Services\SalvageableService;
+use function array_filter;
+use function array_keys;
+use function array_merge;
+use function array_shift;
+use function array_unique;
+use function is_array;
+use function is_object;
+use function is_string;
+use function strpos;
+use function strtr;
 
 /**
  * HookContainer class.
@@ -45,22 +58,28 @@ use Wikimedia\Services\SalvageableService;
 class HookContainer implements SalvageableService {
 	use NonSerializableTrait;
 
-	/** @var array Hooks and their callbacks registered through $this->register() */
-	private $dynamicHandlers = [];
+	public const NOOP = '*no-op*';
 
 	/**
-	 * @var array Tombstone count by hook name
+	 * Normalized hook handlers, as a 3D array:
+	 * - the first level maps hook names to lists of handlers
+	 * - the second is a list of handlers
+	 * - each handler is an associative array with some well known keys, as returned by normalizeHandler()
+	 * @var array<array>
 	 */
-	private $tombstones = [];
+	private $handlers = [];
 
-	/** @var string magic value for use in $dynamicHandlers */
-	private const TOMBSTONE = 'TOMBSTONE';
-
-	/** @var array handler name and their handler objects */
-	private $handlersByName = [];
+	/** @var array<object> handler name and their handler objects */
+	private $handlerObjects = [];
 
 	/** @var HookRegistry */
 	private $registry;
+
+	/**
+	 * Handlers registered by calling register().
+	 * @var array
+	 */
+	private $extraHandlers = [];
 
 	/** @var ObjectFactory */
 	private $objectFactory;
@@ -92,12 +111,12 @@ class HookContainer implements SalvageableService {
 	 */
 	public function salvage( SalvageableService $other ) {
 		Assert::parameterType( self::class, $other, '$other' );
-		if ( $this->dynamicHandlers || $this->handlersByName ) {
+		if ( $this->handlers || $this->handlerObjects || $this->extraHandlers ) {
 			throw new MWException( 'salvage() must be called immediately after construction' );
 		}
-		$this->handlersByName = $other->handlersByName;
-		$this->dynamicHandlers = $other->dynamicHandlers;
-		$this->tombstones = $other->tombstones;
+		$this->handlerObjects = $other->handlerObjects;
+		$this->handlers = $other->handlers;
+		$this->extraHandlers = $other->extraHandlers;
 	}
 
 	/**
@@ -123,80 +142,58 @@ class HookContainer implements SalvageableService {
 	 * @throws UnexpectedValueException if handlers return an invalid value
 	 */
 	public function run( string $hook, array $args = [], array $options = [] ): bool {
-		$legacyHandlers = $this->getLegacyHandlers( $hook );
-		$options = array_merge(
-			$this->registry->getDeprecatedHooks()->getDeprecationInfo( $hook ) ?? [],
-			$options
-		);
-		// Equivalent of legacy Hooks::runWithoutAbort()
-		$notAbortable = ( isset( $options['abortable'] ) && $options['abortable'] === false );
-		foreach ( $legacyHandlers as $handler ) {
-			$normalizedHandler = $this->normalizeHandler( $handler, $hook );
-			if ( $normalizedHandler ) {
-				$functionName = $normalizedHandler['functionName'];
-				$return = $this->callLegacyHook( $hook, $normalizedHandler, $args, $options );
-				if ( $notAbortable && $return !== null && $return !== true ) {
-					throw new UnexpectedValueException( "Invalid return from $functionName" .
-						" for unabortable $hook." );
-				}
-				if ( $return === false ) {
-					return false;
-				}
-				if ( is_string( $return ) ) {
-					wfDeprecatedMsg(
-						"Returning a string from a hook handler is deprecated since MediaWiki 1.35 ' .
-							'(done by $functionName for $hook)",
-						'1.35', false, false
-					);
-					throw new UnexpectedValueException( $return );
-				}
-			}
-		}
+		$checkDeprecation = isset( $options['deprecatedVersion'] );
 
-		$handlers = $this->getHandlers( $hook, $options );
-		$funcName = 'on' . strtr( ucfirst( $hook ), ':-', '__' );
-
-		foreach ( $handlers as $handler ) {
-			$return = $handler->$funcName( ...$args );
-			if ( $notAbortable && $return !== null && $return !== true ) {
-				throw new UnexpectedValueException(
-					"Invalid return from " . $funcName . " for unabortable $hook."
-				);
+		$abortable = $options['abortable'] ?? true;
+		foreach ( $this->getHandlers( $hook, $options ) as $handler ) {
+			if ( $checkDeprecation ) {
+				$this->checkDeprecation( $hook, $handler, $options );
 			}
+
+			// Compose callback arguments.
+			if ( !empty( $handler['args'] ) ) {
+				$callbackArgs = array_merge( $handler['args'], $args );
+			} else {
+				$callbackArgs = $args;
+			}
+			// Call the handler.
+			$callback = $handler['callback'];
+			$return = $callback( ...$callbackArgs );
+
+			// Handler returned false, signal abort to caller
 			if ( $return === false ) {
+				if ( !$abortable ) {
+					throw new UnexpectedValueException( "Handler {$handler['functionName']}" .
+						" return false for unabortable $hook." );
+				}
+
 				return false;
-			}
-			if ( $return !== null && !is_bool( $return ) ) {
-				throw new UnexpectedValueException( "Invalid return from " . $funcName . " for $hook." );
+			} elseif ( $return !== null && $return !== true ) {
+				throw new UnexpectedValueException(
+					"Hook handlers can only return null or a boolean. Got an unexpected value from " .
+					"handler {$handler['functionName']} for $hook" );
 			}
 		}
+
 		return true;
 	}
 
 	/**
-	 * Clear hooks registered via Hooks::register().
+	 * Clear handlers of the given hook.
 	 * This is intended for use while testing and will fail if MW_PHPUNIT_TEST
 	 * and MW_PARSER_TEST are not defined.
 	 *
 	 * @param string $hook Name of hook to clear
 	 *
 	 * @internal For use by Hooks.php
-	 * @throws MWException If not in testing mode.
 	 * @codeCoverageIgnore
 	 */
 	public function clear( string $hook ): void {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) && !defined( 'MW_PARSER_TEST' ) ) {
-			throw new MWException( 'Cannot reset hooks in operation.' );
+			throw new LogicException( 'Cannot reset hooks in operation.' );
 		}
 
-		// The tombstone logic makes it so the clear() operation can be reversed reliably,
-		// and does not affect global state.
-		// $this->tombstones[$hook]>0 suppresses any handlers from the HookRegistry,
-		// see getHandlers().
-		// The TOMBSTONE value in $this->dynamicHandlers[$hook] means that all handlers
-		// that precede it in the array are ignored, see getLegacyHandlers().
-		$this->dynamicHandlers[$hook][] = self::TOMBSTONE;
-		$this->tombstones[$hook] = ( $this->tombstones[$hook] ?? 0 ) + 1;
+		$this->handlers[$hook] = [];
 	}
 
 	/**
@@ -204,138 +201,200 @@ class HookContainer implements SalvageableService {
 	 * Intended for use in temporary registration e.g. testing
 	 *
 	 * @param string $hook Name of hook
-	 * @param callable|string|array $callback Handler object to attach
-	 * @param bool $replace (optional) By default adds callback to handler array.
-	 *        Set true to remove all existing callbacks for the hook.
+	 * @param callable|string|array $handler Handler to attach
 	 * @return ScopedCallback
 	 */
-	public function scopedRegister( string $hook, $callback, bool $replace = false ): ScopedCallback {
-		// Use a known key to register the handler, so we can later remove it
-		// from $this->dynamicHandlers using that key.
+	public function scopedRegister( string $hook, $handler ): ScopedCallback {
+		$handler = $this->normalizeHandler( $hook, $handler );
+		if ( !$handler ) {
+			throw new InvalidArgumentException( 'Bad hook handler!' );
+		}
+
+		$this->checkDeprecation( $hook, $handler );
+
 		$id = 'TemporaryHook_' . $this->nextScopedRegisterId++;
 
-		if ( $replace ) {
-			// Use a known key for the tombstone, so we can later remove it
-			// from $this->dynamicHandlers using that key.
-			$ts = "{$id}_TOMBSTONE";
+		$this->getHandlers( $hook );
 
-			// See comment in clear() for the tombstone logic.
-			$this->dynamicHandlers[$hook][$ts] = self::TOMBSTONE;
-			$this->dynamicHandlers[$hook][$id] = $callback;
-			$this->tombstones[$hook] = ( $this->tombstones[$hook] ?? 0 ) + 1;
+		$this->handlers[$hook][$id] = $handler;
 
-			return new ScopedCallback(
-				function () use ( $hook, $id, $ts ) {
-					unset( $this->dynamicHandlers[$hook][$ts] );
-					unset( $this->dynamicHandlers[$hook][$id] );
-					$this->tombstones[$hook]--;
-				}
-			);
-		} else {
-			$this->dynamicHandlers[$hook][$id] = $callback;
-			return new ScopedCallback( function () use ( $hook, $id ) {
-				unset( $this->dynamicHandlers[$hook][$id] );
-			} );
+		return new ScopedCallback( function () use ( $hook, $id ) {
+			unset( $this->handlers[$hook][$id] );
+		} );
+	}
+
+	/**
+	 * Returns a callable array based on the handler specification provided.
+	 * This will find the appropriate handler object to call a method on,
+	 * This will find the appropriate handler object to call a method on,
+	 * instantiating it if it doesn't exist yet.
+	 *
+	 * @param string $hook The name of the hook the handler was registered for
+	 * @param array $handler A hook handler specification as given in an extension.json file.
+	 * @param array $options Options to apply. If the 'noServices' option is set and the
+	 *              handler requires service injection, this method will throw an
+	 *              UnexpectedValueException.
+	 *
+	 * @return array
+	 */
+	private function makeExtensionHandlerCallback( string $hook, array $handler, array $options = [] ): array {
+		$spec = $handler['handler'];
+		$name = $spec['name'];
+
+		if (
+			!empty( $options['noServices'] ) && (
+				!empty( $spec['services'] ) ||
+				!empty( $spec['optional_services'] )
+			)
+		) {
+			throw new UnexpectedValueException(
+				"The handler for the hook $hook registered in " .
+				"{$handler['extensionPath']} has a service dependency, " .
+				"but this hook does not allow it." );
 		}
+
+		if ( !isset( $this->handlerObjects[$name] ) ) {
+			// @phan-suppress-next-line PhanTypeInvalidCallableArraySize
+			$this->handlerObjects[$name] = $this->objectFactory->createObject( $spec );
+		}
+
+		$obj = $this->handlerObjects[$name];
+		$method = $this->getHookMethodName( $hook );
+
+		return [ $obj, $method ];
 	}
 
 	/**
 	 * Normalize/clean up format of argument passed as hook handler
 	 *
-	 * @param array|callable $handler Executable handler function
 	 * @param string $hook Hook name
+	 * @param string|array|callable $handler Executable handler function. See register() for supported structures.
+	 * @param array $options see makeExtensionHandlerCallback()
+	 *
 	 * @return array|false
-	 *  - handler: (callable) Executable handler function
+	 *  - callback: (callable) Executable handler function
 	 *  - functionName: (string) Handler name for passing to wfDeprecated() or Exceptions thrown
-	 *  - args: (array) handler function arguments
+	 *  - args: (array) Extra handler function arguments (omitted when not needed)
 	 */
-	private function normalizeHandler( $handler, string $hook ) {
-		$normalizedHandler = $handler;
-		if ( !is_array( $handler ) ) {
-			$normalizedHandler = [ $normalizedHandler ];
+	private function normalizeHandler( string $hook, $handler, array $options = [] ) {
+		if ( is_object( $handler ) && !$handler instanceof Closure ) {
+			$handler = [ $handler, $this->getHookMethodName( $hook ) ];
 		}
 
-		// Empty array or array filled with null/false/empty.
-		if ( !array_filter( $normalizedHandler ) ) {
+		// Backwards compatibility with old-style callable that uses a qualified method name.
+		if ( is_array( $handler ) && is_object( $handler[0] ?? false ) && is_string( $handler[1] ?? false ) ) {
+			$ofs = strpos( $handler[1], '::' );
+
+			if ( $ofs !== false ) {
+				$msg = self::callableToString( $handler );
+				wfDeprecatedMsg( "Deprecated handler style for hook '$hook': " .
+					"callable using qualified method name ($msg)" );
+				$handler[1] = substr( $handler[1], $ofs + 2 );
+			}
+		}
+
+		// Backwards compatibility: support objects wrapped in an array but no method name.
+		if ( is_array( $handler ) && is_object( $handler[0] ?? false ) && !isset( $handler[1] ) ) {
+			if ( !$handler[0] instanceof Closure ) {
+				$handler[1] = $this->getHookMethodName( $hook );
+				$msg = self::callableToString( $handler );
+				wfDeprecatedMsg( "Deprecated handler style for hook '$hook': object wrapped in array ($msg)" );
+			}
+		}
+
+		// The empty callback is used to represent a no-op handler in some test cases.
+		if ( $handler === [] || $handler === null || $handler === false || $handler === self::NOOP ) {
+			if ( $handler !== self::NOOP ) {
+				wfDeprecatedMsg(
+					"Deprecated handler style for hook '$hook': falsy value, use HookContainer::NOOP instead."
+				);
+			}
+
+			return [
+				'callback' => static function () {
+					// no-op
+				},
+				'functionName' => self::NOOP,
+			];
+		}
+
+		// Plain callback
+		if ( self::mayBeCallable( $handler ) ) {
+			return [
+				'callback' => $handler,
+				'functionName' => self::callableToString( $handler ),
+			];
+		}
+
+		// Not callable and not an array. Something is wrong.
+		if ( !is_array( $handler ) ) {
 			return false;
 		}
 
-		if ( is_array( $normalizedHandler[0] ) ) {
-			// First element is an array, meaning the developer intended
-			// the first element to be a callback. Merge it in so that
-			// processing can be uniform.
-			$normalizedHandler = array_merge( $normalizedHandler[0], array_slice( $normalizedHandler, 1 ) );
+		// Empty array or array filled with null/false/empty.
+		if ( !array_filter( $handler ) ) {
+			return false;
 		}
 
-		$firstArg = $normalizedHandler[0];
-
-		// Extract function name, handler callback, and any arguments for the callback
-		if ( $firstArg instanceof Closure ) {
-			$functionName = "hook-$hook-closure";
-			$callback = array_shift( $normalizedHandler );
-		} elseif ( is_object( $firstArg ) ) {
-			$object = array_shift( $normalizedHandler );
-			$functionName = array_shift( $normalizedHandler );
-
-			// If no method was specified, default to on$event
-			if ( $functionName === null ) {
-				$functionName = "on$hook";
-			} else {
-				$colonPos = strpos( $functionName, '::' );
-				if ( $colonPos !== false ) {
-					// Some extensions use [ $object, 'Class::func' ] which
-					// worked with call_user_func_array() but doesn't work now
-					// that we use a plain variadic call
-					$functionName = substr( $functionName, $colonPos + 2 );
+		// ExtensionRegistry style handler
+		if ( isset( $handler['handler'] ) ) {
+			// Skip hooks that both acknowledge deprecation and are deprecated in core
+			if ( $handler['deprecated'] ?? false ) {
+				$deprecatedHooks = $this->registry->getDeprecatedHooks();
+				$deprecated = $deprecatedHooks->isHookDeprecated( $hook );
+				if ( $deprecated ) {
+					return false;
 				}
 			}
 
-			$callback = [ $object, $functionName ];
-		} elseif ( is_string( $firstArg ) ) {
-			if ( is_callable( $normalizedHandler, true, $functionName )
-				&& class_exists( $firstArg ) // $firstArg can be a function in global scope
-			) {
-				$callback = $normalizedHandler;
-				$normalizedHandler = []; // Can't pass arguments here
-			} else {
-				$functionName = $callback = array_shift( $normalizedHandler );
-			}
-		} else {
-			throw new UnexpectedValueException( 'Unknown datatype in hooks for ' . $hook );
+			$callback = $this->makeExtensionHandlerCallback( $hook, $handler, $options );
+			return [
+				'callback' => $callback,
+				'functionName' => self::callableToString( $callback ),
+			];
 		}
 
+		// Not an indexed array, something is wrong.
+		if ( !isset( $handler[0] ) ) {
+			return false;
+		}
+
+		// Backwards compatibility: support for arrays of the form [ $object, $method, $data... ]
+		if ( is_object( $handler[0] ) && is_string( $handler[1] ?? false ) && array_key_exists( 2, $handler ) ) {
+			$obj = $handler[0];
+			if ( !$obj instanceof Closure ) {
+				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
+				$method = $handler[1];
+				$handler = array_merge(
+					[ [ $obj, $method ] ],
+					array_slice( $handler, 2 )
+				);
+				$msg = self::callableToString( $handler[1] );
+				wfDeprecatedMsg( "Deprecated handler style for hook '$hook': callable array with extra data ($msg)" );
+			}
+		}
+
+		// The only option left is an array of the form [ $callable, $data... ]
+		$callback = array_shift( $handler );
+
+		// Backwards-compatibility for callbacks in the form [ [ $function ], $data ]
+		if ( is_array( $callback ) && count( $callback ) === 1 && is_string( $callback[0] ?? null ) ) {
+			$callback = $callback[0];
+			$msg = self::callableToString( $callback );
+			wfDeprecatedMsg( "Deprecated handler style for hook '$hook': function wrapped in array ($msg)" );
+		}
+
+		if ( !self::mayBeCallable( $callback ) ) {
+			return false;
+		}
+
+		$msg = self::callableToString( $callback );
+		wfDeprecatedMsg( "Deprecated handler style for hook '$hook': callable wrapped in array ($msg)" );
 		return [
 			'callback' => $callback,
-			'args' => $normalizedHandler,
-			'functionName' => $functionName,
+			'functionName' => self::callableToString( $callback ),
+			'args' => $handler,
 		];
-	}
-
-	/**
-	 * Run legacy hooks
-	 * Hook can be: a function, an object, an array of $function and
-	 * $data, an array of just a function, an array of object and
-	 * method, or an array of object, method, and data
-	 * (See hooks.txt for more details)
-	 *
-	 * @param string $hook
-	 * @param array|callable $handler The name of the hooks handler function
-	 * @param array $args Arguments for hook handler function
-	 * @param array $options
-	 * @return null|string|bool
-	 */
-	private function callLegacyHook( string $hook, $handler, array $args, array $options ) {
-		$callback = $handler['callback'];
-		$hookArgs = array_merge( $handler['args'], $args );
-		if ( isset( $options['deprecatedVersion'] ) && empty( $options['silent'] ) ) {
-			wfDeprecated(
-				"$hook hook (used in " . $handler['functionName'] . ")",
-				$options['deprecatedVersion'] ?? false,
-				$options['component'] ?? false
-			);
-		}
-		// Call the hooks
-		return $callback( ...$hookArgs );
 	}
 
 	/**
@@ -346,180 +405,214 @@ class HookContainer implements SalvageableService {
 	 * @return bool Whether the hook has a handler registered to it
 	 */
 	public function isRegistered( string $hook ): bool {
-		if ( $this->tombstones[$hook] ?? false ) {
-			// If a tombstone is set, we only care about dynamically registered hooks,
-			// and leave it to getLegacyHandlers() to handle the cut-off.
-			return !empty( $this->getLegacyHandlers( $hook ) );
-		}
-
-		// If no tombstone is set, we just check if any of the three arrays contains handlers.
-		if ( !empty( $this->registry->getGlobalHooks()[$hook] ) ||
-			!empty( $this->dynamicHandlers[$hook] ) ||
-			!empty( $this->registry->getExtensionHooks()[$hook] )
-		) {
-			return true;
-		}
-
-		return false;
+		return !empty( $this->getHandlers( $hook ) );
 	}
 
 	/**
 	 * Attach an event handler to a given hook.
 	 *
+	 * The handler should be given in one of the following forms:
+	 *
+	 * 1) A callable (string, array, or closure)
+	 * 2) An extension hook handler spec in the form returned by
+	 *    HookRegistry::getExtensionHooks
+	 *
+	 * Several other forms are supported for backwards compatibility, but
+	 * should not be used when calling this method directly.
+	 *
+	 * @note This method accepts "broken callables", that is, callable
+	 * structures that reference classes that could not be found or could
+	 * not be loaded, e.g. because they implement an interface that cannot
+	 * be loaded. This situation may legitimately arise when implementing
+	 * hooks defined by extensions that are not present.
+	 * In that case, the hook will never fire and registering the "broken"
+	 * handlers is harmless. If a broken hook handler is registered for a
+	 * hook that is indeed called, it will cause an error. This is
+	 * intentional: we don't want to silently ignore mistakes like mistyped
+	 * class names in a hook handler registration.
+	 *
 	 * @param string $hook Name of hook
-	 * @param mixed $callback handler object to attach
+	 * @param string|array|callable $handler handler
 	 */
-	public function register( string $hook, $callback ) {
-		$deprecatedHooks = $this->registry->getDeprecatedHooks();
-		$deprecated = $deprecatedHooks->isHookDeprecated( $hook );
-		if ( $deprecated ) {
-			$info = $deprecatedHooks->getDeprecationInfo( $hook );
-			if ( empty( $info['silent'] ) ) {
-				$handler = $this->normalizeHandler( $callback, $hook );
-				wfDeprecated(
-					"$hook hook (used in " . $handler['functionName'] . ")",
-					$info['deprecatedVersion'] ?? false,
-					$info['component'] ?? false
-				);
-			}
+	public function register( string $hook, $handler ) {
+		$this->checkDeprecation( $hook, $handler );
+
+		if ( !isset( $this->handlers[$hook] ) ) {
+			// Just remember the handler for later.
+			// NOTE: It would be nice to normalize immediately. But since some extensions make extensive
+			//       use of this method for registering hooks on every call, that could be a performance
+			//       issue. This is particularly true if the hook is declared in a way that would require
+			//       service objects to be instantiated.
+			$this->extraHandlers[$hook][] = $handler;
+			return;
 		}
-		$this->dynamicHandlers[$hook][] = $callback;
+
+		$normalized = $this->normalizeHandler( $hook, $handler );
+		if ( !$normalized ) {
+			throw new InvalidArgumentException( 'Bad hook handler!' );
+		}
+
+		$this->getHandlers( $hook );
+		$this->handlers[$hook][] = $normalized;
 	}
 
 	/**
-	 * Get all handlers for legacy hooks system, plus any handlers added
-	 * using register().
+	 * Get handler callbacks.
 	 *
-	 * @internal For use by Hooks.php
+	 * @internal For use by FauxHookHandlerArray. Delete when no longer needed.
 	 * @param string $hook Name of hook
 	 * @return callable[]
 	 */
-	public function getLegacyHandlers( string $hook ): array {
-		if ( $this->tombstones[$hook] ?? false ) {
-			// If there is at least one tombstone set for the hook,
-			// ignore all handlers from the registry, and
-			// only consider handlers registered after the tombstone
-			// was set.
-			$handlers = $this->dynamicHandlers[$hook] ?? [];
-			$keys = array_keys( $handlers );
+	public function getHandlerCallbacks( string $hook ): array {
+		wfDeprecated( __METHOD__, '1.41' );
+		$handlers = $this->getHandlers( $hook );
 
-			// Loop over the handlers backwards, to find the last tombstone.
-			for ( $i = count( $keys ) - 1; $i >= 0; $i-- ) {
-				$k = $keys[$i];
-				$v = $handlers[$k];
+		$callbacks = [];
+		foreach ( $handlers as $h ) {
+			$callback = $h['callback'];
 
-				if ( $v === self::TOMBSTONE ) {
-					break;
-				}
+			if ( isset( $h['args'] ) ) {
+				// Needs curry in order to pass extra arguments.
+				// NOTE: This does not support reference parameters!
+				$extraArgs = $h['args'];
+				$callbacks[] = static function ( ...$hookArgs ) use ( $callback, $extraArgs ) {
+					return $callback( ...$extraArgs, ...$hookArgs );
+				};
+			} else {
+				$callbacks[] = $callback;
 			}
-
-			// Return the part of $this->dynamicHandlers[$hook] after the TOMBSTONE
-			// marker, preserving keys.
-			$keys = array_slice( $keys, $i + 1 );
-			$handlers = array_intersect_key( $handlers, array_fill_keys( $keys, true ) );
-		} else {
-			// If no tombstone is set, just merge the two arrays.
-			$handlers = array_merge(
-				$this->registry->getGlobalHooks()[$hook] ?? [],
-				$this->dynamicHandlers[$hook] ?? []
-			);
 		}
 
-		return $handlers;
+		return $callbacks;
 	}
 
 	/**
 	 * Returns the names of all hooks that have at least one handler registered.
-	 * @return array
+	 * @return string[]
 	 */
 	public function getHookNames(): array {
 		$names = array_merge(
-			array_keys( $this->dynamicHandlers ),
-			array_keys( $this->registry->getGlobalHooks() ),
-			array_keys( $this->registry->getExtensionHooks() )
+			array_keys( array_filter( $this->handlers ) ),
+			array_keys( array_filter( $this->extraHandlers ) ),
+			array_keys( array_filter( $this->registry->getGlobalHooks() ) ),
+			array_keys( array_filter( $this->registry->getExtensionHooks() ) )
 		);
 
 		return array_unique( $names );
 	}
 
 	/**
-	 * Returns the names of all hooks that have handlers registered.
-	 * Note that this may include hook handlers that have been disabled using clear().
+	 * Return the array of handlers for the given hook.
 	 *
-	 * @internal
-	 * @return string[]
-	 */
-	public function getRegisteredHooks(): array {
-		$names = array_merge(
-			array_keys( $this->dynamicHandlers ),
-			array_keys( $this->registry->getExtensionHooks() ),
-			array_keys( $this->registry->getGlobalHooks() ),
-		);
-
-		return array_unique( $names );
-	}
-
-	/**
-	 * Return array of handler objects registered with given hook in the new system.
-	 * This does not include handlers registered dynamically using register(), nor does
-	 * it include hooks registered via the old mechanism using $wgHooks.
-	 *
-	 * @internal For use by Hooks.php
 	 * @param string $hook Name of the hook
 	 * @param array $options Handler options, which may include:
 	 *   - noServices: Do not allow hook handlers with service dependencies
-	 * @return array non-deprecated handler objects
+	 * @return array[] A list of handler entries
 	 */
-	public function getHandlers( string $hook, array $options = [] ): array {
-		if ( $this->tombstones[$hook] ?? false ) {
-			// There is at least one tombstone for the hook, so suppress all new-style hooks.
-			return [];
-		}
-		$handlers = [];
-		$deprecatedHooks = $this->registry->getDeprecatedHooks();
-		$registeredHooks = $this->registry->getExtensionHooks();
-		if ( isset( $registeredHooks[$hook] ) ) {
-			foreach ( $registeredHooks[$hook] as $hookReference ) {
-				// Non-legacy hooks have handler attributes
-				$handlerSpec = $hookReference['handler'];
-				// Skip hooks that both acknowledge deprecation and are deprecated in core
-				$flaggedDeprecated = !empty( $hookReference['deprecated'] );
-				$deprecated = $deprecatedHooks->isHookDeprecated( $hook );
-				if ( $deprecated && $flaggedDeprecated ) {
+	private function getHandlers( string $hook, array $options = [] ): array {
+		if ( !isset( $this->handlers[$hook] ) ) {
+			$handlers = [];
+			$registeredHooks = $this->registry->getExtensionHooks();
+			$configuredHooks = $this->registry->getGlobalHooks();
+
+			$rawHandlers = array_merge(
+				$configuredHooks[ $hook ] ?? [],
+				$registeredHooks[ $hook ] ?? [],
+				$this->extraHandlers[ $hook ] ?? [],
+			);
+
+			foreach ( $rawHandlers as $raw ) {
+				$handler = $this->normalizeHandler( $hook, $raw, $options );
+				if ( !$handler ) {
+					// XXX: log this?!
+					// NOTE: also happens for deprecated hooks, which is fine!
 					continue;
 				}
-				$handlerName = $handlerSpec['name'];
-				if (
-					!empty( $options['noServices'] ) && (
-						isset( $handlerSpec['services'] ) ||
-						isset( $handlerSpec['optional_services'] )
-					)
-				) {
-					throw new UnexpectedValueException(
-						"The handler for the hook $hook registered in " .
-						"{$hookReference['extensionPath']} has a service dependency, " .
-						"but this hook does not allow it." );
-				}
-				if ( !isset( $this->handlersByName[$handlerName] ) ) {
-					$this->handlersByName[$handlerName] =
-						$this->objectFactory->createObject( $handlerSpec );
-				}
-				$handlers[] = $this->handlersByName[$handlerName];
+
+				$handlers[] = $handler;
 			}
+
+			$this->handlers[ $hook ] = $handlers;
 		}
-		return $handlers;
+
+		return $this->handlers[ $hook ];
 	}
 
 	/**
-	 * Will log a deprecation warning if:
-	 * 1. the hook is marked deprecated
+	 * Return the array of strings that describe the handler registered with the given hook.
+	 *
+	 * @internal Only public for use by ApiQuerySiteInfo.php and SpecialVersion.php
+	 * @param string $hook Name of the hook
+	 * @return string[] A list of handler descriptions
+	 */
+	public function getHandlerDescriptions( string $hook ): array {
+		$descriptions = [];
+
+		if ( isset( $this->handlers[ $hook ] ) ) {
+			$rawHandlers = $this->handlers[ $hook ];
+		} else {
+			$registeredHooks = $this->registry->getExtensionHooks();
+			$configuredHooks = $this->registry->getGlobalHooks();
+
+			$rawHandlers = array_merge(
+				$configuredHooks[ $hook ] ?? [],
+				$registeredHooks[ $hook ] ?? [],
+				$this->extraHandlers[ $hook ] ?? [],
+			);
+		}
+
+		foreach ( $rawHandlers as $raw ) {
+			$descr = $this->describeHandler( $hook, $raw );
+
+			if ( $descr ) {
+				$descriptions[] = $descr;
+			}
+		}
+
+		return $descriptions;
+	}
+
+	/**
+	 * Returns a human-readable description of the given handler.
+	 *
+	 * @param string $hook
+	 * @param string|array|callable $handler
+	 *
+	 * @return ?string
+	 */
+	private function describeHandler( string $hook, $handler ): ?string {
+		if ( is_array( $handler ) ) {
+			// already normalized
+			if ( isset( $handler['functionName'] ) ) {
+				return $handler['functionName'];
+			}
+
+			if ( isset( $handler['callback'] ) ) {
+				return self::callableToString( $handler['callback'] );
+			}
+
+			if ( isset( $handler['handler']['class'] ) ) {
+				// New style hook. Avoid instantiating the handler object
+				$method = $this->getHookMethodName( $hook );
+				return $handler['handler']['class'] . '::' . $method;
+			}
+		}
+
+		$handler = $this->normalizeHandler( $hook, $handler );
+		return $handler ? $handler['functionName'] : null;
+	}
+
+	/**
+	 * For each hook handler of each hook, this will log a deprecation if:
+	 * 1. the hook is marked deprecated and
 	 * 2. the "silent" flag is absent or false, and
 	 * 3. an extension registers a handler in the new way but does not acknowledge deprecation
 	 */
 	public function emitDeprecationWarnings() {
 		$deprecatedHooks = $this->registry->getDeprecatedHooks();
-		$registeredHooks = $this->registry->getExtensionHooks();
-		foreach ( $registeredHooks as $name => $handlers ) {
+		$extensionHooks = $this->registry->getExtensionHooks();
+
+		foreach ( $extensionHooks as $name => $handlers ) {
 			if ( $deprecatedHooks->isHookDeprecated( $name ) ) {
 				$deprecationInfo = $deprecatedHooks->getDeprecationInfo( $name );
 				if ( !empty( $deprecationInfo['silent'] ) ) {
@@ -536,6 +629,105 @@ class HookContainer implements SalvageableService {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Will trigger a deprecation warning if the given hook is deprecated and the deprecation
+	 * is not marked as silent.
+	 *
+	 * @param string $hook The name of the hook.
+	 * @param array|callable|string $handler A handler spec
+	 * @param array|null $deprecationInfo Deprecation info if the caller already knows it.
+	 *        If not given, it will be looked up from the hook registry.
+	 *
+	 * @return void
+	 */
+	private function checkDeprecation( string $hook, $handler, array $deprecationInfo = null ): void {
+		if ( !$deprecationInfo ) {
+			$deprecatedHooks = $this->registry->getDeprecatedHooks();
+			$deprecationInfo = $deprecatedHooks->getDeprecationInfo( $hook );
+		}
+
+		if ( $deprecationInfo && empty( $deprecationInfo['silent'] ) ) {
+			$description = $this->describeHandler( $hook, $handler );
+			wfDeprecated(
+				"$hook hook (used in $description)",
+				$deprecationInfo['deprecatedVersion'] ?? false,
+				$deprecationInfo['component'] ?? false
+			);
+		}
+	}
+
+	/**
+	 * Returns a human-readable representation of the given callable.
+	 *
+	 * @param callable $callable
+	 *
+	 * @return string
+	 */
+	private static function callableToString( $callable ): string {
+		if ( is_string( $callable ) ) {
+			return $callable;
+		}
+
+		if ( $callable instanceof Closure ) {
+			$hash = spl_object_hash( $callable );
+			return "*closure#$hash*";
+		}
+
+		if ( is_array( $callable ) ) {
+			[ $on, $func ] = $callable;
+
+			if ( is_object( $on ) ) {
+				$on = get_class( $on );
+			}
+
+			return "$on::$func";
+		}
+
+		throw new LogicException( 'Unexpected kind of callable' );
+	}
+
+	/**
+	 * Returns the default handler method name for the given hook.
+	 *
+	 * @param string $hook
+	 *
+	 * @return string
+	 */
+	private function getHookMethodName( string $hook ): string {
+		$hook = strtr( $hook, ':\\-', '___' );
+		return "on$hook";
+	}
+
+	/**
+	 * Replacement for is_callable that will also return true when the callable uses a class
+	 * that cannot be loaded.
+	 *
+	 * This may legitimately happen when a hook handler uses a hook interfaces that is defined
+	 * in another extension. In that case, the hook itself is also defined in the other extension,
+	 * so the hook will never be called and no problem arises.
+	 *
+	 * However, it is entirely possible to register broken handlers for hooks that will indeed
+	 * be called, causing an error. This is intentional: we don't want to silently ignore
+	 * mistakes like mistyped class names in a hook handler registration.
+	 *
+	 * @param mixed $v
+	 *
+	 * @return bool
+	 */
+	private static function mayBeCallable( $v ): bool {
+		try {
+			return is_callable( $v );
+		} catch ( Error $error ) {
+			// If the callable uses a class that can't be loaded because it extends an unknown base class.
+			// Continue as if is_callable had returned true, to allow the handler to be registered.
+			if ( preg_match( '/Class.*not found/', $error->getMessage() ) ) {
+				return true;
+			}
+
+			throw $error;
 		}
 	}
 }

@@ -3,10 +3,10 @@
 namespace MediaWiki\Extension\Notifications\Api;
 
 // @phan-file-suppress PhanUndeclaredMethod This is a trait, and phan is confused by $this
-use EchoForeignNotifications;
-use EchoForeignWikiRequest;
 use Exception;
-use WikiMap;
+use MediaWiki\Extension\Notifications\ForeignNotifications;
+use MediaWiki\Extension\Notifications\ForeignWikiRequest;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -19,7 +19,7 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 trait ApiCrossWiki {
 	/**
-	 * @var EchoForeignNotifications
+	 * @var ForeignNotifications
 	 */
 	protected $foreignNotifications;
 
@@ -38,7 +38,7 @@ trait ApiCrossWiki {
 			return [];
 		}
 		$tokenType = $this->needsToken();
-		$foreignReq = new EchoForeignWikiRequest(
+		$foreignReq = new ForeignWikiRequest(
 			$this->getUser(),
 			$paramOverrides + $this->getForeignQueryParams(),
 			$wikis,
@@ -104,11 +104,11 @@ trait ApiCrossWiki {
 	}
 
 	/**
-	 * @return EchoForeignNotifications
+	 * @return ForeignNotifications
 	 */
 	protected function getForeignNotifications() {
 		if ( $this->foreignNotifications === null ) {
-			$this->foreignNotifications = new EchoForeignNotifications( $this->getUser() );
+			$this->foreignNotifications = new ForeignNotifications( $this->getUser() );
 		}
 		return $this->foreignNotifications;
 	}

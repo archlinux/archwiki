@@ -5,7 +5,9 @@
 			"RMizo"
 		]
 	},
+	"vector-languages": "Ṭawngte",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ṭawng|$1 ṭawngte}}",
+	"vector-no-language-button-label": "Ṭawng belh tur",
 	"vector-action-addsection": "Thupui belhna",
 	"vector-action-delete": "Paihna",
 	"vector-action-move": "Sawnna",
@@ -18,5 +20,10 @@
 	"vector-view-view": "Chhiarna",
 	"vector-view-viewsource": "A hnar enna",
 	"vector-more-actions": "Belh",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> awmna phek zawng tur"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> awmna phek zawng tur",
+	"vector-toc-label": "A chhunga thu awmte",
+	"vector-toc-beginning": "A ṭan",
+	"vector-page-tools-label": "Hmanruate",
+	"vector-page-tools-general-label": "Tlangpui",
+	"vector-unpin-element-label": "tihbona"
 }

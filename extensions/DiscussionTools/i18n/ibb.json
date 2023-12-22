@@ -21,5 +21,7 @@
 	"discussiontools-topicsubscription-button-subscribe": "sin aying",
 	"discussiontools-topicsubscription-button-subscribe-label": "Sin aying",
 	"discussiontools-topicsubscription-button-unsubscribe": "sio aying",
-	"discussiontools-topicsubscription-button-unsubscribe-label": "Sio aying"
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Sio aying",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Ame}} sin aying mfo!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Udughu}} ke etop atoho iko ke iwod nwed ami."
 }

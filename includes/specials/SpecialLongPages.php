@@ -21,8 +21,11 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Cache\LinkBatchFactory;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Title\NamespaceInfo;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * @ingroup SpecialPage
@@ -31,17 +34,17 @@ class SpecialLongPages extends SpecialShortPages {
 
 	/**
 	 * @param NamespaceInfo $namespaceInfo
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 */
 	public function __construct(
 		NamespaceInfo $namespaceInfo,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory
 	) {
 		parent::__construct(
 			$namespaceInfo,
-			$loadBalancer,
+			$dbProvider,
 			$linkBatchFactory
 		);
 		$this->mName = 'Longpages';
@@ -55,3 +58,8 @@ class SpecialLongPages extends SpecialShortPages {
 		return 'maintenance';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialLongPages::class, 'SpecialLongPages' );

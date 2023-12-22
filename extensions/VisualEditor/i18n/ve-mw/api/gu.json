@@ -4,7 +4,6 @@
 			"Dsvyas"
 		]
 	},
-	"apihelp-visualeditor-description": "Returns HTML5 for a page from the Parsoid service.",
 	"apihelp-visualeditor-param-basetimestamp": "ફેરફાર સાચવતી વખતે જે પુનરાવર્તનમાં ફેરફાર કર્યો છે તેના ટાઇમસ્ટેમ્પ તરીકે આને વાપરો. એડિટ કૉન્ફ્લિક્ટ પારખવામાં ઉપયોગી.",
 	"apihelp-visualeditor-param-cachekey": "For serialize or diff, use the result of a previous serializeforcache request with this key. Overrides $1html.",
 	"apihelp-visualeditor-param-html": "HTML to send to Parsoid to convert to wikitext.",
@@ -14,7 +13,6 @@
 	"apihelp-visualeditor-param-pst": "Pre-save transform wikitext before sending it to Parsoid (paction=parsefragment).",
 	"apihelp-visualeditor-param-starttimestamp": "ફેરફાર સાચવતી વખતે પૃષ્ઠ ક્યારે દૃશ્યમાન થયું હતું તેના ટાઇમસ્ટેમ્પ તરીકે આને વાપરો. એડિટ કૉન્ફ્લિક્ટ પારખવામાં ઉપયોગી.",
 	"apihelp-visualeditor-param-wikitext": "Wikitext to send to Parsoid to convert to HTML (paction=parsefragment).",
-	"apihelp-visualeditoredit-description": "Save an HTML5 page to MediaWiki (converted to wikitext via the Parsoid service).",
 	"apihelp-visualeditoredit-param-basetimestamp": "ફેરફાર સાચવતી વખતે જે પુનરાવર્તનમાં ફેરફાર કર્યો છે તેના ટાઇમસ્ટેમ્પ તરીકે આને વાપરો. એડિટ કૉન્ફ્લિક્ટ પારખવામાં ઉપયોગી.",
 	"apihelp-visualeditoredit-param-cachekey": "Use the result of a previous serializeforcache request with this key. Overrides $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "કેપ્ચા ઓળખ (જ્યારે તમે કેપ્ચા સાથે સંગ્રહ કરો છો).",

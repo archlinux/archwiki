@@ -9,7 +9,8 @@
 			"Tranve",
 			"Xzonn",
 			"Yejianfei",
-			"科劳"
+			"科劳",
+			"星海"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "找不到带有该关键词的已缓存序列化内容",
@@ -17,7 +18,6 @@
 	"apierror-visualeditor-docserver-http-error": "连接至Parsoid/RESTBase服务器错误：$1",
 	"apierror-visualeditor-docserver-http": "连接至Parsoid/RESTBase服务器错误（HTTP $1）：$2",
 	"apierror-visualeditor-docserver": "连接 Parsoid/RESTBase 服务器时出错（无响应）",
-	"apihelp-visualeditor-description": "从Parsoid服务返回页面的HTML5。",
 	"apihelp-visualeditor-param-basetimestamp": "在保存时，将此设置为编辑该修订版本时的时间戳。用于检测编辑冲突。",
 	"apihelp-visualeditor-param-badetag": "如果RESTBase查询返回一个看似无效的ETag，请将其传递到此处以进行记录。",
 	"apihelp-visualeditor-param-cachekey": "对于序列化或版本差异，使用之前的serializeforcache请求与此密钥产生的结果。覆盖$1html。",
@@ -36,11 +36,11 @@
 	"apihelp-visualeditor-param-stash": "若希望使用代码储藏界面来保存，请将此参数设定为True",
 	"apihelp-visualeditor-param-wikitext": "要发送至Parsoid以转换成HTML的wikitext（paction=parsefragment）。",
 	"apihelp-visualeditor-summary": "从Parsoid服务返回页面的HTML5。",
-	"apihelp-visualeditoredit-description": "保存一个HTML5页面至MediaWiki（通过Parsoid服务转换为wikitext）。",
 	"apihelp-visualeditoredit-param-basetimestamp": "当保存时，设置它作为编辑的修订的时间戳。用于检测编辑冲突。",
 	"apihelp-visualeditoredit-param-cachekey": "使用之前的serializeforcache请求的结果带此密钥。覆盖$1html。",
 	"apihelp-visualeditoredit-param-captchaid": "验证码ID（当带验证码保存时）。",
 	"apihelp-visualeditoredit-param-captchaword": "回答验证码（当带验证码保存时）。",
+	"apihelp-visualeditoredit-param-nocontent": "省略在响应中的新版本 HTML 内容。",
 	"apihelp-visualeditoredit-param-plugins": "与API请求关联的插件。",
 	"apihelp-visualeditoredit-param-data-{plugin}": "插件随API请求发送的任意数据。",
 	"apihelp-visualeditoredit-param-etag": "要发送的ETag。",

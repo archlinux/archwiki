@@ -34,6 +34,25 @@ OO.inheritClass( ve.ui.MWPreviewElement, ve.ui.PreviewElement );
 /**
  * @inheritdoc
  */
+ve.ui.MWPreviewElement.prototype.beforeAppend = function ( element ) {
+	// Parent method
+	ve.ui.MWPreviewElement.super.prototype.beforeAppend.apply( this, arguments );
+
+	// Remove any TemplateStyles stylesheets already present on the page, to avoid
+	// very slow repaints (T330781)
+	Array.prototype.forEach.call( element.querySelectorAll( 'style[data-mw-deduplicate]' ), function ( style ) {
+		var key = style.getAttribute( 'data-mw-deduplicate' );
+
+		var duplicate = element.querySelector( 'style[data-mw-deduplicate="' + key + '"]' );
+		if ( duplicate ) {
+			style.parentNode.removeChild( style );
+		}
+	} );
+};
+
+/**
+ * @inheritdoc
+ */
 ve.ui.MWPreviewElement.prototype.setModel = function ( model ) {
 	// Parent method
 	ve.ui.MWPreviewElement.super.prototype.setModel.call( this, model );

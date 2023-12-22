@@ -4,11 +4,9 @@ namespace MediaWiki\Skins\Vector\Components;
 use Linker;
 use MalformedTitleException;
 use MediaWiki\Skin\SkinComponentLink;
-use MediaWiki\Skins\Vector\Constants;
-use MediaWiki\Skins\Vector\VectorServices;
+use MediaWiki\Title\Title;
 use Message;
 use MessageLocalizer;
-use Title;
 use User;
 
 /**
@@ -65,9 +63,7 @@ class VectorComponentUserLinks implements VectorComponent {
 		$isAnon = !$user->isRegistered();
 
 		$class = 'vector-user-menu';
-		if ( VectorServices::getFeatureManager()->isFeatureEnabled( Constants::FEATURE_PAGE_TOOLS ) ) {
-			$class .= ' mw-ui-icon-flush-right';
-		}
+		$class .= ' vector-button-flush-right';
 		$class .= !$isAnon ?
 			' vector-user-menu-logged-in' :
 			' vector-user-menu-logged-out';
@@ -99,7 +95,7 @@ class VectorComponentUserLinks implements VectorComponent {
 	 * @param bool $isAnonEditorLinksEnabled
 	 * @return array
 	 */
-	private function getDropdownMenus( $isDefaultAnonUserLinks, $isAnonEditorLinksEnabled ) {
+	private function getMenus( $isDefaultAnonUserLinks, $isAnonEditorLinksEnabled ) {
 		$user = $this->user;
 		$isAnon = !$user->isRegistered();
 		$portletData = $this->portletData;
@@ -144,7 +140,7 @@ class VectorComponentUserLinks implements VectorComponent {
 				$dropdownMenus[] = new VectorComponentMenu( $anonUserMenuData );
 			}
 		} else {
-			// Logout isnt enabled for temp users, who are considered still considered registeredt
+			// Logout isn't enabled for temp users, who are considered still considered registered
 			$isLogoutLinkEnabled = isset( $portletData[ 'data-user-menu-logout' ][ 'is-empty' ] ) &&
 				!$portletData[ 'data-user-menu-logout'][ 'is-empty' ];
 			if ( $isLogoutLinkEnabled ) {
@@ -176,9 +172,9 @@ class VectorComponentUserLinks implements VectorComponent {
 			'data-user-links-overflow-menu' => $overflowMenu->getTemplateData(),
 			'data-user-links-dropdown' => $this->getDropdown( $isDefaultAnonUserLinks, $isAnonEditorLinksEnabled )
 				->getTemplateData(),
-			'data-user-links-dropdown-menus' => array_map( static function ( $menu ) {
+			'data-user-links-menus' => array_map( static function ( $menu ) {
 				return $menu->getTemplateData();
-			}, $this->getDropdownMenus( $isDefaultAnonUserLinks, $isAnonEditorLinksEnabled ) ),
+			}, $this->getMenus( $isDefaultAnonUserLinks, $isAnonEditorLinksEnabled ) ),
 		];
 	}
 }

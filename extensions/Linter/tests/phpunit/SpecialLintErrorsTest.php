@@ -22,18 +22,18 @@ namespace MediaWiki\Linter\Test;
 
 use ContentHandler;
 use Exception;
-use FauxRequest;
 use MediaWiki\Linter\CategoryManager;
 use MediaWiki\Linter\Database;
-use MediaWiki\Linter\LintError;
 use MediaWiki\Linter\RecordLintJob;
 use MediaWiki\Linter\SpecialLintErrors;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Title\Title;
 use SpecialPageTestBase;
-use Title;
-use User;
 
 /**
  * @covers \MediaWiki\Linter\SpecialLintErrors
+ *
+ * @group Database
  */
 class SpecialLintErrorsTest extends SpecialPageTestBase {
 
@@ -66,29 +66,19 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 	 * @param int|null $ns
 	 * @return array
 	 */
-	private function createTitleAndPage( string $titleText = 'TestPage', ?int $ns = null ): array {
-		$userName = 'LinterUser';
-		$baseText = 'wikitext test content';
-
-		if ( $ns === null ) {
-			$ns = $this->getDefaultWikitextNS();
-		}
+	private function createTitleAndPage(
+		string $titleText = 'SpecialLintErrorsTest test page',
+		?int $ns = null
+	): array {
+		$ns ??= $this->getDefaultWikitextNS();
 		$title = Title::newFromText( $titleText, $ns );
-		$user = User::newFromName( $userName );
-		if ( $user->getId() === 0 ) {
-			$user->addToDatabase();
-		}
-		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
-
-		$content = ContentHandler::makeContent( $baseText, $title );
-		$page->doUserEditContent( $content, $user, "base text for test" );
+		$page = $this->getExistingTestPage( $title );
 
 		return [
 			'title' => $title,
 			'pageID' => $page->getRevisionRecord()->getPageId(),
 			'revID' => $page->getRevisionRecord()->getID(),
 			'page' => $page,
-			'user' => $user
 		];
 	}
 
@@ -108,7 +98,6 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 
 		$db = new Database( $titleAndPage['pageID'] );
 
-		/** @var LintError[] $errorsFromDb */
 		$errorsFromDb = array_values( $db->getForPage() );
 		$this->assertCount( 1, $errorsFromDb );
 
@@ -119,9 +108,9 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 			'css'
 		);
 		$page = $titleAndPage['page'];
-		$page->doUserEditContent(
+		$this->editPage(
+			$page,
 			$content,
-			$titleAndPage['user'],
 			"update with css content model to trigger onRevisionFromEditComplete hook"
 		);
 
@@ -145,11 +134,10 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 
 		$db = new Database( $titleAndPage['pageID'] );
 
-		/** @var LintError[] $errorsFromDb */
 		$errorsFromDb = array_values( $db->getForPage() );
 		$this->assertCount( 1, $errorsFromDb );
 
-		// This test recreates the doUserEditContent bug mentioned in T280193 of not
+		// This test recreates the bug mentioned in T280193 of not
 		// calling the onRevisionFromEditComplete hook with the "mw-contentmodelchange"
 		// tag set when the new content text is literally blank.
 		$blankText = '';
@@ -159,9 +147,9 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 			'text'
 		);
 		$page = $titleAndPage['page'];
-		$page->doUserEditContent(
+		$this->editPage(
+			$page,
 			$content,
-			$titleAndPage['user'],
 			"update with blank text content model to trigger onRevisionFromEditComplete hook"
 		);
 
@@ -359,7 +347,7 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 								$invertString = [ 'unselected', 'selected' ][ $invert ];
 								$exactString = [ 'prefix', 'exact' ][ $exact ];
 								$message = $cases[ 'message' ];
-								$descriptionNamespace = $namespace === null ? 'all' : $namespace;
+								$descriptionNamespace = $namespace ?? 'all';
 								$description = "On config [$configIndex], iteration [$testIndex] " .
 									"namespace [$descriptionNamespace], invert checkbox [$invertString], " .
 									"for a [$exactString] match, with search title [$title], and test text [$message] ";

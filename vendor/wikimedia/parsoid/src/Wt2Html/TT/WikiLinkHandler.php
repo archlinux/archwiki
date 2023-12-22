@@ -121,7 +121,7 @@ class WikiLinkHandler extends TokenHandler {
 					// TODO(arlolra): Pass tsr info to the frame
 					$lint['dsr'] = new DomSourceRange( 0, 0, null, null );
 				}
-				$env->recordLint( 'lint/multi-colon-escape', $lint );
+				$env->recordLint( 'multi-colon-escape', $lint );
 			}
 			// This will get caught by the caller, and mark the target as invalid
 			throw new InternalException( 'Multiple colons prefixing href.' );
@@ -253,7 +253,7 @@ class WikiLinkHandler extends TokenHandler {
 		$tsr = $token->dataParsoid->tsr;
 		$frameSrc = $frame->getSrcText();
 		$linkSrc = $tsr->substr( $frameSrc );
-		$src = substr( $linkSrc, 1, -1 );
+		$src = substr( $linkSrc, 1 );
 		if ( $src === false ) {
 			$manager->getEnv()->log(
 				'error', 'Unable to determine link source.',
@@ -275,7 +275,7 @@ class WikiLinkHandler extends TokenHandler {
 			]
 		);
 		TokenUtils::stripEOFTkfromTokens( $toks );
-		return array_merge( [ '[' ], $toks, [ ']' ] );
+		return array_merge( [ '[' ], $toks );
 	}
 
 	/**
@@ -694,6 +694,24 @@ class WikiLinkHandler extends TokenHandler {
 	private function renderLanguageLink( Token $token, stdClass $target ): TokenHandlerResult {
 		// The prefix is listed in the interwiki map
 
+		// TODO: If $target->language['deprecated'] is set and
+		// $target->language['extralanglink'] is *not* set, then we
+		// should use the normalized language name/prefix (from
+		// 'deprecated') when calling
+		// ContentMetadataCollector::addLanguageLink() here (which
+		// we should eventualy be doing)
+
+		// TODO: might also want to add the language *code* here,
+		// which would be the language['bcp47'] property (added in
+		// change I82465261bc66f0b0cd30d361c299f08066494762) for an
+		// extralanglink, or the interwiki prefix otherwise; the
+		// latter is mediawiki-internal and maybe not BCP-47 compliant.
+		// This is for clients of the MediaWiki DOM spec HTML: the
+		// WMF domain prefix, the MediaWiki internal language code,
+		// and the actual *language* (ie bcp-47 code) can all differ
+		// from each other, due to various historical infelicities.
+		// Perhaps a `lang` attribute on the `link` would be appropriate.
+
 		$newTk = new SelfclosingTagTk( 'link', [], $token->dataParsoid );
 		try {
 			$this->addLinkAttributesAndGetContent( $newTk, $token, $target );
@@ -703,9 +721,18 @@ class WikiLinkHandler extends TokenHandler {
 
 		// add title attribute giving the presentation name of the
 		// "extra language link"
+		// T329303: the 'linktext' comes from the system message
+		// `interlanguage-link-$prefix` and should be set in integrated mode
+		// using the localization features; the integrated-mode SiteConfig
+		// currently never sets the `linktext` property in
+		// SiteConfig::interwikiMap().
+		// I52d50e2f75942a849908c6be7fc5169f00a5983a has some partial work
+		// on this.
 		if ( isset( $target->language['extralanglink'] ) &&
 			!empty( $target->language['linktext'] )
 		) {
+			// XXX in standalone mode, this is user-interface-language text,
+			// not "content language" text.
 			$newTk->addNormalizedAttribute( 'title', $target->language['linktext'], null );
 		}
 
@@ -898,7 +925,7 @@ class WikiLinkHandler extends TokenHandler {
 		// English and contain an '(img|timedmedia)_' prefix.  We drop the
 		// prefix before stuffing them in data-parsoid in order to
 		// save space (that's shortCanonicalOption)
-		$canonicalOption = $siteConfig->magicWordCanonicalName( $oText ) ?? '';
+		$canonicalOption = $siteConfig->getMagicWordForMediaOption( $oText ) ?? '';
 		$shortCanonicalOption = preg_replace( '/^(img|timedmedia)_/', '', $canonicalOption, 1 );
 		// 'imgOption' is the key we'd put in opts; it names the 'group'
 		// for the option, and doesn't have an img_ prefix.
@@ -953,7 +980,7 @@ class WikiLinkHandler extends TokenHandler {
 	): bool {
 		// link and alt options are allowed to contain arbitrary
 		// wikitext (even though only strings are supported in reality)
-		// SSS FIXME: Is this actually true of all options rather than
+		// FIXME(SSS): Is this actually true of all options rather than
 		// just link and alt?
 		if ( $optInfo === null ) {
 			$optInfo = self::getOptionInfo( $prefix . $resultStr, $env );
@@ -1035,6 +1062,7 @@ class WikiLinkHandler extends TokenHandler {
 						$optInfo = null; // might change the nature of opt
 						continue;
 					}
+					return null;
 				}
 				// Similar to TokenUtils.tokensToString()'s includeEntities
 				if ( TokenUtils::isEntitySpanToken( $currentToken ) ) {
@@ -1048,7 +1076,6 @@ class WikiLinkHandler extends TokenHandler {
 						if ( $optInfo === null ) {
 							// An <a> tag before a valid option?
 							// This is most likely a caption.
-							$optInfo = null;
 							return null;
 						}
 					}
@@ -1287,13 +1314,14 @@ class WikiLinkHandler extends TokenHandler {
 
 			// First option wins, the rest are 'bogus'
 			// FIXME: For now, see T305628
-			if (
-				isset( $opts[$optInfo['ck']] ) ||
+			if ( isset( $opts[$optInfo['ck']] ) || (
 				// All the formats are simple options with the key "format"
 				// except for "manualthumb", so check if the format has been set
-				( in_array( $optInfo['ck'], [ 'format', 'manualthumb' ], true ) &&
-					self::getFormat( $opts ) )
-			) {
+				in_array( $optInfo['ck'], [ 'format', 'manualthumb' ], true ) && (
+					self::getFormat( $opts ) ||
+					( $this->options['extTagOpts']['suppressMediaFormats'] ?? false )
+				)
+			) ) {
 				$dataParsoid->optList[] = [
 					'ck' => 'bogus',
 					'ak' => $optInfo['ak']
@@ -1509,7 +1537,7 @@ class WikiLinkHandler extends TokenHandler {
 			$container->addSpaceSeparatedAttribute( 'typeof', 'mw:ExpandedAttrs' );
 		}
 
-		$span = new TagTk( 'span', [ new KV( 'class', 'mw-broken-media' ) ] );
+		$span = new TagTk( 'span', [ new KV( 'class', 'mw-file-element mw-broken-media' ) ] );
 
 		// "resource" and "lang" are allowed attributes on spans
 		$span->addNormalizedAttribute( 'resource', $opts['title']['v'], $opts['title']['src'] );

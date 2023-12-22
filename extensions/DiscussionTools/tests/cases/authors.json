@@ -13,6 +13,7 @@
 							"type": "comment",
 							"id": "Bob1",
 							"author": "Bob",
+							"displayName": "Bobby",
 							"replies": []
 						}
 					]
@@ -20,13 +21,22 @@
 				{
 					"type": "comment",
 					"author": "Bob",
+					"displayName": "Robert",
 					"id": "Bob2",
 					"replies": [
 						{
 							"type": "comment",
 							"id": "Alice1",
 							"author": "Alice",
-							"replies": []
+							"replies": [
+								{
+									"type": "comment",
+									"id": "Bob3",
+									"author": "Bob",
+									"displayName": "Bobby",
+									"replies": []
+								}
+							]
 						},
 						{
 							"type": "comment",
@@ -39,15 +49,28 @@
 			]
 		},
 		"expectedAuthorsBelow": [
-			"Alice",
-			"Bob",
-			"Eve"
+			{
+				"username": "Alice",
+				"displayNames": []
+			},
+			{
+				"username": "Bob",
+				"displayNames": [
+					"Bobby",
+					"Robert"
+				]
+			},
+			{
+				"username": "Eve",
+				"displayNames": []
+			}
 		],
 		"expectedThreadItemIdsBelow": [
 			"Eve1",
 			"Bob1",
 			"Bob2",
 			"Alice1",
+			"Bob3",
 			"Eve2"
 		]
 	}

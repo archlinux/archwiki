@@ -14,7 +14,6 @@
 namespace MediaWiki\Extension\Gadgets;
 
 use InvalidArgumentException;
-use MediaWiki\Extension\Gadgets\Content\GadgetDefinitionContent;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\User\UserIdentity;
@@ -28,7 +27,7 @@ class Gadget {
 	/**
 	 * Increment this when changing class structure
 	 */
-	public const GADGET_CLASS_VERSION = 13;
+	public const GADGET_CLASS_VERSION = 15;
 
 	public const CACHE_TTL = 86400;
 
@@ -58,8 +57,12 @@ class Gadget {
 	private $requiredActions = [];
 	/** @var string[] */
 	private $requiredSkins = [];
+	/** @var int[] */
+	private $requiredNamespaces = [];
 	/** @var string[] */
-	private $targets = [ 'desktop' ];
+	private $requiredContentModels = [];
+	/** @var string[] used in Gadget::isTargetSupported */
+	private $targets = [ 'desktop', 'mobile' ];
 	/** @var bool */
 	private $onByDefault = false;
 	/** @var bool */
@@ -89,6 +92,8 @@ class Gadget {
 				case 'requiredRights':
 				case 'requiredActions':
 				case 'requiredSkins':
+				case 'requiredNamespaces':
+				case 'requiredContentModels':
 				case 'targets':
 				case 'onByDefault':
 				case 'type':
@@ -105,39 +110,72 @@ class Gadget {
 	}
 
 	/**
-	 * Create a object based on the metadata in a GadgetDefinitionContent object
+	 * Create a serialized array based on the metadata in a GadgetDefinitionContent object,
+	 * from which a Gadget object can be constructed.
 	 *
 	 * @param string $id
-	 * @param GadgetDefinitionContent $content
-	 * @return Gadget
+	 * @param array $data
+	 * @return array
 	 */
-	public static function newFromDefinitionContent( $id, GadgetDefinitionContent $content ) {
-		$data = $content->getAssocArray();
+	public static function serializeDefinition( string $id, array $data ): array {
 		$prefixGadgetNs = static function ( $page ) {
 			return 'Gadget:' . $page;
 		};
-		$info = [
-			'name' => $id,
-			'resourceLoaded' => true,
-			'requiresES6' => $data['settings']['requiresES6'],
-			'requiredRights' => $data['settings']['rights'],
-			'onByDefault' => $data['settings']['default'],
-			'package' => $data['settings']['package'],
-			'hidden' => $data['settings']['hidden'],
-			'requiredActions' => $data['settings']['actions'],
-			'requiredSkins' => $data['settings']['skins'],
+		return [
 			'category' => $data['settings']['category'],
-			'supportsUrlLoad' => $data['settings']['supportsUrlLoad'],
-			'scripts' => array_map( $prefixGadgetNs, $data['module']['scripts'] ),
-			'styles' => array_map( $prefixGadgetNs, $data['module']['styles'] ),
 			'datas' => array_map( $prefixGadgetNs, $data['module']['datas'] ),
 			'dependencies' => $data['module']['dependencies'],
-			'peers' => $data['module']['peers'],
+			'hidden' => $data['settings']['hidden'],
 			'messages' => $data['module']['messages'],
+			'name' => $id,
+			'onByDefault' => $data['settings']['default'],
+			'package' => $data['settings']['package'],
+			'peers' => $data['module']['peers'],
+			'requiredActions' => $data['settings']['actions'],
+			'requiredContentModels' => $data['settings']['contentModels'],
+			'requiredNamespaces' => $data['settings']['namespaces'],
+			'requiredRights' => $data['settings']['rights'],
+			'requiredSkins' => $data['settings']['skins'],
+			'requiresES6' => $data['settings']['requiresES6'],
+			'resourceLoaded' => true,
+			'scripts' => array_map( $prefixGadgetNs, $data['module']['scripts'] ),
+			'styles' => array_map( $prefixGadgetNs, $data['module']['styles'] ),
+			'supportsUrlLoad' => $data['settings']['supportsUrlLoad'],
+			'targets' => $data['settings']['targets'],
 			'type' => $data['module']['type'],
 		];
+	}
 
-		return new self( $info );
+	/**
+	 * Serialize to an array
+	 * @return array
+	 */
+	public function toArray(): array {
+		return [
+			'category' => $this->category,
+			'datas' => $this->datas,
+			'dependencies' => $this->dependencies,
+			'hidden' => $this->hidden,
+			'messages' => $this->messages,
+			'name' => $this->name,
+			'onByDefault' => $this->onByDefault,
+			'package' => $this->package,
+			'peers' => $this->peers,
+			'requiredActions' => $this->requiredActions,
+			'requiredContentModels' => $this->requiredContentModels,
+			'requiredNamespaces' => $this->requiredNamespaces,
+			'requiredRights' => $this->requiredRights,
+			'requiredSkins' => $this->requiredSkins,
+			'requiresES6' => $this->requiresES6,
+			'resourceLoaded' => $this->resourceLoaded,
+			'scripts' => $this->scripts,
+			'styles' => $this->styles,
+			'supportsUrlLoad' => $this->supportsUrlLoad,
+			'targets' => $this->targets,
+			'type' => $this->type,
+			// Legacy  (specific to MediaWikiGadgetsDefinitionRepo)
+			'definition' => $this->definition,
+		];
 	}
 
 	/**
@@ -251,7 +289,9 @@ class Gadget {
 	}
 
 	/**
-	 * @param string $action The action name
+	 * Whether to load the gadget on a given page action.
+	 *
+	 * @param string $action Action name
 	 * @return bool
 	 */
 	public function isActionSupported( string $action ): bool {
@@ -259,21 +299,58 @@ class Gadget {
 			return true;
 		}
 		// Don't require specifying 'submit' action in addition to 'edit'
-		if ( $action == 'submit' ) {
+		if ( $action === 'submit' ) {
 			$action = 'edit';
 		}
-		return in_array( $action, $this->requiredActions );
+		return in_array( $action, $this->requiredActions, true );
+	}
+
+	/**
+	 * Whether to load the gadget on pages in a given namespace ID.
+	 *
+	 * @param int $namespace Namespace ID
+	 * @return bool
+	 */
+	public function isNamespaceSupported( int $namespace ) {
+		return ( count( $this->requiredNamespaces ) === 0
+			|| in_array( $namespace, $this->requiredNamespaces )
+		);
+	}
+
+	/**
+	 * Check whether the gadget should load on the mobile domain based on its definition.
+	 *
+	 * @return bool
+	 */
+	public function isTargetSupported( bool $isMobileView ): bool {
+		if ( $isMobileView ) {
+			return in_array( 'mobile', $this->targets, true );
+		} else {
+			return in_array( 'desktop', $this->targets, true );
+		}
 	}
 
 	/**
 	 * Check if this gadget is compatible with a skin
 	 *
-	 * @param Skin $skin The skin to check against
+	 * @param Skin $skin
 	 * @return bool
 	 */
 	public function isSkinSupported( Skin $skin ) {
 		return ( count( $this->requiredSkins ) === 0
-			|| in_array( $skin->getSkinName(), $this->requiredSkins )
+			|| in_array( $skin->getSkinName(), $this->requiredSkins, true )
+		);
+	}
+
+	/**
+	 * Check if this gadget is compatible with the given content model
+	 *
+	 * @param string $contentModel The content model ID
+	 * @return bool
+	 */
+	public function isContentModelSupported( string $contentModel ) {
+		return ( count( $this->requiredContentModels ) === 0
+			|| in_array( $contentModel, $this->requiredContentModels )
 		);
 	}
 
@@ -343,13 +420,6 @@ class Gadget {
 	}
 
 	/**
-	 * @return array
-	 */
-	public function getTargets() {
-		return $this->targets;
-	}
-
-	/**
 	 * Returns list of scripts that don't support ResourceLoader
 	 * @return string[]
 	 */
@@ -397,11 +467,19 @@ class Gadget {
 	}
 
 	/**
-	 * Returns array of page actions on which the gadget runs
+	 * Returns array of page actions on which the gadget loads
 	 * @return string[]
 	 */
 	public function getRequiredActions() {
 		return $this->requiredActions;
+	}
+
+	/**
+	 * Returns array of namespaces in which this gadget loads
+	 * @return int[]
+	 */
+	public function getRequiredNamespaces() {
+		return $this->requiredNamespaces;
 	}
 
 	/**
@@ -410,6 +488,14 @@ class Gadget {
 	 */
 	public function getRequiredSkins() {
 		return $this->requiredSkins;
+	}
+
+	/**
+	 * Returns array of content models where this gadget works
+	 * @return string[]
+	 */
+	public function getRequiredContentModels() {
+		return $this->requiredContentModels;
 	}
 
 	/**

@@ -22,8 +22,6 @@
 		// Parent constructor
 		mw.widgets.TitlesMultiselectWidget.parent.call( this, $.extend( true,
 			{
-				clearInputOnChoose: true,
-				inputPosition: 'inline',
 				allowEditTags: false
 			},
 			config
@@ -108,6 +106,18 @@
 				// Parent method
 				mw.widgets.TitlesMultiselectWidget.parent.prototype.onInputChange.call( widget );
 			} );
+	};
+
+	/**
+	 * We have an empty menu when the input is empty, override the implementation from
+	 * MenuTagMultiselectWidget to avoid error and make tags editable.
+	 *
+	 * Only editable when the input is empty.
+	 */
+	mw.widgets.TitlesMultiselectWidget.prototype.onTagSelect = function () {
+		if ( this.hasInput && !this.input.getValue() ) {
+			OO.ui.TagMultiselectWidget.prototype.onTagSelect.apply( this, arguments );
+		}
 	};
 
 	/**

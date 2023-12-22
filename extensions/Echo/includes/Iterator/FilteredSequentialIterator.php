@@ -5,9 +5,9 @@ namespace MediaWiki\Extension\Notifications\Iterator;
 use ArrayIterator;
 use CallbackFilterIterator;
 use EmptyIterator;
+use InvalidArgumentException;
 use Iterator;
 use IteratorAggregate;
-use MWException;
 use RecursiveIteratorIterator;
 
 /**
@@ -15,13 +15,13 @@ use RecursiveIteratorIterator;
  * and filtering the results.  Accepts plain arrays for the simple
  * use case, also accepts Iterator instances for anything more complex.
  *
- * This exists so that EchoUserLocator implementations can return iterators
+ * This exists so that UserLocator implementations can return iterators
  * that return potentially thousands of users without having to grab
  * them all in one giant query.
  *
  * Usage:
  *   $users = new FilteredSequentialIterator;
- *   $users->add( array( $userA, $userB, $userC ) );
+ *   $users->add( [ $userA, $userB, $userC ] );
  *
  *   $it = new BatchRowIterator( ... );
  *   ...
@@ -55,7 +55,6 @@ class FilteredSequentialIterator implements IteratorAggregate {
 
 	/**
 	 * @param Iterator|IteratorAggregate|array $users
-	 * @throws MWException
 	 */
 	public function add( $users ) {
 		if ( is_array( $users ) ) {
@@ -65,7 +64,7 @@ class FilteredSequentialIterator implements IteratorAggregate {
 		} elseif ( $users instanceof IteratorAggregate ) {
 			$it = $users->getIterator();
 		} else {
-			throw new MWException( 'Expected array, Iterator or IteratorAggregate but received:' .
+			throw new InvalidArgumentException( 'Expected array, Iterator or IteratorAggregate but received:' .
 				( is_object( $users ) ? get_class( $users ) : gettype( $users ) )
 			);
 		}

@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Notifications\Special;
 
 use FormSpecialPage;
 use HTMLForm;
-use MWEchoNotifUser;
+use MediaWiki\Extension\Notifications\NotifUser;
 use SpecialPage;
 
 /**
@@ -28,7 +28,7 @@ class SpecialNotificationsMarkRead extends FormSpecialPage {
 		parent::execute( $par );
 
 		$out = $this->getOutput();
-		$out->setPageTitle( $this->msg( 'echo-specialpage-markasread' )->text() );
+		$out->setPageTitleMsg( $this->msg( 'echo-specialpage-markasread' ) );
 
 		// Redirect to login page and inform user of the need to login
 		$this->requireLogin( 'echo-notification-loginrequired' );
@@ -135,7 +135,7 @@ class SpecialNotificationsMarkRead extends FormSpecialPage {
 	 * @return bool
 	 */
 	public function onSubmit( array $data ) {
-		$notifUser = MWEchoNotifUser::newFromUser( $this->getUser() );
+		$notifUser = NotifUser::newFromUser( $this->getUser() );
 
 		// Allow for all IDs
 		if ( $data['id'] === [ 'ALL' ] ) {

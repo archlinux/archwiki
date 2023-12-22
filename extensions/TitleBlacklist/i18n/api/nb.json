@@ -4,7 +4,6 @@
 			"Jon Harald Søby"
 		]
 	},
-	"apihelp-titleblacklist-description": "Valider en sidetittel, et filnavn eller et brukernavn mot TitleBlacklist.",
 	"apihelp-titleblacklist-summary": "Valider en sidetittel, et filnavn eller et brukernavn mot TitleBlacklist.",
 	"apihelp-titleblacklist-param-title": "Strengen som skal valideres mot svartelista.",
 	"apihelp-titleblacklist-param-action": "Handlingen som skal sjekkes.",

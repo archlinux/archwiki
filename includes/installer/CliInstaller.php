@@ -23,6 +23,9 @@
 
 use MediaWiki\Installer\InstallException;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\Status\Status;
+use MediaWiki\User\User;
 
 /**
  * Class for the core installer command line interface.
@@ -42,6 +45,7 @@ class CliInstaller extends Installer {
 		'dbprefix' => 'wgDBprefix',
 		'dbtableoptions' => 'wgDBTableOptions',
 		'dbport' => 'wgDBport',
+		'dbssl' => 'wgDBssl',
 		'dbschema' => 'wgDBmwschema',
 		'dbpath' => 'wgSQLiteDataDir',
 		'server' => 'wgServer',

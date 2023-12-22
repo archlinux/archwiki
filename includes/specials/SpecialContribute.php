@@ -1,6 +1,9 @@
 <?php
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Html\TemplateParser;
+use MediaWiki\SpecialPage\IncludableSpecialPage;
 use MediaWiki\Specials\Contribute\ContributeFactory;
 
 /**
@@ -26,10 +29,9 @@ class SpecialContribute extends IncludableSpecialPage {
 		$this->outputHeader();
 
 		$out = $this->getOutput();
-		$out->setPageTitle( $this->msg( 'contribute-title', $this->getUser()->getName() )->escaped() );
+		$out->setPageTitleMsg( $this->msg( 'contribute-title', $this->getUser()->getName() ) );
 		$out->addModuleStyles( [
-			'mediawiki.special',
-			'oojs-ui.styles.icons-content'
+			'mediawiki.special'
 		] );
 		$out->addHTML( $this->getContributePage() );
 	}
@@ -98,3 +100,8 @@ class SpecialContribute extends IncludableSpecialPage {
 		);
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialContribute::class, 'SpecialContribute' );

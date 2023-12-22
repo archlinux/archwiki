@@ -7,6 +7,16 @@
 var sequence,
 	controller = require( 'ext.discussionTools.init' ).controller;
 
+function sortAuthors( a, b ) {
+	return a.username < b.username ? -1 : ( a.username === b.username ? 0 : 1 );
+}
+
+function hasUser( authors, username ) {
+	return authors.some( function ( author ) {
+		return author.username === username;
+	} );
+}
+
 /**
  * MWUsernameCompletionAction action.
  *
@@ -16,35 +26,41 @@ var sequence,
  * @extends ve.ui.CompletionAction
  * @constructor
  * @param {ve.ui.Surface} surface Surface to act on
+ * @param {string} [source]
  */
-function MWUsernameCompletionAction( surface ) {
-	var action = this,
-		relevantUserName = mw.config.get( 'wgRelevantUserName' );
+function MWUsernameCompletionAction() {
+	var action = this;
 
 	// Parent constructor
-	MWUsernameCompletionAction.super.call( this, surface );
+	MWUsernameCompletionAction.super.apply( this, arguments );
 
 	// Shared API object so previous requests can be aborted
 	this.api = controller.getApi();
 	this.searchedPrefixes = {};
 	this.localUsers = [];
 	this.ipUsers = [];
-	this.surface.authors.forEach( function ( user ) {
-		if ( mw.util.isIPAddress( user ) ) {
-			action.ipUsers.push( user );
-		} else if ( user !== mw.user.getName() ) {
-			action.localUsers.push( user );
+	this.surface.authors.forEach( function ( author ) {
+		if ( mw.util.isIPAddress( author.username ) ) {
+			action.ipUsers.push( author );
+		} else if ( author.username !== mw.user.getName() ) {
+			action.localUsers.push( author );
 		}
 	} );
+	// On user talk pages, always list the "owner" of the talk page
+	var relevantUserName = mw.config.get( 'wgRelevantUserName' );
 	if (
 		relevantUserName &&
 		relevantUserName !== mw.user.getName() &&
-		this.localUsers.indexOf( relevantUserName ) === -1
+		!hasUser( this.localUsers, relevantUserName )
 	) {
-		this.localUsers.push( relevantUserName );
-		this.localUsers.sort();
+		this.localUsers.push( {
+			username: relevantUserName,
+			displayNames: []
+		} );
+		this.localUsers.sort( sortAuthors );
 	}
 	this.remoteUsers = [];
+	this.sequenceAdded = false;
 }
 
 /* Inheritance */
@@ -87,7 +103,17 @@ MWUsernameCompletionAction.prototype.insertAndOpen = function () {
 	}
 	fragment.collapseToEnd().select();
 
+	this.sequenceAdded = true;
+
 	return this.open();
+};
+
+MWUsernameCompletionAction.prototype.getSequenceLength = function () {
+	if ( this.sequenceAdded ) {
+		return this.constructor.static.sequenceLength;
+	}
+	// Parent method
+	return MWUsernameCompletionAction.super.prototype.getSequenceLength.apply( this, arguments );
 };
 
 MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
@@ -110,19 +136,22 @@ MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
 		} ).then( function ( response ) {
 			var suggestions = response.query.allusers.filter( function ( user ) {
 				// API doesn't return IPs
-				return action.localUsers.indexOf( user.name ) === -1 &&
-					action.remoteUsers.indexOf( user.name ) === -1 &&
+				return !hasUser( action.localUsers, user.name ) &&
+					!hasUser( action.remoteUsers, user.name ) &&
 					// Exclude users with indefinite sitewide blocks:
 					// The only place such users could reply is on their
 					// own user talk page, and in that case the user
 					// will be included in localUsers.
 					!( user.blockexpiry === 'infinite' && !user.blockpartial );
 			} ).map( function ( user ) {
-				return user.name;
+				return {
+					username: user.name,
+					displayNames: []
+				};
 			} );
 
 			action.remoteUsers.push.apply( action.remoteUsers, suggestions );
-			action.remoteUsers.sort();
+			action.remoteUsers.sort( sortAuthors );
 
 			action.searchedPrefixes[ input ] = true;
 		} );
@@ -145,6 +174,39 @@ MWUsernameCompletionAction.prototype.getSuggestions = function ( input ) {
 			validatedInput
 		);
 	} );
+};
+
+/**
+ * @inheritdoc
+ */
+MWUsernameCompletionAction.prototype.compareSuggestionToInput = function ( suggestion, normalizedInput ) {
+	var normalizedSuggestion = suggestion.username.toLowerCase(),
+		normalizedSearchIndex = normalizedSuggestion + ' ' +
+		suggestion.displayNames.map( function ( displayName ) {
+			return displayName.toLowerCase();
+		} ).join( ' ' );
+
+	return {
+		isMatch: normalizedSearchIndex.indexOf( normalizedInput ) !== -1,
+		isExact: normalizedSuggestion === normalizedInput
+	};
+};
+
+/**
+ * Create a suggestion from an input
+ *
+ * @param {string} input User input
+ * @return {Mixed} Suggestion data, string by default
+ */
+MWUsernameCompletionAction.prototype.createSuggestion = function ( input ) {
+	return {
+		username: input,
+		displayNames: []
+	};
+};
+
+MWUsernameCompletionAction.prototype.getMenuItemForSuggestion = function ( suggestion ) {
+	return new OO.ui.MenuOptionWidget( { data: suggestion.username, label: suggestion.username } );
 };
 
 MWUsernameCompletionAction.prototype.getHeaderLabel = function ( input, suggestions ) {
@@ -178,7 +240,12 @@ MWUsernameCompletionAction.prototype.insertCompletion = function ( word, range )
 
 MWUsernameCompletionAction.prototype.shouldAbandon = function ( input ) {
 	// TODO: need to consider whether pending loads from server are happening here
-	return MWUsernameCompletionAction.super.prototype.shouldAbandon.apply( this, arguments ) && input.split( /\s+/ ).length > 2;
+	return MWUsernameCompletionAction.super.prototype.shouldAbandon.apply( this, arguments ) && (
+		// Abandon if the user hit space immediately
+		input.match( /^\s+$/ ) ||
+		// Abandon if there's more than two words entered without a match
+		input.split( /\s+/ ).length > 2
+	);
 };
 
 /* Registration */

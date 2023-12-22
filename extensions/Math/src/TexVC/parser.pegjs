@@ -114,6 +114,9 @@ right
     { return  "]"; }
 lit
   = r:LITERAL                   { return new Literal($r); }
+  / f:generic_func &{ return $this->tu->latex_function_names($f); } _
+   c:( "(" / "[" / "\\{" / "" { return " ";}) _
+   { return new TexArray( new Literal( $f ) , new Literal( $c ) ) ; }
   // quasi-literal; this is from Texutil.find(...) but the result is not
   // guaranteed to be Tex.LITERAL(...)
   / f:generic_func &{ return $this->tu->nullary_macro_aliase($f); } _ // from Texutil.find(...)
@@ -145,6 +148,7 @@ lit
   / name:FUN_AR1nb l:lit        {return new Fun1nb($name, $l); }
   / name:FUN_MHCHEM l:chem_lit  { return new Mhchem($name, $l); }
   / name:FUN_AR2 l1:lit l2:lit  { return new Fun2($name, $l1, $l2); }
+  / name:FUN_AR4_MHCHEM_TEXIFIED l1:lit l2:lit l3:lit l4:lit  { return new Fun4($name, $l1, $l2, $l3, $l4); }
   / name:FUN_AR2nb l1:lit l2:lit { return new Fun2nb($name, $l1, $l2); }
   / BOX
   / CURLY_OPEN e:expr CURLY_CLOSE
@@ -318,9 +322,6 @@ BOX
 LITERAL
  = c:( literal_id / literal_mn / literal_uf_lt / "-" / literal_uf_op ) _
    { return $c; }
- / f:generic_func &{ return $this->tu->latex_function_names($f); } _
-   c:( "(" / "[" / "\\{" / "" { return " ";}) _
-   { return $f . $c; }
  / f:generic_func &{ return $this->tu->mediawiki_function_names($f); } _
    c:( "(" / "[" / "\\{" / "" { return " ";}) _
     {
@@ -489,6 +490,10 @@ FUN_MHCHEM
 
 FUN_AR2
  = f:generic_func &{ return $this->tu->fun_ar2($f); } _
+   { return $f; }
+
+FUN_AR4_MHCHEM_TEXIFIED
+ = f:generic_func &{ return $this->tu->fun_ar4($f) && $this->tu->mhchemtexified_required($f); } _
    { return $f; }
 
 FUN_INFIX

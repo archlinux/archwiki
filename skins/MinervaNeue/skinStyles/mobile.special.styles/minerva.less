@@ -28,20 +28,6 @@
 	}
 }
 
-// FIXME [mediawiki ui] These rules should not be needed in the mobile context
-.mw-ui-button-group {
-	text-align: center;
-
-	* {
-		float: none !important;
-	}
-
-	// For talk and CTA drawer
-	.mw-ui-block {
-		width: auto;
-	}
-}
-
 .ns-special {
 	.mw-body .mw-first-heading {
 		font-size: 1.5em;
@@ -67,7 +53,7 @@
 			text-align: center;
 		}
 
-		.mw-mf-user:before {
+		.mw-mf-user::before {
 			opacity: @opacity-icon-subtle;
 		}
 	}

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ernác"
+			"Ernác",
+			"Къарачайлы"
 		]
 	},
 	"mobile-frontend-editor-edit": "Тюрлендир",
@@ -9,7 +10,7 @@
 	"mobile-frontend-home-button": "Баш бет",
 	"mobile-frontend-language-article-heading": "Тил",
 	"mobile-frontend-main-menu-button-tooltip": "Баш менюну ач",
-	"mobile-frontend-main-menu-login": "Кириу",
+	"mobile-frontend-main-menu-login": "Кир",
 	"mobile-frontend-main-menu-logout": "Чыгъыу",
 	"mobile-frontend-main-menu-nearby": "Джуўукъда",
 	"mobile-frontend-main-menu-settings": "Джарашдырыўла",

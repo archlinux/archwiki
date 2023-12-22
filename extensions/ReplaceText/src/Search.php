@@ -19,7 +19,7 @@
  */
 namespace MediaWiki\Extension\ReplaceText;
 
-use Title;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
@@ -30,11 +30,12 @@ class Search {
 	 * @param array $namespaces
 	 * @param string|null $category
 	 * @param string|null $prefix
+	 * @param int|null $pageLimit
 	 * @param bool $use_regex
 	 * @return IResultWrapper Resulting rows
 	 */
 	public static function doSearchQuery(
-		$search, $namespaces, $category, $prefix, $use_regex = false
+		$search, $namespaces, $category, $prefix, $pageLimit, $use_regex = false
 	) {
 		global $wgReplaceTextResultsLimit;
 
@@ -55,12 +56,14 @@ class Search {
 			'slot_content_id = content_id',
 			$dbr->buildIntegerCast( 'SUBSTR(content_address, 4)' ) . ' = old_id'
 		];
-
+		if ( $pageLimit === null || $pageLimit === "" ) {
+			$pageLimit = $wgReplaceTextResultsLimit;
+		}
 		self::categoryCondition( $category, $tables, $conds );
 		self::prefixCondition( $prefix, $conds );
 		$options = [
 			'ORDER BY' => 'page_namespace, page_title',
-			'LIMIT' => $wgReplaceTextResultsLimit
+			'LIMIT' => $pageLimit
 		];
 
 		return $dbr->select( $tables, $vars, $conds, __METHOD__, $options );
@@ -120,6 +123,7 @@ class Search {
 	 * @param array $namespaces
 	 * @param string|null $category
 	 * @param string|null $prefix
+	 * @param int|null $pageLimit
 	 * @param bool $use_regex
 	 * @return IResultWrapper Resulting rows
 	 */
@@ -128,8 +132,11 @@ class Search {
 		$namespaces,
 		$category,
 		$prefix,
+		$pageLimit,
 		$use_regex = false
 	) {
+		global $wgReplaceTextResultsLimit;
+
 		$dbr = wfGetDB( DB_REPLICA );
 
 		$tables = [ 'page' ];
@@ -146,10 +153,12 @@ class Search {
 			$comparisonCond,
 			'page_namespace' => $namespaces,
 		];
-
+		if ( $pageLimit === null || $pageLimit === "" ) {
+			$pageLimit = $wgReplaceTextResultsLimit;
+		}
 		self::categoryCondition( $category, $tables, $conds );
 		self::prefixCondition( $prefix, $conds );
-		$sort = [ 'ORDER BY' => 'page_namespace, page_title' ];
+		$sort = [ 'ORDER BY' => 'page_namespace, page_title', 'LIMIT' => $pageLimit ];
 
 		return $dbr->select( $tables, $vars, $conds, __METHOD__, $sort );
 	}

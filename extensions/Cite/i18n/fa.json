@@ -38,5 +38,11 @@
 	"cite_references_link_accessibility_back_label": "بازگشت به عقب",
 	"cite_section_preview_references": "پیش‌نمایش ارجاع‌ها",
 	"cite_warning": "هشدار یادکرد: $1",
-	"cite_warning_sectionpreview_no_text": "برچسب <code>&lt;ref&gt;</code> با نام <code>$1</code> قابل پیش‌نمایش نیست چرا که خارج از این بخش کنونی تعریف شده‌است یا کلاً تعریف نشده‌است."
+	"cite_warning_sectionpreview_no_text": "برچسب <code>&lt;ref&gt;</code> با نام <code>$1</code> قابل پیش‌نمایش نیست چرا که خارج از این بخش کنونی تعریف شده‌است یا کلاً تعریف نشده‌است.",
+	"cite-wikieditor-tool-reference": "منبع",
+	"cite-wikieditor-help-page-references": "منابع",
+	"cite-wikieditor-help-content-reference-description": "منبع",
+	"cite-wikieditor-help-content-named-reference-description": "منبع نامگذای‌شده",
+	"cite-wikieditor-help-content-rereference-description": "استفادهٔ دوباره از همان منبع",
+	"cite-wikieditor-help-content-showreferences-description": "نمایش منابع"
 }

@@ -46,6 +46,11 @@ class Bcp47CodeValue implements Bcp47Code {
 		return $this->code;
 	}
 
+	/** @inheritDoc */
+	public function isSameCodeAs( Bcp47Code $other ): bool {
+		return ( $this === $other ) || self::isSameCode( $this, $other );
+	}
+
 	public function __toString() {
 		return $this->toBcp47Code();
 	}
@@ -60,5 +65,16 @@ class Bcp47CodeValue implements Bcp47Code {
 			return $language;
 		}
 		return new Bcp47CodeValue( $language->toBcp47Code() );
+	}
+
+	/**
+	 * Simple helper to compare Bcp47Code in the proper case-insensitive
+	 * manner.
+	 * @param Bcp47Code $a
+	 * @param Bcp47Code $b
+	 * @return bool True if the bcp-47 codes should be considered equal
+	 */
+	public static function isSameCode( Bcp47Code $a, Bcp47Code $b ) {
+		return ( $a === $b ) || strcasecmp( $a->toBcp47Code(), $b->toBcp47Code() ) === 0;
 	}
 }

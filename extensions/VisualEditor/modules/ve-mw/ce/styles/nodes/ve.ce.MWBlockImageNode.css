@@ -11,6 +11,6 @@
 }
 
 /* Disable zoom link */
-.ve-ce-mwBlockImageNode > a:after {
+.ve-ce-mwBlockImageNode > a::after {
 	pointer-events: none;
 }

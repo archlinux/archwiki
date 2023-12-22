@@ -5,7 +5,7 @@
  */
 
 @import 'mediawiki.mixins.less';
-@import '../../common/variables.less';
+@import '../variables.less';
 
 body {
 	background-color: @background-color-secondary;
@@ -25,7 +25,6 @@ body {
 	position: absolute;
 	top: @top-personal-tools;
 	right: 0.75em;
-	z-index: @z-index-personal;
 
 	ul {
 		padding-left: 10em; /* Keep from overlapping logo */
@@ -121,9 +120,6 @@ body {
 // FIXME: This selector requires knowledge of the internals of the search component
 .vector-search-box-inner {
 	min-width: 5em;
-	// Support: IE 8, Firefox 18-, Chrome 19-, Safari 5.1-, Opera 19-, Android 4.4.4-.
-	width: 13.2em;
-	// Support: Modern browsers, responsive width.
 	width: 20vw;
 	max-width: 20em;
 }

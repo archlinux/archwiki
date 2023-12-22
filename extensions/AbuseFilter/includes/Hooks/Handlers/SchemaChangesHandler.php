@@ -4,13 +4,13 @@ namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
 use DatabaseUpdater;
 use MediaWiki\Extension\AbuseFilter\Maintenance\FixOldLogEntries;
+use MediaWiki\Extension\AbuseFilter\Maintenance\MigrateActorsAF;
 use MediaWiki\Extension\AbuseFilter\Maintenance\NormalizeThrottleParameters;
 use MediaWiki\Extension\AbuseFilter\Maintenance\UpdateVarDumps;
 use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserGroupManager;
 use MessageLocalizer;
-use MWException;
 use RequestContext;
 use User;
 
@@ -45,9 +45,10 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook {
 	/**
 	 * @codeCoverageIgnore This is tested by installing or updating MediaWiki
 	 * @param DatabaseUpdater $updater
-	 * @throws MWException
 	 */
 	public function onLoadExtensionSchemaUpdates( $updater ) {
+		global $wgAbuseFilterActorTableSchemaMigrationStage;
+
 		$dbType = $updater->getDB()->getType();
 		$dir = __DIR__ . "/../../../db_patches";
 
@@ -178,10 +179,30 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook {
 			] );
 		}
 
+		$updater->addExtensionUpdate( [
+			'addField', 'abuse_filter', 'af_actor',
+			"$dir/$dbType/patch-add-af_actor.sql", true
+		] );
+
+		$updater->addExtensionUpdate( [
+			'addField', 'abuse_filter_history', 'afh_actor',
+			"$dir/$dbType/patch-add-afh_actor.sql", true
+		] );
+
 		$updater->addExtensionUpdate( [ [ $this, 'createAbuseFilterUser' ] ] );
 		$updater->addPostDatabaseUpdateMaintenance( NormalizeThrottleParameters::class );
 		$updater->addPostDatabaseUpdateMaintenance( FixOldLogEntries::class );
 		$updater->addPostDatabaseUpdateMaintenance( UpdateVarDumps::class );
+		// Don't launch the script on update.php if the migration stage is not high enough.
+		// This would throw an exception.
+		// Also check if the global is set.
+		// If globals aren't loaded, it's install.php, and not update.php. This is intentional,
+		// see for instance T193855 or T198331.
+		if ( isset( $wgAbuseFilterActorTableSchemaMigrationStage ) &&
+			( $wgAbuseFilterActorTableSchemaMigrationStage & SCHEMA_COMPAT_WRITE_NEW )
+		) {
+			$updater->addPostDatabaseUpdateMaintenance( MigrateActorsAF::class );
+		}
 	}
 
 	/**

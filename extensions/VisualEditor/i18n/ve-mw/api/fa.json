@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Alireza Ivaz",
+			"Amire80",
 			"Beginneruser",
 			"Darafsh",
 			"Ebraminio",
@@ -13,14 +14,12 @@
 			"Movyn",
 			"Reza1615",
 			"الناز",
-			"درفش کاویانی",
-			"Amire80"
+			"درفش کاویانی"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "کپچا برای آن کلید یافت نشد",
 	"apierror-visualeditor-difffailed": "تفاوت دارای خطا",
 	"apierror-visualeditor-docserver": "خطا در اتصال به سرور Parsoid/RESTBase (پاسخی دریافت نشد)",
-	"apihelp-visualeditor-description": "HTML5 یک صفحه را از خدمت پارسوید برمی‌گرداند.",
 	"apihelp-visualeditor-param-basetimestamp": "هنگام ذخیره کردن، زمان نسخهٔ ویرایش شده را برای این مورد تنظیم کنید. برای تشخیص تعارض ویرایش کاربرد دارد.",
 	"apihelp-visualeditor-param-cachekey": "برای پیوند تفاوت، از نتیجه درخواست تفاوت پیشین به کمک این کلید استفاده کنید. بازنویسی $1html.",
 	"apihelp-visualeditor-param-editintro": "ویرایش بخش ابتدایی برای افزودن هشدارها.",
@@ -38,7 +37,6 @@
 	"apihelp-visualeditor-param-stash": "در زمان ذخیره، اگر قصد استفاده از API پنهان را دارید این را true تنظیم کنید.",
 	"apihelp-visualeditor-param-wikitext": "متن ویکی برای ارسال به پارسوید برای تبدیل به اچ‌تی‌ام‌ال (paction=parsefragment).",
 	"apihelp-visualeditor-summary": "HTML5 یک صفحه را از خدمت پارسوید برمی‌گرداند.",
-	"apihelp-visualeditoredit-description": "ذخیره صفحه HTML5 به مدیاویکی (تبدیل به متن ویکی با سرویس پارسوید)",
 	"apihelp-visualeditoredit-param-basetimestamp": "در زمان ذخیره کردن، این را برای زمان نسخهٔ ویرایش تنظیم کنید. برای تشخیص تعارض ویرایش کاربرد دارد.",
 	"apihelp-visualeditoredit-param-cachekey": "از نتیجه درخواست تفاوت پیشین به کمک این کلید استفاده کنید. بازنویسی $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "ID تصویر امنیتی (زمان ذخیره با پاسخ یک تصویر امنیتی)",

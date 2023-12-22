@@ -3,17 +3,22 @@
 		"authors": [
 			"Amire80",
 			"Astralnet",
+			"DesVaMan",
 			"Dipa1965",
 			"Evropi",
 			"FocalPoint",
 			"Geraki",
 			"Glavkos",
+			"NikosLikomitros",
 			"Nikosguard",
 			"Stam.nikos",
 			"Tifa93",
 			"아라"
 		]
 	},
+	"tag-editcheck-newcontent-description": "Το EditCheck πιστεύει ότι προστέθηκε νέο περιεχόμενο στη σελίδα",
+	"tag-editcheck-newreference-description": "Προστέθηκε παραπομπή στη σελίδα",
+	"tag-editcheck-references-description": "To EditCheck θεωρεί ότι μπορεί να υπάρχει ανάγκη για προσθήκη παραπομπής σε αυτήν την τροποποίηση",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Οπτική επεξεργασία]]",
 	"tag-visualeditor-description": "Επεξεργασία που έγινε με χρήση του [[{{MediaWiki:visualeditor-descriptionpagelink}}|visual editor]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Οπτική επεξεργασία: Έλεγχος]]",

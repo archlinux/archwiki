@@ -69,7 +69,7 @@
 				background-color: @selected-shading;
 
 				&:hover {
-					background-color: @selected-shading;
+					background-color: @hover-shading;
 					color: @selected-text-color;
 				}
 			}
@@ -138,11 +138,13 @@
 			color: @on-click-text-color;
 		}
 
-		&.ve-ui-mwTransclusionOutlineParameterWidget-activePage,
-		&.ve-ui-mwTransclusionOutlineParameterWidget-activePage:hover,
-		&.ve-ui-mwTransclusionOutlineParameterWidget-activePage.oo-ui-optionWidget-highlighted {
+		&.ve-ui-mwTransclusionOutlineParameterWidget-activePage {
 			background-color: @selected-shading;
-			color: @selected-text-color;
+
+			&,
+			&.oo-ui-optionWidget-highlighted {
+				color: @selected-text-color;
+			}
 		}
 
 		&.oo-ui-optionWidget-highlighted {

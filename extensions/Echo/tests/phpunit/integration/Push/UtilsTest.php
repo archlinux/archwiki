@@ -2,7 +2,10 @@
 
 use MediaWiki\Extension\Notifications\Push\Utils;
 
-/** @covers \MediaWiki\Extension\Notifications\Push\Utils */
+/**
+ * @covers \MediaWiki\Extension\Notifications\Push\Utils
+ * @group Database
+ */
 class UtilsTest extends MediaWikiIntegrationTestCase {
 
 	public function testGetLoggedInPushId(): void {

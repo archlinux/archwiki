@@ -11,9 +11,9 @@
 			"Nurlan",
 			"TayfunEt.",
 			"Vlad5250",
+			"Zolgoyo",
 			"Zpizza",
-			"아라",
-			"Zolgoyo"
+			"아라"
 		]
 	},
 	"tog-underline": "Siltemeniñ astın sız:",
@@ -394,7 +394,7 @@
 	"undo-success": "Bul öñdeme joqqa şığarılwı mümkin. Talabıñızdı quptap aldın ala tömendegi salıstırwdı tekserip şığıñız da, öñdemeni joqqa şığarwın bitirw üşin tömendegi özgeristerdi saqtañız.",
 	"undo-failure": "Bul öñdeme joqqa şyğarylmaidy, sebebi arada qaqtyğysty öñdemeler bar.",
 	"undo-norev": "Bul öñdeme joqqa şığarılmaýdı, sebebi bul joq nemese joýılğan.",
-	"undo-summary": "[[Special:Contributions/$2|$2]] ([[User_talk:$2|talqılawı]]) istegen nömir $1 nusqasın joqqa şığardı",
+	"undo-summary": "[[Special:Contributions/$2|$2]] ([[User_talk:$2|talqılawı]]) istegen nömir [[Special:Diff/$1|$1]] nusqasın joqqa şığardı",
 	"viewpagelogs": "Bul bet üşin jwrnal oqïğaların qaraw",
 	"nohistory": "Mında bul bettiniñ tüzetw tarïxı joq.",
 	"currentrev": "Ağımdıq tüzetw",
@@ -486,7 +486,6 @@
 	"search-relatedarticle": "Qatıstı",
 	"searchrelated": "qatıstı",
 	"searchall": "barlıq",
-	"showingresults": "Tömende nömir '''$2''' ornınan bastap barınşa '''$1''' nätïje körsetiledi.",
 	"powersearch-legend": "Keñeýtilgen izdew",
 	"powersearch-ns": "Usı isimler ko'pliginen izlew:",
 	"search-external": "Şettik izdegiş",
@@ -920,8 +919,6 @@
 	"enotif_lastdiff": "Osı özgeris üşin $1 degendi qarañız.",
 	"enotif_anon_editor": "tirkelgisiz qatıswşı $1",
 	"enotif_body": "Qadirli $WATCHINGUSERNAME,\n\n$PAGEINTRO $NEWPAGE\n\nÖñdewşi keltirgen qısqaşa mazmundaması: $PAGESUMMARY $PAGEMINOREDIT\n\nÖñdewşimen qatınasw:\ne-poşta: $PAGEEDITOR_EMAIL\nwïkï: $PAGEEDITOR_WIKI\n\nBılaýğı özgerister bolğanda da osı betke kelip-ketwiñizgenşe deýin eşqandaý basqa eskertw xattar jiberilmeýdi.\nSonımen qatar baqılaw tizimiñizdegi bet eskertpelik belgisin qaýta qoýıñız.\n\n             Sizdiñ dostıq {{SITENAME}} jobasınıñ eskertw qızmeti\n\n----\nBaqılaw tizimiñizdiñ baptawlırın özgertw üşin, mında kelip-ketiñiz:\n{{canonicalurl:{{#special:EditWatchlist}}}}\n\nSın-pikir berw jäne bılaýğı järdem alw üşin:\n{{canonicalurl:{{{{ns:mediawiki}}:Helppage}}}}",
-	"created": "bastadı",
-	"changed": "özgertti",
 	"deletepage-submit": "Betti joyw",
 	"confirm": "Quptaw",
 	"excontent": "bolğan mağlumatı: '$1'",

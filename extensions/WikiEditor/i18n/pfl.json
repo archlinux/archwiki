@@ -11,7 +11,6 @@
 	"wikieditor-toolbar-tool-link-cancel": "Uffhere",
 	"wikieditor-toolbar-tool-link-int-target-status-exists": "Said gibds schun",
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Said gibds noch ned",
-	"wikieditor-toolbar-tool-reference-insert": "Oifiesche",
 	"wikieditor-toolbar-tool-big": "Groß",
 	"wikieditor-toolbar-tool-big-example": "Großer Tegschd",
 	"wikieditor-toolbar-tool-small": "Klä",
@@ -19,5 +18,5 @@
 	"wikieditor-toolbar-group-insert": "Oifiesche",
 	"wikieditor-toolbar-section-help": "Hilf",
 	"wikieditor-toolbar-help-page-discussion": "Dischbediere",
-	"wikieditor-toolbar-help-content-bold-syntax": "'''Fedde Tegschd'''"
+	"wikieditor-toolbar-help-content-bold-example": "Fedde Tegschd"
 }

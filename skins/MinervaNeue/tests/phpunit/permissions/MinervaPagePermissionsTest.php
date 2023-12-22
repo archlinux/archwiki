@@ -7,35 +7,36 @@ use HashConfig;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Minerva\Permissions\IMinervaPagePermissions;
 use MediaWiki\Minerva\Permissions\MinervaPagePermissions;
-use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Permissions\Authority;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserFactory;
 use MediaWiki\Watchlist\WatchlistManager;
 use MediaWikiIntegrationTestCase;
 use RequestContext;
-use Title;
-use User;
 
 /**
  * @group MinervaNeue
  * @coversDefaultClass \MediaWiki\Minerva\Permissions\MinervaPagePermissions
  */
 class MinervaPagePermissionsTest extends MediaWikiIntegrationTestCase {
+	use MockAuthorityTrait;
 
 	private function buildPermissionsObject(
 		Title $title,
 		$actions = null, /* unused */
 		array $options = [],
 		ContentHandler $contentHandler = null,
-		User $user = null,
+		Authority $user = null,
 		$hasOtherLanguagesOrVariants = false,
-		$alwaysShowLanguageButton = true,
-		$isSuperUser = false
+		$alwaysShowLanguageButton = true
 	) {
 		$languageHelper = $this->createMock( LanguagesHelper::class );
 		$languageHelper->method( 'doesTitleHasLanguagesOrVariants' )
 			->willReturn( $hasOtherLanguagesOrVariants );
 
-		$user = $user ?? $this->getTestUser()->getUser();
-		$actions = $actions ?? [
+		$user ??= $this->mockRegisteredNullAuthority();
+		$actions ??= [
 				IMinervaPagePermissions::CONTENT_EDIT,
 				IMinervaPagePermissions::WATCH,
 				IMinervaPagePermissions::TALK,
@@ -52,19 +53,15 @@ class MinervaPagePermissionsTest extends MediaWikiIntegrationTestCase {
 		}
 
 		$context = new RequestContext();
+		// Force a content model to avoid DB queries.
+		$title->setContentModel( CONTENT_MODEL_WIKITEXT );
 		$context->setTitle( $title );
 		$context->setConfig( new HashConfig( [
 			'MinervaAlwaysShowLanguageButton' => $alwaysShowLanguageButton
 		] ) );
-		$context->setUser( $user );
+		$context->setAuthority( $user );
 
-		$permissionManager = $this->getMockBuilder( PermissionManager::class )
-			->disableOriginalConstructor()
-			->getMock();
-
-		$permissionManager->expects( $this->any() )
-			->method( 'quickUserCan' )
-			->willReturn( $isSuperUser );
+		$permissionManager = $this->getServiceContainer()->getPermissionManager();
 
 		$contentHandlerFactory = $this->createMock( IContentHandlerFactory::class );
 
@@ -76,7 +73,8 @@ class MinervaPagePermissionsTest extends MediaWikiIntegrationTestCase {
 			$skinOptions,
 			$languageHelper,
 			$permissionManager,
-			$contentHandlerFactory
+			$contentHandlerFactory,
+			$this->createMock( UserFactory::class )
 		) )->setContext( $context );
 	}
 
@@ -84,14 +82,8 @@ class MinervaPagePermissionsTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::isAllowed
 	 */
 	public function testWatchAndEditNotAllowedOnMainPage() {
-		$userMock = $this->getMockBuilder( User::class )
-			->disableOriginalConstructor()
-			->onlyMethods( [ 'isRegistered' ] )
-			->getMock();
-		$userMock->expects( $this->once() )
-			->method( 'isRegistered' )
-			->willReturn( false );
-		$permsAnon = $this->buildPermissionsObject( Title::newMainPage(), null, [], null, $userMock );
+		$user = $this->mockAnonNullAuthority();
+		$permsAnon = $this->buildPermissionsObject( Title::newMainPage(), null, [], null, $user );
 		$perms = $this->buildPermissionsObject( Title::newMainPage() );
 
 		$this->assertFalse( $perms->isAllowed( IMinervaPagePermissions::WATCH ) );
@@ -117,7 +109,13 @@ class MinervaPagePermissionsTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::isAllowed
 	 */
 	public function testValidPageActionsAreAllowed() {
-		$perms = $this->buildPermissionsObject( Title::makeTitle( NS_MAIN, 'Test' ) );
+		$perms = $this->buildPermissionsObject(
+			Title::makeTitle( NS_MAIN, 'Test' ),
+			null,
+			[],
+			null,
+			$this->mockRegisteredUltimateAuthority()
+		);
 		$this->assertTrue( $perms->isAllowed( IMinervaPagePermissions::TALK ) );
 		$this->assertTrue( $perms->isAllowed( IMinervaPagePermissions::WATCH ) );
 	}
@@ -246,17 +244,7 @@ class MinervaPagePermissionsTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testWatchIsAllowedOnlyWhenWatchlistPermissionsAreGranted() {
 		$title = Title::makeTitle( NS_MAIN, 'Test_watchstar_permissions' );
-
-		$userMock = $this->getMockBuilder( User::class )
-			->disableOriginalConstructor()
-			->onlyMethods( [ 'isAllowedAll' ] )
-			->getMock();
-		$userMock->expects( $this->once() )
-			->method( 'isAllowedAll' )
-			->with( 'viewmywatchlist', 'editmywatchlist' )
-			->willReturn( false );
-
-		$perms = $this->buildPermissionsObject( $title, null, [], null, $userMock );
+		$perms = $this->buildPermissionsObject( $title );
 		$this->assertTrue( $perms->isAllowed( IMinervaPagePermissions::TALK ) );
 		$this->assertFalse( $perms->isAllowed( IMinervaPagePermissions::WATCH ) );
 	}
@@ -319,10 +307,7 @@ class MinervaPagePermissionsTest extends MediaWikiIntegrationTestCase {
 			],
 			[],
 			null,
-			$this->getTestUser()->getUser(),
-			false,
-			true,
-			true
+			$this->mockRegisteredUltimateAuthority()
 		);
 		$this->assertTrue( $perms->isAllowed( IMinervaPagePermissions::MOVE ) );
 		$this->assertTrue( $perms->isAllowed( IMinervaPagePermissions::DELETE ) );

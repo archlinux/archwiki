@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Push;
 
-use EchoServices;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Extension\Notifications\Services;
 use MediaWiki\MediaWikiServices;
 use User;
 
@@ -16,7 +16,7 @@ class PushNotifier {
 	 * @param Event $event
 	 */
 	public static function notifyWithPush( User $user, Event $event ): void {
-		$attributeManager = EchoServices::getInstance()->getAttributeManager();
+		$attributeManager = Services::getInstance()->getAttributeManager();
 		$userEnabledEvents = $attributeManager->getUserEnabledEvents( $user, 'push' );
 		if ( in_array( $event->getType(), $userEnabledEvents ) ) {
 			MediaWikiServices::getInstance()->getJobQueueGroup()->push( self::createJob( $user, $event ) );

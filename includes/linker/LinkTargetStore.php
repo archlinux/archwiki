@@ -22,12 +22,12 @@ namespace MediaWiki\Linker;
 
 use BagOStuff;
 use InvalidArgumentException;
+use MediaWiki\Title\TitleValue;
 use RuntimeException;
 use stdClass;
-use TitleValue;
 use WANObjectCache;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * Service for retrieving and storing link targets.
@@ -36,8 +36,8 @@ use Wikimedia\Rdbms\ILoadBalancer;
  */
 class LinkTargetStore implements LinkTargetLookup {
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
+	/** @var IConnectionProvider */
+	private $dbProvider;
 
 	/** @var BagOStuff */
 	private $localCache;
@@ -52,16 +52,16 @@ class LinkTargetStore implements LinkTargetLookup {
 	private $byTitleCache;
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param BagOStuff $localCache
 	 * @param WANObjectCache $WanObjectCache
 	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		BagOStuff $localCache,
 		WANObjectCache $WanObjectCache
 	) {
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->localCache = $localCache;
 		$this->wanObjectCache = $WanObjectCache;
 		$this->byIdCache = [];
@@ -99,7 +99,7 @@ class LinkTargetStore implements LinkTargetLookup {
 			return $this->byIdCache[$linkTargetId];
 		}
 
-		$value = $this->loadBalancer->getConnectionRef( DB_REPLICA )->newSelectQueryBuilder()
+		$value = $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
 			->caller( __METHOD__ )
 			->table( 'linktarget' )
 			->conds( [ 'lt_id' => $linkTargetId ] )
@@ -148,7 +148,7 @@ class LinkTargetStore implements LinkTargetLookup {
 
 		// Checking primary when it doesn't exist in replica is not that useful but given
 		// the fact that failed inserts waste an auto_increment id better to avoid that.
-		$linkTargetId = $this->fetchIdFromDbPrimary( $linkTarget, [] );
+		$linkTargetId = $this->fetchIdFromDbPrimary( $linkTarget );
 		if ( $linkTargetId ) {
 			$this->addToClassCache( $linkTargetId, $linkTarget );
 			return $linkTargetId;
@@ -157,24 +157,17 @@ class LinkTargetStore implements LinkTargetLookup {
 		$ns = $linkTarget->getNamespace();
 		$title = $linkTarget->getDBkey();
 
-		$dbw->insert(
-			'linktarget',
-			[
-				'lt_namespace' => $ns,
-				'lt_title' => $title,
-			],
-			__METHOD__,
-			[ 'IGNORE' ]
-		);
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'linktarget' )
+			->ignore()
+			->row( [ 'lt_namespace' => $ns, 'lt_title' => $title ] )
+			->caller( __METHOD__ )->execute();
 
 		if ( $dbw->affectedRows() ) {
 			$linkTargetId = $dbw->insertId();
 		} else {
 			// Use LOCK IN SHARE MODE to bypass any MySQL REPEATABLE-READ snapshot.
-			$linkTargetId = $this->fetchIdFromDbPrimary(
-				$linkTarget,
-				[ 'LOCK IN SHARE MODE' ]
-			);
+			$linkTargetId = $this->fetchIdFromDbPrimary( $linkTarget, true );
 			if ( !$linkTargetId ) {
 				throw new RuntimeException(
 					"Failed to create link target ID for " .
@@ -191,23 +184,21 @@ class LinkTargetStore implements LinkTargetLookup {
 	 * Find lt_id of the given $linkTarget
 	 *
 	 * @param LinkTarget $linkTarget
-	 * @param array $queryOptions
+	 * @param bool $lockInShareMode
 	 * @return int|null
 	 */
 	private function fetchIdFromDbPrimary(
 		LinkTarget $linkTarget,
-		array $queryOptions = []
+		bool $lockInShareMode = false
 	): ?int {
-		$row = $this->loadBalancer->getConnectionRef( DB_PRIMARY )->selectRow(
-			'linktarget',
-			[ 'lt_id', 'lt_namespace', 'lt_title' ],
-			[
-				'lt_namespace' => $linkTarget->getNamespace(),
-				'lt_title' => $linkTarget->getDBkey()
-			],
-			__METHOD__,
-			$queryOptions
-		);
+		$queryBuilder = $this->dbProvider->getPrimaryDatabase()->newSelectQueryBuilder()
+			->select( [ 'lt_id', 'lt_namespace', 'lt_title' ] )
+			->from( 'linktarget' )
+			->where( [ 'lt_namespace' => $linkTarget->getNamespace(), 'lt_title' => $linkTarget->getDBkey() ] );
+		if ( $lockInShareMode ) {
+			$queryBuilder->lockInShareMode();
+		}
+		$row = $queryBuilder->caller( __METHOD__ )->fetchRow();
 
 		if ( !$row || !$row->lt_id ) {
 			return null;
@@ -254,15 +245,14 @@ class LinkTargetStore implements LinkTargetLookup {
 					),
 					WANObjectCache::TTL_DAY,
 					function () use ( $linkTarget, $fname ) {
-						$row = $this->loadBalancer->getConnectionRef( DB_REPLICA )->selectRow(
-							'linktarget',
-							[ 'lt_id', 'lt_namespace', 'lt_title' ],
-							[
+						$row = $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
+							->select( [ 'lt_id', 'lt_namespace', 'lt_title' ] )
+							->from( 'linktarget' )
+							->where( [
 								'lt_namespace' => $linkTarget->getNamespace(),
 								'lt_title' => $linkTarget->getDBkey()
-							],
-							$fname
-						);
+							] )
+							->caller( $fname )->fetchRow();
 						return $row && $row->lt_id ? (int)$row->lt_id : false;
 					}
 				);

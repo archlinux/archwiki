@@ -24,7 +24,6 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\User\ActorMigration;
 use MediaWiki\WikiMap\WikiMap;
 
@@ -48,7 +47,7 @@ class InitEditCount extends Maintenance {
 		} elseif ( $this->hasOption( 'quick' ) ) {
 			$backgroundMode = false;
 		} else {
-			$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
+			$lb = $this->getServiceContainer()->getDBLoadBalancer();
 			$backgroundMode = $lb->hasReplicaServers();
 		}
 
@@ -59,7 +58,10 @@ class InitEditCount extends Maintenance {
 
 			$dbr = $this->getDB( DB_REPLICA );
 			$chunkSize = 100;
-			$lastUser = $dbr->selectField( 'user', 'MAX(user_id)', '', __METHOD__ );
+			$lastUser = $dbr->newSelectQueryBuilder()
+				->select( 'MAX(user_id)' )
+				->from( 'user' )
+				->caller( __METHOD__ )->fetchField();
 
 			$start = microtime( true );
 			$migrated = 0;

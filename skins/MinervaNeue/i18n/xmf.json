@@ -19,8 +19,5 @@
 	"mobile-frontend-main-menu-watchlist": "კონტროლიშ ერკებული",
 	"mobile-frontend-pageaction-edit-tooltip": "თე ხასჷლაშ მაჸვენჯი გნნართიშ რედაქტირაფა.",
 	"mobile-frontend-placeholder": "გორუა {{SITENAME}}ს",
-	"mobile-frontend-random-button": "ნამდგარენ ხასჷლა",
-	"minerva-page-actions-move": "გინოღალა",
-	"minerva-page-actions-delete": "ლასუა",
-	"minerva-page-actions-protect": "თხილუა"
+	"mobile-frontend-random-button": "ნამდგარენ ხასჷლა"
 }

@@ -125,10 +125,13 @@ ve.dm.MWTemplateSpecModel.prototype.setTemplateData = function ( data ) {
 	}
 
 	this.templateData = data;
-	// Better be safe even if the `params` element isn't optional in the TemplateData API
+	// This is currently not optional in the TemplateData API but might be in the future
 	if ( !this.templateData.params ) {
 		this.templateData.params = {};
 	}
+	// Incomplete server validation makes this possible, but the empty string is reserved for
+	// {@see ve.ui.MWAddParameterPage}.
+	delete this.templateData.params[ '' ];
 
 	var resolveAliases = false;
 
@@ -216,11 +219,15 @@ ve.dm.MWTemplateSpecModel.prototype.isDocumented = function () {
  */
 ve.dm.MWTemplateSpecModel.prototype.getDocumentedParameterOrder = function () {
 	return Array.isArray( this.templateData.paramOrder ) ?
-		this.templateData.paramOrder.slice() :
+		this.templateData.paramOrder.filter( function ( name ) {
+			return name;
+		} ) :
 		Object.keys( this.templateData.params );
 };
 
 /**
+ * The returned array is a copy, i.e. it's safe to manipulate.
+ *
  * @return {string[]}
  */
 ve.dm.MWTemplateSpecModel.prototype.getUndocumentedParameterNames = function () {
@@ -237,29 +244,21 @@ ve.dm.MWTemplateSpecModel.prototype.getUndocumentedParameterNames = function () 
  * are first, in their documented order. Undocumented parameters are sorted with numeric names
  * first, followed by alphabetically sorted names.
  *
+ * The returned array is a copy, i.e. it's safe to manipulate.
+ *
  * @return {string[]}
  */
 ve.dm.MWTemplateSpecModel.prototype.getCanonicalParameterOrder = function () {
 	var undocumentedParameters = this.getUndocumentedParameterNames();
 
 	undocumentedParameters.sort( function ( a, b ) {
-		var aIsNaN = isNaN( a ),
-			bIsNaN = isNaN( b );
-
-		if ( aIsNaN && bIsNaN ) {
-			// Two strings
-			return a.localeCompare( b );
+		if ( isNaN( a ) ) {
+			// If a and b are string, order alphabetically, otherwise numbers before strings
+			return isNaN( b ) ? a.localeCompare( b ) : 1;
+		} else {
+			// If a and b are numeric, order incrementally, otherwise numbers before strings
+			return !isNaN( b ) ? a - b : -1;
 		}
-		if ( aIsNaN ) {
-			// A is a string
-			return 1;
-		}
-		if ( bIsNaN ) {
-			// B is a string
-			return -1;
-		}
-		// Two numbers
-		return a - b;
 	} );
 
 	return this.getDocumentedParameterOrder().concat( undocumentedParameters );

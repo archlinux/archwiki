@@ -4,7 +4,6 @@
 			"Xuacu"
 		]
 	},
-	"apihelp-query+extracts-description": "Devuelve testu planu o estractos en HTML parciales de les páxines indicaes.",
 	"apihelp-query+extracts-summary": "Devuelve testu planu o estractos en HTML parciales de les páxines indicaes.",
 	"apihelp-query+extracts-param-chars": "Cuántos caráuteres hai que devolver. El testu real devueltu puede ser un poco más llargu.",
 	"apihelp-query+extracts-param-sentences": "Cuántes frases hai que devolver.",

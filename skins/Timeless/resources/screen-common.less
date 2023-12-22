@@ -27,7 +27,7 @@ body {
 #bodyContentOuter {
 	/* Set a z-index for the content to group it away from any nav stuff (extensions) - T200148 */
 	position: relative;
-	z-index: 0;
+	z-index: @z-index-base;
 }
 
 .mw-body {
@@ -760,8 +760,8 @@ ul#filetoc {
 
 /* Remove brackets around the show/hide button of the TOC
 The selectors have a higher specifity than in core */
-body :not( :checked ) > .toctogglespan:before,
-body :not( :checked ) > .toctogglespan:after {
+body :not( :checked ) > .toctogglespan::before,
+body :not( :checked ) > .toctogglespan::after {
 	content: '';
 }
 

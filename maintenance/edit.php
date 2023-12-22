@@ -23,10 +23,10 @@
 
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Language\RawMessage;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -97,7 +97,7 @@ class EditCLI extends Maintenance {
 			$this->fatalError( "Page already exists" );
 		}
 
-		$page = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
 		if ( $remove ) {
 			if ( $slot === SlotRecord::MAIN ) {

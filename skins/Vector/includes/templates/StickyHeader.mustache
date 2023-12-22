@@ -10,9 +10,9 @@
 	The exception to this is the TOC in the sticky header, which is not duplicated and is moved into the
 	sticky header in the DOM. We apply `aria-hidden` to all the contents of the sticky header except for the TOC.
 }}
-<header id="vector-sticky-header" class="vector-sticky-header">
+<div id="vector-sticky-header" class="vector-sticky-header">
 	<div class="vector-sticky-header-start">
-		<div class="vector-sticky-header-icon-start mw-ui-icon-flush-left mw-ui-icon-flush-right" aria-hidden="true">
+		<div class="vector-sticky-header-icon-start vector-button-flush-left vector-button-flush-right" aria-hidden="true">
 			{{#data-button-start}}
 			{{>Button}}
 			{{/data-button-start}}
@@ -37,16 +37,16 @@
 			<div class="vector-sticky-header-context-bar-primary" aria-hidden="true" {{{html-user-language-attributes}}}>{{{html-title}}}</div>
 		</div>
 	</div>
-	<div class="vector-sticky-header-end{{^is-page-tools-enabled}} mw-ui-icon-flush-right{{/is-page-tools-enabled}}" aria-hidden="true">
+	<div class="vector-sticky-header-end" aria-hidden="true">
 		<div class="vector-sticky-header-icons">
-			{{#data-icons}}
+			{{#array-icon-buttons}}
 			{{>Button}}
-			{{/data-icons}}
+			{{/array-icon-buttons}}
 		</div>
 		<div class="vector-sticky-header-buttons">
-			{{#data-buttons}}
+			{{#array-buttons}}
 			{{>Button}}
-			{{/data-buttons}}
+			{{/array-buttons}}
 		</div>
 		<div class="vector-sticky-header-icon-end">
 			<div class="vector-user-links">
@@ -54,4 +54,4 @@
 			</div>
 		</div>
 	</div>
-</header>
+</div>

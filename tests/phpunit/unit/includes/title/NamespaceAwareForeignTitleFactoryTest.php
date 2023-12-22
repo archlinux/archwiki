@@ -19,6 +19,9 @@
  * @author This, that and the other
  */
 
+use MediaWiki\Title\ForeignTitle;
+use MediaWiki\Title\NamespaceAwareForeignTitleFactory;
+
 /**
  * @covers NamespaceAwareForeignTitleFactory
  *
@@ -26,7 +29,7 @@
  */
 class NamespaceAwareForeignTitleFactoryTest extends \MediaWikiUnitTestCase {
 
-	public function basicProvider() {
+	public static function basicProvider() {
 		return [
 			[
 				'MainNamespaceArticle', 0,

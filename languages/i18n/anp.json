@@ -1,16 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"1233qwer1234qwer4",
 			"Amire80",
 			"Angpradesh",
+			"IND-ANP",
 			"Macofe",
 			"Matma Rex",
 			"Proabscorp!",
 			"Samyo",
 			"Vinitutpal",
-			"아라",
-			"1233qwer1234qwer4",
-			"IND-ANP"
+			"아라"
 		]
 	},
 	"tog-underline": "रेखांकित कड़ी:",
@@ -272,8 +272,6 @@
 	"site-atom-feed": "$1 केरौ अणु फ़ीड",
 	"page-rss-feed": "$1 केरौ आरएसएस फ़ीड",
 	"page-atom-feed": "\"$1\" अणु फ़ीड",
-	"feed-atom": "Atom",
-	"feed-rss": "RSS",
 	"red-link-title": "$1 (पृष्ठ मौजूद नै छै)",
 	"sort-descending": "उतरतें क्रम मँ क्रमबद्ध करौ",
 	"sort-ascending": "चढ़तें क्रम मँ क्रमबद्ध करौ",
@@ -517,8 +515,8 @@
 	"summary-preview": "संपादन सारांश केरो पूर्वावलोकन:",
 	"previewerrortext": "आपनै के बदलाव केरो पूर्वावलोकन करै के चेष्टा करतें घड़ियां एगो त्रुटि भेलै।",
 	"blockedtitle": "उपयोगकर्ता अवरुद्ध छै",
+	"blockedtext": "<strong>तोरौ उपयोगकर्ता रौ नाम या IP पता अवरोधित करी देलौ गेलौ छौं।</strong>\n\n{{int:blockedtext-made-by|$1}}\n{{int:blockedtext-reason-comment|$2}}।\n\n*{{int:blockedtext-start-time|$8}}\n*{{int:blockedtext-expiration-time|$6}}\n*{{int:blockedtext-intended-blockee|$7}}\n\n{{int:blockedtext-contact-blocker-admin|$1}}\nयदि तोरौ [[Special:Preferences|प्राथमिकता सिनी]] मँ वैध ईमेल पता निर्दिष्ट करलौ गेलौ छौं आरो तोरा एकरौ उपयोग करै सँ रोकलौ नाय गेलौ छौं, त तोंय \"{{int:emailuser}}\" सुविधा क उपयोग करै सकै छौ।\n{{int:blockedtext-block-ip|$3}} {{int:blockedtext-block-id|$5}}\n{{int:blockedtext-include-details-queries}}",
 	"blockedtext-partial": "<strong>आपनै के उपयोगकर्ता नाँव या आईपी पता ऐसनो करला सँ अवरुद्ध छै। आपनै अखनियो ई साइट प आरू काम करै मँ सक्षम हुअय सकै छियै, जेना कि कुछू पन्ना संपादित करना।</strong> आपनै [[Special:MyContributions|खाता योगदान]] प सौंसे ब्लॉक विवरण देखै सकै छियै।\n\nब्लॉक $1 द्वारा बनैलो गेलो छेलै ।\n\nदेलो गेलो कारण <em>$2</em> छै।\n\n* ब्लॉक के शुरुआत: $8\n* ब्लॉक के समाप्ति: $6\n* इच्छित अवरोधक: $7\n* ब्लॉक आईडी #$5",
-	"blockedtext": "<strong>आपने के सदस्यनाम या आइ॰पी पता अवरोधित करी देलो गेलो छै ।</strong>\n\nअवरोध $1 द्वारा करलो गेलो छै।\nअवरोध के कारण छै <em>$2</em>\n\n* अवरोध के आरंभ: $8\n* अवरोध के समाप्ति: $6\n* अवरोधित इकाई: $7\n\nइ अवरोध के बारे मँ चर्चा करै वास्तें आपनै $1 या कोनो अन्य [[{{MediaWiki:Grouppage-sysop}}|प्रबन्धक]] सँ संपर्क करै सकै छियै।\nअगर आपनै [[Special:Preferences|वरीयता सिनी]] मँ वैध ई-मेल पता प्रविष्ट करलो छियै आरू आपने क ओकरा इस्तेमाल करला सँ नै रोकलो गेलो छै त आपनै {{int:emailuser}} सुविधा के इस्तेमाल करै सकै छियै ।\nआपने के मौजूदा आइ॰पी पता $3 छेकै आरू अवरोध क्रमांक #$5 छेकै।\nआपने आपनो कोय भी प्रश्न मँ कृपा करी क ई सब जानकारी भी शामिल करौ।",
 	"blockednoreason": "कोई कारण नै देलौ छै",
 	"loginreqtitle": "लॉग इन आवश्यक छै",
 	"loginreqlink": "लॉग-इन करौ",
@@ -634,7 +632,7 @@
 	"compareselectedversions": "चयन करलौ अवतरण सिनी मँ फर्क देखियै",
 	"editundo": "पूर्ववत करौ",
 	"diff-empty": "(कोय फरक नै)",
-	"diff-multi-sameuser": "({{PLURAL:$1|एगऽ मध्यवर्ती संशोधन|$1 मध्यवर्ती संशोधन}} एक्के यूजर द्वारा नै दिखलैलौ गेलौ)",
+	"diff-multi-sameuser": "({{PLURAL:$1|एगो मध्यवर्ती संशोधन|$1 मध्यवर्ती संशोधन}} ओकरहे द्वारा {{GENDER:$3|उपयोगकर्ता}} नाय देखैलौ गेलै)",
 	"diff-multi-otherusers": "({{PLURAL:$2|एक दोसरौ सदस्य|$2 सदस्य सिनी}} द्वारा {{PLURAL:$1|करलौ गेलौ बीच क एगो अवतरण नाय दर्शैलौ गेलै|करलौ गेलौ बीच केरौ $1 अवतरण नाय दर्शैलौ गेलै}})",
 	"searchresults": "खोज परिणाम",
 	"searchresults-title": "\"$1\" लेली खोज परिणाम",
@@ -1117,5 +1115,6 @@
 	"blockedtext-expiration-time": "ब्लॉक केरौ समाप्ति: $1",
 	"blockedtext-intended-blockee": "ब्लॉक करै वाला के प्रयोजन: $1",
 	"blockedtext-contact-blocker-admin": "ब्लॉक प चर्चा करै लेली तोंय $1 या अन्य [[{{MediaWiki:Grouppage-sysop}}|व्यवस्थापक]] सँ संपर्क करै सकै छौ।",
+	"blockedtext-block-ip": "तोरौ वर्त्तमान IP एड्रेस $1 छेकौं।",
 	"blockedtext-include-details-queries": "कृपया अपनौ कोय्यो प्रश्न मँ उपरोक्त सब्भे विवरण क शामिल करौ।"
 }

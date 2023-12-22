@@ -21,117 +21,134 @@ ve.dm.mwExample.createExampleDocumentFromData = ( data, store, base ) =>
 	ve.dm.example.createExampleDocumentFromData( data, store, base || ve.dm.mwExample.baseUri );
 
 ve.dm.mwExample.MWTransclusion = {
-	blockOpen:
-		'<div about="#mwt1" typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Test&quot;,&quot;href&quot;:&quot;./Template:Test&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;Hello, world!&quot;}},&quot;i&quot;:0}}]}"' +
-		'>' +
-		'</div>',
-	blockOpenModified:
-		'<div about="#mwt1" typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Test&quot;,&quot;href&quot;:&quot;./Template:Test&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;Hello, globe!&quot;}},&quot;i&quot;:0}}]}"' +
-		'>' +
-		'</div>',
-	blockOpenFromData:
-		'<span typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Test&quot;,&quot;href&quot;:&quot;./Template:Test&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;Hello, world!&quot;}},&quot;i&quot;:0}}]}"' +
-		'>' +
-		'</span>',
-	blockOpenClipboard:
-		'<div about="#mwt1" typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Test&quot;,&quot;href&quot;:&quot;./Template:Test&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;Hello, world!&quot;}},&quot;i&quot;:0}}]}"' +
-			' data-ve-no-generated-contents="true"' +
-		'>' +
-			'&nbsp;' +
-		'</div>',
-	blockOpenFromDataModified:
-		'<span typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Test&quot;,&quot;href&quot;:&quot;./Template:Test&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;Hello, globe!&quot;}},&quot;i&quot;:0}}]}"' +
-		'>' +
-		'</span>',
-	blockOpenModifiedClipboard:
-		'<span typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Test&quot;,&quot;href&quot;:&quot;./Template:Test&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;Hello, globe!&quot;}},&quot;i&quot;:0}}]}"' +
-			' data-ve-no-generated-contents="true"' +
-		'>' +
-			'&nbsp;' +
-		'</span>',
+	blockOpen: ve.dm.example.singleLine`
+		<div about="#mwt1" typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Test","href":"./Template:Test"},"params":{"1":{"wt":"Hello, world!"}},"i":0}}]}'>
+		</div>
+	`,
+	blockOpenModified: ve.dm.example.singleLine`
+		<div about="#mwt1" typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Test","href":"./Template:Test"},"params":{"1":{"wt":"Hello, globe!"}},"i":0}}]}'>
+		</div>
+	`,
+	blockOpenFromData: ve.dm.example.singleLine`
+		<span typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Test","href":"./Template:Test"},"params":{"1":{"wt":"Hello, world!"}},"i":0}}]}'>
+		</span>
+	`,
+	blockOpenClipboard: ve.dm.example.singleLine`
+		<div about="#mwt1" typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Test","href":"./Template:Test"},"params":{"1":{"wt":"Hello, world!"}},"i":0}}]}'
+			 data-ve-no-generated-contents="true">
+			&nbsp;
+		</div>
+	`,
+	blockOpenFromDataModified: ve.dm.example.singleLine`
+		<span typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Test","href":"./Template:Test"},"params":{"1":{"wt":"Hello, globe!"}},"i":0}}]}'>
+		</span>
+	`,
+	blockOpenModifiedClipboard: ve.dm.example.singleLine`
+		<span typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Test","href":"./Template:Test"},"params":{"1":{"wt":"Hello, globe!"}},"i":0}}]}'
+			 data-ve-no-generated-contents="true">
+			&nbsp;
+		</span>
+	`,
 	blockContent: '<p about="#mwt1" data-parsoid="{}">Hello, world!</p>',
 	blockContentClipboard: '<p about="#mwt1" data-parsoid="{}" data-ve-ignore="true">Hello, world!</p>',
-	inlineOpen:
-		'<span about="#mwt1" typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Inline&quot;,&quot;href&quot;:&quot;./Template:Inline&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;1,234&quot;}},&quot;i&quot;:0}}]}"' +
-		'>',
-	inlineOpenModified:
-		'<span about="#mwt1" typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Inline&quot;,&quot;href&quot;:&quot;./Template:Inline&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;5,678&quot;}},&quot;i&quot;:0}}]}"' +
-		'>',
-	inlineOpenFromData:
-		'<span typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Inline&quot;,&quot;href&quot;:&quot;./Template:Inline&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;1,234&quot;}},&quot;i&quot;:0}}]}"' +
-		'>',
-	inlineOpenClipboard:
-		'<span about="#mwt1" typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Inline&quot;,&quot;href&quot;:&quot;./Template:Inline&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;1,234&quot;}},&quot;i&quot;:0}}]}"' +
-			' data-ve-no-generated-contents="true"' +
-		'>',
-	inlineOpenFromDataModified:
-		'<span typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Inline&quot;,&quot;href&quot;:&quot;./Template:Inline&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;5,678&quot;}},&quot;i&quot;:0}}]}"' +
-		'>',
-	inlineOpenModifiedClipboard:
-		'<span typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Inline&quot;,&quot;href&quot;:&quot;./Template:Inline&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;5,678&quot;}},&quot;i&quot;:0}}]}"' +
-			' data-ve-no-generated-contents="true"' +
-		'>' +
-			'&nbsp;',
+	inlineOpen: ve.dm.example.singleLine`
+		<span about="#mwt1" typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Inline","href":"./Template:Inline"},"params":{"1":{"wt":"1,234"}},"i":0}}]}'>
+	`,
+	inlineOpenModified: ve.dm.example.singleLine`
+		<span about="#mwt1" typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Inline","href":"./Template:Inline"},"params":{"1":{"wt":"5,678"}},"i":0}}]}'>
+	`,
+	inlineOpenFromData: ve.dm.example.singleLine`
+		<span typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Inline","href":"./Template:Inline"},"params":{"1":{"wt":"1,234"}},"i":0}}]}'>
+	`,
+	inlineOpenClipboard: ve.dm.example.singleLine`
+		<span about="#mwt1" typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Inline","href":"./Template:Inline"},"params":{"1":{"wt":"1,234"}},"i":0}}]}'
+			 data-ve-no-generated-contents="true">
+	`,
+	inlineOpenFromDataModified: ve.dm.example.singleLine`
+		<span typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Inline","href":"./Template:Inline"},"params":{"1":{"wt":"5,678"}},"i":0}}]}'>
+	`,
+	inlineOpenModifiedClipboard: ve.dm.example.singleLine`
+		<span typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Inline","href":"./Template:Inline"},"params":{"1":{"wt":"5,678"}},"i":0}}]}'
+			 data-ve-no-generated-contents="true">
+			&nbsp;
+		</span>
+	`,
 	inlineContent: '$1,234.00',
 	inlineClose: '</span>',
-	mixed:
-		'<link about="#mwt1" rel="mw:PageProp/Category" typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Inline&quot;,&quot;href&quot;:&quot;./Template:Inline&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;5,678&quot;}},&quot;i&quot;:0}}]}"' +
-		'>' +
-		'<span about="#mwt1">Foo</span>',
-	mixedFromData:
-		'<span typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Inline&quot;,&quot;href&quot;:&quot;./Template:Inline&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;5,678&quot;}},&quot;i&quot;:0}}]}"' +
-		'></span>',
-	mixedClipboard:
-		'<span typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Inline&quot;,&quot;href&quot;:&quot;./Template:Inline&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;5,678&quot;}},&quot;i&quot;:0}}]}"' +
-			' data-ve-no-generated-contents="true"' +
-		'>&nbsp;</span>' +
-		'<span about="#mwt1" data-ve-ignore="true">Foo</span>',
-	pairOne:
-		'<p about="#mwt1" typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;echo&quot;,&quot;href&quot;:&quot;./Template:Echo&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;foo&quot;}},&quot;i&quot;:0}}]}" data-parsoid="1"' +
-		'>foo</p>',
-	pairTwo:
-		'<p about="#mwt2" typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;echo&quot;,&quot;href&quot;:&quot;./Template:Echo&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;foo&quot;}},&quot;i&quot;:0}}]}" data-parsoid="2"' +
-		'>foo</p>',
-	pairFromData:
-		'<span typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;echo&quot;,&quot;href&quot;:&quot;./Template:Echo&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;foo&quot;}},&quot;i&quot;:0}}]}"' +
-		'></span>',
-	pairClipboard:
-		'<p about="#mwt1" typeof="mw:Transclusion"' +
-			' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;echo&quot;,&quot;href&quot;:&quot;./Template:Echo&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;foo&quot;}},&quot;i&quot;:0}}]}"' +
-			' data-parsoid="1"' +
-			' data-ve-no-generated-contents="true"' +
-		'>foo</p>',
-	meta: '<link rel="mw:PageProp/Category" href="./Category:Page" about="#mwt1" typeof="mw:Transclusion"' +
-		' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Template:Echo&quot;,&quot;href&quot;:&quot;./Template:Echo&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;[[Category:Page]]\\n[[Category:Book]]&quot;}},&quot;i&quot;:0}}]}">' +
-		'<span about="#mwt1" data-parsoid="{}">\n</span>' +
-		'<link rel="mw:PageProp/Category" href="./Category:Book" about="#mwt1">',
-	metaFromData:
-		'<span typeof="mw:Transclusion"' +
-		' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Template:Echo&quot;,&quot;href&quot;:&quot;./Template:Echo&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;' +
-			'[[Category:Page]]\\n[[Category:Book]]&quot;}},&quot;i&quot;:0}}]}"></span>',
-	metaClipboard:
-		'<span typeof="mw:Transclusion"' +
-		' data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;Template:Echo&quot;,&quot;href&quot;:&quot;./Template:Echo&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;' +
-			'[[Category:Page]]\\n[[Category:Book]]&quot;}},&quot;i&quot;:0}}]}"' +
-		' data-ve-no-generated-contents="true">&nbsp;</span>'
+	mixed: ve.dm.example.singleLine`
+		<link about="#mwt1" rel="mw:PageProp/Category" typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Inline","href":"./Template:Inline"},"params":{"1":{"wt":"5,678"}},"i":0}}]}'>
+		<span about="#mwt1">Foo</span>
+	`,
+	mixedFromData: ve.dm.example.singleLine`
+		<span typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Inline","href":"./Template:Inline"},"params":{"1":{"wt":"5,678"}},"i":0}}]}'>
+		</span>
+	`,
+	mixedClipboard: ve.dm.example.singleLine`
+		<span typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"Inline","href":"./Template:Inline"},"params":{"1":{"wt":"5,678"}},"i":0}}]}'
+			 data-ve-no-generated-contents="true">
+			&nbsp;
+		</span>
+		<span about="#mwt1" data-ve-ignore="true">Foo</span>
+	`,
+	pairOne: ve.dm.example.singleLine`
+		<p about="#mwt1" typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"echo","href":"./Template:Echo"},"params":{"1":{"wt":"foo"}},"i":0}}]}' data-parsoid="1">
+			foo
+		</p>
+	`,
+	pairTwo: ve.dm.example.singleLine`
+		<p about="#mwt2" typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"echo","href":"./Template:Echo"},"params":{"1":{"wt":"foo"}},"i":0}}]}' data-parsoid="2">
+			foo
+		</p>
+	`,
+	pairFromData: ve.dm.example.singleLine`
+		<span typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"echo","href":"./Template:Echo"},"params":{"1":{"wt":"foo"}},"i":0}}]}' ></span>
+	`,
+	pairClipboard: ve.dm.example.singleLine`
+		<p about="#mwt1" typeof="mw:Transclusion"
+			 data-mw='{"parts":[{"template":{"target":{"wt":"echo","href":"./Template:Echo"},"params":{"1":{"wt":"foo"}},"i":0}}]}'
+			 data-parsoid="1"
+			 data-ve-no-generated-contents="true">
+			foo
+		</p>
+	`,
+	meta: ve.dm.example.singleLine`
+		<link rel="mw:PageProp/Category" href="./Category:Page" about="#mwt1" typeof="mw:Transclusion"
+		 data-mw='{"parts":[{"template":{"target":{"wt":"Template:Echo","href":"./Template:Echo"},"params":{"1":{"wt":"[[Category:Page]]\\n[[Category:Book]]"}},"i":0}}]}'>
+		<span about="#mwt1" data-parsoid="{}">\n</span>
+		<link rel="mw:PageProp/Category" href="./Category:Book" about="#mwt1">
+	`,
+	metaFromData: ve.dm.example.singleLine`
+		<span typeof="mw:Transclusion"
+		 data-mw='{"parts":[{"template":{"target":{"wt":"Template:Echo","href":"./Template:Echo"},"params":{"1":{"wt":"
+			[[Category:Page]]\\n[[Category:Book]]"}},"i":0}}]}'>
+		</span>
+	`,
+	metaClipboard: ve.dm.example.singleLine`
+		<span typeof="mw:Transclusion"
+		 data-mw='{"parts":[{"template":{"target":{"wt":"Template:Echo","href":"./Template:Echo"},"params":{"1":{"wt":"
+			[[Category:Page]]\\n[[Category:Book]]"}},"i":0}}]}'
+		 data-ve-no-generated-contents="true">
+			&nbsp;
+		</span>
+	`
 };
 ve.dm.mwExample.MWTransclusion.blockData = {
 	type: 'mwTransclusionBlock',
@@ -269,11 +286,14 @@ ve.dm.mwExample.MWMediaLinkMissingData = {
 };
 
 ve.dm.mwExample.MWBlockImage = {
-	html:
-		'<figure typeof="mw:Image/Thumb" class="mw-halign-right foobar">' +
-			'<a href="./Foo"><img src="' + ve.ce.minImgDataUri + '" width="1" height="2" resource="./FooBar" alt="alt text"></a>' +
-			'<figcaption>abc</figcaption>' +
-		'</figure>',
+	html: ve.dm.example.singleLine`
+		<figure typeof="mw:Image/Thumb" class="mw-halign-right foobar">
+			<a href="./Foo" class="mw-file-description">
+				<img src="${ve.ce.minImgDataUri}" class="mw-file-element" width="1" height="2" resource="./FooBar" alt="alt text">
+			</a>
+			<figcaption>abc</figcaption>
+		</figure>
+	`,
 	data: [
 		{
 			type: 'mwBlockImage',
@@ -281,8 +301,8 @@ ve.dm.mwExample.MWBlockImage = {
 				type: 'thumb',
 				align: 'right',
 				href: './Foo',
-				imageClassAttr: null,
-				imgWrapperClassAttr: null,
+				imageClassAttr: 'mw-file-element',
+				imgWrapperClassAttr: 'mw-file-description',
 				mediaClass: 'Image',
 				mediaTag: 'img',
 				src: ve.ce.minImgDataUri,
@@ -310,19 +330,20 @@ ve.dm.mwExample.MWBlockImage = {
 };
 
 ve.dm.mwExample.MWInlineImage = {
-	html:
-		'<span typeof="mw:Image" class="foo mw-valign-text-top">' +
-			'<a href="./File:Wiki.png">' +
-				'<img resource="./File:Wiki.png" src="http://upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png" height="155" width="135" alt="alt text">' +
-			'</a>' +
-		'</span>',
+	html: ve.dm.example.singleLine`
+		<span typeof="mw:Image" class="foo mw-valign-text-top">
+			<a href="./File:Wiki.png" class="mw-file-description">
+				<img resource="./File:Wiki.png" src="http://upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png" class="mw-file-element" height="155" width="135" alt="alt text">
+			</a>
+		</span>
+	`,
 	data: {
 		type: 'mwInlineImage',
 		attributes: {
 			src: 'http://upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png',
 			href: './File:Wiki.png',
-			imageClassAttr: null,
-			imgWrapperClassAttr: null,
+			imageClassAttr: 'mw-file-element',
+			imgWrapperClassAttr: 'mw-file-description',
 			mediaClass: 'Image',
 			mediaTag: 'img',
 			width: 135,
@@ -343,20 +364,21 @@ ve.dm.mwExample.MWInlineImage = {
 	}
 };
 
-ve.dm.mwExample.MWInlineImageWithWrapperClass = {
-	html:
-		'<span typeof="mw:Image" class="foo mw-valign-text-top">' +
-			'<a href="./File:Wiki.png" class="mw-file-description">' +
-				'<img resource="./File:Wiki.png" src="http://upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png" height="155" width="135" alt="alt text">' +
-			'</a>' +
-		'</span>',
+ve.dm.mwExample.MWInlineImageWithoutWrapperClass = {
+	html: ve.dm.example.singleLine`
+		<span typeof="mw:Image" class="foo mw-valign-text-top">
+			<a href="./File:Wiki.png">
+				<img resource="./File:Wiki.png" src="http://upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png" class="mw-file-element" height="155" width="135" alt="alt text">
+			</a>
+		</span>
+	`,
 	data: {
 		type: 'mwInlineImage',
 		attributes: {
 			src: 'http://upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png',
 			href: './File:Wiki.png',
-			imageClassAttr: null,
-			imgWrapperClassAttr: 'mw-file-description',
+			imageClassAttr: 'mw-file-element',
+			imgWrapperClassAttr: null,
 			mediaClass: 'Image',
 			mediaTag: 'img',
 			width: 135,
@@ -641,8 +663,13 @@ ve.dm.mwExample.withMetaMetaData = [
 ve.dm.mwExample.domToDataCases = {
 	'adjacent annotations (data-parsoid)': {
 		preserveAnnotationDomElements: true,
-		body: '<b>a</b><b data-parsoid="1">b</b><b data-parsoid="2">c</b> ' +
-			'<b>d</b><b>d</b>',
+		body: ve.dm.example.singleLine`
+			<b>a</b>
+			<b data-parsoid="1">b</b>
+			<b data-parsoid="2">c</b>
+			 <b>d</b>
+			<b>d</b>
+		`,
 		data: [
 			{ type: 'paragraph', internal: { generated: 'wrapper' } },
 			[
@@ -695,15 +722,28 @@ ve.dm.mwExample.domToDataCases = {
 				linearData = ve.dm.example.preprocessAnnotations( [ data ], model.getStore() );
 			model.data.data.splice( 3, 0, linearData.data[ 0 ] );
 		},
-		normalizedBody: '<b>a</b><b data-parsoid="1">bx</b><b data-parsoid="2">c</b> ' +
-			'<b>dd</b>',
-		fromDataBody: '<b>a</b><b data-parsoid="1">bx</b><b data-parsoid="2">c</b> ' +
-			'<b>dd</b>'
+		normalizedBody: ve.dm.example.singleLine`
+			<b>a</b>
+			<b data-parsoid="1">bx</b>
+			<b data-parsoid="2">c</b>
+			 <b>dd</b>
+		`,
+		fromDataBody: ve.dm.example.singleLine`
+			<b>a</b>
+			<b data-parsoid="1">bx</b>
+			<b data-parsoid="2">c</b>
+			 <b>dd</b
+		`
 	},
 	'adjacent annotations (RESTBase IDs)': {
 		preserveAnnotationDomElements: true,
-		body: '<b>a</b><b id="mwAB">b</b><b id="mwCD">c</b> ' +
-			'<b>d</b><b>d</b>',
+		body: ve.dm.example.singleLine`
+			<b>a</b>
+			<b id="mwAB">b</b>
+			<b id="mwCD">c</b>
+			 <b>d</b>
+			<b>d</b>
+		`,
 		data: [
 			{ type: 'paragraph', internal: { generated: 'wrapper' } },
 			[
@@ -756,13 +796,21 @@ ve.dm.mwExample.domToDataCases = {
 				linearData = ve.dm.example.preprocessAnnotations( [ data ], model.getStore() );
 			model.data.data.splice( 3, 0, linearData.data[ 0 ] );
 		},
-		normalizedBody: '<b>a</b><b id="mwAB">bx</b><b id="mwCD">c</b> ' +
-			'<b>dd</b>',
-		fromDataBody: '<b>a</b><b id="mwAB">bx</b><b id="mwCD">c</b> ' +
-			'<b>dd</b>'
+		normalizedBody: ve.dm.example.singleLine`
+			<b>a</b>
+			<b id="mwAB">bx</b>
+			<b id="mwCD">c</b>
+			 <b>dd</b>
+		`,
+		fromDataBody: ve.dm.example.singleLine`
+			<b>a</b>
+			<b id="mwAB">bx</b>
+			<b id="mwCD">c</b>
+			 <b>dd</b>
+		`
 	},
 	mwImage: {
-		body: '<p>' + ve.dm.mwExample.MWInlineImage.html + '</p>',
+		body: `<p>${ve.dm.mwExample.MWInlineImage.html}</p>`,
 		data: [
 			{ type: 'paragraph' },
 			ve.dm.mwExample.MWInlineImage.data,
@@ -771,32 +819,36 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		ceHtml: '<p class="ve-ce-branchNode ve-ce-contentBranchNode ve-ce-paragraphNode">' +
-			'<span class="ve-ce-branchNode-slug ve-ce-branchNode-inlineSlug"></span>' +
-			'<a class="ve-ce-leafNode ve-ce-focusableNode ve-ce-mwInlineImageNode" contenteditable="false" href="' + new URL( './File:Wiki.png', ve.dm.mwExample.baseUri ) + '">' +
-				'<img src="http://upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png" width="135" height="155" style="vertical-align: text-top;">' +
-			'</a>' +
-			ve.dm.example.inlineSlug +
-			'</p>',
+		ceHtml: ve.dm.example.singleLine`
+			<p class="ve-ce-branchNode ve-ce-contentBranchNode ve-ce-paragraphNode">
+			<span class="ve-ce-branchNode-slug ve-ce-branchNode-inlineSlug"></span>
+			<a class="mw-file-description ve-ce-leafNode ve-ce-focusableNode ve-ce-mwInlineImageNode" contenteditable="false" href="${new URL( './File:Wiki.png', ve.dm.mwExample.baseUri )}">
+				<img src="http://upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png" class="mw-file-element" width="135" height="155" style="vertical-align: text-top;">
+			</a>
+			${ve.dm.example.inlineSlug}
+			</p>
+		`,
 		storeItems: ve.dm.mwExample.MWInlineImage.storeItems
 	},
-	mwImageWithWrapperClass: {
-		body: '<p>' + ve.dm.mwExample.MWInlineImageWithWrapperClass.html + '</p>',
+	mwImageWithoutWrapperClass: {
+		body: '<p>' + ve.dm.mwExample.MWInlineImageWithoutWrapperClass.html + '</p>',
 		data: [
 			{ type: 'paragraph' },
-			ve.dm.mwExample.MWInlineImageWithWrapperClass.data,
+			ve.dm.mwExample.MWInlineImageWithoutWrapperClass.data,
 			{ type: '/mwInlineImage' },
 			{ type: '/paragraph' },
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		ceHtml: '<p class="ve-ce-branchNode ve-ce-contentBranchNode ve-ce-paragraphNode">' +
-			'<span class="ve-ce-branchNode-slug ve-ce-branchNode-inlineSlug"></span>' +
-			'<a class="ve-ce-leafNode ve-ce-focusableNode ve-ce-mwInlineImageNode" contenteditable="false" href="' + new URL( './File:Wiki.png', ve.dm.mwExample.baseUri ) + '">' +
-				'<img src="http://upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png" width="135" height="155" style="vertical-align: text-top;">' +
-			'</a>' +
-			ve.dm.example.inlineSlug +
-			'</p>',
+		ceHtml: ve.dm.example.singleLine`
+			<p class="ve-ce-branchNode ve-ce-contentBranchNode ve-ce-paragraphNode">
+			<span class="ve-ce-branchNode-slug ve-ce-branchNode-inlineSlug"></span>
+			<a class="mw-file-description ve-ce-leafNode ve-ce-focusableNode ve-ce-mwInlineImageNode" contenteditable="false" href="${new URL( './File:Wiki.png', ve.dm.mwExample.baseUri )}">
+				<img src="http://upload.wikimedia.org/wikipedia/en/b/bc/Wiki.png" class="mw-file-element" width="135" height="155" style="vertical-align: text-top;">
+			</a>
+			${ve.dm.example.inlineSlug}
+			</p>
+		`,
 		storeItems: ve.dm.mwExample.MWInlineImage.storeItems
 	},
 	'mwHeading and mwPreformatted nodes': {
@@ -852,19 +904,31 @@ ve.dm.mwExample.domToDataCases = {
 		normalizedBody: '<table><tr><td>Foo</td></tr></table>'
 	},
 	'mwGalleryImage (broken image)': {
-		body: '<ul class="gallery mw-gallery-traditional" typeof="mw:Extension/gallery" about="#mwt2" data-mw=\'{"name":"gallery","attrs":{},"body":{"extsrc":"File:!Example.jpg"}}\'><li class="gallerybox" style="width: 155px;"><div class="thumb" style="width: 150px; height: 150px;"><span typeof="mw:Error mw:File" data-mw=\'{"errors":[{"key":"apierror-filedoesnotexist","message":"This image does not exist."}]}\'><a href="./Special:FilePath/!Example.jpg"><span class="mw-broken-media" resource="./File:!Example.jpg" data-width="120" data-height="120">File:!Example.jpg</span></a></span></div><div class="gallerytext"></div></li></ul>',
+		body: ve.dm.example.singleLine`
+			<ul class="gallery mw-gallery-traditional" typeof="mw:Extension/gallery" about="#mwt2" data-mw='{"name":"gallery","attrs":{},"body":{}}'>
+				<li class="gallerybox" style="width: 155px;">
+					<div class="thumb" style="width: 150px; height: 150px;">
+						<span typeof="mw:Error mw:File" data-mw='{"errors":[{"key":"apierror-filedoesnotexist","message":"This image does not exist."}]}'>
+							<a href="./Special:FilePath/!Example.jpg">
+								<span class="mw-file-element mw-broken-media" resource="./File:!Example.jpg" data-width="120" data-height="120">File:!Example.jpg</span>
+							</a>
+						</span>
+					</div>
+					<div class="gallerytext">
+					</div>
+				</li>
+			</ul>
+		`,
 		data: [
 			{
 				type: 'mwGallery',
 				attributes: {
 					mw: {
 						attrs: {},
-						body: {
-							extsrc: 'File:!Example.jpg'
-						},
+						body: {},
 						name: 'gallery'
 					},
-					originalMw: '{"name":"gallery","attrs":{},"body":{"extsrc":"File:!Example.jpg"}}'
+					originalMw: '{"name":"gallery","attrs":{},"body":{}}'
 				}
 			},
 			{
@@ -877,6 +941,9 @@ ve.dm.mwExample.domToDataCases = {
 					width: 120,
 					height: 120,
 					resource: './File:!Example.jpg',
+					href: './Special:FilePath/!Example.jpg',
+					imageClassAttr: 'mw-file-element mw-broken-media',
+					imgWrapperClassAttr: null,
 					src: null,
 					isError: true,
 					errorText: 'File:!Example.jpg'
@@ -896,11 +963,37 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		normalizedBody: '<ul class="gallery mw-gallery-traditional" typeof="mw:Extension/gallery" about="#mwt2" data-mw=\'{"name":"gallery","attrs":{},"body":{"extsrc":"File:!Example.jpg"}}\'><li class="gallerybox" style="width: 155px;"><div class="thumb"><span typeof="mw:Error mw:File"><a><span class="mw-broken-media" resource="./File:!Example.jpg" data-width="120" data-height="120">File:!Example.jpg</span></a></span></div><div class="gallerytext"></div></li></ul>',
-		fromDataBody: '<ul typeof="mw:Extension/gallery" about="#mwt2" data-mw=\'{"name":"gallery","attrs":{},"body":{"extsrc":"File:!Example.jpg"}}\'><li class="gallerybox"><div class="thumb"><span typeof="mw:Error mw:File"><a><span class="mw-broken-media" resource="./File:!Example.jpg" data-width="120" data-height="120">File:!Example.jpg</span></a></span></div><div class="gallerytext"></div></li></ul>'
+		fromDataBody: ve.dm.example.singleLine`
+			<ul typeof="mw:Extension/gallery" about="#mwt2" data-mw='{"name":"gallery","attrs":{},"body":{}}'>
+				<li class="gallerybox">
+					<div class="thumb">
+						<span typeof="mw:Error mw:File">
+							<a href="./Special:FilePath/!Example.jpg">
+								<span class="mw-file-element mw-broken-media" resource="./File:!Example.jpg" data-width="120" data-height="120">File:!Example.jpg</span>
+							</a>
+						</span>
+					</div>
+					<div class="gallerytext"></div>
+				</li>
+			</ul>
+		`
 	},
 	'mwGalleryImage (empty caption in DOM)': {
-		body: '<ul class="gallery mw-gallery-packed" typeof="mw:Extension/gallery" about="#mwt2" data-mw=\'{"name":"gallery","attrs":{"mode":"packed"},"body":{"extsrc":"File:Example.jpg"}}\'><li class="gallerybox" style="width: 182px;"><div class="thumb" style="width: 180px;"><span typeof="mw:File"><a href="./File:Example.jpg" class="mw-file-description"><img resource="./File:Example.jpg" src="' + ve.ce.minImgDataUri + '" decoding="async" data-file-width="400" data-file-height="267" data-file-type="bitmap" height="120" width="180" srcset="' + ve.ce.minImgDataUri + ' 2x"/></a></span></div><div class="gallerytext"></div></li></ul>',
+		body: ve.dm.example.singleLine`
+			<ul class="gallery mw-gallery-packed" typeof="mw:Extension/gallery" about="#mwt2" data-mw='{"name":"gallery","attrs":{"mode":"packed"},"body":{}}'>
+				<li class="gallerybox" style="width: 182px;">
+					<div class="thumb" style="width: 180px;">
+						<span typeof="mw:File">
+							<a href="./File:Example.jpg" class="mw-file-description">
+								<img resource="./File:Example.jpg" src="${ve.ce.minImgDataUri}" class="mw-file-element" decoding="async" data-file-width="400"
+								 data-file-height="267" data-file-type="bitmap" height="120" width="180" srcset="${ve.ce.minImgDataUri} 2x"/>
+							</a>
+						</span>
+					</div>
+					<div class="gallerytext"></div>
+				</li>
+			</ul>
+		`,
 		data: [
 			{
 				type: 'mwGallery',
@@ -909,12 +1002,10 @@ ve.dm.mwExample.domToDataCases = {
 						attrs: {
 							mode: 'packed'
 						},
-						body: {
-							extsrc: 'File:Example.jpg'
-						},
+						body: {},
 						name: 'gallery'
 					},
-					originalMw: '{"name":"gallery","attrs":{"mode":"packed"},"body":{"extsrc":"File:Example.jpg"}}'
+					originalMw: '{"name":"gallery","attrs":{"mode":"packed"},"body":{}}'
 				}
 			},
 			{
@@ -927,6 +1018,9 @@ ve.dm.mwExample.domToDataCases = {
 					width: 180,
 					height: 120,
 					resource: './File:Example.jpg',
+					href: null,
+					imageClassAttr: 'mw-file-element',
+					imgWrapperClassAttr: 'mw-file-description',
 					src: ve.ce.minImgDataUri,
 					isError: false,
 					errorText: null
@@ -946,11 +1040,36 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		normalizedBody: '<ul class="gallery mw-gallery-packed" typeof="mw:Extension/gallery" about="#mwt2" data-mw=\'{"name":"gallery","attrs":{"mode":"packed"},"body":{"extsrc":"File:Example.jpg"}}\'><li class="gallerybox" style="width: 182px;"><div class="thumb"><span typeof="mw:File"><a><img resource="./File:Example.jpg" src="' + ve.ce.minImgDataUri + '" height="120" width="180"/></a></span></div><div class="gallerytext"></div></li></ul>',
-		fromDataBody: '<ul typeof="mw:Extension/gallery" about="#mwt2" data-mw=\'{"name":"gallery","attrs":{"mode":"packed"},"body":{"extsrc":"File:Example.jpg"}}\'><li class="gallerybox"><div class="thumb"><span typeof="mw:File"><a><img resource="./File:Example.jpg" src="' + ve.ce.minImgDataUri + '" height="120" width="180"/></a></span></div><div class="gallerytext"></div></li></ul>'
+		fromDataBody: ve.dm.example.singleLine`
+			<ul typeof="mw:Extension/gallery" about="#mwt2" data-mw='{"name":"gallery","attrs":{"mode":"packed"},"body":{}}'>
+				<li class="gallerybox">
+					<div class="thumb">
+						<span typeof="mw:File">
+							<a href="./File:Example.jpg" class="mw-file-description">
+								<img resource="./File:Example.jpg" src="${ve.ce.minImgDataUri}" class="mw-file-element" height="120" width="180"/>
+							</a>
+						</span>
+					</div>
+					<div class="gallerytext"></div>
+				</li>
+			</ul>
+		`
 	},
 	'mwGalleryImage (caption with content)': {
-		body: '<ul class="gallery mw-gallery-packed" typeof="mw:Extension/gallery" about="#mwt2" data-mw=\'{"name":"gallery","attrs":{"mode":"packed"},"body":{"extsrc":"File:Example.jpg|Caption"}}\'><li class="gallerybox" style="width: 182px;"><div class="thumb" style="width: 180px;"><span typeof="mw:File"><a href="./File:Example.jpg" class="mw-file-description"><img resource="./File:Example.jpg" src="' + ve.ce.minImgDataUri + '" data-file-width="400" data-file-height="267" data-file-type="bitmap" height="120" width="180"/></a></span></div><div class="gallerytext">Caption</div></li></ul>',
+		body: ve.dm.example.singleLine`
+			<ul class="gallery mw-gallery-packed" typeof="mw:Extension/gallery" about="#mwt2" data-mw='{"name":"gallery","attrs":{"mode":"packed"},"body":{}}'>
+				<li class="gallerybox" style="width: 182px;">
+					<div class="thumb" style="width: 180px;">
+						<span typeof="mw:File">
+							<a href="./File:Example.jpg" class="mw-file-description">
+								<img resource="./File:Example.jpg" src="${ve.ce.minImgDataUri}" class="mw-file-element" data-file-width="400" data-file-height="267" data-file-type="bitmap" height="120" width="180"/>
+							</a>
+						</span>
+					</div>
+					<div class="gallerytext">Caption</div>
+				</li>
+			</ul>
+		`,
 		data: [
 			{
 				type: 'mwGallery',
@@ -959,12 +1078,10 @@ ve.dm.mwExample.domToDataCases = {
 						attrs: {
 							mode: 'packed'
 						},
-						body: {
-							extsrc: 'File:Example.jpg|Caption'
-						},
+						body: {},
 						name: 'gallery'
 					},
-					originalMw: '{"name":"gallery","attrs":{"mode":"packed"},"body":{"extsrc":"File:Example.jpg|Caption"}}'
+					originalMw: '{"name":"gallery","attrs":{"mode":"packed"},"body":{}}'
 				}
 			},
 			{
@@ -977,6 +1094,9 @@ ve.dm.mwExample.domToDataCases = {
 					width: 180,
 					height: 120,
 					resource: './File:Example.jpg',
+					href: null,
+					imageClassAttr: 'mw-file-element',
+					imgWrapperClassAttr: 'mw-file-description',
 					src: ve.ce.minImgDataUri,
 					isError: false,
 					errorText: null
@@ -997,8 +1117,20 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		normalizedBody: '<ul class="gallery mw-gallery-packed" typeof="mw:Extension/gallery" about="#mwt2" data-mw=\'{"name":"gallery","attrs":{"mode":"packed"},"body":{"extsrc":"File:Example.jpg|Caption"}}\'><li class="gallerybox" style="width: 182px;"><div class="thumb"><span typeof="mw:File"><a><img resource="./File:Example.jpg" src="' + ve.ce.minImgDataUri + '" height="120" width="180"/></a></span></div><div class="gallerytext">Caption</div></li></ul>',
-		fromDataBody: '<ul typeof="mw:Extension/gallery" about="#mwt2" data-mw=\'{"name":"gallery","attrs":{"mode":"packed"},"body":{"extsrc":"File:Example.jpg|Caption"}}\'><li class="gallerybox"><div class="thumb"><span typeof="mw:File"><a><img resource="./File:Example.jpg" src="' + ve.ce.minImgDataUri + '" height="120" width="180"/></a></span></div><div class="gallerytext">Caption</div></li></ul>'
+		fromDataBody: ve.dm.example.singleLine`
+			<ul typeof="mw:Extension/gallery" about="#mwt2" data-mw='{"name":"gallery","attrs":{"mode":"packed"},"body":{}}'>
+				<li class="gallerybox">
+					<div class="thumb">
+						<span typeof="mw:File">
+							<a href="./File:Example.jpg" class="mw-file-description">
+								<img resource="./File:Example.jpg" src="${ve.ce.minImgDataUri}" class="mw-file-element" height="120" width="180"/>
+							</a>
+						</span>
+					</div>
+					<div class="gallerytext">Caption</div>
+				</li>
+			</ul>
+		`
 	},
 	'mwGalleryImage (no caption in model)': {
 		data: [
@@ -1009,12 +1141,10 @@ ve.dm.mwExample.domToDataCases = {
 						attrs: {
 							mode: 'packed'
 						},
-						body: {
-							extsrc: ''
-						},
+						body: {},
 						name: 'gallery'
 					},
-					originalMw: '{"attrs":{"mode":"packed"},"body":{"extsrc":""},"name":"gallery"}'
+					originalMw: '{"attrs":{"mode":"packed"},"body":{},"name":"gallery"}'
 				}
 			},
 			{
@@ -1027,6 +1157,9 @@ ve.dm.mwExample.domToDataCases = {
 					width: 120,
 					height: 120,
 					resource: './Foo',
+					href: null,
+					imageClassAttr: 'mw-file-element',
+					imgWrapperClassAttr: 'mw-file-description',
 					src: ve.ce.minImgDataUri,
 					isError: false,
 					errorText: null
@@ -1037,7 +1170,19 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		fromDataBody: '<ul typeof="mw:Extension/gallery" data-mw=\'{"attrs":{"mode":"packed"},"body":{"extsrc":""},"name":"gallery"}\'><li class="gallerybox"><div class="thumb"><span typeof="mw:Image"><a><img resource="./Foo" src="' + ve.ce.minImgDataUri + '" height="120" width="120"/></a></span></div></li></ul>'
+		fromDataBody: ve.dm.example.singleLine`
+			<ul typeof="mw:Extension/gallery" data-mw='{"attrs":{"mode":"packed"},"body":{},"name":"gallery"}'>
+				<li class="gallerybox">
+					<div class="thumb">
+						<span typeof="mw:Image">
+							<a href="./Foo" class="mw-file-description">
+								<img resource="./Foo" src="${ve.ce.minImgDataUri}" class="mw-file-element" height="120" width="120"/>
+							</a>
+						</span>
+					</div>
+				</li>
+			</ul>
+		`
 	},
 	'mwGalleryImage (empty caption in model)': {
 		data: [
@@ -1048,12 +1193,10 @@ ve.dm.mwExample.domToDataCases = {
 						attrs: {
 							mode: 'packed'
 						},
-						body: {
-							extsrc: ''
-						},
+						body: {},
 						name: 'gallery'
 					},
-					originalMw: '{"attrs":{"mode":"packed"},"body":{"extsrc":""},"name":"gallery"}'
+					originalMw: '{"attrs":{"mode":"packed"},"body":{},"name":"gallery"}'
 				}
 			},
 			{
@@ -1066,6 +1209,9 @@ ve.dm.mwExample.domToDataCases = {
 					width: 120,
 					height: 120,
 					resource: './Foo',
+					href: null,
+					imageClassAttr: 'mw-file-element',
+					imgWrapperClassAttr: 'mw-file-description',
 					src: ve.ce.minImgDataUri,
 					isError: false,
 					errorText: null
@@ -1078,10 +1224,29 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		fromDataBody: '<ul typeof="mw:Extension/gallery" data-mw=\'{"attrs":{"mode":"packed"},"body":{"extsrc":""},"name":"gallery"}\'><li class="gallerybox"><div class="thumb"><span typeof="mw:Image"><a><img resource="./Foo" src="' + ve.ce.minImgDataUri + '" height="120" width="120"/></a></span></div><div class="gallerytext"></div></li></ul>'
+		fromDataBody: ve.dm.example.singleLine`
+			<ul typeof="mw:Extension/gallery" data-mw='{"attrs":{"mode":"packed"},"body":{},"name":"gallery"}'>
+				<li class="gallerybox">
+					<div class="thumb">
+						<span typeof="mw:Image">
+							<a href="./Foo" class="mw-file-description">
+								<img resource="./Foo" src="${ve.ce.minImgDataUri}" class="mw-file-element" height="120" width="120"/>
+							</a>
+						</span>
+					</div>
+					<div class="gallerytext"></div>
+				</li>
+			</ul>
+		`
 	},
 	'mwBlockImage (no caption in DOM)': {
-		body: '<figure typeof="mw:Image/Thumb"><a href="./Foo"><img resource="./Foo" src="' + ve.ce.minImgDataUri + '" height="300" width="300"/></a></figure>',
+		body: ve.dm.example.singleLine`
+			<figure typeof="mw:Image/Thumb">
+				<a href="./Foo" class="mw-file-description">
+					<img resource="./Foo" src="${ve.ce.minImgDataUri}" class="mw-file-element" height="300" width="300"/>
+				</a>
+			</figure>
+		`,
 		data: [
 			{
 				type: 'mwBlockImage',
@@ -1090,8 +1255,8 @@ ve.dm.mwExample.domToDataCases = {
 					alt: null,
 					height: 300,
 					href: './Foo',
-					imageClassAttr: null,
-					imgWrapperClassAttr: null,
+					imageClassAttr: 'mw-file-element',
+					imgWrapperClassAttr: 'mw-file-description',
 					isError: false,
 					errorText: null,
 					mediaClass: 'Image',
@@ -1116,10 +1281,24 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		normalizedBody: '<figure typeof="mw:Image/Thumb"><a href="./Foo"><img resource="./Foo" src="' + ve.ce.minImgDataUri + '" height="300" width="300"/></a><figcaption></figcaption></figure>'
+		normalizedBody: ve.dm.example.singleLine`
+			<figure typeof="mw:Image/Thumb">
+				<a href="./Foo" class="mw-file-description">
+					<img resource="./Foo" src="${ve.ce.minImgDataUri}" class="mw-file-element" height="300" width="300"/>
+				</a>
+				<figcaption></figcaption>
+			</figure>
+		`
 	},
 	'mwBlockImage (empty caption in DOM)': {
-		body: '<figure typeof="mw:Image/Thumb"><a href="./Foo"><img resource="./Foo" src="' + ve.ce.minImgDataUri + '" height="300" width="300"/></a><figcaption></figcaption></figure>',
+		body: ve.dm.example.singleLine`
+			<figure typeof="mw:Image/Thumb">
+				<a href="./Foo" class="mw-file-description">
+					<img resource="./Foo" src="${ve.ce.minImgDataUri}" class="mw-file-element" height="300" width="300"/>
+				</a>
+				<figcaption></figcaption>
+			</figure>
+		`,
 		data: [
 			{
 				type: 'mwBlockImage',
@@ -1128,8 +1307,8 @@ ve.dm.mwExample.domToDataCases = {
 					alt: null,
 					height: 300,
 					href: './Foo',
-					imageClassAttr: null,
-					imgWrapperClassAttr: null,
+					imageClassAttr: 'mw-file-element',
+					imgWrapperClassAttr: 'mw-file-description',
 					isError: false,
 					errorText: null,
 					mediaClass: 'Image',
@@ -1156,7 +1335,14 @@ ve.dm.mwExample.domToDataCases = {
 		]
 	},
 	'mwBlockImage (caption with content in DOM)': {
-		body: '<figure typeof="mw:Image/Thumb"><a href="./Foo"><img resource="./Foo" src="' + ve.ce.minImgDataUri + '" height="300" width="300"/></a><figcaption>Caption</figcaption></figure>',
+		body: ve.dm.example.singleLine`
+			<figure typeof="mw:Image/Thumb">
+				<a href="./Foo" class="mw-file-description">
+					<img resource="./Foo" src="${ve.ce.minImgDataUri}" class="mw-file-element" height="300" width="300"/>
+				</a>
+				<figcaption>Caption</figcaption>
+			</figure>
+		`,
 		data: [
 			{
 				type: 'mwBlockImage',
@@ -1165,8 +1351,8 @@ ve.dm.mwExample.domToDataCases = {
 					alt: null,
 					height: 300,
 					href: './Foo',
-					imageClassAttr: null,
-					imgWrapperClassAttr: null,
+					imageClassAttr: 'mw-file-element',
+					imgWrapperClassAttr: 'mw-file-description',
 					isError: false,
 					errorText: null,
 					mediaClass: 'Image',
@@ -1202,8 +1388,8 @@ ve.dm.mwExample.domToDataCases = {
 					alt: null,
 					height: 300,
 					href: './Foo',
-					imageClassAttr: null,
-					imgWrapperClassAttr: null,
+					imageClassAttr: 'mw-file-element',
+					imgWrapperClassAttr: 'mw-file-description',
 					isError: false,
 					errorText: null,
 					mediaClass: 'Image',
@@ -1219,7 +1405,13 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		fromDataBody: '<figure typeof="mw:Image/Thumb"><a href="./Foo"><img resource="./Foo" src="' + ve.ce.minImgDataUri + '" height="300" width="300"/></a></figure>'
+		fromDataBody: ve.dm.example.singleLine`
+			<figure typeof="mw:Image/Thumb">
+				<a href="./Foo" class="mw-file-description">
+					<img resource="./Foo" src="${ve.ce.minImgDataUri}" class="mw-file-element" height="300" width="300"/>
+				</a>
+			</figure>
+		`
 	},
 	'mwBlockImage (empty caption in model)': {
 		data: [
@@ -1230,8 +1422,8 @@ ve.dm.mwExample.domToDataCases = {
 					alt: null,
 					height: 300,
 					href: './Foo',
-					imageClassAttr: null,
-					imgWrapperClassAttr: null,
+					imageClassAttr: 'mw-file-element',
+					imgWrapperClassAttr: 'mw-file-description',
 					isError: false,
 					errorText: null,
 					mediaClass: 'Image',
@@ -1249,7 +1441,13 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		fromDataBody: '<figure typeof="mw:Image/Thumb"><a href="./Foo"><img resource="./Foo" src="' + ve.ce.minImgDataUri + '" height="300" width="300"/></a></figure>'
+		fromDataBody: ve.dm.example.singleLine`
+			<figure typeof="mw:Image/Thumb">
+				<a href="./Foo" class="mw-file-description">
+					<img resource="./Foo" src="${ve.ce.minImgDataUri}" class="mw-file-element" height="300" width="300"/>
+				</a>
+			</figure>
+		`
 	},
 	'mw:Transclusion (block level)': {
 		body: ve.dm.mwExample.MWTransclusion.blockOpen + ve.dm.mwExample.MWTransclusion.blockContent,
@@ -1381,7 +1579,12 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: '/internalList' }
 		],
 		storeItems: {
-			hd2ff771ac84b229d: $.parseHTML( '<p about="#mwt1" typeof="mw:Transclusion" data-mw="{&quot;parts&quot;:[{&quot;template&quot;:{&quot;target&quot;:{&quot;wt&quot;:&quot;echo&quot;,&quot;href&quot;:&quot;./Template:Echo&quot;},&quot;params&quot;:{&quot;1&quot;:{&quot;wt&quot;:&quot;foo&quot;}},&quot;i&quot;:0}}]}" data-parsoid="1">foo</p>' )
+			hd2ff771ac84b229d: $.parseHTML( ve.dm.example.singleLine`
+				<p about="#mwt1" typeof="mw:Transclusion"
+					 data-mw='{"parts":[{"template":{"target":{"wt":"echo","href":"./Template:Echo"},"params":{"1":{"wt":"foo"}},"i":0}}]}' data-parsoid="1">
+					foo
+				</p>
+			` )
 		}
 	},
 	'mw:Transclusion containing only meta data': {
@@ -1441,19 +1644,19 @@ ve.dm.mwExample.domToDataCases = {
 		previewBody: false
 	},
 	'mw:AlienBlockExtension': {
-		body:
-			'<div about="#mwt1" typeof="mw:Extension/syntaxhighlight"' +
-				' data-mw="{&quot;name&quot;:&quot;syntaxhighlight&quot;,&quot;attrs&quot;:{&quot;lang&quot;:&quot;php&quot;},&quot;body&quot;:{&quot;extsrc&quot;:&quot;\\n$foo = bar;\\n&quot;}}"' +
-				' data-parsoid="1"' +
-			'>' +
-				'<div><span>Rendering</span></div>' +
-			'</div>',
-		normalizedBody:
-			'<div typeof="mw:Extension/syntaxhighlight"' +
-				' data-mw="{&quot;name&quot;:&quot;syntaxhighlight&quot;,&quot;attrs&quot;:{&quot;lang&quot;:&quot;php5&quot;},&quot;body&quot;:{&quot;extsrc&quot;:&quot;\\n$foo = bar;\\n&quot;}}"' +
-				' about="#mwt1" data-parsoid="1"' +
-			'>' +
-			'</div>',
+		body: ve.dm.example.singleLine`
+			<div about="#mwt1" typeof="mw:Extension/syntaxhighlight"
+				 data-mw='{"name":"syntaxhighlight","attrs":{"lang":"php"},"body":{"extsrc":"\\n$foo = bar;\\n"}}'
+				 data-parsoid="1">
+				<div><span>Rendering</span></div>
+			</div>
+		`,
+		normalizedBody: ve.dm.example.singleLine`
+			<div typeof="mw:Extension/syntaxhighlight"
+				 data-mw='{"name":"syntaxhighlight","attrs":{"lang":"php5"},"body":{"extsrc":"\\n$foo = bar;\\n"}}'
+				 about="#mwt1" data-parsoid="1">
+			</div>
+		`,
 		data: [
 			{
 				type: 'mwAlienBlockExtension',
@@ -1482,18 +1685,20 @@ ve.dm.mwExample.domToDataCases = {
 		}
 	},
 	'mw:AlienInlineExtension': {
-		body:
-			'<p>' +
-				'<img src="' + ve.ce.minImgDataUri + '" width="100" height="20" alt="Bar" typeof="mw:Extension/score"' +
-					' data-mw="{&quot;name&quot;:&quot;score&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;extsrc&quot;:&quot;\\\\relative c&#39; { e d c d e e e }&quot;}}" ' +
-					' data-parsoid="1" about="#mwt1" />' +
-			'</p>',
-		normalizedBody:
-			'<p>' +
-				'<span typeof="mw:Extension/score"' +
-					' data-mw="{&quot;name&quot;:&quot;score&quot;,&quot;attrs&quot;:{},&quot;body&quot;:{&quot;extsrc&quot;:&quot;\\\\relative c&#39; { d d d e e e }&quot;}}" ' +
-					' src="' + ve.ce.minImgDataUri + '" width="100" height="20" alt="Bar" data-parsoid="1" about="#mwt1" />' +
-			'</p>',
+		body: ve.dm.example.singleLine`
+			<p>
+				<img src="${ve.ce.minImgDataUri}" width="100" height="20" alt="Bar" typeof="mw:Extension/score"
+					 data-mw='{"name":"score","attrs":{},"body":{"extsrc":"\\\\relative c&#39; { e d c d e e e }"}}'
+					 data-parsoid="1" about="#mwt1" />
+			</p>
+		`,
+		normalizedBody: ve.dm.example.singleLine`
+			<p>
+				<span typeof="mw:Extension/score"
+					 data-mw='{"name":"score","attrs":{},"body":{"extsrc":"\\\\relative c&#39; { d d d e e e }"}}'
+					 src="${ve.ce.minImgDataUri}" width="100" height="20" alt="Bar" data-parsoid="1" about="#mwt1" />
+			</p>
+		`,
 		data: [
 			{ type: 'paragraph' },
 			{
@@ -1508,7 +1713,7 @@ ve.dm.mwExample.domToDataCases = {
 					},
 					originalMw: '{"name":"score","attrs":{},"body":{"extsrc":"\\\\relative c\' { e d c d e e e }"}}'
 				},
-				originalDomElements: $.parseHTML( '<img src="' + ve.ce.minImgDataUri + '" width="100" height="20" alt="Bar" about="#mwt1" data-parsoid="1"></img>' )
+				originalDomElements: $.parseHTML( `<img src="${ve.ce.minImgDataUri}" width="100" height="20" alt="Bar" about="#mwt1" data-parsoid="1"></img>` )
 			},
 			{ type: '/mwAlienInlineExtension' },
 			{ type: '/paragraph' },
@@ -1742,7 +1947,7 @@ ve.dm.mwExample.domToDataCases = {
 	}, /* FIXME T185902: Temporarily commented out failing test case
 	'whitespace preservation with wrapped comments and language links': {
 		body: 'Foo\n' +
-			'<link rel="mw:PageProp/Language" href="http://de.wikipedia.org/wiki/Foo">\n' +
+			<link rel="mw:PageProp/Language" href="http://de.wikipedia.org/wiki/Foo">\n
 			'<link rel="mw:PageProp/Language" href="http://fr.wikipedia.org/wiki/Foo">',
 		data: [
 			{
@@ -1805,24 +2010,53 @@ ve.dm.mwExample.domToDataCases = {
 		]
 	}, */
 	'document with meta elements': {
-		body: '<!-- No conversion --><meta property="mw:ThisIsAnAlien" /><p>Foo' +
-			'<link rel="mw:PageProp/Category" href="./Category:Bar" />Bar' +
-			'<meta property="mw:foo" content="bar" />Ba<!-- inline -->z</p>' +
-			'<meta property="mw:bar" content="baz" /><!--barbaz-->' +
-			'<link rel="mw:PageProp/Category" href="./Category:Foo_foo#Bar%20baz%23quux" />' +
-			'<meta typeof="mw:Placeholder" data-parsoid="foobar" />',
-		clipboardBody: '<span rel="ve:Comment" data-ve-comment=" No conversion ">&nbsp;</span><meta property="mw:ThisIsAnAlien" /><p>Foo' +
-			'<link rel="mw:PageProp/Category" href="./Category:Bar" />Bar' +
-			'<meta property="mw:foo" content="bar" />Ba<span rel="ve:Comment" data-ve-comment=" inline ">&nbsp;</span>z</p>' +
-			'<meta property="mw:bar" content="baz" /><span rel="ve:Comment" data-ve-comment="barbaz">&nbsp;</span>' +
-			'<link rel="mw:PageProp/Category" href="./Category:Foo_foo#Bar%20baz%23quux" />' +
-			'<meta typeof="mw:Placeholder" data-parsoid="foobar" />',
-		previewBody: ve.dm.example.commentNodePreview( ' No conversion ' ) + '<meta property="mw:ThisIsAnAlien" /><p>Foo' +
-			'<link rel="mw:PageProp/Category" href="./Category:Bar" />Bar' +
-			'<meta property="mw:foo" content="bar" />Ba' + ve.dm.example.commentNodePreview( ' inline ' ) + 'z</p>' +
-			'<meta property="mw:bar" content="baz" />' + ve.dm.example.commentNodePreview( 'barbaz' ) +
-			'<link rel="mw:PageProp/Category" href="./Category:Foo_foo#Bar%20baz%23quux" />' +
-			'<meta typeof="mw:Placeholder" data-parsoid="foobar" />',
+		body: ve.dm.example.singleLine`
+			<!-- No conversion -->
+			<meta property="mw:ThisIsAnAlien" />
+			<p>
+				Foo
+				<link rel="mw:PageProp/Category" href="./Category:Bar" />
+				Bar
+				<meta property="mw:foo" content="bar" />
+				Ba<!-- inline -->z<
+			/p>
+			<meta property="mw:bar" content="baz" />
+			<!--barbaz-->
+			<link rel="mw:PageProp/Category" href="./Category:Foo_foo#Bar%20baz%23quux" />
+			<meta typeof="mw:Placeholder" data-parsoid="foobar" />
+		`,
+		clipboardBody: ve.dm.example.singleLine`
+			<span rel="ve:Comment" data-ve-comment=" No conversion ">
+				&nbsp;
+			</span>
+			<meta property="mw:ThisIsAnAlien" />
+			<p>
+				Foo
+				<link rel="mw:PageProp/Category" href="./Category:Bar" />
+				Bar
+				<meta property="mw:foo" content="bar" />
+				Ba<span rel="ve:Comment" data-ve-comment=" inline ">&nbsp;</span>z
+			</p>
+			<meta property="mw:bar" content="baz" />
+			<span rel="ve:Comment" data-ve-comment="barbaz">&nbsp;</span>
+			<link rel="mw:PageProp/Category" href="./Category:Foo_foo#Bar%20baz%23quux" />
+			<meta typeof="mw:Placeholder" data-parsoid="foobar" />
+		`,
+		previewBody: ve.dm.example.singleLine`
+			${ve.dm.example.commentNodePreview( ' No conversion ' )}
+			<meta property="mw:ThisIsAnAlien" />
+			<p>
+				Foo
+				<a href="/wiki/Category:Bar">Bar</a>
+				Bar
+				<meta property="mw:foo" content="bar" />
+				Ba${ve.dm.example.commentNodePreview( ' inline ' )}z
+			</p>
+			<meta property="mw:bar" content="baz" />
+			${ve.dm.example.commentNodePreview( 'barbaz' )}
+			<a href="/wiki/Category:Foo_foo">Foo foo</a>
+			<meta typeof="mw:Placeholder" data-parsoid="foobar" />
+		`,
 		base: ve.dm.mwExample.baseUri,
 		data: ve.dm.mwExample.withMeta,
 		realData: ve.dm.mwExample.withMetaRealData
@@ -1976,13 +2210,14 @@ ve.dm.mwExample.domToDataCases = {
 		storeItems: ve.dm.mwExample.MWBlockImage.storeItems
 	},
 	'broken block image': {
-		body:
-			'<figure class="mw-default-size" typeof="mw:Error mw:Image/Thumb" data-mw="{&quot;errors&quot;:[{&quot;key&quot;:&quot;apierror-filedoesnotexist&quot;,&quot;message&quot;:&quot;This image does not exist.&quot;}]}">' +
-				'<a href="./Special:FilePath/Missing_image.jpg">' +
-					'<span class="mw-broken-media" resource="./File:Missing_image.jpg" data-width="220">File:Missing image.jpg</span>' +
-				'</a>' +
-				'<figcaption>abc</figcaption>' +
-			'</figure>',
+		body: ve.dm.example.singleLine`
+			<figure class="mw-default-size" typeof="mw:Error mw:Image/Thumb" data-mw='{"errors":[{"key":"apierror-filedoesnotexist","message":"This image does not exist."}]}'>
+				<a href="./Special:FilePath/Missing_image.jpg">
+					<span resource="./File:Missing_image.jpg" class="mw-file-element mw-broken-media" data-width="220">File:Missing image.jpg</span>
+				</a>
+				<figcaption>abc</figcaption>
+			</figure>
+		`,
 		data: [
 			{
 				type: 'mwBlockImage',
@@ -1990,7 +2225,7 @@ ve.dm.mwExample.domToDataCases = {
 					type: 'thumb',
 					align: 'default',
 					href: './Special:FilePath/Missing_image.jpg',
-					imageClassAttr: 'mw-broken-media',
+					imageClassAttr: 'mw-file-element mw-broken-media',
 					imgWrapperClassAttr: null,
 					mediaClass: 'Image',
 					mediaTag: 'span',
@@ -2023,23 +2258,25 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		previewBody:
-			'<figure class="mw-default-size" typeof="mw:Error mw:Image/Thumb" data-mw="{&quot;errors&quot;:[{&quot;key&quot;:&quot;apierror-filedoesnotexist&quot;,&quot;message&quot;:&quot;This image does not exist.&quot;}]}">' +
-				'<a href="./Special:FilePath/Missing_image.jpg" class="new">' +
-					'<span class="mw-broken-media" resource="./File:Missing_image.jpg" data-width="220">File:Missing image.jpg</span>' +
-				'</a>' +
-				'<figcaption>abc</figcaption>' +
-			'</figure>'
+		previewBody: ve.dm.example.singleLine`
+			<figure class="mw-default-size" typeof="mw:Error mw:Image/Thumb" data-mw='{"errors":[{"key":"apierror-filedoesnotexist","message":"This image does not exist."}]}'>
+				<a href="./Special:FilePath/Missing_image.jpg" class="new">
+					<span resource="./File:Missing_image.jpg" class="mw-file-element mw-broken-media" data-width="220">File:Missing image.jpg</span>
+				</a>
+				<figcaption>abc</figcaption>
+			</figure>
+		`
 	},
 	'broken inline image': {
-		body:
-			'<p>' +
-				'<span typeof="mw:Error mw:Image" data-mw="{&quot;errors&quot;:[{&quot;key&quot;:&quot;apierror-filedoesnotexist&quot;,&quot;message&quot;:&quot;This image does not exist.&quot;}]}">' +
-					'<a href="./Special:FilePath/Missing_image.jpg">' +
-						'<span class="mw-broken-media" resource="./File:Missing_image.jpg" data-width="200">File:Missing image.jpg</span>' +
-					'</a>' +
-				'</span>' +
-			'</p>',
+		body: ve.dm.example.singleLine`
+			<p>
+				<span typeof="mw:Error mw:Image" data-mw='{"errors":[{"key":"apierror-filedoesnotexist","message":"This image does not exist."}]}'>
+					<a href="./Special:FilePath/Missing_image.jpg">
+						<span resource="./File:Missing_image.jpg" class="mw-file-element mw-broken-media" data-width="200">File:Missing image.jpg</span>
+					</a>
+				</span>
+			</p>
+		`,
 		data: [
 			{ type: 'paragraph' },
 			{
@@ -2047,7 +2284,7 @@ ve.dm.mwExample.domToDataCases = {
 				attributes: {
 					type: 'none',
 					href: './Special:FilePath/Missing_image.jpg',
-					imageClassAttr: 'mw-broken-media',
+					imageClassAttr: 'mw-file-element mw-broken-media',
 					imgWrapperClassAttr: null,
 					mediaClass: 'Image',
 					mediaTag: 'span',
@@ -2074,34 +2311,37 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		previewBody:
-			'<p>' +
-				'<span typeof="mw:Error mw:Image" data-mw="{&quot;errors&quot;:[{&quot;key&quot;:&quot;apierror-filedoesnotexist&quot;,&quot;message&quot;:&quot;This image does not exist.&quot;}]}">' +
-					'<a href="./Special:FilePath/Missing_image.jpg" class="new">' +
-						'<span class="mw-broken-media" resource="./File:Missing_image.jpg" data-width="200">File:Missing image.jpg</span>' +
-					'</a>' +
-				'</span>' +
-			'</p>'
+		previewBody: ve.dm.example.singleLine`
+			<p>
+				<span typeof="mw:Error mw:Image" data-mw='{"errors":[{"key":"apierror-filedoesnotexist","message":"This image does not exist."}]}'>
+					<a href="./Special:FilePath/Missing_image.jpg" class="new">
+						<span resource="./File:Missing_image.jpg" class="mw-file-element mw-broken-media" data-width="200">File:Missing image.jpg</span>
+					</a>
+				</span>
+			</p>
+		`
 	},
 	'attribute preservation does not crash due to text node split': {
-		body:
-			'<figure typeof="mw:Image/Thumb" data-parsoid="{}">' +
-				'<a href="./Foo" data-parsoid="{}">' +
-					'<img src="' + ve.ce.minImgDataUri + '" width="1" height="2" resource="./FooBar" data-parsoid="{}">' +
-				'</a>' +
-				'<figcaption data-parsoid="{}">' +
-				' foo <a rel="mw:WikiLink" href="./Bar" data-parsoid="{}">bar</a> baz' +
-				'</figcaption>' +
-			'</figure>',
-		fromDataBody:
-			'<figure typeof="mw:Image/Thumb">' +
-				'<a href="./Foo">' +
-					'<img src="' + ve.ce.minImgDataUri + '" width="1" height="2" resource="./FooBar">' +
-				'</a>' +
-				'<figcaption>' +
-				' foo <a rel="mw:WikiLink" href="./Bar">bar</a> baz' +
-				'</figcaption>' +
-			'</figure>',
+		body: ve.dm.example.singleLine`
+			<figure typeof="mw:Image/Thumb" data-parsoid="{}">
+				<a href="./Foo" data-parsoid="{}" class="mw-file-description">
+					<img src="${ve.ce.minImgDataUri}" class="mw-file-element" width="1" height="2" resource="./FooBar" data-parsoid="{}">
+				</a>
+				<figcaption data-parsoid="{}">
+				 foo <a rel="mw:WikiLink" href="./Bar" data-parsoid="{}">bar</a> baz
+				</figcaption>
+			</figure>
+		`,
+		fromDataBody: ve.dm.example.singleLine`
+			<figure typeof="mw:Image/Thumb">
+				<a href="./Foo" class="mw-file-description">
+					<img src="${ve.ce.minImgDataUri}" class="mw-file-element" width="1" height="2" resource="./FooBar">
+				</a>
+				<figcaption>
+				 foo <a rel="mw:WikiLink" href="./Bar">bar</a> baz
+				</figcaption>
+			</figure>
+		`,
 		base: ve.dm.mwExample.baseUri,
 		data: [
 			{
@@ -2110,8 +2350,8 @@ ve.dm.mwExample.domToDataCases = {
 					type: 'thumb',
 					align: 'default',
 					href: './Foo',
-					imageClassAttr: null,
-					imgWrapperClassAttr: null,
+					imageClassAttr: 'mw-file-element',
+					imgWrapperClassAttr: 'mw-file-description',
 					mediaClass: 'Image',
 					mediaTag: 'img',
 					src: ve.ce.minImgDataUri,

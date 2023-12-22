@@ -5,7 +5,6 @@
 			"Macofe"
 		]
 	},
-	"apihelp-query+extracts-description": "Devuelve extractos de la páginas dadas en texto sin formato o con HTML limitado.",
 	"apihelp-query+extracts-param-chars": "Cuántos caracteres devolver. El texto real devuelto puede ser un poco más largo.",
 	"apihelp-query+extracts-param-sentences": "Cuántas oraciones se devolverán.",
 	"apihelp-query+extracts-param-limit": "Cuántos extractos se devolverán. (Los extractos múltiples sólo pueden devolverse si se estable 'exintro' como verdadero.)",

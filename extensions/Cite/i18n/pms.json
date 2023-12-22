@@ -23,5 +23,10 @@
 	"cite_error_references_no_key": "La tichëtta <code>&lt;ref&gt;</code> definìa an <code>&lt;references&gt;</code> a l'ha pa gnun atribut ëd nòm.",
 	"cite_error_empty_references_define": "La tichëtta <code>&lt;ref&gt;</code> definìa an <code>&lt;references&gt;</code> con nòm \"$1\" a l'ha pa gnun contnù.",
 	"cite_references_link_accessibility_label": "Andé",
-	"cite_references_link_many_accessibility_label": "Sauté a:"
+	"cite_references_link_many_accessibility_label": "Sauté a:",
+	"cite-wikieditor-tool-reference": "Arferiment",
+	"cite-wikieditor-help-page-references": "Arferiment",
+	"cite-wikieditor-help-content-reference-description": "Arferiment",
+	"cite-wikieditor-help-content-rereference-description": "Usagi adissional dël midem arferiment",
+	"cite-wikieditor-help-content-showreferences-description": "Visualisé j'arferiment"
 }

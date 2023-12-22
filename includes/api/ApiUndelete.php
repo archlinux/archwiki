@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
+ * Copyright © 2007 Roan Kattouw <roan.kattouw@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +37,8 @@ class ApiUndelete extends ApiBase {
 
 	use ApiWatchlistTrait;
 
-	/** @var UndeletePageFactory */
-	private $undeletePageFactory;
-
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
+	private UndeletePageFactory $undeletePageFactory;
+	private WikiPageFactory $wikiPageFactory;
 
 	/**
 	 * @param ApiMain $mainModule
@@ -85,6 +82,9 @@ class ApiUndelete extends ApiBase {
 		$titleObj = Title::newFromText( $params['title'] );
 		if ( !$titleObj || $titleObj->isExternal() ) {
 			$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $params['title'] ) ] );
+		}
+		if ( !$titleObj->canExist() ) {
+			$this->dieWithError( 'apierror-pagecannotexist' );
 		}
 
 		// Convert timestamps

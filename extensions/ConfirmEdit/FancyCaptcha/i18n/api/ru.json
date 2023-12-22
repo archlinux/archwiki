@@ -5,7 +5,6 @@
 			"Okras"
 		]
 	},
-	"apihelp-fancycaptchareload-description": "Получение новой FancyCaptcha.",
 	"apihelp-fancycaptchareload-summary": "Получение новой FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Получить новую FancyCaptcha"
 }

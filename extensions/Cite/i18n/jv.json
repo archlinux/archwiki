@@ -33,5 +33,11 @@
 	"cite_references_link_accessibility_back_label": "Lumpat bali munggah",
 	"cite_section_preview_references": "Pratuduh rujukan",
 	"cite_warning": "Pélik sitiran: $1",
-	"cite_warning_sectionpreview_no_text": "Tenger <code>&lt;ref&gt;</code> kanthi jeneng <code>$1</code> ora bisa dipratuduhaké amarga diwedharaké sajabané pérangan sing saiki utawa ora diwedharaké babar pisan."
+	"cite_warning_sectionpreview_no_text": "Tenger <code>&lt;ref&gt;</code> kanthi jeneng <code>$1</code> ora bisa dipratuduhaké amarga diwedharaké sajabané pérangan sing saiki utawa ora diwedharaké babar pisan.",
+	"cite-wikieditor-tool-reference": "Rujukan",
+	"cite-wikieditor-help-page-references": "Rujukan",
+	"cite-wikieditor-help-content-reference-description": "Rujukan",
+	"cite-wikieditor-help-content-named-reference-description": "Rujukan disebut",
+	"cite-wikieditor-help-content-rereference-description": "Panganggo liya saka rujukan sing padha",
+	"cite-wikieditor-help-content-showreferences-description": "Rujukan dipajang"
 }

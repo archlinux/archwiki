@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Les Meloures",
-			"Robby"
+			"Robby",
+			"Volvox"
 		]
 	},
 	"skinname-vector": "Vector (Versioun vun 2010)",
@@ -37,6 +38,8 @@
 	"vector-jumptosearch": "Op d'Siche wiesselen",
 	"vector-jumptocontent": "Op den Inhalt sprangen",
 	"vector-more-actions": "Méi",
+	"vector-feature-custom-font-size-disabled-label": "Kleng",
+	"vector-feature-custom-font-size-enabled-label": "Standard",
 	"vector-search-loader": "Luede vun de Propose fir ze sichen",
 	"vector-searchsuggest-containing": "No Säite mat <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> sichen",
 	"vector-intro-page": "Help:Aféierung",
@@ -52,6 +55,8 @@
 	"vector-site-nav-label": "Site",
 	"vector-main-menu-label": "Haaptmenü",
 	"vector-limited-width-toggle": "Déi limitéiert Breet vum Inhalt aktivéieren oder desaktivéieren",
+	"vector-limited-width-toggle-on-popup": "Dir hutt Äre Layout op voll Breet ëmgeschalt. Fir zréck op déi limitéiert Breet, dréckt dëse Knäppchen.",
+	"vector-limited-width-toggle-off-popup": "Dir kënnt tëscht enger limitéierter Breet a voller Breet wiesselen wann Dir op dëse Knäppchen klickt.",
 	"vector-page-tools-label": "Geschierkëscht",
 	"vector-page-tools-general-label": "Allgemeng",
 	"vector-page-tools-actions-label": "Aktiounen",
@@ -61,5 +66,14 @@
 	"tooltip-vector-anon-user-menu-title": "Méi Optiounen",
 	"vector-prefs-limited-width": "Aktivéiert de Modus vun der limitéiert Breet",
 	"vector-prefs-limited-width-help": "De Modus fir eng limitéiert Breet fir eng verbessert Lieserfarung aktivéieren.",
-	"empty-language-selector-body": "Inhalter vun der Säit ginn an anere Sproochen net ënnerstëtzt."
+	"empty-language-selector-body": "Inhalter vun der Säit ginn an anere Sproochen net ënnerstëtzt.",
+	"vector-toc-unpinned-popup": "D'Inhaltsverzeechnes gouf heihi geréckelt.",
+	"vector-page-tools-unpinned-popup": "De Menü vun der Geschierkëscht gouf heihi geréckelt.",
+	"vector-main-menu-unpinned-popup": "Den Haaptmenü gouf hei hi geréckelt.",
+	"vector-readability-survey-fontSize": "Schrëftgréisst",
+	"vector-readability-survey-lineHeight": "Zeilenhéicht",
+	"vector-readability-survey-paragraphSpacing": "Ofstand tëscht den Abschnitter",
+	"vector-readability-survey-randomize": "zoufälleg",
+	"vector-readability-survey-reset": "zrécksetzen",
+	"vector-readability-survey-share": "virufueren"
 }

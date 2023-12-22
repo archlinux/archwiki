@@ -2,8 +2,10 @@
 
 namespace Test\Parsoid;
 
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\Mocks\MockDataAccess;
+use Wikimedia\Parsoid\Mocks\MockMetrics;
 use Wikimedia\Parsoid\Mocks\MockPageConfig;
 use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Mocks\MockSiteConfig;
@@ -138,7 +140,7 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 		$dataAccess = new MockDataAccess( $opts );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
-		$pageContent = new MockPageContent( [ 'main' => '' ] );
+		$pageContent = new MockPageContent( [ 'main' => $testOpts['pageContent'] ?? '' ] );
 		$pageConfig = new MockPageConfig( [
 			'pageLanguage' => $testOpts['pageLanguage'] ?? 'en'
 		], $pageContent );
@@ -164,6 +166,48 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 	public function providePb2Pb() {
 		// phpcs:disable Generic.Files.LineLength.TooLong
 		return [
+			[
+				'convertoffsets',
+				[
+					'html' => '<p id="mwAA">La Luna è l\'unico satellite naturale della Terra</p><p id="mwAQ">La Luna è l\'unico satellite naturale della Terra</p>',
+					'parsoid' => '{"counter":2,"ids":{"mwAA":{"dsr":[0,49,0,0]},"mwAQ":{"dsr":[51,100,0,0]}},"offsetType":"byte"}',
+					'mw' => null,
+				],
+				[
+					'html' => '<p id="mwAA">La Luna è l\'unico satellite naturale della Terra</p><p id="mwAQ">La Luna è l\'unico satellite naturale della Terra</p>',
+					'parsoid' => '{"counter":2,"ids":{"mwAA":{"dsr":[0,48,0,0]},"mwAQ":{"dsr":[50,98,0,0]}},"offsetType":"ucs2"}',
+					'mw' => '{"ids":[]}',
+					'version' => self::$defaultContentVersion,
+				],
+				[
+					'inputOffsetType' => 'byte',
+					'outputOffsetType' => 'ucs2',
+					// Note the accented e char that is a multi-byte char.
+					// Without the pageContent property, offset conversion will not work.
+					'pageContent' => "La Luna è l'unico satellite naturale della Terra\n\nLa Luna è l'unico satellite naturale della Terra",
+					'body_only' => true
+				]
+			],
+			[
+				'convertoffsets',
+				[
+					'html' => '<p id="mwAA">La Luna è l\'unico satellite naturale della Terra</p><p id="mwAQ">La Luna è l\'unico satellite naturale della Terra</p>',
+					'parsoid' => '{"counter":2,"ids":{"mwAA":{"dsr":[0,48,0,0]},"mwAQ":{"dsr":[50,98,0,0]}},"offsetType":"ucs2"}',
+					'mw' => null,
+				],
+				[
+					'html' => '<p id="mwAA">La Luna è l\'unico satellite naturale della Terra</p><p id="mwAQ">La Luna è l\'unico satellite naturale della Terra</p>',
+					'parsoid' => '{"counter":2,"ids":{"mwAA":{"dsr":[0,49,0,0]},"mwAQ":{"dsr":[51,100,0,0]}},"offsetType":"byte"}',
+					'mw' => '{"ids":[]}',
+					'version' => self::$defaultContentVersion,
+				],
+				[
+					'inputOffsetType' => 'ucs2',
+					'outputOffsetType' => 'byte',
+					'pageContent' => "La Luna è l'unico satellite naturale della Terra\n\nLa Luna è l'unico satellite naturale della Terra",
+					'body_only' => true
+				]
+			],
 			[
 				'redlinks',
 				[
@@ -233,10 +277,10 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 				],
 				[
 					'body_only' => true,
-					'pageLanguage' => 'sr',
+					'pageLanguage' => new Bcp47CodeValue( 'sr' ),
 					'variant' => [
-						'source' => 'sr-ec',
-						'target' => 'sr-el',
+						'source' => new Bcp47CodeValue( 'sr-Cyrl' ),
+						'target' => new Bcp47CodeValue( 'sr-Latn' ),
 					]
 				]
 			],
@@ -255,10 +299,10 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 				],
 				[
 					'body_only' => true,
-					'pageLanguage' => 'sr',
+					'pageLanguage' => new Bcp47CodeValue( 'sr' ),
 					'variant' => [
-						'source' => 'sr-el',
-						'target' => 'sr-ec',
+						'source' => new Bcp47CodeValue( 'sr-Latn' ),
+						'target' => new Bcp47CodeValue( 'sr-Cyrl' ),
 					]
 				]
 			],
@@ -277,10 +321,10 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 				],
 				[
 					'body_only' => true,
-					'pageLanguage' => 'sr',
+					'pageLanguage' => new Bcp47CodeValue( 'sr' ),
 					'variant' => [
-						'source' => 'sr-el',
-						'target' => 'sr-ec',
+						'source' => new Bcp47CodeValue( 'sr-Latn' ),
+						'target' => new Bcp47CodeValue( 'sr-Cyrl' ),
 					]
 				]
 			],
@@ -301,10 +345,10 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 				],
 				[
 					'body_only' => true,
-					'pageLanguage' => 'sr',
+					'pageLanguage' => new Bcp47CodeValue( 'sr' ),
 					'variant' => [
-						'source' => 'sr-el',
-						'target' => 'sr-ec',
+						'source' => new Bcp47CodeValue( 'sr-Latn' ),
+						'target' => new Bcp47CodeValue( 'sr-Cyrl' ),
 					]
 				]
 			],
@@ -313,10 +357,10 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers ::implementsLanguageConversion
-	 * @dataProvider provideImplementsLanguageConversion
+	 * @covers ::implementsLanguageConversionBcp47
+	 * @dataProvider provideImplementsLanguageConversionBcp47
 	 */
-	public function testImplementsLanguageConversion( string $targetVariantCode, $expected ) {
+	public function testImplementsLanguageConversionBcp47( string $targetVariantCode, $expected ) {
 		$opts = [];
 
 		$siteConfig = new MockSiteConfig( $opts );
@@ -326,11 +370,11 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 		$pageContent = new MockPageContent( [ 'main' => '' ] );
 		$pageConfig = new MockPageConfig( $opts, $pageContent );
 
-		$actual = $parsoid->implementsLanguageConversion( $pageConfig, $targetVariantCode );
+		$actual = $parsoid->implementsLanguageConversionBcp47( $pageConfig, new Bcp47CodeValue( $targetVariantCode ) );
 		$this->assertEquals( $expected, $actual );
 	}
 
-	public function provideImplementsLanguageConversion() {
+	public function provideImplementsLanguageConversionBcp47() {
 		yield 'Variant conversion is implemented for en-x-piglatin' => [
 			'en-x-piglatin', true
 		];
@@ -339,4 +383,62 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 			'kk-latn', false
 		];
 	}
+
+	/**
+	 * @covers ::recordParseMetrics
+	 */
+	public function testParseMetrics() {
+		$opts = [];
+		$wt = "testing '''123'''";
+
+		$siteConfig = new MockSiteConfig( $opts );
+		$dataAccess = new MockDataAccess( $opts );
+		$parsoid = new Parsoid( $siteConfig, $dataAccess );
+
+		$pageContent = new MockPageContent( [ 'main' => $wt ] );
+		$pageConfig = new MockPageConfig( $opts, $pageContent );
+		$parsoid->wikitext2html( $pageConfig );
+
+		$metrics = $siteConfig->metrics();
+		$this->assertInstanceOf( MockMetrics::class, $metrics );
+		$log = $metrics->log;
+		$this->assertCount( 3, $log );
+		$this->assertEquals(
+			[ 'timing', 'entry.wt2html.pageWithOldid.size.input', 17 ],
+			$log[1]
+		);
+	}
+
+	/**
+	 * @covers ::recordSerializationMetrics
+	 */
+	public function testSerializationMetrics() {
+		$opts = [];
+		$html = "<p>hiho</p>";
+
+		$siteConfig = new MockSiteConfig( $opts );
+		$dataAccess = new MockDataAccess( $opts );
+		$parsoid = new Parsoid( $siteConfig, $dataAccess );
+
+		$pageContent = new MockPageContent( [ 'main' => '' ] );
+		$pageConfig = new MockPageConfig( $opts, $pageContent );
+
+		$wt = $parsoid->html2wikitext( $pageConfig, $html );
+		$this->assertEquals( 'hiho', $wt );
+
+		$metrics = $siteConfig->metrics();
+		$this->assertInstanceOf( MockMetrics::class, $metrics );
+		$log = $metrics->log;
+		$this->assertCount( 7, $log );
+
+		$this->assertEquals(
+			[ 'timing', 'entry.html2wt.size.input', 11 ],
+			$log[3]
+		);
+		$this->assertEquals(
+			[ 'timing', 'entry.html2wt.size.output', 4 ],
+			$log[5]
+		);
+	}
+
 }

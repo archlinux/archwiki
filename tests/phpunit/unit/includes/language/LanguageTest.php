@@ -1,8 +1,11 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFallback;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Title\NamespaceInfo;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
 
 /**
  * @coversDefaultClass Language
@@ -54,7 +57,42 @@ class LanguageTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $bcp47code, $lang->toBcp47Code() );
 	}
 
-	public function provideCodes() {
+	/**
+	 * @covers ::isSameCodeAs
+	 * @dataProvider provideCodes
+	 */
+	public function testIsSameCodeAs( $code, $bcp47code ) {
+		// Commented out symmetric tests below can be enabled once
+		// we require wikimedia/bcp47-code ^2.0.0
+		$code1 = $this->getObj( [ 'code' => $code ] );
+		$code2 = new Bcp47CodeValue( $bcp47code );
+		$this->assertTrue( $code1->isSameCodeAs( $code2 ) );
+		// $this->assertTrue( $code2->isSameCodeAs( $code1 ) ); // ^2.0.0
+
+		// Should be case-insensitive.
+		$code2 = new Bcp47CodeValue( strtoupper( $bcp47code ) );
+		$this->assertTrue( $code1->isSameCodeAs( $code2 ) );
+		// $this->assertTrue( $code2->isSameCodeAs( $code1 ) ); // ^2.0.0
+
+		$code2 = new Bcp47CodeValue( strtolower( $bcp47code ) );
+		$this->assertTrue( $code1->isSameCodeAs( $code2 ) );
+		// $this->assertTrue( $code2->isSameCodeAs( $code1 ) ); // ^2.0.0
+	}
+
+	/**
+	 * @covers ::isSameCodeAs
+	 * @dataProvider provideCodes
+	 */
+	public function testIsNotSameCodeAs( $code, $bcp47code ) {
+		// Commented out symmetric tests below can be enabled once
+		// we require wikimedia/bcp47-code ^2.0.0
+		$code1 = $this->getObj( [ 'code' => $code ] );
+		$code2 = new Bcp47CodeValue( 'x-not-the-same-code' );
+		$this->assertFalse( $code1->isSameCodeAs( $code2 ) );
+		// $this->assertFalse( $code2->isSameCodeAs( $code1 ) ); // ^2.0.0
+	}
+
+	public static function provideCodes() {
 		return LanguageCodeTest::provideLanguageCodes();
 	}
 
@@ -94,7 +132,7 @@ class LanguageTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $lang->ucwords( $input ) );
 	}
 
-	public function provideUcwords() {
+	public static function provideUcwords() {
 		return [
 			'Empty string' => [ '', '' ],
 			'Non-alpha only' => [ '3212-353', '3212-353' ],
@@ -115,7 +153,7 @@ class LanguageTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $lang->ucwordbreaks( $input ) );
 	}
 
-	public function provideUcwordbreaks() {
+	public static function provideUcwordbreaks() {
 		return [
 			'Empty string' => [ '', '' ],
 			'Non-alpha only' => [ '3212-353', '3212-353' ],
@@ -138,7 +176,7 @@ class LanguageTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $lang->firstChar( $input ) );
 	}
 
-	public function provideFirstChar() {
+	public static function provideFirstChar() {
 		return [
 			'Empty string' => [ '', '' ],
 			'Single Latin' => [ 'T', 'T' ],

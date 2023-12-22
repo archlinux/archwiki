@@ -20,6 +20,7 @@
  */
 
 use MediaWiki\Html\Html;
+use MediaWiki\Specials\SpecialVersion;
 use Wikimedia\IPUtils;
 
 class WebInstallerOptions extends WebInstallerPage {
@@ -315,7 +316,7 @@ class WebInstallerOptions extends WebInstallerPage {
 			$this->addHTML( $extHtml );
 			// Push the dependency map to the client side
 			$this->addHTML( Html::inlineScript(
-				'var extDependencyMap = ' . Xml::encodeJsVar( $dependencyMap )
+				'var extDependencyMap = ' . Html::encodeJsVar( $dependencyMap )
 			) );
 		}
 	}

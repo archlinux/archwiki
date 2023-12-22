@@ -2,10 +2,28 @@
 	"@metadata": {
 		"authors": [
 			"Enye Lav",
-			"Merrahtar"
+			"Merrahtar",
+			"Римма"
 		]
 	},
 	"vector-languages": "Кыввез",
+	"vector-language-button-label": "{{PLURAL:$1|$1 кыв|$1 кыввез}}",
+	"vector-no-language-button-label": "Содтыны кыввез",
+	"vector-action-addsection": "Содтыны тема",
 	"vector-action-delete": "Чышкыны",
-	"vector-view-view": "Лыддьöтны"
+	"vector-action-move": "Вежны ним",
+	"vector-action-protect": "Дорйыны",
+	"vector-view-create": "Лöсьöтны",
+	"vector-view-history": "Синмалӧмлӧн история",
+	"vector-view-view": "Лыддьöтны",
+	"vector-more-actions": "Эшӧ",
+	"vector-searchsuggest-containing": "Листбоккез кошшом, кытӧн эм <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Пытшкӧс",
+	"vector-toc-beginning": "Пондӧм",
+	"vector-main-menu-label": "Шӧр меню",
+	"vector-page-tools-label": "Инструменттэз",
+	"vector-page-tools-general-label": "Ӧтувья",
+	"vector-unpin-element-label": "сайöвтны",
+	"vector-readability-survey-description": "Кытшӧма Википедиялӧн текст кажитчӧ буржыкӧн?Улісь ысласян тувйӧн лӧсьӧтӧ бансӧ.Унажык тӧдмалӧ [[mw:Special:MyLanguage/Reading/Web/Accessibility for reading проект йылісь|Позьӧ лыддьӧтны проектcӧ]]",
+	"vector-readability-survey-optout": "Личкӧ одзлань,медбы ыстыны миянлӧ ассиныт дизайн и пыртны донтан гижӧт мӧд листбок вылӧ.[[#close-vector-survey|Remove this tool]]"
 }

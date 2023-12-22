@@ -5,20 +5,27 @@ var
 	pageThreads,
 	lastControllerScrollOffset,
 	featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {},
-	createMemoryStorage = require( './createMemoryStorage.js' ),
-	storage = createMemoryStorage( mw.storage ),
+	MemoryStorage = require( './MemoryStorage.js' ),
+	STORAGE_EXPIRY = 60 * 60 * 24 * 30,
 	Parser = require( './Parser.js' ),
 	ThreadItemSet = require( './ThreadItemSet.js' ),
 	CommentDetails = require( './CommentDetails.js' ),
 	HeadingItem = require( './HeadingItem.js' ),
 	ReplyLinksController = require( './ReplyLinksController.js' ),
-	logger = require( './logger.js' ),
 	utils = require( './utils.js' ),
 	highlighter = require( './highlighter.js' ),
 	topicSubscriptions = require( './topicsubscriptions.js' ),
-	mobile = require( './mobile.js' ),
+	permalinks = require( './permalinks.js' ),
 	pageHandlersSetup = false,
-	pageDataCache = {};
+	pageDataCache = {},
+	defaultEditMode = mw.user.options.get( 'discussiontools-editmode' ) || mw.config.get( 'wgDiscussionToolsFallbackEditMode' ),
+	defaultVisual = defaultEditMode === 'visual',
+	enable2017Wikitext = featuresEnabled.sourcemodetoolbar;
+
+var mobile = null;
+if ( OO.ui.isMobile() && mw.config.get( 'skin' ) === 'minerva' ) {
+	mobile = require( './mobile.js' );
+}
 
 mw.messages.set( require( './controller/contLangMessages.json' ) );
 
@@ -211,7 +218,7 @@ function checkThreadItemOnPage( pageName, oldId, threadItem ) {
 				} ] } ).promise();
 			}
 
-			return new CommentDetails( pageName, oldId, metadata.notices, metadata.content, defaultMode );
+			return new CommentDetails( pageName, oldId, metadata.notices, metadata.wouldautocreate, metadata.content, defaultMode );
 		} );
 }
 
@@ -247,11 +254,42 @@ function getCheckboxesPromise( pageName, oldId ) {
 }
 
 /**
+ * Get the resourceloader modules required for a mode of the reply widget
+ *
+ * @param {boolean} visual Prefer the VE-based class
+ * @return {string[]}
+ */
+function getReplyWidgetModules( visual ) {
+	if ( !visual ) {
+		return [ 'ext.discussionTools.ReplyWidgetPlain' ];
+	}
+
+	var veConf = mw.config.get( 'wgVisualEditorConfig' ),
+		visualModules = [ 'ext.discussionTools.ReplyWidgetVisual' ]
+			.concat( veConf.pluginModules.filter( mw.loader.getState ) );
+
+	if ( OO.ui.isMobile() ) {
+		visualModules = [
+			'ext.visualEditor.core.mobile',
+			'ext.visualEditor.mwextensions'
+		].concat( visualModules );
+	} else {
+		visualModules = [
+			'ext.visualEditor.core.desktop',
+			'ext.visualEditor.desktopTarget',
+			'ext.visualEditor.mwextensions.desktop'
+		].concat( visualModules );
+	}
+	return visualModules;
+}
+
+/**
  * Initialize Discussion Tools features
  *
  * @param {jQuery} $container Page container
  * @param {Object<string,Mixed>} [state] Page state data object
  * @param {string} [state.repliedTo] The comment ID that was just replied to
+ * @param {boolean} [state.tempUserCreated] Whether a temp user was just created
  */
 function init( $container, state ) {
 	var
@@ -276,6 +314,7 @@ function init( $container, state ) {
 
 	$pageContainer = $container;
 	linksController = new ReplyLinksController( $pageContainer );
+	permalinks.init( $pageContainer );
 
 	linksController.on( 'link-interact', function () {
 		// Preload page metadata when the user is about to use a link, to make the tool load faster.
@@ -298,8 +337,17 @@ function init( $container, state ) {
 		topicSubscriptions.initTopicSubscriptions( $container, pageThreads );
 	}
 
-	if ( OO.ui.isMobile() && mw.config.get( 'skin' ) === 'minerva' ) {
-		mobile.init( $container );
+	if ( mobile ) {
+		mobile.init( $container, pageThreads );
+	}
+
+	if ( linksController.pageHasReplyLinks() || linksController.pageHasNewTopicLink() ) {
+		// Start loading reply widget code
+		// The worst-case here is that we might be on a page with no comments
+		// and the add-topic link suppressed, *but* which has valid links to
+		// trigger the new topic tool within the content. If that happens,
+		// the modules will still be loaded when those links are interacted with.
+		mw.loader.using( getReplyWidgetModules( defaultVisual || enable2017Wikitext ) );
 	}
 
 	/**
@@ -310,18 +358,22 @@ function init( $container, state ) {
 	 * @param {string} [mode] Optionally force a mode, 'visual' or 'source'
 	 * @param {boolean} [hideErrors] Suppress errors, e.g. when restoring auto-save
 	 * @param {boolean} [suppressNotifications] Don't notify the user if recovering auto-save
+	 * @param {MemoryStorage} [storage] Storage object for autosave
 	 */
-	function setupController( comment, $link, mode, hideErrors, suppressNotifications ) {
+	function setupController( comment, $link, mode, hideErrors, suppressNotifications, storage ) {
 		var commentController, $addSectionLink;
 
+		if ( !storage ) {
+			storage = new MemoryStorage( mw.storage, 'mw-ext-DiscussionTools-reply/' + comment.id, STORAGE_EXPIRY );
+		}
 		if ( comment.id === utils.NEW_TOPIC_COMMENT_ID ) {
 			// eslint-disable-next-line no-jquery/no-global-selector
 			$addSectionLink = $( '#ca-addsection' ).find( 'a' );
 			// When opening new topic tool using any link, always activate the link in page tabs too
 			$link = $link.add( $addSectionLink );
-			commentController = new NewTopicController( $pageContainer, comment, pageThreads );
+			commentController = new NewTopicController( $pageContainer, comment, pageThreads, storage );
 		} else {
-			commentController = new CommentController( $pageContainer, comment, pageThreads );
+			commentController = new CommentController( $pageContainer, comment, pageThreads, storage );
 		}
 
 		activeCommentId = comment.id;
@@ -400,6 +452,12 @@ function init( $container, state ) {
 			}
 		}
 
+		if ( mobile ) {
+			teardownPromise = teardownPromise.then( function () {
+				return mobile.closeLedeSectionDialog();
+			} );
+		}
+
 		teardownPromise.then( function () {
 			// If another reply widget is open (or opening), do nothing.
 			if ( activeController ) {
@@ -422,22 +480,26 @@ function init( $container, state ) {
 			return;
 		}
 
-		var mode, $link;
+		var mode, $link, storage;
 		for ( var i = 0; i < pageThreads.threadItems.length; i++ ) {
 			var comment = pageThreads.threadItems[ i ];
-			if ( storage.get( 'reply/' + comment.id + '/saveable' ) ) {
-				mode = storage.get( 'reply/' + comment.id + '/mode' );
+			storage = new MemoryStorage( mw.storage, 'mw-ext-DiscussionTools-reply/' + comment.id, STORAGE_EXPIRY );
+			if ( storage.get( 'saveable' ) ) {
+				mode = storage.get( 'mode' );
 				$link = $( commentNodes[ i ] );
-				setupController( comment, $link, mode, true, !state.firstLoad );
+				setupController( comment, $link, mode, true, !state.firstLoad, storage );
+				if ( OO.ui.isMobile() ) {
+					var urlFragment = mw.util.escapeIdForLink( comment.id );
+					// Force the section to expand on mobile (T338920)
+					location.hash = '#' + urlFragment;
+				}
 				break;
 			}
 		}
-		if (
-			storage.get( 'reply/' + utils.NEW_TOPIC_COMMENT_ID + '/saveable' ) ||
-			storage.get( 'reply/' + utils.NEW_TOPIC_COMMENT_ID + '/title' )
-		) {
-			mode = storage.get( 'reply/' + utils.NEW_TOPIC_COMMENT_ID + '/mode' );
-			setupController( newTopicComment(), $( [] ), mode, true, !state.firstLoad );
+		storage = new MemoryStorage( mw.storage, 'mw-ext-DiscussionTools-reply/' + utils.NEW_TOPIC_COMMENT_ID, STORAGE_EXPIRY );
+		if ( storage.get( 'saveable' ) || storage.get( 'title' ) ) {
+			mode = storage.get( 'mode' );
+			setupController( newTopicComment(), $( [] ), mode, true, !state.firstLoad, storage );
 		} else if ( mw.config.get( 'wgDiscussionToolsStartNewTopicTool' ) ) {
 			var data = linksController.parseNewTopicLink( location.href );
 			setupController( newTopicComment( data ), $( [] ) );
@@ -457,17 +519,14 @@ function init( $container, state ) {
 
 			if ( state.repliedTo === utils.NEW_TOPIC_COMMENT_ID ) {
 				mw.hook( 'postEdit' ).fire( {
+					tempUserCreated: state.tempUserCreated,
 					message: mw.msg( 'discussiontools-postedit-confirmation-topicadded', mw.user )
 				} );
 			} else {
-				if ( OO.ui.isMobile() ) {
-					mw.notify( mw.msg( 'discussiontools-postedit-confirmation-published', mw.user ) );
-				} else {
-					// postEdit is currently desktop only
-					mw.hook( 'postEdit' ).fire( {
-						message: mw.msg( 'discussiontools-postedit-confirmation-published', mw.user )
-					} );
-				}
+				mw.hook( 'postEdit' ).fire( {
+					tempUserCreated: state.tempUserCreated,
+					message: mw.msg( 'discussiontools-postedit-confirmation-published', mw.user )
+				} );
 			}
 		} else if ( state.newCommentIds ) {
 			highlighter.highlightNewComments( pageThreads, true, state.newCommentIds );
@@ -498,7 +557,9 @@ function init( $container, state ) {
 		pageHandlersSetup = true;
 	}
 	if ( state.firstLoad ) {
-		highlighter.highlightTargetComment( pageThreads );
+		promise.then( function () {
+			highlighter.highlightTargetComment( pageThreads );
+		} );
 	}
 }
 
@@ -591,6 +652,9 @@ function refreshPageContents( oldId ) {
 		useskin: mw.config.get( 'skin' ),
 		mobileformat: OO.ui.isMobile(),
 		uselang: mw.config.get( 'wgUserLanguage' ),
+		// HACK: Always display reply links afterwards, ignoring preferences etc., in case this was
+		// a page view with reply links forced with ?dtenable=1 or otherwise
+		dtenable: '1',
 		prop: [ 'text', 'revid', 'categorieshtml', 'sections', 'displaytitle', 'subtitle', 'modules', 'jsconfigvars' ],
 		page: !oldId ? mw.config.get( 'wgRelevantPageName' ) : undefined,
 		oldid: oldId || undefined
@@ -609,7 +673,7 @@ function refreshPageContents( oldId ) {
  */
 function update( data, threadItem, pageName, replyWidget ) {
 	function logSaveSuccess() {
-		logger( {
+		mw.track( 'editAttemptStep', {
 			action: 'saveSuccess',
 			timing: mw.now() - replyWidget.saveInitiated,
 			// eslint-disable-next-line camelcase
@@ -617,16 +681,21 @@ function update( data, threadItem, pageName, replyWidget ) {
 		} );
 	}
 
-	var pageExists = !!mw.config.get( 'wgRelevantArticleId' );
-	if ( !pageExists ) {
-		// The page didn't exist before this update, so reload it. We'd handle
-		// setting up the content just fine (assuming there's a
-		// mw-parser-output), but fixing up the UI tabs/behavior is outside
-		// our scope.
+	if (
+		( pageName === mw.config.get( 'wgRelevantPageName' ) && data.nocontent ) ||
+		data.tempusercreated
+	) {
+		// Reload if the page didn't exist before this update, or we just became logged in
+		// as a temporary user. We'd handle setting up the content just fine (assuming there's
+		// a mw-parser-output), but fixing up the UI tabs/behavior is outside our scope.
 		replyWidget.unbindBeforeUnloadHandler();
 		replyWidget.clearStorage();
 		replyWidget.setPending( true );
-		window.location = mw.util.getUrl( pageName, { dtrepliedto: threadItem.id } );
+		var params = { dtrepliedto: threadItem.id };
+		if ( data.tempusercreated ) {
+			params.dttempusercreated = '1';
+		}
+		window.location = data.tempusercreatedredirect || mw.util.getUrl( pageName, params );
 		logSaveSuccess();
 		return;
 	}
@@ -636,6 +705,7 @@ function update( data, threadItem, pageName, replyWidget ) {
 
 	// Highlight the new reply after re-initializing
 	mw.dt.initState.repliedTo = threadItem.id;
+	mw.dt.initState.tempUserCreated = data.tempusercreated;
 
 	// Update page state
 	var pageUpdated = $.Deferred();
@@ -706,5 +776,7 @@ module.exports = {
 	checkThreadItemOnPage: checkThreadItemOnPage,
 	getCheckboxesPromise: getCheckboxesPromise,
 	getApi: getApi,
-	storage: storage
+	getReplyWidgetModules: getReplyWidgetModules,
+	defaultVisual: defaultVisual,
+	enable2017Wikitext: enable2017Wikitext
 };

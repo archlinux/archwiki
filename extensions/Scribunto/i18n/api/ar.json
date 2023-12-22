@@ -4,7 +4,6 @@
 			"ديفيد"
 		]
 	},
-	"apihelp-scribunto-console-description": "وحدة داخلية لخدمة طلبات XHR من وحدة Scribunto.",
 	"apihelp-scribunto-console-summary": "وحدة داخلية لخدمة طلبات XHR من وحدة Scribunto.",
 	"apihelp-scribunto-console-param-title": "عنوان الوحدة لاختبارها.",
 	"apihelp-scribunto-console-param-content": "المحتوى الجديد للوحدة.",

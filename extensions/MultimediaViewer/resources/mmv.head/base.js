@@ -17,7 +17,7 @@
 
 // Included on every page which has images so keep it lightweight.
 ( function () {
-	mw.mmv = {
+	module.exports = {
 		/**
 		 * The media route prefix
 		 *
@@ -43,8 +43,6 @@
 		 * @return {string} the location hash
 		 * @member mw.mmv
 		 */
-		getMediaHash: function ( imageFileTitle ) {
-			return '#/' + mw.mmv.ROUTE + '/' + imageFileTitle;
-		}
+		getMediaHash: ( imageFileTitle ) => `#/media/${imageFileTitle}`
 	};
 }() );

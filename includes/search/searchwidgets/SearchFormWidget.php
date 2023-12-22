@@ -6,10 +6,11 @@ use ILanguageConverter;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Specials\SpecialSearch;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Widget\SearchInputWidget;
-use NamespaceInfo;
 use SearchEngineConfig;
-use SpecialSearch;
 use Xml;
 
 class SearchFormWidget {
@@ -118,6 +119,9 @@ class SearchFormWidget {
 		$offset,
 		array $options = []
 	) {
+		$autoCapHint = $this->searchConfig->getConfig()
+			->get( MainConfigNames::CapitalLinks );
+
 		$searchWidget = new SearchInputWidget( $options + [
 			'id' => 'searchText',
 			'name' => 'search',
@@ -126,6 +130,7 @@ class SearchFormWidget {
 			'value' => $term,
 			'dataLocation' => 'content',
 			'infusable' => true,
+			'autocapitalize' => $autoCapHint ? 'sentences' : 'none',
 		] );
 
 		$html = new \OOUI\ActionFieldLayout( $searchWidget, new \OOUI\ButtonInputWidget( [
@@ -315,8 +320,8 @@ class SearchFormWidget {
 				'inputId' => 'mw-search-powersearch-remember',
 				// The token goes here rather than in a hidden field so it
 				// is only sent when necessary (not every form submission)
-				'value' => $this->specialSearch->getUser()
-					->getEditToken( 'searchnamespace', $this->specialSearch->getRequest() )
+				'value' => $this->specialSearch->getContext()->getCsrfTokenSet()
+					->getToken( 'searchnamespace' )
 			] ),
 			[
 			'label' => $this->specialSearch->msg( 'powersearch-remember' )->text(),

@@ -7,7 +7,7 @@
 	"descriptionmsg": "discussiontools-desc",
 	"manifest_version": 2,
 	"requires": {
-		"MediaWiki": ">= 1.40.0",
+		"MediaWiki": ">= 1.41",
 		"extensions": {
 			"VisualEditor": ">= 0.1.2",
 			"Linter": "*"
@@ -20,7 +20,8 @@
 		]
 	},
 	"ExtensionMessagesFiles": {
-		"DiscussionToolsAlias": "DiscussionTools.alias.php"
+		"DiscussionToolsAlias": "DiscussionTools.alias.php",
+		"DiscussionToolsMagic": "DiscussionTools.magic.php"
 	},
 	"callback": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\RegistrationHooks::onRegistration",
 	"ResourceFileModulePaths": {
@@ -35,11 +36,15 @@
 				"mobile"
 			]
 		},
+		"ext.discussionTools.debug.styles": {
+			"styles": "dt.debug.less"
+		},
 		"ext.discussionTools.init": {
 			"packageFiles": [
 				"dt.init.js",
 				"controller.js",
 				"highlighter.js",
+				"permalinks.js",
 				"topicsubscriptions.js",
 				"mobile.js",
 				"LedeSectionDialog.js",
@@ -58,7 +63,6 @@
 				{
 					"name": "config.json",
 					"config": {
-						"enable": "DiscussionToolsEnable",
 						"replyIndentation": "DiscussionToolsReplyIndentation",
 						"switchTime": "DiscussionToolsTimestampFormatSwitchTime",
 						"showFeedbackLinks": "DiscussionToolsShowFeedbackLinks"
@@ -67,7 +71,6 @@
 				"ReplyLinksController.js",
 				"CommentController.js",
 				"NewTopicController.js",
-				"logger.js",
 				"modifier.js",
 				"utils.js",
 				"Parser.js",
@@ -76,7 +79,7 @@
 				"CommentItem.js",
 				"HeadingItem.js",
 				"CommentDetails.js",
-				"createMemoryStorage.js",
+				"MemoryStorage.js",
 				"lib/moment-timezone/moment-timezone-with-data-1970-2030.js",
 				{
 					"name": "parser/data.json",
@@ -88,6 +91,7 @@
 			],
 			"dependencies": [
 				"ext.discussionTools.init.styles",
+				"ext.discussionTools.minervaicons",
 				"web2017-polyfills",
 				"moment",
 				"rangefix",
@@ -120,11 +124,19 @@
 				"discussiontools-error-noswitchtove-template",
 				"discussiontools-error-noswitchtove-title",
 				"discussiontools-ledesection-title",
-				"discussiontools-newtopic-legacy-hint",
 				"discussiontools-newtopic-placeholder-title",
 				"discussiontools-newtopic-missing-title",
+				"discussiontools-newtopicssubscription-button-subscribe-label",
+				"discussiontools-newtopicssubscription-button-subscribe-tooltip",
+				"discussiontools-newtopicssubscription-button-unsubscribe-label",
+				"discussiontools-newtopicssubscription-button-unsubscribe-tooltip",
+				"discussiontools-newtopicssubscription-notify-subscribed-body",
+				"discussiontools-newtopicssubscription-notify-subscribed-title",
+				"discussiontools-newtopicssubscription-notify-unsubscribed-body",
+				"discussiontools-newtopicssubscription-notify-unsubscribed-title",
 				"discussiontools-pagetitle-newtopic",
 				"discussiontools-pagetitle-reply",
+				"discussiontools-permalink-comment-copied",
 				"discussiontools-replylink",
 				"discussiontools-replywidget-loading",
 				"discussiontools-replywidget-watchthis",
@@ -149,6 +161,16 @@
 				"mobile"
 			]
 		},
+		"ext.discussionTools.minervaicons": {
+			"selectorWithoutVariant": ".mw-ui-icon-minerva-{name}:before",
+			"useDataURI": false,
+			"defaultColor": "#54595d",
+			"class": "ResourceLoaderOOUIIconPackModule",
+			"icons": [
+				"bell",
+				"bellOutline"
+			]
+		},
 		"ext.discussionTools.debug": {
 			"packageFiles": [
 				"dt.debug.js",
@@ -171,6 +193,13 @@
 				"AbandonCommentDialog.js",
 				"AbandonTopicDialog.js",
 				{
+					"name": "contLangMessages.json",
+					"callback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getContentLanguageMessages",
+					"callbackParam": [
+						"tempuser-helppage"
+					]
+				},
+				{
 					"name": "licenseMessages.json",
 					"callback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getTermsOfUseMessagesParsed",
 					"versionCallback": "\\MediaWiki\\Extension\\DiscussionTools\\ResourceLoaderData::getTermsOfUseMessagesVersion"
@@ -188,8 +217,10 @@
 				"discussiontools-replywidget-abandontopic-keep",
 				"discussiontools-replywidget-advanced",
 				"discussiontools-replywidget-anon-warning",
+				"discussiontools-replywidget-autocreate-warning",
 				"discussiontools-replywidget-cancel",
 				"discussiontools-replywidget-feedback",
+				"discussiontools-replywidget-keyboard-shortcut-submit",
 				"discussiontools-replywidget-mention-tool-header",
 				"discussiontools-replywidget-mention-tool-title",
 				"discussiontools-replywidget-mode-source",
@@ -278,6 +309,7 @@
 			]
 		}
 	},
+	"ForeignResourcesDir": "modules/lib",
 	"QUnitTestModule": {
 		"localBasePath": "tests",
 		"remoteExtPath": "DiscussionTools/tests",
@@ -312,7 +344,8 @@
 		]
 	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\DiscussionTools\\": "includes/"
+		"MediaWiki\\Extension\\DiscussionTools\\": "includes/",
+		"MediaWiki\\Extension\\DiscussionTools\\Maintenance\\": "maintenance/"
 	},
 	"TestAutoloadNamespaces": {
 		"MediaWiki\\Extension\\DiscussionTools\\Tests\\Unit\\": "tests/phpunit/unit/",
@@ -333,9 +366,18 @@
 				"VisualEditor.ParsoidClientFactory",
 				"DiscussionTools.CommentParser",
 				"DiscussionTools.SubscriptionStore",
+				"TempUserCreator",
+				"UserFactory",
 				"SkinFactory",
 				"ConfigFactory",
 				"RevisionLookup"
+			]
+		},
+		"discussiontoolsfindcomment": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\ApiDiscussionToolsFindComment",
+			"services": [
+				"DiscussionTools.ThreadItemStore",
+				"TitleFormatter"
 			]
 		},
 		"discussiontoolsgetsubscriptions": {
@@ -358,6 +400,8 @@
 			"services": [
 				"VisualEditor.ParsoidClientFactory",
 				"DiscussionTools.CommentParser",
+				"TempUserCreator",
+				"UserFactory",
 				"SkinFactory"
 			]
 		},
@@ -389,26 +433,38 @@
 			"services": [
 				"DiscussionTools.ThreadItemStore"
 			]
+		},
+		"DiscussionToolsDebug": {
+			"class": "\\MediaWiki\\Extension\\DiscussionTools\\SpecialDiscussionToolsDebug",
+			"services": [
+				"ParserOutputAccess",
+				"DiscussionTools.CommentParser"
+			]
 		}
 	},
+	"TrackingCategories": [
+		"discussiontools-comments-before-first-heading-category"
+	],
 	"Hooks": {
-		"BeforeCreateEchoEvent": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\EchoHooks::onBeforeCreateEchoEvent",
-		"EchoGetBundleRules": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\EchoHooks::onEchoGetBundleRules",
-		"EchoGetEventsForRevision": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\EchoHooks::onEchoGetEventsForRevision",
-		"MinervaNeueTalkPageOverlay": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\MobileHooks::onMinervaNeueTalkPageOverlay",
+		"BeforeCreateEchoEvent": "echo",
+		"EchoGetBundleRules": "echo",
+		"EchoGetEventsForRevision": "echo",
 		"RevisionDataUpdates": "dataupdates",
 		"LoadExtensionSchemaUpdates": "installer",
+		"GetDoubleUnderscoreIDs": "parser",
 		"ParserAfterTidy": "parser",
 		"BeforeDisplayNoArticleText": "page",
 		"BeforePageDisplay": "page",
 		"GetActionName": "page",
 		"OutputPageBeforeHTML": "page",
 		"OutputPageParserOutput": "page",
-		"TitleGetEditNotices": "page",
+		"SidebarBeforeOutput": "page",
+		"SkinTemplateNavigation::Universal": "page",
 		"ResourceLoaderGetConfigVars": "resourceloader",
-		"GetBetaFeaturePreferences": "\\MediaWiki\\Extension\\DiscussionTools\\Hooks\\PreferenceHooks::onGetBetaFeaturePreferences",
+		"GetBetaFeaturePreferences": "betapreferences",
 		"GetPreferences": "preferences",
 		"LocalUserCreated": "preferences",
+		"DiscussionToolsAddOverflowMenuItems": "discussiontools",
 		"ChangeTagsListActive": "tags",
 		"ListDefinedTags": "tags",
 		"RecentChange_save": "tags"
@@ -445,17 +501,36 @@
 				"LinkRenderer"
 			]
 		},
+		"betapreferences": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\BetaPreferenceHooks",
+			"services": [
+				"MainConfig",
+				"ConfigFactory"
+			]
+		},
 		"resourceloader": {
 			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\ResourceLoaderHooks",
 			"services": [
 				"ConfigFactory"
 			]
 		},
+		"discussiontools": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\DiscussionToolsHooks"
+		},
 		"tags": {
 			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\TagHooks"
+		},
+		"echo": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Hooks\\EchoHooks"
 		}
 	},
 	"Actions": {
+		"dtsubscribe": {
+			"class": "MediaWiki\\Extension\\DiscussionTools\\Actions\\SubscribeAction",
+			"services": [
+				"DiscussionTools.SubscriptionStore"
+			]
+		},
 		"dtunsubscribe": {
 			"class": "MediaWiki\\Extension\\DiscussionTools\\Actions\\UnsubscribeAction",
 			"services": [
@@ -481,41 +556,13 @@
 		"discussiontools-visualenhancements": 1
 	},
 	"config": {
-		"DiscussionToolsEnable": {
-			"value": true,
-			"description": "Enable DiscussionTools on talk pages."
-		},
 		"DiscussionToolsBeta": {
 			"value": false,
 			"description": "Make DiscussionTools a BetaFeature."
 		},
 		"DiscussionToolsABTest": {
 			"value": false,
-			"description": "A/B test DiscussionTools features for logged in users. false, 'replytool', 'newtopictool', or 'mobile'"
-		},
-		"DiscussionToolsEnableMobile": {
-			"value": true,
-			"description": "Enable DiscussionTools on mobile talk pages. Currently this automatically enables 'replytool', 'newtopictool' & 'sourcemodetoolbar' on those pages and disables topic subscriptions on those pages."
-		},
-		"DiscussionTools_replytool": {
-			"value": "default",
-			"description": "Override availability of DiscussionTools reply tool. 'default', 'available', or 'unavailable'."
-		},
-		"DiscussionTools_newtopictool": {
-			"value": "default",
-			"description": "Override availability of DiscussionTools new topic tool. 'default', 'available', or 'unavailable'."
-		},
-		"DiscussionTools_sourcemodetoolbar": {
-			"value": "default",
-			"description": "Enable the toolbar in source mode for the reply tool and new topic tool. 'default', 'available', or 'unavailable'."
-		},
-		"DiscussionTools_topicsubscription": {
-			"value": "default",
-			"description": "Override availability of DiscussionTools topic subscription feature. 'default', 'available', or 'unavailable'."
-		},
-		"DiscussionTools_autotopicsub": {
-			"value": "default",
-			"description": "Override availability of DiscussionTools automatic topic subscription feature. 'default', 'available', or 'unavailable'."
+			"description": "A/B test DiscussionTools features for logged in users. false, any valid feature string for an option below, or an array thereof"
 		},
 		"DiscussionTools_visualenhancements": {
 			"value": "default",
@@ -537,12 +584,20 @@
 				"ja",
 				"nod"
 			],
-			"description": "A list of language codes which will receive an icon in their enhanced reply-button treatment",
+			"description": "A list of language codes which will receive an icon in their enhanced reply-button treatment, due to translation being very short (T323537).",
 			"merge_strategy": "provide_default"
+		},
+		"DiscussionTools_visualenhancements_newsectionlink_enable": {
+			"value": true,
+			"description": "Enable visual enhancements on non-talk, non-article namespaces if they have __NEWSECTIONLINK__ magic word. Temporary config for phased rollout (T331635)"
 		},
 		"DiscussionToolsEnablePermalinksBackend": {
 			"value": true,
 			"description": "Enable the permalinks backend. Do not enable this unless the database tables exist."
+		},
+		"DiscussionToolsEnableTimestampLinks": {
+			"value": true,
+			"description": "Convert signature timestamps to comment links."
 		},
 		"DiscussionToolsAutoTopicSubEditor": {
 			"value": "discussiontoolsapi",
@@ -567,14 +622,6 @@
 		"DiscussionToolsConflictingGadgetName": {
 			"value": "convenientDiscussions",
 			"description": "Internal name of the Convenient Discussions gadget, which conflicts with the reply tool. Reply tool will be unavailable when the user has this gadget enabled."
-		},
-		"DTSchemaEditAttemptStepSamplingRate": {
-			"value": 0,
-			"description": "Rate at which to sample sessions for instrumentation; overrides WikimediaEvents rate if set to any number other than 0"
-		},
-		"DTSchemaEditAttemptStepOversample": {
-			"value": false,
-			"description": "Oversample EditAttemptStep logging; distinct from rate tuning, as it'll flag the events as being oversampled"
 		}
 	},
 	"ConfigRegistry": {

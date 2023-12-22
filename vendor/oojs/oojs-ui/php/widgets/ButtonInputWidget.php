@@ -29,6 +29,13 @@ class ButtonInputWidget extends InputWidget {
 	protected $useInputTag;
 
 	/**
+	 * Whether to use `formnovalidate` attribute.
+	 *
+	 * @var bool
+	 */
+	protected $formNoValidate;
+
+	/**
 	 * @param array $config Configuration options
 	 *      - string $config['type'] HTML tag `type` attribute, may be 'button', 'submit' or 'reset'
 	 *          (default: 'button')
@@ -37,10 +44,11 @@ class ButtonInputWidget extends InputWidget {
 	 *          option, icons and indicators will not be displayed, it won't be possible to have a
 	 *          non-plaintext label, and it won't be possible to set a value (which will internally
 	 *          become identical to the label). (default: false)
+	 *      - bool $config['formNoValidate'] Whether to use `formnovalidate` attribute.
 	 */
 	public function __construct( array $config = [] ) {
 		// Configuration initialization
-		$config = array_merge( [ 'type' => 'button', 'useInputTag' => false ], $config );
+		$config = array_merge( [ 'type' => 'button', 'useInputTag' => false, 'formNoValidate' => false ], $config );
 
 		// Properties (must be set before parent constructor, which calls setValue())
 		$this->useInputTag = $config['useInputTag'];
@@ -62,6 +70,12 @@ class ButtonInputWidget extends InputWidget {
 		// Initialization
 		if ( !$config['useInputTag'] ) {
 			$this->input->appendContent( $this->icon, $this->label, $this->indicator );
+		}
+
+		if ( $config['formNoValidate'] ) {
+			$this->input->setAttributes( [
+				'formnovalidate' => 'formnovalidate'
+			] );
 		}
 
 		$this->addClasses( [ 'oo-ui-buttonInputWidget' ] );
@@ -127,6 +141,9 @@ class ButtonInputWidget extends InputWidget {
 			$config['useInputTag'] = true;
 		}
 		$config['type'] = $this->input->getAttribute( 'type' );
+		if ( $this->input->getAttribute( 'formnovalidate' ) ) {
+			$config['formNoValidate'] = true;
+		}
 		return parent::getConfig( $config );
 	}
 }

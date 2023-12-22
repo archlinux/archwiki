@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
+ * Copyright © 2007 Roan Kattouw <roan.kattouw@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,20 +42,11 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiQueryDeletedrevs extends ApiQueryBase {
 
-	/** @var CommentStore */
-	private $commentStore;
-
-	/** @var RowCommentFormatter */
-	private $commentFormatter;
-
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var NameTableStore */
-	private $changeTagDefStore;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
+	private CommentStore $commentStore;
+	private RowCommentFormatter $commentFormatter;
+	private RevisionStore $revisionStore;
+	private NameTableStore $changeTagDefStore;
+	private LinkBatchFactory $linkBatchFactory;
 
 	/**
 	 * @param ApiQuery $query
@@ -108,12 +99,10 @@ class ApiQueryDeletedrevs extends ApiQueryBase {
 
 		// If we're in a mode that breaks the same-origin policy, no tokens can
 		// be obtained
-		if ( $this->lacksSameOriginSecurity() ) {
-			$fld_token = false;
-		}
-
-		// If user can't undelete, no tokens
-		if ( !$this->getAuthority()->isAllowed( 'undelete' ) ) {
+		if ( $this->lacksSameOriginSecurity() ||
+			// If user can't undelete, no tokens
+			!$this->getAuthority()->isAllowed( 'undelete' )
+		) {
 			$fld_token = false;
 		}
 

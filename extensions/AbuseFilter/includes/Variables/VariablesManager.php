@@ -158,6 +158,8 @@ class VariablesManager {
 	 */
 	public function computeDBVars( VariableHolder $holder ): void {
 		static $dbTypes = [
+			'links-from-database',
+			'links-from-update',
 			'links-from-wikitext-or-database',
 			'load-recent-authors',
 			'page-age',

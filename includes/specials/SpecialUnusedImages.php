@@ -21,8 +21,11 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\MainConfigNames;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\SpecialPage\ImageQueryPage;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * A special page that lists unused images
@@ -32,11 +35,11 @@ use Wikimedia\Rdbms\ILoadBalancer;
 class SpecialUnusedImages extends ImageQueryPage {
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 */
-	public function __construct( ILoadBalancer $loadBalancer ) {
+	public function __construct( IConnectionProvider $dbProvider ) {
 		parent::__construct( 'Unusedimages' );
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 	}
 
 	public function isExpensive() {
@@ -59,7 +62,7 @@ class SpecialUnusedImages extends ImageQueryPage {
 				'title' => 'img_name',
 				'value' => 'img_timestamp',
 			],
-			'conds' => [ 'il_to IS NULL' ],
+			'conds' => [ 'il_to' => null ],
 			'join_conds' => [ 'imagelinks' => [ 'LEFT JOIN', 'il_to = img_name' ] ]
 		];
 
@@ -68,7 +71,7 @@ class SpecialUnusedImages extends ImageQueryPage {
 			$retval['tables'] = [ 'image', 'page', 'categorylinks',
 				'imagelinks' ];
 			$retval['conds']['page_namespace'] = NS_FILE;
-			$retval['conds'][] = 'cl_from IS NULL';
+			$retval['conds']['cl_from'] = null;
 			$retval['conds'][] = 'img_name = page_title';
 			$retval['join_conds']['categorylinks'] = [
 				'LEFT JOIN', 'cl_from = page_id' ];
@@ -96,3 +99,9 @@ class SpecialUnusedImages extends ImageQueryPage {
 		return 'maintenance';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialUnusedImages::class, 'SpecialUnusedImages' );

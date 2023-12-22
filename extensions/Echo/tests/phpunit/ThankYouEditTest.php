@@ -1,12 +1,13 @@
 <?php
 
+use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 
 /**
  * @group Echo
  * @group Database
  */
-class MWEchoThankYouEditTest extends MediaWikiIntegrationTestCase {
+class ThankYouEditTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -15,7 +16,7 @@ class MWEchoThankYouEditTest extends MediaWikiIntegrationTestCase {
 	}
 
 	private function deleteEchoData() {
-		$db = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_PRIMARY );
+		$db = DbFactory::newFromDefault()->getEchoDb( DB_PRIMARY );
 		$db->delete( 'echo_event', '*', __METHOD__ );
 		$db->delete( 'echo_notification', '*', __METHOD__ );
 	}
@@ -30,7 +31,7 @@ class MWEchoThankYouEditTest extends MediaWikiIntegrationTestCase {
 		$title = Title::newFromText( 'Help:MWEchoThankYouEditTest_testFirstEdit' );
 
 		// action
-		$this->edit( $title, $user, 'this is my first edit' );
+		$this->editPage( $title, 'this is my first edit', '', NS_MAIN, $user );
 
 		// assertions
 		$notificationMapper = new NotificationMapper();
@@ -50,16 +51,16 @@ class MWEchoThankYouEditTest extends MediaWikiIntegrationTestCase {
 		$this->deleteEchoData();
 		$user = $this->getMutableTestUser()->getUser();
 		$title = Title::newFromText( 'Help:MWEchoThankYouEditTest_testTenthEdit' );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
 		// action
 		// we could fast-forward the edit-count to speed things up
 		// but this is the only way to make sure duplicate notifications
 		// are not generated
 		for ( $i = 0; $i < 12; $i++ ) {
-			$this->edit( $title, $user, "this is edit #$i" );
-			// Reload to reflect deferred update
-			$user->clearInstanceCache();
+			$this->editPage( $page, "this is edit #$i", '', NS_MAIN, $user );
 		}
+		$user->clearInstanceCache();
 
 		// assertions
 		$notificationMapper = new NotificationMapper();
@@ -69,11 +70,5 @@ class MWEchoThankYouEditTest extends MediaWikiIntegrationTestCase {
 		/** @var Notification $notification */
 		$notification = reset( $notifications );
 		$this->assertSame( 10, $notification->getEvent()->getExtraParam( 'editCount', 'not found' ) );
-	}
-
-	private function edit( Title $title, User $user, $text ) {
-		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
-		$content = ContentHandler::makeContent( $text, $title );
-		$page->doUserEditContent( $content, $user, 'test' );
 	}
 }

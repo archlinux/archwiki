@@ -5,7 +5,7 @@ namespace Wikimedia\Rdbms;
 use mysqli_result;
 
 class MysqliResultWrapper extends ResultWrapper {
-	/** @var DatabaseMysqli */
+	/** @var DatabaseMySQL */
 	private $db;
 
 	/** @var mysqli_result|null */
@@ -13,10 +13,10 @@ class MysqliResultWrapper extends ResultWrapper {
 
 	/**
 	 * @internal
-	 * @param DatabaseMysqli $db
+	 * @param DatabaseMySQL $db
 	 * @param mysqli_result $result
 	 */
-	public function __construct( DatabaseMysqli $db, mysqli_result $result ) {
+	public function __construct( DatabaseMySQL $db, mysqli_result $result ) {
 		$this->db = $db;
 		$this->result = $result;
 	}

@@ -31,6 +31,8 @@ use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreloadTransformParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\Content\ValidationParams;
+use MediaWiki\Diff\TextDiffer\ManifoldTextDiffer;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
@@ -148,16 +150,15 @@ abstract class ContentHandler {
 	 * @param string|null $format The format to use for deserialization. If not
 	 *    given, the model's default format is used.
 	 *
-	 * @throws MWException If model ID or format is not supported or if the text can not be
-	 * unserialized using the format.
 	 * @throws MWContentSerializationException
+	 * @throws MWUnknownContentModelException
 	 * @return Content A Content object representing the text.
 	 */
 	public static function makeContent( $text, Title $title = null,
 		$modelId = null, $format = null ) {
 		if ( $modelId === null ) {
 			if ( $title === null ) {
-				throw new MWException( "Must provide a Title object or a content model ID." );
+				throw new BadMethodCallException( "Must provide a Title object or a content model ID." );
 			}
 
 			$modelId = $title->getContentModel();
@@ -195,8 +196,6 @@ abstract class ContentHandler {
 	 *
 	 * If none of the above applies, the wikitext model is used.
 	 *
-	 * Note: this is used by, and may thus not use, Title::getContentModel()
-	 *
 	 * @since 1.21
 	 * @deprecated since 1.33, use SlotRoleHandler::getDefaultModel() together with
 	 * SlotRoleRegistry::getRoleHandler().
@@ -209,27 +208,6 @@ abstract class ContentHandler {
 		$slotRoleregistry = MediaWikiServices::getInstance()->getSlotRoleRegistry();
 		$mainSlotHandler = $slotRoleregistry->getRoleHandler( 'main' );
 		return $mainSlotHandler->getDefaultModel( $title );
-	}
-
-	/**
-	 * Returns the appropriate ContentHandler singleton for the given title.
-	 *
-	 * @since 1.21
-	 *
-	 * @deprecated since 1.35, hard deprecated since 1.37
-	 * Use ContentHandlerFactory::getContentHandler( $title->getContentModel() ) instead
-	 *
-	 * @param Title $title
-	 *
-	 * @return ContentHandler
-	 * @throws MWException
-	 * @throws MWUnknownContentModelException
-	 */
-	public static function getForTitle( Title $title ) {
-		wfDeprecated( __METHOD__, '1.35' );
-		return MediaWikiServices::getInstance()
-			->getContentHandlerFactory()
-			->getContentHandler( $title->getContentModel() );
 	}
 
 	/**
@@ -564,10 +542,13 @@ abstract class ContentHandler {
 	 * @stable to override
 	 * @since 1.21
 	 *
-	 * @return array An array mapping action names (typically "view", "edit", "history" etc.) to
-	 *  either the full qualified class name of an Action class, a callable taking ( Page $page,
-	 *  IContextSource $context = null ) as parameters and returning an Action object, or an actual
-	 *  Action object. An empty array in this default implementation.
+	 * @return array<string,class-string|callable|false|Action|array> An array mapping action names
+	 *  (typically "view", "edit", "history" etc.) to a specification according to
+	 *  {@see ActionFactory::getActionSpec}. Can be the full qualified class name of an Action
+	 *  class, a callable taking ( Article $article, IContextSource $context ) as parameters and
+	 *  returning an Action object, false to disable an action, an actual Action object,
+	 *  or an ObjectFactory specification array (can have 'class', 'services', etc.).
+	 *  An empty array in this default implementation.
 	 *
 	 * @see Action::factory
 	 */
@@ -620,7 +601,13 @@ abstract class ContentHandler {
 	 * @since 1.32
 	 *
 	 * @param IContextSource $context
-	 * @param array $options of the slot diff renderer (optional)
+	 * @param array $options An associative array of options passed to the SlotDiffRenderer:
+	 *   - diff-type: (string) The text diff format
+	 *   - contentLanguage: (string) The language code of the content language,
+	 *     to be passed to the TextDiffer constructor. This is ignored if a
+	 *     TextDiffer object is provided.
+	 *   - textDiffer: (TextDiffer) A TextDiffer object to use for text
+	 *     comparison.
 	 * @return SlotDiffRenderer
 	 */
 	final public function getSlotDiffRenderer( IContextSource $context, array $options = [] ) {
@@ -645,7 +632,8 @@ abstract class ContentHandler {
 
 	/**
 	 * Return the SlotDiffRenderer appropriate for this content handler.
-	 * @deprecated use getSlotDiffRendererWithOptions instead
+	 * @deprecated since 1.35; use getSlotDiffRendererWithOptions instead
+	 *   Emitting deprecation warnings since 1.41.
 	 * @param IContextSource $context
 	 * @return SlotDiffRenderer|null
 	 */
@@ -658,7 +646,7 @@ abstract class ContentHandler {
 	 * @stable to override
 	 *
 	 * @param IContextSource $context
-	 * @param array $options
+	 * @param array $options See getSlotDiffRenderer()
 	 *
 	 * @return SlotDiffRenderer
 	 */
@@ -667,29 +655,57 @@ abstract class ContentHandler {
 		// `getSlotDiffRendererInternal` has been overridden by a class using the deprecated method.
 		// Options will not work so exit early!
 		if ( $internalRenderer !== null ) {
+			wfDeprecated( 'ContentHandler::getSlotDiffRendererInternal', '1.35' );
 			return $internalRenderer;
 		}
+		return $this->createTextSlotDiffRenderer( $options );
+	}
 
-		$contentLanguage = MediaWikiServices::getInstance()->getContentLanguage();
-		$statsdDataFactory = MediaWikiServices::getInstance()->getStatsdDataFactory();
+	/**
+	 * Create a TextSlotDiffRenderer and inject dependencies
+	 *
+	 * @since 1.41
+	 *
+	 * @param array $options See getSlotDiffRenderer()
+	 * @return TextSlotDiffRenderer
+	 */
+	final protected function createTextSlotDiffRenderer( array $options = [] ): TextSlotDiffRenderer {
 		$slotDiffRenderer = new TextSlotDiffRenderer();
+
+		$services = MediaWikiServices::getInstance();
+		$statsdDataFactory = $services->getStatsdDataFactory();
 		$slotDiffRenderer->setStatsdDataFactory( $statsdDataFactory );
-		// XXX using the page language would be better, but it's unclear how that should be injected
-		$slotDiffRenderer->setLanguage( $contentLanguage );
+		$slotDiffRenderer->setHookContainer( $services->getHookContainer() );
+		$slotDiffRenderer->setContentModel( $this->getModelID() );
 
-		$inline = ( $options['diff-type'] ?? '' ) === 'inline';
-		$engine = DifferenceEngine::getEngine();
-
-		if ( $engine === 'php' ) {
-			$slotDiffRenderer->setEngine( TextSlotDiffRenderer::ENGINE_PHP );
-		} elseif ( $engine === 'wikidiff2' ) {
-			if ( $inline ) {
-				$slotDiffRenderer->setEngine( TextSlotDiffRenderer::ENGINE_WIKIDIFF2_INLINE );
-			} else {
-				$slotDiffRenderer->setEngine( TextSlotDiffRenderer::ENGINE_WIKIDIFF2 );
-			}
+		if ( isset( $options['textDiffer'] ) ) {
+			$textDiffer = $options['textDiffer'];
 		} else {
-			$slotDiffRenderer->setEngine( TextSlotDiffRenderer::ENGINE_EXTERNAL, $engine );
+			if ( isset( $options['contentLanguage'] ) ) {
+				$language = $services->getLanguageFactory()->getLanguage( $options['contentLanguage'] );
+			} else {
+				$language = $services->getContentLanguage();
+			}
+			$config = $services->getMainConfig();
+			$textDiffer = new ManifoldTextDiffer(
+				RequestContext::getMain(),
+				$language,
+				$config->get( MainConfigNames::DiffEngine ),
+				$config->get( MainConfigNames::ExternalDiffEngine ),
+				$config->get( MainConfigNames::Wikidiff2Options )
+			);
+		}
+		$format = $options['diff-type'] ?? 'table';
+		if ( !$textDiffer->hasFormat( $format ) ) {
+			// Maybe it would be better to throw an exception here, but at
+			// present, the value comes straight from user input without
+			// validation, so we have to fall back.
+			$format = 'table';
+		}
+		$slotDiffRenderer->setFormat( $format );
+		$slotDiffRenderer->setTextDiffer( $textDiffer );
+		if ( $options['inline-toggle'] ?? false ) {
+			$slotDiffRenderer->setInlineToggleEnabled();
 		}
 
 		return $slotDiffRenderer;
@@ -810,7 +826,7 @@ abstract class ContentHandler {
 	 * @stable to override
 	 * @since 1.21
 	 *
-	 * @return string
+	 * @return class-string<DifferenceEngine>
 	 */
 	protected function getDiffEngineClass() {
 		return DifferenceEngine::class;
@@ -1085,18 +1101,13 @@ abstract class ContentHandler {
 
 		// Find out if there was only one contributor
 		// Only scan the last 20 revisions
-		$revQuery = $revStore->getQueryInfo();
-		$res = $dbr->select(
-			$revQuery['tables'],
-			[ 'rev_user_text' => $revQuery['fields']['rev_user_text'] ],
-			[
+		$queryBuilder = $revStore->newSelectQueryBuilder( $dbr )
+			->where( [
 				'rev_page' => $title->getArticleID(),
 				$dbr->bitAnd( 'rev_deleted', RevisionRecord::DELETED_USER ) . ' = 0'
-			],
-			__METHOD__,
-			[ 'LIMIT' => 20 ],
-			$revQuery['joins']
-		);
+			] )
+			->limit( 20 );
+		$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 
 		if ( $res === false ) {
 			// This page has no revisions, which is very weird
@@ -1726,18 +1737,19 @@ abstract class ContentHandler {
 		}
 
 		$services = MediaWikiServices::getInstance();
-		$title = $services->getTitleFactory()->castFromPageReference( $cpoParams->getPage() );
+		$title = $services->getTitleFactory()->newFromPageReference( $cpoParams->getPage() );
 		$parserOptions = $cpoParams->getParserOptions();
 
 		if ( $parserOptions->getIsPreview() ) {
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
 			$scopedCallback = $parserOptions->setupFakeRevision( $title, $content, $parserOptions->getUserIdentity() );
 		}
 
+		$hookRunner = new HookRunner( $services->getHookContainer() );
 		$po = new ParserOutput();
 		$parserOptions->registerWatcher( [ $po, 'recordOption' ] );
-		if ( Hooks::runner()->onContentGetParserOutput(
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
+		if ( $hookRunner->onContentGetParserOutput(
+			// FIXME $cpoParams->getRevId() may be null here?
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 			$content, $title, $cpoParams->getRevId(), $parserOptions, $cpoParams->getGenerateHtml(), $po )
 		) {
 			// Save and restore the old value, just in case something is reusing
@@ -1759,8 +1771,7 @@ abstract class ContentHandler {
 			$parserOptions->setRedirectTarget( $oldRedir );
 		}
 
-		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
-		Hooks::runner()->onContentAlterParserOutput( $content, $title, $po );
+		$hookRunner->onContentAlterParserOutput( $content, $title, $po );
 		$parserOptions->registerWatcher( null );
 		if ( isset( $scopedCallback ) ) {
 			ScopedCallback::consume( $scopedCallback );
@@ -1856,10 +1867,9 @@ abstract class ContentHandler {
 	): Content {
 		$services = MediaWikiServices::getInstance();
 		$legacyUser = $services->getUserFactory()->newFromUserIdentity( $params->getUser() );
-		$legacyTitle = $services->getTitleFactory()->castFromPageReference( $params->getPage() );
+		$legacyTitle = $services->getTitleFactory()->newFromPageReference( $params->getPage() );
 
 		return $content->preSaveTransform(
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
 			$legacyTitle,
 			$legacyUser,
 			$params->getParserOptions()
@@ -1879,9 +1889,8 @@ abstract class ContentHandler {
 		PreloadTransformParams $params
 	): Content {
 		$services = MediaWikiServices::getInstance();
-		$legacyTitle = $services->getTitleFactory()->castFromPageReference( $params->getPage() );
+		$legacyTitle = $services->getTitleFactory()->newFromPageReference( $params->getPage() );
 		return $content->preloadTransform(
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
 			$legacyTitle,
 			$params->getParserOptions(),
 			$params->getParams()
@@ -1901,9 +1910,8 @@ abstract class ContentHandler {
 		ContentParseParams $cpoParams
 	) {
 		$services = MediaWikiServices::getInstance();
-		$legacyTitle = $services->getTitleFactory()->castFromPageReference( $cpoParams->getPage() );
+		$legacyTitle = $services->getTitleFactory()->newFromPageReference( $cpoParams->getPage() );
 		return $content->getParserOutput(
-			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
 			$legacyTitle,
 			$cpoParams->getRevId(),
 			$cpoParams->getParserOptions(),

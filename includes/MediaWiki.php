@@ -21,13 +21,21 @@
  */
 
 use Liuggio\StatsdClient\Sender\SocketSender;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\PermissionStatus;
+use MediaWiki\Profiler\ProfilingContext;
 use MediaWiki\Request\DerivativeRequest;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Request\WebResponse;
+use MediaWiki\SpecialPage\RedirectSpecialPage;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\SpecialRunJobs;
+use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
 use Psr\Log\LoggerInterface;
@@ -76,10 +84,10 @@ class MediaWiki {
 	 * Parse the request to get the Title object
 	 *
 	 * @throws MalformedTitleException If a title has been provided by the user, but is invalid.
+	 * @param WebRequest $request
 	 * @return Title Title object to be $wgTitle
 	 */
-	private function parseTitle() {
-		$request = $this->context->getRequest();
+	private function parseTitle( $request ) {
 		$curid = $request->getInt( 'curid' );
 		$title = $request->getText( 'title' );
 
@@ -136,6 +144,22 @@ class MediaWiki {
 			$ret = SpecialPage::getTitleFor( 'Search' );
 		}
 
+		if ( $ret === null || !$ret->isSpecialPage() ) {
+			// Compatibility with old URLs for Special:RevisionDelete/Special:EditTags (T323338)
+			$actionName = $request->getRawVal( 'action' );
+			if (
+				$actionName === 'revisiondelete' ||
+				$actionName === 'historysubmit' && $request->getBool( 'revisiondelete' )
+			) {
+				$ret = SpecialPage::getTitleFor( 'Revisiondelete' );
+			} elseif (
+				$actionName === 'editchangetags' ||
+				$actionName === 'historysubmit' && $request->getBool( 'editchangetags' )
+			) {
+				$ret = SpecialPage::getTitleFor( 'EditTags' );
+			}
+		}
+
 		// Use the main page as default title if nothing else has been provided
 		if ( $ret === null
 			&& strval( $title ) === ''
@@ -162,7 +186,7 @@ class MediaWiki {
 	public function getTitle() {
 		if ( !$this->context->hasTitle() ) {
 			try {
-				$this->context->setTitle( $this->parseTitle() );
+				$this->context->setTitle( $this->parseTitle( $this->context->getRequest() ) );
 			} catch ( MalformedTitleException $ex ) {
 				$this->context->setTitle( SpecialPage::getTitleFor( 'Badtitle' ) );
 			}
@@ -204,6 +228,12 @@ class MediaWiki {
 		$user = $this->context->getUser();
 		$title = $this->context->getTitle();
 		$requestTitle = $title;
+		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+
+		if ( $userOptionsLookup->getBoolOption( $user, 'forcesafemode' ) ) {
+			$request->setVal( 'safemode', '1' );
+		}
+
 		$this->getHookRunner()->onBeforeInitialize( $title, null, $output, $user, $request, $this );
 
 		// Invalid titles. T23776: The interwikis must redirect even if the page name is empty.
@@ -212,7 +242,7 @@ class MediaWiki {
 		) {
 			$this->context->setTitle( SpecialPage::getTitleFor( 'Badtitle' ) );
 			try {
-				$this->parseTitle();
+				$this->parseTitle( $request );
 			} catch ( MalformedTitleException $ex ) {
 				throw new BadTitleError( $ex );
 			}
@@ -259,7 +289,7 @@ class MediaWiki {
 			} else {
 				$this->context->setTitle( SpecialPage::getTitleFor( 'Badtitle' ) );
 				try {
-					$this->parseTitle();
+					$this->parseTitle( $request );
 				} catch ( MalformedTitleException $ex ) {
 					throw new BadTitleError( $ex );
 				}
@@ -382,15 +412,17 @@ class MediaWiki {
 			return false;
 		}
 
+		$services = MediaWikiServices::getInstance();
+
 		if ( $title->isSpecialPage() ) {
-			[ $name, $subpage ] = MediaWikiServices::getInstance()->getSpecialPageFactory()->
+			[ $name, $subpage ] = $services->getSpecialPageFactory()->
 				resolveAlias( $title->getDBkey() );
 			if ( $name ) {
 				$title = SpecialPage::getTitleFor( $name, $subpage );
 			}
 		}
 		// Redirect to canonical url, make it a 301 to allow caching
-		$targetUrl = wfExpandUrl( $title->getFullURL(), PROTO_CURRENT );
+		$targetUrl = (string)$services->getUrlUtils()->expand( $title->getFullURL(), PROTO_CURRENT );
 		if ( $targetUrl == $request->getFullRequestURL() ) {
 			$message = "Redirect loop detected!\n\n" .
 				"This means the wiki got confused about what page was " .
@@ -489,13 +521,7 @@ class MediaWiki {
 
 						$article = $rarticle;
 						// NOTE: This also clears any action cache
-						//
-						// Temporarily silence "Unexpected clearActionName after getActionName"
-						// warnings until FlaggedRevs is fixed to not rely on computed
-						// RequestContext::getActionName (T323254).
-						//
-						// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
-						@$this->context->setTitle( $target );
+						$this->context->setTitle( $target );
 						$this->context->setWikiPage( $article->getPage() );
 					}
 				}
@@ -526,9 +552,11 @@ class MediaWiki {
 		$t = microtime( true );
 		$actionName = $this->getAction();
 		$services = MediaWikiServices::getInstance();
-		$action = $services->getActionFactory()->getAction( $actionName, $article, $this->context );
 
+		$action = $services->getActionFactory()->getAction( $actionName, $article, $this->context );
 		if ( $action instanceof Action ) {
+			ProfilingContext::singleton()->init( MW_ENTRY_POINT, $actionName );
+
 			// Check read permissions
 			if ( $action->needsReadRights() && !$user->isAllowed( 'read' ) ) {
 				throw new PermissionsError( 'read' );
@@ -539,7 +567,6 @@ class MediaWiki {
 				$trxProfiler = Profiler::instance()->getTransactionProfiler();
 				$trxLimits = $this->config->get( MainConfigNames::TrxProfilerLimits );
 				$trxProfiler->setExpectations( $trxLimits['POST-nonwrite'], __METHOD__ );
-				$request->markAsSafeRequest();
 			}
 
 			// Let CDN cache things if we can purge them.
@@ -556,10 +583,20 @@ class MediaWiki {
 			$action->show();
 
 			$runTime = microtime( true ) - $t;
-			$services->getStatsdDataFactory()->timing(
-				'action.' . strtr( $actionName, '.', '_' ) . '.executeTiming',
-				1000 * $runTime
-			);
+
+			// Feature flag (T240685)
+			if ( $this->config->get( MainConfigNames::StatsTarget ) ) {
+				$statAction = strtr( $actionName, '.', '_' );
+				$services->getStatsFactory()->getTiming( 'action_executeTiming_seconds' )
+					->setLabel( 'action', $statAction )
+					->copyToStatsdAt( 'action.' . $statAction . '.executeTiming' )
+					->observe( 1000 * $runTime );
+			} else {
+				$services->getStatsdDataFactory()->timing(
+					'action.' . strtr( $actionName, '.', '_' ) . '.executeTiming',
+					1000 * $runTime
+				);
+			}
 			return;
 		}
 
@@ -662,15 +699,10 @@ class MediaWiki {
 	 * client can receive a response (in case DB commit fails) and thus also before
 	 * the response can trigger a subsequent related request by the client
 	 *
-	 * If there is a significant amount of content to flush, it can be done in $postCommitWork
-	 *
 	 * @param IContextSource $context
-	 * @param callable|null $postCommitWork Unused as of MediaWiki 1.39
 	 * @since 1.27
 	 */
-	public static function preOutputCommit(
-		IContextSource $context, $postCommitWork = null
-	) {
+	public static function preOutputCommit( IContextSource $context ) {
 		$config = $context->getConfig();
 		$request = $context->getRequest();
 		$output = $context->getOutput();
@@ -701,10 +733,10 @@ class MediaWiki {
 		$request->getSession()->save(); // T214471
 		wfDebug( __METHOD__ . ': session changes committed' );
 
-		// Subsequent requests by the client should see the DB replication positions written
-		// during the shutdown() call below, even if the position store itself has asynchronous
-		// replication. Setting the cpPosIndex cookie is normally enough. However, this might not
-		// work for cross-domain redirects to foreign wikis, so set the ?cpPoxIndex in that case.
+		// Subsequent requests by the client should see the DB replication positions, as written
+		// to ChronologyProtector during the shutdown() call below.
+		// Setting the cpPosIndex cookie is normally enough. However, this will not work for
+		// cross-wiki redirects within the same wiki farm, so set the ?cpPoxIndex in that case.
 		$isCrossWikiRedirect = (
 			$output->getRedirect() &&
 			$lbFactory->hasOrMadeRecentPrimaryChanges( INF ) &&
@@ -729,17 +761,18 @@ class MediaWiki {
 			if ( $allowHeaders ) {
 				$expires = $now + ChronologyProtector::POSITION_COOKIE_TTL;
 				$options = [ 'prefix' => '' ];
-				$value = $lbFactory::makeCookieValueFromCPIndex( $cpIndex, $now, $cpClientId );
+				$value = ChronologyProtector::makeCookieValueFromCPIndex( $cpIndex, $now, $cpClientId );
 				$request->response()->setCookie( 'cpPosIndex', $value, $expires, $options );
 			}
 
 			if ( $isCrossWikiRedirect ) {
 				if ( $output->getRedirect() ) {
-					$safeUrl = $lbFactory->appendShutdownCPIndexAsQuery(
-						$output->getRedirect(),
-						$cpIndex
-					);
-					$output->redirect( $safeUrl );
+					$url = $output->getRedirect();
+					if ( $lbFactory->hasStreamingReplicaServers() ) {
+						$url = strpos( $url, '?' ) === false
+							? "$url?cpPosIndex=$cpIndex" : "$url&cpPosIndex=$cpIndex";
+					}
+					$output->redirect( $url );
 				} else {
 					MWExceptionHandler::logException(
 						new LogicException( "No redirect; cannot append cpPosIndex parameter." ),
@@ -760,7 +793,6 @@ class MediaWiki {
 				);
 				$options = [ 'prefix' => '' ];
 				$request->response()->setCookie( 'UseDC', 'master', $expires, $options );
-				$request->response()->setCookie( 'UseCDNCache', 'false', $expires, $options );
 			}
 
 			// Avoid letting a few seconds of replica DB lag cause a month of stale data.
@@ -895,6 +927,11 @@ class MediaWiki {
 		}
 
 		$output = $this->context->getOutput();
+
+		// NOTE: HTMLFileCache::useFileCache() is not used in WMF production but is
+		//       here to provide third-party wikis with a way to enable caching for
+		//       "view" and "history" actions. It's triggered by the use of $wgUseFileCache
+		//       when set to true in LocalSettings.php.
 		if ( $title->canExist() && HTMLFileCache::useFileCache( $this->context ) ) {
 			// getAction() may trigger DB queries, so avoid eagerly initializing it if possible.
 			// This reduces the cost of requests that exit early due to tryNormaliseRedirect()
@@ -958,8 +995,16 @@ class MediaWiki {
 		$force = $this->config->get( MainConfigNames::ForceHTTPS );
 
 		// Don't redirect if $wgServer is explicitly HTTP. We test for this here
-		// by checking whether wfExpandUrl() is able to force HTTPS.
-		if ( !preg_match( '#^https://#', wfExpandUrl( $request->getRequestURL(), PROTO_HTTPS ) ) ) {
+		// by checking whether UrlUtils::expand() is able to force HTTPS.
+		if (
+			!preg_match(
+				'#^https://#',
+				(string)MediaWikiServices::getInstance()->getUrlUtils()->expand(
+					$request->getRequestURL(),
+					PROTO_HTTPS
+				)
+			)
+		) {
 			if ( $force ) {
 				throw new RuntimeException( '$wgForceHTTPS is true but the server is not HTTPS' );
 			}
@@ -1217,20 +1262,14 @@ class MediaWiki {
 			$query, $this->config->get( MainConfigNames::SecretKey ) );
 
 		$errno = $errstr = null;
-		$info = wfParseUrl( $this->config->get( MainConfigNames::CanonicalServer ) );
-		$host = $info ? $info['host'] : null;
-		$port = 80;
-		if ( isset( $info['scheme'] ) && $info['scheme'] == 'https' ) {
-			$host = "tls://" . $host;
-			$port = 443;
-		}
-		if ( isset( $info['port'] ) ) {
-			$port = $info['port'];
-		}
+		$info = $services->getUrlUtils()->parse( $this->config->get( MainConfigNames::CanonicalServer ) ) ?? [];
+		$https = ( $info['scheme'] ?? null ) === 'https';
+		$host = $info['host'] ?? null;
+		$port = $info['port'] ?? ( $https ? 443 : 80 );
 
 		AtEase::suppressWarnings();
 		$sock = $host ? fsockopen(
-			$host,
+			$https ? 'tls://' . $host : $host,
 			$port,
 			$errno,
 			$errstr,
@@ -1245,7 +1284,7 @@ class MediaWiki {
 			$url = $special->getPageTitle()->getCanonicalURL( $query );
 			$req = (
 				"POST $url HTTP/1.1\r\n" .
-				"Host: {$info['host']}\r\n" .
+				"Host: $host\r\n" .
 				"Connection: Close\r\n" .
 				"Content-Length: 0\r\n\r\n"
 			);

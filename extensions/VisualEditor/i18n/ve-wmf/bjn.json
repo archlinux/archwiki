@@ -1,8 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ezagren"
+			"Ezagren",
+			"Arcuscloud"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Babakan visual]]"
+	"tag-editcheck-newcontent-description": "EditCheck bapikir isi hanyar ditambahi ka tungkaran",
+	"tag-editcheck-newreference-description": "Referensi ditambahakan ka tungkaran",
+	"tag-editcheck-references-description": "EditCheck bapikir sabuah referensi pinanya diparluakan",
+	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Babakan visual]]",
+	"visualeditor-welcomedialog-action": "Mulai mambabak",
+	"visualeditor-welcomedialog-content": "Siapa haja kawa mambabak, wan saban pambaikan pacangan manulung.",
+	"visualeditor-welcomedialog-content-thanks": "Tarima kasih sudah manulung pamakai lain mandapati hal hanyar!",
+	"visualeditor-welcomedialog-switch-ve": "Ganti ka pambabak visual",
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Salamat datang}} di $2"
 }

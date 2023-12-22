@@ -123,7 +123,7 @@ li.mw-abusefilter-changeslist-nomatch {
 }
 
 div.mw-abusefilter-editor {
-	width: 65%; /* Same as wpFilterRules and mw-abusefilter-notes-editor */
+	width: 90%; /* Same as wpFilterRules and mw-abusefilter-notes-editor */
 	height: 30em; /* Similar to wpFilterRules */
 	line-height: 1.5em;
 	border: 1px solid #a2a9b1;
@@ -131,12 +131,14 @@ div.mw-abusefilter-editor {
 }
 
 #wpFilterRules {
-	width: 65%; /* Same as mw-abusefilter-editor */
+	width: 90%; /* Same as mw-abusefilter-editor */
 	height: 27em; /* Same as mw-abusefilter-editor, minus extra space */
 }
 
-#mw-abusefilter-notes-editor {
-	width: 65%; /* Same as mw-abusefilter-editor */
+#mw-abusefilter-notes-editor,
+#mw-abusefilter-edit-description-input,
+#mw-abusefilter-edit-group-input {
+	width: 90%; /* Same as mw-abusefilter-editor */
 	max-width: unset; /* OOUI's default of 50em is too low for this field */
 }
 

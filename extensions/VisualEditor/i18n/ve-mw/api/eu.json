@@ -1,13 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Iñaki LL",
-			"Sator",
-			"Amire80"
+			"Sator"
 		]
 	},
 	"apierror-visualeditor-difffailed": "Ezb akatsa",
-	"apihelp-visualeditor-description": "HTML5 orri baterako itzultzen du Parsoid zerbitzutik.",
 	"apihelp-visualeditor-param-basetimestamp": "Gordetzerakoan, berrikuspenaren data eta ordua ezartzen du. Hau edizio-gatazkak antzemateko erabiltzen da.",
 	"apihelp-visualeditor-param-cachekey": "\"serialize\" edo \"diff\"erako, erabili aurreko \"serializeforcache\" eskaerako emaitza. $1html gainidatzi.",
 	"apihelp-visualeditor-param-html": "HTML Parsoidera bidaltzeko eta wikitestura bihurtzeko.",
@@ -18,7 +17,6 @@
 	"apihelp-visualeditor-param-starttimestamp": "Gordetzerakoan, data eta ordua finkatzen du orria kargatzerakoan . Hau edizio-gatazkak antzemateko erabiltzen da.",
 	"apihelp-visualeditor-param-wikitext": "Wikitestua Parsoidera bidaltzeko eta HTML bihurtzeko (paction=parsefragment).",
 	"apihelp-visualeditor-summary": "HTML5 itzultzen du orri baterako Parsoid zerbitzutik.",
-	"apihelp-visualeditoredit-description": "Gorde HTML5 orri bat MediWikirako (wikitestu bihurtua Parsoid zerbituaren bitartez).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Gordetzerakoan, berrikuspenaren data eta ordua ezartzen du. Hau edizio-gatazkak antzemateko erabiltzen da.",
 	"apihelp-visualeditoredit-param-cachekey": "Erabili \"serializeforcache\" aurreko eskaera baten emaitza kode honekin. $1html gainidazten du.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha IDa (captcha irudi kode bati erantzunez gordetzen denean).",

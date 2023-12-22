@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Abijeet Patro",
 			"Anoop rao",
 			"Ansumang",
 			"Jayprakash12345",
@@ -9,7 +10,8 @@
 			"Sfic",
 			"Shubhamkanodia",
 			"Siddhartha Ghai",
-			"संजीव कुमार"
+			"संजीव कुमार",
+			"Saurmandal"
 		]
 	},
 	"cite-desc": "उद्धरणों के लिये <code>&lt;ref[ name=id]&gt;</code> और <code>&lt;references/&gt;</code> टैग जोड़ता है।",
@@ -39,5 +41,11 @@
 	"cite_references_link_accessibility_back_label": "Jump back up",
 	"cite_section_preview_references": "सन्दर्भ की झलक",
 	"cite_warning": "सन्दर्भ चेतावनी: $1",
-	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> टैग <code>$1</code> नाम के साथ पूर्वावलोकन किया जा सका क्योंकि या तो यह वर्तमान विभाग के बाहर परिभाषित है अथवा परिभाषित ही नहीं है।"
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> टैग का <code>$1</code> नाम के साथ पूर्वावलोकन नहीं किया जा सका क्योंकि या तो यह वर्तमान विभाग के बाहर परिभाषित है अथवा परिभाषित ही नहीं है।",
+	"cite-wikieditor-tool-reference": "सन्दर्भ",
+	"cite-wikieditor-help-page-references": "सन्दर्भ",
+	"cite-wikieditor-help-content-reference-description": "सन्दर्भ",
+	"cite-wikieditor-help-content-named-reference-description": "नामित सन्दर्भ",
+	"cite-wikieditor-help-content-rereference-description": "एक ही सन्दर्भ का एकाधिक बार प्रयोग",
+	"cite-wikieditor-help-content-showreferences-description": "सन्दर्भ दिखाएँ"
 }

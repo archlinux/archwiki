@@ -1,12 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"C.R.",
-			"Ruthven",
-			"Amire80"
+			"Ruthven"
 		]
 	},
-	"apihelp-echomarkread-description": "Nzegna tutt' 'e mmasciate comm'a leggiute pe ll'utente.",
 	"apihelp-echomarkread-param-list": "N'elenco 'e ll'ID notifiche 'a nzegnare comme fossero lette.",
 	"apihelp-echomarkread-param-unreadlist": "N'elenco 'e ll'ID notifiche 'a nzegnare comme nun fossero lette.",
 	"apihelp-echomarkread-param-all": "Si mpustato, contrassegna tutte 'e notifiche 'e ll'utente comme fossero lette.",
@@ -14,10 +13,8 @@
 	"apihelp-echomarkread-example-1": "Nzegna 'a notifica 8 comme leggiuta",
 	"apihelp-echomarkread-example-2": "Nzegna tutt' 'e mmasciate comme fussero leggiute",
 	"apihelp-echomarkread-example-3": "Nzegna 'a notifica 1 comme nun leggiuta",
-	"apihelp-echomarkseen-description": "Nzegna 'e mmasciate comme fussero leggiute pe ll'utente.",
 	"apihelp-echomarkseen-example-1": "Nzegna tutte 'e mmasciate comme leggiute",
 	"apihelp-echomarkseen-param-type": "Tipo 'e notifica pe' nzegnà visto comme: 'allerta', 'mmasciata' o 'tutto'.",
-	"apihelp-query+notifications-description": "Piglia 'e notifiche ca stesser'aspettann'a ll'utente.",
 	"apihelp-query+notifications-param-prop": "Dettaglie d' 'a richiesta.",
 	"apihelp-query+notifications-param-sections": "'E seziune 'e notifica a se ffà 'a query (fossero p'esempio na cumbinazione 'allerta' e 'mmasciata').",
 	"apihelp-query+notifications-param-groupbysection": "Si vulite accucchià 'o risultato pe' sezziona. Ogne seziona se pigliasse comme fosse a spartuta si chisto se buò ffà.",
@@ -38,7 +35,6 @@
 	"apihelp-query+notifications-param-titles": "Turnasse surtanto 'e notifiche pe' sti ppaggene. Pe' se puté piglià notifiche nun azzeccate a na paggena, ausate [] comme fosse 'o titolo.",
 	"apihelp-query+notifications-example-1": "Elenca notifiche",
 	"apihelp-query+notifications-example-2": "Elenca notifiche, raggruppate pe' seziona, cu 'e cuntegge",
-	"apihelp-query+unreadnotificationpages-description": "Piglià paggene p' 'e quale ce stanno notifiche ca nun fossero ancora ligiute 'a ll'utente 'e mò.",
 	"apihelp-query+unreadnotificationpages-param-grouppages": "Paggene 'e chiacchiera 'e gruppo nziem'a ll'argomento suo, e notifiche 'e gruppo nun suòcie a na paggena nziem'a na paggena utente.",
 	"apihelp-query+unreadnotificationpages-param-limit": "'O nummero massimo 'e paggene ca s'avess'a turnà.",
 	"apihelp-query+unreadnotificationpages-param-wikis": "Elenco 'e wiki addò se ponno piglià paggene ch' 'e mmasciate nun liggiute (predefinite p' 'o wiki 'e mo sulamente).",

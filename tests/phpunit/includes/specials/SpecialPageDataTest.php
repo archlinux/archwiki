@@ -1,10 +1,12 @@
 <?php
 
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\FauxResponse;
+use MediaWiki\Specials\SpecialPageData;
 
 /**
- * @covers SpecialPageData
+ * @covers \MediaWiki\Specials\SpecialPageData
  * @group Database
  * @group SpecialPage
  *
@@ -29,7 +31,7 @@ class SpecialPageDataTest extends SpecialPageTestBase {
 		return $page;
 	}
 
-	public function provideExecute() {
+	public static function provideExecute() {
 		$cases = [];
 
 		$cases['Empty request'] = [ '', [], [], '!!', 200 ];
@@ -73,7 +75,7 @@ class SpecialPageDataTest extends SpecialPageTestBase {
 			[ 'Location' => '!Helsinki&action=raw!' ]
 		];
 
-		$cases['Nothing specified'] = [
+		$cases['Nothing specified 2'] = [
 			'/Helsinki',
 			[],
 			[],

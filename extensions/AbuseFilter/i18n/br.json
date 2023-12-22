@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Fohanno",
 			"Fulup",
 			"Gwendal",
 			"Huñvreüs",
 			"Matma Rex",
 			"VIGNERON",
-			"Y-M D",
-			"Amire80"
+			"Y-M D"
 		]
 	},
 	"abusefilter-desc": "Lakaat a ra hentennoù klask emgefre da dalvezout evit ar c'hemmoù",
@@ -183,6 +183,7 @@
 	"abusefilter-throttle-ip": "Chomlec'h IP",
 	"abusefilter-throttle-user": "Kont implijer",
 	"abusefilter-throttle-range": "lijorenn IP",
+	"abusefilter-throttle-creationdate": "Deiziad krouidigezh kont",
 	"abusefilter-throttle-site": "al lec'hienn a-bezh",
 	"abusefilter-throttle-page": "pajenn",
 	"abusefilter-throttle-none": "(hini ebet)",
@@ -323,7 +324,7 @@
 	"abusefilter-history-filter": "Reolenn ar sil",
 	"abusefilter-history-comments": "Evezhiadennoù",
 	"abusefilter-history-actions": "Oberoù",
-	"abusefilter-history-backedit": "Distreiñ d'ar bajenn kemmañ ar sil",
+	"abusefilter-history-backedit": "Aozer siloù",
 	"abusefilter-history-deleted": "Diverket",
 	"abusefilter-history-filterid": "Sil",
 	"abusefilter-history-select-legend": "Spisaat ar c'hlask",
@@ -381,6 +382,7 @@
 	"abusefilter-test-page": "Kemmoù graet war ar bajenn :",
 	"abusefilter-test-shownegative": "Diskouez ar c'hemmoù ha n'int ket kemeret e kont gant ar sil",
 	"abusefilter-test-syntaxerr": "Ar sil ho peus roet a zo ennañ ur fazi ereadurezh.\nGallout a rit resev un displegadenn glok dre glikañ war ar bouton \"{{int:abusefilter-edit-check}}\".",
+	"abusefilter-test-search-type-createaccount": "Krouidigezhioù kontoù",
 	"abusefilter-changeslist-examine": "arsellet",
 	"abusefilter-examine": "Studiañ ar c'hemmoù hiniennel",
 	"abusefilter-examine-intro": "Gant ar bajenn-mañ e c'heller ensellout an argemmennoù krouet gant ar sil gwallimplij evit ar c'hemmoù hinnienel, hag arnodiñ anezho gant ar siloù.",
@@ -411,11 +413,17 @@
 	"abusefilter-diff-info": "Titouroù diazez",
 	"abusefilter-diff-pattern": "Amplegad ar sil",
 	"abusefilter-diff-invalid": "Ne c'haller ket adkavout ar stummoù goulennet",
-	"abusefilter-diff-backhistory": "Distreiñ da istor ar sil",
+	"abusefilter-diff-backhistory": "Istor ar sil",
 	"abusefilter-diff-prev": "Kemm koshoc'h",
 	"abusefilter-diff-next": "Kemm nevesoc'h",
 	"abusefilter-import-intro": "Gallout a rit implijout an etrefas-mañ evit enporzhiañ siloù diwar wikioù all.\nEr wiki orin, klikit war \"{{int:abusefilter-edit-export}}\" e-barzh \"{{int:abusefilter-edit-tools}}\" en etrefas aozañ.\nEilit an takad testenn a teu war-well, ha pegit anezhañ e-barzh an takad testenn-mañ, da heul klikit war \"{{int:abusefilter-import-submit}}\".",
 	"abusefilter-import-submit": "Enporzhiañ roadennoù",
 	"abusefilter-group-default": "Dre ziouer",
-	"abusefilter-http-error": "Ur fazi HTTP zo bet : $1"
+	"abusefilter-http-error": "Ur fazi HTTP zo bet : $1",
+	"blockedexternaldomains": "Domanioù diavaez stanket",
+	"abusefilter-blocked-domains-intro": "Stanket a vo al liammoù diavaez a glot gant ar roll-mañ pa vint ouzhpennet en ur bajenn. Enrollet eo an domani-mañ e [[MediaWiki:BlockedExternalDomains.json]].",
+	"abusefilter-blocked-domains-domain-added-comment": "Ouzhpennet domani diavaez stanket $1 gant notennoù: $2",
+	"right-abusefilter-modify-blocked-external-domains": "Krouiñ pe kemmañ pe domanioù diavaez a zo miret ouzh bezañ liammet war o zu",
+	"right-abusefilter-bypass-blocked-external-domains": "Korntroiañ domanioù diavaez stanket",
+	"abusefilter-blocked-domains-cannot-edit-directly": "Krouiñ pe kemmañ pe domanioù diavaez a zo miret ouzh bezañ liammet war o zu a rank bezañ graet dre [[Special:BlockedExternalDomains|ar bajenn a-ratozh]]."
 }

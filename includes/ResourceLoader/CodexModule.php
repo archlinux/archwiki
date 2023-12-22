@@ -20,8 +20,8 @@
 
 namespace MediaWiki\ResourceLoader;
 
-use Config;
 use ExtensionRegistry;
+use MediaWiki\Config\Config;
 
 /**
  * Module for codex that has direction-specific style files and a static helper function for
@@ -48,7 +48,7 @@ class CodexModule extends FileModule {
 	}
 
 	public function getStyleFiles( Context $context ) {
-		if ( !$this->themeStylesAdded ) {
+		if ( $this->themeStyles && !$this->themeStylesAdded ) {
 			// Add theme styles
 			$themeMap = static::$builtinSkinThemeMap +
 				ExtensionRegistry::getInstance()->getAttribute( 'SkinCodexThemes' );

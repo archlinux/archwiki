@@ -44,7 +44,7 @@ class PPNode_Hash_Attr implements PPNode {
 	public function __construct( array $store, $index ) {
 		$descriptor = $store[$index];
 		if ( $descriptor[PPNode_Hash_Tree::NAME][0] !== '@' ) {
-			throw new MWException( __METHOD__ . ': invalid name in attribute descriptor' );
+			throw new InvalidArgumentException( __METHOD__ . ': invalid name in attribute descriptor' );
 		}
 		$this->name = substr( $descriptor[PPNode_Hash_Tree::NAME], 1 );
 		$this->value = $descriptor[PPNode_Hash_Tree::CHILDREN][0];
@@ -86,16 +86,16 @@ class PPNode_Hash_Attr implements PPNode {
 
 	public function splitArg() {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		throw new MWException( __METHOD__ . ': not supported' );
+		throw new LogicException( __METHOD__ . ': not supported' );
 	}
 
 	public function splitExt() {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		throw new MWException( __METHOD__ . ': not supported' );
+		throw new LogicException( __METHOD__ . ': not supported' );
 	}
 
 	public function splitHeading() {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		throw new MWException( __METHOD__ . ': not supported' );
+		throw new LogicException( __METHOD__ . ': not supported' );
 	}
 }

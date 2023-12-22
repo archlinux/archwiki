@@ -18,6 +18,8 @@
  * @file
  */
 
+use MediaWiki\User\User;
+
 /**
  * Form to edit user preferences.
  *
@@ -35,6 +37,9 @@ class PreferencesFormOOUI extends OOUIHTMLForm {
 
 	/** @var bool */
 	private $optionsEditable = true;
+
+	/** @var bool */
+	private $useMobileLayout;
 
 	/**
 	 * @param User $user
@@ -95,10 +100,6 @@ class PreferencesFormOOUI extends OOUIHTMLForm {
 		return [];
 	}
 
-	/**
-	 * @param string $html
-	 * @return string
-	 */
 	public function wrapForm( $html ) {
 		$html = Xml::tags( 'div', [ 'id' => 'preferences' ], $html );
 
@@ -135,19 +136,42 @@ class PreferencesFormOOUI extends OOUIHTMLForm {
 		return $layout;
 	}
 
+	private function isMobileLayout() {
+		if ( $this->useMobileLayout === null ) {
+			$skin = $this->getSkin();
+			$this->useMobileLayout = false;
+			$this->getHookRunner()->onPreferencesGetLayout( $this->useMobileLayout,
+				$skin->getSkinName(), [ 'isResponsive' => $skin->isResponsive() ] );
+		}
+		return $this->useMobileLayout;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function addFields( $descriptor ) {
+		// Replace checkbox fields with toggle switchs on Special:Preferences
+		if ( $this->isMobileLayout() && $this->getTitle()->isSpecial( 'Preferences' ) ) {
+			foreach ( $descriptor as $_ => &$info ) {
+				if ( isset( $info['type'] ) && in_array( $info['type'], [ 'check', 'toggle' ] ) ) {
+					unset( $info['type'] );
+					$info['class'] = HTMLToggleSwitchField::class;
+				} elseif ( isset( $info['class'] ) && $info['class'] === HTMLCheckField::class ) {
+					$info['class'] = HTMLToggleSwitchField::class;
+				}
+			}
+		}
+		return parent::addFields( $descriptor );
+	}
+
 	/**
 	 * Get the whole body of the form.
 	 * @return string
 	 */
 	public function getBody() {
-		$out = $this->getOutput();
-		$skin = $out->getSkin();
-		$this->getHookRunner()->onPreferencesGetLayout( $useMobileLayout,
-			$skin->getSkinName(), [ 'isResponsive' => $skin->isResponsive() ] );
-
-		if ( $useMobileLayout ) {
+		if ( $this->isMobileLayout() ) {
 			// Import the icons used in the mobile view
-			$out->addModuleStyles(
+			$this->getOutput()->addModuleStyles(
 				[
 					'oojs-ui.styles.icons-user',
 					'oojs-ui.styles.icons-editing-core',
@@ -195,23 +219,12 @@ class PreferencesFormOOUI extends OOUIHTMLForm {
 
 	/**
 	 * Create the preferences form for a mobile layout.
-	 * @return string
+	 * @return OOUI\Tag
 	 */
 	private function createMobilePreferencesForm() {
-		$prefPanels = [];
-		$iconNames = [
-			'personal' => 'userAvatar',
-			'rendering' => 'palette',
-			'editing' => 'edit',
-			'rc' => 'recentChanges',
-			'watchlist' => 'watchlist',
-			'searchoptions' => 'search',
-			'misc' => '',
-		];
-		$hookIcons = [];
-		// Get icons from extensions that have their own sections
-		$this->getHookRunner()->onPreferencesGetIcon( $hookIcons );
-		$iconNames += $hookIcons;
+		$sectionButtons = [];
+		$sectionContents = [];
+		$iconNames = $this->getIconNames();
 
 		foreach ( $this->mFieldTree as $key => $val ) {
 			if ( !is_array( $val ) ) {
@@ -228,86 +241,120 @@ class PreferencesFormOOUI extends OOUIHTMLForm {
 				) .
 				$this->getFooterHtml( $key );
 
-			$prefPanel = new OOUI\PanelLayout( [
-				'expanded' => false,
-				'content' => [],
-				'framed' => false,
-				'classes' => [
-					'mw-mobile-prefsection',
-					'mw-prefs-section-fieldset',
-				],
-				'tagName' => 'fieldset',
-			] );
-
-			$iconHeaderDiv = ( new OOUI\Tag( 'div' ) )
-				->addClasses( [ 'mw-prefs-header-container' ] );
-			$iconExists = array_key_exists( $key, $iconNames );
-			if ( $iconExists ) {
-				$iconName = $iconNames[ $key ];
-			} else {
-				$iconName = "settings";
-			}
-			$spanIcon = new OOUI\IconWidget( [
-				'icon' => $iconName,
-				'label' => $label,
-				'title' => $label,
-				'classes' => [ 'mw-prefs-icon' ],
-			] );
-			$prefTitle = ( new OOUI\Tag( 'h5' ) )->appendContent( $label )->addClasses( [ 'prefs-title' ] );
-			$iconHeaderDiv->appendContent( $spanIcon );
-			$iconHeaderDiv->appendContent( $prefTitle );
-			$prefPanel->appendContent( $iconHeaderDiv );
-			$prefDescriptionMsg = $this->msg( "prefs-description-" . $key );
-			$prefDescription = $prefDescriptionMsg->exists() ? $prefDescriptionMsg->text() : "";
-			$prefPanel->appendContent( ( new OOUI\Tag( 'p' ) )
-				->appendContent( $prefDescription )
-				->addClasses( [ 'mw-prefs-description' ] )
+			// Creating the header section
+			$label = ( new OOUI\Tag( 'div' ) )->appendContent(
+				( new OOUI\Tag( 'h5' ) )->appendContent( $label )->addClasses( [ 'mw-prefs-title' ] ),
+				$this->createMobileDescription( $key )
 			);
-			$contentDiv = ( new OOUI\Tag( 'div' ) );
-			$contentDiv->addClasses( [ 'mw-prefs-content-page' ] );
-			$contentDiv->setAttributes( [
-				'id' => 'mw-mobile-prefs-' . $key . '-content'
-			] );
-			$contentHeader = ( new OOUI\Tag( 'div' ) )->setAttributes( [
-				'id' => 'mw-mobile-prefs-' . $key . '-head'
-			] );
-			$contentHeader->addClasses( [ 'mw-prefs-content-head' ] );
-			$contentHeaderTitle = ( new OOUI\Tag( 'h5' ) )->setAttributes( [
-				'id' => 'mw-mobile-prefs-' . $key . '-title',
-			] );
-			$contentHeaderTitle->appendContent( $label )->addClasses( [ 'mw-prefs-header-title' ] );
-			$formContent = new OOUI\Widget( [
-				'content' => new OOUI\HtmlSnippet( $content )
-			] );
-			$hiddenForm = ( new OOUI\Tag( 'div' ) )->appendContent( $formContent );
-			$contentHeader->appendContent( $contentHeaderTitle );
-			$contentDiv->appendContent( $contentHeader );
-			$contentDiv->appendContent( $hiddenForm );
-			$prefPanel->appendContent( $contentDiv );
-			$prefPanel->setAttributes( [
+			$contentDiv = $this->createContentMobile( $key, $label, $content );
+
+			$sectionButton = new OOUI\ButtonWidget( [
 				'id' => 'mw-mobile-prefs-' . $key,
+				'icon' => $iconNames[ $key ] ?? 'settings',
+				'label' => new OOUI\HtmlSnippet( $label->toString() ),
+				'data' => $key,
+				'classes' => [ 'mw-mobile-prefsection' ],
+				'framed' => false,
 			] );
-			$prefPanel->setInfusable( true );
-			$prefPanels[] = $prefPanel;
+			$sectionButtons[] = $sectionButton;
+			$sectionContents[] = $contentDiv;
 		}
 
-		$form = new OOUI\StackLayout( [
-			'items' => $prefPanels,
-			'continuous' => true,
-			'expanded' => true,
-			'classes' => [ 'mw-mobile-preferences-container' ]
+		$buttonGroup = new OOUI\ButtonGroupWidget( [
+			'classes' => [ 'mw-mobile-prefs-sections' ],
+			'infusable' => true,
 		] );
-		$form->setAttributes( [
-			'id' => 'mw-prefs-container',
-		] );
-		$form->setInfusable( true );
+		$buttonGroup->addItems( $sectionButtons );
+		$form = ( new OOUI\Tag( 'div' ) )
+			->setAttributes( [ 'id' => 'mw-prefs-container' ] )
+			->addClasses( [ 'mw-mobile-prefs-container' ] )
+			->appendContent( $buttonGroup )
+			->appendContent( $sectionContents );
 
 		return $form;
 	}
 
 	/**
+	 * Get the icon names for each mobile preference section.
+	 * @return array
+	 */
+	private function getIconNames() {
+		$iconNames = [
+			'personal' => 'userAvatar',
+			'rendering' => 'palette',
+			'editing' => 'edit',
+			'rc' => 'recentChanges',
+			'watchlist' => 'watchlist',
+			'searchoptions' => 'search',
+			'misc' => '',
+		];
+		$hookIcons = [];
+		// Get icons from extensions that have their own sections
+		$this->getHookRunner()->onPreferencesGetIcon( $hookIcons );
+		$iconNames += $hookIcons;
+
+		return $iconNames;
+	}
+
+	/**
+	 * Creates a description tag for each section of the mobile layout.
+	 * @param string $key
+	 * @return OOUI\Tag
+	 */
+	private function createMobileDescription( $key ) {
+		$prefDescriptionMsg = $this->msg( "prefs-description-" . $key );
+		$prefDescription = $prefDescriptionMsg->exists() ? $prefDescriptionMsg->text() : "";
+		$prefDescriptionElement = ( new OOUI\Tag( 'p' ) )
+			->appendContent( $prefDescription )
+			->addClasses( [ 'mw-prefs-description' ] );
+
+		return $prefDescriptionElement;
+	}
+
+	/**
+	 * Creates the contents for each section of the mobile layout.
+	 * @param string $key
+	 * @param string $label
+	 * @param string $content
+	 * @return OOUI\Tag
+	 */
+	private function createContentMobile( $key, $label, $content ) {
+		$contentDiv = ( new OOUI\Tag( 'div' ) );
+		$contentDiv->addClasses( [
+			'mw-prefs-content-page',
+			'mw-prefs-section-fieldset',
+		] );
+		$contentDiv->setAttributes( [
+			'id' => 'mw-mobile-prefs-' . $key
+		] );
+		$contentBody = ( new OOUI\Tag( 'div' ) )
+			->addClasses( [ 'mw-htmlform-autoinfuse-lazy' ] )
+			->setAttributes( [
+				'id' => 'mw-mobile-prefs-' . $key . '-content'
+			] );
+		$contentHeader = ( new OOUI\Tag( 'div' ) )->setAttributes( [
+			'id' => 'mw-mobile-prefs-' . $key . '-head'
+		] );
+		$contentHeader->addClasses( [ 'mw-prefs-content-head' ] );
+		$contentHeaderTitle = ( new OOUI\Tag( 'h5' ) )->setAttributes( [
+			'id' => 'mw-mobile-prefs-' . $key . '-title',
+		] );
+		$contentHeaderTitle->appendContent( $label )->addClasses( [ 'mw-prefs-header-title' ] );
+		$formContent = new OOUI\Widget( [
+			'content' => new OOUI\HtmlSnippet( $content )
+		] );
+		$hiddenForm = ( new OOUI\Tag( 'div' ) )->appendContent( $formContent );
+		$contentHeader->appendContent( $contentHeaderTitle );
+		$contentBody->appendContent( $contentHeader );
+		$contentBody->appendContent( $hiddenForm );
+		$contentDiv->appendContent( $contentBody );
+
+		return $contentDiv;
+	}
+
+	/**
 	 * Create the preferences form for a desktop layout.
-	 * @return string
+	 * @return OOUI\PanelLayout
 	 */
 	private function createDesktopPreferencesForm() {
 		$tabPanels = [];

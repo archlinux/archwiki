@@ -1,7 +1,5 @@
 <?php
 /**
- * Tools for dealing with other locally-hosted wikis.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -28,7 +26,7 @@ use MediaWikiSite;
 use Wikimedia\Rdbms\DatabaseDomain;
 
 /**
- * Helper tools for dealing with other locally-hosted wikis.
+ * Tools for dealing with other locally-hosted wikis.
  */
 class WikiMap {
 
@@ -54,6 +52,7 @@ class WikiMap {
 	 */
 	private static function getWikiReferenceFromWgConf( $wikiID ) {
 		global $wgConf;
+		'@phan-var \MediaWiki\Config\SiteConfiguration $wgConf';
 
 		$wgConf->loadFullData();
 
@@ -110,6 +109,9 @@ class WikiMap {
 
 		$canonicalServer = $urlParts['scheme'] ?? 'http';
 		$canonicalServer .= '://' . $urlParts['host'];
+		if ( isset( $urlParts['port'] ) ) {
+			$canonicalServer .= ':' . $urlParts['port'];
+		}
 
 		return new WikiReference( $canonicalServer, $path );
 	}
@@ -119,7 +121,7 @@ class WikiMap {
 	 *
 	 * @todo We can give more info than just the wiki id!
 	 * @param string $wikiID Wiki'd id (generally database name)
-	 * @return string|int Wiki's name or $wiki_id if the wiki was not found
+	 * @return string Wiki's name or $wiki_id if the wiki was not found
 	 */
 	public static function getWikiName( $wikiID ) {
 		$wiki = self::getWiki( $wikiID );
@@ -189,9 +191,9 @@ class WikiMap {
 		$cache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
 
 		return $cache->getWithSetCallback(
-			$cache->makeGlobalKey( 'wikimap', 'canonical-urls' ),
+			$cache->makeGlobalKey( 'wikimap-canonical-urls' ),
 			$cache::TTL_DAY,
-			function () {
+			static function () {
 				global $wgLocalDatabases, $wgCanonicalServer;
 
 				$infoMap = [];
@@ -323,4 +325,7 @@ class WikiMap {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( WikiMap::class, 'WikiMap' );

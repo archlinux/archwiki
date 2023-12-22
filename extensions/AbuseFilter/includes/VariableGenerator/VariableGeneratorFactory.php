@@ -6,10 +6,10 @@ use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\TextExtractor;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Title\Title;
 use MimeAnalyzer;
 use RecentChange;
 use RepoGroup;
-use Title;
 use User;
 
 class VariableGeneratorFactory {

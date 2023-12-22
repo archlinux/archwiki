@@ -7,20 +7,29 @@ function init() {
 		return;
 	}
 
-	// @ts-ignore
 	mw.hook( 'ext.echo.NotificationBadgeWidget.onInitialize' ).add( function ( badge ) {
-		var $element = badge.$element;
-		$element.addClass( 'mw-list-item' );
-
-		var iconButtonClasses = 'mw-ui-button mw-ui-quiet mw-ui-icon mw-ui-icon-element ';
-		if ( $element.attr( 'id' ) === 'pt-notifications-alert' ) {
-			$element.children( 'a' ).addClass( iconButtonClasses + 'mw-ui-icon-bell' );
-			$element.children( 'a' ).removeClass( 'oo-ui-icon-bell' );
+		const element = badge.$element[ 0 ];
+		element.classList.add( 'mw-list-item' );
+		const anchor = /** @type {HTMLElement} */ ( element.querySelector( 'a' ) );
+		anchor.classList.add(
+			'cdx-button',
+			'cdx-button--weight-quiet',
+			'cdx-button--icon-only',
+			'cdx-button--fake-button',
+			'cdx-button--fake-button--enabled'
+		);
+		// Icon classes shouldn't go on the same element as button classes
+		// However this cant be avoided due to Echo button's implementation
+		// which directly sets the contents of the anchor element every update
+		// which would clear out any icon children that we define
+		if ( element.id === 'pt-notifications-alert' ) {
+			anchor.classList.add( 'vector-icon', 'mw-ui-icon-wikimedia-bell' );
 		}
-		if ( $element.attr( 'id' ) === 'pt-notifications-notice' ) {
-			$element.children( 'a' ).addClass( iconButtonClasses + 'mw-ui-icon-tray' );
-			$element.children( 'a' ).removeClass( 'oo-ui-icon-tray' );
+		if ( element.id === 'pt-notifications-notice' ) {
+			anchor.classList.add( 'vector-icon', 'mw-ui-icon-wikimedia-tray' );
 		}
+		anchor.classList.remove( 'oo-ui-icon-bell', 'oo-ui-icon-tray' );
 	} );
 }
+
 module.exports = init;

@@ -163,5 +163,16 @@
 		},
 		"config": "../data/enwiki-config.json",
 		"data": "../data/enwiki-data.json"
+	},
+	{
+		"name": "Suppressed talk classes",
+		"title": "User_talk:ESanders_(WMF)/suppressed-talk",
+		"dom": "cases/suppressed-talk/suppressed-talk.html",
+		"expected": {
+			"desktop": "cases/suppressed-talk/suppressed-talk-formatted-desktop.html",
+			"mobile": "cases/suppressed-talk/suppressed-talk-formatted-mobile.html"
+		},
+		"config": "../data/enwiki-config.json",
+		"data": "../data/enwiki-data.json"
 	}
 ]

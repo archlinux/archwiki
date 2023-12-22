@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\Mapper\TargetPageMapper;
 use MediaWiki\Extension\Notifications\Model\TargetPage;
 use Wikimedia\Rdbms\IDatabase;
@@ -9,7 +10,7 @@ use Wikimedia\Rdbms\IDatabase;
  */
 class TargetPageMapperTest extends MediaWikiUnitTestCase {
 
-	public function provideDataTestInsert() {
+	public static function provideDataTestInsert() {
 		return [
 			[
 				'successful insert with next sequence = 1',
@@ -29,7 +30,7 @@ class TargetPageMapperTest extends MediaWikiUnitTestCase {
 	 */
 	public function testInsert( $message, $dbResult, $result ) {
 		$target = $this->mockTargetPage();
-		$targetMapper = new TargetPageMapper( $this->mockMWEchoDbFactory( $dbResult ) );
+		$targetMapper = new TargetPageMapper( $this->mockDbFactory( $dbResult ) );
 		$this->assertEquals( $result, $targetMapper->insert( $target ), $message );
 	}
 
@@ -50,12 +51,12 @@ class TargetPageMapperTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * Mock object of MWEchoDbFactory
+	 * Mock object of DbFactory
 	 * @param array $dbResult
-	 * @return MWEchoDbFactory
+	 * @return DbFactory
 	 */
-	protected function mockMWEchoDbFactory( $dbResult ) {
-		$dbFactory = $this->createMock( MWEchoDbFactory::class );
+	protected function mockDbFactory( $dbResult ) {
+		$dbFactory = $this->createMock( DbFactory::class );
 		$dbFactory->method( 'getEchoDb' )
 			->willReturn( $this->mockDb( $dbResult ) );
 

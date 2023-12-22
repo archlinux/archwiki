@@ -10,7 +10,8 @@ use MediaWiki\Storage\PageUpdaterFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
 use Psr\Log\LoggerInterface;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * @since 1.31
@@ -28,9 +29,9 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 	private $doUpdates;
 
 	/**
-	 * @var ILoadBalancer
+	 * @var IConnectionProvider
 	 */
-	private $loadBalancer;
+	private $dbProvider;
 
 	/**
 	 * @var RevisionStore
@@ -56,7 +57,7 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 	/**
 	 * @param bool $doUpdates
 	 * @param LoggerInterface $logger
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param RevisionStore $revisionStore
 	 * @param SlotRoleRegistry $slotRoleRegistry
 	 * @param WikiPageFactory|null $wikiPageFactory
@@ -66,7 +67,7 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 	public function __construct(
 		$doUpdates,
 		LoggerInterface $logger,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		RevisionStore $revisionStore,
 		SlotRoleRegistry $slotRoleRegistry,
 		WikiPageFactory $wikiPageFactory = null,
@@ -75,7 +76,7 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 	) {
 		$this->doUpdates = $doUpdates;
 		$this->logger = $logger;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->revisionStore = $revisionStore;
 		$this->slotRoleRegistry = $slotRoleRegistry;
 
@@ -88,7 +89,7 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 
 	/** @inheritDoc */
 	public function import( ImportableOldRevision $importableRevision, $doUpdates = true ) {
-		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+		$dbw = $this->dbProvider->getPrimaryDatabase();
 
 		# Sneak a single revision into place
 		$user = $importableRevision->getUserObj() ?: $this->userFactory->newFromName( $importableRevision->getUser() );
@@ -115,12 +116,15 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 			// Note: sha1 has been in XML dumps since 2012. If you have an
 			// older dump, the duplicate detection here won't work.
 			if ( $importableRevision->getSha1Base36() !== false ) {
-				$prior = (bool)$dbw->selectField( 'revision', '1',
-					[ 'rev_page' => $pageId,
-					'rev_timestamp' => $dbw->timestamp( $importableRevision->getTimestamp() ),
-					'rev_sha1' => $importableRevision->getSha1Base36() ],
-					__METHOD__
-				);
+				$prior = (bool)$dbw->newSelectQueryBuilder()
+					->select( '1' )
+					->from( 'revision' )
+					->where( [
+						'rev_page' => $pageId,
+						'rev_timestamp' => $dbw->timestamp( $importableRevision->getTimestamp() ),
+						'rev_sha1' => $importableRevision->getSha1Base36()
+					] )
+					->caller( __METHOD__ )->fetchField();
 				if ( $prior ) {
 					// @todo FIXME: This could fail slightly for multiple matches :P
 					$this->logger->debug( __METHOD__ . ": skipping existing revision for [[" .
@@ -143,20 +147,15 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 		// Select previous version to make size diffs correct
 		// @todo This assumes that multiple revisions of the same page are imported
 		// in order from oldest to newest.
-		$qi = $this->revisionStore->getQueryInfo();
-		$prevRevRow = $dbw->selectRow( $qi['tables'], $qi['fields'],
-			[
-				'rev_page' => $pageId,
-				'rev_timestamp <= ' . $dbw->addQuotes( $dbw->timestamp( $importableRevision->getTimestamp() ) ),
-			],
-			__METHOD__,
-			[ 'ORDER BY' => [
-				'rev_timestamp DESC',
-				'rev_id DESC', // timestamp is not unique per page
-			]
-			],
-			$qi['joins']
-		);
+		$queryBuilder = $this->revisionStore->newSelectQueryBuilder( $dbw )
+			->joinComment()
+			->where( [ 'rev_page' => $pageId ] )
+			->andWhere( $dbw->buildComparison(
+				'<=',
+				[ 'rev_timestamp' => $dbw->timestamp( $importableRevision->getTimestamp() ) ]
+			) )
+			->orderBy( [ 'rev_timestamp', 'rev_id' ], SelectQueryBuilder::SORT_DESC );
+		$prevRevRow = $queryBuilder->caller( __METHOD__ )->fetchRow();
 
 		# @todo FIXME: Use original rev_id optionally (better for backups)
 		# Insert the row
@@ -183,7 +182,7 @@ class ImportableOldRevisionImporter implements OldRevisionImporter {
 
 		foreach ( $importableRevision->getSlotRoles() as $role ) {
 			if ( !$this->slotRoleRegistry->isDefinedRole( $role ) ) {
-				throw new MWException( "Undefined slot role $role" );
+				throw new RuntimeException( "Undefined slot role $role" );
 			}
 
 			$newContent = $importableRevision->getContent( $role );

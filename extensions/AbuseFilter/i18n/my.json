@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Dr Lotus Black",
 			"Erikoo",
-			"Ninjastrikers",
-			"Amire80"
+			"Ninjastrikers"
 		]
 	},
 	"abusefilter": "အလွဲသုံးစားမှု စိစစ်စနစ် စီမံခန့်ခွဲရေး",
@@ -169,7 +169,7 @@
 	"abusefilter-history-filter": "စိစစ်မှု စည်းမျဉ်း",
 	"abusefilter-history-comments": "မှတ်ချက်များ",
 	"abusefilter-history-actions": "ဆောင်ရွက်ချက်များ",
-	"abusefilter-history-backedit": "စီစစ်မှုအယ်ဒီတာသို့ ပြန်သွားရန်",
+	"abusefilter-history-backedit": "စိစစ်မှုအယ်ဒီတာ",
 	"abusefilter-history-deleted": "ဖျက်ပြီးပြီ",
 	"abusefilter-history-filterid": "စိစစ်မှု",
 	"abusefilter-history-select-legend": "ရှာဖွေမှုကို သန့်စင်ရန်",
@@ -226,7 +226,7 @@
 	"abusefilter-diff-version": "$1 မှ $2 {{GENDER:$3|ပြုလုပ်သော}} ဗားရှင်းဖြစ်သည်",
 	"abusefilter-diff-info": "အခြေခံသတင်းအချက်အလက်",
 	"abusefilter-diff-pattern": "စီစစ်မှုအခြေနေများ",
-	"abusefilter-diff-backhistory": "စိစစ်မှုရာဇဝင်သို့ ပြန်သွားရန်",
+	"abusefilter-diff-backhistory": "စိစစ်မှုရာဇဝင်",
 	"abusefilter-diff-prev": "ပိုဟောင်းသော ပြောင်းလဲမှု",
 	"abusefilter-diff-next": "ပိုသစ်သော ပြောင်းလဲမှု",
 	"abusefilter-group-default": "နဂိုအတိုင်း",

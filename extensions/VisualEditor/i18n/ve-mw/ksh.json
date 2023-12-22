@@ -5,7 +5,6 @@
 			"Purodha"
 		]
 	},
-	"tooltip-ca-edit": "Donn dä Sigg iere Wikkitäx beärbeide.",
 	"tooltip-ca-ve-edit": "Don heh di Sigg beärbeide.",
 	"visualeditor-advancedsettings-tool": "Fottjeschredde Enschtällonge",
 	"visualeditor-backbutton-tooltip": "Jangk retuhr",
@@ -98,8 +97,6 @@
 	"visualeditor-linkinspector-educationpopup-title": "Lengks",
 	"visualeditor-magiclinknodeinspector-convert-link": "En ene jewöhnlijje lengk wandelle",
 	"visualeditor-magiclinknodeinspector-title-isbn": "<i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"International Standard Book Number - „de engernazjonahle schtandattmähßejje Bohchnommer“\">ISBN</i> met Lengk",
-	"visualeditor-mweditmodesource-warning-cancel": "Ophühre",
-	"visualeditor-mweditmodesource-warning-switch-discard": "De Veränderonge fottschmiiße",
 	"visualeditor-mweditmodewt-popup-body": "Klegg op heh dat Belldsche. Esu kütt mer obbet Wikki-Quälltäx-Beärbeijde zerök.",
 	"visualeditor-mweditmodewt-popup-title": "Op der <i lang=\"en\" xml:lang=\"en\" dir=\"ltr\" title=\"„Projramm för ‚seeschbaa‘ aan Täxte jät ze änndere“\">VisualEditor</i> öjeschalld.",
 	"visualeditor-mwgallerydialog-caption-field-label": "De Övverschreff vun dä Jallerih",
@@ -126,8 +123,6 @@
 	"visualeditor-mwgallerydialog-widths-field-label": "Dä Belder ier Breejde",
 	"visualeditor-mwsignature-tool": "Ding Ongerschreff",
 	"visualeditor-redirect-description": "Opjeleidt op „$1“",
-	"visualeditor-savedialog-error-badtoken": "Ding Ännderonge kunnte nit faßjehallde wähde. De Sezongsdahte wohre verschött jejange.",
-	"visualeditor-savedialog-identify-trylogin": "Do bes nim_mih ennjelogg. Donn vun enem anndere Finser vum sällve Brauser widder enlogge, un versöhg et dann norr_ens.",
 	"visualeditor-savedialog-label-resume-editing": "Wigger maache mem Ändere",
 	"visualeditor-savedialog-label-review-good": "Sühd jood uß för mesch",
 	"visualeditor-savedialog-label-save-short": "Lohß Jonn!",

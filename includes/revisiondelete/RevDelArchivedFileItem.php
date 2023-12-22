@@ -20,7 +20,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 
 /**
  * Item class for a filearchive table row
@@ -68,14 +68,14 @@ class RevDelArchivedFileItem extends RevDelFileItem {
 
 	public function setBits( $bits ) {
 		$dbw = wfGetDB( DB_PRIMARY );
-		$dbw->update( 'filearchive',
-			[ 'fa_deleted' => $bits ],
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'filearchive' )
+			->set( [ 'fa_deleted' => $bits ] )
+			->where( [
 				'fa_id' => $this->row->fa_id,
 				'fa_deleted' => $this->getBits(),
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )->execute();
 
 		return (bool)$dbw->affectedRows();
 	}
@@ -114,8 +114,8 @@ class RevDelArchivedFileItem extends RevDelFileItem {
 			'width' => $file->getWidth(),
 			'height' => $file->getHeight(),
 			'size' => $file->getSize(),
-			'userhidden' => (bool)$file->isDeleted( RevisionRecord::DELETED_USER ),
-			'commenthidden' => (bool)$file->isDeleted( RevisionRecord::DELETED_COMMENT ),
+			'userhidden' => (bool)$file->isDeleted( File::DELETED_USER ),
+			'commenthidden' => (bool)$file->isDeleted( File::DELETED_COMMENT ),
 			'contenthidden' => (bool)$this->isDeleted(),
 		];
 		if ( $this->canViewContent() ) {

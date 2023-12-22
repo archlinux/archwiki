@@ -13,6 +13,7 @@ use Psr\Log\NullLogger;
 use RuntimeException;
 use WANObjectCache;
 use Wikimedia\Rdbms\DBConnRef;
+use Wikimedia\Rdbms\InsertQueryBuilder;
 use Wikimedia\Rdbms\LoadBalancer;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\TestingAccessWrapper;
@@ -27,10 +28,6 @@ class NameTableStoreTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		$this->tablesUsed[] = 'slot_roles';
-	}
-
-	protected function addCoreDBData() {
-		// The default implementation causes the slot_roles to already have content. Skip that.
 	}
 
 	private function populateTable( $values ) {
@@ -84,7 +81,8 @@ class NameTableStoreTest extends MediaWikiIntegrationTestCase {
 					return $this->db->$method( ...$args );
 				} );
 		}
-		$mock->method( 'newSelectQueryBuilder' )->willReturnCallback( fn() => new SelectQueryBuilder( $mock ) );
+		$mock->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $mock ) );
+		$mock->method( 'newInsertQueryBuilder' )->willReturnCallback( static fn () => new InsertQueryBuilder( $mock ) );
 		return $mock;
 	}
 
@@ -106,7 +104,7 @@ class NameTableStoreTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideGetAndAcquireId() {
+	public static function provideGetAndAcquireId() {
 		return [
 			'no wancache, empty table' =>
 				[ new EmptyBagOStuff(), true, 1, [], 'foo', 1 ],
@@ -176,7 +174,7 @@ class NameTableStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expectedId, $store->getId( $name ) );
 	}
 
-	public function provideTestGetAndAcquireIdNameNormalization() {
+	public static function provideTestGetAndAcquireIdNameNormalization() {
 		yield [ 'A', 'a', 'strtolower' ];
 		yield [ 'b', 'B', 'strtoupper' ];
 		yield [
@@ -211,7 +209,7 @@ class NameTableStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $nameOut, $store->getName( $acquiredId ) );
 	}
 
-	public function provideGetName() {
+	public static function provideGetName() {
 		return [
 			[ new HashBagOStuff(), 3, 2 ],
 			[ new EmptyBagOStuff(), 3, 3 ],
@@ -391,6 +389,7 @@ class NameTableStoreTest extends MediaWikiIntegrationTestCase {
 
 				return true;
 			} );
+		$db->method( 'newInsertQueryBuilder' )->willReturnCallback( static fn () => new InsertQueryBuilder( $db ) );
 
 		$lb = $this->createMock( LoadBalancer::class );
 		$lb->method( 'getConnection' )

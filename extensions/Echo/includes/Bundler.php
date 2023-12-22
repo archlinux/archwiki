@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications;
+
 class Bundler {
 
 	private function sort( &$array ) {

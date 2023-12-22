@@ -50,7 +50,7 @@ class PageConfig extends IPageConfig {
 	/** @var ?RevisionRecord */
 	private $revision;
 
-	/** @var Bcp47Code|null */
+	/** @var Bcp47Code */
 	private $pageLanguage;
 
 	/** @var string */
@@ -100,13 +100,6 @@ class PageConfig extends IPageConfig {
 		} else {
 			return $this->slotRoleHandler->getDefaultModel( $this->title );
 		}
-	}
-
-	public function hasLintableContentModel(): bool {
-		// @todo Check just the main slot, or all slots, or what?
-		$content = $this->getRevisionContent();
-		$model = $content ? $content->getModel( SlotRecord::MAIN ) : null;
-		return $content && ( $model === CONTENT_MODEL_WIKITEXT || $model === 'proofread-page' );
 	}
 
 	/** @inheritDoc */

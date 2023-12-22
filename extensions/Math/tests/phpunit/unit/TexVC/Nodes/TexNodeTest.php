@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\Math\Tests\TexVC\Nodes;
 
 use InvalidArgumentException;
+use MediaWiki\Extension\Math\TexVC\Nodes\TexArray;
 use MediaWiki\Extension\Math\TexVC\Nodes\TexNode;
 use MediaWikiUnitTestCase;
 use RuntimeException;
@@ -12,7 +13,7 @@ use RuntimeException;
  */
 class TexNodeTest extends MediaWikiUnitTestCase {
 
-	public function provideTexToRender() {
+	public static function provideTexToRender() {
 		return [
 			[ [], '' ],
 			[ [ '' ], '' ],
@@ -35,7 +36,7 @@ class TexNodeTest extends MediaWikiUnitTestCase {
 		throw new RuntimeException( 'Should not accept integers as arguments' );
 	}
 
-	public function provideTexWithoutCurlies() {
+	public static function provideTexWithoutCurlies() {
 		return [
 			[ 'a', '{a}' ],
 			[ new TexNode( 'a' ), '{a}' ],
@@ -73,7 +74,7 @@ class TexNodeTest extends MediaWikiUnitTestCase {
 			'Should contain a method stub for extracting subscripts' );
 	}
 
-	public function providNegativeMatches() {
+	public static function providNegativeMatches() {
 		return [
 			[ 'asd', 'sda' ],
 			[ [ 'asd', 'ert' ], 'sda' ],
@@ -88,7 +89,7 @@ class TexNodeTest extends MediaWikiUnitTestCase {
 		$this->assertFalse( TexNode::match( $target, $str ) );
 	}
 
-	public function providPositiveMatches() {
+	public static function providPositiveMatches() {
 		return [
 			[ '', '' ],
 			[ 'asd', 'asd' ],
@@ -107,7 +108,7 @@ class TexNodeTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $str, TexNode::match( $target, $str ) );
 	}
 
-	public function provideTextContainingFunctions() {
+	public static function provideTextContainingFunctions() {
 		return [
 			[ '', '', false ],
 			[ '\\', '\\' ],
@@ -156,6 +157,19 @@ class TexNodeTest extends MediaWikiUnitTestCase {
 	 */
 	public function testContainsFunc( $target, string $t, $expected = null ) {
 		$this->assertSame( $expected ?? $target, TexNode::texContainsFunc( $target, $t ) );
+	}
+
+	public function testIsEmptyString() {
+		$this->assertTrue( ( new TexNode( '', '' ) )->isEmpty() );
+		$this->assertFalse( ( new TexNode( '', 'a' ) )->isEmpty() );
+		$this->assertTrue( ( new TexNode() )->isEmpty() );
+	}
+
+	public function testIsEmptyObject() {
+		$this->assertTrue( ( new TexNode( new TexNode() ) )->isEmpty() );
+		$this->assertFalse( ( new TexNode( new TexNode( 'a' ) ) )->isEmpty() );
+		$this->assertTrue( ( new TexNode( new TexArray() ) )->isEmpty() );
+		$this->assertTrue( ( new TexNode( new TexArray( new TexNode( '' ) ) ) )->isEmpty() );
 	}
 
 }

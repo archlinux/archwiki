@@ -134,7 +134,7 @@
 				// Map null to '[]'
 				titles.splice( titles.indexOf( null ), 1, '[]' );
 			}
-			overrideParams.nottitles = titles.join( '|' );
+			overrideParams.nottitles = titles;
 		}
 
 		return overrideParams;

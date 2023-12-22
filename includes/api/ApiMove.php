@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
+ * Copyright © 2007 Roan Kattouw <roan.kattouw@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\MovePageFactory;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
@@ -35,11 +36,8 @@ class ApiMove extends ApiBase {
 
 	use ApiWatchlistTrait;
 
-	/** @var MovePageFactory */
-	private $movePageFactory;
-
-	/** @var RepoGroup */
-	private $repoGroup;
+	private MovePageFactory $movePageFactory;
+	private RepoGroup $repoGroup;
 
 	public function __construct(
 		ApiMain $mainModule,
@@ -105,11 +103,6 @@ class ApiMove extends ApiBase {
 			} elseif ( !$this->getAuthority()->isAllowed( 'reupload-shared' ) ) {
 				$this->dieWithError( 'apierror-cantoverwrite-sharedfile' );
 			}
-		}
-
-		// Rate limit
-		if ( $user->pingLimiter( 'move' ) ) {
-			$this->dieWithError( 'apierror-ratelimited' );
 		}
 
 		// Move the page

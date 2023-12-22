@@ -3,9 +3,15 @@
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
 use FormatJson;
+use GenderCache;
+use MediaWiki\Config\Config;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserIdentity;
 use ParserOutput;
-use Title;
+use Skin;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -18,8 +24,9 @@ class CommentFormatterTest extends IntegrationTestCase {
 	 * @dataProvider provideAddDiscussionToolsInternal
 	 */
 	public function testAddDiscussionToolsInternal(
-		string $name, string $title, string $dom, string $expected, string $config, string $data, bool $isMobile
+		string $name, string $titleText, string $dom, string $expected, string $config, string $data, bool $isMobile
 	): void {
+		$this->setService( 'GenderCache', $this->createMock( GenderCache::class ) );
 		$dom = static::getHtml( $dom );
 		$expectedPath = $expected;
 		$expected = static::getText( $expectedPath );
@@ -27,7 +34,24 @@ class CommentFormatterTest extends IntegrationTestCase {
 		$data = static::getJson( $data );
 
 		$this->setupEnv( $config, $data );
-		$title = Title::newFromText( $title );
+		$this->overrideConfigValues( [
+			MainConfigNames::ScriptPath => '/w',
+			MainConfigNames::Script => '/w/index.php',
+		] );
+
+		$title = Title::newFromText( $titleText );
+		$subscriptionStore = new MockSubscriptionStore();
+		$user = $this->createMock( UserIdentity::class );
+		$qqxLang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'qqx' );
+		$skin = $this->createMock( Skin::class );
+		$outputPage = $this->createMock( OutputPage::class );
+		$outputPage->method( 'getConfig' )->willReturn( $this->createMock( Config::class ) );
+		$outputPage->method( 'getTitle' )->willReturn( $title );
+		$outputPage->method( 'getUser' )->willReturn( $user );
+		$outputPage->method( 'getLanguage' )->willReturn( $qqxLang );
+		$outputPage->method( 'getSkin' )->willReturn( $skin );
+		$outputPage->method( 'msg' )->willReturn( 'a label' );
+
 		MockCommentFormatter::$parser = static::createParser( $data );
 
 		$commentFormatter = TestingAccessWrapper::newFromClass( MockCommentFormatter::class );
@@ -35,26 +59,31 @@ class CommentFormatterTest extends IntegrationTestCase {
 		$pout = new ParserOutput();
 		$preprocessed = $commentFormatter->addDiscussionToolsInternal( $dom, $pout, $title );
 		$preprocessed .= "\n<pre>\n" .
+			"newestComment: " . FormatJson::encode(
+				$pout->getExtensionData( 'DiscussionTools-newestComment' ), "\t", FormatJson::ALL_OK ) . "\n" .
+			( $pout->getExtensionData( 'DiscussionTools-hasLedeContent' ) ?
+			 "hasLedeContent\n" : '' ) .
+			( $pout->getExtensionData( 'DiscussionTools-hasCommentsInLedeContent' ) ?
+			 "hasCommentsInLedeContent\n" : '' ) .
+			( $pout->getExtensionData( 'DiscussionTools-isEmptyTalkPage' ) ?
+			 "isEmptyTalkPage\n" : '' ) .
 			FormatJson::encode( $pout->getJsConfigVars(), "\t", FormatJson::ALL_OK ) .
 			"\n</pre>";
-
-		$mockSubStore = new MockSubscriptionStore();
-		$qqxLang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'qqx' );
 
 		\OutputPage::setupOOUI();
 
 		$actual = $preprocessed;
 
 		$actual = MockCommentFormatter::postprocessTopicSubscription(
-			$actual, $qqxLang, $mockSubStore, static::getTestUser()->getUser(), $isMobile
+			$actual, $outputPage, $subscriptionStore, $isMobile
 		);
 
 		$actual = MockCommentFormatter::postprocessVisualEnhancements(
-			$actual, $qqxLang, static::getTestUser()->getUser(), $isMobile
+			$actual, $outputPage, $isMobile
 		);
 
 		$actual = MockCommentFormatter::postprocessReplyTool(
-			$actual, $qqxLang, $isMobile
+			$actual, $outputPage, $isMobile
 		);
 
 		// OOUI ID's are non-deterministic, so strip them from test output
@@ -71,7 +100,7 @@ class CommentFormatterTest extends IntegrationTestCase {
 	/**
 	 * @return iterable<array>
 	 */
-	public function provideAddDiscussionToolsInternal() {
+	public static function provideAddDiscussionToolsInternal() {
 		foreach ( static::getJson( '../cases/formatted.json' ) as $case ) {
 			// Run each test case twice, for desktop and mobile output
 			yield array_merge( $case, [ 'expected' => $case['expected']['desktop'], 'isMobile' => false ] );

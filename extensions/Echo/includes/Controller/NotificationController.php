@@ -3,27 +3,26 @@
 namespace MediaWiki\Extension\Notifications\Controller;
 
 use DeferredUpdates;
-use EchoAttributeManager;
-use EchoCachedList;
-use EchoContainmentList;
-use EchoContainmentSet;
-use EchoOnWikiList;
-use EchoServices;
-use Hooks;
+use InvalidArgumentException;
 use Iterator;
 use MapCacheLRU;
-use MediaWiki\Extension\Notifications\Exception\CatchableFatalErrorException;
+use MediaWiki\Extension\Notifications\AttributeManager;
+use MediaWiki\Extension\Notifications\CachedList;
+use MediaWiki\Extension\Notifications\ContainmentList;
+use MediaWiki\Extension\Notifications\ContainmentSet;
+use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Iterator\FilteredSequentialIterator;
 use MediaWiki\Extension\Notifications\Jobs\NotificationDeleteJob;
 use MediaWiki\Extension\Notifications\Jobs\NotificationJob;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Extension\Notifications\NotifUser;
+use MediaWiki\Extension\Notifications\OnWikiList;
+use MediaWiki\Extension\Notifications\Services;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use MWEchoNotifUser;
-use MWException;
-use Title;
 use User;
 
 /**
@@ -62,7 +61,7 @@ class NotificationController {
 	/**
 	 * Echo event agent per wiki blacklist
 	 *
-	 * @var EchoContainmentList|null
+	 * @var ContainmentList|null
 	 */
 	protected static $wikiBlacklist;
 
@@ -74,14 +73,14 @@ class NotificationController {
 	protected static $whitelistByUser;
 
 	/**
-	 * Returns the count passed in, or MWEchoNotifUser::MAX_BADGE_COUNT + 1,
+	 * Returns the count passed in, or NotifUser::MAX_BADGE_COUNT + 1,
 	 * whichever is less.
 	 *
 	 * @param int $count
 	 * @return int Notification count, with ceiling applied
 	 */
 	public static function getCappedNotificationCount( int $count ): int {
-		return min( $count, MWEchoNotifUser::MAX_BADGE_COUNT + 1 );
+		return min( $count, NotifUser::MAX_BADGE_COUNT + 1 );
 	}
 
 	/**
@@ -129,7 +128,9 @@ class NotificationController {
 		$notifyTypes = self::getEventNotifyTypes( $type );
 		$userIds = [];
 		$userIdsCount = 0;
-		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+		$services = MediaWikiServices::getInstance();
+		$hookRunner = new HookRunner( $services->getHookContainer() );
+		$userOptionsLookup = $services->getUserOptionsLookup();
 		/** @var bool|null $hasMinorRevision */
 		$hasMinorRevision = null;
 		/** @var User $user */
@@ -147,7 +148,7 @@ class NotificationController {
 					$userNotifyTypes = array_diff( $userNotifyTypes, [ 'email' ] );
 				}
 			}
-			Hooks::run( 'EchoGetNotificationTypes', [ $user, $event, &$userNotifyTypes ] );
+			$hookRunner->onEchoGetNotificationTypes( $user, $event, $userNotifyTypes );
 
 			// types such as web, email, etc
 			foreach ( $userNotifyTypes as $type ) {
@@ -231,7 +232,7 @@ class NotificationController {
 	 *  this event type
 	 */
 	public static function getEventNotifyTypes( $eventType ) {
-		$attributeManager = EchoServices::getInstance()->getAttributeManager();
+		$attributeManager = Services::getInstance()->getAttributeManager();
 
 		$category = $attributeManager->getNotificationCategory( $eventType );
 
@@ -306,7 +307,7 @@ class NotificationController {
 
 		// Ensure we have a blacklist for the user
 		if ( !self::$blacklistByUser->has( (string)$user->getId() ) ) {
-			$blacklist = new EchoContainmentSet( $user );
+			$blacklist = new ContainmentSet( $user );
 
 			// Add the config setting
 			$blacklist->addArray( $wgEchoAgentBlacklist );
@@ -346,7 +347,7 @@ class NotificationController {
 			self::$mutedPageLinkedTitlesCache = new MapCacheLRU( self::$maxUsersTitleCacheSize );
 		}
 		if ( !self::$mutedPageLinkedTitlesCache->has( (string)$user->getId() ) ) {
-			$pageLinkedTitleMutedList = new EchoContainmentSet( $user );
+			$pageLinkedTitleMutedList = new ContainmentSet( $user );
 			$pageLinkedTitleMutedList->addTitleIDsFromUserOption(
 				'echo-notifications-page-linked-title-muted-list'
 			);
@@ -358,7 +359,7 @@ class NotificationController {
 	}
 
 	/**
-	 * @return EchoContainmentList|null
+	 * @return ContainmentList|null
 	 */
 	protected static function getWikiBlacklist() {
 		global $wgEchoOnWikiBlacklist;
@@ -367,10 +368,10 @@ class NotificationController {
 		}
 		if ( self::$wikiBlacklist === null ) {
 			$clusterCache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-			self::$wikiBlacklist = new EchoCachedList(
+			self::$wikiBlacklist = new CachedList(
 				$clusterCache,
 				$clusterCache->makeKey( "echo_on_wiki_blacklist" ),
-				new EchoOnWikiList( NS_MEDIAWIKI, $wgEchoOnWikiBlacklist )
+				new OnWikiList( NS_MEDIAWIKI, $wgEchoOnWikiBlacklist )
 			);
 		}
 
@@ -405,7 +406,7 @@ class NotificationController {
 
 		// Ensure we have a whitelist for the user
 		if ( !self::$whitelistByUser->has( (string)$userId ) ) {
-			$whitelist = new EchoContainmentSet( $user );
+			$whitelist = new ContainmentSet( $user );
 			self::$whitelistByUser->set( (string)$userId, $whitelist );
 			$whitelist->addOnWiki(
 				NS_USER,
@@ -426,18 +427,17 @@ class NotificationController {
 	 * @param Event $event
 	 * @param User $user The user to be notified.
 	 * @param string $type The type of notification delivery to process, e.g. 'email'.
-	 * @throws MWException
 	 */
 	public static function doNotification( $event, $user, $type ) {
 		global $wgEchoNotifiers;
 
 		if ( !isset( $wgEchoNotifiers[$type] ) ) {
-			throw new MWException( "Invalid notification type $type" );
+			throw new InvalidArgumentException( "Invalid notification type $type" );
 		}
 
 		// Don't send any notifications to anonymous users
 		if ( !$user->isRegistered() ) {
-			throw new MWException( "Cannot notify anonymous user: {$user->getName()}" );
+			throw new InvalidArgumentException( "Cannot notify anonymous user: {$user->getName()}" );
 		}
 
 		( $wgEchoNotifiers[$type] )( $user, $event );
@@ -448,11 +448,11 @@ class NotificationController {
 	 * user-locator|user-filters attached to the event type.
 	 *
 	 * @param Event $event
-	 * @param string $locator Either EchoAttributeManager::ATTR_LOCATORS or EchoAttributeManager::ATTR_FILTERS
+	 * @param string $locator Either AttributeManager::ATTR_LOCATORS or AttributeManager::ATTR_FILTERS
 	 * @return array
 	 */
-	public static function evaluateUserCallable( Event $event, $locator = EchoAttributeManager::ATTR_LOCATORS ) {
-		$attributeManager = EchoServices::getInstance()->getAttributeManager();
+	public static function evaluateUserCallable( Event $event, $locator = AttributeManager::ATTR_LOCATORS ) {
+		$attributeManager = Services::getInstance()->getAttributeManager();
 		$type = $event->getType();
 		$result = [];
 		foreach ( $attributeManager->getUserCallable( $type, $locator ) as $callable ) {
@@ -483,21 +483,21 @@ class NotificationController {
 	 */
 	public static function getUsersToNotifyForEvent( Event $event ) {
 		$notify = new FilteredSequentialIterator;
-		foreach ( self::evaluateUserCallable( $event, EchoAttributeManager::ATTR_LOCATORS ) as $users ) {
+		foreach ( self::evaluateUserCallable( $event, AttributeManager::ATTR_LOCATORS ) as $users ) {
 			$notify->add( $users );
 		}
 
 		// Hook for injecting more users.
 		// @deprecated
 		$users = [];
-		Hooks::run( 'EchoGetDefaultNotifiedUsers', [ $event, &$users ] );
-		// @phan-suppress-next-line PhanImpossibleCondition May be set by hook
+		( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
+			->onEchoGetDefaultNotifiedUsers( $event, $users );
 		if ( $users ) {
 			$notify->add( $users );
 		}
 
 		// Exclude certain users
-		foreach ( self::evaluateUserCallable( $event, EchoAttributeManager::ATTR_FILTERS ) as $users ) {
+		foreach ( self::evaluateUserCallable( $event, AttributeManager::ATTR_FILTERS ) as $users ) {
 			// the result of the callback can be both an iterator or array
 			$users = is_array( $users ) ? $users : iterator_to_array( $users );
 			$notify->addFilter( static function ( UserIdentity $user ) use ( $users ) {
@@ -560,25 +560,5 @@ class NotificationController {
 		} );
 
 		return $notify->getIterator();
-	}
-
-	/**
-	 * INTERNAL.  Must be public to be callable by the php error handling methods.
-	 *
-	 * Converts E_RECOVERABLE_ERROR, such as passing null to a method expecting
-	 * a non-null object, into exceptions.
-	 * @param int $errno
-	 * @param string $errstr
-	 * @param string $errfile
-	 * @param int $errline
-	 * @return bool
-	 * @throws CatchableFatalErrorException
-	 */
-	public static function formatterErrorHandler( $errno, $errstr, $errfile, $errline ) {
-		if ( $errno !== E_RECOVERABLE_ERROR ) {
-			return false;
-		}
-
-		throw new CatchableFatalErrorException( $errno, $errstr, $errfile, $errline );
 	}
 }

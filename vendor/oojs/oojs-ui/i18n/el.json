@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Astralnet",
+			"DesVaMan",
 			"Dipa1965",
 			"Evropi",
 			"FocalPoint",
@@ -14,6 +15,7 @@
 			"Tifa93"
 		]
 	},
+	"ooui-copytextlayout-copy": "Αντιγραφή",
 	"ooui-outline-control-move-down": "Μετακίνηση στοιχείου προς τα κάτω",
 	"ooui-outline-control-move-up": "Μετακίνηση στοιχείου προς τα επάνω",
 	"ooui-outline-control-remove": "Αφαίρεση στοιχείου",
@@ -29,9 +31,11 @@
 	"ooui-dialog-process-continue": "Συνέχεια",
 	"ooui-combobox-button-label": "Εναλλαγή επιλογών",
 	"ooui-selectfile-button-select": "Επιλέξτε ένα αρχείο",
+	"ooui-selectfile-button-select-multiple": "Επιλογή αρχείων",
 	"ooui-selectfile-not-supported": "Επιλογή αρχείου δεν υποστηρίζεται",
 	"ooui-selectfile-placeholder": "Κανένα αρχείο δεν είναι επιλεγμένο",
 	"ooui-selectfile-dragdrop-placeholder": "Σύρετε το αρχείο εδώ",
 	"ooui-selectfile-dragdrop-placeholder-multiple": "Ρίξτε εδώ τα αρχεία",
+	"ooui-popup-widget-close-button-aria-label": "Κλείσιμο",
 	"ooui-field-help": "Βοήθεια"
 }

@@ -78,7 +78,10 @@ describe( 'When importing a filter', function () {
 		} );
 		it( 'filter actions are copied', async function () {
 			assert.strictEqual( await ViewEditPage.warnCheckbox.isSelected(), true );
-			assert.strictEqual( await ViewEditPage.warnOtherMessage.getValue(), filterSpecs.warnMessage );
+			assert.strictEqual(
+				await ViewEditPage.warnOtherMessage.getValue(),
+				filterSpecs.warnMessage
+			);
 		} );
 
 		it( 'the imported data can be saved', async function () {

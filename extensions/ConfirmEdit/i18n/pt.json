@@ -14,7 +14,6 @@
 	"captcha-edit": "Para editar esta página resolva a tarefa apresentada abaixo e introduza a resposta na caixa ([[Special:Captcha/help|mais informações]]):",
 	"captcha-edit-fail": "O código CAPTCHA está incorreto ou não foi preenchido.",
 	"captcha-desc": "Fornece técnicas CAPTCHA para proteção contra <i>spam</i> e tentativas de adivinhar a palavra-passe",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Solução do CAPTCHA.",
 	"captcha-info-help": "Descrição do CAPTCHA.",
 	"captcha-id-label": "Identificador do CAPTCHA",

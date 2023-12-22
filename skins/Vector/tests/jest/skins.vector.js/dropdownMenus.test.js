@@ -5,12 +5,12 @@ const { addPortletLinkHandler } = require( '../../../resources/skins.vector.js/d
 describe( 'addPortletLinkHandler', () => {
 	beforeEach( () => {
 		document.body.innerHTML = `
-		<div id="p-views" class="vector-menu vector-menu-dropdown">
+		<div id="p-views" class="vector-menu">
 			<div class="vector-menu-content">
 				<ul class="vector-menu-content-list">
 					<li id="pt-userpage" class="mw-list-item">
 						<a href="#bar">
-							<span class="mw-ui-icon mw-ui-icon-userAvatar mw-ui-icon-wikimedia-userAvatar"></span>
+							<span class="vector-icon mw-ui-icon-userAvatar mw-ui-icon-wikimedia-userAvatar"></span>
 							<span>Admin</span>
 						</a>
 					</li>
@@ -18,12 +18,12 @@ describe( 'addPortletLinkHandler', () => {
 			</div>
 		</div>
 
-		<div id="p-personal" class="vector-menu vector-menu-dropdown">
+		<div id="p-personal" class="vector-menu">
 			 <div class="vector-menu-content">
 				<ul class="vector-menu-content-list">
 					<li id="pt-userpage" class="mw-list-item">
 						<a href="#bar">
-							<span class="mw-ui-icon mw-ui-icon-userAvatar mw-ui-icon-wikimedia-userAvatar"></span>
+							<span class="vector-icon mw-ui-icon-userAvatar mw-ui-icon-wikimedia-userAvatar"></span>
 							<span>Admin</span>
 						</a>
 					</li>
@@ -36,11 +36,11 @@ describe( 'addPortletLinkHandler', () => {
 		jest.restoreAllMocks();
 	} );
 
-	test( 'Adds a span with icon class to dropdown menus', () => {
+	test( 'Adds a span with icon class to menus', () => {
 
 		// <li> element is the assumed HTML output of mw.util.addPortlet
 		document.body.innerHTML = `
-		<ul class="vector-menu vector-menu-dropdown">
+		<ul class="vector-menu">
 			<li class="mw-list-item mw-list-item-js" id="test-id">
 				<a href="#test-href">
 					<span>
@@ -59,7 +59,7 @@ describe( 'addPortletLinkHandler', () => {
 
 		// <li> element is the assumed HTML output of mw.util.addPortlet
 		document.body.innerHTML = `
-		<ul class="vector-menu vector-menu-dropdown">
+		<ul class="vector-menu">
 			<li class="mw-list-item mw-list-item-js" id="test-id">
 				<a href="#test-href">
 					<span>
@@ -94,7 +94,7 @@ describe( 'addPortletLinkHandler', () => {
 			</div>
 
 			<div id="right-navigation">
-				<ul id="p-views" class="vector-menu vector-menu-dropdown">
+				<ul id="p-views" class="vector-menu">
 					<li class="mw-list-item mw-list-item-js" id="test-id">
 						<a href="#test-href">
 							<span>
@@ -131,7 +131,7 @@ describe( 'addPortletLinkHandler', () => {
 		addPortletLinkHandler( portletLinkItem, { id: 'foo-id' } );
 
 		// Asserting that the icon classes were added.
-		expect( portletLinkItem.querySelectorAll( 'span.mw-ui-icon.mw-ui-icon-vector-gadget-foo-id' ) ).toHaveLength( 1 );
+		expect( portletLinkItem.querySelectorAll( 'span.vector-icon.mw-ui-icon-vector-gadget-foo-id' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'addPortletLinkHandler does not add icons to p-views menu', () => {
@@ -196,8 +196,8 @@ describe( 'addPortletLinkHandler', () => {
 
 		// Asserting that the icon classes were added where necessary
 		// and that only one icon class was added per item.
-		expect( portletLinkItem1.querySelectorAll( 'span.mw-ui-icon.mw-ui-icon-vector-gadget-foo' ) ).toHaveLength( 0 );
-		expect( portletLinkItem2.querySelectorAll( 'span.mw-ui-icon.mw-ui-icon-vector-gadget-bar' ) ).toHaveLength( 1 );
-		expect( portletLinkItem3.querySelectorAll( 'span.mw-ui-icon.mw-ui-icon-vector-gadget-baz' ) ).toHaveLength( 1 );
+		expect( portletLinkItem1.querySelectorAll( 'span.vector-icon.mw-ui-icon-vector-gadget-foo' ) ).toHaveLength( 0 );
+		expect( portletLinkItem2.querySelectorAll( 'span.vector-icon.mw-ui-icon-vector-gadget-bar' ) ).toHaveLength( 1 );
+		expect( portletLinkItem3.querySelectorAll( 'span.vector-icon.mw-ui-icon-vector-gadget-baz' ) ).toHaveLength( 1 );
 	} );
 } );

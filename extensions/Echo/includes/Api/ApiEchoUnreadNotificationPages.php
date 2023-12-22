@@ -5,15 +5,15 @@ namespace MediaWiki\Extension\Notifications\Api;
 use ApiQuery;
 use ApiQueryBase;
 use ApiUsageException;
-use EchoServices;
+use MediaWiki\Extension\Notifications\DbFactory;
+use MediaWiki\Extension\Notifications\NotifUser;
+use MediaWiki\Extension\Notifications\Services;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\PageRecord;
 use MediaWiki\Page\PageStore;
-use MWEchoDbFactory;
-use MWEchoNotifUser;
-use Title;
-use TitleFactory;
-use WikiMap;
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -85,10 +85,10 @@ class ApiEchoUnreadNotificationPages extends ApiQueryBase {
 	 * @phan-return array{pages:array[],totalCount:int}
 	 */
 	protected function getFromLocal( $limit, $groupPages ) {
-		$attributeManager = EchoServices::getInstance()->getAttributeManager();
+		$attributeManager = Services::getInstance()->getAttributeManager();
 		$enabledTypes = $attributeManager->getUserEnabledEvents( $this->getUser(), 'web' );
 
-		$dbr = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_REPLICA );
+		$dbr = DbFactory::newFromDefault()->getEchoDb( DB_REPLICA );
 		// If $groupPages is true, we need to fetch all pages and apply the ORDER BY and LIMIT ourselves
 		// after grouping.
 		$extraOptions = $groupPages ? [] : [ 'ORDER BY' => 'count DESC', 'LIMIT' => $limit ];
@@ -198,7 +198,7 @@ class ApiEchoUnreadNotificationPages extends ApiQueryBase {
 
 		return [
 			'pages' => $result,
-			'totalCount' => MWEchoNotifUser::newFromUser( $this->getUser() )->getLocalNotificationCount(),
+			'totalCount' => NotifUser::newFromUser( $this->getUser() )->getLocalNotificationCount(),
 		];
 	}
 

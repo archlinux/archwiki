@@ -7,8 +7,8 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		ve.init.mw.HCaptchaSaveErrorHandler.static.name = 'confirmEditHCaptcha';
 
 		ve.init.mw.HCaptchaSaveErrorHandler.static.getReadyPromise = function () {
-			var onLoadFn = 'onHcaptchaLoadCallback' + Date.now(),
-				deferred, scriptURL, params;
+			const onLoadFn = 'onHcaptchaLoadCallback' + Date.now();
+			let deferred, scriptURL, params;
 
 			if ( !this.readyPromise ) {
 				deferred = $.Deferred();
@@ -25,13 +25,13 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		};
 
 		ve.init.mw.HCaptchaSaveErrorHandler.static.matchFunction = function ( data ) {
-			var captchaData = ve.getProp( data, 'visualeditoredit', 'edit', 'captcha' );
+			const captchaData = ve.getProp( data, 'visualeditoredit', 'edit', 'captcha' );
 
 			return !!( captchaData && captchaData.type === 'hcaptcha' );
 		};
 
 		ve.init.mw.HCaptchaSaveErrorHandler.static.process = function ( data, target ) {
-			var self = this,
+			const self = this,
 				siteKey = require( './config.json' ).hCaptchaSiteKey,
 				$container = $( '<div>' );
 

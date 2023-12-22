@@ -22,9 +22,13 @@
  * @author Rob Church <robchur@gmail.com>, Ilmari Karonen
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\MediaWikiServices;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Special page to direct the user to a random page
@@ -36,23 +40,25 @@ class SpecialRandomPage extends SpecialPage {
 	protected $isRedir = false; // should the result be a redirect?
 	protected $extra = []; // Extra SQL statements
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
+	private IConnectionProvider $dbProvider;
 
 	/**
-	 * @param ILoadBalancer|string|null $loadBalancer
+	 * @param IConnectionProvider|string|null $dbProvider
 	 * @param NamespaceInfo|null $nsInfo
 	 */
 	public function __construct(
-		$loadBalancer = null,
+		$dbProvider = null,
 		NamespaceInfo $nsInfo = null
 	) {
-		parent::__construct( is_string( $loadBalancer ) ? $loadBalancer : 'Randompage' );
+		parent::__construct( is_string( $dbProvider ) ? $dbProvider : 'Randompage' );
+		if ( !$dbProvider instanceof IConnectionProvider || !$nsInfo ) {
+			wfDeprecated( __METHOD__ . ' without injected services', '1.41' );
+		}
 		// This class is extended and therefor fallback to global state - T265308
 		$services = MediaWikiServices::getInstance();
-		$this->loadBalancer = $loadBalancer instanceof ILoadBalancer
-			? $loadBalancer
-			: $services->getDBLoadBalancer();
+		$this->dbProvider = $dbProvider instanceof IConnectionProvider
+			? $dbProvider
+			: $services->getDBLoadBalancerFactory();
 		$nsInfo ??= $services->getNamespaceInfo();
 		$this->namespaces = $nsInfo->getContentNamespaces();
 	}
@@ -62,10 +68,14 @@ class SpecialRandomPage extends SpecialPage {
 	}
 
 	public function setNamespace( $ns ) {
-		if ( !$ns || $ns < NS_MAIN ) {
+		if ( !$this->isValidNS( $ns ) ) {
 			$ns = NS_MAIN;
 		}
 		$this->namespaces = [ $ns ];
+	}
+
+	private function isValidNS( $ns ) {
+		return $ns !== false && $ns >= 0;
 	}
 
 	// select redirects instead of normal pages?
@@ -74,11 +84,7 @@ class SpecialRandomPage extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		if ( is_string( $par ) ) {
-			// Testing for stringiness since we want to catch
-			// the empty string to mean main namespace only.
-			$this->setNamespace( $this->getContentLanguage()->getNsIndex( $par ) );
-		}
+		$this->parsePar( $par );
 
 		$title = $this->getRandomTitle();
 
@@ -95,6 +101,43 @@ class SpecialRandomPage extends SpecialPage {
 		$query = array_merge( $this->getRequest()->getValues(), $redirectParam );
 		unset( $query['title'] );
 		$this->getOutput()->redirect( $title->getFullURL( $query ) );
+	}
+
+	/**
+	 * Parse the subpage parameter that specifies namespaces
+	 *
+	 * @param string $par Subpage to special page
+	 */
+	private function parsePar( $par ) {
+		// Testing for stringiness since we want to catch
+		// the empty string to mean main namespace only.
+		if ( is_string( $par ) ) {
+			$ns = $this->getContentLanguage()->getNsIndex( $par );
+			if ( $ns === false && strpos( $par, ',' ) !== false ) {
+				$nsList = [];
+				// Comma separated list
+				$parSplit = explode( ',', $par );
+				foreach ( $parSplit as $potentialNs ) {
+					$ns = $this->getContentLanguage()->getNsIndex( $potentialNs );
+					if ( $this->isValidNS( $ns ) ) {
+						$nsList[] = $ns;
+					}
+					// Remove duplicate values, and re-index array
+					$nsList = array_unique( $nsList );
+					$nsList = array_values( $nsList );
+					if ( $nsList !== [] ) {
+						$this->namespaces = $nsList;
+					}
+				}
+			} else {
+				// Note, that the case of $par being something
+				// like "main" which is not a namespace, falls
+				// through to here, and sets NS_MAIN, allowing
+				// Special:Random/main or Special:Random/article
+				// to work as expected.
+				$this->setNamespace( $this->getContentLanguage()->getNsIndex( $par ) );
+			}
+		}
 	}
 
 	/**
@@ -178,7 +221,7 @@ class SpecialRandomPage extends SpecialPage {
 	}
 
 	private function selectRandomPageFromDB( $randstr, $fname = __METHOD__ ) {
-		$dbr = $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		$dbr = $this->dbProvider->getReplicaDatabase();
 
 		$query = $this->getQueryInfo( $randstr );
 		$res = $dbr->select(
@@ -203,3 +246,9 @@ class SpecialRandomPage extends SpecialPage {
  * @deprecated since 1.37
  */
 class_alias( SpecialRandomPage::class, 'RandomPage' );
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialRandomPage::class, 'SpecialRandomPage' );

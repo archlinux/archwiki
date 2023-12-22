@@ -11,6 +11,10 @@ class UserRenameHandler implements RenameUserSQLHook {
 	 * @inheritDoc
 	 */
 	public function onRenameUserSQL( RenameuserSQL $renameUserSql ): void {
+		global $wgAbuseFilterActorTableSchemaMigrationStage;
+		if ( !( $wgAbuseFilterActorTableSchemaMigrationStage & SCHEMA_COMPAT_OLD ) ) {
+			return;
+		}
 		$renameUserSql->tablesJob['abuse_filter'] = [
 			RenameuserSQL::NAME_COL => 'af_user_text',
 			RenameuserSQL::UID_COL => 'af_user',

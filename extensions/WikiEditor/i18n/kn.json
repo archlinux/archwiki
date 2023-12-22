@@ -4,8 +4,8 @@
 			"Nayvik",
 			"VASANTH S.N.",
 			"Yogesh",
-			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ",
-			"~aanzx"
+			"~aanzx",
+			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ"
 		]
 	},
 	"wikieditor": "ಮುಂದುವರಿದ ವಿಕಿಪಠ್ಯ ಸಂಪಾದನೆಯ ಅಂತರ್‍ಸಂಪರ್ಕ",
@@ -40,9 +40,6 @@
 	"wikieditor-toolbar-file-default": "(ಮೂಲಸ್ಥಿತಿ)",
 	"wikieditor-toolbar-tool-file-insert": "ಸೇರ್ಪಡಿಸು",
 	"wikieditor-toolbar-tool-file-cancel": "ರದ್ದುಮಾಡಿ",
-	"wikieditor-toolbar-tool-reference": "ಉಲ್ಲೇಖಗಳು",
-	"wikieditor-toolbar-tool-reference-cancel": "ರದ್ದುಮಾಡಿ",
-	"wikieditor-toolbar-tool-reference-insert": "ಸೇರಿಸು",
 	"wikieditor-toolbar-section-advanced": "ಸುಧಾರಿತ ಸಲಕರಣೆಗಳು",
 	"wikieditor-toolbar-tool-heading": "ತಲೆಬರಹ",
 	"wikieditor-toolbar-tool-heading-1": "ದರ್ಜೆ ೧",
@@ -77,18 +74,16 @@
 	"wikieditor-toolbar-help-page-heading": "ತಲೆಬರಹಗಳು",
 	"wikieditor-toolbar-help-page-list": "ಪಟ್ಟಿಗಳು",
 	"wikieditor-toolbar-help-page-file": "ಕಡತಗಳು",
-	"wikieditor-toolbar-help-page-reference": "ಉಲ್ಲೇಖಗಳು",
 	"wikieditor-toolbar-help-page-discussion": "ಚರ್ಚೆ",
 	"wikieditor-toolbar-help-content-italic-description": "ಓರೆಯಾದ",
 	"wikieditor-toolbar-help-content-bold-description": "ದಪ್ಪ",
 	"wikieditor-toolbar-help-content-ilink-description": "ಆಂತರಿಕ ಸಂಪರ್ಕ",
 	"wikieditor-toolbar-help-content-xlink-description": "ಬಾಹ್ಯ ಸಂಪರ್ಕ",
-	"wikieditor-toolbar-help-content-heading2-syntax": "== ಶೀರ್ಷಿಕೆ ಪಠ್ಯ ==",
-	"wikieditor-toolbar-help-content-heading3-syntax": "== ಶೀರ್ಷಿಕೆ ಪಠ್ಯ ==",
-	"wikieditor-toolbar-help-content-heading4-syntax": "== ಶೀರ್ಷಿಕೆ ಪಠ್ಯ ==",
-	"wikieditor-toolbar-help-content-heading5-syntax": "== ಶೀರ್ಷಿಕೆ ಪಠ್ಯ ==",
+	"wikieditor-toolbar-help-content-heading2-example": "ಶೀರ್ಷಿಕೆ ಪಠ್ಯ",
+	"wikieditor-toolbar-help-content-heading3-example": "== ಶೀರ್ಷಿಕೆ ಪಠ್ಯ ==",
+	"wikieditor-toolbar-help-content-heading4-example": "== ಶೀರ್ಷಿಕೆ ಪಠ್ಯ ==",
+	"wikieditor-toolbar-help-content-heading5-example": "== ಶೀರ್ಷಿಕೆ ಪಠ್ಯ ==",
 	"wikieditor-toolbar-help-content-file-description": "ಅಳವಡಿಸಲ್ಪಟ್ಟ ಫೈಲು",
-	"wikieditor-toolbar-help-content-reference-description": "ಉಲ್ಲೇಖಗಳು",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "ಸಮಯಮುದ್ರೆಯೊಂದಿಗೆ ನಿಮ್ಮ ಸಹಿ",
 	"wikieditor-toolbar-help-content-signature-description": "ಸಹಿ"
 }

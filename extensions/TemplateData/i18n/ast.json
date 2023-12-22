@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Xuacu"
+			"Xuacu",
+			"YoaR"
 		]
 	},
 	"templatedata-desc": "Permite l'almacenamientu de datos pa los parámetros de plantíes (usando JSON)",
@@ -37,7 +38,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Usuariu",
 	"templatedata-doc-params": "Parámetros de la plantía",
 	"templatedata-editbutton": "Alministrar TemplateData",
-	"templatedata-errormsg-jsonbadformat": "Formatu JSON incorreutu. Puedes encaboxar esta operación pa poder correxilu, desaniciar les etiquetes <templatedata> actuales y volver a intentalo, o siguir y trocar la TemplateData actual con una nueva.",
+	"templatedata-errormsg-jsonbadformat": "Formatu JSON incorreutu. Puedes zarrar esta operación pa poder correxilu, desaniciar les etiquetes <templatedata> actuales y volver a intentalo, o siguir y trocar la TemplateData actual con una nueva.",
 	"templatedata-errormsg-insertblank": "¿Tas seguru de que quies amestar TemplateData ensin información?",
 	"templatedata-exists-on-related-page": "Nota: yá hai un bloque TemplateData na páxina rellacionada «[[$1]]».",
 	"templatedata-helplink": "Información sobro TemplateData",
@@ -55,7 +56,7 @@
 	"templatedata-modal-button-addparam": "Amestar parámetru",
 	"templatedata-modal-button-apply": "Aplicar",
 	"templatedata-modal-button-back": "Anterior",
-	"templatedata-modal-button-cancel": "Encaboxar",
+	"templatedata-modal-button-cancel": "Zarrar",
 	"templatedata-modal-button-changelang": "Camudar llingua",
 	"templatedata-modal-button-delparam": "Desaniciar la información del parámetru",
 	"templatedata-modal-button-done": "Fecho",
@@ -76,7 +77,6 @@
 	"templatedata-modal-notice-import-numparams": "{{PLURAL:$1|Importóse|Importáronse}} $1 {{PLURAL:$1|parámetru nuevu|parámetros nuevos}}: $2",
 	"templatedata-modal-placeholder-paramkey": "Nome del parámetru",
 	"templatedata-modal-search-input-placeholder": "Guetar pol nome o códigu de llingua",
-	"templatedata-modal-table-param-actions": "Aiciones",
 	"templatedata-modal-table-param-aliases": "Alcuños (separaos por comes)",
 	"templatedata-modal-table-param-autovalue": "Valor automáticu",
 	"templatedata-modal-table-param-default": "Predetermináu ($1)",
@@ -91,7 +91,6 @@
 	"templatedata-modal-table-param-required": "Requeríu",
 	"templatedata-modal-table-param-suggested": "Suxeríu",
 	"templatedata-modal-table-param-type": "Triba",
-	"templatedata-modal-table-param-uneditablefield": "Non editable",
 	"templatedata-modal-title": "Editor de documentación de plantía",
 	"templatedata-modal-title-addparam": "Amestar un parámetru nuevu",
 	"templatedata-modal-title-choose-language": "Escoyer llingua",

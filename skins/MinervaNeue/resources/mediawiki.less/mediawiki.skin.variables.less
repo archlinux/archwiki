@@ -12,6 +12,21 @@
  */
 @import 'mediawiki.skin.defaults.less';
 
+// Import the Codex design tokens from the “WikimediaUI” theme.
+@import 'mediawiki.skin.codex-design-tokens/theme-wikimedia-ui.less';
+
+// Overrides for Codex tokens:
+
+@font-size-base: 1em; // Codex: 16px
+
+// == Typography ==
+// Body content uses the user setting in browser / the system default sans-serif font:
+// Arial on Windows, Roboto on Android.
+// FIXME: Use WikimediaUI Base's OS specific default sans-serif fonts.
+@font-family-sans: @font-family-sans--fallback;
+
+// Overrides for non-Codex variables:
+
 // == Colors ==
 @color-link: #36c;
 @color-link--visited: #795cb2;
@@ -26,33 +41,3 @@
 @color-link-external: #36c;
 @color-link-external--visited: #795cb2;
 @color-link-external--active: #faa700;
-
-// Opacities
-@opacity-base: 1;
-@opacity-medium: 0.65;
-@opacity-low: 0.3;
-@opacity-transparent: 0;
-// Warning: the following token is deprecated (Legacy opacity for icon states in non-Codex products.)
-@opacity-icon-base: 0.87; // = `#222` on `background-color: #fff`, closest to `#202122`.
-// Warning: the following token is deprecated (Legacy opacity for icon states in non-Codex products.)
-@opacity-icon-base--hover: 0.74; // = `#424242` on `background-color: #fff`, closest to `#404244`.
-// Warning: the following token is deprecated (Legacy opacity for icon states in non-Codex products.)
-@opacity-icon-base--selected: 1;
-// Warning: the following token is deprecated (Legacy opacity for icon states in non-Codex products.)
-@opacity-icon-accessory: 0.67; // = `#555` on `background-color: `#fff`, closest to `#54595d`.
-// Warning: the following token is deprecated (Legacy opacity for icon states in non-Codex products. Has only been used for icons despite the name.)
-@opacity-base--disabled: 0.51; // = `#7d7d7d` on `background-color: #fff`, closest to `#72777d`.
-
-// == Box Model properties ==
-// Border Styles
-@border-style-base: solid;
-// Border Widths
-@border-width-base: 1px;
-// Border Radius. Match WikimediaUI Base and Codex.
-@border-radius-base: 2px;
-
-// == Typography ==
-// Body content uses the user setting in browser / the system default sans-serif font:
-// Arial on Windows, Roboto on Android.
-// FIXME: Use WikimediaUI Base's OS specific default sans-serif fonts.
-@font-family-sans: sans-serif;

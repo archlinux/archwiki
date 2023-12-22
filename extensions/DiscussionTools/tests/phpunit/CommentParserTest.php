@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
 use DateTimeImmutable;
+use MediaWiki\Extension\DiscussionTools\CommentParser;
 use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\ImmutableRange;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
@@ -54,6 +55,13 @@ class CommentParserTest extends IntegrationTestCase {
 		return implode( '/', $path );
 	}
 
+	private static function getPathsFromRange( ImmutableRange $range, Element $root ): array {
+		return [
+			static::getOffsetPath( $root, $range->startContainer, $range->startOffset ),
+			static::getOffsetPath( $root, $range->endContainer, $range->endOffset )
+		];
+	}
+
 	private static function serializeComments( ContentThreadItem $threadItem, Element $root ): stdClass {
 		$serialized = new stdClass();
 
@@ -66,23 +74,24 @@ class CommentParserTest extends IntegrationTestCase {
 		if ( $threadItem instanceof ContentCommentItem ) {
 			$serialized->timestamp = $threadItem->getTimestampString();
 			$serialized->author = $threadItem->getAuthor();
+			if ( $threadItem->getDisplayName() ) {
+				$serialized->displayName = $threadItem->getDisplayName();
+			}
 		}
 
 		// Can't serialize the DOM nodes involved in the range,
 		// instead use their offsets within their parent nodes
 		$range = $threadItem->getRange();
-		$serialized->range = [
-			static::getOffsetPath( $root, $range->startContainer, $range->startOffset ),
-			static::getOffsetPath( $root, $range->endContainer, $range->endOffset )
-		];
+		$serialized->range = static::getPathsFromRange( $range, $root );
 
 		if ( $threadItem instanceof ContentCommentItem ) {
 			$serialized->signatureRanges = array_map( function ( ImmutableRange $range ) use ( $root ) {
-				return [
-					static::getOffsetPath( $root, $range->startContainer, $range->startOffset ),
-					static::getOffsetPath( $root, $range->endContainer, $range->endOffset )
-				];
+				return static::getPathsFromRange( $range, $root );
 			}, $threadItem->getSignatureRanges() );
+
+			$serialized->timestampRanges = array_map( function ( ImmutableRange $range ) use ( $root ) {
+				return static::getPathsFromRange( $range, $root );
+			}, $threadItem->getTimestampRanges() );
 		}
 
 		if ( $threadItem instanceof ContentHeadingItem ) {
@@ -108,6 +117,7 @@ class CommentParserTest extends IntegrationTestCase {
 	public function testGetTimestampRegexp(
 		string $format, string $expected, string $message
 	): void {
+		/** @var CommentParser $parser */
 		$parser = TestingAccessWrapper::newFromObject(
 			MediaWikiServices::getInstance()->getService( 'DiscussionTools.CommentParser' )
 		);
@@ -122,7 +132,7 @@ class CommentParserTest extends IntegrationTestCase {
 		static::assertSame( $expected, $result, $message );
 	}
 
-	public function provideTimestampRegexps(): array {
+	public static function provideTimestampRegexps(): array {
 		return static::getJson( '../cases/timestamp-regex.json' );
 	}
 
@@ -132,6 +142,7 @@ class CommentParserTest extends IntegrationTestCase {
 	public function testGetTimestampParser(
 		string $format, array $data, string $expected, string $message
 	): void {
+		/** @var CommentParser $parser */
 		$parser = TestingAccessWrapper::newFromObject(
 			MediaWikiServices::getInstance()->getService( 'DiscussionTools.CommentParser' )
 		);
@@ -142,7 +153,7 @@ class CommentParserTest extends IntegrationTestCase {
 		static::assertEquals( $expected, $tsParser( $data )['date'], $message );
 	}
 
-	public function provideTimestampParser(): array {
+	public static function provideTimestampParser(): array {
 		return static::getJson( '../cases/timestamp-parser.json' );
 	}
 
@@ -153,6 +164,7 @@ class CommentParserTest extends IntegrationTestCase {
 		string $sample, string $expected, string $expectedUtc, string $format,
 		string $timezone, array $timezoneAbbrs, string $message
 	): void {
+		/** @var CommentParser $parser */
 		$parser = TestingAccessWrapper::newFromObject(
 			MediaWikiServices::getInstance()->getService( 'DiscussionTools.CommentParser' )
 		);
@@ -170,7 +182,7 @@ class CommentParserTest extends IntegrationTestCase {
 		static::assertEquals( $expectedUtc, $date, $message );
 	}
 
-	public function provideTimestampParserDST(): array {
+	public static function provideTimestampParserDST(): array {
 		return static::getJson( '../cases/timestamp-parser-dst.json' );
 	}
 
@@ -212,7 +224,7 @@ class CommentParserTest extends IntegrationTestCase {
 		}
 	}
 
-	public function provideComments(): array {
+	public static function provideComments(): array {
 		return static::getJson( '../cases/comments.json' );
 	}
 

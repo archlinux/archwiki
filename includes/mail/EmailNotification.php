@@ -24,11 +24,16 @@
  * @author Luke Welling lwelling@wikimedia.org
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Mail\UserEmailContact;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
+use MediaWiki\User\UserArray;
 use MediaWiki\User\UserIdentity;
 
 /**
@@ -219,7 +224,6 @@ class EmailNotification {
 	 * @param int $oldid Revision ID
 	 * @param array $watchers Array of user IDs
 	 * @param string $pageStatus
-	 * @throws MWException
 	 */
 	public function actuallyNotifyOnPageChange(
 		Authority $editor,
@@ -252,9 +256,10 @@ class EmailNotification {
 
 		$formattedPageStatus = [ 'deleted', 'created', 'moved', 'restored', 'changed' ];
 
-		Hooks::runner()->onUpdateUserMailerFormattedPageStatus( $formattedPageStatus );
+		$hookRunner = new HookRunner( $mwServices->getHookContainer() );
+		$hookRunner->onUpdateUserMailerFormattedPageStatus( $formattedPageStatus );
 		if ( !in_array( $this->pageStatus, $formattedPageStatus ) ) {
-			throw new MWException( 'Not a valid page status!' );
+			throw new UnexpectedValueException( 'Not a valid page status!' );
 		}
 
 		$userTalkId = false;
@@ -288,7 +293,7 @@ class EmailNotification {
 						//       see: https://phabricator.wikimedia.org/T208895
 						&& !( $config->get( MainConfigNames::BlockDisablesLogin ) &&
 							$watchingUser->getBlock() )
-						&& Hooks::runner()->onSendWatchlistEmailNotification( $watchingUser, $title, $this )
+						&& $hookRunner->onSendWatchlistEmailNotification( $watchingUser, $title, $this )
 					) {
 						$this->compose( $watchingUser, self::WATCHLIST, $messageCache );
 					}
@@ -330,6 +335,8 @@ class EmailNotification {
 			wfDebug( __METHOD__ . ": user talk page edited, but user does not exist" );
 		} elseif ( $targetUser->getId() == $editor->getId() ) {
 			wfDebug( __METHOD__ . ": user edited their own talk page, no notification sent" );
+		} elseif ( $targetUser->isTemp() ) {
+			wfDebug( __METHOD__ . ": talk page owner is a temporary user so doesn't have email" );
 		} elseif ( $config->get( MainConfigNames::BlockDisablesLogin ) &&
 			$targetUser->getBlock()
 		) {
@@ -341,7 +348,9 @@ class EmailNotification {
 		) {
 			if ( !$targetUser->isEmailConfirmed() ) {
 				wfDebug( __METHOD__ . ": talk page owner doesn't have validated email" );
-			} elseif ( !Hooks::runner()->onAbortTalkPageEmailNotification( $targetUser, $title ) ) {
+			} elseif ( !( new HookRunner( $services->getHookContainer() ) )
+				->onAbortTalkPageEmailNotification( $targetUser, $title )
+			) {
 				wfDebug( __METHOD__ . ": talk page update notification is aborted for this user" );
 			} else {
 				wfDebug( __METHOD__ . ": sending talk page update notification" );
@@ -389,14 +398,10 @@ class EmailNotification {
 					)->inContentLanguage()->text();
 			}
 			$keys['$OLDID'] = $this->oldid;
-			// Deprecated since MediaWiki 1.21, not used by default. Kept for backwards-compatibility.
-			$keys['$CHANGEDORCREATED'] = wfMessage( 'changed' )->inContentLanguage()->text();
 		} else {
 			# clear $OLDID placeholder in the message template
 			$keys['$OLDID'] = '';
 			$keys['$NEWPAGE'] = '';
-			// Deprecated since MediaWiki 1.21, not used by default. Kept for backwards-compatibility.
-			$keys['$CHANGEDORCREATED'] = wfMessage( 'created' )->inContentLanguage()->text();
 		}
 
 		$keys['$PAGETITLE'] = $this->title->getPrefixedText();
@@ -406,12 +411,15 @@ class EmailNotification {
 			'';
 		$keys['$UNWATCHURL'] = $this->title->getCanonicalURL( 'action=unwatch' );
 
-		if ( !$this->editor->isRegistered() ) {
+		if ( $this->editor->isAnon() ) {
 			# real anon (user:xxx.xxx.xxx.xxx)
 			$keys['$PAGEEDITOR'] = wfMessage( 'enotif_anon_editor', $this->editor->getName() )
 				->inContentLanguage()->text();
 			$keys['$PAGEEDITOR_EMAIL'] = wfMessage( 'noemailtitle' )->inContentLanguage()->text();
-
+		} elseif ( $this->editor->isTemp() ) {
+			$keys['$PAGEEDITOR'] = wfMessage( 'enotif_temp_editor', $this->editor->getName() )
+				->inContentLanguage()->text();
+			$keys['$PAGEEDITOR_EMAIL'] = wfMessage( 'noemailtitle' )->inContentLanguage()->text();
 		} else {
 			$keys['$PAGEEDITOR'] = $config->get( MainConfigNames::EnotifUseRealName ) &&
 					$this->editor->getRealName() !== ''
@@ -563,7 +571,7 @@ class EmailNotification {
 	 * @return Status|null
 	 */
 	private function sendImpersonal( $addresses ) {
-		if ( empty( $addresses ) ) {
+		if ( !$addresses ) {
 			return null;
 		}
 

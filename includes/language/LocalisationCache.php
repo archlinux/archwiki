@@ -44,44 +44,45 @@ use Psr\Log\LoggerInterface;
  * @ingroup Language
  */
 class LocalisationCache {
-	public const VERSION = 4;
+	public const VERSION = 5;
 
 	/** @var ServiceOptions */
 	private $options;
 
 	/**
-	 * True if recaching should only be done on an explicit call to recache().
+	 * True if re-caching should only be done on an explicit call to recache().
 	 * Setting this reduces the overhead of cache freshness checking, which
 	 * requires doing a stat() for every extension i18n file.
+	 *
+	 * @var bool
 	 */
 	private $manualRecache;
 
 	/**
-	 * The cache data. 3-d array, where the first key is the language code,
-	 * the second key is the item key e.g. 'messages', and the third key is
-	 * an item specific subkey index. Some items are not arrays and so for those
+	 * The cache data. 2/3-d array, where the first key is the language code,
+	 * the second key is the item key e.g. 'messages', and the optional third key is
+	 * an item specific subkey index. Some items are not arrays, and so for those
 	 * items, there are no subkeys.
+	 *
+	 * @var array<string,array>
 	 */
 	protected $data = [];
 
 	/**
-	 * The persistent store object. An instance of LCStore.
+	 * The source language of cached data items. Only supports messages for now.
 	 *
-	 * @var LCStore
+	 * @var array<string,array<string,array<string,string>>>
 	 */
+	protected $sourceLanguage = [];
+
+	/** @var LCStore */
 	private $store;
-
-	/**
-	 * @var LoggerInterface
-	 */
+	/** @var LoggerInterface */
 	private $logger;
-
 	/** @var HookRunner */
 	private $hookRunner;
-
 	/** @var callable[] See comment for parameter in constructor */
 	private $clearStoreCallbacks;
-
 	/** @var LanguageNameUtils */
 	private $langNameUtils;
 
@@ -89,22 +90,27 @@ class LocalisationCache {
 	 * A 2-d associative array, code/key, where presence indicates that the item
 	 * is loaded. Value arbitrary.
 	 *
-	 * For split items, if set, this indicates that all of the subitems have been
+	 * For split items, if set, this indicates that all the subitems have been
 	 * loaded.
 	 *
+	 * @var array<string,array<string,true>>
 	 */
 	private $loadedItems = [];
 
 	/**
 	 * A 3-d associative array, code/key/subkey, where presence indicates that
-	 * the subitem is loaded. Only used for the split items, i.e. messages.
+	 * the subitem is loaded. Only used for the split items, i.e. ,messages.
+	 *
+	 * @var array<string,array<string,array<string,true>>>
 	 */
 	private $loadedSubitems = [];
 
 	/**
-	 * An array where presence of a key indicates that that language has been
+	 * An array where the presence of a key indicates that that language has been
 	 * initialised. Initialisation includes checking for cache expiry and doing
 	 * any necessary updates.
+	 *
+	 * @var array<string,true>
 	 */
 	private $initialisedLangs = [];
 
@@ -112,18 +118,34 @@ class LocalisationCache {
 	 * An array mapping non-existent pseudo-languages to fallback languages. This
 	 * is filled by initShallowFallback() when data is requested from a language
 	 * that lacks a Messages*.php file.
+	 *
+	 * @var array<string,string>
 	 */
 	private $shallowFallbacks = [];
 
 	/**
-	 * An array where the keys are codes that have been recached by this instance.
+	 * An array where the keys are codes that have been re-cached by this instance.
+	 *
+	 * @var array<string,true>
 	 */
 	private $recachedLangs = [];
 
 	/**
+	 * An array indicating whether core data for a language has been loaded.
+	 * If the entry for a language code $code is true,
+	 * then {@link self::$data} is guaranteed to contain an array for $code,
+	 * with at least an entry (possibly null) for each of the {@link self::CORE_ONLY_KEYS},
+	 * and all the core-only keys will be marked as loaded in {@link self::$loadedItems} too.
+	 * Additionally, there will be a 'deps' entry for $code with the dependencies tracked so far.
+	 *
+	 * @var array<string,bool>
+	 */
+	private $coreDataLoaded = [];
+
+	/**
 	 * All item keys
 	 */
-	public static $allKeys = [
+	public const ALL_KEYS = [
 		'fallback', 'namespaceNames', 'bookstoreList',
 		'magicWords', 'messages', 'rtl',
 		'digitTransformTable', 'separatorTransformTable',
@@ -137,51 +159,95 @@ class LocalisationCache {
 	];
 
 	/**
-	 * Keys for items which consist of associative arrays, which may be merged
-	 * by a fallback sequence.
+	 * Keys for items that can only be set in the core message files,
+	 * not in extensions. Assignments to these keys in extension messages files
+	 * are silently ignored.
+	 *
+	 * @since 1.41
 	 */
-	public static $mergeableMapKeys = [ 'messages', 'namespaceNames',
-		'namespaceAliases', 'dateFormats', 'imageFiles', 'preloadedMessages'
+	private const CORE_ONLY_KEYS = [
+		'fallback', 'rtl', 'digitTransformTable', 'separatorTransformTable',
+		'minimumGroupingDigits', 'fallback8bitEncoding', 'linkPrefixExtension',
+		'linkTrail', 'linkPrefixCharset', 'datePreferences',
+		'datePreferenceMigrationMap', 'defaultDateFormat', 'digitGroupingPattern',
 	];
 
 	/**
-	 * Keys for items which are a numbered array.
+	 * ALL_KEYS - CORE_ONLY_KEYS. All of these can technically be set
+	 * both in core and in extension messages files,
+	 * though this is not necessarily useful for all these keys.
+	 * Some of these keys are mergeable too.
+	 *
+	 * @since 1.41
 	 */
-	public static $mergeableListKeys = [];
+	private const ALL_EXCEPT_CORE_ONLY_KEYS = [
+		'namespaceNames', 'bookstoreList', 'magicWords', 'messages',
+		'namespaceAliases', 'dateFormats', 'specialPageAliases',
+		'imageFiles', 'preloadedMessages', 'namespaceGenderAliases',
+		'pluralRules', 'pluralRuleTypes', 'compiledPluralRules',
+	];
+
+	/**
+	 * Keys for items which consist of associative arrays, which may be merged
+	 * by a fallback sequence.
+	 */
+	private const MERGEABLE_MAP_KEYS = [ 'messages', 'namespaceNames',
+		'namespaceAliases', 'dateFormats', 'imageFiles', 'preloadedMessages'
+	];
 
 	/**
 	 * Keys for items which contain an array of arrays of equivalent aliases
 	 * for each subitem. The aliases may be merged by a fallback sequence.
 	 */
-	public static $mergeableAliasListKeys = [ 'specialPageAliases' ];
+	private const MERGEABLE_ALIAS_LIST_KEYS = [ 'specialPageAliases' ];
 
 	/**
 	 * Keys for items which contain an associative array, and may be merged if
 	 * the primary value contains the special array key "inherit". That array
 	 * key is removed after the first merge.
 	 */
-	public static $optionalMergeKeys = [ 'bookstoreList' ];
+	private const OPTIONAL_MERGE_KEYS = [ 'bookstoreList' ];
 
 	/**
 	 * Keys for items that are formatted like $magicWords
 	 */
-	public static $magicWordKeys = [ 'magicWords' ];
+	private const MAGIC_WORD_KEYS = [ 'magicWords' ];
 
 	/**
 	 * Keys for items where the subitems are stored in the backend separately.
 	 */
-	public static $splitKeys = [ 'messages' ];
+	private const SPLIT_KEYS = [ 'messages' ];
+
+	/**
+	 * Keys for items that will be prefixed with its source language code,
+	 * which should be stripped out when loading from cache.
+	 */
+	private const SOURCE_PREFIX_KEYS = [ 'messages' ];
+
+	/**
+	 * Separator for the source language prefix.
+	 */
+	private const SOURCEPREFIX_SEPARATOR = ':';
 
 	/**
 	 * Keys which are loaded automatically by initLanguage()
 	 */
-	public static $preloadedKeys = [ 'dateFormats', 'namespaceNames' ];
+	private const PRELOADED_KEYS = [ 'dateFormats', 'namespaceNames' ];
+
+	private const PLURAL_FILES = [
+		// Load CLDR plural rules
+		MW_INSTALL_PATH . '/languages/data/plurals.xml',
+		// Override or extend with MW-specific rules
+		MW_INSTALL_PATH . '/languages/data/plurals-mediawiki.xml',
+	];
 
 	/**
 	 * Associative array of cached plural rules. The key is the language code,
 	 * the value is an array of plural rules for that language.
+	 *
+	 * @var array<string,array<int,string>>|null
 	 */
-	private $pluralRules = null;
+	private static $pluralRules = null;
 
 	/**
 	 * Associative array of cached plural rule types. The key is the language
@@ -194,10 +260,10 @@ class LocalisationCache {
 	 * explicit numeric parameter), not based on the name of the rule type. For
 	 * example, {{plural:count|wordform1|wordform2|wordform3}}, rather than
 	 * {{plural:count|one=wordform1|two=wordform2|many=wordform3}}.
+	 *
+	 * @var array<string,array<int,string>>|null
 	 */
-	private $pluralRuleTypes = null;
-
-	private $mergeableKeys = null;
+	private static $pluralRuleTypes = null;
 
 	/**
 	 * Return a suitable LCStore as specified by the given configuration.
@@ -273,7 +339,7 @@ class LocalisationCache {
 		$this->langNameUtils = $langNameUtils;
 		$this->hookRunner = new HookRunner( $hookContainer );
 
-		// Keep this separate from $this->options so it can be mutable
+		// Keep this separate from $this->options so that it can be mutable
 		$this->manualRecache = $options->get( 'manualRecache' );
 	}
 
@@ -283,25 +349,22 @@ class LocalisationCache {
 	 * @param string $key
 	 * @return bool
 	 */
-	public function isMergeableKey( $key ) {
-		if ( $this->mergeableKeys === null ) {
-			$this->mergeableKeys = array_fill_keys( array_merge(
-				self::$mergeableMapKeys,
-				self::$mergeableListKeys,
-				self::$mergeableAliasListKeys,
-				self::$optionalMergeKeys,
-				self::$magicWordKeys
-			), true );
-		}
-
-		return isset( $this->mergeableKeys[$key] );
+	private static function isMergeableKey( string $key ): bool {
+		static $mergeableKeys;
+		$mergeableKeys ??= array_fill_keys( [
+			...self::MERGEABLE_MAP_KEYS,
+			...self::MERGEABLE_ALIAS_LIST_KEYS,
+			...self::OPTIONAL_MERGE_KEYS,
+			...self::MAGIC_WORD_KEYS,
+		], true );
+		return isset( $mergeableKeys[$key] );
 	}
 
 	/**
 	 * Get a cache item.
 	 *
 	 * Warning: this may be slow for split items (messages), since it will
-	 * need to fetch all of the subitems from the cache individually.
+	 * need to fetch all the subitems from the cache individually.
 	 * @param string $code
 	 * @param string $key
 	 * @return mixed
@@ -315,6 +378,7 @@ class LocalisationCache {
 			return $this->shallowFallbacks[$code];
 		}
 
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		return $this->data[$code][$key];
 	}
 
@@ -336,19 +400,40 @@ class LocalisationCache {
 	}
 
 	/**
+	 * Get a subitem with its source language. Only supports messages for now.
+	 *
+	 * @since 1.41
+	 * @param string $code
+	 * @param string $key
+	 * @param string $subkey
+	 * @return string[]|null Return [ subitem, sourceLanguage ] if the subitem is defined.
+	 */
+	public function getSubitemWithSource( $code, $key, $subkey ) {
+		$subitem = $this->getSubitem( $code, $key, $subkey );
+		// Undefined in the backend.
+		if ( $subitem === null ) {
+			return null;
+		}
+
+		// The source language should have been set, but to avoid a Phan error and to be double sure.
+		return [ $subitem, $this->sourceLanguage[$code][$key][$subkey] ?? $code ];
+	}
+
+	/**
 	 * Get the list of subitem keys for a given item.
 	 *
 	 * This is faster than array_keys($lc->getItem(...)) for the items listed in
-	 * self::$splitKeys.
+	 * self::SPLIT_KEYS.
 	 *
 	 * Will return null if the item is not found, or false if the item is not an
 	 * array.
+	 *
 	 * @param string $code
 	 * @param string $key
 	 * @return bool|null|string|string[]
 	 */
 	public function getSubitemList( $code, $key ) {
-		if ( in_array( $key, self::$splitKeys ) ) {
+		if ( in_array( $key, self::SPLIT_KEYS ) ) {
 			return $this->getSubitem( $code, 'list', $key );
 		} else {
 			$item = $this->getItem( $code, $key );
@@ -362,17 +447,34 @@ class LocalisationCache {
 
 	/**
 	 * Load an item into the cache.
+	 *
 	 * @param string $code
 	 * @param string $key
 	 */
-	protected function loadItem( $code, $key ) {
-		if ( !isset( $this->initialisedLangs[$code] ) ) {
-			$this->initLanguage( $code );
-		}
-
-		// Check to see if initLanguage() loaded it for us
+	private function loadItem( $code, $key ) {
 		if ( isset( $this->loadedItems[$code][$key] ) ) {
 			return;
+		}
+
+		if (
+			in_array( $key, self::CORE_ONLY_KEYS, true ) ||
+			// "synthetic" keys added by loadCoreData based on "fallback"
+			$key === 'fallbackSequence' ||
+			$key === 'originalFallbackSequence'
+		) {
+			if ( $this->langNameUtils->isValidBuiltInCode( $code ) ) {
+				$this->loadCoreData( $code );
+				return;
+			}
+		}
+
+		if ( !isset( $this->initialisedLangs[$code] ) ) {
+			$this->initLanguage( $code );
+
+			// Check to see if initLanguage() loaded it for us
+			if ( isset( $this->loadedItems[$code][$key] ) ) {
+				return;
+			}
 		}
 
 		if ( isset( $this->shallowFallbacks[$code] ) ) {
@@ -381,13 +483,13 @@ class LocalisationCache {
 			return;
 		}
 
-		if ( in_array( $key, self::$splitKeys ) ) {
+		if ( in_array( $key, self::SPLIT_KEYS ) ) {
 			$subkeyList = $this->getSubitem( $code, 'list', $key );
 			foreach ( $subkeyList as $subkey ) {
 				if ( isset( $this->data[$code][$key][$subkey] ) ) {
 					continue;
 				}
-				$this->data[$code][$key][$subkey] = $this->getSubitem( $code, $key, $subkey );
+				$this->loadSubitem( $code, $key, $subkey );
 			}
 		} else {
 			$this->data[$code][$key] = $this->store->get( $code, $key );
@@ -397,13 +499,14 @@ class LocalisationCache {
 	}
 
 	/**
-	 * Load a subitem into the cache
+	 * Load a subitem into the cache.
+	 *
 	 * @param string $code
 	 * @param string $key
 	 * @param string $subkey
 	 */
-	protected function loadSubitem( $code, $key, $subkey ) {
-		if ( !in_array( $key, self::$splitKeys ) ) {
+	private function loadSubitem( $code, $key, $subkey ) {
+		if ( !in_array( $key, self::SPLIT_KEYS ) ) {
 			$this->loadItem( $code, $key );
 
 			return;
@@ -427,7 +530,15 @@ class LocalisationCache {
 		}
 
 		$value = $this->store->get( $code, "$key:$subkey" );
-		$this->data[$code][$key][$subkey] = $value;
+		if ( $value !== null && in_array( $key, self::SOURCE_PREFIX_KEYS ) ) {
+			[
+				$this->sourceLanguage[$code][$key][$subkey],
+				$this->data[$code][$key][$subkey]
+			] = explode( self::SOURCEPREFIX_SEPARATOR, $value, 2 );
+		} else {
+			$this->data[$code][$key][$subkey] = $value;
+		}
+
 		$this->loadedSubitems[$code][$key][$subkey] = true;
 	}
 
@@ -458,7 +569,7 @@ class LocalisationCache {
 		foreach ( $deps as $dep ) {
 			// Because we're unserializing stuff from cache, we
 			// could receive objects of classes that don't exist
-			// anymore (e.g. uninstalled extensions)
+			// anymore (e.g., uninstalled extensions)
 			// When this happens, always expire the cache
 			if ( !$dep instanceof CacheDependency || $dep->isExpired() ) {
 				$this->logger->debug( __METHOD__ . "($code): cache for $code expired due to " .
@@ -473,10 +584,11 @@ class LocalisationCache {
 
 	/**
 	 * Initialise a language in this object. Rebuild the cache if necessary.
+	 *
 	 * @param string $code
 	 * @throws MWException
 	 */
-	protected function initLanguage( $code ) {
+	private function initLanguage( $code ) {
 		if ( isset( $this->initialisedLangs[$code] ) ) {
 			return;
 		}
@@ -490,7 +602,7 @@ class LocalisationCache {
 			return;
 		}
 
-		# Recache the data if necessary
+		# Re-cache the data if necessary
 		if ( !$this->manualRecache && $this->isExpired( $code ) ) {
 			if ( $this->langNameUtils->isSupportedLanguage( $code ) ) {
 				$this->recache( $code );
@@ -519,9 +631,33 @@ class LocalisationCache {
 				throw new MWException( 'Invalid or missing localisation cache.' );
 			}
 		}
-		$this->data[$code] = $preload;
+
+		foreach ( self::SOURCE_PREFIX_KEYS as $key ) {
+			if ( !isset( $preload[$key] ) ) {
+				continue;
+			}
+			foreach ( $preload[$key] as $subkey => $value ) {
+				if ( $value !== null ) {
+					[
+						$this->sourceLanguage[$code][$key][$subkey],
+						$preload[$key][$subkey]
+					] = explode( self::SOURCEPREFIX_SEPARATOR, $value, 2 );
+				} else {
+					$preload[$key][$subkey] = null;
+				}
+			}
+		}
+
+		if ( isset( $this->data[$code] ) ) {
+			foreach ( $preload as $key => $value ) {
+				// @phan-suppress-next-line PhanTypeArraySuspiciousNullable -- see isset() above
+				$this->mergeItem( $key, $this->data[$code][$key], $value );
+			}
+		} else {
+			$this->data[$code] = $preload;
+		}
 		foreach ( $preload as $key => $item ) {
-			if ( in_array( $key, self::$splitKeys ) ) {
+			if ( in_array( $key, self::SPLIT_KEYS ) ) {
 				foreach ( $item as $subkey => $subitem ) {
 					$this->loadedSubitems[$code][$key][$subkey] = true;
 				}
@@ -534,18 +670,21 @@ class LocalisationCache {
 	/**
 	 * Create a fallback from one language to another, without creating a
 	 * complete persistent cache.
+	 *
 	 * @param string $primaryCode
 	 * @param string $fallbackCode
 	 */
-	public function initShallowFallback( $primaryCode, $fallbackCode ) {
+	private function initShallowFallback( $primaryCode, $fallbackCode ) {
 		$this->data[$primaryCode] =& $this->data[$fallbackCode];
 		$this->loadedItems[$primaryCode] =& $this->loadedItems[$fallbackCode];
 		$this->loadedSubitems[$primaryCode] =& $this->loadedSubitems[$fallbackCode];
 		$this->shallowFallbacks[$primaryCode] = $fallbackCode;
+		$this->coreDataLoaded[$primaryCode] =& $this->coreDataLoaded[$fallbackCode];
 	}
 
 	/**
 	 * Read a PHP file containing localisation data.
+	 *
 	 * @param string $_fileName
 	 * @param string $_fileType
 	 * @throws MWException
@@ -555,16 +694,22 @@ class LocalisationCache {
 		include $_fileName;
 
 		$data = [];
-		if ( $_fileType == 'core' || $_fileType == 'extension' ) {
-			foreach ( self::$allKeys as $key ) {
+		if ( $_fileType == 'core' ) {
+			foreach ( self::ALL_KEYS as $key ) {
 				// Not all keys are set in language files, so
 				// check they exist first
 				if ( isset( $$key ) ) {
 					$data[$key] = $$key;
 				}
 			}
+		} elseif ( $_fileType == 'extension' ) {
+			foreach ( self::ALL_EXCEPT_CORE_ONLY_KEYS as $key ) {
+				if ( isset( $$key ) ) {
+					$data[$key] = $$key;
+				}
+			}
 		} elseif ( $_fileType == 'aliases' ) {
-			// @phan-suppress-next-line PhanImpossibleCondition May be set in included file
+			// @phan-suppress-next-line PhanImpossibleCondition May be set in the included file
 			if ( isset( $aliases ) ) {
 				$data['aliases'] = $aliases;
 			}
@@ -577,11 +722,12 @@ class LocalisationCache {
 
 	/**
 	 * Read a JSON file containing localisation messages.
+	 *
 	 * @param string $fileName Name of file to read
 	 * @throws MWException If there is a syntax error in the JSON file
 	 * @return array Array with a 'messages' key, or empty array if the file doesn't exist
 	 */
-	public function readJSONFile( $fileName ) {
+	private function readJSONFile( $fileName ) {
 		if ( !is_readable( $fileName ) ) {
 			return [];
 		}
@@ -596,24 +742,24 @@ class LocalisationCache {
 			throw new MWException( __METHOD__ . ": Invalid JSON file: $fileName" );
 		}
 
-		// Remove keys starting with '@', they're reserved for metadata and non-message data
+		// Remove keys starting with '@'; they are reserved for metadata and non-message data
 		foreach ( $data as $key => $unused ) {
 			if ( $key === '' || $key[0] === '@' ) {
 				unset( $data[$key] );
 			}
 		}
 
-		// The JSON format only supports messages, none of the other variables, so wrap the data
-		return [ 'messages' => $data ];
+		return $data;
 	}
 
 	/**
 	 * Get the compiled plural rules for a given language from the XML files.
+	 *
 	 * @since 1.20
 	 * @param string $code
-	 * @return array|null
+	 * @return array<int,string>|null
 	 */
-	public function getCompiledPluralRules( $code ) {
+	private function getCompiledPluralRules( $code ) {
 		$rules = $this->getPluralRules( $code );
 		if ( $rules === null ) {
 			return null;
@@ -631,49 +777,43 @@ class LocalisationCache {
 
 	/**
 	 * Get the plural rules for a given language from the XML files.
+	 *
 	 * Cached.
+	 *
 	 * @since 1.20
 	 * @param string $code
-	 * @return array|null
+	 * @return array<int,string>|null
 	 */
-	public function getPluralRules( $code ) {
-		if ( $this->pluralRules === null ) {
-			$this->loadPluralFiles();
+	private function getPluralRules( $code ) {
+		if ( self::$pluralRules === null ) {
+			self::loadPluralFiles();
 		}
-		return $this->pluralRules[$code] ?? null;
+		return self::$pluralRules[$code] ?? null;
 	}
 
 	/**
 	 * Get the plural rule types for a given language from the XML files.
+	 *
 	 * Cached.
+	 *
 	 * @since 1.22
 	 * @param string $code
-	 * @return array|null
+	 * @return array<int,string>|null
 	 */
-	public function getPluralRuleTypes( $code ) {
-		if ( $this->pluralRuleTypes === null ) {
-			$this->loadPluralFiles();
+	private function getPluralRuleTypes( $code ) {
+		if ( self::$pluralRuleTypes === null ) {
+			self::loadPluralFiles();
 		}
-		return $this->pluralRuleTypes[$code] ?? null;
+		return self::$pluralRuleTypes[$code] ?? null;
 	}
 
 	/**
 	 * Load the plural XML files.
 	 */
-	protected function loadPluralFiles() {
-		foreach ( $this->getPluralFiles() as $fileName ) {
-			$this->loadPluralFile( $fileName );
+	private static function loadPluralFiles() {
+		foreach ( self::PLURAL_FILES as $fileName ) {
+			self::loadPluralFile( $fileName );
 		}
-	}
-
-	private function getPluralFiles(): array {
-		global $IP;
-		return [
-			// Load CLDR plural rules
-			"$IP/languages/data/plurals.xml",
-			// Override or extend with MW-specific rules
-			"$IP/languages/data/plurals-mediawiki.xml",
-		];
 	}
 
 	/**
@@ -683,7 +823,7 @@ class LocalisationCache {
 	 * @param string $fileName
 	 * @throws MWException
 	 */
-	protected function loadPluralFile( $fileName ) {
+	private static function loadPluralFile( $fileName ) {
 		// Use file_get_contents instead of DOMDocument::load (T58439)
 		$xml = file_get_contents( $fileName );
 		if ( !$xml ) {
@@ -707,22 +847,21 @@ class LocalisationCache {
 				$ruleTypes[] = $ruleType;
 			}
 			foreach ( explode( ' ', $codes ) as $code ) {
-				$this->pluralRules[$code] = $rules;
-				$this->pluralRuleTypes[$code] = $ruleTypes;
+				self::$pluralRules[$code] = $rules;
+				self::$pluralRuleTypes[$code] = $ruleTypes;
 			}
 		}
 	}
 
 	/**
 	 * Read the data from the source files for a given language, and register
-	 * the relevant dependencies in the $deps array. If the localisation
-	 * exists, the data array is returned, otherwise false is returned.
+	 * the relevant dependencies in the $deps array.
 	 *
 	 * @param string $code
 	 * @param array &$deps
 	 * @return array
 	 */
-	protected function readSourceFilesAndRegisterDeps( $code, &$deps ) {
+	private function readSourceFilesAndRegisterDeps( $code, &$deps ) {
 		// This reads in the PHP i18n file with non-messages l10n data
 		$fileName = $this->langNameUtils->getMessagesFileName( $code );
 		if ( !is_file( $fileName ) ) {
@@ -732,14 +871,28 @@ class LocalisationCache {
 			$data = $this->readPHPFile( $fileName, 'core' );
 		}
 
-		// Load CLDR plural rules for JavaScript
-		$data['pluralRules'] = $this->getPluralRules( $code );
-		// And for PHP
-		$data['compiledPluralRules'] = $this->getCompiledPluralRules( $code );
-		// Load plural rule types
-		$data['pluralRuleTypes'] = $this->getPluralRuleTypes( $code );
+		return $data;
+	}
 
-		foreach ( $this->getPluralFiles() as $fileName ) {
+	/**
+	 * Read and compile the plural data for a given language,
+	 * and register the relevant dependencies in the $deps array.
+	 *
+	 * @param string $code
+	 * @param array &$deps
+	 * @return array
+	 */
+	private function readPluralFilesAndRegisterDeps( $code, &$deps ) {
+		$data = [
+			// Load CLDR plural rules for JavaScript
+			'pluralRules' => $this->getPluralRules( $code ),
+			// And for PHP
+			'compiledPluralRules' => $this->getCompiledPluralRules( $code ),
+			// Load plural rule types
+			'pluralRuleTypes' => $this->getPluralRuleTypes( $code ),
+		];
+
+		foreach ( self::PLURAL_FILES as $fileName ) {
 			$deps[] = new FileDependency( $fileName );
 		}
 
@@ -749,26 +902,25 @@ class LocalisationCache {
 	/**
 	 * Merge two localisation values, a primary and a fallback, overwriting the
 	 * primary value in place.
+	 *
 	 * @param string $key
 	 * @param mixed &$value
 	 * @param mixed $fallbackValue
 	 */
-	protected function mergeItem( $key, &$value, $fallbackValue ) {
+	private function mergeItem( $key, &$value, $fallbackValue ) {
 		if ( $value !== null ) {
 			if ( $fallbackValue !== null ) {
-				if ( in_array( $key, self::$mergeableMapKeys ) ) {
+				if ( in_array( $key, self::MERGEABLE_MAP_KEYS ) ) {
 					$value += $fallbackValue;
-				} elseif ( in_array( $key, self::$mergeableListKeys ) ) {
-					$value = array_unique( array_merge( $fallbackValue, $value ) );
-				} elseif ( in_array( $key, self::$mergeableAliasListKeys ) ) {
+				} elseif ( in_array( $key, self::MERGEABLE_ALIAS_LIST_KEYS ) ) {
 					$value = array_merge_recursive( $value, $fallbackValue );
-				} elseif ( in_array( $key, self::$optionalMergeKeys ) ) {
+				} elseif ( in_array( $key, self::OPTIONAL_MERGE_KEYS ) ) {
 					if ( !empty( $value['inherit'] ) ) {
 						$value = array_merge( $fallbackValue, $value );
 					}
 
 					unset( $value['inherit'] );
-				} elseif ( in_array( $key, self::$magicWordKeys ) ) {
+				} elseif ( in_array( $key, self::MAGIC_WORD_KEYS ) ) {
 					$this->mergeMagicWords( $value, $fallbackValue );
 				}
 			}
@@ -778,19 +930,22 @@ class LocalisationCache {
 	}
 
 	/**
-	 * @param mixed &$value
-	 * @param mixed $fallbackValue
+	 * @param array &$value
+	 * @param array $fallbackValue
 	 */
-	protected function mergeMagicWords( &$value, $fallbackValue ) {
+	private function mergeMagicWords( array &$value, array $fallbackValue ): void {
 		foreach ( $fallbackValue as $magicName => $fallbackInfo ) {
 			if ( !isset( $value[$magicName] ) ) {
 				$value[$magicName] = $fallbackInfo;
 			} else {
-				$oldSynonyms = array_slice( $fallbackInfo, 1 );
-				$newSynonyms = array_slice( $value[$magicName], 1 );
-				$synonyms = array_values( array_unique( array_merge(
-					$newSynonyms, $oldSynonyms ) ) );
-				$value[$magicName] = array_merge( [ $fallbackInfo[0] ], $synonyms );
+				$value[$magicName] = [
+					$fallbackInfo[0],
+					...array_unique( [
+						// First value is 1 if the magic word is case-sensitive, 0 if not
+						...array_slice( $value[$magicName], 1 ),
+						...array_slice( $fallbackInfo, 1 ),
+					] )
+				];
 			}
 		}
 	}
@@ -816,20 +971,24 @@ class LocalisationCache {
 	}
 
 	/**
-	 * Load localisation data for a given language for both core and extensions
-	 * and save it to the persistent cache store and the process cache
-	 * @param string $code
-	 * @throws MWException
+	 * Load the core localisation data for a given language code,
+	 * without extensions, using only the process cache.
+	 * See {@link self::$coreDataLoaded} for what this guarantees.
+	 *
+	 * In addition to the core-only keys,
+	 * {@link self::$data} may contain additional entries for $code,
+	 * but those must not be used outside of {@link self::recache()}
+	 * (and accordingly, they are not marked as loaded yet).
 	 */
-	public function recache( $code ) {
+	private function loadCoreData( string $code ) {
 		if ( !$code ) {
 			throw new MWException( "Invalid language code requested" );
 		}
-		$this->recachedLangs[ $code ] = true;
+		if ( $this->coreDataLoaded[$code] ?? false ) {
+			return;
+		}
 
-		# Initial values
-		$initialData = array_fill_keys( self::$allKeys, null );
-		$coreData = $initialData;
+		$coreData = array_fill_keys( self::CORE_ONLY_KEYS, null );
 		$deps = [];
 
 		# Load the primary localisation from the source file
@@ -864,6 +1023,64 @@ class LocalisationCache {
 			}
 		}
 
+		foreach ( $coreData['fallbackSequence'] as $fbCode ) {
+			// load core fallback data
+			$fbData = $this->readSourceFilesAndRegisterDeps( $fbCode, $deps );
+			foreach ( self::CORE_ONLY_KEYS as $key ) {
+				// core-only keys are not mergeable, only set if not present in core data yet
+				if ( isset( $fbData[$key] ) && !isset( $coreData[$key] ) ) {
+					$coreData[$key] = $fbData[$key];
+				}
+			}
+		}
+
+		$coreData['deps'] = $deps;
+		foreach ( $coreData as $key => $item ) {
+			$this->data[$code][$key] ??= null;
+			// @phan-suppress-next-line PhanTypeArraySuspiciousNullable -- we just set a default null
+			$this->mergeItem( $key, $this->data[$code][$key], $item );
+			if (
+				in_array( $key, self::CORE_ONLY_KEYS, true ) ||
+				// "synthetic" keys based on "fallback" (see above)
+				$key === 'fallbackSequence' ||
+				$key === 'originalFallbackSequence'
+			) {
+				// only mark core-only keys as loaded;
+				// we may have loaded additional ones from the source file,
+				// but they are not fully loaded yet, since recache()
+				// may have to merge in additional values from fallback languages
+				$this->loadedItems[$code][$key] = true;
+			}
+		}
+
+		$this->coreDataLoaded[$code] = true;
+	}
+
+	/**
+	 * Load localisation data for a given language for both core and extensions
+	 * and save it to the persistent cache store and the process cache.
+	 *
+	 * @param string $code
+	 * @throws MWException
+	 */
+	public function recache( $code ) {
+		if ( !$code ) {
+			throw new MWException( "Invalid language code requested" );
+		}
+		$this->recachedLangs[ $code ] = true;
+
+		# Initial values
+		$initialData = array_fill_keys( self::ALL_KEYS, null );
+		$this->data[$code] = [];
+		$this->loadedItems[$code] = [];
+		$this->loadedSubitems[$code] = [];
+		$this->coreDataLoaded[$code] = false;
+		$this->loadCoreData( $code );
+		$coreData = $this->data[$code];
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable -- guaranteed by loadCoreData()
+		$deps = $coreData['deps'];
+		$coreData += $this->readPluralFilesAndRegisterDeps( $code, $deps );
+
 		$codeSequence = array_merge( [ $code ], $coreData['fallbackSequence'] );
 		$messageDirs = $this->getMessagesDirs();
 
@@ -881,6 +1098,13 @@ class LocalisationCache {
 			foreach ( $data as $key => $item ) {
 				foreach ( $codeSequence as $csCode ) {
 					if ( isset( $item[$csCode] ) ) {
+						// Keep the behaviour the same as for json messages.
+						// TODO: Consider deprecating using a PHP file for messages.
+						if ( in_array( $key, self::SOURCE_PREFIX_KEYS ) ) {
+							foreach ( $item[$csCode] as $subkey => $_ ) {
+								$this->sourceLanguage[$code][$key][$subkey] ??= $csCode;
+							}
+						}
 						$this->mergeItem( $key, $extensionData[$csCode][$key], $item[$csCode] );
 						$used = true;
 					}
@@ -901,11 +1125,12 @@ class LocalisationCache {
 			foreach ( $messageDirs as $dirs ) {
 				foreach ( (array)$dirs as $dir ) {
 					$fileName = "$dir/$csCode.json";
-					$data = $this->readJSONFile( $fileName );
+					$messages = $this->readJSONFile( $fileName );
 
-					foreach ( $data as $key => $item ) {
-						$this->mergeItem( $key, $csData[$key], $item );
+					foreach ( $messages as $subkey => $_ ) {
+						$this->sourceLanguage[$code]['messages'][$subkey] ??= $csCode;
 					}
+					$this->mergeItem( 'messages', $csData['messages'], $messages );
 
 					$deps[] = new FileDependency( $fileName );
 				}
@@ -927,33 +1152,33 @@ class LocalisationCache {
 				# Load the secondary localisation from the source file to
 				# avoid infinite cycles on cyclic fallbacks
 				$fbData = $this->readSourceFilesAndRegisterDeps( $csCode, $deps );
+				$fbData += $this->readPluralFilesAndRegisterDeps( $csCode, $deps );
 				# Only merge the keys that make sense to merge
-				foreach ( self::$allKeys as $key ) {
+				foreach ( self::ALL_KEYS as $key ) {
 					if ( !isset( $fbData[ $key ] ) ) {
 						continue;
 					}
 
-					if ( ( $coreData[ $key ] ) === null || $this->isMergeableKey( $key ) ) {
+					if ( !isset( $coreData[ $key ] ) || self::isMergeableKey( $key ) ) {
 						$this->mergeItem( $key, $csData[ $key ], $fbData[ $key ] );
 					}
 				}
 			}
 
-			# Allow extensions an opportunity to adjust the data for this
-			# fallback
+			# Allow extensions an opportunity to adjust the data for this fallback
 			$this->hookRunner->onLocalisationCacheRecacheFallback( $this, $csCode, $csData );
 
 			# Merge the data for this fallback into the final array
 			if ( $csCode === $code ) {
 				$allData = $csData;
 			} else {
-				foreach ( self::$allKeys as $key ) {
+				foreach ( self::ALL_KEYS as $key ) {
 					if ( !isset( $csData[$key] ) ) {
 						continue;
 					}
 
 					// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
-					if ( $allData[$key] === null || $this->isMergeableKey( $key ) ) {
+					if ( $allData[$key] === null || self::isMergeableKey( $key ) ) {
 						$this->mergeItem( $key, $allData[$key], $csData[$key] );
 					}
 				}
@@ -970,7 +1195,7 @@ class LocalisationCache {
 		// The 'MessagesDirs' config setting is used in LocalisationCache::getMessagesDirs().
 		// We use the key 'wgMessagesDirs' for historical reasons.
 		$deps['wgMessagesDirs'] = new MainConfigDependency( MainConfigNames::MessagesDirs );
-		$deps['version'] = new ConstantDependency( 'LocalisationCache::VERSION' );
+		$deps['version'] = new ConstantDependency( self::class . '::VERSION' );
 
 		# Add dependencies to the cache entry
 		$allData['deps'] = $deps;
@@ -993,26 +1218,38 @@ class LocalisationCache {
 
 		# Set the list keys
 		$allData['list'] = [];
-		foreach ( self::$splitKeys as $key ) {
+		foreach ( self::SPLIT_KEYS as $key ) {
 			$allData['list'][$key] = array_keys( $allData[$key] );
 		}
 		# Run hooks
 		$unused = true; // Used to be $purgeBlobs, removed in 1.34
 		$this->hookRunner->onLocalisationCacheRecache( $this, $code, $allData, $unused );
 
-		# Set the preload key
-		$allData['preload'] = $this->buildPreload( $allData );
-
 		# Save to the process cache and register the items loaded
 		$this->data[$code] = $allData;
+		$this->loadedItems[$code] = [];
+		$this->loadedSubitems[$code] = [];
 		foreach ( $allData as $key => $item ) {
 			$this->loadedItems[$code][$key] = true;
 		}
 
+		# Prefix each item with its source language code before save
+		foreach ( self::SOURCE_PREFIX_KEYS as $key ) {
+			// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+			foreach ( $allData[$key] as $subKey => $value ) {
+				// The source language should have been set, but to avoid Phan error and be double sure.
+				$allData[$key][$subKey] = ( $this->sourceLanguage[$code][$key][$subKey] ?? $code ) .
+					self::SOURCEPREFIX_SEPARATOR . $value;
+			}
+		}
+
+		# Set the preload key
+		$allData['preload'] = $this->buildPreload( $allData );
+
 		# Save to the persistent cache
 		$this->store->startWrite( $code );
 		foreach ( $allData as $key => $value ) {
-			if ( in_array( $key, self::$splitKeys ) ) {
+			if ( in_array( $key, self::SPLIT_KEYS ) ) {
 				foreach ( $value as $subkey => $subvalue ) {
 					$this->store->set( "$key:$subkey", $subvalue );
 				}
@@ -1023,7 +1260,7 @@ class LocalisationCache {
 		$this->store->finishWrite();
 
 		# Clear out the MessageBlobStore
-		# HACK: If using a null (i.e. disabled) storage backend, we
+		# HACK: If using a null (i.e., disabled) storage backend, we
 		# can't write to the MessageBlobStore either
 		if ( !$this->store instanceof LCStoreNull ) {
 			foreach ( $this->clearStoreCallbacks as $callback ) {
@@ -1036,13 +1273,14 @@ class LocalisationCache {
 	 * Build the preload item from the given pre-cache data.
 	 *
 	 * The preload item will be loaded automatically, improving performance
-	 * for the commonly-requested items it contains.
+	 * for the commonly requested items it contains.
+	 *
 	 * @param array $data
 	 * @return array
 	 */
-	protected function buildPreload( $data ) {
+	private function buildPreload( $data ) {
 		$preload = [ 'messages' => [] ];
-		foreach ( self::$preloadedKeys as $key ) {
+		foreach ( self::PRELOADED_KEYS as $key ) {
 			$preload[$key] = $data[$key];
 		}
 
@@ -1056,7 +1294,9 @@ class LocalisationCache {
 
 	/**
 	 * Unload the data for a given language from the object cache.
+	 *
 	 * Reduces memory usage.
+	 *
 	 * @param string $code
 	 */
 	public function unload( $code ) {
@@ -1065,6 +1305,8 @@ class LocalisationCache {
 		unset( $this->loadedSubitems[$code] );
 		unset( $this->initialisedLangs[$code] );
 		unset( $this->shallowFallbacks[$code] );
+		unset( $this->sourceLanguage[$code] );
+		unset( $this->coreDataLoaded[$code] );
 
 		foreach ( $this->shallowFallbacks as $shallowCode => $fbCode ) {
 			if ( $fbCode === $code ) {

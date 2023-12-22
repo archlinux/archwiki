@@ -1,9 +1,12 @@
 <?php
 
+use MediaWiki\Pager\RangeChronologicalPager;
+
 /**
  * Test class for RangeChronologicalPagerTest logic.
  *
  * @group Pager
+ * @group Database
  *
  * @author Geoffrey Mon <geofbot@gmail.com>
  */
@@ -24,7 +27,7 @@ class RangeChronologicalPagerTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * Data provider in [ input year, input month, input day, expected timestamp output ] format
 	 */
-	public function getDateCondProvider() {
+	public static function getDateCondProvider() {
 		return [
 			[ 2016, 12, 5, '20161206000000' ],
 			[ 2016, 12, 31, '20170101000000' ],
@@ -49,7 +52,7 @@ class RangeChronologicalPagerTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * Data provider in [ start, end, [ expected output has start condition, has end cond ] ] format
 	 */
-	public function getDateRangeCondProvider() {
+	public static function getDateRangeCondProvider() {
 		$db = wfGetDB( DB_PRIMARY );
 
 		return [
@@ -88,7 +91,7 @@ class RangeChronologicalPagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertNull( $pager->getDateRangeCond( $start, $end ) );
 	}
 
-	public function getDateRangeCondInvalidProvider() {
+	public static function getDateRangeCondInvalidProvider() {
 		return [
 			[ '-2016-12-01', '2017-12-01', ],
 			[ '2016-12-01', '-2017-12-01', ],

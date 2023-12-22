@@ -22,6 +22,7 @@
 
 use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\Title\Title;
+use MediaWiki\Utils\UrlUtils;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -32,8 +33,17 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiQueryExternalLinks extends ApiQueryBase {
 
-	public function __construct( ApiQuery $query, $moduleName ) {
+	private UrlUtils $urlUtils;
+
+	/**
+	 * @param ApiQuery $query
+	 * @param string $moduleName
+	 * @param UrlUtils $urlUtils
+	 */
+	public function __construct( ApiQuery $query, $moduleName, UrlUtils $urlUtils ) {
 		parent::__construct( $query, $moduleName, 'el' );
+
+		$this->urlUtils = $urlUtils;
 	}
 
 	public function execute() {
@@ -48,29 +58,21 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		$query = $params['query'];
 		$protocol = LinkFilter::getProtocolPrefix( $params['protocol'] );
 
-		$this->addFields( [
-			'el_from',
-			'el_to'
-		] );
+		$fields = [ 'el_from' ];
+		$fields[] = 'el_to_domain_index';
+		$fields[] = 'el_to_path';
+		$continueField = 'el_to_domain_index';
+		$this->addFields( $fields );
 
 		$this->addTables( 'externallinks' );
 		$this->addWhereFld( 'el_from', array_keys( $pages ) );
 
-		$orderBy = [];
-
-		// Don't order by el_from if it's constant in the WHERE clause
-		if ( count( $pages ) !== 1 ) {
-			$orderBy[] = 'el_from';
-		}
-
 		if ( $query !== null && $query !== '' ) {
-			$protocol ??= 'http://';
-
 			// Normalize query to match the normalization applied for the externallinks table
-			$query = Parser::normalizeLinkUrl( $protocol . $query );
+			$query = Parser::normalizeLinkUrl( $query );
 
 			$conds = LinkFilter::getQueryConditions( $query, [
-				'protocol' => '',
+				'protocol' => $protocol,
 				'oneWildcard' => true,
 				'db' => $db
 			] );
@@ -78,24 +80,13 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 				$this->dieWithError( 'apierror-badquery' );
 			}
 			$this->addWhere( $conds );
-			if ( !isset( $conds['el_index_60'] ) ) {
-				$orderBy[] = 'el_index_60';
-			}
 		} else {
-			$orderBy[] = 'el_index_60';
-
 			if ( $protocol !== null ) {
-				$this->addWhere( 'el_index_60' . $db->buildLike( "$protocol", $db->anyString() ) );
-			} else {
-				// We're querying all protocols, filter out duplicate protocol-relative links
-				$this->addWhere( $db->makeList( [
-					'el_to NOT' . $db->buildLike( '//', $db->anyString() ),
-					'el_index_60 ' . $db->buildLike( 'http://', $db->anyString() ),
-				], LIST_OR ) );
+				$this->addWhere( $continueField . $db->buildLike( "$protocol", $db->anyString() ) );
 			}
 		}
 
-		$orderBy[] = 'el_id';
+		$orderBy = [ 'el_id' ];
 
 		$this->addOption( 'ORDER BY', $orderBy );
 		$this->addFields( $orderBy ); // Make sure
@@ -120,10 +111,10 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 				break;
 			}
 			$entry = [];
-			$to = $row->el_to;
+			$to = LinkFilter::reverseIndexes( $row->el_to_domain_index ) . $row->el_to_path;
 			// expand protocol-relative urls
 			if ( $params['expandurl'] ) {
-				$to = wfExpandUrl( $to, PROTO_CANONICAL );
+				$to = (string)$this->urlUtils->expand( $to, PROTO_CANONICAL );
 			}
 			ApiResult::setContentValue( $entry, 'url', $to );
 			$fit = $this->addPageSubItem( $row->el_from, $entry );
@@ -163,7 +154,11 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 				ParamValidator::PARAM_DEFAULT => '',
 			],
 			'query' => null,
-			'expandurl' => false,
+			'expandurl' => [
+				ParamValidator::PARAM_TYPE => 'boolean',
+				ParamValidator::PARAM_DEFAULT => false,
+				ParamValidator::PARAM_DEPRECATED => true,
+			],
 		];
 	}
 

@@ -43,20 +43,17 @@ use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFormatter;
+use MediaWiki\User\User;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
-use MWException;
 use Psr\Log\LoggerInterface;
 use RecentChange;
 use RuntimeException;
-use TitleFormatter;
-use User;
 use Wikimedia\Assert\Assert;
-use Wikimedia\Rdbms\DBConnRef;
-use Wikimedia\Rdbms\DBUnexpectedError;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
 use WikiPage;
 
 /**
@@ -103,9 +100,9 @@ class PageUpdater {
 	private $derivedDataUpdater;
 
 	/**
-	 * @var ILoadBalancer
+	 * @var IConnectionProvider
 	 */
-	private $loadBalancer;
+	private $dbProvider;
 
 	/**
 	 * @var RevisionStore
@@ -213,7 +210,7 @@ class PageUpdater {
 	 * @param UserIdentity $author
 	 * @param WikiPage $wikiPage
 	 * @param DerivedPageDataUpdater $derivedDataUpdater
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param RevisionStore $revisionStore
 	 * @param SlotRoleRegistry $slotRoleRegistry
 	 * @param IContentHandlerFactory $contentHandlerFactory
@@ -230,7 +227,7 @@ class PageUpdater {
 		UserIdentity $author,
 		WikiPage $wikiPage,
 		DerivedPageDataUpdater $derivedDataUpdater,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		RevisionStore $revisionStore,
 		SlotRoleRegistry $slotRoleRegistry,
 		IContentHandlerFactory $contentHandlerFactory,
@@ -249,7 +246,7 @@ class PageUpdater {
 		$this->wikiPage = $wikiPage;
 		$this->derivedDataUpdater = $derivedDataUpdater;
 
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->revisionStore = $revisionStore;
 		$this->slotRoleRegistry = $slotRoleRegistry;
 		$this->contentHandlerFactory = $contentHandlerFactory;
@@ -354,7 +351,7 @@ class PageUpdater {
 	 */
 	public function updateAuthor( UserIdentity $author ) {
 		if ( $this->author->getName() !== $author->getName() ) {
-			throw new \MWException( 'Cannot replace the author with an author ' .
+			throw new InvalidArgumentException( 'Cannot replace the author with an author ' .
 				'of a different name, since DerivedPageDataUpdater may have stored the ' .
 				'old name.' );
 		}
@@ -435,15 +432,6 @@ class PageUpdater {
 
 	private function getWikiId() {
 		return $this->revisionStore->getWikiId();
-	}
-
-	/**
-	 * @param int $mode DB_PRIMARY or DB_REPLICA
-	 *
-	 * @return DBConnRef
-	 */
-	private function getDBConnectionRef( $mode ) {
-		return $this->loadBalancer->getConnectionRef( $mode, [], $this->getWikiId() );
 	}
 
 	/**
@@ -828,9 +816,6 @@ class PageUpdater {
 	 * @return RevisionRecord|null The new revision, or null if no new revision was created due
 	 *         to a failure or a null-edit. Use wasRevisionCreated(), wasSuccessful() and getStatus()
 	 *         to determine the outcome of the revision creation.
-	 *
-	 * @throws MWException
-	 * @throws RuntimeException
 	 */
 	public function saveRevision( CommentStoreComment $summary, int $flags = 0 ) {
 		$this->setFlags( $flags );
@@ -1267,7 +1252,7 @@ class PageUpdater {
 			return PageUpdateStatus::newFatal( 'edit-gone-missing' );
 		}
 
-		$dbw = $this->getDBConnectionRef( DB_PRIMARY );
+		$dbw = $this->dbProvider->getPrimaryDatabase( $this->getWikiId() );
 		$dbw->startAtomic( __METHOD__ );
 
 		$slots = $this->revisionStore->updateSlotsOn( $revision, $this->slotsUpdate, $dbw );
@@ -1309,8 +1294,6 @@ class PageUpdater {
 
 	/**
 	 * @param CommentStoreComment $summary The edit summary
-	 *
-	 * @throws MWException
 	 * @return PageUpdateStatus
 	 */
 	private function doModify( CommentStoreComment $summary ): PageUpdateStatus {
@@ -1363,7 +1346,7 @@ class PageUpdater {
 		}
 		$this->buildEditResult( $newRevisionRecord, false );
 
-		$dbw = $this->getDBConnectionRef( DB_PRIMARY );
+		$dbw = $this->dbProvider->getPrimaryDatabase( $this->getWikiId() );
 
 		if ( $changed || $this->forceEmptyRevision ) {
 			$dbw->startAtomic( __METHOD__ );
@@ -1473,9 +1456,6 @@ class PageUpdater {
 
 	/**
 	 * @param CommentStoreComment $summary The edit summary
-	 *
-	 * @throws DBUnexpectedError
-	 * @throws MWException
 	 * @return PageUpdateStatus
 	 */
 	private function doCreate( CommentStoreComment $summary ): PageUpdateStatus {
@@ -1504,7 +1484,7 @@ class PageUpdater {
 		$this->buildEditResult( $newRevisionRecord, true );
 		$now = $newRevisionRecord->getTimestamp();
 
-		$dbw = $this->getDBConnectionRef( DB_PRIMARY );
+		$dbw = $this->dbProvider->getPrimaryDatabase( $this->getWikiId() );
 		$dbw->startAtomic( __METHOD__ );
 
 		// Add the page record unless one already exists for the title
@@ -1693,7 +1673,7 @@ class PageUpdater {
 		$allowedRoles = $this->getAllowedSlotRoles();
 
 		$forbidden = array_diff( $roles, $allowedRoles );
-		if ( !empty( $forbidden ) ) {
+		if ( $forbidden ) {
 			$status->error(
 				'edit-slots-cannot-add',
 				count( $forbidden ),
@@ -1730,7 +1710,7 @@ class PageUpdater {
 		$requiredRoles = $this->getRequiredSlotRoles();
 
 		$needed = array_diff( $roles, $requiredRoles );
-		if ( !empty( $needed ) ) {
+		if ( $needed ) {
 			$status->error(
 				'edit-slots-cannot-remove',
 				count( $needed ),
@@ -1747,7 +1727,7 @@ class PageUpdater {
 		$requiredRoles = $this->getRequiredSlotRoles();
 
 		$missing = array_diff( $requiredRoles, $roles );
-		if ( !empty( $missing ) ) {
+		if ( $missing ) {
 			$status->error(
 				'edit-slots-missing',
 				count( $missing ),

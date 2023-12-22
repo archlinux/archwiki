@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\Store;
 
-use Exception;
-use MWException;
+use BadMethodCallException;
+use ConfigException;
 
 abstract class CaptchaStore {
 	/**
@@ -41,7 +41,6 @@ abstract class CaptchaStore {
 	/**
 	 * Get somewhere to store captcha data that will persist between requests
 	 *
-	 * @throws Exception
 	 * @return CaptchaStore
 	 */
 	final public static function get() {
@@ -50,7 +49,7 @@ abstract class CaptchaStore {
 			if ( in_array( self::class, class_parents( $wgCaptchaStorageClass ) ) ) {
 				self::$instance = new $wgCaptchaStorageClass;
 			} else {
-				throw new Exception( "Invalid CaptchaStore class $wgCaptchaStorageClass" );
+				throw new ConfigException( "Invalid CaptchaStore class $wgCaptchaStorageClass" );
 			}
 		}
 		return self::$instance;
@@ -58,7 +57,7 @@ abstract class CaptchaStore {
 
 	final public static function unsetInstanceForTests() {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new MWException( 'Cannot unset ' . __CLASS__ . ' instance in operation.' );
+			throw new BadMethodCallException( 'Cannot unset ' . __CLASS__ . ' instance in operation.' );
 		}
 		self::$instance = null;
 	}

@@ -17,5 +17,10 @@
 	"cite_error_references_missing_group": "<code>&lt;references&gt;</code>-da kesgitlenen <code>&lt;ref&gt;</code> teginiň öňki tekstde ýok \"$1\" topar aýratynlygy bar.",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code>-da kesgitlenen \"$1\" atly <code>&lt;ref&gt;</code> tegi öňki tekstde ulanylmaýar.",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code>-da kesgitlenen <code>&lt;ref&gt;</code> teginiň hiç hili at aýratynlygy ýok.",
-	"cite_error_empty_references_define": "<code>&lt;references&gt;</code>-da kesgitlenen \"$1\" atly <code>&lt;ref&gt;</code> tegiň mazmuny ýok."
+	"cite_error_empty_references_define": "<code>&lt;references&gt;</code>-da kesgitlenen \"$1\" atly <code>&lt;ref&gt;</code> tegiň mazmuny ýok.",
+	"cite-wikieditor-tool-reference": "Salgylanma",
+	"cite-wikieditor-help-page-references": "Salgylanmalar",
+	"cite-wikieditor-help-content-reference-description": "Salgylanma",
+	"cite-wikieditor-help-content-rereference-description": "Şol bir salgylanmanyň goşmaça ulanylyşy",
+	"cite-wikieditor-help-content-showreferences-description": "Salgylanmalary görkez"
 }

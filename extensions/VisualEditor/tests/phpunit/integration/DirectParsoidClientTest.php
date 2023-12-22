@@ -3,15 +3,11 @@
 namespace MediaWiki\Extension\VisualEditor\Tests;
 
 use Generator;
-use Language;
-use LanguageCode;
 use MediaWiki\Extension\VisualEditor\DirectParsoidClient;
-use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
-use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
-use MediaWiki\Rest\HttpException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\VisualEditor\DirectParsoidClient
@@ -32,54 +28,12 @@ class DirectParsoidClientTest extends MediaWikiIntegrationTestCase {
 		return $directClient;
 	}
 
-	/**
-	 * @return DirectParsoidClient
-	 */
-	private function createDirectClientWithHttpExceptionFromFactory(): DirectParsoidClient {
-		$factory = $this->createNoOpMock( PageRestHelperFactory::class, [
-			'newHtmlOutputRendererHelper',
-			'newHtmlInputTransformHelper',
-		] );
-
-		$e = new HttpException( 'testing', 400 );
-		$factory->method( 'newHtmlOutputRendererHelper' )->willThrowException( $e );
-		$factory->method( 'newHtmlInputTransformHelper' )->willThrowException( $e );
-
-		$services = $this->getServiceContainer();
-		$directClient = new DirectParsoidClient(
-			$factory,
-			$services->getUserFactory()->newAnonymous()
-		);
-
-		return $directClient;
-	}
-
 	/** @return Generator */
-	public function provideLanguageCodes() {
+	public static function provideLanguageCodes() {
 		yield 'German language code' => [ 'de' ];
 		yield 'English language code' => [ 'en' ];
 		yield 'French language code' => [ 'fr' ];
 		yield 'No language code, fallback to en' => [ null ];
-	}
-
-	private function createLanguage( $langCode, $allowNull = false ) {
-		if ( $langCode === null ) {
-			$language = $this->getServiceContainer()->getContentLanguage();
-			$langCode = $language->getCode();
-			if ( $allowNull ) {
-				$language = null;
-			}
-		} else {
-			$language = $this->createNoOpMock(
-				Language::class,
-				[ 'getCode', 'toBcp47Code', 'getDir' ]
-			);
-			$language->method( 'getCode' )->willReturn( $langCode );
-			$language->method( 'toBcp47Code' )->willReturn( LanguageCode::bcp47( $langCode ) );
-			$language->method( 'getDir' )->willReturn( 'ltr' );
-		}
-
-		return [ $language, $langCode ];
 	}
 
 	/**
@@ -92,7 +46,8 @@ class DirectParsoidClientTest extends MediaWikiIntegrationTestCase {
 		$revision = $this->getExistingTestPage( 'DirectParsoidClient' )
 			->getRevisionRecord();
 
-		[ $language, $langCode ] = $this->createLanguage( $langCode, true );
+		$language = $langCode ? new Bcp47CodeValue( $langCode ) : null;
+		$langCode ??= 'en';
 		$response = $directClient->getPageHtml( $revision, $language );
 
 		$pageHtml = $response['body'];
@@ -117,19 +72,14 @@ class DirectParsoidClientTest extends MediaWikiIntegrationTestCase {
 	public function testTransformHtml( $langCode ) {
 		$directClient = $this->createDirectClient();
 
-		$pageIdentity = PageIdentityValue::localIdentity(
-			1,
-			NS_MAIN,
-			'DirectParsoidClient'
-		);
-		[ $language, ] = $this->createLanguage( $langCode );
+		$page = $this->getExistingTestPage();
 
 		$html = '<h2>Hello World</h2>';
-		$oldid = $pageIdentity->getId();
+		$oldid = $page->getId();
 
 		$response = $directClient->transformHTML(
-			$pageIdentity,
-			$language,
+			$page,
+			new Bcp47CodeValue( $langCode ?? 'qqx' ),
 			$html,
 			$oldid,
 			// Supplying "null" will use the $oldid and look at recent rendering in ParserCache.
@@ -156,11 +106,11 @@ class DirectParsoidClientTest extends MediaWikiIntegrationTestCase {
 		$page = $this->getExistingTestPage( 'DirectParsoidClient' );
 		$pageRecord = $page->toPageRecord();
 		$wikitext = '== Hello World ==';
-		[ $language, $langCode ] = $this->createLanguage( $langCode );
+		$langCode ??= 'qqx';
 
 		$response = $directClient->transformWikitext(
 			$pageRecord,
-			$language,
+			new Bcp47CodeValue( $langCode ),
 			$wikitext,
 			false,
 			$pageRecord->getLatest(),
@@ -195,6 +145,11 @@ class DirectParsoidClientTest extends MediaWikiIntegrationTestCase {
 		$oldHtml = $pageHtmlResponse['body'];
 		$updatedHtml = str_replace( '</body>', '<p>More Text</p></body>', $oldHtml );
 
+		// Make sure the etag is for "stash" flavor HTML.
+		// The ETag should be transparent, but this is the easiest way to check that we are getting
+		// the correct flavor of HTML.
+		$this->assertMatchesRegularExpression( '@/stash\b@', $eTag );
+
 		// Now make a new client object, so we can mock the ParsoidOutputAccess.
 		$parsoidOutputAccess = $this->createNoOpMock( ParsoidOutputAccess::class );
 		$services = $this->getServiceContainer();
@@ -203,10 +158,9 @@ class DirectParsoidClientTest extends MediaWikiIntegrationTestCase {
 			$services->getUserFactory()->newAnonymous()
 		);
 
-		[ $targetLanguage, ] = $this->createLanguage( 'en' );
 		$transformHtmlResponse = $directClient->transformHTML(
 			$revision->getPage(),
-			$targetLanguage,
+			new Bcp47CodeValue( 'qqx' ),
 			$updatedHtml,
 			$revision->getId(),
 			$eTag
@@ -232,10 +186,9 @@ class DirectParsoidClientTest extends MediaWikiIntegrationTestCase {
 		$oldHtml = $pageHtmlResponse['body'];
 		$updatedHtml = str_replace( '</body>', '<p>More Text</p></body>', $oldHtml );
 
-		[ $targetLanguage, ] = $this->createLanguage( 'en' );
 		$transformHtmlResponse = $directClient->transformHTML(
 			$revision->getPage(),
-			$targetLanguage,
+			new Bcp47CodeValue( 'qqx' ),
 			$updatedHtml,
 			$revision->getId(),
 			null
@@ -245,59 +198,6 @@ class DirectParsoidClientTest extends MediaWikiIntegrationTestCase {
 		$updatedWikitext = $transformHtmlResponse['body'];
 		$this->assertStringContainsString( $originalWikitext, $updatedWikitext );
 		$this->assertStringContainsString( 'More Text', $updatedWikitext );
-	}
-
-	/**
-	 * @covers ::getPageHtml
-	 */
-	public function testGetPageHtml_HttpException() {
-		$directClient = $this->createDirectClientWithHttpExceptionFromFactory();
-
-		$revision = $this->getExistingTestPage( 'DirectParsoidClient' )
-			->getRevisionRecord();
-
-		$response = $directClient->getPageHtml( $revision );
-		$this->assertArrayHasKey( 'error', $response );
-		$this->assertSame( 'testing', $response['error']['message'] );
-	}
-
-	/**
-	 * @covers ::getPageHtml
-	 */
-	public function testTransformHtml_HttpException() {
-		$directClient = $this->createDirectClientWithHttpExceptionFromFactory();
-
-		$page = $this->getExistingTestPage( 'DirectParsoidClient' );
-
-		$response = $directClient->transformHTML(
-			$page,
-			$this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' ),
-			'some html',
-			null,
-			null
-		);
-		$this->assertArrayHasKey( 'error', $response );
-		$this->assertSame( 'testing', $response['error']['message'] );
-	}
-
-	/**
-	 * @covers ::getPageHtml
-	 */
-	public function testTransformWikitext_HttpException() {
-		$directClient = $this->createDirectClientWithHttpExceptionFromFactory();
-
-		$page = $this->getExistingTestPage( 'DirectParsoidClient' );
-
-		$response = $directClient->transformWikitext(
-			$page,
-			$this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' ),
-			'some text',
-			false,
-			null,
-			false
-		);
-		$this->assertArrayHasKey( 'error', $response );
-		$this->assertSame( 'testing', $response['error']['message'] );
 	}
 
 }

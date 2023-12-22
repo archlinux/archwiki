@@ -4,7 +4,6 @@
 			"Ильнар"
 		]
 	},
-	"apihelp-categorytree-description": "CategoryTree кушымтасы өчен эчке модуль.",
 	"apihelp-categorytree-summary": "CategoryTree кушымтасы өчен эчке модуль.",
 	"apihelp-categorytree-param-category": "Төркемнәр мәйданы исемлеге, куелган очракта префикс кулланылмый.",
 	"apihelp-categorytree-param-options": "JSON-җисемнәр сыман CategoryTree төзүчесе төрләре. <var>depth</var> (тирәнлек) параметры <kbd>1</kbd> итеп куелган.",

@@ -3,9 +3,19 @@
  */
 ( function () {
 	var nav = require( './nav.js' );
+	nav.insertHints( mw.msg( 'prefs-sections-navigation-hint' ) );
+
 	// Define a window manager to control the dialogs
 	var dialogFactory = new OO.Factory();
 	var windowManager = new OO.ui.WindowManager( { factory: dialogFactory } );
+	windowManager.on( 'opening', function ( win ) {
+		if ( !win.$body.data( 'mw-section-infused' ) ) {
+			win.$body.removeClass( 'mw-htmlform-autoinfuse-lazy' );
+			mw.hook( 'htmlform.enhance' ).fire( win.$body );
+			win.$body.data( 'mw-section-infused', true );
+		}
+	} );
+
 	// Navigation callback
 	var setSection = function ( sectionName, fieldset ) {
 		// strip possible prefixes from the section to normalize it
@@ -29,28 +39,7 @@
 		}
 		location.hash = '#mw-prefsection-' + section;
 	};
-	/*
-	 * Add a ToggleSwitchWidget to control each checkboxWidget
-	 * Hide each checkboxWidget
-	 */
-	function insertToggles( checkboxes ) {
-		Array.prototype.forEach.call( checkboxes, function ( checkboxElement ) {
-			var checkboxWidget = OO.ui.infuse( checkboxElement );
-			var toggleSwitchWidget = new OO.ui.ToggleSwitchWidget( {
-				value: checkboxWidget.selected,
-				disabled: checkboxWidget.disabled
-			} );
-			checkboxWidget.on( 'disable', function ( state ) {
-				toggleSwitchWidget.setDisabled( state );
-			} );
-			toggleSwitchWidget.on( 'change', function ( value ) {
-				checkboxWidget.setSelected( value );
-			} );
-			checkboxElement = checkboxWidget.$element[ 0 ];
-			checkboxElement.insertAdjacentElement( 'afterend', toggleSwitchWidget.$element[ 0 ] );
-			checkboxElement.classList.add( 'hidden' );
-		} );
-	}
+
 	/*
 	 * Configure and register a dialog for a pref section
 	 */
@@ -69,10 +58,6 @@
 			{ action: 'cancel', label: mw.msg( 'prefs-back-title' ), flags: [ 'safe', 'close' ] }
 		];
 		PrefDialog.prototype.initialize = function () {
-			// T334260 Mobile format breaks global preferences;
-			if ( mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Preferences' ) {
-				insertToggles( sectionBody.querySelectorAll( 'span.oo-ui-checkboxInputWidget[data-ooui]' ) );
-			}
 			this.name = sectionId;
 			PrefDialog.super.prototype.initialize.call( this );
 			this.$body.append( sectionBody );
@@ -100,6 +85,7 @@
 		var preferencesForm = document.getElementById( 'mw-prefs-form' );
 		var prefButtons = preferencesForm.querySelector( '.mw-htmlform-submit-buttons' );
 		var sections = preferencesForm.querySelectorAll( '.mw-mobile-prefsection' );
+
 		// Move the form buttons (such as save) into the dialog after opening.
 		windowManager.on( 'opening', function ( win, opened ) {
 			if ( opened ) {
@@ -119,12 +105,17 @@
 		Array.prototype.forEach.call( sections, function ( section ) {
 			var sectionContent = document.getElementById( section.id + '-content' );
 			var sectionBody = sectionContent.querySelector( 'div > div.oo-ui-widget' );
-			var sectionTitle = document.getElementById( section.id + '-title' ).textContent;
-			document.getElementById( section.id ).addEventListener( 'click', function () {
-				setSection( section.id );
-			} );
-			createSectionDialog( section.id, sectionTitle, sectionBody );
+			var sectionText = sectionContent.querySelector( '.mw-prefs-title' ).textContent;
+			createSectionDialog( section.id, sectionText, sectionBody );
 		} );
+		var prefSelect = OO.ui.infuse( $( '.mw-mobile-prefs-sections' ) );
+		prefSelect.aggregate( {
+			click: 'itemClick'
+		} );
+		prefSelect.on( 'itemClick', function ( button ) {
+			setSection( button.getData() );
+		} );
+
 	}
 	// DOM-dependant code
 	$( function () {

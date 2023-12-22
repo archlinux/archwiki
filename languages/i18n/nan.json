@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"A-lú-mih",
+			"Amire80",
 			"Asd1346",
 			"Hiong3-eng5",
 			"Ianbu",
@@ -16,13 +17,12 @@
 			"Ripunn",
 			"SupaplexTW",
 			"TongcyDai",
+			"Winston Sung",
 			"Yoxem",
 			"唐吉訶德的侍從",
 			"沈澄心",
 			"進也",
-			"아라",
-			"Winston Sung",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Liân-kiat oē té-sûn:",
@@ -570,15 +570,12 @@
 	"defaultmessagetext": "Siat piān ê bûn-jī",
 	"content-model-wikitext": "wikitext",
 	"content-model-text": "sûn bûn-pún",
-	"content-model-javascript": "JavaScript",
-	"content-model-css": "CSS",
-	"content-model-json": "JSON",
 	"content-json-empty-object": "Khang bu̍t-kiāⁿ",
 	"content-json-empty-array": "Khang tīn-lia̍t",
 	"post-expand-template-inclusion-warning": "'''Kéng-pò:'''Pau ji̍t lâi ê pán-bôo sioⁿ koè tsē ia̍h tuā.\nŪ chi̍t-koá-á ē bô pau ji̍t lâi.",
 	"undo-success": "Pian-chi̍p í-keng chhú-siau. Chhiáⁿ khak-tēng, liáu-āu kā ē-kha ho̍k-goân ê kái-piàn pó-chûn--khí-lâi.",
 	"undo-failure": "Pian-chi̍p bē-tàng chhú-siau, in-ūi chhiong tio̍h kî-kan chhah-ji̍p ê pian-chi̍p.",
-	"undo-summary": "Chhú-siau [[Special:Contributions/$2|$2]] ([[User talk:$2|thó-lūn]]) ê siu-tēng-pún $1",
+	"undo-summary": "Chhú-siau [[Special:Contributions/$2|$2]] ([[User talk:$2|thó-lūn]]) ê siu-tēng-pún [[Special:Diff/$1|$1]]",
 	"viewpagelogs": "Khoàⁿ chit ia̍h ê logs",
 	"nohistory": "Chit ia̍h bô pian-chi̍p-sú.",
 	"currentrev": "Hiān-chú-sî ê siu-tēng-pún",
@@ -641,7 +638,6 @@
 	"search-section": "(toān-lo̍h $1)",
 	"search-suggest": "Lí ê ì-sù sī-m̄-sī: $1",
 	"searchall": "choân-pō·",
-	"showingresults": "Ē-kha tùi #<b>$2</b> khai-sí hián-sī <b>$1</b> hāng kiat-kó.",
 	"search-showingresults": "{{PLURAL:$4|<strong>$3</strong> ê kiat-kó <strong>$1</strong>|<strong>$3</strong> ê kiat-kó <strong>$1 – $2</strong>}}",
 	"search-nonefound": "Chhoē m̄ tio̍h",
 	"powersearch-legend": "Kiám-sek",

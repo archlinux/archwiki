@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"John Reid"
+			"John Reid",
+			"CiphriusKane"
 		]
 	},
 	"monobook-desc": "The classeec MediaWiki skin sin 2004, named efter the blaik-n-white photæ o ae buik in the page backgroond",
-	"monobook-view-history": "Histerie",
-	"monobook-action-undelete": "Ondelyte {{PLURAL:$1|yin eedit|$1 eedits}}"
+	"monobook-view-history": "History",
+	"monobook-action-undelete": "Undelete {{PLURAL:$1|yin edit|$1 edits}}"
 }

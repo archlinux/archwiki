@@ -24,10 +24,18 @@ A file for css that optimises the Minerva skin on larger devices.
 	}
 	// stylelint-enable selector-max-id
 
-	// Defaults for page content language
-	// These will be overriden below when explicit classes are set
 	figure[ typeof~='mw:File/Thumb' ],
 	figure[ typeof~='mw:File/Frame' ] {
+		// Default where page content language is not set
+		// Allow to flip
+		clear: right;
+		float: right;
+		margin-left: 1.4em;
+		margin-right: 0;
+
+		// Defaults for page content language
+		// These will be overriden below when explicit classes are set
+
 		.mw-content-ltr & {
 			/* @noflip */
 			float: right;

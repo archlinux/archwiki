@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"McDutchie",
-			"Siebrand",
-			"Amire80"
+			"Siebrand"
 		]
 	},
 	"abusefilter-warning": "'''Waarschuwing:''' Deze handeling is automatisch als schadelijk aangemerkt.\nSchadelijke handelingen worden snel teruggedraaid. Blijf je slechte bewerkingen uitvoeren, dan wordt je account of IP-adres geblokkeerd.\nAls jij denkt dat deze handeling wel iets bijdraagt, bevestig je handeling dan opnieuw.\nHier is een korte beschrijving van de regel op basis waarvan jouw handeling is tegengehouden: $1",

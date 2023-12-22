@@ -5,13 +5,11 @@
 			"Vlad5250"
 		]
 	},
-	"apihelp-query+gadgetcategories-description": "Возвращает список категорий гаджетов.",
 	"apihelp-query+gadgetcategories-summary": "Возвращает список категорий гаджетов.",
 	"apihelp-query+gadgetcategories-param-prop": "Какую информацию о категориях гаджетов получить:\n;name: Внутреннее имя категории.\n;title: Название категории.\n;members: Число гаджетов в категории.",
 	"apihelp-query+gadgetcategories-param-names": "Названия возвращаемых категорий.",
 	"apihelp-query+gadgetcategories-example-1": "Получить список существующих категорий гаджетов",
 	"apihelp-query+gadgetcategories-example-2": "Получить всю информацию о категориях с названиями «Foo» и «Bar»",
-	"apihelp-query+gadgets-description": "Возвращает список гаджетов, используемых в этой вики.",
 	"apihelp-query+gadgets-summary": "Возвращает список гаджетов, используемых в этой вики.",
 	"apihelp-query+gadgets-param-prop": "Какую информацию о гаджете получить:\n;id: Внутренний ID гаджета.\n;metadata: Метаданные гаджета.\n;desc: Описание гаджета, преобразованное в HTML (может быть медленно, используйте его только при настоящем желании).",
 	"apihelp-query+gadgets-param-categories": "Гаджеты из каких категорий получать.",

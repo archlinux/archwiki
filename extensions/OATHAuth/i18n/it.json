@@ -67,7 +67,9 @@
 	"oathauth-disable-method-warning": "Se disabiliti il metodo di autenticazione a due fattori $1, non potrai più utilizzarlo per entrare e tutti i dati associati con questo metodo di autenticazione saranno eliminati.",
 	"oathauth-totp-disable-warning": "Non potrai più usare il dispositivo di autenticazione registrato con questa utenza. Tutti i token monouso associati non saranno più validi.",
 	"oathauth-invalidrequest": "Richiesta non valida",
-	"oathauth-notifications-enabled-help": "Aiuto",
+	"oathauth-notifications-disable-primary": "Controlla le impostazioni di autenticazione a due fattori",
+	"oathauth-notifications-enable-help": "Aiuto",
+	"oathauth-notifications-enable-primary": "Controlla le impostazioni di autenticazione a due fattori",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} ha l'autenticazione a due fattori abilitata.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} non ha l'autenticazione a due fattori abilitata."
 }

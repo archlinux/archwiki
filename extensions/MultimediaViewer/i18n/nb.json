@@ -17,6 +17,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|én annen forfatter|$1 andre forfattere}}",
 	"multimediaviewer-multiple-authors-combine": "$1 og $2",
 	"multimediaviewer-metadata-error": "Klarte ikke laste bildedetaljer (feil: $1)",
+	"multimediaviewer-file-not-found-error": "Beklager, fila $1 kan ikke vises fordi den ikke er til stede på den gjeldende siden.",
 	"multimediaviewer-thumbnail-error": "Beklager, filen kunne ikke vises",
 	"multimediaviewer-thumbnail-error-description": "Det ser ut til å være et teknisk problem. Du kan $1 om det fortsetter. Feil: $2",
 	"multimediaviewer-thumbnail-error-retry": "prøve igjen",

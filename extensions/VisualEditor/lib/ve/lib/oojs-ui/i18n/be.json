@@ -11,6 +11,7 @@
 			"Чаховіч Уладзіслаў"
 		]
 	},
+	"ooui-copytextlayout-copy": "Капіраваць",
 	"ooui-outline-control-move-down": "Перамясціць элемент ўніз",
 	"ooui-outline-control-move-up": "Перамясціць элемент уверх",
 	"ooui-outline-control-remove": "Выдаліць элемент",
@@ -20,7 +21,7 @@
 	"ooui-item-remove": "Выдаліць",
 	"ooui-dialog-message-accept": "ОК",
 	"ooui-dialog-message-reject": "Адмяніць",
-	"ooui-dialog-process-error": "Штось пайшло не так…",
+	"ooui-dialog-process-error": "Штосьці пайшло не так…",
 	"ooui-dialog-process-dismiss": "Закрыць",
 	"ooui-dialog-process-retry": "Паспрабаваць яшчэ раз",
 	"ooui-dialog-process-continue": "Працягнуць",

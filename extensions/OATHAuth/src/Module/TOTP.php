@@ -55,21 +55,6 @@ class TOTP implements IModule {
 	}
 
 	/**
-	 * @param OATHUser $user
-	 * @return array
-	 * @throws MWException
-	 */
-	public function getDataFromUser( OATHUser $user ) {
-		$key = $user->getFirstKey();
-		if ( !( $key instanceof TOTPKey ) ) {
-			throw new MWException( 'oathauth-invalid-key-type' );
-		}
-		return [
-			'keys' => [ $key->jsonSerialize() ]
-		];
-	}
-
-	/**
 	 * @return AbstractSecondaryAuthenticationProvider
 	 */
 	public function getSecondaryAuthProvider() {

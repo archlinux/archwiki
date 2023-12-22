@@ -11,15 +11,17 @@
 	}
 
 	> #wpTextbox1 { // stylelint-disable-line selector-max-id
-		border: 1px solid @colorGray12;
+		border: @border-subtle;
 		max-height: 70vh;
 	}
 }
 
 .action-submit,
 .action-edit {
+	// FIXME: Remove #page-actions when cache has cleared
 	// stylelint-disable selector-max-id
 	#page-secondary-actions,
+	#p-views,
 	#page-actions {
 		display: none;
 	}

@@ -18,21 +18,21 @@ class BaseMappings {
 
 	// Macro Map 'special'
 	private const SPECIAL = [
-		'{' => 'Open',
-		'}' => 'Close',
-		'~' => 'Tilde',
-		'^' => 'Superscript',
-		'_' => 'Subscript',
-		' ' => 'Space',
-		'\t' => 'Space',
-		'\r' => 'Space',
-		'\n' => 'Space',
-		'\\' => 'Prime',
-		'%' => 'Comment',
-		'&' => 'Entry',
-		'#' => 'Hash',
-		'\u00A0' => 'Space',
-		'\u2019' => 'Prime'
+		'{' => 'open',
+		'}' => 'close',
+		'~' => [ 'tilde', true ],
+		'^' => 'superscript',
+		'_' => 'subscript',
+		' ' => 'space',
+		'\t' => 'space',
+		'\r' => 'space',
+		'\n' => 'space',
+		'\\' => 'prime',
+		'%' => 'comment',
+		'&' => 'entry',
+		'#' => 'hash',
+		'\u00A0' => 'space',
+		'\u2019' => 'prime'
 	];
 
 	private const MATHCHAR0MI = [
@@ -65,6 +65,7 @@ class BaseMappings {
 		"varpi" => '\u03D6',
 		"varrho" => '\u03F1',
 		"varsigma" => '\u03C2',
+		"varstigma" => "\u03DB",
 		"varphi" => '\u03C6',
 		// special case with \\ to distinguish from literal:
 		 "\\S" => [ '\u00A7', [ "mathvariant" => Variants::NORMAL ] ],
@@ -235,7 +236,7 @@ class BaseMappings {
 		"Longrightarrow" => '\u27F9',
 		"Longleftrightarrow" => '\u27FA',
 		"longleftrightarrow" => '\u27F7',
-		"longmapsto" => [ '\u27FC',[ "stretchy" => "false" ] ], // added stretchy for test
+		"longmapsto" => [ '\u27FC', [ "stretchy" => "false" ] ], // added stretchy for test
 		"ldots" => '\u2026',
 		"cdots" => '\u22EF',
 		// "cdots" => '\u2026', // fallback
@@ -466,28 +467,28 @@ class BaseMappings {
 		"left" => 'LeftRight',
 		"right" => 'LeftRight',
 		"middle" => 'LeftRight',
-		"llap" => 'Lap',
-		"rlap" => 'Lap',
-		"raise" => 'RaiseLower',
-		"lower" => 'RaiseLower',
+		"llap" => 'lap',
+		"rlap" => 'lap',
+		"raise" => 'raiseLower',
+		"lower" => 'raiseLower',
 		"moveleft" => 'MoveLeftRight',
 		"moveright" => 'MoveLeftRight',
-		',' => [ 'spacer', MathSpace::THINMATHSPACE ],
-		"'" => [ 'spacer', MathSpace::MEDIUMMATHSPACE ],
-		'>' => [ 'spacer', MathSpace::MEDIUMMATHSPACE ],
-		';' => [ 'spacer', MathSpace::THICKMATHSPACE ],
-		'!' => [ 'spacer', MathSpace::NEGATIVETHINMATHSPACE ],
+		'\\,' => [ 'spacer', MathSpace::THINMATHSPACE ],
+		"\\'" => [ 'spacer', MathSpace::MEDIUMMATHSPACE ],
+		'\\>' => [ 'spacer', MathSpace::MEDIUMMATHSPACE ],
+		'\\;' => [ 'spacer', MathSpace::THICKMATHSPACE ],
+		'\\!' => [ 'spacer', MathSpace::NEGATIVETHINMATHSPACE ],
 		"enspace" => [ 'spacer', 0.5 ],
 		"quad" => [ 'spacer', 1 ],
 		"qquad" => [ 'spacer', 2 ],
 		"thinspace" => [ 'spacer', MathSpace::THINMATHSPACE ],
 		"negthinspace" => [ 'spacer', MathSpace::NEGATIVETHINMATHSPACE ],
-		"hskip" => 'Hskip',
-		"hspace" => 'Hskip',
-		"kern" => 'Hskip',
-		"mskip" => 'Hskip',
-		"mspace" => 'Hskip',
-		"mkern" => 'Hskip',
+		"hskip" => 'hskip',
+		"hspace" => 'hskip',
+		"kern" => 'hskip',
+		"mskip" => 'hskip',
+		"mspace" => 'hskip',
+		"mkern" => 'hskip',
 		"rule" => 'rule',
 		"Rule" => [ 'Rule' ],
 		"Space" => [ 'Rule', 'blank' ],
@@ -530,7 +531,7 @@ class BaseMappings {
 		"phantom" => 'phantom',
 		"vphantom" => [ 'phantom', 1, 0 ],
 		"hphantom" => [ 'phantom', 0, 1 ],
-		"smash" => 'Smash',
+		"smash" => 'smash',
 		"acute" => [ 'accent', '00B4' ],
 		"grave" => [ 'accent', '0060' ],
 		"ddot" => [ 'accent', '00A8' ],
@@ -552,8 +553,8 @@ class BaseMappings {
 		"(0, lengths_js_1.em)(MathSpace::thickmathspace)", '.5em', 'D' ],
 		"displaylines" => [ 'matrix', null, null, 'center', null, '.5em', 'D' ],
 		"cr" => 'Cr',
-		'\\' => 'CrLaTeX',
-		"newline" => [ 'CrLaTeX', true ],
+		"\\" => 'crLaTeX',
+		"newline" => [ 'crLaTeX', true ],
 		"hline" => [ 'hline', 'solid' ],
 		"hdashline" => [ 'hline', 'dashed' ],
 		"eqalignno" => [ 'matrix', null, null, 'right left',
@@ -589,7 +590,7 @@ class BaseMappings {
 		"label" => 'HandleLabel',
 		"ref" => 'HandleRef',
 		"nonumber" => 'HandleNoTag',
-		"mathchoice" => 'MathChoice',
+		"mathchoice" => 'mathChoice',
 		"mmlToken" => 'MmlToken'
 	];
 
@@ -754,7 +755,7 @@ class BaseMappings {
 		],
 		"tripledash" => [
 			'macro',
-			'\\vphantom{-}\\raise2mu{\\kern2mu\\tiny\\text{-}\\kern1mu\\text{-}\\kern1mu\\text{-}\\kern2mu}'
+			'\\vphantom{-}\\raise{2mu}\\\kern{2mu}\\tiny\\text{-}\\kern{1mu}\\text{-}\\kern{1mu}\\text{-}\\kern{2mu}}'
 		],
 		"xleftrightarrow" => [ 'xArrow', 0x2194, 6, 6 ],
 		"xrightleftharpoons" => [ 'xArrow', 0x21CC, 5, 7 ],
@@ -765,14 +766,28 @@ class BaseMappings {
 	];
 	// These are some mappings which are created customly for this
 	private const CUSTOM = [
-		"boldsymbol" => [ 'boldsymbol','' ], // see boldsymbolConfiguration.js
+		"boldsymbol" => [ 'boldsymbol', '' ], // see boldsymbolConfiguration.js
 		"oint" => [ 'oint', '\u222E', [ "texClass" => TexClass::OP ] ],
 		"oiint" => [ 'oint', '\u222F', [ "texClass" => TexClass::OP ] ],
 		"oiiint" => [ 'oint', '\u2230', [ "texClass" => TexClass::OP ] ],
 		"ointctrclockwise" => [ 'oint', '\u2233', [ "texClass" => TexClass::OP ] ],
 		"varointclockwise" => [ 'oint', '\u2232', [ "texClass" => TexClass::OP ] ],
-		"P" => [ 'oint', '\u00B6', [ "texClass" => TexClass::OP ] ],
+		"\\P" => [ 'oint', '\u00B6', [ "texClass" => TexClass::OP ] ],
 		'textvisiblespace' => [ 'Insert', '\u2423' ], // From TextCompMappings.js (only makro it seems)
+		"Alpha" => [ 'customLetters', "A" ],
+		"Beta" => [ 'customLetters', "B" ],
+		"Chi" => [ 'customLetters', "X" ],
+		"Epsilon" => [ 'customLetters', "E" ],
+		"Eta" => [ 'customLetters', "H" ],
+		"Iota" => [ 'customLetters', "I" ],
+		"Kappa" => [ 'customLetters', "K" ],
+		"Mu" => [ 'customLetters', "M" ],
+		"Nu" => [ 'customLetters', "N" ],
+		"Omicron" => [ 'customLetters', "O" ],
+		"Rho" => [ 'customLetters', "P" ],
+		"Tau" => [ 'customLetters', "T" ],
+		"Zeta" => [ 'customLetters', "Z" ],
+		"ca" => [ "customLetters", "&#x223C;", true ]
 	];
 
 	private const ALL = [
@@ -830,7 +845,12 @@ class BaseMappings {
 	}
 
 	public static function getSpecialByKey( $key ) {
-		return MMLutil::getMappingByKeySimple( $key, self::SPECIAL );
+		$ret = MMLutil::getMappingByKeySimple( $key, self::SPECIAL );
+		// Only activated elements get found in this mapping currently.
+		if ( is_array( $ret ) && count( $ret ) >= 2 && $ret[1] ) {
+			return $ret;
+		}
+		return null;
 	}
 
 	public static function getCancelByKey( $key ) {

@@ -6,6 +6,9 @@ use EmptyResourceLoader;
 use Exception;
 use ExtensionRegistry;
 use InvalidArgumentException;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\HashConfig;
+use MediaWiki\Html\HtmlJsCode;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\ResourceLoader\Context;
@@ -19,8 +22,9 @@ use ResourceLoaderTestCase;
 use ResourceLoaderTestModule;
 use RuntimeException;
 use UnexpectedValueException;
+use Wikimedia\Minify\IdentityMinifierState;
+use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\TestingAccessWrapper;
-use XmlJsCode;
 
 /**
  * @covers \MediaWiki\ResourceLoader\ResourceLoader
@@ -31,6 +35,7 @@ class ResourceLoaderTest extends ResourceLoaderTestCase {
 		parent::setUp();
 
 		$this->overrideConfigValue( MainConfigNames::ShowExceptionDetails, true );
+		$this->setService( 'DBLoadBalancer', $this->createMock( ILoadBalancer::class ) );
 	}
 
 	/**
@@ -216,6 +221,51 @@ class ResourceLoaderTest extends ResourceLoaderTestCase {
 		$this->assertStringEqualsFile( "$basePath/module/styles.css", $css );
 	}
 
+	public static function provideLessImportRemappingCases() {
+		$basePath = dirname( dirname( __DIR__ ) ) . '/data/less';
+		return [
+			[
+				'input' => "$basePath/import-codex-icons.less",
+				'expected' => "$basePath/import-codex-icons.css"
+			],
+			[
+				'input' => "$basePath/import-codex-tokens.less",
+				'expected' => "$basePath/import-codex-tokens.css"
+			],
+			[
+				'input' => "$basePath/import-codex-tokens-npm.less",
+				'expected' => null,
+				'exception' => [
+					'class' => Exception::class,
+					'message' => 'Importing from @wikimedia/codex-design-tokens is not supported. ' .
+						"To use the Codex tokens, use `@import 'mediawiki.skin.variables.less';` instead."
+				]
+			]
+		];
+	}
+
+	/**
+	 * @dataProvider provideLessImportRemappingCases
+	 */
+	public function testLessImportRemapping( $input, $expected, $exception = null ) {
+		$rl = new EmptyResourceLoader();
+		$lc = $rl->getLessCompiler();
+
+		if ( $exception !== null ) {
+			if ( isset( $exception['class'] ) ) {
+				$this->expectException( $exception['class'] );
+			}
+			if ( isset( $exception['message'] ) ) {
+				$this->expectExceptionMessage( $exception['message'] );
+			}
+		}
+
+		$css = $lc->parseFile( $input )->getCss();
+		if ( $expected !== null ) {
+			$this->assertStringEqualsFile( $expected, $css );
+		}
+	}
+
 	public static function provideMediaWikiVariablesCases() {
 		$basePath = __DIR__ . '/../../data/less';
 		return [
@@ -354,110 +404,71 @@ class ResourceLoaderTest extends ResourceLoaderTestCase {
 
 	public static function provideLoaderImplement() {
 		return [
-			[ [
-				'title' => 'Implement scripts, styles and messages',
-
+			'Implement scripts, styles and messages' => [ [
 				'name' => 'test.example',
 				'scripts' => 'mw.example();',
 				'styles' => [ 'css' => [ '.mw-example {}' ] ],
 				'messages' => [ 'example' => '' ],
 				'templates' => [],
 
-				'expected' => 'mw.loader.implement( "test.example", function ( $, jQuery, require, module ) {
-mw.example();
-}, {
-    "css": [
-        ".mw-example {}"
-    ]
-}, {
-    "example": ""
-} );',
+				'expected' => 'mw.loader.impl(function(){return["test.example@1",function($,jQuery,require,module){mw.example();
+},{"css":[".mw-example {}"]},{"example":""}];});',
 			] ],
-			[ [
-				'title' => 'Implement scripts',
-
+			'Implement scripts' => [ [
 				'name' => 'test.example',
 				'scripts' => 'mw.example();',
 				'styles' => [],
 
-				'expected' => 'mw.loader.implement( "test.example", function ( $, jQuery, require, module ) {
-mw.example();
-} );',
+				'expected' => 'mw.loader.impl(function(){return["test.example@1",function($,jQuery,require,module){mw.example();
+}];});',
 			] ],
-			[ [
-				'title' => 'Implement scripts with newline at end',
-
+			'Implement scripts with newline at end' => [ [
 				'name' => 'test.example',
 				'scripts' => "mw.example();\n",
 				'styles' => [],
 
-				'expected' => 'mw.loader.implement( "test.example", function ( $, jQuery, require, module ) {
-mw.example();
-
-} );',
+				'expected' => 'mw.loader.impl(function(){return["test.example@1",function($,jQuery,require,module){mw.example();
+}];});',
 			] ],
-			[ [
-				'title' => 'Implement scripts with comment at end',
-
+			'Implement scripts with comment at end' => [ [
 				'name' => 'test.example',
 				'scripts' => "mw.example();//Foo",
 				'styles' => [],
 
-				'expected' => 'mw.loader.implement( "test.example", function ( $, jQuery, require, module ) {
-mw.example();//Foo
-} );',
+				'expected' => 'mw.loader.impl(function(){return["test.example@1",function($,jQuery,require,module){mw.example();//Foo
+}];});',
 			] ],
-			[ [
-				'title' => 'Implement styles',
-
+			'Implement styles' => [ [
 				'name' => 'test.example',
 				'scripts' => [],
 				'styles' => [ 'css' => [ '.mw-example {}' ] ],
 
-				'expected' => 'mw.loader.implement( "test.example", [], {
-    "css": [
-        ".mw-example {}"
-    ]
-} );',
+				'expected' => 'mw.loader.impl(function(){return["test.example@1",[],{"css":[".mw-example {}"]}];});',
 			] ],
-			[ [
-				'title' => 'Implement scripts and messages',
-
+			'Implement scripts and messages' => [ [
 				'name' => 'test.example',
 				'scripts' => 'mw.example();',
 				'messages' => [ 'example' => '' ],
 
-				'expected' => 'mw.loader.implement( "test.example", function ( $, jQuery, require, module ) {
-mw.example();
-}, {}, {
-    "example": ""
-} );',
+				'expected' => 'mw.loader.impl(function(){return["test.example@1",function($,jQuery,require,module){mw.example();
+},{},{"example":""}];});',
 			] ],
-			[ [
-				'title' => 'Implement scripts and templates',
-
+			'Implement scripts and templates' => [ [
 				'name' => 'test.example',
 				'scripts' => 'mw.example();',
 				'templates' => [ 'example.html' => '' ],
 
-				'expected' => 'mw.loader.implement( "test.example", function ( $, jQuery, require, module ) {
-mw.example();
-}, {}, {}, {
-    "example.html": ""
-} );',
+				'expected' => 'mw.loader.impl(function(){return["test.example@1",function($,jQuery,require,module){mw.example();
+},{},{},{"example.html":""}];});',
 			] ],
-			[ [
-				'title' => 'Implement unwrapped user script',
-
+			'Implement unwrapped user script' => [ [
 				'name' => 'user',
 				'scripts' => 'mw.example( 1 );',
 				'wrap' => false,
 
-				'expected' => 'mw.loader.implement( "user", "mw.example( 1 );" );',
+				'expected' => 'mw.loader.impl(function(){return["user@1","mw.example( 1 );"];});',
 			] ],
-			[ [
-				'title' => 'Implement multi-file script',
-
+			'Implement multi-file script' => [ [
 				'name' => 'test.multifile',
 				'scripts' => [
 					'files' => [
@@ -486,26 +497,13 @@ mw.example();
 				],
 
 				'expected' => <<<END
-mw.loader.implement( "test.multifile", {
-    "main": "five.js",
-    "files": {
-    "one.js": function ( require, module, exports ) {
-mw.example( 1 );
-},
-    "two.json": {
+mw.loader.impl(function(){return["test.multifile@1",{"main":"five.js","files":{"one.js":function(require,module,exports){mw.example( 1 );
+},"two.json":{
     "n": 2
-},
-    "three.js": function ( require, module, exports ) {
-mw.example( 3 ); // Comment
-},
-    "four.js": function ( require, module, exports ) {
-mw.example( 4 );
-},
-    "five.js": function ( require, module, exports ) {
-mw.example( 5 );
-}
-}
-} );
+},"three.js":function(require,module,exports){mw.example( 3 ); // Comment
+},"four.js":function(require,module,exports){mw.example( 4 );
+},"five.js":function(require,module,exports){mw.example( 5 );
+}}}];});
 END
 			] ],
 		];
@@ -514,36 +512,41 @@ END
 	/**
 	 * @dataProvider provideLoaderImplement
 	 */
-	public function testMakeLoaderImplementScript( $case ) {
+	public function testAddImplementScript( $case ) {
 		$case += [
+			'version' => '1',
 			'wrap' => true,
 			'styles' => [],
 			'templates' => [],
-			'messages' => new XmlJsCode( '{}' ),
+			'messages' => new HtmlJsCode( '{}' ),
 			'packageFiles' => [],
 		];
-		$rl = TestingAccessWrapper::newFromClass( ResourceLoader::class );
-		$this->assertEquals(
-			$case['expected'],
-			$rl->makeLoaderImplementScript(
-				$case['name'],
-				( $case['wrap'] && is_string( $case['scripts'] ) )
-					? new XmlJsCode( $case['scripts'] )
-					: $case['scripts'],
-				$case['styles'],
-				$case['messages'],
-				$case['templates'],
-				$case['packageFiles']
-			)
+		$rl = TestingAccessWrapper::newFromObject( new EmptyResourceLoader );
+		$minifier = new IdentityMinifierState;
+		$rl->addImplementScript(
+			$minifier,
+			$case['name'],
+			$case['version'],
+			( $case['wrap'] && is_string( $case['scripts'] ) )
+				? [ 'plainScripts' => [ [ 'content' => $case['scripts'] ] ] ]
+				: $case['scripts'],
+			$case['styles'],
+			$case['messages'],
+			$case['templates'],
+			$case['packageFiles']
 		);
+		$this->assertEquals( $case['expected'], $minifier->getMinifiedOutput() );
 	}
 
-	public function testMakeLoaderImplementScriptInvalid() {
+	public function testAddImplementScriptInvalid() {
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'Script must be a' );
-		$rl = TestingAccessWrapper::newFromClass( ResourceLoader::class );
-		$rl->makeLoaderImplementScript(
+		$minifier = new IdentityMinifierState;
+		$rl = TestingAccessWrapper::newFromObject( new EmptyResourceLoader );
+		$rl->addImplementScript(
+			$minifier,
 			'test', // name
+			'1', // version
 			123, // scripts
 			null, // styles
 			null, // messages
@@ -664,9 +667,9 @@ END
 		$mock = $this->getMockBuilder( ResourceLoaderTestModule::class )
 					 ->onlyMethods( [ $getter, 'getName' ] )
 			->getMock();
-		$mock->method( $getter )->will( $this->throwException(
+		$mock->method( $getter )->willThrowException(
 			new Exception( 'Ferry not found' )
-		) );
+		);
 		$mock->method( 'getName' )->willReturn( __METHOD__ );
 		return $mock;
 	}
@@ -939,12 +942,12 @@ END
 			'startup response undisrupted (T152266)'
 		);
 		$this->assertMatchesRegularExpression(
-			'/register\([^)]+"ferry",\s*""/s',
+			'/register\([^)]+"ferry",\s*""/',
 			$response,
 			'startup response registers broken module'
 		);
 		$this->assertMatchesRegularExpression(
-			'/state\([^)]+"ferry":\s*"error"/s',
+			'/state\([^)]+"ferry":\s*"error"/',
 			$response,
 			'startup response sets state to error'
 		);
@@ -955,7 +958,7 @@ END
 	 */
 	public function testMakeModuleResponseExtraHeaders() {
 		$module = $this->getMockBuilder( ResourceLoaderTestModule::class )
-					   ->onlyMethods( [ 'getPreloadLinks', 'getName' ] )->getMock();
+			->onlyMethods( [ 'getPreloadLinks', 'getName' ] )->getMock();
 		$module->method( 'getPreloadLinks' )->willReturn( [
 			'https://example.org/script.js' => [ 'as' => 'script' ],
 		] );
@@ -1078,6 +1081,37 @@ END
 	}
 
 	/**
+	 * Silently ignore invalid UTF-8 injected into random query parameters.
+	 *
+	 * @see https://phabricator.wikimedia.org/T331641
+	 */
+	public function testRespondInvalidMissingModule() {
+		$rl = $this->getMockBuilder( EmptyResourceLoader::class )
+			->onlyMethods( [
+				'measureResponseTime',
+				'tryRespondNotModified',
+				'sendResponseHeaders',
+			] )
+			->getMock();
+
+		// Cover the JS-response which formats via mw.loader.state()
+		$context = $this->getResourceLoaderContext(
+			[ 'modules' => "foo|bar\x80\xf0bara|quux", 'only' => null ],
+			$rl
+		);
+		$this->expectOutputRegex( '/mw\.loader\.state.*"foo": "missing"/s' );
+		$rl->respond( $context );
+
+		// Cover the CSS-response which formats via a block comment
+		$context = $this->getResourceLoaderContext(
+			[ 'modules' => "foo|bar\x80\xf0bara|quux", 'only' => 'styles' ],
+			$rl
+		);
+		$this->expectOutputRegex( '/Problematic modules.*"foo": "missing"/s' );
+		$rl->respond( $context );
+	}
+
+	/**
 	 * Refuse requests for private modules.
 	 */
 	public function testRespondErrorPrivate() {
@@ -1097,7 +1131,7 @@ END
 			$rl
 		);
 
-		$this->expectOutputRegex( '/^\/\*.+Cannot build private module/s' );
+		$this->expectOutputRegex( '/\/\*.+Cannot build private module/s' );
 		$rl->respond( $context );
 	}
 
@@ -1136,9 +1170,111 @@ END
 			->with( $context, [ 'test' => $module ] )
 			->willReturn( 'foo;' );
 		// Internal errors should be caught and logged without affecting module output
-		$this->expectOutputRegex( '/^\/\*.+Preload error.+Version error.+\*\/.*foo;/ms' );
+		$this->expectOutputRegex( '/foo;.*\/\*.+Preload error.+Version error.+\*\//ms' );
 
 		$rl->respond( $context );
+	}
+
+	private function getResourceLoaderWithTestModules( Config $config = null ) {
+		$localBasePath = __DIR__ . '/../../data/resourceloader';
+		$remoteBasePath = '/w';
+		$rl = new EmptyResourceLoader( $config );
+		$rl->register( 'test1', [
+			'localBasePath' => $localBasePath,
+			'remoteBasePath' => $remoteBasePath,
+			'scripts' => [ 'script-nosemi.js', 'script-comment.js' ],
+		] );
+		$rl->register( 'test2', [
+			'localBasePath' => $localBasePath,
+			'remoteBasePath' => $remoteBasePath,
+			'scripts' => [ 'script-nosemi-nonl.js' ],
+		] );
+		return $rl;
+	}
+
+	public function testRespondSourceMap() {
+		$rl = $this->getResourceLoaderWithTestModules();
+		$context = $this->getResourceLoaderContext(
+			[ 'modules' => 'test1', 'sourcemap' => '1', 'debug' => '' ],
+			$rl
+		);
+		$this->expectOutputString( <<<JSON
+{
+"version": 3,
+"file": "/load.php?lang=en&modules=test1&only=scripts",
+"sources": ["/w/script-nosemi.js","/w/script-comment.js"],
+"sourcesContent": ["/* eslint-disable */\\nmw.foo()\\n","/* eslint-disable */\\nmw.foo()\\n// mw.bar();\\n"],
+"names": [],
+"mappings": "AACA,EAAE,CAAC,GAAG,CAAC;ACAP,EAAE,CAAC,GAAG,CAAC"
+}
+
+JSON
+		);
+		$rl->respond( $context );
+	}
+
+	public function testRespondIndexMap() {
+		$rl = $this->getResourceLoaderWithTestModules();
+		$context = $this->getResourceLoaderContext(
+			[ 'modules' => 'test1|test2', 'sourcemap' => '1', 'debug' => '' ],
+			$rl
+		);
+		$this->expectOutputString( <<<JSON
+{
+"version": 3,
+"sections": [
+{"offset":{"line":0,"column":0},"map":{
+"version": 3,
+"file": "/load.php?lang=en&modules=test1%2Ctest2&only=scripts",
+"sources": ["/w/script-nosemi.js","/w/script-comment.js"],
+"sourcesContent": ["/* eslint-disable */\\nmw.foo()\\n","/* eslint-disable */\\nmw.foo()\\n// mw.bar();\\n"],
+"names": [],
+"mappings": "AACA,EAAE,CAAC,GAAG,CAAC;ACAP,EAAE,CAAC,GAAG,CAAC"
+}
+},
+{"offset":{"line":2,"column":0},"map":{
+"version": 3,
+"file": "/load.php?lang=en&modules=test1%2Ctest2&only=scripts",
+"sources": ["/w/script-nosemi-nonl.js"],
+"sourcesContent": ["/* eslint-disable */\\nmw.foo()"],
+"names": [],
+"mappings": "AACA,EAAE,CAAC,GAAG,CAAC"
+}
+}
+]
+}
+JSON
+		);
+		$rl->respond( $context );
+	}
+
+	public function testRespondSourceMapLink() {
+		$rl = $this->getResourceLoaderWithTestModules( new HashConfig(
+			[
+				MainConfigNames::ResourceLoaderEnableSourceMapLinks => true,
+			]
+		) );
+		$context = $this->getResourceLoaderContext(
+			[ 'modules' => 'test1|test2', 'debug' => '' ],
+			$rl
+		);
+		$this->expectOutputString( <<<JS
+mw.foo()
+mw.foo()
+mw.foo()
+mw.loader.state({"test1":"ready","test2":"ready"});
+JS
+	);
+		$rl->respond( $context );
+
+		$extraHeaders = TestingAccessWrapper::newFromObject( $rl )->extraHeaders;
+		$this->assertEquals(
+			[
+				'SourceMap: /load.php?lang=en&modules=test1%2Ctest2&only=scripts&sourcemap=1&version=pq39u'
+			],
+			$extraHeaders,
+			'Extra headers'
+		);
 	}
 
 	public function testMeasureResponseTime() {

@@ -25,7 +25,6 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Shell\Shell;
 use Wikimedia\AtEase\AtEase;
-use Wikimedia\RequestTimeout\TimeoutException;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -50,8 +49,12 @@ class SvgHandler extends ImageHandler {
 	];
 
 	public function isEnabled() {
-		$svgConverters = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::SVGConverters );
-		$svgConverter = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::SVGConverter );
+		$config = MediaWikiServices::getInstance()->getMainConfig();
+		$svgConverters = $config->get( MainConfigNames::SVGConverters );
+		$svgConverter = $config->get( MainConfigNames::SVGConverter );
+		if ( $config->get( MainConfigNames::SVGNativeRendering ) === true ) {
+			return true;
+		}
 		if ( !isset( $svgConverters[$svgConverter] ) ) {
 			wfDebug( "\$wgSVGConverter is invalid, disabling SVG rendering." );
 
@@ -61,8 +64,27 @@ class SvgHandler extends ImageHandler {
 		return true;
 	}
 
+	public function allowRenderingByUserAgent( $file ) {
+		$svgNativeRendering = MediaWikiServices::getInstance()
+			->getMainConfig()->get( MainConfigNames::SVGNativeRendering );
+		if ( $svgNativeRendering === true ) {
+			// Don't do any transform for any SVG.
+			return true;
+		}
+		if ( $svgNativeRendering !== 'partial' ) {
+			// SVG images are always rasterized to PNG
+			return false;
+		}
+		$maxSVGFilesize = MediaWikiServices::getInstance()
+			->getMainConfig()->get( MainConfigNames::SVGNativeRenderingSizeLimit );
+		// Browsers don't really support SVG translations, so always render them to PNG
+		// Files bigger than the limit are also rendered as PNG, as big files might be a tax on the user agent
+		return count( $this->getAvailableLanguages( $file ) ) <= 1
+			&& $file->getSize() <= $maxSVGFilesize;
+	}
+
 	public function mustRender( $file ) {
-		return true;
+		return !$this->allowRenderingByUserAgent( $file );
 	}
 
 	public function isVectorized( $file ) {
@@ -170,7 +192,7 @@ class SvgHandler extends ImageHandler {
 	 * @return bool
 	 */
 	public function canAnimateThumbnail( $file ) {
-		return false;
+		return $this->allowRenderingByUserAgent( $file );
 	}
 
 	/**
@@ -239,6 +261,11 @@ class SvgHandler extends ImageHandler {
 		$physicalWidth = $params['physicalWidth'];
 		$physicalHeight = $params['physicalHeight'];
 		$lang = $this->getLanguageFromParams( $params );
+
+		if ( $this->allowRenderingByUserAgent( $image ) ) {
+			// No transformation required for native rendering
+			return new ThumbnailImage( $image, $image->getURL(), false, $params );
+		}
 
 		if ( $flags & self::TRANSFORM_LATER ) {
 			return new ThumbnailImage( $image, $dstUrl, $dstPath, $params );
@@ -321,7 +348,6 @@ class SvgHandler extends ImageHandler {
 	 * @param int $width
 	 * @param int $height
 	 * @param string|false $lang Language code of the language to render the SVG in
-	 * @throws MWException
 	 * @return bool|MediaTransformError
 	 */
 	public function rasterize( $srcPath, $dstPath, $width, $height, $lang = false ) {
@@ -336,7 +362,7 @@ class SvgHandler extends ImageHandler {
 				// This is a PHP callable
 				$func = $svgConverters[$svgConverter][0];
 				if ( !is_callable( $func ) ) {
-					throw new MWException( "$func is not callable" );
+					throw new UnexpectedValueException( "$func is not callable" );
 				}
 				$err = $func( $srcPath,
 					$dstPath,
@@ -348,19 +374,13 @@ class SvgHandler extends ImageHandler {
 				$retval = (bool)$err;
 			} else {
 				// External command
-				$path = $svgConverterPath ? Shell::escape( "{$svgConverterPath}/" ) : '';
-				$cmd = preg_replace_callback( '/\$(path\/|width|height|input|output)/',
-					static function ( $m ) use ( $path, $width, $height, $srcPath, $dstPath ) {
-						return [
-							'$path/' => $path,
-							'$width' => intval( $width ),
-							'$height' => intval( $height ),
-							'$input' => Shell::escape( $srcPath ),
-							'$output' => Shell::escape( $dstPath ),
-						][$m[0]];
-					},
-					$svgConverters[$svgConverter]
-				);
+				$cmd = strtr( $svgConverters[$svgConverter], [
+					'$path/' => $svgConverterPath ? Shell::escape( "$svgConverterPath/" ) : '',
+					'$width' => (int)$width,
+					'$height' => (int)$height,
+					'$input' => Shell::escape( $srcPath ),
+					'$output' => Shell::escape( $dstPath ),
+				] );
 
 				$env = [];
 				if ( $lang !== false ) {
@@ -436,9 +456,7 @@ class SvgHandler extends ImageHandler {
 		try {
 			$svgReader = new SVGReader( $filename );
 			$metadata += $svgReader->getMetadata();
-		} catch ( TimeoutException $e ) {
-			throw $e;
-		} catch ( Exception $e ) { // @todo SVG specific exceptions
+		} catch ( InvalidSVGException $e ) {
 			// File not found, broken, etc.
 			$metadata['error'] = [
 				'message' => $e->getMessage(),

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Vlad5250",
 			"Winston Sung"
 		]
 	},
@@ -44,7 +45,7 @@
 	"cite-ve-referenceslist-isempty-default": "Nema referenci na ovoj stranici koje bi mogle biti uključene u ovaj popis.",
 	"cite-ve-referenceslist-missingref": "Ova referenca je definirana u šablonu ili drugom generiranom bloku i sada se može uređivati jedino u izvornom modu.",
 	"cite-ve-referenceslist-missingref-in-list": "Ova referenca zadaje se u šablonu ili drugom stvorenom bloku. Za sada može da se pregleda samo u izvornom režimu.",
-	"cite-ve-referenceslist-missingreflist": "Ovaj spisak s referencama je generisao šablon, i se za sada može uređivati samo u izvornom režimu.",
+	"cite-ve-referenceslist-missingreflist": "Ovaj spisak s referencama je generisao šablon.",
 	"cite-ve-toolbar-group-label": "Citiraj",
 	"cite-ve-othergroup-item": "$1 referenca",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "Reference",

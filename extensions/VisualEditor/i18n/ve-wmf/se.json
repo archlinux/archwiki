@@ -1,10 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kimberli Mäkäräinen (WMNO)",
-			"Ante75"
+			"Ante75",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck doaivu ahte ođđa sisdoallu lea lasihuvvon siidui",
+	"tag-editcheck-newreference-description": "Siidui lasihuvvui gáldu",
+	"tag-editcheck-references-description": "EditCheck doaivu ahte okta referánsa sáhttá leamáš dárbbašlaš",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Rievdaduvvon visuála rievdadanprográmmain]]",
 	"tag-visualeditor-description": "Rievdadus dahkkon [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuála rievdadanprográmmain]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Rievdaduvvon visuála rievdadanprográmmain: Dárkkis]]",

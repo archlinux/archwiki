@@ -15,6 +15,8 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { IwTitle } = require( 'mmv' );
+
 ( function () {
 	QUnit.module( 'mmv.model.IwTitle', QUnit.newMwEnvironment() );
 
@@ -23,9 +25,9 @@
 			fullPageName = 'User_talk:John_Doe',
 			domain = 'en.wikipedia.org',
 			url = 'https://en.wikipedia.org/wiki/User_talk:John_Doe',
-			title = new mw.mmv.model.IwTitle( namespace, fullPageName, domain, url );
+			title = new IwTitle( namespace, fullPageName, domain, url );
 
-		assert.true( title instanceof mw.mmv.model.IwTitle );
+		assert.true( title instanceof IwTitle );
 	} );
 
 	QUnit.test( 'getters', function ( assert ) {
@@ -33,7 +35,7 @@
 			fullPageName = 'User_talk:John_Doe',
 			domain = 'en.wikipedia.org',
 			url = 'https://en.wikipedia.org/wiki/User_talk:John_Doe',
-			title = new mw.mmv.model.IwTitle( namespace, fullPageName, domain, url );
+			title = new IwTitle( namespace, fullPageName, domain, url );
 
 		assert.strictEqual( title.getUrl(), url, 'getUrl()' );
 		assert.strictEqual( title.getDomain(), domain, 'getDomain()' );

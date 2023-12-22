@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Saraiki",
+			"Amire80",
 			"Kaleem Bhatti",
-			"Amire80"
+			"Saraiki"
 		]
 	},
 	"abuselog": "غلط چھاݨاں لاگ",
@@ -151,7 +151,7 @@
 	"abusefilter-history-filter": "چھاݨاں اصول",
 	"abusefilter-history-comments": "تبصرے",
 	"abusefilter-history-actions": "عمل",
-	"abusefilter-history-backedit": "فلٹرایڈیٹر تے واپس",
+	"abusefilter-history-backedit": "چھاݨاں ایڈیٹر",
 	"abusefilter-history-deleted": "مٹا ݙتے",
 	"abusefilter-history-filterid": "چھاݨاں",
 	"abusefilter-history-select-user": "ورتݨ آلا:",
@@ -191,6 +191,7 @@
 	"abusefilter-diff-version": "ورژن فرام $1 {{GENDER:$3|از}} $2",
 	"abusefilter-diff-info": "بنیادی معلومات",
 	"abusefilter-diff-pattern": "چھاݨاں شرطاں",
+	"abusefilter-diff-backhistory": "چھاݨاں تاریخ",
 	"abusefilter-diff-prev": "پراݨی تبدیلی",
 	"abusefilter-diff-next": "نویں تبدیلی",
 	"abusefilter-import-submit": "ڈیٹا امپورٹ کرو",
@@ -199,6 +200,15 @@
 	"abusefilter-view-privatedetails-submit": "نجی تفصیلاں ݙیکھو",
 	"abusefilter-view-privatedetails-legend": "ذاتی تفصیلاں ݙیکھو",
 	"abusefilter-log-details-id": "لاگ آئی ڈی",
+	"abusefilter-blocked-domains-notes": "نوٹ",
+	"abusefilter-blocked-domains-add-submit": "جمع کرواؤ",
+	"abusefilter-blocked-domains-domain-header": "ڈومین",
+	"abusefilter-blocked-domains-notes-header": "نوٹ",
+	"abusefilter-blocked-domains-actions-header": "عمل",
+	"abusefilter-blocked-domains-remove": "ہٹاؤ",
+	"abusefilter-blocked-domains-remove-title": "بلاک تھئی ڈومین ہٹاؤ",
+	"abusefilter-blocked-domains-remove-reason": "وجہ",
+	"abusefilter-blocked-domains-remove-submit": "ہٹاؤ",
 	"abusefilter-log-ip-not-available": "دستیاب کائنی",
 	"notification-link-text-show-filter": "چھاݨاں ݙکھاؤ"
 }

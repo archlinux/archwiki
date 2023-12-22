@@ -192,7 +192,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals( $expect, $validator->checkSettings( 'dummy', $settings, [] ) );
 	}
 
-	public function provideCheckSettings(): array {
+	public static function provideCheckSettings(): array {
 		$normalKeys = [
 			ParamValidator::PARAM_TYPE, ParamValidator::PARAM_DEFAULT, ParamValidator::PARAM_REQUIRED,
 			ParamValidator::PARAM_ISMULTI, ParamValidator::PARAM_SENSITIVE, ParamValidator::PARAM_DEPRECATED,
@@ -585,6 +585,43 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 		$validator->validateValue( 'foo', null, 'default', [] );
 	}
 
+	public static function provideMismatchValueToType() {
+		yield 'array provided but not multi-value' => [
+			'foo',
+			[ 'foobar' ],
+			[ ParamValidator::PARAM_TYPE => 'string' ],
+			ValidationException::class,
+			"Validation of `foo` failed: badvalue",
+		];
+
+		yield 'string provided but multi-value set' => [
+			'foo',
+			[ 'foobar' ],
+			[ ParamValidator::PARAM_TYPE => 'integer' ],
+			ValidationException::class,
+			"Validation of `foo` failed: badvalue",
+		];
+	}
+
+	/** @dataProvider provideMismatchValueToType */
+	public function testValidateValue_valueToTypeMismatch(
+		$name,
+		$value,
+		$settings,
+		$expectedException,
+		$expectedExceptionMsg
+	) {
+		$validator = new ParamValidator(
+			new SimpleCallbacks( [] ),
+			new ObjectFactory( $this->getMockForAbstractClass( ContainerInterface::class ) ),
+			[ 'typeDefs' => ParamValidator::$STANDARD_TYPES ]
+		);
+
+		$this->expectException( $expectedException );
+		$this->expectExceptionMessage( $expectedExceptionMsg );
+		$validator->validateValue( $name, $value, $settings, [] );
+	}
+
 	/** @dataProvider provideValidateValue */
 	public function testValidateValue(
 		$value, $settings, $highLimits, $valuesList, $calls, $expect, $expectConditions = [],
@@ -731,6 +768,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 				[],
 				new ValidationException(
 					DataMessageValue::new( 'paramvalidator-toomanyvalues', [], 'toomanyvalues', [
+						'parameter' => 'foobar',
 						'limit' => 2,
 						'lowlimit' => 2,
 						'highlimit' => 4,
@@ -750,6 +788,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 				[],
 				new ValidationException(
 					DataMessageValue::new( 'paramvalidator-toomanyvalues', [], 'toomanyvalues', [
+						'parameter' => 'foobar',
 						'limit' => 2,
 						'lowlimit' => 2,
 						'highlimit' => 4,
@@ -781,6 +820,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 				[],
 				new ValidationException(
 					DataMessageValue::new( 'paramvalidator-toomanyvalues', [], 'toomanyvalues', [
+						'parameter' => 'foobar',
 						'limit' => 4,
 						'lowlimit' => 2,
 						'highlimit' => 4,
@@ -799,6 +839,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 				[],
 				new ValidationException(
 					DataMessageValue::new( 'paramvalidator-toomanyvalues', [], 'toomanyvalues', [
+						'parameter' => 'foobar',
 						'limit' => 2,
 						'lowlimit' => 2,
 						'highlimit' => 4,
@@ -830,6 +871,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 				[],
 				new ValidationException(
 					DataMessageValue::new( 'paramvalidator-toomanyvalues', [], 'toomanyvalues', [
+						'parameter' => 'foobar',
 						'limit' => 4,
 						'lowlimit' => 2,
 						'highlimit' => 4,

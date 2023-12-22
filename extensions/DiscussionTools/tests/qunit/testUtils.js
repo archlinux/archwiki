@@ -37,7 +37,7 @@ module.exports.getThreadContainer = function ( doc ) {
  * @param {Node} ancestor The ancestor node
  * @param {Node} node The descendant node
  * @param {number} nodeOffset The offset in the descendant node
- * @return {number[]} The offset path
+ * @return {string} The offset path
  */
 function getOffsetPath( ancestor, node, nodeOffset ) {
 	var path = [ nodeOffset ];
@@ -50,7 +50,14 @@ function getOffsetPath( ancestor, node, nodeOffset ) {
 		path.unshift( utils.childIndexOf( node ) );
 		node = node.parentNode;
 	}
-	return path;
+	return path.join( '/' );
+}
+
+function getPathsFromRange( root, range ) {
+	return [
+		getOffsetPath( root, range.startContainer, range.startOffset ),
+		getOffsetPath( root, range.endContainer, range.endOffset )
+	];
 }
 
 /**
@@ -70,20 +77,22 @@ module.exports.serializeComments = function ( parent, root ) {
 
 	// Can't serialize the DOM nodes involved in the range,
 	// instead use their offsets within their parent nodes
-	parent.range = [
-		getOffsetPath( root, parent.range.startContainer, parent.range.startOffset ).join( '/' ),
-		getOffsetPath( root, parent.range.endContainer, parent.range.endOffset ).join( '/' )
-	];
+	parent.range = getPathsFromRange( root, parent.range );
 	if ( parent.signatureRanges ) {
 		parent.signatureRanges = parent.signatureRanges.map( function ( range ) {
-			return [
-				getOffsetPath( root, range.startContainer, range.startOffset ).join( '/' ),
-				getOffsetPath( root, range.endContainer, range.endOffset ).join( '/' )
-			];
+			return getPathsFromRange( root, range );
+		} );
+	}
+	if ( parent.timestampRanges ) {
+		parent.timestampRanges = parent.timestampRanges.map( function ( range ) {
+			return getPathsFromRange( root, range );
 		} );
 	}
 	if ( parent.timestamp ) {
 		parent.timestamp = parent.getTimestampString();
+	}
+	if ( !parent.displayName ) {
+		delete parent.displayName;
 	}
 
 	// Unimportant

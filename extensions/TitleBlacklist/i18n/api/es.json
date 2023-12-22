@@ -8,7 +8,6 @@
 			"Tiberius1701"
 		]
 	},
-	"apihelp-titleblacklist-description": "Validar el título de una página, nombre de archivo o nombre de usuario contra la TitleBlacklist (lista negra de títulos).",
 	"apihelp-titleblacklist-summary": "Validar el título de una página, nombre de archivo o nombre de usuario en la TitleBlacklist (lista negra de títulos).",
 	"apihelp-titleblacklist-param-title": "La cadena que se validará contra la lista negra.",
 	"apihelp-titleblacklist-param-action": "La acción que verificar.",

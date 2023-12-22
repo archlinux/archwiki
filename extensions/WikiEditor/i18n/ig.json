@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Akwugo",
 			"Amire80",
 			"Edith Nwobu",
 			"Izuchi Onyeike",
 			"Karen",
-			"Ukabia",
-			"Akwugo"
+			"Ukabia"
 		]
 	},
 	"wikieditor": "Ịhụ ndezi wikitext dị elu",
@@ -50,8 +50,6 @@
 	"wikieditor-toolbar-file-alt": "Ederede nwere ike isote",
 	"wikieditor-toolbar-file-alt-help": "I nwere ike iji mpa nke n'egosipụta ịchọọ were dee nkọwa ederede nye ndị n'enweghị ike ịhụ faịlụ ahụ. Nkọwa a kwesịrị ga ezuru ha ịghọta ihe mere na ihe akụkọ gbasara irighiri nsèrè foto. Nke a ka dị mkpa n'etiti ndi kpuruisi na ụfọdụ ndị n'eji akurungwa ihu onyonyo ma ọ bụ brawzer nke naanị ederede.",
 	"wikieditor-toolbar-tool-file-cancel": "Hapụ̀",
-	"wikieditor-toolbar-tool-reference-cancel": "Hapụ̀",
-	"wikieditor-toolbar-tool-reference-insert": "Tìnyé",
 	"wikieditor-toolbar-tool-heading-1": "Ọtú 1",
 	"wikieditor-toolbar-tool-heading-2": "Ọtú 2",
 	"wikieditor-toolbar-tool-heading-3": "Ọtú 3",
@@ -79,17 +77,13 @@
 	"wikieditor-toolbar-help-page-discussion": "Ńkàtá",
 	"wikieditor-toolbar-help-content-italic-description": "Édémédé nsem",
 	"wikieditor-toolbar-help-content-bold-description": "Shí íke",
-	"wikieditor-toolbar-help-content-bold-syntax": "'''Édémédé shírí íké'''",
+	"wikieditor-toolbar-help-content-bold-example": "Édémédé shírí íké",
 	"wikieditor-toolbar-help-content-ilink-description": "Jikodo nke ímé",
 	"wikieditor-toolbar-help-content-xlink-description": "Jikodo di èzí",
-	"wikieditor-toolbar-help-content-heading2-syntax": "== Édémédé íshí ==",
-	"wikieditor-toolbar-help-content-heading2-result": "<h2>Íshí edemede</h2>",
-	"wikieditor-toolbar-help-content-heading3-syntax": "=== Édémédé íshí ===",
-	"wikieditor-toolbar-help-content-heading3-result": "<h3>Íshí edemede</h3>",
-	"wikieditor-toolbar-help-content-heading4-syntax": "==== Édémédé íshí ====",
-	"wikieditor-toolbar-help-content-heading4-result": "<h4>Íshí edemede</h4>",
-	"wikieditor-toolbar-help-content-heading5-syntax": "===== Édémédé íshí =====",
-	"wikieditor-toolbar-help-content-heading5-result": "<h5>Íshí edemede</h5>",
+	"wikieditor-toolbar-help-content-heading2-example": "Édémédé íshí",
+	"wikieditor-toolbar-help-content-heading3-example": "Édémédé íshí",
+	"wikieditor-toolbar-help-content-heading4-example": "Édémédé íshí",
+	"wikieditor-toolbar-help-content-heading5-example": "Édémédé íshí",
 	"wikieditor-toolbar-help-content-signature-description": "Áhà gi",
 	"wikieditor-toolbar-help-content-indent-description": "Tụ atụ",
 	"wikieditor-realtimepreview-preview": "Ngosi etu ọ ga-adị"

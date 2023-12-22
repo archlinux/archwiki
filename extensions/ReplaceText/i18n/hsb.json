@@ -36,7 +36,6 @@
 	"replacetext_warning": "'''Warnowanje:''' {{PLURAL:$1|Je hižo $1 strona, kotraž wobsahuje|Stej hižo $1 stronje, kotejž wobsahujetej|Su hižo $1 strony, kotrež wobsahuja|Je hižo $1 stronow, kotrež wobsahuje}} narunanski tekst, '$2'. Jeli tute narunanje činiš, njemóžeš swoje narunanja wot tutoho teksta rozdźělić.",
 	"replacetext_blankwarning": "Narunanski dźěl je prózdny, tohodla operacija njeda so cofnyć; njedźiwajo na to pokročować?",
 	"replacetext_continue": "Dale",
-	"replacetext_announce": "Tute změny tež na „$1“ a we wobkedźbowankach pokazować",
 	"replacetext_editsummary": "Tekstowe narunanje - \"$1\" do \"$2\"",
 	"replacetext_reminder": "Za změnjenje wotkazow na tutu stronu na druhich stronach, dźi k $1.",
 	"right-replacetext": "Tekstowe narunanja na cyłym wikiju činić",

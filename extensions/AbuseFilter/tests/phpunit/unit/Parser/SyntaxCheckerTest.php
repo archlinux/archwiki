@@ -96,7 +96,7 @@ class SyntaxCheckerTest extends \MediaWikiUnitTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideArity(): array {
+	public static function provideArity(): array {
 		return [
 			[ 'toomanyargs', 'length(1, 2)' ],
 			[ 'noparams', 'length()' ],
@@ -123,7 +123,7 @@ class SyntaxCheckerTest extends \MediaWikiUnitTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideFunctionName(): array {
+	public static function provideFunctionName(): array {
 		return [
 			[ 'unknownfunction', 'f(1)' ],
 			[ 'unknownfunction', 'timestamp(1)' ],
@@ -147,7 +147,7 @@ class SyntaxCheckerTest extends \MediaWikiUnitTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideAssign(): array {
+	public static function provideAssign(): array {
 		// array assignments need to lookup first, so error will differ.
 		return [
 			[ 'overridebuiltin', 'timestamp := 1' ],
@@ -194,7 +194,7 @@ class SyntaxCheckerTest extends \MediaWikiUnitTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideLookup(): array {
+	public static function provideLookup(): array {
 		return [
 			[ '', 'timestamp' ],
 			[ 'usebuiltin', 'length' ],
@@ -226,7 +226,7 @@ class SyntaxCheckerTest extends \MediaWikiUnitTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideModeDiffer(): array {
+	public static function provideModeDiffer(): array {
 		$testSketches = [
 			// and
 			'(false & (a := 1)); a',
@@ -263,7 +263,7 @@ class SyntaxCheckerTest extends \MediaWikiUnitTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideModeAgree(): array {
+	public static function provideModeAgree(): array {
 		$testSketches = [
 			// pass tests
 			// and
@@ -309,7 +309,7 @@ class SyntaxCheckerTest extends \MediaWikiUnitTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideUnusedVars(): array {
+	public static function provideUnusedVars(): array {
 		return [
 			[ '', 'a := 1; a' ],
 

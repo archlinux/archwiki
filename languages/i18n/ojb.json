@@ -242,7 +242,7 @@
 	"compareselectedversions": "Wabaam eyiizh onaabam aanji'",
 	"editundo": "aaba'",
 	"diff-empty": "(Gaawiin bakaan)",
-	"diff-multi-sameuser": "({{PLURAL:$1|Bizhig biindig aanji'}} biindig bezhigwan wiin-aanji' gaawiin waabam)",
+	"diff-multi-sameuser": "({{PLURAL:$1|Bezhig naawayi'ii aanji'|$1 naawayi'ii aanjied}} biindig naasaab {{GENDER:$3|user}} gaawiin waabam)",
 	"diff-multi-otherusers": "({{PLURAL:$1|Bezhig biindig aanji'|$1 Biindig aanji'}} wiji {{PLURAL:$2|bezhig bakaan Wiin-aanji'|$2 wiin-aanji'}} gaawiin waabam)",
 	"searchresults": "Nandawaabam ishkwe-ayi'ii",
 	"searchresults-title": "Nandawaabam ishkwe-ayi'ii biindig \"$1\"",

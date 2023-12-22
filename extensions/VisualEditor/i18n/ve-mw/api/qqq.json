@@ -27,7 +27,8 @@
 			"UV",
 			"Umherirrender",
 			"Woytecr",
-			"Yejianfei"
+			"Yejianfei",
+			"McDutchie"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "{{doc-apierror}}",
@@ -35,7 +36,6 @@
 	"apierror-visualeditor-docserver-http-error": "{{Related|apierror-visualeditor-docserver}}\n{{doc-apierror}}\n\nParameters:\n* $1 - Error message in English",
 	"apierror-visualeditor-docserver-http": "{{Related|apierror-visualeditor-docserver}}\n{{doc-apierror}}\n\nParameters:\n* $1 - HTTP status code (numeric)\n* $2 - Error message in English",
 	"apierror-visualeditor-docserver": "{{Related|apierror-visualeditor-docserver}}\n{{doc-apierror}}",
-	"apihelp-visualeditor-description": "{{doc-apihelp-description|visualeditor}}",
 	"apihelp-visualeditor-param-basetimestamp": "{{doc-apihelp-param|visualeditor|basetimestamp}}",
 	"apihelp-visualeditor-param-badetag": "{{doc-apihelp-param|visualeditor|badetag}}",
 	"apihelp-visualeditor-param-cachekey": "In computer science, in the context of data storage, serialization is the process of translating data structures or object state into a format that can be stored (for example, in a file or memory buffer, or transmitted across a network connection link) and reconstructed later in the same or another computer environment.\n{{doc-apihelp-param|visualeditor|cachekey}}",
@@ -54,11 +54,11 @@
 	"apihelp-visualeditor-param-stash": "{{doc-apihelp-param|visualeditor|stash}}",
 	"apihelp-visualeditor-param-wikitext": "{{doc-apihelp-param|visualeditor|wikitext}}",
 	"apihelp-visualeditor-summary": "{{doc-apihelp-summary|visualeditor}}",
-	"apihelp-visualeditoredit-description": "{{doc-apihelp-description|visualeditoredit}}",
 	"apihelp-visualeditoredit-param-basetimestamp": "{{doc-apihelp-param|visualeditoredit|basetimestamp}}",
 	"apihelp-visualeditoredit-param-cachekey": "{{doc-apihelp-param|visualeditoredit|cachekey}}",
 	"apihelp-visualeditoredit-param-captchaid": "{{doc-apihelp-param|visualeditoredit|captchaid}}",
 	"apihelp-visualeditoredit-param-captchaword": "{{doc-apihelp-param|visualeditoredit|captchaword}}",
+	"apihelp-visualeditoredit-param-nocontent": "{{doc-apihelp-param|visualeditoredit|nocontent}}",
 	"apihelp-visualeditoredit-param-plugins": "{{doc-apihelp-param|visualeditoredit|plugins}}",
 	"apihelp-visualeditoredit-param-data-{plugin}": "{{doc-apihelp-param|visualeditoredit|data-&#x7B;plugin} }}",
 	"apihelp-visualeditoredit-param-etag": "{{doc-apihelp-param|visualeditoredit|etag}}",
@@ -72,7 +72,7 @@
 	"apihelp-visualeditoredit-param-sectiontitle": "{{doc-apihelp-param|visualeditoredit|sectiontitle}}",
 	"apihelp-visualeditoredit-param-starttimestamp": "{{doc-apihelp-param|visualeditoredit|starttimestamp}}",
 	"apihelp-visualeditoredit-param-summary": "{{doc-apihelp-param|visualeditoredit|summary}}\n{{Identical|Edit summary}}",
-	"apihelp-visualeditoredit-param-tags": "{{doc-apihelp-param|visualeditoredit|tags}}",
+	"apihelp-visualeditoredit-param-tags": "A '''[[mw:Help:Tags|change tag]]''' is an annotation associated with an edit or log entry. \n\n{{doc-apihelp-param|visualeditoredit|tags}}",
 	"apihelp-visualeditoredit-param-watchlist": "{{notranslate}}\n{{doc-apihelp-param|visualeditoredit|watchlist}}",
 	"apihelp-visualeditoredit-param-wikitext": "{{doc-apihelp-param|visualeditoredit|wikitext}}",
 	"apihelp-visualeditoredit-summary": "{{doc-apihelp-summary|visualeditoredit}}"

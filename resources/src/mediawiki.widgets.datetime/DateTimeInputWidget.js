@@ -1,9 +1,5 @@
 ( function () {
 
-	// IE 9-11 calculates the width of the 'ch' unit without including the space around characters,
-	// causing fields sized to e.g. 4ch to be too narrow to fit 4 digits. https://caniuse.com/ch-unit
-	var digitWidth = $.client.profile().name === 'msie' ? 1.15 : 1;
-
 	/**
 	 * DateTimeInputWidgets can be used to input a date, a time, or a date and
 	 * time, in either UTC or the user's local timezone.
@@ -219,6 +215,7 @@
 				value = '1970-01-01T' + value + 'Z';
 				break;
 		}
+		// eslint-disable-next-line security/detect-unsafe-regex
 		m = /^(\d{4,})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,3}))?Z$/.exec( value );
 		if ( m ) {
 			if ( m[ 7 ] ) {
@@ -355,7 +352,7 @@
 			}
 
 			if ( spec.type === 'number' ) {
-				sz = ( spec.size * digitWidth ) + 'ch';
+				sz = spec.size + 'ch';
 			} else {
 				// Add a little for padding
 				sz = ( spec.size * 1.25 ) + 'ch';
@@ -461,7 +458,7 @@
 
 				if ( spec.intercalarySize ) {
 					if ( spec.type === 'number' ) {
-						$field.width( ( spec.size * digitWidth ) + 'ch' );
+						$field.width( spec.size + 'ch' );
 					} else {
 						// Add a little for padding
 						$field.width( ( spec.size * 1.25 ) + 'ch' );
@@ -489,7 +486,7 @@
 					}
 					$field.toggleClass( 'oo-ui-element-hidden', sz <= 0 );
 					if ( spec.type === 'number' ) {
-						this.fields[ i ].width( ( sz * digitWidth ) + 'ch' );
+						this.fields[ i ].width( sz + 'ch' );
 					} else {
 						// Add a little for padding
 						this.fields[ i ].width( ( sz * 1.25 ) + 'ch' );

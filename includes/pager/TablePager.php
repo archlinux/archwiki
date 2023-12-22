@@ -18,8 +18,14 @@
  * @file
  */
 
+namespace MediaWiki\Pager;
+
+use IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
+use ParserOutput;
+use stdClass;
+use XmlSelect;
 
 /**
  * Table-based display with a user-selectable sort order
@@ -73,9 +79,11 @@ abstract class TablePager extends IndexPager {
 	 * rather than mysteriously render things wrong.
 	 *
 	 * @deprecated since 1.24, use getBodyOutput() or getFullOutput() instead
+	 *   Emitting deprecation warnings since 1.41.
 	 * @return string
 	 */
 	final public function getBody() {
+		wfDeprecated( __METHOD__, '1.24' );
 		return parent::getBody();
 	}
 
@@ -489,3 +497,9 @@ abstract class TablePager extends IndexPager {
 	 */
 	abstract protected function getFieldNames();
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( TablePager::class, 'TablePager' );

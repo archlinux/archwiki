@@ -15,14 +15,16 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { FileRepoInfo } = require( 'mmv' );
+
 ( function () {
 	QUnit.module( 'mmv.provider.FileRepoInfo', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'FileRepoInfo constructor sense check', function ( assert ) {
 		var api = { get: function () {} },
-			fileRepoInfoProvider = new mw.mmv.provider.FileRepoInfo( api );
+			fileRepoInfoProvider = new FileRepoInfo( api );
 
-		assert.true( fileRepoInfoProvider instanceof mw.mmv.provider.FileRepoInfo );
+		assert.true( fileRepoInfoProvider instanceof FileRepoInfo );
 	} );
 
 	QUnit.test( 'FileRepoInfo get test', function ( assert ) {
@@ -76,7 +78,7 @@
 					}
 				} );
 			} },
-			fileRepoInfoProvider = new mw.mmv.provider.FileRepoInfo( api );
+			fileRepoInfoProvider = new FileRepoInfo( api );
 
 		return fileRepoInfoProvider.get().then( function ( repos ) {
 			assert.strictEqual( repos.shared.displayName,
@@ -116,7 +118,7 @@
 				return $.Deferred().resolve( {} );
 			} },
 			done = assert.async(),
-			fileRepoInfoProvider = new mw.mmv.provider.FileRepoInfo( api );
+			fileRepoInfoProvider = new FileRepoInfo( api );
 
 		fileRepoInfoProvider.get().fail( function () {
 			assert.true( true, 'promise rejected when no data is returned' );

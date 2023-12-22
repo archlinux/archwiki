@@ -6,7 +6,6 @@
 			"Wladek92"
 		]
 	},
-	"apihelp-titleblacklist-description": "Valider un titre de page, un nom de fichier ou un nom d’utilisateur d’après la liste des titres interdits.",
 	"apihelp-titleblacklist-summary": "Valider un titre de page, un nom de fichier ou un nom d’utilisateur d’après la liste des titres interdits.",
 	"apihelp-titleblacklist-param-title": "La chaîne à valider d’après la liste des interdits.",
 	"apihelp-titleblacklist-param-action": "L’action à vérifier.",

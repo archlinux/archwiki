@@ -1184,8 +1184,13 @@
 	"\\int": {
 		"nullary_macro": true
 	},
+	"\\intBar": {
+		"nullary_macro": true,
+		"stix_required": true
+	},
 	"\\intbar": {
-		"nullary_macro": true
+		"nullary_macro": true,
+		"stix_required": true
 	},
 	"\\intercal": {
 		"ams_required": true,
@@ -1214,6 +1219,10 @@
 	},
 	"\\ker": {
 		"latex_function_names": true
+	},
+	"\\kern": {
+		"fun_ar1": true,
+		"mhchemtexified_required": true
 	},
 	"\\koppa": {
 		"nullary_macro_in_mbox": true,
@@ -1353,6 +1362,10 @@
 	"\\ll": {
 		"nullary_macro": true
 	},
+	"\\llap": {
+		"fun_ar1": true,
+		"mhchemtexified_required": true
+	},
 	"\\llcorner": {
 		"ams_required": true,
 		"other_delimiters1": true
@@ -1386,16 +1399,32 @@
 	"\\log": {
 		"latex_function_names": true
 	},
+	"\\longLeftrightharpoons": {
+		"mhchemtexified_required": true,
+		"nullary_macro": true
+	},
+	"\\longRightleftharpoons": {
+		"mhchemtexified_required": true,
+		"nullary_macro": true
+	},
 	"\\longleftarrow": {
 		"nullary_macro": true
 	},
 	"\\longleftrightarrow": {
 		"nullary_macro": true
 	},
+	"\\longleftrightarrows": {
+		"mhchemtexified_required": true,
+		"nullary_macro": true
+	},
 	"\\longmapsto": {
 		"nullary_macro": true
 	},
 	"\\longrightarrow": {
+		"nullary_macro": true
+	},
+	"\\longrightleftharpoons": {
+		"mhchemtexified_required": true,
 		"nullary_macro": true
 	},
 	"\\looparrowleft": {
@@ -1408,6 +1437,10 @@
 	},
 	"\\lor": {
 		"nullary_macro": true
+	},
+	"\\lower": {
+		"fun_ar2": true,
+		"mhchemtexified_required": true
 	},
 	"\\lozenge": {
 		"ams_required": true,
@@ -1454,6 +1487,10 @@
 	"\\mathcal": {
 		"fun_ar1": true,
 		"is_letter_mod": true
+	},
+	"\\mathchoice": {
+		"fun_ar4": true,
+		"mhchemtexified_required": true
 	},
 	"\\mathclose": {
 		"fun_ar1": true,
@@ -1521,6 +1558,10 @@
 	"\\min": {
 		"latex_function_names": true
 	},
+	"\\mkern": {
+		"fun_ar1": true,
+		"mhchemtexified_required": true
+	},
 	"\\mod": {
 		"ams_required": true,
 		"nullary_macro": true
@@ -1530,6 +1571,10 @@
 	},
 	"\\mp": {
 		"nullary_macro": true
+	},
+	"\\mskip": {
+		"fun_ar1": true,
+		"mhchemtexified_required": true
 	},
 	"\\mu": {
 		"is_literal": true,
@@ -1915,6 +1960,10 @@
 		"ams_required": true,
 		"nullary_macro": true
 	},
+	"\\raise": {
+		"fun_ar2": true,
+		"mhchemtexified_required": true
+	},
 	"\\rang": {
 		"other_delimiters2": "\\rangle"
 	},
@@ -1988,6 +2037,10 @@
 	"\\risingdotseq": {
 		"ams_required": true,
 		"nullary_macro": true
+	},
+	"\\rlap": {
+		"fun_ar1": true,
+		"mhchemtexified_required": true
 	},
 	"\\rm": {
 		"declh_function": true
@@ -2071,6 +2124,11 @@
 		"ams_required": true,
 		"nullary_macro": true
 	},
+	"\\smash": {
+		"fun_ar1": true,
+		"fun_ar1opt": true,
+		"mhchemtexified_required": true
+	},
 	"\\smile": {
 		"nullary_macro": true
 	},
@@ -2121,9 +2179,6 @@
 	"\\stigma": {
 		"nullary_macro_in_mbox": true,
 		"teubner_required": true
-	},
-	"\\strokeint": {
-		"nullary_macro": true
 	},
 	"\\sub": {
 		"nullary_macro_aliase": "\\subset"
@@ -2318,6 +2373,10 @@
 	},
 	"\\trianglerighteq": {
 		"ams_required": true,
+		"nullary_macro": true
+	},
+	"\\tripledash": {
+		"mhchemtexified_required": true,
 		"nullary_macro": true
 	},
 	"\\twoheadleftarrow": {

@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Status\Status;
 use Wikimedia\IPUtils;
 
 /**

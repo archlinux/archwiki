@@ -78,7 +78,7 @@ class DeclhTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testSubscriptsForFontMod() {
-		$mods = [ 'rm','it','cal','bf' ];
+		$mods = [ 'rm', 'it', 'cal', 'bf' ];
 		foreach ( $mods as $mod ) {
 			$f = new Declh( "\\{$mod}", new TexArray( new Literal( 'a' ) ) );
 			$this->assertEquals( [ "\\math{$mod}{a}" ], $f->extractSubscripts(),

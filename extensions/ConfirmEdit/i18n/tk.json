@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Hanberke",
-			"TayfunEt."
+			"TayfunEt.",
+			"Zolgoyo"
 		]
 	},
 	"captcha-edit": "Bu sahypany redaktirlemek üçin, aşakdaky meselni çözüň we jogaby gutynyň içine ýazyň ([[Special:Captcha/help|jikme-jik]]):",
 	"captcha-desc": "Ýönekeý captcha ama aşyrylyşy",
-	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Özgerdişiňizde täze daşarky çykgytlar bar.\nAwtomatik spamdan goranmak üçin, aşakdaky ýönekeý soraga jogap beriň we jogaby gutynyň içine ýazyň ([[Special:Captcha/help|giňişleýin maglumat]]):",
 	"captcha-badlogin": "Awtomat parol döwmeklikden goranmaga kömekleşmek üçin, aşakdaky meseläni çözüň we jogaby gutynyň içine ýazyň ([[Special:Captcha/help|jikme-jik]]):",
 	"captcha-createaccount": "Awtomat hasap döredilmeginden goranmaga kömekleşmek üçin, aşakdaky meseläni çözüň we jogaby gutynyň içine ýazyň ([[Special:Captcha/help|jikme-jik]]):",

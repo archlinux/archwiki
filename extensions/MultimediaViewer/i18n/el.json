@@ -5,13 +5,13 @@
 			"Evropi",
 			"Geraki",
 			"Glavkos",
+			"Iakovos Iason Tountas",
 			"Indoril",
 			"NikosLikomitros",
 			"Nikosgranturismogt",
 			"Nikosguard",
 			"Protnet",
-			"Xaris333",
-			"Iakovos Iason Tountas"
+			"Xaris333"
 		]
 	},
 	"multimediaviewer-desc": "Επεκτείνετε τις μικρογραφίες σε μεγαλύτερο μέγεθος σε ένα περιβάλλον εργασίας πλήρους οθόνης.",
@@ -24,6 +24,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|ένας ακόμη δημιουργός|$1 ακόμη δημιουργοί}}",
 	"multimediaviewer-multiple-authors-combine": "$1 και $2",
 	"multimediaviewer-metadata-error": "Δεν ήταν δυνατή η φόρτωση λεπτομερειών εικόνας (σφάλμα: $1)",
+	"multimediaviewer-file-not-found-error": "Λυπούμαστε, το αρχείο $1 δεν μπορεί να εμφανιστεί επειδή δεν υπάρχει στην τρέχουσα σελίδα.",
 	"multimediaviewer-thumbnail-error": "Συγνώμη, το αρχείο δεν μπορεί να προβληθεί",
 	"multimediaviewer-thumbnail-error-description": "Φαίνεται να υπάρχει τεχνικό θέμα. Μπορείτε να $1 αν συνεχίζει. Σφάλμα: $2",
 	"multimediaviewer-thumbnail-error-retry": "ξανά προσπάθεια",

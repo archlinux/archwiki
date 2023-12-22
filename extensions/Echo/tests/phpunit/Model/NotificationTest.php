@@ -3,6 +3,9 @@
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\Extension\Notifications\Model\TargetPage;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\LBFactory;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\Model\Notification
@@ -42,10 +45,16 @@ class NotificationTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNewFromRowWithException() {
+		$lb = $this->createMock( ILoadBalancer::class );
+		$lb->method( 'getConnection' )->willReturn( $this->createMock( IDatabase::class ) );
+		$lbFactory = $this->createMock( LBFactory::class );
+		$lbFactory->method( 'getExternalLB' )->willReturn( $lb );
+		$this->setService( 'DBLoadBalancer', $lb );
+		$this->setService( 'DBLoadBalancerFactory', $lbFactory );
 		$row = $this->mockNotificationRow();
 		// Provide an invalid event id
 		$row['notification_event'] = -1;
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		Notification::newFromRow( (object)$row );
 	}
 

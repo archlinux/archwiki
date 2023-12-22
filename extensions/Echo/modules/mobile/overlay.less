@@ -1,5 +1,5 @@
 // FIXME: some of this could be removed if we reused .page-list styling
-@import 'mediawiki.ui/variables.less';
+@import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
 
 @overlayHeaderHeight: 3em;
@@ -24,8 +24,9 @@
 		.mw-echo-ui-actionMenuPopupWidget-menu {
 			padding: 0.5em;
 			box-shadow: none;
-			border: 1px solid @colorGray12;
-			border-width: 1px 0 0 0;
+			border-color: @border-color-subtle;
+			border-style: @border-style-base;
+			border-width: @border-width-base 0 0 0;
 			// Override the positioning of the menu
 			// so it is "stuck" on the bottom of the
 			// notification overlay panel

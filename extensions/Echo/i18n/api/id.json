@@ -8,7 +8,6 @@
 			"William Surya Permana"
 		]
 	},
-	"apihelp-echomarkread-description": "Tandai pemberitahuan dari pengguna ini sebagai telah dibaca.",
 	"apihelp-echomarkread-summary": "Tandai pemberitahuan dari pengguna ini sebagai telah dibaca.",
 	"apihelp-echomarkread-param-list": "Daftar ID pemberitahuan yang ingin ditandai sebagai telah dibaca.",
 	"apihelp-echomarkread-param-unreadlist": "Daftar ID pemberitahuan yang ingin ditandai sebagai belum dibaca.",
@@ -18,14 +17,11 @@
 	"apihelp-echomarkread-example-1": "Tandai pemberitahuan 8 sebagai telah dibaca",
 	"apihelp-echomarkread-example-2": "Tandai semua pemberitahuan sebagai telah dibaca",
 	"apihelp-echomarkread-example-3": "Tandai pemberitahuan 1 sebagai telah dibaca",
-	"apihelp-echomarkseen-description": "Tandai pemberitahuan dari pengguna ini sebagai telah dibaca.",
 	"apihelp-echomarkseen-summary": "Tandai pemberitahuan dari pengguna ini sebagai telah dibaca.",
 	"apihelp-echomarkseen-example-1": "Tandai pemberitahuan dari semua jenis sebagai telah dibaca",
 	"apihelp-echomarkseen-param-type": "Jenis pemberitahuan untuk ditandai telah dilihat: 'peringatan', 'pesan' atau 'semua'.",
-	"apihelp-echomute-description": "Bisukan atau suarakan pemberitahuan dari pengguna atau halaman tertentu.",
 	"apihelp-echomute-summary": "Bisukan atau suarakan pemberitahuan dari pengguna atau halaman tertentu.",
 	"apihelp-echopushsubscriptions-param-command": "Tindakan untuk dilakukan.",
-	"apihelp-query+notifications-description": "Dapatkan penungguan pemberitahuan untuk pengguna ini.",
 	"apihelp-query+notifications-summary": "Dapatkan penungguan pemberitahuan untuk pengguna ini.",
 	"apihelp-query+notifications-param-prop": "Rincian yang diminta.",
 	"apihelp-query+notifications-param-sections": "Bagian pemberitahuan yang ingin didapatkan (misalnya, kombinasi antara 'peringatan' dan 'pesan').",

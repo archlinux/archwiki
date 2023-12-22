@@ -5,7 +5,6 @@
 			"ديفيد"
 		]
 	},
-	"apihelp-templatedata-description": "اجلب البيانات المخزنة بواسطة الامتداد TemplateData.",
 	"apihelp-templatedata-summary": "اجلب البيانات المخزنة بواسطة الامتداد TemplateData.",
 	"apihelp-templatedata-example-1": "إرجاع بيانات القالب ل[[Template:Stub]] و [[Template:Example]]، مع النتائج لو كان القالبان غير موجودين أو موجودين لكن بدون بيانات قالب.",
 	"apihelp-templatedata-example-2": "يرجع بيانات القالب ل[[Template:Stub]] و [[Template:Example]]، بدون نتائج لو كان القالبان غير موجودين أو موجودين لكن بدون بيانات قالب",

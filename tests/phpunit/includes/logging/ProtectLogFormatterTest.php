@@ -1,9 +1,26 @@
 <?php
 
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\User\UserIdentityValue;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\LBFactory;
+
 /**
  * @covers ProtectLogFormatter
  */
 class ProtectLogFormatterTest extends LogFormatterTestCase {
+
+	use MockAuthorityTrait;
+
+	protected function setUp(): void {
+		parent::setUp();
+
+		$db = $this->createNoOpMock( IDatabase::class, [ 'getInfinity' ] );
+		$db->method( 'getInfinity' )->willReturn( 'infinity' );
+		$lbFactory = $this->createMock( LBFactory::class );
+		$lbFactory->method( 'getReplicaDatabase' )->willReturn( $db );
+		$this->setService( 'DBLoadBalancerFactory', $lbFactory );
+	}
 
 	/**
 	 * Provide different rows from the logging table to test
@@ -429,7 +446,7 @@ class ProtectLogFormatterTest extends LogFormatterTestCase {
 		$this->doTestLogFormatter( $row, $extra );
 	}
 
-	public function provideGetActionLinks() {
+	public static function provideGetActionLinks() {
 		yield [
 			[ 'protect' ],
 			true
@@ -448,8 +465,7 @@ class ProtectLogFormatterTest extends LogFormatterTestCase {
 	 */
 	public function testGetActionLinks( array $permissions, $shouldMatch ) {
 		RequestContext::resetMain();
-		$user = $this->getTestUser()->getUser();
-		$this->overrideUserPermissions( $user, $permissions );
+		$user = $this->mockUserAuthorityWithPermissions( new UserIdentityValue( 42, __METHOD__ ), $permissions );
 		$row = $this->expandDatabaseRow( [
 			'type' => 'protect',
 			'action' => 'unprotect',
@@ -459,9 +475,18 @@ class ProtectLogFormatterTest extends LogFormatterTestCase {
 			'params' => [],
 		], false );
 		$context = new RequestContext();
-		$context->setUser( $user );
+		$context->setAuthority( $user );
+		$context->setLanguage( 'en' );
 		$formatter = LogFormatter::newFromRow( $row );
 		$formatter->setContext( $context );
+		$titleFactory = $this->createMock( TitleFactory::class );
+		$titleFactory->method( 'makeTitle' )->willReturnCallback( static function () {
+			$ret = Title::makeTitle( ...func_get_args() );
+			$ret->resetArticleID( 0 );
+			return $ret;
+		} );
+		$this->setService( 'TitleFactory', $titleFactory );
+		$this->setService( 'LinkCache', $this->createMock( LinkCache::class ) );
 		if ( $shouldMatch ) {
 			$this->assertStringMatchesFormat(
 				'%Aaction=protect%A', $formatter->getActionLinks() );

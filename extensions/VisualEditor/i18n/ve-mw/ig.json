@@ -13,10 +13,9 @@
 		]
 	},
 	"collabpad": "CollabPadì",
-	"tooltip-ca-createsource": "Mepụta koodu mmalite nke ibe a",
-	"tooltip-ca-edit": "Jiri wikitext dezie ibe a",
-	"tooltip-ca-editsource": "Dezie koodu isi mmalite nke ibe a",
 	"tooltip-ca-ve-edit": "Mèzi ihu â",
+	"tooltip-ca-editsource": "Dezie koodu isi mmalite nke ibe a",
+	"tooltip-ca-createsource": "Mepụta koodu mmalite nke ibe a",
 	"visualeditor-advancedsettings-tool": "Ntọala dị elu",
 	"visualeditor-annotations-default-description": "Akụkụ nke ibe a bụ akụkụ nke oke nkọwa.",
 	"visualeditor-annotations-default-end": "Ọgwụgwụ nke oke nkọwapụta",
@@ -29,7 +28,6 @@
 	"visualeditor-autosave-recovered-text": "E nwetaghachila mgbanwe gị echekwara na akpaghị aka.",
 	"visualeditor-autosave-recovered-title": "enwetaghachigo mgbanwe",
 	"visualeditor-backbutton-tooltip": "Laghachi azụ",
-	"visualeditor-beta-warning": "Ọ bụrụ na ị ga-ezute nsogbu teknụzụ ọ bụla ka ị na-edezi, biko kọọ ha.",
 	"visualeditor-ca-createlocaldescriptionsource": "Tinye nkọwa ebe o si",
 	"visualeditor-ca-createsource": "Mepụta isi mmalite",
 	"visualeditor-ca-editsource": "Dezie ebe osi",
@@ -46,7 +44,6 @@
 	"visualeditor-dialog-transclusion-add-param-error-exists-selected": "E nweghị ike itinye ntụ \"$2\" ugboro abụọ.",
 	"visualeditor-dialog-transclusion-add-param-error-exists-unselected": "Nke\n oke \"$2\" adịlarị maka ojiji. Biko lelee nhọrọ ndị dị na sidebar.",
 	"visualeditor-linkinspector-educationpopup-title": "Òjikọ",
-	"visualeditor-mweditmodesource-warning-cancel": "Hapụ̀",
 	"visualeditor-savedialog-label-save-short": "Dònye",
 	"visualeditor-savedialog-label-save-short-start": "Dònye…"
 }

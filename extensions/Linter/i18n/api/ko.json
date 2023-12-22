@@ -4,7 +4,6 @@
 			"Ykhwong"
 		]
 	},
-	"apihelp-query+linterrors-description": "린트 오류 목록을 가져옵니다",
 	"apihelp-query+linterrors-summary": "린트 오류 목록을 가져옵니다",
 	"apihelp-query+linterrors-param-categories": "린트 오류 분류",
 	"apihelp-query+linterrors-param-limit": "질의할 결과 수",

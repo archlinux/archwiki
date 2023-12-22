@@ -25,6 +25,7 @@
  */
 
 use MediaWiki\Cache\CacheKeyHelper;
+use MediaWiki\Config\Config;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
@@ -35,8 +36,18 @@ use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\ForeignTitle;
+use MediaWiki\Title\ImportTitleFactory;
+use MediaWiki\Title\NaiveForeignTitleFactory;
+use MediaWiki\Title\NaiveImportTitleFactory;
+use MediaWiki\Title\NamespaceAwareForeignTitleFactory;
+use MediaWiki\Title\NamespaceImportTitleFactory;
+use MediaWiki\Title\NamespaceInfo;
+use MediaWiki\Title\SubpageImportTitleFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
+use MediaWiki\User\ExternalUserNames;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\NormalizedException\NormalizedException;
 
@@ -567,8 +578,7 @@ class WikiImporter {
 			}
 		}
 
-		$title = Title::castFromPageIdentity( $pageIdentity );
-		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
+		$title = Title::newFromPageIdentity( $pageIdentity );
 		return $this->hookRunner->onAfterImportPage( $title, $foreignTitle,
 			$revCount, $sRevCount, $pageInfo );
 	}
@@ -687,7 +697,6 @@ class WikiImporter {
 	/**
 	 * Primary entry point
 	 * @throws Exception
-	 * @throws MWException
 	 * @return bool
 	 */
 	public function doImport() {

@@ -14,7 +14,6 @@
 	"captcha-edit": "Da biste uredili ovu stranicu, riješite sljedeći zadatak ispod i upišite odgovor u polje ([[Special:Captcha/help|više obavijesti]]):",
 	"captcha-edit-fail": "Netočan ili nedostajući unos CAPTCHA.",
 	"captcha-desc": "Pruža CAPTCHA tehnike za zaštitu od neželjene pošte (spam-a) i pogađanja zaporke",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Rješenje za unos CAPTCHA",
 	"captcha-info-help": "Opis CAPTCHA.",
 	"captcha-id-label": "Identifikator CAPTCHA",

@@ -22,6 +22,8 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
+use MediaWiki\Status\Status;
+use MediaWiki\User\PasswordReset;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -31,8 +33,7 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 class ApiResetPassword extends ApiBase {
 
-	/** @var PasswordReset */
-	private $passwordReset;
+	private PasswordReset $passwordReset;
 
 	/**
 	 * @param ApiMain $main

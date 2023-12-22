@@ -3,6 +3,7 @@
 */
 
 @import 'variables.less';
+@import 'mediawiki.mixins.less';
 
 #column-content {
 	float: right;
@@ -38,6 +39,7 @@
 /*
 ** general portlet styles (elements in the quickbar)
 */
+.mw-portlet,
 .portlet {
 	border: 0;
 	margin: 0 0 0.5em;
@@ -46,11 +48,13 @@
 	width: 11.6em;
 }
 
+.mw-portlet label,
 .portlet h3 {
 	padding: 0 1em 0 0.5em;
 	font-weight: normal;
 }
 
+.mw-portlet > div,
 .pBody {
 	background-color: #fff;
 	border: 1px solid #aaa;

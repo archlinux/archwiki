@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Languages;
 
-use Config;
 use InvalidArgumentException;
 use Language;
 use LanguageCode;
@@ -28,10 +27,11 @@ use LanguageConverter;
 use LocalisationCache;
 use LogicException;
 use MapCacheLRU;
+use MediaWiki\Config\Config;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\MainConfigNames;
-use NamespaceInfo;
+use MediaWiki\Title\NamespaceInfo;
 use Wikimedia\Bcp47Code\Bcp47Code;
 
 /**
@@ -130,7 +130,7 @@ class LanguageFactory {
 	 * presumed to be a standard BCP-47 code.  (There are, regrettably,
 	 * some ambiguous codes where this makes a difference.)
 	 *
-	 * As Language itself implements Bcp47Code, this method is an efficient
+	 * As the Language class itself implements Bcp47Code, this method is an efficient
 	 * and safe downcast if you pass in a Language object.
 	 *
 	 * @param string|Bcp47Code $code
@@ -143,7 +143,7 @@ class LanguageFactory {
 		if ( $code instanceof Bcp47Code ) {
 			// Any compatibility remapping of valid BCP-47 codes would be done
 			// inside ::bcp47ToInternal, not here.
-			$code = LanguageCode::bcp47ToInternal( $code->toBcp47Code() );
+			$code = LanguageCode::bcp47ToInternal( $code );
 		} else {
 			// Perform various deprecated and compatibility mappings of
 			// internal codes.
@@ -176,7 +176,7 @@ class LanguageFactory {
 	 * Create a language object for a given language code.
 	 *
 	 * @param string $code
-	 * @param bool $fallback Whether we're going through language fallback chain
+	 * @param bool $fallback Whether we're going through the language fallback chain
 	 * @return Language
 	 */
 	private function newFromCode( $code, $fallback = false ): Language {
@@ -223,7 +223,7 @@ class LanguageFactory {
 
 	/**
 	 * @param string $code
-	 * @param bool $fallback Whether we're going through language fallback chain
+	 * @param bool $fallback Whether we're going through the language fallback chain
 	 * @return string Name of the language class
 	 */
 	private function classFromCode( $code, $fallback = true ) {
@@ -236,7 +236,7 @@ class LanguageFactory {
 
 	/**
 	 * Get the "parent" language which has a converter to convert a "compatible" language
-	 * (in another variant) to this language (eg. zh for zh-cn, but not en for en-gb).
+	 * (in another variant) to this language (eg., zh for zh-cn, but not en for en-gb).
 	 *
 	 * @note This method does not contain the deprecated and compatibility
 	 *  mappings of Language::getLanguage(string).
@@ -252,7 +252,7 @@ class LanguageFactory {
 		if ( $code instanceof Language ) {
 			$code = $code->getCode();
 		} elseif ( $code instanceof Bcp47Code ) {
-			$code = LanguageCode::bcp47ToInternal( $code->toBcp47Code() );
+			$code = LanguageCode::bcp47ToInternal( $code );
 		}
 		// $code is now a mediawiki internal code string.
 		// We deliberately use array_key_exists() instead of isset() because we cache null.

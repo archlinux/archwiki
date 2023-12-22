@@ -8,7 +8,6 @@
 		]
 	},
 	"apierror-visualeditor-docserver": "Masalah nalika nggayut paladèn Parsoid/RESTBase",
-	"apihelp-visualeditor-description": "Mbalèkaké HTML5 marang kaca saka paladèn Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Nalika nyimpen, setèl ing cap-wektu kapan nalikané kacané dimot. Kanggo ngertèni yèn ana tabrakan besutan.",
 	"apihelp-visualeditor-param-editintro": "Besut pambuka kanggo ditambahaké menyang wara-wara.",
 	"apihelp-visualeditor-param-etag": "ETag kang arep kakirim.",
@@ -19,7 +18,6 @@
 	"apihelp-visualeditor-param-section": "Pérangan kang arep kagarap.",
 	"apihelp-visualeditor-param-starttimestamp": "Nalika nyimpen, setèl ing cap-wektu kapan nalikané kacané dimot. Kanggo ngertèni yèn ana tabrakan besutan.",
 	"apihelp-visualeditor-param-wikitext": "Tèks wiki supaya kakirim menyang Parsoid saperlu kasalin dadi HTML (paksi=parsefragmèn).",
-	"apihelp-visualeditoredit-description": "Simpen kaca HTML5 ing MediaWiki (diolah dadi tèks-wiki lumantar layanan Parsoid)",
 	"apihelp-visualeditoredit-param-basetimestamp": "Nalika nyimpen, setèl ing cap-wektu kapan nalikané kacané dimot. Kanggo ngertèni yèn ana tabrakan besutan.",
 	"apihelp-visualeditoredit-param-captchaid": "ID Captcha (nalika nyimpen nganggo tanggepan captcha)",
 	"apihelp-visualeditoredit-param-captchaword": "Wangsulan marang captcha (nalika nyimpen nganggo tanggepan captcha).",

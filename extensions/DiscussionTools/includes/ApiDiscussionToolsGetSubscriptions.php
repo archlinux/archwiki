@@ -26,7 +26,7 @@ class ApiDiscussionToolsGetSubscriptions extends ApiBase {
 	 */
 	public function execute() {
 		$user = $this->getUser();
-		if ( !$user->isRegistered() ) {
+		if ( !$user->isNamed() ) {
 			$this->dieWithError( 'apierror-mustbeloggedin-generic', 'notloggedin' );
 		}
 
@@ -56,12 +56,5 @@ class ApiDiscussionToolsGetSubscriptions extends ApiBase {
 				ParamValidator::PARAM_ISMULTI => true,
 			],
 		];
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function isInternal() {
-		return true;
 	}
 }

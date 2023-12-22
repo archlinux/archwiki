@@ -4,17 +4,6 @@
  * @covers RCFeed
  */
 class RCFeedTest extends MediaWikiUnitTestCase {
-	protected function setUp(): void {
-		parent::setUp();
-		MWDebug::init();
-	}
-
-	protected function tearDown(): void {
-		MWDebug::clearDeprecationFilters();
-		MWDebug::clearLog();
-		MWDebug::deinit();
-		parent::tearDown();
-	}
 
 	public function testFactoryClass() {
 		$feed = RCFeed::factory( [ 'class' => UDPRCFeedEngine::class ] );
@@ -47,8 +36,8 @@ class RCFeedTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testFactoryCustomUriDeprecated() {
-		$this->expectDeprecation();
-		$this->expectDeprecationMessage( '$wgRCFeeds without class' );
+		$this->expectDeprecationAndContinue( '/\$wgRCFeeds without class/' );
+		$this->expectException( InvalidArgumentException::class );
 		$feed = RCFeed::factory( [ 'uri' => 'test://bogus' ] );
 	}
 

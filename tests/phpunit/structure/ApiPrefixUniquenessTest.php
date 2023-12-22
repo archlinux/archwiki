@@ -6,6 +6,7 @@ use MediaWiki\Request\FauxRequest;
  * Checks that all API query modules, core and extensions, have unique prefixes.
  *
  * @group API
+ * @group Database
  * @coversNothing
  */
 class ApiPrefixUniquenessTest extends MediaWikiIntegrationTestCase {
@@ -23,7 +24,7 @@ class ApiPrefixUniquenessTest extends MediaWikiIntegrationTestCase {
 			$class = get_class( $module );
 
 			$prefix = $module->getModulePrefix();
-			if ( $prefix === '' /* HACK: T196962 */ || $prefix === 'wbeu' ) {
+			if ( $prefix === '' ) {
 				continue;
 			}
 

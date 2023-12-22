@@ -7,8 +7,8 @@ use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
+use Wikimedia\Parsoid\Ext\PHPUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\PHPUtils;
 
 class Poem extends ExtensionTagHandler implements ExtensionModule {
 
@@ -115,7 +115,7 @@ class Poem extends ExtensionTagHandler implements ExtensionModule {
 			$extApi->addNewArg( $extArgs, 'class', 'poem' );
 		}
 
-		return $extApi->extTagToDOM( $extArgs, '', $content, [
+		return $extApi->extTagToDOM( $extArgs, $content, [
 				'wrapperTag' => 'div',
 				'parseOpts' => [ 'extTag' => 'poem' ],
 				// Create new frame, because $content doesn't literally appear in

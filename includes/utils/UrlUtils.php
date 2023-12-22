@@ -94,7 +94,8 @@ class UrlUtils {
 	}
 
 	/**
-	 * Expand a potentially local URL to a fully-qualified URL.
+	 * Expand a potentially local URL to a fully-qualified URL using $wgServer
+	 * (or one of its alternatives).
 	 *
 	 * The meaning of the PROTO_* constants is as follows:
 	 * PROTO_HTTP: Output a URL starting with http://
@@ -106,12 +107,18 @@ class UrlUtils {
 	 *   protocol-relative URLs, use the protocol of CANONICAL_SERVER
 	 * PROTO_INTERNAL: Like PROTO_CANONICAL, but uses INTERNAL_SERVER instead of CANONICAL_SERVER
 	 *
+	 * If $url specifies a protocol, or $url is domain-relative and $wgServer
+	 * specifies a protocol, PROTO_HTTP, PROTO_HTTPS, PROTO_RELATIVE and
+	 * PROTO_CURRENT do not change that.
+	 *
+	 * Parent references (/../) in the path are resolved (as in wfRemoveDotSegments).
+	 *
 	 * @todo this won't work with current-path-relative URLs like "subdir/foo.html", etc.
 	 *
 	 * @throws BadMethodCallException if no server was passed to the constructor
-	 * @param string $url Either fully-qualified or a local path + query
-	 * @param string|int|null $defaultProto One of the PROTO_* constants. Determines the
-	 *    protocol to use if $url or SERVER is protocol-relative
+	 * @param string $url An URL; can be absolute (e.g. http://example.com/foo/bar),
+	 *    protocol-relative (//example.com/foo/bar) or domain-relative (/foo/bar).
+	 * @param string|int|null $defaultProto One of the PROTO_* constants, as described above.
 	 * @return ?string Fully-qualified URL, current-path-relative URL or null if
 	 *    no valid URL can be constructed
 	 */
@@ -173,14 +180,14 @@ class UrlUtils {
 		$bits = $this->parse( $url );
 
 		if ( $bits && isset( $bits['path'] ) ) {
-			$bits['path'] = $this->removeDotSegments( $bits['path'] );
-			return $this->assemble( $bits );
+			$bits['path'] = self::removeDotSegments( $bits['path'] );
+			return self::assemble( $bits );
 		} elseif ( $bits ) {
 			# No path to expand
 			return $url;
 		} elseif ( !str_starts_with( $url, '/' ) ) {
 			# URL is a relative path
-			return $this->removeDotSegments( $url );
+			return self::removeDotSegments( $url );
 		}
 
 		# Expanded URL is not valid.
@@ -220,12 +227,11 @@ class UrlUtils {
 	 * This is the basic structure used (brackets contain keys for $urlParts):
 	 * [scheme][delimiter][user]:[pass]@[host]:[port][path]?[query]#[fragment]
 	 *
-	 * @todo Need to integrate this into expand() (see T34168)
-	 *
+	 * @since 1.41
 	 * @param array $urlParts URL parts, as output from parse()
 	 * @return string URL assembled from its component parts
 	 */
-	public function assemble( array $urlParts ): string {
+	public static function assemble( array $urlParts ): string {
 		$result = '';
 
 		if ( isset( $urlParts['delimiter'] ) ) {
@@ -271,12 +277,11 @@ class UrlUtils {
 	 * Remove all dot-segments in the provided URL path.  For example, '/a/./b/../c/' becomes
 	 * '/a/c/'.  For details on the algorithm, please see RFC3986 section 5.2.4.
 	 *
-	 * @todo Need to integrate this into expand() (see T34168)
-	 *
+	 * @since 1.41
 	 * @param string $urlPath URL path, potentially containing dot-segments
 	 * @return string URL path with all dot-segments removed
 	 */
-	public function removeDotSegments( string $urlPath ): string {
+	public static function removeDotSegments( string $urlPath ): string {
 		$output = '';
 		$inputOffset = 0;
 		$inputLength = strlen( $urlPath );
@@ -393,14 +398,17 @@ class UrlUtils {
 	}
 
 	/**
-	 * parse_url() work-alike, but non-broken.  Differences:
+	 * Advanced and configurable version of parse_url().
 	 *
-	 * 1) Handles protocols that don't use :// (e.g., mailto: and news:, as well as
-	 *    protocol-relative URLs) correctly.
-	 * 2) Adds a "delimiter" element to the array (see (2)).
-	 * 3) Verifies that the protocol is on the UrlProtocols allowed list.
-	 * 4) Rejects some invalid URLs that parse_url doesn't, e.g. the empty string or URLs starting
-	 *    with a line feed character.
+	 * 1) Add a "delimiter" element to the array, which helps permits to blindly re-assemble
+	 *    any URL regardless of protocol, including those that don't use `://`,
+	 *    such as "mailto:" and "news:".
+	 * 2) Reject URLs with protocols not in $wgUrlProtocols.
+	 * 3) Reject relative or incomplete URLs that parse_url would return a partial array for.
+	 *
+	 * If all you need is to extract parts of an HTTP or HTTPS URL (i.e. not specific to
+	 * site-configurable extra protocols, or user input) then `parse_url()` can be used
+	 * directly instead.
 	 *
 	 * @param string $url A URL to parse
 	 * @return ?string[] Bits of the URL in an associative array, or null on failure.
@@ -425,43 +433,28 @@ class UrlUtils {
 			$url = "http:$url";
 		}
 		$bits = parse_url( $url );
-		// parse_url() returns an array without scheme for some invalid URLs, e.g.
-		// parse_url("%0Ahttp://example.com") == [ 'host' => '%0Ahttp', 'path' => 'example.com' ]
+		// parse_url() returns an array without scheme for invalid URLs, e.g.
+		// parse_url("something bad://example") == [ 'path' => 'something bad://example' ]
 		if ( !$bits || !isset( $bits['scheme'] ) ) {
 			return null;
 		}
 
 		// parse_url() incorrectly handles schemes case-sensitively. Convert it to lowercase.
 		$bits['scheme'] = strtolower( $bits['scheme'] );
+		$bits['host'] = $bits['host'] ?? '';
 
 		// most of the protocols are followed by ://, but mailto: and sometimes news: not, check for it
 		if ( in_array( $bits['scheme'] . '://', $this->validProtocols ) ) {
 			$bits['delimiter'] = '://';
 		} elseif ( in_array( $bits['scheme'] . ':', $this->validProtocols ) ) {
 			$bits['delimiter'] = ':';
-			// parse_url detects for news: and mailto: the host part of an url as path
-			// We have to correct this wrong detection
-			if ( isset( $bits['path'] ) ) {
-				$bits['host'] = $bits['path'];
-				$bits['path'] = '';
-			}
 		} else {
 			return null;
 		}
 
-		// Provide an empty host for, e.g., file:/// urls (see T30627)
-		if ( !isset( $bits['host'] ) ) {
-			$bits['host'] = '';
-
-			// See T47069
-			if ( isset( $bits['path'] ) ) {
-				/* parse_url loses the third / for file:///c:/ urls (but not on variants) */
-				if ( !str_starts_with( $bits['path'], '/' ) ) {
-					$bits['path'] = '/' . $bits['path'];
-				}
-			} else {
-				$bits['path'] = '';
-			}
+		/* parse_url loses the third / for file:///c:/ urls */
+		if ( $bits['scheme'] === 'file' && isset( $bits['path'] ) && !str_starts_with( $bits['path'], '/' ) ) {
+			$bits['path'] = '/' . $bits['path'];
 		}
 
 		// If the URL was protocol-relative, fix scheme and delimiter

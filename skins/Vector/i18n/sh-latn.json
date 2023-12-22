@@ -21,6 +21,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 jezik|$1 jezika}}",
 	"vector-no-language-button-label": "Dodaj jezike",
 	"vector-no-language-button-aria-label": "Ovaj članak postoji samo na ovom jeziku. Dodajte druge jezike",
+	"vector-language-redirect-to-top": "Linkovi na druge jezike nalaze se u gornjem desnom uglu stranice, pored naslova članka.",
 	"vector-language-variant-switcher-label": "Promijeni jezičnu varijantu",
 	"vector-action-addsection": "Dodaj temu",
 	"vector-action-delete": "Izbriši",
@@ -50,6 +51,8 @@
 	"vector-site-nav-label": "Sajt",
 	"vector-main-menu-label": "Glavni meni",
 	"vector-limited-width-toggle": "Uključi/isključi ograničenu širinu sadržaja",
+	"vector-limited-width-toggle-on-popup": "Prebacili ste se na punu širinu teksta. Pritisnite dugme da se vratite na ograničenu širinu.",
+	"vector-limited-width-toggle-off-popup": "Ovom tipkom prebacujete se između ograničene i pune širine teksta.",
 	"vector-page-tools-label": "Alati",
 	"vector-page-tools-general-label": "Opšte",
 	"vector-page-tools-actions-label": "Radnje",
@@ -59,5 +62,8 @@
 	"tooltip-vector-anon-user-menu-title": "Više mogućnosti",
 	"vector-prefs-limited-width": "Ograniči širinu teksta",
 	"vector-prefs-limited-width-help": "Omogući režim ograničene širine za poboljšano čitanje.",
-	"empty-language-selector-body": "Sadržaj stranice nije podržan na drugim jezicima."
+	"empty-language-selector-body": "Sadržaj stranice nije podržan na drugim jezicima.",
+	"vector-toc-unpinned-popup": "Sadržaj je premješten ovdje.",
+	"vector-page-tools-unpinned-popup": "Alati su premješteni ovdje.",
+	"vector-main-menu-unpinned-popup": "Glavni meni premješten je ovdje."
 }

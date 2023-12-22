@@ -1,3 +1,4 @@
+@import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
 @import '../echo.variables.less';
 @import '../echo.mixins.less';
@@ -9,7 +10,7 @@
 	white-space: normal;
 	padding: 0.8em 1em 0.5em 1em;
 	box-sizing: border-box;
-	border: 1px solid #c8ccd1;
+	border: @border-width-base @border-style-base @border-color-subtle;
 	margin-bottom: -1px;
 
 	&:not( [ href ] ) {
@@ -29,9 +30,9 @@
 
 	&:focus {
 		text-decoration: none;
-		box-shadow: inset 0 0 0 1px @color-primary;
-		border-color: @color-primary;
-		outline: 0;
+		box-shadow: @box-shadow-inset-small @box-shadow-color-progressive--focus;
+		border-color: @border-color-progressive--focus;
+		outline: @outline-base--focus;
 		z-index: 1;
 	}
 
@@ -86,7 +87,7 @@
 			overflow-wrap: break-word;
 
 			&-header {
-				color: @notification-text-color;
+				color: @color-emphasized;
 			}
 
 			&-body {
@@ -145,7 +146,7 @@
 				flex-grow: 1;
 				text-align: right;
 				vertical-align: bottom;
-				color: @color-base--emphasized;
+				color: @color-emphasized;
 				opacity: @opacity-low;
 				white-space: nowrap;
 			}

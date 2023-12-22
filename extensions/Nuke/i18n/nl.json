@@ -26,6 +26,7 @@
 	"nuke-maxpages": "Maximum aantal pagina's:",
 	"nuke-editby": "Aangemaakt door [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "Pagina '''$1''' is verwijderd.",
+	"nuke-deletion-queued": "Pagina '''$1''' is in de wachtrij voor verwijdering gezet.",
 	"nuke-not-deleted": "Pagina [[:$1]] '''kon niet''' worden verwijderd.",
 	"nuke-delete-more": "[[Special:Nuke|Meer pagina's verwijderen]]",
 	"nuke-pattern": "SQL Like patroon (bijv. %) voor de paginanaam:",

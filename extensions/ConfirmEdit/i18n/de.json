@@ -13,7 +13,6 @@
 	"captcha-edit": "Zur Bearbeitung der Seite löse bitte die nachfolgende Aufgabe und trage die Antwort in das Feld ein [[Special:Captcha/help|(Fragen oder Probleme?)]].",
 	"captcha-edit-fail": "Falsches oder fehlendes CAPTCHA.",
 	"captcha-desc": "Ermöglicht verschiedene CAPTCHA-Techniken zum Schutz vor Spam und dem Erraten von Passwörtern",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Lösung des CAPTCHAs.",
 	"captcha-info-help": "Beschreibung des CAPTCHAs.",
 	"captcha-id-label": "CAPTCHA-Kennung",

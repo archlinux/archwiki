@@ -21,12 +21,14 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\Diff\ComplexityException;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Rest\Handler\Helper\HtmlOutputRendererHelper;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use Wikimedia\Bcp47Code\Bcp47Code;
+use Wikimedia\Diff\ArrayDiffFormatter;
+use Wikimedia\Diff\ComplexityException;
+use Wikimedia\Diff\Diff;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -53,7 +55,7 @@ class CompareLanguageConverterOutput extends Maintenance {
 	}
 
 	public function execute() {
-		$mwInstance = MediaWikiServices::getInstance();
+		$mwInstance = $this->getServiceContainer();
 
 		$pageName = $this->getArg( 'page-title' );
 		$pageTitle = Title::newFromText( $pageName );
@@ -84,7 +86,7 @@ class CompareLanguageConverterOutput extends Maintenance {
 	}
 
 	private function newHtmlOutputRendererHelper(): HtmlOutputRendererHelper {
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 
 		$helper = new HtmlOutputRendererHelper(
 			$services->getParsoidOutputStash(),
@@ -116,7 +118,7 @@ class CompareLanguageConverterOutput extends Maintenance {
 		global $wgDefaultLanguageVariant;
 		$wgDefaultLanguageVariant = $targetVariant->getCode();
 
-		$mwInstance = MediaWikiServices::getInstance();
+		$mwInstance = $this->getServiceContainer();
 
 		$languageFactory = $mwInstance->getLanguageFactory();
 		$parser = $mwInstance->getParser();

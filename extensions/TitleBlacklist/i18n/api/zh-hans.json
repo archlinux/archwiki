@@ -4,7 +4,6 @@
 			"Liuxinyu970226"
 		]
 	},
-	"apihelp-titleblacklist-description": "验证一个页面的标题、文件名或用户名是否触发标题黑名单。",
 	"apihelp-titleblacklist-summary": "验证一个页面的标题、文件名或用户名是否触发标题黑名单。",
 	"apihelp-titleblacklist-param-title": "验证是否触发黑名单的字符串。",
 	"apihelp-titleblacklist-param-action": "要检查的操作。",

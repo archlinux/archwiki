@@ -7,8 +7,5 @@
 		]
 	},
 	"mobile-frontend-language-article-heading": "Afaan",
-	"mobile-frontend-placeholder": "{{SITENAME}} barbaadi",
-	"minerva-page-actions-move": "Sachoosi",
-	"minerva-page-actions-delete": "Balleessi",
-	"minerva-page-actions-protect": "Eegamaa"
+	"mobile-frontend-placeholder": "{{SITENAME}} barbaadi"
 }

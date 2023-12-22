@@ -41,20 +41,11 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 
-	/** @var CommentStore */
-	private $commentStore;
-
-	/** @var RowCommentFormatter */
-	private $commentFormatter;
-
-	/** @var NameTableStore */
-	private $changeTagDefStore;
-
-	/** @var NameTableStore */
-	private $slotRoleStore;
-
-	/** @var SlotRoleRegistry */
-	private $slotRoleRegistry;
+	private CommentStore $commentStore;
+	private RowCommentFormatter $commentFormatter;
+	private NameTableStore $changeTagDefStore;
+	private NameTableStore $slotRoleStore;
+	private SlotRoleRegistry $slotRoleRegistry;
 
 	private $formattedComments = [];
 
@@ -197,30 +188,30 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			}
 
 			/* Add additional conditions to query depending upon parameters. */
-			$this->addWhereIf( 'rc_minor = 0', isset( $show['!minor'] ) );
+			$this->addWhereIf( [ 'rc_minor' => 0 ], isset( $show['!minor'] ) );
 			$this->addWhereIf( 'rc_minor != 0', isset( $show['minor'] ) );
-			$this->addWhereIf( 'rc_bot = 0', isset( $show['!bot'] ) );
+			$this->addWhereIf( [ 'rc_bot' => 0 ], isset( $show['!bot'] ) );
 			$this->addWhereIf( 'rc_bot != 0', isset( $show['bot'] ) );
 			if ( isset( $show['anon'] ) || isset( $show['!anon'] ) ) {
 				$this->addTables( 'actor', 'actor' );
 				$this->addJoinConds( [ 'actor' => [ 'JOIN', 'actor_id=rc_actor' ] ] );
 				$this->addWhereIf(
-					'actor_user IS NULL', isset( $show['anon'] )
+					[ 'actor_user' => null ], isset( $show['anon'] )
 				);
 				$this->addWhereIf(
 					'actor_user IS NOT NULL', isset( $show['!anon'] )
 				);
 			}
-			$this->addWhereIf( 'rc_patrolled = 0', isset( $show['!patrolled'] ) );
+			$this->addWhereIf( [ 'rc_patrolled' => 0 ], isset( $show['!patrolled'] ) );
 			$this->addWhereIf( 'rc_patrolled != 0', isset( $show['patrolled'] ) );
-			$this->addWhereIf( 'page_is_redirect = 1', isset( $show['redirect'] ) );
+			$this->addWhereIf( [ 'page_is_redirect' => 1 ], isset( $show['redirect'] ) );
 
 			if ( isset( $show['unpatrolled'] ) ) {
 				// See ChangesList::isUnpatrolled
 				if ( $user->useRCPatrol() ) {
-					$this->addWhere( 'rc_patrolled = ' . RecentChange::PRC_UNPATROLLED );
+					$this->addWhereFld( 'rc_patrolled', RecentChange::PRC_UNPATROLLED );
 				} elseif ( $user->useNPPatrol() ) {
-					$this->addWhere( 'rc_patrolled = ' . RecentChange::PRC_UNPATROLLED );
+					$this->addWhereFld( 'rc_patrolled', RecentChange::PRC_UNPATROLLED );
 					$this->addWhereFld( 'rc_type', RC_NEW );
 				}
 			}
@@ -230,13 +221,13 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 				isset( $show['!autopatrolled'] )
 			);
 			$this->addWhereIf(
-				'rc_patrolled = ' . RecentChange::PRC_AUTOPATROLLED,
+				[ 'rc_patrolled' => RecentChange::PRC_AUTOPATROLLED ],
 				isset( $show['autopatrolled'] )
 			);
 
 			// Don't throw log entries out the window here
 			$this->addWhereIf(
-				'page_is_redirect = 0 OR page_is_redirect IS NULL',
+				[ 'page_is_redirect' => [ 0, null ] ],
 				isset( $show['!redirect'] )
 			);
 		}
@@ -412,7 +403,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			} else {
 				// Calling $this->addWhere() with an empty array does nothing, so explicitly
 				// add an unsatisfiable condition
-				$this->addWhere( 'rc_type IS NULL' );
+				$this->addWhere( [ 'rc_type' => null ] );
 			}
 		}
 

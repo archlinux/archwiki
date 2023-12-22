@@ -31,7 +31,7 @@ class CommentUtilsTest extends IntegrationTestCase {
 		static::assertEquals( $expected, $isSigned, $msg );
 	}
 
-	public function provideIsSingleCommentSignedBy(): array {
+	public static function provideIsSingleCommentSignedBy(): array {
 		return static::getJson( '../cases/isSingleCommentSignedBy.json' );
 	}
 
@@ -46,7 +46,7 @@ class CommentUtilsTest extends IntegrationTestCase {
 		);
 	}
 
-	public function provideGetTitleFromUrl() {
+	public static function provideGetTitleFromUrl() {
 		// TODO: Test with different configs.
 		$config = new GlobalVarConfig();
 		$GLOBALS['wgArticlePath'] = '/wiki/$1';

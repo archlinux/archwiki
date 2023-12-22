@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Aotake",
 			"Hamilton Abreu",
 			"Liuxinyu970226",
@@ -14,8 +15,7 @@
 			"Siebrand",
 			"The Evil IP address",
 			"Toliño",
-			"Umherirrender",
-			"Amire80"
+			"Umherirrender"
 		]
 	},
 	"captcha-edit": "This message will be shown when editing if the wiki requires solving a captcha for editing.\n{{Related|ConfirmEdit-edit}}",

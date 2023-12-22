@@ -33,7 +33,7 @@ class Util {
 	 * @param int $b
 	 * @return int
 	 */
-	public static function unsignedMod( $a, $b ) {
+	public static function unsignedMod( $a, $b ): int {
 		if ( $a & 0x80000000 ) {
 			$m = ( $a & 0x7fffffff ) % $b + 2 * ( 0x40000000 % $b );
 
@@ -50,7 +50,7 @@ class Util {
 	 * @param int $b
 	 * @return int
 	 */
-	public static function unsignedShiftRight( $a, $b ) {
+	public static function unsignedShiftRight( $a, $b ): int {
 		if ( $b == 0 ) {
 			return $a;
 		}
@@ -67,7 +67,7 @@ class Util {
 	 * @param string $s
 	 * @return int
 	 */
-	public static function hash( $s ) {
+	public static function hash( $s ): int {
 		$h = 5381;
 		$len = strlen( $s );
 		for ( $i = 0; $i < $len; $i++ ) {
@@ -75,15 +75,13 @@ class Util {
 			// Do a 32-bit sum
 			// Inlined here for speed
 			$sum = ( $h & 0x3fffffff ) + ( $h5 & 0x3fffffff );
-			$h =
-				(
-					( $sum & 0x40000000 ? 1 : 0 )
-					+ ( $h & 0x80000000 ? 2 : 0 )
-					+ ( $h & 0x40000000 ? 1 : 0 )
-					+ ( $h5 & 0x80000000 ? 2 : 0 )
-					+ ( $h5 & 0x40000000 ? 1 : 0 )
-				) << 30
-				| ( $sum & 0x3fffffff );
+			$h = (
+				( $sum & 0x40000000 ? 1 : 0 )
+				+ ( $h & 0x80000000 ? 2 : 0 )
+				+ ( $h & 0x40000000 ? 1 : 0 )
+				+ ( $h5 & 0x80000000 ? 2 : 0 )
+				+ ( $h5 & 0x40000000 ? 1 : 0 )
+			) << 30 | ( $sum & 0x3fffffff );
 			$h ^= ord( $s[$i] );
 			$h &= 0xffffffff;
 		}

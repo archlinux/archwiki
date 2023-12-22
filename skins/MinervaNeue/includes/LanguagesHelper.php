@@ -20,8 +20,8 @@
 namespace MediaWiki\Minerva;
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use OutputPage;
-use Title;
 
 /**
  * Helper class to encapsulate logic responsible for checking languages and variants for given title

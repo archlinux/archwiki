@@ -7,7 +7,7 @@ use Exception;
 use File;
 use FormatMetadata;
 use MediaWiki\Hook\ParserAfterTidyHook;
-use MediaWiki\Hook\ParserModifyImageHTML;
+use MediaWiki\Hook\ParserModifyImageHTMLHook;
 use MediaWiki\Hook\ParserTestGlobalsHook;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Page\PageReference;
@@ -17,8 +17,9 @@ use Parser;
 use ParserOutput;
 use RepoGroup;
 use RuntimeException;
-use Title;
+use TitleFactory;
 use WANObjectCache;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Handlers for parser hooks.
@@ -39,7 +40,7 @@ use WANObjectCache;
  */
 class ParserFileProcessingHookHandlers implements
 	ParserAfterTidyHook,
-	ParserModifyImageHTML,
+	ParserModifyImageHTMLHook,
 	ParserTestGlobalsHook
 {
 	private const CANDIDATE_REGEX = '/<!--MW-PAGEIMAGES-CANDIDATE-([0-9]+)-->/';
@@ -53,19 +54,31 @@ class ParserFileProcessingHookHandlers implements
 	/** @var HttpRequestFactory */
 	private $httpRequestFactory;
 
+	/** @var IConnectionProvider */
+	private $connectionProvider;
+
+	/** @var TitleFactory */
+	private $titleFactory;
+
 	/**
 	 * @param RepoGroup $repoGroup
 	 * @param WANObjectCache $mainWANObjectCache
 	 * @param HttpRequestFactory $httpRequestFactory
+	 * @param IConnectionProvider $connectionProvider
+	 * @param TitleFactory $titleFactory
 	 */
 	public function __construct(
 		RepoGroup $repoGroup,
 		WANObjectCache $mainWANObjectCache,
-		HttpRequestFactory $httpRequestFactory
+		HttpRequestFactory $httpRequestFactory,
+		IConnectionProvider $connectionProvider,
+		TitleFactory $titleFactory
 	) {
 		$this->repoGroup = $repoGroup;
 		$this->mainWANObjectCache = $mainWANObjectCache;
 		$this->httpRequestFactory = $httpRequestFactory;
+		$this->connectionProvider = $connectionProvider;
+		$this->titleFactory = $titleFactory;
 	}
 
 	/**
@@ -444,35 +457,32 @@ class ParserFileProcessingHookHandlers implements
 	/**
 	 * Returns list of images linked by the given denylist page
 	 *
-	 * @param string|bool $dbName Database name or false for current database
+	 * @param string|false $dbName Database name or false for current database
 	 * @param string $page
 	 *
 	 * @return string[]
 	 */
 	private function getDbDenylist( $dbName, $page ) {
-		$dbr = wfGetDB( DB_REPLICA, [], $dbName );
-		$title = Title::newFromText( $page );
-		$list = [];
-
-		$id = $dbr->selectField(
-			'page',
-			'page_id',
-			[ 'page_namespace' => $title->getNamespace(), 'page_title' => $title->getDBkey() ],
-			__METHOD__
-		);
-
-		if ( $id ) {
-			$res = $dbr->select( 'pagelinks',
-				'pl_title',
-				[ 'pl_from' => $id, 'pl_namespace' => NS_FILE ],
-				__METHOD__
-			);
-			foreach ( $res as $row ) {
-				$list[] = $row->pl_title;
-			}
+		$title = $this->titleFactory->newFromText( $page );
+		if ( !$title || !$title->canExist() ) {
+			return [];
 		}
 
-		return $list;
+		$dbr = $this->connectionProvider->getReplicaDatabase( $dbName );
+		$id = $dbr->newSelectQueryBuilder()
+			->select( 'page_id' )
+			->from( 'page' )
+			->where( [ 'page_namespace' => $title->getNamespace(), 'page_title' => $title->getDBkey() ] )
+			->caller( __METHOD__ )->fetchField();
+		if ( !$id ) {
+			return [];
+		}
+
+		return $dbr->newSelectQueryBuilder()
+			->select( 'pl_title' )
+			->from( 'pagelinks' )
+			->where( [ 'pl_from' => (int)$id, 'pl_namespace' => NS_FILE ] )
+			->caller( __METHOD__ )->fetchFieldValues();
 	}
 
 	/**
@@ -493,7 +503,7 @@ class ParserFileProcessingHookHandlers implements
 
 		if ( $text && preg_match_all( $regex, $text, $matches ) ) {
 			foreach ( $matches[1] as $s ) {
-				$t = Title::makeTitleSafe( NS_FILE, $s );
+				$t = $this->titleFactory->makeTitleSafe( NS_FILE, $s );
 
 				if ( $t ) {
 					$list[] = $t->getDBkey();

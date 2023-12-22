@@ -22,7 +22,7 @@
 
 namespace MediaWiki\Html;
 
-use OutputPage;
+use MediaWiki\Output\OutputPage;
 
 /**
  * Class for generating clickable toggle links for a list of checkboxes.
@@ -73,4 +73,7 @@ class ListToggle {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( ListToggle::class, 'ListToggle' );

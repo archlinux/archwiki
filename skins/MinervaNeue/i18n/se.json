@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ante75",
 			"Kimberli Mäkäräinen (WMNO)",
-			"Trondtr",
-			"Yupik",
 			"Lea-Christine Sara",
-			"Ante75"
+			"Trondtr",
+			"Yupik"
 		]
 	},
 	"minerva-last-modified-date": "Maŋemus rievdaduvvon $1, diibmu $2",
@@ -16,7 +16,7 @@
 	"mobile-frontend-editor-redlink-create": "Ráhkat siiddu",
 	"mobile-frontend-editor-redlink-explain": "Dát siidu ii leat vuos ráhkaduvvon",
 	"mobile-frontend-editor-redlink-leave": "Giitu, muhto aa",
-	"mobile-frontend-history": "Čájet siiddu redigerenhistorjjá.",
+	"mobile-frontend-history": "Čájet dán siiddu rievdadanhistorjjá.",
 	"mobile-frontend-home-button": "Ruoktot",
 	"mobile-frontend-language-article-heading": "Giella",
 	"mobile-frontend-languages-not-available": "Dat siidu ii leat olámuttos eara gielaide.",
@@ -47,16 +47,8 @@
 	"mobile-frontend-user-page-talk": "Ságastallan",
 	"minerva-user-menu-button": "Geavaheaddjisiidu",
 	"minerva-user-navigation": "Geavaheaddjinavigašuvdna",
+	"minerva-page-actions-editfull": "Rievdat olles siiddu",
 	"minerva-page-actions-overflow": "Eambbo",
-	"minerva-page-actions-info": "Siiddu dieđut",
-	"minerva-page-actions-permalink": "Bissovaš liŋka",
-	"minerva-page-actions-backlinks": "Siiddut mat čujuhit deike",
-	"minerva-page-actions-move": "Sirdde",
-	"minerva-page-actions-delete": "Sihko",
-	"minerva-page-actions-protect": "Suodjal",
-	"minerva-page-actions-user-groups": "Geavaheddjiidjoavkkut",
-	"minerva-page-actions-block": "Hehtte geavaheaddji",
-	"minerva-page-actions-logs": "Loggat",
 	"minerva-page-actions-language-switcher": "Gielat",
 	"minerva-page-actions-history": "Historjá",
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Ságastallan]]",

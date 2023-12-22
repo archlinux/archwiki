@@ -11,12 +11,15 @@
 			"James",
 			"Luzcaru",
 			"Macofe",
-			"MarcoAurelio"
+			"MarcoAurelio",
+			"No se"
 		]
 	},
 	"linterrors": "Errores de sintaxis",
 	"linter-category-bogus-image-options": "Opciones de archivo inútiles",
 	"linter-category-bogus-image-options-desc": "Estas páginas contienen archivos con opciones inútiles.",
+	"linter-category-large-tables": "Tablas grandes que son difíciles de ver en dispositivos móviles",
+	"linter-category-large-tables-desc": "Estas páginas tienen tablas que son difíciles de ver en dispositivos móviles.",
 	"linter-category-deletable-table-tag": "Etiqueta de tabla que debería ser borrada",
 	"linter-category-deletable-table-tag-desc": "Estas páginas tienen etiquetas de tabla que se deberían borrar.",
 	"linter-category-fostered": "Contenido fuera de lugar",
@@ -74,6 +77,7 @@
 	"linter-page-history": "historial",
 	"linter-page-viewsource": "ver código",
 	"linter-pager-bogus-image-options-details": "Opción de archivo inútil",
+	"linter-pager-large-tables-details": "Tabla que es grande para la vista móvil",
 	"linter-pager-category-header": "Categoría",
 	"linter-pager-deletable-table-tag-details": "Etiqueta de tabla que se debería borrar",
 	"linter-pager-details-header": "Información adicional",
@@ -97,5 +101,6 @@
 	"linterrors-subpage": "Errores de sintaxis: $1",
 	"linterrors-summary": "<strong>Nota:</strong> los recuentos de los categorías no son precisos, ya que se basan en estimaciones.",
 	"multi-part-template-block": "Salida proporcionada por más de una plantilla",
-	"pageinfo-linter": "Errores de sintaxis"
+	"pageinfo-linter": "Errores de sintaxis",
+	"pageinfo-linter-moreinfo": "Ver información detallada sobre los errores de sintaxis."
 }

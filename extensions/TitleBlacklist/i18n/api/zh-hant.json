@@ -7,7 +7,6 @@
 			"Xiplus"
 		]
 	},
-	"apihelp-titleblacklist-description": "檢驗一個頁面標題、檔案名稱或使用者名稱是否觸發標題黑名單。",
 	"apihelp-titleblacklist-summary": "檢驗一個頁面的標題、檔案名稱或使用者名稱是否觸發標題黑名單。",
 	"apihelp-titleblacklist-param-title": "要用來檢驗黑名單的字串。",
 	"apihelp-titleblacklist-param-action": "要檢查的操作。",

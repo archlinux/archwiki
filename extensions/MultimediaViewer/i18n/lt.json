@@ -6,10 +6,10 @@
 			"Hugo.arg",
 			"Mantak111",
 			"Manvydasz",
+			"Nokeoo",
 			"Robotukas11",
 			"Tomasdd",
-			"Zygimantus",
-			"Nokeoo"
+			"Zygimantus"
 		]
 	},
 	"multimediaviewer-desc": "Išplėsti labiau miniatiūras esant pilno dydžio vartotojo aplinkai.",
@@ -22,6 +22,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|dar vienas autorius|dar $1 autoriai|dar $1 autorių}}",
 	"multimediaviewer-multiple-authors-combine": "$1 ir $2",
 	"multimediaviewer-metadata-error": "Nepavyksta įkelti vaizdo duomenų (klaida: $1)",
+	"multimediaviewer-file-not-found-error": "Atsiprašome, failas $1 negali būti rodomas, nes jo nėra dabartiniame puslapyje.",
 	"multimediaviewer-thumbnail-error": "Atsiprašome, negalima parodyti failo",
 	"multimediaviewer-thumbnail-error-description": "Atrodo, kad iškilo techninė problema. Galite $1, jei tai tęsiasi. Klaida: $2",
 	"multimediaviewer-thumbnail-error-retry": "bandyti dar kartą",

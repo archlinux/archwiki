@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Parser\Sanitizer;
+
 /**
  * @group Parser
  * @covers MWTidy
@@ -43,11 +45,6 @@ MathML;
 				'<mw:editsection page="foo" section="bar">foo</mw:editsection>',
 				'<mw:editsection page="foo" section="bar">foo</mw:editsection>',
 				'<mw:editsection> should survive tidy'
-			],
-			[
-				'<editsection page="foo" section="bar">foo</editsection>',
-				'<editsection page="foo" section="bar">foo</editsection>',
-				'<editsection> should survive tidy'
 			],
 			[
 				'<meta property="mw:PageProp/toc" />',

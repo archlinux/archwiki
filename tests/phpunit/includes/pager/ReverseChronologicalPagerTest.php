@@ -1,11 +1,14 @@
 <?php
 
+use MediaWiki\Pager\ReverseChronologicalPager;
+use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * Test class for ReverseChronologicalPagerTest methods.
  *
  * @group Pager
+ * @group Database
  *
  * @author Geoffrey Mon <geofbot@gmail.com>
  */
@@ -18,16 +21,15 @@ class ReverseChronologicalPagerTest extends MediaWikiIntegrationTestCase {
 	public function testGetDateCond( $params, $expected ) {
 		$pager = $this->getMockForAbstractClass( ReverseChronologicalPager::class );
 		$pagerWrapper = TestingAccessWrapper::newFromObject( $pager );
-		$db = wfGetDB( DB_PRIMARY );
 
 		$pager->getDateCond( ...$params );
-		$this->assertEquals( $pagerWrapper->endOffset, $db->timestamp( $expected ) );
+		$this->assertEquals( $pagerWrapper->endOffset, $this->getDb()->timestamp( $expected ) );
 	}
 
 	/**
 	 * Data provider in description => [ [ param1, ... ], expected output ] format
 	 */
-	public function provideGetDateCond() {
+	public static function provideGetDateCond() {
 		yield 'Test year and month' => [
 			[ 2006, 6 ], '20060701000000'
 		];
@@ -67,7 +69,7 @@ class ReverseChronologicalPagerTest extends MediaWikiIntegrationTestCase {
 		$pager = $this->getMockForAbstractClass( ReverseChronologicalPager::class );
 		$pagerWrapper = TestingAccessWrapper::newFromObject( $pager );
 		$timestamp = MWTimestamp::getInstance();
-		$db = wfGetDB( DB_PRIMARY );
+		$db = $this->getDb();
 
 		$currYear = $timestamp->format( 'Y' );
 		$currMonth = $timestamp->format( 'n' );

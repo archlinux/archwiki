@@ -80,6 +80,8 @@ class LBFactoryMulti extends LBFactory {
 	private $readOnlyBySection;
 	/** @var array Configuration for the LoadMonitor to use within LoadBalancer instances */
 	private $loadMonitorConfig;
+	/** @var DatabaseDomain[] Map of (domain ID => domain instance) */
+	private $nonLocalDomainCache = [];
 
 	/**
 	 * Template override precedence (highest => lowest):
@@ -157,7 +159,7 @@ class LBFactoryMulti extends LBFactory {
 			$this->loadMonitorConfig = [ 'class' => LoadMonitor::class ];
 		}
 
-		foreach ( array_keys( $this->externalLoadsByCluster ) as $cluster ) {
+		foreach ( $this->externalLoadsByCluster as $cluster => $_ ) {
 			if ( isset( $this->groupLoadsBySection[$cluster] ) ) {
 				throw new LogicException(
 					"External cluster '$cluster' has the same name as a main section/cluster"
@@ -187,6 +189,33 @@ class LBFactoryMulti extends LBFactory {
 				? $this->readOnlyReason
 				: ( $this->readOnlyBySection[$section] ?? false )
 		);
+	}
+
+	/**
+	 * @param DatabaseDomain|string|false $domain
+	 * @return DatabaseDomain
+	 */
+	private function resolveDomainInstance( $domain ) {
+		if ( $domain instanceof DatabaseDomain ) {
+			return $domain; // already a domain instance
+		} elseif ( $domain === false || $domain === $this->localDomain->getId() ) {
+			return $this->localDomain;
+		} elseif ( isset( $this->domainAliases[$domain] ) ) {
+			// This array acts as both the original map and as instance cache.
+			// Instances pass-through DatabaseDomain::newFromId as-is.
+			$this->domainAliases[$domain] =
+				DatabaseDomain::newFromId( $this->domainAliases[$domain] );
+
+			return $this->domainAliases[$domain];
+		}
+
+		$cachedDomain = $this->nonLocalDomainCache[$domain] ?? null;
+		if ( $cachedDomain === null ) {
+			$cachedDomain = DatabaseDomain::newFromId( $domain );
+			$this->nonLocalDomainCache = [ $domain => $cachedDomain ];
+		}
+
+		return $cachedDomain;
 	}
 
 	public function getMainLB( $domain = false ): ILoadBalancer {
@@ -296,7 +325,13 @@ class LBFactoryMulti extends LBFactory {
 		if ( !$groupLoads[ILoadBalancer::GROUP_GENERIC] ) {
 			throw new UnexpectedValueException( "Empty generic load array; no primary DB defined." );
 		}
-		$groupLoadsByServerName = $this->reindexGroupLoadsByServerName( $groupLoads );
+		$groupLoadsByServerName = [];
+		foreach ( $groupLoads as $group => $loadByServerName ) {
+			foreach ( $loadByServerName as $serverName => $load ) {
+				$groupLoadsByServerName[$serverName][$group] = $load;
+			}
+		}
+
 		// Get the ordered map of (server name => load); the primary DB server is first
 		$genericLoads = $groupLoads[ILoadBalancer::GROUP_GENERIC];
 		// Implicitly append any hosts that only appear in custom load groups
@@ -320,23 +355,6 @@ class LBFactoryMulti extends LBFactory {
 	}
 
 	/**
-	 * Take a group load array indexed by (group,server) and reindex it by (server,group)
-	 *
-	 * @param int[][] $groupLoads Map of (group => server name => load)
-	 * @return int[][] Map of (server name => group => load)
-	 */
-	private function reindexGroupLoadsByServerName( array $groupLoads ) {
-		$groupLoadsByServerName = [];
-		foreach ( $groupLoads as $group => $loadByServerName ) {
-			foreach ( $loadByServerName as $serverName => $load ) {
-				$groupLoadsByServerName[$serverName][$group] = $load;
-			}
-		}
-
-		return $groupLoadsByServerName;
-	}
-
-	/**
 	 * @param string $database
 	 * @return string Main section name
 	 */
@@ -352,15 +370,22 @@ class LBFactoryMulti extends LBFactory {
 		}
 
 		foreach ( $this->mainLBs as $lb ) {
-			$groupLoads = $conf['groupLoadsBySection'][$lb->getClusterName()];
-			$groupLoads[ILoadBalancer::GROUP_GENERIC] = $conf['sectionLoads'][$lb->getClusterName()] ?? [];
-			$config = [ 'servers' => $this->makeServerConfigArrays( $conf['serverTemplate'] ?? [], $groupLoads ) ];
+			// Approximate what LBFactoryMulti::__construct does (T346365)
+			$groupLoads = $conf['groupLoadsBySection'][$lb->getClusterName()] ?? [];
+			$groupLoads[ILoadBalancer::GROUP_GENERIC] = $conf['sectionLoads'][$lb->getClusterName()];
+			$config = [
+				'servers' => $this->makeServerConfigArrays( $conf['serverTemplate'] ?? [], $groupLoads )
+			];
 			$lb->reconfigure( $config );
 
 		}
 		foreach ( $this->externalLBs as $lb ) {
-			$groupLoads = [ ILoadBalancer::GROUP_GENERIC => $conf['externalLoads'][$lb->getClusterName()] ];
-			$config = [ 'servers' => $this->makeServerConfigArrays( $conf['serverTemplate'] ?? [], $groupLoads ) ];
+			$groupLoads = [
+				ILoadBalancer::GROUP_GENERIC => $conf['externalLoads'][$lb->getClusterName()]
+			];
+			$config = [
+				'servers' => $this->makeServerConfigArrays( $conf['serverTemplate'] ?? [], $groupLoads )
+			];
 			$lb->reconfigure( $config );
 		}
 	}

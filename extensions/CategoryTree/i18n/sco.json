@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"John Reid"
+			"John Reid",
+			"CiphriusKane"
 		]
 	},
 	"categorytree": "Categerie tree",
@@ -13,7 +14,7 @@
 	"categorytree-go": "Shaw tree",
 	"categorytree-parents": "Pairents",
 	"categorytree-mode-label": "Mode:",
-	"categorytree-mode-categories": "categeries yinlie",
+	"categorytree-mode-categories": "categeries anely",
 	"categorytree-mode-pages": "pages except files",
 	"categorytree-mode-all": "aw pages",
 	"categorytree-collapse": "collapse",

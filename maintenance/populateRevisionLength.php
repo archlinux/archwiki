@@ -21,7 +21,6 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IDatabase;
 
 require_once __DIR__ . '/Maintenance.php';
@@ -56,7 +55,7 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 			return false;
 		}
 
-		$revisionStore = MediaWikiServices::getInstance()->getRevisionStore();
+		$revisionStore = $this->getServiceContainer()->getRevisionStore();
 
 		$this->output( "Populating rev_len column\n" );
 		$rev = $this->doLenUpdates(
@@ -91,8 +90,14 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 		$dbr = $this->getDB( DB_REPLICA );
 		$dbw = $this->getDB( DB_PRIMARY );
 		$batchSize = $this->getBatchSize();
-		$start = $dbw->selectField( $table, "MIN($idCol)", '', __METHOD__ );
-		$end = $dbw->selectField( $table, "MAX($idCol)", '', __METHOD__ );
+		$start = $dbw->newSelectQueryBuilder()
+			->select( "MIN($idCol)" )
+			->from( $table )
+			->caller( __METHOD__ )->fetchField();
+		$end = $dbw->newSelectQueryBuilder()
+			->select( "MAX($idCol)" )
+			->from( $table )
+			->caller( __METHOD__ )->fetchField();
 		if ( !$start || !$end ) {
 			$this->output( "...$table table seems to be empty.\n" );
 
@@ -113,9 +118,9 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 					"$idCol >= $blockStart",
 					"$idCol <= $blockEnd",
 					$dbr->makeList( [
-						"{$prefix}_len IS NULL",
+						"{$prefix}_len" => null,
 						$dbr->makeList( [
-							"{$prefix}_len = 0",
+							"{$prefix}_len" => 0,
 							// sha1( "" )
 							"{$prefix}_sha1 != " . $dbr->addQuotes( 'phoiac9h4m842xq45sp7s6u21eteeq1' ),
 						], IDatabase::LIST_AND )
@@ -154,7 +159,7 @@ class PopulateRevisionLength extends LoggedUpdateMaintenance {
 	protected function upgradeRow( $row, $table, $idCol, $prefix ) {
 		$dbw = $this->getDB( DB_PRIMARY );
 
-		$revFactory = MediaWikiServices::getInstance()->getRevisionFactory();
+		$revFactory = $this->getServiceContainer()->getRevisionFactory();
 		if ( $table === 'archive' ) {
 			$revRecord = $revFactory->newRevisionFromArchiveRow( $row );
 		} else {

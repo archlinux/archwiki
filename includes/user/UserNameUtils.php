@@ -24,14 +24,14 @@ namespace MediaWiki\User;
 
 use InvalidArgumentException;
 use Language;
-use MalformedTitleException;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\MalformedTitleException;
+use MediaWiki\Title\TitleParser;
 use MediaWiki\User\TempUser\TempUserConfig;
 use Psr\Log\LoggerInterface;
-use TitleParser;
 use Wikimedia\IPUtils;
 use Wikimedia\Message\ITextFormatter;
 use Wikimedia\Message\MessageValue;
@@ -56,43 +56,19 @@ class UserNameUtils implements UserRigorOptions {
 	 * RIGOR_* constants are inherited from UserRigorOptions
 	 */
 
-	/**
-	 * @var ServiceOptions
-	 */
-	private $options;
-
-	/**
-	 * @var Language
-	 */
-	private $contentLang;
-
-	/**
-	 * @var LoggerInterface
-	 */
-	private $logger;
-
-	/**
-	 * @var TitleParser
-	 */
-	private $titleParser;
-
-	/**
-	 * @var ITextFormatter
-	 */
-	private $textFormatter;
+	private ServiceOptions $options;
+	private Language $contentLang;
+	private LoggerInterface $logger;
+	private TitleParser $titleParser;
+	private ITextFormatter $textFormatter;
 
 	/**
 	 * @var string[]|false Cache for isUsable()
 	 */
 	private $reservedUsernames = false;
 
-	/**
-	 * @var HookRunner
-	 */
-	private $hookRunner;
-
-	/** @var TempUserConfig */
-	private $tempUserConfig;
+	private HookRunner $hookRunner;
+	private TempUserConfig $tempUserConfig;
 
 	/**
 	 * @param ServiceOptions $options
@@ -209,6 +185,14 @@ class UserNameUtils implements UserRigorOptions {
 		if ( in_array( $name, $this->reservedUsernames, true ) ) {
 			return false;
 		}
+
+		// Check if the name is reserved by the temp user system (actual temp
+		// users are allowed). This is necessary to ensure that CentralAuth
+		// auto-creation will be denied (T342475).
+		if ( $this->isTempReserved( $name ) && !$this->isTemp( $name ) ) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -246,7 +230,7 @@ class UserNameUtils implements UserRigorOptions {
 			return false;
 		}
 
-		if ( $this->isTemp( $name ) ) {
+		if ( $this->isTempReserved( $name ) ) {
 			$this->logger->debug(
 				__METHOD__ . ": '$name' uncreatable due to TempUserConfig"
 			);
@@ -315,20 +299,11 @@ class UserNameUtils implements UserRigorOptions {
 		// RIGOR_NONE handled above
 		switch ( $validate ) {
 			case self::RIGOR_VALID:
-				if ( !$this->isValid( $name ) ) {
-					return false;
-				}
-				return $name;
+				return $this->isValid( $name ) ? $name : false;
 			case self::RIGOR_USABLE:
-				if ( !$this->isUsable( $name ) ) {
-					return false;
-				}
-				return $name;
+				return $this->isUsable( $name ) ? $name : false;
 			case self::RIGOR_CREATABLE:
-				if ( !$this->isCreatable( $name ) ) {
-					return false;
-				}
-				return $name;
+				return $this->isCreatable( $name ) ? $name : false;
 			default:
 				throw new InvalidArgumentException(
 					"Invalid parameter value for validation ($validate) in " .
@@ -372,13 +347,27 @@ class UserNameUtils implements UserRigorOptions {
 	}
 
 	/**
-	 * Is the user name reserved for temporary auto-created users?
+	 * Does the username indicate a temporary user?
 	 *
 	 * @since 1.39
 	 * @param string $name
 	 * @return bool
 	 */
 	public function isTemp( string $name ) {
+		return $this->tempUserConfig->isTempName( $name );
+	}
+
+	/**
+	 * Is the username uncreatable due to it being reserved by the temp username
+	 * system? Note that unlike isTemp(), this does not imply that a user having
+	 * this name is an actual temp account. This should only be used to deny
+	 * account creation.
+	 *
+	 * @since 1.41
+	 * @param string $name
+	 * @return bool
+	 */
+	public function isTempReserved( string $name ) {
 		return $this->tempUserConfig->isReservedName( $name );
 	}
 

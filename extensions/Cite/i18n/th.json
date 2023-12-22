@@ -31,5 +31,10 @@
 	"cite_references_link_many_accessibility_label": "กระโดดขึ้นไป:",
 	"cite_references_link_accessibility_back_label": "กระโดดกลับขึ้น",
 	"cite_section_preview_references": "ตัวอย่างการอ้างอิง",
-	"cite_warning": "คำเตือนการอ้างอิง: $1"
+	"cite_warning": "คำเตือนการอ้างอิง: $1",
+	"cite-wikieditor-tool-reference": "การอ้างอิง",
+	"cite-wikieditor-help-page-references": "ส่วนอ้างอิง",
+	"cite-wikieditor-help-content-reference-description": "อ้างอิง",
+	"cite-wikieditor-help-content-rereference-description": "การใช้การอ้างอิงเดียวกันเพิ่มเติม",
+	"cite-wikieditor-help-content-showreferences-description": "แสดงแหล่งอ้างอิง"
 }

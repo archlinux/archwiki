@@ -1,14 +1,24 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications\Test;
+
+use HashBagOStuff;
+use MediaWiki\Extension\Notifications\ArrayList;
+use MediaWiki\Extension\Notifications\CachedList;
+use MediaWiki\Extension\Notifications\ContainmentSet;
+use MediaWiki\Extension\Notifications\OnWikiList;
+use MediaWikiIntegrationTestCase;
+use WANObjectCache;
+
 /**
- * @covers \EchoContainmentSet
+ * @covers \MediaWiki\Extension\Notifications\ContainmentSet
  * @group Echo
  * @group Database
  */
 class ContainmentSetTest extends MediaWikiIntegrationTestCase {
 
 	public function testGenericContains() {
-		$list = new EchoContainmentSet( self::getTestUser()->getUser() );
+		$list = new ContainmentSet( self::getTestUser()->getUser() );
 
 		$list->addArray( [ 'foo', 'bar' ] );
 		$this->assertTrue( $list->contains( 'foo' ) );
@@ -30,13 +40,13 @@ class ContainmentSetTest extends MediaWikiIntegrationTestCase {
 		$inner = [ 'bing', 'bang' ];
 		// We use a mock instead of the real thing for the $this->once() assertion
 		// verifying that the cache doesn't just keep asking the inner object
-		$list = $this->createMock( EchoArrayList::class );
+		$list = $this->createMock( ArrayList::class );
 		$list->expects( $this->once() )
 			->method( 'getValues' )
 			->willReturn( $inner );
 		$list->method( 'getCacheKey' )->willReturn( '' );
 
-		$cached = new EchoCachedList( $wanCache, 'test_key', $list );
+		$cached = new CachedList( $wanCache, 'test_key', $list );
 
 		// First run through should hit the main list, and save to innerCache
 		$this->assertEquals( $inner, $cached->getValues() );
@@ -44,7 +54,7 @@ class ContainmentSetTest extends MediaWikiIntegrationTestCase {
 
 		// Reinitialize to get a fresh instance that will pull directly from
 		// innerCache without hitting the $list
-		$freshCached = new EchoCachedList( $wanCache, 'test_key', $list );
+		$freshCached = new CachedList( $wanCache, 'test_key', $list );
 		$this->assertEquals( $inner, $freshCached->getValues() );
 	}
 
@@ -54,7 +64,7 @@ class ContainmentSetTest extends MediaWikiIntegrationTestCase {
 	public function testOnWikiList() {
 		$this->editPage( 'User:Foo/Bar-baz', "abc\ndef\r\nghi\n\n\n" );
 
-		$list = new EchoOnWikiList( NS_USER, "Foo/Bar-baz" );
+		$list = new OnWikiList( NS_USER, "Foo/Bar-baz" );
 		$this->assertEquals(
 			[ 'abc', 'def', 'ghi' ],
 			$list->getValues()
@@ -62,7 +72,7 @@ class ContainmentSetTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testOnWikiListNonExistant() {
-		$list = new EchoOnWikiList( NS_USER, "Some_Non_Existant_Page" );
+		$list = new OnWikiList( NS_USER, "Some_Non_Existant_Page" );
 		$this->assertEquals( [], $list->getValues() );
 	}
 }

@@ -1,4 +1,4 @@
-( function () {
+QUnit.module( 'ext.echo.dm - NotificationItem', function ( hooks ) {
 	var fakeData = {
 		type: 'alert',
 		read: true,
@@ -28,11 +28,9 @@
 	var now = 1234567890000;
 	var nowFormatted = '2009-02-13T23:31:30Z';
 
-	QUnit.module( 'ext.echo.dm - NotificationItem', QUnit.newMwEnvironment( {
-		beforeEach: function () {
-			this.sandbox.useFakeTimers( now );
-		}
-	} ) );
+	hooks.beforeEach( function () {
+		this.sandbox.useFakeTimers( now );
+	} );
 
 	QUnit.test.each( 'Constructing items', {
 		'Empty data': {
@@ -137,4 +135,4 @@
 		);
 	} );
 
-}() );
+} );

@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * VisualEditor UserInterface MediaWiki MWReferenceDialog class.
  *
@@ -97,7 +99,7 @@ ve.ui.MWReferenceDialog.static.excludeCommands = [
  * @return {Object} Import rules
  */
 ve.ui.MWReferenceDialog.static.getImportRules = function () {
-	var rules = ve.copy( ve.init.target.constructor.static.importRules );
+	const rules = ve.copy( ve.init.target.constructor.static.importRules );
 	return ve.extendObject(
 		rules,
 		{
@@ -162,7 +164,7 @@ ve.ui.MWReferenceDialog.prototype.isModified = function () {
  * Handle reference target widget change events
  */
 ve.ui.MWReferenceDialog.prototype.onTargetChange = function () {
-	var hasContent = this.documentHasContent();
+	const hasContent = this.documentHasContent();
 
 	this.actions.setAbilities( {
 		done: this.isModified(),
@@ -195,7 +197,7 @@ ve.ui.MWReferenceDialog.prototype.onReferenceGroupInputChange = function () {
  * @param {ve.ui.MWReferenceResultWidget} item Chosen item
  */
 ve.ui.MWReferenceDialog.prototype.onSearchResultsChoose = function ( item ) {
-	var ref = item.getData();
+	const ref = item.getData();
 
 	if ( this.selectedNode instanceof ve.dm.MWReferenceNode ) {
 		this.getFragment().removeContent();
@@ -261,17 +263,15 @@ ve.ui.MWReferenceDialog.prototype.useReference = function ( ref ) {
 	this.referenceGroupInput.setValue( this.originalGroup );
 	this.referenceGroupInput.setDisabled( false );
 
-	var group = this.getFragment().getDocument().getInternalList()
+	const group = this.getFragment().getDocument().getInternalList()
 		.getNodeGroup( this.referenceModel.getListGroup() );
-	if ( ve.getProp( group, 'keyedNodes', this.referenceModel.getListKey(), 'length' ) > 1 ) {
-		this.$reuseWarning.removeClass( 'oo-ui-element-hidden' );
-		this.$reuseWarningText.text( mw.msg(
-			'cite-ve-dialog-reference-editing-reused-long',
-			group.keyedNodes[ this.referenceModel.getListKey() ].length
-		) );
-	} else {
-		this.$reuseWarning.addClass( 'oo-ui-element-hidden' );
-	}
+	const nodes = ve.getProp( group, 'keyedNodes', this.referenceModel.getListKey() );
+	const usages = nodes ? nodes.filter( function ( node ) {
+		return !node.findParent( ve.dm.MWReferencesListNode );
+	} ).length : 0;
+
+	this.reuseWarning.toggle( usages > 1 )
+		.setLabel( mw.msg( 'cite-ve-dialog-reference-editing-reused-long', usages ) );
 
 	return this;
 };
@@ -290,13 +290,13 @@ ve.ui.MWReferenceDialog.prototype.initialize = function () {
 	} );
 	this.searchPanel = new OO.ui.PanelLayout();
 
-	this.reuseWarningIcon = new OO.ui.IconWidget( { icon: 'alert' } );
-	this.$reuseWarningText = $( '<span>' );
-	this.$reuseWarning = $( '<div>' )
-		.addClass( 've-ui-mwReferenceDialog-reuseWarning' )
-		.append( this.reuseWarningIcon.$element, this.$reuseWarningText );
+	this.reuseWarning = new OO.ui.MessageWidget( {
+		inline: true,
+		icon: 'alert',
+		classes: [ 've-ui-mwReferenceDialog-reuseWarning' ]
+	} );
 
-	var citeCommands = Object.keys( ve.init.target.getSurface().commandRegistry.registry ).filter( function ( command ) {
+	const citeCommands = Object.keys( ve.init.target.getSurface().commandRegistry.registry ).filter( function ( command ) {
 		return command.indexOf( 'cite-' ) !== -1;
 	} );
 	this.referenceTarget = ve.init.target.createTargetWidget(
@@ -333,7 +333,7 @@ ve.ui.MWReferenceDialog.prototype.initialize = function () {
 
 	// Initialization
 	this.panels.addItems( [ this.editPanel, this.searchPanel ] );
-	this.editPanel.$element.append( this.$reuseWarning, this.contentFieldset.$element, this.optionsFieldset.$element );
+	this.editPanel.$element.append( this.reuseWarning.$element, this.contentFieldset.$element, this.optionsFieldset.$element );
 	this.optionsFieldset.addItems( [ this.referenceGroupField ] );
 	this.searchPanel.$element.append( this.search.$element );
 	this.$body.append( this.panels.$element );
@@ -355,7 +355,7 @@ ve.ui.MWReferenceDialog.prototype.useExistingReference = function () {
 ve.ui.MWReferenceDialog.prototype.getActionProcess = function ( action ) {
 	if ( action === 'insert' || action === 'done' ) {
 		return new OO.ui.Process( function () {
-			var surfaceModel = this.getFragment().getSurface();
+			const surfaceModel = this.getFragment().getSurface();
 
 			this.referenceModel.setGroup( this.referenceGroupInput.getValue() );
 
@@ -399,7 +399,7 @@ ve.ui.MWReferenceDialog.prototype.getSetupProcess = function ( data ) {
 
 			this.search.setInternalList( this.getFragment().getDocument().getInternalList() );
 
-			var isReadOnly = this.isReadOnly();
+			const isReadOnly = this.isReadOnly();
 			this.referenceTarget.setReadOnly( isReadOnly );
 			this.referenceGroupInput.setReadOnly( isReadOnly );
 

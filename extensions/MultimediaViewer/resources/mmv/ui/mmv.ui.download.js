@@ -16,5 +16,5 @@
  */
 
 ( function () {
-	mw.mmv.ui.download = {};
+	module.exports = {};
 }() );

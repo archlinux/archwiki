@@ -113,34 +113,28 @@ ve.ce.MWWikitextSurface.prototype.afterPasteInsertExternalData = function ( targ
 
 	// isPlainText is true but we still need sanitize (e.g. remove lists)
 	var promise = ve.ce.MWWikitextSurface.super.prototype.afterPasteInsertExternalData.call( this, targetFragment, plainPastedDocumentModel, plainContextRange );
-	if ( this.getSurface().getTarget().constructor.static.convertToWikitextOnPaste && !wasPlain ) {
+	if ( !wasPlain ) {
 		promise.then( function () {
 			// We need to wait for the selection change after paste as that triggers
 			// a contextChange event. Really we should wait for the afterPaste promise to resolve.
 			setTimeout( function () {
 				var surface = view.getSurface(),
 					context = surface.getContext();
-				// HACK: Directly set the 'relatedSources' result in the context to trick it
-				// into showing a context at the end of the paste. This context will disappear
-				// as soon as the selection change as a contextChange will fire.
-				// TODO: Come up with a method to store this context on the surface model then
-				// have the LinearContext read it from there.
-				context.relatedSources = [ {
+				// Ensure surface is deactivated on mobile so context can be shown (T336073)
+				if ( context.isMobile() ) {
+					surface.getView().deactivate();
+				}
+				context.addPersistentSource( {
 					embeddable: false,
-					// HACK²: Pass the rich text document and original fragment (which should now cover
-					// the pasted text) to the context via the otherwise-unused 'model' property.
-					model: {
+					name: 'wikitextPaste',
+					data: {
 						doc: pastedDocumentModel,
 						contextRange: contextRange,
 						fragment: targetFragment
-					},
-					name: 'wikitextPaste',
-					type: 'item'
-				} ];
-				context.afterContextChange();
+					}
+				} );
 				surface.getModel().once( 'select', function () {
-					context.relatedSources = [];
-					context.afterContextChange();
+					context.removePersistentSource( 'wikitextPaste' );
 				} );
 			} );
 		} );

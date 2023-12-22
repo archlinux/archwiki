@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Matma Rex",
 			"Meno25",
 			"ديفيد",
 			"علاء",
-			"فلورانس",
-			"Amire80"
+			"فلورانس"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "لا cached serialization تم العثور عليه مع هذا المفتاح",
@@ -14,7 +14,6 @@
 	"apierror-visualeditor-docserver-http-error": "خطأ في الاتصال بخادم Parsoid/RESTBase: $1",
 	"apierror-visualeditor-docserver-http": "خطأ في الاتصال بخادم Parsoid / RESTBase (HTTP $1 ): $2",
 	"apierror-visualeditor-docserver": "خطأ في الاتصال بخادم Parsoid/RESTBase (بدون استجابة)",
-	"apihelp-visualeditor-description": "يرجع HTML5 لصفحة من الخدمة بارسويد (Parsoid).",
 	"apihelp-visualeditor-param-basetimestamp": "عندما تحفظ، وتعيين هذا إلى الطابع الزمني للمراجعة التي تم تحريرها. تستخدم لكشف الصراعات تحرير.",
 	"apihelp-visualeditor-param-badetag": "إذا أرجع استعلام RESTBase ETag غير صالح على ما يبدو، فقم بتمريره هنا لأغراض التسجيل.",
 	"apihelp-visualeditor-param-cachekey": "لتسلسل أو فرق، استخدم نتيجة لتسلسل السابق لطلب مخبأ مع هذا المفتاح. يتجاوز $1html.",
@@ -33,7 +32,6 @@
 	"apihelp-visualeditor-param-stash": "عند الحفظ ، قم بتعيين ها كصحيح إذا كنت تريد استخدام stashing API.",
 	"apihelp-visualeditor-param-wikitext": "نصوص ويكي WikiText لإرسالها إلى Parsoid للتحويل إلى HTML\n(paction = parsefragment).",
 	"apihelp-visualeditor-summary": "يرجع HTML5 لصفحة من خدمة Parsoid.",
-	"apihelp-visualeditoredit-description": "حفظ الصفحة HTML5 إلى ميدياويكي\n(تحويلها إلى نصوص ويكي WikiText عبر خدمة Parsoid).",
 	"apihelp-visualeditoredit-param-basetimestamp": "عندما تحفظ، وتعيين هذا إلى الطابع الزمني للمراجعة التي تم تحريرها. تستخدم لكشف الصراعات تحرير.",
 	"apihelp-visualeditoredit-param-cachekey": "استخدام نتيجة لتسلسل السابق لطلب مخبأ مع هذا المفتاح.\nيتجاوز $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "CAPTCHA ID (عندما تحفظ مع استجابة CAPTCHA).",

@@ -4,6 +4,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 
 /**
@@ -69,8 +70,6 @@ class CategoryMembershipChange {
 	 * @param Title $pageTitle Title instance of the categorized page
 	 * @param BacklinkCache $backlinkCache
 	 * @param RevisionRecord|null $revision Latest revision of the categorized page.
-	 *
-	 * @throws MWException
 	 */
 	public function __construct(
 		Title $pageTitle, BacklinkCache $backlinkCache, RevisionRecord $revision = null
@@ -92,12 +91,10 @@ class CategoryMembershipChange {
 	 *
 	 * @param callable $callback
 	 * @see RecentChange::newForCategorization for callback signiture
-	 *
-	 * @throws MWException
 	 */
 	public function overrideNewForCategorizationCallback( callable $callback ) {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new MWException( 'Cannot override newForCategorization callback in operation.' );
+			throw new LogicException( 'Cannot override newForCategorization callback in operation.' );
 		}
 		$this->newForCategorizationCallback = $callback;
 	}
@@ -159,8 +156,6 @@ class CategoryMembershipChange {
 	 * @param string $lastTimestamp Parent revision timestamp of this change in TS_MW format
 	 * @param RevisionRecord|null $revision
 	 * @param bool $added true, if the category was added, false for removed
-	 *
-	 * @throws MWException
 	 */
 	private function notifyCategorization(
 		$timestamp,

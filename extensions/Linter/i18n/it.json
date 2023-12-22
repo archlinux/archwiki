@@ -12,6 +12,8 @@
 	"linterrors": "Errori di Lint",
 	"linter-category-bogus-image-options": "Parametri di \"File:\" inesistenti",
 	"linter-category-bogus-image-options-desc": "Queste pagine contengono inclusioni di immagini o altri file con parametri non validi.",
+	"linter-category-large-tables": "Tabelle grandi difficili da visualizzare sui dispositivi mobili",
+	"linter-category-large-tables-desc": "Queste pagine hanno tabelle che sono difficili da visualizzare sui dispositivi mobili",
 	"linter-category-deletable-table-tag": "Tag \"table\" che dovrebbe essere cancellato",
 	"linter-category-deletable-table-tag-desc": "Queste pagine contengono dei tag \"table\" che dovrebbero essere cancellati.",
 	"linter-category-fostered": "Contenuto di tabella in posizione errata",

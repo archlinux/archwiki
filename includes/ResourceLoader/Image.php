@@ -23,6 +23,7 @@ namespace MediaWiki\ResourceLoader;
 use DOMDocument;
 use FileBackend;
 use InvalidArgumentException;
+use InvalidSVGException;
 use MediaWiki\Languages\LanguageFallback;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -88,7 +89,7 @@ class Image {
 		// [ "en,de,fr" => "foo.svg" ]
 		// → [ "en" => "foo.svg", "de" => "foo.svg", "fr" => "foo.svg" ]
 		if ( is_array( $this->descriptor ) && isset( $this->descriptor['lang'] ) ) {
-			foreach ( array_keys( $this->descriptor['lang'] ) as $langList ) {
+			foreach ( $this->descriptor['lang'] as $langList => $_ ) {
 				if ( strpos( $langList, ',' ) !== false ) {
 					$this->descriptor['lang'] += array_fill_keys(
 						explode( ',', $langList ),
@@ -245,14 +246,12 @@ class Image {
 			'image' => $this->getName(),
 			'variant' => $variant,
 			'format' => $format,
+			// Most images don't vary on language, but include the parameter anyway, so that version
+			// hashes are computed consistently. (T321394#9100166)
+			'lang' => $context->getLanguage(),
+			'skin' => $context->getSkin(),
+			'version' => $context->getResourceLoader()->makeVersionQuery( $context, [ $this->getModule() ] ),
 		];
-		if ( $this->varyOnLanguage() ) {
-			$query['lang'] = $context->getLanguage();
-		}
-		// The following parameters are at the end to keep the original order of the parameters.
-		$query['skin'] = $context->getSkin();
-		$rl = $context->getResourceLoader();
-		$query['version'] = $rl->makeVersionQuery( $context, [ $this->getModule() ] );
 
 		return wfAppendQuery( $script, $query );
 	}
@@ -456,7 +455,12 @@ class Image {
 
 		file_put_contents( $tempFilenameSvg, $svg );
 
-		$svgReader = new SVGReader( $tempFilenameSvg );
+		try {
+			$svgReader = new SVGReader( $tempFilenameSvg );
+		} catch ( InvalidSVGException $e ) {
+			// XXX Can this ever happen?
+			throw new RuntimeException( 'Invalid SVG', 0, $e );
+		}
 		$metadata = $svgReader->getMetadata();
 		if ( !isset( $metadata['width'] ) || !isset( $metadata['height'] ) ) {
 			unlink( $tempFilenameSvg );
@@ -479,18 +483,6 @@ class Image {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Check if the image depends on the language.
-	 *
-	 * @return bool
-	 */
-	private function varyOnLanguage() {
-		return is_array( $this->descriptor ) && (
-			isset( $this->descriptor['ltr'] ) ||
-			isset( $this->descriptor['rtl'] ) ||
-			isset( $this->descriptor['lang'] ) );
 	}
 }
 

@@ -31,7 +31,7 @@ class CaptchaAuthenticationRequestTest extends AuthenticationRequestTestCase {
 		];
 	}
 
-	public function provideLoadFromSubmission() {
+	public static function provideLoadFromSubmission() {
 		return [
 			'no id' => [
 				[ '123', [ 'question' => '1+2', 'answer' => '3' ] ],

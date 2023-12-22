@@ -28,5 +28,5 @@
 	"titleblacklist-warning": "<strong>Attenzione: questa pagina può essere modificata solo dagli amministratori o dagli utenti con il diritto <code>tboverride</code> poiché corrisponde alla seguente voce dell'elenco dei titoli non consentiti:</strong><br /><code>$1</code>",
 	"right-tboverride": "Ignora gli elenchi dei titoli e nomi utente non consentiti",
 	"right-tboverride-account": "Ignora elenco dei nomi utente non consentiti",
-	"right-titleblacklistlog": "Visualizza registro dell'elenco dei titoli non consentiti"
+	"right-titleblacklistlog": "Visualizza il registro dell'elenco dei titoli non consentiti"
 }

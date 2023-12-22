@@ -5,7 +5,6 @@
 			"Zoranzoki21"
 		]
 	},
-	"apihelp-titleblacklist-description": "{{doc-apihelp-description|titleblacklist}}",
 	"apihelp-titleblacklist-summary": "{{doc-apihelp-summary|titleblacklist}}",
 	"apihelp-titleblacklist-param-title": "{{doc-apihelp-param|titleblacklist|title}}",
 	"apihelp-titleblacklist-param-action": "{{doc-apihelp-param|titleblacklist|action}}",

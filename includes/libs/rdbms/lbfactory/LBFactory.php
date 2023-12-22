@@ -24,7 +24,6 @@ use EmptyBagOStuff;
 use Exception;
 use Generator;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
-use LogicException;
 use NullStatsdDataFactory;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -39,8 +38,6 @@ use Wikimedia\ScopedCallback;
  * @ingroup Database
  */
 abstract class LBFactory implements ILBFactory {
-	/** @var ChronologyProtector */
-	private $chronProt;
 	/** @var CriticalSectionProvider|null */
 	private $csProvider;
 	/**
@@ -59,32 +56,30 @@ abstract class LBFactory implements ILBFactory {
 	/** @var callable Deprecation logger */
 	private $deprecationLogger;
 
-	/** @var BagOStuff */
-	protected $cpStash;
+	/** @var ChronologyProtector */
+	protected $chronologyProtector;
 	/** @var BagOStuff */
 	protected $srvCache;
 	/** @var WANObjectCache */
 	protected $wanCache;
-	/** @var DatabaseFactory */
-	protected $databaseFactory;
 	/** @var DatabaseDomain Local domain */
 	protected $localDomain;
 
-	/** @var array Web request information about the client */
-	private $requestInfo;
 	/** @var bool Whether this PHP instance is for a CLI script */
 	private $cliMode;
 	/** @var string Agent name for query profiling */
 	private $agent;
-	/** @var string Secret string for HMAC hashing */
-	private $secret;
 
 	/** @var array[] $aliases Map of (table => (dbname, schema, prefix) map) */
 	private $tableAliases = [];
 	/** @var string[] Map of (index alias => index) */
 	private $indexAliases = [];
 	/** @var DatabaseDomain[]|string[] Map of (domain alias => DB domain) */
-	private $domainAliases = [];
+	protected $domainAliases = [];
+	/** @var array[] Map of virtual domain to array of cluster and domain */
+	protected array $virtualDomainsMapping = [];
+	/** @var string[] List of registered virtual domains */
+	protected array $virtualDomains = [];
 	/** @var callable[] */
 	private $replicationWaitCallbacks = [];
 
@@ -102,9 +97,6 @@ abstract class LBFactory implements ILBFactory {
 
 	/** @var string|null */
 	private $defaultGroup = null;
-
-	/** @var DatabaseDomain[] Map of (domain ID => domain instance) */
-	private $nonLocalDomainCache = [];
 
 	private const ROUND_CURSORY = 'cursory';
 	private const ROUND_BEGINNING = 'within-begin';
@@ -125,15 +117,6 @@ abstract class LBFactory implements ILBFactory {
 		if ( isset( $conf['configCallback'] ) ) {
 			$this->configCallback = $conf['configCallback'];
 		}
-
-		$this->requestInfo = [
-			'IPAddress' => $_SERVER['REMOTE_ADDR'] ?? '',
-			'UserAgent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
-			// Headers application can inject via LBFactory::setRequestInfo()
-			'ChronologyProtection' => null,
-			'ChronologyClientId' => null, // prior $cpClientId value from LBFactory::shutdown()
-			'ChronologyPositionIndex' => null // prior $cpIndex value from LBFactory::shutdown()
-		];
 	}
 
 	/**
@@ -149,11 +132,9 @@ abstract class LBFactory implements ILBFactory {
 			$this->readOnlyReason = $conf['readOnlyReason'];
 		}
 
-		$this->cpStash = $conf['cpStash'] ?? new EmptyBagOStuff();
+		$this->chronologyProtector = $conf['chronologyProtector'] ?? new ChronologyProtector();
 		$this->srvCache = $conf['srvCache'] ?? new EmptyBagOStuff();
 		$this->wanCache = $conf['wanCache'] ?? WANObjectCache::newEmpty();
-
-		$this->databaseFactory = $conf['databaseFactory'] ?? new DatabaseFactory();
 
 		$this->logger = $conf['logger'] ?? new NullLogger();
 		$this->errorLogger = $conf['errorLogger'] ?? static function ( Throwable $e ) {
@@ -172,8 +153,9 @@ abstract class LBFactory implements ILBFactory {
 		$this->cliMode = $conf['cliMode'] ?? ( PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg' );
 		$this->agent = $conf['agent'] ?? '';
 		$this->defaultGroup = $conf['defaultGroup'] ?? null;
-		$this->secret = $conf['secret'] ?? '';
 		$this->replicationWaitTimeout = $this->cliMode ? 60 : 1;
+		$this->virtualDomainsMapping = $conf['virtualDomainsMapping'] ?? [];
+		$this->virtualDomains = $conf['virtualDomains'] ?? [];
 
 		static $nextTicket;
 		$this->ticket = $nextTicket = ( is_int( $nextTicket ) ? $nextTicket++ : mt_rand() );
@@ -207,11 +189,9 @@ abstract class LBFactory implements ILBFactory {
 		}
 
 		$conf = ( $this->configCallback )();
-		if ( !$conf ) {
-			return;
+		if ( $conf ) {
+			$this->reconfigure( $conf );
 		}
-
-		$this->reconfigure( $conf );
 	}
 
 	/**
@@ -246,37 +226,6 @@ abstract class LBFactory implements ILBFactory {
 		return $this->localDomain->getId();
 	}
 
-	public function resolveDomainID( $domain ) {
-		return $this->resolveDomainInstance( $domain )->getId();
-	}
-
-	/**
-	 * @param DatabaseDomain|string|false $domain
-	 * @return DatabaseDomain
-	 */
-	final protected function resolveDomainInstance( $domain ) {
-		if ( $domain instanceof DatabaseDomain ) {
-			return $domain; // already a domain instance
-		} elseif ( $domain === false || $domain === $this->localDomain->getId() ) {
-			return $this->localDomain;
-		} elseif ( isset( $this->domainAliases[$domain] ) ) {
-			// This array acts as both the original map and as instance cache.
-			// Instances pass-through DatabaseDomain::newFromId as-is.
-			$this->domainAliases[$domain] =
-				DatabaseDomain::newFromId( $this->domainAliases[$domain] );
-
-			return $this->domainAliases[$domain];
-		}
-
-		$cachedDomain = $this->nonLocalDomainCache[$domain] ?? null;
-		if ( $cachedDomain === null ) {
-			$cachedDomain = DatabaseDomain::newFromId( $domain );
-			$this->nonLocalDomainCache = [ $domain => $cachedDomain ];
-		}
-
-		return $cachedDomain;
-	}
-
 	public function shutdown(
 		$flags = self::SHUTDOWN_NORMAL,
 		callable $workCallback = null,
@@ -286,12 +235,16 @@ abstract class LBFactory implements ILBFactory {
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$scope = ScopedCallback::newScopedIgnoreUserAbort();
 
-		$chronProt = $this->getChronologyProtector();
 		if ( ( $flags & self::SHUTDOWN_NO_CHRONPROT ) != self::SHUTDOWN_NO_CHRONPROT ) {
-			$this->shutdownChronologyProtector( $chronProt, $cpIndex );
+			// Remark all of the relevant DB primary positions
+			foreach ( $this->getLBsForOwner() as $lb ) {
+				$this->chronologyProtector->stageSessionPrimaryPos( $lb );
+			}
+			// Write the positions to the persistent stash
+			$this->chronologyProtector->persistSessionReplicationPositions( $cpIndex );
 			$this->logger->debug( __METHOD__ . ': finished ChronologyProtector shutdown' );
 		}
-		$cpClientId = $chronProt->getClientId();
+		$cpClientId = $this->chronologyProtector->getClientId();
 
 		$this->commitPrimaryChanges( __METHOD__ );
 
@@ -493,30 +446,16 @@ abstract class LBFactory implements ILBFactory {
 
 	public function waitForReplication( array $opts = [] ) {
 		$opts += [
-			'domain' => false,
-			'cluster' => false,
 			'timeout' => $this->replicationWaitTimeout,
 			'ifWritesSince' => null
 		];
 
-		if ( $opts['domain'] === false && isset( $opts['wiki'] ) ) {
-			$opts['domain'] = $opts['wiki']; // b/c
-		}
-
-		// Figure out which clusters need to be checked
-		/** @var ILoadBalancer[] $lbs */
 		$lbs = [];
-		if ( $opts['cluster'] !== false ) {
-			$lbs[] = $this->getExternalLB( $opts['cluster'] );
-		} elseif ( $opts['domain'] !== false ) {
-			$lbs[] = $this->getMainLB( $opts['domain'] );
-		} else {
-			foreach ( $this->getAllLBs() as $lb ) {
-				$lbs[] = $lb;
-			}
-			if ( !$lbs ) {
-				return true; // nothing actually used
-			}
+		foreach ( $this->getLBsForOwner() as $lb ) {
+			$lbs[] = $lb;
+		}
+		if ( !$lbs ) {
+			return true; // nothing actually used
 		}
 
 		// Get all the primary DB positions of applicable DBs right now.
@@ -582,6 +521,20 @@ abstract class LBFactory implements ILBFactory {
 	}
 
 	public function getPrimaryDatabase( $domain = false ): IDatabase {
+		if ( $domain !== false && in_array( $domain, $this->virtualDomains ) ) {
+			if ( isset( $this->virtualDomainsMapping[$domain] ) ) {
+				$config = $this->virtualDomainsMapping[$domain];
+				if ( isset( $config['cluster'] ) ) {
+					return $this
+						->getExternalLB( $config['cluster'] )
+						->getConnection( DB_PRIMARY, [], $config['db'] );
+				}
+				$domain = $config['db'];
+			} else {
+				// It's not configured, assume local db.
+				$domain = false;
+			}
+		}
 		return $this->getMainLB( $domain )->getConnection( DB_PRIMARY, [], $domain );
 	}
 
@@ -590,6 +543,20 @@ abstract class LBFactory implements ILBFactory {
 			$groups = [];
 		} else {
 			$groups = [ $group ];
+		}
+		if ( $domain !== false && in_array( $domain, $this->virtualDomains ) ) {
+			if ( isset( $this->virtualDomainsMapping[$domain] ) ) {
+				$config = $this->virtualDomainsMapping[$domain];
+				if ( isset( $config['cluster'] ) ) {
+					return $this
+						->getExternalLB( $config['cluster'] )
+						->getConnection( DB_REPLICA, $groups, $config['db'] );
+				}
+				$domain = $config['db'];
+			} else {
+				// It's not configured, assume local db.
+				$domain = false;
+			}
 		}
 		return $this->getMainLB( $domain )->getConnection( DB_REPLICA, $groups, $domain );
 	}
@@ -624,69 +591,8 @@ abstract class LBFactory implements ILBFactory {
 		return $waitSucceeded;
 	}
 
-	public function getChronologyProtectorTouched( $domain = false ) {
-		return $this->getChronologyProtector()->getTouched( $this->getMainLB( $domain ) );
-	}
-
 	public function disableChronologyProtection() {
-		$this->getChronologyProtector()->setEnabled( false );
-	}
-
-	/**
-	 * @return ChronologyProtector
-	 */
-	protected function getChronologyProtector() {
-		if ( $this->chronProt ) {
-			return $this->chronProt;
-		}
-
-		$this->chronProt = new ChronologyProtector(
-			$this->cpStash,
-			[
-				'ip' => $this->requestInfo['IPAddress'],
-				'agent' => $this->requestInfo['UserAgent'],
-				'clientId' => $this->requestInfo['ChronologyClientId'] ?: null
-			],
-			$this->requestInfo['ChronologyPositionIndex'],
-			$this->secret
-		);
-		$this->chronProt->setLogger( $this->logger );
-
-		if ( $this->cliMode ) {
-			$this->chronProt->setEnabled( false );
-		} elseif ( $this->requestInfo['ChronologyProtection'] === 'false' ) {
-			// Request opted out of using position wait logic. This is useful for requests
-			// done by the job queue or background ETL that do not have a meaningful session.
-			$this->chronProt->setWaitEnabled( false );
-		} elseif ( $this->cpStash instanceof EmptyBagOStuff ) {
-			// No where to store any DB positions and wait for them to appear
-			$this->chronProt->setEnabled( false );
-			$this->logger->debug( 'Cannot use ChronologyProtector with EmptyBagOStuff' );
-		}
-
-		$this->logger->debug(
-			__METHOD__ . ': request info ' .
-			json_encode( $this->requestInfo, JSON_PRETTY_PRINT )
-		);
-
-		return $this->chronProt;
-	}
-
-	/**
-	 * Get and record all of the staged DB positions into persistent memory storage
-	 *
-	 * @param ChronologyProtector $cp
-	 * @param int|null &$cpIndex DB position key write counter; incremented on update [returned]
-	 */
-	protected function shutdownChronologyProtector(
-		ChronologyProtector $cp, &$cpIndex = null
-	) {
-		// Remark all of the relevant DB primary positions
-		foreach ( $this->getLBsForOwner() as $lb ) {
-			$cp->stageSessionPrimaryPos( $lb );
-		}
-		// Write the positions to the persistent stash
-		$cp->persistSessionReplicationPositions( $cpIndex );
+		$this->chronologyProtector->setEnabled( false );
 	}
 
 	/**
@@ -708,7 +614,6 @@ abstract class LBFactory implements ILBFactory {
 			'readOnlyReason' => $this->readOnlyReason,
 			'srvCache' => $this->srvCache,
 			'wanCache' => $this->wanCache,
-			'databaseFactory' => $this->databaseFactory,
 			'profiler' => $this->profiler,
 			'trxProfiler' => $this->trxProfiler,
 			'logger' => $this->logger,
@@ -718,11 +623,7 @@ abstract class LBFactory implements ILBFactory {
 			'cliMode' => $this->cliMode,
 			'agent' => $this->agent,
 			'defaultGroup' => $this->defaultGroup,
-			'chronologyCallback' => function ( ILoadBalancer $lb ) {
-				// Defer ChronologyProtector construction in case setRequestInfo() ends up
-				// being called later (but before the first connection attempt) (T192611)
-				return $this->getChronologyProtector()->yieldSessionPrimaryPos( $lb );
-			},
+			'chronologyProtector' => $this->chronologyProtector,
 			'roundStage' => $initStage,
 			'criticalSectionProvider' => $this->csProvider
 		];
@@ -792,72 +693,13 @@ abstract class LBFactory implements ILBFactory {
 		$this->agent = $agent;
 	}
 
-	public function appendShutdownCPIndexAsQuery( $url, $index ) {
+	public function hasStreamingReplicaServers() {
 		foreach ( $this->getLBsForOwner() as $lb ) {
 			if ( $lb->hasStreamingReplicaServers() ) {
-				return strpos( $url, '?' ) === false
-					? "$url?cpPosIndex=$index" : "$url&cpPosIndex=$index";
+				return true;
 			}
 		}
-		return $url; // no primary/replica clusters touched
-	}
-
-	/**
-	 * Build a string conveying the client and write index of the chronology protector data
-	 *
-	 * @param int $writeIndex
-	 * @param int $time UNIX timestamp; can be used to detect stale cookies (T190082)
-	 * @param string $clientId Client ID hash from ILBFactory::shutdown()
-	 * @return string Value to use for "cpPosIndex" cookie
-	 * @since 1.32
-	 */
-	public static function makeCookieValueFromCPIndex(
-		int $writeIndex,
-		int $time,
-		string $clientId
-	) {
-		// Format is "<write index>@<write timestamp>#<client ID hash>"
-		return "{$writeIndex}@{$time}#{$clientId}";
-	}
-
-	/**
-	 * Parse a string conveying the client and write index of the chronology protector data
-	 *
-	 * @param string|null $value Value of "cpPosIndex" cookie
-	 * @param int $minTimestamp Lowest UNIX timestamp that a non-expired value can have
-	 * @return array (index: int or null, clientId: string or null)
-	 * @since 1.32
-	 */
-	public static function getCPInfoFromCookieValue( ?string $value, int $minTimestamp ) {
-		static $placeholder = [ 'index' => null, 'clientId' => null ];
-
-		if ( $value === null ) {
-			return $placeholder; // not set
-		}
-
-		// Format is "<write index>@<write timestamp>#<client ID hash>"
-		if ( !preg_match( '/^(\d+)@(\d+)#([0-9a-f]{32})$/', $value, $m ) ) {
-			return $placeholder; // invalid
-		}
-
-		$index = (int)$m[1];
-		if ( $index <= 0 ) {
-			return $placeholder; // invalid
-		} elseif ( isset( $m[2] ) && $m[2] !== '' && (int)$m[2] < $minTimestamp ) {
-			return $placeholder; // expired
-		}
-
-		$clientId = ( isset( $m[3] ) && $m[3] !== '' ) ? $m[3] : null;
-
-		return [ 'index' => $index, 'clientId' => $clientId ];
-	}
-
-	public function setRequestInfo( array $info ) {
-		if ( $this->chronProt ) {
-			throw new LogicException( 'ChronologyProtector already initialized' );
-		}
-
-		$this->requestInfo = $info + $this->requestInfo;
+		return false;
 	}
 
 	public function setDefaultReplicationWaitTimeout( $seconds ) {
@@ -877,13 +719,5 @@ abstract class LBFactory implements ILBFactory {
 				"Transaction round stage must be '$stage' (not '{$this->trxRoundStage}')"
 			);
 		}
-	}
-
-	/**
-	 * @param float|null &$time Mock UNIX timestamp for testing
-	 * @codeCoverageIgnore
-	 */
-	public function setMockTime( &$time ) {
-		$this->getChronologyProtector()->setMockTime( $time );
 	}
 }

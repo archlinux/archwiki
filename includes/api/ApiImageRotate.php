@@ -19,6 +19,8 @@
  */
 
 use MediaWiki\FileBackend\FSFile\TempFSFileFactory;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\TitleFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -27,27 +29,28 @@ use Wikimedia\ParamValidator\ParamValidator;
 class ApiImageRotate extends ApiBase {
 	private $mPageSet = null;
 
-	/** @var RepoGroup */
-	private $repoGroup;
-
-	/** @var TempFSFileFactory */
-	private $tempFSFileFactory;
+	private RepoGroup $repoGroup;
+	private TempFSFileFactory $tempFSFileFactory;
+	private TitleFactory $titleFactory;
 
 	/**
 	 * @param ApiMain $mainModule
 	 * @param string $moduleName
 	 * @param RepoGroup $repoGroup
 	 * @param TempFSFileFactory $tempFSFileFactory
+	 * @param TitleFactory $titleFactory
 	 */
 	public function __construct(
 		ApiMain $mainModule,
 		$moduleName,
 		RepoGroup $repoGroup,
-		TempFSFileFactory $tempFSFileFactory
+		TempFSFileFactory $tempFSFileFactory,
+		TitleFactory $titleFactory
 	) {
 		parent::__construct( $mainModule, $moduleName );
 		$this->repoGroup = $repoGroup;
 		$this->tempFSFileFactory = $tempFSFileFactory;
+		$this->titleFactory = $titleFactory;
 	}
 
 	public function execute() {
@@ -74,7 +77,8 @@ class ApiImageRotate extends ApiBase {
 			}
 		}
 
-		foreach ( $pageSet->getTitles() as $title ) {
+		foreach ( $pageSet->getPages() as $page ) {
+			$title = $this->titleFactory->newFromPageIdentity( $page );
 			$r = [];
 			$r['id'] = $title->getArticleID();
 			ApiQueryBase::addTitleInfo( $r, $title );

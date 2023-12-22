@@ -11,12 +11,12 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionSlots;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use stdClass;
 use TextContent;
-use TitleValue;
 use Wikimedia\Assert\PreconditionException;
 
 /**
@@ -25,7 +25,7 @@ use Wikimedia\Assert\PreconditionException;
  */
 class RevisionArchiveRecordTest extends MediaWikiIntegrationTestCase {
 
-	public function provideConstructor() {
+	public static function provideConstructor() {
 		$user = new UserIdentityValue( 11, 'Tester' );
 		$comment = CommentStoreComment::newUnsavedComment( 'Hello World' );
 
@@ -111,8 +111,10 @@ class RevisionArchiveRecordTest extends MediaWikiIntegrationTestCase {
 		];
 
 		$row = $protoRow;
+		$nonExistingTitle = Title::makeTitle( NS_MAIN, 'DummyDoesNotExist' );
+		$nonExistingTitle->resetArticleID( 0 );
 		yield 'no length, no hash' => [
-			Title::makeTitle( NS_MAIN, 'DummyDoesNotExist' ),
+			$nonExistingTitle,
 			$user,
 			$comment,
 			(object)$row,
@@ -144,7 +146,8 @@ class RevisionArchiveRecordTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertTrue( $page->isSamePageAs( $rec->getPage() ), 'getPage' );
 		$this->assertSame( $user, $rec->getUser( RevisionRecord::RAW ), 'getUser' );
-		$this->assertSame( $comment, $rec->getComment(), 'getComment' );
+		$this->assertSame( null, $rec->getComment(), 'getComment (public)' );
+		$this->assertSame( $comment, $rec->getComment( RevisionRecord::RAW ), 'getComment (raw)' );
 
 		$this->assertSame( $slots->getSlotRoles(), $rec->getSlotRoles(), 'getSlotRoles' );
 		$this->assertSame( $wikiId, $rec->getWikiId(), 'getWikiId' );
@@ -185,7 +188,7 @@ class RevisionArchiveRecordTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
-	public function provideConstructorFailure() {
+	public static function provideConstructorFailure() {
 		$title = Title::makeTitle( NS_MAIN, 'Dummy' );
 		$title->resetArticleID( 17 );
 

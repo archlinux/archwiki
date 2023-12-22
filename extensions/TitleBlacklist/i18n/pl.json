@@ -12,6 +12,7 @@
 			"Sp5uhe",
 			"Tar Lócesilion",
 			"WTM",
+			"WaldiSt",
 			"Woytecr"
 		]
 	},
@@ -34,5 +35,5 @@
 	"titleblacklist-warning": "<strong>Uwaga: tę stronę mogą edytować tylko administratorzy i użytkownicy z uprawnieniem <code>tboverride</code>, ponieważ znajduje się ona na liście niedozwolonych tytułów, w punkcie:</strong><br /><code>$1</code>",
 	"right-tboverride": "Ignorowanie listy niedozwolonych tytułów lub nazw użytkowników",
 	"right-tboverride-account": "Ignorowanie listy niedozwolonych nazw użytkowników",
-	"right-titleblacklistlog": "Podgląd rejestru listy niedozwolonych tytułów"
+	"right-titleblacklistlog": "Wyświetl dziennik listy niedozwolonych tytułów"
 }

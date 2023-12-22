@@ -23,6 +23,7 @@
 
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Status\Status;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DatabaseFactory;
 use Wikimedia\Rdbms\DatabasePostgres;
@@ -43,6 +44,7 @@ class PostgresInstaller extends DatabaseInstaller {
 		'wgDBname',
 		'wgDBuser',
 		'wgDBpassword',
+		'wgDBssl',
 		'wgDBmwschema',
 	];
 
@@ -72,6 +74,7 @@ class PostgresInstaller extends DatabaseInstaller {
 			$this->parent->getHelpBox( 'config-db-host-help' )
 		) .
 			$this->getTextBox( 'wgDBport', 'config-db-port' ) .
+			$this->getCheckBox( 'wgDBssl', 'config-db-ssl' ) .
 			Html::openElement( 'fieldset' ) .
 			Html::element( 'legend', [], wfMessage( 'config-db-wiki-settings' )->text() ) .
 			$this->getTextBox(
@@ -95,6 +98,7 @@ class PostgresInstaller extends DatabaseInstaller {
 		$newValues = $this->setVarsFromRequest( [
 			'wgDBserver',
 			'wgDBport',
+			'wgDBssl',
 			'wgDBname',
 			'wgDBmwschema'
 		] );
@@ -168,6 +172,7 @@ class PostgresInstaller extends DatabaseInstaller {
 				'port' => $this->getVar( 'wgDBport' ),
 				'user' => $user,
 				'password' => $password,
+				'ssl' => $this->getVar( 'wgDBssl' ),
 				'dbname' => $dbName,
 				'schema' => $schema,
 			] );
@@ -274,6 +279,7 @@ class PostgresInstaller extends DatabaseInstaller {
 					'port' => $this->getVar( 'wgDBport' ),
 					'user' => $user,
 					'password' => $password,
+					'ssl' => $this->getVar( 'wgDBssl' ),
 					'dbname' => $db
 				];
 				$conn = ( new DatabaseFactory() )->create( 'postgres', $p );
@@ -572,10 +578,12 @@ class PostgresInstaller extends DatabaseInstaller {
 
 	public function getLocalSettings() {
 		$port = $this->getVar( 'wgDBport' );
+		$useSsl = $this->getVar( 'wgDBssl' ) ? 'true' : 'false';
 		$schema = $this->getVar( 'wgDBmwschema' );
 
 		return "# Postgres specific settings
 \$wgDBport = \"{$port}\";
+\$wgDBssl = {$useSsl};
 \$wgDBmwschema = \"{$schema}\";";
 	}
 

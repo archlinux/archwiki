@@ -45,14 +45,12 @@ class ActorMigrationBase {
 	/** @var int A combination of the SCHEMA_COMPAT_WRITE_* flags */
 	private $writeStage;
 
-	/** @var ActorStoreFactory */
-	private $actorStoreFactory;
+	private ActorStoreFactory $actorStoreFactory;
 
 	/** @var array */
 	private $fieldInfos;
 
-	/** @var bool */
-	private $allowUnknown;
+	private bool $allowUnknown;
 
 	/**
 	 * @param array $fieldInfos An array of associative arrays, giving configuration
@@ -380,13 +378,13 @@ class ActorMigrationBase {
 							}
 							$set[$to] = $extra[$from];
 						}
-						$dbw->upsert(
-							$tempTableInfo['table'],
-							[ $tempTableInfo['pk'] => $pk ] + $set,
-							[ [ $tempTableInfo['pk'] ] ],
-							$set,
-							$func
-						);
+						$dbw->newInsertQueryBuilder()
+							->insertInto( $tempTableInfo['table'] )
+							->row( [ $tempTableInfo['pk'] => $pk ] + $set )
+							->onDuplicateKeyUpdate()
+							->uniqueIndexFields( [ $tempTableInfo['pk'] ] )
+							->set( $set )
+							->caller( $func )->execute();
 					};
 				}
 				if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
@@ -520,4 +518,7 @@ class ActorMigrationBase {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( ActorMigrationBase::class, 'ActorMigrationBase' );

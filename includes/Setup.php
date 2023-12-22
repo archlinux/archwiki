@@ -51,7 +51,9 @@
  */
 
 // phpcs:disable MediaWiki.Usage.DeprecatedGlobalVariables
+use MediaWiki\Config\SiteConfiguration;
 use MediaWiki\HookContainer\FauxGlobalHookArray;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
@@ -66,6 +68,7 @@ use MediaWiki\Settings\WikiFarmSettingsLoader;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use Psr\Log\LoggerInterface;
 use Wikimedia\RequestTimeout\RequestTimeout;
 
@@ -106,7 +109,7 @@ if ( !defined( 'MW_ENTRY_POINT' ) ) {
 // MainConfigNames::BaseDirectory setting. The BaseDirectory setting is set further
 // down in Setup.php to the value of MW_INSTALL_PATH.
 global $IP;
-$IP = $IP = wfDetectInstallPath(); // ensure MW_INSTALL_PATH is defined
+$IP = wfDetectInstallPath(); // ensure MW_INSTALL_PATH is defined
 
 /**
  * Pre-config setup: Before loading LocalSettings.php
@@ -320,7 +323,11 @@ MediaWikiServices::allowGlobalInstance();
 define( 'MW_SERVICE_BOOTSTRAP_COMPLETE', 1 );
 
 MWExceptionRenderer::setShowExceptionDetails( $wgShowExceptionDetails );
-MWExceptionHandler::installHandler( $wgLogExceptionBacktrace, $wgPropagateErrors );
+if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+	// Never install the handler in PHPUnit tests, otherwise PHPUnit's own handler will be unset and things
+	// like convertWarningsToExceptions won't work.
+	MWExceptionHandler::installHandler( $wgLogExceptionBacktrace, $wgPropagateErrors );
+}
 Profiler::init( $wgProfiler );
 
 // Non-trivial validation of: $wgServer
@@ -420,6 +427,7 @@ if ( $wgRequest->getCookie( 'UseDC', '' ) === 'master' ) {
 // Useful debug output
 ( static function () {
 	global $wgCommandLineMode, $wgRequest;
+
 	$logger = LoggerFactory::getInstance( 'wfDebug' );
 	if ( $wgCommandLineMode ) {
 		$self = $_SERVER['PHP_SELF'] ?? '';
@@ -437,7 +445,7 @@ if ( $wgRequest->getCookie( 'UseDC', '' ) === 'master' ) {
 } )();
 
 // Most of the config is out, some might want to run hooks here.
-Hooks::runner()->onSetupAfterCache();
+( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onSetupAfterCache();
 
 // Now that variant lists may be available, parse any action paths and article paths
 // as query parameters.
@@ -453,7 +461,7 @@ if ( MW_ENTRY_POINT === 'index' ) {
 }
 
 /**
- * @var MediaWiki\Session\SessionId|null The persistent session ID (if any) loaded at startup
+ * @var MediaWiki\Session\SessionId|null $wgInitialSessionId The persistent session ID (if any) loaded at startup
  */
 $wgInitialSessionId = null;
 if ( !defined( 'MW_NO_SESSION' ) && !$wgCommandLineMode ) {
@@ -542,7 +550,7 @@ register_shutdown_function( static function () {
 $wgLang = new StubUserLang;
 
 /**
- * @var OutputPage $wgOut
+ * @var MediaWiki\Output\OutputPage $wgOut
  */
 $wgOut = RequestContext::getMain()->getOutput(); // BackCompat
 
@@ -577,15 +585,25 @@ if ( !defined( 'MW_NO_SESSION' ) && !$wgCommandLineMode ) {
 		);
 		\MediaWiki\Logger\LoggerFactory::getInstance( 'authevents' )->info( 'Autocreation attempt', [
 			'event' => 'autocreate',
-			'status' => strval( $res ),
+			'successful' => $res->isGood(),
+			'status' => ( $res->getErrorsArray() ?: $res->getWarningsArray() )[0][0] ?? '-',
 		] );
 		unset( $res );
 	}
 	unset( $sessionUser );
 }
 
-if ( !$wgCommandLineMode ) {
-	Pingback::schedulePingback();
+// Optimization: Avoid overhead from DeferredUpdates and Pingback deps when turned off.
+if ( !$wgCommandLineMode && $wgPingback ) {
+	// NOTE: Do not refactor to inject Config or otherwise make unconditional service call.
+	//
+	// On a plain install of MediaWiki, Pingback is likely the *only* feature
+	// involving DeferredUpdates or DB_PRIMARY on a regular page view.
+	// To allow for error recovery and fault isolation, let admins turn this
+	// off completely. (T269516)
+	DeferredUpdates::addCallableUpdate( static function () {
+		MediaWikiServices::getInstance()->getPingback()->run();
+	} );
 }
 
 $settingsWarnings = $wgSettings->getWarnings();

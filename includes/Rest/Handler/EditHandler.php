@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Rest\Handler;
 
-use Config;
 use IApiMessage;
+use MediaWiki\Config\Config;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\WebResponse;
@@ -13,8 +13,8 @@ use MediaWiki\Rest\Response;
 use MediaWiki\Rest\TokenAwareHandlerTrait;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
-use TitleFormatter;
-use TitleParser;
+use MediaWiki\Title\TitleFormatter;
+use MediaWiki\Title\TitleParser;
 use Wikimedia\Message\MessageValue;
 
 /**

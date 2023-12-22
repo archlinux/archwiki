@@ -1,7 +1,5 @@
 <?php
 
-use Wikimedia\Rdbms\ILoadBalancer;
-
 /**
  * Implements Special:Randomrootpage
  *
@@ -26,19 +24,24 @@ use Wikimedia\Rdbms\ILoadBalancer;
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use MediaWiki\Title\NamespaceInfo;
+use Wikimedia\Rdbms\IConnectionProvider;
+
 class SpecialRandomRootPage extends SpecialRandomPage {
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param NamespaceInfo $nsInfo
 	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		NamespaceInfo $nsInfo
 	) {
-		parent::__construct( $loadBalancer, $nsInfo );
+		parent::__construct( $dbProvider, $nsInfo );
 		$this->mName = 'Randomrootpage';
-		$dbr = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		$dbr = $dbProvider->getReplicaDatabase();
 		$this->extra[] = 'page_title NOT ' . $dbr->buildLike( $dbr->anyString(), '/', $dbr->anyString() );
 	}
 
@@ -47,3 +50,9 @@ class SpecialRandomRootPage extends SpecialRandomPage {
 		return false;
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialRandomRootPage::class, 'SpecialRandomRootPage' );

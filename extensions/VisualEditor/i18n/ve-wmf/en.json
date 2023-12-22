@@ -16,6 +16,14 @@
 			"Amir E. Aharoni"
 		]
 	},
+	"tag-editcheck-newcontent": "-",
+	"tag-editcheck-newcontent-description": "EditCheck thinks new content was added to the page",
+	"tag-editcheck-newreference": "-",
+	"tag-editcheck-newreference-description": "A reference was added to the page",
+	"tag-editcheck-references": "-",
+	"tag-editcheck-references-description": "EditCheck thinks a reference might have been needed",
+	"tag-editcheck-references-activated": "Edit Check (references) activated",
+	"tag-editcheck-references-activated-description": "EditCheck thinks a reference might have been needed, and the UI was shown",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visual edit]]",
 	"tag-visualeditor-description": "Edit made using the [[{{MediaWiki:visualeditor-descriptionpagelink}}|visual editor]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visual edit: Check]]",

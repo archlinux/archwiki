@@ -5,7 +5,9 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Жаваб",
+	"discussiontools-replylink": "{{GENDER:|жаваб}}",
 	"discussiontools-replywidget-mode-source": "ЭлячӀун",
 	"discussiontools-replywidget-preview": "Сифтедин килигун",
+	"discussiontools-replywidget-reply": "{{GENDER:|Жаваб}}",
 	"discussiontools-replywidget-summary": "Нетижа"
 }

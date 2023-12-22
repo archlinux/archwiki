@@ -38,14 +38,13 @@ OO.inheritClass( mw.libs.confirmEdit.CaptchaInputWidget, OO.ui.TextInputWidget )
 /* Methods */
 
 mw.libs.confirmEdit.CaptchaInputWidget.prototype.makeCaptchaInterface = function ( captchaData ) {
-	var $captchaImg, msg, question,
-		$captchaDiv, $captchaParagraph;
+	let $captchaImg, msg, question;
 
-	$captchaParagraph = $( '<div>' ).append(
+	const $captchaParagraph = $( '<div>' ).append(
 		$( '<strong>' ).text( mw.msg( 'captcha-label' ) ),
 		document.createTextNode( mw.msg( 'colon-separator' ) )
 	);
-	$captchaDiv = $( '<div>' ).append( $captchaParagraph );
+	const $captchaDiv = $( '<div>' ).append( $captchaParagraph );
 
 	if ( captchaData.url ) {
 		// FancyCaptcha

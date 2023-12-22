@@ -7,7 +7,11 @@
 
 .ve-ui-mwLatexContextItem .ve-ui-linearContextItem-body {
 	/* Specify a valid second value to fix size in Chrome/FF */
-	font-family: monospace, 'Courier';
+	font-family: monospace, monospace;
+	/* Support: Chrome<76, Firefox<69 */
+	/* Fallback for browsers which don't support break-spaces */
 	white-space: pre-wrap;
+	/* T348006 */
+	white-space: break-spaces;
 	max-height: 10em;
 }

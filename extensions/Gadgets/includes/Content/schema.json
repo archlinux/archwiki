@@ -30,6 +30,14 @@
 					"type": "boolean",
 					"default": false
 				},
+				"targets": {
+					"description": "List of ResourceLoader targets the module can run on",
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [ "desktop" ]
+				},
 				"skins": {
 					"description": "Skins supported by this gadget; empty or true if all skins are supported",
 					"type": [ "array", "boolean" ],
@@ -38,7 +46,21 @@
 					}
 				},
 				"actions": {
-					"description": "Page actions on which the gadget is supported",
+					"description": "Page actions on which to load the gadget",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"namespaces": {
+					"description": "Page namespaces in which to load the gadget",
+					"type": "array",
+					"items": {
+						"type": "number"
+					}
+				},
+				"contentModels": {
+					"description": "Content models on which the gadget is supported",
 					"type": "array",
 					"items": {
 						"type": "string"
@@ -49,7 +71,7 @@
 					"type": "string",
 					"default": ""
 				},
-				"supportsdirectload": {
+				"supportsUrlLoad": {
 					"description": "Whether this gadget supports ?withgadget query parameter",
 					"type": "boolean",
 					"default": false

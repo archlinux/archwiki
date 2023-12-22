@@ -20,6 +20,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 
 /**
@@ -48,16 +49,19 @@ class ThumbnailRenderJob extends Job {
 
 				if ( !$thumb || $thumb->isError() ) {
 					if ( $thumb instanceof MediaTransformError ) {
-						$this->setLastError( __METHOD__ . ': thumbnail couln\'t be generated:' .
+						$this->setLastError( __METHOD__ . ': thumbnail couldn\'t be generated:' .
 							$thumb->toText() );
 					} else {
-						$this->setLastError( __METHOD__ . ': thumbnail couln\'t be generated' );
+						$this->setLastError( __METHOD__ . ': thumbnail couldn\'t be generated' );
 					}
 					return false;
 				}
+				$this->maybeEnqueueNextPage( $transformParams );
 				return true;
 			} elseif ( $uploadThumbnailRenderMethod === 'http' ) {
-				return $this->hitThumbUrl( $file, $transformParams );
+				$res = $this->hitThumbUrl( $file, $transformParams );
+				$this->maybeEnqueueNextPage( $transformParams );
+				return $res;
 			} else {
 				$this->setLastError( __METHOD__ . ': unknown thumbnail render method ' .
 					$uploadThumbnailRenderMethod );
@@ -140,6 +144,25 @@ class ThumbnailRenderJob extends Job {
 				. Status::wrap( $status )->getWikiText( false, false, 'en' ) );
 		}
 		return false;
+	}
+
+	private function maybeEnqueueNextPage( $transformParams ) {
+		if (
+			( $this->params['enqueueNextPage'] ?? false ) &&
+			( $transformParams['page'] ?? 0 ) < ( $this->params['pageLimit'] ?? 0 )
+		) {
+			$transformParams['page'] += 1;
+			$job = new ThumbnailRenderJob(
+				$this->getTitle(),
+				[
+					'transformParams' => $transformParams,
+					'enqueueNextPage' => true,
+					'pageLimit' => $this->params['pageLimit']
+				]
+			);
+
+			MediaWikiServices::getInstance()->getJobQueueGroup()->lazyPush( [ $job ] );
+		}
 	}
 
 	/**

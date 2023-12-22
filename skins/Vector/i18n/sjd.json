@@ -14,12 +14,13 @@
 	"vector-action-move": "Во̄айхэ нэ̄м",
 	"vector-action-protect": "Пынне",
 	"vector-view-create": "Лыһкэ",
-	"vector-view-edit": "Вуайхэ",
+	"vector-view-edit": "Воа̄йхэ",
 	"vector-view-history": "Исторья",
 	"vector-view-view": "Ло̄гкэ",
 	"vector-more-actions": "Вя̄л",
 	"vector-searchsuggest-containing": "О̄дзэ лыстэнҍ, мэ̄йн лӣ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-main-menu-label": "Шурьмусс меню",
 	"vector-page-tools-label": "Тӯййшэмка̄вьн",
+	"vector-page-tools-general-label": "Э̄ххтса",
 	"vector-unpin-element-label": "пе̄ҋҋтэ"
 }

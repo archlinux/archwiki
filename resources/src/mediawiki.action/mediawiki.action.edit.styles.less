@@ -1,6 +1,7 @@
 /*!
  * Styles for elements of the editing form.
  */
+@import 'mediawiki.skin.variables.less';
 
 /* stylelint-disable selector-class-pattern */
 
@@ -78,12 +79,10 @@
 	}
 
 	.editOptions {
-		border-radius: 0 0 2px 2px;
+		border-radius: 0 0 @border-radius-base @border-radius-base;
 	}
 
-	// Use buttonElement to include ButtonInputWidget and ButtonWidget
-	.editButtons .oo-ui-buttonElement,
-	.editHelp {
+	.editButtons {
 		margin-top: 0.5em;
 	}
 

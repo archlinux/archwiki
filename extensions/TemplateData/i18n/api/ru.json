@@ -6,7 +6,6 @@
 			"Putnik"
 		]
 	},
-	"apihelp-templatedata-description": "Получить данные, сохраненные расширением TemplateData.",
 	"apihelp-templatedata-summary": "Получить данные, сохранённые расширением TemplateData.",
 	"apihelp-templatedata-example-1": "Вернуть TemplateData для [[Template:Foobar]] с результатами, если шаблон не существует или существует, но не имеет TemplateData",
 	"apihelp-templatedata-param-lang": "Вернуть локализованные значения на этом языке. По умолчанию возвращаются все доступные переводы."

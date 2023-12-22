@@ -1,10 +1,5 @@
-@import '../../common/variables.less';
-@import '../../common/mixins.less';
-@import 'mediawiki.mixins.less';
-@import 'mediawiki.ui/variables.less';
-
 @font-size-user-links: unit( 14 / @font-size-browser, em ); // Equals `0.875em`.
-// Applies to links in the overflow menu that do not have the .mw-ui-button class.
+// Applies to links in the overflow menu that do not have the .cdx-button class.
 @overflow-link-margin: 0 8px;
 
 /**
@@ -17,15 +12,6 @@
 	justify-content: flex-end;
 	flex-shrink: 1;
 
-	.mw-ui-button {
-		// FIXME: Overrides mw-ui-button's `display: inline-block` property so that
-		// the text in the button is vertically centered. `.mw-ui-button` sets a
-		// min-height to the button, but should also vertically center the
-		// button's children.
-		display: flex;
-		align-items: center;
-	}
-
 	.mw-list-item {
 		margin: 0;
 	}
@@ -35,13 +21,8 @@
  * Both logged-in and logged-out dropdown menus.
  */
 .vector-user-menu {
-	.vector-menu-content {
-		left: auto;
-		right: 0;
-
-		.vector-feature-page-tools-disabled & {
-			min-width: 200px;
-		}
+	.vector-dropdown-content {
+		.mixin-vector-dropdown-content-flip();
 	}
 
 	// Used to hide collapsible items inside the dropdown menu
@@ -65,20 +46,23 @@
 		align-items: center;
 	}
 
-	// TODO: Simplify button, icon button and link styling with T323244
 	@media ( min-width: @min-width-desktop ) {
 		// Right margin to separate overflow menu from dropdown
 		margin-right: 8px;
 
-		// Separate icon buttons inside the overflow menu
+		// Separate menu items inside overflow menu
 		.vector-menu-content-list {
 			column-gap: 8px;
 		}
 	}
 
-	// Add margin to links that don't have the .mw-ui-button or related icon classes.
-	a:not( .mw-ui-button ):not( .mw-echo-notifications-badge  ) {
-		margin: 0 8px;
+	@media ( max-width: @max-width-tablet ) {
+		// Only apply 8px spacing to normal links (i.e. Create account, User page)
+		// Links with button classes will have a larger touch area
+		// and therefore dont need additional spacing
+		a:not( .mw-echo-notifications-badge  ):not( .cdx-button ) {
+			margin: 0 8px;
+		}
 	}
 
 	.user-links-collapsible-item {
@@ -91,10 +75,8 @@
 /**
  * Logged-in dropdown menu
  */
-.vector-user-menu-logged-in {
-	.vector-menu-heading:after {
-		.mixin-vector-menu-heading-arrow();
-	}
+.vector-user-menu-logged-in .vector-dropdown-label {
+	.mixin-vector-arrowed-dropdown-toggle();
 }
 
 /**
@@ -103,11 +85,11 @@
 #p-user-menu-anon-editor .vector-menu-heading {
 	display: block;
 
-	a:before {
+	a::before {
 		content: '@{msg-parentheses-start}';
 	}
 
-	a:after {
+	a::after {
 		content: '@{msg-parentheses-end}';
 	}
 }
@@ -118,7 +100,7 @@
 
 	a:not( .mw-selflink ) {
 		// T312157 Override redlink (.new) color for non-existant userpage
-		color: @color-primary;
+		color: @color-link;
 	}
 
 	span {

@@ -1,6 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
+			"Base",
 			"Geitost",
 			"Gloria sah",
 			"Lévi",
@@ -9,9 +11,7 @@
 			"Reder",
 			"Shirayuki",
 			"Vlad5250",
-			"아라",
-			"Base",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Tîra 'na rîga sòta i colegamèint.",
@@ -621,8 +621,8 @@
 	"undo-failure": "Imposébil scanşlêr la mudéfica a câşva 'd un cuntrâst cun dal mudéfichi fâti dôp.",
 	"undo-norev": "La mudéfica l'an pōl mìa èser scanşlêda perchè l' an gh'é pió o l'é bèle stêda scanşlêda.",
 	"undo-nochange": "A sèmbra che la mudéfica la sìa bèle stêda scanşlêda.",
-	"undo-summary": "Scanşlê la mudéfica $1 ed [[Special:Contributions/$2|$2]]\n([[User talk:$2|discusiòun]])",
-	"undo-summary-username-hidden": "Scanşlê la modéfica $1 ed 'n utèin lughê",
+	"undo-summary": "Scanşlê la mudéfica [[Special:Diff/$1|$1]] ed [[Special:Contributions/$2|$2]]\n([[User talk:$2|discusiòun]])",
+	"undo-summary-username-hidden": "Scanşlê la modéfica [[Special:Diff/$1|$1]] ed 'n utèin lughê",
 	"viewpagelogs": "Guêrda la stòria 'd cla pàgina ché",
 	"nohistory": "L'elèinch ed la stôria dal versiòun ed cla pàgina ché an 's câta mìa.",
 	"currentrev": "Ûltma versiòun",
@@ -788,7 +788,6 @@
 	"search-relatedarticle": "Rişultêt coleghê",
 	"searchrelated": "coleghê",
 	"searchall": "tót",
-	"showingresults": "Ed sègvit {{PLURAL:$1|a vîn preşentê al mâsim <strong>1</strong> rişultêt| a vînen preşentê al mâsim <strong>$1</strong> rişultêt}} a partîr dal nómer #<strong>$2</strong>.",
 	"showingresultsinrange": "{{PLURAL:$1|Sòt a vîn mustrê| Sòt a vînen mustrê}}  {{PLURAL:$1|<strong>1</strong> rişultêt|<strong>$1</strong> rişultêt}} dal <strong>$2</strong> al <strong>$3</strong>.",
 	"search-showingresults": "{{PLURAL:$4|Rişultêt <strong>$1</strong> ed <strong>$3</strong>|Rişultêt <strong>$1 - $2</strong> ed <strong>$3</strong>}}",
 	"search-nonefound": "La sērca an n'à mìa dê di rişultê.",
@@ -1229,7 +1228,7 @@
 	"backend-fail-connect": "Impusébil coleghêres al sistēma 'd memôria \"$1\".",
 	"backend-fail-internal": "É sucès un erōr mìa cgnusû int al sistēma  ed memôria \"$1\".",
 	"backend-fail-contenttype": "Impusébil stabilîr al gèner di file 'd archiviêr in \"$1\".",
-	"backend-fail-batchsize": "Al sistēma 'd memōria l'à dê  un totêl ed \"$1\" 'd {{PLURAL:$1|operazione|operasiòun}} 'd archévi; al lémit l' é 'd \"$2\"  'd {{PLURAL:$2|operazione|operasiòun}}.",
+	"backend-fail-batchsize": "Al sistēma 'd memōria l'à dê un totêl ed \"$1\" 'd {{PLURAL:$1|operazione|operasiòun}} 'd archévi; al lémit l' é 'd \"$2\" 'd {{PLURAL:$2|operazione|operasiòun}}.",
 	"backend-fail-usable": "Impusébil lēzer o scréver al file \"$1\" a câşva ed dirét insuficînt o a mânca l'indirés al  sistēma di file/spâsi insuficînt.",
 	"lockmanager-notlocked": "Impusébil şbluchêr \"$1\"; an n'é mìa bluchê.",
 	"lockmanager-fail-closelock": "Impusébil sarêr al file 'd blôch per \"$1\"",
@@ -1302,8 +1301,6 @@
 	"unwatch": "Andêr mìa adrē",
 	"watchlist-details": "La lésta 'd quî tgnû 'd ôc specêl la gh'à {{PLURAL:$1|'na pàgina (e la relatîva pàgina 'd discusiòun)|$1 pagine (e al relatîvi  pàgini 'd discusiòun)}}.",
 	"watchlist-options": "Siēlti di tgnû sòt ôc specêl.",
-	"created": "creät",
-	"changed": "mudifegat",
 	"delete-confirm": "Scanşela \"$1\"",
 	"delete-legend": "Scanşela",
 	"actioncomplete": "Asiòun cumpîda",

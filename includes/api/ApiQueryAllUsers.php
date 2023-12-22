@@ -36,17 +36,10 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 class ApiQueryAllUsers extends ApiQueryBase {
 	use ApiQueryBlockInfoTrait;
 
-	/** @var UserFactory */
-	private $userFactory;
-
-	/** @var UserGroupManager */
-	private $userGroupManager;
-
-	/** @var GroupPermissionsLookup */
-	private $groupPermissionsLookup;
-
-	/** @var Language */
-	private $contentLanguage;
+	private UserFactory $userFactory;
+	private UserGroupManager $userGroupManager;
+	private GroupPermissionsLookup $groupPermissionsLookup;
+	private Language $contentLanguage;
 
 	/**
 	 * @param ApiQuery $query
@@ -186,7 +179,7 @@ class ApiQueryAllUsers extends ApiQueryBase {
 					'ug1.ug_expiry IS NULL OR ug1.ug_expiry >= ' . $db->addQuotes( $db->timestamp() )
 				], $exclude )
 			] ] );
-			$this->addWhere( 'ug1.ug_user IS NULL' );
+			$this->addWhere( [ 'ug1.ug_user' => null ] );
 		}
 
 		if ( $params['witheditsonly'] ) {

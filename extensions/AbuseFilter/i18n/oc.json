@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"BrennodAloisi",
 			"Cedric31",
 			"Fitoschido",
@@ -8,7 +9,7 @@
 			"Matma Rex",
 			"Matěj Suchánek",
 			"Unuaiga",
-			"Amire80"
+			"Nicolas Eynaud"
 		]
 	},
 	"abusefilter-desc": "Aplica d'euristicas automaticas a las modificacions",
@@ -50,6 +51,13 @@
 	"abusefilter-log-search-filter": "IDs de filtre (separats per de barras verticalas) :",
 	"abusefilter-log-search-title": "Títol :",
 	"abusefilter-log-search-wiki": "Wiki :",
+	"abusefilter-log-search-impact-all": "Totei leis accions",
+	"abusefilter-log-search-impact-saved": "Solament lei modificacions enregistradas",
+	"abusefilter-log-search-impact-not-saved": "Sensa lei modificacions enregistradas",
+	"abusefilter-log-search-entries-label": "Visibilitat :",
+	"abusefilter-log-search-entries-all": "Totei leis intradas",
+	"abusefilter-log-search-entries-hidden": "Solament leis intradas escondudas",
+	"abusefilter-log-search-entries-visible": "Solament leis intradas visiblas",
 	"abusefilter-log-search-submit": "Recercar",
 	"abusefilter-log-entry": "$1 : $2 {{GENDER:$8|a desenclavat}} un filtre anti-abuses, en {{GENDER:$8|efectuant}} l'accion « $3 » sus $4.\nAccions entrepresas : $5 ;\nDescripcion del filtre : $6",
 	"abusefilter-log-detailedentry-meta": "$1 : $2 {{GENDER:$9|a desenclavat}} lo $3, {{GENDER:$9|en efectuant}} l'accion « $4 » sus « $5 ».\nAccions entrepresas : $6 ;\nDescripcion del filtre : $7 ($8)",
@@ -72,6 +80,8 @@
 	"abusefilter-log-hide-legend": "Amagar l'entrada dins los jornals",
 	"abusefilter-log-hide-reason": "Motiu :",
 	"abusefilter-log-hide-reason-other": "Autra rason / rason suplementària :",
+	"abusefilter-log-hide-show": "Mostrar",
+	"abusefilter-log-hide-hide": "Escondre",
 	"abusefilter-list": "Totes los filtres",
 	"abusefilter-list-id": "Filtre ID",
 	"abusefilter-list-pattern": "Motiu",
@@ -155,12 +165,17 @@
 	"abusefilter-edit-throttle-count": "Nombre d’accions d'autorizar :",
 	"abusefilter-edit-throttle-period": "Periòde de temps :",
 	"abusefilter-edit-throttle-groups": "Grop detengut per :\n:''(un per linha, separat per de virgulas)''",
+	"abusefilter-throttle-ip": "Adreiça IP",
+	"abusefilter-throttle-user": "Còmpte utilizaire",
+	"abusefilter-throttle-page": "Pagina",
 	"abusefilter-edit-warn-message": "Messatge del sistèma d'utilizar per l'avertiment :",
 	"abusefilter-edit-warn-other": "Autre messatge",
 	"abusefilter-edit-warn-other-label": "Nom de la pagina d'un autre messatge\n:''(sens lo prefix MediaWiki)''",
 	"abusefilter-edit-warn-actions": "Accions :",
 	"abusefilter-edit-warn-preview": "Previsualizar los messatges seleccionats",
 	"abusefilter-edit-warn-edit": "Crear / modificar lo messatge seleccionat",
+	"abusefilter-edit-disallow-other": "Autre messsatge",
+	"abusefilter-edit-disallow-actions": "Accions :",
 	"abusefilter-edit-tag-tag": "[[Special:Tags|Balisas]] d'aplicar (una per linha) :",
 	"abusefilter-edit-denied": "Podètz pas veire los detalhs d'aqueste filtre, perque es amagat a la vista del public",
 	"abusefilter-edit-main": "Paramètres del filtre",
@@ -347,6 +362,12 @@
 	"abusefilter-test-page": "Modificacions aportadas a la pagina :",
 	"abusefilter-test-shownegative": "Afichar los cambiaments que correspòndon pas al filtre",
 	"abusefilter-test-syntaxerr": "Lo filtre qu'avètz picat conten una error de sintaxi.\nPodètz recebre una explicacion completa en clicant sul boton « {{int:abusefilter-edit-check}} ».",
+	"abusefilter-test-search-type-all": "Totei leis accions",
+	"abusefilter-test-search-type-edit": "Modificacions",
+	"abusefilter-test-search-type-move": "Desplaçaments",
+	"abusefilter-test-search-type-delete": "Supressions",
+	"abusefilter-test-search-type-upload": "Telecargaments",
+	"abusefilter-test-search-type-createaccount": "Creacions de còmpte",
 	"abusefilter-changeslist-examine": "examinar",
 	"abusefilter-examine": "Examinar de modificacions individualament",
 	"abusefilter-examine-intro": "Aquesta pagina vos permet d'examinar las variablas generidas pel filtre dels abuses per de modificacions individualas e las testar amb los filtres.",
@@ -382,5 +403,7 @@
 	"abusefilter-import-intro": "Podètz utilizar aquesta interfàcia per importar de filtres en provenéncia d’autres wikis.\nSul wiki d’origina, clicatz sus « {{int:abusefilter-edit-export}} » dins « {{int:abusefilter-edit-tools}} » dempuèi l’interfàcia d’edicion.\nCopiatz l'airal de tèxte que s’aficha e empegatz-lo dins aqueste airal de tèxte, puèi clicatz sus « {{int:abusefilter-import-submit}} »,",
 	"abusefilter-import-submit": "Importar de donadas",
 	"abusefilter-group-default": "Per defaut",
-	"abusefilter-http-error": "Una error HTTP s’es produsida : $1."
+	"abusefilter-http-error": "Una error HTTP s’es produsida : $1.",
+	"abusefilter-blocked-domains-notes": "Nòtas",
+	"abusefilter-blocked-domains-domain-header": "Domeni"
 }

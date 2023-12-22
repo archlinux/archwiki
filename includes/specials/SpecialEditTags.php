@@ -19,10 +19,24 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use ChangeTagsList;
+use ErrorPageError;
+use LogEventsList;
+use LogPage;
+use MediaWiki\ChangeTags\ChangeTagsStore;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Html\Html;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\SpecialPage\UnlistedSpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use RevisionDeleter;
+use UserBlockedError;
+use Xml;
+use XmlSelect;
 
 /**
  * Special page for adding and removing change tags to individual revisions.
@@ -53,18 +67,19 @@ class SpecialEditTags extends UnlistedSpecialPage {
 	/** @var string */
 	private $reason;
 
-	/** @var PermissionManager */
-	private $permissionManager;
+	private PermissionManager $permissionManager;
+	private ChangeTagsStore $changeTagsStore;
 
 	/**
 	 * @inheritDoc
 	 *
 	 * @param PermissionManager $permissionManager
 	 */
-	public function __construct( PermissionManager $permissionManager ) {
+	public function __construct( PermissionManager $permissionManager, ChangeTagsStore $changeTagsStore ) {
 		parent::__construct( 'EditTags', 'changetags' );
 
 		$this->permissionManager = $permissionManager;
+		$this->changeTagsStore = $changeTagsStore;
 	}
 
 	public function doesWrites() {
@@ -82,7 +97,7 @@ class SpecialEditTags extends UnlistedSpecialPage {
 		$this->setHeaders();
 		$this->outputHeader();
 
-		$output->addModules( [ 'mediawiki.special.edittags' ] );
+		$output->addModules( [ 'mediawiki.misc-authed-curate' ] );
 		$output->addModuleStyles( [
 			'mediawiki.interface.helpers.styles',
 			'mediawiki.special'
@@ -371,7 +386,7 @@ class SpecialEditTags extends UnlistedSpecialPage {
 	 *
 	 * @param array $selectedTags The tags that should be preselected in the
 	 * list. Any tags in this list, but not in the list returned by
-	 * ChangeTags::listExplicitlyDefinedTags, will be appended to the <select>
+	 * ChangeTagsStore::listExplicitlyDefinedTags, will be appended to the <select>
 	 * element.
 	 * @param string $label The text of a <label> to precede the <select>
 	 * @return array HTML <label> element at index 0, HTML <select> element at
@@ -385,7 +400,7 @@ class SpecialEditTags extends UnlistedSpecialPage {
 		$select->setAttribute( 'multiple', 'multiple' );
 		$select->setAttribute( 'size', '8' );
 
-		$tags = ChangeTags::listExplicitlyDefinedTags();
+		$tags = $this->changeTagsStore->listExplicitlyDefinedTags();
 		$tags = array_unique( array_merge( $tags, $selectedTags ) );
 
 		// Values of $tags are also used as <option> labels
@@ -454,7 +469,7 @@ class SpecialEditTags extends UnlistedSpecialPage {
 	 */
 	protected function success() {
 		$out = $this->getOutput();
-		$out->setPageTitle( $this->msg( 'actioncomplete' ) );
+		$out->setPageTitleMsg( $this->msg( 'actioncomplete' ) );
 		$out->addHTML(
 			Html::successBox( $out->msg( 'tags-edit-success' )->parse() )
 		);
@@ -470,7 +485,7 @@ class SpecialEditTags extends UnlistedSpecialPage {
 	 */
 	protected function failure( $status ) {
 		$out = $this->getOutput();
-		$out->setPageTitle( $this->msg( 'actionfailed' ) );
+		$out->setPageTitleMsg( $this->msg( 'actionfailed' ) );
 		$out->addHTML(
 			Html::errorBox(
 				$out->parseAsContent(
@@ -482,10 +497,15 @@ class SpecialEditTags extends UnlistedSpecialPage {
 	}
 
 	public function getDescription() {
-		return $this->msg( 'tags-edit-title' )->text();
+		return $this->msg( 'tags-edit-title' );
 	}
 
 	protected function getGroupName() {
 		return 'pagetools';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialEditTags::class, 'SpecialEditTags' );

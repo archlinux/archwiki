@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Bdamokos",
 			"Bencemac",
+			"Beze",
 			"Bináris",
 			"Csega",
 			"Dani",
@@ -17,9 +19,7 @@
 			"Tacsipacsi",
 			"Tgr",
 			"Wolf Rex",
-			"Zalán Hári",
-			"Amire80",
-			"Beze"
+			"Zalán Hári"
 		]
 	},
 	"abusefilter-desc": "Automatikus heurisztikát alkalmaz a szerkesztésekre.",
@@ -417,7 +417,7 @@
 	"abusefilter-history-filter": "Szabály",
 	"abusefilter-history-comments": "Megjegyzések",
 	"abusefilter-history-actions": "Műveletek",
-	"abusefilter-history-backedit": "Vissza a szűrőszerkesztőhöz",
+	"abusefilter-history-backedit": "Szűrőszerkesztő",
 	"abusefilter-history-deleted": "törölve",
 	"abusefilter-history-filterid": "Szűrő",
 	"abusefilter-history-select-legend": "Keresés szűkítése",
@@ -480,7 +480,6 @@
 	"abusefilter-test-page": "Az oldal változtatásai:",
 	"abusefilter-test-shownegative": "A szűrőn fenn nem akadt változtatások megmutatása",
 	"abusefilter-test-syntaxerr": "A beírt szűrőd szintaktikai hibát tartalmaz.\nA hiba részletes leírásához kattints az „{{int:abusefilter-edit-check}}” gombra.",
-	"abusefilter-test-badtitle": "A megadott cím érvénytelen. Egy vagy több olyan karaktert tartalmaz, amely nem lehet címben.",
 	"abusefilter-test-action": "Művelet típusa:",
 	"abusefilter-test-search-type-all": "Minden művelet",
 	"abusefilter-test-search-type-edit": "Szerkesztések",
@@ -520,7 +519,7 @@
 	"abusefilter-diff-info": "Alapvető információk",
 	"abusefilter-diff-pattern": "Szűrő feltételek",
 	"abusefilter-diff-invalid": "A kért változatokat nem lehet beolvasni",
-	"abusefilter-diff-backhistory": "Vissza a szűrőelőzményekhez",
+	"abusefilter-diff-backhistory": "Szűrési előzmények",
 	"abusefilter-diff-prev": "Régebbi változás",
 	"abusefilter-diff-next": "Újabb változás",
 	"abusefilter-import-intro": "Ezen a felületen más wikikben készült szűrőket lehet importálni.\nA forráswikin a „{{int:abusefilter-edit-tools}}” alatt kattints az „{{int:abusefilter-edit-export}}” gombra.\nA megjelent szövegdoboz tartalmát ebbe a szövegdobozba másold át, majd kattints az „{{int:abusefilter-import-submit}}” gombra.",
@@ -532,6 +531,10 @@
 	"abusefilter-view-privatedetails-legend": "Privát részletek megtekintése",
 	"abusefilter-view-privatedetails-reason": "Privát részletekhez való hozzáférés oka:",
 	"abusefilter-log-details-id": "Naplóazonosító",
+	"abusefilter-blocked-domains-notes": "Megjegyzések",
+	"abusefilter-blocked-domains-actions-header": "Műveletek",
+	"abusefilter-blocked-domains-remove-reason": "Indoklás",
+	"abusefilter-blocked-domains-attempted": "Az általad beküldött szöveg közzétételét blokkolta a szűrőnk. A következő domain van blokkolva: $1",
 	"abusefilter-noreason": "Figyelmeztetés: ezen naplóbejegyzés privát részleteihez való hozzáféréshez indoklást kell megadnod.",
 	"abusefilter-log-ip-not-available": "Nem elérhető",
 	"abusefilter-tag-reserved": "Az <code>abusefilter-condition-limit</code> címke a Vandálszűrő belső használatára van fenntartva.",

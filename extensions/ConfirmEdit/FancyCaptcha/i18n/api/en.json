@@ -4,7 +4,6 @@
 			"Brad Jorsch"
 		]
 	},
-	"apihelp-fancycaptchareload-description": "Get a new FancyCaptcha.",
 	"apihelp-fancycaptchareload-summary": "Get a new FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Get a new FancyCaptcha"
 }

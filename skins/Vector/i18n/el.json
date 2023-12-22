@@ -3,8 +3,10 @@
 		"authors": [
 			"Calak",
 			"Crazymadlover",
+			"Dogogos123",
 			"Evropi",
 			"Geraki",
+			"Gpbiza",
 			"NikosLikomitros",
 			"Nikosgranturismogt",
 			"Norhorn",
@@ -27,7 +29,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 γλώσσα|$1 γλώσσες}}",
 	"vector-no-language-button-label": "Προσθήκη γλωσσών",
 	"vector-no-language-button-aria-label": "Αυτό το λήμμα υπάρχει μόνο σε αυτή τη γλώσσα. Προσθέστε το λήμμα για άλλες γλώσσες",
-	"vector-language-redirect-to-top": "Σε αυτή τη {{SITENAME}} οι σύνδεσμοι γλώσσας βρίσκονται στο επάνω μέρος της σελίδας απέναντι από τον τίτλο του λήμματος. [[#p-lang-btn|Μετάβαση στην κορυφή]].",
+	"vector-language-redirect-to-top": "Οι σύνδεσμοι γλώσσας βρίσκονται στο επάνω μέρος της σελίδας απέναντι από τον τίτλο του λήμματος.",
 	"vector-language-variant-switcher-label": "Αλλαγή παραλλαγής γλώσσας",
 	"vector-action-addsection": "Προσθήκη θέματος",
 	"vector-action-delete": "Διαγραφή",
@@ -59,6 +61,8 @@
 	"vector-site-nav-label": "Ιστότοπος",
 	"vector-main-menu-label": "Κύριο μενού",
 	"vector-limited-width-toggle": "Εναλλαγή περιορισμένου πλάτους περιεχομένου",
+	"vector-limited-width-toggle-on-popup": "Έχετε αλλάξει τη διάταξή σας σε πλήρες πλάτος. Για να επιστρέψετε στο περιορισμένο πλάτος, πατήστε αυτό το κουμπί.",
+	"vector-limited-width-toggle-off-popup": "Μπορείτε να κάνετε εναλλαγή μεταξύ περιορισμένου πλάτους και πλήρους πλάτους κάνοντας κλικ σε αυτό το κουμπί.",
 	"vector-page-tools-label": "Εργαλεία",
 	"vector-page-tools-general-label": "Γενικά",
 	"vector-page-tools-actions-label": "Ενέργειες",
@@ -68,5 +72,8 @@
 	"tooltip-vector-anon-user-menu-title": "Περισσότερες επιλογές",
 	"vector-prefs-limited-width": "Ενεργοποίηση λειτουργίας περιορισμένου πλάτους",
 	"vector-prefs-limited-width-help": "Ενεργοποίηση λειτουργίας περιορισμένου πλάτους για βελτιωμένη εμπειρία ανάγνωσης.",
-	"empty-language-selector-body": "Τα περιεχόμενα της σελίδας δεν υποστηρίζονται σε άλλες γλώσσες."
+	"empty-language-selector-body": "Τα περιεχόμενα της σελίδας δεν υποστηρίζονται σε άλλες γλώσσες.",
+	"vector-toc-unpinned-popup": "Ο πίνακας περιεχομένων έχει μεταφερθεί εδώ.",
+	"vector-page-tools-unpinned-popup": "Το μενού εργαλείων έχει μεταφερθεί εδώ.",
+	"vector-main-menu-unpinned-popup": "Το κύριο μενού έχει μεταφερθεί εδώ."
 }

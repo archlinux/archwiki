@@ -6,9 +6,9 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
-use Title;
+use MediaWiki\Title\Title;
 use User;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\LBFactory;
 
 class AbuseLoggerFactory {
 	public const SERVICE_NAME = 'AbuseFilterAbuseLoggerFactory';
@@ -23,8 +23,8 @@ class AbuseLoggerFactory {
 	private $varManager;
 	/** @var EditRevUpdater */
 	private $editRevUpdater;
-	/** @var ILoadBalancer */
-	private $loadBalancer;
+	/** @var LBFactory */
+	private $lbFactory;
 	/** @var ServiceOptions */
 	private $options;
 	/** @var string */
@@ -38,7 +38,7 @@ class AbuseLoggerFactory {
 	 * @param VariablesBlobStore $varBlobStore
 	 * @param VariablesManager $varManager
 	 * @param EditRevUpdater $editRevUpdater
-	 * @param ILoadBalancer $loadBalancer
+	 * @param LBFactory $lbFactory
 	 * @param ServiceOptions $options
 	 * @param string $wikiID
 	 * @param string $requestIP
@@ -49,7 +49,7 @@ class AbuseLoggerFactory {
 		VariablesBlobStore $varBlobStore,
 		VariablesManager $varManager,
 		EditRevUpdater $editRevUpdater,
-		ILoadBalancer $loadBalancer,
+		LBFactory $lbFactory,
 		ServiceOptions $options,
 		string $wikiID,
 		string $requestIP
@@ -59,7 +59,7 @@ class AbuseLoggerFactory {
 		$this->varBlobStore = $varBlobStore;
 		$this->varManager = $varManager;
 		$this->editRevUpdater = $editRevUpdater;
-		$this->loadBalancer = $loadBalancer;
+		$this->lbFactory = $lbFactory;
 		$this->options = $options;
 		$this->wikiID = $wikiID;
 		$this->requestIP = $requestIP;
@@ -82,7 +82,7 @@ class AbuseLoggerFactory {
 			$this->varBlobStore,
 			$this->varManager,
 			$this->editRevUpdater,
-			$this->loadBalancer,
+			$this->lbFactory,
 			$this->options,
 			$this->wikiID,
 			$this->requestIP,

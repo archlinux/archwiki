@@ -24,7 +24,7 @@ trait AbuseFilterCreateAccountTestTrait {
 	): StatusValue {
 		$userFactory = MediaWikiServices::getInstance()->getUserFactory();
 		$user = $userFactory->newFromName( $accountName );
-		$creator = $creator ?? $user;
+		$creator ??= $user;
 
 		$provider = new AbuseFilterPreAuthenticationProvider(
 			AbuseFilterServices::getVariableGeneratorFactory(),

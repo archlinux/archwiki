@@ -7,13 +7,13 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Waakhulela",
-	"discussiontools-replylink": "waakhulela",
+	"discussiontools-replylink": "{{GENDER:|waakhulela}}",
 	"discussiontools-replywidget-advanced": "Ohela nsina",
 	"discussiontools-replywidget-cancel": "Ohiiha",
 	"discussiontools-replywidget-mode-source": "Ekootiku-yoopacerya",
 	"discussiontools-replywidget-mode-visual": "Yoowooneya",
-	"discussiontools-replywidget-placeholder-reply": "Waakhulela wa {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Waakhulela}} wa {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Mwaanyihereryo",
-	"discussiontools-replywidget-reply": "Waakhulela",
+	"discussiontools-replywidget-reply": "{{GENDER:|Waakhulela}}",
 	"discussiontools-replywidget-summary": "Yoosuweliha ya etthu ela"
 }

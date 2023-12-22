@@ -1,12 +1,14 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
-use Wikimedia\TestingAccessWrapper;
+use MediaWiki\User\UserIdentityValue;
 
 /**
  * @covers DifferenceEngine
@@ -33,10 +35,6 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 		$this->context = new RequestContext();
 		$this->context->setTitle( $title );
 
-		if ( !self::$revisions ) {
-			self::$revisions = $this->doEdits();
-		}
-
 		$this->overrideConfigValue( MainConfigNames::DiffEngine, 'php' );
 
 		$slotRoleRegistry = $this->getServiceContainer()->getSlotRoleRegistry();
@@ -49,6 +47,10 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 				true
 			);
 		}
+	}
+
+	public function addDBDataOnce() {
+		self::$revisions = $this->doEdits();
 	}
 
 	/**
@@ -65,69 +67,122 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 	protected function doEdits() {
 		$title = $this->getTitle();
 
-		$strings = [ "it is a kitten", "two kittens", "three kittens", "four kittens" ];
+		$strings = [
+			0 => "no kittens",
+			1 => "one kitten",
+			2 => "two kittens",
+			3 => "three kittens",
+			4 => "fnord kittens",
+			5 => "kitten's phone number is +1 303 503 229",
+			6 => "six kittens",
+			7 => "seven kittens",
+		];
 		$revisions = [];
 
-		$user = $this->getTestSysop()->getAuthority();
-		foreach ( $strings as $string ) {
+		$sysop = $this->getTestSysop()->getAuthority();
+		$user = $this->getTestUser()->getAuthority();
+		foreach ( $strings as $i => $string ) {
 			$status = $this->editPage(
 				$title,
 				$string,
 				'edit page',
 				NS_MAIN,
-				$user
+				$i == 6 ? $user : $sysop
 			);
 			$revisions[] = $status->getNewRevision()->getId();
 		}
 
+		// Normal user cannot see the fnord
+		$this->revisionDelete(
+			$revisions[4],
+			[
+				RevisionRecord::DELETED_TEXT => 1,
+			],
+			'Testing'
+		);
+
+		// Suppress kitten dox
+		$this->revisionDelete(
+			$revisions[5],
+			[
+				RevisionRecord::DELETED_TEXT => 1,
+				RevisionRecord::DELETED_RESTRICTED => 1,
+			],
+			'Testing'
+		);
+
 		return $revisions;
 	}
 
-	public function testMapDiffPrevNext() {
-		$cases = $this->getMapDiffPrevNextCases();
+	private function expandData( $data ) {
+		if ( is_array( $data ) ) {
+			foreach ( $data as &$value ) {
+				$value = $this->expandData( $value );
+			}
+		} elseif ( is_string( $data ) ) {
+			$data = preg_replace_callback(
+				'/rev\[([0-9]+)]/',
+				static function ( $m ) {
+					return self::$revisions[(int)$m[1]];
+				},
+				$data
+			);
+			$data = str_replace(
+				'rev[cur]',
+				self::$revisions[array_key_last( self::$revisions )],
+				$data
+			);
+		}
+		return $data;
+	}
 
-		foreach ( $cases as [ $expected, $old, $new, $message ] ) {
-			$diffEngine = new DifferenceEngine( $this->context, $old, $new, 2, true, false );
-			$diffMap = $diffEngine->mapDiffPrevNext( $old, $new );
-			$this->assertEquals( $expected, $diffMap, $message );
+	private function expandTestArgs( $args ) {
+		foreach ( $args as &$arg ) {
+			$arg = $this->expandData( $arg );
 		}
 	}
 
-	private function getMapDiffPrevNextCases() {
-		$revs = self::$revisions;
+	/**
+	 * @dataProvider provideMapDiffPrevNext
+	 */
+	public function testMapDiffPrevNext( $expected, $old, $new, $message ) {
+		$this->expandTestArgs( [ &$expected, &$old, &$new, &$message ] );
+		$diffEngine = new DifferenceEngine( $this->context, $old, $new, 2, true, false );
+		$diffMap = $diffEngine->mapDiffPrevNext( $old, $new );
+		$this->assertEquals( $expected, $diffMap, $message );
+	}
 
+	public static function provideMapDiffPrevNext() {
 		return [
-			[ [ $revs[1], $revs[2] ], $revs[2], 'prev', 'diff=prev' ],
-			[ [ $revs[2], $revs[3] ], $revs[2], 'next', 'diff=next' ],
-			[ [ $revs[1], $revs[3] ], $revs[1], $revs[3], 'diff=' . $revs[3] ]
+			[ [ 'rev[1]', 'rev[2]' ], 'rev[2]', 'prev', 'diff=prev' ],
+			[ [ 'rev[2]', 'rev[3]' ], 'rev[2]', 'next', 'diff=next' ],
+			[ [ 'rev[1]', 'rev[3]' ], 'rev[1]', 'rev[3]', 'diff=rev3' ]
 		];
 	}
 
-	public function testLoadRevisionData() {
-		$cases = $this->getLoadRevisionDataCases();
+	/**
+	 * @dataProvider provideLoadRevision
+	 */
+	public function testLoadRevisionData( $expectedOld, $expectedNew, $expectedRet, $old, $new ) {
+		$this->expandTestArgs( [ &$expectedOld, &$expectedNew, &$expectedRet, &$old, &$new ] );
+		$diffEngine = new DifferenceEngine( $this->context, $old, $new, 2, true, false );
+		$ret = $diffEngine->loadRevisionData();
+		$ret2 = $diffEngine->loadRevisionData();
 
-		foreach ( $cases as $testName => [ $expectedOld, $expectedNew, $expectedRet, $old, $new ] ) {
-			$diffEngine = new DifferenceEngine( $this->context, $old, $new, 2, true, false );
-			$ret = $diffEngine->loadRevisionData();
-			$ret2 = $diffEngine->loadRevisionData();
-
-			$this->assertEquals( $expectedOld, $diffEngine->getOldid(), $testName );
-			$this->assertEquals( $expectedNew, $diffEngine->getNewid(), $testName );
-			$this->assertEquals( $expectedRet, $ret, $testName );
-			$this->assertEquals( $expectedRet, $ret2, $testName );
-		}
+		$this->assertEquals( $expectedOld, $diffEngine->getOldid() );
+		$this->assertEquals( $expectedNew, $diffEngine->getNewid() );
+		$this->assertEquals( $expectedRet, $ret );
+		$this->assertEquals( $expectedRet, $ret2 );
 	}
 
-	private function getLoadRevisionDataCases() {
-		$revs = self::$revisions;
-
+	public static function provideLoadRevision() {
 		return [
-			'diff=prev' => [ $revs[2], $revs[3], true, $revs[3], 'prev' ],
-			'diff=next' => [ $revs[2], $revs[3], true, $revs[2], 'next' ],
-			'diff=' . $revs[3] => [ $revs[1], $revs[3], true, $revs[1], $revs[3] ],
-			'diff=0' => [ $revs[1], $revs[3], true, $revs[1], 0 ],
-			'diff=prev&oldid=<first>' => [ false, $revs[0], true, $revs[0], 'prev' ],
-			'invalid' => [ 123456789, $revs[1], false, 123456789, $revs[1] ],
+			'diff=prev' => [ 'rev[2]', 'rev[3]', true, 'rev[3]', 'prev' ],
+			'diff=next' => [ 'rev[2]', 'rev[3]', true, 'rev[2]', 'next' ],
+			'diff=rev[3]' => [ 'rev[1]', 'rev[3]', true, 'rev[1]', 'rev[3]' ],
+			'diff=0' => [ 'rev[1]', 'rev[cur]', true, 'rev[1]', 0 ],
+			'diff=prev&oldid=<first>' => [ false, 'rev[0]', true, 'rev[0]', 'prev' ],
+			'invalid' => [ 123456789, 'rev[1]', false, 123456789, 'rev[1]' ],
 		];
 	}
 
@@ -143,33 +198,6 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 
 		$diffEngine = new DifferenceEngine( $this->context, $revs[1], $revs[2], 2, true, false );
 		$this->assertEquals( $revs[2], $diffEngine->getNewid(), 'diff get new id' );
-	}
-
-	public function provideLocaliseTitleTooltipsTestData() {
-		return [
-			'moved paragraph left shoud get new location title' => [
-				'<a class="mw-diff-movedpara-left">⚫</a>',
-				'<a class="mw-diff-movedpara-left" title="(diff-paragraph-moved-tonew)">⚫</a>',
-			],
-			'moved paragraph right shoud get old location title' => [
-				'<a class="mw-diff-movedpara-right">⚫</a>',
-				'<a class="mw-diff-movedpara-right" title="(diff-paragraph-moved-toold)">⚫</a>',
-			],
-			'nothing changed when key not hit' => [
-				'<a class="mw-diff-movedpara-rightis">⚫</a>',
-				'<a class="mw-diff-movedpara-rightis">⚫</a>',
-			],
-		];
-	}
-
-	/**
-	 * @dataProvider provideLocaliseTitleTooltipsTestData
-	 */
-	public function testAddLocalisedTitleTooltips( $input, $expected ) {
-		$this->setContentLang( 'qqx' );
-		/** @var DifferenceEngine $diffEngine */
-		$diffEngine = TestingAccessWrapper::newFromObject( new DifferenceEngine() );
-		$this->assertEquals( $expected, $diffEngine->addLocalisedTitleTooltips( $input ) );
 	}
 
 	/**
@@ -220,12 +248,8 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testSetRevisions() {
-		$main1 = SlotRecord::newUnsaved( SlotRecord::MAIN,
-			ContentHandler::makeContent( 'xxx', null, CONTENT_MODEL_TEXT ) );
-		$main2 = SlotRecord::newUnsaved( SlotRecord::MAIN,
-			ContentHandler::makeContent( 'yyy', null, CONTENT_MODEL_TEXT ) );
-		$rev1 = $this->getRevisionRecord( $main1 );
-		$rev2 = $this->getRevisionRecord( $main2 );
+		$rev1 = $this->getRevisionRecord( [ SlotRecord::MAIN => 'xxx' ] );
+		$rev2 = $this->getRevisionRecord( [ SlotRecord::MAIN => 'yyy' ] );
 
 		$differenceEngine = new DifferenceEngine();
 		$differenceEngine->setRevisions( $rev1, $rev2 );
@@ -242,14 +266,19 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideGetDiffBody
 	 */
 	public function testGetDiffBody(
-		?RevisionRecord $oldRevision, ?RevisionRecord $newRevision, $expectedDiff
+		?array $oldSlots, ?array $newSlots, $slotDiffOptions, $expectedDiff
 	) {
+		$oldRevision = $this->getRevisionRecord( $oldSlots );
+		$newRevision = $this->getRevisionRecord( $newSlots );
 		if ( $expectedDiff instanceof Exception ) {
 			$this->expectException( get_class( $expectedDiff ) );
 			$this->expectExceptionMessage( $expectedDiff->getMessage() );
 		}
 		$differenceEngine = new DifferenceEngine();
 		$differenceEngine->setRevisions( $oldRevision, $newRevision );
+		if ( $slotDiffOptions !== null ) {
+			$differenceEngine->setSlotDiffOptions( $slotDiffOptions );
+		}
 		if ( $expectedDiff instanceof Exception ) {
 			return;
 		}
@@ -258,51 +287,64 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expectedDiff, $this->getPlainDiff( $diff ) );
 	}
 
-	public function provideGetDiffBody() {
-		$main1 = SlotRecord::newUnsaved( SlotRecord::MAIN,
-			ContentHandler::makeContent( 'xxx', null, CONTENT_MODEL_TEXT ) );
-		$main2 = SlotRecord::newUnsaved( SlotRecord::MAIN,
-			ContentHandler::makeContent( 'yyy', null, CONTENT_MODEL_TEXT ) );
-		$slot1 = SlotRecord::newUnsaved( 'slot',
-			ContentHandler::makeContent( 'aaa', null, CONTENT_MODEL_TEXT ) );
-		$slot2 = SlotRecord::newUnsaved( 'slot',
-			ContentHandler::makeContent( 'bbb', null, CONTENT_MODEL_TEXT ) );
-		$slot3 = SlotRecord::newDerived( 'derivedslot',
-			ContentHandler::makeContent( 'aaa', null, CONTENT_MODEL_TEXT ) );
-		$slot4 = SlotRecord::newDerived( 'derivedslot',
-			ContentHandler::makeContent( 'bbb', null, CONTENT_MODEL_TEXT ) );
+	public static function provideGetDiffBody() {
+		$main1 = [ SlotRecord::MAIN => 'xxx' ];
+		$main2 = [ SlotRecord::MAIN => 'yyy' ];
+		$slot1 = [ 'slot' => 'aaa' ];
+		$slot2 = [ 'slot' => 'bbb' ];
+		$slot3 = [ 'derivedslot' => [ 'text' => 'aaa', 'derived' => true ] ];
+		$slot4 = [ 'derivedslot' => [ 'text' => 'bbb', 'derived' => true ] ];
+		$slot5 = [ 'slot' => [ 'model' => 'testing' ] ];
 
 		return [
 			'revision vs. null' => [
 				null,
-				$this->getRevisionRecord( $main1, $slot1 ),
+				$main1 + $slot1,
+				null,
 				'',
 			],
 			'revision vs. itself' => [
-				$this->getRevisionRecord( $main1, $slot1 ),
-				$this->getRevisionRecord( $main1, $slot1 ),
+				$main1 + $slot1,
+				$main1 + $slot1,
+				null,
 				'',
 			],
 			'different text in one slot' => [
-				$this->getRevisionRecord( $main1, $slot1 ),
-				$this->getRevisionRecord( $main1, $slot2 ),
+				$main1 + $slot1,
+				$main1 + $slot2,
+				null,
 				"slotLine 1:\nLine 1:\n-aaa+bbb",
 			],
 			'different text in two slots' => [
-				$this->getRevisionRecord( $main1, $slot1 ),
-				$this->getRevisionRecord( $main2, $slot2 ),
+				$main1 + $slot1,
+				$main2 + $slot2,
+				null,
 				"Line 1:\nLine 1:\n-xxx+yyy\nslotLine 1:\nLine 1:\n-aaa+bbb",
 			],
 			'new slot' => [
-				$this->getRevisionRecord( $main1 ),
-				$this->getRevisionRecord( $main1, $slot1 ),
+				$main1,
+				$main1 + $slot1,
+				null,
 				"slotLine 1:\nLine 1:\n- +aaa",
 			],
 			'ignored difference in derived slot' => [
-				$this->getRevisionRecord( $main1, $slot3 ),
-				$this->getRevisionRecord( $main1, $slot4 ),
+				$main1 + $slot3,
+				$main1 + $slot4,
+				null,
 				'',
 			],
+			'incompatible slot' => [
+				$main1 + $slot5,
+				$main2 + $slot1,
+				null,
+				"Line 1:\nLine 1:\n-xxx+yyy\nslotCannot compare content models \"testing\" and \"plain text\"",
+			],
+			'invalid diff-type' => [
+				$main1,
+				$main2,
+				[ 'diff-type' => 'invalid' ],
+				"Line 1:\nLine 1:\n-xxx+yyy",
+			]
 		];
 	}
 
@@ -345,13 +387,13 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 		$user = $this->getTestUser( $group )->getUser();
 		$this->context->setUser( $user );
 		if ( $config ) {
-			$this->context->setConfig( $config );
+			$this->context->setConfig( new HashConfig( $config ) );
 		}
 
 		$page = $this->getNonexistingTestPage( 'Page1' );
-		$this->assertTrue( $this->editPage( $page, 'Edit1' )->isGood(), 'edited a page' );
+		$this->assertStatusGood( $this->editPage( $page, 'Edit1' ), 'edited a page' );
 		$rev1 = $page->getRevisionRecord();
-		$this->assertTrue( $this->editPage( $page, 'Edit2' )->isGood(), 'edited a page' );
+		$this->assertStatusGood( $this->editPage( $page, 'Edit2' ), 'edited a page' );
 		$rev2 = $page->getRevisionRecord();
 
 		$diffEngine = new DifferenceEngine( $this->context );
@@ -361,16 +403,16 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( $expectedResult, $html );
 	}
 
-	public function provideMarkPatrolledLink() {
+	public static function provideMarkPatrolledLink() {
 		yield 'PatrollingEnabledUserAllowed' => [
 			'sysop',
-			new HashConfig( [ 'UseRCPatrol' => true, 'LanguageCode' => 'qxx' ] ),
+			[ MainConfigNames::UseRCPatrol => true, MainConfigNames::LanguageCode => 'qxx' ],
 			'Mark as patrolled'
 		];
 
 		yield 'PatrollingEnabledUserNotAllowed' => [
 			null,
-			new HashConfig( [ 'UseRCPatrol' => true, 'LanguageCode' => 'qxx' ] ),
+			[ MainConfigNames::UseRCPatrol => true, MainConfigNames::LanguageCode => 'qxx' ],
 			''
 		];
 
@@ -406,14 +448,42 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @param SlotRecord ...$slots
-	 * @return MutableRevisionRecord
+	 * @param string[]|array[]|null $slots Array mapping slot role to content.
+	 *   If the content is a string, a normal text slot will be created. If the
+	 *   content is an associative array, it can have the following keys:
+	 *    - derived: If present and true, the slot is a derived slot
+	 *    - text: The serialized content
+	 *    - model: The content model ID
+	 * @return MutableRevisionRecord|null
 	 */
-	private function getRevisionRecord( ...$slots ) {
+	private function getRevisionRecord( $slots ) {
+		if ( $slots === null ) {
+			return null;
+		}
+
+		$contentHandlerFactory = $this->getServiceContainer()->getContentHandlerFactory();
 		$title = $this->makeMockTitle( __CLASS__ );
 		$revision = new MutableRevisionRecord( $title );
-		foreach ( $slots as $slot ) {
-			$revision->setSlot( $slot );
+		foreach ( $slots as $role => $info ) {
+			if ( is_string( $info ) ) {
+				$info = [
+					'text' => $info,
+				];
+			}
+			$info += [ 'text' => '', 'model' => CONTENT_MODEL_TEXT ];
+
+			if ( !$contentHandlerFactory->isDefinedModel( $info['model'] ) ) {
+				$contentHandlerFactory->defineContentHandler(
+					$info['model'], DummyContentHandlerForTesting::class );
+			}
+
+			$content = ContentHandler::makeContent( $info['text'], null, $info['model'] );
+			if ( $info['derived'] ?? false ) {
+				$slotRecord = SlotRecord::newDerived( $role, $content );
+			} else {
+				$slotRecord = SlotRecord::newUnsaved( $role, $content );
+			}
+			$revision->setSlot( $slotRecord );
 		}
 		return $revision;
 	}
@@ -424,15 +494,12 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 	public function testRevisionHeader( $deletedFlag, $allowedAction ) {
 		$revs = self::$revisions;
 
-		if ( $deletedFlag !== 'none' ) {
-			$this->revisionDelete(
-				$revs[1],
-				[
-					RevisionRecord::DELETED_TEXT => 1,
-					RevisionRecord::DELETED_RESTRICTED => $deletedFlag === 'suppressed' ? 1 : 0,
-				],
-				'Testing'
-			);
+		if ( $deletedFlag === 'none' ) {
+			$oldRevId = $revs[1];
+		} elseif ( $deletedFlag === 'deleted' ) {
+			$oldRevId = $revs[4];
+		} elseif ( $deletedFlag === 'suppressed' ) {
+			$oldRevId = $revs[5];
 		}
 
 		$context = new DerivativeContext( $this->context );
@@ -452,7 +519,7 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 			new SimpleAuthority( $this->getTestUser()->getUser(), $permissionSet )
 		);
 
-		$diffEngine = new DifferenceEngine( $context, $revs[1], $revs[2], 2, true, true );
+		$diffEngine = new DifferenceEngine( $context, $oldRevId, $revs[2], 2, true, true );
 		$this->assertTrue( $diffEngine->loadRevisionData() );
 		$revisionHeaderHtml = $diffEngine->getRevisionHeader( $diffEngine->getOldRevision(), 'complete' );
 
@@ -460,9 +527,9 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( '(revisionasof:', $revisionHeaderHtml );
 
 		if ( $allowedAction === 'none' ) {
-			$this->assertStringNotContainsString( 'oldid=' . $revs[1], $revisionHeaderHtml );
+			$this->assertStringNotContainsString( 'oldid=' . $oldRevId, $revisionHeaderHtml );
 		} else {
-			$this->assertStringContainsString( 'oldid=' . $revs[1], $revisionHeaderHtml );
+			$this->assertStringContainsString( 'oldid=' . $oldRevId, $revisionHeaderHtml );
 		}
 		if ( $allowedAction === 'edit' ) {
 			$this->assertStringContainsString( '(editold)', $revisionHeaderHtml );
@@ -487,7 +554,7 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 		}
 	}
 
-	public function provideRevisionHeader() {
+	public static function provideRevisionHeader() {
 		return [
 			[ 'none', 'view' ],
 			[ 'none', 'edit' ],
@@ -498,5 +565,200 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 			[ 'suppressed', 'view' ],
 			[ 'suppressed', 'edit' ],
 		];
+	}
+
+	/**
+	 * @dataProvider provideShowDiffPage
+	 * @param array $reqParams
+	 * @param array $userRights
+	 * @param array $expected
+	 */
+	public function testShowDiffPage( $reqParams, $userRights, $expected ) {
+		$this->expandTestArgs( [ &$reqParams, &$expected ] );
+		$context = new DerivativeContext( $this->context );
+
+		$authority = new SimpleAuthority(
+			new UserIdentityValue( 1, 'User' ),
+			$userRights
+		);
+		$context->setAuthority( $authority );
+
+		$request = new FauxRequest( $reqParams );
+		$context->setRequest( $request );
+
+		$context->setLanguage( 'qqx' );
+
+		$out = new OutputPage( $context );
+		$context->setOutput( $out );
+
+		$engine = new DifferenceEngine(
+			$context,
+			$request->getIntOrNull( 'oldid' ),
+			$request->getVal( 'diff' ),
+			0,
+			false,
+			$request->getInt( 'unhide' ) === 1
+		);
+
+		if ( isset( $expected['exception'] ) ) {
+			$this->expectException( $expected['exception'] );
+		}
+
+		$engine->showDiffPage( $request->getBool( 'diffonly' ) );
+
+		if ( isset( $expected['html'] ) ) {
+			$this->assertMatchesRegularExpression(
+				'{' . $expected['html'] . '}s',
+				$out->getHTML(),
+				'OutputPage::getHTML'
+			);
+		}
+	}
+
+	public static function provideShowDiffPage() {
+		$cases = [
+			'missing oldid' => [
+				'params' => [
+					'oldid' => '1000000',
+					'diff' => 'prev',
+				],
+				'expected' => [
+					'html' => '\(difference-missing-revision: 1000000, 1\)',
+				]
+			],
+			'missing prev' => [
+				'params' => [
+					'oldid' => 'rev[0]',
+					'diff' => 'prev'
+				],
+				'expected' => [
+					'html' =>
+						'\(diff-empty\).*' .
+						'<div class="mw-parser-output"><p>no kittens'
+				],
+			],
+			'normal diff=prev' => [
+				'params' => [
+					'oldid' => 'rev[1]',
+					'diff' => 'prev'
+				],
+				'expected' => [
+					'html' =>
+						'\(viewsourceold\).*' .
+						'<del class="diffchange diffchange-inline">no kittens</del>.*' .
+						'<ins class="diffchange diffchange-inline">one kitten</ins>.*' .
+						'<div class="mw-parser-output"><p>one kitten',
+				]
+			],
+			'normal diff=number' => [
+				'params' => [
+					'oldid' => 'rev[0]',
+					'diff' => 'rev[1]'
+				],
+				'expected' => [
+					'html' =>
+						'\(viewsourceold\).*' .
+						'<del class="diffchange diffchange-inline">no kittens</del>.*' .
+						'<ins class="diffchange diffchange-inline">one kitten</ins>.*' .
+						'<div class="mw-parser-output"><p>one kitten',
+				]
+			],
+			'user cannot read' => [
+				'params' => [
+					'oldid' => 'rev[1]',
+					'diff' => 'prev',
+				],
+				'userRights' => [],
+				'expected' => [
+					'exception' => PermissionsError::class,
+				]
+			],
+			'user can rollback' => [
+				'params' => [
+					'oldid' => 'rev[6]',
+					'diff' => 'rev[7]',
+				],
+				'userRights' => [ 'read', 'edit', 'rollback' ],
+				'expected' => [
+					'html' =>
+						'\(editold\).*' .
+						'\(rollbacklinkcount: 1\)',
+				]
+			],
+			'diffonly' => [
+				'params' => [
+					'oldid' => 'rev[1]',
+					'diff' => 'prev',
+					'diffonly' => '1',
+				],
+				'expected' => [
+					'html' =>
+						'<del class="diffchange diffchange-inline">no kittens</del>.*' .
+						'<ins class="diffchange diffchange-inline">one kitten</ins>.*' .
+						'</table>$',
+				]
+			],
+			'deleted LHS' => [
+				'params' => [
+					'oldid' => 'rev[4]',
+					'diff' => 'rev[1]'
+				],
+				'expected' => [
+					'html' => '<div id="mw-diff-otitle1">.*' .
+						'<span class="history-deleted">.*' .
+						'<div id="mw-diff-ntitle1">.*' .
+						'\(rev-deleted-no-diff\)',
+				]
+			],
+			'deleted RHS' => [
+				'params' => [
+					'oldid' => 'rev[3]',
+					'diff' => 'rev[4]'
+				],
+				'expected' => [
+					'html' =>
+						'<div id="mw-diff-otitle1">.*' .
+						'<div id="mw-diff-ntitle1">.*' .
+						'<span class="history-deleted">.*' .
+						'\(rev-deleted-no-diff\)',
+				]
+			],
+			'deleted LHS can unhide' => [
+				'params' => [
+					'oldid' => 'rev[4]',
+					'diff' => 'rev[1]'
+				],
+				'userRights' => [ 'read', 'deletedtext' ],
+				'expected' => [
+					'html' =>
+						'<div id="mw-diff-ntitle1">.*' .
+						'\(rev-deleted-unhide-diff:.*' .
+						'&amp;unhide=1.*',
+				]
+			],
+			'deleted RHS with unhide' => [
+				'params' => [
+					'oldid' => 'rev[3]',
+					'diff' => 'rev[4]',
+					'unhide' => '1'
+				],
+				'userRights' => [ 'read', 'deletedtext' ],
+				'expected' => [
+					'html' =>
+						'\(rev-deleted-diff-view\).*' .
+						'<del class="diffchange diffchange-inline">three </del>.*' .
+						'<ins class="diffchange diffchange-inline">fnord </ins>.*' .
+						'<div class="mw-parser-output"><p>fnord kittens',
+				]
+			],
+		];
+
+		foreach ( $cases as $name => $case ) {
+			yield $name => [
+				$case['params'],
+				$case['userRights'] ?? [ 'read' ],
+				$case['expected']
+			];
+		}
 	}
 }

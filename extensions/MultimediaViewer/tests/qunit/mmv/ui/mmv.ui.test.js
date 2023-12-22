@@ -1,3 +1,5 @@
+const { UiElement } = require( 'mmv' );
+
 ( function () {
 	QUnit.module( 'mmv.ui', QUnit.newMwEnvironment( {
 		beforeEach: function () {
@@ -6,7 +8,7 @@
 	} ) );
 
 	QUnit.test( 'handleEvent()', function ( assert ) {
-		var element = new mw.mmv.ui.Element( $( '<div>' ) );
+		var element = new UiElement( $( '<div>' ) );
 
 		element.handleEvent( 'mmv-foo', function () {
 			assert.true( true, 'Event is handled' );
@@ -20,7 +22,7 @@
 	} );
 
 	QUnit.test( 'setInlineStyle()', function ( assert ) {
-		var element = new mw.mmv.ui.Element( $( '<div>' ) ),
+		var element = new UiElement( $( '<div>' ) ),
 			$testDiv = $( '<div>' ).attr( 'id', 'mmv-testdiv' ).text( '!!!' ).appendTo( '#qunit-fixture' );
 
 		assert.true( $testDiv.is( ':visible' ), 'Test div is visible' );
@@ -35,8 +37,8 @@
 	} );
 
 	QUnit.test( 'setTimer()/clearTimer()/resetTimer()', function ( assert ) {
-		var element = new mw.mmv.ui.Element( $( '<div>' ) ),
-			element2 = new mw.mmv.ui.Element( $( '<div>' ) ),
+		var element = new UiElement( $( '<div>' ) ),
+			element2 = new UiElement( $( '<div>' ) ),
 			spy = this.sandbox.spy(),
 			spy2 = this.sandbox.spy();
 
@@ -93,7 +95,7 @@
 	} );
 
 	QUnit.test( 'correctEW()', function ( assert ) {
-		var element = new mw.mmv.ui.Element( $( '<div>' ) );
+		var element = new UiElement( $( '<div>' ) );
 
 		element.isRTL = this.sandbox.stub().returns( true );
 

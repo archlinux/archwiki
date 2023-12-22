@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"4nn1l2",
+			"Amire80",
 			"Beginneruser",
 			"Dalba",
 			"Huji",
@@ -9,11 +10,9 @@
 			"Mjbmr",
 			"Mohammad ebz",
 			"Reza1615",
-			"فلورانس",
-			"Amire80"
+			"فلورانس"
 		]
 	},
-	"apihelp-echomarkread-description": "آگاه‌سازی‌‌ها برای کاربر کنونی به عنوان خوانده‌شده نشانه‌گذاری شوند.",
 	"apihelp-echomarkread-summary": "علامت گذاری آگاه‌سازی‌ها به عنوان خوانده شده برای کاربر کنونی",
 	"apihelp-echomarkread-param-list": "فهرستی از شناسه های آگاه سازی به عنوان خوانده شده",
 	"apihelp-echomarkread-param-unreadlist": "فهرستی از شناسه‌های آگاه‌سازی برای علامت زدن به عنوان خوانده‌نشده",
@@ -23,14 +22,11 @@
 	"apihelp-echomarkread-example-1": "علامت‌گذاری آگاه‌سازی 8 به عنوان خوانده شده",
 	"apihelp-echomarkread-example-2": "علامت‌گذاری تمامی آگاه‌سازی‌ها به عنوان خوانده‌شده",
 	"apihelp-echomarkread-example-3": "علامت‌گذاری آگاه‌سازی 1 به عنوان خوانده‌نشده",
-	"apihelp-echomarkseen-description": "علامت گذاری به عنوان آگاه‌سازی‌‌های خوانده شده برای کاربر کنونی",
 	"apihelp-echomarkseen-summary": "علامت گذاری آگاه‌سازی‌ها به عنوان دیده شده برای کاربر کنونی.",
 	"apihelp-echomarkseen-example-1": "علامت‌گذاری آگاه‌سازی‌‌ها از همۀ نوع‌ها به عنوان دیده‌شده",
 	"apihelp-echomarkseen-param-type": "انواع آگاه‌سازی‌‌هایی که به‌عنوان خوانده‌شده علامت زده شدند: 'هشدار'، 'پیام'، یا 'همه'.",
 	"apihelp-echomarkseen-param-timestampFormat": "ساختار تاریخ استفاده شده برای خروجی 'ISO_8601' یا 'MW' است. 'MW' در اینجا دیگر مورد استفاده نیست در نتیجه همهٔ کاربران باید از 'ISO_8601' استفاده کنند. این متغیر حذف خواهد شد و 'ISO_8601' به عنوان تنها ساختار خروجی انتخاب خواهد شد.",
-	"apihelp-echomute-description": "بی‌صدا یا باصدا کردن اعلان‌ها از کاربران یا صفحه‌های خاص.",
 	"apihelp-echomute-summary": "بی‌صدا یا باصدا کردن اعلان‌ها از کاربران یا صفحه‌های خاص.",
-	"apihelp-query+notifications-description": "دریافت آگاه‌سازی‌‌های منتظر کاربر کنونی.",
 	"apihelp-query+notifications-summary": "دریافت آگاه‌سازی‌‌های منتظر کاربر کنونی.",
 	"apihelp-query+notifications-param-prop": "جزئیات به درخواست.",
 	"apihelp-query+notifications-param-sections": "بخش آگاه‌سازی پرسمان (مانند هشدار و پیام بعضی از مشارکت‌ها)",
@@ -53,7 +49,6 @@
 	"apihelp-query+notifications-param-bundle": "\nWhether to show bundle compatible unread notifications according to notification types bundling rules.",
 	"apihelp-query+notifications-example-1": "اعلان‌های وب را فهرست کن",
 	"apihelp-query+notifications-example-2": "آگاه‌سازی‌‌های وب را، به‌صورت گروه‌بندی‌شده بر پایه بخش، به همراه تعدادشان فهرست کن",
-	"apihelp-query+unreadnotificationpages-description": "دریافت صفحه‌هایی که برایش آگاه‌سازی‌های خوانده‌نشده‌ای برای کاربر فعلی وجود دارد.",
 	"apihelp-query+unreadnotificationpages-summary": "دریافت صفحه‌هایی که برایش آگاه‌سازی‌های خوانده‌نشده‌ای برای کاربر فعلی وجود دارد.",
 	"apihelp-query+unreadnotificationpages-param-grouppages": "گروه صفحهٔ بحث‌ها همراه با صفحهٔ موضوعشان و آگاه‌سازی‌های گروهی ارتباطی به صفحهٔ کاربری این کاربر ندارد.",
 	"apihelp-query+unreadnotificationpages-param-limit": "حداکثر صفحاتی که برگردانده می‌شود.",

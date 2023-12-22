@@ -24,6 +24,7 @@ namespace MediaWiki\Minerva\Permissions;
  */
 interface IMinervaPagePermissions {
 
+	public const WATCHABLE = 'watchable';
 	public const WATCH = 'watch';
 	public const SWITCH_LANGUAGE = 'switch-language';
 	/** Given user permission, the page content is editable. */

@@ -20,11 +20,17 @@
  * @file
  * @ingroup SpecialPage
  */
+
+namespace MediaWiki\Specials;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
+use Skin;
+use stdClass;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -35,30 +41,23 @@ use Wikimedia\Rdbms\IResultWrapper;
  */
 class SpecialDoubleRedirects extends QueryPage {
 
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var IDatabase */
-	private $dbr;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private LinkBatchFactory $linkBatchFactory;
 
 	/**
 	 * @param IContentHandlerFactory $contentHandlerFactory
 	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 */
 	public function __construct(
 		IContentHandlerFactory $contentHandlerFactory,
 		LinkBatchFactory $linkBatchFactory,
-		ILoadBalancer $loadBalancer
+		IConnectionProvider $dbProvider
 	) {
 		parent::__construct( 'DoubleRedirects' );
 		$this->contentHandlerFactory = $contentHandlerFactory;
 		$this->linkBatchFactory = $linkBatchFactory;
-		$this->setDBLoadBalancer( $loadBalancer );
-		$this->dbr = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		$this->setDatabaseProvider( $dbProvider );
 	}
 
 	public function isExpensive() {
@@ -111,7 +110,7 @@ class SpecialDoubleRedirects extends QueryPage {
 
 				// Need to check both NULL and "" for some reason,
 				// apparently either can be stored for non-iw entries.
-				'ra.rd_interwiki IS NULL OR ra.rd_interwiki = ' . $this->dbr->addQuotes( '' ),
+				'ra.rd_interwiki' => [ null, '' ],
 
 				'pb.page_namespace = ra.rd_namespace',
 				'pb.page_title = ra.rd_title',
@@ -156,7 +155,7 @@ class SpecialDoubleRedirects extends QueryPage {
 					$result->namespace,
 					$result->title
 				);
-				$deep = $this->dbr->selectRow(
+				$deep = $this->getDatabaseProvider()->getReplicaDatabase()->selectRow(
 					$qi['tables'],
 					$qi['fields'],
 					$qi['conds'],
@@ -259,3 +258,8 @@ class SpecialDoubleRedirects extends QueryPage {
 		return 'maintenance';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialDoubleRedirects::class, 'SpecialDoubleRedirects' );

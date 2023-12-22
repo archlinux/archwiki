@@ -2,9 +2,16 @@
 
 namespace MediaWiki\Auth;
 
+use MediaWiki\Config\HashConfig;
+use MediaWiki\Config\MultiConfig;
+use MediaWiki\MainConfigNames;
+use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\Auth\AuthenticationProviderTestTrait;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
+use PasswordFactory;
+use StatusValue;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
@@ -35,11 +42,11 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 	protected function getProvider( $params = [] ) {
 		$mwServices = $this->getServiceContainer();
 		if ( !$this->config ) {
-			$this->config = new \HashConfig( [
-				'EmailEnabled' => true,
+			$this->config = new HashConfig( [
+				MainConfigNames::EnableEmail
 			] );
 		}
-		$config = new \MultiConfig( [
+		$config = new MultiConfig( [
 			$this->config,
 			$mwServices->getMainConfig()
 		] );
@@ -66,13 +73,13 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 				$mwServices->getUserOptionsManager()
 			);
 		}
-		$this->validity = \Status::newGood();
+		$this->validity = \MediaWiki\Status\Status::newGood();
 
 		$mockedMethods[] = 'checkPasswordValidity';
 		$provider = $this->getMockBuilder( TemporaryPasswordPrimaryAuthenticationProvider::class )
 			->onlyMethods( $mockedMethods )
 			->setConstructorArgs( [
-				$mwServices->getDBLoadBalancer(),
+				$mwServices->getDBLoadBalancerFactory(),
 				$mwServices->getUserOptionsLookup(),
 				$params
 			] )
@@ -90,13 +97,16 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 
 	protected function hookMailer( $func = null ) {
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
+
+		$this->clearHook( 'AlternateUserMailer' );
+
 		if ( $func ) {
-			$reset = $hookContainer->scopedRegister( 'AlternateUserMailer', $func, true );
+			$reset = $hookContainer->scopedRegister( 'AlternateUserMailer', $func );
 		} else {
 			$reset = $hookContainer->scopedRegister( 'AlternateUserMailer', function () {
 				$this->fail( 'AlternateUserMailer hook called unexpectedly' );
 				return false;
-			}, true );
+			} );
 		}
 		return $reset;
 	}
@@ -109,8 +119,9 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 			$provider->accountCreationType()
 		);
 
-		$this->assertTrue( $provider->testUserExists( 'UTSysop' ) );
-		$this->assertTrue( $provider->testUserExists( 'uTSysop' ) );
+		$existingUserName = $this->getTestUser()->getUserIdentity()->getName();
+		$this->assertTrue( $provider->testUserExists( $existingUserName ) );
+		$this->assertTrue( $provider->testUserExists( lcfirst( $existingUserName ) ) );
 		$this->assertFalse( $provider->testUserExists( 'DoesNotExist' ) );
 		$this->assertFalse( $provider->testUserExists( '<invalid>' ) );
 
@@ -122,14 +133,14 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 
 	public function testConfig() {
 		$config = new \HashConfig( [
-			'EnableEmail' => false,
-			'NewPasswordExpiry' => 100,
-			'PasswordReminderResendTime' => 101,
-			'AllowRequiringEmailForResets' => false,
+			MainConfigNames::EnableEmail => false,
+			MainConfigNames::NewPasswordExpiry => 100,
+			MainConfigNames::PasswordReminderResendTime => 101,
+			MainConfigNames::AllowRequiringEmailForResets => false,
 		] );
 
 		$provider = new TemporaryPasswordPrimaryAuthenticationProvider(
-			$this->getServiceContainer()->getDBLoadBalancer(),
+			$this->getServiceContainer()->getDBLoadBalancerFactory(),
 			$this->getServiceContainer()->getUserOptionsLookup()
 		);
 		$providerPriv = TestingAccessWrapper::newFromObject( $provider );
@@ -139,7 +150,7 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 		$this->assertSame( 101, $providerPriv->passwordReminderResendTime );
 
 		$provider = new TemporaryPasswordPrimaryAuthenticationProvider(
-			$this->getServiceContainer()->getDBLoadBalancer(),
+			$this->getServiceContainer()->getDBLoadBalancerFactory(),
 			$this->getServiceContainer()->getUserOptionsLookup(),
 			[
 				'emailEnabled' => true,
@@ -159,10 +170,10 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 	public function testTestUserCanAuthenticate() {
 		$user = self::getMutableTestUser()->getUser();
 
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = $this->getDb();
 		$config = $this->getServiceContainer()->getMainConfig();
 		// A is unsalted MD5 (thus fast) ... we don't care about security here, this is test only
-		$passwordFactory = new \PasswordFactory( $config->get( 'PasswordConfig' ), 'A' );
+		$passwordFactory = new PasswordFactory( $config->get( MainConfigNames::PasswordConfig ), 'A' );
 
 		$pwhash = $passwordFactory->newFromPlaintext( 'password' )->toString();
 
@@ -172,57 +183,52 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 		$this->assertFalse( $provider->testUserCanAuthenticate( '<invalid>' ) );
 		$this->assertFalse( $provider->testUserCanAuthenticate( 'DoesNotExist' ) );
 
-		$dbw->update(
-			'user',
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'user' )
+			->set( [
 				'user_newpassword' => \PasswordFactory::newInvalidPassword()->toString(),
 				'user_newpass_time' => null,
-			],
-			[ 'user_id' => $user->getId() ]
-		);
+			] )
+			->where( [ 'user_id' => $user->getId() ] )
+			->execute();
 		$this->assertFalse( $provider->testUserCanAuthenticate( $user->getName() ) );
 
-		$dbw->update(
-			'user',
-			[
-				'user_newpassword' => $pwhash,
-				'user_newpass_time' => null,
-			],
-			[ 'user_id' => $user->getId() ]
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'user' )
+			->set( [ 'user_newpassword' => $pwhash, 'user_newpass_time' => null, ] )
+			->where( [ 'user_id' => $user->getId() ] )
+			->execute();
 		$this->assertTrue( $provider->testUserCanAuthenticate( $user->getName() ) );
 		$this->assertTrue( $provider->testUserCanAuthenticate( lcfirst( $user->getName() ) ) );
 
-		$dbw->update(
-			'user',
-			[
-				'user_newpassword' => $pwhash,
-				'user_newpass_time' => $dbw->timestamp( time() - 10 ),
-			],
-			[ 'user_id' => $user->getId() ]
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'user' )
+			->set( [ 'user_newpassword' => $pwhash, 'user_newpass_time' => $dbw->timestamp( time() - 10 ) ] )
+			->where( [ 'user_id' => $user->getId() ] )
+			->execute();
 		$providerPriv->newPasswordExpiry = 100;
 		$this->assertTrue( $provider->testUserCanAuthenticate( $user->getName() ) );
 		$providerPriv->newPasswordExpiry = 1;
 		$this->assertFalse( $provider->testUserCanAuthenticate( $user->getName() ) );
 
-		$dbw->update(
-			'user',
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'user' )
+			->set( [
 				'user_newpassword' => \PasswordFactory::newInvalidPassword()->toString(),
 				'user_newpass_time' => null,
-			],
-			[ 'user_id' => $user->getId() ]
-		);
+			] )
+			->where( [ 'user_id' => $user->getId() ] )
+			->execute();
 	}
 
 	/**
 	 * @dataProvider provideGetAuthenticationRequests
 	 * @param string $action
-	 * @param array $options
+	 * @param bool $registered
 	 * @param array $expected
 	 */
-	public function testGetAuthenticationRequests( $action, $options, $expected ) {
+	public function testGetAuthenticationRequests( $action, bool $registered, $expected ) {
+		$options = [ 'username' => $registered ? 'TestGetAuthenticationRequests' : null ];
 		$actual = $this->getProvider( [ 'emailEnabled' => true ] )
 			->getAuthenticationRequests( $action, $options );
 		foreach ( $actual as $req ) {
@@ -234,8 +240,8 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 	}
 
 	public static function provideGetAuthenticationRequests() {
-		$anon = [ 'username' => null ];
-		$registered = [ 'username' => 'UTSysop' ];
+		$anon = false;
+		$registered = true;
 
 		return [
 			[ AuthManager::ACTION_LOGIN, $anon, [
@@ -270,12 +276,12 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 
 		$password = 'TemporaryPassword';
 		$hash = ':A:' . md5( $password );
-		$dbw = wfGetDB( DB_PRIMARY );
-		$dbw->update(
-			'user',
-			[ 'user_newpassword' => $hash, 'user_newpass_time' => $dbw->timestamp( time() - 10 ) ],
-			[ 'user_id' => $user->getId() ]
-		);
+		$dbw = $this->getDb();
+		$dbw->newUpdateQueryBuilder()
+			->update( 'user' )
+			->set( [ 'user_newpassword' => $hash, 'user_newpass_time' => $dbw->timestamp( time() - 10 ) ] )
+			->where( [ 'user_id' => $user->getId() ] )
+			->execute();
 
 		$req = new PasswordAuthenticationRequest();
 		$req->action = AuthManager::ACTION_LOGIN;
@@ -325,20 +331,24 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 		// Validation failure
 		$req->username = $user->getName();
 		$req->password = $password;
-		$this->validity = \Status::newFatal( 'arbitrary-failure' );
+		$this->validity = \MediaWiki\Status\Status::newFatal( 'arbitrary-failure' );
 		$ret = $provider->beginPrimaryAuthentication( $reqs );
 		$this->assertEquals(
 			AuthenticationResponse::FAIL,
 			$ret->status
 		);
 		$this->assertEquals(
-			'arbitrary-failure',
+			'fatalpassworderror',
 			$ret->message->getKey()
+		);
+		$this->assertEquals(
+			'arbitrary-failure',
+			$ret->message->getParams()[0]->getKey()
 		);
 
 		// Successful auth
 		$this->manager->removeAuthenticationSessionData( null );
-		$this->validity = \Status::newGood();
+		$this->validity = \MediaWiki\Status\Status::newGood();
 		$this->assertEquals(
 			AuthenticationResponse::newPass( $user->getName() ),
 			$provider->beginPrimaryAuthentication( $reqs )
@@ -346,7 +356,7 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 		$this->assertNotNull( $this->manager->getAuthenticationSessionData( 'reset-pass' ) );
 
 		$this->manager->removeAuthenticationSessionData( null );
-		$this->validity = \Status::newGood();
+		$this->validity = \MediaWiki\Status\Status::newGood();
 		$req->username = lcfirst( $user->getName() );
 		$this->assertEquals(
 			AuthenticationResponse::newPass( $user->getName() ),
@@ -369,7 +379,7 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 
 		// Bad password
 		$providerPriv->newPasswordExpiry = 100;
-		$this->validity = \Status::newGood();
+		$this->validity = \MediaWiki\Status\Status::newGood();
 		$req->password = 'Wrong';
 		$ret = $provider->beginPrimaryAuthentication( $reqs );
 		$this->assertEquals(
@@ -385,14 +395,16 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 	/**
 	 * @dataProvider provideProviderAllowsAuthenticationDataChange
 	 * @param string $type
-	 * @param string $user
-	 * @param \Status $validity Result of the password validity check
+	 * @param callable $usernameGetter Function that takes the username of a sysop user and returns the username to
+	 *  use for testing.
+	 * @param \MediaWiki\Status\Status $validity Result of the password validity check
 	 * @param \StatusValue $expect1 Expected result with $checkData = false
 	 * @param \StatusValue $expect2 Expected result with $checkData = true
 	 */
-	public function testProviderAllowsAuthenticationDataChange( $type, $user, \Status $validity,
+	public function testProviderAllowsAuthenticationDataChange( $type, callable $usernameGetter, \MediaWiki\Status\Status $validity,
 		\StatusValue $expect1, \StatusValue $expect2
 	) {
+		$user = $usernameGetter( $this->getTestSysop()->getUserIdentity()->getName() );
 		if ( $type === PasswordAuthenticationRequest::class ||
 			$type === TemporaryPasswordAuthenticationRequest::class
 		) {
@@ -415,49 +427,95 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 		$err->error( 'arbitrary-warning' );
 
 		return [
-			[ AuthenticationRequest::class, 'UTSysop', \Status::newGood(),
-				\StatusValue::newGood( 'ignored' ), \StatusValue::newGood( 'ignored' ) ],
-			[ PasswordAuthenticationRequest::class, 'UTSysop', \Status::newGood(),
-				\StatusValue::newGood( 'ignored' ), \StatusValue::newGood( 'ignored' ) ],
-			[ TemporaryPasswordAuthenticationRequest::class, 'UTSysop', \Status::newGood(),
-				\StatusValue::newGood(), \StatusValue::newGood() ],
-			[ TemporaryPasswordAuthenticationRequest::class, 'uTSysop', \Status::newGood(),
-				\StatusValue::newGood(), \StatusValue::newGood() ],
-			[ TemporaryPasswordAuthenticationRequest::class, 'UTSysop', \Status::wrap( $err ),
-				\StatusValue::newGood(), $err ],
-			[ TemporaryPasswordAuthenticationRequest::class, 'UTSysop',
-				\Status::newFatal( 'arbitrary-error' ), \StatusValue::newGood(),
-				\StatusValue::newFatal( 'arbitrary-error' ) ],
-			[ TemporaryPasswordAuthenticationRequest::class, 'DoesNotExist', \Status::newGood(),
-				\StatusValue::newGood(), \StatusValue::newGood( 'ignored' ) ],
-			[ TemporaryPasswordAuthenticationRequest::class, '<invalid>', \Status::newGood(),
-				\StatusValue::newGood(), \StatusValue::newGood( 'ignored' ) ],
+			[
+				AuthenticationRequest::class,
+				static fn ( $sysopUsername ) => $sysopUsername,
+				Status::newGood(),
+				StatusValue::newGood( 'ignored' ),
+				StatusValue::newGood( 'ignored' )
+			],
+			[
+				PasswordAuthenticationRequest::class,
+				static fn ( $sysopUsername ) => $sysopUsername,
+				Status::newGood(),
+				StatusValue::newGood( 'ignored' ),
+				StatusValue::newGood( 'ignored' )
+			],
+			[
+				TemporaryPasswordAuthenticationRequest::class,
+				static fn ( $sysopUsername ) => $sysopUsername,
+				Status::newGood(),
+				StatusValue::newGood(),
+				StatusValue::newGood()
+			],
+			[
+				TemporaryPasswordAuthenticationRequest::class,
+				static fn ( $sysopUsername ) => lcfirst( $sysopUsername ),
+				Status::newGood(),
+				StatusValue::newGood(),
+				StatusValue::newGood()
+			],
+			[
+				TemporaryPasswordAuthenticationRequest::class,
+				static fn ( $sysopUsername ) => $sysopUsername,
+				Status::wrap( $err ),
+				StatusValue::newGood(),
+				$err
+			],
+			[
+				TemporaryPasswordAuthenticationRequest::class,
+				static fn ( $sysopUsername ) => $sysopUsername,
+				Status::newFatal( 'arbitrary-error' ),
+				StatusValue::newGood(),
+				StatusValue::newFatal( 'arbitrary-error' )
+			],
+			[
+				TemporaryPasswordAuthenticationRequest::class,
+				static fn () => 'DoesNotExist',
+				Status::newGood(),
+				StatusValue::newGood(),
+				StatusValue::newGood( 'ignored' )
+			],
+			[
+				TemporaryPasswordAuthenticationRequest::class,
+				static fn () => '<invalid>',
+				Status::newGood(),
+				StatusValue::newGood(),
+				StatusValue::newGood( 'ignored' )
+			],
 		];
 	}
 
 	/**
 	 * @dataProvider provideProviderChangeAuthenticationData
-	 * @param string $user
 	 * @param string $type
 	 * @param bool $changed
 	 */
-	public function testProviderChangeAuthenticationData( $user, $type, $changed ) {
-		$cuser = ucfirst( $user );
+	public function testProviderChangeAuthenticationData( $type, $changed ) {
+		$user = $this->getTestSysop()->getUserIdentity()->getName();
 		$oldpass = 'OldTempPassword';
 		$newpass = 'NewTempPassword';
 
-		$dbw = wfGetDB( DB_PRIMARY );
-		$oldHash = $dbw->selectField( 'user', 'user_newpassword', [ 'user_name' => $cuser ] );
-		$cb = new ScopedCallback( static function () use ( $dbw, $cuser, $oldHash ) {
-			$dbw->update( 'user', [ 'user_newpassword' => $oldHash ], [ 'user_name' => $cuser ] );
+		$dbw = $this->getDb();
+		$oldHash = $dbw->newSelectQueryBuilder()
+			->select( 'user_newpassword' )
+			->from( 'user' )
+			->where( [ 'user_name' => $user ] )
+			->fetchField();
+		$cb = new ScopedCallback( static function () use ( $dbw, $user, $oldHash ) {
+			$dbw->newUpdateQueryBuilder()
+				->update( 'user' )
+				->set( [ 'user_newpassword' => $oldHash ] )
+				->where( [ 'user_name' => $user ] )
+				->execute();
 		} );
 
 		$hash = ':A:' . md5( $oldpass );
-		$dbw->update(
-			'user',
-			[ 'user_newpassword' => $hash, 'user_newpass_time' => $dbw->timestamp( time() + 10 ) ],
-			[ 'user_name' => $cuser ]
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'user' )
+			->set( [ 'user_newpassword' => $hash, 'user_newpass_time' => $dbw->timestamp( time() + 10 ) ] )
+			->where( [ 'user_name' => $user ] )
+			->execute();
 
 		$provider = $this->getProvider();
 
@@ -467,7 +525,7 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 		$loginReq->password = $oldpass;
 		$loginReqs = [ PasswordAuthenticationRequest::class => $loginReq ];
 		$this->assertEquals(
-			AuthenticationResponse::newPass( $cuser ),
+			AuthenticationResponse::newPass( $user ),
 			$provider->beginPrimaryAuthentication( $loginReqs )
 		);
 
@@ -502,12 +560,16 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 		$ret = $provider->beginPrimaryAuthentication( $loginReqs );
 		if ( $changed ) {
 			$this->assertEquals(
-				AuthenticationResponse::newPass( $cuser ),
+				AuthenticationResponse::newPass( $user ),
 				$ret,
 				'new password should pass'
 			);
 			$this->assertNotNull(
-				$dbw->selectField( 'user', 'user_newpass_time', [ 'user_name' => $cuser ] )
+				$dbw->newSelectQueryBuilder()
+					->select( 'user_newpass_time' )
+					->from( 'user' )
+					->where( [ 'user_name' => $user ] )
+					->fetchField()
 			);
 		} else {
 			$this->assertEquals(
@@ -521,28 +583,32 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 				'new password should fail'
 			);
 			$this->assertNull(
-				$dbw->selectField( 'user', 'user_newpass_time', [ 'user_name' => $cuser ] )
+				$dbw->newSelectQueryBuilder()
+					->select( 'user_newpass_time' )
+					->from( 'user' )
+					->where( [ 'user_name' => $user ] )
+					->fetchField()
 			);
 		}
 	}
 
 	public static function provideProviderChangeAuthenticationData() {
 		return [
-			[ 'UTSysop', AuthenticationRequest::class, false ],
-			[ 'UTSysop', PasswordAuthenticationRequest::class, false ],
-			[ 'UTSysop', TemporaryPasswordAuthenticationRequest::class, true ],
+			[ AuthenticationRequest::class, false ],
+			[ PasswordAuthenticationRequest::class, false ],
+			[ TemporaryPasswordAuthenticationRequest::class, true ],
 		];
 	}
 
 	public function testProviderChangeAuthenticationDataEmail() {
 		$user = self::getMutableTestUser()->getUser();
 
-		$dbw = wfGetDB( DB_PRIMARY );
-		$dbw->update(
-			'user',
-			[ 'user_newpass_time' => $dbw->timestamp( time() - 5 * 3600 ) ],
-			[ 'user_id' => $user->getId() ]
-		);
+		$dbw = $this->getDb();
+		$dbw->newUpdateQueryBuilder()
+			->update( 'user' )
+			->set( [ 'user_newpass_time' => $dbw->timestamp( time() - 5 * 3600 ) ] )
+			->where( [ 'user_id' => $user->getId() ] )
+			->execute();
 
 		$req = TemporaryPasswordAuthenticationRequest::newRandom();
 		$req->username = $user->getName();
@@ -564,11 +630,11 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 		$status = $provider->providerAllowsAuthenticationDataChange( $req, true );
 		$this->assertFalse( $status->hasMessage( 'throttled-mailpassword' ) );
 
-		$dbw->update(
-			'user',
-			[ 'user_newpass_time' => $dbw->timestamp( time() + 5 * 3600 ) ],
-			[ 'user_id' => $user->getId() ]
-		);
+		$dbw->newUpdateQueryBuilder()
+			->update( 'user' )
+			->set( [ 'user_newpass_time' => $dbw->timestamp( time() + 5 * 3600 ) ] )
+			->where( [ 'user_id' => $user->getId() ] )
+			->execute();
 		$provider = $this->getProvider( [
 			'emailEnabled' => true, 'passwordReminderResendTime' => 0
 		] );
@@ -613,11 +679,11 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 		$priv = TestingAccessWrapper::newFromObject( $provider );
 		$req->username = '<invalid>';
 		$status = $priv->sendPasswordResetEmail( $req );
-		$this->assertEquals( \Status::newFatal( 'noname' ), $status );
+		$this->assertEquals( \MediaWiki\Status\Status::newFatal( 'noname' ), $status );
 	}
 
 	public function testTestForAccountCreation() {
-		$user = \User::newFromName( 'foo' );
+		$user = User::newFromName( 'foo' );
 		$req = new TemporaryPasswordAuthenticationRequest();
 		$req->username = 'Foo';
 		$req->password = 'Bar';
@@ -649,7 +715,7 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 	public function testAccountCreation() {
 		$resetMailer = $this->hookMailer();
 
-		$user = \User::newFromName( 'Foo' );
+		$user = User::newFromName( 'Foo' );
 
 		$req = new TemporaryPasswordAuthenticationRequest();
 		$reqs = [ TemporaryPasswordAuthenticationRequest::class => $req ];
@@ -707,7 +773,7 @@ class TemporaryPasswordPrimaryAuthenticationProviderTest extends \MediaWikiInteg
 	}
 
 	public function testAccountCreationEmail() {
-		$creator = \User::newFromName( 'Foo' );
+		$creator = User::newFromName( 'Foo' );
 
 		$user = self::getMutableTestUser()->getUser();
 		$user->setEmail( '' );

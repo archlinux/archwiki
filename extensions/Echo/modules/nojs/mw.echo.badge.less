@@ -1,3 +1,4 @@
+@import 'mediawiki.skin.variables.less';
 @import '../echo.variables.less';
 
 /* stylelint-disable no-descending-specificity */
@@ -25,20 +26,20 @@
 		&:hover,
 		&:active,
 		&:focus {
-			outline: 0;
+			outline: @outline-base--focus;
 		}
 
 		&:focus {
 			box-shadow: 0 0 0 1px #fff, 0 0 0 3px #36c;
 			opacity: 1;
 
-			&:after {
-				border-color: #36c;
+			&::after {
+				border-color: @border-color-progressive--focus;
 			}
 		}
 
 		// Counter
-		&:after {
+		&::after {
 			position: absolute;
 			display: inline-block;
 			cursor: pointer;
@@ -49,11 +50,11 @@
 			font-size: 0.9em;
 			font-weight: bold;
 			padding: 0 0.3em;
-			border: 1px solid #fff;
+			border: @border-width-base @border-style-base @border-color-inverted;
 			border-radius: @border-radius-base;
 			background-color: @badge-counter-background-seen;
 			content: attr( data-counter-text );
-			color: #fff;
+			color: @color-inverted;
 		}
 
 		&-dimmed {
@@ -63,13 +64,15 @@
 		&.mw-echo-notifications-badge-long-label {
 			margin-right: 0.5em;
 
-			&:after {
+			&::after {
 				left: 35%;
 			}
 		}
 
 		&.mw-echo-notifications-badge-all-read {
-			&:after {
+			opacity: 0.51;
+
+			&::after {
 				visibility: hidden;
 			}
 		}
@@ -77,12 +80,12 @@
 
 	&.oo-ui-flaggedElement-unseen,
 	&.mw-echo-unseen-notifications {
-		#pt-notifications-alert &:after {
-			background-color: @badge-counter-background-unseen-alert;
+		#pt-notifications-alert &::after {
+			background-color: @background-color-destructive;
 		}
 
-		#pt-notifications-notice &:after {
-			background-color: @badge-counter-background-unseen-message;
+		#pt-notifications-notice &::after {
+			background-color: @background-color-progressive;
 		}
 	}
 }

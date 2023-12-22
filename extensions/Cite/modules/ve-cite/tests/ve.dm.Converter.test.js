@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * VisualEditor DataModel Cite-specific Converter tests.
  *
@@ -8,10 +10,10 @@
 QUnit.module( 've.dm.Converter (Cite)', ve.test.utils.newMwEnvironment() );
 
 QUnit.test( 'getModelFromDom', function ( assert ) {
-	var cases = ve.dm.citeExample.domToDataCases;
+	const cases = ve.dm.citeExample.domToDataCases;
 
-	for ( var msg in cases ) {
-		var caseItem = ve.copy( cases[ msg ] );
+	for ( const msg in cases ) {
+		const caseItem = ve.copy( cases[ msg ] );
 		caseItem.base = ve.dm.citeExample.baseUri;
 		caseItem.mwConfig = {
 			wgArticlePath: '/wiki/$1'
@@ -27,10 +29,10 @@ QUnit.test( 'getModelFromDom', function ( assert ) {
 } );
 
 QUnit.test( 'getDomFromModel', function ( assert ) {
-	var cases = ve.dm.citeExample.domToDataCases;
+	const cases = ve.dm.citeExample.domToDataCases;
 
-	for ( var msg in cases ) {
-		var caseItem = ve.copy( cases[ msg ] );
+	for ( const msg in cases ) {
+		const caseItem = ve.copy( cases[ msg ] );
 		caseItem.base = ve.dm.citeExample.baseUri;
 		caseItem.mwConfig = {
 			wgArticlePath: '/wiki/$1'

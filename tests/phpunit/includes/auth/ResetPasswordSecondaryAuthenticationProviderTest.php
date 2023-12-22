@@ -2,8 +2,12 @@
 
 namespace MediaWiki\Auth;
 
+use MediaWiki\Config\HashConfig;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Tests\Unit\Auth\AuthenticationProviderTestTrait;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\User\BotPasswordStore;
+use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
 use Wikimedia\TestingAccessWrapper;
 
@@ -37,8 +41,8 @@ class ResetPasswordSecondaryAuthenticationProviderTest extends \MediaWikiIntegra
 	}
 
 	public function testBasics() {
-		$user = \User::newFromName( 'UTSysop' );
-		$user2 = new \User;
+		$user = $this->createMock( User::class );
+		$user2 = new User;
 		$obj = new \stdClass;
 		$reqs = [ new \stdClass ];
 
@@ -61,7 +65,8 @@ class ResetPasswordSecondaryAuthenticationProviderTest extends \MediaWikiIntegra
 	}
 
 	public function testTryReset() {
-		$user = \User::newFromName( 'UTSysop' );
+		$username = 'TestTryReset';
+		$user = User::newFromName( $username );
 
 		$provider = $this->getMockBuilder(
 			ResetPasswordSecondaryAuthenticationProvider::class
@@ -71,17 +76,17 @@ class ResetPasswordSecondaryAuthenticationProviderTest extends \MediaWikiIntegra
 			] )
 			->getMock();
 		$provider->method( 'providerAllowsAuthenticationDataChange' )
-			->willReturnCallback( function ( $req ) {
-				$this->assertSame( 'UTSysop', $req->username );
+			->willReturnCallback( function ( $req ) use ( $username ) {
+				$this->assertSame( $username, $req->username );
 				return $req->allow;
 			} );
 		$provider->method( 'providerChangeAuthenticationData' )
-			->willReturnCallback( function ( $req ) {
-				$this->assertSame( 'UTSysop', $req->username );
+			->willReturnCallback( function ( $req ) use ( $username ) {
+				$this->assertSame( $username, $req->username );
 				$req->done = true;
 			} );
-		$config = new \HashConfig( [
-			'AuthManagerConfig' => [
+		$config = new HashConfig( [
+			MainConfigNames::AuthManagerConfig => [
 				'preauth' => [],
 				'primaryauth' => [],
 				'secondaryauth' => [
@@ -104,7 +109,7 @@ class ResetPasswordSecondaryAuthenticationProviderTest extends \MediaWikiIntegra
 			$mwServices->getDBLoadBalancer(),
 			$mwServices->getContentLanguage(),
 			$mwServices->getLanguageConverterFactory(),
-			$mwServices->getBotPasswordStore(),
+			$this->createMock( BotPasswordStore::class ),
 			$mwServices->getUserFactory(),
 			$mwServices->getUserIdentityLookup(),
 			$mwServices->getUserOptionsManager()

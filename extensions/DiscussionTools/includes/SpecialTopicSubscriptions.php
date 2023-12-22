@@ -26,7 +26,7 @@ class SpecialTopicSubscriptions extends SpecialPage {
 	 * @throws ErrorPageError
 	 */
 	public function execute( $subpage ) {
-		$this->requireLogin();
+		$this->requireNamedUser();
 
 		parent::execute( $subpage );
 
@@ -47,7 +47,13 @@ class SpecialTopicSubscriptions extends SpecialPage {
 	 * @inheritDoc
 	 */
 	public function getDescription() {
-		return $this->msg( 'discussiontools-topicsubscription-special-title' )->text();
+		return $this->msg( 'discussiontools-topicsubscription-special-title' );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	protected function getGroupName() {
+		return 'login';
+	}
 }

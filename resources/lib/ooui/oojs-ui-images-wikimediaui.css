@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.46.3
+ * OOUI v0.48.1
  * https://www.mediawiki.org/wiki/OOUI
  *
  * Copyright 2011–2023 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2023-02-07T00:44:09Z
+ * Date: 2023-09-12T23:28:07Z
  */
 .oo-ui-icon-arrowNext {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/arrowNext-ltr.svg);
@@ -326,6 +326,15 @@
 /* @noflip */
 .oo-ui-image-progressive.oo-ui-icon-infoFilled:lang(ar) {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/lightbulb-progressive.svg);
+}
+.oo-ui-icon-qrCode {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/qrCode.svg);
+}
+.oo-ui-image-invert.oo-ui-icon-qrCode {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/qrCode-invert.svg);
+}
+.oo-ui-image-progressive.oo-ui-icon-qrCode {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/qrCode-progressive.svg);
 }
 .oo-ui-icon-robot {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/robot.svg);
@@ -2004,6 +2013,43 @@
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/textStyle-progressive.svg);
 }
 
+.oo-ui-icon-function {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/function.svg);
+}
+.oo-ui-image-invert.oo-ui-icon-function {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/function-invert.svg);
+}
+.oo-ui-image-progressive.oo-ui-icon-function {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/function-progressive.svg);
+}
+.oo-ui-icon-functionArgument {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/functionArgument-ltr.svg);
+}
+.oo-ui-image-invert.oo-ui-icon-functionArgument {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/functionArgument-ltr-invert.svg);
+}
+.oo-ui-image-progressive.oo-ui-icon-functionArgument {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/functionArgument-ltr-progressive.svg);
+}
+.oo-ui-icon-instance {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/instance-ltr.svg);
+}
+.oo-ui-image-invert.oo-ui-icon-instance {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/instance-ltr-invert.svg);
+}
+.oo-ui-image-progressive.oo-ui-icon-instance {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/instance-ltr-progressive.svg);
+}
+.oo-ui-icon-literal {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/literal-ltr.svg);
+}
+.oo-ui-image-invert.oo-ui-icon-literal {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/literal-ltr-invert.svg);
+}
+.oo-ui-image-progressive.oo-ui-icon-literal {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/literal-ltr-progressive.svg);
+}
+
 .oo-ui-icon-indent {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/indent-ltr.svg);
 }
@@ -2801,6 +2847,15 @@
 .oo-ui-image-progressive.oo-ui-icon-userGroup {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/userGroup-ltr-progressive.svg);
 }
+.oo-ui-icon-userRights {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/userRights-ltr.svg);
+}
+.oo-ui-image-invert.oo-ui-icon-userRights {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/userRights-ltr-invert.svg);
+}
+.oo-ui-image-progressive.oo-ui-icon-userRights {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/userRights-ltr-progressive.svg);
+}
 .oo-ui-icon-userTalk {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/userTalk-ltr.svg);
 }
@@ -2809,6 +2864,15 @@
 }
 .oo-ui-image-progressive.oo-ui-icon-userTalk {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/userTalk-ltr-progressive.svg);
+}
+.oo-ui-icon-userTemporary {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/userTemporary-ltr.svg);
+}
+.oo-ui-image-invert.oo-ui-icon-userTemporary {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/userTemporary-ltr-invert.svg);
+}
+.oo-ui-image-progressive.oo-ui-icon-userTemporary {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/userTemporary-ltr-progressive.svg);
 }
 .oo-ui-icon-watchlist {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/watchlist-ltr.svg);

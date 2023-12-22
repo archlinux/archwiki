@@ -899,7 +899,8 @@ ve.ui.MWMediaDialog.prototype.confirmSelectedImage = function () {
 					mediaType: info.mediatype,
 					type: 'thumb',
 					align: 'default',
-					defaultSize: true
+					defaultSize: true,
+					imageClassAttr: 'mw-file-element'
 				},
 				this.getFragment().getDocument()
 			);

@@ -9,7 +9,7 @@ interface AbuseFilterComputeVariableHook {
 	 * Hook runner for the `AbuseFilter-computeVariable` hook
 	 *
 	 * Like AbuseFilter-interceptVariable but called if the requested method wasn't found.
-	 * Return true to indicate that the method is known to the hook and was computed successful.
+	 * Return false to indicate that the method is known to the hook and was computed successfully.
 	 *
 	 * @param string $method Method to generate the variable
 	 * @param VariableHolder $vars

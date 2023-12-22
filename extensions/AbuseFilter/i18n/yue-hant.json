@@ -1,7 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Hello903hello",
+			"Winston Sung",
+			"H78c67c",
+			"Yueman"
 		]
 	},
 	"abusefilter-desc": "應用自動行為到編輯",
@@ -71,6 +74,8 @@
 	"abusefilter-log-linkonundelete": "去睇濫用紀錄",
 	"abusefilter-log-linkonundelete-text": "睇呢頁嘅濫用紀錄",
 	"abusefilter-log-hide-reason": "原因：",
+	"abusefilter-log-hide-show": "顯示",
+	"abusefilter-log-hide-hide": "隱藏",
 	"abusefilter-list": "全部過濾器",
 	"abusefilter-list-id": "過濾器ID",
 	"abusefilter-list-status": "狀態",
@@ -116,7 +121,7 @@
 	"abusefilter-edit-save": "保存過濾器",
 	"abusefilter-edit-id": "過濾器ID:",
 	"abusefilter-edit-switch-editor": "轉編輯器",
-	"abusefilter-edit-description": "描述:\n:''(公共睇得到)''",
+	"abusefilter-edit-description": "描述：\n:''（公開睇得到）''",
 	"abusefilter-edit-field-description": "描述",
 	"abusefilter-edit-group": "過濾器群組：",
 	"abusefilter-edit-flags": "旗:",
@@ -162,10 +167,11 @@
 	"abusefilter-edit-disallow-preview": "顯示/收埋揀咗嘅訊息嘅預覽",
 	"abusefilter-edit-disallow-edit": "開/編輯揀咗嘅訊息",
 	"abusefilter-edit-tag-tag": "[[Special:Tags|摘]]嘅名：",
+	"abusefilter-edit-block-anon-durations": "匿名用戶封鎖持續時間：",
 	"abusefilter-edit-block-user-durations": "註冊用戶封鎖持續時間：",
 	"abusefilter-block-anon": "封鎖匿名用戶",
 	"abusefilter-block-user": "封鎖註冊用戶",
-	"abusefilter-edit-denied": "你唔係以去睇呢個過濾器嘅細節，因為響公共顯示度隱藏咗。",
+	"abusefilter-edit-denied": "你唔睇得呢個過濾器嘅細節，因為佢無公開。",
 	"abusefilter-edit-main": "過濾器參數",
 	"abusefilter-edit-done-subtitle": "改咗嘅過濾器",
 	"abusefilter-edit-done": "[[Special:AbuseFilter/$1|過濾器$3]]經已[[Special:AbuseFilter/history/$1/diff/prev/$2|改咗]]。",
@@ -388,5 +394,6 @@
 	"abusefilter-group-default": "預設",
 	"abusefilter-http-error": "一個HTTP錯誤發生咗: $1",
 	"abusefilter-log-details-id": "日誌ID",
+	"abusefilter-blocked-domains-attempted": "你想發佈嘅文字俾我哋嘅過濾器截住咗。呢個域名封咗唔加得：$1",
 	"abusefilter-log-ip-not-available": "唔適用"
 }

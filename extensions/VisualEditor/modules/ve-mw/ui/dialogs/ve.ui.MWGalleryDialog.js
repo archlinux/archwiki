@@ -179,7 +179,7 @@ ve.ui.MWGalleryDialog.prototype.initialize = function () {
 		padded: true,
 		expanded: true,
 		scrollable: true
-	} ).toggle( false );
+	} );
 	this.editSearchStack = new OO.ui.StackLayout( {
 		items: [ this.editPanel, this.searchPanel ]
 	} );
@@ -217,7 +217,7 @@ ve.ui.MWGalleryDialog.prototype.initialize = function () {
 		icon: 'image'
 	} );
 	this.$highlightedImage = $( '<div>' )
-		.addClass( 've-ui-mwGalleryDialog-highlighted-image' );
+		.addClass( 've-ui-mwGalleryDialog-highlighted-image mw-no-invert' );
 	this.filenameFieldset.$element.append( this.$highlightedImage );
 	this.highlightedCaptionTarget = ve.init.target.createTargetWidget( {
 		includeCommands: this.constructor.static.includeCommands,
@@ -267,36 +267,26 @@ ve.ui.MWGalleryDialog.prototype.initialize = function () {
 	// Options tab panel
 
 	// Input widgets
-	this.modeDropdown = new OO.ui.DropdownWidget( {
-		menu: {
-			items: [
-				new OO.ui.MenuOptionWidget( {
-					data: 'traditional',
-					label: ve.msg( 'visualeditor-mwgallerydialog-mode-dropdown-label-traditional' )
-				} ),
-				new OO.ui.MenuOptionWidget( {
-					data: 'nolines',
-					label: ve.msg( 'visualeditor-mwgallerydialog-mode-dropdown-label-nolines' )
-				} ),
-				new OO.ui.MenuOptionWidget( {
-					data: 'packed',
-					label: ve.msg( 'visualeditor-mwgallerydialog-mode-dropdown-label-packed' )
-				} ),
-				new OO.ui.MenuOptionWidget( {
-					data: 'packed-overlay',
-					label: ve.msg( 'visualeditor-mwgallerydialog-mode-dropdown-label-packed-overlay' )
-				} ),
-				new OO.ui.MenuOptionWidget( {
-					data: 'packed-hover',
-					label: ve.msg( 'visualeditor-mwgallerydialog-mode-dropdown-label-packed-hover' )
-				} ),
-				new OO.ui.MenuOptionWidget( {
-					data: 'slideshow',
-					label: ve.msg( 'visualeditor-mwgallerydialog-mode-dropdown-label-slideshow' )
-				} )
-			]
-		}
-	} );
+	this.modeDropdown = new OO.ui.DropdownWidget( { menu: { items: [
+		'traditional',
+		'nolines',
+		'packed',
+		'packed-overlay',
+		'packed-hover',
+		'slideshow'
+	].map( function ( data ) {
+		return new OO.ui.MenuOptionWidget( {
+			data: data,
+			// Messages used here:
+			// * visualeditor-mwgallerydialog-mode-dropdown-label-traditional
+			// * visualeditor-mwgallerydialog-mode-dropdown-label-nolines
+			// * visualeditor-mwgallerydialog-mode-dropdown-label-packed
+			// * visualeditor-mwgallerydialog-mode-dropdown-label-packed-overlay
+			// * visualeditor-mwgallerydialog-mode-dropdown-label-packed-hover
+			// * visualeditor-mwgallerydialog-mode-dropdown-label-slideshow
+			label: ve.msg( 'visualeditor-mwgallerydialog-mode-dropdown-label-' + data )
+		} );
+	} ) } } );
 	this.captionTarget = ve.init.target.createTargetWidget( {
 		includeCommands: this.constructor.static.includeCommands,
 		excludeCommands: this.constructor.static.excludeCommands,
@@ -429,13 +419,16 @@ ve.ui.MWGalleryDialog.prototype.getSetupProcess = function ( data ) {
 						resource: resource,
 						altText: image.getAttribute( 'altText' ),
 						altTextSame: image.getAttribute( 'altTextSame' ),
+						href: image.getAttribute( 'href' ),
 						src: image.getAttribute( 'src' ),
 						height: image.getAttribute( 'height' ),
 						width: image.getAttribute( 'width' ),
 						captionDocument: this.createCaptionDocument( imageCaptionNode ),
 						tagName: image.getAttribute( 'tagName' ),
 						isError: image.getAttribute( 'isError' ),
-						errorText: image.getAttribute( 'errorText' )
+						errorText: image.getAttribute( 'errorText' ),
+						imageClassAttr: image.getAttribute( 'imageClassAttr' ),
+						imgWrapperClassAttr: image.getAttribute( 'imgWrapperClassAttr' )
 					} );
 				}
 
@@ -517,7 +510,7 @@ ve.ui.MWGalleryDialog.prototype.getSetupProcess = function ( data ) {
 			this.captionTarget.connect( this, { change: 'updateActions' } );
 			this.highlightedAltTextInput.connect( this, { change: 'updateActions' } );
 			this.altTextSameAsCaption.connect( this, { change: 'onAltTextSameAsCaptionChange' } );
-			this.highlightedCaptionTarget.connect( this, { change: 'updateActions' } );
+			this.highlightedCaptionTarget.connect( this, { change: 'onHighlightedCaptionTargetChange' } );
 
 			return this.imagesPromise;
 		}, this );
@@ -675,13 +668,15 @@ ve.ui.MWGalleryDialog.prototype.onRequestImagesSuccess = function ( response ) {
 					resource: title,
 					altText: null,
 					altTextSame: true,
+					href: null,
 					src: '',
 					height: thumbUrls[ title ].height,
 					width: thumbUrls[ title ].width,
 					thumbUrl: thumbUrls[ title ].thumbUrl,
 					captionDocument: this.createCaptionDocument( null ),
 					isError: false,
-					errorText: null
+					errorText: null,
+					imageClassAttr: 'mw-file-element'
 				}, config ) );
 				delete this.selectedFilenames[ title ];
 			}
@@ -840,11 +835,25 @@ ve.ui.MWGalleryDialog.prototype.onModeDropdownChange = function () {
 };
 
 /**
+ * Handle change event for this.highlightedCaptionTarget
+ */
+ve.ui.MWGalleryDialog.prototype.onHighlightedCaptionTargetChange = function () {
+	if ( this.altTextSameAsCaption.isSelected() ) {
+		var surfaceModel = this.highlightedCaptionTarget.getSurface().getModel();
+		var caption = surfaceModel.getLinearFragment(
+			surfaceModel.getDocument().getDocumentRange()
+		).getText();
+		this.highlightedAltTextInput.setValue( caption );
+	}
+	this.updateActions();
+};
+
+/**
  * Handle change event for this.altTextSameAsCaption
  */
 ve.ui.MWGalleryDialog.prototype.onAltTextSameAsCaptionChange = function () {
 	this.highlightedAltTextInput.setReadOnly( this.isReadOnly() || this.altTextSameAsCaption.isSelected() );
-	this.updateActions();
+	this.onHighlightedCaptionTargetChange();
 };
 
 /**
@@ -907,11 +916,7 @@ ve.ui.MWGalleryDialog.prototype.updateDialogSize = function () {
  * @param {boolean} empty The gallery is empty
  */
 ve.ui.MWGalleryDialog.prototype.toggleEmptyGalleryMessage = function ( empty ) {
-	if ( empty ) {
-		this.$emptyGalleryMessage.removeClass( 'oo-ui-element-hidden' );
-	} else {
-		this.$emptyGalleryMessage.addClass( 'oo-ui-element-hidden' );
-	}
+	this.$emptyGalleryMessage.toggleClass( 'oo-ui-element-hidden', !empty );
 };
 
 /**
@@ -1025,6 +1030,7 @@ ve.ui.MWGalleryDialog.prototype.insertOrUpdateNode = function () {
 				galleryItem.originalAltText :
 				galleryItem.altText,
 			altTextSame: galleryItem.altTextSame,
+			href: galleryItem.href,
 			// For existing images use `src` to avoid triggering a diff if the
 			// thumbnail size changes. For new images we have to use `thumbUrl` (T310623).
 			src: galleryItem.src || galleryItem.thumbUrl,
@@ -1032,7 +1038,9 @@ ve.ui.MWGalleryDialog.prototype.insertOrUpdateNode = function () {
 			width: size.width,
 			tagName: galleryItem.tagName,
 			isError: galleryItem.isError,
-			errorText: galleryItem.errorText
+			errorText: galleryItem.errorText,
+			imageClassAttr: galleryItem.imageClassAttr,
+			imgWrapperClassAttr: galleryItem.imgWrapperClassAttr
 		};
 
 		return [

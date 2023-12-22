@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"C.R.",
 			"Candalua",
 			"Carmine Colacino",
@@ -22,8 +23,7 @@
 			"ScrabberEax",
 			"V6rg",
 			"לערי ריינהארט",
-			"아라",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Sottolinia 'e jonte:",
@@ -732,8 +732,6 @@
 	"slot-name-main": "Prencepale",
 	"content-model-wikitext": "wikitesto",
 	"content-model-text": "testo nurmale",
-	"content-model-javascript": "JavaScript",
-	"content-model-css": "CSS",
 	"content-json-empty-object": "Oggetto abbacante",
 	"content-json-empty-array": "Array abbacante",
 	"unsupported-content-model": "<strong>Attenziò:</strong> 'o modello $1 nun è suppuntato ngopp' 'a sta wiki.",
@@ -771,9 +769,9 @@
 	"undo-main-slot-only": "Stu cagnamento nun se pò turnà arreto pecché ce vulessero 'e cuntenute for' 'o main slot.",
 	"undo-norev": "Nun se può fà turnà arreto 'o cagnamiento pecché nun esiste o s'è scancellato.",
 	"undo-nochange": "Pare ca sto cagnamiento s'ha scancellato già.",
-	"undo-summary": "Scancella 'o càgno $1 'e [[Special:Contributions/$2|$2]] ([[User talk:$2|Chiàcchiera]])",
-	"undo-summary-anon": "Sfacenno 'o càgno $1 'e [[Special:Contributions/$2|$2]]",
-	"undo-summary-username-hidden": "Annullato 'o cagnamiento $1 pe n'utente annascunnuto",
+	"undo-summary": "Scancella 'o càgno [[Special:Diff/$1|$1]] 'e [[Special:Contributions/$2|$2]] ([[User talk:$2|Chiàcchiera]])",
+	"undo-summary-anon": "Sfacenno 'o càgno [[Special:Diff/$1|$1]] 'e [[Special:Contributions/$2|$2]]",
+	"undo-summary-username-hidden": "Annullato 'o cagnamiento [[Special:Diff/$1|$1]] pe n'utente annascunnuto",
 	"viewpagelogs": "Vide 'e log azzeccate a sta paggena",
 	"viewpagelogs-lowercase": "Vide 'e log pe' sta paggena",
 	"nohistory": "Nun esiste na cronologgia 'e verziune pe' sta paggena.",
@@ -955,7 +953,6 @@
 	"search-relatedarticle": "Azzeccato",
 	"searchrelated": "azzeccato",
 	"searchall": "Tutte",
-	"showingresults": "Ccà abbascio {{PLURAL:$1|s'apprisentano 'o massimo '''1''' risultato|veneno apprisentate massimo '''$1''' risultate}} aropp' 'o nummero '''$2'''.",
 	"showingresultsinrange": "{{PLURAL:$1|Vene mmustato|Veneno mmustate}} abbascio {{PLURAL:$1|<strong>1</strong> risultato|<strong>$1</strong> risultate}} d' 'o <strong>$2</strong> a 'o <strong>$3</strong>.",
 	"search-showingresults": "{{PLURAL:$4|Risultato <strong>$1</strong> 'e <strong>$3</strong>|Risultate <strong>$1 - $2</strong> 'e <strong>$3</strong>}}",
 	"search-nonefound": "'A ricerca nun ha produtto risultate.",
@@ -1036,7 +1033,6 @@
 	"default": "predefinito",
 	"prefs-files": "File",
 	"prefs-custom-css": "CSS personalizzato",
-	"prefs-custom-json": "JSON personalizzato",
 	"prefs-custom-js": "JavaScript personalizzato",
 	"prefs-common-config": "CSS/JSON/JavaScript spartuto pe' tutt' 'e skin:",
 	"prefs-reset-intro": "Putisse ausà sta paggena pe' rimpizzà 'e preferenze proprie comme chille predefinite d' 'o sito.\nL'operazione nun se può annullà.",
@@ -2108,7 +2104,6 @@
 	"enotif_anon_editor": "Utente anonimo $1",
 	"enotif_body": "Caro $WATCHINGUSERNAME,\n\n$PAGEINTRO $NEWPAGE\n\nRiepilego 'e cagnamiente: $PAGESUMMARY $PAGEMINOREDIT\n\nCuntattate l'autore:\ne-mail: $PAGEEDITOR_EMAIL\nncopp' 'o sito: $PAGEEDITOR_WIKI\n\nNun se mannarranno ati notifiche si facite cocch'at'attività senza venì a sta paggena.\nPutite pure cagnà 'e mpustaziune d' 'e mmasciate pe tutt' 'e ppaggene cuntrullate dint' 'a lista.\n\nStatteve Bbuon, 'O sistema d' 'e mmasciate ncopp' 'a {{SITENAME}} vuosto\n\n--\nPe cagnà 'e mpustaziune d' 'e mmasciate elettroniche, jate ccà: {{canonicalurl:{{#special:Preferences}}}}\n\nPe cagnà 'e mpustaziune 'a lista d' 'e ppaggene cuntrullate vuoste, jate ccà: {{canonicalurl:{{#special:EditWatchlist}}}}\n\nPe scancellà 'a lista d' 'e ppaggene cuntrullate vedite $UNWATCHURL\n\nSegnalaziune e at'assistenze:\n$HELPPAGE",
 	"enotif_minoredit": "Chisto è nu cagnamiénto piccerillo",
-	"changed": "cagnata",
 	"deletepage-submit": "Scancella paggena",
 	"confirm": "Cunferma",
 	"excontent": "'o cuntenuto era: '$1'",
@@ -2276,7 +2271,7 @@
 	"mycontris": "'E ffatiche d''e mmeje",
 	"anoncontribs": "Cuntribbute",
 	"contribsub2": "Ppe {{GENDER:$3|$1}} ($2)",
-	"contributions-subtitle": "Pe {{GENDER:$3|$1}}",
+	"contributions-subtitle": "Pe {{GENDER:$2|$1}}",
 	"contributions-userdoesnotexist": "'O cunto utente \"$1\" nun è riggistrato.",
 	"nocontribs": "Nisciunu cagnamiento è stato truvato cu sti criterie.",
 	"uctop": "attuale",

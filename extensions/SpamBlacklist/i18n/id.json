@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Agam Riyandana",
 			"Daud I.F. Argana",
 			"Farras",
 			"Gombang",
@@ -8,8 +9,7 @@
 			"IvanLanin",
 			"Meursault2004",
 			"Rachmat04",
-			"Veracious",
-			"Agam Riyandana"
+			"Veracious"
 		]
 	},
 	"spam-blacklist": " #<!-- biarkan baris ini seperti adanya --> <pre>\n# URL eksternal yang cocok dengan daftar berikut akan diblokir jika ditambahkan pada suatu halaman.\n# Daftar ini hanya berpengaruh pada wiki ini; rujuklah juga daftar hitam global.\n# Untuk dokumentasi, lihat https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# Sintaksnya adalah sebagai berikut:\n#   * Semua yang diawali dengan karakter \"#\" hingga akhir baris adalah komentar\n#   * Semua baris yang tidak kosong adalah fragmen regex yang hanya akan dicocokkan dengan nama host di dalam URL\n\n #</pre> <!-- biarkan baris ini seperti adanya -->",

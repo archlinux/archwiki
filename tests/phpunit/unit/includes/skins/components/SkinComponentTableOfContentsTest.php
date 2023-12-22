@@ -1,13 +1,13 @@
 <?php
 
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Skin\SkinComponentTableOfContents;
 use Wikimedia\Parsoid\Core\SectionMetadata;
 use Wikimedia\Parsoid\Core\TOCData;
 
 /**
  * @covers \MediaWiki\Skin\SkinComponentTableOfContents
- *
- * @group Output
+ * @group Skin
  */
 class SkinComponentTableOfContentsTest extends MediaWikiUnitTestCase {
 
@@ -169,9 +169,7 @@ class SkinComponentTableOfContentsTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Skin\SkinComponentTableOfContents::getTemplateData
 	 * @dataProvider provideGetSectionsData
-	 *
 	 * @param bool $isTocEnabled
 	 * @param array $sectionsData
 	 * @param array $expected

@@ -29,5 +29,11 @@
 	"cite_references_link_many_accessibility_label": "Zompa ncoppa nfin'a:",
 	"cite_section_preview_references": "Anteprimma 'e riferimente.",
 	"cite_warning": "Attenzione dint' 'e note: $1",
-	"cite_warning_sectionpreview_no_text": "'O tag <code>&lt;ref&gt;</code> c' 'o nomme <code>$1</code> nun se pò mmustrà n'anteprimma, pecché è definito a fore d' 'a seziona 'e mo o nun definito 'a nisciuna manera."
+	"cite_warning_sectionpreview_no_text": "'O tag <code>&lt;ref&gt;</code> c' 'o nomme <code>$1</code> nun se pò mmustrà n'anteprimma, pecché è definito a fore d' 'a seziona 'e mo o nun definito 'a nisciuna manera.",
+	"cite-wikieditor-tool-reference": "Riferimiento",
+	"cite-wikieditor-help-page-references": "Riferimienti",
+	"cite-wikieditor-help-content-reference-description": "Riferimiento",
+	"cite-wikieditor-help-content-named-reference-description": "Referimento nnommenate",
+	"cite-wikieditor-help-content-rereference-description": "Ause addizionale d' 'u stesso riferimento",
+	"cite-wikieditor-help-content-showreferences-description": "Fà vedè 'e riferemente"
 }

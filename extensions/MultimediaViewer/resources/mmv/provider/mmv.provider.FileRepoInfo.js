@@ -15,49 +15,50 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const Api = require( './mmv.provider.Api.js' );
+const { newFromRepoInfo } = require( '../model/mmv.model.Repo.js' );
+
 ( function () {
 
 	/**
 	 * Gets file repo information.
-	 *
-	 * @class mw.mmv.provider.FileRepoInfo
-	 * @extends mw.mmv.provider.Api
-	 * @constructor
-	 * @param {mw.Api} api
-	 * @param {Object} [options]
-	 * @cfg {number} [maxage] cache expiration time, in seconds
-	 *  Will be used for both client-side cache (maxage) and reverse proxies (s-maxage)
 	 */
-	function FileRepoInfo( api, options ) {
-		mw.mmv.provider.Api.call( this, api, options );
-	}
-	OO.inheritClass( FileRepoInfo, mw.mmv.provider.Api );
+	class FileRepoInfo extends Api {
+		/**
+		 * @param {mw.Api} api
+		 * @param {Object} [options]
+		 * @cfg {number} [maxage] cache expiration time, in seconds
+		 *  Will be used for both client-side cache (maxage) and reverse proxies (s-maxage)
+		 */
+		constructor( api, options ) {
+			super( api, options );
+		}
 
-	/**
-	 * Runs an API GET request to get the repo info.
-	 *
-	 * @return {jQuery.Promise.<Object.<string, mw.mmv.model.Repo>>} a promise which resolves to
-	 *     a hash of mw.mmv.model.Repo objects, indexed by repo names.
-	 */
-	FileRepoInfo.prototype.get = function () {
-		var provider = this;
-
-		return this.getCachedPromise( '*', function () {
-			return provider.apiGetWithMaxAge( {
-				action: 'query',
-				meta: 'filerepoinfo',
-				uselang: 'content'
-			} ).then( function ( data ) {
-				return provider.getQueryField( 'repos', data );
-			} ).then( function ( reposArray ) {
-				var reposHash = {};
-				reposArray.forEach( function ( repo ) {
-					reposHash[ repo.name ] = mw.mmv.model.Repo.newFromRepoInfo( repo );
+		/**
+		 * Runs an API GET request to get the repo info.
+		 *
+		 * @return {jQuery.Promise.<Object.<string, Repo>>} a promise which resolves to
+		 *     a hash of Repo objects, indexed by repo names.
+		 */
+		get() {
+			return this.getCachedPromise( '*', () => {
+				return this.apiGetWithMaxAge( {
+					formatversion: 2,
+					action: 'query',
+					meta: 'filerepoinfo',
+					uselang: 'content'
+				} ).then( ( data ) => {
+					return this.getQueryField( 'repos', data );
+				} ).then( ( reposArray ) => {
+					const reposHash = {};
+					reposArray.forEach( ( repo ) => {
+						reposHash[ repo.name ] = newFromRepoInfo( repo );
+					} );
+					return reposHash;
 				} );
-				return reposHash;
 			} );
-		} );
-	};
+		}
+	}
 
-	mw.mmv.provider.FileRepoInfo = FileRepoInfo;
+	module.exports = FileRepoInfo;
 }() );

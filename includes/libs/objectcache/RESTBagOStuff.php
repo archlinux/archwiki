@@ -141,7 +141,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 				'connTimeout' => $params['connTimeout'] ?? self::DEFAULT_CONN_TIMEOUT,
 				'reqTimeout' => $params['reqTimeout'] ?? self::DEFAULT_REQ_TIMEOUT,
 			];
-			foreach ( [ 'caBundlePath', 'proxy' ] as $key ) {
+			foreach ( [ 'caBundlePath', 'proxy', 'telemetry' ] as $key ) {
 				if ( isset( $params[$key] ) ) {
 					$clientParams[$key] = $params[$key];
 				}
@@ -265,15 +265,6 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 		}
 
 		return $newValue;
-	}
-
-	protected function makeKeyInternal( $keyspace, $components ) {
-		return $this->genericKeyFromComponents( $keyspace, ...$components );
-	}
-
-	protected function convertGenericKey( $key ) {
-		// short-circuit; already uses "generic" keys
-		return $key;
 	}
 
 	/**

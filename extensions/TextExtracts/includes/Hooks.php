@@ -5,19 +5,20 @@ namespace TextExtracts;
 use ApiBase;
 use ApiMain;
 use ApiResult;
-use FauxRequest;
+use MediaWiki\Api\Hook\ApiOpenSearchSuggestHook;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\FauxRequest;
 
 /**
  * @license GPL-2.0-or-later
  */
-class Hooks {
+class Hooks implements ApiOpenSearchSuggestHook {
 
 	/**
 	 * ApiOpenSearchSuggest hook handler
 	 * @param array &$results Array of search results
 	 */
-	public static function onApiOpenSearchSuggest( &$results ) {
+	public function onApiOpenSearchSuggest( &$results ) {
 		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'textextracts' );
 		if ( !$config->get( 'ExtractsExtendOpenSearchXml' ) || $results === [] ) {
 			return;

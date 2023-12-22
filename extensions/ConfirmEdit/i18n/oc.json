@@ -7,7 +7,6 @@
 	},
 	"captcha-edit": "Per modificar aquesta pagina, vos cal efectuar lo calcul çaijós e n'inscriure lo resultat dins lo camp ([[Special:Captcha/help|Mai d’entresenhas]]) :",
 	"captcha-desc": "Ofèrta de tecnicas CAPTCHA per protegir contra lo spam e la descobèrta dels senhals per ensages multiples",
-	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "Vòstra modificacion inclutz de ligams extèrnes.\nPer nos ajudar dins la proteccion contra lo corrièr indesirable automatizat, calculatz l'operacion simpla çaijós e inscrivissètz-ne lo resultat dins lo camp ([[Special:Captcha/help|mai d'informacions]]) :",
 	"captcha-badlogin": "Per nos ajudar a empachar lo copatge automatizat dels senhal, calculatz l’operacion simpla çaijós e inscrivètz-ne lo resultat dins lo camp ([[Special:Captcha/help|mai d’informacions]]) :",
 	"captcha-createaccount": "Per nos ajudar a empachar la creacion automatizada de comptes, calculatz l’operacion simpla çaijós e inscrivètz-ne lo resultat dins lo camp ([[Special:Captcha/help|mai d’informacions]]) :",

@@ -28,5 +28,10 @@
 	"cite_references_link_accessibility_label": "যাওক",
 	"cite_references_link_many_accessibility_label": "ইয়ালৈ যাওক:",
 	"cite_section_preview_references": "তথ্যসূত্ৰৰ প্ৰাক্‌দৰ্শন",
-	"cite_warning": "তথ্যসূত্ৰ সতৰ্কবাণী: $1"
+	"cite_warning": "তথ্যসূত্ৰ সতৰ্কবাণী: $1",
+	"cite-wikieditor-tool-reference": "তথ্যসূত্ৰ",
+	"cite-wikieditor-help-page-references": "তথ্যসংগ্ৰহ",
+	"cite-wikieditor-help-content-reference-description": "তথ্যসংগ্ৰহ",
+	"cite-wikieditor-help-content-rereference-description": "এটা তথ্য উত্সৰ একাধিক ব্যৱহাৰ",
+	"cite-wikieditor-help-content-showreferences-description": "তথ্যসংগ্ৰহ প্ৰদৰ্শন কৰক"
 }

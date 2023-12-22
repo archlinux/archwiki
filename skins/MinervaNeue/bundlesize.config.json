@@ -1,7 +1,7 @@
 [
 	{
 		"resourceModule": "skins.minerva.base.styles",
-		"maxSize": "6.6KB"
+		"maxSize": "7.4KB"
 	},
 	{
 		"resourceModule": "skins.minerva.content.styles.images",
@@ -10,14 +10,6 @@
 	{
 		"resourceModule": "mediawiki.hlist",
 		"maxSize": "0.5KB"
-	},
-	{
-		"resourceModule": "mediawiki.ui.icon",
-		"maxSize": "1.3KB"
-	},
-	{
-		"resourceModule": "mediawiki.ui.button",
-		"maxSize": "1.6KB"
 	},
 	{
 		"resourceModule": "skins.minerva.icons.wikimedia",
@@ -33,6 +25,6 @@
 	},
 	{
 		"resourceModule": "skins.minerva.scripts",
-		"maxSize": "12.0KB"
+		"maxSize": "11.6KB"
 	}
 ]

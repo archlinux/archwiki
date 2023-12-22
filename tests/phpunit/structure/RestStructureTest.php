@@ -1,10 +1,12 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\StaticHookRegistry;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\SimpleAuthority;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Rest\CorsUtils;
 use MediaWiki\Rest\EntryPoint;
 use MediaWiki\Rest\Handler;
@@ -26,6 +28,7 @@ use Wikimedia\TestingAccessWrapper;
  * - do not have inconsistencies in the parameter definitions
  *
  * @coversNothing
+ * @group Database
  */
 class RestStructureTest extends MediaWikiIntegrationTestCase {
 	use DummyServicesTrait;

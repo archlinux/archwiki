@@ -55,7 +55,7 @@
 	"notification-link-text-view-logentry": "Погл. ставка",
 	"thanks-error-invalidpostid": "Назнаката на објавата е неважечка.",
 	"flow-thanks-confirmation-special": "Дали би сакале да испратите јавна благодарница за коментаров?",
-	"flow-thanks-thanked-notice": "{{GENDER:$2|Му|Ѝ|Му}} {{GENDER:$3|благодаривте}} на $1 за  коментарот.",
+	"flow-thanks-thanked-notice": "{{GENDER:$2|Му|Ѝ|Му}} se {{GENDER:$3|благодаривте}} на $1 за коментарот.",
 	"notification-flow-thanks-post-link": "вашиот коментар",
 	"notification-header-flow-thank": "$1 {{GENDER:$5|ви}} {{GENDER:$2|благодари}} за вашиот коментар на „<strong>$3</strong>“.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|ви}} се {{GENDER:$2|заблагодари}}.",

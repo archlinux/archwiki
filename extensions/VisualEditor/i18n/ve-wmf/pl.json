@@ -9,6 +9,7 @@
 			"Krol111",
 			"Matma Rex",
 			"Mikołka",
+			"Msz2001",
 			"Nasir8891",
 			"Odie2",
 			"Rzuwig",
@@ -21,6 +22,10 @@
 			"아라"
 		]
 	},
+	"tag-editcheck-newcontent-description": "Automatyczny pomocnik uważa, że do strony została dodana nowa treść",
+	"tag-editcheck-newreference-description": "Do strony dodano przypis",
+	"tag-editcheck-references-description": "Automatyczny pomocnik stwierdził, że przydałby się przypis",
+	"tag-editcheck-references-activated-description": "Automatyczny pomocnik stwierdził, że przypis może być potrzebny i odpowiedni komunikat został wyświetlony",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]]",
 	"tag-visualeditor-description": "Edycja z wykorzystaniem [[{{MediaWiki:visualeditor-descriptionpagelink}}|edytora wizualnego]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor: do sprawdzenia]]",

@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Tests\Rest\Handler;
 
-use HashConfig;
 use InvalidArgumentException;
 use Language;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
@@ -19,7 +19,10 @@ use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Search\Entity\SearchResultThumbnail;
 use MediaWiki\Search\SearchResultThumbnailProvider;
+use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\Title\TitleFormatter;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserOptionsLookup;
 use MockSearchResultSet;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -29,9 +32,6 @@ use SearchResult;
 use SearchResultSet;
 use SearchSuggestion;
 use SearchSuggestionSet;
-use Status;
-use TitleFormatter;
-use TitleValue;
 use Wikimedia\Message\MessageValue;
 
 /**
@@ -333,7 +333,7 @@ class SearchHandlerTest extends \MediaWikiUnitTestCase {
 		$this->executeHandler( $handler, $request );
 	}
 
-	public function provideExecute_limit_error() {
+	public static function provideExecute_limit_error() {
 		yield [ 0, 'paramvalidator-outofrange-minmax' ];
 		yield [ 123, 'paramvalidator-outofrange-minmax' ];
 		yield [ 'xyz', 'paramvalidator-badinteger' ];
@@ -477,7 +477,7 @@ class SearchHandlerTest extends \MediaWikiUnitTestCase {
 					foreach ( $pageIdentities as $pageId => $pageIdentity ) {
 						$result[ $pageId ] = new SearchResultThumbnail(
 							'image/png',
-							2250,
+							null,
 							100,
 							125,
 							500,
@@ -502,7 +502,6 @@ class SearchHandlerTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( 125, $data['pages'][0][ 'thumbnail' ]['height'] );
 		$this->assertSame( 100, $data['pages'][0][ 'thumbnail' ]['width'] );
 		$this->assertSame( 'image/png', $data['pages'][0][ 'thumbnail' ]['mimetype'] );
-		$this->assertSame( 2250, $data['pages'][0][ 'thumbnail' ]['size'] );
 		$this->assertSame( 500, $data['pages'][0][ 'thumbnail' ]['duration'] );
 		$this->assertArrayHasKey( 'description', $data['pages'][0] );
 		$this->assertSame( 'Description_1', $data['pages'][0][ 'description' ] );

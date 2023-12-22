@@ -21,6 +21,7 @@
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Transform\ContentTransformer;
+use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionArchiveRecord;
 use MediaWiki\Revision\RevisionRecord;
@@ -28,6 +29,8 @@ use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Title\Title;
+use MediaWiki\User\TempUser\TempUserCreator;
+use MediaWiki\User\UserFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\RequestTimeout\TimeoutException;
 
@@ -36,53 +39,55 @@ use Wikimedia\RequestTimeout\TimeoutException;
  */
 class ApiComparePages extends ApiBase {
 
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var SlotRoleRegistry */
-	private $slotRoleRegistry;
+	private RevisionStore $revisionStore;
+	private ArchivedRevisionLookup $archivedRevisionLookup;
+	private SlotRoleRegistry $slotRoleRegistry;
 
 	/** @var Title|null|false */
 	private $guessedTitle = false;
 	private $props;
 
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/** @var ContentTransformer */
-	private $contentTransformer;
-
-	/** @var CommentFormatter */
-	private $commentFormatter;
-
-	private bool $inlineSupported;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private ContentTransformer $contentTransformer;
+	private CommentFormatter $commentFormatter;
+	private TempUserCreator $tempUserCreator;
+	private UserFactory $userFactory;
+	private DifferenceEngine $differenceEngine;
 
 	/**
 	 * @param ApiMain $mainModule
 	 * @param string $moduleName
 	 * @param RevisionStore $revisionStore
+	 * @param ArchivedRevisionLookup $archivedRevisionLookup
 	 * @param SlotRoleRegistry $slotRoleRegistry
 	 * @param IContentHandlerFactory $contentHandlerFactory
 	 * @param ContentTransformer $contentTransformer
 	 * @param CommentFormatter $commentFormatter
+	 * @param TempUserCreator $tempUserCreator
+	 * @param UserFactory $userFactory
 	 */
 	public function __construct(
 		ApiMain $mainModule,
 		$moduleName,
 		RevisionStore $revisionStore,
+		ArchivedRevisionLookup $archivedRevisionLookup,
 		SlotRoleRegistry $slotRoleRegistry,
 		IContentHandlerFactory $contentHandlerFactory,
 		ContentTransformer $contentTransformer,
-		CommentFormatter $commentFormatter
+		CommentFormatter $commentFormatter,
+		TempUserCreator $tempUserCreator,
+		UserFactory $userFactory
 	) {
 		parent::__construct( $mainModule, $moduleName );
 		$this->revisionStore = $revisionStore;
+		$this->archivedRevisionLookup = $archivedRevisionLookup;
 		$this->slotRoleRegistry = $slotRoleRegistry;
 		$this->contentHandlerFactory = $contentHandlerFactory;
 		$this->contentTransformer = $contentTransformer;
 		$this->commentFormatter = $commentFormatter;
-		$this->inlineSupported = function_exists( 'wikidiff2_inline_diff' )
-			&& DifferenceEngine::getEngine() === 'wikidiff2';
+		$this->tempUserCreator = $tempUserCreator;
+		$this->userFactory = $userFactory;
+		$this->differenceEngine = new DifferenceEngine;
 	}
 
 	public function execute() {
@@ -208,24 +213,21 @@ class ApiComparePages extends ApiBase {
 				$context->setTitle( $guessedTitle );
 			}
 		}
-		$de = new DifferenceEngine( $context );
-		// Use the diff-type option if Wikidiff2 is installed.
-		if ( $this->inlineSupported ) {
-			$de->setSlotDiffOptions( [ 'diff-type' => $params['difftype'] ] );
-		}
-		$de->setRevisions( $fromRev, $toRev );
+		$this->differenceEngine->setContext( $context );
+		$this->differenceEngine->setSlotDiffOptions( [ 'diff-type' => $params['difftype'] ] );
+		$this->differenceEngine->setRevisions( $fromRev, $toRev );
 		if ( $params['slots'] === null ) {
-			$difftext = $de->getDiffBody();
+			$difftext = $this->differenceEngine->getDiffBody();
 			if ( $difftext === false ) {
 				$this->dieWithError( 'apierror-baddiff' );
 			}
 		} else {
 			$difftext = [];
 			foreach ( $params['slots'] as $role ) {
-				$difftext[$role] = $de->getDiffBodyForRole( $role );
+				$difftext[$role] = $this->differenceEngine->getDiffBodyForRole( $role );
 			}
 		}
-		foreach ( $de->getRevisionLoadErrors() as $msg ) {
+		foreach ( $this->differenceEngine->getRevisionLoadErrors() as $msg ) {
 			$this->addWarning( $msg );
 		}
 
@@ -283,21 +285,7 @@ class ApiComparePages extends ApiBase {
 		$rev = $this->revisionStore->getRevisionById( $id );
 		if ( !$rev && $this->getAuthority()->isAllowedAny( 'deletedtext', 'undelete' ) ) {
 			// Try the 'archive' table
-			$arQuery = $this->revisionStore->getArchiveQueryInfo();
-			$row = $this->getDB()->selectRow(
-				$arQuery['tables'],
-				array_merge(
-					$arQuery['fields'],
-					[ 'ar_namespace', 'ar_title' ]
-				),
-				[ 'ar_rev_id' => $id ],
-				__METHOD__,
-				[],
-				$arQuery['joins']
-			);
-			if ( $row ) {
-				$rev = $this->revisionStore->newRevisionFromArchiveRow( $row );
-			}
+			$rev = $this->archivedRevisionLookup->getArchivedRevisionRecord( null, $id );
 		}
 		return $rev;
 	}
@@ -562,7 +550,7 @@ class ApiComparePages extends ApiBase {
 					$content,
 					// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
 					$title,
-					$this->getUser(),
+					$this->getUserForPreview(),
 					$popts
 				);
 			}
@@ -689,6 +677,16 @@ class ApiComparePages extends ApiBase {
 		}
 	}
 
+	private function getUserForPreview() {
+		$user = $this->getUser();
+		if ( $this->tempUserCreator->shouldAutoCreate( $user, 'edit' ) ) {
+			return $this->userFactory->newUnsavedTempUser(
+				$this->tempUserCreator->getStashedName( $this->getRequest()->getSession() )
+			);
+		}
+		return $user;
+	}
+
 	public function getAllowedParams() {
 		$slotRoles = $this->slotRoleRegistry->getKnownRoles();
 		sort( $slotRoles, SORT_STRING );
@@ -787,13 +785,10 @@ class ApiComparePages extends ApiBase {
 			ParamValidator::PARAM_ALL => true,
 		];
 
-		// Expose the inline option if Wikidiff2 is installed.
-		if ( $this->inlineSupported ) {
-			$ret['difftype'] = [
-				ParamValidator::PARAM_TYPE => [ 'table', 'inline' ],
-				ParamValidator::PARAM_DEFAULT => 'table',
-			];
-		}
+		$ret['difftype'] = [
+			ParamValidator::PARAM_TYPE => $this->differenceEngine->getSupportedFormats(),
+			ParamValidator::PARAM_DEFAULT => 'table',
+		];
 
 		return $ret;
 	}

@@ -27,6 +27,7 @@
 	"replacetext_choosepagesforedit": "Selezionare {{PLURAL:$3|la pagina per la quale|le pagine per le quali}} si desidera sostituire '$1' con '$2':",
 	"replacetext_choosepagesformove": "Sostituire \"$1\" con \"$2\" {{PLURAL:$3|nel titolo della pagina seguente|nei titoli delle pagine seguenti}}:",
 	"replacetext_cannotmove": "{{PLURAL:$1|La pagina seguente non può essere spostata|Le pagine seguenti non possono essere spostate}}:",
+	"replacetext_cannotedit": "{{PLURAL:$1|La pagina seguente non può essere modificata|Le $1 pagine seguenti non possono essere modificate}}:",
 	"replacetext_formovedpages": "Per le pagine spostate:",
 	"replacetext_savemovedpages": "Conservare i vecchi titoli come redirect al nuovo titolo:",
 	"replacetext_watchmovedpages": "Aggiungi agli osservati speciali",

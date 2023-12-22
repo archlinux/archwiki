@@ -80,8 +80,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		],
 	];
 
-	/** @var LinksMigration */
-	private $linksMigration;
+	private LinksMigration $linksMigration;
 
 	/**
 	 * @param ApiQuery $query
@@ -114,7 +113,6 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		$db = $this->getDB();
 		$params = $this->extractRequestParams();
 		$prop = array_fill_keys( $params['prop'], true );
-		$emptyString = $db->addQuotes( '' );
 
 		$pageSet = $this->getPageSet();
 		$titles = $pageSet->getGoodAndMissingPages();
@@ -219,7 +217,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		$this->addWhere( "$bl_from = page_id" );
 
 		if ( $this->getModuleName() === 'redirects' ) {
-			$this->addWhere( "rd_interwiki = $emptyString OR rd_interwiki IS NULL" );
+			$this->addWhereFld( 'rd_interwiki', [ '', null ] );
 		}
 
 		$this->addFields( array_keys( $sortby ) );
@@ -242,7 +240,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 
 		$this->addFieldsIf( 'page_namespace', $miser_ns !== null );
 
-		if ( $hasNS ) {
+		if ( $hasNS && $map ) {
 			// Can't use LinkBatch because it throws away Special titles.
 			// And we already have the needed data structure anyway.
 			$this->addWhere( $db->makeWhereFrom2d( $map, $bl_namespace, $bl_title ) );
@@ -264,9 +262,9 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 			) {
 				$this->dieWithError( 'apierror-show' );
 			}
-			$this->addWhereIf( "rd_fragment != $emptyString", isset( $show['fragment'] ) );
+			$this->addWhereIf( "rd_fragment != " . $db->addQuotes( '' ), isset( $show['fragment'] ) );
 			$this->addWhereIf(
-				"rd_fragment = $emptyString OR rd_fragment IS NULL",
+				[ 'rd_fragment' => [ '', null ] ],
 				isset( $show['!fragment'] )
 			);
 			$this->addWhereIf( [ 'page_is_redirect' => 1 ], isset( $show['redirect'] ) );

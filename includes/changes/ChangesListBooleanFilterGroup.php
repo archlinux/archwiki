@@ -1,7 +1,8 @@
 <?php
 
 use MediaWiki\Html\FormOptions;
-use Wikimedia\Rdbms\IDatabase;
+use MediaWiki\SpecialPage\ChangesListSpecialPage;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * If the group is active, any unchecked filters will
@@ -66,7 +67,7 @@ class ChangesListBooleanFilterGroup extends ChangesListFilterGroup {
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyQuery( IDatabase $dbr, ChangesListSpecialPage $specialPage,
+	public function modifyQuery( IReadableDatabase $dbr, ChangesListSpecialPage $specialPage,
 		&$tables, &$fields, &$conds, &$query_options, &$join_conds,
 		FormOptions $opts, $isStructuredFiltersEnabled
 	) {

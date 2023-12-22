@@ -1,12 +1,15 @@
 <?php
 
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Specials\SpecialMute;
 use MediaWiki\User\UserOptionsManager;
 
 /**
  * @group SpecialPage
- * @covers SpecialMute
+ * @group Database
+ * @covers \MediaWiki\Specials\SpecialMute
  */
 class SpecialMuteTest extends SpecialPageTestBase {
 
@@ -27,12 +30,13 @@ class SpecialMuteTest extends SpecialPageTestBase {
 		return new SpecialMute(
 			$this->getServiceContainer()->getCentralIdLookupFactory()->getLookup( 'local' ),
 			$this->userOptionsManager,
-			$this->getServiceContainer()->getUserIdentityLookup()
+			$this->getServiceContainer()->getUserIdentityLookup(),
+			$this->getServiceContainer()->getUserIdentityUtils()
 		);
 	}
 
 	/**
-	 * @covers SpecialMute::execute
+	 * @covers \MediaWiki\Specials\SpecialMute::execute
 	 */
 	public function testInvalidTarget() {
 		$user = $this->getTestUser()->getUser();
@@ -44,12 +48,12 @@ class SpecialMuteTest extends SpecialPageTestBase {
 	}
 
 	/**
-	 * @covers SpecialMute::execute
+	 * @covers \MediaWiki\Specials\SpecialMute::execute
 	 */
 	public function testEmailBlacklistNotEnabled() {
 		$this->setTemporaryHook(
 			'SpecialMuteModifyFormFields',
-			null
+			HookContainer::NOOP
 		);
 
 		$this->overrideConfigValue( MainConfigNames::EnableUserEmailMuteList, false );
@@ -63,7 +67,7 @@ class SpecialMuteTest extends SpecialPageTestBase {
 	}
 
 	/**
-	 * @covers SpecialMute::execute
+	 * @covers \MediaWiki\Specials\SpecialMute::execute
 	 */
 	public function testUserNotLoggedIn() {
 		$this->expectException( UserNotLoggedIn::class );
@@ -71,7 +75,7 @@ class SpecialMuteTest extends SpecialPageTestBase {
 	}
 
 	/**
-	 * @covers SpecialMute::execute
+	 * @covers \MediaWiki\Specials\SpecialMute::execute
 	 */
 	public function testMuteAddsUserToEmailBlacklist() {
 		$targetUser = $this->getTestUser()->getUser();
@@ -94,7 +98,7 @@ class SpecialMuteTest extends SpecialPageTestBase {
 	}
 
 	/**
-	 * @covers SpecialMute::execute
+	 * @covers \MediaWiki\Specials\SpecialMute::execute
 	 */
 	public function testUnmuteRemovesUserFromEmailBlacklist() {
 		$targetUser = $this->getTestUser()->getUser();

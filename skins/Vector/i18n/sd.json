@@ -56,5 +56,8 @@
 	"vector-page-tools-actions-label": "عمل",
 	"vector-pin-element-label": "سائڊبار ڏانھن چوريو",
 	"vector-unpin-element-label": "لڪايو",
-	"tooltip-vector-anon-user-menu-title": "وڌيڪ چارا"
+	"tooltip-vector-anon-user-menu-title": "وڌيڪ چارا",
+	"vector-toc-unpinned-popup": "عنوانن جي فھرست کي ھيڏانھن چوريو ويو آھي.",
+	"vector-page-tools-unpinned-popup": "اوزار مينيو ھيڏانھن چوريو ويو آھي.",
+	"vector-main-menu-unpinned-popup": "مک مينيو ھيڏانھن چوريو ويو آهي."
 }

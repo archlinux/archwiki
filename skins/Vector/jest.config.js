@@ -1,8 +1,11 @@
+'use strict';
+
 // For a detailed explanation regarding each configuration property, visit:
 // https://jestjs.io/docs/en/configuration.html
 
 module.exports = {
 	moduleNameMapper: {
+		'@wikimedia/codex-search': '@wikimedia/codex',
 		'^./templates/(.*).mustache': '<rootDir>/includes/templates/$1.mustache'
 	},
 
@@ -23,16 +26,17 @@ module.exports = {
 
 	// An array of regexp pattern strings used to skip coverage collection
 	coveragePathIgnorePatterns: [
-		'/node_modules/'
+		'/node_modules/',
+		'/resources/skins.vector.typographySurvey/'
 	],
 
 	// An object that configures minimum threshold enforcement for coverage results
 	coverageThreshold: {
 		global: {
-			branches: 26,
-			functions: 32,
-			lines: 34,
-			statements: 34
+			branches: 31,
+			functions: 39,
+			lines: 38,
+			statements: 38
 		}
 	},
 

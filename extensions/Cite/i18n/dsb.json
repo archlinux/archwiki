@@ -22,5 +22,10 @@
 	"cite_error_references_no_key": "Toflicka <code>&lt;ref&gt;</code>, kótaraž jo w <code>&lt;references&gt;</code> definěrowana, njama mjenjowy atribut.",
 	"cite_error_empty_references_define": "Toflicka <code>&lt;ref&gt;</code>, kótaraž jo w <code>&lt;references&gt;</code> z mjenim \"$1\" definěrowana, njama wopśimjeśe.",
 	"cite_references_link_accessibility_label": "Górjej skócyś",
-	"cite_references_link_many_accessibility_label": "Górjej skócys do:"
+	"cite_references_link_many_accessibility_label": "Górjej skócys do:",
+	"cite-wikieditor-tool-reference": "Referenca",
+	"cite-wikieditor-help-page-references": "Reference",
+	"cite-wikieditor-help-content-reference-description": "Referenca",
+	"cite-wikieditor-help-content-rereference-description": "Pśidatne wužywanje samskeje reference",
+	"cite-wikieditor-help-content-showreferences-description": "Reference zwobrazniś"
 }

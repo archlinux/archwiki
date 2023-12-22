@@ -1,5 +1,3 @@
-@import '../../common/variables.less';
-
 @border-base-ems: unit( @border-width-base / @font-size-browser / @font-size-base, em );
 
 .vector-page-toolbar-container {
@@ -19,6 +17,13 @@
 			}
 		}
 	}
+
+	// Reduce icon size for icon buttons in the page toolbar (i.e. watchstar, wikilove)
+	.vector-icon {
+		.cdx-mixin-css-icon-background( @size-icon-small );
+		.cdx-mixin-css-icon-size( @size-icon-small );
+		.cdx-mixin-css-icon-alignment( );
+	}
 }
 
 // ID Selectors outside of .vector-page-toolbar-container to avoid over-specificity.
@@ -34,10 +39,10 @@
 	// flex ensures all child elements align on one line.
 	display: flex;
 	margin-right: -@padding-horizontal-tabs;
+
 	// Any dropdowns inside the right navigation in modern Vector (e.g. "more" menu).
 	// should be right-aligned to prevent horizontal scrolling.
-	.vector-menu-content {
-		left: auto;
-		right: -@border-width-base;
+	.vector-dropdown-content {
+		.mixin-vector-dropdown-content-flip();
 	}
 }

@@ -22,9 +22,12 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Title\NamespaceInfo;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Special page lists all uncategorised pages in the
@@ -36,19 +39,19 @@ class SpecialUncategorizedTemplates extends SpecialUncategorizedPages {
 
 	/**
 	 * @param NamespaceInfo $namespaceInfo
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param LanguageConverterFactory $languageConverterFactory
 	 */
 	public function __construct(
 		NamespaceInfo $namespaceInfo,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory,
 		LanguageConverterFactory $languageConverterFactory
 	) {
 		parent::__construct(
 			$namespaceInfo,
-			$loadBalancer,
+			$dbProvider,
 			$linkBatchFactory,
 			$languageConverterFactory
 		);
@@ -56,3 +59,9 @@ class SpecialUncategorizedTemplates extends SpecialUncategorizedPages {
 		$this->requestedNamespace = NS_TEMPLATE;
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialUncategorizedTemplates::class, 'SpecialUncategorizedTemplates' );

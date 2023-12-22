@@ -26,7 +26,9 @@
 
 		this.markAllReadOption = new OO.ui.MenuOptionWidget( {
 			icon: 'checkAll',
-			label: this.getMarkAllReadOptionLabel(),
+			label: this.getMarkAllReadOptionLabel(
+				this.manager.getPaginationModel().getCurrentPageItemCount()
+			),
 			data: 'markAllRead'
 		} );
 		this.markAllReadOption.toggle( false );
@@ -73,7 +75,15 @@
 	 * Respond to source page change
 	 */
 	mw.echo.ui.SpecialHelpMenuWidget.prototype.onSourcePageUpdate = function () {
-		this.markAllReadOption.setLabel( this.getMarkAllReadOptionLabel() );
+		var sourcePagesModel = this.manager.getFiltersModel().getSourcePagesModel(),
+			source = sourcePagesModel.getCurrentSource(),
+			sourcePages = sourcePagesModel.getSourcePages( source ),
+			currentPage = sourcePagesModel.getCurrentPage(),
+			currentCount = currentPage ?
+				sourcePages[ currentPage ].count :
+				sourcePagesModel.getSourceTotalCount( source );
+
+		this.markAllReadOption.setLabel( this.getMarkAllReadOptionLabel( currentCount ) );
 	};
 
 	/**
@@ -82,6 +92,7 @@
 	 * @param {number} count New count
 	 */
 	mw.echo.ui.SpecialHelpMenuWidget.prototype.onLocalCountChange = function ( count ) {
+		this.markAllReadOption.setLabel( this.getMarkAllReadOptionLabel( count ) );
 		this.markAllReadOption.toggle( count > 0 );
 	};
 
@@ -95,15 +106,6 @@
 		if ( data.href ) {
 			location.href = data.href;
 		} else if ( data === 'markAllRead' ) {
-			// Log this action
-			mw.echo.logger.logInteraction(
-				mw.echo.Logger.static.actions.markAllReadClick,
-				mw.echo.Logger.static.context.archive,
-				null, // Notification ID is irrelevant
-				this.manager.getTypeString(), // The type of the list in general
-				null, // The Logger has logic to decide whether this is mobile or not
-				this.manager.getFiltersModel().getSourcePagesModel().getCurrentSource() // Source name
-			);
 			this.emit( 'markAllRead' );
 		}
 	};
@@ -111,16 +113,17 @@
 	/**
 	 * Build the button label
 	 *
+	 * @param {number} count Number of unread notifications
 	 * @return {string} Mark all read button label
 	 */
-	mw.echo.ui.SpecialHelpMenuWidget.prototype.getMarkAllReadOptionLabel = function () {
+	mw.echo.ui.SpecialHelpMenuWidget.prototype.getMarkAllReadOptionLabel = function ( count ) {
 		var pageModel = this.manager.getFiltersModel().getSourcePagesModel(),
 			source = pageModel.getCurrentSource(),
 			sourceTitle = pageModel.getSourceTitle( source );
 
 		return sourceTitle ?
-			mw.msg( 'echo-mark-wiki-as-read', sourceTitle ) :
-			mw.msg( 'echo-mark-all-as-read' );
+			mw.msg( 'echo-mark-wiki-as-read', sourceTitle, count ) :
+			mw.msg( 'echo-mark-all-as-read', count );
 	};
 
 }() );

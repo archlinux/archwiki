@@ -21,12 +21,22 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
+use LogEventsList;
 use MediaWiki\Block\BlockUtils;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\UnblockUserFactory;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
+use MediaWiki\Watchlist\WatchlistManager;
+use Wikimedia\IPUtils;
 
 /**
  * A special page for unblocking users
@@ -43,35 +53,32 @@ class SpecialUnblock extends SpecialPage {
 
 	protected $block;
 
-	/** @var UnblockUserFactory */
-	private $unblockUserFactory;
-
-	/** @var BlockUtils */
-	private $blockUtils;
-
-	/** @var UserNameUtils */
-	private $userNameUtils;
-
-	/** @var UserNamePrefixSearch */
-	private $userNamePrefixSearch;
+	private UnblockUserFactory $unblockUserFactory;
+	private BlockUtils $blockUtils;
+	private UserNameUtils $userNameUtils;
+	private UserNamePrefixSearch $userNamePrefixSearch;
+	private WatchlistManager $watchlistManager;
 
 	/**
 	 * @param UnblockUserFactory $unblockUserFactory
 	 * @param BlockUtils $blockUtils
 	 * @param UserNameUtils $userNameUtils
 	 * @param UserNamePrefixSearch $userNamePrefixSearch
+	 * @param WatchlistManager $watchlistManager
 	 */
 	public function __construct(
 		UnblockUserFactory $unblockUserFactory,
 		BlockUtils $blockUtils,
 		UserNameUtils $userNameUtils,
-		UserNamePrefixSearch $userNamePrefixSearch
+		UserNamePrefixSearch $userNamePrefixSearch,
+		WatchlistManager $watchlistManager
 	) {
 		parent::__construct( 'Unblock', 'block' );
 		$this->unblockUserFactory = $unblockUserFactory;
 		$this->blockUtils = $blockUtils;
 		$this->userNameUtils = $userNameUtils;
 		$this->userNamePrefixSearch = $userNamePrefixSearch;
+		$this->watchlistManager = $watchlistManager;
 	}
 
 	public function doesWrites() {
@@ -85,8 +92,8 @@ class SpecialUnblock extends SpecialPage {
 		[ $this->target, $this->type ] = $this->getTargetAndType( $par, $this->getRequest() );
 		$this->block = DatabaseBlock::newFromTarget( $this->target );
 		if ( $this->target instanceof UserIdentity ) {
-			# Set the 'relevant user' in the skin, so it displays links like Contributions,
-			# User logs, UserRights, etc.
+			// Set the 'relevant user' in the skin, so it displays links like Contributions,
+			// User logs, UserRights, etc.
 			$this->getSkin()->setRelevantUser( $this->target );
 		}
 
@@ -95,12 +102,21 @@ class SpecialUnblock extends SpecialPage {
 		$this->addHelpLink( 'Help:Blocking users' );
 
 		$out = $this->getOutput();
-		$out->setPageTitle( $this->msg( 'unblockip' ) );
-		$out->addModules( [ 'mediawiki.userSuggest' ] );
+		$out->setPageTitleMsg( $this->msg( 'unblockip' ) );
+		$out->addModules( [ 'mediawiki.userSuggest', 'mediawiki.special.block' ] );
 
 		$form = HTMLForm::factory( 'ooui', $this->getFields(), $this->getContext() )
 			->setWrapperLegendMsg( 'unblockip' )
 			->setSubmitCallback( function ( array $data, HTMLForm $form ) {
+				if ( $this->type != DatabaseBlock::TYPE_RANGE
+					&& $this->type != DatabaseBlock::TYPE_AUTO
+					&& $data['Watch']
+				) {
+					$this->watchlistManager->addWatchIgnoringRights(
+						$form->getUser(),
+						Title::makeTitle( NS_USER, $this->target )
+					);
+				}
 				return $this->unblockUserFactory->newUnblockUser(
 					$data['Target'],
 					$form->getContext()->getAuthority(),
@@ -110,6 +126,52 @@ class SpecialUnblock extends SpecialPage {
 			} )
 			->setSubmitTextMsg( 'ipusubmit' )
 			->addPreHtml( $this->msg( 'unblockiptext' )->parseAsBlock() );
+
+		$userPage = $this->getTargetUserTitle( $this->target );
+		if ( $userPage ) {
+			// Get relevant extracts from the block and suppression logs, if possible
+			$logExtract = '';
+			LogEventsList::showLogExtract(
+				$logExtract,
+				'block',
+				$userPage,
+				'',
+				[
+					'lim' => 10,
+					'msgKey' => [
+						'unblocklog-showlog',
+						$userPage->getText(),
+					],
+					'showIfEmpty' => false
+				]
+			);
+			if ( $logExtract !== '' ) {
+				$form->addPostHtml( $logExtract );
+			}
+
+			// Add suppression block entries if allowed
+			if ( $this->getAuthority()->isAllowed( 'suppressionlog' ) ) {
+				$logExtract = '';
+				LogEventsList::showLogExtract(
+					$logExtract,
+					'suppress',
+					$userPage,
+					'',
+					[
+						'lim' => 10,
+						'conds' => [ 'log_action' => [ 'block', 'reblock', 'unblock' ] ],
+						'msgKey' => [
+							'unblocklog-showsuppresslog',
+							$userPage->getText(),
+						],
+						'showIfEmpty' => false
+					]
+				);
+				if ( $logExtract !== '' ) {
+					$form->addPostHtml( $logExtract );
+				}
+			}
+		}
 
 		if ( $form->show() ) {
 			switch ( $this->type ) {
@@ -162,6 +224,24 @@ class SpecialUnblock extends SpecialPage {
 		return $targetAndType;
 	}
 
+	/**
+	 * Get a user page target for things like logs.
+	 * This handles account and IP range targets.
+	 * @param UserIdentity|string|null $target
+	 * @return Title|null
+	 */
+	private function getTargetUserTitle( $target ): ?Title {
+		if ( $target instanceof UserIdentity ) {
+			return Title::makeTitle( NS_USER, $target->getName() );
+		}
+
+		if ( is_string( $target ) && IPUtils::isIPAddress( $target ) ) {
+			return Title::makeTitle( NS_USER, $target );
+		}
+
+		return null;
+	}
+
 	protected function getFields() {
 		$fields = [
 			'Target' => [
@@ -186,10 +266,10 @@ class SpecialUnblock extends SpecialPage {
 			$type = $this->block->getType();
 			$targetName = $this->block->getTargetName();
 
-			# Autoblocks are logged as "autoblock #123 because the IP was recently used by
-			# User:Foo, and we've just got any block, auto or not, that applies to a target
-			# the user has specified.  Someone could be fishing to connect IPs to autoblocks,
-			# so don't show any distinction between unblocked IPs and autoblocked IPs
+			// Autoblocks are logged as "autoblock #123 because the IP was recently used by
+			// User:Foo, and we've just got any block, auto or not, that applies to a target
+			// the user has specified.  Someone could be fishing to connect IPs to autoblocks,
+			// so don't show any distinction between unblocked IPs and autoblocked IPs
 			if ( $type == DatabaseBlock::TYPE_AUTO && $this->type == DatabaseBlock::TYPE_IP ) {
 				$fields['Target']['default'] = $this->target;
 				unset( $fields['Name'] );
@@ -219,17 +299,24 @@ class SpecialUnblock extends SpecialPage {
 					case DatabaseBlock::TYPE_AUTO:
 						$fields['Name']['default'] = $this->block->getRedactedName();
 						$fields['Name']['raw'] = true;
-						# Don't expose the real target of the autoblock
+						// Don't expose the real target of the autoblock
 						$fields['Target']['default'] = "#{$this->target}";
 						break;
 				}
-				// target is hidden, so the reason is the first element
+				// Target is hidden, so the reason is the first element
 				$fields['Target']['autofocus'] = false;
 				$fields['Reason']['autofocus'] = true;
 			}
 		} else {
 			$fields['Target']['default'] = $this->target;
 			unset( $fields['Name'] );
+		}
+		// Watchlist their user page? (Only if user is logged in)
+		if ( $this->getUser()->isRegistered() ) {
+			$fields['Watch'] = [
+				'type' => 'check',
+				'label-message' => 'ipbwatchuser',
+			];
 		}
 
 		return $fields;
@@ -258,3 +345,9 @@ class SpecialUnblock extends SpecialPage {
 		return 'users';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialUnblock::class, 'SpecialUnblock' );

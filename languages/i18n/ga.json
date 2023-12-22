@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Alison",
+			"Amire80",
 			"D.de.loinsigh",
 			"DannyS712",
 			"Dowlinme",
@@ -26,8 +27,7 @@
 			"לערי ריינהארט",
 			"ديفيد",
 			"පසිඳු කාවින්ද",
-			"아라",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Folínte faoi naisc:",
@@ -225,7 +225,6 @@
 	"versionrequired": "Tá leagan $1 de MediaWiki de dhíth",
 	"versionrequiredtext": "Tá an leagan $1 de MediaWiki riachtanach chun an leathanach seo a úsáid. Féach ar [[Special:Version]]",
 	"ok": "Déan",
-	"pagetitle": "$1 - {{SITENAME}}",
 	"retrievedfrom": "Aisghafa ó \"$1\"",
 	"youhavenewmessages": "Tá $1 agat ($2).",
 	"editsection": "cuir in eagar",
@@ -465,7 +464,7 @@
 	"recreate-moveddeleted-warn": "'''Rabhadh: Tá tú ag athchruthú leathanaigh a scriosadh cheana.'''\n\nAn bhfuil tú cinnte go bhfuil sé oiriúnach an leathanach seo a cur in eagar?\nCuirtear an loga scriosta ar fáil anseo mar áis:",
 	"log-fulllog": "Féach ar an logchomhad iomlán",
 	"postedit-confirmation-restored": "Díscriosadh an leathanach.",
-	"undo-summary": "Cealaíodh athrú $1 le [[Special:Contributions/$2|$2]] ([[User talk:$2|plé]])",
+	"undo-summary": "Cealaíodh athrú [[Special:Diff/$1|$1]] le [[Special:Contributions/$2|$2]] ([[User talk:$2|plé]])",
 	"viewpagelogs": "Féach ar logaí faoin leathanach seo",
 	"nohistory": "Níl aon stáir athraithe ag an leathanach seo.",
 	"currentrev": "Leagan reatha",
@@ -539,7 +538,6 @@
 	"search-relatedarticle": "Gaolmhar",
 	"searchrelated": "gaolmhara",
 	"searchall": "an t-iomlán",
-	"showingresults": "Ag taispeáint thíos {{PLURAL:$1|'''toradh amháin'''|'''$1''' torthaí}}, ag tosú le #'''$2'''.",
 	"search-nonefound": "Ní bhfuarthas toradh ar bith ar an iarratas.",
 	"powersearch-legend": "Cuardach casta",
 	"powersearch-ns": "Cuardaigh in ainmspásanna:",
@@ -1000,8 +998,6 @@
 	"enotif_anon_editor": "úsáideoir gan ainm $1",
 	"enotif_body": "A $WATCHINGUSERNAME, a chara,\n\n$PAGEINTRO $NEWPAGE\n\nAthchoimriú an úsáideora a rinne é: $PAGESUMMARY $PAGEMINOREDIT\n\nSonraí teagmhála an úsáideora:\nr-phost: $PAGEEDITOR_EMAIL\nvicí: $PAGEEDITOR_WIKI\n\nI gcás athruithe eile, ní bheidh aon fhógra eile muna dtéann tú go dtí an leathanach seo.\nIs féidir freisin na bratacha fógartha a athrú do gach leathanach ar do liosta faire.\n\n\t     Is mise le meas,\n\t     Fógrachóras cairdiúil {{GRAMMAR:genitive|{{SITENAME}}}}\n\n--\nChun socruithe do liosta faire a athrú, tabhair cuairt ar\n{{canonicalurl:Special:Watchlist/edit}}\n\nChun an leathanach a bhaint de do liosta faire, tabhair cuairt ar\n$UNWATCHURL\n\nAiseolas agus a thuilleadh cabhrach:\n$HELPPAGE",
 	"enotif_minoredit": "Is mionathrú é seo",
-	"created": "Chruthaigh",
-	"changed": "D'athraigh",
 	"deletepage-submit": "Scrios an leathanach",
 	"confirm": "Cinntigh",
 	"excontent": "téacs an lch: '$1'",

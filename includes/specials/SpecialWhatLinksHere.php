@@ -20,17 +20,25 @@
  * @file
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Navigation\PagerNavigationBuilder;
+use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
-use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Message;
+use SearchEngineFactory;
+use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
+use Xml;
 
 /**
  * Implements Special:Whatlinkshere
@@ -44,31 +52,18 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 	/** @var Title */
 	protected $target;
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
-
-	/** @var SearchEngineFactory */
-	private $searchEngineFactory;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var TitleFactory */
-	private $titleFactory;
-
-	/** @var LinksMigration */
-	private $linksMigration;
+	private IConnectionProvider $dbProvider;
+	private LinkBatchFactory $linkBatchFactory;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private SearchEngineFactory $searchEngineFactory;
+	private NamespaceInfo $namespaceInfo;
+	private TitleFactory $titleFactory;
+	private LinksMigration $linksMigration;
 
 	protected $limits = [ 20, 50, 100, 250, 500 ];
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param IContentHandlerFactory $contentHandlerFactory
 	 * @param SearchEngineFactory $searchEngineFactory
@@ -77,7 +72,7 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 	 * @param LinksMigration $linksMigration
 	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory,
 		IContentHandlerFactory $contentHandlerFactory,
 		SearchEngineFactory $searchEngineFactory,
@@ -87,7 +82,7 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 	) {
 		parent::__construct( 'Whatlinkshere' );
 		$this->mIncludable = true;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->contentHandlerFactory = $contentHandlerFactory;
 		$this->searchEngineFactory = $searchEngineFactory;
@@ -114,8 +109,8 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 	public function onSuccess() {
 		$opts = new FormOptions();
 
-		$opts->add( 'namespace', '', FormOptions::INTNULL );
-		$opts->add( 'limit', $this->getConfig()->get( MainConfigNames::QueryPageDefaultLimit ) );
+		$opts->add( 'namespace', null, FormOptions::INTNULL );
+		$opts->add( 'limit', null, FormOptions::INTNULL );
 		$opts->add( 'offset', '' );
 		$opts->add( 'from', 0 );
 		$opts->add( 'dir', 'next' );
@@ -126,6 +121,10 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		$opts->add( 'invert', false );
 
 		$opts->fetchValuesFromRequest( $this->getRequest() );
+
+		if ( $opts->getValue( 'limit' ) === null ) {
+			$opts->setValue( 'limit', $this->getConfig()->get( MainConfigNames::QueryPageDefaultLimit ) );
+		}
 		$opts->validateIntBounds( 'limit', 0, 5000 );
 
 		// Bind to member variable
@@ -134,7 +133,9 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		$this->getSkin()->setRelevantTitle( $this->target );
 
 		$out = $this->getOutput();
-		$out->setPageTitle( $this->msg( 'whatlinkshere-title', $this->target->getPrefixedText() ) );
+		$out->setPageTitleMsg(
+			$this->msg( 'whatlinkshere-title' )->plaintextParams( $this->target->getPrefixedText() )
+		);
 		$out->addBacklinkSubtitle( $this->target );
 
 		[ $offsetNamespace, $offsetPageID, $dir ] = $this->parseOffsetAndDir( $opts );
@@ -206,7 +207,7 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		$level, $target, $limit, $offsetNamespace = 0, $offsetPageID = 0, $dir = 'next'
 	) {
 		$out = $this->getOutput();
-		$dbr = $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		$dbr = $this->dbProvider->getReplicaDatabase();
 
 		$hidelinks = $this->opts->getValue( 'hidelinks' );
 		$hideredirs = $this->opts->getValue( 'hideredirs' );
@@ -222,11 +223,9 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		$conds['redirect'] = [
 			'rd_namespace' => $target->getNamespace(),
 			'rd_title' => $target->getDBkey(),
+			'rd_interwiki' => [ '', null ],
 		];
-		$conds['pagelinks'] = [
-			'pl_namespace' => $target->getNamespace(),
-			'pl_title' => $target->getDBkey(),
-		];
+		$conds['pagelinks'] = $this->linksMigration->getLinksConditions( 'pagelinks', $target );
 		$conds['templatelinks'] = $this->linksMigration->getLinksConditions( 'templatelinks', $target );
 		$conds['imagelinks'] = [
 			'il_to' => $target->getDBkey(),
@@ -282,7 +281,7 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		$sortDirection = $dir === 'prev' ? SelectQueryBuilder::SORT_DESC : SelectQueryBuilder::SORT_ASC;
 
 		$fname = __METHOD__;
-		$queryFunc = static function ( IDatabase $dbr, $table, $fromCol ) use (
+		$queryFunc = static function ( IReadableDatabase $dbr, $table, $fromCol ) use (
 			$conds, $target, $limit, $sortDirection, $fname
 		) {
 			// Read an extra row as an at-end check
@@ -291,7 +290,7 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 				"rd_from = $fromCol",
 				'rd_title' => $target->getDBkey(),
 				'rd_namespace' => $target->getNamespace(),
-				'rd_interwiki = ' . $dbr->addQuotes( '' ) . ' OR rd_interwiki IS NULL'
+				'rd_interwiki' => [ '', null ],
 			];
 			// Inner LIMIT is 2X in case of stale backlinks with wrong namespaces
 			$subQuery = $dbr->newSelectQueryBuilder()
@@ -450,8 +449,8 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 			$prevPageId = $offsetPageID ? $rows[0]->page_id : false;
 			if ( $numRows > $limit ) {
 				// Get the next row from the last displayed row
-				$nextNamespace = $rows[$limit - 1]->page_namespace;
-				$nextPageId = $rows[$limit - 1]->page_id;
+				$nextNamespace = $rows[$limit - 1]->page_namespace ?? false;
+				$nextPageId = $rows[$limit - 1]->page_id ?? false;
 				// Remove undisplayed rows
 				$rows = array_slice( $rows, 0, $limit );
 			} else {
@@ -754,3 +753,9 @@ class SpecialWhatLinksHere extends FormSpecialPage {
 		return 'pagetools';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialWhatLinksHere::class, 'SpecialWhatLinksHere' );

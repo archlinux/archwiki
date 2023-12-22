@@ -21,7 +21,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 език|$1 езика}}",
 	"vector-no-language-button-label": "Добавяне на езици",
 	"vector-no-language-button-aria-label": "Тази статия съществува само на този език. Добавете статията за други езици",
-	"vector-language-redirect-to-top": "В тази {{SITENAME}} езиковите връзки са в горната част на страницата срещу заглавието на статията. [[#p-lang-btn|Отидете най-горе]].",
+	"vector-language-redirect-to-top": "Езиковите връзки са в горната част на страницата срещу заглавието на статията.",
 	"vector-language-variant-switcher-label": "Промяна на езиковия вариант",
 	"vector-action-addsection": "Добавяне на тема",
 	"vector-action-delete": "Изтриване",

@@ -1,5 +1,64 @@
+const { MultimediaViewerBootstrap } = require( 'mmv.bootstrap' );
+const { asyncMethod, waitForAsync, getMultimediaViewer } = require( './mmv.testhelpers.js' );
+
 ( function () {
 	QUnit.module( 'mmv.bootstrap', QUnit.newMwEnvironment( {
+		// mw.Title relies on these three config vars
+		// Restore them after each test run
+		config: {
+			wgFormattedNamespaces: {
+				'-2': 'Media',
+				'-1': 'Special',
+				0: '',
+				1: 'Talk',
+				2: 'User',
+				3: 'User talk',
+				4: 'Wikipedia',
+				5: 'Wikipedia talk',
+				6: 'File',
+				7: 'File talk',
+				8: 'MediaWiki',
+				9: 'MediaWiki talk',
+				10: 'Template',
+				11: 'Template talk',
+				12: 'Help',
+				13: 'Help talk',
+				14: 'Category',
+				15: 'Category talk',
+				// testing custom / localized namespace
+				100: 'Penguins'
+			},
+			wgNamespaceIds: {
+				/* eslint-disable camelcase */
+				media: -2,
+				special: -1,
+				'': 0,
+				talk: 1,
+				user: 2,
+				user_talk: 3,
+				wikipedia: 4,
+				wikipedia_talk: 5,
+				file: 6,
+				file_talk: 7,
+				mediawiki: 8,
+				mediawiki_talk: 9,
+				template: 10,
+				template_talk: 11,
+				help: 12,
+				help_talk: 13,
+				category: 14,
+				category_talk: 15,
+				image: 6,
+				image_talk: 7,
+				project: 4,
+				project_talk: 5,
+				// Testing custom namespaces and aliases
+				penguins: 100,
+				antarctic_waterfowl: 100
+				/* eslint-enable camelcase */
+			},
+			wgCaseSensitiveNamespaces: []
+		},
 		beforeEach: function () {
 			mw.config.set( 'wgMediaViewer', true );
 			mw.config.set( 'wgMediaViewerOnClick', true );
@@ -50,7 +109,7 @@
 	}
 
 	function createBootstrap( viewer ) {
-		var bootstrap = new mw.mmv.MultimediaViewerBootstrap();
+		var bootstrap = new MultimediaViewerBootstrap();
 
 		bootstrap.processThumbs( $( '#qunit-fixture' ) );
 
@@ -59,7 +118,12 @@
 		bootstrap.ensureEventHandlersAreSetUp = function () {};
 
 		bootstrap.getViewer = function () {
-			return viewer || { initWithThumbs: function () {}, hash: function () {} };
+			return viewer || {
+				loadImageByTitle: function () {},
+				initWithThumbs: function () {},
+				hash: function () {},
+				router: { checkRoute: function () {} }
+			};
 		};
 
 		return bootstrap;
@@ -76,7 +140,7 @@
 
 		// Hijack loadViewer, which will return a promise that we'll have to
 		// wait for if we want to see these tests through
-		mw.mmv.testHelpers.asyncMethod( bootstrap, 'loadViewer' );
+		asyncMethod( bootstrap, 'loadViewer' );
 
 		// invalid hash, should not trigger MMV load
 		location.hash = 'Foo';
@@ -87,10 +151,9 @@
 		// without us interfering with another immediate change
 		setTimeout( function () {
 			location.hash = hash;
-			bootstrap.hash();
 		} );
 
-		return mw.mmv.testHelpers.waitForAsync().then( function () {
+		return waitForAsync().then( function () {
 			assert.strictEqual( callCount, 1, 'Viewer should be loaded once' );
 			bootstrap.cleanupEventHandlers();
 			location.hash = '';
@@ -120,7 +183,7 @@
 
 	QUnit.test( 'Clicks are not captured once the loading fails', function ( assert ) {
 		var event, returnValue,
-			bootstrap = new mw.mmv.MultimediaViewerBootstrap(),
+			bootstrap = new MultimediaViewerBootstrap(),
 			clock = this.sandbox.useFakeTimers();
 
 		this.sandbox.stub( mw.loader, 'using' )
@@ -131,19 +194,10 @@
 		// trigger first click, which will cause MMV to be loaded (which we've
 		// set up to fail)
 		event = new $.Event( 'click', { button: 0, which: 1 } );
-		returnValue = bootstrap.click( {}, event, mw.Title.newFromText( 'Foo' ) );
+		returnValue = bootstrap.click( event, mw.Title.newFromText( 'Foo' ) );
 		clock.tick( 10 );
 		assert.true( event.isDefaultPrevented(), 'First click is caught' );
 		assert.strictEqual( returnValue, false, 'First click is caught' );
-
-		// wait until MMW is loaded (or failed to load, in this case) before we
-		// trigger another click - which should then not be caught
-		event = new $.Event( 'click', { button: 0, which: 1 } );
-		returnValue = bootstrap.click( {}, event, mw.Title.newFromText( 'Foo' ) );
-		clock.tick( 10 );
-		assert.strictEqual( event.isDefaultPrevented(), false, 'Click after loading failure is not caught' );
-		assert.notStrictEqual( returnValue, false, 'Click after loading failure is not caught' );
-
 		clock.restore();
 	} );
 
@@ -303,19 +357,18 @@
 	QUnit.test( 'Ensure that the correct title is loaded when clicking', function ( assert ) {
 		var bootstrap,
 			viewer = { initWithThumbs: function () {}, loadImageByTitle: this.sandbox.stub() },
-			$div = createGallery( 'foo.jpg' ),
-			$link = $div.find( 'a.image' ),
 			clock = this.sandbox.useFakeTimers();
 
 		// Create a new bootstrap object to trigger the DOM scan, etc.
 		bootstrap = createBootstrap( viewer );
 		this.sandbox.stub( bootstrap, 'setupOverlay' );
 
-		$link.trigger( { type: 'click', which: 1 } );
+		bootstrap.route( 'File:Foo.jpg' );
 		clock.tick( 10 );
 		assert.true( bootstrap.setupOverlay.called, 'Overlay was set up' );
 		assert.strictEqual( viewer.loadImageByTitle.firstCall.args[ 0 ].getPrefixedDb(), 'File:Foo.jpg', 'Titles are identical' );
 
+		clock.tick( 10 );
 		clock.restore();
 	} );
 
@@ -324,7 +377,7 @@
 		var bootstrap,
 			$div,
 			$link,
-			viewer = mw.mmv.testHelpers.getMultimediaViewer(),
+			viewer = getMultimediaViewer(),
 			fname = 'valid',
 			imgSrc = '/' + fname + '.jpg/300px-' + fname + '.jpg',
 			imgRegex = new RegExp( imgSrc + '$' ),
@@ -359,7 +412,7 @@
 		clock.reset();
 	} );
 
-	QUnit.test( 'Only load the viewer on a valid hash (modern browsers)', function ( assert ) {
+	QUnit.test( 'Only load the viewer on a valid hash', function ( assert ) {
 		var bootstrap;
 
 		location.hash = '';
@@ -369,34 +422,12 @@
 		return hashTest( '/media', bootstrap, assert );
 	} );
 
-	QUnit.test( 'Only load the viewer on a valid hash (old browsers)', function ( assert ) {
+	QUnit.test( 'Load the viewer on a legacy hash', function ( assert ) {
 		var bootstrap;
 
 		location.hash = '';
 
 		bootstrap = createBootstrap();
-		bootstrap.browserHistory = undefined;
-
-		return hashTest( '/media', bootstrap, assert );
-	} );
-
-	QUnit.test( 'Load the viewer on a legacy hash (modern browsers)', function ( assert ) {
-		var bootstrap;
-
-		location.hash = '';
-
-		bootstrap = createBootstrap();
-
-		return hashTest( 'mediaviewer', bootstrap, assert );
-	} );
-
-	QUnit.test( 'Load the viewer on a legacy hash (old browsers)', function ( assert ) {
-		var bootstrap;
-
-		location.hash = '';
-
-		bootstrap = createBootstrap();
-		bootstrap.browserHistory = undefined;
 
 		return hashTest( 'mediaviewer', bootstrap, assert );
 	} );

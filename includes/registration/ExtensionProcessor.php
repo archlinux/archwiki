@@ -4,9 +4,9 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\ResourceLoader\FilePath;
 
 /**
- * Utility class for loading extension manifests and aggregating
- * their contents.
+ * Load extension manifests and then aggregate their contents.
  *
+ * @ingroup ExtensionRegistry
  * @newable since 1.39
  */
 class ExtensionProcessor implements Processor {
@@ -63,7 +63,8 @@ class ExtensionProcessor implements Processor {
 		MainConfigNames::ResourceLoaderSources,
 		MainConfigNames::RevokePermissions,
 		MainConfigNames::SessionProviders,
-		MainConfigNames::SpecialPages
+		MainConfigNames::SpecialPages,
+		MainConfigNames::UserRegistrationProviders,
 	];
 
 	/**
@@ -81,6 +82,7 @@ class ExtensionProcessor implements Processor {
 		'LateJSConfigVarNames',
 		'TempUserSerialProviders',
 		'TempUserSerialMappings',
+		'DatabaseVirtualDomains',
 	];
 
 	/**
@@ -139,6 +141,7 @@ class ExtensionProcessor implements Processor {
 		'AutoloadClasses',
 		'AutoloadNamespaces',
 		'ExtensionMessagesFiles',
+		'ForeignResourcesDir',
 		'Hooks',
 		'MessagePosterModule',
 		'MessagesDirs',
@@ -153,7 +156,7 @@ class ExtensionProcessor implements Processor {
 	/**
 	 * Stuff that is going to be set to $GLOBALS
 	 *
-	 * Some keys are pre-set to arrays so we can += to them
+	 * Some keys are pre-set to arrays, so we can += to them
 	 *
 	 * @var array
 	 */
@@ -170,8 +173,9 @@ class ExtensionProcessor implements Processor {
 	protected $defines = [];
 
 	/**
-	 * Things to be called once registration of these extensions are done
-	 * keyed by the name of the extension that it belongs to
+	 * Things to be called once the registration of these extensions is done
+	 *
+	 * Keyed by the name of the extension that it belongs to
 	 *
 	 * @var callable[]
 	 */
@@ -208,7 +212,7 @@ class ExtensionProcessor implements Processor {
 	];
 
 	/**
-	 * Any thing else in the $info that hasn't
+	 * Anything else in the $info that hasn't
 	 * already been processed
 	 *
 	 * @var array
@@ -238,15 +242,6 @@ class ExtensionProcessor implements Processor {
 			throw new RuntimeException( "Failed to load JSON data from $path" );
 		}
 
-		if ( !isset( $info['manifest_version'] ) ) {
-			wfDeprecatedMsg(
-				"{$info['name']}'s extension.json or skin.json does not have manifest_version, " .
-				'this is deprecated since MediaWiki 1.29',
-				'1.29', false, false
-			);
-			$info['manifest_version'] = 1;
-		}
-
 		$this->extractInfo( $path, $info, $info['manifest_version'] );
 	}
 
@@ -263,6 +258,7 @@ class ExtensionProcessor implements Processor {
 		$this->extractSkins( $dir, $info );
 		$this->extractSkinImportPaths( $dir, $info );
 		$this->extractNamespaces( $info );
+		$this->extractImplicitRights( $info );
 		$this->extractResourceLoaderModules( $dir, $info );
 		if ( isset( $info['ServiceWiringFiles'] ) ) {
 			$this->extractPathBasedGlobal(
@@ -299,6 +295,8 @@ class ExtensionProcessor implements Processor {
 				$module['name'] = $name;
 			}
 		}
+
+		$this->extractForeignResourcesDir( $info, $name, $dir );
 
 		if ( $version >= 2 ) {
 			$this->extractAttributes( $path, $info );
@@ -369,7 +367,7 @@ class ExtensionProcessor implements Processor {
 		}
 
 		$autoload = $this->getExtractedAutoloadInfo( $includeDev );
-		$info = [
+		return [
 			'globals' => $this->globals,
 			'defines' => $this->defines,
 			'callbacks' => $this->callbacks,
@@ -379,7 +377,6 @@ class ExtensionProcessor implements Processor {
 			'autoloaderClasses' => $autoload['classes'],
 			'autoloaderNS' => $autoload['namespaces'],
 		];
-		return $info;
 	}
 
 	public function getRequirements( array $info, $includeDev ) {
@@ -431,7 +428,7 @@ class ExtensionProcessor implements Processor {
 					);
 				} else {
 					// Prefer dev value, but these should be constant
-					// anyways (ext-* and ability-*)
+					// anyway (ext-* and ability-*)
 					$value = $dev['platform'][$pkey] ?? $req['platform'][$pkey];
 				}
 				$merged['platform'][$pkey] = $value;
@@ -703,29 +700,36 @@ class ExtensionProcessor implements Processor {
 	protected function extractSkins( $dir, array $info ) {
 		if ( isset( $info['ValidSkinNames'] ) ) {
 			foreach ( $info['ValidSkinNames'] as $skinKey => $data ) {
-				if ( isset( $data['args'][0]['templateDirectory'] ) ) {
-					$templateDirectory = $data['args'][0]['templateDirectory'];
-					$correctedPath = $dir . '/' . $templateDirectory;
-					// Historically the template directory was relative to core
-					// but it really should've been relative to the skin directory.
-					// If the path exists relative to the skin directory, assume that
-					// is what was intended. Otherwise fall back on the previous behavior
-					// of having it relative to core.
-					if ( is_dir( $correctedPath ) ) {
-						$data['args'][0]['templateDirectory'] = $correctedPath;
-					} else {
-						$data['args'][0]['templateDirectory'] = $templateDirectory;
-						wfDeprecatedMsg(
-							'Template directory should be relative to skin or omitted for skin ' . $skinKey,
-							'1.37'
-						);
-					}
-				} elseif ( isset( $data['args'][0] ) ) {
-					// If not set, we set a sensible default.
-					$data['args'][0]['templateDirectory'] = $dir . '/templates';
+				if ( isset( $data['args'][0] ) ) {
+					$templateDirectory = $data['args'][0]['templateDirectory'] ?? 'templates';
+					$data['args'][0]['templateDirectory'] = $dir . '/' . $templateDirectory;
 				}
 				$this->globals['wgValidSkinNames'][$skinKey] = $data;
 			}
+		}
+	}
+
+	/**
+	 * Extract any user rights that should be granted implicitly.
+	 *
+	 * @param array $info
+	 */
+	protected function extractImplicitRights( array $info ) {
+		// Rate limits are only configurable for rights that are either in wgImplicitRights
+		// or in wgAvailableRights. Extensions that define rate limits should not have to
+		// explicitly add them to wgImplicitRights as well, we can do that automatically.
+
+		if ( isset( $info['RateLimits'] ) ) {
+			$rights = array_keys( $info['RateLimits'] );
+
+			if ( isset( $info['AvailableRights'] ) ) {
+				$rights = array_diff( $rights, $info['AvailableRights'] );
+			}
+
+			$this->globals['wgImplicitRights'] = array_merge(
+				$this->globals['wgImplicitRights'] ?? [],
+				$rights
+			);
 		}
 	}
 
@@ -771,6 +775,15 @@ class ExtensionProcessor implements Processor {
 		$this->credits[$name] = $credits;
 
 		return $name;
+	}
+
+	protected function extractForeignResourcesDir( array $info, string $name, string $dir ): void {
+		if ( array_key_exists( 'ForeignResourcesDir', $info ) ) {
+			if ( !is_string( $info['ForeignResourcesDir'] ) ) {
+				throw new Exception( "Incorrect ForeignResourcesDir type, must be a string (in $name)" );
+			}
+			$this->attributes['ForeignResourcesDir'][$name] = "{$dir}/{$info['ForeignResourcesDir']}";
+		}
 	}
 
 	/**
@@ -848,7 +861,7 @@ class ExtensionProcessor implements Processor {
 	}
 
 	/**
-	 * Helper function to set a value to a specific global, if it isn't set already.
+	 * Helper function to set a value to a specific global config variable if it isn't set already.
 	 *
 	 * @param string $key The config key with the prefix and anything
 	 * @param mixed $value The value of the config

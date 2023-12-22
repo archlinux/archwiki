@@ -7,14 +7,14 @@
 			"Devwebtel",
 			"Matik7",
 			"Matma Rex",
+			"Msz2001",
 			"Rail",
 			"Railfail536",
 			"SemanticPioneer",
 			"Sethakill",
 			"Sp5uhe",
 			"Tar Lócesilion",
-			"Woytecr",
-			"Msz2001"
+			"Woytecr"
 		]
 	},
 	"math-desc": "Renderowanie formuł matematycznych między znacznikami <code>&lt;math&gt;</code> … <code>&lt;/math&gt;</code>",

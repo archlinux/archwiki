@@ -20,13 +20,17 @@
 
 namespace MediaWiki\Permissions;
 
+use IContextSource;
 use InvalidArgumentException;
 use MediaWiki\Block\Block;
+use MediaWiki\Block\BlockErrorFormatter;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
-use TitleValue;
-use User;
+use Wikimedia\Assert\Assert;
 use Wikimedia\DebugInfo\DebugInfoTrait;
 
 /**
@@ -54,6 +58,12 @@ class UserAuthority implements Authority {
 	private $permissionManager;
 
 	/**
+	 * @var RateLimiter
+	 * @noVarDump
+	 */
+	private $rateLimiter;
+
+	/**
 	 * @var User
 	 * @noVarDump
 	 */
@@ -67,88 +77,91 @@ class UserAuthority implements Authority {
 	private $userBlock = null;
 
 	/**
+	 * Cache for the outcomes of rate limit checks.
+	 * We cache the outcomes primarily so we don't bump the counter multiple times
+	 * per request.
+	 * @var array<string,array> Map of actions to [ int, bool ] pairs.
+	 *      The first element is the increment performed so far (typically 1).
+	 *      The second element is the cached outcome of the check (whether the limit was reached)
+	 */
+	private $limitCache = [];
+
+	/**
+	 * Whether the limit cache should be used. Generally, the limit cache should be used in web
+	 * requests, since we don't want to bump the same limit more than once per request. It
+	 * should not be used during testing, so limits can easily be tested without knowledge
+	 * about the caching mechanism.
+	 *
+	 * @var bool
+	 */
+	private bool $useLimitCache;
+
+	private WebRequest $request;
+	private IContextSource $uiContext;
+	private BlockErrorFormatter $blockErrorFormatter;
+
+	/**
 	 * @param User $user
+	 * @param WebRequest $request
+	 * @param IContextSource $uiContext
 	 * @param PermissionManager $permissionManager
+	 * @param RateLimiter $rateLimiter
+	 * @param BlockErrorFormatter $blockErrorFormatter
 	 */
 	public function __construct(
 		User $user,
-		PermissionManager $permissionManager
+		WebRequest $request,
+		IContextSource $uiContext,
+		PermissionManager $permissionManager,
+		RateLimiter $rateLimiter,
+		BlockErrorFormatter $blockErrorFormatter
 	) {
-		$this->permissionManager = $permissionManager;
 		$this->actor = $user;
+		$this->request = $request;
+		$this->uiContext = $uiContext;
+		$this->permissionManager = $permissionManager;
+		$this->rateLimiter = $rateLimiter;
+		$this->blockErrorFormatter = $blockErrorFormatter;
+		$this->useLimitCache = !defined( 'MW_PHPUNIT_TEST' );
 	}
 
 	/**
-	 * @inheritDoc
-	 *
-	 * @return UserIdentity
+	 * @internal
+	 * @param bool $useLimitCache
 	 */
+	public function setUseLimitCache( bool $useLimitCache ) {
+		$this->useLimitCache = $useLimitCache;
+	}
+
+	/** @inheritDoc */
 	public function getUser(): UserIdentity {
 		return $this->actor;
 	}
 
-	/**
-	 * @inheritDoc
-	 *
-	 * @param string $permission
-	 *
-	 * @return bool
-	 */
-	public function isAllowed( string $permission ): bool {
-		return $this->permissionManager->userHasRight( $this->actor, $permission );
+	/** @inheritDoc */
+	public function isAllowed( string $permission, PermissionStatus $status = null ): bool {
+		return $this->internalAllowed( $permission, $status, false, null );
 	}
 
-	/**
-	 * @inheritDoc
-	 *
-	 * @param string ...$permissions
-	 *
-	 * @return bool
-	 */
+	/** @inheritDoc */
 	public function isAllowedAny( ...$permissions ): bool {
 		if ( !$permissions ) {
 			throw new InvalidArgumentException( 'At least one permission must be specified' );
 		}
 
-		foreach ( $permissions as $perm ) {
-			if ( $this->isAllowed( $perm ) ) {
-				return true;
-			}
-		}
-
-		return false;
+		return $this->permissionManager->userHasAnyRight( $this->actor, ...$permissions );
 	}
 
-	/**
-	 * @inheritDoc
-	 *
-	 * @param string ...$permissions
-	 *
-	 * @return bool
-	 */
+	/** @inheritDoc */
 	public function isAllowedAll( ...$permissions ): bool {
 		if ( !$permissions ) {
 			throw new InvalidArgumentException( 'At least one permission must be specified' );
 		}
 
-		foreach ( $permissions as $perm ) {
-			if ( !$this->isAllowed( $perm ) ) {
-				return false;
-			}
-		}
-
-		return true;
+		return $this->permissionManager->userHasAllRights( $this->actor, ...$permissions );
 	}
 
-	/**
-	 * @inheritDoc
-	 *
-	 * @param string $action
-	 * @param PageIdentity $target
-	 * @param PermissionStatus|null $status
-	 *
-	 * @return bool
-	 */
+	/** @inheritDoc */
 	public function probablyCan(
 		string $action,
 		PageIdentity $target,
@@ -158,19 +171,12 @@ class UserAuthority implements Authority {
 			PermissionManager::RIGOR_QUICK,
 			$action,
 			$target,
-			$status
+			$status,
+			false // do not check the rate limit
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 *
-	 * @param string $action
-	 * @param PageIdentity $target
-	 * @param PermissionStatus|null $status
-	 *
-	 * @return bool
-	 */
+	/** @inheritDoc */
 	public function definitelyCan(
 		string $action,
 		PageIdentity $target,
@@ -183,19 +189,35 @@ class UserAuthority implements Authority {
 			PermissionManager::RIGOR_FULL,
 			$action,
 			$target,
-			$status
+			$status,
+			0 // only check the rate limit, don't count it as a hit
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 *
-	 * @param string $action
-	 * @param PageIdentity $target
-	 * @param PermissionStatus|null $status
-	 *
-	 * @return bool
-	 */
+	/** @inheritDoc */
+	public function isDefinitelyAllowed( string $action, PermissionStatus $status = null ): bool {
+		$userBlock = $this->getApplicableBlock( PermissionManager::RIGOR_FULL, $action );
+		return $this->internalAllowed( $action, $status, 0, $userBlock );
+	}
+
+	/** @inheritDoc */
+	public function authorizeAction(
+		string $action,
+		PermissionStatus $status = null
+	): bool {
+		// Any side-effects can be added here.
+
+		$userBlock = $this->getApplicableBlock( PermissionManager::RIGOR_SECURE, $action );
+
+		return $this->internalAllowed(
+			$action,
+			$status,
+			1,
+			$userBlock
+		);
+	}
+
+	/** @inheritDoc */
 	public function authorizeRead(
 		string $action,
 		PageIdentity $target,
@@ -210,19 +232,12 @@ class UserAuthority implements Authority {
 			PermissionManager::RIGOR_FULL,
 			$action,
 			$target,
-			$status
+			$status,
+			1 // count a hit towards the rate limit
 		);
 	}
 
-	/**
-	 * @inheritDoc
-	 *
-	 * @param string $action
-	 * @param PageIdentity $target
-	 * @param PermissionStatus|null $status
-	 *
-	 * @return bool
-	 */
+	/** @inheritDoc */
 	public function authorizeWrite(
 		string $action,
 		PageIdentity $target,
@@ -236,15 +251,84 @@ class UserAuthority implements Authority {
 			PermissionManager::RIGOR_SECURE,
 			$action,
 			$target,
-			$status
+			$status,
+			1 // count a hit towards the rate limit
 		);
+	}
+
+	/**
+	 * Check whether the user is allowed to perform the action, taking into account
+	 * the user's block status as well as any rate limits.
+	 *
+	 * @param string $action
+	 * @param PermissionStatus|null $status
+	 * @param int|false $limitRate False means no check, 0 means check only,
+	 *        1 means check and increment
+	 * @param ?Block $userBlock
+	 *
+	 * @return bool
+	 */
+	private function internalAllowed(
+		string $action,
+		?PermissionStatus $status,
+		$limitRate,
+		?Block $userBlock
+	): bool {
+		if ( $status ) {
+			Assert::precondition(
+				$status->isGood(),
+				'The PermissionStatus passed as $status parameter must still be good'
+			);
+		}
+
+		if ( !$this->permissionManager->userHasRight( $this->actor, $action ) ) {
+			if ( !$status ) {
+				return false;
+			}
+
+			$status->setPermission( $action );
+			$status->merge(
+				$this->permissionManager->newFatalPermissionDeniedStatus(
+					$action,
+					$this->uiContext
+				)
+			);
+		}
+
+		if ( $userBlock ) {
+			if ( !$status ) {
+				return false;
+			}
+
+			$message = $this->blockErrorFormatter->getMessage(
+				$userBlock,
+				$this->actor,
+				$this->uiContext->getLanguage(),
+				$this->request->getIP()
+			);
+
+			$status->setPermission( $action );
+			$status->fatal( $message );
+		}
+
+		// Check and bump the rate limit.
+		if ( $limitRate !== false ) {
+			$isLimited = $this->limit( $action, $limitRate, $status );
+			if ( $isLimited && !$status ) {
+				return false;
+			}
+		}
+
+		return !$status || $status->isOK();
 	}
 
 	/**
 	 * @param string $rigor
 	 * @param string $action
 	 * @param PageIdentity $target
-	 * @param PermissionStatus|null $status
+	 * @param ?PermissionStatus $status
+	 * @param int|false $limitRate False means no check, 0 means check only,
+	 *        a non-zero values means check and increment
 	 *
 	 * @return bool
 	 */
@@ -252,14 +336,26 @@ class UserAuthority implements Authority {
 		string $rigor,
 		string $action,
 		PageIdentity $target,
-		PermissionStatus $status = null
+		?PermissionStatus $status,
+		$limitRate
 	): bool {
+		// Check and bump the rate limit.
+		if ( $limitRate !== false ) {
+			$isLimited = $this->limit( $action, $limitRate, $status );
+			if ( $isLimited && !$status ) {
+				// bail early if we don't have a status object
+				return false;
+			}
+		}
+
 		if ( !( $target instanceof LinkTarget ) ) {
-			// FIXME: PermissionManager should accept PageIdentity!
+			// TODO: PermissionManager should accept PageIdentity!
 			$target = TitleValue::newFromPage( $target );
 		}
 
 		if ( $status ) {
+			$status->setPermission( $action );
+
 			$errors = $this->permissionManager->getPermissionErrors(
 				$action,
 				$this->actor,
@@ -297,14 +393,56 @@ class UserAuthority implements Authority {
 	}
 
 	/**
-	 * Returns any user block affecting the Authority.
+	 * Check whether a rate limit has been exceeded for the given action.
 	 *
-	 * @param int $freshness
+	 * @see RateLimiter::limit
+	 * @internal For use by User::pingLimiter only.
 	 *
-	 * @return ?Block
-	 * @since 1.37
+	 * @param string $action
+	 * @param int $incrBy
+	 * @param PermissionStatus|null $status
 	 *
+	 * @return bool
 	 */
+	public function limit( string $action, int $incrBy, ?PermissionStatus $status ): bool {
+		$isLimited = null;
+
+		if ( $this->useLimitCache && isset( $this->limitCache[ $action ] ) ) {
+			// subtract the increment that was already applied earlier
+			$incrRemaining = $incrBy - $this->limitCache[ $action ][ 0 ];
+
+			// if no increment is left to apply, return the cached outcome
+			if ( $incrRemaining < 1 ) {
+				$isLimited = $this->limitCache[ $action ][ 1 ];
+			}
+		} else {
+			$incrRemaining = $incrBy;
+		}
+
+		if ( $isLimited === null ) {
+			// NOTE: Avoid toRateLimitSubject() if possible, for performance
+			if ( $this->rateLimiter->isLimitable( $action ) ) {
+				$isLimited = $this->rateLimiter->limit(
+					$this->actor->toRateLimitSubject(),
+					$action,
+					$incrRemaining
+				);
+			} else {
+				$isLimited = false;
+			}
+
+			// Cache the outcome, so we don't bump the counter twice during the same request.
+			$this->limitCache[ $action ] = [ $incrBy, $isLimited ];
+		}
+
+		if ( $isLimited && $status ) {
+			$status->setRateLimitExceeded();
+		}
+
+		return $isLimited;
+	}
+
+	/** @inheritDoc */
 	public function getBlock( int $freshness = self::READ_NORMAL ): ?Block {
 		// Cache block info, so we don't have to fetch it again unnecessarily.
 		if ( $this->userBlock === null || $freshness === self::READ_LATEST ) {
@@ -316,6 +454,21 @@ class UserAuthority implements Authority {
 
 		// if we remembered "false", return null
 		return $this->userBlock ?: null;
+	}
+
+	private function getApplicableBlock(
+		string $rigor,
+		string $action,
+		?PageIdentity $target = null
+	): ?Block {
+		// NOTE: We follow the parameter order of internalCan here.
+		//       It doesn't match the one in PermissionManager.
+		return $this->permissionManager->getApplicableBlock(
+			$action,
+			$this->actor,
+			$rigor,
+			$target
+		);
 	}
 
 	public function isRegistered(): bool {

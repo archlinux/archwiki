@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Dutchy45",
+			"HanV",
 			"LongJohn nl",
 			"Mainframe98",
 			"McDutchie",
-			"Romaine",
-			"HanV"
+			"Romaine"
 		]
 	},
 	"rest-prefix-mismatch": "Het gevraagde pad ($1) bevind zich niet in het REST API-rootpad ($2)",

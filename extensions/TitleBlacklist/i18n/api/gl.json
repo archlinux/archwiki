@@ -4,7 +4,6 @@
 			"Elisardojm"
 		]
 	},
-	"apihelp-titleblacklist-description": "Validar un título de páxina, ficheiro ou nome de usuario contra a lista negra de títulos.",
 	"apihelp-titleblacklist-summary": "Validar un título de páxina, ficheiro ou nome de usuario contra a lista negra de títulos.",
 	"apihelp-titleblacklist-param-title": "Cadea de texto a validar contra a lista negra.",
 	"apihelp-titleblacklist-param-action": "Acción a ser chequeada.",

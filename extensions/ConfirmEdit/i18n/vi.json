@@ -10,7 +10,6 @@
 	"captcha-edit": "Để sửa đổi trang này, xin hãy giải phép toán dưới đây và gõ câu trả lời vào ô ([[Special:Captcha/help|thông tin thêm]]):",
 	"captcha-edit-fail": "CAPTCHA bị thiếu hoặc không chính xác.",
 	"captcha-desc": "Chống spam và sự đoán mật khẩu dùng CAPTCHA",
-	"captcha-label": "CAPTCHA",
 	"captcha-id-label": "ID CAPTCHA",
 	"captcha-id-help": "Giá trị này phải được gửi lại không thay đổi.",
 	"captcha-addurl": "Sửa đổi của bạn có chứa các liên kết ra bên ngoài. Để tránh spam tự động trong wiki, xin bạn vui lòng giải phép toán ở dưới và nhập kết quả vào ô để lưu giữ các sửa đổi của bạn ([[Special:Captcha/help|thông tin thêm]]):",

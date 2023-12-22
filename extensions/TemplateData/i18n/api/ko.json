@@ -4,7 +4,6 @@
 			"Ykhwong"
 		]
 	},
-	"apihelp-templatedata-description": "틀데이터 확장 기능에 의해 저장된 데이터를 가져옵니다.",
 	"apihelp-templatedata-summary": "TemplateData 확장 기능에 의해 저장된 데이터를 가져옵니다.",
 	"apihelp-templatedata-example-1": "[[Template:Stub]]과 [[Template:Example]]의 틀데이터를 반환하지만, 틀이 존재하지 않는다든지, 아니면 틀이 있더라도 틀데이터가 없을 경우에도 결과를 반환합니다.",
 	"apihelp-templatedata-example-2": "[[Template:Stub]]과 [[Template:Example]]의 틀데이터를 반환하지만, 틀이 존재하지 않는다든지, 아니면 틀이 있더라도 틀데이터가 없을 경우 결과를 반환하지 않습니다.",

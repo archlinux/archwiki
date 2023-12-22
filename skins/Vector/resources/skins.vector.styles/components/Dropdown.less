@@ -1,52 +1,73 @@
-@import '../../common/variables.less';
-@import '../../common/mixins.less';
-@import 'mediawiki.mixins.less';
-
-/**
- * Targets all dropdown labels.
- * - language variants, Actions menus
- * - more menu, user menu
- * - ULS button in sticky header
- */
-.vector-dropdown > .vector-menu-heading:not( .mw-ui-icon-element ) {
-	display: flex;
-
-	&:after {
-		.mixin-vector-menu-heading-arrow();
-	}
-}
-
 /**
  * Dropdown container
  */
 .vector-dropdown {
-	.vector-dropdown-content,
-	> .vector-menu-content {
+	position: relative;
+
+	/**
+ 	 * Dropdown toggle buttons. Doesn't apply to icon only buttons like the main menu dropdown.
+ 	 * - language variants, Actions menus
+ 	 * - more menu, user menu
+ 	 * - ULS button in sticky header
+ 	 */
+	.vector-dropdown-label:not( .cdx-button--icon-only ) {
+		.mixin-vector-arrowed-dropdown-toggle();
+	}
+
+	/**
+	 * Invisible checkbox covering the dropdown toggle button.
+	 */
+	.vector-dropdown-checkbox {
+		cursor: pointer;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: @z-index-stacking-1;
+		opacity: 0;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+
+		// Hide and show menu content based off checked status.
+		&:checked ~ .vector-dropdown-content {
+			opacity: 1;
+			visibility: visible;
+			height: auto;
+		}
+	}
+
+	.vector-dropdown-content {
+		position: absolute;
+		top: 100%;
+		left: -@border-width-base;
+		opacity: 0;
+		height: 0;
+		visibility: hidden;
+		overflow: hidden;
+		margin: 0;
+		padding: 4px 0;
+		z-index: @z-index-dropdown;
 		background-color: @background-color-base;
 		border: @border-width-base @border-style-base @border-color-base;
 		box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.1 );
 		transition-property: opacity;
 		transition-duration: @transition-duration-base;
-
-		.vector-feature-page-tools-disabled & {
-			// The menu content should not be narrower than the menu button.
-			min-width: 100%;
-		}
-
-		.vector-feature-page-tools-enabled & {
-			padding: 4px 0;
-			// TODO Add consistent min/max values for dropdowns in T316055
-			width: max-content;
-			max-width: 200px;
-		}
+		// TODO Add consistent min/max values for dropdowns in T316055
+		width: max-content;
+		max-width: 200px;
 	}
 }
 
-.vector-feature-page-tools-enabled .vector-pinnable-element,
+.vector-pinnable-element,
 .vector-dropdown-content {
 	.vector-menu-heading {
 		.mixin-vector-dropdown-menu-item();
 		.mixin-vector-menu-heading();
+	}
+
+	.mw-list-item {
+		padding: 0;
 	}
 
 	.mw-list-item a {
@@ -57,7 +78,7 @@
 
 	> *:not( :last-child ) {
 		// Apply bottom border to every children of dropdown contents and pinnable elements except the last
-		border-bottom: @border-width-base @border-style-base @colorGray14;
+		border-bottom: @border-width-base @border-style-base #eaecf0;
 	}
 }
 
@@ -65,6 +86,8 @@
  * Dropdown menu items.
  */
 .vector-dropdown .mw-list-item {
+	padding: 0;
+
 	a {
 		.mixin-vector-dropdown-menu-item();
 
@@ -72,9 +95,11 @@
 		&:not( .mw-selflink ) {
 			color: @color-link;
 		}
+	}
 
-		.vector-feature-page-tools-disabled & {
-			.mixin-vector-dropdown-menu-item-deprecated();
-		}
+	.selected a,
+	.selected a:visited {
+		color: @color-link-selected;
+		text-decoration: none;
 	}
 }

@@ -7,6 +7,7 @@
 
 /* stylelint-disable-next-line selector-class-pattern */
 .wikiEditor-ui-toolbar .ve-init-mw-editSwitch {
+	/* stylelint-disable-next-line declaration-property-unit-disallowed-list */
 	font-size: 12.8px;
 }
 

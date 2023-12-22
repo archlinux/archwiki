@@ -22,6 +22,7 @@ namespace MediaWiki\SyntaxHighlight;
 
 use MediaWiki\MediaWikiServices;
 use Shellbox\Command\BoxedCommand;
+use Shellbox\ShellboxError;
 
 /**
  * Wrapper around the `pygmentize` command
@@ -291,22 +292,33 @@ class Pygmentize {
 		foreach ( $options as $k => $v ) {
 			$optionPairs[] = "{$k}={$v}";
 		}
-		$result = self::boxedCommand()
-			->params(
-				self::getPath(),
-				'-l', $lexer,
-				'-f', 'html',
-				'-O', implode( ',', $optionPairs ),
-				'file'
-			)
-			->inputFileFromString( 'file', $code )
-			->execute();
 		self::recordShellout( 'highlight' );
+
+		try {
+			$result = self::boxedCommand()
+				->params(
+					self::getPath(),
+					'-l', $lexer,
+					'-f', 'html',
+					'-O', implode( ',', $optionPairs ),
+					'file'
+				)
+				->inputFileFromString( 'file', $code )
+				->execute();
+		} catch ( ShellboxError $exception ) {
+			// If we have trouble sending or receiving over the network to
+			// Shellbox, we technically don't know if the command succeed or failed,
+			// but, treat the highlight() command as recoverable by wrapping this in
+			// PygmentsException. This permits the Parser tag to fallback to
+			// plainCodeWrap(), thus avoiding a fatal on pageviews (T292663).
+			throw new PygmentsException( 'ShellboxError', 0, $exception );
+		}
 
 		$output = $result->getStdout();
 		if ( $result->getExitCode() != 0 ) {
 			throw new PygmentsException( $output );
 		}
+
 		return $output;
 	}
 

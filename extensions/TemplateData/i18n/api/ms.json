@@ -4,7 +4,6 @@
 			"Zulfadli51"
 		]
 	},
-	"apihelp-templatedata-description": "Ambil data yang disimpan oleh pelanjutan DataTemplat.",
 	"apihelp-templatedata-summary": "Ambil data yang disimpan oleh pelanjutan DataTemplat.",
 	"apihelp-templatedata-example-1": "Kembalikan DataTemplat untuk [[Template:Stub]] dan [[Template:Example]], dengan hasil jika templat tidak wujud atau wujud namun tiada DataTemplat",
 	"apihelp-templatedata-example-2": "Kembalikan DataTemplat untuk [[Template:Stub]] dan [[Template:Example]], dengan tiada hasil jika templat tidak wujud atau wujud namun tiada DataTemplat",

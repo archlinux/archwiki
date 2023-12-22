@@ -2,15 +2,15 @@
 
 namespace MediaWiki\Extension\Scribunto;
 
-use MWException;
+use Exception;
+use MediaWiki\Title\Title;
 use Status;
-use Title;
 
 /**
  * An exception class which represents an error in the script. This does not
  * normally abort the request, instead it is caught and shown to the user.
  */
-class ScribuntoException extends MWException {
+class ScribuntoException extends Exception {
 	/**
 	 * @var string
 	 */

@@ -7,7 +7,6 @@
 			"Isabelle Belato"
 		]
 	},
-	"apihelp-query+linterrors-description": "Obter uma lista de erros de lint",
 	"apihelp-query+linterrors-summary": "Obter uma lista de erros de lint",
 	"apihelp-query+linterrors-param-categories": "Categorias de erros Lint",
 	"apihelp-query+linterrors-param-limit": "Número de resultados a consultar",
@@ -16,7 +15,6 @@
 	"apihelp-query+linterrors-param-pageid": "Só incluir erros de lint dos identificadores de página especificados",
 	"apihelp-query+linterrors-param-title": "Incluir apenas erros de cotão no título da página especificado",
 	"apihelp-query+linterrors-example-1": "Obter todos os erros de lint da categoria de etiqueta obsoleta",
-	"apihelp-query+linterstats-description": "Obter número de erros de lint em cada categoria",
 	"apihelp-query+linterstats-summary": "Obter número de erros de lint em cada categoria",
 	"apihelp-query+linterstats-example-1": "Obter número de erros de lint em cada categoria"
 }

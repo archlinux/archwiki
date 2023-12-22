@@ -6,7 +6,6 @@
 			"Felipe L. Ewald"
 		]
 	},
-	"apihelp-templatedata-description": "Obtenha dados armazenados pela extensão TemplateData.",
 	"apihelp-templatedata-summary": "Obtenha dados armazenados pela extensão TemplateData.",
 	"apihelp-templatedata-example-1": "Retorna TemplateData para [[Template:Stub]] e [[Template:Example]], com resultados se as predefinições não existirem ou existirem, mas não tiverem TemplateData",
 	"apihelp-templatedata-example-2": "Retorna TemplateData para [[Template:Stub]] e [[Template:Example]], sem resultados se as predefinições não existem ou existirem, mas não tiverem TemplateData",

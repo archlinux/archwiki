@@ -15,7 +15,7 @@ use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
-use Wikimedia\Parsoid\Html2wt\SerializerState;
+use Wikimedia\Parsoid\Html2Wt\SerializerState;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Utils\ContentUtils;
@@ -172,7 +172,7 @@ class ParsoidExtensionAPI {
 	 */
 	public function addInterfaceI18nAttribute(
 		Element $element, string $name, string $key, ?array $params
-	) {
+	): void {
 		WTUtils::addInterfaceI18nAttribute( $element, $name, $key, $params );
 	}
 
@@ -186,7 +186,7 @@ class ParsoidExtensionAPI {
 	 */
 	public function addPageContentI18nAttribute(
 		Element $element, string $name, string $key, array $params
-	) {
+	): void {
 		WTUtils::addPageContentI18nAttribute( $element, $name, $key, $params );
 	}
 
@@ -307,6 +307,16 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
+	 * Are we parsing for a preview?
+	 * FIXME: Right now, we never do; when we do, this needs to be modified to reflect reality
+	 * @unstable
+	 * @return bool
+	 */
+	public function isPreview(): bool {
+		return false;
+	}
+
+	/**
 	 * FIXME: Is this something that can come from the frame?
 	 * If we are parsing in the context of a parent extension tag,
 	 * return the name of that extension tag
@@ -338,7 +348,7 @@ class ParsoidExtensionAPI {
 	/**
 	 * @param string $contentId
 	 */
-	public function clearContentDOM( string $contentId ) {
+	public function clearContentDOM( string $contentId ): void {
 		$this->env->removeDOMFragment( $contentId );
 	}
 
@@ -389,7 +399,7 @@ class ParsoidExtensionAPI {
 			);
 
 			if ( !empty( $opts['clearDSROffsets'] ) ) {
-				$dsrFn = static function ( DOMSourceRange $dsr ) {
+				$dsrFn = static function ( DomSourceRange $dsr ) {
 					return null;
 				};
 			} else {
@@ -397,24 +407,25 @@ class ParsoidExtensionAPI {
 			}
 
 			if ( $dsrFn ) {
-				ContentUtils::shiftDSR( $this->env, $domFragment, $dsrFn );
+				ContentUtils::shiftDSR( $this->env, $domFragment, $dsrFn, $this );
 			}
 		}
 		return $domFragment;
 	}
 
 	/**
-	 * Parse extension tag to DOM. Beyond parsing the contents of the extension tag,
-	 * this wraps the contents in a custom wrapper element (ex: <div>), sanitizes
+	 * Parse extension tag to DOM.
+	 *
+	 * If a wrapper tag is requested, beyond parsing the contents of the extension tag,
+	 * this method wraps the contents in a custom wrapper element (ex: <div>), sanitizes
 	 * the arguments of the extension args and sets some content flags on the wrapper.
 	 *
-	 * @param array $extArgs
-	 * @param string $leadingWS
-	 * @param string $wikitext
+	 * @param array $extArgs Args sanitized and applied to wrapper
+	 * @param string $wikitext Wikitext content of the tag
 	 * @param array $opts
 	 * - srcOffsets
 	 * - frame
-	 * - wrapperTag
+	 * - wrapperTag (skip OR pass null to not add any wrapper tag)
 	 * - parseOpts
 	 *   - extTag
 	 *   - extTagOpts
@@ -422,35 +433,36 @@ class ParsoidExtensionAPI {
 	 * @return DocumentFragment
 	 */
 	public function extTagToDOM(
-		array $extArgs, string $leadingWS, string $wikitext, array $opts
+		array $extArgs, string $wikitext, array $opts
 	): DocumentFragment {
 		$extTagOffsets = $this->extTag->getOffsets();
 		if ( !isset( $opts['srcOffsets'] ) ) {
 			$opts['srcOffsets'] = new SourceRange(
-				$extTagOffsets->innerStart() + strlen( $leadingWS ),
+				$extTagOffsets->innerStart(),
 				$extTagOffsets->innerEnd()
 			);
 		}
 
 		$domFragment = $this->wikitextToDOM( $wikitext, $opts, true /* sol */ );
+		if ( !empty( $opts['wrapperTag'] ) ) {
+			// Create a wrapper and migrate content into the wrapper
+			$wrapper = $domFragment->ownerDocument->createElement(
+				$opts['wrapperTag']
+			);
+			DOMUtils::migrateChildren( $domFragment, $wrapper );
+			$domFragment->appendChild( $wrapper );
 
-		// Create a wrapper and migrate content into the wrapper
-		$wrapper = $domFragment->ownerDocument->createElement(
-			$opts['wrapperTag']
-		);
-		DOMUtils::migrateChildren( $domFragment, $wrapper );
-		$domFragment->appendChild( $wrapper );
+			// Sanitize args and set on the wrapper
+			Sanitizer::applySanitizedArgs( $this->env->getSiteConfig(), $wrapper, $extArgs );
 
-		// Sanitize args and set on the wrapper
-		Sanitizer::applySanitizedArgs( $this->env->getSiteConfig(), $wrapper, $extArgs );
+			// Mark empty content DOMs
+			if ( $wikitext === '' ) {
+				DOMDataUtils::getDataParsoid( $wrapper )->empty = true;
+			}
 
-		// Mark empty content DOMs
-		if ( $wikitext === '' ) {
-			DOMDataUtils::getDataParsoid( $wrapper )->empty = true;
-		}
-
-		if ( !empty( $this->extTag->isSelfClosed() ) ) {
-			DOMDataUtils::getDataParsoid( $wrapper )->selfClose = true;
+			if ( !empty( $this->extTag->isSelfClosed() ) ) {
+				DOMDataUtils::getDataParsoid( $wrapper )->selfClose = true;
+			}
 		}
 
 		return $domFragment;
@@ -477,15 +489,22 @@ class ParsoidExtensionAPI {
 	 * Get temporary data into the DOM node that will be discarded
 	 * when DOM is serialized.
 	 *
-	 * Use the tag name as the key for TempData management
+	 * This should only be used when the ExtensionTag is not available; otherwise access the newly created data
+	 * directly.
 	 *
 	 * @param Element $node
+	 * @param string $key to access TmpData
 	 * @return mixed
+	 * @unstable
 	 */
-	public function getTempNodeData( Element $node ) {
+	public function getTempNodeData( Element $node, string $key ) {
+		if ( $this->extTag ) {
+			throw new \RuntimeException(
+				'ExtensionTag is available. Data should be available directly through the DOM.'
+			);
+		}
 		$dataParsoid = DOMDataUtils::getDataParsoid( $node );
 		$tmpData = $dataParsoid->getTemp();
-		$key = $this->extTag->getName();
 		return $tmpData->getTagData( $key );
 	}
 
@@ -594,7 +613,7 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
-	 * Extensions might be interested in examining their content embedded
+	 * Extensions might be interested in examining (their) content embedded
 	 * in data-mw attributes that don't otherwise show up in the DOM.
 	 *
 	 * Ex: inline media captions that aren't rendered, language variant markup,
@@ -602,63 +621,12 @@ class ParsoidExtensionAPI {
 	 *
 	 * @param Element $elt The node whose data attributes need to be examined
 	 * @param Closure $proc The processor that will process the embedded HTML
+	 *        Signature: (string) -> string
+	 *        This processor will be provided the HTML string as input
+	 *        and is expected to return a possibly modified string.
 	 */
-	public function processHTMLHiddenInDataAttributes( Element $elt, Closure $proc ): void {
-		/* -----------------------------------------------------------------
-		 * FIXME: This works but feels special cased, maybe?
-		 *
-		 * We should also be running DOM cleanup passes on embedded HTML
-		 * in data-mw and other attributes.
-		 *
-		 * See T214994
-		 * ----------------------------------------------------------------- */
-		// Expanded attributes
-		if ( DOMUtils::matchTypeOf( $elt, '/^mw:ExpandedAttrs$/' ) ) {
-			$dmw = DOMDataUtils::getDataMw( $elt );
-			if ( $dmw->attribs ?? null ) {
-				foreach ( $dmw->attribs as &$a ) {
-					foreach ( $a as $kOrV ) {
-						if ( gettype( $kOrV ) !== 'string' && isset( $kOrV->html ) ) {
-							$kOrV->html = $proc( $kOrV->html );
-						}
-					}
-				}
-			}
-		}
-
-		// Language variant markup
-		if ( DOMUtils::matchTypeOf( $elt, '/^mw:LanguageVariant$/' ) ) {
-			$dmwv = DOMDataUtils::getJSONAttribute( $elt, 'data-mw-variant', null );
-			if ( $dmwv ) {
-				if ( isset( $dmwv->disabled ) ) {
-					$dmwv->disabled->t = $proc( $dmwv->disabled->t );
-				}
-				if ( isset( $dmwv->twoway ) ) {
-					foreach ( $dmwv->twoway as $l ) {
-						$l->t = $proc( $l->t );
-					}
-				}
-				if ( isset( $dmwv->oneway ) ) {
-					foreach ( $dmwv->oneway as $l ) {
-						$l->f = $proc( $l->f );
-						$l->t = $proc( $l->t );
-					}
-				}
-				if ( isset( $dmwv->filter ) ) {
-					$dmwv->filter->t = $proc( $dmwv->filter->t );
-				}
-				DOMDataUtils::setJSONAttribute( $elt, 'data-mw-variant', $dmwv );
-			}
-		}
-
-		// Inline media -- look inside the data-mw attribute
-		if ( WTUtils::isInlineMedia( $elt ) ) {
-			$dmw = DOMDataUtils::getDataMw( $elt );
-			$caption = $dmw->caption ?? null;
-			if ( $caption ) {
-				$dmw->caption = $proc( $caption );
-			}
-		}
+	public function processAttributeEmbeddedHTML( Element $elt, Closure $proc ): void {
+		ContentUtils::processAttributeEmbeddedHTML( $this, $elt, $proc );
 	}
 
 	/**
@@ -697,7 +665,7 @@ class ParsoidExtensionAPI {
 	/**
 	 * Parse input string into DOM.
 	 * NOTE: This leaves the DOM in Parsoid-canonical state and is the preferred method
-	 * to convert HTML to DOM that will be passed into Parsoid's code processing code.
+	 * to convert HTML to DOM that will be passed into Parsoid's processing code.
 	 *
 	 * @param string $html
 	 * @param ?Document $doc XXX You probably don't want to be doing this
@@ -802,6 +770,38 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
+	 * Get the original source for an element.
+	 *
+	 * The callable, $checkIfOrigSrcReusable, is used to determine if the $elt
+	 * is unedited and therefore valid to reuse source.  This is assumed to be
+	 * pretty specific to the callsite so no default is provided.
+	 *
+	 * @param Element $elt
+	 * @param bool $inner
+	 * @param callable $checkIfOrigSrcReusable
+	 * @return string|null
+	 */
+	public function getOrigSrc(
+		Element $elt, bool $inner, callable $checkIfOrigSrcReusable
+	): ?string {
+		$state = $this->serializerState;
+		if ( !$state->selserMode ) {
+			return null;
+		}
+		$dsr = DOMDataUtils::getDataParsoid( $elt )->dsr ?? null;
+		if ( !Utils::isValidDSR( $dsr, $inner ) ) {
+			return null;
+		}
+		if ( $checkIfOrigSrcReusable( $elt ) ) {
+			$start = $inner ? $dsr->innerStart() : $dsr->start;
+			$end = $inner ? $dsr->innerEnd() : $dsr->end;
+			return $state->getOrigSrc( $start, $end );
+		} else {
+			return null;
+		}
+	}
+
+	/**
 	 * @param Element $elt
 	 * @param int $context OR-ed bit flags specifying escaping / serialization context
 	 * @return string
@@ -859,7 +859,7 @@ class ParsoidExtensionAPI {
 	 */
 	public function postProcessDOM( Document $doc ): void {
 		$env = $this->env;
-		// From CleanUp::cleanupAndSaveDataParsoid
+		// From CleanUp::saveDataParsoid
 		DOMDataUtils::visitAndStoreDataAttribs( DOMCompat::getBody( $doc ), [
 			'storeInPageBundle' => $env->pageBundle,
 			'env' => $env
@@ -879,15 +879,20 @@ class ParsoidExtensionAPI {
 	 *   Where,
 	 *     [0] is the fully-constructed image option
 	 *     [1] is the full wikitext source offset for it
-	 * @param ?string &$error
-	 * @param ?bool $forceBlock
+	 * @param ?string &$error Error string is set when the return is null.
+	 * @param ?bool $forceBlock Forces the media to be rendered in a figure as
+	 *   opposed to a span.
+	 * @param ?bool $suppressMediaFormats If any media format is present in
+	 *   $imageOpts, it won't be applied and will result in a linting error.
 	 * @return ?Element
 	 */
 	public function renderMedia(
 		string $titleStr, array $imageOpts, ?string &$error = null,
-		?bool $forceBlock = false
+		?bool $forceBlock = false, ?bool $suppressMediaFormats = false
 	): ?Element {
 		$extTagName = $this->extTag->getName();
+		$extTagOpts = [ 'suppressMediaFormats' => $suppressMediaFormats ];
+
 		$fileNs = $this->getSiteConfig()->canonicalNamespaceId( 'file' );
 
 		$title = $this->makeTitle( $titleStr, 0 );
@@ -946,6 +951,7 @@ class ParsoidExtensionAPI {
 			[
 				'parseOpts' => [
 					'extTag' => $extTagName,
+					'extTagOpts' => $extTagOpts,
 					'context' => 'inline',
 				],
 				// Create new frame, because $pieces doesn't literally appear
@@ -955,13 +961,13 @@ class ParsoidExtensionAPI {
 				// for bits which aren't the caption or file, since they
 				// don't refer to actual source wikitext
 				'shiftDSRFn' => static function ( DomSourceRange $dsr ) use ( $shiftOffset ) {
-					$start = $dsr->start === null ? null :
-						   $shiftOffset( $dsr->start );
-					$end = $dsr->end === null ? null :
-						 $shiftOffset( $dsr->end );
+					$start = $dsr->start === null ? null : $shiftOffset( $dsr->start );
+					$end = $dsr->end === null ? null : $shiftOffset( $dsr->end );
 					// If either offset is newly-invalid, remove entire DSR
-					if ( ( $dsr->start !== null && $start === null ) ||
-						 ( $dsr->end !== null && $end === null ) ) {
+					if (
+						( $dsr->start !== null && $start === null ) ||
+						( $dsr->end !== null && $end === null )
+					) {
 						return null;
 					}
 					return new DomSourceRange(

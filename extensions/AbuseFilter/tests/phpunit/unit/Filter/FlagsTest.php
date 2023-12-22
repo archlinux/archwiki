@@ -51,7 +51,7 @@ class FlagsTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array
 	 */
-	public function provideSetters() {
+	public static function provideSetters() {
 		return [
 			'enabled' => [ true, 'setEnabled', 'getEnabled' ],
 			'deleted' => [ false, 'setDeleted', 'getDeleted' ],

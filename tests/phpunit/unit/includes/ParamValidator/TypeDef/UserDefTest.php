@@ -10,13 +10,12 @@ use MediaWiki\User\UserIdentityValue;
 use Wikimedia\Message\DataMessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\SimpleCallbacks;
-use Wikimedia\ParamValidator\TypeDef\TypeDefTestCase;
 use Wikimedia\ParamValidator\ValidationException;
 
 /**
- * @covers MediaWiki\ParamValidator\TypeDef\UserDef
+ * @covers \MediaWiki\ParamValidator\TypeDef\UserDef
  */
-class UserDefTest extends TypeDefTestCase {
+class UserDefTest extends TypeDefUnitTestCase {
 	use DummyServicesTrait;
 
 	protected function getInstance( SimpleCallbacks $callbacks, array $options ) {
@@ -411,7 +410,7 @@ class UserDefTest extends TypeDefTestCase {
 		$this->assertUserIdentity( $res, 0, "Unknown user" );
 	}
 
-	public function provideMissingId() {
+	public static function provideMissingId() {
 		yield "0 no longer matches request ip" => [ 0 ];
 		yield "Id with no user" => [ 6 ];
 	}

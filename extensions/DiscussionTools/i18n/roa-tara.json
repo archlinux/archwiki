@@ -25,5 +25,6 @@
 	"discussiontools-replywidget-mode-visual": "Visuale",
 	"discussiontools-replywidget-placeholder-reply": "Respunne a {{BIDI:$1}}",
 	"discussiontools-replywidget-reply": "Respunne",
+	"minerva-talk-full-page": "Lìgge cu 'na pàgene uicchi",
 	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Respunne]"
 }

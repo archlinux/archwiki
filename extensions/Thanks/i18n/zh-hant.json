@@ -16,7 +16,8 @@
 			"Waihorace",
 			"Winston Sung",
 			"Xiplus",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"94rain"
 		]
 	},
 	"thanks-desc": "提供可讓使用者感謝編輯、評論..等的連結。",
@@ -73,5 +74,5 @@
 	"notification-header-flow-thank": "$1 {{GENDER:$2|已感謝}}{{GENDER:$5|您}}於「<strong>$3</strong>」中的評論。",
 	"notification-compact-header-flow-thank": "$1{{GENDER:$2|已感謝}}{{GENDER:$3|您}}。",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|有$1位|100=有超過99位}}對於{{GENDER:$3|您}}在「<strong>$2</strong>」所作出的評論表示感謝。",
-	"ipb-action-thanks": "正在傳送感謝"
+	"ipb-action-thanks": "傳送感謝"
 }

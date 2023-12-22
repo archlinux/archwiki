@@ -24,6 +24,7 @@
 use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
+use MediaWiki\Utils\UrlUtils;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -32,12 +33,17 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 
+	private UrlUtils $urlUtils;
+
 	/**
 	 * @param ApiQuery $query
 	 * @param string $moduleName
+	 * @param UrlUtils $urlUtils
 	 */
-	public function __construct( ApiQuery $query, $moduleName ) {
+	public function __construct( ApiQuery $query, $moduleName, UrlUtils $urlUtils ) {
 		parent::__construct( $query, $moduleName, 'eu' );
+
+		$this->urlUtils = $urlUtils;
 	}
 
 	public function execute() {
@@ -65,6 +71,8 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 
 		$this->addTables( [ 'externallinks', 'page' ] );
 		$this->addJoinConds( [ 'page' => [ 'JOIN', 'page_id=el_from' ] ] );
+		$continueField = 'el_to_domain_index';
+		$fields = [ 'el_to_domain_index', 'el_to_path' ];
 
 		$miser_ns = [];
 		if ( $this->getConfig()->get( MainConfigNames::MiserMode ) ) {
@@ -72,17 +80,11 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		} else {
 			$this->addWhereFld( 'page_namespace', $params['namespace'] );
 		}
-
-		$orderBy = [];
-
 		if ( $query !== null && $query !== '' ) {
-			$protocol ??= 'http://';
-
 			// Normalize query to match the normalization applied for the externallinks table
-			$query = Parser::normalizeLinkUrl( $protocol . $query );
-
+			$query = Parser::normalizeLinkUrl( $query );
 			$conds = LinkFilter::getQueryConditions( $query, [
-				'protocol' => '',
+				'protocol' => $protocol,
 				'oneWildcard' => true,
 				'db' => $db
 			] );
@@ -90,24 +92,12 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 				$this->dieWithError( 'apierror-badquery' );
 			}
 			$this->addWhere( $conds );
-			if ( !isset( $conds['el_index_60'] ) ) {
-				$orderBy[] = 'el_index_60';
-			}
 		} else {
-			$orderBy[] = 'el_index_60';
-
 			if ( $protocol !== null ) {
-				$this->addWhere( 'el_index_60' . $db->buildLike( "$protocol", $db->anyString() ) );
-			} else {
-				// We're querying all protocols, filter out duplicate protocol-relative links
-				$this->addWhere( $db->makeList( [
-					'el_to NOT' . $db->buildLike( '//', $db->anyString() ),
-					'el_index_60 ' . $db->buildLike( 'http://', $db->anyString() ),
-				], LIST_OR ) );
+				$this->addWhere( $continueField . $db->buildLike( "$protocol", $db->anyString() ) );
 			}
 		}
-
-		$orderBy[] = 'el_id';
+		$orderBy = [ 'el_id' ];
 
 		$this->addOption( 'ORDER BY', $orderBy );
 		$this->addFields( $orderBy ); // Make sure
@@ -123,7 +113,9 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 				'page_namespace',
 				'page_title'
 			] );
-			$this->addFieldsIf( 'el_to', $fld_url );
+			foreach ( $fields as $field ) {
+				$this->addFieldsIf( $field, $fld_url );
+			}
 		} else {
 			$this->addFields( $resultPageSet->getPageTableFields() );
 		}
@@ -174,10 +166,10 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 					ApiQueryBase::addTitleInfo( $vals, $title );
 				}
 				if ( $fld_url ) {
-					$to = $row->el_to;
+					$to = LinkFilter::reverseIndexes( $row->el_to_domain_index ) . $row->el_to_path;
 					// expand protocol-relative urls
 					if ( $params['expandurl'] ) {
-						$to = wfExpandUrl( $to, PROTO_CANONICAL );
+						$to = (string)$this->urlUtils->expand( $to, PROTO_CANONICAL );
 					}
 					$vals['url'] = $to;
 				}
@@ -236,7 +228,11 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 				IntegerDef::PARAM_MAX => ApiBase::LIMIT_BIG1,
 				IntegerDef::PARAM_MAX2 => ApiBase::LIMIT_BIG2
 			],
-			'expandurl' => false,
+			'expandurl' => [
+				ParamValidator::PARAM_TYPE => 'boolean',
+				ParamValidator::PARAM_DEFAULT => false,
+				ParamValidator::PARAM_DEPRECATED => true,
+			],
 		];
 
 		if ( $this->getConfig()->get( MainConfigNames::MiserMode ) ) {

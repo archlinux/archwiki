@@ -1,12 +1,10 @@
+@import 'mediawiki.skin.variables.less';
 @import '../mmv.variables.less';
 @import '../mmv.mixins.less';
 
 .mw-mmv-reuse-dialog {
-	@divider-border-height: 1px;
-
 	// resetting height (to overwrite .mw-mmv-dialog's bigger height), since the
 	// height may have to change for warnings being added
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	height: initial;
 	// set a standard min-height that should be larger than both panels in
 	// normal circumstances (without warnings) so that the height of the dialog
@@ -21,8 +19,8 @@
 		box-shadow: none;
 		padding-bottom: 0; // OOUI override
 		border: 0; // OOUI override
-		border-bottom: @divider-border-height solid @divider-color;
-		border-radius: @border-radius @border-radius 0 0;
+		border-bottom: @border-width-base @border-style-base @divider-color;
+		border-radius: @border-radius-base @border-radius-base 0 0;
 
 		.oo-ui-iconedElement-icon.oo-ui-icon-check,
 		.oo-ui-iconElement-icon.oo-ui-icon-check {
@@ -38,16 +36,16 @@
 			font-size: 1.2em;
 
 			&.oo-ui-optionWidget-highlighted {
-				border-bottom: ( @tab-border-height - @divider-border-height ) solid @highlighted-tab-color;
+				border-bottom: ( @tab-border-height - @border-width-base ) @border-style-base @highlighted-tab-color;
 			}
 
 			&.oo-ui-optionWidget-selected,
 			&.oo-ui-optionWidget-highlighted.oo-ui-optionWidget-selected {
-				border-bottom: @tab-border-height solid @selected-tab-color;
+				border-bottom: @tab-border-height @border-style-base @selected-tab-color;
 			}
 
 			&:first-child {
-				border-radius: @border-radius 0 0 0;
+				border-radius: @border-radius-base 0 0 0;
 			}
 		}
 	}

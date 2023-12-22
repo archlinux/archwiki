@@ -3,13 +3,15 @@
 		"authors": [
 			"AlexandrL714",
 			"Amire80",
-			"Андрей Саг."
+			"Андрей Саг.",
+			"Oxianboal"
 		]
 	},
 	"tooltip-ca-ve-edit": "Пу страницаны тӱзедерге",
-	"visualeditor-ca-createsource": "Кодты пӱдірерге",
-	"visualeditor-ca-editsource": "Код тӱзедерге",
-	"visualeditor-ca-editsource-section": "код тӱзедерге",
+	"visualeditor-ca-createlocaldescriptionsource": "Код чiли орында идерге",
+	"visualeditor-ca-createsource": "Кодты идерге",
+	"visualeditor-ca-editsource": "Кодты тӱзедерге",
+	"visualeditor-ca-editsource-section": "кодты тӱзедерге",
 	"visualeditor-descriptionpagelink": "Project:Визуал редакторы",
 	"visualeditor-dialog-meta-settings-index-force": "Я",
 	"visualeditor-dialog-meta-settings-newsectioneditlink-force": "Я"

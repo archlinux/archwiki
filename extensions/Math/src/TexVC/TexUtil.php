@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\Math\TexVC;
 
-use MWException;
+use InvalidArgumentException;
 
 class TexUtil {
 	private static $instance = null;
@@ -82,7 +82,6 @@ class TexUtil {
 	 * @param mixed $func
 	 * @param mixed $params
 	 * @return false|mixed
-	 * @throws MWException
 	 */
 	public function __call( $func, $params ) {
 		if ( array_key_exists( $func, $this->baseElements ) ) {
@@ -93,7 +92,7 @@ class TexUtil {
 				return false;
 			}
 		} else {
-			throw new MWException( "Function not defined in json " . $func );
+			throw new InvalidArgumentException( "Function not defined in json " . $func );
 
 		}
 	}
@@ -103,8 +102,15 @@ class TexUtil {
 	 * @return array
 	 */
 	private function getJSON() {
-		$file = file_get_contents( __DIR__ . '/texutil.json' );
+		$file = self::getJsonFile();
 		$json = json_decode( $file, true );
 		return $json;
+	}
+
+	/**
+	 * @return false|string
+	 */
+	public static function getJsonFile() {
+		return file_get_contents( __DIR__ . '/texutil.json' );
 	}
 }

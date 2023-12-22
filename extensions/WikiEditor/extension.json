@@ -1,6 +1,6 @@
 {
 	"name": "WikiEditor",
-	"version": "0.5.3",
+	"version": "0.5.4",
 	"author": [
 		"Derk-Jan Hartman",
 		"Trevor Parscal",
@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"MessagesDirs": {
 		"WikiEditor": [
@@ -29,8 +29,7 @@
 		"EditPageGetPreviewContent": "WikiEditorHooks",
 		"ListDefinedTags": "WikiEditorHooks",
 		"ChangeTagsListActive": "WikiEditorHooks",
-		"RecentChange_save": "WikiEditorHooks",
-		"GetBetaFeaturePreferences": "MediaWiki\\Extension\\WikiEditor\\Hooks::onGetBetaFeaturePreferences"
+		"RecentChange_save": "WikiEditorHooks"
 	},
 	"HookHandlers": {
 		"WikiEditorHooks": {
@@ -88,7 +87,6 @@
 			},
 			"templates": {
 				"dialogInsertFile.html": "templates/dialogInsertFile.html",
-				"dialogInsertReference.html": "templates/dialogInsertReference.html",
 				"dialogInsertTable.html": "templates/dialogInsertTable.html",
 				"dialogReplace.html": "templates/dialogReplace.html"
 			},
@@ -125,12 +123,6 @@
 				"wikieditor-toolbar-tool-link-lookslikeinternal-ext",
 				"wikieditor-toolbar-tool-file",
 				"wikieditor-toolbar-tool-file-example",
-				"wikieditor-toolbar-tool-reference",
-				"wikieditor-toolbar-tool-reference-title",
-				"wikieditor-toolbar-tool-reference-cancel",
-				"wikieditor-toolbar-tool-reference-text",
-				"wikieditor-toolbar-tool-reference-insert",
-				"wikieditor-toolbar-tool-reference-example",
 				"wikieditor-toolbar-tool-signature",
 				"wikieditor-toolbar-section-advanced",
 				"wikieditor-toolbar-tool-heading",
@@ -204,66 +196,47 @@
 				"wikieditor-toolbar-help-page-heading",
 				"wikieditor-toolbar-help-page-list",
 				"wikieditor-toolbar-help-page-file",
-				"wikieditor-toolbar-help-page-reference",
 				"wikieditor-toolbar-help-page-discussion",
 				"wikieditor-toolbar-help-content-bold-description",
-				"wikieditor-toolbar-help-content-bold-syntax",
-				"wikieditor-toolbar-help-content-bold-result",
+				"wikieditor-toolbar-help-content-bold-example",
 				"wikieditor-toolbar-help-content-italic-description",
-				"wikieditor-toolbar-help-content-italic-syntax",
-				"wikieditor-toolbar-help-content-italic-result",
+				"wikieditor-toolbar-help-content-italic-example",
 				"wikieditor-toolbar-help-content-bolditalic-description",
-				"wikieditor-toolbar-help-content-bolditalic-syntax",
-				"wikieditor-toolbar-help-content-bolditalic-result",
+				"wikieditor-toolbar-help-content-bolditalic-example",
 				"wikieditor-toolbar-help-content-ilink-description",
-				"wikieditor-toolbar-help-content-ilink-syntax",
-				"wikieditor-toolbar-help-content-ilink-result",
+				"wikieditor-toolbar-help-content-ilink-example",
 				"wikieditor-toolbar-help-content-xlink-description",
-				"wikieditor-toolbar-help-content-xlink-syntax",
-				"wikieditor-toolbar-help-content-xlink-result",
+				"wikieditor-toolbar-help-content-xlink-example1",
+				"wikieditor-toolbar-help-content-xlink-example2",
+				"wikieditor-toolbar-help-content-xlink-example-label",
+				"wikieditor-toolbar-help-content-xlink-example-url",
 				"wikieditor-toolbar-help-content-heading2-description",
-				"wikieditor-toolbar-help-content-heading2-syntax",
-				"wikieditor-toolbar-help-content-heading2-result",
+				"wikieditor-toolbar-help-content-heading2-example",
 				"wikieditor-toolbar-help-content-heading3-description",
-				"wikieditor-toolbar-help-content-heading3-syntax",
-				"wikieditor-toolbar-help-content-heading3-result",
+				"wikieditor-toolbar-help-content-heading3-example",
 				"wikieditor-toolbar-help-content-heading4-description",
-				"wikieditor-toolbar-help-content-heading4-syntax",
-				"wikieditor-toolbar-help-content-heading4-result",
+				"wikieditor-toolbar-help-content-heading4-example",
 				"wikieditor-toolbar-help-content-heading5-description",
-				"wikieditor-toolbar-help-content-heading5-syntax",
-				"wikieditor-toolbar-help-content-heading5-result",
+				"wikieditor-toolbar-help-content-heading5-example",
 				"wikieditor-toolbar-help-content-ulist-description",
-				"wikieditor-toolbar-help-content-ulist-syntax",
-				"wikieditor-toolbar-help-content-ulist-result",
+				"wikieditor-toolbar-help-content-ulist-example",
 				"wikieditor-toolbar-help-content-olist-description",
-				"wikieditor-toolbar-help-content-olist-syntax",
-				"wikieditor-toolbar-help-content-olist-result",
+				"wikieditor-toolbar-help-content-olist-example",
 				"wikieditor-toolbar-help-content-file-description",
 				"wikieditor-toolbar-help-content-file-syntax",
 				"wikieditor-toolbar-help-content-file-caption",
 				"thumbnail-more",
-				"wikieditor-toolbar-help-content-reference-description",
-				"wikieditor-toolbar-help-content-reference-syntax",
-				"wikieditor-toolbar-help-content-reference-result",
-				"wikieditor-toolbar-help-content-named-reference-description",
-				"wikieditor-toolbar-help-content-named-reference-syntax",
-				"wikieditor-toolbar-help-content-named-reference-result",
-				"wikieditor-toolbar-help-content-rereference-description",
-				"wikieditor-toolbar-help-content-rereference-syntax",
-				"wikieditor-toolbar-help-content-rereference-result",
-				"wikieditor-toolbar-help-content-showreferences-description",
-				"wikieditor-toolbar-help-content-showreferences-syntax",
-				"wikieditor-toolbar-help-content-showreferences-result",
 				"wikieditor-toolbar-help-content-signaturetimestamp-description",
 				"wikieditor-toolbar-help-content-signaturetimestamp-syntax",
-				"wikieditor-toolbar-help-content-signaturetimestamp-result",
+				"wikieditor-toolbar-help-content-signaturetimestamp-example",
 				"wikieditor-toolbar-help-content-signature-description",
 				"wikieditor-toolbar-help-content-signature-syntax",
-				"wikieditor-toolbar-help-content-signature-result",
+				"wikieditor-toolbar-help-content-signature-example",
+				"wikieditor-toolbar-help-content-signature-username",
 				"wikieditor-toolbar-help-content-indent-description",
-				"wikieditor-toolbar-help-content-indent-syntax",
-				"wikieditor-toolbar-help-content-indent-result",
+				"wikieditor-toolbar-help-content-indent1",
+				"wikieditor-toolbar-help-content-indent2",
+				"wikieditor-toolbar-help-content-indent3",
 				"wikieditor-toolbar-tool-file-title",
 				"wikieditor-toolbar-file-target",
 				"wikieditor-toolbar-file-caption",
@@ -280,7 +253,7 @@
 				"wikieditor-toolbar-tool-file-upload"
 			],
 			"dependencies": [
-				"jquery.cookie",
+				"mediawiki.cookie",
 				"jquery.textSelection",
 				"jquery.ui",
 				"mediawiki.api",
@@ -315,12 +288,6 @@
 			"images": {
 				"realtimepreview-error": {
 					"file": "realtimepreview/error.svg"
-				},
-				"realtimepreview-onboarding": {
-					"file": {
-						"ltr": "realtimepreview/OnboardingPopup_ltr.svg",
-						"rtl": "realtimepreview/OnboardingPopup_rtl.svg"
-					}
 				}
 			}
 		},
@@ -339,10 +306,7 @@
 				"wikieditor-realtimepreview-reload",
 				"wikieditor-realtimepreview-reload-title",
 				"accesskey-wikieditor-realtimepreview",
-				"wikieditor-realtimepreview-manual",
-				"wikieditor-realtimepreview-onboarding-title",
-				"wikieditor-realtimepreview-onboarding-body",
-				"wikieditor-realtimepreview-onboarding-button"
+				"wikieditor-realtimepreview-manual"
 			],
 			"packageFiles": [
 				"realtimepreview/init.js",
@@ -350,16 +314,14 @@
 				"realtimepreview/ResizingDragBar.js",
 				"realtimepreview/TwoPaneLayout.js",
 				"realtimepreview/ErrorLayout.js",
-				"realtimepreview/ManualWidget.js",
-				"realtimepreview/OnboardingPopup.js"
+				"realtimepreview/ManualWidget.js"
 			],
 			"styles": [
 				"realtimepreview/RealtimePreview.less",
 				"realtimepreview/ResizingDragBar.less",
 				"realtimepreview/TwoPaneLayout.less",
 				"realtimepreview/ErrorLayout.less",
-				"realtimepreview/ManualWidget.less",
-				"realtimepreview/OnboardingPopup.less"
+				"realtimepreview/ManualWidget.less"
 			],
 			"skinStyles": {
 				"monobook": [
@@ -384,85 +346,12 @@
 		"usebetatoolbar": true,
 		"wikieditor-realtimepreview": 0
 	},
-	"RawHtmlMessages": [
-		"wikieditor-toolbar-help-heading-description",
-		"wikieditor-toolbar-help-heading-syntax",
-		"wikieditor-toolbar-help-heading-result",
-		"wikieditor-toolbar-help-page-format",
-		"wikieditor-toolbar-help-page-link",
-		"wikieditor-toolbar-help-page-heading",
-		"wikieditor-toolbar-help-page-list",
-		"wikieditor-toolbar-help-page-file",
-		"wikieditor-toolbar-help-page-reference",
-		"wikieditor-toolbar-help-page-discussion",
-		"wikieditor-toolbar-help-content-italic-description",
-		"wikieditor-toolbar-help-content-italic-syntax",
-		"wikieditor-toolbar-help-content-italic-result",
-		"wikieditor-toolbar-help-content-bold-description",
-		"wikieditor-toolbar-help-content-bold-syntax",
-		"wikieditor-toolbar-help-content-bold-result",
-		"wikieditor-toolbar-help-content-bolditalic-description",
-		"wikieditor-toolbar-help-content-bolditalic-syntax",
-		"wikieditor-toolbar-help-content-bolditalic-result",
-		"wikieditor-toolbar-help-content-ilink-description",
-		"wikieditor-toolbar-help-content-ilink-syntax",
-		"wikieditor-toolbar-help-content-ilink-result",
-		"wikieditor-toolbar-help-content-xlink-description",
-		"wikieditor-toolbar-help-content-xlink-syntax",
-		"wikieditor-toolbar-help-content-xlink-result",
-		"wikieditor-toolbar-help-content-heading2-description",
-		"wikieditor-toolbar-help-content-heading2-syntax",
-		"wikieditor-toolbar-help-content-heading2-result",
-		"wikieditor-toolbar-help-content-heading3-description",
-		"wikieditor-toolbar-help-content-heading3-syntax",
-		"wikieditor-toolbar-help-content-heading3-result",
-		"wikieditor-toolbar-help-content-heading4-description",
-		"wikieditor-toolbar-help-content-heading4-syntax",
-		"wikieditor-toolbar-help-content-heading4-result",
-		"wikieditor-toolbar-help-content-heading5-description",
-		"wikieditor-toolbar-help-content-heading5-syntax",
-		"wikieditor-toolbar-help-content-heading5-result",
-		"wikieditor-toolbar-help-content-ulist-description",
-		"wikieditor-toolbar-help-content-ulist-syntax",
-		"wikieditor-toolbar-help-content-ulist-result",
-		"wikieditor-toolbar-help-content-olist-description",
-		"wikieditor-toolbar-help-content-olist-syntax",
-		"wikieditor-toolbar-help-content-olist-result",
-		"wikieditor-toolbar-help-content-file-description",
-		"wikieditor-toolbar-help-content-file-syntax",
-		"wikieditor-toolbar-help-content-file-caption",
-		"wikieditor-toolbar-help-content-reference-description",
-		"wikieditor-toolbar-help-content-reference-syntax",
-		"wikieditor-toolbar-help-content-reference-result",
-		"wikieditor-toolbar-help-content-named-reference-description",
-		"wikieditor-toolbar-help-content-named-reference-syntax",
-		"wikieditor-toolbar-help-content-named-reference-result",
-		"wikieditor-toolbar-help-content-rereference-description",
-		"wikieditor-toolbar-help-content-rereference-syntax",
-		"wikieditor-toolbar-help-content-rereference-result",
-		"wikieditor-toolbar-help-content-showreferences-description",
-		"wikieditor-toolbar-help-content-showreferences-syntax",
-		"wikieditor-toolbar-help-content-showreferences-result",
-		"wikieditor-toolbar-help-content-signaturetimestamp-description",
-		"wikieditor-toolbar-help-content-signaturetimestamp-syntax",
-		"wikieditor-toolbar-help-content-signaturetimestamp-result",
-		"wikieditor-toolbar-help-content-signature-description",
-		"wikieditor-toolbar-help-content-signature-syntax",
-		"wikieditor-toolbar-help-content-signature-result",
-		"wikieditor-toolbar-help-content-indent-description",
-		"wikieditor-toolbar-help-content-indent-syntax",
-		"wikieditor-toolbar-help-content-indent-result"
-	],
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\WikiEditor\\": "includes/"
 	},
 	"config": {
 		"WikiEditorRealtimePreview": {
-			"description": "Whether to enable the Realtime Preview feature. If true, the feature might still be limited to a beta feature depending on WikiEditorRealtimePreviewBeta and general beta feature availability. If false, the feature is not available in any form.",
-			"value": false
-		},
-		"WikiEditorRealtimePreviewBeta": {
-			"description": "Offer Realtime Preview as a Beta Feature (assuming the BetaFeatures extension is installed). If false, WikiEditorRealtimePreview directly controls whether the feature is enabled or not.",
+			"description": "Whether to enable the Realtime Preview feature.",
 			"value": true
 		},
 		"WikiEditorRealtimePreviewDebounce": {

@@ -6,11 +6,11 @@ use FormSpecialPage;
 use Html;
 use HTMLForm;
 use MediaWiki\Revision\RevisionLookup;
+use MediaWiki\Title\Title;
 use Parser;
 use ParserFactory;
 use ParserOptions;
 use SearchEngineFactory;
-use Title;
 
 class SpecialCiteThisPage extends FormSpecialPage {
 

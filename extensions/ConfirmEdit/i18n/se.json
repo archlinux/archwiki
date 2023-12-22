@@ -1,24 +1,23 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kimberli Mäkäräinen (WMNO)",
-			"Ante75"
+			"Ante75",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
-	"captcha-edit": "Jus áiggut rievdadit dán siiddu, čoavdde mat álggos bihttá dás vuollelis ja čále vástádusa ruvttu sisa ([[Special:Captcha/help|more info]]):",
+	"captcha-edit": "Jus áiggut rievdadit dán siiddu, čoavdde mat álggos bihttá dás vuollelis ja čále vástádusa ruvttu sisa ([[Special:Captcha/help|lassedieđut]]):",
 	"captcha-edit-fail": "CAPTCHA lea boastut dahje váilu.",
-	"captcha-desc": "Fállá CAPTCHA vugiid várjalan dihte ruskaboastta ja beassansáni árvidemiid vuostá",
-	"captcha-label": "CAPTCHA",
+	"captcha-desc": "Fállá CAPTCHA vugiid várjalan dihte ruskaliŋkkaid ja beassansáni árvidemiid vuostá",
 	"captcha-help": "CAPTCHA-čoavddus",
 	"captcha-info-help": "CAPTCHA govvádus",
 	"captcha-id-label": "CAPTCHA-gilkor",
 	"captcha-id-help": "Dát árvu berrešii sáddejuvvot ruovttoluotta rievdatkeahttá.",
-	"captcha-addurl": "Du rievdadeapmi sisttisdoallá ođđa olgguldas liŋkkaid.\nVárjalan dihte wiki automáhtalaš ruskaboastta vuostá, bivdit mii du čoavdit bihttá dás vuollelis ja čállit vástádusa ruvttu sisa, vurken dihte du rievdadeami ([[Special:Captcha/help|more info]]):",
-	"captcha-badlogin": "Várjalan dihte dán wiki automáhtalaš beassansáni suoládemiid vuostá, bivdit mii du čoavdit čuovvovaš bihttá dás vuollelis ja čállit vástádusa ruvttu sisa ([[Special:Captcha/help|more info]]):",
-	"captcha-createaccount": "Várjalan dihte dán wiki automáhtalaš dovddaldat ráhkademiid vuostá, bivdit mii du čoavdit čuovvovaš bihttá dás vuollelis ja čállit vástádusa ruvttu sisa ([[Special:Captcha/help|more info]]):",
+	"captcha-addurl": "Du rievdadeapmi sisttisdoallá ođđa liŋkkaid eará siidduide.\nVárjalan dihte wiki automateriserejuvvon ruskarievdadusaid vuostá, bivdit mii du čoavdit bihttá dás vuollelis ja čállit vástádusa ruvttu sisa, vurken dihte du rievdadeami ([[Special:Captcha/help|lassedieđut]]):",
+	"captcha-badlogin": "Várjalan dihte dán wiki automáhtalaš beassansáni suoládemiid vuostá, bivdit mii du čoavdit čuovvovaš bihttá dás vuollelis ja čállit vástádusa ruvttu sisa ([[Special:Captcha/help|lassedieđut]]):",
+	"captcha-createaccount": "Várjalan dihte dán wiki automáhtalaš dovddaldat ráhkademiid vuostá, bivdit mii du čoavdit čuovvovaš bihttá dás vuollelis ja čállit vástádusa ruvttu sisa ([[Special:Captcha/help|lassedieđut]]):",
 	"captcha-createaccount-fail": "CAPTCHA lea boastut dahje váilu.",
-	"captcha-create": "Jus áiggut ráhkadit dán siiddu, čoavdde mat álggos čuovvovaš bihttá dás vuollelis ja čále vástádusa ruvttu sisa ([[Special:Captcha/help|more info]]):",
-	"captcha-sendemail": "Várjalan dihte dán wiki automáhtalaš ruskaboasttaid vuostá, bivdit mii du čoavdit čuovvovaš bihttá dás vuollelis ja čállit vástádusa ruvttu sisa ([[Special:Captcha/help|more info]]):",
+	"captcha-create": "Jus áiggut ráhkadit dán siiddu, čoavdde mat álggos čuovvovaš bihttá dás vuollelis ja čále vástádusa ruvttu sisa ([[Special:Captcha/help|lassedieđut]]):",
+	"captcha-sendemail": "Várjalan dihte dán wiki automateriserejuvvon ruskarievdadusaid vuostá, bivdit mii du čoavdit čuovvovaš bihttá dás vuollelis ja čállit vástádusa ruvttu sisa ([[Special:Captcha/help|lassedieđut]]):",
 	"captcha-sendemail-fail": "CAPTCHA lea boastut dahje váilu.",
 	"captcha-disabledinapi": "Dát gohččun gáibida ovtta CAPTCHA, nu ahte dat ii sáhte dahkkojuvvot API čađa.",
 	"captcha-error": "CAPTCHA duođašteapmi ii menestuvvan siskkáldas boasttuvuođa dihte: $1",

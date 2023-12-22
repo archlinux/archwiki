@@ -3,11 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Utils;
 
-use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
-use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
+use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 
 /**
  * Class for helping us traverse the DOM.
@@ -15,7 +14,7 @@ use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
  * This class currently does a pre-order depth-first traversal.
  * See {@link DOMPostOrder} for post-order traversal.
  */
-class DOMTraverser implements Wt2HtmlDOMProcessor {
+class DOMTraverser {
 	/**
 	 * List of handlers to call on each node. Each handler is an array with the following fields:
 	 * - action: a callable to call
@@ -26,15 +25,22 @@ class DOMTraverser implements Wt2HtmlDOMProcessor {
 	private $handlers = [];
 
 	/**
+	 * Should the handlers be called on attribute-embedded-HTML strings?
+	 */
+	private bool $applyToAttributeEmbeddedHTML;
+
+	/**
 	 * @var bool
 	 */
 	private $traverseWithTplInfo;
 
 	/**
 	 * @param bool $traverseWithTplInfo
+	 * @param bool $applyToAttributeEmbeddedHTML
 	 */
-	public function __construct( bool $traverseWithTplInfo = false ) {
+	public function __construct( bool $traverseWithTplInfo = false, bool $applyToAttributeEmbeddedHTML = false ) {
 		$this->traverseWithTplInfo = $traverseWithTplInfo;
+		$this->applyToAttributeEmbeddedHTML = $applyToAttributeEmbeddedHTML;
 	}
 
 	/**
@@ -62,15 +68,47 @@ class DOMTraverser implements Wt2HtmlDOMProcessor {
 
 	/**
 	 * @param Node $node
-	 * @param Env $env
+	 * @param ?ParsoidExtensionAPI $extAPI
 	 * @param DTState|null $state
 	 * @return bool|mixed
 	 */
-	private function callHandlers( Node $node, Env $env, ?DTState $state ) {
+	private function callHandlers( Node $node, ?ParsoidExtensionAPI $extAPI, ?DTState $state ) {
 		$name = DOMCompat::nodeName( $node );
+
+		// Process embedded HTML first since the handlers below might
+		// return a different node which aborts processing. By processing
+		// attributes first, we ensure attribute are always processed.
+		if ( $node instanceof Element && $this->applyToAttributeEmbeddedHTML ) {
+			$self = $this;
+			ContentUtils::processAttributeEmbeddedHTML(
+				$extAPI,
+				$node,
+				static function ( string $html ) use ( $self, $extAPI, $state ) {
+					$dom = $extAPI->htmlToDom( $html );
+					// We are processing a nested document (which by definition
+					// is not a top-level document).
+					// FIXME:
+					// 1. This argument replicates existing behavior but is it sound?
+					//    In any case, we should first replicate existing behavior
+					//    and revisit this later.
+					// 2. It is not clear if creating a *new* state is the right thing
+					//    or if reusing *parts* of the old state is the right thing.
+					//    One of the places where this matters is around the use of
+					//    $state->tplInfo. One could probably find arguments for either
+					//    direction. But, "independent parsing" semantics which Parsoid
+					//    is aiming for would lead us to use a new state or even a new
+					//    traversal object here and that feels a little bit "more correct"
+					//    than reusing partial state.
+					$newState = $state ? new DTState( $state->options, false ) : null;
+					$self->traverse( $extAPI, $dom, $newState );
+					return $extAPI->domToHtml( $dom, true, true );
+				}
+			);
+		}
+
 		foreach ( $this->handlers as $handler ) {
 			if ( $handler['nodeName'] === null || $handler['nodeName'] === $name ) {
-				$result = call_user_func( $handler['action'], $node, $env, $state );
+				$result = call_user_func( $handler['action'], $node, $state );
 				if ( $result !== true ) {
 					// Abort processing for this node
 					return $result;
@@ -94,7 +132,7 @@ class DOMTraverser implements Wt2HtmlDOMProcessor {
 	 *   `$workNode->nextSibling` works even when workNode is a last child of its parent.
 	 * - `true`: continues regular processing on current node.
 	 *
-	 * @param Env $env
+	 * @param ?ParsoidExtensionAPI $extAPI
 	 * @param Node $workNode The starting node for the traversal.
 	 *   The traversal could go beyond the subtree rooted at $workNode if
 	 *   the handlers called during traversal return an arbitrary node elsewhere
@@ -103,19 +141,19 @@ class DOMTraverser implements Wt2HtmlDOMProcessor {
 	 *   there is nothing in the traversal code to prevent that.
 	 * @param DTState|null $state
 	 */
-	public function traverse( Env $env, Node $workNode, ?DTState $state = null ) {
-		$this->traverseInternal( true, $env, $workNode, $state );
+	public function traverse( ?ParsoidExtensionAPI $extAPI, Node $workNode, ?DTState $state = null ): void {
+		$this->traverseInternal( true, $extAPI, $workNode, $state );
 	}
 
 	/**
 	 * @param bool $isRootNode
-	 * @param Env $env
+	 * @param ?ParsoidExtensionAPI $extAPI
 	 * @param Node $workNode
 	 * @param DTState|null $state
 	 */
 	private function traverseInternal(
-		bool $isRootNode, Env $env, Node $workNode, ?DTState $state
-	) {
+		bool $isRootNode, ?ParsoidExtensionAPI $extAPI, Node $workNode, ?DTState $state
+	): void {
 		while ( $workNode !== null ) {
 			if ( $this->traverseWithTplInfo && $workNode instanceof Element ) {
 				// Identify the first template/extension node.
@@ -148,7 +186,7 @@ class DOMTraverser implements Wt2HtmlDOMProcessor {
 			if ( $workNode instanceof DocumentFragment ) {
 				$possibleNext = true;
 			} else {
-				$possibleNext = $this->callHandlers( $workNode, $env, $state );
+				$possibleNext = $this->callHandlers( $workNode, $extAPI, $state );
 			}
 
 			// We may have walked passed the last about sibling or want to
@@ -163,7 +201,7 @@ class DOMTraverser implements Wt2HtmlDOMProcessor {
 				// The 'continue processing' case
 				if ( $workNode->hasChildNodes() ) {
 					$this->traverseInternal(
-						false, $env, $workNode->firstChild, $state
+						false, $extAPI, $workNode->firstChild, $state
 					);
 				}
 				if ( $isRootNode ) {
@@ -187,15 +225,5 @@ class DOMTraverser implements Wt2HtmlDOMProcessor {
 
 			$workNode = $possibleNext;
 		}
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function run(
-		Env $env, Node $workNode, array $options = [], bool $atTopLevel = false
-	): void {
-		$state = new DTState( $options, $atTopLevel );
-		$this->traverse( $env, $workNode, $state );
 	}
 }

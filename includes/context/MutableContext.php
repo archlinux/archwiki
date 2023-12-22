@@ -18,8 +18,12 @@
  * @file
  */
 
+use MediaWiki\Config\Config;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 /**
  * Request-dependent objects containers.

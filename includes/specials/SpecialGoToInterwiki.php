@@ -21,6 +21,9 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\Title\Title;
 
 /**
@@ -103,3 +106,8 @@ class SpecialGoToInterwiki extends UnlistedSpecialPage {
 		return 'redirects';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialGoToInterwiki::class, 'SpecialGoToInterwiki' );

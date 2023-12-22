@@ -6,7 +6,6 @@
 			"Woytecr"
 		]
 	},
-	"apihelp-titleblacklist-description": "Sprawdź tytuł strony, pliku lub nazwy użytkownika pod kątem obecności na czarnej liście tytułów.",
 	"apihelp-titleblacklist-summary": "Sprawdź tytuł artykułu, pliku lub nazwy użytkownika pod kątem obecności na czarnej liście tytułów.",
 	"apihelp-titleblacklist-param-title": "Ciąg znaków, który sprawdzić pod kątem obecności na czarnej liście tytułów.",
 	"apihelp-titleblacklist-param-action": "Akcja do sprawdzenia.",

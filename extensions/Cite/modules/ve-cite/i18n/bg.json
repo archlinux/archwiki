@@ -52,7 +52,7 @@
 	"cite-ve-referenceslist-isempty-default": "Няма източници на тази страница, които могат да бъдат включени в този списък.",
 	"cite-ve-referenceslist-missingref": "Този източник е дефиниран в шаблон или друг генериран блок и в момента може да бъде променен само в режим на редактиране на кода.",
 	"cite-ve-referenceslist-missingref-in-list": "Този източник е дефиниран в шаблон или друг генериран блок и в момента може да бъде предварително прегледан само в режим на редактиране на кода.",
-	"cite-ve-referenceslist-missingreflist": "Този списък с източници е генериран от шаблон и може да бъде променен само в режим на редактиране на кода.",
+	"cite-ve-referenceslist-missingreflist": "Този списък с източници е генериран от шаблон.",
 	"cite-ve-toolbar-group-label": "Цитиране",
 	"cite-ve-othergroup-item": "$1 източник",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "Източници",

@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon;
 
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaError;
 use MediaWiki\Extension\Scribunto\ScribuntoException;
-use Title;
+use MediaWiki\Title\Title;
 
 /**
  * @covers \MediaWiki\Extension\Scribunto\ScribuntoEngineBase
@@ -702,7 +702,7 @@ class LuaCommonTest extends LuaEngineTestBase {
 		$this->assertEquals( '1 2', $text, "Volatile wikitext was not cached" );
 	}
 
-	public function provideVolatileCaching() {
+	public static function provideVolatileCaching() {
 		return [
 			[ 'preprocess' ],
 			[ 'extensionTag' ],

@@ -45,17 +45,10 @@ class ApiQueryContributors extends ApiQueryBase {
 	 */
 	private const MAX_PAGES = 100;
 
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var ActorMigration */
-	private $actorMigration;
-
-	/** @var UserGroupManager */
-	private $userGroupManager;
-
-	/** @var GroupPermissionsLookup */
-	private $groupPermissionsLookup;
+	private RevisionStore $revisionStore;
+	private ActorMigration $actorMigration;
+	private UserGroupManager $userGroupManager;
+	private GroupPermissionsLookup $groupPermissionsLookup;
 
 	/**
 	 * @param ApiQuery $query
@@ -126,7 +119,7 @@ class ApiQueryContributors extends ApiQueryBase {
 		] );
 		$this->addWhereFld( $pageField, $pages );
 		$this->addWhere( $this->actorMigration->isAnon( $revQuery['fields']['rev_user'] ) );
-		$this->addWhere( $db->bitAnd( 'rev_deleted', RevisionRecord::DELETED_USER ) . ' = 0' );
+		$this->addWhere( [ $db->bitAnd( 'rev_deleted', RevisionRecord::DELETED_USER ) => 0 ] );
 		$this->addOption( 'GROUP BY', $pageField );
 		$res = $this->select( __METHOD__ );
 		foreach ( $res as $row ) {
@@ -158,7 +151,7 @@ class ApiQueryContributors extends ApiQueryBase {
 		] );
 		$this->addWhereFld( $pageField, $pages );
 		$this->addWhere( $this->actorMigration->isNotAnon( $revQuery['fields']['rev_user'] ) );
-		$this->addWhere( $db->bitAnd( 'rev_deleted', RevisionRecord::DELETED_USER ) . ' = 0' );
+		$this->addWhere( [ $db->bitAnd( 'rev_deleted', RevisionRecord::DELETED_USER ) => 0 ] );
 		$this->addOption( 'GROUP BY', [ $pageField, $idField ] );
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
 
@@ -216,7 +209,7 @@ class ApiQueryContributors extends ApiQueryBase {
 			] ] );
 			// @phan-suppress-next-next-line PhanTypeMismatchArgumentNullable,PhanPossiblyUndeclaredVariable
 			// excludeGroups declared when limitGroups set
-			$this->addWhereIf( 'ug_user IS NULL', $excludeGroups );
+			$this->addWhereIf( [ 'ug_user' => null ], $excludeGroups );
 		}
 
 		if ( $params['continue'] !== null ) {

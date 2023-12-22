@@ -5,7 +5,6 @@
 			"Wladek92"
 		]
 	},
-	"apihelp-scribunto-console-description": "Module interne pour répondre aux requêtes XHR à partir de la console Scribunto.",
 	"apihelp-scribunto-console-summary": "Module interne pour répondre aux requêtes XHR à partir de la console Scribunto.",
 	"apihelp-scribunto-console-param-title": "Le titre du module à tester.",
 	"apihelp-scribunto-console-param-content": "Le nouveau contenu du module.",

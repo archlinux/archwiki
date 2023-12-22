@@ -15,6 +15,8 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { License } = require( 'mmv' );
+
 ( function () {
 
 	QUnit.module( 'mmv.model.License', QUnit.newMwEnvironment() );
@@ -26,31 +28,31 @@
 			longName = 'Creative Commons Attribution--Share-Alike 3.0',
 			url = 'http://creativecommons.org/licenses/by-sa/3.0/';
 
-		license = new mw.mmv.model.License( shortName );
-		assert.true( license instanceof mw.mmv.model.License, 'License created successfully' );
+		license = new License( shortName );
+		assert.true( license instanceof License, 'License created successfully' );
 		assert.strictEqual( license.shortName, shortName, 'License has correct short name' );
 		assert.strictEqual( license.internalName, undefined, 'License has no internal name' );
 		assert.strictEqual( license.longName, undefined, 'License has no long name' );
 		assert.strictEqual( license.deedUrl, undefined, 'License has no deed URL' );
 
-		license = new mw.mmv.model.License( shortName, internalName, longName, url );
-		assert.true( license instanceof mw.mmv.model.License, 'License created successfully' );
+		license = new License( shortName, internalName, longName, url );
+		assert.true( license instanceof License, 'License created successfully' );
 		assert.strictEqual( license.shortName, shortName, 'License has correct short name' );
 		assert.strictEqual( license.internalName, internalName, 'License has correct internal name' );
 		assert.strictEqual( license.longName, longName, 'License has correct long name' );
 		assert.strictEqual( license.deedUrl, url, 'License has correct deed URL' );
 
 		assert.throws( function () {
-			license = new mw.mmv.model.License();
+			license = new License();
 		}, 'License cannot be created without a short name' );
 	} );
 
 	QUnit.test( 'getShortName()', function ( assert ) {
 		var existingMessageKey = 'Internal name that does exist',
 			nonExistingMessageKey = 'Internal name that does not exist',
-			license1 = new mw.mmv.model.License( 'Shortname' ),
-			license2 = new mw.mmv.model.License( 'Shortname', nonExistingMessageKey ),
-			license3 = new mw.mmv.model.License( 'Shortname', existingMessageKey ),
+			license1 = new License( 'Shortname' ),
+			license2 = new License( 'Shortname', nonExistingMessageKey ),
+			license3 = new License( 'Shortname', existingMessageKey ),
 			oldMwMessage = mw.message,
 			oldMwMessagesExists = mw.messages.exists;
 
@@ -77,10 +79,10 @@
 
 	QUnit.test( 'getShortLink()', function ( assert ) {
 		var $html,
-			license1 = new mw.mmv.model.License( 'lorem ipsum' ),
-			license2 = new mw.mmv.model.License( 'lorem ipsum', 'lipsum' ),
-			license3 = new mw.mmv.model.License( 'lorem ipsum', 'lipsum', 'Lorem ipsum dolor sit amet' ),
-			license4 = new mw.mmv.model.License( 'lorem ipsum', 'lipsum', 'Lorem ipsum dolor sit amet',
+			license1 = new License( 'lorem ipsum' ),
+			license2 = new License( 'lorem ipsum', 'lipsum' ),
+			license3 = new License( 'lorem ipsum', 'lipsum', 'Lorem ipsum dolor sit amet' ),
+			license4 = new License( 'lorem ipsum', 'lipsum', 'Lorem ipsum dolor sit amet',
 				'http://www.lipsum.com/' );
 
 		assert.strictEqual( license1.getShortLink(), 'lorem ipsum',
@@ -102,44 +104,44 @@
 	QUnit.test( 'isCc()', function ( assert ) {
 		var license;
 
-		license = new mw.mmv.model.License( 'CC-BY-SA-2.0', 'cc-by-sa-2.0',
+		license = new License( 'CC-BY-SA-2.0', 'cc-by-sa-2.0',
 			'Creative Commons Attribution - ShareAlike 2.0',
 			'http://creativecommons.org/licenses/by-sa/2.0/' );
 		assert.strictEqual( license.isCc(), true, 'CC license recognized' );
 
-		license = new mw.mmv.model.License( 'Public Domain', 'pd',
+		license = new License( 'Public Domain', 'pd',
 			'Public Domain for lack of originality' );
 		assert.strictEqual( license.isCc(), false, 'Non-CC license not recognized' );
 
-		license = new mw.mmv.model.License( 'MIT' );
+		license = new License( 'MIT' );
 		assert.strictEqual( license.isCc(), false, 'Non-CC license with no internal name not recognized' );
 	} );
 
 	QUnit.test( 'isPd()', function ( assert ) {
 		var license;
 
-		license = new mw.mmv.model.License( 'Public Domain', 'pd',
+		license = new License( 'Public Domain', 'pd',
 			'Public Domain for lack of originality' );
 		assert.strictEqual( license.isPd(), true, 'PD license recognized' );
 
-		license = new mw.mmv.model.License( 'CC-BY-SA-2.0', 'cc-by-sa-2.0',
+		license = new License( 'CC-BY-SA-2.0', 'cc-by-sa-2.0',
 			'Creative Commons Attribution - ShareAlike 2.0',
 			'http://creativecommons.org/licenses/by-sa/2.0/' );
 		assert.strictEqual( license.isPd(), false, 'Non-PD license not recognized' );
 
-		license = new mw.mmv.model.License( 'MIT' );
+		license = new License( 'MIT' );
 		assert.strictEqual( license.isPd(), false, 'Non-PD license with no internal name not recognized' );
 	} );
 
 	QUnit.test( 'isFree()', function ( assert ) {
 		var license;
 
-		license = new mw.mmv.model.License( 'CC-BY-SA-2.0', 'cc-by-sa-2.0',
+		license = new License( 'CC-BY-SA-2.0', 'cc-by-sa-2.0',
 			'Creative Commons Attribution - ShareAlike 2.0',
 			'http://creativecommons.org/licenses/by-sa/2.0/' );
 		assert.strictEqual( license.isFree(), true, 'Licenses default to free' );
 
-		license = new mw.mmv.model.License( 'Fair use', 'fairuse',
+		license = new License( 'Fair use', 'fairuse',
 			'Fair use', undefined, undefined, true );
 		assert.strictEqual( license.isFree(), false, 'Non-free flag handled correctly' );
 	} );
@@ -147,12 +149,12 @@
 	QUnit.test( 'needsAttribution()', function ( assert ) {
 		var license;
 
-		license = new mw.mmv.model.License( 'CC-BY-SA-2.0', 'cc-by-sa-2.0',
+		license = new License( 'CC-BY-SA-2.0', 'cc-by-sa-2.0',
 			'Creative Commons Attribution - ShareAlike 2.0',
 			'http://creativecommons.org/licenses/by-sa/2.0/' );
 		assert.strictEqual( license.needsAttribution(), true, 'Licenses assumed to need attribution by default' );
 
-		license = new mw.mmv.model.License( 'Public Domain', 'pd',
+		license = new License( 'Public Domain', 'pd',
 			'Public Domain for lack of originality', false );
 		assert.strictEqual( license.needsAttribution(), false, 'Attribution required flag handled correctly' );
 	} );

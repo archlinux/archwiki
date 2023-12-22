@@ -1,8 +1,10 @@
 {
 	"exclude": [
 		"docs",
+		"jest.setup.js",
 		"vendor",
-		"coverage"
+		"coverage",
+		"tests/jest"
 	],
 	"compilerOptions": {
 		"resolveJsonModule": true,

@@ -42,7 +42,7 @@ describe( 'Toolbar', function () {
 		assert( await EditPage.helpPopup.isDisplayed() );
 	} );
 
-	it( 'should open special characters menu', async function () {
+	it.skip( 'should open special characters menu', async function () {
 		await EditPage.specialCharacterElement.click();
 		await EditPage.specialCharacterMenu.waitForDisplayed( { timeout: 1000 } );
 

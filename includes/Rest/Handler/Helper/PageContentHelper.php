@@ -18,9 +18,9 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SuppressedDataException;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFormatter;
 use Message;
 use TextContent;
-use TitleFormatter;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use WikitextContent;
@@ -328,23 +328,31 @@ class PageContentHelper {
 	}
 
 	/**
-	 * @throws LocalizedHttpException if the content is not accessible
+	 * @throws LocalizedHttpException if access is not allowed
 	 */
-	public function checkAccess() {
+	public function checkAccessPermission() {
 		$titleText = $this->getTitleText() ?? '';
-
-		if ( !$this->hasContent() ) {
-			throw new LocalizedHttpException(
-				MessageValue::new( 'rest-nonexistent-title' )->plaintextParams( $titleText ),
-				404
-			);
-		}
 
 		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable Validated by hasContent
 		if ( !$this->isAccessible() || !$this->authority->authorizeRead( 'read', $this->getPageIdentity() ) ) {
 			throw new LocalizedHttpException(
 				MessageValue::new( 'rest-permission-denied-title' )->plaintextParams( $titleText ),
 				403
+			);
+		}
+	}
+
+	/**
+	 * @throws LocalizedHttpException if no content is available
+	 */
+	public function checkHasContent() {
+		$titleText = $this->getTitleText() ?? '';
+
+		if ( !$this->hasContent() ) {
+			// needs to check if it's possibly a variant title
+			throw new LocalizedHttpException(
+				MessageValue::new( 'rest-nonexistent-title' )->plaintextParams( $titleText ),
+				404
 			);
 		}
 
@@ -357,7 +365,12 @@ class PageContentHelper {
 		}
 	}
 
-}
+	/**
+	 * @throws LocalizedHttpException if the content is not accessible
+	 */
+	public function checkAccess() {
+		$this->checkAccessPermission();
+		$this->checkHasContent();
+	}
 
-/** @deprecated since 1.40, remove in 1.41 */
-class_alias( PageContentHelper::class, "MediaWiki\\Rest\\Handler\\PageContentHelper" );
+}

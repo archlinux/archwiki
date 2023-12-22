@@ -18,14 +18,8 @@ class HTMLCheckMatrixTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testPlainInstantiation() {
-		try {
-			new HTMLCheckMatrix( [] );
-		} catch ( MWException $e ) {
-			$this->assertInstanceOf( HTMLFormFieldRequiredOptionsException::class, $e );
-			return;
-		}
-
-		$this->fail( 'Expected MWException indicating missing parameters but none was thrown.' );
+		$this->expectException( HTMLFormFieldRequiredOptionsException::class );
+		new HTMLCheckMatrix( [] );
 	}
 
 	public function testInstantiationWithMinimumRequiredParameters() {
@@ -54,7 +48,7 @@ class HTMLCheckMatrixTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $this->validate( $field, $submitted ) );
 	}
 
-	public function provideValidate() {
+	public static function provideValidate() {
 		// $expected, $submitted
 		yield [ false, null ];
 		yield [ false, true ];

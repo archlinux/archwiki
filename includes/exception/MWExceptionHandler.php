@@ -18,9 +18,11 @@
  * @file
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequest;
 use Psr\Log\LogLevel;
 use Wikimedia\NormalizedException\INormalizedException;
 use Wikimedia\Rdbms\DBError;
@@ -103,17 +105,17 @@ class MWExceptionHandler {
 		//   Same as previous case, but more common to bubble to here instead of
 		//   caught locally because they tend to not be safe to recover from.
 		//   (e.g. argument TypeError, division by zero, etc.)
-		set_exception_handler( 'MWExceptionHandler::handleUncaughtException' );
+		set_exception_handler( [ self::class, 'handleUncaughtException' ] );
 
 		// This catches recoverable errors (e.g. PHP Notice, PHP Warning, PHP Error) that do not
 		// interrupt execution in any way. We log these in the background and then continue execution.
-		set_error_handler( 'MWExceptionHandler::handleError' );
+		set_error_handler( [ self::class, 'handleError' ] );
 
 		// This catches fatal errors for which no Throwable is thrown,
 		// including Out-Of-Memory and Timeout fatals.
 		// Reserve 16k of memory so we can report OOM fatals.
 		self::$reservedMemory = str_repeat( ' ', 16384 );
-		register_shutdown_function( 'MWExceptionHandler::handleFatalError' );
+		register_shutdown_function( [ self::class, 'handleFatalError' ] );
 	}
 
 	/**
@@ -509,6 +511,7 @@ TXT;
 	 */
 	public static function getURL() {
 		global $wgRequest;
+
 		if ( !isset( $wgRequest ) || $wgRequest instanceof FauxRequest ) {
 			return false;
 		}
@@ -760,7 +763,7 @@ TXT;
 				$logger->error( $json, [ 'private' => true ] );
 			}
 
-			Hooks::runner()->onLogException( $e, false );
+			( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onLogException( $e, false );
 		}
 	}
 
@@ -805,6 +808,6 @@ TXT;
 			$logger->log( $unfilteredLevel, $json, [ 'private' => true ] );
 		}
 
-		Hooks::runner()->onLogException( $e, $suppressed );
+		( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onLogException( $e, $suppressed );
 	}
 }

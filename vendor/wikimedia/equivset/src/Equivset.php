@@ -29,32 +29,32 @@ use Wikimedia\Equivset\Exception\EquivsetException;
 class Equivset implements EquivsetInterface, IteratorAggregate {
 
 	/**
-	 * @var array
+	 * @var array<string,string>
 	 */
-	protected $data;
+	protected array $data;
 
 	/**
 	 * @var string
 	 */
-	protected $serializedPath;
+	protected string $serializedPath;
 
 	/**
 	 * Equivset
 	 *
-	 * @param array $data Equivalent Set
+	 * @param array<string,string> $data Equivalent Set
 	 * @param string $serializedPath Path of the serialized equivset array.
 	 */
-	public function __construct( array $data = [], $serializedPath = '' ) {
+	public function __construct( array $data = [], string $serializedPath = '' ) {
 		$this->data = $data;
 		$this->serializedPath = $serializedPath ?: __DIR__ . '/../dist/equivset.ser';
 	}
 
 	/**
-	 * Gets the equivset.
+	 * Get the equivset.
 	 *
-	 * @return array An associative array of equivalent characters.
+	 * @return array<string,string> An associative array of equivalent characters.
 	 */
-	public function all() {
+	public function all(): array {
 		if ( !$this->data ) {
 			$this->data = $this->load();
 		}
@@ -66,10 +66,9 @@ class Equivset implements EquivsetInterface, IteratorAggregate {
 	 * {@inheritdoc}
 	 *
 	 * @param string $value The string to normalize against the equivset.
-	 *
 	 * @return string
 	 */
-	public function normalize( $value ) {
+	public function normalize( string $value ): string {
 		$data = $this->all();
 
 		return strtr( $value, $data );
@@ -83,7 +82,7 @@ class Equivset implements EquivsetInterface, IteratorAggregate {
 	 *
 	 * @return bool
 	 */
-	public function isEqual( $str1, $str2 ) {
+	public function isEqual( string $str1, string $str2 ): bool {
 		return $this->normalize( $str1 ) === $this->normalize( $str2 );
 	}
 
@@ -91,10 +90,9 @@ class Equivset implements EquivsetInterface, IteratorAggregate {
 	 * {@inheritdoc}
 	 *
 	 * @param string $key The character that was used.
-	 *
 	 * @return bool If the character has an equivalent.
 	 */
-	public function has( $key ) {
+	public function has( string $key ): bool {
 		$data = $this->all();
 
 		return array_key_exists( $key, $data );
@@ -104,12 +102,10 @@ class Equivset implements EquivsetInterface, IteratorAggregate {
 	 * {@inheritdoc}
 	 *
 	 * @param string $key The character that was used.
-	 *
 	 * @return string The equivalent character.
-	 *
 	 * @throws LogicException If character does not exist.
 	 */
-	public function get( $key ) {
+	public function get( string $key ): string {
 		$data = $this->all();
 
 		if ( !array_key_exists( $key, $data ) ) {
@@ -129,28 +125,29 @@ class Equivset implements EquivsetInterface, IteratorAggregate {
 	}
 
 	/**
-	 * Gets the equivset.
+	 * Get the equivset.
 	 *
-	 * @return array An associative array of equivalent characters.
-	 *
-	 * @throws EquivsetException If the serialized equivset is not loaded.
+	 * @return array<string,string> An associative array of equivalent characters.
+	 * @throws \Throwable If the serialized equivset file is unreadable.
 	 */
-	protected function load() {
-		if ( !file_exists( $this->serializedPath ) ) {
-			throw new EquivsetException( 'Serialized equivset is missing' );
-		}
-
-		if ( !is_readable( $this->serializedPath ) ) {
-			throw new EquivsetException( 'Serialized equivset is unreadable' );
+	protected function load(): array {
+		if ( pathinfo( $this->serializedPath, PATHINFO_EXTENSION ) === 'php' ) {
+			// This will naturally throw if the file does not exist, is not readable,
+			// or can't be parsed.
+			return require $this->serializedPath;
 		}
 
 		// file_get_contents() will not fail at this point since none of the
 		// conditions that can cause a failure can happen at this point.
-		// @see http://php.net/manual/en/function.file-get-contents.php
-		$contents = file_get_contents( $this->serializedPath );
+		// See http://php.net/manual/en/function.file-get-contents.php
+
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		$contents = @file_get_contents( $this->serializedPath );
+		if ( $contents === false ) {
+			throw new EquivsetException( 'Serialized equivset file is unreadable' );
+		}
 
 		$data = unserialize( $contents );
-
 		if ( $data === false ) {
 			throw new EquivsetException( 'Unserializing serialized equivset failed' );
 		}

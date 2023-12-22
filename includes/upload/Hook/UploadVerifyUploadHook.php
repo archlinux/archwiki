@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Hook;
 
+use MediaWiki\User\User;
 use MessageSpecifier;
 use UploadBase;
-use User;
 
 /**
  * This is a hook handler interface, see docs/Hooks.md.
@@ -27,8 +27,8 @@ interface UploadVerifyUploadHook {
 	 *   Note this is not always guaranteed to be set, e.g. in test scenarios.
 	 *   Call MWFileProps::getPropsFromPath() yourself in case you need the information.
 	 * @param string $comment Upload log comment (also used as edit summary)
-	 * @param string $pageText File description page text (only used for new uploads)
-	 * @param array|MessageSpecifier &$error Output: If the file upload should be
+	 * @param string|false $pageText File description page text (only used for new uploads)
+	 * @param array|MessageSpecifier|null &$error Output: If the file upload should be
 	 *   prevented, set this to the reason in the form of [ messagename, param1, param2, ... ]
 	 *   or a MessageSpecifier instance. (You might want to use ApiMessage to
 	 *   provide machine-readable details for the API.)

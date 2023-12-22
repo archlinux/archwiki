@@ -129,7 +129,7 @@ class PagePropsTable extends LinksTable {
 	 * 1 or resp. 0 if it is a bool, and null otherwise.
 	 *
 	 * @note In the future, we may allow the sortkey to be specified explicitly
-	 *       in ParserOutput::setProperty.
+	 *       in ParserOutput::setPageProperty.
 	 *
 	 * @param mixed $value
 	 *
@@ -192,8 +192,7 @@ class PagePropsTable extends LinksTable {
 	 */
 	public function getAssocArray( $setType ) {
 		$props = [];
-		foreach ( $this->getLinkIDs( $setType ) as $linkId ) {
-			[ $name, $value ] = $linkId;
+		foreach ( $this->getLinkIDs( $setType ) as [ $name, $value ] ) {
 			$props[$name] = $value;
 		}
 		return $props;

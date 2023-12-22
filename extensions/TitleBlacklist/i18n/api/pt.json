@@ -4,7 +4,6 @@
 			"Hamilton Abreu"
 		]
 	},
-	"apihelp-titleblacklist-description": "Validar um título de página, nome de ficheiro ou nome de utilizador contra a lista negra.",
 	"apihelp-titleblacklist-summary": "Validar um título de página, nome de ficheiro ou nome de utilizador contra a lista negra.",
 	"apihelp-titleblacklist-param-title": "O texto a validar contra a lista negra.",
 	"apihelp-titleblacklist-param-action": "A operação a verificar.",

@@ -40,20 +40,20 @@ use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Status\Status;
 use MediaWiki\Storage\PageUpdaterFactory;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MWException;
-use NamespaceInfo;
 use RepoGroup;
 use RequestContext;
-use Status;
 use StringUtils;
 use WatchedItemStoreInterface;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
 use WikiPage;
 use WikitextContent;
 
@@ -81,9 +81,9 @@ class MovePage {
 	protected $options;
 
 	/**
-	 * @var ILoadBalancer
+	 * @var IConnectionProvider
 	 */
-	protected $loadBalancer;
+	protected $dbProvider;
 
 	/**
 	 * @var NamespaceInfo
@@ -162,7 +162,7 @@ class MovePage {
 	 * @param Title $oldTitle
 	 * @param Title $newTitle
 	 * @param ServiceOptions $options
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param NamespaceInfo $nsInfo
 	 * @param WatchedItemStoreInterface $watchedItems
 	 * @param RepoGroup $repoGroup
@@ -182,7 +182,7 @@ class MovePage {
 		Title $oldTitle,
 		Title $newTitle,
 		ServiceOptions $options,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		NamespaceInfo $nsInfo,
 		WatchedItemStoreInterface $watchedItems,
 		RepoGroup $repoGroup,
@@ -202,7 +202,7 @@ class MovePage {
 		$this->newTitle = $newTitle;
 
 		$this->options = $options;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->nsInfo = $nsInfo;
 		$this->watchedItems = $watchedItems;
 		$this->repoGroup = $repoGroup;
@@ -651,9 +651,9 @@ class MovePage {
 					StringUtils::escapeRegexReplacement( $this->newTitle->getDBkey() ), # T23234
 					$oldSubpage->getDBkey() );
 			if ( $oldSubpage->isTalkPage() ) {
-				$newNs = $this->newTitle->getTalkPage()->getNamespace();
+				$newNs = $this->nsInfo->getTalkPage( $this->newTitle )->getNamespace();
 			} else {
-				$newNs = $this->newTitle->getSubjectPage()->getNamespace();
+				$newNs = $this->nsInfo->getSubjectPage( $this->newTitle )->getNamespace();
 			}
 			// T16385: we need makeTitleSafe because the new page names may be longer than 255
 			// characters.
@@ -691,7 +691,7 @@ class MovePage {
 			return $status;
 		}
 
-		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+		$dbw = $this->dbProvider->getPrimaryDatabase();
 		$dbw->startAtomic( __METHOD__, IDatabase::ATOMIC_CANCELABLE );
 
 		$this->hookRunner->onTitleMoveStarting( $this->oldTitle, $this->newTitle, $userObj );
@@ -733,7 +733,11 @@ class MovePage {
 					'pr_expiry' => $row->pr_expiry
 				];
 			}
-			$dbw->insert( 'page_restrictions', $rowsInsert, __METHOD__, [ 'IGNORE' ] );
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'page_restrictions' )
+				->ignore()
+				->rows( $rowsInsert )
+				->caller( __METHOD__ )->execute();
 
 			// Build comment for log
 			$comment = wfMessage(
@@ -746,12 +750,11 @@ class MovePage {
 			}
 
 			// reread inserted pr_ids for log relation
-			$logRelationsValues = $dbw->selectFieldValues(
-				'page_restrictions',
-				'pr_id',
-				[ 'pr_page' => $redirid ],
-				__METHOD__
-			);
+			$logRelationsValues = $dbw->newSelectQueryBuilder()
+				->select( 'pr_id' )
+				->from( 'page_restrictions' )
+				->where( [ 'pr_page' => $redirid ] )
+				->caller( __METHOD__ )->fetchFieldValues();
 
 			// Update the protection log
 			$logEntry = new ManualLogEntry( 'protect', 'move_prot' );
@@ -938,7 +941,7 @@ class MovePage {
 			$comment .= wfMessage( 'colon-separator' )->inContentLanguage()->text() . $reason;
 		}
 
-		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+		$dbw = $this->dbProvider->getPrimaryDatabase();
 
 		$oldpage = $this->wikiPageFactory->newFromTitle( $this->oldTitle );
 		$oldcountable = $oldpage->isCountable();
@@ -946,14 +949,14 @@ class MovePage {
 		$newpage = $this->wikiPageFactory->newFromTitle( $nt );
 
 		# Change the name of the target page:
-		$dbw->update( 'page',
-			/* SET */ [
+		$dbw->newUpdateQueryBuilder()
+			->update( 'page' )
+			->set( [
 				'page_namespace' => $nt->getNamespace(),
 				'page_title' => $nt->getDBkey(),
-			],
-			/* WHERE */ [ 'page_id' => $oldid ],
-			__METHOD__
-		);
+			] )
+			->where( [ 'page_id' => $oldid ] )
+			->caller( __METHOD__ )->execute();
 
 		// Reset $nt before using it to create the null revision (T248789).
 		// But not $this->oldTitle yet, see below (T47348).
@@ -1044,4 +1047,7 @@ class MovePage {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( MovePage::class, 'MovePage' );

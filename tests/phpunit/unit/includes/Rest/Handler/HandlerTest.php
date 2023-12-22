@@ -13,6 +13,7 @@ use MediaWiki\Rest\ResponseInterface;
 use MediaWiki\Rest\Router;
 use MediaWiki\Rest\Validator\BodyValidator;
 use MediaWiki\Rest\Validator\Validator;
+use MediaWiki\Session\Session;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\Message\MessageValue;
@@ -51,7 +52,7 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 		$this->assertInstanceOf( Router::class, $handler->getRouter() );
 	}
 
-	public function provideGetRouteUrl() {
+	public static function provideGetRouteUrl() {
 		yield 'empty' => [
 			'/test',
 			[],
@@ -135,7 +136,7 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 		$this->assertInstanceOf( ConditionalHeaderUtil::class, $handler->getConditionalHeaderUtil() );
 	}
 
-	public function provideCheckPreconditions() {
+	public static function provideCheckPreconditions() {
 		yield 'no status' => [ null ];
 		yield 'a status' => [ 444 ];
 	}
@@ -177,7 +178,7 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( 'foo', $response->getHeaderLine( 'Testing' ) );
 	}
 
-	public function provideValidate() {
+	public static function provideValidate() {
 		yield 'empty' => [ [], new RequestData(), [] ];
 
 		yield 'parameter' => [
@@ -397,20 +398,22 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( '', $response->getHeaderLine( 'Last-Modified' ) );
 	}
 
-	public function provideCacheControl() {
+	public static function provideCacheControl() {
 		yield 'nothing' => [
 			'GET',
 			[],
+			false, // no persistent session
 			''
 		];
 
-		yield 'cookie' => [
+		yield 'set-cookie in response' => [
 			'GET',
 			[
 				'Set-Cookie' => 'foo=bar',
 				'Cache-Control' => 'max-age=123'
 			],
-			'private,no-cache,s-maxage=0'
+			false, // no persistent session
+			'private,must-revalidate,s-maxage=0'
 		];
 
 		yield 'POST with cache control' => [
@@ -418,28 +421,46 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 			[
 				'Cache-Control' => 'max-age=123'
 			],
+			false, // no persistent session
 			'max-age=123'
 		];
 
 		yield 'POST use default cache control' => [
 			'POST',
 			[],
+			false, // no persistent session
 			'private,no-cache,s-maxage=0'
+		];
+
+		yield 'persistent session' => [
+			'GET',
+			[ 'Cache-Control' => 'max-age=123' ],
+			true, // persistent session
+			'private,must-revalidate,s-maxage=0'
 		];
 	}
 
 	/**
 	 * @dataProvider provideCacheControl
 	 */
-	public function testCacheControl( string $method, array $headers, $expected ) {
+	public function testCacheControl(
+		string $method,
+		array $headers,
+		bool $hasPersistentSession,
+		$expected
+	) {
 		$response = new Response();
 
 		foreach ( $headers as $name => $value ) {
 			$response->setHeader( $name, $value );
 		}
 
-		$handler = $this->newHandler( [ 'getRequest' ] );
+		$session = $this->createMock( Session::class );
+		$session->method( 'isPersistent' )->willReturn( $hasPersistentSession );
+
+		$handler = $this->newHandler( [ 'getRequest', 'getSession' ] );
 		$handler->method( 'getRequest' )->willReturn( new RequestData( [ 'method' => $method ] ) );
+		$handler->method( 'getSession' )->willReturn( $session );
 
 		$handler->applyCacheControl( $response );
 

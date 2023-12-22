@@ -21,9 +21,13 @@
 
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 /**
  * @defgroup Actions Actions
@@ -101,22 +105,6 @@ abstract class Action implements MessageLocalizer {
 	final public static function getActionName( IContextSource $context ) {
 		// Optimisation: Reuse/prime the cached value of RequestContext
 		return $context->getActionName();
-	}
-
-	/**
-	 * Check if a given action is recognised, even if it's disabled
-	 *
-	 * @since 1.17
-	 * @deprecated since 1.38 use (bool)ActionFactory::getAction()
-	 *
-	 * @param string $name Name of an action
-	 * @return bool
-	 */
-	final public static function exists( string $name ): bool {
-		wfDeprecated( __METHOD__, '1.38' );
-		return MediaWikiServices::getInstance()
-			->getActionFactory()
-			->actionExists( $name );
 	}
 
 	/**
@@ -293,6 +281,10 @@ abstract class Action implements MessageLocalizer {
 	/**
 	 * Get the permission required to perform this action.  Often, but not always,
 	 * the same as the action name
+	 *
+	 * Implementations of this methods must always return the same value, regardless
+	 * of parameters passed to the constructor or system state.
+	 *
 	 * @since 1.17
 	 * @stable to override
 	 *
@@ -304,6 +296,10 @@ abstract class Action implements MessageLocalizer {
 
 	/**
 	 * Indicates whether this action requires read rights
+	 *
+	 * Implementations of this methods must always return the same value, regardless
+	 * of parameters passed to the constructor or system state.
+	 *
 	 * @since 1.38
 	 * @stable to override
 	 * @return bool
@@ -362,6 +358,10 @@ abstract class Action implements MessageLocalizer {
 
 	/**
 	 * Whether this action requires the wiki not to be locked
+	 *
+	 * Implementations of this methods must always return the same value, regardless
+	 * of parameters passed to the constructor or system state.
+	 *
 	 * @since 1.17
 	 * @stable to override
 	 *
@@ -372,7 +372,11 @@ abstract class Action implements MessageLocalizer {
 	}
 
 	/**
-	 * Whether this action can still be executed by a blocked user
+	 * Whether this action can still be executed by a blocked user.
+	 *
+	 * Implementations of this methods must always return the same value, regardless
+	 * of parameters passed to the constructor or system state.
+	 *
 	 * @since 1.17
 	 * @stable to override
 	 *
@@ -391,7 +395,13 @@ abstract class Action implements MessageLocalizer {
 	protected function setHeaders() {
 		$out = $this->getOutput();
 		$out->setRobotPolicy( 'noindex,nofollow' );
-		$out->setPageTitle( $this->getPageTitle() );
+		$title = $this->getPageTitle();
+		if ( is_string( $title ) ) {
+			// T343849: deprecated
+			wfDeprecated( 'string return from Action::getPageTitle()', '1.41' );
+			$title = ( new RawMessage( '$1' ) )->rawParams( $title );
+		}
+		$out->setPageTitleMsg( $title );
 		$out->setSubtitle( $this->getDescription() );
 		$out->setArticleRelated( true );
 	}
@@ -399,11 +409,13 @@ abstract class Action implements MessageLocalizer {
 	/**
 	 * Returns the name that goes in the `<h1>` page title.
 	 *
+	 * Since 1.41, returning a string from this method has been deprecated.
+	 *
 	 * @stable to override
-	 * @return string
+	 * @return string|Message
 	 */
 	protected function getPageTitle() {
-		return $this->getTitle()->getPrefixedText();
+		return ( new RawMessage( '$1' ) )->plaintextParams( $this->getTitle()->getPrefixedText() );
 	}
 
 	/**

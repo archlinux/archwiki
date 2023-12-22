@@ -11,13 +11,14 @@
 	"discussiontools-defaultsummary-reply": "Contestar",
 	"discussiontools-desc": "Ferramientes pa enantar les páxines d'alderique.",
 	"discussiontools-preference-autotopicsub": "Soscribise n’automático a los temes",
-	"discussiontools-replylink": "contestar",
-	"discussiontools-replywidget-cancel": "Encaboxar",
+	"discussiontools-replylink": "{{GENDER:|contestar}}",
+	"discussiontools-replywidget-cancel": "Zarrar",
 	"discussiontools-replywidget-loading": "Cargando...",
 	"discussiontools-replywidget-mode-source": "Fonte",
-	"discussiontools-replywidget-reply": "Contestar",
+	"discussiontools-replywidget-reply": "{{GENDER:|Contestar}}",
 	"discussiontools-replywidget-summary": "Resume",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|comentariu|comentarios}}",
 	"discussiontools-topicheader-latestcomment": "Últimu comentariu: $1",
-	"discussiontools-topicsubscription-button-subscribe": "soscríbite"
+	"discussiontools-topicsubscription-button-subscribe": "soscríbite",
+	"minerva-talk-full-page": "Lleer como páxina wiki"
 }

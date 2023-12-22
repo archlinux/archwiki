@@ -9,6 +9,7 @@ use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
@@ -17,54 +18,48 @@ class DiffUtils {
 	 * Get a node's diff marker.
 	 *
 	 * @param Node $node
-	 * @param Env $env
 	 * @return stdClass|null
 	 */
-	public static function getDiffMark( Node $node, Env $env ): ?stdClass {
+	public static function getDiffMark( Node $node ): ?stdClass {
 		if ( !( $node instanceof Element ) ) {
 			return null;
 		}
-
 		$data = DOMDataUtils::getNodeData( $node );
-		$dpd = $data->parsoid_diff ?? null;
-		return ( $dpd && $dpd->id === $env->getPageConfig()->getPageId() ) ? $dpd : null;
+		return $data->parsoid_diff ?? null;
 	}
 
 	/**
-	 * Check that the diff markers on the node exist and are recent.
+	 * Check that the diff markers on the node exist.
 	 *
 	 * @param Node $node
-	 * @param Env $env
 	 * @return bool
 	 */
-	public static function hasDiffMarkers( Node $node, Env $env ): bool {
-		return self::getDiffMark( $node, $env ) !== null || DOMUtils::isDiffMarker( $node );
+	public static function hasDiffMarkers( Node $node ): bool {
+		return self::getDiffMark( $node ) !== null || self::isDiffMarker( $node );
 	}
 
 	/**
 	 * @param Node $node
-	 * @param Env $env
 	 * @param string $mark
 	 * @return bool
 	 */
-	public static function hasDiffMark( Node $node, Env $env, string $mark ): bool {
+	public static function hasDiffMark( Node $node, string $mark ): bool {
 		// For 'deletion' and 'insertion' markers on non-element nodes,
 		// a mw:DiffMarker meta is added
-		if ( $mark === 'deleted' || ( $mark === 'inserted' && !( $node instanceof Element ) ) ) {
-			return DOMUtils::isDiffMarker( $node->previousSibling, $mark );
+		if ( $mark === DiffMarkers::DELETED || ( $mark === DiffMarkers::INSERTED && !( $node instanceof Element ) ) ) {
+			return self::isDiffMarker( $node->previousSibling, $mark );
 		} else {
-			$diffMark = self::getDiffMark( $node, $env );
+			$diffMark = self::getDiffMark( $node );
 			return $diffMark && in_array( $mark, $diffMark->diff, true );
 		}
 	}
 
 	/**
 	 * @param Node $node
-	 * @param Env $env
 	 * @return bool
 	 */
-	public static function hasInsertedDiffMark( Node $node, Env $env ): bool {
-		return self::hasDiffMark( $node, $env, 'inserted' );
+	public static function hasInsertedDiffMark( Node $node ): bool {
+		return self::hasDiffMark( $node, DiffMarkers::INSERTED );
 	}
 
 	/**
@@ -72,7 +67,7 @@ class DiffUtils {
 	 * @return bool
 	 */
 	public static function maybeDeletedNode( ?Node $node ): bool {
-		return $node instanceof Element && DOMUtils::isDiffMarker( $node, 'deleted' );
+		return $node instanceof Element && self::isDiffMarker( $node, DiffMarkers::DELETED );
 	}
 
 	/**
@@ -89,26 +84,43 @@ class DiffUtils {
 
 	/**
 	 * @param Node $node
-	 * @param Env $env
 	 * @return bool
 	 */
-	public static function directChildrenChanged( Node $node, Env $env ): bool {
-		return self::hasDiffMark( $node, $env, 'children-changed' );
+	public static function directChildrenChanged( Node $node ): bool {
+		return self::hasDiffMark( $node, DiffMarkers::CHILDREN_CHANGED );
 	}
 
 	/**
 	 * @param Element $node
-	 * @param Env $env
 	 * @return bool
 	 */
-	public static function onlySubtreeChanged( Element $node, Env $env ): bool {
-		$dmark = self::getDiffMark( $node, $env );
+	public static function onlySubtreeChanged( Element $node ): bool {
+		$dmark = self::getDiffMark( $node );
 		if ( !$dmark ) {
 			return false;
 		}
 
 		foreach ( $dmark->diff as $mark ) {
-			if ( $mark !== 'subtree-changed' && $mark !== 'children-changed' ) {
+			if ( $mark !== DiffMarkers::SUBTREE_CHANGED && $mark !== DiffMarkers::CHILDREN_CHANGED ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param Element $node
+	 * @return bool
+	 */
+	public static function subtreeUnchanged( Element $node ): bool {
+		$dmark = self::getDiffMark( $node );
+		if ( !$dmark ) {
+			return true;
+		}
+
+		foreach ( $dmark->diff as $mark ) {
+			if ( $mark !== DiffMarkers::MODIFIED_WRAPPER ) {
 				return false;
 			}
 		}
@@ -120,45 +132,44 @@ class DiffUtils {
 	 * @param Node $node
 	 * @param Env $env
 	 * @param string $mark
+	 * @return ?Element
 	 */
-	public static function addDiffMark( Node $node, Env $env, string $mark ): void {
-		if ( $mark === 'deleted' || $mark === 'moved' ) {
-			self::prependTypedMeta( $node, 'mw:DiffMarker/' . $mark );
+	public static function addDiffMark( Node $node, Env $env, string $mark ): ?Element {
+		static $ignoreableNodeTypes = [ XML_DOCUMENT_NODE, XML_DOCUMENT_TYPE_NODE, XML_DOCUMENT_FRAG_NODE ];
+
+		if ( $mark === DiffMarkers::DELETED || $mark === DiffMarkers::MOVED ) {
+			return self::prependTypedMeta( $node, 'mw:DiffMarker/' . $mark );
 		} elseif ( $node instanceof Text || $node instanceof Comment ) {
-			if ( $mark !== 'inserted' ) {
+			if ( $mark !== DiffMarkers::INSERTED ) {
 				$env->log( 'error', 'BUG! CHANGE-marker for ', $node->nodeType, ' node is: ', $mark );
 			}
-			self::prependTypedMeta( $node, 'mw:DiffMarker/' . $mark );
-		} else {
-			self::setDiffMark( $node, $env, $mark );
+			return self::prependTypedMeta( $node, 'mw:DiffMarker/' . $mark );
+		} elseif ( $node instanceof Element ) {
+			self::setDiffMark( $node, $mark );
+		} elseif ( !in_array( $node->nodeType, $ignoreableNodeTypes, true ) ) {
+			$env->log( 'error', 'Unhandled node type', $node->nodeType, 'in addDiffMark!' );
 		}
+
+		return null;
 	}
 
 	/**
 	 * Set a diff marker on a node.
 	 *
 	 * @param Node $node
-	 * @param Env $env
 	 * @param string $change
 	 */
-	public static function setDiffMark( Node $node, Env $env, string $change ): void {
+	private static function setDiffMark( Node $node, string $change ): void {
 		if ( !( $node instanceof Element ) ) {
 			return;
 		}
-
-		$dpd = self::getDiffMark( $node, $env );
-		if ( $dpd ) {
-			// Diff is up to date, append this change if it doesn't already exist
-			if ( !in_array( $change, $dpd->diff, true ) ) {
-				$dpd->diff[] = $change;
-			}
-		} else {
-			// Was an old diff entry or no diff at all, reset
+		$dpd = self::getDiffMark( $node );
+		if ( !$dpd ) {
 			$dpd = (object)[ // FIXME object or array?
-				// The base page revision this change happened on
-				'id' => $env->getPageConfig()->getPageId(),
 				'diff' => [ $change ]
 			];
+		} elseif ( !in_array( $change, $dpd->diff, true ) ) {
+			$dpd->diff[] = $change;
 		}
 		DOMDataUtils::getNodeData( $node )->parsoid_diff = $dpd;
 	}
@@ -170,7 +181,7 @@ class DiffUtils {
 	 * @param string $type
 	 * @return Element
 	 */
-	public static function prependTypedMeta( Node $node, string $type ): Element {
+	private static function prependTypedMeta( Node $node, string $type ): Element {
 		$meta = $node->ownerDocument->createElement( 'meta' );
 		DOMUtils::addTypeOf( $meta, $type );
 		$node->parentNode->insertBefore( $meta, $node );
@@ -184,10 +195,8 @@ class DiffUtils {
 	 */
 	private static function getAttributes( Element $node, array $ignoreableAttribs ): array {
 		$h = DOMUtils::attributes( $node );
-		$count = 0;
 		foreach ( $h as $name => $value ) {
 			if ( in_array( $name, $ignoreableAttribs, true ) ) {
-				$count++;
 				unset( $h[$name] );
 			}
 		}
@@ -243,5 +252,27 @@ class DiffUtils {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check a node to see whether it's a diff marker.
+	 *
+	 * @param ?Node $node
+	 * @param ?string $mark
+	 * @return bool
+	 */
+	public static function isDiffMarker(
+		?Node $node, ?string $mark = null
+	): bool {
+		if ( !$node ) {
+			return false;
+		}
+
+		if ( $mark ) {
+			return DOMUtils::isMarkerMeta( $node, 'mw:DiffMarker/' . $mark );
+		} else {
+			return DOMCompat::nodeName( $node ) === 'meta' &&
+				DOMUtils::matchTypeOf( $node, '#^mw:DiffMarker/#' );
+		}
 	}
 }

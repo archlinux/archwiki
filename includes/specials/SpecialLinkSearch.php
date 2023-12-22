@@ -22,13 +22,21 @@
  * @author Brion Vibber
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
+use MediaWiki\SpecialPage\QueryPage;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\Utils\UrlUtils;
+use Parser;
+use Skin;
+use stdClass;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -45,8 +53,7 @@ class SpecialLinkSearch extends QueryPage {
 	/** @var string|null */
 	private $mProt;
 
-	/** @var UrlUtils */
-	private $urlUtils;
+	private UrlUtils $urlUtils;
 
 	private function setParams( $params ) {
 		$this->mQuery = $params['query'];
@@ -55,17 +62,17 @@ class SpecialLinkSearch extends QueryPage {
 	}
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param UrlUtils $urlUtils
 	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory,
 		UrlUtils $urlUtils
 	) {
 		parent::__construct( 'LinkSearch' );
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 		$this->setLinkBatchFactory( $linkBatchFactory );
 		$this->urlUtils = $urlUtils;
 	}
@@ -93,8 +100,7 @@ class SpecialLinkSearch extends QueryPage {
 		}
 
 		$target2 = Parser::normalizeLinkUrl( $target );
-		// Get protocol, default is http://
-		$protocol = 'http://';
+		$protocol = null;
 		$bits = $this->urlUtils->parse( $target );
 		if ( isset( $bits['scheme'] ) && isset( $bits['delimiter'] ) ) {
 			$protocol = $bits['scheme'] . $bits['delimiter'];
@@ -175,12 +181,16 @@ class SpecialLinkSearch extends QueryPage {
 	}
 
 	public function getQueryInfo() {
-		$dbr = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		$dbr = $this->getDatabaseProvider()->getReplicaDatabase();
 
-		$orderBy = [];
+		$field = 'el_to_domain_index';
+		$extraFields = [
+			'urldomain' => 'el_to_domain_index',
+			'urlpath' => 'el_to_path'
+		];
 		if ( $this->mQuery === '*' && $this->mProt !== '' ) {
 			$this->mungedQuery = [
-				'el_index_60' . $dbr->buildLike( $this->mProt, $dbr->anyString() ),
+				$field . $dbr->buildLike( $this->mProt, $dbr->anyString() ),
 			];
 		} else {
 			$this->mungedQuery = LinkFilter::getQueryConditions( $this->mQuery, [
@@ -192,19 +202,15 @@ class SpecialLinkSearch extends QueryPage {
 				// Invalid query; return no results
 				return [ 'tables' => 'page', 'fields' => 'page_id', 'conds' => '0=1' ];
 			}
-			$orderBy[] = 'el_index_60';
 		}
-
-		$orderBy[] = 'el_id';
+		$orderBy = [ 'el_id' ];
 
 		$retval = [
 			'tables' => [ 'page', 'externallinks' ],
-			'fields' => [
+			'fields' => array_merge( [
 				'namespace' => 'page_namespace',
 				'title' => 'page_title',
-				'value' => 'el_index',
-				'url' => 'el_to'
-			],
+			], $extraFields ),
 			'conds' => array_merge(
 				[
 					'page_id = el_from',
@@ -239,8 +245,8 @@ class SpecialLinkSearch extends QueryPage {
 	public function formatResult( $skin, $result ) {
 		$title = new TitleValue( (int)$result->namespace, $result->title );
 		$pageLink = $this->getLinkRenderer()->makeLink( $title );
+		$url = LinkFilter::reverseIndexes( $result->urldomain ) . $result->urlpath;
 
-		$url = $result->url;
 		$urlLink = Linker::makeExternalLink( $url, $url );
 
 		return $this->msg( 'linksearch-line' )->rawParams( $urlLink, $pageLink )->escaped();
@@ -270,3 +276,8 @@ class SpecialLinkSearch extends QueryPage {
 		return max( parent::getMaxResults(), 60000 );
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialLinkSearch::class, 'SpecialLinkSearch' );

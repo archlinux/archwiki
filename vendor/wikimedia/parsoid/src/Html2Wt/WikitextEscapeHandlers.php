@@ -12,6 +12,7 @@ use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -25,10 +26,11 @@ class WikitextEscapeHandlers {
 
 	private const LINKS_ESCAPE_RE = '/(\[\[)|(\]\])|(-\{)|(^[^\[]*\]$)/D';
 
-	/**
-	 * @var array
-	 */
-	private $options;
+	/** @var Env */
+	private $env;
+
+	/** @var ?string */
+	private $extName;
 
 	/**
 	 * @var PegTokenizer
@@ -36,11 +38,13 @@ class WikitextEscapeHandlers {
 	private $tokenizer;
 
 	/**
-	 * @param array $options [ 'env' => Env, 'extName' => ?string ]
+	 * @param Env $env
+	 * @param ?string $extName
 	 */
-	public function __construct( array $options ) {
-		$this->tokenizer = new PegTokenizer( $options['env'] );
-		$this->options = $options;
+	public function __construct( Env $env, ?string $extName ) {
+		$this->env = $env;
+		$this->extName = $extName;
+		$this->tokenizer = new PegTokenizer( $env );
 	}
 
 	/**
@@ -109,7 +113,7 @@ class WikitextEscapeHandlers {
 		// if the string begins with one or more newlines before a leading quote.
 		$origText = $node->textContent;
 		if ( substr( $origText, 0, 1 ) === "'" ) {
-			$prev = DOMUtils::previousNonDeletedSibling( $node );
+			$prev = DiffDOMUtils::previousNonDeletedSibling( $node );
 			if ( !$prev ) {
 				$prev = $node->parentNode;
 			}
@@ -136,7 +140,7 @@ class WikitextEscapeHandlers {
 		// if the string ends with a trailing quote and then one or more newlines.
 		$origText = $node->textContent;
 		if ( substr( $origText, -1 ) === "'" ) {
-			$next = DOMUtils::nextNonDeletedSibling( $node );
+			$next = DiffDOMUtils::nextNonDeletedSibling( $node );
 			if ( !$next ) {
 				$next = $node->parentNode;
 			}
@@ -202,7 +206,7 @@ class WikitextEscapeHandlers {
 	 */
 	public function isFirstContentNode( Node $node ): bool {
 		// Skip deleted-node markers
-		return DOMUtils::previousNonDeletedSibling( $node ) === null;
+		return DiffDOMUtils::previousNonDeletedSibling( $node ) === null;
 	}
 
 	/**
@@ -445,7 +449,7 @@ class WikitextEscapeHandlers {
 					}
 				} else {
 					while ( $node ) {
-						$node = DOMUtils::previousNonSepSibling( $node );
+						$node = DiffDOMUtils::previousNonSepSibling( $node );
 						if ( $node && WTUtils::isFirstEncapsulationWrapperNode( $node ) ) {
 							// FIXME: This is not entirely correct.
 							// Assumes that extlink content doesn't have templates.
@@ -487,12 +491,11 @@ class WikitextEscapeHandlers {
 	/**
 	 * @param SerializerState $state
 	 * @param bool $onNewline
-	 * @param array $options
 	 * @param string $text
 	 * @return bool
 	 */
-	public function hasWikitextTokens(
-		SerializerState $state, bool $onNewline, array $options, string $text
+	private function hasWikitextTokens(
+		SerializerState $state, bool $onNewline, string $text
 	): bool {
 		$env = $state->getEnv();
 		$env->log(
@@ -531,8 +534,9 @@ class WikitextEscapeHandlers {
 
 			// Ignore html tags that aren't allowed as literals in wikitext
 			if ( TokenUtils::isHTMLTag( $t ) ) {
-				if ( TokenUtils::matchTypeOf( $t, '#^mw:Extension(/|$)#' ) &&
-					( $options['extName'] ?? null ) !== $t->getAttribute( 'name' )
+				if (
+					TokenUtils::matchTypeOf( $t, '#^mw:Extension(/|$)#' ) &&
+					( $this->extName !== $t->getAttribute( 'name' ) )
 				) {
 					return true;
 				}
@@ -565,7 +569,6 @@ class WikitextEscapeHandlers {
 			}
 
 			if ( $tc === 'SelfclosingTagTk' ) {
-
 				// * Ignore RFC/ISBN/PMID tokens when those are encountered in the
 				// context of another link's content -- those are not parsed to
 				// ext-links in that context. (T109371)
@@ -578,13 +581,6 @@ class WikitextEscapeHandlers {
 				// Ignore url links in attributes (href, mostly)
 				// since they are not in danger of being autolink-ified there.
 				if ( $t->getName() === 'urllink' && ( $state->inAttribute || $state->inLink ) ) {
-					continue;
-				}
-
-				// Ignore invalid behavior-switch tokens
-				if ( $t->getName() === 'behavior-switch' &&
-					!$env->getSiteConfig()->isMagicWord( $t->attribs[0]->v )
-				) {
 					continue;
 				}
 
@@ -898,7 +894,7 @@ class WikitextEscapeHandlers {
 			if ( $fullCheckNeeded ||
 				$indentPreUnsafe ||
 				( $hasNonQuoteEscapableChars &&
-					$this->hasWikitextTokens( $state, $sol, $this->options, $text )
+					$this->hasWikitextTokens( $state, $sol, $text )
 				)
 			) {
 				$env->log( 'trace/wt-escape', '---quotes: escaping text---' );
@@ -947,7 +943,7 @@ class WikitextEscapeHandlers {
 
 			// If nothing changed, check if the original multiline string has
 			// any wikitext tokens (ex: multi-line html tags <div\n>foo</div\n>).
-			if ( $ret === $text	&& $this->hasWikitextTokens( $state, $sol, $this->options, $text ) ) {
+			if ( $ret === $text && $this->hasWikitextTokens( $state, $sol, $text ) ) {
 				$env->log( 'trace/wt-escape', '---Found multi-line wt tokens---' );
 				$ret = $this->escapedText( $state, $sol, $text );
 			}
@@ -1007,7 +1003,7 @@ class WikitextEscapeHandlers {
 		if ( $hasTildes ) {
 			$env->log( 'trace/wt-escape', '---Found tildes---' );
 			return $this->escapedText( $state, $sol, $text );
-		} elseif ( $this->hasWikitextTokens( $state, $sol, $this->options, $text ) ) {
+		} elseif ( $this->hasWikitextTokens( $state, $sol, $text ) ) {
 			$env->log( 'trace/wt-escape', '---Found WT tokens---' );
 			return $this->escapedText( $state, $sol, $text );
 		} elseif ( preg_match( '/[^\[]*\]/', $text ) &&
@@ -1166,8 +1162,7 @@ class WikitextEscapeHandlers {
 	 * @return array
 	 */
 	public function escapeTplArgWT( string $arg, array $opts ): array {
-		/** @var Env $env */
-		$env = $this->options['env'];
+		$env = $this->env;
 		$serializeAsNamed = $opts['serializeAsNamed'];
 		$buf = '';
 		$openNowiki = false;

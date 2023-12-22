@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
+			"Arcuscloud",
 			"Ezagren",
 			"J Subhi",
-			"Mnam23",
-			"Arcuscloud"
+			"Mnam23"
 		]
 	},
 	"vector-opt-out": "Baalih ka tampaian lawas",
@@ -26,7 +26,7 @@
 	"vector-more-actions": "Lainnya",
 	"vector-searchsuggest-containing": "Gagai laman nang baisi <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Isi",
-	"vector-toc-beginning": "Panambayan",
+	"vector-toc-beginning": "Panambaian",
 	"vector-anon-user-menu-pages-learn": "palajari labih lanjut",
 	"vector-anon-user-menu-pages-label": "Palajari labih lanjut pasal mambabak",
 	"vector-page-tools-label": "Pakakas",

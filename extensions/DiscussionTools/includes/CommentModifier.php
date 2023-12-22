@@ -468,7 +468,7 @@ class CommentModifier {
 		$dataMw = json_decode( $node->getAttribute( 'data-mw' ) ?? '', true );
 		$wikitextLine = $dataMw['parts'][0] ?? null;
 		return $wikitextLine && is_string( $wikitextLine ) &&
-			in_array( $wikitextLine[0], [ '*', '#', ':', ';' ] );
+			in_array( $wikitextLine[0], [ '*', '#', ':', ';' ], true );
 	}
 
 	/**
@@ -525,7 +525,7 @@ class CommentModifier {
 		$lastLine = end( $lines );
 
 		// If last line looks like a list item, add an empty line afterwards for the signature (T263217)
-		if ( $lastLine && in_array( $lastLine[0], [ '*', '#', ':', ';' ] ) ) {
+		if ( $lastLine && in_array( $lastLine[0], [ '*', '#', ':', ';' ], true ) ) {
 			$wikitext .= "\n";
 			// Trim the signature to prevent leading whitespace triggering preformatted text (T269188, T276612)
 			$signature = ltrim( $signature, ' ' );

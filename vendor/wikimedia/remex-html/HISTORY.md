@@ -1,5 +1,11 @@
 # Release History
 
+## RemexHtml x.x.x (not yet released)
+
+## RemexHtml 4.0.0 (2023-02-24)
+* Drop PHP 7.2 and PHP 7.3 support.
+* Update PHPUnit dependency.
+
 ## RemexHtml 3.0.3 (2022-12-21)
 * Workaround PHP bug which decodes entities when setting attribute values.
   (T324408, https://github.com/php/php-src/pull/10132 )

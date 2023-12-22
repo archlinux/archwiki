@@ -2,15 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Baonguyen21022003",
+			"Flyplanevn27",
 			"Max20091",
 			"Minh Nguyen",
+			"NguyenHung",
 			"Nguyên Lê",
+			"Phjtieudoc",
 			"Quenhitran",
 			"Thienhau2003",
 			"Trần Nguyễn Minh Huy",
-			"Vinhtantran",
-			"Flyplanevn27",
-			"Phjtieudoc"
+			"Vinhtantran"
 		]
 	},
 	"echo-desc": "Hệ thống thông báo cho người dùng về các sự kiện và thay đổi quan trọng",
@@ -130,6 +131,7 @@
 	"notification-link-text-view-mention-failure": "Xem {{PLURAL:$1|lời nhắc đến|các lời nhắc đến}}",
 	"notification-link-text-view-changes": "{{GENDER:$1}}Xem các thay đổi",
 	"notification-link-text-view-page": "Xem trang",
+	"notification-header-edit-user-page": "$1 {{GENDER:$2|đã sửa đổi}} <strong> trang thành viên {{GENDER:$3|của bạn}}</strong>.",
 	"notification-header-edit-user-talk": "$1 {{GENDER:$2}}đã để lại một tin nhắn trên <strong>trang thảo luận {{GENDER:$3}}của bạn</strong>.",
 	"notification-header-edit-user-talk-with-section": "$1 {{GENDER:$2}}đã để lại một tin nhắn trên <strong>trang thảo luận {{GENDER:$3}}của bạn</strong> trong “<strong>$4</strong>”.",
 	"notification-compact-header-edit-user-talk": "$1 {{GENDER:$2}}đã nhắn tin cho {{GENDER:$3}}bạn.",
@@ -220,6 +222,7 @@
 	"echo-displaysnippet-title": "Thông báo mới",
 	"echo-date-today": "Hôm nay",
 	"echo-date-yesterday": "Hôm qua",
+	"notification-bundle-header-edit-user-page": "{{PLURAL:$1|Một sửa đổi mới|$1 sửa đổi mới|100=99+ sửa đổi mới}} tại <strong>trang thành viên {{GENDER:$2|của bạn}}</strong>.",
 	"notification-bundle-header-edit-user-talk-v2": "{{PLURAL:$1|Một tin nhắn|$1 tin nhắn|100=99+ tin nhắn}} mới tại <strong>trang thảo luận của {{GENDER:$3}}bạn</strong>.",
 	"echo-email-batch-bullet": "•",
 	"echo-email-batch-subject-daily": "Bạn có {{PLURAL:$2|một tin nhắn|các tin nhắn}} mới hôm nay trên {{SITENAME}}",

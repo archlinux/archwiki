@@ -6,7 +6,7 @@ use ApiBase;
 use ApiQuery;
 use ApiQueryBase;
 use MediaWiki\MediaWikiServices;
-use Title;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -228,6 +228,7 @@ class ApiQueryPageImages extends ApiQueryBase {
 				ParamValidator::PARAM_TYPE => [ 'thumbnail', 'name', 'original' ],
 				ParamValidator::PARAM_ISMULTI => true,
 				ParamValidator::PARAM_DEFAULT => 'thumbnail|name',
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
 			'thumbsize' => [
 				ParamValidator::PARAM_TYPE => 'integer',
@@ -244,6 +245,7 @@ class ApiQueryPageImages extends ApiQueryBase {
 				ParamValidator::PARAM_TYPE => [ PageImages::LICENSE_FREE, PageImages::LICENSE_ANY ],
 				ParamValidator::PARAM_ISMULTI => false,
 				ParamValidator::PARAM_DEFAULT => $this->getConfig()->get( 'PageImagesAPIDefaultLicense' ),
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
 			'continue' => [
 				ParamValidator::PARAM_TYPE => 'integer',

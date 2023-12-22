@@ -2,6 +2,7 @@ var
 	// LanguageData::getLocalData()
 	parserData = require( './parser/data.json' ),
 	utils = require( './utils.js' );
+
 var featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {};
 
 function ReplyLinksController( $pageContainer ) {
@@ -173,8 +174,8 @@ ReplyLinksController.prototype.parseNewTopicLink = function ( href ) {
 	if ( url.searchParams.get( 'preload' ) ) {
 		data.preload = url.searchParams.get( 'preload' );
 	}
-	if ( url.searchParams.getAll( 'preloadparams[]' ).length ) {
-		data.preloadparams = url.searchParams.getAll( 'preloadparams[]' );
+	if ( mw.util.getArrayParam( 'preloadparams', url.searchParams ) ) {
+		data.preloadparams = mw.util.getArrayParam( 'preloadparams', url.searchParams );
 	}
 	if ( url.searchParams.get( 'preloadtitle' ) ) {
 		data.preloadtitle = url.searchParams.get( 'preloadtitle' );
@@ -230,9 +231,8 @@ ReplyLinksController.prototype.setActiveLink = function ( $linkSet ) {
 		$( '#ca-view' ).removeClass( 'selected' );
 	}
 
-	this.originalDocumentTitle = document.title;
 	var title = mw.Title.newFromText( mw.config.get( 'wgRelevantPageName' ) );
-	document.title = mw.msg( 'pagetitle',
+	var pageTitleMsg = mw.message( 'pagetitle',
 		mw.msg(
 			isNewTopic ?
 				'discussiontools-pagetitle-newtopic' :
@@ -240,6 +240,15 @@ ReplyLinksController.prototype.setActiveLink = function ( $linkSet ) {
 			title.getPrefixedText()
 		)
 	);
+
+	// T317600
+	if ( pageTitleMsg.isParseable() ) {
+		this.originalDocumentTitle = document.title;
+		document.title = pageTitleMsg.text();
+	} else {
+		mw.log.warn( 'DiscussionTools: MediaWiki:Pagetitle contains unsupported syntax. ' +
+			'https://www.mediawiki.org/wiki/Manual:Messages_API#Feature_support_in_JavaScript' );
+	}
 
 	$( document.body ).addClass( 'ext-discussiontools-init-replylink-open' );
 	this.$replyLinkSets.each( function () {
@@ -338,6 +347,16 @@ ReplyLinksController.prototype.teardown = function () {
 		}
 		this.$body.off( 'click keypress', 'a', this.onAnyLinkClickHandler );
 	}
+};
+
+ReplyLinksController.prototype.pageHasReplyLinks = function () {
+	return this.$replyLinkSets.length > 0;
+};
+
+ReplyLinksController.prototype.pageHasNewTopicLink = function () {
+	// Note: this will miss if there are random on-page links that would
+	// trigger the new topic tool via onAnyLinkClick
+	return featuresEnabled.newtopictool && document.getElementById( 'ca-addsection' );
 };
 
 module.exports = ReplyLinksController;

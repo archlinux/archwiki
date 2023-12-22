@@ -15,6 +15,8 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { Repo, ForeignApiRepo, ForeignDbRepo } = require( 'mmv' );
+
 ( function () {
 	QUnit.module( 'mmv.model.Repo', QUnit.newMwEnvironment() );
 
@@ -25,15 +27,15 @@
 			server = '//commons.wikimedia.org',
 			articlePath = '//commons.wikimedia.org/wiki/$1',
 			descBaseUrl = '//commons.wikimedia.org/wiki/File:',
-			localRepo = new mw.mmv.model.Repo( displayName, favicon, true ),
-			foreignApiRepo = new mw.mmv.model.ForeignApiRepo( displayName, favicon,
+			localRepo = new Repo( displayName, favicon, true ),
+			foreignApiRepo = new ForeignApiRepo( displayName, favicon,
 				false, apiUrl, server, articlePath ),
-			foreignDbRepo = new mw.mmv.model.ForeignDbRepo( displayName, favicon, false, descBaseUrl );
+			foreignDbRepo = new ForeignDbRepo( displayName, favicon, false, descBaseUrl );
 
-		assert.true( localRepo instanceof mw.mmv.model.Repo, 'Local repo creation works' );
-		assert.true( foreignApiRepo instanceof mw.mmv.model.ForeignApiRepo,
+		assert.true( localRepo instanceof Repo, 'Local repo creation works' );
+		assert.true( foreignApiRepo instanceof ForeignApiRepo,
 			'Foreign API repo creation works' );
-		assert.true( foreignDbRepo instanceof mw.mmv.model.ForeignDbRepo, 'Foreign DB repo creation works' );
+		assert.true( foreignDbRepo instanceof ForeignDbRepo, 'Foreign DB repo creation works' );
 	} );
 
 	QUnit.test( 'getArticlePath()', function ( assert ) {
@@ -43,10 +45,10 @@
 			server = '//commons.wikimedia.org',
 			articlePath = '/wiki/$1',
 			descBaseUrl = '//commons.wikimedia.org/wiki/File:',
-			localRepo = new mw.mmv.model.Repo( displayName, favicon, true ),
-			foreignApiRepo = new mw.mmv.model.ForeignApiRepo( displayName, favicon,
+			localRepo = new Repo( displayName, favicon, true ),
+			foreignApiRepo = new ForeignApiRepo( displayName, favicon,
 				false, apiUrl, server, articlePath ),
-			foreignDbRepo = new mw.mmv.model.ForeignDbRepo( displayName, favicon, false, descBaseUrl ),
+			foreignDbRepo = new ForeignDbRepo( displayName, favicon, false, descBaseUrl ),
 			expectedLocalArticlePath = '/wiki/$1',
 			expectedFullArticlePath = '//commons.wikimedia.org/wiki/$1',
 			oldWgArticlePath = mw.config.get( 'wgArticlePath' ),
@@ -75,10 +77,10 @@
 			server = '//commons.wikimedia.org',
 			articlePath = '/wiki/$1',
 			descBaseUrl = '//commons.wikimedia.org/wiki/File:',
-			localRepo = new mw.mmv.model.Repo( displayName, favicon, true ),
-			foreignApiRepo = new mw.mmv.model.ForeignApiRepo( displayName, favicon,
+			localRepo = new Repo( displayName, favicon, true ),
+			foreignApiRepo = new ForeignApiRepo( displayName, favicon,
 				false, apiUrl, server, articlePath ),
-			foreignDbRepo = new mw.mmv.model.ForeignDbRepo( displayName, favicon, false, descBaseUrl ),
+			foreignDbRepo = new ForeignDbRepo( displayName, favicon, false, descBaseUrl ),
 			expectedSiteLink = '//commons.wikimedia.org/wiki/',
 			oldWgArticlePath = mw.config.get( 'wgArticlePath' ),
 			oldWgServer = mw.config.get( 'wgServer' );

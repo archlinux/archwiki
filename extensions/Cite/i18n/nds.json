@@ -14,5 +14,8 @@
 	"cite_error_references_no_backlink_label": "De verföögboren Tekens för de Lenken op Referenzen sünd all. Dat lett sik repareren, wenn in de Systemnaricht [[MediaWiki:Cite references link many format backlink labels]] mehr Tekens angeven warrt.",
 	"cite_error_references_no_text": "Ungülligen Tag <tt>&lt;ref&gt;</tt>; is keen Text för Refs mit den Naam <tt>$1</tt> angeven.",
 	"cite_error_included_ref": "Dor fehlt en tosluten <code>&lt;/ref&gt;</code>",
-	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code>-Tags för de Grupp „$1“ gifft dat, is aver keen <code>&lt;references group=„$1“/&gt;</code>-Tag funnen worrn"
+	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code>-Tags för de Grupp „$1“ gifft dat, is aver keen <code>&lt;references group=„$1“/&gt;</code>-Tag funnen worrn",
+	"cite-wikieditor-tool-reference": "Enkelnawies",
+	"cite-wikieditor-help-page-references": "Footnoten",
+	"cite-wikieditor-help-content-reference-description": "Enkelnawies"
 }

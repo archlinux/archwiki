@@ -222,7 +222,7 @@ class WTUtils {
 	 * @return Element|null
 	 */
 	public static function findFirstEncapsulationWrapperNode( Node $node ): ?Element {
-		if ( !self::hasParsoidAboutId( $node ) ) {
+		if ( !self::isEncapsulatedDOMForestRoot( $node ) ) {
 			return null;
 		}
 		/** @var Element $node */
@@ -232,7 +232,7 @@ class WTUtils {
 		$prev = $node;
 		do {
 			$node = $prev;
-			$prev = DOMUtils::previousNonDeletedSibling( $node );
+			$prev = DiffDOMUtils::previousNonDeletedSibling( $node );
 		} while (
 			$prev instanceof Element &&
 			$prev->getAttribute( 'about' ) === $about
@@ -321,25 +321,15 @@ class WTUtils {
 	}
 
 	/**
-	 * Check if $node is an ELEMENT $node belongs to a template/extension.
-	 *
-	 * NOTE: Use with caution. This technique works reliably for the
-	 * root level elements of tpl-content DOM subtrees since only they
-	 * are guaranteed to be  marked and nested content might not
-	 * necessarily be marked.
+	 * Check if $node is a root in an encapsulated DOM forest.
 	 *
 	 * @param Node $node
 	 * @return bool
 	 */
-	public static function hasParsoidAboutId( Node $node ): bool {
-		if (
-			$node instanceof Element &&
-			$node->hasAttribute( 'about' )
-		) {
-			$about = $node->getAttribute( 'about' );
-			// SSS FIXME: Verify that our DOM spec clarifies this
-			// expectation on about-ids and that our clients respect this.
-			return $about && Utils::isParsoidObjectId( $about );
+	public static function isEncapsulatedDOMForestRoot( Node $node ): bool {
+		if ( $node instanceof Element && $node->hasAttribute( 'about' ) ) {
+			// FIXME: Ensure that our DOM spec clarifies this expectation
+			return Utils::isParsoidObjectId( $node->getAttribute( 'about' ) );
 		} else {
 			return false;
 		}
@@ -785,15 +775,22 @@ class WTUtils {
 	}
 
 	/**
+	 * @param Node $node
+	 * @return ?string
+	 */
+	public static function getExtTagName( Node $node ): ?string {
+		$match = DOMUtils::matchTypeOf( $node, '#^mw:Extension/(.+?)$#D' );
+		return $match ? mb_strtolower( substr( $match, strlen( 'mw:Extension/' ) ) ) : null;
+	}
+
+	/**
 	 * @param Env $env
 	 * @param Node $node
 	 * @return ?ExtensionTagHandler
 	 */
 	public static function getNativeExt( Env $env, Node $node ): ?ExtensionTagHandler {
-		$match = DOMUtils::matchTypeOf( $node, '#^mw:Extension/(.+?)$#D' );
-		$matchingTag = $match ? substr( $match, strlen( 'mw:Extension/' ) ) : null;
-		return $matchingTag ?
-			$env->getSiteConfig()->getExtTagImpl( $matchingTag ) : null;
+		$extTagName = self::getExtTagName( $node );
+		return $extTagName ? $env->getSiteConfig()->getExtTagImpl( $extTagName ) : null;
 	}
 
 	/**
@@ -919,7 +916,7 @@ class WTUtils {
 	 */
 	public static function addPageContentI18nAttribute(
 		Element $element, string $name, string $key, ?array $params = null
-	) {
+	): void {
 		$i18n = I18nInfo::createPageContentI18n( $key, $params );
 		DOMUtils::addTypeOf( $element, 'mw:LocalizedAttrs' );
 		DOMDataUtils::setDataAttrI18n( $element, $name, $i18n );
@@ -934,7 +931,7 @@ class WTUtils {
 	 */
 	public static function addInterfaceI18nAttribute(
 		Element $element, string $name, string $key, ?array $params = null
-	) {
+	): void {
 		$i18n = I18nInfo::createInterfaceI18n( $key, $params );
 		DOMUtils::addTypeOf( $element, 'mw:LocalizedAttrs' );
 		DOMDataUtils::setDataAttrI18n( $element, $name, $i18n );
@@ -954,7 +951,7 @@ class WTUtils {
 	 */
 	public static function addLangI18nAttribute(
 		Element $element, Bcp47Code $lang, string $name, string $key, ?array $params = null
-	) {
+	): void {
 		$i18n = I18nInfo::createLangI18n( $lang, $key, $params );
 		DOMUtils::addTypeOf( $element, 'mw:LocalizedAttrs' );
 		DOMDataUtils::setDataAttrI18n( $element, $name, $i18n );
@@ -1080,6 +1077,7 @@ class WTUtils {
 				$content .= $c->nodeValue;
 			} elseif (
 				$c instanceof Element &&
+				!DOMUtils::isMetaDataTag( $c ) &&
 				!DOMUtils::hasTypeOf( $c, "mw:Extension/ref" )
 			) {
 				$content .= self::textContentFromCaption( $c );

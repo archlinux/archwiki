@@ -5,14 +5,14 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Risponde",
-	"discussiontools-replylink": "risponde",
+	"discussiontools-replylink": "{{GENDER:|risponde}}",
 	"discussiontools-replywidget-advanced": "Avantzadas",
 	"discussiontools-replywidget-cancel": "Annulla",
 	"discussiontools-replywidget-mode-source": "Orìgine",
 	"discussiontools-replywidget-mode-visual": "Visuale",
-	"discussiontools-replywidget-placeholder-reply": "Risponde a {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Risponde}} a {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Antiprima",
-	"discussiontools-replywidget-reply": "Risponde",
+	"discussiontools-replywidget-reply": "{{GENDER:|Risponde}}",
 	"discussiontools-replywidget-summary": "Resumu",
 	"discussiontools-replywidget-watchthis": "Annanghe custa pàgina a is [[Special:Watchlist|Pàginas annotadas]] tuas",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|persone|persones}} in s'arresonu",
@@ -23,7 +23,7 @@
 	"discussiontools-topicsubscription-button-unsubscribe": "annulla s'iscritzione",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Annulla s'iscritzione",
 	"discussiontools-topicsubscription-notify-subscribed-body": "As a retzire notìficas pro sos cummentos noos subra de custu tema.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "Ti ses iscritu!",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Ti ses {{GENDER:|iscritu|iscrita}}!",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "No as a retzire prus notìficas pro sos cummentos noos subra de custu tema.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "As annulladu s'iscritzione."
 }

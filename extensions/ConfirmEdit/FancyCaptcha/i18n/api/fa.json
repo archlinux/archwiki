@@ -5,7 +5,6 @@
 			"فلورانس"
 		]
 	},
-	"apihelp-fancycaptchareload-description": "یک FancyCaptcha جدید بیاور.",
 	"apihelp-fancycaptchareload-summary": "کپچای جدید دریافت کن.",
 	"apihelp-fancycaptchareload-example-1": "یک FancyCaptcha جدید بیاور."
 }

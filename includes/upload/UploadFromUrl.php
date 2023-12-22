@@ -21,9 +21,12 @@
  * @ingroup Upload
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Status\Status;
 
 /**
  * Implements uploading from a HTTP resource.
@@ -49,8 +52,7 @@ class UploadFromUrl extends UploadBase {
 	 * @return bool|string
 	 */
 	public static function isAllowed( Authority $performer ) {
-		if ( !$performer->isAllowed( 'upload_by_url' )
-		) {
+		if ( !$performer->isAllowed( 'upload_by_url' ) ) {
 			return 'upload_by_url';
 		}
 
@@ -147,7 +149,8 @@ class UploadFromUrl extends UploadBase {
 	public static function isAllowedUrl( $url ) {
 		if ( !isset( self::$allowedUrls[$url] ) ) {
 			$allowed = true;
-			Hooks::runner()->onIsUploadAllowedFromUrl( $url, $allowed );
+			( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
+				->onIsUploadAllowedFromUrl( $url, $allowed );
 			self::$allowedUrls[$url] = $allowed;
 		}
 
@@ -193,7 +196,7 @@ class UploadFromUrl extends UploadBase {
 
 		$url = $request->getVal( 'wpUploadFileURL' );
 
-		return !empty( $url )
+		return $url
 			&& MediaWikiServices::getInstance()
 				->getPermissionManager()
 				->userHasRight( $user, 'upload_by_url' );

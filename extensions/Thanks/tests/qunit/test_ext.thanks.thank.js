@@ -13,7 +13,7 @@ QUnit.test( 'thanked cookie', function ( assert ) {
 	assert.deepEqual( mw.thanks.thanked.load(), [ '17', '11' ], 'cookie with two values' );
 
 	// Add a 0 the 100th element
-	// eslint-disable-next-line no-restricted-properties
+	// eslint-disable-next-line es-x/no-string-prototype-repeat
 	mw.cookie.set( mw.thanks.thanked.cookieName, escape( '9,'.repeat( mw.thanks.thanked.maxHistory - 1 ) + '0' ) );
 	assert.strictEqual( mw.thanks.thanked.load()[ mw.thanks.thanked.maxHistory - 1 ], '0', 'load ids from a cookie' );
 

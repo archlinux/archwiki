@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use EchoForeignNotifications;
+use MediaWiki\Extension\Notifications\ForeignNotifications;
 
 class EchoForeignPresentationModel extends EchoEventPresentationModel {
 	public function getIconType() {
@@ -44,7 +44,7 @@ class EchoForeignPresentationModel extends EchoEventPresentationModel {
 	}
 
 	protected function getWikiNames( array $wikis ) {
-		$data = EchoForeignNotifications::getApiEndpoints( $wikis );
+		$data = ForeignNotifications::getApiEndpoints( $wikis );
 		$names = [];
 		foreach ( $wikis as $wiki ) {
 			$names[] = $data[$wiki]['title'];

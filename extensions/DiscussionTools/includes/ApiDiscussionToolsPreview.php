@@ -7,8 +7,10 @@ use ApiMain;
 use ApiUsageException;
 use MediaWiki\Extension\VisualEditor\ApiParsoidTrait;
 use MediaWiki\Extension\VisualEditor\VisualEditorParsoidClientFactory;
+use MediaWiki\Title\Title;
+use MediaWiki\User\TempUser\TempUserCreator;
+use MediaWiki\User\UserFactory;
 use SkinFactory;
-use Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -19,6 +21,8 @@ class ApiDiscussionToolsPreview extends ApiBase {
 
 	private CommentParser $commentParser;
 	private VisualEditorParsoidClientFactory $parsoidClientFactory;
+	private TempUserCreator $tempUserCreator;
+	private UserFactory $userFactory;
 	private SkinFactory $skinFactory;
 
 	public function __construct(
@@ -26,11 +30,15 @@ class ApiDiscussionToolsPreview extends ApiBase {
 		string $name,
 		VisualEditorParsoidClientFactory $parsoidClientFactory,
 		CommentParser $commentParser,
+		TempUserCreator $tempUserCreator,
+		UserFactory $userFactory,
 		SkinFactory $skinFactory
 	) {
 		parent::__construct( $main, $name );
 		$this->parsoidClientFactory = $parsoidClientFactory;
 		$this->commentParser = $commentParser;
+		$this->tempUserCreator = $tempUserCreator;
+		$this->userFactory = $userFactory;
 		$this->skinFactory = $skinFactory;
 	}
 
@@ -64,7 +72,9 @@ class ApiDiscussionToolsPreview extends ApiBase {
 		// Check if there was a signature in a proper place
 		$container = DOMCompat::getBody( DOMUtils::parseHTML( $resultHtml ) );
 		$threadItemSet = $this->commentParser->parse( $container, $title->getTitleValue() );
-		if ( !CommentUtils::isSingleCommentSignedBy( $threadItemSet, $this->getUser()->getName(), $container ) ) {
+		if ( !CommentUtils::isSingleCommentSignedBy(
+			$threadItemSet, $this->getUserForPreview()->getName(), $container
+		) ) {
 			// If not, add the signature and re-render
 			$signature = $this->msg( 'discussiontools-signature-prefix' )->inContentLanguage()->text() . '~~~~';
 			// Drop opacity of signature in preview to make message body preview clearer.
@@ -100,7 +110,10 @@ class ApiDiscussionToolsPreview extends ApiBase {
 					'reply',
 					'topic',
 				],
-				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [
+					'reply' => 'apihelp-discussiontoolsedit-paramvalue-paction-addcomment',
+					'topic' => 'apihelp-discussiontoolsedit-paramvalue-paction-addtopic',
+				],
 			],
 			'page' => [
 				ParamValidator::PARAM_REQUIRED => true,

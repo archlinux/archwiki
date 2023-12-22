@@ -2,6 +2,7 @@
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 
@@ -31,7 +32,7 @@ class TestUser {
 			$wgDBprefix !== MediaWikiIntegrationTestCase::DB_PREFIX &&
 			$wgDBprefix !== ParserTestRunner::DB_PREFIX
 		) {
-			throw new MWException( "Can't create user on real database" );
+			throw new RuntimeException( "Can't create user on real database" );
 		}
 	}
 
@@ -60,7 +61,7 @@ class TestUser {
 			);
 
 			if ( !$this->user ) {
-				throw new MWException( "Error creating TestUser " . $username );
+				throw new RuntimeException( "Error creating TestUser " . $username );
 			}
 		}
 
@@ -131,29 +132,27 @@ class TestUser {
 	 */
 	public static function setPasswordForUser( User $user, $password ) {
 		if ( !$user->getId() ) {
-			throw new MWException( "Passed User has not been added to the database yet!" );
+			throw new InvalidArgumentException( "Passed User has not been added to the database yet!" );
 		}
 
 		$dbw = wfGetDB( DB_PRIMARY );
-		$row = $dbw->selectRow(
-			'user',
-			[ 'user_password' ],
-			[ 'user_id' => $user->getId() ],
-			__METHOD__
-		);
+		$row = $dbw->newSelectQueryBuilder()
+			->select( [ 'user_password' ] )
+			->from( 'user' )
+			->where( [ 'user_id' => $user->getId() ] )
+			->caller( __METHOD__ )->fetchRow();
 		if ( !$row ) {
-			throw new MWException( "Passed User has an ID but is not in the database?" );
+			throw new RuntimeException( "Passed User has an ID but is not in the database?" );
 		}
 
 		$passwordFactory = MediaWikiServices::getInstance()->getPasswordFactory();
 		if ( !$passwordFactory->newFromCiphertext( $row->user_password )->verify( $password ) ) {
 			$passwordHash = $passwordFactory->newFromPlaintext( $password );
-			$dbw->update(
-				'user',
-				[ 'user_password' => $passwordHash->toString() ],
-				[ 'user_id' => $user->getId() ],
-				__METHOD__
-			);
+			$dbw->newUpdateQueryBuilder()
+				->update( 'user' )
+				->set( [ 'user_password' => $passwordHash->toString() ] )
+				->where( [ 'user_id' => $user->getId() ] )
+				->caller( __METHOD__ )->execute();
 		}
 	}
 

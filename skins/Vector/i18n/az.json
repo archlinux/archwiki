@@ -28,7 +28,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 dildə|$1 dildə}}",
 	"vector-no-language-button-label": "Dil əlavə et",
 	"vector-no-language-button-aria-label": "Bu məqalə yalnız bu dildə mövcuddur. Digər dillər üçün məqalə əlavə edin",
-	"vector-language-redirect-to-top": "Bu {{SITENAME}} layihəsində dil keçidləri məqalənin başlıq hissəsində verilmişdir. [[#p-lang-btn|Yuxarı get]].",
+	"vector-language-redirect-to-top": "Dil bağlantıları səhifənin yuxarısında başlığın qarşısında yerləşir.",
 	"vector-language-variant-switcher-label": "Dil variantını dəyişdirin",
 	"vector-action-addsection": "Mövzu əlavə et",
 	"vector-action-delete": "Sil",
@@ -60,6 +60,8 @@
 	"vector-site-nav-label": "Sayt",
 	"vector-main-menu-label": "Əsas menyu",
 	"vector-limited-width-toggle": "Məhdud məzmun genişliyini dəyişdirin",
+	"vector-limited-width-toggle-on-popup": "Siz tərtibatı tam genişliyə dəyişdiniz. Məhdud genişliyə qayıtmaq üçün bu düyməni basın.",
+	"vector-limited-width-toggle-off-popup": "Bu düyməni klikləməklə məhdud eni və tam eni arasında keçid edə bilərsiniz.",
 	"vector-page-tools-label": "Alətlər",
 	"vector-page-tools-general-label": "Ümumi",
 	"vector-page-tools-actions-label": "Fəaliyyətlər",
@@ -69,5 +71,8 @@
 	"tooltip-vector-anon-user-menu-title": "Daha çox seçim",
 	"vector-prefs-limited-width": "Məhdud genişlik rejimini aktivləşdirin",
 	"vector-prefs-limited-width-help": "Təkmil oxuma təcrübəsi üçün məhdud en rejimini aktiv edin.",
-	"empty-language-selector-body": "Səhifə məzmunu digər dillərdə dəstəklənmir."
+	"empty-language-selector-body": "Səhifə məzmunu digər dillərdə dəstəklənmir.",
+	"vector-toc-unpinned-popup": "Mündəricat bura köçürülüb.",
+	"vector-page-tools-unpinned-popup": "Alətlər menyusu bura köçürülüb.",
+	"vector-main-menu-unpinned-popup": "Əsas menyu bura köçürülüb."
 }

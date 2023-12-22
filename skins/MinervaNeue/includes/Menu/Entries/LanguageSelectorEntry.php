@@ -17,10 +17,8 @@
 
 namespace MediaWiki\Minerva\Menu\Entries;
 
-use MediaWiki\Minerva\MinervaUI;
+use MediaWiki\Title\Title;
 use MessageLocalizer;
-use SpecialPage;
-use Title;
 
 /**
  * Model for a menu entry that represents a language selector for current title
@@ -75,14 +73,9 @@ class LanguageSelectorEntry implements IMenuEntry {
 		$this->title = $title;
 		$this->doesPageHaveLanguages = $doesPageHaveLanguages;
 		$this->messageLocalizer = $messageLocalizer;
-		$this->icon = 'wikimedia-language-base20';
+		$this->icon = 'language-base20';
 		$this->label = $label;
 		$this->classes = $classes;
-		if ( $isButton ) {
-			$this->classes .= MinervaUI::iconClass(
-				'language-base20', 'element', 'mw-ui-button mw-ui-quiet mw-ui-icon-with-label-desktop', 'wikimedia'
-			);
-		}
 	}
 
 	/**
@@ -107,10 +100,7 @@ class LanguageSelectorEntry implements IMenuEntry {
 		$switcherClasses = ' language-selector';
 
 		if ( $this->doesPageHaveLanguages ) {
-			$switcherLink = SpecialPage::getTitleFor(
-				'MobileLanguages',
-				$this->title
-			)->getLocalURL();
+			$switcherLink = '#p-lang';
 		} else {
 			$switcherClasses .= ' disabled';
 		}
@@ -118,14 +108,35 @@ class LanguageSelectorEntry implements IMenuEntry {
 
 		return [
 			[
-				'href' => $switcherLink,
-				'icon' => $this->icon,
-				'class' => $this->classes . ' ' . $switcherClasses,
-				'text' => $msg,
-				'title' => $msg,
-				'data-event-name' => 'menu.languages'
-			]
-
+				'tag-name' => 'a',
+				'classes' => $this->classes . ' ' . $switcherClasses,
+				'label' => $msg,
+				'data-icon' => [
+					'icon' => $this->icon,
+				],
+				'array-attributes' => [
+					[
+						'key' => 'href',
+						'value' => $switcherLink,
+					],
+					[
+						'key' => 'data-mw',
+						'value' => 'interface',
+					],
+					[
+						'key' => 'data-event-name',
+						'value' => 'menu.languages',
+					],
+					[
+						'key' => 'role',
+						'value' => 'button',
+					],
+					[
+						'key' => 'title',
+						'value' => $msg,
+					],
+				],
+			],
 		];
 	}
 }

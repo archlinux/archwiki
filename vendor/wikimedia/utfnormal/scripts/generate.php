@@ -79,7 +79,7 @@ $in = getFilePointer(
 );
 print "Initializing normalization quick check tables...\n";
 $checkNFC = [];
-while ( false !== ( $line = fgets( $in ) ) ) {
+while ( ( $line = fgets( $in ) ) !== false ) {
 	$matches = [];
 	if ( preg_match(
 		'/^([0-9A-F]+)(?:..([0-9A-F]+))?\s*;\s*(NFC_QC)\s*;\s*([MN])/',
@@ -106,7 +106,7 @@ $in = getFilePointer(
 	'http://www.unicode.org/Public/UNIDATA/CompositionExclusions.txt'
 );
 $exclude = [];
-while ( false !== ( $line = fgets( $in ) ) ) {
+while ( ( $line = fgets( $in ) ) !== false ) {
 	if ( preg_match( '/^([0-9A-F]+)/i', $line, $matches ) ) {
 		$codepoint = $matches[1];
 		$source = Utils::codepointToUtf8( hexdec( $codepoint ) );
@@ -128,7 +128,7 @@ $compat = 0;
 $canon = 0;
 
 print "Reading character definitions...\n";
-while ( false !== ( $line = fgets( $in ) ) ) {
+while ( ( $line = fgets( $in ) ) !== false ) {
 	$columns = explode( ';', $line );
 	$codepoint = $columns[0];
 	$name = $columns[1];
@@ -222,13 +222,12 @@ if ( $out ) {
  *
  * @file
  */
-// @codingStandardsIgnoreFile
 
 UtfNormal\Validator::\$utfCombiningClass = unserialize( '$serCombining' );
 UtfNormal\Validator::\$utfCanonicalComp = unserialize( '$serComp' );
 UtfNormal\Validator::\$utfCanonicalDecomp = unserialize( '$serCanon' );
 UtfNormal\Validator::\$utfCheckNFC = unserialize( '$serCheckNFC' );
-\n";
+";
 	fputs( $out, $outdata );
 	fclose( $out );
 	print "Wrote out UtfNormalData.inc\n";
@@ -247,10 +246,9 @@ if ( $out ) {
  *
  * @file
  */
-// @codingStandardsIgnoreFile
 
 UtfNormal\Validator::\$utfCompatibilityDecomp = unserialize( '$serCompat' );
-\n";
+";
 	fputs( $out, $outdata );
 	fclose( $out );
 	print "Wrote out UtfNormalDataK.inc\n";
@@ -265,9 +263,7 @@ UtfNormal\Validator::\$utfCompatibilityDecomp = unserialize( '$serCompat' );
  * @return string
  */
 function callbackCanonical( $matches ) {
-	// @codingStandardsIgnoreStart MediaWiki.NamingConventions.ValidGlobalName.wgPrefix
 	global $canonicalDecomp;
-	// @codingStandardsIgnoreEnd
 
 	if ( isset( $canonicalDecomp[$matches[1]] ) ) {
 		return $canonicalDecomp[$matches[1]];
@@ -281,9 +277,7 @@ function callbackCanonical( $matches ) {
  * @return string
  */
 function callbackCompat( $matches ) {
-	// @codingStandardsIgnoreStart MediaWiki.NamingConventions.ValidGlobalName.wgPrefix
 	global $compatibilityDecomp;
-	// @codingStandardsIgnoreEnd
 
 	if ( isset( $compatibilityDecomp[$matches[1]] ) ) {
 		return $compatibilityDecomp[$matches[1]];

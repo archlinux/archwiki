@@ -19,6 +19,11 @@
  * @ingroup Pager
  */
 
+namespace MediaWiki\Pager;
+
+use IContextSource;
+use LogEventsList;
+use LogPage;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
@@ -26,24 +31,28 @@ use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MWException;
+use UserCache;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 class ProtectedPagesPager extends TablePager {
 
 	public $mConds;
-	private $type, $level, $namespace, $sizetype, $size, $indefonly, $cascadeonly, $noredirect;
+	private $type;
+	private $level;
+	/** @var int|null */
+	private $namespace;
+	private $sizetype;
+	/** @var int */
+	private $size;
+	private $indefonly;
+	private $cascadeonly;
+	private $noredirect;
 
-	/** @var CommentStore */
-	private $commentStore;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var UserCache */
-	private $userCache;
-
-	/** @var RowCommentFormatter */
-	private $rowCommentFormatter;
+	private CommentStore $commentStore;
+	private LinkBatchFactory $linkBatchFactory;
+	private UserCache $userCache;
+	private RowCommentFormatter $rowCommentFormatter;
 
 	/** @var string[] */
 	private $formattedComments = [];
@@ -53,15 +62,15 @@ class ProtectedPagesPager extends TablePager {
 	 * @param CommentStore $commentStore
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param LinkRenderer $linkRenderer
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param RowCommentFormatter $rowCommentFormatter
 	 * @param UserCache $userCache
 	 * @param array $conds
 	 * @param string $type
 	 * @param string $level
-	 * @param int $namespace
+	 * @param int|null $namespace
 	 * @param string $sizetype
-	 * @param int $size
+	 * @param int|null $size
 	 * @param bool $indefonly
 	 * @param bool $cascadeonly
 	 * @param bool $noredirect
@@ -71,7 +80,7 @@ class ProtectedPagesPager extends TablePager {
 		CommentStore $commentStore,
 		LinkBatchFactory $linkBatchFactory,
 		LinkRenderer $linkRenderer,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		RowCommentFormatter $rowCommentFormatter,
 		UserCache $userCache,
 		$conds,
@@ -85,7 +94,7 @@ class ProtectedPagesPager extends TablePager {
 		$noredirect
 	) {
 		// Set database before parent constructor to avoid setting it there with wfGetDB
-		$this->mDb = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		$this->mDb = $dbProvider->getReplicaDatabase();
 		parent::__construct( $context, $linkRenderer );
 		$this->commentStore = $commentStore;
 		$this->linkBatchFactory = $linkBatchFactory;
@@ -304,8 +313,7 @@ class ProtectedPagesPager extends TablePager {
 		}
 
 		if ( $this->indefonly ) {
-			$infinity = $dbr->addQuotes( $dbr->getInfinity() );
-			$conds[] = "pr_expiry = $infinity OR pr_expiry IS NULL";
+			$conds['pr_expiry'] = [ $dbr->getInfinity(), null ];
 		}
 		if ( $this->cascadeonly ) {
 			$conds[] = 'pr_cascade = 1';
@@ -380,3 +388,9 @@ class ProtectedPagesPager extends TablePager {
 		return false;
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( ProtectedPagesPager::class, 'ProtectedPagesPager' );

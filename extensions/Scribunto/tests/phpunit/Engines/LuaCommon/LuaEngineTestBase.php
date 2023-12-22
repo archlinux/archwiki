@@ -4,9 +4,9 @@ namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon;
 
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaEngine;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaError;
+use MediaWiki\Title\Title;
 use MediaWikiLangTestCase;
 use PHPUnit\Framework\TestSuite;
-use Title;
 
 /**
  * This is the subclass for Lua library tests. It will automatically run all
@@ -96,7 +96,11 @@ abstract class LuaEngineTestBase extends MediaWikiLangTestCase {
 	 * @return Title
 	 */
 	protected function getTestTitle() {
-		return Title::newMainPage();
+		// XXX This should use a dedicated test page, not the main page
+		$t = Title::newMainPage();
+		// Force content model to avoid DB queries
+		$t->setContentModel( CONTENT_MODEL_WIKITEXT );
+		return $t;
 	}
 
 	public function toString(): string {

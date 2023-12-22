@@ -32,6 +32,7 @@
 	"replacetext_nomove": "Није нађена ниједна страница чији наслов садржи „$1“.",
 	"replacetext_return": "Назад на образац.",
 	"replacetext_continue": "Настави",
+	"replacetext_botedit": "Означи измене као ботовске",
 	"replacetext_editsummary": "Замена текста — „$1” у „$2”",
 	"right-replacetext": "замењивање ниски на целом викију"
 }

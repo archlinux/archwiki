@@ -1,3 +1,4 @@
+@import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
 @import '../mmv.mixins.less';
 
@@ -13,7 +14,7 @@
 	h3 {
 		margin: 10px;
 		padding: 0;
-		color: #54595d;
+		color: @color-subtle;
 		font-size: 0.95em;
 	}
 
@@ -24,7 +25,7 @@
 		right: 8px;
 		width: 16px;
 		height: 16px;
-		.background-image( 'img/x_gray.svg' );
+		background-image: url( img/x_gray.svg );
 		cursor: pointer;
 	}
 
@@ -38,7 +39,7 @@
 		margin: 0 10px 10px;
 		font-size: @text-font-size;
 		line-height: @text-line-height;
-		color: #54595d;
+		color: @color-subtle;
 
 		.mw-mmv-permission-text-fader {
 			position: absolute;

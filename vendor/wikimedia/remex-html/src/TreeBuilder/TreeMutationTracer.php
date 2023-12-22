@@ -69,6 +69,7 @@ class TreeMutationTracer implements TreeHandler {
 	 */
 	private function before() {
 		if ( $this->verbosity > 0 ) {
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$this->trace( "Before: " . $this->handler->dump() . "\n" );
 		}
 	}
@@ -78,6 +79,7 @@ class TreeMutationTracer implements TreeHandler {
 	 */
 	private function after() {
 		if ( $this->verbosity > 0 ) {
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$this->trace( "After:  " . $this->handler->dump() . "\n" );
 		}
 	}

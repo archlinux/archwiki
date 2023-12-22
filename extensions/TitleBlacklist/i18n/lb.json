@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Les Meloures",
 			"Robby",
-			"Soued031",
-			"Les Meloures"
+			"Soued031"
 		]
 	},
 	"titleblacklist-desc": "Erlaabt den Administrateuren d'Uleeë vu Säiten a Benotzerkonte mat spezifeschen Titelen iwwer eng [[MediaWiki:Titleblacklist|schwaarz Lëscht]] an eng [[MediaWiki:Titlewhitelist|wäiss Lëscht]] ze verbidden",

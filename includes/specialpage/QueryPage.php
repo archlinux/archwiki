@@ -21,17 +21,60 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\SpecialPage;
+
+use Exception;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Config\Config;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Specials\SpecialAncientPages;
+use MediaWiki\Specials\SpecialBrokenRedirects;
+use MediaWiki\Specials\SpecialDeadendPages;
+use MediaWiki\Specials\SpecialDoubleRedirects;
+use MediaWiki\Specials\SpecialFewestRevisions;
+use MediaWiki\Specials\SpecialLinkSearch;
+use MediaWiki\Specials\SpecialListDuplicatedFiles;
+use MediaWiki\Specials\SpecialListRedirects;
+use MediaWiki\Specials\SpecialLonelyPages;
+use MediaWiki\Specials\SpecialLongPages;
+use MediaWiki\Specials\SpecialMediaStatistics;
+use MediaWiki\Specials\SpecialMIMESearch;
+use MediaWiki\Specials\SpecialMostCategories;
 use MediaWiki\Specials\SpecialMostImages;
+use MediaWiki\Specials\SpecialMostInterwikis;
+use MediaWiki\Specials\SpecialMostLinked;
+use MediaWiki\Specials\SpecialMostLinkedCategories;
+use MediaWiki\Specials\SpecialMostLinkedTemplates;
+use MediaWiki\Specials\SpecialMostRevisions;
+use MediaWiki\Specials\SpecialShortPages;
+use MediaWiki\Specials\SpecialUncategorizedCategories;
+use MediaWiki\Specials\SpecialUncategorizedImages;
+use MediaWiki\Specials\SpecialUncategorizedPages;
+use MediaWiki\Specials\SpecialUncategorizedTemplates;
+use MediaWiki\Specials\SpecialUnusedCategories;
+use MediaWiki\Specials\SpecialUnusedImages;
+use MediaWiki\Specials\SpecialUnusedTemplates;
+use MediaWiki\Specials\SpecialUnwatchedPages;
+use MediaWiki\Specials\SpecialWantedCategories;
 use MediaWiki\Specials\SpecialWantedFiles;
 use MediaWiki\Specials\SpecialWantedPages;
+use MediaWiki\Specials\SpecialWantedTemplates;
+use MediaWiki\Specials\SpecialWithoutInterwiki;
+use MWDebug;
+use MWException;
+use Skin;
+use stdClass;
 use Wikimedia\Rdbms\DBError;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IResultWrapper;
+use Wikimedia\Rdbms\SelectQueryBuilder;
+use Xml;
 
 /**
  * This is a class for doing query pages; since they're almost all the same,
@@ -73,6 +116,9 @@ abstract class QueryPage extends SpecialPage {
 
 	/** @var ILoadBalancer|null */
 	private $loadBalancer = null;
+
+	/** @var IConnectionProvider|null */
+	private $databaseProvider = null;
 
 	/** @var LinkBatchFactory|null */
 	private $linkBatchFactory = null;
@@ -126,7 +172,7 @@ abstract class QueryPage extends SpecialPage {
 				[ SpecialUnusedTemplates::class, 'Unusedtemplates' ],
 				[ SpecialWithoutInterwiki::class, 'Withoutinterwiki' ],
 			];
-			Hooks::runner()->onWgQueryPages( $qp );
+			( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onWgQueryPages( $qp );
 		}
 
 		return $qp;
@@ -385,7 +431,7 @@ abstract class QueryPage extends SpecialPage {
 		}
 
 		$fname = static::class . '::recache';
-		$dbw = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_PRIMARY );
+		$dbw = $this->getDatabaseProvider()->getPrimaryDatabase();
 
 		try {
 			// Do query
@@ -418,29 +464,29 @@ abstract class QueryPage extends SpecialPage {
 					$fname,
 					function ( IDatabase $dbw, $fname ) use ( $vals ) {
 						// Clear out any old cached data
-						$dbw->delete( 'querycache',
-							[ 'qc_type' => $this->getName() ],
-							$fname
-						);
-						// Save results into the querycache table on the primary DB
-						if ( count( $vals ) ) {
-							$dbw->insert( 'querycache', $vals, $fname );
-						}
+						$dbw->newDeleteQueryBuilder()
+							->deleteFrom( 'querycache' )
+							->where( [ 'qc_type' => $this->getName() ] )
+							->caller( $fname )->execute();
 						// Update the querycache_info record for the page
-						$dbw->upsert(
-							'querycache_info',
-							[
-								'qci_type' => $this->getName(),
-								'qci_timestamp' => $dbw->timestamp(),
-							],
-							'qci_type',
-							[
-								'qci_timestamp' => $dbw->timestamp(),
-							],
-							$fname
-						);
+						$dbw->newInsertQueryBuilder()
+							->insertInto( 'querycache_info' )
+							->row( [ 'qci_type' => $this->getName(), 'qci_timestamp' => $dbw->timestamp() ] )
+							->onDuplicateKeyUpdate()
+							->uniqueIndexFields( [ 'qci_type' ] )
+							->set( [ 'qci_timestamp' => $dbw->timestamp() ] )
+							->caller( $fname )->execute();
 					}
 				);
+				// Save results into the querycache table on the primary DB
+				if ( count( $vals ) ) {
+					foreach ( array_chunk( $vals, 500 ) as $chunk ) {
+						$dbw->newInsertQueryBuilder()
+							->insertInto( 'querycache' )
+							->rows( $chunk )
+							->caller( $fname )->execute();
+					}
+				}
 			}
 		} catch ( DBError $e ) {
 			if ( !$ignoreErrors ) {
@@ -470,12 +516,15 @@ abstract class QueryPage extends SpecialPage {
 	 */
 	public function delete( LinkTarget $title ) {
 		if ( $this->isCached() ) {
-			$dbw = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_PRIMARY );
-			$dbw->delete( 'querycache', [
-				'qc_type' => $this->getName(),
-				'qc_namespace' => $title->getNamespace(),
-				'qc_title' => $title->getDBkey(),
-			], __METHOD__ );
+			$dbw = $this->getDatabaseProvider()->getPrimaryDatabase();
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'querycache' )
+				->where( [
+					'qc_type' => $this->getName(),
+					'qc_namespace' => $title->getNamespace(),
+					'qc_title' => $title->getDBkey(),
+				] )
+				->caller( __METHOD__ )->execute();
 		}
 	}
 
@@ -486,19 +535,19 @@ abstract class QueryPage extends SpecialPage {
 	 */
 	public function deleteAllCachedData() {
 		$fname = static::class . '::' . __FUNCTION__;
-		$dbw = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_PRIMARY );
-		$dbw->delete( 'querycache',
-			[ 'qc_type' => $this->getName() ],
-			$fname
-		);
-		$dbw->delete( 'querycachetwo',
-			[ 'qcc_type' => $this->getName() ],
-			$fname
-		);
-		$dbw->delete( 'querycache_info',
-			[ 'qci_type' => $this->getName() ],
-			$fname
-		);
+		$dbw = $this->getDatabaseProvider()->getPrimaryDatabase();
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'querycache' )
+			->where( [ 'qc_type' => $this->getName() ] )
+			->caller( $fname )->execute();
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'querycachetwo' )
+			->where( [ 'qcc_type' => $this->getName() ] )
+			->caller( $fname )->execute();
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'querycache_info' )
+			->where( [ 'qci_type' => $this->getName() ] )
+			->caller( $fname )->execute();
 	}
 
 	/**
@@ -554,6 +603,7 @@ abstract class QueryPage extends SpecialPage {
 			$sql = $this->getSQL();
 			$sql .= ' ORDER BY ' . implode( ', ', $order );
 			$sql = $dbr->limitResult( $sql, $limit, $offset );
+			// phpcs:ignore MediaWiki.Usage.DbrQueryUsage.DbrQueryFound
 			$res = $dbr->query( $sql, $fname );
 		}
 
@@ -584,36 +634,28 @@ abstract class QueryPage extends SpecialPage {
 	 * @since 1.18
 	 */
 	public function fetchFromCache( $limit, $offset = false ) {
-		$dbr = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_REPLICA );
-		$options = [];
+		$dbr = $this->getDatabaseProvider()->getReplicaDatabase();
+		$queryBuilder = $dbr->newSelectQueryBuilder()
+			->select( [ 'qc_type', 'namespace' => 'qc_namespace', 'title' => 'qc_title', 'value' => 'qc_value' ] )
+			->from( 'querycache' )
+			->where( [ 'qc_type' => $this->getName() ] );
 
 		if ( $limit !== false ) {
-			$options['LIMIT'] = intval( $limit );
+			$queryBuilder->limit( intval( $limit ) );
 		}
 
 		if ( $offset !== false ) {
-			$options['OFFSET'] = intval( $offset );
+			$queryBuilder->offset( intval( $offset ) );
 		}
 
 		$order = $this->getCacheOrderFields();
 		if ( $this->sortDescending() ) {
-			foreach ( $order as &$field ) {
-				$field .= " DESC";
-			}
-		}
-		if ( $order ) {
-			$options['ORDER BY'] = $order;
+			$queryBuilder->orderBy( $order, SelectQueryBuilder::SORT_DESC );
+		} else {
+			$queryBuilder->orderBy( $order );
 		}
 
-		return $dbr->select( 'querycache',
-				[ 'qc_type',
-				'namespace' => 'qc_namespace',
-				'title' => 'qc_title',
-				'value' => 'qc_value' ],
-				[ 'qc_type' => $this->getName() ],
-				__METHOD__,
-				$options
-		);
+		return $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 	}
 
 	/**
@@ -632,10 +674,13 @@ abstract class QueryPage extends SpecialPage {
 	 */
 	public function getCachedTimestamp() {
 		if ( $this->cachedTimestamp === null ) {
-			$dbr = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_REPLICA );
+			$dbr = $this->getDatabaseProvider()->getReplicaDatabase();
 			$fname = static::class . '::getCachedTimestamp';
-			$this->cachedTimestamp = $dbr->selectField( 'querycache_info', 'qci_timestamp',
-				[ 'qci_type' => $this->getName() ], $fname );
+			$this->cachedTimestamp = $dbr->newSelectQueryBuilder()
+				->select( 'qci_timestamp' )
+				->from( 'querycache_info' )
+				->where( [ 'qci_type' => $this->getName() ] )
+				->caller( $fname )->fetchField();
 		}
 		return $this->cachedTimestamp;
 	}
@@ -932,4 +977,29 @@ abstract class QueryPage extends SpecialPage {
 		}
 		return $this->loadBalancer;
 	}
+
+	/**
+	 * @since 1.41
+	 * @param IConnectionProvider $databaseProvider
+	 */
+	final protected function setDatabaseProvider( IConnectionProvider $databaseProvider ) {
+		$this->databaseProvider = $databaseProvider;
+	}
+
+	/**
+	 * @since 1.41
+	 * @return IConnectionProvider
+	 */
+	final protected function getDatabaseProvider(): IConnectionProvider {
+		if ( $this->databaseProvider === null ) {
+			$this->databaseProvider = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		}
+		return $this->databaseProvider;
+	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( QueryPage::class, 'QueryPage' );

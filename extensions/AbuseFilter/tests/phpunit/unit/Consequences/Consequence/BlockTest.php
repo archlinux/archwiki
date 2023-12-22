@@ -44,7 +44,7 @@ class BlockTest extends MediaWikiUnitTestCase {
 		return $filterUser;
 	}
 
-	public function provideExecute(): iterable {
+	public static function provideExecute(): iterable {
 		foreach ( [ true, false ] as $result ) {
 			$resStr = wfBoolToStr( $result );
 			yield "IPv4, $resStr" => [ new UserIdentityValue( 0, '1.2.3.4' ), $result ];

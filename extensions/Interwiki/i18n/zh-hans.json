@@ -23,13 +23,14 @@
 			"Xzonn",
 			"Yfdyh000",
 			"列维劳德",
-			"范"
+			"范",
+			"LittlePaw365"
 		]
 	},
 	"interwiki": "查看和编辑跨wiki数据",
 	"interwiki-title-norights": "查看跨wiki数据",
-	"interwiki-desc": "新增[[Special:Interwiki|特殊页面]]以查看和编辑跨wiki表",
-	"interwiki_intro": "这是跨wiki表的概览，它定义了链接到不同wiki甚至其他外部网站的前缀快捷方式。对于使用建议，请参见 [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki MediaWiki.org 上的手册]。",
+	"interwiki-desc": "添加可查看和编辑跨wiki表的[[Special:Interwiki|特殊页面]]",
+	"interwiki_intro": "这是跨wiki表的总览，跨wiki表定义用于快速链接到其他wiki及其他外部网站的快捷前缀。使用建议请查阅[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki MediaWiki.org上的手册]。",
 	"interwiki-legend-label": "说明",
 	"interwiki_prefix": "前缀",
 	"interwiki-prefix-label": "前缀：",

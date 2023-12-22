@@ -19,5 +19,10 @@
 	"cite_references_link_accessibility_label": "باز بدە بۆ سەرەوە",
 	"cite_references_link_many_accessibility_label": "باز بدە بەرەو:",
 	"cite_section_preview_references": "پێشبینینی سەرچاوەکان",
-	"cite_warning": "ئاگادارکردنەوەی ئاماژە: $1"
+	"cite_warning": "ئاگادارکردنەوەی ئاماژە: $1",
+	"cite-wikieditor-tool-reference": "سەرچاوە",
+	"cite-wikieditor-help-page-references": "سەرچاوەکان",
+	"cite-wikieditor-help-content-reference-description": "سەرچاوە",
+	"cite-wikieditor-help-content-rereference-description": "بەکارھێنانی دیکەی ئەو سەرچاوەیە",
+	"cite-wikieditor-help-content-showreferences-description": "نیشان‌دانی سەرچاوەکان"
 }

@@ -15,6 +15,22 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-( function () {
-	mw.mmv.model = {};
-}() );
+const ImageModel = require( './mmv.model.Image.js' );
+const IwTitle = require( './mmv.model.IwTitle.js' );
+const License = require( './mmv.model.License.js' );
+const { Repo, ForeignApiRepo, ForeignDbRepo } = require( './mmv.model.Repo.js' );
+const TaskQueue = require( './mmv.model.TaskQueue.js' );
+const Thumbnail = require( './mmv.model.Thumbnail.js' );
+const ThumbnailWidth = require( './mmv.model.ThumbnailWidth.js' );
+
+module.exports = {
+	ImageModel,
+	IwTitle,
+	License,
+	Repo,
+	ForeignApiRepo,
+	ForeignDbRepo,
+	TaskQueue,
+	Thumbnail,
+	ThumbnailWidth
+};

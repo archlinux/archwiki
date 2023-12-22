@@ -1,24 +1,11 @@
-@import '../../common/variables.less';
-@import '../../common/mixins.less';
-@import 'mediawiki.mixins.less';
-
-// Header sizes defined in the description of T246170 and comment T246170#5957100
-@padding-vertical-header: 0.125em;
-@margin-top-header: 0.5em;
-@margin-bottom-header: 2em;
-
-// Logo sizes per specification in T245190.
-@height-logo-icon: 3.125em;
-
 .mw-header {
-	// A min-height is set to account for projects where no icon is set.
-	min-height: @height-logo-icon;
-	padding: 8px 0;
 	// Vertical centering of header elements (IE>=11), requires Flexbox.
 	.flex-display();
 	flex-wrap: nowrap;
 	// https://caniuse.com/#search=align-items
 	align-items: center;
+	padding-top: 8px;
+	padding-bottom: 8px;
 
 	.vector-header-start,
 	.vector-header-end {
@@ -30,22 +17,24 @@
 		flex-grow: 1;
 	}
 
-	@media ( min-width: @min-width-desktop-wide ) {
-		// Ensure search box is aligned with content when search thumbnails or JS is off
-		.vector-feature-page-tools-disabled & .vector-search-box:not( .vector-search-box-auto-expand-width ),
-		.vector-feature-page-tools-disabled:not( .client-js ) & .vector-search-box {
-			padding-left: @size-search-expand;
-		}
+	.search-toggle {
+		// At lower resolutions the search input is hidden and a toggle is shown
+		display: inline-flex;
+		float: right;
+		// Ensures the button has a font size of 16px
+		font-size: unit( 16 / @font-size-browser, rem );
 
-		.client-js.vector-feature-page-tools-enabled & .vector-search-box.vector-search-box-auto-expand-width {
-			// Ensure search box is aligned with content when it autoexpands (i.e. search thumbnails)
-			margin-left: -@size-search-expand;
+		@media ( min-width: @min-width-desktop ) {
+			// Override .cdx-button styles
+			display: none !important;  /* stylelint-disable-line declaration-no-important */
 		}
 	}
 
-	@media ( min-width: @min-width-desktop ) {
-		.vector-search-box {
-			margin-right: @margin-end-search;
+	.vector-typeahead-search-container {
+		display: none;
+
+		@media ( min-width: @min-width-desktop ) {
+			display: block;
 		}
 	}
 
@@ -59,30 +48,16 @@
 				display: none;
 			}
 
-			.vector-search-box-collapses > div {
+			.vector-typeahead-search-container {
 				display: block;
+				// Override default max width at lower resolutions
+				max-width: none;
 			}
 
 			.vector-search-box {
 				// T284242#7206507: Widen the suggestion results to the edge of the search
 				// button at small resolutions.
 				position: relative;
-				margin-right: @margin-end-search;
-
-				// Override default max width at lower resolutions
-				> div {
-					max-width: none;
-				}
-
-				.vector-feature-page-tools-disabled & {
-					margin-left: @padding-horizontal-tabs;
-				}
-			}
-
-			// Make the menu below the search input wider, to match the width of the input+button
-			// rather than just the width of the input
-			.cdx-search-input__input-wrapper {
-				position: static;
 			}
 
 			// Since the end button's corner is now right above the menu's corner, don't use a

@@ -35,12 +35,14 @@ namespace Wikimedia\Minify;
  * So this class is meant to allow arbitrary (but syntactically correct) input, while being
  * fast enough to be used for on-the-fly minifying.
  *
- * This class was written with ECMA-262 Edition 6 in mind ("ECMAScript 6"). Parsing features
+ * This class was written with ECMA-262 7th Edition in mind ("ECMAScript 2016"). Parsing features
  * new to later editions of ECMAScript might not be supported. It's assumed that the input is
  * syntactically correct; if it's not, this class may not detect that, and may produce incorrect
  * output.
  *
- * See <https://262.ecma-international.org/6.0/>.
+ * See also:
+ * - <https://262.ecma-international.org/7.0/>
+ * - <https://262.ecma-international.org/6.0/>
  */
 class JavaScriptMinifier {
 
@@ -201,6 +203,8 @@ class JavaScriptMinifier {
 		'*'          => self::TYPE_BIN_OP,
 		'/'          => self::TYPE_BIN_OP,
 		'%'          => self::TYPE_BIN_OP,
+		// ECMAScript 7.0 § 12.6 Exponentiation Operator
+		'**'         => self::TYPE_BIN_OP,
 		// ECMAScript 6.0 § 12.8 Bitwise Shift Operators
 		'<<'         => self::TYPE_BIN_OP,
 		'>>'         => self::TYPE_BIN_OP,
@@ -334,7 +338,7 @@ class JavaScriptMinifier {
 		//   TYPE_IF or TYPE_FUNC keyword.
 		// - PrimaryExpression (ECMAScript 6.0 § 12.2 Primary Expression)
 		// - CallExpression (ECMAScript 6.0 § 12.3 Left-Hand-Side Expressions)
-		// - Beginning or an ArrowFunction (ECMAScript 6.0 § 14.2 Arrow Function Definitions)
+		// - Beginning of an ArrowFunction (ECMAScript 6.0 § 14.2 Arrow Function Definitions)
 		'('          => self::TYPE_PAREN_OPEN,
 		')'          => self::TYPE_PAREN_CLOSE,
 
@@ -1282,6 +1286,15 @@ class JavaScriptMinifier {
 	 */
 	public static function createSourceMapState() {
 		return new JavaScriptMapperState;
+	}
+
+	/**
+	 * Create a MinifierState that doesn't actually minify
+	 *
+	 * @return IdentityMinifierState
+	 */
+	public static function createIdentityMinifier() {
+		return new IdentityMinifierState;
 	}
 
 	/**

@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mainframe98"
+			"Mainframe98",
+			"McDutchie"
 		]
 	},
-	"securelinkfixer-desc": "Herschrijft URLs naar HTTPS wanneer het domein altijd HTTPS vereist"
+	"securelinkfixer-desc": "Zet URL’s om naar het gebruik van HTTPS als het domein altijd HTTPS vereist"
 }

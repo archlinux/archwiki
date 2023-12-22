@@ -13,6 +13,7 @@
 	},
 	"vector-opt-out": "رجع ل الشكل لقديم",
 	"vector-language-button-label": "{{PLURAL:$1|$1 لوغة|$1 لوغات}}",
+	"vector-no-language-button-label": "زيد لوغات",
 	"vector-language-redirect-to-top": "ف هاد لويكيپيديا ليانات د لوغات كاينين ف لفوق د صفحة حدا لعنوان. [[#p-lang-btn|سير لفوق]].",
 	"vector-action-addsection": "زيد شي موضوع",
 	"vector-action-delete": "محي",
@@ -26,5 +27,7 @@
 	"vector-view-view": "قرا",
 	"vector-view-viewsource": "شوف لمصدر",
 	"vector-more-actions": "كتر",
-	"vector-searchsuggest-containing": "قلب علا صفاحي فيهم <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "قلب علا صفاحي فيهم <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-pin-element-label": "حوّل ل لبانضة د الجنب",
+	"vector-unpin-element-label": "خبّي"
 }

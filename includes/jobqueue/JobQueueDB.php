@@ -278,7 +278,10 @@ class JobQueueDB extends JobQueue {
 			$rows = array_merge( $rowList, array_values( $rowSet ) );
 			// Insert the job rows in chunks to avoid replica DB lag...
 			foreach ( array_chunk( $rows, 50 ) as $rowBatch ) {
-				$dbw->insert( 'job', $rowBatch, $method );
+				$dbw->newInsertQueryBuilder()
+					->insertInto( 'job' )
+					->rows( $rowBatch )
+					->caller( $method )->execute();
 			}
 			$this->incrStats( 'inserts', $this->type, count( $rows ) );
 			$this->incrStats( 'dupe_inserts', $this->type,
@@ -406,14 +409,20 @@ class JobQueueDB extends JobQueue {
 				break;
 			}
 
-			$dbw->update( 'job', // update by PK
-				[
+			$dbw->newUpdateQueryBuilder()
+				->update( 'job' ) // update by PK
+				->set( [
 					'job_token' => $uuid,
 					'job_token_timestamp' => $dbw->timestamp(),
-					'job_attempts = job_attempts+1' ],
-				[ 'job_cmd' => $this->type, 'job_id' => $row->job_id, 'job_token' => '' ],
-				__METHOD__
-			);
+					'job_attempts = job_attempts+1'
+				] )
+				->where( [
+					'job_cmd' => $this->type,
+					'job_id' => $row->job_id,
+					'job_token' => ''
+				] )
+				->caller( __METHOD__ )->execute();
+
 			// This might get raced out by another runner when claiming the previously
 			// selected row. The use of job_random should minimize this problem, however.
 			if ( !$dbw->affectedRows() ) {
@@ -463,15 +472,15 @@ class JobQueueDB extends JobQueue {
 					->orderBy( 'job_id', SelectQueryBuilder::SORT_ASC )
 					->limit( 1 );
 
-				$dbw->update( 'job',
-					[
+				$dbw->newUpdateQueryBuilder()
+					->update( 'job' )
+					->set( [
 						'job_token' => $uuid,
 						'job_token_timestamp' => $dbw->timestamp(),
-						'job_attempts = job_attempts+1' ],
-					[ 'job_id = (' . $qb->getSQL() . ')'
-					],
-					__METHOD__
-				);
+						'job_attempts = job_attempts+1'
+					] )
+					->where( [ 'job_id = (' . $qb->getSQL() . ')' ] )
+					->caller( __METHOD__ )->execute();
 			}
 
 			if ( !$dbw->affectedRows() ) {
@@ -508,11 +517,10 @@ class JobQueueDB extends JobQueue {
 		$scope = $this->getScopedNoTrxFlag( $dbw );
 		try {
 			// Delete a row with a single DELETE without holding row locks over RTTs...
-			$dbw->delete(
-				'job',
-				[ 'job_cmd' => $this->type, 'job_id' => $id ],
-				__METHOD__
-			);
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'job' )
+				->where( [ 'job_cmd' => $this->type, 'job_id' => $id ] )
+				->caller( __METHOD__ )->execute();
 
 			$this->incrStats( 'acks', $this->type );
 		} catch ( DBError $e ) {
@@ -554,7 +562,10 @@ class JobQueueDB extends JobQueue {
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$scope = $this->getScopedNoTrxFlag( $dbw );
 		try {
-			$dbw->delete( 'job', [ 'job_cmd' => $this->type ], __METHOD__ );
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'job' )
+				->where( [ 'job_cmd' => $this->type ] )
+				->caller( __METHOD__ )->execute();
 		} catch ( DBError $e ) {
 			throw $this->getDBException( $e );
 		}
@@ -572,10 +583,7 @@ class JobQueueDB extends JobQueue {
 		}
 
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-		$lbFactory->waitForReplication( [
-			'domain' => $this->domain,
-			'cluster' => is_string( $this->cluster ) ? $this->cluster : false
-		] );
+		$lbFactory->waitForReplication();
 	}
 
 	/**
@@ -736,14 +744,18 @@ class JobQueueDB extends JobQueue {
 					// Reset job_token for these jobs so that other runners will pick them up.
 					// Set the timestamp to the current time, as it is useful to now that the job
 					// was already tried before (the timestamp becomes the "released" time).
-					$dbw->update( 'job',
-						[
+					$dbw->newUpdateQueryBuilder()
+						->update( 'job' )
+						->set( [
 							'job_token' => '',
 							'job_token_timestamp' => $dbw->timestamp( $now ) // time of release
-						],
-						[ 'job_id' => $ids, "job_token != {$dbw->addQuotes( '' )}" ],
-						__METHOD__
-					);
+						] )
+						->where( [
+							'job_id' => $ids,
+							"job_token != {$dbw->addQuotes( '' )}"
+						] )
+						->caller( __METHOD__ )->execute();
+
 					$affected = $dbw->affectedRows();
 					$count += $affected;
 					$this->incrStats( 'recycles', $this->type, $affected );
@@ -774,7 +786,10 @@ class JobQueueDB extends JobQueue {
 				}, iterator_to_array( $res )
 			);
 			if ( count( $ids ) ) {
-				$dbw->delete( 'job', [ 'job_id' => $ids ], __METHOD__ );
+				$dbw->newDeleteQueryBuilder()
+					->deleteFrom( 'job' )
+					->where( [ 'job_id' => $ids ] )
+					->caller( __METHOD__ )->execute();
 				$affected = $dbw->affectedRows();
 				$count += $affected;
 				$this->incrStats( 'abandons', $this->type, $affected );

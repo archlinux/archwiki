@@ -1,7 +1,7 @@
 @import '../../minerva.less/minerva.variables.less';
 
 .drawer {
-	background-color: @colorGray15;
+	background-color: @background-color-lightest;
 	// needed for Android 4.x
 	position: absolute;
 }
@@ -14,7 +14,11 @@
 // <div class="toast visible">
 //  Notification for user.
 // </div>
-.mw-notification,
+// <div class="mw-notification-area">
+//  <div class="mw-notification">Notification 1 for user.</div>
+//  <div class="mw-notification">Notification 2 for user.</div>
+// </div>
+.mw-notification-area,
 .toast,
 .drawer {
 	box-sizing: border-box;
@@ -22,10 +26,18 @@
 	bottom: 0;
 	left: 0;
 	right: 0;
-	box-shadow: 0 -1px 8px 0 @grayDrawerShadow;
-	word-wrap: break-word;
+	// don't allow notifications to cover the entire screen
+	max-height: 50%;
 	// needs to be higher than for overlays to show on top of overlays
 	z-index: @z-indexOverOverlay;
+}
+
+.mw-notification,
+.toast,
+.drawer {
+	box-sizing: border-box;
+	box-shadow: 0 -1px 8px 0 @box-shadow-color-drawer;
+	word-wrap: break-word;
 	// don't use visibility: hidden in old browsers that don't support animations
 	display: none;
 

@@ -2,9 +2,16 @@
 
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\User;
+use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentityValue;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\TestingAccessWrapper;
@@ -40,6 +47,7 @@ class WatchActionTest extends MediaWikiIntegrationTestCase {
 			MainConfigNames::LanguageCode => 'en',
 		] );
 
+		$this->setService( 'ReadOnlyMode', $this->getDummyReadOnlyMode( false ) );
 		$testTitle = Title::makeTitle( NS_MAIN, 'UTTest' );
 		$this->testWikiPage = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $testTitle );
 		$testContext = new DerivativeContext( RequestContext::getMain() );
@@ -49,17 +57,6 @@ class WatchActionTest extends MediaWikiIntegrationTestCase {
 			Article::newFromWikiPage( $this->testWikiPage, $testContext ),
 			$testContext
 		);
-	}
-
-	/**
-	 * @throws MWException
-	 */
-	protected function tearDown(): void {
-		$this->hideDeprecated( 'Hooks::clear' );
-		Hooks::clear( 'WatchArticle' );
-		Hooks::clear( 'UnwatchArticle' );
-
-		parent::tearDown();
 	}
 
 	private function getWatchAction( Article $article, IContextSource $context ) {
@@ -119,6 +116,9 @@ class WatchActionTest extends MediaWikiIntegrationTestCase {
 		$user = new UserIdentityValue( 100, 'User Name' );
 		$performer = $this->mockUserAuthorityWithPermissions( $user, [ 'editmywatchlist' ] );
 		$testContext->setAuthority( $performer );
+		$userFactory = $this->createMock( UserFactory::class );
+		$userFactory->method( 'newFromUserIdentity' )->willReturn( $this->createMock( User::class ) );
+		$this->setService( 'UserFactory', $userFactory );
 
 		/** @var MockObject|WebRequest $testRequest */
 		$testRequest = $this->createMock( WebRequest::class );
@@ -126,6 +126,8 @@ class WatchActionTest extends MediaWikiIntegrationTestCase {
 			->method( 'getVal' )
 			->willReturn( '6 months' );
 		$testContext->method( 'getRequest' )->willReturn( $testRequest );
+
+		$this->setService( 'WatchedItemStore', $this->getDummyWatchedItemStore() );
 
 		$this->watchAction = $this->getWatchAction(
 			Article::newFromWikiPage( $this->testWikiPage, $testContext ),
@@ -163,6 +165,7 @@ class WatchActionTest extends MediaWikiIntegrationTestCase {
 	 * @covers WatchAction::checkCanExecute()
 	 */
 	public function testShowUserLoggedInNoException() {
+		$this->setService( 'PermissionManager', $this->createMock( PermissionManager::class ) );
 		$registeredUser = $this->createMock( User::class );
 		$registeredUser->method( 'isRegistered' )->willReturn( true );
 		$registeredUser->method( 'isNamed' )->willReturn( true );
@@ -280,7 +283,7 @@ class WatchActionTest extends MediaWikiIntegrationTestCase {
 		$watchAction->onSuccess();
 	}
 
-	public function provideOnSuccessDifferentMessages() {
+	public static function provideOnSuccessDifferentMessages() {
 		return [
 			[
 				'wgWatchlistExpiry' => false,
@@ -430,12 +433,10 @@ class WatchActionTest extends MediaWikiIntegrationTestCase {
 
 		$mockMessageLocalizer->expects( $this->exactly( 2 ) )
 			->method( 'msg' )
-			->will(
-				$this->onConsecutiveCalls(
+			->willReturnOnConsecutiveCalls(
 					$mockMessage,
 					new Message( 'watchlist-expiry-options' )
-				)
-			);
+				);
 
 		$expected = WatchAction::getExpiryOptions( new MockMessageLocalizer( 'en' ), false );
 		$expiryOptions = WatchAction::getExpiryOptions( $mockMessageLocalizer, false );
@@ -461,13 +462,5 @@ class WatchActionTest extends MediaWikiIntegrationTestCase {
 		];
 		$expiryOptions = WatchAction::getExpiryOptions( $mockMessageLocalizer, false );
 		$this->assertSame( $expected, $expiryOptions );
-	}
-
-	private function setWatchedItemStore() {
-		$this->overrideMwServices();
-		// DummyServicesTrait::getDummyWatchedItemStore has all of the handling needed
-		$mock = $this->getDummyWatchedItemStore();
-		$this->setService( 'WatchedItemStore', $mock );
-		return $mock;
 	}
 }

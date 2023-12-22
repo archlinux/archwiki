@@ -29,5 +29,11 @@
 	"cite_references_link_many_accessibility_label": "Jangk noh bovve op:",
 	"cite_section_preview_references": "En Vöraff-Aansesch vun de Quälle un Fohßnuhte",
 	"cite_warning": "Opjepaß: $1",
-	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> dä Befähl mem Nahme <code>$1</code> künne mer nit vöraff belohre. Dä es ußerhallef vun heh däm Afschnedd udder övverhoup nit bestemmt wohde."
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> dä Befähl mem Nahme <code>$1</code> künne mer nit vöraff belohre. Dä es ußerhallef vun heh däm Afschnedd udder övverhoup nit bestemmt wohde.",
+	"cite-wikieditor-tool-reference": "Fohßnoht",
+	"cite-wikieditor-help-page-references": "Fohßnuhte",
+	"cite-wikieditor-help-content-reference-description": "Fohßnoht",
+	"cite-wikieditor-help-content-named-reference-description": "Benannte Bezösch",
+	"cite-wikieditor-help-content-rereference-description": "Noch ens desellve Fohßnoht bruche",
+	"cite-wikieditor-help-content-showreferences-description": "Fohßnuuhte aanzeije"
 }

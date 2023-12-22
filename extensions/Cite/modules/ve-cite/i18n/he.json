@@ -14,11 +14,11 @@
 			"דולב",
 			"חיים",
 			"לואיקה",
+			"מקף",
 			"ערן",
 			"פוילישער",
 			"קיפודנחש",
-			"תומר ט",
-			"מקף"
+			"תומר ט"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "ספר",
@@ -39,6 +39,8 @@
 	"cite-ve-citationneeded-title": "דרוש מקור",
 	"cite-ve-dialog-reference-editing-reused": "הערת השוליים הזאת משמשת {{PLURAL:$1|פעם אחת|פעמיים|$1 פעמים}} בדף הזה.",
 	"cite-ve-dialog-reference-editing-reused-long": "הערת השוליים הזאת משמשת {{PLURAL:$1|פעם אחת|פעמיים|$1 פעמים}} בדף הזה. שינויים שנעשים פה יחולו בכל המקומות שבהם היא משמשת.",
+	"cite-ve-dialog-reference-editing-extends": "זוהי הרחבה של הערת שוליים אחרת.",
+	"cite-ve-dialog-reference-editing-extends-long": "זאת הרחבה של הערת השוליים \"$1\".",
 	"cite-ve-dialog-reference-options-group-label": "להשתמש בקבוצה הזאת",
 	"cite-ve-dialog-reference-options-group-placeholder": "הערות שוליים כלליות",
 	"cite-ve-dialog-reference-options-name-label": "שם לשימוש חוזר",
@@ -61,7 +63,7 @@
 	"cite-ve-referenceslist-isempty-default": "בדף הזה אין הערות שוליים שאפשר לכלול ברשימה הזאת.",
 	"cite-ve-referenceslist-missingref": "הערת השוליים הזאת מוגדרת בתבנית או מחוללת בדרך אחרת כלשהי, ולעת־עתה אפשר לערוך אותה רק במצב קוד מקור.",
 	"cite-ve-referenceslist-missingref-in-list": "הערת השוליים הזאת מוגדרת בתבנית או מחוללת בדרך אחרת כלשהי, ולעת־עתה אפשר לראות תצוגה מקדימה שלה רק במצב קוד מקור.",
-	"cite-ve-referenceslist-missingreflist": "רשימת הערות השוליים הזאת מחוללת באמצעות תבנית, ולעת־עתה אפשר לערוך אותה רק במצב קוד מקור.",
+	"cite-ve-referenceslist-missingreflist": "רשימת הערות השוליים הזאת מחוללת באמצעות תבנית.",
 	"cite-ve-toolbar-group-label": "הערת שוליים",
 	"cite-ve-othergroup-item": "הערה $1",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "הערות שוליים",

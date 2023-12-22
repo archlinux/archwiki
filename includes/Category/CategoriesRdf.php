@@ -129,7 +129,7 @@ class CategoriesRdf {
 
 	/**
 	 * Get URI of the dump for this particular wiki.
-	 * @return false|string
+	 * @return string
 	 */
 	public function getDumpURI() {
 		return $this->titleToUrl( Title::makeTitle( NS_MAIN, self::SPECIAL_DUMP ) );
@@ -137,4 +137,7 @@ class CategoriesRdf {
 
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( CategoriesRdf::class, 'CategoriesRdf' );

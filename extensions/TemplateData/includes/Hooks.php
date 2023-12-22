@@ -3,38 +3,57 @@
 namespace MediaWiki\Extension\TemplateData;
 
 use CommentStoreComment;
-use EditPage;
 use ExtensionRegistry;
 use Html;
+use MediaWiki\Config\Config;
+use MediaWiki\EditPage\EditPage;
 use MediaWiki\Extension\EventLogging\EventLogging;
+use MediaWiki\Hook\EditPage__showEditForm_fieldsHook;
+use MediaWiki\Hook\EditPage__showEditForm_initialHook;
+use MediaWiki\Hook\OutputPageBeforeHTMLHook;
+use MediaWiki\Hook\ParserFetchTemplateDataHook;
+use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\Revision\RenderedRevision;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Storage\Hook\MultiContentSaveHook;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use OutputPage;
 use Parser;
-use ParserOutput;
 use PPFrame;
 use RequestContext;
 use ResourceLoader;
 use Status;
-use Title;
 
 /**
- * Hooks for TemplateData extension
- *
- * @file
- * @ingroup Extensions
+ * @license GPL-2.0-or-later
+ * phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName
  */
+class Hooks implements
+	EditPage__showEditForm_fieldsHook,
+	ParserFirstCallInitHook,
+	MultiContentSaveHook,
+	ResourceLoaderRegisterModulesHook,
+	EditPage__showEditForm_initialHook,
+	ParserFetchTemplateDataHook,
+	OutputPageBeforeHTMLHook
+{
 
-class Hooks {
+	/** @var Config */
+	private $config;
+
+	public function __construct( Config $mainConfig ) {
+		$this->config = $mainConfig;
+	}
 
 	/**
 	 * @param EditPage $editPage
 	 * @param OutputPage $out
 	 */
-	public static function onEditPageShowEditFormFields( EditPage $editPage, OutputPage $out ) {
+	public function onEditPage__showEditForm_fields( $editPage, $out ) {
 		// TODO: Remove when not needed any more, see T267926
 		if ( $out->getRequest()->getBool( 'TemplateDataGeneratorUsed' ) ) {
 			// Recreate the dynamically created field after the user clicked "preview"
@@ -46,7 +65,7 @@ class Hooks {
 	 * Register parser hooks
 	 * @param Parser $parser
 	 */
-	public static function onParserFirstCallInit( Parser $parser ) {
+	public function onParserFirstCallInit( $parser ) {
 		$parser->setHook( 'templatedata', [ __CLASS__, 'render' ] );
 	}
 
@@ -54,9 +73,9 @@ class Hooks {
 	 * Conditionally register the jquery.uls.data module, in case they've already been
 	 * registered by the UniversalLanguageSelector extension or the VisualEditor extension.
 	 *
-	 * @param ResourceLoader &$resourceLoader
+	 * @param ResourceLoader $resourceLoader
 	 */
-	public static function onResourceLoaderRegisterModules( ResourceLoader &$resourceLoader ) {
+	public function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ): void {
 		$resourceModules = $resourceLoader->getConfig()->get( 'ResourceModules' );
 		$name = 'jquery.uls.data';
 		if ( !isset( $resourceModules[$name] ) && !$resourceLoader->isModuleRegistered( $name ) ) {
@@ -82,8 +101,8 @@ class Hooks {
 	 * @param Status $hookStatus
 	 * @return bool
 	 */
-	public static function onMultiContentSave(
-		RenderedRevision $renderedRevision, UserIdentity $user, CommentStoreComment $summary, $flags, Status $hookStatus
+	public function onMultiContentSave(
+		$renderedRevision, $user, $summary, $flags, $hookStatus
 	) {
 		$revisionRecord = $renderedRevision->getRevision();
 		$contentModel = $revisionRecord
@@ -97,10 +116,10 @@ class Hooks {
 		// Revision hasn't been parsed yet, so parse to know if self::render got a
 		// valid tag (via inclusion and transclusion) and abort save if it didn't
 		$parserOutput = $renderedRevision->getRevisionParserOutput( [ 'generate-html' => false ] );
-		$templateDataStatus = self::getStatusFromParserOutput( $parserOutput );
-		if ( $templateDataStatus instanceof Status && !$templateDataStatus->isOK() ) {
+		$status = TemplateDataStatus::newFromJson( $parserOutput->getExtensionData( 'TemplateDataStatus' ) );
+		if ( $status && !$status->isOK() ) {
 			// Abort edit, show error message from TemplateDataBlob::getStatus
-			$hookStatus->merge( $templateDataStatus );
+			$hookStatus->merge( $status );
 			return false;
 		}
 
@@ -110,16 +129,11 @@ class Hooks {
 		return true;
 	}
 
-	/**
-	 * @param RevisionRecord $revisionRecord
-	 * @param ?string $newPageProperty
-	 * @param UserIdentity $user
-	 */
 	private static function logChangeEvent(
 		RevisionRecord $revisionRecord,
 		?string $newPageProperty,
 		UserIdentity $user
-	) {
+	): void {
 		if ( !ExtensionRegistry::getInstance()->isLoaded( 'EventLogging' ) ) {
 			return;
 		}
@@ -136,7 +150,8 @@ class Hooks {
 		}
 
 		$generatorUsed = RequestContext::getMain()->getRequest()->getBool( 'TemplateDataGeneratorUsed' );
-		$userEditCount = MediaWikiServices::getInstance()->getUserEditTracker()->getUserEditCount( $user );
+		$userEditCount = $services->getUserEditTracker()->getUserEditCount( $user );
+		$userId = $services->getUserIdentityUtils()->isTemp( $user ) ? 0 : $user->getId();
 		// Note: We know that irrelevant changes (e.g. whitespace changes) aren't logged here
 		EventLogging::submit(
 			'eventlogging_TemplateDataEditor',
@@ -151,22 +166,30 @@ class Hooks {
 					'page_title' => $page->getDBkey(),
 					'rev_id' => $revisionRecord->getId() ?? 0,
 					'user_edit_count' => $userEditCount ?? 0,
-					'user_id' => $user->getId(),
+					'user_id' => $userId,
 				],
 			]
 		);
 	}
 
 	/**
-	 * Parser hook registering the GUI module only in edit pages.
+	 * Hook to load the GUI module only on edit action.
 	 *
 	 * @param EditPage $editPage
 	 * @param OutputPage $output
 	 */
-	public static function onEditPage( EditPage $editPage, OutputPage $output ) {
-		global $wgTemplateDataUseGUI;
-		if ( $wgTemplateDataUseGUI ) {
-			if ( $output->getTitle()->inNamespace( NS_TEMPLATE ) ) {
+	public function onEditPage__showEditForm_initial( $editPage, $output ) {
+		if ( $this->config->get( 'TemplateDataUseGUI' ) ) {
+			$isTemplate = $output->getTitle()->inNamespace( NS_TEMPLATE );
+			if ( !$isTemplate ) {
+				// If we're outside the Template namespace, allow access to GUI
+				// if it's an existing page with <templatedate> (e.g. User template sandbox,
+				// or some other page that's intended to be transcluded for any reason).
+				$services = MediaWikiServices::getInstance();
+				$props = $services->getPageProps()->getProperties( $editPage->getTitle(), 'templatedata' );
+				$isTemplate = (bool)$props;
+			}
+			if ( $isTemplate ) {
 				$output->addModuleStyles( 'ext.templateDataGenerator.editTemplatePage.loading' );
 				$output->addHTML( '<div class="tdg-editscreen-placeholder"></div>' );
 				$output->addModules( 'ext.templateDataGenerator.editTemplatePage' );
@@ -187,12 +210,13 @@ class Hooks {
 	 *
 	 * @return string HTML to insert in the page.
 	 */
-	public static function render( $input, $args, Parser $parser, $frame ) {
+	public static function render( ?string $input, array $args, Parser $parser, PPFrame $frame ): string {
+		$parserOutput = $parser->getOutput();
 		$ti = TemplateDataBlob::newFromJSON( wfGetDB( DB_REPLICA ), $input ?? '' );
 
 		$status = $ti->getStatus();
 		if ( !$status->isOK() ) {
-			self::setStatusToParserOutput( $parser->getOutput(), $status );
+			$parserOutput->setExtensionData( 'TemplateDataStatus', TemplateDataStatus::jsonSerialize( $status ) );
 			return Html::errorBox( $status->getHTML() );
 		}
 
@@ -205,16 +229,16 @@ class Hooks {
 		$title = $parser->getTitle();
 		$docPage = wfMessage( 'templatedata-doc-subpage' )->inContentLanguage();
 		if ( !$title->isSubpage() || $title->getSubpageText() !== $docPage->plain() ) {
-			$parser->getOutput()->setPageProperty( 'templatedata', $ti->getJSONForDatabase() );
+			$parserOutput->setPageProperty( 'templatedata', $ti->getJSONForDatabase() );
 		}
 
-		$parser->getOutput()->addModuleStyles( [
+		$parserOutput->addModuleStyles( [
 			'ext.templateData',
 			'ext.templateData.images',
 			'jquery.tablesorter.styles',
 		] );
-		$parser->getOutput()->addModules( [ 'jquery.tablesorter' ] );
-		$parser->getOutput()->setEnableOOUI( true );
+		$parserOutput->addModules( [ 'jquery.tablesorter' ] );
+		$parserOutput->setEnableOOUI( true );
 
 		$userLang = $parser->getOptions()->getUserLangObj();
 
@@ -233,7 +257,7 @@ class Hooks {
 	 * @param OutputPage $output
 	 * @param string &$text
 	 */
-	public static function onOutputPageBeforeHTML( $output, &$text ) {
+	public function onOutputPageBeforeHTML( $output, &$text ) {
 		$services = MediaWikiServices::getInstance();
 		$props = $services->getPageProps()->getProperties( $output->getTitle(), 'templatedata' );
 		if ( !empty( $props ) ) {
@@ -241,7 +265,6 @@ class Hooks {
 			$localizer = new TemplateDataMessageLocalizer( $lang );
 			$formatter = new TemplateDataHtmlFormatter( $localizer, $lang->getCode() );
 			$formatter->replaceEditLink( $text );
-
 		}
 	}
 
@@ -259,8 +282,9 @@ class Hooks {
 	 *
 	 * @param array $tplTitles
 	 * @param \stdClass[] &$tplData
+	 * @return bool
 	 */
-	public static function onParserFetchTemplateData( array $tplTitles, array &$tplData ): void {
+	public function onParserFetchTemplateData( array $tplTitles, array &$tplData ): bool {
 		$tplData = [];
 
 		$pageProps = MediaWikiServices::getInstance()->getPageProps();
@@ -287,7 +311,7 @@ class Hooks {
 			}
 
 			if ( !$title->exists() ) {
-				$tplData[$tplTitle] = (object)[ "missing" => true ];
+				$tplData[$tplTitle] = (object)[ 'missing' => true ];
 				continue;
 			}
 
@@ -303,7 +327,7 @@ class Hooks {
 			$props = $pageProps->getProperties( $title, 'templatedata' );
 			if ( !isset( $props[$pageId] ) ) {
 				// No templatedata
-				$tplData[$tplTitle] = (object)[ "notemplatedata" => true ];
+				$tplData[$tplTitle] = (object)[ 'notemplatedata' => true ];
 				continue;
 			}
 
@@ -311,74 +335,13 @@ class Hooks {
 			$status = $tdb->getStatus();
 			if ( !$status->isOK() ) {
 				// Invalid data. Parsoid has no use for the error.
-				$tplData[$tplTitle] = (object)[ "notemplatedata" => true ];
+				$tplData[$tplTitle] = (object)[ 'notemplatedata' => true ];
 				continue;
 			}
 
 			$tplData[$tplTitle] = $tdb->getData();
 		}
+		return true;
 	}
 
-	/**
-	 * Write the status to ParserOutput object.
-	 * @param ParserOutput $parserOutput
-	 * @param Status $status
-	 */
-	public static function setStatusToParserOutput( ParserOutput $parserOutput, Status $status ) {
-		$parserOutput->setExtensionData( 'TemplateDataStatus',
-			self::jsonSerializeStatus( $status ) );
-	}
-
-	/**
-	 * @param ParserOutput $parserOutput
-	 * @return Status|null
-	 */
-	public static function getStatusFromParserOutput( ParserOutput $parserOutput ) {
-		$status = $parserOutput->getExtensionData( 'TemplateDataStatus' );
-		if ( is_array( $status ) ) {
-			return self::newStatusFromJson( $status );
-		}
-		return $status;
-	}
-
-	/**
-	 * @param array $status contains StatusValue ok and errors fields (does not serialize value)
-	 * @return Status
-	 */
-	public static function newStatusFromJson( array $status ): Status {
-		if ( $status['ok'] ) {
-			return Status::newGood();
-		} else {
-			$statusObj = new Status();
-			$errors = $status['errors'];
-			foreach ( $errors as $error ) {
-				$statusObj->fatal( $error['message'], ...$error['params'] );
-			}
-			$warnings = $status['warnings'];
-			foreach ( $warnings as $warning ) {
-				$statusObj->warning( $warning['message'], ...$warning['params'] );
-			}
-			return $statusObj;
-		}
-	}
-
-	/**
-	 * @param Status $status
-	 * @return array contains StatusValue ok and errors fields (does not serialize value)
-	 */
-	public static function jsonSerializeStatus( Status $status ): array {
-		if ( $status->isOK() ) {
-			return [
-				'ok' => true
-			];
-		} else {
-			list( $errorsOnlyStatus, $warningsOnlyStatus ) = $status->splitByErrorType();
-			// note that non-scalar values are not supported in errors or warnings
-			return [
-				'ok' => false,
-				'errors' => $errorsOnlyStatus->getErrors(),
-				'warnings' => $warningsOnlyStatus->getErrors()
-			];
-		}
-	}
 }

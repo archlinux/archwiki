@@ -7,13 +7,16 @@ use IContextSource;
 use Linker;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Extension\AbuseFilter\AbuseFilter;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Linker\LinkRenderer;
-use MWException;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserRigorOptions;
 use TablePager;
-use Title;
+use UnexpectedValueException;
 use Wikimedia\Rdbms\IResultWrapper;
 use Xml;
 
@@ -176,7 +179,7 @@ class AbuseFilterHistoryPager extends TablePager {
 				}
 				break;
 			default:
-				throw new MWException( "Unknown row type $name!" );
+				throw new UnexpectedValueException( "Unknown row type $name!" );
 		}
 
 		return $formatted;
@@ -186,23 +189,23 @@ class AbuseFilterHistoryPager extends TablePager {
 	 * @return array
 	 */
 	public function getQueryInfo() {
+		$afActorMigration = AbuseFilterServices::getActorMigration();
+		$actorQuery = $afActorMigration->getJoin( 'afh_user' );
 		$info = [
-			'tables' => [ 'abuse_filter_history', 'abuse_filter' ],
+			'tables' => [ 'abuse_filter_history', 'abuse_filter' ] + $actorQuery['tables'],
 			// All fields but afh_deleted on abuse_filter_history
 			'fields' => [
 				'afh_filter',
 				'afh_timestamp',
-				'afh_user_text',
 				'afh_public_comments',
 				'afh_flags',
 				'afh_comments',
 				'afh_actions',
 				'afh_id',
-				'afh_user',
 				'afh_changed_fields',
 				'afh_pattern',
 				'af_hidden'
-			],
+			] + $actorQuery['fields'],
 			'conds' => [],
 			'join_conds' => [
 				'abuse_filter' =>
@@ -210,11 +213,14 @@ class AbuseFilterHistoryPager extends TablePager {
 						'LEFT JOIN',
 						'afh_filter=af_id',
 					],
-			],
+			] + $actorQuery['joins'],
 		];
 
 		if ( $this->user !== null ) {
-			$info['conds']['afh_user_text'] = $this->user;
+			$user = MediaWikiServices::getInstance()->getUserFactory()
+				->newFromName( $this->user, UserRigorOptions::RIGOR_NONE );
+			$whereQuery = $afActorMigration->getWhere( $this->mDb, 'afh_user', $user );
+			$info['conds'][] = $whereQuery['conds'];
 		}
 
 		if ( $this->filter ) {
@@ -259,8 +265,8 @@ class AbuseFilterHistoryPager extends TablePager {
 	 * @codeCoverageIgnore Merely declarative
 	 * @inheritDoc
 	 */
-	public function isFieldSortable( $name ) {
-		return $name === 'afh_timestamp';
+	public function isFieldSortable( $field ) {
+		return $field === 'afh_timestamp';
 	}
 
 	/**
@@ -268,7 +274,6 @@ class AbuseFilterHistoryPager extends TablePager {
 	 * @param string $value
 	 * @return array
 	 * @see TablePager::getCellAttrs
-	 *
 	 */
 	public function getCellAttrs( $field, $value ) {
 		$row = $this->mCurrentRow;

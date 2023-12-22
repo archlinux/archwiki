@@ -13,17 +13,6 @@ use TestUser;
  */
 class ThreadItemStoreTest extends IntegrationTestCase {
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getCliArg( $offset ) {
-		// Work around MySQL bug (T256006)
-		if ( $offset === 'use-normal-tables' ) {
-			return true;
-		}
-		return parent::getCliArg( $offset );
-	}
-
 	/** @var @inheritDoc */
 	protected $tablesUsed = [
 		'user',
@@ -39,6 +28,15 @@ class ThreadItemStoreTest extends IntegrationTestCase {
 	 * @dataProvider provideInsertCases
 	 */
 	public function testInsertThreadItems( string $dir ): void {
+		if (
+			$this->db->getType() === 'mysql' &&
+			strpos( $this->db->getSoftwareLink(), 'MySQL' ) &&
+			!$this->getCliArg( 'use-normal-tables' )
+		) {
+			$this->markTestSkipped( 'Set PHPUNIT_USE_NORMAL_TABLES=1 env variable to run these tests, ' .
+				'otherwise they would fail due to a MySQL bug with temporary tables (T256006)' );
+		}
+
 		// Create users for the imported revisions
 		new TestUser( 'X' );
 		new TestUser( 'Y' );
@@ -90,7 +88,7 @@ class ThreadItemStoreTest extends IntegrationTestCase {
 		static::assertEquals( $expected, $actual );
 	}
 
-	public function provideInsertCases(): array {
+	public static function provideInsertCases(): array {
 		return [
 			[ 'cases/ThreadItemStore/1simple-example' ],
 			[ 'cases/ThreadItemStore/2archived-section' ],

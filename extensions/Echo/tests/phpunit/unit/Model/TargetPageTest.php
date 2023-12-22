@@ -43,7 +43,7 @@ class TargetPageTest extends MediaWikiUnitTestCase {
 		$row = (object)[
 			'etp_event' => 3
 		];
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		TargetPage::newFromRow( $row );
 	}
 

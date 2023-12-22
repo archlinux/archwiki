@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Config\Config;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
@@ -117,19 +118,19 @@ class RenameUserJob extends Job {
 				$dbw->commit( __METHOD__, 'flush' );
 				$this->lbFactory->waitForReplication();
 
-				$dbw->update( $table,
-					[ $column => $newname ],
-					[ $column => $oldname, $uniqueKey => $batch ],
-					__METHOD__
-				);
+				$dbw->newUpdateQueryBuilder()
+					->update( $table )
+					->set( [ $column => $newname ] )
+					->where( [ $column => $oldname, $uniqueKey => $batch ] )
+					->caller( __METHOD__ )->execute();
 			}
 		} else {
 			# Update the chunk of rows directly
-			$dbw->update( $table,
-				[ $column => $newname ],
-				$conds,
-				__METHOD__
-			);
+			$dbw->newUpdateQueryBuilder()
+				->update( $table )
+				->set( [ $column => $newname ] )
+				->where( $conds )
+				->caller( __METHOD__ )->execute();
 		}
 
 		return true;

@@ -18,8 +18,10 @@
  *
  */
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFormatter;
+use MediaWiki\Title\TitleParser;
+use MediaWiki\Title\TitleValue;
 
 require_once __DIR__ . '/../includes/Benchmarker.php';
 
@@ -63,8 +65,8 @@ class BenchmarkTitleValue extends Benchmarker {
 	}
 
 	public function execute() {
-		$this->titleFormatter = MediaWikiServices::getInstance()->getTitleFormatter();
-		$this->titleParser = MediaWikiServices::getInstance()->getTitleParser();
+		$this->titleFormatter = $this->getServiceContainer()->getTitleFormatter();
+		$this->titleParser = $this->getServiceContainer()->getTitleParser();
 		$this->titleValue = $this->constructTitleValue();
 		$this->title = $this->constructTitle();
 		$this->toParse = 'Category:FooBar';

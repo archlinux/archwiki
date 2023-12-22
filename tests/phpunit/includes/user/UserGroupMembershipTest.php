@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\User\UserGroupMembership;
+
 class UserGroupMembershipTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
@@ -17,7 +19,7 @@ class UserGroupMembershipTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideInstantiationValidation() {
+	public static function provideInstantiationValidation() {
 		return [
 			[ 1, null, null, 1, null, null ],
 			[ 1, 'test', null, 1, 'test', null ],

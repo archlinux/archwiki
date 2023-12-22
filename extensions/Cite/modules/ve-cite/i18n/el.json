@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Astralnet",
+			"DesVaMan",
 			"Dipa1965",
+			"Dogogos123",
 			"Elitre",
 			"Evropi",
 			"FocalPoint",
@@ -16,9 +18,7 @@
 			"Protnet",
 			"Stam.nikos",
 			"SucreRouge",
-			"Tifa93",
-			"DesVaMan",
-			"Dogogos123"
+			"Tifa93"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Βιβλίο",
@@ -39,6 +39,8 @@
 	"cite-ve-citationneeded-title": "Απαιτείται παραπομπή",
 	"cite-ve-dialog-reference-editing-reused": "Αυτή η παραπομπή χρησιμοποιείται {{PLURAL:$1|μία φορά|$1 φορές}} σε αυτή τη σελίδα.",
 	"cite-ve-dialog-reference-editing-reused-long": "Αυτή η παραπομπή χρησιμοποιείται {{PLURAL:$1|μία φορά|2=δύο φορές|$1 φορές}} σε αυτή τη σελίδα. Αλλαγές που θα γίνουν εδώ θα εφαρμοστούν σε όλα τα σημεία όπου επαναχρησιμοποιείται αυτή η παραπομπή.",
+	"cite-ve-dialog-reference-editing-extends": "Αυτή είναι μια επέκταση μιας άλλης πηγής.",
+	"cite-ve-dialog-reference-editing-extends-long": "Αυτή είναι μια επέκταση μιας άλλης πηγής $1.",
 	"cite-ve-dialog-reference-options-group-label": "Χρησιμοποιείστε αυτή την ομάδα",
 	"cite-ve-dialog-reference-options-group-placeholder": "Γενικές αναφορές",
 	"cite-ve-dialog-reference-options-name-label": "Επαναχρησιμοποίηση με αυτό το όνομα",

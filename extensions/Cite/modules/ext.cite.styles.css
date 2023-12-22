@@ -50,7 +50,7 @@ ol.references .mw-extended-references {
 	margin-left: 2em;
 }
 
-.mw-extended-references > li:before {
+.mw-extended-references > li::before {
 	counter-increment: mw-ref-extends-child;
 	content: counter( mw-ref-extends-parent, decimal ) '.' counter( mw-ref-extends-child, decimal ) '. ';
 }

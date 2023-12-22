@@ -39,7 +39,9 @@ class VariablesFormatterTest extends MediaWikiUnitTestCase {
 		);
 		$ml = $this->createMock( MessageLocalizer::class );
 		$formatter->setMessageLocalizer( $ml );
-		$this->assertSame( $ml, TestingAccessWrapper::newFromObject( $formatter )->messageLocalizer );
+		/** @var VariablesFormatter $wrapper */
+		$wrapper = TestingAccessWrapper::newFromObject( $formatter );
+		$this->assertSame( $ml, $wrapper->messageLocalizer );
 	}
 
 	/**
@@ -56,7 +58,7 @@ class VariablesFormatterTest extends MediaWikiUnitTestCase {
 	 * Provider for testFormatVar
 	 * @return array
 	 */
-	public function provideFormatVar() {
+	public static function provideFormatVar() {
 		return [
 			'boolean' => [ true, 'true' ],
 			'single-quote string' => [ 'foo', "'foo'" ],

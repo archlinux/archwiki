@@ -34,12 +34,14 @@
 		return deferred.promise();
 	};
 	// popups require title attributes
-	document.querySelectorAll( '.mwe-math-element[data-qid] img' )
-		.forEach( function ( node ) {
+	[].forEach.call(
+		document.querySelectorAll( '.mwe-math-element[data-qid] img' ),
+		function ( node ) {
 			if ( isValidId( node.parentNode.parentNode.dataset.qid ) ) {
 				node.dataset.title = 'math-unique-identifier';
 			}
-		} );
+		}
+	);
 	module.exports = {
 		type: previewType,
 		selector: '.mwe-math-element[data-qid] img',

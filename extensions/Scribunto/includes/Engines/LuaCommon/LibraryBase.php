@@ -23,9 +23,9 @@
 
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
+use MediaWiki\Title\Title;
 use Parser;
 use ParserOptions;
-use Title;
 
 /**
  * This class provides some basic services that Lua libraries will probably need

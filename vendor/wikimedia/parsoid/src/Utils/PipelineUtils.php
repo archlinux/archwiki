@@ -368,12 +368,28 @@ class PipelineUtils {
 				// Shallow clone since we don't want to convert the whole tree to tokens.
 				$workNode = $node->cloneNode( false );
 
-				// Reset 'tsr' since it isn't applicable.
+				// Reset 'tsr' since it isn't applicable. Neither is
+				// any auxiliary info like 'endTSR'.
 				// FIXME: The above comment is only true if we are reusing
 				// DOM fragments from cache from previous revisions in
 				// incremental parsing scenarios.  See T98992
 				if ( isset( $nodeData->parsoid->tsr ) ) {
 					$nodeData->parsoid->tsr = null;
+				}
+				if ( isset( $nodeData->parsoid->tmp->endTSR ) ) {
+					unset( $nodeData->parsoid->tmp->endTSR );
+				}
+
+				// The "in transclusion" flag was set on the first child for template
+				// wrapping in the nested pipeline, and doesn't apply to the dom
+				// fragment wrapper in this pipeline.  Keeping it around can induce
+				// template wrapping of a foster box if the dom fragment is found in
+				// a fosterable position.
+				if (
+					isset( $nodeData->parsoid ) &&
+					$nodeData->parsoid->getTempFlag( TempData::IN_TRANSCLUSION )
+				) {
+					$nodeData->parsoid->tmp->setFlag( TempData::IN_TRANSCLUSION, false );
 				}
 			}
 

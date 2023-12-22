@@ -5,7 +5,7 @@
 	 * @param {string[]} [parameterNames]
 	 * @return {ve.dm.MWTemplateModel} but it's a mock
 	 */
-	const createTemplateMock = function ( parameterNames ) {
+	const createTemplateMock = ( parameterNames ) => {
 		const params = {};
 		( parameterNames || [] ).forEach( ( name ) => {
 			params[ name ] = {};
@@ -310,6 +310,13 @@
 			assert.strictEqual( spec.isDocumented(), expected );
 		} )
 	);
+
+	QUnit.test( 'getCanonicalParameterOrder sorting undocumented parameters alphabetically', ( assert ) => {
+		const template = createTemplateMock( [ 'ö', '3', 'x', 9, '', 1, 'a' ] ),
+			spec = new ve.dm.MWTemplateSpecModel( template );
+
+		assert.deepEqual( spec.getCanonicalParameterOrder(), [ '1', '3', '9', 'a', 'ö', 'x' ] );
+	} );
 
 	QUnit.test( 'getDocumentedParameterOrder() should not return a reference', ( assert ) => {
 		const template = createTemplateMock(),

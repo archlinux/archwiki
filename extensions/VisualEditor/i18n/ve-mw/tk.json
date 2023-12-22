@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Hanberke",
-			"TayfunEt."
+			"TayfunEt.",
+			"Zolgoyo"
 		]
 	},
 	"tooltip-ca-ve-edit": "Bu sahypany düzet",
@@ -157,16 +158,12 @@
 	"visualeditor-mweditmodesource-progress": "Çeşmäni redaktirlemäge geçmek…",
 	"visualeditor-mweditmodesource-tool-current": "Çeşmäni redaktirlemek",
 	"visualeditor-mweditmodesource-tool-unavailable": "Çeşmäni redaktirlemek bu ýerde elýeterli däl",
-	"visualeditor-mweditmodesource-warning-cancel": "Goýbolsun et",
-	"visualeditor-mweditmodesource-warning-switch-discard": "Üýtgeşmelerimi taşlaň we üýtgediň",
 	"visualeditor-mweditmodeve-popup-body": "Islendik wagt bu nyşany basyp, wizual redaktirleme geçip bilersiňiz.",
 	"visualeditor-mweditmodeve-popup-title": "Çeşmäni redaktirlemäge geçdiňiz",
 	"visualeditor-mweditmodeve-progress": "Wizual redaktirleme geçmek...",
 	"visualeditor-mweditmodeve-showagain": "Bu habary gaýtadan görkezmäň",
-	"visualeditor-mweditmodeve-title": "Wizual redaktirlemäge geçiňmi?",
 	"visualeditor-mweditmodeve-tool-current": "Wizual redaktirlemek",
 	"visualeditor-mweditmodeve-tool-unavailable": "Bu ýerde wizual redaktirlemek mümkin däl",
-	"visualeditor-mweditmodeve-warning": "Wizual redaktirleme geçýärsiňiz.\nDowam etmek isleýärsiňizmi?",
 	"visualeditor-mweditmodewt-popup-body": "Islendik wagt bu nyşany basyp, çeşme redaktirlemesine geçip bilersiňiz.",
 	"visualeditor-mweditmodewt-popup-title": "Wizual redaktirlemäge geçdiňiz",
 	"visualeditor-mwgallerydialog-caption-field-label": "Galereýa ýazgysy",
@@ -189,10 +186,6 @@
 	"visualeditor-mwpredialog-convert": "Tekstiň ýazylmagyna rugsat beriň",
 	"visualeditor-mwpredialog-title": "Formatlanan ýönekeý tekst",
 	"visualeditor-mwsignature-tool": "Goluňyz",
-	"visualeditor-preference-betatempdisable": "Beta wagty wizual redaktory wagtlaýyn öçüriň",
-	"visualeditor-preference-core-description": "Wizual redaktory işlediň. Gepleşik sahypalarynda we käbir beýleki at giňişliklerinde bolmaz.",
-	"visualeditor-preference-core-label": "Wizual redaktirlemek",
-	"visualeditor-preference-visualdiffpage-label": "Wizual tapawutlar",
 	"visualeditor-rebase-client-import-name": "Sahypanyň ady",
 	"visualeditor-rebase-client-title-help": "Saklamazdan ozal üýtgeşmeleri gözden geçirip bilersiňiz.",
 	"visualeditor-savedialog-label-publish-short": "Neşir et",
@@ -202,7 +195,6 @@
 	"visualeditor-savedialog-label-review": "Üýtgeşmeleriňizi gözden geçiriň",
 	"visualeditor-savedialog-label-save-short": "Ýazdyr",
 	"visualeditor-savedialog-label-save-short-start": "Ýazdyr...",
-	"visualeditor-savedialog-label-visual-diff-report": "Bu üýtgeşme üçin nädogry displeýi habar beriň",
 	"visualeditor-savedialog-review-nosummary": "Gysgaça mazmuny ýok",
 	"visualeditor-savedialog-review-visual": "Wizual",
 	"visualeditor-savedialog-review-wikitext": "Wikitekst",

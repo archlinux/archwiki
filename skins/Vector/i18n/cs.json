@@ -31,7 +31,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 jazyk|$1 jazyky|$1 jazyků}}",
 	"vector-no-language-button-label": "Přidat jazyky",
 	"vector-no-language-button-aria-label": "Tento článek existuje jenom v tomto jazyce. Přidejte jej i v ostatních jazycích",
-	"vector-language-redirect-to-top": "Tady na {{GRAMMAR:6sg|{{SITENAME}}}} jsou mezijazykové odkazy nahoře na stránce, napravo od názvu článku. [[#p-lang-btn|Jít nahoru]].",
+	"vector-language-redirect-to-top": "Mezijazykové odkazy jsou nahoře na stránce, napravo od názvu článku.",
 	"vector-language-variant-switcher-label": "Změnit variantu jazyka",
 	"vector-action-addsection": "Přidat téma",
 	"vector-action-delete": "Smazat",
@@ -63,6 +63,8 @@
 	"vector-site-nav-label": "Projekt",
 	"vector-main-menu-label": "Hlavní menu",
 	"vector-limited-width-toggle": "Přepnout omezenou šířku obsahu",
+	"vector-limited-width-toggle-on-popup": "Přepnuli jste vzhled na plnou šířku. Kliknutím na toto tlačítko můžete přepnout zpět na omezenou šířku.",
+	"vector-limited-width-toggle-off-popup": "Kliknutím na toto tlačítko můžete přepínat mezi omezenou šířkou a plnou šířkou.",
 	"vector-page-tools-label": "Nástroje",
 	"vector-page-tools-general-label": "Obecné",
 	"vector-page-tools-actions-label": "Akce",
@@ -72,5 +74,8 @@
 	"tooltip-vector-anon-user-menu-title": "Další možnosti",
 	"vector-prefs-limited-width": "Zapnout režim omezené šířky",
 	"vector-prefs-limited-width-help": "Zapnout režim omezené šířky pro lepší zážitek ze čtení.",
-	"empty-language-selector-body": "Obsah stránky není podporován v jiných jazycích."
+	"empty-language-selector-body": "Obsah stránky není podporován v jiných jazycích.",
+	"vector-toc-unpinned-popup": "Obsah byl přesunut sem.",
+	"vector-page-tools-unpinned-popup": "Nástroje byly přesunuty sem.",
+	"vector-main-menu-unpinned-popup": "Hlavní menu bylo přesunuto sem."
 }

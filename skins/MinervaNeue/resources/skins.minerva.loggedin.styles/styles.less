@@ -14,61 +14,63 @@
 	}
 }
 
-// FIXME: Belongs in Echo extension.
-.notification-count {
-	display: inline-block;
+.minerva-icon--bellOutline-base20 {
+	.cdx-mixin-css-icon( @cdx-icon-bell-outline, @color-subtle );
+}
+
+//
+// Technical debt relating to Minerva mobile having a single
+// Echo icon rather than 2.
+//
+
+//
+// Difference 1) Never show count for seen notifications
+.mw-mf .mw-echo-notification-badge-nojs::after {
+	content: none;
+}
+
+//
+// Difference 2) Replace bell icon with a red circle
+//
+.mw-mf .mw-echo-unseen-notifications {
 	margin: auto;
-	background: @notificationBackgroundRead;
-	color: @notificationColorRead;
+	background: @background-color-light;
+	color: @color-subtle;
 	cursor: pointer;
 
-	.circle {
-		border-radius: 50%;
-		border: 2px solid @notificationColorRead;
+	.minerva-icon--circle {
+		border-radius: @border-radius-circle;
+		border: @border-width-thick @border-style-base #54595d;
 		margin: auto;
 		height: @icon-size-md;
 		width: @icon-size-md;
+		background: @background-color-destructive;
+		border-color: @border-color-destructive;
 
-		/* stylelint-disable declaration-block-no-duplicate-properties */
-		// Center the text number inside the circle
-		display: block; // Fallback for old iOS
-		text-align: center; // Fallback for old iOS
-		display: -webkit-box;
+		&::before {
+			content: none;
+		}
+	}
+
+	&::after {
+		color: @color-inverted;
+		content: attr( data-counter-text );
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		width: 100%;
+		height: 100%;
+		top: 0;
 		display: flex;
-		-webkit-box-align: center;
 		align-items: center;
-		-webkit-box-pack: center;
 		justify-content: center;
-		/* stylelint-enable declaration-block-no-duplicate-properties */
-
-		span {
-			font-weight: bold;
-			font-size: 13px;
-			line-height: 1;
-			letter-spacing: -0.5px;
-		}
-	}
-
-	&.notification-count {
-		padding: @icon-padding-md;
-	}
-
-	&.notification-unseen {
-		color: @notificationColorUnread;
-
-		.circle {
-			background: @notificationBackgroundUnread;
-			border-color: @notificationBackgroundUnread;
-		}
-	}
-
-	// FIXME: There must be a better way of doing this
-	&.max {
-		right: 0.2em;
-		width: 2em;
-		height: 2em;
-		line-height: 2em;
-		font-size: 0.7em;
+		font-size: 13px;
+		letter-spacing: -0.5px;
+		padding: 0;
+		border: 0;
+		// T342907
+		background-color: transparent !important;
 	}
 
 	&:hover {

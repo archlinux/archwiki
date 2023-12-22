@@ -31,5 +31,11 @@
 	"cite_references_link_accessibility_label": "Vrati se na vrh",
 	"cite_references_link_many_accessibility_label": "Vrati se na:",
 	"cite_section_preview_references": "Pregled referenci",
-	"cite_warning_sectionpreview_no_text": "Oznaka <code>&lt;ref&gt;</code> s nazivom <code>$1</code> ne može se prikazati jer je definirana van trenutnog odlomka ili uopće nije definirana."
+	"cite_warning_sectionpreview_no_text": "Oznaka <code>&lt;ref&gt;</code> s nazivom <code>$1</code> ne može se prikazati jer je definirana van trenutnog odlomka ili uopće nije definirana.",
+	"cite-wikieditor-tool-reference": "Referenca",
+	"cite-wikieditor-help-page-references": "Reference",
+	"cite-wikieditor-help-content-reference-description": "Reference",
+	"cite-wikieditor-help-content-named-reference-description": "Imenovana referenca",
+	"cite-wikieditor-help-content-rereference-description": "Dodatna upotreba istog izvora",
+	"cite-wikieditor-help-content-showreferences-description": "Prikaži izvore"
 }

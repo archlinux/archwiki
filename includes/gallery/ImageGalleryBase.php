@@ -20,9 +20,9 @@
  * @file
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
 
 /**
@@ -147,7 +147,8 @@ abstract class ImageGalleryBase extends ContextSource {
 				'slideshow' => SlideshowImageGallery::class,
 			];
 			// Allow extensions to make a new gallery format.
-			Hooks::runner()->onGalleryGetModes( self::$modeMapping );
+			( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
+				->onGalleryGetModes( self::$modeMapping );
 		}
 	}
 
@@ -278,7 +279,7 @@ abstract class ImageGalleryBase extends ContextSource {
 	 * @param Title $title Title object of the image that is added to the gallery
 	 * @param string $html Additional HTML text to be shown. The name and size
 	 *   of the image are always shown.
-	 * @param string $alt Alt text for the image
+	 * @param string|null $alt Alt text for the image, or null to omit
 	 * @param string $link Override image link (optional)
 	 * @param array $handlerOpts Array of options for image handler (aka page number)
 	 * @param int $loading Sets loading attribute of the underlying <img> (optional)
@@ -343,7 +344,7 @@ abstract class ImageGalleryBase extends ContextSource {
 	 * @return bool
 	 */
 	public function isEmpty() {
-		return empty( $this->mImages );
+		return $this->mImages === [];
 	}
 
 	/**
@@ -423,7 +424,7 @@ abstract class ImageGalleryBase extends ContextSource {
 
 	/**
 	 * Determines the correct language to be used for this image gallery
-	 * @return Language|StubUserLang
+	 * @return Language
 	 */
 	protected function getRenderLang() {
 		return $this->mParser

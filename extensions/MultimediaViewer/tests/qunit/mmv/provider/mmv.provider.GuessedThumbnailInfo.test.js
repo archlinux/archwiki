@@ -15,16 +15,18 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { GuessedThumbnailInfo } = require( 'mmv' );
+
 ( function () {
 	QUnit.module( 'mmv.provider.GuessedThumbnailInfo', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Constructor sense check', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo();
-		assert.true( provider instanceof mw.mmv.provider.GuessedThumbnailInfo, 'Constructor call successful' );
+		var provider = new GuessedThumbnailInfo();
+		assert.true( provider instanceof GuessedThumbnailInfo, 'Constructor call successful' );
 	} );
 
 	QUnit.test( 'get()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Copyleft.svg' ),
 			sampleUrl = 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Copyleft.svg/180px-Copyleft.svg.png',
 			width = 300,
@@ -34,7 +36,7 @@
 			done = assert.async(),
 			result;
 
-		provider.getUrl = function () { return resultUrl; };
+		provider.getUrl = () => resultUrl;
 		result = provider.get( file, sampleUrl, width, originalWidth, originalHeight );
 		assert.true( typeof result.then === 'function', 'Result is a promise' );
 		assert.strictEqual( result.state(), 'resolved', 'Result is resolved' );
@@ -45,14 +47,14 @@
 			done();
 		} );
 
-		provider.getUrl = function () { return undefined; };
+		provider.getUrl = () => undefined;
 		result = provider.get( file, sampleUrl, width, originalWidth, originalHeight );
 		assert.true( typeof result.then === 'function', 'Result is a promise' );
 		assert.strictEqual( result.state(), 'rejected', 'Result is rejected' );
 	} );
 
 	QUnit.test( 'getUrl()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Elizabeth_I_George_Gower.jpg' ),
 			originalWidth = 922,
 			originalHeight = 968,
@@ -105,7 +107,7 @@
 	} );
 
 	QUnit.test( 'needsOriginal()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Copyleft.svg' );
 
 		assert.strictEqual( provider.needsOriginal( file, 100, 1000 ), false, 'Thumbnail of an SVG smaller than the original size doesn\'t need original' );
@@ -120,7 +122,7 @@
 	} );
 
 	QUnit.test( 'isFullSizeUrl()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Copyleft.svg' );
 
 		assert.strictEqual( provider.isFullSizeUrl( 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Copyleft.svg/300px-Copyleft.svg.png', file ),
@@ -132,7 +134,7 @@
 	} );
 
 	QUnit.test( 'obscureFilename()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Copyleft.svg' );
 
 		assert.strictEqual( provider.obscureFilename( 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Copyleft.svg/300px-Copyleft.svg.png', file ),
@@ -145,7 +147,7 @@
 	} );
 
 	QUnit.test( 'restoreFilename()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Copyleft.svg' );
 
 		assert.strictEqual( provider.restoreFilename( 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/<filename>/300px-<filename>.png', file ),
@@ -154,7 +156,7 @@
 	} );
 
 	QUnit.test( 'canHaveLargerThumbnailThanOriginal()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Copyleft.svg' );
 
 		assert.strictEqual( provider.canHaveLargerThumbnailThanOriginal( file ), true, 'SVG can have a larger thumbnail than the original' );
@@ -181,7 +183,7 @@
 	} );
 
 	QUnit.test( 'canBeDisplayedInBrowser()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Copyleft.svg' );
 
 		assert.strictEqual( provider.canBeDisplayedInBrowser( file ), false, 'SVG can\'t be displayed as-is in the browser' );
@@ -208,7 +210,7 @@
 	} );
 
 	QUnit.test( 'guessWidth()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Copyleft.svg' );
 
 		assert.strictEqual( provider.guessWidth( file, 100, 1000 ), 100, 'Width correctly guessed for SVG thumbnail smaller than the original' );
@@ -221,7 +223,7 @@
 	} );
 
 	QUnit.test( 'guessHeight()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Copyleft.svg' );
 
 		assert.strictEqual( provider.guessHeight( file, 100, 1000, 500 ), 50, 'Height correctly guessed for SVG thumbnail smaller than the original' );
@@ -234,7 +236,7 @@
 	} );
 
 	QUnit.test( 'replaceSize()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Copyleft.svg' );
 
 		assert.strictEqual( provider.replaceSize( file, 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Copyleft.svg/300px-Copyleft.svg.png', 220 ),
@@ -254,7 +256,7 @@
 	} );
 
 	QUnit.test( 'guessFullUrl()', function ( assert ) {
-		var provider = new mw.mmv.provider.GuessedThumbnailInfo(),
+		var provider = new GuessedThumbnailInfo(),
 			file = new mw.Title( 'File:Copyleft.svg' ),
 			fullUrl = 'http://upload.wikimedia.org/wikipedia/commons/8/8b/Copyleft.svg',
 			sampleUrl = 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Copyleft.svg/300px-Copyleft.svg.png',

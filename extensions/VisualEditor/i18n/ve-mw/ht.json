@@ -7,8 +7,8 @@
 			"Tisave"
 		]
 	},
-	"tooltip-ca-createsource": "Kreye kòd sous paj sa a",
 	"tooltip-ca-ve-edit": "Edit paj sa a",
+	"tooltip-ca-createsource": "Kreye kòd sous paj sa a",
 	"visualeditor-ca-createlocaldescriptionsource": "Ajoute deskription lokal la nan kòd",
 	"visualeditor-ca-createsource": "Kreye ak wikikòd",
 	"visualeditor-ca-editsource": "Modifye kòd",
@@ -71,7 +71,6 @@
 	"visualeditor-formatdropdown-format-mw-heading6": "Tit seksyon 4",
 	"visualeditor-languages-tool": "Lang yo",
 	"visualeditor-linkinspector-educationpopup-title": "Lyen yo",
-	"visualeditor-mweditmodesource-warning-cancel": "Anile",
 	"visualeditor-mwgallerydialog-widths-input-placeholder": "Lajè pa defo : $1 px",
 	"visualeditor-mwsignature-tool": "Siyati ou",
 	"visualeditor-rebase-client-export": "Ekspò",

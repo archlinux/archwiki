@@ -2,13 +2,15 @@
 
 namespace MediaWiki\Auth;
 
+use MediaWiki\User\User;
+
 /**
  * @group AuthManager
  * @covers \MediaWiki\Auth\AbstractPreAuthenticationProvider
  */
 class AbstractPreAuthenticationProviderTest extends \MediaWikiIntegrationTestCase {
 	public function testAbstractPreAuthenticationProvider() {
-		$user = \User::newFromName( 'UTSysop' );
+		$user = $this->createMock( User::class );
 
 		$provider = $this->getMockForAbstractClass( AbstractPreAuthenticationProvider::class );
 

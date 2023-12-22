@@ -9,6 +9,7 @@ use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\TalkPageNotificationManager;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
@@ -36,7 +37,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 		$wikiPageFactory = $this->createMock( WikiPageFactory::class );
 		$wikiPageFactory->method( 'newFromTitle' )->willReturnCallback(
 			function ( PageIdentity $pageIdentity ) {
-				$title = Title::castFromPageReference( $pageIdentity );
+				$title = Title::newFromPageReference( $pageIdentity );
 				$wikiPage = $this->createMock( WikiPage::class );
 				$wikiPage->method( 'getTitle' )->willReturn( $title );
 				return $wikiPage;
@@ -132,8 +133,14 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 		$watchedItemStore->expects( $this->never() )
 			->method( 'resetAllNotificationTimestampsForUser' );
 
+		$talkPageNotificationManager = $this->createMock( TalkPageNotificationManager::class );
+		$talkPageNotificationManager->expects( $this->exactly( 2 ) )
+			->method( 'removeUserHasNewMessages' )
+			->with( $userIdentity );
+
 		$manager = $this->getManager( [
 			'watchedItemStore' => $watchedItemStore,
+			'talkPageNotificationManager' => $talkPageNotificationManager,
 			'userFactory' => $userFactory
 		] );
 
@@ -521,7 +528,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 		$this->assertTrue( $manager->isWatchable( $target ) );
 	}
 
-	public function provideNotIsWatchable() {
+	public static function provideNotIsWatchable() {
 		yield [ new PageReferenceValue( NS_SPECIAL, 'Contributions', PageReference::LOCAL ) ];
 		yield [ Title::makeTitle( NS_MAIN, '', 'References' ) ];
 		yield [ Title::makeTitle( NS_MAIN, 'Foo', '', 'acme' ) ];

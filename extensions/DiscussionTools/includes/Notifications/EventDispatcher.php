@@ -13,10 +13,11 @@ use ChangeTags;
 use DateInterval;
 use DateTimeImmutable;
 use DeferredUpdates;
-use EchoEvent;
 use ExtensionRegistry;
 use IDBAccessObject;
 use Iterator;
+use MediaWiki\Extension\DiscussionTools\CommentParser;
+use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\ContentThreadItemSet;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
 use MediaWiki\Extension\DiscussionTools\SubscriptionItem;
@@ -27,14 +28,15 @@ use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentHeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentThreadItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\HeadingItem;
 use MediaWiki\Extension\EventLogging\EventLogging;
+use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use ParserOptions;
 use RequestContext;
 use RuntimeException;
-use Title;
 use TitleValue;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -71,6 +73,7 @@ class EventDispatcher {
 
 		$doc = DOMUtils::parseHTML( $html );
 		$container = DOMCompat::getBody( $doc );
+		/** @var CommentParser $parser */
 		$parser = $services->getService( 'DiscussionTools.CommentParser' );
 		return $parser->parse( $container, $title );
 	}
@@ -226,6 +229,13 @@ class EventDispatcher {
 
 		$newHeadings = static::groupSubscribableHeadings( $newItemSet->getThreads() );
 		$oldHeadings = static::groupSubscribableHeadings( $oldItemSet->getThreads() );
+
+		$addedHeadings = [];
+		foreach ( static::findAddedItems( $oldHeadings, $newHeadings ) as $newHeading ) {
+			Assert::precondition( $newHeading instanceof ContentHeadingItem, 'Must be ContentHeadingItem' );
+			$addedHeadings[] = $newHeading;
+		}
+
 		$removedHeadings = [];
 		// Pass swapped parameters to findAddedItems() to find *removed* items
 		foreach ( static::findAddedItems( $newHeadings, $oldHeadings ) as $oldHeading ) {
@@ -293,6 +303,10 @@ class EventDispatcher {
 				continue;
 			}
 			$events[] = [
+				// This probably should've been called "dt-new-comment": this code is
+				// unaware if there are any subscriptions to the containing topic and
+				// an event is generated for every comment posted.
+				// However, changing this would require a complex migration.
 				'type' => 'dt-subscribed-new-comment',
 				'title' => $title,
 				'extra' => [
@@ -325,6 +339,35 @@ class EventDispatcher {
 				'agent' => $user,
 			];
 		}
+
+		$titleObj = Title::castFromPageIdentity( $title );
+		if ( $titleObj ) {
+			foreach ( $addedHeadings as $newHeading ) {
+				// Don't use $event here as that already exists as a reference from above
+				$addTopicEvent = [
+					'type' => 'dt-added-topic',
+					'title' => $title,
+					'extra' => [
+						// As no one can be subscribed to a topic before it has been created,
+						// we will notify users who have subscribed to the whole page.
+						'subscribed-comment-name' => CommentUtils::getNewTopicsSubscriptionId( $titleObj ),
+						'heading-id' => $newHeading->getId(),
+						'heading-name' => $newHeading->getName(),
+						'section-title' => $newHeading->getLinkableTitle(),
+						'revid' => $newRevRecord->getId(),
+					],
+					'agent' => $user,
+				];
+				// Add metadata about the accompanying comment
+				$firstComment = $newHeading->getOldestReply();
+				if ( $firstComment ) {
+					$addTopicEvent['extra']['comment-id'] = $firstComment->getId();
+					$addTopicEvent['extra']['comment-name'] = $firstComment->getName();
+					$addTopicEvent['extra']['content'] = $firstComment->getBodyText( true );
+				}
+				$events[] = $addTopicEvent;
+			}
+		}
 	}
 
 	/**
@@ -355,6 +398,7 @@ class EventDispatcher {
 			$dtConfig->get( 'DiscussionToolsAutoTopicSubEditor' ) === 'any' &&
 			HookUtils::shouldAddAutoSubscription( $user, $title )
 		) {
+			/** @var SubscriptionStore $parser */
 			$subscriptionStore = MediaWikiServices::getInstance()->getService( 'DiscussionTools.SubscriptionStore' );
 			$subscriptionStore->addAutoSubscriptionForUser( $user, $title, $itemName );
 		}
@@ -363,13 +407,14 @@ class EventDispatcher {
 	/**
 	 * Return all users subscribed to a comment
 	 *
-	 * @param EchoEvent $event
+	 * @param Event $event
 	 * @param int $batchSize
 	 * @return UserIdentity[]|Iterator<UserIdentity>
 	 */
-	public static function locateSubscribedUsers( EchoEvent $event, $batchSize = 500 ) {
+	public static function locateSubscribedUsers( Event $event, $batchSize = 500 ) {
 		$commentName = $event->getExtraParam( 'subscribed-comment-name' );
 
+		/** @var SubscriptionStore $subscriptionStore */
 		$subscriptionStore = MediaWikiServices::getInstance()->getService( 'DiscussionTools.SubscriptionStore' );
 		$subscriptionItems = $subscriptionStore->getSubscriptionItemsForTopic(
 			$commentName,
@@ -423,9 +468,11 @@ class EventDispatcher {
 		if ( !$extensionRegistry->isLoaded( 'EventLogging' ) ) {
 			return false;
 		}
+		if ( !$extensionRegistry->isLoaded( 'WikimediaEvents' ) ) {
+			return false;
+		}
 		$inSample = static::inEventSample( $editingStatsId );
 		$shouldOversample = ( $isDiscussionTools && $wgDTSchemaEditAttemptStepOversample ) || (
-				$extensionRegistry->isLoaded( 'WikimediaEvents' ) &&
 				// @phan-suppress-next-line PhanUndeclaredClassMethod
 				\WikimediaEvents\WikimediaEventsHooks::shouldSchemaEditAttemptStepOversample( $context )
 			);
@@ -433,11 +480,12 @@ class EventDispatcher {
 			return false;
 		}
 
-		$editTracker = MediaWikiServices::getInstance()
-			->getUserEditTracker();
+		$services = MediaWikiServices::getInstance();
+		$editTracker = $services->getUserEditTracker();
+		$userIdentityUtils = $services->getUserIdentityUtils();
 
 		$commonData = [
-			'$schema' => '/analytics/mediawiki/talk_page_edit/1.1.0',
+			'$schema' => '/analytics/mediawiki/talk_page_edit/1.2.0',
 			'action' => 'publish',
 			'session_id' => $editingStatsId,
 			'page_id' => $newRevRecord->getPageId(),
@@ -449,6 +497,7 @@ class EventDispatcher {
 				'user_edit_count' => $editTracker->getUserEditCount( $identity ) ?: 0,
 				// Retention-safe values:
 				'user_is_anonymous' => !$identity->isRegistered(),
+				'user_is_temp' => $userIdentityUtils->isTemp( $identity ),
 				'user_edit_count_bucket' => \UserBucketProvider::getUserEditCountBucket( $identity ) ?: 'N/A',
 			],
 			'database' => $wgDBname,

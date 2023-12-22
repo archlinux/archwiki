@@ -43,5 +43,11 @@
 	"cite_references_link_accessibility_back_label": "되돌아가기",
 	"cite_section_preview_references": "각주 미리보기",
 	"cite_warning": "인용 경고: $1",
-	"cite_warning_sectionpreview_no_text": "<code>$1</code>라는 이름의 <code>&lt;ref&gt;</code> 태그는 현재 부분 밖에서 정의되어 있거나 아예 정의되어 있지 않기 때문에 미리 볼 수 없습니다."
+	"cite_warning_sectionpreview_no_text": "<code>$1</code>라는 이름의 <code>&lt;ref&gt;</code> 태그는 현재 부분 밖에서 정의되어 있거나 아예 정의되어 있지 않기 때문에 미리 볼 수 없습니다.",
+	"cite-wikieditor-tool-reference": "각주",
+	"cite-wikieditor-help-page-references": "각주",
+	"cite-wikieditor-help-content-reference-description": "각주",
+	"cite-wikieditor-help-content-named-reference-description": "이름이 지정된 각주",
+	"cite-wikieditor-help-content-rereference-description": "같은 각주의 추가 사용",
+	"cite-wikieditor-help-content-showreferences-description": "각주 표시"
 }

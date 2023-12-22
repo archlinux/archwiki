@@ -173,6 +173,7 @@ class TemplateParser {
 			$compiledTemplate = $this->compile( $templateName );
 		}
 
+		// phpcs:ignore MediaWiki.Usage.ForbiddenFunctions.eval
 		$renderer = eval( $compiledTemplate['phpCode'] );
 		if ( !is_callable( $renderer ) ) {
 			throw new RuntimeException( "Compiled template `{$templateName}` is not callable" );
@@ -284,7 +285,7 @@ class TemplateParser {
 	 *     );
 	 * @endcode
 	 * @param string $templateName The name of the template
-	 * @param-taint $templateName exec_misc
+	 * @param-taint $templateName exec_path
 	 * @param mixed $args
 	 * @param-taint $args none
 	 * @param array $scopes
@@ -297,4 +298,7 @@ class TemplateParser {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( TemplateParser::class, 'TemplateParser' );

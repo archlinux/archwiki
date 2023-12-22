@@ -5,7 +5,6 @@
 			"ديفيد"
 		]
 	},
-	"apihelp-titleblacklist-description": "تحقق من صحة عنوان الصفحة، أو اسم الملف، أو اسم المستخدم ضد قائمة العناوين السوداء.",
 	"apihelp-titleblacklist-summary": "تحقق من صحة عنوان الصفحة، أو اسم الملف، أو اسم المستخدم ضد قائمة العناوين السوداء.",
 	"apihelp-titleblacklist-param-title": "سلسة الحروف للتحقق منها ضد القائمة السوداء.",
 	"apihelp-titleblacklist-param-action": "الفعل للتحقق منه.",

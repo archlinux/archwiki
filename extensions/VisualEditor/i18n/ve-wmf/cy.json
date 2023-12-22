@@ -8,6 +8,7 @@
 			"ОйЛ"
 		]
 	},
+	"tag-editcheck-references-description": "Mae EditCheck yn meddwl y gallai fod angen cyfeiriad yn y golygiad hwn",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Golygiad Gweladwy]]",
 	"tag-visualeditor-description": "Golygwyd gyda'r  [[{{MediaWiki:visualeditor-descriptionpagelink}}|golygydd gweladwy]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Golygiad gweledol: Gwirio]]",

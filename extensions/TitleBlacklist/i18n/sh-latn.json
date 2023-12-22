@@ -10,5 +10,6 @@
 	"log-name-titleblacklist": "Evidencija zabranjenih naslova",
 	"log-description-titleblacklist": "Ovi događaji prate popis zabranjenih naslova.",
 	"right-tboverride": "Zaobilaženje zabranjenih naslova ili korisničkih imena",
-	"right-tboverride-account": "Zaobilaženje zabranjenih korisničkih imena"
+	"right-tboverride-account": "Zaobilaženje zabranjenih korisničkih imena",
+	"right-titleblacklistlog": "Pregled evidencije zabranjenih naslova"
 }

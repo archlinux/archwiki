@@ -5,15 +5,14 @@
 			"Mechanizatar",
 			"Vlad5250",
 			"Yury Tarasievich",
+			"ZlyiLev",
 			"Хомелка",
-			"Чаховіч Уладзіслаў",
-			"ZlyiLev"
+			"Чаховіч Уладзіслаў"
 		]
 	},
 	"captcha-edit": "Для змянення гэтай старонцы, калі ласка, вырашыце наступную задачу ніжэй і ўвядзіце адказ у поле ([[Special:Captcha/help|больш падрабязна]]):",
 	"captcha-edit-fail": "Капча няправільныя або адсутнічае.",
 	"captcha-desc": "Забяспечвае метады CAPTCHA для абароны ад спаму і падбора пароля",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Рашэнне капчы",
 	"captcha-info-help": "Апісанне капчы",
 	"captcha-id-label": "ID капчы",

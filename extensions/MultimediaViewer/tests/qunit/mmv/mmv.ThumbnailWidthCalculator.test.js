@@ -1,3 +1,5 @@
+const { ThumbnailWidthCalculator } = require( 'mmv' );
+
 ( function () {
 	QUnit.module( 'mmv.ThumbnailWidthCalculator', QUnit.newMwEnvironment() );
 
@@ -6,26 +8,26 @@
 			goodWidthBuckets = [ 1 ],
 			thumbnailWidthCalculator;
 
-		thumbnailWidthCalculator = new mw.mmv.ThumbnailWidthCalculator();
-		assert.true( thumbnailWidthCalculator instanceof mw.mmv.ThumbnailWidthCalculator, 'constructor with no argument works' );
+		thumbnailWidthCalculator = new ThumbnailWidthCalculator();
+		assert.true( thumbnailWidthCalculator instanceof ThumbnailWidthCalculator, 'constructor with no argument works' );
 
-		thumbnailWidthCalculator = new mw.mmv.ThumbnailWidthCalculator( {} );
-		assert.true( thumbnailWidthCalculator instanceof mw.mmv.ThumbnailWidthCalculator, 'constructor with empty option argument works' );
+		thumbnailWidthCalculator = new ThumbnailWidthCalculator( {} );
+		assert.true( thumbnailWidthCalculator instanceof ThumbnailWidthCalculator, 'constructor with empty option argument works' );
 
-		thumbnailWidthCalculator = new mw.mmv.ThumbnailWidthCalculator( {
+		thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
 			widthBuckets: goodWidthBuckets
 		} );
-		assert.true( thumbnailWidthCalculator instanceof mw.mmv.ThumbnailWidthCalculator, 'constructor with non-default buckets works' );
+		assert.true( thumbnailWidthCalculator instanceof ThumbnailWidthCalculator, 'constructor with non-default buckets works' );
 
 		assert.throws( function () {
-			thumbnailWidthCalculator = new mw.mmv.ThumbnailWidthCalculator( {
+			thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
 				widthBuckets: badWidthBuckets
 			} );
 		}, 'constructor with empty bucket list throws exception' );
 	} );
 
 	QUnit.test( 'findNextBucket() test', function ( assert ) {
-		var thumbnailWidthCalculator = new mw.mmv.ThumbnailWidthCalculator( {
+		var thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
 			widthBuckets: [ 100, 200 ]
 		} );
 
@@ -44,7 +46,7 @@
 
 	// Old tests for the default bucket sizes. Preserved because why not.
 	QUnit.test( 'We get sensible image sizes when we ask for them', function ( assert ) {
-		var twc = new mw.mmv.ThumbnailWidthCalculator();
+		var twc = new ThumbnailWidthCalculator();
 
 		assert.strictEqual( twc.findNextBucket( 200 ), 320, 'Low target size gives us lowest possible size bucket' );
 		assert.strictEqual( twc.findNextBucket( 320 ), 320, 'Asking for a bucket size gives us exactly that bucket size' );
@@ -54,7 +56,7 @@
 	} );
 
 	QUnit.test( 'findNextBucket() test with unordered bucket list', function ( assert ) {
-		var thumbnailWidthCalculator = new mw.mmv.ThumbnailWidthCalculator( {
+		var thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
 			widthBuckets: [ 200, 100 ]
 		} );
 
@@ -71,7 +73,7 @@
 	QUnit.test( 'calculateFittingWidth() test', function ( assert ) {
 		var boundingWidth = 100,
 			boundingHeight = 200,
-			thumbnailWidthCalculator = new mw.mmv.ThumbnailWidthCalculator( { widthBuckets: [ 1 ] } );
+			thumbnailWidthCalculator = new ThumbnailWidthCalculator( { widthBuckets: [ 1 ] } );
 
 		// 50x10 image in 100x200 box - need to scale up 2x
 		assert.strictEqual(
@@ -92,7 +94,7 @@
 	QUnit.test( 'calculateWidths() test', function ( assert ) {
 		var boundingWidth = 100,
 			boundingHeight = 200,
-			thumbnailWidthCalculator = new mw.mmv.ThumbnailWidthCalculator( {
+			thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
 				widthBuckets: [ 8, 16, 32, 64, 128, 256, 512 ],
 				devicePixelRatio: 1
 			} ),
@@ -120,7 +122,7 @@
 	QUnit.test( 'calculateWidths() test with non-standard device pixel ratio', function ( assert ) {
 		var boundingWidth = 100,
 			boundingHeight = 200,
-			thumbnailWidthCalculator = new mw.mmv.ThumbnailWidthCalculator( {
+			thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
 				widthBuckets: [ 8, 16, 32, 64, 128, 256, 512 ],
 				devicePixelRatio: 2
 			} ),

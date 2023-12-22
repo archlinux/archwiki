@@ -26,6 +26,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|還有 1 位作者|還有 $1 位作者}}",
 	"multimediaviewer-multiple-authors-combine": "$1 及 $2",
 	"multimediaviewer-metadata-error": "無法讀取圖片資料 (錯誤：$1)",
+	"multimediaviewer-file-not-found-error": "很抱歉，無法顯示檔案$1，因為這不在目前的頁面上。",
 	"multimediaviewer-thumbnail-error": "抱歉，檔案無法正常顯示",
 	"multimediaviewer-thumbnail-error-description": "似乎發生技術性問題，若問題仍然存在您可以先$1。錯誤：$2",
 	"multimediaviewer-thumbnail-error-retry": "重試",

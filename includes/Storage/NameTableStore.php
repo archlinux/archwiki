@@ -21,10 +21,10 @@
 namespace MediaWiki\Storage;
 
 use Exception;
-use IExpiringStore;
 use Psr\Log\LoggerInterface;
 use WANObjectCache;
 use Wikimedia\Assert\Assert;
+use Wikimedia\LightweightObjectStore\ExpirationAwareness;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -102,7 +102,7 @@ class NameTableStore {
 		$this->nameField = $nameField;
 		$this->normalizationCallback = $normalizationCallback;
 		$this->domain = $dbDomain;
-		$this->cacheTTL = IExpiringStore::TTL_MONTH;
+		$this->cacheTTL = ExpirationAwareness::TTL_MONTH;
 		$this->insertCallback = $insertCallback;
 	}
 
@@ -402,12 +402,11 @@ class NameTableStore {
 				// NOTE: use IDatabase from the parent scope here, not the function parameter.
 				// If $dbw is a wrapper around the actual DB, we need to call the wrapper here,
 				// not the inner instance.
-				$dbw->insert(
-					$this->table,
-					$this->getFieldsToStore( $name ),
-					$fname,
-					[ 'IGNORE' ]
-				);
+				$dbw->newInsertQueryBuilder()
+					->insertInto( $this->table )
+					->ignore()
+					->row( $this->getFieldsToStore( $name ) )
+					->caller( $fname )->execute();
 
 				if ( $dbw->affectedRows() === 0 ) {
 					$this->logger->info(
@@ -453,11 +452,10 @@ class NameTableStore {
 				function ( IDatabase $unused, $fname ) use ( $name, $id, $dbw ) {
 					// Try to insert a row with the ID we originally got.
 					// If that fails (because of a key conflict), we will just try to get another ID again later.
-					$dbw->insert(
-						$this->table,
-						$this->getFieldsToStore( $name, $id ),
-						$fname
-					);
+					$dbw->newInsertQueryBuilder()
+						->insertInto( $this->table )
+						->row( $this->getFieldsToStore( $name, $id ) )
+						->caller( $fname )->execute();
 
 					// Make sure we re-load the map in case this gets rolled back again.
 					// We could re-try once more, but that bears the risk of an infinite loop.

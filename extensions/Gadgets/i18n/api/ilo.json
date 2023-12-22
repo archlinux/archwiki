@@ -4,13 +4,11 @@
 			"Lam-ang"
 		]
 	},
-	"apihelp-query+gadgetcategories-description": "Mangisubli iti listaan ti katkategoria ti gadget",
 	"apihelp-query+gadgetcategories-summary": "Mangisubli iti listaan ti katkategoria ti gadget.",
 	"apihelp-query+gadgetcategories-param-prop": "Ania ti maala a pakaammo ti kategoria ti gadget:\n;name:Internal a nagan ti kategoria.\n;title:Titulo ti kategoria.\n;members:Bilang dagiti gadget iti kategoria.",
 	"apihelp-query+gadgetcategories-param-names": "Nagnagan ti alaen a katkategoria.",
 	"apihelp-query+gadgetcategories-example-1": "Mangala iti listaan ti adda a katkategoria ti gadget",
 	"apihelp-query+gadgetcategories-example-2": "Mangala kadagiti amin a pakaammo a maipanggep ti katkategoria a nanaganan ti \"foo\" ken \"bar\"",
-	"apihelp-query+gadgets-description": "Mangisubli iti listaan dagiti gadget a naus-usar iti daytoy a wiki.",
 	"apihelp-query+gadgets-summary": "Mangisubli iti listaan dagiti gadget a naus-usar iti daytoy a wiki.",
 	"apihelp-query+gadgets-param-prop": "Ania ti maala a pakaaamo ti gadget:\n;id:ID ti internal a gadget.\n;metadata:Ti metadata ti gadget.\n;desc:Deskripsion ti gadget a nabaliwan iti HTML (mabalin a nabuntog, usaren laeng no masapul unay).",
 	"apihelp-query+gadgets-param-categories": "Dagiti gadget a pakaalaan ti katkategoria.",

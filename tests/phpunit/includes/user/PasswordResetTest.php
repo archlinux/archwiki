@@ -6,13 +6,16 @@ use MediaWiki\Block\CompositeBlock;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\SystemBlock;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\User\StaticUserOptionsLookup;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserOptionsLookup;
 use Psr\Log\NullLogger;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * TODO make this a unit test, all dependencies are injected, but DatabaseBlock::__construct()
@@ -49,7 +52,7 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 			new NullLogger(),
 			$authManager,
 			$this->createHookContainer(),
-			$this->createNoOpMock( ILoadBalancer::class ),
+			$this->createNoOpMock( IConnectionProvider::class ),
 			$this->createNoOpMock( UserFactory::class ),
 			$this->createNoOpMock( UserNameUtils::class ),
 			$this->createNoOpMock( UserOptionsLookup::class )
@@ -58,7 +61,7 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $isAllowed, $passwordReset->isAllowed( $user )->isGood() );
 	}
 
-	public function provideIsAllowed() {
+	public static function provideIsAllowed() {
 		return [
 			'no routes' => [
 				'passwordResetRoutes' => [],
@@ -246,7 +249,7 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				new NullLogger(),
 				$authManager,
 				$this->createHookContainer(),
-				$this->createNoOpMock( ILoadBalancer::class ),
+				$this->createNoOpMock( IConnectionProvider::class ),
 				$userFactory,
 				$this->getDummyUserNameUtils(),
 				$userOptionsLookup
@@ -259,7 +262,14 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 
 		/** @var PasswordReset $passwordReset */
 		$status = $passwordReset->execute( $performingUser, $username, $email );
-		$this->assertStatus( $status, $expectedError );
+
+		if ( is_string( $expectedError ) ) {
+			$this->assertStatusError( $expectedError, $status );
+		} elseif ( $expectedError ) {
+			$this->assertStatusNotOk( $status );
+		} else {
+			$this->assertStatusGood( $status );
+		}
 	}
 
 	public function provideExecute() {
@@ -407,7 +417,7 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 			"Couldn't determine the performing user's IP" => [
 				'expectedError' => 'badipaddress',
 				'config' => $defaultConfig,
-				'performingUser' => $this->makePerformingUser( null, false ),
+				'performingUser' => $this->makePerformingUser( '', false ),
 				'authManager' => $this->makeAuthManager(),
 				'username' => 'User1',
 				'email' => '',
@@ -498,25 +508,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	private function assertStatus( StatusValue $status, $error = false ) {
-		if ( $error === false ) {
-			$this->assertTrue(
-				$status->isGood(),
-				'Expected status to be good, result was: ' . $status->__toString()
-			);
-		} else {
-			$this->assertStatusNotGood( $status, 'Expected status to not be good' );
-			if ( is_string( $error ) ) {
-				$this->assertNotEmpty( $status->getErrors() );
-				$message = $status->getErrors()[0]['message'];
-				if ( $message instanceof MessageSpecifier ) {
-					$message = $message->getKey();
-				}
-				$this->assertSame( $error, $message );
-			}
-		}
-	}
-
 	private function makeConfig( $enableEmail, array $passwordResetRoutes, $emailForResets ) {
 		$hash = [
 			'AllowRequiringEmailForResets' => $emailForResets,
@@ -528,11 +519,11 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @param string|null $ip
+	 * @param string $ip
 	 * @param bool $pingLimited
 	 * @return User
 	 */
-	private function makePerformingUser( $ip, $pingLimited ): User {
+	private function makePerformingUser( string $ip, $pingLimited ): User {
 		$request = $this->createMock( WebRequest::class );
 		$request->method( 'getIP' )
 			->willReturn( $ip );

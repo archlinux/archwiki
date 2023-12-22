@@ -7,11 +7,12 @@ use ConfigFactory;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityUtils;
 use ReadOnlyMode;
 use stdClass;
 use TitleValue;
 use Wikimedia\Rdbms\FakeResultWrapper;
-use Wikimedia\Rdbms\ILBFactory;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
@@ -25,20 +26,23 @@ class SubscriptionStore {
 	public const STATE_AUTOSUBSCRIBED = 2;
 
 	private Config $config;
-	private ILBFactory $lbFactory;
+	private IConnectionProvider $dbProvider;
 	private ReadOnlyMode $readOnlyMode;
 	private UserFactory $userFactory;
+	private UserIdentityUtils $userIdentityUtils;
 
 	public function __construct(
 		ConfigFactory $configFactory,
-		ILBFactory $lbFactory,
+		IConnectionProvider $dbProvider,
 		ReadOnlyMode $readOnlyMode,
-		UserFactory $userFactory
+		UserFactory $userFactory,
+		UserIdentityUtils $userIdentityUtils
 	) {
 		$this->config = $configFactory->makeConfig( 'discussiontools' );
-		$this->lbFactory = $lbFactory;
+		$this->dbProvider = $dbProvider;
 		$this->readOnlyMode = $readOnlyMode;
 		$this->userFactory = $userFactory;
+		$this->userIdentityUtils = $userIdentityUtils;
 	}
 
 	/**
@@ -98,15 +102,15 @@ class SubscriptionStore {
 		array $options = []
 	): array {
 		// Only a registered user can be subscribed
-		if ( !$user->isRegistered() ) {
+		if ( !$user->isRegistered() || $this->userIdentityUtils->isTemp( $user ) ) {
 			return [];
 		}
 
 		$options += [ 'forWrite' => false ];
 		if ( $options['forWrite'] ) {
-			$db = $this->lbFactory->getPrimaryDatabase();
+			$db = $this->dbProvider->getPrimaryDatabase();
 		} else {
-			$db = $this->lbFactory->getReplicaDatabase();
+			$db = $this->dbProvider->getReplicaDatabase();
 		}
 
 		$rows = $this->fetchSubscriptions(
@@ -142,9 +146,9 @@ class SubscriptionStore {
 	): array {
 		$options += [ 'forWrite' => false ];
 		if ( $options['forWrite'] ) {
-			$db = $this->lbFactory->getPrimaryDatabase();
+			$db = $this->dbProvider->getPrimaryDatabase();
 		} else {
-			$db = $this->lbFactory->getReplicaDatabase();
+			$db = $this->dbProvider->getReplicaDatabase();
 		}
 
 		$rows = $this->fetchSubscriptions(
@@ -200,17 +204,17 @@ class SubscriptionStore {
 		UserIdentity $user,
 		LinkTarget $target,
 		string $itemName,
-		// Can't use static:: in compile-time constants
+		// Can not use static:: in compile-time constants
 		int $state = self::STATE_SUBSCRIBED
 	): bool {
 		if ( $this->readOnlyMode->isReadOnly() ) {
 			return false;
 		}
 		// Only a registered user can subscribe
-		if ( !$user->isRegistered() ) {
+		if ( !$user->isRegistered() || $this->userIdentityUtils->isTemp( $user ) ) {
 			return false;
 		}
-		$dbw = $this->lbFactory->getPrimaryDatabase();
+		$dbw = $this->dbProvider->getPrimaryDatabase();
 		$dbw->upsert(
 			'discussiontools_subscription',
 			[
@@ -244,19 +248,19 @@ class SubscriptionStore {
 			return false;
 		}
 		// Only a registered user can subscribe
-		if ( !$user->isRegistered() ) {
+		if ( !$user->isRegistered() || $this->userIdentityUtils->isTemp( $user ) ) {
 			return false;
 		}
-		$dbw = $this->lbFactory->getPrimaryDatabase();
-		$dbw->update(
-			'discussiontools_subscription',
-			[ 'sub_state' => static::STATE_UNSUBSCRIBED ],
-			[
+		$dbw = $this->dbProvider->getPrimaryDatabase();
+		$dbw->newUpdateQueryBuilder()
+			->table( 'discussiontools_subscription' )
+			->set( [ 'sub_state' => static::STATE_UNSUBSCRIBED ] )
+			->where( [
 				'sub_user' => $user->getId(),
 				'sub_item' => $itemName,
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 		return (bool)$dbw->affectedRows();
 	}
 
@@ -304,7 +308,7 @@ class SubscriptionStore {
 		if ( $this->readOnlyMode->isReadOnly() ) {
 			return false;
 		}
-		$dbw = $this->lbFactory->getPrimaryDatabase();
+		$dbw = $this->dbProvider->getPrimaryDatabase();
 
 		$conditions = [
 			'sub_item' => $itemName,
@@ -314,12 +318,12 @@ class SubscriptionStore {
 			$conditions[ 'sub_user' ] = $user->getId();
 		}
 
-		$dbw->update(
-			'discussiontools_subscription',
-			[ $field => $dbw->timestamp() ],
-			$conditions,
-			__METHOD__
-		);
+		$dbw->newUpdateQueryBuilder()
+			->table( 'discussiontools_subscription' )
+			->set( [ $field => $dbw->timestamp() ] )
+			->where( $conditions )
+			->caller( __METHOD__ )
+			->execute();
 		return (bool)$dbw->affectedRows();
 	}
 

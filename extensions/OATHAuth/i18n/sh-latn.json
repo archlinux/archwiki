@@ -32,6 +32,8 @@
 	"action-oathauth-disable-for-user": "onemogućavanje dvofaktorske autentifikacije korisnika",
 	"right-oathauth-verify-user": "Provjera je li suradnica/suradnik omogućio dvofaktorsku autentifikaciju",
 	"action-oathauth-verify-user": "provjeru je li suradnica/suradnik omogućio dvofaktorsku autentifikaciju",
+	"right-oathauth-view-log": "Pristup dnevniku promjena dvofaktorske autentifikacije",
+	"action-oathauth-view-log": "pristup dnevniku promjena dvofaktorske autentifikacije",
 	"oathauth-disable-intro": "Sa velikom moći dolazi velika odgovornost",
 	"oathauth-enteruser": "Korisničko ime:",
 	"oathauth-enterdisablereason": "Razlog onemogućavanja:",
@@ -80,5 +82,5 @@
 	"oathauth-totp-disable-warning": "Više nećete moći koristiti uređaj za autentifikaciju registrovan ovim računom. Svi pričuvni žetoni povezani sa njim biće proglašeni nevažećim.",
 	"oathauth-invalidrequest": "Nevažeći zahtjev",
 	"oathauth-notifications-disable-help": "Pomoć",
-	"oathauth-notifications-enabled-help": "Pomoć"
+	"oathauth-notifications-enable-help": "Pomoć"
 }

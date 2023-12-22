@@ -1,9 +1,11 @@
 <?php
 
 use MediaWiki\MainConfigNames;
-use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Parser\ParserOutputStringSets;
 use MediaWiki\Tests\Parser\ParserCacheSerializationTestCases;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Parsoid\Core\SectionMetadata;
 use Wikimedia\Parsoid\Core\TOCData;
@@ -440,12 +442,12 @@ EOF
 				[], $dedupText, <<<EOF
 <p>This is a test document.</p>
 <style data-mw-deduplicate="duplicate1">.Duplicate1 {}</style>
-<link rel="mw-deduplicated-inline-style" href="mw-data:duplicate1"/>
+<link rel="mw-deduplicated-inline-style" href="mw-data:duplicate1">
 <style data-mw-deduplicate="duplicate2">.Duplicate2 {}</style>
-<link rel="mw-deduplicated-inline-style" href="mw-data:duplicate1"/>
-<link rel="mw-deduplicated-inline-style" href="mw-data:duplicate2"/>
+<link rel="mw-deduplicated-inline-style" href="mw-data:duplicate1">
+<link rel="mw-deduplicated-inline-style" href="mw-data:duplicate2">
 <style data-mw-not-deduplicate="duplicate1">.Duplicate1 {}</style>
-<link rel="mw-deduplicated-inline-style" href="mw-data:duplicate1"/>
+<link rel="mw-deduplicated-inline-style" href="mw-data:duplicate1">
 <style data-mw-deduplicate="duplicate3">.Duplicate1 {}</style>
 <style>.Duplicate1 {}</style>
 EOF
@@ -492,7 +494,7 @@ EOF
 		$po->getText();
 	}
 
-	public function provideGetText_absoluteURLs() {
+	public static function provideGetText_absoluteURLs() {
 		yield 'empty' => [
 			'text' => '',
 			'expectedText' => '',
@@ -538,7 +540,7 @@ EOF
 		$po->getRawText();
 	}
 
-	public function provideMergeHtmlMetaDataFrom() {
+	public static function provideMergeHtmlMetaDataFrom() {
 		// title text ------------
 		$a = new ParserOutput();
 		$a->setTitleText( 'X' );
@@ -664,19 +666,12 @@ EOF
 		// TOC ------------
 		$a = new ParserOutput( '' );
 		$a->setSections( [ [ 'fromtitle' => 'A1' ], [ 'fromtitle' => 'A2' ] ] );
-		$a->getText(); // force TOC
 
 		$b = new ParserOutput( '' );
 		$b->setSections( [ [ 'fromtitle' => 'B1' ], [ 'fromtitle' => 'B2' ] ] );
-		$b->getText(); // force TOC
-
-		$emptyTOC = '<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>' . "\n" .
-		'<li class="toclevel-0"><a href="#"><span class="tocnumber"></span> <span class="toctext"></span></a></li>' . "\n" .
-		'<li class="toclevel-0"><a href="#"><span class="tocnumber"></span> <span class="toctext"></span></a>' . "\n" .
-		"</li></div>\n";
 
 		yield 'concat TOC' => [ $a, $b, [
-			'getTOCHTML' => $emptyTOC . $emptyTOC,
+			'getTOCHTML' => '',
 			'getSections' => [
 				SectionMetadata::fromLegacy( [ 'fromtitle' => 'A1' ] )->toLegacy(),
 				SectionMetadata::fromLegacy( [ 'fromtitle' => 'A2' ] )->toLegacy(),
@@ -803,7 +798,7 @@ EOF
 		$this->assertSame( $expected, $a->getLinks() );
 	}
 
-	public function provideMergeTrackingMetaDataFrom() {
+	public static function provideMergeTrackingMetaDataFrom() {
 		// links ------------
 		$a = new ParserOutput();
 		$a->addLink( Title::makeTitle( NS_MAIN, 'Kittens' ), 6 );
@@ -880,7 +875,7 @@ EOF
 				'ru' => [ 'Kittens_RU' => 1, 'Dragons_RU' => 1, ],
 				'fr' => [ 'Kittens_FR' => 1 ],
 			],
-			'getCategories' => [ 'Foo' => 'X', 'Bar' => 'Y' ],
+			'getCategoryMap' => [ 'Foo' => 'X', 'Bar' => 'Y' ],
 			'getImages' => [ 'Billy.jpg' => 1, 'Puff.jpg' => 1 ],
 			'getFileSearchOptions' => [
 				'Billy.jpg' => [ 'time' => '20180101000013', 'sha1' => 'DEAD' ],
@@ -953,36 +948,14 @@ EOF
 	}
 
 	public function provideMergeInternalMetaDataFrom() {
-		// hooks
-		$a = new ParserOutput();
-
-		$this->hideDeprecated( 'ParserOutput::addOutputHook' );
-		$a->addOutputHook( 'foo', 'X' );
-		$a->addOutputHook( 'bar' );
-
-		$b = new ParserOutput();
-
-		$b->addOutputHook( 'foo', 'Y' );
-		$b->addOutputHook( 'bar' );
-		$b->addOutputHook( 'zoo' );
-
-		yield 'hooks' => [ $a, $b, [
-			'getOutputHooks' => [
-				[ 'foo', 'X' ],
-				[ 'bar', false ],
-				[ 'foo', 'Y' ],
-				[ 'zoo', false ],
-			],
-		] ];
-
 		// flags & co
 		$a = new ParserOutput();
 
 		$a->addWarningMsg( 'duplicate-args-warning', 'A', 'B', 'C' );
 		$a->addWarningMsg( 'template-loop-warning', 'D' );
 
-		$a->setFlag( 'foo' );
-		$a->setFlag( 'bar' );
+		$a->setOutputFlag( 'foo' );
+		$a->setOutputFlag( 'bar' );
 
 		$a->recordOption( 'Foo' );
 		$a->recordOption( 'Bar' );
@@ -991,11 +964,9 @@ EOF
 
 		$b->addWarningMsg( 'template-equals-warning' );
 		$b->addWarningMsg( 'template-loop-warning', 'D' );
-		$this->hideDeprecated( 'ParserOutput::addWarning' );
-		$b->addWarning( 'Old School' ); // test the deprecated ::addWarning()
 
-		$b->setFlag( 'zoo' );
-		$b->setFlag( 'bar' );
+		$b->setOutputFlag( 'zoo' );
+		$b->setOutputFlag( 'bar' );
 
 		$b->recordOption( 'Zoo' );
 		$b->recordOption( 'Bar' );
@@ -1005,7 +976,6 @@ EOF
 				wfMessage( 'duplicate-args-warning', 'A', 'B', 'C' )->text(),
 				wfMessage( 'template-loop-warning', 'D' )->text(),
 				wfMessage( 'template-equals-warning' )->text(),
-				'Old School',
 			],
 			'$mFlags' => [ 'foo' => true, 'bar' => true, 'zoo' => true ],
 			'getUsedOptions' => [ 'Foo', 'Bar', 'Zoo' ],
@@ -1248,28 +1218,41 @@ EOF
 		$this->assertEquals( [ 'fred.com', 'xyzzy.com' ], $po->getExtraCSPStyleSrcs(), 'Style' );
 	}
 
-	/**
-	 * @covers ParserOutput::addTrackingCategory
-	 */
-	public function testAddTrackingCategory() {
-		$this->hideDeprecated( 'ParserOutput::addTrackingCategory' );
-
+	public function testOutputStrings() {
 		$po = new ParserOutput;
-		$po->setPageProperty( 'defaultsort', 'foobar' );
 
-		$page = PageReferenceValue::localReference( NS_USER, 'Testing' );
+		$this->assertEquals( [], $po->getOutputStrings( ParserOutputStringSets::MODULE ) );
+		$this->assertEquals( [], $po->getOutputStrings( ParserOutputStringSets::MODULE_STYLE ) );
+		$this->assertEquals( [], $po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_SCRIPT_SRC ) );
+		$this->assertEquals( [], $po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_STYLE_SRC ) );
+		$this->assertEquals( [], $po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_DEFAULT_SRC ) );
 
-		$po->addTrackingCategory( 'index-category', $page ); // from CORE_TRACKING_CATEGORIES
-		$po->addTrackingCategory( 'sitenotice', $page ); // should be "-", which is ignored
-		$po->addTrackingCategory( 'brackets-start', $page ); // invalid text
-		// TODO: assert proper handling of non-existing messages
+		$this->assertEquals( [], $po->getModules() );
+		$this->assertEquals( [], $po->getModuleStyles() );
+		$this->assertEquals( [], $po->getExtraCSPScriptSrcs() );
+		$this->assertEquals( [], $po->getExtraCSPStyleSrcs() );
+		$this->assertEquals( [], $po->getExtraCSPDefaultSrcs() );
 
-		$expected = wfMessage( 'index-category' )
-			->page( $page )
-			->inContentLanguage()
-			->text();
+		$po->appendOutputStrings( ParserOutputStringSets::MODULE, [ 'a' ] );
+		$po->appendOutputStrings( ParserOutputStringSets::MODULE_STYLE, [ 'b' ] );
+		$po->appendOutputStrings( ParserOutputStringSets::EXTRA_CSP_SCRIPT_SRC, [ 'foo.com', 'bar.com' ] );
+		$po->appendOutputStrings( ParserOutputStringSets::EXTRA_CSP_DEFAULT_SRC, [ 'baz.com' ] );
+		$po->appendOutputStrings( ParserOutputStringSets::EXTRA_CSP_STYLE_SRC, [ 'fred.com' ] );
+		$po->appendOutputStrings( ParserOutputStringSets::EXTRA_CSP_STYLE_SRC, [ 'xyzzy.com' ] );
 
-		$expected = strtr( $expected, ' ', '_' );
-		$this->assertSame( [ $expected => 'foobar' ], $po->getCategories() );
+		$this->assertEquals( [ 'a' ], $po->getOutputStrings( ParserOutputStringSets::MODULE ) );
+		$this->assertEquals( [ 'b' ], $po->getOutputStrings( ParserOutputStringSets::MODULE_STYLE ) );
+		$this->assertEquals( [ 'foo.com', 'bar.com' ],
+			$po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_SCRIPT_SRC ) );
+		$this->assertEquals( [ 'baz.com' ],
+			$po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_DEFAULT_SRC ) );
+		$this->assertEquals( [ 'fred.com', 'xyzzy.com' ],
+			$po->getOutputStrings( ParserOutputStringSets::EXTRA_CSP_STYLE_SRC ) );
+
+		$this->assertEquals( [ 'a' ], $po->getModules() );
+		$this->assertEquals( [ 'b' ], $po->getModuleStyles() );
+		$this->assertEquals( [ 'foo.com', 'bar.com' ], $po->getExtraCSPScriptSrcs() );
+		$this->assertEquals( [ 'baz.com' ], $po->getExtraCSPDefaultSrcs() );
+		$this->assertEquals( [ 'fred.com', 'xyzzy.com' ], $po->getExtraCSPStyleSrcs() );
 	}
 }

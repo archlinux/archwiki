@@ -39,6 +39,7 @@
 	"rest-bad-json-body": "Dåligt innehåll i begäran, måste var ett JSON-objekt.",
 	"rest-json-body-parse-error": "Misslyckades att tolka innehållet i begäran som JSON: $1",
 	"rest-missing-body-field": "Det obligatoriskt fältet \"$1\" saknas från innehållet i begäran.",
+	"rest-extraneous-body-fields": "Främmande fält hittades i förfrågans innehåll: $1",
 	"rest-bad-content-model": "Dålig innehållsmodell: $1",
 	"rest-update-cannot-create-page": "Sidan \"$1\" kan inte skapas eftersom den redan finns. För att uppdatera den befintliga sidan behöver du ange grundversionens ID i strukturen under nyckeln \"latest\" inuti innehållet i begäran.",
 	"rest-extraneous-csrf-token": "Främmande CSRF-nyckel hittades. CSRF-nycklar får inte användas tillsammans med autentiseringsmekaniker som OAuth som inte är säker mot CSRF-attacker.",

@@ -29,8 +29,11 @@ use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRoleRegistry;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ActorMigration;
+use MediaWiki\User\TempUser\TempUserCreator;
+use MediaWiki\User\UserFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -41,14 +44,9 @@ use Wikimedia\ParamValidator\ParamValidator;
  */
 class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var ActorMigration */
-	private $actorMigration;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
+	private RevisionStore $revisionStore;
+	private ActorMigration $actorMigration;
+	private NamespaceInfo $namespaceInfo;
 
 	/**
 	 * @param ApiQuery $query
@@ -62,6 +60,8 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 	 * @param ContentRenderer $contentRenderer
 	 * @param ContentTransformer $contentTransformer
 	 * @param CommentFormatter $commentFormatter
+	 * @param TempUserCreator $tempUserCreator
+	 * @param UserFactory $userFactory
 	 */
 	public function __construct(
 		ApiQuery $query,
@@ -74,7 +74,9 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 		NamespaceInfo $namespaceInfo,
 		ContentRenderer $contentRenderer,
 		ContentTransformer $contentTransformer,
-		CommentFormatter $commentFormatter
+		CommentFormatter $commentFormatter,
+		TempUserCreator $tempUserCreator,
+		UserFactory $userFactory
 	) {
 		parent::__construct(
 			$query,
@@ -86,7 +88,9 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 			$slotRoleRegistry,
 			$contentRenderer,
 			$contentTransformer,
-			$commentFormatter
+			$commentFormatter,
+			$tempUserCreator,
+			$userFactory
 		);
 		$this->revisionStore = $revisionStore;
 		$this->actorMigration = $actorMigration;
@@ -128,37 +132,30 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 
 		if ( $resultPageSet === null ) {
 			$this->parseParameters( $params );
-			$revQuery = $this->revisionStore->getQueryInfo( [ 'page' ] );
+			$queryBuilder = $this->revisionStore->newSelectQueryBuilder( $db )
+				->joinComment()
+				->joinPage();
+			$this->getQueryBuilder()->merge( $queryBuilder );
 		} else {
 			$this->limit = $this->getParameter( 'limit' ) ?: 10;
-			$revQuery = [
-				'tables' => [ 'revision' ],
-				'fields' => [ 'rev_timestamp', 'rev_id' ],
-				'joins' => [],
-			];
+			$this->addTables( [ 'revision' ] );
+			$this->addFields( [ 'rev_timestamp', 'rev_id' ] );
 
 			if ( $params['generatetitles'] ) {
-				$revQuery['fields'][] = 'rev_page';
+				$this->addFields( [ 'rev_page' ] );
 			}
 
 			if ( $params['user'] !== null || $params['excludeuser'] !== null ) {
-				$actorQuery = $this->actorMigration->getJoin( 'rev_user' );
-				$revQuery['tables'] += $actorQuery['tables'];
-				$revQuery['joins'] += $actorQuery['joins'];
+				$this->getQueryBuilder()->join( 'actor', 'actor_rev_user', 'actor_rev_user.actor_id = rev_actor' );
 			}
 
 			if ( $needPageTable ) {
-				$revQuery['tables'][] = 'page';
-				$revQuery['joins']['page'] = [ 'JOIN', [ "$pageField = page_id" ] ];
+				$this->getQueryBuilder()->join( 'page', null, [ "$pageField = page_id" ] );
 				if ( (bool)$miser_ns ) {
-					$revQuery['fields'][] = 'page_namespace';
+					$this->addFields( [ 'page_namespace' ] );
 				}
 			}
 		}
-
-		$this->addTables( $revQuery['tables'] );
-		$this->addFields( $revQuery['fields'] );
-		$this->addJoinConds( $revQuery['joins'] );
 
 		// Seems to be needed to avoid a planner bug (T113901)
 		$this->addOption( 'STRAIGHT_JOIN' );
@@ -182,8 +179,7 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 			// Paranoia: avoid brute force searches (T19342)
 			if ( !$this->getAuthority()->isAllowed( 'deletedhistory' ) ) {
 				$bitmask = RevisionRecord::DELETED_USER;
-			} elseif ( !$this->getAuthority()->isAllowedAny( 'suppressrevision', 'viewsuppressed' )
-			) {
+			} elseif ( !$this->getAuthority()->isAllowedAny( 'suppressrevision', 'viewsuppressed' ) ) {
 				$bitmask = RevisionRecord::DELETED_USER | RevisionRecord::DELETED_RESTRICTED;
 			} else {
 				$bitmask = 0;

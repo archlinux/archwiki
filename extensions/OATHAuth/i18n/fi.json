@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Kyykaarme",
 			"MITO",
 			"Mikahama",
 			"Nike",
@@ -8,8 +9,7 @@
 			"Pyscowicz",
 			"Silvonen",
 			"Stryn",
-			"Veikk0.ma",
-			"Kyykaarme"
+			"Veikk0.ma"
 		]
 	},
 	"disableoathforuser": "Poista käytöstä käyttäjän kaksivaiheinen tunnistautuminen",
@@ -69,5 +69,5 @@
 	"oathauth-ui-available-modules": "Saatavilla olevat tunnistautumistavat",
 	"oathauth-disable-method-warning-button-label": "Vahvista ja jatka",
 	"oathauth-notifications-disable-help": "Ohje",
-	"oathauth-notifications-enabled-help": "Ohje"
+	"oathauth-notifications-enable-help": "Ohje"
 }

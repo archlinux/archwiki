@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Tests\ResourceLoader;
 
-use HashConfig;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\ResourceLoader\ClientHtml;
 use MediaWiki\ResourceLoader\Context;
@@ -85,7 +85,7 @@ class ClientHtmlTest extends \PHPUnit\Framework\TestCase {
 			],
 			'styleDeprecations' => [
 				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'mw.log.warn("This page is using the deprecated ResourceLoader module \\"test.styles.deprecated\\".\\nDeprecation message.");'
+				"This page is using the deprecated ResourceLoader module \"test.styles.deprecated\".\nDeprecation message."
 			],
 		];
 
@@ -97,9 +97,7 @@ class ClientHtmlTest extends \PHPUnit\Framework\TestCase {
 		$context = self::makeContext();
 		$context->getResourceLoader()->register( self::makeSampleModules() );
 
-		$client = new ClientHtml( $context, [
-			'nonce' => false,
-		] );
+		$client = new ClientHtml( $context );
 		$client->setConfig( [ 'key' => 'value' ] );
 		$client->setModules( [
 			'test',
@@ -120,9 +118,9 @@ class ClientHtmlTest extends \PHPUnit\Framework\TestCase {
 			. 'RLPAGEMODULES=["test"];'
 			. '</script>' . "\n"
 			. '<script>(RLQ=window.RLQ||[]).push(function(){'
-			. 'mw.loader.implement("test.private@{blankVer}",null,{"css":[]});'
+			. 'mw.loader.impl(function(){return["test.private@{blankVer}",null,{"css":[]}];});'
 			. '});</script>' . "\n"
-			. '<link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.styles.deprecated%2Cpure&amp;only=styles"/>' . "\n"
+			. '<link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.styles.deprecated%2Cpure&amp;only=styles">' . "\n"
 			. '<style>.private{}</style>' . "\n"
 			. '<script async="" src="/w/load.php?lang=nl&amp;modules=startup&amp;only=scripts&amp;raw=1"></script>';
 		// phpcs:enable
@@ -180,7 +178,7 @@ class ClientHtmlTest extends \PHPUnit\Framework\TestCase {
 		$context = self::makeContext();
 		$context->getResourceLoader()->register( self::makeSampleModules() );
 
-		$client = new ClientHtml( $context, [ 'nonce' => false ] );
+		$client = new ClientHtml( $context );
 		$client->setConfig( [ 'key' => 'value' ] );
 		$client->setModules( [
 			'test',
@@ -218,7 +216,7 @@ class ClientHtmlTest extends \PHPUnit\Framework\TestCase {
 				'modules' => [ 'test.private' ],
 				'only' => Module::TYPE_COMBINED,
 				'extra' => [],
-				'output' => '<script>(RLQ=window.RLQ||[]).push(function(){mw.loader.implement("test.private@{blankVer}",null,{"css":[]});});</script>',
+				'output' => '<script>(RLQ=window.RLQ||[]).push(function(){mw.loader.impl(function(){return["test.private@{blankVer}",null,{"css":[]}];});});</script>',
 			],
 			[
 				'context' => [],
@@ -247,29 +245,29 @@ class ClientHtmlTest extends \PHPUnit\Framework\TestCase {
 				'modules' => [ 'test.styles.pure', 'test.styles.mixed' ],
 				'only' => Module::TYPE_STYLES,
 				'extra' => [],
-				'output' => '<link rel="stylesheet" href="/w/load.php?debug=1&amp;lang=nl&amp;modules=test.styles.mixed&amp;only=styles"/>' . "\n"
-					. '<link rel="stylesheet" href="/w/load.php?debug=1&amp;lang=nl&amp;modules=test.styles.pure&amp;only=styles"/>',
+				'output' => '<link rel="stylesheet" href="/w/load.php?debug=1&amp;lang=nl&amp;modules=test.styles.mixed&amp;only=styles">' . "\n"
+					. '<link rel="stylesheet" href="/w/load.php?debug=1&amp;lang=nl&amp;modules=test.styles.pure&amp;only=styles">',
 			],
 			[
 				'context' => [ 'debug' => 'false' ],
 				'modules' => [ 'test.styles.pure', 'test.styles.mixed' ],
 				'only' => Module::TYPE_STYLES,
 				'extra' => [],
-				'output' => '<link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.styles.mixed%2Cpure&amp;only=styles"/>',
+				'output' => '<link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.styles.mixed%2Cpure&amp;only=styles">',
 			],
 			[
 				'context' => [],
 				'modules' => [ 'test.styles.noscript' ],
 				'only' => Module::TYPE_STYLES,
 				'extra' => [],
-				'output' => '<noscript><link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.styles.noscript&amp;only=styles"/></noscript>',
+				'output' => '<noscript><link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.styles.noscript&amp;only=styles"></noscript>',
 			],
 			[
 				'context' => [],
 				'modules' => [ 'test.shouldembed' ],
 				'only' => Module::TYPE_COMBINED,
 				'extra' => [],
-				'output' => '<script>(RLQ=window.RLQ||[]).push(function(){mw.loader.implement("test.shouldembed@{blankVer}",null,{"css":[]});});</script>',
+				'output' => '<script>(RLQ=window.RLQ||[]).push(function(){mw.loader.impl(function(){return["test.shouldembed@{blankVer}",null,{"css":[]}];});});</script>',
 			],
 			[
 				'context' => [],
@@ -290,7 +288,7 @@ class ClientHtmlTest extends \PHPUnit\Framework\TestCase {
 				'modules' => [ 'test', 'test.shouldembed' ],
 				'only' => Module::TYPE_COMBINED,
 				'extra' => [],
-				'output' => '<script>(RLQ=window.RLQ||[]).push(function(){mw.loader.load("/w/load.php?lang=nl\u0026modules=test");mw.loader.implement("test.shouldembed@{blankVer}",null,{"css":[]});});</script>',
+				'output' => '<script>(RLQ=window.RLQ||[]).push(function(){mw.loader.load("/w/load.php?lang=nl\u0026modules=test");mw.loader.impl(function(){return["test.shouldembed@{blankVer}",null,{"css":[]}];});});</script>',
 			],
 			[
 				'context' => [],
@@ -298,7 +296,7 @@ class ClientHtmlTest extends \PHPUnit\Framework\TestCase {
 				'only' => Module::TYPE_STYLES,
 				'extra' => [],
 				'output' =>
-					'<link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.styles.pure&amp;only=styles"/>' . "\n"
+					'<link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.styles.pure&amp;only=styles">' . "\n"
 					. '<style>.shouldembed{}</style>'
 			],
 			[
@@ -307,9 +305,9 @@ class ClientHtmlTest extends \PHPUnit\Framework\TestCase {
 				'only' => Module::TYPE_STYLES,
 				'extra' => [],
 				'output' =>
-					'<link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.ordering.a%2Cb&amp;only=styles"/>' . "\n"
+					'<link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.ordering.a%2Cb&amp;only=styles">' . "\n"
 					. '<style>.orderingC{}.orderingD{}</style>' . "\n"
-					. '<link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.ordering.e&amp;only=styles"/>'
+					. '<link rel="stylesheet" href="/w/load.php?lang=nl&amp;modules=test.ordering.e&amp;only=styles">'
 			],
 		];
 		// phpcs:enable
@@ -348,9 +346,7 @@ class ClientHtmlTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	private static function makeContext( $extraQuery = [] ) {
-		$conf = new HashConfig( [
-			'ResourceLoaderClientPreferences' => false
-		] );
+		$conf = new HashConfig( [] );
 		return new Context(
 			new ResourceLoader( $conf, null, null, [
 				'loadScript' => '/w/load.php',

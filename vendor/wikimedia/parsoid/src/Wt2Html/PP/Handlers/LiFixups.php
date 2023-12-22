@@ -4,11 +4,11 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\PP\Handlers;
 
 use Wikimedia\Assert\Assert;
-use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\Utils\DiffDOMUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -45,7 +45,7 @@ class LiFixups {
 	 */
 	private static function findLastMigratableNode( Node $li ): ?Node {
 		$sentinel = null;
-		$c = DOMUtils::lastNonSepChild( $li );
+		$c = DiffDOMUtils::lastNonSepChild( $li );
 		// c is known to be a category link.
 		// fail fast in parser tests if something changes.
 		Assert::invariant( WTUtils::isCategoryLink( $c ), 'c is known to be a category link' );
@@ -95,13 +95,10 @@ class LiFixups {
 	 * this pattern is extremely common (some list at the end of the page
 	 * followed by a list of categories for the page).
 	 * @param Element $li
-	 * @param Env $env
 	 * @param DTState $state
 	 * @return bool
 	 */
-	public static function migrateTrailingCategories(
-		Element $li, Env $env, DTState $state
-	): bool {
+	public static function migrateTrailingCategories( Element $li, DTState $state ): bool {
 		// * Don't bother fixing up template content when processing the full page
 		if ( $state->tplInfo ?? null ) {
 			return true;
@@ -112,7 +109,7 @@ class LiFixups {
 		// * migrate it out of the outermost list
 		// * and fix up the DSR of list items and list along the rightmost path.
 		if ( $li->nextSibling === null && DOMUtils::isList( $li->parentNode ) &&
-			WTUtils::isCategoryLink( DOMUtils::lastNonSepChild( $li ) )
+			WTUtils::isCategoryLink( DiffDOMUtils::lastNonSepChild( $li ) )
 		) {
 
 			// Find the outermost list -- content will be moved after it

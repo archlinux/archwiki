@@ -21,5 +21,11 @@
 	"cite_error_group_refs_without_references": "\"$1\" деп аталған дереккөз тобында <code>&lt;ref&gt;</code> тегі бар, бірақ тиісті <code>&lt;references group=\"$1\"/&gt;</code> тегі табылмады, немесе <code>&lt;/ref&gt;</code> жабу тегін қажет етеді",
 	"cite-tracking-category-cite-error": "Қате сілтемелері бар беттер",
 	"cite_references_link_accessibility_label": "Жоғарыға көтеріліңіз",
-	"cite_references_link_many_accessibility_label": "Мынаған өту:"
+	"cite_references_link_many_accessibility_label": "Мынаған өту:",
+	"cite-wikieditor-tool-reference": "Дереккөз",
+	"cite-wikieditor-help-page-references": "Дереккөздер",
+	"cite-wikieditor-help-content-reference-description": "Дереккөз",
+	"cite-wikieditor-help-content-named-reference-description": "Аталған дереккөз",
+	"cite-wikieditor-help-content-rereference-description": "Кейбір дереккөздердің қосымша қолданылуы",
+	"cite-wikieditor-help-content-showreferences-description": "Дереккөзін көрсету"
 }

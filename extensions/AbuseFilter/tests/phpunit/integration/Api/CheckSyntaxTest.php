@@ -8,6 +8,7 @@ use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleWarning;
 use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
 use MediaWiki\Extension\AbuseFilter\Parser\ParserStatus;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Api\CheckSyntax
@@ -16,19 +17,20 @@ use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
  */
 class CheckSyntaxTest extends ApiTestCase {
 	use AbuseFilterApiTestTrait;
+	use MockAuthorityTrait;
 
 	/**
 	 * @covers ::execute
 	 */
 	public function testExecute_noPermissions() {
-		$this->setExpectedApiException( 'apierror-abusefilter-cantcheck', 'permissiondenied' );
+		$this->expectApiErrorCode( 'permissiondenied' );
 
 		$this->setService( RuleCheckerFactory::SERVICE_NAME, $this->getRuleCheckerFactory() );
 
 		$this->doApiRequest( [
 			'action' => 'abusefilterchecksyntax',
 			'filter' => 'sampleFilter',
-		], null, null, self::getTestUser()->getUser() );
+		], null, null, $this->mockRegisteredNullAuthority() );
 	}
 
 	/**
@@ -45,7 +47,7 @@ class CheckSyntaxTest extends ApiTestCase {
 		$result = $this->doApiRequest( [
 			'action' => 'abusefilterchecksyntax',
 			'filter' => $input,
-		], null, null, self::getTestSysop()->getUser() );
+		] );
 
 		$this->assertArrayEquals(
 			[ 'abusefilterchecksyntax' => [ 'status' => 'ok' ] ],
@@ -73,7 +75,7 @@ class CheckSyntaxTest extends ApiTestCase {
 		$result = $this->doApiRequest( [
 			'action' => 'abusefilterchecksyntax',
 			'filter' => $input,
-		], null, null, self::getTestSysop()->getUser() );
+		] );
 
 		$this->assertArrayEquals(
 			[
@@ -81,18 +83,11 @@ class CheckSyntaxTest extends ApiTestCase {
 					'status' => 'ok',
 					'warnings' => [
 						[
-							'message' => wfMessage(
-								'abusefilter-parser-warning-exception-1',
-								3
-							)->text(),
+							'message' => '⧼abusefilter-parser-warning-exception-1⧽',
 							'character' => 3,
 						],
 						[
-							'message' => wfMessage(
-								'abusefilter-parser-warning-exception-2',
-								8,
-								'param'
-							)->text(),
+							'message' => '⧼abusefilter-parser-warning-exception-2⧽',
 							'character' => 8,
 						],
 					]
@@ -119,16 +114,13 @@ class CheckSyntaxTest extends ApiTestCase {
 		$result = $this->doApiRequest( [
 			'action' => 'abusefilterchecksyntax',
 			'filter' => $input,
-		], null, null, self::getTestSysop()->getUser() );
+		] );
 
 		$this->assertArrayEquals(
 			[
 				'abusefilterchecksyntax' => [
 					'status' => 'error',
-					'message' => wfMessage(
-						'abusefilter-exception-error-id',
-						4
-					)->text(),
+					'message' => '⧼abusefilter-exception-error-id⧽',
 					'character' => 4
 				]
 			],

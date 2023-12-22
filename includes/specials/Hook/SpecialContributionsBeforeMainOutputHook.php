@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Hook;
 
-use SpecialContributions;
-use User;
+use MediaWiki\Specials\SpecialContributions;
+use MediaWiki\User\User;
 
 /**
  * This is a hook handler interface, see docs/Hooks.md.

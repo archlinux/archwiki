@@ -10,7 +10,7 @@
 	"license-name": "GPL-2.0-or-later AND MIT",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"APIModules": {
 		"scribunto-console": "MediaWiki\\Extension\\Scribunto\\ApiScribuntoConsole"
@@ -87,19 +87,27 @@
 		"remoteExtPath": "Scribunto/modules"
 	},
 	"Hooks": {
-		"SoftwareInfo": "MediaWiki\\Extension\\Scribunto\\Hooks::getSoftwareInfo",
-		"ParserFirstCallInit": "MediaWiki\\Extension\\Scribunto\\Hooks::setupParserHook",
-		"ParserLimitReportPrepare": "MediaWiki\\Extension\\Scribunto\\Hooks::reportLimitData",
-		"ParserLimitReportFormat": "MediaWiki\\Extension\\Scribunto\\Hooks::formatLimitData",
-		"ParserClearState": "MediaWiki\\Extension\\Scribunto\\Hooks::clearState",
-		"ParserCloned": "MediaWiki\\Extension\\Scribunto\\Hooks::parserCloned",
-		"CodeEditorGetPageLanguage": "MediaWiki\\Extension\\Scribunto\\Hooks::getCodeLanguage",
-		"EditPage::showStandardInputs:options": "MediaWiki\\Extension\\Scribunto\\Hooks::showStandardInputsOptions",
-		"EditPage::showReadOnlyForm:initial": "MediaWiki\\Extension\\Scribunto\\Hooks::showReadOnlyFormInitial",
-		"EditPageBeforeEditButtons": "MediaWiki\\Extension\\Scribunto\\Hooks::beforeEditButtons",
-		"EditFilterMergedContent": "MediaWiki\\Extension\\Scribunto\\Hooks::validateScript",
-		"ArticleViewHeader": "MediaWiki\\Extension\\Scribunto\\Hooks::showDocPageHeader",
-		"ContentHandlerDefaultModelFor": "MediaWiki\\Extension\\Scribunto\\Hooks::contentHandlerDefaultModelFor"
+		"SoftwareInfo": "main",
+		"ParserFirstCallInit": "main",
+		"ParserLimitReportPrepare": "main",
+		"ParserLimitReportFormat": "main",
+		"ParserClearState": "main",
+		"ParserCloned": "main",
+		"CodeEditorGetPageLanguage": "codeeditor",
+		"EditPage::showStandardInputs:options": "main",
+		"EditPage::showReadOnlyForm:initial": "main",
+		"EditPageBeforeEditButtons": "main",
+		"EditFilterMergedContent": "main",
+		"ArticleViewHeader": "main",
+		"ContentHandlerDefaultModelFor": "main"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\Scribunto\\Hooks"
+		},
+		"codeeditor": {
+			"class": "MediaWiki\\Extension\\Scribunto\\CodeEditorHooks"
+		}
 	},
 	"namespaces": [
 		{

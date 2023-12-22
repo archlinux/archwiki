@@ -1,7 +1,5 @@
-/* global RestResult, SearchResult */
-
 /**
- * @typedef {Object} UrlParams
+ * @typedef {Record<string,string>} UrlParams
  * @param {string} title
  * @param {string} fulltext
  */
@@ -30,7 +28,10 @@ function urlGenerator( config ) {
 	// wgVectorSearchUrlGenerator has not been defined as a config variable yet.
 	return config.get( 'wgVectorSearchUrlGenerator', {
 		/**
-		 * @type {generateUrl}
+		 * @param {RestResult|SearchResult|string} suggestion
+		 * @param {UrlParams} params
+		 * @param {string} articlePath
+		 * @return {string}
 		 */
 		generateUrl(
 			suggestion,
@@ -45,11 +46,15 @@ function urlGenerator( config ) {
 				// Add `fulltext` query param to search within pages and for navigation
 				// to the search results page (prevents being redirected to a certain
 				// article).
-				// @ts-ignore
-				params.fulltext = '1';
+				params = Object.assign( {}, params, {
+					fulltext: '1'
+				} );
 			}
 
-			return articlePath + '?' + $.param( $.extend( {}, params, { search: suggestion } ) );
+			const searchParams = new URLSearchParams(
+				Object.assign( {}, params, { search: suggestion } )
+			);
+			return `${articlePath}?${searchParams.toString()}`;
 		}
 	} );
 }

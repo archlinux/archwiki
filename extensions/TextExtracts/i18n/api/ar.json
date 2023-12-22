@@ -4,7 +4,6 @@
 			"ديفيد"
 		]
 	},
-	"apihelp-query+extracts-description": "يعرض نصا عاديا أو مقتطفات HTML محدودة من الصفحات المعينة.",
 	"apihelp-query+extracts-summary": "يعرض نصا عاديا أو مقتطفات HTML محدودة من الصفحات المعينة.",
 	"apihelp-query+extracts-param-chars": "كم عدد شخصيات للعودة؟ قد يكون النص الفعلي المرتجع أطول قليلا.",
 	"apihelp-query+extracts-param-sentences": "كم عدد الجمل للعودة.",

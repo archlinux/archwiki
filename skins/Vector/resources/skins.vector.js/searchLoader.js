@@ -8,23 +8,18 @@
 /** @interface VectorResourceLoaderVirtualConfig */
 /** @interface MediaWikiPageReadyModule */
 
-var /** @type {VectorResourceLoaderVirtualConfig} */
+const /** @type {VectorResourceLoaderVirtualConfig} */
 	config = require( /** @type {string} */ ( './config.json' ) ),
 	// T251544: Collect search performance metrics to compare Vue search with
 	// mediawiki.searchSuggest performance.
 	CAN_TEST_SEARCH = !!(
 		window.performance &&
-		/* eslint-disable compat/compat */
-		// @ts-ignore
-		performance.mark &&
-		// @ts-ignore
-		performance.measure &&
+		!!performance.mark &&
+		!!performance.measure &&
 		performance.getEntriesByName ),
-	/* eslint-enable compat/compat */
 	LOAD_START_MARK = 'mwVectorVueSearchLoadStart',
 	LOAD_END_MARK = 'mwVectorVueSearchLoadEnd',
-	LOAD_MEASURE = 'mwVectorVueSearchLoadStartToLoadEnd',
-	SEARCH_LOADING_CLASS = 'search-form__loader';
+	LOAD_MEASURE = 'mwVectorVueSearchLoadStartToLoadEnd';
 
 /**
  * Loads the search module via `mw.loader.using` on the element's
@@ -39,7 +34,7 @@ var /** @type {VectorResourceLoaderVirtualConfig} */
  * @param {null|function(): void} afterLoadFn function to execute after search module loads.
  */
 function loadSearchModule( element, moduleName, startMarker, afterLoadFn ) {
-	var SHOULD_TEST_SEARCH = CAN_TEST_SEARCH &&
+	const SHOULD_TEST_SEARCH = CAN_TEST_SEARCH &&
 		moduleName === 'skins.vector.search';
 
 	function requestSearchModule() {
@@ -56,64 +51,6 @@ function loadSearchModule( element, moduleName, startMarker, afterLoadFn ) {
 		requestSearchModule();
 	} else {
 		element.addEventListener( 'focus', requestSearchModule );
-	}
-}
-
-/**
- * Event callback that shows or hides the loading indicator based on the event type.
- * The loading indicator states are:
- * 1. Show on input event (while user is typing)
- * 2. Hide on focusout event (when user removes focus from the input )
- * 3. Show when input is focused, if it contains a query. (in case user re-focuses on input)
- *
- * @param {Event} event
- */
-function renderSearchLoadingIndicator( event ) {
-
-	var form = /** @type {HTMLElement} */ ( event.currentTarget ),
-		input = /** @type {HTMLInputElement} */ ( event.target );
-
-	if (
-		!( event.currentTarget instanceof HTMLElement ) ||
-		!( event.target instanceof HTMLInputElement )
-	) {
-		return;
-	}
-
-	if ( !form.dataset.loadingMsg ) {
-		form.dataset.loadingMsg = mw.msg( 'vector-search-loader' );
-	}
-
-	if ( event.type === 'input' ) {
-		form.classList.add( SEARCH_LOADING_CLASS );
-
-	} else if ( event.type === 'focusout' ) {
-		form.classList.remove( SEARCH_LOADING_CLASS );
-
-	} else if ( event.type === 'focusin' && input.value.trim() ) {
-		form.classList.add( SEARCH_LOADING_CLASS );
-	}
-}
-
-/**
- * Attaches or detaches the event listeners responsible for activating
- * the loading indicator.
- *
- * @param {Element} element
- * @param {boolean} attach
- * @param {function(Event): void} eventCallback
- */
-function setLoadingIndicatorListeners( element, attach, eventCallback ) {
-
-	/** @type { "addEventListener" | "removeEventListener" } */
-	var addOrRemoveListener = ( attach ? 'addEventListener' : 'removeEventListener' );
-
-	[ 'input', 'focusin', 'focusout' ].forEach( function ( eventType ) {
-		element[ addOrRemoveListener ]( eventType, eventCallback );
-	} );
-
-	if ( !attach ) {
-		element.classList.remove( SEARCH_LOADING_CLASS );
 	}
 }
 
@@ -138,11 +75,11 @@ function markLoadEnd( startMarker, endMarker, measureMarker ) {
  * @param {Document} document
  */
 function initSearchLoader( document ) {
-	var searchBoxes = document.querySelectorAll( '.vector-search-box' );
+	const searchBoxes = document.querySelectorAll( '.vector-search-box' );
 
 	// Allow developers to defined $wgVectorSearchApiUrl in LocalSettings to target different APIs
-	if ( config.wgVectorSearchApiUrl ) {
-		mw.config.set( 'wgVectorSearchApiUrl', config.wgVectorSearchApiUrl );
+	if ( config.VectorSearchApiUrl ) {
+		mw.config.set( 'wgVectorSearchApiUrl', config.VectorSearchApiUrl );
 	}
 
 	if ( !searchBoxes.length ) {
@@ -160,16 +97,8 @@ function initSearchLoader( document ) {
 	}
 
 	Array.prototype.forEach.call( searchBoxes, function ( searchBox ) {
-		var searchInner = searchBox.querySelector( 'form > div' ),
+		const searchInner = searchBox.querySelector( 'form > div' ),
 			searchInput = searchBox.querySelector( 'input[name="search"]' ),
-			clearLoadingIndicators = function () {
-				setLoadingIndicatorListeners(
-					// @ts-ignore
-					searchInner,
-					false,
-					renderSearchLoadingIndicator
-				);
-			},
 			isPrimarySearch = searchInput && searchInput.getAttribute( 'id' ) === 'searchInput';
 
 		if ( !searchInput || !searchInner ) {
@@ -177,17 +106,16 @@ function initSearchLoader( document ) {
 		}
 		// Remove tooltips while Vue search is still loading
 		searchInput.setAttribute( 'autocomplete', 'off' );
-		setLoadingIndicatorListeners( searchInner, true, renderSearchLoadingIndicator );
 		loadSearchModule(
 			searchInput,
 			'skins.vector.search',
 			isPrimarySearch ? LOAD_START_MARK : null,
-			// Make sure we clearLoadingIndicators so that event listeners are removed.
 			// Note, loading Vue.js will remove the element from the DOM.
-			isPrimarySearch ? function () {
-				markLoadEnd( LOAD_START_MARK, LOAD_END_MARK, LOAD_MEASURE );
-				clearLoadingIndicators();
-			} : clearLoadingIndicators
+			function () {
+				if ( isPrimarySearch ) {
+					markLoadEnd( LOAD_START_MARK, LOAD_END_MARK, LOAD_MEASURE );
+				}
+			}
 		);
 	} );
 }

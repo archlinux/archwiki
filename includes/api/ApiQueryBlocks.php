@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
+ * Copyright © 2007 Roan Kattouw <roan.kattouw@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,14 +38,9 @@ use Wikimedia\Rdbms\IResultWrapper;
  */
 class ApiQueryBlocks extends ApiQueryBase {
 
-	/** @var BlockActionInfo */
-	private $blockActionInfo;
-
-	/** @var BlockRestrictionStore */
-	private $blockRestrictionStore;
-
-	/** @var CommentStore */
-	private $commentStore;
+	private BlockActionInfo $blockActionInfo;
+	private BlockRestrictionStore $blockRestrictionStore;
+	private CommentStore $commentStore;
 
 	/**
 	 * @param ApiQuery $query
@@ -150,20 +145,18 @@ class ApiQueryBlocks extends ApiQueryBase {
 				$this->dieWithError( 'apierror-badip', 'param_ip' );
 			}
 
-			# Check range validity, if it's a CIDR
+			// Check range validity, if it's a CIDR
 			[ $ip, $range ] = IPUtils::parseCIDR( $params['ip'] );
 			if ( $ip !== false && $range !== false && $range < $cidrLimit ) {
 				$this->dieWithError( [ 'apierror-cidrtoobroad', $type, $cidrLimit ] );
 			}
 
-			# Let IPUtils::parseRange handle calculating $upper, instead of duplicating the logic here.
+			// Let IPUtils::parseRange handle calculating $upper, instead of duplicating the logic here.
 			[ $lower, $upper ] = IPUtils::parseRange( $params['ip'] );
 
-			# Extract the common prefix to any rangeblock affecting this IP/CIDR
+			// Extract the common prefix to any range block affecting this IP/CIDR
 			$prefix = substr( $lower, 0, $prefixLen + (int)floor( $cidrLimit / 4 ) );
 
-			# Fairly hard to make a malicious SQL statement out of hex characters,
-			# but it is good practice to add quotes
 			$lower = $db->addQuotes( $lower );
 			$upper = $db->addQuotes( $upper );
 
@@ -178,7 +171,7 @@ class ApiQueryBlocks extends ApiQueryBase {
 		if ( $params['show'] !== null ) {
 			$show = array_fill_keys( $params['show'], true );
 
-			/* Check for conflicting parameters. */
+			// Check for conflicting parameters.
 			if ( ( isset( $show['account'] ) && isset( $show['!account'] ) )
 				|| ( isset( $show['ip'] ) && isset( $show['!ip'] ) )
 				|| ( isset( $show['range'] ) && isset( $show['!range'] ) )
@@ -187,12 +180,11 @@ class ApiQueryBlocks extends ApiQueryBase {
 				$this->dieWithError( 'apierror-show' );
 			}
 
-			$this->addWhereIf( 'ipb_user = 0', isset( $show['!account'] ) );
+			$this->addWhereIf( [ 'ipb_user' => 0 ], isset( $show['!account'] ) );
 			$this->addWhereIf( 'ipb_user != 0', isset( $show['account'] ) );
 			$this->addWhereIf( 'ipb_user != 0 OR ipb_range_end > ipb_range_start', isset( $show['!ip'] ) );
 			$this->addWhereIf( 'ipb_user = 0 AND ipb_range_end = ipb_range_start', isset( $show['ip'] ) );
-			$this->addWhereIf( 'ipb_expiry = ' .
-				$db->addQuotes( $db->getInfinity() ), isset( $show['!temp'] ) );
+			$this->addWhereIf( [ 'ipb_expiry' => $db->getInfinity() ], isset( $show['!temp'] ) );
 			$this->addWhereIf( 'ipb_expiry != ' .
 				$db->addQuotes( $db->getInfinity() ), isset( $show['temp'] ) );
 			$this->addWhereIf( 'ipb_range_end = ipb_range_start', isset( $show['!range'] ) );
@@ -203,7 +195,7 @@ class ApiQueryBlocks extends ApiQueryBase {
 			$this->addWhereFld( 'ipb_deleted', 0 );
 		}
 
-		# Filter out expired rows
+		// Filter out expired rows
 		$this->addWhere( 'ipb_expiry > ' . $db->addQuotes( $db->timestamp() ) );
 
 		$res = $this->select( __METHOD__ );

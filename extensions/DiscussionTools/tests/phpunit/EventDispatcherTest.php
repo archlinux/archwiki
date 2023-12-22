@@ -3,14 +3,15 @@
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
 use DateTimeImmutable;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\User\UserIdentityValue;
-use RawMessage;
 
 /**
  * @group DiscussionTools
+ * @group Database
  * @covers \MediaWiki\Extension\DiscussionTools\Notifications\EventDispatcher
  */
 class EventDispatcherTest extends IntegrationTestCase {
@@ -81,7 +82,7 @@ class EventDispatcherTest extends IntegrationTestCase {
 		static::assertEquals( [], $events );
 	}
 
-	public function provideGenerateCases(): array {
+	public static function provideGenerateCases(): array {
 		return [
 			// Several simple edits adding replies by different users.
 			[

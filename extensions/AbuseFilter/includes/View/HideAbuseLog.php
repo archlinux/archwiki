@@ -13,26 +13,33 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Pager\AbuseLogPager;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\LBFactory;
 use Xml;
 
 class HideAbuseLog extends AbuseFilterView {
+
+	/** @var LBFactory */
+	private $lbFactory;
 
 	/** @var int[] */
 	private $hideIDs;
 
 	/**
+	 * @param LBFactory $lbFactory
 	 * @param AbuseFilterPermissionManager $afPermManager
 	 * @param IContextSource $context
 	 * @param LinkRenderer $linkRenderer
 	 * @param string $basePageName
 	 */
 	public function __construct(
+		LBFactory $lbFactory,
 		AbuseFilterPermissionManager $afPermManager,
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
 		string $basePageName
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, [] );
+		$this->lbFactory = $lbFactory;
 		$this->hideIDs = array_keys( $this->getRequest()->getArray( 'hideids', [] ) );
 	}
 
@@ -139,7 +146,7 @@ class HideAbuseLog extends AbuseFilterView {
 	 */
 	public function saveHideForm( array $fields ) {
 		// Determine which rows actually have to be changed
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = $this->lbFactory->getPrimaryDatabase();
 		$newValue = $fields['showorhide'] === 'hide' ? 1 : 0;
 		$actualIDs = $dbw->selectFieldValues(
 			'abuse_filter_log',

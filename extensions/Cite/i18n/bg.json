@@ -35,5 +35,11 @@
 	"cite_references_link_accessibility_back_label": "Обратно нагоре",
 	"cite_section_preview_references": "Преглед на бележките",
 	"cite_warning": "Предупреждение за цитирането: $1",
-	"cite_warning_sectionpreview_no_text": "Таг <code>&lt;ref&gt;</code> с име <code>$1</code> не може да бъде предварително прегледан, тъй като е дефиниран извън текущия раздел или изобщо не е дефиниран."
+	"cite_warning_sectionpreview_no_text": "Таг <code>&lt;ref&gt;</code> с име <code>$1</code> не може да бъде предварително прегледан, тъй като е дефиниран извън текущия раздел или изобщо не е дефиниран.",
+	"cite-wikieditor-tool-reference": "Източник (бележка под линия)",
+	"cite-wikieditor-help-page-references": "Източници",
+	"cite-wikieditor-help-content-reference-description": "Източник",
+	"cite-wikieditor-help-content-named-reference-description": "Наименован източник/бележка",
+	"cite-wikieditor-help-content-rereference-description": "Множествена употреба на един и същ източник",
+	"cite-wikieditor-help-content-showreferences-description": "Извеждане на източниците"
 }

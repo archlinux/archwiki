@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Daimona Eaytoy",
 			"Joetaras",
 			"Matma Rex",
 			"McDutchie",
-			"Reder",
-			"Amire80"
+			"Reder"
 		]
 	},
 	"abusefilter-desc": "Applichesce le euristeche automateche pe le cangiaminde",
@@ -511,7 +511,6 @@
 	"abusefilter-test-page": "Cangiaminde fatte a 'a pàgene:",
 	"abusefilter-test-shownegative": "Fàce vedè sule le cangiaminde ca non ge sonde correspondende ad 'u filtre",
 	"abusefilter-test-syntaxerr": "'U filtre ca tu é mise tène 'n'errore de sindasse.\nTu pòte avè 'na spiegazione comblete ce cazze 'u pulsande \"{{int:abusefilter-edit-check}}\".",
-	"abusefilter-test-badtitle": "'U titole d'a pàgene inserite ere invalide. Jidde pò tené une o cchiù carattere ca non ge ponne essere ausate jndr'à le titole.",
 	"abusefilter-test-action": "Tipe de azione:",
 	"abusefilter-test-search-type-all": "Tutte le aziune",
 	"abusefilter-test-search-type-edit": "Cangiaminde",

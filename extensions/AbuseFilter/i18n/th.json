@@ -18,6 +18,7 @@
 			"Passawuth",
 			"Patsagorn Y.",
 			"Prame Tan",
+			"RidJasper",
 			"Trisorn Triboon",
 			"Woraponboonkerd"
 		]
@@ -267,7 +268,7 @@
 	"abusefilter-edit-tag-tag": "[[Special:Tags|ป้ายกำกับ]]ที่ใช้:",
 	"abusefilter-edit-tag-placeholder": "เพิ่มป้ายกำกับ (ทีละป้ายหรือคั่นด้วยจุลภาค)",
 	"abusefilter-edit-tag-hidden-placeholder": "เพิ่มป้ายกำกับ (คั่นด้วยจุลภาค)",
-	"abusefilter-edit-block-anon-durations": "ระยะเวลาในการบล็อกสำหรับผู้ใช้นิรนาม:",
+	"abusefilter-edit-block-anon-durations": "ระยะเวลาในการบล็อกสำหรับผู้ใช้ไม่ลงทะเบียน:",
 	"abusefilter-edit-block-user-durations": "รายะเวลาในการบล็อกสำหรับผู้ใช้ที่ลงทะเบียน:",
 	"abusefilter-block-anon": "บล็อกผู้ใช้นิรนาม",
 	"abusefilter-block-user": "บล็อกผู้ใช้ที่ลงทะเบียน",
@@ -519,7 +520,6 @@
 	"abusefilter-test-page": "การเปลี่ยนแปลงไปยังหน้า:",
 	"abusefilter-test-shownegative": "แสดงการเปลี่ยนแปลงที่ไม่ตรงกับตัวกรอง",
 	"abusefilter-test-syntaxerr": "ตัวกรองที่คุณกรอกนั้นมีวากยสัมพันธ์ผิดพลาด\nคุณสามารถดูคำอธิบายเต็มได้โดยคลิกปุ่ม \"{{int:abusefilter-edit-check}}\"",
-	"abusefilter-test-badtitle": "ชื่อหน้าที่คุณกรอกไม่สมเหตุสมผล โดยอาจมีอักขระที่ไม่สามารถใช้เป็นชื่อเรื่อง",
 	"abusefilter-test-action": "ประเภทการกระทำ:",
 	"abusefilter-test-search-type-all": "การกระทำทั้งหมด",
 	"abusefilter-test-search-type-edit": "แก้ไข",

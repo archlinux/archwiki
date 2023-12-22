@@ -43,7 +43,7 @@ class SpecialAbuseFilterTest extends SpecialPageTestBase {
 		$this->assertInstanceOf( $viewClass, $view );
 	}
 
-	public function provideInstantiateView(): array {
+	public static function provideInstantiateView(): array {
 		return [
 			[ AbuseFilterViewDiff::class ],
 			[ AbuseFilterViewEdit::class, [ 'filter' => 1 ] ],

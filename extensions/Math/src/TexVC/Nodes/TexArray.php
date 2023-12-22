@@ -5,9 +5,13 @@ declare( strict_types = 1 );
 namespace MediaWiki\Extension\Math\TexVC\Nodes;
 
 use InvalidArgumentException;
+use MediaWiki\Extension\Math\TexVC\MMLmappings\BaseMappings;
 use MediaWiki\Extension\Math\TexVC\MMLmappings\Util\MMLParsingUtil;
 use MediaWiki\Extension\Math\TexVC\MMLmappings\Util\MMLutil;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmo;
 use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmstyle;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmsup;
+use MediaWiki\Extension\Math\TexVC\TexUtil;
 
 class TexArray extends TexNode {
 
@@ -94,11 +98,68 @@ class TexArray extends TexNode {
 		return null;
 	}
 
+	public function checkForLimits( $currentNode, $nextNode ) {
+		// Preceding 'lim' in example: "\\lim_{x \\to 2}"
+		if ( ( $currentNode instanceof DQ || $currentNode instanceof FQ )
+			&& $currentNode->containsFunc( "\\lim" ) ) {
+
+			if ( $currentNode->getBase() instanceof TexArray ) {
+				return [ $currentNode->getBase()->getArgs()[0], false ];
+			} else {
+				return [ $currentNode->getBase(), false ];
+			}
+		}
+
+		/** Find cases which have preceding Literals with nullary_macro-type operators i.e.:
+		 * "\iint\limits_D \, dx\,dy"
+		 */
+		$tu = TexUtil::getInstance();
+
+		// Check whether the current node is a possible preceding literal
+		if ( !( $currentNode instanceof Literal
+			&& ( $tu->nullary_macro( trim( $currentNode->getArg() ) )
+			|| trim( $currentNode->getArg() ) == "\\lim" ) ) ) {
+			return [ null, false ];
+		}
+
+		// Check whether the next node is a possible limits construct
+		if ( !( ( $nextNode instanceof DQ || $nextNode instanceof FQ )
+			&& $nextNode->getBase() instanceof Literal
+			&& $nextNode->containsFunc( "\\limits" )
+			) ) {
+			return [ null, false ];
+
+		}
+		return [ $currentNode, true ];
+	}
+
+	public function checkForNot( $currentNode ): bool {
+		if ( $currentNode instanceof Literal && trim( $currentNode->getArg() ) == "\\not" ) {
+			return true;
+		}
+		return false;
+	}
+
+	public function checkForDerivatives( $iStart, $args ): int {
+		$ctr = 0;
+		for ( $i = $iStart, $count = count( $this->args ); $i < $count; $i++ ) {
+			$followUp = $args[$i];
+			if ( $followUp instanceof Literal && $followUp->getArg() === "'" ) {
+				$ctr++;
+			} else {
+				break;
+			}
+		}
+
+		return $ctr;
+	}
+
 	public function renderMML( $arguments = [], $state = [] ) {
 		// Everything here is for parsing displaystyle, probably refactored to TexVC grammar later
 		$fullRenderedArray = "";
-		$mmlStyle = null;
+		$mmlStyles = [];
 		$currentColor = null;
+
 		for ( $i = 0, $count = count( $this->args ); $i < $count; $i++ ) {
 			$current = $this->args[$i];
 			if ( isset( $this->args[$i + 1] ) ) {
@@ -112,6 +173,30 @@ class TexArray extends TexNode {
 				$state["sideset"] = $foundSideset;
 				// Skipping the succeeding Literal
 				$i++;
+			}
+
+			// Check for limits
+			$foundLimits = $this->checkForLimits( $current, $next );
+			if ( $foundLimits[0] ) {
+				$state["limits"] = $foundLimits[0];
+				if ( $foundLimits[1] ) {
+					continue;
+				}
+			}
+
+			// Check for Not
+			$foundNot = $this->checkForNot( $current );
+			if ( $foundNot ) {
+				$state["not"] = true;
+				continue;
+			}
+
+			// Check for derivatives
+			$foundDeriv = $this->checkForDerivatives( $i + 1, $this->args );
+			if ( $foundDeriv > 0 ) {
+				// skip the next indices which are derivative characters
+				$i += $foundDeriv;
+				$state["deriv"] = $foundDeriv;
 			}
 
 			// Check if there is a new color definition and add it to state
@@ -128,41 +213,96 @@ class TexArray extends TexNode {
 				continue;
 			}
 			$styleArguments = $this->checkForStyleArgs( $current );
-			// For cases with "displaystyle{someargs} otherargs"
 			if ( $styleArguments ) {
-				$mmlStyle = new MMLmstyle( "", $styleArguments );
-				$fullRenderedArray .= $mmlStyle->getStart();
+				$state["styleargs"] = $styleArguments;
 				if ( $next instanceof Curly ) {
-					$fullRenderedArray .= $this->renderMMLwithColor( $currentColor, $current, $state, $arguments );
+					// Wrap with style-tags when the next element is a Curly which determines start and end tag.
+					$mmlStyle = new MMLmstyle( "", $styleArguments );
+					$fullRenderedArray .= $mmlStyle->getStart();
+					$fullRenderedArray .= $this->createMMLwithContext( $currentColor, $next, $state, $arguments );
 					$fullRenderedArray .= $mmlStyle->getEnd();
 					$mmlStyle = null;
+					unset( $state["styleargs"] );
 					$i++;
+				} else {
+					// Start the style indicator in cases like \textstyle abc
+					$mmlStyle = new MMLmstyle( "", $styleArguments );
+					$fullRenderedArray .= $mmlStyle->getStart();
+					$mmlStyles[] = $mmlStyle->getEnd();
+
 				}
 			} else {
-				$fullRenderedArray .= $this->renderMMLwithColor( $currentColor, $current, $state, $arguments );
+				$fullRenderedArray .= $this->createMMLwithContext( $currentColor, $current, $state, $arguments );
+			}
+
+			if ( array_key_exists( "not", $state ) ) {
+				unset( $state["not"] );
+			}
+			if ( array_key_exists( "limits", $state ) ) {
+				unset( $state["limits"] );
+			}
+			if ( array_key_exists( "deriv", $state ) ) {
+				unset( $state["deriv"] );
 			}
 		}
-		if ( $mmlStyle ) {
-			$fullRenderedArray .= $mmlStyle->getEnd();
+
+		foreach ( array_reverse( $mmlStyles ) as $mmlStyleEnd ) {
+			$fullRenderedArray .= $mmlStyleEnd;
 		}
+
 		return $fullRenderedArray;
 	}
 
-	private function renderMMLwithColor( $currentColor, $currentNode, $state, $arguments ) {
+	private function createMMLwithContext( $currentColor, $currentNode, $state, $arguments ) {
 		if ( $currentColor ) {
 			if ( array_key_exists( "colorDefinitions", $state )
 				&& is_array( $state["colorDefinitions"] )
 				&& array_key_exists( $currentColor, $state["colorDefinitions"] ?? [] )
+				&& is_array( $state["colorDefinitions"][$currentColor] )
+				&& array_key_exists( "hex", $state["colorDefinitions"][$currentColor] )
 			   ) {
 				$displayedColor = $state["colorDefinitions"][$currentColor]["hex"];
+
 			} else {
-				$displayedColor = $currentColor;
+				$resColor = BaseMappings::getColorByKey( $currentColor );
+				$displayedColor = $resColor ? $resColor[0] : $currentColor;
 			}
 			$mmlStyleColor = new MMLmstyle( "", [ "mathcolor" => $displayedColor ] );
-			return $mmlStyleColor->encapsulateRaw( $currentNode->renderMML( $arguments, $state ) );
+			$ret = $mmlStyleColor->encapsulateRaw( $currentNode->renderMML( $arguments, $state ) );
 		} else {
-		   return $currentNode->renderMML( $arguments, $state );
+			$ret = $currentNode->renderMML( $arguments, $state );
 		}
+
+		return $this->addDerivativesContext( $state, $ret );
+	}
+
+	/**
+	 * If derivative was recognized, add the corresponding derivative math operator
+	 * to the mml and wrap with msup element.
+	 * @param array $state state indicator which indicates derivative
+	 * @param string $mml mathml input
+	 * @return string mml with additional mml-elements for derivatives
+	 */
+	public function addDerivativesContext( $state, string $mml ): string {
+		if ( array_key_exists( "deriv", $state ) && $state["deriv"] > 0 ) {
+			$msup = new MMLmsup();
+			$moDeriv = new MMLmo();
+
+			if ( $state["deriv"] == 1 ) {
+				$derInfo = "&#x2032;";
+			} elseif ( $state["deriv"] == 2 ) {
+				$derInfo = "&#x2033;";
+			} elseif ( $state["deriv"] == 3 ) {
+				$derInfo = "&#x2034;";
+			} elseif ( $state["deriv"] == 4 ) {
+				$derInfo = "&#x2057;";
+			} else {
+				$derInfo = str_repeat( "&#x2032;", $state["deriv"] );
+			}
+
+			$mml = $msup->encapsulateRaw( $mml . $moDeriv->encapsulateRaw( $derInfo ) );
+		}
+		return $mml;
 	}
 
 	public function inCurlies() {
@@ -283,4 +423,5 @@ class TexArray extends TexNode {
 			}
 		}
 	}
+
 }

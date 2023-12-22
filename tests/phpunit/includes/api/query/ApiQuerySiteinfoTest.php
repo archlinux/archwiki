@@ -2,6 +2,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
+use MediaWiki\SiteStats\SiteStats;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\LoadBalancer;
 use Wikimedia\TestingAccessWrapper;
@@ -84,6 +85,8 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 	}
 
 	public function testReadOnly() {
+		// Create the test user before making the DB readonly
+		$this->getTestSysop()->getUser();
 		$svc = $this->getServiceContainer()->getReadOnlyMode();
 		$svc->setReason( 'Need more donations' );
 		try {
@@ -153,15 +156,15 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 	}
 
 	public function testSpecialPageAliases() {
-		$this->assertCount(
-			count( $this->getServiceContainer()->getSpecialPageFactory()->getNames() ),
+		$this->assertSameSize(
+			$this->getServiceContainer()->getSpecialPageFactory()->getNames(),
 			$this->doQuery( 'specialpagealiases' )
 		);
 	}
 
 	public function testMagicWords() {
-		$this->assertCount(
-			count( $this->getServiceContainer()->getContentLanguage()->getMagicWords() ),
+		$this->assertSameSize(
+			$this->getServiceContainer()->getContentLanguage()->getMagicWords(),
 			$this->doQuery( 'magicwords' )
 		);
 	}
@@ -171,12 +174,14 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 	 */
 	public function testInterwikiMap( $filter ) {
 		$this->overrideConfigValues( [
+			MainConfigNames::ExtraInterlanguageLinkPrefixes => [ 'self' ],
+			MainConfigNames::ExtraLanguageNames => [ 'self' => 'Recursion' ],
+			MainConfigNames::LocalInterwikis => [ 'self' ],
 			MainConfigNames::Server => 'https://local.example',
 			MainConfigNames::ScriptPath => '/w',
 		] );
 
-		$dbw = wfGetDB( DB_PRIMARY );
-		$dbw->insert(
+		$this->getDb()->insert(
 			'interwiki',
 			[
 				[
@@ -200,12 +205,6 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 			'IGNORE'
 		);
 		$this->tablesUsed[] = 'interwiki';
-
-		$this->overrideConfigValues( [
-			MainConfigNames::LocalInterwikis => [ 'self' ],
-			MainConfigNames::ExtraInterlanguageLinkPrefixes => [ 'self' ],
-			MainConfigNames::ExtraLanguageNames => [ 'self' => 'Recursion' ],
-		] );
 
 		$this->getServiceContainer()->getMessageCache()->enable();
 
@@ -246,7 +245,7 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 		$this->assertSame( $expected, $data );
 	}
 
-	public function interwikiMapProvider() {
+	public static function interwikiMapProvider() {
 		return [ [ 'local' ], [ '!local' ], [ null ] ];
 	}
 
@@ -255,8 +254,11 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 	 */
 	public function testDbReplLagInfo( $showHostnames, $includeAll ) {
 		if ( !$showHostnames && $includeAll ) {
-			$this->setExpectedApiException( 'apierror-siteinfo-includealldenied' );
+			$this->expectApiErrorCode( 'includeAllDenied' );
 		}
+
+		// Force creation of the test user before mocking the database.
+		$this->getTestSysop()->getUser();
 
 		$mockLB = $this->createNoOpMock( LoadBalancer::class, [ 'getMaxLag', 'getLagTimes',
 			'getServerName', 'getLocalDomainID' ] );
@@ -282,7 +284,7 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 		$this->assertSame( $expected, $data );
 	}
 
-	public function dbReplLagProvider() {
+	public static function dbReplLagProvider() {
 		return [
 			'no hostnames, no showalldb' => [ false, false ],
 			'no hostnames, showalldb' => [ false, true ],
@@ -353,7 +355,6 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 			}
 
 			if ( $val['name'] === 'viscount' ) {
-				$viscountFound = true;
 				$this->assertSame( [ 'perambulate' ], $val['rights'] );
 				$this->assertSame( $userAllGroups, $val['add'] );
 			} elseif ( $val['name'] === 'bot' ) {
@@ -365,6 +366,39 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 		}
 	}
 
+	public function testAutoCreateTempUser() {
+		$config = $expected = [ 'enabled' => false ];
+		$this->overrideConfigValue( MainConfigNames::AutoCreateTempUser, $config );
+		$this->assertSame(
+			$expected,
+			$this->doQuery( 'autocreatetempuser' ),
+			'When disabled, no other properties are present'
+		);
+
+		$config = [
+			'enabled' => true,
+			'actions' => [ 'edit' ],
+			'genPattern' => 'Unregistered $1',
+			'reservedPattern' => null,
+			'serialProvider' => [ 'type' => 'local' ],
+			'serialMapping' => [ 'type' => 'plain-numeric' ],
+		];
+		$expected = [
+			'enabled' => true,
+			'actions' => [ 'edit' ],
+			'genPattern' => 'Unregistered $1',
+			'matchPattern' => 'Unregistered $1',
+			'serialProvider' => [ 'type' => 'local' ],
+			'serialMapping' => [ 'type' => 'plain-numeric' ],
+		];
+		$this->overrideConfigValue( MainConfigNames::AutoCreateTempUser, $config );
+		$this->assertSame(
+			$expected,
+			$this->doQuery( 'autocreatetempuser' ),
+			'When enabled, some properties are filled in or cleaned up'
+		);
+	}
+
 	public function testFileExtensions() {
 		// Add duplicate
 		$this->overrideConfigValue( MainConfigNames::FileExtensions, [ 'png', 'gif', 'jpg', 'png' ] );
@@ -374,7 +408,7 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 		$this->assertSame( $expected, $this->doQuery( 'fileextensions' ) );
 	}
 
-	public function groupsProvider() {
+	public static function groupsProvider() {
 		return [
 			'numingroup' => [ true ],
 			'nonumingroup' => [ false ],
@@ -457,12 +491,12 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 		// @todo Test git info
 
 		$this->assertSame(
-			Title::newFromText( 'Special:Version/License/Ersatz Extension' )->getLinkURL(),
+			Title::makeTitle( NS_SPECIAL, 'Version/License/Ersatz Extension' )->getLinkURL(),
 			$data[0]['license']
 		);
 
 		$this->assertSame(
-			Title::newFromText( 'Special:Version/Credits/Ersatz Extension' )->getLinkURL(),
+			Title::makeTitle( NS_SPECIAL, 'Version/Credits/Ersatz Extension' )->getLinkURL(),
 			$data[0]['credits']
 		);
 
@@ -474,12 +508,10 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 	/**
 	 * @dataProvider rightsInfoProvider
 	 */
-	public function testRightsInfo( $page, $url, $text, $expectedUrlOrTitle, $expectedText ) {
-		$expectedUrl = ( $expectedUrlOrTitle instanceof Title )
-			? wfExpandUrl( $expectedUrlOrTitle->getLinkURL(), PROTO_CURRENT )
-			: $expectedUrlOrTitle;
-
+	public function testRightsInfo( $page, $url, $text, $expectedUrl, $expectedText ) {
 		$this->overrideConfigValues( [
+			MainConfigNames::Server => 'https://local.example',
+			MainConfigNames::ArticlePath => '/wiki/$1',
 			MainConfigNames::RightsPage => $page,
 			MainConfigNames::RightsUrl => $url,
 			MainConfigNames::RightsText => $text,
@@ -503,21 +535,21 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 		);
 	}
 
-	public function rightsInfoProvider() {
-		$licenseTitle = Title::makeTitle( 0, 'License' );
+	public static function rightsInfoProvider() {
+		$licenseTitleUrl = 'https://local.example/wiki/License';
 		$licenseUrl = 'http://license.example/';
 
 		return [
 			'No rights info' => [ null, null, null, '', '' ],
-			'Only page' => [ 'License', null, null, $licenseTitle, 'License' ],
+			'Only page' => [ 'License', null, null, $licenseTitleUrl, 'License' ],
 			'Only URL' => [ null, $licenseUrl, null, $licenseUrl, '' ],
 			'Only text' => [ null, null, '!!!', '', '!!!' ],
 			// URL is ignored if page is specified
-			'Page and URL' => [ 'License', $licenseUrl, null, $licenseTitle, 'License' ],
+			'Page and URL' => [ 'License', $licenseUrl, null, $licenseTitleUrl, 'License' ],
 			'URL and text' => [ null, $licenseUrl, '!!!', $licenseUrl, '!!!' ],
-			'Page and text' => [ 'License', null, '!!!', $licenseTitle, '!!!' ],
-			'Page and URL and text' => [ 'License', $licenseUrl, '!!!', $licenseTitle, '!!!' ],
-			'Pagename "0"' => [ '0', null, null, Title::makeTitle( 0, '0' ), '0' ],
+			'Page and text' => [ 'License', null, '!!!', $licenseTitleUrl, '!!!' ],
+			'Page and URL and text' => [ 'License', $licenseUrl, '!!!', $licenseTitleUrl, '!!!' ],
+			'Pagename "0"' => [ '0', null, null, 'https://local.example/wiki/0', '0' ],
 			'URL "0"' => [ null, '0', null, '0', '' ],
 			'Text "0"' => [ null, null, '0', '', '0' ],
 		];
@@ -561,7 +593,7 @@ class ApiQuerySiteinfoTest extends ApiTestCase {
 		$this->assertSame( $expected, $data );
 	}
 
-	public function languagesProvider() {
+	public static function languagesProvider() {
 		return [ [ null ], [ 'fr' ] ];
 	}
 

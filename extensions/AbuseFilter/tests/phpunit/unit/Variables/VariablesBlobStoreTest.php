@@ -122,7 +122,6 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideVariables
 	 */
 	public function testRoundTrip( array $toStore, array $expected = null ) {
-		$expected = $expected ?? $toStore;
 		$blobStore = $this->getBlobStore();
 		$blobStoreFactory = $this->createMock( BlobStoreFactory::class );
 		$blobStoreFactory->method( 'newBlobStore' )->willReturn( $blobStore );
@@ -134,7 +133,7 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 		$nativeLoadedVars = array_map( static function ( AFPData $el ) {
 			return $el->toNative();
 		}, $loadedVars );
-		$this->assertSame( $expected, $nativeLoadedVars );
+		$this->assertSame( $expected ?? $toStore, $nativeLoadedVars );
 	}
 
 	/**
@@ -142,7 +141,7 @@ class VariablesBlobStoreTest extends MediaWikiUnitTestCase {
 	 *
 	 * @return array
 	 */
-	public function provideVariables() {
+	public static function provideVariables() {
 		return [
 			'Only basic variables' => [
 				[

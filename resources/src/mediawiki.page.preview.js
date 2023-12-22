@@ -110,7 +110,7 @@
 		// in resources/src/mediawiki.action/mediawiki.action.edit.collapsibleFooter.js
 		var $list = $parent.find( 'ul' );
 		if ( $list.length === 0 ) {
-			$list = $( '<ul>' );
+			$list = $( '<ul>' ).addClass( [ 'mw-editfooter-list', 'mw-collapsible', 'mw-made-collapsible' ] );
 			$parent.append( $list );
 		}
 
@@ -123,50 +123,99 @@
 			return;
 		}
 
-		// Otherwise, fetch protection status of all templates.
+		// Fetch info about all templates, batched because API is limited to 50 at a time.
 		$parent.addClass( 'mw-preview-loading-elements-loading' );
-		api.get( {
-			action: 'query',
-			format: 'json',
-			titles: templates.map( function ( template ) { return template.title; } ).join( '|' ),
-			prop: 'info',
-			// @todo Do we need inlinkcontext here?
-			inprop: 'linkclasses|protection',
-			intestactions: 'edit'
-		} ).done( function ( response ) {
-			// Empty the list in preparation for either adding new items or not needing to.
-			$list.empty();
+		var batchSize = 50;
+		var requests = [];
+		for ( var batch = 0; batch < templates.length; batch += batchSize ) {
+			// Build a list of template names for this batch.
+			var titles = templates
+				.slice( batch, batch + batchSize )
+				.map( function ( template ) { return template.title; } );
+			requests.push( api.post( {
+				action: 'query',
+				format: 'json',
+				formatversion: 2,
+				titles: titles,
+				prop: 'info',
+				// @todo Do we need inlinkcontext here?
+				inprop: 'linkclasses|protection',
+				intestactions: 'edit'
+			} ) );
+		}
+		$.when.apply( null, requests ).done( function () {
+			var templatesAllInfo = [];
+			// For the first batch, empty the list in preparation for either adding new items or not needing to.
+			for ( var r = 0; r < arguments.length; r++ ) {
+				// Response is either the whole argument, or the 0th element of it.
+				var response = arguments[ r ][ 0 ] || arguments[ r ];
+				var templatesInfo = ( response.query && response.query.pages ) || [];
+				templatesInfo.forEach( function ( ti ) {
+					templatesAllInfo.push( {
+						title: mw.Title.newFromText( ti.title ),
+						apiData: ti
+					} );
+				} );
+			}
+			// Sort alphabetically.
+			templatesAllInfo.sort( function ( t1, t2 ) {
+				// Compare titles with the same rules of Title::compare() in PHP.
+				if ( t1.title.getNamespaceId() !== t2.title.getNamespaceId() ) {
+					return t1.title.getNamespaceId() - t2.title.getNamespaceId();
+				} else {
+					return t1.title.getMain() === t2.title.getMain() ?
+						0 :
+						t1.title.getMain() < t2.title.getMain() ? -1 : 1;
+				}
+			} );
 
-			var templatesInfo = ( response.query && response.query.pages ) || {};
+			// Add new template list, and update the list header.
+			var $listNew = $( '<ul>' );
+			addItemToTemplateListPromise( $listNew, templatesAllInfo, 0 )
+				.then( function () {
+					$list.html( $listNew.html() );
+				} );
 			// The following messages can be used here:
 			// * templatesusedpreview
 			// * templatesusedsection
-			$explanation.msg( explanationMsg, templatesInfo.length );
-			if ( templatesInfo.length === 0 ) {
-				return;
-			}
-
-			// Add all templates to the list, in the order they're returned by the API.
-			Object.keys( templatesInfo ).forEach( function ( t ) {
-				$list.append( getTemplateListItem( templatesInfo[ t ] ) );
-			} );
+			$explanation.msg( explanationMsg, templatesAllInfo.length );
 		} ).always( function () {
 			$parent.removeClass( 'mw-preview-loading-elements-loading' );
 		} );
 	}
 
 	/**
-	 * Get a list item with relevant links for the given template.
+	 * Recursive function to add a template link to the list of templates in use.
+	 * This is useful because addItemToTemplateList() might need to make extra API requests to fetch
+	 * messages, but we don't want to send parallel requests for these (because they're often the
+	 * for the same messages).
 	 *
 	 * @private
-	 * @param {Object} template
-	 * @return {jQuery}
+	 * @param {jQuery} $list The `<ul>` to add the item to.
+	 * @param {Object} templatesInfo All templates' info, sorted by namespace and title.
+	 * @param {number} templateIndex The current item in templatesInfo (0-indexed).
+	 * @return {jQuery.Promise}
 	 */
-	function getTemplateListItem( template ) {
-		var canEdit = template.actions.edit !== undefined;
-		var title = mw.Title.newFromText( template.title );
-		var linkClasses = template.linkclasses || [];
-		if ( template.missing !== undefined ) {
+	function addItemToTemplateListPromise( $list, templatesInfo, templateIndex ) {
+		return addItemToTemplateList( $list, templatesInfo[ templateIndex ] ).then( function () {
+			if ( templatesInfo[ templateIndex + 1 ] !== undefined ) {
+				return addItemToTemplateListPromise( $list, templatesInfo, templateIndex + 1 );
+			}
+		} );
+	}
+
+	/**
+	 * Create list item with relevant links for the given template, and add it to the $list.
+	 *
+	 * @private
+	 * @param {jQuery} $list The `<ul>` to add the item to.
+	 * @param {Object} template Template info with which to construct the `<li>`.
+	 * @return {jQuery.Promise}
+	 */
+	function addItemToTemplateList( $list, template ) {
+		var canEdit = template.apiData.actions.edit !== undefined;
+		var linkClasses = template.apiData.linkclasses || [];
+		if ( template.apiData.missing !== undefined && template.apiData.known === undefined ) {
 			linkClasses.push( 'new' );
 		}
 		var $baseLink = $( '<a>' )
@@ -177,33 +226,34 @@
 			// * any added by the GetLinkColours hook
 			.addClass( linkClasses );
 		var $link = $baseLink.clone()
-			.attr( 'href', title.getUrl() )
-			.text( title.getPrefixedText() );
+			.attr( 'href', template.title.getUrl() )
+			.text( template.title.getPrefixedText() );
 		var $editLink = $baseLink.clone()
-			.attr( 'href', title.getUrl( { action: 'edit' } ) )
+			.attr( 'href', template.title.getUrl( { action: 'edit' } ) )
 			.append( mw.msg( canEdit ? 'editlink' : 'viewsourcelink' ) );
 		var wordSep = mw.message( 'word-separator' ).escaped();
-		return $( '<li>' ).append(
-			$link,
-			wordSep,
-			parenthesesWrap( $editLink[ 0 ].outerHTML ),
-			wordSep,
-			getRestrictionsText( template.protection || [] )
-		);
+		return getRestrictionsText( template.apiData.protection || [] )
+			.then( function ( restrictionsList ) {
+				// restrictionsList is a comma-separated parentheses-wrapped localized list of restriction level names.
+				var editLinkParens = parenthesesWrap( $editLink[ 0 ].outerHTML );
+				var $li = $( '<li>' ).append( $link, wordSep, editLinkParens, wordSep, restrictionsList );
+				$list.append( $li );
+			} );
 	}
 
 	/**
-	 * Get messages about the restriction levels for a template.
+	 * Get a localized string listing the restriction levels for a template.
 	 *
 	 * This should match the logic from TemplatesOnThisPageFormatter::getRestrictionsText().
 	 *
+	 * @private
 	 * @param {Array} restrictions Set of protection info objects from the inprop=protection API.
-	 * @return {string}
+	 * @return {jQuery.Promise}
 	 */
 	function getRestrictionsText( restrictions ) {
 		var msg = '';
 		if ( !restrictions ) {
-			return msg;
+			return $.Deferred().resolve( msg );
 		}
 
 		// Record other restriction levels, in case it's protected for others.
@@ -221,20 +271,32 @@
 			}
 		} );
 
-		// If the edit restriction isn't one of the backwards-compatible ones, use restriction-level-* messages.
-		if ( msg === '' ) {
-			var msgs = [];
-			restrictionLevels.forEach( function ( level ) {
+		// If sysop or autoconfirmed, use that.
+		if ( msg !== '' ) {
+			return $.Deferred().resolve( msg );
+		}
+
+		// Otherwise, if the edit restriction isn't one of the backwards-compatible ones,
+		// use the (possibly custom) restriction-level-* messages.
+		var msgs = [];
+		restrictionLevels.forEach( function ( level ) {
+			msgs.push( 'restriction-level-' + level );
+		} );
+		if ( msgs.length === 0 ) {
+			return $.Deferred().resolve( '' );
+		}
+
+		// Custom restriction levels don't have their messages loaded, so we have to do that.
+		return api.loadMessagesIfMissing( msgs ).then( function () {
+			var localizedMessages = msgs.map( function ( m ) {
 				// Messages that can be used here include:
 				// * restriction-level-sysop
 				// * restriction-level-autoconfirmed
-				msgs.push( mw.msg( 'restriction-level-' + level ) );
+				return mw.message( m ).parse();
 			} );
-			// There's no commaList in JS, so just a comma (doesn't handle the last item).
-			msg = parenthesesWrap( msgs.join( mw.msg( 'comma-separator' ) ) );
-		}
-
-		return msg;
+			// There's no commaList in JS, so just join with commas (doesn't handle the last item).
+			return parenthesesWrap( localizedMessages.join( mw.msg( 'comma-separator' ) ) );
+		} );
 	}
 
 	/**
@@ -273,7 +335,7 @@
 	 * @param {Object} response
 	 * @param {boolean} isSection Whether a section is currently being edited.
 	 */
-	function parseResponse( config, response, isSection ) {
+	function handleParseResponse( config, response, isSection ) {
 		var $content;
 
 		// Js config variables and modules.
@@ -344,16 +406,11 @@
 				.addClass( 'mw-content-' + dir );
 		}
 
-		$content
-			.detach()
-			.html( response.parse.text );
+		$content.html( response.parse.text );
+
+		config.$previewNode.append( $content ).show();
 
 		mw.hook( 'wikipage.content' ).fire( $content );
-
-		// Reattach.
-		config.$previewNode.append( $content );
-
-		config.$previewNode.show();
 	}
 
 	/**
@@ -387,11 +444,11 @@
 			if ( mw.config.get( 'wgUserVariant' ) ) {
 				params.variant = mw.config.get( 'wgUserVariant' );
 			}
-			if ( section === 'new' ) {
-				params.section = 'new';
-				params.sectiontitle = params.summary;
-				delete params.summary;
-			}
+		}
+		if ( section === 'new' ) {
+			params.section = 'new';
+			params.sectiontitle = params.summary;
+			delete params.summary;
 		}
 
 		return api.post( params, { headers: { 'Promise-Non-Write-API-Action': 'true' } } );
@@ -402,14 +459,16 @@
 	 *
 	 * @private
 	 * @param {Object} config
-	 * @param {Object} response
+	 * @param {Object[]|null} response
 	 */
-	function parseDiffResponse( config, response ) {
-		var diff = response.compare.bodies;
+	function handleDiffResponse( config, response ) {
+		var $table = config.$diffNode.find( 'table.diff' );
 
-		if ( diff.main ) {
-			config.$diffNode.find( 'table.diff tbody' ).html( diff.main );
-			mw.hook( 'wikipage.diff' ).fire( config.$diffNode.find( 'table.diff' ) );
+		if ( response && response[ 0 ].compare.bodies.main ) {
+			var diff = response[ 0 ].compare.bodies;
+
+			$table.find( 'tbody' ).html( diff.main );
+			mw.hook( 'wikipage.diff' ).fire( $table );
 		} else {
 			// The diff is empty.
 			var $tableCell = $( '<td>' )
@@ -420,7 +479,7 @@
 						.addClass( 'mw-diff-empty' )
 						.text( mw.msg( 'diff-empty' ) )
 				);
-			config.$diffNode.find( 'table.diff tbody' )
+			$table.find( 'tbody' )
 				.empty()
 				.append(
 					$( '<tr>' ).append( $tableCell )
@@ -446,7 +505,9 @@
 			// Editing-related
 			'.templatesUsed',
 			'.limitreport',
-			'.mw-summary-preview'
+			'.mw-summary-preview',
+			'.hiddencats',
+			'.mw-editTools'
 		];
 	}
 
@@ -505,51 +566,89 @@
 		var $loadingElements = $( config.loadingSelectors.join( ',' ) );
 		$loadingElements.addClass( [ 'mw-preview-loading-elements', 'mw-preview-loading-elements-loading' ] );
 
-		var parseRequest = getParseRequest( config, section ),
-			diffRequest;
+		// Acquire a temporary user username before previewing or diffing, so that signatures and
+		// user-related magic words display the temp user instead of IP user in the preview. (T331397)
+		var tempUserNamePromise = mw.user.acquireTempUserName();
+
+		var parseRequest, diffRequest;
+
+		parseRequest = tempUserNamePromise.then( function () {
+			return getParseRequest( config, section );
+		} );
 
 		if ( config.showDiff ) {
 			config.$previewNode.hide();
 			// Hide the table of contents, in case it was previously shown after previewing.
 			mw.hook( 'wikipage.tableOfContents' ).fire( [] );
 
-			var diffPar = {
-				action: 'compare',
-				fromtitle: config.title,
-				totitle: config.title,
-				toslots: 'main',
-				// Remove trailing whitespace for consistency with EditPage diffs.
-				// TODO trimEnd() when we can use that.
-				'totext-main': config.$textareaNode.textSelection( 'getContents' ).replace( /\s+$/, '' ),
-				'tocontentmodel-main': mw.config.get( 'wgPageContentModel' ),
-				topst: true,
-				slots: 'main',
-				uselang: mw.config.get( 'wgUserLanguage' )
-			};
-			if ( mw.config.get( 'wgUserVariant' ) ) {
-				diffPar.variant = mw.config.get( 'wgUserVariant' );
+			var contents = config.$textareaNode.textSelection( 'getContents' ),
+				sectionTitle = config.summary;
+
+			if ( section === 'new' ) {
+				// T293930: Hack to show live diff for new section creation.
+
+				// We concatenate the section heading with the edit box text and pass it to
+				// the diff API as the full input text. This is roughly what the server-side
+				// does when difference is requested for section edit.
+				// The heading is always prepended, we do not bother with editing old rev
+				// at this point (`?action=edit&oldid=xxx&section=new`) -- which will require
+				// mid-text insertion of the section -- because creation of new section is only
+				// possible on latest revision.
+
+				// The section heading text is unconditionally wrapped in <h2> heading and
+				// ends with double newlines, except when it's empty. This is for parity with the
+				// server-side rendering of the same case.
+				sectionTitle = sectionTitle === '' ? '' : '== ' + sectionTitle + ' ==\n\n';
+
+				// Prepend section heading to section text.
+				contents = sectionTitle + contents;
 			}
-			if ( section ) {
-				diffPar[ 'tosection-main' ] = section;
-			}
-			if ( mw.config.get( 'wgArticleId' ) === 0 ) {
-				diffPar.fromslots = 'main';
-				diffPar[ 'fromcontentmodel-main' ] = mw.config.get( 'wgPageContentModel' );
-				diffPar[ 'fromtext-main' ] = '';
-			}
-			diffRequest = api.post( diffPar );
+
+			// The compare API returns an error if the title doesn't exist and fromtext is not
+			// specified. So we have to account for the possibility that the page was created or
+			// deleted after the user started editing. Luckily the parse API returns pageid so we
+			// can wait for that.
+			// TODO: Show "Warning: This page was deleted after you started editing!"?
+			diffRequest = parseRequest.then( function ( parseResponse ) {
+				var diffPar = {
+					action: 'compare',
+					fromtitle: config.title,
+					totitle: config.title,
+					toslots: 'main',
+					// Remove trailing whitespace for consistency with EditPage diffs.
+					// TODO trimEnd() when we can use that.
+					'totext-main': contents.replace( /\s+$/, '' ),
+					'tocontentmodel-main': mw.config.get( 'wgPageContentModel' ),
+					topst: true,
+					slots: 'main',
+					uselang: mw.config.get( 'wgUserLanguage' )
+				};
+				if ( mw.config.get( 'wgUserVariant' ) ) {
+					diffPar.variant = mw.config.get( 'wgUserVariant' );
+				}
+				if ( section ) {
+					diffPar[ 'tosection-main' ] = section;
+				}
+				if ( parseResponse.parse.pageid === 0 ) {
+					diffPar.fromslots = 'main';
+					diffPar[ 'fromcontentmodel-main' ] = mw.config.get( 'wgPageContentModel' );
+					diffPar[ 'fromtext-main' ] = '';
+				}
+				return api.post( diffPar );
+			} );
+
 		} else if ( config.$diffNode ) {
 			config.$diffNode.hide();
 		}
 
 		return $.when( parseRequest, diffRequest )
-			.done( function ( response, diffResponse ) {
-				showEditSummary( config.$formNode, response[ 0 ] );
+			.done( function ( parseResponse, diffResponse ) {
+				showEditSummary( config.$formNode, parseResponse[ 0 ] );
 
 				if ( config.showDiff ) {
-					parseDiffResponse( config, diffResponse[ 0 ] );
+					handleDiffResponse( config, diffResponse );
 				} else {
-					parseResponse( config, response[ 0 ], section !== '' );
+					handleParseResponse( config, parseResponse[ 0 ], section !== '' );
 				}
 
 				mw.hook( 'wikipage.editform' ).fire( config.$formNode );

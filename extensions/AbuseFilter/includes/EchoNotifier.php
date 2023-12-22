@@ -6,7 +6,7 @@ use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry;
 use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
 use MediaWiki\Extension\Notifications\Model\Event;
-use Title;
+use MediaWiki\Title\Title;
 
 /**
  * Helper service for EmergencyWatcher to notify filter maintainers of throttled filters

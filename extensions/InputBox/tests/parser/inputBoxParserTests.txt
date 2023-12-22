@@ -231,13 +231,10 @@ tour=test
 <div class="mw-inputbox-centered" style=""><form name="searchbox" class="searchbox" action="/wiki/Special:Search"><input class="mw-inputbox-input mw-searchInput searchboxInput mw-ui-input mw-ui-input-inline" name="search" placeholder="" size="50" dir="ltr" /><input type="hidden" value="test" name="tour" /><br /><input type="submit" name="go" class="mw-ui-button" value="Try exact match" />&#160;<input type="submit" name="fulltext" class="mw-ui-button" value="Search full text" /></form></div>
 !! end
 
-# XXX This test is broken: note that the UX text is in sr-Cyrl but the
-# variant requested was sr-Latn
 !! test
 InputBox langconvert
 !! options
 language=sr variant=sr-Latn
-disabled
 !! wikitext
 <inputbox>
 type=create
@@ -245,7 +242,7 @@ default=-{sr-Latn: Some latin; sr-Cyrl: Not latin }-
 placeholder=-{sr-Latn: Latn; sr-Cyrl: Cyrl}-
 </inputbox>
 !! html
-<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input name="title" class="mw-inputbox-input mw-ui-input mw-ui-input-inline mw-inputbox-createbox" value="Some latin" placeholder="Latn" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" class="mw-ui-button mw-ui-progressive" value="Направи страницу" /></form></div>
+<div class="mw-inputbox-centered" style=""><form name="createbox" class="createbox" action="/index.php" method="get"><input type="hidden" value="edit" name="action" /><input name="title" class="mw-inputbox-input mw-ui-input mw-ui-input-inline mw-inputbox-createbox" value="Some latin" placeholder="Latn" required="" size="50" dir="ltr" /><br /><input type="submit" name="create" class="mw-ui-button mw-ui-progressive" value="Napravi stranicu" /></form></div>
 !! end
 
 !! test

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"BRUTE",
 			"David1010",
 			"Dawid Deutschland",
@@ -9,8 +10,7 @@
 			"Otogi",
 			"Temuri rajavi",
 			"გიორგიმელა",
-			"Გიო ოქრო",
-			"Amire80"
+			"Გიო ოქრო"
 		]
 	},
 	"abusefilter-desc": "საშუალებას იძლევა რედაქტირებისას გამოიყენოს ევრისტიკული ფილტრები",
@@ -359,6 +359,7 @@
 	"abusefilter-test-shownegative": "იმ ცვლილებების ჩვენება, რომლებიც ფილტრს არ ერგებიან",
 	"abusefilter-test-syntaxerr": "მოცემული ფილტრი შეიცავს სინტაქსურ შეცდომას.\nდამატებითი შენიშვნების სანახავად დააჭირეთ ღილაკს „სინტაქსის შემოწმება“",
 	"abusefilter-test-search-type-all": "ყველა მოქმედება",
+	"abusefilter-test-search-type-createaccount": "ანგარიშის შექმნა",
 	"abusefilter-changeslist-examine": "ნახვა",
 	"abusefilter-examine": "ცალკეული რედაქტირებების ხილვა",
 	"abusefilter-examine-intro": "ეს გვერდი შესაძლებლობას გაძლევთ ფილტრის მიერ შექმნილი ბოროტად გამოყენებული ცვლადი სიდიდის ხილვას ცალკეული ცვლილებისათვის და მათ ფილტრებში შემოწმებას.",

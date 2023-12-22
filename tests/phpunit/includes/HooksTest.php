@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\HookContainer\HookContainer;
+use Wikimedia\ScopedCallback;
+
 class HooksTest extends MediaWikiIntegrationTestCase {
 
 	private const MOCK_HOOK_NAME = 'MediaWikiHooksTest001';
@@ -9,47 +12,29 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function provideHooks() {
-		$i = new HookTestDummyHookHandlerClass();
+		$obj = new HookTestDummyHookHandlerClass();
 
 		return [
 			[
 				'Object and method',
-				[ $i, 'someNonStatic' ],
+				[ $obj, 'someNonStatic' ],
 				'changed-nonstatic',
 				'changed-nonstatic'
 			],
-			[ 'Object and no method', [ $i ], 'changed-onevent', 'original' ],
-			[
-				'Object and method with data',
-				[ $i, 'someNonStaticWithData', 'data' ],
-				'data',
-				'original'
-			],
-			[ 'Object and static method', [ $i, 'someStatic' ], 'changed-static', 'original' ],
+			[ 'Object and no method', $obj, 'changed-onevent', 'original' ],
+			[ 'Object and static method', [ $obj, 'someStatic' ], 'changed-static', 'original' ],
 			[
 				'Class::method static call',
-				[ 'HookTestDummyHookHandlerClass::someStatic' ],
+				'HookTestDummyHookHandlerClass::someStatic',
 				'changed-static',
 				'original'
 			],
-			[
-				'Class::method static call as array',
-				[ [ 'HookTestDummyHookHandlerClass::someStatic' ] ],
-				'changed-static',
-				'original'
-			],
-			[ 'Global function', [ 'wfNothingFunction' ], 'changed-func', 'original' ],
-			[ 'Global function with data', [ 'wfNothingFunctionData', 'data' ], 'data', 'original' ],
-			[ 'Closure', [ static function ( &$foo, $bar ) {
+			[ 'Global function', 'wfNothingFunction', 'changed-func', 'original' ],
+			[ 'Closure', static function ( &$foo, $bar ) {
 				$foo = 'changed-closure';
 
 				return true;
-			} ], 'changed-closure', 'original' ],
-			[ 'Closure with data', [ static function ( $data, &$foo, $bar ) {
-				$foo = $data;
-
-				return true;
-			}, 'data' ], 'data', 'original' ]
+			}, 'changed-closure', 'original' ],
 		];
 	}
 
@@ -59,6 +44,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	 * @covers Hooks::run
 	 */
 	public function testRunningNewStyleHooks( $msg, $hook, $expectedFoo, $expectedBar ) {
+		$this->hideDeprecated( 'Hooks::run' );
 		$foo = $bar = 'original';
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
 		$hookContainer->register( self::MOCK_HOOK_NAME, $hook );
@@ -69,17 +55,68 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
+	 * @covers Hooks::getHandlers
+	 */
+	public function testGetHandlers() {
+		// phpcs:disable MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgHooks
+		global $wgHooks;
+		$hookContainer = $this->getServiceContainer()->getHookContainer();
+
+		$this->filterDeprecated( '/\$wgHooks/' );
+		$this->filterDeprecated( '/Hooks::getHandlers was deprecated/' );
+		$this->filterDeprecated( '/HookContainer::getHandlerCallbacks was deprecated/' );
+
+		$this->assertSame(
+			[],
+			Hooks::getHandlers( 'MediaWikiHooksTest001' ),
+			'No hooks registered'
+		);
+
+		$a = [ new HookTestDummyHookHandlerClass(), 'someStatic' ];
+		$b = [ new HookTestDummyHookHandlerClass(), 'onMediaWikiHooksTest001' ];
+
+		$wgHooks['MediaWikiHooksTest001'][] = $a;
+
+		$this->assertSame(
+			[ $a ],
+			array_values( Hooks::getHandlers( 'MediaWikiHooksTest001' ) ),
+			'Hook registered by $wgHooks'
+		);
+		$reset = $hookContainer->scopedRegister( 'MediaWikiHooksTest001', $b );
+		$this->assertSame(
+			[ $a, $b ],
+			array_values( Hooks::getHandlers( 'MediaWikiHooksTest001' ) ),
+			'Hooks::getHandlers() should return hooks registered via wgHooks as well as Hooks::register'
+		);
+
+		ScopedCallback::consume( $reset );
+		unset( $wgHooks['MediaWikiHooksTest001'] );
+
+		$hookContainer->register( 'MediaWikiHooksTest001', $b );
+		$this->assertSame(
+			[ $b ],
+			array_values( Hooks::getHandlers( 'MediaWikiHooksTest001' ) ),
+			'Hook registered by Hook::register'
+		);
+	}
+
+	/**
 	 * @covers Hooks::isRegistered
 	 * @covers Hooks::getHandlers
 	 * @covers Hooks::register
 	 * @covers Hooks::run
 	 */
 	public function testRegistration() {
+		$this->hideDeprecated( 'Hooks::isRegistered' );
+		$this->hideDeprecated( 'Hooks::run' );
+		// phpcs:disable MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgHooks
 		global $wgHooks;
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
 
 		$this->expectDeprecationAndContinue( '/\$wgHooks .* deprecated/' );
 		$this->expectDeprecationAndContinue( '/Use of Hooks::register was deprecated/' );
+		$this->expectDeprecationAndContinue( '/Hooks::getHandlers was deprecated/' );
+		$this->expectDeprecationAndContinue( '/HookContainer::getHandlerCallbacks was deprecated/' );
 
 		$a = new HookTestDummyHookHandlerClass();
 		$b = new HookTestDummyHookHandlerClass();
@@ -117,16 +154,23 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	 * @covers Hooks::run
 	 */
 	public function testUncallableFunction() {
+		$this->hideDeprecated( 'Hooks::run' );
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
+
+		// NOTE: Currently, register() doesn't immediately normalize and check the hook.
+		//       Failure to normalize later, on run, is ignored silently. Should it trigger a warning?
 		$hookContainer->register( self::MOCK_HOOK_NAME, 'ThisFunctionDoesntExist' );
-		$this->expectExceptionMessage( 'Call to undefined function ThisFunctionDoesntExist' );
 		Hooks::run( self::MOCK_HOOK_NAME, [] );
+
+		// We assert that run() doesn't throw.
+		$this->addToAssertionCount( 1 );
 	}
 
 	/**
 	 * @covers Hooks::run
 	 */
 	public function testFalseReturn() {
+		$this->hideDeprecated( 'Hooks::run' );
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
 		$hookContainer->register( self::MOCK_HOOK_NAME, static function ( &$foo ) {
 			return false;
@@ -144,6 +188,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	 * @covers Hooks::run
 	 */
 	public function testNullReturn() {
+		$this->hideDeprecated( 'Hooks::run' );
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
 		$hookContainer->register( self::MOCK_HOOK_NAME, static function ( &$foo ) {
 			return;
@@ -161,9 +206,10 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @covers Hooks::run
 	 */
-	public function testCallHook_FalseHook() {
+	public function testCallHook_NoopHook() {
+		$this->hideDeprecated( 'Hooks::run' );
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
-		$hookContainer->register( self::MOCK_HOOK_NAME, false );
+		$hookContainer->register( self::MOCK_HOOK_NAME, HookContainer::NOOP );
 		$hookContainer->register( self::MOCK_HOOK_NAME, static function ( &$foo ) {
 			$foo = 'test';
 
@@ -178,10 +224,16 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	 * @covers Hooks::run
 	 */
 	public function testCallHook_UnknownDatatype() {
+		$this->hideDeprecated( 'Hooks::run' );
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
+
+		// NOTE: Currently, register() doesn't immediately normalize and check the hook.
+		//       Failure to normalize later, on run, is ignored silently. Should it trigger a warning?
 		$hookContainer->register( self::MOCK_HOOK_NAME, 12345 );
-		$this->expectException( UnexpectedValueException::class );
 		Hooks::run( self::MOCK_HOOK_NAME );
+
+		// We assert that run() doesn't throw.
+		$this->addToAssertionCount( 1 );
 	}
 
 	/**
@@ -190,9 +242,10 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	public function testCallHook_Deprecated() {
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
 		$hookContainer->register( self::MOCK_HOOK_NAME, 'HookTestDummyHookHandlerClass::someStatic' );
-		$this->expectDeprecation();
+		$this->expectDeprecationAndContinue( '/Use of MediaWikiHooksTest001 hook/' );
 
 		$a = $b = 0;
+		$this->hideDeprecated( 'Hooks::run' );
 		Hooks::run( self::MOCK_HOOK_NAME, [ $a, $b ], '1.31' );
 	}
 
@@ -200,6 +253,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	 * @covers Hooks::runWithoutAbort
 	 */
 	public function testRunWithoutAbort() {
+		$this->hideDeprecated( 'Hooks::runWithoutAbort' );
 		$list = [];
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
 		$hookContainer->register( self::MOCK_HOOK_NAME, static function ( &$list ) {
@@ -223,6 +277,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	 * @covers Hooks::runWithoutAbort
 	 */
 	public function testRunWithoutAbortWarning() {
+		$this->hideDeprecated( 'Hooks::runWithoutAbort' );
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
 		$hookContainer->register( self::MOCK_HOOK_NAME, static function ( &$foo ) {
 			return false;
@@ -234,9 +289,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 		$foo = 'original';
 
 		$this->expectException( UnexpectedValueException::class );
-		$this->expectExceptionMessage( 'Invalid return from hook-MediaWikiHooksTest001-closure for ' .
-			'unabortable MediaWikiHooksTest001'
-		);
+		$this->expectExceptionMessage( 'unabortable MediaWikiHooksTest001' );
 		Hooks::runWithoutAbort( self::MOCK_HOOK_NAME, [ &$foo ] );
 	}
 
@@ -244,11 +297,12 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	 * @covers Hooks::run
 	 */
 	public function testBadHookFunction() {
+		$this->hideDeprecated( 'Hooks::run' );
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
 		$hookContainer->register( self::MOCK_HOOK_NAME, static function () {
 			return 'test';
 		} );
-		$this->expectDeprecation();
+		$this->expectException( UnexpectedValueException::class );
 		Hooks::run( self::MOCK_HOOK_NAME, [] );
 	}
 }

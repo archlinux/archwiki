@@ -16,24 +16,37 @@ var
  *
  * @param {HTMLElement} element Subscribe link
  * @param {number|null} state State constant (STATE_UNSUBSCRIBED, STATE_SUBSCRIBED or STATE_AUTOSUBSCRIBED)
+ * @param {HTMLElement|null} labelElement Subscribe link, if different to element
+ * @param {boolean} isNewTopics Is a subscribe link for new topics subscriptions
  */
-function updateSubscribeLink( element, state ) {
+function updateSubscribeLink( element, state, labelElement, isNewTopics ) {
+	labelElement = labelElement || element;
 	if ( state !== null ) {
 		element.setAttribute( 'data-mw-subscribed', String( state ) );
 	}
 	if ( state ) {
-		element.textContent = mw.msg( 'discussiontools-topicsubscription-button-unsubscribe' );
-		element.setAttribute( 'title', mw.msg( 'discussiontools-topicsubscription-button-unsubscribe-tooltip' ) );
+		labelElement.textContent = mw.msg( isNewTopics ?
+			'discussiontools-newtopicssubscription-button-unsubscribe-label' :
+			'discussiontools-topicsubscription-button-unsubscribe' );
+		element.setAttribute( 'title', mw.msg( isNewTopics ?
+			'discussiontools-newtopicssubscription-button-unsubscribe-tooltip' :
+			'discussiontools-topicsubscription-button-unsubscribe-tooltip' )
+		);
 	} else {
-		element.textContent = mw.msg( 'discussiontools-topicsubscription-button-subscribe' );
-		element.setAttribute( 'title', mw.msg( 'discussiontools-topicsubscription-button-subscribe-tooltip' ) );
+		labelElement.textContent = mw.msg( isNewTopics ?
+			'discussiontools-newtopicssubscription-button-subscribe-label' :
+			'discussiontools-topicsubscription-button-subscribe' );
+		element.setAttribute( 'title', mw.msg( isNewTopics ?
+			'discussiontools-newtopicssubscription-button-subscribe-tooltip' :
+			'discussiontools-topicsubscription-button-subscribe-tooltip' )
+		);
 	}
 }
 
 /**
  * Update a subscribe button
  *
- * @param {OO.ui.ButtonWidget} button Button Subscribe button
+ * @param {OO.ui.ButtonWidget} button Subscribe button
  * @param {number|null} state State constant (STATE_UNSUBSCRIBED, STATE_SUBSCRIBED or STATE_AUTOSUBSCRIBED)
  */
 function updateSubscribeButton( button, state ) {
@@ -57,9 +70,10 @@ function updateSubscribeButton( button, state ) {
  * @param {string} title Page title
  * @param {string} commentName Comment name
  * @param {boolean} subscribe Subscription state
+ * @param {boolean} isNewTopics Subscription is for new topics
  * @return {jQuery.Promise} Promise which resolves after change of state
  */
-function changeSubscription( title, commentName, subscribe ) {
+function changeSubscription( title, commentName, subscribe, isNewTopics ) {
 	var promise = api.postWithToken( 'csrf', {
 		action: 'discussiontoolssubscribe',
 		page: title,
@@ -73,14 +87,30 @@ function changeSubscription( title, commentName, subscribe ) {
 		mw.notify(
 			mw.msg(
 				result.subscribe ?
-					'discussiontools-topicsubscription-notify-subscribed-body' :
-					'discussiontools-topicsubscription-notify-unsubscribed-body'
+					(
+						isNewTopics ?
+							'discussiontools-newtopicssubscription-notify-subscribed-body' :
+							'discussiontools-topicsubscription-notify-subscribed-body'
+					) :
+					(
+						isNewTopics ?
+							'discussiontools-newtopicssubscription-notify-unsubscribed-body' :
+							'discussiontools-topicsubscription-notify-unsubscribed-body'
+					)
 			),
 			{
 				title: mw.msg(
 					result.subscribe ?
-						'discussiontools-topicsubscription-notify-subscribed-title' :
-						'discussiontools-topicsubscription-notify-unsubscribed-title'
+						(
+							isNewTopics ?
+								'discussiontools-newtopicssubscription-notify-subscribed-title' :
+								'discussiontools-topicsubscription-notify-subscribed-title'
+						) :
+						(
+							isNewTopics ?
+								'discussiontools-newtopicssubscription-notify-unsubscribed-title' :
+								'discussiontools-topicsubscription-notify-unsubscribed-title'
+						)
 				)
 			}
 		);
@@ -96,6 +126,15 @@ function getSubscribedStateFromElement( element ) {
 }
 
 /**
+ * Lazy load API to avoid circular dependency
+ */
+function initApi() {
+	if ( !api ) {
+		api = require( './controller.js' ).getApi();
+	}
+}
+
+/**
  * Initialize topic subscriptions feature
  *
  * @param {jQuery} $container Page container
@@ -105,8 +144,7 @@ function initTopicSubscriptions( $container, threadItemSet ) {
 	linksByName = {};
 	buttonsByName = {};
 
-	// Loads later to avoid circular dependency
-	api = require( './controller.js' ).getApi();
+	initApi();
 
 	// Subscription buttons (visual enhancements)
 	$container.find( '.ext-discussiontools-init-section-subscribeButton' ).each( function () {
@@ -188,6 +226,55 @@ function initTopicSubscriptions( $container, threadItemSet ) {
 					$link.removeClass( 'ext-discussiontools-init-section-subscribe-link-pending' );
 				} );
 		} );
+	} );
+
+	initNewTopicsSubscription();
+}
+
+/**
+ * Bind new topics subscription button
+ *
+ * Note: because this function can get called from `wikipage.content`,
+ * and we're interacting with elements outside of $container, make
+ * sure to account for this possibly being run multiple times on a
+ * pageload. Calls from DT's own previews are filtered out, but other
+ * page actions like live-preview can still reach this point.
+ */
+function initNewTopicsSubscription() {
+	var $button, $label, $icon;
+
+	initApi();
+
+	if ( mw.config.get( 'skin' ) === 'minerva' ) {
+		// eslint-disable-next-line no-jquery/no-global-selector
+		$button = $( '.menu__item--page-actions-overflow-t-page-subscribe' );
+		$label = $button.find( '.toggle-list-item__label' );
+		$icon = $button.find( '.mw-ui-icon' );
+		// HACK: We can't set data-mw-subscribed intially in Minerva, so work it out from the icon
+		// eslint-disable-next-line no-jquery/no-class-state
+		var initialState = $icon.hasClass( 'mw-ui-icon-minerva-bell' ) ? STATE_SUBSCRIBED : STATE_UNSUBSCRIBED;
+		$button.attr( 'data-mw-subscribed', String( initialState ) );
+	} else {
+		// eslint-disable-next-line no-jquery/no-global-selector
+		$button = $( '#ca-dt-page-subscribe > a' );
+		$label = $button.find( 'span' );
+		$icon = $( [] );
+	}
+
+	var titleObj = mw.Title.newFromText( mw.config.get( 'wgRelevantPageName' ) );
+	var name = utils.getNewTopicsSubscriptionId( titleObj );
+
+	$button.off( '.mw-dt-topicsubscriptions' ).on( 'click.mw-dt-topicsubscriptions', function ( e ) {
+		e.preventDefault();
+		// Get latest subscribedState
+		var subscribedState = getSubscribedStateFromElement( $button[ 0 ] );
+
+		changeSubscription( titleObj.getPrefixedText(), name, !subscribedState, true )
+			.then( function ( result ) {
+				updateSubscribeLink( $button[ 0 ], result.subscribe ? STATE_SUBSCRIBED : STATE_UNSUBSCRIBED, $label[ 0 ], true );
+				$icon.toggleClass( 'mw-ui-icon-minerva-bell', !!result.subscribe );
+				$icon.toggleClass( 'mw-ui-icon-minerva-bellOutline', !result.subscribe );
+			} );
 	} );
 }
 
@@ -438,5 +525,6 @@ function updateAutoSubscriptionStates( $container, threadItemSet, threadItemId )
 module.exports = {
 	initTopicSubscriptions: initTopicSubscriptions,
 	initSpecialTopicSubscriptions: initSpecialTopicSubscriptions,
+	initNewTopicsSubscription: initNewTopicsSubscription,
 	updateAutoSubscriptionStates: updateAutoSubscriptionStates
 };

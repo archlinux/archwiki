@@ -21,6 +21,18 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use ErrorPageError;
+use HTMLForm;
+use MediaWiki\Session\SessionManager;
+use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
+use MWException;
+use PermissionsError;
+use ThrottledError;
+
 /**
  * Implements Special:Userlogout
  *
@@ -41,7 +53,7 @@ class SpecialUserLogout extends FormSpecialPage {
 	}
 
 	public function isListed() {
-		return false;
+		return $this->getAuthManager()->canAuthenticateNow();
 	}
 
 	protected function getGroupName() {
@@ -88,7 +100,7 @@ class SpecialUserLogout extends FormSpecialPage {
 	 */
 	public function onSubmit( array $data ) {
 		// Make sure it's possible to log out
-		$session = MediaWiki\Session\SessionManager::getGlobalSession();
+		$session = SessionManager::getGlobalSession();
 		if ( !$session->canSetUser() ) {
 			throw new ErrorPageError(
 				'cannotlogoutnow-title',
@@ -133,3 +145,9 @@ class SpecialUserLogout extends FormSpecialPage {
 		return false;
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialUserLogout::class, 'SpecialUserLogout' );

@@ -27,7 +27,6 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\DatabaseSqlite;
@@ -81,29 +80,28 @@ class RebuildTextIndex extends Maintenance {
 	 */
 	protected function populateSearchIndex() {
 		$dbw = $this->getDB( DB_PRIMARY );
-		$res = $dbw->select( 'page', 'MAX(page_id) AS count', [], __METHOD__ );
+		$res = $dbw->newSelectQueryBuilder()
+			->select( 'MAX(page_id) AS count' )
+			->from( 'page' )
+			->caller( __METHOD__ )->fetchResultSet();
 		$s = $res->fetchObject();
 		$count = $s->count;
 		$this->output( "Rebuilding index fields for {$count} pages...\n" );
 		$n = 0;
 
-		$revStore = MediaWikiServices::getInstance()->getRevisionStore();
-		$revQuery = $revStore->getQueryInfo( [ 'page' ] );
+		$revStore = $this->getServiceContainer()->getRevisionStore();
+		$queryBuilderTemplate = $revStore->newSelectQueryBuilder( $dbw )
+			->joinPage()
+			->joinComment();
 
 		while ( $n < $count ) {
 			if ( $n ) {
 				$this->output( $n . "\n" );
 			}
 			$end = $n + self::RTI_CHUNK_SIZE - 1;
-
-			$res = $dbw->select(
-				$revQuery['tables'],
-				$revQuery['fields'],
-				[ "page_id BETWEEN $n AND $end", 'page_latest = rev_id' ],
-				__METHOD__,
-				[],
-				$revQuery['joins']
-			);
+			$queryBuilder = clone $queryBuilderTemplate;
+			$res = $queryBuilder->where( [ "page_id BETWEEN $n AND $end", 'page_latest = rev_id' ] )
+				->caller( __METHOD__ )->fetchResultSet();
 
 			foreach ( $res as $s ) {
 

@@ -27,6 +27,7 @@ use MediaWiki\HookContainer\StaticHookRegistry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\ResourceLoader\MessageBlobStore;
+use MediaWiki\SiteStats\SiteStatsInit;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
@@ -88,7 +89,6 @@ abstract class DatabaseUpdater {
 		PopulateRevisionLength::class,
 		PopulateRevisionSha1::class,
 		PopulateImageSha1::class,
-		FixExtLinksProtocolRelative::class,
 		PopulateFilearchiveSha1::class,
 		PopulateBacklinkNamespace::class,
 		FixDefaultJsonContentPages::class,
@@ -96,7 +96,6 @@ abstract class DatabaseUpdater {
 		AddRFCandPMIDInterwiki::class,
 		PopulatePPSortKey::class,
 		PopulateIpChanges::class,
-		RefreshExternallinksIndex::class,
 	];
 
 	/**
@@ -1134,7 +1133,11 @@ abstract class DatabaseUpdater {
 	 */
 	protected function checkStats() {
 		$this->output( "...site_stats is populated..." );
-		$row = $this->db->selectRow( 'site_stats', '*', [ 'ss_row_id' => 1 ], __METHOD__ );
+		$row = $this->db->newSelectQueryBuilder()
+			->select( '*' )
+			->from( 'site_stats' )
+			->where( [ 'ss_row_id' => 1 ] )
+			->caller( __METHOD__ )->fetchRow();
 		if ( $row === false ) {
 			$this->output( "data is missing! rebuilding...\n" );
 		} elseif ( isset( $row->site_stats ) && $row->ss_total_pages == -1 ) {
@@ -1154,13 +1157,12 @@ abstract class DatabaseUpdater {
 	 */
 	protected function doCollationUpdate() {
 		global $wgCategoryCollation;
-		if ( $this->db->selectField(
-				'categorylinks',
-				'COUNT(*)',
-				'cl_collation != ' . $this->db->addQuotes( $wgCategoryCollation ),
-				__METHOD__
-			) == 0
-		) {
+		$collationNeeded = $this->db->newSelectQueryBuilder()
+			->select( 'COUNT(*)' )
+			->from( 'categorylinks' )
+			->where( 'cl_collation != ' . $this->db->addQuotes( $wgCategoryCollation ) )
+			->caller( __METHOD__ )->fetchField();
+		if ( $collationNeeded == 0 ) {
 			$this->output( "...collations up-to-date.\n" );
 
 			return;

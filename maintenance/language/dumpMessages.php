@@ -23,8 +23,6 @@
  * @todo Make this more useful, right now just dumps content language
  */
 
-use MediaWiki\MediaWikiServices;
-
 require_once __DIR__ . '/../Maintenance.php';
 
 /**
@@ -41,9 +39,9 @@ class DumpMessages extends Maintenance {
 
 	public function execute() {
 		$messages = [];
-		$localisationCache = MediaWikiServices::getInstance()->getLocalisationCache();
+		$localisationCache = $this->getServiceContainer()->getLocalisationCache();
 		$localisationMessagesEn = $localisationCache->getItem( 'en', 'messages' );
-		foreach ( array_keys( $localisationMessagesEn ) as $key ) {
+		foreach ( $localisationMessagesEn as $key => $_ ) {
 			$messages[$key] = wfMessage( $key )->text();
 		}
 		$this->output( "MediaWiki " . MW_VERSION . " language file\n" );

@@ -5,8 +5,9 @@
 CREATE TABLE abuse_filter (
   af_id BIGSERIAL NOT NULL,
   af_pattern TEXT NOT NULL,
-  af_user BIGINT NOT NULL,
-  af_user_text TEXT NOT NULL,
+  af_user BIGINT DEFAULT 0 NOT NULL,
+  af_user_text TEXT DEFAULT '' NOT NULL,
+  af_actor BIGINT DEFAULT 0 NOT NULL,
   af_timestamp TIMESTAMPTZ NOT NULL,
   af_enabled SMALLINT DEFAULT 1 NOT NULL,
   af_comments TEXT DEFAULT NULL,
@@ -22,6 +23,8 @@ CREATE TABLE abuse_filter (
 );
 
 CREATE INDEX af_user ON abuse_filter (af_user);
+
+CREATE INDEX af_actor ON abuse_filter (af_actor);
 
 CREATE INDEX af_group_enabled ON abuse_filter (af_group, af_enabled, af_id);
 
@@ -80,8 +83,9 @@ CREATE INDEX afl_wiki_timestamp ON abuse_filter_log (afl_wiki, afl_timestamp);
 CREATE TABLE abuse_filter_history (
   afh_id BIGSERIAL NOT NULL,
   afh_filter BIGINT NOT NULL,
-  afh_user BIGINT NOT NULL,
-  afh_user_text TEXT NOT NULL,
+  afh_user BIGINT DEFAULT 0 NOT NULL,
+  afh_user_text TEXT DEFAULT '' NOT NULL,
+  afh_actor BIGINT DEFAULT 0 NOT NULL,
   afh_timestamp TIMESTAMPTZ NOT NULL,
   afh_pattern TEXT NOT NULL,
   afh_comments TEXT NOT NULL,
@@ -99,5 +103,7 @@ CREATE INDEX afh_filter ON abuse_filter_history (afh_filter);
 CREATE INDEX afh_user ON abuse_filter_history (afh_user);
 
 CREATE INDEX afh_user_text ON abuse_filter_history (afh_user_text);
+
+CREATE INDEX afh_actor ON abuse_filter_history (afh_actor);
 
 CREATE INDEX afh_timestamp ON abuse_filter_history (afh_timestamp);

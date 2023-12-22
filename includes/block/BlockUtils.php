@@ -23,18 +23,18 @@ namespace MediaWiki\Block;
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Status\Status;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserNameUtils;
-use Status;
 use Wikimedia\IPUtils;
 
 /**
  * Backend class for blocking utils
  *
  * This service should contain any methods that are useful
- * to more than one blocking-related class and doesn't fit any
+ * to more than one blocking-related class and don't fit any
  * other service.
  *
  * For now, this includes only
@@ -134,7 +134,9 @@ class BlockUtils {
 			return [ $userFromDB, AbstractBlock::TYPE_USER ];
 		}
 
-		// TODO: figure out if it makes sense to have users that do not exist in the DB here
+		// Wrap the invalid user in a UserIdentityValue.
+		// This allows validateTarget() to return a "nosuchusershort" message,
+		// which is needed for Special:Block.
 		$canonicalName = $this->userNameUtils->getCanonical( $target );
 		if ( $canonicalName ) {
 			return [

@@ -2,6 +2,34 @@
 
 Please refer to [UPGRADING](UPGRADING.md) guide for upgrading to a major version.
 
+
+## 7.5.3 - 2023-05-15
+
+### Fixed
+
+- Fix `SetCookie::fromString` MaxAge deprecation warning and skip invalid MaxAge values
+
+## 7.5.2 - 2023-05-14
+
+### Fixed
+
+- Fixed set cookie constructor validation
+- Fixed handling of files with `'0'` body
+
+### Changed
+
+- Corrected docs and default connect timeout value to 300 seconds
+
+## 7.5.1 - 2023-04-17
+
+### Fixed
+
+- Fixed `NO_PROXY` settings so that setting the `proxy` option to `no` overrides the env variable
+
+### Changed
+
+- Adjusted `guzzlehttp/psr7` version constraint to `^1.9.1 || ^2.4.5`
+
 ## 7.5.0 - 2022-08-28
 
 ### Added
@@ -11,15 +39,21 @@ Please refer to [UPGRADING](UPGRADING.md) guide for upgrading to a major version
 
 ## 7.4.5 - 2022-06-20
 
+### Fixed
+
 * Fix change in port should be considered a change in origin
 * Fix `CURLOPT_HTTPAUTH` option not cleared on change of origin
 
 ## 7.4.4 - 2022-06-09
 
+### Fixed
+
 * Fix failure to strip Authorization header on HTTP downgrade
 * Fix failure to strip the Cookie header on change in host or HTTP downgrade
 
 ## 7.4.3 - 2022-05-25
+
+### Fixed
 
 * Fix cross-domain cookie leakage
 

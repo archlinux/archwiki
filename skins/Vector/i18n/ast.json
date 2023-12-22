@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Esbardu",
+			"Fueyas",
 			"Tokvo",
 			"Xuacu",
-			"Fueyas",
 			"YoaR"
 		]
 	},
@@ -16,6 +16,7 @@
 	"vector-languages": "Llingües",
 	"vector-language-button-label": "{{PLURAL:$1|$1 llingua|$1 llingües}}",
 	"vector-no-language-button-label": "Añedir llingües",
+	"vector-language-redirect-to-top": "Los enllaces de llingües atópense na parte superior de la páxina, xunto al títulu del artículu. [[#p-lang-btn|Dir arriba]].",
 	"vector-action-addsection": "Amestar seición",
 	"vector-action-delete": "Desaniciar",
 	"vector-action-move": "Treslladar",
@@ -41,5 +42,9 @@
 	"vector-page-tools-general-label": "Xeneral",
 	"vector-page-tools-actions-label": "Aiciones",
 	"vector-unpin-element-label": "despintar",
-	"tooltip-vector-anon-user-menu-title": "Más opciones"
+	"tooltip-vector-anon-user-menu-title": "Más opciones",
+	"vector-page-tools-nav-label": "Ferramientes de páxina",
+	"vector-toc-unpinned-popup": "La tabla de conteníos movióse equí.",
+	"vector-page-tools-unpinned-popup": "El menú de ferramientes movióse equí.",
+	"vector-main-menu-unpinned-popup": "El menú principal movióse equí."
 }

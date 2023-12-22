@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Vishwanatha Badikana",
-			"ChiK"
+			"ChiK",
+			"Vishwanatha Badikana"
 		]
 	},
 	"templatedata-doc-param-default": "ಮೂಲೊಸ್ಥಿತಿ",
@@ -39,7 +39,6 @@
 	"templatedata-modal-format-block": "ಉಂತಾಲೆ",
 	"templatedata-modal-format-inline": "ಸಾಲ್‍ದ ಉಲಯಿ",
 	"templatedata-modal-json-error-replace": "ಜಾಗೆಡ್ದ್ ದೆಪ್ಪುಲೆ",
-	"templatedata-modal-table-param-actions": "ಕ್ರಿಯೆಕುಲು",
 	"templatedata-modal-table-param-name": "ಪುದರ್",
 	"templatedata-modal-table-param-required": "ಬೋಡಾಯಿನ",
 	"templatedata-modal-table-param-suggested": "ತೋಜ್ಪಾಯಿನ",

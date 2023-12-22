@@ -6,7 +6,6 @@
 		]
 	},
 	"apihelp-abusefilterunblockautopromote-param-user": "Корисничко име корисника ког желите да деблокирате.",
-	"apihelp-query+abusefilters-description": "Прикажи детаље филтера злоупотреба.",
 	"apihelp-query+abusefilters-summary": "Прикажи детаље филтера злоупотреба.",
 	"apihelp-query+abuselog-example-1": "Прикажи скорашње уносе у дневнику",
 	"apihelp-abuselogprivatedetails-param-reason": "Важећи разлог за проверу",

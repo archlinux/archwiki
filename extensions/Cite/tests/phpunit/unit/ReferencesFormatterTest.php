@@ -24,7 +24,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 	 * @dataProvider provideFormatReferences
 	 */
 	public function testFormatReferences( array $refs, string $expectedOutput ) {
-		$mockParser = $this->createMock( Parser::class );
+		$mockParser = $this->createNoOpMock( Parser::class, [ 'recursiveTagParse' ] );
 		$mockParser->method( 'recursiveTagParse' )->willReturnArgument( 0 );
 
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
@@ -43,9 +43,6 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 			}
 		);
 
-		/** @var Parser $mockParser */
-		/** @var ErrorReporter $mockErrorReporter */
-		/** @var ReferenceMessageLocalizer $mockMessageLocalizer */
 		$formatter = new ReferencesFormatter(
 			$mockErrorReporter,
 			$this->createMock( AnchorFormatter::class ),
@@ -56,7 +53,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( $expectedOutput, $output );
 	}
 
-	public function provideFormatReferences() {
+	public static function provideFormatReferences() {
 		return [
 			'Empty' => [
 				[],
@@ -182,7 +179,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( $expectedOutput, $output );
 	}
 
-	public function provideCloseIndention() {
+	public static function provideCloseIndention() {
 		return [
 			'No indention' => [ false, '' ],
 			'Indention string' => [ "</li>\n", "</ol></li>\n" ],
@@ -225,22 +222,19 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 			}
 		);
 
-		/** @var ErrorReporter $mockErrorReporter */
-		/** @var AnchorFormatter $anchorFormatter */
-		/** @var ReferenceMessageLocalizer $mockMessageLocalizer */
+		/** @var ReferencesFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new ReferencesFormatter(
 			$mockErrorReporter,
 			$anchorFormatter,
 			$mockMessageLocalizer
 		) );
 
-		/** @var ReferencesFormatter $formatter */
-		$output = $formatter->formatListItem(
-			$this->createMock( Parser::class ), $key, $val, false );
+		$parser = $this->createNoOpMock( Parser::class );
+		$output = $formatter->formatListItem( $parser, $key, $val, false );
 		$this->assertSame( $expectedOutput, $output );
 	}
 
-	public function provideFormatListItem() {
+	public static function provideFormatListItem() {
 		return [
 			'Success' => [
 				1,
@@ -264,7 +258,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 					'follow' => 'f',
 					'text' => 't',
 				],
-				'(cite_references_no_link|f|<span class="reference-text">t</span>' . "\n)"
+				"<p id=\"f\"><span class=\"reference-text\">t</span>\n</p>"
 			],
 			'Count zero' => [
 				1,
@@ -320,7 +314,6 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 			}
 		);
 
-		/** @var ErrorReporter $mockErrorReporter */
 		/** @var ReferencesFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new ReferencesFormatter(
 			$mockErrorReporter,
@@ -328,12 +321,12 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 			$this->createMock( ReferenceMessageLocalizer::class )
 		) );
 
-		$output = $formatter->referenceText(
-			$this->createMock( Parser::class ), $key, $text, $isSectionPreview );
+		$parser = $this->createNoOpMock( Parser::class );
+		$output = $formatter->referenceText( $parser, $key, $text, $isSectionPreview );
 		$this->assertSame( $expectedOutput, $output );
 	}
 
-	public function provideReferenceText() {
+	public static function provideReferenceText() {
 		return [
 			'No text, not preview' => [
 				1,
@@ -384,8 +377,6 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 			$mockErrorReporter->expects( $this->never() )->method( 'plain' );
 		}
 
-		/** @var ErrorReporter $mockErrorReporter */
-		/** @var ReferenceMessageLocalizer $mockMessageLocalizer */
 		/** @var ReferencesFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new ReferencesFormatter(
 			$mockErrorReporter,
@@ -393,14 +384,14 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 			$mockMessageLocalizer
 		) );
 
-		$label = $formatter->referencesFormatEntryAlternateBacklinkLabel(
-			$this->createMock( Parser::class ), $offset );
+		$parser = $this->createNoOpMock( Parser::class );
+		$label = $formatter->referencesFormatEntryAlternateBacklinkLabel( $parser, $offset );
 		if ( $expectedLabel !== null ) {
 			$this->assertSame( $expectedLabel, $label );
 		}
 	}
 
-	public function provideReferencesFormatEntryAlternateBacklinkLabel() {
+	public static function provideReferencesFormatEntryAlternateBacklinkLabel() {
 		yield [ 'aa', 'aa ab ac', 0 ];
 		yield [ 'ab', 'aa ab ac', 1 ];
 		yield [ 'å', 'å b c', 0 ];
@@ -418,7 +409,6 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 		$mockMessageLocalizer->method( 'localizeSeparators' )->willReturnArgument( 0 );
 		$mockMessageLocalizer->method( 'localizeDigits' )->willReturnArgument( 0 );
 
-		/** @var ReferenceMessageLocalizer $mockMessageLocalizer */
 		/** @var ReferencesFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new ReferencesFormatter(
 			$this->createMock( ErrorReporter::class ),
@@ -430,10 +420,11 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( $expectedLabel, $label );
 	}
 
-	public function provideReferencesFormatEntryNumericBacklinkLabel() {
+	public static function provideReferencesFormatEntryNumericBacklinkLabel() {
 		yield [ '1.2', 1, 2, 9 ];
 		yield [ '1.02', 1, 2, 99 ];
 		yield [ '1.002', 1, 2, 100 ];
+		yield [ '1.50005', 1, 50005, 50005 ];
 		yield [ '2.1', 2, 1, 1 ];
 	}
 
@@ -451,7 +442,6 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 			}
 		);
 
-		/** @var ReferenceMessageLocalizer $mockMessageLocalizer */
 		/** @var ReferencesFormatter $formatter */
 		$formatter = TestingAccessWrapper::newFromObject( new ReferencesFormatter(
 			$this->createMock( ErrorReporter::class ),
@@ -461,7 +451,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $formatter->listToText( $list ) );
 	}
 
-	public function provideLists() {
+	public static function provideLists() {
 		return [
 			[
 				[],

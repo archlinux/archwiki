@@ -2,14 +2,18 @@
 
 namespace MediaWiki\Tests\User;
 
+use MediaWiki\Config\SiteConfiguration;
 use MediaWiki\MainConfigNames;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserGroupManagerFactory;
+use MediaWiki\User\UserRightsProxy;
 use MediaWikiIntegrationTestCase;
-use UserRightsProxy;
 use Wikimedia\Rdbms\DBConnRef;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\ReplaceQueryBuilder;
+use Wikimedia\Rdbms\SelectQueryBuilder;
+use Wikimedia\Rdbms\UpdateQueryBuilder;
 
 /**
  * @coversDefaultClass UserRightsProxy
@@ -21,6 +25,10 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
+		$siteConfig = new SiteConfiguration();
+		$siteConfig->wikis = [ 'foowiki' ];
+		$this->setMwGlobals( 'wgConf', $siteConfig );
+
 		$this->overrideConfigValue( MainConfigNames::LocalDatabases, [ 'foowiki' ] );
 
 		$dbMock = $this->createMock( DBConnRef::class );
@@ -30,6 +38,8 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 			'user_id' => 12345,
 		];
 		$dbMock->method( 'selectRow' )->willReturn( $row );
+		$dbMock->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $dbMock ) );
+		$dbMock->method( 'newReplaceQueryBuilder' )->willReturnCallback( static fn () => new ReplaceQueryBuilder( $dbMock ) );
 
 		$lbMock = $this->createMock( ILoadBalancer::class );
 		$lbMock->method( 'getMaintenanceConnectionRef' )->willReturn( $dbMock );
@@ -44,6 +54,8 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::validDatabase
 	 */
 	public function testValidDatabase() {
+		$this->hideDeprecated( 'MediaWiki\User\UserRightsProxy::validDatabase' );
+
 		$this->assertTrue( UserRightsProxy::validDatabase( 'foowiki' ) );
 		$this->assertFalse( UserRightsProxy::validDatabase( 'barwiki' ) );
 	}
@@ -54,6 +66,8 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::getId
 	 */
 	public function testNewFromId() {
+		$this->hideDeprecated( 'MediaWiki\User\UserRightsProxy::newFromId' );
+
 		$id = 12345;
 		$userRightsProxy = UserRightsProxy::newFromId( 'foowiki', $id );
 		$this->assertInstanceOf( UserRightsProxy::class, $userRightsProxy );
@@ -66,6 +80,8 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::getName
 	 */
 	public function testNewFromName() {
+		$this->hideDeprecated( 'MediaWiki\User\UserRightsProxy::newFromName' );
+
 		$name = 'UserRightsProxyTest';
 		$userRightsProxy = UserRightsProxy::newFromName( 'foowiki', $name );
 		$this->assertInstanceOf( UserRightsProxy::class, $userRightsProxy );
@@ -77,6 +93,8 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::newFromLookup
 	 */
 	public function testInvalidDB() {
+		$this->hideDeprecated( 'MediaWiki\User\UserRightsProxy::newFromName' );
+
 		$userRightsProxy = UserRightsProxy::newFromName( 'barwiki', 'test' );
 		$this->assertNull( $userRightsProxy );
 	}
@@ -85,17 +103,20 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::getUserPage
 	 */
 	public function testGetUserPage() {
+		$this->hideDeprecated( 'MediaWiki\User\UserRightsProxy::newFromName' );
+
 		$userRightsProxy = UserRightsProxy::newFromName( 'foowiki', 'UserRightsProxyTest' );
-		$this->assertSame(
-			'/index.php/User:UserRightsProxyTest@foowiki',
-			$userRightsProxy->getUserPage()->getLinkURL()
-		);
+		$userPage = $userRightsProxy->getUserPage();
+		$this->assertSame( NS_USER, $userPage->getNamespace() );
+		$this->assertSame( 'UserRightsProxyTest@foowiki', $userPage->getText() );
 	}
 
 	/**
 	 * @covers ::equals
 	 */
 	public function testEquals() {
+		$this->hideDeprecated( 'MediaWiki\User\UserRightsProxy::newFromName' );
+
 		$userRightsProxy = UserRightsProxy::newFromName( 'foowiki', 'UserRightsProxyTest' );
 		$userRightsProxy2 = $this->createMock( UserRightsProxy::class );
 		$userRightsProxy2->method( 'getName' )->willReturn( 'UserRightsProxyTest@foowiki' );
@@ -106,6 +127,8 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::getWikiId
 	 */
 	public function testGetWikiId() {
+		$this->hideDeprecated( 'MediaWiki\User\UserRightsProxy::newFromName' );
+
 		$userRightsProxy = UserRightsProxy::newFromName( 'foowiki', 'UserRightsProxyTest' );
 		$this->assertSame( 'foowiki', $userRightsProxy->getWikiId() );
 	}
@@ -115,6 +138,8 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::isRegistered
 	 */
 	public function testIsRegistered() {
+		$this->hideDeprecated( 'MediaWiki\User\UserRightsProxy::newFromName' );
+
 		$userRightsProxy = UserRightsProxy::newFromName( 'foowiki', 'UserRightsProxyTest' );
 		$this->assertTrue( $userRightsProxy->isRegistered() );
 		$this->assertFalse( $userRightsProxy->isAnon() );
@@ -127,6 +152,8 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::removeGroup
 	 */
 	public function testGroupMethods() {
+		$this->hideDeprecated( 'MediaWiki\User\UserRightsProxy::newFromName' );
+
 		$userGroupManagerMock = $this->createMock( UserGroupManager::class );
 		$userGroupManagerMock
 			->expects( $this->exactly( 2 ) )
@@ -179,6 +206,8 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::invalidateCache
 	 */
 	public function testOptions() {
+		$this->hideDeprecated( 'MediaWiki\User\UserRightsProxy::newFromName' );
+
 		$key = 'foo';
 		$value = 'bar';
 
@@ -190,6 +219,8 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 		$dbMock->method( 'selectRow' )->willReturn( $row );
 		$dbMock->method( 'timestamp' )->willReturn( 'timestamp' );
 		$dbMock->method( 'getDomainID' )->willReturn( 'foowiki' );
+		$dbMock->method( 'newSelectQueryBuilder' )->willReturnCallback( static fn () => new SelectQueryBuilder( $dbMock ) );
+		$dbMock->method( 'newReplaceQueryBuilder' )->willReturnCallback( static fn () => new ReplaceQueryBuilder( $dbMock ) );
 
 		$dbMock->expects( $this->once() )
 			->method( 'replace' )
@@ -205,6 +236,9 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 				]
 			);
 		$dbMock->expects( $this->once() )
+			->method( 'newUpdateQueryBuilder' )
+			->willReturn( new UpdateQueryBuilder( $dbMock ) );
+		$dbMock->expects( $this->once() )
 			->method( 'update' )
 			->with(
 				'user',
@@ -216,6 +250,7 @@ class UserRightsProxyTest extends MediaWikiIntegrationTestCase {
 
 		$lbMock = $this->createMock( ILoadBalancer::class );
 		$lbMock->method( 'getMaintenanceConnectionRef' )->willReturn( $dbMock );
+		$lbMock->method( 'getConnection' )->willReturn( $dbMock );
 
 		$lbFactoryMock = $this->createMock( LBFactory::class );
 		$lbFactoryMock->method( 'getMainLB' )->willReturn( $lbMock );

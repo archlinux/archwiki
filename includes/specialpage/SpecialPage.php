@@ -21,16 +21,36 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\SpecialPage;
+
+use ErrorPageError;
+use IContextSource;
+use Language;
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Navigation\PagerNavigationBuilder;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
-use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\User;
+use Message;
+use MessageLocalizer;
+use MessageSpecifier;
+use MWCryptRand;
+use PermissionsError;
+use ReadOnlyError;
+use RequestContext;
+use SearchEngineFactory;
+use Skin;
+use UserNotLoggedIn;
 
 /**
  * Parent class for all special pages.
@@ -45,7 +65,8 @@ use MediaWiki\Title\Title;
 class SpecialPage implements MessageLocalizer {
 	/**
 	 * @var string The canonical name of this special page
-	 * Also used for the default <h1> heading, @see getDescription()
+	 * Also used as the message key for the default <h1> heading,
+	 * @see getDescription()
 	 */
 	protected $mName;
 
@@ -125,7 +146,7 @@ class SpecialPage implements MessageLocalizer {
 	 * @since 1.21 $fragment parameter added
 	 *
 	 * @param string $name
-	 * @param string|false $subpage Subpage string, or false to not use a subpage
+	 * @param string|false|null $subpage Subpage string, or false/null to not use a subpage
 	 * @param string $fragment The link fragment (after the "#")
 	 * @return Title
 	 */
@@ -140,7 +161,7 @@ class SpecialPage implements MessageLocalizer {
 	 *
 	 * @since 1.28
 	 * @param string $name
-	 * @param string|false $subpage Subpage string, or false to not use a subpage
+	 * @param string|false|null $subpage Subpage string, or false/null to not use a subpage
 	 * @param string $fragment The link fragment (after the "#")
 	 * @return TitleValue
 	 */
@@ -377,7 +398,7 @@ class SpecialPage implements MessageLocalizer {
 	 *
 	 * @stable to override
 	 * @since 1.19
-	 * @return void|never
+	 * @return void
 	 * @throws PermissionsError
 	 */
 	public function checkPermissions() {
@@ -390,7 +411,7 @@ class SpecialPage implements MessageLocalizer {
 	 * If the wiki is currently in readonly mode, throws a ReadOnlyError
 	 *
 	 * @since 1.19
-	 * @return void|never
+	 * @return void
 	 * @throws ReadOnlyError
 	 */
 	public function checkReadOnly() {
@@ -673,7 +694,12 @@ class SpecialPage implements MessageLocalizer {
 		$out = $this->getOutput();
 		$out->setArticleRelated( false );
 		$out->setRobotPolicy( $this->getRobotPolicy() );
-		$out->setPageTitle( $this->getDescription() );
+		$title = $this->getDescription();
+		if ( is_string( $title ) ) { // T343849
+			wfDeprecated( 'string return from SpecialPage::getDescription()', '1.41' );
+			$title = ( new RawMessage( '$1' ) )->rawParams( $title );
+		}
+		$out->setPageTitleMsg( $title );
 		if ( $this->getConfig()->get( MainConfigNames::UseMediaWikiUIEverywhere ) ) {
 			$out->addModuleStyles( [
 				'mediawiki.ui.input',
@@ -779,12 +805,14 @@ class SpecialPage implements MessageLocalizer {
 	 * Derived classes can override this, but usually it is easier to keep the
 	 * default behavior.
 	 *
+	 * Returning a string from this method has been deprecated since 1.41.
+	 *
 	 * @stable to override
 	 *
-	 * @return string
+	 * @return string|Message
 	 */
 	public function getDescription() {
-		return $this->msg( strtolower( $this->mName ) )->text();
+		return $this->msg( strtolower( $this->mName ) );
 	}
 
 	/**
@@ -809,7 +837,7 @@ class SpecialPage implements MessageLocalizer {
 	/**
 	 * Get a self-referential title object
 	 *
-	 * @param string|false $subpage
+	 * @param string|false|null $subpage
 	 * @return Title
 	 * @since 1.23
 	 */
@@ -927,19 +955,6 @@ class SpecialPage implements MessageLocalizer {
 	 */
 	final public function setContentLanguage( Language $contentLanguage ) {
 		$this->contentLanguage = $contentLanguage;
-	}
-
-	/**
-	 * Shortcut to get language's converter
-	 *
-	 * @deprecated since 1.36 Inject LanguageConverterFactory and store a ILanguageConverter instance
-	 * @return ILanguageConverter
-	 * @since 1.35
-	 */
-	protected function getLanguageConverter(): ILanguageConverter {
-		wfDeprecated( __METHOD__, '1.36' );
-		return MediaWikiServices::getInstance()->getLanguageConverterFactory()
-			->getLanguageConverter();
 	}
 
 	/**
@@ -1207,3 +1222,9 @@ class SpecialPage implements MessageLocalizer {
 		return $this->specialPageFactory;
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialPage::class, 'SpecialPage' );

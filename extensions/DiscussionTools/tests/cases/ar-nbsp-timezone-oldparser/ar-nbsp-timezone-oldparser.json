@@ -16,6 +16,7 @@
 				"type": "comment",
 				"timestamp": "2020-04-21T22:51:00.000Z",
 				"author": "Johan (WMF)",
+				"displayName": "Johan",
 				"range": [
 					"0/1/0/0",
 					"15/9/30"
@@ -23,6 +24,12 @@
 				"signatureRanges": [
 					[
 						"15/6",
+						"15/9/30"
+					]
+				],
+				"timestampRanges": [
+					[
+						"15/9/2",
 						"15/9/30"
 					]
 				],
@@ -38,6 +45,7 @@
 				"type": "comment",
 				"timestamp": "2020-04-28T17:47:00.000Z",
 				"author": "Dyolf77 (WMF)",
+				"displayName": "الحبيب مهني (ويكيميديا)",
 				"range": [
 					"17/0",
 					"17/12/30"
@@ -45,6 +53,12 @@
 				"signatureRanges": [
 					[
 						"17/9",
+						"17/12/30"
+					]
+				],
+				"timestampRanges": [
+					[
+						"17/12/2",
 						"17/12/30"
 					]
 				],
@@ -86,6 +100,7 @@
 						"type": "comment",
 						"timestamp": "2020-04-29T14:08:00.000Z",
 						"author": "Dyolf77",
+						"displayName": "الحبيب مهنّي",
 						"range": [
 							"27/0",
 							"27/2/29"
@@ -93,6 +108,12 @@
 						"signatureRanges": [
 							[
 								"27/1",
+								"27/2/29"
+							]
+						],
+						"timestampRanges": [
+							[
+								"27/2/1",
 								"27/2/29"
 							]
 						],
@@ -121,6 +142,7 @@
 						"type": "comment",
 						"timestamp": "2020-04-29T17:40:00.000Z",
 						"author": "Trabelsiismail",
+						"displayName": "طرابلسي إسماعيل",
 						"range": [
 							"31/0",
 							"31/4/30"
@@ -128,6 +150,12 @@
 						"signatureRanges": [
 							[
 								"31/1",
+								"31/4/30"
+							]
+						],
+						"timestampRanges": [
+							[
+								"31/4/2",
 								"31/4/30"
 							]
 						],
@@ -156,6 +184,7 @@
 						"type": "comment",
 						"timestamp": "2020-04-29T22:55:00.000Z",
 						"author": "Nehaoua",
+						"displayName": "–عادل",
 						"range": [
 							"35/0",
 							"35/10/30"
@@ -163,6 +192,12 @@
 						"signatureRanges": [
 							[
 								"35/7",
+								"35/10/30"
+							]
+						],
+						"timestampRanges": [
+							[
+								"35/10/2",
 								"35/10/30"
 							]
 						],
@@ -215,6 +250,12 @@
 								"43/4/30"
 							]
 						],
+						"timestampRanges": [
+							[
+								"43/4/2",
+								"43/4/30"
+							]
+						],
 						"level": 1,
 						"name": "c-Aws_Al-mimari-2020-04-30T11:58:00.000Z",
 						"id": "c-Aws_Al-mimari-2020-04-30T11:58:00.000Z-Aws_Al-mimari",
@@ -247,6 +288,12 @@
 						"signatureRanges": [
 							[
 								"47/1",
+								"47/4/30"
+							]
+						],
+						"timestampRanges": [
+							[
+								"47/4/2",
 								"47/4/30"
 							]
 						],
@@ -303,6 +350,7 @@
 						"type": "comment",
 						"timestamp": "2020-04-30T17:35:00.000Z",
 						"author": "Elsayed Taha",
+						"displayName": "السيد طه",
 						"range": [
 							"59/0",
 							"59/4/30"
@@ -310,6 +358,12 @@
 						"signatureRanges": [
 							[
 								"59/1",
+								"59/4/30"
+							]
+						],
+						"timestampRanges": [
+							[
+								"59/4/2",
 								"59/4/30"
 							]
 						],
@@ -338,6 +392,7 @@
 						"type": "comment",
 						"timestamp": "2020-04-30T17:46:00.000Z",
 						"author": "أبو تائب",
+						"displayName": "أبُو تَائِب",
 						"range": [
 							"63/0",
 							"63/3/29"
@@ -345,6 +400,12 @@
 						"signatureRanges": [
 							[
 								"63/1",
+								"63/3/29"
+							]
+						],
+						"timestampRanges": [
+							[
+								"63/3/1",
 								"63/3/29"
 							]
 						],
@@ -401,6 +462,7 @@
 						"type": "comment",
 						"timestamp": "2020-04-30T23:49:00.000Z",
 						"author": "Saif Oofa7",
+						"displayName": "★سيف القوضي",
 						"range": [
 							"75/0",
 							"76/4/29"
@@ -408,6 +470,12 @@
 						"signatureRanges": [
 							[
 								"76/1",
+								"76/4/29"
+							]
+						],
+						"timestampRanges": [
+							[
+								"76/4/1",
 								"76/4/29"
 							]
 						],
@@ -446,6 +514,12 @@
 								"82/4/27"
 							]
 						],
+						"timestampRanges": [
+							[
+								"82/4/1",
+								"82/4/27"
+							]
+						],
 						"level": 1,
 						"name": "c-Mohanad_Kh-2020-05-01T12:00:00.000Z",
 						"id": "c-Mohanad_Kh-2020-05-01T12:00:00.000Z-Mohanad_Kh",
@@ -478,6 +552,12 @@
 						"signatureRanges": [
 							[
 								"86/1",
+								"86/4/27"
+							]
+						],
+						"timestampRanges": [
+							[
+								"86/4/1",
 								"86/4/27"
 							]
 						],
@@ -520,6 +600,7 @@
 						"type": "comment",
 						"timestamp": "2020-05-02T03:01:00.000Z",
 						"author": "محمد بوعلام عصامي",
+						"displayName": "العربيةمحمد بوعلام عصامي *«Simo.Boualam»",
 						"range": [
 							"94/0",
 							"94/10/28"
@@ -527,6 +608,12 @@
 						"signatureRanges": [
 							[
 								"94/7",
+								"94/10/28"
+							]
+						],
+						"timestampRanges": [
+							[
+								"94/10/2",
 								"94/10/28"
 							]
 						],
@@ -597,6 +684,7 @@
 						"type": "comment",
 						"timestamp": "2020-05-04T17:56:00.000Z",
 						"author": "Justwiki",
+						"displayName": "م.ز ناجح ناجي حسن ابو الامير",
 						"range": [
 							"110/0",
 							"110/4/28"
@@ -604,6 +692,12 @@
 						"signatureRanges": [
 							[
 								"110/1",
+								"110/4/28"
+							]
+						],
+						"timestampRanges": [
+							[
+								"110/4/2",
 								"110/4/28"
 							]
 						],
@@ -642,6 +736,12 @@
 								"114/8/28"
 							]
 						],
+						"timestampRanges": [
+							[
+								"114/8/2",
+								"114/8/28"
+							]
+						],
 						"level": 1,
 						"name": "c-Abu_aamir-2020-05-05T09:36:00.000Z",
 						"id": "c-Abu_aamir-2020-05-05T09:36:00.000Z-Abu_aamir",
@@ -669,6 +769,7 @@
 				"type": "comment",
 				"timestamp": "2020-04-29T14:08:00.000Z",
 				"author": "Dyolf77",
+				"displayName": "الحبيب مهنّي",
 				"range": [
 					"27/0",
 					"27/2/29"
@@ -676,6 +777,12 @@
 				"signatureRanges": [
 					[
 						"27/1",
+						"27/2/29"
+					]
+				],
+				"timestampRanges": [
+					[
+						"27/2/1",
 						"27/2/29"
 					]
 				],
@@ -704,6 +811,7 @@
 				"type": "comment",
 				"timestamp": "2020-04-29T17:40:00.000Z",
 				"author": "Trabelsiismail",
+				"displayName": "طرابلسي إسماعيل",
 				"range": [
 					"31/0",
 					"31/4/30"
@@ -711,6 +819,12 @@
 				"signatureRanges": [
 					[
 						"31/1",
+						"31/4/30"
+					]
+				],
+				"timestampRanges": [
+					[
+						"31/4/2",
 						"31/4/30"
 					]
 				],
@@ -739,6 +853,7 @@
 				"type": "comment",
 				"timestamp": "2020-04-29T22:55:00.000Z",
 				"author": "Nehaoua",
+				"displayName": "–عادل",
 				"range": [
 					"35/0",
 					"35/10/30"
@@ -746,6 +861,12 @@
 				"signatureRanges": [
 					[
 						"35/7",
+						"35/10/30"
+					]
+				],
+				"timestampRanges": [
+					[
+						"35/10/2",
 						"35/10/30"
 					]
 				],
@@ -798,6 +919,12 @@
 						"43/4/30"
 					]
 				],
+				"timestampRanges": [
+					[
+						"43/4/2",
+						"43/4/30"
+					]
+				],
 				"level": 1,
 				"name": "c-Aws_Al-mimari-2020-04-30T11:58:00.000Z",
 				"id": "c-Aws_Al-mimari-2020-04-30T11:58:00.000Z-Aws_Al-mimari",
@@ -830,6 +957,12 @@
 				"signatureRanges": [
 					[
 						"47/1",
+						"47/4/30"
+					]
+				],
+				"timestampRanges": [
+					[
+						"47/4/2",
 						"47/4/30"
 					]
 				],
@@ -886,6 +1019,7 @@
 				"type": "comment",
 				"timestamp": "2020-04-30T17:35:00.000Z",
 				"author": "Elsayed Taha",
+				"displayName": "السيد طه",
 				"range": [
 					"59/0",
 					"59/4/30"
@@ -893,6 +1027,12 @@
 				"signatureRanges": [
 					[
 						"59/1",
+						"59/4/30"
+					]
+				],
+				"timestampRanges": [
+					[
+						"59/4/2",
 						"59/4/30"
 					]
 				],
@@ -921,6 +1061,7 @@
 				"type": "comment",
 				"timestamp": "2020-04-30T17:46:00.000Z",
 				"author": "أبو تائب",
+				"displayName": "أبُو تَائِب",
 				"range": [
 					"63/0",
 					"63/3/29"
@@ -928,6 +1069,12 @@
 				"signatureRanges": [
 					[
 						"63/1",
+						"63/3/29"
+					]
+				],
+				"timestampRanges": [
+					[
+						"63/3/1",
 						"63/3/29"
 					]
 				],
@@ -984,6 +1131,7 @@
 				"type": "comment",
 				"timestamp": "2020-04-30T23:49:00.000Z",
 				"author": "Saif Oofa7",
+				"displayName": "★سيف القوضي",
 				"range": [
 					"75/0",
 					"76/4/29"
@@ -991,6 +1139,12 @@
 				"signatureRanges": [
 					[
 						"76/1",
+						"76/4/29"
+					]
+				],
+				"timestampRanges": [
+					[
+						"76/4/1",
 						"76/4/29"
 					]
 				],
@@ -1029,6 +1183,12 @@
 						"82/4/27"
 					]
 				],
+				"timestampRanges": [
+					[
+						"82/4/1",
+						"82/4/27"
+					]
+				],
 				"level": 1,
 				"name": "c-Mohanad_Kh-2020-05-01T12:00:00.000Z",
 				"id": "c-Mohanad_Kh-2020-05-01T12:00:00.000Z-Mohanad_Kh",
@@ -1061,6 +1221,12 @@
 				"signatureRanges": [
 					[
 						"86/1",
+						"86/4/27"
+					]
+				],
+				"timestampRanges": [
+					[
+						"86/4/1",
 						"86/4/27"
 					]
 				],
@@ -1103,6 +1269,7 @@
 				"type": "comment",
 				"timestamp": "2020-05-02T03:01:00.000Z",
 				"author": "محمد بوعلام عصامي",
+				"displayName": "العربيةمحمد بوعلام عصامي *«Simo.Boualam»",
 				"range": [
 					"94/0",
 					"94/10/28"
@@ -1110,6 +1277,12 @@
 				"signatureRanges": [
 					[
 						"94/7",
+						"94/10/28"
+					]
+				],
+				"timestampRanges": [
+					[
+						"94/10/2",
 						"94/10/28"
 					]
 				],
@@ -1180,6 +1353,7 @@
 				"type": "comment",
 				"timestamp": "2020-05-04T17:56:00.000Z",
 				"author": "Justwiki",
+				"displayName": "م.ز ناجح ناجي حسن ابو الامير",
 				"range": [
 					"110/0",
 					"110/4/28"
@@ -1187,6 +1361,12 @@
 				"signatureRanges": [
 					[
 						"110/1",
+						"110/4/28"
+					]
+				],
+				"timestampRanges": [
+					[
+						"110/4/2",
 						"110/4/28"
 					]
 				],
@@ -1222,6 +1402,12 @@
 				"signatureRanges": [
 					[
 						"114/5",
+						"114/8/28"
+					]
+				],
+				"timestampRanges": [
+					[
+						"114/8/2",
 						"114/8/28"
 					]
 				],

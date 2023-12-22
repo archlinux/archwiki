@@ -1,6 +1,11 @@
 <?php
 
+use MediaWiki\Extension\Notifications\AttributeManager;
+use MediaWiki\Extension\Notifications\DbFactory;
+use MediaWiki\Extension\Notifications\NotifUser;
+use MediaWiki\Extension\Notifications\UnreadWikis;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\WikiMap\WikiMap;
 
 $IP = getenv( 'MW_INSTALL_PATH' );
 if ( $IP === false ) {
@@ -19,7 +24,7 @@ class BackfillUnreadWikis extends Maintenance {
 	}
 
 	public function execute() {
-		$dbFactory = MWEchoDbFactory::newFromDefault();
+		$dbFactory = DbFactory::newFromDefault();
 		$lookup = MediaWikiServices::getInstance()->getCentralIdLookup();
 
 		$rebuild = $this->hasOption( 'rebuild' );
@@ -57,14 +62,14 @@ class BackfillUnreadWikis extends Maintenance {
 					$user = User::newFromRow( $row );
 				}
 
-				$notifUser = MWEchoNotifUser::newFromUser( $user );
-				$uw = EchoUnreadWikis::newFromUser( $user );
+				$notifUser = NotifUser::newFromUser( $user );
+				$uw = UnreadWikis::newFromUser( $user );
 				if ( $uw ) {
-					$alertCount = $notifUser->getNotificationCount( EchoAttributeManager::ALERT, false );
-					$alertUnread = $notifUser->getLastUnreadNotificationTime( EchoAttributeManager::ALERT, false );
+					$alertCount = $notifUser->getNotificationCount( AttributeManager::ALERT, false );
+					$alertUnread = $notifUser->getLastUnreadNotificationTime( AttributeManager::ALERT, false );
 
-					$msgCount = $notifUser->getNotificationCount( EchoAttributeManager::MESSAGE, false );
-					$msgUnread = $notifUser->getLastUnreadNotificationTime( EchoAttributeManager::MESSAGE, false );
+					$msgCount = $notifUser->getNotificationCount( AttributeManager::MESSAGE, false );
+					$msgUnread = $notifUser->getLastUnreadNotificationTime( AttributeManager::MESSAGE, false );
 
 					if ( ( $alertCount !== 0 && $alertUnread === false ) ||
 						( $msgCount !== 0 && $msgUnread === false )

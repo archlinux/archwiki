@@ -18,7 +18,7 @@ use Wikimedia\Parsoid\Utils\Utils;
  */
 class PageConfig extends IPageConfig {
 
-	/** @var ApiHelper */
+	/** @var ?ApiHelper */
 	private $api;
 
 	/** @var string */
@@ -139,12 +139,6 @@ class PageConfig extends IPageConfig {
 		return $this->rev['slots']['main']['contentmodel'] ?? 'wikitext';
 	}
 
-	public function hasLintableContentModel(): bool {
-		$contentmodel = $this->getContentModel();
-		return $contentmodel === 'wikitext' ||
-			$contentmodel === 'proofread-page';
-	}
-
 	/** @inheritDoc */
 	public function getTitle(): string {
 		$this->loadData();
@@ -229,17 +223,4 @@ class PageConfig extends IPageConfig {
 		}
 		return $this->content;
 	}
-
-	/**
-	 * @param array $parsoidSettings
-	 * @param array $opts
-	 * @return PageConfig
-	 */
-	public static function fromSettings(
-		array $parsoidSettings, array $opts
-	): PageConfig {
-		$api = ApiHelper::fromSettings( $parsoidSettings );
-		return new PageConfig( $api, $opts );
-	}
-
 }

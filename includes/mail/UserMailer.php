@@ -25,8 +25,12 @@
  * @author Luke Welling lwelling@wikimedia.org
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
 
 /**
@@ -90,13 +94,11 @@ class UserMailer {
 	 *     'replyTo' MailAddress
 	 *     'contentType' string default 'text/plain; charset=UTF-8'
 	 *     'headers' array Extra headers to set
-	 *
-	 * @throws MWException
-	 * @throws Exception
 	 * @return Status
 	 */
 	public static function send( $to, $from, $subject, $body, $options = [] ) {
-		$allowHTMLEmail = MediaWikiServices::getInstance()->getMainConfig()->get(
+		$services = MediaWikiServices::getInstance();
+		$allowHTMLEmail = $services->getMainConfig()->get(
 			MainConfigNames::AllowHTMLEmail );
 
 		if ( !isset( $options['contentType'] ) ) {
@@ -153,7 +155,7 @@ class UserMailer {
 		// target differently to split up the address list
 		if ( count( $to ) > 1 ) {
 			$oldTo = $to;
-			Hooks::runner()->onUserMailerSplitTo( $to );
+			( new HookRunner( $services->getHookContainer() ) )->onUserMailerSplitTo( $to );
 			if ( $oldTo != $to ) {
 				$splitTo = array_diff( $oldTo, $to );
 				$to = array_diff( $oldTo, $splitTo ); // ignore new addresses added in the hook
@@ -185,9 +187,6 @@ class UserMailer {
 	 *     'replyTo' MailAddress
 	 *     'contentType' string default 'text/plain; charset=UTF-8'
 	 *     'headers' array Extra headers to set
-	 *
-	 * @throws MWException
-	 * @throws Exception
 	 * @return Status
 	 */
 	protected static function sendInternal(
@@ -197,7 +196,8 @@ class UserMailer {
 		$body,
 		$options = []
 	) {
-		$mainConfig = MediaWikiServices::getInstance()->getMainConfig();
+		$services = MediaWikiServices::getInstance();
+		$mainConfig = $services->getMainConfig();
 		$smtp = $mainConfig->get( MainConfigNames::SMTP );
 		$enotifMaxRecips = $mainConfig->get( MainConfigNames::EnotifMaxRecips );
 		$additionalMailParams = $mainConfig->get( MainConfigNames::AdditionalMailParams );
@@ -206,10 +206,11 @@ class UserMailer {
 		$contentType = $options['contentType'] ?? 'text/plain; charset=UTF-8';
 		$headers = $options['headers'] ?? [];
 
+		$hookRunner = new HookRunner( $services->getHookContainer() );
 		// Allow transformation of content, such as encrypting/signing
 		$error = false;
 		// @phan-suppress-next-line PhanTypeMismatchArgument Type mismatch on pass-by-ref args
-		if ( !Hooks::runner()->onUserMailerTransformContent( $to, $from, $body, $error ) ) {
+		if ( !$hookRunner->onUserMailerTransformContent( $to, $from, $body, $error ) ) {
 			if ( $error ) {
 				return Status::newFatal( 'php-mail-error', $error );
 			} else {
@@ -251,7 +252,7 @@ class UserMailer {
 		$extraParams = $additionalMailParams;
 
 		// Hook to generate custom VERP address for 'Return-Path'
-		Hooks::runner()->onUserMailerChangeReturnPath( $to, $returnPath );
+		$hookRunner->onUserMailerChangeReturnPath( $to, $returnPath );
 		// Add the envelope sender address using the -f command line option when PHP mail() is used.
 		// Will default to the $from->address when the UserMailerChangeReturnPath hook fails and the
 		// generated VERP address when the hook runs effectively.
@@ -307,7 +308,7 @@ class UserMailer {
 		}
 
 		// allow transformation of MIME-encoded message
-		if ( !Hooks::runner()->onUserMailerTransformMessage(
+		if ( !$hookRunner->onUserMailerTransformMessage(
 			$to, $from, $subject, $headers, $body, $error )
 		) {
 			if ( $error ) {
@@ -317,7 +318,7 @@ class UserMailer {
 			}
 		}
 
-		$ret = Hooks::runner()->onAlternateUserMailer( $headers, $to, $from, $subject, $body );
+		$ret = $hookRunner->onAlternateUserMailer( $headers, $to, $from, $subject, $body );
 		if ( $ret === false ) {
 			// the hook implementation will return false to skip regular mail sending
 			return Status::newGood();
@@ -368,7 +369,7 @@ class UserMailer {
 			self::$mErrorString = '';
 			$html_errors = ini_get( 'html_errors' );
 			ini_set( 'html_errors', '0' );
-			set_error_handler( 'UserMailer::errorHandler' );
+			set_error_handler( [ self::class, 'errorHandler' ] );
 
 			try {
 				foreach ( $to as $recip ) {
@@ -449,17 +450,20 @@ class UserMailer {
 	 */
 	public static function quotedPrintable( $string, $charset = '' ) {
 		// Probably incomplete; see RFC 2045
-		if ( empty( $charset ) ) {
+		if ( !$charset ) {
 			$charset = 'UTF-8';
 		}
 		$charset = strtoupper( $charset );
 		$charset = str_replace( 'ISO-8859', 'ISO8859', $charset ); // ?
 
 		$illegal = '\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\xff=';
-		$replace = $illegal . '\t ?_';
 		if ( !preg_match( "/[$illegal]/", $string ) ) {
 			return $string;
 		}
+
+		// T344912: Add period '.' char
+		$replace = $illegal . '.\t ?_';
+
 		$out = "=?$charset?Q?";
 		$out .= preg_replace_callback( "/([$replace])/",
 			static function ( $matches ) {

@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\MediaWikiServices;
 use PHPUnit\Framework\TestSuite;
 use SebastianBergmann\FileIterator\Facade;
 
@@ -20,7 +22,7 @@ class ExtensionsTestSuite extends TestSuite {
 			$paths[] = dirname( $info['path'] ) . '/tests/phpunit';
 		}
 		// Extensions can return a list of files or directories
-		Hooks::runner()->onUnitTestsList( $paths );
+		( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onUnitTestsList( $paths );
 		foreach ( array_unique( $paths ) as $path ) {
 			if ( is_dir( $path ) ) {
 				// If the path is a directory, search for test cases.
@@ -34,25 +36,9 @@ class ExtensionsTestSuite extends TestSuite {
 				$this->addTestFile( $path );
 			}
 		}
-		if ( !$paths ) {
-			$this->addTest( new DummyExtensionsTest( 'testNothing' ) );
-		}
 	}
 
 	public static function suite() {
 		return new self;
-	}
-}
-
-/**
- * Needed to avoid warnings like 'No tests found in class "ExtensionsTestSuite".'
- * when no extensions with tests are used.
- */
-class DummyExtensionsTest extends MediaWikiIntegrationTestCase {
-	/**
-	 * @coversNothing
-	 */
-	public function testNothing() {
-		$this->assertTrue( true );
 	}
 }

@@ -17,8 +17,6 @@ class AFPData {
 	public const DARRAY = 'array';
 	// Special purpose type for non-initialized stuff
 	public const DUNDEFINED = 'undefined';
-	// Special purpose for creating instances that will be populated later
-	public const DEMPTY = 'empty';
 
 	/**
 	 * Translation table mapping shell-style wildcards to PCRE equivalents.
@@ -67,9 +65,9 @@ class AFPData {
 	 * @param AFPData[]|mixed|null $val
 	 */
 	public function __construct( $type, $val = null ) {
-		if ( ( $type === self::DUNDEFINED || $type === self::DEMPTY ) && $val !== null ) {
+		if ( $type === self::DUNDEFINED && $val !== null ) {
 			// Sanity
-			throw new InvalidArgumentException( 'DUNDEFINED and DEMPTY cannot have a non-null value' );
+			throw new InvalidArgumentException( 'DUNDEFINED cannot have a non-null value' );
 		}
 		$this->type = $type;
 		$this->data = $val;
@@ -236,8 +234,7 @@ class AFPData {
 		} elseif ( $this->type === self::DINT ) {
 			return new AFPData( $this->type, -$this->toInt() );
 		} else {
-			$type = $this->type === self::DEMPTY ? self::DNULL : $this->type;
-			return new AFPData( $type, -$this->toFloat() );
+			return new AFPData( $this->type, -$this->toFloat() );
 		}
 	}
 
@@ -445,7 +442,6 @@ class AFPData {
 				return $output;
 			case self::DNULL:
 			case self::DUNDEFINED:
-			case self::DEMPTY:
 				return null;
 			default:
 				// @codeCoverageIgnoreStart

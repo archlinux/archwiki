@@ -3,20 +3,19 @@
 namespace MediaWiki\Revision;
 
 use ChangeTags;
-use ContribsPager;
 use IContextSource;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkRendererFactory;
+use MediaWiki\Pager\ContribsPager;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\FauxRequest;
-use MediaWiki\User\ActorMigration;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\User\UserIdentity;
 use Message;
-use NamespaceInfo;
 use RequestContext;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * @since 1.35
@@ -35,11 +34,8 @@ class ContributionsLookup {
 	/** @var HookContainer */
 	private $hookContainer;
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var ActorMigration */
-	private $actorMigration;
+	/** @var IConnectionProvider */
+	private $dbProvider;
 
 	/** @var NamespaceInfo */
 	private $namespaceInfo;
@@ -52,8 +48,7 @@ class ContributionsLookup {
 	 * @param LinkRendererFactory $linkRendererFactory
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param HookContainer $hookContainer
-	 * @param ILoadBalancer $loadBalancer
-	 * @param ActorMigration $actorMigration
+	 * @param IConnectionProvider $dbProvider
 	 * @param NamespaceInfo $namespaceInfo
 	 * @param CommentFormatter $commentFormatter
 	 */
@@ -62,8 +57,7 @@ class ContributionsLookup {
 		LinkRendererFactory $linkRendererFactory,
 		LinkBatchFactory $linkBatchFactory,
 		HookContainer $hookContainer,
-		ILoadBalancer $loadBalancer,
-		ActorMigration $actorMigration,
+		IConnectionProvider $dbProvider,
 		NamespaceInfo $namespaceInfo,
 		CommentFormatter $commentFormatter
 	) {
@@ -71,8 +65,7 @@ class ContributionsLookup {
 		$this->linkRendererFactory = $linkRendererFactory;
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->hookContainer = $hookContainer;
-		$this->loadBalancer = $loadBalancer;
-		$this->actorMigration = $actorMigration;
+		$this->dbProvider = $dbProvider;
 		$this->namespaceInfo = $namespaceInfo;
 		$this->commentFormatter = $commentFormatter;
 	}
@@ -119,7 +112,6 @@ class ContributionsLookup {
 	 * @param string|null $tag
 	 *
 	 * @return ContributionsSegment
-	 * @throws \MWException
 	 */
 	public function getContributions(
 		UserIdentity $target,
@@ -275,8 +267,7 @@ class ContributionsLookup {
 			$this->linkRendererFactory->create(),
 			$this->linkBatchFactory,
 			$this->hookContainer,
-			$this->loadBalancer,
-			$this->actorMigration,
+			$this->dbProvider,
 			$this->revisionStore,
 			$this->namespaceInfo,
 			$targetUser,

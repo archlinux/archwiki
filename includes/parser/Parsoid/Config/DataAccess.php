@@ -21,6 +21,7 @@ namespace MediaWiki\Parser\Parsoid\Config;
 
 use ContentHandler;
 use File;
+use LanguageCode;
 use MediaTransformError;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Config\ServiceOptions;
@@ -33,12 +34,12 @@ use MediaWiki\Page\File\BadFileLookup;
 use MediaWiki\Title\Title;
 use Parser;
 use ParserFactory;
-use ReadOnlyMode;
 use RepoGroup;
 use Wikimedia\Parsoid\Config\DataAccess as IDataAccess;
 use Wikimedia\Parsoid\Config\PageConfig as IPageConfig;
 use Wikimedia\Parsoid\Config\PageContent as IPageContent;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
  * Implement Parsoid's abstract class for data access.
@@ -63,8 +64,11 @@ class DataAccess extends IDataAccess {
 	/** @var ContentTransformer */
 	private $contentTransformer;
 
-	/** @var Parser */
-	private $parser;
+	/** @var ParserFactory */
+	private $parserFactory;
+
+	/** @var ?Parser Lazy-created via self::prepareParser() */
+	private $parser = null;
 
 	/** @var \PPFrame */
 	private $ppFrame;
@@ -118,9 +122,7 @@ class DataAccess extends IDataAccess {
 
 		$this->hookRunner = new HookRunner( $hookContainer );
 
-		// Use the same legacy parser object for all calls to extension tag
-		// processing, for greater compatibility.
-		$this->parser = $parserFactory->create();
+		$this->parserFactory = $parserFactory;
 		$this->previousPageConfig = null; // ensure we initialize parser options
 	}
 
@@ -160,7 +162,9 @@ class DataAccess extends IDataAccess {
 		}
 
 		// Parser::makeImage() always sets this
-		$hp['targetlang'] = $pageConfig->getPageLanguage();
+		$hp['targetlang'] = LanguageCode::bcp47ToInternal(
+			$pageConfig->getPageLanguageBcp47()
+		);
 
 		return $hp;
 	}
@@ -324,6 +328,9 @@ class DataAccess extends IDataAccess {
 		// be retained. This should also provide better compatibility with extension tags.
 		$clearState = $this->previousPageConfig !== $pageConfig;
 		$this->previousPageConfig = $pageConfig;
+		// Use the same legacy parser object for all calls to extension tag
+		// processing, for greater compatibility.
+		$this->parser ??= $this->parserFactory->create();
 		$this->parser->startExternalParse(
 			Title::newFromText( $pageConfig->getTitle() ), $pageConfig->getParserOptions(),
 			$outputType, $clearState, $pageConfig->getRevisionId() );
@@ -392,7 +399,7 @@ class DataAccess extends IDataAccess {
 		$wikitext = $parser->getStripState()->unstripBoth( $wikitext );
 
 		// XXX: Ideally we will eventually have the legacy parser use our
-		// ContentMetadataCollector instead of having an new ParserOutput
+		// ContentMetadataCollector instead of having a new ParserOutput
 		// created (implicitly in ::prepareParser()/Parser::resetOutput() )
 		// which we then have to manually merge.
 		$out = $parser->getOutput();

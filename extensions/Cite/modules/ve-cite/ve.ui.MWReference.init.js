@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * VisualEditor MediaWiki Cite initialisation code.
  *
@@ -7,12 +9,11 @@
 
 ( function () {
 	function fixTarget( target ) {
-		var toolGroups = target.static.toolbarGroups;
+		const toolGroups = target.static.toolbarGroups;
 
-		var i, iLen;
 		if ( mw.config.get( 'wgCiteVisualEditorOtherGroup' ) ) {
-			for ( i = 0, iLen = toolGroups.length; i < iLen; i++ ) {
-				var toolGroup = toolGroups[ i ];
+			for ( let i = 0; i < toolGroups.length; i++ ) {
+				const toolGroup = toolGroups[ i ];
 				if ( toolGroup.name === 'insert' && ( !toolGroup.demote || toolGroup.demote.indexOf( 'reference' ) === -1 ) ) {
 					toolGroup.demote = toolGroup.demote || [];
 					toolGroup.demote.push( { group: 'cite' }, 'reference', 'reference/existing' );
@@ -20,9 +21,9 @@
 			}
 		} else {
 			// Find the reference placeholder group and replace it
-			for ( i = 0, iLen = toolGroups.length; i < iLen; i++ ) {
+			for ( let i = 0; i < toolGroups.length; i++ ) {
 				if ( toolGroups[ i ].name === 'reference' ) {
-					var group = {
+					const group = {
 						// Change the name so it isn't replaced twice
 						name: 'cite',
 						type: 'list',
@@ -30,7 +31,7 @@
 						include: [ { group: 'cite' }, 'reference', 'reference/existing' ],
 						demote: [ 'reference', 'reference/existing' ]
 					};
-					var label = OO.ui.deferMsg( 'cite-ve-toolbar-group-label' );
+					const label = OO.ui.deferMsg( 'cite-ve-toolbar-group-label' );
 					// Treat mobile targets differently
 					if ( target === ve.init.mw.MobileArticleTarget ) {
 						group.header = label;
@@ -46,7 +47,7 @@
 		}
 	}
 
-	for ( var n in ve.init.mw.targetFactory.registry ) {
+	for ( const n in ve.init.mw.targetFactory.registry ) {
 		fixTarget( ve.init.mw.targetFactory.lookup( n ) );
 	}
 
@@ -71,7 +72,7 @@
 	 *
 	 */
 	( function () {
-		var deprecatedIcons = {
+		const deprecatedIcons = {
 				'ref-cite-book': 'book',
 				'ref-cite-journal': 'journal',
 				'ref-cite-news': 'newspaper',
@@ -85,13 +86,13 @@
 				web: 'browser'
 			};
 
-		// This is assigned server-side by CiteVisualEditorModule.php, before this file runs.
+		// This is assigned server-side by CitationToolDefinition.php, before this file runs.
 		// Ensure it has a fallback, just in case.
 		ve.ui.mwCitationTools = ve.ui.mwCitationTools || [];
 
 		ve.ui.mwCitationTools.forEach( function ( item ) {
-			var hasOwn = Object.prototype.hasOwnProperty,
-				data = { template: item.template, title: item.title };
+			const hasOwn = Object.prototype.hasOwnProperty;
+			const data = { template: item.template, title: item.title };
 
 			if ( !item.icon && hasOwn.call( defaultIcons, item.name ) ) {
 				item.icon = defaultIcons[ item.name ];
@@ -102,9 +103,9 @@
 			}
 
 			// Generate citation tool
-			var name = 'cite-' + item.name;
+			const name = 'cite-' + item.name;
 			if ( !ve.ui.toolFactory.lookup( name ) ) {
-				var tool = function GeneratedMWCitationDialogTool() {
+				const tool = function GeneratedMWCitationDialogTool() {
 					ve.ui.MWCitationDialogTool.apply( this, arguments );
 				};
 				OO.inheritClass( tool, ve.ui.MWCitationDialogTool );
@@ -131,7 +132,7 @@
 
 			// Generate citation context item
 			if ( !ve.ui.contextItemFactory.lookup( name ) ) {
-				var contextItem = function GeneratedMWCitationContextItem() {
+				const contextItem = function GeneratedMWCitationContextItem() {
 					// Parent constructor
 					ve.ui.MWCitationContextItem.apply( this, arguments );
 				};

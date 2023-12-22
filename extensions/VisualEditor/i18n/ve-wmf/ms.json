@@ -5,11 +5,15 @@
 			"Anakmalaysia",
 			"Aurora",
 			"CyberTroopers",
+			"Hakimi97",
 			"Kurniasan",
 			"SNN95",
 			"아라"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck berpendapat kandungan baharu telah ditambahkan pada halaman",
+	"tag-editcheck-newreference-description": "Rujukan telah ditambahkan pada halaman",
+	"tag-editcheck-references-description": "EditCheck berpendapat rujukan mungkin diperlukan",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Suntingan visual]]",
 	"tag-visualeditor-description": "Disunting dengan menggunakan [[{{MediaWiki:visualeditor-descriptionpagelink}}|suntingan visual]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Suntingan visual: Semak]]",

@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajiniyaz Nurniyazov",
 			"Arystanbek",
 			"Габдулгани НИШ ХБН",
 			"СеніңШешең",
-			"Ajiniyaz Nurniyazov"
+			"U.ayaao.p"
 		]
 	},
 	"multimediaviewer-desc": "Толық экранды интерфейсте шағын суреттерді өлшемін үлкенірек етіп кеңейту",
-	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media kóriwshi]</span>ni qosıw",
+	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Медиа қараушыны]</span> қосу",
 	"multimediaviewer-file-page": "Тиісті файл бетіне өту",
 	"multimediaviewer-repository-local": "Көбірек егжей-тегжейі",
 	"multimediaviewer-datetime-created": "Құрылған кезі: $1",

@@ -17,25 +17,27 @@ use Html;
 use IContextSource;
 use MediaWiki\Actions\Hook\GetActionNameHook;
 use MediaWiki\Extension\DiscussionTools\CommentFormatter;
+use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\SubscriptionStore;
 use MediaWiki\Extension\VisualEditor\Hooks as VisualEditorHooks;
 use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\OutputPageBeforeHTMLHook;
 use MediaWiki\Hook\OutputPageParserOutputHook;
-use MediaWiki\Hook\TitleGetEditNoticesHook;
+use MediaWiki\Hook\SidebarBeforeOutputHook;
+use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\Hook\BeforeDisplayNoArticleTextHook;
+use MediaWiki\Title\Title;
+use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserOptionsLookup;
 use OOUI\ButtonWidget;
-use OOUI\HtmlSnippet;
-use OOUI\MessageWidget;
 use OutputPage;
 use ParserOutput;
 use RequestContext;
 use Skin;
+use SkinTemplate;
 use SpecialPage;
-use Title;
 
 class PageHooks implements
 	BeforeDisplayNoArticleTextHook,
@@ -43,7 +45,8 @@ class PageHooks implements
 	GetActionNameHook,
 	OutputPageBeforeHTMLHook,
 	OutputPageParserOutputHook,
-	TitleGetEditNoticesHook
+	SidebarBeforeOutputHook,
+	SkinTemplateNavigation__UniversalHook
 {
 
 	private Config $config;
@@ -102,12 +105,7 @@ class PageHooks implements
 		}
 
 		// Load modules if any DT feature is enabled for this user
-		if (
-			HookUtils::isFeatureEnabledForOutput( $output ) ||
-			// If there's an a/b test we need to include the JS for unregistered users just so
-			// we can make sure we store the bucket
-			( $this->config->get( 'DiscussionToolsABTest' ) && !$user->isRegistered() )
-		) {
+		if ( HookUtils::isFeatureEnabledForOutput( $output ) ) {
 			$output->addModules( [
 				'ext.discussionTools.init'
 			] );
@@ -177,47 +175,17 @@ class PageHooks implements
 			$title = $output->getTitle();
 
 			if (
-				HookUtils::isFeatureEnabledForOutput( $output, HookUtils::NEWTOPICTOOL ) &&
-				// Only add the button if "New section" tab would be shown in a normal skin.
-				HookUtils::shouldShowNewSectionTab( $output->getContext() )
-			) {
-				$output->enableOOUI();
-				$output->addModuleStyles( [
-					// For speechBubbleAdd
-					'oojs-ui.styles.icons-alerts',
-				] );
-				$output->addBodyClasses( 'ext-discussiontools-init-new-topic-opened' );
-
-				// Minerva doesn't show a new topic button by default, unless the MobileFrontend
-				// talk page feature is enabled, but we shouldn't depend on code from there.
-				$output->addHTML( Html::rawElement( 'div',
-					[ 'class' => 'ext-discussiontools-init-new-topic' ],
-					( new ButtonWidget( [
-						'classes' => [ 'ext-discussiontools-init-new-topic-button' ],
-						'href' => $title->getLinkURL( [ 'action' => 'edit', 'section' => 'new' ] ),
-						'icon' => 'speechBubbleAdd',
-						'label' => $output->getContext()->msg( 'skin-action-addsection' )->text(),
-						'flags' => [ 'progressive', 'primary' ],
-						'infusable' => true,
-					] ) )
-						// For compatibility with Minerva click tracking (T295490)
-						->setAttributes( [ 'data-event-name' => 'talkpage.add-topic' ] )
-				) );
-			}
-
-			if (
 				$title->isTalkPage() &&
 				HookUtils::isFeatureEnabledForOutput( $output, HookUtils::REPLYTOOL ) && (
-					CommentFormatter::hasLedeContent( $output->getHTML() ) || (
+					// 'DiscussionTools-ledeButton' property may be already set to true or false.
+					// Examine the other conditions only if it's unset.
+					$output->getProperty( 'DiscussionTools-ledeButton' ) ?? (
 						// Header shown on all talk pages, see Article::showNamespaceHeader
 						!$output->getContext()->msg( 'talkpageheader' )->isDisabled() &&
 						// Check if it isn't empty since it may use parser functions to only show itself on some pages
 						trim( $output->getContext()->msg( 'talkpageheader' )->text() ) !== ''
 					)
-				) &&
-				// If there are comments in the lede section, we can't really separate them from other lede
-				// content, so keep the whole section visible.
-				!CommentFormatter::hasCommentsInLedeContent( $output->getHTML() )
+				)
 			) {
 				$output->addBodyClasses( 'ext-discussiontools-init-lede-hidden' );
 				$output->enableOOUI();
@@ -236,10 +204,43 @@ class PageHooks implements
 
 				// Preload jquery.makeCollapsible for LedeSectionDialog.
 				// Using the same approach as in Skin::getDefaultModules in MediaWiki core.
-				if ( strpos( $output->getHTML(), 'mw-collapsible' ) !== false ) {
+				if ( str_contains( $output->getHTML(), 'mw-collapsible' ) ) {
 					$output->addModules( 'jquery.makeCollapsible' );
 					$output->addModuleStyles( 'jquery.makeCollapsible.styles' );
 				}
+			}
+
+			if (
+				$req->getRawVal( 'action', 'view' ) === 'view' &&
+				HookUtils::isFeatureEnabledForOutput( $output, HookUtils::NEWTOPICTOOL ) &&
+				// Only add the button if "New section" tab would be shown in a normal skin.
+				HookUtils::shouldShowNewSectionTab( $output->getContext() )
+			) {
+				$output->enableOOUI();
+				$output->addModuleStyles( [
+					// For speechBubbleAdd
+					'oojs-ui.styles.icons-alerts',
+				] );
+				$output->addBodyClasses( 'ext-discussiontools-init-new-topic-opened' );
+
+				// Minerva doesn't show a new topic button.
+				$output->addHTML( Html::rawElement( 'div',
+					[ 'class' => 'ext-discussiontools-init-new-topic' ],
+					( new ButtonWidget( [
+						'classes' => [ 'ext-discussiontools-init-new-topic-button' ],
+						'href' => $title->getLinkURL( [ 'action' => 'edit', 'section' => 'new' ] ),
+						'icon' => 'speechBubbleAdd',
+						'label' => $output->getContext()->msg( 'skin-action-addsection' )->text(),
+						'flags' => [ 'progressive', 'primary' ],
+						'infusable' => true,
+					] ) )
+						// For compatibility with MobileWebUIActionsTracking logging (T295490)
+						->setAttributes( [ 'data-event-name' => 'talkpage.add-topic' ] )
+				) );
+			}
+
+			if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::TOPICSUBSCRIPTION ) ) {
+				$output->addModuleStyles( 'ext.discussionTools.minervaicons' );
 			}
 		}
 	}
@@ -263,32 +264,18 @@ class PageHooks implements
 		// multiple sources!
 
 		$isMobile = $this->isMobile();
-		$lang = $output->getLanguage();
 
 		if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::TOPICSUBSCRIPTION ) ) {
 			// Just enable OOUI PHP - the OOUI subscribe button isn't infused unless VISUALENHANCEMENTS are enabled
 			$output->setupOOUI();
 			$text = CommentFormatter::postprocessTopicSubscription(
-				$text, $lang, $this->subscriptionStore, $output->getUser(), $isMobile
+				$text, $output, $this->subscriptionStore, $isMobile
 			);
 		}
 
 		if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::REPLYTOOL ) ) {
 			$output->enableOOUI();
-			$text = CommentFormatter::postprocessReplyTool(
-				$text, $lang, $isMobile
-			);
-		}
-
-		if (
-			CommentFormatter::isEmptyTalkPage( $text ) &&
-			HookUtils::shouldDisplayEmptyState( $output->getContext() )
-		) {
-			$output->enableOOUI();
-			$text = CommentFormatter::appendToEmptyTalkPage(
-				$text, $this->getEmptyStateHtml( $output->getContext() )
-			);
-			$output->addBodyClasses( 'ext-discussiontools-emptystate-shown' );
+			$text = CommentFormatter::postprocessReplyTool( $text, $output, $isMobile );
 		}
 
 		if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::VISUALENHANCEMENTS ) ) {
@@ -304,7 +291,7 @@ class PageHooks implements
 				$isMobile ||
 				(
 					HookUtils::isFeatureEnabledForOutput( $output, HookUtils::VISUALENHANCEMENTS_REPLY ) &&
-					CommentFormatter::isLanguageRequiringReplyIcon( $lang )
+					CommentFormatter::isLanguageRequiringReplyIcon( $output->getLanguage() )
 				)
 			) {
 				$output->addModuleStyles( [
@@ -322,17 +309,7 @@ class PageHooks implements
 					'oojs-ui.styles.icons-editing-core',
 				] );
 			}
-			$text = CommentFormatter::postprocessVisualEnhancements(
-				$text, $lang, $output->getUser(), $isMobile
-			);
-
-			$subtitle = CommentFormatter::postprocessVisualEnhancementsSubtitle(
-				$text, $lang, $output->getUser()
-			);
-
-			if ( $subtitle ) {
-				$output->addSubtitle( $subtitle );
-			}
+			$text = CommentFormatter::postprocessVisualEnhancements( $text, $output, $isMobile );
 		}
 
 		return true;
@@ -347,7 +324,61 @@ class PageHooks implements
 	 * @return void This hook must not abort, it must return no value
 	 */
 	public function onOutputPageParserOutput( $output, $pout ): void {
-		CommentFormatter::postprocessTableOfContents( $pout, $output->getLanguage() );
+		// ParserOutputPostCacheTransform hook would be a better place to do this,
+		// so that when the ParserOutput is used directly without using this hook,
+		// we don't leave half-baked interface elements in it (see e.g. T292345, T294168).
+		// But that hook doesn't provide parameters that we need to render correctly
+		// (including the page title, interface language, and current user).
+
+		// This hook can be executed more than once per page view if the page content is composed from
+		// multiple sources!
+
+		$isMobile = $this->isMobile();
+
+		CommentFormatter::postprocessTableOfContents( $pout, $output );
+
+		if (
+			CommentFormatter::isEmptyTalkPage( $pout ) &&
+			HookUtils::shouldDisplayEmptyState( $output->getContext() )
+		) {
+			$output->enableOOUI();
+			CommentFormatter::appendToEmptyTalkPage(
+				$pout, $this->getEmptyStateHtml( $output->getContext() )
+			);
+			$output->addBodyClasses( 'ext-discussiontools-emptystate-shown' );
+		}
+
+		if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::VISUALENHANCEMENTS ) ) {
+			$subtitle = CommentFormatter::postprocessVisualEnhancementsSubtitle( $pout, $output );
+
+			if ( $subtitle ) {
+				$output->addSubtitle( $subtitle );
+			}
+		}
+
+		if ( $output->getSkin()->getSkinName() === 'minerva' ) {
+			$title = $output->getTitle();
+
+			if (
+				$title->isTalkPage() &&
+				HookUtils::isFeatureEnabledForOutput( $output, HookUtils::REPLYTOOL )
+			) {
+				if (
+					CommentFormatter::hasCommentsInLedeContent( $pout )
+				) {
+					// If there are comments in the lede section, we can't really separate them from other lede
+					// content, so keep the whole section visible.
+					$output->setProperty( 'DiscussionTools-ledeButton', false );
+
+				} elseif (
+					CommentFormatter::hasLedeContent( $pout ) &&
+					$output->getProperty( 'DiscussionTools-ledeButton' ) === null
+				) {
+					// If there is lede content and the lede button hasn't been disabled above, enable it.
+					$output->setProperty( 'DiscussionTools-ledeButton', true );
+				}
+			}
+		}
 	}
 
 	/**
@@ -418,15 +449,22 @@ class PageHooks implements
 		$descParams = [];
 		$buttonMsg = 'discussiontools-emptystate-button';
 		$title = $context->getTitle();
-		if ( $title->getNamespace() == NS_USER_TALK && !$title->isSubpage() ) {
+		if ( $title->getNamespace() === NS_USER_TALK && !$title->isSubpage() ) {
 			// This is a user talk page
 			$isIP = $this->userNameUtils->isIP( $title->getText() );
+			$isTemp = $this->userNameUtils->isTemp( $title->getText() );
 			if ( $title->equals( $context->getUser()->getTalkPage() ) ) {
 				// This is your own user talk page
-				if ( $isIP ) {
-					// You're an IP editor, so this is only *sort of* your talk page
-					$titleMsg = 'discussiontools-emptystate-title-self-anon';
-					$descMsg = 'discussiontools-emptystate-desc-self-anon';
+				if ( $isIP || $isTemp ) {
+					if ( $isIP ) {
+						// You're an IP editor, so this is only *sort of* your talk page
+						$titleMsg = 'discussiontools-emptystate-title-self-anon';
+						$descMsg = 'discussiontools-emptystate-desc-self-anon';
+					} else {
+						// You're a temporary user, so you don't get some of the good stuff
+						$titleMsg = 'discussiontools-emptystate-title-self-temp';
+						$descMsg = 'discussiontools-emptystate-desc-self-temp';
+					}
 					$query = $context->getRequest()->getValues();
 					unset( $query['title'] );
 					$descParams = [
@@ -449,6 +487,10 @@ class PageHooks implements
 				// This is an IP editor
 				$titleMsg = 'discussiontools-emptystate-title-user-anon';
 				$descMsg = 'discussiontools-emptystate-desc-user-anon';
+			} elseif ( $isTemp ) {
+				// This is a temporary user
+				$titleMsg = 'discussiontools-emptystate-title-user-temp';
+				$descMsg = 'discussiontools-emptystate-desc-user-temp';
 			} else {
 				// This is any other user
 				$titleMsg = 'discussiontools-emptystate-title-user';
@@ -491,46 +533,87 @@ class PageHooks implements
 	}
 
 	/**
-	 * @param Title $title Title object for the page the edit notices are for
-	 * @param int $oldid Revision ID that the edit notices are for (or 0 for latest)
-	 * @param array &$notices Array of notices. Keys are i18n message keys, values are
-	 *   parseAsBlock()ed messages.
-	 * @return bool|void True or no return value to continue or false to abort
+	 * @param Skin $skin
+	 * @param array &$sidebar
 	 */
-	public function onTitleGetEditNotices( $title, $oldid, &$notices ) {
-		$context = RequestContext::getMain();
-
+	public function onSidebarBeforeOutput( $skin, &$sidebar ): void {
+		$output = $skin->getOutput();
 		if (
-			// Hint is active
-			$this->userOptionsLookup->getOption( $context->getUser(), 'discussiontools-newtopictool-hint-shown' ) &&
-			// Turning off the new topic tool also dismisses the hint
-			$this->userOptionsLookup->getOption( $context->getUser(), 'discussiontools-' . HookUtils::NEWTOPICTOOL ) &&
-			// Only show when following the link from the new topic tool, never on normal edit attempts.
-			// This can be called from within ApiVisualEditor, so we can't access most request parameters
-			// for the main request. However, we can access 'editintro', because it's passed to the API.
-			$context->getRequest()->getRawVal( 'editintro' ) === 'mw-dt-topic-hint'
+			$skin->getSkinName() === 'minerva' &&
+			HookUtils::isFeatureEnabledForOutput( $output, HookUtils::TOPICSUBSCRIPTION )
 		) {
-			$context->getOutput()->enableOOUI();
-
-			$returnUrl = $title->getFullURL( [
-				'action' => 'edit',
-				'section' => 'new',
-				'dtenable' => '1',
-			] );
-			$prefUrl = SpecialPage::getTitleFor( 'Preferences' )
-				->createFragmentTarget( 'mw-prefsection-editing-discussion' )->getFullURL();
-
-			$topicHint = new MessageWidget( [
-				'label' => new HtmlSnippet( wfMessage( 'discussiontools-newtopic-legacy-hint-return' )
-					->params( $returnUrl, $prefUrl )->parse() ),
-				'icon' => 'article',
-				'classes' => [ 'ext-discussiontools-ui-newTopic-hint-return' ],
-			] );
-
-			// Add our notice above the built-in ones
-			$notices = [
-				'discussiontools-newtopic-legacy-hint-return' => (string)$topicHint,
-			] + $notices;
+			$button = $this->getNewTopicsSubscriptionButton(
+				$skin->getUser(),
+				$skin->getTitle(),
+				$skin->getContext()
+			);
+			$sidebar['TOOLBOX']['t-page-subscribe'] = [
+				'icon' => $button['icon'],
+				'text' => $button['label'],
+				'href' => $button['href'],
+			];
 		}
+	}
+
+	/**
+	 * @param SkinTemplate $sktemplate
+	 * @param array &$links
+	 * @return void
+	 * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
+	 */
+	public function onSkinTemplateNavigation__Universal( $sktemplate, &$links ): void {
+		$output = $sktemplate->getOutput();
+		if ( HookUtils::isFeatureEnabledForOutput( $output, HookUtils::TOPICSUBSCRIPTION ) ) {
+			$button = $this->getNewTopicsSubscriptionButton(
+				$sktemplate->getUser(),
+				$sktemplate->getTitle(),
+				$sktemplate->getContext()
+			);
+
+			$links['actions']['dt-page-subscribe'] = [
+				'text' => $button['label'],
+				'title' => $button['tooltip'],
+				'data-mw-subscribed' => $button['isSubscribed'] ? '1' : '0',
+				'href' => $button['href'],
+			];
+
+			$output->addModules( [ 'ext.discussionTools.init' ] );
+		}
+	}
+
+	/**
+	 * Get data from a new topics subcription button
+	 *
+	 * @param UserIdentity $user User
+	 * @param Title $title Title
+	 * @param IContextSource $context Context
+	 * @return array Array containing label, tooltip, icon, isSubscribed and href.
+	 */
+	private function getNewTopicsSubscriptionButton(
+		UserIdentity $user, Title $title, IContextSource $context
+	): array {
+		$items = $this->subscriptionStore->getSubscriptionItemsForUser(
+			$user,
+			[ CommentUtils::getNewTopicsSubscriptionId( $title ) ]
+		);
+		$subscriptionItem = count( $items ) ? $items[ 0 ] : null;
+		$isSubscribed = $subscriptionItem && !$subscriptionItem->isMuted();
+
+		return [
+			'label' => $context->msg( $isSubscribed ?
+				'discussiontools-newtopicssubscription-button-unsubscribe-label' :
+				'discussiontools-newtopicssubscription-button-subscribe-label'
+			)->text(),
+			'tooltip' => $context->msg( $isSubscribed ?
+				'discussiontools-newtopicssubscription-button-unsubscribe-tooltip' :
+				'discussiontools-newtopicssubscription-button-subscribe-tooltip'
+			)->text(),
+			'icon' => $isSubscribed ? 'bell' : 'bellOutline',
+			'isSubscribed' => $isSubscribed,
+			'href' => $title->getLinkURL( [
+				'action' => $isSubscribed ? 'dtunsubscribe' : 'dtsubscribe',
+				'commentname' => CommentUtils::getNewTopicsSubscriptionId( $title ),
+			] ),
+		];
 	}
 }

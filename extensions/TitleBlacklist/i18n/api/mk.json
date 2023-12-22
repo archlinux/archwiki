@@ -4,7 +4,6 @@
 			"Bjankuloski06"
 		]
 	},
-	"apihelp-titleblacklist-description": "Провери наслов на страница, име на податотека или корисничко име во Црниот список.",
 	"apihelp-titleblacklist-summary": "Провери наслов на страница, име на податотека или корисничко име во Црниот список.",
 	"apihelp-titleblacklist-param-title": "Низата што треба да се провери во црниот список.",
 	"apihelp-titleblacklist-param-action": "Дејството што треба да се провери.",

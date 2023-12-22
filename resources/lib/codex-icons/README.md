@@ -2,8 +2,7 @@
 
 This package contains the Codex icons, and utility functions needed to work with them.
 The icons are applying “WikimediaUI” theme visual style of Wikimedia Foundation, following
-[Wikimedia Design Style Guide's icon guidelines](https://design.wikimedia.org/style-guide/visual-style_icons.html).
-
+[Design Style Guide's icon guidelines](https://doc.wikimedia.org/codex/latest/style-guide/icons.html)
 ## Using icons
 To use an icon, import it from this package:
 ```
@@ -38,7 +37,7 @@ backwards-compatible SVG file for older [SVG render libraries compliance](https:
 ### Build products
 The build process outputs the following files in the `dist/` directory:
 - `codex-icons.cjs.js`: All icons and utility functions, in CommonJS format
-- `codex-icons.es.js`: All icons and utility functions, in ES module format
+- `codex-icons.mjs`: All icons and utility functions, in ES module format
 - `codex-icons.json`: All icons, in JSON format
 - `index.d.ts` and other `.d.ts` files: TypeScript type definitions
 - `images/*.svg`: All icons as raw SVG files

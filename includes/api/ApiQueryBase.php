@@ -21,8 +21,11 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
@@ -113,29 +116,11 @@ abstract class ApiQueryBase extends ApiBase {
 	/**
 	 * Get the Query database connection (read-only)
 	 * @stable to override
-	 * @return IDatabase
+	 * @return IReadableDatabase
 	 */
 	protected function getDB() {
 		$this->mDb ??= $this->getQuery()->getDB();
 
-		return $this->mDb;
-	}
-
-	/**
-	 * Change the database connection for subsequent calls to ::getDB().
-	 *
-	 * See ApiQuery::getNamedDB() for more information.
-	 *
-	 * @deprecated since 1.39 Use or override ApiBase::getDB() and optionally
-	 *  pass a query group to wfGetDB() or ILoadBalancer::getConnectionRef().
-	 * @param string $name Name to assign to the database connection
-	 * @param int $db One of the DB_* constants
-	 * @param string|string[] $groups Query groups
-	 * @return IDatabase
-	 */
-	public function selectNamedDB( $name, $db, $groups ) {
-		wfDeprecated( __METHOD__, '1.39' );
-		$this->mDb = $this->getQuery()->getNamedDB( $name, $db, $groups );
 		return $this->mDb;
 	}
 
@@ -279,7 +264,7 @@ abstract class ApiQueryBase extends ApiBase {
 	 * consider using addWhereIDsFld() instead.
 	 *
 	 * @param string $field Field name
-	 * @param int|string|string[]|int[] $value Value; ignored if null or empty array
+	 * @param int|string|(string|int|null)[] $value Value; ignored if null or empty array
 	 */
 	protected function addWhereFld( $field, $value ) {
 		if ( $value !== null && !( is_array( $value ) && !$value ) ) {

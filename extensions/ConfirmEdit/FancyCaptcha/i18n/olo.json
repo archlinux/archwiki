@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Ilja.mos",
-			"Mashoi7"
+			"Mashoi7",
+			"Ruppijeva"
 		]
 	},
-	"fancycaptcha-captcha": "Turvalližusvarmistus",
-	"fancycaptcha-accountcreate": "Ku suojata wikii automuattizesti luajittulois tililöis, kyzymmö sinuu kirjuttamah al olijat sanat ramkah ([[Special:Captcha/help|ližätieduo]]):",
-	"fancycaptcha-imgcaptcha-ph": "Kirjuta ylähän olii tekstu",
-	"fancycaptcha-reload-text": "Päivitä"
+	"fancycaptcha-captcha": "Turvalližuon tarkastus",
+	"fancycaptcha-accountcreate": "Ku suojata wikii avtomuattizesti luajittulois käyttäjäntunnuksis, kyzymmö sinuu kirjuttamah alemba olijat sanat tekstukentäh ([[Special:Captcha/help|ližätieduo]]):",
+	"fancycaptcha-imgcaptcha-ph": "Kirjuta kuvas olii tekstu",
+	"fancycaptcha-reload-text": "Uvvista"
 }

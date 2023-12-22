@@ -23,23 +23,27 @@
 
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Diff\TextDiffer\ManifoldTextDiffer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
+use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\BadRevisionException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Storage\NameTableAccessException;
-use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsLookup;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * DifferenceEngine is responsible for rendering the difference between two revisions as HTML.
@@ -73,7 +77,7 @@ class DifferenceEngine extends ContextSource {
 	 * fixes important bugs or such to force cached diff views to
 	 * clear.
 	 */
-	private const DIFF_VERSION = '1.12';
+	private const DIFF_VERSION = '1.41';
 
 	/**
 	 * Revision ID for the old revision. 0 for the revision previous to $mNewid, false
@@ -115,14 +119,12 @@ class DifferenceEngine extends ContextSource {
 
 	/**
 	 * Title of old revision or null if the old revision does not exist or does not belong to a page.
-	 * Since 1.32 public access is deprecated and the property can be null.
 	 * @var Title|null
 	 */
 	protected $mOldPage;
 
 	/**
 	 * Title of new revision or null if the new revision does not exist or does not belong to a page.
-	 * Since 1.32 public access is deprecated and the property can be null.
 	 * @var Title|null
 	 */
 	protected $mNewPage;
@@ -153,7 +155,7 @@ class DifferenceEngine extends ContextSource {
 	 */
 	private $mNewContent;
 
-	/** @var Language|StubUserLang */
+	/** @var Language */
 	protected $mDiffLang;
 
 	/** @var bool Have the revisions IDs been loaded */
@@ -177,6 +179,9 @@ class DifferenceEngine extends ContextSource {
 
 	/** @var bool Was the diff fetched from cache? */
 	protected $mCacheHit = false;
+
+	/** @var string|null Cache key if the diff was fetched from cache */
+	private $cacheHitKey = null;
 
 	/**
 	 * Set this to true to add debug info to the HTML output.
@@ -218,31 +223,22 @@ class DifferenceEngine extends ContextSource {
 	private $slotDiffOptions = [];
 
 	/**
-	 * @var LinkRenderer
+	 * Extra query parameters to be appended to diff page links
 	 */
-	protected $linkRenderer;
+	private $extraQueryParams = [];
 
-	/**
-	 * @var IContentHandlerFactory
-	 */
-	private $contentHandlerFactory;
+	/** @var ManifoldTextDiffer|null */
+	private $textDiffer;
 
-	/**
-	 * @var RevisionStore
-	 */
-	private $revisionStore;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var WikiPageFactory */
-	private $wikiPageFactory;
-
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
-
-	/** @var CommentFormatter */
-	private $commentFormatter;
+	protected LinkRenderer $linkRenderer;
+	private IContentHandlerFactory $contentHandlerFactory;
+	private RevisionStore $revisionStore;
+	private ArchivedRevisionLookup $archivedRevisionLookup;
+	private HookRunner $hookRunner;
+	private WikiPageFactory $wikiPageFactory;
+	private UserOptionsLookup $userOptionsLookup;
+	private CommentFormatter $commentFormatter;
+	private IConnectionProvider $dbProvider;
 
 	/** @var Message[] */
 	private $revisionLoadErrors = [];
@@ -260,16 +256,6 @@ class DifferenceEngine extends ContextSource {
 	public function __construct( $context = null, $old = 0, $new = 0, $rcid = 0,
 		$refreshCache = false, $unhide = false
 	) {
-		$this->deprecatePublicProperty( 'mOldid', '1.32', __CLASS__ );
-		$this->deprecatePublicProperty( 'mNewid', '1.32', __CLASS__ );
-		$this->deprecatePublicProperty( 'mOldPage', '1.32', __CLASS__ );
-		$this->deprecatePublicProperty( 'mNewPage', '1.32', __CLASS__ );
-		$this->deprecatePublicProperty( 'mOldContent', '1.32', __CLASS__ );
-		$this->deprecatePublicProperty( 'mNewContent', '1.32', __CLASS__ );
-		$this->deprecatePublicProperty( 'mRevisionsLoaded', '1.32', __CLASS__ );
-		$this->deprecatePublicProperty( 'mTextLoaded', '1.32', __CLASS__ );
-		$this->deprecatePublicProperty( 'mCacheHit', '1.32', __CLASS__ );
-
 		if ( $context instanceof IContextSource ) {
 			$this->setContext( $context );
 		}
@@ -285,15 +271,18 @@ class DifferenceEngine extends ContextSource {
 		$this->linkRenderer = $services->getLinkRenderer();
 		$this->contentHandlerFactory = $services->getContentHandlerFactory();
 		$this->revisionStore = $services->getRevisionStore();
+		$this->archivedRevisionLookup = $services->getArchivedRevisionLookup();
 		$this->hookRunner = new HookRunner( $services->getHookContainer() );
 		$this->wikiPageFactory = $services->getWikiPageFactory();
 		$this->userOptionsLookup = $services->getUserOptionsLookup();
 		$this->commentFormatter = $services->getCommentFormatter();
+		$this->dbProvider = $services->getDBLoadBalancerFactory();
 	}
 
 	/**
 	 * @return SlotDiffRenderer[] Diff renderers for each slot, keyed by role name.
-	 *   Includes slots only present in one of the revisions.
+	 *   Includes slots only present in one of the revisions. Does not include slots
+	 *   for which content is identical in the two revisions.
 	 */
 	protected function getSlotDiffRenderers() {
 		if ( $this->isSlotDiffRenderer ) {
@@ -306,14 +295,23 @@ class DifferenceEngine extends ContextSource {
 			}
 
 			$slotContents = $this->getSlotContents();
-			$this->slotDiffRenderers = array_map( function ( array $contents ) {
-				/** @var Content $content */
-				$content = $contents['new'] ?: $contents['old'];
-				return $content->getContentHandler()->getSlotDiffRenderer(
+			$this->slotDiffRenderers = [];
+			foreach ( $slotContents as $role => $contents ) {
+				if ( $contents['new'] && $contents['old']
+					&& $contents['new']->equals( $contents['old'] )
+				) {
+					// Do not produce a diff of identical content
+					continue;
+				}
+				$handler = ( $contents['new'] ?: $contents['old'] )->getContentHandler();
+				$this->slotDiffRenderers[$role] = $handler->getSlotDiffRenderer(
 					$this->getContext(),
-					$this->slotDiffOptions
+					$this->slotDiffOptions + [
+						'contentLanguage' => $this->getDiffLang()->getCode(),
+						'textDiffer' => $this->getTextDiffer()
+					]
 				);
-			}, $slotContents );
+			}
 		}
 
 		return $this->slotDiffRenderers;
@@ -332,7 +330,7 @@ class DifferenceEngine extends ContextSource {
 	/**
 	 * Get the old and new content objects for all slots.
 	 * This method does not do any permission checks.
-	 * @return array [ role => [ 'old' => SlotRecord|null, 'new' => SlotRecord|null ], ... ]
+	 * @return (Content|null)[][] [ role => [ 'old' => Content|null, 'new' => Content|null ], ... ]
 	 */
 	protected function getSlotContents() {
 		if ( $this->isContentOverridden ) {
@@ -443,15 +441,24 @@ class DifferenceEngine extends ContextSource {
 	}
 
 	/**
-	 * Get the language of the difference engine, defaults to page content language
+	 * Get the language in which the diff text is written
 	 *
-	 * @return Language|StubUserLang
+	 * @return Language
 	 */
 	public function getDiffLang() {
 		# Default language in which the diff text is written.
-		$this->mDiffLang ??= $this->getTitle()->getPageLanguage();
-
+		$this->mDiffLang ??= $this->getDefaultLanguage();
 		return $this->mDiffLang;
+	}
+
+	/**
+	 * Get the language to use if none has been set by setTextLanguage().
+	 * Wikibase overrides this to use the user language.
+	 *
+	 * @return Language
+	 */
+	protected function getDefaultLanguage() {
+		return $this->getTitle()->getPageLanguage();
 	}
 
 	/**
@@ -515,19 +522,9 @@ class DifferenceEngine extends ContextSource {
 	 */
 	public function deletedLink( $id ) {
 		if ( $this->getAuthority()->isAllowed( 'deletedhistory' ) ) {
-			$dbr = wfGetDB( DB_REPLICA );
-			$arQuery = $this->revisionStore->getArchiveQueryInfo();
-			$row = $dbr->selectRow(
-				$arQuery['tables'],
-				array_merge( $arQuery['fields'], [ 'ar_namespace', 'ar_title' ] ),
-				[ 'ar_rev_id' => $id ],
-				__METHOD__,
-				[],
-				$arQuery['joins']
-			);
-			if ( $row ) {
-				$revRecord = $this->revisionStore->newRevisionFromArchiveRow( $row );
-				$title = Title::makeTitleSafe( $row->ar_namespace, $row->ar_title );
+			$revRecord = $this->archivedRevisionLookup->getArchivedRevisionRecord( null, $id );
+			if ( $revRecord ) {
+				$title = Title::newFromPageIdentity( $revRecord->getPage() );
 
 				return SpecialPage::getTitleFor( 'Undelete' )->getFullURL( [
 					'target' => $title->getPrefixedText(),
@@ -566,7 +563,7 @@ class DifferenceEngine extends ContextSource {
 			$missing[] = $this->deletedIdMarker( $this->mNewid );
 		}
 
-		$out->setPageTitle( $this->msg( 'errorpagetitle' ) );
+		$out->setPageTitleMsg( $this->msg( 'errorpagetitle' ) );
 		$msg = $this->msg( 'difference-missing-revision' )
 			->params( $this->getLanguage()->listToText( $missing ) )
 			->numParams( count( $missing ) )
@@ -691,7 +688,7 @@ class DifferenceEngine extends ContextSource {
 
 		$rollback = '';
 
-		$query = $this->slotDiffOptions;
+		$query = $this->extraQueryParams;
 		# Carry over 'diffonly' param via navigation links
 		if ( $diffOnly != MediaWikiServices::getInstance()
 			->getUserOptionsLookup()->getBoolOption( $user, 'diffonly' )
@@ -715,7 +712,9 @@ class DifferenceEngine extends ContextSource {
 		# is the first version of that article. In that case, V' does not exist.
 		if ( $this->mOldRevisionRecord === false ) {
 			if ( $this->mNewPage ) {
-				$out->setPageTitle( $this->msg( 'difference-title', $this->mNewPage->getPrefixedText() ) );
+				$out->setPageTitleMsg(
+					$this->msg( 'difference-title' )->plaintextParams( $this->mNewPage->getPrefixedText() )
+				);
 			}
 			$samePage = true;
 			$oldHeader = '';
@@ -728,10 +727,12 @@ class DifferenceEngine extends ContextSource {
 				// XXX say something to the user?
 				$samePage = false;
 			} elseif ( $this->mNewPage->equals( $this->mOldPage ) ) {
-				$out->setPageTitle( $this->msg( 'difference-title', $this->mNewPage->getPrefixedText() ) );
+				$out->setPageTitleMsg(
+					$this->msg( 'difference-title' )->plaintextParams( $this->mNewPage->getPrefixedText() )
+				);
 				$samePage = true;
 			} else {
-				$out->setPageTitle( $this->msg( 'difference-title-multipage',
+				$out->setPageTitleMsg( $this->msg( 'difference-title-multipage' )->plaintextParams(
 					$this->mOldPage->getPrefixedText(), $this->mNewPage->getPrefixedText() ) );
 				$out->addSubtitle( $this->msg( 'difference-multipage' ) );
 				$samePage = false;
@@ -919,10 +920,37 @@ class DifferenceEngine extends ContextSource {
 				$notice .= Html::warningBox( $msg->parse() );
 			}
 
+			// Check if inline switcher will be needed
+			if ( $this->getTextDiffer()->hasFormat( 'inline' ) ) {
+				$out->enableOOUI();
+			}
+
+			$this->showTablePrefixes();
 			$this->showDiff( $oldHeader, $newHeader, $notice );
 			if ( !$diffOnly ) {
 				$this->renderNewRevision();
 			}
+		}
+	}
+
+	/**
+	 * Add table prefixes
+	 */
+	private function showTablePrefixes() {
+		$parts = [];
+		foreach ( $this->getSlotDiffRenderers() as $slotDiffRenderer ) {
+			$parts += $slotDiffRenderer->getTablePrefix( $this->getContext(), $this->mNewPage );
+		}
+		ksort( $parts );
+		if ( count( array_filter( $parts ) ) > 0 ) {
+			$language = $this->getLanguage();
+			$attrs = [
+				'class' => 'mw-diff-table-prefix',
+				'dir' => $language->getDir(),
+				'lang' => $language->getCode(),
+			];
+			$this->getOutput()->addHTML(
+				Html::rawElement( 'div', $attrs, implode( '', $parts ) ) );
 		}
 	}
 
@@ -1095,10 +1123,21 @@ class DifferenceEngine extends ContextSource {
 					$wikiPage = $this->wikiPageFactory->newFromTitle( $this->mNewPage );
 				}
 
-				$parserOutput = $this->getParserOutput( $wikiPage, $this->mNewRevisionRecord );
+				$parserOptions = $wikiPage->makeParserOptions( $this->getContext() );
+				$parserOptions->setRenderReason( 'diff-page' );
 
-				# WikiPage::getParserOutput() should not return false, but just in case
-				if ( $parserOutput ) {
+				$parserOutputAccess = MediaWikiServices::getInstance()->getParserOutputAccess();
+				$status = $parserOutputAccess->getParserOutput(
+					$wikiPage,
+					$parserOptions,
+					$this->mNewRevisionRecord,
+					// we already checked
+					ParserOutputAccess::OPT_NO_AUDIENCE_CHECK |
+					// Update cascading protection
+					ParserOutputAccess::OPT_LINKS_UPDATE
+				);
+				if ( $status->isOK() ) {
+					$parserOutput = $status->getValue();
 					// Allow extensions to change parser output here
 					if ( $this->hookRunner->onDifferenceEngineRenderRevisionAddParserOutput(
 						$this, $out, $parserOutput, $wikiPage )
@@ -1112,6 +1151,14 @@ class DifferenceEngine extends ContextSource {
 							'absoluteURLs' => $this->slotDiffOptions['expand-url'] ?? false
 						] );
 					}
+				} else {
+					$out->addHTML(
+						Html::errorBox(
+							$out->parseAsInterface(
+								$status->getWikiText( false, false, $this->getLanguage() )
+							)
+						)
+					);
 				}
 			}
 		}
@@ -1121,25 +1168,6 @@ class DifferenceEngine extends ContextSource {
 			# Add redundant patrol link on bottom...
 			$out->addHTML( $this->markPatrolledLink() );
 		}
-	}
-
-	/**
-	 * @param WikiPage $page
-	 * @param RevisionRecord $revRecord
-	 *
-	 * @return ParserOutput|false False if the revision was not found
-	 */
-	protected function getParserOutput( WikiPage $page, RevisionRecord $revRecord ) {
-		if ( !$revRecord->getId() ) {
-			// WikiPage::getParserOutput wants a revision ID. Passing 0 will incorrectly show
-			// the current revision, so fail instead. If need be, WikiPage::getParserOutput
-			// could be made to accept a RevisionRecord instead of the id.
-			return false;
-		}
-
-		$parserOptions = $page->makeParserOptions( $this->getContext() );
-		$parserOptions->setRenderReason( 'diff-page' );
-		return $page->getParserOutput( $parserOptions, $revRecord->getId() );
 	}
 
 	/**
@@ -1209,6 +1237,10 @@ class DifferenceEngine extends ContextSource {
 				"</div>\n";
 		}
 
+		if ( $this->cacheHitKey !== null ) {
+			$body .= "\n<!-- diff cache key " . htmlspecialchars( $this->cacheHitKey ) . " -->\n";
+		}
+
 		return $this->addHeader( $body, $otitle, $ntitle, $multi, $notice );
 	}
 
@@ -1264,13 +1296,13 @@ class DifferenceEngine extends ContextSource {
 				if ( is_string( $difftext ) ) {
 					$stats->updateCount( 'diff_cache.hit', 1 );
 					$difftext = $this->localiseDiff( $difftext );
-					$difftext .= "\n<!-- diff cache key $key -->\n";
-
+					$this->cacheHitKey = $key;
 					return $difftext;
 				}
 			} // don't try to load but save the result
 		}
 		$this->mCacheHit = false;
+		$this->cacheHitKey = null;
 
 		// Loadtext is permission safe, this just clears out the diff
 		if ( !$this->loadText() ) {
@@ -1282,8 +1314,12 @@ class DifferenceEngine extends ContextSource {
 		// read permissions here.
 		$slotContents = $this->getSlotContents();
 		foreach ( $this->getSlotDiffRenderers() as $role => $slotDiffRenderer ) {
-			$slotDiff = $slotDiffRenderer->getDiff( $slotContents[$role]['old'],
-				$slotContents[$role]['new'] );
+			try {
+				$slotDiff = $slotDiffRenderer->getDiff( $slotContents[$role]['old'],
+					$slotContents[$role]['new'] );
+			} catch ( IncompatibleDiffTypesException $e ) {
+				$slotDiff = $this->getSlotError( $e->getMessageObject()->parse() );
+			}
 			if ( $slotDiff && $role !== SlotRecord::MAIN ) {
 				// FIXME: ask SlotRoleHandler::getSlotNameMessage
 				$slotTitle = $role;
@@ -1320,9 +1356,13 @@ class DifferenceEngine extends ContextSource {
 		}
 
 		$slotContents = $this->getSlotContents();
-		$slotDiff = $diffRenderers[$role]->getDiff( $slotContents[$role]['old'],
-			$slotContents[$role]['new'] );
-		if ( !$slotDiff ) {
+		try {
+			$slotDiff = $diffRenderers[$role]->getDiff( $slotContents[$role]['old'],
+				$slotContents[$role]['new'] );
+		} catch ( IncompatibleDiffTypesException $e ) {
+			$slotDiff = $this->getSlotError( $e->getMessageObject()->parse() );
+		}
+		if ( $slotDiff === '' ) {
 			return false;
 		}
 
@@ -1351,6 +1391,20 @@ class DifferenceEngine extends ContextSource {
 	}
 
 	/**
+	 * Get an error message for inclusion in a diff body (as a table row).
+	 *
+	 * @param string $errorText The HTML of the error
+	 * @return string
+	 */
+	protected function getSlotError( $errorText ) {
+		// The old revision is missing on oldid=<first>&diff=prev; only 2 columns in that case.
+		$columnCount = $this->mOldRevisionRecord ? 4 : 2;
+		$userLang = $this->getLanguage()->getHtmlCode();
+		return Html::rawElement( 'tr', [ 'class' => 'mw-diff-slot-error', 'lang' => $userLang ],
+			Html::rawElement( 'td', [ 'colspan' => $columnCount ], $errorText ) );
+	}
+
+	/**
 	 * Get the cache key parameters
 	 *
 	 * Subclasses can replace the first element in the array to something
@@ -1362,33 +1416,27 @@ class DifferenceEngine extends ContextSource {
 	 *
 	 * @return string[]
 	 * @phan-return non-empty-array<string>
-	 * @throws MWException
 	 */
 	protected function getDiffBodyCacheKeyParams() {
 		if ( !$this->mOldid || !$this->mNewid ) {
-			throw new MWException( 'mOldid and mNewid must be set to get diff cache key.' );
+			throw new BadMethodCallException( 'mOldid and mNewid must be set to get diff cache key.' );
 		}
 
-		$engine = $this->getEngine();
 		$params = [
 			'diff',
-			$engine === 'php' ? false : $engine, // Back compat
 			self::DIFF_VERSION,
 			"old-{$this->mOldid}",
 			"rev-{$this->mNewid}"
 		];
 
-		if ( $engine === 'wikidiff2' ) {
-			$params[] = phpversion( 'wikidiff2' );
-		}
-
+		$extraKeys = [];
 		if ( !$this->isSlotDiffRenderer ) {
 			foreach ( $this->getSlotDiffRenderers() as $slotDiffRenderer ) {
-				$params = array_merge( $params, $slotDiffRenderer->getExtraCacheKeys() );
+				$extraKeys = array_merge( $extraKeys, $slotDiffRenderer->getExtraCacheKeys() );
 			}
 		}
-
-		return $params;
+		ksort( $extraKeys );
+		return array_merge( $params, array_values( $extraKeys ) );
 	}
 
 	/**
@@ -1424,11 +1472,40 @@ class DifferenceEngine extends ContextSource {
 	}
 
 	/**
-	 * @param array $options for the difference engine.
-	 * Accepts keys 'diff-type' and 'expand-url'
+	 * @param array $options for the difference engine. Available options:
+	 *    - diff-type: The text diff format, e.g. "table" or "inline". If the
+	 *      specified format is not supported, the option will be ignored, so
+	 *      the site default format (table) will be used.
+	 *    - expand-url: If true, put full URLs in href attributes (for action=render)
+	 *      FIXME: expand-url is not a slot diff option, it is a DifferenceEngine option.
+	 *    - inline-toggle: If true, and the inline format is supported
+	 *      a format selector toggle switch will be shown.
 	 */
 	public function setSlotDiffOptions( $options ) {
-		$this->slotDiffOptions = $options;
+		$validatedOptions = [];
+		if ( isset( $options['diff-type'] )
+			&& $this->getTextDiffer()->hasFormat( $options['diff-type'] )
+		) {
+			$validatedOptions['diff-type'] = $options['diff-type'];
+		}
+		if ( !empty( $options['expand-url'] ) ) {
+			$validatedOptions['expand-url'] = true;
+		}
+		if ( !empty( $options['inline-toggle'] ) ) {
+			$validatedOptions['inline-toggle'] = true;
+		}
+		$this->slotDiffOptions = $validatedOptions;
+	}
+
+	/**
+	 * Set query parameters to append to diff page links
+	 *
+	 * @since 1.41
+	 *
+	 * @param array $params
+	 */
+	public function setExtraQueryParams( $params ) {
+		$this->extraQueryParams = $params;
 	}
 
 	/**
@@ -1492,53 +1569,14 @@ class DifferenceEngine extends ContextSource {
 	 * @internal For use by this class and within Core only.
 	 */
 	public static function getEngine() {
-		$diffEngine = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::DiffEngine );
-		$externalDiffEngine = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::ExternalDiffEngine );
-
-		if ( $diffEngine === null ) {
-			$engines = [ 'external', 'wikidiff2', 'php' ];
+		$differenceEngine = new self;
+		$engine = $differenceEngine->getTextDiffer()->getEngineForFormat( 'table' );
+		if ( $engine === 'external' ) {
+			return MediaWikiServices::getInstance()->getMainConfig()
+				->get( MainConfigNames::ExternalDiffEngine );
 		} else {
-			$engines = [ $diffEngine ];
+			return $engine;
 		}
-
-		$failureReason = null;
-		foreach ( $engines as $engine ) {
-			switch ( $engine ) {
-				case 'external':
-					if ( is_string( $externalDiffEngine ) ) {
-						if ( is_executable( $externalDiffEngine ) ) {
-							return $externalDiffEngine;
-						}
-						$failureReason = 'ExternalDiffEngine config points to a non-executable';
-						if ( $diffEngine === null ) {
-							wfDebug( "$failureReason, ignoring" );
-						}
-					} else {
-						$failureReason = 'ExternalDiffEngine config is set to a non-string value';
-						if ( $diffEngine === null && $externalDiffEngine ) {
-							wfWarn( "$failureReason, ignoring" );
-						}
-					}
-					break;
-
-				case 'wikidiff2':
-					if ( function_exists( 'wikidiff2_do_diff' ) ) {
-						return 'wikidiff2';
-					}
-					$failureReason = 'wikidiff2 is not available';
-					break;
-
-				case 'php':
-					// Always available.
-					return 'php';
-
-				default:
-					throw new DomainException( 'Invalid value for $wgDiffEngine: ' . $engine );
-			}
-		}
-		throw new UnexpectedValueException( "Cannot use diff engine '$engine': $failureReason" );
 	}
 
 	/**
@@ -1585,52 +1623,25 @@ class DifferenceEngine extends ContextSource {
 	 * @return string
 	 */
 	private function localiseDiff( $text ) {
-		$text = $this->localiseLineNumbers( $text );
-		if ( $this->getEngine() === 'wikidiff2' &&
-			version_compare( phpversion( 'wikidiff2' ), '1.5.1', '>=' )
-		) {
-			$text = $this->addLocalisedTitleTooltips( $text );
-		}
-		return $text;
+		return $this->getTextDiffer()->localize( $this->getTextDiffFormat(), $text );
 	}
 
 	/**
-	 * Replace line numbers with the text in the user's language
+	 * Replace a common convention for language-independent line numbers with
+	 * the text in the user's language.
 	 *
+	 * @deprecated since 1.41, use BaseTextDiffer::localizeLineNumbers()
 	 * @param string $text
-	 *
 	 * @return string
 	 */
 	public function localiseLineNumbers( $text ) {
-		return preg_replace_callback(
-			'/<!--LINE (\d+)-->/',
+		return preg_replace_callback( '/<!--LINE (\d+)-->/',
 			function ( array $matches ) {
 				if ( $matches[1] === '1' && $this->mReducedLineNumbers ) {
 					return '';
 				}
 				return $this->msg( 'lineno' )->numParams( $matches[1] )->escaped();
-			},
-			$text
-		);
-	}
-
-	/**
-	 * Add title attributes for tooltips on moved paragraph indicators
-	 *
-	 * @param string $text
-	 * @return string
-	 */
-	private function addLocalisedTitleTooltips( $text ) {
-		return preg_replace_callback(
-			'/class="mw-diff-movedpara-(left|right)"/',
-			function ( array $matches ) {
-				$key = $matches[1] === 'right' ?
-					'diff-paragraph-moved-toold' :
-					'diff-paragraph-moved-tonew';
-				return $matches[0] . ' title="' . $this->msg( $key )->escaped() . '"';
-			},
-			$text
-		);
+			}, $text );
 	}
 
 	/**
@@ -1680,6 +1691,8 @@ class DifferenceEngine extends ContextSource {
 			}
 		}
 		if ( $nEdits > 0 && $nEdits <= 1000 ) {
+			// Use an invalid username to get the wiki's default gender (as fallback)
+			$newRevUserForGender = '[HIDDEN]';
 			$limit = 100; // use diff-multi-manyusers if too many users
 			try {
 				$users = $this->revisionStore->getAuthorsBetween(
@@ -1693,6 +1706,11 @@ class DifferenceEngine extends ContextSource {
 
 				$newRevUser = $newRevRecord->getUser( RevisionRecord::RAW );
 				$newRevUserText = $newRevUser ? $newRevUser->getName() : '';
+				$newRevUserSafe = $newRevRecord->getUser(
+					RevisionRecord::FOR_THIS_USER,
+					$this->getAuthority()
+				);
+				$newRevUserForGender = $newRevUserSafe ? $newRevUserSafe->getName() : '[HIDDEN]';
 				if ( $numUsers == 1 && $users[0]->getName() == $newRevUserText ) {
 					$numUsers = 0; // special case to say "by the same user" instead of "by one other user"
 				}
@@ -1700,7 +1718,7 @@ class DifferenceEngine extends ContextSource {
 				$numUsers = 0;
 			}
 
-			return self::intermediateEditsMsg( $nEdits, $numUsers, $limit );
+			return self::intermediateEditsMsg( $nEdits, $numUsers, $limit, $newRevUserForGender );
 		}
 
 		return '';
@@ -1712,12 +1730,17 @@ class DifferenceEngine extends ContextSource {
 	 * @param int $numEdits
 	 * @param int $numUsers
 	 * @param int $limit
+	 * @param string $lastUser
 	 *
 	 * @return string
 	 */
-	public static function intermediateEditsMsg( $numEdits, $numUsers, $limit ) {
+	public static function intermediateEditsMsg( $numEdits, $numUsers, $limit, $lastUser = '[HIDDEN]' ) {
 		if ( $numUsers === 0 ) {
 			$msg = 'diff-multi-sameuser';
+			return wfMessage( $msg )
+				->numParams( $numEdits, $numUsers )
+				->params( $lastUser )
+				->parse();
 		} elseif ( $numUsers > $limit ) {
 			$msg = 'diff-multi-manyusers';
 			$numUsers = $limit;
@@ -1824,7 +1847,18 @@ class DifferenceEngine extends ContextSource {
 		$header = Html::openElement( 'table', [
 			'class' => [
 				'diff',
+				// The following classes are used here:
+				// * diff-type-table
+				// * diff-type-inline
+				'diff-type-' . $this->getTextDiffFormat(),
+				// The following classes are used here:
+				// * diff-contentalign-left
+				// * diff-contentalign-right
 				'diff-contentalign-' . $this->getDiffLang()->alignStart(),
+				// The following classes are used here:
+				// * diff-editfont-monospace
+				// * diff-editfont-sans-serif
+				// * diff-editfont-serif
 				'diff-editfont-' . $this->userOptionsLookup->getOption(
 					$this->getUser(),
 					'editfont'
@@ -2073,15 +2107,14 @@ class DifferenceEngine extends ContextSource {
 		}
 
 		// Load tags information for both revisions
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$changeTagDefStore = MediaWikiServices::getInstance()->getChangeTagDefStore();
 		if ( $this->mOldid !== false ) {
-			$tagIds = $dbr->selectFieldValues(
-				'change_tag',
-				'ct_tag_id',
-				[ 'ct_rev_id' => $this->mOldid ],
-				__METHOD__
-			);
+			$tagIds = $dbr->newSelectQueryBuilder()
+				->select( 'ct_tag_id' )
+				->from( 'change_tag' )
+				->where( [ 'ct_rev_id' => $this->mOldid ] )
+				->caller( __METHOD__ )->fetchFieldValues();
 			$tags = [];
 			foreach ( $tagIds as $tagId ) {
 				try {
@@ -2095,12 +2128,11 @@ class DifferenceEngine extends ContextSource {
 			$this->mOldTags = false;
 		}
 
-		$tagIds = $dbr->selectFieldValues(
-			'change_tag',
-			'ct_tag_id',
-			[ 'ct_rev_id' => $this->mNewid ],
-			__METHOD__
-		);
+		$tagIds = $dbr->newSelectQueryBuilder()
+			->select( 'ct_tag_id' )
+			->from( 'change_tag' )
+			->where( [ 'ct_rev_id' => $this->mNewid ] )
+			->caller( __METHOD__ )->fetchFieldValues();
 		$tags = [];
 		foreach ( $tagIds as $tagId ) {
 			try {
@@ -2185,6 +2217,44 @@ class DifferenceEngine extends ContextSource {
 		$this->hookRunner->onDifferenceEngineAfterLoadNewText( $this );
 
 		return true;
+	}
+
+	/**
+	 * Get the TextDiffer which will be used for rendering text
+	 *
+	 * @return ManifoldTextDiffer
+	 */
+	protected function getTextDiffer() {
+		if ( $this->textDiffer === null ) {
+			$this->textDiffer = new ManifoldTextDiffer(
+				$this->getContext(),
+				$this->getDiffLang(),
+				$this->getConfig()->get( MainConfigNames::DiffEngine ),
+				$this->getConfig()->get( MainConfigNames::ExternalDiffEngine ),
+				$this->getConfig()->get( MainConfigNames::Wikidiff2Options )
+			);
+		}
+		return $this->textDiffer;
+	}
+
+	/**
+	 * Get the list of supported text diff formats
+	 *
+	 * @since 1.41
+	 * @return array|string[]
+	 */
+	public function getSupportedFormats() {
+		return $this->getTextDiffer()->getFormats();
+	}
+
+	/**
+	 * Get the selected text diff format
+	 *
+	 * @since 1.41
+	 * @return string
+	 */
+	public function getTextDiffFormat() {
+		return $this->slotDiffOptions['diff-type'] ?? 'table';
 	}
 
 }

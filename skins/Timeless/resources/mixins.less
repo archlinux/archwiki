@@ -69,14 +69,17 @@
 		padding: 0;
 	}
 
+	label,
 	h3 {
 		font-weight: normal;
 		font-size: 1em;
 		margin: 0.25em 0 0.75em 0;
 		padding-bottom: 0.15em;
 		border-bottom: solid 2px @base70;
+		display: block;
 	}
 
+	.mw-portlet > div,
 	.mw-portlet-body {
 		margin-bottom: 2em;
 	}
@@ -110,7 +113,7 @@
 	margin-bottom: -0.45em;
 	padding-bottom: 0.45em;
 
-	&:after {
+	&::after {
 		display: inline-block;
 		content: '';
 		width: 22px;
@@ -132,12 +135,12 @@
 	top: 2.95em;
 	@{direction}: -1em;
 	overflow: visible;
-	z-index: 3;
+	z-index: @z-index-dropdown;
 }
 
 .dropdown-pokey() {
-	&:before,
-	&:after {
+	&::before,
+	&::after {
 		transform: rotate( 360deg ); // to force some smoothing in annoying browsers
 		border-bottom: 10px solid @base80;
 		border-left: 10px solid transparent;
@@ -147,14 +150,14 @@
 		width: 0;
 		position: absolute;
 		right: 1em;
-		z-index: 4;
+		z-index: ( @z-index-dropdown + 1 );
 	}
 
-	&:before {
+	&::before {
 		top: -10px;
 	}
 
-	&:after {
+	&::after {
 		border-bottom-color: @base100;
 		top: -8px;
 	}

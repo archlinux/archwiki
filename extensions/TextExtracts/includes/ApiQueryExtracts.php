@@ -8,13 +8,13 @@ use ApiQueryBase;
 use ApiUsageException;
 use Config;
 use ConfigFactory;
-use FauxRequest;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Title\Title;
 use ParserOptions;
-use Title;
 use WANObjectCache;
 use Wikimedia\ParamValidator\ParamValidator;
 use WikiPage;
@@ -238,9 +238,10 @@ class ApiQueryExtracts extends ApiQueryBase {
 	 */
 	private function getFirstSection( $text, $plainText ) {
 		if ( $plainText ) {
-			$regexp = '/^(.*?)(?=' . ExtractFormatter::SECTION_MARKER_START . ')/s';
+			$regexp = '/^.*?(?=' . ExtractFormatter::SECTION_MARKER_START .
+				'(?!.' . ExtractFormatter::SECTION_MARKER_END . '<h2 id="mw-toc-heading"))/s';
 		} else {
-			$regexp = '/^(.*?)(?=<h[1-6]\b)/s';
+			$regexp = '/^.*?(?=<h[1-6]\b(?! id="mw-toc-heading"))/s';
 		}
 		if ( preg_match( $regexp, $text, $matches ) ) {
 			$text = $matches[0];
@@ -409,6 +410,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 			'sectionformat' => [
 				ApiBase::PARAM_TYPE => [ 'plain', 'wiki', 'raw' ],
 				ParamValidator::PARAM_DEFAULT => 'wiki',
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
 			'continue' => [
 				ApiBase::PARAM_TYPE => 'integer',

@@ -54,6 +54,7 @@
 	"vector-site-nav-label": "Sajt",
 	"vector-main-menu-label": "Glavni meni",
 	"vector-limited-width-toggle": "Uključi/isključi ograničenu širinu sadržaja",
+	"vector-limited-width-toggle-on-popup": "Prebacili ste se na punu širinu teksta. Pritisnite dugme da se vratite na ograničenu širinu.",
 	"vector-page-tools-label": "Alati",
 	"vector-page-tools-general-label": "Općenito",
 	"vector-page-tools-actions-label": "Radnje",
@@ -63,5 +64,7 @@
 	"tooltip-vector-anon-user-menu-title": "Više opcija",
 	"vector-prefs-limited-width": "Uključi režim ograničene širine",
 	"vector-prefs-limited-width-help": "Uključuje režim ograničene širine za poboljšano iskustvo čitanja.",
-	"empty-language-selector-body": "Sadržaj stranice nije podržan na drugim jezicima."
+	"empty-language-selector-body": "Sadržaj stranice nije podržan na drugim jezicima.",
+	"vector-page-tools-unpinned-popup": "Alati su premješteni ovdje.",
+	"vector-main-menu-unpinned-popup": "Glavni meni premješten je ovdje."
 }

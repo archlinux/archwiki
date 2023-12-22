@@ -17,7 +17,6 @@
 	"captcha-edit": "Bu sayfayı düzenlemek için, lütfen aşağıdaki görevi çözün ve cevabı kutuya girin ([[Special:Captcha/help|daha fazla bilgi]]):",
 	"captcha-edit-fail": "Yanlış veya eksik CAPTCHA",
 	"captcha-desc": "Spam ve parola tahminine karşı koruma sağlamak için CAPTCHA teknikleri sağlar",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "CAPTCHA'nın çözümü.",
 	"captcha-info-help": "CAPTCHA'nın açıklaması.",
 	"captcha-id-label": "CAPTCHA kimliği",

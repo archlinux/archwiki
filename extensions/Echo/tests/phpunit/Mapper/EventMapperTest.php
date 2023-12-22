@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\Mapper\EventMapper;
 use MediaWiki\Extension\Notifications\Model\Event;
 use Wikimedia\Rdbms\IDatabase;
@@ -17,7 +18,7 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 		$this->tablesUsed[] = 'echo_target_page';
 	}
 
-	public function provideDataTestInsert() {
+	public static function provideDataTestInsert() {
 		return [
 			[
 				'successful insert with next sequence = 1',
@@ -37,7 +38,7 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testInsert( $message, $dbResult, $result ) {
 		$event = $this->mockEvent();
-		$eventMapper = new EventMapper( $this->mockMWEchoDbFactory( $dbResult ) );
+		$eventMapper = new EventMapper( $this->mockDbFactory( $dbResult ) );
 		$this->assertEquals( $result, $eventMapper->insert( $event ), $message );
 	}
 
@@ -46,7 +47,7 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testSuccessfulFetchById() {
 		$eventMapper = new EventMapper(
-			$this->mockMWEchoDbFactory(
+			$this->mockDbFactory(
 				[
 					'selectRow' => (object)[
 						'event_id' => 1,
@@ -67,13 +68,13 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 
 	public function testUnsuccessfulFetchById() {
 		$eventMapper = new EventMapper(
-			$this->mockMWEchoDbFactory(
+			$this->mockDbFactory(
 				[
 					'selectRow' => false
 				]
 			)
 		);
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$eventMapper->fetchById( 1 );
 	}
 
@@ -90,10 +91,10 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @param array $dbResult
-	 * @return MWEchoDbFactory
+	 * @return DbFactory
 	 */
-	protected function mockMWEchoDbFactory( $dbResult ) {
-		$dbFactory = $this->createMock( MWEchoDbFactory::class );
+	protected function mockDbFactory( $dbResult ) {
+		$dbFactory = $this->createMock( DbFactory::class );
 		$dbFactory->method( 'getEchoDb' )
 			->willReturn( $this->mockDb( $dbResult ) );
 
@@ -126,6 +127,8 @@ class EventMapperTest extends MediaWikiIntegrationTestCase {
 
 	public function testFetchByPage() {
 		$user = $this->getTestUser()->getUser();
+		// Do not create a notification for the edit made by getExistingTestPage.
+		$this->clearHook( 'PageSaveComplete' );
 		$page = $this->getExistingTestPage();
 
 		// Create a notification that is not associated with any page

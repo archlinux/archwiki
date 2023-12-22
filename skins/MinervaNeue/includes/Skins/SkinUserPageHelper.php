@@ -21,9 +21,9 @@
 namespace MediaWiki\Minerva\Skins;
 
 use IContextSource;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
-use Title;
 use User;
 
 class SkinUserPageHelper {
@@ -81,8 +81,7 @@ class SkinUserPageHelper {
 	 */
 	private function fetchData() {
 		if ( $this->fetchedData === false ) {
-			if ( $this->title && $this->title->inNamespace( NS_USER ) && !$this->title->isSubpage()
-			) {
+			if ( $this->title && $this->title->inNamespace( NS_USER ) && !$this->title->isSubpage() ) {
 				$this->pageUser = $this->buildPageUserObject( $this->title );
 			}
 			$this->fetchedData = true;

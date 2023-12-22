@@ -22,9 +22,10 @@
  * @author Alex Dean <wikimedia@mostlyalex.com>
  */
 
-require_once __DIR__ . '/Maintenance.php';
+use MediaWiki\User\BotPassword;
+use MediaWiki\User\User;
 
-use MediaWiki\MediaWikiServices;
+require_once __DIR__ . '/Maintenance.php';
 
 class CreateBotPassword extends Maintenance {
 	/**
@@ -82,7 +83,7 @@ class CreateBotPassword extends Maintenance {
 			$this->fatalError( implode( "\n", $errors ) );
 		}
 
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$grantsInfo = $services->getGrantsInfo();
 		$invalidGrants = array_diff( $grants, $grantsInfo->getValidGrants() );
 		if ( count( $invalidGrants ) > 0 ) {
@@ -135,7 +136,7 @@ class CreateBotPassword extends Maintenance {
 	}
 
 	public function showGrants() {
-		$permissions = MediaWikiServices::getInstance()->getGrantsInfo()->getValidGrants();
+		$permissions = $this->getServiceContainer()->getGrantsInfo()->getValidGrants();
 		sort( $permissions );
 
 		$this->output( str_pad( 'GRANT', self::SHOWGRANTS_COLUMN_WIDTH ) . " DESCRIPTION\n" );

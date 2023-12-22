@@ -21,8 +21,13 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\GrantsLocalization;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\User;
 
 /**
  * This special page lists all defined rights grants and the associated rights.
@@ -31,8 +36,7 @@ use MediaWiki\Permissions\GrantsLocalization;
  * @ingroup SpecialPage
  */
 class SpecialListGrants extends SpecialPage {
-	/** @var GrantsLocalization */
-	private $grantsLocalization;
+	private GrantsLocalization $grantsLocalization;
 
 	public function __construct( GrantsLocalization $grantsLocalization ) {
 		parent::__construct( 'Listgrants' );
@@ -51,11 +55,10 @@ class SpecialListGrants extends SpecialPage {
 		$out->addModuleStyles( 'mediawiki.special' );
 
 		$out->addHTML(
-			\MediaWiki\Html\Html::openElement( 'table',
-											   [ 'class' => 'wikitable mw-listgrouprights-table' ] ) .
+			Html::openElement( 'table', [ 'class' => 'wikitable mw-listgrouprights-table' ] ) .
 				'<tr>' .
-				\MediaWiki\Html\Html::element( 'th', [], $this->msg( 'listgrants-grant' )->text() ) .
-				\MediaWiki\Html\Html::element( 'th', [], $this->msg( 'listgrants-rights' )->text() ) .
+				Html::element( 'th', [], $this->msg( 'listgrants-grant' )->text() ) .
+				Html::element( 'th', [], $this->msg( 'listgrants-rights' )->text() ) .
 				'</tr>'
 		);
 
@@ -67,11 +70,14 @@ class SpecialListGrants extends SpecialPage {
 			$descs = [];
 			$rights = array_filter( $rights ); // remove ones with 'false'
 			foreach ( $rights as $permission => $granted ) {
-				$descs[] = $this->msg(
-					'listgrouprights-right-display',
-					\User::getRightDescription( $permission ),
-					'<span class="mw-listgrants-right-name">' . $permission . '</span>'
-				)->parse();
+				$descs[] = $this->msg( 'listgrouprights-right-display' )
+					->params( User::getRightDescription( $permission ) )
+					->rawParams( Html::element(
+						'span',
+						[ 'class' => 'mw-listgrants-right-name' ],
+						$permission
+					) )
+					->parse();
 			}
 			if ( $descs === [] ) {
 				$grantCellHtml = '';
@@ -80,23 +86,30 @@ class SpecialListGrants extends SpecialPage {
 				$grantCellHtml = '<ul><li>' . implode( "</li>\n<li>", $descs ) . '</li></ul>';
 			}
 
-			$id = Sanitizer::escapeIdForAttribute( $grant );
-			$out->addHTML( \MediaWiki\Html\Html::rawElement( 'tr', [ 'id' => $id ],
+			$out->addHTML( Html::rawElement( 'tr', [ 'id' => $grant ],
 															 "<td>" .
-				$this->msg(
-					"listgrants-grant-display",
-					$this->grantsLocalization->getGrantDescription( $grant, $lang ),
-					"<span class='mw-listgrants-grant-name'>" . $id . "</span>"
-				)->parse() .
+				$this->msg( 'listgrants-grant-display' )
+					->params( $this->grantsLocalization->getGrantDescription( $grant, $lang ) )
+					->rawParams( Html::element(
+						'span',
+						[ 'class' => 'mw-listgrants-grant-name' ],
+						$grant
+					) )
+					->parse() .
 				"</td>" .
 				"<td>" . $grantCellHtml . "</td>"
 			) );
 		}
 
-		$out->addHTML( \MediaWiki\Html\Html::closeElement( 'table' ) );
+		$out->addHTML( Html::closeElement( 'table' ) );
 	}
 
 	protected function getGroupName() {
 		return 'users';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialListGrants::class, 'SpecialListGrants' );

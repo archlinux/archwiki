@@ -7,7 +7,6 @@
 	"captcha-edit": "Per modifegà quella pagina chì a gh'è besogn de risolv l'atività chì de sota e met denter la risposta in la casella ([[Special:Captcha/help|per savenn pussee]]):",
 	"captcha-edit-fail": "Codes de verifica sbagliad o mancant",
 	"captcha-desc": "El forniss di tecnich CAPTCHA per la protezzion contra del spam e 'l tentatif de induvinà la parola ciav",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Soluzzion del CAPTCHA.",
 	"captcha-info-help": "Descrizzion del CAPTCHA.",
 	"captcha-id-label": "ID del CAPTCHA",

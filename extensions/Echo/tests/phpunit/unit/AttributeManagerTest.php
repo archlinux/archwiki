@@ -1,28 +1,29 @@
 <?php
 
+use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserOptionsLookup;
 
 /**
- * @covers \EchoAttributeManager
+ * @covers \MediaWiki\Extension\Notifications\AttributeManager
  */
-class EchoAttributeManagerTest extends MediaWikiUnitTestCase {
+class AttributeManagerTest extends MediaWikiUnitTestCase {
 
 	private function getAttributeManager(
 		array $notifications,
 		array $categories = [],
 		array $defaultNotifyTypeAvailability = [],
 		array $notifyTypeAvailabilityByCategory = []
-	): EchoAttributeManager {
+	): AttributeManager {
 		$userGroupManager = $this->createNoOpMock( UserGroupManager::class, [ 'getUserGroups' ] );
 		$userGroupManager->method( 'getUserGroups' )->willReturn( [ 'echo_group' ] );
 
 		$userOptionsLookup = $this->createNoOpMock( UserOptionsLookup::class, [ 'getOption' ] );
 		$userOptionsLookup->method( 'getOption' )->willReturn( true );
 
-		return new EchoAttributeManager(
+		return new AttributeManager(
 			$notifications,
 			$categories,
 			$defaultNotifyTypeAvailability,
@@ -60,10 +61,10 @@ class EchoAttributeManagerTest extends MediaWikiUnitTestCase {
 				// notification configuration
 				[
 					'foo' => [
-						EchoAttributeManager::ATTR_LOCATORS => [ 'frown' ],
+						AttributeManager::ATTR_LOCATORS => [ 'frown' ],
 					],
 					'magic' => [
-						EchoAttributeManager::ATTR_LOCATORS => [ 'woot!' ],
+						AttributeManager::ATTR_LOCATORS => [ 'woot!' ],
 					],
 				],
 			],
@@ -77,7 +78,7 @@ class EchoAttributeManagerTest extends MediaWikiUnitTestCase {
 				// notification configuration
 				[
 					'challah' => [
-						EchoAttributeManager::ATTR_LOCATORS => 'sagen',
+						AttributeManager::ATTR_LOCATORS => 'sagen',
 					],
 				],
 			],
@@ -90,7 +91,7 @@ class EchoAttributeManagerTest extends MediaWikiUnitTestCase {
 	public function testGetUserLocators( $message, $expect, $type, $notifications ) {
 		$manager = $this->getAttributeManager( $notifications );
 
-		$result = $manager->getUserCallable( $type, EchoAttributeManager::ATTR_LOCATORS );
+		$result = $manager->getUserCallable( $type, AttributeManager::ATTR_LOCATORS );
 		$this->assertEquals( $expect, $result, $message );
 	}
 
@@ -563,7 +564,7 @@ class EchoAttributeManagerTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( $expected, $actual, $message );
 	}
 
-	public function getNotificationSectionProvider() {
+	public static function getNotificationSectionProvider() {
 		yield [ 'event_one', 'alert' ];
 		yield [ 'event_two', 'message' ];
 		yield [ 'event_three', 'alert' ];
@@ -587,7 +588,7 @@ class EchoAttributeManagerTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expected, $actual );
 	}
 
-	public function isBundleExpandableProvider() {
+	public static function isBundleExpandableProvider() {
 		yield [ 'event_one', false ];
 		yield [ 'event_two', false ];
 		yield [ 'event_three', false ];

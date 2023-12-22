@@ -7,6 +7,7 @@ use MediaWiki\Extension\AbuseFilter\Parser\Exception\InternalException;
 use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
 use MediaWiki\Extension\AbuseFilter\Parser\ParserStatus;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Api\EvalExpression
@@ -15,19 +16,20 @@ use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
  */
 class EvalExpressionTest extends ApiTestCase {
 	use AbuseFilterApiTestTrait;
+	use MockAuthorityTrait;
 
 	/**
 	 * @covers ::execute
 	 */
 	public function testExecute_noPermissions() {
-		$this->setExpectedApiException( 'apierror-abusefilter-canteval', 'permissiondenied' );
+		$this->expectApiErrorCode( 'permissiondenied' );
 
 		$this->setService( RuleCheckerFactory::SERVICE_NAME, $this->getRuleCheckerFactory() );
 
 		$this->doApiRequest( [
 			'action' => 'abusefilterevalexpression',
 			'expression' => 'sampleExpression',
-		], null, null, self::getTestUser()->getUser() );
+		], null, null, $this->mockRegisteredNullAuthority() );
 	}
 
 	/**
@@ -35,7 +37,7 @@ class EvalExpressionTest extends ApiTestCase {
 	 * @covers ::evaluateExpression
 	 */
 	public function testExecute_error() {
-		$this->setExpectedApiException( 'abusefilter-tools-syntax-error' );
+		$this->expectApiErrorCode( 'abusefilter-tools-syntax-error' );
 		$expression = 'sampleExpression';
 		$status = new ParserStatus( $this->createMock( InternalException::class ), [], 1 );
 		$ruleChecker = $this->createMock( FilterEvaluator::class );
@@ -46,7 +48,7 @@ class EvalExpressionTest extends ApiTestCase {
 		$this->doApiRequest( [
 			'action' => 'abusefilterevalexpression',
 			'expression' => $expression,
-		], null, null, self::getTestSysop()->getUser() );
+		] );
 	}
 
 	/**
@@ -67,7 +69,7 @@ class EvalExpressionTest extends ApiTestCase {
 			'action' => 'abusefilterevalexpression',
 			'expression' => $expression,
 			'prettyprint' => false,
-		], null, null, self::getTestSysop()->getUser() );
+		] );
 
 		$this->assertArrayEquals(
 			[
@@ -99,7 +101,7 @@ class EvalExpressionTest extends ApiTestCase {
 			'action' => 'abusefilterevalexpression',
 			'expression' => $expression,
 			'prettyprint' => true,
-		], null, null, self::getTestSysop()->getUser() );
+		] );
 
 		$this->assertArrayEquals(
 			[

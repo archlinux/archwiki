@@ -28,6 +28,7 @@
 					"mw.storage",
 					"mw.storage.session",
 					"mw.user",
+					"mw.user.clientPrefs",
 					"mw.util",
 					"mw.plugin.*",
 					"mw.cookie",
@@ -87,7 +88,6 @@
 				"name": "Plugins",
 				"classes": [
 					"jQuery.client",
-					"jQuery.colorUtil",
 					"jQuery.plugin.*"
 				]
 			}

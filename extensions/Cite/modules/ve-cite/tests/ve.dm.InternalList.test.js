@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * VisualEditor DataModel Cite-specific InternalList tests.
  *
@@ -10,44 +12,44 @@ QUnit.module( 've.dm.InternalList (Cite)', ve.test.utils.newMwEnvironment() );
 /* Tests */
 
 QUnit.test( 'addNode/removeNode', function ( assert ) {
-	var doc = ve.dm.citeExample.createExampleDocument( 'references' ),
-		newInternalList = new ve.dm.InternalList( doc ),
-		referenceNodes = [
-			doc.getDocumentNode().children[ 0 ].children[ 0 ],
-			doc.getDocumentNode().children[ 1 ].children[ 1 ],
-			doc.getDocumentNode().children[ 1 ].children[ 3 ],
-			doc.getDocumentNode().children[ 1 ].children[ 5 ],
-			doc.getDocumentNode().children[ 2 ].children[ 0 ],
-			doc.getDocumentNode().children[ 2 ].children[ 1 ]
-		],
-		expectedNodes = {
-			'mwReference/': {
-				keyedNodes: {
-					'auto/0': [ referenceNodes[ 0 ] ],
-					'literal/bar': [ referenceNodes[ 1 ], referenceNodes[ 3 ] ],
-					'literal/:3': [ referenceNodes[ 2 ] ],
-					'auto/1': [ referenceNodes[ 4 ] ]
-				},
-				firstNodes: [
-					referenceNodes[ 0 ],
-					referenceNodes[ 1 ],
-					referenceNodes[ 2 ],
-					referenceNodes[ 4 ]
-				],
-				indexOrder: [ 0, 1, 2, 3 ],
-				uniqueListKeys: {},
-				uniqueListKeysInUse: {}
+	const doc = ve.dm.citeExample.createExampleDocument( 'references' );
+	let newInternalList = new ve.dm.InternalList( doc );
+	const referenceNodes = [
+		doc.getDocumentNode().children[ 0 ].children[ 0 ],
+		doc.getDocumentNode().children[ 1 ].children[ 1 ],
+		doc.getDocumentNode().children[ 1 ].children[ 3 ],
+		doc.getDocumentNode().children[ 1 ].children[ 5 ],
+		doc.getDocumentNode().children[ 2 ].children[ 0 ],
+		doc.getDocumentNode().children[ 2 ].children[ 1 ]
+	];
+	const expectedNodes = {
+		'mwReference/': {
+			keyedNodes: {
+				'auto/0': [ referenceNodes[ 0 ] ],
+				'literal/bar': [ referenceNodes[ 1 ], referenceNodes[ 3 ] ],
+				'literal/:3': [ referenceNodes[ 2 ] ],
+				'auto/1': [ referenceNodes[ 4 ] ]
 			},
-			'mwReference/foo': {
-				keyedNodes: {
-					'auto/2': [ referenceNodes[ 5 ] ]
-				},
-				firstNodes: [ undefined, undefined, undefined, undefined, referenceNodes[ 5 ] ],
-				indexOrder: [ 4 ],
-				uniqueListKeys: {},
-				uniqueListKeysInUse: {}
-			}
-		};
+			firstNodes: [
+				referenceNodes[ 0 ],
+				referenceNodes[ 1 ],
+				referenceNodes[ 2 ],
+				referenceNodes[ 4 ]
+			],
+			indexOrder: [ 0, 1, 2, 3 ],
+			uniqueListKeys: {},
+			uniqueListKeysInUse: {}
+		},
+		'mwReference/foo': {
+			keyedNodes: {
+				'auto/2': [ referenceNodes[ 5 ] ]
+			},
+			firstNodes: [ undefined, undefined, undefined, undefined, referenceNodes[ 5 ] ],
+			indexOrder: [ 4 ],
+			uniqueListKeys: {},
+			uniqueListKeysInUse: {}
+		}
+	};
 
 	assert.deepEqualWithNodeTree(
 		doc.internalList.nodes,
@@ -185,11 +187,11 @@ QUnit.test( 'addNode/removeNode', function ( assert ) {
 } );
 
 QUnit.test( 'getItemInsertion', function ( assert ) {
-	var doc = ve.dm.citeExample.createExampleDocument( 'references' ),
-		internalList = doc.getInternalList();
+	const doc = ve.dm.citeExample.createExampleDocument( 'references' );
+	const internalList = doc.getInternalList();
 
-	var insertion = internalList.getItemInsertion( 'mwReference/', 'literal/foo', [] );
-	var index = internalList.getItemNodeCount();
+	let insertion = internalList.getItemInsertion( 'mwReference/', 'literal/foo', [] );
+	const index = internalList.getItemNodeCount();
 	assert.strictEqual( insertion.index, index, 'Insertion creates a new reference' );
 	assert.deepEqual(
 		insertion.transaction.getOperations(),
@@ -213,10 +215,10 @@ QUnit.test( 'getItemInsertion', function ( assert ) {
 } );
 
 QUnit.test( 'getUniqueListKey', function ( assert ) {
-	var doc = ve.dm.citeExample.createExampleDocument( 'references' ),
-		internalList = doc.getInternalList();
+	const doc = ve.dm.citeExample.createExampleDocument( 'references' );
+	const internalList = doc.getInternalList();
 
-	var generatedName;
+	let generatedName;
 	generatedName = internalList.getUniqueListKey( 'mwReference/', 'auto/0', 'literal/:' );
 	assert.strictEqual( generatedName, 'literal/:0', '0 maps to 0' );
 	generatedName = internalList.getUniqueListKey( 'mwReference/', 'auto/1', 'literal/:' );

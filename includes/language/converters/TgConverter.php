@@ -104,38 +104,20 @@ class TgConverter extends LanguageConverter {
 		'Ц' => 'Ts',
 	];
 
-	/**
-	 * Get Main language code.
-	 * @since 1.36
-	 *
-	 * @return string
-	 */
 	public function getMainCode(): string {
 		return 'tg';
 	}
 
-	/**
-	 * Get supported variants of the language.
-	 * @since 1.36
-	 *
-	 * @return array
-	 */
 	public function getLanguageVariants(): array {
 		return [ 'tg', 'tg-latn' ];
 	}
 
-	/**
-	 * Get language variants fallbacks.
-	 * @since 1.36
-	 *
-	 * @return array
-	 */
 	public function getVariantsFallbacks(): array {
 		return [];
 	}
 
-	protected function loadDefaultTables() {
-		$this->mTables = [
+	protected function loadDefaultTables(): array {
+		return [
 			'tg-latn' => new ReplacementArray( $this->table ),
 			'tg' => new ReplacementArray()
 		];

@@ -3,11 +3,13 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Utils;
 
+use Psr\Log\LoggerInterface;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\Sanitizer;
+use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Wikitext\Consts;
 
@@ -356,20 +358,23 @@ class Utils {
 	 * Get argument information for an extension tag token.
 	 *
 	 * @param Token $extToken
-	 * @return \stdClass
+	 * @return DataMw
 	 */
-	public static function getExtArgInfo( Token $extToken ): \stdClass {
+	public static function getExtArgInfo( Token $extToken ): DataMw {
 		$name = $extToken->getAttribute( 'name' );
 		$options = $extToken->getAttribute( 'options' );
-		return (object)[
-			'dict' => (object)[
-				'name' => $name,
-				'attrs' => PHPUtils::arrayToObject( TokenUtils::kvToHash( $options ) ),
-				'body' => (object)[
-					'extsrc' => self::extractExtBody( $extToken )
-				],
-			],
-		];
+		$defaultDataMw = new DataMw( [
+			'name' => $name,
+			'attrs' => PHPUtils::arrayToObject( TokenUtils::kvToHash( $options ) ),
+		] );
+		$extTagOffsets = $extToken->dataParsoid->extTagOffsets;
+		if ( $extTagOffsets->closeWidth !== 0 ) {
+			// If not self-closing...
+			$defaultDataMw->body = (object)[
+				'extsrc' => self::extractExtBody( $extToken ),
+			];
+		}
+		return $defaultDataMw;
 	}
 
 	/**
@@ -433,15 +438,6 @@ class Utils {
 		*/
 		throw new \BadMethodCallException( "This method shouldn't be needed. " .
 			"But, port this if you really need it." );
-	}
-
-	/**
-	 * FIXME: This feels broken.
-	 * Magic words masquerading as templates.
-	 * @return array
-	 */
-	public static function magicMasqs() {
-		return PHPUtils::makeSet( [ 'defaultsort', 'displaytitle' ] );
 	}
 
 	/**
@@ -541,12 +537,33 @@ class Utils {
 	 * mapping table.
 	 *
 	 * @param string|Bcp47Code $code Mediawiki-internal language code or object
+	 * @param bool $strict If true, this code will log a deprecation message
+	 *  or fail if a MediaWiki-internal language code is passed.
+	 * @param ?LoggerInterface $warnLogger A deprecation warning will be
+	 *   emitted on $warnLogger if $strict is true and a string-valued
+	 *   MediaWiki-internal language code is passed; otherwise an exception
+	 *   will be thrown.
 	 * @return Bcp47Code BCP-47 language code.
 	 * @see LanguageCode::bcp47()
 	 */
-	public static function mwCodeToBcp47( $code ): Bcp47Code {
+	public static function mwCodeToBcp47(
+		$code, bool $strict = false, ?LoggerInterface $warnLogger = null
+	): Bcp47Code {
 		if ( $code instanceof Bcp47Code ) {
 			return $code;
+		}
+		if ( $strict ) {
+			$msg = "Use of string-valued BCP-47 codes is deprecated.";
+			if ( defined( 'MW_PHPUNIT_TEST' ) || defined( 'MW_PARSER_TEST' ) ) {
+				// Always throw an error if running tests
+				throw new \Error( $msg );
+			}
+			if ( $warnLogger ) {
+				$warnLogger->warning( $msg );
+			} else {
+				// Strict mode requested but no deprecation logger provided
+				throw new \Error( $msg );
+			}
 		}
 		// This map is dumped from
 		// LanguageCode::getNonstandardLanguageCodeMapping() in core.

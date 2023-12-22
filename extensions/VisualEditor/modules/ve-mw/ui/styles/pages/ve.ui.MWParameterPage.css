@@ -26,6 +26,8 @@
 
 .ve-ui-mwParameterPage-undocumentedLabel {
 	margin-left: 0.4em;
+	/* TODO: Use ems? */
+	/* stylelint-disable-next-line declaration-property-unit-disallowed-list */
 	font-size: 13px;
 	font-style: italic;
 	font-weight: normal;

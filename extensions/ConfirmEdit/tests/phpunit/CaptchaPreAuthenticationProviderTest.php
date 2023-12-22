@@ -9,6 +9,7 @@ use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\Extension\ConfirmEdit\Store\CaptchaHashStore;
 use MediaWiki\Extension\ConfirmEdit\Store\CaptchaStore;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Unit\Auth\AuthenticationProviderTestTrait;
 use Wikimedia\TestingAccessWrapper;
 
@@ -47,8 +48,15 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 	 * @dataProvider provideGetAuthenticationRequests
 	 */
 	public function testGetAuthenticationRequests(
-		$action, $username, $triggers, $needsCaptcha, $preTestCallback = null
+		$action, $useExistingUserOrNull, $triggers, $needsCaptcha, $preTestCallback = null
 	) {
+		if ( $useExistingUserOrNull === true ) {
+			$username = $this->getTestSysop()->getUserIdentity()->getName();
+		} elseif ( $useExistingUserOrNull === false ) {
+			$username = 'Foo';
+		} else {
+			$username = null;
+		}
 		$this->setTriggers( $triggers );
 		if ( $preTestCallback ) {
 			$fn = array_shift( $preTestCallback );
@@ -70,18 +78,18 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 		}
 	}
 
-	public function provideGetAuthenticationRequests() {
+	public static function provideGetAuthenticationRequests() {
 		return [
 			[ AuthManager::ACTION_LOGIN, null, [], false ],
 			[ AuthManager::ACTION_LOGIN, null, [ 'badlogin' ], false ],
 			[ AuthManager::ACTION_LOGIN, null, [ 'badlogin' ], true, [ 'blockLogin', 'Foo' ] ],
 			[ AuthManager::ACTION_LOGIN, null, [ 'badloginperuser' ], false, [ 'blockLogin', 'Foo' ] ],
-			[ AuthManager::ACTION_LOGIN, 'Foo', [ 'badloginperuser' ], false, [ 'blockLogin', 'Bar' ] ],
-			[ AuthManager::ACTION_LOGIN, 'Foo', [ 'badloginperuser' ], true, [ 'blockLogin', 'Foo' ] ],
+			[ AuthManager::ACTION_LOGIN, false, [ 'badloginperuser' ], false, [ 'blockLogin', 'Bar' ] ],
+			[ AuthManager::ACTION_LOGIN, false, [ 'badloginperuser' ], true, [ 'blockLogin', 'Foo' ] ],
 			[ AuthManager::ACTION_LOGIN, null, [ 'badloginperuser' ], true, [ 'flagSession' ] ],
 			[ AuthManager::ACTION_CREATE, null, [], false ],
 			[ AuthManager::ACTION_CREATE, null, [ 'createaccount' ], true ],
-			[ AuthManager::ACTION_CREATE, 'UTSysop', [ 'createaccount' ], false ],
+			[ AuthManager::ACTION_CREATE, true, [ 'createaccount' ], false ],
 			[ AuthManager::ACTION_LINK, null, [], false ],
 			[ AuthManager::ACTION_CHANGE, null, [], false ],
 			[ AuthManager::ACTION_REMOVE, null, [], false ],
@@ -132,7 +140,7 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 		$this->assertEquals( $result, $status->isGood() );
 	}
 
-	public function provideTestForAuthentication() {
+	public static function provideTestForAuthentication() {
 		$fallback = new UsernameAuthenticationRequest();
 		$fallback->username = 'Foo';
 		return [
@@ -141,16 +149,16 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 			'badlogin' => [ $fallback, true, false, false ],
 			'badloginperuser, no username' => [ null, false, true, true ],
 			'badloginperuser' => [ $fallback, false, true, false ],
-			'non-existent captcha' => [ $this->getCaptchaRequest( '123', '4' ), true, true, false ],
-			'wrong captcha' => [ $this->getCaptchaRequest( '345', '6' ), true, true, false ],
-			'correct captcha' => [ $this->getCaptchaRequest( '345', '4' ), true, true, true ],
+			'non-existent captcha' => [ self::getCaptchaRequest( '123', '4' ), true, true, false ],
+			'wrong captcha' => [ self::getCaptchaRequest( '345', '6' ), true, true, false ],
+			'correct captcha' => [ self::getCaptchaRequest( '345', '4' ), true, true, true ],
 		];
 	}
 
 	/**
 	 * @dataProvider provideTestForAccountCreation
 	 */
-	public function testTestForAccountCreation( $req, $creator, $result, $disableTrigger = false ) {
+	public function testTestForAccountCreation( $req, $creatorIsSysop, $result, $disableTrigger = false ) {
 		$this->setTemporaryHook( 'PingLimiter', static function ( $user, $action, &$result ) {
 			$result = false;
 			return false;
@@ -161,21 +169,20 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 		$provider = new CaptchaPreAuthenticationProvider();
 		$this->initProvider( $provider, null, null, $this->getServiceContainer()->getAuthManager() );
 
+		$creator = $creatorIsSysop ? $this->getTestSysop()->getUser() : User::newFromName( 'Bar' );
 		$status = $provider->testForAccountCreation( $user, $creator, $req ? [ $req ] : [] );
 		$this->assertEquals( $result, $status->isGood() );
 	}
 
-	public function provideTestForAccountCreation() {
-		$user = User::newFromName( 'Bar' );
-		$sysop = User::newFromName( 'UTSysop' );
+	public static function provideTestForAccountCreation() {
 		return [
 			// [ auth request, creator, result, disable trigger? ]
-			'no captcha' => [ null, $user, false ],
-			'non-existent captcha' => [ $this->getCaptchaRequest( '123', '4' ), $user, false ],
-			'wrong captcha' => [ $this->getCaptchaRequest( '345', '6' ), $user, false ],
-			'correct captcha' => [ $this->getCaptchaRequest( '345', '4' ), $user, true ],
-			'user is exempt' => [ null, $sysop, true ],
-			'disabled' => [ null, $user, true, 'disable' ],
+			'no captcha' => [ null, false, false ],
+			'non-existent captcha' => [ self::getCaptchaRequest( '123', '4' ), false, false ],
+			'wrong captcha' => [ self::getCaptchaRequest( '345', '6' ), false, false ],
+			'correct captcha' => [ self::getCaptchaRequest( '345', '4' ), false, true ],
+			'user is exempt' => [ null, true, true ],
+			'disabled' => [ null, false, true, 'disable' ],
 		];
 	}
 
@@ -254,30 +261,30 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 		}
 	}
 
-	public function providePingLimiter() {
+	public static function providePingLimiter() {
 		$sysop = User::newFromName( 'UTSysop' );
 		return [
 			// sequence of [ auth request, user, result, disable ping limiter? ]
 			'no failure' => [
-				[ $this->getCaptchaRequest( '345', '14' ), new User(), true ],
-				[ $this->getCaptchaRequest( '345', '14' ), new User(), true ],
+				[ self::getCaptchaRequest( '345', '14' ), new User(), true ],
+				[ self::getCaptchaRequest( '345', '14' ), new User(), true ],
 			],
 			'limited' => [
-				[ $this->getCaptchaRequest( '345', '33' ), new User(), false ],
-				[ $this->getCaptchaRequest( '345', '14' ), new User(), false ],
+				[ self::getCaptchaRequest( '345', '33' ), new User(), false ],
+				[ self::getCaptchaRequest( '345', '14' ), new User(), false ],
 			],
 			'exempt user' => [
-				[ $this->getCaptchaRequest( '345', '33' ), $sysop, false ],
-				[ $this->getCaptchaRequest( '345', '14' ), $sysop, true ],
+				[ self::getCaptchaRequest( '345', '33' ), $sysop, false ],
+				[ self::getCaptchaRequest( '345', '14' ), $sysop, true ],
 			],
 			'pinglimiter disabled' => [
-				[ $this->getCaptchaRequest( '345', '33' ), new User(), false, 'disable' ],
-				[ $this->getCaptchaRequest( '345', '14' ), new User(), true, 'disable' ],
+				[ self::getCaptchaRequest( '345', '33' ), new User(), false, 'disable' ],
+				[ self::getCaptchaRequest( '345', '14' ), new User(), true, 'disable' ],
 			],
 		];
 	}
 
-	protected function getCaptchaRequest( $id, $word, $username = null ) {
+	protected static function getCaptchaRequest( $id, $word, $username = null ) {
 		$req = new CaptchaAuthenticationRequest( $id, [ 'question' => '?', 'answer' => $word ] );
 		$req->captchaWord = $word;
 		$req->username = $username;

@@ -1,3 +1,4 @@
+@import 'mediawiki.skin.variables.less';
 @import '../mmv.variables.less';
 @import '../mmv.mixins.less';
 
@@ -137,7 +138,7 @@
 .mw-mmv-options-text-header {
 	margin: 0;
 	font-size: 1em;
-	color: #54595d;
+	color: @color-subtle;
 }
 
 .mw-mmv-options-text-body {
@@ -152,8 +153,8 @@
 	left: -15px;
 	right: -15px;
 	top: -15px;
-	border-top-right-radius: @border-radius;
-	border-top-left-radius: @border-radius;
+	border-top-right-radius: @border-radius-base;
+	border-top-left-radius: @border-radius-base;
 	padding: 10px 15px;
 	font-weight: 500;
 }

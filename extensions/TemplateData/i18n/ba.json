@@ -4,10 +4,10 @@
 			"MR973",
 			"Азат Хәлилов",
 			"Аҡҡашҡа",
+			"З. ӘЙЛЕ",
 			"Лилиә",
 			"Ләйсән",
-			"Янмурза Баки",
-			"З. ӘЙЛЕ"
+			"Янмурза Баки"
 		]
 	},
 	"templatedata-desc": "Ҡалып параметрҙары өсөн һаҡлағыс мәғлүмәттәрен тормошҡа ашырыу (JSON ярҙамында)",
@@ -74,7 +74,6 @@
 	"templatedata-modal-placeholder-paramkey": "Параметр исеме",
 	"templatedata-modal-placeholder-prompt-map-name": "Картаның исемен яҙығыҙ",
 	"templatedata-modal-search-input-placeholder": "Телдең атамһы йәки коды буйынса эҙләргә.",
-	"templatedata-modal-table-param-actions": "Ваҡиғалар",
 	"templatedata-modal-table-param-aliases": "Тәхәллүстәр",
 	"templatedata-modal-table-param-autovalue": "Автоматик мәғәнә.",
 	"templatedata-modal-table-param-default": "Программа көйләүенсә: $1",
@@ -89,7 +88,6 @@
 	"templatedata-modal-table-param-required": "Мотлаҡ",
 	"templatedata-modal-table-param-suggested": "Тәҡдим ителгән",
 	"templatedata-modal-table-param-type": "Төр",
-	"templatedata-modal-table-param-uneditablefield": "Мөхәррирләүгә асылмаған",
 	"templatedata-modal-title": "Ҡалып мәғлүмәттәре мөхәррире",
 	"templatedata-modal-title-addparam": "Яңы параметр өҫтәргә",
 	"templatedata-modal-title-choose-language": "Телде һайларға",

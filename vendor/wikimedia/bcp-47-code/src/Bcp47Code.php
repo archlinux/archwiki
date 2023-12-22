@@ -44,6 +44,12 @@ namespace Wikimedia\Bcp47Code;
  *      }
  *      return new MyLanguage($code->toBcp47Code());
  *    }
+ *    public function isSameCodeAs( Bcp47Code $other ): bool {
+ *      if ( $other instanceof MyLanguage ) {
+ *         // implement optimized MyLanguage-specific comparison
+ *      }
+ *      return strcasecmp( $this->toBcp47Code(), $other->toBcp47Code() ) === 0;
+ *    }
  * }
  * </pre>
  */
@@ -53,4 +59,14 @@ interface Bcp47Code {
 	 * @return string a standardized IETF BCP 47 language tag
 	 */
 	public function toBcp47Code(): string;
+
+	/**
+	 * Compare two Bcp47Code objects.  Note that BCP 47 codes are case
+	 * insensitive, so if this comparison is going to use ::toBcp47Code()
+	 * ensure the comparison is case insensitive.
+	 *
+	 * @param Bcp47Code $other The language tag to compare to
+	 * @return bool true if this language tag is the same as the given one
+	 */
+	public function isSameCodeAs( Bcp47Code $other ): bool;
 }

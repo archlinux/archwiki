@@ -4,7 +4,6 @@
 			"BaRaN6161 TURK"
 		]
 	},
-	"apihelp-titleblacklist-description": "TitleBlacklist ile bir sayfa başlığını, dosya adını veya kullanıcı adını doğrulayın.",
 	"apihelp-titleblacklist-summary": "TitleBlacklist ile bir sayfa başlığını, dosya adını veya kullanıcı adını doğrulayın.",
 	"apihelp-titleblacklist-param-title": "Kara listeye göre doğrulanacak dize.",
 	"apihelp-titleblacklist-param-action": "Kontrol edilecek eylem.",

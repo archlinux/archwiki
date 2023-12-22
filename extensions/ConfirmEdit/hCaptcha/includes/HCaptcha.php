@@ -3,16 +3,16 @@
 namespace MediaWiki\Extension\ConfirmEdit\hCaptcha;
 
 use ApiBase;
-use ContentSecurityPolicy;
 use FormatJson;
 use Html;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\ContentSecurityPolicy;
 use Message;
-use RawMessage;
 use RequestContext;
 use Status;
 use WebRequest;

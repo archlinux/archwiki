@@ -1,15 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Kurniasan",
-			"Notanotheramy",
-			"Amire80"
+			"Notanotheramy"
 		]
 	},
 	"vector-action-move": "Paléccé'",
 	"vector-view-create": "Ebbu",
 	"vector-view-edit": "Padéccéng",
 	"vector-view-view": "Baca",
-	"vector-view-viewsource": "Ita sumber",
-	"vector-more-actions": "ᨒᨕᨗᨊᨕᨙ"
+	"vector-view-viewsource": "Ita sumber"
 }

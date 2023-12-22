@@ -4,7 +4,6 @@
 			"Albertas"
 		]
 	},
-	"apihelp-titleblacklist-description": "Patikrinti, ar straipsnio pavadinimas, failo vardas ar naudotojo vardas nėra įtrauktas į juodąjį sąrašą.",
 	"apihelp-titleblacklist-param-title": "Eilutė, kurią patikrinti juodajame sąraše.",
 	"apihelp-titleblacklist-param-action": "Veiksmas, kurį patikrinti.",
 	"apihelp-titleblacklist-param-nooverride": "Nebandykite perrašyti pavadinimų juodojo sąrašo.",

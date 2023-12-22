@@ -47,7 +47,7 @@ class LastEditInfoTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array
 	 */
-	public function provideSetters() {
+	public static function provideSetters() {
 		return [
 			'user ID' => [ 163, 'setUserID', 'getUserID' ],
 			'username' => [ 'Sysop', 'setUserName', 'getUserName' ],

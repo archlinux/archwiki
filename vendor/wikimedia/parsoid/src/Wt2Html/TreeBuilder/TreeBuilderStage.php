@@ -12,6 +12,7 @@ namespace Wikimedia\Parsoid\Wt2Html\TreeBuilder;
 use Generator;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\NodeData\DataMw;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\NodeData\NodeData;
 use Wikimedia\Parsoid\NodeData\TempData;
@@ -175,12 +176,12 @@ class TreeBuilderStage extends PipelineStage {
 		$data = new NodeData;
 		$data->parsoid = $dataParsoid;
 		if ( isset( $attribs['data-mw'] ) ) {
-			$data->mw = json_decode( $attribs['data-mw'] );
+			$data->mw = new DataMw( (array)json_decode( $attribs['data-mw'] ) );
 			unset( $attribs['data-mw'] );
 		}
 		// Store in the top level doc since we'll be importing the nodes after treebuilding
-		$docId = DOMDataUtils::stashObjectInDoc( $this->env->topLevelDoc, $data );
-		$attribs[DOMDataUtils::DATA_OBJECT_ATTR_NAME] = (string)$docId;
+		$nodeId = DOMDataUtils::stashObjectInDoc( $this->env->topLevelDoc, $data );
+		$attribs[DOMDataUtils::DATA_OBJECT_ATTR_NAME] = (string)$nodeId;
 		return $attribs;
 	}
 
@@ -284,24 +285,16 @@ class TreeBuilderStage extends PipelineStage {
 
 			$wasInserted = false;
 
-			// FIXME: This prevents fostering of all metas except those
-			// that are explictly identified for fostering. Instead,
-			// this should foster all metas except those are explicitly
-			// barred from being fostered.
-
-			// <*include*> metas, behavior switch metas
-			// should be fostered since they end up generating
-			// HTML content at the marker site.
+			// Transclusion metas are placeholders and are eliminated after template-wrapping.
+			// Fostering them unnecessarily expands template ranges. Same for mw:Param metas.
+			// Annotations are not fostered because the AnnotationBuilder handles its own
+			// range expansion for metas that end up in fosterable positions.
 			if ( $tName === 'meta' ) {
-				$shouldFoster = TokenUtils::matchTypeOf(
+				$shouldNotFoster = TokenUtils::matchTypeOf(
 					$token,
-					'#^mw:Includes/(OnlyInclude|IncludeOnly|NoInclude)(/|$)#'
+					'#^mw:(Transclusion|Annotation|Param)(/|$)#'
 				);
-				if ( !$shouldFoster ) {
-					$prop = $token->getAttribute( 'property' ) ?? '';
-					$shouldFoster = preg_match( '/^(mw:PageProp\/[a-zA-Z]*)\b/', $prop );
-				}
-				if ( !$shouldFoster ) {
+				if ( $shouldNotFoster ) {
 					// transclusions state
 					$transType = TokenUtils::matchTypeOf( $token, '#^mw:Transclusion#' );
 					if ( $transType ) {

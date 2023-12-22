@@ -4,7 +4,6 @@
 			"Silovan"
 		]
 	},
-	"apihelp-visualeditor-description": "HTML5-იშ დორთინაფა ხასჷლაშო parsoid სერვისშე.",
 	"apihelp-visualeditor-param-basetimestamp": "მუჟამსჷთ დოჩუანთჷნ, ქიგიორინეთ თე დორედაქტირაფილი გინომორსებაშ ნიშანო. გჷმირინუაფუ რედაქტირაფაშ კონფლიქტიშ გიოგორაფალო.",
 	"apihelp-visualeditor-param-cachekey": "დოფორმატირაფაშ ვარდა გიშაკერძაფეფშო, გიმირინეთ ქეშიშ წიმოხიანი დოფორმატაფაშ მოთხირიშ მოღალი თე კილაწკმა ართო. $1html-იშ მიოჯინშა ვემეღებათ.",
 	"apihelp-visualeditor-param-etag": "გეუნჭირით ETag-ის ოჯღონალო.",
@@ -15,7 +14,6 @@
 	"apihelp-visualeditor-param-pst": "ვიკიტექსტიშ გიწოთოლორაფა Parsoid-შა ჯღონუაშახ (აპიჯალა=სხუნუაშ ფრაგმენტი)",
 	"apihelp-visualeditor-param-starttimestamp": "ჩუალაშ ბორჯის, ქიგიორინეთ ხასჷლაშ დინოხარგუაშ მალობას. გჷმირინუაფუ რედაქტირაფაშ კონფლიქტიშ გიოგორაფალო.",
 	"apihelp-visualeditor-param-wikitext": "Parsoid-შა ოჯღონალი ვიკიტექსტიშ HTML-შა გინაჸონაფალო (paction=parsefragment).",
-	"apihelp-visualeditoredit-description": "დოჩვი HTML5 ხასჷლა მედიავიკის (გჷნიკონვერტირუ ვიკიტექსტის Parsoid სერვისიშ მეშქაშობათ)",
 	"apihelp-visualeditoredit-param-basetimestamp": "ჩუალაშ ბორჯის, ქიგიორინეთ ხასჷლაშ დინოხარგუაშ მალობას. გჷმირინუაფუ რედაქტირაფაშ კონფლიქტიშ გიოგორაფალო.",
 	"apihelp-visualeditoredit-param-cachekey": "დოფორმატირაფაშ ვარდა გიშაკერძაფეფშო, გიმირინეთ ქეშიშ წიმოხიანი დოფორმატაფაშ მოთხირიშ მოღალი თე კილაწკმა ართო. $1html-იშ მიოჯინშა ვემეღებათ.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha ID (captcha-შ გჷმოხონარაფაშ ჩუალაშ ბორჯის).",

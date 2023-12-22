@@ -42,10 +42,6 @@ class PageArchiveTest extends MediaWikiIntegrationTestCase {
 	 */
 	protected $ipRev;
 
-	protected function addCoreDBData() {
-		// Blanked out to keep auto-increment values stable.
-	}
-
 	protected function setUp(): void {
 		parent::setUp();
 
@@ -54,7 +50,6 @@ class PageArchiveTest extends MediaWikiIntegrationTestCase {
 			[
 				'page',
 				'revision',
-				'revision_comment_temp',
 				'ip_changes',
 				'text',
 				'archive',
@@ -99,7 +94,7 @@ class PageArchiveTest extends MediaWikiIntegrationTestCase {
 		$rev->setContent( SlotRecord::MAIN, new TextContent( 'Lorem Ipsum' ) );
 		$rev->setComment( CommentStoreComment::newUnsavedComment( 'just a test' ) );
 
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = $this->getDb();
 		$this->ipRev = $revisionStore->insertRevisionOn( $rev, $dbw );
 
 		$this->deletePage( $page, '', $user );
@@ -113,24 +108,27 @@ class PageArchiveTest extends MediaWikiIntegrationTestCase {
 		$revisionStore = $this->getServiceContainer()->getRevisionStore();
 
 		// First make sure old revisions are archived
-		$dbr = wfGetDB( DB_REPLICA );
-		$arQuery = $revisionStore->getArchiveQueryInfo();
-		$row = $dbr->selectRow(
-			$arQuery['tables'],
-			$arQuery['fields'],
-			[ 'ar_rev_id' => $this->ipRev->getId() ],
-			__METHOD__,
-			[],
-			$arQuery['joins']
-		);
+		$dbr = $this->getDb();
+		$row = $revisionStore->newArchiveSelectQueryBuilder( $dbr )
+			->joinComment()
+			->where( [ 'ar_rev_id' => $this->ipRev->getId() ] )
+			->caller( __METHOD__ )->fetchRow();
 		$this->assertEquals( $this->ipEditor, $row->ar_user_text );
 
 		// Should not be in revision
-		$row = $dbr->selectRow( 'revision', '1', [ 'rev_id' => $this->ipRev->getId() ] );
+		$row = $dbr->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'revision' )
+			->where( [ 'rev_id' => $this->ipRev->getId() ] )
+			->fetchRow();
 		$this->assertFalse( $row );
 
 		// Should not be in ip_changes
-		$row = $dbr->selectRow( 'ip_changes', '1', [ 'ipc_rev_id' => $this->ipRev->getId() ] );
+		$row = $dbr->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'ip_changes' )
+			->where( [ 'ipc_rev_id' => $this->ipRev->getId() ] )
+			->fetchRow();
 		$this->assertFalse( $row );
 
 		// Restore the page
@@ -138,20 +136,18 @@ class PageArchiveTest extends MediaWikiIntegrationTestCase {
 		$archive->undeleteAsUser( [], $this->getTestSysop()->getUser() );
 
 		// Should be back in revision
-		$revQuery = $revisionStore->getQueryInfo();
-		$row = $dbr->selectRow(
-			$revQuery['tables'],
-			$revQuery['fields'],
-			[ 'rev_id' => $this->ipRev->getId() ],
-			__METHOD__,
-			[],
-			$revQuery['joins']
-		);
+		$row = $revisionStore->newSelectQueryBuilder( $dbr )
+			->where( [ 'rev_id' => $this->ipRev->getId() ] )
+			->caller( __METHOD__ )->fetchRow();
 		$this->assertNotFalse( $row, 'row exists in revision table' );
 		$this->assertEquals( $this->ipEditor, $row->rev_user_text );
 
 		// Should be back in ip_changes
-		$row = $dbr->selectRow( 'ip_changes', [ 'ipc_hex' ], [ 'ipc_rev_id' => $this->ipRev->getId() ] );
+		$row = $dbr->newSelectQueryBuilder()
+			->select( [ 'ipc_hex' ] )
+			->from( 'ip_changes' )
+			->where( [ 'ipc_rev_id' => $this->ipRev->getId() ] )
+			->fetchRow();
 		$this->assertNotFalse( $row, 'row exists in ip_changes table' );
 		$this->assertEquals( IPUtils::toHex( $this->ipEditor ), $row->ipc_hex );
 	}

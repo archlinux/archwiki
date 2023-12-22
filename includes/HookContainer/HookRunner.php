@@ -3,13 +3,14 @@
 namespace MediaWiki\HookContainer;
 
 use Article;
-use Config;
 use File;
 use IContextSource;
 use JsonContent;
+use MailAddress;
 use ManualLogEntry;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Mail\UserEmailContact;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Permissions\Authority;
@@ -17,12 +18,12 @@ use MediaWiki\RenameUser\RenameuserSQL;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Session\Session;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Parser;
 use ParserOptions;
 use Skin;
-use SpecialPage;
 use StatusValue;
 
 /**
@@ -55,6 +56,7 @@ class HookRunner implements
 	\MediaWiki\Cache\Hook\HtmlCacheUpdaterAppendUrlsHook,
 	\MediaWiki\Cache\Hook\HtmlCacheUpdaterVaryUrlsHook,
 	\MediaWiki\Cache\Hook\HTMLFileCache__useFileCacheHook,
+	\MediaWiki\Cache\Hook\MessageCacheFetchOverridesHook,
 	\MediaWiki\Cache\Hook\MessageCacheReplaceHook,
 	\MediaWiki\Cache\Hook\MessageCache__getHook,
 	\MediaWiki\Cache\Hook\MessagesPreLoadHook,
@@ -83,6 +85,7 @@ class HookRunner implements
 	\MediaWiki\Diff\Hook\AbortDiffCacheHook,
 	\MediaWiki\Diff\Hook\ArticleContentOnDiffHook,
 	\MediaWiki\Diff\Hook\DifferenceEngineAfterLoadNewTextHook,
+	\MediaWiki\Diff\Hook\TextSlotDiffRendererTablePrefixHook,
 	\MediaWiki\Diff\Hook\DifferenceEngineLoadTextAfterNewContentIsLoadedHook,
 	\MediaWiki\Diff\Hook\DifferenceEngineMarkPatrolledLinkHook,
 	\MediaWiki\Diff\Hook\DifferenceEngineMarkPatrolledRCIDHook,
@@ -170,6 +173,8 @@ class HookRunner implements
 	\MediaWiki\Hook\EmailUserFormHook,
 	\MediaWiki\Hook\EmailUserHook,
 	\MediaWiki\Hook\EmailUserPermissionsErrorsHook,
+	\MediaWiki\Mail\Hook\EmailUserAuthorizeSendHook,
+	\MediaWiki\Mail\Hook\EmailUserSendEmailHook,
 	\MediaWiki\Hook\EnhancedChangesListModifyBlockLineDataHook,
 	\MediaWiki\Hook\EnhancedChangesListModifyLineDataHook,
 	\MediaWiki\Hook\EnhancedChangesList__getLogTextHook,
@@ -292,12 +297,11 @@ class HookRunner implements
 	\MediaWiki\Hook\ParserLimitReportPrepareHook,
 	\MediaWiki\Hook\ParserLogLinterDataHook,
 	\MediaWiki\Hook\ParserMakeImageParamsHook,
-	\MediaWiki\Hook\ParserModifyImageHTML,
+	\MediaWiki\Hook\ParserModifyImageHTMLHook,
 	\MediaWiki\Hook\ParserOptionsRegisterHook,
 	\MediaWiki\Hook\ParserOutputPostCacheTransformHook,
 	\MediaWiki\Hook\ParserPreSaveTransformCompleteHook,
 	\MediaWiki\Hook\ParserTestGlobalsHook,
-	\MediaWiki\Hook\ParserTestTablesHook,
 	\MediaWiki\Hook\PasswordPoliciesForUserHook,
 	\MediaWiki\Hook\PostLoginRedirectHook,
 	\MediaWiki\Hook\PreferencesGetIconHook,
@@ -330,10 +334,7 @@ class HookRunner implements
 	\MediaWiki\Hook\SkinPreloadExistenceHook,
 	\MediaWiki\Hook\SkinSubPageSubtitleHook,
 	\MediaWiki\Hook\SkinTemplateGetLanguageLinkHook,
-	\MediaWiki\Hook\SkinTemplateNavigationHook,
-	\MediaWiki\Hook\SkinTemplateNavigation__SpecialPageHook,
 	\MediaWiki\Hook\SkinTemplateNavigation__UniversalHook,
-	\MediaWiki\Hook\PersonalUrlsHook,
 	\MediaWiki\Hook\SoftwareInfoHook,
 	\MediaWiki\Hook\SpecialBlockModifyFormFieldsHook,
 	\MediaWiki\Hook\SpecialContributionsBeforeMainOutputHook,
@@ -489,8 +490,6 @@ class HookRunner implements
 	\MediaWiki\RenameUser\Hook\RenameUserPreRenameHook,
 	\MediaWiki\RenameUser\Hook\RenameUserSQLHook,
 	\MediaWiki\RenameUser\Hook\RenameUserWarningHook,
-	\MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook,
-	\MediaWiki\ResourceLoader\Hook\ResourceLoaderJqueryMsgModuleMagicWordsHook,
 	\MediaWiki\Rest\Hook\SearchResultProvideDescriptionHook,
 	\MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook,
 	\MediaWiki\Revision\Hook\RevisionRecordInsertedHook,
@@ -1184,11 +1183,11 @@ class HookRunner implements
 	}
 
 	public function onContentGetParserOutput( $content, $title, $revId, $options,
-		$generateHtml, &$output
+		$generateHtml, &$parserOutput
 	) {
 		return $this->container->run(
 			'ContentGetParserOutput',
-			[ $content, $title, $revId, $options, $generateHtml, &$output ]
+			[ $content, $title, $revId, $options, $generateHtml, &$parserOutput ]
 		);
 	}
 
@@ -1199,10 +1198,10 @@ class HookRunner implements
 		);
 	}
 
-	public function onContentHandlerForModelID( $modeName, &$handler ) {
+	public function onContentHandlerForModelID( $modelName, &$handler ) {
 		return $this->container->run(
 			'ContentHandlerForModelID',
-			[ $modeName, &$handler ]
+			[ $modelName, &$handler ]
 		);
 	}
 
@@ -1322,6 +1321,17 @@ class HookRunner implements
 		return $this->container->run(
 			'DifferenceEngineAfterLoadNewText',
 			[ $differenceEngine ]
+		);
+	}
+
+	public function onTextSlotDiffRendererTablePrefix(
+		\TextSlotDiffRenderer $textSlotDiffRenderer,
+		IContextSource $context,
+		array &$parts
+	) {
+		return $this->container->run(
+			'TextSlotDiffRendererTablePrefix',
+			[ $textSlotDiffRenderer, $context, &$parts ]
 		);
 	}
 
@@ -1632,6 +1642,28 @@ class HookRunner implements
 		return $this->container->run(
 			'EmailUserPermissionsErrors',
 			[ $user, $editToken, &$hookErr ]
+		);
+	}
+
+	public function onEmailUserAuthorizeSend( Authority $sender, StatusValue $status ) {
+		return $this->container->run(
+			'EmailUserAuthorizeSend',
+			[ $sender, $status ]
+		);
+	}
+
+	public function onEmailUserSendEmail(
+		Authority $from,
+		MailAddress $fromAddress,
+		UserEmailContact $to,
+		MailAddress $toAddress,
+		string $subject,
+		string $text,
+		StatusValue $status
+	) {
+		return $this->container->run(
+			'EmailUserSendEmail',
+			[ $from, $fromAddress, $to, $toAddress, $subject, $text, $status ]
 		);
 	}
 
@@ -2503,6 +2535,14 @@ class HookRunner implements
 		);
 	}
 
+	public function onMessageCacheFetchOverrides( array &$messages ): void {
+		$this->container->run(
+			'MessageCacheFetchOverrides',
+			[ &$messages ],
+			[ 'abortable' => false ]
+		);
+	}
+
 	public function onMessageCacheReplace( $title, $text ) {
 		return $this->container->run(
 			'MessageCacheReplace',
@@ -3011,13 +3051,6 @@ class HookRunner implements
 		);
 	}
 
-	public function onParserTestTables( &$tables ) {
-		return $this->container->run(
-			'ParserTestTables',
-			[ &$tables ]
-		);
-	}
-
 	public function onPasswordPoliciesForUser( $user, &$effectivePolicy ) {
 		return $this->container->run(
 			'PasswordPoliciesForUser',
@@ -3029,14 +3062,6 @@ class HookRunner implements
 		return $this->container->run(
 			'PerformRetroactiveAutoblock',
 			[ $block, &$blockIds ]
-		);
-	}
-
-	public function onPersonalUrls( &$personal_urls, &$title, $skin ): void {
-		$this->container->run(
-			'PersonalUrls',
-			[ &$personal_urls, &$title, $skin ],
-			[ 'abortable' => false ]
 		);
 	}
 
@@ -3238,24 +3263,6 @@ class HookRunner implements
 		return $this->container->run(
 			'ResetPasswordExpiration',
 			[ $user, &$newExpire ]
-		);
-	}
-
-	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
-		$this->container->run(
-			'ResourceLoaderGetConfigVars',
-			[ &$vars, $skin, $config ],
-			[ 'abortable' => false ]
-		);
-	}
-
-	public function onResourceLoaderJqueryMsgModuleMagicWords( RL\Context $context,
-		array &$magicWords
-	): void {
-		$this->container->run(
-			'ResourceLoaderJqueryMsgModuleMagicWords',
-			[ $context, &$magicWords ],
-			[ 'abortable' => false ]
 		);
 	}
 
@@ -3563,28 +3570,6 @@ class HookRunner implements
 		return $this->container->run(
 			'SkinTemplateGetLanguageLink',
 			[ &$languageLink, $languageLinkTitle, $title, $outputPage ]
-		);
-	}
-
-	/**
-	 * @deprecated since 1.39 Use onSkinTemplateNavigation__Universal instead
-	 */
-	public function onSkinTemplateNavigation( $sktemplate, &$links ): void {
-		$this->container->run(
-			'SkinTemplateNavigation',
-			[ $sktemplate, &$links ],
-			[ 'abortable' => false ]
-		);
-	}
-
-	/**
-	 * @deprecated since 1.39 Use onSkinTemplateNavigation__Universal instead
-	 */
-	public function onSkinTemplateNavigation__SpecialPage( $sktemplate, &$links ): void {
-		$this->container->run(
-			'SkinTemplateNavigation::SpecialPage',
-			[ $sktemplate, &$links ],
-			[ 'abortable' => false ]
 		);
 	}
 

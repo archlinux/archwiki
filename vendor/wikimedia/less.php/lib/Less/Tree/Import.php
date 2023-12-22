@@ -105,10 +105,10 @@ class Less_Tree_Import extends Less_Tree {
 			$path = $this->path->value;
 			$path = ( isset( $this->css ) || preg_match( '/(\.[a-z]*$)|([\?;].*)$/', $path ) ) ? $path : $path . '.less';
 
-		// During the first pass, Less_Tree_URL may contain a Less_Tree_Variable (not yet expanded),
+		// During the first pass, Less_Tree_Url may contain a Less_Tree_Variable (not yet expanded),
 		// and thus has no value property defined yet. Return null until we reach the next phase.
 		// https://github.com/wikimedia/less.php/issues/29
-		} elseif ( $this->path instanceof Less_Tree_URL && !( $this->path->value instanceof Less_Tree_Variable ) ) {
+		} elseif ( $this->path instanceof Less_Tree_Url && !( $this->path->value instanceof Less_Tree_Variable ) ) {
 			$path = $this->path->value->value;
 		} else {
 			return null;
@@ -129,7 +129,7 @@ class Less_Tree_Import extends Less_Tree {
 			$rootpath = $this->currentFileInfo['rootpath'];
 		}
 
-		if ( !( $path instanceof Less_Tree_URL ) ) {
+		if ( !( $path instanceof Less_Tree_Url ) ) {
 			if ( $rootpath ) {
 				$pathValue = $path->value;
 				// Add the base path if the import is relative
@@ -227,23 +227,26 @@ class Less_Tree_Import extends Less_Tree {
 
 			foreach ( $import_dirs as $rootpath => $rooturi ) {
 				if ( is_callable( $rooturi ) ) {
-					list( $path, $uri ) = call_user_func( $rooturi, $evald_path );
-					if ( is_string( $path ) ) {
-						$full_path = $path;
-						return [ $full_path, $uri ];
+					$res = $rooturi( $evald_path );
+					if ( $res && is_string( $res[0] ) ) {
+						return [
+							Less_Environment::normalizePath( $res[0] ),
+							Less_Environment::normalizePath( $res[1] ?? dirname( $evald_path ) )
+						];
 					}
 				} elseif ( !empty( $rootpath ) ) {
-
 					$path = rtrim( $rootpath, '/\\' ) . '/' . ltrim( $evald_path, '/\\' );
-
 					if ( file_exists( $path ) ) {
-						$full_path = Less_Environment::normalizePath( $path );
-						$uri = Less_Environment::normalizePath( dirname( $rooturi . $evald_path ) );
-						return [ $full_path, $uri ];
-					} elseif ( file_exists( $path . '.less' ) ) {
-						$full_path = Less_Environment::normalizePath( $path . '.less' );
-						$uri = Less_Environment::normalizePath( dirname( $rooturi . $evald_path . '.less' ) );
-						return [ $full_path, $uri ];
+						return [
+							Less_Environment::normalizePath( $path ),
+							Less_Environment::normalizePath( dirname( $rooturi . $evald_path ) )
+						];
+					}
+					if ( file_exists( $path . '.less' ) ) {
+						return [
+							Less_Environment::normalizePath( $path . '.less' ),
+							Less_Environment::normalizePath( dirname( $rooturi . $evald_path . '.less' ) )
+						];
 					}
 				}
 			}

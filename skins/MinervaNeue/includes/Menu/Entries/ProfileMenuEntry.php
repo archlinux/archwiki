@@ -17,8 +17,8 @@
 
 namespace MediaWiki\Minerva\Menu\Entries;
 
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use Title;
 
 /**
  * Note this is used by Extension:GrowthExperiments
@@ -84,12 +84,23 @@ final class ProfileMenuEntry implements IProfileMenuEntry {
 	public function getComponents(): array {
 		$username = $this->user->getName();
 		return [ [
-			'icon' => 'wikimedia-userAvatar-base20',
-			'text' => $this->customProfileLabel ?? $username,
-			'href' => $this->customProfileURL ?? Title::makeTitle( NS_USER, $username )->getLocalURL(),
-			'class' => 'menu__item--user',
-			'data-event-name' => 'menu.' . (
-				$this->profileTrackingCode ?? self::DEFAULT_PROFILE_TRACKING_CODE )
+			'data-icon' => [
+				'icon' => 'userAvatar-base20',
+			],
+			'label' => $this->customProfileLabel ?? $username,
+			'array-attributes' => [
+				[
+					'key' => 'href',
+					'value' => $this->customProfileURL ?? Title::makeTitle( NS_USER, $username )->getLocalURL(),
+				],
+				[
+					'key' => 'data-event-name',
+					'value' => 'menu.' . (
+						$this->profileTrackingCode ?? self::DEFAULT_PROFILE_TRACKING_CODE
+					)
+				],
+			],
+			'classes' => 'menu__item--user',
 		] ];
 	}
 }

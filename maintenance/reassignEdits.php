@@ -23,8 +23,8 @@
  * @license GPL-2.0-or-later
  */
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\User\ActorMigration;
+use MediaWiki\User\User;
 use Wikimedia\IPUtils;
 
 require_once __DIR__ . '/Maintenance.php';
@@ -80,7 +80,7 @@ class ReassignEdits extends Maintenance {
 	private function doReassignEdits( &$from, &$to, $updateRC = false, $report = false ) {
 		$dbw = $this->getDB( DB_PRIMARY );
 		$this->beginTransaction( $dbw, __METHOD__ );
-		$actorNormalization = MediaWikiServices::getInstance()->getActorNormalization();
+		$actorNormalization = $this->getServiceContainer()->getActorNormalization();
 		$fromActorId = $actorNormalization->findActorId( $from, $dbw );
 
 		# Count things
@@ -97,23 +97,21 @@ class ReassignEdits extends Maintenance {
 		$this->output( "found {$revisionRows}.\n" );
 
 		$this->output( "Checking deleted edits..." );
-		$archiveRows = $dbw->selectRowCount(
-			[ 'archive' ],
-			'*',
-			[ 'ar_actor' => $fromActorId ],
-			__METHOD__
-		);
+		$archiveRows = $dbw->newSelectQueryBuilder()
+			->select( '*' )
+			->from( 'archive' )
+			->where( [ 'ar_actor' => $fromActorId ] )
+			->caller( __METHOD__ )->fetchRowCount();
 		$this->output( "found {$archiveRows}.\n" );
 
 		# Don't count recent changes if we're not supposed to
 		if ( $updateRC ) {
 			$this->output( "Checking recent changes..." );
-			$recentChangesRows = $dbw->selectRowCount(
-				[ 'recentchanges' ],
-				'*',
-				[ 'rc_actor' => $fromActorId ],
-				__METHOD__
-			);
+			$recentChangesRows = $dbw->newSelectQueryBuilder()
+				->select( '*' )
+				->from( 'recentchanges' )
+				->where( [ 'rc_actor' => $fromActorId ] )
+				->caller( __METHOD__ )->fetchRowCount();
 			$this->output( "found {$recentChangesRows}.\n" );
 		} else {
 			$recentChangesRows = 0;
@@ -184,7 +182,7 @@ class ReassignEdits extends Maintenance {
 	 * @return User
 	 */
 	private function initialiseUser( $username ) {
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		if ( $services->getUserNameUtils()->isIP( $username ) ) {
 			$user = User::newFromName( $username, false );
 			$user->getActorId();

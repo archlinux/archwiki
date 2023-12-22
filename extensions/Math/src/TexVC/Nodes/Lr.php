@@ -94,7 +94,7 @@ class Lr extends TexNode {
 
 	public function containsFunc( $target, $args = null ) {
 		if ( $args == null ) {
-			$args = [ '\\left','\\right', $this->arg ];
+			$args = [ '\\left', '\\right', $this->arg ];
 		}
 		return parent::containsFunc( $target, $args );
 	}

@@ -14,16 +14,18 @@
 
 	OO.inheritClass( RebaserTarget, ve.init.sa.Target );
 
+	var linkIndex = RebaserTarget.static.toolbarGroups.findIndex( function ( group ) {
+		return group.name === 'link';
+	} );
 	RebaserTarget.static.toolbarGroups = ve.copy( RebaserTarget.static.toolbarGroups );
-	RebaserTarget.static.toolbarGroups.splice( 4, 0, {
+	RebaserTarget.static.toolbarGroups.splice( linkIndex + 1, 0, {
 		name: 'commentAnnotation',
 		include: [ 'commentAnnotation' ]
 	} );
-
-	RebaserTarget.static.actionGroups = ve.copy( RebaserTarget.static.actionGroups );
-	RebaserTarget.static.actionGroups.push(
+	RebaserTarget.static.toolbarGroups.push(
 		{
 			name: 'authorList',
+			align: 'after',
 			include: [ 'authorList' ]
 		}
 	);

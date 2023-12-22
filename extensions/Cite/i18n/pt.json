@@ -41,5 +41,11 @@
 	"cite_references_link_accessibility_back_label": "Voltar acima",
 	"cite_section_preview_references": "Antevisão de referências",
 	"cite_warning": "Aviso de citação: $1",
-	"cite_warning_sectionpreview_no_text": "Elemento <code>&lt;ref&gt;</code> com o nome <code>$1</code> não pode fazer parte da antevisão porque está definido fora da presente secção ou não foi definido."
+	"cite_warning_sectionpreview_no_text": "Elemento <code>&lt;ref&gt;</code> com o nome <code>$1</code> não pode fazer parte da antevisão porque está definido fora da presente secção ou não foi definido.",
+	"cite-wikieditor-tool-reference": "Referência",
+	"cite-wikieditor-help-page-references": "Referências",
+	"cite-wikieditor-help-content-reference-description": "Referência",
+	"cite-wikieditor-help-content-named-reference-description": "Referência nomeada",
+	"cite-wikieditor-help-content-rereference-description": "Reutilização da mesma referência",
+	"cite-wikieditor-help-content-showreferences-description": "Mostrar referências"
 }

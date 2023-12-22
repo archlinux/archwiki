@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Aputtu",
 			"Byrial",
 			"Cgtdk",
@@ -22,8 +23,7 @@
 			"Sarrus",
 			"Steenth",
 			"Tjernobyl",
-			"Weblars",
-			"Amire80"
+			"Weblars"
 		]
 	},
 	"abusefilter-desc": "Anvender automatiske heuristikker på redigeringer",

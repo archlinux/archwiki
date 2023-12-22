@@ -5,8 +5,8 @@ namespace MediaWiki\Extension\AbuseFilter\Consequences;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
 use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
 use Psr\Log\LoggerInterface;
-use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IReadableDatabase;
+use Wikimedia\Rdbms\LBFactory;
 
 /**
  * Class for retrieving actions and parameters from the database
@@ -15,8 +15,8 @@ use Wikimedia\Rdbms\ILoadBalancer;
 class ConsequencesLookup {
 	public const SERVICE_NAME = 'AbuseFilterConsequencesLookup';
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
+	/** @var LBFactory */
+	private $lbFactory;
 	/** @var CentralDBManager */
 	private $centralDBManager;
 	/** @var ConsequencesRegistry */
@@ -25,18 +25,18 @@ class ConsequencesLookup {
 	private $logger;
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param LBFactory $lbFactory
 	 * @param CentralDBManager $centralDBManager
 	 * @param ConsequencesRegistry $consequencesRegistry
 	 * @param LoggerInterface $logger
 	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer,
+		LBFactory $lbFactory,
 		CentralDBManager $centralDBManager,
 		ConsequencesRegistry $consequencesRegistry,
 		LoggerInterface $logger
 	) {
-		$this->loadBalancer = $loadBalancer;
+		$this->lbFactory = $lbFactory;
 		$this->centralDBManager = $centralDBManager;
 		$this->consequencesRegistry = $consequencesRegistry;
 		$this->logger = $logger;
@@ -61,7 +61,7 @@ class ConsequencesLookup {
 		}
 
 		// Load local filter info
-		$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+		$dbr = $this->lbFactory->getReplicaDatabase();
 		// Retrieve the consequences.
 		$consequences = [];
 
@@ -81,12 +81,12 @@ class ConsequencesLookup {
 	}
 
 	/**
-	 * @param IDatabase $dbr
+	 * @param IReadableDatabase $dbr
 	 * @param int[] $filters
 	 * @param string $prefix
 	 * @return array[][]
 	 */
-	private function loadConsequencesFromDB( IDatabase $dbr, array $filters, string $prefix = '' ): array {
+	private function loadConsequencesFromDB( IReadableDatabase $dbr, array $filters, string $prefix = '' ): array {
 		$actionsByFilter = [];
 		foreach ( $filters as $filter ) {
 			$actionsByFilter[$prefix . $filter] = [];

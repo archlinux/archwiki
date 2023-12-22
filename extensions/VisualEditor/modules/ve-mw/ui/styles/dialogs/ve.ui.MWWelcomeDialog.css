@@ -5,7 +5,7 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-.ve-init-mw-welcomeDialog-content:before {
+.ve-init-mw-welcomeDialog-content::before {
 	content: '';
 	background: url( images/welcomeSplash-ltr.png ) center no-repeat;
 	background-size: contain;

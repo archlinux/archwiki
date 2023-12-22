@@ -12,17 +12,21 @@ var ThreadItem = require( './ThreadItem.js' ),
  * @param {Object[]} [signatureRanges] Objects describing the extent of signatures (plus
  *  timestamps) for this comment. There is always at least one signature, but there may be
  *  multiple. The author and timestamp of the comment is determined from the first signature.
- *  The last node in every signature range is a node containing the timestamp.
+ * @param {Object[]} [timestampRanges] Objects describing the extent of timestamps within
+ *  the above signatures.
  * @param {moment} [timestamp] Timestamp (Moment object)
  * @param {string} [author] Comment author's username
+ * @param {string|null} [displayName] Comment author's display name
  */
-function CommentItem( level, range, signatureRanges, timestamp, author ) {
+function CommentItem( level, range, signatureRanges, timestampRanges, timestamp, author, displayName ) {
 	// Parent constructor
 	CommentItem.super.call( this, 'comment', level, range );
 
 	this.signatureRanges = signatureRanges || [];
+	this.timestampRanges = timestampRanges || [];
 	this.timestamp = timestamp || null;
 	this.author = author || null;
+	this.displayName = displayName || null;
 
 	/**
 	 * @member {ThreadItem} Parent thread item

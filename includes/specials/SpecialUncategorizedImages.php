@@ -22,7 +22,10 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
-use Wikimedia\Rdbms\ILoadBalancer;
+namespace MediaWiki\Specials;
+
+use MediaWiki\SpecialPage\ImageQueryPage;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Special page lists images which haven't been categorised
@@ -33,11 +36,11 @@ use Wikimedia\Rdbms\ILoadBalancer;
 class SpecialUncategorizedImages extends ImageQueryPage {
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 */
-	public function __construct( ILoadBalancer $loadBalancer ) {
+	public function __construct( IConnectionProvider $dbProvider ) {
 		parent::__construct( 'Uncategorizedimages' );
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 	}
 
 	protected function sortDescending() {
@@ -69,7 +72,7 @@ class SpecialUncategorizedImages extends ImageQueryPage {
 				'title' => 'page_title',
 			],
 			'conds' => [
-				'cl_from IS NULL',
+				'cl_from' => null,
 				'page_namespace' => NS_FILE,
 				'page_is_redirect' => 0,
 			],
@@ -86,3 +89,9 @@ class SpecialUncategorizedImages extends ImageQueryPage {
 		return 'maintenance';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialUncategorizedImages::class, 'SpecialUncategorizedImages' );

@@ -16,15 +16,16 @@ if ( mw.user.isAnon() && mw.config.get( 'wgDiscussionToolsABTest' ) && mw.config
 	var token = mw.cookie.get( 'DTABid', '', mw.user.generateRandomSessionId() );
 	mw.cookie.set( 'DTAB', mw.config.get( 'wgDiscussionToolsABTestBucket' ), { path: '/', expires: 90 * 86400, prefix: '' } );
 	mw.cookie.set( 'DTABid', token, { path: '/', expires: 90 * 86400, prefix: '' } );
-	mw.config.set( 'wgDiscussionToolsAnonymousUserId', token );
 }
 
 if ( url.searchParams.get( 'dtrepliedto' ) ) {
 	// If we had to reload the page to highlight the new comment, extract that data from the URL and
 	// clean it up.
 	mw.dt.initState.repliedTo = url.searchParams.get( 'dtrepliedto' );
+	mw.dt.initState.tempUserCreated = url.searchParams.has( 'dttempusercreated' );
 	if ( window.history.replaceState ) {
 		url.searchParams.delete( 'dtrepliedto' );
+		url.searchParams.delete( 'dttempusercreated' );
 		window.history.replaceState( {}, '', url );
 	}
 }
@@ -38,6 +39,9 @@ mw.dt.init = function ( $container ) {
 	function reallyInit( $node ) {
 		controller.init( $node, mw.dt.initState );
 		mw.dt.initState = {};
+
+		// TODO: This functionality could be provided by MediaWiki (T183720).
+		$( document.documentElement ).addClass( 'ext-discussiontools-init-ready' );
 	}
 
 	// Only (re)initialize if the hook is being fired on the page content – not on e.g. a single image
@@ -75,10 +79,31 @@ if ( url.searchParams.get( 'dtdebug' ) ) {
 	mw.hook( 'wikipage.content' ).add( mw.dt.init );
 }
 
+var topicSubscriptions;
+
 if ( mw.config.get( 'wgCanonicalSpecialPageName' ) === 'TopicSubscriptions' ) {
-	var topicSubscriptions = require( './topicsubscriptions.js' );
+	topicSubscriptions = require( './topicsubscriptions.js' );
 	topicSubscriptions.initSpecialTopicSubscriptions();
 }
+
+if ( mw.config.get( 'wgAction' ) === 'history' ) {
+	topicSubscriptions = require( './topicsubscriptions.js' );
+	topicSubscriptions.initNewTopicsSubscription();
+}
+
+// Clean up old localStorage entries that were erroneously set with no expiration (T339042).
+// We are no longer using these keys since T329299.
+// TODO: Remove this code after a few weeks.
+mw.requestIdleCallback( function () {
+	try {
+		for ( var key in localStorage ) {
+			if ( key.startsWith( 'reply/' ) ) {
+				localStorage.removeItem( key );
+				localStorage.removeItem( '_EXPIRY_' + key );
+			}
+		}
+	} catch ( err ) {}
+} );
 
 module.exports = {
 	controller: controller,
@@ -89,6 +114,5 @@ module.exports = {
 	HeadingItem: require( './HeadingItem.js' ),
 	CommentItem: require( './CommentItem.js' ),
 	utils: require( './utils.js' ),
-	config: require( './config.json' ),
-	logger: require( './logger.js' )
+	config: require( './config.json' )
 };

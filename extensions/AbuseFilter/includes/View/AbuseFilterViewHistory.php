@@ -85,9 +85,10 @@ class AbuseFilterViewHistory extends AbuseFilterView {
 		}
 
 		if ( $filter ) {
-			$out->setPageTitle( $this->msg( 'abusefilter-history' )->numParams( $filter ) );
+			// Parse wikitext in this message to allow formatting of numero signs (T343994#9209383)
+			$out->setPageTitle( $this->msg( 'abusefilter-history' )->numParams( $filter )->parse() );
 		} else {
-			$out->setPageTitle( $this->msg( 'abusefilter-filter-log' ) );
+			$out->setPageTitleMsg( $this->msg( 'abusefilter-filter-log' ) );
 		}
 
 		// Useful links
@@ -117,13 +118,12 @@ class AbuseFilterViewHistory extends AbuseFilterView {
 		);
 		if ( $user !== false ) {
 			$out->addSubtitle(
-				$this->msg(
-					'abusefilter-history-foruser',
-					// We don't really need to get a user ID
-					Linker::userLink( 1, $user ),
+				$this->msg( 'abusefilter-history-foruser' )
+					// We don't really need to pass the real user ID
+					->rawParams( Linker::userLink( 1, $user ) )
 					// For GENDER
-					$user
-				)->text()
+					->params( $user )
+					->parse()
 			);
 		} else {
 			$user = null;

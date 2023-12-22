@@ -21,39 +21,32 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Pager\ImageListPager;
+use MediaWiki\SpecialPage\IncludableSpecialPage;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserRigorOptions;
-use Wikimedia\Rdbms\ILoadBalancer;
+use RepoGroup;
+use UserCache;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 class SpecialListFiles extends IncludableSpecialPage {
 
-	/** @var RepoGroup */
-	private $repoGroup;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var CommentStore */
-	private $commentStore;
-
-	/** @var UserNameUtils */
-	private $userNameUtils;
-
-	/** @var UserNamePrefixSearch */
-	private $userNamePrefixSearch;
-
-	/** @var UserCache */
-	private $userCache;
-
-	/** @var CommentFormatter */
-	private $commentFormatter;
+	private RepoGroup $repoGroup;
+	private IConnectionProvider $dbProvider;
+	private CommentStore $commentStore;
+	private UserNameUtils $userNameUtils;
+	private UserNamePrefixSearch $userNamePrefixSearch;
+	private UserCache $userCache;
+	private CommentFormatter $commentFormatter;
 
 	/**
 	 * @param RepoGroup $repoGroup
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param CommentStore $commentStore
 	 * @param UserNameUtils $userNameUtils
 	 * @param UserNamePrefixSearch $userNamePrefixSearch
@@ -62,7 +55,7 @@ class SpecialListFiles extends IncludableSpecialPage {
 	 */
 	public function __construct(
 		RepoGroup $repoGroup,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		CommentStore $commentStore,
 		UserNameUtils $userNameUtils,
 		UserNamePrefixSearch $userNamePrefixSearch,
@@ -71,7 +64,7 @@ class SpecialListFiles extends IncludableSpecialPage {
 	) {
 		parent::__construct( 'Listfiles' );
 		$this->repoGroup = $repoGroup;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->commentStore = $commentStore;
 		$this->userNameUtils = $userNameUtils;
 		$this->userNamePrefixSearch = $userNamePrefixSearch;
@@ -100,7 +93,7 @@ class SpecialListFiles extends IncludableSpecialPage {
 		}
 
 		if ( $userName ) {
-			$pageTitle = $this->msg( 'listfiles_subpage', $userName );
+			$pageTitle = $this->msg( 'listfiles_subpage' )->plaintextParams( $userName );
 		} else {
 			$pageTitle = $this->msg( 'listfiles' );
 		}
@@ -109,7 +102,7 @@ class SpecialListFiles extends IncludableSpecialPage {
 			$this->getContext(),
 			$this->commentStore,
 			$this->getLinkRenderer(),
-			$this->loadBalancer,
+			$this->dbProvider,
 			$this->repoGroup,
 			$this->userCache,
 			$this->userNameUtils,
@@ -121,7 +114,7 @@ class SpecialListFiles extends IncludableSpecialPage {
 		);
 
 		$out = $this->getOutput();
-		$out->setPageTitle( $pageTitle );
+		$out->setPageTitleMsg( $pageTitle );
 		$out->addModuleStyles( 'mediawiki.special' );
 		if ( $this->including() ) {
 			$out->addParserOutputContent( $pager->getBodyOutput() );
@@ -158,3 +151,8 @@ class SpecialListFiles extends IncludableSpecialPage {
 		return 'media';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialListFiles::class, 'SpecialListFiles' );

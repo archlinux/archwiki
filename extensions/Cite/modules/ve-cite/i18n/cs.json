@@ -65,7 +65,7 @@
 	"cite-ve-referenceslist-isempty-default": "Na této stránce nejsou žádné reference, které by se v tomto seznamu zobrazily.",
 	"cite-ve-referenceslist-missingref": "Tato reference je definována v šabloně nebo jiné generované části textu a zatím ji lze editovat jen v režimu zdrojového textu.",
 	"cite-ve-referenceslist-missingref-in-list": "Tato reference je definována v šabloně nebo jiné generované části textu a její náhled si zatím lze zobrazit jen v režimu zdrojového textu.",
-	"cite-ve-referenceslist-missingreflist": "Tento seznam referencí je generován šablonou a zatím ho lze editovat pouze v režimu zdrojového textu.",
+	"cite-ve-referenceslist-missingreflist": "Tento seznam referencí je generován šablonou.",
 	"cite-ve-toolbar-group-label": "Citace",
 	"cite-ve-othergroup-item": "$1 reference",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "Reference",

@@ -1,8 +1,9 @@
+@import 'mediawiki.skin.variables.less';
 @import '../echo.variables.less';
 
 .mw-echo-ui-toggleReadCircleButtonWidget {
 	&-circle {
-		border-radius: 50%;
+		border-radius: @border-radius-circle;
 		box-sizing: border-box;
 		min-width: 10px;
 		width: @bundle-group-padding;
@@ -11,13 +12,13 @@
 		margin: @bundle-group-padding;
 
 		// Mark as read
-		background-color: #36c;
+		background-color: @background-color-progressive;
 		border: 0;
 
 		// Mark as unread
 		&-unread {
 			background-color: #eaecf0;
-			border: 1px solid @grey-light;
+			border: @border-width-base @border-style-base @grey-light;
 		}
 	}
 

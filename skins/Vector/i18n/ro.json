@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"AdiJapan",
+			"Alesaru",
 			"Amire80",
 			"Danutz",
 			"Firilacroco",
@@ -40,6 +41,13 @@
 	"vector-jumptosearch": "Sari la căutare",
 	"vector-jumptocontent": "Sari la conținut",
 	"vector-more-actions": "Mai mult",
+	"vector-client-preferences": "Setări de citire",
+	"vector-feature-limited-width-name": "Lățimea coloanei",
+	"vector-feature-custom-font-size-name": "Mărimea tipului",
+	"vector-feature-limited-width-0-label": "Lățime maximă",
+	"vector-feature-limited-width-1-label": "Lățime limitată",
+	"vector-feature-custom-font-size-disabled-label": "Mic",
+	"vector-feature-custom-font-size-enabled-label": "Standard",
 	"vector-search-loader": "Se încarcă sugestiile de căutare",
 	"vector-searchsuggest-containing": "Căutați după pagini care conțin <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Cuprins",
@@ -51,6 +59,8 @@
 	"vector-toc-collapsible-button-label": "Comută cuprinsul",
 	"vector-main-menu-label": "Meniul principal",
 	"vector-limited-width-toggle": "Comută lățimea limitată a conținutului",
+	"vector-limited-width-toggle-on-popup": "V-ați comutat aspectul la lățime maximă. Pentru a comuta la loc la lățime limitată, apăsați acest buton.",
+	"vector-limited-width-toggle-off-popup": "Puteți comuta între o lățime limitată și o lățime maximă prin apăsarea acestui buton.",
 	"vector-page-tools-label": "Unelte",
 	"vector-page-tools-actions-label": "Acțiuni",
 	"vector-pin-element-label": "mută în bara laterală",
@@ -59,5 +69,8 @@
 	"tooltip-vector-anon-user-menu-title": "Mai multe opțiuni",
 	"vector-prefs-limited-width": "Activează modul de lățime limitată",
 	"vector-prefs-limited-width-help": "Activează modul de lățime limitată pentru experiență de lectură îmbunătățită.",
-	"empty-language-selector-body": "Conținutul paginii nu este suportat în alte limbi."
+	"empty-language-selector-body": "Conținutul paginii nu este suportat în alte limbi.",
+	"vector-toc-unpinned-popup": "Cuprinsul a fost mutat aici.",
+	"vector-page-tools-unpinned-popup": "Meniul uneltelor a fost mutat aici.",
+	"vector-main-menu-unpinned-popup": "Meniul principal a fost mutat aici."
 }

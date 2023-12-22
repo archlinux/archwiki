@@ -10,9 +10,9 @@ namespace MediaWiki\Extension\TitleBlacklist;
 
 use ApiMessage;
 use ApiResult;
-use EditPage;
 use Html;
 use ManualLogEntry;
+use MediaWiki\EditPage\EditPage;
 use MediaWiki\Hook\EditFilterHook;
 use MediaWiki\Hook\MovePageCheckPermissionsHook;
 use MediaWiki\Hook\TitleGetEditNoticesHook;
@@ -20,12 +20,12 @@ use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsExpensiveHook;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MessageSpecifier;
 use RequestContext;
 use Status;
 use StatusValue;
-use Title;
 use User;
 use WikiPage;
 
@@ -280,18 +280,6 @@ class Hooks implements
 			] );
 			$logid = $logEntry->insert();
 			$logEntry->publish( $logid );
-		}
-	}
-
-	/**
-	 * External Lua library for Scribunto
-	 *
-	 * @param string $engine
-	 * @param array &$extraLibraries
-	 */
-	public static function onScribuntoExternalLibraries( $engine, array &$extraLibraries ) {
-		if ( $engine == 'lua' ) {
-			$extraLibraries['mw.ext.TitleBlacklist'] = Scribunto_LuaTitleBlacklistLibrary::class;
 		}
 	}
 }

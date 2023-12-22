@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Benojan",
 			"Winston Sung",
-			"Benojan"
+			"Subarupan"
 		]
 	},
 	"visualeditor-ca-editsource": "源碼編輯",
-	"visualeditor-ca-editsource-section": "源碼編輯"
+	"visualeditor-ca-editsource-section": "編輯源碼"
 }

@@ -4,7 +4,6 @@
 			"Ernác"
 		]
 	},
-	"apihelp-visualeditor-description": "Parsoid сервисден бетге HTML5'ни къайтарады.",
 	"apihelp-visualeditor-param-html": "Вики-текстге конвертация этер ючюн Parsoid'ге иерге HTML.",
 	"apihelp-visualeditor-param-paction": "Тындырыргъа этим",
 	"apihelp-visualeditor-param-page": "Этимни этилирге керек бет.",

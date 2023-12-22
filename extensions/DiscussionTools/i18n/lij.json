@@ -5,14 +5,14 @@
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Rispòsta",
-	"discussiontools-replylink": "rispóndi",
+	"discussiontools-replylink": "{{GENDER:|rispóndi}}",
 	"discussiontools-replywidget-advanced": "Avansæ",
 	"discussiontools-replywidget-cancel": "Anùlla",
 	"discussiontools-replywidget-mode-source": "Vivàgna",
 	"discussiontools-replywidget-mode-visual": "Vizoâle",
-	"discussiontools-replywidget-placeholder-reply": "Rispóndi a {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Rispóndi}} a {{BIDI:$1}}",
 	"discussiontools-replywidget-preview": "Anteprìmma",
-	"discussiontools-replywidget-reply": "Rispóndi",
+	"discussiontools-replywidget-reply": "{{GENDER:Rispóndi}}",
 	"discussiontools-replywidget-summary": "Ògètto",
 	"discussiontools-replywidget-watchthis": "Azónzi sta pàgina chi a-a tò [[Special:Watchlist|lìsta di òservæ speciâli]]",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|persónn-a|persónn-e}} inta discusción",
@@ -22,8 +22,9 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "Inscrîvite",
 	"discussiontools-topicsubscription-button-unsubscribe": "anùlla inscriçión",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Anùlla inscriçión",
-	"discussiontools-topicsubscription-notify-subscribed-body": "Ti ti riçeviæ de notìfiche pe-i nêuvi coménti a sta discusción chi.",
-	"discussiontools-topicsubscription-notify-subscribed-title": "Ti t'ê inscrîto!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "Ti no riçeviæ ciù de notìfiche pe-i nêuvi coménti a sta discusción chi.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "Ti t'ê anulòu l'inscriçión."
+	"discussiontools-topicsubscription-notify-subscribed-body": "Ti ti {{GENDER:|riçeviæ}} de notìfiche pe-i nêuvi coménti a sta discusción chi.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Ti t'ê {{GENDER:|inscrîto|inscrîta}}!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Ti no ti {{GENDER:|riçeviæ}} ciù de notìfiche pe-i nêuvi coménti a sta discusción chi.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Ti t'ê {{GENDER:|anulòu}} l'inscriçión.",
+	"minerva-talk-full-page": "Lêzi cómme pàgina wiki"
 }

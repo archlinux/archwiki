@@ -104,18 +104,6 @@
 	}
 }
 
-/* Reference Dialog */
-#wikieditor-toolbar-reference-dialog {
-	label {
-		float: left;
-		line-height: 1.7em;
-	}
-}
-
-#wikieditor-toolbar-reference-text {
-	width: 100%;
-}
-
 /* RTL Changes */
 
 body.rtl {
@@ -131,8 +119,8 @@ body.rtl {
 }
 
 /* Self Clearing Floats */
-.wikieditor-toolbar-table-dimension-fields:after,
-.wikieditor-toolbar-dialog-wrapper:after {
+.wikieditor-toolbar-table-dimension-fields::after,
+.wikieditor-toolbar-dialog-wrapper::after {
 	visibility: hidden;
 	display: block;
 	font-size: 0;

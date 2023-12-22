@@ -56,7 +56,7 @@ class CorsUtilsTest extends \MediaWikiUnitTestCase {
 
 		$handler = $this->createMock( Handler::class );
 		$handler->method( 'needsWriteAccess' )
-			->willReturn( false );
+			->willReturn( $needsWriteAccess );
 
 		$result = $cors->authorize(
 			$request,
@@ -66,7 +66,7 @@ class CorsUtilsTest extends \MediaWikiUnitTestCase {
 		$this->assertNull( $result );
 	}
 
-	public function provideAuthorizeAllowOrigin() {
+	public static function provideAuthorizeAllowOrigin() {
 		$origin = 'https://example.com';
 
 		return [
@@ -170,7 +170,7 @@ class CorsUtilsTest extends \MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideModifyResponseAllowTrustedOriginCookieAuth
 	 * @param string $requestMethod
-	 * @param string $isRegistered
+	 * @param bool $isRegistered
 	 */
 	public function testModifyResponseAllowTrustedOriginCookieAuth( string $requestMethod, bool $isRegistered ) {
 		$cors = new CorsUtils(
@@ -207,7 +207,7 @@ class CorsUtilsTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( [ 'https://example.com' ], $result->getHeader( 'Access-Control-Allow-Origin' ) );
 	}
 
-	public function provideModifyResponseAllowTrustedOriginCookieAuth() {
+	public static function provideModifyResponseAllowTrustedOriginCookieAuth() {
 		return [
 			'OPTIONS request' => [
 				'OPTIONS',
@@ -261,7 +261,7 @@ class CorsUtilsTest extends \MediaWikiUnitTestCase {
 		$this->assertSame( [ '*' ], $result->getHeader( 'Access-Control-Allow-Origin' ) );
 	}
 
-	public function provideModifyResponseDisallowUntrustedOriginCookieAuth() {
+	public static function provideModifyResponseDisallowUntrustedOriginCookieAuth() {
 		return [
 			'Missing Origin' => [
 				'',
@@ -320,6 +320,6 @@ class CorsUtilsTest extends \MediaWikiUnitTestCase {
 		$header = $response->getHeader( 'Access-Control-Allow-Headers' );
 		$this->assertContains( 'Authorization', $header );
 		$this->assertContains( 'Content-Type', $header );
-		$this->assertSame( count( $header ), count( array_unique( $header ) ) );
+		$this->assertSameSize( $header, array_unique( $header ) );
 	}
 }

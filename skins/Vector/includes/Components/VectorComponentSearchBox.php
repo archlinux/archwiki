@@ -3,8 +3,8 @@ namespace MediaWiki\Skins\Vector\Components;
 
 use Config;
 use Linker;
+use MediaWiki\Title\Title;
 use MessageLocalizer;
-use Title;
 
 /**
  * VectorSearchBox component
@@ -26,6 +26,7 @@ class VectorComponentSearchBox implements VectorComponent {
 	private $location;
 	/** @var Config */
 	private $config;
+	private const SEARCH_COLLAPSIBLE_CLASS = 'vector-search-box-collapses';
 	private const SEARCH_SHOW_THUMBNAIL_CLASS = 'vector-search-box-show-thumbnail';
 	private const SEARCH_AUTO_EXPAND_WIDTH_CLASS = 'vector-search-box-auto-expand-width';
 
@@ -54,56 +55,6 @@ class VectorComponentSearchBox implements VectorComponent {
 	 */
 	private function getSearchBoxInputLocation(): string {
 		return $this->location;
-	}
-
-	/**
-	 * Annotates search box with Vector-specific information
-	 *
-	 * @param array $searchBoxData
-	 * @param bool $isCollapsible
-	 * @param bool $isPrimary
-	 * @param string $formId
-	 * @param bool $autoExpandWidth
-	 * @return array modified version of $searchBoxData
-	 */
-	private function getSearchData(
-		array $searchBoxData,
-		bool $isCollapsible,
-		bool $isPrimary,
-		string $formId,
-		bool $autoExpandWidth
-	) {
-		$searchClass = 'vector-search-box-vue ';
-
-		if ( $isCollapsible ) {
-			$searchClass .= ' vector-search-box-collapses ';
-		}
-
-		if ( $this->doesSearchHaveThumbnails() ) {
-			$searchClass .= ' ' . self::SEARCH_SHOW_THUMBNAIL_CLASS .
-				( $autoExpandWidth ? ' ' . self::SEARCH_AUTO_EXPAND_WIDTH_CLASS : '' );
-		}
-
-		// Annotate search box with a component class.
-		$searchBoxData['class'] = trim( $searchClass );
-		$searchBoxData['is-collapsible'] = $isCollapsible;
-		$searchBoxData['is-primary'] = $isPrimary;
-		$searchBoxData['form-id'] = $formId;
-		$searchBoxData['input-location'] = $this->getSearchBoxInputLocation();
-
-		// At lower resolutions the search input is hidden search and only the submit button is shown.
-		// It should behave like a form submit link (e.g. submit the form with no input value).
-		// We'll wire this up in a later task T284242.
-		$collapseIconAttrs = Linker::tooltipAndAccesskeyAttribs( 'search' );
-		$searchBoxData['data-collapse-icon'] = array_merge( [
-			'href' => Title::newFromText( $searchBoxData['page-title'] )->getLocalURL(),
-			'label' => $this->localizer->msg( 'search' ),
-			'icon' => 'wikimedia-search',
-			'is-quiet' => true,
-			'class' => 'search-toggle',
-		], $collapseIconAttrs );
-
-		return $searchBoxData;
 	}
 
 	/**
@@ -140,12 +91,44 @@ class VectorComponentSearchBox implements VectorComponent {
 	 * @inheritDoc
 	 */
 	public function getTemplateData(): array {
-		return $this->getSearchData(
-			$this->searchBoxData,
-			$this->isCollapsible,
-			$this->isPrimary,
-			$this->formId,
-			$this->autoExpandWidth
+		$searchBoxData = $this->searchBoxData;
+		$isCollapsible = $this->isCollapsible;
+		$isThumbnail = $this->doesSearchHaveThumbnails();
+		$isAutoExpand = $isThumbnail && $this->autoExpandWidth;
+		$isPrimary = $this->isPrimary;
+		$formId = $this->formId;
+
+		$searchClass = 'vector-search-box-vue ';
+		$searchClass .= $isCollapsible ? ' ' . self::SEARCH_COLLAPSIBLE_CLASS : '';
+		$searchClass .= $isThumbnail ? ' ' . self::SEARCH_SHOW_THUMBNAIL_CLASS : '';
+		$searchClass .= $isAutoExpand ? ' ' . self::SEARCH_AUTO_EXPAND_WIDTH_CLASS : '';
+
+		// Annotate search box with a component class.
+		$searchBoxData['class'] = trim( $searchClass );
+		$searchBoxData['is-collapsible'] = $isCollapsible;
+		$searchBoxData['is-thumbnail'] = $isThumbnail;
+		$searchBoxData['is-auto-expand'] = $isAutoExpand;
+		$searchBoxData['is-primary'] = $isPrimary;
+		$searchBoxData['form-id'] = $formId;
+		$searchBoxData['input-location'] = $this->getSearchBoxInputLocation();
+
+		// At lower resolutions the search input is hidden search and only the submit button is shown.
+		// It should behave like a form submit link (e.g. submit the form with no input value).
+		// We'll wire this up in a later task T284242.
+		$collapseIconAttrs = Linker::tooltipAndAccesskeyAttribs( 'search' );
+		$searchButton = new VectorComponentButton(
+			$this->localizer->msg( 'search' ),
+			'search',
+			'',
+			'search-toggle',
+			$collapseIconAttrs,
+			'quiet',
+			'default',
+			true,
+			Title::newFromText( $searchBoxData['page-title'] )->getLocalURL()
 		);
+		$searchBoxData['data-collapsed-search-button'] = $searchButton->getTemplateData();
+
+		return $searchBoxData;
 	}
 }

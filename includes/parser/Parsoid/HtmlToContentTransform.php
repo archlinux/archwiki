@@ -317,8 +317,7 @@ class HtmlToContentTransform {
 					null,
 					$revision,
 					null,
-					$this->contentLanguage,
-					$this->parsoidSettings
+					$this->contentLanguage
 				);
 			} catch ( RevisionAccessException $exception ) {
 				// TODO: Throw a different exception, this class should not know
@@ -497,12 +496,12 @@ class HtmlToContentTransform {
 		return $this->originalRevision || $this->oldid || $this->originalContent !== null;
 	}
 
-	public function getContentModel(): ?string {
-		return $this->options['contentmodel'] ?? null;
+	public function getContentModel(): string {
+		return $this->options['contentmodel'] ?? CONTENT_MODEL_WIKITEXT;
 	}
 
 	public function getOffsetType(): string {
-		return $this->options['offsetType'];
+		return $this->options['offsetType'] ?? 'byte';
 	}
 
 	private function needsDowngrade( PageBundle $pb ): bool {
@@ -634,7 +633,7 @@ class HtmlToContentTransform {
 	}
 
 	private function getContentHandler(): ContentHandler {
-		$model = $this->getContentModel() ?: CONTENT_MODEL_WIKITEXT;
+		$model = $this->getContentModel();
 
 		return $this->contentHandlerFactory
 			->getContentHandler( $model );

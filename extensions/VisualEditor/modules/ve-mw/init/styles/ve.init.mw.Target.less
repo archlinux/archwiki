@@ -12,18 +12,6 @@
 	overflow: visible;
 }
 
-/* IE hacks */
-
-/* Undo overflow: hidden; from MW CSS to work around hasLayout issue */
-.ve-init-target-ie .ve-ce-surface h1,
-.ve-init-target-ie .ve-ce-surface h2,
-.ve-init-target-ie .ve-ce-surface h3,
-.ve-init-target-ie .ve-ce-surface h4,
-.ve-init-target-ie .ve-ce-surface h5,
-.ve-init-target-ie .ve-ce-surface h6 {
-	overflow: visible;
-}
-
 /* Override MediaWiki's styles that make sense in read mode only */
 
 // Prevent jQuery.makeCollapsible from hiding things, even if collapsed by default.
@@ -63,26 +51,43 @@
  * is now paragraph wrapped. Making these paragraphs display:inline would fix the
  * rendering but causes them to be destroyed by the CE when empty (T197987).
  */
-.ve-ce-mwTableNode.mw-collapsible :first-child tr:first-child th:last-child:before,
-.ve-ce-mwTableNode.mw-collapsible > caption:first-child:after,
-.ve-ui-diffElement table.mw-collapsible :first-child tr:first-child th:last-child:before,
-.ve-ui-diffElement table.mw-collapsible > caption:first-child:after {
+.ve-ce-mwTableNode.mw-collapsible :first-child tr:first-child th:last-child::before,
+.ve-ce-mwTableNode.mw-collapsible > caption:first-child::after,
+.ve-ui-diffElement table.mw-collapsible :first-child tr:first-child th:last-child::before,
+.ve-ui-diffElement table.mw-collapsible > caption:first-child::after {
 	color: #999;
 	float: none;
 }
 
-.ve-ce-surface div.mw-collapsible:before,
-.ve-ui-diffElement div.mw-collapsible:before {
+.ve-ce-surface div.mw-collapsible::before,
+.ve-ui-diffElement div.mw-collapsible::before {
 	color: #999;
 }
 
+/* Categories */
+
+// Don't show categories from converter preview mode (e.g. <ref>[[Category:Foo]]</ref)...
+a[ rel~='mw:PageProp/Category' ] {
+	display: none;
+
+	// ... unless in a category list (e.g. visual diff)
+	.catlinks & { /* stylelint-disable-line selector-class-pattern */
+		display: inline;
+	}
+}
+
+// Increase specificity of catlink margin reset when nested in body content (e.g. in visual diff)
+.mw-body-content .catlinks ul { /* stylelint-disable-line selector-class-pattern */
+	margin: 0;
+}
+
 /* Reset section node styles */
-.ve-init-mw-target .ve-ce-sectionNode:before,
-.ve-init-mw-target .ve-ce-sectionNode:after {
+.ve-init-mw-target .ve-ce-sectionNode::before,
+.ve-init-mw-target .ve-ce-sectionNode::after {
 	content: normal;
 }
 
-.ve-init-mw-target .ve-ce-surface-enabled .ve-ce-sectionNode:not( .ve-ce-activeNode-active ) {
+.ve-init-mw-target .ve-ce-surface .ve-ce-sectionNode:not( .ve-ce-activeNode-active ) {
 	opacity: 1;
 }
 

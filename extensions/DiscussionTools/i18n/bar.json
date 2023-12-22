@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"WikiBayer",
-			"Mucalexx"
+			"Mucalexx",
+			"WikiBayer"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Ántwort",
@@ -13,6 +13,6 @@
 	"discussiontools-replywidget-abandon-keep": "Weida schreim",
 	"discussiontools-replywidget-cancel": "Obbrecha",
 	"discussiontools-replywidget-mode-source": "Gwën",
-	"discussiontools-replywidget-reply": "Antwort",
+	"discussiontools-replywidget-reply": "Ántwurt",
 	"discussiontools-replywidget-summary": "Zámmfossung"
 }

@@ -7,7 +7,6 @@
 	},
 	"captcha-edit": "Fyri at rætta hesa síðu, vinarliga  loys tað einfalda roknistykki niðanfyri og skriva svarið í teigin ([[Special:Captcha/help|meira kunning]]):",
 	"captcha-desc": "Gevur CAPTCHA teknikkir fyri at verja ímóti spamming og ímóti giting av loyniorði",
-	"captcha-label": "CAPTCHA",
 	"captcha-createaccount": "Fyri at verja wikiina ímóti sjálvvirkandi spam kontoupprættan, vilja vit vinarliga heita á teg um at loysa ta einføldu rokniuppgávuna niðanfyri og skriva svarið í teigin\n([[Special:Captcha/help|meira kunning]]):",
 	"captcha-createaccount-fail": "Skeiv ella manglandi váttanar loyniorð.",
 	"captcha-create": "Fyri at upprætta síðuna, vinarliga loys tað einfalda roknistykki niðanfyri og skriva svarið í teigin ([[Special:Captcha/help|meira kunning]]):",

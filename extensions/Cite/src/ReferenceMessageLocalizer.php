@@ -12,14 +12,8 @@ use MessageSpecifier;
  */
 class ReferenceMessageLocalizer implements MessageLocalizer {
 
-	/**
-	 * @var Language
-	 */
-	private $language;
+	private Language $language;
 
-	/**
-	 * @param Language $language
-	 */
 	public function __construct( Language $language ) {
 		$this->language = $language;
 	}

@@ -39,5 +39,11 @@
 	"cite_references_link_accessibility_back_label": "Sari înapoi",
 	"cite_section_preview_references": "Previzualizare a notelor",
 	"cite_warning": "Avertisment de citare: $1",
-	"cite_warning_sectionpreview_no_text": "Eticheta <code>&lt;ref&gt;</code> cu numele <code>$1</code> nu poate fi previzualizată pentru că este definită în afara secțiunii curente sau nu este definită deloc."
+	"cite_warning_sectionpreview_no_text": "Eticheta <code>&lt;ref&gt;</code> cu numele <code>$1</code> nu poate fi previzualizată pentru că este definită în afara secțiunii curente sau nu este definită deloc.",
+	"cite-wikieditor-tool-reference": "Referință",
+	"cite-wikieditor-help-page-references": "Referințe",
+	"cite-wikieditor-help-content-reference-description": "Referință",
+	"cite-wikieditor-help-content-named-reference-description": "Referință denumită",
+	"cite-wikieditor-help-content-rereference-description": "Utilizare suplimentară a aceleiași referințe",
+	"cite-wikieditor-help-content-showreferences-description": "Afișare referințe"
 }

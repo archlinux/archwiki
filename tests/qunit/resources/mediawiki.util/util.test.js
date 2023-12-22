@@ -1,97 +1,23 @@
-( function () {
-	var util = require( 'mediawiki.util' ),
-		// Based on IPTest.php > testisIPv4
-		IPV4_CASES = [
-			[ false, false, 'Boolean false is not an IP' ],
-			[ false, true, 'Boolean true is not an IP' ],
-			[ false, '', 'Empty string is not an IP' ],
-			[ false, 'abc', '"abc" is not an IP' ],
-			[ false, ':', 'Colon is not an IP' ],
-			[ false, '124.24.52', 'IPv4 not enough quads' ],
-			[ false, '24.324.52.13', 'IPv4 out of range' ],
-			[ false, '.24.52.13', 'IPv4 starts with period' ],
+QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
+	messages: {
+		// Used by accessKeyLabel in test for addPortletLink
+		brackets: '[$1]',
+		'word-separator': ' '
+	}
+} ), ( hooks ) => {
+	const util = require( 'mediawiki.util' );
 
-			[ true, '124.24.52.13', '124.24.52.134 is a valid IP' ],
-			[ true, '1.24.52.13', '1.24.52.13 is a valid IP' ],
-			[ false, '74.24.52.13/20', 'IPv4 ranges are not recognized as valid IPs' ]
-		],
-
-		// Based on IPTest.php > testisIPv6
-		IPV6_CASES = [
-			[ false, ':fc:100::', 'IPv6 starting with lone ":"' ],
-			[ false, 'fc:100:::', 'IPv6 ending with a ":::"' ],
-			[ false, 'fc:300', 'IPv6 with only 2 words' ],
-			[ false, 'fc:100:300', 'IPv6 with only 3 words' ],
-
-			[ false, 'fc:100:a:d:1:e:ac:0::', 'IPv6 with 8 words ending with "::"' ],
-			[ false, 'fc:100:a:d:1:e:ac:0:1::', 'IPv6 with 9 words ending with "::"' ],
-
-			[ false, ':::' ],
-			[ false, '::0:', 'IPv6 ending in a lone ":"' ],
-
-			[ true, '::', 'IPv6 zero address' ],
-
-			[ false, '::fc:100:a:d:1:e:ac:0', 'IPv6 with "::" and 8 words' ],
-			[ false, '::fc:100:a:d:1:e:ac:0:1', 'IPv6 with 9 words' ],
-
-			[ false, ':fc::100', 'IPv6 starting with lone ":"' ],
-			[ false, 'fc::100:', 'IPv6 ending with lone ":"' ],
-			[ false, 'fc:::100', 'IPv6 with ":::" in the middle' ],
-
-			[ true, 'fc::100', 'IPv6 with "::" and 2 words' ],
-			[ true, 'fc::100:a', 'IPv6 with "::" and 3 words' ],
-			[ true, 'fc::100:a:d', 'IPv6 with "::" and 4 words' ],
-			[ true, 'fc::100:a:d:1', 'IPv6 with "::" and 5 words' ],
-			[ true, 'fc::100:a:d:1:e', 'IPv6 with "::" and 6 words' ],
-			[ true, 'fc::100:a:d:1:e:ac', 'IPv6 with "::" and 7 words' ],
-			[ true, '2001::df', 'IPv6 with "::" and 2 words' ],
-			[ true, '2001:5c0:1400:a::df', 'IPv6 with "::" and 5 words' ],
-			[ true, '2001:5c0:1400:a::df:2', 'IPv6 with "::" and 6 words' ],
-
-			[ false, 'fc::100:a:d:1:e:ac:0', 'IPv6 with "::" and 8 words' ],
-			[ false, 'fc::100:a:d:1:e:ac:0:1', 'IPv6 with 9 words' ]
-		];
-
-	Array.prototype.push.apply( IPV6_CASES,
-		[
-			'fc:100::',
-			'fc:100:a::',
-			'fc:100:a:d::',
-			'fc:100:a:d:1::',
-			'fc:100:a:d:1:e::',
-			'fc:100:a:d:1:e:ac::',
-			'::0',
-			'::fc',
-			'::fc:100',
-			'::fc:100:a',
-			'::fc:100:a:d',
-			'::fc:100:a:d:1',
-			'::fc:100:a:d:1:e',
-			'::fc:100:a:d:1:e:ac',
-			'fc:100:a:d:1:e:ac:0'
-		].map( function ( el ) {
-			return [ true, el, el + ' is a valid IP' ];
-		} )
-	);
-
-	QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
-		beforeEach: function () {
-			$.fn.updateTooltipAccessKeys.setTestMode( true );
-			this.origConfig = mw.util.setOptionsForTest( {
-				FragmentMode: [ 'legacy', 'html5' ],
-				LoadScript: '/w/load.php'
-			} );
-		},
-		afterEach: function () {
-			$.fn.updateTooltipAccessKeys.setTestMode( false );
-			mw.util.setOptionsForTest( this.origConfig );
-		},
-		messages: {
-			// Used by accessKeyLabel in test for addPortletLink
-			brackets: '[$1]',
-			'word-separator': ' '
-		}
-	} ) );
+	hooks.beforeEach( () => {
+		$.fn.updateTooltipAccessKeys.setTestMode( true );
+		mw.util.setOptionsForTest( {
+			FragmentMode: [ 'legacy', 'html5' ],
+			LoadScript: '/w/load.php'
+		} );
+	} );
+	hooks.afterEach( () => {
+		$.fn.updateTooltipAccessKeys.setTestMode( false );
+		mw.util.setOptionsForTest();
+	} );
 
 	QUnit.test( 'rawurlencode', function ( assert ) {
 		assert.strictEqual( util.rawurlencode( 'Test:A & B/Here' ), 'Test%3AA%20%26%20B%2FHere' );
@@ -310,12 +236,70 @@
 		assert.strictEqual( util.getParamValue( 'title', url ), null, 'T268058: getParamValue can return null on input it cannot decode.' );
 	} );
 
+	QUnit.test( 'getArrayParam', function ( assert ) {
+		const params1 = new URLSearchParams( '?foo[]=a&foo[]=b&foo[]=c' );
+		const params2 = new URLSearchParams( '?foo[0]=a&foo[1]=b&foo[2]=c' );
+		const params3 = new URLSearchParams( '?foo[1]=b&foo[0]=a&foo[]=c' );
+		const expected = [ 'a', 'b', 'c' ];
+		assert.deepEqual( util.getArrayParam( 'foo', params1 ), expected,
+			'array query parameters are parsed (implicit indexes)' );
+		assert.deepEqual( util.getArrayParam( 'foo', params2 ), expected,
+			'array query parameters are parsed (explicit indexes)' );
+		assert.deepEqual( util.getArrayParam( 'foo', params3 ), expected,
+			'array query parameters are parsed (mixed indexes, out of order)' );
+
+		const paramsMissing = new URLSearchParams( '?foo[0]=a&foo[2]=c' );
+		// eslint-disable-next-line no-sparse-arrays
+		const expectedMissing = [ 'a', , 'c' ];
+		assert.deepEqual( util.getArrayParam( 'foo', paramsMissing ), expectedMissing,
+			'array query parameters are parsed (missing array item)' );
+
+		const paramsWeird = new URLSearchParams( '?foo[0]=a&foo[1][1]=b&foo[x]=c' );
+		const expectedWeird = [ 'a' ];
+		assert.deepEqual( util.getArrayParam( 'foo', paramsWeird ), expectedWeird,
+			'array query parameters are parsed (multi-dimensional or associative arrays are ignored)' );
+
+		const paramsNotArray = new URLSearchParams( '?foo=a' );
+		assert.deepEqual( util.getArrayParam( 'foo', paramsNotArray ), null,
+			'non-array query parameters are ignored' );
+
+		const paramsOther = new URLSearchParams( '?bar[]=a' );
+		assert.deepEqual( util.getArrayParam( 'foo', paramsOther ), null,
+			'other query parameters are ignored' );
+	} );
+
 	function getParents( link ) {
 		return $( link ).parents( '#qunit-fixture *' ).toArray()
 			.map( function ( el ) {
 				return el.tagName + ( el.className && '.' + el.className ) + ( el.id && '#' + el.id );
 			} );
 	}
+
+	QUnit.test( 'addPortlet does not append to DOM if no `before` is provided', function ( assert ) {
+		$( '#qunit-fixture' ).html(
+			'<div class="portlet" id="p-toolbox"></div>'
+		);
+		const portlet = util.addPortlet( 'test', 'Hello' );
+		assert.true( portlet !== null, 'A portlet node is returned.' );
+		assert.true( portlet.parentNode === null, 'Portlet has no parent node' );
+	} );
+
+	QUnit.test( 'addPortlet returns null if bad selector given', function ( assert ) {
+		$( '#qunit-fixture' ).html(
+			'<div class="portlet" id="p-toolbox"></div>'
+		);
+		const portlet = util.addPortlet( 'test', 'Hello', '#?saasp-toolbox' );
+		assert.true( portlet === null, 'No portlet created.' );
+	} );
+
+	QUnit.test( 'addPortlet appends to DOM if before provided', function ( assert ) {
+		$( '#qunit-fixture' ).html(
+			'<div class="portlet" id="p-toolbox"></div>'
+		);
+		const portlet = util.addPortlet( 'test', 'Hello', '#p-toolbox' );
+		assert.true( !!portlet, 'A portlet node is returned.' );
+		assert.true( portlet.parentNode !== null, 'It is appended to the DOM' );
+	} );
 
 	QUnit.test( 'addPortletLink (Vector list)', function ( assert ) {
 		var link;
@@ -451,199 +435,206 @@
 		assert.strictEqual( util.validateEmail( 'userfoo@ex-ample.org' ), true, 'Emails may contain a hyphen' );
 	} );
 
-	QUnit.test( 'isIPv6Address', function ( assert ) {
-		IPV6_CASES.forEach( function ( ipCase ) {
-			assert.strictEqual( util.isIPv6Address( ipCase[ 1 ] ), ipCase[ 0 ], ipCase[ 2 ] );
-		} );
+	// Based on mediawiki/libs/IPUtils: provideInvalidIPv4Addresses
+	QUnit.test.each( 'isIPv4Address invalid', [
+		false,
+		true,
+		'',
+		'abc',
+		':',
+		'124.24.52', // not enough quads
+		'24.324.52.13', // outside of the IPv4 range
+		'.24.52.13',
+		'74.24.52.13/20' // Known difference: mw.util requires individual IP, not IP-range
+	], ( assert, ip ) => {
+		assert.false( util.isIPv4Address( ip ), String( ip ) );
 	} );
 
-	QUnit.test( 'isIPv4Address', function ( assert ) {
-		IPV4_CASES.forEach( function ( ipCase ) {
-			assert.strictEqual( util.isIPv4Address( ipCase[ 1 ] ), ipCase[ 0 ], ipCase[ 2 ] );
-		} );
+	// Based on mediawiki/libs/IPUtils: provideValidIPv4Address
+	QUnit.test.each( 'isIPv4Address valid', [
+		'124.24.52.13',
+		'1.24.52.13'
+	], ( assert, ip ) => {
+		assert.true( util.isIPv4Address( ip ), ip );
 	} );
 
-	QUnit.test( 'isIPAddress', function ( assert ) {
-		IPV4_CASES.forEach( function ( ipCase ) {
-			assert.strictEqual( util.isIPv4Address( ipCase[ 1 ] ), ipCase[ 0 ], ipCase[ 2 ] );
-		} );
-
-		IPV6_CASES.forEach( function ( ipCase ) {
-			assert.strictEqual( util.isIPv6Address( ipCase[ 1 ] ), ipCase[ 0 ], ipCase[ 2 ] );
-		} );
+	// Based on mediawiki/libs/IPUtils: testisIPv6
+	QUnit.test.each( 'isIPv6Address invalid', [
+		false,
+		true,
+		':fc:100::', // starting with lone ":"
+		'fc:100:::', // ending with a tripple ":::"
+		'fc:300', // 2 words
+		'fc:100:300', // 3 words
+		'fc:100:a:d:1:e:ac:0::', // 8 words ending with "::"
+		'fc:100:a:d:1:e:ac:0:1::', // 9 words ending with "::"
+		':::',
+		'::0:', // ending in a lone ":"
+		'::fc:100:a:d:1:e:ac:0', // 8 words starting with "::"
+		'::fc:100:a:d:1:e:ac:0:1', // 9 words
+		':fc::100', // starting with lone ":"
+		'fc::100:', // ending with lone ":"
+		'fc:::100', // tripple ":::" in the middle
+		'fc::100:a:d:1:e:ac:0', // 8 words containing double "::"
+		'fc::100:a:d:1:e:ac:0:1' // 9 words
+	], ( assert, ip ) => {
+		assert.false( util.isIPv6Address( ip ), String( ip ) );
 	} );
 
-	QUnit.module( 'parseImageUrl', function ( hooks ) {
-		hooks.beforeEach( function () {
-			this.oldConfig = mw.util.setOptionsForTest( {} );
-		} );
-		hooks.afterEach( function () {
-			mw.util.setOptionsForTest( this.oldConfig );
-		} );
+	// Based on mediawiki/libs/IPUtils: testisIPv6
+	QUnit.test.each( 'isIPv6Address valid', [
+		'::', // IPv6 zero address
+		'fc::100', // 2 words with double "::"
+		'fc::100:a', // 3 words with double "::"
+		'fc::100:a:d', // 4 words with double "::"
+		'fc::100:a:d:1', // 5 words with double "::"
+		'fc::100:a:d:1:e', // 6 words with double "::"
+		'fc::100:a:d:1:e:ac', // 7 words with double "::"
+		'2001::df',
+		'2001:5c0:1400:a::df',
+		'2001:5c0:1400:a::df:2',
+		'fc:100::',
+		'fc:100:a::',
+		'fc:100:a:d::',
+		'fc:100:a:d:1::',
+		'fc:100:a:d:1:e::',
+		'fc:100:a:d:1:e:ac::',
+		'::0',
+		'::fc',
+		'::fc:100',
+		'::fc:100:a',
+		'::fc:100:a:d',
+		'::fc:100:a:d:1',
+		'::fc:100:a:d:1:e',
+		'::fc:100:a:d:1:e:ac',
+		'fc:100:a:d:1:e:ac:0'
+	], ( assert, ip ) => {
+		assert.true( util.isIPv6Address( ip ), ip );
+	} );
 
-		[
-			{
-				url: '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/939px-thumbnail.jpg',
-				typeOfUrl: 'Hashed thumb with shortened path',
-				name: 'Princess Alexandra of Denmark (later Queen Alexandra, wife of Edward VII) with her two eldest sons, Prince Albert Victor (Eddy) and George Frederick Ernest Albert (later George V).jpg',
-				width: 939,
-				resizedUrl: '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/1000px-thumbnail.jpg'
-			},
+	QUnit.test.each( 'parseImageUrl', {
+		'Hashed thumb with shortened path': {
+			url: '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/939px-thumbnail.jpg',
+			name: 'Princess Alexandra of Denmark (later Queen Alexandra, wife of Edward VII) with her two eldest sons, Prince Albert Victor (Eddy) and George Frederick Ernest Albert (later George V).jpg',
+			width: 939,
+			resizedUrl: '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/1000px-thumbnail.jpg'
+		},
+		'Hashed thumb with sha1-ed path': {
+			url: '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/939px-ki708pr1r6g2dl5lbhvwdqxenhait13.jpg',
+			name: 'Princess Alexandra of Denmark (later Queen Alexandra, wife of Edward VII) with her two eldest sons, Prince Albert Victor (Eddy) and George Frederick Ernest Albert (later George V).jpg',
+			width: 939,
+			resizedUrl: '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/1000px-ki708pr1r6g2dl5lbhvwdqxenhait13.jpg'
+		},
+		'Normal hashed directory thumbnail': {
+			url: '/wiki/images/thumb/9/91/Anticlockwise_heliotrope%27s.jpg/99px-Anticlockwise_heliotrope%27s.jpg',
+			name: 'Anticlockwise heliotrope\'s.jpg',
+			width: 99,
+			resizedUrl: '/wiki/images/thumb/9/91/Anticlockwise_heliotrope%27s.jpg/1000px-Anticlockwise_heliotrope%27s.jpg'
+		},
+		'Normal hashed directory thumbnail with complex thumbnail parameters': {
+			url: '/wiki/images/thumb/8/80/Wikipedia-logo-v2.svg/langde-150px-Wikipedia-logo-v2.svg.png',
+			name: 'Wikipedia-logo-v2.svg',
+			width: 150,
+			resizedUrl: '/wiki/images/thumb/8/80/Wikipedia-logo-v2.svg/langde-1000px-Wikipedia-logo-v2.svg.png'
+		},
+		'Width-like filename component': {
+			url: '/wiki/images/thumb/1/10/Little_Bobby_Tables-100px-file.jpg/qlow-100px-Little_Bobby_Tables-100px-file.jpg',
+			name: 'Little Bobby Tables-100px-file.jpg',
+			width: 100,
+			resizedUrl: '/wiki/images/thumb/1/10/Little_Bobby_Tables-100px-file.jpg/qlow-1000px-Little_Bobby_Tables-100px-file.jpg'
+		},
+		'Width-like filename component in non-ASCII filename': {
+			url: '/wiki/images/thumb/1/10/Little_Bobby%22%3B_Tables-100px-file.jpg/qlow-100px-Little_Bobby%22%3B_Tables-100px-file.jpg',
+			name: 'Little Bobby"; Tables-100px-file.jpg',
+			width: 100,
+			resizedUrl: '/wiki/images/thumb/1/10/Little_Bobby%22%3B_Tables-100px-file.jpg/qlow-1000px-Little_Bobby%22%3B_Tables-100px-file.jpg'
+		},
 
-			{
-				url: '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/939px-ki708pr1r6g2dl5lbhvwdqxenhait13.jpg',
-				typeOfUrl: 'Hashed thumb with sha1-ed path',
-				name: 'Princess Alexandra of Denmark (later Queen Alexandra, wife of Edward VII) with her two eldest sons, Prince Albert Victor (Eddy) and George Frederick Ernest Albert (later George V).jpg',
-				width: 939,
-				resizedUrl: '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/1000px-ki708pr1r6g2dl5lbhvwdqxenhait13.jpg'
-			},
+		'Commons thumbnail': {
+			url: '//upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/150px-Wikipedia-logo-v2.svg.png',
+			name: 'Wikipedia-logo-v2.svg',
+			width: 150,
+			resizedUrl: '//upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1000px-Wikipedia-logo-v2.svg.png'
+		},
+		'Full image': {
+			url: '/wiki/images/9/91/Anticlockwise_heliotrope%27s.jpg',
+			name: 'Anticlockwise heliotrope\'s.jpg',
+			width: null
+		},
+		'thumb.php-based thumbnail': {
+			url: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&width=180',
+			name: 'Stuffless Figaro\'s.jpg',
+			width: 180,
+			resizedUrl: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&width=1000'
+		},
+		'thumb.php-based thumbnail with px width': {
+			url: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&width=180px',
+			name: 'Stuffless Figaro\'s.jpg',
+			width: 180,
+			resizedUrl: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&width=1000'
+		},
+		'thumb.php-based BC thumbnail': {
+			url: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&w=180',
+			name: 'Stuffless Figaro\'s.jpg',
+			width: 180,
+			resizedUrl: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&width=1000'
+		},
+		'Commons unhashed thumbnail': {
+			url: '/wikipedia/commons/thumb/Wikipedia-logo-v2.svg/150px-Wikipedia-logo-v2.svg.png',
+			name: 'Wikipedia-logo-v2.svg',
+			width: 150,
+			resizedUrl: '/wikipedia/commons/thumb/Wikipedia-logo-v2.svg/1000px-Wikipedia-logo-v2.svg.png'
+		},
+		'Commons unhashed thumbnail with complex thumbnail parameters': {
+			url: '/wikipedia/commons/thumb/Wikipedia-logo-v2.svg/langde-150px-Wikipedia-logo-v2.svg.png',
+			name: 'Wikipedia-logo-v2.svg',
+			width: 150,
+			resizedUrl: '/wikipedia/commons/thumb/Wikipedia-logo-v2.svg/langde-1000px-Wikipedia-logo-v2.svg.png'
+		},
+		'Unhashed local file': {
+			url: '/wiki/images/Anticlockwise_heliotrope%27s.jpg',
+			name: 'Anticlockwise heliotrope\'s.jpg',
+			width: null
+		},
+		'Empty string': {
+			url: ''
+		},
+		'String with only alphabet characters': {
+			url: 'foo'
+		},
+		'Not a file path': {
+			url: 'foobar.foobar'
+		},
+		'Space characters': {
+			url: '/a/a0/blah blah blah'
+		}
+	}, function ( assert, thisCase ) {
+		mw.util.setOptionsForTest( { GenerateThumbnailOnParse: false } );
+		var data = mw.util.parseImageUrl( thisCase.url );
+		if ( !thisCase.name ) {
+			assert.strictEqual( data, null, 'return null' );
+			return;
+		}
 
-			{
-				url: '/wiki/images/thumb/9/91/Anticlockwise_heliotrope%27s.jpg/99px-Anticlockwise_heliotrope%27s.jpg',
-				typeOfUrl: 'Normal hashed directory thumbnail',
-				name: 'Anticlockwise heliotrope\'s.jpg',
-				width: 99,
-				resizedUrl: '/wiki/images/thumb/9/91/Anticlockwise_heliotrope%27s.jpg/1000px-Anticlockwise_heliotrope%27s.jpg'
-			},
+		assert.strictEqual( typeof data, 'object', 'return object' );
+		assert.strictEqual( data.name, thisCase.name, 'file name' );
+		assert.strictEqual( data.width, thisCase.width, 'width' );
+		if ( thisCase.resizedUrl ) {
+			assert.strictEqual( typeof data.resizeUrl, 'function', 'resizeUrl type' );
+			assert.strictEqual( data.resizeUrl( 1000 ), thisCase.resizedUrl, 'resizeUrl return' );
+		} else {
+			assert.strictEqual( data.resizeUrl, null, 'resizeUrl is not set' );
+		}
+	} );
 
-			{
-				url: '/wiki/images/thumb/8/80/Wikipedia-logo-v2.svg/langde-150px-Wikipedia-logo-v2.svg.png',
-				typeOfUrl: 'Normal hashed directory thumbnail with complex thumbnail parameters',
-				name: 'Wikipedia-logo-v2.svg',
-				width: 150,
-				resizedUrl: '/wiki/images/thumb/8/80/Wikipedia-logo-v2.svg/langde-1000px-Wikipedia-logo-v2.svg.png'
-			},
+	QUnit.test( 'parseImageUrl [no dynamic thumbnail generation]', function ( assert ) {
+		mw.util.setOptionsForTest( { GenerateThumbnailOnParse: true } );
+		this.sandbox.stub( mw.config.values, 'wgScript', '/w' );
 
-			{
-				url: '/wiki/images/thumb/1/10/Little_Bobby_Tables-100px-file.jpg/qlow-100px-Little_Bobby_Tables-100px-file.jpg',
-				typeOfUrl: 'Width-like filename component',
-				name: 'Little Bobby Tables-100px-file.jpg',
-				width: 100,
-				resizedUrl: '/wiki/images/thumb/1/10/Little_Bobby_Tables-100px-file.jpg/qlow-1000px-Little_Bobby_Tables-100px-file.jpg'
-			},
+		var resizeUrl = mw.util.parseImageUrl( '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/939px-thumbnail.jpg' ).resizeUrl;
 
-			{
-				url: '/wiki/images/thumb/1/10/Little_Bobby%22%3B_Tables-100px-file.jpg/qlow-100px-Little_Bobby%22%3B_Tables-100px-file.jpg',
-				typeOfUrl: 'Width-like filename component in non-ASCII filename',
-				name: 'Little Bobby"; Tables-100px-file.jpg',
-				width: 100,
-				resizedUrl: '/wiki/images/thumb/1/10/Little_Bobby%22%3B_Tables-100px-file.jpg/qlow-1000px-Little_Bobby%22%3B_Tables-100px-file.jpg'
-			},
-
-			{
-				url: '//upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/150px-Wikipedia-logo-v2.svg.png',
-				typeOfUrl: 'Commons thumbnail',
-				name: 'Wikipedia-logo-v2.svg',
-				width: 150,
-				resizedUrl: '//upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1000px-Wikipedia-logo-v2.svg.png'
-			},
-
-			{
-				url: '/wiki/images/9/91/Anticlockwise_heliotrope%27s.jpg',
-				typeOfUrl: 'Full image',
-				name: 'Anticlockwise heliotrope\'s.jpg',
-				width: null,
-				resizedUrl: null
-			},
-
-			{
-				url: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&width=180',
-				typeOfUrl: 'thumb.php-based thumbnail',
-				name: 'Stuffless Figaro\'s.jpg',
-				width: 180,
-				resizedUrl: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&width=1000'
-			},
-
-			{
-				url: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&width=180px',
-				typeOfUrl: 'thumb.php-based thumbnail with px width',
-				name: 'Stuffless Figaro\'s.jpg',
-				width: 180,
-				resizedUrl: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&width=1000'
-			},
-
-			{
-				url: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&w=180',
-				typeOfUrl: 'thumb.php-based BC thumbnail',
-				name: 'Stuffless Figaro\'s.jpg',
-				width: 180,
-				resizedUrl: 'http://localhost/thumb.php?f=Stuffless_Figaro%27s.jpg&width=1000'
-			},
-
-			{
-				url: '/wikipedia/commons/thumb/Wikipedia-logo-v2.svg/150px-Wikipedia-logo-v2.svg.png',
-				typeOfUrl: 'Commons unhashed thumbnail',
-				name: 'Wikipedia-logo-v2.svg',
-				width: 150,
-				resizedUrl: '/wikipedia/commons/thumb/Wikipedia-logo-v2.svg/1000px-Wikipedia-logo-v2.svg.png'
-			},
-
-			{
-				url: '/wikipedia/commons/thumb/Wikipedia-logo-v2.svg/langde-150px-Wikipedia-logo-v2.svg.png',
-				typeOfUrl: 'Commons unhashed thumbnail with complex thumbnail parameters',
-				name: 'Wikipedia-logo-v2.svg',
-				width: 150,
-				resizedUrl: '/wikipedia/commons/thumb/Wikipedia-logo-v2.svg/langde-1000px-Wikipedia-logo-v2.svg.png'
-			},
-
-			{
-				url: '/wiki/images/Anticlockwise_heliotrope%27s.jpg',
-				typeOfUrl: 'Unhashed local file',
-				name: 'Anticlockwise heliotrope\'s.jpg',
-				width: null,
-				resizedUrl: null
-			},
-
-			{
-				url: '',
-				typeOfUrl: 'Empty string'
-			},
-
-			{
-				url: 'foo',
-				typeOfUrl: 'String with only alphabet characters'
-			},
-
-			{
-				url: 'foobar.foobar',
-				typeOfUrl: 'Not a file path'
-			},
-
-			{
-				url: '/a/a0/blah blah blah',
-				typeOfUrl: 'Space characters'
-			}
-		].forEach( function ( thisCase ) {
-			QUnit.test( 'parseImageUrl: ' + thisCase.typeOfUrl, function ( assert ) {
-				var data;
-
-				mw.util.setOptionsForTest( { GenerateThumbnailOnParse: false } );
-				data = mw.util.parseImageUrl( thisCase.url );
-				if ( thisCase.name !== undefined ) {
-					assert.notStrictEqual( data, null, 'Parses successfully' );
-					assert.strictEqual( data.name, thisCase.name, 'File name is correct' );
-					assert.strictEqual( data.width, thisCase.width, 'Width is correct' );
-					if ( thisCase.resizedUrl ) {
-						assert.strictEqual( typeof data.resizeUrl, 'function', 'resizeUrl is set' );
-						assert.strictEqual( data.resizeUrl( 1000 ), thisCase.resizedUrl, 'Resized URL is correct' );
-					} else {
-						assert.strictEqual( data.resizeUrl, null, 'resizeUrl is not set' );
-					}
-				} else {
-					assert.strictEqual( data, null, thisCase.typeOfUrl + ', should not produce an mw.Title object' );
-				}
-			} );
-		} );
-
-		QUnit.test( 'parseImageUrl: Without dynamic thumbnail generation', function ( assert ) {
-			var resizeUrl;
-
-			mw.util.setOptionsForTest( { GenerateThumbnailOnParse: true } );
-			this.sandbox.stub( mw.config.values, 'wgScript', '/w' );
-			resizeUrl = mw.util.parseImageUrl( '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/939px-thumbnail.jpg' ).resizeUrl;
-			assert.strictEqual( typeof resizeUrl, 'function', 'resizeUrl is set' );
-			assert.strictEqual( resizeUrl( 500 ), '/w?title=Special:Redirect/file/Princess_Alexandra_of_Denmark_(later_Queen_Alexandra,_wife_of_Edward_VII)_with_her_two_eldest_sons,_Prince_Albert_Victor_(Eddy)_and_George_Frederick_Ernest_Albert_(later_George_V).jpg&width=500', 'Resized URL is correct' );
-		} );
+		assert.strictEqual( typeof resizeUrl, 'function', 'resizeUrl is set' );
+		assert.strictEqual( resizeUrl( 500 ), '/w?title=Special:Redirect/file/Princess_Alexandra_of_Denmark_(later_Queen_Alexandra,_wife_of_Edward_VII)_with_her_two_eldest_sons,_Prince_Albert_Victor_(Eddy)_and_George_Frederick_Ernest_Albert_(later_George_V).jpg&width=500', 'Resized URL is correct' );
 	} );
 
 	QUnit.test( 'escapeRegExp', function ( assert ) {
@@ -674,6 +665,7 @@
 		].join( '' );
 
 		specials.forEach( function ( str ) {
+			// eslint-disable-next-line security/detect-non-literal-regexp
 			assert.propEqual( str.match( new RegExp( mw.util.escapeRegExp( str ) ) ), [ str ], 'Match ' + str );
 		} );
 
@@ -803,74 +795,65 @@
 		assert.strictEqual( mw.util.$content.length, 1, 'length' );
 	} );
 
-	QUnit.test( 'sanitizeIP', function ( assert ) {
-		var IPaddress = [
-			[ 'FC:0:0:0:0:0:0:100', 'fc::100', 'IPv6 with "::" and 2 words' ],
-			[ 'FC:0:0:0:0:0:100:A', 'fc::100:a', 'IPv6 with "::" and 3 words' ],
-			[ 'FC:0:0:0:0:100:A:D', 'fc::100:a:d', 'IPv6 with "::" and 4 words' ],
-			[ 'FC:0:0:0:100:A:D:1', 'fc::100:a:d:1', 'IPv6 with "::" and 5 words' ],
-			[ 'FC:0:0:100:A:D:1:E', 'fc::100:a:d:1:e', 'IPv6 with "::" and 6 words' ],
-			[ 'FC:0:100:A:D:1:E:AC', 'fc::100:a:d:1:e:ac', 'IPv6 with "::" and 7 words' ],
-			[ '2001:0:0:0:0:0:0:DF', '2001::df', 'IPv6 with "::" and 2 words' ],
-			[ '2001:5C0:1400:A:0:0:0:DF', '2001:5c0:1400:a::df', 'IPv6 with "::" and 5 words' ],
-			[ '2001:5C0:1400:A:0:0:DF:2', '2001:5c0:1400:a::df:2', 'IPv6 with "::" and 6 words' ],
-			[ '2001:DB8:A:0:0:0:0:123/64', '2001:db8:a::123/64', 'IPv6 with "::" and 6 words' ],
-			[ '1.24.52.13', '1.24.52.13', 'IPv4 no change' ],
-			[ '1.24.52.13', '01.024.052.013', 'IPv4 strip leading 0s' ],
-			[ '1.2.5.1', '001.002.005.001', 'IPv4 strip multiple leading 0s' ],
-			[ '100.240.52.130', '100.240.52.130', 'IPv4 don\'t strip meaningful trailing 0s' ],
-			[ '0.0.52.0', '00.000.52.00', 'IPv4 strip meaningless multiple 0s' ],
-			[ '0.0.52.0/32', '00.000.52.00/32', 'IPv4 range strip meaningless multiple 0s' ],
-			[ 'not an IP', 'not an IP', 'Not an IP' ],
-			[ null, ' ', 'Empty string' ],
-			[ '1.24.52.13', ' 1.24.52.13 ', 'IPv4 trim whitespace from start and end of the string' ],
-			[ '0:0:0:0:0:0:0:1', '::1', 'IPv6 starts with ::' ],
-			[ '2001:DB8:0:0:0:FF00:42:8329', '2001:0db8:0000:0000:0000:ff00:0042:8329', 'IPv6 remove leading zeros from each block.' ],
-			[ 'FE80:0:0:0:0:0:0:0/10', 'fe80::/10', 'IPv6 :: at the end' ],
-			[ 'UserName', 'UserName', 'Non-IP string' ],
-			[ null, null, 'Non-string' ]
-		];
-		IPaddress.forEach( function ( ipCase ) {
-			assert.strictEqual( util.sanitizeIP( ipCase[ 1 ] ), ipCase[ 0 ], ipCase[ 2 ] );
-		} );
+	QUnit.test.each( 'sanitizeIP', {
+		'IPv6 with "::" and 2 words': [ 'FC:0:0:0:0:0:0:100', 'fc::100' ],
+		'IPv6 with "::" and 3 words': [ 'FC:0:0:0:0:0:100:A', 'fc::100:a' ],
+		'IPv6 with "::" and 4 words': [ 'FC:0:0:0:0:100:A:D', 'fc::100:a:d' ],
+		'IPv6 with "::" and 5 words': [ 'FC:0:0:0:100:A:D:1', 'fc::100:a:d:1' ],
+		'IPv6 with "::" and 6 words': [ 'FC:0:0:100:A:D:1:E', 'fc::100:a:d:1:e' ],
+		'IPv6 with "::" and 7 words': [ 'FC:0:100:A:D:1:E:AC', 'fc::100:a:d:1:e:ac' ],
+		// https://www.apnic.net/get-ip/faqs/what-is-an-ip-address/ipv6-address-types/
+		'IPv6 with "::" and 2 words (Teredo)': [ '2001:0:0:0:0:0:0:DF', '2001::df' ],
+		'IPv6 with "::" and 5 words (Teredo)': [ '2001:5C0:1400:A:0:0:0:DF', '2001:5c0:1400:a::df' ],
+		'IPv6 with "::" and 6 words (Teredo)': [ '2001:5C0:1400:A:0:0:DF:2', '2001:5c0:1400:a::df:2' ],
+		'IPv6 range with "::" and 6 words (Teredo)': [ '2001:DB8:A:0:0:0:0:123/64', '2001:db8:a::123/64' ],
+		'IPv4 no change': [ '1.24.52.13', '1.24.52.13' ],
+		'IPv4 strip leading 0s': [ '1.24.52.13', '01.024.052.013' ],
+		'IPv4 strip multiple leading 0s': [ '1.2.5.1', '001.002.005.001' ],
+		'IPv4 don\'t strip meaningful trailing 0s': [ '100.240.52.130', '100.240.52.130' ],
+		'IPv4 strip meaningless multiple 0s': [ '0.0.52.0', '00.000.52.00' ],
+		'IPv4 range strip meaningless multiple 0s': [ '0.0.52.0/32', '00.000.52.00/32' ],
+		'Not an IP': [ 'not an IP', 'not an IP' ],
+		'Empty string': [ null, ' ' ],
+		'IPv4 trim whitespace from start and end of the string': [ '1.24.52.13', ' 1.24.52.13 ' ],
+		'IPv6 starts with ::': [ '0:0:0:0:0:0:0:1', '::1' ],
+		'IPv6 remove leading zeros from each block.': [ '2001:DB8:0:0:0:FF00:42:8329', '2001:0db8:0000:0000:0000:ff00:0042:8329' ],
+		'IPv6 :: at the end': [ 'FE80:0:0:0:0:0:0:0/10', 'fe80::/10' ],
+		'Non-IP string': [ 'UserName', 'UserName' ],
+		'Non-string': [ null, null ]
+	}, function ( assert, [ expected, input ] ) {
+		assert.strictEqual( util.sanitizeIP( input ), expected );
 	} );
 
-	QUnit.test( 'prettifyIP', function ( assert ) {
-		var IPaddress = [
-			[ 'fc::100', 'FC::100', 'IPv6 change to lowercase' ],
-			[ '1.24.52.13', '1.24.52.13', 'IPv4 no change' ],
-			[ '0.0.52.0/32', '00.000.52.00/32', 'IPv4 range strip meaningless multiple 0s' ],
-			[ null, ' ', 'Empty string' ],
-			[ '2001:db8:a::123/64', '2001:db8:a:0000:0000:0000:0000:123/64', 'IPv6 range Replace consecutive zeros with :: ' ],
-			[ '2001:db8::ff00:42:8329', '2001:DB8:0:0:0:FF00:42:8329', 'IPv6 Replace consecutive zeros with ::' ],
-			[ '2001::15:0:0:1a2b', '2001:0000:0000:0000:0015:0000:0000:1a2b', 'IPv6 only replace longest consecutive zeros with ::' ],
-			[ '2001:0:0:15::1a2b', '2001:0000:0000:0015:0000:0000:0000:1a2b', 'IPv6 only replace longest consecutive zeros with ::' ],
-			[ '2001::15:0:0:3:1a2b', '2001:0000:0000:0015:0000:0000:0003:1a2b', 'IPv6 replace first match of longest consecutive zeros with ::' ]
-		];
-		IPaddress.forEach( function ( ipCase ) {
-			assert.strictEqual( util.prettifyIP( ipCase[ 1 ] ), ipCase[ 0 ], ipCase[ 2 ] );
-		} );
-
+	QUnit.test.each( 'prettifyIP', {
+		'IPv6 change to lowercase': [ 'fc::100', 'FC::100' ],
+		'IPv4 no change': [ '1.24.52.13', '1.24.52.13' ],
+		'IPv4 range strip meaningless multiple 0s': [ '0.0.52.0/32', '00.000.52.00/32' ],
+		'Empty string': [ null, ' ' ],
+		'IPv6 range Replace consecutive zeros with :: ': [ '2001:db8:a::123/64', '2001:db8:a:0000:0000:0000:0000:123/64' ],
+		'IPv6 middle only consecutive zeros with ::': [ '2001:db8::ff00:42:8329', '2001:DB8:0:0:0:FF00:42:8329' ],
+		'IPv6 first longer consecutive zeros with ::': [ '2001::15:0:0:1a2b', '2001:0000:0000:0000:0015:0000:0000:1a2b' ],
+		'IPv6 last longer consecutive zeros with ::': [ '2001:0:0:15::1a2b', '2001:0000:0000:0015:0000:0000:0000:1a2b' ],
+		'IPv6 first of equal length consecutive zeros with ::': [ '2001::15:0:0:3:1a2b', '2001:0000:0000:0015:0000:0000:0003:1a2b' ]
+	}, function ( assert, [ expected, input ] ) {
+		assert.strictEqual( util.prettifyIP( input ), expected );
 	} );
 
-	QUnit.test( 'isTemporaryUser', function ( assert ) {
-		var usernames = [
-			[ '*$1', 'Test', false, true, 'prefix mismatch' ],
-			[ '*$1', '*Some user', true, true, 'prefix match' ],
-			[ '$1*', 'Some user*', true, true, 'suffix only match' ],
-			[ '$1*', 'Some user', false, true, 'suffix only mismatch' ],
-			[ '*$1*', '*Unregistered 123*', true, true, 'prefix and suffix match' ],
-			[ '*$1*', 'Unregistered 123*', false, true, 'prefix and suffix mismatch' ],
-			[ '*$1*', '**', true, true, 'prefix and suffix zero length match' ],
-			[ '*$1*', '*', false, true, 'prefix and suffix overlapping' ],
-			[ '*$1*', '*', false, false, 'Auto create temporary user disabled' ]
-		];
-		usernames.forEach( function ( username ) {
-			mw.util.setOptionsForTest( {
-				AutoCreateTempUser: { enabled: username[ 3 ], matchPattern: username[ 0 ] }
-			} );
-
-			assert.strictEqual( util.isTemporaryUser( username[ 1 ] ), username[ 2 ], username[ 4 ] );
+	QUnit.test.each( 'isTemporaryUser', {
+		'prefix mismatch': [ '*$1', 'Test', false, true ],
+		'prefix match': [ '*$1', '*Some user', true, true ],
+		'suffix only match': [ '$1*', 'Some user*', true, true ],
+		'suffix only mismatch': [ '$1*', 'Some user', false, true ],
+		'prefix and suffix match': [ '*$1*', '*Unregistered 123*', true, true ],
+		'prefix and suffix mismatch': [ '*$1*', 'Unregistered 123*', false, true ],
+		'prefix and suffix zero length match': [ '*$1*', '**', true, true ],
+		'prefix and suffix overlapping': [ '*$1*', '*', false, true ],
+		'Auto create temporary user disabled': [ '*$1*', '*', false, false ]
+	}, function ( assert, username ) {
+		mw.util.setOptionsForTest( {
+			AutoCreateTempUser: { enabled: username[ 3 ], matchPattern: username[ 0 ] }
 		} );
+
+		assert.strictEqual( util.isTemporaryUser( username[ 1 ] ), username[ 2 ] );
 	} );
-}() );
+} );

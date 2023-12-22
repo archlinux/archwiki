@@ -101,7 +101,7 @@ class PathRouter {
 		if ( !isset( $options['strict'] ) || !$options['strict'] ) {
 			// Unless this is a strict path make sure that the path has a $1
 			if ( strpos( $path, '$1' ) === false ) {
-				if ( substr( $path, -1 ) !== '/' ) {
+				if ( $path[-1] !== '/' ) {
 					$path .= '/';
 				}
 				$path .= '$1';
@@ -445,4 +445,7 @@ class PathRouter {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( PathRouter::class, 'PathRouter' );

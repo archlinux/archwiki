@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ashay vb",
 			"Ktkaushik",
 			"Nayvik",
 			"Omshivaprakash",
@@ -39,5 +40,12 @@
 	"vector-page-tools-label": "ಉಪಕರಣಗಳು",
 	"vector-page-tools-general-label": "ಸಾಮಾನ್ಯ",
 	"vector-unpin-element-label": "ಮರೆ ಮಾಡಿ",
-	"vector-prefs-limited-width": "ಸೀಮಿತ ಪುಟ ಅಗಲ ಮೋಡ್ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ"
+	"vector-prefs-limited-width": "ಸೀಮಿತ ಪುಟ ಅಗಲ ಮೋಡ್ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ",
+	"vector-readability-survey-title": "ವಿಕಿಮೀಡಿಯಾ ಓದುವ ಸಾಧನ",
+	"vector-readability-survey-fontSize": "ಅಕ್ಷರ ಗಾತ್ರ",
+	"vector-readability-survey-lineHeight": "ಗೆರೆಯ ಎತ್ತರ",
+	"vector-readability-survey-paragraphSpacing": "ಪ್ಯಾರಾಗ್ರಾಫ್ ಅಂತರ",
+	"vector-readability-survey-randomize": "ಯಾದೃಚ್ಛಿಕಗೊಳಿಸು",
+	"vector-readability-survey-reset": "ಮರುಹೊಂದಿಸಿ",
+	"vector-readability-survey-share": "ಮುಂದುವರಿಸಿ"
 }

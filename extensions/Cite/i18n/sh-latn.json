@@ -32,5 +32,6 @@
 	"cite_references_link_accessibility_back_label": "Vrati se gore",
 	"cite_section_preview_references": "Pregled referenci",
 	"cite_warning": "Upozorenje citiranja: $1",
-	"cite_warning_sectionpreview_no_text": "Oznaka <code>&lt;ref&gt;</code> s nazivom <code>$1</code> ne može se prikazati jer je opredjeljena van trenutnog odlomka, ili pak uopće nije opredjeljena."
+	"cite_warning_sectionpreview_no_text": "Oznaka <code>&lt;ref&gt;</code> s nazivom <code>$1</code> ne može se prikazati jer je opredjeljena van trenutnog odlomka, ili pak uopće nije opredjeljena.",
+	"cite-wikieditor-tool-reference": "Referenca"
 }

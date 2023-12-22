@@ -1,13 +1,15 @@
-@import 'mediawiki.ui/variables';
+@import 'mediawiki.skin.variables.less';
 
 .ext-WikiEditor-ManualWidget {
-	background-color: @colorGray14;
+	// TODO: The only background-color token carrying `#eaecf0` right now is
+	// `@background-color-interactive`, which shouldn't be used here.
+	background-color: #eaecf0;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	border-color: @colorGray12;
-	border-width: 1px 0;
-	border-style: solid;
+	border-color: @border-color-subtle;
+	border-width: @border-width-base 0;
+	border-style: @border-style-base;
 	padding: 14px 24px;
 	position: relative;
 	color: inherit;
@@ -23,12 +25,12 @@
 
 	.ext-WikiEditor-realtimepreview-manual-reload {
 		margin-left: auto;
-		font-weight: bolder;
-		color: @color-primary;
+		font-weight: @font-weight-bold;
+		color: @color-progressive;
 	}
 
 	&.oo-ui-widget-disabled .ext-WikiEditor-realtimepreview-manual-reload {
-		color: @colorDisabledText;
+		color: @color-disabled;
 	}
 
 	&.oo-ui-widget-disabled:active {

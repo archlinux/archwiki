@@ -10,7 +10,7 @@
 	"descriptionmsg": "poem-desc",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"MessagesDirs": {
 		"Poem": [

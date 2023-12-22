@@ -6,6 +6,7 @@ use MediaWiki\Block\Restriction\NamespaceRestriction;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\User\User;
 use Psr\Log\NullLogger;
 
 /**
@@ -146,7 +147,7 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $block->equals( $retrievedBlock ) );
 	}
 
-	public function provideInsertBlockSuccess() {
+	public static function provideInsertBlockSuccess() {
 		return [
 			'No conflicting block, not autoblocking' => [
 				'block' => [
@@ -198,7 +199,7 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		$targetToken = $userFactory->newFromUserIdentity( $block->getTargetUserIdentity() )->getToken();
 
 		$store = $this->getStore( $options );
-		$result = $store->insertBlock( $block );
+		$store->insertBlock( $block );
 
 		$this->assertSame(
 			$expectTokenEqual,
@@ -206,7 +207,7 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideInsertBlockLogout() {
+	public static function provideInsertBlockLogout() {
 		return [
 			'Blocked user can log in' => [
 				[
@@ -255,7 +256,7 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 	public function testInsertBlockError() {
 		$block = $this->createMock( DatabaseBlock::class );
 
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'insert' );
 
 		$store = $this->getStore();
@@ -323,7 +324,7 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideUpdateBlockRestrictions() {
+	public static function provideUpdateBlockRestrictions() {
 		return [
 			'Restrictions deleted if removed' => [ 0 ],
 			'Restrictions changed if updated' => [ 2 ],
@@ -361,7 +362,7 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 		$block->method( 'getWikiId' )
 			->willReturn( DatabaseBlock::LOCAL );
 
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'delete' );
 
 		$store = $this->getStore();
@@ -375,16 +376,16 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 	 * @param bool $expected Whether to expect to find any rows
 	 */
 	private function assertPurgeWorked( int $blockId, bool $expected ): void {
-		$blockRows = (bool)$this->db->select(
-			'ipblocks',
-			'ipb_id',
-			[ 'ipb_id' => $blockId ]
-		)->numRows();
-		$blockRestrictionsRows = (bool)$this->db->select(
-			'ipblocks_restrictions',
-			'ir_ipb_id',
-			[ 'ir_ipb_id' => $blockId ]
-		)->numRows();
+		$blockRows = (bool)$this->db->newSelectQueryBuilder()
+			->select( 'ipb_id' )
+			->from( 'ipblocks' )
+			->where( [ 'ipb_id' => $blockId ] )
+			->fetchResultSet()->numRows();
+		$blockRestrictionsRows = (bool)$this->db->newSelectQueryBuilder()
+			->select( 'ir_ipb_id' )
+			->from( 'ipblocks_restrictions' )
+			->where( [ 'ir_ipb_id' => $blockId ] )
+			->fetchResultSet()->numRows();
 
 		$this->assertSame( $expected, $blockRows );
 		$this->assertSame( $expected, $blockRestrictionsRows );
@@ -423,7 +424,7 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function addDBDataOnce() {
 		$this->editPage(
-			'UTPage', // Added in addCoreDBData
+			'DatabaseBlockStoreTest test page',
 			'an edit',
 			'a summary',
 			NS_MAIN,
@@ -440,7 +441,7 @@ class DatabaseBlockStoreTest extends MediaWikiIntegrationTestCase {
 	public function addDBData() {
 		$this->sysop = $this->getTestSysop()->getUser();
 
-		// Get a comment ID. One was added in addCoreDBData.
+		// Get a comment ID. One was added in addDBDataOnce.
 		$commentId = $this->db->select(
 			'comment',
 			'comment_id'

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Alesaru",
 			"Cin",
 			"Firilacroco",
 			"KlaudiuMihaila",
@@ -14,6 +15,7 @@
 	"gadgets-desc": "Permite utilizatorilor să își aleagă [[Special:Gadgets|gadgeturi CSS și JavaScript]] în [[Special:Preferences#mw-prefsection-gadgets|preferințele]] lor",
 	"prefs-gadgets": "Gadgeturi",
 	"prefs-description-gadgets": "Activați funcții adiționale pentru contul dvs.",
+	"gadgets-prefstext-safemode": "Gadget-urile nu sunt disponibile momentan deoarece modul sigur a fost activat. Vă rugăm să [[#mw-input-wpforcesafemode|dezactivați modul sigur]] pentru a utiliza gadgeturi.",
 	"gadgets": "Gadgeturi",
 	"gadgetusage": "Statistici de utilizare a gadgeturilor",
 	"gadgetusage-gadget": "Gadget",
@@ -29,5 +31,6 @@
 	"gadgets-export": "Exportă",
 	"gadgets-export-title": "Exportul de gadgeturi",
 	"gadgets-not-found": "Gadgetul „$1” nu a fost găsit.",
+	"gadgets-export-text": "Pentru a exporta gadgetul $1, apăsați butonul „{{int:gadgets-export-download}}”, salvați fișierul descărcat, mergeți la Special:Import pe wiki-ul de destinație și încărcați-l. Apoi adăugați următoarele la pagina MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nTrebuie să aveți permisiuni corespunzătoare (incluzând dreptul de a edita mesaje de sistem) pe wiki-ul de destinație, iar importul din partea încărcărilor de fișiere trebuie să fie activat.",
 	"gadgets-export-download": "Descarcă"
 }

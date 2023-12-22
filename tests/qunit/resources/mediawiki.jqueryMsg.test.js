@@ -1145,6 +1145,12 @@
 		logSpy = this.sandbox.spy( mw.log, 'warn' );
 
 		assert.strictEqual(
+			mw.message( 'invalid-wikitext' ).isParseable(),
+			false,
+			'Invalid wikitext: reported as not parseable'
+		);
+
+		assert.strictEqual(
 			formatParse( 'invalid-wikitext' ),
 			'&lt;b&gt;{{FAIL}}&lt;/b&gt;',
 			'Invalid wikitext: \'parse\' format'
@@ -1258,9 +1264,7 @@
 	} );
 
 	QUnit.test( 'Integration', function ( assert ) {
-		var expected, msg, $bar;
-
-		expected = '<b><a title="Bold" href="/wiki/Bold">Bold</a>!</b>';
+		var expected = '<b><a title="Bold" href="/wiki/Bold">Bold</a>!</b>';
 		mw.messages.set( 'integration-test', '<b>[[Bold]]!</b>' );
 		mw.messages.set( 'param-test', 'Hello $1' );
 		mw.messages.set( 'param-test-with-link', 'Hello $1 [[$2|$3]]' );
@@ -1272,9 +1276,21 @@
 		);
 
 		assert.strictEqual(
+			$( '<span>' ).append( mw.message( 'integration-test' ).parseDom() ).html(),
+			expected,
+			'mw.message().parseDom() works correctly'
+		);
+
+		assert.strictEqual(
 			$( '<span>' ).msg( 'integration-test' ).html(),
 			expected,
 			'jQuery plugin $.fn.msg() works correctly'
+		);
+
+		assert.strictEqual(
+			mw.message( 'integration-test' ).isParseable(),
+			true,
+			'mw.message().isParseable() works correctly'
 		);
 
 		assert.strictEqual(
@@ -1283,18 +1299,13 @@
 			'Passing a jQuery object as a parameter to a message without wikitext works correctly'
 		);
 
-		( function () {
-			var $messageArgument,
-				$message;
-
-			mw.messages.set( 'object-double-replace', 'Foo 1: $1 2: $1' );
-			$messageArgument = $( '<div class="bar">&gt;</div>' );
-			$message = $( '<span>' ).msg( 'object-double-replace', $messageArgument );
-			assert.true(
-				$message[ 0 ].contains( $messageArgument[ 0 ] ),
-				'The original jQuery object is actually in the DOM'
-			);
-		}() );
+		mw.messages.set( 'object-double-replace', 'Foo 1: $1 2: $1' );
+		var $messageArgument = $( '<div class="bar">&gt;</div>' );
+		var $message = $( '<span>' ).msg( 'object-double-replace', $messageArgument );
+		assert.true(
+			$message[ 0 ].contains( $messageArgument[ 0 ] ),
+			'The original jQuery object is actually in the DOM'
+		);
 
 		assert.strictEqual(
 			mw.message( 'param-test', $( '<span>' ).text( 'World' ).get( 0 ) ).parse(),
@@ -1320,7 +1331,7 @@
 		);
 
 		mw.messages.set( 'integration-test-extlink', '[$1 Link]' );
-		msg = mw.message(
+		var msg = mw.message(
 			'integration-test-extlink',
 			$( '<a>' ).attr( 'href', 'http://example.com/' )
 		);
@@ -1333,7 +1344,7 @@
 
 		mw.config.set( 'wgUserLanguage', 'qqx' );
 
-		$bar = $( '<b>' ).text( 'bar' );
+		var $bar = $( '<b>' ).text( 'bar' );
 		mw.messages.set( 'qqx-message', '(qqx-message)' );
 		mw.messages.set( 'non-qqx-message', '<b>hello world</b>' );
 

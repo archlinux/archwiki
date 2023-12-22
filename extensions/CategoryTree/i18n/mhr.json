@@ -1,11 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"Lifeway",
 			"Санюн Вадик",
-			"Lifeway"
+			"Валентина Семёнова"
 		]
 	},
+	"categorytree": "Категорий пушеҥге",
 	"categorytree-portlet": "Категорий-влак",
+	"categorytree-legend": "Категорий пушеҥгым ончыкташ",
+	"categorytree-desc": "Викин [[Special:CategoryTree| категорийын чоҥалтмыжым]] ончыктышо  AJAX-ужаш",
+	"categorytree-header": "Категорийын кӧргыжым пушеҥге семын ончыктышашлан, тудын лӱмжым возыза.  (JavaScript кӱлеш).",
 	"categorytree-category": "Категорий:",
 	"categorytree-go": "Пушеҥгым ончыкташ",
 	"categorytree-parents": "Вожысо",

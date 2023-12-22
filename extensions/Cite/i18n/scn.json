@@ -27,5 +27,10 @@
 	"cite_error_references_no_key": "N'etichetta <code>&lt;ref&gt;</code> difinuta nta <code>&lt;references&gt;</code> nun havi n'attribbutu nomu.",
 	"cite_error_empty_references_define": "L'etichetta <code>&lt;ref&gt;</code> difinuta nta <code>&lt;references&gt;</code> cû nomu \"$1\" nun havi nuddu cuntinutu.",
 	"cite_references_link_accessibility_label": "Attorna pi supra",
-	"cite_references_link_many_accessibility_label": "Attorna pi supra unni:"
+	"cite_references_link_many_accessibility_label": "Attorna pi supra unni:",
+	"cite-wikieditor-tool-reference": "Rifirenza",
+	"cite-wikieditor-help-page-references": "Rifirenzi",
+	"cite-wikieditor-help-content-reference-description": "Rifirenza",
+	"cite-wikieditor-help-content-rereference-description": "Usu dâ stissa nota cchiù tardu",
+	"cite-wikieditor-help-content-showreferences-description": "Ammuscia li rifirenzi"
 }

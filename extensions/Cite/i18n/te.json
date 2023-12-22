@@ -30,11 +30,15 @@
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> లో \"$1\" పేరుతో నిర్వచించిన <code>&lt;ref&gt;</code> ట్యాగులో పాఠ్యమేమీ లేదు.",
 	"cite-tracking-category-cite-error": "మూలాల లోపాలున్న పేజీలు",
 	"cite-tracking-category-cite-error-desc": "ఈ వర్గం లోని పేజీల్లో మూలాల ట్యాగుల వాడకంలో లోపాలున్నాయి.",
+	"cite_reference_backlink_symbol": "↑",
 	"cite_references_link_many_and": "&#32;",
 	"cite_references_link_accessibility_label": "పైకి దూకు",
 	"cite_references_link_many_accessibility_label": "ఇక్కడికి దుముకు:",
 	"cite_references_link_accessibility_back_label": "వెనక్కి గెంతు",
 	"cite_section_preview_references": "మూలాల మునుజూపు",
 	"cite_warning": "ఉల్లేఖన హెచ్చరిక: $1",
-	"cite_warning_sectionpreview_no_text": "<code>$1</code> పేరుతో ఉన్న <code>&lt;ref&gt;</code> ట్యాగును మునుజూపులో చూపలేం. ఎందుకంటే అది ప్రస్తుత విభాగానికి బయటైనా ఉండి ఉండాలి, లేదా అసలు దాన్ని నిర్వచించకపోయి అయినా ఉండాలి."
+	"cite_warning_sectionpreview_no_text": "<code>$1</code> పేరుతో ఉన్న <code>&lt;ref&gt;</code> ట్యాగును మునుజూపులో చూపలేం. ఎందుకంటే అది ప్రస్తుత విభాగానికి బయటైనా ఉండి ఉండాలి, లేదా అసలు దాన్ని నిర్వచించకపోయి అయినా ఉండాలి.",
+	"cite-wikieditor-tool-reference": "మూలాలు",
+	"cite-wikieditor-help-page-references": "మూలాలు",
+	"cite-wikieditor-help-content-reference-description": "సాక్ష్యాలు"
 }

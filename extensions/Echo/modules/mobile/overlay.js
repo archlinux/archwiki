@@ -11,7 +11,7 @@ var mobile = mw.mobileFrontend.require( 'mobile.startup' ),
  * @return {void}
  */
 function onBeforeExitAnimation( overlay, exit ) {
-	if ( 'transition' in overlay.$el[ 0 ].style ) {
+	if ( getComputedStyle( overlay.$el[ 0 ] ).transitionDuration !== '0s' ) {
 		// Manually detach the overlay from DOM once hide animation completes.
 		overlay.$el[ 0 ].addEventListener( 'transitionend', exit, { once: true } );
 
@@ -30,20 +30,29 @@ function onBeforeExitAnimation( overlay, exit ) {
  */
 
 /**
+ * @param {number} count a capped (0-99 or 99+) count.
+ */
+function onCountChange( count ) {
+	mw.hook( 'ext.echo.badge.countChange' ).fire(
+		'all',
+		count,
+		mw.msg( 'echo-badge-count',
+			mw.language.convertNumber( count )
+		)
+	);
+}
+
+/**
  * Make a notification overlay
  *
- * @param {FunctionCountChangeCallback} onCountChange receives one parameter - a capped (0-99 or 99+) count.
- * @param {Function} onNotificationListRendered a function that is called when the
- *   notifications list has fully rendered (taking no arguments)
  * @param {Function} onBeforeExit
  * @return {Overlay}
  */
-function notificationsOverlay( onCountChange, onNotificationListRendered, onBeforeExit ) {
+function notificationsOverlay( onBeforeExit ) {
 	var markAllReadButton, overlay,
 		oouiPromise = mw.loader.using( 'oojs-ui' ).then( function () {
 			markAllReadButton = new OO.ui.ButtonWidget( {
-				icon: 'checkAll',
-				title: mw.msg( 'echo-mark-all-as-read' )
+				icon: 'checkAll'
 			} );
 			return View.make(
 				{ class: 'notifications-overlay-header-markAllRead' },
@@ -74,8 +83,7 @@ function notificationsOverlay( onCountChange, onNotificationListRendered, onBefo
 		},
 		promisedView(
 			oouiPromise.then( function () {
-				return list( mw.echo, markAllReadButton, onCountChange,
-					onNotificationListRendered );
+				return list( mw.echo, markAllReadButton, onCountChange );
 			} )
 		)
 	);

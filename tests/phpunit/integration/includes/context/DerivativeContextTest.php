@@ -3,17 +3,17 @@
 namespace MediaWiki\Tests\Integration\Context;
 
 use DerivativeContext;
-use HashConfig;
 use IContextSource;
 use Language;
 use MediaWiki\Actions\ActionFactory;
+use MediaWiki\Config\HashConfig;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use OutputPage;
 use RequestContext;
-use User;
 use WikiPage;
 
 /**

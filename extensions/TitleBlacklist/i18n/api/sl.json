@@ -4,7 +4,6 @@
 			"Eleassar"
 		]
 	},
-	"apihelp-titleblacklist-description": "Validiranje naslova strani, imena datoteke ali uporabniškega imena glede na TitleBlacklist.",
 	"apihelp-titleblacklist-summary": "Validiranje naslova strani, imena datoteke ali uporabniškega imena glede na TitleBlacklist.",
 	"apihelp-titleblacklist-param-title": "Niz a validiranje glede na črni seznam.",
 	"apihelp-titleblacklist-param-action": "Dejanje, ki ga je treba preveriti.",

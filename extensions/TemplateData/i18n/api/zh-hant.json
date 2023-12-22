@@ -5,7 +5,6 @@
 			"Kly"
 		]
 	},
-	"apihelp-templatedata-description": "取得由 TemplateData 擴充套件儲存的資料。",
 	"apihelp-templatedata-summary": "取得由 TemplateData 擴充套件儲存的資料。",
 	"apihelp-templatedata-example-1": "回傳用於 [[Template:Foobar]] 的 TemplateData，如果模板不存在或是雖然存在但沒有模板資料的話就回傳結果",
 	"apihelp-templatedata-example-2": "回傳用於 [[Template:Phabricator]] 的 TemplateData，如果模板不存在或是雖然存在但沒有模板資料的話就不回傳結果",

@@ -102,7 +102,7 @@ function benchmarkForm( &$u, &$data, $form ) {
 	$delta = $deltas[0];
 
 	$rate = intval( strlen( $data ) / $delta );
-	$same = ( 0 == strcmp( $data, $out ) );
+	$same = ( strcmp( $data, $out ) == 0 );
 
 	printf( " %20s %6.1fms %12s bytes/s (%s)\n",
 		$form,

@@ -1,11 +1,13 @@
 <?php
 
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\MediaWikiServices;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @covers ApiQueryBlockInfoTrait
+ * @group Database
  */
 class ApiQueryBlockInfoTraitTest extends MediaWikiIntegrationTestCase {
 
@@ -24,7 +26,7 @@ class ApiQueryBlockInfoTraitTest extends MediaWikiIntegrationTestCase {
 		$data = [];
 
 		$mock = $this->getMockForTrait( ApiQueryBlockInfoTrait::class );
-		$mock->method( 'getDB' )->willReturn( wfGetDB( DB_REPLICA ) );
+		$mock->method( 'getDB' )->willReturn( $this->getDb() );
 		$mock->method( 'getAuthority' )
 			->willReturn( $this->getMutableTestUser()->getUser() );
 		$mock->method( 'addTables' )->willReturnCallback( static function ( $v ) use ( &$data ) {
@@ -44,17 +46,17 @@ class ApiQueryBlockInfoTraitTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( $expect, $data );
 	}
 
-	public function provideAddBlockInfoToQuery() {
+	public static function provideAddBlockInfoToQuery() {
 		$queryInfo = DatabaseBlock::getQueryInfo();
 
-		$db = wfGetDB( DB_REPLICA );
+		$db = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
 		$ts = $db->addQuotes( $db->timestamp( '20190101000000' ) );
 
 		return [
 			[ [ false ], [
 				'tables' => [ 'blk' => [ 'ipblocks' ] ],
 				'fields' => [ 'ipb_deleted' ],
-				'where' => [ 'ipb_deleted = 0 OR ipb_deleted IS NULL' ],
+				'where' => [ 'ipb_deleted' => [ 0, null ] ],
 				'joins' => [
 					'blk' => [ 'LEFT JOIN', [ 'ipb_user=user_id', "ipb_expiry > $ts" ] ]
 				],
@@ -63,7 +65,7 @@ class ApiQueryBlockInfoTraitTest extends MediaWikiIntegrationTestCase {
 			[ [ true ], [
 				'tables' => [ 'blk' => $queryInfo['tables'] ],
 				'fields' => $queryInfo['fields'],
-				'where' => [ 'ipb_deleted = 0 OR ipb_deleted IS NULL' ],
+				'where' => [ 'ipb_deleted' => [ 0, null ] ],
 				'joins' => $queryInfo['joins'] + [
 					'blk' => [ 'LEFT JOIN', [ 'ipb_user=user_id', "ipb_expiry > $ts" ] ]
 				],

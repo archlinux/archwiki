@@ -64,21 +64,9 @@ interface IDatabase extends IReadableDatabase {
 	public const ESTIMATE_TOTAL = 'total';
 	/** @var string Estimate time to apply (scanning, applying) */
 	public const ESTIMATE_DB_APPLY = 'apply';
-	/**
-	 * @var int Enable SSL/TLS in connection protocol
-	 * @deprecated since 1.39 use 'ssl' parameter
-	 */
-	public const DBO_SSL = 256;
-	/** @var int Enable compression in connection protocol */
-	public const DBO_COMPRESS = 512;
 
 	/** Flag to return the lock acquisition timestamp (null if not acquired) */
 	public const LOCK_TIMESTAMP = 1;
-
-	/** @var bool Parameter to unionQueries() for UNION ALL */
-	public const UNION_ALL = true;
-	/** @var bool Parameter to unionQueries() for UNION DISTINCT */
-	public const UNION_DISTINCT = false;
 
 	/** @var string Field for getLBInfo()/setLBInfo() */
 	public const LB_TRX_ROUND_ID = 'trxRoundId';
@@ -157,6 +145,8 @@ interface IDatabase extends IReadableDatabase {
 	/**
 	 * Get properties passed down from the server info array of the load balancer
 	 *
+	 * @internal should not be called outside of rdbms library.
+	 *
 	 * @param string|null $name The entry of the info array to get, or null to get the whole array
 	 * @return array|mixed|null
 	 */
@@ -166,6 +156,8 @@ interface IDatabase extends IReadableDatabase {
 	 * Set the entire array or a particular key of the managing load balancer info array
 	 *
 	 * Keys matching the IDatabase::LB_* constants are also used internally by subclasses
+	 *
+	 * @internal should not be called outside of rdbms library.
 	 *
 	 * @param array|string $nameOrArray The new array or the name of a key to set
 	 * @param array|mixed|null $value If $nameOrArray is a string, the new key value (null to unset)
@@ -216,22 +208,46 @@ interface IDatabase extends IReadableDatabase {
 	public function pendingWriteCallers();
 
 	/**
-	 * Get the inserted value of an auto-increment row
+	 * Get the sequence-based ID assigned by the last query method call
 	 *
-	 * This should only be called after an insert that used an auto-incremented
-	 * value. If no such insert was previously done in the current database
-	 * session, the return value is undefined.
+	 * This method should only be called when all the following hold true:
+	 *   - (a) A method call was made to insert(), upsert(), replace(), or insertSelect()
+	 *   - (b) The method call attempts to insert exactly one row
+	 *   - (c) The method call omits the value of exactly one auto-increment column
+	 *   - (d) The method call succeeded
+	 *   - (e) No subsequent method calls were made, with the exception of affectedRows(),
+	 *         lastErrno(), lastError(), and getType()
+	 *
+	 * In all other cases, the return value is unspecified.
+	 *
+	 * When the query method is either insert() with "IGNORE", upsert(), or insertSelect(),
+	 * callers should first check affectedRows() before calling this method, making sure that
+	 * the query method actually created a row. Otherwise, an ID from a previous insert might
+	 * be incorrectly assumed to belong to last insert.
 	 *
 	 * @return int
 	 */
 	public function insertId();
 
 	/**
-	 * Get the number of rows affected by the last attempted query statement
+	 * Get the number of rows affected by the last query method call
 	 *
-	 * Similar to https://www.php.net/mysql_affected_rows but includes rows matched
-	 * but not changed (ie. an UPDATE which sets all fields to the same value they already have).
-	 * To get the old mysql_affected_rows behavior, include non-equality of the fields in WHERE.
+	 * This method should only be called when all the following hold true:
+	 *   - (a) A method call was made to insert(), upsert(), replace(), update(), delete(),
+	 *         insertSelect(), query() with a non-SELECT statement, or queryMulti() with a
+	 *         non-SELECT terminal statement
+	 *   - (b) The method call succeeded
+	 *   - (c) No subsequent method calls were made, with the exception of affectedRows(),
+	 *         lastErrno(), lastError(), and getType()
+	 *
+	 * In all other cases, the return value is unspecified.
+	 *
+	 * UPDATE queries consider rows affected even when all their new column values match
+	 * the previous values. Such rows can be excluded from the count by changing the WHERE
+	 * clause to filter them out.
+	 *
+	 * If the last query method call was to query() or queryMulti(), then the results
+	 * are based on the (last) statement provided to that call and are driver-specific.
 	 *
 	 * @return int
 	 */
@@ -256,39 +272,18 @@ interface IDatabase extends IReadableDatabase {
 	 * Callers should avoid the use of statements like BEGIN, COMMIT, and ROLLBACK.
 	 * Methods like startAtomic(), endAtomic(), and cancelAtomic() can be used instead.
 	 *
-	 * @param string $sql Single-statement SQL query
+	 * @param string|Query $sql Single-statement SQL query
+	 * @param-taint $sql exec_sql
 	 * @param string $fname Caller name; used for profiling/SHOW PROCESSLIST comments
 	 * @param int $flags Bit field of IDatabase::QUERY_* constants.
 	 * @return bool|IResultWrapper True for a successful write query, IResultWrapper object
 	 *     for a successful read query, or false on failure if QUERY_SILENCE_ERRORS is set.
+	 * @return-taint tainted
 	 * @throws DBQueryError If the query is issued, fails, and QUERY_SILENCE_ERRORS is not set.
 	 * @throws DBExpectedError If the query is not, and cannot, be issued yet (non-DBQueryError)
 	 * @throws DBError If the query is inherently not allowed (non-DBExpectedError)
 	 */
 	public function query( $sql, $fname = __METHOD__, $flags = 0 );
-
-	/**
-	 * Run a batch of SQL query statements and return the results
-	 *
-	 * If any statement results in an error, subsequent statements will not be attempted.
-	 *
-	 * Callers should avoid the use of statements like BEGIN, COMMIT, and ROLLBACK.
-	 * Methods like startAtomic(), endAtomic(), and cancelAtomic() can be used instead.
-	 *
-	 * @see IDatabase::query()
-	 *
-	 * @param string[] $sqls Map of (statement ID => SQL statement)
-	 * @param string $fname Name of the calling function
-	 * @param int $flags Bit field of IDatabase::QUERY_* constants
-	 * @param string|null $summarySql Virtual SQL for profiling (e.g. "UPSERT INTO TABLE 'x'")
-	 * @return array<string,QueryStatus> Ordered map of (statement ID => QueryStatus)
-	 * @throws DBQueryError If a query is issued, fails, and QUERY_SILENCE_ERRORS is not set.
-	 * @throws DBExpectedError If a query is not, and cannot, be issued yet (non-DBQueryError)
-	 * @since 1.39
-	 */
-	public function queryMulti(
-		array $sqls, string $fname = __METHOD__, int $flags = 0, ?string $summarySql = null
-	);
 
 	/**
 	 * Get an UpdateQueryBuilder bound to this connection. This is overridden by
@@ -301,6 +296,42 @@ interface IDatabase extends IReadableDatabase {
 	 * @return UpdateQueryBuilder
 	 */
 	public function newUpdateQueryBuilder(): UpdateQueryBuilder;
+
+	/**
+	 * Get an DeleteQueryBuilder bound to this connection. This is overridden by
+	 * DBConnRef.
+	 *
+	 * @note A new query builder must be created per query. Query builders
+	 *   should not be reused since this uses a fluent interface and the state of
+	 *   the builder changes during the query which may cause unexpected results.
+	 *
+	 * @return DeleteQueryBuilder
+	 */
+	public function newDeleteQueryBuilder(): DeleteQueryBuilder;
+
+	/**
+	 * Get an InsertQueryBuilder bound to this connection. This is overridden by
+	 * DBConnRef.
+	 *
+	 * @note A new query builder must be created per query. Query builders
+	 *   should not be reused since this uses a fluent interface and the state of
+	 *   the builder changes during the query which may cause unexpected results.
+	 *
+	 * @return InsertQueryBuilder
+	 */
+	public function newInsertQueryBuilder(): InsertQueryBuilder;
+
+	/**
+	 * Get an ReplaceQueryBuilder bound to this connection. This is overridden by
+	 * DBConnRef.
+	 *
+	 * @note A new query builder must be created per query. Query builders
+	 *   should not be reused since this uses a fluent interface and the state of
+	 *   the builder changes during the query which may cause unexpected results.
+	 *
+	 * @return ReplaceQueryBuilder
+	 */
+	public function newReplaceQueryBuilder(): ReplaceQueryBuilder;
 
 	/**
 	 * Lock all rows meeting the given conditions/options FOR UPDATE
@@ -323,6 +354,8 @@ interface IDatabase extends IReadableDatabase {
 	 *
 	 * This operation will be seen by affectedRows()/insertId() as one query statement,
 	 * regardless of how many statements are actually sent by the class implementation.
+	 *
+	 * @internal callers outside of rdbms library should use InsertQueryBuilder instead.
 	 *
 	 * @param string $table Table name
 	 * @param array|array[] $rows Row(s) to insert, as either:
@@ -348,7 +381,10 @@ interface IDatabase extends IReadableDatabase {
 	 * This operation will be seen by affectedRows()/insertId() as one query statement,
 	 * regardless of how many statements are actually sent by the class implementation.
 	 *
+	 * @internal callers outside of rdbms library should use UpdateQueryBuilder instead.
+	 *
 	 * @param string $table Table name
+	 * @param-taint $table exec_sql
 	 * @param array $set Combination map/list where each string-keyed entry maps a column
 	 *   to a literal assigned value and each integer-keyed value is a SQL expression in the
 	 *   format of a column assignment within UPDATE...SET. The (column => value) entries are
@@ -356,17 +392,22 @@ interface IDatabase extends IReadableDatabase {
 	 *   assignment format is useful for updates like "column = column + X". All assignments
 	 *   have no defined execution order, so they should not depend on each other. Do not
 	 *   modify AUTOINCREMENT or UUID columns in assignments.
+	 * @param-taint $set exec_sql_numkey
 	 * @param array|string $conds Condition in the format of IDatabase::select() conditions.
 	 *   In order to prevent possible performance or replication issues or damaging a data
 	 *   accidentally, an empty condition for 'update' queries isn't allowed.
 	 *   IDatabase::ALL_ROWS should be passed explicitly in order to update all rows.
+	 * @param-taint $conds exec_sql_numkey
 	 * @param string $fname Calling function name (use __METHOD__) for logs/profiling
+	 * @param-taint $fname exec_sql
 	 * @param string|array $options Combination map/list where each string-keyed entry maps
 	 *   a non-boolean option to the option parameters and each integer-keyed value is the
 	 *   name of a boolean option. Supported options are:
 	 *     - IGNORE: Boolean: skip update of rows that would cause unique key conflicts.
 	 *       IDatabase::affectedRows() can be used to determine how many rows were updated.
+	 * @param-taint $options none
 	 * @return bool Return true if no exception was thrown (deprecated since 1.33)
+	 * @return-taint none
 	 * @throws DBError If an error occurs, {@see query}
 	 */
 	public function update( $table, $set, $conds, $fname = __METHOD__, $options = [] );
@@ -407,6 +448,8 @@ interface IDatabase extends IReadableDatabase {
 	 * This operation will be seen by affectedRows()/insertId() as one query statement,
 	 * regardless of how many statements are actually sent by the class implementation.
 	 *
+	 * @internal callers outside of rdbms library should use ReplaceQueryBuilder instead.
+	 *
 	 * @param string $table The table name
 	 * @param string|string[]|string[][] $uniqueKeys Column name or non-empty list of column
 	 *   name lists that define all applicable unique keys on the table. There must only be
@@ -435,7 +478,7 @@ interface IDatabase extends IReadableDatabase {
 	 * This operation will be seen by affectedRows()/insertId() as one query statement,
 	 * regardless of how many statements are actually sent by the class implementation.
 	 *
-	 * @see IDatabase::buildExcludedValue()
+	 * @internal callers outside of rdbms library should use InsertQueryBuilder instead.
 	 *
 	 * @param string $table Table name
 	 * @param array|array[] $rows Row(s) to insert, in the form of either:
@@ -504,13 +547,19 @@ interface IDatabase extends IReadableDatabase {
 	 * This operation will be seen by affectedRows()/insertId() as one query statement,
 	 * regardless of how many statements are actually sent by the class implementation.
 	 *
+	 * @internal callers outside of rdbms library should use DeleteQueryBuilder instead.
+	 *
 	 * @param string $table Table name
+	 * @param-taint $table exec_sql
 	 * @param string|array $conds Array of conditions. See $conds in IDatabase::select()
 	 *   In order to prevent possible performance or replication issues or damaging a data
 	 *   accidentally, an empty condition for 'delete' queries isn't allowed.
 	 *   IDatabase::ALL_ROWS should be passed explicitly in order to delete all rows.
+	 * @param-taint $conds exec_sql_numkey
 	 * @param string $fname Name of the calling function
+	 * @param-taint $fname exec_sql
 	 * @return bool Return true if no exception was thrown (deprecated since 1.33)
+	 * @return-taint none
 	 * @throws DBError If an error occurs, {@see query}
 	 */
 	public function delete( $table, $conds, $fname = __METHOD__ );
@@ -560,16 +609,16 @@ interface IDatabase extends IReadableDatabase {
 	);
 
 	/**
-	 * Get the position of this primary DB
+	 * Get the replication position of this primary DB server
 	 *
-	 * @return DBPrimaryPos|false False if this is not a primary DB
+	 * @return DBPrimaryPos|false Position; false if this is not a primary DB
 	 * @throws DBError If an error occurs, {@see query}
 	 * @since 1.37
 	 */
 	public function getPrimaryPos();
 
 	/**
-	 * @return bool Whether the DB server is marked as read-only server-side
+	 * @return bool Whether this DB server is running in server-side read-only mode
 	 * @throws DBError If an error occurs, {@see query}
 	 * @since 1.28
 	 */
@@ -1016,11 +1065,17 @@ interface IDatabase extends IReadableDatabase {
 	public function flushSnapshot( $fname = __METHOD__, $flush = self::FLUSHING_ONE );
 
 	/**
-	 * Override database's default behavior. $options include:
-	 *     'connTimeout' : Set the connection timeout value in seconds.
-	 *                     May be useful for very long batch queries such as
-	 *                     full-wiki dumps, where a single query reads out over
-	 *                     hours or days.
+	 * Override database's default behavior.
+	 * Not all options are supported on all database backends;
+	 * unsupported options are silently ignored.
+	 *
+	 * $options include:
+	 * - 'connTimeout': Set the connection timeout value in seconds.
+	 *   May be useful for very long batch queries such as full-wiki dumps,
+	 *   where a single query reads out over hours or days.
+	 *   Only supported on MySQL and MariaDB.
+	 * - 'groupConcatMaxLen': Maximum length of a GROUP_CONCAT() result.
+	 *   Only supported on MySQL and MariaDB.
 	 *
 	 * @param array $options
 	 * @return void
@@ -1097,13 +1152,12 @@ interface IDatabase extends IReadableDatabase {
 	public function namedLocksEnqueue();
 
 	/**
-	 * @return bool Whether this DB server is read-only
+	 * Check if this DB server is marked as read-only according to load balancer info
+	 *
+	 * @note LoadBalancer checks serverIsReadOnly() when setting the load balancer info array
+	 *
+	 * @return bool
 	 * @since 1.27
 	 */
 	public function isReadOnly();
 }
-
-/**
- * @deprecated since 1.29
- */
-class_alias( IDatabase::class, 'IDatabase' );

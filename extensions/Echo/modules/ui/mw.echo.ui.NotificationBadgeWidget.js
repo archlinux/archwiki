@@ -99,8 +99,12 @@
 		} );
 		preferencesButton.$element.children().first().removeAttr( 'role' );
 
+		var footerItems = [ allNotificationsButton ];
+		if ( !mw.user.isTemp() ) {
+			footerItems.push( preferencesButton );
+		}
 		footerButtonGroupWidget = new OO.ui.ButtonGroupWidget( {
-			items: [ allNotificationsButton, preferencesButton ],
+			items: footerItems,
 			classes: [ 'mw-echo-ui-notificationBadgeButtonPopupWidget-footer-buttons' ]
 		} );
 		$footer = $( '<div>' )
@@ -139,9 +143,10 @@
 		this.setPendingElement( this.popup.$head );
 
 		// Mark all as read button
+		this.markAllReadLabel = mw.msg( 'echo-mark-all-as-read', config.convertedNumber );
 		this.markAllReadButton = new OO.ui.ButtonWidget( {
 			framed: false,
-			label: mw.msg( 'echo-mark-all-as-read' ),
+			label: this.markAllReadLabel,
 			classes: [ 'mw-echo-ui-notificationsWidget-markAllReadButton' ]
 		} );
 
@@ -239,11 +244,14 @@
 	 * Update the badge state and label based on changes to the model
 	 */
 	mw.echo.ui.NotificationBadgeWidget.prototype.updateBadge = function () {
-		var unreadCount, cappedUnreadCount, badgeLabel;
+		var unreadCount, cappedUnreadCount, badgeLabel, convertedCount;
 
 		unreadCount = this.manager.getUnreadCounter().getCount();
 		cappedUnreadCount = this.manager.getUnreadCounter().getCappedNotificationCount( unreadCount );
-		badgeLabel = mw.msg( 'echo-badge-count', mw.language.convertNumber( cappedUnreadCount ) );
+		convertedCount = mw.language.convertNumber( cappedUnreadCount );
+		badgeLabel = mw.msg( 'echo-badge-count', convertedCount );
+		this.markAllReadLabel = mw.msg( 'echo-mark-all-as-read', convertedCount );
+		this.markAllReadButton.setLabel( this.markAllReadLabel );
 
 		this.badgeButton.setLabel( badgeLabel );
 		this.badgeButton.setCount( unreadCount, badgeLabel );
@@ -262,14 +270,6 @@
 	 * Respond to 'mark all as read' button click
 	 */
 	mw.echo.ui.NotificationBadgeWidget.prototype.onMarkAllReadButtonClick = function () {
-		// Log the click action
-		mw.echo.logger.logInteraction(
-			mw.echo.Logger.static.actions.markAllReadClick,
-			mw.echo.Logger.static.context.popup,
-			null, // Event id isn't relevant
-			this.manager.getTypeString() // The type of the list
-		);
-
 		this.controller.markLocalNotificationsRead();
 	};
 
@@ -290,14 +290,6 @@
 			widget.notificationsWidget.resetInitiallyUnseenItems();
 			return;
 		}
-
-		// Log the click event
-		mw.echo.logger.logInteraction(
-			'ui-badge-link-click',
-			mw.echo.Logger.static.context.badge,
-			null,
-			this.controller.getTypeString()
-		);
 
 		if ( this.hasRunFirstTime ) {
 			// HACK: Clippable doesn't resize the clippable area when

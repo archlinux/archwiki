@@ -21,12 +21,21 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use DerivativeContext;
+use HTMLForm;
+use HTMLUserTextField;
+use IContextSource;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
+use MediaWiki\Pager\NewFilesPager;
 use MediaWiki\Permissions\GroupPermissionsLookup;
 use MediaWiki\Request\DerivativeRequest;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\SpecialPage\IncludableSpecialPage;
+use MimeAnalyzer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 class SpecialNewFiles extends IncludableSpecialPage {
 	/** @var FormOptions */
@@ -35,30 +44,25 @@ class SpecialNewFiles extends IncludableSpecialPage {
 	/** @var string[] */
 	protected $mediaTypes;
 
-	/** @var GroupPermissionsLookup */
-	private $groupPermissionsLookup;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
+	private GroupPermissionsLookup $groupPermissionsLookup;
+	private IConnectionProvider $dbProvider;
+	private LinkBatchFactory $linkBatchFactory;
 
 	/**
 	 * @param MimeAnalyzer $mimeAnalyzer
 	 * @param GroupPermissionsLookup $groupPermissionsLookup
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 */
 	public function __construct(
 		MimeAnalyzer $mimeAnalyzer,
 		GroupPermissionsLookup $groupPermissionsLookup,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory
 	) {
 		parent::__construct( 'Newimages' );
 		$this->groupPermissionsLookup = $groupPermissionsLookup;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->mediaTypes = $mimeAnalyzer->getMediaTypes();
 		$this->linkBatchFactory = $linkBatchFactory;
 	}
@@ -137,7 +141,7 @@ class SpecialNewFiles extends IncludableSpecialPage {
 			$this->groupPermissionsLookup,
 			$this->linkBatchFactory,
 			$this->getLinkRenderer(),
-			$this->loadBalancer,
+			$this->dbProvider,
 			$opts
 		);
 
@@ -250,3 +254,9 @@ class SpecialNewFiles extends IncludableSpecialPage {
 		}
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialNewFiles::class, 'SpecialNewFiles' );

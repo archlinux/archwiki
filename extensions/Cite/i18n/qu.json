@@ -16,5 +16,10 @@
 	"cite_error_included_ref": "Kichaq <code>&lt;ref&gt;</code> unanchachapaq wichq'aq <code>&lt;/ref&gt;</code> unanchachaqa manam kanchu",
 	"cite_error_group_refs_without_references": "\"$1\" sutiyuq huñupaq <code>&lt;ref&gt;</code> unanchacham kachkan, ichataq manam chay huñupaq qillqasqa <code>&lt;references group=\"$1\"/&gt;</code> unanchacha manam tarisqachu, icha wichq'aq <code>&lt;/ref&gt;</code> unanchacha manam kanchu",
 	"cite_references_link_accessibility_label": "Hawaman t'iskuy",
-	"cite_references_link_many_accessibility_label": "Hawaman t'iskuspa kayman riy:"
+	"cite_references_link_many_accessibility_label": "Hawaman t'iskuspa kayman riy:",
+	"cite-wikieditor-tool-reference": "Pukyumanta willay",
+	"cite-wikieditor-help-page-references": "Pukyumanta willaykuna",
+	"cite-wikieditor-help-content-reference-description": "Pukyumanta willay",
+	"cite-wikieditor-help-content-rereference-description": "Kay pukyumanta willayta yapalla llamk'achiy",
+	"cite-wikieditor-help-content-showreferences-description": "Pukyukunamanta willaykunata rikuchiy"
 }

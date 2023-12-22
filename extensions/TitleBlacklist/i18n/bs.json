@@ -20,5 +20,6 @@
 	"titleblacklist-invalid": "{{PLURAL:$1|Sljedeći red|Sljedeća $1 reda|Sljedećih $1 redova}} na spisku nepoželjnih naslova {{PLURAL:$1|je nevalidan|su nevalidna|je nevalidno}};\nmolimo da {{PLURAL:$1|ga|ih}} ispravite prije spašavanja:",
 	"titleblacklist-override": "Zanemari crnu listu ako se podudara",
 	"right-tboverride": "Zaobilaženje spiska zabranjenih naslova ili korisničkih imena",
-	"right-tboverride-account": "Zaobilaženje spiska zabranjenih korisničkih imena"
+	"right-tboverride-account": "Zaobilaženje spiska zabranjenih korisničkih imena",
+	"right-titleblacklistlog": "Pregledanje zapisnika spiska nedozvoljenih naslova"
 }

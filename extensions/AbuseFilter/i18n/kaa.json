@@ -42,5 +42,8 @@
 	"abusefilter-topnav-log": "Buzaqıshılıq háreketleri jurnalı",
 	"abusefilter-topnav-tools": "Durıslawshı qurallar",
 	"abusefilter-log-name": "Buzaqıshılıq háreketlerdi filtrlew jurnalı",
-	"abusefilter-log-noresults": "Nátiyje joq"
+	"abusefilter-log-noresults": "Nátiyje joq",
+	"abusefilter-blocked-domains-domain-header": "Domen:",
+	"abusefilter-blocked-domains-actions-header": "Háreketler",
+	"abusefilter-blocked-domains-remove-reason": "Sebep"
 }

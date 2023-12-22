@@ -23,7 +23,6 @@
 namespace MediaWiki\Extension\AbuseFilter\Tests\Integration\Parser;
 
 use EmptyBagOStuff;
-use Generator;
 use LanguageEn;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
@@ -51,10 +50,8 @@ use Wikimedia\Equivset\Equivset;
  * @covers \MediaWiki\Extension\AbuseFilter\Parser\SyntaxChecker
  */
 class ParserEquivsetTest extends MediaWikiIntegrationTestCase {
-	/**
-	 * @return FilterEvaluator
-	 */
-	protected function getParser() {
+
+	private function getParser(): FilterEvaluator {
 		// We're not interested in caching or logging; tests should call respectively setCache
 		// and setLogger if they want to test any of those.
 		$contLang = new LanguageEn();
@@ -88,10 +85,7 @@ class ParserEquivsetTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $this->getParser()->parse( $rule ) );
 	}
 
-	/**
-	 * @return Generator|array
-	 */
-	public function provideGenericTests() {
+	public static function provideGenericTests() {
 		$testPath = __DIR__ . "/../../../parserTestsEquivset";
 		$testFiles = glob( $testPath . "/*.t" );
 

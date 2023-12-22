@@ -26,9 +26,7 @@ class HistoryFilterTest extends MediaWikiUnitTestCase {
 			[],
 			$this->createMock( LastEditInfo::class ),
 			1,
-			$historyID,
-			null,
-			null
+			$historyID
 		);
 
 		$this->assertSame( $historyID, $filter->getHistoryID() );

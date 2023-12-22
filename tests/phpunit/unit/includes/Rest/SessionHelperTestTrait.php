@@ -29,6 +29,7 @@ trait SessionHelperTestTrait {
 		$session = $this->createMock( Session::class );
 		$session->method( 'getSessionId' )->willReturn( new SessionId( 'test' ) );
 		$session->method( 'getProvider' )->willReturn( $sessionProvider );
+		$session->method( 'isPersistent' )->willReturn( true );
 
 		return $session;
 	}

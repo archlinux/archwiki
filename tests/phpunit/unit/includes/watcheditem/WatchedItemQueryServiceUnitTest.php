@@ -1,12 +1,15 @@
 <?php
 
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\User\UserOptionsLookup;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\Rdbms\DBConnRef;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\LoadBalancer;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -40,7 +43,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 		UserOptionsLookup $userOptionsLookup = null
 	) {
 		return new WatchedItemQueryService(
-			$this->getMockLoadBalancer( $mockDb ),
+			$this->getMockDbProvider( $mockDb ),
 			$this->getMockCommentStore(),
 			$this->getMockWatchedItemStore(),
 			$this->createHookContainer(),
@@ -109,14 +112,9 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 		return $mock;
 	}
 
-	/**
-	 * @param DBConnRef $mockDb
-	 * @return LoadBalancer
-	 */
-	private function getMockLoadBalancer( DBConnRef $mockDb ) {
-		$mock = $this->createMock( LoadBalancer::class );
-		$mock->method( 'getConnectionRef' )
-			->with( DB_REPLICA )
+	private function getMockDbProvider( IReadableDatabase $mockDb ): IConnectionProvider {
+		$mock = $this->createMock( IConnectionProvider::class );
+		$mock->method( 'getReplicaDatabase' )
 			->willReturn( $mockDb );
 		return $mock;
 	}
@@ -451,7 +449,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( [ '20160203123456', 42 ], $startFrom );
 	}
 
-	public function getWatchedItemsWithRecentChangeInfoOptionsProvider() {
+	public static function getWatchedItemsWithRecentChangeInfoOptionsProvider() {
 		return [
 			[
 				[ 'includeFields' => [ WatchedItemQueryService::INCLUDE_FLAGS ] ],
@@ -857,7 +855,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 		$this->assertNull( $startFrom );
 	}
 
-	public function filterPatrolledOptionProvider() {
+	public static function filterPatrolledOptionProvider() {
 		return [
 			'Patrolled' => [ WatchedItemQueryService::FILTER_PATROLLED ],
 			'Not patrolled' => [ WatchedItemQueryService::FILTER_NOT_PATROLLED ],
@@ -894,7 +892,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 		$this->assertSame( [], $items );
 	}
 
-	public function mysqlIndexOptimizationProvider() {
+	public static function mysqlIndexOptimizationProvider() {
 		return [
 			[
 				'mysql',
@@ -953,7 +951,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 		$this->assertSame( [], $items );
 	}
 
-	public function userPermissionRelatedExtraChecksProvider() {
+	public static function userPermissionRelatedExtraChecksProvider() {
 		return [
 			[
 				[],
@@ -1356,7 +1354,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideGetWatchedItemsForUserOptions() {
+	public static function provideGetWatchedItemsForUserOptions() {
 		return [
 			[
 				[ 'namespaceIds' => [ 0, 1 ], ],
@@ -1444,7 +1442,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 		$this->assertSame( [], $items );
 	}
 
-	public function provideGetWatchedItemsForUser_fromUntilStartFromOptions() {
+	public static function provideGetWatchedItemsForUser_fromUntilStartFromOptions() {
 		return [
 			[
 				[
@@ -1555,7 +1553,7 @@ class WatchedItemQueryServiceUnitTest extends MediaWikiUnitTestCase {
 		$this->assertSame( [], $items );
 	}
 
-	public function getWatchedItemsForUserInvalidOptionsProvider() {
+	public static function getWatchedItemsForUserInvalidOptionsProvider() {
 		return [
 			[
 				[ 'sort' => 'foo' ],

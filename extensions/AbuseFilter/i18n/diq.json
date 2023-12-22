@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"1917 Ekim Devrimi",
+			"Amire80",
 			"Asmen",
 			"Aspar",
 			"Erdemaslancan",
@@ -13,8 +14,7 @@
 			"Matma Rex",
 			"Mirzali",
 			"Orbot707",
-			"Xoser",
-			"Amire80"
+			"Xoser"
 		]
 	},
 	"abusefilter-desc": "Vurnayışa rê terzê otomatik vınakari dezge keno",
@@ -513,7 +513,6 @@
 	"abusefilter-test-page": "Vurnayişan ser pelan:",
 	"abusefilter-test-shownegative": "Vurnayîşan ke filitre match nikena înan bimucne",
 	"abusefilter-test-syntaxerr": "Filitreyê tu de yew ğeletê syntaxî esto.\nQe yew deskripsiyonê ğeletî, \"{{int:abusefilter-edit-check}}\" rê bitexne.",
-	"abusefilter-test-badtitle": "Sernamey perer nêravêrde yo. Eno zerrek yu yana zeder peran dı dehana veror karıya yo.",
 	"abusefilter-test-action": "Babeta aksiyoni:",
 	"abusefilter-test-search-type-all": "Aksiyoni pêro",
 	"abusefilter-test-search-type-edit": "Vurnayışi",

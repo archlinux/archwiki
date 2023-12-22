@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"ElangoRamanujam",
-			"Siddhan"
+			"Siddhan",
+			"Fahimrazick"
 		]
 	},
-	"discussiontools-replylink": "பதில் அளி",
-	"discussiontools-replywidget-cancel": "ரத்து செய்",
+	"discussiontools-replylink": "பதிலளி",
+	"discussiontools-replywidget-cancel": "கைவிடு",
 	"discussiontools-replywidget-mode-source": "மூலம்",
 	"discussiontools-replywidget-mode-visual": "காட்சி",
 	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}க்கு பதிலளிக்க",
-	"discussiontools-replywidget-reply": "பதில் அளி"
+	"discussiontools-replywidget-reply": "பதிலளி"
 }

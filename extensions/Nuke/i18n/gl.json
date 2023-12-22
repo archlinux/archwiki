@@ -25,6 +25,7 @@
 	"nuke-maxpages": "Número máximo de páxinas:",
 	"nuke-editby": "Creado por [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "A páxina \"'''$1'''\" foi borrada.",
+	"nuke-deletion-queued": "A páxina '''$1''' está na cola para a súa eliminación.",
 	"nuke-not-deleted": "A páxina \"[[:$1]]\" '''non''' se pode borrar.",
 	"nuke-delete-more": "[[Special:Nuke|Borrar máis páxinas]]",
 	"nuke-pattern": "Patrón SQL LIKE (por exemplo, %) para o nome de páxina:",

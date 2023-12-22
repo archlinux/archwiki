@@ -5,7 +5,6 @@
 			"咽頭べさ"
 		]
 	},
-	"minerva-talk-add-topic": "ᥗᥦᥛᥴᥔᥬᥱ ᥞᥨᥝᥴᥑᥩᥲ",
 	"mobile-frontend-editor-edit": "ᥛᥨᥢᥳ ᥛᥥᥰ",
 	"mobile-frontend-history": "ᥖᥨᥭᥰ ᥙᥪᥢᥰ ᥛᥥᥰ ᥗᥖᥴ ᥑᥩᥒᥴ ᥘᥣᥲ ᥘᥤᥐ ᥟᥢ ᥘᥭᥳ.",
 	"mobile-frontend-home-button": "ᥞᥨᥝᥴ ᥘᥣᥲ ᥖᥥᥰ",
@@ -25,15 +24,6 @@
 	"mobile-frontend-user-page-contributions": "ᥘᥩᥒᥲᥑᥝᥲᥞᥨᥛᥲ",
 	"mobile-frontend-user-page-talk": "ᥖᥩᥢᥲᥟᥧᥙᥱ",
 	"minerva-page-actions-overflow": "ᥘᥛᥴ ᥘᥫᥴ",
-	"minerva-page-actions-info": "ᥘᥩᥢᥳᥑᥣᥝᥱᥢᥣᥲᥘᥤᥐᥲ",
-	"minerva-page-actions-permalink": "ᥞᥥᥒᥰᥐᥩᥒᥳ ᥛᥢᥲᥐᥪᥛᥰ",
-	"minerva-page-actions-backlinks": "ᥞᥥᥒᥰᥐᥩᥒᥳ ᥟᥢᥴᥛᥤᥰᥖᥤᥲᥢᥭᥲᥙᥥᥢᥴᥔᥒᥴ",
-	"minerva-page-actions-cite": "ᥟᥤᥒᥴᥢᥣᥲᥘᥤᥐᥲᥢᥭᥳ",
-	"minerva-page-actions-move": "ᥑᥣᥭᥳ",
-	"minerva-page-actions-delete": "ᥛᥩᥖᥱᥙᥦᥖᥲ",
-	"minerva-page-actions-protect": "ᥞᥥᥳᥐᥒᥲ",
-	"minerva-page-actions-logs": "ᥔᥣᥭᥴᥛᥣᥭᥴ",
-	"minerva-page-actions-wikibase": "{{WBREPONAME}} ᥛᥤᥱᥐᥤᥰ",
 	"minerva-page-actions-language-switcher": "ᥚᥣᥱᥔᥣᥱᥐᥣᥛᥰ",
 	"minerva-page-actions-history": "ᥙᥪᥢᥰ",
 	"skin-minerva-mobile-option-MinervaShowCategories": "ᥙᥫᥒᥴᥗᥣᥢᥲ"

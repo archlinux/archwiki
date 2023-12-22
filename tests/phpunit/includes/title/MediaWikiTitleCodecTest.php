@@ -24,7 +24,11 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\Title\MalformedTitleException;
+use MediaWiki\Title\MediaWikiTitleCodec;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 
 /**
  * @covers MediaWikiTitleCodec
@@ -520,9 +524,9 @@ class MediaWikiTitleCodecTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideMakeTitleValueSafe
-	 * @covers Title::makeTitleSafe
-	 * @covers Title::makeName
-	 * @covers Title::secureAndSplit
+	 * @covers MediaWiki\Title\Title::makeTitleSafe
+	 * @covers MediaWiki\Title\Title::makeName
+	 * @covers MediaWiki\Title\Title::secureAndSplit
 	 */
 	public function testMakeTitleSafe(
 		$expected, $ns, $text, $fragment = '', $interwiki = '', $lang = 'en'
@@ -535,7 +539,7 @@ class MediaWikiTitleCodecTest extends MediaWikiIntegrationTestCase {
 
 		if ( $expected ) {
 			$this->assertNotNull( $actual );
-			$expectedTitle = Title::castFromLinkTarget( $expected );
+			$expectedTitle = Title::newFromLinkTarget( $expected );
 			$this->assertSame( $expectedTitle->getPrefixedDBkey(), $actual->getPrefixedDBkey() );
 		} else {
 			$this->assertNull( $actual );

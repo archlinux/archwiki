@@ -3,7 +3,8 @@
 		"authors": [
 			"Hanberke",
 			"Matma Rex",
-			"TayfunEt."
+			"TayfunEt.",
+			"Zolgoyo"
 		]
 	},
 	"abusefilter-desc": "Özgerdişlerde awtomatik ewristik filtleri ulanýar",
@@ -403,7 +404,6 @@
 	"abusefilter-test-period-end": "Şundan öň edilen üýtgeşmeler:",
 	"abusefilter-test-page": "Sahypada edilen üýtgeşmeler:",
 	"abusefilter-test-shownegative": "Filtre gabat gelmeýän üýtgeşmeleri görkez",
-	"abusefilter-test-badtitle": "Girizen sahypaňyzyň ady nädogry. Onda atlarda ulanyp bolmaýan bir ýa-da birnäçe simwol bolup biler.",
 	"abusefilter-test-action": "Hereketiň görnüşi:",
 	"abusefilter-test-search-type-all": "Ähli hereketler",
 	"abusefilter-test-search-type-edit": "Düzetmeler",

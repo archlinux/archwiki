@@ -24,6 +24,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\DefaultPreferencesFactory;
 use MediaWiki\Preferences\PreferencesFactory;
+use MediaWiki\User\User;
 use MediaWiki\User\UserOptionsManager;
 use Wikimedia\ParamValidator\ParamValidator;
 
@@ -37,11 +38,8 @@ class ApiOptions extends ApiBase {
 	/** @var User User account to modify */
 	private $userForUpdates;
 
-	/** @var UserOptionsManager */
-	private $userOptionsManager;
-
-	/** @var PreferencesFactory */
-	private $preferencesFactory;
+	private UserOptionsManager $userOptionsManager;
+	private PreferencesFactory $preferencesFactory;
 
 	/**
 	 * @param ApiMain $main
@@ -70,7 +68,7 @@ class ApiOptions extends ApiBase {
 	 */
 	public function execute() {
 		$user = $this->getUserForUpdates();
-		if ( !$user || !$user->isRegistered() ) {
+		if ( !$user || !$user->isNamed() ) {
 			$this->dieWithError(
 				[ 'apierror-mustbeloggedin', $this->msg( 'action-editmyoptions' ) ], 'notloggedin'
 			);

@@ -5,11 +5,9 @@
 			"Xuacu"
 		]
 	},
-	"apihelp-flowthank-description": "Unviar una notificación pública d'agradecimientu por un comentariu en Flow.",
 	"apihelp-flowthank-summary": "Unviar una notificación pública d'agradecimientu por un comentariu en Flow.",
 	"apihelp-flowthank-param-postid": "La UUID de la publicación qu'agradecer.",
 	"apihelp-flowthank-example-1": "Unviar un agradecimientu pol comentariu con <kbd>UUID xyz789</kbd>",
-	"apihelp-thank-description": "Unviar una notificación d'agradecimientu a un editor.",
 	"apihelp-thank-summary": "Unviar una notificación d'agradecimientu a un editor.",
 	"apihelp-thank-param-rev": "ID de la revisión pola que dar les gracies a dalguién. Tien de dase esto o 'log'.",
 	"apihelp-thank-param-log": "ID del rexistru pol que dar les gracies a dalguién. Tien de dase esto o 'rev'.",

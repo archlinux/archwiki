@@ -183,6 +183,11 @@ socket.io-client
  – MIT License
  – Guillermo Rauch and other contributors
 
+spark-md5
+ – https://github.com/satazor/js-spark-md5
+ – BSD-3-Clause (dual with WTFv2)
+ – André Cruz
+
 Tree Differ
  – https://github.com/tchanders/treeDiffer.js
  – MIT license

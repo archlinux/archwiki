@@ -6,12 +6,12 @@ use AtomicSectionUpdate;
 use BatchRowIterator;
 use DeferredUpdates;
 use Exception;
+use InvalidArgumentException;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use MWException;
 use MWExceptionHandler;
-use Title;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
@@ -48,7 +48,6 @@ class NotificationMapper extends AbstractMapper {
 	/**
 	 * Extract the offset used for notification list
 	 * @param string|null $continue String Used for offset
-	 * @throws MWException
 	 * @return int[]
 	 */
 	protected function extractQueryOffset( $continue ) {
@@ -59,7 +58,7 @@ class NotificationMapper extends AbstractMapper {
 		if ( $continue ) {
 			$values = explode( '|', $continue, 3 );
 			if ( count( $values ) !== 2 ) {
-				throw new MWException( 'Invalid continue param: ' . $continue );
+				throw new InvalidArgumentException( 'Invalid continue param: ' . $continue );
 			}
 			$offset['timestamp'] = (int)$values[0];
 			$offset['offset'] = (int)$values[1];

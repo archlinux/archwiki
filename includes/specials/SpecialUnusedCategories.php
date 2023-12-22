@@ -21,9 +21,14 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Skin;
+use stdClass;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * @ingroup SpecialPage
@@ -31,15 +36,15 @@ use Wikimedia\Rdbms\ILoadBalancer;
 class SpecialUnusedCategories extends QueryPage {
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory
 	) {
 		parent::__construct( 'Unusedcategories' );
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 		$this->setLinkBatchFactory( $linkBatchFactory );
 	}
 
@@ -63,10 +68,10 @@ class SpecialUnusedCategories extends QueryPage {
 				'title' => 'page_title',
 			],
 			'conds' => [
-				'cl_from IS NULL',
+				'cl_from' => null,
 				'page_namespace' => NS_CATEGORY,
 				'page_is_redirect' => 0,
-				'pp_page IS NULL'
+				'pp_page' => null,
 			],
 			'join_conds' => [
 				'categorylinks' => [ 'LEFT JOIN', 'cl_to = page_title' ],
@@ -105,3 +110,9 @@ class SpecialUnusedCategories extends QueryPage {
 		$this->executeLBFromResultWrapper( $res );
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialUnusedCategories::class, 'SpecialUnusedCategories' );

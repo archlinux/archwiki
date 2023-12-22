@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * VisualEditor DataModel MWReferenceModel class.
  *
@@ -19,6 +21,7 @@ ve.dm.MWReferenceModel = function VeDmMWReferenceModel( parentDoc ) {
 	OO.EventEmitter.call( this );
 
 	// Properties
+	this.extendsRef = null;
 	this.listKey = '';
 	this.listGroup = '';
 	this.listIndex = null;
@@ -41,11 +44,12 @@ OO.mixinClass( ve.dm.MWReferenceModel, OO.EventEmitter );
  * @return {ve.dm.MWReferenceModel} Reference model
  */
 ve.dm.MWReferenceModel.static.newFromReferenceNode = function ( node ) {
-	var doc = node.getDocument(),
-		internalList = doc.getInternalList(),
-		attr = node.getAttributes(),
-		ref = new ve.dm.MWReferenceModel( doc );
+	const doc = node.getDocument();
+	const internalList = doc.getInternalList();
+	const attr = node.getAttributes();
+	const ref = new ve.dm.MWReferenceModel( doc );
 
+	ref.setExtendsRef( attr.extendsRef );
 	ref.setListKey( attr.listKey );
 	ref.setListGroup( attr.listGroup );
 	ref.setListIndex( attr.listIndex );
@@ -83,15 +87,15 @@ ve.dm.MWReferenceModel.prototype.findInternalItem = function ( surfaceModel ) {
  */
 ve.dm.MWReferenceModel.prototype.insertInternalItem = function ( surfaceModel ) {
 	// Create new internal item
-	var doc = surfaceModel.getDocument(),
-		internalList = doc.getInternalList();
+	const doc = surfaceModel.getDocument();
+	const internalList = doc.getInternalList();
 
 	// Fill in data
 	this.setListKey( 'auto/' + internalList.getNextUniqueNumber() );
 	this.setListGroup( 'mwReference/' + this.group );
 
 	// Insert internal reference item into document
-	var item = internalList.getItemInsertion( this.listGroup, this.listKey, [] );
+	const item = internalList.getItemInsertion( this.listGroup, this.listKey, [] );
 	surfaceModel.change( item.transaction );
 	this.setListIndex( item.index );
 
@@ -113,26 +117,26 @@ ve.dm.MWReferenceModel.prototype.insertInternalItem = function ( surfaceModel ) 
  * @param {ve.dm.Surface} surfaceModel Surface model of main document
  */
 ve.dm.MWReferenceModel.prototype.updateInternalItem = function ( surfaceModel ) {
-	var doc = surfaceModel.getDocument(),
-		internalList = doc.getInternalList(),
-		listGroup = 'mwReference/' + this.group;
+	const doc = surfaceModel.getDocument();
+	const internalList = doc.getInternalList();
+	const listGroup = 'mwReference/' + this.group;
 
 	// Group/key has changed
 	if ( this.listGroup !== listGroup ) {
 		// Get all reference nodes with the same group and key
-		var group = internalList.getNodeGroup( this.listGroup );
-		var refNodes = group.keyedNodes[ this.listKey ] ?
+		const group = internalList.getNodeGroup( this.listGroup );
+		const refNodes = group.keyedNodes[ this.listKey ] ?
 			group.keyedNodes[ this.listKey ].slice() :
 			[ group.firstNodes[ this.listIndex ] ];
 		// Check for name collision when moving items between groups
-		var keyIndex = internalList.getKeyIndex( this.listGroup, this.listKey );
+		const keyIndex = internalList.getKeyIndex( this.listGroup, this.listKey );
 		if ( keyIndex !== undefined ) {
 			// Resolve name collision by generating a new list key
 			this.listKey = 'auto/' + internalList.getNextUniqueNumber();
 		}
 		// Update the group name of all references nodes with the same group and key
-		var txs = [];
-		for ( var i = 0, len = refNodes.length; i < len; i++ ) {
+		const txs = [];
+		for ( let i = 0, len = refNodes.length; i < len; i++ ) {
 			txs.push( ve.dm.TransactionBuilder.static.newFromAttributeChanges(
 				doc,
 				refNodes[ i ].getOuterRange().start,
@@ -143,7 +147,7 @@ ve.dm.MWReferenceModel.prototype.updateInternalItem = function ( surfaceModel ) 
 		this.listGroup = listGroup;
 	}
 	// Update internal node content
-	var itemNodeRange = internalList.getItemNode( this.listIndex ).getRange();
+	const itemNodeRange = internalList.getItemNode( this.listIndex ).getRange();
 	surfaceModel.change( ve.dm.TransactionBuilder.static.newFromRemoval( doc, itemNodeRange, true ) );
 	surfaceModel.change(
 		ve.dm.TransactionBuilder.static.newFromDocumentInsertion( doc, itemNodeRange.start, this.getDocument() )
@@ -157,7 +161,8 @@ ve.dm.MWReferenceModel.prototype.updateInternalItem = function ( surfaceModel ) 
  * @param {boolean} [placeholder] Reference is a placeholder for staging purposes
  */
 ve.dm.MWReferenceModel.prototype.insertReferenceNode = function ( surfaceFragment, placeholder ) {
-	var attributes = {
+	const attributes = {
+		extendsRef: this.extendsRef,
 		listKey: this.listKey,
 		listGroup: this.listGroup,
 		listIndex: this.listIndex,
@@ -244,6 +249,15 @@ ve.dm.MWReferenceModel.prototype.getDocument = function () {
  */
 ve.dm.MWReferenceModel.prototype.setListKey = function ( listKey ) {
 	this.listKey = listKey;
+};
+
+/**
+ * Set the name of the parent reference that is being extended by the current reference.
+ *
+ * @param {string} extendsRef References parent
+ */
+ve.dm.MWReferenceModel.prototype.setExtendsRef = function ( extendsRef ) {
+	this.extendsRef = extendsRef;
 };
 
 /**

@@ -23,5 +23,9 @@
 	"cite_references_link_many_accessibility_label": "اس تک اوپر جائیں:",
 	"cite_section_preview_references": "حوالہ جات کی نما‏ئش",
 	"cite_warning": "انتباہ حوالہ: $1",
-	"cite_warning_sectionpreview_no_text": "<code>$1</code> کے نام کے حامل <code>&lt;ref&gt;</code> ٹیگ کی نمائش نہیں دیکھی جا سکتی کیونکہ اسے یا تو اس قطعہ سے باہر کسی اور جگہ رکھا گیا ہے یا سرے سے رکھا ہی نہیں گیا۔"
+	"cite_warning_sectionpreview_no_text": "<code>$1</code> کے نام کے حامل <code>&lt;ref&gt;</code> ٹیگ کی نمائش نہیں دیکھی جا سکتی کیونکہ اسے یا تو اس قطعہ سے باہر کسی اور جگہ رکھا گیا ہے یا سرے سے رکھا ہی نہیں گیا۔",
+	"cite-wikieditor-tool-reference": "حوالہ",
+	"cite-wikieditor-help-page-references": "حوالہ جات",
+	"cite-wikieditor-help-content-reference-description": "حوالہ",
+	"cite-wikieditor-help-content-showreferences-description": "حوالہ جات دکھاؤ"
 }

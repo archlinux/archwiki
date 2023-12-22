@@ -4,7 +4,6 @@
 			"Xuacu"
 		]
 	},
-	"apihelp-titleblacklist-description": "Validar un títulu de páxina, o nome de ficheru o d'usuariu escontra la llista prieta de títulos.",
 	"apihelp-titleblacklist-summary": "Validar un títulu de páxina, o nome de ficheru o d'usuariu escontra la llista prieta de títulos.",
 	"apihelp-titleblacklist-param-title": "La cadena a validar escontra la llista prieta.",
 	"apihelp-titleblacklist-param-action": "L'aición a comprobar.",

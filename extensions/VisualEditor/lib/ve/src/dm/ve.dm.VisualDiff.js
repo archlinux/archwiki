@@ -64,9 +64,11 @@ ve.dm.VisualDiff = function VeDmVisualDiff( oldDocOrNode, newDocOrNode, timeout 
 
 	var oldInternalList = this.oldDoc.getInternalList();
 	var newInternalList = this.newDoc.getInternalList();
+
 	this.diff = {
 		docDiff: this.diffDocs( oldDocNode, newDocNode, true ),
-		internalListDiff: this.getInternalListDiff( oldInternalList, newInternalList )
+		internalListDiff: this.getInternalListDiff( oldInternalList, newInternalList ),
+		metaListDiff: this.getMetaListDiff( oldDoc.getMetaList(), newDoc.getMetaList() )
 	};
 
 	// Make docs writable again, so they can be modified by DiffElement
@@ -233,8 +235,11 @@ ve.dm.VisualDiff.prototype.diffList = function ( oldNodes, newNodes ) {
  * indices. Those indices in the longest increasing subsequence represent the unmoved
  * nodes.
  *
- * @param {Object} oldToNew Index map of oldDoc nodes to corresponding newDoc nodes
- * @param {Object} newToOld Index map of newDoc nodes to corresponding oldDoc nodes
+ * @param {Object.<number,number|Object>} oldToNew Map of oldDoc nodes to corresponding newDoc nodes.
+ *   Keys are indices of nodes in the list. Values are either indices of nodes in the list for
+ *   unchanged nodes, or objects where the `node` property is the index for changed nodes.
+ * @param {Object.<number,number|Object>} newToOld Map of newDoc nodes to corresponding oldDoc nodes.
+ *   Same format at oldToNew.
  * @return {(number|string)[]} Record of whether and how each newDoc node has moved
  */
 ve.dm.VisualDiff.prototype.calculateDiffMoves = function ( oldToNew, newToOld ) {
@@ -310,7 +315,7 @@ ve.dm.VisualDiff.prototype.calculateDiffMoves = function ( oldToNew, newToOld ) 
 	// Record whether the remaining newDoc nodes have moved up or down
 	// (or not at all, e.g. if they are an insert)
 	ilen = Number( sortedKeys[ sortedKeys.length - 1 ] ) + 1;
-	var latestUnmoved;
+	var latestUnmoved, latestUnmovedIndex, nodeIndex;
 	for ( i = 0; i < ilen; i++ ) {
 		if ( !( i in newToOld ) ) {
 			// This node must be an insert, so wasn't moved
@@ -327,7 +332,11 @@ ve.dm.VisualDiff.prototype.calculateDiffMoves = function ( oldToNew, newToOld ) 
 				// If this node's oldDoc index is higher than the latest unmoved
 				// node's oldDoc index, then it must have moved up; otherwise it
 				// must have moved down
-				moves[ i ] = newToOld[ i ] > newToOld[ latestUnmoved ] ? up : down;
+				nodeIndex = newToOld[ i ];
+				nodeIndex = typeof nodeIndex === 'number' ? nodeIndex : nodeIndex.node;
+				latestUnmovedIndex = newToOld[ latestUnmoved ];
+				latestUnmovedIndex = typeof latestUnmovedIndex === 'number' ? latestUnmovedIndex : latestUnmovedIndex.node;
+				moves[ i ] = nodeIndex > latestUnmovedIndex ? up : down;
 			}
 		}
 	}
@@ -835,6 +844,34 @@ ve.dm.VisualDiff.prototype.updateChangeRecordLinearDiff = function ( linearDiff,
  */
 ve.dm.VisualDiff.prototype.underDiffThreshold = function ( changeRecord ) {
 	return changeRecord.keepLength < this.diffThreshold * changeRecord.diffLength;
+};
+
+ve.dm.VisualDiff.prototype.getMetaListDiff = function ( oldMetaList, newMetaList ) {
+	var visualDiff = this;
+	var oldItemsByGroup = {};
+	oldMetaList.items.forEach( function ( metaItem ) {
+		var group = metaItem.getGroup();
+		oldItemsByGroup[ group ] = oldItemsByGroup[ group ] || [];
+		oldItemsByGroup[ group ].push( metaItem );
+	} );
+	var newItemsByGroup = {};
+	newMetaList.items.forEach( function ( metaItem ) {
+		var group = metaItem.getGroup();
+		newItemsByGroup[ group ] = newItemsByGroup[ group ] || [];
+		newItemsByGroup[ group ].push( metaItem );
+	} );
+	var groups = OO.simpleArrayUnion(
+		Object.keys( oldItemsByGroup ),
+		Object.keys( newItemsByGroup )
+	);
+	var groupDiffs = {};
+	groups.forEach( function ( group ) {
+		groupDiffs[ group ] = visualDiff.diffList(
+			oldItemsByGroup[ group ] || [],
+			newItemsByGroup[ group ] || []
+		);
+	} );
+	return groupDiffs;
 };
 
 /*

@@ -64,4 +64,12 @@ class Less_Visitor_joinSelector extends Less_Visitor {
 		}
 	}
 
+	public function visitDirective( $directiveNode ) {
+		$context = end( $this->contexts );
+
+		if ( $directiveNode->rules && count( $directiveNode->rules ) > 0 ) {
+			$directiveNode->rules[0]->root = $directiveNode->isRooted || count( $context ) === 0;
+		}
+	}
+
 }

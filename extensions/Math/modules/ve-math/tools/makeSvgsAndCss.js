@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 'use strict';
 
 /* eslint-disable no-use-before-define */
@@ -24,9 +23,11 @@ function generateCSS( symbolsFile, cssFile, inputType ) {
 		singleButtonHeight = 1.8, // Height of the single-height math dialog buttons in em
 		baseline = 0.65; // Proportion of the way down the button the baseline should be
 
+	// eslint-disable-next-line security/detect-non-literal-fs-filename
 	const symbolsData = fs.readFileSync( symbolsFile ).toString();
 	let cssData;
 	try {
+		// eslint-disable-next-line security/detect-non-literal-fs-filename
 		cssData = fs.readFileSync( cssFile ).toString();
 	} catch ( e ) {}
 

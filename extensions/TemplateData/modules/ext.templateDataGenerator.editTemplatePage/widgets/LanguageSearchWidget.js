@@ -88,7 +88,8 @@ LanguageSearchWidget.prototype.addResults = function () {
 		hasQuery = !!query.length,
 		items = [];
 
-	this.results.clearItems();
+	var results = this.getResults();
+	results.clearItems();
 
 	this.filteredLanguageResultWidgets.forEach( function ( languageResult ) {
 		var data = languageResult.getData();
@@ -108,13 +109,16 @@ LanguageSearchWidget.prototype.addResults = function () {
 					.updateLabel( query, matchedProperty, compare )
 					.setSelected( false )
 					.setHighlighted( false )
+					// Forward keyboard-triggered events from the OptionWidget to the SelectWidget
+					.off( 'choose' )
+					.connect( results, { choose: [ 'emit', 'choose' ] } )
 			);
 		}
 	} );
 
-	this.results.addItems( items );
+	results.addItems( items );
 	if ( hasQuery ) {
-		this.results.highlightItem( this.results.findFirstSelectableItem() );
+		results.highlightItem( results.findFirstSelectableItem() );
 	}
 };
 

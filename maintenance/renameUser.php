@@ -21,10 +21,11 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\MovePageFactory;
 use MediaWiki\RenameUser\RenameuserSQL;
 use MediaWiki\Title\Title;
+use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 
 class RenameUser extends Maintenance {
@@ -52,7 +53,7 @@ class RenameUser extends Maintenance {
 	}
 
 	private function initServices() {
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$this->userFactory = $services->getUserFactory();
 		$this->centralLookup = $services->getCentralIdLookupFactory()->getNonLocalLookup();
 		$this->movePageFactory = $services->getMovePageFactory();

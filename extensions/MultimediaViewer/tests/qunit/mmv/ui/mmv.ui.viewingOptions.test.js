@@ -1,8 +1,10 @@
+const { OptionsDialog } = require( 'mmv' );
+
 ( function () {
 	function makeDialog( initialise ) {
 		var $qf = $( '#qunit-fixture' ),
 			$button = $( '<div>' ).appendTo( $qf ),
-			dialog = new mw.mmv.ui.OptionsDialog( $qf, $button, { setMediaViewerEnabledOnClick: function () {} } );
+			dialog = new OptionsDialog( $qf, $button, { setMediaViewerEnabledOnClick: function () {} } );
 
 		if ( initialise ) {
 			dialog.initPanel();
@@ -15,7 +17,7 @@
 
 	QUnit.test( 'Constructor sense test', function ( assert ) {
 		var dialog = makeDialog();
-		assert.true( dialog instanceof mw.mmv.ui.OptionsDialog, 'Dialog is created successfully' );
+		assert.true( dialog instanceof OptionsDialog, 'Dialog is created successfully' );
 	} );
 
 	QUnit.test( 'Initialisation functions', function ( assert ) {

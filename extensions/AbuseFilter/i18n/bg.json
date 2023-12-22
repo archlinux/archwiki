@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"DCLXVI",
 			"Kareyac",
 			"Matma Rex",
@@ -14,8 +15,7 @@
 			"Vlad5250",
 			"Vodnokon4e",
 			"Петър Петров",
-			"පසිඳු කාවින්ද",
-			"Amire80"
+			"පසිඳු කාවින්ද"
 		]
 	},
 	"abusefilter-desc": "Прилага автоматични евристики към редакциите.",
@@ -251,7 +251,7 @@
 	"abusefilter-edit-tag-tag": "[[Special:Tags|Етикети]] за прилагане:",
 	"abusefilter-edit-tag-placeholder": "Добавяне на етикети (един по един или разделени със запетая)",
 	"abusefilter-edit-tag-hidden-placeholder": "Добавяне на етикети (разделени със запетая)",
-	"abusefilter-edit-block-anon-durations": "Продължителност на блокирането за анонимни потребители:",
+	"abusefilter-edit-block-anon-durations": "Продължителност на блокирането за нерегистрирани потребители:",
 	"abusefilter-edit-block-user-durations": "Продължителност на блокирането за регистрирани потребители:",
 	"abusefilter-block-anon": "Блокиране на анонимни потребители",
 	"abusefilter-block-user": "блокиране на регистрирани потребители",
@@ -414,7 +414,7 @@
 	"abusefilter-history-filter": "Правило на филтъра",
 	"abusefilter-history-comments": "Коментари",
 	"abusefilter-history-actions": "Действия",
-	"abusefilter-history-backedit": "Връщане към редактора на филтри",
+	"abusefilter-history-backedit": "Редактор на филтри",
 	"abusefilter-history-deleted": "Изтрит",
 	"abusefilter-history-filterid": "Филтър",
 	"abusefilter-history-select-legend": "Подробно търсене",
@@ -476,7 +476,6 @@
 	"abusefilter-test-page": "Промени по страницата:",
 	"abusefilter-test-shownegative": "Показване на промените, които не съвпадат с филтъра",
 	"abusefilter-test-syntaxerr": "Въведеният филтър съдържа синтактична грешка.\nПълно обяснение за грешката е достъпно при щракване на бутона „{{int:abusefilter-edit-check}}“.",
-	"abusefilter-test-badtitle": "Заглавието на страницата, което сте въвели, е невалидно. То може би съдържа един или повече знаци, които не могат да се използват в заглавия.",
 	"abusefilter-test-action": "Тип на действието:",
 	"abusefilter-test-search-type-all": "Всички действия",
 	"abusefilter-test-search-type-edit": "Редактирания",
@@ -516,7 +515,7 @@
 	"abusefilter-diff-info": "Основна информация",
 	"abusefilter-diff-pattern": "Условия на филтъра",
 	"abusefilter-diff-invalid": "Не е възможно извличане на исканите версии",
-	"abusefilter-diff-backhistory": "Връщане към историята на филтъра",
+	"abusefilter-diff-backhistory": "Историята на филтъра",
 	"abusefilter-diff-prev": "По-стара промяна",
 	"abusefilter-diff-next": "По-нова промяна",
 	"abusefilter-import-intro": "Можете да използвате този интерфейс, за да импортирате филтри от други уикита.\nВ уикито-източник щракнете връзката \"{{int:abusefilter-edit-export}}\" под заглавието \"{{int:abusefilter-edit-tools}}\" в интерфейса за редактиране.\nКопирайте съдържанието от текстовата кутия, която ще се появи, и го поставете в тази текстова кутия. След това щракнете на \"{{int:abusefilter-import-submit}}\".",
@@ -530,9 +529,25 @@
 	"abusefilter-log-details-id": "Номер на записа",
 	"abusefilter-invalid-request": "Невалидна заявка! Трябва да осъществите достъп до непубличните записи през формуляра на [[Special:AbuseLog/$1]] и да посочите причина.",
 	"abusefilter-invalid-request-noid": "Невалидна заявка! Трябва да осъществите достъп до непубличните записи през формуляра на съответната страница и да посочите причина.",
+	"blockedexternaldomains": "Блокирани външни домейни",
+	"abusefilter-blocked-domains-title": "Блокирани външни домейни",
+	"abusefilter-blocked-domains-intro": "Външните връзки, съответстващи на този списък, ще бъдат блокирани при опит за добавяне към страница. Тези домейни се съхраняват в [[MediaWiki:BlockedExternalDomains.json]].",
+	"abusefilter-blocked-domains-add-heading": "Добавяне на нов блокиран домейн",
+	"abusefilter-blocked-domains-add-explanation": "Тук можете да добавите домейн към списъка с блокирани домейни.",
+	"abusefilter-blocked-domains-domain": "Домейн за блокиране, напр. wikipedia.org",
+	"abusefilter-blocked-domains-notes": "Забележки",
+	"abusefilter-blocked-domains-add-submit": "Изпращане",
+	"abusefilter-blocked-domains-domain-header": "Домейн",
+	"abusefilter-blocked-domains-notes-header": "Забележки",
+	"abusefilter-blocked-domains-actions-header": "Действия",
+	"abusefilter-blocked-domains-remove-submit": "Премахване",
+	"abusefilter-blocked-domains-json-error": "JSON трябва да е масив",
+	"log-description-abusefilterblockeddomainhit": "Тези събития проследяват посещения на блокирани домейни.",
 	"abusefilter-noreason": "Предупреждение: За да видите личните данни в този дневник, ще трябва да посочите причина.",
 	"abusefilter-log-ip-not-available": "Недостъпен",
 	"abusefilter-tag-reserved": "Етикетът <code>abusefilter-condition-limit</code> е запазен за вътрешна обработка от филтъра на злоупотребите.",
 	"tag-abusefilter-condition-limit": "границата на условието е достигната",
-	"notification-link-text-show-filter": "Показване на филтър"
+	"notification-link-text-show-filter": "Показване на филтър",
+	"right-abusefilter-bypass-blocked-external-domains": "Пренебрегване на блокираните външни домейни",
+	"action-abusefilter-bypass-blocked-external-domains": "пренебрегване на блокираните външни домейни"
 }

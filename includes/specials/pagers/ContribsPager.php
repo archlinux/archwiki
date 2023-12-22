@@ -19,8 +19,18 @@
  * @ingroup Pager
  */
 
+namespace MediaWiki\Pager;
+
+use ChangesList;
+use ChangeTags;
+use DateTime;
+use HtmlArmor;
+use IContextSource;
+use InvalidArgumentException;
+use MapCacheLRU;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
@@ -29,16 +39,18 @@ use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use MediaWiki\User\ActorMigration;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserRigorOptions;
+use stdClass;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\FakeResultWrapper;
-use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -121,34 +133,21 @@ class ContribsPager extends RangeChronologicalPager {
 	/** @var UserIdentity */
 	private $targetUser;
 
-	/**
-	 * @var TemplateParser
-	 */
-	private $templateParser;
-
-	/** @var ActorMigration */
-	private $actorMigration;
-
-	/** @var CommentFormatter */
-	private $commentFormatter;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var RevisionStore */
-	private $revisionStore;
+	private TemplateParser $templateParser;
+	private CommentFormatter $commentFormatter;
+	private HookRunner $hookRunner;
+	private LinkBatchFactory $linkBatchFactory;
+	private NamespaceInfo $namespaceInfo;
+	private RevisionStore $revisionStore;
 
 	/** @var string[] */
 	private $formattedComments = [];
 
 	/** @var RevisionRecord[] Cached revisions by ID */
 	private $revisions = [];
+
+	/** @var MapCacheLRU */
+	private $tagsCache;
 
 	/**
 	 * FIXME List services first T266484 / T290405
@@ -157,8 +156,7 @@ class ContribsPager extends RangeChronologicalPager {
 	 * @param LinkRenderer|null $linkRenderer
 	 * @param LinkBatchFactory|null $linkBatchFactory
 	 * @param HookContainer|null $hookContainer
-	 * @param ILoadBalancer|null $loadBalancer
-	 * @param ActorMigration|null $actorMigration
+	 * @param IConnectionProvider|null $dbProvider
 	 * @param RevisionStore|null $revisionStore
 	 * @param NamespaceInfo|null $namespaceInfo
 	 * @param UserIdentity|null $targetUser
@@ -170,8 +168,7 @@ class ContribsPager extends RangeChronologicalPager {
 		LinkRenderer $linkRenderer = null,
 		LinkBatchFactory $linkBatchFactory = null,
 		HookContainer $hookContainer = null,
-		ILoadBalancer $loadBalancer = null,
-		ActorMigration $actorMigration = null,
+		IConnectionProvider $dbProvider = null,
 		RevisionStore $revisionStore = null,
 		NamespaceInfo $namespaceInfo = null,
 		UserIdentity $targetUser = null,
@@ -179,7 +176,7 @@ class ContribsPager extends RangeChronologicalPager {
 	) {
 		// Class is used directly in extensions - T266484
 		$services = MediaWikiServices::getInstance();
-		$loadBalancer ??= $services->getDBLoadBalancer();
+		$dbProvider ??= $services->getDBLoadBalancerFactory();
 
 		// Set ->target before calling parent::__construct() so
 		// parent can call $this->getIndexField() and get the right result. Set
@@ -218,16 +215,14 @@ class ContribsPager extends RangeChronologicalPager {
 		$this->hideMinor = !empty( $options['hideMinor'] );
 		$this->revisionsOnly = !empty( $options['revisionsOnly'] );
 
-		$this->mDb = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
-		// Needed by call to getIndexField -> getTargetTable from parent constructor
-		$this->actorMigration = $actorMigration ?? $services->getActorMigration();
 		parent::__construct( $context, $linkRenderer ?? $services->getLinkRenderer() );
 
 		$msgs = [
 			'diff',
 			'hist',
 			'pipe-separator',
-			'uctop'
+			'uctop',
+			'changeslist-nocomment',
 		];
 
 		foreach ( $msgs as $msg ) {
@@ -251,6 +246,7 @@ class ContribsPager extends RangeChronologicalPager {
 		$this->revisionStore = $revisionStore ?? $services->getRevisionStore();
 		$this->namespaceInfo = $namespaceInfo ?? $services->getNamespaceInfo();
 		$this->commentFormatter = $commentFormatter ?? $services->getCommentFormatter();
+		$this->tagsCache = new MapCacheLRU( 50 );
 	}
 
 	public function getDefaultQuery() {
@@ -379,13 +375,9 @@ class ContribsPager extends RangeChronologicalPager {
 			];
 			$queryInfo['conds'][] = $ipRangeConds;
 		} else {
-			// tables and joins are already handled by RevisionStore::getQueryInfo()
-			$conds = $this->actorMigration->getWhere( $dbr, 'rev_user', $this->targetUser );
-			$queryInfo['conds'][] = $conds['conds'];
+			$queryInfo['conds']['actor_name'] = $this->targetUser->getName();
 			// Force the appropriate index to avoid bad query plans (T307295)
-			if ( isset( $conds['orconds']['newactor'] ) ) {
-				$queryInfo['options']['USE INDEX']['revision'] = 'rev_actor_timestamp';
-			}
+			$queryInfo['options']['USE INDEX']['revision'] = 'rev_actor_timestamp';
 		}
 
 		if ( $this->deletedOnly ) {
@@ -463,13 +455,13 @@ class ContribsPager extends RangeChronologicalPager {
 
 	/**
 	 * Get SQL conditions for an IP range, if applicable
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @param string $ip The IP address or CIDR
 	 * @return string|false SQL for valid IP ranges, false if invalid
 	 */
 	private function getIpRangeConds( $db, $ip ) {
 		// First make sure it is a valid range and they are not outside the CIDR limit
-		if ( !$this->isQueryableRange( $ip ) ) {
+		if ( !self::isQueryableRange( $ip, $this->getConfig() ) ) {
 			return false;
 		}
 
@@ -481,12 +473,14 @@ class ContribsPager extends RangeChronologicalPager {
 	/**
 	 * Is the given IP a range and within the CIDR limit?
 	 *
+	 * @internal Public only for SpecialContributions
 	 * @param string $ipRange
+	 * @param Config $config
 	 * @return bool True if it is valid
 	 * @since 1.30
 	 */
-	public function isQueryableRange( $ipRange ) {
-		$limits = $this->getConfig()->get( MainConfigNames::RangeContributionsCIDRLimit );
+	public static function isQueryableRange( $ipRange, $config ) {
+		$limits = $config->get( MainConfigNames::RangeContributionsCIDRLimit );
 
 		$bits = IPUtils::parseCIDR( $ipRange )[1];
 		if (
@@ -579,7 +573,7 @@ class ContribsPager extends RangeChronologicalPager {
 		$this->mParentLens = [];
 		$revisions = [];
 		$linkBatch = $this->linkBatchFactory->newLinkBatch();
-		$isIpRange = $this->isQueryableRange( $this->target );
+		$isIpRange = self::isQueryableRange( $this->target, $this->getConfig() );
 		# Give some pointers to make (last) links
 		foreach ( $this->mResult as $row ) {
 			if ( isset( $row->rev_parent_id ) && $row->rev_parent_id ) {
@@ -761,7 +755,7 @@ class ContribsPager extends RangeChronologicalPager {
 			$comment = $this->formattedComments[$row->rev_id];
 
 			if ( $comment === '' ) {
-				$defaultComment = $this->msg( 'changeslist-nocomment' )->escaped();
+				$defaultComment = $this->messages['changeslist-nocomment'];
 				$comment = "<span class=\"comment mw-comment-none\">$defaultComment</span>";
 			}
 
@@ -775,7 +769,7 @@ class ContribsPager extends RangeChronologicalPager {
 			$revUser = $revRecord->getUser();
 			$revUserId = $revUser ? $revUser->getId() : 0;
 			$revUserText = $revUser ? $revUser->getName() : '';
-			if ( $this->isQueryableRange( $this->target ) ) {
+			if ( self::isQueryableRange( $this->target, $this->getConfig() ) ) {
 				$userlink = ' <span class="mw-changeslist-separator"></span> '
 					. $lang->getDirMark()
 					. Linker::userLink( $revUserId, $revUserText );
@@ -810,11 +804,18 @@ class ContribsPager extends RangeChronologicalPager {
 				Html::rawElement( 'span', [], $histlink )
 			);
 
-			# Tags, if any.
-			[ $tagSummary, $newClasses ] = ChangeTags::formatSummaryRow(
-				$row->ts_tags,
-				null,
-				$this->getContext()
+			# Tags, if any. Save some time using a cache.
+			[ $tagSummary, $newClasses ] = $this->tagsCache->getWithSetCallback(
+				$this->tagsCache->makeKey(
+					$row->ts_tags ?? '',
+					$this->getUser()->getName(),
+					$lang->getCode()
+				),
+				fn () => ChangeTags::formatSummaryRow(
+					$row->ts_tags,
+					null,
+					$this->getContext()
+				)
 			);
 			$classes = array_merge( $classes, $newClasses );
 
@@ -941,3 +942,9 @@ class ContribsPager extends RangeChronologicalPager {
 		return $opts;
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( ContribsPager::class, 'ContribsPager' );

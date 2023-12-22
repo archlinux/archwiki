@@ -4,6 +4,8 @@ use MediaWiki\FileBackend\FSFile\TempFSFileFactory;
 use MediaWiki\FileBackend\LockManager\LockManagerGroupFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Output\StreamFile;
+use MediaWiki\Status\Status;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -14,7 +16,7 @@ trait FileBackendGroupTestTrait {
 	/**
 	 * @param array $options Dictionary to use as a source for ServiceOptions before defaults, plus
 	 *   the following options are available to override other arguments:
-	 *     * 'configuredROMode'
+	 *     * 'readOnlyMode'
 	 *     * 'lmgFactory'
 	 *     * 'mimeAnalyzer'
 	 *     * 'tmpFileFactory'
@@ -133,7 +135,7 @@ trait FileBackendGroupTestTrait {
 		return [
 			'domainId with neither wikiId nor domainId set' => [
 				'domainId',
-				function () {
+				static function () {
 					return self::getWikiID();
 				},
 			],
@@ -148,13 +150,13 @@ trait FileBackendGroupTestTrait {
 				'readOnly',
 				'cuz',
 				[],
-				[ 'configuredROMode' => new ConfiguredReadOnlyMode( 'cuz' ) ],
+				[ 'readOnlyMode' => 'cuz' ],
 			],
 			'readOnly with readOnly set to false but string in passed object' => [
 				'readOnly',
 				false,
 				[ 'readOnly' => false ],
-				[ 'configuredROMode' => new ConfiguredReadOnlyMode( 'cuz' ) ],
+				[ 'readOnlyMode' => 'cuz' ],
 			],
 		];
 	}

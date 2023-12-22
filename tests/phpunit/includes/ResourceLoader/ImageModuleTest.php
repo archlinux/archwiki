@@ -155,7 +155,7 @@ class ImageModuleTest extends ResourceLoaderTestCase {
 	}
 
 	/**
-	 * Test reading files from elsewhere than localBasePath using ResourceLoaderFilePath.
+	 * Test reading files from elsewhere than localBasePath using FilePath.
 	 *
 	 * This mimics modules modified by skins using 'ResourceModuleSkinStyles' and 'OOUIThemePaths'
 	 * skin attributes.
@@ -303,7 +303,7 @@ class ImageModuleTestable extends ImageModule {
 	 * Replace with a stub to make test cases easier to write.
 	 * @inheritDoc
 	 */
-	protected function getCssDeclarations( $primary, $fallback ): array {
+	protected function getCssDeclarations( $primary ): array {
 		return [ '...' ];
 	}
 }

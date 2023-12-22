@@ -6,25 +6,9 @@ use MediaWiki\MediaWikiServices;
 
 /**
  * Cache class that maps revision id to RevisionStore object
+ * @xxx Like TitleLocalCache, this class shouldn't need to exist.
  */
 class RevisionLocalCache extends LocalCache {
-
-	/**
-	 * @var RevisionLocalCache
-	 */
-	private static $instance;
-
-	/**
-	 * @return RevisionLocalCache
-	 */
-	public static function create() {
-		if ( !self::$instance ) {
-			self::$instance = new RevisionLocalCache();
-		}
-
-		return self::$instance;
-	}
-
 	/**
 	 * @inheritDoc
 	 */

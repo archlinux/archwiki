@@ -4,11 +4,9 @@
 			"Bangrapip"
 		]
 	},
-	"apihelp-flowthank-description": "Kirim ma'lumat makasi umum bakal tanggepan Flow.",
-	"apihelp-flowthank-summary": "Kirim ma'lumat makasi umum bakal tanggepan Flow.",
+	"apihelp-flowthank-summary": "Kirim ma'lumat makasi umum bakal sautan Flow.",
 	"apihelp-flowthank-param-postid": "UUID deri publikasi nyang pèngèn dimakasiin.",
-	"apihelp-flowthank-example-1": "Kirim makasi bakal tanggepan dengen <kbd>UUID xyz789</kbd>",
-	"apihelp-thank-description": "Kirim ma'lumat makasi ke pemermak.",
+	"apihelp-flowthank-example-1": "Kirim makasi bakal sautan dengen <kbd>UUID xyz789</kbd>",
 	"apihelp-thank-summary": "Kirim ma'lumat makasi ke pemermak.",
 	"apihelp-thank-param-rev": "ID perbaèkan nyang pèngèn dimakasii. Ni atawa 'rekeman' kudu ada.",
 	"apihelp-thank-param-log": "ID rekeman nyang pèngèn dimakasiin. Ni atawa 'rev' kudu ada.",

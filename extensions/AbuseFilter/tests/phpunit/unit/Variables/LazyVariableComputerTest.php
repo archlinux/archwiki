@@ -17,17 +17,17 @@ use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
-use MWException;
-use Parser;
+use ParserFactory;
 use Psr\Log\NullLogger;
-use Title;
+use UnexpectedValueException;
 use User;
 use WANObjectCache;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\LBFactory;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer
@@ -44,12 +44,12 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 			$this->createMock( TextExtractor::class ),
 			new AbuseFilterHookRunner( $this->createHookContainer( $hookHandlers ) ),
 			new NullLogger(),
-			$this->createMock( ILoadBalancer::class ),
+			$this->createMock( LBFactory::class ),
 			$this->createMock( WANObjectCache::class ),
 			$services['RevisionLookup'] ?? $this->createMock( RevisionLookup::class ),
 			$this->createMock( RevisionStore::class ),
 			$services['ContentLanguage'] ?? $this->createMock( Language::class ),
-			$this->createMock( Parser::class ),
+			$this->createMock( ParserFactory::class ),
 			$services['UserEditTracker'] ?? $this->createMock( UserEditTracker::class ),
 			$services['UserGroupManager'] ?? $this->createMock( UserGroupManager::class ),
 			$services['PermissionManager'] ?? $this->createMock( PermissionManager::class ),
@@ -97,7 +97,7 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 	 */
 	public function testCompute_invalidName() {
 		$computer = $this->getComputer();
-		$this->expectException( MWException::class );
+		$this->expectException( UnexpectedValueException::class );
 		$computer->compute(
 			new LazyLoadedVariable( 'method-does-not-exist', [] ),
 			new VariableHolder(),

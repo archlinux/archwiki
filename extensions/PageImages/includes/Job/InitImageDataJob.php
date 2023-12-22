@@ -4,9 +4,9 @@ namespace PageImages\Job;
 
 use Job;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use MWExceptionHandler;
 use RefreshLinks;
-use Title;
 
 class InitImageDataJob extends Job {
 	/**

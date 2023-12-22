@@ -21,5 +21,10 @@
 	"cite_error_references_missing_group": "Im <code>&lt;ref&gt;</code>-Tag, wu definiert isch in <code>&lt;references&gt;</code>, het s e Gruppe-Eigeschaft „$1“, wu im obere Text nit vorchunnt.",
 	"cite_error_references_missing_key": "S <code>&lt;ref&gt;</code>-Tag mit em Name „$1“, wu definiert isch in <code>&lt;references&gt;</code> wird nit verwändet im obere Text.",
 	"cite_error_references_no_key": "S <code>&lt;ref&gt;</code>-Tag, wu definiert isch in <code>&lt;references&gt;</code>, het kei Name-Eigeschaft.",
-	"cite_error_empty_references_define": "Im <code>&lt;ref&gt;</code>-Tag, wu definiert isch in <code>&lt;references&gt;</code>, mit em Name „$1“ het s kei Inhalt."
+	"cite_error_empty_references_define": "Im <code>&lt;ref&gt;</code>-Tag, wu definiert isch in <code>&lt;references&gt;</code>, mit em Name „$1“ het s kei Inhalt.",
+	"cite-wikieditor-tool-reference": "Quälle",
+	"cite-wikieditor-help-page-references": "Quälle",
+	"cite-wikieditor-help-content-reference-description": "Quälle",
+	"cite-wikieditor-help-content-rereference-description": "Zuesätzlige Verwändig vu dr glyche Quälle",
+	"cite-wikieditor-help-content-showreferences-description": "Quälle aazeige"
 }

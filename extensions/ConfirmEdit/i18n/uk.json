@@ -22,7 +22,6 @@
 	"captcha-edit": "Щоб відредагувати цю сторінку, будь ласка, розв'яжіть подану задачу і введіть відповідь у текстове поле ([[Special:Captcha/help|докладніше]]):",
 	"captcha-edit-fail": "Неправильна або відсутня капча.",
 	"captcha-desc": "Забезпечує методи CAPTCHA для захисту від спаму і підбору пароля",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Вирішення CAPTCHA.",
 	"captcha-info-help": "Опис CAPTCHA",
 	"captcha-id-label": "Ідентифікатор CAPTCHA",

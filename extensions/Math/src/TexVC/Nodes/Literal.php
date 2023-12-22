@@ -30,6 +30,11 @@ class Literal extends TexNode {
 	}
 
 	public function renderMML( $arguments = [], $state = [] ) {
+		if ( $this->arg === " " ) {
+			// Fixes https://gerrit.wikimedia.org/r/c/mediawiki/extensions/Math/+/961711
+			// And they creation of empty mo elements.
+			return "";
+		}
 		if ( is_numeric( $this->arg ) ) {
 			$mn = new MMLmn( "", $arguments );
 			return $mn->encapsulateRaw( $this->arg );
@@ -50,21 +55,24 @@ class Literal extends TexNode {
 			$mi = new MMLmi();
 			return $mi->encapsulateRaw( $operatorContent );
 		}
+
+		$inputP = MMLutil::inputPreparation( $input );
+
 		// Sieve for Operators
 		$bm = new BaseMethods();
-		$ret = $bm->checkAndParseOperator( $input, $this, $arguments, $operatorContent );
+		$ret = $bm->checkAndParseOperator( $inputP, $this, $arguments, $operatorContent, $state, false );
 		if ( $ret ) {
 			return $ret;
 		}
 		// Sieve for mathchar07 chars
 		$bm = new BaseMethods();
-		$ret = $bm->checkAndParseMathCharacter( $input, $this, $arguments, $operatorContent );
+		$ret = $bm->checkAndParseMathCharacter( $inputP, $this, $arguments, $operatorContent, false );
 		if ( $ret ) {
 			return $ret;
 		}
 
 		// Sieve for Identifiers
-		$ret = $bm->checkAndParseIdentifier( $input, $this, $arguments, $operatorContent );
+		$ret = $bm->checkAndParseIdentifier( $inputP, $this, $arguments, $operatorContent, false );
 		if ( $ret ) {
 			return $ret;
 		}
@@ -73,14 +81,9 @@ class Literal extends TexNode {
 		if ( $ret ) {
 			return $ret;
 		}
-		// Sieve for Colors
-		$ret = $bm->checkAndParseColor( $input, $this, $arguments, $operatorContent );
-		if ( $ret ) {
-			return $ret;
-		}
 
 		// Sieve for Makros
-		$ret = BaseMethods::checkAndParse( $input, $arguments, $operatorContent, $this );
+		$ret = BaseMethods::checkAndParse( $inputP, $arguments, $operatorContent, $this, false );
 		if ( $ret ) {
 			return $ret;
 		}
@@ -94,6 +97,7 @@ class Literal extends TexNode {
 			// No mi, if literal is from HBox
 			return $input;
 		}
+
 		// If falling through all sieves just create an MI element
 		$mi = new MMLmi( "", $arguments );
 		return $mi->encapsulateRaw( $input ); // $this->arg
@@ -143,7 +147,7 @@ class Literal extends TexNode {
 		$s = trim( $this->arg );
 		if ( preg_match( $regexp, $s ) == 1 ) {
 			return [ $s ];
-		} elseif ( in_array( $s, $lit ) ) {
+		} elseif ( in_array( $s, $lit, true ) ) {
 			 return [ $s ];
 		} else {
 			return [];

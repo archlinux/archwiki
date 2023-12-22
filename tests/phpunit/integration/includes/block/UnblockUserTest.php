@@ -5,8 +5,8 @@ namespace MediaWiki\Tests\Block;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\UnblockUserFactory;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use User;
 
 /**
  * @group Blocking
@@ -72,10 +72,6 @@ class UnblockUserTest extends MediaWikiIntegrationTestCase {
 			$this->mockRegisteredUltimateAuthority(),
 			'test'
 		)->unblock();
-		$this->assertStatusNotOK( $status );
-		$this->assertContains(
-			'ipb_cant_unblock',
-			array_column( $status->getErrorsArray(), 0 )
-		);
+		$this->assertStatusError( 'ipb_cant_unblock', $status );
 	}
 }

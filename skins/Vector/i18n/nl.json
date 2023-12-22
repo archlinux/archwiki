@@ -4,6 +4,7 @@
 			"Amire80",
 			"Bdijkstra",
 			"Calak",
+			"DiGro",
 			"Mainframe98",
 			"McDutchie",
 			"Nickthijssen1994",
@@ -11,8 +12,8 @@
 			"SPQRobin",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Troefkaart",
-			"Strepulah"
+			"Strepulah",
+			"Troefkaart"
 		]
 	},
 	"skinname-vector": "Vector, oude versie (2010)",
@@ -29,7 +30,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 taal|$1 talen}}",
 	"vector-no-language-button-label": "Talen toevoegen",
 	"vector-no-language-button-aria-label": "Dit artikel bestaat alleen in deze taal. Het artikel in andere talen toevoegen.",
-	"vector-language-redirect-to-top": "Op deze {{SITENAME}} staan de taallinks bovenaan de pagina tegenover de titel van het artikel. [[#p-lang-btn|Naar boven]].",
+	"vector-language-redirect-to-top": "Op deze pagina staan de links naar talen bovenaan de pagina tegenover de titel van het artikel.",
 	"vector-language-variant-switcher-label": "Taalvariant wijzigen",
 	"vector-action-addsection": "Onderwerp toevoegen",
 	"vector-action-delete": "Verwijderen",
@@ -69,5 +70,8 @@
 	"tooltip-vector-anon-user-menu-title": "Meer opties",
 	"vector-prefs-limited-width": "Inschakelen modus beperkte breedte",
 	"vector-prefs-limited-width-help": "Inschakelen modus beperkte breedte voor een verbeterde leeservaring.",
-	"empty-language-selector-body": "Pagina-inhoud wordt niet ondersteund in andere talen."
+	"empty-language-selector-body": "Pagina-inhoud wordt niet ondersteund in andere talen.",
+	"vector-toc-unpinned-popup": "De inhoudsopgave is hierheen verplaatst.",
+	"vector-page-tools-unpinned-popup": "Het menu met hulpmiddelen is hierheen verplaatst.",
+	"vector-main-menu-unpinned-popup": "Het hoofdmenu is hierheen verplaatst."
 }

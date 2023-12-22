@@ -24,5 +24,6 @@
 	"cite_references_link_many_accessibility_label": "Irar adsupre a(d):",
 	"cite_section_preview_references": "Previdado di referi",
 	"cite_warning": "Averto pri citajo: $1",
-	"cite_warning_sectionpreview_no_text": "La kodexo <code>&lt;ref&gt;</code> kun la nomo <code>$1</code> ne povas videsar, pro ol ne havar defino, od esar definita exter ica seciono."
+	"cite_warning_sectionpreview_no_text": "La kodexo <code>&lt;ref&gt;</code> kun la nomo <code>$1</code> ne povas videsar, pro ol ne havar defino, od esar definita exter ica seciono.",
+	"cite-wikieditor-tool-reference": "Refero"
 }

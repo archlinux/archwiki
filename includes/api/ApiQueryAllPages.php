@@ -22,6 +22,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -33,14 +34,9 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiQueryAllPages extends ApiQueryGeneratorBase {
 
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var GenderCache */
-	private $genderCache;
-
-	/** @var RestrictionStore */
-	private $restrictionStore;
+	private NamespaceInfo $namespaceInfo;
+	private GenderCache $genderCache;
+	private RestrictionStore $restrictionStore;
 
 	/**
 	 * @param ApiQuery $query
@@ -185,7 +181,7 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 			$forceNameTitleIndex = false;
 
 			if ( $params['prexpiry'] == 'indefinite' ) {
-				$this->addWhere( "pr_expiry = {$db->addQuotes( $db->getInfinity() )} OR pr_expiry IS NULL" );
+				$this->addWhereFld( 'pr_expiry', [ $db->getInfinity(), null ] );
 			} elseif ( $params['prexpiry'] == 'definite' ) {
 				$this->addWhere( "pr_expiry != {$db->addQuotes( $db->getInfinity() )}" );
 			}
@@ -200,7 +196,7 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 		if ( $params['filterlanglinks'] == 'withoutlanglinks' ) {
 			$this->addTables( 'langlinks' );
 			$this->addJoinConds( [ 'langlinks' => [ 'LEFT JOIN', 'page_id=ll_from' ] ] );
-			$this->addWhere( 'll_from IS NULL' );
+			$this->addWhere( [ 'll_from' => null ] );
 			$forceNameTitleIndex = false;
 		} elseif ( $params['filterlanglinks'] == 'withlanglinks' ) {
 			$this->addTables( 'langlinks' );
@@ -305,6 +301,14 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 					'nonredirects'
 				]
 			],
+			'filterlanglinks' => [
+				ParamValidator::PARAM_TYPE => [
+					'withlanglinks',
+					'withoutlanglinks',
+					'all'
+				],
+				ParamValidator::PARAM_DEFAULT => 'all'
+			],
 			'minsize' => [
 				ParamValidator::PARAM_TYPE => 'integer',
 			],
@@ -328,6 +332,15 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 					'all'
 				],
 			],
+			'prexpiry' => [
+				ParamValidator::PARAM_TYPE => [
+					'indefinite',
+					'definite',
+					'all'
+				],
+				ParamValidator::PARAM_DEFAULT => 'all',
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
+			],
 			'limit' => [
 				ParamValidator::PARAM_DEFAULT => 10,
 				ParamValidator::PARAM_TYPE => 'limit',
@@ -341,23 +354,6 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 					'ascending',
 					'descending'
 				]
-			],
-			'filterlanglinks' => [
-				ParamValidator::PARAM_TYPE => [
-					'withlanglinks',
-					'withoutlanglinks',
-					'all'
-				],
-				ParamValidator::PARAM_DEFAULT => 'all'
-			],
-			'prexpiry' => [
-				ParamValidator::PARAM_TYPE => [
-					'indefinite',
-					'definite',
-					'all'
-				],
-				ParamValidator::PARAM_DEFAULT => 'all',
-				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
 		];
 

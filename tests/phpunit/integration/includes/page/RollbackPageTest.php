@@ -14,12 +14,12 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
-use ReadOnlyMode;
 use RecentChange;
-use User;
+use Wikimedia\Rdbms\ReadOnlyMode;
 use WikiPage;
 use WikitextContent;
 
@@ -85,7 +85,7 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 			'readOnlyMode' => $mockReadOnly,
 			'performer' => $this->mockRegisteredUltimateAuthority()
 		] );
-		$this->assertFalse( $rollback->authorizeRollback()->isGood() );
+		$this->assertStatusNotOk( $rollback->authorizeRollback() );
 	}
 
 	/**
@@ -105,13 +105,13 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 			'performer' => $performer,
 			'userFactory' => $userFactoryMock
 		] );
-		$this->assertTrue( $rollbackPage->authorizeRollback()->isGood() );
+		$this->assertStatusGood( $rollbackPage->authorizeRollback() );
 	}
 
 	public function testRollbackNotAllowed() {
-		$this->assertFalse( $this->newServiceInstance( RollbackPage::class, [
+		$this->assertStatusNotOk( $this->newServiceInstance( RollbackPage::class, [
 			'performer' => $this->mockRegisteredNullAuthority()
-		] )->rollbackIfAllowed()->isGood() );
+		] )->rollbackIfAllowed() );
 	}
 
 	public function testRollback() {
@@ -307,7 +307,7 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( '0', $rc->getAttribute( 'rc_bot' ) );
 	}
 
-	public function provideRollbackPatrolAndBot() {
+	public static function provideRollbackPatrolAndBot() {
 		yield 'mark as bot' => [ true ];
 		yield 'do not mark as bot' => [ false ];
 	}
@@ -430,19 +430,9 @@ class RollbackPageTest extends MediaWikiIntegrationTestCase {
 			->setSummary( 'TESTING' )
 			->rollbackIfAllowed();
 		$this->assertStatusGood( $rollbackResult );
-		$logQuery = DatabaseLogEntry::getSelectQueryData();
-		$logRow = $this->db->selectRow(
-			$logQuery['tables'],
-			$logQuery['fields'],
-			[
-				'log_namespace' => NS_MAIN,
-				'log_title' => __METHOD__,
-				'log_type' => 'contentmodel'
-			],
-			__METHOD__,
-			[],
-			$logQuery['join_conds']
-		);
+		$logRow = DatabaseLogEntry::newSelectQueryBuilder( $this->db )
+			->where( [ 'log_namespace' => NS_MAIN, 'log_title' => __METHOD__, 'log_type' => 'contentmodel' ] )
+			->caller( __METHOD__ )->fetchRow();
 		$this->assertNotNull( $logRow );
 		$this->assertSame( $admin->getUser()->getName(), $logRow->user_name );
 		$this->assertSame( 'TESTING', $logRow->log_comment_text );

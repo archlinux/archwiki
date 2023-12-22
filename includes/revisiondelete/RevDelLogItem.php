@@ -20,7 +20,7 @@
  */
 
 use MediaWiki\CommentStore\CommentStore;
-use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 
 /**
@@ -67,7 +67,7 @@ class RevDelLogItem extends RevDelItem {
 
 	public function canView() {
 		return LogEventsList::userCan(
-			$this->row, RevisionRecord::DELETED_RESTRICTED, $this->list->getAuthority()
+			$this->row, LogPage::DELETED_RESTRICTED, $this->list->getAuthority()
 		);
 	}
 
@@ -82,31 +82,31 @@ class RevDelLogItem extends RevDelItem {
 	public function setBits( $bits ) {
 		$dbw = wfGetDB( DB_PRIMARY );
 
-		$dbw->update( 'logging',
-			[ 'log_deleted' => $bits ],
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'logging' )
+			->set( [ 'log_deleted' => $bits ] )
+			->where( [
 				'log_id' => $this->row->log_id,
 				'log_deleted' => $this->getBits() // cas
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )->execute();
 
 		if ( !$dbw->affectedRows() ) {
 			// Concurrent fail!
 			return false;
 		}
 
-		$dbw->update( 'recentchanges',
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'recentchanges' )
+			->set( [
 				'rc_deleted' => $bits,
 				'rc_patrolled' => RecentChange::PRC_AUTOPATROLLED
-			],
-			[
+			] )
+			->where( [
 				'rc_logid' => $this->row->log_id,
 				'rc_timestamp' => $this->row->log_timestamp // index
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )->execute();
 
 		return true;
 	}

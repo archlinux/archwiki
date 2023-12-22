@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Parser\Exception;
 
-use MWException;
+use Exception;
 
-abstract class ExceptionBase extends MWException {
+abstract class ExceptionBase extends Exception {
 
 	/**
 	 * Serialize data for edit stash

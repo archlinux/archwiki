@@ -51,5 +51,11 @@
 	"cite_references_link_accessibility_back_label": "Обратно к тексту",
 	"cite_section_preview_references": "Предпросмотр примечаний",
 	"cite_warning": "Предупреждение о цитировании: $1",
-	"cite_warning_sectionpreview_no_text": "Тег <code>&lt;ref&gt;</code> с именем <code>$1</code> не может быть предпросмотрен, так как он определён вне текущего раздела или не определён вообще."
+	"cite_warning_sectionpreview_no_text": "Тег <code>&lt;ref&gt;</code> с именем <code>$1</code> не может быть предпросмотрен, так как он определён вне текущего раздела или не определён вообще.",
+	"cite-wikieditor-tool-reference": "Сноска",
+	"cite-wikieditor-help-page-references": "Примечания",
+	"cite-wikieditor-help-content-reference-description": "Примечание",
+	"cite-wikieditor-help-content-named-reference-description": "Сноска с названием",
+	"cite-wikieditor-help-content-rereference-description": "Дополнительное использование той же ссылки",
+	"cite-wikieditor-help-content-showreferences-description": "Показывать примечания"
 }

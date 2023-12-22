@@ -12,7 +12,6 @@
 	},
 	"captcha-edit": "Per a poder modificar aquesta pàgina cal que resolgueu la següent tasca i introduïu el resultat en el quadre ([[Special:Captcha/help|més informació]]):",
 	"captcha-desc": "Proporciona tècniques CAPTCHA per a protegir contra la publicitat no desitjada i l'obtenció de contrasenyes",
-	"captcha-label": "CAPTCHA",
 	"captcha-addurl": "La vostra modificació conté enllaços externs nous.\nCom a protecció contra la brossa de propaganda automàtica, cal que resolgueu la següent tasca i introduïu el resultat en el quadre a continuació ([[Special:Captcha/help|més informació]]):",
 	"captcha-badlogin": "Com a protecció contra l'obtenció automatitzada de contrasenyes, cal que resolgueu la següent tasca i introduïu el resultat en el quadre a continuació ([[Special:Captcha/help|més informació]]):",
 	"captcha-createaccount": "Com a protecció contra la creació automàtica de comptes d'usuari, cal que resolgueula següent tasca i introduïu el resultat en el quadre a continuació ([[Special:Captcha/help|més informació]]):",

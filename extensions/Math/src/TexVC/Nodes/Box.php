@@ -45,8 +45,20 @@ class Box extends TexNode {
 	public function renderMML( $arguments = [], $state = [] ) {
 		$mrow = new MMLmrow();
 		$mtext = new MMLmtext();
+		$arg = $this->getArg();
+
+		if ( strlen( $arg ) >= 1 ) {
+			// Replace trailing and leading spaces with special space sign
+			if ( substr( $arg, -1, 1 ) === " " ) {
+				$arg = rtrim( $arg, " " ) . "&#xA0;";
+			}
+			if ( substr( $arg, 0, 1 ) == " " ) {
+				$arg = "&#xA0;" . ltrim( $arg, " " );
+			}
+		}
+
 		return $mrow->encapsulateRaw(
-			$mtext->encapsulateRaw( $this->getArg() )
+			$mtext->encapsulateRaw( $arg )
 		);
 	}
 

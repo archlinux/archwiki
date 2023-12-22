@@ -11,7 +11,6 @@
 	"captcha-edit": "U wilt deze pagina bewerken.\nVoer het antwoord op de onderstaande eenvoudige som in het invoervenster in ([[Special:Captcha/help|meer informatie]]):",
 	"captcha-edit-fail": "Onjuiste of ontbrekende CAPTCHA.",
 	"captcha-desc": "Biedt CAPTCHA-technieken om bescherming te bieden tegen spam en het raden van wachtwoorden",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Oplossing van de CAPTCHA.",
 	"captcha-info-help": "Beschrijving van de CAPTCHA.",
 	"captcha-id-label": "CAPTCHA-ID",

@@ -61,6 +61,7 @@ abstract class ImageHandler extends MediaHandler {
 	/**
 	 * @inheritDoc
 	 * @stable to override
+	 * @throws MediaTransformInvalidParametersException
 	 */
 	public function makeParamString( $params ) {
 		if ( isset( $params['physicalWidth'] ) ) {
@@ -89,8 +90,9 @@ abstract class ImageHandler extends MediaHandler {
 	}
 
 	/**
-	 * @inheritDoc
 	 * @stable to override
+	 * @param array $params
+	 * @return array
 	 */
 	protected function getScriptParams( $params ) {
 		return [ 'width' => $params['width'] ];

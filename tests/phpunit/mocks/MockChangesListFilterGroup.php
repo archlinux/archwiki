@@ -1,7 +1,8 @@
 <?php
 
 use MediaWiki\Html\FormOptions;
-use Wikimedia\Rdbms\IDatabase;
+use MediaWiki\SpecialPage\ChangesListSpecialPage;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 class MockChangesListFilterGroup extends ChangesListFilterGroup {
 	public function createFilter( array $filterDefinition ) {
@@ -12,7 +13,7 @@ class MockChangesListFilterGroup extends ChangesListFilterGroup {
 		$this->filters[$filter->getName()] = $filter;
 	}
 
-	public function modifyQuery( IDatabase $dbr, ChangesListSpecialPage $specialPage,
+	public function modifyQuery( IReadableDatabase $dbr, ChangesListSpecialPage $specialPage,
 		&$tables, &$fields, &$conds, &$query_options, &$join_conds, FormOptions $opts,
 		$isStructuredFiltersEnabled ) {
 	}

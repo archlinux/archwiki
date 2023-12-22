@@ -53,7 +53,7 @@ class Fun2Test extends MediaWikiUnitTestCase {
 
 	public function testExtractIdentifiersFun2() {
 		$f = new Fun2( '\\f', new Literal( 'a' ), new Literal( 'b' ) );
-		$this->assertEquals( [ 'a','b' ], $f->extractIdentifiers(),
+		$this->assertEquals( [ 'a', 'b' ], $f->extractIdentifiers(),
 			'Should extract identifiers' );
 	}
 }

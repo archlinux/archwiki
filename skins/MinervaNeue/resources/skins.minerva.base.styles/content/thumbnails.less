@@ -33,7 +33,7 @@
 		font-size: @font-size-minerva-smallest;
 		line-height: 1.5;
 		padding: 0 !important;
-		color: @grayMediumDark;
+		color: @color-subtle;
 	}
 
 	figure[ typeof~='mw:File/Thumb' ],
@@ -49,10 +49,11 @@
 	}
 
 	// Parsoid class name is mw-image-border (T198534) and parser (PHP) class name is thumbborder
-	// However, Parsoid places the class on the wrapper, whereas the legacy parser placed it on the img
-	.mw-image-border img,
+	// However, Parsoid places the class on the wrapper, whereas the legacy parser placed it on
+	// the file element.
+	.mw-image-border .mw-file-element,
 	.thumbborder {
-		border: 1px solid @colorGray12;
+		border: @border-subtle;
 	}
 
 	// Hide the image magnification icon normally displayed in image captions

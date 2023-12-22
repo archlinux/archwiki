@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2009 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
+ * Copyright © 2009 Roan Kattouw <roan.kattouw@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +34,8 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 
-	/** @var CommentStore */
-	private $commentStore;
-
-	/** @var RowCommentFormatter */
-	private $commentFormatter;
+	private CommentStore $commentStore;
+	private RowCommentFormatter $commentFormatter;
 
 	/**
 	 * @param ApiQuery $query

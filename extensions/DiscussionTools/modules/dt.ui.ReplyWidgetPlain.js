@@ -92,7 +92,7 @@ ReplyWidgetPlain.prototype.clear = function ( preserveStorage ) {
 	this.replyBodyWidget.setValue( '' );
 
 	if ( !preserveStorage ) {
-		this.storage.remove( this.storagePrefix + '/body' );
+		this.storage.remove( 'body' );
 	}
 
 	// Parent method
@@ -126,14 +126,14 @@ ReplyWidgetPlain.prototype.onInputChange = function () {
 	ReplyWidgetPlain.super.prototype.onInputChange.apply( this, arguments );
 
 	var wikitext = this.getValue();
-	this.storage.set( this.storagePrefix + '/body', wikitext );
+	this.storage.set( 'body', wikitext );
 };
 
 /**
  * @inheritdoc
  */
 ReplyWidgetPlain.prototype.setup = function ( data ) {
-	var autosaveValue = this.storage.get( this.storagePrefix + '/body' );
+	var autosaveValue = this.storage.get( 'body' );
 
 	data = data || {};
 

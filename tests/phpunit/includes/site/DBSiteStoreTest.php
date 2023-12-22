@@ -33,10 +33,7 @@ class DBSiteStoreTest extends MediaWikiIntegrationTestCase {
 	 * @return DBSiteStore
 	 */
 	private function newDBSiteStore() {
-		// NOTE: Use the real DB load balancer for now. Eventually, the test framework should
-		// provide a LoadBalancer that is safe to use in unit tests.
-		$lb = $this->getServiceContainer()->getDBLoadBalancer();
-		return new DBSiteStore( $lb );
+		return new DBSiteStore( $this->getServiceContainer()->getDBLoadBalancerFactory() );
 	}
 
 	/**
@@ -103,6 +100,7 @@ class DBSiteStoreTest extends MediaWikiIntegrationTestCase {
 	 * @covers DBSiteStore::reset
 	 */
 	public function testReset() {
+		TestSites::insertIntoDb();
 		$store1 = $this->newDBSiteStore();
 		$store2 = $this->newDBSiteStore();
 
@@ -112,7 +110,7 @@ class DBSiteStoreTest extends MediaWikiIntegrationTestCase {
 
 		// Clear actual data. Will purge the external cache and reset the internal
 		// cache in $store1, but not the internal cache in store2.
-		$this->assertTrue( $store1->clear() );
+		$store1->clear();
 
 		// check: $store2 should have a stale cache now
 		$this->assertNotNull( $store2->getSite( 'enwiki' ) );
@@ -130,7 +128,7 @@ class DBSiteStoreTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testClear() {
 		$store = $this->newDBSiteStore();
-		$this->assertTrue( $store->clear() );
+		$store->clear();
 
 		$site = $store->getSite( 'enwiki' );
 		$this->assertNull( $site );

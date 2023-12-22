@@ -15,6 +15,7 @@ class ArticlePageWithEditorOverlay extends MinervaPage {
 	get editor_overlay_element() { return $( '.overlay' ); }
 
 	// overlay components
+	get editor_load_basic_element() { return $( '.ve-loadbasiceditor' ); }
 	get editor_textarea_element() { return $( '.overlay .wikitext-editor, .overlay .surface' ); }
 	get continue_element() { return $( '.overlay .continue' ); }
 	get submit_element() { return $( '.overlay .submit' ); }

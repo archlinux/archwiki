@@ -6,7 +6,6 @@
 			"Toliño"
 		]
 	},
-	"apihelp-echomarkread-description": "Marcar notificacións coma lidas para o usuario actual.",
 	"apihelp-echomarkread-summary": "Marcar notificacións coma lidas para o usuario actual.",
 	"apihelp-echomarkread-param-list": "Lista de identificadores de notificacións a marcar coma lidas.",
 	"apihelp-echomarkread-param-unreadlist": "Lista de identificadores de notificacións a marcar coma non lidas.",
@@ -15,12 +14,10 @@
 	"apihelp-echomarkread-example-1": "Marcar a notificación 8 coma lida",
 	"apihelp-echomarkread-example-2": "Marcar tódalas notificacións como lidas",
 	"apihelp-echomarkread-example-3": "Marcar a notificación 1 coma non lida",
-	"apihelp-echomarkseen-description": "Marcar notificacións coma lidas para o usuario actual.",
 	"apihelp-echomarkseen-summary": "Marcar notificacións coma vistas para o usuario actual.",
 	"apihelp-echomarkseen-example-1": "Marcar notificacións de todos os tipos como lidas",
 	"apihelp-echomarkseen-param-type": "Tipo de notificacións para marcar como lidas: 'alert' (alerta), 'message' (mensaxe) ou 'all' (todas).",
 	"apihelp-echomarkseen-param-timestampFormat": "Formato de selo de tempo a usar para a saída, 'ISO_8601' ou 'MW'. 'MW' está obsoleto aquí, polo que tódolos clientes deberían cambiarse a 'ISO_8601'. Este parámetro será eliminado, e 'ISO_8601' converterase no único formato de saída.",
-	"apihelp-query+notifications-description": "Obter notificacións de espera para o usuario actual.",
 	"apihelp-query+notifications-summary": "Obter notificacións de espera para o usuario actual.",
 	"apihelp-query+notifications-param-prop": "Detalles que solicitar.",
 	"apihelp-query+notifications-param-sections": "As seccións de notificación a consultar (p.ex. algunha combinación de 'alerta' e 'mensaxe').",
@@ -43,7 +40,6 @@
 	"apihelp-query+notifications-param-bundle": "Se amosar as notificacións non lidas compatibles coas regras de agrupamento de tipos de notificación.",
 	"apihelp-query+notifications-example-1": "Listar as notificacións",
 	"apihelp-query+notifications-example-2": "Listar as notificacións, agrupadas por seccións, incluíndo os contadores",
-	"apihelp-query+unreadnotificationpages-description": "Obter as páxinas para as que hai notificacións sen ler para o usuario actual.",
 	"apihelp-query+unreadnotificationpages-summary": "Obter as páxinas para as que hai notificacións sen ler para o usuario actual.",
 	"apihelp-query+unreadnotificationpages-param-grouppages": "Agrupar as páxinas de conversa xunto coas súas páxinas asociadas, e agrupar xuntas as notificacións non asociadas cunha páxina coa páxina de usuario actual.",
 	"apihelp-query+unreadnotificationpages-param-limit": "Número máximo de páxinas a devolver.",

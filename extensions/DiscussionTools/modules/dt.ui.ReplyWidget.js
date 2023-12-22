@@ -1,8 +1,8 @@
 var controller = require( 'ext.discussionTools.init' ).controller,
 	utils = require( 'ext.discussionTools.init' ).utils,
-	logger = require( 'ext.discussionTools.init' ).logger,
 	ModeTabSelectWidget = require( './ModeTabSelectWidget.js' ),
 	ModeTabOptionWidget = require( './ModeTabOptionWidget.js' ),
+	contLangMessages = require( './contLangMessages.json' ),
 	licenseMessages = require( './licenseMessages.json' ),
 	featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {},
 	enable2017Wikitext = featuresEnabled.sourcemodetoolbar,
@@ -43,9 +43,7 @@ function ReplyWidget( commentController, commentDetails, config ) {
 	this.pageExists = mw.config.get( 'wgRelevantArticleId', 0 ) !== 0;
 	var contextNode = utils.closestElement( threadItem.range.endContainer, [ 'dl', 'ul', 'ol' ] );
 	this.context = contextNode ? contextNode.tagName.toLowerCase() : 'dl';
-	// TODO: Should storagePrefix include pageName?
-	this.storagePrefix = 'reply/' + threadItem.id;
-	this.storage = controller.storage;
+	this.storage = commentController.storage;
 	// eslint-disable-next-line no-jquery/no-global-selector
 	this.contentDir = $( '#mw-content-text' ).css( 'direction' );
 	this.hideNewCommentsWarning = false;
@@ -167,6 +165,15 @@ function ReplyWidget( commentController, commentDetails, config ) {
 		classes: [ 'ext-discussiontools-ui-replyWidget-advanced' ]
 	} ).toggle( false ).setIcon( '' );
 
+	this.enterWarning = new OO.ui.MessageWidget( {
+		classes: [ 'ext-discussiontools-ui-replyWidget-enterWarning' ],
+		type: 'warning',
+		label: mw.msg(
+			'discussiontools-replywidget-keyboard-shortcut-submit',
+			new ve.ui.Trigger( ve.ui.commandHelpRegistry.lookup( 'dialogConfirm' ).shortcuts[ 0 ] ).getMessage()
+		)
+	} ).toggle( false );
+
 	this.$footer = $( '<div>' ).addClass( 'ext-discussiontools-ui-replyWidget-footer' );
 	if ( this.pageName !== mw.config.get( 'wgRelevantPageName' ) ) {
 		this.$footer.append( $( '<p>' ).append(
@@ -174,7 +181,7 @@ function ReplyWidget( commentController, commentDetails, config ) {
 		) );
 	}
 	var $footerLinks = $( '<ul>' ).addClass( 'ext-discussiontools-ui-replyWidget-footer-links' );
-	if ( !mw.user.isAnon() ) {
+	if ( mw.user.isNamed() ) {
 		$footerLinks.append(
 			$( '<li>' ).append(
 				$( '<a>' )
@@ -235,15 +242,15 @@ function ReplyWidget( commentController, commentDetails, config ) {
 	// Events
 	this.replyButton.connect( this, { click: 'onReplyClick' } );
 	this.cancelButton.connect( this, { click: 'tryTeardown' } );
-	this.$element.on( 'keydown', this.onKeyDown.bind( this, true ) );
+	this.$element.on( 'keydown', this.onKeyDown.bind( this ) );
 	this.beforeUnloadHandler = this.onBeforeUnload.bind( this );
 	this.unloadHandler = this.onUnload.bind( this );
 	this.onWatchToggleHandler = this.onWatchToggle.bind( this );
 	this.advancedToggle.connect( this, { click: 'onAdvancedToggleClick' } );
 	this.editSummaryInput.connect( this, { change: 'onEditSummaryChange' } );
-	this.editSummaryInput.$input.on( 'keydown', this.onKeyDown.bind( this, false ) );
+	this.editSummaryInput.$input.on( 'keydown', this.onKeyDown.bind( this ) );
 	if ( this.isNewTopic ) {
-		this.commentController.sectionTitle.$input.on( 'keydown', this.onKeyDown.bind( this, false ) );
+		this.commentController.sectionTitle.$input.on( 'keydown', this.onKeyDown.bind( this ) );
 	}
 	this.scrollBackTopButton.connect( this, { click: 'onScrollBackButtonClick' } );
 	this.scrollBackBottomButton.connect( this, { click: 'onScrollBackButtonClick' } );
@@ -257,6 +264,7 @@ function ReplyWidget( commentController, commentDetails, config ) {
 		this.$preview,
 		this.advancedToggle.$element,
 		this.advanced.$element,
+		this.enterWarning.$element,
 		this.$actionsWrapper,
 		this.scrollBackTopButton.$element,
 		this.scrollBackBottomButton.$element
@@ -268,6 +276,9 @@ function ReplyWidget( commentController, commentDetails, config ) {
 	}
 
 	if ( mw.user.isAnon() ) {
+		var msg = this.commentDetails.wouldAutoCreate ?
+			'discussiontools-replywidget-autocreate-warning' :
+			'discussiontools-replywidget-anon-warning';
 		var returnTo = {
 			returntoquery: window.location.search.slice( 1 ),
 			returnto: mw.config.get( 'wgPageName' )
@@ -275,10 +286,12 @@ function ReplyWidget( commentController, commentDetails, config ) {
 		this.anonWarning = new OO.ui.MessageWidget( {
 			classes: [ 'ext-discussiontools-ui-replyWidget-anonWarning' ],
 			type: 'warning',
-			label: mw.message( 'discussiontools-replywidget-anon-warning' )
+			// eslint-disable-next-line mediawiki/msg-doc
+			label: mw.message( msg )
 				.params( [
 					mw.util.getUrl( 'Special:Userlogin', returnTo ),
-					mw.util.getUrl( 'Special:Userlogin/signup', returnTo )
+					mw.util.getUrl( 'Special:Userlogin/signup', returnTo ),
+					contLangMessages[ 'tempuser-helppage' ]
 				] )
 				.parseDom()
 		} );
@@ -291,7 +304,7 @@ function ReplyWidget( commentController, commentDetails, config ) {
 	this.checkboxesPromise = controller.getCheckboxesPromise( this.pageName, this.oldId );
 	this.checkboxesPromise.then( function ( checkboxes ) {
 		function trackCheckbox( n ) {
-			mw.track( 'dt.schemaVisualEditorFeatureUse', {
+			mw.track( 'visualEditorFeatureUse', {
 				feature: 'dtReply',
 				action: 'checkbox-' + n
 			} );
@@ -385,7 +398,7 @@ ReplyWidget.prototype.clear = function ( preserveStorage ) {
 	if ( !preserveStorage ) {
 		this.clearStorage();
 	} else {
-		this.storage.set( this.storagePrefix + '/saveable', '1' );
+		this.storage.set( 'saveable', '1' );
 	}
 
 	this.emit( 'clear' );
@@ -395,12 +408,7 @@ ReplyWidget.prototype.clear = function ( preserveStorage ) {
  * Remove any storage that the widget is using
  */
 ReplyWidget.prototype.clearStorage = function () {
-	this.storage.remove( this.storagePrefix + '/mode' );
-	this.storage.remove( this.storagePrefix + '/saveable' );
-	this.storage.remove( this.storagePrefix + '/summary' );
-	this.storage.remove( this.storagePrefix + '/showAdvanced' );
-	this.storage.remove( this.storagePrefix + '/formToken' );
-
+	this.storage.clear();
 	this.emit( 'clearStorage' );
 };
 
@@ -452,7 +460,7 @@ ReplyWidget.prototype.saveEditMode = function ( mode ) {
 
 ReplyWidget.prototype.onAdvancedToggleClick = function () {
 	var showAdvanced = !this.showAdvanced;
-	mw.track( 'dt.schemaVisualEditorFeatureUse', {
+	mw.track( 'visualEditorFeatureUse', {
 		feature: 'dtReply',
 		action: 'advanced-' + ( showAdvanced ? 'show' : 'hide' )
 	} );
@@ -493,7 +501,11 @@ ReplyWidget.prototype.toggleAdvanced = function ( showAdvanced ) {
 	this.advanced.toggle( !!this.showAdvanced );
 	this.advancedToggle.setIndicator( this.showAdvanced ? 'up' : 'down' );
 
-	this.storage.set( this.storagePrefix + '/showAdvanced', this.showAdvanced ? '1' : '' );
+	this.storage.set( 'showAdvanced', this.showAdvanced ? '1' : '' );
+};
+
+ReplyWidget.prototype.showEnterWarning = function () {
+	this.enterWarning.toggle( true );
 };
 
 ReplyWidget.prototype.onEditSummaryChange = function () {
@@ -546,7 +558,7 @@ ReplyWidget.prototype.switch = function ( mode ) {
 	// reload the editor.
 	return promise.then( function () {
 		// Switch succeeded
-		mw.track( 'dt.schemaVisualEditorFeatureUse', {
+		mw.track( 'visualEditorFeatureUse', {
 			feature: 'editor-switch',
 			action: (
 				mode === 'visual' ?
@@ -580,7 +592,7 @@ ReplyWidget.prototype.setup = function ( data ) {
 	}
 	this.saveEditMode( this.getMode() );
 
-	var summary = this.storage.get( this.storagePrefix + '/summary' ) || data.editSummary;
+	var summary = this.storage.get( 'summary' ) || data.editSummary;
 
 	if ( !summary ) {
 		if ( this.isNewTopic ) {
@@ -595,7 +607,7 @@ ReplyWidget.prototype.setup = function ( data ) {
 	}
 
 	this.toggleAdvanced(
-		!!this.storage.get( this.storagePrefix + '/showAdvanced' ) ||
+		!!this.storage.get( 'showAdvanced' ) ||
 		!!+mw.user.options.get( 'discussiontools-showadvanced' ) ||
 		!!data.showAdvanced
 	);
@@ -613,8 +625,7 @@ ReplyWidget.prototype.setup = function ( data ) {
 
 	mw.hook( 'wikipage.watchlistChange' ).add( this.onWatchToggleHandler );
 
-	// TODO: Use ve.addPassiveEventListener
-	this.$window.on( 'scroll', this.onWindowScrollThrottled );
+	this.$window[ 0 ].addEventListener( 'scroll', this.onWindowScrollThrottled, { passive: true } );
 
 	return this;
 };
@@ -626,7 +637,7 @@ ReplyWidget.prototype.afterSetup = function () {
 	// Init preview and button state
 	this.onInputChange();
 	// Autosave
-	this.storage.set( this.storagePrefix + '/mode', this.getMode() );
+	this.storage.set( 'mode', this.getMode() );
 };
 
 /**
@@ -635,12 +646,12 @@ ReplyWidget.prototype.afterSetup = function () {
  * @return {string} Form token
  */
 ReplyWidget.prototype.getFormToken = function () {
-	var formToken = this.storage.get( this.storagePrefix + '/formToken' );
+	var formToken = this.storage.get( 'formToken' );
 	if ( !formToken ) {
 		// See ApiBase::PARAM_MAX_CHARS in ApiDiscussionToolsEdit.php
 		var maxLength = 16;
 		formToken = Math.random().toString( 36 ).slice( 2, maxLength + 2 );
-		this.storage.set( this.storagePrefix + '/formToken', formToken );
+		this.storage.set( 'formToken', formToken );
 	}
 	return formToken;
 };
@@ -661,7 +672,7 @@ ReplyWidget.prototype.tryTeardown = function () {
 				if ( !( data && data.action === 'discard' ) ) {
 					return $.Deferred().reject().promise();
 				}
-				logger( {
+				mw.track( 'editAttemptStep', {
 					action: 'abort',
 					mechanism: 'cancel',
 					type: 'abandon'
@@ -669,7 +680,7 @@ ReplyWidget.prototype.tryTeardown = function () {
 			} );
 	} else {
 		promise = $.Deferred().resolve().promise();
-		logger( {
+		mw.track( 'editAttemptStep', {
 			action: 'abort',
 			mechanism: 'cancel',
 			type: 'nochange'
@@ -704,7 +715,7 @@ ReplyWidget.prototype.teardown = function ( mode ) {
 		this.modeTabSelect.blur();
 	}
 	this.unbindBeforeUnloadHandler();
-	this.$window.off( 'scroll', this.onWindowScrollThrottled );
+	this.$window[ 0 ].removeEventListener( 'scroll', this.onWindowScrollThrottled, { passive: true } );
 	mw.hook( 'wikipage.watchlistChange' ).remove( this.onWatchToggleHandler );
 
 	this.isTornDown = true;
@@ -738,11 +749,10 @@ ReplyWidget.prototype.onWatchToggle = function ( isWatched ) {
 /**
  * Handle key down events anywhere in the reply widget
  *
- * @param {boolean} isMultiline The current input is multiline
  * @param {jQuery.Event} e Key down event
  * @return {boolean} Return false to prevent default event
  */
-ReplyWidget.prototype.onKeyDown = function ( isMultiline, e ) {
+ReplyWidget.prototype.onKeyDown = function ( e ) {
 	if ( e.which === OO.ui.Keys.ESCAPE ) {
 		this.tryTeardown();
 		return false;
@@ -750,9 +760,15 @@ ReplyWidget.prototype.onKeyDown = function ( isMultiline, e ) {
 
 	// VE surfaces already handle CTRL+Enter, but this will catch
 	// the plain surface, and the edit summary input.
-	if ( e.which === OO.ui.Keys.ENTER && ( !isMultiline || e.ctrlKey || e.metaKey ) ) {
-		this.onReplyClick();
-		return false;
+	// Require CTRL+Enter even on single line inputs per T326500.
+	if ( e.which === OO.ui.Keys.ENTER ) {
+		if ( e.ctrlKey || e.metaKey ) {
+			this.onReplyClick();
+			return false;
+		} else if ( e.target.tagName === 'INPUT' ) {
+			this.showEnterWarning();
+			return false;
+		}
 	}
 };
 
@@ -766,7 +782,7 @@ ReplyWidget.prototype.onInputChange = function () {
 	}
 
 	this.updateButtons();
-	this.storage.set( this.storagePrefix + '/saveable', this.isEmpty() ? '' : '1' );
+	this.storage.set( 'saveable', this.isEmpty() ? '' : '1' );
 	this.preparePreview();
 };
 
@@ -802,14 +818,19 @@ ReplyWidget.prototype.preparePreview = function ( wikitext ) {
 	if ( !wikitext ) {
 		parsePromise = $.Deferred().resolve( null ).promise();
 	} else {
-		this.previewRequest = parsePromise = controller.getApi().post( {
-			action: 'discussiontoolspreview',
-			type: this.isNewTopic ? 'topic' : 'reply',
-			page: this.pageName,
-			wikitext: wikitext,
-			sectiontitle: title,
-			useskin: mw.config.get( 'skin' ),
-			mobileformat: OO.ui.isMobile()
+		// Acquire a temporary user username before previewing, so that signatures and
+		// user-related magic words display the temp user instead of IP user in the preview. (T331397)
+		parsePromise = mw.user.acquireTempUserName().then( function () {
+			widget.previewRequest = controller.getApi().post( {
+				action: 'discussiontoolspreview',
+				type: widget.isNewTopic ? 'topic' : 'reply',
+				page: widget.pageName,
+				wikitext: wikitext,
+				sectiontitle: title,
+				useskin: mw.config.get( 'skin' ),
+				mobileformat: OO.ui.isMobile()
+			} );
+			return widget.previewRequest;
 		} );
 	}
 
@@ -839,7 +860,7 @@ ReplyWidget.prototype.updateButtons = function () {
  * Currently only the first change in the body, used for logging.
  */
 ReplyWidget.prototype.onFirstChange = function () {
-	logger( { action: 'firstChange' } );
+	mw.track( 'editAttemptStep', { action: 'firstChange' } );
 };
 
 /**
@@ -883,7 +904,7 @@ ReplyWidget.prototype.onBeforeUnload = function ( e ) {
  * @param {jQuery.Event} e Event
  */
 ReplyWidget.prototype.onUnload = function () {
-	logger( {
+	mw.track( 'editAttemptStep', {
 		action: 'abort',
 		type: this.isEmpty() ? 'nochange' : 'abandon',
 		mechanism: 'navigate'
@@ -951,7 +972,7 @@ ReplyWidget.prototype.updateNewCommentsWarning = function ( comments ) {
 		setTimeout( function () {
 			widget.newCommentsWarning.$element.addClass( 'ext-discussiontools-ui-replyWidget-newComments-open' );
 		} );
-		mw.track( 'dt.schemaVisualEditorFeatureUse', {
+		mw.track( 'visualEditorFeatureUse', {
 			feature: 'notificationNewComments',
 			action: 'show'
 		} );
@@ -963,9 +984,14 @@ ReplyWidget.prototype.updateNewCommentsWarning = function ( comments ) {
  */
 ReplyWidget.prototype.onNewCommentsShowClick = function () {
 	this.emit( 'reloadPage' );
-	mw.track( 'dt.schemaVisualEditorFeatureUse', {
+	mw.track( 'visualEditorFeatureUse', {
 		feature: 'notificationNewComments',
 		action: 'page-update'
+	} );
+	mw.track( 'editAttemptStep', {
+		action: 'abort',
+		mechanism: 'navigate',
+		type: 'pageupdate'
 	} );
 };
 
@@ -977,7 +1003,7 @@ ReplyWidget.prototype.onNewCommentsCloseClick = function () {
 	// Hide the warning for the rest of the lifetime of the widget
 	this.hideNewCommentsWarning = true;
 	this.focus();
-	mw.track( 'dt.schemaVisualEditorFeatureUse', {
+	mw.track( 'visualEditorFeatureUse', {
 		feature: 'notificationNewComments',
 		action: 'close'
 	} );
@@ -1018,12 +1044,12 @@ ReplyWidget.prototype.onReplyClick = function () {
 	this.saveInitiated = mw.now();
 	this.setPending( true );
 
-	logger( { action: 'saveIntent' } );
+	mw.track( 'editAttemptStep', { action: 'saveIntent' } );
 
 	// TODO: When editing a transcluded page, VE API returning the page HTML is a waste, since we won't use it
 	var pageName = this.pageName;
 
-	logger( { action: 'saveAttempt' } );
+	mw.track( 'editAttemptStep', { action: 'saveAttempt' } );
 	widget.commentController.save( pageName ).fail( function ( code, data ) {
 		// Compare to ve.init.mw.ArticleTargetEvents.js in VisualEditor.
 		var typeMap = {
@@ -1089,7 +1115,7 @@ ReplyWidget.prototype.onReplyClick = function () {
 			}
 		}
 
-		logger( {
+		mw.track( 'editAttemptStep', {
 			action: 'saveFailure',
 			timing: mw.now() - widget.saveInitiated,
 			message: code,

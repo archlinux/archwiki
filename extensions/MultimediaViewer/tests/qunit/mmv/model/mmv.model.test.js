@@ -15,6 +15,8 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { Thumbnail, ThumbnailWidth } = require( 'mmv' );
+
 ( function () {
 	QUnit.module( 'mmv.model', QUnit.newMwEnvironment() );
 
@@ -22,14 +24,14 @@
 		var width = 23,
 			height = 42,
 			url = 'http://example.com/foo.jpg',
-			thumbnail = new mw.mmv.model.Thumbnail( url, width, height );
+			thumbnail = new Thumbnail( url, width, height );
 
 		assert.strictEqual( thumbnail.url, url, 'Url is set correctly' );
 		assert.strictEqual( thumbnail.width, width, 'Width is set correctly' );
 		assert.strictEqual( thumbnail.height, height, 'Height is set correctly' );
 
 		assert.throws( function () {
-			thumbnail = new mw.mmv.model.Thumbnail( url, width );
+			thumbnail = new Thumbnail( url, width );
 		}, 'Exception is thrown when parameters are missing' );
 	} );
 
@@ -38,7 +40,7 @@
 			cssHeight = 29,
 			screenWidth = 42,
 			realWidth = 123,
-			thumbnailWidth = new mw.mmv.model.ThumbnailWidth(
+			thumbnailWidth = new ThumbnailWidth(
 				cssWidth, cssHeight, screenWidth, realWidth );
 
 		assert.strictEqual( thumbnailWidth.cssWidth, cssWidth, 'Width is set correctly' );
@@ -47,7 +49,7 @@
 		assert.strictEqual( thumbnailWidth.real, realWidth, 'Real width is set correctly' );
 
 		assert.throws( function () {
-			thumbnailWidth = new mw.mmv.model.ThumbnailWidth( cssWidth, screenWidth );
+			thumbnailWidth = new ThumbnailWidth( cssWidth, screenWidth );
 		}, 'Exception is thrown when parameters are missing' );
 	} );
 

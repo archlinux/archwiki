@@ -16,12 +16,14 @@
 		originalUrl = new URL( location.href ),
 		initMode = originalUrl.searchParams.get( 'diffmode' ) || mw.user.options.get( 'visualeditor-diffmode-historical' ) || 'source',
 		conf = mw.config.get( 'wgVisualEditorConfig' ),
-		pluginModules = conf.pluginModules.filter( mw.loader.getState );
+		pluginModules = conf.pluginModules.filter( mw.loader.getState ),
+		diffTypeSwitch;
 
 	if ( initMode !== 'visual' ) {
 		// Enforce a valid mode, to avoid visual glitches in button-selection.
 		initMode = 'source';
 	}
+	var mode = initMode;
 
 	$visualDiffContainer.append(
 		progress.$element.addClass( 'oo-ui-element-hidden' ),
@@ -29,21 +31,26 @@
 	);
 
 	function onReviewModeButtonSelectSelect( item ) {
-		var url = new URL( location.href );
-
 		var oldPageName, newPageName;
 		if ( mw.config.get( 'wgCanonicalSpecialPageName' ) !== 'ComparePages' ) {
 			oldPageName = newPageName = mw.config.get( 'wgRelevantPageName' );
 		} else {
-			oldPageName = url.searchParams.get( 'page1' );
-			newPageName = url.searchParams.get( 'page2' );
+			var params = new URLSearchParams( location.search );
+			oldPageName = params.get( 'page1' );
+			newPageName = params.get( 'page2' );
 		}
 
-		var mode = item.getData();
+		mode = item.getData();
 		var isVisual = mode === 'visual';
 
 		$visualDiffContainer.toggleClass( 'oo-ui-element-hidden', !isVisual );
 		$wikitextDiffBody.toggleClass( 'oo-ui-element-hidden', isVisual );
+
+		// If inline switch exists
+		if ( typeof diffTypeSwitch !== 'undefined' ) {
+			diffTypeSwitch.setDisabled( isVisual );
+		}
+
 		var $revSlider = $( '.mw-revslider-container' );
 		$revSlider.toggleClass( 've-init-mw-diffPage-revSlider-visual', isVisual );
 		if ( isVisual ) {
@@ -65,7 +72,7 @@
 			$visualDiff.empty();
 			progress.$element.removeClass( 'oo-ui-element-hidden' );
 			// TODO: Load a smaller subset of VE for computing the visual diff
-			var modulePromise = mw.loader.using( [ 'ext.visualEditor.articleTarget' ].concat( pluginModules ) );
+			var modulePromise = mw.loader.using( [ 'ext.visualEditor.articleTarget', 'ext.visualEditor.mwmeta' ].concat( pluginModules ) );
 			mw.libs.ve.diffLoader.getVisualDiffGeneratorPromise( oldId, newId, modulePromise, oldPageName, newPageName ).then( function ( visualDiffGenerator ) {
 				// This class is loaded via modulePromise above
 				// eslint-disable-next-line no-undef
@@ -93,14 +100,10 @@
 				throw error;
 			} );
 		}
-
-		url.searchParams.set( 'diffmode', mode );
-		history.replaceState( history.state, '', url );
-
 	}
 
 	function onReviewModeButtonSelectChoose( item ) {
-		var mode = item.getData();
+		mode = item.getData();
 		if ( mode !== mw.user.options.get( 'visualeditor-diffmode-historical' ) ) {
 			mw.user.options.set( 'visualeditor-diffmode-historical', mode );
 			// Same as ve.init.target.getLocalApi()
@@ -109,6 +112,19 @@
 	}
 
 	mw.hook( 'wikipage.diff' ).add( function () {
+		if ( mw.config.get( 'wgDiffOldId' ) === false || mw.config.get( 'wgDiffNewId' ) === false ) {
+			// Don't offer visual diffs for "fake" diffs where the revision to compare to is not given,
+			// e.g. when viewing a "diff" of page creation (T338388)
+			return;
+		}
+		if ( !Object.prototype.hasOwnProperty.call( conf.contentModels, mw.config.get( 'wgPageContentModel' ) ) ) {
+			// Don't offer visual diffs for non-wikitext pages.
+			// TODO: This is wrong if we're comparing revisions of two different pages, or if the content
+			// model of the page has changed between the revisions. The diff needs to give us more
+			// information about the revisions being compared… (T346252)
+			return;
+		}
+
 		$wikitextDiffContainer = $( 'table.diff[data-mw="interface"]' );
 		$wikitextDiffHeader = $wikitextDiffContainer.find( 'tr.diff-title' )
 			.add( $wikitextDiffContainer.find( 'td.diff-multi, td.diff-notice' ).parent() );
@@ -129,5 +145,14 @@
 		reviewModeButtonSelect.on( 'choose', onReviewModeButtonSelectChoose );
 		$( '.ve-init-mw-diffPage-diffMode' ).empty().append( reviewModeButtonSelect.$element );
 		reviewModeButtonSelect.selectItemByData( initMode );
+	} );
+
+	mw.hook( 'wikipage.diff.wikitextBodyUpdate' ).add( function ( $wikitextBody ) {
+		$wikitextDiffBody = $wikitextBody;
+	} );
+
+	mw.hook( 'wikipage.diff.diffTypeSwitch' ).add( function ( inlineToggleSwitch ) {
+		diffTypeSwitch = inlineToggleSwitch;
+		diffTypeSwitch.setDisabled( mode === 'visual' );
 	} );
 }() );

@@ -19,6 +19,8 @@
  * @author This, that and the other
  */
 
+use MediaWiki\Title\ForeignTitle;
+
 /**
  * @covers ForeignTitle
  *
@@ -26,7 +28,7 @@
  */
 class ForeignTitleTest extends \MediaWikiUnitTestCase {
 
-	public function basicProvider() {
+	public static function basicProvider() {
 		return [
 			[
 				new ForeignTitle( 20, 'Contributor', 'JohnDoe' ),
@@ -73,7 +75,7 @@ class ForeignTitleTest extends \MediaWikiUnitTestCase {
 		$title->getNamespaceId();
 	}
 
-	public function fullTextProvider() {
+	public static function fullTextProvider() {
 		return [
 			[
 				new ForeignTitle( 20, 'Contributor', 'JohnDoe' ),

@@ -10,7 +10,7 @@
 namespace MediaWiki\Extension\DiscussionTools\Notifications;
 
 use EchoDiscussionParser;
-use EchoPresentationModelSection;
+use MediaWiki\Extension\Notifications\Formatters\EchoPresentationModelSection;
 use RuntimeException;
 
 /**

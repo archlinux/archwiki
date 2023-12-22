@@ -140,7 +140,7 @@ class MMLComparator {
 			}
 		}
 
-		return [ $overallSize,$overallAttrs ];
+		return [ $overallSize, $overallAttrs ];
 	}
 
 	private function compareArrays( $base, $comp ): array {
@@ -202,7 +202,7 @@ class MMLComparator {
 	private function filterKeys( $allMMLElements ): array {
 		$finalKeys = [];
 		foreach ( $allMMLElements as $key => $element ) {
-			if ( in_array( $key, self::IGNOREDELEMENTKEYS ) ) {
+			if ( in_array( $key, self::IGNOREDELEMENTKEYS, true ) ) {
 				$finalKeys = $this->checkExplicitKeys( $key, $element, $finalKeys );
 				continue;
 			}
@@ -233,7 +233,7 @@ class MMLComparator {
 		$finalAttributes = [];
 		foreach ( $attributes as $akey => $aval ) {
 
-			if ( in_array( $akey, $ignoredAttrs ) ) {
+			if ( in_array( $akey, $ignoredAttrs, true ) ) {
 				continue;
 			}
 			$finalAttributes[$akey] = $aval[0];

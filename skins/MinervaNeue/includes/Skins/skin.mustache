@@ -23,7 +23,6 @@
 				{{#data-minerva-page-actions}}
 				{{>PageActionsMenu}}
 				{{/data-minerva-page-actions}}
-				{{{html-minerva-post-heading}}}
 				{{{html-subtitle}}}
 			</div>
 			{{/is-title-blank}}
@@ -36,14 +35,10 @@
 			<div class="post-content" id="page-secondary-actions">
 			{{#data-minerva-secondary-actions}}
 				{{#talk}}
-				<a {{#attributes}} href="{{href}}" data-title="{{data-title}}" class="{{class}} mw-ui-button button"{{/attributes}}>
-					{{{label}}}
-				</a>
+				{{>Button}}
 				{{/talk}}
 				{{#language}}
-				<a {{#attributes}} href="{{href}}" data-title="{{data-title}}" class="{{class}} mw-ui-button button"{{/attributes}}>
-					{{{label}}}
-				</a>
+				{{>Button}}
 				{{/language}}
 			{{/data-minerva-secondary-actions}}
 			</div>

@@ -4,7 +4,6 @@
 		IssueList = require( './IssueList.js' ),
 		KEYWORD_ALL_SECTIONS = 'all',
 		NS_MAIN = 0,
-		NS_TALK = 1,
 		NS_CATEGORY = 14;
 
 	/**
@@ -45,8 +44,6 @@
 		switch ( namespaceID ) {
 			case NS_CATEGORY:
 				return mw.msg( 'mobile-frontend-meta-data-issues-categories' );
-			case NS_TALK:
-				return mw.msg( 'mobile-frontend-meta-data-issues-talk' );
 			case NS_MAIN:
 				return mw.msg( 'mobile-frontend-meta-data-issues' );
 			default:

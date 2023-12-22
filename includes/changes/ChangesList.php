@@ -23,16 +23,20 @@
  */
 
 use MediaWiki\CommentFormatter\RowCommentFormatter;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Pager\PagerTools;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 use OOUI\IconWidget;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -77,6 +81,16 @@ class ChangesList extends ContextSource {
 	protected $filterGroups;
 
 	/**
+	 * @var MapCacheLRU
+	 */
+	protected $tagsCache;
+
+	/**
+	 * @var MapCacheLRU
+	 */
+	protected $userLinkCache;
+
+	/**
 	 * @param IContextSource $context
 	 * @param ChangesListFilterGroup[] $filterGroups Array of ChangesListFilterGroup objects (currently optional)
 	 */
@@ -89,6 +103,8 @@ class ChangesList extends ContextSource {
 		$services = MediaWikiServices::getInstance();
 		$this->linkRenderer = $services->getLinkRenderer();
 		$this->commentFormatter = $services->getRowCommentFormatter();
+		$this->tagsCache = new MapCacheLRU( 50 );
+		$this->userLinkCache = new MapCacheLRU( 50 );
 	}
 
 	/**
@@ -102,9 +118,10 @@ class ChangesList extends ContextSource {
 	public static function newFromContext( IContextSource $context, array $groups = [] ) {
 		$user = $context->getUser();
 		$sk = $context->getSkin();
+		$services = MediaWikiServices::getInstance();
 		$list = null;
-		if ( Hooks::runner()->onFetchChangesList( $user, $sk, $list, $groups ) ) {
-			$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+		if ( ( new HookRunner( $services->getHookContainer() ) )->onFetchChangesList( $user, $sk, $list, $groups ) ) {
+			$userOptionsLookup = $services->getUserOptionsLookup();
 			$new = $context->getRequest()->getBool(
 				'enhanced',
 				$userOptionsLookup->getBoolOption( $user, 'usenewrc' )
@@ -183,7 +200,7 @@ class ChangesList extends ContextSource {
 			$this->message = [];
 			foreach ( [
 				'cur', 'diff', 'hist', 'enhancedrc-history', 'last', 'blocklink', 'history',
-				'semicolon-separator', 'pipe-separator' ] as $msg
+				'semicolon-separator', 'pipe-separator', 'word-separator' ] as $msg
 			) {
 				$this->message[$msg] = $this->msg( $msg )->escaped();
 			}
@@ -199,7 +216,7 @@ class ChangesList extends ContextSource {
 	public function recentChangesFlags( $flags, $nothing = "\u{00A0}" ) {
 		$f = '';
 		foreach (
-			array_keys( $this->getConfig()->get( MainConfigNames::RecentChangesFlags ) ) as $flag
+			$this->getConfig()->get( MainConfigNames::RecentChangesFlags ) as $flag => $_
 		) {
 			$f .= isset( $flags[$flag] ) && $flags[$flag]
 				? self::flag( $flag, $this->getContext() )
@@ -696,18 +713,25 @@ class ChangesList extends ContextSource {
 			$s .= ' <span class="' . $deletedClass . '">' .
 				$this->msg( 'rev-deleted-user' )->escaped() . '</span>';
 		} else {
-			$s .= $this->getLanguage()->getDirMark() . Linker::userLink(
-				$rc->mAttribs['rc_user'],
-				$rc->mAttribs['rc_user_text'],
-				false,
-				[ 'data-mw-revid' => $rc->mAttribs['rc_this_oldid'] ]
-			);
-			$s .= Linker::userToolLinks(
-				$rc->mAttribs['rc_user'], $rc->mAttribs['rc_user_text'],
-				false, 0, null,
-				// The text content of tools is not wrapped with parentheses or "piped".
-				// This will be handled in CSS (T205581).
-				false
+			$s .= $this->getLanguage()->getDirMark();
+			$s .= $this->userLinkCache->getWithSetCallback(
+				$this->userLinkCache->makeKey(
+					$rc->mAttribs['rc_user_text'],
+					$this->getUser()->getName(),
+					$this->getLanguage()->getCode()
+				),
+				static function () use ( $rc ) {
+					return Linker::userLink(
+						$rc->mAttribs['rc_user'],
+						$rc->mAttribs['rc_user_text']
+					) . Linker::userToolLinks(
+						$rc->mAttribs['rc_user'], $rc->mAttribs['rc_user_text'],
+						false, 0, null,
+						// The text content of tools is not wrapped with parentheses or "piped".
+						// This will be handled in CSS (T205581).
+						false
+					);
+				}
 			);
 		}
 	}
@@ -728,7 +752,7 @@ class ChangesList extends ContextSource {
 			. $formatter->getActionText()
 			. " $mark"
 			. $formatter->getComment()
-			. $this->msg( 'word-separator' )->escaped()
+			. $this->message['word-separator']
 			. $formatter->getActionLinks()
 			. Html::closeElement( 'span' );
 	}
@@ -775,7 +799,12 @@ class ChangesList extends ContextSource {
 		}
 
 		return $this->watchMsgCache->getWithSetCallback(
-			"watching-users-msg:$count",
+			$this->watchMsgCache->makeKey(
+				'watching-users-msg',
+				strval( $count ),
+				$this->getUser()->getName(),
+				$this->getLanguage()->getCode()
+			),
 			function () use ( $count ) {
 				return $this->msg( 'number-of-watching-users-for-recent-changes' )
 					->numParams( $count )->escaped();
@@ -901,10 +930,22 @@ class ChangesList extends ContextSource {
 			return;
 		}
 
-		[ $tagSummary, $newClasses ] = ChangeTags::formatSummaryRow(
-			$rc->mAttribs['ts_tags'],
-			'changeslist',
-			$this->getContext()
+		/**
+		 * Tags are repeated for a lot of the records, so during single run of RecentChanges, we
+		 * should cache those that were already processed as doing that for each record takes
+		 * significant amount of time.
+		 */
+		[ $tagSummary, $newClasses ] = $this->tagsCache->getWithSetCallback(
+			$this->tagsCache->makeKey(
+				$rc->mAttribs['ts_tags'],
+				$this->getUser()->getName(),
+				$this->getLanguage()->getCode()
+			),
+			fn () => ChangeTags::formatSummaryRow(
+				$rc->mAttribs['ts_tags'],
+				'changeslist',
+				$this->getContext()
+			)
 		);
 		$classes = array_merge( $classes, $newClasses );
 		$s .= ' ' . $tagSummary;
@@ -946,19 +987,13 @@ class ChangesList extends ContextSource {
 			$rcLogType = $rc->rc_log_type;
 		}
 
-		if ( !$isPatrolled ) {
-			if ( $user->useRCPatrol() ) {
-				return true;
-			}
-			if ( $user->useNPPatrol() && $rcType == RC_NEW ) {
-				return true;
-			}
-			if ( $user->useFilePatrol() && $rcLogType == 'upload' ) {
-				return true;
-			}
+		if ( $isPatrolled ) {
+			return false;
 		}
 
-		return false;
+		return $user->useRCPatrol() ||
+			( $rcType == RC_NEW && $user->useNPPatrol() ) ||
+			( $rcLogType === 'upload' && $user->useFilePatrol() );
 	}
 
 	/**

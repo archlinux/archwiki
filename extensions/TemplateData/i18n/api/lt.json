@@ -5,7 +5,6 @@
 			"Tomasdd"
 		]
 	},
-	"apihelp-templatedata-description": "Gauti duomenis, saugomus TemplateData plėtinio.",
 	"apihelp-templatedata-summary": "Gauti duomenis, saugomus TemplateData plėtinio.",
 	"apihelp-templatedata-example-1": "Grąžinti šablonų [[Template:Stub]] ir [[Template:Example]] TemplateData rezultatus, jei šablonų nėra arba jie neturi TemplateData",
 	"apihelp-templatedata-example-2": "Grąžinti [[Template:Stub]] ir [[Template:Example]] TemplateData duomenis be rezultatų, jei šablonų nėra arba jei jie yra, bet neturi TemplateData",

@@ -3,7 +3,8 @@
 		"authors": [
 			"Dbc334",
 			"Eleassar",
-			"Janezdrilc"
+			"Janezdrilc",
+			"Upwinxp"
 		]
 	},
 	"oathauth-desc": "Zagotavlja podporo za avtentikacijo z uporabo enkratnih HMAC-gesel",
@@ -57,7 +58,7 @@
 	"oathauth-user-not-found": "Ni bilo mogoče najti uporabniškega računa s tem imenom",
 	"oath-log-name": "Dnevnik dvofaktorske avtentikacije",
 	"oath-log-header": "Ti dogodki beležijo spremembe uporabnikovega stanja dvofaktorske avtentikacije.",
-	"logentry-oath-disable-other": "$1 {{GENDER:$2|je izklopil|je izklopila|je izklopil_a}} dvofaktorsko avtentikacijo {{GENDER:$2|uporabnika $3|uporabnice $3|uporabnika_ce $3}}",
+	"logentry-oath-disable-other": "$1 {{GENDER:$2|je izklopil|je izklopila|je izklopil/a}} dvofaktorsko avtentikacijo {{GENDER:$2|uporabnika $3|uporabnice $3|uporabnika/ce $3}}",
 	"logentry-oath-verify": "$1 je {{GENDER:$2|preveril|preverila|preveril_a}}, ali ima $3 vklopljeno dvofaktorsko avtentikacijo",
 	"log-action-filter-oath": "Vrsta dvofaktorske avtentikacije:",
 	"log-action-filter-oath-verify": "Preverjanje, ali je vklopljena dvofaktorska avtentikacija",
@@ -90,9 +91,11 @@
 	"notification-body-oathauth-disable": "Če tega {{GENDER:$2|niste}} storili vi, je {{GENDER:$2|vaš račun}} morda kompromitiran.",
 	"notification-body-oathauth-disable-other": "Če tega {{GENDER:$2|niste}} zahtevali vi, se {{GENDER:$2|morate}} obrniti na administratorja.",
 	"oathauth-notifications-disable-help": "Pomoč",
-	"notification-header-oathauth-enabled": "Dvofaktorska avtentikacija je za {{GENDER:$2|vaš račun}} izklopljena.",
-	"notification-body-oathauth-enabled": "Če tega {{GENDER:$2|niste}} storili vi, je {{GENDER:$2|vaš račun}} morda kompromitiran.",
-	"oathauth-notifications-enabled-help": "Pomoč",
+	"oathauth-notifications-disable-primary": "Preverite nastavitve dvostopenjske avtentikacije",
+	"notification-header-oathauth-enable": "Dvofaktorska avtentikacija je za {{GENDER:$2|vaš račun}} izklopljena.",
+	"notification-body-oathauth-enable": "Če tega {{GENDER:$2|niste}} storili vi, je {{GENDER:$2|vaš račun}} morda kompromitiran.",
+	"oathauth-notifications-enable-help": "Pomoč",
+	"oathauth-notifications-enable-primary": "Preverite nastavitve dvostopenjske avtentikacije",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} ima vklopljeno dvofaktorsko avtentikacijo.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} nima vklopljene dvofaktorske avtentikacije.",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Onemogočena skupina|Onemogočeni skupini|Onemogočene skupine}}:",

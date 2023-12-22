@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.0
+
+The library now requires PHP 7.4 or later.
+
+* Drop 7.2 support (Sam Reed)
+* Add return types and make Reader and Writer signatures more consistent (Timo Tijhof)
+* Writer\PHP: Faster `set()` by reducing total number of method calls (Thiemo Kreuz)
+* Writer\PHP: Faster `finish()` by using native `array_fill()` where possible (Thiemo Kreuz)
+* Writer\PHP: Faster `set()` by inlining single-use methods (Thiemo Kreuz)
+
 ## 2.0.0
 
 The library now requires PHP 7.2 or later.

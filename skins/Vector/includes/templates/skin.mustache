@@ -23,45 +23,27 @@
 	MenuDefinition data-portlets.data-views
 	MenuDefinition data-portlets.data-actions
 	object data-search-box. See SearchBox.mustache for documentation.
-	boolean is-main-menu-visible For users that want to see the sidebar on initial render, this should be
-		true.
 	string msg-vector-action-toggle-sidebar The label used by the sidebar button.
 	string msg-vector-main-menu-tooltip The title attribute for the main menu icon.
 	object data-main-menu. See MainMenu.mustache for documentation.
 	object data-footer for footer template partial. see Footer.mustache for documentation.
 }}
+<a class="mw-jump-link" href="#bodyContent">{{msg-vector-jumptocontent}}</a>
+<div class="vector-header-container">
+	{{>Header}}
+</div>
 <div class="mw-page-container">
-	<a class="mw-jump-link" href="#bodyContent">{{msg-vector-jumptocontent}}</a>
 	<div class="mw-page-container-inner">
-		<input
-			type="checkbox"
-			id="mw-sidebar-checkbox"
-			class="mw-checkbox-hack-checkbox"
-			{{#is-main-menu-visible}}checked{{/is-main-menu-visible}}>
-		{{>Header}}
-		{{>MainMenuPinned}}
 		<div class="vector-sitenotice-container">
 			<div id="siteNotice">{{{html-site-notice}}}</div>
 		</div>
-		{{#data-toc}}
-		<input type="checkbox" id="vector-toc-collapsed-checkbox" class="mw-checkbox-hack-checkbox">
-		<nav id="mw-panel-toc" role="navigation" aria-label="{{ msg-vector-toc-label }}" data-event-name="ui.sidebar-toc" class="mw-table-of-contents-container vector-toc-landmark">
-			{{! T313060 Additional container div needed to prevent the sticky element from being siblings with the footer }}
-			{{#data-toc-pinnable-container}}
-			{{>PinnableContainer/Pinned/Open}}
-				{{#is-pinned}}
-					{{#data-toc}}{{>TableOfContents}}{{/data-toc}}
-				{{/is-pinned}}
-			{{>PinnableContainer/Close}}
-			{{/data-toc-pinnable-container}}
-		</nav>
-		{{/data-toc}}
+		{{>ColumnStart}}
 		<div class="mw-content-container">
 			{{! `role` is unnecessary but kept to support selectors in any gadgets or user styles. }}
 			<main id="content" class="mw-body" role="main">
 				{{>PageTitlebar}}
 				{{>PageToolbar}}
-				{{#is-page-tools-enabled}}{{>ColumnEnd}}{{/is-page-tools-enabled}}
+				{{>ColumnEnd}}
 				<div id="bodyContent" class="vector-body" aria-labelledby="firstHeading" data-mw-ve-target-container>
 					{{>BeforeContent}}
 					{{! the #contentSub element is currently used by editors, do not hide or remove it
@@ -71,13 +53,10 @@
 					{{{html-user-message}}}
 					{{{html-body-content}}}
 					{{{html-categories}}}
-					{{#is-page-tools-enabled}}{{#is-language-in-content-bottom}}
-						{{#data-lang-btn}}{{>LanguageDropdown}}{{/data-lang-btn}}
-					{{/is-language-in-content-bottom}}{{/is-page-tools-enabled}}
+					{{#is-language-in-content-bottom}}
+						{{#data-lang-dropdown}}{{>LanguageDropdown}}{{/data-lang-dropdown}}
+					{{/is-language-in-content-bottom}}
 				</div>
-				{{^is-page-tools-enabled}}{{#is-language-in-content-bottom}}
-					{{#data-lang-btn}}{{>LanguageDropdown}}{{/data-lang-btn}}
-				{{/is-language-in-content-bottom}}{{/is-page-tools-enabled}}
 			</main>
 			{{{html-after-content}}}
 		</div>
@@ -86,4 +65,15 @@
 		</div>
 	</div> {{! END mw-page-container-inner }}
 </div> {{! END mw-page-container }}
-{{#data-vector-sticky-header}}{{>StickyHeader}}{{/data-vector-sticky-header}}
+{{#data-vector-sticky-header}}
+<div class="vector-header-container vector-sticky-header-container">
+	{{>StickyHeader}}
+</div>
+{{/data-vector-sticky-header}}
+<div class="vector-settings" id="p-dock-bottom">
+	<ul>
+		<li>
+		{{#data-client-prefs}}{{>ClientPreferences}}{{/data-client-prefs}}
+		{{#data-vector-settings-button}}{{>Button}}{{/data-vector-settings-button}}</li>
+	</ul>
+</div>

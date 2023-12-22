@@ -2,14 +2,14 @@
 
 namespace MediaWiki\Skin;
 
-use Config;
 use HtmlArmor;
+use MediaWiki\Config\Config;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MessageLocalizer;
-use User;
 
 class SkinComponentCopyright implements SkinComponent {
 	/** @var Config */
@@ -43,7 +43,7 @@ class SkinComponentCopyright implements SkinComponent {
 	/**
 	 * Get the copyright.
 	 *
-	 * @inheritDoc
+	 * @return string
 	 */
 	public function getCopyrightHTML(): string {
 		$out = $this->skinContext->getOutput();

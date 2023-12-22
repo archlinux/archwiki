@@ -4,7 +4,6 @@
 			"Tacsipacsi"
 		]
 	},
-	"apihelp-scribunto-console-description": "Belső modul a Scribunto konzolról érkező XHR-kérések kiszolgálására.",
 	"apihelp-scribunto-console-summary": "Belső modul a Scribunto konzolról érkező XHR-kérések kiszolgálására.",
 	"apihelp-scribunto-console-param-title": "A tesztelendő modul címe.",
 	"apihelp-scribunto-console-param-content": "A modul új tartalma.",

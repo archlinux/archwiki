@@ -28,5 +28,10 @@
 	"cite_error_empty_references_define": "ტეგს <code>&lt;ref&gt;</code>, გარკვეულს <code>&lt;references&gt;</code>-ში, სახელით „$1“ არ გააჩნია შინაარსი.",
 	"cite-tracking-category-cite-error": "გვერდები, რომლებიც შეიცავენ სქოლიოში შეცდომას",
 	"cite_references_link_accessibility_label": "ზემოთ ასვლა",
-	"cite_section_preview_references": "სქოლიოს სიის წინასწარი გადახედვა"
+	"cite_section_preview_references": "სქოლიოს სიის წინასწარი გადახედვა",
+	"cite-wikieditor-tool-reference": "სქოლიო",
+	"cite-wikieditor-help-page-references": "სქოლიო",
+	"cite-wikieditor-help-content-reference-description": "მინიშნება",
+	"cite-wikieditor-help-content-rereference-description": "იგივე მინიშნების დამატებითი გამოყენება",
+	"cite-wikieditor-help-content-showreferences-description": "სქოლიოს ჩვენება"
 }

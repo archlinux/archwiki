@@ -13,6 +13,14 @@ $specialPageAliases['en'] = [
 	'TopicSubscriptions' => [ 'TopicSubscriptions' ],
 	'FindComment' => [ 'FindComment' ],
 	'GoToComment' => [ 'GoToComment' ],
+	'DiscussionToolsDebug' => [ 'DiscussionToolsDebug' ],
+];
+
+/** Bengali (বাংলা) */
+$specialPageAliases['bn'] = [
+	'TopicSubscriptions' => [ 'আলোচনা_অনুসরণ' ],
+	'FindComment' => [ 'মন্তব্য_খুঁজুন' ],
+	'GoToComment' => [ 'মন্তব্যে_চলুন' ],
 ];
 
 /** Czech (čeština) */
@@ -55,4 +63,12 @@ $specialPageAliases['pl'] = [
 	'TopicSubscriptions' => [ 'Subskrypcje_wątków', 'Subskrybowane_wątki' ],
 	'FindComment' => [ 'Znajdź_komentarz' ],
 	'GoToComment' => [ 'Przejdź_do_komentarza' ],
+];
+
+/** Urdu (اردو) */
+$specialPageAliases['ur'] = [
+	'TopicSubscriptions' => [ 'گفتگو_میں_شرکت' ],
+	'FindComment' => [ 'تلاش_تبصرہ' ],
+	'GoToComment' => [ 'تبصرہ_پر_جائیں' ],
+	'DiscussionToolsDebug' => [ 'آلات_گفتگو_کی_خرابی_کا_ازالہ' ],
 ];

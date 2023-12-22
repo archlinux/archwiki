@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Manke ruLpa"
+			"Manke ruLpa",
+			"Ndołkah"
 		]
 	},
 	"discussiontools-autotopicsubpopup-dismiss": "Feley, azümfin",
@@ -38,5 +39,6 @@
 	"discussiontools-topicsubscription-pager-notified-never": "Turpu",
 	"discussiontools-topicsubscription-pager-page": "Tapülh",
 	"discussiontools-topicsubscription-pager-topic": "Zungu",
-	"discussiontools-topicsubscription-pager-unsubscribe-button": "Inanienoalu"
+	"discussiontools-topicsubscription-pager-unsubscribe-button": "Inanienoalu",
+	"minerva-talk-full-page": "Chilcatun chum tapül mew wiki"
 }

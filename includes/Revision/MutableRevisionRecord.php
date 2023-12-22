@@ -28,8 +28,7 @@ use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Storage\RevisionSlotsUpdate;
 use MediaWiki\User\UserIdentity;
-use MWException;
-use MWTimestamp;
+use MediaWiki\Utils\MWTimestamp;
 
 /**
  * Mutable RevisionRecord implementation, for building new revision entries programmatically.
@@ -104,8 +103,6 @@ class MutableRevisionRecord extends RevisionRecord {
 	 *
 	 * @param PageIdentity $page The page this RevisionRecord is associated with.
 	 * @param false|string $wikiId Relevant wiki id or self::LOCAL for the current one.
-	 *
-	 * @throws MWException
 	 */
 	public function __construct( PageIdentity $page, $wikiId = self::LOCAL ) {
 		$slots = new MutableRevisionSlots( [], function () {

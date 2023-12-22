@@ -25,10 +25,10 @@ use CommentStoreComment;
 use ContentHandler;
 use Job as JobParent;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use RecentChange;
 use RequestContext;
 use TextContent;
-use Title;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -101,7 +101,7 @@ class Job extends JobParent {
 				$services->getWatchlistManager()->addWatch( $current_user, $new_title );
 			}
 		} else {
-			$wikiPage = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $this->title );
+			$wikiPage = $services->getWikiPageFactory()->newFromTitle( $this->title );
 			$latestRevision = $wikiPage->getRevisionRecord();
 
 			if ( $latestRevision === null ) {
@@ -169,10 +169,8 @@ class Job extends JobParent {
 				if ( $permissionManager->userHasRight( $current_user, 'bot' ) ) {
 					$flags |= EDIT_FORCE_BOT;
 				}
-				if ( isset( $this->params['doAnnounce'] ) &&
-					!$this->params['doAnnounce'] ) {
-					$flags |= EDIT_SUPPRESS_RC;
-					# fixme log this action
+				if ( isset( $this->params['botEdit'] ) && $this->params['botEdit'] ) {
+					$flags |= EDIT_FORCE_BOT;
 				}
 				if ( $permissionManager->userHasRight( $current_user, 'patrol' ) ||
 					$permissionManager->userHasRight( $current_user, 'autopatrol' ) ) {

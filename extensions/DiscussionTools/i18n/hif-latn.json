@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Thakurji"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Jawaab do",
+	"discussiontools-replylink": "{{GENDER:|jawaab do}}",
+	"discussiontools-replywidget-cancel": "Cancel karo",
+	"discussiontools-replywidget-mode-source": "Source",
+	"discussiontools-replywidget-mode-visual": "Visual",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Jawaab do}} {{BIDI:$1}} ke",
+	"discussiontools-replywidget-reply": "{{GENDER:|Jawaab do}}",
+	"discussiontools-replywidget-watchthis": "Ii panna ke aapan [[Special:Watchlist|watchlist]] me jorro"
+}

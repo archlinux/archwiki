@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"1233qwer1234qwer4",
+			"Amire80",
 			"Axel xadolik",
 			"DannyS712",
 			"Kaganer",
@@ -12,8 +13,7 @@
 			"Vlad5250",
 			"Wikimistusik",
 			"Zetud",
-			"아라",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Levconyana gluyaxa",
@@ -522,7 +522,6 @@
 	"slot-name-main": "Dalaf",
 	"content-model-wikitext": "\"wikitext\"",
 	"content-model-text": "Krentack",
-	"content-model-javascript": "JavaScript",
 	"content-json-empty-object": "Nedaca",
 	"content-json-empty-array": "Nedafa wafra",
 	"duplicate-args-warning": "<strong>OBRAL</strong> [[:$1]] va [[:$2]] rozar, kan loa tanoya voda mu \"$3\" dor. Ant bocafa deana voda zo saveter.",
@@ -535,7 +534,7 @@
 	"undo-success": "Betaks tir rodimaskin. Va vlevefa dolunhera vay stujel nume ageltal da batcoba tir rinafa djumaskina aze ta tenukera va dimaskira va betara va vlevef betakseem giwal.",
 	"undo-failure": "Betaks me zo rodimaskir, larde walif betaks co rokobodad.",
 	"undo-norev": "Dimbetara tir merotisa golde metira ok sulara.",
-	"undo-summary": "Dimaskira va $1 betaks ke [[Special:Contributions/$2|$2]] ([[User talk:$2|Prilara]])",
+	"undo-summary": "Dimaskira va [[Special:Diff/$1|$1]] betaks ke [[Special:Contributions/$2|$2]] ([[User talk:$2|Prilara]])",
 	"viewpagelogs": "Wira va \"logs\" ke batu bu",
 	"nohistory": "Nedoy izvot va batu bu.",
 	"currentrev": "Noelaf siatos",
@@ -664,7 +663,6 @@
 	"search-relatedarticle": "Skedaf",
 	"searchrelated": "skedaf",
 	"searchall": "kot",
-	"showingresults": "Vlevefa nedira va {{PLURAL:$1|'''1''' trasiks|'''$1''' trasiks}} dem #'''$2''' toza.",
 	"search-showingresults": "{{PLURAL:$4|Nekiks <strong>$1</strong> ke <strong>$3</strong>|Nekiks <strong>$1 – $2</strong> ke <strong>$3</strong>}}",
 	"search-nonefound": "Mek trasiks vas kucilara",
 	"powersearch-legend": "Aneyapara",
@@ -726,7 +724,6 @@
 	"default": "omava",
 	"prefs-files": "Iyeltak se",
 	"prefs-custom-css": "Ilkaf CSS",
-	"prefs-custom-json": "Ilkaf JSON",
 	"prefs-custom-js": "Ilkaf JavaScript",
 	"youremail": "Jinafe internetmane",
 	"username": "{{GENDER:$1|Favesikyolt}} :",
@@ -1184,9 +1181,6 @@
 	"enotif_lastvisited": "Va $1 disukel ta da va kot betaks mali ironokafa worara wil.",
 	"enotif_lastdiff": "Ta wira va bat betaks va $1 disukel.",
 	"enotif_anon_editor": "$1 yoltiskaf favesik",
-	"enotif_body": "Dear $WATCHINGUSERNAME,\n\n\nThe {{SITENAME}} page $PAGETITLE has been $CHANGEDORCREATED on $PAGEEDITDATE by $PAGEEDITOR, see $PAGETITLE_URL for the current version.\n\n$NEWPAGE\n\nEditor's summary: $PAGESUMMARY $PAGEMINOREDIT\n\nContact the editor:\nmail: $PAGEEDITOR_EMAIL\nwiki: $PAGEEDITOR_WIKI\n\nThere will be no other notifications in case of further changes unless you visit this page.\nYou could also reset the notification flags for all your watched pages on your watchlist.\n\n             Your friendly {{SITENAME}} notification system\n\n--\nTo change your watchlist settings, visit\n{{canonicalurl:{{#special:EditWatchlist}}}}\n\nFeedback and further assistance:\n$HELPPAGE",
-	"created": "reduyun",
-	"changed": "betayan",
 	"deletepage-submit": "Busulara",
 	"confirm": "Gruyé",
 	"excontent": "ruldas va « $1 »",

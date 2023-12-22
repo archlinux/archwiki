@@ -1,6 +1,8 @@
 <?php
 
-use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\User;
+use MediaWiki\User\UserRigorOptions;
 
 /**
  * @group API
@@ -10,28 +12,30 @@ use MediaWiki\Title\Title;
  */
 class ApiQueryUserContribsTest extends ApiTestCase {
 	public function addDBDataOnce() {
+		$userFactory = $this->getServiceContainer()->getUserFactory();
 		$users = [
-			User::newFromName( '192.168.2.2', false ),
-			User::newFromName( '192.168.2.1', false ),
-			User::newFromName( '192.168.2.3', false ),
+			$userFactory->newFromName( '192.168.2.2', UserRigorOptions::RIGOR_NONE ),
+			$userFactory->newFromName( '192.168.2.1', UserRigorOptions::RIGOR_NONE ),
+			$userFactory->newFromName( '192.168.2.3', UserRigorOptions::RIGOR_NONE ),
 			User::createNew( __CLASS__ . ' B' ),
 			User::createNew( __CLASS__ . ' A' ),
 			User::createNew( __CLASS__ . ' C' ),
-			User::newFromName( 'IW>' . __CLASS__, false ),
+			$userFactory->newFromName( 'IW>' . __CLASS__, UserRigorOptions::RIGOR_NONE ),
 		];
 
-		$title = Title::makeTitle( NS_MAIN, 'ApiQueryUserContribsTest' );
+		$page = $this->getServiceContainer()->getWikiPageFactory()
+			->newFromLinkTarget( new TitleValue( NS_MAIN, 'ApiQueryUserContribsTest' ) );
 		for ( $i = 0; $i < 3; $i++ ) {
 			foreach ( array_reverse( $users ) as $user ) {
 				$status = $this->editPage(
-					$title,
-					"Test revision $user #$i",
+					$page,
+					new WikitextContent( "Test revision $user #$i" ),
 					'Test edit',
 					NS_MAIN,
 					$user
 				);
 				if ( !$status->isOK() ) {
-					$this->fail( "Failed to edit $title: " . $status->getWikiText( false, false, 'en' ) );
+					$this->fail( 'Failed to edit: ' . $status->getWikiText( false, false, 'en' ) );
 				}
 			}
 		}

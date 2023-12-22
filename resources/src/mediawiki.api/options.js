@@ -5,7 +5,7 @@
 
 	var saveOptionsRequests = {};
 
-	$.extend( mw.Api.prototype, {
+	Object.assign( mw.Api.prototype, {
 
 		/**
 		 * Asynchronously save the value of a single user option using the API. See #saveOptions.
@@ -21,7 +21,7 @@
 		},
 
 		/**
-		 * Asynchronously save the values of user options using the API.
+		 * Asynchronously save the values of user options using the [Options API](https://www.mediawiki.org/wiki/API:Options).
 		 *
 		 * If a value of `null` is provided, the given option will be reset to the default value.
 		 *
@@ -44,7 +44,7 @@
 				promise;
 
 			// Logged-out users can't have user options; we can't depend on mw.user, that'd be circular
-			if ( mw.config.get( 'wgUserName' ) === null ) {
+			if ( mw.config.get( 'wgUserName' ) === null || mw.config.get( 'wgUserIsTemp' ) ) {
 				return $.Deferred().reject( 'notloggedin' ).promise();
 			}
 

@@ -4,11 +4,11 @@
 			"Albertas",
 			"Eitvys200",
 			"Matma Rex",
-			"Naktis"
+			"Naktis",
+			"Nokeoo"
 		]
 	},
 	"apierror-visualeditor-docserver": "Klaida susisiekiant su Parsoid/RESTBase serveriu",
-	"apihelp-visualeditor-description": "Grąžina puslapio HTML5 iš Parsoid paslaugos.",
 	"apihelp-visualeditor-param-basetimestamp": "Išsaugodami nustatykite į redaguotos versijos laiko žymą. Naudojamas, kai reikia aptikti redagavimo konfliktus.",
 	"apihelp-visualeditor-param-cachekey": "Nuoseklinimui ar pakeitimams naudoti prieš tai buvusią serializeforcache užklausą su šiuo raktu. Perdengia $1html.",
 	"apihelp-visualeditor-param-etag": "ETag, kurį siųsti.",
@@ -21,7 +21,6 @@
 	"apihelp-visualeditor-param-starttimestamp": "Išsaugant nustatykite į laiko žymę, kada puslapis buvo užkrautas. Naudojama pakeitimų konfliktų aptikimui.",
 	"apihelp-visualeditor-param-stash": "Išsaugodami nustatykite šią reikšmę, jei norite naudoti saugojama API.",
 	"apihelp-visualeditor-param-wikitext": "Vikitekstas, kuris bus siunčiamas į Parsoid, kad būtų konvertuotas į HTML (paction=parsefragment).",
-	"apihelp-visualeditoredit-description": "Išsaugoti HTML5 puslapį MediaWiki (konvertuotą į vikitekstą per Parsoid paslaugą).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Išsaugant nustatykite į koreguoto poversijo laiko žymę. Naudojama redagavimo konfliktų aptikimui.",
 	"apihelp-visualeditoredit-param-cachekey": "Naudoti prieš tai buvusią serializeforcache užklausą su šiuo raktu. Perdengia $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Saugos kodo ID (išsaugant su saugos kodo atsaku).",

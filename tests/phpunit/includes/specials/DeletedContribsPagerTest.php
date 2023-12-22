@@ -4,8 +4,8 @@ use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Pager\DeletedContribsPager;
 use MediaWiki\Revision\RevisionStore;
-use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * @group Database
@@ -16,9 +16,6 @@ class DeletedContribsPagerTest extends MediaWikiIntegrationTestCase {
 
 	/** @var HookContainer */
 	private $hookContainer;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
 
 	/** @var LinkRenderer */
 	private $linkRenderer;
@@ -38,19 +35,19 @@ class DeletedContribsPagerTest extends MediaWikiIntegrationTestCase {
 		$services = $this->getServiceContainer();
 		$this->hookContainer = $services->getHookContainer();
 		$this->linkRenderer = $services->getLinkRenderer();
-		$this->loadBalancer = $services->getDBLoadBalancer();
+		$this->dbProvider = $services->getDBLoadBalancerFactory();
 		$this->revisionStore = $services->getRevisionStore();
 		$this->commentFormatter = $services->getCommentFormatter();
 		$this->linkBatchFactory = $services->getLinkBatchFactory();
 		$this->pager = $this->getDeletedContribsPager();
 	}
 
-	private function getDeletedContribsPager( $target = 'UTSysop', $namespace = 0 ) {
+	private function getDeletedContribsPager( $target = 'Some test user', $namespace = 0 ) {
 		return new DeletedContribsPager(
 			RequestContext::getMain(),
 			$this->hookContainer,
 			$this->linkRenderer,
-			$this->loadBalancer,
+			$this->dbProvider,
 			$this->revisionStore,
 			$this->commentFormatter,
 			$this->linkBatchFactory,
@@ -61,7 +58,7 @@ class DeletedContribsPagerTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Flow uses DeletedContribsPager::reallyDoQuery hook to provide something other then
-	 * stdClass as a row, and then manually formats it's own row in ContributionsLineEnding.
+	 * stdClass as a row, and then manually formats its own row in ContributionsLineEnding.
 	 * Emulate this behaviour and check that it works.
 	 *
 	 * @covers DeletedContribsPager::formatRow

@@ -2,16 +2,16 @@
 
 namespace MediaWiki\Tests\Languages;
 
-use HashConfig;
 use LocalisationCache;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageFallback;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWikiUnitTestCase;
-use NamespaceInfo;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
 
 /**
@@ -21,10 +21,7 @@ class LanguageFactoryTest extends MediaWikiUnitTestCase {
 	private function createFactory() {
 		$options = new ServiceOptions(
 			LanguageFactory::CONSTRUCTOR_OPTIONS,
-			array_combine(
-				LanguageFactory::CONSTRUCTOR_OPTIONS,
-				array_fill( 0, count( LanguageFactory::CONSTRUCTOR_OPTIONS ), null )
-			)
+			array_fill_keys( LanguageFactory::CONSTRUCTOR_OPTIONS, null )
 		);
 		$languageNameUtils = $this->createMock( LanguageNameUtils::class );
 		$languageNameUtils
@@ -96,7 +93,7 @@ class LanguageFactoryTest extends MediaWikiUnitTestCase {
 	// These are codes which should *not* be used internally: they can
 	// be given as inputs to LanguageFactory::getLanguage() (for backward
 	// compatibility) but should never be returned from Language::getCode()
-	public function provideDeprecatedCodes() {
+	public static function provideDeprecatedCodes() {
 		return [
 			[ 'als', 'gsw' ],
 			[ 'bat-smg', 'sgs' ],
@@ -109,7 +106,7 @@ class LanguageFactoryTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	public function provideCodes() {
+	public static function provideCodes() {
 		return [
 			# Basic codes
 			[ 'en', 'en' ],

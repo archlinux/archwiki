@@ -7,6 +7,7 @@
 			"Agusbou2015",
 			"Alan",
 			"AlvaroMolina",
+			"Amire80",
 			"Canaan9801",
 			"Carlos Cristia",
 			"Chris TR",
@@ -44,6 +45,7 @@
 			"McDutchie",
 			"Mgpena",
 			"Ncontinanza",
+			"No se",
 			"Pierpao",
 			"Poco a poco",
 			"Pompilos",
@@ -53,9 +55,7 @@
 			"Superzerocool",
 			"Tiberius1701",
 			"Whovian Biologist",
-			"YoViajo",
-			"Amire80",
-			"No se"
+			"YoViajo"
 		]
 	},
 	"apihelp-main-extended-description": "<div class=\"hlist plainlinks api-main-links\">\n* [[mw:Special:MyLanguage/API:Main_page|Documentación]]\n* [[mw:Special:MyLanguage/API:Etiquette|Normas de uso y etiqueta]]\n* [[mw:Special:MyLanguage/API:FAQ|FAQ]]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-api Lista de correo]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-api-announce Anuncios API]\n* [https://phabricator.wikimedia.org/maniphest/query/GebfyV4uCaLd/#R Errores y peticiones]\n</div>\n<strong>Estado:</strong> La API de MediaWiki es una interfaz madura y estable que se mejora y prueba activamente. Aunque tratamos de evitarlo, es posible que ocasionalmente debamos hacer cambios importantes. Suscríbete a la [https://lists.wikimedia.org/hyperkitty/list/mediawiki-api-announce@lists.wikimedia.org/ lista de correo mediawiki-api-announce] para recibir avisos de actualizaciones.\n\n<strong>Solicitudes erróneas:</strong> Cuando se envían solicitudes erróneas a la API, se enviará un encabezado HTTP con la clave «MediaWiki-API-Error» y, luego, el valor del encabezado y el código de error devuelto se establecerán en el mismo valor. Para obtener más información, consulta [[mw:Special:MyLanguage/API:Errors_and_warnings|API: Errores y advertencias]].\n\n<p class=\"mw-apisandbox-link\"><strong>Pruebas:</strong> Para facilitar la comprobación de las solicitudes de API, consulta [[Special:ApiSandbox]].</p>",
@@ -76,6 +76,8 @@
 	"apihelp-main-param-errorformat": "Formato utilizado para la salida de texto de avisos y errores.",
 	"apihelp-main-param-errorlang": "Idioma empleado para advertencias y errores. <kbd>[[Special:ApiHelp/query+siteinfo|action=query&meta=siteinfo]]</kbd> con <kbd>siprop=languages</kbd> devuelve una lista de códigos de idioma. Puedes especificar <kbd>content</kbd> para utilizar el idioma del contenido de esta wiki o <kbd>uselang</kbd> para utilizar el valor del parámetro <var>uselang</var>.",
 	"apihelp-main-param-errorsuselocal": "Si se da, los textos de error emplearán mensajes localmente personalizados del espacio de nombres {{ns:MediaWiki}}.",
+	"apihelp-acquiretempusername-summary": "Adquiera un nombre de usuario de usuario temporal y guárdelo en la sesión actual, si la creación de una cuenta temporal está habilitada y el usuario actual está desconectado. Si un nombre ya ha sido guardado, devuelve el mismo nombre.",
+	"apihelp-acquiretempusername-extended-description": "Si el usuario luego realiza una acción que da como resultado la creación de una cuenta temporal, el nombre de usuario oculto se usará para su cuenta. También se puede utilizar en vistas previas. Sin embargo, la cuenta aún no se ha creado y el nombre no es visible para otros usuarios.",
 	"apihelp-block-summary": "Bloquear a un usuario.",
 	"apihelp-block-param-user": "Usuario que bloquear.",
 	"apihelp-block-param-userid": "ID de usuario para bloquear. No se puede utilizar junto con <var>$1user</var>.",

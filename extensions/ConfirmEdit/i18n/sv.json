@@ -20,7 +20,6 @@
 	"captcha-edit": "För att redigera den här sidan måste du först lösa följande uppgift och skriva svaret i rutan ([[Special:Captcha/help|mer information]]):",
 	"captcha-edit-fail": "Felaktig eller saknad captcha.",
 	"captcha-desc": "Tillhandahåller CAPTCHA-metoder för att skydda mot spam och lösenordsgissning",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Lösning på captchan.",
 	"captcha-info-help": "Beskrivning av captchan.",
 	"captcha-id-label": "CAPTCHA-ID",

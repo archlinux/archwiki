@@ -45,7 +45,7 @@ class CommentUtilsTest extends MediaWikiUnitTestCase {
 		static::assertEquals( $expectedBackwards, $actualBackwards, $name . ' (backwards)' );
 	}
 
-	public function provideLinearWalk(): array {
+	public static function provideLinearWalk(): array {
 		return static::getJson( '../cases/linearWalk.json' );
 	}
 }

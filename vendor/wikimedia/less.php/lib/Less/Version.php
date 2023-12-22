@@ -6,7 +6,7 @@
 class Less_Version {
 
 	/* Current release version of less.php */
-	public const version = '4.0.0';
+	public const version = '4.1.0';
 
 	/* Upstream less.js version that this release should be compatible with */
 	public const less_version = '2.5.3';

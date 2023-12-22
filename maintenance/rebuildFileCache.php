@@ -22,10 +22,10 @@
  */
 
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Title\Title;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -53,7 +53,7 @@ class RebuildFileCache extends Maintenance {
 		$settingsBuilder->putConfigValue( MainConfigNames::UseFileCache, false );
 
 		// Avoid DB writes (like enotif/counters)
-		MediaWiki\MediaWikiServices::getInstance()->getReadOnlyMode()
+		$this->getServiceContainer()->getReadOnlyMode()
 			->setReason( 'Building cache' );
 
 		// Ensure no debug-specific logic ends up in the cache (must be after Setup.php)
@@ -86,10 +86,16 @@ class RebuildFileCache extends Maintenance {
 		$overwrite = $this->hasOption( 'overwrite' );
 		$start = ( $start > 0 )
 			? $start
-			: $dbr->selectField( 'page', 'MIN(page_id)', '', __METHOD__ );
+			: $dbr->newSelectQueryBuilder()
+				->select( 'MIN(page_id)' )
+				->from( 'page' )
+				->caller( __METHOD__ )->fetchField();
 		$end = ( $end > 0 )
 			? $end
-			: $dbr->selectField( 'page', 'MAX(page_id)', '', __METHOD__ );
+			: $dbr->newSelectQueryBuilder()
+				->select( 'MAX(page_id)' )
+				->from( 'page' )
+				->caller( __METHOD__ )->fetchField();
 		if ( !$start ) {
 			$this->fatalError( "Nothing to do." );
 		}
@@ -99,7 +105,7 @@ class RebuildFileCache extends Maintenance {
 			// If 'all' isn't passed as an option, just fall back to previous behaviour
 			// of using content namespaces
 			$where['page_namespace'] =
-				MediaWikiServices::getInstance()->getNamespaceInfo()->getContentNamespaces();
+				$this->getServiceContainer()->getNamespaceInfo()->getContentNamespaces();
 		}
 
 		// Mock request (hack, no real client)
@@ -114,12 +120,14 @@ class RebuildFileCache extends Maintenance {
 		// Go through each page and save the output
 		while ( $blockEnd <= $end ) {
 			// Get the pages
-			$res = $dbr->select( 'page',
-				[ 'page_namespace', 'page_title', 'page_id' ],
-				$where + [ "page_id BETWEEN " . (int)$blockStart . " AND " . (int)$blockEnd ],
-				__METHOD__,
-				[ 'ORDER BY' => 'page_id ASC', 'USE INDEX' => 'PRIMARY' ]
-			);
+			$res = $dbr->newSelectQueryBuilder()
+				->select( [ 'page_namespace', 'page_title', 'page_id' ] )
+				->from( 'page' )
+				->useIndex( 'PRIMARY' )
+				->where( $where )
+				->andWhere( [ "page_id BETWEEN " . (int)$blockStart . " AND " . (int)$blockEnd ] )
+				->orderBy( 'page_id', SelectQueryBuilder::SORT_ASC )
+				->caller( __METHOD__ )->fetchResultSet();
 
 			$this->beginTransaction( $dbw, __METHOD__ ); // for any changes
 			foreach ( $res as $row ) {

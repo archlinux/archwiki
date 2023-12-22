@@ -1,11 +1,13 @@
 <?php
 
 use MediaWiki\Permissions\UltimateAuthority;
+use MediaWiki\Specials\SpecialContribute;
+use MediaWiki\User\User;
 
 /**
  * @author MAbualruz
  * @group Database
- * @covers SpecialContribute
+ * @covers \MediaWiki\Specials\SpecialContribute
  */
 class SpecialContributeTest extends SpecialPageTestBase {
 	/** @var string */
@@ -23,11 +25,11 @@ class SpecialContributeTest extends SpecialPageTestBase {
 	}
 
 	/**
-	 * @covers SpecialContribute::execute
+	 * @covers \MediaWiki\Specials\SpecialContribute::execute
 	 */
 	public function testExecute() {
 		$this->specialContribute = new SpecialContribute();
-		list( $html ) = $this->executeSpecialPage(
+		[ $html ] = $this->executeSpecialPage(
 			$this->admin->getUser()->getName(),
 			null,
 			'qqx',

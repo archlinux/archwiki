@@ -5,20 +5,14 @@ namespace MediaWiki\Extension\Notifications;
 use ApiModuleManager;
 use Config;
 use Content;
-use DatabaseUpdater;
 use DeferredUpdates;
-use EchoAttributeManager;
-use EchoDiscussionParser;
-use EchoEmailFormat;
-use EchoEmailFrequency;
-use EchoSeenTime;
-use EchoServices;
+use EchoUserLocator;
 use EmailNotification;
 use ExtensionRegistry;
-use Hooks as MWHooks;
 use HTMLCheckMatrix;
 use LinksUpdate;
 use LogEntry;
+use LogicException;
 use MailAddress;
 use MediaWiki\Api\Hook\ApiMain__moduleManagerHook;
 use MediaWiki\Auth\Hook\LocalUserCreatedHook;
@@ -26,6 +20,7 @@ use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Extension\Notifications\Controller\ModerationController;
 use MediaWiki\Extension\Notifications\Controller\NotificationController;
 use MediaWiki\Extension\Notifications\Formatters\EchoEventPresentationModel;
+use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Mapper\EventMapper;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Model\Event;
@@ -42,6 +37,7 @@ use MediaWiki\Hook\PreferencesGetIconHook;
 use MediaWiki\Hook\RecentChange_saveHook;
 use MediaWiki\Hook\SendWatchlistEmailNotificationHook;
 use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
+use MediaWiki\Hook\SpecialMuteModifyFormFieldsHook;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\Hook\ArticleDeleteCompleteHook;
@@ -56,6 +52,7 @@ use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
+use MediaWiki\Title\Title;
 use MediaWiki\User\Hook\UserClearNewTalkNotificationHook;
 use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
 use MediaWiki\User\Hook\UserGroupsChangedHook;
@@ -63,20 +60,14 @@ use MediaWiki\User\Hook\UserSaveSettingsHook;
 use MediaWiki\User\Options\Hook\LoadUserOptionsHook;
 use MediaWiki\User\Options\Hook\SaveUserOptionsHook;
 use MediaWiki\User\UserIdentity;
-use MWEchoDbFactory;
-use MWEchoNotifUser;
-use MWException;
+use MediaWiki\WikiMap\WikiMap;
 use OutputPage;
 use RecentChange;
-use ResourceLoaderEchoImageModule;
 use Skin;
 use SkinTemplate;
 use SpecialPage;
-use Title;
-use UpdateEchoSchemaForSuppression;
 use User;
 use WebRequest;
-use WikiMap;
 use WikiPage;
 
 class Hooks implements
@@ -104,7 +95,8 @@ class Hooks implements
 	UserClearNewTalkNotificationHook,
 	UserGetDefaultOptionsHook,
 	UserGroupsChangedHook,
-	UserSaveSettingsHook
+	UserSaveSettingsHook,
+	SpecialMuteModifyFormFieldsHook
 {
 	/**
 	 * @var Config
@@ -197,8 +189,8 @@ class Hooks implements
 			$wgEnableUserEmail;
 
 		// allow extensions to define their own event
-		MWHooks::run( 'BeforeCreateEchoEvent',
-			[ &$wgEchoNotifications, &$wgEchoNotificationCategories, &$wgEchoNotificationIcons ] );
+		( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onBeforeCreateEchoEvent(
+			$wgEchoNotifications, $wgEchoNotificationCategories, $wgEchoNotificationIcons );
 
 		// Only allow mention status notifications when enabled
 		if ( !$wgEchoMentionStatusNotifications ) {
@@ -252,152 +244,11 @@ class Hooks implements
 	}
 
 	/**
-	 * @param DatabaseUpdater $updater
-	 */
-	public static function onLoadExtensionSchemaUpdates( $updater ) {
-		global $wgEchoCluster;
-		if ( $wgEchoCluster ) {
-			// DatabaseUpdater does not support other databases, so skip
-			return;
-		}
-
-		$db = $updater->getDB();
-		$dbType = $db->getType();
-
-		$dir = dirname( __DIR__ ) . '/sql';
-
-		$updater->addExtensionTable( 'echo_event', "$dir/$dbType/tables-generated.sql" );
-
-		// 1.33
-		// Can't use addPostDatabaseUpdateMaintenance() here because that would
-		// run the migration script after dropping the fields
-		$updater->addExtensionUpdate( [ 'runMaintenance', UpdateEchoSchemaForSuppression::class,
-			'extensions/Echo/maintenance/updateEchoSchemaForSuppression.php' ] );
-		$updater->dropExtensionField( 'echo_event', 'event_page_namespace',
-			"$dir/patch-drop-echo_event-event_page_namespace.sql" );
-		$updater->dropExtensionField( 'echo_event', 'event_page_title',
-			"$dir/patch-drop-echo_event-event_page_title.sql" );
-		if ( $dbType === 'mysql' ) {
-			$updater->dropExtensionField( 'echo_notification', 'notification_bundle_base',
-				"$dir/mysql/patch-drop-notification_bundle_base.sql" );
-			$updater->dropExtensionField( 'echo_notification', 'notification_bundle_display_hash',
-				"$dir/mysql/patch-drop-notification_bundle_display_hash.sql" );
-		}
-		$updater->dropExtensionIndex( 'echo_notification', 'echo_notification_user_hash_timestamp',
-			"$dir/patch-drop-user-hash-timestamp-index.sql" );
-
-		// 1.35
-		$updater->addExtensionTable( 'echo_push_provider', "$dir/echo_push_provider.sql" );
-		$updater->addExtensionTable( 'echo_push_subscription', "$dir/echo_push_subscription.sql" );
-
-		// 1.36
-		$updater->addExtensionTable( 'echo_push_topic', "$dir/echo_push_topic.sql" );
-
-		// 1.39
-		if ( $dbType === 'mysql' && $db->tableExists( 'echo_push_subscription', __METHOD__ ) ) {
-			// Splitted into single steps to support updates from some releases as well - T322143
-			$updater->renameExtensionIndex(
-				'echo_push_subscription',
-				'echo_push_subscription_user_id',
-				'eps_user',
-				"$dir/$dbType/patch-echo_push_subscription-rename-index-eps_user.sql",
-				false
-			);
-			$updater->dropExtensionIndex(
-				'echo_push_subscription',
-				'echo_push_subscription_token',
-				"$dir/$dbType/patch-echo_push_subscription-drop-index-eps_token.sql"
-			);
-			$updater->addExtensionIndex(
-				'echo_push_subscription',
-				'eps_token',
-				"$dir/$dbType/patch-echo_push_subscription-create-index-eps_token.sql"
-			);
-			$updater->addExtensionField(
-				'echo_push_subscription',
-				'eps_topic',
-				"$dir/$dbType/patch-echo_push_subscription-add-column-eps_topic.sql"
-			);
-
-			$res = $db->query( 'SHOW CREATE TABLE ' . $db->tableName( 'echo_push_subscription' ), __METHOD__ );
-			$row = $res ? $res->fetchRow() : false;
-			$statement = $row ? $row[1] : '';
-			if ( str_contains( $statement, $db->addIdentifierQuotes( 'echo_push_subscription_ibfk_1' ) ) ) {
-				$updater->modifyExtensionTable(
-					'echo_push_subscription',
-					"$dir/$dbType/patch-echo_push_subscription-drop-foreign-keys_1.sql"
-				);
-			}
-			if ( str_contains( $statement, $db->addIdentifierQuotes( 'echo_push_subscription_ibfk_2' ) ) ) {
-				$updater->modifyExtensionTable(
-					'echo_push_subscription',
-					"$dir/$dbType/patch-echo_push_subscription-drop-foreign-keys_2.sql"
-				);
-			}
-		}
-		if ( $dbType === 'sqlite' ) {
-			$updater->addExtensionIndex( 'echo_push_subscription', 'eps_user',
-				"$dir/$dbType/patch-cleanup-push_subscription-foreign-keys-indexes.sql" );
-		}
-
-		global $wgEchoSharedTrackingCluster, $wgEchoSharedTrackingDB;
-		// Following tables should only be created if both cluster and database are false.
-		// Otherwise they are not created in the place they are accesses, because
-		// DatabaseUpdater does not support other databases other than main wiki schema.
-		if ( $wgEchoSharedTrackingCluster === false && $wgEchoSharedTrackingDB === false ) {
-			$updater->addExtensionTable( 'echo_unread_wikis', "$dir/$dbType/tables-sharedtracking-generated.sql" );
-
-			// 1.34 (backported) - not for sqlite, the used data type supports the new length
-			if ( $updater->getDB()->getType() === 'mysql' ) {
-				$updater->modifyExtensionField( 'echo_unread_wikis', 'euw_wiki',
-					"$dir/mysql/patch-increase-varchar-echo_unread_wikis-euw_wiki.sql" );
-			}
-		}
-	}
-
-	/**
-	 * Handler for EchoGetBundleRule hook, which defines the bundle rule for each notification
-	 *
-	 * @param Event $event
-	 * @param string &$bundleString Determines how the notification should be bundled, for example,
-	 * talk page notification is bundled based on namespace and title, the bundle string would be
-	 * 'edit-user-talk-' + namespace + title, email digest/email bundling would use this hash as
-	 * a key to identify bundle-able event.  For web bundling, we bundle further based on user's
-	 * visit to the overlay, we would generate a display hash based on the hash of $bundleString
-	 */
-	public static function onEchoGetBundleRules( $event, &$bundleString ) {
-		switch ( $event->getType() ) {
-			case 'edit-user-talk':
-			case 'page-linked':
-				$bundleString = $event->getType();
-				if ( $event->getTitle() ) {
-					$bundleString .= '-' . $event->getTitle()->getNamespace()
-						. '-' . $event->getTitle()->getDBkey();
-				}
-				break;
-			case 'mention-success':
-			case 'mention-failure':
-				$bundleString = 'mention-status-' . $event->getExtraParam( 'revid' );
-				break;
-			case 'watchlist-change':
-			case 'minor-watchlist-change':
-				$bundleString = 'watchlist-change';
-				if ( $event->getTitle() ) {
-					$bundleString .= '-' . $event->getTitle()->getNamespace()
-						. '-' . $event->getTitle()->getDBkey();
-				}
-				break;
-		}
-	}
-
-	/**
 	 * Handler for GetPreferences hook.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/GetPreferences
 	 *
 	 * @param User $user User to get preferences for
 	 * @param array &$preferences Preferences array
-	 *
-	 * @throws MWException
 	 */
 	public function onGetPreferences( $user, &$preferences ) {
 		global $wgEchoEnableEmailBatch,
@@ -406,18 +257,18 @@ class Hooks implements
 			$wgEchoCrossWikiNotifications, $wgEchoPerUserBlacklist,
 			$wgEchoWatchlistNotifications;
 
-		$attributeManager = EchoServices::getInstance()->getAttributeManager();
+		$attributeManager = Services::getInstance()->getAttributeManager();
 
 		// Show email frequency options
 		$freqOptions = [
-			'echo-pref-email-frequency-never' => EchoEmailFrequency::NEVER,
-			'echo-pref-email-frequency-immediately' => EchoEmailFrequency::IMMEDIATELY,
+			'echo-pref-email-frequency-never' => EmailFrequency::NEVER,
+			'echo-pref-email-frequency-immediately' => EmailFrequency::IMMEDIATELY,
 		];
 		// Only show digest options if email batch is enabled
 		if ( $wgEchoEnableEmailBatch ) {
 			$freqOptions += [
-				'echo-pref-email-frequency-daily' => EchoEmailFrequency::DAILY_DIGEST,
-				'echo-pref-email-frequency-weekly' => EchoEmailFrequency::WEEKLY_DIGEST,
+				'echo-pref-email-frequency-daily' => EmailFrequency::DAILY_DIGEST,
+				'echo-pref-email-frequency-weekly' => EmailFrequency::WEEKLY_DIGEST,
 			];
 		}
 		$preferences['echo-email-frequency'] = [
@@ -466,11 +317,12 @@ class Hooks implements
 			// Email format
 			$preferences['echo-email-format'] = [
 				'type' => 'select',
+				'default' => EmailFormat::HTML,
 				'label-message' => 'echo-pref-email-format',
 				'section' => 'echo/emailsettings',
 				'options-messages' => [
-					'echo-pref-email-format-html' => EchoEmailFormat::HTML,
-					'echo-pref-email-format-plain-text' => EchoEmailFormat::PLAIN_TEXT,
+					'echo-pref-email-format-html' => EmailFormat::HTML,
+					'echo-pref-email-format-plain-text' => EmailFormat::PLAIN_TEXT,
 				]
 			];
 		}
@@ -535,7 +387,7 @@ class Hooks implements
 
 		$invalid = array_intersect( $forceOptionsOff, $forceOptionsOn );
 		if ( $invalid ) {
-			throw new MWException( sprintf(
+			throw new LogicException( sprintf(
 				'The following notifications are both forced and removed: %s',
 				implode( ', ', $invalid )
 			) );
@@ -656,7 +508,7 @@ class Hooks implements
 
 		// Try to do this after the HTTP response
 		DeferredUpdates::addCallableUpdate( static function () use ( $revisionRecord, $isRevert ) {
-			EchoDiscussionParser::generateEventsForRevision( $revisionRecord, $isRevert );
+			DiscussionParser::generateEventsForRevision( $revisionRecord, $isRevert );
 		} );
 
 		// If the user is not an IP and this is not a null edit,
@@ -747,45 +599,6 @@ class Hooks implements
 	}
 
 	/**
-	 * Handler for EchoAbortEmailNotification hook
-	 * @param User $user
-	 * @param Event $event
-	 * @return bool true - send email, false - do not send email
-	 */
-	public static function onEchoAbortEmailNotification( $user, $event ) {
-		global $wgEchoWatchlistEmailOncePerPage;
-		$type = $event->getType();
-		if ( $type === 'edit-user-talk' ) {
-			$extra = $event->getExtra();
-			if ( !empty( $extra['minoredit'] ) ) {
-				global $wgEnotifMinorEdits;
-				$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
-				if ( !$wgEnotifMinorEdits || !$userOptionsLookup->getOption( $user, 'enotifminoredits' ) ) {
-					// Do not send talk page notification email
-					return false;
-				}
-			}
-		// Mimic core code of only sending watchlist notification emails once per page
-		} elseif ( $type === "watchlist-change" || $type === "minor-watchlist-change" ) {
-			if ( !$wgEchoWatchlistEmailOncePerPage ) {
-				// Don't care about rate limiting
-				return true;
-			}
-			$store = MediaWikiServices::getInstance()->getWatchedItemStore();
-			$ts = $store->getWatchedItem( $user, $event->getTitle() )->getNotificationTimestamp();
-			// if (ts != null) is not sufficient because, if $wgEchoUseJobQueue is set,
-			// wl_notificationtimestamp will have already been set for the new edit
-			// by the time this code runs.
-			if ( $ts !== null && $ts !== $event->getExtraParam( "timestamp" ) ) {
-				// User has already seen an email for this page before
-				return false;
-			}
-		}
-		// Proceed to send notification email
-		return true;
-	}
-
-	/**
 	 * Get overrides for new users.  This allows changes that only apply going forward,
 	 * without affecting existing users.
 	 *
@@ -820,7 +633,7 @@ class Hooks implements
 			] );
 		}
 
-		$seenTime = EchoSeenTime::newFromUser( $user );
+		$seenTime = SeenTime::newFromUser( $user );
 
 		// Set seen time to UNIX epoch, so initially all notifications are unseen.
 		$seenTime->setTime( wfTimestamp( TS_MW, 1 ), 'all' );
@@ -945,6 +758,11 @@ class Hooks implements
 				}
 
 				$linkFromPageId = $linksUpdate->getTitle()->getArticleID();
+				// T318523: Don't send page-linked notifications for pages created by bot users.
+				$articleAuthor = EchoUserLocator::getArticleAuthorByArticleId( $title->getArticleID() );
+				if ( $articleAuthor && $articleAuthor->isBot() ) {
+					continue;
+				}
 				Event::create( [
 					'type' => 'page-linked',
 					'title' => $title,
@@ -996,8 +814,8 @@ class Hooks implements
 	private static function processMarkAsRead( User $user, WebRequest $request, Title $title ) {
 		global $wgEchoCrossWikiNotifications;
 		$subtractions = [
-			EchoAttributeManager::ALERT => 0,
-			EchoAttributeManager::MESSAGE => 0
+			AttributeManager::ALERT => 0,
+			AttributeManager::MESSAGE => 0
 		];
 
 		// Attempt to mark a notification as read when visiting a page
@@ -1042,7 +860,7 @@ class Hooks implements
 			} else {
 				$markAsReadIds = array_map( 'intval', $markAsReadIds );
 				// Look up the notifications on the foreign wiki
-				$notifUser = MWEchoNotifUser::newFromUser( $user );
+				$notifUser = NotifUser::newFromUser( $user );
 				$notifInfo = $notifUser->getForeignNotificationInfo( $markAsReadIds, $markAsReadWiki, $request );
 				foreach ( $notifInfo as $id => $info ) {
 					$subtractions[$info['section']]++;
@@ -1051,7 +869,7 @@ class Hooks implements
 				// Schedule a deferred update to mark these notifications as read on the foreign wiki
 				DeferredUpdates::addCallableUpdate(
 					static function () use ( $user, $markAsReadIds, $markAsReadWiki, $request ) {
-						$notifUser = MWEchoNotifUser::newFromUser( $user );
+						$notifUser = NotifUser::newFromUser( $user );
 						$notifUser->markReadForeign( $markAsReadIds, $markAsReadWiki, $request );
 					}
 				);
@@ -1061,7 +879,7 @@ class Hooks implements
 		// Schedule a deferred update to mark local target_page and ?markasread= notifications as read
 		if ( $eventIds ) {
 			DeferredUpdates::addCallableUpdate( static function () use ( $user, $eventIds ) {
-				$notifUser = MWEchoNotifUser::newFromUser( $user );
+				$notifUser = NotifUser::newFromUser( $user );
 				$notifUser->markRead( $eventIds );
 			} );
 		}
@@ -1108,9 +926,9 @@ class Hooks implements
 		$subtractions = self::processMarkAsRead( $user, $out->getRequest(), $title );
 
 		// Add a "My notifications" item to personal URLs
-		$notifUser = MWEchoNotifUser::newFromUser( $user );
-		$msgCount = $notifUser->getMessageCount() - $subtractions[EchoAttributeManager::MESSAGE];
-		$alertCount = $notifUser->getAlertCount() - $subtractions[EchoAttributeManager::ALERT];
+		$notifUser = NotifUser::newFromUser( $user );
+		$msgCount = $notifUser->getMessageCount() - $subtractions[AttributeManager::MESSAGE];
+		$alertCount = $notifUser->getAlertCount() - $subtractions[AttributeManager::ALERT];
 		// But make sure we never show a negative number (T130853)
 		$msgCount = max( 0, $msgCount );
 		$alertCount = max( 0, $alertCount );
@@ -1118,10 +936,10 @@ class Hooks implements
 		$msgNotificationTimestamp = $notifUser->getLastUnreadMessageTime();
 		$alertNotificationTimestamp = $notifUser->getLastUnreadAlertTime();
 
-		$seenTime = EchoSeenTime::newFromUser( $user );
+		$seenTime = SeenTime::newFromUser( $user );
 		if ( $title->isSpecial( 'Notifications' ) ) {
 			// If this is the Special:Notifications page, seenTime to now
-			$seenTime->setTime( wfTimestamp( TS_MW ), EchoAttributeManager::ALL );
+			$seenTime->setTime( wfTimestamp( TS_MW ), AttributeManager::ALL );
 		}
 		$seenAlertTime = $seenTime->getTime( 'alert', TS_ISO_8601 );
 		$seenMsgTime = $seenTime->getTime( 'message', TS_ISO_8601 );
@@ -1143,7 +961,7 @@ class Hooks implements
 		$out::setupOOUI( $skinName, $out->getLanguage()->getDir() );
 		$bellIconClass = $isMinervaSkin ? 'oo-ui-icon-bellOutline' : 'oo-ui-icon-bell';
 
-		$msgLinkClasses = [ "mw-echo-notifications-badge", "mw-echo-notification-badge-nojs","oo-ui-icon-tray" ];
+		$msgLinkClasses = [ "mw-echo-notifications-badge", "mw-echo-notification-badge-nojs", "oo-ui-icon-tray" ];
 		$alertLinkClasses = [ "mw-echo-notifications-badge", "mw-echo-notification-badge-nojs", $bellIconClass ];
 
 		$hasUnseen = false;
@@ -1162,7 +980,7 @@ class Hooks implements
 			$msgLinkClasses[] = 'mw-echo-notifications-badge-all-read';
 		}
 
-		if ( $msgCount > MWEchoNotifUser::MAX_BADGE_COUNT ) {
+		if ( $msgCount > NotifUser::MAX_BADGE_COUNT ) {
 			$msgLinkClasses[] = 'mw-echo-notifications-badge-long-label';
 		}
 
@@ -1181,7 +999,7 @@ class Hooks implements
 			$alertLinkClasses[] = 'mw-echo-notifications-badge-all-read';
 		}
 
-		if ( $alertCount > MWEchoNotifUser::MAX_BADGE_COUNT ) {
+		if ( $alertCount > NotifUser::MAX_BADGE_COUNT ) {
 			$alertLinkClasses[] = 'mw-echo-notifications-badge-long-label';
 		}
 
@@ -1189,8 +1007,8 @@ class Hooks implements
 		if (
 			$mytalk &&
 			self::shouldDisplayTalkAlert( $user, $title ) &&
-			MediaWikiServices::getInstance()
-				->getHookContainer()->run( 'BeforeDisplayOrangeAlert', [ $user, $title ] )
+			( new HookRunner( MediaWikiServices::getInstance()
+				->getHookContainer() ) )->onBeforeDisplayOrangeAlert( $user, $title )
 		) {
 			// Create new talk alert inheriting from the talk link data.
 			$links['notifications']['talk-alert'] = array_merge(
@@ -1294,12 +1112,19 @@ class Hooks implements
 			// Let echo handle watchlist notifications entirely
 			return false;
 		}
-		// If a user is watching his/her own talk page, do not send talk page watchlist
-		// email notification if the user is receiving Echo talk page notification
-		if ( $title->isTalkPage() && $targetUser->getTalkPage()->equals( $title ) ) {
-			$attributeManager = EchoServices::getInstance()->getAttributeManager();
+		$eventName = false;
+		// The edit-user-talk and edit-user-page events effectively duplicate watchlist notifications.
+		// If we are sending Echo notification emails, suppress the watchlist notifications.
+		if ( $title->inNamespace( NS_USER_TALK ) && $targetUser->getTalkPage()->equals( $title ) ) {
+			$eventName = 'edit-user-talk';
+		} elseif ( $title->inNamespace( NS_USER ) && $targetUser->getUserPage()->equals( $title ) ) {
+			$eventName = 'edit-user-page';
+		}
+
+		if ( $eventName !== false ) {
+			$attributeManager = Services::getInstance()->getAttributeManager();
 			$events = $attributeManager->getUserEnabledEvents( $targetUser, 'email' );
-			if ( in_array( 'edit-user-talk', $events ) ) {
+			if ( in_array( $eventName, $events ) ) {
 				// Do not send watchlist email notification, the user will receive an Echo notification
 				return false;
 			}
@@ -1316,20 +1141,20 @@ class Hooks implements
 	public function onOutputPageCheckLastModified( &$modifiedTimes, $out ) {
 		$req = $out->getRequest();
 		if ( $req->getRawVal( 'action' ) === 'raw' || $req->getRawVal( 'action' ) === 'render' ) {
-			// Optimisation: Avoid expensive EchoSeenTime compute on non-skin responses (T279213)
+			// Optimisation: Avoid expensive SeenTime compute on non-skin responses (T279213)
 			return;
 		}
 
 		$user = $out->getUser();
 		if ( $user->isRegistered() ) {
-			$notifUser = MWEchoNotifUser::newFromUser( $user );
+			$notifUser = NotifUser::newFromUser( $user );
 			$lastUpdate = $notifUser->getGlobalUpdateTime();
 			if ( $lastUpdate !== false ) {
 				$modifiedTimes['notifications-global'] = $lastUpdate;
 			}
 
-			$modifiedTimes['notifications-seen-alert'] = EchoSeenTime::newFromUser( $user )->getTime( 'alert' );
-			$modifiedTimes['notifications-seen-message'] = EchoSeenTime::newFromUser( $user )->getTime( 'message' );
+			$modifiedTimes['notifications-seen-alert'] = SeenTime::newFromUser( $user )->getTime( 'alert' );
+			$modifiedTimes['notifications-seen-message'] = SeenTime::newFromUser( $user )->getTime( 'message' );
 		}
 	}
 
@@ -1355,7 +1180,8 @@ class Hooks implements
 		// notifications for talk page messages, disable the new messages alert.
 		if ( $user->isRegistered()
 			&& isset( $wgEchoNotifications['edit-user-talk'] )
-			&& MWHooks::run( 'EchoCanAbortNewMessagesAlert' )
+			&& ( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )
+				->onEchoCanAbortNewMessagesAlert()
 		) {
 			// hide new messages alert
 			return false;
@@ -1422,7 +1248,7 @@ class Hooks implements
 					// update runs (T318081)
 					return;
 				}
-				MWEchoNotifUser::newFromUser( $user )->resetNotificationCount();
+				NotifUser::newFromUser( $user )->resetNotificationCount();
 			} );
 		}
 	}
@@ -1506,7 +1332,7 @@ class Hooks implements
 	public function onUserClearNewTalkNotification( $user, $oldid ) {
 		if ( $user->isRegistered() ) {
 			DeferredUpdates::addCallableUpdate( static function () use ( $user ) {
-				MWEchoNotifUser::newFromUser( $user )->clearUserTalkNotifications();
+				NotifUser::newFromUser( $user )->clearUserTalkNotifications();
 			} );
 		}
 	}
@@ -1549,107 +1375,6 @@ class Hooks implements
 	}
 
 	/**
-	 * For integration with the UserMerge extension.
-	 *
-	 * @param array &$updateFields
-	 */
-	public static function onUserMergeAccountFields( &$updateFields ) {
-		// array( tableName, idField, textField )
-		$dbw = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_PRIMARY );
-		$updateFields[] = [ 'echo_event', 'event_agent_id', 'db' => $dbw ];
-		$updateFields[] = [ 'echo_notification', 'notification_user', 'db' => $dbw, 'options' => [ 'IGNORE' ] ];
-		$updateFields[] = [ 'echo_email_batch', 'eeb_user_id', 'db' => $dbw, 'options' => [ 'IGNORE' ] ];
-	}
-
-	public static function onMergeAccountFromTo( User &$oldUser, User &$newUser ) {
-		$method = __METHOD__;
-		DeferredUpdates::addCallableUpdate( static function () use ( $oldUser, $newUser, $method ) {
-			if ( $newUser->isRegistered() ) {
-				// Select notifications that are now sent to the same user
-				$dbw = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_PRIMARY );
-				$attributeManager = EchoServices::getInstance()->getAttributeManager();
-				$selfIds = $dbw->selectFieldValues(
-					[ 'echo_notification', 'echo_event' ],
-					'event_id',
-					[
-						'notification_user' => $newUser->getId(),
-						'notification_event = event_id',
-						'notification_user = event_agent_id',
-						'event_type NOT IN (' . $dbw->makeList( $attributeManager->getNotifyAgentEvents() ) . ')'
-					],
-					$method
-				) ?: [];
-
-				// Select newer welcome notification(s)
-				$welcomeIds = $dbw->selectFieldValues(
-					[ 'echo_notification', 'echo_event' ],
-					'event_id',
-					[
-						'notification_user' => $newUser->getId(),
-						'notification_event = event_id',
-						'event_type' => 'welcome',
-					],
-					$method,
-					[
-						'ORDER BY' => 'notification_timestamp ASC',
-						'OFFSET' => 1,
-					]
-				) ?: [];
-
-				// Select newer milestone notifications (per milestone level)
-				$counts = [];
-				$thankYouIds = [];
-				$thankYouRows = $dbw->select(
-					[ 'echo_notification', 'echo_event' ],
-					Event::selectFields(),
-					[
-						'notification_user' => $newUser->getId(),
-						'notification_event = event_id',
-						'event_type' => 'thank-you-edit',
-					],
-					$method,
-					[ 'ORDER BY' => 'notification_timestamp ASC' ]
-				) ?: [];
-				foreach ( $thankYouRows as $row ) {
-					$event = Event::newFromRow( $row );
-					$editCount = $event ? $event->getExtraParam( 'editCount' ) : null;
-					if ( $editCount ) {
-						if ( isset( $counts[$editCount] ) ) {
-							$thankYouIds[] = $row->event_id;
-						} else {
-							$counts[$editCount] = true;
-						}
-					}
-				}
-
-				// Delete notifications
-				$ids = array_merge( $selfIds, $welcomeIds, $thankYouIds );
-				if ( $ids !== [] ) {
-					$dbw->delete(
-						'echo_notification',
-						[
-							'notification_user' => $newUser->getId(),
-							'notification_event' => $ids
-						],
-						$method
-					);
-				}
-			}
-
-			MWEchoNotifUser::newFromUser( $oldUser )->resetNotificationCount();
-			if ( $newUser->isRegistered() ) {
-				MWEchoNotifUser::newFromUser( $newUser )->resetNotificationCount();
-			}
-		} );
-	}
-
-	public static function onUserMergeAccountDeleteTables( &$tables ) {
-		$dbw = MWEchoDbFactory::newFromDefault()->getEchoDb( DB_PRIMARY );
-		$tables['echo_notification'] = [ 'notification_user', 'db' => $dbw ];
-		$tables['echo_email_batch'] = [ 'eeb_user_id', 'db' => $dbw ];
-	}
-
-	/**
 	 * Sets custom login message for redirect from notification page
 	 *
 	 * @param array &$messages
@@ -1660,17 +1385,8 @@ class Hooks implements
 
 	public static function getConfigVars( RL\Context $context, Config $config ) {
 		return [
-			'EchoMaxNotificationCount' => MWEchoNotifUser::MAX_BADGE_COUNT,
+			'EchoMaxNotificationCount' => NotifUser::MAX_BADGE_COUNT,
 			'EchoPollForUpdates' => $config->get( 'EchoPollForUpdates' )
-		];
-	}
-
-	public static function getLoggerConfigVars( RL\Context $context, Config $config ) {
-		$schemas = $config->get( 'EchoEventLoggingSchemas' );
-		return [
-			'EchoInteractionLogging' => $schemas['EchoInteraction']['enabled'] &&
-				ExtensionRegistry::getInstance()->isLoaded( 'EventLogging' ),
-			'EchoEventLoggingVersion' => $config->get( 'EchoEventLoggingVersion' )
 		];
 	}
 
@@ -1723,7 +1439,7 @@ class Hooks implements
 	 * @param User $user
 	 * @param array &$fields
 	 */
-	public static function onSpecialMuteModifyFormFields( $target, $user, &$fields ) {
+	public function onSpecialMuteModifyFormFields( $target, $user, &$fields ) {
 		$services = MediaWikiServices::getInstance();
 		$echoPerUserBlacklist = $services->getMainConfig()->get( 'EchoPerUserBlacklist' );
 		if ( $echoPerUserBlacklist ) {
@@ -1745,7 +1461,6 @@ class Hooks implements
 	/**
 	 * @param RecentChange $change
 	 * @return bool|void
-	 * @throws MWException
 	 */
 	public function onRecentChange_save( $change ) {
 		if ( !$this->config->get( 'EchoWatchlistNotifications' ) ) {

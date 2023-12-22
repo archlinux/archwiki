@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Alshamiri1",
 			"FShbib",
 			"Hhaboh162002",
 			"Meno25",
@@ -9,13 +10,14 @@
 			"Shbib Al-Subaie",
 			"ديفيد",
 			"علاء",
-			"محمد أحمد عبد الفتاح",
-			"Alshamiri1"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"linterrors": "أخطاء لنت",
 	"linter-category-bogus-image-options": "خيارات ملف زائفة",
 	"linter-category-bogus-image-options-desc": "تحتوي هذه الصفحات على ملفات بخيارات زائفة.",
+	"linter-category-large-tables": "جداول كبيرة يصعب عرضها على الهاتف المحمول",
+	"linter-category-large-tables-desc": "تحتوي هذه الصفحات على جداول يصعب عرضها على الهاتف المحمول",
 	"linter-category-deletable-table-tag": "علامة الجدول التي ينبغي حذفها",
 	"linter-category-deletable-table-tag-desc": "تحتوي هذه الصفحات على علامات جدول ينبغي حذفها.",
 	"linter-category-fostered": "محتوى معزز",
@@ -28,6 +30,8 @@
 	"linter-category-misnested-tag-desc": "تحتوي هذه الصفحات على علامات غير متداخلة يمكن إصلاحها.",
 	"linter-category-missing-end-tag": "علامة انتهاء مفقودة",
 	"linter-category-missing-end-tag-desc": "تحتوي هذه الصفحات على علامات انتهاء مفقودة.",
+	"linter-category-missing-end-tag-in-heading": "وسم النهاية مفقود في العنوان",
+	"linter-category-missing-end-tag-in-heading-desc": "تفتقد هذه الصفحات إلى وسوم نهاية في العناوين.",
 	"linter-category-multi-colon-escape": "هروب متعدد النقاط الرأسية",
 	"linter-category-multi-colon-escape-desc": "تحتوي هذه الصفحات على وصلات مسبوقة بنقاط رأسية متعددة.",
 	"linter-category-multiline-html-table-in-list": "جدول متعدد في القائمة",
@@ -74,6 +78,7 @@
 	"linter-page-history": "تاريخ",
 	"linter-page-viewsource": "عرض المصدر",
 	"linter-pager-bogus-image-options-details": "خيار ملف زائف",
+	"linter-pager-large-tables-details": "جدول كبير لعرض الجوال",
 	"linter-pager-category-header": "التصنيف",
 	"linter-pager-deletable-table-tag-details": "علامة الجدول التي ينبغي حذفها",
 	"linter-pager-details-header": "معلومات إضافية",
@@ -81,6 +86,7 @@
 	"linter-pager-misc-tidy-replacement-issues-details": "أخطاء ترميز متنوعة تؤثر على استبدال تيدي",
 	"linter-pager-misnested-tag-details": "العلامة غير المتداخلة التي ينبغي أن تكون متداخلة بشكل صحيح",
 	"linter-pager-missing-end-tag-details": "علامة انتهاء مفقودة",
+	"linter-pager-missing-end-tag-in-heading-details": "وسم النهاية مفقود في العنوان",
 	"linter-pager-multi-colon-escape-details": "الهروب متعدد النقاط الرأسية",
 	"linter-pager-multiline-html-table-in-list-details": "جدول HTML5 متعدد الأسطر داخل قائمة، تم تقديمه بشكل مختلف في HTML5 وتيدي",
 	"linter-pager-multiple-unclosed-formatting-tags-details": "علامات تنسيق متعددة غير مغلقة في الصفحة",

@@ -28,6 +28,10 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\User\User;
+use Wikimedia\Diff\Diff;
+use Wikimedia\Diff\UnifiedDiffFormatter;
+
 require_once __DIR__ . '/dumpIterator.php';
 
 /**

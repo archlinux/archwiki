@@ -1,10 +1,11 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\MovePageFactory;
 use MediaWiki\RenameUser\RenameuserSQL;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\TempUser\Pattern;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 
 require_once __DIR__ . '/Maintenance.php';
@@ -55,7 +56,7 @@ class RenameUsersMatchingPattern extends Maintenance {
 	}
 
 	private function initServices() {
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		if ( $services->getCentralIdLookupFactory()->getNonLocalLookup() ) {
 			$this->fatalError( "This script cannot be run when CentralAuth is enabled." );
 		}
@@ -113,6 +114,24 @@ class RenameUsersMatchingPattern extends Maintenance {
 					continue;
 				}
 				$newName = $toPattern->generate( $variablePart );
+
+				// Canonicalize
+				$newTitle = $this->titleFactory->makeTitleSafe( NS_USER, $newName );
+				$newUser = $this->userFactory->newFromName( $newName );
+				if ( !$newTitle || !$newUser ) {
+					$this->output( "Cannot rename \"$oldName\" " .
+						"because \"$newName\" is not a valid title\n" );
+					continue;
+				}
+				$newName = $newTitle->getText();
+
+				// Check destination existence
+				if ( $newUser->isRegistered() ) {
+					$this->output( "Cannot rename \"$oldName\" " .
+						"because \"$newName\" already exists\n" );
+					continue;
+				}
+
 				$numRenamed += $this->renameUser( $oldName, $newName ) ? 1 : 0;
 				$this->waitForReplication();
 			}

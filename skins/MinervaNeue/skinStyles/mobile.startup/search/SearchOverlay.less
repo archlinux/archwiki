@@ -24,12 +24,12 @@
 
 @media all and ( min-width: @width-breakpoint-tablet ) {
 	.overlay.search-overlay {
-		// TODO: update @iconSize and @iconGutterWidth to reflect new icon button specs
-		@updatedIconSize: 1.25em; // 20px icon width
-		@updatedIconGutterWidth: 0.75em; // 12px padding width
-		@iconBorder: 0.125em; // 1px border width * 2
+		// TODO: update @size-icon and @width-icon-gutter to reflect new icon button specs
+		@size-icon-updated: 1.25em; // 20px icon width
+		@width-icon-gutter-updated: 0.75em; // 12px padding width
+		@border-width-icon: 0.125em; // 1px border width * 2
 		// Calculate padding based off icon and branding box widths, accounting for `box-sizing: border-box` on the icon
-		@searchPadding: (@updatedIconSize + @updatedIconGutterWidth + @iconBorder) + @brandingBoxWidth;
+		@searchPadding: (@size-icon-updated + @width-icon-gutter-updated + @border-width-icon) + @brandingBoxWidth;
 
 		.search-box,
 		.search-content,

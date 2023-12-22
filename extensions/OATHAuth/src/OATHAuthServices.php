@@ -54,4 +54,11 @@ class OATHAuthServices {
 	public function getDatabase(): OATHAuthDatabase {
 		return $this->services->getService( 'OATHAuthDatabase' );
 	}
+
+	/**
+	 * @return OATHAuthModuleRegistry
+	 */
+	public function getModuleRegistry(): OATHAuthModuleRegistry {
+		return $this->services->getService( 'OATHAuthModuleRegistry' );
+	}
 }

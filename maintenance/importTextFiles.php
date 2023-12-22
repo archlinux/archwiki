@@ -21,9 +21,9 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -102,7 +102,7 @@ class ImportTextFiles extends Maintenance {
 		$failCount = 0;
 		$skipCount = 0;
 
-		$revLookup = MediaWikiServices::getInstance()->getRevisionLookup();
+		$revLookup = $this->getServiceContainer()->getRevisionLookup();
 		foreach ( $files as $file => $text ) {
 			$pageName = $prefix . pathinfo( $file, PATHINFO_FILENAME );
 			$timestamp = $useTimestamp ? wfTimestamp( TS_UNIX, filemtime( $file ) ) : wfTimestampNow();

@@ -5,7 +5,6 @@
 			"WikiPhoenix"
 		]
 	},
-	"apihelp-templatedata-description": "Hämta data som lagras av TemplateData-tillägget.",
 	"apihelp-templatedata-summary": "Hämta data som lagras av TemplateData-tillägget.",
 	"apihelp-templatedata-example-1": "Returnera malldata för [[Template:Foobar]], med resultat om mallen inte finns eller finns men saknar malldata",
 	"apihelp-templatedata-example-2": "Returnera malldata för [[Template:Phabricator]], men utan resultat om mallen inte finns eller finns men saknar malldata",

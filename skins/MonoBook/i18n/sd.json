@@ -18,6 +18,5 @@
 	"monobook-notifications-link": "($1) اطلاع",
 	"monobook-notifications-link-none": "اطلاع",
 	"monobook-view-history": "سوانح",
-	"monobook-action-undelete": "{{PLURAL:$1|ھڪ سنوار|$1 سنوارون}} اڻڊاھيو",
-	"monobook-action-addsection": "+"
+	"monobook-action-undelete": "{{PLURAL:$1|ھڪ سنوار|$1 سنوارون}} اڻڊاھيو"
 }

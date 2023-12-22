@@ -3,6 +3,7 @@
 */
 
 @import 'variables.less';
+@import 'mediawiki.mixins.less';
 
 #column-content {
 	padding-top: 6em;
@@ -17,7 +18,15 @@
 ** Navigation
 */
 .menu-toggle {
-	.menu-button();
+	display: block;
+	width: @block-size;
+	height: @block-size;
+	background: @content-background;
+	border: solid 1px @orange-border;
+	box-sizing: border-box;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	z-index: 4;
 }
 
 #sidebar-toggle {
@@ -52,7 +61,7 @@
 	box-sizing: border-box;
 
 	h3 {
-		.hidden();
+		.mixin-screen-reader-text();
 	}
 }
 
@@ -141,7 +150,7 @@
 				font-weight: bold;
 
 				a {
-					color: @text-color;
+					color: @color-base;
 				}
 			}
 		}
@@ -179,16 +188,18 @@
 		margin-right: 0.5em;
 		height: 2.5em;
 
+		// The mobile icon cactions tabs
 		a {
-			.icon-tab();
 			display: block;
 			position: relative;
+			width: 1em;
 			padding: 0.5em 1em 0.75em;
 			background-color: #fbfbfb;
 			background-image: url( images/icon-page.svg );
 			background-position: 50% 50%;
 			background-repeat: no-repeat;
 			text-transform: lowercase;
+			text-indent: -99999px;
 		}
 
 		&#ca-talk-mobile a {

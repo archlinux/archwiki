@@ -15,13 +15,23 @@
 // Account for the use of CSS Grid in Vector 2022
 // for the 2017 Wikitext editor preview.
 // The grid is defined with named grid areas on .mw-body.
-/* stylelint-disable-next-line selector-class-pattern */
-.ve-ui-mwSaveDialog-preview .mw-body .firstHeading {
-	grid-area: titlebar;
-}
+.ve-ui-mwSaveDialog-preview {
+	.mw-body {
+		/* stylelint-disable-next-line selector-class-pattern */
+		.firstHeading {
+			grid-area: titlebar;
+		}
 
-.ve-ui-mwSaveDialog-preview .mw-body .mw-body-content {
-	grid-area: content;
+		.mw-body-content {
+			grid-area: content;
+		}
+	}
+
+	.mw-content-container {
+		// Content container has a max-width of 60em * 16px = 960px
+		max-width: 960px;
+		margin: 0 auto;
+	}
 }
 
 .ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface > .ve-ce-surface .ve-ce-attachedRootNode {

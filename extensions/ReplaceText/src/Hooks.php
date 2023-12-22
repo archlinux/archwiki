@@ -21,15 +21,12 @@
  */
 namespace MediaWiki\Extension\ReplaceText;
 
-use ALItem;
-use ALRow;
-use ALTree;
 use Config;
 use MediaWiki\Hook\SpecialMovepageAfterMoveHook;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Title\Title;
 use MediaWiki\User\Hook\UserGetReservedNamesHook;
 use MovePageForm;
-use Title;
 
 class Hooks implements
 	SpecialMovepageAfterMoveHook,
@@ -55,30 +52,6 @@ class Hooks implements
 	}
 
 	/**
-	 * Implements AdminLinks hook from Extension:Admin_Links.
-	 *
-	 * @param ALTree &$adminLinksTree
-	 * @return bool
-	 */
-	public static function addToAdminLinks( ALTree &$adminLinksTree ) {
-		$generalSection = $adminLinksTree->getSection( wfMessage( 'adminlinks_general' )->text() );
-
-		if ( !$generalSection ) {
-			return true;
-		}
-		$extensionsRow = $generalSection->getRow( 'extensions' );
-
-		if ( $extensionsRow === null ) {
-			$extensionsRow = new ALRow( 'extensions' );
-			$generalSection->addRow( $extensionsRow );
-		}
-
-		$extensionsRow->addItem( ALItem::newFromSpecialPage( 'ReplaceText' ) );
-
-		return true;
-	}
-
-	/**
 	 * Implements SpecialMovepageAfterMove hook.
 	 *
 	 * Adds a link to the Special:ReplaceText page at the end of a successful
@@ -96,7 +69,7 @@ class Hooks implements
 		$page = $this->specialPageFactory->getPage( 'ReplaceText' );
 		$pageLink = $form->getLinkRenderer()->makeLink( $page->getPageTitle() );
 		$out->addHTML( $form->msg( 'replacetext_reminder' )
-			->rawParams( $pageLink )->inContentLanguage()->parseAsBlock() );
+			->rawParams( $pageLink )->parseAsBlock() );
 	}
 
 	/**

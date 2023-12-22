@@ -6,10 +6,6 @@
 		.editor-textarea();
 	}
 
-	.header-cancel {
-		padding-left: 4px;
-	}
-
 	.license {
 		.secondary-text();
 	}
@@ -27,8 +23,7 @@
 		height: @siteHeaderHeight;
 	}
 
-	.mw-ui-anchor,
-	.mw-ui-button:not( .mw-ui-icon ) {
+	.mw-ui-anchor {
 		height: @overlayHeaderHeight;
 
 		.header-chrome & {
@@ -36,15 +31,19 @@
 		}
 	}
 
+	.cdx-button {
+		height: @overlayHeaderHeight;
+	}
+
 	.overlay-title {
 		padding: @headerVerticalPadding 0;
 
 		&:last-child {
 			// Reserve space to the right in case the search form in the header or
-			// overlay title in the overlay header is the last element. Use @iconGutterWidth
+			// overlay title in the overlay header is the last element. Use @width-icon-gutter
 			// because there is a hamburger or close/back icon next to this element and
 			// the space between them is exactly that.
-			padding-right: @iconGutterWidth;
+			padding-right: @width-icon-gutter;
 		}
 	}
 }
@@ -61,6 +60,6 @@
 	.overlay-header {
 		// Make sure the close button and secondary button icon images are aligned
 		// with the content.
-		max-width: @contentMaxWidthTablet + ( 2 * @iconGutterWidth );
+		max-width: @contentMaxWidthTablet + ( 2 * @width-icon-gutter );
 	}
 }

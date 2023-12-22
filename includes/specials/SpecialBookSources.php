@@ -21,10 +21,16 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
 use MediaWiki\Html\Html;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
-use MediaWiki\Title\Title;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\TitleFactory;
+use TextContent;
+use UnexpectedValueException;
 
 /**
  * Special page outputs information on sourcing a book with a particular ISBN
@@ -35,17 +41,20 @@ use MediaWiki\Title\Title;
  */
 class SpecialBookSources extends SpecialPage {
 
-	/** @var RevisionLookup */
-	private $revisionLookup;
+	private RevisionLookup $revisionLookup;
+	private TitleFactory $titleFactory;
 
 	/**
 	 * @param RevisionLookup $revisionLookup
+	 * @param TitleFactory $titleFactory
 	 */
 	public function __construct(
-		RevisionLookup $revisionLookup
+		RevisionLookup $revisionLookup,
+		TitleFactory $titleFactory
 	) {
 		parent::__construct( 'Booksources' );
 		$this->revisionLookup = $revisionLookup;
+		$this->titleFactory = $titleFactory;
 	}
 
 	/**
@@ -172,7 +181,8 @@ class SpecialBookSources extends SpecialPage {
 
 		# Check for a local page such as Project:Book_sources and use that if available
 		$page = $this->msg( 'booksources' )->inContentLanguage()->text();
-		$title = Title::makeTitleSafe( NS_PROJECT, $page ); # Show list in content language
+		// Show list in content language
+		$title = $this->titleFactory->makeTitleSafe( NS_PROJECT, $page );
 		if ( is_object( $title ) && $title->exists() ) {
 			$rev = $this->revisionLookup->getRevisionByTitle( $title );
 			$content = $rev->getContent( SlotRecord::MAIN );
@@ -223,3 +233,8 @@ class SpecialBookSources extends SpecialPage {
 		return 'wiki';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialBookSources::class, 'SpecialBookSources' );

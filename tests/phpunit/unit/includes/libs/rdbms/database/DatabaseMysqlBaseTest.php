@@ -25,8 +25,7 @@
 
 use MediaWiki\Tests\Unit\Libs\Rdbms\AddQuoterMock;
 use Wikimedia\Rdbms\DatabaseDomain;
-use Wikimedia\Rdbms\DatabaseMysqlBase;
-use Wikimedia\Rdbms\DatabaseMysqli;
+use Wikimedia\Rdbms\DatabaseMySQL;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
@@ -36,14 +35,14 @@ use Wikimedia\Rdbms\Replication\MysqlReplicationReporter;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers \Wikimedia\Rdbms\DatabaseMysqlBase
+ * @covers \Wikimedia\Rdbms\DatabaseMySQL
  */
 class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 
 	use MediaWikiCoversValidator;
 
 	private function getMockForViews(): IMaintainableDatabase {
-		$db = $this->getMockBuilder( DatabaseMysqli::class )
+		$db = $this->getMockBuilder( DatabaseMySQL::class )
 			->disableOriginalConstructor()
 			->onlyMethods( [ 'query', 'getDBname' ] )
 			->getMock();
@@ -289,7 +288,7 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 	/**
 	 * @dataProvider provideGtidData
 	 * @covers \Wikimedia\Rdbms\MySQLPrimaryPos
-	 * @covers \Wikimedia\Rdbms\DatabaseMysqlBase
+	 * @covers \Wikimedia\Rdbms\DatabaseMySQL
 	 */
 	public function testServerGtidTable( $gtable, $rBLtable, $mBLtable, $rGTIDs, $mGTIDs ) {
 		$db = $this->getMockBuilder( IDatabase::class )
@@ -322,7 +321,7 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 		$replicationReporter->method( 'getServerId' )->willReturn( 1 );
 		$replicationReporter->method( 'getServerUUID' )->willReturn( '2E11FA47-71CA-11E1-9E33-C80AA9429562' );
 
-		/** @var DatabaseMysqlBase $replicationReporter */
+		/** @var DatabaseMySQL $replicationReporter */
 		if ( is_array( $rGTIDs ) ) {
 			$this->assertEquals( $rGTIDs, $replicationReporter->getReplicaPos( $db )->getGTIDs() );
 		} else {
@@ -459,7 +458,7 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 	}
 
 	public function testBuildIntegerCast() {
-		$db = $this->createPartialMock( DatabaseMysqli::class, [] );
+		$db = $this->createPartialMock( DatabaseMySQL::class, [] );
 		TestingAccessWrapper::newFromObject( $db )->platform = new MySQLPlatform( new AddQuoterMock() );
 
 		/** @var IDatabase $db */
@@ -490,7 +489,7 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 	 * @covers \Wikimedia\Rdbms\Platform\MySQLPlatform
 	 */
 	public function testNormalizeJoinTypeSqb() {
-		$db = $this->createPartialMock( DatabaseMysqli::class, [] );
+		$db = $this->createPartialMock( DatabaseMySQL::class, [] );
 
 		TestingAccessWrapper::newFromObject( $db )->currentDomain =
 			new DatabaseDomain( null, null, '' );
@@ -511,15 +510,15 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * @covers \Wikimedia\Rdbms\Database
-	 * @covers \Wikimedia\Rdbms\DatabaseMysqlBase
+	 * @covers \Wikimedia\Rdbms\DatabaseMySQL
 	 * @covers \Wikimedia\Rdbms\Platform\MySQLPlatform
 	 */
 	public function testIndexAliases() {
-		$db = $this->getMockBuilder( DatabaseMysqli::class )
+		$db = $this->getMockBuilder( DatabaseMySQL::class )
 			->disableOriginalConstructor()
-			->onlyMethods( [ 'mysqlRealEscapeString', 'dbSchema', 'tablePrefix' ] )
+			->onlyMethods( [ 'strencode', 'dbSchema', 'tablePrefix' ] )
 			->getMock();
-		$db->method( 'mysqlRealEscapeString' )->willReturnCallback(
+		$db->method( 'strencode' )->willReturnCallback(
 			static function ( $s ) {
 				return str_replace( "'", "\\'", $s );
 			}
@@ -529,8 +528,12 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 
 		/** @var IDatabase $db */
 		$db->setIndexAliases( [ 'a_b_idx' => 'a_c_idx' ] );
-		$sql = $db->selectSQLText(
-			'zend', 'field', [ 'a' => 'x' ], __METHOD__, [ 'USE INDEX' => 'a_b_idx' ] );
+		$sql = $db->newSelectQueryBuilder()
+			->select( 'field' )
+			->from( 'zend' )
+			->where( [ 'a' => 'x' ] )
+			->useIndex( 'a_b_idx' )
+			->caller( __METHOD__ )->getSQL();
 
 		$this->assertSameSql(
 			"SELECT  field  FROM `zend` FORCE INDEX (a_c_idx)    WHERE a = 'x'  ",
@@ -538,8 +541,12 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 		);
 
 		$db->setIndexAliases( [] );
-		$sql = $db->selectSQLText(
-			'zend', 'field', [ 'a' => 'x' ], __METHOD__, [ 'USE INDEX' => 'a_b_idx' ] );
+		$sql = $db->newSelectQueryBuilder()
+			->select( 'field' )
+			->from( 'zend' )
+			->where( [ 'a' => 'x' ] )
+			->useIndex( 'a_b_idx' )
+			->caller( __METHOD__ )->getSQL();
 
 		$this->assertSameSql(
 			"SELECT  field  FROM `zend` FORCE INDEX (a_b_idx)    WHERE a = 'x'",
@@ -553,11 +560,11 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 	 * @covers \Wikimedia\Rdbms\Platform\MySQLPlatform
 	 */
 	public function testTableAliases() {
-		$db = $this->getMockBuilder( DatabaseMysqli::class )
+		$db = $this->getMockBuilder( DatabaseMySQL::class )
 			->disableOriginalConstructor()
-			->onlyMethods( [ 'mysqlRealEscapeString', 'dbSchema', 'tablePrefix' ] )
+			->onlyMethods( [ 'strencode', 'dbSchema', 'tablePrefix' ] )
 			->getMock();
-		$db->method( 'mysqlRealEscapeString' )->willReturnCallback(
+		$db->method( 'strencode' )->willReturnCallback(
 			static function ( $s ) {
 				return str_replace( "'", "\\'", $s );
 			}
@@ -569,7 +576,11 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 		$db->setTableAliases( [
 			'meow' => [ 'dbname' => 'feline', 'schema' => null, 'prefix' => 'cat_' ]
 		] );
-		$sql = $db->selectSQLText( 'meow', 'field', [ 'a' => 'x' ], __METHOD__ );
+		$sql = $db->newSelectQueryBuilder()
+			->select( 'field' )
+			->from( 'meow' )
+			->where( [ 'a' => 'x' ] )
+			->caller( __METHOD__ )->getSQL();
 
 		$this->assertSameSql(
 			"SELECT  field  FROM `feline`.`cat_meow`    WHERE a = 'x'  ",
@@ -577,7 +588,11 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 		);
 
 		$db->setTableAliases( [] );
-		$sql = $db->selectSQLText( 'meow', 'field', [ 'a' => 'x' ], __METHOD__ );
+		$sql = $db->newSelectQueryBuilder()
+			->select( 'field' )
+			->from( 'meow' )
+			->where( [ 'a' => 'x' ] )
+			->caller( __METHOD__ )->getSQL();
 
 		$this->assertSameSql(
 			"SELECT  field  FROM `meow`    WHERE a = 'x'  ",
@@ -586,21 +601,21 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers \Wikimedia\Rdbms\DatabaseMysqlBase
+	 * @covers \Wikimedia\Rdbms\DatabaseMySQL
 	 * @covers \Wikimedia\Rdbms\Platform\SQLPlatform
 	 * @covers \Wikimedia\Rdbms\Platform\MySQLPlatform
 	 */
 	public function testMaxExecutionTime() {
-		$db = $this->getMockBuilder( DatabaseMysqli::class )
+		$db = $this->getMockBuilder( DatabaseMySQL::class )
 			->disableOriginalConstructor()
-			->onlyMethods( [ 'getMySqlServerVariant', 'dbSchema', 'tablePrefix' ] )
+			->onlyMethods( [ 'getServerVersion', 'dbSchema', 'tablePrefix' ] )
 			->getMock();
-		$db->method( 'getMySqlServerVariant' )->willReturn( [ 'MariaDB', '10.4.21' ] );
-		TestingAccessWrapper::newFromObject( $db )->platform =
-			new MySQLPlatform( new AddQuoterMock() );
+		$db->method( 'getServerVersion' )->willReturn( '10.4.28-MariaDB-log' );
+		$wdb = TestingAccessWrapper::newFromObject( $db );
+		$wdb->platform = new MySQLPlatform( new AddQuoterMock() );
 
 		/** @var IDatabase $db */
-		$sql = $db->selectSQLText( 'image',
+		$sql = $wdb->selectSQLText( 'image',
 			'img_metadata',
 			'*',
 			'',
@@ -615,11 +630,11 @@ class DatabaseMysqlBaseTest extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * @covers \Wikimedia\Rdbms\Database
-	 * @covers \Wikimedia\Rdbms\DatabaseMysqlBase
+	 * @covers \Wikimedia\Rdbms\DatabaseMySQL
 	 */
 	public function testStreamStatementEnd() {
-		/** @var DatabaseMysqlBase $db */
-		$db = $this->getMockForAbstractClass( DatabaseMysqlBase::class, [], '', false );
+		/** @var DatabaseMySQL $db */
+		$db = $this->getMockForAbstractClass( DatabaseMySQL::class, [], '', false );
 		$sql = '';
 
 		$newLine = "delimiter\n!! ?";

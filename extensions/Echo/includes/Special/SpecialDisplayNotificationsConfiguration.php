@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Special;
 
-use EchoAttributeManager;
 use Html;
+use MediaWiki\Extension\Notifications\AttributeManager;
 use MediaWiki\Extension\Notifications\Hooks as EchoHooks;
 use MediaWiki\User\UserOptionsManager;
 use OOUIHTMLForm;
@@ -12,9 +12,9 @@ use User;
 
 class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 	/**
-	 * EchoAttributeManager to access notification configuration
+	 * AttributeManager to access notification configuration
 	 *
-	 * @var EchoAttributeManager
+	 * @var AttributeManager
 	 */
 	protected $attributeManager;
 
@@ -62,11 +62,11 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 	private $userOptionsManager;
 
 	/**
-	 * @param EchoAttributeManager $attributeManager
+	 * @param AttributeManager $attributeManager
 	 * @param UserOptionsManager $userOptionsManager
 	 */
 	public function __construct(
-		EchoAttributeManager $attributeManager,
+		AttributeManager $attributeManager,
 		UserOptionsManager $userOptionsManager
 	) {
 		parent::__construct( 'DisplayNotificationsConfiguration' );
@@ -118,7 +118,7 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 			$notificationTypes
 		);
 
-		$this->getOutput()->setPageTitle( $this->msg( 'echo-displaynotificationsconfiguration' )->text() );
+		$this->getOutput()->setPageTitleMsg( $this->msg( 'echo-displaynotificationsconfiguration' ) );
 		$this->outputHeader( 'echo-displaynotificationsconfiguration-summary' );
 		$this->outputConfiguration();
 	}
@@ -218,7 +218,7 @@ class SpecialDisplayNotificationsConfiguration extends UnlistedSpecialPage {
 
 		$flippedSectionNames = [];
 
-		foreach ( EchoAttributeManager::$sections as $section ) {
+		foreach ( AttributeManager::$sections as $section ) {
 			$types = $this->attributeManager->getEventsForSection( $section );
 			// echo-notification-alert-text-only, echo-notification-notice-text-only
 			$msgSection = $section == 'message' ? 'notice' : $section;

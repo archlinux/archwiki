@@ -179,6 +179,8 @@ class ConvertibleTimestamp {
 	 *   Ignored if $fakeTime is a callback or false.
 	 *
 	 * @return callable|null the previous fake time callback, if any.
+	 *
+	 * @phan-param callable():int|ConvertibleTimestamp|string|int|false $fakeTime
 	 */
 	public static function setFakeTime( $fakeTime, $step = 0 ) {
 		if ( $fakeTime instanceof ConvertibleTimestamp ) {
@@ -316,7 +318,7 @@ class ConvertibleTimestamp {
 
 		try {
 			$final = DateTime::createFromFormat( "!$format", $strtime, new DateTimeZone( 'UTC' ) );
-		} catch ( Exception $e ) {
+		} catch ( \ValueError $e ) {
 			throw new TimestampException( __METHOD__ . ': Invalid timestamp format.', $e->getCode(), $e );
 		}
 

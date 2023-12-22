@@ -1,33 +1,43 @@
 <?php
 
+// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
+
 namespace MediaWiki\Extension\Thanks;
 
 use ApiModuleManager;
 use Article;
-use CategoryPage;
 use ConfigException;
 use DatabaseLogEntry;
 use DifferenceEngine;
 use EchoAttributeManager;
-use EchoEvent;
 use EchoUserLocator;
 use ExtensionRegistry;
 use Html;
-use ImagePage;
+use IContextSource;
 use LogEventsList;
 use LogPage;
+use MediaWiki\Api\Hook\ApiMain__moduleManagerHook;
+use MediaWiki\Auth\Hook\LocalUserCreatedHook;
+use MediaWiki\Block\Hook\GetAllBlockActionsHook;
+use MediaWiki\Diff\Hook\DifferenceEngineViewHeaderHook;
+use MediaWiki\Diff\Hook\DiffToolsHook;
+use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Extension\Thanks\Api\ApiFlowThank;
+use MediaWiki\Hook\BeforePageDisplayHook;
+use MediaWiki\Hook\GetLogTypesOnUserHook;
+use MediaWiki\Hook\HistoryToolsHook;
+use MediaWiki\Hook\LogEventsListLineEndingHook;
+use MediaWiki\Hook\PageHistoryBeforeListHook;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MobileContext;
 use OutputPage;
-use RequestContext;
 use Skin;
 use SpecialPage;
-use Title;
 use User;
-use WikiPage;
 
 /**
  * Hooks for Thanks extension
@@ -35,7 +45,18 @@ use WikiPage;
  * @file
  * @ingroup Extensions
  */
-class Hooks {
+class Hooks implements
+	ApiMain__moduleManagerHook,
+	BeforePageDisplayHook,
+	DiffToolsHook,
+	DifferenceEngineViewHeaderHook,
+	GetAllBlockActionsHook,
+	GetLogTypesOnUserHook,
+	HistoryToolsHook,
+	LocalUserCreatedHook,
+	LogEventsListLineEndingHook,
+	PageHistoryBeforeListHook
+{
 
 	/**
 	 * Handler for the HistoryTools hook
@@ -45,11 +66,11 @@ class Hooks {
 	 * @param RevisionRecord|null $oldRevisionRecord
 	 * @param UserIdentity $userIdentity
 	 */
-	public static function onHistoryTools(
-		RevisionRecord $revisionRecord,
-		array &$links,
-		?RevisionRecord $oldRevisionRecord,
-		UserIdentity $userIdentity
+	public function onHistoryTools(
+		$revisionRecord,
+		&$links,
+		$oldRevisionRecord,
+		$userIdentity
 	) {
 		self::insertThankLink( $revisionRecord,
 			$links, $userIdentity );
@@ -63,11 +84,11 @@ class Hooks {
 	 * @param RevisionRecord|null $oldRevisionRecord
 	 * @param UserIdentity $userIdentity
 	 */
-	public static function onDiffTools(
-		RevisionRecord $revisionRecord,
-		array &$links,
-		?RevisionRecord $oldRevisionRecord,
-		UserIdentity $userIdentity
+	public function onDiffTools(
+		$revisionRecord,
+		&$links,
+		$oldRevisionRecord,
+		$userIdentity
 	) {
 		// Don't allow thanking for a diff that includes multiple revisions
 		// This does a query that is too expensive for history rows (T284274)
@@ -106,11 +127,12 @@ class Hooks {
 
 		// Don't let users thank themselves.
 		// Exclude anonymous users.
+		// Exclude temp users (T345679)
 		// Exclude users who are blocked.
 		// Check whether bots are allowed to receive thanks.
 		// Don't allow thanking for a diff that includes multiple revisions
 		// Check whether we have a revision id to link to
-		if ( $userIdentity->isRegistered()
+		if ( $user->isNamed()
 			&& !$userIdentity->equals( $recipient )
 			&& !self::isUserBlockedFromTitle( $user, $revisionRecord->getPageAsLinkTarget() )
 			&& !self::isUserBlockedFromThanks( $user )
@@ -231,10 +253,10 @@ class Hooks {
 	 * Handler for PageHistoryBeforeList hook.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageHistoryBeforeList
 	 *
-	 * @param WikiPage|Article|ImagePage|CategoryPage $page Not used
-	 * @param RequestContext $context RequestContext object
+	 * @param Article $page Not used
+	 * @param IContextSource $context RequestContext object
 	 */
-	public static function onPageHistoryBeforeList( $page, $context ) {
+	public function onPageHistoryBeforeList( $page, $context ) {
 		if ( $context->getUser()->isRegistered() ) {
 			static::addThanksModule( $context->getOutput() );
 		}
@@ -245,7 +267,7 @@ class Hooks {
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/DifferenceEngineViewHeader
 	 * @param DifferenceEngine $diff DifferenceEngine object that's calling.
 	 */
-	public static function onDifferenceEngineViewHeader( $diff ) {
+	public function onDifferenceEngineViewHeader( $diff ) {
 		if ( $diff->getUser()->isRegistered() ) {
 			static::addThanksModule( $diff->getOutput() );
 		}
@@ -316,10 +338,10 @@ class Hooks {
 	 * @param User $user User object that was created.
 	 * @param bool $autocreated True when account was auto-created
 	 */
-	public static function onAccountCreated( $user, $autocreated ) {
+	public function onLocalUserCreated( $user, $autocreated ) {
 		// New users get echo preferences set that are not the default settings for existing users.
 		// Specifically, new users are opted into email notifications for thanks.
-		if ( !$autocreated ) {
+		if ( !$user->isTemp() && !$autocreated ) {
 			$userOptionsManager = MediaWikiServices::getInstance()->getUserOptionsManager();
 			$userOptionsManager->setOption( $user, 'echo-subscriptions-email-edit-thank', true );
 		}
@@ -359,11 +381,11 @@ class Hooks {
 	 * @link https://www.mediawiki.org/wiki/Manual:Hooks/GetLogTypesOnUser
 	 * @param string[] &$types The list of log types, to add to.
 	 */
-	public static function onGetLogTypesOnUser( array &$types ) {
+	public function onGetLogTypesOnUser( &$types ) {
 		$types[] = 'thanks';
 	}
 
-	public static function onGetAllBlockActions( array &$actions ) {
+	public function onGetAllBlockActions( &$actions ) {
 		$actions[ 'thanks' ] = 100;
 	}
 
@@ -375,7 +397,7 @@ class Hooks {
 	 * @param OutputPage $out OutputPage object
 	 * @param Skin $skin The skin in use.
 	 */
-	public static function onBeforePageDisplay( OutputPage $out, $skin ) {
+	public function onBeforePageDisplay( $out, $skin ): void {
 		$title = $out->getTitle();
 		// Add to Flow boards.
 		if ( $title instanceof Title && $title->hasContentModel( 'flow-board' ) ) {
@@ -400,12 +422,18 @@ class Hooks {
 	 *
 	 * @param ApiModuleManager $moduleManager Module manager instance
 	 */
-	public static function onApiMainModuleManager( ApiModuleManager $moduleManager ) {
+	public function onApiMain__moduleManager( $moduleManager ) {
 		if ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
 			$moduleManager->addModule(
 				'flowthank',
 				'action',
-				ApiFlowThank::class
+				[
+					"class" => ApiFlowThank::class,
+					"services" => [
+						"PermissionManager",
+						"ThanksLogStore"
+					]
+				]
 			);
 		}
 	}
@@ -413,7 +441,7 @@ class Hooks {
 	/**
 	 * Handler for EchoGetBundleRule hook, which defines the bundle rules for each notification.
 	 *
-	 * @param EchoEvent $event The event being notified.
+	 * @param Event $event The event being notified.
 	 * @param string &$bundleString Determines how the notification should be bundled.
 	 */
 	public static function onEchoGetBundleRules( $event, &$bundleString ) {
@@ -453,8 +481,8 @@ class Hooks {
 	 * @param string[] &$attribs HTML attributes to add to the line.
 	 * @throws ConfigException
 	 */
-	public static function onLogEventsListLineEnding(
-		LogEventsList $page, &$ret, DatabaseLogEntry $entry, &$classes, &$attribs
+	public function onLogEventsListLineEnding(
+		$page, &$ret, $entry, &$classes, &$attribs
 	) {
 		$user = $page->getUser();
 

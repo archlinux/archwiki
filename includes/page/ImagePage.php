@@ -22,6 +22,8 @@ use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleArray;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -347,6 +349,7 @@ class ImagePage extends Article {
 		$enableUploads = $mainConfig->get( MainConfigNames::EnableUploads );
 		$send404Code = $mainConfig->get( MainConfigNames::Send404Code );
 		$svgMaxSize = $mainConfig->get( MainConfigNames::SVGMaxSize );
+		$enableLegacyMediaDOM = $mainConfig->get( MainConfigNames::ParserEnableLegacyMediaDOM );
 		$this->loadFile();
 		$out = $context->getOutput();
 		$user = $context->getUser();
@@ -485,6 +488,9 @@ class ImagePage extends Article {
 					$linkPrev = $linkNext = '';
 					$count = $this->displayImg->pageCount();
 					$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+					if ( !$enableLegacyMediaDOM ) {
+						$out->addModules( 'mediawiki.page.media' );
+					}
 
 					if ( $page > 1 ) {
 						$label = $context->msg( 'imgmultipageprev' )->text();
@@ -722,7 +728,7 @@ EOT
 	}
 
 	/**
-	 * Creates an thumbnail of specified size and returns an HTML link to it
+	 * Creates a thumbnail of specified size and returns an HTML link to it
 	 * @param array $params Scaler parameters
 	 * @param int $width
 	 * @param int $height
@@ -861,15 +867,14 @@ EOT
 	 * @return IResultWrapper
 	 */
 	protected function queryImageLinks( $target, $limit ) {
-		$dbr = wfGetDB( DB_REPLICA );
-
-		return $dbr->select(
-			[ 'imagelinks', 'page' ],
-			[ 'page_namespace', 'page_title', 'il_to' ],
-			[ 'il_to' => $target, 'il_from = page_id' ],
-			__METHOD__,
-			[ 'LIMIT' => $limit + 1, 'ORDER BY' => 'il_from', ]
-		);
+		return wfGetDB( DB_REPLICA )->newSelectQueryBuilder()
+			->select( [ 'page_namespace', 'page_title', 'il_to' ] )
+			->from( 'imagelinks' )
+			->join( 'page', null, 'il_from = page_id' )
+			->where( [ 'il_to' => $target ] )
+			->orderBy( 'il_from' )
+			->limit( $limit + 1 )
+			->caller( __METHOD__ )->fetchResultSet();
 	}
 
 	protected function imageLinks() {
@@ -1044,7 +1049,7 @@ EOT
 	 */
 	public function showError( $description ) {
 		$out = $this->getContext()->getOutput();
-		$out->setPageTitle( $this->getContext()->msg( 'internalerror' ) );
+		$out->setPageTitleMsg( $this->getContext()->msg( 'internalerror' ) );
 		$out->setRobotPolicy( 'noindex,nofollow' );
 		$out->setArticleRelated( false );
 		$out->disableClientCache();

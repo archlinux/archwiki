@@ -124,10 +124,6 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 		return $this->getGadget()->getMessages();
 	}
 
-	public function getTargets() {
-		return $this->getGadget()->getTargets();
-	}
-
 	public function getSkins(): ?array {
 		return $this->getGadget()->getRequiredSkins() ?: null;
 	}

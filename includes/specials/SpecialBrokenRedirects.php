@@ -21,11 +21,15 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
+use Skin;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -36,22 +40,21 @@ use Wikimedia\Rdbms\IResultWrapper;
  */
 class SpecialBrokenRedirects extends QueryPage {
 
-	/** @var IContentHandlerFactory */
-	private $contentHandlerFactory;
+	private IContentHandlerFactory $contentHandlerFactory;
 
 	/**
 	 * @param IContentHandlerFactory $contentHandlerFactory
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 */
 	public function __construct(
 		IContentHandlerFactory $contentHandlerFactory,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory
 	) {
 		parent::__construct( 'BrokenRedirects' );
 		$this->contentHandlerFactory = $contentHandlerFactory;
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 		$this->setLinkBatchFactory( $linkBatchFactory );
 	}
 
@@ -72,7 +75,7 @@ class SpecialBrokenRedirects extends QueryPage {
 	}
 
 	public function getQueryInfo() {
-		$dbr = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		$dbr = $this->getDatabaseProvider()->getReplicaDatabase();
 
 		return [
 			'tables' => [
@@ -92,8 +95,8 @@ class SpecialBrokenRedirects extends QueryPage {
 				// but aren't "broken" either.
 				// Special pages and interwiki links
 				'rd_namespace >= 0',
-				'rd_interwiki IS NULL OR rd_interwiki = ' . $dbr->addQuotes( '' ),
-				'p2.page_namespace IS NULL',
+				'rd_interwiki' => [ null, '' ],
+				'p2.page_namespace' => null,
 			],
 			'join_conds' => [
 				'p1' => [ 'JOIN', [
@@ -116,7 +119,7 @@ class SpecialBrokenRedirects extends QueryPage {
 
 	/**
 	 * @param Skin $skin
-	 * @param stdClass $result Result row
+	 * @param \stdClass $result Result row
 	 * @return string
 	 */
 	public function formatResult( $skin, $result ) {
@@ -212,3 +215,8 @@ class SpecialBrokenRedirects extends QueryPage {
 		return 'maintenance';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialBrokenRedirects::class, 'SpecialBrokenRedirects' );

@@ -6,7 +6,6 @@
 			"Woytecr"
 		]
 	},
-	"apihelp-scribunto-console-description": "Wewnętrzny moduł obsługi żądań XHR z konsoli Scribunto.",
 	"apihelp-scribunto-console-summary": "Wewnętrzny moduł obsługi żądań XHR z konsoli Scribunto.",
 	"apihelp-scribunto-console-param-title": "Tytuł modułu do przetestowania.",
 	"apihelp-scribunto-console-param-content": "Nowa zawartość modułu.",

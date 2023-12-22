@@ -94,10 +94,10 @@ class MappingsGenerator {
 					"\n"
 				) + $this->curSourceOffset + 1;
 			$this->curSourceLine += $lineCount;
-			$this->curSourceColumn = self::getJsLength(
+			$this->curSourceColumn = Utils::getJsLength(
 				substr( $this->source, $lineStartPos, $newOffset - $lineStartPos ) );
 		} else {
-			$this->curSourceColumn += self::getJsLength(
+			$this->curSourceColumn += Utils::getJsLength(
 				substr( $this->source, $this->curSourceOffset, $length ) );
 		}
 		$this->curSourceOffset = $newOffset;
@@ -105,7 +105,7 @@ class MappingsGenerator {
 
 	/**
 	 * Notify the source map generator of the generated output of text which
-	 * may contain a line break and should not generate a mapping segment.
+	 * should not generate a mapping segment.
 	 *
 	 * @param string $out
 	 */
@@ -114,17 +114,17 @@ class MappingsGenerator {
 		if ( $lineCount ) {
 			$lineStartPos = strrpos( $out, "\n" ) + 1;
 			$this->curOutLine += $lineCount;
-			$this->curOutColumn = self::getJsLength(
+			$this->curOutColumn = Utils::getJsLength(
 				substr( $out, $lineStartPos, strlen( $out ) - $lineStartPos ) );
 		} else {
-			$this->curOutColumn += self::getJsLength( $out );
+			$this->curOutColumn += Utils::getJsLength( $out );
 		}
 	}
 
 	/**
 	 * Notify the source map generator of the generated output of text which
-	 * does not contain a line break and should generate a mapping segment.
-	 * Append the mapping segment to the internal buffer.
+	 * should generate a mapping segment. Append the mapping segment to the
+	 * internal buffer.
 	 *
 	 * @param string $out
 	 */
@@ -151,7 +151,7 @@ class MappingsGenerator {
 		$this->prevSourceLine = $this->curSourceLine;
 		$this->prevSourceColumn = $this->curSourceColumn;
 
-		$this->curOutColumn += self::getJsLength( $out );
+		$this->outputSpace( $out );
 	}
 
 	/**
@@ -175,16 +175,6 @@ class MappingsGenerator {
 		} while ( $vlq > 0 );
 
 		$this->mappings .= $encoded;
-	}
-
-	/**
-	 * Get the length of a string in UTF-16 code units
-	 *
-	 * @param string $s
-	 * @return int
-	 */
-	private static function getJsLength( $s ) {
-		return strlen( mb_convert_encoding( $s, 'UTF-16', 'UTF-8' ) ) / 2;
 	}
 
 	/**

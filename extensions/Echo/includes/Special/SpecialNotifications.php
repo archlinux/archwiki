@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Extension\Notifications\Special;
 
-use EchoDataOutputFormatter;
-use EchoSeenTime;
 use Html;
+use MediaWiki\Extension\Notifications\DataOutputFormatter;
+use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\Extension\Notifications\OOUI\LabelIconWidget;
-use MWEchoEventLogging;
+use MediaWiki\Extension\Notifications\SeenTime;
 use OOUI;
 use SpecialPage;
 
@@ -28,7 +28,7 @@ class SpecialNotifications extends SpecialPage {
 		$this->setHeaders();
 
 		$out = $this->getOutput();
-		$out->setPageTitle( $this->msg( 'echo-specialpage' )->text() );
+		$out->setPageTitleMsg( $this->msg( 'echo-specialpage' ) );
 
 		$this->addHelpLink( 'Help:Notifications/Special:Notifications' );
 
@@ -68,7 +68,7 @@ class SpecialNotifications extends SpecialPage {
 
 		$notif = [];
 		foreach ( $notifications as $notification ) {
-			$output = EchoDataOutputFormatter::formatOutput( $notification, 'special', $user, $this->getLanguage() );
+			$output = DataOutputFormatter::formatOutput( $notification, 'special', $user, $this->getLanguage() );
 			if ( $output ) {
 				$notif[] = $output;
 			}
@@ -77,8 +77,7 @@ class SpecialNotifications extends SpecialPage {
 		// Add the notifications to the page (interspersed with date headers)
 		$dateHeader = '';
 		$anyUnread = false;
-		$echoSeenTime = EchoSeenTime::newFromUser( $user );
-		$seenTime = $echoSeenTime->getTime();
+		$seenTime = SeenTime::newFromUser( $user )->getTime();
 		$notifArray = [];
 		foreach ( $notif as $row ) {
 			if ( !$row['*'] ) {
@@ -121,8 +120,13 @@ class SpecialNotifications extends SpecialPage {
 		if ( $anyUnread ) {
 			$markReadSpecialPage = new SpecialNotificationsMarkRead();
 			$markReadSpecialPage->setContext( $this->getContext() );
+			$notifUser = NotifUser::newFromUser( $user );
+			$unreadCount = $notifUser->getAlertCount() + $notifUser->getMessageCount();
 
-			$markAllAsReadText = $this->msg( 'echo-mark-all-as-read' )->text();
+			$markAllAsReadText = $this
+				->msg( 'echo-mark-all-as-read' )
+				->numParams( $unreadCount )
+				->text();
 			$markAllAsReadLabelIcon = new LabelIconWidget( [
 				'label' => $markAllAsReadText,
 				'icon' => 'checkAll',
@@ -235,9 +239,6 @@ class SpecialNotifications extends SpecialPage {
 			'oojs-ui.styles.icons-alerts',
 			'oojs-ui.styles.icons-interactions',
 		] );
-
-		// Log visit
-		MWEchoEventLogging::logSpecialPageVisit( $user, $out->getSkin()->getSkinName() );
 	}
 
 	/**
@@ -263,6 +264,6 @@ class SpecialNotifications extends SpecialPage {
 	}
 
 	protected function getGroupName() {
-		return 'users';
+		return 'login';
 	}
 }

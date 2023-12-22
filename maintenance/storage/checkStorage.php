@@ -21,18 +21,9 @@
  * @ingroup Maintenance ExternalStorage
  */
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Shell\Shell;
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	$optionsWithoutArgs = [ 'fix' ];
-	require_once __DIR__ . '/../CommandLineInc.php';
-
-	$cs = new CheckStorage;
-	$fix = isset( $options['fix'] );
-	$xml = $args[0] ?? false;
-	$cs->check( $fix, $xml );
-}
+require_once __DIR__ . '/../Maintenance.php';
 
 // ----------------------------------------------------------------------------------
 
@@ -42,11 +33,26 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  * @fixme this should extend the base Maintenance class
  * @ingroup Maintenance ExternalStorage
  */
-class CheckStorage {
+class CheckStorage extends Maintenance {
 	private const CONCAT_HEADER = 'O:27:"concatenatedgziphistoryblob"';
+
 	public $oldIdMap, $errors;
+
 	/** @var ExternalStoreDB */
 	public $dbStore = null;
+
+	public function __construct() {
+		parent::__construct();
+
+		$this->addOption( 'fix', 'Fix errors if possible' );
+		$this->addArg( 'xml', 'Path to an XML dump', false );
+	}
+
+	public function execute() {
+		$fix = $this->hasOption( 'fix' );
+		$xml = $this->getArg( 'xml', false );
+		$this->check( $fix, $xml );
+	}
 
 	public $errorDescriptions = [
 		'restore text' => 'Damaged text, need to be restored from a backup',
@@ -63,7 +69,10 @@ class CheckStorage {
 		} else {
 			print "Checking...\n";
 		}
-		$maxRevId = $dbr->selectField( 'revision', 'MAX(rev_id)', '', __METHOD__ );
+		$maxRevId = $dbr->newSelectQueryBuilder()
+			->select( 'MAX(rev_id)' )
+			->from( 'revision' )
+			->caller( __METHOD__ )->fetchField();
 		$chunkSize = 1000;
 		$flagStats = [];
 		$objectStats = [];
@@ -84,16 +93,14 @@ class CheckStorage {
 			$dbr->ping();
 
 			// Fetch revision rows
-			$res = $dbr->select(
-				[ 'slots', 'content' ],
-				[ 'slot_revision_id', 'content_address' ],
-				[ "slot_revision_id BETWEEN $chunkStart AND $chunkEnd" ],
-				__METHOD__,
-				[],
-				[ 'content' => [ 'INNER JOIN', [ 'content_id = slot_content_id' ] ] ]
-			);
+			$res = $dbr->newSelectQueryBuilder()
+				->select( [ 'slot_revision_id', 'content_address' ] )
+				->from( 'slots' )
+				->join( 'content', null, 'content_id = slot_content_id' )
+				->where( [ "slot_revision_id BETWEEN $chunkStart AND $chunkEnd" ] )
+				->caller( __METHOD__ )->fetchResultSet();
 			/** @var \MediaWiki\Storage\SqlBlobStore $blobStore */
-			$blobStore = MediaWikiServices::getInstance()->getBlobStore();
+			$blobStore = $this->getServiceContainer()->getBlobStore();
 			'@phan-var \MediaWiki\Storage\SqlBlobStore $blobStore';
 			foreach ( $res as $row ) {
 				$textId = $blobStore->getTextIdFromAddress( $row->content_address );
@@ -114,12 +121,11 @@ class CheckStorage {
 			$missingTextRows = $this->oldIdMap;
 			$externalRevs = [];
 			$objectRevs = [];
-			$res = $dbr->select(
-				'text',
-				[ 'old_id', 'old_flags' ],
-				[ 'old_id' => array_keys( $this->oldIdMap ) ],
-				__METHOD__
-			);
+			$res = $dbr->newSelectQueryBuilder()
+				->select( [ 'old_id', 'old_flags' ] )
+				->from( 'text' )
+				->where( [ 'old_id' => array_keys( $this->oldIdMap ) ] )
+				->caller( __METHOD__ )->fetchResultSet();
 			foreach ( $res as $row ) {
 				/**
 				 * @var int $flags
@@ -175,12 +181,11 @@ class CheckStorage {
 			$externalConcatBlobs = [];
 			$externalNormalBlobs = [];
 			if ( count( $externalRevs ) ) {
-				$res = $dbr->select(
-					'text',
-					[ 'old_id', 'old_flags', 'old_text' ],
-					[ 'old_id' => $externalRevs ],
-					__METHOD__
-				);
+				$res = $dbr->newSelectQueryBuilder()
+					->select( [ 'old_id', 'old_flags', 'old_text' ] )
+					->from( 'text' )
+					->where( [ 'old_id' => $externalRevs ] )
+					->caller( __METHOD__ )->fetchResultSet();
 				foreach ( $res as $row ) {
 					$urlParts = explode( '://', $row->old_text, 2 );
 					if ( count( $urlParts ) !== 2 || $urlParts[1] == '' ) {
@@ -212,18 +217,18 @@ class CheckStorage {
 			// Check external normal blobs for existence
 			if ( count( $externalNormalBlobs ) ) {
 				if ( $this->dbStore === null ) {
-					$esFactory = MediaWikiServices::getInstance()->getExternalStoreFactory();
+					$esFactory = $this->getServiceContainer()->getExternalStoreFactory();
 					$this->dbStore = $esFactory->getStore( 'DB' );
 				}
 				foreach ( $externalConcatBlobs as $cluster => $xBlobIds ) {
 					$blobIds = array_keys( $xBlobIds );
-					$extDb =& $this->dbStore->getReplica( $cluster );
+					$extDb = $this->dbStore->getReplica( $cluster );
 					$blobsTable = $this->dbStore->getTable( $extDb );
-					$res = $extDb->select( $blobsTable,
-						[ 'blob_id' ],
-						[ 'blob_id' => $blobIds ],
-						__METHOD__
-					);
+					$res = $extDb->newSelectQueryBuilder()
+						->select( [ 'blob_id' ] )
+						->from( $blobsTable )
+						->where( [ 'blob_id' => $blobIds ] )
+						->caller( __METHOD__ )->fetchResultSet();
 					foreach ( $res as $row ) {
 						unset( $xBlobIds[$row->blob_id] );
 					}
@@ -243,12 +248,11 @@ class CheckStorage {
 			$curIds = [];
 			if ( count( $objectRevs ) ) {
 				$headerLength = 300;
-				$res = $dbr->select(
-					'text',
-					[ 'old_id', 'old_flags', "LEFT(old_text, $headerLength) AS header" ],
-					[ 'old_id' => $objectRevs ],
-					__METHOD__
-				);
+				$res = $dbr->newSelectQueryBuilder()
+					->select( [ 'old_id', 'old_flags', "LEFT(old_text, $headerLength) AS header" ] )
+					->from( 'text' )
+					->where( [ 'old_id' => $objectRevs ] )
+					->caller( __METHOD__ )->fetchResultSet();
 				foreach ( $res as $row ) {
 					$oldId = $row->old_id;
 					$matches = [];
@@ -301,12 +305,11 @@ class CheckStorage {
 			$externalConcatBlobs = [];
 			if ( count( $concatBlobs ) ) {
 				$headerLength = 300;
-				$res = $dbr->select(
-					'text',
-					[ 'old_id', 'old_flags', "LEFT(old_text, $headerLength) AS header" ],
-					[ 'old_id' => array_keys( $concatBlobs ) ],
-					__METHOD__
-				);
+				$res = $dbr->newSelectQueryBuilder()
+					->select( [ 'old_id', 'old_flags', "LEFT(old_text, $headerLength) AS header" ] )
+					->from( 'text' )
+					->where( [ 'old_id' => array_keys( $concatBlobs ) ] )
+					->caller( __METHOD__ )->fetchResultSet();
 				foreach ( $res as $row ) {
 					$flags = explode( ',', $row->old_flags );
 					if ( in_array( 'external', $flags ) ) {
@@ -412,20 +415,20 @@ class CheckStorage {
 		}
 
 		if ( $this->dbStore === null ) {
-			$esFactory = MediaWikiServices::getInstance()->getExternalStoreFactory();
+			$esFactory = $this->getServiceContainer()->getExternalStoreFactory();
 			$this->dbStore = $esFactory->getStore( 'DB' );
 		}
 
 		foreach ( $externalConcatBlobs as $cluster => $oldIds ) {
 			$blobIds = array_keys( $oldIds );
-			$extDb =& $this->dbStore->getReplica( $cluster );
+			$extDb = $this->dbStore->getReplica( $cluster );
 			$blobsTable = $this->dbStore->getTable( $extDb );
 			$headerLength = strlen( self::CONCAT_HEADER );
-			$res = $extDb->select( $blobsTable,
-				[ 'blob_id', "LEFT(blob_text, $headerLength) AS header" ],
-				[ 'blob_id' => $blobIds ],
-				__METHOD__
-			);
+			$res = $extDb->newSelectQueryBuilder()
+				->select( [ 'blob_id', "LEFT(blob_text, $headerLength) AS header" ] )
+				->from( $blobsTable )
+				->where( [ 'blob_id' => $blobIds ] )
+				->caller( __METHOD__ )->fetchResultSet();
 			foreach ( $res as $row ) {
 				if ( strcasecmp( $row->header, self::CONCAT_HEADER ) ) {
 					$this->addError(
@@ -471,6 +474,7 @@ class CheckStorage {
 		// Run mwdumper
 		echo "Filtering XML dump...\n";
 		$exitStatus = 0;
+		// phpcs:ignore MediaWiki.Usage.ForbiddenFunctions.passthru
 		passthru( 'mwdumper ' .
 			Shell::escape(
 				"--output=file:$filteredXmlFileName",
@@ -498,7 +502,7 @@ class CheckStorage {
 		$dbw->ping();
 
 		$source = new ImportStreamSource( $file );
-		$importer = MediaWikiServices::getInstance()
+		$importer = $this->getServiceContainer()
 			->getWikiImporterFactory()
 			->getWikiImporter( $source );
 		$importer->setRevisionCallback( [ $this, 'importRevision' ] );
@@ -543,16 +547,14 @@ class CheckStorage {
 
 		// Find text row again
 		$dbr = wfGetDB( DB_REPLICA );
-		$res = $dbr->selectRow(
-			[ 'slots', 'content' ],
-			[ 'content_address' ],
-			[ 'slot_revision_id' => $id ],
-			__METHOD__,
-			[],
-			[ 'content' => [ 'INNER JOIN', [ 'content_id = slot_content_id' ] ] ]
-		);
+		$res = $dbr->newSelectQueryBuilder()
+			->select( [ 'content_address' ] )
+			->from( 'slots' )
+			->join( 'content', null, 'content_id = slot_content_id' )
+			->where( [ 'slot_revision_id' => $id ] )
+			->caller( __METHOD__ )->fetchRow();
 
-		$blobStore = MediaWikiServices::getInstance()
+		$blobStore = $this->getServiceContainer()
 			->getBlobStoreFactory()
 			->newSqlBlobStore();
 		$oldId = $blobStore->getTextIdFromAddress( $res->content_address );
@@ -577,4 +579,8 @@ class CheckStorage {
 		unset( $this->errors['restore text'][$id] );
 		$this->errors['fixed'][$id] = true;
 	}
+
 }
+
+$maintClass = CheckStorage::class;
+require_once RUN_MAINTENANCE_IF_MAIN;

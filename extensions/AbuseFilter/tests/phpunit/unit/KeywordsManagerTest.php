@@ -106,7 +106,7 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array[]
 	 */
-	public function provideIsVarDisabled() {
+	public static function provideIsVarDisabled() {
 		return [
 			'disabled' => [ 'old_text', true ],
 			'deprecated' => [ 'article_text', false ],
@@ -128,7 +128,7 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array[]
 	 */
-	public function provideIsVarDeprecated() {
+	public static function provideIsVarDeprecated() {
 		return [
 			'disabled' => [ 'old_text', false ],
 			'deprecated' => [ 'article_text', true ],
@@ -182,7 +182,7 @@ class KeywordsManagerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @return array[]
 	 */
-	public function provideVarExists() {
+	public static function provideVarExists() {
 		return [
 			'disabled' => [ 'old_text', true ],
 			'deprecated' => [ 'article_text', true ],

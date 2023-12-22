@@ -9,11 +9,9 @@
 			"Wladek92"
 		]
 	},
-	"apihelp-flowthank-description": "Envoyer des remerciements pour un « contenu Flow ».",
 	"apihelp-flowthank-summary": "Envoyer une notification publique de remerciement pour un commentaire Flow.",
 	"apihelp-flowthank-param-postid": "L’UUID du message pour lequel remercier.",
 	"apihelp-flowthank-example-1": "Remercier pour le commentaire ayant l’<kbd>UUID xyz789</kbd>",
-	"apihelp-thank-description": "Envoyer des remerciements à un rédacteur.",
 	"apihelp-thank-summary": "Envoyer une notification de remerciement à un rédacteur.",
 	"apihelp-thank-param-rev": "Identifiant de révision pour laquelle remercier quelqu’un. Celui-ci ou « log » doit être fourni.",
 	"apihelp-thank-param-log": "Identifiant de journal pour remercier quelqu’un. Cet identifiant ou « rev » doit être fourni.",

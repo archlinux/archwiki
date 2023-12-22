@@ -30,7 +30,8 @@
 	} );
 
 	QUnit.test( 'insertBannersOrNotice() should add an icon', function ( assert ) {
-		assert.true( /mw-ui-icon/.test( processedAmbox.html() ) );
+		// FIXME: Remove mw-ui-icon when T346184 and/or T346162 has been resolved.
+		assert.true( /(mw-ui-icon|mf-icon)/.test( processedAmbox.html() ) );
 	} );
 	QUnit.test( 'clicking on the product of insertBannersOrNotice() should trigger a URL change', function ( assert ) {
 		processedAmbox.click();

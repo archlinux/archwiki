@@ -24,6 +24,9 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials\Redirects;
+
+use MediaWiki\SpecialPage\RedirectSpecialArticle;
 use MediaWiki\Title\Title;
 
 /**
@@ -58,3 +61,9 @@ class SpecialMypage extends RedirectSpecialArticle {
 		return true;
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialMypage::class, 'SpecialMypage' );

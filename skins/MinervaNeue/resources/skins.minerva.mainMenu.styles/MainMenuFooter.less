@@ -17,12 +17,12 @@
 				font-size: 0.75em; // equals `12px` at base `font-size: 16px`
 
 				// T173507
-				&:after {
+				&::after {
 					content: none;
 				}
 
 				a {
-					color: @colorProgressive;
+					color: @color-progressive;
 					padding: 0.7em 12px; // equals `8.4px` via 0.75em assuming 16px base
 
 					&:hover {

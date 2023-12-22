@@ -24,23 +24,24 @@ use InvalidArgumentException;
 use LogEntryBase;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Config\SiteConfiguration;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\SimpleAuthority;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\PHPSessionHandler;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\User\TempUser\RealTempUserConfig;
+use MediaWiki\User\User;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
-use MWTimestamp;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use RequestContext;
 use TestLogger;
-use User;
-use WebRequest;
 use Wikimedia\Assert\PreconditionException;
 
 /**
@@ -91,7 +92,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 				],
 				$services->getMainConfig()
 			),
-			$services->getConfiguredReadOnlyMode(),
+			$services->getReadOnlyMode(),
 			$services->getDBLoadBalancerFactory(),
 			$services->getHookContainer(),
 			$userEditTrackerOverride ?? $services->getUserEditTracker(),
@@ -117,6 +118,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$this->tablesUsed[] = 'user_former_groups';
 		$this->tablesUsed[] = 'logging';
 		$this->expiryTime = wfTimestamp( TS_MW, time() + 100500 );
+		$this->clearHooks();
 	}
 
 	/**
@@ -243,12 +245,12 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$user = new User;
 		$user->setName( '*Unregistered 1234' );
 		$this->assertArrayEquals(
-			[ '*', 'user' ],
+			[ '*', 'temp' ],
 			$manager->getUserImplicitGroups( $user )
 		);
 	}
 
-	public function provideGetEffectiveGroups() {
+	public static function provideGetEffectiveGroups() {
 		yield [ [], [ '*', 'user', 'named', 'autoconfirmed' ] ];
 		yield [ [ 'bureaucrat', 'test' ], [ '*', 'user', 'named', 'autoconfirmed', 'bureaucrat', 'test' ] ];
 		yield [ [ 'autoconfirmed', 'test' ], [ '*', 'user', 'named', 'autoconfirmed', 'test' ] ];
@@ -312,7 +314,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testAddUserToGroupReadonly() {
 		$user = $this->getTestUser()->getUser();
-		$this->getServiceContainer()->getConfiguredReadOnlyMode()->setReason( 'TEST' );
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'TEST' );
 		$manager = $this->getManager();
 		$this->assertFalse( $manager->addUserToGroup( $user, 'test' ) );
 		$this->assertNotContains( 'test', $manager->getUserGroups( $user ) );
@@ -478,7 +480,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testRemoveUserFromGroupReadOnly() {
 		$user = $this->getTestUser( [ 'test' ] )->getUser();
-		$this->getServiceContainer()->getConfiguredReadOnlyMode()->setReason( 'TEST' );
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'TEST' );
 		$manager = $this->getManager();
 		$this->assertFalse( $manager->removeUserFromGroup( $user, 'test' ) );
 		$this->assertContains( 'test', $manager->getUserGroups( $user ) );
@@ -533,7 +535,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\User\UserGroupManager::purgeExpired
 	 */
 	public function testPurgeExpiredReadOnly() {
-		$this->getServiceContainer()->getConfiguredReadOnlyMode()->setReason( 'TEST' );
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'TEST' );
 		$manager = $this->getManager();
 		$this->assertFalse( $manager->purgeExpired() );
 	}
@@ -584,24 +586,29 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function provideGetUserAutopromoteEmailConfirmed() {
-		$successUserMock = $this->createNoOpMock( User::class, [ 'getEmail', 'getEmailAuthenticationTimestamp' ] );
+		$successUserMock = $this->createNoOpMock(
+			User::class, [ 'getEmail', 'getEmailAuthenticationTimestamp', 'isTemp', 'assertWiki' ]
+		);
+		$successUserMock->method( 'assertWiki' )->willReturn( true );
 		$successUserMock->expects( $this->once() )
 			->method( 'getEmail' )
 			->willReturn( 'test@test.com' );
 		$successUserMock->expects( $this->once() )
 			->method( 'getEmailAuthenticationTimestamp' )
 			->willReturn( wfTimestampNow() );
-		yield 'Successfull autopromote' => [
+		yield 'Successful autopromote' => [
 			true, $successUserMock, [ 'test_autoconfirmed' ]
 		];
-		$emailAuthMock = $this->createNoOpMock( User::class, [ 'getEmail' ] );
+		$emailAuthMock = $this->createNoOpMock( User::class, [ 'getEmail', 'isTemp', 'assertWiki' ] );
+		$emailAuthMock->method( 'assertWiki' )->willReturn( true );
 		$emailAuthMock->expects( $this->once() )
 			->method( 'getEmail' )
 			->willReturn( 'test@test.com' );
 		yield 'wgEmailAuthentication is false' => [
 			false, $emailAuthMock, [ 'test_autoconfirmed' ]
 		];
-		$invalidEmailMock = $this->createNoOpMock( User::class, [ 'getEmail' ] );
+		$invalidEmailMock = $this->createNoOpMock( User::class, [ 'getEmail', 'isTemp', 'assertWiki' ] );
+		$invalidEmailMock->method( 'assertWiki' )->willReturn( true );
 		$invalidEmailMock
 			->expects( $this->once() )
 			->method( 'getEmail' )
@@ -609,7 +616,10 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		yield 'Invalid email' => [
 			true, $invalidEmailMock, []
 		];
-		$nullTimestampMock = $this->createNoOpMock( User::class, [ 'getEmail', 'getEmailAuthenticationTimestamp' ] );
+		$nullTimestampMock = $this->createNoOpMock(
+			User::class, [ 'getEmail', 'getEmailAuthenticationTimestamp', 'isTemp', 'assertWiki' ]
+		);
+		$nullTimestampMock->method( 'assertWiki' )->willReturn( true );
 		$nullTimestampMock->expects( $this->once() )
 			->method( 'getEmail' )
 			->willReturn( 'test@test.com' );
@@ -641,8 +651,8 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayEquals( $expected, $manager->getUserAutopromoteGroups( $user ) );
 	}
 
-	public function provideGetUserAutopromoteEditCount() {
-		yield 'Successfull promote' => [
+	public static function provideGetUserAutopromoteEditCount() {
+		yield 'Successful promote' => [
 			[ APCOND_EDITCOUNT, 5 ], true, 10, [ 'test_autoconfirmed' ]
 		];
 		yield 'Required edit count negative' => [
@@ -684,8 +694,6 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 				->willReturn( $userEditCount );
 		} else {
 			$user = User::newFromName( 'UTUser1' );
-			$userEditTrackerMock->expects( $this->never() )
-				->method( 'getUserEditCount' );
 		}
 		$manager = $this->getManager(
 			[
@@ -697,8 +705,8 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayEquals( $expected, $manager->getUserAutopromoteGroups( $user ) );
 	}
 
-	public function provideGetUserAutopromoteAge() {
-		yield 'Successfull promote' => [
+	public static function provideGetUserAutopromoteAge() {
+		yield 'Successful promote' => [
 			[ APCOND_AGE, 1000 ],
 			MWTimestamp::convert( TS_MW, time() - 1000000 ),
 			[ 'test_autoconfirmed' ]
@@ -731,14 +739,15 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 			'AutoConfirmAge' => 10000000,
 			'Autopromote' => [ 'test_autoconfirmed' => $requiredCondition ]
 		] );
-		$user = $this->createNoOpMock( User::class, [ 'getRegistration' ] );
+		$user = $this->createNoOpMock( User::class, [ 'getRegistration', 'isTemp', 'assertWiki' ] );
+		$user->method( 'assertWiki' )->willReturn( true );
 		$user->method( 'getRegistration' )
 			->willReturn( $registrationTs );
 		$this->assertArrayEquals( $expected, $manager->getUserAutopromoteGroups( $user ) );
 	}
 
-	public function provideGetUserAutopromoteEditAge() {
-		yield 'Successfull promote' => [
+	public static function provideGetUserAutopromoteEditAge() {
+		yield 'Successful promote' => [
 			[ APCOND_AGE_FROM_EDIT, 1000 ],
 			MWTimestamp::convert( TS_MW, time() - 1000000 ),
 			[ 'test_autoconfirmed' ]
@@ -773,8 +782,8 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayEquals( $expected, $manager->getUserAutopromoteGroups( $user ) );
 	}
 
-	public function provideGetUserAutopromoteGroups() {
-		yield 'Successfull promote' => [
+	public static function provideGetUserAutopromoteGroups() {
+		yield 'Successful promote' => [
 			[ 'group1', 'group2' ], [ 'group1', 'group2' ], [ 'test_autoconfirmed' ]
 		];
 		yield 'Not enough groups to promote' => [
@@ -799,7 +808,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayEquals( $expected, $manager->getUserAutopromoteGroups( $user ) );
 	}
 
-	public function provideGetUserAutopromoteIP() {
+	public static function provideGetUserAutopromoteIP() {
 		yield 'Individual ip, success' => [
 			[ APCOND_ISIP, '123.123.123.123' ], '123.123.123.123', [ 'test_autoconfirmed' ]
 		];
@@ -834,7 +843,8 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$requestMock->expects( $this->once() )
 			->method( 'getIP' )
 			->willReturn( $userIp );
-		$user = $this->createNoOpMock( User::class, [ 'getRequest' ] );
+		$user = $this->createNoOpMock( User::class, [ 'getRequest', 'isTemp', 'assertWiki' ] );
+		$user->method( 'assertWiki' )->willReturn( true );
 		$user->expects( $this->once() )
 			->method( 'getRequest' )
 			->willReturn( $requestMock );
@@ -1000,7 +1010,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertArrayEquals( [ 'test_autoconfirmed' ], $manager->getUserAutopromoteGroups( $user ) );
 	}
 
-	public function provideGetUserAutopromoteOnce() {
+	public static function provideGetUserAutopromoteOnce() {
 		yield 'Events are not matching' => [
 			[ 'NOT_EVENT' => [ 'autopromoteonce' => [ APCOND_EDITCOUNT, 0 ] ] ], [], [], []
 		];
@@ -1055,6 +1065,12 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\User\UserGroupManager::addUserToAutopromoteOnceGroups
 	 */
 	public function testAddUserToAutopromoteOnceGroupsForeignDomain() {
+		$siteConfig = new SiteConfiguration();
+		$siteConfig->wikis = [ 'TEST_DOMAIN' ];
+		$this->setMwGlobals( 'wgConf', $siteConfig );
+
+		$this->overrideConfigValue( MainConfigNames::LocalDatabases, [ 'TEST_DOMAIN' ] );
+
 		$manager = $this->getServiceContainer()
 			->getUserGroupManagerFactory()
 			->getUserGroupManager( 'TEST_DOMAIN' );
@@ -1078,7 +1094,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 	public function testAddUserToAutopromoteOnceGroupsReadOnly() {
 		$manager = $this->getManager();
 		$user = $this->getTestUser()->getUser();
-		$this->getServiceContainer()->getConfiguredReadOnlyMode()->setReason( 'TEST' );
+		$this->getServiceContainer()->getReadOnlyMode()->setReason( 'TEST' );
 		$this->assertSame( [], $manager->addUserToAutopromoteOnceGroups( $user, 'TEST' ) );
 	}
 
@@ -1113,18 +1129,17 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		$manager->addUserToAutopromoteOnceGroups( $user, 'EVENT' );
 		$this->assertContains( 'autopromoteonce', $manager->getUserGroups( $user ) );
 		$this->assertTrue( $hookCalled );
-		$this->assertSelect(
-			'logging',
-			[ 'log_type', 'log_action', 'log_params' ],
-			[ 'log_type' => 'rights' ],
-			[ [ 'rights',
+		$this->newSelectQueryBuilder()
+			->select( [ 'log_type', 'log_action', 'log_params' ] )
+			->from( 'logging' )
+			->where( [ 'log_type' => 'rights' ] )
+			->assertResultSet( [ [ 'rights',
 				'autopromote',
 				LogEntryBase::makeParamBlob( [
 					'4::oldgroups' => [],
 					'5::newgroups' => [ 'autopromoteonce' ],
 				] )
-			] ]
-		);
+			] ] );
 	}
 
 	private const CHANGEABLE_GROUPS_TEST_CONFIG = [
@@ -1199,7 +1214,7 @@ class UserGroupManagerTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideChangeableByGroup() {
+	public static function provideChangeableByGroup() {
 		yield 'sysop' => [ 'sysop', [
 			'add' => [ 'rollback' ],
 			'remove' => [ 'rollback' ],

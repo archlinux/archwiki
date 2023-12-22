@@ -1,21 +1,19 @@
 <?php
 
 /**
- * @covers FileContentsHasherTest
+ * @covers FileContentsHasher
  */
 class FileContentsHasherTest extends PHPUnit\Framework\TestCase {
 
 	use MediaWikiCoversValidator;
 
-	public function provideSingleFile() {
+	public static function provideSingleFile() {
 		return array_map( static function ( $file ) {
 			return [ $file, file_get_contents( $file ) ];
 		}, glob( __DIR__ . '/../../data/filecontentshasher/*.*' ) );
 	}
 
 	/**
-	 * @covers FileContentsHasher::getFileContentsHash
-	 * @covers FileContentsHasher::getFileContentsHashInternal
 	 * @dataProvider provideSingleFile
 	 */
 	public function testSingleFileHash( $fileName, $contents ) {
@@ -34,8 +32,6 @@ class FileContentsHasherTest extends PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @covers FileContentsHasher::getFileContentsHash
-	 * @covers FileContentsHasher::getFileContentsHashInternal
 	 * @dataProvider provideMultipleFiles
 	 */
 	public function testMultipleFileHash( $files ) {

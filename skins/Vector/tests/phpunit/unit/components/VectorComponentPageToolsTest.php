@@ -33,7 +33,7 @@ use User;
  * @coversDefaultClass \MediaWiki\Skins\Vector\Components\VectorComponentPageTools
  */
 class VectorComponentPageToolsTest extends \MediaWikiUnitTestCase {
-	public function getPinnableHeaderData( $data = [] ) {
+	public static function getPinnableHeaderData( $data = [] ) {
 		return array_merge( [
 			'is-pinned' => false,
 			'label' => 'vector-page-tools-label',
@@ -47,7 +47,7 @@ class VectorComponentPageToolsTest extends \MediaWikiUnitTestCase {
 		], $data );
 	}
 
-	public function provideConstructorData() {
+	public static function provideConstructorData() {
 		$menus = [ [
 			'id' => 'p-cactions',
 			'array-items' => [ [
@@ -74,7 +74,7 @@ class VectorComponentPageToolsTest extends \MediaWikiUnitTestCase {
 				[
 					'id' => 'vector-page-tools',
 					'is-pinned' => false,
-					'data-pinnable-header' => $this->getPinnableHeaderData(),
+					'data-pinnable-header' => self::getPinnableHeaderData(),
 					'data-menus' => $expectedMenus
 				]
 			],
@@ -85,7 +85,7 @@ class VectorComponentPageToolsTest extends \MediaWikiUnitTestCase {
 				[
 					'id' => 'vector-page-tools',
 					'is-pinned' => true,
-					'data-pinnable-header' => $this->getPinnableHeaderData( [
+					'data-pinnable-header' => self::getPinnableHeaderData( [
 						'is-pinned' => true,
 					] ),
 					'data-menus' => $expectedMenus
@@ -98,7 +98,7 @@ class VectorComponentPageToolsTest extends \MediaWikiUnitTestCase {
 				[
 					'id' => 'vector-page-tools',
 					'is-pinned' => false,
-					'data-pinnable-header' => $this->getPinnableHeaderData(),
+					'data-pinnable-header' => self::getPinnableHeaderData(),
 					'data-menus' => $expectedMenus
 				]
 			]

@@ -6,6 +6,7 @@ use Generator;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
+use MediaWiki\Extension\AbuseFilter\Filter\MutableFilter;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWikiUnitTestCase;
 
@@ -57,7 +58,7 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideCanEditGlobal(): Generator {
+	public static function provideCanEditGlobal(): Generator {
 		yield 'not allowed' => [ [], false ];
 		yield 'allowed' => [ [ 'abusefilter-modify-global' ], true ];
 	}
@@ -75,12 +76,12 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	public function provideCanEditFilter(): Generator {
-		$localFilter = $this->createMock( AbstractFilter::class );
-		$localFilter->method( 'isGlobal' )->willReturn( false );
-		$globalFilter = $this->createMock( AbstractFilter::class );
-		$globalFilter->method( 'isGlobal' )->willReturn( true );
+		$localFilter = MutableFilter::newDefault();
+		$localFilter->setGlobal( false );
+		$globalFilter = MutableFilter::newDefault();
+		$globalFilter->setGlobal( true );
 		foreach ( $this->provideCanEdit() as $name => $editArgs ) {
-			foreach ( $this->provideCanEditGlobal() as $allowed => $globalArgs ) {
+			foreach ( self::provideCanEditGlobal() as $allowed => $globalArgs ) {
 				yield "can edit: $name; can edit global: $allowed; local filter" => [
 					$localFilter,
 					$editArgs[0],
@@ -126,7 +127,7 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideCanViewPrivateFilters(): Generator {
+	public static function provideCanViewPrivateFilters(): Generator {
 		yield 'not privileged' => [ [], false ];
 		yield 'modify' => [ [ 'abusefilter-modify' ], true ];
 		yield 'private' => [ [ 'abusefilter-view-private' ], true ];
@@ -145,7 +146,7 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideCanViewPrivateFiltersLogs(): Generator {
+	public static function provideCanViewPrivateFiltersLogs(): Generator {
 		yield 'not privileged' => [ [], false ];
 		yield 'can view private' => [ [ 'abusefilter-view-private' ], true ];
 		yield 'can view logs' => [ [ 'abusefilter-log-private' ], true ];
@@ -166,7 +167,7 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideCanSeeLogDetailsForFilter(): Generator {
+	public static function provideCanSeeLogDetailsForFilter(): Generator {
 		$details = [ 0 => 'abusefilter-log-detail' ];
 		$private = [ 1 => 'abusefilter-log-private' ];
 		yield 'filter hidden, not privileged' => [ true, [], false ];
@@ -192,7 +193,7 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideSimpleCases(): array {
+	public static function provideSimpleCases(): array {
 		return [
 			'not allowed' => [ false ],
 			'allowed' => [ true ],

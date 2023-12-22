@@ -1,4 +1,4 @@
-@import 'mediawiki.ui/variables.less';
+@import 'mediawiki.skin.variables.less';
 
 .mw-inputbox-centered {
 	margin-left: auto;
@@ -21,8 +21,8 @@
 
 .mw-inputbox-createbox:required:invalid ~ .mw-ui-button {
 	// appear like .mw-ui-input:disabled
-	background-color: @colorGray12;
-	color: @color-base--inverted;
-	border-color: @colorGray12;
-	cursor: default;
+	background-color: @background-color-disabled;
+	color: @color-inverted;
+	border-color: @border-color-disabled;
+	cursor: @cursor-base--disabled;
 }

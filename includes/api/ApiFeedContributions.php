@@ -27,55 +27,37 @@ use MediaWiki\Feed\FeedItem;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Pager\ContribsPager;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use MediaWiki\User\ActorMigration;
+use MediaWiki\Title\TitleParser;
+use MediaWiki\User\ExternalUserNames;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserRigorOptions;
 use Wikimedia\ParamValidator\ParamValidator;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * @ingroup API
  */
 class ApiFeedContributions extends ApiBase {
 
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var TitleParser */
-	private $titleParser;
-
-	/** @var LinkRenderer */
-	private $linkRenderer;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var ActorMigration */
-	private $actorMigration;
-
-	/** @var UserFactory */
-	private $userFactory;
-
-	/** @var CommentFormatter */
-	private $commentFormatter;
-
-	/** @var ApiHookRunner */
-	private $hookRunner;
+	private RevisionStore $revisionStore;
+	private TitleParser $titleParser;
+	private LinkRenderer $linkRenderer;
+	private LinkBatchFactory $linkBatchFactory;
+	private HookContainer $hookContainer;
+	private IConnectionProvider $dbProvider;
+	private NamespaceInfo $namespaceInfo;
+	private UserFactory $userFactory;
+	private CommentFormatter $commentFormatter;
+	private ApiHookRunner $hookRunner;
 
 	/**
 	 * @param ApiMain $main
@@ -85,9 +67,8 @@ class ApiFeedContributions extends ApiBase {
 	 * @param LinkRenderer $linkRenderer
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param HookContainer $hookContainer
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param NamespaceInfo $namespaceInfo
-	 * @param ActorMigration $actorMigration
 	 * @param UserFactory $userFactory
 	 * @param CommentFormatter $commentFormatter
 	 */
@@ -99,9 +80,8 @@ class ApiFeedContributions extends ApiBase {
 		LinkRenderer $linkRenderer,
 		LinkBatchFactory $linkBatchFactory,
 		HookContainer $hookContainer,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		NamespaceInfo $namespaceInfo,
-		ActorMigration $actorMigration,
 		UserFactory $userFactory,
 		CommentFormatter $commentFormatter
 	) {
@@ -111,9 +91,8 @@ class ApiFeedContributions extends ApiBase {
 		$this->linkRenderer = $linkRenderer;
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->hookContainer = $hookContainer;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->namespaceInfo = $namespaceInfo;
-		$this->actorMigration = $actorMigration;
 		$this->userFactory = $userFactory;
 		$this->commentFormatter = $commentFormatter;
 
@@ -187,8 +166,7 @@ class ApiFeedContributions extends ApiBase {
 			$this->linkRenderer,
 			$this->linkBatchFactory,
 			$this->hookContainer,
-			$this->loadBalancer,
-			$this->actorMigration,
+			$this->dbProvider,
 			$this->revisionStore,
 			$this->namespaceInfo,
 			$targetUser,

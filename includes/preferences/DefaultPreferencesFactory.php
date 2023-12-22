@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Preferences;
 
-use Config;
 use HTMLForm;
 use HTMLFormField;
 use IContextSource;
@@ -30,6 +29,7 @@ use LanguageCode;
 use LanguageConverter;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PasswordAuthenticationRequest;
+use MediaWiki\Config\Config;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
@@ -39,28 +39,30 @@ use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\SpecialWatchlist;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserGroupManager;
+use MediaWiki\User\UserGroupMembership;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\User\UserOptionsManager;
 use MediaWiki\User\UserTimeCorrection;
 use Message;
 use MessageLocalizer;
 use MWException;
-use NamespaceInfo;
-use OutputPage;
 use Parser;
+use ParserFactory;
 use ParserOptions;
 use PreferencesFormOOUI;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use SkinFactory;
-use SpecialPage;
-use Status;
 use UnexpectedValueException;
-use User;
-use UserGroupMembership;
 use Xml;
 
 /**
@@ -97,13 +99,13 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	private $hookRunner;
 
 	/** @var UserOptionsManager */
-	private $userOptionsManager;
+	protected $userOptionsManager;
 
 	/** @var LanguageConverterFactory */
 	private $languageConverterFactory;
 
-	/** @var Parser */
-	private $parser;
+	/** @var ParserFactory */
+	private $parserFactory;
 
 	/** @var SkinFactory */
 	private $skinFactory;
@@ -163,7 +165,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	 * @param HookContainer $hookContainer
 	 * @param UserOptionsLookup $userOptionsLookup Should be an instance of UserOptionsManager
 	 * @param LanguageConverterFactory|null $languageConverterFactory
-	 * @param Parser|null $parser
+	 * @param ParserFactory|null $parserFactory
 	 * @param SkinFactory|null $skinFactory
 	 * @param UserGroupManager|null $userGroupManager
 	 * @param SignatureValidatorFactory|null $signatureValidatorFactory
@@ -181,7 +183,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		HookContainer $hookContainer,
 		UserOptionsLookup $userOptionsLookup,
 		LanguageConverterFactory $languageConverterFactory = null,
-		Parser $parser = null,
+		ParserFactory $parserFactory = null,
 		SkinFactory $skinFactory = null,
 		UserGroupManager $userGroupManager = null,
 		SignatureValidatorFactory $signatureValidatorFactory = null,
@@ -216,7 +218,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			: $services()->getUserOptionsManager();
 		$this->languageConverterFactory = $languageConverterFactory ?? $services()->getLanguageConverterFactory();
 
-		$this->parser = $parser ?? $services()->getParser();
+		$this->parserFactory = $parserFactory ?? $services()->getParserFactory();
 		$this->skinFactory = $skinFactory ?? $services()->getSkinFactory();
 		$this->userGroupManager = $userGroupManager ?? $services()->getUserGroupManager();
 		$this->signatureValidatorFactory = $signatureValidatorFactory
@@ -339,7 +341,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			}
 			$field = $form->getField( $name );
 			$globalDefault = $defaultOptions[$name] ?? null;
-			$prefFromUser = $this->getOptionFromUser( $name, $info, $userOptions );
+			$prefFromUser = static::getPreferenceForField( $name, $field, $userOptions );
 
 			// If it validates, set it as the default
 			// FIXME: That's not how the validate() function works! Values of nested fields
@@ -361,8 +363,37 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	}
 
 	/**
+	 * Get preference values for the 'default' param of html form descriptor, compatible
+	 * with nested fields.
+	 *
+	 * @since 1.41
+	 * @param string $name
+	 * @param HTMLFormField $field
+	 * @param array $userOptions
+	 * @return array|string
+	 */
+	public static function getPreferenceForField( $name, HTMLFormField $field, array $userOptions ) {
+		$val = $userOptions[$name] ?? null;
+
+		if ( $field instanceof \HTMLNestedFilterable ) {
+			$val = [];
+			$prefix = $field->mParams['prefix'] ?? $name;
+			// Fetch all possible preference keys of the given field on this wiki.
+			$keys = array_keys( $field->filterDataForSubmit( [] ) );
+			foreach ( $keys as $key ) {
+				if ( $userOptions[$prefix . $key] ?? false ) {
+					$val[] = $key;
+				}
+			}
+		}
+
+		return $val;
+	}
+
+	/**
 	 * Pull option from a user account. Handles stuff like array-type preferences.
 	 *
+	 * @deprecated 1.41 Use getPreferenceForField() instead.
 	 * @param string $name
 	 * @param array $info
 	 * @param array $userOptions
@@ -443,9 +474,8 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 				foreach ( $userEffectiveGroups as $ueg ) {
 					$groupStringOrObject = $userGroupMemberships[$ueg] ?? $ueg;
 
-					$userG = UserGroupMembership::getLink( $groupStringOrObject, $context, 'html' );
-					$userM = UserGroupMembership::getLink( $groupStringOrObject, $context, 'html',
-						$userName );
+					$userG = UserGroupMembership::getLinkHTML( $groupStringOrObject, $context );
+					$userM = UserGroupMembership::getLinkHTML( $groupStringOrObject, $context, $userName );
 
 					// Store expiring groups separately, so we can place them before non-expiring
 					// groups in the list. This is to avoid the ambiguity of something like
@@ -559,7 +589,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 				'a',
 				[
 					'href' => $this->options->get( MainConfigNames::ScriptPath ) .
-						'/api.php?action=query&meta=userinfo&uiprop=*',
+						'/api.php?action=query&meta=userinfo&uiprop=*&formatversion=2',
 				],
 				$context->msg( 'prefs-user-downloaddata-info' )->text()
 			),
@@ -663,7 +693,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		}
 
 		// show a preview of the old signature first
-		$oldsigWikiText = $this->parser->preSaveTransform(
+		$oldsigWikiText = $this->parserFactory->getInstance()->preSaveTransform(
 			'~~~',
 			$context->getTitle(),
 			$user,
@@ -785,7 +815,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 					'label-message' => 'tog-requireemail',
 					'help-message' => 'prefs-help-requireemail',
 					'section' => 'personal/email',
-					'disabled' => $user->getEmail() ? false : true,
+					'disabled' => !$user->getEmail(),
 				];
 			}
 
@@ -917,50 +947,70 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	 */
 	protected function skinPreferences( User $user, IContextSource $context, &$defaultPreferences ) {
 		// Skin selector, if there is at least one valid skin
-		$skinOptions = $this->generateSkinOptions( $user, $context );
-		if ( $skinOptions ) {
+		$validSkinNames = $this->getValidSkinNames( $user, $context );
+		if ( $validSkinNames ) {
 			$defaultPreferences['skin'] = [
-				// @phan-suppress-next-line SecurityCheck-XSS False positive, key is escaped
 				'type' => 'radio',
-				'options' => $skinOptions,
+				'options' => $this->generateSkinOptions( $user, $context, $validSkinNames ),
 				'section' => 'rendering/skin',
 			];
+			$hideCond = [ 'AND' ];
+			foreach ( $validSkinNames as $skinName => $_ ) {
+				$options = $this->skinFactory->getSkinOptions( $skinName );
+				if ( $options['responsive'] ?? false ) {
+					$hideCond[] = [ '!==', 'skin', $skinName ];
+				}
+			}
+			if ( $hideCond === [ 'AND' ] ) {
+				$hideCond = [];
+			}
 			$defaultPreferences['skin-responsive'] = [
 				'type' => 'check',
 				'label-message' => 'prefs-skin-responsive',
 				'section' => 'rendering/skin/skin-prefs',
 				'help-message' => 'prefs-help-skin-responsive',
+				'hide-if' => $hideCond,
 			];
 		}
 
 		$allowUserCss = $this->options->get( MainConfigNames::AllowUserCss );
 		$allowUserJs = $this->options->get( MainConfigNames::AllowUserJs );
+		$safeMode = $this->userOptionsManager->getOption( $user, 'forcesafemode' );
 		// Create links to user CSS/JS pages for all skins.
 		// This code is basically copied from generateSkinOptions().
 		// @todo Refactor this and the similar code in generateSkinOptions().
 		if ( $allowUserCss || $allowUserJs ) {
-			$linkTools = [];
-			$userName = $user->getName();
+			if ( $safeMode ) {
+				$defaultPreferences['customcssjs-safemode'] = [
+					'type' => 'info',
+					'raw' => true,
+					'default' => Html::warningBox( $context->msg( 'prefs-custom-cssjs-safemode' )->parse() ),
+					'section' => 'rendering/skin',
+				];
+			} else {
+				$linkTools = [];
+				$userName = $user->getName();
 
-			if ( $allowUserCss ) {
-				$cssPage = Title::makeTitleSafe( NS_USER, $userName . '/common.css' );
-				$cssLinkText = $context->msg( 'prefs-custom-css' )->text();
-				$linkTools[] = $this->linkRenderer->makeLink( $cssPage, $cssLinkText );
+				if ( $allowUserCss ) {
+					$cssPage = Title::makeTitleSafe( NS_USER, $userName . '/common.css' );
+					$cssLinkText = $context->msg( 'prefs-custom-css' )->text();
+					$linkTools[] = $this->linkRenderer->makeLink( $cssPage, $cssLinkText );
+				}
+
+				if ( $allowUserJs ) {
+					$jsPage = Title::makeTitleSafe( NS_USER, $userName . '/common.js' );
+					$jsLinkText = $context->msg( 'prefs-custom-js' )->text();
+					$linkTools[] = $this->linkRenderer->makeLink( $jsPage, $jsLinkText );
+				}
+
+				$defaultPreferences['commoncssjs'] = [
+					'type' => 'info',
+					'raw' => true,
+					'default' => $context->getLanguage()->pipeList( $linkTools ),
+					'label-message' => 'prefs-common-config',
+					'section' => 'rendering/skin',
+				];
 			}
-
-			if ( $allowUserJs ) {
-				$jsPage = Title::makeTitleSafe( NS_USER, $userName . '/common.js' );
-				$jsLinkText = $context->msg( 'prefs-custom-js' )->text();
-				$linkTools[] = $this->linkRenderer->makeLink( $jsPage, $jsLinkText );
-			}
-
-			$defaultPreferences['commoncssjs'] = [
-				'type' => 'info',
-				'raw' => true,
-				'default' => $context->getLanguage()->pipeList( $linkTools ),
-				'label-message' => 'prefs-common-config',
-				'section' => 'rendering/skin',
-			];
 		}
 	}
 
@@ -1074,6 +1124,9 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			'section' => 'rendering/diffs',
 			'label-message' => 'tog-norollbackdiff',
 		];
+		$defaultPreferences['diff-type'] = [
+			'type' => 'api',
+		];
 
 		// Page Rendering
 		if ( $this->options->get( MainConfigNames::AllowUserCssPrefs ) ) {
@@ -1102,6 +1155,13 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 				'label-message' => 'tog-showrollbackconfirmation',
 			];
 		}
+
+		$defaultPreferences['forcesafemode'] = [
+			'type' => 'toggle',
+			'section' => 'rendering/advancedrendering',
+			'label-message' => 'tog-forcesafemode',
+			'help-message' => 'prefs-help-forcesafemode'
+		];
 	}
 
 	/**
@@ -1357,7 +1417,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			'label-message' => 'tog-watchlisthideliu',
 		];
 
-		if ( !\SpecialWatchlist::checkStructuredFilterUiEnabled( $user ) ) {
+		if ( !SpecialWatchlist::checkStructuredFilterUiEnabled( $user ) ) {
 			$defaultPreferences['watchlistreloadautomatically'] = [
 				'type' => 'toggle',
 				'section' => 'watchlist/advancedwatchlist',
@@ -1390,7 +1450,6 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		$watchTypes = [
 			'edit' => 'watchdefault',
 			'move' => 'watchmoves',
-			'delete' => 'watchdeletion'
 		];
 
 		// Kinda hacky
@@ -1398,13 +1457,12 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			$watchTypes['read'] = 'watchcreations';
 		}
 
-		if ( $user->isAllowed( 'rollback' ) ) {
-			$watchTypes['rollback'] = 'watchrollback';
-		}
-
-		if ( $user->isAllowed( 'upload' ) ) {
-			$watchTypes['upload'] = 'watchuploads';
-		}
+		// Move uncommon actions to end of list
+		$watchTypes += [
+			'rollback' => 'watchrollback',
+			'upload' => 'watchuploads',
+			'delete' => 'watchdeletion',
+		];
 
 		foreach ( $watchTypes as $action => $pref ) {
 			if ( $user->isAllowed( $action ) ) {
@@ -1486,7 +1544,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 
 		// show a preference for thumbnails from namespaces other than NS_FILE,
 		// only when there they're actually configured to be served
-		$thumbNamespaces = $this->config->get( 'ThumbnailNamespaces' );
+		$thumbNamespaces = $this->config->get( MainConfigNames::ThumbnailNamespaces );
 		$thumbNamespacesFormatted = array_combine(
 			$thumbNamespaces,
 			array_map(
@@ -1558,16 +1616,14 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	}
 
 	/**
+	 * Gat valid skin names for the given user, which the 'useskin' query string and user
+	 * options should be taken into account.
+	 *
 	 * @param User $user
 	 * @param IContextSource $context
-	 * @return array Text/links to display as key; $skinkey as value
+	 * @return array Associative array in the format of [ 'skin name' => 'display name' ].
 	 */
-	protected function generateSkinOptions( User $user, IContextSource $context ) {
-		$ret = [];
-
-		$mptitle = Title::newMainPage();
-		$previewtext = $context->msg( 'skin-preview' )->escaped();
-
+	private function getValidSkinNames( User $user, IContextSource $context ) {
 		// Only show skins that aren't disabled
 		$validSkinNames = $this->skinFactory->getAllowedSkins();
 		$allInstalledSkins = $this->skinFactory->getInstalledSkins();
@@ -1602,9 +1658,24 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			return $this->sortSkinNames( $a, $b, $currentUserSkin, $preferredSkins );
 		} );
 
+		return $validSkinNames;
+	}
+
+	/**
+	 * @param User $user
+	 * @param IContextSource $context
+	 * @param array $validSkinNames
+	 * @return array Text/links to display as key; $skinkey as value
+	 */
+	protected function generateSkinOptions( User $user, IContextSource $context, array $validSkinNames ) {
+		$ret = [];
+
+		$mptitle = Title::newMainPage();
+		$previewtext = $context->msg( 'skin-preview' )->escaped();
 		$defaultSkin = $this->options->get( MainConfigNames::DefaultSkin );
 		$allowUserCss = $this->options->get( MainConfigNames::AllowUserCss );
 		$allowUserJs = $this->options->get( MainConfigNames::AllowUserJs );
+		$safeMode = $this->userOptionsManager->getOption( $user, 'forcesafemode' );
 		$foundDefault = false;
 		foreach ( $validSkinNames as $skinkey => $sn ) {
 			$linkTools = [];
@@ -1625,18 +1696,20 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			$mplink = htmlspecialchars( $mptitle->getLocalURL( [ 'useskin' => $skinkey ] ) );
 			$linkTools[] = "<a target='_blank' href=\"$mplink\">$previewtext</a>";
 
-			// Create links to user CSS/JS pages
-			// @todo Refactor this and the similar code in skinPreferences().
-			if ( $allowUserCss ) {
-				$cssPage = Title::makeTitleSafe( NS_USER, $user->getName() . '/' . $skinkey . '.css' );
-				$cssLinkText = $context->msg( 'prefs-custom-css' )->text();
-				$linkTools[] = $this->linkRenderer->makeLink( $cssPage, $cssLinkText );
-			}
+			if ( !$safeMode ) {
+				// Create links to user CSS/JS pages
+				// @todo Refactor this and the similar code in skinPreferences().
+				if ( $allowUserCss ) {
+					$cssPage = Title::makeTitleSafe( NS_USER, $user->getName() . '/' . $skinkey . '.css' );
+					$cssLinkText = $context->msg( 'prefs-custom-css' )->text();
+					$linkTools[] = $this->linkRenderer->makeLink( $cssPage, $cssLinkText );
+				}
 
-			if ( $allowUserJs ) {
-				$jsPage = Title::makeTitleSafe( NS_USER, $user->getName() . '/' . $skinkey . '.js' );
-				$jsLinkText = $context->msg( 'prefs-custom-js' )->text();
-				$linkTools[] = $this->linkRenderer->makeLink( $jsPage, $jsLinkText );
+				if ( $allowUserJs ) {
+					$jsPage = Title::makeTitleSafe( NS_USER, $user->getName() . '/' . $skinkey . '.js' );
+					$jsLinkText = $context->msg( 'prefs-custom-js' )->text();
+					$linkTools[] = $this->linkRenderer->makeLink( $jsPage, $jsLinkText );
+				}
 			}
 
 			$display = $sn . ' ' . $context->msg( 'parentheses' )
@@ -1778,7 +1851,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		// Quick check for mismatched HTML tags in the input.
 		// Note that this is easily fooled by wikitext templates or bold/italic markup.
 		// We're only keeping this until Parsoid is integrated and guaranteed to be available.
-		if ( $this->parser->validateSig( $signature ) === false ) {
+		if ( $this->parserFactory->getInstance()->validateSig( $signature ) === false ) {
 			return $form->msg( 'badsig' )->escaped();
 		}
 
@@ -1793,7 +1866,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	 */
 	protected function cleanSignature( $signature, $alldata, HTMLForm $form ) {
 		if ( isset( $alldata['fancysig'] ) && $alldata['fancysig'] ) {
-			$signature = $this->parser->cleanSig( $signature );
+			$signature = $this->parserFactory->getInstance()->cleanSig( $signature );
 		} else {
 			// When no fancy sig used, make sure ~{3,5} get removed.
 			$signature = Parser::cleanSigInSig( $signature );
@@ -1876,8 +1949,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		$hiddenPrefs = $this->options->get( MainConfigNames::HiddenPrefs );
 		$result = true;
 
-		if ( !$user->isAllowedAny( 'editmyprivateinfo', 'editmyoptions' )
-		) {
+		if ( !$user->isAllowedAny( 'editmyprivateinfo', 'editmyoptions' ) ) {
 			return Status::newFatal( 'mypreferencesprotected' );
 		}
 

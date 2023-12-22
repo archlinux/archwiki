@@ -15,6 +15,8 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { ImageModel, License } = require( 'mmv' );
+
 ( function () {
 	QUnit.module( 'mmv.model.Image', QUnit.newMwEnvironment() );
 
@@ -40,12 +42,12 @@
 			authorCount = 1,
 			permission = 'only use for good, not evil',
 			deletionReason = 'poor quality',
-			license = new mw.mmv.model.License( 'cc0' ),
+			license = new License( 'cc0' ),
 			attribution = 'Created by my cats on a winter morning',
 			latitude = 39.12381283,
 			longitude = 100.983829,
 			restrictions = [ 'trademarked' ],
-			imageData = new mw.mmv.model.Image(
+			imageData = new ImageModel(
 				title, name, size, width, height, mime, url,
 				descurl, descShortUrl, pageID, repo, datetime, anondatetime, origdatetime,
 				description, source, author, authorCount, license, permission, attribution,
@@ -80,13 +82,13 @@
 
 	QUnit.test( 'hasCoords()', function ( assert ) {
 		var
-			firstImageData = new mw.mmv.model.Image(
+			firstImageData = new ImageModel(
 				mw.Title.newFromText( 'File:Foobar.pdf.jpg' ), 'Foo bar',
 				10, 10, 10, 'image/jpeg', 'http://example.org', 'http://example.com', 42,
 				'example', 'tester', '2013-11-10', '20131110', '2013-11-09', 'Blah blah blah',
 				'A person', 'Another person', 1, 'CC-BY-SA-3.0', 'Permitted', 'My cat'
 			),
-			secondImageData = new mw.mmv.model.Image(
+			secondImageData = new ImageModel(
 				mw.Title.newFromText( 'File:Foobar.pdf.jpg' ), 'Foo bar',
 				10, 10, 10, 'image/jpeg', 'http://example.org', 'http://example.com', 42,
 				'example', 'tester', '2013-11-10', '20131110', '2013-11-09', 'Blah blah blah',
@@ -99,8 +101,7 @@
 	} );
 
 	QUnit.test( 'parseExtmeta()', function ( assert ) {
-		var Image = mw.mmv.model.Image,
-			stringData = { value: 'foo' },
+		var stringData = { value: 'foo' },
 			plaintextData = { value: 'fo<b>o</b>' },
 			integerData = { value: 3 },
 			integerStringData = { value: '3' },
@@ -114,35 +115,35 @@
 			listDataMultiple = { value: 'foo|bar|baz' },
 			missingData;
 
-		assert.strictEqual( Image.parseExtmeta( stringData, 'string' ), 'foo',
+		assert.strictEqual( ImageModel.parseExtmeta( stringData, 'string' ), 'foo',
 			'Extmeta string parsed correctly.' );
-		assert.strictEqual( Image.parseExtmeta( plaintextData, 'plaintext' ), 'foo',
+		assert.strictEqual( ImageModel.parseExtmeta( plaintextData, 'plaintext' ), 'foo',
 			'Extmeta plaintext parsed correctly.' );
-		assert.strictEqual( Image.parseExtmeta( floatData, 'float' ), 1.23,
+		assert.strictEqual( ImageModel.parseExtmeta( floatData, 'float' ), 1.23,
 			'Extmeta float parsed correctly.' );
-		assert.strictEqual( Image.parseExtmeta( floatStringData, 'float' ), 1.23,
+		assert.strictEqual( ImageModel.parseExtmeta( floatStringData, 'float' ), 1.23,
 			'Extmeta float string parsed correctly.' );
-		assert.strictEqual( Image.parseExtmeta( booleanData, 'boolean' ), true,
+		assert.strictEqual( ImageModel.parseExtmeta( booleanData, 'boolean' ), true,
 			'Extmeta boolean string parsed correctly.' );
-		assert.strictEqual( Image.parseExtmeta( wrongBooleanData, 'boolean' ), undefined,
+		assert.strictEqual( ImageModel.parseExtmeta( wrongBooleanData, 'boolean' ), undefined,
 			'Extmeta boolean string with error ignored.' );
-		assert.strictEqual( Image.parseExtmeta( integerData, 'integer' ), 3,
+		assert.strictEqual( ImageModel.parseExtmeta( integerData, 'integer' ), 3,
 			'Extmeta integer parsed correctly.' );
-		assert.strictEqual( Image.parseExtmeta( integerStringData, 'integer' ), 3,
+		assert.strictEqual( ImageModel.parseExtmeta( integerStringData, 'integer' ), 3,
 			'Extmeta integer string parsed correctly.' );
-		assert.strictEqual( Image.parseExtmeta( zeroPrefixedIntegerStringData, 'integer' ), 3,
+		assert.strictEqual( ImageModel.parseExtmeta( zeroPrefixedIntegerStringData, 'integer' ), 3,
 			'Extmeta zero-prefixed integer string parsed correctly.' );
-		assert.deepEqual( Image.parseExtmeta( listDataEmpty, 'list' ), [],
+		assert.deepEqual( ImageModel.parseExtmeta( listDataEmpty, 'list' ), [],
 			'Extmeta empty list parsed correctly.' );
-		assert.deepEqual( Image.parseExtmeta( listDataSingle, 'list' ), [ 'foo' ],
+		assert.deepEqual( ImageModel.parseExtmeta( listDataSingle, 'list' ), [ 'foo' ],
 			'Extmeta list with single element parsed correctly.' );
-		assert.deepEqual( Image.parseExtmeta( listDataMultiple, 'list' ), [ 'foo', 'bar', 'baz' ],
-			'Extmeta list with multipleelements parsed correctly.' );
-		assert.strictEqual( Image.parseExtmeta( missingData, 'string' ), undefined,
+		assert.deepEqual( ImageModel.parseExtmeta( listDataMultiple, 'list' ), [ 'foo', 'bar', 'baz' ],
+			'Extmeta list with multiple elements parsed correctly.' );
+		assert.strictEqual( ImageModel.parseExtmeta( missingData, 'string' ), undefined,
 			'Extmeta missing data parsed correctly.' );
 
 		assert.throws( function () {
-			Image.parseExtmeta( stringData, 'strong' );
+			ImageModel.parseExtmeta( stringData, 'strong' );
 		}, 'Exception is thrown on invalid argument' );
 	} );
 

@@ -4,7 +4,6 @@
 			"WikiPhoenix"
 		]
 	},
-	"apihelp-fancycaptchareload-description": "Hämta en ny FancyCaptcha.",
 	"apihelp-fancycaptchareload-summary": "Hämta en ny FancyCaptcha.",
 	"apihelp-fancycaptchareload-example-1": "Hämta en ny FancyCaptcha."
 }

@@ -26,7 +26,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 тил}}",
 	"vector-no-language-button-label": "Тилдерди кошуу",
 	"vector-no-language-button-aria-label": "Бул макала ушул тилде гана бар. Башка тилдеги макала кошуңуз",
-	"vector-language-redirect-to-top": "Бул {{SITENAME}}да тил шилтемелери барактын жогорусунда жайгашкан (барак аталышынын маңдайында). [[#p-lang-btn|Жогоруга өтүү]].",
+	"vector-language-redirect-to-top": "Тил шилтемелери барактын жогору жагындагы аталыштын маңдайында жайгашкан.",
 	"vector-language-variant-switcher-label": "Тилди өзгөртүү",
 	"vector-action-addsection": "Тема кошуу",
 	"vector-action-delete": "Өчүрүү",
@@ -67,5 +67,8 @@
 	"tooltip-vector-anon-user-menu-title": "Кошумча мүмкүнчүлүктөр",
 	"vector-prefs-limited-width": "Чектелген туурасы режимин орнотуу",
 	"vector-prefs-limited-width-help": "Окуу ыңгайлуулугу үчүн чектелген туурасы режимин орнотуу",
-	"empty-language-selector-body": "Барактын мазмуну башка тилдерде жеткиликтүү эмес."
+	"empty-language-selector-body": "Барактын мазмуну башка тилдерде жеткиликтүү эмес.",
+	"vector-toc-unpinned-popup": "Мазмуну бул жерге жылдырылды.",
+	"vector-page-tools-unpinned-popup": "Куралдар бул жерге жылдырылды.",
+	"vector-main-menu-unpinned-popup": "Иш тилкеси бул жерге жылдырылды."
 }

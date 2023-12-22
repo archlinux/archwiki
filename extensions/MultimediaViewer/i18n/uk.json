@@ -23,6 +23,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|ще один автор|$1 інші автори|$1 інших авторів}}",
 	"multimediaviewer-multiple-authors-combine": "$1 і $2",
 	"multimediaviewer-metadata-error": "Не вдалося завантажити дані зображення (помилка: $1)",
+	"multimediaviewer-file-not-found-error": "На жаль, файл $1 неможливо відобразити, оскільки його немає на поточній сторінці.",
 	"multimediaviewer-thumbnail-error": "Вибачте, файл не можна відобразити",
 	"multimediaviewer-thumbnail-error-description": "Схоже, сталася технічна проблема. Ви можете $1, якщо вона збережеться. Помилка: $2",
 	"multimediaviewer-thumbnail-error-retry": "повторити",

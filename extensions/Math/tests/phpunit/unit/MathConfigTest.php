@@ -29,7 +29,7 @@ class MathConfigTest extends TestCase {
 		);
 	}
 
-	public function provideTexCheckDisabled() {
+	public static function provideTexCheckDisabled() {
 		yield 'always' => [ 'always', MathConfig::ALWAYS ];
 		yield 'never' => [ 'never', MathConfig::NEVER ];
 		yield 'new' => [ 'new', MathConfig::NEW ];
@@ -47,7 +47,7 @@ class MathConfigTest extends TestCase {
 		$this->assertSame( $expected, $mathConfig->texCheckDisabled() );
 	}
 
-	public function provideNormalizeRenderingMode() {
+	public static function provideNormalizeRenderingMode() {
 		yield 'legacy user option' => [ 1, self::TEST_DEFAULT ];
 		yield 'source user option' => [ 3, MathConfig::MODE_SOURCE ];
 		yield 'mathml user option' => [ 5, MathConfig::MODE_MATHML ];
@@ -82,7 +82,7 @@ class MathConfigTest extends TestCase {
 		$this->assertContains( MathConfig::MODE_SOURCE, $actualModes );
 	}
 
-	public function provideIsValidRenderingMode() {
+	public static function provideIsValidRenderingMode() {
 		yield 'valid' => [ MathConfig::MODE_MATHML, true ];
 		yield 'garbage' => [ 'garbage', false ];
 		yield 'does not normalize' => [ 0, false ];

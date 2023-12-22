@@ -5,7 +5,6 @@
 		]
 	},
 	"minerva-last-modified-date": "چھیکڑی تبدیلی مورخہ $1 بوقت $2",
-	"minerva-talk-add-topic": "بحث شامل کرو",
 	"mobile-frontend-editor-edit": "لکھو",
 	"minerva-download": "ڈاؤن لوڈ پی ڈی ایف",
 	"mobile-frontend-editor-redlink-create": "ورقہ بݨاؤ",
@@ -25,8 +24,6 @@
 	"mobile-frontend-meta-data-issues": "ورقے دے مسئلے",
 	"mobile-frontend-meta-data-issues-categories": "ایں ونکی بارے",
 	"mobile-frontend-meta-data-issues-header": "ورقے دے مسئلے",
-	"mobile-frontend-meta-data-issues-header-talk": "ایں ورقے بارے",
-	"mobile-frontend-meta-data-issues-talk": "ایں ڳالھ مہاڑ ورقے بارے",
 	"mobile-frontend-notifications-filter": "چھاݨاں",
 	"mobile-frontend-placeholder": "ڳولو {{SITENAME}}",
 	"mobile-frontend-random-button": "بے ترتیبا",

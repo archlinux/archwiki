@@ -26,19 +26,19 @@
  */
 
 use MediaWiki\Cache\CacheKeyHelper;
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Title\Title;
-use MediaWiki\Title\TitleArray;
-use MediaWiki\Title\TitleArrayFromResult;
+use MediaWiki\Title\TitleValue;
 use Wikimedia\Rdbms\Database;
-use Wikimedia\Rdbms\FakeResultWrapper;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
@@ -56,6 +56,12 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  * Introduced by r47317
  */
 class BacklinkCache {
+	/**
+	 * @internal Used by ServiceWiring.php
+	 */
+	public const CONSTRUCTOR_OPTIONS = [
+		MainConfigNames::UpdateRowsPerJob,
+	];
 
 	/**
 	 * Multi dimensions array representing batches. Keys are:
@@ -92,39 +98,35 @@ class BacklinkCache {
 	protected $page;
 
 	private const CACHE_EXPIRY = 3600;
+	private IConnectionProvider $dbProvider;
+	private ServiceOptions $options;
+	private LinksMigration $linksMigration;
 
 	/**
 	 * Create a new BacklinkCache
 	 *
+	 * @param ServiceOptions $options
+	 * @param LinksMigration $linksMigration
 	 * @param WANObjectCache $wanCache
 	 * @param HookContainer $hookContainer
+	 * @param IConnectionProvider $dbProvider
 	 * @param PageReference $page Page to create a backlink cache for
 	 */
 	public function __construct(
+		ServiceOptions $options,
+		LinksMigration $linksMigration,
 		WANObjectCache $wanCache,
 		HookContainer $hookContainer,
+		IConnectionProvider $dbProvider,
 		PageReference $page
 	) {
+		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
+		$this->options = $options;
+		$this->linksMigration = $linksMigration;
 		$this->page = $page;
 		$this->wanCache = $wanCache;
 		$this->hookRunner = new HookRunner( $hookContainer );
-	}
-
-	/**
-	 * Create a new BacklinkCache or reuse any existing one.
-	 * Currently, only one cache instance can exist; callers that
-	 * need multiple backlink cache objects should keep them in scope.
-	 *
-	 * @deprecated since 1.37 Use BacklinkCacheFactory::getBacklinkCache() instead. Hard deprecated in 1.40.
-	 *
-	 * @param PageReference $page Page to get a backlink cache for
-	 * @return BacklinkCache
-	 */
-	public static function get( PageReference $page ): self {
-		wfDeprecated( __METHOD__, '1.37' );
-		$backlinkCacheFactory = MediaWikiServices::getInstance()->getBacklinkCacheFactory();
-
-		return $backlinkCacheFactory->getBacklinkCache( $page );
+		$this->dbProvider = $dbProvider;
 	}
 
 	/**
@@ -138,10 +140,10 @@ class BacklinkCache {
 	/**
 	 * Get the replica DB connection to the database
 	 *
-	 * @return IDatabase
+	 * @return IReadableDatabase
 	 */
 	protected function getDB() {
-		return wfGetDB( DB_REPLICA );
+		return $this->dbProvider->getReplicaDatabase();
 	}
 
 	/**
@@ -160,21 +162,6 @@ class BacklinkCache {
 			yield PageIdentityValue::localIdentity(
 				$row->page_id, $row->page_namespace, $row->page_title );
 		}
-	}
-
-	/**
-	 * Get the backlinks for a given table. Cached in process memory only.
-	 *
-	 * @deprecated in 1.37, use getLinkPages(). Hard deprecated in 1.40.
-	 * @param string $table
-	 * @param int|bool $startId
-	 * @param int|bool $endId
-	 * @param int|float $max Integer, or INF for no max
-	 * @return TitleArrayFromResult
-	 */
-	public function getLinks( $table, $startId = false, $endId = false, $max = INF ) {
-		wfDeprecated( __METHOD__, '1.37' );
-		return TitleArray::newFromResult( $this->queryLinks( $table, $startId, $endId, $max ) );
 	}
 
 	/**
@@ -229,7 +216,6 @@ class BacklinkCache {
 	/**
 	 * Get the field name prefix for a given table
 	 * @param string $table
-	 * @throws MWException
 	 * @return null|string
 	 */
 	protected function getPrefix( $table ) {
@@ -250,7 +236,7 @@ class BacklinkCache {
 			if ( $prefix ) {
 				return $prefix;
 			} else {
-				throw new MWException( "Invalid table \"$table\" in " . __CLASS__ );
+				throw new LogicException( "Invalid table \"$table\" in " . __CLASS__ );
 			}
 		}
 	}
@@ -262,7 +248,6 @@ class BacklinkCache {
 	 * @param string $table
 	 * @param string $select
 	 * @return SelectQueryBuilder
-	 * @throws MWException
 	 */
 	private function initQueryBuilderForTable( string $table, string $select ): SelectQueryBuilder {
 		$prefix = $this->getPrefix( $table );
@@ -288,24 +273,16 @@ class BacklinkCache {
 
 		switch ( $table ) {
 			case 'pagelinks':
-				$queryBuilder->where( [
-					"{$prefix}_namespace" => $this->page->getNamespace(),
-					"{$prefix}_title" => $this->page->getDBkey(),
-				] );
-				break;
 			case 'templatelinks':
-				$linksMigration = MediaWikiServices::getInstance()->getLinksMigration();
 				$queryBuilder->where(
-					$linksMigration->getLinksConditions( $table, TitleValue::newFromPage( $this->page ) ) );
+					$this->linksMigration->getLinksConditions( $table, TitleValue::newFromPage( $this->page ) )
+				);
 				break;
 			case 'redirect':
 				$queryBuilder->where( [
 					"{$prefix}_namespace" => $this->page->getNamespace(),
 					"{$prefix}_title" => $this->page->getDBkey(),
-					$this->getDB()->makeList( [
-						"{$prefix}_interwiki" => '',
-						"{$prefix}_interwiki IS NULL",
-					], LIST_OR ),
+					"{$prefix}_interwiki" => [ '', null ],
 				] );
 				break;
 			case 'imagelinks':
@@ -318,13 +295,12 @@ class BacklinkCache {
 				$knownTable = false;
 				$conds = null;
 				$this->hookRunner->onBacklinkCacheGetConditions( $table,
-					// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
-					Title::castFromPageReference( $this->page ),
+					Title::newFromPageReference( $this->page ),
 					// @phan-suppress-next-line PhanTypeMismatchArgument Type mismatch on pass-by-ref args
 					$conds
 				);
 				if ( !$conds ) {
-					throw new MWException( "Invalid table \"$table\" in " . __CLASS__ );
+					throw new LogicException( "Invalid table \"$table\" in " . __CLASS__ );
 				}
 				if ( $joinPageTable ) {
 					$queryBuilder->table( 'page' ); // join condition in $conds
@@ -382,14 +358,12 @@ class BacklinkCache {
 			),
 			self::CACHE_EXPIRY,
 			function ( $oldValue, &$ttl, array &$setOpts ) use ( $table, $max ) {
-				$config = MediaWikiServices::getInstance()->getMainConfig();
-
 				$setOpts += Database::getCacheSetOptions( $this->getDB() );
 
 				if ( is_infinite( $max ) ) {
 					// Use partition() since it will batch the query and skip the JOIN.
 					// Use $wgUpdateRowsPerJob just to encourage cache reuse for jobs.
-					$batchSize = $config->get( MainConfigNames::UpdateRowsPerJob );
+					$batchSize = $this->options->get( MainConfigNames::UpdateRowsPerJob );
 					$this->partition( $table, $batchSize );
 					$value = $this->partitionCache[$table][$batchSize]['numRows'];
 				} else {
@@ -480,7 +454,6 @@ class BacklinkCache {
 	 * @param IResultWrapper $res Database result
 	 * @param int $batchSize
 	 * @param bool $isComplete Whether $res includes all the backlinks
-	 * @throws MWException
 	 * @return array
 	 */
 	protected function partitionResult( $res, $batchSize, $isComplete = true ) {
@@ -509,7 +482,7 @@ class BacklinkCache {
 
 			# Check order
 			if ( $start && $end && $start > $end ) {
-				throw new MWException( __METHOD__ . ': Internal error: query result out of order' );
+				throw new RuntimeException( __METHOD__ . ': Internal error: query result out of order' );
 			}
 
 			$batches[] = [ $start, $end ];
@@ -532,19 +505,6 @@ class BacklinkCache {
 	}
 
 	/**
-	 * Get a Title iterator for cascade-protected template/file use backlinks
-	 *
-	 * @deprecated since 1.37, use getCascadeProtectedLinkPages(). Hard deprecated in 1.40.
-	 * @return TitleArray
-	 * @since 1.25
-	 */
-	public function getCascadeProtectedLinks() {
-		wfDeprecated( __METHOD__, '1.37' );
-		return TitleArray::newFromResult(
-			new FakeResultWrapper( $this->getCascadeProtectedLinksInternal() ) );
-	}
-
-	/**
 	 * Get an array of cascade-protected template/file use backlinks
 	 *
 	 * @return stdClass[]
@@ -554,8 +514,9 @@ class BacklinkCache {
 
 		// @todo: use UNION without breaking tests that use temp tables
 		$resSets = [];
-		$linksMigration = MediaWikiServices::getInstance()->getLinksMigration();
-		$linkConds = $linksMigration->getLinksConditions( 'templatelinks', TitleValue::newFromPage( $this->page ) );
+		$linkConds = $this->linksMigration->getLinksConditions(
+			'templatelinks', TitleValue::newFromPage( $this->page )
+		);
 		$resSets[] = $dbr->newSelectQueryBuilder()
 			->select( [ 'page_namespace', 'page_title', 'page_id' ] )
 			->from( 'templatelinks' )

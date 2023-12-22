@@ -77,8 +77,8 @@ class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 		$this->setupDummyRendering();
 
 		$page = $this->getExistingTestPage( __METHOD__ );
-		$this->assertTrue(
-			$this->editPage( $page, '<math>TEST_FORMULA</math>' )->isGood(),
+		$this->assertStatusGood(
+			$this->editPage( $page, '<math>TEST_FORMULA</math>' ),
 			'Sanity: edited page'
 		);
 
@@ -97,7 +97,7 @@ class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 		$parserOptions2->setOption( 'math', MathConfig::MODE_MATHML );
 		$this->assertNull( $parserOutputAccess->getCachedParserOutput( $page, $parserOptions2 ) );
 		$renderStatus = $parserOutputAccess->getParserOutput( $page, $parserOptions2 );
-		$this->assertTrue( $renderStatus->isGood() );
+		$this->assertStatusGood( $renderStatus );
 		$this->assertStringContainsString(
 			"<render>png:TEST_FORMULA</render>",
 			$renderStatus->getValue()->getText()

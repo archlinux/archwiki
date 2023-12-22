@@ -1,17 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
+			"Benojan",
 			"Winston Sung",
-			"Benojan"
+			"Subarupan"
 		]
 	},
 	"vector-languages": "閒話",
-	"vector-language-button-label": "{{PLURAL:$1|$1種話}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1種閒話}}",
 	"vector-action-addsection": "加話題",
-	"vector-action-delete": "刪除",
-	"vector-action-move": "移動",
-	"vector-action-protect": "保牢",
-	"vector-view-history": "望編輯記錄",
+	"vector-action-delete": "刪脫",
+	"vector-action-move": "捅去",
+	"vector-action-protect": "保護牢",
+	"vector-view-history": "望歷史",
 	"vector-view-view": "閱讀",
 	"vector-more-actions": "還多",
 	"vector-page-tools-label": "家生",

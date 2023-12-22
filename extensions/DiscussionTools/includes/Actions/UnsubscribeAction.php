@@ -10,7 +10,8 @@ use HTMLForm;
 use IContextSource;
 use MediaWiki\Extension\DiscussionTools\SubscriptionItem;
 use MediaWiki\Extension\DiscussionTools\SubscriptionStore;
-use Title;
+use MediaWiki\Title\Title;
+use SpecialPage;
 use User;
 use UserNotLoggedIn;
 
@@ -32,11 +33,10 @@ class UnsubscribeAction extends FormAction {
 	 * @inheritDoc
 	 */
 	protected function getPageTitle() {
-		if ( $this->subscriptionItem ) {
+		if ( $this->subscriptionItem && !str_starts_with( $this->subscriptionItem->getItemName(), 'p-topics-' ) ) {
 			$title = Title::newFromLinkTarget( $this->subscriptionItem->getLinkTarget() );
-			return htmlspecialchars( $title->getPrefixedText() ) .
-				$this->msg( 'pipe-separator' )->escaped() .
-				htmlspecialchars( $title->getFragment() );
+			return $this->msg( 'discussiontools-topicsubscription-action-title' )
+				->plaintextParams( $title->getPrefixedText(), $title->getFragment() );
 		} else {
 			return parent::getPageTitle();
 		}
@@ -98,7 +98,9 @@ class UnsubscribeAction extends FormAction {
 				'intro' => [
 					'type' => 'info',
 					'raw' => true,
-					'default' => $this->msg( 'discussiontools-topicsubscription-action-unsubscribe-prompt' )->parse(),
+					'default' => $this->msg( str_starts_with( $this->subscriptionItem->getItemName(), 'p-topics-' ) ?
+						'discussiontools-topicsubscription-action-unsubscribe-prompt-newtopics' :
+						'discussiontools-topicsubscription-action-unsubscribe-prompt' )->parse(),
 				],
 			];
 		} else {
@@ -133,9 +135,13 @@ class UnsubscribeAction extends FormAction {
 			Html::element(
 				'p',
 				[],
-				$this->msg( 'discussiontools-topicsubscription-notify-unsubscribed-body' )->text()
+				$this->msg( str_starts_with( $this->subscriptionItem->getItemName(), 'p-topics-' ) ?
+					'discussiontools-newtopicssubscription-notify-unsubscribed-body' :
+					'discussiontools-topicsubscription-notify-unsubscribed-body' )->text()
 			)
 		);
+		$this->getOutput()->addReturnTo( $this->subscriptionItem->getLinkTarget() );
+		$this->getOutput()->addReturnTo( SpecialPage::getTitleFor( 'TopicSubscriptions' ) );
 	}
 
 	/**
@@ -151,7 +157,7 @@ class UnsubscribeAction extends FormAction {
 	 */
 	protected function checkCanExecute( User $user ) {
 		// Must be logged in
-		if ( $user->isAnon() ) {
+		if ( !$user->isNamed() ) {
 			throw new UserNotLoggedIn();
 		}
 

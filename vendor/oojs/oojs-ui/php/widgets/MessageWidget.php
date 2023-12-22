@@ -39,7 +39,7 @@ class MessageWidget extends Widget {
 		'notice' => 'infoFilled',
 		'error' => 'error',
 		'warning' => 'alert',
-		'success' => 'check',
+		'success' => 'success',
 	];
 
 	/**

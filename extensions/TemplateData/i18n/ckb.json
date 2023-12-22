@@ -53,7 +53,6 @@
 	"templatedata-modal-json-error-replace": "جێگۆڕ بکە",
 	"templatedata-modal-placeholder-paramkey": "ناوی پارامەتر",
 	"templatedata-modal-search-input-placeholder": "گەڕان بە ناوی زمان یان کۆد",
-	"templatedata-modal-table-param-actions": "کردەوەکان",
 	"templatedata-modal-table-param-autovalue": "بەھای خۆگەڕ",
 	"templatedata-modal-table-param-default": "بنەڕەت ($1)",
 	"templatedata-modal-table-param-description": "وەسف ($1)",
@@ -63,7 +62,6 @@
 	"templatedata-modal-table-param-required": "پێویستە",
 	"templatedata-modal-table-param-suggested": "پێشنیارکراوە",
 	"templatedata-modal-table-param-type": "جۆر",
-	"templatedata-modal-table-param-uneditablefield": "ناتواندرێت دەستکاری بکرێت",
 	"templatedata-modal-title-addparam": "زیادکردنی پارامەتری نوێ",
 	"templatedata-modal-title-choose-language": "ھەڵبژاردنی زمان",
 	"templatedata-modal-title-language": "زمان"

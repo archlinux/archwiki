@@ -1,10 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Huuchin"
+			"Huuchin",
+			"Ukhant Erdemt",
+			"Алия"
 		]
 	},
 	"tooltip-ca-ve-edit": "Эн халх ясх",
-	"visualeditor-ca-editsource": "Иш ясх",
-	"visualeditor-ca-editsource-section": "иш ясх"
+	"visualeditor-ca-createlocaldescriptionsource": "локал тәәлвртә экн-үүсвр немх",
+	"visualeditor-ca-createsource": "Кодар үүскх",
+	"visualeditor-ca-editsource": "Кодар ясврлх",
+	"visualeditor-ca-editsource-section": "кодар ясврлх",
+	"visualeditor-descriptionpagelink": "Project:Визуал редактор"
 }

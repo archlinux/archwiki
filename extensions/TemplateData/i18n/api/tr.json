@@ -6,7 +6,6 @@
 			"SaldırganSincap"
 		]
 	},
-	"apihelp-templatedata-description": "TemplateData uzantısı tarafından depolanan verileri alın.",
 	"apihelp-templatedata-summary": "TemplateData uzantısı tarafından depolanan verileri alın.",
 	"apihelp-templatedata-example-1": "[[Template:Stub]] ve [[Template:Example]] için TemplateData'yı döndürün, şablonlar yoksa veya varsa, ancak TemplateData yoksa sonuçlarla birlikte",
 	"apihelp-templatedata-example-2": "[[Template:Stub]] ve [[Template:Example]] için TemplateData döndürün, şablonlar yoksa veya mevcutsa ancak TemplateData yoksa sonuç yok",

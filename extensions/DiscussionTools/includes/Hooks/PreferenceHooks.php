@@ -16,7 +16,6 @@ use MediaWiki\Auth\Hook\LocalUserCreatedHook;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
-use RequestContext;
 use SpecialPage;
 use User;
 
@@ -147,20 +146,11 @@ class PreferenceHooks implements
 		$preferences['discussiontools-showadvanced'] = [
 			'type' => 'api',
 		];
-		$preferences['discussiontools-newtopictool-opened'] = [
-			'type' => 'api',
-		];
-		$preferences['discussiontools-newtopictool-hint-shown'] = [
-			'type' => 'api',
-		];
 		$preferences['discussiontools-seenautotopicsubpopup'] = [
 			'type' => 'api',
 		];
 
-		if (
-			!$this->config->get( 'DiscussionToolsEnable' ) ||
-			!$this->config->get( 'DiscussionToolsBeta' )
-		) {
+		if ( !$this->config->get( 'DiscussionToolsBeta' ) ) {
 			// When out of beta, preserve the user preference in case we
 			// bring back the beta feature for a new sub-feature. (T272071)
 			$preferences['discussiontools-betaenable'] = [
@@ -204,40 +194,6 @@ class PreferenceHooks implements
 	}
 
 	/**
-	 * Handler for the GetBetaFeaturePreferences hook, to add and hide user beta preferences as configured
-	 *
-	 * @param User $user
-	 * @param array &$preferences
-	 */
-	public static function onGetBetaFeaturePreferences( User $user, array &$preferences ): void {
-		$coreConfig = RequestContext::getMain()->getConfig();
-		$iconpath = $coreConfig->get( 'ExtensionAssetsPath' ) . '/DiscussionTools/images';
-
-		$dtConfig = MediaWikiServices::getInstance()->getConfigFactory()
-			->makeConfig( 'discussiontools' );
-
-		if (
-			$dtConfig->get( 'DiscussionToolsEnable' ) &&
-			$dtConfig->get( 'DiscussionToolsBeta' )
-		) {
-			$preferences['discussiontools-betaenable'] = [
-				'version' => '1.0',
-				'label-message' => 'discussiontools-preference-label',
-				'desc-message' => 'discussiontools-preference-description',
-				'screenshot' => [
-					'ltr' => "$iconpath/betafeatures-icon-DiscussionTools-ltr.svg",
-					'rtl' => "$iconpath/betafeatures-icon-DiscussionTools-rtl.svg",
-				],
-				'info-message' => 'discussiontools-preference-info-link',
-				'discussion-message' => 'discussiontools-preference-discussion-link',
-				'requirements' => [
-					'javascript' => true
-				]
-			];
-		}
-	}
-
-	/**
 	 * Handler for LocalUserCreated hook.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/LocalUserCreated
 	 * @param User $user User object for the created user
@@ -245,17 +201,20 @@ class PreferenceHooks implements
 	 * @return bool|void True or no return value to continue or false to abort
 	 */
 	public function onLocalUserCreated( $user, $autocreated ) {
-		if ( !$autocreated ) {
-			$userOptionsManager = MediaWikiServices::getInstance()->getUserOptionsManager();
-			// We want new users to be created with email-subscriptions to our notifications enabled
-			$userOptionsManager->setOption( $user, 'echo-subscriptions-email-dt-subscription', true );
-			// The auto topic subscription feature is disabled by default for existing users, but
-			// we enable it for new users (T294398).
-			// This can only occur when the feature is available for everyone; when it's in beta,
-			// the new user won't have the beta enabled, so it'll never be available here.
-			if ( HookUtils::isFeatureAvailableToUser( $user, HookUtils::AUTOTOPICSUB ) ) {
-				$userOptionsManager->setOption( $user, 'discussiontools-' . HookUtils::AUTOTOPICSUB, 1 );
-			}
+		if ( $user->isTemp() ) {
+			// Temp users can't have preferences (and we don't let them have topic subscriptions anyway)
+			return;
+		}
+
+		$userOptionsManager = MediaWikiServices::getInstance()->getUserOptionsManager();
+		// We want new users to be created with email-subscriptions to our notifications enabled
+		$userOptionsManager->setOption( $user, 'echo-subscriptions-email-dt-subscription', true );
+		// The auto topic subscription feature is disabled by default for existing users, but
+		// we enable it for new users (T294398).
+		// This can only occur when the feature is available for everyone; when it's in beta,
+		// the new user won't have the beta enabled, so it'll never be available here.
+		if ( HookUtils::isFeatureAvailableToUser( $user, HookUtils::AUTOTOPICSUB ) ) {
+			$userOptionsManager->setOption( $user, 'discussiontools-' . HookUtils::AUTOTOPICSUB, 1 );
 		}
 	}
 

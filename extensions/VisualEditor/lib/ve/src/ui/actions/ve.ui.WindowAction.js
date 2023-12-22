@@ -11,6 +11,7 @@
  * @extends ve.ui.Action
  * @constructor
  * @param {ve.ui.Surface} surface Surface to act on
+ * @param {string} [source]
  */
 ve.ui.WindowAction = function VeUiWindowAction() {
 	// Parent constructor
@@ -38,13 +39,14 @@ ve.ui.WindowAction.static.methods = [ 'open', 'close', 'toggle' ];
  * @return {boolean|jQuery.Promise} Action was executed; if a Promise, it'll resolve once the action is finished executing
  */
 ve.ui.WindowAction.prototype.open = function ( name, data, action ) {
+	data = data || {};
 	var windowAction = this,
 		windowType = this.getWindowType( name ),
 		windowManager = windowType && this.getWindowManager( windowType ),
 		currentWindow = windowManager.getCurrentWindow(),
 		autoClosePromises = [],
 		surface = this.surface,
-		surfaceFragment = surface.getModel().getFragment( undefined, true ),
+		surfaceFragment = data.fragment || surface.getModel().getFragment( undefined, true ),
 		dir = surface.getView().getSelectionDirectionality(),
 		windowClass = ve.ui.windowFactory.lookup( name ),
 		isFragmentWindow = !!windowClass.prototype.getFragment,

@@ -77,7 +77,7 @@
 	 * @param {Icon} spinner
 	 */
 	function onClick( portletItem, spinner ) {
-		var icon = portletItem.querySelector( '.mw-ui-icon-minerva-download' );
+		var icon = portletItem.querySelector( '.minerva-icon--download' );
 		function doPrint() {
 			printSetTimeoutReference = clearTimeout( printSetTimeoutReference );
 			track( 'minerva.downloadAsPDF', {
@@ -124,11 +124,10 @@
 	function downloadPageAction( page, supportedNamespaces, windowObj, overflowList ) {
 		var
 			portletLink, iconElement,
-			modifier = overflowList ? 'toggle-list-item__anchor toggle-list-item__label' :
-				'mw-ui-icon-element mw-ui-icon-with-label-desktop',
-			spinner = icons.spinner( {
-				modifier: modifier
-			} );
+			spinner = ( overflowList ) ? icons.spinner( {
+				label: '',
+				isIconOnly: false
+			} ) : icons.spinner();
 
 		if (
 			isAvailable(
@@ -136,9 +135,10 @@
 				supportedNamespaces
 			)
 		) {
-
+			// FIXME: Use p-views when cache has cleared.
+			const actionID = document.querySelector( '#p-views' ) ? 'p-views' : 'page-actions';
 			portletLink = mw.util.addPortletLink(
-				overflowList ? 'page-actions-overflow' : 'page-actions',
+				overflowList ? 'page-actions-overflow' : actionID,
 				'#',
 				mw.msg( 'minerva-download' ),
 				// id
@@ -153,13 +153,13 @@
 				portletLink.addEventListener( 'click', function () {
 					onClick( portletLink, spinner );
 				} );
-				spinner.$el.hide().insertAfter(
-					$( portletLink ).find( '.mw-ui-icon' )
-				);
-				iconElement = portletLink.querySelector( '.mw-ui-icon' );
+				iconElement = portletLink.querySelector( '.minerva-icon' );
 				if ( iconElement ) {
-					iconElement.classList.add( 'mw-ui-icon-minerva-download' );
+					iconElement.classList.add( 'minerva-icon--download' );
 				}
+				spinner.$el.hide().insertBefore(
+					$( portletLink ).find( '.minerva-icon' )
+				);
 			}
 			return portletLink;
 		} else {

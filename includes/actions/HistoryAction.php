@@ -28,6 +28,10 @@ use MediaWiki\Feed\RSSFeed;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Pager\HistoryPager;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IResultWrapper;
 
@@ -61,7 +65,7 @@ class HistoryAction extends FormlessAction {
 	}
 
 	protected function getPageTitle() {
-		return $this->msg( 'history-title', $this->getTitle()->getPrefixedText() )->text();
+		return $this->msg( 'history-title' )->plaintextParams( $this->getTitle()->getPrefixedText() );
 	}
 
 	protected function getDescription() {
@@ -95,7 +99,10 @@ class HistoryAction extends FormlessAction {
 		// Precache various messages
 		if ( !isset( $this->message ) ) {
 			$this->message = [];
-			$msgs = [ 'cur', 'tooltip-cur', 'last', 'tooltip-last', 'pipe-separator' ];
+			$msgs = [
+				'cur', 'tooltip-cur', 'last', 'tooltip-last', 'pipe-separator',
+				'changeslist-nocomment', 'updatedmarker',
+			];
 			foreach ( $msgs as $msg ) {
 				$this->message[$msg] = $this->msg( $msg )->escaped();
 			}
@@ -185,15 +192,10 @@ class HistoryAction extends FormlessAction {
 		$out->addModules( 'mediawiki.action.history' );
 		$out->addModuleStyles( [
 			'mediawiki.interface.helpers.styles',
+			'codex-search-styles',
 			'mediawiki.action.history.styles',
 			'mediawiki.special.changeslist',
 		] );
-		if ( $config->get( MainConfigNames::UseMediaWikiUIEverywhere ) ) {
-			$out->addModuleStyles( [
-				'mediawiki.ui.input',
-				'mediawiki.ui.checkbox',
-			] );
-		}
 
 		// Handle atom/RSS feeds.
 		$feedType = $request->getRawVal( 'feed' );
@@ -215,7 +217,7 @@ class HistoryAction extends FormlessAction {
 			}
 			$out->addWikiMsg( 'nohistory' );
 
-			$dbr = wfGetDB( DB_REPLICA );
+			$dbr = $services->getDBLoadBalancerFactory()->getReplicaDatabase();
 
 			# show deletion/move log if there is an entry
 			LogEventsList::showLogExtract(
@@ -247,27 +249,33 @@ class HistoryAction extends FormlessAction {
 
 		// Add the general form.
 		$fields = [
-			[
+			'action' => [
 				'name' => 'action',
 				'type' => 'hidden',
 				'default' => 'history',
 			],
-			[
+			'date-range-to' => [
 				'type' => 'date',
 				'default' => $ts,
 				'label' => $this->msg( 'date-range-to' )->text(),
 				'name' => 'date-range-to',
 			],
-			[
+			'tagfilter' => [
 				'label-message' => 'tag-filter',
 				'type' => 'tagfilter',
 				'id' => 'tagfilter',
 				'name' => 'tagfilter',
 				'value' => $tagFilter,
-			]
+			],
+			'tagInvert' => [
+				'type' => 'check',
+				'name' => 'tagInvert',
+				'label-message' => 'invert',
+				'hide-if' => [ '===', 'tagfilter', '' ],
+			],
 		];
 		if ( $this->getAuthority()->isAllowed( 'deletedhistory' ) ) {
-			$fields[] = [
+			$fields['deleted'] = [
 				'type' => 'check',
 				'label' => $this->msg( 'history-show-deleted' )->text(),
 				'default' => $request->getBool( 'deleted' ),
@@ -309,13 +317,15 @@ class HistoryAction extends FormlessAction {
 			$this,
 			$y,
 			$m,
-			$tagFilter,
-			$conds,
 			$d,
+			$tagFilter,
+			$request->getCheck( 'tagInvert' ),
+			$conds,
 			$services->getLinkBatchFactory(),
 			$watchlistManager,
 			$services->getCommentFormatter(),
-			$services->getHookContainer()
+			$services->getHookContainer(),
+			$services->getChangeTagsStore()
 		);
 		$out->addHTML(
 			$pager->getNavigationBar() .
@@ -343,7 +353,7 @@ class HistoryAction extends FormlessAction {
 			return new FakeResultWrapper( [] );
 		}
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
 
 		if ( $direction === self::DIR_PREV ) {
 			[ $dirs, $oper ] = [ "ASC", ">=" ];
@@ -359,10 +369,8 @@ class HistoryAction extends FormlessAction {
 
 		$page_id = $this->getWikiPage()->getId();
 
-		$revQuery = MediaWikiServices::getInstance()->getRevisionStore()->getQueryInfo();
-
-		$res = $dbr->newSelectQueryBuilder()
-			->queryInfo( $revQuery )
+		$res = MediaWikiServices::getInstance()->getRevisionStore()->newSelectQueryBuilder( $dbr )
+			->joinComment()
 			->where( [ 'rev_page' => $page_id ] )
 			->andWhere( $offsets )
 			->useIndex( [ 'revision' => 'rev_page_timestamp' ] )

@@ -6,13 +6,14 @@ use Linker;
 use LogicException;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewList;
 use MediaWiki\Linker\LinkRenderer;
-use MWException;
 use SpecialPage;
 use stdClass;
 use TablePager;
+use UnexpectedValueException;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IResultWrapper;
 
@@ -38,7 +39,7 @@ class AbuseFilterPager extends TablePager {
 	private $linkBatchFactory;
 
 	/** @var AbuseFilterPermissionManager */
-	protected $afPermManager;
+	private $afPermManager;
 
 	/** @var SpecsFormatter */
 	protected $specsFormatter;
@@ -46,11 +47,11 @@ class AbuseFilterPager extends TablePager {
 	/**
 	 * @var AbuseFilterViewList The associated page
 	 */
-	protected $mPage;
+	private $mPage;
 	/**
 	 * @var array Query WHERE conditions
 	 */
-	protected $conds;
+	private $conds;
 	/**
 	 * @var string|null The pattern being searched
 	 */
@@ -95,8 +96,9 @@ class AbuseFilterPager extends TablePager {
 	 * @return array
 	 */
 	public function getQueryInfo() {
+		$actorQuery = AbuseFilterServices::getActorMigration()->getJoin( 'af_user' );
 		return [
-			'tables' => [ 'abuse_filter' ],
+			'tables' => [ 'abuse_filter' ] + $actorQuery['tables'],
 			'fields' => [
 				// All columns but af_comments
 				'af_id',
@@ -108,13 +110,12 @@ class AbuseFilterPager extends TablePager {
 				'af_hidden',
 				'af_hit_count',
 				'af_timestamp',
-				'af_user_text',
-				'af_user',
 				'af_actions',
 				'af_group',
 				'af_throttled'
-			],
+			] + $actorQuery['fields'],
 			'conds' => $this->conds,
+			'join_conds' => $actorQuery['joins'],
 		];
 	}
 
@@ -326,7 +327,7 @@ class AbuseFilterPager extends TablePager {
 			case 'af_group':
 				return $this->specsFormatter->nameGroup( $value );
 			default:
-				throw new MWException( "Unknown row type $name!" );
+				throw new UnexpectedValueException( "Unknown row type $name!" );
 		}
 	}
 
@@ -430,15 +431,16 @@ class AbuseFilterPager extends TablePager {
 	}
 
 	/**
-	 * @param string $name
+	 * @param string $field
+	 *
 	 * @return bool
 	 */
-	public function isFieldSortable( $name ) {
-		if ( ( $name === 'af_hit_count' || $name === 'af_public_comments' )
+	public function isFieldSortable( $field ) {
+		if ( ( $field === 'af_hit_count' || $field === 'af_public_comments' )
 			&& !$this->afPermManager->canSeeLogDetails( $this->getAuthority() )
 		) {
 			return false;
 		}
-		return isset( self::INDEX_FIELDS[$name] );
+		return isset( self::INDEX_FIELDS[$field] );
 	}
 }

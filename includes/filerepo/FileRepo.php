@@ -12,8 +12,10 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\AtEase\AtEase;
 
 /**
@@ -947,8 +949,7 @@ class FileRepo {
 
 		$operations = [];
 		// Validate each triplet and get the store operation...
-		foreach ( $triplets as $triplet ) {
-			[ $src, $dstZone, $dstRel ] = $triplet;
+		foreach ( $triplets as [ $src, $dstZone, $dstRel ] ) {
 			$srcPath = ( $src instanceof FSFile ) ? $src->getPath() : $src;
 			wfDebug( __METHOD__
 				. "( \$src='$srcPath', \$dstZone='$dstZone', \$dstRel='$dstRel' )"
@@ -980,8 +981,8 @@ class FileRepo {
 				'op' => $op,
 				'src' => $src, // storage path (copy) or local file path (store)
 				'dst' => $dstPath,
-				'overwrite' => ( $flags & self::OVERWRITE ) ? true : false,
-				'overwriteSame' => ( $flags & self::OVERWRITE_SAME ) ? true : false,
+				'overwrite' => (bool)( $flags & self::OVERWRITE ),
+				'overwriteSame' => (bool)( $flags & self::OVERWRITE_SAME ),
 			];
 		}
 
@@ -1448,8 +1449,7 @@ class FileRepo {
 		$this->backend->preloadFileStat( [ 'srcs' => $paths ] );
 
 		$result = [];
-		foreach ( $files as $key => $file ) {
-			$path = $this->resolveToStoragePathIfVirtual( $file );
+		foreach ( $paths as $key => $path ) {
 			$result[$key] = $this->backend->fileExists( [ 'src' => $path ] );
 		}
 
@@ -1587,7 +1587,7 @@ class FileRepo {
 	 * Temporary files may be purged when the file object falls out of scope.
 	 *
 	 * @param string $virtualUrl
-	 * @return TempFSFile|null Returns null on failure
+	 * @return TempFSFile|null|false Returns false for missing file, null on failure
 	 */
 	public function getLocalCopy( $virtualUrl ) {
 		$path = $this->resolveToStoragePathIfVirtual( $virtualUrl );
@@ -1601,7 +1601,7 @@ class FileRepo {
 	 * Temporary files may be purged when the file object falls out of scope.
 	 *
 	 * @param string $virtualUrl
-	 * @return FSFile|null Returns null on failure.
+	 * @return FSFile|null|false Returns false for missing file, null on failure.
 	 */
 	public function getLocalReference( $virtualUrl ) {
 		$path = $this->resolveToStoragePathIfVirtual( $virtualUrl );
@@ -1959,7 +1959,6 @@ class FileRepo {
 	 * Throw an exception if this repo is read-only by design.
 	 * This does not and should not check getReadOnlyReason().
 	 *
-	 * @return void|never
 	 * @throws MWException
 	 */
 	protected function assertWritableRepo() {

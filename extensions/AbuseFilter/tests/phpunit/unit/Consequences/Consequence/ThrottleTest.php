@@ -12,14 +12,14 @@ use MediaWiki\Extension\AbuseFilter\Consequences\ConsequenceNotPrecheckedExcepti
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\NullLogger;
-use Title;
-use User;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -32,7 +32,7 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 		array $throttleParams = [],
 		BagOStuff $cache = null,
 		bool $globalFilter = false,
-		User $user = null,
+		UserIdentity $user = null,
 		Title $title = null,
 		UserEditTracker $editTracker = null,
 		string $ip = null
@@ -81,6 +81,7 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 			$groups = [ 'ip', 'user', 'range', 'creationdate', 'editcount', 'site', 'page' ];
 			foreach ( $groups as $group ) {
 				$throttle = $this->getThrottle( [ 'groups' => [ $group ], 'count' => 0 ], null, $global );
+				/** @var Throttle $throttleWr */
 				$throttleWr = TestingAccessWrapper::newFromObject( $throttle );
 				$throttleWr->setThrottled( $group );
 				yield "$group set, $globalStr" => [ $throttle, false ];
@@ -108,7 +109,9 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 	 */
 	public function testExecute( Throttle $throttle, bool $shouldDisable, MockObject $cache = null ) {
 		if ( $cache ) {
-			$groupCount = count( TestingAccessWrapper::newFromObject( $throttle )->throttleParams['groups'] );
+			/** @var Throttle $wrapper */
+			$wrapper = TestingAccessWrapper::newFromObject( $throttle );
+			$groupCount = count( $wrapper->throttleParams['groups'] );
 			$cache->expects( $this->exactly( $groupCount ) )->method( 'incrWithInit' );
 		}
 		$throttle->shouldDisableOtherConsequences();
@@ -124,7 +127,7 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 		?string $expected,
 		string $ip,
 		Title $title,
-		User $user,
+		UserIdentity $user,
 		UserEditTracker $editTracker = null
 	) {
 		$throttle = $this->getThrottle( [], null, false, $user, $title, $editTracker, $ip );
@@ -142,20 +145,15 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 		$pageName = 'AbuseFilter test throttle identifiers';
 		$title = $this->createMock( Title::class );
 		$title->method( 'getPrefixedText' )->willReturn( $pageName );
-		$user = $this->createMock( User::class );
 		$ip = '42.42.42.42';
+		$anon = new UserIdentityValue( 0, $ip );
 
-		yield 'IP, simple' => [ 'ip', "ip-$ip", $ip, $title, $user ];
+		yield 'IP, simple' => [ 'ip', "ip-$ip", $ip, $title, $anon ];
+		yield 'user, anonymous' => [ 'user', 'user-0', $ip, $title, $anon ];
 
 		$userID = 123;
-		$user->method( 'isAnon' )->willReturn( false );
-		$user->method( 'getId' )->willReturn( $userID );
+		$user = new UserIdentityValue( $userID, 'Username' );
 		yield 'user, registered' => [ 'user', "user-$userID", $ip, $title, $user ];
-
-		$anonID = 0;
-		$anon = $this->createMock( User::class );
-		$anon->method( 'getId' )->willReturn( $anonID );
-		yield 'user, anonymous' => [ 'user', "user-$anonID", $ip, $title, $anon ];
 
 		$editcount = 5;
 		$uet = $this->createMock( UserEditTracker::class );

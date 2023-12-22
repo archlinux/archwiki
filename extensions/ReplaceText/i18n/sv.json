@@ -43,7 +43,6 @@
 	"replacetext_warning": "'''Varning:''' Det finns {{PLURAL:$1|$1 sida|$1 sidor}} som redan har ersättningssträngen \"$2\". Om du gör den här ersättningen kommer du inte kunna separera dina ersättningar från den här texten.",
 	"replacetext_blankwarning": "Eftersom ersättningstexten är tom kommer den här handlingen inte kunna upphävas; vill du fortsätta?",
 	"replacetext_continue": "Fortsätt",
-	"replacetext_announce": "Meddela dessa redigeringar via $1 och bevakningslistor",
 	"replacetext_editsummary": "Textersättning - \"$1\" till \"$2\"",
 	"replacetext_reminder": "För att även ändra länkar till denna sida på andra sidor, gå till $1.",
 	"right-replacetext": "Genomför textersättningar på hela wikin",

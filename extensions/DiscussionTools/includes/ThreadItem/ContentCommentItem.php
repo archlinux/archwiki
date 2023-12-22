@@ -7,8 +7,8 @@ use MediaWiki\Extension\DiscussionTools\CommentModifier;
 use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\ImmutableRange;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use Sanitizer;
-use Title;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -18,11 +18,14 @@ class ContentCommentItem extends ContentThreadItem implements CommentItem {
 	use CommentItemTrait {
 		getHeading as protected traitGetHeading;
 		getSubscribableHeading as protected traitGetSubscribableHeading;
+		jsonSerialize as protected traitJsonSerialize;
 	}
 
 	private $signatureRanges;
+	private $timestampRanges;
 	private $timestamp;
 	private $author;
+	private $displayName;
 
 	/**
 	 * @param int $level
@@ -30,18 +33,35 @@ class ContentCommentItem extends ContentThreadItem implements CommentItem {
 	 * @param ImmutableRange[] $signatureRanges Objects describing the extent of signatures (plus
 	 *  timestamps) for this comment. There is always at least one signature, but there may be
 	 *  multiple. The author and timestamp of the comment is determined from the first signature.
-	 *  The last node in every signature range is a node containing the timestamp.
+	 * @param ImmutableRange[] $timestampRanges Objects describing the extent of timestamps within
+	 *  the above signatures.
 	 * @param DateTimeImmutable $timestamp
 	 * @param string $author Comment author's username
+	 * @param ?string $displayName Comment author's display name
 	 */
 	public function __construct(
 		int $level, ImmutableRange $range,
-		array $signatureRanges, DateTimeImmutable $timestamp, string $author
+		array $signatureRanges, array $timestampRanges,
+		DateTimeImmutable $timestamp,
+		string $author, ?string $displayName = null
 	) {
 		parent::__construct( 'comment', $level, $range );
 		$this->signatureRanges = $signatureRanges;
+		$this->timestampRanges = $timestampRanges;
 		$this->timestamp = $timestamp;
 		$this->author = $author;
+		$this->displayName = $displayName;
+	}
+
+	/**
+	 * @inheritDoc CommentItemTrait::jsonSerialize
+	 */
+	public function jsonSerialize( bool $deep = false, ?callable $callback = null ): array {
+		$data = $this->traitJsonSerialize( $deep, $callback );
+		if ( $this->displayName ) {
+			$data['displayName'] = $this->displayName;
+		}
+		return $data;
 	}
 
 	/**
@@ -130,6 +150,13 @@ class ContentCommentItem extends ContentThreadItem implements CommentItem {
 	}
 
 	/**
+	 * @return ImmutableRange[] Comment timestamp ranges
+	 */
+	public function getTimestampRanges(): array {
+		return $this->timestampRanges;
+	}
+
+	/**
 	 * @return ImmutableRange Range of the thread item's "body"
 	 */
 	public function getBodyRange(): ImmutableRange {
@@ -151,6 +178,13 @@ class ContentCommentItem extends ContentThreadItem implements CommentItem {
 	 */
 	public function getAuthor(): string {
 		return $this->author;
+	}
+
+	/**
+	 * @return ?string Comment display name
+	 */
+	public function getDisplayName(): ?string {
+		return $this->displayName;
 	}
 
 	/**

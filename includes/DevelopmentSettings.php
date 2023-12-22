@@ -29,12 +29,13 @@
  * Debugging for PHP
  */
 
-// Enable showing of errors
-use MediaWiki\WikiMap\WikiMap;
-
+// Enable logging of all errors
 error_reporting( -1 );
-// @phan-suppress-next-line PhanTypeMismatchArgumentInternal Scalar okay with php8.1
-ini_set( 'display_errors', 1 );
+
+// Enable showing of errors, but avoid breaking non-HTML responses
+if ( MW_ENTRY_POINT === 'index' ) {
+	ini_set( 'display_errors', '1' );
+}
 
 /**
  * Debugging for MediaWiki
@@ -135,13 +136,15 @@ $wgCiteBookReferencing = true;
 // directory by default (T218207)
 $wgCacheDirectory = TempFSFile::getUsableTempDirectory() .
 	DIRECTORY_SEPARATOR .
-	rawurlencode( WikiMap::getCurrentWikiId() );
+	rawurlencode( MediaWiki\WikiMap\WikiMap::getCurrentWikiId() );
 
 // Enable uploads for FileImporter browser tests (T190829)
 $wgEnableUploads = true;
 
 // Enable en-x-piglatin variant conversion for testing
 $wgUsePigLatinVariant = true;
+// Enable x-xss language code for testing correct message escaping
+$wgUseXssLanguage = true;
 
 // Enable the new wikitext mode for browser testing (T270240)
 $wgVisualEditorEnableWikitext = true;

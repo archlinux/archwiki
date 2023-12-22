@@ -127,6 +127,7 @@ return [
 						$languagesHelper
 					) :
 					new PageActionsMenu\DefaultOverflowBuilder(
+						$title,
 						$context,
 						$services->getService( 'Minerva.Permissions' )
 					);
@@ -159,7 +160,8 @@ return [
 			$services->getService( 'Minerva.SkinOptions' ),
 			$services->getService( 'Minerva.LanguagesHelper' ),
 			$services->getPermissionManager(),
-			$services->getContentHandlerFactory()
+			$services->getContentHandlerFactory(),
+			$services->getUserFactory()
 		);
 		// TODO: This should not be allowed, this is basically global $wgTitle and $wgUser.
 		$permissions->setContext( RequestContext::getMain() );

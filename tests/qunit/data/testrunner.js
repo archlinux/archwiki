@@ -19,11 +19,6 @@
 		value: 'true'
 	} );
 
-	// Create initial fixture element
-	var fixture = document.createElement( 'div' );
-	fixture.id = 'qunit-fixture';
-	document.body.appendChild( fixture );
-
 	// Integrate SinonJS with QUnit
 	//
 	// - Add a Sinon sandbox to the test context that is automatically
@@ -212,36 +207,6 @@
 	}
 
 	var addons = {
-
-		/**
-		 * Assert strictly boolean true
-		 *
-		 * @param {Mixed} actual
-		 * @param {string} [message]
-		 */
-		assertTrue: function ( actual, message ) {
-			this.pushResult( {
-				result: actual === true,
-				actual: actual,
-				expected: true,
-				message: message
-			} );
-		},
-
-		/**
-		 * Assert strictly boolean false
-		 *
-		 * @param {Mixed} actual
-		 * @param {string} [message]
-		 */
-		assertFalse: function ( actual, message ) {
-			this.pushResult( {
-				result: actual === false,
-				actual: actual,
-				expected: false,
-				message: message
-			} );
-		},
 
 		/**
 		 * Assert numerical value less than X
@@ -480,7 +445,7 @@
 		} );
 	} );
 
-	QUnit.module( 'testrunner-next', QUnit.newMwEnvironment() );
+	QUnit.module( 'testrunner-next' );
 
 	QUnit.test( 'afterEach', function ( assert ) {
 		assert.strictEqual( mw.html.escape( '<' ), '&lt;', 'mock not leaked to next module' );

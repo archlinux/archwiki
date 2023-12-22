@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Hook;
 
-use OutputPage;
-use User;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\User\User;
 
 /**
  * This is a hook handler interface, see docs/Hooks.md.

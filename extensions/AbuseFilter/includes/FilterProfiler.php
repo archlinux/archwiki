@@ -5,8 +5,8 @@ namespace MediaWiki\Extension\AbuseFilter;
 use BagOStuff;
 use IBufferingStatsdDataFactory;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Title\Title;
 use Psr\Log\LoggerInterface;
-use Title;
 use Wikimedia\WRStats\LocalEntityKey;
 use Wikimedia\WRStats\WRStatsFactory;
 

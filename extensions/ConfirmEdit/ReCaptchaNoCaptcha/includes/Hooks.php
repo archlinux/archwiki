@@ -2,14 +2,18 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\ReCaptchaNoCaptcha;
 
-class Hooks {
+use Config;
+use MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook;
+
+class Hooks implements ResourceLoaderGetConfigVarsHook {
 	/**
 	 * Adds extra variables to the global config
 	 *
 	 * @param array &$vars Global variables object
-	 * @return bool Always true
+	 * @param string $skin
+	 * @param Config $config
 	 */
-	public static function onResourceLoaderGetConfigVars( array &$vars ) {
+	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
 		global $wgReCaptchaSiteKey;
 		global $wgCaptchaClass;
 
@@ -19,7 +23,5 @@ class Hooks {
 				'reCaptchaScriptURL' => 'https://www.recaptcha.net/recaptcha/api.js'
 			];
 		}
-
-		return true;
 	}
 }

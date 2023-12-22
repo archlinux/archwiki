@@ -16,14 +16,15 @@
 			"Locos epraix",
 			"Macofe",
 			"Manuelt15",
+			"MarcoAurelio",
 			"McDutchie",
 			"Muro de Aguas",
+			"No se",
 			"Peter Bowman",
 			"Remember the dot",
 			"Sanbec",
 			"Tiberius1701",
-			"Translationista",
-			"MarcoAurelio"
+			"Translationista"
 		]
 	},
 	"cite-desc": "Añade las etiquetas <code>&lt;ref&gt;</code> y <code>&lt;references&gt;</code> para citas.",
@@ -52,5 +53,13 @@
 	"cite_references_link_accessibility_back_label": "Volver arriba",
 	"cite_section_preview_references": "Previsualización de referencias",
 	"cite_warning": "Advertencia de cita: $1",
-	"cite_warning_sectionpreview_no_text": "La etiqueta <code>&lt;ref&gt;</code> con nombre <code>$1</code> no puede previsualizarse porque está definida fuera de la sección actual o no está definida en absoluto."
+	"cite_warning_sectionpreview_no_text": "La etiqueta <code>&lt;ref&gt;</code> con nombre <code>$1</code> no puede previsualizarse porque está definida fuera de la sección actual o no está definida en absoluto.",
+	"cite-wikieditor-tool-reference": "Referencia",
+	"cite-wikieditor-help-page-references": "Referencias",
+	"cite-wikieditor-help-content-reference-description": "Referencia",
+	"cite-wikieditor-help-content-named-reference-description": "Referencia nombrada",
+	"cite-wikieditor-help-content-rereference-description": "Uso adicional de la misma referencia",
+	"cite-wikieditor-help-content-showreferences-description": "Mostrar referencias",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Texto del enlace]",
+	"cite-wikieditor-help-content-reference-example-ref-id": "prueba"
 }

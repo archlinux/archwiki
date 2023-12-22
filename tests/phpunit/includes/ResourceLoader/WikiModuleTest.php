@@ -2,14 +2,15 @@
 
 namespace MediaWiki\Tests\ResourceLoader;
 
-use Config;
 use Content;
 use CssContent;
 use EmptyResourceLoader;
-use HashConfig;
 use JavaScriptContent;
 use JavaScriptContentHandler;
 use LinkCacheTestTrait;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\HashConfig;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageRecord;
@@ -19,10 +20,10 @@ use MediaWiki\ResourceLoader\Context;
 use MediaWiki\ResourceLoader\DerivativeContext;
 use MediaWiki\ResourceLoader\WikiModule;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\WikiMap\WikiMap;
 use ReflectionMethod;
 use ResourceLoaderTestCase;
-use TitleValue;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\TestingAccessWrapper;
@@ -30,6 +31,7 @@ use WikitextContent;
 
 /**
  * @covers \MediaWiki\ResourceLoader\WikiModule
+ * @group Database
  */
 class WikiModuleTest extends ResourceLoaderTestCase {
 	use LinkCacheTestTrait;
@@ -74,8 +76,8 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 
 	public static function provideGetPages() {
 		$settings = self::getSettings() + [
-			'UseSiteJs' => true,
-			'UseSiteCss' => true,
+			MainConfigNames::UseSiteJs => true,
+			MainConfigNames::UseSiteCss => true,
 		];
 
 		$params = [
@@ -89,15 +91,15 @@ class WikiModuleTest extends ResourceLoaderTestCase {
 				'MediaWiki:Common.js' => [ 'type' => 'script' ],
 				'MediaWiki:Common.css' => [ 'type' => 'style' ]
 			] ],
-			[ $params, new HashConfig( [ 'UseSiteCss' => false ] + $settings ), [
+			[ $params, new HashConfig( [ MainConfigNames::UseSiteCss => false ] + $settings ), [
 				'MediaWiki:Common.js' => [ 'type' => 'script' ],
 			] ],
-			[ $params, new HashConfig( [ 'UseSiteJs' => false ] + $settings ), [
+			[ $params, new HashConfig( [ MainConfigNames::UseSiteJs => false ] + $settings ), [
 				'MediaWiki:Common.css' => [ 'type' => 'style' ],
 			] ],
 			[ $params,
 				new HashConfig(
-					[ 'UseSiteJs' => false, 'UseSiteCss' => false ]
+					[ MainConfigNames::UseSiteJs => false, MainConfigNames::UseSiteCss => false ]
 				),
 				[]
 			],

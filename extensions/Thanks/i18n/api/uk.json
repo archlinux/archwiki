@@ -6,11 +6,9 @@
 			"Ата"
 		]
 	},
-	"apihelp-flowthank-description": "Надіслати публічне сповіщення про подяку за коментар Flow.",
 	"apihelp-flowthank-summary": "Надіслати публічне сповіщення про подяку за коментар Flow.",
 	"apihelp-flowthank-param-postid": "UUID допису, за який дякувати.",
 	"apihelp-flowthank-example-1": "Надіслати подяку за коментар з <kbd>UUID xyz789</kbd>",
-	"apihelp-thank-description": "Надіслати редактору сповіщення про подяку.",
 	"apihelp-thank-summary": "Надіслати редактору сповіщення про подяку.",
 	"apihelp-thank-param-rev": "Ідентифікатор версії, за яку комусь треба подякувати. Треба вказати або його, або 'log'.",
 	"apihelp-thank-param-log": "Ідентифікатор версії, за яку комусь треба подякувати. Треба вказати або його, або 'rev'.",

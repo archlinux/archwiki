@@ -26,9 +26,12 @@ namespace MediaWiki\WikiMap;
  * Reference to a locally-hosted wiki
  */
 class WikiReference {
-	private $mCanonicalServer; ///< canonical server URL, e.g. 'https://www.mediawiki.org'
-	private $mServer; ///< server URL, may be protocol-relative, e.g. '//www.mediawiki.org'
-	private $mPath; ///< path, '/wiki/$1'
+	// wgCanonicalServer, e.g. 'https://www.mediawiki.org'
+	private $mCanonicalServer;
+	// wgServer, may be protocol-relative, e.g. '//www.mediawiki.org'
+	private $mServer;
+	// wgArticlepath, e.g. '/wiki/$1'
+	private $mPath;
 
 	/**
 	 * @param string $canonicalServer
@@ -48,9 +51,9 @@ class WikiReference {
 	 * @return string
 	 */
 	public function getDisplayName() {
-		$parsed = wfParseUrl( $this->mCanonicalServer );
-		if ( $parsed ) {
-			return $parsed['host'];
+		$host = parse_url( $this->mCanonicalServer,  PHP_URL_HOST );
+		if ( $host ) {
+			return $host;
 		} else {
 			// Invalid server spec.
 			// There's no sensible thing to do here, so just return the canonical server name in full.
@@ -124,4 +127,7 @@ class WikiReference {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( WikiReference::class, 'WikiReference' );

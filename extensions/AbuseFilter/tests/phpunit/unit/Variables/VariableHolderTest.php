@@ -22,7 +22,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit;
 
-use Generator;
 use MediaWiki\Extension\AbuseFilter\Parser\AFPData;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyLoadedVariable;
 use MediaWiki\Extension\AbuseFilter\Variables\UnsetVariableException;
@@ -80,7 +79,7 @@ class VariableHolderTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( $expected, $vars->getVars()[$name] );
 	}
 
-	public function provideSetVar() {
+	public static function provideSetVar() {
 		yield 'native' => [ 'foo', 12, new AFPData( AFPData::DINT, 12 ) ];
 
 		$afpdata = new AFPData( AFPData::DSTRING, 'foobar' );
@@ -119,10 +118,7 @@ class VariableHolderTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( $expected, $vars->getVarThrow( $name ) );
 	}
 
-	/**
-	 * @return Generator|array
-	 */
-	public function provideGetVarThrow() {
+	public static function provideGetVarThrow() {
 		$vars = new VariableHolder();
 
 		$name = 'foo';
@@ -159,7 +155,7 @@ class VariableHolderTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( $expected, $actual->getVars() );
 	}
 
-	public function provideHoldersForAddition() {
+	public static function provideHoldersForAddition() {
 		$v1 = VariableHolder::newFromArray( [ 'a' => 1, 'b' => 2 ] );
 		$v2 = VariableHolder::newFromArray( [ 'b' => 3, 'c' => 4 ] );
 		$v3 = VariableHolder::newFromArray( [ 'c' => 5, 'd' => 6 ] );

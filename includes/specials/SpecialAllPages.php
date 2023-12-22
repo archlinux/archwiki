@@ -21,13 +21,20 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageStore;
+use MediaWiki\SpecialPage\IncludableSpecialPage;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\Title\TitleValue;
+use SearchEngineFactory;
+use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
  * Implements Special:Allpages
@@ -51,24 +58,19 @@ class SpecialAllPages extends IncludableSpecialPage {
 	 */
 	protected $nsfromMsg = 'allpagesfrom';
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var SearchEngineFactory */
-	private $searchEngineFactory;
-
-	/** @var PageStore */
-	private $pageStore;
+	private IConnectionProvider $dbProvider;
+	private SearchEngineFactory $searchEngineFactory;
+	private PageStore $pageStore;
 
 	public function __construct(
-		ILoadBalancer $loadBalancer = null,
+		IConnectionProvider $dbProvider = null,
 		SearchEngineFactory $searchEngineFactory = null,
 		PageStore $pageStore = null
 	) {
 		parent::__construct( 'Allpages' );
 		// This class is extended and therefore falls back to global state - T265309
 		$services = MediaWikiServices::getInstance();
-		$this->loadBalancer = $loadBalancer ?? $services->getDBLoadBalancer();
+		$this->dbProvider = $dbProvider ?? $services->getDBLoadBalancerFactory();
 		$this->searchEngineFactory = $searchEngineFactory ?? $services->getSearchEngineFactory();
 		$this->pageStore = $pageStore ?? $services->getPageStore();
 	}
@@ -98,9 +100,9 @@ class SpecialAllPages extends IncludableSpecialPage {
 
 		$namespaces = $this->getLanguage()->getNamespaces();
 
-		$out->setPageTitle(
+		$out->setPageTitleMsg(
 			( $namespace > 0 && array_key_exists( $namespace, $namespaces ) ) ?
-				$this->msg( 'allinnamespace', str_replace( '_', ' ', $namespaces[$namespace] ) ) :
+				$this->msg( 'allinnamespace' )->plaintextParams( str_replace( '_', ' ', $namespaces[$namespace] ) ) :
 				$this->msg( 'allarticles' )
 		);
 		$out->addModuleStyles( 'mediawiki.special' );
@@ -218,7 +220,7 @@ class SpecialAllPages extends IncludableSpecialPage {
 			[ $namespace, $fromKey, $from ] = $fromList;
 			[ , $toKey, $to ] = $toList;
 
-			$dbr = $this->loadBalancer->getConnection( ILoadBalancer::DB_REPLICA );
+			$dbr = $this->dbProvider->getReplicaDatabase();
 			$filterConds = [ 'page_namespace' => $namespace ];
 			if ( $hideredirects ) {
 				$filterConds['page_is_redirect'] = 0;
@@ -270,24 +272,23 @@ class SpecialAllPages extends IncludableSpecialPage {
 				# Get the first title from previous chunk
 				$prevConds = $filterConds;
 				$prevConds[] = 'page_title < ' . $dbr->addQuotes( $fromKey );
-				$prevKey = $dbr->selectField(
-					'page',
-					'page_title',
-					$prevConds,
-					__METHOD__,
-					[ 'ORDER BY' => 'page_title DESC', 'OFFSET' => $this->maxPerPage - 1 ]
-				);
+				$prevKey = $dbr->newSelectQueryBuilder()
+					->select( 'page_title' )
+					->from( 'page' )
+					->where( $prevConds )
+					->orderBy( 'page_title', SelectQueryBuilder::SORT_DESC )
+					->offset( $this->maxPerPage - 1 )
+					->caller( __METHOD__ )->fetchField();
 
 				if ( $prevKey === false ) {
 					# The previous chunk is not complete, need to link to the very first title
 					# available in the database
-					$prevKey = $dbr->selectField(
-						'page',
-						'page_title',
-						$prevConds,
-						__METHOD__,
-						[ 'ORDER BY' => 'page_title' ]
-					);
+					$prevKey = $dbr->newSelectQueryBuilder()
+						->select( 'page_title' )
+						->from( 'page' )
+						->where( $prevConds )
+						->orderBy( 'page_title' )
+						->caller( __METHOD__ )->fetchField();
 				}
 
 				if ( $prevKey !== false ) {
@@ -408,3 +409,8 @@ class SpecialAllPages extends IncludableSpecialPage {
 		return 'pages';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialAllPages::class, 'SpecialAllPages' );

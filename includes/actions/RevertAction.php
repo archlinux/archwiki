@@ -23,6 +23,12 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Status\Status;
+use MediaWiki\User\User;
+use MediaWiki\Utils\MWTimestamp;
+
 /**
  * File reversion user interface
  * WikiPage must contain getFile method: \WikiFilePage
@@ -32,11 +38,8 @@
  */
 class RevertAction extends FormAction {
 
-	/** @var Language */
-	private $contentLanguage;
-
-	/** @var RepoGroup */
-	private $repoGroup;
+	private Language $contentLanguage;
+	private RepoGroup $repoGroup;
 
 	/**
 	 * @param Article $article
@@ -121,7 +124,7 @@ class RevertAction extends FormAction {
 				'raw' => true,
 				'default' => $this->msg( 'filerevert-intro',
 					$this->getTitle()->getText(), $userDate, $userTime,
-					wfExpandUrl(
+					(string)MediaWikiServices::getInstance()->getUrlUtils()->expand(
 						$this->getFile()
 							->getArchiveUrl(
 								$this->getRequest()->getText( 'oldimage' )
@@ -178,7 +181,7 @@ class RevertAction extends FormAction {
 
 		$this->getOutput()->addWikiMsg( 'filerevert-success', $this->getTitle()->getText(),
 			$userDate, $userTime,
-			wfExpandUrl(
+			(string)MediaWikiServices::getInstance()->getUrlUtils()->expand(
 				$this->getFile()
 					->getArchiveUrl(
 						$this->getRequest()->getText( 'oldimage' )
@@ -189,7 +192,7 @@ class RevertAction extends FormAction {
 	}
 
 	protected function getPageTitle() {
-		return $this->msg( 'filerevert', $this->getTitle()->getText() )->text();
+		return $this->msg( 'filerevert' )->plaintextParams( $this->getTitle()->getText() );
 	}
 
 	protected function getDescription() {

@@ -18,13 +18,11 @@
 			"மதனாஹரன்"
 		]
 	},
-	"tooltip-ca-createsource": "இந்த பக்கத்தின் மூல நிரலை உருவாக்கவும்",
-	"tooltip-ca-edit": "இப்பக்கத்தை, விக்கியுரைக் கொண்டுத் தொகு",
-	"tooltip-ca-editsource": "இப்பக்க மூலத்தைத் தொகு",
 	"tooltip-ca-ve-edit": "இப்பக்கத்தைத் தொகு",
+	"tooltip-ca-editsource": "இப்பக்க மூலத்தைத் தொகு",
+	"tooltip-ca-createsource": "இந்த பக்கத்தின் மூல நிரலை உருவாக்கவும்",
 	"visualeditor-advancedsettings-tool": "நுட்பமான அமைப்புகள்",
 	"visualeditor-backbutton-tooltip": "பின் செல்லவும்",
-	"visualeditor-beta-warning": "இக்காட்சிசார் தொகுப்பி முழுமைற்ற வடிவமாகும். எனவே, தொகுக்க முழுமையாகத் தொகுக்க முடியாமல், இடர் வரலாம். எப்பொழுது வேண்டுமானாலும், இத்தொகுப்பியிலிருந்து, ஏற்படுத்திய மாற்ற இழப்பு இல்லாமல் வெளியேறலாம். \"{{int:visualeditor-toolbar-savedialog}}\" என்பதற்கு அடுத்துள்ளத் தெரிவுப்பட்டியிலிருந்து, \"{{int:visualeditor-mweditmodesource-tool}}\" என்பதைத் தேர்ந்தேடு.",
 	"visualeditor-browserwarning": "தற்போது நீங்கள் பயன்படுத்தும் உலாவி, இக்காட்சிசார்த் தொகுப்பிக்குப் பொருத்தமானதல்ல.",
 	"visualeditor-ca-createlocaldescriptionsource": "தற்போதுள்ள விவரமூலத்தை சேர்",
 	"visualeditor-ca-createsource": "மூலத்தை உருவாக்கவும்",
@@ -69,8 +67,6 @@
 	"visualeditor-formatdropdown-format-mw-heading6": "உப தலைப்பு 4",
 	"visualeditor-linknodeinspector-add-label": "அடையாள சீட்டை சேர்க்கவும்",
 	"visualeditor-meta-tool": "விருப்பத்தேர்வுகள்",
-	"visualeditor-preference-newwikitexteditor-description": "விக்கி தொகுப்பை இயற்றி காட்சி தொகுப்பிலுள்ள பெரும்பாலான கருவிகளை போன்ற வசதியை பெறுக. மேலும் இதன் மூலம் காட்சி தொகுப்பு மற்றும் விக்கி தொகுப்பு இவற்றுக்கிடையில் மாறுவது எளிது.",
-	"visualeditor-preference-newwikitexteditor-label": "புதிய விக்கி டெக்ஸ்ட்  தொகுப்பான்",
 	"visualeditor-savedialog-label-publish-short": "வெளியிடு",
 	"visualeditor-special-characters-group-other": "அடிக்கடி பயன்படுத்தப்பட்டது"
 }

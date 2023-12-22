@@ -35,18 +35,18 @@ use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Status\Status;
 use MediaWiki\Storage\PageUpdaterFactory;
-use NamespaceInfo;
+use MediaWiki\Title\NamespaceInfo;
 use Psr\Log\LoggerInterface;
 use ReadOnlyError;
-use ReadOnlyMode;
 use RepoGroup;
-use Status;
 use StatusValue;
 use Wikimedia\Message\ITextFormatter;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\ReadOnlyMode;
 use WikiPage;
 
 /**
@@ -367,16 +367,18 @@ class UndeletePage {
 		if ( $textRestored || $filesRestored ) {
 			$logEntry = $this->addLogEntry( $this->page, $comment, $textRestored, $filesRestored );
 
-			$this->hookRunner->onPageUndeleteComplete(
-				$this->page,
-				$this->performer,
-				$comment,
-				$restoredRevision,
-				$logEntry,
-				$textRestored,
-				$pageCreated,
-				$restoredPageIds
-			);
+			if ( $textRestored ) {
+				$this->hookRunner->onPageUndeleteComplete(
+					$this->page,
+					$this->performer,
+					$comment,
+					$restoredRevision,
+					$logEntry,
+					$textRestored,
+					$pageCreated,
+					$restoredPageIds
+				);
+			}
 		}
 
 		if ( $talkRestored ) {
@@ -487,19 +489,13 @@ class UndeletePage {
 		}
 
 		$revisionStore = $this->revisionStore;
-		$queryInfo = $revisionStore->getArchiveQueryInfo();
-		$queryInfo['tables'][] = 'revision';
-		$queryInfo['fields'][] = 'rev_id';
-		$queryInfo['joins']['revision'] = [ 'LEFT JOIN', 'ar_rev_id=rev_id' ];
-
-		$result = $dbw->select(
-			$queryInfo['tables'],
-			$queryInfo['fields'],
-			$oldWhere,
-			__METHOD__,
-			[ 'ORDER BY' => 'ar_timestamp' ],
-			$queryInfo['joins']
-		);
+		$result = $revisionStore->newArchiveSelectQueryBuilder( $dbw )
+			->joinComment()
+			->leftJoin( 'revision', null, 'ar_rev_id=rev_id' )
+			->field( 'rev_id' )
+			->where( $oldWhere )
+			->orderBy( 'ar_timestamp' )
+			->caller( __METHOD__ )->fetchResultSet();
 
 		$rev_count = $result->numRows();
 		if ( !$rev_count ) {
@@ -621,7 +617,7 @@ class UndeletePage {
 			);
 
 			// This will also copy the revision to ip_changes if it was an IP edit.
-			$revisionStore->insertRevisionOn( $revision, $dbw );
+			$revision = $revisionStore->insertRevisionOn( $revision, $dbw );
 
 			$restoredRevCount++;
 
@@ -631,9 +627,10 @@ class UndeletePage {
 		}
 
 		// Now that it's safely stored, take it out of the archive
-		$dbw->delete( 'archive',
-			$oldWhere,
-			__METHOD__ );
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'archive' )
+			->where( $oldWhere )
+			->caller( __METHOD__ )->execute();
 
 		// Status value is count of revisions, whether the page has been created,
 		// last revision undeleted and all undeleted pages

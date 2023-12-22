@@ -19,7 +19,9 @@
  */
 
 use MediaWiki\Parser\MagicWord;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 /**
  * Base interface for representing page content.

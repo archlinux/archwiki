@@ -20,5 +20,10 @@
 	"cite_error_references_missing_group": "Tag <code>&lt;ref&gt;</code> pado <code>&lt;references&gt;</code> indak ado namo grup \"$1\".",
 	"cite_error_references_missing_key": "Tag <code>&lt;ref&gt;</code> jo namo \"$1\" pado <code>&lt;references&gt;</code> indak ado.",
 	"cite_error_references_no_key": "Tag <code>&lt;ref&gt;</code> pado <code>&lt;references&gt;</code> indak ado aprameter namo.",
-	"cite_error_empty_references_define": "Tag <code>&lt;ref&gt;</code> pado <code>&lt;references&gt;</code> nan banamo \"$1\" indak ado isi."
+	"cite_error_empty_references_define": "Tag <code>&lt;ref&gt;</code> pado <code>&lt;references&gt;</code> nan banamo \"$1\" indak ado isi.",
+	"cite-wikieditor-tool-reference": "Rujuakan",
+	"cite-wikieditor-help-page-references": "Rujuakan",
+	"cite-wikieditor-help-content-reference-description": "Rujuakan",
+	"cite-wikieditor-help-content-rereference-description": "Rujuakan nan digunoan ulang",
+	"cite-wikieditor-help-content-showreferences-description": "Tampilkan rujuakan"
 }

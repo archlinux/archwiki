@@ -6,26 +6,11 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageRecord;
 
 /**
- * Cache class that maps article id to Title object
+ * Cache class that maps article id to Title object.
+ * @fixme There should be no need for this class. Core's PageStore should be responsible for caching, if it's
+ * deemed necessary. See also T344124.
  */
 class TitleLocalCache extends LocalCache {
-
-	/**
-	 * @var TitleLocalCache
-	 */
-	private static $instance;
-
-	/**
-	 * @return TitleLocalCache
-	 */
-	public static function create() {
-		if ( !self::$instance ) {
-			self::$instance = new TitleLocalCache();
-		}
-
-		return self::$instance;
-	}
-
 	/**
 	 * @inheritDoc
 	 */

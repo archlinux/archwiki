@@ -24,7 +24,7 @@ class ReCaptchaNoCaptchaAuthenticationRequestTest extends AuthenticationRequestT
 		return new ReCaptchaNoCaptchaAuthenticationRequest();
 	}
 
-	public function provideLoadFromSubmission() {
+	public static function provideLoadFromSubmission() {
 		return [
 			'no proof' => [ [], [], false ],
 			'normal' => [ [], [ 'captchaWord' => 'abc' ], [ 'captchaWord' => 'abc' ] ],

@@ -8,7 +8,6 @@
 		]
 	},
 	"minerva-last-modified-date": "فعاله خبرې اترې",
-	"minerva-talk-add-topic": "خبري آترې ورګډول",
 	"mobile-frontend-editor-edit": "سمول",
 	"minerva-download": "پی‌ډی‌اف کښته کول",
 	"mobile-frontend-editor-redlink-create": "مخ جوړول",
@@ -28,7 +27,6 @@
 	"mobile-frontend-meta-data-issues": "د مخ ستونزې",
 	"mobile-frontend-meta-data-issues-categories": "د دې وېشنيزې په اړه",
 	"mobile-frontend-meta-data-issues-header": "ستونزې",
-	"mobile-frontend-meta-data-issues-header-talk": "د دې مخ په اړه",
 	"mobile-frontend-pageaction-edit-tooltip": "د دې مخ د پيل برخه سمول.",
 	"mobile-frontend-placeholder": "{{SITENAME}} پلټل",
 	"mobile-frontend-random-button": "ناټاکلی",

@@ -2,16 +2,20 @@
 
 use MediaWiki\Extension\Notifications\Push\NotificationRequestJob;
 use MediaWiki\Extension\Notifications\Push\PushNotifier;
-use MediaWiki\Extension\Notifications\Push\Utils;
 use Wikimedia\TestingAccessWrapper;
 
 /** @covers \MediaWiki\Extension\Notifications\Push\PushNotifier */
 class PushNotifierTest extends MediaWikiIntegrationTestCase {
 
 	public function testCreateJob(): void {
+		$user = $this->createMock( User::class );
+		$centralId = 42;
+		$centralIdLookup = $this->createMock( CentralIdLookup::class );
+		$centralIdLookup->method( 'centralIdFromLocalUser' )
+			->with( $user )
+			->willReturn( 42 );
+		$this->setService( 'CentralIdLookup', $centralIdLookup );
 		$notifier = TestingAccessWrapper::newFromClass( PushNotifier::class );
-		$user = $this->getTestUser()->getUser();
-		$centralId = Utils::getPushUserId( $user );
 		$job = $notifier->createJob( $user );
 		$this->assertInstanceOf( NotificationRequestJob::class, $job );
 		$this->assertSame( 'EchoPushNotificationRequest', $job->getType() );

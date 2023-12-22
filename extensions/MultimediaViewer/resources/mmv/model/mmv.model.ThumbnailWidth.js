@@ -23,60 +23,61 @@
 	 * different size than their screen size. The ThumbnailWidth model stores the various types of
 	 * sizes and helps avoiding accidental incompatible assignments. (Think of it as a slightly
 	 * overcomplicated Hungarian notation)
-	 *
-	 * @class mw.mmv.model.ThumbnailWidth
-	 * @constructor
-	 * @param {number} cssWidth width in CSS pixels
-	 * @param {number} cssHeight height in CSS pixels
-	 * @param {number} screen width in screen pixels
-	 * @param {number} real width in real pixels
 	 */
-	function ThumbnailWidth( cssWidth, cssHeight, screen, real ) {
-		if ( !cssWidth || !cssHeight || !screen || !real ) {
-			throw new Error( 'All parameters are required and cannot be empty or zero' );
+	class ThumbnailWidth {
+		/**
+		 * @param {number} cssWidth width in CSS pixels
+		 * @param {number} cssHeight height in CSS pixels
+		 * @param {number} screen width in screen pixels
+		 * @param {number} real width in real pixels
+		 */
+		constructor( cssWidth, cssHeight, screen, real ) {
+			if ( !cssWidth || !cssHeight || !screen || !real ) {
+				throw new Error( 'All parameters are required and cannot be empty or zero' );
+			}
+
+			/**
+			 * Width of the thumbnail on the screen, in CSS pixels. This is the number which can be plugged
+			 * into UI code like $element.width(x).
+			 *
+			 * @property {number}
+			 */
+			this.cssWidth = cssWidth;
+
+			/**
+			 * Height of the thumbnail on the screen, in CSS pixels. This is the number which can be plugged
+			 * into UI code like $element.height(x).
+			 *
+			 * @property {number}
+			 */
+			this.cssHeight = cssHeight;
+
+			/**
+			 * Width of the thumbnail on the screen, in device pixels. On most devices this is the same as
+			 * the CSS width, but devices with high pixel density displays have multiple screen pixels
+			 * in a CSS pixel.
+			 *
+			 * This value is mostly used internally; for most purposes you will need one of the others.
+			 *
+			 * @property {number}
+			 */
+			this.screen = screen;
+
+			/**
+			 * "Real" width of the thumbnail. This is the number you need to use in API requests when
+			 * obtaining the thumbnail URL. This is usually larger than the screen width, since
+			 * downscaling images via CSS looks OK but upscaling them looks ugly. However, for images
+			 * where the full size itself is very small, this can be smaller than the screen width, since
+			 * we cannot create a thumbnail which is larger than the original image. (In such cases the
+			 * image is just positioned to the center of the intended area and the space around it is
+			 * left empty.)
+			 *
+			 * @property {number}
+			 */
+			this.real = real;
 		}
-
-		/**
-		 * Width of the thumbnail on the screen, in CSS pixels. This is the number which can be plugged
-		 * into UI code like $element.width(x).
-		 *
-		 * @property {number}
-		 */
-		this.cssWidth = cssWidth;
-
-		/**
-		 * Height of the thumbnail on the screen, in CSS pixels. This is the number which can be plugged
-		 * into UI code like $element.height(x).
-		 *
-		 * @property {number}
-		 */
-		this.cssHeight = cssHeight;
-
-		/**
-		 * Width of the thumbnail on the screen, in device pixels. On most devices this is the same as
-		 * the CSS width, but devices with high pixel density displays have multiple screen pixels
-		 * in a CSS pixel.
-		 *
-		 * This value is mostly used internally; for most purposes you will need one of the others.
-		 *
-		 * @property {number}
-		 */
-		this.screen = screen;
-
-		/**
-		 * "Real" width of the thumbnail. This is the number you need to use in API requests when
-		 * obtaining the thumbnail URL. This is usually larger than the screen width, since
-		 * downscaling images via CSS looks OK but upscaling them looks ugly. However, for images
-		 * where the full size itself is very small, this can be smaller than the screen width, since
-		 * we cannot create a thumbnail which is larger than the original image. (In such cases the
-		 * image is just positioned to the center of the intended area and the space around it is
-		 * left empty.)
-		 *
-		 * @property {number}
-		 */
-		this.real = real;
 	}
 
-	mw.mmv.model.ThumbnailWidth = ThumbnailWidth;
+	module.exports = ThumbnailWidth;
 
 }() );

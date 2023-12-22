@@ -17,8 +17,6 @@
 
 .ve-ui-mwSaveDialog-summary textarea {
 	height: 4em;
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-	resize: vertical;
 }
 
 .ve-ui-mwSaveDialog-foot {
@@ -108,10 +106,6 @@
 .ve-ui-mwSaveDialog-no-changes {
 	color: #72777d;
 	font-style: italic;
-}
-
-.ve-ui-mwSaveDialog-visualDiffFeedback {
-	float: right;
 }
 
 .ve-ui-mwSaveDialog-preview .mw-body {

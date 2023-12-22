@@ -11,7 +11,6 @@
 	"apihelp-visualeditor-param-oldid": "Ang bilang ng pagbabago na gagamitin (likas na tumutungo sa huling pagbabago).",
 	"apihelp-visualeditor-param-paction": "Gawaing dapat isakatuparan.",
 	"apihelp-visualeditor-param-page": "Ang pahinang dapat gawan ng pagkilos.",
-	"apihelp-visualeditoredit-description": "Itakda ang isang pahinang HTML5 sa MediaWiki (isinasalin sa wikiteksto gamit ang serbisyong Parsoid).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Kapag nagtatala, itakda ito sa panandang-oras ng rebisyong ibinago. Ginagamit upang matuklas ang mga alitan sa pagbabago.",
 	"apihelp-visualeditoredit-param-cachekey": "Gamitin ang resulta ng dating hiling na serializeforcache gamit ang susing ito. Mangingibabaw ito sa $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha ID (kapag nagtatala nang may hinihinging tugon sa captcha).",

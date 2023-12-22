@@ -32,9 +32,10 @@ class PermissionStatusTest extends MediaWikiUnitTestCase {
 	public function testNewEmpty() {
 		$status = PermissionStatus::newEmpty();
 
-		$this->assertStatusOK( $status );
 		$this->assertStatusGood( $status );
-		$this->assertSame( [], $status->getErrors() );
+
+		// should not throw!
+		$status->throwErrorPageError();
 	}
 
 	public function testBlock() {
@@ -46,6 +47,17 @@ class PermissionStatusTest extends MediaWikiUnitTestCase {
 		$status->setBlock( $block );
 
 		$this->assertSame( $block, $status->getBlock() );
+		$this->assertTrue( $status->isBlocked() );
+		$this->assertFalse( $status->isOK() );
+	}
+
+	public function testRateLimitExceeded() {
+		$status = PermissionStatus::newEmpty();
+
+		$this->assertFalse( $status->isRateLimitExceeded() );
+
+		$status->setRateLimitExceeded();
+		$this->assertTrue( $status->isRateLimitExceeded() );
 	}
 
 }

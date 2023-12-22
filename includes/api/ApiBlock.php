@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2007 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
+ * Copyright © 2007 Roan Kattouw <roan.kattouw@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,26 +52,13 @@ class ApiBlock extends ApiBase {
 	use ApiBlockInfoTrait;
 	use ApiWatchlistTrait;
 
-	/** @var BlockPermissionCheckerFactory */
-	private $blockPermissionCheckerFactory;
-
-	/** @var BlockUserFactory */
-	private $blockUserFactory;
-
-	/** @var TitleFactory */
-	private $titleFactory;
-
-	/** @var UserIdentityLookup */
-	private $userIdentityLookup;
-
-	/** @var WatchedItemStoreInterface */
-	private $watchedItemStore;
-
-	/** @var BlockUtils */
-	private $blockUtils;
-
-	/** @var BlockActionInfo */
-	private $blockActionInfo;
+	private BlockPermissionCheckerFactory $blockPermissionCheckerFactory;
+	private BlockUserFactory $blockUserFactory;
+	private TitleFactory $titleFactory;
+	private UserIdentityLookup $userIdentityLookup;
+	private WatchedItemStoreInterface $watchedItemStore;
+	private BlockUtils $blockUtils;
+	private BlockActionInfo $blockActionInfo;
 
 	/**
 	 * @param ApiMain $main
@@ -221,7 +208,7 @@ class ApiBlock extends ApiBase {
 		$res['nocreate'] = $params['nocreate'];
 		$res['autoblock'] = $params['autoblock'];
 		$res['noemail'] = $params['noemail'];
-		$res['hidename'] = $params['hidename'];
+		$res['hidename'] = $block->getHideName();
 		$res['allowusertalk'] = $params['allowusertalk'];
 		$res['watchuser'] = $params['watchuser'];
 		if ( $watchlistExpiry ) {

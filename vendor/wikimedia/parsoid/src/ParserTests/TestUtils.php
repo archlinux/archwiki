@@ -76,7 +76,7 @@ class TestUtils {
 			//     If possible, get rid of it and diff-mark dependency
 			//     on the env object.
 			$mockEnv = new MockEnv( [] );
-			$mockSerializer = new WikitextSerializer( [ 'env' => $mockEnv ] );
+			$mockSerializer = new WikitextSerializer( $mockEnv, [] );
 			$mockState = new SerializerState( $mockSerializer, [ 'selserMode' => false ] );
 			if ( is_string( $domBody ) ) {
 				// Careful about the lifetime of this document
@@ -277,9 +277,7 @@ class TestUtils {
 		$child = $node->firstChild;
 		// Skip over the empty mw:FallbackId <span> and strip leading WS
 		// on the other side of it.
-		if ( preg_match( '/^h[1-6]$/D', DOMCompat::nodeName( $node ) ) &&
-			$child && WTUtils::isFallbackIdSpan( $child )
-		) {
+		if ( $child && DOMUtils::isHeading( $node ) && WTUtils::isFallbackIdSpan( $child ) ) {
 			$child = $child->nextSibling;
 		}
 		for ( ; $child; $child = $next ) {

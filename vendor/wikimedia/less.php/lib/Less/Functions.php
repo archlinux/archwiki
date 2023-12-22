@@ -1034,7 +1034,7 @@ class Less_Functions {
 			$returner = "'data:image/svg+xml," . $returner . "'";
 		}
 
-		return new Less_Tree_URL( new Less_Tree_Anonymous( $returner ) );
+		return new Less_Tree_Url( new Less_Tree_Anonymous( $returner ) );
 	}
 
 	/**

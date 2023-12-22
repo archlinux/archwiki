@@ -21,11 +21,28 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use ErrorPageError;
+use File;
+use HTMLForm;
+use LogEventsList;
+use LogPage;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Html\Html;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\SpecialPage\UnlistedSpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
+use MWException;
+use PermissionsError;
+use RepoGroup;
+use RevDelList;
+use RevisionDeleter;
+use UserBlockedError;
+use Xml;
 
 /**
  * Special page allowing users with the appropriate permissions to view
@@ -70,11 +87,8 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 	/** @var string */
 	private $otherReason;
 
-	/** @var PermissionManager */
-	private $permissionManager;
-
-	/** @var RepoGroup */
-	private $repoGroup;
+	private PermissionManager $permissionManager;
+	private RepoGroup $repoGroup;
 
 	/**
 	 * UI labels for each type.
@@ -390,7 +404,6 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 		$this->getRequest()->response()->header(
 			'Cache-Control: no-cache, no-store, max-age=0, must-revalidate'
 		);
-		$this->getRequest()->response()->header( 'Pragma: no-cache' );
 
 		$key = $oimage->getStorageKey();
 		$path = $repo->getZonePath( 'deleted' ) . '/' . $repo->getDeletedHashPath( $key ) . $key;
@@ -460,7 +473,7 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 		if ( $this->mIsAllowed ) {
 			$suppressAllowed = $this->permissionManager
 				->userHasRight( $this->getUser(), 'suppressrevision' );
-			$out->addModules( [ 'mediawiki.special.revisionDelete' ] );
+			$out->addModules( [ 'mediawiki.misc-authed-ooui' ] );
 			$out->addModuleStyles( [ 'mediawiki.special',
 				'mediawiki.interface.helpers.styles' ] );
 
@@ -608,17 +621,17 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 			if ( $bitField == RevisionRecord::DELETED_RESTRICTED ) {
 				$field['label-raw'] = "<b>" . $field['label-raw'] . "</b>";
 				if ( $type === 'radio' ) {
-					$field['options'] = [
-						$this->msg( 'revdelete-radio-same' )->text() => -1,
-						$this->msg( 'revdelete-radio-unset-suppress' )->text() => 0,
-						$this->msg( 'revdelete-radio-set-suppress' )->text() => 1
+					$field['options-messages'] = [
+						'revdelete-radio-same' => -1,
+						'revdelete-radio-unset-suppress' => 0,
+						'revdelete-radio-set-suppress' => 1
 					];
 				}
 			} elseif ( $type === 'radio' ) {
-				$field['options'] = [
-					$this->msg( 'revdelete-radio-same' )->text() => -1,
-					$this->msg( 'revdelete-radio-unset' )->text() => 0,
-					$this->msg( 'revdelete-radio-set' )->text() => 1
+				$field['options-messages'] = [
+					'revdelete-radio-same' => -1,
+					'revdelete-radio-unset' => 0,
+					'revdelete-radio-set' => 1
 				];
 			}
 
@@ -678,7 +691,7 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 	protected function success() {
 		// Messages: revdelete-success, logdelete-success
 		$out = $this->getOutput();
-		$out->setPageTitle( $this->msg( 'actioncomplete' ) );
+		$out->setPageTitleMsg( $this->msg( 'actioncomplete' ) );
 		$out->addHTML(
 			Html::successBox(
 				$out->msg( $this->typeLabels['success'] )->parse()
@@ -696,7 +709,7 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 	protected function failure( $status ) {
 		// Messages: revdelete-failure, logdelete-failure
 		$out = $this->getOutput();
-		$out->setPageTitle( $this->msg( 'actionfailed' ) );
+		$out->setPageTitleMsg( $this->msg( 'actionfailed' ) );
 		$out->addHTML(
 			Html::errorBox(
 				$out->parseAsContent(
@@ -714,8 +727,7 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 	 */
 	protected function extractBitParams() {
 		$bitfield = [];
-		foreach ( $this->checks as $item ) {
-			[ /* message */, $name, $field ] = $item;
+		foreach ( $this->checks as [ /* message */, $name, $field ] ) {
 			$val = $this->getRequest()->getInt( $name, 0 /* unchecked */ );
 			if ( $val < -1 || $val > 1 ) {
 				$val = -1; // -1 for existing value
@@ -745,3 +757,9 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 		return 'pagetools';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialRevisionDelete::class, 'SpecialRevisionDelete' );

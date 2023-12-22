@@ -4,7 +4,6 @@
 			"Felipe L. Ewald"
 		]
 	},
-	"apihelp-scribunto-console-description": "Módulo interno para atender solicitações XHR a partir do console Scribunto.",
 	"apihelp-scribunto-console-summary": "Módulo interno para atender solicitações XHR a partir do console Scribunto.",
 	"apihelp-scribunto-console-param-title": "O título do módulo a ser testado.",
 	"apihelp-scribunto-console-param-content": "O novo conteúdo do módulo.",

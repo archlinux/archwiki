@@ -21,7 +21,6 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 
 require_once __DIR__ . '/Maintenance.php';
@@ -82,7 +81,7 @@ class PurgeList extends Maintenance {
 	private function doPurge() {
 		$stdin = $this->getStdin();
 		$urls = [];
-		$htmlCacheUpdater = MediaWikiServices::getInstance()->getHtmlCacheUpdater();
+		$htmlCacheUpdater = $this->getServiceContainer()->getHtmlCacheUpdater();
 
 		while ( !feof( $stdin ) ) {
 			$page = trim( fgets( $stdin ) );
@@ -125,7 +124,7 @@ class PurgeList extends Maintenance {
 		}
 
 		$dbr = $this->getDB( DB_REPLICA );
-		$htmlCacheUpdater = MediaWikiServices::getInstance()->getHtmlCacheUpdater();
+		$htmlCacheUpdater = $this->getServiceContainer()->getHtmlCacheUpdater();
 		$startId = 0;
 		if ( $namespace === false ) {
 			$conds = [];
@@ -133,16 +132,14 @@ class PurgeList extends Maintenance {
 			$conds = [ 'page_namespace' => $namespace ];
 		}
 		while ( true ) {
-			$res = $dbr->select( 'page',
-				[ 'page_id', 'page_namespace', 'page_title' ],
-				$conds + [ 'page_id > ' . $dbr->addQuotes( $startId ) ],
-				__METHOD__,
-				[
-					'LIMIT' => $this->getBatchSize(),
-					'ORDER BY' => 'page_id'
-
-				]
-			);
+			$res = $dbr->newSelectQueryBuilder()
+				->select( [ 'page_id', 'page_namespace', 'page_title' ] )
+				->from( 'page' )
+				->where( $conds )
+				->andWhere( [ 'page_id > ' . $dbr->addQuotes( $startId ) ] )
+				->orderBy( 'page_id' )
+				->limit( $this->getBatchSize() )
+				->caller( __METHOD__ )->fetchResultSet();
 			if ( !$res->numRows() ) {
 				break;
 			}
@@ -161,7 +158,7 @@ class PurgeList extends Maintenance {
 	 * @param array $urls List of URLS to purge from CDNs
 	 */
 	private function sendPurgeRequest( $urls ) {
-		$hcu = MediaWikiServices::getInstance()->getHtmlCacheUpdater();
+		$hcu = $this->getServiceContainer()->getHtmlCacheUpdater();
 		if ( $this->delay > 0 ) {
 			foreach ( $urls as $url ) {
 				if ( $this->hasOption( 'verbose' ) ) {

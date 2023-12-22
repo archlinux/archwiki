@@ -22,36 +22,37 @@
 namespace MediaWiki\Page;
 
 use BagOStuff;
-use Config;
 use ContentModelChange;
 use JobQueueGroup;
 use MediaWiki\Cache\BacklinkCacheFactory;
 use MediaWiki\Collation\CollationFactory;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Config\Config;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\EditPage\SpamChecker;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Linker\LinkTargetLookup;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\ArchivedRevisionLookup;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Storage\PageUpdaterFactory;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
+use MediaWiki\Title\TitleFormatter;
 use MediaWiki\User\ActorMigration;
 use MediaWiki\User\ActorNormalization;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
-use NamespaceInfo;
 use Psr\Log\LoggerInterface;
-use ReadOnlyMode;
 use RepoGroup;
-use TitleFormatter;
 use WatchedItemStoreInterface;
 use Wikimedia\Message\ITextFormatter;
 use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\ReadOnlyMode;
 use WikiPage;
 
 /**
@@ -154,6 +155,7 @@ class PageCommandFactory implements
 
 	/** @var RestrictionStore */
 	private $restrictionStore;
+	private LinkTargetLookup $linkTargetLookup;
 
 	public function __construct(
 		Config $config,
@@ -184,7 +186,8 @@ class PageCommandFactory implements
 		PageUpdaterFactory $pageUpdaterFactory,
 		ITextFormatter $contLangMsgTextFormatter,
 		ArchivedRevisionLookup $archivedRevisionLookup,
-		RestrictionStore $restrictionStore
+		RestrictionStore $restrictionStore,
+		LinkTargetLookup $linkTargetLookup
 	) {
 		$this->config = $config;
 		$this->lbFactory = $lbFactory;
@@ -215,6 +218,7 @@ class PageCommandFactory implements
 		$this->contLangMsgTextFormatter = $contLangMsgTextFormatter;
 		$this->archivedRevisionLookup = $archivedRevisionLookup;
 		$this->restrictionStore = $restrictionStore;
+		$this->linkTargetLookup = $linkTargetLookup;
 	}
 
 	/**
@@ -278,7 +282,7 @@ class PageCommandFactory implements
 			$source,
 			$destination,
 			$timestamp,
-			$this->lbFactory->getMainLB(),
+			$this->lbFactory,
 			$this->contentHandlerFactory,
 			$this->revisionStore,
 			$this->watchedItemStore,
@@ -286,7 +290,8 @@ class PageCommandFactory implements
 			$this->hookContainer,
 			$this->wikiPageFactory,
 			$this->titleFormatter,
-			$this->titleFactory
+			$this->titleFactory,
+			$this->linkTargetLookup
 		);
 	}
 
@@ -300,7 +305,7 @@ class PageCommandFactory implements
 			$from,
 			$to,
 			new ServiceOptions( MovePage::CONSTRUCTOR_OPTIONS, $this->config ),
-			$this->lbFactory->getMainLB(),
+			$this->lbFactory,
 			$this->namespaceInfo,
 			$this->watchedItemStore,
 			$this->repoGroup,
@@ -333,7 +338,7 @@ class PageCommandFactory implements
 	): RollbackPage {
 		return new RollbackPage(
 			new ServiceOptions( RollbackPage::CONSTRUCTOR_OPTIONS, $this->config ),
-			$this->lbFactory->getMainLB(),
+			$this->lbFactory,
 			$this->userFactory,
 			$this->readOnlyMode,
 			$this->revisionStore,

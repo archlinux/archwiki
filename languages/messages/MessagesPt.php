@@ -87,12 +87,18 @@ $namespaceNames = [
 ];
 
 $namespaceAliases = [
-	'Usuário'           => NS_USER,
-	'Usuário_Discussão' => NS_USER_TALK,
-	'Imagem'            => NS_FILE,
-	'Imagem_Discussão'  => NS_FILE_TALK,
-	'Arquivo'           => NS_FILE,
-	'Arquivo_Discussão' => NS_FILE_TALK,
+	'Usuário'                 => NS_USER,
+	'Usuário_Discussão'       => NS_USER_TALK,
+	'Usuária'                 => NS_USER, // T33986
+	'Usuária_Discussão'       => NS_USER_TALK, // T33986
+	'Usuário(a)'              => NS_USER, // T33986
+	'Usuário(a)_Discussão'    => NS_USER_TALK, // T33986
+	'Utilizador(a)'           => NS_USER, // T33986
+	'Utilizador(a)_Discussão' => NS_USER_TALK, // T33986
+	'Imagem'                  => NS_FILE,
+	'Imagem_Discussão'        => NS_FILE_TALK,
+	'Arquivo'                 => NS_FILE,
+	'Arquivo_Discussão'       => NS_FILE_TALK,
 ];
 
 $namespaceGenderAliases = [
@@ -103,9 +109,9 @@ $namespaceGenderAliases = [
 $defaultDateFormat = 'dmy';
 
 $dateFormats = [
-	'dmy time' => 'H\hi\m\i\n',
-	'dmy date' => 'j \d\e F \d\e Y',
-	'dmy both' => 'H\hi\m\i\n \d\e j \d\e F \d\e Y',
+	'dmy time' => 'H"h"i"min"',
+	'dmy date' => 'j "de" F "de" Y',
+	'dmy both' => 'H"h"i"min" "de" j "de" F "de" Y',
 ];
 
 $separatorTransformTable = [ ',' => "\u{00A0}", '.' => ',' ];

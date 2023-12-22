@@ -7,10 +7,11 @@ use MediaWiki\Extension\AbuseFilter\EchoNotifier;
 use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
-use Title;
 
 /**
+ * @group Database
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\EchoNotifier
  */
 class EchoNotifierTest extends MediaWikiIntegrationTestCase {
@@ -20,19 +21,19 @@ class EchoNotifierTest extends MediaWikiIntegrationTestCase {
 		'2' => 42,
 	];
 
-	private function getFilterLookup(): FilterLookup {
+	private function getFilterLookup( int $userID = null ): FilterLookup {
 		$lookup = $this->createMock( FilterLookup::class );
 		$lookup->method( 'getFilter' )
-			->willReturnCallback( function ( $filter, $global ) {
+			->willReturnCallback( function ( $filter, $global ) use ( $userID ) {
+				$userID ??= self::USER_IDS[ $global ? "global-$filter" : $filter ] ?? 0;
 				$filterObj = $this->createMock( ExistingFilter::class );
-				$filterObj->method( 'getUserID' )
-					->willReturn( self::USER_IDS[ $global ? "global-$filter" : $filter ] ?? 0 );
+				$filterObj->method( 'getUserID' )->willReturn( $userID );
 				return $filterObj;
 			} );
 		return $lookup;
 	}
 
-	public function provideDataForEvent(): array {
+	public static function provideDataForEvent(): array {
 		return [
 			[ true, 1, 1 ],
 			[ true, 2, 42 ],
@@ -73,11 +74,11 @@ class EchoNotifierTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::notifyForFilter
 	 */
 	public function testNotifyForFilter() {
-		if ( !class_exists( Event::class ) ) {
-			$this->markTestSkipped( 'Echo not loaded' );
-		}
+		$this->markTestSkippedIfExtensionNotLoaded( 'Echo' );
+		// Use a real user, or Echo will throw an exception.
+		$user = $this->getTestUser()->getUserIdentity();
 		$notifier = new EchoNotifier(
-			$this->getFilterLookup(),
+			$this->getFilterLookup( $user->getId() ),
 			$this->createMock( ConsequencesRegistry::class ),
 			true
 		);

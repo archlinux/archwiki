@@ -14,5 +14,11 @@
 	"cite_error_ref_too_many_keys": "Ongeldig <code>&lt;ref&gt;</code>-etiket;\nongeldige name, byvoorbeeld te veel",
 	"cite_error_references_no_backlink_label": "Ontsien van gepasmaakte terugskakeletikette. Definieer meer in die [[MediaWiki:Cite references link many format backlink labels]]-boodskap.",
 	"cite_error_no_link_label_group": "Ontspan uit persoonlike skakeletikette vir groep \"$1\". Definieer meer in die [[MediaWiki:$2]] -boodskap.",
-	"cite_section_preview_references": "Voorskou van verwysings"
+	"cite_section_preview_references": "Voorskou van verwysings",
+	"cite-wikieditor-tool-reference": "Verwysing",
+	"cite-wikieditor-help-page-references": "Verwysings",
+	"cite-wikieditor-help-content-reference-description": "Verwysing",
+	"cite-wikieditor-help-content-named-reference-description": "Benoemde verwysing",
+	"cite-wikieditor-help-content-rereference-description": "Hergebruik van dieselfde verwysing",
+	"cite-wikieditor-help-content-showreferences-description": "Wys verwysings"
 }

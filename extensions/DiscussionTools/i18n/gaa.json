@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jwale2",
-			"Amire80"
+			"Amire80",
+			"Jwale2"
 		]
 	},
+	"discussiontools-replylink": "{{GENDER:|hetoo}}",
 	"discussiontools-replywidget-cancel": "Foo mli",
 	"discussiontools-replywidget-preview": "Kwɛmɔ shi kome daŋ",
-	"discussiontools-replywidget-reply": "Hetoo",
+	"discussiontools-replywidget-reply": "{{GENDER:|Hetoo}}",
 	"discussiontools-replywidget-summary": "Sanenaabuamɔ"
 }

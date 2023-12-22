@@ -32,11 +32,10 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MemoizedCallable;
-use TitleValue;
 use Wikimedia\Minify\CSSMin;
 use Wikimedia\Rdbms\Database;
-use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -181,7 +180,7 @@ class WikiModule extends Module {
 	 * be set to the foreign wiki directly. Methods getScript() and getContent()
 	 * will not use this handle and are not valid on the local wiki.
 	 *
-	 * @return IDatabase
+	 * @return IReadableDatabase
 	 */
 	protected function getDB() {
 		return wfGetDB( DB_REPLICA );
@@ -479,7 +478,7 @@ class WikiModule extends Module {
 
 		// Optimisation: For user modules, don't needlessly load if there are no non-empty pages
 		// This is worthwhile because unlike most modules, user modules require their own
-		// separate embedded request (managed by ResourceLoaderClientHtml).
+		// separate embedded request (managed by ClientHtml).
 		$revisions = $this->getTitleInfo( $context );
 		if ( $this->getGroup() === self::GROUP_USER ) {
 			foreach ( $revisions as $revision ) {
@@ -583,11 +582,11 @@ class WikiModule extends Module {
 	/**
 	 * @since 1.28
 	 * @param Context $context
-	 * @param IDatabase $db
+	 * @param IReadableDatabase $db
 	 * @param string[] $moduleNames
 	 */
 	public static function preloadTitleInfo(
-		Context $context, IDatabase $db, array $moduleNames
+		Context $context, IReadableDatabase $db, array $moduleNames
 	) {
 		$rl = $context->getResourceLoader();
 		// getDB() can be overridden to point to a foreign database.
@@ -695,7 +694,7 @@ class WikiModule extends Module {
 		}
 
 		if ( !$purge ) {
-			$title = Title::castFromPageIdentity( $page );
+			$title = Title::newFromPageIdentity( $page );
 			$purge = ( $title->isSiteConfigPage() || $title->isUserConfigPage() );
 		}
 

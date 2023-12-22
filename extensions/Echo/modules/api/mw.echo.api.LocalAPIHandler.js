@@ -65,7 +65,7 @@
 			// of the array will be ignored.
 			data.all = true;
 		} else {
-			data.sections = type.join( '|' );
+			data.sections = type;
 		}
 		if ( !this.isSourceLocal( source ) ) {
 			data.wikis = source;
@@ -90,9 +90,9 @@
 		}
 
 		if ( isRead ) {
-			data.list = itemIdArray.join( '|' );
+			data.list = itemIdArray;
 		} else {
-			data.unreadlist = itemIdArray.join( '|' );
+			data.unreadlist = itemIdArray;
 		}
 
 		return this.api.postWithToken( 'csrf', data );

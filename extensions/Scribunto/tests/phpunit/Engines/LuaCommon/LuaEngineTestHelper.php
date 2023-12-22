@@ -7,6 +7,7 @@ use MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxEngine;
 use MediaWiki\Extension\Scribunto\Engines\LuaStandalone\LuaStandaloneEngine;
 use MediaWiki\Extension\Scribunto\ScribuntoEngineBase;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use Parser;
 use ParserOptions;
 use PHPUnit\Framework\DataProviderTestSuite;
@@ -14,7 +15,6 @@ use PHPUnit\Framework\TestSuite;
 use PHPUnit\Framework\WarningTestCase;
 use PHPUnit\Util\Test;
 use ReflectionClass;
-use Title;
 
 /**
  * Trait that helps LuaEngineTestBase and LuaEngineUnitTestBase
@@ -41,6 +41,8 @@ trait LuaEngineTestHelper {
 	];
 	/** @var int[] */
 	protected $templateLoadCounts = [];
+	/** @var array */
+	protected $extraModules = [];
 
 	/**
 	 * Create a PHPUnit test suite to run the test against all engines
@@ -143,9 +145,11 @@ trait LuaEngineTestHelper {
 	 */
 	protected function getEngine() {
 		if ( !$this->engine ) {
-			$parser = MediaWikiServices::getInstance()->getParserFactory()->create();
+			$services = MediaWikiServices::getInstance();
+			$parser = $services->getParserFactory()->create();
 			$options = ParserOptions::newFromAnon();
 			$options->setTemplateCallback( [ $this, 'templateCallback' ] );
+			$options->setTargetLanguage( $services->getLanguageFactory()->getLanguage( 'en' ) );
 			$parser->startExternalParse( $this->getTestTitle(), $options, Parser::OT_HTML, true );
 
 			// HACK

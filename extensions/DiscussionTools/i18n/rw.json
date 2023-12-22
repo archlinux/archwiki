@@ -38,8 +38,6 @@
 	"discussiontools-limitreport-errorreqid": "Ikosa rya DiscussionTools saba ID",
 	"discussiontools-limitreport-timeusage": "Igihe cyo gukoresha DiscussionTools",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|isegonda|amasegonda}}",
-	"discussiontools-newtopic-legacy-hint": "<strong>uburyo bushya bwo gutangiza ingingo buri hano.</strong> iri vugurura rigushoboza kongeramo ingingo ukoresheje ifishi yo kuri murandasi no guhuza abandi hamwe ukoresheje impine nshya. Ushobora kandi [$1 subira inyuma kuburambe bw'umurage].",
-	"discussiontools-newtopic-legacy-hint-return": "<strong>ubu urimo kureba uburambe bw'umurage.</strong> ushobora[$1 garuka kuburambe bushya]cyangwa gusura ibyo ukunda kuri [$2 shyiraho uburambe bw'umurage kuri mburabuzi yawe].",
 	"discussiontools-newtopic-missing-title": "Tanga umutwe w'ibiganiro byawe.Niba ukanza \"{{int:discussiontools-replywidget-newtopic}}\", ingingo yawe izongerwaho nta mutwe.",
 	"discussiontools-newtopic-placeholder-title": "Umutwe",
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|}} yashubije muri \"<strong>$4</strong>\".",

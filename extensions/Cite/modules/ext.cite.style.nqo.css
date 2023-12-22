@@ -15,14 +15,14 @@
 	symbols: '߀' '߁' '߂' '߃' '߄' '߅' '߆' '߇' '߈' '߉';
 }
 
-.mw-ref > a:after {
+.mw-ref > a::after {
 	content: '[' counter( mw-Ref, nqo-counter ) ']';
 }
 
-.mw-ref > a[ data-mw-group ]:after {
+.mw-ref > a[ data-mw-group ]::after {
 	content: '[' attr( data-mw-group ) ' ' counter( mw-Ref, nqo-counter ) ']';
 }
 
-span[ rel='mw:referencedBy' ] > a:before {
+span[ rel='mw:referencedBy' ] > a::before {
 	content: counter( mw-references, nqo-counter ) '.' counter( mw-ref-linkback, nqo-counter );
 }

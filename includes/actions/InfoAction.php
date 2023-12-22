@@ -36,12 +36,16 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageProps;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use Wikimedia\Rdbms\Database;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Displays information about a page.
@@ -51,50 +55,21 @@ use Wikimedia\Rdbms\ILoadBalancer;
 class InfoAction extends FormlessAction {
 	private const VERSION = 1;
 
-	/** @var Language */
-	private $contentLanguage;
-
-	/** @var LanguageNameUtils */
-	private $languageNameUtils;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var LinkRenderer */
-	private $linkRenderer;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var MagicWordFactory */
-	private $magicWordFactory;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var PageProps */
-	private $pageProps;
-
-	/** @var RepoGroup */
-	private $repoGroup;
-
-	/** @var RevisionLookup */
-	private $revisionLookup;
-
-	/** @var WANObjectCache */
-	private $wanObjectCache;
-
-	/** @var WatchedItemStoreInterface */
-	private $watchedItemStore;
-
-	/** @var RedirectLookup */
-	private $redirectLookup;
-
-	/** @var RestrictionStore */
-	private $restrictionStore;
-
-	/** @var LinksMigration */
-	private $linksMigration;
+	private Language $contentLanguage;
+	private LanguageNameUtils $languageNameUtils;
+	private LinkBatchFactory $linkBatchFactory;
+	private LinkRenderer $linkRenderer;
+	private IConnectionProvider $dbProvider;
+	private MagicWordFactory $magicWordFactory;
+	private NamespaceInfo $namespaceInfo;
+	private PageProps $pageProps;
+	private RepoGroup $repoGroup;
+	private RevisionLookup $revisionLookup;
+	private WANObjectCache $wanObjectCache;
+	private WatchedItemStoreInterface $watchedItemStore;
+	private RedirectLookup $redirectLookup;
+	private RestrictionStore $restrictionStore;
+	private LinksMigration $linksMigration;
 
 	/**
 	 * @param Article $article
@@ -103,7 +78,7 @@ class InfoAction extends FormlessAction {
 	 * @param LanguageNameUtils $languageNameUtils
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param LinkRenderer $linkRenderer
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param MagicWordFactory $magicWordFactory
 	 * @param NamespaceInfo $namespaceInfo
 	 * @param PageProps $pageProps
@@ -122,7 +97,7 @@ class InfoAction extends FormlessAction {
 		LanguageNameUtils $languageNameUtils,
 		LinkBatchFactory $linkBatchFactory,
 		LinkRenderer $linkRenderer,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		MagicWordFactory $magicWordFactory,
 		NamespaceInfo $namespaceInfo,
 		PageProps $pageProps,
@@ -139,7 +114,7 @@ class InfoAction extends FormlessAction {
 		$this->languageNameUtils = $languageNameUtils;
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->linkRenderer = $linkRenderer;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->magicWordFactory = $magicWordFactory;
 		$this->namespaceInfo = $namespaceInfo;
 		$this->pageProps = $pageProps;
@@ -188,16 +163,14 @@ class InfoAction extends FormlessAction {
 	 */
 	public static function invalidateCache( PageIdentity $page, $revid = null ) {
 		$services = MediaWikiServices::getInstance();
-		if ( !$revid ) {
+		if ( $revid === null ) {
 			$revision = $services->getRevisionLookup()
 				->getRevisionByTitle( $page, 0, IDBAccessObject::READ_LATEST );
-			$revid = $revision ? $revision->getId() : null;
+			$revid = $revision ? $revision->getId() : 0;
 		}
-		if ( $revid !== null ) {
-			$cache = $services->getMainWANObjectCache();
-			$key = self::getCacheKey( $cache, $page, $revid );
-			$cache->delete( $key );
-		}
+		$cache = $services->getMainWANObjectCache();
+		$key = self::getCacheKey( $cache, $page, $revid ?? 0 );
+		$cache->delete( $key );
 	}
 
 	/**
@@ -422,7 +395,8 @@ class InfoAction extends FormlessAction {
 		if ( $config->get( MainConfigNames::PageLanguageUseDB )
 			&& $this->getAuthority()->probablyCan( 'pagelang', $title )
 		) {
-			$pageLangHtml .= ' ' . $this->msg( 'parentheses' )->rawParams( $linkRenderer->makeLink(
+			$pageLangHtml .= $this->msg( 'word-separator' )->escaped();
+			$pageLangHtml .= $this->msg( 'parentheses' )->rawParams( $linkRenderer->makeLink(
 				SpecialPage::getTitleValueFor( 'PageLanguage', $title->getPrefixedText() ),
 				$this->msg( 'pageinfo-language-change' )->text()
 			) )->escaped();
@@ -437,7 +411,8 @@ class InfoAction extends FormlessAction {
 		$modelHtml = htmlspecialchars( ContentHandler::getLocalizedName( $title->getContentModel() ) );
 		// If the user can change it, add a link to Special:ChangeContentModel
 		if ( $this->getAuthority()->probablyCan( 'editcontentmodel', $title ) ) {
-			$modelHtml .= ' ' . $this->msg( 'parentheses' )->rawParams( $linkRenderer->makeLink(
+			$modelHtml .= $this->msg( 'word-separator' )->escaped();
+			$modelHtml .= $this->msg( 'parentheses' )->rawParams( $linkRenderer->makeLink(
 				SpecialPage::getTitleValueFor( 'ChangeContentModel', $title->getPrefixedText() ),
 				$this->msg( 'pageinfo-content-model-change' )->text()
 			) )->escaped();
@@ -546,11 +521,15 @@ class InfoAction extends FormlessAction {
 					$prefixIndex,
 					$this->msg( 'pageinfo-subpages-name' )->text()
 				),
-				$this->msg( 'pageinfo-subpages-value' )
-					->numParams(
+				// $wgNamespacesWithSubpages can be changed and this can be unset (T340749)
+				isset( $pageCounts['subpages'] )
+					? $this->msg( 'pageinfo-subpages-value' )->numParams(
 						$pageCounts['subpages']['total'],
 						$pageCounts['subpages']['redirects'],
 						$pageCounts['subpages']['nonredirects']
+					) : $this->msg( 'pageinfo-subpages-value-unknown' )->rawParams(
+						$linkRenderer->makeKnownLink(
+							$title, $this->msg( 'purge' )->text(), [], [ 'action' => 'purge' ] )
 					)
 			];
 		}
@@ -706,8 +685,13 @@ class InfoAction extends FormlessAction {
 
 		if ( $firstRev ) {
 			// Page creator
+			$firstRevUser = $firstRev->getUser( RevisionRecord::FOR_THIS_USER, $user );
+			// Check if the username is available – it may have been suppressed, in
+			// which case use the invalid user name '[HIDDEN]' to get the wiki's
+			// default user gender.
+			$firstRevUserName = $firstRevUser ? $firstRevUser->getName() : '[HIDDEN]';
 			$pageInfo['header-edits'][] = [
-				$this->msg( 'pageinfo-firstuser' ),
+				$this->msg( 'pageinfo-firstuser', $firstRevUserName ),
 				Linker::revUserTools( $firstRev )
 			];
 
@@ -725,8 +709,13 @@ class InfoAction extends FormlessAction {
 
 		if ( $lastRev ) {
 			// Latest editor
+			$lastRevUser = $lastRev->getUser( RevisionRecord::FOR_THIS_USER, $user );
+			// Check if the username is available – it may have been suppressed, in
+			// which case use the invalid user name '[HIDDEN]' to get the wiki's
+			// default user gender.
+			$lastRevUserName = $lastRevUser ? $lastRevUser->getName() : '[HIDDEN]';
 			$pageInfo['header-edits'][] = [
-				$this->msg( 'pageinfo-lastuser' ),
+				$this->msg( 'pageinfo-lastuser', $lastRevUserName ),
 				Linker::revUserTools( $lastRev )
 			];
 
@@ -933,7 +922,7 @@ class InfoAction extends FormlessAction {
 				$title = $page->getTitle();
 				$id = $title->getArticleID();
 
-				$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+				$dbr = $this->dbProvider->getReplicaDatabase();
 				$setOpts += Database::getCacheSetOptions( $dbr );
 
 				$field = 'rev_actor';
@@ -1053,7 +1042,7 @@ class InfoAction extends FormlessAction {
 	 * @return string
 	 */
 	protected function getPageTitle() {
-		return $this->msg( 'pageinfo-title', $this->getTitle()->getPrefixedText() )->text();
+		return $this->msg( 'pageinfo-title' )->plaintextParams( $this->getTitle()->getPrefixedText() );
 	}
 
 	/**

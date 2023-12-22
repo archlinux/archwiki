@@ -2,8 +2,10 @@
 
 use MediaWiki\HookContainer\HookContainer;
 use PHPUnit\Framework\Constraint\Constraint;
+use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Container\ContainerInterface;
+use SebastianBergmann\Comparator\ComparisonFailure;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Services\NoSuchServiceException;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
@@ -195,7 +197,51 @@ trait MediaWikiTestCaseTrait {
 	}
 
 	/**
-	 * Assert that two arrays are equal. By default this means that both arrays need to hold
+	 * Assert that an associative array contains the subset of an expected array.
+	 *
+	 * The internal key order does not matter.
+	 * Values are compared with strict equality.
+	 *
+	 * @since 1.41
+	 * @param array $expected
+	 * @param array $actual
+	 * @param string $message
+	 */
+	protected function assertArrayContains(
+		array $expected,
+		array $actual,
+		$message = ''
+	) {
+		$patched = array_replace_recursive( $actual, $expected );
+
+		ksort( $patched );
+		ksort( $actual );
+		$result = ( $actual === $patched );
+
+		if ( !$result ) {
+			$comparisonFailure = new ComparisonFailure(
+				$patched,
+				$actual,
+				var_export( $patched, true ),
+				var_export( $actual, true )
+			);
+
+			$failureDescription = 'Failed asserting that array contains the expected submap.';
+			if ( $message != '' ) {
+				$failureDescription = $message . "\n" . $failureDescription;
+			}
+
+			throw new ExpectationFailedException(
+				$failureDescription,
+				$comparisonFailure
+			);
+		} else {
+			$this->assertTrue( true, $message );
+		}
+	}
+
+	/**
+	 * Assert that two arrays are equal. By default, this means that both arrays need to hold
 	 * the same set of values. Using additional arguments, order and associated key can also
 	 * be set as relevant.
 	 *
@@ -206,14 +252,9 @@ trait MediaWikiTestCaseTrait {
 	 * @param bool $ordered If the order of the values should match
 	 * @param bool $named If the keys should match
 	 * @param string $message
-	 * @param float $delta Deprecated in assertEquals()
-	 * @param int $maxDepth Deprecated in assertEquals()
-	 * @param bool $canonicalize Deprecated in assertEquals()
-	 * @param bool $ignoreCase Deprecated in assertEquals()
 	 */
 	public function assertArrayEquals(
-		array $expected, array $actual, $ordered = false, $named = false, string $message = '',
-		float $delta = 0.0, int $maxDepth = 10, bool $canonicalize = false, bool $ignoreCase = false
+		array $expected, array $actual, $ordered = false, $named = false, string $message = ''
 	) {
 		if ( !$ordered ) {
 			$this->objectAssociativeSort( $expected );
@@ -225,11 +266,7 @@ trait MediaWikiTestCaseTrait {
 			$actual = array_values( $actual );
 		}
 
-		$this->assertEquals(
-			$expected, $actual, $message,
-			// Deprecated args
-			$delta, $maxDepth, $canonicalize, $ignoreCase
-		);
+		$this->assertEquals( $expected, $actual, $message );
 	}
 
 	/**
@@ -402,4 +439,29 @@ trait MediaWikiTestCaseTrait {
 
 		$this->assertEquals( $expected, $actual, $msg );
 	}
+
+	/**
+	 * Forward-compatibility method to replace assertObjectHasAttribute in PHPUnit 9. This can be removed when
+	 * upgrading to PHPUnit 10, which introduces this method upstream.
+	 */
+	protected function assertObjectHasProperty( string $propertyName, object $object, string $message = '' ): void {
+		$this->assertTrue(
+			( new ReflectionObject( $object ) )->hasProperty( $propertyName ),
+			$message ?: 'Failed asserting that object of class "' . get_class( $object ) .
+					"\" has property \"$propertyName\""
+		);
+	}
+
+	/**
+	 * Forward-compatibility method to replace assertObjectNotHasAttribute in PHPUnit 9. This can be removed when
+	 * upgrading to PHPUnit 10, which introduces this method upstream.
+	 */
+	protected function assertObjectNotHasProperty( string $propertyName, object $object, string $message = '' ): void {
+		$this->assertFalse(
+			( new ReflectionObject( $object ) )->hasProperty( $propertyName ),
+			$message ?: 'Failed asserting that object of class "' . get_class( $object ) .
+				"\" does not have property \"$propertyName\""
+		);
+	}
+
 }

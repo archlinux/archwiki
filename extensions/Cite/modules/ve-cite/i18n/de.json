@@ -13,9 +13,9 @@
 			"Metalhead64",
 			"Murma174",
 			"Se4598",
+			"TMg",
 			"Tomabrafix",
-			"Umherirrender",
-			"TMg"
+			"Umherirrender"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Buch",
@@ -36,6 +36,8 @@
 	"cite-ve-citationneeded-title": "Beleg wird benötigt",
 	"cite-ve-dialog-reference-editing-reused": "Dieser Einzelnachweis wird auf dieser Seite {{PLURAL:$1|einmal|2=zwei Mal|$1 Mal}} verwendet.",
 	"cite-ve-dialog-reference-editing-reused-long": "Dieser Einzelnachweis wird {{PLURAL:$1|ein|2=zwei|$1}} Mal auf dieser Seite verwendet. Hier durchgeführte Änderungen werden auf alle Orte angewandt, an denen dieser Einzelnachweis erneut verwendet wird.",
+	"cite-ve-dialog-reference-editing-extends": "Dies ist eine Erweiterung eines anderen Einzelnachweises.",
+	"cite-ve-dialog-reference-editing-extends-long": "Dies ist eine Erweiterung des anderen Einzelnachweises „$1“.",
 	"cite-ve-dialog-reference-options-group-label": "Diese Gruppe verwenden",
 	"cite-ve-dialog-reference-options-group-placeholder": "Allgemeine Einzelnachweise",
 	"cite-ve-dialog-reference-options-name-label": "Diesen Namen weiterverwenden",
@@ -58,7 +60,7 @@
 	"cite-ve-referenceslist-isempty-default": "Auf dieser Seite gibt es keine Einzelnachweise zum Anzeigen in dieser Liste.",
 	"cite-ve-referenceslist-missingref": "Dieser Einzelnachweis ist in einer Vorlage oder einem anderen erzeugten Block definiert und kann derzeit nur im Quelltextmodus bearbeitet werden.",
 	"cite-ve-referenceslist-missingref-in-list": "Dieser Einzelnachweis wird in einer Vorlage oder einem anderen erzeugten Block definiert und derzeit kann eine Vorschau nur im Quelltextmodus angezeigt werden.",
-	"cite-ve-referenceslist-missingreflist": "Diese Einzelnachweisliste wurde von einer Vorlage erzeugt und kann derzeit nur im Quelltextmodus bearbeitet werden.",
+	"cite-ve-referenceslist-missingreflist": "Diese Einzelnachweisliste wurde von einer Vorlage erzeugt.",
 	"cite-ve-toolbar-group-label": "Belegen",
 	"cite-ve-othergroup-item": "$1-Einzelnachweis",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referenzierungen",

@@ -14,7 +14,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Math\\": "src/"
@@ -34,6 +34,7 @@
 		"MathAlias": "Math.alias.php",
 		"MathAliasNoTranslate": "Math.alias.noTranslate.php"
 	},
+	"callback": "MediaWiki\\Extension\\Math\\Hooks::onConfig",
 	"HookHandlers": {
 		"ParserHooksHandler": {
 			"class": "MediaWiki\\Extension\\Math\\HookHandlers\\ParserHooksHandler",
@@ -54,6 +55,12 @@
 			"services": [
 				"Math.Config"
 			]
+		},
+		"main": {
+			"class": "MediaWiki\\Extension\\Math\\Hooks"
+		},
+		"schema": {
+			"class": "MediaWiki\\Extension\\Math\\HookHandlers\\SchemaHooksHandler"
 		}
 	},
 	"Hooks": {
@@ -62,11 +69,11 @@
 		"ParserOptionsRegister": "ParserHooksHandler",
 		"GetPreferences": "PreferencesHooksHandler",
 		"UserGetDefaultOptions": "PreferencesHooksHandler",
-		"LoadExtensionSchemaUpdates": "MediaWiki\\Extension\\Math\\Hooks::onLoadExtensionSchemaUpdates",
+		"LoadExtensionSchemaUpdates": "schema",
 		"WikibaseClientDataTypes": "MediaWiki\\Extension\\Math\\WikibaseHook::onWikibaseClientDataTypes",
 		"WikibaseRepoDataTypes": "MediaWiki\\Extension\\Math\\WikibaseHook::onWikibaseRepoDataTypes",
-		"SpecialPage_initList": "MediaWiki\\Extension\\Math\\Hooks::onSpecialPageInitList",
-		"MaintenanceRefreshLinksInit": "MediaWiki\\Extension\\Math\\Hooks::onMaintenanceRefreshLinksInit",
+		"SpecialPage_initList": "main",
+		"MaintenanceRefreshLinksInit": "main",
 		"ResourceLoaderGetConfigVars": "ResourceLoaderConfigHandler"
 	},
 	"config": {
@@ -124,9 +131,12 @@
 			"value": "https://mathoid-beta.wmflabs.org"
 		},
 		"MathUseInternalRestbasePath": {
-			"description": "Whether to allow to use of internal RESTBase path instead of $wgMathFullRestbaseURL and $wgVisualEditorFullRestbaseURL. Set false if you want to use external RESTBase in any case.",
+			"description": "Whether to allow to use of internal RESTBase path instead of $wgMathFullRestbaseURL. Set false if you want to use external RESTBase in any case.",
 			"value": true,
 			"public": true
+		},
+		"MathInternalRestbaseURL": {
+			"value": null
 		},
 		"MathFullRestbaseURL": {
 			"value": "https://wikimedia.org/api/rest_"
@@ -202,28 +212,13 @@
 	},
 	"ResourceModules": {
 		"ext.math.styles": {
-			"styles": "ext.math.css",
-			"targets": [
-				"desktop",
-				"mobile"
-			]
-		},
-		"ext.math.scripts": {
-			"scripts": "ext.math.js",
-			"targets": [
-				"desktop",
-				"mobile"
-			]
+			"styles": "ext.math.css"
 		},
 		"ext.math.popup": {
 			"es6": true,
 			"packageFiles": "ext.math.popup.js",
 			"dependencies": [
 				"mediawiki.api"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		},
 		"mw.widgets.MathWbEntitySelector": {
@@ -235,10 +230,6 @@
 				"mw.config.values.wbRepo",
 				"mediawiki.ForeignApi",
 				"mediawiki.widgets"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		},
 		"ext.math.visualEditor": {
@@ -325,10 +316,6 @@
 				"math-visualeditor-symbol-group-math-symbols",
 				"math-visualeditor-symbol-group-math-typefaces",
 				"math-visualeditor-symbol-group-math-unsorted"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		},
 		"ext.math.visualEditor.mathSymbols": {
@@ -338,10 +325,6 @@
 			],
 			"styles": [
 				"ve-math/ve.ui.MWMathSymbols.css"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		},
 		"ext.math.visualEditor.chemSymbols": {
@@ -351,10 +334,6 @@
 			],
 			"styles": [
 				"ve-math/ve.ui.MWChemSymbols.css"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		}
 	},

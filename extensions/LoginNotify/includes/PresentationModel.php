@@ -2,8 +2,8 @@
 
 namespace LoginNotify;
 
-use EchoEvent;
-use EchoEventPresentationModel;
+use MediaWiki\Extension\Notifications\Formatters\EchoEventPresentationModel;
+use MediaWiki\Extension\Notifications\Model\Event;
 use Message;
 use SpecialPage;
 
@@ -70,7 +70,7 @@ class PresentationModel extends EchoEventPresentationModel {
 					$msg = $this->msg( 'notification-new-bundled-header-login-fail' );
 					$totalAttempts = array_reduce(
 						$this->getBundledEvents(),
-						static function ( $sum, EchoEvent $event ) {
+						static function ( $sum, Event $event ) {
 							return $sum + $event->getExtraParam( 'count', 0 );
 						},
 						0

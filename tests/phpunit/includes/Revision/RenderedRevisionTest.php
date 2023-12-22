@@ -19,17 +19,18 @@ use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SuppressedDataException;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use ParserOptions;
 use ParserOutput;
 use PHPUnit\Framework\MockObject\MockObject;
-use TitleValue;
 use Wikimedia\TestingAccessWrapper;
 use WikitextContent;
 
 /**
  * @covers \MediaWiki\Revision\RenderedRevision
+ * @group Database
  */
 class RenderedRevisionTest extends MediaWikiIntegrationTestCase {
 	use MockAuthorityTrait;
@@ -290,7 +291,8 @@ class RenderedRevisionTest extends MediaWikiIntegrationTestCase {
 			$rev,
 			$options,
 			$this->contentRenderer,
-			$this->combinerCallback
+			$this->combinerCallback,
+			RevisionRecord::RAW
 		);
 
 		$this->assertFalse( $rr->isContentDeleted(), 'isContentDeleted' );

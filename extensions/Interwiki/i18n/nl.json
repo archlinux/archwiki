@@ -43,6 +43,7 @@
 	"interwiki_addtext": "Voeg een interwiki of taal voorvoegsel toe",
 	"interwiki-addtext-local": "Voeg een lokaal interwiki- of taalvoorvoegsel toe",
 	"interwiki-addtext-nolang": "Voeg een interwikivoorvoegsel toe",
+	"interwiki-addtext-local-nolang": "Een lokaal interwiki-voorvoegsel toevoegen",
 	"interwiki_addintro": "U bent een nieuw interwikivoorvoegsel aan het toevoegen.\nLet op dat dit geen spaties ( ), dubbele punt (:), ampersands (&), of gelijktekens (=) mag bevatten.",
 	"interwiki_addbutton": "Toevoegen",
 	"interwiki_added": "Voorvoegsel \"$1\" is toegevoegd aan de interwikitabel.",
@@ -52,6 +53,7 @@
 	"interwiki_edited": "Voorvoegsel \"$1\" is gewijzigd in de interwikitabel.",
 	"interwiki_editerror": "Voorvoegsel \"$1\" kan niet worden gewijzigd in de interwikitabel. Mogelijk bestaat het niet.",
 	"interwiki-badprefix": "Het interwikivoorvoegsel \"$1\" bevat ongeldige tekens",
+	"interwiki-cannotaddlocallanguage": "Het voorvoegsel “$1” komt overeen met een bekende taalcode. Het toevoegen van lokale taalvoorvoegsels is niet mogelijk wanneer een globale taalkoppelingen-database gebruikt wordt.",
 	"interwiki-submit-empty": "Het voorvoegsel en de URL mogen niet leeg zijn.",
 	"interwiki-submit-invalidurl": "Het protocol van de URL is ongeldig.",
 	"log-name-interwiki": "Logboek interwikitabel",
@@ -67,5 +69,7 @@
 	"interwiki-local-description": "Deze voorvoegsels zijn lokaal. Ze vervangen eventuele dubbelgangers in de globale configuratie.",
 	"interwiki-links": "Interwikivoorvoegsels",
 	"interwiki-language-links": "Intertaalvoorvoegsels",
-	"interwiki-language-description": "Deze voorvoegsels komen overeen met gedefinieerde taalcode en worden gebruikt om de lijst \"{{int:otherlanguages}}\" te maken als deze aan een pagina wordt toegevoegd."
+	"interwiki-language-description": "Deze voorvoegsels komen overeen met gedefinieerde taalcode en worden gebruikt om de lijst \"{{int:otherlanguages}}\" te maken als deze aan een pagina wordt toegevoegd.",
+	"interwiki-global-language-links": "Globale taalvoorvoegsels",
+	"interwiki-global-language-description": "Deze voorvoegsels komen overeen met gedefinieerde taalcodes en worden gebruikt om de lijst “{{int:otherlanguages}}” te maken wanneer ze aan een pagina worden toegevoegd. Omdat ze worden overgenomen van een globale configuratie, kunnen ze alleen worden bewerkt op de bronwiki. Globale definities van taalkoppelingen kunnen niet lokaal worden overschreven."
 }

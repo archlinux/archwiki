@@ -2,18 +2,19 @@
 	"@metadata": {
 		"authors": [
 			"Bgo eiu",
-			"Jagseer S Sidhu"
+			"Jagseer S Sidhu",
+			"Kuldeepburjbhalaike"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "ਜੁਆਬ",
-	"discussiontools-replylink": "ਜੁਆਬ ਦਿਉ",
+	"discussiontools-replylink": "{{GENDER:|ਜਵਾਬ}}",
 	"discussiontools-replywidget-advanced": "ਉੱਨਤ",
 	"discussiontools-replywidget-cancel": "ਰੱਦ ਕਰੋ",
 	"discussiontools-replywidget-mode-source": "ਸਰੋਤ",
 	"discussiontools-replywidget-mode-visual": "ਵਿਜ਼ੂਅਲ",
-	"discussiontools-replywidget-placeholder-reply": "{{BIDI: $1 }} ਨੂੰ ਜਵਾਬ ਦਿਓ",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI: $1 }} ਨੂੰ {{GENDER:|ਜਵਾਬ}}",
 	"discussiontools-replywidget-preview": "ਝਲਕ",
-	"discussiontools-replywidget-reply": "ਜੁਆਬ ਦਿਉ",
+	"discussiontools-replywidget-reply": "{{GENDER:|ਜਵਾਬ}}",
 	"discussiontools-replywidget-summary": "ਸਾਰ",
 	"discussiontools-replywidget-watchthis": "ਇਸ ਪੰਨੇ ਨੂੰ ਆਪਣੀ [[Special:Watchlist|ਨਿਗਰਾਨ ਸੂਚੀ]] ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ।",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1| ਵਿਅਕਤੀ|ਲੋਕ}} ਚਰਚਾ ਵਿੱਚ ਹਨ",
@@ -23,8 +24,8 @@
 	"discussiontools-topicsubscription-button-subscribe-label": "ਗਾਹਕੀ ਕਰੋ",
 	"discussiontools-topicsubscription-button-unsubscribe": "ਗਾਹਕੀ ਰੱਦ ਕਰੋ",
 	"discussiontools-topicsubscription-button-unsubscribe-label": "ਗਾਹਕੀ ਰੱਦ ਕਰੋ",
-	"discussiontools-topicsubscription-notify-subscribed-body": "ਤੁਹਾਨੂੰ ਇਸ ਵਿਸ਼ੇ ਵਿੱਚ ਨਵੀਆਂ ਟਿੱਪਣੀਆਂ ਬਾਰੇ ਨੋਟੀਫਿਕੇਸ਼ਨ ਪ੍ਰਾਪਤ ਹੋਣਗੇ।",
-	"discussiontools-topicsubscription-notify-subscribed-title": "ਤੁਸੀਂ ਸਬਸਕ੍ਰਾਈਬ ਕੀਤਾ ਹੈ!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "ਤੁਹਾਨੂੰ ਹੁਣ ਇਸ ਵਿਸ਼ੇ ਵਿੱਚ ਨਵੀਆਂ ਟਿੱਪਣੀਆਂ ਬਾਰੇ ਨੋਟੀਫਿਕੇਸ਼ਨ ਨਹੀਂ ਪ੍ਰਾਪਤ ਹੋਣਗੇ।",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "ਤੁਸੀਂ ਗਾਹਕੀ ਰੱਦ ਕਰ ਦਿੱਤੀ ਹੈ।"
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|ਤੁਸੀਂ}} ਇਸ ਵਿਸ਼ੇ ਵਿੱਚ ਨਵੀਆਂ ਟਿੱਪਣੀਆਂ ਬਾਰੇ ਸੂਚਨਾਵਾਂ ਪ੍ਰਾਪਤ ਕਰੋਂਗੇ।",
+	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|ਤੁਸੀਂ}} ਇਸਨੂੰ ਸਬਸਕ੍ਰਾਈਬ ਕੀਤਾ!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|ਤੁਸੀਂ}} ਹੁਣ ਇਸ ਵਿਸ਼ੇ ਵਿੱਚ ਨਵੀਆਂ ਟਿੱਪਣੀਆਂ ਬਾਰੇ ਸੂਚਨਾਵਾਂ ਪ੍ਰਾਪਤ ਨਹੀਂ ਕਰੋਂਗੇ।",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|ਤੁਸੀਂ}} ਨੇ ਗਾਹਕੀ ਹਟਾ ਦਿੱਤੀ ਹੈ।"
 }

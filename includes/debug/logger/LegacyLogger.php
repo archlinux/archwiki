@@ -22,12 +22,12 @@ namespace MediaWiki\Logger;
 
 use DateTimeZone;
 use Error;
+use LogicException;
 use MediaWiki\WikiMap\WikiMap;
 use MWDebug;
 use MWExceptionHandler;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
-use RuntimeException;
 use Throwable;
 use UDPTransport;
 use Wikimedia\AtEase\AtEase;
@@ -42,10 +42,11 @@ use Wikimedia\AtEase\AtEase;
  * - `$wgDBerrorLog`
  * - `$wgDBerrorLogTZ`
  *
- * See docs/Configuration.ms for detailed explanations of these settings.
+ * See docs/Configuration.md for detailed explanations of these settings.
  *
  * @see \MediaWiki\Logger\LoggerFactory
  * @since 1.25
+ * @ingroup Debug
  * @copyright © 2014 Wikimedia Foundation and contributors
  */
 class LegacyLogger extends AbstractLogger {
@@ -140,7 +141,7 @@ class LegacyLogger extends AbstractLogger {
 	 */
 	public function setMinimumForTest( ?int $level ) {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new RuntimeException( 'Not allowed outside tests' );
+			throw new LogicException( 'Not allowed outside tests' );
 		}
 		// Set LEVEL_INFINITY if given null, or restore the original level.
 		$original = $this->minimumLevel;

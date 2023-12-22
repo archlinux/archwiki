@@ -49,16 +49,13 @@ class PurgeJobUtils {
 				// This is necessary to prevent the job queue from smashing the DB with
 				// large numbers of concurrent invalidations of the same page.
 				$now = $dbw->timestamp();
-				$ids = $dbw->selectFieldValues(
-					'page',
-					'page_id',
-					[
-						'page_namespace' => $namespace,
-						'page_title' => $dbkeys,
-						'page_touched < ' . $dbw->addQuotes( $now )
-					],
-					$fname
-				);
+				$ids = $dbw->newSelectQueryBuilder()
+					->select( 'page_id' )
+					->from( 'page' )
+					->where( [ 'page_namespace' => $namespace ] )
+					->andWhere( [ 'page_title' => $dbkeys ] )
+					->andWhere( $dbw->buildComparison( '<', [ 'page_touched' => $now ] ) )
+					->caller( $fname )->fetchFieldValues();
 
 				if ( !$ids ) {
 					return;
@@ -69,15 +66,12 @@ class PurgeJobUtils {
 				$ticket = $lbFactory->getEmptyTransactionTicket( $fname );
 				$idBatches = array_chunk( $ids, $batchSize );
 				foreach ( $idBatches as $idBatch ) {
-					$dbw->update(
-						'page',
-						[ 'page_touched' => $now ],
-						[
-							'page_id' => $idBatch,
-							'page_touched < ' . $dbw->addQuotes( $now ) // handle races
-						],
-						$fname
-					);
+					$dbw->newUpdateQueryBuilder()
+						->update( 'page' )
+						->set( [ 'page_touched' => $now ] )
+						->where( [ 'page_id' => $idBatch ] )
+						->andWhere( $dbw->buildComparison( '<', [ 'page_touched' => $now ] ) ) // handle races
+						->caller( $fname )->execute();
 					if ( count( $idBatches ) > 1 ) {
 						$lbFactory->commitAndWaitForReplication( $fname, $ticket );
 					}

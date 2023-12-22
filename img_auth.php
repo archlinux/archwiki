@@ -2,7 +2,7 @@
 /**
  * The web entry point for serving non-public images to logged-in users.
  *
- * To use this, see https://www.mediawiki.org/wiki/Manual:Image_Authorization
+ * To use this, see https://www.mediawiki.org/wiki/Manual:Image_authorization
  *
  * - Set $wgUploadDirectory to a non-public directory (not web accessible)
  * - Set $wgUploadPath to point to this file
@@ -39,7 +39,9 @@
  * @ingroup entrypoint
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\TemplateParser;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 
 define( 'MW_NO_OUTPUT_COMPRESSION', 1 );
@@ -134,7 +136,7 @@ function wfImageAuthMain() {
 		$filename = $repo->getZonePath( 'public' ) . $path;
 		// Check to see if the file exists and is not deleted
 		$bits = explode( '!', $name, 2 );
-		if ( substr( $path, 0, 9 ) === '/archive/' && count( $bits ) == 2 ) {
+		if ( str_starts_with( $path, '/archive/' ) && count( $bits ) == 2 ) {
 			$file = $repo->newFromArchiveName( $bits[1], $name );
 		} else {
 			$file = $repo->newFile( $name );
@@ -149,6 +151,7 @@ function wfImageAuthMain() {
 
 	$title = Title::makeTitleSafe( NS_FILE, $name );
 
+	$hookRunner = new HookRunner( $services->getHookContainer() );
 	if ( !$publicWiki ) {
 		// For private wikis, run extra auth checks and set cache control headers
 		$headers['Cache-Control'] = 'private';
@@ -162,7 +165,7 @@ function wfImageAuthMain() {
 		// Run hook for extension authorization plugins
 		/** @var array $result */
 		$result = null;
-		if ( !Hooks::runner()->onImgAuthBeforeStream( $title, $path, $name, $result ) ) {
+		if ( !$hookRunner->onImgAuthBeforeStream( $title, $path, $name, $result ) ) {
 			wfForbidden( $result[0], $result[1], array_slice( $result, 2 ) );
 			return;
 		}
@@ -188,7 +191,7 @@ function wfImageAuthMain() {
 	}
 
 	// Allow modification of headers before streaming a file
-	Hooks::runner()->onImgAuthModifyHeaders( $title->getTitleValue(), $headers );
+	$hookRunner->onImgAuthModifyHeaders( $title->getTitleValue(), $headers );
 
 	// Stream the requested file
 	[ $headers, $options ] = HTTPFileStreamer::preprocessHeaders( $headers );

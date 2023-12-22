@@ -23,7 +23,8 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -52,7 +53,7 @@ class RefreshFileHeaders extends Maintenance {
 	}
 
 	public function execute() {
-		$repo = MediaWikiServices::getInstance()->getRepoGroup()->getLocalRepo();
+		$repo = $this->getServiceContainer()->getRepoGroup()->getLocalRepo();
 		$start = str_replace( ' ', '_', $this->getOption( 'start', '' ) ); // page on img_name
 		$end = str_replace( ' ', '_', $this->getOption( 'end', '' ) ); // page on img_name
 		// filter by img_media_type
@@ -65,37 +66,30 @@ class RefreshFileHeaders extends Maintenance {
 		$count = 0;
 		$dbr = $this->getDB( DB_REPLICA );
 
-		$fileQuery = LocalFile::getQueryInfo();
-
 		do {
-			$conds = [ 'img_name > ' . $dbr->addQuotes( $start ) ];
+			$queryBuilder = FileSelectQueryBuilder::newForFile( $dbr );
 
+			$queryBuilder->where( [ 'img_name > ' . $dbr->addQuotes( $start ) ] );
 			if ( strlen( $end ) ) {
-				$conds[] = 'img_name <= ' . $dbr->addQuotes( $end );
+				$queryBuilder->andWhere( 'img_name <= ' . $dbr->addQuotes( $end ) );
 			}
 
 			if ( strlen( $media_type ) ) {
-				$conds['img_media_type'] = $media_type;
+				$queryBuilder->andWhere( [ 'img_media_type' => $media_type ] );
 			}
 
 			if ( strlen( $major_mime ) ) {
-				$conds['img_major_mime'] = $major_mime;
+				$queryBuilder->andWhere( [ 'img_major_mime' => $major_mime ] );
 			}
 
 			if ( strlen( $minor_mime ) ) {
-				$conds['img_minor_mime'] = $minor_mime;
+				$queryBuilder->andWhere( [ 'img_minor_mime' => $minor_mime ] );
 			}
 
-			$res = $dbr->select( $fileQuery['tables'],
-				$fileQuery['fields'],
-				$conds,
-				__METHOD__,
-				[
-					'LIMIT' => $this->getBatchSize(),
-					'ORDER BY' => 'img_name ASC'
-				],
-				$fileQuery['joins']
-			);
+			$res = $queryBuilder
+				->orderBy( 'img_name', SelectQueryBuilder::SORT_ASC )
+				->limit( $this->getBatchSize() )
+				->caller( __METHOD__ )->fetchResultSet();
 
 			if ( $res->numRows() > 0 ) {
 				$row1 = $res->current();

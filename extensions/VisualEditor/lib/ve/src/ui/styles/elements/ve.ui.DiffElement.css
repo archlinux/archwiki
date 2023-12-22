@@ -104,7 +104,8 @@
 }
 
 .ve-ui-diffElement-attributeChange.oo-ui-labelElement .oo-ui-labelElement-label {
-	white-space: normal;
+	/* Respect line breaks and prevent collapsing added/removed spaces */
+	white-space: pre-wrap;
 	word-break: break-word;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
@@ -174,16 +175,27 @@ del[ data-diff-action='remove' ] {
 	text-decoration: none;
 }
 
+/* Add some space to separate insertions from removals (inline only) */
 /* TODO: These sibling selectors still match when there is a text node in-between, should be fixed in JS */
-[ data-diff-action='remove' ] + [ data-diff-action='insert' ],
-[ data-diff-action='insert' ] + [ data-diff-action='remove' ],
-[ data-diff-action='remove' ] + [ data-diff-action='change-insert' ],
-[ data-diff-action='insert' ] + [ data-diff-action='change-remove' ] {
+del[ data-diff-action='remove' ] + ins[ data-diff-action='insert' ],
+ins[ data-diff-action='insert' ] + del[ data-diff-action='remove' ],
+del[ data-diff-action='remove' ] + span[ data-diff-action='change-insert' ],
+ins[ data-diff-action='insert' ] + span[ data-diff-action='change-remove' ] {
 	margin-left: 4px;
 }
 
 [ data-diff-action='none' ]:not( [ data-diff-move ] ) {
 	opacity: 0.4;
+}
+
+/* List items only apply this style to the marker. The contents
+   is styled separately to avoid styling nested lists. */
+li[ data-diff-action='none' ]:not( [ data-diff-move ] ) {
+	opacity: 1;
+}
+
+li[ data-diff-action='none' ]:not( [ data-diff-move ] )::marker {
+	color: #72777d;
 }
 
 /* stylelint-disable no-descending-specificity */
@@ -198,18 +210,14 @@ del[ data-diff-action='remove' ] {
 }
 /* stylelint-enable no-descending-specificity */
 
-/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-@supports ( mix-blend-mode: darken ) {
-	/* Blend contents into the background (I7a7e27b1218) */
-	[ data-diff-action='insert' ] > *,
-	[ data-diff-action='remove' ] > *,
-	[ data-diff-action='change' ] > *,
-	[ data-diff-action='change-insert' ] > *,
-	[ data-diff-action='change-remove' ] > *,
-	[ data-diff-move ] > * {
-		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-		mix-blend-mode: darken;
-	}
+/* Blend contents into the background (I7a7e27b1218) */
+[ data-diff-action='insert' ] > *,
+[ data-diff-action='remove' ] > *,
+[ data-diff-action='change' ] > *,
+[ data-diff-action='change-insert' ] > *,
+[ data-diff-action='change-remove' ] > *,
+[ data-diff-move ] > * {
+	mix-blend-mode: darken;
 }
 
 .ve-ui-diffElement-moved-up,
@@ -255,4 +263,10 @@ del[ data-diff-action='remove' ] {
 [ data-diff-list-spacer ],
 .ve-ui-diffElement-internalListSpacer {
 	list-style-type: none !important; /* stylelint-disable-line declaration-no-important */
+	list-style-image: none;
+}
+
+[ data-diff-list-none ]::marker {
+	/* Approximately opacity 0.4, but we can't style the list marker with opacity */
+	color: #aaa;
 }

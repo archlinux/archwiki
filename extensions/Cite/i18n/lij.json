@@ -33,5 +33,6 @@
 	"cite_references_link_accessibility_back_label": "Torna in simma",
 	"cite_section_preview_references": "Anteprimma de notte",
 	"cite_warning": "Attençion inte notte: $1",
-	"cite_warning_sectionpreview_no_text": "O tag <code>&lt;ref&gt;</code> con nomme <code>$1</code> o no poeu ese vixualizou in anteprimma, perché o l'è definio a-o de foeua da seçion attoale ò o no l'è definio affæto."
+	"cite_warning_sectionpreview_no_text": "O tag <code>&lt;ref&gt;</code> con nomme <code>$1</code> o no poeu ese vixualizou in anteprimma, perché o l'è definio a-o de foeua da seçion attoale ò o no l'è definio affæto.",
+	"cite-wikieditor-tool-reference": "Notta"
 }

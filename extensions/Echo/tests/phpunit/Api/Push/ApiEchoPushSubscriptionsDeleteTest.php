@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Extension\Notifications\Push\Utils;
+use MediaWiki\Extension\Notifications\Services;
 
 /**
  * @group medium
@@ -99,7 +100,7 @@ class ApiEchoPushSubscriptionsDeleteTest extends ApiTestCase {
 	}
 
 	private function createTestData(): void {
-		$subscriptionManager = EchoServices::getInstance()->getPushSubscriptionManager();
+		$subscriptionManager = Services::getInstance()->getPushSubscriptionManager();
 		$userId = Utils::getPushUserId( $this->user );
 		$subscriptionManager->create( 'fcm', 'ABC', $userId );
 	}

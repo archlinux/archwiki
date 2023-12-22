@@ -4,7 +4,6 @@
 			"Saurmandal"
 		]
 	},
-	"apihelp-templatedata-description": "TemplateData एक्सटेंशन द्वारा संग्रहीत डेटा प्राप्त करें।",
 	"apihelp-templatedata-summary": "TemplateData एक्सटेंशन द्वारा संग्रहीत डेटा प्राप्त करता है।",
 	"apihelp-templatedata-example-1": "[[Template:Stub]] और [[Template:Example]] के लिए TemplateData लौटाएँ, और अगर साँचे मौजूद न हों या फिर मौजूद होने के बावजूद उनपर TemplateData न हो तो परिणाम लौटाएँ",
 	"apihelp-templatedata-example-2": "[[Template:Stub]] और [[Template:Example]] के लिए TemplateData लौटाएँ, और अगर साँचे मौजूद न हों या फिर मौजूद होने के बावजूद उनपर TemplateData न हो तो परिणाम लौटाएँ",

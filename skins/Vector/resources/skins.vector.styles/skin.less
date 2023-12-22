@@ -2,39 +2,50 @@
  * Vector modern stylesheets
  * See '../common/common.less' for common screen and print Vector stylesheets.
  */
-
-@import '../common/variables.less';
-@import 'mediawiki.mixins.less';
+@import './variables.less';
+@import './mixins.less';
 
 @media screen {
-	// Layouts
-	@import './layouts/screen.less';
+	.vector-feature-zebra-design-disabled {
+		// Layouts
+		@import './layouts/screen.less';
+		@import './layouts/preZebra.less';
+		@import './layouts/grid.less';
+		@import './layouts/toc/pinned.less';
+		@import './layouts/toc/unpinned.less';
+		// Components
+		@import './components/Dropdown.less';
+		@import './components/MainMenu.less';
+		@import './components/PinnableElement.less';
+		@import './components/PinnableHeader.less';
+		@import './components/PageTools.less';
+		@import './components/StickyHeader.less';
+		@import './components/TableOfContents.less';
+	}
+}
+
+@media screen {
+	// Common styles
+	@import './normalize.less';
+	@import './typography.less';
 
 	// Components
-	@import './components/SearchBoxLoader.less';
-	@import './components/VueEnhancedSearchBox.less';
+	@import './components/Button.less';
 	@import './components/LanguageDropdown.less';
 	@import './components/UserLinks.less';
 	@import './components/Header.less';
+	@import './components/Icon.less';
+	@import './components/Indicators.less';
 	@import './components/Footer.less';
 	@import './components/Menu.less';
-	@import './components/Dropdown.less';
 	@import './components/MenuTabs.less';
-	@import './components/MainMenu.less';
-	@import './components/MainMenuGroup.less';
 	@import './components/PageTitlebar.less';
 	@import './components/PageToolbar.less';
-	@import './components/PageTools.less';
-	@import './components/PinnableHeader.less';
-	@import './components/PinnableElement.less';
-	@import './components/StickyHeader.less';
-	@import './components/TabWatchstarLink.less';
-	@import './components/TableOfContents.less';
-	@import './components/Icon.less';
-
-	.vector-feature-page-tools-disabled {
-		@import './components/checkboxHack.less';
-	}
+	@import './components/PopupNotification.less';
+	@import './components/SearchBox.less';
+	@import './components/SiteNotice.less';
+	@import './components/Watchstar.less';
+	@import './components/BottomDock.less';
 }
 
 @media all {
@@ -43,6 +54,7 @@
 }
 
 @media print {
+	@import './print.less';
 	@import './layouts/print.less';
 }
 

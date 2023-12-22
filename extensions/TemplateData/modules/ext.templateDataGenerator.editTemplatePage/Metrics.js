@@ -7,7 +7,7 @@ function logEvent( eventName ) {
 		page_namespace: mw.config.get( 'wgNamespaceNumber' ),
 		rev_id: mw.config.get( 'wgCurRevisionId' ),
 		user_edit_count: mw.config.get( 'wgUserEditCount', 0 ),
-		user_id: mw.user.getId()
+		user_id: mw.user.isNamed() ? mw.user.getId() : 0
 	};
 
 	var editCountBucket = mw.config.get( 'wgUserEditCountBucket' );

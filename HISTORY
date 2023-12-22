@@ -1,6 +1,856 @@
-Change notes from older releases. For current info, see RELEASE-NOTES-1.40.
+Change notes from older releases. For current info, see RELEASE-NOTES-1.41.
+
+= MediaWiki 1.40 =
+
+PHP 8.0 workboard: https://phabricator.wikimedia.org/tag/php_8.0_support/
+PHP 8.1 workboard: https://phabricator.wikimedia.org/tag/php_8.1_support/
+PHP 8.2 workboard: https://phabricator.wikimedia.org/tag/php_8.2_support/
+PHP 8.3 workboard: https://phabricator.wikimedia.org/tag/php_8.3_support/
+
+== MediaWiki 1.40.1 ==
+
+This is a security and maintenance release of the MediaWiki 1.40 branch.
+
+=== Changes since MediaWiki 1.40.0 ===
+* Localisation updates.
+* (T333050, CVE-2023-45363) SECURITY: Fix infinite loop for self-redirects
+  with variants conversion.
+* docs: Fix a few typos in MainConfigSchema.
+* (T290464) Add DiscussionTools bundling to release notes.
+* (T309714) mime: Add support for 'font/sfnt' mime type.
+* (T341434) WikiImporter: Improve error message output.
+* (T341737) ApiBase: Cast $id to string in filterIDs.
+* (T286291, T296188) Merge zh and zh-tw namespace translations back to zh-hans,
+  zh-hant, zh-hk respectively.
+* (T337875) WRStats: Round up SequenceSpec::hardExpiry to the nearest integer.
+* (T237898) installer: Check MariaDB version in updater/installer.
+* (T342632) ApiComparePages: Add help url.
+* (T326182, T324903) EditPage: Add #[AllowDynamicProperties].
+* (T342351) rdbms: Fix postgres db function call.
+* (T343675) user: Use {@} to escape annotation when writting about annotation.
+* (T343797) LanguageWa: Fix double timezone adjustment.
+* (T343669) skins: Avoid function call on array.
+* (T326454) Update pear/mail to 1.5.1.
+* (T343622) docs: Set the <comment> tag back to optional.
+* (T330528) Upgrade wikimedia/html-formatter from 3.0.1 to 4.0.3.
+* Updated jQuery from v3.6.1 to v3.7.1.
+* (T337463) wdio-mediawiki: await saveScreenshot.
+* (T208477) $wgPrivilegedGroups – Users belonging in some of the listed groups
+  will be audited more aggressively.
+* doc: Improve description of "type" in extension.schema.v2.json.
+* Added PrivilegedGroups attribute for extension.json / skin.json, which lets
+  you add any new user groups you define to wgPrivilegedGroups (see above).
+* (T288624) MultiHttpClient: Unset $this->cmh after closing it.
+* (T345039) Do not run SkinAfterBottomScripts hook twice unconditionally.
+* (T265734) API Help: Note that parameters may be inherited from other context.
+* (T285545) i18n: Split apihelp for standard dir parameter.
+* (T285545) i18n: Split apihelp for redirects/linkshere/transcludedin/fileusage
+  show.
+* (T285545) i18n: Split apihelp for parameter list=deletedrevs&drprop=.
+* (T285545) i18n: Split apihelp for parameter list=allpages&apprexpiry=.
+* (T285545) i18n: Split apihelp for parameter action=opensearch&redirects=.
+* (T285545) i18n: Split apihelp for parameter action=managetags&operation=.
+* (T285545) api: Add message for list=watchlist&wlprop=expiry.
+* (T334011) ApiComparePages: expose 'difftype' param if wikidiff2 is installed.
+* (T342633) api: Add message for action=compare&prop=timestamp.
+* API: revids=… does not necessarily return the queried revisions.
+* (T235207) Get correct main page in API call examples.
+* doc: Make extension.schema.v2.json a valid JSON schema.
+* (T326696) Add since tag to UserOptionsManager::MAX_BYTES_OPTION_VALUE.
+* updateSpecialPages.php: Avoid implicit float conversion on modulo.
+* (T347227) ImportReporter: Make callback functions public.
+* (T346898) importDump: Unconditionally call $importer->setUsernamePrefix().
+* doc: Improve description of type in extension.schema.v1.json.
+* (T340217, CVE-2023-45359) SECURITY: Vector 2022: Numerous unescaped messages
+  leading to potential XSS.
+* (T340220, CVE-2023-45361) SECURITY: Vector 2022: vector-intro-page message
+  is assumed to yield a valid title.
+* (T340221, CVE-2023-45360) SECURITY: XSS via 'youhavenewmessagesmanyusers'
+  and 'youhavenewmessages' messages.
+* (T341529, CVE-2023-45362) SECURITY: diff-multi-sameuser ("X intermediate
+  revisions by the same user not shown") ignores username suppression.
+* (T341565, CVE-2023-3550) SECURITY: Stored XSS when uploading crafted
+  XML file to Special:Upload (non standard configuration).
+
+== MediaWiki 1.40.0 ==
+
+=== Changes since MediaWiki 1.40.0-rc.0 ===
+* Localisation updates.
+* (T330464) Work around argument corruption bug in XMLReader::open.
+* build: Updating mediawiki/mediawiki-phan-config to 0.12.1.
+* Fix frame and frameless rdfa depending on file existing.
+* (T329214) Pass whether current rev of file exists to
+  Linker::makeBrokenImageLinkObj.
+* (T334659) Handle thumb errors when !$enableLegacyMediaDOM.
+* A manualthumb that doesn't exist should be considered a thumb error.
+* (T313157) IndexPager: Also protect against $offset being 0.
+* (T335612, CVE-2023-36674) SECURITY: Move badFile lookup to Linker.
+
+== MediaWiki 1.40.0-rc.0 ==
+
+== Upgrading notes for 1.40 ==
+Don't forget to always back up your database before upgrading!
+
+See the file UPGRADE for more detailed per-version upgrade instructions from the
+oldest supported upgrading version, MediaWiki 1.35.
+
+Some specific notes for MediaWiki 1.40 upgrades are below:
+* Maintenance scripts should now be executed using maintenance/run.php, e.g.
+  maintenance/run.php update not maintenance/update.php as before.
+* Five extensions have now been bundled with MediaWiki:
+  * The DiscussionTools extension, which provides a forum-like editing
+    experience for wikitext-based discussion pages.
+  * The Echo extension, which provides a system of user notifications.
+  * The Linter extension, which warns about use of deprecated wikitext.
+  * The LoginNotify extension, which warns users about failed attempted logins.
+  * The Thanks extension, which lets users thank editors for edits.
+* The Renameuser extension has been moved to MediaWiki core. It is now possible
+  to rename users without installing an extension. The extension had already
+  been bundled with MediaWiki since 1.18.
+
+For notes on 1.39.x and older releases, see HISTORY.
+
+=== Configuration changes for system administrators in 1.40 ===
+* When computing PBKDF2 password hashes, MediaWiki now detects and uses OpenSSL
+  support if available, unless $wgPasswordConfig['pbkdf2']['class'] is set in
+  LocalSettings.php. OpenSSL is more efficient, so if that setting is present,
+  you should remove it (or set it to 'Pbkdf2PasswordUsingOpenSSL' if possible).
+  If users get an internal error when trying to log in, you can try setting it
+  to 'Pbkdf2PasswordUsingHashExtension'. In particular, this would be necessary
+  if existing PBKDF2 password hashes were computed using a hash algorithm other
+  than "sha512" or "sha256" (the current and prior defaults).
+* You should configure your webserver to return the http header
+  'X-Content-Type-Options: nosniff' for the /images directory. This will
+  instruct browsers to not apply content sniffing when accessing the files.
+  MediaWiki before 1.40 shipped with a content sniffer which disallowed
+  potentially dangerous files at upload time, but this protection has now been
+  removed in favor of this 'X-Content-Type-Options: nosniff' header and the
+  installer will return a warning when it is not in place.
+* Support for MW_USE_LEGACY_DEFAULT_SETTINGS has been removed, setting this
+  constant will not have any effect. Use of MW_USE_LEGACY_DEFAULT_SETTINGS
+  had been deprecated since 1.39.
+
+==== New configuration ====
+* $wgThumbnailNamespaces - This setting lets you define the namespaces for which
+  image thumbnails (or a placeholder in the absence of a thumbnail) will be
+  displayed on Special:Search.
+* $wgResourceLoaderClientPreferences – This experimental flag lets you enable
+  client-side preferences for logged-out users.
+* $wgExternalLinksSchemaMigrationStage – This temporary flag lets you control
+  the migration stage for the new schema for the external links database table.
+  Ignore it unless you have a large wiki farm with complex migration needs.
+* $wgCommentTempTableSchemaMigrationStage – This temporary flag lets you control
+  the migration stage for the temporary comment database table, from revision.
+  Ignore it unless you have a large wiki farm with complex migration needs.
+* $wgSpecialContributeSkinsEnabled – This setting lets you list skins on which
+  Special:Contribute is available, for where others don't work for the feature.
+* $wgPrivilegedGroups – Users belonging in some of the listed groups will be
+  audited more aggressively.
+
+==== Changed configuration ====
+* $wgPasswordPolicies – This setting, which controls what makes for a valid
+  password for wiki accounts, has been adjusted to raise the minimal password
+  length from 1 to 8 characters. The initial limit of 1 has been in place since
+  MediaWiki 1.26. If you wish to allow shorter passwords, you can over-ride it
+  in your LocalSettings following the guidance on MediaWiki.org.
+* (T254045) New accounts can no longer use an equals sign (=) in their
+  usernames because of issues it causes in wikitext syntax. This can be
+  adjusted by changing the value of $wgInvalidUsernameCharacters.
+* (T314318) $wgParserEnableLegacyMediaDOM – This setting has been changed, so
+  the alternative modern HTML structure for media is now the default. You can
+  disable it for now by over-riding this back to `true` in LocalSettings, but
+  this configuration will be removed in future versions of MediaWiki. For more
+  details, see the documentation at:
+  https://www.mediawiki.org/wiki/Parsoid/Parser_Unification/Media_structure/FAQ
+* $wgWatchlistExpiryMaxDuration – This setting, which controls the maximum
+  allowed duration for users to set their temporary watchlist entries for expiry
+  if that feature is enabled, has been increased from 6 months to 1 year.
+
+==== Removed configuration ====
+* $wgShellboxUrl – This setting, deprecated in 1.37, has now been removed; use
+  $wgShellboxUrls instead.
+* $wgMainWANCache and $wgWANObjectCaches – These never-used settings have been
+  removed. To inject WANObjectCache parameters, use $wgWANObjectCache instead.
+  These variables were introduced for multi-DC wiki farms to add a separate
+  memcached proxy for cross-DC relaying of purges but never used because
+  WANObjectCache works based on route prefixes, which can be transparently
+  handled by the main memcached proxy.
+* $wgParserTestFiles – This setting, deprecated in 1.30, has now been removed;
+  extensions can place their parser test files in `tests/parser` instead.
+* (T231412) $wgAutoloadAttemptLowercase – This setting, deprecated in 1.35, no
+  longer has any effect. If you run into difficulties, fix the names of miscased
+  local files.
+* (T309787) $wgVerifyMimeTypeIE – This setting, to provide extra security checks
+  for very old versions of Internet Explorer clients, was removed. These user
+  agents aren't used in practice, and haven't been served JavaScript content for
+  years.
+
+=== New user-facing features in 1.40 ===
+* Special:Search can now show thumbnails for results for titles outside NS_FILE.
+  This is controlled via the new onSearchResultProvideThumbnail hook.
+* A new preference ('search-thumbnail-extra-namespaces') to allow users to
+  control whether to show more thumbnails (per $wgThumbnailNamespaces)
+* (T324910) On pages using multi-content revisions, the raw content of a
+  specific slot can be retrieved using the action=raw&slot=<role-name> query
+  parameters.
+* (T313804) The preferences page now provides a search bar to find preferences,
+  regardless of the tab on which they appear.
+
+=== New developer features in 1.40 ===
+* The MediaWiki-Docker development environment is now configured to
+  run on PHP 8.1 by default, up from PHP 7.4 now that that's EOL.
+* Vue development mode is enabled by default in DevelopmentSettings.php
+* (T277618) The @noVarDump annotation from the DebugInfoTrait tool can now be
+  added to references to stop them from being expanded when their object is
+  passed to var_dump(), to make its use for debugging more feasible.
+* The ApiSandbox will now by default request responses in the latest API format,
+  rather than the original format. Users can set `formatversion` to a different
+  value if needed.
+* A new hook, GetBlockErrorMessageKeyHook, allows extensions' block error
+  messages to be received and displayed by BlockErrorFormatter.
+* A new hook, SpecialCreateAccountBenefits, lets extensions and local code set
+  custom content on the signup page about the benefits of using an account.
+* (T321412) A new 'PageUndeleteComplete' hook has been added for more thorough
+  information about a page post restoration than the 'PageUndelete' hook passes.
+  This provides similar functionality to the 'PageDeleteComplete' hook.
+* The Linker::specialLink() method can now link to a Special page's with a sub-
+  page or action parameter set, e.g. [[Special:Contributions/JohnDoe]].
+* The PHPUnit entrypoints (tests/phpunit/phpunit.php and vendor/bin/phpunit)
+  now check if composer dependencies are up-to-date, like update.php, using
+  CheckComposerLockUpToDate. To disable this check, use
+  MW_SKIP_EXTERNAL_DEPENDENCIES=1 environment flag when running PHPUnit.
+* ManualLogEntry::setForceBotFlag() has been added to allow the forcing of the
+  bot flag for log entries which are inserted to the recent changes.
+
+=== External library changes in 1.40 ===
+
+==== New external libraries ====
+* Added codex-design-tokens at v0.6.2.
+* Added symfony/polyfill-php81 at v1.27.0.
+* Added wikimedia/bcp-47-code at v1.0.0.
+
+===== New development-only external libraries =====
+* Added wikimedia/langconv at v0.4.2.
+
+==== Changed external libraries ====
+* Updated OOUI from v0.44.3 to v0.46.3.
+* Updated codex, codex-search, and codex-icons from v0.2.2 to v0.6.2.
+* Updated cssjanus/cssjanus from 2.1.0 to 2.1.1.
+* Updated guzzlehttp/guzzle 7.4.5 to 7.5.0.
+* Updated justinrainbow/json-schema from 5.2.11 to 5.2.12.
+* Updated pear/mail from 1.4.1 to 1.5.1.
+* Updated pear/net_smtp from 0.10.0 to 0.10.1.
+* Updated psr/container from 1.1.1 to 1.1.2.
+* Updated symfony/polyfill-php80 from 1.26.0 to 1.27.0.
+* Updated symfony/yaml from 5.4.10 to 5.4.17.
+* Updated wikimedia/html-formatter from 3.0.1 to 4.0.3.
+* Updated wikimedia/less.php from 3.1.0 to 4.0.0.
+* Updated wikimedia/object-factory from 4.0.0 to 5.0.1.
+* Updated wikimedia/parsoid from 0.16.0 to 0.17.0.
+* Updated wikimedia/remex-html from 3.0.2 to 3.0.3.
+* Updated wikimedia/shellbox from 3.0.0 to 4.0.0.
+* Updated wikimedia/timestamp from 4.0.0 to 4.1.0.
+* Updated wikimedia/xmp-reader from 0.8.4 to 0.9.1.
+
+===== Changed development-only external libraries =====
+* Updated QUnit from 2.18.2 to 2.19.4.
+* Updated api-testing from 1.5.0 to 1.5.1.
+* Updated composer/spdx-licenses from 1.5.6 to 1.5.7.
+* Updated eslint-config-wikimedia from 0.22.1 to 0.24.0.
+* Updated giorgiosironi/eris from ^0.10.0 to ^0.13.0.
+* Updated grunt from 1.5.2 to 1.6.1.
+* Updated grunt-banana-checker from 0.9.0 to 0.10.0.
+* Updated grunt-eslint from 24.0.0 to 24.0.1.
+* Updated karma from 6.3.15 to 6.4.1.
+* Updated mediawiki/mediawiki-codesniffer from 38.0.0 to 41.0.0.
+* Updated mediawiki/mediawiki-phan-config from 0.11.1 to 0.12.1.
+* Updated php-parallel-lint/php-console-highlighter from 0.5 to 1.0.0.
+* Updated php-parallel-lint/php-parallel-lint from 1.3.1 to 1.3.2.
+* Updated phpunit/phpunit from 8.5.28 to 9.5.28.
+* Updated stylelint-config-wikimedia from 0.13.0 to 0.13.1.
+* Updated wikimedia/alea from 0.9.3 to 1.0.0.
+
+==== Removed external libraries ====
+* jquery.throttle-debounce, deprecated since MediaWiki 1.33.
+* WVUI, deprecated since MediaWiki 1.39.
+
+=== Action API changes in 1.40 ===
+* New `cancreateaccount` parameter on action=query&meta=userinfo that allows
+  you to check if the user can create an account. Some of the errors that have
+  previously been returned by action=query&list=users&usprop=cancreate are now
+  returned here.
+
+=== Languages updated in 1.40 ===
+MediaWiki supports over 400 languages. Many localisations are updated regularly.
+Below only new and removed languages are listed, as well as changes to languages
+because of Phabricator reports.
+
+* (T300378) Added language support for Toki Pona (tok).
+* (T320465) Added language support for Magahi (mag).
+* (T320912) Added language support for Arakanese (rki).
+* (T323971) Added language support for Khakas (kjh).
+* (T326526) Added language support for Igala (igl).
+* (T329476) Added language support for Kusaal (kus).
+* (T330266) Added language support for Southern Dagaare (dga).
+* (T331596) Added language support for Obolo (ann).
+* (T331597) Added language support for Nogai (nog).
+* (T331599) Added language support for Wolaytta (wal).
+* (T295637) Add no to fallback chain of nb and nn.
+
+=== Breaking changes in 1.40 ===
+* OutputPage::enableClientCache no longer accepts a parameter, nor does it
+  return the current value. It simply sets the OutputPage::mEnableClientCache
+  to true. Use OutputPage::disableClientCache to disable client side caching
+  instead.
+* ResourceLoader::makeMessageSetScript, unused since 1.26, has been removed
+  without deprecation.
+* Changes to skins:
+  - The internal protected method Skin::getFooterLinks() was removed.
+    It had no known usages. Different from SkinTemplate::getFooterLinks.
+  - The internal public method Skin::getSiteFooterLinks() was removed.
+    It had no known usages.
+* The 'oojs-router' module has been removed without deprecation in favour
+  of the 'mediawiki.router' wrapper module.
+* BagOStuff::makeKeyInternal(), deprecated for public use in 1.36, is now a
+  protected method of MediumSpecificBagOStuff.
+* WANObjectCache::reap() and WANObjectCache::reapCheckKey(), deprecated since
+  1.39, have been removed.
+* The EnqueueJob class, unused since 1.31, has been removed without
+  deprecation.
+* JobQueueGroup::singleton() and ::destroySingletons(), deprecated since 1.37,
+  have been removed.
+* JobRunner no longer supports manually calling the constructor,
+  use MediaWikiServices::getInstance()->getJobRunner() instead.
+* JobRunner::setLogger, deprecated since 1.35, has been removed.
+* ContextSource::getStats, deprecated since 1.27, has been removed.
+* The following public properties of Parser, deprecated in 1.35,
+  have been made private: Parser::$mLinkId, Parser::$mIncludeSizes,
+  Parser::$mDoubleUnderscore, Parser::$mShowToc, Parser::$mRevisionId,
+  Parser::$mRevisionTimestamp, Parser::$mRevisionUser, Parser::$mRevisionSize,
+  Parser::$mInputSize, Parser::$mInParse, Parser::$mFirstCall,
+  Parser::$mGeneratedPPNodeCount
+* The MWGrants class, deprecated since 1.38, has been removed.
+* PageProps::getInstance(), deprecated since 1.38, has been removed.
+* Global functions wfReadOnly and wfReadOnlyReason, deprecated since 1.38, have
+  been removed.
+* Global function wfQueriesMustScale, deprecated since 1.39, has been removed.
+* Global function wfLogProfilingData, deprecated since 1.38, has been removed.
+* The HTMLCacheUpdate class, deprecated since 1.34, has been removed.
+* Linker::normaliseSpecialPage(), deprecated since 1.35, has been removed.
+* MWTimestamp::getHumanTimestamp(), deprecated since 1.26, has been removed.
+* Collation::singleton() and ::factory(), deprecated since 1.37, have been
+  removed.
+* SpecialVersion::listToText() and SpecialVersion::arrayToString()
+  have become private or internal without deprecation.
+* The 'ParserTestFiles' key in the schema for extension.json has been removed.
+  This was deprecated in 1.30 and the corresponding $wgParserTestFiles
+  configuration variable has also been removed in this release.  Extensions
+  can put parser test files in their `tests/parser` directory to have them
+  automatically run.
+* DBLockManager, MySqlLockManager, and PostgreSqlLockManager have been
+  removed without deprecation.
+* MediaWikiTestCaseTrait::checkPHPExtension() has been removed without
+  deprecation. Use PHPUnit @requires annotations instead.
+* EditPage::getCopywarn(), deprecated since 1.38, has been removed.
+* EditPage::getCopyrightWarning() now requires a MessageLocalizer parameter.
+  Use of other parameter types or omitting it was deprecated since 1.38.
+* Action constructor now requires Article and IContextSource parameters.
+  Use of other parameter types or omitting them was deprecated since 1.35.
+* Article::viewRedirect(), deprecated since 1.30, has been removed.
+* Title::getNotificationTimestamp(), deprecated since 1.35, has been removed.
+* WikiRevision::$fileIsTemp property, deprecated since 1.29, has been removed.
+* Use of CommentStore::insertWithTempTable() with 'img_description' is no
+  longer supported, it was deprecated since 1.32. Use CommentStore::insert()
+  instead.
+* Return values in the parameter $pageLang of the PageContentLanguage hook with
+  other types than a Language object, deprecated since 1.33 & emitting warnings
+  since 1.38, now throws an exception.
+* FormatMetadata::flattenArrayContentLang(), deprecated since 1.36, has been
+  removed.
+* WikiRevision::downloadSource() and ::importUpload(), deprecated since 1.31,
+  have been removed.
+* DataUpdate::runUpdates(), deprecated since 1.28, has been removed.
+* CdnCacheUpdate::newFromTitles(), deprecated since 1.35, has been removed.
+* HtmlFileCacheUpdate::newFromTitles(), deprecated since 1.37, has been
+  removed.
+* BaseTemplate::renderAfterPortlet() and ::getAfterPortlet(), has been removed.
+  Use the corresponding methods in Skin class.
+* DifferenceEngine::textDiff(), deprecated since 1.32, has been removed.
+* Skin::getSearchPageTitle() and Skin::setSearchPageTitle(), deprecated since
+  1.38, have been removed.
+* DifferenceEngine::getDiffBodyCacheKey(), deprecated since 1.31, has been
+  removed.
+* ForeignDBViaLBRepo::getMasterDB(), LocalRepo::getMasterDB(), and
+  JobQueueDB::getMasterDB(), deprecated since 1.37, have been removed.
+* Clarified that the InitializeArticleMaybeRedirect hook should not change
+  its $article parameter; the behavior when doing so was previously
+  undocumented.
+* IDatabase::ping()'s $rtt parameter was removed without deprecation.
+* IDatabase::setBigSelects(), unused, was removed without deprecation.
+* IDatabase::attributesFromType(), unused, was removed without deprecation.
+* IMaintainableDatabase::deadlockLoop() was removed without deprecation.
+* DatabasePostgres::remappedTableName(), deprecated since 1.37, has been
+  removed.
+* ILBFactory::getChronologyProtectorClientId and ::commitAll, unused, were
+   removed without deprecation.
+* LoadBalancer::haveIndex() and ::isNonZeroLoad(), deprecated in 1.34,
+  have been removed.
+* LoadBalancer::getLazyConnectionRef(), deprecated in 1.38, has been removed.
+* ILBFactory::forEachLB(), deprecated in 1.39, has been removed.
+* LoadBalancer::getTransactionRoundStage and ::commitAll, unused, were
+  removed without deprecation.
+* ILoadBalancer::getLaggedReplicaMode, unused, was removed  without
+  deprecation. Use ILBFactory::laggedReplicaUsed() instead.
+* Optional parameters of ILoadBalancer::waitForPrimaryPos(), $pos and $timeout
+  have been removed without deprecation as they are unused.
+* LoadMonitorMysql was removed without deprecation. Use LoadMonitor instead.
+* IDatabase::selectDB(), deprecated since 1.32, has been removed.
+  Use IDatabase::selectDomain() instead.
+* The following deprecated hooks have been removed:
+  - BaseTemplateAfterPortlet, deprecated in 1.35
+  - BeforeParserFetchTemplateAndtitle, deprecated in 1.36
+  - BeforeParserrenderImageGallery, deprecated in 1.35
+  - InternalParseBeforeSanitize, deprecated in 1.35
+  - LinksUpdateConstructed, deprecated in 1.38
+  - LinksUpdateAfterInsert, deprecated in 1.38
+  - ParserSectionCreate, deprecated in 1.35
+  - ResourceLoaderTestModules, deprecated in 1.33
+  - SpecialMuteSubmit, deprecated in 1.35
+  - UserLoadFromDatabase, deprecated in 1.37
+  - UserSetCookies, deprecated in 1.27
+* RemexDriver::__construct() now only accepts a ServiceOptions instance as
+  the only argument. Passing an array was deprecated since 1.36.
+* TidyDriverBase::supportsValidate(), deprecated since 1.36, has been removed.
+* RevDelList::reloadFromMaster(), deprecated since 1.37, has been removed.
+* ExternalStoreDB::getMaster(), deprecated since 1.37, has been removed.
+* DeletePage::deletionWasScheduled(), deprecated since 1.38, has been removed.
+* The SearchResultProvideThumbnailHook (which was unstable) and now no longer
+  used, has been removed. Use SearchResultProvideThumbnailHook in the search
+  namespace: MediaWiki\Search\Hook\SearchResultProvideThumbnailHook.
+* Command::cgroup(), deprecated since 1.36, has been removed.
+* When running tests, the serialize_precision INI setting is now set to -1
+  (current PHP default) instead of 17. Extension tests may need to be adjusted
+  accordingly; string representations of floating-point numbers in serialized
+  or JSON-encoded data may change.
+* WikiRevision::$sha1base36 is now private.
+* IcuCollation::getUnicodeVersionForICU() was removed without deprecation.
+* LinkFilter::supportsIDN() was removed without deprecation.
+* The ability to pass null for the errorData parameter of HttpException and
+  LocalizedHttpException was removed without deprecation.
+* ApiQueryExtLinksUsage::getProtocolPrefix() and ::prepareProtocols() have
+  been moved to LinkFilter with the same name.
+* .box-sizing() Less mixin, deprecated since 1.37, has been removed.
+  Use CSS box-sizing now.
+* MimeAnalyzer::getIEMimeTypes() and IEContentAnalyzer were removed.
+* Language::commafy and mw.language.commafy, deprecated since 1.36, has been
+  removed.
+* BagOStuff::decr(), deprecated since 1.28, has been removed.
+* BagOStuff::incr(), deprecated since 1.28, has been removed.
+
+=== Deprecations in 1.40 ===
+* Changes to skins:
+  - The public Skin::footerLink is deprecated.
+    Use SkinComponentMenuLink::getTemplateData instead.
+    It now emits deprecation warnings.
+  - The protected Skin::lastModified is deprecated, and marked for @internal use
+    and now emits deprecation warnings.
+* Manipulating $wgHooks after initialization is deprecated.
+  HookContainer::register() or HookContainer::scopedRegister() should be
+  used instead. During initialization, SettingsBuilder::registerHookHandlers
+  can be used. For backwards compatibility, $wgHooks is replaced by a fake
+  array that calls methods on HookContainer. $wgHooks can still be used as a
+  configuration variable, only dynamic manipulation is deprecated.
+* ParserOptions::{get,set}ExternalLinkTarget() and
+  ParserOptions::{get,set}MaxTemplateDepth() have been deprecated and marked
+  for @internal use only.
+* ParserOutput::getCategories() has been deprecated; use ::getCategoryNames()
+  and ::getCategorySortKey() instead.
+* ParserOutput::{get,set}TOCHTML() has been deprecated; use
+  ::{get,set}TOCData() instead.
+* TransactionProfiler::setSilenced() is deprecated.
+  Use TransactionProfiler::silenceForScope() instead.
+* The following methods in the Title class, deprecated since 1.37, emits
+  deprecations warnings:
+  - ::areCascadeProtectionSourcesLoaded()
+  - ::areRestrictionsCascading()
+  - ::areRestrictionsLoaded()
+  - ::getAllRestrictions()
+  - ::getCascadeProtectionSources()
+  - ::getFilteredRestrictionTypes()
+  - ::getRestrictionExpiry()
+  - ::getRestrictionTypes()
+  - ::getRestrictions()
+  - ::isCascadeProtected()
+  - ::isProtected()
+  - ::isSemiProtected()
+  - ::loadRestrictionsFromRows()
+* The class Pbkdf2Password was renamed to Pbkdf2PasswordUsingHashExtension,
+  and the old name is now deprecated.
+* WikiPage::factory(), ::newFromID() and ::newFromRow, deprecated in 1.36, now
+  emit deprecation warnings.
+* Manually constructing a LinkBatch object, deprecated in 1.35, now emits
+  deprecation warnings. Use LinkBatchFactory instead.
+* Calling MediaWikiSite::getFileUrl() without a $path argument is deprecated.
+  If you need the "generic" full file path, with $1 not replaced by anything,
+  call $site->getPath( MediaWikiSite::PATH_FILE ) directly.
+* In SessionConsistentConnectionManager, the methods
+  getReadConnectionRef() and getWriteConnectionRef() are deprecated;
+  the ConnectionManager methods they override had been deprecated already.
+* Database::wasErrorReissuable() is deprecated.
+* MimeAnalyzer::isPHPImageType was not used and will now emit deprecation
+  warnings.
+* GenericArrayObject, originally developed for Wikibase and SiteList, has been
+  deprecated. Use built-in ArrayObject directly instead.
+* Parser::getFunctionLang() has been deprecated; use
+  Parser::getTargetLanguage() instead.
+* MagicWordArray::getVariableRegex(), deprecated in 1.36, now emits deprecation
+  warnings.
+* AbstractBlock::getId() now emits deprecation warnings in case of cross-wiki
+  access. This use was deprecated in 1.38.
+* CommentStore::getStore, deprecated in 1.31, now emits deprecation warnings.
+* BacklinkCache::get(), ::getLinks() and ::getCascadeProtectedLinks(),
+  deprecated in 1.37, now emit deprecation warnings.
+* LanguageConverterFactory::isTitleConversionDisabled(), deprecated in 1.36,
+  now emits deprecation warnings.
+* Language::getFileName(), ::getMessagesFileName() and
+  ::getJsonMessagesFileName(), deprecated in 1.34,
+  now emit deprecation warnings.
+* Language::getLocalisationCache(), deprecated in 1.34, also
+  Language::getMessagesFor(), ::getMessageFor() and ::getMessageKeysFor(),
+  deprecated in 1.35, now emit deprecation warnings.
+* User::incEditCount(), deprecated in 1.37, now emits deprecation warnings.
+* User::idFromName(), deprecated in 1.37, now emits deprecation warnings.
+* The ability to override and use User::$mRights, deprecated in 1.34, now emits
+  deprecation warnings.
+* IndexPager::getHookContainer is deprecated and emits deprecation warnings.
+  Inject a HookContainer instead.
+* User::getGroupPermissions(), ::getGroupsWithPermission() and
+  ::groupHasPermission(), deprecated in 1.34, now emit deprecation warnings.
+* PermissionManager::getGroupPermissions(), ::getGroupsWithPermission() and
+  ::groupHasPermission(), deprecated in 1.36, now emit deprecation warnings.
+* Global function wfShowingResults is deprecated and emits deprecation warnings.
+* UserGroupMembership::getGroupMemberName is deprecated, the deprecation of
+  UserGroupMembership::getGroupName in 1.38 missed a release note.
+  Use Language::getGroupMemberName or ::getGroupName instead.
+* AbstractBlock::getPermissionsError(), deprecated in 1.35, now emits
+  deprecation warnings.
+* SearchEngine::getNearMatcher() and ::getDefaultMatcher() have been deprecated
+  in favor of MediaWikiServices::getInstance()->getTitleMatcher().
+* SearchNearMatcher class has been deprecated in 1.40 in favor of TitleMatcher.
+* The following functions are deprecated: User::isBlockedGlobally and
+  User::getGlobalBlock. Use User::getBlock instead.
+* The UserIsBlockedGlobally hook is deprecated.
+  Use GetUserBlock hook instead.
+* The SystemBlock type global-block is deprecated.
+  GlobalBlocks are now added into CompositeBlocks via the GetUserBlock hook.
+* Language::isWellFormedLanguageTag(), deprecated in 1.39, now emits deprecation
+  notices. Please use LanguageCode::isWellFormedLanguageTag() instead.
+* Language::fetchLanguageNames() and ::fetchLanguageName(), deprecated in 1.34,
+  now emit deprecation warnings.
+* Language::getFallbackFor(), ::getFallbacksIncludingSiteLanguage() and
+  ::getFallbacksFor(), deprecated in 1.35, now emit deprecation warnings.
+* Language::isSupportedLanguage(), ::isValidCode(), ::isValidBuiltInCode() and
+  ::isKnownLanguageTag(), deprecated in 1.34, now emit deprecation warnings.
+* Language::getConverter(), ::autoConvert(), ::autoConvertToAllVariants(),
+  ::convert(), ::convertNamespace(), ::convertHtml(), ::convertCategoryKey(),
+  ::getVariants(), ::hasVariants(), ::hasVariant(), ::getDefaultVariant(),
+  ::getURLVariant(), ::getExtraHashOptions(), ::getConvRuleTitle(),
+  deprecated in 1.35, now emit deprecation warnings.
+* Language::factory() and ::getParentLanguage(), deprecated in 1.35, now emit
+  deprecation warnings.
+* Executing maintenance scripts directly is deprecated. The maintenance/run.php
+  entry point should be used instead.
+* MWHttpRequest::factory, deprecated in 1.34, now emits deprecation warnings.
+* Job::factory is deprecated, use JobFactory::newJob instead.
+* Http::request(), ::get(), ::post(), ::userAgent() and ::isValidURI(),
+  deprecated in 1.34, now emit deprecation warnings.
+* Title.js's confusingly-named getName() and getNameText() methods, for using
+  media files' pages, have been renamed to getFileNameWithoutExtension() and
+  getFileNameTextWithoutExtension() respectively. The old names are deprecated.
+* Command::whitelistPaths() should now emit deprecation warnings. Make use of
+  Command::allowPaths/disallowPaths() instead.
+* When manually creating an HTMLFormField (i.e. not via HTMLForm::factory),
+  it is deprecated to not include the "parent" field as one of the parameters.
+* The MWException class is deprecated. Use native exceptions, either directly
+  or as base classes.
+* SelectQueryBuilder::lockForUpdate() is deprecated. Use ::forUpdate() with
+  ::fetchRowCount() or ::acquireRowLocks() instead.
+* ArticleUndelete hook is deprecated. Use PageUndeleteComplete hook instead.
+* The global function wfReportTime() is now deprecated.
+* PrevNextNavigationRenderer, deprecated in 1.39, now emits deprecation
+  warnings.
+* PagerNavigationBuilder::setMakeLinkCallback(), deprecated in 1.39, now emits
+  deprecation warnings.
+* IndexPager::getPagingLinks(), IndexPager::getLimitLinks() and
+  IndexPager::buildPrevNextNavigation(), deprecated in 1.39, now emit
+  deprecation warnings.
+* Overriding the method IndexPager::makeLink(), deprecated in 1.39, now emits
+  deprecation warnings.
+* The following class names were namespaced (and, for the special pages,
+  also renamed), and the old class names are now deprecated:
+  - MostimagesPage -> MediaWiki\Specials\SpecialMostImages
+  - MovePageForm -> MediaWiki\Specials\SpecialMovePage
+  - UserrightsPage -> MediaWiki\Specials\SpecialUserRights
+  - WantedFilesPage -> MediaWiki\Specials\SpecialWantedFiles
+  - WantedPagesPage -> MediaWiki\Specials\SpecialWantedPages
+  - DerivativeRequest -> MediaWiki\Request\DerivativeRequest
+  - FauxRequest -> MediaWiki\Request\FauxRequest
+  - FauxRequestUpload -> MediaWiki\Request\FauxRequestUpload
+  - PathRouter -> MediaWiki\Request\PathRouter
+  - WebRequestUpload -> MediaWiki\Request\WebRequestUpload
+  - HeaderCallback -> MediaWiki\Request\HeaderCallback
+  - FauxResponse -> MediaWiki\Request\FauxResponse
+  - WebResponse -> MediaWiki\Request\WebResponse
+  - ForeignResourceManager ->
+    MediaWiki\ResourceLoader\ForeignResourceManager
+  - DummyLinker -> MediaWiki\Linker\DummyLinker
+  - Linker -> MediaWiki\Linker\Linker
+  - PageProps -> MediaWiki\Page\PageProps
+  - MagicWord -> MediaWiki\Parser\MagicWord
+  - MagicWordArray -> MediaWiki\Parser\MagicWordArray
+  - MagicWordFactory -> MediaWiki\Parser\MagicWordFactory
+  - RawMessage -> MediaWiki\Language\RawMessage
+  - ActorMigration -> MediaWiki\User\ActorMigration
+  - ActorMigrationBase -> MediaWiki\User\ActorMigrationBase
+  - CategoriesRdf -> MediaWiki\Category\CategoriesRdf
+  - Category -> MediaWiki\Category\Category
+  - CategoryViewer -> MediaWiki\Category\CategoryViewer
+  - TrackingCategories -> MediaWiki\Category\TrackingCategories
+  - EditPage -> MediaWiki\EditPage\EditPage
+  - TemplatesOnThisPageFormatter ->
+    MediaWiki\EditPage\TemplatesOnThisPageFormatter
+  - ContentSecurityPolicy -> MediaWiki\Request\ContentSecurityPolicy
+  - FormOptions -> MediaWiki\Html\FormOptions
+  - Html -> MediaWiki\Html\Html
+  - HtmlHelper -> MediaWiki\Html\HtmlHelper
+  - TemplateParser -> MediaWiki\Html\TemplateParser
+  - FormOptions -> MediaWiki\Html\FormOptions
+  - WikiMap -> MediaWiki\WikiMap\WikiMap
+  - WikiReference -> MediaWiki\WikiMap\WikiReference
+  - MediaWiki\BadFileLookup -> MediaWiki\Page\File\BadFileLookup
+  - FileDeleteForm -> MediaWiki\Page\File\FileDeleteForm
+  - MergeHistory -> MediaWiki\Page\MergeHistory
+  - MovePage -> MediaWiki\Page\MovePage
+  - ProtectionForm -> MediaWiki\Page\ProtectionForm
+  - LinkFilter -> MediaWiki\ExternalLinks\LinkFilter
+  - TitleArray -> MediaWiki\Title\TitleArray
+  - TitleArrayFromResult -> MediaWiki\Title\TitleArrayFromResult
+  - TitleFactory -> MediaWiki\Title\TitleFactory
+  - Title -> MediaWiki\Title\Title
+  - ForkController -> MediaWiki\Maintenance\ForkController
+  - OrderedStreamingForkController ->
+    MediaWiki\Maintenance\OrderedStreamingForkController
+  - AtomFeed -> MediaWiki\Feed\AtomFeed
+  - ChannelFeed -> MediaWiki\Feed\ChannelFeed
+  - FeedItem -> MediaWiki\Feed\FeedItem
+  - FeedUtils -> MediaWiki\Feed\FeedUtils
+  - RSSFeed -> MediaWiki\Feed\RSSFeed
+  - DeprecatedGlobal -> MediaWiki\StubObject\DeprecatedGlobal
+  - StubGlobalUser -> MediaWiki\StubObject\StubGlobalUser
+  - StubObject -> MediaWiki\StubObject\StubObject
+  - StubUserLang -> MediaWiki\StubObject\StubUserLang
+* ContentHandler::getParserOutputForIndexing() and ::getDataForSearchIndex()
+  now take an optional RevisionRecord parameter.
+* The SearchDataForIndex hook is deprecated in favor of SearchDataForIndex2
+* IDatabase::lastQuery and IReadableDatabase::lastQuery are deprecated without
+  without replacement.
+
+=== Other changes in 1.40 ===
+* Calling RecentChange::doMarkPatrolled() with $auto = true has no effect and
+  logs a warning. Since 1.31, it would mark the change as manually patrolled,
+  but would not log it as such in patrol log and would still require
+  'autopatrol' right (not 'patrol'). Generally, whether a change should become
+  autopatrolled, is usually determined before it's inserted in the database.
+* In versions of MediaWiki before 1.39, the table of contents location
+  was marked internally with <mw:toc>...</mw:toc>; in version 1.39
+  this was changed to an empty tag <mw:tocplace />.  In 1.40 this has
+  been changed a final time to use an empty <meta> tag for future
+  Parsoid compatibility (see Parser::TOC_PLACEHOLDER).  This may
+  affect you if stale content is left in the ParserCache or if your
+  skin did manual ToC replacement without using the recommended
+  Parser::replaceTableOfContentsMarker() function.
+* Skins can now choose which Codex theme should be loaded by setting the
+  SkinCodexThemes attribute in their skin.json file.
+* The parser test framework has been updated, and the 'pst', 'ill', 'cat'
+  and 'showflags' options have slight differences in their output.  These
+  options are not much used outside core, but third parties may need to
+  update parser tests.
+* (T332889, CVE-2023-36675) SECURITY: Fix escaping in BlockLogFormatter.
+
+== Compatibility ==
+
+MediaWiki 1.40 requires PHP 7.4.3 or later and the following PHP extensions:
+
+* ctype
+* dom
+* fileinfo
+* iconv
+* intl
+* json
+* mbstring
+* xml
+
+MariaDB is the recommended database software. MySQL, PostgreSQL, or SQLite can
+be used instead, but support for them is somewhat less mature.
+
+The supported versions are:
+
+* MariaDB 10.3 or higher
+* MySQL 5.7.0 or higher
+* PostgreSQL 10 or later
+* SQLite 3.8.0 or later
+
+== Online documentation ==
+Documentation for both end-users and site administrators is available on
+MediaWiki.org, and is covered under the GNU Free Documentation License (except
+for pages that explicitly state that their contents are in the public domain):
+
+       https://www.mediawiki.org/wiki/Special:MyLanguage/Documentation
+
+== Mailing list ==
+A mailing list is available for MediaWiki user support and discussion:
+
+       https://lists.wikimedia.org/mailman/listinfo/mediawiki-l
+
+A low-traffic announcements-only list is also available:
+
+       https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce
+
+It's highly recommended that you sign up for one of these lists if you're
+going to run a public MediaWiki, so you can be notified of security fixes.
+
+== IRC help ==
+There's usually someone online in #mediawiki on irc.libera.chat.
 
 = MediaWiki 1.39 =
+
+PHP 8.0 workboard: https://phabricator.wikimedia.org/tag/php_8.0_support/
+PHP 8.1 workboard: https://phabricator.wikimedia.org/tag/php_8.1_support/
+PHP 8.2 workboard: https://phabricator.wikimedia.org/tag/php_8.2_support/
+PHP 8.3 workboard: https://phabricator.wikimedia.org/tag/php_8.3_support/
+
+== MediaWiki 1.39.5 ==
+
+This is a security and maintenance release of the MediaWiki 1.39 branch.
+
+=== Changes since MediaWiki 1.39.4 ===
+* Localisation updates.
+* (T333050, CVE-2023-45363) SECURITY: Fix infinite loop for self-redirects
+  with variants conversion.
+* docs: Fix a few typos in MainConfigSchema.
+* (T309714) mime: Add support for 'font/sfnt' mime type.
+* (T341434) WikiImporter: Improve error message output.
+* (T317255) VueComponentParser: Use Zest's getElementsByTagName() rather than
+  PHP's.
+* (T341737) ApiBase: Cast $id to string in filterIDs.
+* (T286291, T296188) Merge zh and zh-tw namespace translations back to zh-hans,
+  zh-hant, zh-hk respectively.
+* (T337875) WRStats: Round up SequenceSpec::hardExpiry to the nearest integer.
+* (T237898) installer: Check MariaDB version in updater/installer.
+* (T342632) ApiComparePages: Add help url.
+* (T326182, T324903) EditPage: Add #[AllowDynamicProperties].
+* (T342351) rdbms: Fix postgres db function call.
+* (T343675) user: Use {@} to escape annotation when writting about annotation.
+* (T343797) LanguageWa: Fix double timezone adjustment.
+* (T326454) Update pear/mail to 1.5.1.
+* (T343622) docs: Set the <comment> tag back to optional.
+* (T330528) Upgrade wikimedia/html-formatter from 3.0.1 to 4.0.3.
+* (T337463) wdio-mediawiki: await saveScreenshot.
+* (T274041) Include core PSR-4 classes in the generated classmap.
+* (T208477) $wgPrivilegedGroups – Users belonging in some of the listed groups
+  will be audited more aggressively.
+* doc: Improve description of "type" in extension.schema.v2.json.
+* Added PrivilegedGroups attribute for extension.json / skin.json, which lets
+  you add any new user groups you define to wgPrivilegedGroups (see above).
+* HTMLForm: Fix E_NOTICE when hide-if is used with setFormIdentifier.
+* (T288624) MultiHttpClient: Unset $this->cmh after closing it.
+* (T345039) Do not run SkinAfterBottomScripts hook twice unconditionally.
+* (T265734) API Help: Note that parameters may be inherited from other context.
+* API: Make continue parameter help description more specific.
+* (T285545) i18n: Split apihelp for standard dir parameter.
+* (T285545) i18n: Split apihelp for redirects/linkshere/transcludedin/fileusage
+  show.
+* (T285545) i18n: Split apihelp for parameter list=deletedrevs&drprop=.
+* (T285545) i18n: Split apihelp for parameter list=allpages&apprexpiry=.
+* (T285545) i18n: Split apihelp for parameter action=opensearch&redirects=.
+* (T285545) i18n: Split apihelp for parameter action=managetags&operation=.
+* (T285545) api: Add message for list=watchlist&wlprop=expiry.
+* (T334011) ApiComparePages: expose 'difftype' param if wikidiff2 is installed.
+* (T342633) api: Add message for action=compare&prop=timestamp.
+* API: revids=… does not necessarily return the queried revisions.
+* (T326696) user: Truncate option value in UserOptionsManager.
+* (T326696) ApiOptions: Give warning if the value is too long.
+* API i18n: Add {{PLURAL:}} for byte count messages.
+* (T235207) Get correct main page in API call examples.
+* doc: Make extension.schema.v2.json a valid JSON schema.
+* updateSpecialPages.php: Avoid implicit float conversion on modulo.
+* (T347227) ImportReporter: Make callback functions public.
+* (T346898) importDump: Unconditionally call $importer->setUsernamePrefix().
+* doc: Improve description of type in extension.schema.v1.json.
+* (T340217, CVE-2023-45359) SECURITY: Vector 2022: Numerous unescaped
+  messages leading to potential XSS.
+* (T340220, CVE-2023-45361) SECURITY: Vector 2022: vector-intro-page
+  message is assumed to yield a valid title.
+* (T340221, CVE-2023-45360) SECURITY: XSS via
+  'youhavenewmessagesmanyusers' and 'youhavenewmessages' messages.
+* (T341529, CVE-2023-45362) SECURITY: diff-multi-sameuser
+  ("X intermediate revisions by the same user not shown") ignores
+  username suppression.
+* (T341565, CVE-2023-3550) SECURITY: Stored XSS when uploading crafted
+  XML file to Special:Upload (non-standard configuration).
+
+== MediaWiki 1.39.4 ==
+
+This is a security and maintenance release of the MediaWiki 1.39 branch.
+
+=== Changes since MediaWiki 1.39.3 ===
+* Localisation updates.
+* (T333990) composer.json: Explicitly pin psr/http-message to 1.0.1.
+* (T335203, CVE-2023-29197) SECURITY: Upgrading guzzlehttp/psr7
+  (2.4.0 => 2.4.5).
+* (T333776) {{ACTIVEUSERS}} wasn't being updated without updateSpecialPages.php.
+* (T258860) Prevent LogicCache exception from message cache during IO errors
+  from memcache.
+* (T336868) Improve idempotency of postgres index upgrades.
+* (T322944) Add Authorization to default $wgAllowedCorsHeaders.
+* (T332889, CVE-2023-36675) SECURITY: Fix escaping in BlockLogFormatter.
+* A fake MessageLocalizer for use in unit tests.
+* (T338114) Title: Add forward alias.
+* composer: Add symfony/polyfill-php81 like symfony/polyfill-php80.
+* (T330464) Work around argument corruption bug in XMLReader::open.
+* Fix frame and frameless rdfa depending on file existing.
+* Fixes for the phan upgrade, part 1.
+* Fixes for the phan upgrade, part 2.
+* (T298571) build: Update mediawiki/mediawiki-phan-config to 0.12.0.
+* build: Updating mediawiki/mediawiki-phan-config to 0.12.1.
+* (T329214) Pass whether current rev of file exists to
+  Linker::makeBrokenImageLinkObj.
+* (T334659) Handle thumb errors when !$enableLegacyMediaDOM.
+* A manualthumb that doesn't exist should be considered a thumb error.
+* (T313157) IndexPager: Also protect against $offset being 0.
+* (T335612, CVE-2023-36674) SECURITY: Move badFile lookup to Linker.
+
+== MediaWiki 1.39.3 ==
+
+This is a security and maintenance release of the MediaWiki 1.39 branch.
+
+=== Changes since MediaWiki 1.39.2 ===
+* Localisation updates.
+* (T328477) LinksUpdate: Use DB key for category links table.
+* GlobalFunctions: Remove check for MEDIAWIKI constant.
+* (T329484) API: Fix query+allimages user parameter description.
+* (T330529) SpecialEditTags: Set default of '' for wpReason.
+* (T330382) postgres: Make the upgrade ignore dropping indexes that
+  might not exist.
+* (T330526) htmlform: Handle null from HTMLFormField::getDefault in
+  multiselects.
+* (T291753) rdbms: escape backslashes in makeConnectionString for PostgreSQL.
+* (T325529) Fix total breakage of wgCanonicalServer fallback.
+* (T318103) mediawiki.storage: Disable async GC during integration test.
+* (T332461, T332397) TempFSFile: Keep the WeakMap alive.
+* (T332902) page: fix InvalidArgumentException in SQLPlatform::makeList.
+* (T285159, CVE-2023-29141) SECURITY: Do not apply autoblocks to untrusted
+  XFF headers.
 
 == MediaWiki 1.39.2 ==
 
@@ -158,6 +1008,8 @@ For notes on 1.38.x and older releases, see HISTORY.
   request URLs to canonical CDN URLs insensitive to parameter order.
 * $wgMultiShardSiteStats – This allows you to split site_stats across multiple
   rows. Only useful for very large, heavily edited wikis. (T306589)
+* $wgPrivilegedGroups – Users belonging in some of the listed groups will be
+  audited more aggressively.
 
 ==== Changed configuration ====
 * $wgInvalidUsernameCharacters – This setting now contains the char '>', which
@@ -230,6 +1082,7 @@ For notes on 1.38.x and older releases, see HISTORY.
 
 ==== New external libraries ====
 * Added Codex v0.1.1. This replaces the now deprecated wvui library.
+* Added symfony/polyfill-php81.
 
 ===== New development-only external libraries =====
 * Updated QUnit from 2.18.0 to 2.18.2.
@@ -239,12 +1092,13 @@ For notes on 1.38.x and older releases, see HISTORY.
 * Updated OOUI from v0.43.2 to v0.44.5.
 * Updated composer/semver from 3.2.6 to 3.3.2.
 * Updated cssjanus/cssjanus fromv2.1.0 to v2.1.1.
-* Updated pear/mail from v1.4.1 to v1.5.0.
+* Updated pear/mail from v1.4.1 to v1.5.1.
 * Updated symfony/polyfill-php73 from 1.25.0 to 1.26.0.
 * Updated symfony/polyfill-php80 from 1.25.0 to 1.26.0.
 * Updated symfony/yaml from 5.4.3 to 5.4.10.
 * Updated vue/compat from 3.2.23 to 3.2.37.
 * Updated wikimedia/base-convert from 2.0.1 to 2.0.2.
+* Updated wikimedia/html-formatter from 3.0.1 to 4.0.3.
 * Updated wikimedia/ip-set from 3.0.0 to 3.1.0.
 * Updated wikimedia/minify from 2.2.6 to 2.3.0.
 * Updated wikimedia/php-session-serializer from 2.0.0 to 2.0.1.
@@ -259,6 +1113,7 @@ For notes on 1.38.x and older releases, see HISTORY.
 * Updated composer/spdx-licenses from 1.5.5 to 1.5.7.
 * Updated doctrine/dbal for PHP < 7.3 from 2.13.6 to 2.13.9.
 * Updated doctrine/dbal for PHP >= 7.3 from 3.1.5 to 3.4.2.
+* Updated mediawiki/mediawiki-phan-config from 0.11.1 to 0.12.1.
 
 ==== Removed external libraries ====
 * Removed wikimedia/dodo (v0.4.0).
@@ -761,6 +1616,57 @@ There's usually someone online in #mediawiki on irc.libera.chat.
 
 = MediaWiki 1.38 =
 
+== MediaWiki 1.38.7 ==
+
+This is a security and maintenance release of the MediaWiki 1.38 branch.
+
+=== Changes since MediaWiki 1.38.6 ===
+* Localisation updates.
+* (T333990) composer.json: Explicitly pin psr/http-message to 1.0.1.
+* (T335203, CVE-2023-29197) SECURITY: Upgrading guzzlehttp/psr7
+  (2.4.0 => 2.4.5).
+* (T322944) Add Authorization to default $wgAllowedCorsHeaders.
+* (T332889, CVE-2023-36675) SECURITY: Fix escaping in BlockLogFormatter.
+* (T330464) Work around argument corruption bug in XMLReader::open.
+* (T313157) IndexPager: Also protect against $offset being 0.
+* (T335612, CVE-2023-36674) SECURITY: Move badFile lookup to Linker.
+
+== MediaWiki 1.38.6 ==
+
+This is a security and maintenance release of the MediaWiki 1.38 branch.
+
+=== Changes since MediaWiki 1.38.5 ===
+* Localisation updates.
+* (T325872) ChangeTags: Remove table name from condition.
+* (T324895) MWCallbackStream: Add explicit $stream property.
+* (T297031, T326039) PostgresUpdater: Move setDefault ahead of
+  changeNullableField.
+* Remove /images .htaccess rules that are no longer relevent.
+* Disable php in .htaccess of images directory as a hardening measure.
+* (T322583) Include missing message parameter in message.
+* Fix phan error when Excimer is enabled.
+* (T323373) Parser: Fix extractSections() behavior for PHP >= 8.0
+* (T326021) Add matrix: to $wgUrlProtocols.
+* (T326377) rdbms: Use DBConnRef in SelectQueryBuilder.
+* api/en.json: api-help-datatype-expiry add missing 'may'.
+* (T328222) Pass empty string to strlen() if schema is null for
+  PostgresDatabase.
+* (T317329) OutputPage: Fix undefined ['host'] in ImagePreconnect code.
+* (T289926) SpecialRevisionDelete: Set default of '' for wpReason.
+* (T155582, T328503) Fix XML dumps for content types with non-string
+  getNativeData().
+* (T314099) revisiondelete: Replace dynamic property Status::$itemStatuses.
+* (T329198) ParamValidator: Improve paramvalidator-help-multi-max message.
+* (T292348) WikiImporter: do not fail if upload entry in dump lacks 'text'
+  tag.
+* (T295637) Add no to fallback chain of nb and nn.
+* (T329484) API: Fix query+allimages user parameter description.
+* (T330529) SpecialEditTags: Set default of '' for wpReason.
+* (T330526) htmlform: Handle null from HTMLFormField::getDefault in
+  multiselects.
+* (T285159, CVE-2023-29141) SECURITY: Do not apply autoblocks to untrusted
+  XFF headers.
+
 == MediaWiki 1.38.5 ==
 
 This is a security and maintenance release of the MediaWiki 1.38 branch.
@@ -821,7 +1727,7 @@ This is a security and maintenance release of the MediaWiki 1.38 branch.
 * (T312301) SpecialDiff: Don't pass null to trim().
 * Hooks: Use more meaningful name for SkinAfterPortlet hook parameter.
 * (T289926) Ensure we don't pass null to mb_strlen.
-* (T312305, T311572, T311571, T311578) HtmlForm: Null coalescence in trim()
+* (T312305, T311572, T311571, T311578) HTMLForm: Null coalescence in trim()
   calls.
 * (T289926) site: Consistently return null from Site::getDomain().
 * (T307304, T289879) filebackend,jobqueue: Add signature for
@@ -1735,7 +2641,7 @@ This is a security and maintenance release of the MediaWiki 1.37 branch.
 * (T312301) SpecialDiff: Don't pass null to trim().
 * Hooks: Use more meaningful name for SkinAfterPortlet hook parameter.
 * (T289926) Ensure we don't pass null to mb_strlen.
-* (T312305, T311572, T311571, T311578) HtmlForm: Null coalescence in trim()
+* (T312305, T311572, T311571, T311578) HTMLForm: Null coalescence in trim()
   calls.
 * (T289926) site: Consistently return null from Site::getDomain().
 * (T307304, T289879) filebackend,jobqueue: Add signature for
@@ -3864,6 +4770,98 @@ There's usually someone online in #mediawiki on irc.libera.chat.
 
 = MediaWiki 1.35 =
 
+MediaWiki 1.35 should mostly work on PHP 8.0/8.1, however it is not
+currently actively supported. Testing (on a development wiki!) is
+appreciated, and bugs with PHP 8.0/8.1 on MediaWiki 1.35 will be accepted.
+
+It is anticipated that in a later MediaWiki 1.35 point release, we can
+declare 1.35 as supporting PHP 8.0/8.1.
+
+PHP 8.0 workboard: https://phabricator.wikimedia.org/tag/php_8.0_support/
+PHP 8.1 workboard: https://phabricator.wikimedia.org/tag/php_8.1_support/
+PHP 8.2 workboard: https://phabricator.wikimedia.org/tag/php_8.2_support/
+PHP 8.3 workboard: https://phabricator.wikimedia.org/tag/php_8.3_support/
+
+== MediaWiki 1.35.13 ==
+
+This is a maintenance release of the MediaWiki 1.35 branch.
+
+=== Changes since MediaWiki 1.35.12 ===
+* Tarball release to fix backport issues with patch for T341529.
+
+== MediaWiki 1.35.12 ==
+
+This is a security and maintenance release of the MediaWiki 1.35 branch.
+
+=== Changes since MediaWiki 1.35.11 ===
+* Localisation updates.
+* (T333050, CVE-2023-45363) SECURITY: Fix infinite loop for
+  self-redirects with variants conversion.
+* (T341434) WikiImporter: Improve error message output.
+* (T341737) ApiBase: Cast $id to string in filterIDs.
+* (T342632) ApiComparePages: Add help url.
+* (T347227) ImportReporter: Make callback functions public.
+* doc: Improve description of type in extension.schema.v1.json.
+* (T340221, CVE-2023-45360) SECURITY: XSS via
+  'youhavenewmessagesmanyusers' and 'youhavenewmessages' messages.
+* (T341529, CVE-2023-45362) SECURITY: diff-multi-sameuser
+  ("X intermediate revisions by the same user not shown") ignores username
+  suppression.
+* (T341565, CVE-2023-3550) SECURITY: Stored XSS when uploading crafted XML
+  file to Special:Upload (non-standard configuration).
+
+== MediaWiki 1.35.11 ==
+
+This is a security and maintenance release of the MediaWiki 1.35 branch.
+
+=== Changes since MediaWiki 1.35.10 ===
+* Localisation updates.
+* (T333990) composer.json: Explicitly pin psr/http-message to 1.0.1.
+* (T335203, CVE-2023-29197) SECURITY: Upgrading guzzlehttp/psr7
+  (1.9.0 => 1.9.1).
+* (T269636) Add Access-Control-Max-Age to $wgAllowedCorsHeaders.
+* (T322944) Add Authorization to default $wgAllowedCorsHeaders.
+* (T332889, CVE-2023-36675) SECURITY: Fix escaping in BlockLogFormatter.
+* (T297917) objectcache: avoid use of ctype_digit() in
+  WANObjectCache::adaptiveTTL().
+* (T330464) Work around argument corruption bug in XMLReader::open.
+* (T313157) IndexPager: Also protect against $offset being 0.
+* (T335612, CVE-2023-36674) SECURITY: Move badFile lookup to Linker.
+
+== MediaWiki 1.35.10 ==
+
+This is a security and maintenance release of the MediaWiki 1.35 branch.
+
+=== Changes since MediaWiki 1.35.9 ===
+* Localisation updates.
+* (T324895) MWCallbackStream: Add explicit $stream property.
+* Remove /images .htaccess rules that are no longer relevent.
+* Disable php in .htaccess of images directory as a hardening measure.
+* (T322583) Include missing message parameter in message.
+* Fix phan error when Excimer is enabled.
+* (T274966) tests: Make pass on php8.0.
+* (T323373) Parser: Fix extractSections() behavior for PHP >= 8.0.
+* (T326021) Add matrix: to $wgUrlProtocols.
+* api/en.json: api-help-datatype-expiry add missing 'may'.
+* (T225218) Wait until the recent changes are updated.
+* (T328222) Pass empty string to strlen() if schema is null for
+  PostgresDatabase.
+* (T317329) OutputPage: Fix undefined ['host'] in ImagePreconnect code.
+* (T289926) SpecialRevisionDelete: Set default of '' for wpReason.
+* (T155582, T328503) Fix XML dumps for content types with non-string
+  getNativeData().
+* (T295958, T278847) MediaWiki-Docker: Switch PHP images to PHP7.4.
+* (T314099) revisiondelete: Replace dynamic property Status::$itemStatuses.
+* (T329198) ParamValidator: Improve paramvalidator-help-multi-max message.
+* (T292348) WikiImporter: do not fail if upload entry in dump lacks 'text'
+  tag.
+* (T329484) API: Fix query+allimages user parameter description.
+* (T330529) SpecialEditTags: Set default of '' for wpReason.
+* (T330526) htmlform: Handle null from HTMLFormField::getDefault in
+  multiselects.
+* (T285159, CVE-2023-29141) SECURITY: Do not apply autoblocks to untrusted
+  XFF headers.
+
 == MediaWiki 1.35.9 ==
 
 This is a security and maintenance release of the MediaWiki 1.35 branch.
@@ -4140,7 +5138,7 @@ This is a security and maintenance release of the MediaWiki 1.35 branch.
 
 This is a security and maintenance release of the MediaWiki 1.35 branch.
 
-MediaWiki 1.35.2 supports Composer 2.0. It is reccommended to make sure your
+MediaWiki 1.35.2 supports Composer 2.0. It is recommended to make sure your
 libraries are up to date on Composer 1.x, before running Composer 2.x.
 
 While normally running update.php isn't required for point releases,
@@ -4471,10 +5469,10 @@ See the file UPGRADE for more detailed upgrade instructions, including
 important information when upgrading from versions prior to 1.11.
 
 Some specific notes for MediaWiki 1.35 upgrades are below:
-* (T259685) Zeroconf (zero-configuration) VisualEditor/Parsoid doesn't work
-  using SQLite as the database backend for MediaWiki. This is due to the lack
-  of write concurrency in SQLite. If you wish to use this feature, it is
-  recommended to use MySQL/MariaDB rather than SQLite.
+* (T259685) When using SQLite as the database backend for MediaWiki,
+  Zeroconf (zero-configuration) VisualEditor/Parsoid only works with
+  MediaWiki 1.35.2 and above.  It is still recommended to use
+  MySQL/MariaDB rather than SQLite when using VisualEditor.
 
 For notes on 1.34.x and older releases, see HISTORY.
 
@@ -4513,15 +5511,15 @@ For notes on 1.34.x and older releases, see HISTORY.
   of this setting, but all other aspects of the expiry feature are controlled
   by it. Enabling in production is discouraged for the time being. A future
   MediaWiki 1.35 release will advertise this feature once it is stable.
-* $wgWatchlistPurgeRate — This sets the chance of expired watchlist items being
+* $wgWatchlistPurgeRate — This sets the chance of expired watchlist items being
   purged on each page edit. Only has effect if $wgWatchlistExpiry is true.
 * $wgWatchlistExpiryMaxDuration — This is the maximum definite relative duration
   for watchlist expiries. Only has effect if $wgWatchlistExpiry is true.
-* $wgImgAuthPath – This can be used to override the path prefix used when
+* $wgImgAuthPath – This can be used to override the path prefix used when
   handling img_auth.php requests. (T235357)
 * $wgAllowedCorsHeaders — This is a list of headers which can be used in a
   cross-site API request.
-* $wgHTTPMaxTimeout and $wgHTTPMaxConnectTimeout — These allow site
+* $wgHTTPMaxTimeout and $wgHTTPMaxConnectTimeout — These allow site
   administrators to limit the timeouts used by the HTTP client libraries.
   This only affects callers using HttpRequestFactory and the deprecated
   wrappers in the Http class.
@@ -4583,7 +5581,7 @@ For notes on 1.34.x and older releases, see HISTORY.
 * $wgShellRestrictionMethod — This now defaults to 'autodetect', which will
   enable sandboxing for shell commands using firejail, if it's installed. To
   disable restrictions, set it to false.
-* $wgLegacyJavaScriptGlobals – This deprecated setting now default to false,
+* $wgLegacyJavaScriptGlobals – This deprecated setting now default to false,
   instead of true, ahead of its planned removal.
 
 ==== Removed configuration ====
@@ -4708,21 +5706,21 @@ For notes on 1.34.x and older releases, see HISTORY.
 
 ==== New external libraries ====
 * Added wikimedia/ip-utils 1.0.0.
-* Added wikimedia/parsoid 0.12.0.
+* Added wikimedia/parsoid 0.12.3.
 * Added wikimedia/services 2.0.1.
 * Added taylorhakes/promise-polyfill v8.1.3.
 * Added vuejs v2.6.11.
 * Added vuex v3.1.3.
-* Added symfony/symfony/polyfill-php80 1.23.1.
+* Added symfony/symfony/polyfill-php80 1.25.0.
 
 ===== New development-only external libraries =====
-* Added doctrine/dbal 2.10.2.
+* Added doctrine/dbal 3.1.5.
 * Added doctrine/sql-formatter 1.1.0.
-* Added pimple/pimple 3.3.0.
+* Added pimple/pimple 3.3.1.
 
 ==== Changed external libraries ====
-* pear/mail_mime was upgraded from 1.10.2 to 1.10.8.
-* wikimedia/less.php was upgraded from 1.8.0 to 3.0.0.
+* pear/mail_mime was upgraded from 1.10.2 to 1.10.11.
+* wikimedia/less.php was upgraded from 1.8.0 to 3.1.0.
 * Updated oojs from 3.0.0 to 5.0.0.
 * Updated OOUI from 0.35.1 to 0.39.3.
 * zordius/lightncandy was upgraded from 0.23.0 to 1.2.5.
@@ -4736,10 +5734,13 @@ For notes on 1.34.x and older releases, see HISTORY.
 * Updated wikimedia/xmp-reader from 0.6.3 to 0.8.5.
   Fixes error log spam with too-large XMP data, and adds support for GPano tags.
 * Updated wikimedia/base-convert from v2.0.0 to v2.0.1.
-* Updated composer/semver from 1.5.0 to 1.5.1.
+* Updated composer/semver from 1.5.0 to 1.7.2.
 * Updated wikimedia/remex-html from 2.1.0 to 2.2.0.
 * Replaced wikimedia/password-blacklist 0.1.4 with wikimedia/common-passwords
   0.2.0.
+* Updated wikimedia/composer-merge-plugin from 1.4.1 to 2.0.1.
+* Updated wikimedia/html-formatter from 1.0.2 to 2.0.1.
+* Updated wikimedia/object-factory from 2.1.0 to 2.2.0.
 
 ===== Changed development-only external libraries =====
 * Updated symfony/yaml from 3.4.28 to 5.0.5.
@@ -4747,11 +5748,13 @@ For notes on 1.34.x and older releases, see HISTORY.
 * Updated php-parallel-lint/php-console-highlighter from v0.3.2 to v0.5.
 * Updated php-parallel-lint/php-parallel-lint from v0.9.2 to v1.2.0.
 * Updated psy/psysh from 0.9.9 to 0.10.4.
-* Updated monolog/monolog from 1.24.0 to 1.25.2.
-* Upgrade mediawiki-codesniffer from 28.0.0 to 30.0.0.
+* Updated monolog/monolog from 1.24.0 to 2.2.0.
+* Upgrade mediawiki-codesniffer from 28.0.0 to 38.0.0.
 * Updated composer/spdx-licenses from 1.5.1 to 1.5.3.
 * Updated monolog/monolog from 1.25.2 to 1.25.3.
 * Updated qunit from 2.9.1 to 2.10.0.
+* Updating wikimedia/testing-access-wrapper from 1.0.0 to 2.0.0.
+* Updated seld/jsonlint from 1.7.1 to 1.8.3.
 
 ==== Removed external libraries ====
 * phpunit/php-invoker (dev-only).
@@ -4828,6 +5831,7 @@ because of Phabricator reports.
 * (T248299) Added language support for Inari Sami (smn).
 * (T251369) Added language support for Ladin (lld).
 * (T251369) Added language support for Seediq (trv), also known as Taroko.
+* (T254854) Added language support for Southern Altay (alt).
 
 === Breaking changes in 1.35 ===
 * MediaWiki no longer supports PHP 7.2; use PHP 7.3.19+ (T228346, T257879).
@@ -5855,6 +6859,48 @@ because of Phabricator reports.
 * The printableversion has been marked as deprecated per T167956.
 * (T30162, T245387) The installer supports using a Postgres server running
   on a custom port other than 5432.
+
+== Compatibility ==
+MediaWiki 1.35 requires PHP 7.3.19 or later, and the following PHP extensions:
+
+* ctype
+* dom
+* fileinfo
+* iconv
+* json
+* mbstring
+* xml
+
+MySQL/MariaDB is the recommended DBMS. PostgreSQL or SQLite can also be used,
+but support for them is somewhat less mature.
+
+The supported versions are:
+
+* MySQL 5.5.8 or later
+* PostgreSQL 9.2 or later
+* SQLite 3.8.0 or later
+
+== Online documentation ==
+Documentation for both end-users and site administrators is available on
+MediaWiki.org, and is covered under the GNU Free Documentation License (except
+for pages that explicitly state that their contents are in the public domain):
+
+       https://www.mediawiki.org/wiki/Special:MyLanguage/Documentation
+
+== Mailing list ==
+A mailing list is available for MediaWiki user support and discussion:
+
+       https://lists.wikimedia.org/mailman/listinfo/mediawiki-l
+
+A low-traffic announcements-only list is also available:
+
+       https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce
+
+It's highly recommended that you sign up for one of these lists if you're
+going to run a public MediaWiki, so you can be notified of security fixes.
+
+== IRC help ==
+There's usually someone online in #mediawiki on irc.libera.chat.
 
 = MediaWiki 1.34 =
 

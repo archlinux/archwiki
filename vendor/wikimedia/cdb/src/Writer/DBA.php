@@ -26,10 +26,16 @@ use Cdb\Writer;
  */
 class DBA extends Writer {
 	/**
-	 * @param string $fileName
-	 * @throws Exception
+	 * The file handle
 	 */
-	public function __construct( $fileName ) {
+	protected $handle;
+
+	/**
+	 * Create the object and open the file.
+	 *
+	 * @param string $fileName
+	 */
+	public function __construct( string $fileName ) {
 		$this->realFileName = $fileName;
 		$this->tmpFileName = $fileName . '.tmp.' . mt_rand( 0, 0x7fffffff );
 		$this->handle = dba_open( $this->tmpFileName, 'n', 'cdb_make' );
@@ -38,23 +44,20 @@ class DBA extends Writer {
 		}
 	}
 
-	public function set( $key, $value ) {
-		return dba_insert( $key, $value, $this->handle );
+	public function set( $key, $value ): void {
+		dba_insert( $key, $value, $this->handle );
 	}
 
-	/**
-	 * @throws Exception
-	 */
-	public function close() {
-		if ( isset( $this->handle ) ) {
+	public function close(): void {
+		if ( $this->handle ) {
 			dba_close( $this->handle );
+			if ( $this->isWindows() ) {
+				unlink( $this->realFileName );
+			}
+			if ( !rename( $this->tmpFileName, $this->realFileName ) ) {
+				throw new Exception( 'Unable to move the new CDB file into place.' );
+			}
 		}
-		if ( $this->isWindows() ) {
-			unlink( $this->realFileName );
-		}
-		if ( !rename( $this->tmpFileName, $this->realFileName ) ) {
-			throw new Exception( 'Unable to move the new CDB file into place.' );
-		}
-		unset( $this->handle );
+		$this->handle = null;
 	}
 }

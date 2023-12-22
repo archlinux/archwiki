@@ -3,83 +3,93 @@
 figure[ typeof~='mw:File/Thumb' ],
 figure[ typeof~='mw:File/Frame' ] {
 	border: @border-thumbinner-screen;
-	border-bottom: 0;  // No border to figcaption
-	border-width: 1px 1px 0.2em;  // From .box
-	box-shadow: 0 1px 2px 1px rgba( 0, 0, 0, 0.02 );  // From .box
+	border-bottom: 0; // No border to figcaption
+	border-width: 1px 1px 0.2em; // From .box
+	box-shadow: 0 1px 2px 1px rgba( 0, 0, 0, 0.02 ); // From .box
 	background-color: @background-color-thumbinner-screen;
 
-	> a:first-child,
-	> span:first-child {
-		> *:first-child:not( .mw-broken-media ) {
-			border: @border-thumbimage-screen;
-		}
+	> :not( figcaption ) .mw-file-element {
+		border: @border-thumbimage-screen;
 	}
 
 	> figcaption {
 		border: @border-thumbinner-screen;
 		border-top: 0;
-		border-width: 1px 1px 0.2em;  // From .box
-		box-shadow: 0 1px 2px 1px rgba( 0, 0, 0, 0.02 );  // From .box
+		border-width: 1px 1px 0.2em; // From .box
+		box-shadow: 0 1px 2px 1px rgba( 0, 0, 0, 0.02 ); // From .box
 		background-color: @background-color-thumbinner-screen;
 		font-size: @font-size-thumbcaption-screen;
 	}
 }
 
-.mw-image-border {
-	> a:first-child,
-	> span:first-child {
-		> *:first-child:not( .mw-broken-media ) {
-			border: @border-thumbborder-screen;
-		}
-	}
+.mw-image-border .mw-file-element {
+	border: @border-thumbborder-screen;
 }
 
-/* Magnify clip, not present for broken media */
-figure[ typeof~='mw:File/Thumb' ]:not( [ typeof~='mw:Error' ] ) {
-	> figcaption:before {
+figure[ typeof~='mw:File/Thumb' ] {
+	> figcaption::before {
 		content: '';
 		width: 20px;
 		height: 20px;
 
+		// Default where page content language is not set
+		// Allow to flip
+		margin: 0 0 0.5em 0.5em;
+		float: right;
+
+		// Defaults for page content language
+
 		.mw-content-ltr & {
 			/* @noflip */
-			margin-left: 0.5em;
+			margin: 0 0 0.5em 0.5em;
 			/* @noflip */
 			float: right;
 		}
 
 		.mw-content-rtl & {
 			/* @noflip */
-			margin-right: 0.5em;
+			margin: 0 0.5em 0.5em 0;
 			/* @noflip */
 			float: left;
 		}
 	}
 
-	> a {
+	> .mw-file-description,
+	> .mw-file-magnify {
 		display: block;
 		position: relative;
-	}
 
-	> a.mw-file-description:after {
-		content: '';
-		width: 20px;
-		height: 20px;
-		position: absolute;
-		bottom: -20px;
+		&::after {
+			content: '';
+			width: 20px;
+			height: 20px;
+			position: absolute;
+			bottom: -20px;
 
-		.mw-content-ltr & {
-			/* @noflip */
+			// Default where page content language is not set
+			// Allow to flip
 			right: 0.75em;
-			/* @noflip */
 			background-image: @background-image-magnify-ltr;
-		}
 
-		.mw-content-rtl & {
-			/* @noflip */
-			left: 0.75em;
-			/* @noflip */
-			background-image: @background-image-magnify-rtl;
+			// Defaults for page content language
+
+			.mw-content-ltr & {
+				/* @noflip */
+				right: 0.75em;
+				/* @noflip */
+				left: auto;
+				/* @noflip */
+				background-image: @background-image-magnify-ltr;
+			}
+
+			.mw-content-rtl & {
+				/* @noflip */
+				right: auto;
+				/* @noflip */
+				left: 0.75em;
+				/* @noflip */
+				background-image: @background-image-magnify-rtl;
+			}
 		}
 	}
 }

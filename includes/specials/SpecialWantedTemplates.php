@@ -26,9 +26,12 @@
  * @author Danny B.
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Linker\LinksMigration;
-use Wikimedia\Rdbms\ILoadBalancer;
+use MediaWiki\SpecialPage\WantedQueryPage;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * A querypage to list the most wanted templates
@@ -37,21 +40,20 @@ use Wikimedia\Rdbms\ILoadBalancer;
  */
 class SpecialWantedTemplates extends WantedQueryPage {
 
-	/** @var LinksMigration */
-	private $linksMigration;
+	private LinksMigration $linksMigration;
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param LinksMigration $linksMigration
 	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		LinkBatchFactory $linkBatchFactory,
 		LinksMigration $linksMigration
 	) {
 		parent::__construct( 'Wantedtemplates' );
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 		$this->setLinkBatchFactory( $linkBatchFactory );
 		$this->linksMigration = $linksMigration;
 	}
@@ -67,7 +69,7 @@ class SpecialWantedTemplates extends WantedQueryPage {
 				'value' => 'COUNT(*)'
 			],
 			'conds' => [
-				'page_title IS NULL',
+				'page_title' => null,
 				$ns => NS_TEMPLATE
 			],
 			'options' => [ 'GROUP BY' => [ $ns, $title ] ],
@@ -83,3 +85,9 @@ class SpecialWantedTemplates extends WantedQueryPage {
 		return 'maintenance';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialWantedTemplates::class, 'SpecialWantedTemplates' );

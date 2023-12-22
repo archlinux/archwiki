@@ -39,7 +39,7 @@ abstract class LocalCache {
 	abstract protected function resolve( array $lookups );
 
 	/**
-	 * Use a factory method, such as TitleLocalCache::create().
+	 * Instances should be obtained via EchoServices / MediaWikiServices.
 	 *
 	 * @private
 	 */

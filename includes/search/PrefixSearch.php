@@ -20,9 +20,11 @@
  * @file
  */
 
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\MediaWikiTitleCodec;
 use MediaWiki\Title\Title;
-use MediaWiki\Title\TitleArray;
+use MediaWiki\Title\TitleArrayFromResult;
 
 /**
  * Handles searching prefixes of titles and finding any page
@@ -126,7 +128,7 @@ abstract class PrefixSearch {
 			}
 		}
 		$srchres = [];
-		if ( Hooks::runner()->onPrefixSearchBackend(
+		if ( ( new HookRunner( MediaWikiServices::getInstance()->getHookContainer() ) )->onPrefixSearchBackend(
 			$namespaces, $search, $limit, $srchres, $offset )
 		) {
 			return $this->titles( $this->defaultSearchBackend( $namespaces, $search, $limit, $offset ) );
@@ -279,41 +281,15 @@ abstract class PrefixSearch {
 			$conds[] = $dbr->makeList( $condition, LIST_AND );
 		}
 
-		$table = 'page';
-		$fields = [ 'page_id', 'page_namespace', 'page_title' ];
-		$conds = $dbr->makeList( $conds, LIST_OR );
-		$options = [
-			'LIMIT' => $limit,
-			'ORDER BY' => [ 'page_title', 'page_namespace' ],
-			'OFFSET' => $offset
-		];
+		$queryBuilder = $dbr->newSelectQueryBuilder()
+			->select( [ 'page_id', 'page_namespace', 'page_title' ] )
+			->from( 'page' )
+			->where( $dbr->makeList( $conds, LIST_OR ) )
+			->orderBy( [ 'page_title', 'page_namespace' ] )
+			->limit( $limit )
+			->offset( $offset );
+		$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 
-		$res = $dbr->select( $table, $fields, $conds, __METHOD__, $options );
-
-		return iterator_to_array( TitleArray::newFromResult( $res ) );
-	}
-
-	/**
-	 * Validate an array of numerical namespace indexes
-	 *
-	 * @param array $namespaces
-	 * @return array (default: contains only NS_MAIN)
-	 */
-	protected function validateNamespaces( $namespaces ) {
-		// We will look at each given namespace against content language namespaces
-		$validNamespaces = MediaWikiServices::getInstance()->getContentLanguage()->getNamespaces();
-		if ( is_array( $namespaces ) && count( $namespaces ) > 0 ) {
-			$valid = [];
-			foreach ( $namespaces as $ns ) {
-				if ( is_numeric( $ns ) && array_key_exists( $ns, $validNamespaces ) ) {
-					$valid[] = $ns;
-				}
-			}
-			if ( count( $valid ) > 0 ) {
-				return $valid;
-			}
-		}
-
-		return [ NS_MAIN ];
+		return iterator_to_array( new TitleArrayFromResult( $res ) );
 	}
 }

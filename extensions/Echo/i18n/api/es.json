@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Allan Aguilar",
+			"DarkGames26",
 			"Dgstranz",
 			"DiegoAmbrocio",
 			"Fitoschido",
@@ -9,11 +10,9 @@
 			"Jakeukalane",
 			"Jduranboger",
 			"Macofe",
-			"Tiberius1701",
-			"DarkGames26"
+			"Tiberius1701"
 		]
 	},
-	"apihelp-echomarkread-description": "Marcar notificaciones como leídas para el usuario actual.",
 	"apihelp-echomarkread-summary": "Marcar las notificaciones del usuario actual como leídas.",
 	"apihelp-echomarkread-param-list": "Lista de identificaciones de notificación para marcar como leídas.",
 	"apihelp-echomarkread-param-unreadlist": "Una lista de identificadores de notificación para marcar como leídas.",
@@ -23,12 +22,10 @@
 	"apihelp-echomarkread-example-1": "Marca la notificación 8 como leída",
 	"apihelp-echomarkread-example-2": "Marca todas las notificaciones como leídas",
 	"apihelp-echomarkread-example-3": "Marca la notificación 1 como no leída",
-	"apihelp-echomarkseen-description": "Marca las notificaciones como vistas para el usuario actual.",
 	"apihelp-echomarkseen-summary": "Marcar notificaciones como vistas para el usuario actual.",
 	"apihelp-echomarkseen-example-1": "Marca las notificaciones de todos los tipos como vistas",
 	"apihelp-echomarkseen-param-type": "Tipo de notificaciones para marcar como leídas: 'alert' (alerta), 'message' (mensaje) o 'all' (todas).",
 	"apihelp-echomarkseen-param-timestampFormat": "Formato de fecha y hora que utilizar para la salida, «ISO_8601» o «MW». «MW» aquí está desusado, por lo que todos los clientes deben cambiar a «ISO_8601». Este parámetro desaparecerá y el único formato de salida será «ISO_8601».",
-	"apihelp-echomute-description": "Silenciar o anular el silencio de las notificaciones de determinados usuarios o páginas.",
 	"apihelp-echomute-summary": "Silenciar o anular el silencio de las notificaciones de determinados usuarios o páginas.",
 	"apihelp-echomute-param-type": "A qué lista de silencio agregar o eliminar",
 	"apihelp-echomute-param-mute": "Páginas o usuarios a añadir a la lista de silenciados",
@@ -44,7 +41,6 @@
 	"apihelp-echopushsubscriptions+delete-param-providertoken": "El token asociado a la suscripción push que se desea anular.",
 	"apihelp-echopushsubscriptions+delete-param-centraluserid": "Identificador de usuario central asociado a la suscripción para anular el registro",
 	"apihelp-echopushsubscriptions+delete-example": "Cancelar la suscripción de notificación push para el usuario actual.",
-	"apihelp-query+notifications-description": "Recibe notificaciones en espera para el usuario actual.",
 	"apihelp-query+notifications-summary": "Recibir notificaciones pendientes del usuario actual.",
 	"apihelp-query+notifications-param-prop": "Detalles que solicitar.",
 	"apihelp-query+notifications-param-sections": "Las secciones de notificación para consultar (o sea, alguna combinación de «alerta» y «mensaje»).",
@@ -69,7 +65,6 @@
 	"apihelp-query+notifications-example-1": "Lista de notificaciones",
 	"apihelp-query+notifications-example-2": "Lista notificaciones, agrupadas por sección, incluyendo contadores",
 	"apihelp-query+notifications-example-3": "Lista de notificaciones por correo electrónico",
-	"apihelp-query+unreadnotificationpages-description": "Obtener las páginas para las que hay notificaciones sin leer para el usuario actual.",
 	"apihelp-query+unreadnotificationpages-summary": "Recibir páginas para las que hay notificaciones no leídas para el usuario actual.",
 	"apihelp-query+unreadnotificationpages-param-grouppages": "Agrupar páginas de discusión junto con su página de asunto asociada, y agrupar notificaciones no asociadas con una página junto con la página de usuario del usuario actual.",
 	"apihelp-query+unreadnotificationpages-param-limit": "El máximo número de páginas que se devolverán.",

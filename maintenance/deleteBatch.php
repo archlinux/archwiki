@@ -28,9 +28,9 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -82,9 +82,10 @@ class DeleteBatch extends Maintenance {
 			$this->fatalError( "Unable to read file, exiting" );
 		}
 
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$wikiPageFactory = $services->getWikiPageFactory();
 		$repoGroup = $services->getRepoGroup();
+		$delPageFactory = $services->getDeletePageFactory();
 
 		# Handle each entry
 		for ( $linenum = 1; !feof( $file ); $linenum++ ) {
@@ -112,18 +113,11 @@ class DeleteBatch extends Maintenance {
 				}
 			}
 			$page = $wikiPageFactory->newFromTitle( $title );
-			$error = '';
-			$status = $page->doDeleteArticleReal(
-				$reason,
-				$user,
-				false,
-				null,
-				$error,
-				null,
-				[],
-				'delete',
-				true
-			);
+			$delPage = $delPageFactory->newDeletePage( $page, $user );
+			$status = $delPage
+				->forceImmediate( true )
+				->deleteUnsafe( $reason );
+
 			if ( $status->isOK() ) {
 				$this->output( " Deleted!\n" );
 			} else {

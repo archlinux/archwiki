@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 
 class MailAddressTest extends MediaWikiIntegrationTestCase {
@@ -36,6 +37,23 @@ class MailAddressTest extends MediaWikiIntegrationTestCase {
 
 		$wgEnotifUseRealName = false;
 		$this->assertEquals( '"UserName" <foo@bar.baz>', $ma->toString() );
+	}
+
+	/**
+	 * @covers MailAddress::equals
+	 * @dataProvider provideEquals
+	 */
+	public function testEquals( MailAddress $first, MailAddress $second, bool $expected ) {
+		$this->assertSame( $expected, $first->equals( $second ) );
+	}
+
+	public static function provideEquals(): Generator {
+		$base = new MailAddress( 'a@b.c', 'name', 'realname' );
+
+		yield 'Different addresses' => [ $base, new MailAddress( 'xxx', 'name', 'realname' ), false ];
+		yield 'Different names' => [ $base, new MailAddress( 'a@b.c', 'other name', 'realname' ), false ];
+		yield 'Different real names' => [ $base, new MailAddress( 'a@b.c', 'name', 'other realname' ), false ];
+		yield 'Equal' => [ $base, new MailAddress( 'a@b.c', 'name', 'realname' ), true ];
 	}
 
 	/**

@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Derbeth",
 			"Matma Rex",
 			"Matěj Suchánek",
-			"Michawiki",
-			"Amire80"
+			"Michawiki"
 		]
 	},
 	"abusefilter-desc": "Nałožujo awtomatisku heuristiku na změny.",
@@ -339,7 +339,6 @@
 	"abusefilter-test-page": "Změny pśewjeźone na boku:",
 	"abusefilter-test-shownegative": "Změny pokazaś, kótarež njewótpowěduju filtroju",
 	"abusefilter-test-syntaxerr": "Filter, kótaryž sy zapódał, jo wopśimjeł syntaksowu zmólku.\nPśez kliknjenje na tłocašk \"{{int:abusefilter-edit-check}} móžoš połne wujasnjenje dostaś.",
-	"abusefilter-test-badtitle": "Titel boka, kótaryž sy zapódał, jo njepłaśiwy był. Wopśimujo snaź znamuška, kótarež njedaju se w titelu wužywaś.",
 	"abusefilter-changeslist-examine": "pśepytowaś",
 	"abusefilter-examine": "Jadnotliwe změny pśepytowaś",
 	"abusefilter-examine-intro": "Toś ten bok śi zmóžnja wariable pśespytowaś, kótarež su se napórali pśez znjewužywański filter za jadnotliwu změnu a ju pśeśiwo tiltram testowaś.",

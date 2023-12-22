@@ -110,5 +110,5 @@ $specialPageAliases['zh-hans'] = [
 
 /** Traditional Chinese (中文（繁體）‎) */
 $specialPageAliases['zh-hant'] = [
-	'OATHManage' => [ 'OATH_認證' ],
+	'OATHManage' => [ 'OATH驗證', 'OATH_認證' ],
 ];

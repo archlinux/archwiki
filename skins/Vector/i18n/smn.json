@@ -26,10 +26,12 @@
 	"vector-jumptocontent": "Njuškii siskáldâsân",
 	"vector-more-actions": "Eenâb",
 	"vector-searchsuggest-containing": "Uusâ siijđoid, moh siskáldeh <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Siskáldâslisto",
 	"vector-toc-beginning": "Algâttâs",
 	"vector-main-menu-tooltip": "Uáivivaljiittâh",
 	"vector-main-menu-label": "Uáivivaljiittâh",
 	"vector-page-tools-label": "Tyejiniävuh",
+	"vector-page-tools-general-label": "Almolâš",
 	"vector-unpin-element-label": "čievâ",
 	"tooltip-vector-anon-user-menu-title": "Lase valjiimeh"
 }

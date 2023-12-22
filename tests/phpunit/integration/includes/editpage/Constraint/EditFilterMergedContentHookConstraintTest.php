@@ -21,6 +21,8 @@
 use MediaWiki\EditPage\Constraint\EditFilterMergedContentHookConstraint;
 use MediaWiki\EditPage\Constraint\IEditConstraint;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Status\Status;
+use MediaWiki\User\User;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -43,13 +45,16 @@ class EditFilterMergedContentHookConstraintTest extends MediaWikiIntegrationTest
 				$this->anything() // Not worrying about the hook call here
 			)
 			->willReturn( $hookResult );
+		$language = $this->createMock( Language::class );
+		$language->method( 'getCode' )
+			->willReturn( 'en' );
 		$constraint = new EditFilterMergedContentHookConstraint(
 			$hookContainer,
 			$this->getMockForAbstractClass( Content::class ),
 			$this->createMock( RequestContext::class ),
 			'EditSummaryGoesHere',
 			true, // Minor edit
-			$this->createMock( Language::class ),
+			$language,
 			$this->createMock( User::class )
 		);
 		return $constraint;

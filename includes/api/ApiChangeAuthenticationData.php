@@ -29,8 +29,7 @@ use MediaWiki\MainConfigNames;
  * @ingroup API
  */
 class ApiChangeAuthenticationData extends ApiBase {
-	/** @var AuthManager */
-	private $authManager;
+	private AuthManager $authManager;
 
 	/**
 	 * @param ApiMain $main
@@ -47,7 +46,7 @@ class ApiChangeAuthenticationData extends ApiBase {
 	}
 
 	public function execute() {
-		if ( !$this->getUser()->isRegistered() ) {
+		if ( !$this->getUser()->isNamed() ) {
 			$this->dieWithError( 'apierror-mustbeloggedin-changeauthenticationdata', 'notloggedin' );
 		}
 

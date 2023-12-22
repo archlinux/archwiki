@@ -24,6 +24,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 ნინა}}",
 	"vector-no-language-button-label": "არძა ნინა",
 	"vector-no-language-button-aria-label": "ათე სტატია ხვალე თე ნინაშა რე. ქეგუძინით სტატია შხვა ნინეფშო",
+	"vector-language-redirect-to-top": "ათე ვებ-ხასჷლას შხვა ნინეფიშ რცხუეფი მოჩამილი რე ხასჷლაშ დაჭყაფუს, დუდჯოხოშ მანგას.",
 	"vector-language-variant-switcher-label": "ნინაშ ვარიანტიშ თირუა",
 	"vector-action-addsection": "თემაშ მიშაძინა",
 	"vector-action-delete": "ლასუა",
@@ -62,5 +63,7 @@
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|დისკუსია]]",
 	"tooltip-vector-anon-user-menu-title": "უმოსი პარამეტრი",
 	"vector-prefs-limited-width": "გოხურგილი სიგანაშ რეჟიმიშ ჩართება",
-	"empty-language-selector-body": "ხასჷლაშ დინორე შხვა ნინაშა ვა რე ხემიოლი."
+	"empty-language-selector-body": "ხასჷლაშ დინორე შხვა ნინაშა ვა რე ხემიოლი.",
+	"vector-page-tools-unpinned-popup": "ხეჭკუდეფიშ მენიუ გინოღალირი რე ათაქ.",
+	"vector-main-menu-unpinned-popup": "თარი მენიუ გინოღალირი რე ათაქ."
 }

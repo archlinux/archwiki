@@ -3,7 +3,8 @@
 		"authors": [
 			"Esbardu",
 			"Macofe",
-			"Xuacu"
+			"Xuacu",
+			"YoaR"
 		]
 	},
 	"math-desc": "Dibuxa les fórmules matemátiques ente les etiquetes <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -68,7 +69,7 @@
 	"math-test-fail": "<span style=\"color:red\">Falló</span> la prueba ''$1''.",
 	"math-test-start": "Executando les pruebes del backend pal mou de representación «$1».",
 	"math-test-success": "<span style=\"color:green\">Pasada</span> la prueba ''$1''.",
-	"math-test-contains-diff": "La cadena «$1» devuelta nun contien la cadena esperada «$2».",
+	"math-test-contains-diff": "La cadena «$1» devuelta nun contién la cadena esperada «$2».",
 	"math-test-equals-diff": "La cadena «$1» devuelta ye distinta de la cadena esperada «$2»",
 	"math-tracking-category-error": "Páxines con errores matemáticos",
 	"math-tracking-category-error-desc": "Les páxines d'esta categoría tienen errores nel usu de les etiquetes de matemátiques.",

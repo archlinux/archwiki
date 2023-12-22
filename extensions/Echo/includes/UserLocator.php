@@ -1,10 +1,16 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications;
+
+use BatchRowIterator;
+use Iterator;
 use MediaWiki\Extension\Notifications\Iterator\CallbackIterator;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
+use RecursiveIteratorIterator;
+use User;
 
-class EchoUserLocator {
+class UserLocator {
 	/**
 	 * Return all users watching the event title.
 	 *
@@ -66,6 +72,27 @@ class EchoUserLocator {
 	}
 
 	/**
+	 * If the event occurred on the user page of a registered
+	 * user return that user.
+	 *
+	 * @param Event $event
+	 * @return User[]
+	 */
+	public static function locateUserPageOwner( Event $event ) {
+		$title = $event->getTitle();
+		if ( !$title || !$title->inNamespace( NS_USER ) ) {
+			return [];
+		}
+
+		$user = User::newFromName( $title->getDBkey() );
+		if ( $user && $user->isRegistered() ) {
+			return [ $user->getId() => $user ];
+		}
+
+		return [];
+	}
+
+	/**
 	 * Return the event agent
 	 *
 	 * @param Event $event
@@ -94,22 +121,12 @@ class EchoUserLocator {
 			return [];
 		}
 
-		$dbr = wfGetDB( DB_REPLICA );
-		$revQuery = MediaWikiServices::getInstance()->getRevisionStore()->getQueryInfo();
-		$res = $dbr->selectRow(
-			$revQuery['tables'],
-			[ 'rev_user' => $revQuery['fields']['rev_user'] ],
-			[ 'rev_page' => $title->getArticleID() ],
-			__METHOD__,
-			[ 'LIMIT' => 1, 'ORDER BY' => 'rev_timestamp, rev_id' ],
-			$revQuery['joins']
-		);
-		if ( !$res || !$res->rev_user ) {
-			return [];
-		}
-
-		$user = User::newFromId( $res->rev_user );
+		$user = self::getArticleAuthorByArticleId( $title->getArticleID() );
 		if ( $user ) {
+			// T318523: Don't send page-linked notifications for pages created by bot users.
+			if ( $event->getType() === 'page-linked' && $user->isBot() ) {
+				return [];
+			}
 			return [ $user->getId() => $user ];
 		}
 
@@ -117,10 +134,32 @@ class EchoUserLocator {
 	}
 
 	/**
+	 * @param int $articleId
+	 * @return User|null
+	 */
+	public static function getArticleAuthorByArticleId( int $articleId ): ?User {
+		$dbr = wfGetDB( DB_REPLICA );
+		$revQuery = MediaWikiServices::getInstance()->getRevisionStore()->getQueryInfo();
+		$res = $dbr->selectRow(
+			$revQuery['tables'],
+			[ 'rev_user' => $revQuery['fields']['rev_user'] ],
+			[ 'rev_page' => $articleId ],
+			__METHOD__,
+			[ 'LIMIT' => 1, 'ORDER BY' => 'rev_timestamp, rev_id' ],
+			$revQuery['joins']
+		);
+		if ( !$res || !$res->rev_user ) {
+			return null;
+		}
+
+		return User::newFromId( $res->rev_user );
+	}
+
+	/**
 	 * Fetch user ids from the event extra data.  Requires additional
 	 * parameter.  Example $wgEchoNotifications parameter:
 	 *
-	 *   'user-locator' => array( array( 'event-extra', 'mentions' ) ),
+	 *   'user-locators' => [ [ 'event-extra', 'mentions' ] ],
 	 *
 	 * The above will look in the 'mentions' parameter for a user id or
 	 * array of user ids.  It will return all these users as notification
@@ -158,3 +197,5 @@ class EchoUserLocator {
 		return $users;
 	}
 }
+
+class_alias( UserLocator::class, 'EchoUserLocator' );

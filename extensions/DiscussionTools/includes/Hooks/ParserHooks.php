@@ -12,10 +12,14 @@ namespace MediaWiki\Extension\DiscussionTools\Hooks;
 use Config;
 use ConfigFactory;
 use MediaWiki\Extension\DiscussionTools\CommentFormatter;
+use MediaWiki\Hook\GetDoubleUnderscoreIDsHook;
 use MediaWiki\Hook\ParserAfterTidyHook;
 use Parser;
 
-class ParserHooks implements ParserAfterTidyHook {
+class ParserHooks implements
+	GetDoubleUnderscoreIDsHook,
+	ParserAfterTidyHook
+{
 
 	private Config $config;
 
@@ -61,15 +65,28 @@ class ParserHooks implements ParserAfterTidyHook {
 		// the user doesn't have DiscussionTools features enabled.
 		if ( HookUtils::isAvailableForTitle( $title ) ) {
 			// This modifies $text
-			CommentFormatter::addDiscussionTools( $text, $pout, $parser );
+			CommentFormatter::addDiscussionTools( $text, $pout, $title );
 
 			if ( $parser->getOptions()->getIsPreview() ) {
 				$text = CommentFormatter::removeInteractiveTools( $text );
+				// Suppress the empty state
+				$pout->setExtensionData( 'DiscussionTools-isEmptyTalkPage', null );
 			}
 
 			$pout->addModuleStyles( [
 				'ext.discussionTools.init.styles',
 			] );
 		}
+	}
+
+	/**
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/GetDoubleUnderscoreIDs
+	 *
+	 * @param string[] &$doubleUnderscoreIDs
+	 * @return bool|void
+	 */
+	public function onGetDoubleUnderscoreIDs( &$doubleUnderscoreIDs ) {
+		$doubleUnderscoreIDs[] = 'archivedtalk';
+		$doubleUnderscoreIDs[] = 'notalk';
 	}
 }

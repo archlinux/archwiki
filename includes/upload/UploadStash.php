@@ -312,11 +312,10 @@ class UploadStash {
 			'us_status' => 'finished'
 		];
 
-		$dbw->insert(
-			'uploadstash',
-			$insertRow,
-			__METHOD__
-		);
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'uploadstash' )
+			->row( $insertRow )
+			->caller( __METHOD__ )->execute();
 
 		// store the insertid in the class variable so immediate retrieval
 		// (possibly laggy) isn't necessary.
@@ -346,11 +345,10 @@ class UploadStash {
 
 		wfDebug( __METHOD__ . ' clearing all rows for user ' . $this->user->getId() );
 		$dbw = $this->repo->getPrimaryDB();
-		$dbw->delete(
-			'uploadstash',
-			[ 'us_user' => $this->user->getId() ],
-			__METHOD__
-		);
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'uploadstash' )
+			->where( [ 'us_user' => $this->user->getId() ] )
+			->caller( __METHOD__ )->execute();
 
 		# destroy objects.
 		$this->files = [];
@@ -413,11 +411,10 @@ class UploadStash {
 
 		$dbw = $this->repo->getPrimaryDB();
 
-		$dbw->delete(
-			'uploadstash',
-			[ 'us_key' => $key ],
-			__METHOD__
-		);
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'uploadstash' )
+			->where( [ 'us_key' => $key ] )
+			->caller( __METHOD__ )->execute();
 
 		/** @todo Look into UnregisteredLocalFile and find out why the rv here is
 		 *  sometimes wrong (false when file was removed). For now, ignore.
@@ -457,7 +454,7 @@ class UploadStash {
 		// finish the read before starting writes.
 		$keys = [];
 		foreach ( $res as $row ) {
-			array_push( $keys, $row->us_key );
+			$keys[] = $row->us_key;
 		}
 
 		return $keys;

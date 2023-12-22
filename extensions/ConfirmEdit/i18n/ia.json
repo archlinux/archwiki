@@ -7,7 +7,6 @@
 	"captcha-edit": "Pro modificar iste pagina, resolve le carga hic infra e scribe le responsa in le quadro ([[Special:Captcha/help|plus info]]):",
 	"captcha-edit-fail": "Codice de confirmation (CAPTCHA) incorrecte o mancante.",
 	"captcha-desc": "Forni technicas CAPTCHA de protection contra spam e discoperta de contrasignos",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Solution del CAPTCHA.",
 	"captcha-info-help": "Description del CAPTCHA.",
 	"captcha-id-label": "ID del CAPTCHA",

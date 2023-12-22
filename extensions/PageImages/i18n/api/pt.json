@@ -5,7 +5,6 @@
 			"Hamilton Abreu"
 		]
 	},
-	"apihelp-query+pageimages-description": "Devolve informação sobre as imagens de uma página, tais como miniaturas e a presença de fotografias.",
 	"apihelp-query+pageimages-summary": "Devolve informação sobre as imagens de uma página, tais como miniaturas e a presença de fotografias.",
 	"apihelp-query+pageimages-example-1": "Obter o nome e uma miniatura de 100 píxeis de uma imagem na página <kbd>Albert Einstein</kbd>.",
 	"apihelp-query+pageimages-param-prop": "A informação a ser devolvida:\n;thumbnail:O URL e as dimensões da miniatura associada à página, se existir.\n;original:O URL e as dimensões originais da imagem associada à página, se existir.\n;name:O título da imagem.",

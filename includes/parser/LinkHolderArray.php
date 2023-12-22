@@ -35,26 +35,16 @@ use MediaWiki\Title\Title;
  */
 class LinkHolderArray {
 	/** @var array<int,array<int,array>> Indexed by numeric namespace and link ids, {@see Parser::nextLinkID} */
-	public $internals = [];
+	private $internals = [];
 	/** @var array<int,array> Indexed by numeric link id */
-	public $interwikis = [];
+	private $interwikis = [];
 	/** @var int */
-	public $size = 0;
-
-	/**
-	 * @var Parser
-	 */
-	public $parent;
-
-	/**
-	 * Current language converter
-	 * @var ILanguageConverter
-	 */
+	private $size = 0;
+	/** @var Parser */
+	private $parent;
+	/** @var ILanguageConverter */
 	private $languageConverter;
-
-	/**
-	 * @var HookRunner
-	 */
+	/** @var HookRunner */
 	private $hookRunner;
 
 	/**
@@ -176,7 +166,7 @@ class LinkHolderArray {
 		$output = $this->parent->getOutput();
 		$linkRenderer = $this->parent->getLinkRenderer();
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $services->getDBLoadBalancerFactory()->getReplicaDatabase();
 
 		# Sort by namespace
 		ksort( $this->internals );
@@ -400,7 +390,7 @@ class LinkHolderArray {
 		}
 
 		// construct query
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
 
 		$varRes = $dbr->newSelectQueryBuilder()
 			->select( LinkCache::getSelectFields() )
@@ -437,9 +427,11 @@ class LinkHolderArray {
 					$entry['title'] = $variantTitle;
 					$entry['pdbk'] = $varPdbk;
 
-					// set pdbk and colour
-					$classes[$varPdbk] = $linkRenderer->getLinkClasses( $variantTitle );
-					$pagemap[$s->page_id] = $pdbk;
+					// set pdbk and colour if we haven't checked this title yet.
+					if ( !isset( $classes[$varPdbk] ) ) {
+						$classes[$varPdbk] = $linkRenderer->getLinkClasses( $variantTitle );
+						$pagemap[$s->page_id] = $varPdbk;
+					}
 				}
 			}
 
@@ -457,8 +449,8 @@ class LinkHolderArray {
 		// rebuild the categories in original order (if there are replacements)
 		if ( $varCategories !== [] ) {
 			$newCats = [];
-			$originalCats = $output->getCategories();
-			foreach ( $originalCats as $cat => $sortkey ) {
+			foreach ( $output->getCategoryNames() as $cat ) {
+				$sortkey = $output->getCategorySortKey( $cat );
 				// make the replacement
 				$newCats[$varCategories[$cat] ?? $cat] = $sortkey;
 			}

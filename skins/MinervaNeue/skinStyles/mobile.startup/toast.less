@@ -5,8 +5,8 @@
 .toast {
 	font-size: @font-size-minerva-small;
 	padding: 0.9em 1em;
-	background-color: @toastNotificationColor;
-	color: #fff;
+	background-color: @background-color-toast-notification;
+	color: @color-inverted;
 	margin: 0 10% 20px;
 	width: 80%;
 	text-align: center;
@@ -29,8 +29,13 @@
 		border: 0; // FIXME: this is needed because a global .error adds border
 	}
 
+	.oo-ui-iconElement-icon {
+		// Fix icon placement in post-edit notifications (T336001)
+		display: block;
+	}
+
 	a {
-		color: @color-base--inverted;
+		color: @color-inverted;
 		text-decoration: underline;
 	}
 }

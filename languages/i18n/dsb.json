@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"DannyS712",
 			"Dbc334",
 			"Derbeth",
@@ -24,8 +25,7 @@
 			"Tlustulimu",
 			"Tlustulimu Nepl1",
 			"Vlad5250",
-			"아라",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Wótkaze pódšmarnuś:",
@@ -607,8 +607,6 @@
 	"editpage-notsupportedcontentformat-text": "Wopśimjeśowy format $1 njepódpěra se pśez wopśimjeśowy model $2.",
 	"content-model-wikitext": "wikitekst",
 	"content-model-text": "lutny tekst",
-	"content-model-javascript": "JavaScript",
-	"content-model-css": "CSS",
 	"expensive-parserfunction-warning": "Warnowanje: Toś ten bok wopśimujo pśewjele wołanjow parserowych funkcijow wupominajucych wusoke wugbaśe.\n\nNjesmějo daś wěcej nježli $2 {{PLURAL:$2|wołanja|wołanjowu|wołanjow|wołanjow}}, něnto {{PLURAL:$1|jo $1 wołanje|stej $1 wołani|su $1 wołanja|jo $1 wołanjow}}.",
 	"expensive-parserfunction-category": "Boki z pśewjele paerserowymi funkcijami, kótarež pominaju sebje wusoke wugbaśe.",
 	"post-expand-template-inclusion-warning": "Warnowanje: Wjelikosć zapśěgnjonych pśedłogow jo pśewjelika. Někotare pśedłogi se njezapśěgu.",
@@ -629,8 +627,8 @@
 	"undo-failure": "Změna njejo se mógała wótpóraś, dokulaž jo něchten pótrjefjony wótrězk mjaztym změnił.",
 	"undo-norev": "Změna njeda se wótwrośiś, dokulaž njeeksistěčujo abo jo se wulašowała.",
 	"undo-nochange": "Zda se, až změna jo se južo anulěrowała.",
-	"undo-summary": "Wersija $1 wót [[Special:Contributions/$2|$2]] ([[User talk:$2|Diskusija]]) jo se anulěrowała",
-	"undo-summary-username-hidden": "Změna $1 schowanego wužywarja jo se anulěrowała",
+	"undo-summary": "Wersija [[Special:Diff/$1|$1]] wót [[Special:Contributions/$2|$2]] ([[User talk:$2|Diskusija]]) jo se anulěrowała",
+	"undo-summary-username-hidden": "Změna [[Special:Diff/$1|$1]] schowanego wužywarja jo se anulěrowała",
 	"viewpagelogs": "Protokole boka pokazaś",
 	"nohistory": "Stawizny wobźěłanja za toś ten bok njeeksistěruju.",
 	"currentrev": "Aktualna wersija",
@@ -790,7 +788,6 @@
 	"search-relatedarticle": "swójźbne",
 	"searchrelated": "swójźbne",
 	"searchall": "wše",
-	"showingresults": "How {{PLURAL:|jo '''1''' wuslědk|stej '''$1''' wuslědka|su '''$1''' wuslědki}} wót cysła '''$2'''.",
 	"showingresultsinrange": "Dołojce pokazujo se do {{PLURAL:$1|<strong>1</strong> wuslědka|<strong>$1</strong> wuslědkowu|<strong>$1</strong> wuslědkow}} we wobłuku <strong>$2</strong> až do <strong>$3</strong>.",
 	"search-nonefound": "Njejsu se wuslědki namakali, kótarež wótpowěduju napšašowanjeju.",
 	"powersearch-legend": "Rozšyrjone pytanje",
@@ -1246,7 +1243,7 @@
 	"backend-fail-connect": "Zwisk z datajowym składowańskem backendom \"$1\" njejo móžno.",
 	"backend-fail-internal": "W składowańskem backenźe \"$1\" jo njeznata zmólka nastała.",
 	"backend-fail-contenttype": "Wopśimjeśowy typ dataje, kótaraž ma se na \"$1\" składowaś, njedajo se zwěsćiś.",
-	"backend-fail-batchsize": "Štapjelowa dataja, kótaraž wopśimujo {{PLURAL:$1|jadnu operaciju|$1 operaciji|$1 operacije|$1 operacijow}},  jo se  na składowański backend pósłała; limit jo $2 {{PLURAL:$1|operaciju|operaciji|operacije|operacijow}}.",
+	"backend-fail-batchsize": "Štapjelowa dataja, kótaraž wopśimujo {{PLURAL:$1|jadnu operaciju|$1 operaciji|$1 operacije|$1 operacijow}}, jo se na składowański backend pósłała; limit jo $2 {{PLURAL:$1|operaciju|operaciji|operacije|operacijow}}.",
 	"backend-fail-usable": "Dataja \"$1\" njedajo se dla njedosegajucych  pšawow abo felujucych zapisow daniž cytaś daniž pisaś.",
 	"lockmanager-notlocked": "\"$1\" njedajo se wótwóriś; njejo zastajony.",
 	"lockmanager-fail-closelock": "Zastajańska dataja njedajo se za \"$1\" zacyniś.",
@@ -1648,8 +1645,6 @@
 	"enotif_lastdiff": "Za toś tu změnu glědaj w $1.",
 	"enotif_anon_editor": "anonymny wužywaŕ $1",
 	"enotif_body": "Luby $WATCHINGUSERNAME,\n\n$PAGEINTRO $NEWPAGE\n\nZespominanje wobźěłarja: $PAGESUMMARY $PAGEMINOREDIT\n\nKontakt z wobźěłarjom:\nE-mail: $PAGEEDITOR_EMAIL\nWiki: $PAGEEDITOR_WIKI\n\nNjebudu žedne dalšne powěźeńki w paźe aktiwity, snaźkuli woglědujoš se toś ten bok, mjaztym sy pśizjawjony.\nMóźoś teke chórgojcki powěźeńkow za wšykne twóje wobglědowane boki slědk stajiś.\n\n             Twój pśijaśelny powěsćowy system {{SITENAME}}\n--\nAby swoje nastajenja za e-mailowe zdźělenja změnił, woglědaj\n{{canonicalurl:{{#special:Preferences}}}}\n\nAby nastajenja twójeje wobglědowańki změnił, woglědaj:\n{{canonicalurl:{{#special:EditWatchlist}}}}\n\nAby se bok z twójeje wobglědowańki wulašował, woglědaj\n$UNWATCHURL\n\nPšašanja a dalšna pomoc:\n$HELPPAGE",
-	"created": "napórał",
-	"changed": "změnił",
 	"deletepage-submit": "Bok wulašowaś",
 	"confirm": "Wobkšuśiś",
 	"excontent": "wopśimjeśe jo było: '$1'",

@@ -28,6 +28,7 @@
 	"multimediaviewer-multiple-authors": "Text shown after the author name when there are multiple authors. The text will link to the file description page.\n* $1 - number of additional authors.",
 	"multimediaviewer-multiple-authors-combine": "Combines the author name and the message about other authors.\n* $1 - author name, parsed from the file page\n* $2 - {{msg-mw|multimediaviewer-multiple-authors}} wrapped in a link.\n{{Identical|And}}",
 	"multimediaviewer-metadata-error": "Text shown when the information on the metadata panel could not be loaded. Parameters:\n* $1 - the error message (not localized)\nSee also:\n* {{msg-mw|multimediaviewer-thumbnail-error}}",
+	"multimediaviewer-file-not-found-error": "Text shown when the image could not be found on current page.",
 	"multimediaviewer-thumbnail-error": "Text shown when the image could not be loaded. Followed by {{msg-mw|multimediaviewer-thumbnail-error-description}}.\nSee also:\n* {{msg-mw|multimediaviewer-thumbnail-error-description}}\n* {{msg-mw|multimediaviewer-metadata-error}}",
 	"multimediaviewer-thumbnail-error-description": "Text shown when the image could not be loaded. Follows {{msg-mw|multimediaviewer-thumbnail-error}}. Parameters:\n* $1 - \"retry\" link (see {{msg-mw|multimediaviewer-thumbnail-error-retry}})\n* $2 - the error message (not localized)\nSee also:\n* {{msg-mw|multimediaviewer-thumbnail-error}}",
 	"multimediaviewer-thumbnail-error-retry": "Used as a part of {{msg-mw|multimediaviewer-thumbnail-error-description}} (as a link text).\n{{Identical|Retry}}",

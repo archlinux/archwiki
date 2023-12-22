@@ -7,7 +7,6 @@
 			"Woytecr"
 		]
 	},
-	"apihelp-templatedata-description": "Pobierz dane zapisane przez rozszerzenie TemplateData.",
 	"apihelp-templatedata-summary": "Pobierz dane zapisane przez rozszerzenie TemplateData.",
 	"apihelp-templatedata-example-1": "Zwraca dane TemplateData dla [[Template:Stub]] oraz [[Template:Example]] z informacją, że szablon nie istnieje lub że istnieje, ale nie posiada TemplateData.",
 	"apihelp-templatedata-example-2": "Zwraca dane TemplateData dla [[Template:Stub]] oraz [[Template:Example]] z brakiem wyników jeśli szablon nie istnieje lub jeśli istnieje, ale nie posiada TemplateData.",

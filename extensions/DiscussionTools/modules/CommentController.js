@@ -1,7 +1,6 @@
 var
 	controller = require( './controller.js' ),
 	modifier = require( './modifier.js' ),
-	logger = require( './logger.js' ),
 	dtConf = require( './config.json' ),
 	CommentItem = require( './CommentItem.js' ),
 	scrollPadding = {
@@ -9,43 +8,17 @@ var
 		top: 10 + ( $( document.documentElement ).hasClass( 'vector-feature-sticky-header-enabled' ) ? 50 : 0 ),
 		bottom: 10
 	},
-	defaultEditMode = mw.user.options.get( 'discussiontools-editmode' ) || mw.config.get( 'wgDiscussionToolsFallbackEditMode' ),
-	defaultVisual = defaultEditMode === 'visual',
-	featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {},
-	enable2017Wikitext = featuresEnabled.sourcemodetoolbar,
-	conf = mw.config.get( 'wgVisualEditorConfig' ),
-	visualModules = [ 'ext.discussionTools.ReplyWidgetVisual' ]
-		.concat( conf.pluginModules.filter( mw.loader.getState ) ),
-	plainModules = [ 'ext.discussionTools.ReplyWidgetPlain' ];
-
-if ( OO.ui.isMobile() ) {
-	visualModules = [
-		'ext.visualEditor.core.mobile',
-		'ext.visualEditor.mwextensions'
-	].concat( visualModules );
-} else {
-	visualModules = [
-		'ext.visualEditor.core.desktop',
-		'ext.visualEditor.desktopTarget',
-		'ext.visualEditor.mwextensions.desktop'
-	].concat( visualModules );
-}
-
-// Start loading reply widget code
-if ( defaultVisual || enable2017Wikitext ) {
-	mw.loader.using( visualModules );
-} else {
-	mw.loader.using( plainModules );
-}
-
+	defaultVisual = controller.defaultVisual,
+	enable2017Wikitext = controller.enable2017Wikitext;
 /**
  * Handles setup, save and teardown of commenting widgets
  *
  * @param {jQuery} $pageContainer Page container
  * @param {ThreadItem} threadItem Thread item to attach new comment to
  * @param {ThreadItemSet} threadItemSet
+ * @param {MemoryStorage} storage Storage object for autosave
  */
-function CommentController( $pageContainer, threadItem, threadItemSet ) {
+function CommentController( $pageContainer, threadItem, threadItemSet, storage ) {
 	// Mixin constructors
 	OO.EventEmitter.call( this );
 
@@ -53,6 +26,7 @@ function CommentController( $pageContainer, threadItem, threadItemSet ) {
 	this.$pageContainer = $pageContainer;
 	this.threadItem = threadItem;
 	this.threadItemSet = threadItemSet;
+	this.storage = storage;
 	this.newListItem = null;
 	this.replyWidgetPromise = null;
 	this.newComments = [];
@@ -141,10 +115,11 @@ CommentController.prototype.setup = function ( mode, hideErrors, suppressNotific
 			( defaultVisual ? 'visual' : 'source' );
 	}
 
-	logger( {
+	mw.track( 'editAttemptStep', {
 		action: 'init',
 		type: this.constructor.static.initType || 'page',
 		mechanism: 'click',
+		integration: 'discussiontools',
 		// eslint-disable-next-line camelcase
 		editor_interface: mode === 'visual' ? 'visualeditor' :
 			( enable2017Wikitext ? 'wikitext-2017' : 'wikitext' )
@@ -164,7 +139,7 @@ CommentController.prototype.setup = function ( mode, hideErrors, suppressNotific
 				mw.track( 'dt.commentSetupError', code );
 			}
 
-			logger( {
+			mw.track( 'editAttemptStep', {
 				action: 'abort',
 				type: 'preinit'
 			} );
@@ -223,14 +198,12 @@ CommentController.prototype.setup = function ( mode, hideErrors, suppressNotific
 		}
 		$( commentController.newListItem ).empty().append( replyWidget.$element );
 
-		$( this.newListItem ).parents( '.collapsible-block' ).prev().addClass( 'collapsible-heading-disabled' );
-
 		commentController.setupReplyWidget( replyWidget, {}, suppressNotifications );
 
 		commentController.showAndFocus();
 
-		logger( { action: 'ready' } );
-		logger( { action: 'loaded' } );
+		mw.track( 'editAttemptStep', { action: 'ready' } );
+		mw.track( 'editAttemptStep', { action: 'loaded' } );
 	} );
 };
 
@@ -326,7 +299,7 @@ CommentController.prototype.getReplyWidgetClass = function ( visual ) {
 	// If 2017WTE mode is enabled, always use ReplyWidgetVisual.
 	visual = visual || enable2017Wikitext;
 
-	return mw.loader.using( visual ? visualModules : plainModules ).then( function () {
+	return mw.loader.using( controller.getReplyWidgetModules( visual ) ).then( function () {
 		return require( visual ? 'ext.discussionTools.ReplyWidgetVisual' : 'ext.discussionTools.ReplyWidgetPlain' );
 	} );
 };
@@ -361,7 +334,7 @@ CommentController.prototype.setupReplyWidget = function ( replyWidget, data, sup
 
 CommentController.prototype.storeEditSummary = function () {
 	if ( this.replyWidget ) {
-		this.replyWidget.storage.set( this.replyWidget.storagePrefix + '/summary', this.replyWidget.getEditSummary() );
+		this.replyWidget.storage.set( 'summary', this.replyWidget.getEditSummary() );
 	}
 };
 
@@ -434,8 +407,10 @@ CommentController.prototype.getApiQuery = function ( pageName, checkboxes ) {
 		assert: mw.user.isAnon() ? 'anon' : 'user',
 		assertuser: mw.user.getName() || undefined,
 		uselang: mw.config.get( 'wgUserLanguage' ),
-		dttags: tags.join( ',' ),
-		editingStatsId: logger.getSessionId()
+		// HACK: Always display reply links afterwards, ignoring preferences etc., in case this was
+		// a page view with reply links forced with ?dtenable=1 or otherwise
+		dtenable: '1',
+		dttags: tags.join( ',' )
 	};
 
 	if ( replyWidget.getMode() === 'source' ) {
@@ -472,6 +447,27 @@ CommentController.prototype.save = function ( pageName ) {
 
 	return this.replyWidget.checkboxesPromise.then( function ( checkboxes ) {
 		var data = commentController.getApiQuery( pageName, checkboxes );
+
+		if (
+			// We're saving the first comment on a page that previously didn't exist.
+			// Don't fetch the new revision's HTML content, because we will reload the whole page.
+			!mw.config.get( 'wgRelevantArticleId' ) ||
+			// We're saving a comment on a different page than the one being viewed.
+			// Don't fetch the new revision's HTML content, because we can't use it anyway.
+			pageName !== mw.config.get( 'wgRelevantPageName' )
+		) {
+			data.nocontent = true;
+		}
+
+		if ( replyWidget.commentDetails.wouldAutoCreate ) {
+			// This means that we might need to redirect to an opaque URL,
+			// so we must set up query parameters we want ahead of time.
+			data.returnto = pageName;
+			var params = new URLSearchParams();
+			params.set( 'dtrepliedto', commentController.getThreadItem().id );
+			params.set( 'dttempusercreated', '1' );
+			data.returntoquery = params.toString();
+		}
 
 		// No timeout. Huge talk pages can take a long time to save, and falsely reporting an error
 		// could result in duplicate messages if the user retries. (T249071)
@@ -722,7 +718,7 @@ CommentController.prototype.switchToVisual = function () {
 							size: 'medium'
 						}
 					);
-					mw.track( 'dt.schemaVisualEditorFeatureUse', {
+					mw.track( 'visualEditorFeatureUse', {
 						feature: 'editor-switch',
 						action: 'dialog-prevent-show'
 					} );

@@ -7,7 +7,6 @@
 			"Yusuke1109"
 		]
 	},
-	"apihelp-titleblacklist-description": "TitleBllacklist に対してページ名、ファイル名、利用者名を検証します。",
 	"apihelp-titleblacklist-summary": "TitleBllacklist に対してページ名、ファイル名、利用者名を検証します。",
 	"apihelp-titleblacklist-param-title": "TitleBllacklist に対して検証する文字列",
 	"apihelp-titleblacklist-param-action": "確認対象の操作",

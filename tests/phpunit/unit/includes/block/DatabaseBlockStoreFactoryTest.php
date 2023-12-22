@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Tests\Block;
 
-use ConfiguredReadOnlyMode;
 use MediaWiki\Block\BlockRestrictionStore;
 use MediaWiki\Block\BlockRestrictionStoreFactory;
 use MediaWiki\Block\DatabaseBlockStore;
@@ -17,6 +16,7 @@ use MediaWikiUnitTestCase;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\LBFactory;
 use Wikimedia\Rdbms\LoadBalancer;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
  * @covers \MediaWiki\Block\DatabaseBlockStoreFactory
@@ -51,7 +51,7 @@ class DatabaseBlockStoreFactoryTest extends MediaWikiUnitTestCase {
 			$this->createMock( CommentStore::class ),
 			$this->createMock( HookContainer::class ),
 			$lbFactory,
-			$this->createMock( ConfiguredReadOnlyMode::class ),
+			$this->createMock( ReadOnlyMode::class ),
 			$this->createMock( UserFactory::class )
 		);
 
@@ -59,7 +59,7 @@ class DatabaseBlockStoreFactoryTest extends MediaWikiUnitTestCase {
 		$this->assertInstanceOf( DatabaseBlockStore::class, $databaseBlockStore );
 	}
 
-	public function provideDomains() {
+	public static function provideDomains() {
 		yield 'local wiki' => [ WikiAwareEntity::LOCAL ];
 		yield 'foreign wiki' => [ 'meta' ];
 	}

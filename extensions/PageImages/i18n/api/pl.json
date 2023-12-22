@@ -6,7 +6,6 @@
 			"SemanticPioneer"
 		]
 	},
-	"apihelp-query+pageimages-description": "Zwraca informacje na temat obrazów na stronie, takie jak miniatury lub wygląd zdjęć.",
 	"apihelp-query+pageimages-summary": "Zwraca informacje na temat obrazów na stronie, takie jak miniatury lub wygląd zdjęć.",
 	"apihelp-query+pageimages-example-1": "Pobierz nazwę i stupikslową miniaturę portretu Alberta Einsteina.",
 	"apihelp-query+pageimages-param-prop": "Jakie informacje zwrócić:\n;thumbnail:Adres URL i wymiary miniatury obrazu powiązanego ze stroną, jeżeli występuje.\n;original:Adres URL i pierwotne wymiary obrazu powiązanego ze stroną, jeżeli występuje.\n;name:Tytuł obrazu.",

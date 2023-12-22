@@ -3,6 +3,8 @@
 namespace MediaWiki\Api;
 
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Session\Session;
+use MediaWiki\User\UserIdentity;
 
 /**
  * This class provides an implementation of the hook interfaces used
@@ -49,12 +51,12 @@ class ApiHookRunner implements
 	\MediaWiki\Hook\LanguageLinksHook,
 	\MediaWiki\Hook\OutputPageBeforeHTMLHook,
 	\MediaWiki\Hook\OutputPageCheckLastModifiedHook,
+	\MediaWiki\Hook\TempUserCreatedRedirectHook,
 	\MediaWiki\Hook\UserLoginCompleteHook,
 	\MediaWiki\Hook\UserLogoutCompleteHook,
 	\MediaWiki\SpecialPage\Hook\ChangeAuthenticationDataAuditHook
 {
-	/** @var HookContainer */
-	private $container;
+	private HookContainer $container;
 
 	public function __construct( HookContainer $container ) {
 		$this->container = $container;
@@ -333,6 +335,20 @@ class ApiHookRunner implements
 		return $this->container->run(
 			'RequestHasSameOriginSecurity',
 			[ $request ]
+		);
+	}
+
+	public function onTempUserCreatedRedirect(
+		Session $session,
+		UserIdentity $user,
+		string $returnTo,
+		string $returnToQuery,
+		string $returnToAnchor,
+		&$redirectUrl
+	) {
+		return $this->container->run(
+			'TempUserCreatedRedirect',
+			[ $session, $user, $returnTo, $returnToQuery, $returnToAnchor, &$redirectUrl ]
 		);
 	}
 

@@ -1,11 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Metalhead64",
-			"Amire80"
+			"Amire80",
+			"Metalhead64"
 		]
 	},
-	"apihelp-templatedata-description": "Gespeicherte Daten von der Erweiterung „TemplateData“ abrufen.",
 	"apihelp-templatedata-summary": "Ruft Daten ab, die durch die Erweiterung „TemplateData“ gespeichert werden.",
 	"apihelp-templatedata-example-1": "Gibt Vorlagendaten für [[Template:Foobar]] mit Ergebnissen zurück, falls die Vorlage nicht vorhanden ist oder zwar vorhanden ist, jedoch keine Vorlagendaten hat.",
 	"apihelp-templatedata-example-2": "Gibt Vorlagendaten für [[Template:Phabricator]] ohne Ergebnisse zurück, falls die Vorlage nicht vorhanden ist oder zwar vorhanden ist, jedoch keine Vorlagendaten hat.",

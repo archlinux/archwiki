@@ -28,6 +28,9 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\MutableRevisionSlots;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\ExternalUserNames;
+use MediaWiki\User\User;
+use MediaWiki\User\UserIdentityValue;
 
 /**
  * Represents a revision, log entry or upload during the import process.
@@ -195,19 +198,10 @@ class WikiRevision implements ImportableUploadRevision, ImportableOldRevision {
 	}
 
 	/**
-	 * @since 1.7 taking a Title object (string before)
 	 * @param Title $title
-	 * @throws MWException
 	 */
-	public function setTitle( $title ) {
-		if ( is_object( $title ) ) {
-			$this->title = $title;
-		} elseif ( $title === null ) {
-			throw new MWException( "WikiRevision given a null title in import. "
-				. "You may need to adjust \$wgLegalTitleChars." );
-		} else {
-			throw new MWException( "WikiRevision given non-object title in import." );
-		}
+	public function setTitle( Title $title ) {
+		$this->title = $title;
 	}
 
 	/**
@@ -656,7 +650,13 @@ class WikiRevision implements ImportableUploadRevision, ImportableOldRevision {
 	public function importLogItem() {
 		$dbw = wfGetDB( DB_PRIMARY );
 
-		$user = $this->getUserObj() ?: User::newFromName( $this->getUser(), false );
+		$userName = $this->getUser();
+		if ( ExternalUserNames::isExternal( $userName ) ) {
+			// Use newAnonymous() since the user name is already prefixed.
+			$user = UserIdentityValue::newAnonymous( $userName );
+		} else {
+			$user = $this->getUserObj() ?: User::newFromName( $userName, false );
+		}
 
 		# @todo FIXME: This will not record autoblocks
 		if ( !$this->getTitle() ) {
@@ -666,15 +666,18 @@ class WikiRevision implements ImportableUploadRevision, ImportableOldRevision {
 		}
 		# Check if it exists already
 		// @todo FIXME: Use original log ID (better for backups)
-		$prior = (bool)$dbw->selectField( 'logging', '1',
-			[ 'log_type' => $this->getType(),
+		$prior = (bool)$dbw->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'logging' )
+			->where( [
+				'log_type' => $this->getType(),
 				'log_action' => $this->getAction(),
 				'log_timestamp' => $dbw->timestamp( $this->timestamp ),
 				'log_namespace' => $this->getTitle()->getNamespace(),
 				'log_title' => $this->getTitle()->getDBkey(),
-				'log_params' => $this->params ],
-			__METHOD__
-		);
+				'log_params' => $this->params
+			] )
+			->caller( __METHOD__ )->fetchField();
 		// @todo FIXME: This could fail slightly for multiple matches :P
 		if ( $prior ) {
 			wfDebug( __METHOD__

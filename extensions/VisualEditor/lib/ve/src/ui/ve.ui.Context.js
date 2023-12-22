@@ -96,9 +96,11 @@ ve.ui.Context.prototype.isVisible = function () {
  * Result is cached, and cleared when the model or selection changes.
  *
  * @abstract
- * @return {Object[]} List of objects containing `type`, `name` and `model` properties,
- *   representing each compatible type (either `item` or `tool`), symbolic name of the item or tool
- *   and the model the item or tool is compatible with
+ * @return {Object[]} List of objects containing `type`, `name`, and `model` or `data` properties,
+ *   `type` is either `item`, `tool` or `persistent`
+ *   `name` is the symbolic name of the item or tool
+ *   `model` is the model the item or tool is compatible with (for `item` or `tool`)
+ *   `data` is additional data, for `persistent` context items
  */
 ve.ui.Context.prototype.getRelatedSources = null;
 
@@ -175,6 +177,10 @@ ve.ui.Context.prototype.setupMenuItems = function () {
 		} else if ( source.type === 'tool' ) {
 			items.push( new ve.ui.ToolContextItem(
 				this, sources[ i ].model, ve.ui.toolFactory.lookup( sources[ i ].name )
+			) );
+		} else if ( source.type === 'persistent' ) {
+			items.push( ve.ui.contextItemFactory.create(
+				sources[ i ].name, this, sources[ i ].data
 			) );
 		}
 	}
@@ -255,4 +261,16 @@ ve.ui.Context.prototype.destroy = function () {
 
 	this.$element.remove();
 	return this;
+};
+
+/**
+ * Get an object describing the amount of padding the context adds to the surface.
+ *
+ * For example the mobile context, which is fixed to the bottom of the viewport,
+ * will add bottom padding, whereas the floating desktop context will add none.
+ *
+ * @return {null|Object} Padding object, or null
+ */
+ve.ui.Context.prototype.getSurfacePadding = function () {
+	return null;
 };

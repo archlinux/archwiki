@@ -5,19 +5,30 @@ namespace MediaWiki\Tests\Integration\CommentFormatter;
 use LinkCacheTestTrait;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentParser;
+use MediaWiki\Config\SiteConfiguration;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\Title;
-use SiteConfiguration;
+use RepoGroup;
 
 /**
  * @group Database
  * @covers \MediaWiki\CommentFormatter\CommentParser
+ * @group Database
  */
 class CommentParserTest extends \MediaWikiIntegrationTestCase {
 	use DummyServicesTrait;
 	use LinkCacheTestTrait;
+
+	/**
+	 * @return RepoGroup
+	 */
+	private function getRepoGroup() {
+		$repoGroup = $this->createNoOpMock( RepoGroup::class, [ 'findFiles' ] );
+		$repoGroup->method( 'findFiles' )->willReturn( [] );
+		return $repoGroup;
+	}
 
 	private function getParser() {
 		$services = $this->getServiceContainer();
@@ -25,7 +36,7 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 			$services->getLinkRenderer(),
 			$services->getLinkBatchFactory(),
 			$services->getLinkCache(),
-			$services->getRepoGroup(),
+			$this->getRepoGroup(),
 			$services->getContentLanguage(),
 			$services->getContentLanguage(),
 			$services->getTitleParser(),
@@ -34,41 +45,44 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 		);
 	}
 
-	private function setupInterwiki() {
-		$this->overrideMwServices( null, [
-			'InterwikiLookup' => function () {
-				return $this->getDummyInterwikiLookup( [
-					'interwiki' => [
-						'iw_prefix' => 'interwiki',
-						'iw_url' => 'https://interwiki/$1',
-					]
-				] );
-			}
-		] );
+	/**
+	 * @before
+	 */
+	public function interwikiSetUp() {
+		$this->setService( 'InterwikiLookup', function () {
+			return $this->getDummyInterwikiLookup( [
+				'interwiki' => [
+					'iw_prefix' => 'interwiki',
+					'iw_url' => 'https://interwiki/$1',
+				]
+			] );
+		} );
 	}
 
-	private function setupConf() {
+	/**
+	 * @before
+	 */
+	public function configSetUp() {
 		$conf = new SiteConfiguration();
 		$conf->settings = [
 			'wgServer' => [
-				'enwiki' => '//en.example.org'
+				'foowiki' => '//foo.example.org'
 			],
 			'wgArticlePath' => [
-				'enwiki' => '/w/$1',
+				'foowiki' => '/foo/$1',
 			],
 		];
 		$conf->suffixes = [ 'wiki' ];
 		$this->setMwGlobals( 'wgConf', $conf );
 		$this->overrideConfigValues( [
-			MainConfigNames::Script => '/wiki/index.php',
+			MainConfigNames::Script => '/w/index.php',
 			MainConfigNames::ArticlePath => '/wiki/$1',
 			MainConfigNames::CapitalLinks => true,
 			MainConfigNames::LanguageCode => 'en',
 		] );
 	}
 
-	public function provideFormatComment() {
-		$wikiId = 'enwiki'; // $wgConf has a fake entry for this
+	public static function provideFormatComment() {
 		return [
 			// MediaWiki\CommentFormatter\CommentFormatter::format
 			[
@@ -180,17 +194,17 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 				false, false
 			],
 			[
-				'<span dir="auto"><span class="autocomment"><a class="external" rel="nofollow" href="//en.example.org/w/Special:BlankPage#autocomment">→‎autocomment</a></span></span>',
+				'<span dir="auto"><span class="autocomment"><a class="external" rel="nofollow" href="//foo.example.org/foo/Special:BlankPage#autocomment">→‎autocomment</a></span></span>',
 				"/* autocomment */",
-				false, false, $wikiId
+				false, false, 'foowiki'
 			],
 			// MediaWiki\CommentFormatter\CommentParser::doWikiLinks
 			[
-				'abc <a href="/wiki/index.php?title=Link&amp;action=edit&amp;redlink=1" class="new" title="Link (page does not exist)">link</a> def',
+				'abc <a href="/w/index.php?title=Link&amp;action=edit&amp;redlink=1" class="new" title="Link (page does not exist)">link</a> def',
 				"abc [[link]] def",
 			],
 			[
-				'abc <a href="/wiki/index.php?title=Link&amp;action=edit&amp;redlink=1" class="new" title="Link (page does not exist)">text</a> def',
+				'abc <a href="/w/index.php?title=Link&amp;action=edit&amp;redlink=1" class="new" title="Link (page does not exist)">text</a> def',
 				"abc [[link|text]] def",
 			],
 			[
@@ -198,7 +212,7 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 				"abc [[Special:BlankPage|]] def",
 			],
 			[
-				'abc <a href="/wiki/index.php?title=%C4%84%C5%9B%C5%BC&amp;action=edit&amp;redlink=1" class="new" title="Ąśż (page does not exist)">ąśż</a> def',
+				'abc <a href="/w/index.php?title=%C4%84%C5%9B%C5%BC&amp;action=edit&amp;redlink=1" class="new" title="Ąśż (page does not exist)">ąśż</a> def',
 				"abc [[%C4%85%C5%9B%C5%BC]] def",
 			],
 			[
@@ -206,11 +220,11 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 				"abc [[#section]] def",
 			],
 			[
-				'abc <a href="/wiki/index.php?title=/subpage&amp;action=edit&amp;redlink=1" class="new" title="/subpage (page does not exist)">/subpage</a> def',
+				'abc <a href="/w/index.php?title=/subpage&amp;action=edit&amp;redlink=1" class="new" title="/subpage (page does not exist)">/subpage</a> def',
 				"abc [[/subpage]] def",
 			],
 			[
-				'abc <a href="/wiki/index.php?title=%22evil!%22&amp;action=edit&amp;redlink=1" class="new" title="&quot;evil!&quot; (page does not exist)">&quot;evil!&quot;</a> def',
+				'abc <a href="/w/index.php?title=%22evil!%22&amp;action=edit&amp;redlink=1" class="new" title="&quot;evil!&quot; (page does not exist)">&quot;evil!&quot;</a> def',
 				"abc [[\"evil!\"]] def",
 			],
 			[
@@ -222,17 +236,17 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 				"abc [[|]] def",
 			],
 			[
-				'abc <a href="/wiki/index.php?title=Link&amp;action=edit&amp;redlink=1" class="new" title="Link (page does not exist)">link</a> def',
+				'abc <a href="/w/index.php?title=Link&amp;action=edit&amp;redlink=1" class="new" title="Link (page does not exist)">link</a> def',
 				"abc [[link]] def",
 				false, false
 			],
 			[
-				'abc <a class="external" rel="nofollow" href="//en.example.org/w/Link">link</a> def',
+				'abc <a class="external" rel="nofollow" href="//foo.example.org/foo/Link">link</a> def',
 				"abc [[link]] def",
-				false, false, $wikiId
+				false, false, 'foowiki'
 			],
 			[
-				'<a href="/wiki/index.php?title=Special:Upload&amp;wpDestFile=LinkerTest.jpg" class="new" title="LinkerTest.jpg">Media:LinkerTest.jpg</a>',
+				'<a href="/w/index.php?title=Special:Upload&amp;wpDestFile=LinkerTest.jpg" class="new" title="LinkerTest.jpg">Media:LinkerTest.jpg</a>',
 				'[[Media:LinkerTest.jpg]]'
 			],
 			[
@@ -240,7 +254,7 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 				'[[:Special:BlankPage]]'
 			],
 			[
-				'<a href="/wiki/index.php?title=Link&amp;action=edit&amp;redlink=1" class="new" title="Link (page does not exist)">linktrail</a>...',
+				'<a href="/w/index.php?title=Link&amp;action=edit&amp;redlink=1" class="new" title="Link (page does not exist)">linktrail</a>...',
 				'[[link]]trail...'
 			],
 			[
@@ -270,19 +284,17 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 		$conf = new SiteConfiguration();
 		$conf->settings = [
 			'wgServer' => [
-				'enwiki' => '//en.example.org',
-				'dewiki' => '//de.example.org',
+				'foowiki' => '//foo.example.org',
 			],
 			'wgArticlePath' => [
-				'enwiki' => '/w/$1',
-				'dewiki' => '/w/$1',
+				'foowiki' => '/foo/$1',
 			],
 		];
 		$conf->suffixes = [ 'wiki' ];
 
 		$this->setMwGlobals( 'wgConf', $conf );
 		$this->overrideConfigValues( [
-			MainConfigNames::Script => '/wiki/index.php',
+			MainConfigNames::Script => '/w/index.php',
 			MainConfigNames::ArticlePath => '/wiki/$1',
 			MainConfigNames::CapitalLinks => true,
 			// TODO: update tests when the default changes
@@ -290,12 +302,11 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 			MainConfigNames::LanguageCode => 'en',
 		] );
 
-		$this->setupInterwiki();
 		$this->addGoodLinkObject( 1, Title::makeTitle( NS_MAIN, 'Present' ) );
 
 		if ( $title === false ) {
 			// We need a page title that exists
-			$title = Title::newFromText( 'Special:BlankPage' );
+			$title = Title::makeTitle( NS_SPECIAL, 'BlankPage' );
 		}
 
 		$parser = $this->getParser();
@@ -332,24 +343,24 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 				null,
 			],
 			[
-				'<a class="external" rel="nofollow" href="//en.example.org/w/Foo%27bar">Foo&#039;bar</a>',
+				'<a class="external" rel="nofollow" href="//foo.example.org/foo/Foo%27bar">Foo&#039;bar</a>',
 				"[[Foo'bar]]",
-				'enwiki',
+				'foowiki',
 			],
 			[
-				'<a class="external" rel="nofollow" href="//en.example.org/w/Foo$100bar">Foo$100bar</a>',
+				'<a class="external" rel="nofollow" href="//foo.example.org/foo/Foo$100bar">Foo$100bar</a>',
 				'[[Foo$100bar]]',
-				'enwiki',
+				'foowiki',
 			],
 			[
-				'foo bar <a class="external" rel="nofollow" href="//en.example.org/w/Special:BlankPage">Special:BlankPage</a>',
+				'foo bar <a class="external" rel="nofollow" href="//foo.example.org/foo/Special:BlankPage">Special:BlankPage</a>',
 				'foo bar [[Special:BlankPage]]',
-				'enwiki',
+				'foowiki',
 			],
 			[
-				'foo bar <a class="external" rel="nofollow" href="//en.example.org/w/File:Example">Image:Example</a>',
+				'foo bar <a class="external" rel="nofollow" href="//foo.example.org/foo/File:Example">Image:Example</a>',
 				'foo bar [[Image:Example]]',
-				'enwiki',
+				'foowiki',
 			],
 		];
 		// phpcs:enable
@@ -361,9 +372,8 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 	 * @dataProvider provideFormatLinksInComment
 	 */
 	public function testFormatLinksInComment( $expected, $input, $wiki ) {
-		$this->setupConf();
 		$parser = $this->getParser();
-		$title = Title::newFromText( 'Special:BlankPage' );
+		$title = Title::makeTitle( NS_SPECIAL, 'BlankPage' );
 		$result = $parser->finalize(
 			$parser->preprocess(
 				$input, $title, false, $wiki, false
@@ -375,14 +385,10 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 
 	public function testLinkCacheInteraction() {
 		$this->tablesUsed[] = 'page';
-		$this->setupConf();
 		$services = $this->getServiceContainer();
-		$present = Title::makeTitle( NS_MAIN, 'Present' );
-		$absent = Title::makeTitle( NS_MAIN, 'Absent' );
-		$this->editPage(
-			$present,
-			'content'
-		);
+		$present = $this->getExistingTestPage( 'Present' )->getTitle();
+		$absent = $this->getNonexistingTestPage( 'Absent' )->getTitle();
+
 		$parser = $this->getParser();
 		$linkCache = $services->getLinkCache();
 		$result = $parser->finalize( [
@@ -391,7 +397,7 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 		] );
 		$expected = [
 			'<a href="/wiki/Present" title="Present">Present</a>',
-			'<a href="/wiki/index.php?title=Absent&amp;action=edit&amp;redlink=1" class="new" title="Absent (page does not exist)">Absent</a>'
+			'<a href="/w/index.php?title=Absent&amp;action=edit&amp;redlink=1" class="new" title="Absent (page does not exist)">Absent</a>'
 		];
 		$this->assertSame( $expected, $result );
 		$this->assertGreaterThan( 0, $linkCache->getGoodLinkID( $present ) );
@@ -402,14 +408,12 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 		// LinkBatch does not provide a transparent read-through cache.
 		// TODO: Generic $this->assertQueryCount() would do the job.
 		$lbf = $services->getDBLoadBalancerFactory();
-		$fakeLB = $lbf->newMainLB();
-		$fakeLB->disable( __METHOD__ );
 		$linkBatchFactory = new LinkBatchFactory(
 			$services->getLinkCache(),
 			$services->getTitleFormatter(),
 			$services->getContentLanguage(),
 			$services->getGenderCache(),
-			$fakeLB,
+			$lbf,
 			$services->getLinksMigration(),
 			LoggerFactory::getInstance( 'LinkBatch' )
 		);
@@ -417,7 +421,7 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 			$services->getLinkRenderer(),
 			$linkBatchFactory,
 			$linkCache,
-			$services->getRepoGroup(),
+			$this->getRepoGroup(),
 			$services->getContentLanguage(),
 			$services->getContentLanguage(),
 			$services->getTitleParser(),
@@ -435,14 +439,8 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 	 * Regression test for T300311
 	 */
 	public function testInterwikiLinkCachePollution() {
-		$this->tablesUsed[] = 'page';
-		$this->setupConf();
-		$this->setupInterwiki();
-		$present = Title::makeTitle( NS_TEMPLATE, 'Present' );
-		$this->editPage(
-			$present,
-			'content'
-		);
+		$present = $this->getExistingTestPage( 'Template:Present' )->getTitle();
+
 		$this->getServiceContainer()->getLinkCache()->clear();
 		$parser = $this->getParser();
 		$result = $parser->finalize(
@@ -459,7 +457,6 @@ class CommentParserTest extends \MediaWikiIntegrationTestCase {
 	 * Regression test for T293665
 	 */
 	public function testAlwaysKnownPages() {
-		$this->setupConf();
 		$this->setTemporaryHook( 'TitleIsAlwaysKnown',
 			static function ( $target, &$isKnown ) {
 				$isKnown = $target->getText() == 'AlwaysKnownFoo';

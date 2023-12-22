@@ -5,7 +5,6 @@
 			"Elisardojm"
 		]
 	},
-	"apihelp-query+extracts-description": "Devolve texto plano ou extractos limitados en HTML das páxinas indicadas.",
 	"apihelp-query+extracts-summary": "Devolve texto plano ou extractos limitados en HTML das páxinas indicadas.",
 	"apihelp-query+extracts-param-chars": "Cantos caracteres devolver. O texto devolto actual pode ser un pouco máis longo.",
 	"apihelp-query+extracts-param-sentences": "Cantas frases devolver.",

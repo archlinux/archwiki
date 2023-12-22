@@ -1,6 +1,9 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityValue;
 
 /**
  * @covers ClearUserWatchlistJob
@@ -12,15 +15,8 @@ use MediaWiki\MainConfigNames;
  * @author Addshore
  */
 class ClearUserWatchlistJobTest extends MediaWikiIntegrationTestCase {
-
-	protected function setUp(): void {
-		parent::setUp();
-		self::$users['ClearUserWatchlistJobTestUser']
-			= new TestUser( 'ClearUserWatchlistJobTestUser' );
-	}
-
-	private function getUser() {
-		return self::$users['ClearUserWatchlistJobTestUser']->getUser();
+	private function getUser(): UserIdentity {
+		return new UserIdentityValue( 42, 'ClearUserWatchlistJobTestUser' );
 	}
 
 	private function getWatchedItemStore() {
@@ -77,12 +73,11 @@ class ClearUserWatchlistJobTest extends MediaWikiIntegrationTestCase {
 		$watchedItemStore->addWatch( $user, new TitleValue( 0, __METHOD__ . 'has expiry' ), '1 week' );
 
 		// Get the IDs of these items.
-		$itemIds = $this->db->selectFieldValues(
-			[ 'watchlist' ],
-			'wl_id',
-			[ 'wl_user' => $user->getId() ],
-			__METHOD__
-		);
+		$itemIds = $this->db->newSelectQueryBuilder()
+			->select( 'wl_id' )
+			->from( 'watchlist' )
+			->where( [ 'wl_user' => $user->getId() ] )
+			->caller( __METHOD__ )->fetchFieldValues();
 
 		// Clear the watchlist by running the job.
 		$job = new ClearUserWatchlistJob( [
@@ -93,12 +88,11 @@ class ClearUserWatchlistJobTest extends MediaWikiIntegrationTestCase {
 		$this->runJobs( [ 'complete' => false ], [ 'maxJobs' => 1 ] );
 
 		// Confirm that there are now no expiry records.
-		$watchedCount = $this->db->selectRowCount(
-			'watchlist_expiry',
-			'*',
-			[ 'we_item' => $itemIds ],
-			__METHOD__
-		);
+		$watchedCount = $this->db->newSelectQueryBuilder()
+			->select( '*' )
+			->from( 'watchlist_expiry' )
+			->where( [ 'we_item' => $itemIds ] )
+			->caller( __METHOD__ )->fetchRowCount();
 		$this->assertSame( 0, $watchedCount );
 	}
 }

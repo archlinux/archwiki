@@ -1,4 +1,4 @@
-@import 'mediawiki.ui/variables.less';
+@import 'mediawiki.skin.variables.less';
 
 /* stylelint-disable-next-line selector-class-pattern */
 .notifications-filter-overlay {
@@ -21,7 +21,7 @@
 
 		.mw-echo-ui-pageNotificationsOptionWidget {
 			box-sizing: border-box;
-			border: 1px solid @colorGray12;
+			border: @border-width-base @border-style-base @border-color-subtle;
 			padding: 0.7em 1.5em 1em 1em;
 			width: 100%;
 		}
@@ -31,7 +31,7 @@
 		}
 
 		.mw-echo-ui-crossWikiUnreadFilterWidget {
-			border: 1px solid @colorGray12;
+			border: @border-width-base @border-style-base @border-color-subtle;
 			width: 100%;
 			margin-left: 0;
 			padding: 0;
@@ -45,7 +45,7 @@
 
 			&-subtitle {
 				display: block;
-				color: @colorGray1;
+				color: @color-emphasized;
 				margin-left: 0.9em;
 			}
 		}

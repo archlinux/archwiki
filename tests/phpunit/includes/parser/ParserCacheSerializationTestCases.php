@@ -6,10 +6,11 @@ use CacheTime;
 use JsonSerializable;
 use MediaWiki\Json\JsonCodec;
 use MediaWiki\Title\Title;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
 use MWDebug;
-use MWTimestamp;
 use ParserOutput;
+use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Tests\SerializationTestUtils;
 
 /**
@@ -229,8 +230,7 @@ abstract class ParserCacheSerializationTestCases {
 		$parserOutputWithMetadata->addModules( [ 'module1' ] );
 		$parserOutputWithMetadata->addModuleStyles( [ 'module_style1' ] );
 		$parserOutputWithMetadata->setJsConfigVar( 'key1', 'value1' );
-		$parserOutputWithMetadata->addOutputHook( 'hook1', self::MOCK_EXT_DATA );
-		$parserOutputWithMetadata->addWarning( 'warning1' );
+		$parserOutputWithMetadata->addWarningMsg( 'rawmessage', 'warning1' );
 		$parserOutputWithMetadata->setIndexPolicy( 'noindex' );
 		$parserOutputWithMetadata->setTOCHTML( 'tochtml1' );
 		$parserOutputWithMetadata->setTimestamp( MWTimestamp::convert( TS_MW, 987654321 ) );
@@ -238,7 +238,15 @@ abstract class ParserCacheSerializationTestCases {
 		$parserOutputWithMetadata->setEnableOOUI( true );
 		$parserOutputWithMetadata->setHideNewSection( true );
 		$parserOutputWithMetadata->setNewSection( true );
-		$parserOutputWithMetadata->setFlag( 'test' );
+		$parserOutputWithMetadata->setOutputFlag( 'test' );
+
+		// For compatibility with older serialized objects, clear out the
+		// $mWarningMsgs array, which is not currently stored.
+		// See T343050 for the steps required to remove this workaround in
+		// the future.
+		TestingAccessWrapper::newFromObject(
+			$parserOutputWithMetadata
+		)->mWarningMsgs = [];
 
 		$parserOutputWithSections = new ParserOutput( '' );
 		$parserOutputWithSections->setSections( self::SECTIONS );
@@ -261,7 +269,7 @@ abstract class ParserCacheSerializationTestCases {
 		return [
 			'empty' => [
 				'instance' => new ParserOutput( '' ),
-				'assertions' => function ( MediaWikiIntegrationTestCase $testCase, ParserOutput $object ) {
+				'assertions' => static function ( MediaWikiIntegrationTestCase $testCase, ParserOutput $object ) {
 					// Empty CacheTime assertions
 					self::getCacheTimeTestCases()['empty']['assertions']( $testCase, $object );
 					// Empty string text is counted as having text.
@@ -276,7 +284,7 @@ abstract class ParserCacheSerializationTestCases {
 					$testCase->assertArrayEquals( [], $object->getLanguageLinks() );
 					$testCase->assertArrayEquals( [], $object->getInterwikiLinks() );
 					$testCase->assertArrayEquals( [], $object->getCategoryNames() );
-					$testCase->assertArrayEquals( [], $object->getCategories() );
+					$testCase->assertArrayEquals( [], $object->getCategoryMap() );
 					$testCase->assertArrayEquals( [], $object->getIndicators() );
 					$testCase->assertSame( '', $object->getTitleText() );
 					$testCase->assertArrayEquals( [], $object->getSections() );
@@ -292,7 +300,6 @@ abstract class ParserCacheSerializationTestCases {
 					$testCase->assertArrayEquals( [], $object->getModules() );
 					$testCase->assertArrayEquals( [], $object->getModuleStyles() );
 					$testCase->assertArrayEquals( [], $object->getJsConfigVars() );
-					$testCase->assertArrayEquals( [], $object->getOutputHooks() );
 					$testCase->assertArrayEquals( [], $object->getWarnings() );
 					$testCase->assertSame( '', $object->getIndexPolicy() );
 					$testCase->assertSame( '', $object->getTOCHTML() );
@@ -306,7 +313,7 @@ abstract class ParserCacheSerializationTestCases {
 					$testCase->assertFalse( $object->getHideNewSection() );
 					$testCase->assertFalse( $object->getNewSection() );
 					$testCase->assertFalse( $object->getDisplayTitle() );
-					$testCase->assertFalse( $object->getFlag( 'test' ) );
+					$testCase->assertFalse( $object->getOutputFlag( 'test' ) );
 					$testCase->assertArrayEquals( [], $object->getAllFlags() );
 					$testCase->assertNull( $object->getPageProperty( 'test_prop' ) );
 					$testCase->assertArrayEquals( [], $object->getPageProperties() );
@@ -382,7 +389,7 @@ abstract class ParserCacheSerializationTestCases {
 					$testCase->assertArrayEquals( [
 						'category1' => '2',
 						'category2' => '1'
-					], $object->getCategories() );
+					], $object->getCategoryMap() );
 					$testCase->assertArrayEquals( [ 'indicator1' => 'indicator1_value' ], $object->getIndicators() );
 					$testCase->assertSame( 'title_text1', $object->getTitleText() );
 					$testCase->assertArrayEquals( self::SECTIONS, $object->getSections() );
@@ -405,7 +412,6 @@ abstract class ParserCacheSerializationTestCases {
 					$testCase->assertArrayEquals( [ 'module1' ], $object->getModules() );
 					$testCase->assertArrayEquals( [ 'module_style1' ], $object->getModuleStyles() );
 					$testCase->assertArrayEquals( [ 'key1' => 'value1' ], $object->getJsConfigVars() );
-					$testCase->assertArrayEquals( [ [ 'hook1', self::MOCK_EXT_DATA ] ], $object->getOutputHooks() );
 					$testCase->assertArrayEquals( [ 'warning1' ], $object->getWarnings() );
 					$testCase->assertSame( 'noindex', $object->getIndexPolicy() );
 					$testCase->assertSame( 'tochtml1', $object->getTOCHTML() );
@@ -421,7 +427,7 @@ abstract class ParserCacheSerializationTestCases {
 					$testCase->assertTrue( $object->getEnableOOUI() );
 					$testCase->assertTrue( $object->getHideNewSection() );
 					$testCase->assertTrue( $object->getNewSection() );
-					$testCase->assertTrue( $object->getFlag( 'test' ) );
+					$testCase->assertTrue( $object->getOutputFlag( 'test' ) );
 					$testCase->assertArrayEquals( [ 'test' ], $object->getAllFlags() );
 				}
 			],

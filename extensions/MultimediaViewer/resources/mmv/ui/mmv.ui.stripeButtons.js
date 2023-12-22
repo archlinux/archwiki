@@ -15,130 +15,112 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const UiElement = require( './mmv.ui.js' );
+
 ( function () {
-	var SBP;
 
 	/**
 	 * Class for buttons which are placed on the metadata stripe (the always visible part of the
 	 * metadata panel).
-	 *
-	 * @class mw.mmv.ui.StripeButtons
-	 * @extends mw.mmv.ui.Element
-	 * @constructor
-	 * @param {jQuery} $container the title block (.mw-mmv-title-contain) which wraps the buttons and all
-	 *  other title elements
 	 */
-	function StripeButtons( $container ) {
-		mw.mmv.ui.Element.call( this, $container );
+	class StripeButtons extends UiElement {
+		/**
+		 * @param {jQuery} $container the title block (.mw-mmv-title-contain) which wraps the buttons and all
+		 *  other title elements
+		 */
+		constructor( $container ) {
+			super( $container );
 
-		this.$buttonContainer = $( '<div>' )
-			.addClass( 'mw-mmv-stripe-button-container' )
-			.appendTo( $container );
+			this.$buttonContainer = $( '<div>' )
+				.addClass( 'mw-mmv-stripe-button-container' )
+				.appendTo( $container );
+
+			/**
+			 * This holds the actual buttons.
+			 *
+			 * @property {Object.<string, jQuery>}
+			 */
+			this.buttons = {};
+
+			this.initDescriptionPageButton();
+		}
 
 		/**
-		 * This holds the actual buttons.
+		 * Creates a button linking to the file description page.
 		 *
-		 * @property {Object.<string, jQuery>}
+		 * @protected
 		 */
-		this.buttons = {};
+		initDescriptionPageButton() {
+			this.buttons.$descriptionPage = $( '<a>' )
+				.addClass( 'mw-mmv-stripe-button empty mw-mmv-description-page-button cdx-button cdx-button--weight-primary cdx-button--action-progressive cdx-button--size-large cdx-button--fake-button cdx-button--fake-button--enabled' )
+				// elements are right-floated so we use prepend instead of append to keep the order
+				.prependTo( this.$buttonContainer );
+		}
 
-		this.initDescriptionPageButton();
+		/**
+		 * Runs code for each button, similarly to $.each.
+		 *
+		 * @protected
+		 * @param {function(jQuery, string)} callback a function that will be called with each button
+		 */
+		eachButton( callback ) {
+			let buttonName;
+			for ( buttonName in this.buttons ) {
+				callback( this.buttons[ buttonName ], buttonName );
+			}
+		}
+
+		/**
+		 * @inheritdoc
+		 * @param {Image} imageInfo
+		 * @param {Repo} repoInfo
+		 */
+		set( imageInfo, repoInfo ) {
+			this.eachButton( ( $button ) => {
+				$button.removeClass( 'empty' );
+			} );
+
+			this.setDescriptionPageButton( imageInfo, repoInfo );
+		}
+
+		/**
+		 * Updates the button linking to the file page.
+		 *
+		 * @protected
+		 * @param {Image} imageInfo
+		 * @param {Repo} repoInfo
+		 */
+		setDescriptionPageButton( imageInfo, repoInfo ) {
+			const $button = this.buttons.$descriptionPage;
+			let isCommons = repoInfo.isCommons();
+			let descriptionUrl = imageInfo.descriptionUrl;
+
+			if ( repoInfo.isLocal === false && imageInfo.pageID ) {
+				// The file has a local description page, override the description URL
+				descriptionUrl = imageInfo.title.getUrl();
+				isCommons = false;
+			}
+
+			$button.empty()
+				.append( $( '<span>' ).addClass( 'cdx-button__icon' ) )
+				.append( mw.message( 'multimediaviewer-repository-local' ).text() )
+				.attr( 'href', descriptionUrl );
+
+			$button.toggleClass( 'mw-mmv-repo-button-commons', isCommons );
+		}
+
+		/**
+		 * @inheritdoc
+		 */
+		empty() {
+			this.eachButton( ( $button ) => {
+				$button.addClass( 'empty' );
+			} );
+
+			this.buttons.$descriptionPage.attr( { href: null, title: null, 'original-title': null } )
+				.removeClass( 'mw-mmv-repo-button-commons' );
+		}
 	}
-	OO.inheritClass( StripeButtons, mw.mmv.ui.Element );
-	SBP = StripeButtons.prototype;
 
-	/**
-	 * Creates a new button on the metadata stripe.
-	 *
-	 * @protected
-	 * @param {string} cssClass CSS class name for the button
-	 * @return {jQuery} Button
-	 */
-	SBP.createButton = function ( cssClass ) {
-		var $button;
-
-		// eslint-disable-next-line mediawiki/class-doc
-		$button = $( '<a>' )
-			.addClass( 'mw-mmv-stripe-button empty ' + cssClass )
-			// elements are right-floated so we use prepend instead of append to keep the order
-			.prependTo( this.$buttonContainer )
-			.attr( 'tabindex', '0' );
-
-		return $button;
-	};
-
-	/**
-	 * Creates a button linking to the file description page.
-	 *
-	 * @protected
-	 */
-	SBP.initDescriptionPageButton = function () {
-		this.buttons.$descriptionPage = this.createButton(
-			'empty mw-mmv-description-page-button mw-ui-big mw-ui-button mw-ui-progressive'
-		);
-	};
-
-	/**
-	 * Runs code for each button, similarly to $.each.
-	 *
-	 * @protected
-	 * @param {function(jQuery, string)} callback a function that will be called with each button
-	 */
-	SBP.eachButton = function ( callback ) {
-		var buttonName;
-		for ( buttonName in this.buttons ) {
-			callback( this.buttons[ buttonName ], buttonName );
-		}
-	};
-
-	/**
-	 * @inheritdoc
-	 * @param {mw.mmv.model.Image} imageInfo
-	 * @param {mw.mmv.model.Repo} repoInfo
-	 */
-	SBP.set = function ( imageInfo, repoInfo ) {
-		this.eachButton( function ( $button ) {
-			$button.removeClass( 'empty' );
-		} );
-
-		this.setDescriptionPageButton( imageInfo, repoInfo );
-	};
-
-	/**
-	 * Updates the button linking to the file page.
-	 *
-	 * @protected
-	 * @param {mw.mmv.model.Image} imageInfo
-	 * @param {mw.mmv.model.Repo} repoInfo
-	 */
-	SBP.setDescriptionPageButton = function ( imageInfo, repoInfo ) {
-		var $button = this.buttons.$descriptionPage,
-			isCommons = repoInfo.isCommons(),
-			descriptionUrl = imageInfo.descriptionUrl;
-
-		if ( repoInfo.isLocal === false && imageInfo.pageID ) {
-			// The file has a local description page, override the description URL
-			descriptionUrl = imageInfo.title.getUrl();
-			isCommons = false;
-		}
-
-		$button.text( mw.message( 'multimediaviewer-repository-local' ).text() )
-			.attr( 'href', descriptionUrl );
-
-		$button.toggleClass( 'mw-mmv-repo-button-commons', isCommons );
-	};
-
-	/**
-	 * @inheritdoc
-	 */
-	SBP.empty = function () {
-		this.eachButton( function ( $button ) {
-			$button.addClass( 'empty' );
-		} );
-
-		this.buttons.$descriptionPage.attr( { href: null, title: null, 'original-title': null } )
-			.removeClass( 'mw-mmv-repo-button-commons' );
-	};
-
-	mw.mmv.ui.StripeButtons = StripeButtons;
+	module.exports = StripeButtons;
 }() );

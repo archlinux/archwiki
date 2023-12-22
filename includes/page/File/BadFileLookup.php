@@ -3,12 +3,12 @@
 namespace MediaWiki\Page\File;
 
 use BagOStuff;
-use MalformedTitleException;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Title\MalformedTitleException;
+use MediaWiki\Title\TitleParser;
 use RepoGroup;
-use TitleParser;
 
 class BadFileLookup {
 	/** @var callable Returns contents of bad file list (see comment for isBadFile()) */
@@ -140,4 +140,7 @@ class BadFileLookup {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( BadFileLookup::class, 'MediaWiki\\BadFileLookup' );

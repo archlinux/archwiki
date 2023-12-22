@@ -9,8 +9,9 @@ use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
 use MediaWiki\Extension\VisualEditor\VisualEditorParsoidClientFactory;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
-use Title;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 
 class ApiDiscussionToolsCompare extends ApiBase {
 
@@ -93,8 +94,12 @@ class ApiDiscussionToolsCompare extends ApiBase {
 			return;
 		}
 
-		$fromItemSet = HookUtils::parseRevisionParsoidHtml( $fromRev, __METHOD__ );
-		$toItemSet = HookUtils::parseRevisionParsoidHtml( $toRev, __METHOD__ );
+		try {
+			$fromItemSet = HookUtils::parseRevisionParsoidHtml( $fromRev, __METHOD__ );
+			$toItemSet = HookUtils::parseRevisionParsoidHtml( $toRev, __METHOD__ );
+		} catch ( ResourceLimitExceededException $e ) {
+			$this->dieWithException( $e );
+		}
 
 		$removedComments = [];
 		foreach ( $fromItemSet->getCommentItems() as $fromComment ) {

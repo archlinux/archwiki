@@ -27,10 +27,10 @@ use Language;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\Status\Status;
+use MediaWiki\User\User;
 use Message;
-use Status;
 use StatusValue;
-use User;
 
 /**
  * Verify `EditFilterMergedContent` hook

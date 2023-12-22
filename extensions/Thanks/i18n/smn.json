@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Seipinne",
 			"Trondtr",
-			"Yupik",
-			"Seipinne"
+			"Yupik"
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|kijte}}}}",

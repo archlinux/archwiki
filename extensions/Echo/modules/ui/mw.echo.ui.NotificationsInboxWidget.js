@@ -116,7 +116,7 @@
 								.addClass( 'mw-echo-ui-notificationsInboxWidget-main-toolbar-pagination' )
 								.addClass( 'mw-echo-ui-notificationsInboxWidget-cell' )
 								.append( this.topPaginationWidget.$element ),
-							$( '<div>' )
+							mw.user.isTemp() ? '' : $( '<div>' )
 								.addClass( 'mw-echo-ui-notificationsInboxWidget-main-toolbar-settings' )
 								.addClass( 'mw-echo-ui-notificationsInboxWidget-cell' )
 								.append( this.settingsMenu.$element )

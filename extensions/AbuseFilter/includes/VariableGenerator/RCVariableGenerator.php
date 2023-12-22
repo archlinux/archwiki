@@ -7,11 +7,11 @@ use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Title\Title;
 use MimeAnalyzer;
 use MWFileProps;
 use RecentChange;
 use RepoGroup;
-use Title;
 use User;
 
 /**
@@ -22,7 +22,7 @@ class RCVariableGenerator extends VariableGenerator {
 	/**
 	 * @var RecentChange
 	 */
-	protected $rc;
+	private $rc;
 
 	/** @var User */
 	private $contextUser;
@@ -83,7 +83,7 @@ class RCVariableGenerator extends VariableGenerator {
 					return null;
 			}
 		} elseif ( $this->rc->getAttribute( 'rc_this_oldid' ) ) {
-			// It's an edit.
+			// It's an edit (or a page creation).
 			$this->addEditVarsForRow();
 		} elseif (
 			!$this->hookRunner->onAbuseFilterGenerateVarsForRecentChange(

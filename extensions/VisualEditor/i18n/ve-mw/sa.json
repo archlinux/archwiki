@@ -7,17 +7,15 @@
 			"Soorya Hebbar"
 		]
 	},
-	"tooltip-ca-createsource": "अस्य पृष्ठस्य मूलपाठं रचयतु",
-	"tooltip-ca-edit": "विकिपाठ्यम् उपयुज्य पृष्ठं सम्पाद्यताम्",
-	"tooltip-ca-editsource": "अस्य पृष्ठस्य स्रोतपाठ्यं सम्पाद्यताम्",
 	"tooltip-ca-ve-edit": "इदं पृष्ठं सम्पाद्यताम्",
+	"tooltip-ca-editsource": "अस्य पृष्ठस्य स्रोतपाठ्यं सम्पाद्यताम्",
+	"tooltip-ca-createsource": "अस्य पृष्ठस्य मूलपाठं रचयतु",
 	"visualeditor-advancedsettings-tool": "उन्नतानि संयोजनानि",
 	"visualeditor-autosave-modified-prompt-accept": "सम्पादनं पुनरारभ्यताम्",
 	"visualeditor-autosave-modified-prompt-reject": "नूतनसम्पादनम् आरभ्यताम्",
 	"visualeditor-autosave-modified-prompt-title": "सम्पादनं पुनरारभ्यताम्",
 	"visualeditor-autosave-not-recovered-text": "अरक्षितानां परिवर्तनानां पुनः प्राप्तिः न स्याद्",
 	"visualeditor-backbutton-tooltip": "प्रतिगम्यताम्",
-	"visualeditor-beta-warning": "यथादृश्यसम्पादिका अधुना उपान्त्ये अस्ति । विकि-पाठस्य स्रोतसम्पादके सम्पादयितुं यदा कदापि पतत्सूच्यां \"{{int:visualeditor-toolbar-savedialog}}\" नुदित्वा एतत् \"{{int:visualeditor-mweditmodesource-tool}}\" चीयताम् ।",
 	"visualeditor-ca-createlocaldescriptionsource": "स्थानीयवर्णनस्य मूलः योज्यताम्",
 	"visualeditor-ca-createsource": "स्रोतः सृज्यताम्",
 	"visualeditor-ca-editsource": "स्रोतः सम्पाद्यताम्",
@@ -87,9 +85,6 @@
 	"visualeditor-linkinspector-button-link-external": "बाह्यसम्पर्कतन्तुः",
 	"visualeditor-linkinspector-button-link-internal": "पृष्ठानि अन्विष्यन्ताम्",
 	"visualeditor-meta-tool": "विकल्पाः",
-	"visualeditor-mweditmodesource-warning-cancel": "निरस्यताम्",
 	"visualeditor-mwgallerydialog-title": "वीथिका",
-	"visualeditor-preference-betatempdisable": "यावता यथादृश्यसम्पादिका उपान्त्ये अस्ति, तावता यथादृश्यसम्पादिका निष्क्रियताम् ।",
-	"visualeditor-preference-core-label": "यथादृश्यसम्पादिका",
 	"visualeditor-version-label": "संस्करणम्"
 }

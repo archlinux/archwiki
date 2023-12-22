@@ -18,7 +18,6 @@
 	"captcha-edit": "Aby edytować tę stronę, najpierw musisz rozwiązać poniższe zadanie i wpisać odpowiedź do pola tekstowego ([[Special:Captcha/help|więcej informacji]]):",
 	"captcha-edit-fail": "Nieprawidłowy kod lub brak kodu potwierdzającego.",
 	"captcha-desc": "Dodaje CAPTCHA – zabezpieczenie przed spamującymi automatami oraz odgadywaniem haseł",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Rozwiązanie CAPTCHA.",
 	"captcha-info-help": "Opis CAPTCHA.",
 	"captcha-id-label": "Identyfikator CAPTCHA",

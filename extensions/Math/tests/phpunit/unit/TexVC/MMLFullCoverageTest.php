@@ -32,7 +32,7 @@ final class MMLFullCoverageTest extends MediaWikiUnitTestCase {
 	private static $FILTERLENGTH = 60;
 	private static $GENERATEHTML = false;
 	private static $GENERATEDHTMLFILE = __DIR__ . "/MMLFullCoverageTest-Output.html";
-	private static $SKIPPEDINDICES = [ 0,58, 380, 388 ];
+	private static $SKIPPEDINDICES = [ 0, 380, 388 ];
 
 	private static $FILTERMML = true;
 
@@ -51,7 +51,7 @@ final class MMLFullCoverageTest extends MediaWikiUnitTestCase {
 	public function testTexVC( $title, $tc ) {
 		$texVC = new TexVC();
 
-		if ( in_array( $tc->ctr, self::$SKIPPEDINDICES ) ) {
+		if ( in_array( $tc->ctr, self::$SKIPPEDINDICES, true ) ) {
 			MMLTestUtilHTML::generateHTMLtableRow( self::$GENERATEDHTMLFILE, [ $tc->ctr, $tc->tex,
 				"skipped", "skipped", "skipped" ], false, self::$GENERATEHTML );
 			$this->assertTrue( true );

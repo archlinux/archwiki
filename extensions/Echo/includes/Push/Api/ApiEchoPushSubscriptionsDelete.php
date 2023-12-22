@@ -5,9 +5,9 @@ namespace MediaWiki\Extension\Notifications\Push\Api;
 use ApiBase;
 use ApiMain;
 use ApiUsageException;
-use EchoServices;
 use MediaWiki\Extension\Notifications\Push\SubscriptionManager;
 use MediaWiki\Extension\Notifications\Push\Utils;
+use MediaWiki\Extension\Notifications\Services;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiEchoPushSubscriptionsDelete extends ApiBase {
@@ -25,7 +25,7 @@ class ApiEchoPushSubscriptionsDelete extends ApiBase {
 	 * @return ApiEchoPushSubscriptionsDelete
 	 */
 	public static function factory( ApiBase $parent, string $name ): ApiEchoPushSubscriptionsDelete {
-		$subscriptionManager = EchoServices::getInstance()->getPushSubscriptionManager();
+		$subscriptionManager = Services::getInstance()->getPushSubscriptionManager();
 		$module = new self( $parent->getMain(), $name, $subscriptionManager );
 		$module->parent = $parent;
 		return $module;

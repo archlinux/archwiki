@@ -21,6 +21,7 @@
 use MediaWiki\EditPage\Constraint\IEditConstraint;
 use MediaWiki\EditPage\Constraint\UserRateLimitConstraint;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
 /**
  * Tests the UserRateLimitConstraint
@@ -46,13 +47,11 @@ class UserRateLimitConstraintTest extends MediaWikiUnitTestCase {
 				[ 'linkpurge', 0 ],
 				[ 'editcontentmodel', 1 ]
 			)
-			->will(
-				$this->onConsecutiveCalls(
+			->willReturnOnConsecutiveCalls(
 					false,
 					false,
 					false
-				)
-			);
+				);
 
 		$title = $this->createMock( Title::class );
 		$title->expects( $this->once() )
@@ -77,13 +76,11 @@ class UserRateLimitConstraintTest extends MediaWikiUnitTestCase {
 				[ 'linkpurge', 0 ],
 				[ 'editcontentmodel', 1 ]
 			)
-			->will(
-				$this->onConsecutiveCalls(
+			->willReturnOnConsecutiveCalls(
 					false,
 					false,
 					true // Only die on the last check
-				)
-			);
+				);
 
 		$title = $this->createMock( Title::class );
 		$title->expects( $this->once() )

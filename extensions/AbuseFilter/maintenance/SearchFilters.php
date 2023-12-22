@@ -54,7 +54,7 @@ class SearchFilters extends Maintenance {
 	/**
 	 * @param string|false $dbname Name of database, or false if the wiki is not part of a wikifarm
 	 */
-	public function getMatchingFilters( $dbname = false ) {
+	private function getMatchingFilters( $dbname = false ) {
 		$dbr = $this->getDB( DB_REPLICA, [], $dbname );
 		$pattern = $dbr->addQuotes( $this->getOption( 'pattern' ) );
 

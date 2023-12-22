@@ -43,9 +43,8 @@ class NotificationServiceClient implements LoggerAwareInterface {
 
 			$tokenMap[$topic][$provider][] = $subscription->getToken();
 		}
-		foreach ( array_keys( $tokenMap ) as $topic ) {
-			foreach ( array_keys( $tokenMap[$topic] ) as $provider ) {
-				$tokens = $tokenMap[$topic][$provider];
+		foreach ( $tokenMap as $topic => $providerMap ) {
+			foreach ( $providerMap as $provider => $tokens ) {
 				$payload = [
 					'deviceTokens' => $tokens,
 					'messageType' => 'checkEchoV1'

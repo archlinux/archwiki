@@ -14,6 +14,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|un altere autor|$1 altere autores}}",
 	"multimediaviewer-multiple-authors-combine": "$1 e $2",
 	"multimediaviewer-metadata-error": "Non poteva cargar detalios del imagine (error: $1)",
+	"multimediaviewer-file-not-found-error": "Le file $1 non pote esser monstrate perque non es presente sur le pagina actual.",
 	"multimediaviewer-thumbnail-error": "Non es possibile monstrar le file",
 	"multimediaviewer-thumbnail-error-description": "Il sembla haber un problema technic. Tu pote $1 si illo persiste. Error: $2",
 	"multimediaviewer-thumbnail-error-retry": "reprobar",

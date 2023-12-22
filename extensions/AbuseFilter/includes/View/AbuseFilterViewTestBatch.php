@@ -15,43 +15,20 @@ use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use RecentChange;
-use Title;
+use Wikimedia\Rdbms\LBFactory;
 
 class AbuseFilterViewTestBatch extends AbuseFilterView {
 	/**
 	 * @var int The limit of changes to test, hard coded for now
 	 */
-	protected static $mChangeLimit = 100;
+	private static $mChangeLimit = 100;
 
 	/**
-	 * @var bool Whether to show changes that don't trigger the specified pattern
+	 * @var LBFactory
 	 */
-	public $mShowNegative;
-	/**
-	 * @var string The start time of the lookup period
-	 */
-	public $mTestPeriodStart;
-	/**
-	 * @var string The end time of the lookup period
-	 */
-	public $mTestPeriodEnd;
-	/**
-	 * @var string The page of which edits we're interested in
-	 */
-	public $mTestPage;
-	/**
-	 * @var string The user whose actions we want to test
-	 */
-	public $mTestUser;
-	/**
-	 * @var bool Whether to exclude bot edits
-	 */
-	public $mExcludeBots;
-	/**
-	 * @var string The action (performed by the user) we want to search for
-	 */
-	public $mTestAction;
+	private $lbFactory;
 	/**
 	 * @var string The text of the rule to test changes against
 	 */
@@ -70,6 +47,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 	private $varGeneratorFactory;
 
 	/**
+	 * @param LBFactory $lbFactory
 	 * @param AbuseFilterPermissionManager $afPermManager
 	 * @param EditBoxBuilderFactory $boxBuilderFactory
 	 * @param RuleCheckerFactory $ruleCheckerFactory
@@ -80,6 +58,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 	 * @param array $params
 	 */
 	public function __construct(
+		LBFactory $lbFactory,
 		AbuseFilterPermissionManager $afPermManager,
 		EditBoxBuilderFactory $boxBuilderFactory,
 		RuleCheckerFactory $ruleCheckerFactory,
@@ -90,6 +69,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		array $params
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, $params );
+		$this->lbFactory = $lbFactory;
 		$this->boxBuilderFactory = $boxBuilderFactory;
 		$this->ruleCheckerFactory = $ruleCheckerFactory;
 		$this->varGeneratorFactory = $varGeneratorFactory;
@@ -109,7 +89,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 
 		$this->loadParameters();
 
-		$out->setPageTitle( $this->msg( 'abusefilter-test' ) );
+		$out->setPageTitleMsg( $this->msg( 'abusefilter-test' ) );
 		$out->addHelpLink( 'Extension:AbuseFilter/Rules format' );
 		$out->addWikiMsg( 'abusefilter-test-intro', self::$mChangeLimit );
 		$out->enableOOUI();
@@ -133,62 +113,52 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		$min = wfTimestamp( TS_ISO_8601, time() - $RCMaxAge );
 		$max = wfTimestampNow();
 
-		$optionsFields = [];
-		$optionsFields['wpTestAction'] = [
-			'name' => 'wpTestAction',
-			'type' => 'select',
-			'label-message' => 'abusefilter-test-action',
-			'options' => [
-				$this->msg( 'abusefilter-test-search-type-all' )->text() => 0,
-				$this->msg( 'abusefilter-test-search-type-edit' )->text() => 'edit',
-				$this->msg( 'abusefilter-test-search-type-move' )->text() => 'move',
-				$this->msg( 'abusefilter-test-search-type-delete' )->text() => 'delete',
-				$this->msg( 'abusefilter-test-search-type-createaccount' )->text() => 'createaccount',
-				$this->msg( 'abusefilter-test-search-type-upload' )->text() => 'upload'
-			]
-		];
-		$optionsFields['wpTestUser'] = [
-			'name' => 'wpTestUser',
-			'type' => 'user',
-			'ipallowed' => true,
-			'label-message' => 'abusefilter-test-user',
-			'default' => $this->mTestUser
-		];
-		$optionsFields['wpExcludeBots'] = [
-			'name' => 'wpExcludeBots',
-			'type' => 'check',
-			'label-message' => 'abusefilter-test-nobots',
-			'default' => $this->mExcludeBots
-		];
-		$optionsFields['wpTestPeriodStart'] = [
-			'name' => 'wpTestPeriodStart',
-			'type' => 'datetime',
-			'label-message' => 'abusefilter-test-period-start',
-			'default' => $this->mTestPeriodStart,
-			'min' => $min,
-			'max' => $max
-		];
-		$optionsFields['wpTestPeriodEnd'] = [
-			'name' => 'wpTestPeriodEnd',
-			'type' => 'datetime',
-			'label-message' => 'abusefilter-test-period-end',
-			'default' => $this->mTestPeriodEnd,
-			'min' => $min,
-			'max' => $max
-		];
-		$optionsFields['wpTestPage'] = [
-			'name' => 'wpTestPage',
-			'type' => 'title',
-			'label-message' => 'abusefilter-test-page',
-			'default' => $this->mTestPage,
-			'creatable' => true,
-			'required' => false
-		];
-		$optionsFields['wpShowNegative'] = [
-			'name' => 'wpShowNegative',
-			'type' => 'check',
-			'label-message' => 'abusefilter-test-shownegative',
-			'selected' => $this->mShowNegative
+		$optionsFields = [
+			'TestAction' => [
+				'type' => 'select',
+				'label-message' => 'abusefilter-test-action',
+				'options-messages' => [
+					'abusefilter-test-search-type-all' => '0',
+					'abusefilter-test-search-type-edit' => 'edit',
+					'abusefilter-test-search-type-move' => 'move',
+					'abusefilter-test-search-type-delete' => 'delete',
+					'abusefilter-test-search-type-createaccount' => 'createaccount',
+					'abusefilter-test-search-type-upload' => 'upload'
+				],
+			],
+			'TestUser' => [
+				'type' => 'user',
+				'exists' => true,
+				'ipallowed' => true,
+				'required' => false,
+				'label-message' => 'abusefilter-test-user',
+			],
+			'ExcludeBots' => [
+				'type' => 'check',
+				'label-message' => 'abusefilter-test-nobots',
+			],
+			'TestPeriodStart' => [
+				'type' => 'datetime',
+				'label-message' => 'abusefilter-test-period-start',
+				'min' => $min,
+				'max' => $max,
+			],
+			'TestPeriodEnd' => [
+				'type' => 'datetime',
+				'label-message' => 'abusefilter-test-period-end',
+				'min' => $min,
+				'max' => $max,
+			],
+			'TestPage' => [
+				'type' => 'title',
+				'label-message' => 'abusefilter-test-page',
+				'creatable' => true,
+				'required' => false,
+			],
+			'ShowNegative' => [
+				'type' => 'check',
+				'label-message' => 'abusefilter-test-shownegative',
+			],
 		];
 		array_walk( $optionsFields, static function ( &$el ) {
 			$el['section'] = 'abusefilter-test-options-section';
@@ -200,61 +170,58 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 			->setId( 'wpFilterForm' )
 			->setWrapperLegendMsg( 'abusefilter-test-legend' )
 			->setSubmitTextMsg( 'abusefilter-test-submit' )
-			->setMethod( 'post' )
-			->prepareForm()
-			->displayForm( false );
-
-		if ( $this->getRequest()->wasPosted() ) {
-			$this->doTest();
-		}
+			->setSubmitCallback( [ $this, 'doTest' ] )
+			->showAlways();
 	}
 
 	/**
 	 * Loads the revisions and checks the given syntax against them
+	 * @param array $formData
+	 * @param HTMLForm $form
+	 * @return bool
 	 */
-	public function doTest() {
+	public function doTest( array $formData, HTMLForm $form ): bool {
 		// Quick syntax check.
-		$out = $this->getOutput();
 		$ruleChecker = $this->ruleCheckerFactory->newRuleChecker();
 
 		if ( !$ruleChecker->checkSyntax( $this->testPattern )->isValid() ) {
-			$out->addHTML(
+			$form->addPreHtml(
 				Html::errorBox( $this->msg( 'abusefilter-test-syntaxerr' )->parse() )
 			);
-			return;
+			return true;
 		}
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->lbFactory->getReplicaDatabase();
 		$rcQuery = RecentChange::getQueryInfo();
 		$conds = [];
 
-		if ( $this->mTestUser !== '' ) {
-			$conds[$rcQuery['fields']['rc_user_text']] = $this->mTestUser;
+		// Normalise username
+		$userTitle = Title::newFromText( $formData['TestUser'], NS_USER );
+		$testUser = $userTitle ? $userTitle->getText() : '';
+		if ( $testUser !== '' ) {
+			$conds[$rcQuery['fields']['rc_user_text']] = $testUser;
 		}
 
-		if ( $this->mTestPeriodStart ) {
-			$conds[] = 'rc_timestamp >= ' .
-				$dbr->addQuotes( $dbr->timestamp( strtotime( $this->mTestPeriodStart ) ) );
+		$startTS = strtotime( $formData['TestPeriodStart'] );
+		if ( $startTS ) {
+			$conds[] = 'rc_timestamp>=' . $dbr->addQuotes( $dbr->timestamp( $startTS ) );
 		}
-		if ( $this->mTestPeriodEnd ) {
-			$conds[] = 'rc_timestamp <= ' .
-				$dbr->addQuotes( $dbr->timestamp( strtotime( $this->mTestPeriodEnd ) ) );
+		$endTS = strtotime( $formData['TestPeriodEnd'] );
+		if ( $endTS ) {
+			$conds[] = 'rc_timestamp<=' . $dbr->addQuotes( $dbr->timestamp( $endTS ) );
 		}
-		if ( $this->mTestPage !== '' ) {
-			$title = Title::newFromText( $this->mTestPage );
-			if ( !$title ) {
-				$out->addWikiMsg( 'abusefilter-test-badtitle' );
-				return;
-			}
+		if ( $formData['TestPage'] !== '' ) {
+			// The form validates the input for us, so this shouldn't throw.
+			$title = Title::newFromTextThrow( $formData['TestPage'] );
 			$conds['rc_namespace'] = $title->getNamespace();
 			$conds['rc_title'] = $title->getDBkey();
 		}
 
-		if ( $this->mExcludeBots ) {
+		if ( $formData['ExcludeBots'] ) {
 			$conds['rc_bot'] = 0;
 		}
 
-		$action = $this->mTestAction !== '0' ? $this->mTestAction : false;
+		$action = $formData['TestAction'] !== '0' ? $formData['TestAction'] : false;
 		$conds[] = $this->buildTestConditions( $dbr, $action );
 		$conds = array_merge( $conds, $this->buildVisibilityConditions( $dbr, $this->getAuthority() ) );
 
@@ -279,9 +246,9 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		$ruleChecker->toggleConditionLimit( false );
 		foreach ( $res as $row ) {
 			$rc = RecentChange::newFromRow( $row );
-			if ( !$this->mShowNegative ) {
+			if ( !$formData['ShowNegative'] ) {
 				$type = (int)$rc->getAttribute( 'rc_type' );
-				$deletedValue = $rc->getAttribute( 'rc_deleted' );
+				$deletedValue = (int)$rc->getAttribute( 'rc_deleted' );
 				if (
 					(
 						$type === RC_LOG &&
@@ -296,7 +263,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 					)
 				) {
 					// If the RC is deleted, the user can't see it, and we're only showing matches,
-					// always skip this row. If mShowNegative is true, we can still show the row
+					// always skip this row. If ShowNegative is true, we can still show the row
 					// because we won't tell whether it matches the given filter.
 					continue;
 				}
@@ -312,7 +279,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 			$ruleChecker->setVariables( $vars );
 			$result = $ruleChecker->checkConditions( $this->testPattern )->getResult();
 
-			if ( $result || $this->mShowNegative ) {
+			if ( $result || $formData['ShowNegative'] ) {
 				// Stash result in RC item
 				$rc->filterResult = $result;
 				$rc->counter = $counter++;
@@ -322,7 +289,9 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 
 		$output .= $changesList->endRecentChangesList();
 
-		$out->addHTML( $output );
+		$form->addPostHtml( $output );
+
+		return true;
 	}
 
 	/**
@@ -332,19 +301,12 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		$request = $this->getRequest();
 
 		$this->testPattern = $request->getText( 'wpFilterRules' );
-		$this->mShowNegative = $request->getBool( 'wpShowNegative' );
-		$testUsername = $request->getText( 'wpTestUser' );
-		$this->mTestPeriodEnd = $request->getText( 'wpTestPeriodEnd' );
-		$this->mTestPeriodStart = $request->getText( 'wpTestPeriodStart' );
-		$this->mTestPage = $request->getText( 'wpTestPage' );
-		$this->mExcludeBots = $request->getBool( 'wpExcludeBots' );
-		$this->mTestAction = $request->getText( 'wpTestAction' );
 
 		if ( $this->testPattern === ''
 			&& count( $this->mParams ) > 1
 			&& is_numeric( $this->mParams[1] )
 		) {
-			$dbr = wfGetDB( DB_REPLICA );
+			$dbr = $this->lbFactory->getReplicaDatabase();
 			$pattern = $dbr->selectField( 'abuse_filter',
 				'af_pattern',
 				[ 'af_id' => intval( $this->mParams[1] ) ],
@@ -354,9 +316,5 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 				$this->testPattern = $pattern;
 			}
 		}
-
-		// Normalise username
-		$userTitle = Title::newFromText( $testUsername, NS_USER );
-		$this->mTestUser = $userTitle ? $userTitle->getText() : '';
 	}
 }

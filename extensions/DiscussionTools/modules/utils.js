@@ -165,22 +165,6 @@ function childIndexOf( child ) {
 }
 
 /**
- * Check whether a Node contains (is an ancestor of) another Node (or is the same node)
- *
- * @param {Node} ancestor
- * @param {Node} descendant
- * @return {boolean}
- */
-function contains( ancestor, descendant ) {
-	// Support: IE 11
-	// Node#contains is only supported on HTMLElement nodes. Otherwise we could just use
-	// `ancestor.contains( descendant )`.
-	return ancestor === descendant ||
-		// eslint-disable-next-line no-bitwise
-		ancestor.compareDocumentPosition( descendant ) & Node.DOCUMENT_POSITION_CONTAINED_BY;
-}
-
-/**
  * Find closest ancestor element using one of the given tag names.
  *
  * @param {Node} node
@@ -327,7 +311,7 @@ function getCoveredSiblings( range ) {
 	if ( ancestor === range.startContainer ) {
 		start = range.startOffset;
 	} else {
-		while ( !contains( siblings[ start ], range.startContainer ) ) {
+		while ( !siblings[ start ].contains( range.startContainer ) ) {
 			start++;
 		}
 	}
@@ -336,7 +320,7 @@ function getCoveredSiblings( range ) {
 	if ( ancestor === range.endContainer ) {
 		end = range.endOffset - 1;
 	} else {
-		while ( !contains( siblings[ end ], range.endContainer ) ) {
+		while ( !siblings[ end ].contains( range.endContainer ) ) {
 			end--;
 		}
 	}
@@ -627,6 +611,16 @@ function compareRangesAlmostEqualBoundaries( a, b, boundary ) {
 }
 
 /**
+ * Get the ID for a new topics subscription from a page title
+ *
+ * @param {mw.Title} title Page title
+ * @return {string} ID for a new topics subscription
+ */
+function getNewTopicsSubscriptionId( title ) {
+	return 'p-topics-' + title.getNamespaceId() + ':' + title.getMain();
+}
+
+/**
  * Check whether a jQuery event represents a plain left click, without any modifiers
  *
  * @param {jQuery.Event} e
@@ -655,5 +649,6 @@ module.exports = {
 	linearWalk: linearWalk,
 	linearWalkBackwards: linearWalkBackwards,
 	compareRanges: compareRanges,
+	getNewTopicsSubscriptionId: getNewTopicsSubscriptionId,
 	isUnmodifiedLeftClick: isUnmodifiedLeftClick
 };

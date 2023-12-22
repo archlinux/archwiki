@@ -40,7 +40,7 @@ class CiteParserTagHooks {
 		$cite = self::citeForParser( $parser );
 		$result = $cite->ref( $parser, $text, $argv );
 
-		if ( $result === false ) {
+		if ( $result === null ) {
 			return htmlspecialchars( "<ref>$text</ref>" );
 		}
 
@@ -71,7 +71,7 @@ class CiteParserTagHooks {
 		$cite = self::citeForParser( $parser );
 		$result = $cite->references( $parser, $text, $argv );
 
-		if ( $result === false ) {
+		if ( $result === null ) {
 			return htmlspecialchars( $text === null
 				? "<references/>"
 				: "<references>$text</references>"

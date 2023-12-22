@@ -9,12 +9,13 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Notifications;
 
-use EchoEvent;
 use EchoEventPresentationModel;
 use Language;
+use MediaWiki\Extension\DiscussionTools\SubscriptionStore;
+use MediaWiki\Extension\Notifications\Model\Event;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
 use Message;
-use RawMessage;
 use User;
 use Wikimedia\Timestamp\TimestampException;
 
@@ -26,7 +27,7 @@ class SubscribedNewCommentPresentationModel extends EchoEventPresentationModel {
 	/**
 	 * @inheritDoc
 	 */
-	protected function __construct( EchoEvent $event, Language $language, User $user, $distributionType ) {
+	protected function __construct( Event $event, Language $language, User $user, $distributionType ) {
 		parent::__construct( $event, $language, $user, $distributionType );
 		$this->section = new PlaintextEchoPresentationModelSection( $event, $user, $language );
 	}
@@ -50,7 +51,7 @@ class SubscribedNewCommentPresentationModel extends EchoEventPresentationModel {
 	 */
 	public function getPrimaryLink() {
 		return [
-			'url' => $this->getCommentLink() ?: $this->event->getTitle()->getFullURL(),
+			'url' => $this->getCommentLink() ?: $this->section->getTitleWithSection()->getFullURL(),
 			'label' => $this->msg( 'discussiontools-notification-subscribed-new-comment-view' )->text()
 		];
 	}
@@ -142,6 +143,7 @@ class SubscribedNewCommentPresentationModel extends EchoEventPresentationModel {
 			$viewChangesLink,
 		];
 
+		/** @var SubscriptionStore $parser */
 		$subscriptionStore = MediaWikiServices::getInstance()->getService( 'DiscussionTools.SubscriptionStore' );
 		$items = $subscriptionStore->getSubscriptionItemsForUser(
 			$this->getUser(),
@@ -150,6 +152,7 @@ class SubscribedNewCommentPresentationModel extends EchoEventPresentationModel {
 		$isSubscribed = count( $items ) && !$items[0]->isMuted();
 		if ( $isSubscribed ) {
 			$commentName = $this->event->getExtraParam( 'subscribed-comment-name' );
+			$messageKeys = $this->getUnsubscribeConfirmationMessageKeys();
 			$links[] = $this->getDynamicActionLink(
 				$this->event->getTitle(),
 				'bellOutline',
@@ -165,8 +168,8 @@ class SubscribedNewCommentPresentationModel extends EchoEventPresentationModel {
 					],
 					'messages' => [
 						'confirmation' => [
-							'title' => $this->msg( 'discussiontools-topicsubscription-notify-unsubscribed-title' ),
-							'description' => $this->msg( 'discussiontools-topicsubscription-notify-unsubscribed-body' )
+							'title' => $this->msg( $messageKeys[ 'title' ] ),
+							'description' => $this->msg( $messageKeys[ 'description' ] ),
 						]
 					]
 				],
@@ -178,5 +181,17 @@ class SubscribedNewCommentPresentationModel extends EchoEventPresentationModel {
 		}
 
 		return $links;
+	}
+
+	/**
+	 * Get message keys for the unsubscribe confirmation popup
+	 *
+	 * @return array Array with 'title' and 'description' keys
+	 */
+	protected function getUnsubscribeConfirmationMessageKeys() {
+		return [
+			'title' => 'discussiontools-topicsubscription-notify-unsubscribed-title',
+			'description' => 'discussiontools-topicsubscription-notify-unsubscribed-body',
+		];
 	}
 }

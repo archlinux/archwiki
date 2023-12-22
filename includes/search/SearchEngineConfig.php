@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Config\Config;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
@@ -176,7 +177,7 @@ class SearchEngineConfig {
 	public function namespacesAsText( $namespaces ) {
 		$formatted = array_map( [ $this->language, 'getFormattedNsText' ], $namespaces );
 		foreach ( $formatted as $key => $ns ) {
-			if ( empty( $ns ) ) {
+			if ( !$ns ) {
 				$formatted[$key] = wfMessage( 'blanknamespace' )->text();
 			}
 		}

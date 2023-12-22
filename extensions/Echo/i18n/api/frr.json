@@ -4,15 +4,12 @@
 			"Murma174"
 		]
 	},
-	"apihelp-echomarkread-description": "Bööden för di uugenblakelk brüker ruad uunwise",
 	"apihelp-echomarkread-param-list": "En list faan bööd-IDs ruad uuntuwisin",
 	"apihelp-echomarkread-param-all": "Wan det so fäästlaanj as, wurd aal a bööden üs al leesen uunwiset.",
 	"apihelp-echomarkread-param-sections": "En list faan kirwer ruad uuntuwisin.",
 	"apihelp-echomarkread-example-1": "Bööd 8 üs al leesen uunwise",
 	"apihelp-echomarkread-example-2": "Aal a bööden üs al leesen uunwise",
-	"apihelp-echomarkseen-description": "Bööden för di uugenblakelk brüker üs uunluket markiare",
 	"apihelp-echomarkseen-example-1": "Bööden üs uunluket markiare",
-	"apihelp-query+notifications-description": "Bööden för di uugenblakelk brüker haale.",
 	"apihelp-query+notifications-param-prop": "Enkelthaiden uuntufraagin.",
 	"apihelp-query+notifications-param-sections": "Bööd kirwer uftufraagin",
 	"apihelp-query+notifications-param-groupbysection": "Of det resultaat efter kirwer uunwiset woort. Arke kirew woort enkelt haalet, wan det so fäästlaanj as.",

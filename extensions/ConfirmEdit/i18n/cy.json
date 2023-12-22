@@ -7,7 +7,6 @@
 	},
 	"captcha-edit": "Er mwyn gallu golygu'r dudalen, gwnewch y swm isod a gosodwch y canlyniad yn y blwch ([[Special:Captcha/help|rhagor o wybodaeth]]):",
 	"captcha-desc": "Yn gweithredu technegau CAPTCHA i arbed rhag sbam a dyfalu cyfrineiriau",
-	"captcha-label": "CAPTCHA",
 	"captcha-id-label": "ID CAPTCHA",
 	"captcha-addurl": "Mae eich golygiad yn cynnwys cysylltiadau allanol newydd. \nEr mwyn gwarchod y wici rhag peiriant sbam, byddwch gystal â theipio cyfanswm y swm canlynol yn y blwch isod i roi eich golygiad ar gadw ([[Special:Captcha/help|mwy o wybodaeth]]):",
 	"captcha-badlogin": "Er mwyn arbed y wici rhag peiriannau datrys cyfrineiriau, byddwch gystal â gwneud y swm syml isod a gosod yr ateb yn y blwch ([[Special:Captcha/help|rhagor o wybodaeth]]):",

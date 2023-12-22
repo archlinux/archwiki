@@ -8,9 +8,10 @@ use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry;
 use MediaWiki\Extension\AbuseFilter\Filter\Filter;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\User\ActorMigrationBase;
 use MediaWiki\User\UserIdentity;
 use Status;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\LBFactory;
 
 /**
  * @internal
@@ -21,8 +22,8 @@ class FilterStore {
 	/** @var ConsequencesRegistry */
 	private $consequencesRegistry;
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
+	/** @var LBFactory */
+	private $lbFactory;
 
 	/** @var FilterProfiler */
 	private $filterProfiler;
@@ -42,34 +43,40 @@ class FilterStore {
 	/** @var EmergencyCache */
 	private $emergencyCache;
 
+	/** @var ActorMigrationBase */
+	private $actorMigration;
+
 	/**
 	 * @param ConsequencesRegistry $consequencesRegistry
-	 * @param ILoadBalancer $loadBalancer
+	 * @param LBFactory $lbFactory
 	 * @param FilterProfiler $filterProfiler
 	 * @param FilterLookup $filterLookup
 	 * @param ChangeTagsManager $tagsManager
 	 * @param FilterValidator $filterValidator
 	 * @param FilterCompare $filterCompare
 	 * @param EmergencyCache $emergencyCache
+	 * @param ActorMigrationBase $actorMigration
 	 */
 	public function __construct(
 		ConsequencesRegistry $consequencesRegistry,
-		ILoadBalancer $loadBalancer,
+		LBFactory $lbFactory,
 		FilterProfiler $filterProfiler,
 		FilterLookup $filterLookup,
 		ChangeTagsManager $tagsManager,
 		FilterValidator $filterValidator,
 		FilterCompare $filterCompare,
-		EmergencyCache $emergencyCache
+		EmergencyCache $emergencyCache,
+		ActorMigrationBase $actorMigration
 	) {
 		$this->consequencesRegistry = $consequencesRegistry;
-		$this->loadBalancer = $loadBalancer;
+		$this->lbFactory = $lbFactory;
 		$this->filterProfiler = $filterProfiler;
 		$this->filterLookup = $filterLookup;
 		$this->tagsManager = $tagsManager;
 		$this->filterValidator = $filterValidator;
 		$this->filterCompare = $filterCompare;
 		$this->emergencyCache = $emergencyCache;
+		$this->actorMigration = $actorMigration;
 	}
 
 	/**
@@ -127,13 +134,12 @@ class FilterStore {
 		?int $filterId,
 		bool $wasGlobal
 	): array {
-		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+		$dbw = $this->lbFactory->getPrimaryDatabase();
 		$newRow = $this->filterToDatabaseRow( $newFilter );
 
 		// Set last modifier.
 		$newRow['af_timestamp'] = $dbw->timestamp();
-		$newRow['af_user'] = $userIdentity->getId();
-		$newRow['af_user_text'] = $userIdentity->getName();
+		$newRow += $this->actorMigration->getInsertValues( $dbw, 'af_user', $userIdentity );
 
 		$isNew = $filterId === null;
 
@@ -179,7 +185,10 @@ class FilterStore {
 		$afhRow = [];
 
 		foreach ( AbuseFilter::HISTORY_MAPPINGS as $afCol => $afhCol ) {
-			$afhRow[$afhCol] = $newRow[$afCol];
+			// Some fields are expected to be missing during actor migration
+			if ( isset( $newRow[$afCol] ) ) {
+				$afhRow[$afhCol] = $newRow[$afCol];
+			}
 		}
 
 		$afhRow['afh_actions'] = serialize( $actions );
@@ -248,6 +257,7 @@ class FilterStore {
 
 	/**
 	 * @todo Perhaps add validation to ensure no null values remained.
+	 * @note For simplicity, data about the last editor are omitted.
 	 * @param Filter $filter
 	 * @return array
 	 */
@@ -264,8 +274,6 @@ class FilterStore {
 			'af_deleted' => (int)$filter->isDeleted(),
 			'af_hidden' => (int)$filter->isHidden(),
 			'af_global' => (int)$filter->isGlobal(),
-			'af_user' => $filter->getUserID(),
-			'af_user_text' => $filter->getUserName(),
 			'af_timestamp' => $filter->getTimestamp(),
 			'af_hit_count' => $filter->getHitCount(),
 			'af_throttled' => (int)$filter->isThrottled(),

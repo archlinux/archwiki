@@ -18,7 +18,10 @@
  * @file
  */
 
+use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Status\Status;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -86,7 +89,7 @@ class LocalFileRestoreBatch {
 	 * @return Status
 	 */
 	public function execute() {
-		/** @var Language */
+		/** @var Language $wgLang */
 		global $wgLang;
 
 		$repo = $this->file->getRepo();
@@ -115,32 +118,29 @@ class LocalFileRestoreBatch {
 
 		$status = $this->file->repo->newGood();
 
-		$exists = (bool)$dbw->selectField( 'image', '1',
-			[ 'img_name' => $this->file->getName() ],
-			__METHOD__,
-			// The acquireFileLock() should already prevent changes, but this still may need
-			// to bypass any transaction snapshot. However, if we started the
-			// trx (which we probably did) then snapshot is post-lock and up-to-date.
-			$ownTrx ? [] : [ 'LOCK IN SHARE MODE' ]
-		);
+		$queryBuilder = $dbw->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'image' )
+			->where( [ 'img_name' => $this->file->getName() ] );
+		// The acquireFileLock() should already prevent changes, but this still may need
+		// to bypass any transaction snapshot. However, if we started the
+		// trx (which we probably did) then snapshot is post-lock and up-to-date.
+		if ( !$ownTrx ) {
+			$queryBuilder->lockInShareMode();
+		}
+		$exists = (bool)$queryBuilder->caller( __METHOD__ )->fetchField();
 
 		// Fetch all or selected archived revisions for the file,
 		// sorted from the most recent to the oldest.
-		$conditions = [ 'fa_name' => $this->file->getName() ];
+		$arQueryBuilder = FileSelectQueryBuilder::newForArchivedFile( $dbw );
+		$arQueryBuilder->where( [ 'fa_name' => $this->file->getName() ] )
+			->orderBy( 'fa_timestamp', SelectQueryBuilder::SORT_DESC );
 
 		if ( !$this->all ) {
-			$conditions['fa_id'] = $this->ids;
+			$arQueryBuilder->andWhere( [ 'fa_id' => $this->ids ] );
 		}
 
-		$arFileQuery = ArchivedFile::getQueryInfo();
-		$result = $dbw->select(
-			$arFileQuery['tables'],
-			$arFileQuery['fields'],
-			$conditions,
-			__METHOD__,
-			[ 'ORDER BY' => 'fa_timestamp DESC' ],
-			$arFileQuery['joins']
-		);
+		$result = $arQueryBuilder->caller( __METHOD__ )->fetchResultSet();
 
 		$idsPresent = [];
 		$storeBatch = [];
@@ -235,7 +235,7 @@ class LocalFileRestoreBatch {
 			} else {
 				$archiveName = $row->fa_archive_name;
 
-				if ( $archiveName == '' ) {
+				if ( $archiveName === null ) {
 					// This was originally a current version; we
 					// have to devise a new archive name for it.
 					// Format is <timestamp of archiving>!<name>
@@ -319,17 +319,24 @@ class LocalFileRestoreBatch {
 		// public zone.
 		// This is not ideal, which is why it's important to lock the image row.
 		if ( $insertCurrent ) {
-			$dbw->insert( 'image', $insertCurrent, __METHOD__ );
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'image' )
+				->row( $insertCurrent )
+				->caller( __METHOD__ )->execute();
 		}
 
 		if ( $insertBatch ) {
-			$dbw->insert( 'oldimage', $insertBatch, __METHOD__ );
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'oldimage' )
+				->rows( $insertBatch )
+				->caller( __METHOD__ )->execute();
 		}
 
 		if ( $deleteIds ) {
-			$dbw->delete( 'filearchive',
-				[ 'fa_id' => $deleteIds ],
-				__METHOD__ );
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'filearchive' )
+				->where( [ 'fa_id' => $deleteIds ] )
+				->caller( __METHOD__ )->execute();
 		}
 
 		// If store batch is empty (all files are missing), deletion is to be considered successful

@@ -11,6 +11,7 @@ use MediaWiki\Permissions\Hook\UserGetRightsHook;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\SpecialPage\Hook\AuthChangeFormFieldsHook;
+use MediaWiki\Title\Title;
 use MediaWiki\User\Hook\UserEffectiveGroupsHook;
 use MediaWiki\User\UserGroupManager;
 use OOUI\ButtonWidget;
@@ -18,7 +19,6 @@ use OOUI\HorizontalLayout;
 use OOUI\LabelWidget;
 use RequestContext;
 use SpecialPage;
-use Title;
 use User;
 use UserGroupMembership;
 
@@ -143,7 +143,7 @@ class HookHandler implements
 			$context = RequestContext::getMain();
 			$list = [];
 			foreach ( $disabledGroups as $disabledGroup ) {
-				$list[] = UserGroupMembership::getLink( $disabledGroup, $context, 'html' );
+				$list[] = UserGroupMembership::getLinkHTML( $disabledGroup, $context );
 			}
 			$info = $context->getLanguage()->commaList( $list );
 			$disabledInfo = [ 'oathauth-disabledgroups' => [

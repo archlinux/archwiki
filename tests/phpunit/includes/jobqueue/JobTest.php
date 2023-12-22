@@ -1,10 +1,12 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 
 /**
  * @author Addshore
+ * @covers Job
  */
 class JobTest extends MediaWikiIntegrationTestCase {
 
@@ -13,8 +15,6 @@ class JobTest extends MediaWikiIntegrationTestCase {
 	 *
 	 * @param Job $job
 	 * @param string $expected
-	 *
-	 * @covers Job::toString
 	 */
 	public function testToString( $job, $expected ) {
 		$this->overrideConfigValue( MainConfigNames::LanguageCode, 'en' );
@@ -91,9 +91,6 @@ class JobTest extends MediaWikiIntegrationTestCase {
 		return $mock;
 	}
 
-	/**
-	 * @covers Job::__construct()
-	 */
 	public function testInvalidParamsArgument() {
 		$params = false;
 		$this->expectException( InvalidArgumentException::class );
@@ -103,8 +100,6 @@ class JobTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideTestJobFactory
-	 *
-	 * @covers Job::factory
 	 */
 	public function testJobFactory( $handler, $expectedClass ) {
 		$this->overrideConfigValue( 'JobClasses', [ 'testdummy' => $handler ] );
@@ -150,10 +145,6 @@ class JobTest extends MediaWikiIntegrationTestCase {
 		return new NullJob( $params );
 	}
 
-	/**
-	 * @covers Job::factory
-	 * @covers Job::__construct()
-	 */
 	public function testJobSignatureGeneric() {
 		$testPage = Title::makeTitle( NS_PROJECT, 'x' );
 		$blankTitle = Title::makeTitle( NS_SPECIAL, '' );
@@ -177,10 +168,6 @@ class JobTest extends MediaWikiIntegrationTestCase {
 		$this->assertJobParamsMatch( $job, $params );
 	}
 
-	/**
-	 * @covers Job::factory
-	 * @covers Job::__construct()
-	 */
 	public function testJobSignatureTitleBased() {
 		$testPage = Title::makeTitle( NS_PROJECT, 'X' );
 		$blankPage = Title::makeTitle( NS_SPECIAL, 'Blankpage' );
@@ -206,10 +193,6 @@ class JobTest extends MediaWikiIntegrationTestCase {
 		$this->assertJobParamsMatch( $job, $paramsWithBlankpage );
 	}
 
-	/**
-	 * @covers Job::factory
-	 * @covers Job::__construct()
-	 */
 	public function testJobSignatureTitleBasedIncomplete() {
 		$testPage = Title::makeTitle( NS_PROJECT, 'X' );
 		$blankTitle = Title::makeTitle( NS_SPECIAL, '' );

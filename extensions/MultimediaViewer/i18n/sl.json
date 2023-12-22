@@ -18,6 +18,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|še $1 avtor|še $1 avtorja|še $1 avtorji|še $1 avtorjev}}",
 	"multimediaviewer-multiple-authors-combine": "$1 in $2",
 	"multimediaviewer-metadata-error": "Podatkov o sliki ni bilo mogoče naložiti (napaka: $1)",
+	"multimediaviewer-file-not-found-error": "Žal datoteke $1 ni mogoče prikazati, ker je ni na trenutni strani.",
 	"multimediaviewer-thumbnail-error": "Datoteke žal ni mogoče prikazati",
 	"multimediaviewer-thumbnail-error-description": "Prišlo je do tehnične težave. Če vztraja, lahko $1. Napaka: $2.",
 	"multimediaviewer-thumbnail-error-retry": "poskusi znova",

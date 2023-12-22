@@ -8,8 +8,8 @@
 	position: relative;
 	margin: 1em 0;
 	padding: 0 1em 1em 1em;
-	background-color: @colorGray15;
-	border: solid 1px @grayLightest;
+	background-color: @background-color-lightest;
+	border: @border-width-base @border-style-base #eaecf0;
 	box-sizing: border-box;
 
 	// We need high specificity to override .content ul
@@ -44,6 +44,9 @@
 		font-family: @font-family-base;
 		font-size: unit( 18/16, em );
 		vertical-align: middle;
+		flex-grow: 1;
+		margin-left: @toc-large-icon;
+		margin-right: @toc-large-icon;
 	}
 }
 
@@ -65,22 +68,6 @@
 .client-js .toc {
 	// Reset padding, because we need to reserve space for icons
 	padding: 0;
-
-	.toctitle {
-		// Reserve space for icons
-		padding: 0 @toc-small-icon 0 @toc-large-icon;
-
-		.mw-ui-icon {
-			position: absolute;
-			left: 0;
-		}
-
-		.toctogglespan + .mw-ui-icon {
-			top: (@toc-large-icon - @toc-small-icon) / 2;
-			right: 0;
-			left: auto;
-		}
-	}
 
 	> ul {
 		// Account for the icon spaces left and right.

@@ -275,7 +275,7 @@
 	"compareselectedversions": "Ayoujiraa na e'rajaaüshiika püneekalaka",
 	"editundo": "atsataa",
 	"diff-empty": "(Wanaawasü)",
-	"diff-multi-sameuser": "({{PLURAL:$1|Analawaa anaatünaka süseerüpüna|$1 anaatünakalirua süseerüpüna}} nütüma ne'e chi ka'yataayakalü)",
+	"diff-multi-sameuser": "(Nnojotsü ee'iyalaain {{PLURAL:$1|wane anaatawaa eekai joolu'ujatüin|$1 anaatünükalü eekai joolu'ujatüin}} nütüma ka'yataayakalü {{GENDER:$3|user}})",
 	"diff-multi-otherusers": "(Nnojotsü {{PLURAL:$1|ee'iyatünüin wane anaataa ee shiatapünain|$1 ee'iyatünüin anaatünakalirua shiatapünaaka}} nümüin {{PLURAL:$2|waneyan ka'yatayaakalü|$2 ka'yatayaakalirua}})",
 	"searchresults": "Asa'awajünaka sünain achajawaa",
 	"searchresults-title": "Asa'awajünükaa sünain achajawaa $1",
@@ -661,5 +661,6 @@
 	"blockedtext-expiration-time": "Jutateerü suchukuwa'a pünüliayaasüka sünainjee: $1",
 	"blockedtext-intended-blockee": "A'alijitnüsü nünülia: $1",
 	"blockedtext-contact-blocker-admin": "Paashajaa nümaa $1 otta namaa na waneeirua [[{{MediaWiki:Grouppage-sysop}}|na akumajuliikana]] süpüla aakalaa tü alijitnuushika puulia.",
+	"blockedtext-block-ip": "Tü püyaawaseka IP shia $1",
 	"blockedtext-include-details-queries": "Analu'ulu putuma shii'ire pi'itaain supushuwa'a tü achuntunakaa pümüin wanaa sümaa püsakirüin saa'ujee wane kasa."
 }

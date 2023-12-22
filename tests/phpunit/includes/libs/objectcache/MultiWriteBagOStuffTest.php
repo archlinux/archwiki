@@ -59,7 +59,7 @@ class MultiWriteBagOStuffTest extends MediaWikiIntegrationTestCase {
 		};
 
 		// XXX: DeferredUpdates bound to transactions in CLI mode
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = $this->getDb();
 		$dbw->begin();
 		$this->cache->merge( $key, $func );
 
@@ -88,7 +88,7 @@ class MultiWriteBagOStuffTest extends MediaWikiIntegrationTestCase {
 
 		$key = 'keyB';
 
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = $this->getDb();
 		$dbw->begin();
 		$cache->merge( $key, $func );
 
@@ -106,7 +106,7 @@ class MultiWriteBagOStuffTest extends MediaWikiIntegrationTestCase {
 		$expectValue = clone $value;
 
 		// XXX: DeferredUpdates bound to transactions in CLI mode
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = $this->getDb();
 		$dbw->begin();
 		$this->cache->set( $key, $value );
 
@@ -139,6 +139,48 @@ class MultiWriteBagOStuffTest extends MediaWikiIntegrationTestCase {
 		] );
 
 		$this->assertSame( 'generic:a:b', $cache->makeKey( 'a', 'b' ) );
+	}
+
+	public function testConvertGenericKey() {
+		$cache1 = new class extends HashBagOStuff {
+			protected function makeKeyInternal( $keyspace, $components ) {
+				return $keyspace . ':short-one-way';
+			}
+
+			protected function requireConvertGenericKey(): bool {
+				return true;
+			}
+		};
+		$cache2 = new class extends HashBagOStuff {
+			protected function makeKeyInternal( $keyspace, $components ) {
+				return $keyspace . ':short-another-way';
+			}
+
+			protected function requireConvertGenericKey(): bool {
+				return true;
+			}
+		};
+
+		$cache = new MultiWriteBagOStuff( [
+			'caches' => [ $cache1, $cache2 ]
+		] );
+		$key = $cache->makeKey( 'a', 'b' );
+		$cache->set( $key, 'my_value' );
+
+		$this->assertSame(
+			'local:a:b',
+			$key
+		);
+		$this->assertSame(
+			[ 'local:short-one-way' ],
+			array_keys( TestingAccessWrapper::newFromObject( $cache1 )->bag ),
+			'key gets re-encoded for first backend'
+		);
+		$this->assertSame(
+			[ 'local:short-another-way' ],
+			array_keys( TestingAccessWrapper::newFromObject( $cache2 )->bag ),
+			'key gets re-encoded for second backend'
+		);
 	}
 
 	public function testMakeGlobalKey() {

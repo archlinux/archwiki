@@ -6,7 +6,7 @@
 	/**
 	 * @class mw.language
 	 */
-	$.extend( mw.language, {
+	Object.assign( mw.language, {
 
 		/**
 		 * Plural form transformations, needed for some languages.
@@ -124,6 +124,7 @@
 					continue;
 				}
 
+				// eslint-disable-next-line security/detect-non-literal-regexp
 				regexp = new RegExp( sourcePattern );
 				replacement = rule[ 1 ];
 

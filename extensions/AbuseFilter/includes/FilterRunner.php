@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
-use BadMethodCallException;
 use DeferredUpdates;
 use InvalidArgumentException;
 use MediaWiki\Config\ServiceOptions;
@@ -17,9 +16,9 @@ use MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Extension\AbuseFilter\Watcher\Watcher;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\Title;
 use Psr\Log\LoggerInterface;
-use Status;
-use Title;
 use User;
 
 /**
@@ -72,23 +71,23 @@ class FilterRunner {
 	/**
 	 * @var User The user who performed the action being filtered
 	 */
-	protected $user;
+	private $user;
 	/**
 	 * @var Title The title where the action being filtered was performed
 	 */
-	protected $title;
+	private $title;
 	/**
 	 * @var VariableHolder The variables for the current action
 	 */
-	protected $vars;
+	private $vars;
 	/**
 	 * @var string The group of filters to check (as defined in $wgAbuseFilterValidGroups)
 	 */
-	protected $group;
+	private $group;
 	/**
 	 * @var string The action we're filtering
 	 */
-	protected $action;
+	private $action;
 
 	/**
 	 * @param AbuseFilterHookRunner $hookRunner
@@ -150,6 +149,7 @@ class FilterRunner {
 			throw new InvalidArgumentException( "Group $group is not a valid group" );
 		}
 		$this->options = $options;
+
 		if ( !$vars->varIsSet( 'action' ) ) {
 			throw new InvalidArgumentException( "The 'action' variable is not set." );
 		}
@@ -184,7 +184,6 @@ class FilterRunner {
 	 *
 	 * @param bool $allowStash Whether we are allowed to check the cache to see if there's a cached
 	 *  result of a previous execution for the same edit.
-	 * @throws BadMethodCallException If run() was already called on this instance
 	 * @return Status Good if no action has been taken, a fatal otherwise.
 	 */
 	public function run( $allowStash = true ): Status {
@@ -214,22 +213,12 @@ class FilterRunner {
 			}
 		}
 
-		if ( $runnerData === null ) {
-			$runnerData = $this->checkAllFiltersInternal();
-		}
+		$runnerData ??= $this->checkAllFiltersInternal();
 
-		// hack until DI for DeferredUpdates is possible (T265749)
-		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+		DeferredUpdates::addCallableUpdate( function () use ( $runnerData ) {
 			$this->profileExecution( $runnerData );
 			$this->updateEmergencyCache( $runnerData->getMatchesMap() );
-		} else {
-			// @codeCoverageIgnoreStart
-			DeferredUpdates::addCallableUpdate( function () use ( $runnerData ) {
-				$this->profileExecution( $runnerData );
-				$this->updateEmergencyCache( $runnerData->getMatchesMap() );
-			} );
-			// @codeCoverageIgnoreEnd
-		}
+		} );
 
 		// TODO: inject the action specifier to avoid this
 		$accountname = $this->varManager->getVar(
@@ -325,7 +314,7 @@ class FilterRunner {
 	 *
 	 * @return RunnerData
 	 */
-	protected function checkAllFiltersInternal(): RunnerData {
+	private function checkAllFiltersInternal(): RunnerData {
 		// Ensure there's no extra time leftover
 		LazyVariableComputer::$profilingExtraTime = 0;
 
@@ -365,7 +354,7 @@ class FilterRunner {
 	 * @return array [ status, time taken ]
 	 * @phan-return array{0:\MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerStatus,1:float}
 	 */
-	protected function checkFilter( ExistingFilter $filter, bool $global = false ): array {
+	private function checkFilter( ExistingFilter $filter, bool $global = false ): array {
 		$filterName = GlobalNameUtils::buildGlobalName( $filter->getID(), $global );
 
 		$startTime = microtime( true );
@@ -382,7 +371,7 @@ class FilterRunner {
 	/**
 	 * @param RunnerData $data
 	 */
-	protected function profileExecution( RunnerData $data ) {
+	private function profileExecution( RunnerData $data ) {
 		$allFilters = $data->getAllFilters();
 		$matchedFilters = $data->getMatchedFilters();
 		$this->filterProfiler->recordRuntimeProfilingResult(
@@ -402,7 +391,7 @@ class FilterRunner {
 	/**
 	 * @param bool[] $matches
 	 */
-	protected function updateEmergencyCache( array $matches ): void {
+	private function updateEmergencyCache( array $matches ): void {
 		$filters = $this->emergencyCache->getFiltersToCheckInGroup( $this->group );
 		foreach ( $filters as $filter ) {
 			if ( array_key_exists( "$filter", $matches ) ) {

@@ -7,7 +7,6 @@
 			"SaldırganSincap"
 		]
 	},
-	"apihelp-spamblacklist-description": "Bir veya daha fazla URL'yi spam engelleme listesine göre doğrulayın.",
 	"apihelp-spamblacklist-example-1": "Engellenenler listesine göre iki URL'yi kontrol edin",
 	"apihelp-spamblacklist-param-url": "Engellenenler listesine göre doğrulanacak URL'ler.",
 	"apihelp-spamblacklist-summary": "Bir veya daha fazla URL'yi spam engelleme listesine göre doğrulayın."

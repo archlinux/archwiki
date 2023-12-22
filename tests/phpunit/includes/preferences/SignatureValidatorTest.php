@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\MainConfigNames;
 use MediaWiki\Preferences\SignatureValidator;
 use Wikimedia\TestingAccessWrapper;
 
@@ -24,6 +25,7 @@ use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Preferences
+ * @group Database
  */
 class SignatureValidatorTest extends MediaWikiIntegrationTestCase {
 
@@ -31,6 +33,7 @@ class SignatureValidatorTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
+		$this->overrideConfigValue( MainConfigNames::ParsoidSettings, [ 'linting' => true ] );
 		$this->validator = $this->getSignatureValidator();
 	}
 
@@ -60,7 +63,7 @@ class SignatureValidatorTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $pstSig );
 	}
 
-	public function provideApplyPreSaveTransform() {
+	public static function provideApplyPreSaveTransform() {
 		return [
 			'Pipe trick' =>
 				[ '[[test|]]', '[[test|test]]' ],
@@ -82,7 +85,7 @@ class SignatureValidatorTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $isValid );
 	}
 
-	public function provideCheckUserLinks() {
+	public static function provideCheckUserLinks() {
 		return [
 			'Perfect' =>
 				[ '[[User:SignatureValidatorTest|Signature]] ([[User talk:SignatureValidatorTest|talk]])', true ],
@@ -102,6 +105,32 @@ class SignatureValidatorTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
+	 * @covers MediaWiki\Preferences\SignatureValidator::checkLintErrors()
+	 * @dataProvider provideCheckLintErrors
+	 */
+	public function testCheckLintErrors( $signature, $expected ) {
+		$errors = $this->validator->checkLintErrors( $signature );
+		$this->assertSame( $expected, $errors );
+	}
+
+	public static function provideCheckLintErrors() {
+			yield 'Perfect' => [ '<strong>Foo</strong>', [] ];
+			yield 'Unclosed tag' => [
+				'<strong>Foo',
+				[
+					[
+						'type' => 'missing-end-tag',
+						'dsr' => [ 0, 11, 8, 0 ],
+						'params' => [
+							'name' => 'strong',
+							'inTable' => false,
+						]
+					]
+				]
+			];
+	}
+
+	/**
 	 * @covers MediaWiki\Preferences\SignatureValidator::checkLineBreaks()
 	 * @dataProvider provideCheckLineBreaks
 	 */
@@ -110,7 +139,7 @@ class SignatureValidatorTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $isValid );
 	}
 
-	public function provideCheckLineBreaks() {
+	public static function provideCheckLineBreaks() {
 		return [
 			'Perfect' =>
 				[ '[[User:SignatureValidatorTest|Signature]] ([[User talk:SignatureValidatorTest|talk]])', true ],

@@ -7,7 +7,6 @@
 		]
 	},
 	"minerva-last-modified-date": "កែប្រែចុងក្រោយនៅ $1 $2",
-	"minerva-talk-add-topic": "បន្ថែម​ប្រធានបទ​",
 	"mobile-frontend-editor-edit": "កែប្រែ",
 	"minerva-download": "ទាញយកជាPDF",
 	"mobile-frontend-editor-redlink-create": "បង្កើតទំព័រ",
@@ -27,8 +26,6 @@
 	"mobile-frontend-meta-data-issues": "បញ្ហា​ទំព័រ",
 	"mobile-frontend-meta-data-issues-categories": "អំពីចំណាត់ក្រុមនេះ",
 	"mobile-frontend-meta-data-issues-header": "បញ្ហាក្នុងទំព័រ",
-	"mobile-frontend-meta-data-issues-header-talk": "អំពីទំព័រនេះ",
-	"mobile-frontend-meta-data-issues-talk": "អំពីទំព័រពិភាក្សានេះ",
 	"mobile-frontend-notifications-filter": "តម្រង",
 	"mobile-frontend-pageaction-edit-tooltip": "កែប្រែសេចក្ដីផ្ដើមរបស់ទំព័រនេះ",
 	"mobile-frontend-placeholder": "ស្វែងរកក្នុង{{SITENAME}}",

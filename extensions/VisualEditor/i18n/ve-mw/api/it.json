@@ -6,7 +6,6 @@
 			"Mannivu"
 		]
 	},
-	"apihelp-visualeditor-description": "Ritorna il codice HTML5 per una pagina del servizio Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Quando salvi, imposta il timestamp della revisione che è stata modificata. È utilizzato per rilevare i conflitti di edizione.",
 	"apihelp-visualeditor-param-cachekey": "Per serializzare o differenziare, utilizza il sirultato della precedente richiesta serializeforcache con questa chiave. Sovrascrive $1html.",
 	"apihelp-visualeditor-param-etag": "ETag da inviare.",
@@ -18,7 +17,6 @@
 	"apihelp-visualeditor-param-section": "La sezione su cui agire.",
 	"apihelp-visualeditor-param-starttimestamp": "Quando salvi, imposta questo parametro al timestamp di quando la pagina è stata caricata. È utilizzato per rilevare i conflitti di edizione.",
 	"apihelp-visualeditor-param-wikitext": "Wikitesto da inviare al Parsoid per essere convertito in HTML (paction=parsefragment).",
-	"apihelp-visualeditoredit-description": "Salva una pagina HTML in MediaWiki (convertita in wikitesto dal servizio Parsoid).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Quando salvi, imposta questo parametro al timestamp della revisione che è stata modificata. È utilizzato per rilevare i conflitti di edizione.",
 	"apihelp-visualeditoredit-param-cachekey": "Utilizza il risultato di una richiesta serializeforcache precedente con questa chiave. Sovrascrive $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha ID (quando stai salvando con una risposta captcha).",

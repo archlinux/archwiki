@@ -21,5 +21,10 @@
 	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> ٹیگ دسیا گیا <code>&lt;references&gt;</code> دے ٹولی اٹریبیوٹ \"$1\" جیہڑے  پہلی لکھت چ ناں دسے۔",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> ٹیگ ناں نال \"$1\" <code>&lt;references&gt;</code> چ دسیا گیا پہلی کسے لکھت چ نئیں ورتیا گیا۔",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> ٹیگ دسیا گیا <code>&lt;references&gt;</code> چ دا کوئی ناں اٹریبیوٹ نئیں۔",
-	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> ٹیگ دسیا گیا <code>&lt;references&gt;</code> چ \"$1\" ناں نال، ایدے چ کج نئیں۔"
+	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> ٹیگ دسیا گیا <code>&lt;references&gt;</code> چ \"$1\" ناں نال، ایدے چ کج نئیں۔",
+	"cite-wikieditor-tool-reference": "حوالہ",
+	"cite-wikieditor-help-page-references": "اتے پتے",
+	"cite-wikieditor-help-content-reference-description": "اتے پتے",
+	"cite-wikieditor-help-content-rereference-description": "ہور ورتن اوسے اتے پتے دا",
+	"cite-wikieditor-help-content-showreferences-description": "اتے پتے وکھاؤ"
 }

@@ -23,7 +23,7 @@ ve.ui.MWSettingsPage = function VeUiMWSettingsPage( name, config ) {
 	ve.ui.MWSettingsPage.super.apply( this, arguments );
 
 	// Properties
-	this.metaList = null;
+	this.fragment = null;
 	this.tocOptionTouched = false;
 	this.redirectOptionsTouched = false;
 	this.tableOfContentsTouched = false;
@@ -271,22 +271,22 @@ ve.ui.MWSettingsPage.prototype.onEnableStaticRedirectChange = function () {
  * @return {Object|null} Meta item, if any
  */
 ve.ui.MWSettingsPage.prototype.getMetaItem = function ( name ) {
-	return this.metaList.getItemsInGroup( name )[ 0 ] || null;
+	return this.fragment.getDocument().getMetaList().getItemsInGroup( name )[ 0 ] || null;
 };
 
 /**
  * Setup settings page.
  *
- * @param {ve.dm.MetaList} metaList Meta list
+ * @param {ve.dm.SurfaceFragment} fragment Surface fragment
  * @param {Object} config
  * @param {Object} [config.data] Dialog setup data
  * @param {boolean} [config.isReadOnly=false] Dialog is in read-only mode
  * @return {jQuery.Promise}
  */
-ve.ui.MWSettingsPage.prototype.setup = function ( metaList, config ) {
+ve.ui.MWSettingsPage.prototype.setup = function ( fragment, config ) {
 	var settingsPage = this;
 
-	this.metaList = metaList;
+	this.fragment = fragment;
 
 	// Table of Contents items
 	var tableOfContentsField = this.tableOfContents.getField();
@@ -354,15 +354,16 @@ ve.ui.MWSettingsPage.prototype.teardown = function ( data ) {
 	if ( this.tableOfContentsTouched ) {
 		if ( newTableOfContentsData.data === 'default' ) {
 			if ( currentTableOfContents ) {
-				currentTableOfContents.remove();
+				this.fragment.removeMeta( currentTableOfContents );
 			}
 		} else {
 			var newTableOfContentsItem = { type: 'mwTOC', attributes: { property: newTableOfContentsData.data } };
 
 			if ( !currentTableOfContents ) {
-				this.metaList.insertMeta( newTableOfContentsItem );
+				this.fragment.insertMeta( newTableOfContentsItem );
 			} else if ( currentTableOfContents.getAttribute( 'property' ) !== newTableOfContentsData.data ) {
-				currentTableOfContents.replaceWith(
+				this.fragment.replaceMeta(
+					currentTableOfContents,
 					ve.extendObject( true, {}, currentTableOfContents.getElement(), newTableOfContentsItem )
 				);
 			}
@@ -375,7 +376,8 @@ ve.ui.MWSettingsPage.prototype.teardown = function ( data ) {
 			if ( newRedirectData ) {
 				if ( currentRedirectTargetItem.getAttribute( 'title' ) !== newRedirectData ) {
 					// There was a redirect and is a new one, but they differ, so replace
-					currentRedirectTargetItem.replaceWith(
+					this.fragment.replaceMeta(
+						currentRedirectTargetItem,
 						ve.extendObject( true, {},
 							currentRedirectTargetItem.getElement(),
 							newRedirectItemData
@@ -384,21 +386,21 @@ ve.ui.MWSettingsPage.prototype.teardown = function ( data ) {
 				}
 			} else {
 				// There was a redirect and is no new one, so remove
-				currentRedirectTargetItem.remove();
+				this.fragment.removeMeta( currentRedirectTargetItem );
 			}
 		} else {
 			if ( newRedirectData ) {
 				// There's no existing redirect but there is a new one, so create
 				// HACK: Putting this at position 0 so that it works – T63862
-				this.metaList.insertMeta( newRedirectItemData, 0 );
+				this.fragment.insertMeta( newRedirectItemData, 0 );
 			}
 		}
 
 		if ( currentStaticRedirectItem && ( !newStaticRedirectState || !newRedirectData ) ) {
-			currentStaticRedirectItem.remove();
+			this.fragment.removeMeta( currentStaticRedirectItem );
 		}
 		if ( !currentStaticRedirectItem && newStaticRedirectState && newRedirectData ) {
-			this.metaList.insertMeta( { type: 'mwStaticRedirect' } );
+			this.fragment.insertMeta( { type: 'mwStaticRedirect' } );
 		}
 	}
 
@@ -407,13 +409,13 @@ ve.ui.MWSettingsPage.prototype.teardown = function ( data ) {
 			isSelected = metaItemCheckbox.fieldLayout.getField().isSelected();
 
 		if ( currentItem && !isSelected ) {
-			currentItem.remove();
+			this.fragment.removeMeta( currentItem );
 		} else if ( !currentItem && isSelected ) {
-			settingsPage.metaList.insertMeta( { type: metaItemCheckbox.metaName } );
+			settingsPage.fragment.insertMeta( { type: metaItemCheckbox.metaName } );
 		}
 	} );
 
-	this.metaList = null;
+	this.fragment = null;
 };
 
 ve.ui.MWSettingsPage.prototype.getFieldsets = function () {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="./bootstrap.maintenance.php"
+<phpunit bootstrap="./bootstrap.integration.php"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
 	colors="true"
@@ -33,7 +33,6 @@
 		<testsuite name="skins">
 			<directory>structure</directory>
 			<file>suites/ExtensionsTestSuite.php</file>
-			<file>suites/LessTestSuite.php</file>
 		</testsuite>
 		<!-- As there is a class Maintenance, we cannot use the name "maintenance" directly -->
 		<testsuite name="maintenance_suite">
@@ -49,13 +48,15 @@
 			<directory>structure</directory>
 			<file>suites/ExtensionsTestSuite.php</file>
 			<file>suites/ExtensionsParserTestSuite.php</file>
-			<file>suites/LessTestSuite.php</file>
 		</testsuite>
 		<testsuite name="unit">
 			<directory>unit</directory>
 		</testsuite>
 		<testsuite name="integration">
 			<directory>integration</directory>
+		</testsuite>
+		<testsuite name="docs">
+			<directory>docs</directory>
 		</testsuite>
 	</testsuites>
 	<groups>
@@ -80,7 +81,7 @@
 						<integer>50</integer>
 					</element>
 					<element key="reportLength">
-						<integer>50</integer>
+						<integer>10</integer>
 					</element>
 				</array>
 			</arguments>
@@ -88,5 +89,6 @@
 	</listeners>
 	<extensions>
 		<extension class="MediaWikiLoggerPHPUnitExtension" />
+		<extension class="MediaWikiTeardownPHPUnitExtension" />
 	</extensions>
 </phpunit>

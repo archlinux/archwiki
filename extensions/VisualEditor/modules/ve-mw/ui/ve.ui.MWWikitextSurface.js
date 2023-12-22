@@ -77,7 +77,7 @@ ve.ui.MWWikitextSurface = function VeUiMWWikitextSurface() {
 				caretPos = range ? surfaceModel.getSourceOffsetFromOffset( range.start ) : 0;
 
 			return options.startAndEnd ?
-				[ caretPos, surfaceModel.getSourceOffsetFromOffset( range.end ) ] :
+				[ caretPos, range ? surfaceModel.getSourceOffsetFromOffset( range.end ) : 0 ] :
 				caretPos;
 		},
 		replaceSelection: function ( value ) {

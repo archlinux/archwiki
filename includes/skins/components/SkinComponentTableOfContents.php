@@ -18,7 +18,8 @@
 
 namespace MediaWiki\Skin;
 
-use OutputPage;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Parser\ParserOutputFlags;
 
 /**
  * @internal for use inside Skin and SkinTemplate classes only
@@ -59,7 +60,7 @@ class SkinComponentTableOfContents implements SkinComponent {
 				$data[] = $section->toLegacy() + [
 					'array-sections' => $childSections,
 					'is-top-level-section' => $toclevel === 1,
-					'is-parent-section' => !empty( $childSections )
+					'is-parent-section' => $childSections !== []
 				];
 			}
 		}
@@ -81,6 +82,10 @@ class SkinComponentTableOfContents implements SkinComponent {
 		$tocData = $this->output->getTOCData();
 		// Return data only if TOC present T298796.
 		if ( $tocData === null ) {
+			return [];
+		}
+		// Respect __NOTOC__
+		if ( $this->output->getOutputFlag( ParserOutputFlags::NO_TOC ) ) {
 			return [];
 		}
 

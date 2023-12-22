@@ -5,13 +5,11 @@
 			"Protnet"
 		]
 	},
-	"apihelp-query+gadgetcategories-description": "Επιστρέφει λίστα με τις κατηγορίες μικροεφαρμογών.",
 	"apihelp-query+gadgetcategories-summary": "Επιστρέφει λίστα με τις κατηγορίες μικροεφαρμογών.",
 	"apihelp-query+gadgetcategories-param-prop": "Τι πληροφορίες για την κατηγορία της μικροεφαρμογής να ληφθούν:\n;name:Όνομα εσωτερικής κατηγορίας.\n;title:Τίτλος κατηγορίας.\n;members:Αριθμός μικροεφαρμογών σε αυτήν την κατηγορία.",
 	"apihelp-query+gadgetcategories-param-names": "Τα ονόματα των κατηγοριών προς ανάκτηση.",
 	"apihelp-query+gadgetcategories-example-1": "Λήψη λίστας με τις υπάρχουσες κατηγορίες μικροεφαρμογών",
 	"apihelp-query+gadgetcategories-example-2": "Λήψη όλων των πληροφοριών σχετικά με τις κατηγορίες με ονόματα «τάδε» και «δείνα»",
-	"apihelp-query+gadgets-description": "Επιστρέφει λίστα με τις μικροεφαρμογές που χρησιμοποιούνται σε αυτό το wiki.",
 	"apihelp-query+gadgets-summary": "Επιστρέφει λίστα με τις μικροεφαρμογές που χρησιμοποιούνται σε αυτό το wiki.",
 	"apihelp-query+gadgets-param-prop": "Τι πληροφορίες της μικροεφαρμογής να ληφθούν:\n;id:Εσωτερικό αναγνωριστικό της μικροεφαρμογής.\n;metadata:Τα μεταδεδομένα της μικροεφαρμογής.\n;desc:Περιγραφή της μικροεφαρμογής μετασχηματισμένη σε HTML (μπορεί να είναι αργό, χρησιμοποιήστε μόνο αν πραγματικά χρειάζεται).",
 	"apihelp-query+gadgets-param-categories": "Ποιων κατηγοριών μικροεφαρμογές να ανακτηθούν.",

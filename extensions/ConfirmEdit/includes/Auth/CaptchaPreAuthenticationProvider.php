@@ -103,7 +103,7 @@ class CaptchaPreAuthenticationProvider extends AbstractPreAuthenticationProvider
 			] );
 		}
 
-		if ( $isBadLoginPerUserTriggered || $isBadLoginPerUserTriggered === null ) {
+		if ( $isBadLoginPerUserTriggered ) {
 			$session = $this->manager->getRequest()->getSession();
 			$session->set( 'ConfirmEdit:loginCaptchaPerUserTriggered', true );
 		}

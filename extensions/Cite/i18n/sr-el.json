@@ -34,5 +34,11 @@
 	"cite_references_link_accessibility_back_label": "Vrati se gore",
 	"cite_section_preview_references": "Pregled referenci",
 	"cite_warning": "Upozorenje za referenciranje: $1",
-	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> tag sa imenom <code>$1</code> ne može da se prikaže u pretpregledu jer je definisan van trenutnog odeljka ili nije uopšte definisan."
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code> tag sa imenom <code>$1</code> ne može da se prikaže u pretpregledu jer je definisan van trenutnog odeljka ili nije uopšte definisan.",
+	"cite-wikieditor-tool-reference": "Referenca",
+	"cite-wikieditor-help-page-references": "Reference",
+	"cite-wikieditor-help-content-reference-description": "Referenca",
+	"cite-wikieditor-help-content-named-reference-description": "Imenovana referenca",
+	"cite-wikieditor-help-content-rereference-description": "Dodatna upotreba iste reference",
+	"cite-wikieditor-help-content-showreferences-description": "Prikazivanje referenci"
 }

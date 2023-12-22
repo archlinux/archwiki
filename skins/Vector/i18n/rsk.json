@@ -17,7 +17,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 язик|$1 язики}}",
 	"vector-no-language-button-label": "Додай язики",
 	"vector-no-language-button-aria-label": "Тота статя еґзистує лєм на тим язику. Додайце статю за други язики.",
-	"vector-language-redirect-to-top": "Язични вязи ше находза на верху бока попри наслова статї. [[#p-lang-btn|Идзце на верх]].",
+	"vector-language-redirect-to-top": "Язични вязи ше находза на верху бока при наслову статї.",
 	"vector-language-variant-switcher-label": "Пременїц вариянту язика",
 	"vector-action-addsection": "Додай тему",
 	"vector-action-delete": "Посцерай",
@@ -49,6 +49,8 @@
 	"vector-site-nav-label": "Сайт",
 	"vector-main-menu-label": "Главни мени",
 	"vector-limited-width-toggle": "Уключце огранїчену ширину змисту",
+	"vector-limited-width-toggle-on-popup": "Преруцели сце випатрунок бока на полну ширину. Же бисце ше врацели на огранїчену ширину, прицишнїце тоту ґомбичку.",
+	"vector-limited-width-toggle-off-popup": "З кликом на тоту ґомбичку ви меняце опциї полней або узшей ширини.",
 	"vector-page-tools-label": "Алатки",
 	"vector-page-tools-general-label": "Обще",
 	"vector-page-tools-actions-label": "Акциї",
@@ -58,5 +60,8 @@
 	"tooltip-vector-anon-user-menu-title": "Вецей опциї",
 	"vector-prefs-limited-width": "Уключиц режим огранїченей ширини",
 	"vector-prefs-limited-width-help": "Уключце режим огранїченей ширини за олєгчане читанє",
-	"empty-language-selector-body": "Змист бока нє потримани на других язикох"
+	"empty-language-selector-body": "Змист бока нє потримани на других язикох",
+	"vector-toc-unpinned-popup": "Змист премесцени ту.",
+	"vector-page-tools-unpinned-popup": "Мени алатох премесцени ту.",
+	"vector-main-menu-unpinned-popup": "Главни мени премесцени ту."
 }

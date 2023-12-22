@@ -25,7 +25,7 @@
 
 namespace MediaWiki\Request;
 
-use WebRequest;
+use MediaWiki\Session\Session;
 
 /**
  * Similar to MediaWiki\Request\FauxRequest, but only fakes URL parameters and method
@@ -66,7 +66,7 @@ class DerivativeRequest extends FauxRequest {
 		return $this->base->getAllHeaders();
 	}
 
-	public function getSession() {
+	public function getSession(): Session {
 		return $this->base->getSession();
 	}
 
@@ -82,7 +82,7 @@ class DerivativeRequest extends FauxRequest {
 		return $this->base->getAcceptLang();
 	}
 
-	public function getIP() {
+	public function getIP(): string {
 		return $this->ip ?: $this->base->getIP();
 	}
 
@@ -104,4 +104,7 @@ class DerivativeRequest extends FauxRequest {
 	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( DerivativeRequest::class, 'DerivativeRequest' );

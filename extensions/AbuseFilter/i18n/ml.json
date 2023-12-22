@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Adithyak1997",
+			"Amire80",
 			"Anoopan",
 			"Matma Rex",
-			"Praveenp",
-			"Amire80"
+			"Praveenp"
 		]
 	},
 	"abusefilter-desc": "തിരുത്തലുകളിൽ സ്വയം പ്രതിരോധപ്രവർത്തനങ്ങൾ നടപ്പിലാക്കുന്നു",
@@ -388,7 +388,6 @@
 	"abusefilter-test-page": "താളിൽ വരുത്തിയ മാറ്റങ്ങൾ:",
 	"abusefilter-test-shownegative": "അരിപ്പയുമായി യോജിക്കാത്ത മാറ്റങ്ങൾ പ്രദർശിപ്പിക്കുക",
 	"abusefilter-test-syntaxerr": "താങ്കൾ നൽകിയ അരിപ്പയുടെ എഴുത്തുരീതിയിൽ പിശകുണ്ട്.\n\"{{int:abusefilter-edit-check}}\" എന്ന ബട്ടൺ ഞെക്കിയാൽ താങ്കൾക്ക് പൂർണ്ണമായ വിശദീകരണം ലഭിക്കുന്നതാണ്.",
-	"abusefilter-test-badtitle": "താങ്കൾ നൽകിയ താളിന്റെ തലക്കെട്ട് അസാധുവാണ്. തലക്കെട്ടിൽ ഉപയോഗിക്കാൻ പാടില്ലാത്ത ഒന്നോ അതിലധികമോ അക്ഷരങ്ങൾ അതിലുണ്ട്.",
 	"abusefilter-test-action": "പ്രവൃത്തിയുടെ തരം:",
 	"abusefilter-test-search-type-all": "എല്ലാ പ്രവൃത്തികളും",
 	"abusefilter-test-search-type-edit": "തിരുത്തുകൾ",

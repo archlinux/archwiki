@@ -1,6 +1,4 @@
 var
-	logger = require( './logger.js' ),
-	controller = require( './controller.js' ),
 	CommentController = require( './CommentController.js' ),
 	HeadingItem = require( './HeadingItem.js' );
 
@@ -10,8 +8,9 @@ var
  * @param {jQuery} $pageContainer Page container
  * @param {HeadingItem} threadItem
  * @param {ThreadItemSet} threadItemSet
+ * @param {MemoryStorage} storage Storage object for autosave
  */
-function NewTopicController( $pageContainer, threadItem, threadItemSet ) {
+function NewTopicController( $pageContainer, threadItem, threadItemSet, storage ) {
 	this.container = new OO.ui.PanelLayout( {
 		classes: [ 'ext-discussiontools-ui-newTopic' ],
 		expanded: false,
@@ -41,7 +40,7 @@ function NewTopicController( $pageContainer, threadItem, threadItemSet ) {
 	threadItem.range.endContainer = this.sectionTitleField.$element[ 0 ];
 	threadItem.range.endOffset = this.sectionTitleField.$element[ 0 ].childNodes.length;
 
-	NewTopicController.super.call( this, $pageContainer, threadItem, threadItemSet );
+	NewTopicController.super.call( this, $pageContainer, threadItem, threadItemSet, storage );
 }
 
 OO.inheritClass( NewTopicController, CommentController );
@@ -51,8 +50,6 @@ OO.inheritClass( NewTopicController, CommentController );
 NewTopicController.static.initType = 'section';
 
 NewTopicController.static.suppressedEditNotices = [
-	// Our own notice, meant for the other interfaces only
-	'discussiontools-newtopic-legacy-hint-return',
 	// Ignored because we have a custom warning for non-logged-in users.
 	'anoneditwarning',
 	// Ignored because it contains mostly instructions for signing comments using tildes.
@@ -74,7 +71,7 @@ NewTopicController.prototype.setup = function ( mode ) {
 
 	// Insert directly after the page content on already existing pages
 	// (.mw-parser-output is missing on non-existent pages)
-	var $parserOutput = this.$pageContainer.find( '.mw-parser-output' );
+	var $parserOutput = this.$pageContainer.find( '.mw-parser-output' ).first();
 	var $mobileAddTopicWrapper = this.$pageContainer.find( '.ext-discussiontools-init-new-topic' );
 	if ( $parserOutput.length ) {
 		$parserOutput.after( this.container.$element );
@@ -94,22 +91,6 @@ NewTopicController.prototype.setup = function ( mode ) {
 	// it while the content field is still loading.
 	rootScrollable.scrollTop = rootScrollable.scrollHeight;
 	this.focus();
-
-	var firstUse = !mw.user.options.get( 'discussiontools-newtopictool-opened' );
-	if (
-		( firstUse || mw.user.options.get( 'discussiontools-newtopictool-hint-shown' ) ) &&
-		mw.config.get( 'wgUserId' ) && mw.config.get( 'wgUserEditCount', 0 ) >= 500
-	) {
-		// Topic hint should be shown to logged in users who have more than
-		// 500 edits on their first use of the tool, and should persist until
-		// they deliberately close it.
-		this.setupTopicHint();
-	}
-	if ( firstUse ) {
-		controller.getApi().saveOption( 'discussiontools-newtopictool-opened', '1' ).then( function () {
-			mw.user.options.set( 'discussiontools-newtopictool-opened', '1' );
-		} );
-	}
 };
 
 /**
@@ -140,7 +121,7 @@ NewTopicController.prototype.setupReplyWidget = function ( replyWidget, data ) {
 	}
 	mw.hook( 'wikipage.content' ).fire( this.$notices );
 
-	var title = this.replyWidget.storage.get( this.replyWidget.storagePrefix + '/title' );
+	var title = this.replyWidget.storage.get( 'title' );
 	if ( title && !this.sectionTitle.getValue() ) {
 		// Don't overwrite if the user has already typed something in while the widget was loading.
 		// TODO This should happen immediately rather than waiting for the reply widget to load,
@@ -148,12 +129,12 @@ NewTopicController.prototype.setupReplyWidget = function ( replyWidget, data ) {
 		this.sectionTitle.setValue( title );
 		this.prevTitleText = title;
 
-		if ( this.replyWidget.storage.get( this.replyWidget.storagePrefix + '/summary' ) === null ) {
+		if ( this.replyWidget.storage.get( 'summary' ) === null ) {
 			var generatedSummary = this.generateSummary( title );
 			this.replyWidget.editSummaryInput.setValue( generatedSummary );
 		}
 	}
-	this.replyWidget.storage.set( this.replyWidget.storagePrefix + '/title', this.sectionTitle.getValue() );
+	this.replyWidget.storage.set( 'title', this.sectionTitle.getValue() );
 
 	if ( this.replyWidget.modeTabSelect ) {
 		// Start with the mode-select widget not-tabbable so focus will go from the title to the body
@@ -168,59 +149,6 @@ NewTopicController.prototype.setupReplyWidget = function ( replyWidget, data ) {
 	replyWidget.connect( this, {
 		clear: 'clear',
 		clearStorage: 'clearStorage'
-	} );
-};
-
-/**
- * Create and display a hint dialog that redirects users to the non-DT version of this tool
- */
-NewTopicController.prototype.setupTopicHint = function () {
-	var topicController = this;
-	var legacyUrl = new URL( location.href );
-	if ( OO.ui.isMobile() ) {
-		legacyUrl.hash = '#/talk/new';
-		legacyUrl.searchParams.delete( 'action' );
-		legacyUrl.searchParams.delete( 'section' );
-	} else {
-		legacyUrl.searchParams.set( 'action', 'edit' );
-		legacyUrl.searchParams.set( 'section', 'new' );
-	}
-	legacyUrl.searchParams.set( 'dtenable', '0' );
-	// This is not a real valid value for 'editintro', but we look for it elsewhere to generate our own edit notice
-	legacyUrl.searchParams.set( 'editintro', 'mw-dt-topic-hint' );
-	// Avoid triggering code that disallows section editing while editing an old version of the page (T311665)
-	legacyUrl.searchParams.delete( 'oldid' );
-	legacyUrl.searchParams.delete( 'diff' );
-
-	this.topicHint = new OO.ui.MessageWidget( {
-		label: mw.message( 'discussiontools-newtopic-legacy-hint', legacyUrl.toString() ).parseDom(),
-		showClose: true,
-		icon: 'article'
-	} )
-		.connect( this, { close: 'onTopicHintClose' } );
-	this.topicHint.$element.addClass( 'ext-discussiontools-ui-newTopic-hint' );
-	this.topicHint.$element.find( 'a' ).on( 'click', function () {
-		// Clicking to follow this link should immediately discard the
-		// autosave. We can do this before the onBeforeUnload handler asks
-		// them to confirm, because if they decide to cancel the navigation
-		// then the autosave will occur again.
-		topicController.clearStorage();
-		topicController.replyWidget.clearStorage();
-	} );
-	this.container.$element.before( this.topicHint.$element );
-
-	// This needs to persist once it's shown
-	controller.getApi().saveOption( 'discussiontools-newtopictool-hint-shown', 1 ).then( function () {
-		mw.user.options.set( 'discussiontools-newtopictool-hint-shown', 1 );
-	} );
-};
-
-/**
- * Handle clicks on the close button for the hint dialog
- */
-NewTopicController.prototype.onTopicHintClose = function () {
-	controller.getApi().saveOption( 'discussiontools-newtopictool-hint-shown', null ).then( function () {
-		mw.user.options.set( 'discussiontools-newtopictool-hint-shown', null );
 	} );
 };
 
@@ -246,7 +174,7 @@ NewTopicController.prototype.clear = function () {
 NewTopicController.prototype.clearStorage = function () {
 	// This is going to get called as part of the teardown chain from replywidget
 	if ( this.replyWidget ) {
-		this.replyWidget.storage.remove( this.replyWidget.storagePrefix + '/title' );
+		this.replyWidget.storage.remove( 'title' );
 	}
 };
 
@@ -256,7 +184,7 @@ NewTopicController.prototype.storeEditSummary = function () {
 		var generatedSummary = this.generateSummary( this.sectionTitle.getValue() );
 		if ( currentSummary === generatedSummary ) {
 			// Do not store generated summaries (T315730)
-			this.replyWidget.storage.remove( this.replyWidget.storagePrefix + '/summary' );
+			this.replyWidget.storage.remove( 'summary' );
 			return;
 		}
 	}
@@ -271,9 +199,6 @@ NewTopicController.prototype.teardown = function ( abandoned ) {
 	NewTopicController.super.prototype.teardown.call( this, abandoned );
 
 	this.container.$element.detach();
-	if ( this.topicHint ) {
-		this.topicHint.$element.detach();
-	}
 
 	if ( mw.config.get( 'wgDiscussionToolsStartNewTopicTool' ) ) {
 		var url = new URL( location.href );
@@ -332,8 +257,10 @@ NewTopicController.prototype.getApiQuery = function ( pageName, checkboxes ) {
 	data = $.extend( {}, data, {
 		paction: 'addtopic',
 		sectiontitle: this.sectionTitle.getValue(),
-		dttags: tags.join( ',' ),
-		editingStatsId: logger.getSessionId()
+		// TODO: Make the user somehow confirm that they really want to post a topic with no subject
+		// before sending this parameter (T334163)
+		allownosectiontitle: true,
+		dttags: tags.join( ',' )
 	} );
 
 	// Allow MediaWiki to generate the summary if it wasn't modified by the user. This avoids
@@ -366,7 +293,7 @@ NewTopicController.prototype.onSectionTitleChange = function () {
 	var prevTitleText = this.prevTitleText;
 
 	if ( prevTitleText !== titleText ) {
-		this.replyWidget.storage.set( this.replyWidget.storagePrefix + '/title', titleText );
+		this.replyWidget.storage.set( 'title', titleText );
 
 		var generatedSummary = this.generateSummary( titleText );
 		var generatedPrevSummary = this.generateSummary( prevTitleText );

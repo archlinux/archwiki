@@ -64,6 +64,7 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 
 		switch ( $type ) {
 			case 'create':
+				$expectedValues['page_id'] = 0;
 				$expectedValues['old_wikitext'] = '';
 				$expectedValues['old_content_model'] = '';
 			// Fallthrough
@@ -186,7 +187,7 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 	 * Data provider for testGetVarsFromRCRow
 	 * @return array
 	 */
-	public function provideRCRowTypes() {
+	public static function provideRCRowTypes() {
 		return [
 			'edit' => [ 'edit', 'edit' ],
 			'create' => [ 'create', 'edit' ],
@@ -200,6 +201,7 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers ::addEditVars
+	 * @covers ::addDerivedEditVars
 	 * @covers ::addEditVarsForRow
 	 * @covers ::addGenericVars
 	 * @covers \MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer
@@ -247,11 +249,11 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 			'old_wikitext' => $oldText,
 			'old_size' => strlen( $oldText ),
 			'old_content_model' => 'wikitext',
-			'old_links' => [ $oldLink ],
+			'old_links' => [ "https://wikipedia.org/" ],
 			'new_wikitext' => $newText,
 			'new_size' => strlen( $newText ),
 			'new_content_model' => 'wikitext',
-			'all_links' => [ $newLink ],
+			'all_links' => [ "https://en.wikipedia.org/" ],
 			'timestamp' => (string)$timestamp,
 		];
 		foreach ( $expected as $var => $value ) {

@@ -43,7 +43,7 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 	}
 
 	protected function doDBUpdates() {
-		$this->lbFactory = MediaWiki\MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$this->lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
 		$this->setBatchSize( $this->getOption( 'batch-size', $this->getBatchSize() ) );
 
 		$dbr = $this->lbFactory->getMainLB()->getConnectionRef( DB_REPLICA );
@@ -77,15 +77,13 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 
 		$userTags = null;
 		if ( $dbr->tableExists( 'valid_tag', __METHOD__ ) ) {
-			$userTags = $dbr->selectFieldValues(
-				'valid_tag',
-				'vt_tag',
-				[],
-				__METHOD__
-			);
+			$userTags = $dbr->newSelectQueryBuilder()
+				->select( 'vt_tag' )
+				->from( 'valid_tag' )
+				->caller( __METHOD__ )->fetchFieldValues();
 		}
 
-		if ( empty( $userTags ) ) {
+		if ( !$userTags ) {
 			$this->output( "No user defined tags to set, moving on...\n" );
 			return;
 		}
@@ -113,13 +111,11 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 		$dbr = $this->lbFactory->getMainLB()->getConnectionRef( DB_REPLICA );
 
 		// This query can be pretty expensive, don't run it on master
-		$res = $dbr->select(
-			'change_tag',
-			[ 'ct_tag_id', 'hitcount' => 'count(*)' ],
-			[],
-			__METHOD__,
-			[ 'GROUP BY' => 'ct_tag_id' ]
-		);
+		$res = $dbr->newSelectQueryBuilder()
+			->select( [ 'ct_tag_id', 'hitcount' => 'count(*)' ] )
+			->from( 'change_tag' )
+			->groupBy( 'ct_tag_id' )
+			->caller( __METHOD__ )->fetchResultSet();
 
 		$dbw = $this->lbFactory->getMainLB()->getConnectionRef( DB_PRIMARY );
 
@@ -147,13 +143,11 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 		$dbr = $this->lbFactory->getMainLB()->getConnectionRef( DB_REPLICA );
 
 		// This query can be pretty expensive, don't run it on master
-		$res = $dbr->select(
-			'change_tag',
-			[ 'ct_tag', 'hitcount' => 'count(*)' ],
-			[],
-			__METHOD__,
-			[ 'GROUP BY' => 'ct_tag' ]
-		);
+		$res = $dbr->newSelectQueryBuilder()
+			->select( [ 'ct_tag', 'hitcount' => 'count(*)' ] )
+			->from( 'change_tag' )
+			->groupBy( 'ct_tag' )
+			->caller( __METHOD__ )->fetchResultSet();
 
 		$dbw = $this->lbFactory->getMainLB()->getConnectionRef( DB_PRIMARY );
 
@@ -167,31 +161,28 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 				$this->output( 'This row will be updated: ' . $row->ct_tag . $row->hitcount . "\n" );
 				continue;
 			}
-
-			$dbw->upsert(
-				'change_tag_def',
-				[
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'change_tag_def' )
+				->row( [
 					'ctd_name' => $row->ct_tag,
 					'ctd_user_defined' => 0,
 					'ctd_count' => $row->hitcount
-				],
-				'ctd_name',
-				[ 'ctd_count' => $row->hitcount ],
-				__METHOD__
-			);
+				] )
+				->onDuplicateKeyUpdate()
+				->uniqueIndexFields( [ 'ctd_name' ] )
+				->set( [ 'ctd_count' => $row->hitcount ] )
+				->caller( __METHOD__ )->execute();
 		}
 		$this->lbFactory->waitForReplication();
 	}
 
 	private function backpopulateChangeTagId() {
 		$dbr = $this->lbFactory->getMainLB()->getConnectionRef( DB_REPLICA );
-		$changeTagDefs = $dbr->select(
-			'change_tag_def',
-			[ 'ctd_name', 'ctd_id' ],
-			[],
-			__METHOD__,
-			[ 'ORDER BY' => 'ctd_id' ]
-		);
+		$changeTagDefs = $dbr->newSelectQueryBuilder()
+			->select( [ 'ctd_name', 'ctd_id' ] )
+			->from( 'change_tag_def' )
+			->orderBy( 'ctd_id' )
+			->caller( __METHOD__ )->fetchResultSet();
 
 		foreach ( $changeTagDefs as $row ) {
 			$this->backpopulateChangeTagPerTag( $row->ctd_name, $row->ctd_id );
@@ -206,13 +197,13 @@ class PopulateChangeTagDef extends LoggedUpdateMaintenance {
 		$this->output( "Starting to add ct_tag_id = {$tagId} for ct_tag = {$tagName}\n" );
 		while ( true ) {
 			// Given that indexes might not be there, it's better to use replica
-			$ids = $dbr->selectFieldValues(
-				'change_tag',
-				'ct_id',
-				[ 'ct_tag' => $tagName, 'ct_tag_id' => null, 'ct_id > ' . $lastId ],
-				__METHOD__,
-				[ 'LIMIT' => $this->getBatchSize(), 'ORDER BY' => 'ct_id' ]
-			);
+			$ids = $dbr->newSelectQueryBuilder()
+				->select( 'ct_id' )
+				->from( 'change_tag' )
+				->where( [ 'ct_tag' => $tagName, 'ct_tag_id' => null, 'ct_id > ' . $lastId ] )
+				->orderBy( 'ct_id' )
+				->limit( $this->getBatchSize() )
+				->caller( __METHOD__ )->fetchFieldValues();
 
 			if ( !$ids ) {
 				break;

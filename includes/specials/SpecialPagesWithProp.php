@@ -22,9 +22,15 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
 use MediaWiki\Html\Html;
+use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Skin;
+use stdClass;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Special:PagesWithProp to search the page_props table
@@ -59,11 +65,11 @@ class SpecialPagesWithProp extends QueryPage {
 	private $sortByValue = false;
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 */
-	public function __construct( ILoadBalancer $loadBalancer ) {
+	public function __construct( IConnectionProvider $dbProvider ) {
 		parent::__construct( 'PagesWithProp' );
-		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setDatabaseProvider( $dbProvider );
 	}
 
 	public function isCacheable() {
@@ -251,24 +257,22 @@ class SpecialPagesWithProp extends QueryPage {
 	}
 
 	protected function queryExistingProps( $limit = null, $offset = 0 ) {
-		$opts = [
-			'DISTINCT', 'ORDER BY' => 'pp_propname'
-		];
+		$queryBuilder =
+			$this->getDatabaseProvider()
+				 ->getReplicaDatabase()
+				 ->newSelectQueryBuilder()
+				 ->select( 'pp_propname' )
+				 ->distinct()
+				 ->from( 'page_props' )
+				 ->orderBy( 'pp_propname' );
+
 		if ( $limit ) {
-			$opts['LIMIT'] = $limit;
+			$queryBuilder->limit( $limit );
 		}
 		if ( $offset ) {
-			$opts['OFFSET'] = $offset;
+			$queryBuilder->offset( $offset );
 		}
-
-		$dbr = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_REPLICA );
-		$res = $dbr->select(
-			'page_props',
-			'pp_propname',
-			'',
-			__METHOD__,
-			$opts
-		);
+		$res = $queryBuilder->caller( __METHOD__ )->fetchResultSet();
 
 		$propnames = [];
 		foreach ( $res as $row ) {
@@ -282,3 +286,9 @@ class SpecialPagesWithProp extends QueryPage {
 		return 'pages';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialPagesWithProp::class, 'SpecialPagesWithProp' );

@@ -46,6 +46,8 @@ class GenerateCollationData extends Maintenance {
 
 	public $debugOutFile;
 
+	private $groups;
+
 	public function __construct() {
 		parent::__construct();
 		$this->addOption( 'data-dir', 'A directory on the local filesystem ' .
@@ -333,7 +335,7 @@ class UcdXmlReader {
 	protected function open() {
 		$this->xml = new XMLReader;
 		if ( !$this->xml->open( $this->fileName ) ) {
-			throw new MWException( __METHOD__ . ": unable to open {$this->fileName}" );
+			throw new RuntimeException( __METHOD__ . ": unable to open {$this->fileName}" );
 		}
 		while ( $this->xml->name !== 'ucd' && $this->xml->read() );
 		$this->xml->read();

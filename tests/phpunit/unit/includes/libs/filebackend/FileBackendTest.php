@@ -9,7 +9,7 @@ use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @coversDefaultClass FileBackend
+ * @covers FileBackend
  */
 class FileBackendTest extends MediaWikiUnitTestCase {
 	/**
@@ -58,7 +58,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
 	 * @dataProvider provideConstruct_validName
 	 */
 	public function testConstruct_validName( $name ): void {
@@ -78,7 +77,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
 	 * @dataProvider provideConstruct_invalidName
 	 * @param mixed $name
 	 */
@@ -107,13 +105,9 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 			'Zero integer' => [ 0 ],
 			'Zero float' => [ 0.0 ],
 			'Negative integer' => [ -7 ],
-			'Negative float' => [ -7.0 ],
 		];
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstruct_noName(): void {
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'Backend name not specified' );
@@ -124,7 +118,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
 	 * @dataProvider provideConstruct_validDomainId
 	 */
 	public function testConstruct_validDomainId( string $domainId ): void {
@@ -135,7 +128,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
 	 * @dataProvider provideConstruct_validDomainId
 	 */
 	public function testConstruct_validWikiId( string $wikiId ): void {
@@ -155,7 +147,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
 	 * @dataProvider provideConstruct_invalidDomainId
 	 */
 	public function testConstruct_invalidDomainId( $domainId ): void {
@@ -180,7 +171,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
 	 * @dataProvider provideConstruct_invalidWikiId
 	 */
 	public function testConstruct_invalidWikiId( $wikiId ): void {
@@ -196,9 +186,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 		] + self::provideConstruct_invalidDomainId();
 	}
 
-	/**
-	 * @covers ::__construct
-	 */
 	public function testConstruct_noDomainId(): void {
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( "Backend domain ID not provided for 'test_name'" );
@@ -209,7 +196,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
 	 * @dataProvider provideConstruct_properties
 	 * @param string $property
 	 * @param mixed $expected
@@ -294,9 +280,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::setLogger
-	 */
 	public function testSetLogger(): void {
 		$backend = $this->newMockFileBackend();
 		$logger = new NullLogger;
@@ -306,18 +289,12 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $logger, TestingAccessWrapper::newFromObject( $backend )->logger );
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::getName
-	 */
 	public function testGetName(): void {
 		$backend = $this->newMockFileBackend();
 		$this->assertSame( 'test_name', $backend->getName() );
 	}
 
 	/**
-	 * @covers ::__construct
-	 * @covers ::getDomainId
 	 * @dataProvider provideGetDomainId
 	 */
 	public function testGetDomainId( array $config ): void {
@@ -326,8 +303,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
-	 * @covers ::getWikiId
 	 * @dataProvider provideGetDomainId
 	 */
 	public function testGetWikiId( array $config ): void {
@@ -345,38 +320,24 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 		];
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::isReadOnly
-	 * @covers ::getReadOnlyReason
-	 */
 	public function testIsReadOnly_default(): void {
 		$backend = $this->newMockFileBackend();
 		$this->assertFalse( $backend->isReadOnly() );
 		$this->assertFalse( $backend->getReadOnlyReason() );
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::isReadOnly
-	 * @covers ::getReadOnlyReason
-	 */
 	public function testIsReadOnly(): void {
 		$backend = $this->newMockFileBackend( [ 'readOnly' => '.' ] );
 		$this->assertTrue( $backend->isReadOnly() );
 		$this->assertSame( '.', $backend->getReadOnlyReason() );
 	}
 
-	/**
-	 * @covers ::getFeatures
-	 */
 	public function testGetFeatures(): void {
 		$backend = $this->newMockFileBackend();
 		$this->assertSame( FileBackend::ATTR_UNICODE_PATHS, $backend->getFeatures() );
 	}
 
 	/**
-	 * @covers ::hasFeatures
 	 * @dataProvider provideHasFeatures
 	 */
 	public function testHasFeatures(
@@ -404,26 +365,12 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::doOperations
-	 * @covers ::doOperation
-	 * @covers ::doQuickOperations
-	 * @covers ::doQuickOperation
-	 * @covers ::prepare
-	 * @covers ::secure
-	 * @covers ::publish
-	 * @covers ::clean
-	 * @covers ::newStatus
 	 * @dataProvider provideReadOnly
 	 */
 	public function testReadOnly( string $method ): void {
 		$backend = $this->newMockFileBackend( [ 'readOnly' => '.' ] );
 		$status = $backend->$method( [] );
-		$this->assertSame( [ [
-			'type' => 'error',
-			'message' => 'backend-fail-readonly',
-			'params' => [ 'test_name', '.' ],
-		] ], $status->getErrors() );
-		$this->assertStatusNotOK( $status );
+		$this->assertStatusError( 'backend-fail-readonly', $status );
 	}
 
 	public static function provideReadOnly(): array {
@@ -444,15 +391,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::doOperations
-	 * @covers ::doOperation
-	 * @covers ::doQuickOperations
-	 * @covers ::doQuickOperation
-	 * @covers ::prepare
-	 * @covers ::secure
-	 * @covers ::publish
-	 * @covers ::clean
-	 * @covers ::newStatus
 	 * @dataProvider provideReadOnly
 	 * @param string $method Method to call
 	 * @param string $internalMethod Internal method the call will be forwarded to
@@ -473,9 +411,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::doOperations
-	 * @covers ::doQuickOperations
-	 * @covers ::newStatus
 	 * @dataProvider provideDoMultipleOperations
 	 */
 	public function testDoOperations_noOp( string $method ): void {
@@ -496,8 +431,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::doOperations
-	 * @covers ::doOperation
 	 * @dataProvider provideDoOperations
 	 * @param string $method 'doOperation' or 'doOperations'
 	 */
@@ -516,8 +449,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::doOperations
-	 * @covers ::doOperation
 	 * @dataProvider provideDoOperations
 	 * @param string $method 'doOperation' or 'doOperations'
 	 */
@@ -534,18 +465,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	// XXX Can't test newScopedIgnoreUserAbort() because it's a no-op in CLI
 
 	/**
-	 * @covers ::create
-	 * @covers ::store
-	 * @covers ::copy
-	 * @covers ::move
-	 * @covers ::delete
-	 * @covers ::describe
-	 * @covers ::quickCreate
-	 * @covers ::quickStore
-	 * @covers ::quickCopy
-	 * @covers ::quickMove
-	 * @covers ::quickDelete
-	 * @covers ::quickDescribe
 	 * @dataProvider provideAction
 	 * @param string $prefix '' or 'quick'
 	 * @param string $action
@@ -580,10 +499,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::prepare
-	 * @covers ::secure
-	 * @covers ::publish
-	 * @covers ::clean
 	 * @dataProvider provideForwardToDo
 	 */
 	public function testForwardToDo( string $method ): void {
@@ -608,9 +523,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::getFileContents
-	 * @covers ::getLocalReference
-	 * @covers ::getLocalCopy
 	 * @dataProvider provideForwardToMulti
 	 */
 	public function testForwardToMulti( string $method ): void {
@@ -633,8 +545,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::getTopDirectoryList
-	 * @covers ::getTopFileList
 	 * @dataProvider provideForwardFromTop
 	 */
 	public function testForwardFromTop( string $methodSuffix ): void {
@@ -657,9 +567,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
-	 * @covers ::lockFiles
-	 * @covers ::unlockFiles
 	 * @dataProvider provideLockUnlockFiles
 	 * @param string $method
 	 * @param int|null $timeout Only relevant for lockFiles
@@ -698,7 +605,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::getScopedFileLocks
 	 * @dataProvider provideGetScopedFileLocks
 	 * @param array $paths
 	 * @param int|string $type
@@ -777,8 +683,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
-	 * @covers ::getRootStoragePath
 	 * @dataProvider provideConstruct_validName
 	 * @param mixed $name
 	 */
@@ -788,8 +692,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::__construct
-	 * @covers ::getContainerStoragePath
 	 * @dataProvider provideConstruct_validName
 	 */
 	public function testGetContainerStoragePath( $name ): void {
@@ -799,7 +701,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::isStoragePath
 	 * @dataProvider provideIsStoragePath
 	 */
 	public function testIsStoragePath( string $path, bool $expected ): void {
@@ -828,7 +729,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::splitStoragePath
 	 * @dataProvider provideSplitStoragePath
 	 */
 	public function testSplitStoragePath( string $path, array $expected ): void {
@@ -858,7 +758,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::normalizeStoragePath
 	 * @dataProvider provideNormalizeStoragePath
 	 * @param string $path
 	 * @param string|null $expected
@@ -893,7 +792,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::parentStoragePath
 	 * @dataProvider provideParentStoragePath
 	 * @param string $path
 	 * @param string|null $expected
@@ -921,7 +819,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::extensionFromPath
 	 * @dataProvider provideExtensionFromPath
 	 */
 	public function testExtensionFromPath( array $args, string $expected ): void {
@@ -946,8 +843,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::isPathTraversalFree
-	 * @covers ::normalizeContainerPath
 	 * @dataProvider provideIsPathTraversalFree
 	 */
 	public function testIsPathTraversalFree( string $path, bool $expected ): void {
@@ -1022,7 +917,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::makeContentDisposition
 	 * @dataProvider provideMakeContentDisposition
 	 */
 	public function testMakeContentDisposition( array $args, string $expected ): void {
@@ -1051,7 +945,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::makeContentDisposition
 	 * @dataProvider provideMakeContentDisposition_invalid
 	 */
 	public function testMakeContentDisposition_invalid( string ...$args ): void {
@@ -1072,9 +965,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::doOperations
-	 * @covers ::doOperation
-	 * @covers ::resolveFSFileObjects
 	 * @dataProvider provideDoOperations
 	 * @param string $method 'doOperation' or 'doOperations'
 	 */
@@ -1096,9 +986,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ::doOperations
-	 * @covers ::doOperation
-	 * @covers ::resolveFSFileObjects
 	 * @dataProvider provideDoOperations
 	 * @param string $method 'doOperation' or 'doOperations'
 	 */
@@ -1117,10 +1004,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 		$this->assertTrue( is_file( $path ) );
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::wrapStatus
-	 */
 	public function testWrapStatus(): void {
 		$expectedSv = StatusValue::newGood( 'myvalue' );
 		$backend = $this->newMockFileBackend( [ 'statusWrapper' =>
@@ -1132,9 +1015,6 @@ class FileBackendTest extends MediaWikiUnitTestCase {
 		$this->assertSame( $expectedSv, $backend->doOperations( [] ) );
 	}
 
-	/**
-	 * @covers ::scopedProfileSection
-	 */
 	public function testScopedProfileSection(): void {
 		$scopedCallback = new ScopedCallback( static function () {
 		} );

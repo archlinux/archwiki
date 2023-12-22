@@ -14,6 +14,7 @@ use DateTimeZone;
 use ILanguageConverter;
 use Language;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 
 class LanguageData {
@@ -58,7 +59,7 @@ class LanguageData {
 		foreach ( $langConv->getVariants() as $variant ) {
 			$data['digits'][$variant] = [];
 			foreach ( str_split( '0123456789' ) as $digit ) {
-				if ( $config->get( 'TranslateNumerals' ) ) {
+				if ( $config->get( MainConfigNames::TranslateNumerals ) ) {
 					$localDigit = $lang->formatNumNoSeparators( $digit );
 				} else {
 					$localDigit = $digit;
@@ -69,7 +70,7 @@ class LanguageData {
 		}
 
 		// ApiQuerySiteinfo
-		$data['localTimezone'] = $config->get( 'Localtimezone' );
+		$data['localTimezone'] = $config->get( MainConfigNames::Localtimezone );
 
 		// special page names compared against Title::getText, which contains space
 		// But aliases are stored with underscores (db key) in the alias files
@@ -78,7 +79,7 @@ class LanguageData {
 		$data['specialNewSectionName'] = str_replace( '_', ' ', $this->specialPageFactory
 			->getLocalNameFor( 'NewSection' ) );
 
-		$localTimezone = $config->get( 'Localtimezone' );
+		$localTimezone = $config->get( MainConfigNames::Localtimezone );
 		// Return all timezone abbreviations for the local timezone (there will often be two, for
 		// non-DST and DST timestamps, and sometimes more due to historical data, but that's okay).
 		// Avoid DateTimeZone::listAbbreviations(), it returns some half-baked list that is different
@@ -178,18 +179,21 @@ class LanguageData {
 			switch ( $code ) {
 				case 'xx':
 				case 'xg':
+				case 'xn':
 				case 'd':
 				case 'D':
 				case 'j':
 				case 'l':
 				case 'F':
 				case 'M':
+				case 'm':
 				case 'n':
 				case 'Y':
 				case 'xkY':
 				case 'G':
 				case 'H':
 				case 'i':
+				case 's':
 					// Special code - pass through unchanged
 					$s .= $code;
 					break;

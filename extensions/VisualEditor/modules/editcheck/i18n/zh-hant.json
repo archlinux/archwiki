@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kly"
+		]
+	},
+	"editcheck-dialog-action-no": "否",
+	"editcheck-dialog-action-yes": "是",
+	"editcheck-dialog-addref-description": "透過添加引文來幫助讀者了解此份資訊的來源。",
+	"editcheck-dialog-addref-reject-question": "為何不添加引文呢？",
+	"editcheck-dialog-addref-reject-description": "其他編者希望能更了解您駁回引文的決定。",
+	"editcheck-dialog-addref-reject-irrelevant": "我認為引文內容與我所做的修改無關",
+	"editcheck-dialog-addref-reject-common-knowledge": "我所添加的資訊是眾所周知的",
+	"editcheck-dialog-addref-reject-uncertain": "我不確定要添加什麼引文",
+	"editcheck-dialog-addref-reject-other": "其他",
+	"editcheck-dialog-addref-success-notify": "感謝您添加引文！",
+	"editcheck-dialog-addref-title": "添加引文",
+	"editcheck-dialog-title": "發布前"
+}

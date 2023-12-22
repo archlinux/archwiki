@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\SpamBlacklist;
 
 use LogicException;
-use Title;
+use MediaWiki\Title\Title;
 use User;
 use Wikimedia\AtEase\AtEase;
 

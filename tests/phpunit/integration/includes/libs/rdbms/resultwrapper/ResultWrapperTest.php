@@ -68,7 +68,11 @@ class ResultWrapperTest extends MediaWikiIntegrationTestCase {
 			7 => (object)[ 'col_a' => '8', 'col_b' => 'h' ]
 		];
 
-		$res = $this->db->select( 'ResultWrapperTest', [ 'col_a', 'col_b' ], '1 = 1', __METHOD__ );
+		$res = $this->db->newSelectQueryBuilder()
+			->select( [ 'col_a', 'col_b' ] )
+			->from( 'ResultWrapperTest' )
+			->where( '1 = 1' )
+			->caller( __METHOD__ )->fetchResultSet();
 		$this->assertSame( 8, $res->numRows() );
 		$this->assertTrue( $res->valid() );
 
@@ -107,31 +111,34 @@ class ResultWrapperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testCurrentNoResults() {
-		$res = $this->db->select( 'ResultWrapperTest',
-			[ 'col_a', 'col_b' ],
-			'1 = 0',
-			__METHOD__ );
+		$res = $this->db->newSelectQueryBuilder()
+			->select( [ 'col_a', 'col_b' ] )
+			->from( 'ResultWrapperTest' )
+			->where( '1 = 0' )
+			->caller( __METHOD__ )->fetchResultSet();
 		$this->assertFalse( $res->current() );
 	}
 
 	public function testValidNoResults() {
-		$res = $this->db->select( 'ResultWrapperTest',
-			[ 'col_a', 'col_b' ],
-			'1 = 0',
-			__METHOD__ );
+		$res = $this->db->newSelectQueryBuilder()
+			->select( [ 'col_a', 'col_b' ] )
+			->from( 'ResultWrapperTest' )
+			->where( '1 = 0' )
+			->caller( __METHOD__ )->fetchResultSet();
 		$this->assertFalse( $res->valid() );
 	}
 
 	public function testSeekNoResults() {
-		$res = $this->db->select( 'ResultWrapperTest',
-			[ 'col_a', 'col_b' ],
-			'1 = 0',
-			__METHOD__ );
+		$res = $this->db->newSelectQueryBuilder()
+			->select( [ 'col_a', 'col_b' ] )
+			->from( 'ResultWrapperTest' )
+			->where( '1 = 0' )
+			->caller( __METHOD__ )->fetchResultSet();
 		$res->seek( 0 );
 		$this->assertTrue( true ); // no error
 	}
 
-	public function provideSeekOutOfBounds() {
+	public static function provideSeekOutOfBounds() {
 		return [ [ 0, 1 ], [ 1, 1 ], [ 1, 2 ], [ 1, -1 ] ];
 	}
 
@@ -142,10 +149,11 @@ class ResultWrapperTest extends MediaWikiIntegrationTestCase {
 				[ [ 'col_a' => $i, 'col_b' => $i ] ],
 				__METHOD__ );
 		}
-		$res = $this->db->select( 'ResultWrapperTest',
-			[ 'col_a', 'col_b' ],
-			'1 = 0',
-			__METHOD__ );
+		$res = $this->db->newSelectQueryBuilder()
+			->select( [ 'col_a', 'col_b' ] )
+			->from( 'ResultWrapperTest' )
+			->where( '1 = 0' )
+			->caller( __METHOD__ )->fetchResultSet();
 		$this->expectException( OutOfBoundsException::class );
 		$res->seek( $seekPos );
 	}

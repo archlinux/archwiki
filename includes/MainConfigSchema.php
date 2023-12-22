@@ -33,7 +33,6 @@ use DoubleRedirectJob;
 use EmaillingJob;
 use EmptyBagOStuff;
 use EnotifNotifyJob;
-use EventRelayerNull;
 use FallbackContentHandler;
 use Generator;
 use HashBagOStuff;
@@ -44,11 +43,14 @@ use JavaScriptContentHandler;
 use JobQueueDB;
 use JsonContentHandler;
 use LayeredParameterizedPassword;
-use LocalIdLookup;
 use LocalisationCache;
 use LocalRepo;
 use LogFormatter;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Settings\Source\JsonSchemaTrait;
+use MediaWiki\Title\NamespaceInfo;
+use MediaWiki\User\CentralId\LocalIdLookup;
+use MediaWiki\User\Registration\LocalUserRegistrationProvider;
 use MediaWikiSite;
 use MemcachedPeclBagOStuff;
 use MemcachedPhpBagOStuff;
@@ -56,7 +58,6 @@ use MergeLogFormatter;
 use MoveLogFormatter;
 use MWOldPassword;
 use MWSaltedPassword;
-use NamespaceInfo;
 use NullJob;
 use ParsoidCachePrewarmJob;
 use PatrolLogFormatter;
@@ -82,7 +83,7 @@ use UserEditCountInitJob;
 use UserGroupExpiryJob;
 use UserOptionsUpdateJob;
 use WatchlistExpiryJob;
-use WebRequest;
+use Wikimedia\EventRelayer\EventRelayerNull;
 use WikitextContentHandler;
 use WinCacheBagOStuff;
 
@@ -901,9 +902,12 @@ class MainConfigSchema {
 	 *
 	 * Slashes and backslashes are disallowed regardless of this setting, but included here for
 	 * completeness.
+	 *
+	 * @deprecated since 1.41; no longer customizable
 	 */
 	public const IllegalFileChars = [
 		'default' => ':\\/\\\\',
+		'deprecated' => 'since 1.41; no longer customizable',
 	];
 
 	/**
@@ -1941,6 +1945,32 @@ class MainConfigSchema {
 	 */
 	public const SVGMetadataCutoff = [
 		'default' => 262144,
+	];
+
+	/**
+	 * Whether native rendering by the browser agent is allowed
+	 *
+	 * Default is false. Setting it to true disables all SVG conversion.
+	 * Setting to the string 'partial' will only allow native rendering
+	 * when the filesize is below SVGNativeRenderingSizeLimit and if the
+	 * file contains at most 1 language.
+	 *
+	 * @since 1.41
+	 */
+	public const SVGNativeRendering = [
+		'default' => false,
+		'type' => 'string|boolean',
+	];
+
+	/**
+	 * Filesize limit for allowing SVGs to render natively by the browser agent
+	 *
+	 * Default is 50kB.
+	 *
+	 * @since 1.41
+	 */
+	public const SVGNativeRenderingSizeLimit = [
+		'default' => 50 * 1024,
 	];
 
 	/**
@@ -3200,6 +3230,26 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * Mapping of virtual domain to external cluster db.
+	 *
+	 * If no entry is set, the code assumes local database.
+	 * For example, for routing queries of virtual domain 'vdomain'
+	 * to 'wikishared' database in 'extension1' cluster. The config should be like this:
+	 *  [ 'vdomain' => [ 'cluster' => 'extension1', 'db' => 'wikishared' ] ]
+	 *
+	 * If the database needs to be the local domain, just set the 'db' to false.
+	 *
+	 * If you want to get another db in the main cluster, just omit 'cluster'. For example:
+	 *  [ 'centralauth' => [ 'db' => 'centralauth' ] ]
+	 *
+	 * @since 1.41
+	 */
+	public const VirtualDomainsMapping = [
+		'default' => [],
+		'type' => 'map',
+	];
+
+	/**
 	 * Templatelinks table schema migration stage, for normalizing tl_namespace and tl_title fields.
 	 *
 	 * Use the SCHEMA_COMPAT_XXX flags. Supported values:
@@ -3219,30 +3269,40 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Externallinks table schema migration stage.
+	 * Pagelinks table schema migration stage, for normalizing pl_namespace and pl_title fields.
 	 *
 	 * Use the SCHEMA_COMPAT_XXX flags. Supported values:
 	 *
-	 *   - SCHEMA_COMPAT_OLD
+	 *   - SCHEMA_COMPAT_WRITE_OLD | SCHEMA_COMPAT_READ_OLD
 	 *   - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
 	 *
 	 * History:
-	 *   - 1.40: Added
+	 *   - 1.41: Added
 	 */
-	public const ExternalLinksSchemaMigrationStage = [
-		'default' => SCHEMA_COMPAT_OLD,
+	public const PageLinksSchemaMigrationStage = [
+		'default' => SCHEMA_COMPAT_WRITE_OLD | SCHEMA_COMPAT_READ_OLD,
 		'type' => 'integer',
 	];
 
 	/**
-	 * Comment temp tables schema migration stage.
+	 * Gaps in the externallinks table for certain domains.
 	 *
-	 * Use the SCHEMA_COMPAT_XXX flags.
+	 * If you have identified certain domains for which externallinks searches are slow,
+	 * you can use this setting to make MediaWiki skip large el_id ranges,
+	 * rather than having the database scan through them fruitlessly.
+	 *
+	 * Each key in the array is a domain name in el_to_domain_index form,
+	 * e.g. 'https://com.example.'.
+	 * The value is an array with integer keys and values,
+	 * where each entry is a range (from => to, both inclusive)
+	 * of el_id values where this domain is known to have no entries.
+	 * (Subdomains are included, i.e., configuring an entry here guarantees to MediaWiki
+	 * that there are no rows where the el_to_domain_index starts with this value.)
 	 *
 	 * History:
-	 *  - 1.40: Added
+	 *   - 1.41: Added
 	 */
-	public const CommentTempTableSchemaMigrationStage = [
+	public const ExternalLinksDomainGaps = [
 		'default' => [],
 		'type' => 'map',
 	];
@@ -3272,7 +3332,9 @@ class MainConfigSchema {
 						'ParserFactory',
 						'GlobalIdGenerator',
 						'LanguageNameUtils',
+						'LinkRenderer',
 						'MagicWordFactory',
+						'ParsoidParserFactory',
 					],
 				],
 				// dumb version, no syntax highlighting
@@ -3455,6 +3517,35 @@ class MainConfigSchema {
 	public const ExternalDiffEngine = [
 		'default' => false,
 		'type' => 'string|false',
+	];
+
+	/**
+	 * Options for wikidiff2:
+	 *   - useMultiFormat: (bool) Whether to use wikidiff2_multi_format_diff()
+	 *     if it is available. This temporarily defaults to false, during
+	 *     migration to the new code. It is available in wikidiff2 1.14.0+.
+	 *
+	 * The following options are only effective if wikidiff2_multi_format_diff()
+	 * is enabled. See README.md in wikidiff2 for details:
+	 *
+	 *   - numContextLines
+	 *   - changeThreshold
+	 *   - movedLineThreshold
+	 *   - maxMovedLines
+	 *   - maxWordLevelDiffComplexity
+	 *   - maxSplitSize
+	 *   - initialSplitThreshold
+	 *   - finalSplitThreshold
+	 *
+	 * Also:
+	 *   - formatOptions: An array of format-specific overrides. The key may
+	 *     be "inline" or "table" and the value is an array with keys
+	 *     numContextLines, changeThreshold, etc.
+	 * @since 1.41
+	 */
+	public const Wikidiff2Options = [
+		'default' => [],
+		'type' => 'map'
 	];
 
 	// endregion -- end of Content handlers and storage
@@ -4026,6 +4117,16 @@ class MainConfigSchema {
 	public const ChronologyProtectorStash = [
 		'default' => null,
 		'type' => '?string',
+	];
+
+	/**
+	 * Secret string for HMAC hashing in ChronologyProtector [optional]
+	 *
+	 * @since 1.41
+	 */
+	public const ChronologyProtectorSecret = [
+		'default' => '',
+		'type' => 'string',
 	];
 
 	/**
@@ -4833,6 +4934,25 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * Whether to enable the 'x-xss' language code, used for development.
+	 *
+	 * When enabled, the language code 'x-xss' (e.g. via ?uselang=x-xss) can
+	 * be used to test correct message escaping at scale, to prevent
+	 * cross-site scripting. In this "language", every message becomes an HTML
+	 * snippet which attempts to alert the message key. Well-written code will
+	 * correctly escape all of these messages. If any alerts are actually
+	 * fired in the browser, the message is not being escaped correctly;
+	 * either the offending code should be fixed, or the message should be
+	 * added to {@link self::RawHtmlMessages}.
+	 *
+	 * @see https://www.mediawiki.org/wiki/Special:MyLanguage/Cross-site_scripting
+	 * @since 1.41
+	 */
+	public const UseXssLanguage = [
+		'default' => false,
+	];
+
+	/**
 	 * Show a bar of language selection links in the user login and user
 	 * registration forms; edit the "loginlanguagelinks" message to
 	 * customise these.
@@ -5096,7 +5216,7 @@ class MainConfigSchema {
 	 * change this to any one of the other available skins in their preferences.
 	 */
 	public const DefaultSkin = [
-		'default' => 'vector',
+		'default' => 'vector-2022',
 	];
 
 	/**
@@ -5121,21 +5241,6 @@ class MainConfigSchema {
 	public const SkipSkins = [
 		'default' => [],
 		'type' => 'map',
-	];
-
-	/**
-	 * Enable client-side preferences for unregistered users.
-	 *
-	 * This is only supported for unregistered users. For registered users, skins
-	 * and extensions must use user preferences (e.g. hidden or API-only options)
-	 * and swap class names server-side through the Skin interface.
-	 *
-	 * @warning EXPERIMENTAL!
-	 * @since 1.40
-	 * @see \MediaWiki\ResourceLoader\ClientHtml
-	 */
-	public const ResourceLoaderClientPreferences = [
-		'default' => false,
 	];
 
 	/**
@@ -5296,6 +5401,25 @@ class MainConfigSchema {
 	 */
 	public const EnableCanonicalServerLink = [
 		'default' => false,
+	];
+
+	/**
+	 * List of interwiki logos overrides.
+	 * This is used by the sister project sidebar. This list accept a key equal to the
+	 * interwiki ID (as defined in the interwiki links), and accept a Codex icon name
+	 * (https://doc.wikimedia.org/codex/latest/icons/all-icons.html) or a base URL for
+	 * the given interwiki.
+	 *
+	 * Example :
+	 * $wgInterwikiLogoOverride = [
+	 *     'c' => 'logoWikimediaCommons',
+	 *     'wikit' => 'https://mySpecialWiki.com'
+	 * ];
+	 */
+	public const InterwikiLogoOverride = [
+		'default' => [],
+		'type' => 'list',
+		'items' => [ 'type' => 'string', ],
 	];
 
 	// endregion -- End of output format settings
@@ -5462,7 +5586,7 @@ class MainConfigSchema {
 	 *
 	 *   Default: `[]`
 	 *
-	 * - scripts `{string[]|string}`:
+	 * - scripts `{string[]|string|array[]}`:
 	 *   Scripts to always include in the module.
 	 *   %File path or list of file paths, relative to `localBasePath`.
 	 *
@@ -5478,15 +5602,19 @@ class MainConfigSchema {
 	 *   [Coding
 	 *     conventions/JavaScript](https://www.mediawiki.org/wiki/Manual:Coding_conventions/JavaScript#Exporting).
 	 *
+	 *   Since MW 1.41, an element of `scripts` may be an array in the same format as
+	 *   packageFiles, giving a callback to call for content generation.
+	 *
 	 *   Default: `[]`
 	 *
 	 *   Extended options, concatenated in this order:
 	 *
-	 *   - languageScripts `{string[]|string}`: Scripts to include in specific language contexts.
-	 *     Array is keyed by language code with file path or list of file path.
-	 *   - skinScripts `{string[]|string}`: Scripts to include in specific skin contexts.
+	 *   - languageScripts `{string[]|string|array[]}`: Scripts to include in specific
+	 *     language contexts. Array is keyed by language code with file path or list of
+	 *     file path.
+	 *   - skinScripts `{string[]|string|array[]}`: Scripts to include in specific skin contexts.
 	 *     Array keyed is by skin name with file path or list of file paths.
-	 *   - debugScripts `{string[]|string}`: Scripts to include in debug contexts.
+	 *   - debugScripts `{string[]|string|array[]}`: Scripts to include in debug contexts.
 	 *     %File path or list of file paths.
 	 *
 	 * - messages `{string[]}`
@@ -5501,14 +5629,9 @@ class MainConfigSchema {
 	 *   Default: `[]`
 	 *
 	 * - es6 `{boolean}`:
-	 *   If true, this module will only be executed in browsers that support ES6. You should set
-	 *     this flag for modules that use ES6 in their JavaScript. Only use this for modules that
-	 *     provide progressive enhancements that are safe to not load in browsers that are not
-	 *     modern but still have a substantial user base, like IE11.
+	 *   Since: MW 1.36; ignored since MW 1.41.
 	 *
-	 *   Since: MW 1.36
-	 *
-	 *   Default: `false`
+	 *   Default: `true`
 	 *
 	 * ## Examples
 	 *
@@ -5871,6 +5994,16 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * Whether to include a SourceMap header in ResourceLoader responses
+	 * for JavaScript modules.
+	 *
+	 * @since 1.41
+	 */
+	public const ResourceLoaderEnableSourceMapLinks = [
+		'default' => true,
+	];
+
+	/**
 	 * Whether to allow site-wide CSS (MediaWiki:Common.css and friends) on
 	 * restricted pages like Special:UserLogin or Special:Preferences where
 	 * JavaScript is disabled for security reasons. As it is possible to
@@ -6038,9 +6171,12 @@ class MainConfigSchema {
 	 * because articles can be created such that they are hard to view or edit.
 	 *
 	 * In some rare cases you may wish to remove + for compatibility with old links.
+	 * @deprecated since 1.41; use Extension:TitleBlacklist or (soon)
+	 * Extension:AbuseFilter to customize this set.
 	 */
 	public const LegalTitleChars = [
 		'default' => ' %!"$&\'()*,\\-.\\/0-9:;=?@A-Z\\\\^_`a-z~\\x80-\\xFF+',
+		'deprecated' => 'since 1.41; use Extension:TitleBlacklist to customize',
 	];
 
 	/**
@@ -6437,9 +6573,11 @@ class MainConfigSchema {
 	 * https://www.mediawiki.org/wiki/Parsing/Media_structure
 	 *
 	 * @since 1.36
+	 * @deprecated since 1.41
 	 */
 	public const ParserEnableLegacyMediaDOM = [
 		'default' => false,
+		'deprecated' => 'since 1.41',
 	];
 
 	/**
@@ -6449,8 +6587,22 @@ class MainConfigSchema {
 	 * but still in the cache.
 	 *
 	 * @internal
+	 * @deprecated since 1.41
 	 */
 	public const UseContentMediaStyles = [
+		'default' => false,
+		'deprecated' => 'since 1.41',
+	];
+
+	/**
+	 * Temporary flag to stop shipping the styles for the legacy media HTML structure
+	 * that has been replaced when $wgParserEnableLegacyMediaDOM is `false`.  This is
+	 * configured separately to give time for templates and extensions that mimic the
+	 * the parser output to be migrated away.  See T318433
+	 *
+	 * @internal
+	 */
+	public const UseLegacyMediaStyles = [
 		'default' => false,
 	];
 
@@ -6725,7 +6877,7 @@ class MainConfigSchema {
 				'class' => LocalIdLookup::class,
 				'services' => [
 					'MainConfig',
-					'DBLoadBalancer',
+					'DBLoadBalancerFactory',
 				]
 			]
 		],
@@ -6738,6 +6890,22 @@ class MainConfigSchema {
 	public const CentralIdLookupProvider = [
 		'default' => 'local',
 		'type' => 'string',
+	];
+
+	/**
+	 * User registration timestamp provider classes
+	 * @since 1.41
+	 */
+	public const UserRegistrationProviders = [
+		'default' => [
+			LocalUserRegistrationProvider::TYPE => [
+				'class' => LocalUserRegistrationProvider::class,
+				'services' => [
+					'UserFactory'
+				]
+			]
+		],
+		'type' => 'map',
 	];
 
 	/**
@@ -6803,7 +6971,7 @@ class MainConfigSchema {
 	 *
 	 * @since 1.26
 	 * @see \PasswordPolicyChecks
-	 * @see \User::checkPasswordValidity()
+	 * @see \MediaWiki\User\User::checkPasswordValidity()
 	 */
 	public const PasswordPolicy = [
 		'default' => [
@@ -6896,7 +7064,7 @@ class MainConfigSchema {
 				\MediaWiki\Auth\TemporaryPasswordPrimaryAuthenticationProvider::class => [
 					'class' => \MediaWiki\Auth\TemporaryPasswordPrimaryAuthenticationProvider::class,
 					'services' => [
-						'DBLoadBalancer',
+						'DBLoadBalancerFactory',
 						'UserOptionsLookup',
 					],
 					'args' => [ [
@@ -6908,7 +7076,7 @@ class MainConfigSchema {
 				\MediaWiki\Auth\LocalPasswordPrimaryAuthenticationProvider::class => [
 					'class' => \MediaWiki\Auth\LocalPasswordPrimaryAuthenticationProvider::class,
 					'services' => [
-						'DBLoadBalancer',
+						'DBLoadBalancerFactory',
 					],
 					'args' => [ [
 						// Last one should be authoritative, or else the user will get
@@ -6937,7 +7105,7 @@ class MainConfigSchema {
 				\MediaWiki\Auth\EmailNotificationSecondaryAuthenticationProvider::class => [
 					'class' => \MediaWiki\Auth\EmailNotificationSecondaryAuthenticationProvider::class,
 					'services' => [
-						'DBLoadBalancer',
+						'DBLoadBalancerFactory',
 					],
 					'sort' => 200,
 				],
@@ -7251,7 +7419,7 @@ class MainConfigSchema {
 	 * Array of usernames which may not be registered or logged in from
 	 * Maintenance scripts can still use these
 	 *
-	 * @see \User::MAINTENANCE_SCRIPT_USER
+	 * @see \MediaWiki\User\User::MAINTENANCE_SCRIPT_USER
 	 */
 	public const ReservedUsernames = [
 		'default' => [
@@ -7283,10 +7451,12 @@ class MainConfigSchema {
 	 */
 	public const DefaultUserOptions = [
 		'default' =>
+			// This array should be sorted by key
 			[
 				'ccmeonemails' => 0,
 				'date' => 'default',
 				'diffonly' => 0,
+				'diff-type' => 'table',
 				'disablemail' => 0,
 				'editfont' => 'monospace',
 				'editondblclick' => 0,
@@ -7299,55 +7469,56 @@ class MainConfigSchema {
 				'extendwatchlist' => 1,
 				'fancysig' => 0,
 				'forceeditsummary' => 0,
+				'forcesafemode' => 0,
 				'gender' => 'unknown',
+				'hidecategorization' => 1,
 				'hideminor' => 0,
 				'hidepatrolled' => 0,
-				'hidecategorization' => 1,
 				'imagesize' => 2,
 				'minordefault' => 0,
 				'newpageshidepatrolled' => 0,
 				'nickname' => '',
-				'pst-cssjs' => 1,
 				'norollbackdiff' => 0,
+				'prefershttps' => 1,
 				'previewonfirst' => 0,
 				'previewontop' => 1,
+				'pst-cssjs' => 1,
 				'rcdays' => 7,
 				'rcenhancedfilters-disable' => 0,
 				'rclimit' => 50,
+				'requireemail' => 0,
 				'search-match-redirect' => true,
 				'search-special-page' => 'Search',
-				'searchlimit' => 20,
 				'search-thumbnail-extra-namespaces' => true,
+				'searchlimit' => 20,
 				'showhiddencats' => 0,
 				'shownumberswatching' => 1,
 				'showrollbackconfirmation' => 0,
 				'skin' => false,
+				'skin-responsive' => 1,
 				'thumbsize' => 5,
 				'underline' => 2,
+				'useeditwarning' => 1,
 				'uselivepreview' => 0,
 				'usenewrc' => 1,
 				'watchcreations' => 1,
 				'watchdefault' => 1,
 				'watchdeletion' => 0,
-				'watchuploads' => 1,
 				'watchlistdays' => 7,
 				'watchlisthideanons' => 0,
 				'watchlisthidebots' => 0,
+				'watchlisthidecategorization' => 1,
 				'watchlisthideliu' => 0,
 				'watchlisthideminor' => 0,
 				'watchlisthideown' => 0,
 				'watchlisthidepatrolled' => 0,
-				'watchlisthidecategorization' => 1,
 				'watchlistreloadautomatically' => 0,
 				'watchlistunwatchlinks' => 0,
 				'watchmoves' => 0,
 				'watchrollback' => 0,
+				'watchuploads' => 1,
 				'wlenhancedfilters-disable' => 0,
 				'wllimit' => 250,
-				'useeditwarning' => 1,
-				'prefershttps' => 1,
-				'requireemail' => 0,
-				'skin-responsive' => 1,
 			],
 		'type' => 'map',
 	];
@@ -7468,6 +7639,10 @@ class MainConfigSchema {
 	 *   - matchPattern: (string) The pattern used when determining whether a
 	 *     username is a temporary user. This affects the rights of the user
 	 *     and also prevents explicit creation of users with matching names.
+	 *     This is ignored if "enabled" is false.
+	 *   - reservedPattern: (string) A pattern used to determine whether a
+	 *     username should be denied for explicit creation, in addition to
+	 *     matchPattern. This is used even if "enabled" is false.
 	 *   - serialProvider: (array) Configuration for generation of unique integer
 	 *     indexes which are used to make temporary usernames.
 	 *       - type: (string) May be "local" to allocate indexes using the local
@@ -7503,6 +7678,7 @@ class MainConfigSchema {
 			'actions' => [ 'type' => 'list', 'default' => [ 'edit' ] ],
 			'genPattern' => [ 'type' => 'string', 'default' => '*Unregistered $1' ],
 			'matchPattern' => [ 'type' => 'string', 'default' => '*$1' ],
+			'reservedPattern' => [ 'type' => 'string|null', 'default' => null ],
 			'serialProvider' => [ 'type' => 'object', 'default' => [ 'type' => 'local' ] ],
 			'serialMapping' => [ 'type' => 'object', 'default' => [ 'type' => 'plain-numeric' ] ]
 		],
@@ -7677,120 +7853,119 @@ class MainConfigSchema {
 		'mergeStrategy' => 'array_plus_2d',
 		'default' => [
 			'*' => [
-					'createaccount' => true,
-					'read' => true,
-					'edit' => true,
-					'createpage' => true,
-					'createtalk' => true,
-					'writeapi' => true,
-					'viewmywatchlist' => true,
-					'editmywatchlist' => true,
-					'viewmyprivateinfo' => true,
-					'editmyprivateinfo' => true,
-					'editmyoptions' => true,
-				],
+				'createaccount' => true,
+				'read' => true,
+				'edit' => true,
+				'createpage' => true,
+				'createtalk' => true,
+				'writeapi' => true,
+				'viewmyprivateinfo' => true,
+				'editmyprivateinfo' => true,
+				'editmyoptions' => true,
+			],
 			'user' => [
-					'move' => true,
-					'move-subpages' => true,
-					'move-rootuserpages' => true,
-					'move-categorypages' => true,
-					'movefile' => true,
-					'read' => true,
-					'edit' => true,
-					'createpage' => true,
-					'createtalk' => true,
-					'writeapi' => true,
-					'upload' => true,
-					'reupload' => true,
-					'reupload-shared' => true,
-					'minoredit' => true,
-					'editmyusercss' => true,
-					'editmyuserjson' => true,
-					'editmyuserjs' => true,
-					'editmyuserjsredirect' => true,
-					'purge' => true,
-					'sendemail' => true,
-					'applychangetags' => true,
-					'changetags' => true,
-					'editcontentmodel' => true,
-				],
+				'move' => true,
+				'move-subpages' => true,
+				'move-rootuserpages' => true,
+				'move-categorypages' => true,
+				'movefile' => true,
+				'read' => true,
+				'edit' => true,
+				'createpage' => true,
+				'createtalk' => true,
+				'writeapi' => true,
+				'upload' => true,
+				'reupload' => true,
+				'reupload-shared' => true,
+				'minoredit' => true,
+				'editmyusercss' => true,
+				'editmyuserjson' => true,
+				'editmyuserjs' => true,
+				'editmyuserjsredirect' => true,
+				'sendemail' => true,
+				'applychangetags' => true,
+				'changetags' => true,
+				'editcontentmodel' => true,
+				'viewmywatchlist' => true,
+				'editmywatchlist' => true,
+			],
 			'autoconfirmed' => [
-					'autoconfirmed' => true,
-					'editsemiprotected' => true,
-				],
+				'autoconfirmed' => true,
+				'editsemiprotected' => true,
+			],
 			'bot' => [
-					'bot' => true,
-					'autoconfirmed' => true,
-					'editsemiprotected' => true,
-					'nominornewtalk' => true,
-					'autopatrol' => true,
-					'suppressredirect' => true,
-					'apihighlimits' => true,
-					'writeapi' => true,
-				],
+				'bot' => true,
+				'autoconfirmed' => true,
+				'editsemiprotected' => true,
+				'nominornewtalk' => true,
+				'autopatrol' => true,
+				'suppressredirect' => true,
+				'apihighlimits' => true,
+				'writeapi' => true,
+			],
 			'sysop' => [
-					'block' => true,
-					'createaccount' => true,
-					'delete' => true,
-					'bigdelete' => true,
-					'deletedhistory' => true,
-					'deletedtext' => true,
-					'undelete' => true,
-					'editinterface' => true,
-					'editsitejson' => true,
-					'edituserjson' => true,
-					'import' => true,
-					'importupload' => true,
-					'move' => true,
-					'move-subpages' => true,
-					'move-rootuserpages' => true,
-					'move-categorypages' => true,
-					'patrol' => true,
-					'autopatrol' => true,
-					'protect' => true,
-					'editprotected' => true,
-					'rollback' => true,
-					'upload' => true,
-					'reupload' => true,
-					'reupload-shared' => true,
-					'unwatchedpages' => true,
-					'autoconfirmed' => true,
-					'editsemiprotected' => true,
-					'ipblock-exempt' => true,
-					'blockemail' => true,
-					'markbotedits' => true,
-					'apihighlimits' => true,
-					'browsearchive' => true,
-					'noratelimit' => true,
-					'movefile' => true,
-					'unblockself' => true,
-					'suppressredirect' => true,
-					'mergehistory' => true,
-					'managechangetags' => true,
-					'deletechangetags' => true,
-				],
+				'block' => true,
+				'createaccount' => true,
+				'delete' => true,
+				'bigdelete' => true,
+				'deletedhistory' => true,
+				'deletedtext' => true,
+				'undelete' => true,
+				'editinterface' => true,
+				'editsitejson' => true,
+				'edituserjson' => true,
+				'import' => true,
+				'importupload' => true,
+				'move' => true,
+				'move-subpages' => true,
+				'move-rootuserpages' => true,
+				'move-categorypages' => true,
+				'patrol' => true,
+				'autopatrol' => true,
+				'protect' => true,
+				'editprotected' => true,
+				'rollback' => true,
+				'upload' => true,
+				'reupload' => true,
+				'reupload-shared' => true,
+				'unwatchedpages' => true,
+				'autoconfirmed' => true,
+				'editsemiprotected' => true,
+				'ipblock-exempt' => true,
+				'blockemail' => true,
+				'markbotedits' => true,
+				'apihighlimits' => true,
+				'browsearchive' => true,
+				'noratelimit' => true,
+				'movefile' => true,
+				'unblockself' => true,
+				'suppressredirect' => true,
+				'mergehistory' => true,
+				'managechangetags' => true,
+				'deletechangetags' => true,
+			],
 			'interface-admin' => [
-					'editinterface' => true,
-					'editsitecss' => true,
-					'editsitejson' => true,
-					'editsitejs' => true,
-					'editusercss' => true,
-					'edituserjson' => true,
-					'edituserjs' => true,
-				],
+				'editinterface' => true,
+				'editsitecss' => true,
+				'editsitejson' => true,
+				'editsitejs' => true,
+				'editusercss' => true,
+				'edituserjson' => true,
+				'edituserjs' => true,
+			],
 			'bureaucrat' => [
-					'userrights' => true,
-					'noratelimit' => true,
-					'renameuser' => true,
-				],
+				'userrights' => true,
+				'noratelimit' => true,
+				'renameuser' => true,
+			],
 			'suppress' => [
-					'hideuser' => true,
-					'suppressrevision' => true,
-					'viewsuppressed' => true,
-					'suppressionlog' => true,
-					'deleterevision' => true,
-					'deletelogentry' => true,
-				],
+				'hideuser' => true,
+				'suppressrevision' => true,
+				'viewsuppressed' => true,
+				'suppressionlog' => true,
+				'deleterevision' => true,
+				'deletelogentry' => true,
+			],
 		],
 	];
 
@@ -7901,7 +8076,7 @@ class MainConfigSchema {
 	 * You probably shouldn't change this.
 	 *
 	 * Translated through restriction-* messages.
-	 * Title::getRestrictionTypes() will remove restrictions that are not
+	 * RestrictionStore::listApplicableRestrictionTypes() will remove restrictions that are not
 	 * applicable to a specific title (create and upload)
 	 */
 	public const RestrictionTypes = [
@@ -8083,11 +8258,11 @@ class MainConfigSchema {
 	 */
 	public const Autopromote = [
 		'default' => [
-				'autoconfirmed' => [ '&',
-					[ APCOND_EDITCOUNT, null ], // NOTE: null means $wgAutoConfirmCount
-					[ APCOND_AGE, null ], // NOTE: null means AutoConfirmAge
-				],
+			'autoconfirmed' => [ '&',
+				[ APCOND_EDITCOUNT, null ], // NOTE: null means $wgAutoConfirmCount
+				[ APCOND_AGE, null ], // NOTE: null means AutoConfirmAge
 			],
+		],
 		'type' => 'map',
 	];
 
@@ -8169,12 +8344,37 @@ class MainConfigSchema {
 
 	/**
 	 * A list of available rights, in addition to the ones defined by the core.
+	 * Rights in this list are denied unless explicitly granted, typically
+	 * using GroupPermissions.
 	 *
 	 * For extensions only.
+	 *
+	 * @see self::GroupPermissions
+	 * @see self::ImplicitRights
 	 */
 	public const AvailableRights = [
 		'default' => [],
 		'type' => 'list',
+		'items' => [ 'type' => 'string', ],
+	];
+
+	/**
+	 * A list of implicit rights, in addition to the ones defined by the core.
+	 * Rights in this list are granted implicitly to all users, but rate limits
+	 * may apply to them.
+	 *
+	 * Extensions that define rate limits should add the corresponding right to
+	 * either ImplicitRights or AvailableRights, depending on whether the right
+	 * should be granted to everyone.
+	 *
+	 * @since 1.41
+	 * @see self::RateLimits
+	 * @see self::AvailableRights
+	 */
+	public const ImplicitRights = [
+		'default' => [],
+		'type' => 'list',
+		'items' => [ 'type' => 'string', ]
 	];
 
 	/**
@@ -8227,7 +8427,7 @@ class MainConfigSchema {
 	 * ];
 	 * ```
 	 *
-	 * @note For backwards compatibility reasons, this my also be given as a single
+	 * @note For backwards compatibility reasons, this may also be given as a single
 	 *       integer, representing the number of account creations per day.
 	 *
 	 * @warning Requires $wgMainCacheType to be enabled
@@ -8385,6 +8585,7 @@ class MainConfigSchema {
 	 * ];
 	 * ```
 	 *
+	 * @see self::ImplicitRights
 	 * @warning Requires that $wgMainCacheType is set to something persistent
 	 */
 	public const RateLimits = [
@@ -8538,173 +8739,172 @@ class MainConfigSchema {
 	public const GrantPermissions = [
 		'default' => [
 			'basic' => [
-					'autocreateaccount' => true,
-					'autoconfirmed' => true,
-					'autopatrol' => true,
-					'editsemiprotected' => true,
-					'ipblock-exempt' => true,
-					'nominornewtalk' => true,
-					'patrolmarks' => true,
-					'purge' => true,
-					'read' => true,
-					'writeapi' => true,
-					'unwatchedpages' => true,
-				],
+				'autocreateaccount' => true,
+				'autoconfirmed' => true,
+				'autopatrol' => true,
+				'editsemiprotected' => true,
+				'ipblock-exempt' => true,
+				'nominornewtalk' => true,
+				'patrolmarks' => true,
+				'read' => true,
+				'writeapi' => true,
+				'unwatchedpages' => true,
+			],
 			'highvolume' => [
-					'bot' => true,
-					'apihighlimits' => true,
-					'noratelimit' => true,
-					'markbotedits' => true,
-				],
+				'bot' => true,
+				'apihighlimits' => true,
+				'noratelimit' => true,
+				'markbotedits' => true,
+			],
 			'import' => [
-					'import' => true,
-					'importupload' => true,
-				],
+				'import' => true,
+				'importupload' => true,
+			],
 			'editpage' => [
-					'edit' => true,
-					'minoredit' => true,
-					'applychangetags' => true,
-					'changetags' => true,
-					'editcontentmodel' => true,
-				],
+				'edit' => true,
+				'minoredit' => true,
+				'applychangetags' => true,
+				'changetags' => true,
+				'editcontentmodel' => true,
+			],
 			'editprotected' => [
-					'edit' => true,
-					'minoredit' => true,
-					'applychangetags' => true,
-					'changetags' => true,
-					'editcontentmodel' => true,
-					'editprotected' => true,
-				],
+				'edit' => true,
+				'minoredit' => true,
+				'applychangetags' => true,
+				'changetags' => true,
+				'editcontentmodel' => true,
+				'editprotected' => true,
+			],
 			'editmycssjs' => [
-					'edit' => true,
-					'minoredit' => true,
-					'applychangetags' => true,
-					'changetags' => true,
-					'editcontentmodel' => true,
-					'editmyusercss' => true,
-					'editmyuserjson' => true,
-					'editmyuserjs' => true,
-				],
+				'edit' => true,
+				'minoredit' => true,
+				'applychangetags' => true,
+				'changetags' => true,
+				'editcontentmodel' => true,
+				'editmyusercss' => true,
+				'editmyuserjson' => true,
+				'editmyuserjs' => true,
+			],
 			'editmyoptions' => [
-					'editmyoptions' => true,
-					'editmyuserjson' => true,
-				],
+				'editmyoptions' => true,
+				'editmyuserjson' => true,
+			],
 			'editinterface' => [
-					'edit' => true,
-					'minoredit' => true,
-					'applychangetags' => true,
-					'changetags' => true,
-					'editcontentmodel' => true,
-					'editinterface' => true,
-					'edituserjson' => true,
-					'editsitejson' => true,
-				],
+				'edit' => true,
+				'minoredit' => true,
+				'applychangetags' => true,
+				'changetags' => true,
+				'editcontentmodel' => true,
+				'editinterface' => true,
+				'edituserjson' => true,
+				'editsitejson' => true,
+			],
 			'editsiteconfig' => [
-					'edit' => true,
-					'minoredit' => true,
-					'applychangetags' => true,
-					'changetags' => true,
-					'editcontentmodel' => true,
-					'editinterface' => true,
-					'edituserjson' => true,
-					'editsitejson' => true,
-					'editusercss' => true,
-					'edituserjs' => true,
-					'editsitecss' => true,
-					'editsitejs' => true,
-				],
+				'edit' => true,
+				'minoredit' => true,
+				'applychangetags' => true,
+				'changetags' => true,
+				'editcontentmodel' => true,
+				'editinterface' => true,
+				'edituserjson' => true,
+				'editsitejson' => true,
+				'editusercss' => true,
+				'edituserjs' => true,
+				'editsitecss' => true,
+				'editsitejs' => true,
+			],
 			'createeditmovepage' => [
-					'edit' => true,
-					'minoredit' => true,
-					'applychangetags' => true,
-					'changetags' => true,
-					'editcontentmodel' => true,
-					'createpage' => true,
-					'createtalk' => true,
-					'delete-redirect' => true,
-					'move' => true,
-					'move-rootuserpages' => true,
-					'move-subpages' => true,
-					'move-categorypages' => true,
-					'suppressredirect' => true,
-				],
+				'edit' => true,
+				'minoredit' => true,
+				'applychangetags' => true,
+				'changetags' => true,
+				'editcontentmodel' => true,
+				'createpage' => true,
+				'createtalk' => true,
+				'delete-redirect' => true,
+				'move' => true,
+				'move-rootuserpages' => true,
+				'move-subpages' => true,
+				'move-categorypages' => true,
+				'suppressredirect' => true,
+			],
 			'uploadfile' => [
-					'upload' => true,
-					'reupload-own' => true,
-				],
+				'upload' => true,
+				'reupload-own' => true,
+			],
 			'uploadeditmovefile' => [
-					'upload' => true,
-					'reupload-own' => true,
-					'reupload' => true,
-					'reupload-shared' => true,
-					'upload_by_url' => true,
-					'movefile' => true,
-					'suppressredirect' => true,
-				],
+				'upload' => true,
+				'reupload-own' => true,
+				'reupload' => true,
+				'reupload-shared' => true,
+				'upload_by_url' => true,
+				'movefile' => true,
+				'suppressredirect' => true,
+			],
 			'patrol' => [
-					'patrol' => true,
-				],
+				'patrol' => true,
+			],
 			'rollback' => [
-					'rollback' => true,
-				],
+				'rollback' => true,
+			],
 			'blockusers' => [
-					'block' => true,
-					'blockemail' => true,
-				],
+				'block' => true,
+				'blockemail' => true,
+			],
 			'viewdeleted' => [
-					'browsearchive' => true,
-					'deletedhistory' => true,
-					'deletedtext' => true,
-				],
+				'browsearchive' => true,
+				'deletedhistory' => true,
+				'deletedtext' => true,
+			],
 			'viewrestrictedlogs' => [
-					'suppressionlog' => true,
-				],
+				'suppressionlog' => true,
+			],
 			'delete' => [
-					'edit' => true,
-					'minoredit' => true,
-					'applychangetags' => true,
-					'changetags' => true,
-					'editcontentmodel' => true,
-					'browsearchive' => true,
-					'deletedhistory' => true,
-					'deletedtext' => true,
-					'delete' => true,
-					'bigdelete' => true,
-					'deletelogentry' => true,
-					'deleterevision' => true,
-					'undelete' => true,
-				],
+				'edit' => true,
+				'minoredit' => true,
+				'applychangetags' => true,
+				'changetags' => true,
+				'editcontentmodel' => true,
+				'browsearchive' => true,
+				'deletedhistory' => true,
+				'deletedtext' => true,
+				'delete' => true,
+				'bigdelete' => true,
+				'deletelogentry' => true,
+				'deleterevision' => true,
+				'undelete' => true,
+			],
 			'oversight' => [
-					'suppressrevision' => true,
-					'viewsuppressed' => true,
-				],
+				'suppressrevision' => true,
+				'viewsuppressed' => true,
+			],
 			'protect' => [
-					'edit' => true,
-					'minoredit' => true,
-					'applychangetags' => true,
-					'changetags' => true,
-					'editcontentmodel' => true,
-					'editprotected' => true,
-					'protect' => true,
-				],
+				'edit' => true,
+				'minoredit' => true,
+				'applychangetags' => true,
+				'changetags' => true,
+				'editcontentmodel' => true,
+				'editprotected' => true,
+				'protect' => true,
+			],
 			'viewmywatchlist' => [
-					'viewmywatchlist' => true,
-				],
+				'viewmywatchlist' => true,
+			],
 			'editmywatchlist' => [
-					'editmywatchlist' => true,
-				],
+				'editmywatchlist' => true,
+			],
 			'sendemail' => [
-					'sendemail' => true,
-				],
+				'sendemail' => true,
+			],
 			'createaccount' => [
-					'createaccount' => true,
-				],
+				'createaccount' => true,
+			],
 			'privateinfo' => [
-					'viewmyprivateinfo' => true,
-				],
+				'viewmyprivateinfo' => true,
+			],
 			'mergehistory' => [
-					'mergehistory' => true,
-				],
+				'mergehistory' => true,
+			],
 		],
 		'type' => 'map',
 		'mergeStrategy' => 'array_plus_2d',
@@ -8897,7 +9097,7 @@ class MainConfigSchema {
 	 *
 	 * @see https://www.w3.org/TR/CSP2/
 	 * @since 1.32
-	 * @warning May cause slowness on windows due to slow random number generator.
+	 * @warning May cause slowness on Windows due to slow random number generator.
 	 */
 	public const CSPHeader = [
 		'default' => false,
@@ -10095,7 +10295,7 @@ class MainConfigSchema {
 	 * List of Days options to list in the Special:Recentchanges and
 	 * Special:Recentchangeslinked pages.
 	 *
-	 * @see \ChangesListSpecialPage::getLinkDays
+	 * @see \MediaWiki\SpecialPage\ChangesListSpecialPage::getLinkDays
 	 */
 	public const RCLinkDays = [
 		'default' => [ 1, 3, 7, 14, 30 ],
@@ -10834,27 +11034,6 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Parser output hooks.
-	 *
-	 * This is an associative array where the key is an extension-defined tag
-	 * (typically the extension name), and the value is a PHP callback.
-	 * These will be called as an OutputPageParserOutput hook, if the relevant
-	 * tag has been registered with the parser output object.
-	 *
-	 * Registration is done with $pout->addOutputHook( $tag, $data ).
-	 *
-	 * The callback has the form:
-	 *
-	 * ```
-	 * function outputHook( $outputPage, $parserOutput, $data ) { ... }
-	 * ```
-	 */
-	public const ParserOutputHooks = [
-		'default' => [],
-		'type' => 'map',
-	];
-
-	/**
 	 * Whether to include the NewPP limit report as a HTML comment
 	 */
 	public const EnableParserLimitReporting = [
@@ -11059,7 +11238,16 @@ class MainConfigSchema {
 			'htmlCacheUpdate' => HTMLCacheUpdateJob::class,
 			'sendMail' => EmaillingJob::class,
 			'enotifNotify' => EnotifNotifyJob::class,
-			'fixDoubleRedirect' => DoubleRedirectJob::class,
+			'fixDoubleRedirect' => [
+				'class' => DoubleRedirectJob::class,
+				'services' => [
+					'RevisionLookup',
+					'MagicWordFactory',
+					'WikiPageFactory',
+				],
+				// This job requires a title
+				'needsPage' => true,
+			],
 			'AssembleUploadChunks' => AssembleUploadChunksJob::class,
 			'PublishStashedFile' => PublishStashedFileJob::class,
 			'ThumbnailRender' => ThumbnailRenderJob::class,
@@ -11917,13 +12105,6 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Enable AJAX check for file overwrite, pre-upload
-	 */
-	public const AjaxUploadDestCheck = [
-		'default' => true,
-	];
-
-	/**
 	 * Enable previewing licences via AJAX.
 	 */
 	public const AjaxLicensePreview = [
@@ -12233,9 +12414,13 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Whether to respect/honour the request ID provided by the incoming request
-	 * via the `X-Request-Id` header. Set to `true` if the entity sitting in front
-	 * of Mediawiki sanitises external requests. Default: `false`.
+	 * Whether to respect/honour
+	 *  - request ID provided by the incoming request via the `X-Request-Id`
+	 *  - trace context provided by the incoming request via the `tracestate` and `traceparent`
+	 *
+	 * Set to `true` if the entity sitting in front of Mediawiki sanitises external requests.
+	 *
+	 * Default: `false`.
 	 */
 	public const AllowExternalReqID = [
 		'default' => false,
@@ -12474,6 +12659,15 @@ class MainConfigSchema {
 	public const SpecialContributeSkinsEnabled = [
 		'default' => [],
 		'type' => 'list',
+	];
+
+	/**
+	 * Whether to enable the client-side edit recovery feature.
+	 * This is a temporary feature flag.
+	 */
+	public const EnableEditRecovery = [
+		'default' => false,
+		'type' => 'boolean',
 	];
 
 	// endregion -- End Miscellaneous

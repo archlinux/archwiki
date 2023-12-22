@@ -65,7 +65,11 @@ class Title {
 		}
 
 		// Strip Unicode bidi override characters.
-		$title = preg_replace( '/[\x{200E}\x{200F}\x{202A}-\x{202E}]/u', '', $title );
+		$title = preg_replace( '/[\x{200E}\x{200F}\x{202A}-\x{202E}]+/u', '', $title );
+		if ( $title === null ) {
+			throw new TitleException( "Bad UTF-8 in title \"$title\"", 'title-invalid-utf8', $title );
+		}
+
 		// Clean up whitespace
 		$title = preg_replace(
 			'/[ _\x{00A0}\x{1680}\x{180E}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u',
@@ -74,7 +78,7 @@ class Title {
 		// Trim _ from beginning and end
 		$title = trim( $title, '_' );
 
-		if ( strpos( $title, \UtfNormal\Constants::UTF8_REPLACEMENT ) !== false ) {
+		if ( str_contains( $title, \UtfNormal\Constants::UTF8_REPLACEMENT ) ) {
 			throw new TitleException( "Bad UTF-8 in title \"$title\"", 'title-invalid-utf8', $title );
 		}
 
@@ -92,38 +96,58 @@ class Title {
 		if ( $defaultNs instanceof TitleNamespace ) {
 			$defaultNs = $defaultNs->getId();
 		}
+		$ns = $defaultNs;
+		$interwiki = null;
 
-		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures.AssignmentInControlStructures
-		if ( ( $pmatch = preg_match( '/^(.+?)_*:_*(.*)$/D', $title, $m ) ) && (
-			( $nsId = $siteConfig->canonicalNamespaceId( $m[1] ) ) !== null ||
-			( $nsId = $siteConfig->namespaceId( $m[1] ) ) !== null
-		) ) {
-			$title = $m[2];
-			$ns = $nsId;
-		} else {
-			if ( $pmatch && ( $siteConfig->interwikiMapNoNamespaces()[$m[1]] ?? null ) ) {
-				// Zorg!  Core also removes the prefix for interwikis when doing
-				// the rest of validation on the title, so let's just ignore $m[1]
+		# Namespace or interwiki prefix
+		$prefixRegexp = "/^(.+?)_*:_*(.*)$/S";
+		// MediaWikiTitleCodec::splitTitleString wraps a loop around the
+		// next section, to allow it to repeat this prefix processing if
+		// an interwiki prefix is found which points at the local wiki.
+		$m = [];
+		if ( preg_match( $prefixRegexp, $title, $m ) ) {
+			$p = $m[1];
+			$nsId = $siteConfig->canonicalNamespaceId( $p ) ??
+				  $siteConfig->namespaceId( $p );
+			if ( $nsId !== null ) {
 				$title = $m[2];
+				$ns = $nsId;
+				# For Talk:X pages, check if X has a "namespace" prefix
+				if (
+					$nsId === $siteConfig->canonicalNamespaceId( 'talk' ) &&
+					preg_match( $prefixRegexp, $title, $x )
+				) {
+					if ( $siteConfig->namespaceId( $x[1] ) ) {
+						// Disallow Talk:File:x type titles.
+						throw new TitleException(
+							"Invalid Talk namespace title \"$origTitle\"", 'title-invalid-talk-namespace', $title
+						);
+					} elseif ( $siteConfig->interwikiMapNoNamespaces()[$x[1]] ?? null ) {
+						// Disallow Talk:Interwiki:x type titles.
+						throw new TitleException(
+							"Invalid Talk namespace title \"$origTitle\"", 'title-invalid-talk-namespace', $title
+						);
+					}
+				}
+			} elseif ( $siteConfig->interwikiMapNoNamespaces()[$p] ?? null ) {
+				# Interwiki link
+				$title = $m[2];
+				$interwiki = strtolower( $p );
+
+				# We don't check for a redundant interwiki prefix to the
+				# local wiki, like core does here in
+				# MediaWikiTitleCodec::splitTitleString;
+				# core then does a `continue` to repeat the processing
 
 				// If there's an initial colon after the interwiki, that also
 				// resets the default namespace
 				if ( $title !== '' && $title[0] === ':' ) {
-					$title = ltrim( substr( $title, 1 ), '_' );
-					$defaultNs = 0;
+					$title = trim( substr( $title, 1 ), '_' );
+					$ns = 0;
 				}
 			}
-			$ns = $defaultNs;
-		}
-
-		// Disallow Talk:File:x type titles.
-		if ( $ns === $siteConfig->canonicalNamespaceId( 'talk' ) &&
-			preg_match( '/^(.+?)_*:_*(.*)$/D', $title, $m ) &&
-			$siteConfig->namespaceId( $m[1] ) !== null
-		) {
-			throw new TitleException(
-				"Invalid Talk namespace title \"$origTitle\"", 'title-invalid-talk-namespace', $title
-			);
+			# If there's no recognized interwiki or namespace,
+			# then let the colon expression be part of the title
 		}
 
 		$fragment = null;
@@ -138,9 +162,7 @@ class Title {
 			// to round-trip titles -- you can't link to them consistently.
 			. '|%[0-9A-Fa-f]{2}'
 			// XML/HTML character references produce similar issues.
-			. '|&[A-Za-z0-9\x80-\xff]+;'
-			. '|&#[0-9]+;'
-			. '|&#x[0-9A-Fa-f]+;/';
+			. '|&[A-Za-z0-9\x80-\xff]+;/S';
 		if ( preg_match( $illegalCharsRe, $title ) ) {
 			throw new TitleException(
 				"Invalid characters in title \"$origTitle\"", 'title-invalid-characters', $title
@@ -150,14 +172,14 @@ class Title {
 		// Pages with "/./" or "/../" appearing in the URLs will often be
 		// unreachable due to the way web browsers deal with 'relative' URLs.
 		// Also, they conflict with subpage syntax. Forbid them explicitly.
-		if ( strpos( $title, '.' ) !== false && (
+		if ( str_contains( $title, '.' ) && (
 			$title === '.' || $title === '..' ||
-			strpos( $title, './' ) === 0 ||
-			strpos( $title, '../' ) === 0 ||
-			strpos( $title, '/./' ) !== false ||
-			strpos( $title, '/../' ) !== false ||
-			substr( $title, -2 ) === '/.' ||
-			substr( $title, -3 ) === '/..'
+			str_starts_with( $title, './' ) ||
+			str_starts_with( $title, '../' ) ||
+			str_contains( $title, '/./' ) ||
+			str_contains( $title, '/../' ) ||
+			str_ends_with( $title, '/.' ) ||
+			str_ends_with( $title, '/..' )
 		) ) {
 			throw new TitleException(
 				"Title \"$origTitle\" contains relative path components", 'title-invalid-relative', $title
@@ -165,7 +187,7 @@ class Title {
 		}
 
 		// Magic tilde sequences? Nu-uh!
-		if ( strpos( $title, '~~~' ) !== false ) {
+		if ( str_contains( $title, '~~~' ) ) {
 			throw new TitleException(
 				"Title \"$origTitle\" contains ~~~", 'title-invalid-magic-tilde', $title
 			);
@@ -178,19 +200,21 @@ class Title {
 			);
 		}
 
-		if ( $siteConfig->namespaceCase( $ns ) === 'first-letter' ) {
+		if ( $interwiki === null && $siteConfig->namespaceCase( $ns ) === 'first-letter' ) {
 			$title = $siteConfig->ucfirst( $title );
 		}
 
-		// Allow "#foo" as a title, which comes in as namespace 0.
-		// TODO: But should this exclude "_#foo" and the like?
-		if ( $title === '' && $ns !== $siteConfig->canonicalNamespaceId( '' ) ) {
+		# Can't make a link to a namespace alone... "empty" local links can only be
+		# self-links with a fragment identifier.
+		if ( $title === '' && $interwiki === null && $ns !== $siteConfig->canonicalNamespaceId( '' ) ) {
 			throw new TitleException( 'Empty title', 'title-invalid-empty', $title );
 		}
 
-		if ( $ns === $siteConfig->canonicalNamespaceId( 'user' ) ||
+		// This is from MediaWikiTitleCodec::splitTitleString() in core
+		if ( $title !== '' && ( # T329690
+			$ns === $siteConfig->canonicalNamespaceId( 'user' ) ||
 			$ns === $siteConfig->canonicalNamespaceId( 'user_talk' )
-		) {
+		) ) {
 			$title = IPUtils::sanitizeIP( $title );
 		}
 
@@ -205,6 +229,12 @@ class Title {
 		// mediawiki-title's newFromText.
 		if ( $ns === $siteConfig->canonicalNamespaceId( 'special' ) ) {
 			$title = self::fixSpecialName( $siteConfig, $title );
+		}
+
+		// This is not in core's splitTitleString but matches parsoid's
+		// convention.
+		if ( $interwiki !== null ) {
+			$title = "$interwiki:$title";
 		}
 
 		return new self( $title, $ns, $siteConfig, $fragment );

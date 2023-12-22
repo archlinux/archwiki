@@ -22,13 +22,14 @@ namespace MediaWiki\EditPage;
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use Sanitizer;
 
 /**
  * Helps EditPage build textboxes
  *
+ * @newable
  * @since 1.31
  * @author Kunal Mehta <legoktm@debian.org>
  */
@@ -44,8 +45,7 @@ class TextboxBuilder {
 			// is awkward.
 			// But don't add a newline if the text is empty, or Firefox in XHTML
 			// mode will show an extra newline. A bit annoying.
-			$wikitext .= "\n";
-			return $wikitext;
+			return $wikitext . "\n";
 		}
 		return $wikitext;
 	}
@@ -104,14 +104,14 @@ class TextboxBuilder {
 		$name, array $customAttribs, UserIdentity $user, PageIdentity $page
 	) {
 		$attribs = $customAttribs + [
-				'accesskey' => ',',
-				'id' => $name,
-				'cols' => 80,
-				'rows' => 25,
-				// Avoid PHP notices when appending preferences
-				// (appending allows customAttribs['style'] to still work).
-				'style' => ''
-			];
+			'accesskey' => ',',
+			'id' => $name,
+			'cols' => 80,
+			'rows' => 25,
+			// Avoid PHP notices when appending preferences
+			// (appending allows customAttribs['style'] to still work).
+			'style' => ''
+		];
 
 		// The following classes can be used here:
 		// * mw-editfont-monospace
@@ -130,7 +130,7 @@ class TextboxBuilder {
 			$attribs['class'] = $class;
 		}
 
-		$title = Title::castFromPageIdentity( $page );
+		$title = Title::newFromPageIdentity( $page );
 		$pageLang = $title->getPageLanguage();
 		$attribs['lang'] = $pageLang->getHtmlCode();
 		$attribs['dir'] = $pageLang->getDir();

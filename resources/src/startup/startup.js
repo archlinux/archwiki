@@ -9,113 +9,72 @@
 /**
  * See <https://www.mediawiki.org/wiki/Compatibility#Browsers>
  *
- * Capabilities required for modern run-time:
- * - ECMAScript 5
- * - DOM Level 4 (including Selectors API)
- * - HTML5 (including Web Storage API)
+ * Browsers that pass these checks get served our modern run-time. This includes all Grade A
+ * browsers, and some Grade C and Grade X browsers.
  *
- * Browsers we support in our modern run-time (Grade A):
- * - Chrome 13+
- * - IE 11+
- * - Firefox 4+
- * - Safari 5+
- * - Opera 15+
- * - Mobile Safari 6.0+ (iOS 6+)
- * - Android 4.1+
- *
- * Browsers we support in our no-JavaScript, basic run-time (Grade C):
- * - Chrome 1+
- * - IE 8+
- * - Firefox 3+
- * - Safari 3+
- * - Opera 15+
- * - Mobile Safari 5.0+ (iOS 4+)
- * - Android 2.0+
- * - WebOS < 1.5
- * - PlayStation
- * - Symbian-based browsers
- * - NetFront-based browser
- * - Opera Mini
- * - Nokia's Ovi Browser
- * - MeeGo's browser
- * - Google Glass
- * - UC Mini (speed mode on)
- *
- * Other browsers that pass the check are considered unknown (Grade X).
+ * The following browsers are known to pass these checks:
+ * - Chrome 63+
+ * - Edge 79+
+ * - Opera 50+
+ * - Firefox 58+
+ * - Safari 11.1+
+ * - Mobile Safari 11.2+ (iOS 11+)
+ * - Android 5.0+
  *
  * @private
- * @param {string} ua User agent string
  * @return {boolean} User agent is compatible with MediaWiki JS
  */
-function isCompatible( ua ) {
+function isCompatible() {
 	return !!(
-		// https://caniuse.com/#feat=es5
-		// https://caniuse.com/#feat=use-strict
-		( function () {
-			'use strict';
-			return !this && Function.prototype.bind;
-		}() ) &&
-
+		// Ensure DOM Level 4 features (including Selectors API).
+		//
 		// https://caniuse.com/#feat=queryselector
 		'querySelector' in document &&
 
+		// Ensure HTML 5 features (including Web Storage API)
+		//
 		// https://caniuse.com/#feat=namevalue-storage
-		// https://developer.blackberry.com/html5/apis/v1_0/localstorage.html
 		// https://blog.whatwg.org/this-week-in-html-5-episode-30
 		'localStorage' in window &&
 
-		// Force certain browsers into Basic mode, even if they pass the check.
+		// Ensure ES2015 grammar and runtime API (a.k.a. ES6)
 		//
-		// Some of the below are "remote browsers", where the webpage is actually
-		// rendered remotely in a capable browser (cloud service) by the vendor,
-		// with the client app receiving a graphical representation through a
-		// format that is not HTML/CSS. These get a better user experience if
-		// we turn JavaScript off, to avoid triggering JavaScript calls, which
-		// either don't work or require a roundtrip to the server with added
-		// latency. Note that remote browsers are sometimes referred to as
-		// "proxy browsers", but that term is also conflated with browsers
-		// that accelerate or compress web pages through a "proxy", where
-		// client-side JS would generally be okay.
+		// In practice, Promise.finally is a good proxy for overall ES6 support and
+		// rejects most unsupporting browsers in one sweep. The feature itself
+		// was specified in ES2018, however.
+		// https://caniuse.com/promise-finally
+		// Chrome 63+, Edge 18+, Opera 50+, Safari 11.1+, Firefox 58+, iOS 11+
 		//
-		// Remember:
+		// eslint-disable-next-line es-x/no-promise, es-x/no-promise-prototype-finally, dot-notation
+		typeof Promise === 'function' && Promise.prototype[ 'finally' ] &&
+		// ES6 Arrow Functions (with default params), this ensures
+		// genuine syntax support for ES6 grammar, not just API coverage.
 		//
-		// - Add new entries on top, and document why and since when.
-		// - Please extend the regex instead of adding new ones, for performance.
-		// - Add a test case to startup.test.js.
+		// https://caniuse.com/arrow-functions
+		// Chrome 45+, Safari 10+, Firefox 22+, Opera 32+
 		//
-		// Forced into Basic mode:
+		// Based on Benjamin De Cock's snippet here:
+		// https://gist.github.com/bendc/d7f3dbc83d0f65ca0433caf90378cd95
+		( function () {
+			try {
+				// eslint-disable-next-line no-new, no-new-func
+				new Function( '(a = 0) => a' );
+				return true;
+			} catch ( e ) {
+				return false;
+			}
+		}() ) &&
+		// ES6 RegExp.prototype.flags
 		//
-		// - MSIE 10: Bugs (since 2018, T187869).
-		//   Low traffic. Reduce support cost by no longer having to workaround
-		//   bugs in its JavaScript APIs.
+		// https://caniuse.com/mdn-javascript_builtins_regexp_flags
+		// Edge 79+ (Chromium-based, rejects MSEdgeHTML-based Edge <= 18)
 		//
-		// - UC Mini "Speed Mode": Improve UX, save data (since 2016, T147369).
-		//   Does not have an obvious user agent, other than ending with an
-		//   incomplete `Gecko/` token.
-		//
-		// - Google Web Light: Bugs, save data (since 2016, T152602).
-		//   Proxy breaks most JavaScript.
-		//
-		// - MeeGo: Bugs (since 2015, T97546).
-		//
-		// - Opera Mini: Improve UX, save data. (since 2013, T49572).
-		//   It is a remote browser.
-		//
-		// - Ovi Browser: Improve UX, save data (since 2013, T57600).
-		//   It is a remote browser. UA contains "S40OviBrowser".
-		//
-		// - Google Glass: Improve UX (since 2013, T58008).
-		//   Run modern browser engine, but limited UI is better served when
-		//   content is expand by default, requiring little interaction.
-		//
-		// - NetFront: Unsupported by jQuery (since 2013, commit c46fc74).
-		// - PlayStation: Unsupported by jQuery (since 2013, commit c46fc74).
-		//
-		!ua.match( /MSIE 10|NetFront|Opera Mini|S40OviBrowser|MeeGo|Android.+Glass|^Mozilla\/5\.0 .+ Gecko\/$|googleweblight|PLAYSTATION|PlayStation/ )
+		// eslint-disable-next-line es-x/no-regexp-prototype-flags
+		/./g.flags === 'g'
 	);
 }
 
-if ( !isCompatible( navigator.userAgent ) ) {
+if ( !isCompatible() ) {
 	// Handle basic supported browsers (Grade C).
 	// Undo speculative modern (Grade A) root CSS class `<html class="client-js">`.
 	// See ResourceLoaderClientHtml::getDocumentAttributes().
@@ -155,7 +114,7 @@ if ( !isCompatible( navigator.userAgent ) ) {
 
 		$CODE.registrations();
 
-		// First set page-specific config needed by mw.loader (wgCSPNonce, wgUserName)
+		// First set page-specific config needed by mw.loader (wgUserName)
 		mw.config.set( window.RLCONF || {} );
 		mw.loader.state( window.RLSTATE || {} );
 		mw.loader.load( window.RLPAGEMODULES || [] );

@@ -11,11 +11,8 @@ namespace MediaWiki\Extension\Math;
 use Exception;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
-use MWException;
 use Psr\Log\LoggerInterface;
-use RestbaseVirtualRESTService;
 use stdClass;
-use VirtualRESTServiceClient;
 
 class MathRestbaseInterface {
 	/** @var string|false */
@@ -57,9 +54,9 @@ class MathRestbaseInterface {
 	 * Bundles several requests for fetching MathML.
 	 * Does not send requests, if the input TeX is invalid.
 	 * @param MathRestbaseInterface[] $rbis
-	 * @param VirtualRESTServiceClient $serviceClient
+	 * @param \MultiHttpClient $multiHttpClient
 	 */
-	private static function batchGetMathML( array $rbis, VirtualRESTServiceClient $serviceClient ) {
+	private static function batchGetMathML( array $rbis, \MultiHttpClient $multiHttpClient ) {
 		$requests = [];
 		$skips = [];
 		$i = 0;
@@ -72,17 +69,18 @@ class MathRestbaseInterface {
 			}
 			$i++;
 		}
-		$results = $serviceClient->runMulti( $requests );
+		$results = $multiHttpClient->runMulti( $requests );
 		$lenRbis = count( $rbis );
 		$j = 0;
 		for ( $i = 0; $i < $lenRbis; $i++ ) {
-			if ( !in_array( $i, $skips ) ) {
+			if ( !in_array( $i, $skips, true ) ) {
 				/** @var MathRestbaseInterface $rbi */
 				$rbi = $rbis[$i];
 				try {
-					$mml = $rbi->evaluateContentResponse( 'mml', $results[$j], $requests[$j] );
+					$response = $results[ $j ][ 'response' ];
+					$mml = $rbi->evaluateContentResponse( 'mml', $response, $requests[$j] );
 					$rbi->mml = $mml;
-				} catch ( Exception $e ) {
+				} catch ( MathRestbaseException $e ) {
 					// FIXME: Why is this silenced? Doesn't this leave invalid data behind?
 				}
 				$j++;
@@ -104,7 +102,7 @@ class MathRestbaseInterface {
 
 	/**
 	 * @return string MathML code
-	 * @throws MWException
+	 * @throws MathRestbaseException
 	 */
 	public function getMathML() {
 		if ( !$this->mml ) {
@@ -113,17 +111,25 @@ class MathRestbaseInterface {
 		return $this->mml;
 	}
 
+	/**
+	 * @param string $type
+	 * @return string
+	 * @throws MathRestbaseException
+	 */
 	private function getContent( $type ) {
 		$request = $this->getContentRequest( $type );
-		$serviceClient = $this->getServiceClient();
-		$response = $serviceClient->run( $request );
+		$multiHttpClient = $this->getMultiHttpClient();
+		$response = $multiHttpClient->run( $request );
 		return $this->evaluateContentResponse( $type, $response, $request );
 	}
 
+	/**
+	 * @throws InvalidTeXException
+	 */
 	private function calculateHash() {
 		if ( !$this->hash ) {
 			if ( !$this->checkTeX() ) {
-				throw new MWException( "TeX input is invalid." );
+				throw new InvalidTeXException( "TeX input is invalid." );
 			}
 		}
 	}
@@ -144,8 +150,8 @@ class MathRestbaseInterface {
 	 */
 	private function executeRestbaseCheckRequest( $request ) {
 		$res = null;
-		$serviceClient = $this->getServiceClient();
-		$response = $serviceClient->run( $request );
+		$multiHttpClient = $this->getMultiHttpClient();
+		$response = $multiHttpClient->run( $request );
 		if ( $response['code'] !== 200 ) {
 			$this->log()->info( 'Tex check failed', [
 				'post'  => $request['body'],
@@ -166,39 +172,31 @@ class MathRestbaseInterface {
 		$requests = [];
 		/** @var MathRestbaseInterface $first */
 		$first = $rbis[0];
-		$serviceClient = $first->getServiceClient();
+		$multiHttpClient = $first->getMultiHttpClient();
 		foreach ( $rbis as $rbi ) {
 			/** @var MathRestbaseInterface $rbi */
 			$requests[] = $rbi->getCheckRequest();
 		}
-		$results = $serviceClient->runMulti( $requests );
+		$results = $multiHttpClient->runMulti( $requests );
 		$i = 0;
-		foreach ( $results as $response ) {
+		foreach ( $results as $requestResponse ) {
 			/** @var MathRestbaseInterface $rbi */
 			$rbi = $rbis[$i++];
 			try {
+				$response = $requestResponse[ 'response' ];
 				$rbi->evaluateRestbaseCheckResponse( $response );
 			} catch ( Exception $e ) {
 			}
 		}
-		self::batchGetMathML( $rbis, $serviceClient );
+		self::batchGetMathML( $rbis, $multiHttpClient );
 	}
 
-	/**
-	 * @return VirtualRESTServiceClient
-	 */
-	private function getServiceClient() {
-		global $wgVirtualRestConfig, $wgMathConcurrentReqs;
-		$http = MediaWikiServices::getInstance()->getHttpRequestFactory()->createMultiClient(
+	private function getMultiHttpClient() {
+		global $wgMathConcurrentReqs;
+		$multiHttpClient = MediaWikiServices::getInstance()->getHttpRequestFactory()->createMultiClient(
 			[ 'maxConnsPerHost' => $wgMathConcurrentReqs ] );
-		$serviceClient = new VirtualRESTServiceClient( $http );
-		if ( isset( $wgVirtualRestConfig['modules']['restbase'] ) ) {
-			$cfg = $wgVirtualRestConfig['modules']['restbase'];
-			$cfg['parsoidCompat'] = false;
-			$vrsObject = new RestbaseVirtualRESTService( $cfg );
-			$serviceClient->mount( '/mathoid/', $vrsObject );
-		}
-		return $serviceClient;
+
+		return $multiHttpClient;
 	}
 
 	/**
@@ -207,37 +205,25 @@ class MathRestbaseInterface {
 	 * Case A: <code>$internal = false</code>, which means one needs a URL that is accessible from
 	 * outside:
 	 *
-	 * --> If <code>$wgMathFullRestbaseURL</code> is configured use it, otherwise fall back try to
-	 * <code>$wgVisualEditorFullRestbaseURL</code>. (Note, that this is not be worse than failing
-	 * immediately.)
+	 * --> Use <code>$wgMathFullRestbaseURL</code>. It must always be configured.
 	 *
-	 * Case B: <code> $internal= true</code>, which means one needs to access content from Restbase
+	 * Case B: <code>$internal = true</code>, which means one needs to access content from Restbase
 	 * which does not need to be accessible from outside:
 	 *
-	 * --> Use the mount point when it is available and <code> $wgMathUseInternalRestbasePath=
-	 * true</code>. If not, use <code>$wgMathFullRestbaseURL</code> with fallback to
-	 * <code>wgVisualEditorFullRestbaseURL</code>
+	 * --> Use the mount point when it is available and <code>$wgMathUseInternalRestbasePath =
+	 * true</code>. If not, use <code>$wgMathFullRestbaseURL</code>.
 	 *
 	 * @param string $path
 	 * @param bool|true $internal
 	 * @return string
-	 * @throws MWException
 	 */
 	public function getUrl( $path, $internal = true ) {
-		global $wgMathUseInternalRestbasePath, $wgVirtualRestConfig, $wgMathFullRestbaseURL,
-			$wgVisualEditorFullRestbaseURL;
-		if ( $internal && $wgMathUseInternalRestbasePath && isset( $wgVirtualRestConfig['modules']['restbase'] ) ) {
-			return "/mathoid/local/v1/$path";
-		}
-		if ( $wgMathFullRestbaseURL ) {
+		global $wgMathInternalRestbaseURL, $wgMathFullRestbaseURL;
+		if ( $internal ) {
+			return "{$wgMathInternalRestbaseURL}v1/$path";
+		} else {
 			return "{$wgMathFullRestbaseURL}v1/$path";
 		}
-		if ( $wgVisualEditorFullRestbaseURL ) {
-			return "{$wgVisualEditorFullRestbaseURL}v1/$path";
-		}
-		$msg = 'Math extension can not find Restbase URL. Please specify $wgMathFullRestbaseURL.';
-		$this->setErrorMessage( $msg );
-		throw new MWException( $msg );
 	}
 
 	/**
@@ -247,6 +233,10 @@ class MathRestbaseInterface {
 		return $this->logger;
 	}
 
+	/**
+	 * @return string
+	 * @throws MathRestbaseException
+	 */
 	public function getSvg() {
 		return $this->getContent( 'svg' );
 	}
@@ -287,7 +277,7 @@ class MathRestbaseInterface {
 	/**
 	 * Gets a publicly accessible link to the generated SVG image.
 	 * @return string
-	 * @throws MWException
+	 * @throws InvalidTeXException
 	 */
 	public function getFullSvgUrl() {
 		$this->calculateHash();
@@ -297,7 +287,7 @@ class MathRestbaseInterface {
 	/**
 	 * Gets a publicly accessible link to the generated SVG image.
 	 * @return string
-	 * @throws MWException
+	 * @throws InvalidTeXException
 	 */
 	public function getFullPngUrl() {
 		$this->calculateHash();
@@ -362,7 +352,6 @@ class MathRestbaseInterface {
 
 	/**
 	 * @return array
-	 * @throws MWException
 	 */
 	public function getCheckRequest() {
 		return [
@@ -413,7 +402,7 @@ class MathRestbaseInterface {
 	/**
 	 * @param string $type
 	 * @return array
-	 * @throws MWException
+	 * @throws InvalidTeXException
 	 */
 	private function getContentRequest( $type ) {
 		$this->calculateHash();
@@ -435,7 +424,7 @@ class MathRestbaseInterface {
 	 * @param array $response
 	 * @param array $request
 	 * @return string
-	 * @throws MWException
+	 * @throws MathRestbaseException
 	 */
 	private function evaluateContentResponse( $type, array $response, array $request ) {
 		if ( $response['code'] === 200 ) {
@@ -458,7 +447,7 @@ class MathRestbaseInterface {
 	/**
 	 * @param string $type
 	 * @param string $body
-	 * @throws MWException
+	 * @throws MathRestbaseException
 	 * @return never
 	 */
 	public static function throwContentError( $type, $body ) {
@@ -471,6 +460,6 @@ class MathRestbaseInterface {
 				$detail = $json->detail;
 			}
 		}
-		throw new MWException( "Cannot get $type. $detail" );
+		throw new MathRestbaseException( "Cannot get $type. $detail" );
 	}
 }

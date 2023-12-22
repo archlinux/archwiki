@@ -7,7 +7,8 @@
 			"N100a",
 			"Steeve815",
 			"Strayblues",
-			"Uziel302"
+			"Uziel302",
+			"YaronSh"
 		]
 	},
 	"oathauth-desc": "תמיכה באימות באמצעות סיסמאות חד־פעמיות מבוססות HMAC",
@@ -93,9 +94,11 @@
 	"notification-body-oathauth-disable": "אם לא {{GENDER:$2|עשית}} את זה, ייתכן שהחשבון שלך נפרץ.",
 	"notification-body-oathauth-disable-other": "אם לא {{GENDER:$2|ביקשת}} את זה, כדאי לך ליצור קשר עם מפעיל.",
 	"oathauth-notifications-disable-help": "עזרה",
-	"notification-header-oathauth-enabled": "אימות דו־שלבי הופעל {{GENDER:$2|בחשבון שלך}}.",
-	"notification-body-oathauth-enabled": "אם לא {{GENDER:$2|עשית}} את זה, ייתכן שהחשבון שלך נפרץ.",
-	"oathauth-notifications-enabled-help": "עזרה",
+	"oathauth-notifications-disable-primary": "נא לבדוק את הגדרות האימות הדו־שלבי שלך",
+	"notification-header-oathauth-enable": "אימות דו־שלבי הופעל {{GENDER:$2|בחשבון שלך}}.",
+	"notification-body-oathauth-enable": "אם לא {{GENDER:$2|עשית}} את זה, ייתכן שהחשבון שלך נפרץ.",
+	"oathauth-notifications-enable-help": "עזרה",
+	"oathauth-notifications-enable-primary": "נא לבדוק את הגדרות האימות הדו־שלבי שלך",
 	"oathauth-verify-enabled": "אצל {{GENDER:$1|המשתמש|המשתמשת}} $1 מופעל אימות דו־שלבי.",
 	"oathauth-verify-disabled": "אצל {{GENDER:$1|המשתמש|המשתמשת}} $1 לא מופעל אימות דו־שלבי.",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|קבוצה כבויה|קבוצות כבויות}}:",

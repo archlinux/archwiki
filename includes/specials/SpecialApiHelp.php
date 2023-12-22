@@ -21,7 +21,13 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use ApiHelp;
+use ApiMain;
+use ApiUsageException;
 use MediaWiki\Html\Html;
+use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\Utils\UrlUtils;
 
 /**
@@ -32,8 +38,7 @@ use MediaWiki\Utils\UrlUtils;
  */
 class SpecialApiHelp extends UnlistedSpecialPage {
 
-	/** @var UrlUtils */
-	private $urlUtils;
+	private UrlUtils $urlUtils;
 
 	/**
 	 * @param UrlUtils $urlUtils
@@ -46,7 +51,7 @@ class SpecialApiHelp extends UnlistedSpecialPage {
 	}
 
 	public function execute( $par ) {
-		if ( empty( $par ) ) {
+		if ( !$par ) {
 			$par = 'main';
 		}
 
@@ -107,3 +112,8 @@ class SpecialApiHelp extends UnlistedSpecialPage {
 		return true;
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialApiHelp::class, 'SpecialApiHelp' );

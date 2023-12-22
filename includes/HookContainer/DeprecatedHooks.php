@@ -34,24 +34,25 @@ class DeprecatedHooks {
 	 *  - silent (bool, optional) If true, no deprecation warning will be raised
 	 */
 	private $deprecatedHooks = [
-		'AddNewAccount' => [ 'deprecatedVersion' => '1.27', 'silent' => true ],
+		'AddNewAccount' => [ 'deprecatedVersion' => '1.27' ],
 		'EditPageBeforeEditToolbar' => [ 'deprecatedVersion' => '1.36' ],
 		'LocalFile::getHistory' => [ 'deprecatedVersion' => '1.37' ],
 		'MagicWordwgVariableIDs' => [ 'deprecatedVersion' => '1.35', 'silent' => true ],
 		'PageContentSave' => [ 'deprecatedVersion' => '1.35', 'silent' => true ],
-		'ParserTestTables' => [ 'deprecatedVersion' => '1.36', 'silent' => true ],
-		'PrefixSearchBackend' => [ 'deprecatedVersion' => '1.27', 'silent' => true ],
+		'PrefixSearchBackend' => [ 'deprecatedVersion' => '1.27' ],
 		'ProtectionForm::buildForm' => [ 'deprecatedVersion' => '1.36', 'silent' => true ],
 		'RollbackComplete' => [ 'deprecatedVersion' => '1.36', 'silent' => true ],
 		'WikiPageDeletionUpdates' => [ 'deprecatedVersion' => '1.32', 'silent' => true ],
 		'userCan' => [ 'deprecatedVersion' => '1.37' ],
 		'ArticleDelete' => [ 'deprecatedVersion' => '1.37', 'silent' => true ],
 		'ArticleDeleteComplete' => [ 'deprecatedVersion' => '1.37', 'silent' => true ],
-		'SkinTemplateNavigation' => [ 'deprecatedVersion' => '1.39' ],
-		'SkinTemplateNavigation::SpecialPage' => [ 'deprecatedVersion' => '1.39' ],
-		'PersonalUrls' => [ 'deprecatedVersion' => '1.39' ],
 		'SearchDataForIndex' => [ 'deprecatedVersion' => '1.40', 'silent' => true ],
 		'ArticleUndelete' => [ 'deprecatedVersion' => '1.40', 'silent' => true ],
+		'MessageCache::get' => [ 'deprecatedVersion' => '1.41', 'silent' => true ],
+		'EmailUserPermissionsErrors' => [ 'deprecatedVersion' => '1.41' ],
+		'UserCanSendEmail' => [ 'deprecatedVersion' => '1.41', 'silent' => true ],
+		'EmailUser' => [ 'deprecatedVersion' => '1.41', 'silent' => true ],
+		'InterwikiLoadPrefix' => [ 'deprecatedVersion' => '1.36' ],
 	];
 
 	/**

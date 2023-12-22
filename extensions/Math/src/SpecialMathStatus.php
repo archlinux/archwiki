@@ -5,8 +5,6 @@ namespace MediaWiki\Extension\Math;
 use ExtensionRegistry;
 use MediaWiki\Extension\Math\Render\RendererFactory;
 use MediaWiki\Logger\LoggerFactory;
-use MWException;
-use PermissionsError;
 use Psr\Log\LoggerInterface;
 use SpecialPage;
 
@@ -41,9 +39,6 @@ class SpecialMathStatus extends SpecialPage {
 
 	/**
 	 * @param null|string $query
-	 *
-	 * @throws MWException
-	 * @throws PermissionsError
 	 */
 	public function execute( $query ) {
 		$this->setHeaders();

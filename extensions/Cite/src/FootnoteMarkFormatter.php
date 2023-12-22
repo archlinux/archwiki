@@ -10,31 +10,12 @@ use Sanitizer;
  */
 class FootnoteMarkFormatter {
 
-	/**
-	 * @var string[][]
-	 */
-	private $linkLabels = [];
+	/** @var string[][] */
+	private array $linkLabels = [];
+	private AnchorFormatter $anchorFormatter;
+	private ErrorReporter $errorReporter;
+	private ReferenceMessageLocalizer $messageLocalizer;
 
-	/**
-	 * @var AnchorFormatter
-	 */
-	private $anchorFormatter;
-
-	/**
-	 * @var ErrorReporter
-	 */
-	private $errorReporter;
-
-	/**
-	 * @var ReferenceMessageLocalizer
-	 */
-	private $messageLocalizer;
-
-	/**
-	 * @param ErrorReporter $errorReporter
-	 * @param AnchorFormatter $anchorFormatter
-	 * @param ReferenceMessageLocalizer $messageLocalizer
-	 */
 	public function __construct(
 		ErrorReporter $errorReporter,
 		AnchorFormatter $anchorFormatter,

@@ -1,5 +1,6 @@
-@import 'mediawiki.ui/variables.less';
+@import 'mediawiki.skin.variables.less';
 @import '../mmv/mmv.variables.less';
+@import 'mediawiki.mixins.less';
 @import '../mmv/mmv.mixins.less';
 
 @pane-padding: 10px;
@@ -23,25 +24,30 @@
 		padding-left: 10px;
 		padding-bottom: 60px;
 		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
 
 		.mw-mmv-download-go-button {
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
+			display: inline-flex;
+			flex-flow: column;
+			min-height: 50px;
 		}
 
 		/* Selection size arrow element */
 		.mw-mmv-download-select-menu {
-			.unselectable();
+			.user-select( none );
 			background-image: /* @embed */ url( img/down.svg );
 			background-position: center center;
 			background-repeat: no-repeat;
 			min-width: 10px;
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
-			border-left: 1px solid mix( #000, @colorProgressive, 20% );
+			border-left: 1px solid mix( #000, @color-progressive, 20% );
 
 			&:hover {
-				border-bottom: 1px solid mix( #000, @colorProgressive, 20% );
+				border-bottom: 1px solid mix( #000, @color-progressive, 20% );
 			}
 		}
 
@@ -60,9 +66,10 @@
 			margin-top: 12px;
 			margin-left: -6px;
 			font-size: 16px;
-			color: #54595d;
+			color: @color-subtle;
+			width: 100%;
 
-			&:before {
+			&::before {
 				display: inline-block;
 				vertical-align: middle;
 				content: ' ';
@@ -82,7 +89,7 @@
 			display: none;
 			margin-top: 0;
 			margin-right: 20px;
-			width: auto;
+			width: 100%;
 
 			&.active {
 				display: block;
@@ -111,7 +118,7 @@
 		margin: 0 -@pane-padding;
 		padding: @pane-padding;
 		background-color: @attribution-color;
-		color: #54595d;
+		color: @color-subtle;
 
 		&:hover {
 			background-color: @attribution-color-highlighted;

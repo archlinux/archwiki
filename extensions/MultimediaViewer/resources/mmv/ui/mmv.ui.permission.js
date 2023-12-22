@@ -15,165 +15,167 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { HtmlUtils } = require( 'mmv.bootstrap' );
+const UiElement = require( './mmv.ui.js' );
+const MetadataPanelScroller = require( './mmv.ui.metadataPanelScroller.js' );
+
 ( function () {
-	var P;
 
 	/**
 	 * A box to display additional terms or remarks from the image author.
 	 * (Typically comes from the Permission field of the {{Information}} template.)
 	 * It has two states: when closed, it just shows some text, when open, it shows the HTML
 	 * block supplied by the author in its full beauty.
-	 *
-	 * @class mw.mmv.ui.Permission
-	 * @extends mw.mmv.ui.Element
-	 * @constructor
-	 * @param {jQuery} $container
-	 * @param {mw.mmv.ui.MetadataPanelScroller} scroller
 	 */
-	function Permission( $container, scroller ) {
-		var permission = this;
+	class Permission extends UiElement {
+		/**
+		 * @param {jQuery} $container
+		 * @param {MetadataPanelScroller} scroller
+		 */
+		constructor( $container, scroller ) {
+			super( $container );
 
-		mw.mmv.ui.Element.call( this, $container );
+			/** @property {HtmlUtils} htmlUtils - */
+			this.htmlUtils = new HtmlUtils();
 
-		/** @property {mw.mmv.HtmlUtils} htmlUtils - */
-		this.htmlUtils = new mw.mmv.HtmlUtils();
+			/**
+			 * Contains everything else.
+			 *
+			 * @property {jQuery}
+			 */
+			this.$box = $( '<div>' )
+				.addClass( 'mw-mmv-permission-box mw-mmv-info-box empty' )
+				.appendTo( this.$container );
+
+			/**
+			 * Box title
+			 *
+			 * @property {jQuery}
+			 */
+			this.$title = $( '<h3>' )
+				.text( mw.message( 'multimediaviewer-permission-title' ).text() )
+				.appendTo( this.$box );
+
+			/**
+			 * Plain-text version of the author's message
+			 * This is just the text parsed out from the original markup, it might not make much sense
+			 * (e.g. if the original is a HTML table)
+			 *
+			 * @property {jQuery}
+			 */
+			this.$text = $( '<div>' )
+				.addClass( 'mw-mmv-permission-text' )
+				.appendTo( this.$box )
+				.on( 'click', '.mw-mmv-permission-text-viewmore', ( e ) => {
+					e.preventDefault();
+					this.grow();
+					this.scroller.toggle( 'up' );
+				} );
+
+			/**
+			 * A helper element to fade off text
+			 *
+			 * @property {jQuery}
+			 */
+			this.$fader = $( '<div>' )
+				.addClass( 'mw-mmv-permission-text-fader' )
+				.append(
+					$( '<a>' )
+						.addClass( 'mw-mmv-permission-text-viewmore' )
+						.prop( 'href', '#' )
+						.text( mw.message( 'multimediaviewer-permission-viewmore' ).text() )
+				);
+
+			/**
+			 * Original (HTML) version of the author's message
+			 * This can be scary sometimes (huge tables, black text on dark purple background etc).
+			 *
+			 * @property {jQuery}
+			 */
+			this.$html = $( '<div>' )
+				.addClass( 'mw-mmv-permission-html' )
+				.appendTo( this.$box );
+
+			/**
+			 * "Close" button (does not actually close the box, just makes it smaller).
+			 *
+			 * @property {jQuery}
+			 */
+			this.$close = $( '<button>' )
+				.addClass( 'mw-mmv-permission-close' )
+				.on( 'click', () => {
+					this.shrink();
+				} )
+				.appendTo( this.$box );
+
+			/**
+			 * Panel scroller from the metadata panel object.
+			 *
+			 * @property {MetadataPanelScroller}
+			 */
+			this.scroller = scroller;
+		}
 
 		/**
-		 * Contains everything else.
-		 *
-		 * @property {jQuery}
+		 * Clear everything
 		 */
-		this.$box = $( '<div>' )
-			.addClass( 'mw-mmv-permission-box mw-mmv-info-box empty' )
-			.appendTo( this.$container );
+		empty() {
+			this.$box.addClass( 'empty' );
+			this.$text.empty();
+			this.$html.empty();
+		}
 
 		/**
-		 * Box title
+		 * Set permission text/html
 		 *
-		 * @property {jQuery}
+		 * @param {string} permission the text or HTML code written by the image author
 		 */
-		this.$title = $( '<h3>' )
-			.text( mw.message( 'multimediaviewer-permission-title' ).text() )
-			.appendTo( this.$box );
+		set( permission ) {
+			this.$box.removeClass( 'empty' );
+
+			this.$text.html( this.htmlUtils.htmlToTextWithLinks( permission ) );
+			this.$text.append( this.$fader );
+
+			this.$html.html( permission );
+		}
 
 		/**
-		 * Plain-text version of the author's message
-		 * This is just the text parsed out from the original markup, it might not make much sense
-		 * (e.g. if the original is a HTML table)
-		 *
-		 * @property {jQuery}
+		 * @event Permission#mmv-permission-grow
 		 */
-		this.$text = $( '<div>' )
-			.addClass( 'mw-mmv-permission-text' )
-			.appendTo( this.$box )
-			.on( 'click', '.mw-mmv-permission-text-viewmore', function ( e ) {
-				e.preventDefault();
-				permission.grow();
-				permission.scroller.toggle( 'up' );
-			} );
 
 		/**
-		 * A helper element to fade off text
+		 * Enlarge the box, show HTML instead of text.
 		 *
-		 * @property {jQuery}
+		 * @fires Permission#mmv-permission-grow
 		 */
-		this.$fader = $( '<div>' )
-			.addClass( 'mw-mmv-permission-text-fader' )
-			.append(
-				$( '<a>' )
-					.addClass( 'mw-mmv-permission-text-viewmore' )
-					.prop( 'href', '#' )
-					.text( mw.message( 'multimediaviewer-permission-viewmore' ).text() )
-			);
+		grow() {
+			this.$box.addClass( 'full-size' );
+			this.$container.trigger( 'mmv-permission-grow' );
+		}
 
 		/**
-		 * Original (HTML) version of the author's message
-		 * This can be scary sometimes (huge tables, black text on dark purple background etc).
-		 *
-		 * @property {jQuery}
+		 * @event Permission#mmv-permission-shrink
 		 */
-		this.$html = $( '<div>' )
-			.addClass( 'mw-mmv-permission-html' )
-			.appendTo( this.$box );
 
 		/**
-		 * "Close" button (does not actually close the box, just makes it smaller).
+		 * Limit the size of the box, show text only.
 		 *
-		 * @property {jQuery}
+		 * @fires Permission#mmv-permission-shrink
 		 */
-		this.$close = $( '<button>' )
-			.addClass( 'mw-mmv-permission-close' )
-			.on( 'click', function () {
-				permission.shrink();
-			} )
-			.appendTo( this.$box );
+		shrink() {
+			this.$box.removeClass( 'full-size' );
+			this.$container.trigger( 'mmv-permission-shrink' );
+		}
 
 		/**
-		 * Panel scroller from the metadata panel object.
+		 * Returns whether the box is full-size.
 		 *
-		 * @property {mw.mmv.ui.MetadataPanelScroller}
+		 * @return {boolean}
 		 */
-		this.scroller = scroller;
+		isFullSize() {
+			return this.$box.hasClass( 'full-size' );
+		}
 	}
-	OO.inheritClass( Permission, mw.mmv.ui.Element );
-	P = Permission.prototype;
 
-	/**
-	 * Clear everything
-	 */
-	P.empty = function () {
-		this.$box.addClass( 'empty' );
-		this.$text.empty();
-		this.$html.empty();
-	};
-
-	/**
-	 * Set permission text/html
-	 *
-	 * @param {string} permission the text or HTML code written by the image author
-	 */
-	P.set = function ( permission ) {
-		this.$box.removeClass( 'empty' );
-
-		this.$text.html( this.htmlUtils.htmlToTextWithLinks( permission ) );
-		this.$text.append( this.$fader );
-
-		this.$html.html( permission );
-	};
-
-	/**
-	 * Enlarge the box, show HTML instead of text.
-	 *
-	 * @fires mmv-permission-grow
-	 */
-	P.grow = function () {
-		// FIXME: Use CSS transition
-		// eslint-disable-next-line no-jquery/no-animate
-		this.$box.addClass( 'full-size' )
-			.stop( true )
-			.animate( { backgroundColor: '#FFFFA0' }, 500 )
-			.animate( { backgroundColor: '#FFFFFF' }, 500 );
-		this.$container.trigger( 'mmv-permission-grow' );
-	};
-
-	/**
-	 * Limit the size of the box, show text only.
-	 *
-	 * @fires mmv-permission-shrink
-	 */
-	P.shrink = function () {
-		this.$box.removeClass( 'full-size' );
-		this.$container.trigger( 'mmv-permission-shrink' );
-	};
-
-	/**
-	 * Returns whether the box is full-size.
-	 *
-	 * @return {boolean}
-	 */
-	P.isFullSize = function () {
-		return this.$box.hasClass( 'full-size' );
-	};
-
-	mw.mmv.ui.Permission = Permission;
+	module.exports = Permission;
 }() );

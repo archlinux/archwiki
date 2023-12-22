@@ -3,7 +3,6 @@
 		"authors": []
 	},
 	"apihelp-abusefilterunblockautopromote-param-user": "Korisničko ime korisnika kog želite da deblokirate.",
-	"apihelp-query+abusefilters-description": "Prikaži detalje filtera zloupotreba.",
 	"apihelp-query+abusefilters-summary": "Prikaži detalje filtera zloupotreba.",
 	"apihelp-query+abuselog-example-1": "Prikaži skorašnje unose u dnevniku",
 	"apihelp-abuselogprivatedetails-param-reason": "Važeći razlog za proveru",

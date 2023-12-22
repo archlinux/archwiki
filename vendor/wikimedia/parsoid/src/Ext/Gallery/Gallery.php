@@ -5,19 +5,22 @@ namespace Wikimedia\Parsoid\Ext\Gallery;
 
 use stdClass;
 use Wikimedia\Assert\UnreachableException;
+use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\MediaStructure;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\Ext\DiffDOMUtils;
+use Wikimedia\Parsoid\Ext\DiffUtils;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
+use Wikimedia\Parsoid\Ext\PHPUtils;
 use Wikimedia\Parsoid\Ext\WTSUtils;
 use Wikimedia\Parsoid\Ext\WTUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\PHPUtils;
 
 /**
  * Implements the php parser's `renderImageGallery` natively.
@@ -43,6 +46,9 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 					'name' => 'gallery',
 					'handler' => self::class,
 					'options' => [
+						'wt2html' => [
+							'customizesDataMw' => true,
+						],
 						'outputHasCoreMwDomSpecMarkup' => true
 					],
 				]
@@ -87,8 +93,10 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		$mode = Mode::byName( $opts->mode );
 
 		$imageOpts = [
-			"|{$mode->dimensions( $opts )}",
 			[ $imageOptStr, $lineStartOffset + strlen( $oTitleStr ) ],
+			// T305628: Dimensions are last one wins so ensure this takes
+			// precedence over anything in $imageOptStr
+			"|{$mode->dimensions( $opts )}",
 		];
 
 		$fileNs = $extApi->getSiteConfig()->canonicalNamespaceId( 'file' );
@@ -125,6 +133,9 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 			$titleStr, $imageOpts, $error,
 			// Force block for an easier structure to manipulate, otherwise
 			// we have to pull the caption out of the data-mw
+			true,
+			// Suppress media formats since they aren't valid gallery media
+			// options and we don't want to deal with rendering differences
 			true
 		);
 		if ( !$thumb || DOMCompat::nodeName( $thumb ) !== 'figure' ) {
@@ -144,9 +155,6 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 
 		$doc = $thumb->ownerDocument;
 		$rdfaType = $thumb->getAttribute( 'typeof' ) ?? '';
-
-		// T214601: Account for a format being set in $imageOptStr
-		$rdfaType = preg_replace( '#mw:File(/\w+)?\b#', 'mw:File', $rdfaType, 1 );
 
 		// Detach figcaption as well
 		$figcaption = DOMCompat::querySelector( $thumb, 'figcaption' );
@@ -180,7 +188,8 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 			break;
 		}
 
-		return new ParsedLine( $thumb, $gallerytext, $rdfaType );
+		$dsr = new DomSourceRange( $lineStartOffset, $lineStartOffset + strlen( $line ), null, null );
+		return new ParsedLine( $thumb, $gallerytext, $rdfaType, $dsr );
 	}
 
 	/** @inheritDoc */
@@ -215,7 +224,25 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		$mode = Mode::byName( $opts->mode );
 		$extApi->getMetadata()->addModules( $mode->getModules() );
 		$extApi->getMetadata()->addModuleStyles( $mode->getModuleStyles() );
-		return $mode->render( $extApi, $opts, $caption, $lines );
+		$domFragment = $mode->render( $extApi, $opts, $caption, $lines );
+
+		$dataMw = $extApi->extTag->getDefaultDataMw();
+
+		// Remove extsrc from native extensions
+		if (
+			// Self-closed tags don't have a body but unsetting on it induces one
+			isset( $dataMw->body )
+		) {
+			unset( $dataMw->body->extsrc );
+		}
+
+		// Remove the caption since it's redundant with the HTML
+		// and we prefer editing it there.
+		unset( $dataMw->attrs->caption );
+
+		DOMDataUtils::setDataMw( $domFragment->firstChild, $dataMw );
+
+		return $domFragment;
 	}
 
 	/**
@@ -238,6 +265,13 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 				) {
 					break;
 				}
+				$oContent = $extApi->getOrigSrc(
+					$child, false, [ DiffUtils::class, 'subtreeUnchanged' ]
+				);
+				if ( $oContent !== null ) {
+					$content .= $oContent . "\n";
+					break;
+				}
 				$thumb = DOMCompat::querySelector( $child, '.thumb' );
 				if ( !$thumb ) {
 					break;
@@ -249,7 +283,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 						DOMCompat::remove( $showfilename ); // Destructive to the DOM!
 					}
 				}
-				$ms = MediaStructure::parse( DOMUtils::firstNonSepChild( $thumb ) );
+				$ms = MediaStructure::parse( DiffDOMUtils::firstNonSepChild( $thumb ) );
 				if ( $ms ) {
 					// FIXME: Dry all this out with T252246 / T262833
 					if ( $ms->hasResource() ) {
@@ -322,50 +356,54 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 	) {
 		$dataMw = DOMDataUtils::getDataMw( $node );
 		$dataMw->attrs ??= new stdClass;
-		$nativeGalleryEnabled = $extApi->getSiteConfig()->nativeGalleryEnabled();
 		// Handle the "gallerycaption" first
 		$galcaption = DOMCompat::querySelector( $node, 'li.gallerycaption' );
-		if (
-			$galcaption && ( $nativeGalleryEnabled ||
-				// FIXME: VE should signal to use the HTML by removing the
-				// `caption` from data-mw.
-				!is_string( $dataMw->attrs->caption ?? null )
-		) ) {
+		if ( $galcaption ) {
 			$dataMw->attrs->caption = $extApi->domChildrenToWikitext(
 				$galcaption, $extApi::IN_IMG_CAPTION | $extApi::IN_OPTION
 			);
+			// Destructive to the DOM!
+			// However, removing it simplifies some of the logic below.
+			// Hopefully this won't be necessary after T268250
+			DOMCompat::remove( $galcaption );
 		}
+
+		// Not having a body is a signal that the extension tag was parsed
+		// as self-closed but, when serializing, we should make sure that
+		// no content was added, otherwise it's uneditable.
+		//
+		// This relies on the caption having been removed above
+		if ( DiffDOMUtils::firstNonSepChild( $node ) !== null ) {
+			$dataMw->body ??= new stdClass;
+		}
+
 		$startTagSrc = $extApi->extStartTagToWikitext( $node );
 
 		if ( !isset( $dataMw->body ) ) {
 			return $startTagSrc; // We self-closed this already.
 		} else {
-			// FIXME: VE should signal to use the HTML by removing the
-			// `extsrc` from the data-mw.
-			if (
-				!$nativeGalleryEnabled &&
-				is_string( $dataMw->body->extsrc ?? null )
-			) {
-				$content = $dataMw->body->extsrc;
-			} else {
+			$content = $extApi->getOrigSrc(
+				$node, true,
+				// The gallerycaption is nested as a list item but shouldn't
+				// be considered when deciding if the body can be reused.
+				// Hopefully this won't be necessary after T268250
+				//
+				// Even though we've removed the caption from the DOM above,
+				// it was present during DOM diff'ing, so a call to
+				// DiffUtils::subtreeUnchanged is insufficient.
+				static function ( Element $elt ): bool {
+					for ( $child = $elt->firstChild; $child; $child = $child->nextSibling ) {
+						if ( DiffUtils::hasDiffMarkers( $child ) ) {
+							return false;
+						}
+					}
+					return true;
+				}
+			);
+			if ( $content === null ) {
 				$content = $this->contentHandler( $extApi, $node );
 			}
 			return $startTagSrc . $content . '</' . $dataMw->name . '>';
-		}
-	}
-
-	/** @inheritDoc */
-	public function modifyArgDict(
-		ParsoidExtensionAPI $extApi, object $argDict
-	): void {
-		// FIXME: Only remove after VE switches to editing HTML.
-		if ( $extApi->getSiteConfig()->nativeGalleryEnabled() ) {
-			// Remove extsrc from native extensions
-			unset( $argDict->body->extsrc );
-
-			// Remove the caption since it's redundant with the HTML
-			// and we prefer editing it there.
-			unset( $argDict->attrs->caption );
 		}
 	}
 

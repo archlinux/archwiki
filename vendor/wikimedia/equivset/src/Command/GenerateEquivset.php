@@ -32,12 +32,12 @@ class GenerateEquivset extends Command {
 	/**
 	 * @var string
 	 */
-	protected $dataDir;
+	protected string $dataDir;
 
 	/**
 	 * @var string
 	 */
-	protected $distDir;
+	protected string $distDir;
 
 	/**
 	 * Generate Equivset
@@ -45,7 +45,7 @@ class GenerateEquivset extends Command {
 	 * @param string $dataDir Data Directory
 	 * @param string $distDir Distribution Directory
 	 */
-	public function __construct( $dataDir = '', $distDir = '' ) {
+	public function __construct( string $dataDir = '', string $distDir = '' ) {
 		parent::__construct();
 
 		$this->dataDir = $dataDir ?: __DIR__ . '/../../data';
@@ -57,6 +57,9 @@ class GenerateEquivset extends Command {
 	 */
 	protected function configure() {
 		$this->setName( 'generate-equivset' );
+		$this->setDescription(
+			'Generate the JSON, PHP, serialized, and plain text versions of the equivset in `./dist`'
+		);
 	}
 
 	/**
@@ -68,25 +71,21 @@ class GenerateEquivset extends Command {
 	 * @return int Return status.
 	 */
 	public function execute( InputInterface $input, OutputInterface $output ) {
-		$lines = file( $this->dataDir . '/equivset.in' );
-		if ( !$lines ) {
+		// phpcs:ignore Generic.PHP.NoSilencedErrors
+		$fp = @fopen( $this->dataDir . '/equivset.in', 'rb' );
+		if ( $fp === false ) {
 			throw new Exception( "Unable to open equivset.in" );
 		}
-
-		# \s matches \xa0 in non-unicode mode, which is not what we want
-		# So we need to make our own whitespace class
-		$sp = '[\ \t]';
 
 		$lineNum = 0;
 		$setsByChar = [];
 		$sets = [];
 		$exitStatus = 0;
+		$lastChar = null;
 
-		foreach ( $lines as $index => $line ) {
-			$lineNum = $index + 1;
-			# Whether the line ends with a nul character
-			$mapToEmpty = ( strpos( $line, "\0" ) === strlen( $line ) - 2 );
-
+		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures
+		while ( ( $line = fgets( $fp ) ) !== false ) {
+			$lineNum++;
 			$line = trim( $line );
 
 			# Filter comments
@@ -96,8 +95,8 @@ class GenerateEquivset extends Command {
 
 			# Process line
 			if ( !preg_match(
-				"/^(?P<hexleft> [A-F0-9]+) $sp+ (?P<charleft> .+?) $sp+ => $sp+ " .
-					"(?:(?P<hexright> [A-F0-9]+) $sp+|) (?P<charright> .+?) $sp* (?: \#.*|) $ /x",
+				'/^(?P<hexleft>[0-9A-F]+) +(?P<charleft>.) +=> +' .
+					'(?:(?P<hexright>[0-9A-F]+) +(?P<charright>.)|(?P<invisible>invisible))$/u',
 					$line, $m
 				)
 			) {
@@ -107,83 +106,87 @@ class GenerateEquivset extends Command {
 			}
 			$error = false;
 
-			if ( Utils::codepointToUtf8( hexdec( $m['hexleft'] ) ) != $m['charleft'] ) {
-				$actual = Utils::utf8ToCodepoint( $m['charleft'] );
-				if ( $actual === false ) {
-					$output->writeln( "Bytes: " . strlen( $m['charleft'] ) );
-					$output->writeln( bin2hex( $line ) );
-					$hexForm = bin2hex( $m['charleft'] );
-					$output->writeln( "<error>Invalid UTF-8 character \"{$m['charleft']}\" ($hexForm) at " .
-						"line $lineNum: $line</error>" );
-				} else {
-					$output->writeln( "<error>Error: left number ({$m['hexleft']}) does not match left " .
-						"character ($actual) at line $lineNum: $line</error>" );
-				}
+			if ( Utils::codepointToUtf8( hexdec( $m['hexleft'] ) ) !== $m['charleft'] ) {
+				$actual = strtoupper( dechex( mb_ord( $m['charleft'] ) ) );
+				$output->writeln( "<error>Error: left number ({$m['hexleft']}) does not match left " .
+					"character ($actual) at line $lineNum: $line</error>" );
 				$error = true;
 			}
-			if ( !empty( $m['hexright'] )
-				&& Utils::codepointToUtf8( hexdec( $m['hexright'] ) ) != $m['charright']
-			) {
-				$actual = Utils::utf8ToCodepoint( $m['charright'] );
-				if ( $actual === false ) {
-					$hexForm = bin2hex( $m['charright'] );
-					$output->writeln( "<error>Invalid UTF-8 character \"{$m['charleft']}\" ($hexForm) at " .
-						"line $lineNum: $line</error>" );
-				} else {
-					$output->writeln( "<error>Error: right number ({$m['hexright']}) does not match right " .
-						"character ($actual) at line $lineNum: $line</error>" );
-				}
+			if ( isset( $m['invisible'] ) ) {
+				$m['charright'] = '';
+			} elseif ( Utils::codepointToUtf8( hexdec( $m['hexright'] ) ) !== $m['charright'] ) {
+				$actual = strtoupper( dechex( mb_ord( $m['charright'] ) ) );
+				$output->writeln( "<error>Error: right number ({$m['hexright']}) does not match right " .
+					"character ($actual) at line $lineNum: $line</error>" );
 				$error = true;
+			}
+			if ( isset( $setsByChar[$m['charleft']] ) ) {
+				$output->writeln( "<error>Error: Duplicate character ({$m['charleft']}) " .
+					"at line $lineNum: $line</error>" );
+				$error = true;
+			}
+			if ( $lastChar !== null && $m['charleft'] < $lastChar ) {
+				$output->writeln( "<error>Error: Characters not in order based on hex-value ({$m['charleft']}) " .
+					"at line $lineNum: $line</error>" );
+				$error = true;
+			} else {
+				$lastChar = $m['charleft'];
 			}
 			if ( $error ) {
 				$exitStatus = 1;
 				continue;
 			}
-			if ( $mapToEmpty || $m['charright'] == 'NUL' ) {
-				$m['charright'] = '';
-			}
 
 			# Find the set for the right character, add a new one if necessary
-			if ( isset( $setsByChar[$m['charright']] ) ) {
-				$setName = $setsByChar[$m['charright']];
-				$setsByChar[$m['charleft']] = $setsByChar[$m['charright']];
-			} else {
-				$setName = $m['charright'];
-				$setsByChar[$m['charleft']] = $m['charright'];
-			}
+			$setName = $setsByChar[$m['charright']] ?? $m['charright'];
 
 			if ( !isset( $sets[$setName] ) ) {
 				$sets[$setName] = [ $setName ];
 			}
 
-			$sets[$setName][] = $m['charleft'];
+			// When a mapping between two chars exists before one of them gets the final set, a merge is needed
+			if ( isset( $sets[$m['charleft']] ) ) {
+				foreach ( $sets[$m['charleft']] as $char ) {
+					$setsByChar[$char] = $setName;
+					$sets[$setName][] = $char;
+				}
+				unset( $sets[$m['charleft']] );
+			} else {
+				$setsByChar[$m['charleft']] = $setName;
+				$sets[$setName][] = $m['charleft'];
+			}
 		}
 
-		$jsonData = [
-			'_readme' => [
-				'This file is generated by `bin/console generate-equivset`',
-				'It contains a map of characters, encoded in UTF-8, such that running',
-				'strtr() on a string with this map will cause confusable characters to',
-				'be reduced to a canonical representation. The same array is also',
-				'available in serialized form, in equivset.ser.',
-			],
+		$header = [
+			'This file is generated by `bin/console generate-equivset`',
+			'It contains a map of characters, encoded in UTF-8, such that running',
+			'strtr() on a string with this map will cause confusable characters to',
+			'be reduced to a canonical representation. The same array is also',
+			'available in serialized form, in equivset.ser.',
 		];
 
 		// JSON
 		$data = json_encode(
-			$jsonData + $setsByChar,
-			JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+			[ '_readme' => implode( ' ', $header ) ] + $setsByChar,
+			JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
 		);
+		$data = preg_replace( '/^ +/m', "\t", $data );
 		file_put_contents( $this->distDir . '/equivset.json', $data );
 
 		// Serialized.
 		file_put_contents( $this->distDir . '/equivset.ser', serialize( $setsByChar ) );
 
+		// PHP file
+		file_put_contents( $this->distDir . '/equivset.php', self::generatePHP( $setsByChar, $header ) );
+
 		// Text File.
+		uksort( $sets, [ self::class, 'compareCodePoints' ] );
 		touch( $this->distDir . '/equivset.txt' );
 		$textFile = fopen( $this->distDir . '/equivset.txt', 'w' );
 		foreach ( $sets as $members ) {
-			fwrite( $textFile, implode( ' ', $members ) . PHP_EOL );
+			$setName = array_shift( $members );
+			usort( $members, [ self::class, 'compareCodePoints' ] );
+			fwrite( $textFile, $setName . ' ' . implode( ' ', $members ) . "\n" );
 		}
 		fclose( $textFile );
 
@@ -194,5 +197,35 @@ class GenerateEquivset extends Command {
 		}
 
 		return $exitStatus;
+	}
+
+	/**
+	 * @param string $a
+	 * @param string $b
+	 * @return int
+	 */
+	private static function compareCodePoints( string $a, string $b ) {
+		if ( $a === '' ) {
+			return -1;
+		} elseif ( $b === '' ) {
+			return 1;
+		}
+		return mb_ord( $a ) - mb_ord( $b );
+	}
+
+	/**
+	 * @param string[] $data
+	 * @param string[] $header
+	 * @return string
+	 */
+	private static function generatePHP( array $data, array $header ): string {
+		$s = "<?php\n"
+			. "// " . implode( "\n// ", $header ) . "\n"
+			. "return [\n";
+		foreach ( $data as $key => $value ) {
+			$s .= "\t" . var_export( (string)$key, true ) . ' => ' . var_export( $value, true ) . ",\n";
+		}
+		$s .= "];\n";
+		return $s;
 	}
 }

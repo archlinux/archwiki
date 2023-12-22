@@ -5,10 +5,10 @@ namespace MediaWiki\Extension\Scribunto;
 use ApiBase;
 use Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use ObjectCache;
 use Parser;
 use ParserOptions;
-use Title;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**

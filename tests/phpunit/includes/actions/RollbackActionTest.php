@@ -6,15 +6,15 @@ use Article;
 use DerivativeContext;
 use ErrorPageError;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 use RequestContext;
 use RollbackAction;
-use User;
-use WebRequest;
 
 /**
- * @coversDefaultClass RollbackAction
+ * @covers RollbackAction
  * @group Database
  * @package MediaWiki\Tests\Action
  */
@@ -56,7 +56,7 @@ class RollbackActionTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideRollbackParamFail() {
+	public static function provideRollbackParamFail() {
 		yield 'No from parameter' => [
 			'requestParams' => [],
 		];
@@ -74,7 +74,6 @@ class RollbackActionTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideRollbackParamFail
-	 * @covers ::handleRollbackRequest
 	 */
 	public function testRollbackParamFail( array $requestParams ) {
 		$request = new FauxRequest( $requestParams );
@@ -83,9 +82,6 @@ class RollbackActionTest extends MediaWikiIntegrationTestCase {
 		$rollbackAction->handleRollbackRequest();
 	}
 
-	/**
-	 * @covers ::handleRollbackRequest
-	 */
 	public function testRollbackTokenMismatch() {
 		$request = new FauxRequest( [
 			'from' => $this->vandal->getName(),
@@ -96,9 +92,6 @@ class RollbackActionTest extends MediaWikiIntegrationTestCase {
 		$rollbackAction->handleRollbackRequest();
 	}
 
-	/**
-	 * @covers ::handleRollbackRequest
-	 */
 	public function testRollback() {
 		$request = new FauxRequest( [
 			'from' => $this->vandal->getName(),
@@ -120,9 +113,6 @@ class RollbackActionTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $this->sysop->getName(), $recentChange->getAttribute( 'rc_user_text' ) );
 	}
 
-	/**
-	 * @covers ::handleRollbackRequest
-	 */
 	public function testRollbackMarkBot() {
 		$request = new FauxRequest( [
 			'from' => $this->vandal->getName(),

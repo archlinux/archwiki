@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
-use MWException;
+use Exception;
 
-class LuaInterpreterBadVersionError extends MWException {
+class LuaInterpreterBadVersionError extends Exception {
 }

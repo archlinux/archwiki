@@ -28,12 +28,17 @@ ve.ce.MWGalleryNode = function VeCeMWGalleryNode() {
 	//     ⋮
 
 	// Mixin constructors
-	ve.ce.FocusableNode.call( this, this.$element );
+	ve.ce.FocusableNode.call( this, this.getFocusableElement() );
+
+	this.onUpdateDebounced = ve.debounce( this.onUpdate.bind( this ) );
 
 	// Events
-	this.model.connect( this, { update: 'updateInvisibleIcon' } );
-	this.model.connect( this, { update: 'onUpdate' } );
-	this.model.connect( this, { attributeChange: 'onAttributeChange' } );
+	this.model.connect( this, {
+		update: 'onUpdateDebounced',
+		// Update $focusable when number of images changes
+		splice: 'onUpdateDebounced',
+		attributeChange: 'onAttributeChange'
+	} );
 
 	// Initialization
 	this.$element.addClass( 'gallery' );
@@ -76,6 +81,18 @@ ve.ce.MWGalleryNode.prototype.onUpdate = function () {
 		var imagePadding = ( mode === 'traditional' ? 30 : 0 );
 		this.$element.css( 'max-width', mwAttrs.perrow * ( imageWidth + imagePadding + 8 ) );
 	}
+
+	// Update $focusable/$bounding, similar to ve.ce.GeneratedContentNode
+	if ( this.live ) {
+		this.emit( 'teardown' );
+	}
+	this.$focusable = this.getFocusableElement();
+	this.$bounding = this.$focusable;
+	if ( this.live ) {
+		this.emit( 'setup' );
+	}
+
+	this.updateInvisibleIcon();
 };
 
 /**
@@ -113,6 +130,18 @@ ve.ce.MWGalleryNode.prototype.onAttributeChange = function ( key, from, to ) {
 			.removeClass( 'mw-gallery-' + ( from.attrs.mode || defaults.mode ) )
 			.addClass( 'mw-gallery-' + ( to.attrs.mode || defaults.mode ) );
 	}
+};
+
+/**
+ * Get the focusable element
+ *
+ * As seen in ve.ce.GeneratedContentNode.
+ * TODO: Consider making this a core ve.ce.FocsableNode feature.
+ *
+ * @return {jQuery} Focusable element
+ */
+ve.ce.MWGalleryNode.prototype.getFocusableElement = function () {
+	return this.$element.find( '.gallerybox .thumb' );
 };
 
 /* Registration */

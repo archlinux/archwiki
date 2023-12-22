@@ -11,8 +11,8 @@ use Wikimedia\Rdbms\IMaintainableDatabase;
 
 /**
  * @group Database
- * @covers ActorMigration
- * @covers ActorMigrationBase
+ * @covers MediaWiki\User\ActorMigration
+ * @covers MediaWiki\User\ActorMigrationBase
  */
 class ActorMigrationTest extends MediaWikiLangTestCase {
 
@@ -284,7 +284,7 @@ class ActorMigrationTest extends MediaWikiLangTestCase {
 		$mock = $this->createNoOpMock( ActorStore::class, [ 'findActorId' ] );
 
 		$mock->method( 'findActorId' )
-			->willReturnCallback( function ( UserIdentity $user ) {
+			->willReturnCallback( static function ( UserIdentity $user ) {
 				$row = self::findRow( self::ACTORS, 1, $user->getName() );
 				return $row ? $row[2] : null;
 			} );
@@ -326,7 +326,7 @@ class ActorMigrationTest extends MediaWikiLangTestCase {
 		$this->assertEquals( $expect, $result );
 	}
 
-	public function provideGetWhere() {
+	public static function provideGetWhere() {
 		$genericUser = new UserIdentityValue( 1, 'User1' );
 		$complicatedUsers = [
 			new UserIdentityValue( 1, 'User1' ),
@@ -530,7 +530,7 @@ class ActorMigrationTest extends MediaWikiLangTestCase {
 		);
 
 		$m = $this->getMigration( $stage );
-		$result = $m->getWhere( $this->db, 'am1_user', 'Foo' );
+		$m->getWhere( $this->db, 'am1_user', 'Foo' );
 	}
 
 	/**

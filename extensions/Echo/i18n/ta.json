@@ -8,7 +8,8 @@
 			"Rakeshonwiki",
 			"Shanmugamp7",
 			"தமிழ்க்குரிசில்",
-			"மதனாஹரன்"
+			"மதனாஹரன்",
+			"Fahimrazick"
 		]
 	},
 	"echo-desc": "அறிவிப்பு முறைமை",
@@ -51,7 +52,7 @@
 	"notification-dynamic-actions-watch": "{{GENDER:$3|Follow}} புதிய செயல்பாடு \"$1\"",
 	"notification-dynamic-actions-watch-confirmation": "{{GENDER:$3|You}} இந்த பக்கத்தை பார்க்கிறார் \"$1",
 	"notification-dynamic-actions-watch-confirmation-description": "{{GENDER:$3|You}}, [$2 this page] ஐ பார்ப்பதை எப்போது வேண்டுமானாலும் நிறுத்தலாம்",
-	"notification-link-text-expand-all": "விரிவாக்குக",
+	"notification-link-text-expand-all": "விரி",
 	"notification-link-text-collapse-all": "சுருக்குக",
 	"notification-link-text-view-message": "செய்தியினை பார்",
 	"notification-link-text-view-mention": "குறித்திருப்பதைக்காண்க",
@@ -70,7 +71,7 @@
 	"notification-timestamp-yesterday": "நேற்று",
 	"notification-inbox-filter-read": "படி",
 	"notification-inbox-filter-unread": "படிக்காத அஞ்சல்கள்",
-	"notification-inbox-filter-all": "அனைத்தும்",
+	"notification-inbox-filter-all": "யாவும்",
 	"echo-notification-alert-text-only": "விழிப்பூட்டல்கள்",
 	"echo-notification-notice-text-only": "அறிவிப்புகள்",
 	"echo-overlay-link": "எல்லா அறிவிப்புகள்",

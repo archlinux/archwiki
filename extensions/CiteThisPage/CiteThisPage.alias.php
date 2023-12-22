@@ -53,6 +53,11 @@ $specialPageAliases['bjn'] = [
 	'CiteThisPage' => [ 'Juhut' ],
 ];
 
+/** Bengali (বাংলা) */
+$specialPageAliases['bn'] = [
+	'CiteThisPage' => [ 'উদ্ধৃত_করুন', 'এই_পাতা_উদ্ধৃত_করুন' ],
+];
+
 /** Breton (brezhoneg) */
 $specialPageAliases['br'] = [
 	'CiteThisPage' => [ 'Menegiñ' ],

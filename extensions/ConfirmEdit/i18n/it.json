@@ -13,7 +13,6 @@
 	"captcha-edit": "Per modificare la pagina è necessario risolvere l'attività presentata di seguito e inserire la risposta nella casella\n([[Special:Captcha/help|maggiori informazioni]]):",
 	"captcha-edit-fail": "Codice di verifica errato o mancante.",
 	"captcha-desc": "Fornisce tecniche CAPTCHA per la protezione contro lo spam e l'individuazione delle password",
-	"captcha-label": "CAPTCHA",
 	"captcha-help": "Soluzione del CAPTCHA.",
 	"captcha-info-help": "Descrizione del CAPTCHA.",
 	"captcha-id-label": "ID CAPTCHA",

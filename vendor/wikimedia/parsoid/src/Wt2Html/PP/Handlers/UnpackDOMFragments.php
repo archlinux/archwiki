@@ -336,7 +336,7 @@ class UnpackDOMFragments {
 						}
 						return true;
 					} );
-					$dsrFixer->traverse( $env, $node );
+					$dsrFixer->traverse( null, $node );
 				}
 
 				$node = $node->nextSibling;
@@ -349,9 +349,22 @@ class UnpackDOMFragments {
 			// placeholderParent itself is useless now
 			$placeholderParent->parentNode->removeChild( $placeholderParent );
 		} else {
+			// Preserve fostered flag from DOM fragment
+			if ( $fragmentContent instanceof Element ) {
+				if ( !empty( $placeholderDP->fostered ) ) {
+					$n = $fragmentContent;
+					while ( $n ) {
+						$dp = DOMDataUtils::getDataParsoid( $n );
+						$dp->fostered = true;
+						$n = $n->nextSibling;
+					}
+				}
+			}
+
 			// Move the content nodes over and delete the placeholder node
 			DOMUtils::migrateChildren( $fragmentDOM, $placeholderParent, $placeholder );
 			$placeholderParent->removeChild( $placeholder );
+
 		}
 
 		// Empty out $fragmentDOM since the call below asserts it

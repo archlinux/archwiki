@@ -5,6 +5,5 @@
 			"Mormegil"
 		]
 	},
-	"apihelp-categorytree-description": "Interní modul pro rozšíření CategoryTree.",
 	"apierror-categorytree-invalidjson": "Nastavení musí být platný objekt JSON."
 }

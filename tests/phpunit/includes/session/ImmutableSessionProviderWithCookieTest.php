@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Session;
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\MainConfigNames;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\NullLogger;
 use TestLogger;
-use User;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -18,9 +18,9 @@ class ImmutableSessionProviderWithCookieTest extends MediaWikiIntegrationTestCas
 	use SessionProviderTestTrait;
 
 	private function getProvider( $name, $prefix = null, $forceHTTPS = false, $logger = null ) {
-		$config = new \HashConfig();
-		$config->set( 'CookiePrefix', 'wgCookiePrefix' );
-		$config->set( 'ForceHTTPS', $forceHTTPS );
+		$config = new HashConfig();
+		$config->set( MainConfigNames::CookiePrefix, 'wgCookiePrefix' );
+		$config->set( MainConfigNames::ForceHTTPS, $forceHTTPS );
 
 		$params = [
 			'sessionCookieName' => $name,
@@ -200,7 +200,7 @@ class ImmutableSessionProviderWithCookieTest extends MediaWikiIntegrationTestCas
 		];
 
 		$sessionId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-		$user = User::newFromName( 'UTSysop' );
+		$user = $this->getTestSysop()->getUser();
 		$this->assertSame( $forceHTTPS, $user->requiresHTTPS() );
 
 		$backend = new SessionBackend(

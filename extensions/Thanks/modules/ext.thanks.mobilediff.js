@@ -2,8 +2,7 @@
 	// To allow users to cancel a thanks in the event of an accident, the action is delayed.
 	var THANKS_DELAY = 2000,
 		mobile = mw.mobileFrontend.require( 'mobile.startup' ),
-		Button = mobile.Button,
-		Icon = mobile.Icon,
+		IconButton = mobile.IconButton,
 		msgOptions = {
 			// tag ensures that only one message in workflow is shown at any time
 			tag: 'thanks'
@@ -64,19 +63,17 @@
 	 */
 	function createThankLink( name, rev, gender ) {
 		var timeout,
-			button = new Button( {
-				progressive: true,
-				additionalClassNames: 'mw-mf-action-button'
+			button = new IconButton( {
+				weight: 'primary',
+				action: 'progressive',
+				size: 'medium',
+				additionalClassNames: 'mw-mf-action-button',
+				icon: 'userTalk',
+				isIconOnly: false,
+				glyphPrefix: 'thanks',
+				label: mw.msg( 'thanks-button-thank', mw.user, gender )
 			} ),
 			$button = button.$el;
-
-		// append icon
-		new Icon( {
-			name: 'userTalk',
-			glyphPrefix: 'thanks',
-			type: 'before',
-			label: mw.msg( 'thanks-button-thank', mw.user, gender )
-		} ).$el.appendTo( $button );
 
 		// Don't make thank button for self
 		if ( name === mw.config.get( 'wgUserName' ) ) {

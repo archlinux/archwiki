@@ -23,8 +23,6 @@
 
 require_once __DIR__ . '/../Maintenance.php';
 
-use MediaWiki\MediaWikiServices;
-
 /**
  * Maintenance script that shows some statistics on the blob_orphans table,
  * created with trackBlobs.php.
@@ -39,7 +37,7 @@ class OrphanStats extends Maintenance {
 	}
 
 	protected function getExternalDB( $db, $cluster ) {
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
 		$lb = $lbFactory->getExternalLB( $cluster );
 
 		return $lb->getMaintenanceConnectionRef( $db );
@@ -50,7 +48,10 @@ class OrphanStats extends Maintenance {
 		if ( !$dbr->tableExists( 'blob_orphans', __METHOD__ ) ) {
 			$this->fatalError( "blob_orphans doesn't seem to exist, need to run trackBlobs.php first" );
 		}
-		$res = $dbr->select( 'blob_orphans', '*', '', __METHOD__ );
+		$res = $dbr->newSelectQueryBuilder()
+			->select( '*' )
+			->from( 'blob_orphans' )
+			->caller( __METHOD__ )->fetchResultSet();
 
 		$num = 0;
 		$totalSize = 0;
@@ -59,12 +60,11 @@ class OrphanStats extends Maintenance {
 
 		foreach ( $res as $row ) {
 			$extDB = $this->getExternalDB( DB_REPLICA, $row->bo_cluster );
-			$blobRow = $extDB->selectRow(
-				'blobs',
-				'*',
-				[ 'blob_id' => $row->bo_blob_id ],
-				__METHOD__
-			);
+			$blobRow = $extDB->newSelectQueryBuilder()
+				->select( '*' )
+				->from( 'blobs' )
+				->where( [ 'blob_id' => $row->bo_blob_id ] )
+				->caller( __METHOD__ )->fetchRow();
 
 			$num++;
 			$size = strlen( $blobRow->blob_text );

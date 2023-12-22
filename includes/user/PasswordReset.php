@@ -20,19 +20,25 @@
  * @file
  */
 
+namespace MediaWiki\User;
+
+use DeferredUpdates;
+use LogicException;
+use MapCacheLRU;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\TemporaryPasswordAuthenticationRequest;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
-use MediaWiki\User\UserFactory;
-use MediaWiki\User\UserNameUtils;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\Parser\Sanitizer;
+use Message;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Wikimedia\Rdbms\ILoadBalancer;
+use SendPasswordResetEmailUpdate;
+use StatusValue;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Helper class for the password reset functionality shared by the web UI and the API.
@@ -44,26 +50,13 @@ use Wikimedia\Rdbms\ILoadBalancer;
 class PasswordReset implements LoggerAwareInterface {
 	use LoggerAwareTrait;
 
-	/** @var ServiceOptions */
-	private $config;
-
-	/** @var AuthManager */
-	private $authManager;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var UserFactory */
-	private $userFactory;
-
-	/** @var UserNameUtils */
-	private $userNameUtils;
-
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
+	private ServiceOptions $config;
+	private AuthManager $authManager;
+	private HookRunner $hookRunner;
+	private IConnectionProvider $dbProvider;
+	private UserFactory $userFactory;
+	private UserNameUtils $userNameUtils;
+	private UserOptionsLookup $userOptionsLookup;
 
 	/**
 	 * In-process cache for isAllowed lookups, by username.
@@ -88,7 +81,7 @@ class PasswordReset implements LoggerAwareInterface {
 	 * @param LoggerInterface $logger
 	 * @param AuthManager $authManager
 	 * @param HookContainer $hookContainer
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param UserFactory $userFactory
 	 * @param UserNameUtils $userNameUtils
 	 * @param UserOptionsLookup $userOptionsLookup
@@ -98,7 +91,7 @@ class PasswordReset implements LoggerAwareInterface {
 		LoggerInterface $logger,
 		AuthManager $authManager,
 		HookContainer $hookContainer,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		UserFactory $userFactory,
 		UserNameUtils $userNameUtils,
 		UserOptionsLookup $userOptionsLookup
@@ -110,7 +103,7 @@ class PasswordReset implements LoggerAwareInterface {
 
 		$this->authManager = $authManager;
 		$this->hookRunner = new HookRunner( $hookContainer );
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->userFactory = $userFactory;
 		$this->userNameUtils = $userNameUtils;
 		$this->userOptionsLookup = $userOptionsLookup;
@@ -179,8 +172,6 @@ class PasswordReset implements LoggerAwareInterface {
 	 * @param string|null $username The user whose password is reset
 	 * @param string|null $email Alternative way to specify the user
 	 * @return StatusValue
-	 * @throws LogicException When the user is not allowed to perform the action
-	 * @throws MWException On unexpected DB errors
 	 */
 	public function execute(
 		User $performingUser,
@@ -364,23 +355,12 @@ class PasswordReset implements LoggerAwareInterface {
 	 *
 	 * @param string $email
 	 * @return User[]
-	 * @throws MWException On unexpected database errors
 	 */
 	protected function getUsersByEmail( $email ) {
-		$userQuery = User::getQueryInfo();
-		$res = $this->loadBalancer->getConnectionRef( DB_REPLICA )->select(
-			$userQuery['tables'],
-			$userQuery['fields'],
-			[ 'user_email' => $email ],
-			__METHOD__,
-			[],
-			$userQuery['joins']
-		);
-
-		if ( !$res ) {
-			// Some sort of database error, probably unreachable
-			throw new MWException( 'Unknown database error in ' . __METHOD__ );
-		}
+		$res = User::newQueryBuilder( $this->dbProvider->getReplicaDatabase() )
+			->where( [ 'user_email' => $email ] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$users = [];
 		foreach ( $res as $row ) {
@@ -390,3 +370,9 @@ class PasswordReset implements LoggerAwareInterface {
 	}
 
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( PasswordReset::class, 'PasswordReset' );

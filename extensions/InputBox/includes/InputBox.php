@@ -37,6 +37,8 @@ class InputBox {
 	/** @var ?string */
 	private $mUseVE = null;
 	/** @var ?string */
+	private $mUseDT = null;
+	/** @var ?string */
 	private $mSummary = null;
 	/** @var ?string */
 	private $mNosummary = null;
@@ -95,6 +97,7 @@ class InputBox {
 			'ext.inputBox.styles',
 			'mediawiki.ui.input',
 			'mediawiki.ui.checkbox',
+			'mediawiki.ui.button',
 		] );
 	}
 
@@ -471,6 +474,9 @@ class InputBox {
 		// @phan-suppress-next-line PhanSuspiciousValueComparison False positive
 		if ( $this->mType === 'comment' ) {
 			$htmlOut .= Html::hidden( 'section', 'new' );
+			if ( $this->mUseDT ) {
+				$htmlOut .= Html::hidden( 'dtpreload', '1' );
+			}
 		}
 
 		$htmlOut .= $this->buildTextBox( [
@@ -612,6 +618,9 @@ class InputBox {
 		] );
 
 		$htmlOut .= Html::hidden( 'section', 'new' );
+		if ( $this->mUseDT ) {
+			$htmlOut .= Html::hidden( 'dtpreload', '1' );
+		}
 		$htmlOut .= Html::hidden( 'title', $this->mPage );
 		$htmlOut .= $this->mBR;
 		$htmlOut .= Xml::openElement( 'input',
@@ -665,6 +674,7 @@ class InputBox {
 			'page' => 'mPage',
 			'editintro' => 'mEditIntro',
 			'useve' => 'mUseVE',
+			'usedt' => 'mUseDT',
 			'summary' => 'mSummary',
 			'nosummary' => 'mNosummary',
 			'minor' => 'mMinor',

@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Naval Scene",
+			"Amire80",
 			"Bangrapip",
-			"Amire80"
+			"Naval Scene"
 		]
 	},
 	"vector-skin-desc": "Nyediain 2 kulit Bèktor:\n* 2011 - Pèrsi moderen deri MonoBook dengen roman anyar èn banyak peningkatan kebegunaan.\n* 2022 -Bèktor nyang dibangun sebagé bagèan deri proyèk WMF [[mw:Desktop Improvements]].",
@@ -17,7 +17,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 basa}}",
 	"vector-no-language-button-label": "Tambah basa",
 	"vector-no-language-button-aria-label": "Ni makalah cuman ada dalem ni basa. Tambah makalah bakal laèn-laèn basa",
-	"vector-language-redirect-to-top": "Di ni {{SITENAME}}, sènggètan basa ada di atas halaman di sampingnya judulmakalah. [[#p-lang-btn|Ke atas]].",
+	"vector-language-redirect-to-top": "Sènggètan basa ada di bagèan atas halaman di sebrangnya judul.",
 	"vector-language-variant-switcher-label": "Robah ragem basa",
 	"vector-action-addsection": "Tambah topik",
 	"vector-action-delete": "Apus",
@@ -34,7 +34,7 @@
 	"vector-jumptosearch": "Loncat ke penyarian",
 	"vector-jumptocontent": "Loncat ke isi",
 	"vector-more-actions": "Laènnya",
-	"vector-search-loader": "Muat saran penyarian",
+	"vector-search-loader": "Munggah saran penyarian",
 	"vector-searchsuggest-containing": "Cari halaman nyang ada <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Mukadimah",
 	"vector-toc-label": "Daptar isi",
@@ -49,6 +49,8 @@
 	"vector-site-nav-label": "Pelampang",
 	"vector-main-menu-label": "Menu utama",
 	"vector-limited-width-toggle": "Cetèkin lèbar isi kewates",
+	"vector-limited-width-toggle-on-popup": "Lu udah ngganti lu punya telepekan ke lèbar penu. Bakal balik ke lèbar kewates, pijet ni tombol.",
+	"vector-limited-width-toggle-off-popup": "Lu bisa nyetèkin antara lèbar kewates èb lebar penu, tibang ngeklik ni tombol doang.",
 	"vector-page-tools-label": "Peranti",
 	"vector-page-tools-general-label": "Umum",
 	"vector-page-tools-actions-label": "Piil",
@@ -56,7 +58,11 @@
 	"vector-unpin-element-label": "umpetin",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Perhadring]]",
 	"tooltip-vector-anon-user-menu-title": "Pilihan laènnya",
+	"vector-page-tools-nav-label": "Peranti halaman",
 	"vector-prefs-limited-width": "Nyalain mode lèbar kewates",
 	"vector-prefs-limited-width-help": "Nyalain mode lèbar kewates biar lebi ènak ngebacanya.",
-	"empty-language-selector-body": "Isi halaman kaga' didukung di laèn-laèn basa."
+	"empty-language-selector-body": "Isi halaman kaga' didukung di laèn-laèn basa.",
+	"vector-toc-unpinned-popup": "Daptar isi udah dipindahin ke mari.",
+	"vector-page-tools-unpinned-popup": "Menu peranti udah dipindahin ke mari.",
+	"vector-main-menu-unpinned-popup": "Menu utama udah dipindahin ke mari."
 }

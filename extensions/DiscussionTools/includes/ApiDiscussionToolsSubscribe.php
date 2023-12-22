@@ -5,7 +5,7 @@ namespace MediaWiki\Extension\DiscussionTools;
 use ApiBase;
 use ApiMain;
 use ApiUsageException;
-use Title;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiDiscussionToolsSubscribe extends ApiBase {
@@ -27,7 +27,7 @@ class ApiDiscussionToolsSubscribe extends ApiBase {
 	 */
 	public function execute() {
 		$user = $this->getUser();
-		if ( !$user->isRegistered() ) {
+		if ( !$user->isNamed() ) {
 			$this->dieWithError( 'apierror-mustbeloggedin-generic', 'notloggedin' );
 		}
 
@@ -95,13 +95,6 @@ class ApiDiscussionToolsSubscribe extends ApiBase {
 	 */
 	public function needsToken() {
 		return 'csrf';
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function isInternal() {
-		return true;
 	}
 
 	/**

@@ -15,7 +15,7 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		ve.init.mw.CaptchaSaveErrorHandler.static.name = 'confirmEditCaptchas';
 
 		ve.init.mw.CaptchaSaveErrorHandler.static.matchFunction = function ( data ) {
-			var captchaData = ve.getProp( data, 'visualeditoredit', 'edit', 'captcha' );
+			const captchaData = ve.getProp( data, 'visualeditoredit', 'edit', 'captcha' );
 
 			return !!( captchaData && (
 				captchaData.url ||
@@ -26,18 +26,16 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		};
 
 		ve.init.mw.CaptchaSaveErrorHandler.static.process = function ( data, target ) {
-			var captchaInput;
+			const captchaInput = new mw.libs.confirmEdit.CaptchaInputWidget(
+				ve.getProp( data, 'visualeditoredit', 'edit', 'captcha' )
+			);
+			ve.targetLinksToNewWindow( captchaInput.$element[ 0 ] );
 
 			function onCaptchaLoad() {
 				target.saveDialog.updateSize();
 				captchaInput.focus();
 				captchaInput.scrollElementIntoView();
 			}
-
-			captchaInput = new mw.libs.confirmEdit.CaptchaInputWidget(
-				ve.getProp( data, 'visualeditoredit', 'edit', 'captcha' )
-			);
-			ve.targetLinksToNewWindow( captchaInput.$element[ 0 ] );
 
 			captchaInput.on( 'load', onCaptchaLoad );
 			// Save when pressing 'Enter' in captcha field as it is single line.

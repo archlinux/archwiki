@@ -4,39 +4,40 @@ namespace MediaWiki\Extension\Thanks;
 
 use ApiMain;
 use ApiUsageException;
-use DerivativeRequest;
 use FormSpecialPage;
 use HTMLForm;
 use Linker;
+use MediaWiki\Request\DerivativeRequest;
+use MediaWiki\User\UserFactory;
 use Status;
-use User;
 
 class SpecialThanks extends FormSpecialPage {
 
 	/**
 	 * API result
-	 * @var array
 	 */
-	protected $result;
+	protected array $result;
 
 	/**
 	 * 'rev' for revision, 'log' for log entry, or 'flow' for Flow comment,
 	 * null if no ID is specified
-	 * @var string|null
 	 */
-	protected $type;
+	protected ?string $type;
 
 	/**
 	 * Revision or Log ID ('0' = invalid) or Flow UUID
-	 * @var string
 	 */
-	protected $id;
+	protected ?string $id;
 
-	public function __construct() {
+	private UserFactory $userFactory;
+
+	public function __construct( UserFactory $userFactory ) {
 		parent::__construct( 'Thanks' );
+		$this->userFactory = $userFactory;
+		$this->id = null;
 	}
 
-	public function doesWrites() {
+	public function doesWrites(): bool {
 		return true;
 	}
 
@@ -54,54 +55,58 @@ class SpecialThanks extends FormSpecialPage {
 		if ( $tokens[0] === 'Flow' ) {
 			if ( count( $tokens ) === 1 || $tokens[1] === '' ) {
 				$this->type = null;
-			} else {
-				$this->type = 'flow';
-				$this->id = $tokens[1];
+				return;
 			}
-		} elseif ( strtolower( $tokens[0] ) === 'log' ) {
+			$this->type = 'flow';
+			$this->id = $tokens[1];
+			return;
+		}
+
+		if ( strtolower( $tokens[0] ) === 'log' ) {
 			$this->type = 'log';
 			// Make sure there's a numeric ID specified as the subpage.
 			if ( count( $tokens ) === 1 || $tokens[1] === '' || !( ctype_digit( $tokens[1] ) ) ) {
 				$this->id = '0';
-			} else {
-				$this->id = $tokens[1];
+				return;
 			}
-		} else {
-			$this->type = 'rev';
-			if ( !( ctype_digit( $par ) ) ) { // Revision ID is not an integer.
-				$this->id = '0';
-			} else {
-				$this->id = $par;
-			}
+			$this->id = $tokens[1];
+			return;
 		}
+
+		$this->type = 'rev';
+		if ( !( ctype_digit( $par ) ) ) { // Revision ID is not an integer.
+			$this->id = '0';
+			return;
+		}
+
+		$this->id = $par;
 	}
 
 	/**
 	 * HTMLForm fields
 	 * @return string[][]
 	 */
-	protected function getFormFields() {
+	protected function getFormFields(): array {
 		return [
 			'id' => [
 				'id' => 'mw-thanks-form-id',
 				'name' => 'id',
 				'type' => 'hidden',
-				'default' => $this->id,
+				'default' => $this->id ?? ''
 			],
 			'type' => [
 				'id' => 'mw-thanks-form-type',
 				'name' => 'type',
 				'type' => 'hidden',
-				'default' => $this->type,
+				'default' => $this->type ?? '',
 			],
 		];
 	}
 
 	/**
 	 * Return the confirmation or error message.
-	 * @return string
 	 */
-	protected function preHtml() {
+	protected function preHtml(): string {
 		if ( $this->type === null ) {
 			$msgKey = 'thanks-error-no-id-specified';
 		} elseif ( $this->type === 'rev' && $this->id === '0' ) {
@@ -130,19 +135,15 @@ class SpecialThanks extends FormSpecialPage {
 		}
 	}
 
-	/**
-	 * @return string
-	 */
-	protected function getDisplayFormat() {
+	protected function getDisplayFormat(): string {
 		return 'ooui';
 	}
 
 	/**
 	 * Call the API internally.
 	 * @param string[] $data The form data.
-	 * @return Status
 	 */
-	public function onSubmit( array $data ) {
+	public function onSubmit( array $data ): Status {
 		if ( !isset( $data['id'] ) ) {
 			return Status::newFatal( 'thanks-error-invalidrevision' );
 		}
@@ -152,13 +153,13 @@ class SpecialThanks extends FormSpecialPage {
 				'action' => 'thank',
 				$this->type => (int)$data['id'],
 				'source' => 'specialpage',
-				'token' => $this->getUser()->getEditToken(),
+				'token' => $this->getOutput()->getCsrfTokenSet()->getToken(),
 			];
 		} else {
 			$requestData = [
 				'action' => 'flowthank',
 				'postid' => $data['id'],
-				'token' => $this->getUser()->getEditToken(),
+				'token' => $this->getOutput()->getCsrfTokenSet()->getToken(),
 			];
 		}
 
@@ -188,7 +189,7 @@ class SpecialThanks extends FormSpecialPage {
 	 */
 	public function onSuccess() {
 		$sender = $this->getUser();
-		$recipient = User::newFromName( $this->result['recipient'] );
+		$recipient = $this->userFactory->newFromName( $this->result['recipient'] );
 		$link = Linker::userLink( $recipient->getId(), $recipient->getName() );
 
 		if ( in_array( $this->type, [ 'rev', 'log' ] ) ) {
@@ -202,7 +203,7 @@ class SpecialThanks extends FormSpecialPage {
 		$this->getOutput()->addHTML( $msg->parse() );
 	}
 
-	public function isListed() {
+	public function isListed(): bool {
 		return false;
 	}
 }

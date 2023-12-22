@@ -6,7 +6,6 @@
 			"Wladek92"
 		]
 	},
-	"apihelp-templatedata-description": "Récupérer les données stockées via l’extension TemplateData.",
 	"apihelp-templatedata-summary": "Récupérer les données stockées par l’extension TemplateData.",
 	"apihelp-templatedata-example-1": "Renvoyer des données de modèle pour [[Template:Foobar]], avec des résultats si les modèles n’existent pas ou s’ils existent mais sans données de modèle.",
 	"apihelp-templatedata-example-2": "Renvoyer des données de modèle [[Template:Phabricator]], sans aucun résultat si les modèles n’existent pas ou n’ont pas de données de modèle",

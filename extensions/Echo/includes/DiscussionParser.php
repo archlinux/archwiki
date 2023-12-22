@@ -1,21 +1,40 @@
 <?php
 
+namespace MediaWiki\Extension\Notifications;
+
+use Article;
+use Language;
+use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserNameUtils;
+use ParserOptions;
+use ParserOutput;
+use RequestContext;
+use RuntimeException;
+use Sanitizer;
+use TextContent;
+use User;
 
-abstract class EchoDiscussionParser {
+abstract class DiscussionParser {
 	private const HEADER_REGEX = '^(==+)\h*([^=].*)\h*\1$';
 
 	public const DEFAULT_SNIPPET_LENGTH = 150;
 
 	/** @var string|null */
 	protected static $timestampRegex;
-	/** @var array[][] */
+
+	/**
+	 * @var array[][]
+	 * FIXME: This static cache can become stale in tests, because it's never reset. We use both rev IDs and title keys
+	 * to mitigate that, but it might still break!
+	 */
 	protected static $revisionInterpretationCache = [];
-	/** @var EchoDiffParser|null */
+
+	/** @var DiffParser|null */
 	protected static $diffParser;
 
 	/**
@@ -28,12 +47,13 @@ abstract class EchoDiscussionParser {
 	public static function generateEventsForRevision( RevisionRecord $revision, $isRevert ) {
 		global $wgEchoMentionsOnMultipleSectionEdits;
 		global $wgEchoMentionOnChanges;
-		$store = MediaWikiServices::getInstance()->getRevisionStore();
+		$services = MediaWikiServices::getInstance();
+		$store = $services->getRevisionStore();
 
-		// use replica database if there is a previous revision
+		// use the replica database if there is a previous revision
 		if ( $store->getPreviousRevision( $revision ) ) {
 			$title = Title::newFromID( $revision->getPageId() );
-			// use primary database for new page
+			// use the primary database for new page
 		} else {
 			$title = Title::newFromID( $revision->getPageId(), Title::GAID_FOR_UPDATE );
 		}
@@ -94,8 +114,7 @@ abstract class EchoDiscussionParser {
 
 		if ( $title->getNamespace() === NS_USER_TALK ) {
 			$notifyUser = User::newFromName( $title->getText() );
-			// If the recipient is a valid non-anonymous user and hasn't turned
-			// off their notifications, generate a talk page post Echo notification.
+			// If the recipient is a valid non-anonymous user generate a talk page post notification.
 			if ( $notifyUser && $notifyUser->getId() ) {
 				$permManager = MediaWikiServices::getInstance()->getPermissionManager();
 				// If this is a minor edit, only notify if the agent doesn't have talk page minor
@@ -122,13 +141,27 @@ abstract class EchoDiscussionParser {
 					];
 				}
 			}
+		} elseif ( $title->inNamespace( NS_USER ) ) {
+			$notifyUser = User::newFromName( $title->getText() );
+			// If the recipient is a valid non-anonymous user and hasn't turned
+			// off their notifications, generate a talk page post Echo notification.
+			if ( $notifyUser && $notifyUser->getId() ) {
+				$events[] = [
+					'type' => 'edit-user-page',
+					'title' => $title,
+					'extra' => [
+						'revid' => $revision->getId(),
+					],
+					'agent' => $user,
+				];
+			}
 		}
 
 		// Notify users mentioned in edit summary
 		global $wgEchoMaxMentionsInEditSummary;
 
 		if ( $wgEchoMaxMentionsInEditSummary > 0 && !$user->isBot() && !$isRevert ) {
-			$summaryParser = new EchoSummaryParser();
+			$summaryParser = new SummaryParser();
 			$usersInSummary = $summaryParser->parse( $revision->getComment()->text );
 
 			// Don't allow pinging yourself
@@ -163,7 +196,8 @@ abstract class EchoDiscussionParser {
 
 		// Allow extensions to generate more events for a revision, and de-duplicate
 		// against the standard events created above.
-		Hooks::run( 'EchoGetEventsForRevision', [ &$events, $revision, $isRevert ] );
+		( new HookRunner( $services->getHookContainer() ) )
+			->onEchoGetEventsForRevision( $events, $revision, $isRevert );
 
 		// Create events
 		foreach ( $events as $event ) {
@@ -501,12 +535,18 @@ abstract class EchoDiscussionParser {
 	 * of the changes made in it.
 	 *
 	 * @param RevisionRecord $revision
-	 * @see EchoDiscussionParser::interpretDiff
+	 * @see DiscussionParser::interpretDiff
 	 * @return array[] See {@see interpretDiff} for details.
 	 */
 	private static function getChangeInterpretationForRevision( RevisionRecord $revision ) {
-		if ( $revision->getId() && isset( self::$revisionInterpretationCache[$revision->getId()] ) ) {
-			return self::$revisionInterpretationCache[$revision->getId()];
+		if ( $revision->getId() ) {
+			$page = $revision->getPage();
+			$cacheKey = $revision->getId() . '|' . $page->getNamespace() . '|' . $page->getDBkey();
+			if ( isset( self::$revisionInterpretationCache[$cacheKey] ) ) {
+				return self::$revisionInterpretationCache[$cacheKey];
+			}
+		} else {
+			$cacheKey = null;
 		}
 
 		$userIdentity = $revision->getUser();
@@ -532,7 +572,9 @@ abstract class EchoDiscussionParser {
 			Title::newFromLinkTarget( $revision->getPageAsLinkTarget() )
 		);
 
-		self::$revisionInterpretationCache[$revision->getId()] = $output;
+		if ( $cacheKey ) {
+			self::$revisionInterpretationCache[$cacheKey] = $output;
+		}
 
 		return $output;
 	}
@@ -903,9 +945,7 @@ abstract class EchoDiscussionParser {
 	 * @return string The same text, with the section header stripped out.
 	 */
 	private static function stripHeader( $text ) {
-		$text = preg_replace( '/' . self::HEADER_REGEX . '/um', '', $text );
-
-		return $text;
+		return preg_replace( '/' . self::HEADER_REGEX . '/um', '', $text );
 	}
 
 	/**
@@ -960,7 +1000,6 @@ abstract class EchoDiscussionParser {
 	 *
 	 * @param string $oldText The "left hand side" of the diff.
 	 * @param string $newText The "right hand side" of the diff.
-	 * @throws MWException
 	 * @return array[] Array of changes.
 	 * Each change consists of:
 	 * * An 'action', one of:
@@ -973,7 +1012,7 @@ abstract class EchoDiscussionParser {
 	 */
 	public static function getMachineReadableDiff( $oldText, $newText ) {
 		if ( !isset( self::$diffParser ) ) {
-			self::$diffParser = new EchoDiffParser;
+			self::$diffParser = new DiffParser;
 		}
 
 		return self::$diffParser->getChangeSet( $oldText, $newText );
@@ -1046,7 +1085,7 @@ abstract class EchoDiscussionParser {
 			$match = explode( '|', $match, 2 );
 			$title = Title::newFromText( $match[0] );
 
-			// figure out if we the link is related to a user
+			// figure out if the link is related to a user
 			if (
 				$title &&
 				( $title->getNamespace() === NS_USER || $title->getNamespace() === NS_USER_TALK )
@@ -1186,7 +1225,6 @@ abstract class EchoDiscussionParser {
 	 * Gets a regular expression that will match this wiki's
 	 * timestamps as given by ~~~~.
 	 *
-	 * @throws MWException
 	 * @return string regular expression fragment.
 	 */
 	public static function getTimestampRegex() {
@@ -1220,7 +1258,7 @@ abstract class EchoDiscussionParser {
 		}
 
 		if ( !preg_match( "/$output/u", $exemplarTimestamp ) ) {
-			throw new MWException( "Timestamp regex does not match exemplar" );
+			throw new RuntimeException( "Timestamp regex does not match exemplar" );
 		}
 
 		self::$timestampRegex = $output;
@@ -1279,3 +1317,5 @@ abstract class EchoDiscussionParser {
 		return $lang->truncateForVisual( $section['section-title'] . ' ' . $section['section-text'], $length );
 	}
 }
+
+class_alias( DiscussionParser::class, 'EchoDiscussionParser' );

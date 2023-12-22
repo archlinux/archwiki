@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Ayame",
-			"Kkairri"
+			"Kkairri",
+			"Ant176"
 		]
 	},
+	"renocaptcha-desc": "Confirm Edit 用の reCAPTCHA NoCAPTCHA モジュール",
 	"renocaptcha-edit": "Wikiを自動編集スパムから保護するために、下のチェックボックスをクリックしてください。",
 	"renocaptcha-addurl": "あなたの編集には新しい外部リンクが含まれています。Wikiを自動投稿スパムから保護するために、以下のCAPTCHAを解いてください。",
 	"renocaptcha-badlogin": "あなたのアカウントを攻撃から保護するために、下のチェックボックスをクリックしてください。",

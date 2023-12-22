@@ -25,6 +25,7 @@ use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -37,23 +38,12 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  */
 class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 
-	/** @var CommentStore */
-	private $commentStore;
-
-	/** @var WatchedItemQueryService */
-	private $watchedItemQueryService;
-
-	/** @var Language */
-	private $contentLanguage;
-
-	/** @var NamespaceInfo */
-	private $namespaceInfo;
-
-	/** @var GenderCache */
-	private $genderCache;
-
-	/** @var CommentFormatter */
-	private $commentFormatter;
+	private CommentStore $commentStore;
+	private WatchedItemQueryService $watchedItemQueryService;
+	private Language $contentLanguage;
+	private NamespaceInfo $namespaceInfo;
+	private GenderCache $genderCache;
+	private CommentFormatter $commentFormatter;
 
 	/**
 	 * @param ApiQuery $query
@@ -321,7 +311,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		if ( $target instanceof LinkTarget ) {
 			$title = Title::newFromLinkTarget( $target );
 		} else {
-			$title = Title::castFromPageIdentity( $target );
+			$title = Title::newFromPageIdentity( $target );
 		}
 		$user = $this->getUser();
 
@@ -346,7 +336,6 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 				)
 			) {
 				if ( $this->fld_title ) {
-					// @phan-suppress-next-line PhanTypeMismatchArgumentNullable castFrom does not return null here
 					ApiQueryBase::addTitleInfo( $vals, $title );
 				}
 				if ( $this->fld_ids ) {

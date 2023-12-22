@@ -25,6 +25,8 @@
 
 namespace MediaWiki\Html;
 
+use FormatJson;
+use InvalidArgumentException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\ContentSecurityPolicy;
@@ -138,7 +140,7 @@ class Html {
 	/**
 	 * Modifies a set of attributes meant for text input elements
 	 * and apply a set of default attributes.
-	 * Removes size attribute when $wgUseMediaWikiUIEverywhere enabled.
+	 *
 	 * @param array $attrs An attribute array.
 	 * @return array Modified attributes array
 	 */
@@ -146,11 +148,25 @@ class Html {
 		$useMediaWikiUIEverywhere = MediaWikiServices::getInstance()
 			->getMainConfig()->get( MainConfigNames::UseMediaWikiUIEverywhere );
 		if ( $useMediaWikiUIEverywhere ) {
-			if ( isset( $attrs['class'] ) ) {
+			$cdxInputClass = 'cdx-text-input__input';
+			// This will only apply if the input is not using official Codex classes.
+			// In future this should trigger a deprecation warning.
+			if ( isset( $attrs['class'] ) ) { // see expandAttributes() for supported attr formats
 				if ( is_array( $attrs['class'] ) ) {
-					$attrs['class'][] = 'mw-ui-input';
+					if (
+						!in_array( $cdxInputClass, $attrs['class'], true ) &&
+						!( $attrs['class'][$cdxInputClass] ?? false )
+					) {
+						$attrs['class']['mw-ui-input'] = true;
+					}
+				} elseif ( is_string( $attrs['class'] ) ) {
+					if ( !preg_match( "/(^| )$cdxInputClass($| )/", $attrs['class'] ) ) {
+						$attrs['class'] .= ' mw-ui-input';
+					}
 				} else {
-					$attrs['class'] .= ' mw-ui-input';
+					throw new InvalidArgumentException(
+						'Unexpected class attr of type ' . gettype( $attrs['class'] )
+					);
 				}
 			} else {
 				$attrs['class'] = 'mw-ui-input';
@@ -209,18 +225,21 @@ class Html {
 	 * content model.
 	 *
 	 * @param string $element The element's name, e.g., 'a'
+	 * @param-taint $element tainted
 	 * @param array $attribs Associative array of attributes, e.g., [
 	 *   'href' => 'https://www.mediawiki.org/' ]. See expandAttributes() for
 	 *   further documentation.
+	 * @param-taint $attribs escapes_html
 	 * @param string $contents The raw HTML contents of the element: *not*
 	 *   escaped!
+	 * @param-taint $contents tainted
 	 * @return string Raw HTML
+	 * @return-taint escaped
 	 */
 	public static function rawElement( $element, $attribs = [], $contents = '' ) {
 		$start = self::openElement( $element, $attribs );
 		if ( isset( self::$voidElements[$element] ) ) {
-			// Silly XML.
-			return substr( $start, 0, -1 ) . '/>';
+			return $start;
 		} else {
 			return $start . $contents . self::closeElement( $element );
 		}
@@ -231,12 +250,16 @@ class Html {
 	 * Xml::element()).
 	 *
 	 * @param string $element Name of the element, e.g., 'a'
+	 * @param-taint $element tainted
 	 * @param array $attribs Associative array of attributes, e.g., [
 	 *   'href' => 'https://www.mediawiki.org/' ]. See expandAttributes() for
 	 *   further documentation.
+	 * @param-taint $attribs escapes_html
 	 * @param string $contents
+	 * @param-taint $contents escapes_html
 	 *
 	 * @return string
+	 * @return-taint escaped
 	 */
 	public static function element( $element, $attribs = [], $contents = '' ) {
 		return self::rawElement(
@@ -270,7 +293,7 @@ class Html {
 
 		// Some people were abusing this by passing things like
 		// 'h1 id="foo" to $element, which we don't want.
-		if ( strpos( $element, ' ' ) !== false ) {
+		if ( str_contains( $element, ' ' ) ) {
 			wfWarn( __METHOD__ . " given element name with space '$element'" );
 		}
 
@@ -596,23 +619,16 @@ class Html {
 	 * a warning is logged server-side.
 	 *
 	 * @param string $contents JavaScript
-	 * @param string|null $nonce Nonce for CSP header, from OutputPage->getCSP()->getNonce()
+	 * @param string|null $nonce Unused
 	 * @return string Raw HTML
 	 */
 	public static function inlineScript( $contents, $nonce = null ) {
-		$attrs = [];
-		if ( $nonce !== null ) {
-			$attrs['nonce'] = $nonce;
-		} elseif ( ContentSecurityPolicy::isNonceRequired( MediaWikiServices::getInstance()->getMainConfig() ) ) {
-			wfWarn( "no nonce set on script. CSP will break it" );
-		}
-
 		if ( preg_match( '/<\/?script/i', $contents ) ) {
 			wfLogWarning( __METHOD__ . ': Illegal character sequence found in inline script.' );
 			$contents = '/* ERROR: Invalid script */';
 		}
 
-		return self::rawElement( 'script', $attrs, $contents );
+		return self::rawElement( 'script', [], $contents );
 	}
 
 	/**
@@ -748,18 +764,35 @@ class Html {
 	 * @param string $html of contents of box
 	 * @param string|array $className corresponding to box
 	 * @param string $heading (optional)
+	 * @param string $iconClassName (optional) corresponding to box icon
 	 * @return string of HTML representing a box.
 	 */
-	private static function messageBox( $html, $className, $heading = '' ) {
+	private static function messageBox( $html, $className, $heading = '', $iconClassName = '' ) {
 		if ( $heading !== '' ) {
 			$html = self::element( 'h2', [], $heading ) . $html;
 		}
+		$coreClasses = [
+			'mw-message-box',
+			'cdx-message',
+			'cdx-message--block'
+		];
 		if ( is_array( $className ) ) {
-			$className[] = 'mw-message-box';
+			$className = array_merge(
+				$coreClasses,
+				$className
+			);
 		} else {
-			$className .= ' mw-message-box';
+			$className .= ' ' . implode( ' ', $coreClasses );
 		}
-		return self::rawElement( 'div', [ 'class' => $className ], $html );
+		return self::rawElement( 'div', [ 'class' => $className ],
+			self::element( 'span', [ 'class' => [
+				'cdx-message__icon',
+				$iconClassName
+			] ] ) .
+			self::rawElement( 'div', [
+				'class' => 'cdx-message__content'
+			], $html )
+		);
 	}
 
 	/**
@@ -767,10 +800,16 @@ class Html {
 	 * @since 1.38
 	 * @param string $html of contents of notice
 	 * @param string|array $className corresponding to notice
+	 * @param string $heading (optional)
+	 * @param string|array $iconClassName (optional) corresponding to notice icon
 	 * @return string of HTML representing the notice
 	 */
-	public static function noticeBox( $html, $className ) {
-		return self::messageBox( $html, [ 'mw-message-box-notice', $className ] );
+	public static function noticeBox( $html, $className, $heading = '', $iconClassName = '' ) {
+		return self::messageBox( $html, [
+			'mw-message-box-notice',
+			'cdx-message--notice',
+			$className
+		], $heading, $iconClassName );
 	}
 
 	/**
@@ -782,7 +821,9 @@ class Html {
 	 * @return string of HTML representing a warning box.
 	 */
 	public static function warningBox( $html, $className = '' ) {
-		return self::messageBox( $html, [ 'mw-message-box-warning', $className ] );
+		return self::messageBox( $html, [
+			'mw-message-box-warning',
+			'cdx-message--warning', $className ] );
 	}
 
 	/**
@@ -795,7 +836,9 @@ class Html {
 	 * @return string of HTML representing an error box.
 	 */
 	public static function errorBox( $html, $heading = '', $className = '' ) {
-		return self::messageBox( $html, [ 'mw-message-box-error', $className ], $heading );
+		return self::messageBox( $html, [
+			'mw-message-box-error',
+			'cdx-message--error', $className ], $heading );
 	}
 
 	/**
@@ -807,7 +850,9 @@ class Html {
 	 * @return string of HTML representing a success box.
 	 */
 	public static function successBox( $html, $className = '' ) {
-		return self::messageBox( $html, [ 'mw-message-box-success', $className ] );
+		return self::messageBox( $html, [
+			'mw-message-box-success',
+			'cdx-message--success', $className ] );
 	}
 
 	/**
@@ -1114,6 +1159,75 @@ class Html {
 
 		return implode( ", ", $candidates );
 	}
+
+	/**
+	 * Encode a variable of arbitrary type to JavaScript.
+	 * If the value is an HtmlJsCode object, pass through the object's value verbatim.
+	 *
+	 * @note Only use this function for generating JavaScript code. If generating output
+	 *       for a proper JSON parser, just call FormatJson::encode() directly.
+	 *
+	 * @since 1.41 (previously on {@link Xml})
+	 * @param mixed $value The value being encoded. Can be any type except a resource.
+	 * @param-taint $value escapes_html
+	 * @param bool $pretty If true, add non-significant whitespace to improve readability.
+	 * @return string|false String if successful; false upon failure
+	 * @return-taint none
+	 */
+	public static function encodeJsVar( $value, $pretty = false ) {
+		if ( $value instanceof HtmlJsCode ) {
+			return $value->value;
+		}
+		return FormatJson::encode( $value, $pretty, FormatJson::UTF8_OK );
+	}
+
+	/**
+	 * Create a call to a JavaScript function. The supplied arguments will be
+	 * encoded using Html::encodeJsVar().
+	 *
+	 * @since 1.41 (previously on {@link Xml} since 1.17)
+	 * @param string $name The name of the function to call, or a JavaScript expression
+	 *    which evaluates to a function object which is called.
+	 * @param-taint $name tainted
+	 * @param array $args The arguments to pass to the function.
+	 * @param-taint $args escapes_html
+	 * @param bool $pretty If true, add non-significant whitespace to improve readability.
+	 * @return string|false String if successful; false upon failure
+	 * @return-taint none
+	 */
+	public static function encodeJsCall( $name, $args, $pretty = false ) {
+		$encodedArgs = self::encodeJsList( $args, $pretty );
+		if ( $encodedArgs === false ) {
+			return false;
+		}
+		return "$name($encodedArgs);";
+	}
+
+	/**
+	 * Encode a JavaScript comma-separated list. The supplied items will be encoded using
+	 * Html::encodeJsVar().
+	 *
+	 * @since 1.41.
+	 * @param array $args The elements of the list.
+	 * @param bool $pretty If true, add non-significant whitespace to improve readability.
+	 * @return false|string String if successful; false upon failure
+	 */
+	public static function encodeJsList( $args, $pretty = false ) {
+		foreach ( $args as &$arg ) {
+			$arg = self::encodeJsVar( $arg, $pretty );
+			if ( $arg === false ) {
+				return false;
+			}
+		}
+		if ( $pretty ) {
+			return ' ' . implode( ', ', $args ) . ' ';
+		} else {
+			return implode( ',', $args );
+		}
+	}
 }
 
+/**
+ * @deprecated since 1.40
+ */
 class_alias( Html::class, 'Html' );

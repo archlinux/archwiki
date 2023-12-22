@@ -7,11 +7,10 @@
 			"Oldstoneage"
 		]
 	},
-	"tooltip-ca-createsource": "اصنع الكود المصدري لهذه الباجة",
-	"tooltip-ca-editsource": "بدل الكود المصدري لهاذ الباجة",
 	"tooltip-ca-ve-edit": "بدّل هاد الـصفحه",
+	"tooltip-ca-editsource": "بدل الكود المصدري لهاذ الباجة",
+	"tooltip-ca-createsource": "اصنع الكود المصدري لهذه الباجة",
 	"visualeditor-advancedsettings-tool": "إعدادات متقدمة",
-	"visualeditor-beta-warning": "teqder tḥawel l lwikitext editor fi ay waqt ki tekliki ɛla $1, bech tḥafed ɛla tebdal li dertah. ila jawek ay machakil madabik tkhabarna taḥt.",
 	"visualeditor-browserwarning": "المحرر المرئي ما يدعمش رسميا البروزر الي تخدم بيه.",
 	"visualeditor-ca-createlocaldescriptionsource": "زيد توصاف مبلّد",
 	"visualeditor-ca-createsource": "أصنع المصدر",
@@ -55,8 +54,6 @@
 	"visualeditor-dialog-template-title": "مودال",
 	"visualeditor-linknodeinspector-title": "وصلة بسيطة",
 	"visualeditor-meta-tool": "خيارات",
-	"visualeditor-mweditmodesource-warning-cancel": "فوتها",
-	"visualeditor-preference-core-label": "المحرر المرئي",
 	"visualeditor-savedialog-label-resolve-conflict": "سلك التشعب",
 	"visualeditor-savedialog-label-resume-editing": "كمل التبديل",
 	"visualeditor-savedialog-label-review": "سجل تبديلات نتاعك",

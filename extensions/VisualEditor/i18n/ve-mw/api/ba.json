@@ -1,17 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Lizalizaufa",
 			"Азат Хәлилов",
-			"Лилиә",
-			"Ләйсән",
-			"Янмурза Баки",
 			"Айсар",
 			"З. ӘЙЛЕ",
-			"Amire80"
+			"Лилиә",
+			"Ләйсән",
+			"Янмурза Баки"
 		]
 	},
-	"apihelp-visualeditor-description": "Возвращает  для страницы со сервиса \nParsoid сервисынан бит өсөн HTML5-ға ҡайтара",
 	"apihelp-visualeditor-param-basetimestamp": "Һаҡлаған саҡта үҙгәртеү ваҡытын ҡуйығыҙ. Был мөхәррирләү конфликттарын асыҡлау өсөн ҡулланыла.",
 	"apihelp-visualeditor-param-cachekey": "Сериялаштырыу һәм айырмалыҡтарҙы ҡарау өсөн ошо уҡ асҡыс менән һоралған кэшты сериаллау һөҙөмтәһен ҡулланырға. $1html-ды алмаштыра.",
 	"apihelp-visualeditor-param-etag": "Ебәреү өсөн ETag.",
@@ -22,7 +21,6 @@
 	"apihelp-visualeditor-param-pst": "Parsoid-ҡа (paction=parsefragment) ебәреү алдынан әйләндерелгән вики-тексты һаҡлағыҙ.",
 	"apihelp-visualeditor-param-starttimestamp": "Һаҡлаған саҡта үҙгәртеү ваҡытын ҡуйығыҙ. Был мөхәррирләү конфликтын асыҡлау өсөн ҡулланыла.",
 	"apihelp-visualeditor-param-wikitext": "Викитексты HTML-ға (paction=parsefragment) әйләндереү өсөн уны Parsoid-ҡа ебәрегеҙ.",
-	"apihelp-visualeditoredit-description": "HTML5-битен Медиавикила һаҡларға (вики-тексты Parsoid хеҙмәте аша үҙгәртергә).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Һаҡлаған саҡта үҙгәртеү ваҡытын ҡуйығыҙ. Был мөхәррирләү конфликтын асыҡлау өсөн ҡулланыла.",
 	"apihelp-visualeditoredit-param-cachekey": "Был асҡыс менән алдағы serializeforcache һоратыу һөҙөмтәһен ҡулланығыҙ. $1html-ды алмаштыра.",
 	"apihelp-visualeditoredit-param-captchaid": "Капча идентификаторы (капчаны күрһәтеп һаҡлаған осраҡта).",

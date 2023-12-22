@@ -21,11 +21,22 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\Tidy\TidyDriverBase;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsLookup;
+use Parser;
+use ParserFactory;
+use ParserOptions;
+use ParserOutput;
+use Xml;
 
 /**
  * A special page that expands submitted templates, parser functions,
@@ -38,27 +49,22 @@ class SpecialExpandTemplates extends SpecialPage {
 	/** @var int Maximum size in bytes to include. 50 MB allows fixing those huge pages */
 	private const MAX_INCLUDE_SIZE = 50000000;
 
-	/** @var Parser */
-	private $parser;
-
-	/** @var UserOptionsLookup */
-	private $userOptionsLookup;
-
-	/** @var TidyDriverBase */
-	private $tidy;
+	private ParserFactory $parserFactory;
+	private UserOptionsLookup $userOptionsLookup;
+	private TidyDriverBase $tidy;
 
 	/**
-	 * @param Parser $parser
+	 * @param ParserFactory $parserFactory
 	 * @param UserOptionsLookup $userOptionsLookup
 	 * @param TidyDriverBase $tidy
 	 */
 	public function __construct(
-		Parser $parser,
+		ParserFactory $parserFactory,
 		UserOptionsLookup $userOptionsLookup,
 		TidyDriverBase $tidy
 	) {
 		parent::__construct( 'ExpandTemplates' );
-		$this->parser = $parser;
+		$this->parserFactory = $parserFactory;
 		$this->userOptionsLookup = $userOptionsLookup;
 		$this->tidy = $tidy;
 	}
@@ -91,9 +97,10 @@ class SpecialExpandTemplates extends SpecialPage {
 				$options->setTargetLanguage( $this->getContentLanguage() );
 			}
 
+			$parser = $this->parserFactory->getInstance();
 			if ( $generateXML ) {
-				$this->parser->startExternalParse( $title, $options, Parser::OT_PREPROCESS );
-				$dom = $this->parser->preprocessToDom( $input );
+				$parser->startExternalParse( $title, $options, Parser::OT_PREPROCESS );
+				$dom = $parser->preprocessToDom( $input );
 
 				if ( method_exists( $dom, 'saveXML' ) ) {
 					// @phan-suppress-next-line PhanUndeclaredMethod
@@ -104,7 +111,7 @@ class SpecialExpandTemplates extends SpecialPage {
 				}
 			}
 
-			$output = $this->parser->preprocess( $input, $title, $options );
+			$output = $parser->preprocess( $input, $title, $options );
 			$this->makeForm();
 
 			$out = $this->getOutput();
@@ -127,7 +134,7 @@ class SpecialExpandTemplates extends SpecialPage {
 
 			$out->addHTML( $tmp );
 
-			$pout = $this->parser->parse( $output, $title, $options );
+			$pout = $parser->parse( $output, $title, $options );
 			$rawhtml = $pout->getText( [ 'enableSectionEditLinks' => false ] );
 			if ( $generateRawHtml && strlen( $rawhtml ) > 0 ) {
 				// @phan-suppress-next-line SecurityCheck-DoubleEscaped Wanted here to display the html
@@ -277,10 +284,15 @@ class SpecialExpandTemplates extends SpecialPage {
 		] ) );
 		$out->addParserOutputContent( $pout, [ 'enableSectionEditLinks' => false ] );
 		$out->addHTML( Html::closeElement( 'div' ) );
-		$out->setCategoryLinks( $pout->getCategories() );
+		$out->setCategoryLinks( $pout->getCategoryMap() );
 	}
 
 	protected function getGroupName() {
 		return 'wiki';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialExpandTemplates::class, 'SpecialExpandTemplates' );

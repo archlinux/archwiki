@@ -9,6 +9,7 @@ use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
 use MediaWiki\Extension\AbuseFilter\Parser\ParserStatus;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerStatus;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Api\CheckMatch
@@ -17,12 +18,13 @@ use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerStatus;
  */
 class CheckMatchTest extends ApiTestCase {
 	use AbuseFilterApiTestTrait;
+	use MockAuthorityTrait;
 
 	/**
 	 * @covers ::execute
 	 */
 	public function testExecute_noPermissions() {
-		$this->setExpectedApiException( 'apierror-abusefilter-canttest', 'permissiondenied' );
+		$this->expectApiErrorCode( 'permissiondenied' );
 
 		$this->setService( RuleCheckerFactory::SERVICE_NAME, $this->getRuleCheckerFactory() );
 
@@ -30,10 +32,10 @@ class CheckMatchTest extends ApiTestCase {
 			'action' => 'abusefiltercheckmatch',
 			'filter' => 'sampleFilter',
 			'vars' => FormatJson::encode( [] ),
-		], null, null, self::getTestUser()->getUser() );
+		], null, null, $this->mockRegisteredNullAuthority() );
 	}
 
-	public function provideExecuteOk() {
+	public static function provideExecuteOk() {
 		return [
 			'matched' => [ true ],
 			'no match' => [ false ],
@@ -61,7 +63,7 @@ class CheckMatchTest extends ApiTestCase {
 			'action' => 'abusefiltercheckmatch',
 			'filter' => $filter,
 			'vars' => FormatJson::encode( [] ),
-		], null, null, self::getTestSysop()->getUser() );
+		] );
 
 		$this->assertArrayEquals(
 			[
@@ -79,7 +81,7 @@ class CheckMatchTest extends ApiTestCase {
 	 * @covers ::execute
 	 */
 	public function testExecute_error() {
-		$this->setExpectedApiException( 'apierror-abusefilter-badsyntax', 'badsyntax' );
+		$this->expectApiErrorCode( 'badsyntax' );
 		$filter = 'sampleFilter';
 		$status = new ParserStatus( $this->createMock( InternalException::class ), [], 1 );
 		$ruleChecker = $this->createMock( FilterEvaluator::class );
@@ -92,7 +94,7 @@ class CheckMatchTest extends ApiTestCase {
 			'action' => 'abusefiltercheckmatch',
 			'filter' => $filter,
 			'vars' => FormatJson::encode( [] ),
-		], null, null, self::getTestSysop()->getUser() );
+		] );
 	}
 
 }

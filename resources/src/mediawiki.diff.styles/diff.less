@@ -2,6 +2,11 @@
  * Diff rendering
  */
 
+@import 'mediawiki.skin.variables.less';
+
+@diffInserted: #a3d3ff;
+@diffDeleted: #ffe49c;
+
 /* stylelint-disable selector-class-pattern */
 
 .diff {
@@ -23,7 +28,7 @@
 			font-size: 1.25em;
 			line-height: 1.2;
 
-			&:before {
+			&::before {
 				content: attr( data-marker );
 			}
 		}
@@ -64,22 +69,55 @@
 
 .mw-diff-inline-added,
 .mw-diff-inline-changed,
+.mw-diff-inline-moved,
 .mw-diff-inline-deleted {
 	ins,
 	del {
-		display: inline-block;
+		padding: 0.3em 1px;
 		text-decoration: none;
+		white-space: break-spaces;
 	}
 }
 
 .mw-diff-inline-added ins,
-.mw-diff-inline-changed ins {
-	background: #a3d3ff;
+.mw-diff-inline-changed ins,
+.mw-diff-inline-moved ins {
+	background: @diffInserted;
 }
 
 .mw-diff-inline-deleted del,
-.mw-diff-inline-changed del {
-	background: #ffe49c;
+.mw-diff-inline-changed del,
+.mw-diff-inline-moved del {
+	background: @diffDeleted;
+}
+
+.mw-diff-table-prefix {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	margin: 1em 0;
+
+	.mw-diff-inline-legend {
+		margin-right: auto;
+
+		.mw-diff-inline-legend-ins,
+		.mw-diff-inline-legend-del {
+			display: inline-block;
+			padding: 4px 6px;
+		}
+
+		.mw-diff-inline-legend-ins {
+			background: @diffInserted;
+		}
+
+		.mw-diff-inline-legend-del {
+			background: @diffDeleted;
+		}
+	}
+
+	.mw-diffPage-inlineToggle-container {
+		margin-left: 1em;
+	}
 }
 
 .diff-addedline,
@@ -101,9 +139,18 @@
 	border-style: solid;
 	border-width: 1px 1px 1px 4px;
 	border-radius: 0.33em;
+}
 
+.diff-addedline,
+.diff-deletedline,
+.diff-context,
+.mw-diff-inline-added,
+.mw-diff-inline-deleted,
+.mw-diff-inline-moved,
+.mw-diff-inline-changed,
+.mw-diff-inline-context {
 	// Allow editfont to be set on container while only
-	// affect wikitext content.
+	// affecting wikitext content.
 	// These classes match mw-editfont-*
 	.diff-editfont-monospace & {
 		font-family: monospace, monospace;
@@ -118,6 +165,11 @@
 	}
 }
 
+.mw-diff-inline-header {
+	font-weight: bold;
+	margin: 1em 0;
+}
+
 .diff-context {
 	background: #f8f9fa;
 	border-color: #eaecf0;
@@ -125,11 +177,11 @@
 }
 
 .diff-addedline {
-	border-color: #a3d3ff;
+	border-color: @diffInserted;
 }
 
 .diff-deletedline {
-	border-color: #ffe49c;
+	border-color: @diffDeleted;
 }
 
 .diffchange {
@@ -182,6 +234,11 @@
 	text-align: center;
 }
 
+.mw-diff-slot-error {
+	text-align: center;
+	color: @color-error;
+}
+
 /*!
  * Wikidiff2 rendering for moved paragraphs
  */
@@ -204,20 +261,20 @@
 		color: transparent;
 	}
 
-	&:after {
+	&::after {
 		display: block;
 		color: #202122;
 		margin-top: -1.25em;
 	}
 }
 
-.mw-diff-movedpara-left:after,
-.rtl .mw-diff-movedpara-right:after {
+.mw-diff-movedpara-left::after,
+.rtl .mw-diff-movedpara-right::after {
 	content: '↪';
 }
 
-.mw-diff-movedpara-right:after,
-.rtl .mw-diff-movedpara-left:after {
+.mw-diff-movedpara-right::after,
+.rtl .mw-diff-movedpara-left::after {
 	content: '↩';
 }
 
@@ -238,4 +295,41 @@
 	-ms-user-select: none;
 	user-select: none;
 	cursor: text;
+}
+
+/*!
+ * Wikidiff2 rendering for new lines and deleted lines
+ */
+.mw-diff-inline-added.mw-diff-empty-line,
+.mw-diff-inline-deleted.mw-diff-empty-line,
+.mw-inline-diff-newline {
+	&::after {
+		font-family: @font-family-monospace;
+		font-size: 87.5%;
+		padding: 0 3px;
+		display: inline-block;
+		color: @color-base--subtle;
+	}
+}
+
+.mw-diff-inline-added.mw-diff-empty-line,
+.mw-inline-diff-newline {
+	&::after {
+		content: '@{msg-diff-newline}';
+		background: @diffInserted;
+	}
+}
+
+.mw-diff-inline-deleted.mw-diff-empty-line {
+	&::after {
+		content: '@{msg-diff-line-deleted}';
+		background: @diffDeleted;
+	}
+}
+
+.mw-diff-empty-line {
+	ins,
+	del {
+		display: none;
+	}
 }

@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.46.3
+ * OOUI v0.47.4
  * https://www.mediawiki.org/wiki/OOUI
  *
  * Copyright 2011–2023 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2023-02-07T00:43:59Z
+ * Date: 2023-07-10T16:09:12Z
  */
 ( function ( OO ) {
 
@@ -88,7 +88,7 @@ OO.ui.mixin.DraggableElement.static.cancelButtonMouseDownEvents = false;
  * Change the draggable state of this widget.
  * This allows users to temporarily halt the dragging operations.
  *
- * @param {boolean} isDraggable Widget supports draggable operations
+ * @param {boolean} [isDraggable] Widget supports draggable operations, omit to toggle
  * @fires draggable
  */
 OO.ui.mixin.DraggableElement.prototype.toggleDraggable = function ( isDraggable ) {
@@ -328,7 +328,7 @@ OO.mixinClass( OO.ui.mixin.DraggableGroupElement, OO.ui.mixin.GroupElement );
  * Change the draggable state of this widget.
  * This allows users to temporarily halt the dragging operations.
  *
- * @param {boolean} isDraggable Widget supports draggable operations
+ * @param {boolean} [isDraggable] Widget supports draggable operations, omit to toggle
  * @fires draggable
  */
 OO.ui.mixin.DraggableGroupElement.prototype.toggleDraggable = function ( isDraggable ) {
@@ -812,7 +812,7 @@ OO.ui.mixin.LookupElement.prototype.getLookupMenu = function () {
  *
  * When lookups are disabled, calls to #populateLookupMenu will be ignored.
  *
- * @param {boolean} disabled Disable lookups
+ * @param {boolean} [disabled=false] Disable lookups
  */
 OO.ui.mixin.LookupElement.prototype.setLookupsDisabled = function ( disabled ) {
 	this.lookupsDisabled = !!disabled;
@@ -966,7 +966,7 @@ OO.ui.mixin.LookupElement.prototype.getLookupMenuOptionsFromData = null;
  *
  * This will also disable/enable the lookups functionality.
  *
- * @param {boolean} readOnly Make input read-only
+ * @param {boolean} [readOnly=false] Make input read-only
  * @chainable
  * @return {OO.ui.Element} The element, for chaining
  */
@@ -1157,7 +1157,7 @@ OO.ui.TabPanelLayout.prototype.setupTabItem = function () {
  * one tab panel at a time. Additional CSS is applied to the tab item to reflect the tab panel's
  * active state. Outside of the index context, setting the active state on a tab panel does nothing.
  *
- * @param {boolean} active Tab panel is active
+ * @param {boolean} [active=false] Tab panel is active
  * @fires active
  */
 OO.ui.TabPanelLayout.prototype.setActive = function ( active ) {
@@ -1298,7 +1298,7 @@ OO.ui.PageLayout.prototype.setupOutlineItem = function () {
  * one page at a time. Additional CSS is applied to the outline item to reflect the page's active
  * state. Outside of the booklet context, setting the active state on a page does nothing.
  *
- * @param {boolean} active Page is active
+ * @param {boolean} [active=false] Page is active
  * @fires active
  */
 OO.ui.PageLayout.prototype.setActive = function ( active ) {
@@ -1344,6 +1344,8 @@ OO.ui.PageLayout.prototype.setActive = function ( active ) {
  * @cfg {boolean} [continuous=false] Show all panels, one after another. By default, only one panel
  *  is displayed at a time.
  * @cfg {OO.ui.Layout[]} [items] Panel layouts to add to the stack layout.
+ * @cfg {boolean} [hideUntilFound] Hide panels using hidden="until-found", meaning they will be
+ *  shown when matched with the browser's find-and-replace feature if supported.
  */
 OO.ui.StackLayout = function OoUiStackLayout( config ) {
 	// Configuration initialization
@@ -1359,13 +1361,11 @@ OO.ui.StackLayout = function OoUiStackLayout( config ) {
 
 	// Properties
 	this.currentItem = null;
-	this.continuous = !!config.continuous;
+	this.setContinuous( !!config.continuous );
+	this.hideUntilFound = !!config.hideUntilFound;
 
 	// Initialization
 	this.$element.addClass( 'oo-ui-stackLayout' );
-	if ( this.continuous ) {
-		this.$element.addClass( 'oo-ui-stackLayout-continuous' );
-	}
 	this.addItems( config.items || [] );
 };
 
@@ -1385,6 +1385,27 @@ OO.mixinClass( OO.ui.StackLayout, OO.ui.mixin.GroupElement );
  */
 
 /* Methods */
+
+/**
+ * Set the layout to continuous mode or not
+ *
+ * @param {boolean} continuous Continuous mode
+ */
+OO.ui.StackLayout.prototype.setContinuous = function ( continuous ) {
+	this.continuous = continuous;
+	this.$element.toggleClass( 'oo-ui-stackLayout-continuous', !!continuous );
+	// Force an update of the attributes used to hide/show items
+	this.updateHiddenState( this.items, this.currentItem );
+};
+
+/**
+ * Check if the layout is in continuous mode
+ *
+ * @return {boolean} The layout is in continuous mode
+ */
+OO.ui.StackLayout.prototype.isContinuous = function () {
+	return this.continuous;
+};
 
 /**
  * Get the current panel.
@@ -1410,6 +1431,17 @@ OO.ui.StackLayout.prototype.unsetCurrentItem = function () {
 
 	this.currentItem = null;
 	this.emit( 'set', null );
+};
+
+/**
+ * Set the hideUntilFound config (see contructor)
+ *
+ * @param {boolean} hideUntilFound
+ */
+OO.ui.StackLayout.prototype.setHideUntilFound = function ( hideUntilFound ) {
+	this.hideUntilFound = hideUntilFound;
+	// Force an update of the attributes used to hide/show items
+	this.updateHiddenState( this.items, this.currentItem );
 };
 
 /**
@@ -1526,7 +1558,7 @@ OO.ui.StackLayout.prototype.setItem = function ( item ) {
  * @inheritdoc
  */
 OO.ui.StackLayout.prototype.resetScroll = function () {
-	if ( this.continuous ) {
+	if ( this.isContinuous() ) {
 		// Parent method
 		return OO.ui.StackLayout.super.prototype.resetScroll.call( this );
 	}
@@ -1556,17 +1588,31 @@ OO.ui.StackLayout.prototype.resetScroll = function () {
  * @param {OO.ui.Layout} [selectedItem] Selected item to show
  */
 OO.ui.StackLayout.prototype.updateHiddenState = function ( items, selectedItem ) {
-	if ( !this.continuous ) {
-		for ( var i = 0, len = items.length; i < len; i++ ) {
-			if ( !selectedItem || selectedItem !== items[ i ] ) {
-				items[ i ].toggle( false );
-				items[ i ].$element.attr( 'aria-hidden', 'true' );
+	var layout = this;
+	if ( !this.isContinuous() ) {
+		items.forEach( function ( item ) {
+			if ( !selectedItem || selectedItem !== item ) {
+				// If the panel is a TabPanelLayout which has a disabled tab, then
+				// fully hide it so we don't search inside it and automatically switch
+				// to it.
+				var isDisabled = item instanceof OO.ui.TabPanelLayout &&
+					item.getTabItem() && item.getTabItem().isDisabled();
+				var hideUntilFound = !isDisabled && layout.hideUntilFound;
+				// jQuery "fixes" the value of the hidden attribute to always be "hidden"
+				// Browsers which don't support 'until-found' will still hide the element
+				item.$element[ 0 ].setAttribute( 'hidden', hideUntilFound ? 'until-found' : 'hidden' );
+				item.$element.attr( 'aria-hidden', 'true' );
 			}
-		}
+		} );
 		if ( selectedItem ) {
-			selectedItem.toggle( true );
+			selectedItem.$element[ 0 ].removeAttribute( 'hidden' );
 			selectedItem.$element.removeAttr( 'aria-hidden' );
 		}
+	} else {
+		items.forEach( function ( item ) {
+			item.$element[ 0 ].removeAttribute( 'hidden' );
+			item.$element.removeAttr( 'aria-hidden' );
+		} );
 	}
 };
 
@@ -1710,7 +1756,7 @@ OO.inheritClass( OO.ui.MenuLayout, OO.ui.Layout );
 /**
  * Toggle menu.
  *
- * @param {boolean} showMenu Show menu, omit to toggle
+ * @param {boolean} [showMenu] Show menu, omit to toggle
  * @chainable
  * @return {OO.ui.MenuLayout} The layout, for chaining
  */
@@ -2005,7 +2051,7 @@ OO.ui.BookletLayout.prototype.onStackLayoutSet = function ( page ) {
 	}
 	var promise;
 	// For continuous BookletLayouts, scroll the selected page into view first
-	if ( this.stackLayout.continuous && !this.scrolling ) {
+	if ( this.stackLayout.isContinuous() && !this.scrolling ) {
 		promise = page.scrollElementIntoView();
 	} else {
 		promise = $.Deferred().resolve();
@@ -2367,7 +2413,7 @@ OO.ui.BookletLayout.prototype.setPage = function ( name ) {
 		// hold focus.
 		if ( this.autoFocus &&
 			!OO.ui.isMobile() &&
-			this.stackLayout.continuous &&
+			this.stackLayout.isContinuous() &&
 			OO.ui.findFocusable( page.$element ).length !== 0
 		) {
 			$focused = previousPage.$element.find( ':focus' );
@@ -2378,7 +2424,7 @@ OO.ui.BookletLayout.prototype.setPage = function ( name ) {
 	}
 	page.setActive( true );
 	this.stackLayout.setItem( page );
-	if ( !this.stackLayout.continuous && previousPage ) {
+	if ( !this.stackLayout.isContinuous() && previousPage ) {
 		// This should not be necessary, since any inputs on the previous page should have
 		// been blurred when it was hidden, but browsers are not very consistent about
 		// this.
@@ -2401,7 +2447,7 @@ OO.ui.BookletLayout.prototype.resetScroll = function () {
 
 	if (
 		this.outlined &&
-		this.stackLayout.continuous &&
+		this.stackLayout.isContinuous() &&
 		this.outlineSelectWidget.findFirstSelectableItem()
 	) {
 		this.scrolling = true;
@@ -2466,6 +2512,8 @@ OO.ui.BookletLayout.prototype.selectFirstSelectablePage = function () {
  * @cfg {boolean} [autoFocus=true] Focus on the first focusable element when a new tab panel is
  *  displayed. Disabled on mobile.
  * @cfg {boolean} [framed=true] Render the tabs with frames
+ * @cfg {boolean} [openMatchedPanels=true] Automatically switch to a panel when the browser's
+ *  find-in-page feature matches content there, in browsers that support it.
  */
 OO.ui.IndexLayout = function OoUiIndexLayout( config ) {
 	// Configuration initialization
@@ -2478,15 +2526,29 @@ OO.ui.IndexLayout = function OoUiIndexLayout( config ) {
 	this.currentTabPanelName = null;
 	// Allow infused widgets to pass existing tabPanels
 	this.tabPanels = config.tabPanels || {};
+	this.openMatchedPanels = config.openMatchedPanels === undefined || !!config.openMatchedPanels;
 
 	this.ignoreFocus = false;
+	if ( this.contentPanel ) {
+		this.contentPanel.setHideUntilFound( this.openMatchedPanels );
+	}
 	this.stackLayout = this.contentPanel || new OO.ui.StackLayout( {
 		continuous: !!config.continuous,
-		expanded: this.expanded
+		expanded: this.expanded,
+		hideUntilFound: this.openMatchedPanels
 	} );
 	this.setContentPanel( this.stackLayout );
 	this.autoFocus = config.autoFocus === undefined || !!config.autoFocus;
 
+	if ( config.tabSelectWidget ) {
+		// If we are using a custom tabSelectWidget (e.g. infusing) then
+		// ensure the tabPanels are linked to tabItems
+		this.stackLayout.getItems().forEach( function ( tabPanel, i ) {
+			if ( !tabPanel.getTabItem() ) {
+				tabPanel.setTabItem( config.tabSelectWidget.items[ i ] || null );
+			}
+		} );
+	}
 	// Allow infused widgets to pass an existing tabSelectWidget
 	this.tabSelectWidget = config.tabSelectWidget || new OO.ui.TabSelectWidget( {
 		framed: config.framed === undefined || config.framed
@@ -2502,6 +2564,9 @@ OO.ui.IndexLayout = function OoUiIndexLayout( config ) {
 	this.stackLayout.connect( this, {
 		set: 'onStackLayoutSet'
 	} );
+	if ( this.openMatchedPanels ) {
+		this.stackLayout.$element.on( 'beforematch', this.onStackLayoutBeforeMatch.bind( this ) );
+	}
 	this.tabSelectWidget.connect( this, {
 		select: 'onTabSelectWidgetSelect'
 	} );
@@ -2585,6 +2650,29 @@ OO.ui.IndexLayout.prototype.onStackLayoutSet = function ( tabPanel ) {
 	// Focus the first element on the newly selected panel
 	if ( this.autoFocus && !OO.ui.isMobile() ) {
 		this.focus();
+	}
+};
+
+/**
+ * Handle beforematch events triggered by the browser's find-in-page feature
+ *
+ * @param {Event} event 'beforematch' event
+ */
+OO.ui.IndexLayout.prototype.onStackLayoutBeforeMatch = function ( event ) {
+	var tabPanel;
+	// Find TabPanel from DOM node
+	this.stackLayout.getItems().some( function ( item ) {
+		if ( item.$element[ 0 ] === event.target ) {
+			tabPanel = item;
+			return true;
+		}
+		return false;
+	} );
+	if ( tabPanel ) {
+		var tabItem = tabPanel.getTabItem();
+		if ( tabItem ) {
+			this.tabSelectWidget.selectItem( tabItem );
+		}
 	}
 };
 
@@ -2859,7 +2947,7 @@ OO.ui.IndexLayout.prototype.setTabPanel = function ( name ) {
 				if (
 					this.autoFocus &&
 					!OO.ui.isMobile() &&
-					this.stackLayout.continuous &&
+					this.stackLayout.isContinuous() &&
 					OO.ui.findFocusable( tabPanel.$element ).length !== 0
 				) {
 					$focused = previousTabPanel.$element.find( ':focus' );
@@ -2871,7 +2959,7 @@ OO.ui.IndexLayout.prototype.setTabPanel = function ( name ) {
 			this.currentTabPanelName = name;
 			tabPanel.setActive( true );
 			this.stackLayout.setItem( tabPanel );
-			if ( !this.stackLayout.continuous && previousTabPanel ) {
+			if ( !this.stackLayout.isContinuous() && previousTabPanel ) {
 				// This should not be necessary, since any inputs on the previous tab panel should
 				// have been blurred when it was hidden, but browsers are not very consistent about
 				// this.
@@ -2897,6 +2985,111 @@ OO.ui.IndexLayout.prototype.selectFirstSelectableTabPanel = function () {
 	}
 
 	return this;
+};
+
+/**
+ * CopyTextLayout is an action field layout containing some readonly text and a button to copy
+ * it to the clipboard.
+ *
+ * @class
+ * @extends OO.ui.ActionFieldLayout
+ *
+ * @constructor
+ * @param {Object} [config] Configuration options
+ * @cfg {string} copyText Text to copy, can also be provided as textInput.value
+ * @cfg {Object} textInput Config for text input
+ * @cfg {Object} button Config for button
+ */
+OO.ui.CopyTextLayout = function OoUiCopyTextLayout( config ) {
+	var TextClass;
+	config = config || {};
+
+	// Properties
+	TextClass = config.multiline ? OO.ui.MultilineTextInputWidget : OO.ui.TextInputWidget;
+	this.textInput = new TextClass( $.extend( {
+		value: config.copyText,
+		readOnly: true
+	}, config.textInput ) );
+	this.button = new OO.ui.ButtonWidget( $.extend( {
+		label: OO.ui.msg( 'ooui-copytextlayout-copy' ),
+		icon: 'articles'
+	}, config.button ) );
+
+	// Parent constructor
+	OO.ui.CopyTextLayout.super.call( this, this.textInput, this.button, config );
+
+	// HACK: When using a multiline text input, remove classes which connect widgets
+	if ( config.multiline ) {
+		this.$input.removeClass( 'oo-ui-actionFieldLayout-input' );
+		this.$button
+			.removeClass( 'oo-ui-actionFieldLayout-button' )
+			.addClass( 'oo-ui-copyTextLayout-multiline-button' );
+	}
+
+	// Events
+	this.button.connect( this, { click: 'onButtonClick' } );
+	this.textInput.$input.on( 'focus', this.onInputFocus.bind( this ) );
+
+	this.$element.addClass( 'oo-ui-copyTextLayout' );
+};
+
+/* Inheritance */
+
+OO.inheritClass( OO.ui.CopyTextLayout, OO.ui.ActionFieldLayout );
+
+/* Events */
+
+/**
+ * When the user has executed a copy command
+ *
+ * @event copy
+ * @param {boolean} Whether the copy command succeeded
+ */
+
+/* Methods */
+
+/**
+ * Handle button click events
+ *
+ * @fires copy
+ */
+OO.ui.CopyTextLayout.prototype.onButtonClick = function () {
+	var copied;
+
+	this.selectText();
+
+	try {
+		copied = document.execCommand( 'copy' );
+	} catch ( e ) {
+		copied = false;
+	}
+	this.emit( 'copy', copied );
+};
+
+/**
+ * Handle text widget focus events
+ */
+OO.ui.CopyTextLayout.prototype.onInputFocus = function () {
+	if ( !this.selecting ) {
+		this.selectText();
+	}
+};
+
+/**
+ * Select the text to copy
+ */
+OO.ui.CopyTextLayout.prototype.selectText = function () {
+	var input = this.textInput.$input[ 0 ],
+		scrollTop = input.scrollTop,
+		scrollLeft = input.scrollLeft;
+
+	this.selecting = true;
+	this.textInput.select();
+	this.selecting = false;
+
+	// Restore scroll position
+	input.scrollTop = scrollTop;
+	input.scrollLeft = scrollLeft;
 };
 
 /**
@@ -2960,7 +3153,7 @@ OO.ui.ToggleWidget.prototype.getValue = function () {
 /**
  * Set the state of the toggle: `true` for 'on', `false` for 'off'.
  *
- * @param {boolean} value The state of the toggle
+ * @param {boolean} [value=false] The state of the toggle
  * @fires change
  * @chainable
  * @return {OO.ui.Widget} The widget, for chaining
@@ -3475,7 +3668,7 @@ OO.ui.OutlineOptionWidget.prototype.getLevel = function () {
  *
  * Movability is used by {@link OO.ui.OutlineControlsWidget outline controls}.
  *
- * @param {boolean} movable Item is movable
+ * @param {boolean} [movable=false] Item is movable
  * @chainable
  * @return {OO.ui.Widget} The widget, for chaining
  */
@@ -3490,7 +3683,7 @@ OO.ui.OutlineOptionWidget.prototype.setMovable = function ( movable ) {
  *
  * Removability is used by {@link OO.ui.OutlineControlsWidget outline controls}.
  *
- * @param {boolean} removable Item is removable
+ * @param {boolean} [removable=false] Item is removable
  * @chainable
  * @return {OO.ui.Widget} The widget, for chaining
  */
@@ -4273,6 +4466,7 @@ OO.ui.TagItemWidget.prototype.isValid = function () {
  *    the user types into the tag groups to add tags.
  *  - outline: The input is underneath the tag area.
  *  - none: No input supplied
+ * @cfg {string} [placeholder] Placeholder text for the input box
  * @cfg {boolean} [allowEditTags=true] Allow editing of the tags by clicking them
  * @cfg {boolean} [allowArbitrary=false] Allow data items to be added even if
  *  not present in the menu.
@@ -5450,10 +5644,15 @@ OO.ui.MenuTagMultiselectWidget.prototype.onResize = function () {
  * @inheritdoc
  */
 OO.ui.MenuTagMultiselectWidget.prototype.onInputFocus = function () {
+	var valid = this.isValid();
+
 	// Parent method
 	OO.ui.MenuTagMultiselectWidget.super.prototype.onInputFocus.call( this );
 
 	this.menu.toggle( true );
+	if ( !valid ) {
+		this.menu.highlightItem();
+	}
 };
 
 /**

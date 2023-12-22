@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Mapper;
 
+use InvalidArgumentException;
 use MediaWiki\Extension\Notifications\Model\Event;
-use MWException;
 use User;
 
 /**
@@ -41,7 +41,6 @@ class EventMapper extends AbstractMapper {
 	 * @param int $id
 	 * @param bool $fromPrimary
 	 * @return Event|false False if it wouldn't load/unserialize
-	 * @throws MWException
 	 */
 	public function fetchById( $id, $fromPrimary = false ) {
 		$db = $fromPrimary ? $this->dbFactory->getEchoDb( DB_PRIMARY ) : $this->dbFactory->getEchoDb( DB_REPLICA );
@@ -52,7 +51,7 @@ class EventMapper extends AbstractMapper {
 		if ( !$row && !$fromPrimary && $this->dbFactory->canRetryPrimary() ) {
 			return $this->fetchById( $id, true );
 		} elseif ( !$row ) {
-			throw new MWException( "No Event found with ID: $id" );
+			throw new InvalidArgumentException( "No Event found with ID: $id" );
 		}
 
 		return Event::newFromRow( $row );

@@ -11,12 +11,12 @@ use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use MimeAnalyzer;
-use MWException;
 use MWFileProps;
-use Title;
 use UploadBase;
 use User;
+use Wikimedia\Assert\PreconditionException;
 use WikiPage;
 
 /**
@@ -27,12 +27,12 @@ class RunVariableGenerator extends VariableGenerator {
 	/**
 	 * @var User
 	 */
-	protected $user;
+	private $user;
 
 	/**
 	 * @var Title
 	 */
-	protected $title;
+	private $title;
 
 	/** @var TextExtractor */
 	private $textExtractor;
@@ -101,7 +101,7 @@ class RunVariableGenerator extends VariableGenerator {
 	 * @param string $slot
 	 * @return array|null
 	 */
-	protected function getEditTextForFiltering( WikiPage $page, Content $content, $slot ): ?array {
+	private function getEditTextForFiltering( WikiPage $page, Content $content, $slot ): ?array {
 		$oldRevRecord = $page->getRevisionRecord();
 		if ( !$oldRevRecord ) {
 			return null;
@@ -142,7 +142,6 @@ class RunVariableGenerator extends VariableGenerator {
 	 * @param string $oldtext
 	 * @param Content|null $oldcontent
 	 * @return VariableHolder
-	 * @throws MWException
 	 */
 	private function newVariableHolderForEdit(
 		WikiPage $page,
@@ -166,7 +165,16 @@ class RunVariableGenerator extends VariableGenerator {
 		$this->vars->setVar( 'new_content_model', $newcontent->getModel() );
 		$this->vars->setVar( 'old_wikitext', $oldtext );
 		$this->vars->setVar( 'new_wikitext', $text );
-		$this->addEditVars( $page, $this->user );
+
+		try {
+			$update = $page->getCurrentUpdate();
+			$update->getParserOutputForMetaData();
+		} catch ( PreconditionException | LogicException $exception ) {
+			// Temporary workaround until this becomes
+			// a hook parameter
+			$update = null;
+		}
+		$this->addEditVars( $page, $this->user, true, $update );
 
 		return $this->vars;
 	}
@@ -306,8 +314,8 @@ class RunVariableGenerator extends VariableGenerator {
 			$this->vars->setVar( 'summary', $summary );
 			$this->vars->setVar( 'old_wikitext', $oldtext );
 			$this->vars->setVar( 'new_wikitext', $text );
-			// TODO: set old_content and new_content vars, use them
-			$this->addEditVars( $page, $this->user );
+			// TODO: set old_content_model and new_content_model vars, use them
+			$this->addEditVars( $page, $this->user, true );
 		}
 		return $this->vars;
 	}

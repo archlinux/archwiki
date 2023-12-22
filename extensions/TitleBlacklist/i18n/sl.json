@@ -25,5 +25,5 @@
 	"titleblacklist-warning": "<strong>Opozorilo: To stran lahko urejajo samo administratorji in drugi uporabniki s pravico <code>tboverride</code>, saj se ujema z naslednjim vnosom na seznamu nedovoljenih naslovov:</strong><br /><code>$1</code>",
 	"right-tboverride": "Prepisovanje seznama nedovoljenih naslovov ali uporabniških imen",
 	"right-tboverride-account": "Prepisovanje seznama nedovoljenih uporabniških imen",
-	"right-titleblacklistlog": "Ogled dnevnika seznamov nedovoljenih naslovov"
+	"right-titleblacklistlog": "Ogled dnevnika seznama nedovoljenih naslovov"
 }

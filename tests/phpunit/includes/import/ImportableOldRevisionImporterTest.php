@@ -19,7 +19,7 @@ class ImportableOldRevisionImporterTest extends MediaWikiIntegrationTestCase {
 		ChangeTags::defineTag( 'tag1' );
 	}
 
-	public function provideTestCases() {
+	public static function provideTestCases() {
 		yield [ [] ];
 		yield [ [ "tag1" ] ];
 	}
@@ -41,7 +41,7 @@ class ImportableOldRevisionImporterTest extends MediaWikiIntegrationTestCase {
 		$importer = new ImportableOldRevisionImporter(
 			true,
 			new NullLogger(),
-			$services->getDBLoadBalancer(),
+			$services->getDBLoadBalancerFactory(),
 			$services->getRevisionStore(),
 			$services->getSlotRoleRegistry(),
 			$services->getWikiPageFactory(),
@@ -52,7 +52,7 @@ class ImportableOldRevisionImporterTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $result );
 
 		$tags = ChangeTags::getTags(
-			$services->getDBLoadBalancer()->getConnection( DB_PRIMARY ),
+			$this->getDb(),
 			null,
 			$title->getLatestRevID()
 		);

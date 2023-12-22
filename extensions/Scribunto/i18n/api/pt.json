@@ -4,7 +4,6 @@
 			"Hamilton Abreu"
 		]
 	},
-	"apihelp-scribunto-console-description": "Módulo interno para responder a pedidos XHR vindos da consola Scribunto.",
 	"apihelp-scribunto-console-summary": "Módulo interno para responder a pedidos XHR vindos da consola Scribunto.",
 	"apihelp-scribunto-console-param-title": "O título do módulo a ser testado.",
 	"apihelp-scribunto-console-param-content": "O novo conteúdo do módulo.",

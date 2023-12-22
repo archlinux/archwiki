@@ -6,6 +6,8 @@ use ChangeTags;
 use MediaWiki\Page\ExistingPageRecord;
 use MediaWiki\Page\PageLookup;
 use MediaWiki\Permissions\GroupPermissionsLookup;
+use MediaWiki\Rest\Handler\Helper\PageRedirectHelper;
+use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
 use MediaWiki\Rest\SimpleHandler;
@@ -15,19 +17,17 @@ use MediaWiki\Storage\NameTableAccessException;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Storage\NameTableStoreFactory;
 use MediaWiki\User\ActorMigration;
-use TitleFormatter;
 use WANObjectCache;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Message\ParamType;
 use Wikimedia\Message\ScalarParam;
 use Wikimedia\ParamValidator\ParamValidator;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Handler class for Core REST API endpoints that perform operations on revisions
  */
 class PageHistoryCountHandler extends SimpleHandler {
-	use PageRedirectHandlerTrait;
 
 	/** The maximum number of counts to return per type of revision */
 	private const COUNT_LIMITS = [
@@ -47,29 +47,14 @@ class PageHistoryCountHandler extends SimpleHandler {
 
 	private const MAX_AGE_200 = 60;
 
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var NameTableStore */
-	private $changeTagDefStore;
-
-	/** @var GroupPermissionsLookup */
-	private $groupPermissionsLookup;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var PageLookup */
-	private $pageLookup;
-
-	/** @var WANObjectCache */
-	private $cache;
-
-	/** @var ActorMigration */
-	private $actorMigration;
-
-	/** @var TitleFormatter */
-	private $titleFormatter;
+	private RevisionStore $revisionStore;
+	private NameTableStore $changeTagDefStore;
+	private GroupPermissionsLookup $groupPermissionsLookup;
+	private IConnectionProvider $dbProvider;
+	private PageLookup $pageLookup;
+	private WANObjectCache $cache;
+	private ActorMigration $actorMigration;
+	private PageRestHelperFactory $helperFactory;
 
 	/** @var RevisionRecord|false|null */
 	private $revision = false;
@@ -84,30 +69,39 @@ class PageHistoryCountHandler extends SimpleHandler {
 	 * @param RevisionStore $revisionStore
 	 * @param NameTableStoreFactory $nameTableStoreFactory
 	 * @param GroupPermissionsLookup $groupPermissionsLookup
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param WANObjectCache $cache
 	 * @param PageLookup $pageLookup
 	 * @param ActorMigration $actorMigration
-	 * @param TitleFormatter $titleFormatter
+	 * @param PageRestHelperFactory $helperFactory
 	 */
 	public function __construct(
 		RevisionStore $revisionStore,
 		NameTableStoreFactory $nameTableStoreFactory,
 		GroupPermissionsLookup $groupPermissionsLookup,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		WANObjectCache $cache,
 		PageLookup $pageLookup,
 		ActorMigration $actorMigration,
-		TitleFormatter $titleFormatter
+		PageRestHelperFactory $helperFactory
 	) {
 		$this->revisionStore = $revisionStore;
 		$this->changeTagDefStore = $nameTableStoreFactory->getChangeTagDef();
 		$this->groupPermissionsLookup = $groupPermissionsLookup;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->cache = $cache;
 		$this->pageLookup = $pageLookup;
 		$this->actorMigration = $actorMigration;
-		$this->titleFormatter = $titleFormatter;
+		$this->helperFactory = $helperFactory;
+	}
+
+	private function getRedirectHelper(): PageRedirectHelper {
+		return $this->helperFactory->newPageRedirectHelper(
+			$this->getResponseFactory(),
+			$this->getRouter(),
+			$this->getPath(),
+			$this->getRequest()
+		);
 	}
 
 	private function normalizeType( $type ) {
@@ -174,10 +168,9 @@ class PageHistoryCountHandler extends SimpleHandler {
 		}
 
 		'@phan-var \MediaWiki\Page\ExistingPageRecord $page';
-		$redirectResponse = $this->createNormalizationRedirectResponseIfNeeded(
+		$redirectResponse = $this->getRedirectHelper()->createNormalizationRedirectResponseIfNeeded(
 			$page,
-			$params['title'] ?? null,
-			$this->titleFormatter
+			$params['title'] ?? null
 		);
 
 		if ( $redirectResponse !== null ) {
@@ -364,7 +357,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 	 * @return int|null
 	 */
 	private function loggingTableTime( $pageId ) {
-		$res = $this->loadBalancer->getConnection( DB_REPLICA )->newSelectQueryBuilder()
+		$res = $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
 			->select( 'MAX(log_timestamp)' )
 			->from( 'logging' )
 			->where( [ 'log_page' => $pageId ] )
@@ -444,16 +437,16 @@ class PageHistoryCountHandler extends SimpleHandler {
 	 * @return int the count
 	 */
 	protected function getAnonCount( $pageId, RevisionRecord $fromRev = null ) {
-		$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->select( '1' )
 			->from( 'revision' )
 			->join( 'actor', null, 'rev_actor = actor_id' )
 			->where( [
 				'rev_page' => $pageId,
-				'actor_user IS NULL',
+				'actor_user' => null,
 				$dbr->bitAnd( 'rev_deleted',
-					RevisionRecord::DELETED_TEXT | RevisionRecord::DELETED_USER ) . " = 0"
+					RevisionRecord::DELETED_TEXT | RevisionRecord::DELETED_USER ) => 0,
 			] )
 			->limit( self::COUNT_LIMITS['anonymous'] + 1 ); // extra to detect truncation
 
@@ -473,14 +466,14 @@ class PageHistoryCountHandler extends SimpleHandler {
 	 * @return int the count
 	 */
 	protected function getBotCount( $pageId, RevisionRecord $fromRev = null ) {
-		$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+		$dbr = $this->dbProvider->getReplicaDatabase();
 
 		$revQuery = $this->actorMigration->getJoin( 'rev_user' );
 
 		$cond = [
-			'rev_page=' . intval( $pageId ),
+			'rev_page' => intval( $pageId ),
 			$dbr->bitAnd( 'rev_deleted',
-				RevisionRecord::DELETED_TEXT | RevisionRecord::DELETED_USER ) . " = 0",
+				RevisionRecord::DELETED_TEXT | RevisionRecord::DELETED_USER ) => 0,
 			'EXISTS(' .
 				$dbr->selectSQLText(
 					'user_groups',
@@ -548,7 +541,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 			return 0;
 		}
 
-		$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->select( '1' )
 			->from( 'revision' )
@@ -577,7 +570,7 @@ class PageHistoryCountHandler extends SimpleHandler {
 	 * @return int the count
 	 */
 	protected function getMinorCount( $pageId, RevisionRecord $fromRev = null ) {
-		$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->select( '1' )
 			->from( 'revision' )

@@ -300,14 +300,24 @@
 			$table.find( '> tbody' ).first().before( $thead );
 		}
 		if ( !$table.get( 0 ).tFoot ) {
-			var $tfoot = $( '<tfoot>' );
-			var len = $rows.length;
-			for ( var i = len - 1; i >= 0; i-- ) {
-				if ( $( $rows[ i ] ).children( 'td' ).length ) {
-					break;
+			var $tfoot = $( '<tfoot>' ),
+				tfootRows = [],
+				remainingCellRowSpan = 0;
+
+			$rows.each( function () {
+				$( this ).children( 'td' ).each( function () {
+					remainingCellRowSpan = Math.max( this.rowSpan, remainingCellRowSpan );
+				} );
+
+				if ( remainingCellRowSpan > 0 ) {
+					tfootRows = [];
+					remainingCellRowSpan--;
+				} else {
+					tfootRows.push( this );
 				}
-				$tfoot.prepend( $( $rows[ i ] ) );
-			}
+			} );
+
+			$tfoot.append( tfootRows );
 			$table.append( $tfoot );
 		}
 	}
@@ -560,6 +570,7 @@
 
 		// We allow a trailing percent sign, which we just strip. This works fine
 		// if percents and regular numbers aren't being mixed.
+		// eslint-disable-next-line security/detect-non-literal-regexp
 		ts.numberRegex = new RegExp(
 			'^(' +
 				'[-+\u2212]?[0-9][0-9,]*(\\.[0-9,]*)?(E[-+\u2212]?[0-9][0-9,]*)?' + // Fortran-style scientific
@@ -595,6 +606,7 @@
 		ts.dateRegex[ 0 ] = new RegExp( /^\s*(\d{1,2})[,.\-/'\s]{1,2}(\d{1,2})[,.\-/'\s]{1,2}(\d{2,4})\s*?/i );
 
 		// Written Month name, dmy
+		// eslint-disable-next-line security/detect-non-literal-regexp
 		ts.dateRegex[ 1 ] = new RegExp(
 			'^\\s*(\\d{1,2})[\\,\\.\\-\\/\'º\\s]+(' +
 				regex +
@@ -604,6 +616,7 @@
 		);
 
 		// Written Month name, mdy
+		// eslint-disable-next-line security/detect-non-literal-regexp
 		ts.dateRegex[ 2 ] = new RegExp(
 			'^\\s*(' + regex + ')' +
 			'[\\,\\.\\-\\/\'\\s]+(\\d{1,2})[\\,\\.\\-\\/\'\\s]+(\\d{2,4})\\s*$',
@@ -765,6 +778,7 @@
 				keys.push( mw.util.escapeRegExp( key ) );
 			}
 			if ( keys.length ) {
+				// eslint-disable-next-line security/detect-non-literal-regexp
 				ts.collationRegex = new RegExp( keys.join( '|' ), 'ig' );
 			}
 		}

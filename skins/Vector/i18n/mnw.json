@@ -5,9 +5,11 @@
 			"咽頭べさ"
 		]
 	},
+	"vector-opt-out": "မပြံၚ်ဗလေတ်ထောံဗီုတြေံ",
 	"vector-languages": "အရေဝ်ဘာသာဂမၠိုင်",
 	"vector-language-button-label": "{{PLURAL:$1|$1 အရေဝ်ဘာသာ|$1 အရေဝ်ဘာသာဂမၠိုင်}}",
 	"vector-no-language-button-label": "စုတ် အရေဝ်ဘာသာဂမၠိုင်",
+	"vector-language-redirect-to-top": "လေန်အရေဝ်ဘာသာပ္ဍဲ{{SITENAME}}တဏအ်ဝွံမနွံအပ္ဍဲထောတ်မဆေၚ်စပ်ကဵုမုက်လိက်နူကဵုယၟုက္ဍိုပ်လိက်ပရေၚ်။ [[#p-lang-btn|မဆက်ဗဵုအာအထောတ်ညိ]]။",
 	"vector-action-addsection": "စုတ် ပရူပရာ",
 	"vector-action-delete": "ပလီု",
 	"vector-action-move": "ပြံင်ပဆုဲ",

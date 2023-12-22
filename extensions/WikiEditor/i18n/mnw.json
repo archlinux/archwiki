@@ -6,8 +6,12 @@
 		]
 	},
 	"wikieditor-toolbar-tool-link-title": "ဗပေင်စုတ်လကံက်",
+	"wikieditor-toolbar-tool-link-int": "မုက်လိက်နကဵုဝဳကဳမွဲသာ်",
+	"wikieditor-toolbar-tool-link-int-target": "မုက်လိက်ပတဝ်ဏာက္ဍိုပ် ဝါ URL:",
+	"wikieditor-toolbar-tool-link-int-text": "လိက်ဒါန်နကဵုအရန်ထ္ၜး:",
+	"wikieditor-toolbar-tool-link-ext": "မုက်လိက်နကဵုမ္ၚးဝေပ်သာ်မွဲ",
 	"wikieditor-toolbar-tool-link-insert": "ဗပေင်စုတ်လကံက်",
-	"wikieditor-toolbar-tool-reference": "နိဿဲ",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "မုက်လိက်တဏအ်ဟွံမွဲကဵုလ္တူ {{SITENAME}}",
 	"wikieditor-toolbar-section-advanced": "နာနာ",
 	"wikieditor-toolbar-tool-heading-2": "ကဆံင် ၂",
 	"wikieditor-toolbar-tool-heading-3": "ကဆံင် ၃",

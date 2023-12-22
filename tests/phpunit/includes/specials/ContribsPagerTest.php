@@ -2,12 +2,14 @@
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Pager\ContribsPager;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
-use MediaWiki\User\ActorMigration;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use Wikimedia\Rdbms\FakeResultWrapper;
@@ -36,9 +38,6 @@ class ContribsPagerTest extends MediaWikiIntegrationTestCase {
 	/** @var ILoadBalancer */
 	private $loadBalancer;
 
-	/** @var ActorMigration */
-	private $actorMigration;
-
 	/** @var NamespaceInfo */
 	private $namespaceInfo;
 
@@ -53,8 +52,7 @@ class ContribsPagerTest extends MediaWikiIntegrationTestCase {
 		$this->revisionStore = $services->getRevisionStore();
 		$this->linkBatchFactory = $services->getLinkBatchFactory();
 		$this->hookContainer = $services->getHookContainer();
-		$this->loadBalancer = $services->getDBLoadBalancer();
-		$this->actorMigration = $services->getActorMigration();
+		$this->dbProvider = $services->getDBLoadBalancerFactory();
 		$this->namespaceInfo = $services->getNamespaceInfo();
 		$this->commentFormatter = $services->getCommentFormatter();
 		$this->pager = $this->getContribsPager( [
@@ -70,8 +68,7 @@ class ContribsPagerTest extends MediaWikiIntegrationTestCase {
 			$this->linkRenderer,
 			$this->linkBatchFactory,
 			$this->hookContainer,
-			$this->loadBalancer,
-			$this->actorMigration,
+			$this->dbProvider,
 			$this->revisionStore,
 			$this->namespaceInfo,
 			$targetUser,
@@ -184,21 +181,20 @@ class ContribsPagerTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideQueryableRanges
 	 */
 	public function testQueryableRanges( $ipRange ) {
-		$this->overrideConfigValue(
-			MainConfigNames::RangeContributionsCIDRLimit,
-			[
+		$config = new HashConfig( [
+			MainConfigNames::RangeContributionsCIDRLimit => [
 				'IPv4' => 16,
 				'IPv6' => 32,
 			]
-		);
+		] );
 
 		$this->assertTrue(
-			$this->pager->isQueryableRange( $ipRange ),
+			ContribsPager::isQueryableRange( $ipRange, $config ),
 			"$ipRange is a queryable IP range"
 		);
 	}
 
-	public function provideQueryableRanges() {
+	public static function provideQueryableRanges() {
 		return [
 			[ '116.17.184.5/32' ],
 			[ '0.17.184.5/16' ],
@@ -212,21 +208,20 @@ class ContribsPagerTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideUnqueryableRanges
 	 */
 	public function testUnqueryableRanges( $ipRange ) {
-		$this->overrideConfigValue(
-			MainConfigNames::RangeContributionsCIDRLimit,
-			[
+		$config = new HashConfig( [
+			MainConfigNames::RangeContributionsCIDRLimit => [
 				'IPv4' => 16,
 				'IPv6' => 32,
 			]
-		);
+		] );
 
 		$this->assertFalse(
-			$this->pager->isQueryableRange( $ipRange ),
+			ContribsPager::isQueryableRange( $ipRange, $config ),
 			"$ipRange is not a queryable IP range"
 		);
 	}
 
-	public function provideUnqueryableRanges() {
+	public static function provideUnqueryableRanges() {
 		return [
 			[ '116.17.184.5/33' ],
 			[ '0.17.184.5/15' ],
@@ -330,7 +325,7 @@ class ContribsPagerTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Flow uses ContribsPager::reallyDoQuery hook to provide something other then
-	 * stdClass as a row, and then manually formats it's own row in ContributionsLineEnding.
+	 * stdClass as a row, and then manually formats its own row in ContributionsLineEnding.
 	 * Emulate this behaviour and check that it works.
 	 *
 	 * @covers ContribsPager::formatRow
@@ -350,7 +345,7 @@ class ContribsPagerTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( 'FROM_HOOK!', $pager->getBody() );
 	}
 
-	public function provideEmptyResultIntegration() {
+	public static function provideEmptyResultIntegration() {
 		$cases = [
 			[ 'target' => '127.0.0.1' ],
 			[ 'target' => '127.0.0.1/24' ],

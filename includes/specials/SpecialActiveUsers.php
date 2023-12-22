@@ -21,13 +21,18 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
+use HTMLForm;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Pager\ActiveUsersPager;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentityLookup;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Implements Special:Activeusers
@@ -36,33 +41,26 @@ use Wikimedia\Rdbms\ILoadBalancer;
  */
 class SpecialActiveUsers extends SpecialPage {
 
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
-
-	/** @var ILoadBalancer */
-	private $loadBalancer;
-
-	/** @var UserGroupManager */
-	private $userGroupManager;
-
-	/** @var UserIdentityLookup */
-	private $userIdentityLookup;
+	private LinkBatchFactory $linkBatchFactory;
+	private IConnectionProvider $dbProvider;
+	private UserGroupManager $userGroupManager;
+	private UserIdentityLookup $userIdentityLookup;
 
 	/**
 	 * @param LinkBatchFactory $linkBatchFactory
-	 * @param ILoadBalancer $loadBalancer
+	 * @param IConnectionProvider $dbProvider
 	 * @param UserGroupManager $userGroupManager
 	 * @param UserIdentityLookup $userIdentityLookup
 	 */
 	public function __construct(
 		LinkBatchFactory $linkBatchFactory,
-		ILoadBalancer $loadBalancer,
+		IConnectionProvider $dbProvider,
 		UserGroupManager $userGroupManager,
 		UserIdentityLookup $userIdentityLookup
 	) {
 		parent::__construct( 'Activeusers' );
 		$this->linkBatchFactory = $linkBatchFactory;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 		$this->userGroupManager = $userGroupManager;
 		$this->userIdentityLookup = $userIdentityLookup;
 	}
@@ -95,7 +93,7 @@ class SpecialActiveUsers extends SpecialPage {
 			$this->getContext(),
 			$this->getHookContainer(),
 			$this->linkBatchFactory,
-			$this->loadBalancer,
+			$this->dbProvider,
 			$this->userGroupManager,
 			$this->userIdentityLookup,
 			$opts
@@ -188,7 +186,8 @@ class SpecialActiveUsers extends SpecialPage {
 		$intro = $this->msg( 'activeusers-intro' )->numParams( $days )->parse();
 
 		// Mention the level of cache staleness...
-		$dbr = $this->loadBalancer->getConnection( ILoadBalancer::DB_REPLICA );
+		$dbr = $this->dbProvider->getReplicaDatabase();
+
 		$rcMax = $dbr->newSelectQueryBuilder()
 			->select( 'MAX(rc_timestamp)' )
 			->from( 'recentchanges' )
@@ -221,3 +220,8 @@ class SpecialActiveUsers extends SpecialPage {
 		return 'users';
 	}
 }
+
+/**
+ * @deprecated since 1.41
+ */
+class_alias( SpecialActiveUsers::class, 'SpecialActiveUsers' );

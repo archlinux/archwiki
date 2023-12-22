@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Html\Html;
+use MediaWiki\Request\WebRequest;
 
 /**
  * Double field with a dropdown list constructed from a system message in the format
@@ -149,8 +150,9 @@ class HTMLSelectAndOtherField extends HTMLSelectField {
 	}
 
 	/**
-	 * @inheritDoc
 	 * @stable to override
+	 * @param array $params
+	 * @return \MediaWiki\Widget\SelectWithInputWidget
 	 */
 	public function getInputWidget( $params ) {
 		return new MediaWiki\Widget\SelectWithInputWidget( $params );

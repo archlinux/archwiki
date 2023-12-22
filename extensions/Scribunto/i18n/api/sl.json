@@ -4,7 +4,6 @@
 			"Eleassar"
 		]
 	},
-	"apihelp-scribunto-console-description": "Notranji modul za strežbo zahtevkov XHR iz konzole Scribunto.",
 	"apihelp-scribunto-console-summary": "Notranji modul za strežbo zahtevkov XHR iz konzole Scribunto.",
 	"apihelp-scribunto-console-param-title": "Naslov modula za testiranje.",
 	"apihelp-scribunto-console-param-content": "Nova vsebina modula.",

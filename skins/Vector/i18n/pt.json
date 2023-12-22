@@ -29,7 +29,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 língua|$1 línguas}}",
 	"vector-no-language-button-label": "Adicionar línguas",
 	"vector-no-language-button-aria-label": "Este artigo só existe nesta língua. Adicione o artigo noutras línguas",
-	"vector-language-redirect-to-top": "Na wiki {{SITENAME}} as hiperligações interlínguas estão localizadas no topo da página do lado oposto ao título. [[#p-lang-btn|Ir para o topo]].",
+	"vector-language-redirect-to-top": "Na wiki {{SITENAME}} as hiperligações interlínguas estão localizadas no topo da página ao lado oposto do título.",
 	"vector-language-variant-switcher-label": "Mudar a variante da língua",
 	"vector-action-addsection": "Adicionar tópico",
 	"vector-action-delete": "Eliminar",
@@ -61,6 +61,8 @@
 	"vector-site-nav-label": "''Site''",
 	"vector-main-menu-label": "Menu principal",
 	"vector-limited-width-toggle": "Alternar a largura de conteúdo limitada",
+	"vector-limited-width-toggle-on-popup": "Alternou a disposição gráfica para a largura total. Para voltar à largura limitada, pressione este botão.",
+	"vector-limited-width-toggle-off-popup": "Pode alternar entre uma largura limitada e uma largura total clicando este botão.",
 	"vector-page-tools-label": "Ferramentas",
 	"vector-page-tools-general-label": "Geral",
 	"vector-page-tools-actions-label": "Operações",
@@ -70,5 +72,8 @@
 	"tooltip-vector-anon-user-menu-title": "Mais opções",
 	"vector-prefs-limited-width": "Ativar o modo de largura limitada",
 	"vector-prefs-limited-width-help": "Ativar o modo de largura limitada, para uma melhor experiência de leitura.",
-	"empty-language-selector-body": "O conteúdo da página não é suportado noutras línguas."
+	"empty-language-selector-body": "O conteúdo da página não é suportado noutras línguas.",
+	"vector-toc-unpinned-popup": "O índice foi movido para aqui.",
+	"vector-page-tools-unpinned-popup": "O menu de ferramentas foi movido para aqui.",
+	"vector-main-menu-unpinned-popup": "O menu principal foi movido para aqui."
 }

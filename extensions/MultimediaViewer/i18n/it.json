@@ -26,6 +26,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|un altro autore|altri $1 autori}}",
 	"multimediaviewer-multiple-authors-combine": "$1 e $2",
 	"multimediaviewer-metadata-error": "Impossibile caricare i dettagli dell'immagine (errore: $1)",
+	"multimediaviewer-file-not-found-error": "Spiacenti, il file $1 non può essere visualizzato poiché non è presente nella pagina attuale.",
 	"multimediaviewer-thumbnail-error": "Spiacenti, il file non può essere visualizzato",
 	"multimediaviewer-thumbnail-error-description": "Sembra esserci un problema tecnico. Puoi $1 se persiste. Errore: $2",
 	"multimediaviewer-thumbnail-error-retry": "riprova",

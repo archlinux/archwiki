@@ -181,10 +181,13 @@ class Tag {
 	 * @return $this
 	 */
 	public function removeContent( ...$content ) {
-		if ( $content && is_array( $content[ 0 ] ) ) {
+		if ( isset( $content[0] ) && is_array( $content[0] ) ) {
 			return $this->removeContent( ...$content[0] );
 		}
-		foreach ( $content as $item ) {
+		foreach ( $content as $i => $item ) {
+			if ( !is_int( $i ) ) {
+				throw new \AssertionError( '$content cannot have string keys' );
+			}
 			if ( !is_string( $item ) ) {
 				// Use strict type comparions so we don't
 				// compare objects with existing strings
@@ -216,7 +219,7 @@ class Tag {
 	 * @return $this
 	 */
 	public function appendContent( ...$content ) {
-		if ( $content && is_array( $content[ 0 ] ) ) {
+		if ( isset( $content[0] ) && is_array( $content[0] ) ) {
 			return $this->appendContent( ...$content[0] );
 		}
 		$this->removeContent( ...$content );
@@ -244,7 +247,7 @@ class Tag {
 	 * @return $this
 	 */
 	public function prependContent( ...$content ) {
-		if ( $content && is_array( $content[ 0 ] ) ) {
+		if ( isset( $content[0] ) && is_array( $content[0] ) ) {
 			return $this->prependContent( ...$content[0] );
 		}
 		$this->removeContent( ...$content );
@@ -313,6 +316,13 @@ class Tag {
 	public static function generateElementId() {
 		self::$elementId++;
 		return 'ooui-php-' . self::$elementId;
+	}
+
+	/**
+	 * Reset the unique ID, for consistent test output
+	 */
+	public static function resetElementId() {
+		self::$elementId = 0;
 	}
 
 	/**
@@ -413,7 +423,6 @@ class Tag {
 	/**
 	 * Render element into HTML.
 	 * @return string HTML serialization
-	 * @throws Exception
 	 */
 	public function toString() {
 		// List of void elements from HTML5, section 8.1.2 as of 2016-09-19

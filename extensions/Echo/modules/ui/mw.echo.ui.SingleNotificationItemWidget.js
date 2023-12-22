@@ -44,22 +44,6 @@
 	OO.mixinClass( mw.echo.ui.SingleNotificationItemWidget, OO.ui.mixin.PendingElement );
 
 	/* Methods */
-	mw.echo.ui.SingleNotificationItemWidget.prototype.onPrimaryLinkClick = function () {
-		// Log notification click
-
-		mw.echo.logger.logInteraction(
-			mw.echo.Logger.static.actions.notificationClick,
-			mw.echo.Logger.static.context.popup,
-			this.getModel().getId(),
-			this.getModel().getCategory(),
-			false,
-			// Source of this notification if it is cross-wiki
-			// TODO: For notifications in local bundles, we need
-			// to consider changing this
-			this.bundle ? this.getModel().getSource() : ''
-		);
-	};
-
 	/**
 	 * @inheritdoc
 	 */

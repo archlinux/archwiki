@@ -14,12 +14,12 @@ use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFormatter;
 use MediaWiki\User\TempUser\RealTempUserConfig;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserGroupManager;
 use MediaWikiUnitTestCase;
-use TitleFormatter;
-use User;
 use UserCache;
 use Wikimedia\TestingAccessWrapper;
 
@@ -47,6 +47,8 @@ class PermissionManagerTest extends MediaWikiUnitTestCase {
 			MainConfigNames::NamespaceProtection => [ NS_MEDIAWIKI => 'editinterface' ],
 			MainConfigNames::RestrictionLevels => [ '', 'autoconfirmed', 'sysop' ],
 			MainConfigNames::DeleteRevisionsLimit => false,
+			MainConfigNames::RateLimits => [],
+			MainConfigNames::ImplicitRights => [],
 		];
 		$config = $overrideConfig + $baseConfig;
 
@@ -122,7 +124,7 @@ class PermissionManagerTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( $expectedErrors, $result );
 	}
 
-	public function provideTestCheckUserConfigPermissions() {
+	public static function provideTestCheckUserConfigPermissions() {
 		yield 'Patrol ignored' => [ 'NameOfActingUser/subpage', [], 'patrol', false, [] ];
 		yield 'Own non-config' => [ 'NameOfActingUser/subpage', [], 'edit', false, [] ];
 		yield 'Other non-config' => [ 'NameOfAnotherUser/subpage', [], 'edit', false, [] ];
@@ -237,7 +239,7 @@ class PermissionManagerTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideTestCheckUserConfigPermissionsForRedirect() {
+	public static function provideTestCheckUserConfigPermissionsForRedirect() {
 		yield 'With `editmyuserjsredirect`' => [ true, true, NS_USER, 'NameOfActingUser/other.js', false ];
 		yield 'Not a redirect' => [ false, false, NS_USER, 'NameOfActingUser/other.js', false ];
 		yield 'Redirect out of user space' => [ false, true, NS_MAIN, 'MainPage.js', true ];
@@ -284,7 +286,7 @@ class PermissionManagerTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( $expectedErrors, $result );
 	}
 
-	public function provideTestCheckPageRestrictions() {
+	public static function provideTestCheckPageRestrictions() {
 		yield 'No restrictions' => [ 'move', [], [], true, [] ];
 		yield 'Empty string' => [ 'edit', [ '' ], [], true, [] ];
 		yield 'Semi-protected, with rights' => [
@@ -380,7 +382,7 @@ class PermissionManagerTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( $expectedErrors, $result );
 	}
 
-	public function provideTestCheckQuickPermissions() {
+	public static function provideTestCheckQuickPermissions() {
 		// $namespace, $pageTitle, $userIsAnon, $action, $rights, $expectedError
 
 		// Four different possible errors when trying to create

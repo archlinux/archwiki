@@ -7,10 +7,9 @@
 			"Lakzon"
 		]
 	},
-	"tooltip-ca-createsource": "ساخت کد متن این صفحه.",
-	"tooltip-ca-edit": "این صفحه را با استفاده از ویکی‌متن ویرایش کنید",
-	"tooltip-ca-editsource": "ویرایش کد متن این صفحه.",
 	"tooltip-ca-ve-edit": "اێ وەڵگە دەسکاری کە",
+	"tooltip-ca-editsource": "ویرایش کد متن این صفحه.",
+	"tooltip-ca-createsource": "ساخت کد متن این صفحه.",
 	"visualeditor-advancedsettings-tool": "تنظیمات پیشرفته",
 	"visualeditor-backbutton-tooltip": "بوو دؤما/ عقب",
 	"visualeditor-browserwarning": "شما از مرورگری استفاده می‌کنید که در این ویرایشگر به طور رسمی پشتیبانی نمی‌شود.",
@@ -160,8 +159,6 @@
 	"visualeditor-magiclinknodeinspector-title-pmid": "پیوند PMID",
 	"visualeditor-magiclinknodeinspector-title-rfc": "پیوند RFC",
 	"visualeditor-meta-tool": "گزینۀل",
-	"visualeditor-mweditmodesource-warning-cancel": "ئآهووسانن/لغو",
-	"visualeditor-mweditmodesource-warning-switch-discard": "دور ریختن تغییرات",
 	"visualeditor-mwgallerydialog-title": "گالری",
 	"visualeditor-savedialog-label-resolve-conflict": "حل تعارض",
 	"visualeditor-savedialog-label-resume-editing": "خلاصه ویرایش",

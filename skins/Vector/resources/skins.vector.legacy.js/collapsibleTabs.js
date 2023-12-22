@@ -1,3 +1,7 @@
+/* eslint-disable no-jquery/no-jquery-constructor, no-jquery/no-other-methods, no-jquery/no-class,
+	no-jquery/no-extend, no-jquery/no-data, no-jquery/no-css, no-jquery/no-visibility, no-jquery/no-trigger,
+	no-jquery/no-is-empty-object, no-jquery/no-find-collection, no-jquery/no-attr, no-jquery/no-parent,
+	no-jquery/no-each-collection */
 /**
  * This adds behaviour to Vector's tabs in the bottom right so that at smaller
  * displays they collapse under the more menu.
@@ -5,9 +9,9 @@
 
 /** @interface CollapsibleTabsOptions */
 function init() {
-	/** @type {boolean|undefined} */ var boundEvent;
-	var isRTL = document.documentElement.dir === 'rtl';
-	var rAF = window.requestAnimationFrame || setTimeout;
+	/** @type {boolean|undefined} */ let boundEvent;
+	const isRTL = document.documentElement.dir === 'rtl';
+	const rAF = window.requestAnimationFrame || setTimeout;
 
 	// Mark the tabs which can be collapsed under the more menu
 	// eslint-disable-next-line no-jquery/no-global-selector
@@ -16,7 +20,7 @@ function init() {
 
 	$.fn.collapsibleTabs = function ( options ) {
 		// Merge options into the defaults
-		var settings = $.extend( {}, $.collapsibleTabs.defaults, options );
+		const settings = $.extend( {}, $.collapsibleTabs.defaults, options );
 
 		// return if the function is called on an empty jquery object
 		if ( !this.length ) {
@@ -24,7 +28,7 @@ function init() {
 		}
 
 		this.each( function () {
-			var $el = $( this );
+			const $el = $( this );
 			// add the element to our array of collapsible managers
 			$.collapsibleTabs.instances.push( $el );
 			// attach the settings to the elements
@@ -68,17 +72,17 @@ function init() {
 			}
 		},
 		addData: function ( $collapsible ) {
-			var settings = $collapsible.parent().data( 'collapsibleTabsSettings' );
+			const settings = $collapsible.parent().data( 'collapsibleTabsSettings' );
 			if ( settings ) {
 				$collapsible.data( 'collapsibleTabsSettings', {
 					expandedContainer: settings.expandedContainer,
 					collapsedContainer: settings.collapsedContainer,
-					expandedWidth: $collapsible.width()
+					expandedWidth: $collapsible.outerWidth( true )
 				} );
 			}
 		},
 		getSettings: function ( $collapsible ) {
-			var settings = $collapsible.data( 'collapsibleTabsSettings' );
+			let settings = $collapsible.data( 'collapsibleTabsSettings' );
 			if ( !settings ) {
 				$.collapsibleTabs.addData( $collapsible );
 				settings = $collapsible.data( 'collapsibleTabsSettings' );
@@ -93,8 +97,7 @@ function init() {
 		},
 		handleResize: function () {
 			$.collapsibleTabs.instances.forEach( function ( $el ) {
-				var $tab,
-					data = $.collapsibleTabs.getSettings( $el );
+				const data = $.collapsibleTabs.getSettings( $el );
 
 				if ( $.isEmptyObject( data ) || data.shifting ) {
 					return;
@@ -113,7 +116,7 @@ function init() {
 					$.collapsibleTabs.moveToCollapsed( $el.children( data.collapsible ).last() );
 				}
 
-				$tab = $( data.collapsedContainer ).children( data.collapsible ).first();
+				const $tab = $( data.collapsedContainer ).children( data.collapsible ).first();
 				// if there are still moveable items in the dropdown menu,
 				// and there is sufficient space to place them in the tab container
 				if (
@@ -134,15 +137,11 @@ function init() {
 			} );
 		},
 		moveToCollapsed: function ( $moving ) {
-			/** @type {CollapsibleTabsOptions} */ var outerData;
-			/** @type {CollapsibleTabsOptions} */ var collapsedContainerSettings;
-			/** @type {string} */ var target;
-
-			outerData = $.collapsibleTabs.getSettings( $moving );
+			const outerData = $.collapsibleTabs.getSettings( $moving );
 			if ( !outerData ) {
 				return;
 			}
-			collapsedContainerSettings = $.collapsibleTabs.getSettings(
+			const collapsedContainerSettings = $.collapsibleTabs.getSettings(
 				$( outerData.expandedContainer )
 			);
 			if ( !collapsedContainerSettings ) {
@@ -151,7 +150,7 @@ function init() {
 			collapsedContainerSettings.shifting = true;
 
 			// Remove the element from where it's at and put it in the dropdown menu
-			target = outerData.collapsedContainer;
+			const target = outerData.collapsedContainer;
 			// eslint-disable-next-line no-jquery/no-animate
 			$moving.css( 'position', 'relative' )
 				.css( ( isRTL ? 'left' : 'right' ), 0 )
@@ -166,16 +165,11 @@ function init() {
 				} );
 		},
 		moveToExpanded: function ( $moving ) {
-			/** @type {CollapsibleTabsOptions} */ var data;
-			/** @type {CollapsibleTabsOptions} */ var expandedContainerSettings;
-			var $target;
-			var expandedWidth;
-
-			data = $.collapsibleTabs.getSettings( $moving );
+			const data = $.collapsibleTabs.getSettings( $moving );
 			if ( !data ) {
 				return;
 			}
-			expandedContainerSettings =
+			const expandedContainerSettings =
 				$.collapsibleTabs.getSettings( $( data.expandedContainer ) );
 			if ( !expandedContainerSettings ) {
 				return;
@@ -183,8 +177,8 @@ function init() {
 			expandedContainerSettings.shifting = true;
 
 			// grab the next appearing placeholder so we can use it for replacing
-			$target = $( data.expandedContainer ).find( 'span.placeholder' ).first();
-			expandedWidth = data.expandedWidth;
+			const $target = $( data.expandedContainer ).find( 'span.placeholder' ).first();
+			const expandedWidth = data.expandedWidth;
 			$moving.css( 'position', 'relative' ).css( ( isRTL ? 'right' : 'left' ), 0 ).css( 'width', '1px' );
 			$target.replaceWith(
 				// eslint-disable-next-line no-jquery/no-animate
@@ -199,7 +193,7 @@ function init() {
 							// change the tab's contents after the page load *gasp* (T71729). This
 							// doesn't prevent a tab from collapsing back and forth once, but at
 							// least it won't continue to do that forever.
-							data.expandedWidth = $moving.width() || 0;
+							data.expandedWidth = $moving.outerWidth( true ) || 0;
 							$moving.data( 'collapsibleTabsSettings', data );
 							expandedContainerSettings.shifting = false;
 							$.collapsibleTabs.handleResize();
@@ -219,7 +213,7 @@ function init() {
 		 * @return {number} distance/overlap in pixels
 		 */
 		calculateTabDistance: function () {
-			var leftTab, rightTab, leftEnd, rightStart;
+			let leftTab, rightTab, leftEnd, rightStart;
 
 			// In RTL, #right-navigation is actually on the left and vice versa.
 			// Hooray for descriptive naming.

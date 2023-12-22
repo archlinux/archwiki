@@ -11,10 +11,10 @@ use MediaWiki\Content\ValidationParams;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\SyntaxHighlight\SyntaxHighlight;
+use MediaWiki\Title\Title;
 use ParserOutput;
 use Status;
 use TextContent;
-use Title;
 
 /**
  * Scribunto Content Handler

@@ -44,6 +44,7 @@ class WarnTest extends MediaWikiUnitTestCase {
 				null
 			)
 		);
+		/** @var Warn $warnWrap */
 		$warnWrap = TestingAccessWrapper::newFromObject( $this->getWarn( $params ) );
 		return [ $params, $warnWrap->getWarnKey() ];
 	}

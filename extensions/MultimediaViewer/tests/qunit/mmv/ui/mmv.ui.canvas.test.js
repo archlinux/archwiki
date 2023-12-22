@@ -15,12 +15,14 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { Canvas, LightboxImage } = require( 'mmv' );
+
 ( function () {
 	QUnit.module( 'mmv.ui.Canvas', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Constructor sense check', function ( assert ) {
 		var $qf = $( '#qunit-fixture' ),
-			canvas = new mw.mmv.ui.Canvas( $qf, $qf, $qf );
+			canvas = new Canvas( $qf, $qf, $qf );
 
 		assert.strictEqual( canvas.$imageDiv.length, 1, 'Image container is created.' );
 		assert.strictEqual( canvas.$imageWrapper, $qf, '$imageWrapper is set correctly.' );
@@ -29,10 +31,10 @@
 
 	QUnit.test( 'empty() and set()', function ( assert ) {
 		var $qf = $( '#qunit-fixture' ),
-			canvas = new mw.mmv.ui.Canvas( $qf ),
+			canvas = new Canvas( $qf ),
 			image = new Image(),
 			$imageElem = $( image ),
-			imageRawMetadata = new mw.mmv.LightboxImage( 'foo.png' );
+			imageRawMetadata = new LightboxImage( 'foo.png' );
 
 		canvas.empty();
 
@@ -57,8 +59,8 @@
 			$mainWrapper = $( '<div>' ).appendTo( $qf ),
 			$innerWrapper = $( '<div>' ).appendTo( $mainWrapper ),
 			$imageWrapper = $( '<div>' ).appendTo( $innerWrapper ),
-			canvas = new mw.mmv.ui.Canvas( $innerWrapper, $imageWrapper, $mainWrapper ),
-			imageRawMetadata = new mw.mmv.LightboxImage( 'foo.png' ),
+			canvas = new Canvas( $innerWrapper, $imageWrapper, $mainWrapper ),
+			imageRawMetadata = new LightboxImage( 'foo.png' ),
 			image = new Image(),
 			$imageElem = $( image ),
 			image2 = new Image(),
@@ -99,8 +101,8 @@
 		var $image,
 			blurredThumbnailShown,
 			$qf = $( '#qunit-fixture' ),
-			imageRawMetadata = new mw.mmv.LightboxImage( 'foo.svg' ),
-			canvas = new mw.mmv.ui.Canvas( $qf );
+			imageRawMetadata = new LightboxImage( 'foo.svg' ),
+			canvas = new Canvas( $qf );
 
 		imageRawMetadata.filePageTitle = {
 			getExtension: function () { return 'svg'; }
@@ -129,8 +131,8 @@
 		var $image,
 			blurredThumbnailShown,
 			$qf = $( '#qunit-fixture' ),
-			imageRawMetadata = new mw.mmv.LightboxImage( 'foo.png' ),
-			canvas = new mw.mmv.ui.Canvas( $qf );
+			imageRawMetadata = new LightboxImage( 'foo.png' ),
+			canvas = new Canvas( $qf );
 
 		imageRawMetadata.filePageTitle = {
 			getExtension: function () { return 'png'; }
@@ -159,8 +161,8 @@
 		var $image,
 			blurredThumbnailShown,
 			$qf = $( '#qunit-fixture' ),
-			imageRawMetadata = new mw.mmv.LightboxImage( 'foo.png' ),
-			canvas = new mw.mmv.ui.Canvas( $qf );
+			imageRawMetadata = new LightboxImage( 'foo.png' ),
+			canvas = new Canvas( $qf );
 
 		imageRawMetadata.filePageTitle = {
 			getExtension: function () { return 'png'; }
@@ -189,8 +191,8 @@
 		var $image,
 			blurredThumbnailShown,
 			$qf = $( '#qunit-fixture' ),
-			imageRawMetadata = new mw.mmv.LightboxImage( 'foo.png' ),
-			canvas = new mw.mmv.ui.Canvas( $qf );
+			imageRawMetadata = new LightboxImage( 'foo.png' ),
+			canvas = new Canvas( $qf );
 
 		imageRawMetadata.filePageTitle = {
 			getExtension: function () { return 'png'; }
@@ -219,8 +221,8 @@
 		var $image,
 			blurredThumbnailShown,
 			$qf = $( '#qunit-fixture' ),
-			imageRawMetadata = new mw.mmv.LightboxImage( 'foo.png' ),
-			canvas = new mw.mmv.ui.Canvas( $qf );
+			imageRawMetadata = new LightboxImage( 'foo.png' ),
+			canvas = new Canvas( $qf );
 
 		imageRawMetadata.filePageTitle = {
 			getExtension: function () { return 'png'; }
@@ -247,7 +249,7 @@
 
 	QUnit.test( 'unblurWithAnimation', function ( assert ) {
 		var $qf = $( '#qunit-fixture' ),
-			canvas = new mw.mmv.ui.Canvas( $qf ),
+			canvas = new Canvas( $qf ),
 			oldAnimate = $.fn.animate;
 
 		$.fn.animate = function ( target, options ) {

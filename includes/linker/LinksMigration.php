@@ -20,8 +20,8 @@
 
 namespace MediaWiki\Linker;
 
-use Config;
 use InvalidArgumentException;
+use MediaWiki\Config\Config;
 use MediaWiki\MainConfigNames;
 
 /**
@@ -46,10 +46,19 @@ class LinksMigration {
 			'target_id' => 'tl_target_id',
 			'deprecated_configs' => [ SCHEMA_COMPAT_OLD ],
 		],
+		'pagelinks' => [
+			'config' => MainConfigNames::PageLinksSchemaMigrationStage,
+			'page_id' => 'pl_from',
+			'ns' => 'pl_namespace',
+			'title' => 'pl_title',
+			'target_id' => 'pl_target_id',
+			'deprecated_configs' => [],
+		],
 	];
 
 	public static $prefixToTableMapping = [
-		'tl' => 'templatelinks'
+		'tl' => 'templatelinks',
+		'pl' => 'pagelinks',
 	];
 
 	/**

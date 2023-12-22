@@ -4,22 +4,25 @@ namespace MediaWiki\Tests\Rest\Handler;
 
 use ApiUsageException;
 use FormatJson;
-use HashConfig;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
 use MediaWiki\Rest\Handler\UpdateHandler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Status\Status;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use MockTitleTrait;
 use ParserFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Status;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Message\ParamType;
 use Wikimedia\Message\ScalarParam;
@@ -28,6 +31,7 @@ use WikitextContent;
 use WikitextContentHandler;
 
 /**
+ * @group Database
  * @covers \MediaWiki\Rest\Handler\UpdateHandler
  */
 class UpdateHandlerTest extends \MediaWikiLangTestCase {
@@ -37,8 +41,8 @@ class UpdateHandlerTest extends \MediaWikiLangTestCase {
 
 	private function newHandler( $resultData, $throwException = null, $csrfSafe = false ) {
 		$config = new HashConfig( [
-			'RightsUrl' => 'https://creativecommons.org/licenses/by-sa/4.0/',
-			'RightsText' => 'CC-BY-SA 4.0'
+			MainConfigNames::RightsUrl => 'https://creativecommons.org/licenses/by-sa/4.0/',
+			MainConfigNames::RightsText => 'CC-BY-SA 4.0'
 		] );
 
 		$wikitextContentHandler = new WikitextContentHandler(
@@ -47,7 +51,9 @@ class UpdateHandlerTest extends \MediaWikiLangTestCase {
 			$this->createMock( ParserFactory::class ),
 			$this->createMock( GlobalIdGenerator::class ),
 			$this->createMock( LanguageNameUtils::class ),
-			$this->createMock( MagicWordFactory::class )
+			$this->createMock( LinkRenderer::class ),
+			$this->createMock( MagicWordFactory::class ),
+			$this->createMock( ParsoidParserFactory::class )
 		);
 
 		// Only wikitext is defined, returns specific handler instance
@@ -102,7 +108,7 @@ class UpdateHandlerTest extends \MediaWikiLangTestCase {
 		return $handler;
 	}
 
-	public function provideExecute() {
+	public static function provideExecute() {
 		yield "create with token" => [
 			[ // Request data received by UpdateHandler
 				'method' => 'PUT',
@@ -443,7 +449,7 @@ class UpdateHandlerTest extends \MediaWikiLangTestCase {
 		}
 	}
 
-	public function provideBodyValidation() {
+	public static function provideBodyValidation() {
 		yield "missing source field" => [
 			[ // Request data received by UpdateHandler
 				'method' => 'PUT',
@@ -493,7 +499,7 @@ class UpdateHandlerTest extends \MediaWikiLangTestCase {
 		$this->assertEquals( $expectedMessage, $exception->getMessageValue() );
 	}
 
-	public function provideHeaderValidation() {
+	public static function provideHeaderValidation() {
 		yield "bad content type" => [
 			[ // Request data received by UpdateHandler
 				'method' => 'PUT',
@@ -528,7 +534,7 @@ class UpdateHandlerTest extends \MediaWikiLangTestCase {
 	/**
 	 * FIXME: Can't access MW services in a dataProvider.
 	 */
-	public function provideErrorMapping() {
+	public static function provideErrorMapping() {
 		yield "missingtitle" => [
 			new ApiUsageException( null, Status::newFatal( 'apierror-missingtitle' ) ),
 			new LocalizedHttpException( new MessageValue( 'apierror-missingtitle' ), 404 ),

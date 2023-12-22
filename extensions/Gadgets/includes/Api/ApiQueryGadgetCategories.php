@@ -99,6 +99,7 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 					'title',
 					'members',
 				],
+				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
 			'names' => [
 				ParamValidator::PARAM_TYPE => 'string',

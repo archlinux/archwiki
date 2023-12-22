@@ -103,7 +103,6 @@ class TextPassDumperDatabaseTest extends DumpTestCase {
 		// Setting up of the dump
 		$nameStub = $this->setUpStub( 'AllStubs', $wgXmlDumpSchemaVersion );
 		$nameFull = $this->getNewTempFile();
-		$expFile = $this->getDumpTemplatePath( 'AllText', $wgXmlDumpSchemaVersion );
 
 		$dumper = new TextPassDumper( [ "--stub=file:" . $nameStub,
 			"--output=file:" . $nameFull ] );
@@ -504,7 +503,7 @@ class TextPassDumperDatabaselessTest extends MediaWikiLangTestCase {
 	 *
 	 * @dataProvider bufferSizeProvider
 	 */
-	public function bufferSizeProvider() {
+	public static function bufferSizeProvider() {
 		// expected, bufferSize to initialize with, message
 		return [
 			[ 512 * 1024, 512 * 1024, "Setting 512 KiB is not effective" ],

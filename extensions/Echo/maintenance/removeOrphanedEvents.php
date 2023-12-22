@@ -4,6 +4,9 @@
  *
  * @ingroup Maintenance
  */
+
+use MediaWiki\Extension\Notifications\DbFactory;
+
 require_once getenv( 'MW_INSTALL_PATH' ) !== false
 	? getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php'
 	: __DIR__ . '/../../../maintenance/Maintenance.php';
@@ -32,7 +35,7 @@ class RemoveOrphanedEvents extends LoggedUpdateMaintenance {
 
 	public function doDBUpdates() {
 		$startId = 0;
-		$dbFactory = MWEchoDbFactory::newFromDefault();
+		$dbFactory = DbFactory::newFromDefault();
 		$dbr = $dbFactory->getEchoDb( DB_REPLICA );
 		$maxId = (int)$dbr->newSelectQueryBuilder()
 			->select( 'MAX(event_id)' )
@@ -53,7 +56,7 @@ class RemoveOrphanedEvents extends LoggedUpdateMaintenance {
 	}
 
 	private function doMajorBatch( $maxId ) {
-		$dbFactory = MWEchoDbFactory::newFromDefault();
+		$dbFactory = DbFactory::newFromDefault();
 		$dbw = $dbFactory->getEchoDb( DB_PRIMARY );
 		$dbr = $dbFactory->getEchoDb( DB_REPLICA );
 		$iterator = new BatchRowIterator(

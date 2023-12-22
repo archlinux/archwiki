@@ -20,5 +20,10 @@
 	"cite_error_references_missing_group": "Значка <code>&lt;ref&gt;</code> внутрї <code>&lt;references&gt;</code> хоснує ґрупу „$1“, котра ся в попереднїм текстї не обявує.",
 	"cite_error_references_missing_key": "На <code>&lt;ref&gt;</code> з іменом „$1“ дефінованый внутрї <code>&lt;references&gt;</code> не суть в попереднїм текстї жадны одказы.",
 	"cite_error_references_no_key": "У значкы <code>&lt;ref&gt;</code> дефінованой внутрї <code>&lt;references&gt;</code> хыбить атрібут <code>name</code>.",
-	"cite_error_empty_references_define": "У значкы <code>&lt;ref&gt;</code> з назвов „$1“ дефінованой внутрї <code>&lt;references&gt;</code> хыбить обсяг."
+	"cite_error_empty_references_define": "У значкы <code>&lt;ref&gt;</code> з назвов „$1“ дефінованой внутрї <code>&lt;references&gt;</code> хыбить обсяг.",
+	"cite-wikieditor-tool-reference": "Позначкы",
+	"cite-wikieditor-help-page-references": "Референції",
+	"cite-wikieditor-help-content-reference-description": "Позначка",
+	"cite-wikieditor-help-content-rereference-description": "Далшый одказ на тоту саму позначку",
+	"cite-wikieditor-help-content-showreferences-description": "Вказати позначкы"
 }

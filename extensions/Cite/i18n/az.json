@@ -19,5 +19,10 @@
 	"cite-tracking-category-cite-error": "İstinad xətası olan səhifələr",
 	"cite_section_preview_references": "İstinadların sınaq göstərişi",
 	"cite_warning": "İstinad xəbərdarlığı: $1",
-	"cite_warning_sectionpreview_no_text": "<code>$1</code> adlı <code>&lt;ref&gt;</code> istinad etiketi ya cari bölmədən kənarda müəyyən edildiyinə, ya da ümumiyyətlə müəyyən edilmədiyinə görə göstərilə bilmir."
+	"cite_warning_sectionpreview_no_text": "<code>$1</code> adlı <code>&lt;ref&gt;</code> istinad etiketi ya cari bölmədən kənarda müəyyən edildiyinə, ya da ümumiyyətlə müəyyən edilmədiyinə görə göstərilə bilmir.",
+	"cite-wikieditor-tool-reference": "İstinad",
+	"cite-wikieditor-help-page-references": "İstinadlar",
+	"cite-wikieditor-help-content-reference-description": "İstinad",
+	"cite-wikieditor-help-content-rereference-description": "Eyni istinaddan istifadənin əlavəsi",
+	"cite-wikieditor-help-content-showreferences-description": "İstinadları göstər"
 }

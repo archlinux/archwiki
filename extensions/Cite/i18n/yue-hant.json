@@ -17,5 +17,10 @@
 	"cite_references_link_accessibility_label": "跳到",
 	"cite_references_link_many_accessibility_label": "跳到去：",
 	"cite_section_preview_references": "預覽參考資料",
-	"cite_warning": "引用警告：$1"
+	"cite_warning": "引用警告：$1",
+	"cite-wikieditor-tool-reference": "參考",
+	"cite-wikieditor-help-page-references": "參考",
+	"cite-wikieditor-help-content-reference-description": "參考",
+	"cite-wikieditor-help-content-rereference-description": "同參考附加用途",
+	"cite-wikieditor-help-content-showreferences-description": "顯示喜好"
 }

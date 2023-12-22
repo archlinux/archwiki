@@ -9,7 +9,8 @@
 			"Roy17",
 			"Waihorace",
 			"Winston Sung",
-			"Yueman"
+			"Yueman",
+			"H78c67c"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -26,6 +27,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1種語言}}",
 	"vector-no-language-button-label": "加語言",
 	"vector-no-language-button-aria-label": "呢篇文淨係喺呢種語言先有。喺第種語言開呢篇文。",
+	"vector-language-redirect-to-top": "其他語言嘅連結喺頁頂標題側邊。",
 	"vector-language-variant-switcher-label": "改語言變體",
 	"vector-action-addsection": "加主題",
 	"vector-action-delete": "剷走",
@@ -42,6 +44,8 @@
 	"vector-jumptosearch": "跳去搵嘢",
 	"vector-jumptocontent": "跳去內容",
 	"vector-more-actions": "多啲",
+	"vector-feature-limited-width-name": "欄闊",
+	"vector-feature-custom-font-size-name": "打字大細",
 	"vector-search-loader": "載入緊搜索提議",
 	"vector-searchsuggest-containing": "搵包含 <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> 嘅版",
 	"vector-intro-page": "Help:目錄",
@@ -57,6 +61,8 @@
 	"vector-site-nav-label": "站點",
 	"vector-main-menu-label": "主目錄",
 	"vector-limited-width-toggle": "切換限制內容闊度",
+	"vector-limited-width-toggle-on-popup": "你切換咗去全螢幕闊度。想切換返去限制闊度，㩒呢粒掣。",
+	"vector-limited-width-toggle-off-popup": "你可以㩒呢粒掣切換去限制闊度同全螢幕闊度。",
 	"vector-page-tools-label": "架撐",
 	"vector-page-tools-general-label": "基本",
 	"vector-page-tools-actions-label": "動作",
@@ -64,7 +70,18 @@
 	"vector-unpin-element-label": "收埋",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|傾下]]",
 	"tooltip-vector-anon-user-menu-title": "多啲選項",
+	"vector-page-tools-nav-label": "頁面工具",
 	"vector-prefs-limited-width": "啟用限制闊度模式",
 	"vector-prefs-limited-width-help": "啟用限制闊度模式去改善閱讀嘅體驗。",
-	"empty-language-selector-body": "頁面內容唔支援其他語言。"
+	"empty-language-selector-body": "頁面內容唔支援其他語言。",
+	"vector-toc-unpinned-popup": "頁面目錄搬咗嚟呢度。",
+	"vector-page-tools-unpinned-popup": "架撐目錄搬咗嚟呢度。",
+	"vector-main-menu-unpinned-popup": "主目錄搬咗嚟呢度。",
+	"vector-readability-survey-title": "維基媒體閱讀架撐",
+	"vector-readability-survey-fontSize": "字大細",
+	"vector-readability-survey-lineHeight": "行高",
+	"vector-readability-survey-paragraphSpacing": "段間距",
+	"vector-readability-survey-randomize": "是但",
+	"vector-readability-survey-reset": "重設",
+	"vector-readability-survey-share": "繼續"
 }

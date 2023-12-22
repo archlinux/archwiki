@@ -44,14 +44,23 @@ return [
 
 	'test.MediaWiki' => [
 		'scripts' => [
-			'tests/qunit/resources/startup/startup.test.js',
 			'tests/qunit/resources/startup/mediawiki.test.js',
 			'tests/qunit/resources/startup/mw.Map.test.js',
 			'tests/qunit/resources/startup/mw.loader.test.js',
 			'tests/qunit/resources/startup/mw.requestIdleCallback.test.js',
 			'tests/qunit/resources/startup/jscompat.test.js',
-			'tests/qunit/resources/jquery.color.test.js',
-			'tests/qunit/resources/jquery.colorUtil.test.js',
+			[
+				'name' => 'tests/qunit/resources/startup/clientprefs.js',
+				'callback' => static function () {
+					return 'mw.clientprefs = function ( document, $VARS ) { '
+						. strtr(
+							file_get_contents( MW_INSTALL_PATH . '/resources/src/startup/clientprefs.js' ),
+							[ '__COOKIE_PREFIX__' => '' ]
+						)
+						. '};';
+				}
+			],
+			'tests/qunit/resources/startup/clientprefs.test.js',
 			'tests/qunit/resources/jquery.highlightText.test.js',
 			'tests/qunit/resources/jquery.lengthLimit.test.js',
 			'tests/qunit/resources/jquery.makeCollapsible.test.js',
@@ -63,11 +72,7 @@ return [
 			'tests/qunit/resources/mediawiki.base/track.test.js',
 			'tests/qunit/resources/mediawiki.jqueryMsg.test.js',
 			'tests/qunit/resources/mediawiki.messagePoster/factory.test.js',
-			'tests/qunit/resources/mediawiki.String/byteLength.test.js',
-			'tests/qunit/resources/mediawiki.String/charAt.test.js',
-			'tests/qunit/resources/mediawiki.String/lcFirst.test.js',
-			'tests/qunit/resources/mediawiki.String/ucFirst.test.js',
-			'tests/qunit/resources/mediawiki.String/trimByteLength.test.js',
+			'tests/qunit/resources/mediawiki.String.test.js',
 			'tests/qunit/resources/mediawiki.storage.test.js',
 			'tests/qunit/resources/mediawiki.template.test.js',
 			'tests/qunit/resources/mediawiki.template.mustache.test.js',
@@ -105,7 +110,6 @@ return [
 			'tests/qunit/resources/mediawiki.visibleTimeout.test.js',
 		],
 		'dependencies' => [
-			'jquery.color',
 			'jquery.highlightText',
 			'jquery.lengthLimit',
 			'jquery.makeCollapsible',

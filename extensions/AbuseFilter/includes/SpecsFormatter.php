@@ -4,9 +4,9 @@ namespace MediaWiki\Extension\AbuseFilter;
 
 use Language;
 use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
+use MediaWiki\Language\RawMessage;
 use Message;
 use MessageLocalizer;
-use RawMessage;
 
 /**
  * @todo Improve this once DI around Message objects is improved in MW core.

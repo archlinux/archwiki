@@ -12,7 +12,6 @@
 	"apihelp-query+abusefilters-param-prop": "कौन से गुण पाना चाहिए।",
 	"apihelp-query+abusefilters-example-1": "सक्षम सार्वजनिक फ़िलटरों सूची दें",
 	"apihelp-query+abusefilters-example-2": "फ़िलटरों के बारे में कुछ जानकारी दिखाइये",
-	"apihelp-query+abuselog-description": "उन घटनाओं को दिखाएँ जिन्हें दुरुपयोग फ़िलटरों में से किसी एक द्वारा दिखाया गया है।",
 	"apihelp-query+abuselog-param-start": "समयछाप की गिनती प्रारंभ हो रही (स्थान) से।",
 	"apihelp-query+abuselog-param-end": "समयछाप की गिनती समाप्त हो रही (स्थान) से।",
 	"apihelp-query+abuselog-param-user": "केवल उन प्रविष्टियों को दिखाएँ जो दिए गए सदस्य या आई०पी० पते द्वारा किए गए हैं।",

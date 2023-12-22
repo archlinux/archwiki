@@ -41,6 +41,7 @@ class SearchFiltersTest extends MaintenanceBaseTestCase {
 		$defaultRow = [
 			'af_user' => 0,
 			'af_user_text' => 'FilterTester',
+			'af_actor' => 1,
 			'af_timestamp' => $this->db->timestamp( '20190826000000' ),
 			'af_enabled' => 1,
 			'af_comments' => '',
@@ -71,7 +72,7 @@ class SearchFiltersTest extends MaintenanceBaseTestCase {
 		return $expected;
 	}
 
-	public function provideSearches(): Generator {
+	public static function provideSearches(): Generator {
 		yield 'single filter' => [ 'page_title', [ 2 ] ];
 		yield 'multiple filters' => [ 'rmspecials', [ 2, 4 ] ];
 		yield 'regex' => [ '[a-z]\(', [ 2, 4 ] ];

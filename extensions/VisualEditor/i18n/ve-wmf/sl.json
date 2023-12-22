@@ -8,6 +8,11 @@
 			"Yerpo"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck meni, da je bila na stran dodana nova vsebina",
+	"tag-editcheck-newreference-description": "Na stran je bil dodan sklic",
+	"tag-editcheck-references-description": "EditCheck meni, da bi bil morda potreben sklic",
+	"tag-editcheck-references-activated": "Preverjanje urejanja (sklici) aktivirano",
+	"tag-editcheck-references-activated-description": "EditCheck meni, da je bil morda potreben sklic, in prikazan je bil uporabniški vmesnik",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualno urejanje]]",
 	"tag-visualeditor-description": "Urejanje, opravljeno z [[{{MediaWiki:visualeditor-descriptionpagelink}}|Vizualnim urejevalnikom]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vizualno urejanje: preveri]]",

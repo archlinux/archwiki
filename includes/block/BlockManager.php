@@ -26,14 +26,15 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Request\WebResponse;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityUtils;
 use Message;
 use MWCryptHash;
 use Psr\Log\LoggerInterface;
-use User;
-use WebRequest;
 use Wikimedia\IPSet;
 use Wikimedia\IPUtils;
 
@@ -49,6 +50,9 @@ class BlockManager {
 
 	/** @var UserFactory */
 	private $userFactory;
+
+	/* UserIdentityUtils */
+	private $userIdentityUtils;
 
 	/** @var ServiceOptions */
 	private $options;
@@ -78,6 +82,7 @@ class BlockManager {
 	 * @param ServiceOptions $options
 	 * @param PermissionManager $permissionManager
 	 * @param UserFactory $userFactory
+	 * @param UserIdentityUtils $userIdentityUtils
 	 * @param LoggerInterface $logger
 	 * @param HookContainer $hookContainer
 	 */
@@ -85,6 +90,7 @@ class BlockManager {
 		ServiceOptions $options,
 		PermissionManager $permissionManager,
 		UserFactory $userFactory,
+		UserIdentityUtils $userIdentityUtils,
 		LoggerInterface $logger,
 		HookContainer $hookContainer
 	) {
@@ -92,6 +98,7 @@ class BlockManager {
 		$this->options = $options;
 		$this->permissionManager = $permissionManager;
 		$this->userFactory = $userFactory;
+		$this->userIdentityUtils = $userIdentityUtils;
 		$this->logger = $logger;
 		$this->hookRunner = new HookRunner( $hookContainer );
 	}
@@ -152,15 +159,15 @@ class BlockManager {
 
 			// Case #1: checking the global user, including IP blocks
 			$ip = $request->getIP();
-			$isAnon = !$user->isRegistered();
+			$applySoftBlocks = $this->applySoftBlockToUser( $user );
 
 			$xff = $request->getHeader( 'X-Forwarded-For' );
 
 			// TODO: remove dependency on DatabaseBlock (T221075)
 			$blocks = array_merge(
 				DatabaseBlock::newListFromTarget( $user, $ip, $fromPrimary ),
-				$this->getSystemIpBlocks( $ip, $isAnon ),
-				$this->getXffBlocks( $ip, $xff, $isAnon, $fromPrimary ),
+				$this->getSystemIpBlocks( $ip, $applySoftBlocks ),
+				$this->getXffBlocks( $ip, $xff, $applySoftBlocks, $fromPrimary ),
 				$this->getCookieBlock( $user, $request )
 			);
 		} else {
@@ -179,6 +186,17 @@ class BlockManager {
 		$this->hookRunner->onGetUserBlock( clone $legacyUser, $ip, $block );
 
 		return $block;
+	}
+
+	/**
+	 * For soft blocks, i.e. blocks that don't block logged-in users,
+	 * temporary users are treated as anon users, and are blocked.
+	 *
+	 * @param UserIdentity $user
+	 * @return bool
+	 */
+	private function applySoftBlockToUser( UserIdentity $user ): bool {
+		return !$this->userIdentityUtils->isNamed( $user );
 	}
 
 	/**
@@ -242,10 +260,10 @@ class BlockManager {
 	 * Get any system blocks against the IP address.
 	 *
 	 * @param string $ip
-	 * @param bool $isAnon Whether the user accessing the wiki from the IP address is logged out
+	 * @param bool $applySoftBlocks
 	 * @return AbstractBlock[]
 	 */
-	private function getSystemIpBlocks( string $ip, bool $isAnon ): array {
+	private function getSystemIpBlocks( string $ip, bool $applySoftBlocks ): array {
 		$blocks = [];
 
 		// Proxy blocking
@@ -257,7 +275,7 @@ class BlockManager {
 					'address' => $ip,
 					'systemBlock' => 'proxy',
 				] );
-			} elseif ( $isAnon && $this->isDnsBlacklisted( $ip ) ) {
+			} elseif ( $applySoftBlocks && $this->isDnsBlacklisted( $ip ) ) {
 				$blocks[] = new SystemBlock( [
 					'reason' => new Message( 'sorbsreason' ),
 					'address' => $ip,
@@ -268,7 +286,7 @@ class BlockManager {
 		}
 
 		// Soft blocking
-		if ( $isAnon && IPUtils::isInRanges( $ip, $this->options->get( MainConfigNames::SoftBlockRanges ) ) ) {
+		if ( $applySoftBlocks && IPUtils::isInRanges( $ip, $this->options->get( MainConfigNames::SoftBlockRanges ) ) ) {
 			$blocks[] = new SystemBlock( [
 				'address' => $ip,
 				'reason' => new Message( 'softblockrangesreason', [ $ip ] ),
@@ -287,19 +305,23 @@ class BlockManager {
 	 *
 	 * @param string $ip
 	 * @param string $xff
-	 * @param bool $isAnon
+	 * @param bool $applySoftBlocks
 	 * @param bool $fromPrimary
 	 * @return AbstractBlock[]
 	 */
-	private function getXffBlocks( string $ip, string $xff, bool $isAnon, bool $fromPrimary ): array {
+	private function getXffBlocks(
+		string $ip,
+		string $xff,
+		bool $applySoftBlocks,
+		bool $fromPrimary
+	): array {
 		// (T25343) Apply IP blocks to the contents of XFF headers, if enabled
 		if ( $this->options->get( MainConfigNames::ApplyIpBlocksToXff )
 			&& !in_array( $ip, $this->options->get( MainConfigNames::ProxyWhitelist ) )
 		) {
 			$xff = array_map( 'trim', explode( ',', $xff ) );
 			$xff = array_diff( $xff, [ $ip ] );
-			// TODO: remove dependency on DatabaseBlock (T221075)
-			$xffblocks = DatabaseBlock::getBlocksForIPList( $xff, $isAnon, $fromPrimary );
+			$xffblocks = $this->getBlocksForIPList( $xff, $applySoftBlocks, $fromPrimary );
 
 			// (T285159) Exclude autoblocks from XFF headers to prevent spoofed
 			// headers uncovering the IPs of autoblocked users
@@ -311,6 +333,19 @@ class BlockManager {
 		}
 
 		return [];
+	}
+
+	/**
+	 * Wrapper for mocking in tests.
+	 *
+	 * @param array $xff
+	 * @param bool $isAnon
+	 * @param bool $fromPrimary
+	 * @return DatabaseBlock[]
+	 */
+	protected function getBlocksForIPList( array $xff, bool $isAnon, bool $fromPrimary ) {
+		// TODO: remove dependency on DatabaseBlock (T221075)
+		return DatabaseBlock::getBlocksForIPList( $xff, $isAnon, $fromPrimary );
 	}
 
 	/**
@@ -553,19 +588,13 @@ class BlockManager {
 		$isAnon = $user->isAnon();
 
 		if ( $block ) {
-			if ( $block instanceof CompositeBlock ) {
+			foreach ( $block->toArray() as $originalBlock ) {
 				// TODO: Improve on simply tracking the first trackable block (T225654)
-				foreach ( $block->getOriginalBlocks() as $originalBlock ) {
-					if ( $this->shouldTrackBlockWithCookie( $originalBlock, $isAnon ) ) {
-						'@phan-var DatabaseBlock $originalBlock';
-						$this->setBlockCookie( $originalBlock, $response );
-						return;
-					}
-				}
-			} else {
-				if ( $this->shouldTrackBlockWithCookie( $block, $isAnon ) ) {
-					'@phan-var DatabaseBlock $block';
-					$this->setBlockCookie( $block, $response );
+				if ( $originalBlock instanceof DatabaseBlock
+					&& $this->shouldTrackBlockWithCookie( $originalBlock, $isAnon )
+				) {
+					$this->setBlockCookie( $originalBlock, $response );
+					return;
 				}
 			}
 		}
@@ -576,12 +605,10 @@ class BlockManager {
 	 * the same as the block's, to a maximum of 24 hours.
 	 *
 	 * @since 1.34
-	 * @internal Should be private.
-	 *  Left public for backwards compatibility, until DatabaseBlock::setCookie is removed.
 	 * @param DatabaseBlock $block
 	 * @param WebResponse $response The response on which to set the cookie.
 	 */
-	public function setBlockCookie( DatabaseBlock $block, WebResponse $response ) {
+	private function setBlockCookie( DatabaseBlock $block, WebResponse $response ) {
 		// Calculate the default expiry time.
 		$maxExpiryTime = wfTimestamp( TS_MW, (int)wfTimestamp() + ( 24 * 60 * 60 ) );
 
@@ -601,25 +628,22 @@ class BlockManager {
 	/**
 	 * Check if the block should be tracked with a cookie.
 	 *
-	 * @param AbstractBlock $block
+	 * @param DatabaseBlock $block
 	 * @param bool $isAnon The user is logged out
 	 * @return bool The block should be tracked with a cookie
 	 */
-	private function shouldTrackBlockWithCookie( AbstractBlock $block, $isAnon ) {
-		if ( $block instanceof DatabaseBlock ) {
-			switch ( $block->getType() ) {
-				case DatabaseBlock::TYPE_IP:
-				case DatabaseBlock::TYPE_RANGE:
-					return $isAnon && $this->options->get( MainConfigNames::CookieSetOnIpBlock );
-				case DatabaseBlock::TYPE_USER:
-					return !$isAnon &&
-						$this->options->get( MainConfigNames::CookieSetOnAutoblock ) &&
-						$block->isAutoblocking();
-				default:
-					return false;
-			}
+	private function shouldTrackBlockWithCookie( DatabaseBlock $block, $isAnon ) {
+		switch ( $block->getType() ) {
+			case DatabaseBlock::TYPE_IP:
+			case DatabaseBlock::TYPE_RANGE:
+				return $isAnon && $this->options->get( MainConfigNames::CookieSetOnIpBlock );
+			case DatabaseBlock::TYPE_USER:
+				return !$isAnon &&
+					$this->options->get( MainConfigNames::CookieSetOnAutoblock ) &&
+					$block->isAutoblocking();
+			default:
+				return false;
 		}
-		return false;
 	}
 
 	/**
@@ -637,12 +661,10 @@ class BlockManager {
 	 * the ID and a HMAC (see DatabaseBlock::setCookie), but will sometimes only be the ID.
 	 *
 	 * @since 1.34
-	 * @internal Should be private.
-	 *  Left public for backwards compatibility, until DatabaseBlock::getIdFromCookieValue is removed.
 	 * @param string $cookieValue The string in which to find the ID.
 	 * @return int|null The block ID, or null if the HMAC is present and invalid.
 	 */
-	public function getIdFromCookieValue( $cookieValue ) {
+	private function getIdFromCookieValue( $cookieValue ) {
 		// The cookie value must start with a number
 		if ( !is_numeric( substr( $cookieValue, 0, 1 ) ) ) {
 			return null;
@@ -670,20 +692,16 @@ class BlockManager {
 	 * be the block ID.
 	 *
 	 * @since 1.34
-	 * @internal Should be private.
-	 *  Left public for backwards compatibility, until DatabaseBlock::getCookieValue is removed.
 	 * @param DatabaseBlock $block
 	 * @return string The block ID, probably concatenated with "!" and the HMAC.
 	 */
-	public function getCookieValue( DatabaseBlock $block ) {
+	private function getCookieValue( DatabaseBlock $block ) {
 		$id = (string)$block->getId();
 		if ( !$this->options->get( MainConfigNames::SecretKey ) ) {
 			// If there's no secret key, don't append a HMAC.
 			return $id;
 		}
 		$hmac = MWCryptHash::hmac( $id, $this->options->get( MainConfigNames::SecretKey ), false );
-		$cookieValue = $id . '!' . $hmac;
-		return $cookieValue;
+		return $id . '!' . $hmac;
 	}
-
 }

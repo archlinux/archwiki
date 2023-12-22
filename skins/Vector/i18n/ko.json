@@ -50,6 +50,7 @@
 	"vector-jumptosearch": "검색으로 이동",
 	"vector-jumptocontent": "본문으로 이동",
 	"vector-more-actions": "더 보기",
+	"vector-client-preferences": "읽기 설정",
 	"vector-search-loader": "검색 제안을 불러오는 중",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> 항목이 포함된 글을 검색",
 	"vector-intro-page": "Help:소개",
@@ -65,6 +66,8 @@
 	"vector-site-nav-label": "사이트",
 	"vector-main-menu-label": "주 메뉴",
 	"vector-limited-width-toggle": "내용 폭 제한 전환",
+	"vector-limited-width-toggle-on-popup": "레이아웃을 전체폭으로 전환하였습니다. 제한폭으로 돌아가려면 이 버튼을 누르십시오.",
+	"vector-limited-width-toggle-off-popup": "이 버튼을 클릭하여 제한폭과 전체폭을 오갈 수 있습니다.",
 	"vector-page-tools-label": "도구",
 	"vector-page-tools-general-label": "일반",
 	"vector-page-tools-actions-label": "동작",
@@ -74,5 +77,8 @@
 	"tooltip-vector-anon-user-menu-title": "더 많은 옵션",
 	"vector-prefs-limited-width": "폭 제한 모드 사용",
 	"vector-prefs-limited-width-help": "향상된 읽기 경험을 위해 폭 제한 모드를 활성화합니다.",
-	"empty-language-selector-body": "문서 내용이 다른 언어로는 지원되지 않습니다."
+	"empty-language-selector-body": "문서 내용이 다른 언어로는 지원되지 않습니다.",
+	"vector-toc-unpinned-popup": "목차가 여기로 이동되었습니다.",
+	"vector-page-tools-unpinned-popup": "도구 메뉴가 여기로 이동되었습니다.",
+	"vector-main-menu-unpinned-popup": "주 메뉴가 여기로 이동되었습니다."
 }

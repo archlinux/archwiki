@@ -4,7 +4,6 @@
 			"Joetaras"
 		]
 	},
-	"apihelp-templatedata-description": "Pigghie le date reggistrate sus a l'estenzione TemplateData.",
 	"apihelp-templatedata-summary": "Pigghie le date reggistrate sus a l'estenzione TemplateData.",
 	"apihelp-templatedata-example-1": "Fà 'ndrucà TemplateData pe [[Template:Stub]] e [[Template:Example]], cu resultate ce le template non g'esistone ma onne TemplateData",
 	"apihelp-templatedata-example-2": "Fà 'ndrucà TemplateData pe [[Template:Stub]] e [[Template:Example]], senze resultate ce le template non g'esistone o esistone ma non g'onne TemplateData",

@@ -43,7 +43,7 @@ class FilterCompareTest extends MediaWikiUnitTestCase {
 	 * Data provider for testCompareVersions
 	 * @return array
 	 */
-	public function provideVersions() {
+	public static function provideVersions() {
 		$baseSpecs = [
 			'actions' => [],
 			'user' => 1,

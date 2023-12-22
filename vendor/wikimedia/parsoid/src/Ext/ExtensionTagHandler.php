@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext;
 
+use Closure;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
@@ -36,6 +37,28 @@ abstract class ExtensionTagHandler {
 		ParsoidExtensionAPI $extApi, string $src, array $extArgs
 	) {
 		return false; /* Use default wrapper */
+	}
+
+	/**
+	 * Extensions might embed HTML in attributes in their own custom
+	 * representation (whether in data-mw or elsewhere).
+	 *
+	 * Core Parsoid will need a way to traverse such content. This method
+	 * is a way for extension tag handlers to provide this functionality.
+	 * Parsoid will only call this method if the tag's config sets the
+	 * options['wt2html']['embedsHTMLInAttributes'] property to true.
+	 *
+	 * @param ParsoidExtensionAPI $extApi
+	 * @param Element $elt The node whose data attributes need to be examined
+	 * @param Closure $proc The processor that will process the embedded HTML
+	 *        Signature: (string) -> string
+	 *        This processor will be provided the HTML string as input
+	 *        and is expected to return a possibly modified string.
+	 */
+	public function processAttributeEmbeddedHTML(
+		ParsoidExtensionAPI $extApi, Element $elt, Closure $proc
+	): void {
+		// Nothing to do by default
 	}
 
 	/**
@@ -81,16 +104,6 @@ abstract class ExtensionTagHandler {
 	) {
 		/* Use default serialization */
 		return false;
-	}
-
-	/**
-	 * Some extensions require the ability to modify the argument
-	 * dictionary.
-	 * @param ParsoidExtensionAPI $extApi
-	 * @param object $argDict
-	 */
-	public function modifyArgDict( ParsoidExtensionAPI $extApi, object $argDict ): void {
-		/* do not modify the argument dictionary by default */
 	}
 
 	/**

@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Rest\Handler;
 
-use Config;
 use InvalidArgumentException;
 use ISearchResultSet;
 use MediaWiki\Cache\CacheKeyHelper;
+use MediaWiki\Config\Config;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageStore;
@@ -16,13 +16,13 @@ use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
 use MediaWiki\Search\Entity\SearchResultThumbnail;
 use MediaWiki\Search\SearchResultThumbnailProvider;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\TitleFormatter;
 use SearchEngine;
 use SearchEngineConfig;
 use SearchEngineFactory;
 use SearchResult;
 use SearchSuggestion;
-use Status;
-use TitleFormatter;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -330,7 +330,6 @@ class SearchHandler extends Handler {
 
 		return [
 			'mimetype' => $thumbnail->getMimeType(),
-			'size' => $thumbnail->getSize(),
 			'width' => $thumbnail->getWidth(),
 			'height' => $thumbnail->getHeight(),
 			'duration' => $thumbnail->getDuration(),

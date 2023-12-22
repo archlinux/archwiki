@@ -9,9 +9,9 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Notifications;
 
-use EchoEvent;
-use EchoEventPresentationModel;
 use Language;
+use MediaWiki\Extension\Notifications\Formatters\EchoEventPresentationModel;
+use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
 use SpecialPage;
 use User;
@@ -23,7 +23,7 @@ class RemovedTopicPresentationModel extends EchoEventPresentationModel {
 	/**
 	 * @inheritDoc
 	 */
-	protected function __construct( EchoEvent $event, Language $language, User $user, $distributionType ) {
+	protected function __construct( Event $event, Language $language, User $user, $distributionType ) {
 		parent::__construct( $event, $language, $user, $distributionType );
 		$this->section = new PlaintextEchoPresentationModelSection( $event, $user, $language );
 	}

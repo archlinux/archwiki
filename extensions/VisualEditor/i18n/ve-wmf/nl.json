@@ -20,9 +20,14 @@
 			"Siebrand",
 			"Sjoerddebruin",
 			"Southparkfan",
-			"सरोज कुमार ढकाल"
+			"सरोज कुमार ढकाल",
+			"McDutchie"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck denkt dat er nieuwe inhoud aan de pagina is toegevoegd",
+	"tag-editcheck-newreference-description": "Er is een referentie aan de pagina toegevoegd",
+	"tag-editcheck-references-description": "EditCheck denkt dat er een referentie nodig kan zijn",
+	"tag-editcheck-references-activated-description": "EditCheck denkt dat er een referentie nodig kan zijn, en de gebruikersinterface is weergegeven",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuele tekstverwerker]]",
 	"tag-visualeditor-description": "Bewerking gedaan met de [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuele tekstverwerker]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuele tekstverwerker: nakijken]]",

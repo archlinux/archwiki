@@ -11,5 +11,6 @@
 	"apierror-discussiontools-formtoken-used": "মন্তব্য ইতোমধ্যে পোস্ট করা হয়েছে। মন্তব্যটি দেখতে পাতাটি পুনরায় লোড করুন।",
 	"apierror-discussiontools-subscription-failed-add": "এই আলোচনা অনুসরণ যায়নি।",
 	"apierror-discussiontools-subscription-failed-remove": "এই আলোচনা অ-অনুসরণ করা যায়নি।",
-	"apihelp-discussiontoolsedit-param-wikitext": "উইকিপাঠ্য হিসেবে পোস্ট করার বিষয়বস্তু। <var>html</var> এর সাথে একত্রে ব্যবহার করা যাবে না।"
+	"apihelp-discussiontoolsedit-param-wikitext": "উইকিপাঠ্য হিসেবে পোস্ট করার বিষয়বস্তু। <var>html</var> এর সাথে একত্রে ব্যবহার করা যাবে না।",
+	"apihelp-discussiontoolsfindcomment-param-idorname": "মন্তব্যের আইডি বা নাম"
 }

@@ -1,20 +1,55 @@
-/* stylelint-disable selector-max-id */
-#pt-notifications-notice,
-#pt-notifications-alert {
-	.mw-echo-notifications-badge {
-		margin: 0 auto;
+/* stylelint-disable unit-disallowed-list, selector-max-id */
+@import 'mediawiki.skin.variables.less';
+
+/**
+ * Mixin based on Vector mixin
+ * https://github.com/wikimedia/mediawiki-skins-Vector/blob/master/skinStyles/ext.echo.styles.badge.less
+ * Used in desktop version of Minerva.
+ */
+.mixin-notification-badge() {
+	position: relative;
+
+	// When 99+ allow counter so spill outside icon
+	&.cdx-button {
+		overflow: visible;
 	}
 
-	a.mw-ui-icon-wikimedia-bellOutline-base20 {
-		color: transparent;
+	&::after {
+		position: absolute;
+		left: 55%;
+		top: 43%;
+		font-size: 0.75rem;
+		padding: 0.25rem;
+		border: 1px solid #fff;
+		border-radius: @border-radius-base;
+		background-color: #72777d;
+		content: attr( data-counter-text );
+		color: #fff;
+	}
+
+	// The number of notifications shouldn't show if there are none.
+	&[ data-counter-num='0' ]::after {
+		content: none;
 	}
 }
 
-li#pt-notifications-notice,
-li#pt-notifications-alert {
-	list-style: none;
-	width: 1.25em;
-	height: 1.25em;
-	padding: 0.75em;
-	vertical-align: middle;
+.minerva-icon--bell {
+	.cdx-mixin-css-icon( @cdx-icon-bell, @color-subtle );
+}
+
+.minerva-icon--tray {
+	.cdx-mixin-css-icon( @cdx-icon-tray, @color-subtle );
+}
+
+.mw-echo-notification-badge-nojs {
+	.mixin-notification-badge();
+}
+
+// Special colors for unseen notifications (Applies to desktop Minerva)
+#pt-notifications-alert.mw-echo-unseen-notifications::after {
+	background-color: @color-destructive;
+}
+
+#pt-notifications-notice.mw-echo-unseen-notifications::after {
+	background-color: @color-progressive;
 }

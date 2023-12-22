@@ -1,6 +1,6 @@
 /* eslint-disable no-jquery/no-global-selector */
 $( document ).on( 'click', '.fancycaptcha-reload', function () {
-	var $this = $( this ),
+	const $this = $( this ),
 		$root = $this.closest( '.fancycaptcha-captcha-container' ),
 		$captchaImage = $root.find( '.fancycaptcha-image' );
 
@@ -8,8 +8,8 @@ $( document ).on( 'click', '.fancycaptcha-reload', function () {
 
 	// AJAX request to get captcha index key
 	new mw.Api().post( { action: 'fancycaptchareload' } ).done( function ( data ) {
-		var captchaIndex = data.fancycaptchareload.index,
-			imgSrc;
+		const captchaIndex = data.fancycaptchareload.index;
+		let imgSrc;
 		if ( typeof captchaIndex === 'string' ) {
 			// replace index key with a new one for captcha image
 			imgSrc = $captchaImage.attr( 'src' ).replace( /(wpCaptchaId=)\w+/, '$1' + captchaIndex );

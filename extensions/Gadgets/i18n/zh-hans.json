@@ -6,6 +6,7 @@
 			"Dimension",
 			"Gaoxuewei",
 			"GraceL",
+			"GuoPC",
 			"Hydra",
 			"Impersonator 1",
 			"Lakejason0",
@@ -20,14 +21,17 @@
 			"Yfdyh000",
 			"孟天皓",
 			"御坂美琴",
+			"沈澄心",
 			"阿pp",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"LittlePaw365"
 		]
 	},
 	"gadgets-desc": "让用户在其[[Special:Preferences#mw-prefsection-gadgets|参数设置]]中选择自定义[[Special:Gadgets|CSS和JavaScript工具]]",
 	"prefs-gadgets": "小工具",
 	"prefs-description-gadgets": "为您的账号启用额外功能。",
 	"gadgets-prefstext": "下面是您可以为账户启用的特殊小工具列表。这些小工具大多数基于JavaScript，所以您的浏览器需要启用JavaScript以使其生效。请注意这些小工具不会在这个参数设置页面上生效。\n\n同时请注意，这些特殊小工具不是MediaWiki软件的组成部分，而通常是由您的本地wiki的用户开发并维护的。本地界面管理员可以编辑可用小工具的[[MediaWiki:Gadgets-definition|定义]]，本地管理员可以编辑它们的描述[[Special:Gadgets|说明]]，在此处你可以看到各个小工具的源代码。该wiki上每个小工具的用户数量列于[[Special:GadgetUsage|小工具使用统计]]页面中。",
+	"gadgets-prefstext-safemode": "由于已启用安全模式，小工具目前不可用。请[[#mw-input-wpforcesafemode|禁用安全模式]]以使用小工具。",
 	"gadgets": "小工具",
 	"gadgetusage": "小工具使用统计",
 	"gadgetusage-gadget": "小工具",
@@ -44,7 +48,9 @@
 	"gadgets-uses": "使用",
 	"gadgets-required-rights": "需要以下{{PLURAL:$2|权限}}：\n\n$1",
 	"gadgets-required-skins": "可用于{{PLURAL:$2|$1皮肤|以下皮肤：$1}}。",
-	"gadgets-required-actions": "可用于{{PLURAL:$2|“$1”页面操作|以下页面操作：$1}}",
+	"gadgets-required-actions": "仅限{{PLURAL:$2|“$1”页面操作|以下页面操作：$1}}。",
+	"gadgets-required-namespaces": "仅限{{PLURAL:$2|“$1”命名空间|以下命名空间：$1}}。",
+	"gadgets-required-contentmodels": "仅限{{PLURAL:$2|“$1”内容模型|以下内容模型：$1}}。",
 	"gadgets-default": "默认所有人启用。",
 	"gadgets-legacy": "未加载小工具。请迁移至ResourceLoader。\n（[https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) 了解更多]）",
 	"gadgets-packaged": "本小工具[https://www.mediawiki.org/wiki/ResourceLoader/Package_files 被包装]，入口点为$1",
@@ -60,6 +66,6 @@
 	"action-gadgets-edit": "编辑此小工具的JavaScript或CSS页面",
 	"right-gadgets-definition-edit": "编辑小工具定义",
 	"action-gadgets-definition-edit": "编辑此小工具的定义",
-	"gadgets-wrong-contentmodel": "在{{ns:2302}} 命名空间的页码必须在定义的内容模型中。",
+	"gadgets-wrong-contentmodel": "{{ns:2302}}命名空间内的页面必须是小工具定义内容模型。",
 	"gadgets-supports-urlload": "此小工具支持通过包含<code>?withgadget</code>查询的URL来加载。"
 }

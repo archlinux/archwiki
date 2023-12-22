@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Wawiel",
-			"Rooiratel"
+			"Rooiratel",
+			"Wawiel"
 		]
 	},
 	"templatedata-desc": "Implementeer die stoor van data vir sjabloonparameters (met JSON)",
@@ -72,7 +72,6 @@
 	"templatedata-modal-notice-import-numparams": "$1 nuwe {{PLURAL:$1|parameter is| parameters is}} ingevoer: $2",
 	"templatedata-modal-placeholder-paramkey": "Parameternaam",
 	"templatedata-modal-search-input-placeholder": "Soek volgens taalnaam of -kode",
-	"templatedata-modal-table-param-actions": "Maatreëls",
 	"templatedata-modal-table-param-aliases": "Aliasse (geskei deur 'n komma)",
 	"templatedata-modal-table-param-autovalue": "Outomatiese waarde",
 	"templatedata-modal-table-param-default": "Verstek ($1)",
@@ -87,7 +86,6 @@
 	"templatedata-modal-table-param-required": "Verpligtend",
 	"templatedata-modal-table-param-suggested": "Voorgestel",
 	"templatedata-modal-table-param-type": "Soort",
-	"templatedata-modal-table-param-uneditablefield": "Nie bewerkbaar nie",
 	"templatedata-modal-title": "Sjabloondokumentasieredigeerder",
 	"templatedata-modal-title-addparam": "Voeg nuwe parameter by",
 	"templatedata-modal-title-choose-language": "Kies taal",

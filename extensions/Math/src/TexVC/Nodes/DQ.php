@@ -4,9 +4,10 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\Math\TexVC\Nodes;
 
-use MediaWiki\Extension\Math\TexVC\MMLmappings\BaseMethods;
+use MediaWiki\Extension\Math\TexVC\MMLmappings\BaseParsing;
 use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmsub;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmunder;
 
 class DQ extends TexNode {
 	/** @var TexNode */
@@ -39,17 +40,34 @@ class DQ extends TexNode {
 	}
 
 	public function renderMML( $arguments = [], $state = [] ) {
-		$res = BaseMethods::checkAndParse( $this->base->getArgs()[0], $arguments, null, $this );
-		if ( $res ) {
-			return $res;
-		} else {
+		if ( array_key_exists( "limits", $state ) ) {
+			// A specific DQ case with preceding limits, just invoke the limits parsing manually.
+			return BaseParsing::limits( $this, $arguments, $state, "" );
+		}
+
+		$emptyMrow = "";
+		// In cases with empty curly preceding like: "{}_pF_q"
+		if ( $this->getBase() instanceof Curly && $this->getBase()->isEmpty() ) {
+			$mrow = new MMLmrow();
+			$emptyMrow = $mrow->getEmpty();
+		}
+
+		if ( !$this->isEmpty() ) {
+			if ( $this->getBase()->containsFunc( "\underbrace" ) ) {
+				$outer = new MMLmunder();
+
+			} else {
+				$outer = new MMLmsub();
+			}
 			// Otherwise use default fallback
 			$mmlMrow = new MMLmrow();
-			$msub = new MMLmsub();
-			return $msub->encapsulateRaw(
+			return $outer->encapsulateRaw(
+				 $emptyMrow .
 				$this->base->renderMML( [], $state ) .
 				$mmlMrow->encapsulateRaw( $this->down->renderMML( [], $state ) ) );
 		}
+
+		return "";
 	}
 
 	public function extractIdentifiers( $args = null ) {

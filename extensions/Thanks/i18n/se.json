@@ -16,7 +16,7 @@
 	"thanks-error-undefined": "Giitin ii lihkostuvvan (meattáhuskoda: $1). Geahččal giitit fas.",
 	"thanks-error-invalid-log-id": "Loggamearkkastat ii gávdnon",
 	"thanks-error-revdeleted": "Giitin ii lihkostuvvan, go siidoveršuvdna lii sihkkojuvvon.",
-	"thanks-error-notloggedin": "Namahis geavaheaddjit eai sáhte giitit",
+	"thanks-error-notloggedin": "Anonyma geavaheaddjit eai sáhte giitit",
 	"thanks-thank-tooltip": "{{GENDER:$1|Giitte}} dán {{GENDER:$2|geavaheaddji}}",
 	"thanks-thank-tooltip-no": "{{GENDER:$1|Ale giitte}}",
 	"thanks-thank-tooltip-yes": "{{GENDER:$1|Giitte}} geavaheaddji",

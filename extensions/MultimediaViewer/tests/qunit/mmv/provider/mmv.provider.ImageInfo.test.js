@@ -15,14 +15,73 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { ImageInfo } = require( 'mmv' );
+
 ( function () {
-	QUnit.module( 'mmv.provider.ImageInfo', QUnit.newMwEnvironment() );
+	QUnit.module( 'mmv.provider.ImageInfo', QUnit.newMwEnvironment( {
+		// mw.Title relies on these three config vars
+		// Restore them after each test run
+		config: {
+			wgFormattedNamespaces: {
+				'-2': 'Media',
+				'-1': 'Special',
+				0: '',
+				1: 'Talk',
+				2: 'User',
+				3: 'User talk',
+				4: 'Wikipedia',
+				5: 'Wikipedia talk',
+				6: 'File',
+				7: 'File talk',
+				8: 'MediaWiki',
+				9: 'MediaWiki talk',
+				10: 'Template',
+				11: 'Template talk',
+				12: 'Help',
+				13: 'Help talk',
+				14: 'Category',
+				15: 'Category talk',
+				// testing custom / localized namespace
+				100: 'Penguins'
+			},
+			wgNamespaceIds: {
+				/* eslint-disable camelcase */
+				media: -2,
+				special: -1,
+				'': 0,
+				talk: 1,
+				user: 2,
+				user_talk: 3,
+				wikipedia: 4,
+				wikipedia_talk: 5,
+				file: 6,
+				file_talk: 7,
+				mediawiki: 8,
+				mediawiki_talk: 9,
+				template: 10,
+				template_talk: 11,
+				help: 12,
+				help_talk: 13,
+				category: 14,
+				category_talk: 15,
+				image: 6,
+				image_talk: 7,
+				project: 4,
+				project_talk: 5,
+				// Testing custom namespaces and aliases
+				penguins: 100,
+				antarctic_waterfowl: 100
+				/* eslint-enable camelcase */
+			},
+			wgCaseSensitiveNamespaces: []
+		}
+	} ) );
 
 	QUnit.test( 'ImageInfo constructor sense check', function ( assert ) {
 		var api = { get: function () {} },
-			imageInfoProvider = new mw.mmv.provider.ImageInfo( api );
+			imageInfoProvider = new ImageInfo( api );
 
-		assert.true( imageInfoProvider instanceof mw.mmv.provider.ImageInfo );
+		assert.true( imageInfoProvider instanceof ImageInfo );
 	} );
 
 	QUnit.test( 'ImageInfo get test', function ( assert ) {
@@ -31,11 +90,11 @@
 				apiCallCount++;
 				return $.Deferred().resolve( {
 					query: {
-						pages: {
-							'-1': {
+						pages: [
+							{
 								ns: 6,
 								title: 'File:Stuff.jpg',
-								missing: '',
+								missing: true,
 								imagerepository: 'shared',
 								imageinfo: [
 									{
@@ -134,12 +193,12 @@
 									}
 								]
 							}
-						}
+						]
 					}
 				} );
 			} },
 			file = new mw.Title( 'File:Stuff.jpg' ),
-			imageInfoProvider = new mw.mmv.provider.ImageInfo( api );
+			imageInfoProvider = new ImageInfo( api );
 
 		return imageInfoProvider.get( file ).then( function ( image ) {
 			assert.strictEqual( image.title.getPrefixedDb(), 'File:Stuff.jpg', 'title is set correctly' );
@@ -184,7 +243,7 @@
 			} },
 			file = new mw.Title( 'File:Stuff.jpg' ),
 			done = assert.async(),
-			imageInfoProvider = new mw.mmv.provider.ImageInfo( api );
+			imageInfoProvider = new ImageInfo( api );
 
 		imageInfoProvider.get( file ).fail( function () {
 			assert.true( true, 'promise rejected when no data is returned' );
@@ -196,17 +255,17 @@
 		var api = { get: function () {
 				return $.Deferred().resolve( {
 					query: {
-						pages: {
-							'-1': {
+						pages: [
+							{
 								title: 'File:Stuff.jpg'
 							}
-						}
+						]
 					}
 				} );
 			} },
 			file = new mw.Title( 'File:Stuff.jpg' ),
 			done = assert.async(),
-			imageInfoProvider = new mw.mmv.provider.ImageInfo( api );
+			imageInfoProvider = new ImageInfo( api );
 
 		imageInfoProvider.get( file ).fail( function () {
 			assert.true( true, 'promise rejected when imageinfo is missing' );
@@ -218,19 +277,19 @@
 		var api = { get: function () {
 				return $.Deferred().resolve( {
 					query: {
-						pages: {
-							'-1': {
+						pages: [
+							{
 								title: 'File:Stuff.jpg',
-								missing: '',
+								missing: true,
 								imagerepository: ''
 							}
-						}
+						]
 					}
 				} );
 			} },
 			file = new mw.Title( 'File:Stuff.jpg' ),
 			done = assert.async(),
-			imageInfoProvider = new mw.mmv.provider.ImageInfo( api );
+			imageInfoProvider = new ImageInfo( api );
 
 		imageInfoProvider.get( file ).fail( function ( errorMessage ) {
 			assert.strictEqual( errorMessage, 'file does not exist: File:Stuff.jpg',

@@ -5,7 +5,6 @@
 			"Ykhwong"
 		]
 	},
-	"apihelp-titleblacklist-description": "TitleBlacklist에 대해 문서 제목, 파일 이름, 사용자 이름을 검사합니다.",
 	"apihelp-titleblacklist-summary": "TitleBlacklist에 대해 문서 제목, 파일 이름, 사용자 이름을 검사합니다.",
 	"apihelp-titleblacklist-param-title": "블랙리스트에 대해 검사할 문자열입니다.",
 	"apihelp-titleblacklist-param-action": "검사할 동작입니다.",

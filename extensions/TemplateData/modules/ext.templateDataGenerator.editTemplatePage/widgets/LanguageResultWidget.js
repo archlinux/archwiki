@@ -12,6 +12,12 @@ function LanguageResultWidget( config ) {
 	// Parent constructor
 	LanguageResultWidget.parent.call( this, config );
 
+	// Mixin constructors
+	OO.ui.mixin.TabIndexedElement.call( this );
+
+	// Events
+	this.$element.on( 'keydown', this.onKeyDown.bind( this ) );
+
 	// Initialization
 	this.$element.addClass( 'tdg-languageResultWidget' );
 	this.$name = $( '<div>' ).addClass( 'tdg-languageResultWidget-name' );
@@ -22,8 +28,19 @@ function LanguageResultWidget( config ) {
 /* Inheritance */
 
 OO.inheritClass( LanguageResultWidget, OO.ui.OptionWidget );
+OO.mixinClass( LanguageResultWidget, OO.ui.mixin.TabIndexedElement );
 
 /* Methods */
+
+/**
+ * @param {jQuery.Event} e Key down event
+ * @fires choose
+ */
+LanguageResultWidget.prototype.onKeyDown = function ( e ) {
+	if ( e.which === OO.ui.Keys.ENTER ) {
+		this.emit( 'choose', this );
+	}
+};
 
 /**
  * Update labels based on query

@@ -1,0 +1,10 @@
+{
+	"vector-feature-custom-font-size": {
+		"options": [ "disabled", "enabled" ],
+		"preferenceKey": "vector-font-size"
+	},
+	"vector-feature-limited-width": {
+		"options": [ "0", "1" ],
+		"preferenceKey": "vector-limited-width"
+	}
+}

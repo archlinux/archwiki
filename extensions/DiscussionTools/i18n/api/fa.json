@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Beginneruser",
+			"Havadar-hvac",
 			"Jeeputer"
 		]
 	},
@@ -13,6 +14,7 @@
 	"apierror-discussiontools-subscription-failed-remove": "ناتوان در توقف اشتراک در این موضوع",
 	"apihelp-discussiontoolsedit-param-commentid": "شناسه نظر برای پاسخ دادن. تنها در صورتی که <var>paction</var> روی <var>addcomment</var> تنظیم شده‌باشد استفاده می‌شود. <var>commentname</var> را نادیده می‌گیرد.",
 	"apihelp-discussiontoolsedit-param-commentname": "نام پیام برای پاسخ دادن. تنها در صورت <var>paction</var> روی <var>addcomment</var> تنظیم شده‌باشد استفاده می‌شود.",
+	"apihelp-discussiontoolsedit-param-autosubscribe": "کاربر به صورت خودکار در موضوع صفحه بحث مشترک شود؟",
 	"apihelp-discussiontoolsedit-param-html": "محتوا برای ارسال، در قالب اچ‌تی‌ام‌ال. همزمان همراه با <var>wikitext</var> قابل استفاده نیست.",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} تنها در صورتی که <var>paction</var> روی <var>addtopic</var> تنظیم شده‌باشد استفاده می‌شود.",
 	"apihelp-discussiontoolsedit-param-wikitext": "محتوا برای ارسال، در قالب ویکی‌متن. همزمان همراه با <var>html</var> قابل استفاده نیست.",

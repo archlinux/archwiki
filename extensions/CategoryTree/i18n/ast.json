@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Esbardu",
-			"Xuacu"
+			"Xuacu",
+			"YoaR"
 		]
 	},
 	"categorytree": "Árbole de categoríes",
@@ -19,7 +20,7 @@
 	"categorytree-mode-all": "toles páxines",
 	"categorytree-collapse": "anubrir",
 	"categorytree-expand": "espander",
-	"categorytree-member-counts": "Contien {{PLURAL:$1|1 subcategoría|$1 subcategoríes}}, {{PLURAL:$2|1 páxina|$2 páxines}} y {{PLURAL:$3|1 ficheru|$3 ficheros}}",
+	"categorytree-member-counts": "Contién {{PLURAL:$1|1 subcategoría|$1 subcategoríes}}, {{PLURAL:$2|1 páxina|$2 páxines}} y {{PLURAL:$3|1 ficheru|$3 ficheros}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 F",

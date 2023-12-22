@@ -516,8 +516,7 @@
 					} ).observe( $filterBox[ 0 ] );
 				}
 
-				$switchEditorBtn.on( 'click', switchEditor );
-				$switchEditorBtn.show();
+				$switchEditorBtn.on( 'click', switchEditor ).show();
 			} );
 		}
 

@@ -7,7 +7,6 @@
 			"RYOUMA1117"
 		]
 	},
-	"apihelp-echomarkread-description": "現在の利用者への通知を既読にする。",
 	"apihelp-echomarkread-summary": "現在の利用者への通知を既読にする。",
 	"apihelp-echomarkread-param-list": "既読にする通知IDのリスト。",
 	"apihelp-echomarkread-param-unreadlist": "未読にする通知IDのリスト。",

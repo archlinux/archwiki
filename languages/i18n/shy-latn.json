@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
+			"Base",
 			"DannyS712",
-			"Vikoula5",
-			"Base"
+			"Vikoula5"
 		]
 	},
 	"tog-underline": "Aderrer n iseɣwan:",
@@ -554,7 +554,7 @@
 	"summary-preview": "Taskant n ugzul n ubeddel:",
 	"blockedtitle": "Amseqdac iɛekkel",
 	"blockedtext": "<strong>Amiḍan-ik n useqdac neɣ tansa n IP weḥlen.</strong>\n\nAsewḥel yega-t $1.\nTaɣẓint d tagi : <em>$2</em>.\n\n* Tazwara n usewḥel : $8\n* Tagara n usewḥel : $6\n* Amiḍan iweḥlen : $7.\n\n\nTzemreḍ ad tnermseḍ $1 neɣ [[{{MediaWiki:Grouppage-sysop}}|anedbal]]-nniḍen akken ad tsmelayem.\nUr tezmireḍ ara ad tesqedceḍ tawuri \"nemres aseqdac-agi\" ma yella tella tensa tameɣtut deg[[Special:Preferences|ismenyifen n useqdac]], udiɣ ma yella tawuri-agi ur tewḥil ara. Tansa-ik IP n tura d $3, ID n usewḥeld #$5.\nSuddu-d akk talɣut-agi deg tuttriwin ara d-azdneḍ.",
-	"autoblockedtext": "Tansa-ik IP tewḥel s wudem awurman acku i tt-yesseqdacen  yesweḥli-t $1.\n\n\nTaɣẓint d tagi :\n:<em>$2</em>\n\n* Tazwara n usewḥel : $8\n* Tagara n usewḥel : $6\n* Amiḍan iweḥlen : $7.\n\n\nTzemreḍ ad tnermseḍ $1 neɣ [[{{MediaWiki:Grouppage-sysop}}|anedbal]]-nniḍen akken ad tsmelayem.\nUr tezmireḍ ara ad tesqedceḍ tawuri \"nermres aseqdac-agi\" ma yella tella tensa tameɣtut deg[[Special:Preferences|ismenyifen n useqdac]], udiɣ ma yella tawuri-agi ur tewḥil ara. \n\nTansa-ik IP n tura d $3, ID n usewḥeld #$5.\nSuddu-d akk talɣut-agi deg tuttriwin ara d-azdneḍ.",
+	"autoblockedtext": "Tansa-ik IP tewḥel s wudem awurman acku i tt-yesseqdacen yesweḥli-t $1.\n\n\nTaɣẓint d tagi :\n:<em>$2</em>\n\n* Tazwara n usewḥel : $8\n* Tagara n usewḥel : $6\n* Amiḍan iweḥlen : $7.\n\n\nTzemreḍ ad tnermseḍ $1 neɣ [[{{MediaWiki:Grouppage-sysop}}|anedbal]]-nniḍen akken ad tsmelayem.\nUr tezmireḍ ara ad tesqedceḍ tawuri \"nermres aseqdac-agi\" ma yella tella tensa tameɣtut deg[[Special:Preferences|ismenyifen n useqdac]], udiɣ ma yella tawuri-agi ur tewḥil ara. \n\nTansa-ik IP n tura d $3, ID n usewḥeld #$5.\nSuddu-d akk talɣut-agi deg tuttriwin ara d-azdneḍ.",
 	"blockednoreason": "Ulac taɣẓint",
 	"whitelistedittext": "Yessefk ad $1 iwakken ad tbeddleḍ isebtar.",
 	"confirmedittext": "Yessefk ad tsentmeḍ tansa e-mail inek uqbel abeddel. Xtar tansa e-mail di [[Special:Preferences|isemyifiyen n wemseqdac]].",
@@ -646,7 +646,6 @@
 	"editpage-notsupportedcontentformat-text": "Amasal n ugbur $1 ur d-yetwarfed ara sɣur talɣa n ugbur $2.",
 	"content-model-wikitext": "wikiaḍris",
 	"content-model-text": "aḍris afraray",
-	"content-model-javascript": "JavaScript",
 	"content-json-empty-object": "Asentel d ilem",
 	"content-json-empty-array": "Talfelwit d tilemt",
 	"expensive-parserfunction-warning": "'''Ɣur-wet :''' Asebter agi yesɛa aṭas n tiɣriwin ar tiseɣnin ɣlayen n umsisleḍ taseddast.\nIlaq ad i sɛu ddaw n  $2 {{PLURAL:$2|tiɣri|tiɣriwin }}, wannag tura {{PLURAL:$1|tella $1 tiɣri|llant $1 tiɣriwin}}.",
@@ -671,8 +670,8 @@
 	"undo-failure": "Ur yezmir ara ad issefu abeddel axaṭer yella amennuɣ abusari deg ubeddel.",
 	"undo-norev": "Abeddel ur yezmer ara ad yetwekkes acku ulac-itt naɣ tetwekkes yakan",
 	"undo-nochange": "Ad yettban d akken abeddel yettwasefsex yakan.",
-	"undo-summary": "Ssefsu tasiwelt $1 sɣur [[Special:Contributions/$2|$2]] ([[User talk:$2|Meslay]])",
-	"undo-summary-username-hidden": "Semmewet tacaggart $1 sɣur amseqdac yeffren",
+	"undo-summary": "Ssefsu tasiwelt [[Special:Diff/$1|$1]] sɣur [[Special:Contributions/$2|$2]] ([[User talk:$2|Meslay]])",
+	"undo-summary-username-hidden": "Semmewet tacaggart [[Special:Diff/$1|$1]] sɣur amseqdac yeffren",
 	"viewpagelogs": "Ẓer aɣmis n usebter-agi",
 	"nohistory": "Ulac amezruy n yibeddlen i usebter-agi.",
 	"currentrev": "Tasiwelt n tura",
@@ -833,7 +832,6 @@
 	"search-relatedarticle": "Amassaɣ",
 	"searchrelated": "amassaɣ",
 	"searchall": "akk",
-	"showingresults": "Tamuli n {{PLURAL:$1|<strong>Yiwen</strong> wegmud|<strong>$1</strong> n yigmad}} seg  #<strong>$2</strong>.",
 	"search-showingresults": "{{PLURAL:$4|Agmuḍ <strong>$1</strong> si <strong>$3</strong>|Igmaḍ <strong>$1 - $2</strong> si <strong>$3</strong>}}",
 	"search-nonefound": "Ulac igmad i usuter agi.",
 	"search-nonefound-thiswiki": "ulac Agmuḍ l site",
@@ -908,7 +906,6 @@
 	"default": "ameslugen",
 	"prefs-files": "ifuyla",
 	"prefs-custom-css": "CSS asagen",
-	"prefs-custom-json": "JSON asagen",
 	"prefs-custom-js": "JavaScript asagen",
 	"prefs-common-config": "JavaScript  d CSS azduklan i akkw lebsa:",
 	"prefs-reset-intro": "Tzemreḍ ad seqdeceḍ asebter agi iwakken ad erreḍ iɣewwaren inek/inem ar azalen n lexṣas n usmel.\nWagi ur yezmer ara ad yetwekkes.",

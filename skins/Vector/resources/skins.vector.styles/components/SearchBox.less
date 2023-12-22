@@ -1,0 +1,23 @@
+// Search container
+// We have to put those styles outside `.skin-vector-search-vue`,
+// as we can't address no-JS modern and Vue enhanced otherwise.
+.vector-search-box {
+	// Use Vector's base font-size, as this is a component outside of `.vector-body`.
+	// Support IE 9-11, Trident cuts values 2 digits after decimal point.
+	// `calc` enables to set correct calculation in place again. See T102364.
+	font-size: @font-size-base--trident-hack;
+	// If this is a flex item, make sure it grows into available space.
+	flex-grow: 1;
+
+	.vector-typeahead-search-container {
+		max-width: @max-width-search;
+		margin-right: @margin-end-search;
+	}
+}
+
+@media ( min-width: @min-width-desktop-wide ) {
+	.client-js & .vector-search-box.vector-search-box-auto-expand-width {
+		// Ensure search box is aligned with content when it autoexpands (i.e. search thumbnails)
+		margin-left: -@size-search-expand;
+	}
+}

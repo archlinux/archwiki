@@ -29,6 +29,8 @@ use Wikimedia\Rdbms\Database\DbQuoter;
 use Wikimedia\Rdbms\DatabaseDomain;
 use Wikimedia\Rdbms\DBLanguageError;
 use Wikimedia\Rdbms\LikeMatch;
+use Wikimedia\Rdbms\Query;
+use Wikimedia\Rdbms\QueryBuilderFromRawSql;
 use Wikimedia\Rdbms\Subquery;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
@@ -188,6 +190,11 @@ class SQLPlatform implements ISQLPlatform {
 
 		$sql = '';
 		foreach ( array_reverse( $conds ) as $field => $value ) {
+			if ( is_int( $field ) ) {
+				throw new InvalidArgumentException(
+					'Non-associative array passed to buildComparison() (typo?)'
+				);
+			}
 			$encValue = $this->quoter->addQuotes( $value );
 			if ( $sql === '' ) {
 				$sql = "$field $op $encValue";
@@ -278,7 +285,6 @@ class SQLPlatform implements ISQLPlatform {
 
 	public function makeWhereFrom2d( $data, $baseKey, $subKey ) {
 		$conds = [];
-
 		foreach ( $data as $base => $sub ) {
 			if ( count( $sub ) ) {
 				$conds[] = $this->makeList(
@@ -288,12 +294,11 @@ class SQLPlatform implements ISQLPlatform {
 			}
 		}
 
-		if ( $conds ) {
-			return $this->makeList( $conds, self::LIST_OR );
-		} else {
-			// Nothing to search for...
-			return false;
+		if ( !$conds ) {
+			throw new InvalidArgumentException( "Data for $baseKey and $subKey must be non-empty" );
 		}
+
+		return $this->makeList( $conds, self::LIST_OR );
 	}
 
 	public function factorConds( $condsArray ) {
@@ -468,10 +473,21 @@ class SQLPlatform implements ISQLPlatform {
 	 * @inheritDoc
 	 * @stable to override
 	 */
-	public function unionQueries( $sqls, $all ) {
+	public function unionQueries( $sqls, $all, $options = [] ) {
 		$glue = $all ? ') UNION ALL (' : ') UNION (';
 
-		return '(' . implode( $glue, $sqls ) . ')';
+		$sql = '(' . implode( $glue, $sqls ) . ')';
+		if ( !$this->unionSupportsOrderAndLimit() ) {
+			return $sql;
+		}
+		$sql = $sql . $this->makeOrderBy( $options );
+		$limit = $options['LIMIT'] ?? null;
+		$offset = $options['OFFSET'] ?? false;
+		if ( $limit !== null ) {
+			$sql = $this->limitResult( $sql, $limit, $offset );
+		}
+
+		return $sql;
 	}
 
 	/**
@@ -1155,7 +1171,7 @@ class SQLPlatform implements ISQLPlatform {
 	 * @return bool
 	 */
 	public function isQuotedIdentifier( $name ) {
-		return $name[0] == '"' && substr( $name, -1, 1 ) == '"';
+		return strlen( $name ) > 1 && $name[0] === '"' && $name[-1] === '"';
 	}
 
 	/**
@@ -1297,82 +1313,6 @@ class SQLPlatform implements ISQLPlatform {
 		return '';
 	}
 
-	public function unionConditionPermutations(
-		$table,
-		$vars,
-		array $permute_conds,
-		$extra_conds = '',
-		$fname = __METHOD__,
-		$options = [],
-		$join_conds = []
-	) {
-		// First, build the Cartesian product of $permute_conds
-		$conds = [ [] ];
-		foreach ( $permute_conds as $field => $values ) {
-			if ( !$values ) {
-				// Skip empty $values
-				continue;
-			}
-			$values = array_unique( $values );
-			$newConds = [];
-			foreach ( $conds as $cond ) {
-				foreach ( $values as $value ) {
-					$cond[$field] = $value;
-					$newConds[] = $cond; // Arrays are by-value, not by-reference, so this works
-				}
-			}
-			$conds = $newConds;
-		}
-
-		$extra_conds = $extra_conds === '' ? [] : (array)$extra_conds;
-
-		// If there's just one condition and no subordering, hand off to
-		// selectSQLText directly.
-		if ( count( $conds ) === 1 &&
-			( !isset( $options['INNER ORDER BY'] ) || !$this->unionSupportsOrderAndLimit() )
-		) {
-			return $this->selectSQLText(
-				$table, $vars, $conds[0] + $extra_conds, $fname, $options, $join_conds
-			);
-		}
-
-		// Otherwise, we need to pull out the order and limit to apply after
-		// the union. Then build the SQL queries for each set of conditions in
-		// $conds. Then union them together (using UNION ALL, because the
-		// product *should* already be distinct).
-		$orderBy = $this->makeOrderBy( $options );
-		$limit = $options['LIMIT'] ?? null;
-		$offset = $options['OFFSET'] ?? false;
-		$all = empty( $options['NOTALL'] ) && !in_array( 'NOTALL', $options );
-		if ( !$this->unionSupportsOrderAndLimit() ) {
-			unset( $options['ORDER BY'], $options['LIMIT'], $options['OFFSET'] );
-		} else {
-			if ( array_key_exists( 'INNER ORDER BY', $options ) ) {
-				$options['ORDER BY'] = $options['INNER ORDER BY'];
-			}
-			if ( $limit !== null && is_numeric( $offset ) && $offset != 0 ) {
-				// We need to increase the limit by the offset rather than
-				// using the offset directly, otherwise it'll skip incorrectly
-				// in the subqueries.
-				$options['LIMIT'] = $limit + $offset;
-				unset( $options['OFFSET'] );
-			}
-		}
-
-		$sqls = [];
-		foreach ( $conds as $cond ) {
-			$sqls[] = $this->selectSQLText(
-				$table, $vars, $cond + $extra_conds, $fname, $options, $join_conds
-			);
-		}
-		$sql = $this->unionQueries( $sqls, $all ) . $orderBy;
-		if ( $limit !== null ) {
-			$sql = $this->limitResult( $sql, $limit, $offset );
-		}
-
-		return $sql;
-	}
-
 	/**
 	 * @inheritDoc
 	 * @stable to override
@@ -1398,7 +1338,10 @@ class SQLPlatform implements ISQLPlatform {
 		$encTable = $this->tableName( $table );
 		[ $sqlColumns, $sqlTuples ] = $this->makeInsertLists( $rows );
 
-		return "INSERT INTO $encTable ($sqlColumns) VALUES $sqlTuples";
+		return [
+			"INSERT INTO $encTable ($sqlColumns) VALUES $sqlTuples",
+			"INSERT INTO $encTable ($sqlColumns) VALUES '?'"
+		];
 	}
 
 	/**
@@ -1452,7 +1395,10 @@ class SQLPlatform implements ISQLPlatform {
 		[ $sqlColumns, $sqlTuples ] = $this->makeInsertLists( $rows );
 		[ $sqlVerb, $sqlOpts ] = $this->makeInsertNonConflictingVerbAndOptions();
 
-		return rtrim( "$sqlVerb $encTable ($sqlColumns) VALUES $sqlTuples $sqlOpts" );
+		return [
+			rtrim( "$sqlVerb $encTable ($sqlColumns) VALUES $sqlTuples $sqlOpts" ),
+			rtrim( "$sqlVerb $encTable ($sqlColumns) VALUES '?' $sqlOpts" )
+		];
 	}
 
 	/**
@@ -1566,60 +1512,74 @@ class SQLPlatform implements ISQLPlatform {
 		return $sql;
 	}
 
+	/**
+	 * @param string $table
+	 * @param string|array $conds
+	 * @return Query
+	 */
 	public function deleteSqlText( $table, $conds ) {
-		$this->assertConditionIsNotEmpty( $conds, __METHOD__, false );
+		$isCondValid = ( is_string( $conds ) || is_array( $conds ) ) && $conds;
+		if ( !$isCondValid ) {
+			throw new DBLanguageError( __METHOD__ . ' called with empty conditions' );
+		}
 
-		$table = $this->tableName( $table );
-		$sql = "DELETE FROM $table";
+		$encTable = $this->tableName( $table );
+		$sql = "DELETE FROM $encTable";
 
-		if ( $conds !== self::ALL_ROWS ) {
+		$condsSql = '';
+		$cleanCondsSql = '';
+		if ( $conds !== self::ALL_ROWS && $conds !== [ self::ALL_ROWS ] ) {
+			$cleanCondsSql = ' WHERE ' . $this->scrubArray( $conds );
 			if ( is_array( $conds ) ) {
 				$conds = $this->makeList( $conds, self::LIST_AND );
 			}
-			$sql .= ' WHERE ' . $conds;
+			$condsSql .= ' WHERE ' . $conds;
 		}
+		return new Query(
+			$sql . $condsSql,
+			self::QUERY_CHANGE_ROWS,
+			'DELETE',
+			$table,
+			$sql . $cleanCondsSql
+		);
+	}
 
-		return $sql;
+	private function scrubArray( $array, $listType = self::LIST_AND ) {
+		if ( is_array( $array ) ) {
+			$scrubbedArray = [];
+			foreach ( $array as $key => $value ) {
+				$scrubbedArray[$key] = '?';
+			}
+			return $this->makeList( $scrubbedArray, $listType );
+		}
+		return '?';
 	}
 
 	public function updateSqlText( $table, $set, $conds, $options ) {
-		$this->assertConditionIsNotEmpty( $conds, __METHOD__, true );
-		$table = $this->tableName( $table );
+		$isCondValid = ( is_string( $conds ) || is_array( $conds ) ) && $conds;
+		if ( !$isCondValid ) {
+			throw new DBLanguageError( __METHOD__ . ' called with empty conditions' );
+		}
+		$encTable = $this->tableName( $table );
 		$opts = $this->makeUpdateOptions( $options );
-		$sql = "UPDATE $opts $table SET " . $this->makeList( $set, self::LIST_SET );
+		$sql = "UPDATE $opts $encTable";
+		$condsSql = " SET " . $this->makeList( $set, self::LIST_SET );
+		$cleanCondsSql = " SET " . $this->scrubArray( $set, self::LIST_SET );
 
-		if ( $conds && $conds !== self::ALL_ROWS ) {
+		if ( $conds && $conds !== self::ALL_ROWS && $conds !== [ self::ALL_ROWS ] ) {
+			$cleanCondsSql .= ' WHERE ' . $this->scrubArray( $conds );
 			if ( is_array( $conds ) ) {
 				$conds = $this->makeList( $conds, self::LIST_AND );
 			}
-			$sql .= ' WHERE ' . $conds;
+			$condsSql .= ' WHERE ' . $conds;
 		}
-
-		return $sql;
-	}
-
-	/**
-	 * Check type and bounds conditions parameters for update
-	 *
-	 * In order to prevent possible performance or replication issues,
-	 * empty condition for 'update' and 'delete' queries isn't allowed
-	 *
-	 * @param array|string $conds conditions to be validated on emptiness
-	 * @param string $fname caller's function name to be passed to exception
-	 * @param bool $deprecate define the assertion type. If true then
-	 *   wfDeprecated will be called, otherwise DBUnexpectedError will be
-	 *   raised.
-	 * @since 1.35, moved to SQLPlatform in 1.39
-	 */
-	protected function assertConditionIsNotEmpty( $conds, string $fname, bool $deprecate ) {
-		$isCondValid = ( is_string( $conds ) || is_array( $conds ) ) && $conds;
-		if ( !$isCondValid ) {
-			if ( $deprecate ) {
-				wfDeprecated( $fname . ' called with empty $conds', '1.35', false, 4 );
-			} else {
-				throw new DBLanguageError( $fname . ' called with empty conditions' );
-			}
-		}
+		return new Query(
+			$sql . $condsSql,
+			self::QUERY_CHANGE_ROWS,
+			'UPDATE',
+			$table,
+			$sql . $cleanCondsSql
+		);
 	}
 
 	/**
@@ -1681,12 +1641,7 @@ class SQLPlatform implements ISQLPlatform {
 	 * @return string|null
 	 */
 	public function getQueryVerb( $sql ) {
-		// Distinguish ROLLBACK from ROLLBACK TO SAVEPOINT
-		return preg_match(
-			'/^\s*(rollback\s+to\s+savepoint|[a-z]+)/i',
-			$sql,
-			$m
-		) ? strtoupper( $m[1] ) : null;
+		return QueryBuilderFromRawSql::buildQuery( $sql, 0 )->getVerb();
 	}
 
 	/**
@@ -1700,12 +1655,11 @@ class SQLPlatform implements ISQLPlatform {
 	 * before the current query (in DBO_TRX mode, on by default).
 	 *
 	 * @stable to override
-	 * @param string $sql
 	 * @return bool
 	 */
-	public function isTransactableQuery( $sql ) {
+	public function isTransactableQuery( Query $sql ) {
 		return !in_array(
-			$this->getQueryVerb( $sql ),
+			$sql->getVerb(),
 			[
 				'BEGIN',
 				'ROLLBACK',
@@ -1738,65 +1692,14 @@ class SQLPlatform implements ISQLPlatform {
 	 * @param string $sql SQL query
 	 * @param int $flags Query flags to query()
 	 * @return bool
+	 * @deprecated since 1.41
 	 */
 	public function isWriteQuery( $sql, $flags ) {
-		// Check if a SQL wrapper method already flagged the query as a write
-		if (
-			$this->fieldHasBit( $flags, self::QUERY_CHANGE_ROWS ) ||
-			$this->fieldHasBit( $flags, self::QUERY_CHANGE_SCHEMA )
-		) {
-			return true;
-		}
-		// Check if a SQL wrapper method already flagged the query as a non-write
-		if (
-			$this->fieldHasBit( $flags, self::QUERY_CHANGE_NONE ) ||
-			$this->fieldHasBit( $flags, self::QUERY_CHANGE_TRX ) ||
-			$this->fieldHasBit( $flags, self::QUERY_CHANGE_LOCKS )
-		) {
-			return false;
-		}
-
-		$this->logger->warning( __METHOD__ . ' fallback to regex', [
-			'exception' => new RuntimeException(),
-			'db_log_category' => 'sql',
-		] );
-
-		// Treat SELECT queries without FOR UPDATE queries as non-writes. This matches
-		// how MySQL enforces read_only (FOR SHARE and LOCK IN SHADE MODE are allowed).
-		// Handle (SELECT ...) UNION (SELECT ...) queries in a similar fashion.
-		if ( preg_match( '/^\s*\(?SELECT\b/i', $sql ) ) {
-			return (bool)preg_match( '/\bFOR\s+UPDATE\)?\s*$/i', $sql );
-		}
-		// BEGIN and COMMIT queries are considered non-write queries here.
-		// Database backends and drivers (MySQL, MariaDB, php-mysqli) generally
-		// treat these as write queries, in that their results have "affected rows"
-		// as meta data as from writes, instead of "num rows" as from reads.
-		// But, we treat them as non-write queries because when reading data (from
-		// either replica or primary DB) we use transactions to enable repeatable-read
-		// snapshots, which ensures we get consistent results from the same snapshot
-		// for all queries within a request. Use cases:
-		// - Treating these as writes would trigger ChronologyProtector (see method doc).
-		// - We use this method to reject writes to replicas, but we need to allow
-		//   use of transactions on replicas for read snapshots. This is fine given
-		//   that transactions by themselves don't make changes, only actual writes
-		//   within the transaction matter, which we still detect.
-		return !preg_match(
-			'/^\s*(BEGIN|ROLLBACK|COMMIT|SAVEPOINT|RELEASE|SET|SHOW|EXPLAIN|USE)\b/i',
-			$sql
-		);
-	}
-
-	/**
-	 * @param int $flags A bitfield of flags
-	 * @param int $bit Bit flag constant
-	 * @return bool Whether the bit field has the specified bit flag set
-	 */
-	final protected function fieldHasBit( int $flags, int $bit ) {
-		return ( ( $flags & $bit ) === $bit );
+		return QueryBuilderFromRawSql::buildQuery( $sql, $flags )->isWriteQuery();
 	}
 
 	public function buildExcludedValue( $column ) {
-		/* @see Database::doUpsert() */
+		/* @see Database::upsert() */
 		// This can be treated like a single value since __VALS is a single row table
 		return "(SELECT __$column FROM __VALS)";
 	}
@@ -1825,10 +1728,11 @@ class SQLPlatform implements ISQLPlatform {
 
 		$options = $this->normalizeOptions( $options );
 		if ( $this->isFlagInOptions( 'IGNORE', $options ) ) {
-			return $this->insertNonConflictingSqlText( $table, $rows );
+			[ $sql, $cleanSql ] = $this->insertNonConflictingSqlText( $table, $rows );
 		} else {
-			return $this->insertSqlText( $table, $rows );
+			[ $sql, $cleanSql ] = $this->insertSqlText( $table, $rows );
 		}
+		return new Query( $sql, self::QUERY_CHANGE_ROWS, 'INSERT', $table, $cleanSql );
 	}
 
 	/**
@@ -1861,43 +1765,18 @@ class SQLPlatform implements ISQLPlatform {
 	 *
 	 * @param string|string[]|string[][] $uniqueKeys Unique indexes (only one is allowed)
 	 * @param array[] &$rows The row array, which will be replaced with a normalized version.
-	 * @return string[]|null List of columns that defines a single unique index, or null for
-	 *   a legacy fallback to plain insert.
+	 * @return string[] List of columns that defines a single unique index
 	 * @since 1.35
 	 */
 	final public function normalizeUpsertParams( $uniqueKeys, &$rows ) {
 		$rows = $this->normalizeRowArray( $rows );
-		if ( !$rows ) {
-			return null;
-		}
 		if ( !$uniqueKeys ) {
-			// For backwards compatibility, allow insertion of rows with no applicable key
-			$this->logger->warning(
-				"upsert/replace called with no unique key",
-				[
-					'exception' => new RuntimeException(),
-					'db_log_category' => 'sql',
-				]
-			);
-			return null;
+			throw new DBLanguageError( 'No unique key specified for upsert/replace' );
 		}
-		$identityKey = $this->normalizeUpsertKeys( $uniqueKeys );
-		if ( $identityKey ) {
-			$allDefaultKeyValues = $this->assertValidUpsertRowArray( $rows, $identityKey );
-			if ( $allDefaultKeyValues ) {
-				// For backwards compatibility, allow insertion of rows with all-NULL
-				// values for the unique columns (e.g. for an AUTOINCREMENT column)
-				$this->logger->warning(
-					"upsert/replace called with all-null values for unique key",
-					[
-						'exception' => new RuntimeException(),
-						'db_log_category' => 'sql',
-					]
-				);
-				return null;
-			}
-		}
-		return $identityKey;
+		$uniqueKey = $this->normalizeUpsertKeys( $uniqueKeys );
+		$this->assertValidUpsertRowArray( $rows, $uniqueKey );
+
+		return $uniqueKey;
 	}
 
 	/**
@@ -1925,8 +1804,7 @@ class SQLPlatform implements ISQLPlatform {
 
 	/**
 	 * @param string|string[]|string[][] $uniqueKeys Unique indexes (only one is allowed)
-	 * @return string[]|null List of columns that defines a single unique index,
-	 *   or null for a legacy fallback to plain insert.
+	 * @return string[] List of columns that defines a single unique index
 	 * @since 1.35
 	 */
 	private function normalizeUpsertKeys( $uniqueKeys ) {
@@ -1962,39 +1840,30 @@ class SQLPlatform implements ISQLPlatform {
 
 	/**
 	 * @param array<int,array> $rows Normalized list of rows to insert
-	 * @param string[] $identityKey Columns of the (unique) identity key to UPSERT upon
-	 * @return bool Whether all the rows have NULL/absent values for all identity key columns
+	 * @param string[] $uniqueKey Columns of the unique key to UPSERT upon
 	 * @since 1.37
 	 */
-	final protected function assertValidUpsertRowArray( array $rows, array $identityKey ) {
-		$numNulls = 0;
+	final protected function assertValidUpsertRowArray( array $rows, array $uniqueKey ) {
 		foreach ( $rows as $row ) {
-			foreach ( $identityKey as $column ) {
-				$numNulls += ( isset( $row[$column] ) ? 0 : 1 );
+			foreach ( $uniqueKey as $column ) {
+				if ( !isset( $row[$column] ) ) {
+					throw new DBLanguageError(
+						"NULL/absent values for unique key (" . implode( ',', $uniqueKey ) . ")"
+					);
+				}
 			}
 		}
-
-		if (
-			$numNulls &&
-			$numNulls !== ( count( $rows ) * count( $identityKey ) )
-		) {
-			throw new DBLanguageError(
-				"NULL/absent values for unique key (" . implode( ',', $identityKey ) . ")"
-			);
-		}
-
-		return (bool)$numNulls;
 	}
 
 	/**
 	 * @param array $set Combined column/literal assignment map and SQL assignment list
-	 * @param string[] $identityKey Columns of the (unique) identity key to UPSERT upon
+	 * @param string[] $uniqueKey Columns of the unique key to UPSERT upon
 	 * @param array<int,array> $rows List of rows to upsert
 	 * @since 1.37
 	 */
 	final public function assertValidUpsertSetArray(
 		array $set,
-		array $identityKey,
+		array $uniqueKey,
 		array $rows
 	) {
 		if ( !$set ) {
@@ -2002,15 +1871,15 @@ class SQLPlatform implements ISQLPlatform {
 		}
 
 		// Sloppy callers might construct the SET array using the ROW array, leaving redundant
-		// column definitions for identity key columns. Detect this for backwards compatibility.
+		// column definitions for unique key columns. Detect this for backwards compatibility.
 		$soleRow = ( count( $rows ) == 1 ) ? reset( $rows ) : null;
-		// Disallow value changes for any columns in the identity key. This avoids additional
+		// Disallow value changes for any columns in the unique key. This avoids additional
 		// insertion order dependencies that are unwieldy and difficult to implement efficiently
 		// in PostgreSQL.
 		foreach ( $set as $k => $v ) {
 			if ( is_string( $k ) ) {
 				// Key is a column name and value is a literal (e.g. string, int, null, ...)
-				if ( in_array( $k, $identityKey, true ) ) {
+				if ( in_array( $k, $uniqueKey, true ) ) {
 					if ( $soleRow && array_key_exists( $k, $soleRow ) && $soleRow[$k] === $v ) {
 						$this->logger->warning(
 							__METHOD__ . " called with redundant assignment to column '$k'",
@@ -2021,15 +1890,15 @@ class SQLPlatform implements ISQLPlatform {
 						);
 					} else {
 						throw new DBLanguageError(
-							"Cannot reassign column '$k' since it belongs to identity key"
+							"Cannot reassign column '$k' since it belongs to the provided unique key"
 						);
 					}
 				}
 			} elseif ( preg_match( '/^([a-zA-Z0-9_]+)\s*=/', $v, $m ) ) {
 				// Value is of the form "<unquoted alphanumeric column> = <SQL expression>"
-				if ( in_array( $m[1], $identityKey, true ) ) {
+				if ( in_array( $m[1], $uniqueKey, true ) ) {
 					throw new DBLanguageError(
-						"Cannot reassign column '{$m[1]}' since it belongs to identity key"
+						"Cannot reassign column '{$m[1]}' since it belongs to the provided unique key"
 					);
 				}
 			}

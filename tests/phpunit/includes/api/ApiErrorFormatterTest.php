@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Language\RawMessage;
+use MediaWiki\Status\Status;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -403,7 +404,6 @@ class ApiErrorFormatterTest extends MediaWikiLangTestCase {
 		$aboutpage = wfMessage( 'aboutpage' );
 		$mainpage = wfMessage( 'mainpage' );
 		$parens = wfMessage( 'parentheses', 'foobar' );
-		$brackets = wfMessage( 'brackets', 'foobar' );
 		$copyright = wfMessage( 'copyright' );
 		$disclaimers = wfMessage( 'disclaimers' );
 		$edithelp = wfMessage( 'edithelp' );

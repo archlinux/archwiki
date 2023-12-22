@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.40.0"
+		"MediaWiki": ">= 1.41"
 	},
 	"APIModules": {
 		"templatedata": "MediaWiki\\Extension\\TemplateData\\Api\\ApiTemplateData"
@@ -24,13 +24,21 @@
 		"MediaWiki\\Extension\\TemplateData\\": "includes/"
 	},
 	"Hooks": {
-		"EditPage::showEditForm:fields": "MediaWiki\\Extension\\TemplateData\\Hooks::onEditPageShowEditFormFields",
-		"ParserFirstCallInit": "MediaWiki\\Extension\\TemplateData\\Hooks::onParserFirstCallInit",
-		"MultiContentSave": "MediaWiki\\Extension\\TemplateData\\Hooks::onMultiContentSave",
-		"ResourceLoaderRegisterModules": "MediaWiki\\Extension\\TemplateData\\Hooks::onResourceLoaderRegisterModules",
-		"EditPage::showEditForm:initial": "MediaWiki\\Extension\\TemplateData\\Hooks::onEditPage",
-		"ParserFetchTemplateData": "MediaWiki\\Extension\\TemplateData\\Hooks::onParserFetchTemplateData",
-		"OutputPageBeforeHTML": "MediaWiki\\Extension\\TemplateData\\Hooks::onOutputPageBeforeHTML"
+		"EditPage::showEditForm:fields": "main",
+		"ParserFirstCallInit": "main",
+		"MultiContentSave": "main",
+		"ResourceLoaderRegisterModules": "main",
+		"EditPage::showEditForm:initial": "main",
+		"ParserFetchTemplateData": "main",
+		"OutputPageBeforeHTML": "main"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\TemplateData\\Hooks",
+			"services": [
+				"MainConfig"
+			]
+		}
 	},
 	"MessagesDirs": {
 		"TemplateData": [
@@ -86,6 +94,7 @@
 			],
 			"dependencies": [
 				"mediawiki.api",
+				"mediawiki.language",
 				"mediawiki.user",
 				"oojs-ui-core",
 				"oojs-ui-widgets",
@@ -151,7 +160,6 @@
 				"templatedata-modal-search-input-placeholder",
 				"templatedata-modal-placeholder-mapinfo",
 				"templatedata-modal-placeholder-prompt-map-name",
-				"templatedata-modal-table-param-actions",
 				"templatedata-modal-table-param-aliases",
 				"templatedata-modal-table-param-autovalue",
 				"templatedata-modal-table-param-suggestedvalues",
@@ -168,7 +176,6 @@
 				"templatedata-modal-table-param-required",
 				"templatedata-modal-table-param-suggested",
 				"templatedata-modal-table-param-type",
-				"templatedata-modal-table-param-uneditablefield",
 				"templatedata-modal-title",
 				"templatedata-modal-title-addparam",
 				"templatedata-modal-title-choose-language",

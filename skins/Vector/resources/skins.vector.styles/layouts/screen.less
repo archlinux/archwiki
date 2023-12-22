@@ -5,10 +5,8 @@
  * The rules here should only define the layout, not color or typography.
  */
 
-@import '../../common/variables.less';
+@import '../variables.less';
 @import 'mediawiki.mixins.less';
-
-@selector-sidebar-no-toc-sidebar-closed: ~'@{selector-main-menu-closed} ~ .vector-sidebar-container-no-toc';
 
 // Content container
 
@@ -16,21 +14,13 @@
 // see T259331.
 @padding-content: @padding-top-content 0 1.5em;
 
-// Breakpoints
-
-// Defines the minimum viewport width, at which point the layout will not get any
-// smaller and will start horizontal scrolling instead.
-@min-width-supported: unit( 500px / @font-size-browser, em );
-
-html {
+&html {
 	scroll-padding-top: @scroll-padding-top;
 }
 
 body {
 	background-color: @background-color-secondary--modern;
 	color: @color-base;
-	// Vertical scrollbar always visible.
-	overflow-y: scroll;
 }
 
 .mw-body,
@@ -54,7 +44,7 @@ body {
 	z-index: @z-index-header;
 }
 
-.mw-body-content {
+#mw-content-text {
 	margin-top: 16px;
 }
 
@@ -78,6 +68,12 @@ body {
 	// Contain the floating .mw-indicators, but don't use clearfix because of browser inconsistencies
 	// when combining 'clear' and 'margin-top' (T325391)
 	overflow: hidden;
+
+	// Margin is only applied to indicators inside `.vector-body-before-content` since they can
+	// also appear next to the page title, where margin is not needed.
+	.mw-indicators {
+		margin-top: @margin-top-pre-content;
+	}
 }
 
 .mw-body .mw-portlet-lang {
@@ -90,9 +86,7 @@ body {
 }
 
 #siteSub {
-	// By default its hidden as it was hidden in Vector legacy but site styles can reveal.
-	display: none;
-	margin-top: 8px; // T311564
+	margin-top: @margin-top-pre-content; // T311564
 }
 
 // Styles only applied to non-empty #contentSub to avoid extra margins when both #contentSub and #contentSub2
@@ -101,10 +95,10 @@ body {
 #contentSub2 {
 	font-size: 84%;
 	line-height: 1.2em;
-	color: @color-base--subtle;
+	color: @color-subtle;
 	width: auto;
 	// Visually separate #contentSub and #contentSub2 (T315639)
-	margin: 8px 0 0;
+	margin: @margin-top-pre-content 0 0;
 }
 
 .parsoid-body {
@@ -113,46 +107,32 @@ body {
 
 // Container logic.
 .mw-page-container {
-	// Setting position and z-index is important as it allows overlays appended to the body tag
+	// Create stacking context.
+	// Setting position and z-index as it allows overlays appended to the body tag
 	// to position themselves over the Vector interface. This forms another stacking context for
 	// elements placed inside this element
 	position: relative;
-	z-index: 0;
-	max-width: @max-width-page-container;
-	// Set a min-width to make explicit we do not support anything below this threshold.
-	// For devices too small, they should be more useable with horizontal scrolling.
-	// e.g. Portrait on an iPad
-	min-width: @min-width-supported;
-	// Fill the viewport even if the content height is small. This also helps
-	// mitigate a long sidebar overflowing the page container (T257518).
-	min-height: 100%;
-	margin-left: auto;
-	margin-right: auto;
+	z-index: @z-index-base;
 	// Use non-zero padding to disable margin collapse.
 	// Be careful not to use overflow-y: scroll here (see T270146 and T271868)
-	padding: 0.05px @padding-horizontal-page-container;
-	background-color: @background-color-page-container;
-	box-sizing: border-box;
+	padding-top: 0.05px;
+	padding-bottom: 0.05px;
+	.mixin-page-container();
+}
 
-	.vector-feature-limited-width-disabled & {
-		max-width: none;
+.vector-header-container {
+	.mw-header,
+	.vector-sticky-header {
+		width: 100%;
+		// A min-height is set to account for projects where no icon is set.
+		min-height: @height-header;
 	}
+}
 
-	@media ( min-width: @min-width-desktop ) {
-		padding-left: @padding-horizontal-page-container-desktop;
-		padding-right: @padding-horizontal-page-container-desktop;
-	}
-
-	@media ( min-width: @min-width-desktop-wide ) {
-		padding-left: @padding-horizontal-page-container-desktop-wide;
-		padding-right: @padding-horizontal-page-container-desktop-wide;
-	}
+&.vector-feature-limited-width-clientpref-0 .mw-page-container {
+	max-width: none;
 }
 
 .skin--responsive .mw-page-container {
 	min-width: auto;
 }
-
-@import 'grid.less';
-@import 'toc/pinned.less';
-@import 'toc/unpinned.less';

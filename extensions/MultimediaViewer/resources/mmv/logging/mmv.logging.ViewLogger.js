@@ -16,167 +16,156 @@
  */
 
 ( function () {
-	var VL;
 
 	/**
 	 * Tracks how long users are viewing images for
-	 *
-	 * @class mw.mmv.logging.ViewLogger
-	 * @extends mw.Api
-	 * @constructor
-	 * @param {mw.mmv.Config} config mw.mmv.Config object
-	 * @param {Object} windowObject Browser window object
 	 */
-	function ViewLogger( config, windowObject ) {
+	class ViewLogger {
 		/**
-		 * Was the last image view logged or was logging skipped?
-		 *
-		 * @property {boolean}
+		 * @param {Config} config Config object
+		 * @param {Object} windowObject Browser window object
 		 */
-		this.wasLastViewLogged = false;
+		constructor( config, windowObject ) {
+			/**
+			 * Was the last image view logged or was logging skipped?
+			 *
+			 * @property {boolean}
+			 */
+			this.wasLastViewLogged = false;
 
-		/**
-		 * Record when the user started looking at the current image
-		 *
-		 * @property {number}
-		 */
-		this.viewStartTime = 0;
-
-		/**
-		 * How long the user has been looking at the current image
-		 *
-		 * @property {number}
-		 */
-		this.viewDuration = 0;
-
-		/**
-		 * The image URL to record a virtual view for
-		 *
-		 * @property {string}
-		 */
-		this.url = '';
-
-		/**
-		 * If set, URI to send the beacon request to in order to record the virtual view
-		 *
-		 * @property {string}
-		 */
-		this.recordVirtualViewBeaconURI = config.recordVirtualViewBeaconURI();
-
-		/**
-		 * Browser window
-		 *
-		 * @property {Object}
-		 */
-		this.window = windowObject;
-	}
-
-	VL = ViewLogger.prototype;
-
-	/**
-	 * Tracks the unview event of the current image if appropriate
-	 */
-	VL.unview = function () {
-		if ( !this.wasLastViewLogged ) {
-			return;
-		}
-
-		this.wasLastViewLogged = false;
-	};
-
-	/**
-	 * Starts recording a viewing window for the current image
-	 */
-	VL.startViewDuration = function () {
-		this.viewStartTime = Date.now();
-	};
-
-	/**
-	 * Stops recording the viewing window for the current image
-	 */
-	VL.stopViewDuration = function () {
-		if ( this.viewStartTime ) {
-			this.viewDuration += Date.now() - this.viewStartTime;
+			/**
+			 * Record when the user started looking at the current image
+			 *
+			 * @property {number}
+			 */
 			this.viewStartTime = 0;
+
+			/**
+			 * How long the user has been looking at the current image
+			 *
+			 * @property {number}
+			 */
+			this.viewDuration = 0;
+
+			/**
+			 * The image URL to record a virtual view for
+			 *
+			 * @property {string}
+			 */
+			this.url = '';
+
+			/**
+			 * If set, URI to send the beacon request to in order to record the virtual view
+			 *
+			 * @property {string}
+			 */
+			this.recordVirtualViewBeaconURI = config.recordVirtualViewBeaconURI();
+
+			/**
+			 * Browser window
+			 *
+			 * @property {Object}
+			 */
+			this.window = windowObject;
 		}
-	};
 
-	/**
-	 * Records the amount of time the current image has been viewed
-	 */
-	VL.recordViewDuration = function () {
-		var uri;
-
-		this.stopViewDuration();
-
-		if ( this.recordVirtualViewBeaconURI ) {
-			try {
-				uri = new mw.Uri( this.recordVirtualViewBeaconURI );
-				uri.extend( { duration: this.viewDuration,
-					uri: this.url } );
-			} catch ( e ) {
-				// the URI is malformed. We cannot log it.
+		/**
+		 * Tracks the unview event of the current image if appropriate
+		 */
+		unview() {
+			if ( !this.wasLastViewLogged ) {
 				return;
 			}
 
-			try {
-				navigator.sendBeacon( uri.toString() );
-			} catch ( e ) {
-				$.ajax( {
-					type: 'HEAD',
-					url: uri.toString()
-				} );
-			}
-
-			mw.log( 'Image has been viewed for ', this.viewDuration );
+			this.wasLastViewLogged = false;
 		}
 
-		this.viewDuration = 0;
+		/**
+		 * Starts recording a viewing window for the current image
+		 */
+		startViewDuration() {
+			this.viewStartTime = Date.now();
+		}
 
-		this.unview();
-	};
+		/**
+		 * Stops recording the viewing window for the current image
+		 */
+		stopViewDuration() {
+			if ( this.viewStartTime ) {
+				this.viewDuration += Date.now() - this.viewStartTime;
+				this.viewStartTime = 0;
+			}
+		}
 
-	/**
-	 * Sets up the view tracking for the current image
-	 *
-	 * @param {string} url URL of the image to record a virtual view for
-	 */
-	VL.attach = function ( url ) {
-		var view = this;
+		/**
+		 * Records the amount of time the current image has been viewed
+		 */
+		recordViewDuration() {
+			let uri;
 
-		this.url = encodeURIComponent( url );
-		this.startViewDuration();
+			this.stopViewDuration();
 
-		$( this.window )
-			.off( '.mmv-view-logger' )
-			.on( 'beforeunload.mmv-view-logger', function () {
-				view.recordViewDuration();
-			} )
-			.on( 'focus.mmv-view-logger', function () {
-				view.startViewDuration();
-			} )
-			.on( 'blur.mmv-view-logger', function () {
-				view.stopViewDuration();
-			} );
-	};
+			if ( this.recordVirtualViewBeaconURI ) {
+				try {
+					uri = new mw.Uri( this.recordVirtualViewBeaconURI );
+					uri.extend( {
+						duration: this.viewDuration,
+						uri: this.url
+					} );
+				} catch ( e ) {
+					// the URI is malformed. We cannot log it.
+					return;
+				}
 
-	/*
-	 * Stops listening to events
-	 */
-	VL.unattach = function () {
-		$( this.window ).off( '.mmv-view-logger' );
-		this.stopViewDuration();
-	};
+				try {
+					navigator.sendBeacon( uri.toString() );
+				} catch ( e ) {
+					$.ajax( {
+						type: 'HEAD',
+						url: uri.toString()
+					} );
+				}
 
-	/**
-	 * Tracks whether or not the image view event was logged or not (i.e. was it in the logging sample)
-	 *
-	 * @param {boolean} wasEventLogged Whether the image view event was logged
-	 */
-	VL.setLastViewLogged = function ( wasEventLogged ) {
-		this.wasLastViewLogged = wasEventLogged;
-	};
+				mw.log( 'Image has been viewed for ', this.viewDuration );
+			}
 
-	mw.mmv.logging = mw.mmv.logging || {};
-	mw.mmv.logging.ViewLogger = ViewLogger;
+			this.viewDuration = 0;
+
+			this.unview();
+		}
+
+		/**
+		 * Sets up the view tracking for the current image
+		 *
+		 * @param {string} url URL of the image to record a virtual view for
+		 */
+		attach( url ) {
+			this.url = encodeURIComponent( url );
+			this.startViewDuration();
+
+			$( this.window )
+				.off( '.mmv-view-logger' )
+				.on( 'beforeunload.mmv-view-logger', () => this.recordViewDuration() )
+				.on( 'focus.mmv-view-logger', () => this.startViewDuration() )
+				.on( 'blur.mmv-view-logger', () => this.stopViewDuration() );
+		}
+		/*
+			 * Stops listening to events
+			 */
+		unattach() {
+			$( this.window ).off( '.mmv-view-logger' );
+			this.stopViewDuration();
+		}
+
+		/**
+		 * Tracks whether or not the image view event was logged or not (i.e. was it in the logging sample)
+		 *
+		 * @param {boolean} wasEventLogged Whether the image view event was logged
+		 */
+		setLastViewLogged( wasEventLogged ) {
+			this.wasLastViewLogged = wasEventLogged;
+		}
+	}
+
+	module.exports = ViewLogger;
 }() );

@@ -42,5 +42,11 @@
 	"cite_references_link_many_accessibility_label": "Siirry ylös kohtaan:",
 	"cite_section_preview_references": "Viitteiden esikatselu",
 	"cite_warning": "Viittausvaroitus: $1",
-	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code>-viitettä, jonka nimenä on <code>$1</code>, ei voida näyttää esikatselussa, koska se määritetään tämän osion ulkopuolella tai sitä ei ole määritetty lainkaan."
+	"cite_warning_sectionpreview_no_text": "<code>&lt;ref&gt;</code>-viitettä, jonka nimenä on <code>$1</code>, ei voida näyttää esikatselussa, koska se määritetään tämän osion ulkopuolella tai sitä ei ole määritetty lainkaan.",
+	"cite-wikieditor-tool-reference": "Viite",
+	"cite-wikieditor-help-page-references": "Viitteet",
+	"cite-wikieditor-help-content-reference-description": "Viite",
+	"cite-wikieditor-help-content-named-reference-description": "Nimetty viite",
+	"cite-wikieditor-help-content-rereference-description": "Saman viitteen lisäkäyttö",
+	"cite-wikieditor-help-content-showreferences-description": "Näytä viitteet"
 }

@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use EchoDiscussionParser;
+use MediaWiki\Extension\Notifications\DiscussionParser;
 use MediaWiki\Revision\RevisionRecord;
 
 class EchoRevertedPresentationModel extends EchoEventPresentationModel {
@@ -37,7 +37,7 @@ class EchoRevertedPresentationModel extends EchoEventPresentationModel {
 	}
 
 	private function formatSummary( $wikitext ) {
-		return EchoDiscussionParser::getTextSnippetFromSummary( $wikitext, $this->language );
+		return DiscussionParser::getTextSnippetFromSummary( $wikitext, $this->language );
 	}
 
 	public function getPrimaryLink() {

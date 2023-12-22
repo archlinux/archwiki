@@ -1,15 +1,17 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Linker\LinkTargetLookup;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\TitleValue;
 
 /**
  * @covers MediaWiki\Linker\LinksMigration
  */
 class LinksMigrationTest extends MediaWikiUnitTestCase {
 
-	public function provideReadNew() {
+	public static function provideReadNew() {
 		yield [ SCHEMA_COMPAT_READ_NEW ];
 		yield [ SCHEMA_COMPAT_NEW ];
 	}
@@ -38,7 +40,7 @@ class LinksMigrationTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public function provideReadOld() {
+	public static function provideReadOld() {
 		yield [ SCHEMA_COMPAT_READ_OLD ];
 	}
 

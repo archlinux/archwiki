@@ -11,7 +11,7 @@ The wikitext tag math (e.g.,
 [texvc.](https://github.com/wikimedia/texvcjs/blob/master/lib/parser.pegjs)
 The most recent version of the Math extension converts these tags to mathematical expressions that can be
 displayed by most browsers using
-[mathoid.](https://gerrit.wikimedia.org/r/#/admin/projects/mediawiki/services/mathoid)
+[mathoid](https://gitlab.wikimedia.org/repos/mediawiki/services/mathoid).
 
 ## Workflow overview
 

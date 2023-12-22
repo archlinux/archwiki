@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +30,10 @@ use Seld\JsonLint\ParsingException;
  * validateRegistrationFile.php, and the PHPUnit structure test suite
  * (ExtensionJsonValidationTest).
  *
- * The files are normally read by the ExtensionRegistry
- * and ExtensionProcessor classes.
+ * The files are normally read by the ExtensionRegistry and ExtensionProcessor classes.
  *
  * @since 1.29
+ * @ingroup ExtensionRegistry
  */
 class ExtensionJsonValidator {
 
@@ -103,14 +102,9 @@ class ExtensionJsonValidator {
 		$version = $data->manifest_version;
 		$schemaPath = __DIR__ . "/../../docs/extension.schema.v$version.json";
 
-		// Not too old
-		if ( $version < ExtensionRegistry::OLDEST_MANIFEST_VERSION ) {
-			throw new ExtensionJsonValidationError(
-				"$path is using a non-supported schema version"
-			);
-		}
-
-		if ( $version > ExtensionRegistry::MANIFEST_VERSION ) {
+		if ( $version < ExtensionRegistry::OLDEST_MANIFEST_VERSION ||
+			$version > ExtensionRegistry::MANIFEST_VERSION
+		) {
 			throw new ExtensionJsonValidationError(
 				"$path is using a non-supported schema version"
 			);
@@ -127,17 +121,21 @@ class ExtensionJsonValidator {
 			}
 		}
 		if ( isset( $data->url ) && is_string( $data->url ) ) {
-			$parsed = wfParseUrl( $data->url );
+			$parsed = parse_url( $data->url );
 			$mwoUrl = false;
-			if ( $parsed['host'] === 'www.mediawiki.org' ) {
-				$mwoUrl = true;
-			} elseif ( $parsed['host'] === 'mediawiki.org' ) {
-				$mwoUrl = true;
-				$extraErrors[] = '[url] Should use www.mediawiki.org domain';
-			}
+			if ( !$parsed || !isset( $parsed['host'] ) || !isset( $parsed['scheme'] ) ) {
+				$extraErrors[] = '[url] URL cannot be parsed';
+			} else {
+				if ( $parsed['host'] === 'www.mediawiki.org' ) {
+					$mwoUrl = true;
+				} elseif ( $parsed['host'] === 'mediawiki.org' ) {
+					$mwoUrl = true;
+					$extraErrors[] = '[url] Should use www.mediawiki.org domain';
+				}
 
-			if ( $mwoUrl && $parsed['scheme'] !== 'https' ) {
-				$extraErrors[] = '[url] Should use HTTPS for www.mediawiki.org URLs';
+				if ( $mwoUrl && $parsed['scheme'] !== 'https' ) {
+					$extraErrors[] = '[url] Should use HTTPS for www.mediawiki.org URLs';
+				}
 			}
 		}
 

@@ -20,21 +20,38 @@
 
 namespace MediaWiki\Extension\OATHAuth;
 
-use ExtensionRegistry;
+use Exception;
 
 class OATHAuthModuleRegistry {
 
+	/** @var OATHAuthDatabase */
+	private OATHAuthDatabase $database;
+
+	/** @var array */
+	private $modules;
+
 	/** @var array|null */
-	private $modules = null;
+	private $moduleIds;
+
+	/**
+	 * @param OATHAuthDatabase $database
+	 * @param array $modules
+	 */
+	public function __construct(
+		OATHAuthDatabase $database,
+		array $modules
+	) {
+		$this->database = $database;
+		$this->modules = $modules;
+	}
 
 	/**
 	 * @param string $key
 	 * @return IModule|null
 	 */
 	public function getModuleByKey( string $key ): ?IModule {
-		$this->collectModules();
-		if ( isset( $this->modules[$key] ) ) {
-			$module = call_user_func_array( $this->modules[$key], [] );
+		if ( isset( $this->getModules()[$key] ) ) {
+			$module = call_user_func_array( $this->getModules()[$key], [] );
 			if ( !$module instanceof IModule ) {
 				return null;
 			}
@@ -50,10 +67,8 @@ class OATHAuthModuleRegistry {
 	 * @return IModule[]
 	 */
 	public function getAllModules(): array {
-		$this->collectModules();
-
 		$modules = [];
-		foreach ( $this->modules as $key => $callback ) {
+		foreach ( $this->getModules() as $key => $callback ) {
 			$module = $this->getModuleByKey( $key );
 			if ( !( $module instanceof IModule ) ) {
 				continue;
@@ -63,11 +78,66 @@ class OATHAuthModuleRegistry {
 		return $modules;
 	}
 
-	private function collectModules() {
-		if ( $this->modules !== null ) {
-			return;
+	/**
+	 * Returns the numerical ID for the module with the specified key.
+	 * @param string $key
+	 * @return int
+	 */
+	public function getModuleId( string $key ): int {
+		$ids = $this->getModuleIds();
+		if ( isset( $ids[$key] ) ) {
+			return $ids[$key];
 		}
 
-		$this->modules = ExtensionRegistry::getInstance()->getAttribute( 'OATHAuthModules' );
+		throw new Exception( "Module $key does not seem to exist" );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getModuleIds(): array {
+		if ( $this->moduleIds === null ) {
+			$this->moduleIds = $this->getModuleIdsFromDatabase( DB_REPLICA );
+		}
+
+		$missing = array_diff(
+			array_keys( $this->getModules() ),
+			array_keys( $this->moduleIds )
+		);
+
+		if ( $missing ) {
+			$rows = [];
+			foreach ( $missing as $name ) {
+				$rows[] = [ 'oat_name' => $name ];
+			}
+
+			$this->database
+				->getDB( DB_PRIMARY )
+				->insert( 'oathauth_types', $rows, __METHOD__ );
+			$this->moduleIds = $this->getModuleIdsFromDatabase( DB_PRIMARY );
+		}
+
+		return $this->moduleIds;
+	}
+
+	private function getModuleIdsFromDatabase( int $index ): array {
+		$ids = [];
+
+		$rows = $this->database->getDB( $index )
+			->newSelectQueryBuilder()
+			->select( [ 'oat_id', 'oat_name' ] )
+			->from( 'oathauth_types' )
+			->caller( __METHOD__ )
+			->fetchResultSet();
+
+		foreach ( $rows as $row ) {
+			$ids[$row->oat_name] = (int)$row->oat_id;
+		}
+
+		return $ids;
+	}
+
+	private function getModules(): array {
+		return $this->modules;
 	}
 }

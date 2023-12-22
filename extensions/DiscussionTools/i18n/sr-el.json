@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Matma Rex",
-			"Kizule"
+			"Kizule",
+			"Matma Rex"
 		]
 	},
 	"discussiontools": "Alatke za razgovor",
@@ -39,7 +39,6 @@
 	"discussiontools-ledesection-title": "O ovoj stranici za razgovor",
 	"discussiontools-limitreport-timeusage": "Vreme korišćenja alata za diskusiju",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|sekund|sekunda|sekundi}}",
-	"discussiontools-newtopic-legacy-hint": "<strong>Nov način dodavanja tema.</strong> Ova funkcija omogućava da dodajte teme u inlajn formi i pingujete druge pomoću prečice. Takođe možete se vratiti na [$1 stari način].",
 	"discussiontools-newtopic-missing-title": "Molimo navedite naslov Vaše teme. Ako kliknete „{{int:discussiontools-replywidget-newtopic}}” tema će biti dodati bez naslova.",
 	"discussiontools-newtopic-placeholder-title": "Tema",
 	"discussiontools-notification-removed-topic-header": "Tema „<strong>$4</strong>” je arhivirana ili uklonjena iz $3.",
@@ -124,6 +123,7 @@
 	"discussiontools-topicsubscription-special-title": "Praćenje tema",
 	"echo-category-title-dt-subscription": "Stranice za razgovor {{PLURAL:$1|koje pratim}}",
 	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|Arhiviranje}} stranica za razgovor",
+	"minerva-talk-full-page": "Čitajte kao viki stranicu",
 	"tag-discussiontools-description": "Izmene pomoću alatka za razgovor",
 	"tag-discussiontools-edit": "komentar izmenjen",
 	"tag-discussiontools-edit-description": "Korisnik je uredio postojeći komentar pomoću alatka za razgovor",

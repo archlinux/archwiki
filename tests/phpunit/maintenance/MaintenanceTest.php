@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Tests\Maintenance;
 
-use Config;
-use HashConfig;
 use Maintenance;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\MediaWikiServices;
 use PHPUnit\Framework\Assert;
 use Wikimedia\TestingAccessWrapper;
@@ -57,7 +57,7 @@ class MaintenanceTest extends MaintenanceBaseTestCase {
 		$this->assertOutputPrePostShutdown( $expected, $extraNL );
 	}
 
-	public function provideOutputData() {
+	public static function provideOutputData() {
 		return [
 			[ [ "" ], "", false ],
 			[ [ "foo" ], "foo", false ],
@@ -210,7 +210,7 @@ class MaintenanceTest extends MaintenanceBaseTestCase {
 		$this->assertOutputPrePostShutdown( $expected, $extraNL );
 	}
 
-	public function provideOutputChanneledData() {
+	public static function provideOutputChanneledData() {
 		return [
 			[ [ "" ], "\n", false ],
 			[ [ "foo" ], "foo\n", false ],

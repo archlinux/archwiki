@@ -3,8 +3,8 @@
 namespace MediaWiki\Extension\CiteThisPage;
 
 use Config;
+use MediaWiki\Title\Title;
 use SpecialPage;
-use Title;
 
 class Hooks implements \MediaWiki\Hook\SidebarBeforeOutputHook {
 	/**
@@ -56,6 +56,7 @@ class Hooks implements \MediaWiki\Hook\SidebarBeforeOutputHook {
 		$citeThisPageLink = [
 			'id' => 't-cite',
 			'href' => $citeURL,
+			'icon' => 'quotes',
 			'text' => $skin->msg( 'citethispage-link' )->text(),
 			// Message keys: 'tooltip-citethispage', 'accesskey-citethispage'
 			'single-id' => 'citethispage',

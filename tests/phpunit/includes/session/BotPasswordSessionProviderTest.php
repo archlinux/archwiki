@@ -2,9 +2,11 @@
 
 namespace MediaWiki\Session;
 
+use MediaWiki\Config\HashConfig;
+use MediaWiki\Config\MultiConfig;
 use MediaWiki\MainConfigNames;
+use MediaWiki\User\BotPassword;
 use MediaWikiIntegrationTestCase;
-use MultiConfig;
 use Psr\Log\LogLevel;
 use Wikimedia\TestingAccessWrapper;
 
@@ -34,11 +36,11 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 
 		$configHash = json_encode( [ $name, $prefix, $isApiRequest ] );
 		if ( !$this->config || $this->configHash !== $configHash ) {
-			$this->config = new \HashConfig( [
-				'CookiePrefix' => 'wgCookiePrefix',
-				'EnableBotPasswords' => true,
-				'BotPasswordsDatabase' => false,
-				'SessionProviders' => $wgSessionProviders + [
+			$this->config = new HashConfig( [
+				MainConfigNames::CookiePrefix => 'wgCookiePrefix',
+				MainConfigNames::EnableBotPasswords => true,
+				MainConfigNames::BotPasswordsDatabase => false,
+				MainConfigNames::SessionProviders => $wgSessionProviders + [
 					BotPasswordSessionProvider::class => [
 						'class' => BotPasswordSessionProvider::class,
 						'args' => [ $params ],
@@ -80,12 +82,11 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 			->getLookup( 'local' )
 			->centralIdFromName( $sysop->getName() );
 
-		$dbw = wfGetDB( DB_PRIMARY );
-		$dbw->delete(
-			'bot_passwords',
-			[ 'bp_user' => $userId, 'bp_app_id' => 'BotPasswordSessionProvider' ],
-			__METHOD__
-		);
+		$dbw = $this->getDb();
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'bot_passwords' )
+			->where( [ 'bp_user' => $userId, 'bp_app_id' => 'BotPasswordSessionProvider' ] )
+			->caller( __METHOD__ )->execute();
 		$dbw->insert(
 			'bot_passwords',
 			[
@@ -212,7 +213,7 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 			->onlyMethods( [ 'getIP' ] )->getMock();
 		$request->method( 'getIP' )
 			->willReturn( '127.0.0.1' );
-		$bp = \BotPassword::newFromUser( $user, 'BotPasswordSessionProvider' );
+		$bp = BotPassword::newFromUser( $user, 'BotPasswordSessionProvider' );
 
 		$session = $provider->newSessionForRequest( $user, $bp, $request );
 		$this->assertInstanceOf( Session::class, $session );
@@ -240,7 +241,7 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 			->onlyMethods( [ 'getIP' ] )->getMock();
 		$request->method( 'getIP' )
 			->willReturn( '127.0.0.1' );
-		$bp = \BotPassword::newFromUser( $user, 'BotPasswordSessionProvider' );
+		$bp = BotPassword::newFromUser( $user, 'BotPasswordSessionProvider' );
 
 		$data = [
 			'provider' => $provider,
@@ -255,7 +256,7 @@ class BotPasswordSessionProviderTest extends MediaWikiIntegrationTestCase {
 		];
 		$dataMD = $data['metadata'];
 
-		foreach ( array_keys( $data['metadata'] ) as $key ) {
+		foreach ( $data['metadata'] as $key => $_ ) {
 			$data['metadata'] = $dataMD;
 			unset( $data['metadata'][$key] );
 			$info = new SessionInfo( SessionInfo::MIN_PRIORITY, $data );

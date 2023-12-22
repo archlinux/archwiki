@@ -21,10 +21,17 @@
  * @ingroup SpecialPage
  */
 
+namespace MediaWiki\Specials;
+
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\SiteStats\SiteStats;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserGroupManager;
+use MediaWiki\User\UserGroupMembership;
+use Xml;
 
 /**
  * Special page lists various statistics, including the contents of
@@ -36,8 +43,7 @@ class SpecialStatistics extends SpecialPage {
 	private $edits, $good, $images, $total, $users,
 		$activeUsers = 0;
 
-	/** @var UserGroupManager */
-	private $userGroupManager;
+	private UserGroupManager $userGroupManager;
 
 	/**
 	 * @param UserGroupManager $userGroupManager
@@ -310,3 +316,9 @@ class SpecialStatistics extends SpecialPage {
 		return 'wiki';
 	}
 }
+
+/**
+ * Retain the old class name for backwards compatibility.
+ * @deprecated since 1.41
+ */
+class_alias( SpecialStatistics::class, 'SpecialStatistics' );

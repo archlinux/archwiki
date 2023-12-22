@@ -2,12 +2,13 @@
 
 namespace MediaWiki\Session;
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\MainConfigNames;
+use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 use TestLogger;
-use User;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -19,17 +20,17 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 	use SessionProviderTestTrait;
 
 	private function getConfig() {
-		return new \HashConfig( [
-			'CookiePrefix' => 'CookiePrefix',
-			'CookiePath' => 'CookiePath',
-			'CookieDomain' => 'CookieDomain',
-			'CookieSecure' => true,
-			'CookieHttpOnly' => true,
-			'CookieSameSite' => '',
-			'SessionName' => false,
-			'CookieExpiration' => 100,
-			'ExtendedLoginCookieExpiration' => 200,
-			'ForceHTTPS' => false,
+		return new HashConfig( [
+			MainConfigNames::CookiePrefix => 'CookiePrefix',
+			MainConfigNames::CookiePath => 'CookiePath',
+			MainConfigNames::CookieDomain => 'CookieDomain',
+			MainConfigNames::CookieSecure => true,
+			MainConfigNames::CookieHttpOnly => true,
+			MainConfigNames::CookieSameSite => '',
+			MainConfigNames::SessionName => false,
+			MainConfigNames::CookieExpiration => 100,
+			MainConfigNames::ExtendedLoginCookieExpiration => 200,
+			MainConfigNames::ForceHTTPS => false,
 		] );
 	}
 
@@ -471,7 +472,6 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 		$backend->setRememberUser( true );
 		$backend->setForceHTTPS( true );
 		$request = new \MediaWiki\Request\FauxRequest();
-		$time = time();
 		$provider->persistSession( $backend, $request );
 		$this->assertSame( $sessionId, $request->response()->getCookie( 'MySessionName' ) );
 		$this->assertSame( (string)$user->getId(), $request->response()->getCookie( 'xUserID' ) );
@@ -535,15 +535,15 @@ class CookieSessionProviderTest extends MediaWikiIntegrationTestCase {
 
 		$defaults = [
 			'expire' => (int)100,
-			'path' => $config->get( 'CookiePath' ),
-			'domain' => $config->get( 'CookieDomain' ),
+			'path' => $config->get( MainConfigNames::CookiePath ),
+			'domain' => $config->get( MainConfigNames::CookieDomain ),
 			'secure' => $secure || $forceHTTPS,
-			'httpOnly' => $config->get( 'CookieHttpOnly' ),
+			'httpOnly' => $config->get( MainConfigNames::CookieHttpOnly ),
 			'raw' => false,
 		];
 
-		$normalExpiry = $config->get( 'CookieExpiration' );
-		$extendedExpiry = $config->get( 'ExtendedLoginCookieExpiration' );
+		$normalExpiry = $config->get( MainConfigNames::CookieExpiration );
+		$extendedExpiry = $config->get( MainConfigNames::ExtendedLoginCookieExpiration );
 		$extendedExpiry = (int)( $extendedExpiry ?? 0 );
 		$expect = [
 			'MySessionName' => [

@@ -15,19 +15,23 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const base = require( './base.js' );
+mw.mmv = base;
+module.exports = base;
+
 ( function () {
-	var $document = $( document );
+	const $document = $( document );
 
 	// If MediaViewer is disabled by the user, do not set up click handling.
 	// This is loaded before user JS so we cannot check wgMediaViewer.
 	if (
 		mw.config.get( 'wgMediaViewerOnClick' ) !== true ||
-		mw.user.isAnon() && mw.storage.get( 'wgMediaViewerOnClick', '1' ) !== '1'
+		!mw.user.isNamed() && mw.storage.get( 'wgMediaViewerOnClick', '1' ) !== '1'
 	) {
 		return;
 	}
 
-	$document.on( 'click.mmv-head', 'a.image', function ( e ) {
+	$document.on( 'click.mmv-head', 'a.image', ( e ) => {
 		// Do not interfere with non-left clicks or if modifier keys are pressed.
 		// Also, make sure we do not get in a loop.
 		if ( ( e.button !== 0 && e.which !== 1 ) || e.altKey || e.ctrlKey || e.shiftKey || e.metaKey || e.replayed ) {
@@ -36,9 +40,10 @@
 
 		// We wait for document readiness because mw.loader.using writes to the DOM
 		// which can cause a blank page if it happens before DOM readiness
-		$( function () {
-			mw.loader.using( [ 'mmv.bootstrap.autostart' ], function () {
-				mw.mmv.bootstrap.whenThumbsReady().then( function () {
+		$( () => {
+			mw.loader.using( [ 'mmv.bootstrap.autostart' ], ( req ) => {
+				const bootstrap = req( 'mmv.bootstrap.autostart' );
+				bootstrap.whenThumbsReady().then( () => {
 					// We have to copy the properties, passing e doesn't work. Probably because of preventDefault()
 					$( e.target ).trigger( { type: 'click', which: 1, replayed: true } );
 				} );
