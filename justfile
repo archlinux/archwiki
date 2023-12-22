@@ -91,7 +91,12 @@ update version:
 	rm -rf $TMPDIR
 
 	git submodule update
+	git submodule foreach git fetch
 	git submodule foreach git checkout REL${branch/./_}
 	git submodule foreach git pull
+
+	git add -u
+	git add .
+	git commit -am"Update to MediaWiki {{version}}"
 
 # vim: set ft=make :
