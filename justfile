@@ -94,6 +94,9 @@ update version:
 	git submodule foreach git fetch
 	git submodule foreach git checkout REL${branch/./_}
 	git submodule foreach git pull
+	for module in $(git submodule foreach --quiet 'echo $name'); do
+		git submodule set-branch --branch REL${branch/./_} "${module}"
+	done
 
 	git add -u
 	git add .
