@@ -82,7 +82,7 @@ update version:
 	shopt -s extglob
 	rm -rf !("justfile"|"favicon.ico"|".gitmodules"|".gitignore"|"sitemaps"|".git"|"docker"|".idea"|"extensions")
 	pushd extensions >/dev/null
-	rm -rf !("ArchLinux"|"BounceHandler"|"CheckUser"|"CodeMirror"|"DarkMode"|"FlarumAuth"|"Lockdown"|"NativeSvgHandler"|"TitleKey"|"UserMerge")
+	rm -rf !("ArchLinux"|"BounceHandler"|"CheckUser"|"CodeMirror"|"DarkMode"|"FlarumAuth"|"Lockdown"|"TitleKey"|"UserMerge")
 	popd >/dev/null
 	shopt -u extglob
 
