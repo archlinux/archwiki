@@ -16,6 +16,9 @@
     ],
     "AfterFinalPageOutput": [
       "MediaWiki\\Extensions\\ArchLinux\\Hooks::onAfterFinalPageOutput"
+    ],
+    "SkinAddFooterLinks": [
+      "MediaWiki\\Extensions\\ArchLinux\\Hooks::onSkinAddFooterLinks"
     ]
   },
   "ResourceModules": {
