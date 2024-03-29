@@ -16,7 +16,8 @@
 			"Okras",
 			"Ole Yves",
 			"Patrick Star",
-			"Stjn"
+			"Stjn",
+			"Iniquity"
 		]
 	},
 	"scribunto-desc": "Средство для включения скриптовых языков на страницах MediaWiki",
@@ -51,7 +52,7 @@
 	"scribunto-lua-error-location": "Ошибка Lua $1: $2.",
 	"scribunto-lua-error": "Ошибка Lua: $2.",
 	"scribunto-lua-notarrayreturn": "Ошибка скрипта: Модуль вернул значение $2. Ожидается, что модуль вернёт таблицу экспорта.",
-	"scribunto-lua-warning": "Ошибка скрипта: $1",
+	"scribunto-lua-warning": "Предупреждение скрипта: $1",
 	"scribunto-luastandalone-proc-error": "Ошибка Lua: Не удалось создать процесс.",
 	"scribunto-luastandalone-proc-error-msg": "Ошибка Lua: не удаётся создать процесс:  $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Ошибка Lua: не удаётся создать процесс: proc_open не доступен. Проверьте директиву конфигурации PHP «disable_functions».",

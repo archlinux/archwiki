@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung"
+			"Winston Sung",
+			"H78c67c"
 		]
 	},
 	"templatedata-desc": "裝住模板參數嘅相關資訊（用JSON）",
@@ -36,8 +37,8 @@
 	"templatedata-doc-param-type-wiki-template-name": "模",
 	"templatedata-doc-param-type-wiki-user-name": "用戶",
 	"templatedata-doc-params": "模參數",
-	"templatedata-editbutton": "管理 TemplateData",
-	"templatedata-errormsg-jsonbadformat": "JSON格式唔啱。你可以取消而家做緊嘅嘢，改返啱佢；刪走現存嘅<templatedata>標籤然後再嚟過；或者用新嘅TemplateData冚咗現存嘅TemplateData。",
+	"templatedata-editbutton": "修改模數據",
+	"templatedata-errormsg-jsonbadformat": "JSON格式唔啱。你可以取消而家做緊嘅嘢，改返啱佢；刪走現存嘅<templatedata>標籤然後再嚟過；或者用新嘅模數據冚過現存嘅模數據。",
 	"templatedata-errormsg-insertblank": "你肯定你想加一舊空白嘅 TemplateData？",
 	"templatedata-exists-on-related-page": "提醒：相關頁面\"[[$1]]\"已經有 TemplateData 內容。",
 	"templatedata-helplink": "TemplateData 相關資訊",
@@ -74,7 +75,7 @@
 	"templatedata-modal-notice-import-numparams": "倒入咗$1個新參數：$2",
 	"templatedata-modal-placeholder-paramkey": "參數名",
 	"templatedata-modal-search-input-placeholder": "用語言名或者代碼搵語言",
-	"templatedata-modal-table-param-aliases": "別名（用半形逗號隔開）",
+	"templatedata-modal-table-param-aliases": "別名",
 	"templatedata-modal-table-param-autovalue": "自動值",
 	"templatedata-modal-table-param-default": "預設 ($1)",
 	"templatedata-modal-table-param-deprecated": "停用",
@@ -88,13 +89,13 @@
 	"templatedata-modal-table-param-required": "必填",
 	"templatedata-modal-table-param-suggested": "建議",
 	"templatedata-modal-table-param-type": "類",
-	"templatedata-modal-title": "模版指引編輯器",
+	"templatedata-modal-title": "模數據編輯器",
 	"templatedata-modal-title-addparam": "加參數",
 	"templatedata-modal-title-choose-language": "改語言",
 	"templatedata-modal-title-language": "話",
 	"templatedata-modal-title-paramorder": "參數次序",
 	"templatedata-modal-title-templatedesc": "模版描述 ($1)",
-	"templatedata-modal-title-templateformat": "鼓勵用邊個格式",
+	"templatedata-modal-title-templateformat": "建議嘅wiki文字格式",
 	"templatedata-modal-title-templateformatstring": "自訂格式字串",
 	"templatedata-modal-title-templateparam-details": "參數細節： $1",
 	"templatedata-modal-title-templateparams": "模版參數"

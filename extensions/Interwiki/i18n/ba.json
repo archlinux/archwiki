@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Assele",
-			"З. ӘЙЛЕ"
+			"З. ӘЙЛЕ",
+			"Bashkorttan"
 		]
 	},
 	"interwiki": "Интервики мәғлүмәттәрен ҡарау һәм үҙгәртеү",
@@ -42,11 +43,11 @@
 	"interwiki-badprefix": "Интервикиҙың «$1» префиксында рөхсәт ителмәгән символдар бар",
 	"interwiki-submit-empty": "Префикс һәм URL буш була алмай.",
 	"interwiki-submit-invalidurl": "URL адресының протоколы дөрөҫ түгел.",
-	"log-name-interwiki": "Интервики таблицаһын үҙгәртеүҙәр яҙмалары журналы",
+	"log-name-interwiki": "Интервики таблицаһын үҙгәртеүҙәр журналы",
 	"logentry-interwiki-iw_add": "Интервики таблицаһына «$4» префиксын ($5) (ҡулланыу: $6; локаль: $7) $1 {{GENDER:$2|өҫтәне}}",
 	"logentry-interwiki-iw_edit": "Интервики таблицаһында «$4» префиксын ($5) (ҡулланыу: $6; локаль: $7)  $1 {{GENDER:$2|үҙгәртте}}",
 	"logentry-interwiki-iw_delete": "Интервики таблицаһынан «$4» префиксын $1 {{GENDER:$2|юйҙы}}",
-	"log-description-interwiki": "Был — [[Special:Interwiki|интервики таблицаһын]] үҙгәртеүҙәр яҙмалары журналы.",
+	"log-description-interwiki": "Был — [[Special:Interwiki|интервики таблицаһын]] үҙгәртеүҙәр журналы.",
 	"right-interwiki": "Интервики таблицаһын мөхәррирләү",
 	"action-interwiki": "интервики яҙмаһын үҙгәртеү"
 }

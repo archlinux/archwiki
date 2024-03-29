@@ -12,5 +12,5 @@
 	"renocaptcha-createaccount-fail": "נראה שלא פתרת את ה־CAPTCHA.",
 	"renocaptcha-create": "כדי להגן על הוויקי מפני יצירת דפים אוטומטית, אנו מבקשים ממך לפתור את ה־CAPTCHA הבאה:",
 	"renocaptcha-noscript": "למרבה הצער, כיבית את JavaScript, כך שאיננו יכולים לזהות באופן אוטומטי אם {{GENDER:|אתה|את}} בן אדם או לא. נא לפתוח את ה־CAPTCHA למעלה ולהעתיק את הטקסט שנוצר לאזור הטקסט הבא:",
-	"renocaptcha-help": "נא לפתוח אתגר ReCaptcha NoCaptcha ולהחזיר את ערך התגובה כ־captchaWord."
+	"renocaptcha-help": "נא לפתור אתגר ReCaptcha NoCaptcha ולהחזיר את ערך התגובה כ־captchaWord."
 }

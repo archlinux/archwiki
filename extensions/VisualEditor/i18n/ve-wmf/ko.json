@@ -16,6 +16,9 @@
 			"아라"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck는 새로운 내용이 페이지에 추가되었다고 간주합니다",
+	"tag-editcheck-references-description": "EditCheck는 출처가 필요할 수 있다고 간주합니다",
+	"tag-editcheck-references-activated-description": "EditCheck는 출처가 필요할 수 있다고 간주하며 UI를 표시합니다",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|시각 편집]]",
 	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|시각편집기]]를 사용한 편집",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|시각편집기: 확인 필요]]",

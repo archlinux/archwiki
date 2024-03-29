@@ -14,7 +14,8 @@
 			"Matiia",
 			"McDutchie",
 			"MuratTheTurkish",
-			"PoLuX124"
+			"PoLuX124",
+			"No se"
 		]
 	},
 	"oathauth-desc": "Proporciona compatibilidad con la autenticación mediante contraseñas en HMAC de un solo uso",
@@ -24,7 +25,7 @@
 	"oathauth-account": "Nombre de la cuenta:",
 	"oathauth-secret": "Clave secreta de autenticación en dos pasos:",
 	"oathauth-enable": "Activar la autenticación en dos pasos",
-	"oathauth-scratchtokens": "La lista siguiente es una lista de claves de un solo uso. Estas claves solo pueden utilizarse una vez y son para usar en caso de emergencia. Por favor, anótalas y mantenlas en un lugar seguro. Si pierdes el teléfono, estas claves son la única manera de recuperar tu cuenta. '''Estas claves nunca se mostrarán una segunda vez'''.",
+	"oathauth-recoverycodes-important": "¡Este paso es importante! ¡No te saltes este paso!",
 	"oathauth-token": "Clave",
 	"oathauth-disable": "Desactivar la autenticación en dos pasos",
 	"oathauth-validatedoath": "Se han validado las credenciales en dos pasos. Ahora se aplicará la autenticación en dos pasos.",
@@ -106,5 +107,6 @@
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} tiene activada la autenticación en dos pasos.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} no tiene activada la autenticación en dos pasos.",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Grupo desactivado|Grupos desactivados}}:",
-	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Tu}} pertenencia {{PLURAL:$1|al siguiente grupo|a los siguientes grupos}} de usuario están desactivados hasta que actives la [[Special:Manage Two-factor authentication|autenticación en dos pasos]]."
+	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Tu}} pertenencia {{PLURAL:$1|al siguiente grupo|a los siguientes grupos}} de usuario están desactivados hasta que actives la [[Special:Manage Two-factor authentication|autenticación en dos pasos]].",
+	"oathauth-hint": "¿No tienes acceso a tu dispositivo o aplicación? Puede ingresar tokens de recuperación (presentados cuando habilitó 2FA) en este campo."
 }

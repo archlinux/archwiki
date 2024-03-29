@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dr Lotus Black"
+			"Dr Lotus Black",
+			"Ninjastrikers"
 		]
 	},
 	"oathauth-token": "တိုကင်",
-	"oathauth-auth-token-label": "တိုကင်",
+	"oathauth-auth-token-label": "နှစ်ဆင့်ခံ တိုကင် သို့မဟုတ် ပြန်လည်ရယူရေး ကုဒ်",
 	"oathauth-user-not-found": "ဤအမည်ဖြင့် အသုံးပြုသူအကောင့်ကို မတွေ့ပါ",
 	"oathauth-ui-no-module": "ဘာတစ်ခုမှ ပြုလုပ်ခွင့်မပေးထား",
 	"oathauth-ui-manage": "စီမံရန်",

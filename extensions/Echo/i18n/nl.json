@@ -228,7 +228,7 @@
 	"notification-inbox-filter-unread": "Ongelezen",
 	"notification-inbox-filter-all": "Alle",
 	"echo-specialmute-label-mute-notifications": "Verberg meldingen van deze {{GENDER:$1|gebruiker}}",
-	"echo-email-plain-footer": "Controleer {{GENDER:$1|uw}} voorkeuren om te bepalen welke e-mails wij {{GENDER:$1|u}} sturen:",
+	"echo-email-plain-footer": "Om te bepalen welke e-mails wij u sturen, geeft u hier uw voorkeuren aan:{{GENDER:$1|}}",
 	"echo-email-html-footer-preference-link-text": "controleer {{GENDER:$1|uw}} voorkeuren",
 	"echo-email-html-footer-with-link": "Om te bepalen welke e-mails wij {{GENDER:$2|u}} sturen, $1.",
 	"echo-notification-alert": "{{PLURAL:$1|Melding ($1)|Meldingen ($1)|100=Meldingen (99+)}}",

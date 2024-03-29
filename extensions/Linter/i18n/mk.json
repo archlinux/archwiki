@@ -90,7 +90,7 @@
 	"linter-pager-tidy-whitespace-bug-details": "Грешка во расчленувањето на празното место",
 	"linter-pager-title-header": "Наслов на страницата",
 	"linter-pager-unclosed-quotes-in-heading-details": "Незатворен цитат што истекува од прегледот на содржината",
-	"linter-prefix-search-subpage": "Страници страници со гршеки на Lint кои одговараат на претставка на наслов или целосен наслов: $1",
+	"linter-prefix-search-subpage": "Страници страници со грешки на Lint кои одговараат на претставка на наслов или целосен наслов: $1",
 	"linterrors-subpage": "Грешки од пречистувачот: $1",
 	"linterrors-summary": "<strong>Напомена:</strong> Бројот на категории не е точен, туку претставува проценка",
 	"multi-part-template-block": "Изводот не е од единствена предлошка",

@@ -32,7 +32,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 llengua|$1 llengües}}",
 	"vector-no-language-button-label": "Afegeix llengües",
 	"vector-no-language-button-aria-label": "Aquest article només existeix en aquesta llengua. Afegiu l'article per a altres llengües",
-	"vector-language-redirect-to-top": "Els enllaços de llengua són a dalt de la pàgina, a l'altre costat del títol. [[#p-lang-btn|Vés a dalt]].",
+	"vector-language-redirect-to-top": "Els enllaços de llengua són a dalt de la pàgina, a l'altre costat del títol.",
 	"vector-language-variant-switcher-label": "Canvia la variant de llengua",
 	"vector-action-addsection": "Afegeix un tema",
 	"vector-action-delete": "Esborra",

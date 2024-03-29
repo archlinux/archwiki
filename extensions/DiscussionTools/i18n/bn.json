@@ -10,7 +10,9 @@
 			"Yahya",
 			"ZI Jony",
 			"আজিজ",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"Aishik Rehman",
+			"Borhan"
 		]
 	},
 	"discussiontools": "আলোচনা সরঞ্জাম",
@@ -110,7 +112,7 @@
 	"discussiontools-preference-sourcemodetoolbar-help": "এটি দ্রুত উত্তর ও দ্রুত আলোচনা যোগ করার বৈশিষ্ট্যের উত্স মোডে একটি সরঞ্জামদণ্ড যোগ করবে, এর মধ্যে কাউকে উল্লেখ করার ও লিঙ্ক যুক্ত করার শর্টকাট অন্তর্ভুক্ত রয়েছে।",
 	"discussiontools-preference-summary": "আপনি [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary বৈশিষ্ট্যের সারাংশ] পড়ে এই বৈশিষ্ট্যগুলি সম্পর্কে আরও জানতে পারেন।",
 	"discussiontools-preference-topicsubscription": "আলোচনা অনুসরণ সক্রিয় করুন",
-	"discussiontools-preference-topicsubscription-help": "আপনাকে যেকোন আলোচনা অনুসরণ করার অনুমতি দিবে, যার ফলে সেসব আলোচনায় নতুন মন্তব্য যোগ হলে আপনি বিজ্ঞপ্তি পাবেন।",
+	"discussiontools-preference-topicsubscription-help": "আপনাকে যেকোনো আলোচনা অনুসরণ করার অনুমতি দিবে, যার ফলে সেসব আলোচনায় নতুন মন্তব্য যোগ হলে আপনি বিজ্ঞপ্তি পাবেন।",
 	"discussiontools-preference-visualenhancements": "আলোচনার কার্যকলাপ দেখান",
 	"discussiontools-preference-visualenhancements-help": "এটি আলাপ পাতার একটি নতুন রূপ সক্রিয় করবে, যাতে প্রতিটি আলোচনার কার্যকলাপ সম্পর্কে তথ্য অন্তর্ভুক্ত থাকবে।",
 	"discussiontools-replybutton": "উত্তর দিন",

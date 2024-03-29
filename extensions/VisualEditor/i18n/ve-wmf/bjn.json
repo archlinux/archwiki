@@ -5,9 +5,9 @@
 			"Arcuscloud"
 		]
 	},
-	"tag-editcheck-newcontent-description": "EditCheck bapikir isi hanyar ditambahi ka tungkaran",
-	"tag-editcheck-newreference-description": "Referensi ditambahakan ka tungkaran",
-	"tag-editcheck-references-description": "EditCheck bapikir sabuah referensi pinanya diparluakan",
+	"tag-editcheck-newcontent-description": "EditCheck bapikir isi hanyar ditambahi ka laman",
+	"tag-editcheck-newreference-description": "Bahan acuan ditambahakan ka laman",
+	"tag-editcheck-references-description": "EditCheck bapikir sabuting bahan acuan pinanya diparluakan",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Babakan visual]]",
 	"visualeditor-welcomedialog-action": "Mulai mambabak",
 	"visualeditor-welcomedialog-content": "Siapa haja kawa mambabak, wan saban pambaikan pacangan manulung.",

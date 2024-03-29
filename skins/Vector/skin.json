@@ -525,7 +525,6 @@
 		},
 		"vector": {
 			"ext.echo.styles.badge": "skinStyles/vector/ext.echo.styles.badge.less",
-			"+ext.echo.styles.alert": "skinStyles/ext.echo.styles.alert.less",
 			"jquery.ui": [
 				"skinStyles/jquery.ui/jquery.ui.core.css",
 				"skinStyles/jquery.ui/jquery.ui.theme.css",

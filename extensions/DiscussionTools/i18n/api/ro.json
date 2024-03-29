@@ -13,6 +13,7 @@
 	"apihelp-discussiontoolscompare-summary": "Primiți informații despre schimbări asupra comentariilor între două versiuni de pagină.",
 	"apihelp-discussiontoolsedit-param-commentid": "ID-ul comentariului la care să se răspundă. Utilizat doar când <var>paction</var> este <var>addcomment</var>. Suprascrie <var>commentname</var>.",
 	"apihelp-discussiontoolsedit-param-commentname": "Numele comentariului la care să se răspundă. Utilizat doar când <var>paction</var> este <var>addcomment</var>.",
+	"apihelp-discussiontoolsedit-param-autosubscribe": "Abonează automat utilizatorul la șirul paginii de discuție?",
 	"apihelp-discussiontoolsedit-param-formtoken": "Un ID unic opțional generat în client pentru a preveni publicarea dublă.",
 	"apihelp-discussiontoolsedit-param-html": "Conținutul de publicat, ca HTML. Nu poate fi utilizat împreună cu <var>wikitext</var>.",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} Utilizat doar când <var>paction</var> este <var>addtopic</var>.",

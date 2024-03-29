@@ -51,5 +51,8 @@
 	"cite-wikieditor-help-content-reference-description": "Виноска",
 	"cite-wikieditor-help-content-named-reference-description": "Іменоване посилання",
 	"cite-wikieditor-help-content-rereference-description": "Додаткове використання тієї ж виноски",
-	"cite-wikieditor-help-content-showreferences-description": "Показати виноски"
+	"cite-wikieditor-help-content-showreferences-description": "Показати виноски",
+	"cite-wikieditor-help-content-reference-example-text1": "Текст сторінки.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Текст посилання], додатковий текст.",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Текст посилання]"
 }

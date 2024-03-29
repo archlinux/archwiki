@@ -15,7 +15,8 @@
 			"Pietrodn",
 			"Sakretsu",
 			"Scompo",
-			"ValterVB"
+			"ValterVB",
+			"Luca.favorido"
 		]
 	},
 	"vector-skin-desc": "Fornisce 2 temi Vector\n* 2011 - La versione moderna del MonoBook con un aspetto rinnovato e molti miglioramenti dell'usabilità\n* 2022 - Vector realizzata nell'ambito del progetto WMF [[mw:Desktop Improvements]]",
@@ -67,7 +68,7 @@
 	"vector-toc-menu-tooltip": "Indice",
 	"vector-site-nav-label": "Sito",
 	"vector-main-menu-label": "Menu principale",
-	"vector-limited-width-toggle-on-popup": "Sei passato in modalità a schermo intero. Per tornare alla larghezza ridotta premi questo pulsante.",
+	"vector-limited-width-toggle-on-popup": "Hai attivato la modalità a schermo intero. Per tornare alla larghezza ridotta premi questo pulsante.",
 	"vector-limited-width-toggle-off-popup": "Puoi passare dalla modalità larghezza limitata a schermo intero cliccando su questo pulsante.",
 	"vector-page-tools-label": "Strumenti",
 	"vector-page-tools-general-label": "Generale",

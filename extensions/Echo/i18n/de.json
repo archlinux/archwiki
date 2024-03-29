@@ -21,7 +21,8 @@
 			"Tobi 406",
 			"Umherirrender",
 			"Vogone",
-			"Wnme"
+			"Wnme",
+			"Filzstift"
 		]
 	},
 	"echo-desc": "Erweitert das Wiki um ein System zur Benachrichtigung von Benutzern zu Ereignissen und Nachrichten",
@@ -71,7 +72,7 @@
 	"echo-category-title-article-reminder": "{{PLURAL:$1|Seitenerinnerung|Seitenerinnerungen}}",
 	"echo-category-title-thank-you-edit": "{{PLURAL:$1|Bearbeitungsmeilenstein|Bearbeitungsmeilensteine}}",
 	"echo-category-title-watchlist": "Bearbeitung an beobachteter Seite",
-	"echo-category-title-minor-watchlist": "Kleine Bearbeitung an beobachteter Seite",
+	"echo-category-title-minor-watchlist": "Kleine Änderung an beobachteter Seite",
 	"echo-pref-tooltip-edit-user-talk": "Benachrichtige mich, wenn jemand meine Diskussionsseite bearbeitet.",
 	"echo-pref-tooltip-edit-user-page": "Benachrichtige mich, wenn jemand meine Benutzerseite bearbeitet.",
 	"echo-pref-tooltip-article-linked": "Benachrichtige mich, wenn jemand auf einer Seite auf eine andere von mir erstellte Seite verlinkt.",
@@ -83,8 +84,8 @@
 	"echo-pref-tooltip-emailuser": "Benachrichtige mich, wenn mir jemand eine E-Mail sendet.",
 	"echo-pref-tooltip-article-reminder": "Benachrichtige mich über diese Seite, wenn ich dies verlange.",
 	"echo-pref-tooltip-thank-you-edit": "Benachrichtige mich, wenn ich meine 1., 10., 100., … Bearbeitung erreiche.",
-	"echo-pref-tooltip-watchlist": "Benachrichtige mich, wenn jemand eine (nicht-kleine) Bearbeitung an einer Seite auf meiner Beobachtungsliste macht.",
-	"echo-pref-tooltip-minor-watchlist": "Benachrichtige mich, wenn jemand eine kleine Bearbeitung an einer Seite auf meiner Beobachtungsliste macht.",
+	"echo-pref-tooltip-watchlist": "Benachrichtige mich, wenn jemand eine Bearbeitung, die nicht als „kleine Änderung“ gekennzeichnet ist, an einer Seite auf meiner Beobachtungsliste macht.",
+	"echo-pref-tooltip-minor-watchlist": "Benachrichtigen mich, wenn jemand eine Bearbeitung, die als „kleine Änderung“ gekennzeichnet ist, an einer Seite auf meiner Beobachtungsliste macht.",
 	"notifications": "Benachrichtigungen",
 	"tooltip-pt-notifications-alert": "{{GENDER:|Deine}} Meldungen",
 	"tooltip-pt-notifications-notice": "{{GENDER:|Deine}} Mitteilungen",

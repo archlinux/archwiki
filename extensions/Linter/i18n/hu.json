@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Tacsipacsi",
-			"Urbalazs"
+			"Urbalazs",
+			"Bean49"
 		]
 	},
 	"linterrors": "Lint-hibák",
@@ -34,6 +35,7 @@
 	"linter-pager-title-header": "Lapcím",
 	"linter-pager-unclosed-quotes-in-heading-details": "Lezáratlan aposztróf, ami kiszivárog a tartalomjegyzékből",
 	"linterrors-subpage": "Lint-hibák: $1",
+	"linterrors-summary": "Bővebb információkért lásd: [[mw:Help:Lint errors]].<br><strong>Note:</strong> The counts for categories are not accurate counts, but are based on estimates.",
 	"multi-part-template-block": "A kimenet nem egyetlen sablonból származik",
 	"pageinfo-linter": "Lint-hibák"
 }

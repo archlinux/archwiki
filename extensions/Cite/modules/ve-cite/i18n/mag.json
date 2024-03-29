@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"ऐक्टिवेटेड्"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "पुस्तक",
+	"visualeditor-cite-tool-name-journal": "पत्रिका",
+	"visualeditor-cite-tool-name-news": "समाचार",
+	"visualeditor-cite-tool-name-web": "जालस्थान",
+	"cite-ve-citationneeded-button": "उद्धरण जोड़ी",
+	"cite-ve-citationneeded-reason": "कारण देल गेल :",
+	"cite-ve-citationneeded-title": "उद्धरणके आवश्यकता हे",
+	"cite-ve-dialog-reference-editing-extends": "ई एगो दुसर सन्दर्भके बिस्तार हे ।",
+	"cite-ve-dialog-reference-editing-extends-long": "ई एगो दुसर सन्दर्भ \"$1\" के बिस्तार हे ।",
+	"cite-ve-dialog-reference-options-group-label": "ई समूहके प्रयोग करी",
+	"cite-ve-dialog-reference-options-group-placeholder": "सामान्य सन्दर्भ",
+	"cite-ve-dialog-reference-options-name-label": "ई नामके पुनरुपयोग करी",
+	"cite-ve-dialog-reference-options-responsive-label": "उत्तरदायी कॉलम् लेआउट् प्रयाग करी",
+	"cite-ve-dialog-reference-options-section": "बिकल्प",
+	"cite-ve-dialog-reference-placeholder": "अपन सन्दर्भ हिँया लिखी वा साटी, या फिन उद्धरण साँचा जोड़ी ।",
+	"cite-ve-dialog-reference-title": "सन्दर्भ",
+	"cite-ve-dialog-reference-useexisting-tool": "पुनरुपयोग",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "सामान्य सन्दर्भके सूची",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "समूह \"$1\" लागि सन्दर्भके सूची",
+	"cite-ve-dialog-referenceslist-title": "सन्दर्भसूची",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "उद्धरण",
+	"cite-ve-dialogbutton-reference-full-label": "मूलभूत",
+	"cite-ve-dialogbutton-reference-title": "सन्दर्भ",
+	"cite-ve-dialogbutton-reference-tooltip": "मूलभूत",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "सन्दर्भसूची",
+	"cite-ve-reference-input-placeholder": "बर्तमान उद्धरणमे खोजी",
+	"cite-ve-referenceslist-missingreflist": "ई सन्दर्भसूची एगो साँचासे उत्पन्न कैल गेलीहे ।",
+	"cite-ve-toolbar-group-label": "उद्धृत करी",
+	"cite-ve-othergroup-item": "$1 सन्दर्भ"
+}

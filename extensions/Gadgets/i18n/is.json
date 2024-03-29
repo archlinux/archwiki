@@ -4,10 +4,11 @@
 			"Jóna Þórunn",
 			"Maxí",
 			"Snævar",
-			"Sveinn í Felli"
+			"Sveinn í Felli",
+			"Stefán Örvar Sigmundsson"
 		]
 	},
-	"gadgets-desc": "Gerir notendum kleift að velja [[Special:Gadgets|CSS og JavaScript-forrit]] í [[Special:Preferences#mw-prefsection-gadgets|stillingum sínum]]",
+	"gadgets-desc": "Leyfir notendum að velja sérsniðnar [[Special:Gadgets|CSS- og JavaScript-græjur]] í [[Special:Preferences#mw-prefsection-gadgets|kjörstillingum]]",
 	"prefs-gadgets": "Smáforrit",
 	"gadgets-prefstext": "Eftirfarandi er listi yfir smáforrit sem þú getur notað á notandareikningi þínum. Þessi smáforrit eru að mestu byggð á JavaScript svo vafrinn þarf að styðja JavaScript til að þau virki. Athugaðu einnig að smáforritin hafa engin áhrif á stillingasíðunni.\n\nSmáforritin eru ekki hluti af MediaWiki-hugbúnaðinum heldur eru skrifuð og viðhaldin af notendum á þessu wiki-verkefni. Möppudýr geta breytt smáforritunum á [[MediaWiki:Gadgets-definition]] og [[Special:Gadgets]]. Fjöldi notenda sem nota hvert smáforrit fyrir sig er skráður á [[Special:GadgetUsage|Notkunarupplýsingar smáforrita]].",
 	"gadgets": "Smáforrit",
@@ -16,11 +17,11 @@
 	"gadgetusage-activeusers": "Virkir notendur",
 	"gadgetusage-default": "Sjálfgefið",
 	"gadgets-title": "Smáforrit",
-	"gadgets-pagetext": "Eftirfarandi er listi yfir smáforrit sem notendur geta virkjað í [[Special:Preferences#mw-prefsection-gadgets|stillingunum sínum]] og eru tilgreind á [[MediaWiki:Gadgets-definition]].\nÞessi listi veitir auðveldan aðgang að lýsingum á smáforritunum og kóðanum þeirra.",
+	"gadgets-pagetext": "Fyrir neðan er listi yfir sérstakar græjur sem notendur geta virkjað á [[Special:Preferences#mw-prefsection-gadgets|kjörstillingasíðu]], eins og þær eru skilgreindar af [[MediaWiki:Gadgets-definition|skilgreiningunum]].\nÞetta yfirlit veitir greiðan aðgang að kerfisskilaboðasíðum sem skilgreina lýsingu og kóða hverrar græju.",
 	"gadgets-uses": "Notar",
 	"gadgets-required-rights": "Þarfnast eftifarandi {{PLURAL:$2|réttinda}}:\n\n$1",
 	"gadgets-required-skins": "Aðgengileg með eftirfarandi {{PLURAL:$2|þema|$2 þemum}}: $1",
-	"gadgets-default": "Virkt fyrir alla notendur.",
+	"gadgets-default": "Sjálfgefið virkjað fyrir alla.",
 	"gadgets-export": "Flytja út",
 	"gadgets-export-title": "Flytja út smáforrit",
 	"gadgets-not-found": "Smáforritið \"$1\" fannst ekki.",

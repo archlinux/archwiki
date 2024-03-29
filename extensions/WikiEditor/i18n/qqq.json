@@ -142,7 +142,7 @@
 	"wikieditor-toolbar-tool-replace-title": "{{Identical|Search and replace}}",
 	"wikieditor-toolbar-tool-replace-search": "{{Identical|Search}}",
 	"wikieditor-toolbar-tool-replace-replace": "Used in the \"search and replace\" dialog of the toolbar as label for an input field",
-	"wikieditor-toolbar-tool-replace-case": "This could as well be translated as \"case sensitive search\" -\n\"case\" refers to character case, that is upper case, or lower case.",
+	"wikieditor-toolbar-tool-replace-case": "This could as well be translated as \"case-sensitive search\". \"Case\" refers to character case, that is upper case or lower case.",
 	"wikieditor-toolbar-tool-replace-regex": "A \"regular expression\" is a syntax to find strings based on patterns, for more see [[wikipedia:Regular expression|the Wikipedia article]].\n\nMore notes:\n* \"Regular expression\" is mostly a programmer tool, which is sometimes exposed to normal users too. It's almost as a programming language, but it is used to describe different kinds of strings (sometimes also called patterns and pattern matching), and is often used to change (parts of) the strings,  too.",
 	"wikieditor-toolbar-tool-replace-button-findnext": "{{Identical|Find next}}",
 	"wikieditor-toolbar-tool-replace-button-replace": "{{Identical|Replace}}",

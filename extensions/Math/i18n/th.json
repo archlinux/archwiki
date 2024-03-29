@@ -5,10 +5,12 @@
 			"Ans",
 			"Horus",
 			"Octahedron80",
-			"Prame Tan"
+			"Prame Tan",
+			"Ekminarin",
+			"RidJasper"
 		]
 	},
-	"math-desc": "เรนเดอร์สูตรคณิตศาสตร์ระหว่างป้ายกำกับ <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
+	"math-desc": "เรนเดอร์สูตรคณิตศาสตร์ระหว่างป้ายระบุ <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
 	"math-visualeditor-mwchemdialog-title": "สูตรเคมี",
 	"math-visualeditor-mwcheminspector-title": "สูตรเคมี",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "แก้ไขรวดเร็ว",
@@ -62,15 +64,24 @@
 	"math_unknown_error": "ข้อผิดพลาดที่ไม่ทราบสาเหตุ",
 	"math_unknown_function": "ฟังก์ชันที่ไม่ทราบ \"$1\"",
 	"mw_math_latexml": "LaTeXML (แบบทดลอง ใช้ MathML)",
-	"mw_math_mathml": "MathML โดยมี  SVG หรือ PNG เป็นรูปแบบสำรอง (แนะนำสำหรับเว็บเบราว์เซอร์และเครื่องมือสนับสนุนการเข้าถึงรุ่นใหม่ๆ)",
+	"mw_math_mathml": "SVG (สามารถเปิดใช้งาน MathML ผ่านปลั๊กอินของเบราว์เซอร์)",
 	"mw_math_source": "รหัสต้นฉบับ LaTeX (สำหรับเว็บเบราว์เซอร์แบบข้อความ)",
 	"prefs-math": "คณิตศาสตร์",
+	"mathstatus": "สถานะทางคณิตศาสตร์",
+	"mathwikibase": "ข้อมูลสูตรคณิตศาสตร์",
 	"datatypes-type-math": "นิพจน์ทางคณิตศาสตร์",
 	"wikibase-listdatatypes-math-head": "นิพจน์ทางคณิตศาสตร์",
+	"math-wikibase-header": "ข้อมูลรายการทางคณิตศาสตร์",
+	"math-wikibase-formula": "สูตร",
 	"math-wikibase-formula-name": "ชื่อ",
 	"math-wikibase-formula-type": "ชนิด",
 	"math-wikibase-formula-description": "คำอธิบาย",
-	"math-wikibase-special-form-header": "กำหนดชื่อของสมการ",
-	"math-wikibase-special-form-placeholder": "ชื่อสมการ",
-	"math-wikibase-special-error-header": "เกิดข้อผิดพลาด"
+	"math-wikibase-formula-information": "ข้อมูลสูตรคณิตศาสตร์",
+	"math-wikibase-formula-link-header": "แหล่งข้อมูล",
+	"math-wikibase-special-form-header": "กำหนดชื่อของสูตร:",
+	"math-wikibase-special-form-placeholder": "ชื่อสูตร",
+	"math-wikibase-special-form-button": "ขอข้อมูล",
+	"math-wikibase-special-error-header": "เกิดข้อผิดพลาด",
+	"math-wikibase-special-error-unknown": "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุขณะดึงข้อมูลจากวิกิเบส",
+	"math-wikibase-special-error-no-wikibase": "จำเป็นต้องมีส่วนขยายวิกิเบสเพื่อที่จะใช้หน้าพิเศษนี้"
 }

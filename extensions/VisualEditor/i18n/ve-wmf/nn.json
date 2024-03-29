@@ -2,9 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Jeblad",
-			"Njardarlogar"
+			"Njardarlogar",
+			"Jon Harald Søby"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck trur at nytt innhald vart lagt til på sida",
+	"tag-editcheck-newreference-description": "Ein referanse vart lagt til på sida",
+	"tag-editcheck-references-description": "EditCheck trur at ein referanse kan ha vore naudsynt",
+	"tag-editcheck-references-activated-description": "EditCheck trur at ein referanse kan ha vore naudsynt, og brukargrensesnittet for dette vart vist",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuell endring]]",
 	"tag-visualeditor-description": "Endring gjord med [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuell endring]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuell endring: Kontroller]]",
@@ -13,6 +18,7 @@
 	"tag-visualeditor-wikitext-description": "Endring gjord med 2017-tekstendraren",
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuell endring: Bytte]]",
 	"tag-visualeditor-switched-description": "Brukaren byrja endra med visuell endring, men bytte så til wikitekstendring.",
+	"visualeditor-feedback-link": "Project:VisualEditor/Feedback",
 	"visualeditor-feedback-tool": "Gje attendemelding på programvara",
 	"visualeditor-help-label": "Les brukarrettleiinga",
 	"visualeditor-help-title": "Handbok for bruk av tekstendraren",

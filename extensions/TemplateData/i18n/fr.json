@@ -48,7 +48,7 @@
 	"templatedata-doc-param-type-boolean": "Booléen",
 	"templatedata-doc-param-type-content": "Contenu",
 	"templatedata-doc-param-type-date": "Date",
-	"templatedata-doc-param-type-line": "Ligne",
+	"templatedata-doc-param-type-line": "Ligne de texte",
 	"templatedata-doc-param-type-number": "Nombre",
 	"templatedata-doc-param-type-string": "Chaîne",
 	"templatedata-doc-param-type-unbalanced-wikitext": "Wikicode non équilibré",

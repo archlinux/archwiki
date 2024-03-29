@@ -9,7 +9,8 @@
 			"Revi",
 			"ToePeu",
 			"Ykhwong",
-			"아라"
+			"아라",
+			"Dr1t jg"
 		]
 	},
 	"captcha-edit": "글을 편집하려면 아래의 문제를 해결한 다음 상자에 정답을 입력해 주세요 ([[Special:Captcha/help|자세한 정보]]):",
@@ -39,5 +40,6 @@
 	"confirmedit-preview-content": "내용",
 	"confirmedit-preview-validity": "유효성",
 	"confirmedit-preview-valid": "유효함",
-	"confirmedit-preview-invalid": "유효하지 않음"
+	"confirmedit-preview-invalid": "유효하지 않음",
+	"confirmedit-preview-description": "다음 표는 이 페이지의 행 목록이랑 유효한 아이피 주소나 아이피 주소 범위인지 보여줌. 행이 유효한 아이피 주소나 아이피 주소 범위라면 캡차 검사에서 제외되지만, 유효하지 않은 행은 무시됨. 유효하지 않은 아이피 주소 범위는 예로: 69.208.0.0에서 69.208.255.255까지 가는 69.208.0.0/16. 아이피 주소 범위를 계산하는 것에 대하여[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix More information]."
 }

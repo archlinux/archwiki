@@ -3,7 +3,8 @@
 		"authors": [
 			"Matma Rex",
 			"Metalhead64",
-			"ToBeFree"
+			"ToBeFree",
+			"Filzstift"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Keine gecachte Serialisierung mit diesem Schlüssel gefunden",
@@ -38,7 +39,7 @@
 	"apihelp-visualeditoredit-param-data-{plugin}": "Beliebige Daten, die von einem Plugin mit der API-Anfrage gesendet werden.",
 	"apihelp-visualeditoredit-param-etag": "Zu sendendes ETag.",
 	"apihelp-visualeditoredit-param-html": "HTML, das an Parsoid in Austausch für Wikitext gesendet werden soll.",
-	"apihelp-visualeditoredit-param-minor": "Markierung für kleine Bearbeitung.",
+	"apihelp-visualeditoredit-param-minor": "Markierung für eine kleine Änderung.",
 	"apihelp-visualeditoredit-param-needcheck": "Lege diesen Parameter beim Speichern fest, falls die Version Probleme haben könnte. Dies führt dazu, dass die Bearbeitung markiert wird.",
 	"apihelp-visualeditoredit-param-oldid": "Die zu verwendende Versionsnummer. Standard: Aktuellste Version.",
 	"apihelp-visualeditoredit-param-paction": "Die auszuführende Aktion.",

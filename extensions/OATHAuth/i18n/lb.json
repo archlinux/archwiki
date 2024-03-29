@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robby"
+			"Robby",
+			"Volvox"
 		]
 	},
 	"oathauth-account": "Numm vum Kont:",
@@ -12,6 +13,7 @@
 	"oathauth-prefs-label": "Authentifikatioun mat zwee Elementer:",
 	"oathauth-step1": "Schrëtt 1: Den Zwee-Facteur-Authentifikatiounsprogramm eroflueden",
 	"oathauth-step2": "Schrëtt 2: De QR-Code scannen",
+	"oathauth-step2alt": "Wann Dir de QR-Code net scanne kënnt, gitt de geheime Schlëssel an den Numm vum Kont manuell an:",
 	"oathauth-step4": "Schrëtt 4: Verificatioun",
 	"oathauth-enteruser": "Benotzernumm:",
 	"oathauth-enterverifyreason": "Grond fir Nozekucken",

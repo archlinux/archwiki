@@ -3,7 +3,8 @@
 		"authors": [
 			"Aefgh39622",
 			"Manop",
-			"Passawuth"
+			"Passawuth",
+			"Ekminarin"
 		]
 	},
 	"interwiki": "ดูและแก้ไขข้อมูลอินเตอร์วิกิ",
@@ -11,6 +12,9 @@
 	"interwiki-desc": "เพิ่ม[[Special:Interwiki|หน้าพิเศษ]]เพื่อดูและแก้ไขตารางอินเตอร์วิกิ",
 	"interwiki_prefix": "คำนำหน้า",
 	"interwiki-prefix-label": "คำนำหน้า:",
+	"interwiki_url": "ยูอาร์แอล",
+	"interwiki-url-label": "ยูอาร์แอล:",
+	"interwiki-api-label": "เอพีไอ:",
 	"interwiki_local": "ส่งต่อ",
 	"interwiki_trans": "การใช้แม่แบบ",
 	"interwiki_1": "ใช่",
@@ -18,6 +22,7 @@
 	"interwiki_edit": "แก้ไข",
 	"interwiki_reasonfield": "เหตุผล:",
 	"interwiki_deleting": "คุณกำลังจะลบคำนำหน้า \"$1\"",
+	"interwiki-logtext": "ดูปูม",
 	"interwiki_addbutton": "เพิ่ม",
 	"interwiki_edittext": "แก้ไขคำนำหน้าอินเตอร์วิกิ",
 	"right-interwiki": "แก้ไขข้อมูลอินเตอร์วิกิ",

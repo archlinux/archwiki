@@ -6,6 +6,7 @@
 	},
 	"apihelp-query+linterrors-summary": "Pigghie l'elenghe de le errore de Lint",
 	"apihelp-query+linterrors-param-categories": "Categorije de errore de Lint",
+	"apihelp-query+linterrors-param-invisible-categories": "Categorije invisibbele de le errore lint",
 	"apihelp-query+linterrors-param-limit": "Numere de le resultate da cercà",
 	"apihelp-query+linterrors-param-from": "ID de Lint da addò accumenzà 'a recerche",
 	"apihelp-query+linterrors-param-namespace": "'Nglude sulamende le errore de Lint da le namespace specificate",

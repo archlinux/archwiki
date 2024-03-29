@@ -4,7 +4,8 @@
 			"Chinneeb",
 			"MongolWiki",
 			"Sembuk",
-			"Wisdom"
+			"Wisdom",
+			"Enkhsaihan2005"
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Хуучны Vector ашиглах",
@@ -13,6 +14,7 @@
 	"vector-action-toggle-sidebar": "Хажуугийн цэсийг нээж хаах",
 	"vector-languages": "Хэлнүүд",
 	"vector-language-button-label": "{{PLURAL:$1|$1 хэлээр}}",
+	"vector-no-language-button-label": "Хэл нэмэх",
 	"vector-language-redirect-to-top": "Хэлний цэсийг хуудасны баруун дээд өнцгөөс харна уу. [[#p-lang-btn|Эхлэл рүү шилжих]].",
 	"vector-action-addsection": "Сэдэв нэмэх",
 	"vector-action-delete": "Устгах",

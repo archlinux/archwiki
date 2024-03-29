@@ -7,10 +7,12 @@
 			"Jeluang Terluang",
 			"Kurniasan",
 			"Macofe",
-			"Tofeiku"
+			"Tofeiku",
+			"Hakimi97"
 		]
 	},
 	"math-desc": "Mengolah rumus-rumus matematik antara teg-teg <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
+	"math-visualeditor-mwlatexcontextitem-quickedit": "Sunting pantas",
 	"math-visualeditor-mwlatexinspector-display": "Paparan",
 	"math-visualeditor-mwlatexinspector-display-block": "Sekat",
 	"math-visualeditor-mwlatexinspector-display-default": "Asali",

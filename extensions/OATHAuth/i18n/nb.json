@@ -16,7 +16,6 @@
 	"oathauth-account": "Kontonavn:",
 	"oathauth-secret": "Hemmelig nøkkel for tofaktorautentisering:",
 	"oathauth-enable": "Slå på tofaktorautentisering",
-	"oathauth-scratchtokens": "Følgende liste er en liste over engangspassord. Disse kan kun brukes én gang, og bør kun brukes i nødstilfelle. Skriv dem ned og legg dem på et lurt sted. Om du mister telefonen din vil disse passordene være eneste måte å få tilbake kontoen din. '''Disse passordene vil aldri vises igjen.'''",
 	"oathauth-token": "Tegn",
 	"oathauth-disable": "Slå av tofaktorautentisering",
 	"oathauth-validatedoath": "Tofaktorautentisering legitimert. Det er nå tatt i bruk.",
@@ -100,5 +99,6 @@
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} har slått på tofaktorautentisering.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} har ikke slått på tofaktorautentisering.",
 	"oathauth-prefs-disabledgroups": "Skrudd av for {{PLURAL:$1|gruppen|gruppene}}:",
-	"oathauth-prefs-disabledgroups-help": "Medlemskapet {{GENDER:$2|ditt}} i {{PLURAL:$1|denne gruppa|disse gruppene}} er deaktivert fram til du aktiverer [[Special:Manage Two-factor authentication|tofaktorautentisering]]."
+	"oathauth-prefs-disabledgroups-help": "Medlemskapet {{GENDER:$2|ditt}} i {{PLURAL:$1|denne gruppa|disse gruppene}} er deaktivert fram til du aktiverer [[Special:Manage Two-factor authentication|tofaktorautentisering]].",
+	"oathauth-hint": "Har du ikke tilgang til enheten eller applikasjonen? Du kan skrive inn gjenopprettingsnøkler (som du fikk da du slo på 2FA) i dette feltet."
 }

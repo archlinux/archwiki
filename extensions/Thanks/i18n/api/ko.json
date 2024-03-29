@@ -5,6 +5,7 @@
 			"Ykhwong"
 		]
 	},
+	"apihelp-flowthank-summary": "플로 댓글에 공개 감사 표현 알림 보내기",
 	"apihelp-flowthank-param-postid": "감사를 표할 게시물의 UUID입니다.",
 	"apihelp-flowthank-example-1": "<kbd>UUID xyz789</kbd>와 함께 댓글에 대한 감사 표현을 보냅니다",
 	"apihelp-thank-summary": "편집자에게 감사 알림을 보냅니다.",

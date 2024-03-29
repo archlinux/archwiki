@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Snævar",
-			"Sveinn í Felli"
+			"Sveinn í Felli",
+			"Stefán Örvar Sigmundsson"
 		]
 	},
 	"scribunto-line": "í línu $1",
@@ -19,13 +20,13 @@
 	"scribunto-console-clear": "Hreinsa",
 	"scribunto-console-cleared": "Staða stjórnborðsins var hreinsuð því skriftan var uppfærð.",
 	"scribunto-console-cleared-session-lost": "Staða stjórnborðsins var hreinsuð því setu gögn töpuðust.",
-	"scribunto-common-error-category": "Síður með villum í skriftum",
-	"scribunto-common-error-category-desc": "Villa átti sér stað við vinnslu skriftanna á þessari síðu.",
+	"scribunto-common-error-category": "Síður með skriftuvillur",
+	"scribunto-common-error-category-desc": "Það kom upp villa við meðhöndlun skriftanna sem innifalnar eru á síðunni.",
 	"scribunto-common-nosuchmodule": "Villa í skriftu: Skriftan „$2” er ekki til.",
 	"scribunto-common-nofunction": "Villa í skriftu: Þú þarft að kalla á aðgerð.",
 	"scribunto-common-nosuchfunction": "Villa í skriftu: Aðgerðin „$2” er ekki til.",
 	"scribunto-common-notafunction": "Villa í skriftu: „$2“ er ekki aðgerð.",
-	"scribunto-common-timeout": "Sá tími sem er tileinkaður keyrslu skriftna hefur runnið út.",
+	"scribunto-common-timeout": "Tíminn úthlutaður til að keyra skriftur er útrunninn.",
 	"scribunto-common-oom": "Það magn minnis sem er leyft fyrir keyrslu skrifta er þegar uppurið.",
 	"scribunto-common-backtrace": "Afturekja:",
 	"scribunto-common-no-details": "Engar frekari upplýsingar eru til.",
@@ -44,7 +45,7 @@
 	"scribunto-luastandalone-gone": "Lua villa: Innri villa: Túlkurinn hefur þegar lokið vinnslu.",
 	"scribunto-luastandalone-signal": "Lua villa: Innri villa: Túlkurinn hefur slökkt á sér með merkinu \"$2\".",
 	"scribunto-luastandalone-exited": "Lua villa: Innri villa: Túlkurinn hefur slökkt á sér með stöðunni $2.",
-	"scribunto-module-with-errors-category": "Scribunto skriftur með villum",
+	"scribunto-module-with-errors-category": "Scribunto-skriftur með villur",
 	"scribunto-module-with-errors-category-desc": "Skriftan hefur villu í sér.",
 	"scribunto-limitreport-timeusage": "Lua tímanotkun",
 	"scribunto-limitreport-timeusage-value": "$1/$2 sekóndur",

@@ -6,6 +6,7 @@
 		]
 	},
 	"templatedata-doc-desc-empty": "Nula deskripto.",
+	"templatedata-doc-no-params-set": "Nula parametro specigesis",
 	"templatedata-doc-param-autovalue": "Valoro ''default''",
 	"templatedata-doc-param-default": "''Default''",
 	"templatedata-doc-param-desc": "Deskripto",

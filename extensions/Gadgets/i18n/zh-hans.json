@@ -24,7 +24,10 @@
 			"沈澄心",
 			"阿pp",
 			"飞舞回堂前",
-			"LittlePaw365"
+			"LittlePaw365",
+			"Diskdance",
+			"Dream Star.cn",
+			"列维劳德"
 		]
 	},
 	"gadgets-desc": "让用户在其[[Special:Preferences#mw-prefsection-gadgets|参数设置]]中选择自定义[[Special:Gadgets|CSS和JavaScript工具]]",
@@ -53,7 +56,7 @@
 	"gadgets-required-contentmodels": "仅限{{PLURAL:$2|“$1”内容模型|以下内容模型：$1}}。",
 	"gadgets-default": "默认所有人启用。",
 	"gadgets-legacy": "未加载小工具。请迁移至ResourceLoader。\n（[https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) 了解更多]）",
-	"gadgets-packaged": "本小工具[https://www.mediawiki.org/wiki/ResourceLoader/Package_files 被包装]，入口点为$1",
+	"gadgets-packaged": "此小工具已[https://www.mediawiki.org/wiki/ResourceLoader/Package_files 打包]，其入口点为 $1",
 	"gadgets-export": "导出",
 	"gadgets-export-title": "导出小工具",
 	"gadgets-not-found": "找不到“$1”小工具。",

@@ -12,7 +12,7 @@
 	"prefs-vector-enable-vector-1-help": "In di agn che vegnen sgionaremm meneman el tema Vector. Legacy Vector el te permetarà de visualizà la version passada de  Vector (che la risaliss al dicember 2019). Per savenn pussee sora i asgiornament, visita la nostra [[mw:Reading/Web/Desktop_Improvements|pagina de progett]].",
 	"vector-opt-out": "Torna a l'aspet vegg",
 	"vector-opt-out-tooltip": "Cambia i to impostazzion per tornà a la visualizzazion de la pell che la gh'era prima (legacy Vector)",
-	"vector-action-toggle-sidebar": "Ativa/desativa la sbarra de fianch",
+	"vector-action-toggle-sidebar": "Ativa/desativa la colona de fianch",
 	"vector-languages": "Lengue",
 	"vector-language-button-aria-label": "Vai a on articol in d'on'altra lenguaː Disponibil in {{PLURAL:$1|$1 lengua|$1 lengue}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 lengua|$1 lengov}}",
@@ -48,7 +48,7 @@
 	"vector-page-tools-label": "Istrument",
 	"vector-page-tools-general-label": "Sgeneral",
 	"vector-page-tools-actions-label": "Azzion",
-	"vector-pin-element-label": "sposta in la sbarra de fianch",
+	"vector-pin-element-label": "sposta de fianch",
 	"vector-unpin-element-label": "scond",
 	"tooltip-vector-anon-user-menu-title": "Pussee de opzion"
 }

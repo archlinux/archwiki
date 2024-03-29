@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Cedric31"
+			"Cedric31",
+			"Lhanars"
 		]
 	},
 	"timeless-desc": "Un abilhatge intemporal concebut d’aprèp lo prototipe Winter per Brandon Harris, e divèrses estils de la Fondacion Wikimèdia.",
@@ -9,7 +10,7 @@
 	"timeless-loggedinas": "Connectat en tant que '''$1'''",
 	"timeless-notloggedin": "Pas connectat",
 	"timeless-userpage": "Pagina {{GENDER:$1|utilizaire}}",
-	"timeless-talkpage": "Discussion {{GENDER:$1|utilizaire}}",
+	"timeless-talkpage": "Discussion {{GENDER:$1|Utilizator}}",
 	"timeless-pagelog": "Registres de pagina",
 	"timeless-more": "Mai",
 	"timeless-sitetools": "Aisinas wiki",

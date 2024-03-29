@@ -35,5 +35,6 @@
 	"gadgets-not-found": "No s'ha trobat el giny «$1».",
 	"gadgets-export-text": "Per a exportar el giny $1, feu clic al botó «{{int:gadgets-export-download}}», deseu el fitxer baixat,\naneu a Special:Import al wiki de destinació i pugeu-lo. Llavors afegiu el següent a la pàgina MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nHeu de tenir els permisos adequats en el wiki de destinació (incloent-hi els permisos per editar missatges del sistema) i s'ha d'habilitar la importació de la pujada de fitxers.",
 	"gadgets-export-download": "Baixa",
-	"right-gadgets-edit": "Edita el gadget JavaScript i les pàgines CSS"
+	"right-gadgets-edit": "Edita el gadget JavaScript i les pàgines CSS",
+	"right-gadgets-definition-edit": "Modificar les definicions de gadgets"
 }

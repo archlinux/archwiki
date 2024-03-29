@@ -6,6 +6,8 @@
 			"Сантяй"
 		]
 	},
+	"vector-opt-out": "Аравтомс ташто аравтомкатнень",
+	"vector-opt-out-tooltip": "Полавтыть аравтомкатнень, ташто аравтомкатнень (Таштомозь Векторонь) теманть коряс",
 	"vector-languages": "Кельть",
 	"vector-language-button-label": "{{PLURAL:$1|$1 кель|$1 кельть}}",
 	"vector-no-language-button-label": "Поладомс кельть",

@@ -7,7 +7,8 @@
 			"Lockal",
 			"Okras",
 			"Putnik",
-			"Александр Сигачёв"
+			"Александр Сигачёв",
+			"Pacha Tchernof"
 		]
 	},
 	"categorytree": "Дерево категорий",
@@ -30,7 +31,7 @@
 	"categorytree-num-files": "$1 Ф",
 	"categorytree-num-empty": "пусто",
 	"categorytree-load": "загрузить",
-	"categorytree-loading": "загрузка…",
+	"categorytree-loading": "загружается…",
 	"categorytree-nothing-found": "Данная категория не содержит подкатегорий.",
 	"categorytree-no-subcategories": "нет подкатегорий",
 	"categorytree-no-parent-categories": "нет родительских категорий",

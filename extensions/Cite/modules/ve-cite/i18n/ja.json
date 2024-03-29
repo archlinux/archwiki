@@ -21,7 +21,8 @@
 			"Takot",
 			"Vigorous action",
 			"Whym",
-			"おはぐろ蜻蛉"
+			"おはぐろ蜻蛉",
+			"Ant176"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "書籍",
@@ -64,7 +65,7 @@
 	"cite-ve-referenceslist-isempty-default": "このページには、この一覧に含められる脚注がありません。",
 	"cite-ve-referenceslist-missingref": "この脚注はテンプレート内または別途生成されたブロック内で定義されているため、現時点ではソースモードでのみ編集できます。",
 	"cite-ve-referenceslist-missingref-in-list": "この脚注はテンプレート内または別途生成されたブロック内で定義されているため、現時点ではソースモードでのみプレビューできます。",
-	"cite-ve-referenceslist-missingreflist": "この脚注リストはテンプレートにより生成されているため、現時点ではソースモードでのみ編集できます。",
+	"cite-ve-referenceslist-missingreflist": "この脚注リストはテンプレートにより生成されています。",
 	"cite-ve-toolbar-group-label": "引用",
 	"cite-ve-othergroup-item": "$1 脚注",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "脚注",

@@ -15,7 +15,8 @@
 			"Shirayuki",
 			"Siebrand",
 			"The Evil IP address",
-			"Umherirrender"
+			"Umherirrender",
+			"Amire80"
 		]
 	},
 	"gadgets-desc": "{{desc|name=Gadgets|url=https://www.mediawiki.org/wiki/Extension:Gadgets}}",
@@ -39,10 +40,10 @@
 	"gadgets-viewdescription": "Link for viewing the gadget description shown in Special:Preferences. Used on [[Special:Gadgets]] instead of {{msg-mw|Gadgets-editdescription}} when the user does not have permissions to edit.",
 	"gadgets-uses": "This is used as a verb in third-person singular. It appears in front of a script name. Example: \"''Uses: Gadget-UTCLiveClock.js''\"\n\nSee [[meta:Special:Gadgets|Gadgets page in meta.wikimedia.org]]\n{{Identical|Use}}",
 	"gadgets-required-rights": "Parameters:\n* $1 - a list in wikitext.\n* $2 - the number of items in list $1 for PLURAL use.",
-	"gadgets-required-skins": "Parameters:\n* $1 - a comma separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
-	"gadgets-required-actions": "Parameters:\n* $1 - a comma separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
-	"gadgets-required-namespaces": "Parameters:\n* $1 - a comma separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
-	"gadgets-required-contentmodels": "Parameters:\n* $1 - a comma separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
+	"gadgets-required-skins": "Parameters:\n* $1 - a comma-separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
+	"gadgets-required-actions": "{{doc-important|The difference here is between specifically one action and more than one action. In languages that use the singular form for numbers other than 1 (for example, for 21), use <nowiki>{{PLURAL:$2|1=}}</nowiki>.}}\nParameters:\n* $1 - a comma-separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
+	"gadgets-required-namespaces": "{{doc-important|The difference here is between specifically one namespace and more than one namespace. In languages that use the singular form for numbers other than 1 (for example, for 21), use <nowiki>{{PLURAL:$2|1=}}</nowiki>.}}\nParameters:\n* $1 - a comma-separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
+	"gadgets-required-contentmodels": "{{doc-important|The difference here is between specifically one content model and more than one content model. In languages that use the singular form for numbers other than 1 (for example, for 21), use <nowiki>{{PLURAL:$2|1=}}</nowiki>.}}\nParameters:\n* $1 - a comma-separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
 	"gadgets-default": "Used in [[Special:Gadgets]], if the gadget is enabled for everyone by the Wiki's default settings.",
 	"gadgets-legacy": "Used on [[Special:Gadgets]], if the gadget contains legacy scripts and doesn't use ResourceLoader yet.",
 	"gadgets-packaged": "Used on [[Special:Gadgets]], if the gadget is [https://www.mediawiki.org/wiki/ResourceLoader/Package_files packaged]. Parameters:\n* $1 - script file which is the entry point",
@@ -51,7 +52,7 @@
 	"gadgets-not-found": "Used as error message. Parameters:\n* $1 - gadget name",
 	"gadgets-export-text": "Used as page description in [[Special:Gadgets]].\n\nRefers to {{msg-mw|Gadgets-export-download}}.\n\nSee example: [[Special:Gadgets/export/editbuttons]]\n\nFollowed by the \"Export\" form.\n\nParameters:\n* $1 - gadget name\n* $2 - gadget definition (code)",
 	"gadgets-export-download": "Use the verb for this message. Submit button.\n{{Identical|Download}}",
-	"gadgets-requires-es6": "Message shown on [[Special:Gadgets]] for gadgets that only run on browsers that support ES6",
+	"gadgets-requires-es6": "Message shown on [[Special:Gadgets]] for gadgets that only run on browsers that support ES6 (ES6 is a version of the JavaScript programming language).",
 	"gadgets-validate-notset": "Error message shown if a required property is not set. Parameters:\n* $1 - name of the property, e.g. settings.rights .",
 	"gadgets-validate-wrongtype": "Error message shown if a property is set to the wrong type. * $1 is the name of the property, e.g. settings.rights or module.messages[3].\n* $2 is the type that this property is expected to have\n* $3 is the type it actually had",
 	"right-gadgets-edit": "{{doc-right|gadgets-edit}}",

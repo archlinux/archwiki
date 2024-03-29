@@ -18,7 +18,7 @@
 		]
 	},
 	"math-desc": "{{desc|name=Math|url=https://www.mediawiki.org/wiki/Extension:Math}}",
-	"math-visualeditor-mwchemdialog-title": "Title for the dialog to edit <nowiki><chem></nowiki> formula blocks.",
+	"math-visualeditor-mwchemdialog-title": "Title for the dialog to edit &lt;chem&gt; formula blocks.",
 	"math-visualeditor-mwcheminspector-title": "Title for the inspector to edit <nowiki><chem></nowiki> formula blocks.",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Label for the quick edit button in the math context item",
 	"math-visualeditor-mwlatexdialog-card-formula": "Label for the generic formula card of the dialog for mathematics, chemistry, etc.\n{{Identical|Formula}}",

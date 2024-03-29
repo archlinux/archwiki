@@ -12,7 +12,8 @@
 			"Sayak Sarkar",
 			"Sayma Jahan",
 			"Tauhid16",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"Aishik Rehman"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "বই",
@@ -51,7 +52,7 @@
 	"cite-ve-dialogbutton-reference-tooltip": "মৌলিক",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "তথ্যসূত্রের তালিকা",
 	"cite-ve-reference-input-placeholder": "বর্তমান তথ্যসূত্রের মধ্যে অনুসন্ধান করুন",
-	"cite-ve-referenceslist-isempty": "এই পাতাতে \"$1\" দলের জন্য কোন তথ্যসূত্র নেই।",
+	"cite-ve-referenceslist-isempty": "এই পাতাতে \"$1\" দলের জন্য কোনো তথ্যসূত্র নেই।",
 	"cite-ve-referenceslist-isempty-default": "এই তালিকায় যোগ করার জন্য এই পৃষ্ঠায় কোন তথ্যসূত্র নেই।",
 	"cite-ve-referenceslist-missingref": "এই তথ্যসূত্রটি একটি টেমপ্লেটে বা অন্য উত্পন্ন ব্লকে সংজ্ঞায়িত করা হয়েছে এবং এখনকার জন্য এটি শুধুমাত্র উৎস মোডে সম্পাদনা করা যাবে।",
 	"cite-ve-referenceslist-missingref-in-list": "এই তথ্যসূত্রটি একটি টেমপ্লেটে বা অন্য উত্পন্ন ব্লকে সংজ্ঞায়িত করা হয়েছে এবং এখনকার জন্য এটি শুধুমাত্র উৎস মোডে প্রাকদর্শন করা যাবে।",

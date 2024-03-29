@@ -16,7 +16,8 @@
 			"Solde",
 			"Ssola",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"V27t"
 		]
 	},
 	"wikieditor": "Interfície avançada de modificació de wikitext",
@@ -42,7 +43,7 @@
 	"wikieditor-toolbar-tool-link-int-text": "Text de l'enllaç:",
 	"wikieditor-toolbar-tool-link-int-text-tooltip": "Text a mostrar",
 	"wikieditor-toolbar-tool-link-ext": "A una pàgina web externa",
-	"wikieditor-toolbar-tool-link-ext-target": "URL de l'enllaç",
+	"wikieditor-toolbar-tool-link-ext-target": "URL de l'enllaç:",
 	"wikieditor-toolbar-tool-link-ext-text": "Text de l'enllaç:",
 	"wikieditor-toolbar-tool-link-insert": "Insereix un enllaç",
 	"wikieditor-toolbar-tool-link-cancel": "Cancel·la",
@@ -163,5 +164,6 @@
 	"wikieditor-toolbar-help-content-file-caption": "Text de la llegenda",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Signatura, data i hora",
 	"wikieditor-toolbar-help-content-signature-description": "Signatura",
+	"wikieditor-toolbar-help-content-signature-username": "Nom d'usuari",
 	"wikieditor-toolbar-help-content-indent-description": "Sagnat"
 }

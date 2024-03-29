@@ -13,8 +13,10 @@
 	"apihelp-query+abusefilters-summary": "Vandálszűrők részleteinek megjelenítése.",
 	"apihelp-query+abusefilters-example-1": "Az engedélyezett nyilvános szűrők listázása.",
 	"apihelp-query+abuselog-example-1": "Friss naplóbejegyzések mutatása",
+	"apihelp-abuselogprivatedetails-param-reason": "Az ellenőrzés végrehajtásának valós indoka.",
 	"apierror-abusefilter-canttest": "Nincs jogosultságod Vandálszűrők teszteléshez.",
 	"apierror-abusefilter-cantcheck": "Nincs jogosultságod a vandálszűrők szintaxisának ellenőrzéséhez.",
+	"apierror-abusefilter-canteval": "Nincs engedélyed az Vandálszűrő kifejezések kiértékelésére.",
 	"apierror-abusefilter-nosuchlogid": "Nincsen $1. számú bejegyzés a Vandálszűrő-naplóban.",
 	"apierror-abusefilter-badsyntax": "A szűrő szintaktikailag hibás."
 }

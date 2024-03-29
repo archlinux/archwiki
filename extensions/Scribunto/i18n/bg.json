@@ -31,6 +31,7 @@
 	"scribunto-lua-in-function-at": "във функцията $1:$2",
 	"scribunto-lua-error-location": "Грешка в Lua $1: $2.",
 	"scribunto-lua-error": "Грешка в Lua: $2.",
+	"scribunto-lua-warning": "Предупреждение от скрипта: $1",
 	"scribunto-luastandalone-proc-error": "Грешка в Lua: Не може да бъде създаден процес.",
 	"scribunto-luastandalone-decode-error": "Грешка в Lua: Вътрешна грешка: Не може да се декодира съобщението.",
 	"scribunto-module-with-errors-category": "Модули с грешки",

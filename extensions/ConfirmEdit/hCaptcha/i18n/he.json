@@ -11,5 +11,5 @@
 	"hcaptcha-createaccount": "כדי להגן על הוויקי מפני יצירת חשבון אוטומטית, אנחנו מבקשים ממך לפתור את ה־hCaptcha הבאה:",
 	"hcaptcha-createaccount-fail": "נראה שלא פתרת את ה־hCaptcha.",
 	"hcaptcha-create": "כדי להגן על הוויקי מפני יצירת דפים אוטומטית, אנו מבקשים ממך לפתור את ה־hCaptcha הבאה:",
-	"hcaptcha-help": "נא לפתוח אתגר hCaptcha ולהחזיר את ערך התגובה כ־captchaWord."
+	"hcaptcha-help": "נא לפתור אתגר hCaptcha ולהחזיר את ערך התגובה כ־captchaWord."
 }

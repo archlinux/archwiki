@@ -303,6 +303,7 @@
 	"visualeditor-mwgallerydialog-widths-field-label": "Larghezza immagine",
 	"visualeditor-mwgallerydialog-widths-input-placeholder": "Larghezza predefinita: $1 px",
 	"visualeditor-mwsignature-tool": "La tua firma",
+	"visualeditor-preference-visualeditor": "Abilita l'editor visuale",
 	"visualeditor-preference-newwikitexteditor-enable": "Utilizza la modalità wikitesto all'interno dell'editor visivo, anziché un diverso editor wikitesto",
 	"visualeditor-preference-newwikitexteditor-help": "Anche nota come 'editor di wikitesto 2017'.",
 	"visualeditor-preference-tabs": "Modalità di modifica:",

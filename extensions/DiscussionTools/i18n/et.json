@@ -81,6 +81,7 @@
 	"discussiontools-pageframe-latestcomment-notopic": "Viimase kommentaari postitas $2 $1.",
 	"discussiontools-pagetitle-newtopic": "Uue teema alustamine leheküljel \"$1\"",
 	"discussiontools-pagetitle-reply": "Vastamine leheküljel \"$1\"",
+	"discussiontools-permalink-comment-copied": "Kommentaari link kopeeritud lõikelauale.",
 	"discussiontools-postedit-confirmation-published": "Sinu kommentaar on avaldatud.",
 	"discussiontools-postedit-confirmation-topicadded": "Teema lisatud.",
 	"discussiontools-preference-autotopicsub": "Telli teemad automaatselt",

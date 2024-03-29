@@ -4,9 +4,11 @@
 			"A-lú-mih",
 			"Ianbu",
 			"Luuva",
-			"唐吉訶德的侍從"
+			"唐吉訶德的侍從",
+			"Winston Sung"
 		]
 	},
+	"vector-languages": "Gú-giân",
 	"vector-action-addsection": "Ke chi̍t-ê toān-lo̍h",
 	"vector-action-delete": "Thâi",
 	"vector-action-move": "Sóa khì",
@@ -18,5 +20,6 @@
 	"vector-view-history": "khoàⁿ le̍k-sú",
 	"vector-view-view": "Tha̍k",
 	"vector-view-viewsource": "Khoàⁿ goân-sí lōe-iông",
-	"vector-more-actions": "Koh khoàⁿ"
+	"vector-more-actions": "Koh khoàⁿ",
+	"vector-page-tools-label": "Ke-si"
 }

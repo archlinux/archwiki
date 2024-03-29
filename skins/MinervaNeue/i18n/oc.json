@@ -4,7 +4,8 @@
 			"Cedric31",
 			"Fitoschido",
 			"Guilhelma",
-			"Quentí"
+			"Quentí",
+			"Lhanars"
 		]
 	},
 	"mobile-frontend-editor-edit": "Modificar",
@@ -18,10 +19,12 @@
 	"mobile-frontend-main-menu-nearby": "A proximitat",
 	"mobile-frontend-main-menu-settings": "Configuracion",
 	"mobile-frontend-main-menu-watchlist": "Lista de seguiment",
+	"mobile-frontend-meta-data-issues": "Problèmas de la pagina",
 	"mobile-frontend-meta-data-issues-categories": "A prepaus d'aquesta categoria",
 	"mobile-frontend-meta-data-issues-header": "Problèmas",
 	"mobile-frontend-pageaction-edit-tooltip": "Modificar la seccion d'introduccion d'aquesta pagina",
 	"mobile-frontend-placeholder": "Recercar sus {{SITENAME}}",
 	"mobile-frontend-random-button": "A l'azard",
-	"mobile-frontend-user-newmessages": "Avètz de messatges novèls sus vòstra pagina de discussion"
+	"mobile-frontend-user-newmessages": "Avètz de messatges novèls sus vòstra pagina de discussion",
+	"minerva-page-actions-editfull": "Modificar tota la pagina"
 }

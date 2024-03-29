@@ -263,6 +263,7 @@
 	"visualeditor-mwgallerydialog-widths-field-label": "Lățimea imaginii",
 	"visualeditor-mwgallerydialog-widths-input-placeholder": "Lățime implicită: $1 px",
 	"visualeditor-mwsignature-tool": "Semnătura dumneavoastră",
+	"visualeditor-preference-visualeditor": "Activează editorul vizual",
 	"visualeditor-preference-newwikitexteditor-enable": "Utilizați modul wikitext înăuntrul editorului vizual, în locul unui editor wikitext diferit.",
 	"visualeditor-preference-tabs": "Mod de editare:",
 	"visualeditor-preference-tabs-multi-tab": "Arată-mi ambele file de modificare",

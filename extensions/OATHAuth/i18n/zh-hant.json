@@ -16,7 +16,8 @@
 			"Xiplus",
 			"予弦",
 			"捍粵者",
-			"神樂坂秀吉"
+			"神樂坂秀吉",
+			"LowensteinYang"
 		]
 	},
 	"oathauth-desc": "提供基於 HMAC 的一次性密碼驗證支援",
@@ -26,7 +27,7 @@
 	"oathauth-account": "帳號名稱：",
 	"oathauth-secret": "雙重認證密鑰：",
 	"oathauth-enable": "開啟雙重認證",
-	"oathauth-scratchtokens": "以下是一次性使用的臨時權杖，這些權杖於緊急情況使用，且只能使用一次。請寫下這些密碼，並存放在安全的地方。如果您遺失了您的行動電話，這些令牌可以回復您的帳號。'''這些權杖於此顯示過一次後，便不會再次顯示'''。",
+	"oathauth-scratchtokens": "以下清單是只能使用一次的臨時權杖的清單，每些權杖只能使用一次，供您在無法存取你的裝置時緊急使用。請寫下這些密碼，並存放在安全的地方。建議您在使用每個密碼登錄時將其標記為已使用。如果您遺失了您的裝置，這些令牌可以回復您的帳號。'''這些權杖於此顯示過一次後，便不會再次顯示'''。",
 	"oathauth-token": "權杖",
 	"oathauth-disable": "停用雙重認證",
 	"oathauth-validatedoath": "已驗證雙重認證。現在起將強制執行雙重認證。",
@@ -37,7 +38,7 @@
 	"oathauth-step1": "步驟一：下載雙重認證應用程式",
 	"oathauth-step1-test": "下載雙重認證的應用程式。這可以是一個手機應用程式（例如Google Authenticator）或一個桌面應用程式。",
 	"oathauth-step2": "步驟二：掃描QR碼",
-	"oathauth-step2alt": "或手動輸入密鑰：",
+	"oathauth-step2alt": "如果無法掃描二維碼，請手動輸入金鑰和帳戶名稱：",
 	"oathauth-step3": "步驟三：記下臨時碼",
 	"oathauth-step4": "步驟四：驗證",
 	"oathauth-entertoken": "輸入顯示於您認證裝置上的代碼來驗證：",

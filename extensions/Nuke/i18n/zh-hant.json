@@ -14,7 +14,9 @@
 			"Mark85296341",
 			"Shinjiman",
 			"Weather Top Wizard",
-			"Xiplus"
+			"Xiplus",
+			"H78c67c",
+			"Winston Sung"
 		]
 	},
 	"nuke": "大量刪除",
@@ -27,7 +29,7 @@
 	"nuke-multiplepeople": "大量刪除最近新增的頁面",
 	"nuke-tools": "此工具可大量刪除指定使用者或 IP 位址最近新增的頁面。\n請輸入使用者名稱或 IP 位址取得欲刪除的頁面清單，或留空代表所有使用者。",
 	"nuke-submit-user": "列出頁面",
-	"nuke-submit-delete": "刪除已選擇",
+	"nuke-submit-delete": "刪除已選取的頁面",
 	"right-nuke": "大量刪除頁面",
 	"nuke-userorip": "使用者名稱、IP 位址或空白：",
 	"nuke-maxpages": "頁面數量上限：",

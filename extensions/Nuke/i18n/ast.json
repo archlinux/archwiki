@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Esbardu",
-			"Xuacu"
+			"Xuacu",
+			"YoaR"
 		]
 	},
 	"nuke": "Desaniciar en masa",
@@ -25,7 +26,7 @@
 	"nuke-delete-more": "[[Special:Nuke|Desaniciar más páxines]]",
 	"nuke-pattern": "Patrón LIKE de SQL (p. ex. %) pal nome de la páxina:",
 	"nuke-nopages-global": "Nun hai títulos de páxina que casen cola gueta.",
-	"nuke-viewchanges": "ver los cambios",
+	"nuke-viewchanges": "ver los cambeos",
 	"nuke-namespace": "Llendar al espaciu de nomes:",
 	"nuke-linkoncontribs": "desaniciar en masa",
 	"nuke-linkoncontribs-text": "Desaniciar en masa les páxines nes qu'{{GENDER:$1|esti usuariu ye l'únicu autor|esta usuaria ye la única autora}}",

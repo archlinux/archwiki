@@ -3,7 +3,8 @@
 		"authors": [
 			"Cedric31",
 			"Nicolas Eynaud",
-			"Vriullop"
+			"Vriullop",
+			"Lhanars"
 		]
 	},
 	"echo-desc": "Sistèma per avertir los utilizaires dels eveniments e messatges",
@@ -48,6 +49,7 @@
 	"echo-specialpage-pagefilters-subtitle": "Paginas amb de notificacions pas legidas",
 	"echo-none": "Avètz pas recebut cap de notificacion.",
 	"echo-notification-placeholder": "I a pas cap de notificacion.",
+	"echo-notification-placeholder-filters": "Non i a cap de notificacion que coïncidís amb aqueles critèris.",
 	"echo-notification-markasread": "Marcar coma legit",
 	"echo-notification-markasunread": "Marcar coma pas legit",
 	"echo-notification-markasread-tooltip": "Marcar coma legit",
@@ -60,6 +62,7 @@
 	"notification-link-text-view-page": "Afichar la pagina",
 	"notification-header-edit-user-talk": "$1 {{GENDER:$2|a daissat}} un messatge sus <strong>{{GENDER:$3|vòstra}} pagina de discussion</strong>.",
 	"notification-header-edit-user-talk-with-section": "$1 {{GENDER:$2|a daissat}} un messatge sus <strong>{{GENDER:$3|vòstra}} pagina de discussion</strong> dins la seccion « <strong>$4</strong> ».",
+	"notification-header-page-linked": "S'es creat un ligam <strong>$4</strong> vèrs <strong>$3</strong>.",
 	"notification-header-mention-other": "$1 {{GENDER:$2|vos}} {{GENDER:$3|a mencionat|a mencionada}} sus <strong>$4</strong> dins « <strong>$5</strong> ».",
 	"notification-header-mention-other-nosection": "$1 {{GENDER:$2|vos}} {{GENDER:$3|a mencionat|a mencionada}} sus <strong>$4</strong>.",
 	"notification-header-mention-user-talkpage-v2": "$1 {{GENDER:$2|vos}} {{GENDER:$3|a mencionat|a mencionada}} sus la <strong>pagina de discussion {{GENDER:$5|de}} $4</strong> dins « <strong>$6</strong> ».",
@@ -73,6 +76,8 @@
 	"notification-compact-header-mention-success": "<strong>{{GENDER:$2|Avètz mencionat}}:</strong> $3",
 	"notification-header-mention-status-bundle": "{{PLURAL:$3|Demest las notificacions|$3 notificacions}} qu'{{GENDER:$2|avètz faita}}{{PLURAL:$3||s}} sus la pagina de discussion <strong>$4</strong>, $5 {{PLURAL:$5|es pas estada mandada|son pas estadas mandadas}} e $6 {{PLURAL:$6|es estada mandada|son estadas mandadas}}.",
 	"notification-welcome-linktext": "Benvenguda",
+	"notification-header-thank-you-10-edit": "Acabatz de far vòstra desena modificacion: mercé!",
+	"notification-header-thank-you-100-edit": "Acabatz de far un centenar de modificacions; grandmercé!",
 	"notification-link-text-view-edit": "Afichar la modificacion",
 	"notification-header-reverted": "{{PLURAL:$4|Vòstra modificacion sus <strong>$3</strong> es estada|Vòstras modificacions sus <strong>$3</strong> son estadas}} {{GENDER:$2|anullada}}{{PLURAL:$4||s}}",
 	"notification-header-emailuser": "$1 vos {{GENDER:$2|a mandat}} un corrièr electronic.",

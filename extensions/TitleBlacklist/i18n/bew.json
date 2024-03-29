@@ -4,9 +4,9 @@
 			"Bangrapip"
 		]
 	},
-	"action-tboverride": "ngesampingin daptar judul ama nama pemaké nyang kaga' diboléin",
-	"action-tboverride-account": "ngesampingin daptar nama pemaké nyang kaga' diboléin",
-	"action-titleblacklistlog": "ngesampingin daptar rekeman daptar judul nyang kaga' diboléin",
+	"action-tboverride": "nglèngosin daptar judul ama nama pemaké nyang kaga' diboléin",
+	"action-tboverride-account": "lèngosin daptar nama pemaké nyang kaga' diboléin",
+	"action-titleblacklistlog": "ndeleng daptar rekeman daptar judul nyang kaga' diboléin",
 	"log-name-titleblacklist": "Rekeman daptar judul nyang kaga' diboléin",
 	"log-description-titleblacklist": "Ni kejadian nglacak kenaan daptar judul nyang kaga' diboléin.",
 	"titleblacklist-override": "Kesampingin daptar judul nyang kaga' diboléin kalo cocok",

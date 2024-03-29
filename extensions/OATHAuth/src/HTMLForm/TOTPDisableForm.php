@@ -29,7 +29,8 @@ class TOTPDisableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 				'dir' => 'ltr',
 				'autocomplete' => 'one-time-code',
 				'spellcheck' => false,
-			]
+				'help' => $this->msg( 'oathauth-hint' )->parse(),
+			],
 		];
 	}
 

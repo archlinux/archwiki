@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Cedric31"
+			"Cedric31",
+			"Lhanars"
 		]
 	},
 	"multimediaviewer-desc": "Agrandís las vinhetas dins una interfàcia en ecran complet.",
@@ -34,5 +35,6 @@
 	"multimediaviewer-description-page-popup-text": "Mai de detalhs sus aqueste fichièr en $1",
 	"multimediaviewer-commons-subtitle": "L'entrepaus de mèdia liure",
 	"multimediaviewer-view-expanded": "Dobrir dins lo Visualizador de mèdias",
-	"multimediaviewer-close-popup-text": "Tampar aquesta aisina (Esc)"
+	"multimediaviewer-close-popup-text": "Tampar aquesta aisina (Esc)",
+	"multimediaviewer-fullscreen-popup-text": "Mòstra la mapa complèta"
 }

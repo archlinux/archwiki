@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Arnobarnard",
-			"Rooiratel"
+			"Rooiratel",
+			"Naudefj"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Jy sal 'n kennisgewing ontvang wanneer iemand 'n nuwe opmerking in hierdie bespreking plaas. Jy kan jou kennisgewinginstellings in voorkeure aanpas.",
@@ -86,7 +87,7 @@
 	"discussiontools-preference-visualenhancements": "Wys besprekingsaktiwiteit",
 	"discussiontools-preference-visualenhancements-help": "Dit sal 'n nuwe besprekingsbladsy-voorkoms moontlik maak wat inligting oor die aktiwiteit binne elke bespreking insluit.",
 	"discussiontools-replybutton": "Beantwoord",
-	"discussiontools-replylink": "antwoord",
+	"discussiontools-replylink": "{{GENDER:|antwoord}}",
 	"discussiontools-replywidget-abandon": "Is jy seker jy wil die opmerking wat jy skryf weggooi?",
 	"discussiontools-replywidget-abandon-discard": "Gooi opmerking weg",
 	"discussiontools-replywidget-abandon-keep": "Hou aan skryf",
@@ -105,10 +106,10 @@
 	"discussiontools-replywidget-newcomments-button": "Wys $1 nuwe {{PLURAL:$1|opmerking|opmerkings}}",
 	"discussiontools-replywidget-newtopic": "Voeg onderwerp by",
 	"discussiontools-replywidget-placeholder-newtopic": "Beskrywing",
-	"discussiontools-replywidget-placeholder-reply": "Antwoord op {{BIDI:$1}}",
+	"discussiontools-replywidget-placeholder-reply": "{{GENDER:|Antwoord}} op {{BIDI:$1}}",
 	"discussiontools-replywidget-preferences": "Voorkeure",
 	"discussiontools-replywidget-preview": "Voorskou",
-	"discussiontools-replywidget-reply": "Antwoord",
+	"discussiontools-replywidget-reply": "{{GENDER:|Antwoord}}",
 	"discussiontools-replywidget-return-to-newtopic": "Keer terug na nuwe onderwerp",
 	"discussiontools-replywidget-return-to-reply": "Keer terug na antwoord",
 	"discussiontools-replywidget-signature-body": "$1 is omskep in jou handtekening. Om dit ongedaan te maak, tik $2. Let daarop dat jy nie opmerkings met hierdie gereedskap hoef te teken nie. Jou handtekening sal outomaties bygevoeg word.",
@@ -132,7 +133,7 @@
 	"discussiontools-topicsubscription-button-unsubscribe-tooltip": "Kanselleer subskripsie om op te hou om kennisgewings te ontvang.",
 	"discussiontools-topicsubscription-error-not-found-body": "Die intekening gespesifiseer in die URL is nie gevind nie.",
 	"discussiontools-topicsubscription-error-not-found-title": "Intekening nie gevind nie",
-	"discussiontools-topicsubscription-notify-subscribed-body": "Jy sal kennisgewings ontvang oor nuwe opmerkings in hierdie onderwerp.",
+	"discussiontools-topicsubscription-notify-subscribed-body": "{{GENDER:|Jy}} sal kennisgewings ontvang oor nuwe opmerkings in hierdie onderwerp.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Jy}} is ingeteken",
 	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Jy}} sal nie meer kennisgewings oor nuwe opmerkings in hierdie onderwerp ontvang nie.",
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Jy}} het uitgeteken.",

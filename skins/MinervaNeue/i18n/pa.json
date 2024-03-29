@@ -6,7 +6,8 @@
 			"BukhariSaeed",
 			"Sony dandiwal",
 			"Tow",
-			"ਪ੍ਰਚਾਰਕ"
+			"ਪ੍ਰਚਾਰਕ",
+			"Kuldeepburjbhalaike"
 		]
 	},
 	"mobile-frontend-editor-edit": "ਸੋਧੋ",
@@ -18,7 +19,7 @@
 	"mobile-frontend-language-article-heading": "ਭਾਸ਼ਾ",
 	"mobile-frontend-main-menu-button-tooltip": "ਮੁੱਖ ਮੀਨੂ ਖੋਲ੍ਹੋ",
 	"mobile-frontend-main-menu-login": "ਲੌਗਇਨ",
-	"mobile-frontend-main-menu-nearby": "ਨੇੜੇ",
+	"mobile-frontend-main-menu-nearby": "ਨੇੜੇ-ਤੇੜੇ",
 	"mobile-frontend-main-menu-settings": "ਪਸੰਦਾਂ",
 	"mobile-frontend-main-menu-watchlist": "ਨਿਗਰਾਨ-ਸੂਚੀ",
 	"mobile-frontend-pageaction-edit-tooltip": "ਇਸ ਸਫ਼ੇ ਦਾ ਅਗੇਤਰਾ ਹਿੱਸਾ ਸੋਧੋ।",
@@ -26,5 +27,7 @@
 	"mobile-frontend-random-button": "ਅਟਕਲ ਪੱਚੂ",
 	"mobile-frontend-user-page-contributions": "ਯੋਗਦਾਨ",
 	"mobile-frontend-user-page-talk": "ਗੱਲ-ਬਾਤ",
+	"minerva-page-actions-editfull": "ਪੂਰਾ ਸਫ਼ਾ ਸੋਧੋ",
+	"minerva-page-actions-overflow": "ਹੋਰ",
 	"skin-minerva-mobile-option-MinervaShowCategories": "ਸ਼੍ਰੇਣੀਆਂ"
 }

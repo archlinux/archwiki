@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Idojc"
+			"Idojc",
+			"Joao Xavier"
 		]
 	},
+	"tag-editcheck-newcontent-description": "Redakto-kontrolo (''EditCheck'') kredas ke nova kontenajo adjuntesis a la pagino",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Redakto per VisualEditor]]",
 	"tag-visualeditor-description": "Redaktita per la [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Redakto per VisualEditor: Kontrolar]]",

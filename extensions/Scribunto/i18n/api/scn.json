@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Pippinu",
-			"Sarvaturi"
+			"Sarvaturi",
+			"Ajeje Brazorf"
 		]
 	},
+	"apihelp-scribunto-console-summary": "Mòdulu nternu pi sèrviri addumannati XHR dâ console Scribunto.",
 	"apihelp-scribunto-console-param-title": "Lu tìtulu dû mòdulu di pruvari.",
 	"apihelp-scribunto-console-param-content": "Lu cuntinutu novu dû mòdulu.",
 	"apihelp-scribunto-console-param-session": "Token dâ sissioni.",

@@ -6,5 +6,5 @@
 	},
 	"monobook-more-actions": "Кхы а",
 	"monobook-view-history": "Тархьар",
-	"monobook-action-undelete": "Юхаметтаоттде {{PLURAL:$1|$1 нийсдар|$1 нийсдараш}}"
+	"monobook-action-undelete": "Меттаоттабе {{PLURAL:$1|$1 хувцам|1=хувцам}}"
 }

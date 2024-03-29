@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Karthi.dr",
-			"செல்வா"
+			"செல்வா",
+			"Fahimrazick"
 		]
 	},
 	"interwiki": " interwiki தரவைப் பார்த்துத் திருத்துக",
-	"interwiki-title-norights": "Interwiki தரவைப் பார்க்க",
+	"interwiki-title-norights": "விக்கியிடைத் தரவைப் பார்",
 	"interwiki_prefix": "முன்னொட்டு",
 	"interwiki-prefix-label": "முன்னொட்டு",
 	"interwiki_local": "முன் செல்",

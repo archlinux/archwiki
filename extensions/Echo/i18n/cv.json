@@ -1,8 +1,36 @@
 {
 	"@metadata": {
 		"authors": [
-			"Chuvash2014"
+			"Chuvash2014",
+			"Astahar"
 		]
 	},
-	"echo-pref-email-format-html": "HTML"
+	"echo-pref-email-format-html": "HTML",
+	"echo-category-title-other": "{{PLURAL:$1|Ытти}}",
+	"echo-category-title-system": "{{PLURAL:$1|Системӑри}}",
+	"echo-category-title-system-noemail": "{{PLURAL:$1|Системӑри}}",
+	"echo-category-title-system-emailonly": "{{PLURAL:$1|Системӑри}}",
+	"echo-category-title-user-rights": "Хутшӑнаканӑн {{PLURAL:$1|правине|прависене}} улӑштарни",
+	"echo-notification-markasread": "Вуланӑ пек палӑрт",
+	"echo-notification-markasunread": "Вуламан пек палӑрт",
+	"echo-notification-markasread-tooltip": "Вуланӑ пек палӑрт",
+	"echo-notification-more-options-tooltip": "Анлӑрах опцисем",
+	"notification-dynamic-actions-mute-page-linked": "«$1» ҫинчи каҫӑ пирки систернисене {{GENDER:$2|шута илмелле мар}}",
+	"notification-link-text-collapse-all": "Хуп",
+	"notification-link-text-view-message": "Сообщенипе паллаш",
+	"notification-link-text-view-mention": "Асӑннипе паллаш",
+	"notification-link-text-view-mention-failure": "{{PLURAL:$1|Асӑннипе паллаш|Асӑннисемпе паллаш}}",
+	"notification-link-text-view-changes": "Улшӑнусене {{GENDER:$1|пӑх}}",
+	"notification-link-text-view-page": "Страницӑпа паллаш",
+	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1 с}}",
+	"notification-timestamp-ago-minutes": "{{PLURAL:$1|$1 мин}}",
+	"notification-timestamp-ago-hours": "{{PLURAL:$1|$1 сех}}",
+	"notification-timestamp-ago-days": "{{PLURAL:$1|$1 кун}}",
+	"notification-timestamp-ago-months": "{{PLURAL:$1|$1 уйӑх}}",
+	"notification-timestamp-ago-years": "{{PLURAL:$1|$1 ҫул}}",
+	"notification-timestamp-today": "Паян",
+	"notification-timestamp-yesterday": "Ӗнер",
+	"notification-inbox-filter-read": "Вуланисем",
+	"notification-inbox-filter-unread": "Вуаманнисем",
+	"notification-inbox-filter-all": "Пурте"
 }

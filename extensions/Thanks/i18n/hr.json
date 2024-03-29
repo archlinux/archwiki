@@ -36,7 +36,7 @@
 	"thanks-thank-tooltip-no": "{{GENDER:$1|Otkaži}} vijestice o zahvaljivanju",
 	"thanks-thank-tooltip-yes": "{{GENDER:$1|Pošalji}} mi vijestice o zahvaljivanju",
 	"thanks-confirmation2": "Želite li javno {{GENDER:$1|poslati}} zahvalu?",
-	"thanks-thanked-notice": "{{GENDER:$3|Zahvalio si|Zahvalila si|Zahvalili ste}} {{GENDER:$2|suradniku $1|suradnici $1}}.",
+	"thanks-thanked-notice": "{{GENDER:$3|Zahvalili ste}} {{GENDER:$2|suradniku $1|suradnici $1}}.",
 	"thanks": "Pošalji zahvalu",
 	"thanks-submit": "Pošalji zahvalu",
 	"echo-pref-subscription-edit-thank": "Zahvala",

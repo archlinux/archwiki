@@ -23,7 +23,7 @@
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویرایشگر دیداری]]",
-	"tag-visualeditor-description": "ویرایش توسط [[{{MediaWiki:visualeditor-descriptionpagelink}}|ویرایشگر دیداری]] انجام شده‌است.",
+	"tag-visualeditor-description": "ویرایش توسط [[{{MediaWiki:visualeditor-descriptionpagelink}}|ویرایشگر دیداری]] انجام شده است.",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویرایشگر دیداری: بررسی]]",
 	"tag-visualeditor-needcheck-description": "ویرایش انجام‌شده با [[{{MediaWiki:visualeditor-descriptionpagelink}}|ویرایشگر دیداری]] که در آن سامانۀ احتمال وقوع تغییرات ناخواسته در ویکی‌متن را شناسایی کرد.",
 	"tag-visualeditor-wikitext": "ویرایش مبدأ ۲۰۱۷",

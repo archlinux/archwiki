@@ -20,7 +20,6 @@
 	"oathauth-account": "نام حساب:",
 	"oathauth-secret": "کلید مخفی اصالت‌سنجی دومرحله‌ای:",
 	"oathauth-enable": "فعال کردن اصالت‌سنجی دومرحله‌ای",
-	"oathauth-scratchtokens": "فهرست زیر، فهرست یک‌بار مصرف نشانه‌های مخفی است. این نشانه‌ها می‌تواند فقط یک بار مورد استفاده قرار گیرند، و برای ضرورت استفاده می‌شوند. لطفاً این‌ها را برروی کاغذ یا جایی بنویسید و آن‌ها را در محل امنی نگهدارید. اگر گوشی خود رو گم کردید، این نشانه‌ها تنها راه نجات حساب شما هستند. '''این نشانه‌ها هرگز دوباره نشان داده نخواهند شد'''.",
 	"oathauth-token": "بلیط",
 	"oathauth-disable": "غیرفعال کردن اصالت‌سنجی دومرحله‌ای",
 	"oathauth-validatedoath": "اعتبارنامه‌های دو مرحله‌ای تأیید شدند. تأیید اعتبار دو مرحله‌ای از این پس اعمال خواهد شد.",
@@ -46,7 +45,7 @@
 	"oathauth-enteruser": "نام کاربری:",
 	"oathauth-enterdisablereason": "دلیل غبرفعال‌سازی:",
 	"oathauth-enterverifyreason": "دلیل بررسی:",
-	"oathauth-user-not-does-not-have-oath-enabled": "کاربر اصالت‌سنجی دومرحله‌ای را فعال نکرده‌است، پس چیزی برای غیرفعال‌سازی موجود نیست",
+	"oathauth-user-not-does-not-have-oath-enabled": "کاربر اصالت‌سنجی دومرحله‌ای را فعال نکرده است، پس چیزی برای غیرفعال‌سازی موجود نیست",
 	"right-oathauth-enable": "فعال‌سازی اصالت‌سنجی دومرحله‌ای",
 	"action-oathauth-enable": "فعال‌سازی اصالت‌سنجی دومرحله‌ای",
 	"oathauth-auth-token-label": "بلیط",
@@ -65,7 +64,7 @@
 	"logentry-oath-disable-other": "$1 تأیید اعتبار دومرحله‌ای برای $3 را {{GENDER:$2|غیرفعال کرد}}",
 	"logentry-oath-verify": "$1 فعال بودن تأیید اعتبار دومرحله‌ای برای $3 را {{GENDER:$2|بررسی کرد}}",
 	"oathauth-ui-no-module": "هیچ پودمانی فعال نیست",
-	"oathauth-module-invalid": "پودمان OATHAuth که کاربر ثبت کرده‌است نامعتبر است.",
+	"oathauth-module-invalid": "پودمان OATHAuth که کاربر ثبت کرده است نامعتبر است.",
 	"oathauth-module-totp-label": "تی‌اوتی‌پی (بلیط‌های یک‌بارمصرف)",
 	"oathauth-ui-manage": "مدیریت",
 	"oathmanage": "مدیریت اصالت‌سنجی دومرحله‌ای",
@@ -89,6 +88,6 @@
 	"oathauth-totp-disable-warning": "شما دیگر قادر به استفاده از دستگاه اصالت‌سنجی ثبت‌شده برای این حساب نخواهید بود و تمام توکن‌های یک‌بار مصرف مرتبط با این حساب نامعتبر محسوب خواهند شد.",
 	"oathauth-invalidrequest": "درخواست نامعتبر",
 	"oathauth-notifications-enable-help": "راهنما",
-	"oathauth-verify-enabled": "{{GENDER:$1|$1}} اصالت‌سنجی دومرحله‌ای را فعال کرده‌است.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} تأیید اعتبار دومرحله‌ای را فعال نکرده‌است."
+	"oathauth-verify-enabled": "{{GENDER:$1|$1}} اصالت‌سنجی دومرحله‌ای را فعال کرده است.",
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} تأیید اعتبار دومرحله‌ای را فعال نکرده است."
 }

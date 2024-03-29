@@ -41,5 +41,5 @@
 	"replacetext_continue": "Continua",
 	"replacetext_editsummary": "Text de reemplaçament - \"$1\" a \"$2\"",
 	"right-replacetext": "Fer substitucions de cadena a tot el wiki",
-	"action-replacetext": "fer les substitucions de la cadena en tot el wiki"
+	"action-replacetext": "fer substitucions de text en tot el wiki"
 }

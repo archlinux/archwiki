@@ -9,10 +9,10 @@
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Koʻrib tahrirlagich]]",
-	"tag-visualeditor-description": "Tahrir [[{{MediaWiki:visualeditor-descriptionpagelink}}|koʻrib tahrirlagich]] yordamida bajarildi",
+	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Koʻrib tahrirlagich]] yordamida qilingan tahrir",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Koʻrib tahrirlagich: tekshirish]]",
-	"tag-visualeditor-wikitext": "2017-yilgi manba tahrirlagichi",
-	"tag-visualeditor-wikitext-description": "Tahrir 2017-yilgi manba tahrirlagichidan foydalanib amalga oshirildi.",
+	"tag-visualeditor-wikitext": "vikimatn muharriri 2017",
+	"tag-visualeditor-wikitext-description": "Vikimatn muharriri (2017) yordamida qilingan tahrir",
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Koʻrib tahrirlagich: almashtirildi]]",
 	"tag-visualeditor-switched-description": "Foydalanuvchi koʻrib tahrirlagichdan foydalanib tahrirlashni boshladi, keyin vikimatn tahrirlagichiga oʻzgartirdi.",
 	"visualeditor-feedback-link": "Project:Koʻrib tahrirlagich/Fikrlar",

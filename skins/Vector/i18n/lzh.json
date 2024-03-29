@@ -4,13 +4,15 @@
 			"Itsmine",
 			"Justincheng12345",
 			"Nemo bis",
-			"魔琴"
+			"魔琴",
+			"物灵"
 		]
 	},
 	"skinname-vector": "經典向量（庚寅年）",
 	"skinname-vector-2022": "向量（壬寅年）",
 	"vector.css": "/* 此之 CSS 用於動力面之簿也 */",
 	"vector.js": "/* 此之JavaScript將載於用動力面之簿 */",
+	"vector-language-redirect-to-top": "語剡居頁首而對題名。",
 	"vector-action-addsection": "入題",
 	"vector-action-delete": "刪",
 	"vector-action-move": "遷",

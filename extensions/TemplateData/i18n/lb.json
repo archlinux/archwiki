@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Les Meloures",
-			"Robby"
+			"Robby",
+			"Volvox"
 		]
 	},
 	"templatedata-doc-desc-empty": "Keng Beschreiwung.",
@@ -56,7 +57,7 @@
 	"templatedata-modal-button-removemap": "Kaart ewechhuelen",
 	"templatedata-modal-button-restoreparam": "Parameter restauréieren",
 	"templatedata-modal-button-saveparam": "Späicheren",
-	"templatedata-modal-confirmcancel": "Sidd Dir sécher datt Dir Är Ännerunge verwerfe wëllt?",
+	"templatedata-modal-confirmcancel": "Sidd Dir sécher, datt Dir Är Ännerunge verwerfe wëllt?",
 	"templatedata-modal-current-language": "Aktuell Sprooch: $1",
 	"templatedata-modal-errormsg-duplicate-name": "Feeler fonnt. De gewielten Numm gëtt scho vun engem anere Parameter benotzt.",
 	"templatedata-modal-errormsg-import-noparams": "Keng nei Parametere beim Import fonnt.",

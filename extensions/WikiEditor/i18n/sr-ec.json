@@ -22,7 +22,7 @@
 		]
 	},
 	"wikieditor": "Напредни интефејс за уређивање викитекста",
-	"wikieditor-desc": "Омогућава напредни, прошириви интерфејс за уређивање викитекста",
+	"wikieditor-desc": "Основни уређивач викитекста",
 	"wikieditor-wikitext-tab": "Викитекст",
 	"wikieditor-toolbar": "Трака са алаткама за уређивање",
 	"wikieditor-toolbar-desc": "Трака са алаткама за уређивање са побољшаном употребљивошћу",
@@ -43,7 +43,7 @@
 	"wikieditor-toolbar-tool-link-int-target-tooltip": "Наслов странице или URL адреса",
 	"wikieditor-toolbar-tool-link-int-text": "Текст везе:",
 	"wikieditor-toolbar-tool-link-int-text-tooltip": "Текст за приказ",
-	"wikieditor-toolbar-tool-link-ext": "Према спољашњој веб-страници",
+	"wikieditor-toolbar-tool-link-ext": "Према веб-страници",
 	"wikieditor-toolbar-tool-link-ext-target": "URL адреса везе:",
 	"wikieditor-toolbar-tool-link-ext-text": "Текст везе:",
 	"wikieditor-toolbar-tool-link-insert": "Уметни везу",

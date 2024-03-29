@@ -54,5 +54,6 @@
 	"notification-flow-thanks-post-link": "comentariul dumneavoastră",
 	"notification-header-flow-thank": "$1 {{GENDER:$5|v-a}} {{GENDER:$2|mulțumit}} pentru comentariul dvs. din cadrul secțiunii „<strong>$3</strong>”.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|v-a}} {{GENDER:$3|mulțumit}}.",
-	"notification-bundle-header-flow-thank": "{{PLURAL:$1|O persoană v-a|$1 persoane v-au|100=99+ de persoane v-au}} {{GENDER:$3|mulțumit}} pentru pentru comentariul dvs. din cadrul secțiunii „<strong>$2</strong>”."
+	"notification-bundle-header-flow-thank": "{{PLURAL:$1|O persoană v-a|$1 persoane v-au|100=99+ de persoane v-au}} {{GENDER:$3|mulțumit}} pentru pentru comentariul dvs. din cadrul secțiunii „<strong>$2</strong>”.",
+	"ipb-action-thanks": "Trimiterea mulțumirilor"
 }

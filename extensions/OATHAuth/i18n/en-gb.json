@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Drkirstyross"
+		]
+	},
+	"oathauth-recoverycodes-important": "This step is important! Do not skip this step!",
+	"oathauth-noscratchforvalidation": "You cannot use a recovery code to confirm two-factor authentication. Recovery codes are for backup and incidental use only. Please use a code from your two-factor authentication application (such as Google Authenticator).",
+	"oathauth-step3": "Step 3: Write down the recovery codes",
+	"oathauth-auth-token-label": "Two-factor token or recovery code",
+	"oathauth-auth-ui": "Please enter a code from your two-factor authentication application (such as Google Authenticator).",
+	"oathauth-totp-disable-warning": "You will no longer be able to use the authentication device registered with this account. All recovery codes associated with this account will be invalidated.",
+	"oathauth-hint": "Don't have access to your device or application? You can enter recovery tokens (presented when you enabled 2FA) in this field."
+}

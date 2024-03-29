@@ -110,7 +110,7 @@
 	"discussiontools-preference-visualenhancements": "Гайта дийцарийн жигаралла",
 	"discussiontools-preference-visualenhancements-help": "ХӀокху опцес латайо дийцаран агӀонан керла хатӀ, цунна йукъахь йу хӀора дийцаран жигараллех информаци.",
 	"discussiontools-replybutton": "{{GENDER:|Жоп дала}}",
-	"discussiontools-replylink": "жоп далар",
+	"discussiontools-replylink": "{{GENDER:|жоп}}",
 	"discussiontools-replywidget-abandon": "Хьуна бакъалла а лаьа йазйина коммент дӀайаккха?",
 	"discussiontools-replywidget-abandon-discard": "ДӀайаккха коммент",
 	"discussiontools-replywidget-abandon-keep": "Чекхдакха йаздар",

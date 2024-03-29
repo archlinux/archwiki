@@ -602,7 +602,7 @@
 	"notification-header-throttle-filter": "Филтер за злоупотреби $2 кој неодамна {{GENDER:$1|го}} изменивте беше стеснет.",
 	"notification-header-throttle-filter-actions": "Филтерот на злоупотреби $2 кој неодамна го {{GENDER:$1|изменивте}} има висок степен на погодоци, и затоа автоматски {{PLURAL:$4|е оневозможено следново дејство|се оневозможени следниве дејства}}: $3.",
 	"notification-header-throttle-filter-no-actions": "Филтерот на злоупотреби $2 кој неодамна го {{GENDER:$1|изменивте}} има висок степен на погодоци, но нема автоматски оневозможени дејства.",
-	"notification-subject-throttle-filter": "Филтер за злоупотреби кој неодамна {{GENDER:$1|го}} изменивте беше стеснет на{{SITENAME}}",
+	"notification-subject-throttle-filter": "Филтер за злоупотреби кој неодамна {{GENDER:$1|го}} изменивте беше стеснет на {{SITENAME}}",
 	"notification-link-text-show-filter": "Прикажи филтер",
 	"right-abusefilter-modify-blocked-external-domains": "Поставање и менување на блокираните надворешни домени",
 	"action-abusefilter-modify-blocked-external-domains": "поставање и менување на блокираните надворешни домени",

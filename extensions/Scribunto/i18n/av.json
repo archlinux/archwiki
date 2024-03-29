@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gazimagomedov"
+			"Gazimagomedov",
+			"Augustus A C"
 		]
 	},
-	"scribunto-lua-error": "ГъалатӀ Lua: $2."
+	"scribunto-lua-error": "ГъалатӀ Lua: $2.",
+	"nstab-module": "Модул"
 }

@@ -35,6 +35,7 @@
 	"apihelp-visualeditoredit-param-cachekey": "Use o resultado de um pedido \"serializeforcache\" prévio com esta chave. Substitui $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Identificador do captcha (ao gravar a resposta a um captcha).",
 	"apihelp-visualeditoredit-param-captchaword": "Resposta ao captcha (ao gravar a resposta a um captcha).",
+	"apihelp-visualeditoredit-param-nocontent": "Omitir o conteúdo HTML da nova revisão na resposta.",
 	"apihelp-visualeditoredit-param-plugins": "''Plug-ins'' associados ao pedido da API.",
 	"apihelp-visualeditoredit-param-data-{plugin}": "Dados arbitrários enviados por um ''plug-in'' com o pedido da API.",
 	"apihelp-visualeditoredit-param-etag": "ETag para enviar.",

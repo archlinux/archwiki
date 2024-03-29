@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Mirzali",
-			"Orbot707"
+			"Orbot707",
+			"GolyatGeri"
 		]
 	},
 	"discussiontools": "Hacetê werênayışi",
@@ -26,8 +27,8 @@
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Aboneyiye ra veciye",
 	"discussiontools-topicsubscription-notify-subscribed-body": "Nê mewzu de seba mışewreyanê neweyan ra {{GENDER:|şıma}} xebere gênê.",
 	"discussiontools-topicsubscription-notify-subscribed-title": "{{GENDER:|Tı}} abone biya!",
-	"discussiontools-topicsubscription-notify-unsubscribed-body": "Nê mewzu de seba mışewreyanê neweyan ra endi xebere nêgênê.",
-	"discussiontools-topicsubscription-notify-unsubscribed-title": "Tı aboneyiya xo ra texeliya.",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "{{GENDER:|Şıma}} nê mewzu de seba mışewreyanê neweyan ra endi xebere nêgênê.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "{{GENDER:|Şıma}} aboneyiya xo texelna.",
 	"discussiontools-topicsubscription-pager-page": "Pele",
 	"discussiontools-topicsubscription-pager-topic": "Mewzu",
 	"minerva-talk-full-page": "Zey pela wiki bıwane"

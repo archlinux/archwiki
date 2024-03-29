@@ -9,6 +9,10 @@
 			"Y-M D"
 		]
 	},
+	"tag-editcheck-newcontent-description": "Hervez EditCheck ez eus bet ouzhpennet endalc’h nevez d’a bajenn",
+	"tag-editcheck-newreference-description": "Ouzphennet ez eus bet un daveenn d’ar bajenn-mañ.",
+	"tag-editcheck-references-description": "Hervez EditCheck e vefe ezhomm eus un daveenn",
+	"tag-editcheck-references-activated-description": "Hervez EditCheck e vefe ezhomm eus un daveenn, ha diskouezet eo bet an etrefas implijer",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Gwelaozer]]",
 	"tag-visualeditor-description": "Kemm graet gant ar [[{{MediaWiki:visualeditor-descriptionpagelink}}|gwelaozer]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Gwelaozer: Da wiriañ]]",

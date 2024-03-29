@@ -16,5 +16,6 @@
 	"spam-blacklisted-email-text": "La vostra adreça de correu electrònic té actualment prohibit d'enviar correus electrònics a altres usuaris.",
 	"spam-blacklisted-email-signup": "L'adreça de correu electrònic proporcionada està actualment en la llista negra d'ús.",
 	"spam-invalid-lines": "{{PLURAL:$1|La línia següent no es considera una expressió correcta|Les línies següents no es consideren expressions correctes}} {{PLURAL:$1|perquè recull|perquè recullen}} SPAM que està vetat. Heu d'esmenar-ho abans de salvar la pàgina:",
-	"spam-blacklist-desc": "Eina (basada en Regex) anti correu brossa que permet prohibir anotar URL en pàgines i adreces de correu electrònic per a usuaris registrats"
+	"spam-blacklist-desc": "Eina (basada en Regex) anti correu brossa que permet prohibir anotar URL en pàgines i adreces de correu electrònic per a usuaris registrats",
+	"right-spamblacklistlog": "Veure el registre de blocatges de spam"
 }

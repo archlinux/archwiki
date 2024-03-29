@@ -13,7 +13,8 @@
 			"Shirayuki",
 			"Sujiniku",
 			"Suyama",
-			"Takot"
+			"Takot",
+			"春春眠眠"
 		]
 	},
 	"thanks-desc": "利用者の編集やコメントなどに感謝を示すリンクを追加する",
@@ -59,11 +60,13 @@
 	"thanks-confirmation-special-log": "この記録の操作について、公開の場で感謝を示しますか?",
 	"thanks-confirmation-special-rev": "この編集について、公開の場で感謝を示しますか?",
 	"notification-link-text-view-post": "コメントを閲覧",
+	"notification-link-text-view-logentry": "記録項目を閲覧",
 	"thanks-error-invalidpostid": "投稿 ID が無効です。",
 	"flow-thanks-confirmation-special": "このコメントに公に感謝を示しますか?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|あなた}}が $1 のコメントに感謝を示したことを{{GENDER:$2|本人}}に通知しました。",
 	"notification-flow-thanks-post-link": "あなたのコメント",
 	"notification-header-flow-thank": "$1 が 話題「<strong>$3</strong>」での{{GENDER:$5|あなた}}のコメントに{{GENDER:$2|感謝}}を示しました。",
 	"notification-compact-header-flow-thank": "$1 が{{GENDER:$3|あなた}}に{{GENDER:$2|感謝}}を示しました。",
-	"notification-bundle-header-flow-thank": "{{PLURAL:$1|1人|$1人|100=99人以上}}が話題「<strong>$2</strong>」での{{GENDER:$3|あなた}}のコメントに感謝を示しています。"
+	"notification-bundle-header-flow-thank": "{{PLURAL:$1|1人|$1人|100=99人以上}}が話題「<strong>$2</strong>」での{{GENDER:$3|あなた}}のコメントに感謝を示しています。",
+	"ipb-action-thanks": "感謝の送信"
 }

@@ -6,7 +6,8 @@
 			"Nasir8891",
 			"Wikitanvir",
 			"Zaheen",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"Aishik Rehman"
 		]
 	},
 	"gadgets-desc": "ব্যবহারকারীদের তাদের [[Special:Preferences#mw-prefsection-gadgets|পছন্দে]] স্বনির্বাচিত [[Special:Gadgets|সিএসএস এবং জাভাস্ক্রিপ্ট গ্যাজেট]] নির্বাচনের সুযোগ দাও",
@@ -30,7 +31,7 @@
 	"gadgets-required-rights": "নিচের {{PLURAL:$2|অধিকার|অধিকারগুলো}} প্রয়োজন:\n$1",
 	"gadgets-required-skins": "{{PLURAL:$2|$1 স্কিন|স্কিনগুলো: $1}} থেকে ব্যবহার করা যাবে।",
 	"gadgets-default": "পূর্বনির্ধারিতরূপে সকলের জন্য স্বয়ংক্রিয়ভাবে সক্রিয়।",
-	"gadgets-legacy": "গ্যাজেট লোড করা হয়নি। ResourceLoader-এ স্থানান্তরিত হোন। ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) আরো জানুন])",
+	"gadgets-legacy": "গ্যাজেট লোড করা হয়নি। ResourceLoader-এ স্থানান্তরিত হোন। ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) আরও জানুন])",
 	"gadgets-export": "রপ্তানি",
 	"gadgets-export-title": "গ্যাজেট রপ্তানি",
 	"gadgets-not-found": "গ্যাজেট \"$1\" খুজে পাওয়া যায়নি।",

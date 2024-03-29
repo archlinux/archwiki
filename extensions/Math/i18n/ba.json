@@ -10,10 +10,12 @@
 			"Лилиә",
 			"Ләйсән",
 			"Рустам Нурыев",
-			"Янмурза Баки"
+			"Янмурза Баки",
+			"Bashkorttan"
 		]
 	},
 	"math-desc": "<code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code> тамғаларында математик формулаларҙы күрһәтә",
+	"math-visualeditor-mwchemdialog-title": "Химик формула",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Тиҙ мөхәррирләү",
 	"math-visualeditor-mwlatexdialog-card-formula": "Формула",
 	"math-visualeditor-mwlatexdialog-card-options": "Мөмкинлектәр",

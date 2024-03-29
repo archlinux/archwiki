@@ -5,7 +5,8 @@
 			"Aftabuzzaman",
 			"Bellayet",
 			"Bodhisattwa",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"Aishik Rehman"
 		]
 	},
 	"scribunto-desc": "মিডিয়াওয়িকি পৃষ্ঠাগুলিতে স্ক্রিপ্টিং ভাষাগুলি গাঁথার জন্য ফ্রেমওয়ার্ক",
@@ -26,10 +27,10 @@
 	"scribunto-console-cleared-session-lost": "কনসোলের অবস্থা সাফ করা হয়েছে কারণ সেশনের উপাত্ত হারিয়ে গেছে।",
 	"scribunto-common-error-category": "স্ক্রিপ্ট ত্রুটিসহ পাতা",
 	"scribunto-common-error-category-desc": "এই পৃষ্ঠায় অন্তর্ভুক্ত মডিউল প্রক্রিয়াকরণের সময় একটি ত্রুটি হয়েছে।",
-	"scribunto-common-nosuchmodule": "স্ক্রিপ্ট ত্রুটি: \"$2\" নামক কোন মডিউল নেই।",
+	"scribunto-common-nosuchmodule": "স্ক্রিপ্ট ত্রুটি: \"$2\" নামক কোনো মডিউল নেই।",
 	"scribunto-common-nofunction": "স্ক্রিপ্ট ত্রুটি: কল করতে আপনাকে একটি ফাংশন অবশ্যই উল্লেখ করতে হবে।",
 	"scribunto-common-nosuchfunction": "স্ক্রিপ্ট ত্রুটি: ফাংশন \"$2\" নেই।",
-	"scribunto-common-notafunction": "স্ক্রিপ্ট ত্রুটি: \"$2\" কোন ফাংশন নয়।",
+	"scribunto-common-notafunction": "স্ক্রিপ্ট ত্রুটি: \"$2\" কোনো ফাংশন নয়।",
 	"scribunto-common-timeout": "স্ক্রিপ্ট চলার জন্য বরাদ্দকৃত সময়ের মেয়াদ শেষ হয়ে গেছে।",
 	"scribunto-common-oom": "স্ক্রিপ্ট চালানোর জন্য অনুমোদিত মেমোরির পরিমাণ অতিক্রান্ত হয়েছে।",
 	"scribunto-common-backtrace": "ব্যাকট্রেস:",

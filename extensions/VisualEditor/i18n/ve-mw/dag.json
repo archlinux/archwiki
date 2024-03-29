@@ -11,7 +11,8 @@
 			"Masssly",
 			"Munkaila Sulemana",
 			"Yakubu Fadilatu",
-			"Bashiru Nurideen Pona"
+			"Bashiru Nurideen Pona",
+			"Issahiddris98"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -190,7 +191,7 @@
 	"visualeditor-mweditmodeve-tool-unavailable": "Lihigu maliniŋ ka kpe",
 	"visualeditor-mweditmodewt-popup-body": "A ni tooi labi nyaaŋa chaŋ maliniŋ shee saha shɛli kam a yi dihi daliŋ ŋɔ.",
 	"visualeditor-mweditmodewt-popup-title": "A ni tooi dihi chaŋ lihibu maliniŋ shee",
-	"visualeditor-mwgallerycontext-description": "$1{{PLURAL:$1|anfooni|anfooni}}",
+	"visualeditor-mwgallerycontext-description": "$1 {{PLURAL:$1|anfooni|anfooni}}",
 	"visualeditor-mwgallerydialog-caption-field-label": "Anfooninima biɛhigu shee taachi",
 	"visualeditor-mwgallerydialog-card-images": "Anfooninima",
 	"visualeditor-mwgallerydialog-card-options": "Piibu",

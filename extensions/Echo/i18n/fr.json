@@ -150,7 +150,7 @@
 	"echo-notification-markasread-tooltip": "Marquer comme lue",
 	"echo-notification-more-options-tooltip": "Plus d’options",
 	"notification-dynamic-actions-mute-page-linked": "{{GENDER:$2|}}Mettre en sourdine les notifications des liens dans « $1 ».",
-	"notification-dynamic-actions-mute-page-linked-confirmation": "Les notifications « Lien de page » sont désormais désactivées pour la page « $1 »",
+	"notification-dynamic-actions-mute-page-linked-confirmation": "Les notifications « Lien de page » sont désormais en sourdine pour la page « $1 »",
 	"notification-dynamic-actions-mute-page-linked-confirmation-description": "{{GENDER:$2|}}Vous pouvez gérer vos pages mises en sourdine dans [$1 vos préférences] à tout moment.",
 	"notification-dynamic-actions-unmute-page-linked": "{{GENDER:$2|}}Rétablir les notifications de liens dans « $1 ».",
 	"notification-dynamic-actions-unmute-page-linked-confirmation": "Les notifications de « Lien de page » sont désormais activées pour la page « $1 »",

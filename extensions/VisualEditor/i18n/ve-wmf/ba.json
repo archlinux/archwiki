@@ -8,7 +8,8 @@
 			"Sagan",
 			"З. ӘЙЛЕ",
 			"Рустам Нурыев",
-			"Янмурза Баки"
+			"Янмурза Баки",
+			"Bashkorttan"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Күҙләгес мөхәррир]]",
@@ -16,7 +17,7 @@
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Күҙләгес мөхәррир: Тикшереү]]",
 	"tag-visualeditor-needcheck-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Күҙләгес мөхәррир]] аша эшләнгән төҙәтеүҙә система аңламаҫтан үҙгәртелгән вики-текст булыу ихтималлығын асыҡланы.",
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Күҙләгес мөхәррир: Тикшереү]]",
-	"tag-visualeditor-switched-description": "Ҡатнашыусы күҙләгес мөхәррир (үҙгәртергә) ярҙамында мөхәррирләй башланы, һуңынан вики-тексты үҙгәртергә режимы аша мөхәррирләүгә күсте",
+	"tag-visualeditor-switched-description": "Ҡулланыусы күҙләгес мөхәррир менән үҙгәртә башланы, һуңынан викитекст мөхәрриренә күсте.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Фекер алышыу",
 	"visualeditor-feedback-tool": "Программа тәьминәте тураһында фекер ҡалдырығыҙ",
 	"visualeditor-help-label": "Ҡатнашыусы ҡулланмаларын уҡығыҙ",

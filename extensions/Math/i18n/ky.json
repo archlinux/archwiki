@@ -4,6 +4,17 @@
 			"Bosogo"
 		]
 	},
-	"math-visualeditor-mwlatexinspector-display-block": "Бөгөт",
-	"math_unknown_error": "белгисиз ката"
+	"math-visualeditor-mwchemdialog-title": "Химиялык формула",
+	"math-visualeditor-mwlatexdialog-card-formula": "Формула",
+	"math-visualeditor-mwlatexinspector-display-block": "Блок",
+	"math-visualeditor-mwmathdialog-title": "Математикалык формула",
+	"math-visualeditor-symbol-group-chem-greek": "Грек белгилери",
+	"math-visualeditor-symbol-group-chem-isotopes": "Изотоптор",
+	"math_syntax_error": "синтаксистик ката",
+	"math_unknown_error": "белгисиз ката",
+	"math-wikibase-formula": "Формула",
+	"math-wikibase-formula-description": "Сыпаттама",
+	"math-wikibase-formula-elements-header": "Формула элементтери",
+	"math-wikibase-special-form-placeholder": "Формуланын аталышы",
+	"math-wikibase-special-error-header": "Ката"
 }

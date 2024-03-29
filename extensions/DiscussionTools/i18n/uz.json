@@ -89,8 +89,10 @@
 	"discussiontools-topicsubscription-pager-page": "Sahifa",
 	"discussiontools-topicsubscription-pager-topic": "Mavzu",
 	"minerva-talk-full-page": "Viki sahifa sifatida oʻqish",
-	"tag-discussiontools-description": "DiscussionTools orqali qilingan tahrir",
+	"tag-discussiontools-description": "DiscussionTools yordamida qilingan tahrir",
 	"tag-discussiontools-edit": "Tahrirlangan fikr",
 	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Yangi mavzu]",
-	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Javob]"
+	"tag-discussiontools-newtopic-description": "Foydalanuvchi DiscussionTools yordamida sahifaga yangi mavzu qoʻshdi",
+	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Javob]",
+	"tag-discussiontools-reply-description": "Foydalanuvchi DiscussionTools yordamida xabarga javob berdi"
 }

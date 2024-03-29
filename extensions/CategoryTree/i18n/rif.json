@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Amara-Amaziɣ",
-			"Syphax Amaynu"
+			"Syphax Amaynu",
+			"AjellidnArif"
 		]
 	},
 	"categorytree-expand": "Semɣer",
-	"categorytree-num-pages": "$1 ⵙⵏ",
-	"categorytree-num-files": "$1 ⴼⵢⵍ"
+	"categorytree-num-pages": "$1 SN",
+	"categorytree-num-files": "$1 F"
 }

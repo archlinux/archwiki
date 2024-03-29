@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Astahar"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Кӗнеке",
+	"visualeditor-cite-tool-name-journal": "Статья",
+	"visualeditor-cite-tool-name-news": "Хыпар",
+	"visualeditor-cite-tool-name-web": "Сайт",
+	"cite-ve-dialogbutton-reference-full-label": "Ахаль",
+	"cite-ve-dialogbutton-reference-title": "Ӑнлантару",
+	"cite-ve-dialogbutton-reference-tooltip": "Тӗп",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Ӑнлантарусен списокӗ",
+	"cite-ve-toolbar-group-label": "Ҫӑлкуҫсем",
+	"cite-ve-othergroup-item": "$1 ӑнлантару"
+}

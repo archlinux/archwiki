@@ -4,6 +4,7 @@
 			"Aefgh39622"
 		]
 	},
+	"apihelp-abusefiltercheckmatch-summary": "ตรวจสอบดูว่าตัวกรองการละเมิดกฎตรงกับชุดตัวแปร การแก้ไข หรือเหตุการณ์ตัวกรองการละเมิดกฎที่ลงบันทึกไว้หรือไม่",
 	"apihelp-abusefiltercheckmatch-extended-description": "ต้องการ vars, rcid หรือ logid แต่สามารถใช้ได้เพียงอย่างเดียว",
 	"apihelp-abusefiltercheckmatch-param-filter": "ข้อความตัวกรองแบบเต็มที่จะตรวจหารายการที่ตรงกัน",
 	"apihelp-abusefiltercheckmatch-param-vars": "แถวลำดับที่เข้ารหัสแล้วของ JSON ของตัวแปรที่จะนำมาใช้ทดสอบ",
@@ -16,8 +17,12 @@
 	"apihelp-abusefilterchecksyntax-example-2": "ตรวจสอบไวยากรณ์ของตัวกรองที่ไม่ถูกต้อง",
 	"apihelp-abusefilterevalexpression-summary": "ประเมินนิพจน์ตัวกรองการละเมิดกฎ",
 	"apihelp-abusefilterevalexpression-param-expression": "นิพจน์ที่ต้องการประเมิน",
+	"apihelp-abusefilterevalexpression-param-prettyprint": "ระบุว่าจะให้พิมพ์ผลลัพธ์ออกมาแบบเป็นระเบียบหรือไม่",
 	"apihelp-abusefilterevalexpression-example-1": "ประเมินนิพจน์อย่างง่าย",
+	"apihelp-abusefilterevalexpression-example-2": "ประเมินนิพจน์อย่างง่าย จัดรูปแบบผลลัพธ์",
+	"apihelp-abusefilterunblockautopromote-summary": "ปลดบล็อกผู้ใช้จากการได้รับการโปรโมตอัตโนมัติเนื่องจากผลของตัวกรองการละเมิดกฎ",
 	"apihelp-abusefilterunblockautopromote-param-user": "ชื่อผู้ใช้ของผู้ใช้ที่คุณต้องการเลิกบล็อก",
+	"apihelp-abusefilterunblockautopromote-example-1": "เอาการบล็อกการโปรโมตอัตโนมัติของ [[User:Example]] ออก",
 	"apihelp-query+abusefilters-summary": "แสดงรายละเอียดของตัวกรองการละเมิดกฎ",
 	"apihelp-query+abusefilters-param-startid": "ไอดีตัวกรองที่ต้องการใช้เป็นจุดเริ่มต้นของการแจงนับ",
 	"apihelp-query+abusefilters-param-endid": "ไอดีตัวกรองที่ต้องการใช้เป็นจุดสิ้นสุดของการแจงนับ",

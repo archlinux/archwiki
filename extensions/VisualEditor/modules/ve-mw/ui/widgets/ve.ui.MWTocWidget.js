@@ -22,7 +22,7 @@ ve.ui.MWTocWidget = function VeUiMWTocWidget( surface, config ) {
 	// Properties
 	this.surface = surface;
 	this.doc = surface.getModel().getDocument();
-	this.metaList = surface.getModel().metaList;
+	this.metaList = this.doc.getMetaList();
 	// Topic level 0 lives inside of a toc item
 	this.rootLength = 0;
 	this.initialized = false;

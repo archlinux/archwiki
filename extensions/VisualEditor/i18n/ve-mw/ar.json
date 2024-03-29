@@ -34,7 +34,8 @@
 			"فلورانس",
 			"محمد أحمد عبد الفتاح",
 			"محمد عصام",
-			"مشعل الحربي"
+			"مشعل الحربي",
+			"Lolekek"
 		]
 	},
 	"collabpad-doctitle": "كولاب باد: $1",
@@ -310,6 +311,7 @@
 	"visualeditor-mwsignature-tool": "توقيعك",
 	"visualeditor-preference-visualeditor": "تفعيل المحرر المرئي",
 	"visualeditor-preference-newwikitexteditor-enable": "استخدم نمط نص الويكي داخل المحرر المرئي، بدلا من محرر نص ويكي مختلف.",
+	"visualeditor-preference-newwikitexteditor-help": "هذا يطلق عليه أحيانا 'محرر نص الويكي 2017'.",
 	"visualeditor-preference-tabs": "وضع التحرير:",
 	"visualeditor-preference-tabs-multi-tab": "أظهر تبويبي المحررين",
 	"visualeditor-preference-tabs-prefer-ve": "أظهر المحرر المرئي كلما أمكن",

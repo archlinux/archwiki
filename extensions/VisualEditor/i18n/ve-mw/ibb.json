@@ -2,9 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Nyaknograce",
-			"Uduakj"
+			"Uduakj",
+			"Okon Ibiono",
+			"Uduakumana"
 		]
 	},
+	"visualeditor-ca-createlocaldescriptionsource": "Dian udiongho mkpo",
+	"visualeditor-ca-createsource": "Tongho nte ato",
 	"visualeditor-ca-editsource": "Kpungo nte edio",
 	"visualeditor-ca-editsource-section": "kpungo nte edio",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor"

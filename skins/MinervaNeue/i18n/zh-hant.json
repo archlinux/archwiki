@@ -52,7 +52,7 @@
 	"mobile-frontend-user-button-tooltip": "顯示我的通知",
 	"mobile-frontend-user-newmessages": "您的對話頁面有新訊息",
 	"mobile-frontend-user-page-contributions": "貢獻",
-	"mobile-frontend-user-page-member-since": "{{GENDER:$2| 加入}}於 $1",
+	"mobile-frontend-user-page-member-since": "{{GENDER:$2|加入}}於 $1",
 	"mobile-frontend-user-page-talk": "討論",
 	"minerva-user-menu-button": "使用者選單",
 	"minerva-user-navigation": "使用者導覽",

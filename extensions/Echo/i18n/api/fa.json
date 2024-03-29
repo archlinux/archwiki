@@ -10,14 +10,15 @@
 			"Mjbmr",
 			"Mohammad ebz",
 			"Reza1615",
-			"فلورانس"
+			"فلورانس",
+			"Ebraminio"
 		]
 	},
 	"apihelp-echomarkread-summary": "علامت گذاری آگاه‌سازی‌ها به عنوان خوانده شده برای کاربر کنونی",
-	"apihelp-echomarkread-param-list": "فهرستی از شناسه های آگاه سازی به عنوان خوانده شده",
+	"apihelp-echomarkread-param-list": "فهرستی از شناسه‌های آگاه سازی به عنوان خوانده شده",
 	"apihelp-echomarkread-param-unreadlist": "فهرستی از شناسه‌های آگاه‌سازی برای علامت زدن به عنوان خوانده‌نشده",
 	"apihelp-echomarkread-param-all": "اگر تنظیم شده‌باشد، همهٔ آگاه‌سازی‌‌ها یک کاربر به عنوان خوانده‌شده نشانه‌گذاری شوند.",
-	"apihelp-echomarkread-param-sections": "فهرستی از شناسه های آگاه سازی به عنوان خوانده شده",
+	"apihelp-echomarkread-param-sections": "فهرستی از شناسه‌های آگاه سازی به عنوان خوانده شده",
 	"apihelp-echomarkread-param-wikis": "فهرست ویکی‌ها برای علامت‌زدن اعلان‌ها به‌عنوان خوانده‌شده (پیش‌فرض آن بر روی تنها ویکی کنونی است).",
 	"apihelp-echomarkread-example-1": "علامت‌گذاری آگاه‌سازی 8 به عنوان خوانده شده",
 	"apihelp-echomarkread-example-2": "علامت‌گذاری تمامی آگاه‌سازی‌ها به عنوان خوانده‌شده",
@@ -61,7 +62,7 @@
 	"apihelp-echoarticlereminder-param-comment": "توضیح اختیاری کاربر برای یادآوری",
 	"apihelp-echoarticlereminder-example-1": "ایجاد یک آگاه‌سازی یادآور برای فردا همراه با توضیح",
 	"apihelp-echoarticlereminder-example-2": "ساخت آگاه‌سازی یادآور برای فردا همراه بدون توضیح",
-	"apiwarn-echo-deprecation-timestampformat": "قالب خروجی مدیاویکی در اینجا منسوخ شده‌است. در آینده، ایزو ۸۶۰۱ همواره برای قالب خروجی برچسب زمان استفاده خواهد شد. برنامهٔ خود را تنظیم کنید و <var>timestampFormat</var> را برابر <kbd>ISO_8601</kbd> قرار دهید.",
+	"apiwarn-echo-deprecation-timestampformat": "قالب خروجی مدیاویکی در اینجا منسوخ شده است. در آینده، ایزو ۸۶۰۱ همواره برای قالب خروجی برچسب زمان استفاده خواهد شد. برنامهٔ خود را تنظیم کنید و <var>timestampFormat</var> را برابر <kbd>ISO_8601</kbd> قرار دهید.",
 	"apiwarn-echo-deprecation-flyout": "<kbd>notformat=flyout</kbd> منسوخ شده و به زودی حذف خواهد شد. از <kbd>notformat=model</kbd> برای گرفتن داده‌های خام و از <kbd>notformat=special</kbd> برای گرفتن اچ‌تی‌ام‌ال استفاده کنید.",
 	"apiwarn-echo-deprecation-html": "<kbd>notformat=html</kbd> منسوخ شده و به زودی حذف خواهد شد. به جای آن از <kbd>notformat=special</kbd> استفاده کنید.",
 	"apierror-echo-event-creation-failed": "امکان ایجاد رویداد سامانه آگاه‌سازی وجود ندارد"

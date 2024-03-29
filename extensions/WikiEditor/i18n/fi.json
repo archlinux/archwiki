@@ -110,7 +110,7 @@
 	"wikieditor-toolbar-tool-table-example-old": "-\n! otsikko 1\n! otsikko 2\n! otsikko 3\n|-\n| rivi 1, solu 1\n| rivi 1, solu 2\n| rivi 1, solu 3\n|-\n| rivi 2, solu 1\n| rivi 2, solu 2\n| rivi 2, solu 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Solun teksti",
 	"wikieditor-toolbar-tool-table-example-header": "Otsikkoteksti",
-	"wikieditor-toolbar-tool-table-example-caption": "Kuvateksti",
+	"wikieditor-toolbar-tool-table-example-caption": "Otsikko",
 	"wikieditor-toolbar-tool-table-title": "Lisää taulukko",
 	"wikieditor-toolbar-tool-table-dimensions-rows": "Rivit",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "Sarakkeet",

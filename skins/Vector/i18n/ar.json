@@ -25,7 +25,8 @@
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"Tar Lócesilion"
+			"Tar Lócesilion",
+			"عبد الإله صديقي"
 		]
 	},
 	"skinname-vector": "فكتور القديم (2010)",
@@ -84,6 +85,7 @@
 	"vector-unpin-element-label": "أخف",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|نقاش]]",
 	"tooltip-vector-anon-user-menu-title": "المزيد من الخيارات",
+	"vector-page-tools-nav-label": "أدوات الصفحة",
 	"vector-prefs-limited-width": "تفعيل وضع العرض المحدود",
 	"vector-prefs-limited-width-help": "قم بتمكين وضع العرض المحدود لتجربة قراءة محسنة.",
 	"empty-language-selector-body": "محتويات الصفحة غير مدعومة بلغات أخرى.",

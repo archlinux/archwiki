@@ -21,10 +21,10 @@
 	"cite_error_included_references": "Chiusure d'u tag mangande pe <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "'U tag <code>&lt;ref&gt;</code> esiste pu gruppe nomenate \"$1\", ma non ge corresponne a 'u tag acchiate <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "'U tag <code>&lt;ref&gt;</code> tag jndr'à <code>&lt;references&gt;</code> tène conflitte cu l'attribbute d'u gruppe \"$1\".",
-	"cite_error_references_missing_group": "'U tag <code>&lt;ref&gt;</code> definite jndr'à <code>&lt;references&gt;</code> ave attribbute de gruppe \"$1\" 'u quale non ge jesse jndr'à 'u teste prengepàle.",
+	"cite_error_references_missing_group": "'u tag <code>&lt;ref&gt;</code> cu 'u nome \"$2\" definite jndr'à <code>&lt;references&gt;</code> ave attribbute de gruppe \"$1\" ca non ge jessene jndr'à 'u teste prengepàle.",
 	"cite_error_references_missing_key": "'U tag <code>&lt;ref&gt;</code> cu 'u nome \"$1\" definite jndr'à <code>&lt;references&gt;</code> non g'avene ausate jndr'à 'u teste prengepàle.",
 	"cite_error_references_no_key": "'U tag <code>&lt;ref&gt;</code> definite jndr'à <code>&lt;references&gt;</code> non ge tène 'nu nome d'attrebbute.",
-	"cite_error_empty_references_define": "'U tag <code>&lt;ref&gt;</code> definite jndr'à <code>&lt;references&gt;</code> cu 'u nome \"$1\" non ge tène condenute.",
+	"cite_error_empty_references_define": "'u tag <code>&lt;ref&gt;</code> cu 'u nome \"$1\" definite jndr'à 'u gruppe <code>&lt;references&gt;</code> \"$2\" non ge tène condenute.",
 	"cite-tracking-category-cite-error": "Pàggene cu errore de referimende",
 	"cite-tracking-category-cite-error-desc": "Pàggene jndr'à sta categorije ca ave errore de ause de le tag de referimende.",
 	"cite_references_link_accessibility_label": "Zumbe sus",
@@ -38,5 +38,8 @@
 	"cite-wikieditor-help-content-reference-description": "Riferimende",
 	"cite-wikieditor-help-content-named-reference-description": "Referimende nnomenate",
 	"cite-wikieditor-help-content-rereference-description": "Ause addizionale d'u stesse riferimende",
-	"cite-wikieditor-help-content-showreferences-description": "Fà vedè le rifereminde"
+	"cite-wikieditor-help-content-showreferences-description": "Fà vedè le rifereminde",
+	"cite-wikieditor-help-content-reference-example-text1": "Teste d'a pàgene.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Teste d'u collegamende], teste aggiundive.",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Teste d'u collegamende]"
 }

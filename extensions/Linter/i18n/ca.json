@@ -4,7 +4,8 @@
 			"Fitoschido",
 			"SMP",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"Lluis Cat"
 		]
 	},
 	"linterrors": "Errors de lint",
@@ -28,6 +29,8 @@
 	"linter-category-stripped-tag-desc": "Aquestes pàgines tenen etiquetes que no estan ben aparellades.",
 	"linter-desc": "Analitza errors de lint des d'un servei extern i els mostra als usuaris",
 	"linter-form-namespace": "Espai de noms:",
+	"linter-form-template-option-with": "Amb plantilles",
+	"linter-form-template-option-without": "Sense plantilles",
 	"linter-heading-high-priority": "Prioritat alta",
 	"linter-heading-low-priority": "Prioritat baixa",
 	"linter-heading-medium-priority": "Prioritat mitjana",

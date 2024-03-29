@@ -33,11 +33,15 @@
 	"templatedata-helplink": "Úlgi maǵlıwmatları haqqında informaciya",
 	"templatedata-modal-button-add-language": "Til qosıw",
 	"templatedata-modal-button-addparam": "Parametr qosıw",
+	"templatedata-modal-button-apply": "Qollanıw",
 	"templatedata-modal-button-back": "Artqa",
 	"templatedata-modal-button-cancel": "Biykarlaw",
 	"templatedata-modal-button-changelang": "Tildi ózgertiw",
-	"templatedata-modal-button-done": "Orınlandı",
+	"templatedata-modal-button-delparam": "Parametr haqqındaǵı maǵlıwmattı óshiriw",
+	"templatedata-modal-button-done": "Tayar",
 	"templatedata-modal-button-saveparam": "Saqlaw",
+	"templatedata-modal-title": "Úlgi maǵlıwmatların ózgertiwshi",
 	"templatedata-modal-title-language": "Til",
+	"templatedata-modal-title-templatedesc": "Úlgi sıpatlaması ($1)",
 	"templatedata-modal-title-templateparams": "Úlgi parametrleri"
 }

@@ -60,5 +60,6 @@
 	"notification-flow-thanks-post-link": "kommentaari",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|tänas}} {{GENDER:$5|sind}} kommentaari eest teemas \"<strong>$3</strong>\".",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|tänas}} {{GENDER:$3|sind}}.",
-	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Üks inimene|$1 inimest|100=Üle 99 inimese}} tänas {{GENDER:$3|sind}} kommentaari eest arutelus \"<strong>$2</strong>\"."
+	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Üks inimene|$1 inimest|100=Üle 99 inimese}} tänas {{GENDER:$3|sind}} kommentaari eest arutelus \"<strong>$2</strong>\".",
+	"ipb-action-thanks": "Tänuavalduste saatmine"
 }

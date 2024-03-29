@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Amdf",
-			"Botuzhaleny-sodamo"
+			"Botuzhaleny-sodamo",
+			"Rueter"
 		]
 	},
 	"math_failure": "А ловнови",
@@ -10,6 +11,6 @@
 	"math_unknown_error": "апак содань ильведькс",
 	"math_unknown_function": "апак содань функция «$1»",
 	"mw_math_mathml": "SVG-с печтамо марто MathML (варчамонь)",
-	"mw_math_source": "Кадык TeX хорматсо (текст вальмас)",
+	"mw_math_source": "LaTeX лисьмапряпарцунсо (текст вальмань туртов)",
 	"prefs-math": "Математика"
 }

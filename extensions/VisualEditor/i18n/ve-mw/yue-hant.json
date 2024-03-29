@@ -13,7 +13,8 @@
 			"William915",
 			"Winston Sung",
 			"Yueman",
-			"捍粵者"
+			"捍粵者",
+			"H78c67c"
 		]
 	},
 	"tooltip-ca-ve-edit": "用 VisualEditor 改呢版",
@@ -44,8 +45,8 @@
 	"visualeditor-dialog-media-info-moreinfo": "多啲資訊",
 	"visualeditor-dialog-media-info-readmore": "睇多啲",
 	"visualeditor-dialog-media-info-uploaded": "上載日期：$1",
-	"visualeditor-dialog-media-page-advanced": "進階設定",
-	"visualeditor-dialog-media-page-general": "一般設定",
+	"visualeditor-dialog-media-page-advanced": "進階",
+	"visualeditor-dialog-media-page-general": "一般",
 	"visualeditor-dialog-media-position-checkbox": "圍住呢件嘢編排文字",
 	"visualeditor-dialog-media-position-section": "位置",
 	"visualeditor-dialog-media-save": "保存",
@@ -110,7 +111,7 @@
 	"visualeditor-dialog-table-sortable": "篩選表",
 	"visualeditor-dialog-table-wikitable": "格式化 (維基表)",
 	"visualeditor-dialog-template-title": "模",
-	"visualeditor-dialog-transclusion-add-template": "加個模",
+	"visualeditor-dialog-transclusion-add-template": "加模",
 	"visualeditor-dialog-transclusion-collapse-options": "收埋啲選項",
 	"visualeditor-dialog-transclusion-contextitem-description": "產生自：$1",
 	"visualeditor-dialog-transclusion-expand-options": "睇選項",
@@ -151,6 +152,7 @@
 	"visualeditor-linkinspector-educationpopup-text": "鏈重要嘅字眼去第啲wiki文章甚至係第啲網站，用來幫讀者更加了解上下文。",
 	"visualeditor-linkinspector-educationpopup-title": "拎",
 	"visualeditor-linkinspector-illegal-title": "頁名無效",
+	"visualeditor-linkinspector-invalid-external": "入個完整嘅URL，例如 https://example.org",
 	"visualeditor-linknodeinspector-add-label": "加label",
 	"visualeditor-linknodeinspector-title": "短拎",
 	"visualeditor-magiclinknodeinspector-convert-link": "轉做簡單連結",
@@ -216,6 +218,7 @@
 	"visualeditor-settings-tool": "版嘅設定",
 	"visualeditor-special-characters-group-other": "成日用",
 	"visualeditor-templatesused-tool": "用咗嘅模",
+	"visualeditor-toload": "而家即將載入編輯器，如果你幾秒鐘之後仲見到呢句嘢嘅話，請[$1 重新載入呢版]。",
 	"visualeditor-version-label": "版本",
 	"visualeditor-wikitext-warning": "你而家用緊 VisualEditor。[[{{MediaWiki:visualeditor-wikitext-warning-link}}|維基代碼]]喺呢度用唔到。你可以隨時轉去改源碼，撳個掣就得，你改咗嘅嘢唔會唔見。",
 	"visualeditor-wikitext-warning-title": "偵測到維基代碼"
