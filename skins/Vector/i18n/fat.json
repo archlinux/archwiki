@@ -3,7 +3,8 @@
 		"authors": [
 			"Amire80",
 			"Ebenoffen1",
-			"Leonard Nketsia"
+			"Leonard Nketsia",
+			"Gregorynelsonmensah1"
 		]
 	},
 	"vector-languages": "Kasahorow",
@@ -19,6 +20,8 @@
 	"vector-view-view": "Kenkan",
 	"vector-more-actions": "Pii",
 	"vector-searchsuggest-containing": "Hwehwɛ nkrataafa a <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> wɔ mu",
+	"vector-toc-label": "Dza ɔwɔ mu",
+	"vector-toc-beginning": "Ahyɛase",
 	"vector-page-tools-label": "Edwumadze",
 	"vector-page-tools-general-label": "Kɛsemu",
 	"vector-unpin-element-label": "fa suma"

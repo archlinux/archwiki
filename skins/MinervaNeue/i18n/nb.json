@@ -61,5 +61,7 @@
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Vis kategoriene til sider",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Forbedret behandling av sideproblemer",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Sideproblemer (Mal:ambox) vises i artikkelteksten.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Dessverre er ikke gruppering av resultater tilgjengelig på mobil. Om du ønsker å bruke denne funksjonen, besøk datamaskinversjonen av nettstedet."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Dessverre er ikke gruppering av resultater tilgjengelig på mobil. Om du ønsker å bruke denne funksjonen, besøk datamaskinversjonen av nettstedet.",
+	"minerva.css": "/* CSS i denne fila vil gjelde alle som bruker drakta MinervaNeue */",
+	"minerva.js": "/* Javascript i denne fila vil gjelde for brukere av drakta MinervaNeue */"
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Babanwalia"
+			"Babanwalia",
+			"Kuldeepburjbhalaike"
 		]
 	},
 	"wikieditor-wikitext-tab": "ਵਿਕੀਲਿਖਤ",
@@ -26,9 +27,9 @@
 	"wikieditor-toolbar-tool-link-ext-text": "ਕੜੀ ਦੀ ਲਿਖਤ:",
 	"wikieditor-toolbar-tool-link-insert": "ਕੜੀ ਜੋੜੋ",
 	"wikieditor-toolbar-tool-link-cancel": "ਰੱਦ ਕਰੋ",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "ਸਫ਼ਾ ਮੌਜੂਦ ਹੈ",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "ਸਫ਼ਾ ਮੌਜੂਦ ਨਹੀਂ ਹੈ",
-	"wikieditor-toolbar-tool-link-int-target-status-invalid": "ਗ਼ਲਤ ਸਿਰਲੇਖ",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "ਇਹ ਪੰਨਾ {{SITENAME}} 'ਤੇ ਮੌਜੂਦ ਹੈ",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "ਇਹ ਪੰਨਾ {{SITENAME}} 'ਤੇ ਮੌਜੂਦ ਨਹੀਂ ਹੈ",
+	"wikieditor-toolbar-tool-link-int-target-status-invalid": "ਤੁਹਾਡੇ ਵੱਲੋਂ ਦਿੱਤਾ ਗਿਆ ਸਿਰਲੇਖ ਅਵੈਧ ਹੈ",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "ਬਾਹਰੀ ਕੜੀ",
 	"wikieditor-toolbar-tool-link-int-invalid": "ਤੁਹਾਡਾ ਦੱਸਿਆ ਹੋਇਆ ਸਿਰਲੇਖ ਗ਼ਲਤ ਹੈ।",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "ਅੰਦਰੂਨੀ ਕੜੀ",
@@ -107,7 +108,7 @@
 	"wikieditor-toolbar-help-content-italic-example": "ਟੇਢੀ ਲਿਖਤ",
 	"wikieditor-toolbar-help-content-bold-description": "ਮੋਟਾ",
 	"wikieditor-toolbar-help-content-bold-example": "ਮੋਟੀ ਲਿਖਤ",
-	"wikieditor-toolbar-help-content-bolditalic-description": "ਮੋਟਾ &amp; ਟੇਢਾ",
+	"wikieditor-toolbar-help-content-bolditalic-description": "ਮੋਟਾ ਅਤੇ ਟੇਢਾ",
 	"wikieditor-toolbar-help-content-bolditalic-example": "ਮੋਟੀ & ਟੇਢੀ ਲਿਖਤ",
 	"wikieditor-toolbar-help-content-ilink-description": "ਅੰਦਰੂਨੀ ਕੜੀ",
 	"wikieditor-toolbar-help-content-xlink-description": "ਬਾਹਰੀ ਕੜੀ",

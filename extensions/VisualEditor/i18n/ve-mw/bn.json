@@ -20,7 +20,8 @@
 			"YahyA",
 			"Yahya",
 			"আজিজ",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"Aishik Rehman"
 		]
 	},
 	"collabpad-doctitle": "কোলাবপ্যাড: $1",
@@ -217,7 +218,7 @@
 	"visualeditor-dialogbutton-media-tooltip": "চিত্র ও মিডিয়া",
 	"visualeditor-dialogbutton-template-tooltip": "টেমপ্লেট",
 	"visualeditor-editconflict": "আপনার পরিবর্তনগুলো সম্পাদনা দ্বন্দ্বের কারণে সংরক্ষণ করা যায়নি। {{GENDER:|আপনি}} ম্যানুয়ালি এই দ্বন্দ্ব সমাধান করতে ইচ্ছুক?",
-	"visualeditor-editingtabdialog-body": "{{SITENAME}} এখন আপনি কোন সম্পাদক পছন্দ করেন তা মনে রাখবে। আপনি সম্পাদনা করার সময় সম্পাদনা মোড, এবং পরে আপনার পছন্দ পরিবর্তন করতে পারবেন।",
+	"visualeditor-editingtabdialog-body": "{{SITENAME}} এখন আপনি কোনো সম্পাদক পছন্দ করেন তা মনে রাখবে। আপনি সম্পাদনা করার সময় সম্পাদনা মোড, এবং পরে আপনার পছন্দ পরিবর্তন করতে পারবেন।",
 	"visualeditor-editingtabdialog-ok": "আমার সর্বশেষ সম্পাদনায় আমি যে সম্পাদক ব্যবহার করেছি তা ব্যবহার করুন",
 	"visualeditor-editingtabdialog-title": "ট্যাব সম্পাদনা করছেন",
 	"visualeditor-editnotices-tool": "$1টি {{PLURAL:$1|বিজ্ঞপ্তি}}",
@@ -338,7 +339,7 @@
 	"visualeditor-toload": "সম্পাদকটি এখন লোড হবে। আপনি যদি কয়েক সেকেন্ড পরেও এই বার্তাটি দেখতে পান, তাহলে দয়া করে [$1 পাতাটি পুনঃলোড করুন]।",
 	"visualeditor-version-label": "সংস্করণ",
 	"visualeditor-wikitext-progress": "উইকিপাঠ্য রূপান্তর হচ্ছে",
-	"visualeditor-wikitext-warning": "আপনি দৃশ্যমান সম্পাদনা ব্যবহার করছেন - এখানে [[{{MediaWiki:visualeditor-wikitext-warning-link}}|উইকিপাঠ্য]] কাজ করে না। আপনার করা পরিবর্তনগুলি না হারিয়ে যে কোন সময়ে উৎস সম্পাদনায় যাওয়ার জন্য, পাল্টান বোতামে ক্লিক করুন।",
+	"visualeditor-wikitext-warning": "আপনি দৃশ্যমান সম্পাদনা ব্যবহার করছেন - এখানে [[{{MediaWiki:visualeditor-wikitext-warning-link}}|উইকিপাঠ্য]] কাজ করে না। আপনার করা পরিবর্তনগুলি না হারিয়ে যে কোনো সময়ে উৎস সম্পাদনায় যাওয়ার জন্য, পাল্টান বোতামে ক্লিক করুন।",
 	"visualeditor-wikitext-warning-title": "উইকিপাঠ্য মার্কআপ সনাক্ত",
 	"visualeditor-wikitextconvert-title": "বিন্যাসনকে উইকিপাঠ্যে রূপান্তর করবেন?",
 	"visualeditor-wikitextconvert-message": "আপনার প্রতিলেপন করা বিষয়বস্তুতে সমৃদ্ধ বিন্যাসন রয়েছে। আপনি কি এই বিন্যাসনকে উইকিপাঠ্যে রূপান্তর করতে চান?",

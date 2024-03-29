@@ -26,7 +26,7 @@
 	"mobile-frontend-main-menu-settings": "Eyar",
 	"mobile-frontend-main-menu-watchlist": "Lîsteya şopandinê",
 	"mobile-frontend-meta-data-issues-categories": "Di derbarê vê kategoriyê de",
-	"mobile-frontend-placeholder": "Li ser {{SITENAME}} bigere",
+	"mobile-frontend-placeholder": "Li ser {{GRAMMAR:oblique|{{SITENAME}}}} bigere",
 	"mobile-frontend-random-button": "Ketober",
 	"mobile-frontend-talk-back-to-filepage": "Vegere dosyeya \"$1\".",
 	"mobile-frontend-talk-back-to-page": "Vegere rûpela \"$1\".",

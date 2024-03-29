@@ -56,7 +56,7 @@
 	"callback": "MediaWiki\\Extension\\ConfirmEdit\\Hooks::onFancyCaptchaSetup",
 	"config": {
 		"CaptchaClass": {
-			"value": "MediaWiki\\Extension\\ConfirmEdit\\FancyCaptcha"
+			"value": "MediaWiki\\Extension\\ConfirmEdit\\FancyCaptcha\\FancyCaptcha"
 		},
 		"CaptchaFileBackend": {
 			"value": ""

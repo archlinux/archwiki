@@ -36,7 +36,7 @@
 	"minerva-meta-data-issues-section-header": "Проблеми одељка",
 	"mobile-frontend-notifications-filter": "Филтер",
 	"mobile-frontend-pageaction-edit-tooltip": "Уредите уводни одељак ове странице",
-	"mobile-frontend-placeholder": "Претражите {{GRAMMAR:акузатив|{{SITENAME}}}}",
+	"mobile-frontend-placeholder": "Претражите {{SITENAME}}",
 	"mobile-frontend-random-button": "Случајна",
 	"mobile-frontend-redirected-from": "Преусмерено са „[[$1]]”",
 	"mobile-frontend-talk-back-to-filepage": "Врати ме на датотеку „$1”.",

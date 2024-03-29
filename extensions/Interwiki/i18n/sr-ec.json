@@ -25,6 +25,7 @@
 	"interwiki-url-label": "Адреса:",
 	"interwiki_local": "Напред",
 	"interwiki-local-label": "Напред",
+	"interwiki_trans": "Укључења",
 	"interwiki_1": "да",
 	"interwiki_0": "не",
 	"interwiki_error": "Грешка: табела међувикија је празна, или нешто друго није у реду.",
@@ -50,6 +51,7 @@
 	"interwiki-submit-empty": "Префикс и URL не могу да буду празни.",
 	"interwiki-submit-invalidurl": "Протокол везе је неважећи.",
 	"log-name-interwiki": "Дневник табеле међувикија",
+	"logentry-interwiki-iw_delete": "$1 је {{GENDER:$2|уклонио|уклонила}} префикс „$4” из међувики табеле",
 	"log-description-interwiki": "Ово је историја измена [[Special:Interwiki|табеле међувикија]].",
 	"right-interwiki": "уређивање међувикија",
 	"action-interwiki": "мењате ову ставку међувикија",
@@ -57,5 +59,6 @@
 	"interwiki-local-links": "Локални међувики префикси",
 	"interwiki-links": "Међувики префикси",
 	"interwiki-language-links": "Међујезички префикси",
+	"interwiki-language-description": "Ови префиски су кодови језика и користе се за списак „{{int:otherlanguages}}” када се повеже нека страница.",
 	"interwiki-global-language-links": "Глобални међујезички префикси"
 }

@@ -184,7 +184,7 @@
 	"visualeditor-dialog-transclusion-add-param-error-exists-selected": "Kan inte lägga till parametern \"$2\" två gånger.",
 	"visualeditor-dialog-transclusion-add-param-error-exists-unselected": "Parametern \"$2\" är redan tillgänglig att användas. Kontrollera alternativen i sidofältet.",
 	"visualeditor-dialog-transclusion-add-param-error-forbidden-char": "$1 är ett otillåtet tecken. Ta bort det för att lägga till parametern.",
-	"visualeditor-dialog-transclusion-add-param-help": "Ange [//www.mediawiki.org/wiki/Special:MyLanguage/Help:VisualEditor/User_guide#Adding_undocumented_parameters parameternamn utan dokumentation] om det är känt. Observera att endast parametrar som är kända av mallen har effekt. Du kan hitta information om befintliga parametrar på [[$1|template's page]].",
+	"visualeditor-dialog-transclusion-add-param-help": "Ange [//www.mediawiki.org/wiki/Special:MyLanguage/Help:VisualEditor/User_guide#Adding_undocumented_parameters parameternamn utan dokumentation] om det är känt. Observera att endast parametrar som är kända av mallen har effekt. Du kan hitta information om befintliga parametrar på [[$1|mallens sida]].",
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Parameternamn",
 	"visualeditor-dialog-transclusion-add-param-save": "Lägg till",
 	"visualeditor-dialog-transclusion-add-template": "Lägg till mall",

@@ -405,5 +405,10 @@
 	"abusefilter-group-default": "Per defaut",
 	"abusefilter-http-error": "Una error HTTP s’es produsida : $1.",
 	"abusefilter-blocked-domains-notes": "Nòtas",
-	"abusefilter-blocked-domains-domain-header": "Domeni"
+	"abusefilter-blocked-domains-add-submit": "Mandar",
+	"abusefilter-blocked-domains-domain-header": "Domeni",
+	"abusefilter-blocked-domains-notes-header": "Nòtas",
+	"abusefilter-blocked-domains-actions-header": "Accions",
+	"abusefilter-blocked-domains-remove-reason": "Rason",
+	"abusefilter-blocked-domains-remove-submit": "Suprimir"
 }

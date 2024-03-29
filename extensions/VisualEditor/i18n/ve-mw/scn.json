@@ -13,6 +13,7 @@
 		]
 	},
 	"tooltip-ca-ve-edit": "Cancia sta pàggina",
+	"tooltip-ca-ve-create": "Crea sta pàggina",
 	"tooltip-ca-editsource": "Cancia lu codici surgenti di sta pàggina",
 	"tooltip-ca-createsource": "Crea lu codici surgenti di sta pàggina",
 	"visualeditor-advancedsettings-tool": "Mpustazzioni avanzati",
@@ -29,7 +30,7 @@
 	"visualeditor-dialog-media-choose-image": "Usa sta mmàggini",
 	"visualeditor-dialog-media-content-description-link": "(pàggina di descrizzioni)",
 	"visualeditor-dialog-media-content-filename": "Nomu dû file",
-	"visualeditor-dialog-media-content-section": "Didascalia",
+	"visualeditor-dialog-media-content-section": "Didascalìa",
 	"visualeditor-dialog-media-info-created": "Criatu: $1",
 	"visualeditor-dialog-media-info-meta-artist": "Auturi: $1",
 	"visualeditor-dialog-media-info-moreinfo": "Chiossai nfurmazzioni",

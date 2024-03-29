@@ -12,7 +12,8 @@
 			"MokaAkashiyaPT",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious"
+			"Waldyrious",
+			"Caiofernandes"
 		]
 	},
 	"skinname-vector": "Vector antigo (2010)",
@@ -29,7 +30,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 língua|$1 línguas}}",
 	"vector-no-language-button-label": "Adicionar línguas",
 	"vector-no-language-button-aria-label": "Este artigo só existe nesta língua. Adicione o artigo noutras línguas",
-	"vector-language-redirect-to-top": "Na wiki {{SITENAME}} as hiperligações interlínguas estão localizadas no topo da página ao lado oposto do título.",
+	"vector-language-redirect-to-top": "Na wiki {{SITENAME}} as hiperligações interlínguas estão localizadas no topo da página do lado oposto ao título.",
 	"vector-language-variant-switcher-label": "Mudar a variante da língua",
 	"vector-action-addsection": "Adicionar tópico",
 	"vector-action-delete": "Eliminar",
@@ -70,6 +71,7 @@
 	"vector-unpin-element-label": "ocultar",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|discussão]]",
 	"tooltip-vector-anon-user-menu-title": "Mais opções",
+	"vector-page-tools-nav-label": "Ferramentas de página",
 	"vector-prefs-limited-width": "Ativar o modo de largura limitada",
 	"vector-prefs-limited-width-help": "Ativar o modo de largura limitada, para uma melhor experiência de leitura.",
 	"empty-language-selector-body": "O conteúdo da página não é suportado noutras línguas.",

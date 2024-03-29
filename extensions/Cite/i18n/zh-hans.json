@@ -35,7 +35,7 @@
 	"cite_error_references_no_text": "<code>&lt;ref&gt;</code>标签无效；未给name（名称）为<code>$1</code>的ref（参考）提供文本",
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code>标签缺少关闭标签<code>&lt;/ref&gt;</code>",
 	"cite_error_included_references": "<code>&lt;references&gt;</code>缺少关闭标记",
-	"cite_error_group_refs_without_references": "名称为“$1”的分组存在<code>&lt;ref&gt;</code>标签，但未找到对应的<code>&lt;references group=\"$1\"/&gt;</code>标签",
+	"cite_error_group_refs_without_references": "名称为“$1”的group（分组）存在<code>&lt;ref&gt;</code>标签，但未找到对应的<code>&lt;references group=\"$1\"/&gt;</code>标签",
 	"cite_error_references_group_mismatch": "<code>&lt;references&gt;</code>内的<code>&lt;ref&gt;</code>标签有冲突的group（分组）属性“$1”。",
 	"cite_error_references_missing_group": "<code>&lt;references&gt;</code>内定义的name（名称）为“$2”的<code>&lt;ref&gt;</code>标签有未在前文内出现过的group（分组）属性“$1”。",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code>内定义的name（名称）为“$1”的<code>&lt;ref&gt;</code>标签未在前文内使用。",

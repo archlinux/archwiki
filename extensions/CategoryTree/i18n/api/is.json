@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Sveinn í Felli"
+			"Sveinn í Felli",
+			"Stefán Örvar Sigmundsson"
 		]
 	},
-	"apihelp-categorytree-summary": "Innri kerfiseining fyrir CategoryTree-viðbótina."
+	"apihelp-categorytree-summary": "Innri seining fyrir CategoryTree-viðbótina."
 }

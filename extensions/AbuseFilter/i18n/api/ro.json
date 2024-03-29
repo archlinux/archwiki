@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Strainu",
-			"WebSourceContentRO"
+			"WebSourceContentRO",
+			"Heron702"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "Verificați dacă un AbuseFilter se potrivește cu un set de variabile, o modificare sau un eveniment AbuseFilter înregistrat",
@@ -19,5 +20,6 @@
 	"apihelp-abusefilterevalexpression-example-1": "Evaluează o expresie simplă",
 	"apihelp-query+abuselog-param-limit": "Numărul maxim de intrări de afișat.",
 	"apihelp-query+abuselog-param-prop": "Ce proprietăți se cer.",
+	"apihelp-abuselogprivatedetails-summary": "Vizualizați detaliile private ale unei intrări AbuseLog.",
 	"apierror-abusefilter-badsyntax": "Filtrul are sintaxă invalidă."
 }

@@ -51,15 +51,16 @@
 	"mobile-frontend-user-page-talk": "คุย",
 	"minerva-user-menu-button": "เมนูผู้ใช้",
 	"minerva-user-navigation": "ส่วนนำทางผู้ใช้",
+	"minerva-page-actions-editfull": "แก้ไขหน้าเต็ม",
 	"minerva-page-actions-overflow": "เพิ่มเติม",
 	"minerva-page-actions-language-switcher": "ภาษา",
 	"minerva-page-actions-history": "ประวัติ",
-	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|การอภิปราย]]",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|อภิปราย]]",
 	"minerva-skin-desc": "สกินดั้งเดิมสำหรับอุปกรณ์เคลื่อนที่",
 	"skin-minerva-issue-learn-more": "เรียนรู้เพิ่มเติม",
 	"skin-minerva-mobile-option-MinervaShowCategories": "หมวดหมู่",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "ดูหมวดหมู่ของหน้า",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "ปรับปรุงการแสดงผลปัญหาหน้า",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "ปัญหาหน้า (แม่แบบ:ambox) จะเป็นแบบในบรรทัดในบทความ",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "น่าเสียดายที่การจัดกลุ่มผลลัพธ์ตามหน้าไม่พร้อมใช้งานบนมือถือ หากต้องการใช้คุณลักษณะนี้กรุณาใช้มุมมองแบบคอมพิวเตอร์ตั้งโต๊ะ"
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "น่าเสียดายที่การจัดกลุ่มผลลัพธ์ตามหน้าไม่พร้อมใช้งานบนอุปกรณ์เคลื่อนที่ หากต้องการใช้คุณลักษณะนี้กรุณาใช้มุมมองแบบคอมพิวเตอร์ตั้งโต๊ะ"
 }

@@ -4,8 +4,9 @@
 			"Liuxinyu970226",
 			"Shinjiman",
 			"Wmr89502270",
-			"Xiaomingyan"
+			"Xiaomingyan",
+			"LittlePaw365"
 		]
 	},
-	"poem-desc": "添加<code>&lt;poem&gt;</code>标签用于诗歌格式"
+	"poem-desc": "添加用于诗歌格式化的<code>&lt;poem&gt;</code>标签"
 }

@@ -12,6 +12,7 @@
 	"abuselog": "Register del filter anti-abus",
 	"abusefilter-intro": "Benvegnud in de l'interfacia del manesg del filter antiabus.\nEl filter antiabus a l'è on sistema automatich per l'aplicazzion de procedure empiriche automatiche a tute i azzion.\nL'interfacia la fà vedé ona lista de filter definid e la fà in manera che i poden vesser modifegad.",
 	"abusefilter-warning": "'''Atenzion:''' questa azzion chì l'è stada reconossuda in automatich come pericolosa. \nI azzion minga creativ i sarann scacellade a la svelta; a seguità a met denter di contribuzzion minga creativ o di grandi contribuzzion reconossude come ruf te andaret incontra al bloch de l'utenza o de l'adress IP. \nSe, inveci te penset che l'azion in esamm la sia creativa, te gh'het de inviàlla an'mò per confermàlla. \nQuesta l'è una descrizzion a la curta de la regola de sicurezza che l'è stada profanada: $1",
+	"abusefilter-disallowed": "Questa azzion chì è stata ritegnuda pericolosa in automatich e donca minga permetuda. Se te credet che la toa azzion la sia giusta e util, informa on aministrador de quell che te seret 'dree a tentà de fà. Questa chì a l'è ona descrizzion curta de la regola che l'è stada minga rispetada: $1",
 	"abusefilter-blocker": "Filter anti abus",
 	"abusefilter-accountreserved": "Quest nom del cunt chì l'è riservad per el filter de sicurezza.",
 	"right-abusefilter-view": "Varda i filter anti abus",

@@ -13,5 +13,6 @@
 	"spam-blacklisted-email-text": "Evit ar mare eo ho chomlec'h postel berzet da gas posteloù da implijerien all.",
 	"spam-blacklisted-email-signup": "N'hall ket ar chomlec'h postel pourchaset bezañ implijet evit ar mare.",
 	"spam-invalid-lines": "{{PLURAL:$1|Ul lavarenn|Lavarennoù}} reoliek direizh eo {{PLURAL:$1|al linenn|al linennoù}} da-heul eus roll du ar stroboù ha ret eo {{PLURAL:$1|he reizhañ|o reizhañ}} a-raok enrollañ ar bajenn :",
-	"spam-blacklist-desc": "Ostilh enep-strob diazezet war lavarennoù reoliek (Regex) : [[MediaWiki:Spam-blacklist]] ha [[MediaWiki:Spam-whitelist]]"
+	"spam-blacklist-desc": "Ostilh enep-strob diazezet war lavarennoù reoliek (Regex) : [[MediaWiki:Spam-blacklist]] ha [[MediaWiki:Spam-whitelist]]",
+	"log-name-spamblacklist": "Marilh ar roll stankañ strob"
 }

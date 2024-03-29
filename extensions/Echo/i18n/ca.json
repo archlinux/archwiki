@@ -14,7 +14,8 @@
 			"Ssola",
 			"Toniher",
 			"Vriullop",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"SMP"
 		]
 	},
 	"echo-desc": "Sistema per notificar als usuaris sobre esdeveniments i missatges",
@@ -187,5 +188,6 @@
 	"echo-email-batch-link-text-view-all-notifications": "Vegeu totes les notificacions",
 	"notification-header-foreign-alert": "Més alertes {{PLURAL:$5|d'un altre wiki|de $5 altres wikis}}",
 	"notification-header-foreign-notice": "Més avisos {{PLURAL:$5|d'un altre wiki|de $5 altres wikis}}",
-	"notification-header-foreign-all": "Més notificacions {{PLURAL:$5|d'un altre wiki|de $5 altres wikis}}"
+	"notification-header-foreign-all": "Més notificacions {{PLURAL:$5|d'un altre wiki|de $5 altres wikis}}",
+	"right-manage-all-push-subscriptions": "Gestionar les subscripcions push"
 }

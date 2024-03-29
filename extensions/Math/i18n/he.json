@@ -72,7 +72,7 @@
 	"math_timeout": "הזמן להכנת $1 מהשרת \"$2\" פג.",
 	"math-test-end": "בדיקות רקע למצב תיצוג ''$1'' הושלמו.",
 	"math-test-fail": "הבדיקת ''$1'' <span style=\"color:red\">נכשלה</span>.",
-	"math-test-start": "הרצת בדיקות רגע למצב התיצוג ''$1''.",
+	"math-test-start": "הרצת בדיקות רקע למצב התיצוג ''$1''.",
 	"math-test-success": "הבדיקה ''$1'' <span style=\"color:green\">הצליחה</span>..",
 	"math-test-contains-diff": "המחרוזת המוחזרת $1 אינה מכילה את המחרוזת הצפויה $2.",
 	"math-test-equals-diff": "המחרוזת המוחזרת $1 שונה מהמחרוזת הצפויה $2.",
@@ -110,5 +110,5 @@
 	"math-wikibase-special-error-header": "שגיאה",
 	"math-wikibase-special-error-invalid-argument": "מזהה פריט הוויקיבייס אינו קיים.",
 	"math-wikibase-special-error-unknown": "אירעה שגיאה בלתי־ידועה באחזור נתונים מוויקיבייס.",
-	"math-wikibase-special-error-no-wikibase": "ההרחבה ויקיבייס נחוצה לשימוש בדף המיוחד הזה."
+	"math-wikibase-special-error-no-wikibase": "ההרחבה Wikibase נחוצה לשימוש בדף המיוחד הזה."
 }

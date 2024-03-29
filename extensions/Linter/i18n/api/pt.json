@@ -7,6 +7,7 @@
 	},
 	"apihelp-query+linterrors-summary": "Obter uma lista de erros de lint",
 	"apihelp-query+linterrors-param-categories": "Categorias de erros de lint",
+	"apihelp-query+linterrors-param-invisible-categories": "Categorias invisíveis de erros de lint",
 	"apihelp-query+linterrors-param-limit": "Número de resultados a pesquisar",
 	"apihelp-query+linterrors-param-from": "Identificador de lint no qual iniciar a pesquisa",
 	"apihelp-query+linterrors-param-namespace": "Só incluir erros de lint dos espaços nominais especificados",

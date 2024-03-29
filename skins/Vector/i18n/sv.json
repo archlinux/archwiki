@@ -10,10 +10,13 @@
 			"Sabelöga",
 			"Skalman",
 			"Sturban",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Kakan spelar",
+			"Lejonel",
+			"Sebastian Berlin (WMSE)"
 		]
 	},
-	"skinname-vector": "Vector, äldre (2010)",
+	"skinname-vector": "Vector äldre (2010)",
 	"vector-skin-desc": "Innehåller 2 Vector-utseenden:\n* 2011 - Modern version av MonoBook med ett nytt utseende och flera användarvänlighetsförbättringar.\n* 2022 - Inbyggda versionen av Vector som är en del av WMF:s [[mw:Desktop Improvements]]-projekt.",
 	"prefs-vector-enable-vector-1-label": "Använd gamla Vector",
 	"prefs-vector-enable-vector-1-help": "Under de nästkommande åren kommer vi gradvis uppdatera utseendet Vector. Gamla Vector kommer låta dig se den gamla version av Vector (fr.o.m. december 2019). För att läsa mer om uppdateringarna, gå till vår [[mw:Reading/Web/Desktop_Improvements|projektsida]].",

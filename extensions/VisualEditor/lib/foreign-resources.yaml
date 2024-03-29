@@ -21,7 +21,7 @@ Diff Match and Patch:
   type: doc-only
 
 DOMPurify:
-  license: Apache-2.0 AND MPLv2
+  license: MPL-2.0 OR Apache-2.0
   homepage: https://github.com/cure53/DOMPurify
   authors: Mario Heiderich and other contributors
   version: 2.4.4
@@ -56,7 +56,7 @@ socket.io-client:
   type: doc-only
 
 spark-md5:
-  license: BSD-3-Clause AND WTFv2
+  license: WTFPL OR MIT
   homepage: https://github.com/satazor/js-spark-md5
   authors: André Cruz
   version: 3.0.0
@@ -70,7 +70,7 @@ Tree Differ:
   type: doc-only
 
 Universal Language Selector data:
-  license: MIT AND GPLv2
+  license: MIT OR GPL-2.0+
   homepage: https://github.com/wikimedia/jquery.uls
   authors: Wikimedia Language Engineering Team and other contributors
   version: —

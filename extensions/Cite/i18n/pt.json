@@ -47,5 +47,8 @@
 	"cite-wikieditor-help-content-reference-description": "Referência",
 	"cite-wikieditor-help-content-named-reference-description": "Referência nomeada",
 	"cite-wikieditor-help-content-rereference-description": "Reutilização da mesma referência",
-	"cite-wikieditor-help-content-showreferences-description": "Mostrar referências"
+	"cite-wikieditor-help-content-showreferences-description": "Mostrar referências",
+	"cite-wikieditor-help-content-reference-example-text1": "Texto da página.$1",
+	"cite-wikieditor-help-content-reference-example-text2": "[$1 Texto da hiperligação], texto adicional.",
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Texto da hiperligação]"
 }

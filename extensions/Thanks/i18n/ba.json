@@ -9,7 +9,8 @@
 			"Ләйсән",
 			"Рустам Нурыев",
 			"Танзиля Кутлугильдина",
-			"Янмурза Баки"
+			"Янмурза Баки",
+			"Bashkorttan"
 		]
 	},
 	"thanks-desc": "Мөхәррирләгән, фекер яҙған һ.б. өсөн ҡатнашыусыларға рәхмәт белдергән һылтанмалар өҫтәй.",
@@ -19,7 +20,7 @@
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Рәхмәт әйтелде}}}}",
 	"thanks-error-undefined": "Рәхмәт әйтеп булманы (хата коды:$1). Ҡабатлап ҡарағыҙ.",
 	"thanks-error-invalidrevision": "Өлгөнөң ID номеры хаталы",
-	"thanks-error-ratelimited": "{{GENDER:$1|Һеҙ}} бындай ғәмәлдәрҙе башҡарыуҙың сикләнгән тиҙлеген арттырып ебәрҙегеҙ. Бер аҙ ваҡыт көтөгөҙ һәм яңынан эшләп ҡарағыҙ.",
+	"thanks-error-ratelimited": "{{GENDER:$1|Һеҙ}} эш тиҙлеге сиген үттегеҙ. Бер аҙ көтөп, ҡабатлап ҡарағыҙ.",
 	"thanks-thank-tooltip": "{{GENDER:$2|Был ҡатнашыусыға}} рәхмәт {{GENDER\n:$1|әйтергә}}",
 	"thanks-thank-tooltip-no": "Рәхмәтте {{GENDER:$1|кире алырға}}",
 	"thanks-confirmation2": "Асыҡ рәүештә рәхмәт {{GENDER:$1|әйтергә}}ме?",
@@ -31,9 +32,10 @@
 	"echo-category-title-edit-thank": "Рәхмәт!",
 	"notification-thanks-diff-link": "Һеҙҙең үҙгәртеүҙәрҙе",
 	"notification-header-rev-thank": "{{GENDER:$4|Һеҙгә}}, <strong>$3</strong> битендә яһаған үҙгәртеүегеҙ өсөн, $1 {{GENDER:$2|рәхмәт әйтте}}.",
-	"log-name-thanks": "Рәхмәт әйтеү журналы",
+	"log-name-thanks": "Рәхмәт журналы",
 	"log-description-thanks": "Түбәндә башҡа ҡатнашыусыларҙан рәхмәт алған ҡатнашыусылар исемлеге бар",
-	"logentry-thanks-thank": "$3 {{GENDER:$4|ҡатнашыусыға}}  $1 {{GENDER:$2|рәхмәт әйтте}}",
+	"logentry-thanks-thank": "$3 исемле {{GENDER:$4|ҡатнашыусыға}}  $1 {{GENDER:$2|рәхмәт әйтте}}",
+	"logeventslist-thanks-log": "Рәхмәт журналы",
 	"thanks-error-no-id-specified": "Рәхмәт белдереү өсөн төҙәтеү йәки журнал идентификаторын күрһәтергә кәрәк.",
 	"notification-link-text-view-post": "Фекерҙе ҡарарға",
 	"thanks-error-invalidpostid": "Хәбәрҙең рөхсәт ителмәгән идентификаторы.",

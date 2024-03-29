@@ -28,7 +28,7 @@
 	"gadgets-pagetext": "По-долу е списъкът на специалните джаджи, които потребителите могат да активират чрез [[Special:Preferences#mw-prefsection-gadgets|страницата си с настройки]], както е указано на [[MediaWiki:Gadgets-definition]].\nТози списък дава лесен достъп до страниците със системни съобщения, съдържащи описанието и кода на всяка джаджа.",
 	"gadgets-uses": "Използва",
 	"gadgets-required-rights": "Изисква {{PLURAL:$2|следното потребителско право|следните потребителски права}}:\n\n$1",
-	"gadgets-required-skins": "Джаджата е достъпна в {{PLURAL:$2|облик „$1“|следните облици: „$1“}}.",
+	"gadgets-required-skins": "Джаджата е достъпна за {{PLURAL:$2|облик „$1“|следните облици: „$1“}}.",
 	"gadgets-default": "Активирана за всички по подразбиране.",
 	"gadgets-legacy": "Джаджата не е заредена. Моля, мигрирайте към ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) научете повече])",
 	"gadgets-export": "Изнасяне",

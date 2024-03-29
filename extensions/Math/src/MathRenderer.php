@@ -266,7 +266,7 @@ abstract class MathRenderer {
 		$this->inputHash = $rpage->math_inputhash; // MUST NOT BE NULL
 		$this->md5 = self::dbHash2md5( $this->inputHash );
 		if ( !empty( $rpage->math_mathml ) ) {
-			$this->mathml = utf8_decode( $rpage->math_mathml );
+			$this->mathml = $rpage->math_mathml;
 		}
 		if ( !empty( $rpage->math_inputtex ) ) {
 			// in the current database the field is probably not set.
@@ -345,7 +345,7 @@ abstract class MathRenderer {
 	protected function dbOutArray() {
 		$out = [
 			'math_inputhash' => $this->getInputHash(),
-			'math_mathml' => utf8_encode( $this->mathml ),
+			'math_mathml' => $this->mathml,
 			'math_inputtex' => $this->userInputTex,
 			'math_tex' => $this->tex,
 			'math_svg' => $this->svg

@@ -10,5 +10,6 @@
 	"echo-pref-tooltip-login-fail": "Obavijesti me kad bude nekoliko neuspješnih pokušaja prijave na moj račun.",
 	"echo-category-title-login-success": "Prijava s novog računara",
 	"echo-pref-tooltip-login-success": "Obavijesti me kad se neko prijavi na moj račun s računara koji dosad nisam koristio/-la.",
-	"loginnotify-primary-link": "Pomoć"
+	"loginnotify-primary-link": "Pomoć",
+	"notification-new-unbundled-header-login-fail": "{{PLURAL:$1|Dogodio se '''neuspješni pokušaj'''|Dogodili su se '''neuspješni pokušaji'''}} prijave na Vaš račun s novog uređaja. Osigurajte račun jakom lozinkom."
 }

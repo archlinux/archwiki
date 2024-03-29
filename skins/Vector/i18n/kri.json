@@ -1,9 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Protostar"
+			"Protostar",
+			"122112ê"
 		]
 	},
+	"vector-languages": "Langwej dɛn",
+	"vector-language-button-label": "{{PLURAL:$1| $1 langwej| $1 langwej dɛn}}",
+	"vector-no-language-button-label": "Ad langwej dɛn",
 	"vector-action-addsection": "Add tòpik",
 	"vector-action-delete": "Delet",
 	"vector-action-move": "Muf",
@@ -13,5 +17,11 @@
 	"vector-view-history": "Luk historia",
 	"vector-view-view": "Rid",
 	"vector-view-viewsource": "Luk dhi sòrs",
-	"vector-more-actions": "Mòr"
+	"vector-more-actions": "Mòr",
+	"vector-searchsuggest-containing": "Sɔch fɔ pej dɛn we gɛt<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Kòntèntdèm",
+	"vector-main-menu-label": "Men mɛnyu",
+	"vector-page-tools-label": "Tul dɛn",
+	"vector-page-tools-general-label": "Jeneral",
+	"vector-unpin-element-label": "haid"
 }

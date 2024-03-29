@@ -217,6 +217,7 @@
 	"visualeditor-savedialog-identify-user": "Anda telah log masuk sebagai [[User:$1|$1]]. Suntingan anda akan dikaitkan dengan akaun ini jika anda menyimpan suntingan ini.",
 	"visualeditor-savedialog-keyboard-shortcut-submit": "Anda boleh tekan $1 untuk menyimpan suntingan.",
 	"visualeditor-savedialog-label-publish-short": "Siarkan",
+	"visualeditor-savedialog-label-publish-short-start": "Terbitkan…",
 	"visualeditor-savedialog-label-resolve-conflict": "Selesaikan percanggahan",
 	"visualeditor-savedialog-label-resume-editing": "Sambung menyunting",
 	"visualeditor-savedialog-label-review": "Semak perubahan anda",

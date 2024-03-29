@@ -15,12 +15,14 @@
 			"Whym",
 			"Yusuke1109",
 			"ひまり",
-			"もなー(偽物)"
+			"もなー(偽物)",
+			"Ant176"
 		]
 	},
 	"linterrors": "Lint エラー",
 	"linter-category-bogus-image-options": "偽のファイルオプション",
 	"linter-category-bogus-image-options-desc": "これらのページには、偽のオプションを含むファイルがあります。",
+	"linter-category-large-tables": "モバイルでは見にくい大きな表",
 	"linter-category-deletable-table-tag": "削除する必要があるTableタグ",
 	"linter-category-deletable-table-tag-desc": "このページでは、削除する必要があるTableタグがあるページを掲載しています。",
 	"linter-category-fostered-desc": "これらのページでは、コンテンツが表の中の無効な位置にあるため、表の外に表示されています。",
@@ -32,6 +34,8 @@
 	"linter-category-misnested-tag-desc": "修正可能なタグの入れ子のエラーを含むページ。",
 	"linter-category-missing-end-tag": "終了タグの不足",
 	"linter-category-missing-end-tag-desc": "これらのページでは終了タグが不足しています。",
+	"linter-category-missing-end-tag-in-heading": "見出しの終了タグの不足",
+	"linter-category-missing-end-tag-in-heading-desc": "これらのページには見出しの終了タグが不足しています。",
 	"linter-category-multi-colon-escape": "複数コロンのウィキ間リンク",
 	"linter-category-multi-colon-escape-desc": "このページでは、ウィキ間リンクに2個以上のコロンを前置しているページを掲載しています。",
 	"linter-category-multiline-html-table-in-list": "リスト内の複数行のテーブル",
@@ -44,7 +48,7 @@
 	"linter-category-pwrap-bug-workaround-desc": "これらのページには、段落の折り返しのバグがあり、それを回避できる場合があります。",
 	"linter-category-self-closed-tag": "自己終了タグ",
 	"linter-category-self-closed-tag-desc": "これらのページには自己終了タグがあります。",
-	"linter-category-stripped-tag-desc": "これらのページでは、タグを除去しています。",
+	"linter-category-stripped-tag-desc": "これらのページでは開始タグが省略されています。",
 	"linter-category-tidy-font-bug-desc": "従来は、これらのフォントタグをリンクの内側に移動してリンクカラーを変更していました。",
 	"linter-category-tidy-whitespace-bug": "空白文字解析のバグ",
 	"linter-category-tidy-whitespace-bug-desc": "これらのページは空白文字解析のバグを引き起こしたため、回避法を適用すべきです。",
@@ -80,6 +84,7 @@
 	"linter-pager-misc-tidy-replacement-issues-details": "その他のマークアップエラー",
 	"linter-pager-misnested-tag-details": "適切に入れ子にされるべきである誤ったタグ",
 	"linter-pager-missing-end-tag-details": "不足している終了タグ",
+	"linter-pager-missing-end-tag-in-heading-details": "不足している見出しの終了タグ",
 	"linter-pager-multi-colon-escape-details": "複数コロンのウィキ間リンク",
 	"linter-pager-multiline-html-table-in-list-details": "リスト内の複数行の HTML5 テーブルで、レンダリングすると表示が HTML5 と Tidy で異なる",
 	"linter-pager-multiple-unclosed-formatting-tags-details": "ページ上に閉じられていない複数の書式設定タグ",
@@ -95,5 +100,6 @@
 	"linterrors-subpage": "Lint エラー: $1",
 	"linterrors-summary": "<strong>Note:</strong> カテゴリの集計数は正確ではなく、推計値です。",
 	"multi-part-template-block": "単一のテンプレートからではない出力",
-	"pageinfo-linter": "lintエラー"
+	"pageinfo-linter": "lintエラー",
+	"pageinfo-linter-moreinfo": "lint エラーに関する詳細情報を表示します。"
 }

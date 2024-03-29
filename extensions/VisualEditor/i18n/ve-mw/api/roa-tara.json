@@ -32,6 +32,7 @@
 	"apihelp-visualeditoredit-param-cachekey": "Ause 'u resultate de 'na richieste serializeforcache ausate apprime cu sta chiave. Sovrascrive $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "ID d'u captcha (quanne ste reggìstre cu 'na resposte d'u captcha).",
 	"apihelp-visualeditoredit-param-captchaword": "Respunne a 'u captcha (quanne reggìstre cu 'na resposte captcha).",
+	"apihelp-visualeditoredit-param-nocontent": "No sce penzanne a 'u condenute HTML d'a versiona nove jndr'à resposte.",
 	"apihelp-visualeditoredit-param-plugins": "Plugin associate cu 'a richieste de l'API.",
 	"apihelp-visualeditoredit-param-data-{plugin}": "Date arbitrarie mannate cu 'nu plugin cu 'a richieste de l'API.",
 	"apihelp-visualeditoredit-param-etag": "ETag da mannà.",

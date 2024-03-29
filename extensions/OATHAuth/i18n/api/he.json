@@ -12,8 +12,8 @@
 	"apihelp-query+oath-example-1": "קבלת מידע על המשתמש הנוכחי",
 	"apihelp-query+oath-example-2": "קבלת מידע על משתמש <kbd>Example</kbd>",
 	"apihelp-oathvalidate-summary": "בדיקת תקינות של אסימון אימות דו־שלבי (OATH).",
-	"apihelp-oathvalidate-param-user": "לאיזה משתמש לאמת את האסימון. ברירת המחדל היא המשתמש הנוכחי.",
+	"apihelp-oathvalidate-param-user": "לאיזה משתמש לבדוק את תקינות האסימון. ברירת המחדל היא המשתמש הנוכחי.",
 	"apihelp-oathvalidate-example-1": "בדיקת תקינות נתוני ה־JSON עבור המשתמש הנוכחי.",
-	"apihelp-oathvalidate-example-3": "לוודא את התקינות של נתוני JSON של המשתמש <kbd>Example</kbd>",
+	"apihelp-oathvalidate-example-3": "לבדוק את התקינות של נתוני JSON של המשתמש <kbd>Example</kbd>",
 	"apihelp-oathvalidate-param-data": "מצופים נתונים מקודדים ב־JSON על־ידי המודול שכרגע מופעל למשתמש המאומת כעת"
 }

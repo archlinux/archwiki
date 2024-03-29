@@ -24,7 +24,7 @@
 	"templatedata-doc-format-block": "استفاده از قالب‌بندی قطعه‌ای برای پارامترهای این الگو ارجح است.",
 	"templatedata-doc-format-custom": "این الگو، قالب‌بندی شخصی‌سازی‌شده دارد",
 	"templatedata-doc-format-inline": "استفاده از قالب‌بندی درون‌خطی برای پارامترهای این الگو ارجح است.",
-	"templatedata-doc-no-params-set": "هیچ پارامتری مشخص نشده‌است",
+	"templatedata-doc-no-params-set": "هیچ پارامتری مشخص نشده است",
 	"templatedata-doc-param-autovalue": "مقدار خودکار",
 	"templatedata-doc-param-default": "پیش‌فرض",
 	"templatedata-doc-param-example": "مثال",

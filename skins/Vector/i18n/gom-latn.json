@@ -36,12 +36,16 @@
 	"vector-main-menu-tooltip": "Mukhel volleri",
 	"vector-toc-menu-tooltip": "Vixoi suchi",
 	"vector-toc-collapsible-button-label": "Vixoi suchi dakhoi / lipoi",
+	"vector-site-nav-label": "Sayt",
 	"vector-main-menu-label": "Mukhel volleri",
 	"vector-limited-width-toggle": "Panachi rundai purnn vo tharavik",
 	"vector-page-tools-label": "Avtam",
+	"vector-page-tools-general-label": "Samanio",
 	"vector-page-tools-actions-label": "Kornnio",
 	"vector-pin-element-label": "deg-pott'ttiecher vor",
 	"vector-unpin-element-label": "lipoi",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Bhasabhas]]",
+	"tooltip-vector-anon-user-menu-title": "Anik poryay",
+	"vector-page-tools-nav-label": "Panachin avtam",
 	"empty-language-selector-body": "Panacho mozkur her bhasani somorthit na."
 }

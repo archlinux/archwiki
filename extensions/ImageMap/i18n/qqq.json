@@ -5,7 +5,8 @@
 			"Purodha",
 			"Shirayuki",
 			"The Evil IP address",
-			"Umherirrender"
+			"Umherirrender",
+			"Amire80"
 		]
 	},
 	"imagemap_desc": "{{desc|name=Image Map|url=https://www.mediawiki.org/wiki/Extension:ImageMap}}",
@@ -18,7 +19,7 @@
 	"imagemap_unrecognised_shape": "{{doc-important|Do not translate the parameters <code>default</code>, <code>rect</code>, <code>circle</code> or <code>poly</code>.}}\nUsed as error message. Parameters:\n* $1 - line number",
 	"imagemap_invalid_coord": "Used as error message. Parameters:\n* $1 - line number",
 	"imagemap_invalid_desc": "Used as error message. Parameters:\n* $1 - list of desc types",
-	"imagemap_description": "Used as HTML <code>title=</code> attribute of <code><nowiki><a></nowiki></code> tag and as HTML <code>alt=</code> attribute of <code><nowiki><img></nowiki></code> tag.",
+	"imagemap_description": "Used as HTML <code>title=</code> attribute of <code>&lt;a&gt;</code> tag and as HTML <code>alt=</code> attribute of <code>&lt;img&gt;</code> tag.",
 	"imagemap_desc_types": "{{optional}}{{doc-important|Keep the same order.}}",
 	"imagemap_poly_odd": "Used as error message. Parameters:\n* $1 - line number"
 }

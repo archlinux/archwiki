@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ajiniyaz Nurniyazov",
-			"Nurlan"
+			"Nurlan",
+			"Inabat Allanova"
 		]
 	},
 	"prefs-echo": "Xabarlandırıwlar",
@@ -49,6 +50,7 @@
 	"notification-header-edit-user-talk": "$1 <strong>talqılaw {{GENDER:$3|betińizde}}</strong> xabarlama {{GENDER:$2|qaldırdı}}.",
 	"notification-header-edit-user-talk-with-section": "$1 <strong>siziń talqılaw {{GENDER:$3|betińizdegi}}</strong> «<strong>$4</strong>» bóliminde xabarlama {{GENDER:$2|qaldırdı}}.",
 	"notification-header-page-linked": "<strong>$4</strong> degennen <strong>$3</strong> degende silteme berildi.",
+	"notification-bundle-header-page-linked": "{{PLURAL:$5||$5 betler|100=99+ betler}}den <strong>$3</strong>qa ornatıldı.",
 	"notification-header-mention-other": "$1 paydalanıwshı <strong>$4</strong> betiniń «<strong>$5</strong>» bóliminde {{GENDER:$3|sizdi}} {{GENDER:$2|atap ótti}}.",
 	"notification-header-mention-other-nosection": "$1 paydalanıwshı <strong>$4</strong> betinde {{GENDER:$3|sizdi}} {{GENDER:$2|atap ótti}}.",
 	"notification-header-mention-user-talkpage-v2": "$1 paydalanıwshı <strong>$4 paydalanıwshınıń talqılaw {{GENDER:$5|betiniń}}</strong> «<strong>$6</strong>» bóliminde {{GENDER:$3|sizdi}} {{GENDER:$2|atap ótti}}.",
@@ -65,6 +67,7 @@
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|Siz}} ózińizdiń {{GENDER:$2|on mıńınshı}} redaktorlawıńızdı orınladıńız. Sizge kópten-kóp {{GENDER:$2|raxmetler}}!",
 	"notification-header-thank-you-100000-edit": "{{GENDER:$2|Siz}} ózińizdiń {{GENDER:$2|júz mıńınshı}} redaktorlawıńızdı orınladıńız. Sizge ájayıp úlesińiz ushın {{GENDER:$2|raxmet}} aytamız!",
 	"notification-header-reverted": "Siziń {{PLURAL:$4|<strong>$3</strong> betindegi redaktorlawıńız|<strong>$3</strong> betindegi redaktorlawıńız}} {{GENDER:$2|joqqa shıǵarıldı}}.",
+	"notification-edit-talk-page-email-subject2": "$1 {{SITENAME}} saytında {{GENDER:$3|sizge}} xabar {{GENDER:$2|qaldırdı}}",
 	"notification-page-linked-email-subject": "{{SITENAME}} saytında siz jaratqan betke silteme berildi",
 	"notification-mention-email-subject": "{{SITENAME}} saytında $1 sizdi {{GENDER:$3|atap ótti}}",
 	"notification-timestamp-ago-seconds": "{{PLURAL:$1|$1 sekund}}",

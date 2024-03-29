@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Батыр Комдошев",
-			"Bakpay"
+			"Bakpay",
+			"Amire80"
 		]
 	},
-	"abusefilter-desc": "Автоматикалык ла эвристикалык  фильтрларды тӱзедӱ эдеринде тузаланарга јарадат",
+	"abusefilter-desc": "Автоматикалык ла эвристикалык фильтрларды тӱзедӱ эдеринде тузаланарга јарадат",
 	"abusefilter": "Шокту эдилгелерди кӧрӧр фильтрлерди иштедери",
 	"abuselog": "Шокту эдилгелердиҥ филтрыныҥ журналы",
 	"abusefilter-intro": "Шокту эдилгелердиҥ фильтрын башкарар бӱкке кӱӱнзеп киригер.\nШокту эдилгелердиҥ фильтры туружаачылардыҥ ченелтелерин эвристик автоматикалык механизм ажыра јазайт.\nАлты јанында бастыра тургузылган фильтрлердиҥ тизими.",
@@ -181,8 +182,8 @@
 	"abusefilter-tools-reautoconfirm": "«autoconfirmed» статузын орныктырар",
 	"abusefilter-tools-reautoconfirm-user": "Туружаачы:",
 	"abusefilter-tools-reautoconfirm-submit": "Автоподтверждениени ойтодоҥ эдери",
-	"abusefilter-tools-restoreautopromote": "Автокыймыгу каршу эдимдерлÿ фильтрдыҥ  инструменттериниҥ болужыла орныктырылган.",
-	"abusefilter-reautoconfirm-none": "Бу {{GENDER:$1|туружаачыныҥ|туружаачыныҥ}}   автокыймыгу статусы токтодылбаган",
+	"abusefilter-tools-restoreautopromote": "Автокыймыгу каршу эдимдерлÿ фильтрдыҥ инструменттериниҥ болужыла орныктырылган.",
+	"abusefilter-reautoconfirm-none": "Бу {{GENDER:$1|туружаачыныҥ|туружаачыныҥ}} автокыймыгу статусы токтодылбаган.",
 	"abusefilter-reautoconfirm-notallowed": "Слерге автобыжулаш статусын орныктырарга jарадылбаган.",
 	"abusefilter-reautoconfirm-done": "Аккаунттыҥ автобыжулаш статузы орныктырылган",
 	"abusefilter-edit": "Каршу эдимдерлÿ фильтрларды тÿзедер",
@@ -232,6 +233,6 @@
 	"abusefilter-throttle-site": "бастыра сайт",
 	"abusefilter-throttle-page": "Бӱк",
 	"abusefilter-throttle-none": "(јок)",
-	"abusefilter-edit-warn-message": "Озолодо токтодорыныҥ истемный  бичимели:",
+	"abusefilter-edit-warn-message": "Озолодо токтодорыныҥ истемный бичимели:",
 	"abusefilter-edit-warn-other": "Öскö бичилге"
 }

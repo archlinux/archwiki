@@ -69,7 +69,9 @@
 			"ЛингвоЧел",
 			"Сrower",
 			"Туллук",
-			"SuperYwx9"
+			"SuperYwx9",
+			"Mitte27",
+			"Nikokrat"
 		]
 	},
 	"abusefilter-desc": "Позволяет применять автоматические эвристические фильтры к правкам",
@@ -654,6 +656,7 @@
 	"abusefilter-blocked-domains-json-error": "JSON должен быть массивом",
 	"abusefilter-blocked-domains-invalid-entry": "Запись $1 в JSON неверна: это должен быть объект, содержащий только поля 'domain' и 'notes', которые должны быть строками",
 	"log-description-abusefilterprivatedetails": "В этом журнале отображается список случаев, когда пользователь просматривал личные данные журнала злоупотреблений.",
+	"log-description-abusefilterblockeddomainhit": "Эти события отслеживают попадания в заблокированные домены.",
 	"abusefilter-noreason": "Предупреждение. Чтобы просмотреть личные данные этого журнала, вы должны указать причину.",
 	"abusefilter-log-ip-not-available": "Недоступно",
 	"abusefilter-tag-reserved": "Метка <code>abusefilter-condition-limit</code> зарезервирована для использования фильтром злоупотреблений.",
@@ -667,5 +670,6 @@
 	"right-abusefilter-modify-blocked-external-domains": "Создание или изменение установки блокировки ссылок на внешние домены",
 	"action-abusefilter-modify-blocked-external-domains": "создание или изменение установки блокировки ссылок на внешние домены",
 	"right-abusefilter-bypass-blocked-external-domains": "Обход заблокированных внешних доменов",
-	"action-abusefilter-bypass-blocked-external-domains": "обход заблокированных внешних доменов"
+	"action-abusefilter-bypass-blocked-external-domains": "обход заблокированных внешних доменов",
+	"abusefilter-blocked-domains-cannot-edit-directly": "Создать или изменить, ссылки на какие внешние домены блокируются, необходимо через [[Special:BlockedExternalDomains|специальную страницу]]."
 }

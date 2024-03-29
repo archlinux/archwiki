@@ -9,7 +9,7 @@
 	"syntaxhighlight-desc": "אפשרות לסימון קוד מקור בצבעים עם התגית <code>&lt;syntaxhighlight&gt;</code> באמצעות [http://pygments.org/ Pygments – צובע קוד בשפת Python]",
 	"syntaxhighlight-error-category": "דפים עם שגיאות בצביעת קוד",
 	"syntaxhighlight-error-category-desc": "אירעה שגיאה בעת ניסיון לצבוע קוד שכלול בדף.",
-	"syntaxhighlight-enclose-category": "דפים שמשתמשים במאפייני enclose מיושנים",
+	"syntaxhighlight-enclose-category": "דפים שמשתמשים בתכונות enclose מיושנות",
 	"syntaxhighlight-enclose-category-desc": "צביעת קוד בדף משתמשת בתחביר enclose מיושן.",
 	"syntaxhighlight-source-category": "דפים שמשתמשים בתג source",
 	"syntaxhighlight-source-category-desc": "צביעת הקוד בדף משתמשת בתגי source מיושנים.",

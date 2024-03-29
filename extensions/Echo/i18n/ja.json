@@ -27,7 +27,8 @@
 			"Yusuke1109",
 			"おはぐろ蜻蛉",
 			"ネイ",
-			"春春眠眠"
+			"春春眠眠",
+			"Müller857"
 		]
 	},
 	"echo-desc": "イベントおよびメッセージについて、利用者に通知するシステム",
@@ -175,6 +176,15 @@
 	"notification-header-user-rights-add-and-remove": "{{GENDER:$6|あなたの}}利用者権限が{{GENDER:$1|変更されました}}: $2へ追加され、$4から除外されました。",
 	"notification-header-welcome": "$1 さん、{{SITENAME}} へ{{GENDER:$2|ようこそ}}！{{GENDER:$2|あなた}}の参加を歓迎します。",
 	"notification-header-mention-summary": "$1 が <strong>$4</strong> の「編集の要約欄」で{{GENDER:$3|あなた}}に{{GENDER:$2|言及しました}} 。",
+	"notification-header-watchlist-changed": "$1が{{GENDER:$4|あなた}}のウォッチリスト上のページ<strong>$3</strong>を$5{{PLURAL:$5|回}}{{GENDER:$2|変更}}しました。",
+	"notification-header-watchlist-created": "$1が{{GENDER:$4|あなた}}のウォッチリスト上のページ<strong>$3</strong>を$5{{PLURAL:$5|回}}{{GENDER:$2|作成}}しました。",
+	"notification-header-watchlist-deleted": "$1が{{GENDER:$4|あなた}}のウォッチリスト上のページ<strong>$3</strong>を$5{{PLURAL:$5|回}}{{GENDER:$2|削除}}しました。",
+	"notification-header-watchlist-moved": "$1が{{GENDER:$4|あなた}}のウォッチリスト上のページ<strong>$3</strong>を$5{{PLURAL:$5|回}}{{GENDER:$2|移動}}しました。",
+	"notification-header-watchlist-restored": "$1が{{GENDER:$4|あなた}}のウォッチリスト上のページ<strong>$3</strong>を$5{{PLURAL:$5|回}}{{GENDER:$2|復元}}しました。",
+	"notification-header-watchlist-multiuser-changed": "{{GENDER:$2|あなた}}のウォッチリスト上のページ<strong>$1</strong>が$3{{PLURAL:$3|回}}変更されました。",
+	"notification-header-watchlist-multiuser-created": "{{GENDER:$2|あなた}}のウォッチリスト上のページ<strong>$1</strong>が$3{{PLURAL:$3|回}}作成されました。",
+	"notification-header-watchlist-multiuser-deleted": "{{GENDER:$2|あなた}}のウォッチリスト上のページ<strong>$1</strong>が$3{{PLURAL:$3|回}}削除されました。",
+	"notification-header-watchlist-multiuser-moved": "{{GENDER:$2|あなた}}のウォッチリスト上のページ<strong>$1</strong>が$3{{PLURAL:$3|回}}移動されました。",
 	"notification-header-watchlist-multiuser-restored": "<strong>$1</strong>、{{GENDER:$2|あなた}}のウォッチリストを$3{{PLURAL:$3|time|times}}のものに復元しました。",
 	"notification-welcome-linktext": "ようこそ",
 	"notification-header-thank-you-1-edit": "{{GENDER:$2|あなた}}は初めて編集を行いました。寄稿をありがとうございます。そして、ようこそ！",

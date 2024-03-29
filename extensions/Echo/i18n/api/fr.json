@@ -28,7 +28,7 @@
 	"apihelp-echomarkseen-param-timestampFormat": "Format d’horodatage à utiliser pour la sortie, « ISO_8601 » ou « MW ». « MW » est désuet ici, donc tous les clients devraient basculer vers « ISO_8601 ». Ce paramètre sera supprimé et « ISO_8601 » deviendra le seul format de sortie.",
 	"apihelp-echomute-summary": "Faire taire ou non les notifications issues de certains utilisateurs ou pages.",
 	"apihelp-echomute-param-type": "Quelle liste de mise en silence à laquelle ajouter ou de laquelle supprimer",
-	"apihelp-echomute-param-mute": "Pages ou utilisateurs à ajouter à la liste de mise en silence",
+	"apihelp-echomute-param-mute": "Pages ou utilisateurs à ajouter à la liste de sourdine",
 	"apihelp-echomute-param-unmute": "Pages ou utilisateurs à retirer de la liste de mise en silence",
 	"apihelp-echopushsubscriptions-summary": "Gérer les abonnements de poussée d’informations pour l’utilisateur actuel.",
 	"apihelp-echopushsubscriptions-param-command": "Action à effectuer.",

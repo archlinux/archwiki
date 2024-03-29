@@ -28,7 +28,7 @@
 	"nuke-userorip": "نام کاربری، نشانی آی‌پی یا خالی:",
 	"nuke-maxpages": "حداکثر تعداد صفحه‌ها:",
 	"nuke-editby": "ایجاد شده توسط [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
-	"nuke-deleted": "صفحهٔ '''$1''' حذف شده‌است.",
+	"nuke-deleted": "صفحهٔ '''$1''' حذف شده است.",
 	"nuke-not-deleted": "صفحهٔ [[:$1]] را '''نمی‌توان''' حذف کرد.",
 	"nuke-delete-more": "[[Special:Nuke|حذف صفحه‌های بیشتر]]",
 	"nuke-pattern": "الگوی SQL LIKE (مثلاً %) برای نام صفحه:",

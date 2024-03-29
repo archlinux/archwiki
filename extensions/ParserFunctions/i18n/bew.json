@@ -24,5 +24,5 @@
 	"pfunc_expr_invalid_argument_ln": "Hujah kaga' aci bakal ln: <= 0.",
 	"pfunc_expr_unknown_error": "Haturan ngablu: Kengabluan kaga' ditauin ($1).",
 	"pfunc_expr_not_a_number": "Di $1: Hasil bukan angka.",
-	"pfunc_string_too_long": "Kengabluan: Kèteng nglantasin wates $1 lèter."
+	"pfunc_string_too_long": "Kengabluan: Rèncèng nglantasin wates $1 lèter."
 }

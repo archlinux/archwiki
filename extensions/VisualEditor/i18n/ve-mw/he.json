@@ -85,7 +85,7 @@
 	"visualeditor-dialog-media-page-advanced": "מתקדם",
 	"visualeditor-dialog-media-page-general": "כללי",
 	"visualeditor-dialog-media-position-checkbox": "גלישת טקסט סביב הפריט הזה",
-	"visualeditor-dialog-media-position-checkbox-help": "אפשר לגרום לפריט המדיה להופיע בתוך הטקסט של הדף ולא לצוף בצד. זה נחוץ לעיתים רחוקות, מכיוון שסימון התיבה הזאת ישבור את זרימת הטקסט.",
+	"visualeditor-dialog-media-position-checkbox-help": "אפשר לגרום לפריט המדיה להופיע בתוך הטקסט של הדף ולא לצוף בצד. כדאי לעשות את זה לעיתים רחוקות מכיוון שסימון התיבה הזאת ישבור את זרימת הטקסט.",
 	"visualeditor-dialog-media-position-section": "מיקום",
 	"visualeditor-dialog-media-position-section-help": "אפשר להגדיר איפה בדף יופיע פריט המדיה הזה. זה לעיתים משמש לשבירת שורה ארוכה של תמונות בצד אחד של הדף.",
 	"visualeditor-dialog-media-save": "שמירה",

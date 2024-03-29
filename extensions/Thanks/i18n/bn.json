@@ -9,7 +9,8 @@
 			"Macofe",
 			"Nasir8891",
 			"আজিজ",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"Aishik Rehman"
 		]
 	},
 	"thanks-desc": "সম্পাদনা, মতামত, ইত্যাদির জন্য ব্যবহারকারীদের ধন্যবাদ জানানোর লিঙ্ক সংযোজন করে।",
@@ -26,7 +27,7 @@
 	"thanks-error-invalidrevision": "সংশোধনের আইডি বৈধ নয়।",
 	"thanks-error-revdeleted": "সংশোধনটি মুছে ফেলার কারণে ধন্যবাদ জানানো যাচ্ছে না।",
 	"thanks-error-notitle": "পৃষ্ঠার শিরোনাম উদ্ধার করা যাবে না",
-	"thanks-error-invalidrecipient": "কোন বৈধ প্রাপক পাওয়া যায়নি",
+	"thanks-error-invalidrecipient": "কোনো বৈধ প্রাপক পাওয়া যায়নি",
 	"thanks-error-invalidrecipient-bot": "বটকে ধন্যবাদ দেয়া যাবে না",
 	"thanks-error-invalidrecipient-self": "আপনি নিজেকে নিজে ধন্যবাদ দিতে পারবেন না",
 	"thanks-error-notloggedin": "বেনামী ব্যবহারকারীগণ ধন্যবাদ পাঠাতে পারবে না",

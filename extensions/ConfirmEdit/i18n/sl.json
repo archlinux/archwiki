@@ -20,7 +20,7 @@
 	"captcha-create": "Če želite ustvariti stran, prosimo rešite spodnjo nalogo in odgovor vpišite v polje ([[Special:Captcha/help|več informacij]]):",
 	"captcha-sendemail": "Za zaščito vikija pred samodejnim smetenjem vas prijazno prosimo, da rešite spodnjo nalogo in odgovor vnesete v polje ([[Special:Captcha/help|več o tem]]):",
 	"captcha-sendemail-fail": "Napačna ali manjkajoča CAPTCHA.",
-	"captcha-disabledinapi": "To dejanje zahteva preverjanje captcha, zato ga ni mogoče izvesti z API-jem.",
+	"captcha-disabledinapi": "To dejanje zahteva reševanje CAPTCHA, zato ga ni mogoče izvesti z API-jem.",
 	"captcha-error": "Preverjanje rešitve uganke CAPTCHA je spodletelo zaradi notranje napake: $1",
 	"captchahelp-title": "Pomoč za captcha",
 	"captchahelp-cookies-needed": "Če želite, da to deluje, boste morali v brskalniku omogočiti piškotke.",

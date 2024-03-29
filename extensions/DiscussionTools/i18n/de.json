@@ -73,7 +73,7 @@
 	"discussiontools-newtopicssubscription-button-unsubscribe-tooltip": "Abbestellen, um keine Benachrichtigungen mehr zu erhalten, wenn neue Themen auf dieser Seite gestartet werden.",
 	"discussiontools-newtopicssubscription-notify-subscribed-body": "Du erhältst Benachrichtigungen, wenn neue Themen auf dieser Seite begonnen werden.",
 	"discussiontools-newtopicssubscription-notify-subscribed-title": "Du hast abonniert!",
-	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "Sie erhalten keine Benachrichtigungen mehr, wenn auf dieser Seite neue Themen gestartet werden.",
+	"discussiontools-newtopicssubscription-notify-unsubscribed-body": "Du erhältst keine Benachrichtigungen mehr, wenn auf dieser Seite neue Themen gestartet werden.",
 	"discussiontools-newtopicssubscription-notify-unsubscribed-title": "Du hast diese Benachrichtigung abbestellt.",
 	"discussiontools-notification-added-topic-header": "Neues Thema „<strong>$4</strong>“ erstellt am <strong>$3</strong> von $2.",
 	"discussiontools-notification-added-topic-header-bundled": "{{PLURAL:$1|Ein neues Thema|$1 neue Themen|100=Über 99 neue Themen}} auf „<strong>$2</strong>“.",

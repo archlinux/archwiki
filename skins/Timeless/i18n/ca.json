@@ -5,7 +5,8 @@
 			"Jmarchn",
 			"Macofe",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"SMP"
 		]
 	},
 	"timeless-desc": "Una aparença atemporal dissenyada a partir del prototip Winter de Brandon Harris i diversos estils de la Fundació Wikimedia",
@@ -20,6 +21,7 @@
 	"timeless-pageactions": "Eines de pàgina",
 	"timeless-userpagetools": "Eines de pàgina d'usuari",
 	"timeless-action-addsection": "Tema nou",
+	"timeless-view-view": "Llegeix",
 	"timeless-pagemisc": "Més",
 	"timeless-namespaces": "Espais de noms",
 	"timeless-pagetools": "Accions de pàgina",

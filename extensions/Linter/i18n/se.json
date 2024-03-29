@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik"
+			"Yupik",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
 	"linterrors": "Lint-feaillat",
+	"linter-category-missing-end-tag": "Loahppagilkor váilu",
 	"linter-form-namespace": "Nammagomuvuohta:",
 	"linter-numerrors": "($1 {{PLURAL:$1|meattáhus|meattáhusa}})",
 	"linterrors-subpage": "Lint-feaillat: $1",

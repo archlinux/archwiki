@@ -11,5 +11,5 @@
 	"timeless-pagemisc": "Кхы а",
 	"timeless-namespaces": "ЦӀерий аренаш",
 	"timeless-view-history": "Тархьар",
-	"timeless-action-undelete": "Юхаметтаоттде {{PLURAL:$1|$1 нийсдар|$1 нийсдараш}}"
+	"timeless-action-undelete": "Меттаоттабе {{PLURAL:$1|$1 хувцам|1=хувцам}}"
 }

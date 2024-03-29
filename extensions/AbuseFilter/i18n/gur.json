@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Akakiiri"
+			"Akakiiri",
+			"Baba Ayɛ'ɛra",
+			"Amire80"
 		]
 	},
 	"abusefilter-log-search-user": "Tuntuna:",
@@ -63,6 +65,7 @@
 	"abusefilter-log-hide-no-change": "ID sɛba ti ba loe la za'an pugum tara nɛɛsum sɛbo n nari la mɛ.",
 	"abusefilter-log-hide-done": "Nɛɛsum n paa se'em beene: $1 {{PLURAL:$1|entry|enteries}} $2.",
 	"abusefilter-log-hide-done-hide": "{{PLURAL:$1|hidden}}",
+	"abusefilter-log-hide-done-show": "{{PLURAL:$1|unhidden}}",
 	"log-action-filter-abusefilter": "Filita teere buuri buuri:",
 	"log-action-filter-abusefilter-create": "Filita paalega maalegɔ",
 	"log-action-filter-abusefilter-modify": "Filita teeseŋo",
@@ -116,6 +119,10 @@
 	"abusefilter-list-options-search-rlike": "'Regular expression'",
 	"abusefilter-list-options-search-irlike": "'Case-insensitive regular expression'",
 	"abusefilter-list-invalid-searchmode": "Yibegerɛ eere 'mode' la ka de 'valid'.",
+	"abusefilter-edit": "Demesego la daani filita la mɛ",
+	"abusefilter-edit-subtitle": "Filita demesego $1",
+	"abusefilter-edit-subtitle-new": "Filita maalegɔ",
+	"abusefilter-edit-token-not-match": "Demesego la ka Derbe! M beleni mɛ seeve le yɛ'ɛsa.",
 	"abusefilter-edit-new": "Filita paalega",
 	"abusefilter-edit-save": "Seeve filita",
 	"abusefilter-edit-id": "Filita ID:",
@@ -124,6 +131,8 @@
 	"abusefilter-edit-field-description": "Pa'alegɔ",
 	"abusefilter-edit-group": ",'Filter' tigere:",
 	"abusefilter-edit-flags": "'flags':",
+	"abusefilter-edit-enabled": "Basɛ ti filita wa tãna ita",
+	"abusefilter-edit-deleted": "Makɛ ti dɛna yesebasɛ",
 	"abusefilter-edit-global": "Tingɔŋɔ za'an waabi filita",
 	"abusefilter-edit-rules": "'Condition':",
 	"abusefilter-edit-field-conditions": "'Conditions':",
@@ -132,6 +141,11 @@
 	"abusefilter-edit-lastmod-text": "$1 by $2",
 	"abusefilter-edit-hitcount": "Filita 'hits':",
 	"abusefilter-edit-consequences": "Itegɔ ti fu nara ti fu dikɛ la San tɔ",
+	"abusefilter-edit-throttle-count": "Kanlɛ n zuni se'em ti la nara la basɛ",
+	"abusefilter-edit-throttle-period": "Sansɛka (in seconds):",
+	"abusefilter-edit-throttle-groups": "Tigere 'throttle by':",
+	"abusefilter-edit-throttle-groups-help": "Bisɛ $1.",
+	"abusefilter-edit-throttle-groups-help-text": "the documentation on mediawiki\n.org",
 	"abusefilter-throttle-ip": "IP aderisi",
 	"abusefilter-throttle-user": "Tuntuna akanti",
 	"abusefilter-throttle-range": "IP beene",
@@ -140,6 +154,8 @@
 	"abusefilter-throttle-site": "'whole' zi'an",
 	"abusefilter-throttle-page": "Pɛgerɛ",
 	"abusefilter-throttle-none": "(zaŋa)",
+	"abusefilter-edit-history": "Tuusum:",
+	"abusefilter-edit-tools": "Lɔgerɔ:",
 	"abusefilter-edit-builder-group-op-arithmetic": "'Arithmetic operators'",
 	"abusefilter-edit-builder-op-arithmetic-addition": "A dikɛ pa'asɛ (+)",
 	"abusefilter-edit-builder-op-arithmetic-subtraction": "A yese basɛ (-)",
@@ -317,7 +333,7 @@
 	"abusefilter-topnav-log": "Abuse log",
 	"abusefilter-topnav-tools": "'Debugging tools'",
 	"abusefilter-log-name": "Abuse filita log",
-	"abusefilter-log-header": "Log wa pa'ali la teere  kilesego n tee filita duma la puan.\nSan dɛna gãresegɔ mɔɔnɛ, bisɛ [[Special: AbuseFilter/history|the list]] n de nananawa filita teere duma.",
+	"abusefilter-log-header": "Log wa pa'ali la teere kilesego n tee filita duma la puan.\nSan dɛna gãresegɔ mɔɔnɛ, bisɛ [[Special: AbuseFilter/history|the list]] n de nananawa filita teere duma",
 	"abusefilter-logentry-create": "$1 {{GENDER:$2|created}} $4 ($5)",
 	"abusefilter-logentry-modify": "$1 {{GENDER:$2|modified}} $4 ($5)",
 	"abusefilter-log-invalid-filter": "'Specified' filita ID duma la basɛba de la 'invalid'.",

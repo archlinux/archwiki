@@ -57,6 +57,7 @@
 	"visualeditor-ca-editlocaldescriptionsource": "로컬 설명 원본 편집",
 	"visualeditor-ca-editsource": "원본 편집",
 	"visualeditor-ca-editsource-section": "원본 편집",
+	"visualeditor-ca-editsource-section-hint": "문단의 원본 코드 편집: $1",
 	"visualeditor-categories-tool": "분류",
 	"visualeditor-changedesc-mwredirect": "넘겨주기 대상이 $1에서 $2 문서로 바뀌었습니다",
 	"visualeditor-changedesc-mwtransclusion": "틀의 변수가 변경되었습니다",

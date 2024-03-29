@@ -141,7 +141,7 @@
 	"notification-compact-header-edit-user-talk-with-section": "$1 {{GENDER:$3|sənə}} \"<strong>$4</strong>\" adlı yerdə mesaj {{GENDER:$2|yazıb.}}",
 	"notification-body-edit-user-talk-with-section": "$1",
 	"notification-header-page-linked": "<strong>$4</strong> səhifəsindən <strong>$3</strong> səhifəsinə keçid verildi.",
-	"notification-compact-header-page-linked": "<strong>$1</strong> ilə əlaqəli",
+	"notification-compact-header-page-linked": "<strong>$1</strong> səhifəsindən keçid verilib.",
 	"notification-bundle-header-page-linked": "{{PLURAL:$5||$5 səhifə|100=99+ səhifə}}dən <strong>$3</strong> səhifəsinə keçid verildi.",
 	"notification-header-article-reminder": "Xatırladılmasını {{GENDER:$2|istədiyiniz}} səhifə <strong>$3</strong> adı altındadır.",
 	"notification-link-text-what-links-here": "Bu səhifəyə olan bütün keçidlər",

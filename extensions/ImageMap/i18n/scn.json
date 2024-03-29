@@ -8,7 +8,7 @@
 	"imagemap_desc": "Pirmetti di rializzari ''image map'' cliccàbbili latu client cô tag <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Sbàgghiu: s'hà spicificari na mmàggini ntâ prima riga",
 	"imagemap_invalid_image": "Sbàgghiu: la mmàggini nun è vàlida o non c'è",
-	"imagemap_bad_image": "Sbàgghiu: la mmàggini s'attrova ntâ blacklist pi sta pàggina",
+	"imagemap_bad_image": "Erruri: la mmàggini nun è cunzintuta n chista pàggina.",
 	"imagemap_no_link": "Sbàgghiu: non vinni attruvatu nuddu lijami vàlidu â fini dâ riga $1.",
 	"imagemap_invalid_title": "Sbàgghiu: tìtulu dû lijami non vàlidu ntâ riga $1",
 	"imagemap_missing_coord": "Sbàgghiu: nun ci sunnu abbastanza cuurdinati pâ furma spicificata ntâ riga $1",

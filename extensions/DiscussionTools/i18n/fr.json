@@ -18,7 +18,9 @@
 			"Urhixidur",
 			"VIGNERON",
 			"Verdy p",
-			"Wladek92"
+			"Wladek92",
+			"SleaY",
+			"MacOS Weed"
 		]
 	},
 	"discussiontools": "Outils de discussion",
@@ -32,7 +34,7 @@
 	"discussiontoolsdebug-intro": "Cette page montre comment l’[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:DiscussionTools extension Outils de discussion] reconnaît les fils de discussion et les commentaires présents sur la page '''[[:$1]]'''. Vous pouvez trouver cela utile pour déboguer des problèmes avec l’extension ou comprendre son fonctionnement. Les mêmes informations sont disponibles dans l’[[$2|API discussiontoolspageinfo]].",
 	"discussiontools-desc": "Outils pour améliorer les pages de discussion.",
 	"discussiontools-emptystate-button": "Démarrer une discussion",
-	"discussiontools-emptystate-desc": "Les [[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|pages de discussion]] sont l’endroit où diverses personnes peuvent discuter de la manière d’améliorer le contenu de {{SITENAME}}. {{GENDER:|}}Vous pouvez utiliser cette page pour démarrer une discussion avec les autres utilisateurs sur la façon d’améliorer [[:{{SUBJECTPAGENAME}}]].",
+	"discussiontools-emptystate-desc": "Les [[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|pages de discussion]] sont l’endroit où diverses personnes peuvent discuter de la manière d’améliorer le contenu de {{SITENAME}}. {{GENDER:|}}Vous pouvez utiliser cette page pour démarrer une discussion avec les autres utilisateurs sur la façon d’améliorer la page « [[:{{SUBJECTPAGENAME}}]] ».",
 	"discussiontools-emptystate-desc-self": "Les utilisateurs sur {{SITENAME}} peuvent utiliser cette [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|page de discussion]] pour publier un message public pour vous et {{GENDER:|}}vous recevrez une notification quand ils le feront.",
 	"discussiontools-emptystate-desc-self-anon": "Les utilisateurs sur {{SITENAME}} peuvent utiliser cette [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|page de discussion]] pour publier un message public sur les modifications faites depuis l’adresse IP que {{GENDER:|}}vous utilisez actuellement.\n\nBeaucoup d’adresses IP changent périodiquement et sont souvent partagées par plusieurs personnes. Vous pouvez [$1 créer un compte] ou [$2 vous connecter] pour éviter de futures confusions avec d’autres utilisateurs non connectés. Créer un compte masque aussi votre adresse IP.",
 	"discussiontools-emptystate-desc-self-temp": "Les personnes sur {{SITENAME}} peuvent utiliser cette [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|page de discussion]] pour vous envoyer un message public et vous en serez averti{{GENDER:||e}} quand ils le font.\n\nVous utilisez actuellement un [[{{MediaWiki:tempuser-helppage}}|compte temporaire]] avec un nom généré automatiquement. Pour choisir un nom de votre choix et obtenir davantage de fonctionnalités, [$1 créez un compte] ou [$2 connectez-vous].",
@@ -102,6 +104,7 @@
 	"discussiontools-pageframe-latestcomment-notopic": "Dernier commentaire : $1 par $2",
 	"discussiontools-pagetitle-newtopic": "Démarrage d’un nouveau sujet sur $1",
 	"discussiontools-pagetitle-reply": "Réponse sur $1",
+	"discussiontools-permalink-comment-copied": "Le lien vers le commentaire a été copié dans le presse-papiers.",
 	"discussiontools-postedit-confirmation-published": "Votre commentaire a été publié.",
 	"discussiontools-postedit-confirmation-topicadded": "Votre sujet a été ajouté.",
 	"discussiontools-preference-autotopicsub": "S’abonner automatiquement aux sujets",
@@ -139,6 +142,7 @@
 	"discussiontools-replywidget-cancel": "Annuler",
 	"discussiontools-replywidget-feedback": "{{GENDER:|}}Partager un avis sur cette fonctionnalité",
 	"discussiontools-replywidget-feedback-link": "https://www.mediawiki.org/wiki/Talk:Talk_pages_project/Replying",
+	"discussiontools-replywidget-keyboard-shortcut-submit": "Vous pouvez faire $1 pour soumettre votre commentaire",
 	"discussiontools-replywidget-loading": "Chargement en cours...",
 	"discussiontools-replywidget-mention-prefix": "@",
 	"discussiontools-replywidget-mention-tool-header": "Chercher l'utilisateur : $1",

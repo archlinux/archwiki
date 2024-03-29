@@ -6,6 +6,7 @@
 			"Sarvaturi"
 		]
 	},
+	"apihelp-abusefiltercheckmatch-summary": "Cuntrolla si nu filtru anti-abbusi veni attivatu d'unu nzemi di variàbbili, nu canciamentu o n'eventu dû riggistru abbusi.",
 	"apihelp-abusefiltercheckmatch-param-filter": "Lu testu cumpletu dûn filtru, pi cuntrullari si currispunni.",
 	"apihelp-abusefiltercheckmatch-param-vars": "Nu vitturi di variàbbili n furmatu JSON, pi cuntrullari si currispunni.",
 	"apihelp-abusefiltercheckmatch-param-rcid": "L'ID dûn canciamentu ricenti, pi cuntrullari si currispunni.",
@@ -15,8 +16,10 @@
 	"apihelp-abusefilterchecksyntax-param-filter": "Lu testu cumpletu dû filtru dû quali si voli cuntrullari la sintassi.",
 	"apihelp-abusefilterchecksyntax-example-1": "Cuntrolla la sintassi di nu filtru bonu",
 	"apihelp-abusefilterchecksyntax-example-2": "Cuntrolla la sintassi di nu filtru malu",
+	"apihelp-abusefilterevalexpression-summary": "Vàluta na sprissioni dû filtru anti-abbusi",
 	"apihelp-abusefilterevalexpression-param-expression": "La sprissioni di valutari.",
 	"apihelp-abusefilterevalexpression-example-1": "Vàluta na sprissioni sìmplici",
+	"apihelp-abusefilterevalexpression-example-2": "Valutari na sprissioni sìmprici, furmattanu lu risurtatu",
 	"apihelp-abusefilterunblockautopromote-param-user": "Nomu di l'utenti chi si voli sbluccari.",
 	"apihelp-abusefilterunblockautopromote-example-1": "Leva lu bloccu di l'autu-cunferma a l'utenti [[User:Example]]",
 	"apihelp-query+abusefilters-summary": "Ammustra li dittagghî dî filtri anti-abbusi.",

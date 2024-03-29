@@ -20,6 +20,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|mais um autor|mais $1 autores}}",
 	"multimediaviewer-multiple-authors-combine": "$1 e $2",
 	"multimediaviewer-metadata-error": "Não foi possível carregar os dados da imagem (erro: $1)",
+	"multimediaviewer-file-not-found-error": "Desculpe, o ficheiro $1 não pode ser apresentado porque não está presente na página atual.",
 	"multimediaviewer-thumbnail-error": "Desculpe, o ficheiro não pode ser apresentado",
 	"multimediaviewer-thumbnail-error-description": "Parece haver um problema técnico. Pode $1, caso o problema continue. Erro: $2",
 	"multimediaviewer-thumbnail-error-retry": "tentar novamente",

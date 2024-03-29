@@ -3,9 +3,13 @@
 		"authors": [
 			"Amire80",
 			"Bashir Gwanki",
-			"Gwanki"
+			"Gwanki",
+			"Yusuf Sa'adu"
 		]
 	},
+	"tag-editcheck-newcontent-description": "EditCheck yana tunanin an kara sabon abun ciki a shafin",
+	"tag-editcheck-newreference-description": "An kara wani bayani a shafin",
+	"tag-editcheck-references-description": "EditCheck yana tunanin ana iya buƙatar bayani",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Gyaran gani]]",
 	"tag-visualeditor-description": "An yi gyara ta amfani da [[{{MediaWiki:visualeditor-descriptionpagelink}}|Gyaran gani]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visual edit: Check]]",

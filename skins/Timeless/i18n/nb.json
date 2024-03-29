@@ -24,6 +24,7 @@
 	"timeless-pagetools": "Sidehandlinger",
 	"timeless-languages": "Språk",
 	"timeless-projects": "Andre prosjekter",
+	"timeless.css": "/* CSS i denne fila vil gjelde alle som bruker drakta Timeless */",
 	"timeless.js": "/* Javascript i denne fila vil gjelde for brukere av drakta Timeless */",
 	"timeless-view-history": "Historikk",
 	"timeless-action-undelete": "Gjenopprett {{PLURAL:$1|én versjon|$1 versjoner}}"

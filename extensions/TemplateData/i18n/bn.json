@@ -8,7 +8,8 @@
 			"Tauhid16",
 			"Titodutta",
 			"আফতাবুজ্জামান",
-			"খাত্তাব হাসান"
+			"খাত্তাব হাসান",
+			"Aishik Rehman"
 		]
 	},
 	"templatedata-desc": "টেমপ্লেট প্যারামিটারের জন্য ডেটা স্টোরেজ প্রয়োগ করে (JSON ব্যবহার করে)",
@@ -45,7 +46,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "ব্যবহারকারী",
 	"templatedata-doc-params": "টেমপ্লেট প্যারামিটার",
 	"templatedata-editbutton": "টেমপ্লেটের উপাত্ত সম্পাদনা করুন",
-	"templatedata-errormsg-insertblank": "আপনি কি নিশ্চিতরূপে কোন তথ্য ছাড়াই টেমপ্লেটের উপাত্ত সন্নিবেশ করতে ইচ্ছুক?",
+	"templatedata-errormsg-insertblank": "আপনি কি নিশ্চিতরূপে কোনো তথ্য ছাড়াই টেমপ্লেটের উপাত্ত সন্নিবেশ করতে ইচ্ছুক?",
 	"templatedata-exists-on-related-page": "অনুগ্রহ করে লক্ষ্য করুন: সংশ্লিষ্ট \"[[$1]]\" পাতায় ইতিমধ্যেই টেমপ্লেটের উপাত্ত ব্লক রয়েছে।",
 	"templatedata-helplink": "টেমপ্লেটের উপাত্ত সম্পর্কে তথ্য",
 	"templatedata-invalid-format": "বিশিষ্ট \"$1\" \"inline\", \"block\", বা একটি বৈধ বিন্যাসের স্ট্রিং হতে হবে।",
@@ -67,7 +68,7 @@
 	"templatedata-modal-button-saveparam": "সংরক্ষণ",
 	"templatedata-modal-confirmcancel": "আপনি কি নিশ্চিত যে আপনি আপনার পরিবর্তনগুলি পরিত্যাগ করতে ইচ্ছুক?",
 	"templatedata-modal-current-language": "বর্তমান ভাষা: $1",
-	"templatedata-modal-errormsg": "ত্রুটি পাওয়া গেছে। দয়া করে নিশ্চিত করুন যে এখানে কোন খালি বা সদৃশ প্যারামিটারের নাম নেই, এবং প্যারামিটারের নামে \"$1\", \"$2\" বা \"$3\" অন্তর্ভুক্ত করা হয় নি।",
+	"templatedata-modal-errormsg": "ত্রুটি পাওয়া গেছে। দয়া করে নিশ্চিত করুন যে এখানে কোনো খালি বা সদৃশ প্যারামিটারের নাম নেই, এবং প্যারামিটারের নামে \"$1\", \"$2\" বা \"$3\" অন্তর্ভুক্ত করা হয় নি।",
 	"templatedata-modal-errormsg-duplicate-name": "ত্রুটি পাওয়া গেছে। নির্বাচিত নামটি ইতিমধ্যেই অন্য প্যারামিটার ব্যবহার করছে।",
 	"templatedata-modal-errormsg-import-noparams": "আমদানির সময় নতুন কোনো প্যারামিটার পাওয়া যায়নি।",
 	"templatedata-modal-format-block": "ব্লক",

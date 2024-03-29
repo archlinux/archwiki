@@ -25,7 +25,8 @@
 			"予弦",
 			"沈澄心",
 			"神樂坂秀吉",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"Anterdc99"
 		]
 	},
 	"multimediaviewer-desc": "在全屏界面中以较大尺寸显示缩略图。",
@@ -38,6 +39,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|$1位更多作者}}",
 	"multimediaviewer-multiple-authors-combine": "$1和$2",
 	"multimediaviewer-metadata-error": "无法加载图片的详细信息（错误：$1）",
+	"multimediaviewer-file-not-found-error": "抱歉，文件$1无法显示，因为当前页面上不存在该文件。",
 	"multimediaviewer-thumbnail-error": "抱歉，文件无法显示",
 	"multimediaviewer-thumbnail-error-description": "看起来发生了技术问题。如果仍然发生，您可以$1。错误：$2",
 	"multimediaviewer-thumbnail-error-retry": "重试",

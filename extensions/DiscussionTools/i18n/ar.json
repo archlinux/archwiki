@@ -14,7 +14,8 @@
 			"أيوب",
 			"ديفيد",
 			"علاء",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"Karim185.3"
 		]
 	},
 	"discussiontools": "أدوات النقاش",
@@ -94,8 +95,8 @@
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|لا ردّ|ردّ واحد جديد|ردّان جديدان|$1 ردود جديدة|$1 ردّا جديدا}} في «<strong>$3</strong>».",
 	"discussiontools-notification-subscribed-new-comment-header-compact": "$1: <em>$3</em>.",
 	"discussiontools-notification-subscribed-new-comment-view": "إظهار التعليق",
-	"discussiontools-pageframe-latestcomment": "أحدث تعليق: $1 بواسطة $2 في الموضوع $3",
-	"discussiontools-pageframe-latestcomment-notopic": "التعليق الأخير: $1 بواسطة $2",
+	"discussiontools-pageframe-latestcomment": "أحدث تعليق: $1 من $2 في الموضوع $3",
+	"discussiontools-pageframe-latestcomment-notopic": "التعليق الأخير: $1 من $2",
 	"discussiontools-pagetitle-newtopic": "بدء موضوع جديد على $1",
 	"discussiontools-pagetitle-reply": "الرد على $1",
 	"discussiontools-permalink-comment-copied": "تم نسخ رابط التعليق إلى الحافظة.",

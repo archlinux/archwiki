@@ -3,7 +3,8 @@
 		"authors": [
 			"Maxí",
 			"Snævar",
-			"Sveinn í Felli"
+			"Sveinn í Felli",
+			"Stefán Örvar Sigmundsson"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Bókaheimild",
@@ -20,7 +21,7 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Listi yfir almennar tilvísanir",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "Listi yfir tilvísanir fyrir hópin „$1“",
 	"cite-ve-dialog-referenceslist-title": "Tilvísunarlisti",
-	"cite-ve-dialogbutton-citation-educationpopup-text": "Bætir efnið þitt með því að bæta við heimildum. Þú getur vísað í bækur, fréttablöð og vefsíður.",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "Bætir efnið þitt með því að bæta við heimildum. Þú getur vísað í bækur, fréttablöð og vefsetur.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Tilvísanir",
 	"cite-ve-dialogbutton-reference-full-label": "Einfalt",
 	"cite-ve-dialogbutton-reference-title": "Tilvísun",
@@ -29,7 +30,7 @@
 	"cite-ve-reference-input-placeholder": "Leita innan núverandi tilvísana",
 	"cite-ve-referenceslist-isempty": "Það eru engar tilvísanir í hópnum „$1“ á þessari síðu til að taka með í þennan lista.",
 	"cite-ve-referenceslist-isempty-default": "Það eru engar tilvísanir á þessari síðu til að taka með í þennan lista.",
-	"cite-ve-referenceslist-missingref": "Þessi tilvísun er tilgreind í sniði eða öðru tilbúnu efni, og í augnablikinu er aðeins hægt að breyta henni með frumkóðaritlinum.",
+	"cite-ve-referenceslist-missingref": "Þessi tilvísun er tilgreind í sniði eða öðru framleiddu bálkni og sem stendur er einungis hægt að breyta henni með frumkóðaritlinum.",
 	"cite-ve-toolbar-group-label": "Tilvísun",
 	"cite-ve-othergroup-item": "$1 tilvísun",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "Tilvísanir"

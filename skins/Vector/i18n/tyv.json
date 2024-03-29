@@ -5,7 +5,8 @@
 			"Karak-Kyzyl",
 			"Riverman",
 			"Sborsody",
-			"Монгуш Салим"
+			"Монгуш Салим",
+			"Mongush Salim"
 		]
 	},
 	"skinname-vector": "Вектор",
@@ -27,6 +28,7 @@
 	"vector-searchsuggest-containing": "Мындыг чүүлдерлиг арыннарны дилээри: <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Ишти",
 	"vector-toc-beginning": "Эгези",
+	"vector-main-menu-label": "Кол меню",
 	"vector-page-tools-label": "Херекселдер",
 	"vector-page-tools-general-label": "Ниити",
 	"vector-unpin-element-label": "чажырар"

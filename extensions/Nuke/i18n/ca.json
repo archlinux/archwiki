@@ -12,7 +12,7 @@
 		]
 	},
 	"nuke": "Eliminació massiva",
-	"action-nuke": "eliminació massiva",
+	"action-nuke": "esborrar pàgines de forma massiva",
 	"nuke-desc": "Dóna als administradors l'habilitat d'[[Special:Nuke|esborrar pàgines massivament]]",
 	"nuke-nopages": "No hi ha pàgines noves de [[Special:Contributions/$1|{{GENDER:$1|$1}}]] als canvis recents.",
 	"nuke-list": "Les següents pàgines han estat creades recentment per [[Special:Contributions/$1|{{GENDER:$1|$1}}]];\nafegiu un comentari i cliqueu el botó per a esborrar-les.",

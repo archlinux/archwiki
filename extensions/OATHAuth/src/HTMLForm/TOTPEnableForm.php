@@ -41,13 +41,15 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 		}
 
 		$secret = $key->getSecret();
-		$label = "{$this->oathUser->getIssuer()}:{$this->oathUser->getAccount()}";
+		$issuer = $this->oathUser->getIssuer();
+		$account = $this->oathUser->getAccount();
+		$label = "{$issuer}:{$account}";
 		$qrcodeUrl = "otpauth://totp/"
 			. rawurlencode( $label )
 			. "?secret="
 			. rawurlencode( $secret )
 			. "&issuer="
-			. rawurlencode( $this->oathUser->getIssuer() );
+			. rawurlencode( $issuer );
 
 		$qrcodeElement = Html::element( 'div', [
 			'data-mw-qrcode-url' => $qrcodeUrl,
@@ -60,13 +62,14 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 		return [
 			'app' => [
 				'type' => 'info',
-				'default' => $this->msg( 'oathauth-step1-test' )->escaped(),
+				'default' => $this->msg( 'oathauth-step1-test' )->parse(),
 				'raw' => true,
 				'section' => 'step1',
 			],
 			'qrcode' => [
 				'type' => 'info',
-				'default' => $qrcodeElement,
+				'default' => $this->msg( 'oathauth-step2-qrcode' )->escaped() . '<br/>' .
+					$qrcodeElement,
 				'raw' => true,
 				'section' => 'step2',
 			],
@@ -74,17 +77,18 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 				'type' => 'info',
 				'label-message' => 'oathauth-step2alt',
 				'default' =>
-					'<strong>' . $this->msg( 'oathauth-account' )->escaped() . '</strong><br/>'
-					. htmlspecialchars( $this->oathUser->getAccount() ) . '<br/><br/>'
-					. '<strong>' . $this->msg( 'oathauth-secret' )->escaped() . '</strong><br/>'
-					. '<kbd>' . $this->getSecretForDisplay( $key ) . '</kbd><br/>',
+					'<strong>' . $this->msg( 'oathauth-secret' )->escaped() . '</strong><br/>'
+					. '<kbd>' . $this->getSecretForDisplay( $key ) . '</kbd><br/>'
+					. '<strong>' . $this->msg( 'oathauth-account' )->escaped() . '</strong><br/>'
+					. htmlspecialchars( $label ) . '<br/><br/>',
 				'raw' => true,
 				'section' => 'step2',
 			],
 			'scratchtokens' => [
 				'type' => 'info',
 				'default' =>
-					$this->msg( 'oathauth-scratchtokens' )->parse()
+					'<strong>' . $this->msg( 'oathauth-recoverycodes-important' )->escaped() . '</strong><br/>'
+					. $this->msg( 'oathauth-recoverycodes' )->parse()
 					. $this->createResourceList( $this->getScratchTokensForDisplay( $key ) ),
 				'raw' => true,
 				'section' => 'step3',
@@ -127,7 +131,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 	}
 
 	/**
-	 * Retrieve current scratch tokens for display purposes
+	 * Retrieve current recovery codes for display purposes
 	 *
 	 * The characters of the token are split in groups of 4
 	 *
@@ -139,7 +143,7 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 	}
 
 	/**
-	 * Formats a key or scratch token by creating groups of 4 separated by space characters
+	 * Formats a key or recovery code by creating groups of 4 separated by space characters
 	 *
 	 * @param string $token Token to format
 	 * @return string The token formatted for display
@@ -162,9 +166,9 @@ class TOTPEnableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 		}
 
 		if ( $key->isScratchToken( $formData['token'] ) ) {
-			// A scratch token is not allowed for enrollment
+			// A recovery code is not allowed for enrollment
 			LoggerFactory::getInstance( 'authentication' )->info(
-				'OATHAuth {user} attempted to enable 2FA using a scratch token from {clientip}', [
+				'OATHAuth {user} attempted to enable 2FA using a recovery code from {clientip}', [
 					'user' => $this->getUser()->getName(),
 					'clientip' => $this->getRequest()->getIP(),
 				]

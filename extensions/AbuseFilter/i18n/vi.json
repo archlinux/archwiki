@@ -21,7 +21,9 @@
 			"Vinhtantran",
 			"Withoutaname",
 			"Đỗ Thảo",
-			"Pisceskaze"
+			"Pisceskaze",
+			"Doraemonluonbentoi",
+			"Hide on Rosé"
 		]
 	},
 	"abusefilter-desc": "Áp dụng heuristic tự động vào các sửa đổi",
@@ -601,6 +603,7 @@
 	"abusefilter-blocked-domains-remove-explanation-initial": "Trên trang này bạn có thể xóa một tên miền bị chặn",
 	"abusefilter-blocked-domains-remove-reason": "Lý do",
 	"abusefilter-blocked-domains-remove-submit": "Loại bỏ",
+	"abusefilter-blocked-domains-attempted": "Nội dung mà bạn đưa vào đã bị chặn bởi bộ lọc. Các tên miền sau đây bị chặn: $1",
 	"log-description-abusefilterprivatedetails": "Nhật ký này hiển thị danh sách các lần người dùng truy cập vào các chi tiết riêng tư của nhật ký lạm dụng.",
 	"abusefilter-noreason": "Cảnh báo: Để xem chi tiết kín của nhật trình này, bạn phải nêu lý do.",
 	"abusefilter-log-ip-not-available": "Không tồn tại",

@@ -246,7 +246,7 @@
 	"echo-displaysnippet-title": "Yeni bildirim",
 	"echo-date-today": "Bugün",
 	"echo-date-yesterday": "Dün",
-	"notification-bundle-header-edit-user-page": "<strong>Kullanıcı {{GENDER:$2|sayfanızda}}</strong>{{PLURAL:$1|bir yeni değişiklik|$1 yeni değişiklik|100=99+ yeni değişiklik}}.",
+	"notification-bundle-header-edit-user-page": "<strong>Kullanıcı {{GENDER:$2|sayfanızda}}</strong> {{PLURAL:$1|bir yeni değişiklik|$1 yeni değişiklik|100=99+ yeni değişiklik}}.",
 	"notification-bundle-header-edit-user-talk-v2": "Mesaj {{GENDER:$3|sayfanızda}} $1 yeni {{PLURAL:$1|mesaj|mesaj}} var.",
 	"echo-email-batch-subject-daily": "{{SITENAME}} sitesinde {{PLURAL:$2|yeni bir bildiriminiz|yeni bildirimleriniz}} var",
 	"echo-email-batch-subject-weekly": "Bu hafta {{SITENAME}} sitesinde {{PLURAL:$2|yeni bir bildiriminiz|yeni bildirimleriniz}} var",

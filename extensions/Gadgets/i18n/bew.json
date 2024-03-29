@@ -18,7 +18,7 @@
 	"gadgets-viewdescription": "Deleng jabaran",
 	"gadgets-uses": "Pemakéan",
 	"gadgets-required-rights": "Mbutuhin ni {{PLURAL:$2|hak|hak-hak pada}}:\n\n$1",
-	"gadgets-required-skins": "Kesedia bakal {{PLURAL:$2|$1 kulit|ni kulit pada: $1}}.",
+	"gadgets-required-skins": "Derak bakal {{PLURAL:$2|$1 kulit|ni kulit pada: $1}}.",
 	"gadgets-required-actions": "Kewates ke {{PLURAL:$2|piil halaman \"$1\"|ni piil halaman pada: $1}}.",
 	"gadgets-default": "Bawaannya dinyalain bakal sapa aja",
 	"gadgets-export": "Èkspor",

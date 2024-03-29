@@ -54,5 +54,6 @@
 	"notification-flow-thanks-post-link": "آپ کا تبصرہ",
 	"notification-header-flow-thank": "$1 نے {{GENDER:$5|آپ}} کی «<strong>$3</strong>» رائے پر {{GENDER:$5|آپ}} کا {{GENDER:$2|شکریہ}} ادا کیا ہے۔",
 	"notification-compact-header-flow-thank": "$1 نے {{GENDER:$3|آپ}} کا {{GENDER:$2|شکریہ}} ادا کیا۔",
-	"notification-bundle-header-flow-thank": "\"<strong>$2</strong>\" میں آپ کے تبصرے کے لیے {{PLURAL:$1|ایک فرد|$1 افراد|100=99+ افراد}} نے {{GENDER:$3|آپ}} کا شکریہ ادا کیا۔"
+	"notification-bundle-header-flow-thank": "\"<strong>$2</strong>\" میں آپ کے تبصرے کے لیے {{PLURAL:$1|ایک فرد|$1 افراد|100=99+ افراد}} نے {{GENDER:$3|آپ}} کا شکریہ ادا کیا۔",
+	"ipb-action-thanks": "اظہار تشکر"
 }

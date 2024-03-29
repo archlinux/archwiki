@@ -346,6 +346,7 @@
 	"abusefilter-test-page": "Lapai veiktās izmaiņas:",
 	"abusefilter-test-shownegative": "Rādīt izmaiņas, kuras neatbilst filtram",
 	"abusefilter-test-syntaxerr": "Tavs ievadītais filtrs saturēja sintakses kļūdu.\nPilnu paskaidrojumu vari saņemt, noklikšķinot uz pogas \"Pārbadīt sintaksi\".",
+	"abusefilter-test-search-type-createaccount": "Kontu veidošana",
 	"abusefilter-changeslist-examine": "izmeklēt",
 	"abusefilter-examine": "Izmeklēt personiskās izmaiņas",
 	"abusefilter-examine-legend": "Izvēlēties izmaiņas",

@@ -10,13 +10,15 @@
 			"SeoJeongHo",
 			"Yearning",
 			"Ykhwong",
-			"아라"
+			"아라",
+			"Dr1t jg"
 		]
 	},
 	"gadgets-desc": "각 사용자가 [[Special:Gadgets|CSS와 자바스크립트 소도구]]를 [[Special:Preferences#mw-prefsection-gadgets|사용자 환경 설정]]을 통해 사용할 수 있습니다",
 	"prefs-gadgets": "소도구",
 	"prefs-description-gadgets": "계정의 추가 기능을 활성화합니다.",
 	"gadgets-prefstext": "아래 목록은 현재 사용 가능한 소도구의 목록입니다.\n대부분의 소도구는 자바스크립트로 동작하며, 웹 브라우저에서 자바스크립트를 사용할 수 있어야 동작합니다.\n소도구는 이 환경 설정 페이지에는 영향을 주지 않습니다.\n\n이 소도구는 미디어위키의 기능이 아니며, 일반적으로 각 위키의 사용자가 개발 및 관리하고 있습니다.\n각 위키의 인터페이스 관리자는 [[MediaWiki:Gadgets-definition|소도구 정의 문서]]와 각각의 소도구의 소스 코드를 볼 수 있는 [[Special:Gadgets|소도구 설명 문서]]를 통해 소도구를 관리할 수 있습니다. 이 위키에서 각각의 소도구 사용자의 수가 [[Special:GadgetUsage|소도구 사용 통계]]에 나열되어 있습니다.",
+	"gadgets-prefstext-safemode": "지금 안전 모드가 활성화되어서 가젯을 사용할 수 없음. [[#mw-input-wpforcesafemode|안전 모드를 비활성]] 해서 가젯을 사용해.",
 	"gadgets": "소도구 목록",
 	"gadgetusage": "소도구 사용현황 통계",
 	"gadgetusage-gadget": "소도구",
@@ -32,7 +34,7 @@
 	"gadgets-viewdescription": "설명 보기",
 	"gadgets-uses": "다음 코드를 사용",
 	"gadgets-required-rights": "다음 {{PLURAL:$2|권한}}이 필요합니다: \n\n$1",
-	"gadgets-required-skins": "{{PLURAL:$2|$1 스킨에서 사용 가능합니다.|다음 스킨에서 사용 가능합니다: $1}}",
+	"gadgets-required-skins": "{{PLURAL:$2|$1 스킨|다음 스킨: $1}}에 사용 가능.",
 	"gadgets-default": "기본적으로 모든 사람에게 활성화되어 있습니다.",
 	"gadgets-legacy": "소도구가 로드되지 않았습니다. ResourceLoader로 전환해주세요. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) 더 알아보기])",
 	"gadgets-packaged": "이 소도구는 [https://www.mediawiki.org/wiki/ResourceLoader/Package_files 패키지화]되었으며, 진입접은 $1입니다.",

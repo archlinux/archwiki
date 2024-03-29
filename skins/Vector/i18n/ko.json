@@ -14,7 +14,8 @@
 			"Revi",
 			"Ykhwong",
 			"메이",
-			"아라"
+			"아라",
+			"Kmshts"
 		]
 	},
 	"skinname-vector": "벡터 레거시 (2010)",
@@ -75,6 +76,7 @@
 	"vector-unpin-element-label": "숨기기",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|토론]]",
 	"tooltip-vector-anon-user-menu-title": "더 많은 옵션",
+	"vector-page-tools-nav-label": "페이지 도구",
 	"vector-prefs-limited-width": "폭 제한 모드 사용",
 	"vector-prefs-limited-width-help": "향상된 읽기 경험을 위해 폭 제한 모드를 활성화합니다.",
 	"empty-language-selector-body": "문서 내용이 다른 언어로는 지원되지 않습니다.",

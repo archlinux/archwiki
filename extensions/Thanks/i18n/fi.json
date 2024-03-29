@@ -11,7 +11,8 @@
 			"Silvonen",
 			"Stryn",
 			"Valtlai",
-			"Valtlait"
+			"Valtlait",
+			"Kyykaarme"
 		]
 	},
 	"thanks-desc": "Lisää linkkejä käyttäjien kiittämistä varten heidän muokkauksistaan, kommenteistaan ynnä muusta.",
@@ -64,5 +65,6 @@
 	"notification-flow-thanks-post-link": "kommentistasi",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|kiitti}} {{GENDER:$5|sinua}} kommentistasi aiheessa ”<strong>$3</strong>”.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|kiitti}} {{GENDER:$3|sinua}}.",
-	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Yksi henkilö|$1 ihmistä|100=99+ ihmistä}} kiitti {{GENDER:$3|sinua}} kommentistasi aiheessa ”<strong>$2</strong>”."
+	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Yksi henkilö|$1 ihmistä|100=99+ ihmistä}} kiitti {{GENDER:$3|sinua}} kommentistasi aiheessa ”<strong>$2</strong>”.",
+	"ipb-action-thanks": "Kiitosten lähettäminen"
 }

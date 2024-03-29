@@ -24,6 +24,7 @@
 	"replacetext_optionalfilters": "過濾條件選項：",
 	"replacetext_categorysearch": "僅取代頁面於分類：",
 	"replacetext_prefixsearch": "僅取代頁面含字首：",
+	"replacetext_pagelimit": "搜尋回傳的最多頁數：",
 	"replacetext_editpages": "取代頁面內容中的文字",
 	"replacetext_movepages": "取代頁面標題的文字 (當可以時)",
 	"replacetext_givetarget": "您必須指定要被取代的字串。",
@@ -52,6 +53,6 @@
 	"replacetext_cfg_error": "ReplaceText 設置錯誤",
 	"replacetext_no_compress": "您的 wiki 無法運作 ReplaceText：若 $wgCompressRevisions 設定成 true，無法執行文字替換。",
 	"replacetext_no_external_stores": "您的 wiki 無法運作 ReplaceText：若 $wgExternalStores 非空值，無法執行文字替換。",
-	"right-replacetext": "取代整個Wiki的字串",
-	"action-replacetext": "取代整個Wiki的字串。"
+	"right-replacetext": "取代整個wiki的字串",
+	"action-replacetext": "取代整個wiki的字串。"
 }

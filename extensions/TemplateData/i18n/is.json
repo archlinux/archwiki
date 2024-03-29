@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Snævar",
-			"Sveinn í Felli"
+			"Sveinn í Felli",
+			"Stefán Örvar Sigmundsson"
 		]
 	},
 	"templatedata-doc-desc-empty": "Engin lýsing",
@@ -42,7 +43,7 @@
 	"templatedata-invalid-length": "Gögnin eru of stór til að vista ({{formatnum:$1}} {{PLURAL:$1|bæti}}, {{PLURAL:$2|hámarkið er}} {{formatnum:$2}})",
 	"templatedata-invalid-missing": "Nauðsynlegur eiginleiki „$1” fannst ekki.",
 	"templatedata-invalid-param": "Ógilt gildi \"$1\" fyrir eiginleikann \"$2\".",
-	"templatedata-invalid-parse": "Villa í málskipan JSON.",
+	"templatedata-invalid-parse": "Málskipanarvilla í JSON.",
 	"templatedata-invalid-type": "Bjóst við að eiginleikinn „$1” væri af gerðinni „$2”, en fékk eitthvað allt annað.",
 	"templatedata-invalid-unknown": "Óvæntur eiginleiki „$1”.",
 	"templatedata-invalid-value": "Ógilt eigindargildi fyrir eiginleikann „$1”.",

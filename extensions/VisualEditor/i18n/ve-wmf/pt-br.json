@@ -19,6 +19,10 @@
 			555
 		]
 	},
+	"tag-editcheck-newcontent-description": "O EditCheck acha que novo conteúdo foi adicionado à página",
+	"tag-editcheck-newreference-description": "Uma referência foi adicionada à página",
+	"tag-editcheck-references-description": "O EditCheck acha que uma referência pode ser necessária",
+	"tag-editcheck-references-activated-description": "O EditCheck acha que uma referência pode ser necessária e a IU foi exibida",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Edição visual]]",
 	"tag-visualeditor-description": "Edição feita utilizando o [[{{MediaWiki:visualeditor-descriptionpagelink}}|editor visual]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Edição visual: Verificar]]",

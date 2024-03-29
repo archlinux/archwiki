@@ -4,7 +4,7 @@
 			"Bjankuloski06"
 		]
 	},
-	"codeeditor-desc": "Уредување со истакната синтакса за JavaScript и каскадни стилски страници (CSS) користејќи го уредникот [https://ace.c9.io/ Ace]",
+	"codeeditor-desc": "Уредување со истакната синтакса за JavaScript и каскадни стилски табели (CSS) користејќи го уредникот [https://ace.c9.io/ Ace]",
 	"codeeditor-next-annotation": "Оди на следната прибелешка",
 	"codeeditor-toolbar-toggle": "Префрли на уредникот на кодот",
 	"codeeditor-save-with-errors": "Документот содржи грешки. Сигурно сакате да го објавите?",

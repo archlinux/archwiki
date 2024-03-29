@@ -7,7 +7,8 @@
 			"Snævar",
 			"Sveinki",
 			"Sveinn í Felli",
-			"Ævar Arnfjörð Bjarmason"
+			"Ævar Arnfjörð Bjarmason",
+			"Stefán Örvar Sigmundsson"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -32,7 +33,7 @@
 	"vector-action-protect": "Vernda",
 	"vector-action-undelete": "Hætta við eyðingu",
 	"vector-action-unprotect": "Breyta verndunarstigi",
-	"vector-view-create": "Útbúa",
+	"vector-view-create": "Búa til",
 	"vector-view-edit": "Breyta",
 	"vector-view-history": "Breytingaskrá",
 	"vector-view-view": "Lesa",

@@ -2,11 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Chuvash",
-			"Chuvash2014"
+			"Chuvash2014",
+			"Astahar"
 		]
 	},
 	"prefs-gadgets": "Гаджетсем",
 	"gadgets": "Гаджетсем",
+	"gadgetusage-gadget": "Гаджет",
+	"gadgetusage-usercount": "Хутшӑнакансен йышӗ",
+	"gadgetusage-noresults": "Нимӗнле гаджет та тупӑнмарӗ",
 	"gadgets-title": "Гаджетсем",
 	"gadgets-not-found": "\"$1\" гаджечĕ тупăнмарĕ."
 }

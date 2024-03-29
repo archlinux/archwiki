@@ -5,8 +5,11 @@
 			"Nokeoo"
 		]
 	},
+	"apihelp-abusefilterchecksyntax-summary": "Patikrinkite AbuseFilter filtro sintaksę.",
+	"apihelp-abusefilterchecksyntax-param-filter": "Visas filtro tekstas, skirtas patikrinti sintaksę.",
 	"apihelp-abusefilterchecksyntax-example-1": "Tikrinti galimo filtro sintaksę",
 	"apihelp-abusefilterchecksyntax-example-2": "Tikrinti negalimo filtro sintaksę",
+	"apihelp-abusefilterevalexpression-summary": "Įvertina AbuseFilter išraišką.",
 	"apihelp-abusefilterevalexpression-param-expression": "Išraiška įvertinimui.",
 	"apihelp-abusefilterevalexpression-example-1": "Įvertinti paprastą išraišką",
 	"apihelp-abusefilterunblockautopromote-param-user": "Vartotojo vardas, kurį norite atblokuoti.",
@@ -32,5 +35,6 @@
 	"apihelp-abuselogprivatedetails-example-1": "Gauti AbuseLog įrašo su ID 1 privačią informaciją, naudojant priežastį „pavyzdys“.",
 	"apierror-abusefilter-canttest": "Neturite leidimo išbandyti piktnaudžiavimo filtrus.",
 	"apierror-abusefilter-cantcheck": "Neturite teisės tikrinti piktnaudžiavimo filtrų sintaksės.",
+	"apierror-abusefilter-canteval": "Neturite leidimo vertinti AbuseFilter išraiškų.",
 	"apierror-abusefilter-badsyntax": "Filtro sintaksė neteisinga."
 }

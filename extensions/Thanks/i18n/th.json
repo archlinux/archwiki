@@ -8,7 +8,8 @@
 			"Horus",
 			"Octahedron80",
 			"Patsagorn Y.",
-			"Pilarbini"
+			"Pilarbini",
+			"RidJasper"
 		]
 	},
 	"thanks-desc": "เพิ่มลิงก์ขอบคุณผู้ใช้สำหรับการแก้ไข ความคิดเห็น ฯลฯ",
@@ -16,7 +17,9 @@
 	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|กล่าวขอบคุณแล้ว}}}}",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|ขอบคุณ}}}}",
 	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|กล่าวขอบคุณแล้ว}}}}",
+	"thanks-button-action-queued": "{{GENDER:$1|{{GENDER:$2|กำลังขอบคุณ}}}} $1…",
 	"thanks-button-action-cancel": "ยกเลิก",
+	"thanks-button-action-completed": "คุณ{{GENDER:$1|{{GENDER:$2|ขอบคุณ}}}} $1 แล้ว",
 	"thanks-error-undefined": "ปฏิบัติการขอบคุณล้มเหลว (รหัสข้อผิดพลาด: $1) โปรดลองอีกครั้ง",
 	"thanks-error-invalid-log-id": "ไม่พบรายการบันทึก",
 	"thanks-error-invalidrevision": "หมายเลขประจำรุ่นไม่ถูกต้อง",
@@ -59,5 +62,6 @@
 	"notification-flow-thanks-post-link": "ความเห็นของคุณ",
 	"notification-header-flow-thank": "$1 ได้{{GENDER:$2|กล่าวขอบคุณ}}{{GENDER:$5|คุณ}}สำหรับความคิดเห็นของคุณใน \"<strong>$3</strong>\"",
 	"notification-compact-header-flow-thank": "$1 ได้{{GENDER:$2|กล่าวขอบคุณ}}{{GENDER:$3|คุณ}}",
-	"notification-bundle-header-flow-thank": "{{PLURAL:$1|1 คน|$1 คน|100=99+ คน}}ได้กล่าวขอบคุณ{{GENDER:$3|คุณ}}สำหรับความคิดเห็นของคุณใน \"<strong>$2</strong>\""
+	"notification-bundle-header-flow-thank": "{{PLURAL:$1|1 คน|$1 คน|100=99+ คน}}ได้กล่าวขอบคุณ{{GENDER:$3|คุณ}}สำหรับความคิดเห็นของคุณใน \"<strong>$2</strong>\"",
+	"ipb-action-thanks": "กำลังส่งคำขอบคุณ"
 }

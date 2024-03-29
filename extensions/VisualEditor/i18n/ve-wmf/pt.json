@@ -16,6 +16,10 @@
 			"아라"
 		]
 	},
+	"tag-editcheck-newcontent-description": "A Verificação de Edições acha que foi adicionado conteúdo novo à página",
+	"tag-editcheck-newreference-description": "Foi adicionada uma referência à página",
+	"tag-editcheck-references-description": "A Verificação de Edições acha que podia ter sido necessária uma referência",
+	"tag-editcheck-references-activated-description": "A Verificação de Edições acha que podia ter sido necessária uma referência e foi mostrada a interface do utilizador",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Editor Visual]]",
 	"tag-visualeditor-description": "Edição realizada utilizando o [[{{MediaWiki:visualeditor-descriptionpagelink}}|Editor Visual]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Editor Visual: Verificar]]",

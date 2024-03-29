@@ -2,17 +2,19 @@
 	"@metadata": {
 		"authors": [
 			"Bentong Isles",
-			"Rodney Araujo"
+			"Rodney Araujo",
+			"Như Gây Mê"
 		]
 	},
 	"minerva-last-modified-date": "Kataposang giusab niadtong $1, $2",
 	"mobile-frontend-editor-edit": "Usba",
+	"mobile-frontend-history": "Tan-awa ang kasaysayan sa pag-usab niini nga panid.",
 	"mobile-frontend-home-button": "Unang Panid",
-	"mobile-frontend-language-article-heading": "Basaha sa laing pinulongan",
+	"mobile-frontend-language-article-heading": "Pinulongan",
 	"mobile-frontend-main-menu-button-tooltip": "Ablihi ang meyn nga menu",
 	"mobile-frontend-main-menu-login": "Sulod",
 	"mobile-frontend-main-menu-nearby": "Duol",
-	"mobile-frontend-main-menu-settings": "Mga kahimtang",
+	"mobile-frontend-main-menu-settings": "Mga setting",
 	"mobile-frontend-main-menu-watchlist": "Gibantayan",
 	"mobile-frontend-meta-data-issues": "Isyu sa panid",
 	"mobile-frontend-meta-data-issues-header": "Isyu sa panid",

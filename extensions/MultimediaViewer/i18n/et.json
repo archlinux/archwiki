@@ -18,7 +18,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|veel üks autor|veel $1 autorit}}",
 	"multimediaviewer-multiple-authors-combine": "$1 ja $2",
 	"multimediaviewer-metadata-error": "Pildi üksikasju ei õnnestunud laadida (tõrge: $1)",
-	"multimediaviewer-thumbnail-error": "Failinime kahjuks ei õnnestu kuvada",
+	"multimediaviewer-thumbnail-error": "Kahjuks ei õnnestunud faili kuvada",
 	"multimediaviewer-thumbnail-error-description": "Paistab, et tegu on tehnilise probleemiga. Saad $1, kui see on püsiv. Tõrge: $2",
 	"multimediaviewer-thumbnail-error-retry": "uuesti proovida",
 	"multimediaviewer-thumbnail-error-report": "probleemist teatada",

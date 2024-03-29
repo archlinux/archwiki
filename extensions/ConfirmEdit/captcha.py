@@ -33,7 +33,6 @@ import os
 import sys
 import re
 import multiprocessing
-import time
 
 try:
 	from PIL import Image
@@ -46,6 +45,11 @@ except:
 	sys.exit("This script requires the Python Imaging Library - http://www.pythonware.com/products/pil/")
 
 nonalpha = re.compile('[^a-z]') # regex to test for suitability of words
+
+# Pillow 9.2 added getbbox to replace getsize, and getsize() was removed in Pillow 10
+# https://pillow.readthedocs.io/en/stable/releasenotes/10.0.0.html#font-size-and-offset-methods
+# We don't have a requirements.txt, and therefore don't declare any specific supported or min version...
+IMAGEFONT_HAS_GETBBOX = hasattr(ImageFont.ImageFont, "getbbox")
 
 # Does X-axis wobbly copy, sandwiched between two rotates
 def wobbly_copy(src, wob, col, scale, ang):
@@ -80,8 +84,13 @@ def gen_captcha(text, fontname, fontsize, file_name):
 	fgcolor = 0xffffff
 	# create a font object
 	font = ImageFont.truetype(fontname,fontsize)
+
 	# determine dimensions of the text
-	dim = font.getsize(text)
+	if IMAGEFONT_HAS_GETBBOX:
+		dim = font.getbbox(text)[2:]
+	else:
+		dim = font.getsize(text)
+
 	# create a new image significantly larger that the text
 	edge = max(dim[0], dim[1]) + 2*min(dim[0], dim[1])
 	im = Image.new('RGB', (edge, edge), bgcolor)
@@ -197,7 +206,7 @@ def read_wordlist(filename):
 	return words
 
 def run_in_thread(object):
-	count = object[0];
+	count = object[0]
 	words = object[1]
 	badwordlist = object[2]
 	opts = object[3]
@@ -205,17 +214,17 @@ def run_in_thread(object):
 	fontsize = object[5]
 
 	for i in range(count):
-		word = pick_word(words, badwordlist, verbose, opts.number_words, opts.min_length, opts.max_length)
+		word = pick_word(words, badwordlist, opts.verbose, opts.number_words, opts.min_length, opts.max_length)
 		salt = "%08x" % random.randrange(2**32)
 		# 64 bits of hash is plenty for this purpose
 		md5hash = hashlib.md5((key+salt+word+key+salt).encode('utf-8')).hexdigest()[:16]
 		filename = "image_%s_%s.png" % (salt, md5hash)
-		if dirs:
-			subdir = gen_subdir(output, md5hash, dirs)
+		if opts.dirs:
+			subdir = gen_subdir(opts.output, md5hash, opts.dirs)
 			filename = os.path.join(subdir, filename)
-		if verbose:
+		if opts.verbose:
 			print(filename)
-		gen_captcha(word, font, fontsize, os.path.join(output, filename))
+		gen_captcha(word, font, fontsize, os.path.join(opts.output, filename))
 
 if __name__ == '__main__':
 	"""This grabs random words from the dictionary 'words' (one
@@ -268,8 +277,6 @@ if __name__ == '__main__':
 	badwordlist = read_wordlist(opts.blacklist) + read_wordlist(opts.badwordlist)
 	count = opts.count
 	fill = opts.fill
-	dirs = opts.dirs
-	verbose = opts.verbose
 	fontsize = opts.font_size
 	threads = opts.threads
 
@@ -292,7 +299,7 @@ if __name__ == '__main__':
 	else:
 		chunks = (count // threads)
 
-	p = multiprocessing.Pool(threads);
+	p = multiprocessing.Pool(threads)
 	data = []
 	print("Generating %s CAPTCHA images separated in %s image(s) per chunk run by %s threads..." % (count, chunks, threads))
 	for i in range(0, threads):

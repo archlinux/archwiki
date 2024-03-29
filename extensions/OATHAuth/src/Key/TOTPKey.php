@@ -41,11 +41,11 @@ use Psr\Log\LoggerInterface;
  * @ingroup Extensions
  */
 class TOTPKey implements IAuthKey {
-	/** @var array Two factor binary secret */
+	/** @var array Two-factor binary secret */
 	private $secret;
 
-	/** @var string[] List of scratch tokens */
-	private $scratchTokens = [];
+	/** @var string[] List of recovery codes */
+	private $recoveryCodes = [];
 
 	/**
 	 * @return TOTPKey
@@ -89,17 +89,17 @@ class TOTPKey implements IAuthKey {
 
 	/**
 	 * @param string $secret
-	 * @param array $scratchTokens
+	 * @param array $recoveryCodes
 	 */
-	public function __construct( $secret, array $scratchTokens ) {
-		// Currently hardcoded values; might be used in future
+	public function __construct( $secret, array $recoveryCodes ) {
+		// Currently hardcoded values; might be used in the future
 		$this->secret = [
 			'mode' => 'hotp',
 			'secret' => $secret,
 			'period' => 30,
 			'algorithm' => 'SHA1',
 		];
-		$this->scratchTokens = array_values( $scratchTokens );
+		$this->recoveryCodes = array_values( $recoveryCodes );
 	}
 
 	/**
@@ -113,7 +113,7 @@ class TOTPKey implements IAuthKey {
 	 * @return string[]
 	 */
 	public function getScratchTokens() {
-		return $this->scratchTokens;
+		return $this->recoveryCodes;
 	}
 
 	/**
@@ -183,14 +183,14 @@ class TOTPKey implements IAuthKey {
 			}
 		}
 
-		// See if the user is using a scratch token
-		foreach ( $this->scratchTokens as $i => $scratchToken ) {
-			if ( hash_equals( $token, $scratchToken ) ) {
-				// If we used a scratch token, remove it from the scratch token list.
+		// See if the user is using a recovery code
+		foreach ( $this->recoveryCodes as $i => $recoveryCode ) {
+			if ( hash_equals( $token, $recoveryCode ) ) {
+				// If we used a recovery code, remove it from the recovery code list.
 				// This is saved below via OATHUserRepository::persist
-				array_splice( $this->scratchTokens, $i, 1 );
+				array_splice( $this->recoveryCodes, $i, 1 );
 
-				$logger->info( 'OATHAuth user {user} used a scratch token from {clientip}', [
+				$logger->info( 'OATHAuth user {user} used a recovery token from {clientip}', [
 					'user' => $user->getAccount(),
 					'clientip' => $clientIP,
 				] );
@@ -216,19 +216,19 @@ class TOTPKey implements IAuthKey {
 		for ( $i = 0; $i < 10; $i++ ) {
 			$scratchTokens[] = Base32::encode( random_bytes( 10 ) );
 		}
-		$this->scratchTokens = $scratchTokens;
+		$this->recoveryCodes = $scratchTokens;
 	}
 
 	/**
-	 * Check if a token is one of the scratch tokens for this two factor key.
+	 * Check if a token is one of the recovery codes for this two-factor key.
 	 *
 	 * @param string $token Token to verify
 	 *
-	 * @return bool true if this is a scratch token.
+	 * @return bool true if this is a recovery code.
 	 */
 	public function isScratchToken( $token ) {
 		$token = preg_replace( '/\s+/', '', $token );
-		return in_array( $token, $this->scratchTokens, true );
+		return in_array( $token, $this->recoveryCodes, true );
 	}
 
 	/**

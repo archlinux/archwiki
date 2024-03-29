@@ -3,7 +3,8 @@
 		"authors": [
 			"Matma Rex",
 			"Semso98",
-			"Srđan"
+			"Srđan",
+			"Reedy"
 		]
 	},
 	"discussiontools": "Alati za razgovor",
@@ -61,7 +62,7 @@
 	"discussiontools-preference-replytool-help": "Ovo će Vam prikazati link da jednim klikom možete odgovoriti na komentare na stranicama za razgovor.",
 	"discussiontools-preference-sourcemodetoolbar": "Uključi alate za uređivanje u izvornom režimu",
 	"discussiontools-preference-sourcemodetoolbar-help": "Ovo će dodati alatnu traku s prečicama za spominjanje korisnika i dodavanje linkova u izvornim režimima alata za brzo odgovaranje i stvaranje novih tema.",
-	"discussiontools-preference-summary": "Detaljnije informacije možete pronaći na [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary odgovarajućoj stranici] na sajtu Mediawiki.org.",
+	"discussiontools-preference-summary": "Detaljnije informacije možete pronaći na [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary odgovarajućoj stranici] na sajtu MediaWiki.org.",
 	"discussiontools-preference-topicsubscription": "Uključi praćenje tema",
 	"discussiontools-preference-topicsubscription-help": "Ovo će Vam omogućiti praćenje pojedinačnih tema na stranicama za razgovor.",
 	"discussiontools-replybutton": "{{GENDER:|Odgovori}}",

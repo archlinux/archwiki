@@ -51,7 +51,7 @@
 	"interwiki-submit-invalidurl": "Protokol URL-ja ni veljaven.",
 	"log-name-interwiki": "Dnevnik tabele interwiki",
 	"logentry-interwiki-iw_add": "$1 je {{GENDER:$2|dodal|dodala|dodal_a}} predpono »$4« ($5) (trans: $6; lokalno: $7) v interviki tabelo",
-	"logentry-interwiki-iw_edit": "$1 je {{GENDER:$2|spremenil|spremenila|spremenil/a}} predpono »$4« ($5) (trans: $6; lokalno: $7) v tabeli interwikijev",
+	"logentry-interwiki-iw_edit": "$1 je {{GENDER:$2|spremenil|spremenila|spremenil_a}} predpono »$4« ($5) (trans: $6; lokalno: $7) v interviki tabeli",
 	"logentry-interwiki-iw_delete": "$1 je {{GENDER:$2|odstranil|odstraenila|odstranil_a}} predpono »$4« iz interviki tabele",
 	"log-description-interwiki": "To je dnevnik sprememb [[Special:Interwiki|tabele interwiki]].",
 	"right-interwiki": "Urejanje interviki podatkov",

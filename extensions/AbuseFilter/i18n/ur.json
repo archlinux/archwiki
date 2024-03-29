@@ -102,6 +102,7 @@
 	"log-action-filter-abusefilter-modify": "تبدیلی مقطر",
 	"logentry-abusefilterprivatedetails-access": "$1 نے $3 کی نجی تفصیلات تک {{GENDER:$2|رسائی حاصل کی}}",
 	"abusefilterprivatedetails-log-name": "نوشتہ رسائی برائے نجی مقطر غلط کاری",
+	"log-name-abusefilterblockeddomainhit": "نوشتہ ضرب بر ممنوع ڈومین",
 	"abusefilter-list": "تمام فلٹر",
 	"abusefilter-list-id": "مقطر کا شناختی نمبر",
 	"abusefilter-list-pattern": "طرز",

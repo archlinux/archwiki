@@ -47,6 +47,6 @@
 	"interwiki-submit-empty": "El prefix i l'URL no pot estar buit.",
 	"log-name-interwiki": "Registre de taula interwiki",
 	"log-description-interwiki": "Això és un registre de canvis a la[[Special:Interwiki|interwiki taula]].",
-	"right-interwiki": "Editar les dades interwiki",
+	"right-interwiki": "Modificar les dades interwiki",
 	"action-interwiki": "canviar aquesta entrada d'interwiki"
 }

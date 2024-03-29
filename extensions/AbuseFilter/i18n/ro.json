@@ -20,7 +20,8 @@
 			"Silviubogan",
 			"Stelistcristi",
 			"Strainu",
-			"WebSourceContentRO"
+			"WebSourceContentRO",
+			"Heron702"
 		]
 	},
 	"abusefilter-desc": "Aplică euristici automate modificărilor.",
@@ -165,7 +166,7 @@
 	"abusefilter-import-button": "Importă filtru",
 	"abusefilter-return": "Înapoi la gestionarea filtrului",
 	"abusefilter-status-global": "Global",
-	"abusefilter-list-options": "Caută opțiuni",
+	"abusefilter-list-options": "Căutare opțiuni",
 	"abusefilter-list-options-deleted": "Filtre șterse:",
 	"abusefilter-list-options-deleted-only": "Arată doar filtrele șterse",
 	"abusefilter-list-options-deleted-hide": "Ascunde filtrele șterse",
@@ -244,7 +245,7 @@
 	"abusefilter-edit-throttle-placeholder": "Separați cu virgule pentru a uni prin ȘI, ori introduceți unul câte unul pentru a uni prin SAU",
 	"abusefilter-throttle-ip": "adresă IP",
 	"abusefilter-throttle-user": "cont de utilizator",
-	"abusefilter-throttle-range": "gamă /16",
+	"abusefilter-throttle-range": "Interval de IP-uri",
 	"abusefilter-throttle-creationdate": "data creării contului",
 	"abusefilter-throttle-editcount": "numărul de editări",
 	"abusefilter-throttle-site": "întreg site-ul",
@@ -542,6 +543,7 @@
 	"abusefilter-http-error": "A apărut o eroare HTTP: $1.",
 	"abusefilter-view-privatedetails-submit": "Vezi detalii private",
 	"abusefilter-view-privatedetails-legend": "Vezi detalii private",
+	"abusefilter-blocked-domains-remove-reason": "Motiv",
 	"abusefilter-log-ip-not-available": "Indisponibil",
 	"notification-link-text-show-filter": "Arată filtrul"
 }
