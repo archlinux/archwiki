@@ -1,0 +1,178 @@
+@import '../arch_definitions';
+
+/* disable default mediawiki logo  */
+#p-logo {
+    display: none !important;
+}
+/* hide logo text, but keep its box in the layout */
+#p-logo-text {
+    visibility: hidden;
+}
+
+/* let body take the full height so its background applies in dark mode */
+body {
+    height: 100%;
+}
+
+/* make room for archnavbar and disable fixed searchbar */
+#mw-content-container {
+    margin-top: 0;
+}
+#mw-content-container {
+    border-bottom: none;
+    padding-top: .5em;
+    background-color: @body-background-color;
+    background-image: none;
+}
+#mw-header-hack, #mw-header-nav-hack {
+    display: none !important;
+}
+#mw-header-container {
+    position: initial;
+    background: @body-background-color;
+}
+#mw-content {
+    border: @content-border-style;
+}
+#content {
+    border: none;
+    background: transparent;
+}
+
+/* integrate footer into page background */
+#mw-footer {
+    padding-left: 16em;
+    padding-right: 18em;
+}
+#mw-footer > * {
+    font-size: .8em;
+}
+.mw-footer-container {
+    border-top: none;
+    line-height: 1;
+    color: inherit;
+    box-shadow: none;
+}
+.mw-footer-container a, a {
+    color: @link-color-normal;
+    &:active {
+        color: @link-color-active;
+    }
+    &:hover {
+        color: @link-color-hover;
+    }
+    &:visited {
+        color: @link-color-visited;
+        &:hover {
+            color: @link-color-hover;
+        }
+    }
+}
+
+/* reset special border of the page title */
+.mw-body {
+    h1.firstHeading {
+        border-bottom: solid 3px #c8ccd1;
+    }
+}
+
+/* change MediaWiki's @blue color to Arch's blue */
+.suggestions {
+    .suggestions-result-current {
+        background-color: @link-color-normal;
+    }
+}
+.tools-inline li.selected {
+    border-bottom-color: @link-color-normal;
+}
+
+// reset hardcoded white-on-blue colors to black-on-gray as in Vector
+// (this affects e.g. the "Compare selected revisions" button on the history page)
+body.skin-timeless form:not( .oo-ui-layout ) {
+    button,
+    input[ type='submit' ] {
+        background-color: #f8f9fa;
+        color: #202122;
+        border-color: #a2a9b1;
+
+        &:not( :disabled ):hover,
+        &:not( :disabled ):active {
+            background-color: #ffffff;
+            color: #404244;
+        }
+    }
+}
+
+
+/* fixes for specific widths */
+@media screen and (max-width:1339px) {
+    #mw-footer {
+        padding-right: 1em;
+    }
+}
+@media screen and (min-width:851px) and (max-width:1099px) {
+    #p-logo-text {
+        display: none;
+    }
+    #mw-footer {
+        padding-left: 1em;
+    }
+    #mw-content {
+        margin-top: 1.75em;
+    }
+    /* avoid relative and absolute positioning, set the layout using grid */
+    #mw-content-block {
+        position: unset;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto;
+        /* content takes all columns on second row */
+        #mw-content-wrapper {
+            grid-row: 2;
+            grid-column-start: 1;
+            grid-column-end: -1;
+            /* remove margin that was for relative/absolute positioning */
+            #mw-content {
+                margin-top: 0;
+            }
+        }
+        /* Navigation, Wiki tools and Page tools take columns in the first row */
+        #mw-site-navigation, #mw-related-navigation {
+            grid-row: 1;
+            position: unset;
+            top: unset;
+            left: unset;
+            right: unset;
+        }
+        /* align navigation to the search box */
+        #mw-site-navigation {
+            margin-left: 2em;
+        }
+        /* Swap left and right margins since it is aligned to the left */
+        #mw-related-navigation > * {
+            margin-left: 0em;
+            margin-right: 1em;
+        }
+    }
+}
+@media screen and (max-width:850px) {
+    #p-logo-text {
+        display: none;
+    }
+    #mw-footer {
+        padding-left: 1em;
+    }
+    #site-navigation h2, #site-tools h2, #user-tools h2, #personal-extra {
+        top: 75px;
+    }
+    .sidebar-inner, .dropdown {
+        top: 7.75em;
+    }
+    #menus-cover {
+        top: 65px;
+    }
+    /* reset background for the box with category links (placed below the content) */
+    #mw-content-block {
+        background: @body-background-color;
+    }
+}
