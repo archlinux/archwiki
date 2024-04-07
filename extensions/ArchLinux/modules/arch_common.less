@@ -49,6 +49,17 @@ body {
 
 // general content styling
 .mw-body-content {
+    // Hide <br> elements at the start/end of paragraphs. They are produced by
+    // MediaWiki parser when multiple consecutive blank lines appear in the text.
+    p > br:is(:first-child, :last-child) {
+        display: none;
+    }
+
+    // Eliminate useless margin of last-child paragraphs
+    p:last-child {
+        margin-bottom: 0;
+    }
+
     table {
         border-collapse: collapse;
     }
