@@ -16,14 +16,9 @@
     display: none;
 }
 
-// general styling
+// general colors according to Arch definitions
 body {
     background: @body-background-color;
-}
-
-#content {
-    background: @content-background-color;
-    border: @content-border-style;
 
     table,
     h1,
@@ -36,7 +31,24 @@ body {
     tt {
         color: @text-color;
     }
+}
 
+#content {
+    background: @content-background-color;
+    border: @content-border-style;
+}
+
+// article Table of Contents
+#toc,
+.toc,
+.mw-warning,
+.toccolours {
+    background-color: @toc-background-color;
+    border: @toc-border-style;
+}
+
+// general content styling
+.mw-body-content {
     table {
         border-collapse: collapse;
     }
@@ -61,25 +73,17 @@ body {
 
     code,
     tt {
-        /* Inline-block prevents code from wrapping when starting too close to the end of a line; it also lets select the entire code line with a triple click */
+        // Inline-block prevents code from wrapping when starting too close to
+        // the end of a line; it also lets select the entire code line with a
+        // triple click
         display: inline-block;
         padding: 0 0.3em;
-        /* A border would be inherited by the default style sheets, but we don't want it */
+        // A border would be inherited by the default style sheets, but we
+        // do not want it
         border-width: 0;
         border-radius: 0;
     }
-}
 
-/* article Table of Contents */
-#toc,
-.toc,
-.mw-warning,
-.toccolours {
-    background-color: @toc-background-color;
-    border: @toc-border-style;
-}
-
-.mw-body-content {
     // Make all links coming from the rendered wiki markup bold
     a {
         font-weight: bold;
