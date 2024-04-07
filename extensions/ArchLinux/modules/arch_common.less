@@ -4,7 +4,19 @@
 
 @import 'arch_definitions';
 
-/* general styling */
+// hide logo at the top (sidebar or header)
+#p-logo,
+.mw-logo {
+  display: none;
+}
+
+// hide logos in the footer
+// (they can be disabled in LocalSettings.php by setting $wgFooterIcons)
+#footer-icons {
+    display: none;
+}
+
+// general styling
 body {
     background: @body-background-color;
 }
@@ -56,14 +68,6 @@ body {
         border-width: 0;
         border-radius: 0;
     }
-}
-
-/*
- * Hide logos in the footer
- * (they can be disabled in LocalSettings.php by setting $wgFooterIcons)
- */
-#footer-icons {
-    display: none;
 }
 
 /* article Table of Contents */
