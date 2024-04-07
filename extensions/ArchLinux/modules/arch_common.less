@@ -91,10 +91,7 @@ body {
 #wikiPreview > div.mw-content-rtl a {
     font-weight: bold;
 }
-#bodyContent #toc a,
-#bodyContent .special li > a,
-#bodyContent .special li span a,
-#bodyContent #pagehistory a {
+#bodyContent #toc a {
     font-weight: normal;
 }
 
@@ -104,7 +101,6 @@ header.mw-header li:not(.new), // Vector
 #mw-panel-toc,                // Vector
 #mw-navigation li:not(.new),  // Legacy Vector
 #mw-panel li:not(.new),       // Legacy Vector
-#column-one li:not(.new),     // MonoBook
 #footer {
   a:not([role=button]) {
     &:not(.new) {
@@ -129,8 +125,6 @@ header.mw-header li:not(.new), // Vector
  * (not for MediaWiki navigation elements above the page) */
 #content,
 #mw-panel li:not(.new),       // Legacy Vector
-#p-navigation li:not(.new),   // MonoBook
-#p-tb li:not(.new)            // MonoBook
 {
   a:not(.new):not([role=button]):visited {
     color: @link-color-visited !important;
