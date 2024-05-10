@@ -1,11 +1,6 @@
 @import '../arch_definitions';
 @import 'mediawiki.ui/variables';
 
-#p-logo,
-.mw-logo {
-  display: none;
-}
-
 .mw-body {
   & h1,
   &-content h1,
@@ -68,6 +63,28 @@ body.skin-vector {
   // Disable sidebar's gradient as it conflicts with the background color
   div#mw-panel {
     background-image: none;
+  }
+
+  // Override font size of section headings to improve readability
+  // Vector's font size for h4 is 100%, just like regular paragraphs, which makes
+  // the heading indiscernible from regular bolded text.
+  .mw-body-content {
+    h1 { font-size: 188%; }
+    h2 { font-size: 150%; }
+    h3 { font-size: 128%; }
+    h4 { font-size: 116%; }
+    h5 { font-size: 108%; }
+    h6 { font-size: 100%; }
+  }
+
+  // Use plain item markers
+  #content ul {
+    list-style-image: none;
+  }
+
+  // Assign consistent vertical margin to code blocks
+  .mw-body-content pre {
+    margin: 0.5em 0;
   }
 }
 
@@ -144,6 +161,12 @@ body.skin-vector-2022 {
         }
       }
     }
+  }
+
+  // Restore section numbers in the sidebar table of contents
+  .vector-toc .vector-toc-numb {
+    display: inline;
+    padding-right: 0.5em;
   }
 
   // Restore language links which disappeared in the Vector 2022 version 1.39

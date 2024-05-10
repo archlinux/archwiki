@@ -4,14 +4,21 @@
 
 @import 'arch_definitions';
 
-/* general styling */
-body {
-    background: @body-background-color;
+// hide logo at the top (sidebar or header)
+#p-logo,
+.mw-logo {
+  display: none;
 }
 
-#content {
-    background: @content-background-color;
-    border: @content-border-style;
+// hide logos in the footer
+// (they can be disabled in LocalSettings.php by setting $wgFooterIcons)
+#footer-icons {
+    display: none;
+}
+
+// general colors according to Arch definitions
+body {
+    background: @body-background-color;
 
     table,
     h1,
@@ -24,14 +31,37 @@ body {
     tt {
         color: @text-color;
     }
+}
 
-    ul {
-        list-style-image: none;
+#content {
+    background: @content-background-color;
+    border: @content-border-style;
+}
+
+// article Table of Contents
+#toc,
+.toc,
+.mw-warning,
+.toccolours {
+    background-color: @toc-background-color;
+    border: @toc-border-style;
+}
+
+// general content styling
+.mw-body-content {
+    // Hide <br> elements at the start/end of paragraphs. They are produced by
+    // MediaWiki parser when multiple consecutive blank lines appear in the text.
+    p > br:is(:first-child, :last-child) {
+        display: none;
+    }
+
+    // Eliminate useless margin of last-child paragraphs
+    p:last-child {
+        margin-bottom: 0;
     }
 
     table {
         border-collapse: collapse;
-        padding: 2px;
     }
 
     td {
@@ -54,48 +84,33 @@ body {
 
     code,
     tt {
-        /* Inline-block prevents code from wrapping when starting too close to the end of a line; it also lets select the entire code line with a triple click */
+        // Inline-block prevents code from wrapping when starting too close to
+        // the end of a line; it also lets select the entire code line with a
+        // triple click
         display: inline-block;
         padding: 0 0.3em;
-        /* A border would be inherited by the default style sheets, but we don't want it */
+        // A border would be inherited by the default style sheets, but we
+        // do not want it
         border-width: 0;
         border-radius: 0;
     }
-}
 
-/*
- * Hide logos in the footer
- * (they can be disabled in LocalSettings.php by setting $wgFooterIcons)
- */
-#footer-icons {
-    display: none;
-}
+    // Make all links coming from the rendered wiki markup bold
+    a {
+        font-weight: bold;
+    }
+    #toc a {
+        font-weight: normal;
+    }
 
-#footer {
-    color: @footer-text-color;
-}
-
-/* article Table of Contents */
-#toc,
-.toc,
-.mw-warning,
-.toccolours {
-    background-color: @toc-background-color;
-    border: @toc-border-style;
-}
-
-/* Make all links coming from the rendered wiki markup bold */
-#bodyContent > div.mw-content-ltr a,
-#bodyContent > div.mw-content-rtl a,
-#wikiPreview > div.mw-content-ltr a,
-#wikiPreview > div.mw-content-rtl a {
-    font-weight: bold;
-}
-#bodyContent #toc a,
-#bodyContent .special li > a,
-#bodyContent .special li span a,
-#bodyContent #pagehistory a {
-    font-weight: normal;
+    // Use the same icon for all external links
+    // The default MediaWiki style assigns icons only to external links and not
+    // interwiki links, so we use this to have an icon for all links pointing
+    // to external sites.
+    a.external, a.extiw {
+        background: url(../../../resources/src/mediawiki.skinning/images/external-ltr.svg) center right no-repeat;
+        padding-right: 13px;
+    }
 }
 
 /* Colors of links in the content, MediaWiki navigation and the footer */
@@ -104,7 +119,6 @@ header.mw-header li:not(.new), // Vector
 #mw-panel-toc,                // Vector
 #mw-navigation li:not(.new),  // Legacy Vector
 #mw-panel li:not(.new),       // Legacy Vector
-#column-one li:not(.new),     // MonoBook
 #footer {
   a:not([role=button]) {
     &:not(.new) {
@@ -129,8 +143,6 @@ header.mw-header li:not(.new), // Vector
  * (not for MediaWiki navigation elements above the page) */
 #content,
 #mw-panel li:not(.new),       // Legacy Vector
-#p-navigation li:not(.new),   // MonoBook
-#p-tb li:not(.new)            // MonoBook
 {
   a:not(.new):not([role=button]):visited {
     color: @link-color-visited !important;
@@ -144,15 +156,4 @@ a.new:visited,
 #mw-navigation li.new a:visited  // Vector
 {
     color: @link-color-new !important;
-}
-
-/*
- * Use the same icon for all external links
- * The default MediaWiki style assigns icons only to external links and not interwiki links,
- * so we use this to have an icon for all links pointing to external sites.
- */
-.mw-body-content a.external,
-.mw-body-content a.extiw {
-    background: url(../../../resources/src/mediawiki.skinning/images/external-ltr.svg) center right no-repeat;
-    padding-right: 13px;
 }
