@@ -34,14 +34,14 @@ init: start
 
 # Load a (gzipped) database backup for local testing
 import-db-dump file name='archwiki': start
-	{{MARIADB-RUN}} mariadb-admin -uroot -hmariadb drop -f {{name}} || true
-	{{MARIADB-RUN}} mariadb-admin -uroot -hmariadb create {{name}}
-	zcat {{file}} | {{MARIADB-RUN}} mariadb -uroot -hmariadb {{name}}
+	{{MARIADB-RUN}} mariadb-admin -uroot -hmariadb --skip-ssl drop -f {{name}} || true
+	{{MARIADB-RUN}} mariadb-admin -uroot -hmariadb --skip-ssl create {{name}}
+	zcat {{file}} | {{MARIADB-RUN}} mariadb -uroot -hmariadb --skip-ssl {{name}}
 	{{PHP-RUN}} php maintenance/run.php update --quick
 
 start:
 	{{COMPOSE}} up -d
-	{{MARIADB-RUN}} mariadb-admin -uroot -hmariadb --wait=10 ping
+	{{MARIADB-RUN}} mariadb-admin -uroot -hmariadb --skip-ssl --wait=10 ping
 	@echo URL: http://localhost:${PORT}
 
 stop:
