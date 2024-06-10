@@ -16,7 +16,7 @@ services:
       - mariadb
 
   nginx:
-    image: nginxinc/nginx-unprivileged:stable-alpine
+    image: nginxinc/nginx-unprivileged:stable-alpine-slim
     ports:
       - "${PORT}:8080"
     volumes:
