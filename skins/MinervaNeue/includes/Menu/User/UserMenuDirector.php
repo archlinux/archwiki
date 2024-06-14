@@ -57,12 +57,12 @@ final class UserMenuDirector {
 		$templateParser = new TemplateParser( __DIR__ . '/../../Skins' );
 		$toggleID = 'minerva-user-menu-toggle';
 		$checkboxID = 'minerva-user-menu-checkbox';
-		return empty( $entries )
+		return !$entries
 			? null
 			: $templateParser->processTemplate( 'ToggleList', [
 				'class' => 'minerva-user-menu',
 				'checkboxID' => $checkboxID,
-				'toggleID' => $toggleID, // See skin.mustache too.
+				'toggleID' => $toggleID,
 				'data-btn' => [
 					'tag-name' => 'label',
 					'data-icon' => [
@@ -90,7 +90,8 @@ final class UserMenuDirector {
 					'label' => $this->localizer->msg( 'minerva-user-menu-button' )->escaped(),
 				],
 				'listID' => $group->getId(),
-				'listClass' => 'minerva-user-menu-list toggle-list__list--drop-down', // See ToggleList/*.less.
+				// See ToggleList/*.less.
+				'listClass' => 'minerva-user-menu-list toggle-list__list--drop-down',
 				'items' => $entries
 			] );
 	}

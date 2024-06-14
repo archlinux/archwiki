@@ -4,6 +4,7 @@ use Composer\Semver\Semver;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Shell\Shell;
 use MediaWiki\ShellDisabledError;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -244,9 +245,15 @@ class ExtensionRegistry {
 
 	private function getCache(): BagOStuff {
 		if ( !$this->cache ) {
+			// NOTE: Copy of ObjectCacheFactory::getDefaultKeyspace
+			//
 			// Can't call MediaWikiServices here, as we must not cause services
 			// to be instantiated before extensions have loaded.
-			return ObjectCache::makeLocalServerCache();
+			global $wgCachePrefix;
+			$keyspace = ( is_string( $wgCachePrefix ) && $wgCachePrefix !== '' )
+				? $wgCachePrefix
+				: WikiMap::getCurrentWikiDbDomain()->getId();
+			return ObjectCache::makeLocalServerCache( $keyspace );
 		}
 
 		return $this->cache;
@@ -290,17 +297,13 @@ class ExtensionRegistry {
 		$this->lazyAttributes = [];
 	}
 
-	/**
-	 * @throws MWException If the queue is already marked as finished (no further things should
-	 *  be loaded then).
-	 */
 	public function loadFromQueue() {
 		if ( !$this->queued ) {
 			return;
 		}
 
 		if ( $this->finished ) {
-			throw new MWException(
+			throw new LogicException(
 				"The following paths tried to load late: "
 				. implode( ', ', array_keys( $this->queued ) )
 			);
@@ -414,7 +417,7 @@ class ExtensionRegistry {
 	 *
 	 * @param int[] $queue keys are filenames, values are ignored
 	 * @return array extracted info
-	 * @throws Exception
+	 * @throws InvalidArgumentException
 	 * @throws ExtensionDependencyError
 	 */
 	public function readFromQueue( array $queue ) {
@@ -425,16 +428,16 @@ class ExtensionRegistry {
 		foreach ( $queue as $path => $mtime ) {
 			$json = file_get_contents( $path );
 			if ( $json === false ) {
-				throw new Exception( "Unable to read $path, does it exist?" );
+				throw new InvalidArgumentException( "Unable to read $path, does it exist?" );
 			}
 			$info = json_decode( $json, /* $assoc = */ true );
 			if ( !is_array( $info ) ) {
-				throw new Exception( "$path is not a valid JSON file." );
+				throw new InvalidArgumentException( "$path is not a valid JSON file." );
 			}
 
 			$version = $info['manifest_version'];
 			if ( $version < self::OLDEST_MANIFEST_VERSION || $version > self::MANIFEST_VERSION ) {
-				throw new Exception( "$path: unsupported manifest_version: {$version}" );
+				throw new InvalidArgumentException( "$path: unsupported manifest_version: {$version}" );
 			}
 
 			// get all requirements/dependencies for this extension
@@ -651,7 +654,7 @@ class ExtensionRegistry {
 		}
 		// @codeCoverageIgnoreEnd
 		if ( isset( $this->testAttributes[$name] ) ) {
-			throw new Exception( "The attribute '$name' has already been overridden" );
+			throw new InvalidArgumentException( "The attribute '$name' has already been overridden" );
 		}
 		$this->testAttributes[$name] = $value;
 		return new ScopedCallback( function () use ( $name ) {

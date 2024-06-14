@@ -88,6 +88,7 @@
 	"templatedata-modal-table-param-aliases": "Истозначници",
 	"templatedata-modal-table-param-autovalue": "Автовредност",
 	"templatedata-modal-table-param-default": "По основно ($1)",
+	"templatedata-modal-table-param-status": "Статус",
 	"templatedata-modal-table-param-deprecated": "Застарен",
 	"templatedata-modal-table-param-deprecatedValue": "Застарено напатствие",
 	"templatedata-modal-table-param-description": "Опис ($1)",

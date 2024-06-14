@@ -22,7 +22,6 @@
 	"cite_error_included_references": "Nedostaje zatvarajuća oznaka za <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Postoje oznake <code>&lt;ref&gt;</code> za grupu s imenom „$1“, ali nema odgovarajuće oznake <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code> oznaka u <code>&lt;references&gt;</code> ima sukobni grupni parametar „$1“.",
-	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> oznaka „$2” definisana u <code>&lt;references&gt;</code> ima grupni parametar „$1” koji se ne pojavljuje u ranijem tekstu.",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> tag sa imenom „$1” definisan u <code>&lt;references&gt;</code> nije upotrebljen u prethodnom tekstu.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> oznaka definisana u <code>&lt;references&gt;</code> nema parametar „name“ (ime).",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> oznaka „$1” definisana u <code>&lt;references&gt;</code> grupi „$2” nema sadržaja.",

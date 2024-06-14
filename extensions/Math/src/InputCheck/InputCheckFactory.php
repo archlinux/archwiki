@@ -52,9 +52,10 @@ class InputCheckFactory {
 	/**
 	 * @param string $input input string to be checked
 	 * @param string $type type of input
+	 * @param bool $purge whether to purge the cache
 	 * @return MathoidChecker checker based on mathoid
 	 */
-	public function newMathoidChecker( string $input, string $type ): MathoidChecker {
+	public function newMathoidChecker( string $input, string $type, bool $purge ): MathoidChecker {
 		return new MathoidChecker(
 			$this->cache,
 			$this->httpFactory,
@@ -62,7 +63,8 @@ class InputCheckFactory {
 			$this->url,
 			$this->timeout,
 			$input,
-			$type
+			$type,
+			$purge
 		);
 	}
 
@@ -84,33 +86,38 @@ class InputCheckFactory {
 	/**
 	 * @param string $input input string to be checked
 	 * @param string $type type of input (only 'tex')
-	 * @return LocalChecker checker based on php implementation of TexVC within Math-extension
+	 * @param bool $purge whether to purge the cache
+	 * @return LocalChecker checker based on php implementation of WikiTexVC within Math-extension
 	 */
-	public function newLocalChecker( string $input, string $type ): LocalChecker {
+	public function newLocalChecker( string $input, string $type, bool $purge = false ): LocalChecker {
 		return new LocalChecker(
 			$this->cache,
 			$input,
-			$type
+			$type,
+			$purge
 		);
 	}
 
 	/**
 	 * Creates an instance of BaseChecker based on the configuration parameter for the texVC Service.
-	 * By default, this sets the checker to the local PHP variant of TexVC.
+	 * By default, this sets the checker to the local PHP variant of WikiTexVC.
 	 *
 	 * @param string $input input string which is checked
 	 * @param string $type input type, for some configurations this has to be 'tex'
 	 * @param MathRestbaseInterface|null &$restbaseInterface restbase interface,
 	 *         only necessary when using 'restbase' configuration
+	 * @param bool $purge whether to purge the cache
 	 * @return BaseChecker a checker object which has the results of the check.
 	 */
-	public function newDefaultChecker( string $input, string $type,
-									   MathRestbaseInterface &$restbaseInterface = null ): BaseChecker {
+	public function newDefaultChecker( string $input,
+									   string $type,
+									   MathRestbaseInterface &$restbaseInterface = null,
+									   bool $purge = false ): BaseChecker {
 		switch ( $this->texVCmode ) {
 			case "mathoid":
-				return $this->newMathoidChecker( $input, $type );
+				return $this->newMathoidChecker( $input, $type, $purge );
 			case "local":
-				return $this->newLocalChecker( $input, $type );
+				return $this->newLocalChecker( $input, $type, $purge );
 			case "restbase":
 			default:
 				return $this->newRestbaseChecker( $input, $type, $restbaseInterface );

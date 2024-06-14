@@ -1,15 +1,16 @@
 var FilterGroup = require( './FilterGroup.js' ),
 	FilterItem = require( './FilterItem.js' ),
+	utils = require( '../utils.js' ),
 	FiltersViewModel;
 
 /**
- * View model for the filters selection and display
+ * View model for the filters selection and display.
  *
  * @class mw.rcfilters.dm.FiltersViewModel
- * @mixins OO.EventEmitter
- * @mixins OO.EmitterList
+ * @ignore
+ * @mixes OO.EventEmitter
+ * @mixes OO.EmitterList
  *
- * @constructor
  */
 FiltersViewModel = function MwRcfiltersDmFiltersViewModel() {
 	// Mixin constructor
@@ -39,29 +40,33 @@ OO.mixinClass( FiltersViewModel, OO.EmitterList );
 /* Events */
 
 /**
+ * Filter list is initialized.
+ *
  * @event initialize
- *
- * Filter list is initialized
+ * @ignore
  */
 
 /**
+ * Model has been updated.
+ *
  * @event update
- *
- * Model has been updated
+ * @ignore
  */
 
 /**
+ * Filter item has changed.
+ *
  * @event itemUpdate
  * @param {mw.rcfilters.dm.FilterItem} item Filter item updated
- *
- * Filter item has changed
+ * @ignore
  */
 
 /**
+ * Highlight feature has been toggled enabled or disabled.
+ *
  * @event highlightChange
  * @param {boolean} Highlight feature is enabled
- *
- * Highlight feature has been toggled enabled or disabled
+ * @ignore
  */
 
 /* Methods */
@@ -185,6 +190,7 @@ FiltersViewModel.prototype.hasConflict = function () {
 /**
  * Get the first item with a current conflict
  *
+ * @ignore
  * @return {mw.rcfilters.dm.FilterItem|undefined} Conflicted item or undefined when not found
  */
 FiltersViewModel.prototype.getFirstConflictedItem = function () {
@@ -593,6 +599,7 @@ FiltersViewModel.prototype.getFilterGroupsByView = function ( view ) {
 /**
  * Get an array of filters matching the given display group.
  *
+ * @ignore
  * @param {string} [view] Requested view. If not given, uses current view
  * @return {mw.rcfilters.dm.FilterItem} Filter items matching the group
  */
@@ -897,7 +904,7 @@ FiltersViewModel.prototype.sanitizeStringOptionGroup = function ( groupName, val
 		return filterItem.getParamName();
 	} );
 
-	return mw.rcfilters.utils.normalizeParamOptions( valueArray, validNames );
+	return utils.normalizeParamOptions( valueArray, validNames );
 };
 
 /**
@@ -955,6 +962,7 @@ FiltersViewModel.prototype.areTagsEffectivelyInverted = function () {
 /**
  * Get the item that matches the given name
  *
+ * @ignore
  * @param {string} name Filter name
  * @return {mw.rcfilters.dm.FilterItem} Filter item
  */
@@ -1004,6 +1012,7 @@ FiltersViewModel.prototype.toggleFiltersSelected = function ( filterDef ) {
 /**
  * Get a group model from its name
  *
+ * @ignore
  * @param {string} groupName Group name
  * @return {mw.rcfilters.dm.FilterGroup} Group model
  */
@@ -1014,6 +1023,7 @@ FiltersViewModel.prototype.getGroup = function ( groupName ) {
 /**
  * Get all filters within a specified group by its name
  *
+ * @ignore
  * @param {string} groupName Group name
  * @return {mw.rcfilters.dm.FilterItem[]} Filters belonging to this group
  */
@@ -1098,6 +1108,7 @@ FiltersViewModel.prototype.findMatches = function ( query, returnFlat ) {
 /**
  * Get items that are highlighted
  *
+ * @ignore
  * @return {mw.rcfilters.dm.FilterItem[]} Highlighted items
  */
 FiltersViewModel.prototype.getHighlightedItems = function () {
@@ -1110,6 +1121,7 @@ FiltersViewModel.prototype.getHighlightedItems = function () {
 /**
  * Get items that allow highlights even if they're not currently highlighted
  *
+ * @ignore
  * @return {mw.rcfilters.dm.FilterItem[]} Items supporting highlights
  */
 FiltersViewModel.prototype.getItemsSupportingHighlights = function () {
@@ -1121,6 +1133,7 @@ FiltersViewModel.prototype.getItemsSupportingHighlights = function () {
 /**
  * Get all selected items
  *
+ * @ignore
  * @return {mw.rcfilters.dm.FilterItem[]} Selected items
  */
 FiltersViewModel.prototype.findSelectedItems = function () {
@@ -1299,6 +1312,7 @@ FiltersViewModel.prototype.toggleInvertedNamespaces = function ( enable ) {
 /**
  * Get the model object that represents the 'invert' filter
  *
+ * @ignore
  * @param {string} view
  * @return {mw.rcfilters.dm.FilterItem|null}
  */
@@ -1316,6 +1330,7 @@ FiltersViewModel.prototype.getInvertModel = function ( view ) {
 /**
  * Get the model object that represents the 'invert' filter
  *
+ * @ignore
  * @return {mw.rcfilters.dm.FilterItem}
  */
 FiltersViewModel.prototype.getNamespacesInvertModel = function () {
@@ -1325,6 +1340,7 @@ FiltersViewModel.prototype.getNamespacesInvertModel = function () {
 /**
  * Get the model object that represents the 'invert' filter
  *
+ * @ignore
  * @return {mw.rcfilters.dm.FilterItem}
  */
 FiltersViewModel.prototype.getTagsInvertModel = function () {

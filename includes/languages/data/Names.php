@@ -42,6 +42,7 @@ class Names {
 	/** @phpcs-require-sorted-array */
 	public static $names = [
 		'aa' => 'Qafár af', # Afar
+		'aae' => 'Arbërisht', # Arbëresh
 		'ab' => 'аԥсшәа', # Abkhaz
 		'abs' => 'bahasa ambon', # Ambonese Malay, T193566
 		'ace' => 'Acèh', # Aceh
@@ -117,6 +118,7 @@ class Names {
 		'ce' => 'нохчийн', # Chechen
 		'ceb' => 'Cebuano', # Cebuano
 		'ch' => 'Chamoru', # Chamorro
+		'chn' => 'chinuk wawa', # Chinook Jargon
 		'cho' => 'Chahta anumpa', # Choctaw
 		'chr' => 'ᏣᎳᎩ', # Cherokee
 		'chy' => 'Tsetsêhestâhese', # Cheyenne
@@ -153,6 +155,7 @@ class Names {
 		'dv' => 'ދިވެހިބަސް', # Dhivehi
 		'dz' => 'ཇོང་ཁ', # Dzongkha (Bhutan)
 		'ee' => 'eʋegbe', # Éwé
+		'efi' => 'Efịk', # Efik
 		'egl' => 'Emiliàn', # Emilian
 		'el' => 'Ελληνικά', # Greek
 		'eml' => 'emiliàn e rumagnòl', # Emiliano-Romagnolo / Sammarinese
@@ -188,6 +191,7 @@ class Names {
 		'gan' => '贛語', # Gan (multiple scripts - defaults to Traditional Han)
 		'gan-hans' => '赣语（简体）', # Gan (Simplified Han)
 		'gan-hant' => '贛語（繁體）', # Gan (Traditional Han)
+		'gcf' => 'kréyòl Gwadloup', # Guadeloupean Creole
 		'gcr' => 'kriyòl gwiyannen', # Guianan Creole
 		'gd' => 'Gàidhlig', # Scots Gaelic
 		'gl' => 'galego', # Galician
@@ -228,6 +232,7 @@ class Names {
 		'hyw' => 'Արեւմտահայերէն', # Western Armenian, T201276, T219975
 		'hz' => 'Otsiherero', # Herero
 		'ia' => 'interlingua', # Interlingua (IALA)
+		'ibb' => 'ibibio', # Ibibio
 		'id' => 'Bahasa Indonesia', # Indonesian
 		'ie' => 'Interlingue', # Interlingue (Occidental)
 		'ig' => 'Igbo', # Igbo
@@ -257,6 +262,7 @@ class Names {
 		'kcg' => 'Tyap', # Tyap
 		'kea' => 'kabuverdianu', # Cape Verdean Creole
 		'kg' => 'Kongo', # Kongo, (FIXME!) should probably be KiKongo or KiKoongo
+		'kge' => 'Basa Kumoring', # Komering
 		'khw' => 'کھوار', # Khowar
 		'ki' => 'Gĩkũyũ', # Gikuyu
 		'kiu' => 'Kırmancki', # Kirmanjki
@@ -335,7 +341,7 @@ class Names {
 		'mnc-latn' => 'manju gisun', # Manchu (Latin script)
 		'mnc-mong' => 'ᠮᠠᠨᠵᡠ ᡤᡳᠰᡠᠨ', # Manchu (Mongolian script)
 		'mni' => 'ꯃꯤꯇꯩ ꯂꯣꯟ', # Manipuri/Meitei
-		'mnw' => 'ဘာသာ မန်', # Mon, T201583
+		'mnw' => 'ဘာသာမန်', # Mon
 		'mo' => 'молдовеняскэ', # Moldovan, deprecated (ISO 639-2: ro-Cyrl-MD)
 		'mos' => 'moore', # Mooré
 		'mr' => 'मराठी', # Marathi
@@ -360,6 +366,7 @@ class Names {
 		'new' => 'नेपाल भाषा', # Newar / Nepal Bhasha
 		'ng' => 'Oshiwambo', # Ndonga
 		'nia' => 'Li Niha', # Nias, T263968
+		'nit' => 'కొలామి', # Southeastern Kolami
 		'niu' => 'Niuē', # Niuean
 		'nl' => 'Nederlands', # Dutch
 		'nl-informal' => 'Nederlands (informeel)', # Dutch (informal address ("je"))
@@ -375,6 +382,7 @@ class Names {
 		'nv' => 'Diné bizaad', # Navajo
 		'ny' => 'Chi-Chewa', # Chichewa
 		'nyn' => 'runyankore', # Nkore
+		'nyo' => 'Orunyoro', # Nyoro
 		'nys' => 'Nyunga', # Nyungar
 		'oc' => 'occitan', # Occitan
 		'ojb' => 'Ojibwemowin', # Ojibwe
@@ -422,6 +430,7 @@ class Names {
 		'ruq-cyrl' => 'Влахесте', # Megleno-Romanian (Cyrillic script)
 		# 'ruq-grek' => 'Βλαεστε', # Megleno-Romanian (Greek script)
 		'ruq-latn' => 'Vlăheşte', # Megleno-Romanian (Latin script)
+		'rut' => 'мыхаӀбишды', # Rutul
 		'rw' => 'Ikinyarwanda', # Kinyarwanda
 		'ryu' => 'うちなーぐち', # Okinawan
 		'sa' => 'संस्कृतम्', # Sanskrit
@@ -507,6 +516,7 @@ class Names {
 		'tt' => 'татарча / tatarça', # Tatar (multiple scripts - defaults to Cyrillic)
 		'tt-cyrl' => 'татарча', # Tatar (Cyrillic script) (default)
 		'tt-latn' => 'tatarça', # Tatar (Latin script)
+		'ttj' => 'Orutooro', # Tooro
 		'tum' => 'chiTumbuka', # Tumbuka
 		'tw' => 'Twi', # Twi
 		'ty' => 'reo tahiti', # Tahitian

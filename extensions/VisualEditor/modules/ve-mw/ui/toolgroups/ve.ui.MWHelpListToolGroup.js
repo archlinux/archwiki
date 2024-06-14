@@ -1,7 +1,7 @@
 /*!
  * VisualEditor MediaWiki UserInterface help list toolgroup classes.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -111,7 +111,6 @@ ve.ui.MWUserGuideTool = function VeUiMWUserGuideTool() {
 	ve.ui.MWUserGuideTool.super.apply( this, arguments );
 
 	this.setDisabled( false );
-	this.$link.attr( 'title', 'QQQ' );
 };
 OO.inheritClass( ve.ui.MWUserGuideTool, ve.ui.Tool );
 ve.ui.MWUserGuideTool.static.name = 'mwUserGuide';

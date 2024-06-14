@@ -3,6 +3,7 @@
 		"authors": [
 			"Aftab1995",
 			"Aftabuzzaman",
+			"Aishik Rehman",
 			"Bellayet",
 			"Jayantanth",
 			"NahidSultan",
@@ -12,8 +13,7 @@
 			"Sayak Sarkar",
 			"Sayma Jahan",
 			"Tauhid16",
-			"আফতাবুজ্জামান",
-			"Aishik Rehman"
+			"আফতাবুজ্জামান"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "বই",
@@ -58,7 +58,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "এই তথ্যসূত্রটি একটি টেমপ্লেটে বা অন্য উত্পন্ন ব্লকে সংজ্ঞায়িত করা হয়েছে এবং এখনকার জন্য এটি শুধুমাত্র উৎস মোডে প্রাকদর্শন করা যাবে।",
 	"cite-ve-referenceslist-missingreflist": "এই তথ্যসূত্রের তালিকাটি একটি টেমপ্লেট দ্বারা উত্পন্ন হয়েছে।",
 	"cite-ve-toolbar-group-label": "উদ্ধৃতি",
-	"cite-ve-othergroup-item": "$1টি তথ্যসূত্র",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "তথ্যসূত্র",
-	"visualeditor-internal-list-diff-group-name-mwreference": "তথ্যসূত্রের দলের নাম: \"$1\""
+	"cite-ve-othergroup-item": "$1টি তথ্যসূত্র"
 }

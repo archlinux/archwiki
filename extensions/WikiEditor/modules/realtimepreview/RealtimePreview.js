@@ -158,6 +158,7 @@ RealtimePreview.prototype.saveUserPref = function () {
 RealtimePreview.prototype.toggle = function ( saveUserPref ) {
 	var $uiText = this.context.$ui.find( '.wikiEditor-ui-text' );
 	var $textarea = this.context.$textarea;
+	var $form = $textarea.parents( 'form' );
 
 	// Save the current cursor selection and focused element.
 	var cursorPos = $textarea.textSelection( 'getCaretPosition', { startAndEnd: true } );
@@ -174,6 +175,7 @@ RealtimePreview.prototype.toggle = function ( saveUserPref ) {
 
 		// Remove the keyup handler.
 		$textarea.off( this.eventNames );
+		$form.off( 'reset.realtimepreview' );
 
 		// Let other things happen after disabling.
 		mw.hook( 'ext.WikiEditor.realtimepreview.disable' ).fire( this );
@@ -194,6 +196,8 @@ RealtimePreview.prototype.toggle = function ( saveUserPref ) {
 		$textarea
 			.off( this.eventNames )
 			.on( this.eventNames, this.getEventHandler() );
+		$form.off( 'reset.realtimepreview' )
+			.on( 'reset.realtimepreview', this.getEventHandler() );
 
 		// Hide or show the manual-reload message bar.
 		this.manualWidget.toggle( this.inManualMode );

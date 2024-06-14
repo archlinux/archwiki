@@ -4,15 +4,15 @@ namespace MediaWiki\Tests\Registration;
 
 use Exception;
 use ExtensionRegistry;
+use InvalidArgumentException;
 use LogicException;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWikiUnitTestCase;
-use MWException;
 use Wikimedia\ScopedCallback;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers ExtensionRegistry
+ * @covers \ExtensionRegistry
  */
 class ExtensionRegistryTest extends MediaWikiUnitTestCase {
 
@@ -85,7 +85,7 @@ class ExtensionRegistryTest extends MediaWikiUnitTestCase {
 		$registry = $this->getRegistry();
 		$registry->finish();
 		$registry->queue( "{$this->dataDir}/good.json" );
-		$this->expectException( MWException::class );
+		$this->expectException( LogicException::class );
 		$this->expectExceptionMessage(
 			"The following paths tried to load late: {$this->dataDir}/good.json" );
 		$registry->loadFromQueue();
@@ -120,10 +120,16 @@ class ExtensionRegistryTest extends MediaWikiUnitTestCase {
 
 	public function testReadFromQueue_nonexistent() {
 		$registry = $this->getRegistry();
-		$this->expectError();
-		$registry->readFromQueue( [
-			__DIR__ . '/doesnotexist.json' => 1
-		] );
+		$this->expectException( InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Unable to read' );
+		$this->expectPHPError(
+			E_WARNING,
+			static function () use ( $registry ) {
+				$registry->readFromQueue( [
+					__DIR__ . '/doesnotexist.json' => 1
+				] );
+			}
+		);
 	}
 
 	public function testExportExtractedDataNamespaceAlreadyDefined() {

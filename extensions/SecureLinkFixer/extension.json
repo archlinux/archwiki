@@ -8,7 +8,7 @@
 	"descriptionmsg": "securelinkfixer-desc",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\SecureLinkFixer\\": "includes/"

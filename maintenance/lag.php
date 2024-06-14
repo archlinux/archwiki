@@ -29,6 +29,9 @@ require_once __DIR__ . '/Maintenance.php';
  * @ingroup Maintenance
  */
 class DatabaseLag extends Maintenance {
+
+	protected $stopReporting = false;
+
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Shows database lag' );
@@ -47,22 +50,33 @@ class DatabaseLag extends Maintenance {
 			}
 			$this->output( "\n" );
 
-			// @phan-suppress-next-line PhanInfiniteLoop
-			while ( 1 ) {
+			do {
 				$lags = $lb->getLagTimes();
 				unset( $lags[0] );
 				$this->output( gmdate( 'H:i:s' ) . ' ' );
 				foreach ( $lags as $lag ) {
-					$this->output( sprintf( "%-12s ", $lag === false ? 'false' : $lag ) );
+					$this->output(
+						sprintf(
+							"%-12s ",
+							$lag === false ? 'replication stopped or errored' : $lag
+						)
+					);
 				}
 				$this->output( "\n" );
 				sleep( 5 );
-			}
+			} while ( !$this->stopReporting );
+
 		} else {
 			$lags = $lb->getLagTimes();
 			foreach ( $lags as $i => $lag ) {
 				$name = $lb->getServerName( $i );
-				$this->output( sprintf( "%-20s %s\n", $name, $lag === false ? 'false' : $lag ) );
+				$this->output(
+					sprintf(
+						"%-20s %s\n",
+						$name,
+						$lag === false ? 'replication stopped or errored' : $lag
+					)
+				);
 			}
 		}
 	}

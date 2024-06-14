@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Tests\Rest\Handler\Helper;
 
+use Exception;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\ExistingPageRecord;
@@ -27,22 +28,13 @@ class PageContentHelperTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-
-		// Clean up these tables after each test
-		$this->tablesUsed = [
-			'page',
-			'revision',
-			'comment',
-			'text',
-			'content'
-		];
 	}
 
 	/**
 	 * @param array $params
 	 * @param Authority|null $authority
 	 * @return PageContentHelper
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	private function newHelper(
 		array $params = [],
@@ -101,6 +93,23 @@ class PageContentHelperTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
+	/**
+	 * Ensure we can load the page with title "0" (T353687).
+	 */
+	public function testT353687() {
+		$page = $this->getExistingTestPage( '0' );
+		$rev = $page->getRevisionRecord();
+
+		$helper = $this->newHelper( [ 'title' => $page->getTitle()->getPrefixedDBkey() ] );
+
+		// Key assertion: this should not throw!
+		$helper->checkAccess();
+
+		$targetRev = $helper->getTargetRevision();
+		$this->assertInstanceOf( RevisionRecord::class, $targetRev );
+		$this->assertSame( $rev->getId(), $targetRev->getId() );
+	}
+
 	public function testNoTitle() {
 		$helper = $this->newHelper();
 
@@ -122,7 +131,40 @@ class PageContentHelperTest extends MediaWikiIntegrationTestCase {
 			$helper->checkAccess();
 			$this->fail( 'Expected HttpException' );
 		} catch ( HttpException $ex ) {
-			$this->assertSame( 403, $ex->getCode() );
+			$this->assertSame( 404, $ex->getCode() );
+		}
+	}
+
+	public static function provideBadTitle() {
+		yield [ '_' ];
+		yield [ '::Hello' ];
+		yield [ 'Special:Blankpage' ];
+	}
+
+	/**
+	 * @dataProvider provideBadTitle
+	 */
+	public function testBadTitle( $badTitle ) {
+		$helper = $this->newHelper( [ 'title' => $badTitle ] );
+
+		$this->assertNotNull( $helper->getTitleText() );
+		$this->assertNull( $helper->getPage() );
+
+		$this->assertFalse( $helper->hasContent() );
+		$this->assertNull( $helper->getTargetRevision() );
+
+		try {
+			$helper->getContent();
+			$this->fail( 'Expected HttpException' );
+		} catch ( HttpException $ex ) {
+			$this->assertSame( 404, $ex->getCode() );
+		}
+
+		try {
+			$helper->checkAccess();
+			$this->fail( 'Expected HttpException' );
+		} catch ( HttpException $ex ) {
+			$this->assertSame( 404, $ex->getCode() );
 		}
 	}
 

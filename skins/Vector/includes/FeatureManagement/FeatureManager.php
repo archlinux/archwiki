@@ -22,7 +22,11 @@
 
 namespace MediaWiki\Skins\Vector\FeatureManagement;
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Skins\Vector\ConfigHelper;
+use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\Requirements\SimpleRequirement;
+use RequestContext;
 use Wikimedia\Assert\Assert;
 
 /**
@@ -128,26 +132,71 @@ class FeatureManager {
 	}
 
 	/**
+	 * Gets user's preference value
+	 *
+	 * If user preference is not set or did not appear in config
+	 * set it to default value we go back to defualt suffix value
+	 * that will ensure that the feature will be enabled when requirements are met
+	 *
+	 * @param string $preferenceKey User preference key
+	 * @return string
+	 */
+	public function getUserPreferenceValue( $preferenceKey ) {
+		$user = RequestContext::getMain()->getUser();
+		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+		return $userOptionsLookup->getOption(
+			$user,
+			$preferenceKey
+			// For client preferences, this should be the same as `preferenceKey`
+			// in 'resources/skins.vector.js/clientPreferences.json'
+		);
+	}
+
+	/**
 	 * Return a list of classes that should be added to the body tag
 	 *
 	 * @return array
 	 */
 	public function getFeatureBodyClass() {
-		$featureManager = $this;
-		return array_map( static function ( $featureName ) use ( $featureManager ) {
+		return array_map( function ( $featureName ) {
 			// switch to lower case and switch from camel case to hyphens
 			$featureClass = ltrim( strtolower( preg_replace( '/[A-Z]([A-Z](?![a-z]))*/', '-$0', $featureName ) ), '-' );
+			$prefix = 'vector-feature-' . $featureClass . '-';
+
+			// some features (eg night mode) will require request context to determine status
+			$context = RequestContext::getMain();
+			$request = $context->getRequest();
+			$config = $context->getConfig();
+			$title = $context->getTitle();
 
 			// Client side preferences
-			switch ( $featureClass ) {
-				case 'toc-pinned':
-				case 'limited-width':
-					$suffixEnabled = 'clientpref-1';
+			switch ( $featureName ) {
+				case CONSTANTS::FEATURE_FONT_SIZE:
+					$suffixEnabled = 'clientpref-' . $this->getUserPreferenceValue( CONSTANTS::PREF_KEY_FONT_SIZE );
 					$suffixDisabled = 'clientpref-0';
 					break;
-				case 'custom-font-size':
-					$suffixEnabled = 'clientpref-enabled';
-					$suffixDisabled = 'clientpref-disabled';
+				case CONSTANTS::PREF_NIGHT_MODE:
+					// if night mode is disabled for the page, add the disabled class instead and return early
+					if ( ConfigHelper::shouldDisable( $config->get( 'VectorNightModeOptions' ), $request, $title ) ) {
+						return 'skin-night-mode-disabled';
+					}
+
+					$valueRequest = $request->getText( 'vectornightmode' );
+					// If night mode query string is used, hardcode pref value to the night mode value
+					// NOTE: The query string parameter only works for logged in users.
+					// IF you have set a cookie locally this will be overriden.
+					$value = $valueRequest !== '' ? self::resolveNightModeQueryValue( $valueRequest ) :
+						$this->getUserPreferenceValue( CONSTANTS::PREF_KEY_NIGHT_MODE );
+					$suffixEnabled = 'clientpref-' . $value;
+					$suffixDisabled = 'clientpref-day';
+					// Must be hardcoded to 'skin-theme-' to be consistent with Minerva
+					// So that editors can target the same class across skins
+					$prefix = 'skin-theme-';
+					break;
+				case CONSTANTS::FEATURE_LIMITED_WIDTH:
+				case CONSTANTS::FEATURE_TOC_PINNED:
+					$suffixEnabled = 'clientpref-1';
+					$suffixDisabled = 'clientpref-0';
 					break;
 				default:
 					// FIXME: Eventually this should not be necessary.
@@ -155,8 +204,7 @@ class FeatureManager {
 					$suffixDisabled = 'disabled';
 					break;
 			}
-			$prefix = 'vector-feature-' . $featureClass . '-';
-			return $featureManager->isFeatureEnabled( $featureName ) ?
+			return $this->isFeatureEnabled( $featureName ) ?
 				$prefix . $suffixEnabled : $prefix . $suffixDisabled;
 		}, array_keys( $this->features ) );
 	}
@@ -237,5 +285,25 @@ class FeatureManager {
 		}
 
 		return $this->requirements[$name]->isMet();
+	}
+
+	/**
+	 * Converts "1", "2", and "0" to equivalent values.
+	 *
+	 * @return string
+	 */
+	private static function resolveNightModeQueryValue( string $value ) {
+		switch ( $value ) {
+			case 'day':
+			case 'night':
+			case 'os':
+				return $value;
+			case '1':
+				return 'night';
+			case '2':
+				return 'os';
+			default:
+				return 'day';
+		}
 	}
 }

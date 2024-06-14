@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Dinhxuanduyet",
+			"Doraemonluonbentoi",
 			"Flyplanevn27",
 			"Harriettruong3",
 			"KhangND",
@@ -47,7 +48,6 @@
 	"echo-pref-subscription-edit-thank": "Cảm ơn tôi vì một sửa đổi của tôi",
 	"echo-pref-tooltip-edit-thank": "Báo cho tôi khi có người cảm ơn một sửa đổi của tôi.",
 	"echo-category-title-edit-thank": "Cảm ơn",
-	"notification-thanks-diff-link": "sửa đổi của bạn",
 	"notification-header-rev-thank": "$1 {{GENDER:$2}}đã cảm ơn {{GENDER:$4}}bạn vì sửa đổi tại <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 {{GENDER:$2|đã cảm ơn}} vì {{GENDER:$4|bạn}} đã tạo <strong>$3</strong>.",
 	"notification-header-log-thank": "$1 {{GENDER:$2}}đã cảm ơn {{GENDER:$4}}bạn vì tác vụ có liên quan đến <strong>$3</strong>.",
@@ -66,7 +66,6 @@
 	"thanks-error-invalidpostid": "Số bài đăng không hợp lệ.",
 	"flow-thanks-confirmation-special": "Bạn có muốn gửi lời cảm ơn cho lời bình luận này?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3}}Bạn đã cảm ơn $1 vì lời bình luận của {{GENDER:$2}}họ.",
-	"notification-flow-thanks-post-link": "đã bình luận",
 	"notification-header-flow-thank": "$1 {{GENDER:$2}}đã cảm ơn {{GENDER:$5}}bạn vì bình luận ở “<strong>$3</strong>”.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2}}đã cảm ơn {{GENDER:$3}}bạn.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Một người|$1 người|100=99+ người}} đã cảm ơn {{GENDER:$3}}bạn vì lời bình luận của bạn trong “<strong>$2</strong>”.",

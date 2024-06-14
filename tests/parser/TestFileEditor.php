@@ -5,9 +5,9 @@ class TestFileEditor {
 	private $lines;
 	/** @var int */
 	private $numLines;
-	/** @var array */
+	/** @var array<string,true> */
 	private $deletions;
-	/** @var array */
+	/** @var array<string,array<string,array>> */
 	private $changes;
 	/** @var int */
 	private $pos = 0;
@@ -118,7 +118,7 @@ class TestFileEditor {
 			}
 		}
 
-		throw new Exception( 'Unexpected end of file' );
+		throw new OutOfBoundsException( 'Unexpected end of file' );
 	}
 
 	private function parseHooks() {
@@ -134,7 +134,7 @@ class TestFileEditor {
 		} while ( $this->pos < $this->numLines && $nextHeading !== $expectedEnd );
 
 		if ( $nextHeading !== $expectedEnd ) {
-			throw new Exception( 'Unexpected end of file' );
+			throw new UnexpectedValueException( 'Unexpected end of file' );
 		}
 		$this->emitHooks( $heading, $contents );
 	}
@@ -173,7 +173,7 @@ class TestFileEditor {
 							$test[$i]['deleted'] = true;
 							break;
 						default:
-							throw new Exception( "Unknown op: {$change['op']}" );
+							throw new UnexpectedValueException( "Unknown op: {$change['op']}" );
 					}
 					// Acknowledge
 					// Note that we use the old section name for the rename op

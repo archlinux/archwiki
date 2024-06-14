@@ -22,7 +22,6 @@
 
 namespace MediaWiki\User;
 
-use DBAccessObjectUtils;
 use IDBAccessObject;
 use InvalidArgumentException;
 use MediaWiki\Config\ServiceOptions;
@@ -38,11 +37,10 @@ use Wikimedia\Rdbms\ILoadBalancer;
  *
  * @since 1.35
  */
-class UserFactory implements IDBAccessObject, UserRigorOptions {
+class UserFactory implements UserRigorOptions {
 
 	/**
 	 * RIGOR_* constants are inherited from UserRigorOptions
-	 * READ_* constants are inherited from IDBAccessObject
 	 */
 
 	/** @internal */
@@ -284,18 +282,20 @@ class UserFactory implements IDBAccessObject, UserRigorOptions {
 	 */
 	public function newFromConfirmationCode(
 		string $confirmationCode,
-		int $flags = self::READ_NORMAL
+		int $flags = IDBAccessObject::READ_NORMAL
 	) {
-		[ $index, $options ] = DBAccessObjectUtils::getDBOptions( $flags );
-
-		$db = $this->loadBalancer->getConnectionRef( $index );
+		if ( ( $flags & IDBAccessObject::READ_LATEST ) == IDBAccessObject::READ_LATEST ) {
+			$db = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
+		} else {
+			$db = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+		}
 
 		$id = $db->newSelectQueryBuilder()
 			->select( 'user_id' )
 			->from( 'user' )
 			->where( [ 'user_email_token' => md5( $confirmationCode ) ] )
-			->andWhere( $db->buildComparison( '>', [ 'user_email_token_expires' => $db->timestamp() ] ) )
-			->options( $options )
+			->andWhere( $db->expr( 'user_email_token_expires', '>', $db->timestamp() ) )
+			->recency( $flags )
 			->caller( __METHOD__ )->fetchField();
 
 		if ( !$id ) {

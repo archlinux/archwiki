@@ -26,28 +26,30 @@
 	 * This feature works with any content model that defines a
 	 * `mw.messagePoster.MessagePoster`.
 	 *
-	 * Minimal usage example:
-	 *
+	 * @example // Minimal usage example
+	 * mw.loader.using( 'mediawiki.feedback').then(() => {
 	 *     var feedback = new mw.Feedback();
 	 *     $( '#myButton' ).click( function () { feedback.launch(); } );
-	 *
+	 * });
 	 * You can also launch the feedback form with a prefilled subject and body.
 	 * See the docs for the #launch() method.
 	 *
-	 * @class
+	 * @class mw.Feedback
+	 * @classdesc Simple mechanism for obtaining feedback from users. Functionality is provided by the mediawiki.feedback
+	 * ResourceLoader module.
 	 * @constructor
 	 * @param {Object} [config] Configuration object
-	 * @cfg {mw.Title} [title="Feedback"] The title of the page where you collect
+	 * @param {mw.Title} [config.title="Feedback"] The title of the page where you collect
 	 *  feedback.
-	 * @cfg {string} [apiUrl] api.php URL if the feedback page is on another wiki
-	 * @cfg {string} [dialogTitleMessageKey="feedback-dialog-title"] Message key for the
+	 * @param {string} [config.apiUrl] api.php URL if the feedback page is on another wiki
+	 * @param {string} [config.dialogTitleMessageKey="feedback-dialog-title"] Message key for the
 	 *  title of the dialog box
-	 * @cfg {mw.Uri|string} [bugsLink="//phabricator.wikimedia.org/maniphest/task/edit/form/1/"] URL where
+	 * @param {mw.Uri|string} [config.bugsLink="//phabricator.wikimedia.org/maniphest/task/edit/form/1/"] URL where
 	 *  bugs can be posted
-	 * @cfg {boolean} [showUseragentCheckbox=false] Show a Useragent agreement checkbox as part of the form.
-	 * @cfg {boolean} [useragentCheckboxMandatory=false] Make the Useragent checkbox mandatory.
-	 * @cfg {string|jQuery} [useragentCheckboxMessage] Supply a custom message for the useragent checkbox.
-	 *  defaults to the message 'feedback-terms'.
+	 * @param {boolean} [config.showUseragentCheckbox=false] Show a Useragent agreement checkbox as part of the form.
+	 * @param {boolean} [config.useragentCheckboxMandatory=false] Make the Useragent checkbox mandatory.
+	 * @param {string|jQuery} [config.useragentCheckboxMessage] Supply a custom message for the useragent checkbox.
+	 *  Defaults to the {@link mw.Message} 'feedback-terms'.
 	 */
 	mw.Feedback = function MwFeedback( config ) {
 		config = config || {};
@@ -78,8 +80,8 @@
 
 	/**
 	 * mw.Feedback Dialog
-	 *
-	 * @class
+	 * See FeedbackDialog.js for documentation
+	 * @ignore
 	 */
 	mw.Feedback.Dialog = FeedbackDialog;
 
@@ -152,7 +154,7 @@
 				this.constructor.static.dialog,
 				this.thankYouDialog
 			] );
-			$( document.body )
+			$( OO.ui.getTeleportTarget() )
 				.append( this.constructor.static.windowManager.$element );
 		}
 		// Open the dialog

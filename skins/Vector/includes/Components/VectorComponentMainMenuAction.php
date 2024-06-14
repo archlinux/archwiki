@@ -52,7 +52,7 @@ class VectorComponentMainMenuAction implements VectorComponent {
 			$htmlContent = $htmlData['html-content'];
 		}
 
-		if ( !empty( $this->classes ) ) {
+		if ( $this->classes !== '' ) {
 			$headingOptions['class'] = $this->classes;
 		}
 

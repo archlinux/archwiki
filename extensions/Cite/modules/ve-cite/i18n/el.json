@@ -65,7 +65,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Αυτή η αναφορά ορίζεται σε ένα πρότυπο ή άλλο\nδημιουργημένο μπλοκ, και προς το παρόν μπορεί να γίνει προεπισκόπηση μόνο σε λειτουργία πηγής.",
 	"cite-ve-referenceslist-missingreflist": "Αυτή η λίστα αναφοράς δημιουργείται από ένα πρότυπο και προς το παρόν μπορεί να επεξεργαστεί μόνο σε λειτουργία πηγής.",
 	"cite-ve-toolbar-group-label": "Παραπομπή",
-	"cite-ve-othergroup-item": "$1 παραπομπή",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Παραπομπές",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Όνομα ομάδας αναφοράς: \" $1 \""
+	"cite-ve-othergroup-item": "$1 παραπομπή"
 }

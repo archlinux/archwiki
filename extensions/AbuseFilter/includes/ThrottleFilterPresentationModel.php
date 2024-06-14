@@ -19,7 +19,7 @@ class ThrottleFilterPresentationModel extends EchoEventPresentationModel {
 	 */
 	public function getHeaderMessage() {
 		$text = $this->event->getTitle()->getText();
-		list( , $filter ) = explode( '/', $text, 2 );
+		[ , $filter ] = explode( '/', $text, 2 );
 		$disabledActions = $this->event->getExtraParam( 'throttled-actions' );
 		if ( $disabledActions === null ) {
 			// BC for when we didn't include the actions here.

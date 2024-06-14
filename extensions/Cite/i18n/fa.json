@@ -27,7 +27,6 @@
 	"cite_error_included_ref": "برچسب تمام‌کنندهٔ <code>&lt;/ref&gt;</code> برای برچسب <code>&lt;ref&gt;</code> پیدا نشد",
 	"cite_error_group_refs_without_references": "برچسب <code>&lt;ref&gt;</code> برای گروهی به نام «$1» وجود دارد، اما برچسب متناظر با <code>&lt;references group=\"$1\"/&gt;</code> یافت نشد.",
 	"cite_error_references_group_mismatch": "ویژگی «group» برچسپ <code>&lt;ref&gt;</code> درون <code>&lt;references&gt;</code> در تضاد با «$1» است.",
-	"cite_error_references_missing_group": "برچسپ <code>&lt;ref&gt;</code> که در <code>&lt;references&gt;</code> تعریف شده ویژگی group برابر «$1» دارد که در متن قبل از آن پیدا نمی‌شود.",
 	"cite_error_references_missing_key": "برچسپ <code>&lt;ref&gt;</code> که با نام «$1» درون <code>&lt;references&gt;</code> تعریف شده، در متن قبل از آن استفاده نشده است.",
 	"cite_error_references_no_key": "برچسپ <code>&lt;ref&gt;</code> درون <code>&lt;references&gt;</code> ویژگی name را ندارد.",
 	"cite_error_empty_references_define": "برچسپ <code>&lt;ref&gt;</code> تعریف شده درون <code>&lt;references&gt;</code> با نام «$1» محتوایی ندارد.",

@@ -27,6 +27,7 @@ use MediaWiki\Language\RawMessage;
  * by the server and the client.
  */
 class TOTPAuthenticationRequest extends AuthenticationRequest {
+	/** @var string */
 	public $OATHToken;
 
 	public function describeCredentials() {

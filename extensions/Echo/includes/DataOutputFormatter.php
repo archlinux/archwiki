@@ -10,10 +10,10 @@ use MediaWiki\Extension\Notifications\Formatters\SpecialNotificationsFormatter;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\User\User;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
-use MWTimestamp;
 use RequestContext;
-use User;
 
 /**
  * Utility class that formats a notification in the format specified

@@ -3,6 +3,7 @@
 // phpcs:disable
 
 /* @phan-file-suppress PhanTypeSuspiciousEcho, PhanTypeConversionFromArray, PhanPluginUseReturnValueInternalKnown, PhanNoopNew */
+/* @phan-file-suppress PhanTypeMismatchArgument Ignore list/array mismatch for taint checks */
 
 /*
  * This test ensures that taint-check knows about unsafe methods in MediaWiki. Knowledge about those methods
@@ -30,8 +31,12 @@ use MediaWiki\Title\TitleValue;
 use Shellbox\Command\UnboxedResult;
 use Shellbox\Shellbox;
 use Wikimedia\Rdbms\DeleteQueryBuilder;
+use Wikimedia\Rdbms\Expression;
 use Wikimedia\Rdbms\InsertQueryBuilder;
+use Wikimedia\Rdbms\RawSQLExpression;
+use Wikimedia\Rdbms\ReplaceQueryBuilder;
 use Wikimedia\Rdbms\SelectQueryBuilder;
+use Wikimedia\Rdbms\UnionQueryBuilder;
 use Wikimedia\Rdbms\UpdateQueryBuilder;
 
 die( 'This file should never be loaded' );
@@ -65,7 +70,7 @@ class TaintCheckAnnotationsTest {
 		$db->selectRowCount( $_GET['a'], '' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
 		$db->selectRowCount( '', $_GET['a'] ); // @phan-suppress-current-line SecurityCheck-SQLInjection
 		$db->selectRowCount( '', '', [ $_GET['a'] ] ); // @phan-suppress-current-line SecurityCheck-SQLInjection
-		echo $db->selectRowCount( 'safe', 'safe' ); // @phan-suppress-current-line SecurityCheck-XSS
+		echo $db->selectRowCount( 'safe', 'safe' ); // Safe
 
 		$db->selectRow( $_GET['a'], '', [] ); // @phan-suppress-current-line SecurityCheck-SQLInjection
 		$db->selectRow( '', $_GET['a'], [] ); // @phan-suppress-current-line SecurityCheck-SQLInjection
@@ -261,7 +266,7 @@ class TaintCheckAnnotationsTest {
 		$db->selectRowCount( $_GET['a'], '' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
 		$db->selectRowCount( '', $_GET['a'] ); // @phan-suppress-current-line SecurityCheck-SQLInjection
 		$db->selectRowCount( '', '', [ $_GET['a'] ] ); // @phan-suppress-current-line SecurityCheck-SQLInjection
-		echo $db->selectRowCount( 'safe', 'safe' ); // @phan-suppress-current-line SecurityCheck-XSS
+		echo $db->selectRowCount( 'safe', 'safe' ); // Safe
 
 		$db->selectRow( $_GET['a'], '', [] ); // @phan-suppress-current-line SecurityCheck-SQLInjection
 		$db->selectRow( '', $_GET['a'], [] ); // @phan-suppress-current-line SecurityCheck-SQLInjection
@@ -337,6 +342,11 @@ class TaintCheckAnnotationsTest {
 		$sqb->conds( [ $_GET['a'] ] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 		$sqb->conds( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 		$sqb->conds( [ 'foo' => $_GET['a'] ] );// Safe
+		$sqb->groupBy( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
+		$sqb->having( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
+		$sqb->orderBy( $_GET['a'], $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
+		$sqb->useIndex( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
+		$sqb->ignoreIndex( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 
 		$sqb->caller( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 
@@ -351,15 +361,15 @@ class TaintCheckAnnotationsTest {
 		$iqb->insert( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 		$iqb->insertInto( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 
-		$iqb->row( $_GET['a'] );// TODO: Unsafe
+		$iqb->row( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 		$iqb->row( [ 'bar' => $_GET['a'] ] );// Safe
-		$iqb->row( [ $_GET['a'] => 'foo' ] );// TODO: Unsafe
+		$iqb->row( [ $_GET['a'] => 'foo' ] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 
-		$iqb->rows( $_GET['a'] );// TODO: Unsafe
-		$iqb->rows( [ $_GET['a'] ] );// TODO: Unsafe
+		$iqb->rows( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
+		$iqb->rows( [ $_GET['a'] ] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 		$iqb->rows( [ $_GET['a'] => [] ] );// Safe
 		$iqb->rows( [ $_GET['a'] => [ 'foo' => $_GET['a'] ] ] );// Safe
-		$iqb->rows( [ $_GET['a'] => [ $_GET['a'] => 'foo' ] ] );// TODO: Unsafe
+		$iqb->rows( [ $_GET['a'] => [ $_GET['a'] => 'foo' ] ] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 
 		$iqb->set( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 		$iqb->set( [ $_GET['a'] ] );// @phan-suppress-current-line SecurityCheck-SQLInjection
@@ -370,6 +380,28 @@ class TaintCheckAnnotationsTest {
 		$iqb->andSet( [ 'x' => $_GET['a'] ] );// Safe
 
 		$iqb->caller( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
+	}
+
+	function testReplaceQueryBuilder( ReplaceQueryBuilder $rqb ) {
+		$rqb->table( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
+		$rqb->replaceInto( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
+
+		// FIXME: After T361523 and a new release, the suppression must be enabled
+		$rqb->row( $_GET['a'] );// phan-suppress-current-line SecurityCheck-SQLInjection
+		$rqb->row( [ 'bar' => $_GET['a'] ] );// Safe
+		// FIXME: After T361523 and a new release, the suppression must be enabled
+		$rqb->row( [ $_GET['a'] => 'foo' ] );// phan-suppress-current-line SecurityCheck-SQLInjection
+
+		// FIXME: After T361523 and a new release, the suppression must be enabled
+		$rqb->rows( $_GET['a'] );// phan-suppress-current-line SecurityCheck-SQLInjection
+		// FIXME: After T361523 and a new release, the suppression must be enabled
+		$rqb->rows( [ $_GET['a'] ] );// phan-suppress-current-line SecurityCheck-SQLInjection
+		$rqb->rows( [ $_GET['a'] => [] ] );// Safe
+		$rqb->rows( [ $_GET['a'] => [ 'foo' => $_GET['a'] ] ] );// Safe
+		// FIXME: After T361523 and a new release, the suppression must be enabled
+		$rqb->rows( [ $_GET['a'] => [ $_GET['a'] => 'foo' ] ] );// phan-suppress-current-line SecurityCheck-SQLInjection
+
+		$rqb->caller( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
 	}
 
 	function testUpdateQueryBuilder( UpdateQueryBuilder $uqb ) {
@@ -412,6 +444,59 @@ class TaintCheckAnnotationsTest {
 		$dqb->conds( [ 'foo' => $_GET['a'] ] );// Safe
 
 		$dqb->caller( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
+	}
+
+	function testUnionQueryBuilder( UnionQueryBuilder $uqb ) {
+		$uqb->orderBy( $_GET['a'], $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
+
+		$uqb->caller( $_GET['a'] );// @phan-suppress-current-line SecurityCheck-SQLInjection
+
+		echo $uqb->fetchResultSet();// @phan-suppress-current-line SecurityCheck-XSS
+		echo $uqb->fetchField();// @phan-suppress-current-line SecurityCheck-XSS
+		echo $uqb->fetchFieldValues();// @phan-suppress-current-line SecurityCheck-XSS
+		echo $uqb->fetchRow();// @phan-suppress-current-line SecurityCheck-XSS
+	}
+
+	/**
+	 * @suppress PhanPluginUseReturnValueKnown
+	 */
+	function testExpression( \Wikimedia\Rdbms\IDatabase $db ) {
+		$db->expr( $_GET['field'], '=', 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$db->expr( 'a', $_GET['op'], 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$db->expr( 'a', '=', $_GET['value'] ); // Safe
+
+		new Expression( $_GET['field'], '=', 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		new Expression( 'a', $_GET['op'], 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		new Expression( 'a', '=', $_GET['value'] ); // Safe
+
+		$safeExpr = new Expression( 'a', '=', 'a' );
+		$safeExpr->and( $_GET['field'], '=', 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$safeExpr->and( 'a', $_GET['op'], 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$safeExpr->and( 'a', '=', $_GET['value'] ); // Safe
+		$safeExpr->or( $_GET['field'], '=', 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$safeExpr->or( 'a', $_GET['op'], 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$safeExpr->or( 'a', '=', $_GET['value'] ); // Safe
+
+		$andExpr = $safeExpr->andExpr( $safeExpr );
+		$andExpr->and( $_GET['field'], '=', 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$andExpr->and( 'a', $_GET['op'], 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$andExpr->and( 'a', '=', $_GET['value'] ); // Safe
+
+		$orExpr = $safeExpr->orExpr( $safeExpr );
+		$orExpr->or( $_GET['field'], '=', 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$orExpr->or( 'a', $_GET['op'], 'a' ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$orExpr->or( 'a', '=', $_GET['value'] ); // Safe
+
+		$unsafeExpr = new Expression( $_GET['a'], $_GET['a'], $_GET['a'] ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+
+		$unsafeRawSQL = new RawSQLExpression( $_GET['a'] ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$unsafeRawSQL->andExpr( new RawSQLExpression( 'b > ' . $_GET['a'] ) ); // @phan-suppress-current-line SecurityCheck-SQLInjection
+		$unsafeRawSQL->andExpr( new RawSQLExpression( 'a > b ' ) ); // Safe
+
+		// Not validated at this point, only when building the Expression
+		$db->newSelectQueryBuilder()->where( $safeExpr );
+		$db->newSelectQueryBuilder()->where( $unsafeExpr );
+		$db->newSelectQueryBuilder()->where( $unsafeRawSQL );
 	}
 
 	function testMessage( Message $msg ) {
@@ -784,5 +869,10 @@ class TaintCheckAnnotationsTest {
 		echo \Status::newGood( $_GET['a'] );// Safe
 		echo \Status::newGood( $_GET['a'] )->getValue();// Safe
 		echo \Status::newGood( $_GET['a'] )->setResult( true, $_GET['a'] );// Safe
+	}
+
+	function testParserOutput( ParserOutput $po ) {
+		$po->setIndicator( 'foo', $_GET['a'] ); //@phan-suppress-current-line SecurityCheck-XSS
+		$po->setRawText( $_GET['a'] ); //@phan-suppress-current-line SecurityCheck-XSS
 	}
 }

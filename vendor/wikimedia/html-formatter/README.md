@@ -34,7 +34,7 @@ $processedHtml = $formatter->getText();
 
 License
 -------
-Copyright 2011-2023 MediaWiki contributors
+Copyright 2011-2024 MediaWiki contributors
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

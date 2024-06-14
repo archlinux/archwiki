@@ -123,7 +123,7 @@ class PurgeList extends Maintenance {
 			$this->fatalError( 'The --db-touch option is not supported when purging by namespace.' );
 		}
 
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 		$htmlCacheUpdater = $this->getServiceContainer()->getHtmlCacheUpdater();
 		$startId = 0;
 		if ( $namespace === false ) {
@@ -136,7 +136,7 @@ class PurgeList extends Maintenance {
 				->select( [ 'page_id', 'page_namespace', 'page_title' ] )
 				->from( 'page' )
 				->where( $conds )
-				->andWhere( [ 'page_id > ' . $dbr->addQuotes( $startId ) ] )
+				->andWhere( $dbr->expr( 'page_id', '>', $startId ) )
 				->orderBy( 'page_id' )
 				->limit( $this->getBatchSize() )
 				->caller( __METHOD__ )->fetchResultSet();

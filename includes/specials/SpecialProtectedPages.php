@@ -23,18 +23,18 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
 use HTMLMultiSelectField;
 use HTMLSelectNamespace;
 use HTMLSizeFilterField;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Cache\UserCache;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\ProtectedPagesPager;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\SpecialPage\SpecialPage;
-use UserCache;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**

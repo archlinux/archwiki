@@ -56,7 +56,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Erreferentzia hau txantiloi batean edo sortutako beste bloke mota batean dago zehaztuta, eta oraingoz iturburu kodeko moduan baizik ezin da aurreikusi.",
 	"cite-ve-referenceslist-missingreflist": "Erreferentzia zerrenda hau txantiloi batek sortzen du, eta oraingoz iturburu kodeko moduan baizik ezin da editatu.",
 	"cite-ve-toolbar-group-label": "Erreferentzia",
-	"cite-ve-othergroup-item": "$1 erreferentzia",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Erreferentziak",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Taldearen erreferentzia izena: \"$1\""
+	"cite-ve-othergroup-item": "$1 erreferentzia"
 }

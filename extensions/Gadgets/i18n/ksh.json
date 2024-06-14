@@ -8,7 +8,7 @@
 	"gadgets-desc": "En iere [[Special:Preferences#mw-prefsection-gadgets|Enschtällong]] künne Metmaacher [[Special:Gadgets|CSS- un JavaScrip-Gadgets]] en- un ußschallde.",
 	"prefs-gadgets": "Gadgets",
 	"gadgets-prefstext": "Heh is en Leß met beschtemmpte <i xml:lang=\"en\" lang=\"en\">Gadgets</i>,\ndi för jehde Metmaacher enjeschalldt wähde könne.\nDi boue miehts op JavaSkrepte op, drom moß mer dat em Brauser\nenschallde, domet dat klapp.\n\n<i xml:lang=\"en\" lang=\"en\">Gadgets</i> werke nimmohls op dä Sigg\nmet de päsöhnlesche Enschtällonge.\n\nOpjepaß! <i xml:lang=\"en\" lang=\"en\">Gadgets</i>, sin kei Schtök vum MedijaWikki,\nsöndern sin extra em Wikki enschtalleht, un sin vun de Wikki-Bedrihver\nudder de Metmaacher ußjedaach un enjeerescht.\nWä et Rääsch doför hät, kann se övver de Sigge\n[[MediaWiki:Gadgets-definition|<i xml:lang=\"en\" lang=\"en\">Gadgets</i> fäßlääje]]\nun [[Special:Gadgets|<i xml:lang=\"en\" lang=\"en\">Gadgets</i> beschriewe]]\nenreeschte, un verändere.",
-	"gadgets": "<i lang=\"en\">Gadgets</i>",
+	"special-gadgets": "<i lang=\"en\">Gadgets</i>",
 	"gadgetusage": "Schtestekeüvver er Ennsaz vun Zohbehür",
 	"gadgetusage-gadget": "Zohbehür",
 	"gadgetusage-usercount": "Aanzahl Metmaacher",

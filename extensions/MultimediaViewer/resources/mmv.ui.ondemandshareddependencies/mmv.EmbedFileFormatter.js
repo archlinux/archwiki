@@ -55,11 +55,11 @@ const { HtmlUtils } = require( 'mmv.bootstrap' );
 		 * @return {string}
 		 */
 		getThumbnailWikitext( title, width, caption, alt ) {
-			const widthSection = width ? `|${width}px` : '';
-			const captionSection = caption ? `|${caption}` : '';
-			const altSection = alt ? `|alt=${alt}` : '';
+			const widthSection = width ? `|${ width }px` : '';
+			const captionSection = caption ? `|${ caption }` : '';
+			const altSection = alt ? `|alt=${ alt }` : '';
 
-			return `[[File:${title.getMainText()}${widthSection}|thumb${captionSection}${altSection}]]`;
+			return `[[File:${ title.getMainText() }${ widthSection }|thumb${ captionSection }${ altSection }]]`;
 		}
 
 		/**

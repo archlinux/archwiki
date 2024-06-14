@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ant176",
 			"Ayame",
-			"Kkairri",
-			"Ant176"
+			"Kkairri"
 		]
 	},
 	"renocaptcha-desc": "Confirm Edit 用の reCAPTCHA NoCAPTCHA モジュール",

@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface MWSaveDialogAction class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 // TODO: Can perhaps extract a lot of the dialog lifecycle management code
@@ -135,7 +135,9 @@ ve.ui.commandRegistry.register(
 			{
 				command: 'showSave',
 				accessKey: 'accesskey-save',
-				label: function () { return ve.init.target.getSaveButtonLabel(); }
+				label: function () {
+					return ve.init.target.getSaveButtonLabel();
+				}
 			},
 			{
 				command: 'showChanges',

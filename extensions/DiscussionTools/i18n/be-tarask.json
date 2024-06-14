@@ -4,11 +4,12 @@
 			"Matma Rex",
 			"Nieszczarda2",
 			"Renessaince",
-			"Vlad5250"
+			"Vlad5250",
+			"Red Winged Duck"
 		]
 	},
 	"discussiontools": "Інструмэнты абмеркаваньня",
-	"discussiontools-autotopicsubpopup-body": "Калі хтосьці апублікуе ў гэтым абмеркаваньні новы камэнтар, вы атрымаеце паведамленьне. Атрыманьне паведамленьняў можна зьмяніць у наладах.",
+	"discussiontools-autotopicsubpopup-body": "Калі хтосьці апублікуе ў гэтым абмеркаваньні новы камэнтар, {{GENDER:|вы}} атрымаеце паведамленьне. Атрыманьне паведамленьняў можна зьмяніць у наладах.",
 	"discussiontools-autotopicsubpopup-dismiss": "Добра, зразумела",
 	"discussiontools-autotopicsubpopup-preferences": "Рэдагаваць налады",
 	"discussiontools-autotopicsubpopup-title": "Вы падпісаныя",
@@ -34,9 +35,11 @@
 	"discussiontools-preference-label": "Інструмэнты абмеркаваньня",
 	"discussiontools-preference-newtopictool": "Уключыць хуткае дадаваньне тэмы",
 	"discussiontools-preference-newtopictool-createpage": "Калі я наведваю старонку абмеркаваньня, якая яшчэ ня створаная:",
+	"discussiontools-preference-newtopictool-createpage-editor": "Адкрыць рэдактар вікіразьметкі",
+	"discussiontools-preference-summary": "Вы можаце даведацца болей пра гэтыя функцыі, калі [https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary прачытаеце іх апісаньне].",
 	"discussiontools-preference-visualenhancements": "Паказаць дзейнасьць абмеркаваньня",
 	"discussiontools-preference-visualenhancements-help": "Гэта ўключыць новы выгляд старонкі гутарак, які паказвае зьвесткі аб дзейнасьці ў кожным абмеркаваньні.",
-	"discussiontools-replybutton": "Адказаць",
+	"discussiontools-replybutton": "{{GENDER:|Адказаць}}",
 	"discussiontools-replylink": "{{GENDER:|адказаць}}",
 	"discussiontools-replywidget-advanced": "Дадаткова",
 	"discussiontools-replywidget-cancel": "Скасаваць",

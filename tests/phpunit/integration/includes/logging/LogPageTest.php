@@ -10,7 +10,7 @@ use MockTitleTrait;
 
 /**
  * @group Database
- * @coversDefaultClass LogPage
+ * @coversDefaultClass \LogPage
  * @package MediaWiki\Tests\Log
  */
 class LogPageTest extends \MediaWikiIntegrationTestCase {
@@ -30,7 +30,6 @@ class LogPageTest extends \MediaWikiIntegrationTestCase {
 				'test_test' => 'testing-log-restriction'
 			]
 		] );
-		$this->tablesUsed[] = 'logging';
 	}
 
 	/**

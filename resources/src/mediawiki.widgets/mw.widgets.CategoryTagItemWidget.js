@@ -27,8 +27,7 @@
 	 * @private
 	 */
 	PageExistenceCache.prototype.processExistenceCheckQueue = function () {
-		var queue, titles,
-			cache = this;
+		var cache = this;
 		if ( this.currentRequest ) {
 			// Don't fire off a million requests at the same time
 			this.currentRequest.always( function () {
@@ -37,9 +36,9 @@
 			} );
 			return;
 		}
-		queue = this.existenceCheckQueue;
+		var queue = this.existenceCheckQueue;
 		this.existenceCheckQueue = {};
-		titles = Object.keys( queue ).filter( function ( title ) {
+		var titles = Object.keys( queue ).filter( function ( title ) {
 			if ( hasOwn.call( cache.existenceCache, title ) ) {
 				queue[ title ].resolve( cache.existenceCache[ title ] );
 			}
@@ -103,7 +102,7 @@
 		// We only need to handle categories here... but we don't know the target language.
 		// So assume that any namespace-like prefix is the 'Category' namespace...
 		title = title.replace( /^(.+?)_*:_*(.*)$/, 'Category:$2' ); // HACK
-		ForeignTitle.parent.call( this, title, namespace );
+		ForeignTitle.super.call( this, title, namespace );
 	}
 	OO.inheritClass( ForeignTitle, mw.Title );
 	ForeignTitle.prototype.getNamespacePrefix = function () {
@@ -121,13 +120,13 @@
 	 *
 	 * @constructor
 	 * @param {Object} config Configuration options
-	 * @cfg {mw.Title} title Page title to use (required)
-	 * @cfg {string} [apiUrl] API URL, if not the current wiki's API
+	 * @param {mw.Title} config.title Page title to use (required)
+	 * @param {string} [config.apiUrl] API URL, if not the current wiki's API
 	 */
 	mw.widgets.CategoryTagItemWidget = function MWWCategoryTagItemWidget( config ) {
 		var widget = this;
 		// Parent constructor
-		mw.widgets.CategoryTagItemWidget.parent.call( this, $.extend( {
+		mw.widgets.CategoryTagItemWidget.super.call( this, $.extend( {
 			data: config.title.getMainText(),
 			label: config.title.getMainText()
 		}, config ) );
@@ -170,7 +169,8 @@
 	 *
 	 * @static
 	 * @inheritable
-	 * @property {Object}
+	 * @type {Object}
+	 * @name mw.widgets.CategoryTagItemWidget.pageExistenceCaches
 	 */
 	mw.widgets.CategoryTagItemWidget.static.pageExistenceCaches = {
 		'': new PageExistenceCache()

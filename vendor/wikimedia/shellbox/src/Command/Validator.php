@@ -4,8 +4,6 @@ namespace Shellbox\Command;
 
 use Shellbox\Shellbox;
 use Shellbox\ShellboxError;
-use Shellbox\ShellParser\ShellParser;
-use Shellbox\ShellParser\SyntaxInfo;
 
 class Validator {
 	/** @var array */
@@ -58,18 +56,6 @@ class Validator {
 	 * @throws ValidationError
 	 */
 	private function validateWithSpec( BoxedCommand $command, $spec ) {
-		// Locally cached SyntaxInfo for argv and shellFeatures
-		// The static cache will be destroyed when the closure goes out of scope.
-		$info = function () use ( $command ): SyntaxInfo {
-			static $info;
-			if ( !$info ) {
-				$parser = new ShellParser;
-				$tree = $parser->parse( $command->getCommandString() );
-				$info = $tree->getInfo();
-			}
-			return $info;
-		};
-
 		foreach ( $spec as $target => $targetSpec ) {
 			switch ( $target ) {
 				case 'inputFiles':
@@ -85,11 +71,12 @@ class Validator {
 					break;
 
 				case 'shellFeatures':
-					$this->validateShellFeatures( $targetSpec, $info()->getFeatureList() );
+					$this->validateShellFeatures(
+						$targetSpec, $command->getSyntaxInfo()->getFeatureList() );
 					break;
 
 				case 'argv':
-					$this->validateArgv( $targetSpec, $info()->getLiteralArgv() );
+					$this->validateArgv( $targetSpec, $command->getSyntaxInfo()->getLiteralArgv() );
 					break;
 
 				case 'options':

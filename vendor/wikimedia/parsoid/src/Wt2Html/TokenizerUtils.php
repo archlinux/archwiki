@@ -50,7 +50,7 @@ class TokenizerUtils {
 					$res[] = $v;
 				}
 			} else {
-				throw new \Exception( __METHOD__ . ": found falsy element $i" );
+				throw new \RuntimeException( __METHOD__ . ": found falsy element $i" );
 			}
 		}
 
@@ -92,7 +92,7 @@ class TokenizerUtils {
 		$out = [];
 		$text = '';
 		$c = self::flattenIfArray( $c );
-		for ( $i = 0,  $l = count( $c );  $i < $l;  $i++ ) {
+		for ( $i = 0, $l = count( $c );  $i < $l;  $i++ ) {
 			$ci = $c[$i];
 			if ( is_string( $ci ) ) {
 				if ( $ci !== '' ) {
@@ -153,10 +153,10 @@ class TokenizerUtils {
 			}
 		} else {
 			$a = $attrInfo[0];
-			if ( count( $a ) === 0 ) {
+			if ( !$a ) {
 				$dp->startTagSrc = $wtChar . $attrInfo[1];
 			}
-			if ( ( count( $a ) === 0 && $attrInfo[2] ) || $attrInfo[2] !== '|' ) {
+			if ( ( !$a && $attrInfo[2] ) || $attrInfo[2] !== '|' ) {
 				// Variation from default
 				// 1. Separator present with an empty attribute block
 				// 2. Not "|"
@@ -353,7 +353,7 @@ class TokenizerUtils {
 					&& $c2 === ']';
 
 			default:
-				throw new \Exception( 'Unhandled case!' );
+				throw new \RuntimeException( 'Unhandled case!' );
 		}
 	}
 
@@ -382,10 +382,10 @@ class TokenizerUtils {
 			}
 		}
 		// ensure we found a comment
-		while ( count( $buf ) && !( $buf[0] instanceof CommentTk ) ) {
+		while ( $buf && !( $buf[0] instanceof CommentTk ) ) {
 			array_shift( $buf );
 		}
-		if ( count( $buf ) ) {
+		if ( $buf ) {
 			array_splice( $attrs, -count( $buf ), count( $buf ) );
 			return [ 'buf' => $buf, 'commentStartPos' => $buf[0]->dataParsoid->tsr->start ];
 		} else {

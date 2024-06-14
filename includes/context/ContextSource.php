@@ -18,14 +18,23 @@
  * @file
  */
 
+namespace MediaWiki\Context;
+
+use Language;
 use MediaWiki\Config\Config;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\CsrfTokenSet;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MessageSpecifier;
+use Skin;
+use Timing;
+use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\NonSerializable\NonSerializableTrait;
+use WikiPage;
 
 /**
  * The simplest way of implementing IContextSource is to hold a RequestContext as a
@@ -171,6 +180,16 @@ abstract class ContextSource implements IContextSource {
 	}
 
 	/**
+	 * @since 1.42
+	 * @stable to override
+	 * @note When overriding, keep consistent with getLanguage()!
+	 * @return Bcp47Code
+	 */
+	public function getLanguageCode(): Bcp47Code {
+		return $this->getLanguage();
+	}
+
+	/**
 	 * @since 1.18
 	 * @stable to override
 	 * @return Skin
@@ -225,3 +244,6 @@ abstract class ContextSource implements IContextSource {
 		return $this->getContext()->getCsrfTokenSet();
 	}
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( ContextSource::class, 'ContextSource' );

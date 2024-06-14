@@ -21,11 +21,12 @@
 
 namespace MediaWiki\Auth;
 
+use IDBAccessObject;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
-use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\User\UserRigorOptions;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -201,19 +202,18 @@ class TemporaryPasswordPrimaryAuthenticationProvider
 			$this->isTimestampValid( $row->user_newpass_time );
 	}
 
-	public function testUserExists( $username, $flags = User::READ_NORMAL ) {
+	public function testUserExists( $username, $flags = IDBAccessObject::READ_NORMAL ) {
 		$username = $this->userNameUtils->getCanonical( $username, UserRigorOptions::RIGOR_USABLE );
 		if ( $username === false ) {
 			return false;
 		}
 
-		[ $mode, $options ] = \DBAccessObjectUtils::getDBOptions( $flags );
-		$db = \DBAccessObjectUtils::getDBFromIndex( $this->dbProvider, $mode );
+		$db = \DBAccessObjectUtils::getDBFromRecency( $this->dbProvider, $flags );
 		return (bool)$db->newSelectQueryBuilder()
 			->select( [ 'user_id' ] )
 			->from( 'user' )
 			->where( [ 'user_name' => $username ] )
-			->options( $options )
+			->recency( $flags )
 			->caller( __METHOD__ )->fetchField();
 	}
 

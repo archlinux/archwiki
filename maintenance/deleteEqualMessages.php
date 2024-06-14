@@ -72,7 +72,7 @@ class DeleteEqualMessages extends Maintenance {
 			$messageNames,
 			$langCode,
 			$nonContentLanguage,
-			$this->getDB( DB_REPLICA )
+			$this->getReplicaDB()
 		);
 		// getCustomisedStatuses is stripping the sub page from the page titles, add it back
 		$titleSuffix = $nonContentLanguage ? "/$langCode" : '';
@@ -126,7 +126,7 @@ class DeleteEqualMessages extends Maintenance {
 				->getLanguageNames( LanguageNameUtils::AUTONYMS, LanguageNameUtils::SUPPORTED );
 			if ( $langCode === '*' ) {
 				// All valid lang-code subpages in NS_MEDIAWIKI that
-				// override the messsages in that language
+				// override the messages in that language
 				foreach ( $langCodes as $key => $value ) {
 					$this->fetchMessageInfo( $key, $messageInfo );
 				}
@@ -186,7 +186,7 @@ class DeleteEqualMessages extends Maintenance {
 
 		// Handle deletion
 		$this->output( "\n...deleting equal messages (this may take a long time!)..." );
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		$wikiPageFactory = $services->getWikiPageFactory();
 		$delPageFactory = $services->getDeletePageFactory();
 		foreach ( $messageInfo['results'] as $result ) {

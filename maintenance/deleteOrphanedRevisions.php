@@ -46,7 +46,7 @@ class DeleteOrphanedRevisions extends Maintenance {
 
 		$report = $this->hasOption( 'report' );
 
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		$this->beginTransaction( $dbw, __METHOD__ );
 
 		# Find all the orphaned revisions
@@ -91,10 +91,16 @@ class DeleteOrphanedRevisions extends Maintenance {
 	 * @param IDatabase $dbw Primary DB handle
 	 */
 	private function deleteRevs( array $id, $dbw ) {
-		$dbw->delete( 'revision', [ 'rev_id' => $id ], __METHOD__ );
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'revision' )
+			->where( [ 'rev_id' => $id ] )
+			->caller( __METHOD__ )->execute();
 
 		// Delete from ip_changes should a record exist.
-		$dbw->delete( 'ip_changes', [ 'ipc_rev_id' => $id ], __METHOD__ );
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'ip_changes' )
+			->where( [ 'ipc_rev_id' => $id ] )
+			->caller( __METHOD__ )->execute();
 	}
 }
 

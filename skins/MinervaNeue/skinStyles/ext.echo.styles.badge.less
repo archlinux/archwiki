@@ -1,4 +1,4 @@
-/* stylelint-disable unit-disallowed-list, selector-max-id */
+/* stylelint-disable selector-max-id */
 @import 'mediawiki.skin.variables.less';
 
 /**
@@ -34,11 +34,11 @@
 }
 
 .minerva-icon--bell {
-	.cdx-mixin-css-icon( @cdx-icon-bell, @color-subtle );
+	.cdx-mixin-css-icon( @cdx-icon-bell, var(--color-subtle) );
 }
 
 .minerva-icon--tray {
-	.cdx-mixin-css-icon( @cdx-icon-tray, @color-subtle );
+	.cdx-mixin-css-icon( @cdx-icon-tray, var(--color-subtle) );
 }
 
 .mw-echo-notification-badge-nojs {

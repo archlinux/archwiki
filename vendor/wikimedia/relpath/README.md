@@ -1,8 +1,9 @@
 RelPath
 =======
 
-RelPath is a small PHP library for computing a relative filepath to some path,
-either from the current directory or from an optional start directory.
+RelPath is a small PHP library for working with file paths, to join
+two paths, or find the relative path to a path from the current directory
+or from an optional start directory.
 
 Here is how you use it:
 

@@ -14,14 +14,15 @@
 			"Wwycheuk",
 			"Xiplus",
 			"一個正常人",
-			"捍粵者"
+			"捍粵者",
+			"Cookai1205"
 		]
 	},
 	"minerva-last-modified-date": "最後編輯於 $1 $2",
 	"minerva-watchlist-cta": "保持追蹤此頁面以及對此的所有修改。",
 	"mobile-frontend-cookies-required": "切換檢視模式需要開啟 Cookies，請先開啟後再重試。",
 	"mobile-frontend-editor-edit": "編輯",
-	"minerva-download": "下載 PDF",
+	"minerva-download": "下載為PDF",
 	"mobile-frontend-editor-redlink-create": "建立頁面",
 	"mobile-frontend-editor-redlink-explain": "此頁面尚未被建立。",
 	"mobile-frontend-editor-redlink-leave": "不用了，謝謝。",
@@ -61,12 +62,21 @@
 	"minerva-page-actions-language-switcher": "語言",
 	"minerva-page-actions-history": "歷史",
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|討論]]",
-	"skinname-minerva": "Minerva",
+	"skinname-minerva": "MinervaNeue",
 	"minerva-skin-desc": "回應式的行動版優先外觀",
 	"skin-minerva-issue-learn-more": "了解更多",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 秒}}前",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1}} 分前",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 小時}}前",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 天}}前",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 個月}}前",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1}} 年前",
 	"skin-minerva-mobile-option-MinervaShowCategories": "分類",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "檢視頁面分類",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "已改進頁面問題處理",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "頁面問題（模板:ambox）會內聯至條目裡。",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "很不幸地，依照頁面的分組結果在移動裝置上不可用。若您想要使用依照頁面功能的群組，請訪問適用於桌上型電腦的網站。"
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "很不幸地，依照頁面的分組結果在移動裝置上不可用。若您想要使用依照頁面功能的群組，請訪問適用於桌上型電腦的網站。",
+	"skin-minerva-night-mode-unavailable": "頁面僅適用於「日間」色彩主題。",
+	"minerva.css": "/* 此處所有的 CSS 都會在使用者使用 MinervaNeue 外觀時載入 */",
+	"minerva.js": "/* 此處所有的 JavaScript 都會在使用者使用 MinervaNeue 外觀時載入 */"
 }

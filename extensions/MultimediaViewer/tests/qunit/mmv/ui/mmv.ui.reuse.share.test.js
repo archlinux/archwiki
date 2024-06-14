@@ -25,7 +25,7 @@ const { Share } = require( 'mmv.ui.reuse.shareembed' );
 	QUnit.module( 'mmv.ui.reuse.share', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
-		var share = makeShare();
+		const share = makeShare();
 
 		assert.true( share instanceof Share, 'Share UI element is created.' );
 		assert.strictEqual( share.$pane.length, 1, 'Pane div created.' );
@@ -34,12 +34,12 @@ const { Share } = require( 'mmv.ui.reuse.shareembed' );
 	} );
 
 	QUnit.test( 'set()/empty():', function ( assert ) {
-		var share = makeShare(),
-			image = { // fake ImageModel
-				title: new mw.Title( 'File:Foobar.jpg' ),
-				url: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
-				descriptionUrl: '//commons.wikimedia.org/wiki/File:Foobar.jpg'
-			};
+		const share = makeShare();
+		const image = { // fake ImageModel
+			title: new mw.Title( 'File:Foobar.jpg' ),
+			url: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
+			descriptionUrl: '//commons.wikimedia.org/wiki/File:Foobar.jpg'
+		};
 
 		assert.notStrictEqual( !share.pageInput.textInput.getValue(), '', 'pageInput is empty.' );
 

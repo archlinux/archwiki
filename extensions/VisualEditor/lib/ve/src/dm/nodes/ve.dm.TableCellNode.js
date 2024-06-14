@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel TableCellNode class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -124,7 +124,7 @@ ve.dm.TableCellNode.static.describeChange = function ( key, change ) {
 	}
 
 	// Parent method
-	return ve.dm.TableCellNode.parent.static.describeChange.call( this, key, change );
+	return ve.dm.TableCellNode.super.static.describeChange.call( this, key, change );
 };
 
 /* Registration */

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Anterdc99",
 			"Arthur2e5",
 			"Cwek",
 			"Diskdance",
@@ -17,8 +18,8 @@
 			"Xiaomingyan",
 			"Xiplus",
 			"Yfdyh000",
-			"沈澄心",
-			"星海"
+			"星海",
+			"沈澄心"
 		]
 	},
 	"templatedata-desc": "实现模板参数的数据存储（使用JSON）",
@@ -104,6 +105,7 @@
 	"templatedata-modal-table-param-aliases": "别名",
 	"templatedata-modal-table-param-autovalue": "自动值",
 	"templatedata-modal-table-param-default": "默认值（$1）",
+	"templatedata-modal-table-param-status": "状态",
 	"templatedata-modal-table-param-deprecated": "弃用",
 	"templatedata-modal-table-param-deprecatedValue": "弃用指南",
 	"templatedata-modal-table-param-description": "描述（$1）",

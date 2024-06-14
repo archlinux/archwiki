@@ -35,7 +35,7 @@ class WordLevelDiff extends Diff {
 	/**
 	 * @inheritDoc
 	 */
-	protected $bailoutComplexity = 40000000; // Roughly 6K x 6K words changed
+	protected $bailoutComplexity = 40_000_000; // Roughly 6K x 6K words changed
 
 	/**
 	 * @stable to call
@@ -141,5 +141,5 @@ class WordLevelDiff extends Diff {
 
 }
 
-/** @deprecated since 1.41 */
+/** @deprecated class alias since 1.41 */
 class_alias( WordLevelDiff::class, 'WordLevelDiff' );

@@ -5,7 +5,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 
 /**
- * @covers MediaWiki\Category\Category
+ * @covers \MediaWiki\Category\Category
  * @group Database
  * @group Category
  */
@@ -21,8 +21,6 @@ class CategoryTest extends MediaWikiIntegrationTestCase {
 			MainConfigNames::MetaNamespace => 'Project',
 			MainConfigNames::LanguageCode => 'en',
 		] );
-
-		$this->tablesUsed[] = 'category';
 	}
 
 	public function addDBData() {

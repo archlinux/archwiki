@@ -90,6 +90,7 @@
 	"templatedata-modal-table-param-aliases": "כינויים",
 	"templatedata-modal-table-param-autovalue": "ערך אוטומטי",
 	"templatedata-modal-table-param-default": "ערך התחלתי ($1)",
+	"templatedata-modal-table-param-status": "מצב",
 	"templatedata-modal-table-param-deprecated": "מיושן",
 	"templatedata-modal-table-param-deprecatedValue": "הדרכה על התיישנות",
 	"templatedata-modal-table-param-description": "תיאור ($1)",

@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Heron702",
 			"Strainu",
-			"WebSourceContentRO",
-			"Heron702"
+			"WebSourceContentRO"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "Verificați dacă un AbuseFilter se potrivește cu un set de variabile, o modificare sau un eveniment AbuseFilter înregistrat",

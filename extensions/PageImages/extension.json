@@ -6,10 +6,15 @@
 	"license-name": "WTFPL",
 	"type": "api",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42.0"
 	},
 	"APIPropModules": {
-		"pageimages": "PageImages\\ApiQueryPageImages"
+		"pageimages": {
+			"class": "PageImages\\ApiQueryPageImages",
+			"services": [
+				"RepoGroup"
+			]
+		}
 	},
 	"MessagesDirs": {
 		"PageImages": [
@@ -37,6 +42,8 @@
 		"main": {
 			"class": "PageImages\\PageImages",
 			"services": [
+				"DBLoadBalancerFactory",
+				"RepoGroup",
 				"UserOptionsLookup"
 			]
 		},
@@ -47,7 +54,8 @@
 				"MainWANObjectCache",
 				"HttpRequestFactory",
 				"DBLoadBalancerFactory",
-				"TitleFactory"
+				"TitleFactory",
+				"LinksMigration"
 			]
 		},
 		"search": {
@@ -63,7 +71,12 @@
 		}
 	},
 	"JobClasses": {
-		"InitImageDataJob": "PageImages\\Job\\InitImageDataJob"
+		"InitImageDataJob": {
+			"class": "PageImages\\Job\\InitImageDataJob",
+			"services": [
+				"DBLoadBalancerFactory"
+			]
+		}
 	},
 	"config": {
 		"PageImagesScores": {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2004 Brion Vibber, lcrocker, Tim Starling,
+ * Copyright © 2004 Brooke Vibber, lcrocker, Tim Starling,
  * Domas Mituzas, Antoine Musso, Jens Frank, Zhengzhu,
  * 2006 Rob Church <robchur@gmail.com>
  *
@@ -25,18 +25,20 @@
 
 namespace MediaWiki\Pager;
 
-use HTMLForm;
 use HTMLHiddenField;
 use HTMLInfoField;
 use HTMLSelectField;
 use HTMLSubmitField;
 use HTMLUserTextField;
-use IContextSource;
+use MediaWiki\Block\HideUserUtils;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserGroupManager;
@@ -79,6 +81,12 @@ class UsersPager extends AlphabeticPager {
 	/** @var string */
 	protected $requestedUser;
 
+	/** @var int */
+	protected $blockTargetReadStage;
+
+	/** @var HideUserUtils */
+	protected $hideUserUtils;
+
 	private HookRunner $hookRunner;
 	private LinkBatchFactory $linkBatchFactory;
 	private UserGroupManager $userGroupManager;
@@ -91,6 +99,7 @@ class UsersPager extends AlphabeticPager {
 	 * @param IConnectionProvider $dbProvider
 	 * @param UserGroupManager $userGroupManager
 	 * @param UserIdentityLookup $userIdentityLookup
+	 * @param HideUserUtils $hideUserUtils
 	 * @param string|null $par
 	 * @param bool|null $including Whether this page is being transcluded in
 	 * another page
@@ -102,6 +111,7 @@ class UsersPager extends AlphabeticPager {
 		IConnectionProvider $dbProvider,
 		UserGroupManager $userGroupManager,
 		UserIdentityLookup $userIdentityLookup,
+		HideUserUtils $hideUserUtils,
 		$par,
 		$including
 	) {
@@ -146,13 +156,16 @@ class UsersPager extends AlphabeticPager {
 			}
 		}
 
-		// Set database before parent constructor to avoid setting it there with wfGetDB
+		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbProvider->getReplicaDatabase();
 		parent::__construct();
 		$this->userGroupManager = $userGroupManager;
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->userIdentityLookup = $userIdentityLookup;
+		$this->blockTargetReadStage = $this->getConfig()
+			->get( MainConfigNames::BlockTargetMigrationStage ) & SCHEMA_COMPAT_READ_MASK;
+		$this->hideUserUtils = $hideUserUtils;
 	}
 
 	/**
@@ -168,17 +181,35 @@ class UsersPager extends AlphabeticPager {
 	public function getQueryInfo() {
 		$dbr = $this->getDatabase();
 		$conds = [];
+		$options = [];
 
 		// Don't show hidden names
 		if ( !$this->canSeeHideuser() ) {
-			$conds['ipb_deleted'] = [ null, 0 ];
+			$conds[] = $this->hideUserUtils->getExpression( $dbr );
+			$deleted = '1=0';
+		} else {
+			// In MySQL, there's no separate boolean type so getExpression()
+			// effectively returns an integer, and MAX() works on the result of it.
+			// In PostgreSQL, getExpression() returns a special boolean type which
+			// can't go into MAX(). So we have to cast it to support PostgreSQL.
+
+			// A neater PostgreSQL-only solution would be bool_or(), but MySQL
+			// doesn't have that or need it. We could add a wrapper to SQLPlatform
+			// which returns MAX() on MySQL and bool_or() on PostgreSQL.
+
+			// This would not be necessary if we used "GROUP BY user_name,user_id",
+			// but MariaDB forgets how to use indexes if you do that.
+			$deleted = 'MAX(' . $dbr->buildIntegerCast(
+				$this->hideUserUtils->getExpression( $dbr, 'user_id', HideUserUtils::HIDDEN_USERS )
+			) . ')';
 		}
 
-		$options = [];
-
 		if ( $this->requestedGroup != '' || $this->temporaryGroupsOnly ) {
-			$conds[] = 'ug_expiry >= ' . $dbr->addQuotes( $dbr->timestamp() ) .
-			( !$this->temporaryGroupsOnly ? ' OR ug_expiry IS NULL' : '' );
+			$cond = $dbr->expr( 'ug_expiry', '>=', $dbr->timestamp() );
+			if ( !$this->temporaryGroupsOnly ) {
+				$cond = $cond->or( 'ug_expiry', '=', null );
+			}
+			$conds[] = $cond;
 		}
 
 		if ( $this->requestedGroup != '' ) {
@@ -193,7 +224,7 @@ class UsersPager extends AlphabeticPager {
 					$conds[] = 'user_id >= ' . $userIdentity->getId();
 				}
 			} else {
-				$conds[] = 'user_name >= ' . $dbr->addQuotes( $this->requestedUser );
+				$conds[] = $dbr->expr( 'user_name', '>=', $this->requestedUser );
 			}
 		}
 
@@ -203,28 +234,61 @@ class UsersPager extends AlphabeticPager {
 
 		$options['GROUP BY'] = $this->creationSort ? 'user_id' : 'user_name';
 
-		$query = [
-			'tables' => [ 'user', 'user_groups', 'ipblocks' ],
-			'fields' => [
-				'user_name' => $this->creationSort ? 'MAX(user_name)' : 'user_name',
-				'user_id' => $this->creationSort ? 'user_id' : 'MAX(user_id)',
-				'edits' => 'MAX(user_editcount)',
-				'creation' => 'MIN(user_registration)',
-				'ipb_deleted' => 'MAX(ipb_deleted)', // block/hide status
-				'ipb_sitewide' => 'MAX(ipb_sitewide)'
-			],
-			'options' => $options,
-			'join_conds' => [
-				'user_groups' => [ 'LEFT JOIN', 'user_id=ug_user' ],
-				'ipblocks' => [
-					'LEFT JOIN', [
-						'user_id=ipb_user',
-						'ipb_auto' => 0
+		if ( $this->blockTargetReadStage === SCHEMA_COMPAT_READ_OLD ) {
+			$query = [
+				'tables' => [ 'user', 'user_groups', 'ipblocks' ],
+				'fields' => [
+					'user_name' => $this->creationSort ? 'MAX(user_name)' : 'user_name',
+					'user_id' => $this->creationSort ? 'user_id' : 'MAX(user_id)',
+					'edits' => 'MAX(user_editcount)',
+					'creation' => 'MIN(user_registration)',
+					'deleted' => $deleted, // block/hide status
+					'sitewide' => 'MAX(ipb_sitewide)'
+				],
+				'options' => $options,
+				'join_conds' => [
+					'user_groups' => [ 'LEFT JOIN', 'user_id=ug_user' ],
+					'ipblocks' => [
+						'LEFT JOIN', [
+							'user_id=ipb_user',
+							'ipb_auto' => 0
+						]
+					],
+				],
+				'conds' => $conds
+			];
+		} else {
+			$query = [
+				'tables' => [
+					'user',
+					'user_groups',
+					'block_with_target' => [
+						'block_target',
+						'block'
 					]
 				],
-			],
-			'conds' => $conds
-		];
+				'fields' => [
+					'user_name' => $this->creationSort ? 'MAX(user_name)' : 'user_name',
+					'user_id' => $this->creationSort ? 'user_id' : 'MAX(user_id)',
+					'edits' => 'MAX(user_editcount)',
+					'creation' => 'MIN(user_registration)',
+					'deleted' => $deleted, // block/hide status
+					'sitewide' => 'MAX(bl_sitewide)'
+				],
+				'options' => $options,
+				'join_conds' => [
+					'user_groups' => [ 'LEFT JOIN', 'user_id=ug_user' ],
+					'block_with_target' => [
+						'LEFT JOIN', [
+							'user_id=bt_user',
+							'bt_auto' => 0
+						]
+					],
+					'block' => [ 'JOIN', 'bl_target=bt_id' ]
+				],
+				'conds' => $conds
+			];
+		}
 
 		$this->hookRunner->onSpecialListusersQueryInfo( $this, $query );
 
@@ -267,7 +331,7 @@ class UsersPager extends AlphabeticPager {
 
 		$item = $lang->specialList( $ulinks, $groups );
 
-		if ( $row->ipb_deleted ) {
+		if ( $row->deleted ) {
 			$item = "<span class=\"deleted\">$item</span>";
 		}
 
@@ -287,7 +351,7 @@ class UsersPager extends AlphabeticPager {
 			$created = ' ' . $this->msg( 'parentheses' )->rawParams( $created )->escaped();
 		}
 
-		$blocked = $row->ipb_deleted !== null && $row->ipb_sitewide === '1' ?
+		$blocked = $row->deleted !== null && $row->sitewide === '1' ?
 			' ' . $this->msg( 'listusers-blocked', $userName )->escaped() :
 			'';
 
@@ -347,6 +411,18 @@ class UsersPager extends AlphabeticPager {
 
 		$groupOptions = [ $this->msg( 'group-all' )->text() => '' ];
 		foreach ( $this->getAllGroups() as $group => $groupText ) {
+			if ( array_key_exists( $groupText, $groupOptions ) ) {
+				LoggerFactory::getInstance( 'error' )->error(
+					'The group {group_one} has the same translation as {group_two} for {lang}. ' .
+					'{group_one} will not be displayed in group dropdown of the UsersPager.',
+					[
+						'group_one' => $group,
+						'group_two' => $groupOptions[$groupText],
+						'lang' => $this->getLanguage()->getCode(),
+					]
+				);
+				continue;
+			}
 			$groupOptions[ $groupText ] = $group;
 		}
 

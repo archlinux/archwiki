@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Rodrigue",
-			"Musindi250"
+			"Musindi250",
+			"Rodrigue"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Igitabo",
@@ -47,7 +47,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Iyi ndanganturo isobanurwa mu nyandikorugero cyangwa izindi nyandiko, kandi kuri ubu bishobora gusa kuboneka muburyo bw'inkomoko.",
 	"cite-ve-referenceslist-missingreflist": "Uru rutonde rw'indanganturo ruva mu nyandikorugero",
 	"cite-ve-toolbar-group-label": "vuga",
-	"cite-ve-othergroup-item": "$1 Indanganturo",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Indanganturo",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Izina ry'itsinda ry'indanganturo : \"$1\""
+	"cite-ve-othergroup-item": "$1 Indanganturo"
 }

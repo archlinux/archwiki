@@ -13,7 +13,6 @@
 		]
 	},
 	"apierror-visualeditor-difffailed": "差分の取得ができませんでした",
-	"apierror-visualeditor-docserver": "Parsoid/RESTBaseサーバと通信中エラーが発生しました（応答なし）",
 	"apihelp-visualeditor-param-basetimestamp": "保存する際に、編集した版のタイムスタンプとしてこれがセットされます。編集競合を検出するのに利用されます。",
 	"apihelp-visualeditor-param-badetag": "RESTBase が返した ETag が間違っている場合と感じたは、ログを残すためここに転記してください。",
 	"apihelp-visualeditor-param-cachekey": "serializeまたはdiffについては、このキーで以前に serializeforcache リクエストをした際の結果を使用する。$1html を上書きします。",

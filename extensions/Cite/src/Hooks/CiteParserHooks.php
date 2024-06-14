@@ -35,7 +35,7 @@ class CiteParserHooks implements
 	 * @param Parser $parser
 	 */
 	public function onParserClearState( $parser ) {
-		unset( $parser->extCite );
+		$parser->extCite = null;
 	}
 
 	/**
@@ -44,7 +44,7 @@ class CiteParserHooks implements
 	 * @param Parser $parser
 	 */
 	public function onParserCloned( $parser ) {
-		unset( $parser->extCite );
+		$parser->extCite = null;
 	}
 
 	/**

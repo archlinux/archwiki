@@ -26,6 +26,8 @@
 	"apihelp-discussiontoolsedit-summary": "於討論頁發布留言。",
 	"apihelp-discussiontoolsfindcomment-summary": "按 ID 或名稱查找留言。",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "留言 ID 或名稱",
+	"apihelp-discussiontoolsfindcomment-param-heading": "標題雜湊片段",
+	"apihelp-discussiontoolsfindcomment-param-page": "標題雜湊片段曾存在的頁面",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "要檢查的話題名稱",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "取得指定話題的訂閱狀態。",
 	"apihelp-discussiontoolspageinfo-param-oldid": "要使用的修訂編號（預設為最新版本）。",

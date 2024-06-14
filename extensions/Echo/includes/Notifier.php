@@ -9,7 +9,7 @@ use MediaWiki\Extension\Notifications\Hooks\HookRunner;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\MediaWikiServices;
-use User;
+use MediaWiki\User\User;
 use UserMailer;
 
 class Notifier {

@@ -23,54 +23,40 @@ namespace MediaWiki\Minerva\Menu;
 use IContextSource;
 use MediaWiki\Minerva\Menu\Entries\AuthMenuEntry;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use MediaWiki\User\UserOptionsLookup;
 use Message;
-use SpecialPage;
 
 /**
  * Set of all known menu items for easier building
  */
 final class Definitions {
 
-	/**
-	 * @var UserIdentity
-	 */
-	private $user;
-
-	/**
-	 * @var IContextSource
-	 */
-	private $context;
-
-	/**
-	 * @var SpecialPageFactory
-	 */
-	private $specialPageFactory;
-
-	/**
-	 * @var UserOptionsLookup
-	 */
-	private $userOptionsLookup;
+	private SpecialPageFactory $specialPageFactory;
+	private IContextSource $context;
+	private UserIdentity $user;
 
 	/**
 	 * Initialize definitions helper class
 	 *
-	 * @param IContextSource $context
-	 * @param SpecialPageFactory $factory
-	 * @param UserOptionsLookup $userOptionsLookup
+	 * @param SpecialPageFactory $specialPageFactory
 	 */
 	public function __construct(
-		IContextSource $context,
-		SpecialPageFactory $factory,
-		UserOptionsLookup $userOptionsLookup
+		SpecialPageFactory $specialPageFactory
 	) {
-		$this->user = $context->getUser();
+		$this->specialPageFactory = $specialPageFactory;
+	}
+
+	/**
+	 * @param IContextSource $context
+	 * @return $this
+	 */
+	public function setContext( IContextSource $context ) {
 		$this->context = $context;
-		$this->specialPageFactory = $factory;
-		$this->userOptionsLookup = $userOptionsLookup;
+		$this->user = $context->getUser();
+		return $this;
 	}
 
 	/**
@@ -293,7 +279,7 @@ final class Definitions {
 			// unset campaign on login link so as not to interfere with A/B tests
 			unset( $returnToQuery['campaign'] );
 		}
-		if ( !empty( $returnToQuery ) ) {
+		if ( $returnToQuery ) {
 			$ret['returntoquery'] = wfArrayToCgi( $returnToQuery );
 		}
 		return $ret;

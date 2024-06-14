@@ -3,8 +3,18 @@
 namespace MediaWiki\Extension\DiscussionTools\Tests;
 
 use FormatJson;
+use GenderCache;
+use HashConfig;
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\DiscussionTools\CommentParser;
+use MediaWiki\Interwiki\NullInterwikiLookup;
+use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\StaticUserOptionsLookup;
+use MediaWikiTitleCodec;
+use MultiConfig;
+use NamespaceInfo;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -14,9 +24,6 @@ trait TestUtils {
 
 	/**
 	 * Create a Document from a string.
-	 *
-	 * @param string $html
-	 * @return Document
 	 */
 	protected static function createDocument( string $html ): Document {
 		return DOMUtils::parseHTML( $html );
@@ -24,9 +31,6 @@ trait TestUtils {
 
 	/**
 	 * Return the node that is expected to contain thread items.
-	 *
-	 * @param Document $doc
-	 * @return Element
 	 */
 	protected static function getThreadContainer( Document $doc ): Element {
 		// In tests created from Parsoid output, comments are contained directly in <body>.
@@ -38,9 +42,6 @@ trait TestUtils {
 
 	/**
 	 * Get text from path
-	 *
-	 * @param string $relativePath
-	 * @return string
 	 */
 	protected static function getText( string $relativePath ): string {
 		return file_get_contents( __DIR__ . '/../' . $relativePath );
@@ -48,9 +49,6 @@ trait TestUtils {
 
 	/**
 	 * Write text to path
-	 *
-	 * @param string $relativePath
-	 * @param string $text
 	 */
 	protected static function overwriteTextFile( string $relativePath, string $text ): void {
 		file_put_contents( __DIR__ . '/../' . $relativePath, $text );
@@ -73,9 +71,6 @@ trait TestUtils {
 
 	/**
 	 * Write JSON to path
-	 *
-	 * @param string $relativePath
-	 * @param array $data
 	 */
 	protected static function overwriteJsonFile( string $relativePath, array $data ): void {
 		$json = FormatJson::encode( $data, "\t", FormatJson::ALL_OK );
@@ -84,9 +79,6 @@ trait TestUtils {
 
 	/**
 	 * Get HTML from path
-	 *
-	 * @param string $relativePath
-	 * @return string
 	 */
 	protected static function getHtml( string $relativePath ): string {
 		return file_get_contents( __DIR__ . '/../' . $relativePath );
@@ -94,10 +86,6 @@ trait TestUtils {
 
 	/**
 	 * Write HTML to path
-	 *
-	 * @param string $relPath
-	 * @param Element $container
-	 * @param string $origRelPath
 	 */
 	protected static function overwriteHtmlFile( string $relPath, Element $container, string $origRelPath ): void {
 		// Do not use $doc->saveHtml(), it outputs an awful soup of HTML entities for documents with
@@ -137,20 +125,114 @@ trait TestUtils {
 		file_put_contents( __DIR__ . '/../' . $relPath, $html );
 	}
 
-	/**
-	 * Create a comment parser
-	 *
-	 * @param array $data
-	 * @return CommentParser
-	 */
-	public static function createParser( array $data ): CommentParser {
+	private static function prepareConfig( array $config, array $data ): array {
+		return [
+			'LanguageCode' => $config['wgContentLanguage'],
+			'ArticlePath' => $config['wgArticlePath'],
+			// TODO: Move this to $config
+			'Localtimezone' => $data['localTimezone'],
+
+			// Defaults for NamespaceInfo
+			'CanonicalNamespaceNames' => NamespaceInfo::CANONICAL_NAMES,
+			'CapitalLinkOverrides' => [],
+			'CapitalLinks' => true,
+			'ContentNamespaces' => [ NS_MAIN ],
+			'ExtraNamespaces' => [],
+			'ExtraSignatureNamespaces' => [],
+			'NamespaceContentModels' => [],
+			'NamespacesWithSubpages' => [
+				NS_TALK => true,
+				NS_USER => true,
+				NS_USER_TALK => true,
+				NS_PROJECT => true,
+				NS_PROJECT_TALK => true,
+				NS_FILE_TALK => true,
+				NS_MEDIAWIKI => true,
+				NS_MEDIAWIKI_TALK => true,
+				NS_TEMPLATE => true,
+				NS_TEMPLATE_TALK => true,
+				NS_HELP => true,
+				NS_HELP_TALK => true,
+				NS_CATEGORY_TALK => true
+			],
+			'NonincludableNamespaces' => [],
+
+			// Defaults for LanguageFactory
+			'DummyLanguageCodes' => [],
+
+			// Defaults for LanguageConverterFactory
+			'UsePigLatinVariant' => false,
+			'DisableLangConversion' => false,
+			'DisableTitleConversion' => false,
+
+			// Defaults for Language
+			'ExtraGenderNamespaces' => [],
+
+			// Overrides
+			'ExtraNamespaces' => array_diff_key( $config['wgFormattedNamespaces'], NamespaceInfo::CANONICAL_NAMES ),
+			'MetaNamespace' => strtr( $config['wgFormattedNamespaces'][NS_PROJECT], ' ', '_' ),
+			'MetaNamespaceTalk' => strtr( $config['wgFormattedNamespaces'][NS_PROJECT_TALK], ' ', '_' ),
+			'NamespaceAliases' => $config['wgNamespaceIds'],
+		];
+	}
+
+	public function createParser( array $config, array $data ): CommentParser {
+		// TODO: Derive everything from $config and $data without using global services
 		$services = MediaWikiServices::getInstance();
+
+		$config = self::prepareConfig( $config, $data );
+
+		$langConvFactory = new LanguageConverterFactory(
+			new ServiceOptions( LanguageConverterFactory::CONSTRUCTOR_OPTIONS, $config ),
+			$services->getObjectFactory(),
+			static function () use ( $services ) {
+				return $services->getLanguageFactory()->getLanguage( $config['LanguageCode'] );
+			}
+		);
+
 		return new CommentParser(
-			$services->getMainConfig(),
-			$services->getContentLanguage(),
-			$services->getLanguageConverterFactory(),
+			new HashConfig( $config ),
+			$services->getLanguageFactory()->getLanguage( $config['LanguageCode'] ),
+			$langConvFactory,
 			new MockLanguageData( $data ),
-			$services->getTitleParser()
+			$this->createTitleParser( $config )
+		);
+	}
+
+	public function createTitleParser( array $config ): MediaWikiTitleCodec {
+		// TODO: Derive everything from $config and $data without using global services
+		$services = MediaWikiServices::getInstance();
+
+		if ( isset( $config['wgArticlePath'] ) ) {
+			$config = self::prepareConfig( $config, [ 'localTimezone' => '' ] );
+		}
+
+		$nsInfo = new NamespaceInfo(
+			new ServiceOptions( NamespaceInfo::CONSTRUCTOR_OPTIONS, $config ),
+			$services->getHookContainer(),
+			[],
+			[]
+		);
+
+		$langFactory = new LanguageFactory(
+			new ServiceOptions( LanguageFactory::CONSTRUCTOR_OPTIONS, $config ),
+			$nsInfo,
+			$services->getLocalisationCache(),
+			$services->getLanguageNameUtils(),
+			$services->getLanguageFallback(),
+			$services->getLanguageConverterFactory(),
+			$services->getHookContainer(),
+			new MultiConfig( [ new HashConfig( $config ), $services->getMainConfig() ] )
+		);
+
+		$contLang = $langFactory->getLanguage( $config['LanguageCode'] );
+
+		return new MediaWikiTitleCodec(
+			$contLang,
+			new GenderCache( $nsInfo, null, new StaticUserOptionsLookup( [] ) ),
+			[],
+			new NullInterwikiLookup(),
+			$nsInfo
 		);
 	}
 }

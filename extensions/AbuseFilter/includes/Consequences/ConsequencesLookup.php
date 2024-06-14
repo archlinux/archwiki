@@ -51,7 +51,7 @@ class ConsequencesLookup {
 		$localFilters = [];
 
 		foreach ( $filters as $filter ) {
-			list( $filterID, $global ) = GlobalNameUtils::splitGlobalName( $filter );
+			[ $filterID, $global ] = GlobalNameUtils::splitGlobalName( $filter );
 
 			if ( $global ) {
 				$globalFilters[] = $filterID;

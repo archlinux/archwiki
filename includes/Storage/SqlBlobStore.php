@@ -48,10 +48,13 @@ use Wikimedia\Rdbms\IResultWrapper;
  * @note This was written to act as a drop-in replacement for the corresponding
  *       static methods in the old Revision class (which was later removed in 1.37).
  */
-class SqlBlobStore implements IDBAccessObject, BlobStore {
+class SqlBlobStore implements BlobStore {
 
 	// Note: the name has been taken unchanged from the old Revision class.
 	public const TEXT_CACHE_GROUP = 'revisiontext:10';
+
+	/** @internal */
+	public const DEFAULT_TTL = 7 * 24 * 3600; // 7 days
 
 	/**
 	 * @var ILoadBalancer
@@ -76,7 +79,7 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 	/**
 	 * @var int
 	 */
-	private $cacheExpiry = 604800; // 7 days
+	private $cacheExpiry = self::DEFAULT_TTL;
 
 	/**
 	 * @var bool
@@ -117,28 +120,28 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 	}
 
 	/**
-	 * @return int time for which blobs can be cached, in seconds
+	 * @return int Time for which blobs can be cached, in seconds
 	 */
 	public function getCacheExpiry() {
 		return $this->cacheExpiry;
 	}
 
 	/**
-	 * @param int $cacheExpiry time for which blobs can be cached, in seconds
+	 * @param int $cacheExpiry Time for which blobs can be cached, in seconds
 	 */
 	public function setCacheExpiry( int $cacheExpiry ) {
 		$this->cacheExpiry = $cacheExpiry;
 	}
 
 	/**
-	 * @return bool whether blobs should be compressed for storage
+	 * @return bool Whether blobs should be compressed for storage
 	 */
 	public function getCompressBlobs() {
 		return $this->compressBlobs;
 	}
 
 	/**
-	 * @param bool $compressBlobs whether blobs should be compressed for storage
+	 * @param bool $compressBlobs Whether blobs should be compressed for storage
 	 */
 	public function setCompressBlobs( $compressBlobs ) {
 		$this->compressBlobs = $compressBlobs;
@@ -383,11 +386,11 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 		}
 		// Callers doing updates will pass in READ_LATEST as usual. Since the text/blob tables
 		// do not normally get rows changed around, set READ_LATEST_IMMUTABLE in those cases.
-		$queryFlags |= DBAccessObjectUtils::hasFlags( $queryFlags, self::READ_LATEST )
-			? self::READ_LATEST_IMMUTABLE
+		$queryFlags |= DBAccessObjectUtils::hasFlags( $queryFlags, IDBAccessObject::READ_LATEST )
+			? IDBAccessObject::READ_LATEST_IMMUTABLE
 			: 0;
 		[ $index, $options, $fallbackIndex, $fallbackOptions ] =
-			DBAccessObjectUtils::getDBOptions( $queryFlags );
+			self::getDBOptions( $queryFlags );
 		// Text data is immutable; check replica DBs first.
 		$dbConnection = $this->getDBConnection( $index );
 		$rows = $dbConnection->newSelectQueryBuilder()
@@ -450,6 +453,36 @@ class SqlBlobStore implements IDBAccessObject, BlobStore {
 			}
 		}
 		return [ $result, $errors ];
+	}
+
+	private static function getDBOptions( $bitfield ) {
+		if ( DBAccessObjectUtils::hasFlags( $bitfield, IDBAccessObject::READ_LATEST_IMMUTABLE ) ) {
+			$index = DB_REPLICA; // override READ_LATEST if set
+			$fallbackIndex = DB_PRIMARY;
+		} elseif ( DBAccessObjectUtils::hasFlags( $bitfield, IDBAccessObject::READ_LATEST ) ) {
+			$index = DB_PRIMARY;
+			$fallbackIndex = null;
+		} else {
+			$index = DB_REPLICA;
+			$fallbackIndex = null;
+		}
+
+		$lockingOptions = [];
+		if ( DBAccessObjectUtils::hasFlags( $bitfield, IDBAccessObject::READ_EXCLUSIVE ) ) {
+			$lockingOptions[] = 'FOR UPDATE';
+		} elseif ( DBAccessObjectUtils::hasFlags( $bitfield, IDBAccessObject::READ_LOCKING ) ) {
+			$lockingOptions[] = 'LOCK IN SHARE MODE';
+		}
+
+		if ( $fallbackIndex !== null ) {
+			$options = []; // locks on DB_REPLICA make no sense
+			$fallbackOptions = $lockingOptions;
+		} else {
+			$options = $lockingOptions;
+			$fallbackOptions = []; // no fallback
+		}
+
+		return [ $index, $options, $fallbackIndex, $fallbackOptions ];
 	}
 
 	/**

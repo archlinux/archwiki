@@ -2,7 +2,7 @@
 /**
  * Contain log classes
  *
- * Copyright © 2002, 2004 Brion Vibber <brion@pobox.com>
+ * Copyright © 2002, 2004 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,7 @@
  * @file
  */
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -103,7 +104,7 @@ class LogPage {
 	protected function saveContent() {
 		$logRestrictions = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::LogRestrictions );
 
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 
 		$now = wfTimestampNow();
 		$actorId = MediaWikiServices::getInstance()->getActorNormalization()
@@ -123,7 +124,10 @@ class LogPage {
 			'log_comment',
 			$this->comment
 		);
-		$dbw->insert( 'logging', $data, __METHOD__ );
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'logging' )
+			->row( $data )
+			->caller( __METHOD__ )->execute();
 		$newId = $dbw->insertId();
 
 		# And update recentchanges
@@ -242,46 +246,40 @@ class LogPage {
 	) {
 		global $wgLang;
 		$config = MediaWikiServices::getInstance()->getMainConfig();
-		$logActionsHandlers = $config->get( MainConfigNames::LogActionsHandlers );
 		$key = "$type/$action";
 
-		if ( isset( $logActionsHandlers[$key] ) ) {
-			$args = func_get_args();
-			$rv = call_user_func_array( $logActionsHandlers[$key], $args );
+		$logActions = $config->get( MainConfigNames::LogActions );
+
+		if ( isset( $logActions[$key] ) ) {
+			$message = $logActions[$key];
 		} else {
-			$logActions = $config->get( MainConfigNames::LogActions );
+			wfDebug( "LogPage::actionText - unknown action $key" );
+			$message = "log-unknown-action";
+			$params = [ $key ];
+		}
 
-			if ( isset( $logActions[$key] ) ) {
-				$message = $logActions[$key];
-			} else {
-				wfDebug( "LogPage::actionText - unknown action $key" );
-				$message = "log-unknown-action";
-				$params = [ $key ];
-			}
+		if ( $skin === null ) {
+			$langObj = MediaWikiServices::getInstance()->getContentLanguage();
+			$langObjOrNull = null;
+		} else {
+			// TODO Is $skin->getLanguage() safe here?
+			StubUserLang::unstub( $wgLang );
+			$langObj = $wgLang;
+			$langObjOrNull = $wgLang;
+		}
+		if ( $title === null ) {
+			$rv = wfMessage( $message )->inLanguage( $langObj )->escaped();
+		} else {
+			$titleLink = self::getTitleLink( $title, $langObjOrNull );
 
-			if ( $skin === null ) {
-				$langObj = MediaWikiServices::getInstance()->getContentLanguage();
-				$langObjOrNull = null;
+			if ( count( $params ) == 0 ) {
+				$rv = wfMessage( $message )->rawParams( $titleLink )
+					->inLanguage( $langObj )->escaped();
 			} else {
-				// TODO Is $skin->getLanguage() safe here?
-				StubUserLang::unstub( $wgLang );
-				$langObj = $wgLang;
-				$langObjOrNull = $wgLang;
-			}
-			if ( $title === null ) {
-				$rv = wfMessage( $message )->inLanguage( $langObj )->escaped();
-			} else {
-				$titleLink = self::getTitleLink( $title, $langObjOrNull );
+				array_unshift( $params, $titleLink );
 
-				if ( count( $params ) == 0 ) {
-					$rv = wfMessage( $message )->rawParams( $titleLink )
+				$rv = wfMessage( $message )->rawParams( $params )
 						->inLanguage( $langObj )->escaped();
-				} else {
-					array_unshift( $params, $titleLink );
-
-					$rv = wfMessage( $message )->rawParams( $params )
-							->inLanguage( $langObj )->escaped();
-				}
 			}
 		}
 
@@ -395,19 +393,14 @@ class LogPage {
 		if ( !strlen( $field ) || !$values ) {
 			return false;
 		}
-
-		$data = [];
-
+		$insert = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase()
+			->newInsertQueryBuilder()
+			->insertInto( 'log_search' )
+			->ignore();
 		foreach ( $values as $value ) {
-			$data[] = [
-				'ls_field' => $field,
-				'ls_value' => $value,
-				'ls_log_id' => $logid
-			];
+			$insert->row( [ 'ls_field' => $field, 'ls_value' => $value, 'ls_log_id' => $logid ] );
 		}
-
-		$dbw = wfGetDB( DB_PRIMARY );
-		$dbw->insert( 'log_search', $data, __METHOD__, [ 'IGNORE' ] );
+		$insert->caller( __METHOD__ )->execute();
 
 		return true;
 	}

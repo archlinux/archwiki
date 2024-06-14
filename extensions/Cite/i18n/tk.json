@@ -14,7 +14,6 @@
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code> tegi üçin <code>&lt;/ref&gt;</code> ýapylyşy kem",
 	"cite_error_group_refs_without_references": "\"$1\" atly topar üçin <code>&lt;ref&gt;</code> tegleri bar, emma degişli code>&lt;references group=\"$1\"/&gt;</code> tegi tapylmady",
 	"cite_error_references_group_mismatch": "<code>&lt;references&gt;</code>-daky <code>&lt;ref&gt;</code> teginiň çaknyşýan \"$1\" topar aýratynlygy bar.",
-	"cite_error_references_missing_group": "<code>&lt;references&gt;</code>-da kesgitlenen <code>&lt;ref&gt;</code> teginiň öňki tekstde ýok \"$1\" topar aýratynlygy bar.",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code>-da kesgitlenen \"$1\" atly <code>&lt;ref&gt;</code> tegi öňki tekstde ulanylmaýar.",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code>-da kesgitlenen <code>&lt;ref&gt;</code> teginiň hiç hili at aýratynlygy ýok.",
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code>-da kesgitlenen \"$1\" atly <code>&lt;ref&gt;</code> tegiň mazmuny ýok.",

@@ -11,6 +11,10 @@ use Message;
  *
  * @copyright 2002-2015 Tomasz Wegrzanowski, Brion Vibber, Moritz Schubotz,
  * and other MediaWiki contributors
+ *
+ * @note The restbase checker does not support purging the cache as it just represents
+ * the state of the restbase interface.
+ *
  * @license GPL-2.0-or-later
  * @author Moritz Schubotz
  */
@@ -44,9 +48,9 @@ class RestbaseChecker extends BaseChecker {
 	 * Some TeX checking programs may return
 	 * a modified tex string after having checked it.
 	 * You can get the altered tex string with this method
-	 * @return string A valid Tex string
+	 * @return ?string A valid Tex string
 	 */
-	public function getValidTex() {
+	public function getValidTex(): ?string {
 		return $this->restbaseInterface->getCheckedTex();
 	}
 

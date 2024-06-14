@@ -9,7 +9,7 @@
 	"math_syntax_error": "Sbagl da la sintaxta",
 	"math_unknown_error": "errur nunenconuschenta",
 	"math_unknown_function": "funcziun nunenconuschenta",
-	"mw_math_mathml": "MathML sche pussibel (experimental)",
-	"mw_math_source": "Laschar en furma da TeX (per navigaturs da text)",
+	"mw-math-mathml": "MathML sche pussibel (experimental)",
+	"mw-math-source": "Laschar en furma da TeX (per navigaturs da text)",
 	"prefs-math": "TeX"
 }

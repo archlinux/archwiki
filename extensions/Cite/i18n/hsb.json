@@ -18,7 +18,6 @@
 	"cite_error_included_ref": "Kónčny <code>&lt;/ref&gt;</code> za tafličku <code>&lt;ref&gt;</code> faluje",
 	"cite_error_group_refs_without_references": "Taflički <code>&lt;ref&gt;</code> eksistuja za skupinu z mjenom \"$1\", ale njeje so wotpowědowaca taflička <code>&lt;references group=\"$1\"/&gt;</code> namakała abo začinjacy <code>&lt;/ref&gt;</code> faluje",
 	"cite_error_references_group_mismatch": "Taflička <code>&lt;ref&gt;</code> w <code>&lt;references&gt;</code> je ze skupinskim atributom \"$1\" w konflikće.",
-	"cite_error_references_missing_group": "Taflička <code>&lt;ref&gt;</code>, kotraž je w <code>&lt;references&gt;</code> definowana, ma skupinski atribut \"$1\", kotryž so w prjedawšim teksće njejewi.",
 	"cite_error_references_missing_key": "Taflička <code>&lt;ref&gt;</code> z mjenom \"$1\", kotraž je w <code>&lt;references&gt;</code> definowana, so w prjedawšim teksće njewužiwa.",
 	"cite_error_references_no_key": "Taflička <code>&lt;ref&gt;</code>, kotraž je w <code>&lt;references&gt;</code> definowana, mjenowy atribut nima.",
 	"cite_error_empty_references_define": "Taflička <code>&lt;ref&gt;</code>, kotraž je w <code>&lt;references&gt;</code> z mjenom \"$1\" definowana, wobsah nima.",

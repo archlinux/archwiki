@@ -24,7 +24,6 @@ use FormatJson;
 use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
-use User;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -36,17 +35,18 @@ use Wikimedia\ParamValidator\ParamValidator;
 class ApiOATHValidate extends ApiBase {
 	public function execute() {
 		$this->requirePostedParameters( [ 'token', 'data' ] );
+		// messages used: right-oathauth-api-all, action-oathauth-api-all,
+		$this->checkUserRightsAny( 'oathauth-api-all' );
 
 		$params = $this->extractRequestParams();
 		if ( $params['user'] === null ) {
-			$params['user'] = $this->getUser()->getName();
-		}
-
-		$this->checkUserRightsAny( 'oathauth-api-all' );
-
-		$user = User::newFromName( $params['user'] );
-		if ( $user === false ) {
-			$this->dieWithError( 'noname' );
+			$user = $this->getUser();
+		} else {
+			$user = MediaWikiServices::getInstance()->getUserFactory()
+				->newFromName( $params['user'] );
+			if ( $user === null ) {
+				$this->dieWithError( 'noname' );
+			}
 		}
 
 		// Don't increase pingLimiter, just check for limit exceeded.
@@ -60,7 +60,7 @@ class ApiOATHValidate extends ApiBase {
 			'valid' => false,
 		];
 
-		if ( !$user->isAnon() ) {
+		if ( $user->isNamed() ) {
 			$userRepo = MediaWikiServices::getInstance()->getService( 'OATHUserRepository' );
 			$authUser = $userRepo->findByUser( $user );
 			if ( $authUser ) {
@@ -94,10 +94,12 @@ class ApiOATHValidate extends ApiBase {
 		$this->getResult()->addValue( null, $this->getModuleName(), $result );
 	}
 
+	/** @inheritDoc */
 	public function isInternal() {
 		return true;
 	}
 
+	/** @inheritDoc */
 	public function needsToken() {
 		return 'csrf';
 	}
@@ -112,7 +114,7 @@ class ApiOATHValidate extends ApiBase {
 			],
 			'data' => [
 				ParamValidator::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true,
+				ParamValidator::PARAM_REQUIRED => true,
 			]
 		];
 	}

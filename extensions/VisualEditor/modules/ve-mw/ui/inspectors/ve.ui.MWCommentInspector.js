@@ -1,12 +1,12 @@
 /*!
  * VisualEditor UserInterface MWCommentInspector class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
 /**
- * Inspector for editing Mediawiki comments.
+ * Inspector for editing MediaWiki comments.
  *
  * @class
  * @extends ve.ui.CommentInspector

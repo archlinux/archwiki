@@ -170,6 +170,7 @@
 	"visualeditor-mwgallerydialog-title": "Галерэя",
 	"visualeditor-mwsignature-tool": "Ваш подпіс",
 	"visualeditor-preference-visualeditor": "Уключыць візуальны рэдактар",
+	"visualeditor-preference-newwikitexteditor-enable": "Выкарыстоўваць рэжым вікіразьметкі ўнутры візуальнага рэдактара замест іншага рэдактара вікіразьметкі.",
 	"visualeditor-preference-newwikitexteditor-help": "Часам яго называюць „рэдактарам вікітэксту-2017“.",
 	"visualeditor-savedialog-identify-anon": "Ці жадаеце захаваць гэтую старонку ў стане ананімнага ўдзельніка? У гэтым разе ў гісторыю правак старонкі трапіць ваш IP-адрас.",
 	"visualeditor-savedialog-identify-user": "Вы ўвайшлі як [[User:$1|$1]]. Вашая праўка будзе запісаная на ваш рахунак па захаваньні.",

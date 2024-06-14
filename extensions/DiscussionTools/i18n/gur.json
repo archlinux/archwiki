@@ -8,8 +8,8 @@
 			"Akoonaba",
 			"Amire80",
 			"Amoramah",
-			"Sir Amugi",
-			"Atalata Gumah"
+			"Atalata Gumah",
+			"Sir Amugi"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|You}} tu wan yele fu sansɛka ti nɛra lebese yelepaalɛ se'ere yɛsera sɔsega wa puan. Fu ta'am malegɛ maalɛ fu yelesum baŋa",
@@ -24,7 +24,9 @@
 	"discussiontools-emptystate-button": "Pi'ilum sɔsega",
 	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Talk pages]] de la zi'an ti nɛreba sɔsera ba wan gulesɛ {{SITENAME}} puan. Di suŋa za'a m bala. {{GENDER:|You}} ta'am dikɛ pɛgedina pi'ilum sɔsega la nɛreba yɛsera di wan iŋɛ se'em tole nɛŋa [[:{{SUBJECTPAGENAME}}]].",
 	"discussiontools-emptystate-desc-self": "Nɛreba n boi {{SITENAME}} ta'am dikɛ dina tum [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|talk page]] ta'asɛ zama lasebaarɛ bo {{GENDER:|you}}, gee ti ba me wan yele fu .",
+	"discussiontools-emptystate-desc-self-temp": "People\n on {{SITENAME}} can use this [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|talk page]] to post a public message for {{GENDER:|you}}.\n\nEventually, [[{{MediaWiki:tempuser-helppage}}|this page will expire]]. To continue receiving notifications, and to access other features, [$1 create an account] or [$2 log in].",
 	"discussiontools-emptystate-desc-user": "[[{{MediaWiki:discussiontools-emptystate\n-link-userpage}}|Talk pages]] are where people discuss how to make content on {{SITENAME}} the best that it can be. Start a new discussion to connect and collaborate {{GENDER:{{PAGENAME}}|with}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. What {{GENDER:|you}} say here will be public for others to see.",
+	"discussiontools-emptystate-desc-user-temp": "Dikɛ ina [[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|talk page]] pi'ilum sɔsega {{GENDER:{{PAGENAME}}|with}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] yɛsera tu wan iŋɛ se'em ti {{SITENAME}} tole nɛŋa. Sɛla ti fu {{GENDER:|you}} yele wan dɛna sɛla ti zama woo wan nyɛ [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] de la [[{{MediaWiki:tempuser-helppage}}|temporary account]], tɔgum pɛgedina wa saŋa wan ta tole . [[{{MediaWiki:tempuser-helppage}}|Learn more]].",
 	"discussiontools-emptystate-title": "Pi'ilum sɔsega yɛsera {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-self": "Yeletɔgum pɛgerɛ la zuo",
 	"discussiontools-emptystate-title-self-anon": "Yeletɔgum pɛgere wa zuo",

@@ -1,5 +1,5 @@
-var $drawerContainer = $( document.body ),
-	BODY_CLASS_SCROLL_LOCKED = 'has-drawer--with-scroll-locked';
+const $drawerContainer = $( document.body );
+const BODY_CLASS_SCROLL_LOCKED = 'has-drawer--with-scroll-locked';
 
 /**
  * Discard a drawer from display on the page.

@@ -25,10 +25,10 @@ class Env extends IEnv {
 	public function __construct( array $opts ) {
 		$api = new ApiHelper( $opts );
 
-		$pageConfig = new PageConfig( $api, $opts );
 		$siteConfig = new SiteConfig( $api, $opts );
+		$pageConfig = new PageConfig( $api, $siteConfig, $opts );
 		$dataAccess = new DataAccess( $api, $siteConfig, $opts );
-		$metadata = new StubMetadataCollector( $siteConfig->getLogger() );
+		$metadata = new StubMetadataCollector( $siteConfig );
 		parent::__construct( $siteConfig, $pageConfig, $dataAccess, $metadata, $opts );
 	}
 

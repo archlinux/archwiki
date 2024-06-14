@@ -24,11 +24,13 @@
 namespace MediaWiki\Specials;
 
 use HTMLCheckField;
-use HTMLForm;
-use LinkCache;
+use MediaWiki\Cache\LinkCache;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IConnectionProvider;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 
 /**
  * Implements Special:Prefixindex
@@ -39,7 +41,7 @@ class SpecialPrefixIndex extends SpecialAllPages {
 
 	/**
 	 * Whether to remove the searched prefix from the displayed link. Useful
-	 * for inclusion of a set of sub pages in a root page.
+	 * for inclusion of a set of subpages in a root page.
 	 */
 	protected $stripPrefix = false;
 
@@ -65,7 +67,7 @@ class SpecialPrefixIndex extends SpecialAllPages {
 	}
 
 	/**
-	 * Entry point : initialise variables and call subfunctions.
+	 * Entry point: initialise variables and call subfunctions.
 	 * @param string|null $par Becomes "FOO" when called like Special:Prefixindex/FOO
 	 */
 	public function execute( $par ) {
@@ -108,17 +110,17 @@ class SpecialPrefixIndex extends SpecialAllPages {
 		if ( $this->including() || $showme != '' || $ns !== null ) {
 			$this->showPrefixChunk( $namespace, $showme, $from );
 		} else {
-			$out->addHTML( $this->namespacePrefixForm( $namespace, '' ) );
+			$out->addHTML( $this->namespacePrefixForm( $namespace, '' )->getHTML( false ) );
 		}
 	}
 
 	/**
-	 * HTML for the top form
+	 * Prepared HTMLForm object for the top form
 	 * @param int $namespace A namespace constant (default NS_MAIN).
 	 * @param string $from DbKey we are starting listing at.
-	 * @return string
+	 * @return HTMLForm
 	 */
-	protected function namespacePrefixForm( $namespace = NS_MAIN, $from = '' ) {
+	protected function namespacePrefixForm( $namespace = NS_MAIN, $from = '' ): HTMLForm {
 		$formDescriptor = [
 			'prefix' => [
 				'label-message' => 'allpagesprefix',
@@ -147,13 +149,16 @@ class SpecialPrefixIndex extends SpecialAllPages {
 				'label-message' => 'prefixindex-strip',
 			],
 		];
+
+		$this->getHookRunner()->onSpecialPrefixIndexGetFormFilters( $this->getContext(), $formDescriptor );
+
 		$htmlForm = HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() )
 			->setMethod( 'get' )
 			->setTitle( $this->getPageTitle() ) // Remove subpage
 			->setWrapperLegendMsg( 'prefixindex' )
 			->setSubmitTextMsg( 'prefixindex-submit' );
 
-		return $htmlForm->prepareForm()->getHTML( false );
+		return $htmlForm->prepareForm();
 	}
 
 	/**
@@ -172,6 +177,7 @@ class SpecialPrefixIndex extends SpecialAllPages {
 		$res = null;
 		$n = 0;
 		$nextRow = null;
+		$preparedHtmlForm = $this->namespacePrefixForm( $namespace, $prefix );
 
 		if ( !$prefixList || !$fromList ) {
 			$out = $this->msg( 'allpagesbadtitle' )->parseAsBlock();
@@ -191,8 +197,12 @@ class SpecialPrefixIndex extends SpecialAllPages {
 				->from( 'page' )
 				->where( [
 					'page_namespace' => $namespace,
-					'page_title' . $dbr->buildLike( $prefixKey, $dbr->anyString() ),
-					'page_title >= ' . $dbr->addQuotes( $fromKey ),
+					$dbr->expr(
+						'page_title',
+						IExpression::LIKE,
+						new LikeValue( $prefixKey, $dbr->anyString() )
+					),
+					$dbr->expr( 'page_title', '>=', $fromKey ),
 				] )
 				->orderBy( 'page_title' )
 				->limit( $this->maxPerPage + 1 )
@@ -201,6 +211,8 @@ class SpecialPrefixIndex extends SpecialAllPages {
 			if ( $this->hideRedirects ) {
 				$queryBuiler->andWhere( [ 'page_is_redirect' => 0 ] );
 			}
+
+			$this->getHookRunner()->onSpecialPrefixIndexQuery( $preparedHtmlForm->mFieldData, $queryBuiler );
 
 			$res = $queryBuiler->caller( __METHOD__ )->fetchResultSet();
 
@@ -237,8 +249,8 @@ class SpecialPrefixIndex extends SpecialAllPages {
 				$out .= Html::closeElement( 'ul' );
 
 				if ( $res->numRows() > 2 ) {
-					// Only apply CSS column styles if there's more than 2 entries.
-					// Otherwise rendering is broken as "mw-prefixindex-body"'s CSS column count is 3.
+					// Only apply CSS column styles if there are more than 2 entries.
+					// Otherwise, rendering is broken as "mw-prefixindex-body"'s CSS column count is 3.
 					$out = Html::rawElement( 'div', [ 'class' => 'mw-prefixindex-body' ], $out );
 				}
 			} else {
@@ -249,13 +261,13 @@ class SpecialPrefixIndex extends SpecialAllPages {
 		$output = $this->getOutput();
 
 		if ( $this->including() ) {
-			// We don't show the nav-links and the form when included into other
-			// pages so let's just finish here.
+			// We don't show the nav-links and the form when included in other
+			// pages, so let's just finish here.
 			$output->addHTML( $out );
 			return;
 		}
 
-		$topOut = $this->namespacePrefixForm( $namespace, $prefix );
+		$topOut = $preparedHtmlForm->getHTML( false );
 
 		if ( $res && ( $n == $this->maxPerPage ) && $nextRow ) {
 			$query = [

@@ -11,6 +11,7 @@ use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\TalkPageNotificationManager;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
@@ -778,10 +779,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 
 		$status = $watchlistManager->removeWatch( $authority, $title );
 
-		$this->assertStatusNotGood( $status );
-		$errors = $status->getErrors();
-		$this->assertCount( 1, $errors );
-		$this->assertEquals( 'hookaborted', $errors[0]['message'] );
+		$this->assertStatusError( 'hookaborted', $status );
 		$this->assertTrue( $watchlistManager->isWatchedIgnoringRights( $userIdentity, $title ) );
 	}
 

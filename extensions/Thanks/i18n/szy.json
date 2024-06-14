@@ -30,7 +30,6 @@
 	"notification-link-text-view-post": "ciwsace tu buhci tu kamu",
 	"thanks-error-invalidpostid": "pazepit ID inayi’ ku laheci.",
 	"flow-thanks-confirmation-special": "amikukay tina buhci tu kamu pabinawlan sakamu tu nizateng haw?",
-	"notification-flow-thanks-post-link": "u misuay a buhci tu kamu",
 	"notification-header-flow-thank": "$1{{GENDER:$2|mikukay tisuwan}} {{GENDER:$5|kisu}} i \"<strong>$3</strong>\" a buhci tu kamu.",
 	"notification-compact-header-flow-thank": "$1{{GENDER:$2|makukay}} {{GENDER:$3|kisu}}."
 }

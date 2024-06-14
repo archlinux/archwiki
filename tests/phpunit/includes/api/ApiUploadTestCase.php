@@ -1,5 +1,10 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use Exception;
+use FSFile;
+use IDBAccessObject;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\File\FileDeleteForm;
 use MediaWiki\Title\Title;
@@ -57,7 +62,7 @@ abstract class ApiUploadTestCase extends ApiTestCase {
 			$this->deletePage( $page, "removing for test" );
 		}
 
-		return !( $title && $title instanceof Title && $title->exists( Title::READ_LATEST ) );
+		return !( $title && $title instanceof Title && $title->exists( IDBAccessObject::READ_LATEST ) );
 	}
 
 	/**
@@ -105,17 +110,17 @@ abstract class ApiUploadTestCase extends ApiTestCase {
 	protected function fakeUploadFile( $fieldName, $fileName, $type, $filePath ) {
 		$tmpName = $this->getNewTempFile();
 		if ( !is_file( $filePath ) ) {
-			throw new Exception( "$filePath doesn't exist!" );
+			$this->fail( "$filePath doesn't exist!" );
 		}
 
 		if ( !copy( $filePath, $tmpName ) ) {
-			throw new Exception( "couldn't copy $filePath to $tmpName" );
+			$this->fail( "couldn't copy $filePath to $tmpName" );
 		}
 
 		clearstatcache();
 		$size = filesize( $tmpName );
 		if ( $size === false ) {
-			throw new Exception( "couldn't stat $tmpName" );
+			$this->fail( "couldn't stat $tmpName" );
 		}
 
 		$this->requestDataFiles[$fieldName] = [
@@ -133,13 +138,13 @@ abstract class ApiUploadTestCase extends ApiTestCase {
 		$tmpName = $this->getNewTempFile();
 		// copy the chunk data to temp location:
 		if ( !file_put_contents( $tmpName, $chunkData ) ) {
-			throw new Exception( "couldn't copy chunk data to $tmpName" );
+			$this->fail( "couldn't copy chunk data to $tmpName" );
 		}
 
 		clearstatcache();
 		$size = filesize( $tmpName );
 		if ( $size === false ) {
-			throw new Exception( "couldn't stat $tmpName" );
+			$this->fail( "couldn't stat $tmpName" );
 		}
 
 		$this->requestDataFiles[$fieldName] = [
@@ -165,3 +170,5 @@ abstract class ApiUploadTestCase extends ApiTestCase {
 		$this->requestDataFiles = [];
 	}
 }
+
+class_alias( ApiUploadTestCase::class, 'ApiUploadTestCase' );

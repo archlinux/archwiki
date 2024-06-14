@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ciencia Al Poder",
 			"Crazymadlover",
 			"Jakeukalane",
 			"Macofe",
 			"Pertile",
 			"Sporeunai",
-			"Tiberius1701",
-			"Ciencia Al Poder"
+			"Tiberius1701"
 		]
 	},
 	"questycaptcha-addurl": "Tu edición incluye enlaces externos nuevos. \nPara proteger la wiki contra el spam automatizado, te pedimos que respondas la pregunta que aparece debajo ([[Special:Captcha/help|más información]]):",

@@ -72,8 +72,8 @@ class UpdateRestrictions extends Maintenance {
 				->from( 'page' )
 				->where( [
 					"page_restrictions != $escapedEmptyBlobValue",
-					'page_id > ' . $dbw->addQuotes( $batchMinPageId ),
-					'page_id <= ' . $dbw->addQuotes( $batchMaxPageId ),
+					$dbw->expr( 'page_id', '>', $batchMinPageId ),
+					$dbw->expr( 'page_id', '<=', $batchMaxPageId ),
 				] )
 				->caller( __METHOD__ )->fetchResultSet();
 
@@ -107,12 +107,11 @@ class UpdateRestrictions extends Maintenance {
 
 			// Insert new format protection settings for the pages in the current batch.
 			// Use INSERT IGNORE to ignore conflicts with new format settings that might exist for the page
-			$dbw->insert(
-				'page_restrictions',
-				$batch,
-				__METHOD__,
-				[ 'IGNORE' ]
-			);
+			$dbw->newInsertQueryBuilder()
+				->insertInto( 'page_restrictions' )
+				->ignore()
+				->rows( $batch )
+				->caller( __METHOD__ )->execute();
 
 			// Clear out the legacy page.page_restrictions blob for this batch
 			$dbw->update( 'page', [ 'page_restrictions' => '' ], [ 'page_id' => $pageIds ], __METHOD__ );

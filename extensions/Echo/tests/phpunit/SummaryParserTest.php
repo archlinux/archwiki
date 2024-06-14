@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Extension\Notifications\SummaryParser;
+use MediaWiki\User\User;
 
 /**
  * @group Echo

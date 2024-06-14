@@ -34,10 +34,12 @@
 		this.animated = !!config.animated;
 
 		// Initialization
-		this.setGroupElement( config.$group || this.$element );
+		this.setGroupElement( config.$group || $( '<div>' ) );
 
+		this.$group.addClass( 'mw-echo-ui-sortedListWidget-group' );
 		this.$element
-			.addClass( 'mw-echo-ui-sortedListWidget' );
+			.addClass( 'mw-echo-ui-sortedListWidget' )
+			.append( this.$group );
 	};
 
 	/* Initialization */
@@ -102,10 +104,8 @@
 	 * @param {jQuery} $group Element to use as group
 	 */
 	mw.echo.ui.SortedListWidget.prototype.setGroupElement = function ( $group ) {
-		var i, len;
-
 		this.$group = $group;
-		for ( i = 0, len = this.items.length; i < len; i++ ) {
+		for ( var i = 0, len = this.items.length; i < len; i++ ) {
 			this.$group.append( this.items[ i ].$element );
 		}
 	};
@@ -117,11 +117,10 @@
 	 * @return {OO.ui.Element|null} Item with equivalent data, `null` if none exists
 	 */
 	mw.echo.ui.SortedListWidget.prototype.getItemFromId = function ( id ) {
-		var i, len, item,
-			hash = OO.getHash( id );
+		var hash = OO.getHash( id );
 
-		for ( i = 0, len = this.items.length; i < len; i++ ) {
-			item = this.items[ i ];
+		for ( var i = 0, len = this.items.length; i < len; i++ ) {
+			var item = this.items[ i ];
 			if ( hash === OO.getHash( item.getId() ) ) {
 				return item;
 			}

@@ -7,6 +7,7 @@
  * @details
  */
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -166,7 +167,6 @@ class FileRepo {
 	/**
 	 * @see Documentation of info options at $wgLocalFileRepo
 	 * @param array|null $info
-	 * @throws MWException
 	 * @phan-assert array $info
 	 */
 	public function __construct( array $info = null ) {
@@ -176,7 +176,7 @@ class FileRepo {
 			|| !array_key_exists( 'name', $info )
 			|| !array_key_exists( 'backend', $info )
 		) {
-			throw new MWException( __CLASS__ .
+			throw new InvalidArgumentException( __CLASS__ .
 				" requires an array of options having both 'name' and 'backend' keys.\n" );
 		}
 
@@ -268,13 +268,12 @@ class FileRepo {
 	 * Ensure that a single zone or list of zones is defined for usage
 	 *
 	 * @param string[]|string $doZones Only do a particular zones
-	 * @throws MWException
 	 */
 	protected function initZones( $doZones = [] ): void {
 		foreach ( (array)$doZones as $zone ) {
 			$root = $this->getZonePath( $zone );
 			if ( $root === null ) {
-				throw new MWException( "No '$zone' zone defined in the {$this->name} repo." );
+				throw new RuntimeException( "No '$zone' zone defined in the {$this->name} repo." );
 			}
 		}
 	}
@@ -348,28 +347,28 @@ class FileRepo {
 	}
 
 	/**
-	 * Get the backend storage path corresponding to a virtual URL.
+	 * Get the backend storage path corresponding to a virtual URL. Callers are responsible of
+	 * verifying that $url is a valid virtual URL.
 	 * Use this function wisely.
 	 *
 	 * @param string $url
-	 * @throws MWException
 	 * @return string
 	 */
 	public function resolveVirtualUrl( $url ) {
 		if ( !str_starts_with( $url, 'mwrepo://' ) ) {
-			throw new MWException( __METHOD__ . ': unknown protocol' );
+			throw new InvalidArgumentException( __METHOD__ . ': unknown protocol' );
 		}
 		$bits = explode( '/', substr( $url, 9 ), 3 );
 		if ( count( $bits ) != 3 ) {
-			throw new MWException( __METHOD__ . ": invalid mwrepo URL: $url" );
+			throw new InvalidArgumentException( __METHOD__ . ": invalid mwrepo URL: $url" );
 		}
 		[ $repo, $zone, $rel ] = $bits;
 		if ( $repo !== $this->name ) {
-			throw new MWException( __METHOD__ . ": fetching from a foreign repo is not supported" );
+			throw new InvalidArgumentException( __METHOD__ . ": fetching from a foreign repo is not supported" );
 		}
 		$base = $this->getZonePath( $zone );
 		if ( !$base ) {
-			throw new MWException( __METHOD__ . ": invalid zone: $zone" );
+			throw new InvalidArgumentException( __METHOD__ . ": invalid zone: $zone" );
 		}
 
 		return $base . '/' . rawurldecode( $rel );
@@ -470,7 +469,7 @@ class FileRepo {
 			$options['latest'] = $options['bypassCache']; // b/c
 		}
 		$time = $options['time'] ?? false;
-		$flags = !empty( $options['latest'] ) ? File::READ_LATEST : 0;
+		$flags = !empty( $options['latest'] ) ? IDBAccessObject::READ_LATEST : 0;
 		# First try the current version of the file to see if it precedes the timestamp
 		$img = $this->newFile( $title );
 		if ( !$img ) {
@@ -888,7 +887,7 @@ class FileRepo {
 	public function getDescriptionStylesheetUrl() {
 		if ( isset( $this->scriptDirUrl ) ) {
 			// Must match canonical query parameter order for optimum caching
-			// See HtmlCacheUpdater::getUrls
+			// See HTMLCacheUpdater::getUrls
 			return $this->makeUrl( 'title=MediaWiki:Filepage.css&action=raw&ctype=text/css' );
 		}
 
@@ -934,7 +933,6 @@ class FileRepo {
 	 *   self::OVERWRITE_SAME    Overwrite the file if the destination exists and has the
 	 *                           same contents as the source
 	 *   self::SKIP_LOCKING      Skip any file locking when doing the store
-	 * @throws MWException
 	 * @return Status
 	 */
 	public function storeBatch( array $triplets, $flags = 0 ) {
@@ -964,10 +962,10 @@ class FileRepo {
 			// Resolve destination path
 			$root = $this->getZonePath( $dstZone );
 			if ( !$root ) {
-				throw new MWException( "Invalid zone: $dstZone" );
+				throw new RuntimeException( "Invalid zone: $dstZone" );
 			}
 			if ( !$this->validateFilename( $dstRel ) ) {
-				throw new MWException( 'Validation error in $dstRel' );
+				throw new RuntimeException( 'Validation error in $dstRel' );
 			}
 			$dstPath = "$root/$dstRel";
 			$dstDir = dirname( $dstPath );
@@ -1281,7 +1279,6 @@ class FileRepo {
 	 *   (source, dest, archive, options) 4-tuples as per publish().
 	 * @param int $flags Bitfield, may be FileRepo::DELETE_SOURCE to indicate
 	 *   that the source files should be deleted if possible
-	 * @throws MWException
 	 * @return Status
 	 */
 	public function publishBatch( array $ntuples, $flags = 0 ) {
@@ -1304,10 +1301,10 @@ class FileRepo {
 			// Resolve source to a storage path if virtual
 			$srcPath = $this->resolveToStoragePathIfVirtual( $srcPath );
 			if ( !$this->validateFilename( $dstRel ) ) {
-				throw new MWException( 'Validation error in $dstRel' );
+				throw new RuntimeException( 'Validation error in $dstRel' );
 			}
 			if ( !$this->validateFilename( $archiveRel ) ) {
-				throw new MWException( 'Validation error in $archiveRel' );
+				throw new RuntimeException( 'Validation error in $archiveRel' );
 			}
 
 			$publicRoot = $this->getZonePath( 'public' );
@@ -1486,7 +1483,6 @@ class FileRepo {
 	 *   is a two-element array containing the source file path relative to the
 	 *   public root in the first element, and the archive file path relative
 	 *   to the deleted zone root in the second element.
-	 * @throws MWException
 	 * @return Status
 	 */
 	public function deleteBatch( array $sourceDestPairs ) {
@@ -1502,9 +1498,9 @@ class FileRepo {
 		// Validate filenames and create archive directories
 		foreach ( $sourceDestPairs as [ $srcRel, $archiveRel ] ) {
 			if ( !$this->validateFilename( $srcRel ) ) {
-				throw new MWException( __METHOD__ . ':Validation error in $srcRel' );
+				throw new RuntimeException( __METHOD__ . ':Validation error in $srcRel' );
 			} elseif ( !$this->validateFilename( $archiveRel ) ) {
-				throw new MWException( __METHOD__ . ':Validation error in $archiveRel' );
+				throw new RuntimeException( __METHOD__ . ':Validation error in $archiveRel' );
 			}
 
 			$publicRoot = $this->getZonePath( 'public' );
@@ -1551,12 +1547,11 @@ class FileRepo {
 	 * e.g. s/z/a/ for sza251lrxrc1jad41h5mgilp8nysje52.jpg
 	 *
 	 * @param string $key
-	 * @throws MWException
 	 * @return string
 	 */
 	public function getDeletedHashPath( $key ) {
 		if ( strlen( $key ) < 31 ) {
-			throw new MWException( "Invalid storage key '$key'." );
+			throw new InvalidArgumentException( "Invalid storage key '$key'." );
 		}
 		$path = '';
 		for ( $i = 0; $i < $this->deletedHashLevels; $i++ ) {
@@ -1572,7 +1567,6 @@ class FileRepo {
 	 *
 	 * @param string $path
 	 * @return string
-	 * @throws MWException
 	 */
 	protected function resolveToStoragePathIfVirtual( $path ) {
 		if ( self::isVirtualUrl( $path ) ) {
@@ -1678,7 +1672,7 @@ class FileRepo {
 		$params = [ 'src' => $path, 'headers' => $headers, 'options' => $optHeaders ];
 
 		// T172851: HHVM does not flush the output properly, causing OOM
-		ob_start( null, 1048576 );
+		ob_start( null, 1_048_576 );
 		ob_implicit_flush( true );
 
 		$status = $this->newGood()->merge( $this->backend->streamFile( $params ) );
@@ -1724,7 +1718,7 @@ class FileRepo {
 			}
 			$iterator = $this->backend->getFileList( [ 'dir' => $path ] );
 			if ( $iterator === null ) {
-				throw new MWException( __METHOD__ . ': could not get file listing for ' . $path );
+				throw new RuntimeException( __METHOD__ . ': could not get file listing for ' . $path );
 			}
 			foreach ( $iterator as $name ) {
 				// Each item returned is a public file
@@ -1959,7 +1953,7 @@ class FileRepo {
 	 * Throw an exception if this repo is read-only by design.
 	 * This does not and should not check getReadOnlyReason().
 	 *
-	 * @throws MWException
+	 * @throws LogicException
 	 */
 	protected function assertWritableRepo() {
 	}

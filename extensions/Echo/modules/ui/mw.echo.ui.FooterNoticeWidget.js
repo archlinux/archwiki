@@ -12,29 +12,28 @@
 	 *  The message should already be formatted properly.
 	 */
 	mw.echo.ui.FooterNoticeWidget = function MwEchoUiFooterNoticeWidget( config ) {
-		var $icon, label, dismissButton,
-			$row = $( '<div>' )
-				.addClass( 'mw-echo-ui-footerNoticeWidget-row' );
 
 		config = config || {};
 
 		// Parent constructor
 		mw.echo.ui.FooterNoticeWidget.super.call( this, config );
 
+		var $row = $( '<div>' ).addClass( 'mw-echo-ui-footerNoticeWidget-row' );
+
 		if ( config.iconUrl ) {
-			$icon = $( '<div>' )
+			var $icon = $( '<div>' )
 				.addClass( 'mw-echo-ui-footerNoticeWidget-icon' )
 				.append( $( '<img>' ).attr( { src: config.iconUrl, width: 30, height: 30 } ) );
 
 			$row.append( $icon );
 		}
 
-		label = new OO.ui.LabelWidget( {
+		var label = new OO.ui.LabelWidget( {
 			label: $( '<span>' ).append( $.parseHTML( config.message ) ).contents(),
 			classes: [ 'mw-echo-ui-footerNoticeWidget-label' ]
 		} );
 
-		dismissButton = new OO.ui.ButtonWidget( {
+		var dismissButton = new OO.ui.ButtonWidget( {
 			icon: 'close',
 			framed: false,
 			classes: [ 'mw-echo-ui-footerNoticeWidget-dismiss' ]

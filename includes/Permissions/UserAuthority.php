@@ -20,10 +20,11 @@
 
 namespace MediaWiki\Permissions;
 
-use IContextSource;
+use IDBAccessObject;
 use InvalidArgumentException;
 use MediaWiki\Block\Block;
 use MediaWiki\Block\BlockErrorFormatter;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Request\WebRequest;
@@ -263,7 +264,7 @@ class UserAuthority implements Authority {
 	 * @param string $action
 	 * @param PermissionStatus|null $status
 	 * @param int|false $limitRate False means no check, 0 means check only,
-	 *        1 means check and increment
+	 *        and 1 means check and increment
 	 * @param ?Block $userBlock
 	 *
 	 * @return bool
@@ -300,15 +301,16 @@ class UserAuthority implements Authority {
 				return false;
 			}
 
-			$message = $this->blockErrorFormatter->getMessage(
+			$messages = $this->blockErrorFormatter->getMessages(
 				$userBlock,
 				$this->actor,
-				$this->uiContext->getLanguage(),
 				$this->request->getIP()
 			);
 
 			$status->setPermission( $action );
-			$status->fatal( $message );
+			foreach ( $messages as $message ) {
+				$status->fatal( $message );
+			}
 		}
 
 		// Check and bump the rate limit.
@@ -443,9 +445,9 @@ class UserAuthority implements Authority {
 	}
 
 	/** @inheritDoc */
-	public function getBlock( int $freshness = self::READ_NORMAL ): ?Block {
+	public function getBlock( int $freshness = IDBAccessObject::READ_NORMAL ): ?Block {
 		// Cache block info, so we don't have to fetch it again unnecessarily.
-		if ( $this->userBlock === null || $freshness === self::READ_LATEST ) {
+		if ( $this->userBlock === null || $freshness === IDBAccessObject::READ_LATEST ) {
 			$this->userBlock = $this->actor->getBlock( $freshness );
 
 			// if we got null back, remember this as "false"
@@ -467,7 +469,8 @@ class UserAuthority implements Authority {
 			$action,
 			$this->actor,
 			$rigor,
-			$target
+			$target,
+			$this->request
 		);
 	}
 

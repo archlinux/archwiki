@@ -1,9 +1,15 @@
 @import 'mediawiki.mixins';
 
-.group-codeeditor-format,
-.group-codeeditor-style,
-.codeEditor-ui-toolbar .group-insert,
-.codeEditor-ui-toolbar .group-format,
+/* stylelint-disable selector-class-pattern */
+
+.wikiEditor-ui-toolbar .group-codeeditor-style {
+	border-right: 0;
+}
+
+.wikiEditor-ui-toolbar:not( .codeEditor-ui-toolbar ) .group-codeeditor-format,
+.wikiEditor-ui-toolbar:not( .codeEditor-ui-toolbar ) .group-codeeditor-style,
+.codeEditor-ui-toolbar .group-insert.group,
+.codeEditor-ui-toolbar .group-format.group,
 .codeEditor-ui-toolbar .tabs span.tab-advanced,
 .codeEditor-ui-toolbar .tabs span.tab-characters,
 .codeEditor-ui-toolbar .tabs span.tab-help,
@@ -11,19 +17,10 @@
 	display: none;
 }
 
-.codeEditor-ui-toolbar .group-codeeditor-format,
-.codeEditor-ui-toolbar .group-codeeditor-style {
-	display: block;
-}
-
 .wikiEditor-ui .ace_editor {
 	/* Same as mw-editfont-monospace, repeated for higher specificity */
 	font-size: 13px;
 	font-family: monospace, monospace;
-}
-
-.wikiEditor-ui-toolbar .group-codeeditor-style {
-	border-right: 0;
 }
 
 .ace_editor textarea,
@@ -72,5 +69,41 @@
 .client-js .editButtons {
 	.editHelp {
 		display: none;
+	}
+}
+
+.client-js {
+	.mw-editform {
+		/* Disable margin collapse, e.g. with messages boxes */
+		padding: 0.05px;
+
+		> #wpTextbox1 { /* stylelint-disable-line selector-max-id */
+			/* Toolbar height + padding + bottom border = 26 + 2*3 + 1 */
+			margin-top: 33px;
+		}
+	}
+
+	> .codeeditor-loading {
+		.mw-editform {
+			/* Copied from ext.wikiEditor.styles to avoid FOUC while loading (T73015) */
+			> #wpTextbox1 { /* stylelint-disable-line selector-max-id */
+				/* Unless there are <10 lines of code, the gutter will be 2 characters wide on the first page */
+				padding-left: 53px !important; /* stylelint-disable-line declaration-no-important */
+				margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+				width: 100% !important; /* stylelint-disable-line declaration-no-important */
+			}
+
+			/* Try to style textarea like the Ace editor to avoid movement when switching */
+			#wpTextbox1 { /* stylelint-disable-line selector-max-id */
+				/* Reserve space for CodeEditor status bar */
+				padding-bottom: 22px;
+				margin-left: 49px;
+				width: calc( 100% - 49px );
+				padding-left: 4px;
+				padding-top: 0;
+				line-height: 20px;
+				white-space: pre;
+			}
+		}
 	}
 }

@@ -17,6 +17,7 @@ use MediaWiki\ChangeTags\Hook\ChangeTagsListActiveHook;
 use MediaWiki\ChangeTags\Hook\ListDefinedTagsHook;
 use MediaWiki\Config\Config;
 use MediaWiki\EditPage\EditPage;
+use MediaWiki\Extension\ConfirmEdit\Hooks as ConfirmEditHooks;
 use MediaWiki\Extension\DiscussionTools\Hooks as DiscussionToolsHooks;
 use MediaWiki\Extension\EventLogging\EventLogging;
 use MediaWiki\Hook\EditPage__attemptSave_afterHook;
@@ -32,11 +33,12 @@ use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\Status\Status;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
 use MediaWiki\User\UserEditTracker;
-use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\WikiMap\WikiMap;
 use MessageLocalizer;
+use MobileContext;
 use MWCryptRand;
 use RecentChange;
 use RequestContext;
@@ -72,19 +74,25 @@ class Hooks implements
 	/** @var UserOptionsLookup */
 	private $userOptionsLookup;
 
+	/** @var MobileContext|null */
+	private ?MobileContext $mobileContext;
+
 	/**
 	 * @param Config $config
 	 * @param UserEditTracker $userEditTracker
 	 * @param UserOptionsLookup $userOptionsLookup
+	 * @param MobileContext|null $mobileContext
 	 */
 	public function __construct(
 		Config $config,
 		UserEditTracker $userEditTracker,
-		UserOptionsLookup $userOptionsLookup
+		UserOptionsLookup $userOptionsLookup,
+		?MobileContext $mobileContext
 	) {
 		$this->config = $config;
 		$this->userEditTracker = $userEditTracker;
 		$this->userOptionsLookup = $userOptionsLookup;
+		$this->mobileContext = $mobileContext;
 	}
 
 	/**
@@ -129,9 +137,8 @@ class Hooks implements
 		if ( !$extensionRegistry->isLoaded( 'EventLogging' ) || !$extensionRegistry->isLoaded( 'WikimediaEvents' ) ) {
 			return;
 		}
-		if ( $extensionRegistry->isLoaded( 'MobileFrontend' ) ) {
-			$mobFrontContext = MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' );
-			if ( $mobFrontContext->shouldDisplayMobileView() ) {
+		if ( $extensionRegistry->isLoaded( 'MobileFrontend' ) && $this->mobileContext ) {
+			if ( $this->mobileContext->shouldDisplayMobileView() ) {
 				// on a MobileFrontend page the logging should be handled by it
 				return;
 			}
@@ -178,8 +185,6 @@ class Hooks implements
 			$data['user_class'] = 'IP';
 		}
 
-		$this->doMetricsPlatformLogging( $action, $data );
-
 		if ( !$inSample && !$shouldOversample ) {
 			return;
 		}
@@ -187,46 +192,10 @@ class Hooks implements
 		EventLogging::submit(
 			'eventlogging_EditAttemptStep',
 			[
-				'$schema' => '/analytics/legacy/editattemptstep/2.0.0',
+				'$schema' => '/analytics/legacy/editattemptstep/2.0.2',
 				'event' => $data,
 			]
 		);
-	}
-
-	/**
-	 * @see https://phabricator.wikimedia.org/T309013
-	 * @see https://phabricator.wikimedia.org/T309985
-	 */
-	private function doMetricsPlatformLogging( string $action, array $data ): void {
-		unset( $data['version'] );
-		unset( $data['action'] );
-
-		// Sampling rate (and therefore whether a stream should oversample) is captured in
-		// the stream config ($wgEventStreams).
-		unset( $data['is_oversample'] );
-		unset( $data['session_token'] );
-
-		// Platform can be derived from the agent_client_platform_family context attribute
-		// mixed in by the JavaScript Metrics Platform Client. The context attribute will be
-		// "desktop_browser" or "mobile_browser" depending on whether the MobileFrontend
-		// extension has signalled that it is enabled.
-		unset( $data['platform'] );
-
-		unset( $data['page_id'] );
-		unset( $data['page_title'] );
-		unset( $data['page_ns'] );
-
-		// If the revision ID can be fetched (i.e. it is a positive integer), then it will be
-		//mixed in by the Metrics Platform Client.
-		if ( $data['revision_id'] ) {
-			unset( $data['revision_id'] );
-		}
-
-		unset( $data['user_id'] );
-		unset( $data['user_editcount'] );
-		unset( $data['mw_version'] );
-
-		EventLogging::submitMetricsEvent( 'eas.wt.' . $action, $data );
 	}
 
 	/**
@@ -343,25 +312,6 @@ class Hooks implements
 
 			$this->doEventLogging( 'init', $article, $data );
 		}
-	}
-
-	/**
-	 * Deprecated static alias for onEditPage__showEditForm_initial
-	 *
-	 * Adds the modules to the edit form
-	 *
-	 * @deprecated since 1.38
-	 * @param EditPage $editPage the current EditPage object.
-	 * @param OutputPage $outputPage object.
-	 */
-	public static function editPageShowEditFormInitial( EditPage $editPage, OutputPage $outputPage ) {
-		wfDeprecated( __METHOD__, '1.38' );
-		$services = MediaWikiServices::getInstance();
-		( new self(
-			$services->getMainConfig(),
-			$services->getUserEditTracker(),
-			$services->getUserOptionsLookup()
-		) )->onEditPage__showEditForm_initial( $editPage, $outputPage );
 	}
 
 	/**
@@ -584,7 +534,7 @@ class Hooks implements
 				if ( ExtensionRegistry::getInstance()->isLoaded( 'ConfirmEdit' ) ) {
 					$key = CacheKeyHelper::getKeyForPage( $wikiPage );
 					/** @var SimpleCaptcha $captcha */
-					$captcha = \ConfirmEditHooks::getInstance();
+					$captcha = ConfirmEditHooks::getInstance();
 					$activatedCaptchas = $captcha->getActivatedCaptchas();
 					if ( isset( $activatedCaptchas[$key] ) ) {
 						// TODO: :(

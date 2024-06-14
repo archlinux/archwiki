@@ -7,20 +7,20 @@
 ( function () {
 
 	/**
-	 * Creates an mw.widgets.TitlesMultiselectWidget object
+	 * Creates an mw.widgets.TitlesMultiselectWidget object.
 	 *
 	 * @class
 	 * @extends OO.ui.MenuTagMultiselectWidget
-	 * @mixins OO.ui.mixin.RequestManager
-	 * @mixins OO.ui.mixin.PendingElement
-	 * @mixins mw.widgets.TitleWidget
+	 * @mixes OO.ui.mixin.RequestManager
+	 * @mixes OO.ui.mixin.PendingElement
+	 * @mixes mw.widgets.TitleWidget
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
 	 */
 	mw.widgets.TitlesMultiselectWidget = function MwWidgetsTitlesMultiselectWidget( config ) {
 		// Parent constructor
-		mw.widgets.TitlesMultiselectWidget.parent.call( this, $.extend( true,
+		mw.widgets.TitlesMultiselectWidget.super.call( this, $.extend( true,
 			{
 				allowEditTags: false
 			},
@@ -92,7 +92,7 @@
 	};
 
 	/**
-	 * @inheritdoc OO.ui.MenuTagMultiselectWidget
+	 * @inheritdoc
 	 */
 	mw.widgets.TitlesMultiselectWidget.prototype.onInputChange = function () {
 		var widget = this;
@@ -104,7 +104,7 @@
 				widget.menu.addItems( widget.getOptionsFromData( data ) );
 			} ).always( function () {
 				// Parent method
-				mw.widgets.TitlesMultiselectWidget.parent.prototype.onInputChange.call( widget );
+				mw.widgets.TitlesMultiselectWidget.super.prototype.onInputChange.call( widget );
 			} );
 	};
 
@@ -121,21 +121,21 @@
 	};
 
 	/**
-	 * @inheritdoc OO.ui.mixin.RequestManager
+	 * @inheritdoc
 	 */
 	mw.widgets.TitlesMultiselectWidget.prototype.getRequestQuery = function () {
 		return this.getQueryValue();
 	};
 
 	/**
-	 * @inheritdoc OO.ui.mixin.RequestManager
+	 * @inheritdoc
 	 */
 	mw.widgets.TitlesMultiselectWidget.prototype.getRequest = function () {
 		return this.getSuggestionsPromise();
 	};
 
 	/**
-	 * @inheritdoc OO.ui.mixin.RequestManager
+	 * @inheritdoc
 	 */
 	mw.widgets.TitlesMultiselectWidget.prototype.getRequestCacheDataFromResponse = function ( response ) {
 		return response.query || {};

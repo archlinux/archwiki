@@ -4,11 +4,10 @@ namespace Cite\Tests\Unit;
 
 use Cite\Hooks\CiteHooks;
 use MediaWiki\Title\Title;
-use MediaWiki\User\StaticUserOptionsLookup;
+use MediaWiki\User\Options\StaticUserOptionsLookup;
 
 /**
  * @covers \Cite\Hooks\CiteHooks
- *
  * @license GPL-2.0-or-later
  */
 class CiteHooksUnitTest extends \MediaWikiUnitTestCase {

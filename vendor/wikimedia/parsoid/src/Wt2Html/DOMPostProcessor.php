@@ -54,11 +54,8 @@ class DOMPostProcessor extends PipelineStage {
 	/** @var array */
 	private $options;
 
-	/** @var array */
-	private $seenIds;
-
-	/** @var array */
-	private $processors;
+	private array $seenIds = [];
+	private array $processors = [];
 
 	/** @var ParsoidExtensionAPI Provides post-processing support to extensions */
 	private $extApi;
@@ -69,12 +66,6 @@ class DOMPostProcessor extends PipelineStage {
 	/** @var string */
 	private $timeProfile = '';
 
-	/**
-	 * @param Env $env
-	 * @param array $options
-	 * @param string $stageId
-	 * @param ?PipelineStage $prevStage
-	 */
 	public function __construct(
 		Env $env, array $options = [], string $stageId = "",
 		?PipelineStage $prevStage = null
@@ -82,8 +73,6 @@ class DOMPostProcessor extends PipelineStage {
 		parent::__construct( $env, $prevStage );
 
 		$this->options = $options;
-		$this->seenIds = [];
-		$this->processors = [];
 		$this->extApi = new ParsoidExtensionAPI( $env );
 
 		// map from mediawiki metadata names to RDFa property names
@@ -122,15 +111,8 @@ class DOMPostProcessor extends PipelineStage {
 		];
 	}
 
-	/**
-	 * @param ?array $processors
-	 */
 	public function registerProcessors( ?array $processors ): void {
-		if ( empty( $processors ) ) {
-			$processors = $this->getDefaultProcessors();
-		}
-
-		foreach ( $processors as $p ) {
+		foreach ( $processors ?: $this->getDefaultProcessors() as $p ) {
 			if ( empty( $p['name'] ) ) {
 				$p['name'] = Utils::stripNamespace( $p['Processor'] );
 			}
@@ -172,9 +154,6 @@ class DOMPostProcessor extends PipelineStage {
 		}
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getDefaultProcessors(): array {
 		$env = $this->env;
 		$options = $this->options;
@@ -291,6 +270,7 @@ class DOMPostProcessor extends PipelineStage {
 						'action' => static function ( $node ) use ( &$abouts, $env ) {
 							// TODO: $abouts can be part of DTState
 							$isStart = false;
+							// isStart gets modified (not read) by extractAnnotationType
 							$t = WTUtils::extractAnnotationType( $node, $isStart );
 							if ( $t !== null ) {
 								$about = null;
@@ -308,11 +288,16 @@ class DOMPostProcessor extends PipelineStage {
 										$about = array_pop( $abouts[$t] );
 									}
 								}
-								if ( $about !== null ) {
-									$datamw = DOMDataUtils::getDataMw( $node );
-									$datamw->rangeId = $about;
-									DOMDataUtils::setDataMw( $node, $datamw );
+								if ( $about === null ) {
+									// this doesn't have a start tag, so we don't handle it when creating
+									// annotation ranges, and we replace it with a string
+									$textAnn = $node->ownerDocument->createTextNode( '</' . $t . '>' );
+									$parentNode = $node->parentNode;
+									$parentNode->insertBefore( $textAnn, $node );
+									DOMCompat::remove( $node );
+									return $textAnn;
 								}
+								DOMDataUtils::getDataMw( $node )->rangeId = $about;
 							}
 							return true;
 						}
@@ -464,28 +449,6 @@ class DOMPostProcessor extends PipelineStage {
 					]
 				]
 			],
-			// Benefits from running after determining which media are redlinks
-			[
-				'name' => 'Headings-genAnchors',
-				'shortcut' => 'heading-ids',
-				'skipNested' => true,
-				'isTraverser' => true,
-				// No need to generate heading ids for HTML embedded in attributes
-				'applyToAttributeEmbeddedHTML' => false,
-				'handlers' => [
-					[
-						'nodeName' => null,
-						'action' => static fn ( $node ) => Headings::genAnchors( $node, $env )
-					],
-					[
-						'nodeName' => null,
-						'action' => static function ( $node ) use ( &$seenIds ) {
-							// TODO: $seenIds can be part of DTState
-							return Headings::dedupeHeadingIds( $seenIds, $node );
-						}
-					]
-				]
-			],
 			[
 				'Processor' => Linter::class,
 				'omit' => !$env->getSiteConfig()->linting(),
@@ -503,7 +466,7 @@ class DOMPostProcessor extends PipelineStage {
 				'handlers' => [
 					[
 						'nodeName' => 'meta',
-						'action' => static fn( $node ) => CleanUp::stripMarkerMetas( $node ),
+						'action' => static fn ( $node ) => CleanUp::stripMarkerMetas( $node ),
 					]
 				]
 			],
@@ -533,11 +496,11 @@ class DOMPostProcessor extends PipelineStage {
 				'handlers' => [
 					[
 						'nodeName' => null,
-						'action' => static fn( $node ) => DisplaySpace::leftHandler( $node )
+						'action' => static fn ( $node ) => DisplaySpace::leftHandler( $node )
 					],
 					[
 						'nodeName' => null,
-						'action' => static fn( $node ) => DisplaySpace::rightHandler( $node )
+						'action' => static fn ( $node ) => DisplaySpace::rightHandler( $node )
 					],
 				]
 			],
@@ -548,6 +511,28 @@ class DOMPostProcessor extends PipelineStage {
 				// since some (not yet known) use cases might benefit from this information
 				// on these hidden links.
 				'skipNested' => true
+			],
+			// Benefits from running after determining which media are redlinks
+			[
+				'name' => 'Headings-genAnchors',
+				'shortcut' => 'heading-ids',
+				'skipNested' => true,
+				'isTraverser' => true,
+				// No need to generate heading ids for HTML embedded in attributes
+				'applyToAttributeEmbeddedHTML' => false,
+				'handlers' => [
+					[
+						'nodeName' => null,
+						'action' => static fn ( $node ) => Headings::genAnchors( $node, $env )
+					],
+					[
+						'nodeName' => null,
+						'action' => static function ( $node ) use ( &$seenIds ) {
+							// TODO: $seenIds can be part of DTState
+							return Headings::dedupeHeadingIds( $seenIds, $node );
+						}
+					]
+				]
 			],
 			// Add <section> wrappers around sections
 			[
@@ -583,12 +568,12 @@ class DOMPostProcessor extends PipelineStage {
 					// Strip empty elements from template content
 					[
 						'nodeName' => null,
-						'action' => static fn( $node, $state ) => CleanUp::handleEmptyElements( $node, $state )
+						'action' => static fn ( $node, $state ) => CleanUp::handleEmptyElements( $node, $state )
 					],
 					// Additional cleanup
 					[
 						'nodeName' => null,
-						'action' => static fn( $node, $state ) => CleanUp::finalCleanup( $node, $state )
+						'action' => static fn ( $node, $state ) => CleanUp::finalCleanup( $node, $state )
 					]
 				]
 			],
@@ -641,10 +626,6 @@ class DOMPostProcessor extends PipelineStage {
 		$this->seenIds = [];
 	}
 
-	/**
-	 * @param Element $body
-	 * @param Env $env
-	 */
 	private function updateBodyClasslist( Element $body, Env $env ): void {
 		$dir = $env->getPageConfig()->getPageLanguageDir();
 		$bodyCL = DOMCompat::getClassList( $body );
@@ -659,7 +640,7 @@ class DOMPostProcessor extends PipelineStage {
 		// Set 'parsoid-body' to add the desired layout styling from Vector.
 		$bodyCL->add( 'parsoid-body' );
 		// Also, add the 'mediawiki' class.
-		// Some Mediawiki:Common.css seem to target this selector.
+		// Some MediaWiki:Common.css seem to target this selector.
 		$bodyCL->add( 'mediawiki' );
 		// Set 'mw-parser-output' directly on the body.
 		// Templates target this class as part of the TemplateStyles RFC
@@ -678,6 +659,8 @@ class DOMPostProcessor extends PipelineStage {
 	 * @param Document $document
 	 */
 	public function addMetaData( Env $env, Document $document ): void {
+		$title = $env->getContextTitle();
+
 		// Set the charset in the <head> first.
 		// This also adds the <head> element if it was missing.
 		DOMUtils::appendToHead( $document, 'meta', [ 'charset' => 'utf-8' ] );
@@ -713,7 +696,7 @@ class DOMPostProcessor extends PipelineStage {
 		$pageConfig = $env->getPageConfig();
 		$revProps = [
 			'id' => $pageConfig->getPageId(),
-			'ns' => $pageConfig->getNs(),
+			'ns' => $title->getNamespace(),
 			'rev_parentid' => $pageConfig->getParentRevisionId(),
 			'rev_revid' => $pageConfig->getRevisionId(),
 			'rev_sha1' => $pageConfig->getRevisionSha1(),
@@ -756,10 +739,7 @@ class DOMPostProcessor extends PipelineStage {
 		}
 
 		// Normalize before comparison
-		if (
-			str_replace( '_', ' ', $env->getSiteConfig()->mainpage() ) ===
-			str_replace( '_', ' ', $env->getPageConfig()->getTitle() )
-		) {
+		if ( $title->isSameLinkAs( $env->getSiteConfig()->mainPageLinkTarget() ) ) {
 			DOMUtils::appendToHead( $document, 'meta', [
 				'property' => 'isMainPage',
 				'content' => 'true' /* HTML attribute values should be strings */
@@ -782,8 +762,7 @@ class DOMPostProcessor extends PipelineStage {
 			]
 		);
 
-		$expTitle = strtr( $env->getPageConfig()->getTitle(), ' ', '_' );
-		$expTitle = explode( '/', $expTitle );
+		$expTitle = explode( '/', $title->getPrefixedDBKey() );
 		$expTitle = array_map( static function ( $comp ) {
 			return PHPUtils::encodeURIComponent( $comp );
 		}, $expTitle );
@@ -810,7 +789,7 @@ class DOMPostProcessor extends PipelineStage {
 		$this->updateBodyClasslist( $body, $env );
 		$env->getSiteConfig()->exportMetadataToHeadBcp47(
 			$document, $env->getMetadata(),
-			$env->getPageConfig()->getTitle(), $lang
+			$title->getPrefixedText(), $lang
 		);
 
 		// Indicate whether LanguageConverter is enabled, so that downstream
@@ -840,9 +819,6 @@ class DOMPostProcessor extends PipelineStage {
 		}
 	}
 
-	/**
-	 * @param Node $node
-	 */
 	public function doPostProcess( Node $node ): void {
 		$env = $this->env;
 
@@ -871,8 +847,7 @@ class DOMPostProcessor extends PipelineStage {
 			}
 		}
 
-		for ( $i = 0;  $i < count( $this->processors );  $i++ ) {
-			$pp = $this->processors[$i];
+		foreach ( $this->processors as $pp ) {
 			// - Nested pipelines are used for both top-level and non-top-level content.
 			// - Omit is currently set only for templated content pipelines.
 			// - But, skipNested can be set for both templated content as well as

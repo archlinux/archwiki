@@ -22,16 +22,16 @@ namespace MediaWiki\Linter;
 
 class HtmlTags {
 	/**
-	 * @var array
+	 * @var array|null
 	 */
-	private static $allowedHtmlTags;
+	private static $allowedHtmlTags = null;
 
 	/**
 	 * @param SpecialLintErrors|LintErrorsPager $parent
 	 */
 	public function __construct( $parent ) {
 		// reuse the allowed html tags array once constructed
-		if ( !isset( self::$allowedHtmlTags ) ) {
+		if ( self::$allowedHtmlTags === null ) {
 			$tagOptionAll = $parent->msg( 'linter-form-tag-option-all' )->escaped();
 			self::$allowedHtmlTags = $this->createAllowedHTMLTags();
 

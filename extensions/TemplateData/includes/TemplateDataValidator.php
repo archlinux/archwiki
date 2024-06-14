@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\TemplateData;
 
-use Status;
+use MediaWiki\Status\Status;
 use stdClass;
 
 /**

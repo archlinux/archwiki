@@ -4,6 +4,7 @@
 			"2nd-player",
 			"Aefgh39622",
 			"Afaz",
+			"Ant176",
 			"Hzy980512",
 			"Kkairri",
 			"Kokage si",
@@ -15,8 +16,7 @@
 			"Whym",
 			"Yusuke1109",
 			"ひまり",
-			"もなー(偽物)",
-			"Ant176"
+			"もなー(偽物)"
 		]
 	},
 	"linterrors": "Lint エラー",
@@ -81,6 +81,7 @@
 	"linter-pager-deletable-table-tag-details": "削除する必要があるTableタグ",
 	"linter-pager-details-header": "追加情報",
 	"linter-pager-html5-misnesting-details": "Misnesting（現在使用不可）",
+	"linter-pager-inline-media-caption-details": "キャプション付きインラインメディア",
 	"linter-pager-misc-tidy-replacement-issues-details": "その他のマークアップエラー",
 	"linter-pager-misnested-tag-details": "適切に入れ子にされるべきである誤ったタグ",
 	"linter-pager-missing-end-tag-details": "不足している終了タグ",

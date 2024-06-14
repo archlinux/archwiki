@@ -22,12 +22,12 @@
 
 namespace MediaWiki\User;
 
-use IContextSource;
 use InvalidArgumentException;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Title\Title;
-use Message;
-use RequestContext;
 
 /**
  * Represents a "user group membership" -- a specific instance of a user belonging
@@ -305,8 +305,5 @@ class UserGroupMembership {
 
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( UserGroupMembership::class, 'UserGroupMembership' );

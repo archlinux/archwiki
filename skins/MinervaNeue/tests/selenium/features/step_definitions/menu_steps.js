@@ -21,8 +21,8 @@ const iShouldSeeLogoutLinkInMenu = async () => {
 };
 
 const iShouldSeeALinkInMenu = async ( text ) => {
-	assert.strictEqual( await ArticlePage.menu_element.$( `span=${text}` ).isDisplayed(),
-		true, `Link to ${text} is visible.` );
+	assert.strictEqual( await ArticlePage.menu_element.$( `span=${ text }` ).isDisplayed(),
+		true, `Link to ${ text } is visible.` );
 };
 
 const iShouldSeeALinkToDisclaimer = async () => {

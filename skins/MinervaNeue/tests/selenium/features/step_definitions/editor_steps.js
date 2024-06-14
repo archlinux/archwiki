@@ -56,7 +56,7 @@ const theTextOfTheFirstHeadingShouldBe = async ( title ) => {
 	await ArticlePage.first_heading_element.waitForDisplayed();
 	assert.match(
 		await ArticlePage.first_heading_element.getText(),
-		new RegExp( `.*${title}$` )
+		new RegExp( `.*${ title }$` )
 	);
 };
 const thereShouldBeARedLinkWithText = ( text ) => {

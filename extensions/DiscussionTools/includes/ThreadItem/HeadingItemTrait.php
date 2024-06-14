@@ -26,8 +26,6 @@ trait HeadingItemTrait {
 
 	/**
 	 * Check whether this heading can be used for topic subscriptions.
-	 *
-	 * @return bool
 	 */
 	public function isSubscribable(): bool {
 		return (

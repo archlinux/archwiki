@@ -1,10 +1,13 @@
 <?php
 
+namespace MediaWiki\Tests\Parser;
+
 use MediaWiki\Parser\Sanitizer;
+use MWTidy;
 
 /**
  * @group Parser
- * @covers MWTidy
+ * @covers \MWTidy
  */
 class TidyTest extends \MediaWikiIntegrationTestCase {
 

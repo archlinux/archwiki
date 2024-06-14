@@ -26,7 +26,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 тил}}",
 	"vector-no-language-button-label": "Тилдерди кошуу",
 	"vector-no-language-button-aria-label": "Бул макала ушул тилде гана бар. Башка тилдеги макала кошуңуз",
-	"vector-language-redirect-to-top": "Тил шилтемелери барактын жогору жагындагы аталыштын маңдайында жайгашкан.",
 	"vector-language-variant-switcher-label": "Тилди өзгөртүү",
 	"vector-action-addsection": "Тема кошуу",
 	"vector-action-delete": "Өчүрүү",

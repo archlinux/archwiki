@@ -35,8 +35,8 @@ use Wikimedia\Parsoid\Tokens\SourceRange;
  * Used to shuttle tokens to the end of a stage in the TTM
  * @property array|null $shuttleTokens
  *
- * Used to indicate that media dimensions have redundant units
- * @property bool|null $bogusPx
+ * Section data associated with a heading
+ * @property array|null $section
  */
 #[\AllowDynamicProperties]
 class TempData {
@@ -98,6 +98,11 @@ class TempData {
 	public const FROM_FOSTER = 1 << 9;
 
 	/**
+	 * Used to indicate that media dimensions have redundant units.
+	 */
+	public const BOGUS_PX = 1 << 10;
+
+	/**
 	 * All elements inserted by TreeBuilderStage receive an integer ID. It is used
 	 * in findAutoInsertedTags() in conjunction with data-stag to identify
 	 * auto-inserted tags, and for debugging.
@@ -152,12 +157,9 @@ class TempData {
 	 *
 	 * @param string $key identifier to support a map for multiple extensions
 	 * @param mixed $data
-	 * @return void
 	 */
 	public function setTagData( string $key, $data ) {
-		if ( !isset( $this->tagData ) ) {
-			$this->tagData = [];
-		}
+		$this->tagData ??= [];
 		$this->tagData[$key] = $data;
 	}
 

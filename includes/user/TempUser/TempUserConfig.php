@@ -3,6 +3,8 @@
 namespace MediaWiki\User\TempUser;
 
 use MediaWiki\Permissions\Authority;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 /**
  * Interface for temporary user creation config and name matching.
@@ -71,7 +73,49 @@ interface TempUserConfig {
 	 *
 	 * Used to avoid selecting a temp account via select queries.
 	 *
+	 * @deprecated since 1.42. Use ::getMatchPatterns as multiple patterns may be defined.
 	 * @return Pattern
 	 */
 	public function getMatchPattern(): Pattern;
+
+	/**
+	 * Get Patterns indicating how temporary account can be detected
+	 *
+	 * Used to avoid selecting a temp account via select queries.
+	 *
+	 * @since 1.42
+	 * @return Pattern[]
+	 */
+	public function getMatchPatterns(): array;
+
+	/**
+	 * Get a SQL query condition that will match (or not match) temporary accounts.
+	 *
+	 * @since 1.42
+	 * @param IReadableDatabase $db
+	 * @param string $field Database field to match against
+	 * @param string $op Operator: IExpression::LIKE or IExpression::NOT_LIKE
+	 * @return IExpression
+	 */
+	public function getMatchCondition( IReadableDatabase $db, string $field, string $op ): IExpression;
+
+	/**
+	 * After how many days do temporary users expire?
+	 *
+	 * @note expireTemporaryAccounts.php maintenance script needs to be periodically executed for
+	 * temp account expiry to work.
+	 * @since 1.42
+	 * @return int|null Null if temp accounts should never expire
+	 */
+	public function getExpireAfterDays(): ?int;
+
+	/**
+	 * How many days before expiration should temporary users be notified?
+	 *
+	 * @note expireTemporaryAccounts.php maintenance script needs to be periodically executed for
+	 * temp account expiry to work.
+	 * @since 1.42
+	 * @return int|null Null if temp accounts should never be notified before expiration
+	 */
+	public function getNotifyBeforeExpirationDays(): ?int;
 }

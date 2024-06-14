@@ -1,10 +1,15 @@
 <?php
 
+namespace MediaWiki\Tests\SpecialPage;
+
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\SpecialPage\ChangesListSpecialPage;
+use MediaWikiIntegrationTestCase;
 
 /**
  * Abstract base class for shared logic when testing ChangesListSpecialPage

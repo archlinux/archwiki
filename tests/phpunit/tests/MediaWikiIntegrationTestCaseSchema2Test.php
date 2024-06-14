@@ -7,7 +7,7 @@
  * test classes getting run in alpha-numerical order.
  * Order is checked by the testMediaWikiIntegrationTestCaseSchemaTestOrder test in both classes.
  *
- * @covers MediaWikiIntegrationTestCase
+ * @covers \MediaWikiIntegrationTestCase
  * @group Database
  */
 class MediaWikiIntegrationTestCaseSchema2Test extends MediaWikiIntegrationTestCase {
@@ -43,6 +43,8 @@ class MediaWikiIntegrationTestCaseSchema2Test extends MediaWikiIntegrationTestCa
 	}
 
 	public function testAlteredTableWasRestored() {
+		// The sql file does ALTER which doesn't exist in sqlite
+		$this->markTestSkippedIfDbType( 'sqlite' );
 		// Make sure pagelinks altered by MediaWikiIntegrationTestCaseSchema1Test
 		// was restored to the original schema before executing MediaWikiIntegrationTestCaseSchema2Test.
 		$this->assertTrue( $this->db->tableExists( 'pagelinks' ) );

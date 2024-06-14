@@ -1,7 +1,7 @@
 /*!
  * VisualEditor Table Selection class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -262,11 +262,15 @@ ve.dm.TableSelection.prototype.getTableSliceRanges = function ( doc ) {
 
 	return ranges
 		// Condense sparse array
-		.filter( function ( r ) { return r; } )
+		.filter( function ( r ) {
+			return r;
+		} )
 		// Add cell ranges
 		.concat( this.getOuterRanges( doc ) )
 		// Sort
-		.sort( function ( a, b ) { return a.start - b.start; } );
+		.sort( function ( a, b ) {
+			return a.start - b.start;
+		} );
 };
 
 /**

@@ -4,21 +4,21 @@ var byteLength = require( 'mediawiki.String' ).byteLength,
 
 /* eslint no-underscore-dangle: "off" */
 /**
- * Controller for the filters in Recent Changes
+ * Controller for the filters in Recent Changes.
  *
- * @class mw.rcfilters.Controller
- *
- * @constructor
+ * @class Controller
+ * @memberof mw.rcfilters
+ * @ignore
  * @param {mw.rcfilters.dm.FiltersViewModel} filtersModel Filters view model
  * @param {mw.rcfilters.dm.ChangesListViewModel} changesListModel Changes list view model
  * @param {mw.rcfilters.dm.SavedQueriesModel} savedQueriesModel Saved queries model
  * @param {Object} config Additional configuration
- * @cfg {string} savedQueriesPreferenceName Where to save the saved queries
- * @cfg {string} daysPreferenceName Preference name for the days filter
- * @cfg {string} limitPreferenceName Preference name for the limit filter
- * @cfg {string} collapsedPreferenceName Preference name for collapsing and showing
+ * @param {string} config.savedQueriesPreferenceName Where to save the saved queries
+ * @param {string} config.daysPreferenceName Preference name for the days filter
+ * @param {string} config.limitPreferenceName Preference name for the limit filter
+ * @param {string} config.collapsedPreferenceName Preference name for collapsing and showing
  *  the active filters area
- * @cfg {boolean} [normalizeTarget] Dictates whether or not to go through the
+ * @param {boolean} [config.normalizeTarget] Dictates whether or not to go through the
  *  title normalization to separate title subpage/parts into the target= url
  *  parameter
  */
@@ -182,7 +182,9 @@ Controller.prototype.initialize = function ( filterStructure, namespaceStructure
 					min: 0, // The server normalizes negative numbers to 0 results
 					max: 1000
 				},
-				sortFunc: function ( a, b ) { return Number( a.name ) - Number( b.name ); },
+				sortFunc: function ( a, b ) {
+					return Number( a.name ) - Number( b.name );
+				},
 				default: mw.user.options.get( this.limitPreferenceName, displayConfig.limitDefault ),
 				sticky: true,
 				filters: displayConfig.limitArray.map( function ( num ) {
@@ -201,7 +203,9 @@ Controller.prototype.initialize = function ( filterStructure, namespaceStructure
 					min: 0,
 					max: displayConfig.maxDays
 				},
-				sortFunc: function ( a, b ) { return Number( a.name ) - Number( b.name ); },
+				sortFunc: function ( a, b ) {
+					return Number( a.name ) - Number( b.name );
+				},
 				numToLabelFunc: function ( i ) {
 					return Number( i ) < 1 ?
 						( Number( i ) * 24 ).toFixed( 2 ) :
@@ -554,6 +558,12 @@ Controller.prototype.toggleHighlight = function () {
 	this.uriProcessor.updateURL();
 
 	if ( this.filtersModel.isHighlightEnabled() ) {
+		/**
+		 * Fires when highlight feature is enabled.
+		 *
+		 * @event ~'RcFilters.highlight.enable'
+		 * @memberof Hooks
+		 */
 		mw.hook( 'RcFilters.highlight.enable' ).fire();
 	}
 };
@@ -566,7 +576,9 @@ Controller.prototype.toggleInvertedTags = function () {
 
 	if (
 		this.filtersModel.getFiltersByView( 'tags' ).filter(
-			function ( filterItem ) { return filterItem.isSelected(); }
+			function ( filterItem ) {
+				return filterItem.isSelected();
+			}
 		).length
 	) {
 		// Only re-fetch results if there are tags items that are actually selected
@@ -584,7 +596,9 @@ Controller.prototype.toggleInvertedNamespaces = function () {
 
 	if (
 		this.filtersModel.getFiltersByView( 'namespaces' ).filter(
-			function ( filterItem ) { return filterItem.isSelected(); }
+			function ( filterItem ) {
+				return filterItem.isSelected();
+			}
 		).length
 	) {
 		// Only re-fetch results if there are namespace items that are actually selected
@@ -840,6 +854,7 @@ Controller.prototype.applySavedQuery = function ( queryID ) {
  * Check whether the current filter and highlight state exists
  * in the saved queries model.
  *
+ * @ignore
  * @return {mw.rcfilters.dm.SavedQueryItemModel} Matching item model
  */
 Controller.prototype.findQueryMatchingCurrentState = function () {

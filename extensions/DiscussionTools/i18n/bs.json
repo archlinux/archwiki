@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Matma Rex",
+			"Reedy",
 			"Semso98",
-			"Srđan",
-			"Reedy"
+			"Srđan"
 		]
 	},
 	"discussiontools": "Alati za razgovor",
@@ -34,6 +34,7 @@
 	"discussiontools-findcomment-title": "Pronađi komentar",
 	"discussiontools-ledesection-button": "Više o stranici",
 	"discussiontools-ledesection-title": "O stranici za razgovor",
+	"discussiontools-newtopic-missing-title": "Dodajte naslov teme. Ako kliknete na \"{{int:discussiontools-replywidget-newtopic}}\", tema će biti dodana bez naslova.",
 	"discussiontools-newtopic-placeholder-title": "Tema",
 	"discussiontools-newtopicssubscription-button-subscribe-label": "Prati",
 	"discussiontools-newtopicssubscription-button-unsubscribe-label": "Prestani pratiti",
@@ -48,6 +49,7 @@
 	"discussiontools-pageframe-latestcomment-notopic": "Najnoviji komentar: $2, $1",
 	"discussiontools-pagetitle-newtopic": "Nova tema na $1",
 	"discussiontools-pagetitle-reply": "Odgovor na $1",
+	"discussiontools-permalink-comment-copied": "Link komentara kopiran u međuspremnik.",
 	"discussiontools-postedit-confirmation-published": "Vaš je komentar objavljen.",
 	"discussiontools-postedit-confirmation-topicadded": "Vaša tema je dodana.",
 	"discussiontools-preference-autotopicsub": "Automatski prati teme",
@@ -115,6 +117,5 @@
 	"discussiontools-topicsubscription-preferences-editsubscriptions": "Izmijeni praćenja",
 	"echo-category-title-dt-subscription": "Praćene {{PLURAL:$1|stranice}} za razgovor",
 	"echo-pref-tooltip-dt-subscription": "Obavijesti me kad neko odgovori na temu koju {{GENDER:|pratim}}.",
-	"minerva-talk-full-page": "Prikaži kao wikistranicu",
 	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Nova tema]"
 }

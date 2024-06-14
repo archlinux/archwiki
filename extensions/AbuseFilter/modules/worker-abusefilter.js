@@ -1437,17 +1437,16 @@ ace.define( 'ace/mode/abusefilter_worker', [ 'require', 'exports', 'module', 'ac
 	'use strict';
 
 	var oop = require( 'ace/lib/oop' ),
-		Mirror = require( 'ace/worker/mirror' ).Mirror,
-		AbuseFilterWorker, parseCode;
+		Mirror = require( 'ace/worker/mirror' ).Mirror;
 
-	AbuseFilterWorker = exports.AbuseFilterWorker = function ( sender ) {
+	var AbuseFilterWorker = exports.AbuseFilterWorker = function ( sender ) {
 		Mirror.call( this, sender );
 		// How many seconds after the change to wait before running the validation
 		this.setTimeout( 1000 );
 	};
 	oop.inherits( AbuseFilterWorker, Mirror );
 
-	parseCode = function ( code ) {
+	var parseCode = function ( code ) {
 		var xhr, data;
 
 		if ( !self.mwapipath ) {
@@ -1479,17 +1478,16 @@ ace.define( 'ace/mode/abusefilter_worker', [ 'require', 'exports', 'module', 'ac
 
 	( function () {
 		this.onUpdate = function () {
-			var results = parseCode( this.doc.getValue() ),
-				errors = [],
-				warning,
-				position;
+			var results = parseCode( this.doc.getValue() );
 
 			if ( results === true ) {
 				// API error or something similar.
 				this.sender.emit( 'annotate', [] );
 				return;
 			}
-			for ( warning in results.warnings || {} ) {
+			var position;
+			var errors = [];
+			for ( var warning in results.warnings || {} ) {
 				position = this.doc.indexToPosition( results.warnings[ warning ].character );
 				errors.push( {
 					row: position.row,

@@ -26,17 +26,16 @@ module.exports = {
 
 	// An array of regexp pattern strings used to skip coverage collection
 	coveragePathIgnorePatterns: [
-		'/node_modules/',
-		'/resources/skins.vector.typographySurvey/'
+		'/node_modules/'
 	],
 
 	// An object that configures minimum threshold enforcement for coverage results
 	coverageThreshold: {
 		global: {
-			branches: 31,
-			functions: 39,
-			lines: 38,
-			statements: 38
+			branches: 35,
+			functions: 45,
+			lines: 48,
+			statements: 48
 		}
 	},
 
@@ -45,6 +44,10 @@ module.exports = {
 		'js',
 		'json',
 		'vue'
+	],
+
+	modulePathIgnorePatterns: [
+		'<rootDir>/tests/integration-qunit/'
 	],
 
 	// The paths to modules that run some code to configure or

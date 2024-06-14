@@ -19,7 +19,6 @@
 	"echo-pref-subscription-edit-thank": "Me mercejar per ma modificacion",
 	"echo-pref-tooltip-edit-thank": "M'avisar quand qualqu’un me merceja per una modificacion qu’ai faita.",
 	"echo-category-title-edit-thank": "Mercé",
-	"notification-thanks-diff-link": "vòstra modificacion",
 	"notification-header-rev-thank": "$1 vos {{GENDER:$2|a}} {{GENDER:$4|mercejat|mercejada|remercejat(ejada)}} per vòstra modificacion sus <strong>$3</strong>.",
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Una persona|$1 personas|100=Al mens 100 personas}} vos {{PLURAL:$1|a|an}} {{GENDER:$3|mercejat|mercejada}} per vòstra modificacion sus <strong>$2</strong>.",
 	"log-name-thanks": "Entrada mercejaments",

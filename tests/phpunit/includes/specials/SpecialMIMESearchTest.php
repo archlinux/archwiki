@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Specials\SpecialMIMESearch;
 use MediaWiki\Title\Title;
@@ -18,7 +19,7 @@ class SpecialMIMESearchTest extends MediaWikiIntegrationTestCase {
 
 		$services = $this->getServiceContainer();
 		$this->page = new SpecialMIMESearch(
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$services->getLinkBatchFactory(),
 			$services->getLanguageConverterFactory()
 		);

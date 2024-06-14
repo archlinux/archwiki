@@ -2,6 +2,8 @@
 
 namespace MediaWiki\Minerva;
 
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Minerva\Skins\SkinUserPageHelper;
 use MediaWikiUnitTestCase;
 use OutOfBoundsException;
 
@@ -12,13 +14,20 @@ use OutOfBoundsException;
  */
 class SkinOptionsTest extends MediaWikiUnitTestCase {
 
+	private function newSkinOptions() {
+		return new SkinOptions(
+			$this->createMock( HookContainer::class ),
+			$this->createMock( SkinUserPageHelper::class )
+		);
+	}
+
 	/**
 	 * @covers ::get
 	 * @covers ::getAll
 	 * @covers ::setMultiple
 	 */
 	public function testSettersAndGetters() {
-		$options = new SkinOptions();
+		$options = $this->newSkinOptions();
 		$defaultValue = $options->get( SkinOptions::BETA_MODE );
 		$options->setMultiple( [ SkinOptions::BETA_MODE => !$defaultValue ] );
 
@@ -33,7 +42,7 @@ class SkinOptionsTest extends MediaWikiUnitTestCase {
 	 * @covers ::hasSkinOptions
 	 */
 	public function testHasSkinOptions() {
-		$options = new SkinOptions();
+		$options = $this->newSkinOptions();
 		$this->assertTrue( $options->hasSkinOptions() );
 		$options->setMultiple( [
 			SkinOptions::SHOW_DONATE => false,
@@ -51,7 +60,7 @@ class SkinOptionsTest extends MediaWikiUnitTestCase {
 	 * @covers ::get
 	 */
 	public function testGettingUnknownKeyShouldThrowException() {
-		$options = new SkinOptions();
+		$options = $this->newSkinOptions();
 		$this->expectException( OutOfBoundsException::class );
 		$options->get( 'non_existing_key' );
 	}
@@ -60,7 +69,7 @@ class SkinOptionsTest extends MediaWikiUnitTestCase {
 	 * @covers ::get
 	 */
 	public function testSettingUnknownKeyShouldThrowException() {
-		$options = new SkinOptions();
+		$options = $this->newSkinOptions();
 		$this->expectException( OutOfBoundsException::class );
 		$options->setMultiple( [
 			'non_existing_key' => 1

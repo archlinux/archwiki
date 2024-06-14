@@ -6,6 +6,7 @@
 			"Pikne"
 		]
 	},
+	"content-model-scribunto": "Scribunto moodul",
 	"scribunto-desc": "Raamistik, mis võimaldab põimida MediaWiki lehekülgedesse skriptikeeli.",
 	"scribunto-line": "$1. real",
 	"scribunto-module-line": "kohal $1 $2. real",
@@ -14,6 +15,7 @@
 	"scribunto-error-long": "Skriptitõrked:\n\n$1",
 	"scribunto-doc-page-does-not-exist": "''Selle mooduli dokumentatsiooni saab kirjutada asukohta [[$1]]''.",
 	"scribunto-doc-page-header": "'''See on üksuse [[$1]] dokumentatsiooni lehekülg.'''",
+	"scribunto-console-intro": "* Moodul on eksporditav muutujana \"p\", mis sisaldab ka salvestamata muudatusi.\n* Lisa rea algusesse \"=\", et käsitada seda avaldisena või kasuta funktsiooni print(). Tabelite jaoks kasuta funktsiooni mw.logObject().\n* Kasuta mooduli koodis funktsioone mw.log() ja mw.logObject(), et saata sõnum siia konsooli.",
 	"scribunto-console-title": "Veatõrje konsool",
 	"scribunto-console-current-src": "konsoolisisend",
 	"scribunto-console-clear": "Puhasta",
@@ -22,6 +24,7 @@
 	"scribunto-common-nosuchmodule": "Skriptitõrge: Moodulit \"$2\" pole.",
 	"scribunto-common-nosuchfunction": "Skriptitõrge: Funktsioon \"$2\" puudub.",
 	"scribunto-common-notafunction": "Skriptitõrge: \"$2\" pole funktsioon.",
+	"scribunto-common-backtrace": "Pinujälg:",
 	"scribunto-common-no-details": "Rohkem üksikasju pole saadaval.",
 	"scribunto-lua-in-function": "funktsioonis \"$1\"",
 	"scribunto-lua-error-location": "Lua tõrge $1: $2.",
@@ -35,6 +38,7 @@
 	"scribunto-limitreport-virtmemusage": "Lua virtuaalne suurus",
 	"scribunto-limitreport-estmemusage": "Lua hinnanguline mälukasutus",
 	"scribunto-limitreport-memusage": "Lua mälukasutus",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|bait|baiti}}",
 	"scribunto-limitreport-profile": "Lua profiil",
 	"nstab-module": "Moodul",
 	"tooltip-ca-nstab-module": "Vaata mooduli lehekülge"

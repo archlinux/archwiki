@@ -7,7 +7,8 @@
 			"Martin Urbanec",
 			"Matěj Suchánek",
 			"Mormegil",
-			"Slepi"
+			"Slepi",
+			"Spotter"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-extended-description": "vars, rcid nebo logid jsou povinné parametry, avšak jen jeden z nich může být použit",
@@ -24,6 +25,7 @@
 	"apihelp-abusefilterevalexpression-param-expression": "Výraz, který se má vyhodnotit.",
 	"apihelp-abusefilterevalexpression-param-prettyprint": "Zda má být výsledek pěkně vytištěn.",
 	"apihelp-abusefilterevalexpression-example-1": "Vyhodnotit jednoduchý výraz",
+	"apihelp-abusefilterevalexpression-example-2": "Vyhodnoťte jednoduchý výraz, formátování výsledku",
 	"apihelp-abusefilterunblockautopromote-param-user": "Jméno uživatele, jehož chcete odblokovat.",
 	"apihelp-abusefilterunblockautopromote-example-1": "Zrušit blokování automatického povýšení uživatele [[User:Example]]",
 	"apihelp-query+abusefilters-summary": "Zobrazit podrobnosti o filtrech zneužití.",

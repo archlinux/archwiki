@@ -7,8 +7,8 @@ use MediaWiki\WikiMap\WikiMap;
 
 /**
  * @group Database
- * @covers FileRepo
- * @covers LocalRepo
+ * @covers \FileRepo
+ * @covers \LocalRepo
  */
 class LocalRepoTest extends MediaWikiIntegrationTestCase {
 	/**
@@ -79,7 +79,7 @@ class LocalRepoTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testNewFileFromRow_invalid() {
-		$this->expectException( MWException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'LocalRepo::newFileFromRow: invalid row' );
 
 		$row = (object)[
@@ -163,14 +163,14 @@ class LocalRepoTest extends MediaWikiIntegrationTestCase {
 			->getMock();
 		$mockBag->expects( $this->never() )
 			->method( 'makeKey' )
-			->withConsecutive(
-				[ 'filerepo-file-redirect', 'local', md5( 'Redirect' ) ]
+			->with(
+				'filerepo-file-redirect', 'local', md5( 'Redirect' )
 			);
 		$mockBag->expects( $this->once() )
 			->method( 'makeGlobalKey' )
-			->withConsecutive(
-				[ 'filerepo-file-redirect', $dbDomain, md5( 'Redirect' ) ]
-			)->willReturnOnConsecutiveCalls(
+			->with(
+				'filerepo-file-redirect', $dbDomain, md5( 'Redirect' )
+			)->willReturn(
 				implode( ':', [ 'filerepo-file-redirect', $dbDomain, md5( 'Redirect' ) ] )
 			);
 
@@ -183,7 +183,7 @@ class LocalRepoTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testCheckRedirect_invalidFile() {
-		$this->expectException( MWException::class );
+		$this->expectException( RuntimeException::class );
 		$this->expectExceptionMessage( '`Notafile` is not a valid file title.' );
 		$this->newRepo()->checkRedirect( Title::makeTitle( NS_MAIN, 'Notafile' ) );
 	}

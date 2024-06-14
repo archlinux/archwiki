@@ -1,7 +1,7 @@
 /*!
  * VisualEditor user interface MWParameterPage class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -263,7 +263,12 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 		return new ve.ui.MWLazyMultilineTextInputWidget( valueInputConfig );
 	}
 
-	return new OO.ui.TextInputWidget( valueInputConfig );
+	// Wrapping single line input (T348482)
+	return new ve.ui.MWLazyMultilineTextInputWidget( ve.extendObject( {
+		rows: 1,
+		autosize: true,
+		allowLinebreaks: false
+	}, valueInputConfig ) );
 };
 
 /**

@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
-use Config;
-use ConfigFactory;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\ConfigFactory;
 use MediaWiki\Extension\BetaFeatures\Hooks\GetBetaFeaturePreferencesHook;
 use MediaWiki\MainConfigNames;
-use User;
+use MediaWiki\User\User;
 
 /**
  * Hooks from BetaFeatures extension,
@@ -27,9 +27,6 @@ class BetaPreferenceHooks implements GetBetaFeaturePreferencesHook {
 
 	/**
 	 * Handler for the GetBetaFeaturePreferences hook, to add and hide user beta preferences as configured
-	 *
-	 * @param User $user
-	 * @param array &$preferences
 	 */
 	public function onGetBetaFeaturePreferences( User $user, array &$preferences ) {
 		if ( $this->config->get( 'DiscussionToolsBeta' ) ) {

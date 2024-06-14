@@ -1,9 +1,9 @@
 <?php
 
-namespace MediaWiki\ParamValidator\TypeDef;
+namespace MediaWiki\Tests\ParamValidator\TypeDef;
 
 use MediaWikiIntegrationTestCase;
-use Wikimedia\ParamValidator\TypeDef\TypeDefTestCaseTrait;
+use Wikimedia\Tests\ParamValidator\TypeDef\TypeDefTestCaseTrait;
 
 abstract class TypeDefIntegrationTestCase extends MediaWikiIntegrationTestCase {
 	use TypeDefTestCaseTrait;

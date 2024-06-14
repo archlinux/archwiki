@@ -46,7 +46,6 @@
 	"echo-pref-subscription-edit-thank": "Megköszöni a szerkesztésem",
 	"echo-pref-tooltip-edit-thank": "Értesítést kérek, ha valaki megköszöni egy szerkesztésemet.",
 	"echo-category-title-edit-thank": "köszönet",
-	"notification-thanks-diff-link": "a szerkesztésed",
 	"notification-header-rev-thank": "$1 {{GENDER:$2 $4|megköszönte}} a szerkesztésedet a(z) <strong>$3</strong> lapon.",
 	"notification-header-creation-thank": "$1 {{GENDER:$2 $4|megköszönte}} a(z) <strong>$3</strong> lap létrehozását.",
 	"notification-header-log-thank": "$1 {{GENDER:$2 $4|megköszönte}} a(z) <strong>$3</strong> laphoz kapcsolódó műveletedet.",
@@ -65,7 +64,6 @@
 	"thanks-error-invalidpostid": "Érvénytelen hozzászólás-azonosító",
 	"flow-thanks-confirmation-special": "Küldesz nyilvános köszönetet ezért a hozzászólásért?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Megköszönted}} $1 {{GENDER:$2|hozzászólását}}.",
-	"notification-flow-thanks-post-link": "a hozzászólásodat",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|megköszönte}} a {{GENDER:$5|hozzászólásodat}} a(z) „<strong>$3</strong>” témában.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|köszönetet}} {{GENDER:$2|küldött}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Valaki köszönetet küldött|$1 felhasználó köszönetet küldött|100=Több mint 99 felhasználó küldött köszönetet}} a {{GENDER:$3|hozzászólásodért}} a(z) „<strong>$2</strong>” témában."

@@ -159,7 +159,7 @@
 	"notification-header-mention-failure-bundle": "{{PLURAL:$3|Kunne}} ikke sende {{PLURAL:$3|en nevning|$3 nevninger}} {{GENDER:$2|du prøvde å gjøre}} på diskusjonssiden <strong>$4</strong>.",
 	"notification-compact-header-mention-failure-user-unknown": "<strong>Brukernavnet eksisterer ikke:</strong> $1",
 	"notification-compact-header-mention-failure-user-anonymous": "<strong>Kan ikke nevne IP-adresser:</strong> $1",
-	"notification-header-mention-success": "<strong>$3</strong> har fått beskjed om at {{GENDER:$2|du}} nevnte {{GENDER:$3|ham|henne|vedkommende}}.",
+	"notification-header-mention-success": "<strong>$3</strong> har fått beskjed om at {{GENDER:$2|du}} nevnte {{GENDER:$3|ham|henne|hen}}.",
 	"notification-header-mention-success-bundle": "{{GENDER:$2|Du}} {{PLURAL:$3|nevnte}} {{PLURAL:$3|en bruker|$3 brukere}} på diskusjonssiden <strong>$4</strong>.",
 	"notification-compact-header-mention-success": "<strong>{{GENDER:$2|Du nevnte}}:</strong> $3",
 	"notification-header-mention-status-bundle": "{{PLURAL:$3|En beskjed|$3 beskjeder}} om nevninger {{GENDER:$2|du gjorde}} på diskusjonssiden <strong>$4</strong>: {{PLURAL:$5|$5 ble ikke sendt}}, {{PLURAL:$6|$6 ble sendt}}.",

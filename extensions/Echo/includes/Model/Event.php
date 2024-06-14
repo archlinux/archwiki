@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\Notifications\Model;
 
 use Exception;
+use IDBAccessObject;
 use InvalidArgumentException;
 use MediaWiki\Extension\Notifications\Bundleable;
 use MediaWiki\Extension\Notifications\Controller\NotificationController;
@@ -15,10 +16,10 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use RuntimeException;
 use stdClass;
-use User;
 
 /**
  * Immutable class to represent an event.
@@ -294,7 +295,7 @@ class Event extends AbstractEntity implements Bundleable {
 			$title = Title::newFromID( $targetPageId );
 			// Try primary database if there is no match
 			if ( !$title ) {
-				$title = Title::newFromID( $targetPageId, Title::GAID_FOR_UPDATE );
+				$title = Title::newFromID( $targetPageId, IDBAccessObject::READ_LATEST );
 			}
 			if ( $title ) {
 				$result[] = $title;
@@ -564,7 +565,7 @@ class Event extends AbstractEntity implements Bundleable {
 				$this->title = $title;
 				return $this->title;
 			}
-			$this->title = Title::newFromID( $this->pageId, $fromPrimary ? Title::GAID_FOR_UPDATE : 0 );
+			$this->title = Title::newFromID( $this->pageId, $fromPrimary ? IDBAccessObject::READ_LATEST : 0 );
 			if ( $this->title ) {
 				return $this->title;
 			}

@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Brettchenweber",
+			"Caro",
 			"Hwboehm",
 			"Inkowik",
 			"Kghbln",
@@ -11,19 +12,17 @@
 			"MuratTheTurkish",
 			"Sushi",
 			"Umherirrender",
-			"Wnme",
-			"Caro"
+			"Wnme"
 		]
 	},
 	"oathauth-desc": "Ermöglicht die Authentifizierung mit HMAC-gestützten Einmalpasswörtern",
 	"disableoathforuser": "Zwei-Faktor-Authentifizierung für Benutzer deaktivieren",
 	"verifyoathforuser": "Überprüfen des Zwei-Faktor-Authentifizierungsstatus",
-	"specialpages-group-oath": "Zwei-Faktor-Authentifizierung",
 	"oathauth-account": "Benutzerkonto:",
 	"oathauth-secret": "Geheimer Schlüssel für die Zwei-Faktor-Authentifizierung:",
 	"oathauth-enable": "Zwei-Faktor-Authentifizierung aktivieren",
+	"oathauth-recoverycodes": "Die folgende Liste enthält einmalig verwendbare geheime Schlüssel. Diese geheimen Schlüssel können jeweils nur einmal verwendet werden und sind für Notfälle vorgesehen, wenn du keinen Zugang zu deinem Gerät hast. Bitte notiere und verwahre sie an einem sicheren Ort. Es wird empfohlen, jeden Code als verwendet zu markieren, wenn du dich mit ihm angemeldet hast. Sofern dir dein Gerät abhanden kommt, werden diese geheimen Schlüssel die einzige Möglichkeit sein, dein Konto zu retten.\n\n'''Diese geheimen Schlüssel werden dir niemals wieder angezeigt werden'''.",
 	"oathauth-recoverycodes-important": "Dieser Schritt ist wichtig! Überspringe diesen Schritt nicht!",
-	"oathauth-token": "Geheimer Schlüssel",
 	"oathauth-disable": "Die Zwei-Faktor-Authentifizierung deaktivieren",
 	"oathauth-validatedoath": "Die Zwei-Faktor-Anmeldeinformationen wurden bestätigt. Die Zwei-Faktor-Authentifizierung wird jetzt angewendet.",
 	"oathauth-noscratchforvalidation": "Du kannst keinen Wiederherstellungscode zur Bestätigung der Zwei-Faktor-Authentifizierung verwenden. Wiederherstellungscodes dienen nur der Sicherung und gelegentlichen Verwendung. Bitte verwende einen Code aus deiner Zwei-Faktor-Authentifizierungsanwendung (z. B. Google Authenticator).",
@@ -81,7 +80,6 @@
 	"oathauth-enable-generic": "Aktivieren",
 	"oathauth-disable-generic": "Deaktivieren",
 	"oathauth-invalid-data-format": "Der Datenprovider kann keinen Schlüssel für die ausgewählte Authentifizierungsmethode erstellen",
-	"oathauth-invalid-key-type": "Der festgelegte Schlüssel des Benutzers stimmt nicht mit dem erforderlichen Typ für die ausgewählte Authentifizierungsmethode überein",
 	"oathauth-disable-page-title": "Deaktiviere $1",
 	"oathauth-enable-page-title": "Aktiviere $1",
 	"oathauth-action-exclusive-to-2fa": "Diese Aktion kann nur von Benutzern durchgeführt werden, die eine Zwei-Faktor-Authentifizierung aktiviert haben.",
@@ -96,8 +94,10 @@
 	"oathauth-totp-disable-warning": "Du kannst das mit diesem Konto registrierte Authentifizierungsgerät nicht mehr verwenden. Alle mit diesem Konto verknüpften Wiederherstellungscodes werden ungültig.",
 	"oathauth-invalidrequest": "Ungültige Anfrage",
 	"notification-header-oathauth-disable": "Die Zwei-Faktor-Authentifizierung wurde für {{GENDER:$2|dein Konto}} deaktiviert.",
+	"notification-header-oathauth-remove-device": "Ein Zwei-Faktor-Authentifizierungsgerät wurde von {{GENDER:$2|deinem Konto}} entfernt.",
 	"notification-body-oathauth-disable": "Wenn {{GENDER:$2|du}} dies nicht getan hast, kann {{GENDER:$2|dein Konto}} kompromittiert worden sein.",
 	"notification-body-oathauth-disable-other": "Wenn {{GENDER:$2|du}} dies nicht beantragt hast, solltest {{GENDER:$2|du}} einen Administrator kontaktieren.",
+	"notification-body-oathauth-disable-remaining": "Es {{PLURAL:$3|ist immer noch ein zusätzliches Gerät|sind immer noch $3 zusätzliche Geräte}} in {{GENDER:$2|deinem Konto}} aktiv.",
 	"oathauth-notifications-disable-help": "Hilfe",
 	"oathauth-notifications-disable-primary": "Überprüfe deine Einstellungen für die Zwei-Faktor-Authentifizierung",
 	"notification-header-oathauth-enable": "Die Zwei-Faktor-Authentifizierung wurde für {{GENDER:$2|dein Konto}} aktiviert.",
@@ -108,5 +108,6 @@
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} hat die Zwei-Faktor-Authentifizierung nicht aktiviert.",
 	"oathauth-prefs-disabledgroups": "Deaktiverte {{PLURAL:$1|Gruppe|Gruppen}}:",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Deine Mitgliedschaft}} in {{PLURAL:$1|der Gruppe|den Gruppen}} ist deaktiviert, bis du die [[Special:Manage Two-factor authentication|Zwei-Faktor-Authentifizierung]] aktivierst.",
+	"oathauth-qrcode-alt": "Scanbarer QR-Code, der den geheimen Schlüssel darstellt.",
 	"oathauth-hint": "Du hast keinen Zugriff auf dein Gerät oder deine Anwendung? In diesem Feld kannst du Wiederherstellungstokens eingeben (die angezeigt werden, wenn du 2FA aktiviert hast)."
 }

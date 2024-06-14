@@ -7,7 +7,7 @@
 	"gadgets-desc": "Deixa que os usuario seleccionen os [[Special:Gadgets|gadgets de CSS y JavaScript]] que quieran en as suyas [[Special:Preferences#mw-prefsection-gadgets|preferencias]]",
 	"prefs-gadgets": "Trastes",
 	"gadgets-prefstext": "Contino ye una lista de trastes especials que puede fer servir en a suya cuenta.\nComo quasi totz istos trastes son feitos en JavaScript, caldrá que tienga activato JavaScript en o suyo navegador ta que vaigan bien. Pare cuenta que istos trastes no tendrán garra efeuto en ista pachina de preferencias.\n\nPare cuenta tamién que istos trastes especials no fan parte d'o software MediaWiki, y que gosan estar desenvolicatos y mantenitos por usuarios d'a suya wiki local.\nOs almenistradors locals pueden editar os trastes disponibles en as pachinas de [[MediaWiki:Gadgets-definition|definicions]] y de [[Special:Gadgets|descripcions]].",
-	"gadgets": "Trastes",
+	"special-gadgets": "Trastes",
 	"gadgets-title": "Trastes",
 	"gadgets-pagetext": "Contino ye una lista de trastes especials que os usuarios pueden activar en a suya [[Special:Preferences#mw-prefsection-gadgets|pachina de preferencias]], como se define en a pachina de [[MediaWiki:Gadgets-definition|definicions]].\nIsta lista premite ir facilment t'as pachinas de mensaches d'o sistema que definen a descripción y o codigo de cada traste.",
 	"gadgets-uses": "Fa servir",

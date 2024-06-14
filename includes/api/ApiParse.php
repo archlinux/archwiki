@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Cache\LinkCache;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Renderer\ContentRenderer;
@@ -31,7 +32,10 @@ use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
+use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
@@ -147,13 +151,15 @@ class ApiParse extends ApiBase {
 	private function getContentParserOutput(
 		Content $content,
 		PageReference $page,
-		$revId,
+		?RevisionRecord $revision,
 		ParserOptions $popts
 	) {
 		$worker = new PoolCounterWorkViaCallback( 'ApiParser', $this->getPoolKey(),
 			[
-				'doWork' => function () use ( $content, $page, $revId, $popts ) {
-					return $this->contentRenderer->getParserOutput( $content, $page, $revId, $popts );
+				'doWork' => function () use ( $content, $page, $revision, $popts ) {
+					return $this->contentRenderer->getParserOutput(
+						$content, $page, $revision, $popts
+					);
 				},
 				'error' => function () {
 					$this->dieWithError( 'apierror-concurrency-limit' );
@@ -326,6 +332,7 @@ class ApiParse extends ApiBase {
 				$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $title ) ] );
 			}
 			$revid = $params['revid'];
+			$rev = null;
 			if ( $revid !== null ) {
 				$rev = $this->revisionLookup->getRevisionById( $revid );
 				if ( !$rev ) {
@@ -434,9 +441,9 @@ class ApiParse extends ApiBase {
 
 			// Not cached (save or load)
 			if ( $params['pst'] ) {
-				$p_result = $this->getContentParserOutput( $this->pstContent, $titleObj, $revid, $popts );
+				$p_result = $this->getContentParserOutput( $this->pstContent, $titleObj, $rev, $popts );
 			} else {
-				$p_result = $this->getContentParserOutput( $this->content, $titleObj, $revid, $popts );
+				$p_result = $this->getContentParserOutput( $this->content, $titleObj, $rev, $popts );
 			}
 		}
 
@@ -820,13 +827,21 @@ class ApiParse extends ApiBase {
 				$this->content,
 				$pageId === null ? $page->getTitle()->getPrefixedText() : $this->msg( 'pageid', $pageId )
 			);
-			return $this->getContentParserOutput( $this->content, $page->getTitle(), $revId, $popts );
+			return $this->getContentParserOutput(
+				$this->content, $page->getTitle(),
+				$rev,
+				$popts
+			);
 		}
 
 		if ( $isDeleted ) {
 			// getParserOutput can't do revdeled revisions
 
-			$pout = $this->getContentParserOutput( $this->content, $page->getTitle(), $revId, $popts );
+			$pout = $this->getContentParserOutput(
+				$this->content, $page->getTitle(),
+				$rev,
+				$popts
+			);
 		} else {
 			// getParserOutput will save to Parser cache if able
 			$pout = $this->getPageParserOutput( $page, $revId, $popts, $suppressCache );

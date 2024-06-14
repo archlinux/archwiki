@@ -16,11 +16,14 @@
 #vector-page-titlebar-toc-label,
 .vector-header .cdx-button.cdx-button--icon-only {
 	// Increase padding on small viewports
-	// FIXME: Replace with Codex solution i.e. `.cdx-button--size-large`
-	@media ( max-width: @max-width-tablet ) {
+	// FIXME: T338163 Replace with Codex solution i.e. `.cdx-button--size-large`
+	@media ( max-width: @max-width-breakpoint-tablet ) {
 		@min-size-interactive-touch: 44px;
-		min-width: @min-size-interactive-touch;
 		min-height: @min-size-interactive-touch;
+		// FIXME: This results in inconsistencies with icon-only buttons with a dropdown arrow
+		// (i.e. user dropdown toggle), because those buttons should have a larger width than
+		// @min-size-interactive-touch. Instead of min-width we should be increasing the horizontal padding
+		min-width: @min-size-interactive-touch;
 	}
 }
 
@@ -32,32 +35,32 @@
 }
 
 .vector-button-flush-left {
-	@media ( min-width: @min-width-desktop ) {
+	@media ( min-width: @min-width-breakpoint-desktop ) {
 		.cdx-mixin-button-layout-flush( 'start', true );
 	}
 
-	@media ( max-width: @max-width-tablet ) {
+	@media ( max-width: @max-width-breakpoint-tablet ) {
 		.cdx-mixin-button-layout-flush( 'start', true, 'large' );
 	}
 }
 
 .vector-button-flush-right {
-	@media ( min-width: @min-width-desktop ) {
+	@media ( min-width: @min-width-breakpoint-desktop ) {
 		.cdx-mixin-button-layout-flush( 'end', true );
 	}
 
-	@media ( max-width: @max-width-tablet ) {
+	@media ( max-width: @max-width-breakpoint-tablet ) {
 		.cdx-mixin-button-layout-flush( 'end', true, 'large' );
 	}
 }
 
 // Handle button styles in checkbox hack, copied from Codex
 // FIXME: Remove these styles when Codex supports the checkbox hack in T333394
-input:hover + .cdx-button:not( .cdx-button--action-progressive ) {
+input:hover + .cdx-button:not( .cdx-button--action-progressive ) + .cdx-button:not( .vector-page-titlebar-toc ) {
 	background-color: @background-color-button-quiet--hover;
 }
 
-input:active + .cdx-button:not( .cdx-button--action-progressive ) {
+input:active + .cdx-button:not( .cdx-button--action-progressive ) + .cdx-button:not( .vector-page-titlebar-toc ) {
 	background-color: @background-color-button-quiet--active;
 	color: @color-emphasized;
 	border-color: @border-color-interactive;

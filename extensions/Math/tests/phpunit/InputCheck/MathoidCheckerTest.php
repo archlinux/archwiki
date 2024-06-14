@@ -53,10 +53,27 @@ class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @covers \MediaWiki\Extension\Math\InputCheck\MathoidChecker::getCheckResponse
 	 */
+	public function testResponseWithPurge() {
+		$fakeWAN = new WANObjectCache( [ 'cache' => new HashBagOStuff() ] );
+		$fakeWAN->set( self::SAMPLE_KEY,
+			[ 999, 'unexpected' ],
+			WANObjectCache::TTL_INDEFINITE,
+			[ 'version' => MathoidChecker::VERSION ] );
+		// double check that the fake works
+		$this->assertSame( [ 999, 'unexpected' ], $fakeWAN->get( self::SAMPLE_KEY ) );
+		$this->setFakeRequest( 200, 'expected' );
+		$this->setService( 'MainWANObjectCache', $fakeWAN );
+		$checker = $this->getMathoidChecker( '\sin x', true );
+		$this->assertSame( [ 200, 'expected' ], $checker->getCheckResponse() );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\Math\InputCheck\MathoidChecker::getCheckResponse
+	 */
 	public function testResponseFromResponse() {
 		$fakeWAN = WANObjectCache::newEmpty();
 		$fakeWAN->set( self::SAMPLE_KEY, 'expected' );
-		// double check that the fake does not works
+		// double check that the fake does not work
 		$this->assertSame( false, $fakeWAN->get( self::SAMPLE_KEY ) );
 		$this->setService( 'MainWANObjectCache', $fakeWAN );
 		$this->setFakeRequest( 200, 'expected' );
@@ -70,7 +87,7 @@ class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 	public function testFailedResponse() {
 		$fakeWAN = WANObjectCache::newEmpty();
 		$fakeWAN->set( self::SAMPLE_KEY, 'expected' );
-		// double check that the fake does not works
+		// double check that the fake does not work
 		$this->assertSame( false, $fakeWAN->get( self::SAMPLE_KEY ) );
 		$this->setService( 'MainWANObjectCache', $fakeWAN );
 		$this->setFakeRequest( 401, false );
@@ -134,11 +151,12 @@ class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @param string $tex
+	 * @param bool $purge
 	 * @return MathoidChecker
 	 */
-	private function getMathoidChecker( $tex = '\sin x' ): MathoidChecker {
+	private function getMathoidChecker( string $tex = '\sin x', bool $purge = false ): MathoidChecker {
 		return Math::getCheckerFactory()
-			->newMathoidChecker( $tex, 'tex' );
+			->newMathoidChecker( $tex, 'tex', $purge );
 	}
 
 	private function setFakeRequest( $returnStatus, $content ): void {

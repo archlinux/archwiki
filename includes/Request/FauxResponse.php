@@ -45,6 +45,10 @@ class FauxResponse extends WebResponse {
 	 * @param null|int $http_response_code Forces the HTTP response code to the specified value.
 	 */
 	public function header( $string, $replace = true, $http_response_code = null ) {
+		if ( $this->disableForPostSend ) {
+			return;
+		}
+
 		if ( str_starts_with( $string, 'HTTP/' ) ) {
 			$parts = explode( ' ', $string, 3 );
 			$this->code = intval( $parts[1] );
@@ -58,7 +62,7 @@ class FauxResponse extends WebResponse {
 			}
 		}
 
-		if ( $http_response_code !== null ) {
+		if ( $http_response_code ) {
 			$this->code = intval( $http_response_code );
 		}
 	}
@@ -118,6 +122,10 @@ class FauxResponse extends WebResponse {
 	 * @param array $options Ignored in this faux subclass.
 	 */
 	public function setCookie( $name, $value, $expire = 0, $options = [] ) {
+		if ( $this->disableForPostSend ) {
+			return;
+		}
+
 		$cookieConfig = $this->getCookieConfig();
 		$cookiePath = $cookieConfig->get( MainConfigNames::CookiePath );
 		$cookiePrefix = $cookieConfig->get( MainConfigNames::CookiePrefix );
@@ -188,7 +196,5 @@ class FauxResponse extends WebResponse {
 
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( FauxResponse::class, 'FauxResponse' );

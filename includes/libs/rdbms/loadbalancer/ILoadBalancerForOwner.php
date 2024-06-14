@@ -48,7 +48,7 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 *      - is static: whether the dataset is static *and* this server has a copy [optional]
 	 *  - localDomain: A DatabaseDomain or domain ID string
 	 *  - loadMonitor : LoadMonitor::__construct() parameters with "class" field [optional]
-	 *  - readOnlyReason : Reason the primary server is read-only if so [optional]
+	 *  - readOnlyReason : Reason the primary server is read-only (false if not) [optional]
 	 *  - srvCache : BagOStuff object for server cache [optional]
 	 *  - wanCache : WANObjectCache object [optional]
 	 *  - databaseFactory: DatabaseFactory object [optional]
@@ -244,4 +244,23 @@ interface ILoadBalancerForOwner extends ILoadBalancer {
 	 * @since 1.31
 	 */
 	public function setIndexAliases( array $aliases );
+
+	/**
+	 * Get the timestamp of the latest write query done by this thread
+	 * @return float|false UNIX timestamp or false
+	 * @since 1.37
+	 */
+	public function lastPrimaryChangeTimestamp();
+
+	/**
+	 * Set the primary wait position and wait for ALL replica DBs to catch up to it
+	 *
+	 * This method is only intended for use a throttling mechanism for high-volume updates.
+	 * Unlike waitFor(), failure does not effect laggedReplicaUsed().
+	 *
+	 * @param DBPrimaryPos $pos Primary position
+	 * @param int|null $timeout Max seconds to wait; default is mWaitTimeout
+	 * @return bool Success (able to connect and no timeouts reached)
+	 */
+	public function waitForAll( DBPrimaryPos $pos, $timeout = null );
 }

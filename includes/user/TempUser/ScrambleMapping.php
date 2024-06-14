@@ -2,6 +2,10 @@
 
 namespace MediaWiki\User\TempUser;
 
+use LogicException;
+use OutOfBoundsException;
+use RuntimeException;
+
 /**
  * A mapping which converts sequential input into an output sequence that looks
  * pseudo-random, but preserves the base-10 length of the input number.
@@ -31,8 +35,8 @@ namespace MediaWiki\User\TempUser;
  */
 class ScrambleMapping implements SerialMapping {
 	/**
-	 * Appropriately sized prime moduli and their associated largest primitive
-	 * root. Generated with this GP/PARI script:
+	 * Appropriately sized prime moduli and primitive roots. Generated with
+	 * this GP/PARI script:
 	 * s=0; \
 	 * for(q = 2, 10, \
 	 *   p=precprime(10^q - s); \
@@ -67,7 +71,7 @@ class ScrambleMapping implements SerialMapping {
 		$this->hasGmp = extension_loaded( 'gmp' );
 		$this->hasBcm = extension_loaded( 'bcmath' );
 		if ( !$this->hasGmp && !$this->hasBcm ) {
-			throw new \MWException( __CLASS__ . ' requires the bcmath or gmp extension' );
+			throw new RuntimeException( __CLASS__ . ' requires the bcmath or gmp extension' );
 		}
 	}
 
@@ -76,13 +80,16 @@ class ScrambleMapping implements SerialMapping {
 			return (string)$index;
 		}
 		$offset = $this->offset;
+		if ( $index - $offset < 0 ) {
+			throw new OutOfBoundsException( __METHOD__ . ": The configured offset $offset is too large." );
+		}
 		foreach ( self::GENERATORS as [ $g, $p ] ) {
 			if ( $index - $offset < $p ) {
 				return (string)( $offset + $this->powmod( $g, $index - $offset, $p ) );
 			}
 			$offset += $p - 1;
 		}
-		throw new \MWException( __METHOD__ . ": The index $index is too large" );
+		throw new RuntimeException( __METHOD__ . ": The index $index is too large" );
 	}
 
 	private function powmod( $num, $exponent, $modulus ) {
@@ -91,7 +98,7 @@ class ScrambleMapping implements SerialMapping {
 		} elseif ( $this->hasBcm ) {
 			return (int)\bcpowmod( (string)$num, (string)$exponent, (string)$modulus );
 		} else {
-			throw new \MWException( __CLASS__ . ' requires the bcmath or gmp extension' );
+			throw new LogicException( __CLASS__ . ' requires the bcmath or gmp extension' );
 		}
 	}
 }

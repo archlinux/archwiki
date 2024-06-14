@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use SpecialPage;
+use MediaWiki\SpecialPage\SpecialPage;
 
 class EchoWatchlistChangePresentationModel extends EchoEventPresentationModel {
 

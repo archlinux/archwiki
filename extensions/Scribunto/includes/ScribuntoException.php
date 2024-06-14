@@ -3,8 +3,8 @@
 namespace MediaWiki\Extension\Scribunto;
 
 use Exception;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use Status;
 
 /**
  * An exception class which represents an error in the script. This does not
@@ -51,8 +51,13 @@ class ScribuntoException extends Exception {
 			$codeLocation = '[UNKNOWN]';
 		}
 		array_unshift( $this->messageArgs, $codeLocation );
-		$msg = wfMessage( $messageName )->params( $this->messageArgs )->inContentLanguage()->text();
-		parent::__construct( $msg );
+		$msg = wfMessage( $messageName )
+			->params( $this->messageArgs )
+			->inContentLanguage();
+		if ( isset( $params['title'] ) ) {
+			$msg = $msg->page( $params['title'] );
+		}
+		parent::__construct( $msg->text() );
 
 		$this->messageName = $messageName;
 		$this->params = $params;

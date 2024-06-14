@@ -20,11 +20,11 @@
 
 namespace MediaWiki\Minerva\Menu\Main;
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Minerva\Menu\Definitions;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
 use MediaWiki\Minerva\Menu\Group;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityUtils;
 
 /**
  * Used to build default (available for everyone by default) main menu
@@ -52,6 +52,8 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 	 */
 	private $definitions;
 
+	private UserIdentityUtils $userIdentityUtils;
+
 	/**
 	 * Initialize the Default Main Menu builder
 	 *
@@ -59,12 +61,20 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 	 * @param bool $showDonateLink whether to show the donate link
 	 * @param UserIdentity $user The current user
 	 * @param Definitions $definitions A menu items definitions set
+	 * @param UserIdentityUtils $userIdentityUtils
 	 */
-	public function __construct( $showMobileOptions, $showDonateLink, UserIdentity $user, Definitions $definitions ) {
+	public function __construct(
+		$showMobileOptions,
+		$showDonateLink,
+		UserIdentity $user,
+		Definitions $definitions,
+		UserIdentityUtils $userIdentityUtils
+	) {
 		$this->showMobileOptions = $showMobileOptions;
 		$this->showDonateLink = $showDonateLink;
 		$this->user = $user;
 		$this->definitions = $definitions;
+		$this->userIdentityUtils = $userIdentityUtils;
 	}
 
 	/**
@@ -103,8 +113,7 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 	public function getSettingsGroup(): Group {
 		$group = new Group( 'pt-preferences' );
 		// Show settings group for anon and temp users
-		$userIdentityUtils = MediaWikiServices::getInstance()->getUserIdentityUtils();
-		$isTemp = $userIdentityUtils->isTemp( $this->user );
+		$isTemp = $this->userIdentityUtils->isTemp( $this->user );
 		if ( $this->showMobileOptions && ( !$this->user->isRegistered() || $isTemp ) ) {
 			$this->definitions->insertMobileOptionsItem( $group );
 		}
@@ -129,8 +138,7 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 				[ 'login' ]
 			);
 		}
-		$userIdentityUtils = MediaWikiServices::getInstance()->getUserIdentityUtils();
-		$isTemp = $userIdentityUtils->isTemp( $this->user );
+		$isTemp = $this->userIdentityUtils->isTemp( $this->user );
 		if ( $isTemp ) {
 			$excludeKeyList[] = 'mycontris';
 		}

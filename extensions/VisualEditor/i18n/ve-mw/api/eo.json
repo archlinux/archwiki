@@ -13,7 +13,6 @@
 	},
 	"apierror-visualeditor-badcachekey": "Neniu seriigaĵo kun tiu ŝlosilo troviĝis en kaŝmemoro.",
 	"apierror-visualeditor-difffailed": "Diff malsukcesita",
-	"apierror-visualeditor-docserver": "Eraro dum kontaktado de la servilo de Parsoid/RESTBase",
 	"apihelp-visualeditor-param-basetimestamp": "Kiam konservigu, asignu tempindikon de la redaktita revizio. Tio estas uzata por rekoni konflikoj pri redakto.",
 	"apihelp-visualeditor-param-badetag": "Se RESTBase-demando resendis ŝajne nevalidan ETag-on, donu ĝin ĉi tien por registraj celoj.",
 	"apihelp-visualeditor-param-cachekey": "Por vicigo aŭ diferencaĵo, uzu rezulton de antaŭa porkaŝmemorviciga peto (''serializeforcache request'') kun tiu vokilo. Transpasu $1html.",

@@ -1,14 +1,21 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Format;
+
+use ApiBase;
+use ApiFormatBase;
+use ApiMain;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
+use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group API
  * @group Database
- * @covers ApiFormatBase
+ * @covers \ApiFormatBase
  */
 class ApiFormatBaseTest extends ApiFormatTestBase {
 
@@ -23,7 +30,7 @@ class ApiFormatBaseTest extends ApiFormatTestBase {
 	 * @param ApiMain|null $main
 	 * @param string $format
 	 * @param array $methods
-	 * @return ApiFormatBase|\PHPUnit\Framework\MockObject\MockObject
+	 * @return ApiFormatBase|MockObject
 	 */
 	public function getMockFormatter( ?ApiMain $main, $format, $methods = [] ) {
 		if ( $main === null ) {

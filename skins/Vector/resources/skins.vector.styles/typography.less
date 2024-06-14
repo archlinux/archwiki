@@ -40,11 +40,12 @@ pre,
 .mw-body {
 	// h1's can exist outside of `.mw-body-content` so some heading styles
 	// therefore need to be defined in `.mw-body` as well.
-	& h1,
+	h1,
+	.mw-heading1,
 	&-content h1,
-	&-content h2 {
-		margin-bottom: 0.25em;
-		padding: 0;
+	&-content .mw-heading1,
+	&-content h2,
+	&-content .mw-heading2 {
 		font-family: @font-family-serif;
 		line-height: @line-height-xx-small;
 
@@ -67,75 +68,89 @@ pre,
 		}
 	}
 
-	& h1,
-	&-content h1 {
+	h1,
+	.mw-heading1,
+	&-content h1,
+	&-content .mw-heading1 {
 		font-size: @font-size-heading-1;
 	}
-}
 
-// T335625 - Move siteSub into common.less to prevent it from being feature-flagged
-// and overriding on-wiki modifications.
-#siteSub {
-	// By default the sitesub (i.e. tagline) is hidden as it was hidden in Vector legacy but site styles can reveal.
-	display: none;
-}
-
-.vector-body {
-	font-size: @font-size-base;
-	// Support IE 9-11, Trident cuts values 2 digits after decimal point.
-	// `calc` enables to set correct calculation in place again. See T102364.
-	font-size: @font-size-base--trident-hack;
-	line-height: @line-height-base;
-
-	.vector-feature-custom-font-size-clientpref-enabled & {
-		font-size: 16px;
-	}
-
-	#siteSub {
-		font-size: 12.8px; // T311421
-	}
-
-	h1 {
-		margin-top: 1em;
-	}
-
+	.mw-heading2,
 	h2 {
-		margin-top: 1em;
 		font-size: @font-size-heading-2;
 	}
 
+	.mw-heading3,
 	h3,
+	.mw-heading4,
 	h4,
+	.mw-heading5,
 	h5,
+	.mw-heading6,
 	h6 {
-		margin-top: 0.3em;
-		margin-bottom: 0;
+		// Additional bottom padding isnt necessary because only the h2 has an underline
 		padding-bottom: 0;
 		line-height: @line-height-base;
 	}
 
+	.mw-heading2,
+	h2,
+	.mw-heading3,
+	h3,
+	.mw-heading4,
+	h4,
+	.mw-heading5,
+	h5,
+	.mw-heading6,
+	h6 {
+		// Headings should have extra spacing from its siblings, which is a
+		// <p> element most of the time. In this case, spacing from the heading
+		// the <p> is sufficient. However, we to account for cases
+		// where the previous sibling element doesnt have any spacing
+		margin: 0.25em 0 0.25em 0;
+	}
+
+	.mw-heading3,
 	h3 {
 		font-size: @font-size-heading-3;
 	}
 
+	.mw-heading3,
 	h3,
+	.mw-heading4,
 	h4 {
 		font-weight: bold;
 	}
 
+	.mw-heading4,
 	h4,
+	.mw-heading5,
 	h5,
+	.mw-heading6,
 	h6 {
 		font-size: @font-size-reset; // Reset.
 	}
 
-	.toc h2 {
-		font-family: @font-family-sans;
-		font-size: @font-size-reset; // Reset.
+	// On Talk:Test?dtenable=0 h2 is inside mw-heading which results in larger than
+	// expected font size since @font-size-heading-2 is defined in ems (T357929).
+	// TODO: Consider switching font-sizes to rems instead of ems to remove these styles.
+	.mw-heading1 h1,
+	.mw-heading2 h2,
+	.mw-heading3 h3,
+	.mw-heading4 h4,
+	.mw-heading5 h5,
+	.mw-heading6 h6 {
+		margin-top: 0;
+		font-size: inherit;
 	}
 
 	p {
-		margin: 0.5em 0;
+		// T351754 Use padding to avoid margin collapsing between adjacent <p> elements
+		// creating an effective margin-bottom: 1em
+		padding-bottom: 0.5em;
+		// Top margin is needed because many elements rely on adjacent <p> elements
+		// for extra spacing, i.e. lists and headings
+		margin: 0.5em 0 0 0;
 	}
 
 	blockquote {
@@ -151,6 +166,25 @@ pre,
 			margin-bottom: 0;
 		}
 	}
+
+	ul,
+	ol {
+		// Override default spacing so that lists entirely rely on adjacent sibling elements for spacing
+		margin-top: 0;
+	}
+}
+
+// T335625 - Move siteSub into common.less to prevent it from being feature-flagged
+// and overriding on-wiki modifications.
+#siteSub {
+	font-size: unit( @font-size-small, rem ); // T311421
+	// By default the sitesub (i.e. tagline) is hidden as it was hidden in Vector legacy but site styles can reveal.
+	display: none;
+}
+
+.vector-body {
+	font-size: var( --font-size-medium );
+	line-height: var( --line-height-medium );
 }
 
 // External links

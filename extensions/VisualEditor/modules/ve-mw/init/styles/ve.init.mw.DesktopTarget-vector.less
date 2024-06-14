@@ -1,7 +1,7 @@
 /*!
  * VisualEditor MediaWiki Initialization desktop target Vector skin styles.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -13,11 +13,6 @@
 	ol {
 		margin-left: 0;
 	}
-}
-
-.ve-ui-overlay-global {
-	/* Same as main content font-size in Vector */
-	font-size: 0.875em;
 }
 
 /* Slug animation needs more specific rules and skin-specific target margins */
@@ -35,11 +30,4 @@
 	& > * {
 		color: #72777d;
 	}
-}
-
-.ve-ui-overlay .mw-body-content {
-	/* Fix font-size for surfaces inside UI overlays */
-	/* Increase specificity to deal with :not selector hack in core's typography.less */
-	/* stylelint-disable-next-line declaration-no-important */
-	font-size: 1em !important;
 }

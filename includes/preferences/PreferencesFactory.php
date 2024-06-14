@@ -20,8 +20,8 @@
 
 namespace MediaWiki\Preferences;
 
-use HTMLForm;
-use IContextSource;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\User\User;
 use PreferencesFormOOUI;
 

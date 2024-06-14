@@ -23,7 +23,6 @@
 	"echo-pref-subscription-edit-thank": "Eskertu nire aldaketa",
 	"echo-pref-tooltip-edit-thank": "Abisatu norbaitek egin dudan aldaketa bat eskertzen duenean.",
 	"echo-category-title-edit-thank": "Eskerrak",
-	"notification-thanks-diff-link": "edizioa",
 	"notification-header-rev-thank": "$1 lankideak '''$3''' orrian egin {{GENDER:$4|duzun}} aldaketa eskertu {{GENDER:$2|dizu}}.",
 	"log-name-thanks": "Eskertza erregistroa",
 	"logentry-thanks-thank": "$1 {{GENDER:$2|wikilariak}} eskerrak eman dizkio {{GENDER:$4|$3}} wikilariari",
@@ -31,6 +30,5 @@
 	"thanks-confirmation-special-rev": "Publikoki eskertu nahi duzu edizio hau?",
 	"notification-link-text-view-post": "Erakutsi iruzkina",
 	"flow-thanks-confirmation-special": "Iruzkin hau eskertu nahi duzu?",
-	"flow-thanks-thanked-notice": "{{GENDER:$3|Zu}} eskerrak $1 {{GENDER:$2|mutilarena|neskarena|haiena}}agatik oharra.",
-	"notification-flow-thanks-post-link": "Zure iruzkina"
+	"flow-thanks-thanked-notice": "{{GENDER:$3|Zu}} eskerrak $1 {{GENDER:$2|mutilarena|neskarena|haiena}}agatik oharra."
 }

@@ -13,10 +13,11 @@
 			"Ladsgroup",
 			"Mojtabakd",
 			"Reza1615",
-			"Zack90",
-			"Tar Lócesilion",
 			"Rulebased",
-			"محک"
+			"Tar Lócesilion",
+			"Zack90",
+			"محک",
+			"Darafsh"
 		]
 	},
 	"skinname-vector": "وکتور قدیمی (۲۰۱۰)",
@@ -35,7 +36,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 زبان}}",
 	"vector-no-language-button-label": "افزودن زبان‌ها",
 	"vector-no-language-button-aria-label": "این مقاله فقط به این زبان وجود دارد. مقاله را برای زبان‌های دیگر اضافه کنید.",
-	"vector-language-redirect-to-top": "در این {{SITENAME}} پیوندهای زبانی در بالای صفحه و هم‌تراز با عنوان مقاله قرار دارند. [[#p-lang-btn|رفتن به بالا]].",
 	"vector-language-variant-switcher-label": "تغییر گونهٔ زبان",
 	"vector-action-addsection": "افزودن مبحث",
 	"vector-action-delete": "حذف",
@@ -52,6 +52,10 @@
 	"vector-jumptosearch": "پرش به جستجو",
 	"vector-jumptocontent": "پرش به محتوا",
 	"vector-more-actions": "بیشتر",
+	"vector-feature-limited-width-1-label": "استاندارد",
+	"vector-feature-custom-font-size-1-label": "استاندارد",
+	"vector-feature-custom-font-size-2-label": "بزرگ",
+	"skin-night-mode-description": "[نسخهٔ آزمایشی، احتمال زیاد بروز مشکلات] نور ساطع شده از صفحهٔ نمایش دستگاه را کاهش می‌دهد.",
 	"vector-search-loader": "بارگیری پیشنهادهای جستجو",
 	"vector-searchsuggest-containing": "جستجو برای صفحه‌های دارای <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:مقدمه",
@@ -75,13 +79,6 @@
 	"tooltip-vector-anon-user-menu-title": "گزینه‌های بیشتر",
 	"vector-prefs-limited-width": "فعال‌سازی حالت محدودیت عرض",
 	"vector-prefs-limited-width-help": "فعال‌سازی حالت محدودیت عرض برای بهبود تجربهٔ مطالعه.",
-	"vector-readability-survey-title": "تغییرات آزمایشی در خوانایی",
-	"vector-readability-survey-description": "به نظر شما، بهترین ظاهر برای متون ویکی‌پدیا چیست؟ برای تنظیم ظاهر از اسلایدر های زیر استفاده کنید. در مورد پروژه [[mw:Special:MyLanguage/Reading/Web/Accessibility for reading|بهبود خوانایی]] بیشتر بخوانید.",
-	"vector-readability-survey-fontSize": "اندازه فونت",
-	"vector-readability-survey-lineHeight": "ارتفاع خط",
-	"vector-readability-survey-paragraphSpacing": "فاصله بین بندها",
-	"vector-readability-survey-optout": "بر دکمه «ادامه»‌ کلیک کنید تا بازخورد شما در صفحه بعد منتشر شود. [[#close-vector-survey|بر این پیوند کلیک کنید تا ابزار را حذف کنید]].",
-	"vector-readability-survey-randomize": "تصادفی",
-	"vector-readability-survey-reset": "ریست",
-	"vector-readability-survey-share": "ادامه دهید"
+	"vector-2022-beta-preview-label": "وکتور ۲۰۲۲ آزمایشی",
+	"vector-2022-beta-preview-description": "پیش‌نمایش‌های زودهنگام ویژگی‌های جدید وکتور ۲۰۲۲ را دریافت کنید."
 }

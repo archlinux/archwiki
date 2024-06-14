@@ -74,6 +74,7 @@
 	"templatedata-modal-table-param-aliases": "Aliasen",
 	"templatedata-modal-table-param-autovalue": "Automatesche Wäert",
 	"templatedata-modal-table-param-default": "Standard ($1)",
+	"templatedata-modal-table-param-status": "Status",
 	"templatedata-modal-table-param-deprecated": "Net méi aktuell",
 	"templatedata-modal-table-param-deprecatedValue": "Vereelzt Uleedung",
 	"templatedata-modal-table-param-description": "Beschreiwung ($1)",

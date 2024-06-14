@@ -25,6 +25,8 @@
 	"apihelp-discussiontoolsedit-summary": "שליחת הודעה בדף שיחה.",
 	"apihelp-discussiontoolsfindcomment-summary": "מציאת תגובה לפי המזהה או השם שלה.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "מזהה התגובה או שמה",
+	"apihelp-discussiontoolsfindcomment-param-heading": "קטע גיבוב של כותרת פרק",
+	"apihelp-discussiontoolsfindcomment-param-page": "דף שקטע הגיבוב של כותרת הפרק היה קיים בו בעבר",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "שמות הנושאים לבדוק",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "קבלת מצב המעקב של הנושאים הנתונים.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "באיזה מספר גרסה להשתמש (ברירת המחדל היא הגרסה האחרונה).",

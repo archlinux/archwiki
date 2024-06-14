@@ -8,7 +8,7 @@
 	"math_syntax_error": "синтаксийн алдаа",
 	"math_unknown_error": "үл мэдэгдэх алдаа",
 	"math_unknown_function": "үл мэдэгдэх функц",
-	"mw_math_mathml": "Бололцоотой бол MathML （туршилт）",
-	"mw_math_source": "TeX хэвээр үлдээх （текстэн броузеруудад）",
+	"mw-math-mathml": "Бололцоотой бол MathML （туршилт）",
+	"mw-math-source": "TeX хэвээр үлдээх （текстэн броузеруудад）",
 	"prefs-math": "Томъёонууд"
 }

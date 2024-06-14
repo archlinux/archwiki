@@ -3,6 +3,7 @@
 		"authors": [
 			"01miki10",
 			"Crt",
+			"Kyykaarme",
 			"Macofe",
 			"Nike",
 			"Pxos",
@@ -11,8 +12,7 @@
 			"Silvonen",
 			"Stryn",
 			"Valtlai",
-			"Valtlait",
-			"Kyykaarme"
+			"Valtlait"
 		]
 	},
 	"thanks-desc": "Lisää linkkejä käyttäjien kiittämistä varten heidän muokkauksistaan, kommenteistaan ynnä muusta.",
@@ -43,7 +43,6 @@
 	"echo-pref-subscription-edit-thank": "Minulle annetut kiitokset tekemistäni muokkauksista",
 	"echo-pref-tooltip-edit-thank": "Ilmoita minulle, kun joku kiittää minua tekemästäni muokkauksesta.",
 	"echo-category-title-edit-thank": "Kiitokset",
-	"notification-thanks-diff-link": "muokkauksestasi",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|kiitti}} {{GENDER:$4|sinua}} muokkauksestasi kohteessa <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 {{GENDER:$2|kiitti}} {{GENDER:$4|sinua}} sivun <strong>$3</strong> luonnista.",
 	"notification-header-log-thank": "$1 {{GENDER:$2|kiitti}} {{GENDER:$4|sinua}} toiminnastasi liittyen sivuun <strong>$3</strong>.",
@@ -62,7 +61,6 @@
 	"thanks-error-invalidpostid": "Viestin tunnistenumero ei ole kelvollinen.",
 	"flow-thanks-confirmation-special": "Haluatko lähettää näkyvän kiitoksen tästä kommentista?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Kiitit}} käyttäjää $1 {{GENDER:$2|hänen}} kommentistaan.",
-	"notification-flow-thanks-post-link": "kommentistasi",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|kiitti}} {{GENDER:$5|sinua}} kommentistasi aiheessa ”<strong>$3</strong>”.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|kiitti}} {{GENDER:$3|sinua}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Yksi henkilö|$1 ihmistä|100=99+ ihmistä}} kiitti {{GENDER:$3|sinua}} kommentistasi aiheessa ”<strong>$2</strong>”.",

@@ -18,9 +18,11 @@
  * @file
  */
 
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\PermissionStatus;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
 
@@ -76,6 +78,7 @@ class ApiPurge extends ApiBase {
 
 		$result = $pageSet->getInvalidTitlesAndRevisions();
 		$userName = $authority->getUser()->getName();
+		$now = wfTimestampNow();
 
 		foreach ( $pageSet->getGoodPages() as $pageIdentity ) {
 			$title = $this->titleFormatter->getPrefixedText( $pageIdentity );
@@ -86,7 +89,7 @@ class ApiPurge extends ApiBase {
 			$page = $this->wikiPageFactory->newFromTitle( $pageIdentity );
 
 			$authStatus = PermissionStatus::newEmpty();
-			if ( $authority->authorizeWrite( 'purge', $pageIdentity, $authStatus ) ) {
+			if ( $authority->authorizeAction( 'purge', $authStatus ) ) {
 				// Directly purge and skip the UI part of purge()
 				$page->doPurge();
 				$r['purged'] = true;
@@ -99,7 +102,7 @@ class ApiPurge extends ApiBase {
 			}
 
 			if ( $forceLinkUpdate || $forceRecursiveLinkUpdate ) {
-				if ( $authority->authorizeWrite( 'linkpurge', $pageIdentity, $authStatus ) ) {
+				if ( $authority->authorizeAction( 'linkpurge', $authStatus ) ) {
 					# Logging to better see expensive usage patterns
 					if ( $forceRecursiveLinkUpdate ) {
 						LoggerFactory::getInstance( 'RecursiveLinkPurge' )->info(
@@ -120,15 +123,17 @@ class ApiPurge extends ApiBase {
 						'causeAction' => 'api-purge',
 						'causeAgent' => $userName,
 						'defer' => DeferredUpdates::PRESEND,
+						'freshness' => $now,
 					] );
 					$r['linkupdate'] = true;
 				} else {
 					if ( $authStatus->isRateLimitExceeded() ) {
 						$this->addWarning( 'apierror-ratelimited' );
+						$forceLinkUpdate = false;
+						$forceRecursiveLinkUpdate = false;
 					} else {
 						$this->addWarning( Status::wrap( $authStatus )->getMessage() );
 					}
-					$forceLinkUpdate = false;
 				}
 			}
 

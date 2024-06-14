@@ -1,10 +1,21 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use ApiDisabled;
+use ApiFeedContributions;
+use ApiFeedRecentChanges;
+use ApiLogout;
+use ApiMain;
+use ApiModuleManager;
+use ApiRsd;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\User\UserFactory;
+use MediaWikiUnitTestCase;
 
 /**
- * @covers ApiModuleManager
+ * @covers \ApiModuleManager
  * @group API
  * @group medium
  */
@@ -195,7 +206,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ApiModuleManager::getModule
+	 * @covers \ApiModuleManager::getModule
 	 * @dataProvider getModuleProvider
 	 */
 	public function testGetModule( $modules, $name, $expectedClass ) {
@@ -220,7 +231,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ApiModuleManager::getModule
+	 * @covers \ApiModuleManager::getModule
 	 */
 	public function testGetModule_null() {
 		$modules = [
@@ -236,7 +247,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ApiModuleManager::getNames
+	 * @covers \ApiModuleManager::getNames
 	 */
 	public function testGetNames() {
 		$fooModules = [
@@ -262,7 +273,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ApiModuleManager::getNamesWithClasses
+	 * @covers \ApiModuleManager::getNamesWithClasses
 	 */
 	public function testGetNamesWithClasses() {
 		$fooModules = [
@@ -291,7 +302,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ApiModuleManager::getModuleGroup
+	 * @covers \ApiModuleManager::getModuleGroup
 	 */
 	public function testGetModuleGroup() {
 		$fooModules = [
@@ -314,7 +325,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ApiModuleManager::getGroups
+	 * @covers \ApiModuleManager::getGroups
 	 */
 	public function testGetGroups() {
 		$fooModules = [
@@ -336,7 +347,7 @@ class ApiModuleManagerTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers ApiModuleManager::getClassName
+	 * @covers \ApiModuleManager::getClassName
 	 */
 	public function testGetClassName() {
 		$fooModules = [

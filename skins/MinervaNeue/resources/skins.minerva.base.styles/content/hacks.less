@@ -3,35 +3,21 @@ A file for css that corrects known rendering issues on known Wikimedia wikis.
 
 the following definitions exist to deal with certain inline styles
 present in wikitext.
-This file should not need to exist
-It will become redundant when the following RFC is resolved:
-https://www.mediawiki.org/wiki/Requests_for_comment/Allow_styling_in_templates
+
+This selectors used here should reflect the list on:
+https://www.mediawiki.org/wiki/Recommendations_for_mobile_friendly_articles_on_Wikimedia_wikis#Use_standardized_class_names_in_HTML_markup_for_components_in_templates_across_projects
 
 FIXME: Review all of these hacks to see if they still apply.
 */
 @import '../../../minerva.less/minerva.variables.less';
 @import '../../../minerva.less/minerva.mixins.less';
 @import 'templates/ambox.less';
-@import 'templates/reflist.less';
-
-.collapsible td {
-	width: auto !important;
-}
 
 .content {
 	.vertical-navbox,
 	.navbox {
 		display: none;
 	}
-
-	// stylelint-disable selector-max-id
-	#coordinates,
-	/* Hide article badges, clean-up notices, stub notices, and navigation boxes */
-	.topicon {
-		// It's important as some of these are tables which become display: table on larger screens
-		display: none !important;
-	}
-	// stylelint-enable selector-max-id
 
 	table,
 	.infobox {
@@ -45,9 +31,10 @@ FIXME: Review all of these hacks to see if they still apply.
 	.infobox {
 		font-size: 90%;
 		position: relative;
-		border: @border-width-base @border-style-base #eaecf0;
+		border: @border-width-base @border-style-base var( --border-color-muted );
 		margin-bottom: 2em;
-		background-color: @background-color-lightest;
+		color: var( --color-base );
+		background-color: var( --background-color-interactive-subtle );
 		display: flex;
 		flex: 1 1 100%;
 		flex-flow: column nowrap;
@@ -62,7 +49,7 @@ FIXME: Review all of these hacks to see if they still apply.
 		th, td {
 			vertical-align: top;
 			border: 0;
-			border-bottom: @border-width-base @border-style-base #eaecf0;
+			border-bottom: @border-width-base @border-style-base var( --border-color-muted );
 			padding: 7px 10px;
 		}
 
@@ -107,39 +94,18 @@ FIXME: Review all of these hacks to see if they still apply.
 	}
 }
 
-// FIXME: Remove when filetoc is stripped from file pages a la table of contents (toc)
-#filetoc { // stylelint-disable-line selector-max-id
-	display: none;
-}
-
-/* T36878: Set an optimal width for a column.
- * Makes sure that on small screens column-count is only honored if column-width hint is not violated.
- * https://developer.mozilla.org/en-US/docs/CSS/column-width
- */
-.references-column-count,
-.column-count {
-	-moz-column-width: 35em;
-	-webkit-column-width: 35em;
-	column-width: 35em;
-}
-
-// When JavaScript is disabled clarify to the user which reference they clicked on
-.references li:target {
-	background-color: @background-color-progressive-subtle;
-}
-
 .hatnote,
 .dablink,
 .rellink {
 	padding: 5px 7px;
-	color: @color-subtle;
+	color: var( --color-subtle );
 	font-size: @font-size-minerva-smallest;
-	background-color: @background-color-lightest;
+	background-color: var( --background-color-interactive-subtle );
 	margin-bottom: 1px;
 	overflow: hidden;
 
 	a {
-		color: @color-progressive;
+		color: var( --color-progressive );
 	}
 }
 
@@ -156,16 +122,6 @@ FIXME: Review all of these hacks to see if they still apply.
 // Hacks to render galleries and multicol tables better on mobile
 @media all and ( max-width: @width-breakpoint-tablet ) {
 	.content {
-		table {
-			// Make {{col-beg}}, {{col-break}}, and {{col-end}} templates display single column tables
-			&.multicol {
-				> tr > td,
-				> tbody > tr > td {
-					display: block !important;
-					width: auto !important;
-				}
-			}
-		}
 		// Deal with Template:Multiple_image.  T38030 and T148505
 		.thumb .thumbinner {
 			.flex-display( flex );
@@ -183,3 +139,100 @@ FIXME: Review all of these hacks to see if they still apply.
 		}
 	}
 }
+
+/* T358385 */
+[ bgcolor ] {
+	// Important: this should correspond with the light mode theme version of color-base
+	color: #333;
+}
+
+html.skin-theme-clientpref-night {
+	// These colors become !important in night mode to avoid color contrast issues.
+	.hatnote:not( .notheme ),
+	.dablink:not( .notheme ),
+	.rellink:not( .notheme ),
+	.infobox:not( .notheme ) {
+		color: var( --color-base ) !important;
+		background-color: var( --background-color-interactive-subtle ) !important;
+	}
+
+	/* T357453 - attempt to strip colors from the majority of infoboxes in night mode (unless notheme specified) */
+	// please forgive me for bypassing the linter there is no easy way to keep all of the infobox classes grouped without
+	// stylelint-disable no-descending-specificity
+	.infobox td,
+	.infobox th,
+	.infobox-above,
+	/* itwiki */.sinottico th,
+	.infobox-header,
+	/* T358164 General case that templates/extensions can opt into */
+	.skin-nightmode-reset-color,
+	.navigation-box,
+	.metadata,
+	/* T357735 */
+	.quotebox,
+	/* T357726 */
+	.side-box,
+	.side-box div,
+	/* T358012 */
+	.navbox,
+	.navbox-subgroup,
+	.navbox-group,
+	.navbox-even,
+	.navbox-abovebelow,
+	.navbox-title {
+		&:not( .notheme ) {
+			.night-mode-strip-all-colors-when-safe();
+		}
+	}
+
+	// T358797 - if a background color is specified, assume they wanted the day mode font color
+	.mw-parser-output [ style*='background' ] {
+		color: #333; // not !important so that if a color is also specified it will take priority
+	}
+}
+
+@media ( prefers-color-scheme: dark ) {
+	html.skin-theme-clientpref-os {
+		/* T357453 */
+		.infobox td,
+		.infobox th,
+		.infobox-above,
+		/* itwiki */.sinottico th,
+		.infobox-header,
+		/* T358164 General case that templates/extensions can opt into */
+		.skin-nightmode-reset-color,
+		.navigation-box,
+		.metadata,
+		/* T357735 */
+		.quotebox,
+		/* T357726 */
+		.side-box,
+		.side-box div,
+		/* T358012 */
+		.navbox,
+		.navbox-subgroup,
+		.navbox-group,
+		.navbox-even,
+		.navbox-abovebelow,
+		.navbox-title {
+			&:not( .notheme ) {
+				.night-mode-strip-all-colors-when-safe();
+			}
+		}
+
+		// These colors become !important in night mode to avoid color contrast issues.
+		.hatnote:not( .notheme ),
+		.dablink:not( .notheme ),
+		.rellink:not( .notheme ),
+		.infobox:not( .notheme ) {
+			color: var( --color-base ) !important;
+			background-color: var( --background-color-interactive-subtle ) !important;
+		}
+
+		// T358797 - if a background color is specified, assume they wanted the day mode font color
+		.mw-parser-output [ style*='background' ] {
+			color: #333; // not !important so that if a color is also specified it will take priority
+		}
+	}
+}
+// stylelint-enable no-descending-specificity

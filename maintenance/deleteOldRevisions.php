@@ -44,7 +44,7 @@ class DeleteOldRevisions extends Maintenance {
 
 	private function doDelete( $delete = false, $pageIds = [] ) {
 		# Data should come off the master, wrapped in a transaction
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		$this->beginTransaction( $dbw, __METHOD__ );
 
 		$pageConds = [];
@@ -74,7 +74,7 @@ class DeleteOldRevisions extends Maintenance {
 		# Get all revisions that aren't in this set
 		$this->output( "Searching for inactive revisions..." );
 		if ( count( $latestRevs ) > 0 ) {
-			$revConds[] = 'rev_id NOT IN (' . $dbw->makeList( $latestRevs ) . ')';
+			$revConds[] = $dbw->expr( 'rev_id', '!=', $latestRevs );
 		}
 		$res = $dbw->newSelectQueryBuilder()
 			->select( 'rev_id' )
@@ -95,8 +95,14 @@ class DeleteOldRevisions extends Maintenance {
 		# Delete as appropriate
 		if ( $delete && $count ) {
 			$this->output( "Deleting..." );
-			$dbw->delete( 'revision', [ 'rev_id' => $oldRevs ], __METHOD__ );
-			$dbw->delete( 'ip_changes', [ 'ipc_rev_id' => $oldRevs ], __METHOD__ );
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'revision' )
+				->where( [ 'rev_id' => $oldRevs ] )
+				->caller( __METHOD__ )->execute();
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'ip_changes' )
+				->where( [ 'ipc_rev_id' => $oldRevs ] )
+				->caller( __METHOD__ )->execute();
 			$this->output( "done.\n" );
 		}
 

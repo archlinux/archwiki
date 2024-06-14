@@ -18,10 +18,16 @@ html {
 }
 
 body {
-	background-color: @background-color-base;
-	color: @color-base;
+	background-color: var( --background-color-base );
+	color: var( --color-base );
 	// Support All Browsers: Remove `margin` (normalized)
 	margin: 0;
+}
+
+/* needed for navigation elements and content */
+ul {
+	margin: 0;
+	padding: 0;
 }
 
 main {
@@ -31,13 +37,13 @@ main {
 
 .mw-body {
 	// avoid margin collapsing (see T147956)
-	border-top: @border-width-base @border-style-base @border-color-transparent;
+	border-top: @border-width-base @border-style-base var( --border-color-transparent );
 	padding-bottom: 32px;
 }
 
 .overlay-enabled,
 .mw-body {
-	background-color: @background-color-base;
+	background-color: var( --background-color-base );
 }
 
 // If footer has last modified list item (Desktop MinervaNeue ?useformat=desktop&useskin=minerva),
@@ -64,7 +70,7 @@ main {
 	width: 100%;
 	border-spacing: 0;
 	border-collapse: collapse;
-	height: @siteHeaderHeight;
+	height: @height-site-header;
 	white-space: nowrap;
 	// When banners are present we want to easily distinguish between them and the header so add border
 	border-top: @border-subtle;
@@ -94,16 +100,16 @@ main {
 	@size-modifier-border: unit( 1 / @font-size-browser, em );
 	@padding-vertical-search: 8px - @border-width-base;
 	@padding-start-search-icon: @size-icon-search + ( 2 * @size-icon-search-gutter ) - @size-modifier-border;
-	background-color: @background-color-base; // Support Fennec, Opera Mini: Remove default background, see T38490.
+	background-color: var( --background-color-base ); // Support Fennec, Opera Mini: Remove default background, see T38490.
 	background-position: left @size-icon-search-gutter center;
 	background-repeat: no-repeat;
 	background-size: @size-icon-search;
 	// Support Safari: Get rid of rounded corners.
 	-webkit-appearance: none;
 	width: 100%;
-	margin-top: 0;
+	margin: 0;
 	height: 2.25em;
-	border: @border-width-base @border-style-base @border-color-inverted;
+	border: @border-width-base @border-style-base var( --border-color-inverted );
 	border-radius: @border-radius-base;
 	padding: @padding-vertical-search 0 @padding-vertical-search @padding-start-search-icon;
 	box-shadow: 0 1px 1px rgba( 0, 0, 0, 0.05 );
@@ -111,6 +117,7 @@ main {
 	outline: 0;
 	transition-property: border-color, box-shadow;
 	transition-duration: @transition-duration-medium;
+	font: inherit;
 
 	// [T139928] Hide all pseudo-elements added to search inputs in WebKit.
 	&::-webkit-search-decoration,
@@ -124,63 +131,59 @@ main {
 // Provide focus styles only in non-JS and overlay to prevent double transition.
 .client-nojs .search-box .search:focus,
 .search-overlay .search-box .search:focus {
-	border-color: @border-color-progressive--focus;
-	box-shadow: @box-shadow-inset-small @box-shadow-color-progressive--focus, 0 1px 1px rgba( 0, 0, 0, 0.05 );
+	border-color: var( --border-color-progressive--focus );
+	box-shadow: @box-shadow-inset-small var( --box-shadow-color-progressive--focus ), 0 1px 1px rgba( 0, 0, 0, 0.05 );
 }
 
 .content {
+	.mw-heading2,
 	h2 {
 		// Clear table of contents and any other floated elements in desktop Minerva.
 		clear: left;
+	}
 
-		.edit-page {
-			/* stylelint-disable-next-line unit-disallowed-list */
-			font-size: 1rem;
+	// Only reveal section edit links in expanded section headings.
+	// The .section-heading class is only present on mobile.
+	.section-heading {
+		.mw-editsection {
+			visibility: hidden;
 		}
-	}
 
-	.collapsible-heading .edit-page {
-		visibility: hidden;
-	}
-
-	.collapsible-heading.open-block {
-		// Restrict to child so that child section edit links do not get revealed.
-		.edit-page {
+		&.open-block .mw-editsection,
+		.client-nojs & .mw-editsection {
 			visibility: visible;
 		}
 	}
 
+	.mw-parser-output > .mw-heading2,
 	.mw-parser-output > h2,
 	.section-heading {
-		border-bottom: @border-width-base @border-style-base #eaecf0;
-		margin-bottom: @headingMargin;
+		border-bottom: @border-width-base @border-style-base var( --border-color-muted );
+		margin-bottom: @margin-heading;
 	}
 
 	.mw-parser-output {
-		h1,
-		h2,
-		h3,
-		h4,
-		h5,
-		h6 {
+		.mw-heading,
+		h1, h2, h3, h4, h5, h6 {
 			display: flex;
+		}
 
-			.mw-headline {
-				flex-grow: 1;
-				flex-basis: 0;
-				margin-left: 0;
-			}
+		h1, h2, h3, h4, h5, h6,
+		.mw-headline {
+			flex-grow: 1;
+			flex-basis: 0;
+			margin-left: 0;
+		}
 
-			.mw-editsection {
-				align-self: center;
-				// Negative margins to prevent the edit icon from affecting the height of the heading
-				margin-top: -1em;
-				margin-bottom: -1em;
+		.mw-editsection {
+			align-self: center;
+			// Negative margins to prevent the edit icon from affecting the height of the heading
+			margin-top: -1em;
+			margin-bottom: -1em;
+			.cdx-mixin-button-layout-flush( 'end', true, 'large' );
 
-				.cdx-button:last-child {
-					.cdx-mixin-button-layout-flush( 'end', true, 'large' );
-					font-size: 1rem; // stylelint-disable-line unit-disallowed-list
-				}
+			.cdx-button {
+				font-size: 1rem;
 			}
 		}
 	}
@@ -199,8 +202,8 @@ main {
 #bodyContent .panel .content,
 .overlay .content-header,
 .overlay .panel,
-.page-list.side-list .list-thumb,
-.page-list li,
+.mw-mf-page-list.side-list .list-thumb,
+.mw-mf-page-list li,
 .topic-title-list li,
 .site-link-list li,
 .drawer,
@@ -208,8 +211,8 @@ main {
 .content h2.list-header,
 .list-header,
 .mw-revision {
-	padding-left: @contentPadding;
-	padding-right: @contentPadding;
+	padding-left: @padding-content;
+	padding-right: @padding-content;
 }
 
 .image-list,
@@ -221,13 +224,11 @@ main {
 #mw-content-text > form > .oo-ui-widget,
 .content,
 .post-content {
-	margin: 0 @contentMargin;
+	margin: 0 @margin-content;
 }
 
 // T217197
-// FIXME: minerva__subtitle can be removed when cache has cleared.
-#mw-content-subtitle,
-.minerva__subtitle {
+#mw-content-subtitle {
 	margin-top: 10px;
 	margin-bottom: 10px;
 
@@ -249,8 +250,8 @@ main {
 	.overlay .panel,
 	/* language overlay / MobileSpecialPageFeed */
 	.list-header {
-		padding-left: @contentPaddingTablet;
-		padding-right: @contentPaddingTablet;
+		padding-left: @padding-content-tablet;
+		padding-right: @padding-content-tablet;
 	}
 }
 /* stylelint-enable no-descending-specificity */

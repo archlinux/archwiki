@@ -176,7 +176,7 @@ Group assignment is universal no matter how many tests are running since both
 Group membership can be debugged from the console via:
 
 ```js
-  const AB = mw.mobileFrontend.require('skins.minerva.scripts/AB')
+  const AB = require('skins.minerva.scripts/AB')
   new AB({
     testName: 'WME.PageIssuesAB',
     samplingRate: mw.config.get( 'wgMinervaABSamplingRate', 0 ),
@@ -187,3 +187,33 @@ Group membership can be debugged from the console via:
 And since session ID is an input in calculating the group, reassignment occurs
 when clearing it: `mw.storage.session.remove('mwuser-sessionId')`.
 
+#### $wgMinervaNightMode
+
+* Type: `array`
+* Default:
+```php
+  [
+    'base' => false,
+  ]
+```
+
+Temporary feature flag for enabling the night mode feature.
+
+
+#### $wgMinervaNightModeOptions
+
+* Type: `array`
+* Default:
+```php
+  [
+    "exclude" => [
+        "mainpage" => false,
+        "querystring" => [],
+        "namespaces" => [],
+        "pagetitles" => []
+    ]
+  ]
+```
+
+Allows the disabling of the night theme on certain pages.
+NOTE: Vector skin must be enabled to use this functionality.

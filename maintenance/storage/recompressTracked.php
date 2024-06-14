@@ -167,10 +167,12 @@ class RecompressTracked {
 	 * previous part of this batch process.
 	 */
 	private function syncDBs() {
-		$dbw = wfGetDB( DB_PRIMARY );
-		$dbr = wfGetDB( DB_REPLICA );
+		$icp = MediaWikiServices::getInstance()->getConnectionProvider();
+		$dbw = $icp->getPrimaryDatabase();
+
+		$dbr = $icp->getReplicaDatabase();
 		$pos = $dbw->getPrimaryPos();
-		$dbr->primaryPosWait( $pos, 100000 );
+		$dbr->primaryPosWait( $pos, 100_000 );
 	}
 
 	/**
@@ -204,7 +206,8 @@ class RecompressTracked {
 	 * @return bool
 	 */
 	private function checkTrackingTable() {
-		$dbr = wfGetDB( DB_REPLICA );
+		// TOOD: Use ICP::getConnection() – but that returns an IDatabase not a Database and so no tableExists()
+		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnectionRef( DB_REPLICA );
 		if ( !$dbr->tableExists( 'blob_tracking', __METHOD__ ) ) {
 			$this->critical( "Error: blob_tracking table does not exist" );
 
@@ -328,18 +331,17 @@ class RecompressTracked {
 	 * Move all tracked pages to the new clusters
 	 */
 	private function doAllPages() {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$i = 0;
 		$startId = 0;
 		if ( $this->noCount ) {
 			$numPages = '[unknown]';
 		} else {
-			$numPages = $dbr->selectField( 'blob_tracking',
-				'COUNT(DISTINCT bt_page)',
-				# A condition is required so that this query uses the index
-				[ 'bt_moved' => 0 ],
-				__METHOD__
-			);
+			$numPages = $dbr->newSelectQueryBuilder()
+				->select( 'COUNT(DISTINCT bt_page)' )
+				->from( 'blob_tracking' )
+				->where( [ 'bt_moved' => 0 ] )
+				->caller( __METHOD__ )->fetchField();
 		}
 		if ( $this->copyOnly ) {
 			$this->info( "Copying pages..." );
@@ -351,7 +353,7 @@ class RecompressTracked {
 				->select( [ 'bt_page' ] )
 				->distinct()
 				->from( 'blob_tracking' )
-				->where( [ 'bt_moved' => 0, 'bt_page > ' . $dbr->addQuotes( $startId ) ] )
+				->where( [ 'bt_moved' => 0, $dbr->expr( 'bt_page', '>', $startId ) ] )
 				->orderBy( 'bt_page' )
 				->limit( $this->batchSize )
 				->caller( __METHOD__ )->fetchResultSet();
@@ -392,7 +394,7 @@ class RecompressTracked {
 	 * Move all orphan text to the new clusters
 	 */
 	private function doAllOrphans() {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$startId = 0;
 		$i = 0;
 		if ( $this->noCount ) {
@@ -418,7 +420,7 @@ class RecompressTracked {
 				->select( [ 'bt_text_id' ] )
 				->distinct()
 				->from( 'blob_tracking' )
-				->where( [ 'bt_moved' => 0, 'bt_page' => 0, 'bt_text_id > ' . $dbr->addQuotes( $startId ) ] )
+				->where( [ 'bt_moved' => 0, 'bt_page' => 0, $dbr->expr( 'bt_text_id', '>', $startId ) ] )
 				->orderBy( 'bt_text_id' )
 				->limit( $this->batchSize )
 				->caller( __METHOD__ )->fetchResultSet();
@@ -493,7 +495,7 @@ class RecompressTracked {
 		} else {
 			$titleText = '[deleted]';
 		}
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 
 		// Finish any incomplete transactions
 		if ( !$this->copyOnly ) {
@@ -512,7 +514,7 @@ class RecompressTracked {
 				->join( 'text', null, 'bt_text_id=old_id' )
 				->where( [
 					'bt_page' => $pageId,
-					'bt_text_id > ' . $dbr->addQuotes( $startId ),
+					$dbr->expr( 'bt_text_id', '>', $startId ),
 					'bt_moved' => 0,
 					'bt_new_url' => null,
 				] )
@@ -570,7 +572,8 @@ class RecompressTracked {
 			$this->critical( "Internal error: can't call moveTextRow() in --copy-only mode" );
 			exit( 1 );
 		}
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
+
 		$dbw->begin( __METHOD__ );
 		$dbw->update( 'text',
 			[ // set
@@ -601,7 +604,7 @@ class RecompressTracked {
 	 * @param array $conds
 	 */
 	private function finishIncompleteMoves( $conds ) {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 
 		$startId = 0;
@@ -614,7 +617,7 @@ class RecompressTracked {
 				->select( '*' )
 				->from( 'blob_tracking' )
 				->where( $conds )
-				->andWhere( [ 'bt_text_id > ' . $dbr->addQuotes( $startId ) ] )
+				->andWhere( $dbr->expr( 'bt_text_id', '>', $startId ) )
 				->orderBy( 'bt_text_id' )
 				->limit( $this->batchSize )
 				->caller( __METHOD__ )->fetchResultSet();
@@ -660,7 +663,7 @@ class RecompressTracked {
 		$trx = new CgzCopyTransaction( $this, $this->orphanBlobClass );
 
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-		$res = wfGetDB( DB_REPLICA )->newSelectQueryBuilder()
+		$res = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase()->newSelectQueryBuilder()
 			->select( [ 'old_id', 'old_text', 'old_flags' ] )
 			->distinct()
 			->from( 'text' )
@@ -767,7 +770,7 @@ class CgzCopyTransaction {
 		 *
 		 * We do a locking read to prevent closer-run race conditions.
 		 */
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 		$dbw->begin( __METHOD__ );
 		$res = $dbw->newSelectQueryBuilder()
 			->select( [ 'bt_text_id', 'bt_moved' ] )

@@ -1,12 +1,7 @@
 /*!
  * JavaScript for diff inline toggle
  */
-( function () {
-	var $inlineToggleSwitchLayout = $( '#mw-diffPage-inline-toggle-switch-layout' );
-	// Return if inline switch is not displaying.
-	if ( !$inlineToggleSwitchLayout.length ) {
-		return;
-	}
+module.exports = function ( $inlineToggleSwitchLayout ) {
 	var $wikitextDiffContainer, $wikitextDiffHeader, $wikitextDiffBody,
 		$wikitextDiffBodyInline, $wikitextDiffBodyTable,
 		url = new URL( location.href ),
@@ -153,8 +148,8 @@
 			/**
 			 * Fired when the wikitext DOM is updated so others can react accordingly.
 			 *
-			 * @event wikipage_diff_wikitextDiffBody
-			 * @member mw.hook
+			 * @event ~'wikipage.diff.wikitextDiffBody'
+			 * @memberof Hooks
 			 * @param {jQuery} $wikitextDiffBody
 			 */
 			mw.hook( 'wikipage.diff.wikitextBodyUpdate' ).fire( $wikitextDiffBody );
@@ -163,11 +158,11 @@
 
 	/**
 	 * Fired when the diff type switch is present so others can decide
-	 * how to manipulate the DOM
+	 * how to manipulate the DOM.
 	 *
-	 * @event wikipage_diff_diffTypeSwitch
-	 * @member mw.hook
+	 * @event ~'wikipage.diff.diffTypeSwitch'
+	 * @memberof Hooks
 	 * @param {OO.ui.ToggleSwitchWidget} inlineToggleSwitch
 	 */
 	mw.hook( 'wikipage.diff.diffTypeSwitch' ).fire( inlineToggleSwitch );
-}() );
+};

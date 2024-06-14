@@ -5,7 +5,7 @@
  * a predefined bucket ("unsampled", "control", or "treatment") and starts an AB-test.
  */
 ( function ( mwExperiments ) {
-	var bucket = {
+	const bucket = {
 		UNSAMPLED: 'unsampled', // Old treatment: not sampled and not instrumented.
 		CONTROL: 'control', // Old treatment: sampled and instrumented.
 		TREATMENT: 'treatment' // New treatment: sampled and instrumented.
@@ -21,19 +21,18 @@
 	 * @constructor
 	 */
 	function AB( config ) {
-		var
-			testName = config.testName,
-			samplingRate = config.samplingRate,
-			sessionId = config.sessionId,
-			test = {
-				name: testName,
-				enabled: !!samplingRate,
-				buckets: {
-					unsampled: 1 - samplingRate,
-					control: samplingRate / 2,
-					treatment: samplingRate / 2
-				}
-			};
+		const testName = config.testName;
+		const samplingRate = config.samplingRate;
+		const sessionId = config.sessionId;
+		const test = {
+			name: testName,
+			enabled: !!samplingRate,
+			buckets: {
+				unsampled: 1 - samplingRate,
+				control: samplingRate / 2,
+				treatment: samplingRate / 2
+			}
+		};
 
 		/**
 		 * Gets the users AB-test bucket.
@@ -44,6 +43,7 @@
 		 * "treatment") to callers which is necessary if getBucket(). The downside is that now two
 		 * functions exist where one would suffice.
 		 *
+		 * @private
 		 * @return {string} AB-test bucket, `bucket.UNSAMPLED` by default, `bucket.CONTROL` or
 		 *                  `bucket.TREATMENT` buckets otherwise.
 		 */
@@ -62,6 +62,7 @@
 		/**
 		 * Checks whether or not a user is in the AB-test,
 		 *
+		 * @private
 		 * @return {boolean}
 		 */
 		function isSampled() {

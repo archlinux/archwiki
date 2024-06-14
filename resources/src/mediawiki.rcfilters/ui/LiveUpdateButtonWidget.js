@@ -1,10 +1,10 @@
 /**
- * Widget for toggling live updates
+ * Widget for toggling live updates.
  *
  * @class mw.rcfilters.ui.LiveUpdateButtonWidget
+ * @ignore
  * @extends OO.ui.ToggleButtonWidget
  *
- * @constructor
  * @param {mw.rcfilters.Controller} controller
  * @param {mw.rcfilters.dm.ChangesListViewModel} changesListModel
  * @param {Object} [config] Configuration object
@@ -13,7 +13,7 @@ var LiveUpdateButtonWidget = function MwRcfiltersUiLiveUpdateButtonWidget( contr
 	config = config || {};
 
 	// Parent
-	LiveUpdateButtonWidget.parent.call( this, $.extend( {
+	LiveUpdateButtonWidget.super.call( this, $.extend( {
 		label: mw.msg( 'rcfilters-liveupdates-button' )
 	}, config ) );
 

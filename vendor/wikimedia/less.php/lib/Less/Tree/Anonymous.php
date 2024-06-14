@@ -1,43 +1,47 @@
 <?php
 /**
  * @private
+ * @see less-2.5.3.js#Anonymous.prototype
  */
-class Less_Tree_Anonymous extends Less_Tree {
+class Less_Tree_Anonymous extends Less_Tree implements Less_Tree_HasValueProperty {
 	public $value;
 	public $quote;
 	public $index;
 	public $mapLines;
 	public $currentFileInfo;
-	public $type = 'Anonymous';
+	/** @var bool */
+	public $rulesetLike;
 
 	/**
-	 * @param int $index
+	 * @param string $value
+	 * @param int|null $index
+	 * @param array|null $currentFileInfo
 	 * @param bool|null $mapLines
+	 * @param bool $rulesetLike
 	 */
-	public function __construct( $value, $index = null, $currentFileInfo = null, $mapLines = null ) {
+	public function __construct( $value, $index = null, $currentFileInfo = null, $mapLines = null, $rulesetLike = false ) {
 		$this->value = $value;
 		$this->index = $index;
 		$this->mapLines = $mapLines;
 		$this->currentFileInfo = $currentFileInfo;
+		$this->rulesetLike = $rulesetLike;
 	}
 
 	public function compile( $env ) {
-		return new Less_Tree_Anonymous( $this->value, $this->index, $this->currentFileInfo, $this->mapLines );
+		return new self( $this->value, $this->index, $this->currentFileInfo, $this->mapLines );
 	}
 
+	/**
+	 * @param Less_Tree|mixed $x
+	 * @return int|null
+	 * @see less-2.5.3.js#Anonymous.prototype.compare
+	 */
 	public function compare( $x ) {
-		if ( !is_object( $x ) ) {
-			return -1;
-		}
+		return ( is_object( $x ) && $this->toCSS() === $x->toCSS() ) ? 0 : null;
+	}
 
-		$left = $this->toCSS();
-		$right = $x->toCSS();
-
-		if ( $left === $right ) {
-			return 0;
-		}
-
-		return $left < $right ? -1 : 1;
+	public function isRulesetLike() {
+		return $this->rulesetLike;
 	}
 
 	/**

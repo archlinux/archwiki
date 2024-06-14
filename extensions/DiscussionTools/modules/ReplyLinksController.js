@@ -5,6 +5,20 @@ var
 
 var featuresEnabled = mw.config.get( 'wgDiscussionToolsFeaturesEnabled' ) || {};
 
+function tryInfuse( $element ) {
+	if ( $element.length ) {
+		var element = null;
+		// $.data() might have already been cleared by jQuery if the elements were removed, ignore
+		// TODO: We should keep references to the OO.ui.ButtonWidget objects instead of infusing again,
+		// which would avoid this issue too
+		try {
+			element = OO.ui.infuse( $element );
+		} catch ( e ) {}
+		return element;
+	}
+	return null;
+}
+
 function ReplyLinksController( $pageContainer ) {
 	var controller = this;
 
@@ -19,13 +33,15 @@ function ReplyLinksController( $pageContainer ) {
 	this.onAnyLinkClickHandler = this.onAnyLinkClick.bind( this );
 
 	// Reply links
-	this.$replyLinkSets = $pageContainer.find( '.ext-discussiontools-init-replylink-buttons[data-mw-thread-id]:not(:empty)' );
+	this.$replyLinkSets = $pageContainer.find( '.ext-discussiontools-init-replylink-buttons[ data-mw-thread-id ]:not( :empty )' );
 
 	this.$replyLinkSets.each( function () {
-		var replyButton = OO.ui.infuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
+		var replyButton = tryInfuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
 		var $replyLink = $( this ).find( '.ext-discussiontools-init-replylink-reply' );
 		$replyLink.on( 'click keypress', controller.onReplyLinkClickHandler );
-		replyButton.on( 'click', controller.onReplyButtonClickHandler, [ replyButton ] );
+		if ( replyButton ) {
+			replyButton.on( 'click', controller.onReplyButtonClickHandler, [ replyButton ] );
+		}
 	} );
 
 	this.$replyLinkSets.on( 'focusin mouseover touchstart', function () {
@@ -128,7 +144,7 @@ ReplyLinksController.prototype.onAnyLinkClick = function ( e ) {
  * @return {Object|null} `null` if not a new topic link, parameters otherwise
  */
 ReplyLinksController.prototype.parseNewTopicLink = function ( href ) {
-	var url = new URL( href );
+	var searchParams = new URL( href ).searchParams;
 
 	var title = mw.Title.newFromText( utils.getTitleFromUrl( href ) || '' );
 	if ( !title ) {
@@ -151,9 +167,9 @@ ReplyLinksController.prototype.parseNewTopicLink = function ( href ) {
 	} else if (
 		// ?title=...&action=edit&section=new
 		// ?title=...&veaction=editsource&section=new
-		( url.searchParams.get( 'action' ) === 'edit' || url.searchParams.get( 'veaction' ) === 'editsource' ) &&
-		url.searchParams.get( 'section' ) === 'new' &&
-		url.searchParams.get( 'dtenable' ) !== '0'
+		( searchParams.get( 'action' ) === 'edit' || searchParams.get( 'veaction' ) === 'editsource' ) &&
+		searchParams.get( 'section' ) === 'new' &&
+		searchParams.get( 'dtenable' ) !== '0'
 	) {
 		// Do nothing
 
@@ -168,21 +184,21 @@ ReplyLinksController.prototype.parseNewTopicLink = function ( href ) {
 	}
 
 	var data = {};
-	if ( url.searchParams.get( 'editintro' ) ) {
-		data.editintro = url.searchParams.get( 'editintro' );
+	if ( searchParams.get( 'editintro' ) ) {
+		data.editintro = searchParams.get( 'editintro' );
 	}
-	if ( url.searchParams.get( 'preload' ) ) {
-		data.preload = url.searchParams.get( 'preload' );
+	if ( searchParams.get( 'preload' ) ) {
+		data.preload = searchParams.get( 'preload' );
 	}
-	if ( mw.util.getArrayParam( 'preloadparams', url.searchParams ) ) {
-		data.preloadparams = mw.util.getArrayParam( 'preloadparams', url.searchParams );
+	if ( mw.util.getArrayParam( 'preloadparams', searchParams ) ) {
+		data.preloadparams = mw.util.getArrayParam( 'preloadparams', searchParams );
 	}
-	if ( url.searchParams.get( 'preloadtitle' ) ) {
-		data.preloadtitle = url.searchParams.get( 'preloadtitle' );
+	if ( searchParams.get( 'preloadtitle' ) ) {
+		data.preloadtitle = searchParams.get( 'preloadtitle' );
 	}
 
 	// Handle new topic with preloaded text only when requested (T269310)
-	if ( !url.searchParams.get( 'dtpreload' ) && !$.isEmptyObject( data ) ) {
+	if ( !searchParams.get( 'dtpreload' ) && !$.isEmptyObject( data ) ) {
 		return null;
 	}
 
@@ -207,8 +223,11 @@ ReplyLinksController.prototype.isActivationEvent = function ( e ) {
 
 ReplyLinksController.prototype.focusLink = function ( $linkSet ) {
 	if ( $linkSet.is( this.$replyLinkSets ) ) {
+		var button = tryInfuse( $linkSet.find( '.ext-discussiontools-init-replybutton' ) );
 		// Focus whichever is visible, the link or the button
-		OO.ui.infuse( $linkSet.find( '.ext-discussiontools-init-replybutton' ) ).focus();
+		if ( button ) {
+			button.focus();
+		}
 		$linkSet.find( '.ext-discussiontools-init-replylink-reply' ).trigger( 'focus' );
 	}
 };
@@ -220,7 +239,7 @@ ReplyLinksController.prototype.setActiveLink = function ( $linkSet ) {
 	var activeButton;
 	if ( this.$activeLink.is( this.$replyLinkSets ) ) {
 		this.$activeLink.addClass( 'ext-discussiontools-init-replylink-active' );
-		activeButton = OO.ui.infuse( this.$activeLink.find( '.ext-discussiontools-init-replybutton' ) );
+		activeButton = tryInfuse( this.$activeLink.find( '.ext-discussiontools-init-replybutton' ) );
 	} else if ( this.$addSectionLink && this.$activeLink.is( this.$addSectionLink ) ) {
 		isNewTopic = true;
 		// eslint-disable-next-line no-jquery/no-global-selector
@@ -252,9 +271,12 @@ ReplyLinksController.prototype.setActiveLink = function ( $linkSet ) {
 
 	$( document.body ).addClass( 'ext-discussiontools-init-replylink-open' );
 	this.$replyLinkSets.each( function () {
-		var replyButton = OO.ui.infuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
+		var replyButton = tryInfuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
 		var $replyLink = $( this ).find( '.ext-discussiontools-init-replylink-reply' );
 		$replyLink.attr( 'tabindex', -1 );
+		if ( !replyButton ) {
+			return;
+		}
 		if ( replyButton === activeButton ) {
 			replyButton.setFlags( { progressive: false } );
 		} else {
@@ -272,13 +294,7 @@ ReplyLinksController.prototype.clearActiveLink = function () {
 	var activeButton;
 	if ( this.$activeLink.is( this.$replyLinkSets ) ) {
 		this.$activeLink.removeClass( 'ext-discussiontools-init-replylink-active' );
-		try {
-			activeButton = OO.ui.infuse( this.$activeLink.find( '.ext-discussiontools-init-replybutton' ) );
-		} catch ( err ) {
-			// $.data() might have already been cleared by jQuery if the elements were removed, ignore
-			// TODO: We should keep references to the OO.ui.ButtonWidget objects instead of infusing again,
-			// which would avoid this issue too
-		}
+		activeButton = tryInfuse( this.$activeLink.find( '.ext-discussiontools-init-replybutton' ) );
 	} else if ( this.$addSectionLink && this.$activeLink.is( this.$addSectionLink ) ) {
 		// eslint-disable-next-line no-jquery/no-global-selector
 		$( '#ca-addsection' ).removeClass( 'selected' );
@@ -296,13 +312,8 @@ ReplyLinksController.prototype.clearActiveLink = function () {
 	this.$replyLinkSets.each( function () {
 		var $replyLink = $( this ).find( '.ext-discussiontools-init-replylink-reply' );
 		$replyLink.attr( 'tabindex', 0 );
-		var replyButton;
-		try {
-			replyButton = OO.ui.infuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
-		} catch ( err ) {
-			// $.data() might have already been cleared by jQuery if the elements were removed, ignore
-			// TODO: We should keep references to the OO.ui.ButtonWidget objects instead of infusing again,
-			// which would avoid this issue too
+		var replyButton = tryInfuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
+		if ( !replyButton ) {
 			return;
 		}
 		if ( replyButton === activeButton ) {
@@ -329,13 +340,9 @@ ReplyLinksController.prototype.teardown = function () {
 	}
 
 	this.$replyLinkSets.each( function () {
-		try {
-			var replyButton = OO.ui.infuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
+		var replyButton = tryInfuse( $( this ).find( '.ext-discussiontools-init-replybutton' ) );
+		if ( replyButton ) {
 			replyButton.off( 'click', controller.onReplyButtonClickHandler );
-		} catch ( err ) {
-			// $.data() might have already been cleared by jQuery if the elements were removed, ignore
-			// TODO: We should keep references to the OO.ui.ButtonWidget objects instead of infusing again,
-			// which would avoid this issue too
 		}
 		var $replyLink = $( this ).find( '.ext-discussiontools-init-replylink-reply' );
 		$replyLink.off( 'click keypress', controller.onReplyLinkClickHandler );

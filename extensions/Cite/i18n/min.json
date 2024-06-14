@@ -17,7 +17,6 @@
 	"cite_error_included_ref": "Tag <code>&lt;ref&gt;</code> harus ditutuik jo <code>&lt;/ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Tag <code>&lt;ref&gt;</code> ado untuak grup banamo \"$1\", tapi indak ado <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "Tag <code>&lt;ref&gt;</code> pado <code>&lt;references&gt;</code> ado namo grup \"$1\" nan konflik.",
-	"cite_error_references_missing_group": "Tag <code>&lt;ref&gt;</code> pado <code>&lt;references&gt;</code> indak ado namo grup \"$1\".",
 	"cite_error_references_missing_key": "Tag <code>&lt;ref&gt;</code> jo namo \"$1\" pado <code>&lt;references&gt;</code> indak ado.",
 	"cite_error_references_no_key": "Tag <code>&lt;ref&gt;</code> pado <code>&lt;references&gt;</code> indak ado aprameter namo.",
 	"cite_error_empty_references_define": "Tag <code>&lt;ref&gt;</code> pado <code>&lt;references&gt;</code> nan banamo \"$1\" indak ado isi.",

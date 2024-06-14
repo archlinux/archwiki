@@ -9,14 +9,14 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  */
 class AfterAfterBody extends InsertionMode {
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
-		list( $part1, $part2 ) = $this->splitInitialMatch( true, "\t\n\f\r ",
+		[ $part1, $part2 ] = $this->splitInitialMatch( true, "\t\n\f\r ",
 			$text, $start, $length, $sourceStart, $sourceLength );
-		list( $start, $length, $sourceStart, $sourceLength ) = $part1;
+		[ $start, $length, $sourceStart, $sourceLength ] = $part1;
 		if ( $length ) {
 			$this->builder->insertCharacters( $text, $start, $length, $sourceStart, $sourceLength );
 		}
 
-		list( $start, $length, $sourceStart, $sourceLength ) = $part2;
+		[ $start, $length, $sourceStart, $sourceLength ] = $part2;
 		if ( !$length ) {
 			return;
 		}
@@ -31,15 +31,15 @@ class AfterAfterBody extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'html':
-			$dispatcher->inBody->startTag(
-				$name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'html':
+				$dispatcher->inBody->startTag(
+					$name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			$builder->error( "unexpected start tag after after body", $sourceStart );
-			$dispatcher->switchMode( Dispatcher::IN_BODY )
-				->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+			default:
+				$builder->error( "unexpected start tag after after body", $sourceStart );
+				$dispatcher->switchMode( Dispatcher::IN_BODY )
+					->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
 		}
 	}
 

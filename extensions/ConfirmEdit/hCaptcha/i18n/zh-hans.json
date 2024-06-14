@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lakejason0"
+			"Lakejason0",
+			"XtexChooser"
 		]
 	},
 	"hcaptcha-desc": "ConfirmEdit的[https://www.hcaptcha.com/ hCaptcha]模块",
@@ -11,5 +12,5 @@
 	"hcaptcha-createaccount": "为保护wiki免于自动化账户创建，我们恳请您输入下面的hCaptcha验证码：",
 	"hcaptcha-createaccount-fail": "看起来您未输入正确的hCaptcha验证码。",
 	"hcaptcha-create": "为保护wiki免于自动化页面创建，我们恳请您输入下面的hCaptcha验证码：",
-	"hcaptcha-help": "请解决hCaptcha验证码挑战，并将响应值作为验证码文本返回。"
+	"hcaptcha-help": "请解决hCaptcha验证码挑战，并将响应值作为captchaWord返回。"
 }

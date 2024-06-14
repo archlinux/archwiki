@@ -3,13 +3,24 @@
 const Page = require( 'wdio-mediawiki/Page' );
 
 class DeletePage extends Page {
-	get reason() { return $( '#wpReason' ); }
-	get watch() { return $( '#wpWatch' ); }
-	get submit() { return $( '#wpConfirmB' ); }
-	get displayedContent() { return $( '#mw-content-text' ); }
+	get reason() {
+		return $( '#wpReason' );
+	}
 
-	open( title ) {
-		super.openTitle( title, { action: 'delete' } );
+	get watch() {
+		return $( '#wpWatch' );
+	}
+
+	get submit() {
+		return $( '#wpConfirmB' );
+	}
+
+	get displayedContent() {
+		return $( '#mw-content-text' );
+	}
+
+	async open( title ) {
+		return super.openTitle( title, { action: 'delete' } );
 	}
 
 	async delete( title, reason ) {

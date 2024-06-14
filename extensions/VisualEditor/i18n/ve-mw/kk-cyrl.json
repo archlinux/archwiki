@@ -5,7 +5,8 @@
 			"Darzz",
 			"TMg",
 			"Нұрлан Рахымжанов",
-			"СеніңШешең"
+			"СеніңШешең",
+			"Casserium"
 		]
 	},
 	"tooltip-ca-ve-edit": "Бұл бетті өңдеу",
@@ -150,9 +151,11 @@
 	"visualeditor-magiclinknodeinspector-title-pmid": "PMID сілтеме",
 	"visualeditor-magiclinknodeinspector-title-rfc": "RFC сілтеме",
 	"visualeditor-meta-tool": "Параметрлер",
+	"visualeditor-mweditmodesource-tool-current": "Қайнарын өңдеу",
 	"visualeditor-mweditmodeve-popup-body": "Сіз кез келген уақытта бұл белгішені басу арқылы көріп өңдеуге ауысуға қайта аласыз.",
 	"visualeditor-mweditmodeve-popup-title": "Қайнарын өңдеуге ауыстыңыз",
 	"visualeditor-mweditmodeve-showagain": "Бұл хабарламаны қайтадан көрсетпе",
+	"visualeditor-mweditmodeve-tool-current": "Көріп өңдеу",
 	"visualeditor-mwgallerydialog-title": "Галерея",
 	"visualeditor-mwsignature-tool": "Қолтаңбаңыз",
 	"visualeditor-preference-tabs": "Өңдеу режимі",

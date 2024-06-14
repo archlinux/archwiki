@@ -170,7 +170,7 @@ class ForeignAttributes implements Attributes {
 					$localName = $name;
 				} elseif ( isset( self::$namespaceMap[$name] ) ) {
 					$namespace = self::$namespaceMap[$name];
-					list( $prefix, $localName ) = explode( ':', $name, 2 );
+					[ $prefix, $localName ] = explode( ':', $name, 2 );
 				} else {
 					$prefix = null;
 					$namespace = null;

@@ -27,7 +27,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 jazyk|$1 jazyky|$1 jazykov}}",
 	"vector-no-language-button-label": "Pridať jazyky",
 	"vector-no-language-button-aria-label": "Tento článok existuje iba v tomto jazyku. Pridajte článok v iných jazykoch",
-	"vector-language-redirect-to-top": "Tu na {{GRAMMAR:6sg|{{SITENAME}}}} sú jazykové odkazy vpravo hore vedľa názvu článku. [[#p-lang-btn|Ísť hore]].",
 	"vector-action-addsection": "Pridať tému",
 	"vector-action-delete": "Zmazať",
 	"vector-action-move": "Presunúť",
@@ -60,5 +59,7 @@
 	"vector-unpin-element-label": "skryť",
 	"tooltip-vector-anon-user-menu-title": "Ďalšie možnosti",
 	"vector-prefs-limited-width": "Povoliť režim obmedzenej šírky",
-	"vector-prefs-limited-width-help": "Povoliť režim obmedzenej šírky pre lepšiu čitateľnosť."
+	"vector-prefs-limited-width-help": "Povoliť režim obmedzenej šírky pre lepšiu čitateľnosť.",
+	"vector-toc-unpinned-popup": "Obsah bol presunutý sem.",
+	"vector-main-menu-unpinned-popup": "Hlavné menu bolo presunuté sem."
 }

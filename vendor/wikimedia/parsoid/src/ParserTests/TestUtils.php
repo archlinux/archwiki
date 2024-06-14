@@ -123,6 +123,7 @@ class TestUtils {
 			$out = preg_replace( $unnecessaryAttribs . '&apos;.*?&apos;/u', '', $out ); // apos variant
 			if ( !$options['externallinktarget'] ) {
 				$out = preg_replace( '/ nofollow/', '', $out );
+				$out = str_replace( ' rel="nofollow"', '', $out );
 				$out = preg_replace( '/ noreferrer noopener/', '', $out );
 			}
 
@@ -172,10 +173,6 @@ class TestUtils {
 		);
 	}
 
-	/**
-	 * @param Node $node
-	 * @param ?string $stripSpanTypeof
-	 */
 	private static function cleanSpans(
 		Node $node, ?string $stripSpanTypeof
 	): void {
@@ -188,18 +185,13 @@ class TestUtils {
 		for ( $child = $node->firstChild; $child; $child = $next ) {
 			$next = $child->nextSibling;
 			if ( $child instanceof Element && DOMCompat::nodeName( $child ) === 'span' &&
-				preg_match( $stripSpanTypeof, $child->getAttribute( 'typeof' ) ?? '' )
+				preg_match( $stripSpanTypeof, DOMCompat::getAttribute( $child, 'typeof' ) ?? '' )
 			) {
 				self::unwrapSpan( $node, $child, $stripSpanTypeof );
 			}
 		}
 	}
 
-	/**
-	 * @param Node $parent
-	 * @param Node $node
-	 * @param ?string $stripSpanTypeof
-	 */
 	private static function unwrapSpan(
 		Node $parent, Node $node, ?string $stripSpanTypeof
 	): void {
@@ -210,10 +202,6 @@ class TestUtils {
 		$parent->removeChild( $node );
 	}
 
-	/**
-	 * @param ?Node $node
-	 * @return bool
-	 */
 	private static function newlineAround( ?Node $node ): bool {
 		return $node && preg_match(
 			'/^(body|caption|div|dd|dt|li|p|table|tr|td|th|tbody|dl|ol|ul|h[1-6])$/D',
@@ -221,11 +209,6 @@ class TestUtils {
 		);
 	}
 
-	/**
-	 * @param Node $node
-	 * @param array $opts
-	 * @return Node
-	 */
 	private static function normalizeIEWVisitor(
 		Node $node, array $opts
 	): Node {
@@ -267,8 +250,9 @@ class TestUtils {
 			// hack, since PHP adds a newline before </pre>
 			$opts['stripLeadingWS'] = false;
 			$opts['stripTrailingWS'] = true;
-		} elseif ( DOMCompat::nodeName( $node ) === 'span' &&
-			preg_match( '/^mw[:]/', $node->getAttribute( 'typeof' ) ?? '' )
+		} elseif (
+			DOMCompat::nodeName( $node ) === 'span' &&
+			DOMUtils::matchTypeOf( $node, '/^mw:/' )
 		) {
 			// SPAN is transparent; pass the strip parameters down to kids
 		} else {

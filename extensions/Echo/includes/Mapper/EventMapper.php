@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Notifications\Mapper;
 
 use InvalidArgumentException;
 use MediaWiki\Extension\Notifications\Model\Event;
-use User;
+use MediaWiki\User\User;
 
 /**
  * Database mapper for Event model, which is an immutable class, there should

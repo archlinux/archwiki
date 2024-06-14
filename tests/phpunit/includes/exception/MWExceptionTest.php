@@ -3,17 +3,11 @@
 use Wikimedia\TestingAccessWrapper;
 
 /**
+ * @covers \MWException
  * @author Antoine Musso
- * @copyright Copyright © 2013, Antoine Musso
- * @copyright Copyright © 2013, Wikimedia Foundation Inc.
- * @file
  */
-
 class MWExceptionTest extends MediaWikiIntegrationTestCase {
 
-	/**
-	 * @covers MWException
-	 */
 	public function testMwexceptionThrowing() {
 		$this->expectException( MWException::class );
 		throw new MWException();
@@ -21,7 +15,6 @@ class MWExceptionTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideTextUseOutputPage
-	 * @covers MWException::useOutputPage
 	 */
 	public function testUseOutputPage( $expected, $langObj, $fullyInitialised, $outputPage ) {
 		if ( $langObj !== null ) {
@@ -51,45 +44,19 @@ class MWExceptionTest extends MediaWikiIntegrationTestCase {
 		];
 	}
 
-	/**
-	 * @covers MWException::useMessageCache
-	 */
 	public function testUseMessageCache() {
 		$e = new MWException();
 		$this->assertTrue( $e->useMessageCache() );
 	}
 
-	/**
-	 * @covers MWException::isLoggable
-	 */
-	public function testIsLogable() {
+	public function testIsLoggable() {
 		$e = new MWException();
 		$this->assertTrue( $e->isLoggable() );
 	}
 
 	/**
-	 * @dataProvider provideIsCommandLine
-	 * @covers MWException::isCommandLine
-	 */
-	public function testisCommandLine( $expected, $commandLineMode ) {
-		$this->setMwGlobals( [
-			'wgCommandLineMode' => $commandLineMode,
-		] );
-		$e = new MWException();
-		$this->assertEquals( $expected, $e->isCommandLine() );
-	}
-
-	public static function provideIsCommandLine() {
-		return [
-			[ false, null ],
-			[ true, true ],
-		];
-	}
-
-	/**
 	 * Verify the exception classes are JSON serializabe.
 	 *
-	 * @covers MWExceptionHandler::jsonSerializeException
 	 * @dataProvider provideExceptionClasses
 	 */
 	public function testJsonSerializeExceptions( $exception_class ) {
@@ -105,6 +72,59 @@ class MWExceptionTest extends MediaWikiIntegrationTestCase {
 			[ Exception::class ],
 			[ MWException::class ],
 		];
+	}
+
+	/**
+	 * @covers \MWException::report
+	 */
+	public function testReport() {
+		// Turn off to keep mw-error.log file empty in CI (and thus avoid build failure)
+		$this->setMwGlobals( 'wgDebugLogGroups', [] );
+
+		global $wgOut;
+		$wgOut->disable();
+
+		$e = new class( 'Uh oh!' ) extends MWException {
+			public function report() {
+				global $wgOut;
+				$wgOut->addHTML( 'Oh no!' );
+			}
+		};
+
+		MWExceptionHandler::handleException( $e );
+
+		$this->assertStringContainsString( 'Oh no!', $wgOut->getHTML() );
+	}
+
+	/**
+	 * @covers \MWException::report
+	 */
+	public function testReportDeprecated() {
+		// Turn off to keep mw-error.log file empty in CI (and thus avoid build failure)
+		$this->setMwGlobals( 'wgDebugLogGroups', [] );
+
+		global $wgOut;
+		$wgOut->disable();
+
+		$e = new class( 'Uh oh!' ) extends MWException {
+			public function getHTML() {
+				throw new LogicException( 'This should not be called' );
+			}
+
+			public function getText() {
+				return 'Oh no! ' . $this->getPageTitle();
+			}
+		};
+
+		$this->expectDeprecationAndContinue( '/overrides getHTML which was deprecated/' );
+		$this->expectDeprecationAndContinue( '/overrides getText which was deprecated/' );
+		$this->expectDeprecationAndContinue( '/Use of MWException::getPageTitle was deprecated/' );
+
+		ob_start();
+		MWExceptionHandler::handleException( $e );
+		ob_end_clean();
+
+		$this->assertStringContainsString( 'Oh no!', $wgOut->getHTML() );
 	}
 
 }

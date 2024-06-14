@@ -24,24 +24,23 @@ namespace MediaWiki\Specials;
 
 use Exception;
 use File;
-use HTMLForm;
 use HttpError;
 use LocalRepo;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Pager\UploadStashPager;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Utils\UrlUtils;
-use MWException;
-use MWExceptionHandler;
 use RepoGroup;
 use SpecialUploadStashTooLargeException;
 use UnregisteredLocalFile;
 use UploadStash;
 use UploadStashBadPathException;
 use UploadStashFileNotFoundException;
-use Wikimedia\RequestTimeout\TimeoutException;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Web access for files temporarily stored by UploadStash.
@@ -63,6 +62,7 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	private LocalRepo $localRepo;
 	private HttpRequestFactory $httpRequestFactory;
 	private UrlUtils $urlUtils;
+	private IConnectionProvider $dbProvider;
 
 	/**
 	 * Since we are directly writing the file to STDOUT,
@@ -74,22 +74,25 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * This service is really for thumbnails and other such previews while
 	 * uploading.
 	 */
-	private const MAX_SERVE_BYTES = 1048576; // 1 MiB
+	private const MAX_SERVE_BYTES = 1_048_576; // 1 MiB
 
 	/**
 	 * @param RepoGroup $repoGroup
 	 * @param HttpRequestFactory $httpRequestFactory
 	 * @param UrlUtils $urlUtils
+	 * @param IConnectionProvider $dbProvider
 	 */
 	public function __construct(
 		RepoGroup $repoGroup,
 		HttpRequestFactory $httpRequestFactory,
-		UrlUtils $urlUtils
+		UrlUtils $urlUtils,
+		IConnectionProvider $dbProvider
 	) {
 		parent::__construct( 'UploadStash', 'upload' );
 		$this->localRepo = $repoGroup->getLocalRepo();
 		$this->httpRequestFactory = $httpRequestFactory;
 		$this->urlUtils = $urlUtils;
+		$this->dbProvider = $dbProvider;
 	}
 
 	public function doesWrites() {
@@ -178,6 +181,10 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 			$handler = $file->getHandler();
 			if ( $handler ) {
 				$params = $handler->parseParamString( $paramString );
+				if ( $params === false ) {
+					// The params are invalid, but still try to show a thumb
+					$params = [];
+				}
 
 				return [ 'file' => $file, 'type' => $type, 'params' => $params ];
 			} else {
@@ -216,7 +223,6 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 * and output it to STDOUT.
 	 * @param File $file
 	 * @param array $params Scaling parameters ( e.g. [ width => '50' ] );
-	 * @throws MWException|UploadStashFileNotFoundException
 	 */
 	private function outputLocallyScaledThumb( $file, $params ) {
 		// n.b. this is stupid, we insist on re-transforming the file every time we are invoked. We rely
@@ -259,7 +265,6 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 	 *
 	 * @param File $file
 	 * @param array $params Scaling parameters ( e.g. [ width => '50' ] );
-	 * @throws MWException
 	 */
 	private function outputRemoteScaledThumb( $file, $params ) {
 		// We need to use generateThumbName() instead of thumbName(), because
@@ -428,34 +433,16 @@ class SpecialUploadStash extends UnlistedSpecialPage {
 			$this->getPageTitle(),
 			$this->msg( 'uploadstash-refresh' )->text()
 		);
-		$files = $this->stash->listFiles();
-		if ( $files && count( $files ) ) {
-			sort( $files );
-			$fileListItemsHtml = '';
-			foreach ( $files as $file ) {
-				$itemHtml = $linkRenderer->makeKnownLink(
-					$this->getPageTitle( "file/$file" ),
-					$file
-				);
-				try {
-					$fileObj = $this->stash->getFile( $file );
-					$thumb = $fileObj->generateThumbName( $file, [ 'width' => 220 ] );
-					$itemHtml .=
-						$this->msg( 'word-separator' )->escaped() .
-						$this->msg( 'parentheses' )->rawParams(
-							$linkRenderer->makeKnownLink(
-								$this->getPageTitle( "thumb/$file/$thumb" ),
-								$this->msg( 'uploadstash-thumbnail' )->text()
-							)
-						)->escaped();
-				} catch ( TimeoutException $e ) {
-					throw $e;
-				} catch ( Exception $e ) {
-					MWExceptionHandler::logException( $e );
-				}
-				$fileListItemsHtml .= Html::rawElement( 'li', [], $itemHtml );
-			}
-			$this->getOutput()->addHTML( Html::rawElement( 'ul', [], $fileListItemsHtml ) );
+		$pager = new UploadStashPager(
+			$this->getContext(),
+			$linkRenderer,
+			$this->dbProvider,
+			$this->stash,
+			$this->localRepo
+		);
+		if ( $pager->getNumRows() ) {
+			$pager->getForm();
+			$this->getOutput()->addParserOutputContent( $pager->getFullOutput() );
 			$form->displayForm( $formResult );
 			$this->getOutput()->addHTML( Html::rawElement( 'p', [], $refreshHtml ) );
 		} else {

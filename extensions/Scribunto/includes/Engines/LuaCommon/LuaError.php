@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
-use Html;
 use MediaWiki\Extension\Scribunto\ScribuntoException;
+use MediaWiki\Html\Html;
 use MediaWiki\Title\Title;
 
 class LuaError extends ScribuntoException {

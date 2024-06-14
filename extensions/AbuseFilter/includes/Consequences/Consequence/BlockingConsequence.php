@@ -6,9 +6,9 @@ use LogPage;
 use MediaWiki\Block\BlockUserFactory;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Extension\AbuseFilter\FilterUser;
+use MediaWiki\Status\Status;
 use MessageLocalizer;
 use Psr\Log\LoggerInterface;
-use Status;
 use Wikimedia\IPUtils;
 
 /**

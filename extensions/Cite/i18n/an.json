@@ -17,7 +17,6 @@
 	"cite_error_included_ref": "Zarrando <code>&lt;/ref&gt;</code> falta una etiqueta <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Existen etiquetas <code>&lt;ref&gt;</code> ta un grupo clamau \"$1\", pero no se trobó garra etiqueta <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "O tag <code>&lt;ref&gt;</code> en <code>&lt;references&gt;</code> presienta l'atributo de grupo en conflicto \"$1\".",
-	"cite_error_references_missing_group": "O tag <code>&lt;ref&gt;</code> definiu en <code>&lt;references&gt;</code> incluye l'atributo \"$1\" no declarau en o texto precedente.",
 	"cite_error_references_missing_key": "O tag <code>&lt;ref&gt;</code> con nombre \"$1\" definiu en <code>&lt;references&gt;</code> no s'emplega en o texto precedente.",
 	"cite_error_references_no_key": "O tag <code>&lt;ref&gt;</code> definiu en <code>&lt;references&gt;</code> no tiene garra atributo de nombre.",
 	"cite_error_empty_references_define": "O tag <code>&lt;ref&gt;</code> definiu en <code>&lt;references&gt;</code> con nombre \"$1\" no tiene garra conteniu.",

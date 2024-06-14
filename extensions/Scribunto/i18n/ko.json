@@ -8,9 +8,11 @@
 			"Priviet",
 			"SeoJeongHo",
 			"Ykhwong",
-			"아라"
+			"아라",
+			"Markingdots"
 		]
 	},
+	"content-model-scribunto": "Scribunto 모듈",
 	"scribunto-desc": "미디어위키 문서에 스크립트 언어를 넣기 위한 프레임워크",
 	"scribunto-line": "$1번째 줄에서",
 	"scribunto-module-line": "$1 $2번째 줄에서",

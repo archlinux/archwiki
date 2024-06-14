@@ -9,16 +9,17 @@
 namespace MediaWiki\Extension\InputBox;
 
 use Article;
-use MediaWiki;
+use MediaWiki\Actions\ActionEntryPoint;
+use MediaWiki\Config\Config;
 use MediaWiki\Hook\MediaWikiPerformActionHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\Hook\SpecialPageBeforeExecuteHook;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
-use OutputPage;
+use MediaWiki\User\User;
 use Parser;
-use SpecialPage;
-use User;
-use WebRequest;
 
 /**
  * InputBox hooks
@@ -28,6 +29,17 @@ class InputBoxHooks implements
 	SpecialPageBeforeExecuteHook,
 	MediaWikiPerformActionHook
 {
+	/** @var Config */
+	private $config;
+
+	/**
+	 * @param Config $config
+	 */
+	public function __construct(
+		Config $config
+	) {
+		$this->config = $config;
+	}
 
 	/**
 	 * Initialization
@@ -67,7 +79,7 @@ class InputBoxHooks implements
 	 */
 	public function render( $input, $args, Parser $parser ) {
 		// Create InputBox
-		$inputBox = new InputBox( $parser );
+		$inputBox = new InputBox( $this->config, $parser );
 
 		// Configure InputBox
 		$inputBox->extractOptions( $parser->replaceVariables( $input ) );
@@ -85,7 +97,7 @@ class InputBoxHooks implements
 	 * @param Title $title
 	 * @param User $user
 	 * @param WebRequest $request
-	 * @param MediaWiki $wiki
+	 * @param ActionEntryPoint $wiki
 	 * @return bool
 	 */
 	public function onMediaWikiPerformAction(

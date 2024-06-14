@@ -228,17 +228,20 @@ ThreadItem.prototype.getThreadItemsBelow = function () {
 };
 
 /**
- * Return a native Range object corresponding to the item's range.
+ * Get the range of the entire thread item
  *
  * @return {Range}
  */
-ThreadItem.prototype.getNativeRange = function () {
+ThreadItem.prototype.getRange = function () {
 	var doc = this.range.startContainer.ownerDocument;
 	var nativeRange = doc.createRange();
 	nativeRange.setStart( this.range.startContainer, this.range.startOffset );
 	nativeRange.setEnd( this.range.endContainer, this.range.endOffset );
 	return nativeRange;
 };
+
+// Deprecated alias
+ThreadItem.prototype.getNativeRange = ThreadItem.prototype.getRange;
 
 // TODO: Implement getHTML/getText if required
 

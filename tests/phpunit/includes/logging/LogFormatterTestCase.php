@@ -1,6 +1,9 @@
 <?php
 
+use MediaWiki\Cache\GenderCache;
+use MediaWiki\Cache\LinkCache;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
@@ -92,6 +95,8 @@ abstract class LogFormatterTestCase extends MediaWikiLangTestCase {
 			} );
 		$userFactory->method( 'newFromId' )->willReturnCallback( [ $origUserFactory, 'newFromId' ] );
 		$userFactory->method( 'newAnonymous' )->willReturnCallback( [ $origUserFactory, 'newAnonymous' ] );
+		$userFactory->method( 'newFromUserIdentity' )
+			->willReturnCallback( [ $origUserFactory, 'newFromUserIdentity' ] );
 		$this->setService( 'UserFactory', $userFactory );
 
 		// Replace gender cache to avoid gender DB lookups
@@ -153,13 +158,13 @@ abstract class LogFormatterTestCase extends MediaWikiLangTestCase {
 		];
 	}
 
-	private static function removeSomeHtml( $html ) {
+	protected static function removeSomeHtml( $html ) {
 		$html = str_replace( '&quot;', '"', $html );
 		$html = preg_replace( '/\xE2\x80[\x8E\x8F]/', '', $html ); // Strip lrm/rlm
 		return trim( strip_tags( $html ) );
 	}
 
-	private static function removeApiMetaData( $val ) {
+	protected static function removeApiMetaData( $val ) {
 		if ( is_array( $val ) ) {
 			unset( $val['_element'] );
 			unset( $val['_type'] );

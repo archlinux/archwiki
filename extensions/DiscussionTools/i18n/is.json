@@ -3,13 +3,14 @@
 		"authors": [
 			"Matma Rex",
 			"Snævar",
+			"Stefán Örvar Sigmundsson",
 			"Sveinn í Felli",
-			"Þjarkur",
-			"Stefán Örvar Sigmundsson"
+			"Þjarkur"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Þú munt fá tilkynningu þegar einhver skrifar nýtt svar í þessari umræðu. Þú getur breytt tilkynninga stillingunum þínum í stillingunum.",
 	"discussiontools-defaultsummary-reply": "Svar",
+	"discussiontoolsdebug-pagetitle": "Síðutitill",
 	"discussiontools-emptystate-button": "Byrja nýja umræðu",
 	"discussiontools-emptystate-desc": "[[{{MediaWiki:discussiontools-emptystate-link-talkpages}}|Spjallsíður]] er þar sem maður spjallar um hvernig efnið á {{SITENAME}} getur verið sem best. Þú getur notað þessa síðu til að byrja umræðu við aðra um hvernig má bæta [[:{{SUBJECTPAGENAME}}]].",
 	"discussiontools-emptystate-desc-self": "Notendur {{SITENAME}} geta notað þessa [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|spjallsíðu]] til að senda opinber skilaboð á þig og þú færð meldingu þegar það gerist.",
@@ -20,6 +21,7 @@
 	"discussiontools-emptystate-title-self": "Velkomin/n á spjallsíðuna þína",
 	"discussiontools-emptystate-title-self-anon": "Velkomin/n á þessa spjallsíðu",
 	"discussiontools-findcomment-results-transcluded": "(innifalið frá öðrum síðum)",
+	"discussiontools-findcomment-title": "Finna athugasemd",
 	"discussiontools-newtopic-missing-title": "Vinsamlegast tilgreindu titil fyrir umræðuefnið. Ef þú smellir á \"{{int:discussiontools-replywidget-newtopic}}\", þá verður umræðuefninu þínu bætt við án titils.",
 	"discussiontools-preference-newtopictool": "Virkja flýtiviðbót umræðuefna",
 	"discussiontools-preference-replytool": "Virkja snöggan svarmöguleika",

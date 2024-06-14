@@ -125,16 +125,23 @@ class Mail_smtpmx extends Mail {
     /**
      * Switch to test mode - don't send emails for real
      *
-     * @var boolean $debug
+     * @var boolean $test
      */
     var $test = false;
 
     /**
      * Turn on Net_SMTP debugging?
      *
-     * @var boolean $peardebug
+     * @var boolean $debug
      */
     var $debug = false;
+
+    /**
+     * Set debug_handler on Net_SMTP
+     *
+     * @var string $debug_handler
+     */
+    var $debug_handler = null;
 
     /**
      * internal error codes
@@ -142,7 +149,7 @@ class Mail_smtpmx extends Mail {
      * translate internal error identifier to PEAR-Error codes and human
      * readable messages.
      *
-     * @var boolean $debug
+     * @var array $errorCode
      * @todo as I need unique error-codes to identify what exactly went wrond
      *       I did not use intergers as it should be. Instead I added a "namespace"
      *       for each code. This avoids conflicts with error codes from different
@@ -196,14 +203,15 @@ class Mail_smtpmx extends Mail {
      *
      * Instantiates a new Mail_smtp:: object based on the parameters
      * passed in. It looks for the following parameters:
-     *     mailname    The name of the local mail system (a valid hostname which matches the reverse lookup)
-     *     port        smtp-port - the default comes from getservicebyname() and should work fine
-     *     timeout     The SMTP connection timeout. Defaults to 30 seconds.
-     *     vrfy        Whether to use VRFY or not. Defaults to false.
-     *     verp        Whether to use VERP or not. Defaults to false.
-     *     test        Activate test mode? Defaults to false.
-     *     debug       Activate SMTP and Net_DNS debug mode? Defaults to false.
-     *     netdns      whether to use PEAR:Net_DNS or the PHP build in function getmxrr, default is true
+     *     mailname       The name of the local mail system (a valid hostname which matches the reverse lookup)
+     *     port           smtp-port - the default comes from getservicebyname() and should work fine
+     *     timeout        The SMTP connection timeout. Defaults to 30 seconds.
+     *     vrfy           Whether to use VRFY or not. Defaults to false.
+     *     verp           Whether to use VERP or not. Defaults to false.
+     *     test           Activate test mode? Defaults to false.
+     *     debug          Activate SMTP and Net_DNS debug mode? Defaults to false.
+     *     debug_handler  Set SMTP debug handler function. Defaults to null.
+     *     netdns         whether to use PEAR:Net_DNS or the PHP build in function getmxrr, default is true
      *
      * If a parameter is present in the $params array, it replaces the
      * default.
@@ -233,9 +241,12 @@ class Mail_smtpmx extends Mail {
         }
 
         if (isset($params['timeout'])) $this->timeout = $params['timeout'];
+        if (isset($params['vrfy'])) $this->vrfy = (bool)$params['vrfy'];
         if (isset($params['verp'])) $this->verp = $params['verp'];
-        if (isset($params['test'])) $this->test = $params['test'];
-        if (isset($params['peardebug'])) $this->test = $params['peardebug'];
+        if (isset($params['test'])) $this->test = (bool)$params['test'];
+        if (isset($params['peardebug'])) $this->debug = (bool)$params['peardebug'];
+        if (isset($params['debug'])) $this->debug = (bool)$params['debug'];
+        if (isset($params['debug_handler'])) $this->debug_handler = $params['debug_handler'];
         if (isset($params['netdns'])) $this->withNetDns = $params['netdns'];
     }
 
@@ -324,7 +335,7 @@ class Mail_smtpmx extends Mail {
 
                 // configure the SMTP connection.
                 if ($this->debug) {
-                    $this->_smtp->setDebug(true);
+                    $this->_smtp->setDebug(true, $this->debug_handler);
                 }
 
                 // attempt to connect to the configured SMTP server.
@@ -464,7 +475,7 @@ class Mail_smtpmx extends Mail {
 
         $this->resolver = new Net_DNS_Resolver();
         if ($this->debug) {
-            $this->resolver->test = 1;
+            $this->resolver->debug = 1;
         }
 
         return true;

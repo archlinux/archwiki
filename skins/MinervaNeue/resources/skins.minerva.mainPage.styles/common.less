@@ -17,4 +17,9 @@
 		margin-top: 1em;
 	}
 }
+
+& when (@wgMinervaApplyKnownTemplateHacks = 1) {
+	@import 'hacks.less';
+}
+
 // stylelint-enable selector-max-id

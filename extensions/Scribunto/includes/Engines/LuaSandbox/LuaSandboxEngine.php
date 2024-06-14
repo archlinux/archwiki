@@ -2,14 +2,14 @@
 
 namespace MediaWiki\Extension\Scribunto\Engines\LuaSandbox;
 
-use Html;
 use LuaSandbox;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaEngine;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreterBadVersionError;
 use MediaWiki\Extension\Scribunto\Engines\LuaCommon\LuaInterpreterNotFoundError;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\Title;
-use ParserOutput;
 
 class LuaSandboxEngine extends LuaEngine {
 	/** @var array */
@@ -59,12 +59,12 @@ class LuaSandboxEngine extends LuaEngine {
 	public function getResourceUsage( $resource ) {
 		$this->load();
 		switch ( $resource ) {
-		case self::MEM_PEAK_BYTES:
-			return $this->interpreter->getPeakMemoryUsage();
-		case self::CPU_SECONDS:
-			return $this->interpreter->getCPUUsage();
-		default:
-			return false;
+			case self::MEM_PEAK_BYTES:
+				return $this->interpreter->getPeakMemoryUsage();
+			case self::CPU_SECONDS:
+				return $this->interpreter->getCPUUsage();
+			default:
+				return false;
 		}
 	}
 

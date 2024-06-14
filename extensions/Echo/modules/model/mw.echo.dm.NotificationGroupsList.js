@@ -151,10 +151,9 @@
 	 * @return {mw.echo.dm.NotificationsList|null} Requested group, null if none was found.
 	 */
 	mw.echo.dm.NotificationGroupsList.prototype.getGroupByName = function ( groupName ) {
-		var i,
-			items = this.getItems();
+		var items = this.getItems();
 
-		for ( i = 0; i < items.length; i++ ) {
+		for ( var i = 0; i < items.length; i++ ) {
 			if ( items[ i ].getName() === groupName ) {
 				return items[ i ];
 			}

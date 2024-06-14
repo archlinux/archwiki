@@ -4,7 +4,6 @@ namespace MediaWiki\Extension\DiscussionTools\Tests;
 
 use DateTimeImmutable;
 use MediaWiki\Language\RawMessage;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\User\UserIdentityValue;
@@ -36,9 +35,8 @@ class EventDispatcherTest extends IntegrationTestCase {
 		$doc2 = static::createDocument( $dom2 );
 		$container2 = static::getThreadContainer( $doc2 );
 
-		$this->setupEnv( $config, $data );
-		$dummyTitle = MediaWikiServices::getInstance()->getTitleParser()->parseTitle( 'Dummy' );
-		$parser = static::createParser( $data );
+		$dummyTitle = $this->createTitleParser( $config )->parseTitle( 'Dummy' );
+		$parser = $this->createParser( $config, $data );
 		$itemSet1 = $parser->parse( $container1, $dummyTitle );
 		$itemSet2 = $parser->parse( $container2, $dummyTitle );
 

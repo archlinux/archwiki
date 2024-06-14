@@ -57,23 +57,23 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 
 	protected $fileFactory = [ ForeignAPIFile::class, 'newFromTitle' ];
 	/** @var int Check back with Commons after this expiry */
-	protected $apiThumbCacheExpiry = 86400; // 1 day (24*3600)
+	protected $apiThumbCacheExpiry = 24 * 3600; // 1 day
 
 	/** @var int Redownload thumbnail files after this expiry */
-	protected $fileCacheExpiry = 2592000; // 1 month (30*24*3600)
+	protected $fileCacheExpiry = 30 * 24 * 3600; // 1 month
 
 	/**
 	 * @var int API metadata cache time.
 	 * @since 1.38
 	 *
 	 * This is often the performance bottleneck for ForeignAPIRepo. For
-	 * each file used, we must fetch file metadata for it and every high-dpi
+	 * each file used, we must fetch file metadata for it and every high-DPI
 	 * variant, in serial, during the parse. This is slow if a page has many
 	 * files, with RTT of the handshake often being significant. The metadata
 	 * rarely changes, but if a new version of the file was uploaded, it might
 	 * be displayed incorrectly until its metadata entry falls out of cache.
 	 */
-	protected $apiMetadataExpiry = 14400; // 4 hours
+	protected $apiMetadataExpiry = 4 * 3600; // 4 hours
 
 	/** @var array */
 	protected $mFileExists = [];
@@ -112,13 +112,6 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 		if ( $this->canCacheThumbs() && !$this->thumbUrl ) {
 			$this->thumbUrl = $this->url . '/thumb';
 		}
-	}
-
-	/**
-	 * @return string
-	 */
-	private function getApiUrl() {
-		return $this->mApiBase;
 	}
 
 	/**
@@ -503,7 +496,7 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 	 */
 	public function getInfo() {
 		$info = parent::getInfo();
-		$info['apiurl'] = $this->getApiUrl();
+		$info['apiurl'] = $this->mApiBase;
 
 		$query = [
 			'format' => 'json',
@@ -620,14 +613,16 @@ class ForeignAPIRepo extends FileRepo implements IForeignRepoWithMWApi {
 
 	/**
 	 * @param callable $callback
+	 * @return never
 	 */
 	public function enumFiles( $callback ) {
-		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new RuntimeException( 'enumFiles is not supported by ' . static::class );
 	}
 
+	/**
+	 * @return never
+	 */
 	protected function assertWritableRepo() {
-		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		throw new MWException( static::class . ': write operations are not supported.' );
+		throw new LogicException( static::class . ': write operations are not supported.' );
 	}
 }

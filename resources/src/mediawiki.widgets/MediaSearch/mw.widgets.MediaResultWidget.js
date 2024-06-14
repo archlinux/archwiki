@@ -14,11 +14,11 @@
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {number} [rowHeight] Height of the row this result is part of
-	 * @cfg {number} [maxRowWidth] A limit for the width of the row this
+	 * @param {number} [config.rowHeight] Height of the row this result is part of
+	 * @param {number} [config.maxRowWidth] A limit for the width of the row this
 	 *  result is a part of.
-	 * @cfg {number} [minWidth] Minimum width for the result
-	 * @cfg {number} [maxWidth] Maximum width for the result
+	 * @param {number} [config.minWidth] Minimum width for the result
+	 * @param {number} [config.maxWidth] Maximum width for the result
 	 */
 	mw.widgets.MediaResultWidget = function MwWidgetsMediaResultWidget( config ) {
 		// Configuration initialization
@@ -113,11 +113,9 @@
 	 * @param {Object} [boundingBox] Specific bounding box, if supplied
 	 */
 	mw.widgets.MediaResultWidget.prototype.calculateSizing = function ( originalDimensions, boundingBox ) {
-		var wrapperPadding,
-			imageDimensions = {};
-
 		boundingBox = boundingBox || {};
 
+		var imageDimensions;
 		if ( this.isAudio ) {
 			// HACK: We are getting the wrong information from the
 			// API about audio files. Set their thumbnail to square 120px
@@ -145,7 +143,7 @@
 		this.$thumb.css( this.imageDimensions );
 
 		// Set the box size
-		wrapperPadding = this.calculateWrapperPadding( this.imageDimensions );
+		var wrapperPadding = this.calculateWrapperPadding( this.imageDimensions );
 		this.$element.css( wrapperPadding );
 	};
 
@@ -161,7 +159,7 @@
 	};
 
 	/**
-	 * Retrieve the store dimensions object
+	 * Retrieve the store dimensions object.
 	 *
 	 * @return {Object} Thumb dimensions
 	 */
@@ -170,18 +168,17 @@
 	};
 
 	/**
-	 * Resize thumbnail and element according to the resize factor
+	 * Resize thumbnail and element according to the resize factor.
 	 *
 	 * @param {number} resizeFactor The resizing factor for the image
 	 */
 	mw.widgets.MediaResultWidget.prototype.resizeThumb = function ( resizeFactor ) {
-		var boundingBox,
-			imageOriginalWidth = this.imageDimensions.width,
+		var imageOriginalWidth = this.imageDimensions.width,
 			wrapperWidth = this.$element.width();
 		// Set the new row height
 		this.setRowHeight( Math.ceil( this.getRowHeight() * resizeFactor ) );
 
-		boundingBox = {
+		var boundingBox = {
 			width: Math.ceil( this.imageDimensions.width * resizeFactor ),
 			height: this.getRowHeight()
 		};
@@ -197,7 +194,7 @@
 	};
 
 	/**
-	 * Adjust the wrapper padding for small images
+	 * Adjust the wrapper padding for small images.
 	 *
 	 * @param {Object} thumbDimensions Thumbnail dimensions
 	 * @return {Object} Css styling for the wrapper
@@ -218,7 +215,7 @@
 	};
 
 	/**
-	 * Set the row height for all size calculations
+	 * Set the row height for all size calculations.
 	 *
 	 * @return {number} rowHeight Row height
 	 */
@@ -227,7 +224,7 @@
 	};
 
 	/**
-	 * Set the row height for all size calculations
+	 * Set the row height for all size calculations.
 	 *
 	 * @param {number} rowHeight Row height
 	 */
@@ -261,7 +258,7 @@
 	};
 
 	/**
-	 * Check if the image has a src attribute already
+	 * Check if the image has a src attribute already.
 	 *
 	 * @return {boolean} Thumbnail has its source attribute set
 	 */

@@ -26,15 +26,15 @@ namespace MediaWiki\Utils;
 
 use DateInterval;
 use Language;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserTimeCorrection;
-use Message;
-use RequestContext;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
@@ -156,7 +156,5 @@ class MWTimestamp extends ConvertibleTimestamp {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( MWTimestamp::class, 'MWTimestamp' );

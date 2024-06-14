@@ -9,13 +9,13 @@ use MediaWiki\Extension\Notifications\Controller\NotificationController;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
 use Message;
 use MessageLocalizer;
 use MessageSpecifier;
-use SpecialPage;
-use User;
 use Wikimedia\Timestamp\TimestampException;
 
 /**

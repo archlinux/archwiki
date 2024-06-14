@@ -44,6 +44,12 @@ function show() {
 function hide() {
 	document.body.classList.remove( STICKY_HEADER_VISIBLE_CLASS );
 	document.body.classList.add( ULS_HIDE_CLASS );
+
+	// Dismiss dropdown menus and search if active
+	const stickyHeader = /** @type {HTMLElement} */ ( document.getElementById( STICKY_HEADER_ID ) );
+	if ( stickyHeader && stickyHeader.contains( document.activeElement ) ) {
+		document.body.click();
+	}
 }
 
 /**

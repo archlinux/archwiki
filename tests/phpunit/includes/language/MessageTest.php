@@ -3,6 +3,7 @@
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Message\UserGroupMembershipParam;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
@@ -13,7 +14,7 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group Database
  * @covers ::wfMessage
- * @covers Message
+ * @covers \Message
  */
 class MessageTest extends MediaWikiLangTestCase {
 
@@ -217,30 +218,30 @@ class MessageTest extends MediaWikiLangTestCase {
 		);
 		$this->assertSame(
 			'You have foo (bar).',
-			wfMessage( 'youhavenewmessages', 'foo', 'bar' )->text()
+			wfMessage( 'new-messages', 'foo', 'bar' )->text()
 		);
 		$this->assertSame(
 			'You have foo (bar).',
-			wfMessage( 'youhavenewmessages', [ 'foo', 'bar' ] )->text()
+			wfMessage( 'new-messages', [ 'foo', 'bar' ] )->text()
 		);
 		$this->assertSame(
 			'You have 1,024 (bar).',
 			wfMessage(
-				'youhavenewmessages',
+				'new-messages',
 				Message::numParam( 1024 ), 'bar'
 			)->text()
 		);
 		$this->assertSame(
 			'You have foo (2,048).',
 			wfMessage(
-				'youhavenewmessages',
+				'new-messages',
 				'foo', Message::numParam( 2048 )
 			)->text()
 		);
 		$this->assertSame(
 			'You have 1,024 (2,048).',
 			wfMessage(
-				'youhavenewmessages',
+				'new-messages',
 				[ Message::numParam( 1024 ), Message::numParam( 2048 ) ]
 			)->text()
 		);
@@ -358,7 +359,7 @@ class MessageTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Language\RawMessage
+	 * @covers \MediaWiki\Language\RawMessage
 	 */
 	public function testRawMessage() {
 		$msg = new RawMessage( 'example &' );
@@ -367,8 +368,8 @@ class MessageTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Language\RawMessage
-	 * @covers CoreTagHooks::html
+	 * @covers \MediaWiki\Language\RawMessage
+	 * @covers \CoreTagHooks::html
 	 */
 	public function testRawHtmlInMsg() {
 		$this->overrideConfigValue( MainConfigNames::RawHtml, true );
@@ -724,8 +725,8 @@ class MessageTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Message
-	 * @covers LanguageQqx
+	 * @covers \Message
+	 * @covers \LanguageQqx
 	 */
 	public function testQqxPlaceholders() {
 		$this->assertSame(
@@ -820,8 +821,8 @@ class MessageTest extends MediaWikiLangTestCase {
 
 		return [
 			'string' => [ 'mainpage', 'Main Page' ],
-			'array' => [ [ 'youhavenewmessages', 'foo', 'bar' ], 'You have foo (bar).' ],
-			'Message' => [ new Message( 'youhavenewmessages', [ 'foo', 'bar' ] ), 'You have foo (bar).' ],
+			'array' => [ [ 'new-messages', 'foo', 'bar' ], 'You have foo (bar).' ],
+			'Message' => [ new Message( 'new-messages', [ 'foo', 'bar' ] ), 'You have foo (bar).' ],
 			'RawMessage' => [ new RawMessage( 'foo ($1)', [ 'bar' ] ), 'foo (bar)' ],
 			'ApiMessage' => [ new ApiMessage( [ 'mainpage' ], 'code', [ 'data' ] ), 'Main Page' ],
 			'MessageSpecifier' => [ $messageSpecifier, 'Main Page' ],

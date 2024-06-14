@@ -14,7 +14,7 @@
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {number} maxHeight The maximum height of the media, used in the
+	 * @param {number} config.maxHeight The maximum height of the media, used in the
 	 *  search call to the API.
 	 */
 	mw.widgets.MediaUserUploadsQueue = function MwWidgetsMediaUserUploadsQueue( config ) {
@@ -33,18 +33,17 @@
 
 	/**
 	 * Override parent method to set up the providers according to
-	 * the file repos
+	 * the file repos.
 	 *
 	 * @return {jQuery.Promise} Promise that resolves when the resources are set up
 	 */
 	mw.widgets.MediaUserUploadsQueue.prototype.setup = function () {
-		var i, len,
-			queue = this;
+		var queue = this;
 
 		return this.getFileRepos().then( function ( sources ) {
 			if ( queue.providers.length === 0 ) {
 				// Set up the providers
-				for ( i = 0, len = sources.length; i < len; i++ ) {
+				for ( var i = 0, len = sources.length; i < len; i++ ) {
 					queue.addProvider( new mw.widgets.MediaUserUploadsProvider(
 						sources[ i ].apiurl,
 						{
@@ -65,7 +64,7 @@
 	};
 
 	/**
-	 * Set the user nae
+	 * Set the user name.
 	 *
 	 * @param {string} user User name
 	 */
@@ -74,7 +73,7 @@
 	};
 
 	/**
-	 * Get the user name
+	 * Get the user name.
 	 *
 	 * @return {string} API search query
 	 */

@@ -3,6 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Core;
 
+use Wikimedia\JsonCodec\JsonCodecable;
+use Wikimedia\JsonCodec\JsonCodecableTrait;
+use Wikimedia\Parsoid\Utils\CompatJsonCodec;
+
 /**
  * Table of Contents data, including an array of section metadata.
  *
@@ -10,7 +14,9 @@ namespace Wikimedia\Parsoid\Core;
  * with extension data, but may include additional ToC properties in
  * the future.
  */
-class TOCData implements \JsonSerializable {
+class TOCData implements \JsonSerializable, JsonCodecable {
+	use JsonCodecableTrait;
+
 	/**
 	 * The sections in this Table of Contents.
 	 * @var SectionMetadata[]
@@ -28,7 +34,7 @@ class TOCData implements \JsonSerializable {
 	 * use, and SectionMetadata::setExtensionData() for a method appropriate
 	 * for attaching information to a specific section of the ToC.
 	 */
-	private array $extensionData;
+	private array $extensionData = [];
 
 	/**
 	 * --------------------------------------------------
@@ -58,7 +64,6 @@ class TOCData implements \JsonSerializable {
 	 */
 	public function __construct( ...$sections ) {
 		$this->sections = $sections;
-		$this->extensionData = [];
 	}
 
 	/**
@@ -107,6 +112,9 @@ class TOCData implements \JsonSerializable {
 	 * supported as a value.  (A future revision will allow anything
 	 * that core's JsonCodec can handle.)  Attempts to set other types
 	 * as extension data values will break ParserCache for the page.
+	 *
+	 * @todo When values more complex than scalar values get supported,
+	 * __clone needs to be updated accordingly.
 	 *
 	 * @param string $key The key for accessing the data. Extensions
 	 *   should take care to avoid conflicts in naming keys. It is
@@ -282,6 +290,35 @@ class TOCData implements \JsonSerializable {
 		];
 	}
 
+	// JsonCodecable interface
+
+	/** @inheritDoc */
+	public function toJsonArray(): array {
+		return [
+			'sections' => $this->sections,
+			'extensionData' => $this->extensionData,
+		];
+	}
+
+	/** @inheritDoc */
+	public static function newFromJsonArray( array $json ) {
+		$tocData = new TOCData( ...$json['sections'] );
+		foreach ( $json['extensionData'] as $key => $value ) {
+			$tocData->setExtensionData( $key, $value );
+		}
+		return $tocData;
+	}
+
+	/** @inheritDoc */
+	public static function jsonClassHintFor( string $keyName ): ?string {
+		if ( $keyName === 'sections' ) {
+			return SectionMetadata::class . '[]';
+		}
+		return null;
+	}
+
+	// Pretty-printing
+
 	/**
 	 * For use in parser tests and wherever else humans might appreciate
 	 * some formatting in the JSON encoded output.
@@ -294,10 +331,15 @@ class TOCData implements \JsonSerializable {
 		}
 		if ( $this->extensionData ) {
 			$out[] = "Extension Data:";
-			// XXX: This should use a codec; extension data might
-			// require special serialization.
-			$out[] = json_encode( $this->extensionData );
+			$codec = new CompatJsonCodec();
+			$out[] = json_encode( $codec->toJsonArray( $this->extensionData ) );
 		}
 		return implode( "\n", $out );
+	}
+
+	public function __clone() {
+		foreach ( $this->sections as $k => $v ) {
+			$this->sections[$k] = clone $v;
+		}
 	}
 }

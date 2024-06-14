@@ -29,11 +29,11 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 		$opts = [];
 
 		$siteConfig = new MockSiteConfig( $opts );
-		$dataAccess = new MockDataAccess( $opts );
+		$dataAccess = new MockDataAccess( $siteConfig, $opts );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
 		$pageContent = new MockPageContent( [ 'main' => $wt ] );
-		$pageConfig = new MockPageConfig( $opts, $pageContent );
+		$pageConfig = new MockPageConfig( $siteConfig, $opts, $pageContent );
 		$out = $parsoid->wikitext2html( $pageConfig, $parserOpts );
 		if ( !empty( $parserOpts['pageBundle'] ) ) {
 			$this->assertTrue( $out instanceof PageBundle );
@@ -75,11 +75,11 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 		];
 
 		$siteConfig = new MockSiteConfig( $opts );
-		$dataAccess = new MockDataAccess( $opts );
+		$dataAccess = new MockDataAccess( $siteConfig, $opts );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
 		$pageContent = new MockPageContent( [ 'main' => $wt ] );
-		$pageConfig = new MockPageConfig( $opts, $pageContent );
+		$pageConfig = new MockPageConfig( $siteConfig, $opts, $pageContent );
 		$lint = $parsoid->wikitext2lint( $pageConfig, $parserOpts );
 		$this->assertEquals( $expected, $lint );
 	}
@@ -93,6 +93,7 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 						'type' => 'wikilink-in-extlink',
 						'dsr' => [ 0, 52, 19, 1 ],
 						'params' => [],
+						'templateInfo' => null,
 					]
 				]
 			]
@@ -107,11 +108,11 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 		$opts = [];
 
 		$siteConfig = new MockSiteConfig( $opts );
-		$dataAccess = new MockDataAccess( $opts );
+		$dataAccess = new MockDataAccess( $siteConfig, $opts );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
 		$pageContent = new MockPageContent( [ 'main' => '' ] );
-		$pageConfig = new MockPageConfig( $opts, $pageContent );
+		$pageConfig = new MockPageConfig( $siteConfig, $opts, $pageContent );
 		$wt = $parsoid->html2wikitext( $pageConfig, $input, $parserOpts );
 		$this->assertEquals( $expected, $wt );
 	}
@@ -137,11 +138,11 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 		$opts = [];
 
 		$siteConfig = new MockSiteConfig( $opts );
-		$dataAccess = new MockDataAccess( $opts );
+		$dataAccess = new MockDataAccess( $siteConfig, $opts );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
 		$pageContent = new MockPageContent( [ 'main' => $testOpts['pageContent'] ?? '' ] );
-		$pageConfig = new MockPageConfig( [
+		$pageConfig = new MockPageConfig( $siteConfig, [
 			'pageLanguage' => $testOpts['pageLanguage'] ?? 'en'
 		], $pageContent );
 		$pb = new PageBundle(
@@ -279,8 +280,8 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 					'body_only' => true,
 					'pageLanguage' => new Bcp47CodeValue( 'sr' ),
 					'variant' => [
-						'source' => new Bcp47CodeValue( 'sr-Cyrl' ),
-						'target' => new Bcp47CodeValue( 'sr-Latn' ),
+						'wikitext' => new Bcp47CodeValue( 'sr-Cyrl' ),
+						'html' => new Bcp47CodeValue( 'sr-Latn' ),
 					]
 				]
 			],
@@ -301,8 +302,8 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 					'body_only' => true,
 					'pageLanguage' => new Bcp47CodeValue( 'sr' ),
 					'variant' => [
-						'source' => new Bcp47CodeValue( 'sr-Latn' ),
-						'target' => new Bcp47CodeValue( 'sr-Cyrl' ),
+						'wikitext' => new Bcp47CodeValue( 'sr-Latn' ),
+						'html' => new Bcp47CodeValue( 'sr-Cyrl' ),
 					]
 				]
 			],
@@ -323,8 +324,8 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 					'body_only' => true,
 					'pageLanguage' => new Bcp47CodeValue( 'sr' ),
 					'variant' => [
-						'source' => new Bcp47CodeValue( 'sr-Latn' ),
-						'target' => new Bcp47CodeValue( 'sr-Cyrl' ),
+						'wikitext' => new Bcp47CodeValue( 'sr-Latn' ),
+						'html' => new Bcp47CodeValue( 'sr-Cyrl' ),
 					]
 				]
 			],
@@ -347,8 +348,8 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 					'body_only' => true,
 					'pageLanguage' => new Bcp47CodeValue( 'sr' ),
 					'variant' => [
-						'source' => new Bcp47CodeValue( 'sr-Latn' ),
-						'target' => new Bcp47CodeValue( 'sr-Cyrl' ),
+						'wikitext' => new Bcp47CodeValue( 'sr-Latn' ),
+						'html' => new Bcp47CodeValue( 'sr-Cyrl' ),
 					]
 				]
 			],
@@ -360,17 +361,17 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 	 * @covers ::implementsLanguageConversionBcp47
 	 * @dataProvider provideImplementsLanguageConversionBcp47
 	 */
-	public function testImplementsLanguageConversionBcp47( string $targetVariantCode, $expected ) {
+	public function testImplementsLanguageConversionBcp47( string $htmlVariantCode, $expected ) {
 		$opts = [];
 
 		$siteConfig = new MockSiteConfig( $opts );
-		$dataAccess = new MockDataAccess( $opts );
+		$dataAccess = new MockDataAccess( $siteConfig, $opts );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
 		$pageContent = new MockPageContent( [ 'main' => '' ] );
-		$pageConfig = new MockPageConfig( $opts, $pageContent );
+		$pageConfig = new MockPageConfig( $siteConfig, $opts, $pageContent );
 
-		$actual = $parsoid->implementsLanguageConversionBcp47( $pageConfig, new Bcp47CodeValue( $targetVariantCode ) );
+		$actual = $parsoid->implementsLanguageConversionBcp47( $pageConfig, new Bcp47CodeValue( $htmlVariantCode ) );
 		$this->assertEquals( $expected, $actual );
 	}
 
@@ -392,20 +393,19 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 		$wt = "testing '''123'''";
 
 		$siteConfig = new MockSiteConfig( $opts );
-		$dataAccess = new MockDataAccess( $opts );
+		$dataAccess = new MockDataAccess( $siteConfig, $opts );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
 		$pageContent = new MockPageContent( [ 'main' => $wt ] );
-		$pageConfig = new MockPageConfig( $opts, $pageContent );
+		$pageConfig = new MockPageConfig( $siteConfig, $opts, $pageContent );
 		$parsoid->wikitext2html( $pageConfig );
 
 		$metrics = $siteConfig->metrics();
 		$this->assertInstanceOf( MockMetrics::class, $metrics );
 		$log = $metrics->log;
-		$this->assertCount( 3, $log );
-		$this->assertEquals(
+		$this->assertContains(
 			[ 'timing', 'entry.wt2html.pageWithOldid.size.input', 17 ],
-			$log[1]
+			$log
 		);
 	}
 
@@ -417,11 +417,11 @@ class ParsoidTest extends \PHPUnit\Framework\TestCase {
 		$html = "<p>hiho</p>";
 
 		$siteConfig = new MockSiteConfig( $opts );
-		$dataAccess = new MockDataAccess( $opts );
+		$dataAccess = new MockDataAccess( $siteConfig, $opts );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
 		$pageContent = new MockPageContent( [ 'main' => '' ] );
-		$pageConfig = new MockPageConfig( $opts, $pageContent );
+		$pageConfig = new MockPageConfig( $siteConfig, $opts, $pageContent );
 
 		$wt = $parsoid->html2wikitext( $pageConfig, $html );
 		$this->assertEquals( 'hiho', $wt );

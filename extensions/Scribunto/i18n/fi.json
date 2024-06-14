@@ -13,6 +13,7 @@
 			"VezonThunder"
 		]
 	},
+	"content-model-scribunto": "Scribunto-moduuli",
 	"scribunto-desc": "Mahdollistaa komentosarjakielien käytön wikisivuilla",
 	"scribunto-line": "rivillä $1",
 	"scribunto-module-line": "kohdassa $1 rivillä $2",
@@ -53,8 +54,11 @@
 	"scribunto-limitreport-timeusage": "Lua-ajankäyttö",
 	"scribunto-limitreport-timeusage-value": "$1/$2 sekuntia",
 	"scribunto-limitreport-virtmemusage": "Lua-virtuaalikoko",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|tavu|tavua}}",
 	"scribunto-limitreport-estmemusage": "Arvioitu Lua-muistinkäyttö",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|tavu|tavua}}",
 	"scribunto-limitreport-memusage": "Lua-muistinkäyttö",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|tavu|tavua}}",
 	"scribunto-limitreport-profile": "Lua-profiili",
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Lua-lokit",

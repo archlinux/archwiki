@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"2nd-player",
+			"Ant176",
 			"Shirayuki",
 			"Sou0012",
-			"Yusuke1109",
-			"Ant176"
+			"Yusuke1109"
 		]
 	},
 	"apihelp-query+pageimages-summary": "Returns information about images on the page, such as thumbnail and presence of photos.",

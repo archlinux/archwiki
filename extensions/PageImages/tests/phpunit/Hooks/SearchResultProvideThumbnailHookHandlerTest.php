@@ -3,6 +3,7 @@
 namespace PageImages\Tests\Hooks;
 
 use LocalFile;
+use LogicException;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageProps;
@@ -10,7 +11,6 @@ use MediaWiki\Search\SearchResultThumbnailProvider;
 use MediaWikiIntegrationTestCase;
 use PageImages\Hooks\SearchResultProvideThumbnailHookHandler;
 use PageImages\PageImages;
-use PHPUnit\Framework\MockObject\Stub\ReturnCallback;
 use RepoGroup;
 use ThumbnailImage;
 
@@ -116,19 +116,21 @@ class SearchResultProvideThumbnailHookHandlerTest extends MediaWikiIntegrationTe
 			->onlyMethods( [ 'findFile' ] )
 			->getMock();
 
-		$findFileCallback = function ( $filename ) {
-			return $this->getMockLocalFile(
-				SearchResultThumbnailProvider::THUMBNAIL_SIZE,
-				$filename
-			);
-		};
 		$repoGroup->expects( $this->exactly( 2 ) )
 			->method( 'findFile' )
-			->withConsecutive( [ 'File1_free.jpg' ], [ 'File2_free.jpg' ] )
-			->willReturnOnConsecutiveCalls(
-				new ReturnCallback( $findFileCallback ),
-				null
-			);
+			->willReturnCallback( function ( $title ) {
+				switch ( $title ) {
+					case 'File1_free.jpg':
+						return $this->getMockLocalFile(
+							SearchResultThumbnailProvider::THUMBNAIL_SIZE,
+							$title
+						);
+					case 'File2_free.jpg':
+						return null;
+					default:
+						throw new LogicException( "Unexpected title $title" );
+				}
+			} );
 
 		$provider = new SearchResultThumbnailProvider( $repoGroup, $this->createHookContainer() );
 		$handler = new SearchResultProvideThumbnailHookHandler( $provider, $pageProps, $repoGroup );

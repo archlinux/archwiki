@@ -5,7 +5,6 @@
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "ߖߎ߲ߛߊ ߛߏ߯ߙߏߟߊ߲",
-	"math-visualeditor-mwcheminspector-title": "ߖߎ߲ߛߊ ߛߏ߯ߙߏߟߊ߲",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲߬ ߞߊߟߌߡߊ߲",
 	"math-visualeditor-mwlatexdialog-card-formula": "ߛߏ߯ߙߏߟߊ߲",
 	"math-visualeditor-mwlatexdialog-card-options": "ߢߣߊߕߊߟߌ",
@@ -29,7 +28,7 @@
 	"math-visualeditor-symbol-group-math-special": "ߞߙߍߞߙߍߣߍ߲",
 	"math_syntax_error": "ߞߎߡߦߊߘߐ ߝߎ߬ߕߎ߲߬ߕߌ",
 	"math_timeout": "$1 ߕߎ߬ߡߊ ߓߘߊ߫ ߕߊ߬ߡߌ߲߬ ߞߊ߬ ߝߘߊ߫ \"$2\" ߟߊ߫.",
-	"math-test-fail": "ߞߟߏߘߋ߲ ''$1'' <span style=\"color:red\">ߓߘߊ߫ ߗߌߙߏ߲߫</span>",
+	"math-test-fail": "ߞߟߏߘߋ߲ ''$1'' ''ߓߘߊ߫ ߗߌߙߏ߲߫''",
 	"math-tracking-category-error": "ߘߡߊ߬ߟߐ߲ ߝߎ߬ߕߎ߲߬ߕߌ ߦߋ߫ ߞߐߜߍ ߡߍ߲ ߠߎ߬ ߟߊ߫",
 	"math-tracking-category-error-desc": "ߞߐߜߍ ߡߍ߲ ߠߎ߬ ߦߋ߫ ߦߌߟߡߊ ߣߌ߲߬ ߘߐ߫߸ ߝߎ߬ߕߎ߲߬ߕߌ ߦߴߏ߬ ߟߎ߫ ߟߊ߫ ߞߊ߬ ߝߘߊ߫ ߘߡߊ߬ߟߐ߲ ߞߊ߲ߠߊߛߓߍ ߟߎ߬ ߟߊߓߊ߯ߙߊ ߡߊ߬.",
 	"math-tracking-category-render-error": "ߘߡߊ߬ߟߐ߲ ߟߊ߬ߛߋ߬ߟߌ ߝߌ߬ߟߌ ߦߋ߫ ߞߐߜߍ ߡߍ߲ ߠߎ߬ ߟߊ߫",

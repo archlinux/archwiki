@@ -5,7 +5,7 @@ use MediaWiki\Html\HtmlJsCode;
 use MediaWiki\MainConfigNames;
 
 /**
- * @covers MediaWiki\Html\Html
+ * @covers \MediaWiki\Html\Html
  */
 class HtmlTest extends MediaWikiIntegrationTestCase {
 
@@ -69,9 +69,13 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testOpenElement() {
-		$this->expectNotice();
-		$this->expectNoticeMessage( 'given element name with space' );
-		Html::openElement( 'span id="x"' );
+		$this->expectPHPError(
+			E_USER_NOTICE,
+			static function () {
+				Html::openElement( 'span id="x"' );
+			},
+			'given element name with space'
+		);
 	}
 
 	public function testElementBasics() {
@@ -267,7 +271,7 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 	public function testExpandAttributes_ArrayOnNonListValueAttribute_ThrowsException() {
 		// Real-life test case found in the Popups extension (see Gerrit cf0fd64),
 		// when used with an outdated BetaFeatures extension (see Gerrit deda1e7)
-		$this->expectException( MWException::class );
+		$this->expectException( UnexpectedValueException::class );
 		Html::expandAttributes( [
 			'src' => [
 				'ltr' => 'ltr.svg',
@@ -832,65 +836,6 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, $html );
 	}
 
-	/** @dataProvider provideGetTextInputAttributes */
-	public function testGetTextInputAttributes(
-		bool $useMediaWikiUIEverywhere,
-		$classAttribute,
-		$expectedClassAttribute
-	) {
-		$this->overrideConfigValue( MainConfigNames::UseMediaWikiUIEverywhere, $useMediaWikiUIEverywhere );
-		$attrs = Html::getTextInputAttributes( [ 'class' => $classAttribute ] );
-		$this->assertSame( $expectedClassAttribute, $attrs['class'] );
-	}
-
-	public static function provideGetTextInputAttributes(): iterable {
-		yield 'MWUI everywhere, non-codex, class string' => [
-			'useMediaWikiUIEverywhere' => true,
-			'classAttribute' => 'foo',
-			'expectedClassAttribute' => 'foo mw-ui-input',
-		];
-		yield 'MWUI everywhere, non-codex, class list' => [
-			'useMediaWikiUIEverywhere' => true,
-			'classAttribute' => [ 'foo' ],
-			'expectedClassAttribute' => [ 'foo', 'mw-ui-input' => true ],
-		];
-		yield 'MWUI everywhere, non-codex, class dict' => [
-			'useMediaWikiUIEverywhere' => true,
-			'classAttribute' => [ 'foo' => true ],
-			'expectedClassAttribute' => [ 'foo' => true, 'mw-ui-input' => true ],
-		];
-		yield 'MWUI everywhere, non-codex, class dict disables mw-ui-input' => [
-			'useMediaWikiUIEverywhere' => true,
-			'classAttribute' => [ 'foo' => true, 'mw-ui-input' => false ],
-			'expectedClassAttribute' => [ 'foo' => true, 'mw-ui-input' => true ],
-		];
-		yield 'MWUI everywhere, codex, class string' => [
-			'useMediaWikiUIEverywhere' => true,
-			'classAttribute' => 'foo cdx-text-input__input',
-			'expectedClassAttribute' => 'foo cdx-text-input__input',
-		];
-		yield 'MWUI everywhere, codex, class list' => [
-			'useMediaWikiUIEverywhere' => true,
-			'classAttribute' => [ 'foo', 'cdx-text-input__input' ],
-			'expectedClassAttribute' => [ 'foo', 'cdx-text-input__input' ],
-		];
-		yield 'MWUI everywhere, codex, class dict' => [
-			'useMediaWikiUIEverywhere' => true,
-			'classAttribute' => [ 'foo' => true, 'cdx-text-input__input' => true ],
-			'expectedClassAttribute' => [ 'foo' => true, 'cdx-text-input__input' => true ],
-		];
-		yield 'MWUI everywhere, class dict disables codex' => [
-			'useMediaWikiUIEverywhere' => true,
-			'classAttribute' => [ 'foo' => true, 'cdx-text-input__input' => false ],
-			'expectedClassAttribute' => [ 'foo' => true, 'cdx-text-input__input' => false, 'mw-ui-input' => true ],
-		];
-		yield 'not MWUI everywhere' => [
-			'useMediaWikiUIEverywhere' => false,
-			'classAttribute' => 'foo',
-			'expectedClassAttribute' => 'foo',
-		];
-	}
-
 	public static function provideEncodeJsVar() {
 		// $expected, $input
 		yield 'boolean' => [ 'true', true ];
@@ -907,7 +852,8 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Html\Html::encodeJsVar
+	 * @covers \MediaWiki\Html\Html
+	 * @covers \MediaWiki\Html\HtmlJsCode
 	 * @dataProvider provideEncodeJsVar
 	 */
 	public function testEncodeJsVar( string $expect, $input ) {
@@ -918,8 +864,8 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Html\Html::encodeJsVar
-	 * @covers \MediaWiki\Html\HtmlJsCode::encodeObject
+	 * @covers \MediaWiki\Html\Html
+	 * @covers \MediaWiki\Html\HtmlJsCode
 	 */
 	public function testEncodeObject() {
 		$codeA = 'function () { foo( 42 ); }';
@@ -931,6 +877,67 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals(
 			"{\"a\":$codeA,\"b\":$codeB}",
 			Html::encodeJsVar( $obj )
+		);
+	}
+
+	public function testListDropdownOptions() {
+		$this->assertEquals(
+			[
+				'other reasons' => 'other',
+				'Empty group item' => 'Empty group item',
+				'Foo' => [
+					'Foo 1' => 'Foo 1',
+					'Example' => 'Example',
+				],
+				'Bar' => [
+					'Bar 1' => 'Bar 1',
+				],
+			],
+			Html::listDropdownOptions(
+				"*\n** Empty group item\n* Foo\n** Foo 1\n** Example\n* Bar\n** Bar 1",
+				[ 'other' => 'other reasons' ]
+			)
+		);
+	}
+
+	public function testListDropdownOptionsOthers() {
+		// Do not use the value for 'other' as option group - T251351
+		$this->assertEquals(
+			[
+				'other reasons' => 'other',
+				'Foo 1' => 'Foo 1',
+				'Example' => 'Example',
+				'Bar' => [
+					'Bar 1' => 'Bar 1',
+				],
+			],
+			Html::listDropdownOptions(
+				"* other reasons\n** Foo 1\n** Example\n* Bar\n** Bar 1",
+				[ 'other' => 'other reasons' ]
+			)
+		);
+	}
+
+	public function testListDropdownOptionsOoui() {
+		$this->assertEquals(
+			[
+				[ 'data' => 'other', 'label' => 'other reasons' ],
+				[ 'optgroup' => 'Foo' ],
+				[ 'data' => 'Foo 1', 'label' => 'Foo 1' ],
+				[ 'data' => 'Example', 'label' => 'Example' ],
+				[ 'optgroup' => 'Bar' ],
+				[ 'data' => 'Bar 1', 'label' => 'Bar 1' ],
+			],
+			Html::listDropdownOptionsOoui( [
+				'other reasons' => 'other',
+				'Foo' => [
+					'Foo 1' => 'Foo 1',
+					'Example' => 'Example',
+				],
+				'Bar' => [
+					'Bar 1' => 'Bar 1',
+				],
+			] )
 		);
 	}
 }

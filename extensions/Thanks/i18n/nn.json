@@ -28,7 +28,6 @@
 	"echo-pref-subscription-edit-thank": "Takkar meg for endringa mi",
 	"echo-pref-tooltip-edit-thank": "Meld meg når nokon takkar meg for ei endring eg har gjort.",
 	"echo-category-title-edit-thank": "Takk",
-	"notification-thanks-diff-link": "endringa di",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|takka}} {{GENDER:$4|deg}} for endringa di på <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 {{GENDER:$2|takka}} {{GENDER:$4|deg}} for at du oppretta <strong>$3</strong>.",
 	"notification-header-log-thank": "$1 {{GENDER:$2|takka}} {{GENDER:$4|deg}} for handlinga di knytt til <strong>$3</strong>.",
@@ -44,7 +43,6 @@
 	"thanks-confirmation-special-rev": "Ynskjer du å offentleg senda ein takk for denne endringa?",
 	"flow-thanks-confirmation-special": "Ynskjer du å offentleg senda ein takk for denne kommentaren?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Du}} takka $1 for kommentaren {{GENDER:$2|hans|hennar|deira}}.",
-	"notification-flow-thanks-post-link": "kommentaren din",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|takka}} {{GENDER:$5|deg}} for kommentaren din på «<strong>$3</strong>».",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|takka}} {{GENDER:$3|deg}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Éin person|$1 personar|100=fleire enn 99 personar}} takka {{GENDER:$3|deg}} for kommentaren din på «<strong>$2</strong>»."

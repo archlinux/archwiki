@@ -18,7 +18,7 @@
 	}
 
 	$( function () {
-		var $checkboxes = $( '#powersearch input[id^=mw-search-ns]' );
+		var $checkboxes = $( '#powersearch input[id^="mw-search-ns"]' );
 
 		$( '.ext-replacetext-invert' ).on( 'click', invertSelections );
 

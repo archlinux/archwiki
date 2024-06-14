@@ -78,8 +78,6 @@ class TagHooks implements
 
 	/**
 	 * Get DT tags from the dttags param in the request, and validate against known tags.
-	 *
-	 * @return array
 	 */
 	public static function getDiscussionToolsTagsFromRequest(): array {
 		$request = RequestContext::getMain()->getRequest();

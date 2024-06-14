@@ -18,6 +18,7 @@
  * @file
  */
 
+use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -35,7 +36,7 @@ class RecentChangesUpdateJob extends Job {
 		parent::__construct( 'recentChangesUpdate', $title, $params );
 
 		if ( !isset( $params['type'] ) ) {
-			throw new Exception( "Missing 'type' parameter." );
+			throw new InvalidArgumentException( "Missing 'type' parameter." );
 		}
 
 		$this->executionFlags |= self::JOB_NO_EXPLICIT_TRX_ROUND;
@@ -80,15 +81,14 @@ class RecentChangesUpdateJob extends Job {
 			MainConfigNames::RCMaxAge );
 		$updateRowsPerQuery = $services->getMainConfig()->get(
 			MainConfigNames::UpdateRowsPerQuery );
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbProvider = $services->getConnectionProvider();
+		$dbw = $dbProvider->getPrimaryDatabase();
 		$lockKey = $dbw->getDomainID() . ':recentchanges-prune';
 		if ( !$dbw->lock( $lockKey, __METHOD__, 0 ) ) {
 			// already in progress
 			return;
 		}
-
-		$factory = $services->getDBLoadBalancerFactory();
-		$ticket = $factory->getEmptyTransactionTicket( __METHOD__ );
+		$ticket = $dbProvider->getEmptyTransactionTicket( __METHOD__ );
 		$hookRunner = new HookRunner( $services->getHookContainer() );
 		$cutoff = $dbw->timestamp( time() - $rcMaxAge );
 		$rcQuery = RecentChange::getQueryInfo();
@@ -98,7 +98,7 @@ class RecentChangesUpdateJob extends Job {
 			$res = $dbw->select(
 				$rcQuery['tables'],
 				$rcQuery['fields'],
-				[ 'rc_timestamp < ' . $dbw->addQuotes( $cutoff ) ],
+				[ $dbw->expr( 'rc_timestamp', '<', $cutoff ) ],
 				__METHOD__,
 				[ 'LIMIT' => $updateRowsPerQuery ],
 				$rcQuery['joins']
@@ -114,7 +114,7 @@ class RecentChangesUpdateJob extends Job {
 					->caller( __METHOD__ )->execute();
 				$hookRunner->onRecentChangesPurgeRows( $rows );
 				// There might be more, so try waiting for replica DBs
-				if ( !$factory->commitAndWaitForReplication(
+				if ( !$dbProvider->commitAndWaitForReplication(
 					__METHOD__, $ticket, [ 'timeout' => 3 ]
 				) ) {
 					// Another job will continue anyway
@@ -135,9 +135,9 @@ class RecentChangesUpdateJob extends Job {
 		// Pull in the full window of active users in this update
 		$window = $activeUserDays * 86400;
 
-		$factory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-		$dbw = $factory->getPrimaryDatabase();
-		$ticket = $factory->getEmptyTransactionTicket( __METHOD__ );
+		$dbProvider = MediaWikiServices::getInstance()->getConnectionProvider();
+		$dbw = $dbProvider->getPrimaryDatabase();
+		$ticket = $dbProvider->getEmptyTransactionTicket( __METHOD__ );
 
 		$lockKey = $dbw->getDomainID() . '-activeusers';
 		if ( !$dbw->lock( $lockKey, __METHOD__, 0 ) ) {
@@ -170,11 +170,11 @@ class RecentChangesUpdateJob extends Job {
 			->from( 'recentchanges' )
 			->join( 'actor', null, 'actor_id=rc_actor' )
 			->where( [
-				'actor_user IS NOT NULL', // actual accounts
-				'rc_type != ' . $dbw->addQuotes( RC_EXTERNAL ), // no wikidata
-				'rc_log_type IS NULL OR rc_log_type != ' . $dbw->addQuotes( 'newusers' ),
-				$dbw->buildComparison( '>=', [ 'rc_timestamp' => $dbw->timestamp( $sTimestamp ) ] ),
-				$dbw->buildComparison( '<=', [ 'rc_timestamp' => $dbw->timestamp( $eTimestamp ) ] ),
+				$dbw->expr( 'actor_user', '!=', null ), // actual accounts
+				$dbw->expr( 'rc_type', '!=', RC_EXTERNAL ), // no wikidata
+				$dbw->expr( 'rc_log_type', '=', null )->or( 'rc_log_type', '!=', 'newusers' ),
+				$dbw->expr( 'rc_timestamp', '>=', $dbw->timestamp( $sTimestamp ) ),
+				$dbw->expr( 'rc_timestamp', '<=', $dbw->timestamp( $eTimestamp ) ),
 			] )
 			->groupBy( 'actor_name' )
 			->orderBy( 'NULL' ) // avoid filesort
@@ -194,7 +194,7 @@ class RecentChangesUpdateJob extends Job {
 					'qcc_type' => 'activeusers',
 					'qcc_namespace' => NS_USER,
 					'qcc_title' => array_map( 'strval', array_keys( $names ) ),
-					$dbw->buildComparison( '>=', [ 'qcc_value' => $nowUnix - $days * 86400 ] ),
+					$dbw->expr( 'qcc_value', '>=', $nowUnix - $days * 86400 ),
 				] )
 				->caller( __METHOD__ )->fetchResultSet();
 			// Note: In order for this to be actually consistent, we would need
@@ -218,8 +218,11 @@ class RecentChangesUpdateJob extends Job {
 				];
 			}
 			foreach ( array_chunk( $newRows, 500 ) as $rowBatch ) {
-				$dbw->insert( 'querycachetwo', $rowBatch, __METHOD__ );
-				$factory->commitAndWaitForReplication( __METHOD__, $ticket );
+				$dbw->newInsertQueryBuilder()
+					->insertInto( 'querycachetwo' )
+					->rows( $rowBatch )
+					->caller( __METHOD__ )->execute();
+				$dbProvider->commitAndWaitForReplication( __METHOD__, $ticket );
 			}
 		}
 
@@ -230,7 +233,7 @@ class RecentChangesUpdateJob extends Job {
 		// Touch the data freshness timestamp
 		$dbw->newReplaceQueryBuilder()
 			->replaceInto( 'querycache_info' )
-			->rows( [
+			->row( [
 				'qci_type' => 'activeusers',
 				'qci_timestamp' => $dbw->timestamp( $asOfTimestamp ), // not always $now
 			] )
@@ -242,7 +245,7 @@ class RecentChangesUpdateJob extends Job {
 			->deleteFrom( 'querycachetwo' )
 			->where( [
 				'qcc_type' => 'activeusers',
-				$dbw->buildComparison( '<', [ 'qcc_value' => $nowUnix - $days * 86400 ] ) // TS_UNIX
+				$dbw->expr( 'qcc_value', '<', $nowUnix - $days * 86400 ) // TS_UNIX
 			] )
 			->caller( __METHOD__ )->execute();
 

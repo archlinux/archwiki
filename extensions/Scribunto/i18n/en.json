@@ -5,6 +5,7 @@
 			"Base"
 		]
 	},
+	"content-model-scribunto": "Scribunto module",
 	"scribunto-desc": "Framework for embedding scripting languages into MediaWiki pages",
 	"scribunto-line": "at line $1",
 	"scribunto-module-line": "in $1 at line $2",

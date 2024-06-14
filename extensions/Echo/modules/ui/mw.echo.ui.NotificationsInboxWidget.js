@@ -15,8 +15,6 @@
 	 * @cfg {jQuery} [$overlay] An overlay for the popup menus
 	 */
 	mw.echo.ui.NotificationsInboxWidget = function MwEchoUiNotificationsInboxWidget( controller, manager, config ) {
-		var $main, $sidebar;
-
 		config = config || {};
 
 		// Parent constructor
@@ -128,11 +126,11 @@
 				.addClass( 'mw-echo-ui-notificationsInboxWidget-toolbarWrapper' )
 				.append( this.$topToolbar );
 
-		$sidebar = $( '<div>' )
+		var $sidebar = $( '<div>' )
 			.addClass( 'mw-echo-ui-notificationsInboxWidget-sidebar' )
 			.append( this.xwikiUnreadWidget.$element );
 
-		$main = $( '<div>' )
+		var $main = $( '<div>' )
 			.addClass( 'mw-echo-ui-notificationsInboxWidget-main' )
 			.append(
 				this.$toolbarWrapper,
@@ -224,9 +222,9 @@
 	 *  have been fetched.
 	 */
 	mw.echo.ui.NotificationsInboxWidget.prototype.populateNotifications = function ( direction ) {
-		var fetchPromise,
-			widget = this;
+		var widget = this;
 
+		var fetchPromise;
 		if ( direction === 'prev' ) {
 			fetchPromise = this.controller.fetchPrevPageByDate();
 		} else if ( direction === 'next' ) {
@@ -298,11 +296,10 @@
 	 * in case the list is empty.
 	 */
 	mw.echo.ui.NotificationsInboxWidget.prototype.resetMessageLabel = function () {
-		var label,
-			count = this.manager.getPaginationModel().getCurrentPageItemCount();
+		var count = this.manager.getPaginationModel().getCurrentPageItemCount();
 
 		if ( count === 0 ) {
-			label = this.manager.getFiltersModel().getReadState() === 'all' ?
+			var label = this.manager.getFiltersModel().getReadState() === 'all' ?
 				mw.msg( 'echo-notification-placeholder' ) :
 				mw.msg( 'echo-notification-placeholder-filters' );
 

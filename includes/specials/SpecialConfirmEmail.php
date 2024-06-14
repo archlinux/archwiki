@@ -23,7 +23,8 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
+use IDBAccessObject;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -42,7 +43,7 @@ use Wikimedia\ScopedCallback;
  * processing of the confirmation code when the link in the email is followed
  *
  * @ingroup SpecialPage
- * @author Brion Vibber
+ * @author Brooke Vibber
  * @author Rob Church <robchur@gmail.com>
  */
 class SpecialConfirmEmail extends UnlistedSpecialPage {
@@ -173,7 +174,7 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 	private function attemptConfirm( $code ) {
 		$user = $this->userFactory->newFromConfirmationCode(
 			$code,
-			UserFactory::READ_LATEST
+			IDBAccessObject::READ_LATEST
 		);
 
 		if ( !is_object( $user ) ) {
@@ -186,12 +187,8 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 			return;
 		}
 
-		// rate limit email confirmations
-		if ( $user->pingLimiter( 'confirmemail' ) ) {
-			$this->getOutput()->addWikiMsg( 'actionthrottledtext' );
-
-			return;
-		}
+		// Enforce permissions, user blocks, and rate limits
+		$this->authorizeAction( 'confirmemail' )->throwErrorPageError();
 
 		$userLatest = $user->getInstanceForUpdate();
 		$userLatest->confirmEmail();
@@ -206,7 +203,5 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialConfirmEmail::class, 'SpecialConfirmEmail' );

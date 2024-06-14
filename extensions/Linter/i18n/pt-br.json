@@ -81,6 +81,7 @@
 	"linter-pager-tidy-whitespace-bug-details": "Erro de análise de espaço em branco",
 	"linter-pager-title-header": "Título da página",
 	"linter-pager-unclosed-quotes-in-heading-details": "Aspas não fechadas que se propagam para fora do índice",
+	"linter-pager-wikilink-in-extlink-details": "Wikilinks aninhadas em links externos que precisam ser corrigidos",
 	"linterrors-subpage": "Erros de Lint: $1",
 	"linterrors-summary": "<strong>Nota:</strong> As contagens para as categorias não são precisas, mas sim baseadas em estimativas.",
 	"multi-part-template-block": "Saída não de uma única predefinição",

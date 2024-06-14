@@ -22,20 +22,23 @@ namespace MediaWiki\Rest\Handler\Helper;
 use Content;
 use HttpError;
 use IBufferingStatsdDataFactory;
+use InvalidArgumentException;
 use LanguageCode;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
-use LogicException;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Edit\ParsoidOutputStash;
 use MediaWiki\Edit\SelserContext;
 use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\HtmlTransformFactory;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
 use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
 use MediaWiki\Parser\Parsoid\ParsoidRenderID;
+use MediaWiki\Permissions\Authority;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
@@ -46,10 +49,8 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use MediaWiki\User\User;
 use MWUnknownContentModelException;
 use ParserOptions;
-use ParserOutput;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
@@ -71,6 +72,9 @@ use Wikimedia\Parsoid\Utils\WTUtils;
  * @unstable Pending consolidation of the Parsoid extension with core code.
  */
 class HtmlOutputRendererHelper implements HtmlOutputHelper {
+	use RestAuthorizeTrait;
+	use RestStatusTrait;
+
 	/**
 	 * @internal
 	 * @var string[]
@@ -103,8 +107,8 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	/** @var IBufferingStatsdDataFactory */
 	private $stats;
 
-	/** @var User */
-	private $user;
+	/** @var Authority */
+	private $authority;
 
 	/** @var ParsoidOutputAccess */
 	private $parsoidOutputAccess;
@@ -165,7 +169,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	 * @param bool $lenientRevHandling Should we ignore mismatches
 	 *    $page and the page that $revision belongs to? Usually happens
 	 *    because of page moves. This should be set to true only for
-	 *	  internal API calls.
+	 *    internal API calls.
 	 */
 	public function __construct(
 		ParsoidOutputStash $parsoidOutputStash,
@@ -201,7 +205,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	 */
 	public function setFlavor( string $flavor ): void {
 		if ( !in_array( $flavor, self::OUTPUT_FLAVORS ) ) {
-			throw new LogicException( 'Invalid flavor supplied' );
+			throw new InvalidArgumentException( 'Invalid flavor supplied' );
 		}
 
 		if ( $this->stash ) {
@@ -374,29 +378,21 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	 *
 	 * @param PageIdentity $page
 	 * @param array $parameters
-	 * @param User $user
+	 * @param Authority $authority
 	 * @param RevisionRecord|int|null $revision
-	 * @param ?Bcp47Code $pageLanguage
 	 */
 	public function init(
 		PageIdentity $page,
 		array $parameters,
-		User $user,
-		$revision = null,
-		// FIXME: This is not set anywhere except in tests?
-		// Should we remove this?
-		?Bcp47Code $pageLanguage = null
+		Authority $authority,
+		$revision = null
 	) {
 		$this->page = $page;
-		$this->user = $user;
+		$this->authority = $authority;
 		$this->stash = $parameters['stash'] ?? false;
 
 		if ( $revision !== null ) {
 			$this->setRevision( $revision );
-		}
-
-		if ( $pageLanguage !== null ) {
-			$this->setPageLanguage( $pageLanguage );
 		}
 
 		if ( $this->stash ) {
@@ -414,6 +410,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		$sourceLanguage = null
 	): void {
 		if ( is_string( $targetLanguage ) ) {
+			$targetLanguage = $this->getAcceptedTargetLanguage( $targetLanguage );
 			$targetLanguage = LanguageCode::normalizeNonstandardCodeAndWarn(
 				$targetLanguage
 			);
@@ -428,6 +425,22 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	}
 
 	/**
+	 * Get a target language from an accept header
+	 */
+	private function getAcceptedTargetLanguage( string $targetLanguage ): string {
+		// We could try to identify the most desirable language here,
+		// following the rules for Accept-Language headers in RFC9100.
+		// For now, just take the first language code.
+
+		if ( preg_match( '/^\s*([-\w]+)/', $targetLanguage, $m ) ) {
+			return $m[1];
+		} else {
+			// "undetermined" per RFC5646
+			return 'und';
+		}
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	public function getHtml(): ParserOutput {
@@ -438,19 +451,10 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		$parserOutput = $this->getParserOutput();
 
 		if ( $this->stash ) {
-			if ( $this->user->pingLimiter( 'stashbasehtml' ) ) {
-				throw new LocalizedHttpException(
-					MessageValue::new( 'parsoid-stash-rate-limit-error' ),
-					// See https://www.rfc-editor.org/rfc/rfc6585#section-4
-					429,
-					[ 'reason' => 'Rate limiter tripped, wait for a few minutes and try again' ]
-				);
-			}
+			$this->authorizeWriteOrThrow( $this->authority, 'stashbasehtml', $this->page );
 
 			$isFakeRevision = $this->getRevisionId() === null;
-			$parsoidStashKey = ParsoidRenderID::newFromKey(
-				$this->parsoidOutputAccess->getParsoidRenderID( $parserOutput )
-			);
+			$parsoidStashKey = ParsoidRenderID::newFromParserOutput( $parserOutput );
 			$stashSuccess = $this->parsoidOutputStash->set(
 				$parsoidStashKey,
 				new SelserContext(
@@ -461,10 +465,16 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			);
 			if ( !$stashSuccess ) {
 				$this->stats->increment( 'htmloutputrendererhelper.stash.fail' );
+
+				$errorData = [ 'parsoid-stash-key' => $parsoidStashKey ];
+				LoggerFactory::getInstance( 'HtmlOutputRendererHelper' )->error(
+					"Parsoid stash failure",
+					$errorData
+				);
 				throw new LocalizedHttpException(
-					MessageValue::new( 'rest-html-backend-error' ),
+					MessageValue::new( 'rest-html-stash-failure' ),
 					500,
-					[ 'reason' => 'Failed to stash parser output' ]
+					$errorData
 				);
 			}
 			$this->stats->increment( 'htmloutputrendererhelper.stash.save' );
@@ -477,7 +487,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 			// XXX: Would be nice if we had a DOM handy.
 			$doc = DOMUtils::parseHTML( $parserOutput->getRawText() );
 			PageBundle::apply( $doc, $pb );
-			$parserOutput->setText( ContentUtils::toXML( $doc ) );
+			$parserOutput->setRawText( ContentUtils::toXML( $doc ) );
 		}
 
 		// Check if variant conversion has to be performed
@@ -501,7 +511,7 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	public function getETag( string $suffix = '' ): ?string {
 		$parserOutput = $this->getParserOutput();
 
-		$renderID = $this->parsoidOutputAccess->getParsoidRenderID( $parserOutput )->getKey();
+		$renderID = ParsoidRenderID::newFromParserOutput( $parserOutput )->getKey();
 
 		if ( $suffix !== '' ) {
 			$eTag = "$renderID/{$this->flavor}/$suffix";
@@ -585,23 +595,12 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 
 			if ( !$status->isOK() ) {
 				if ( $status->hasMessage( 'parsoid-client-error' ) ) {
-					throw new LocalizedHttpException(
-						MessageValue::new( 'rest-html-backend-error' ),
-						400,
-						[ 'reason' => $status->getErrors() ]
-					);
+					$this->throwExceptionForStatus( $status, 'rest-html-backend-error', 400 );
 				} elseif ( $status->hasMessage( 'parsoid-resource-limit-exceeded' ) ) {
-					throw new LocalizedHttpException(
-						MessageValue::new( 'rest-resource-limit-exceeded' ),
-						413,
-						[ 'reason' => $status->getErrors() ]
-					);
+					$this->throwExceptionForStatus( $status, 'rest-resource-limit-exceeded', 413 );
 				} else {
-					throw new LocalizedHttpException(
-						MessageValue::new( 'rest-html-backend-error' ),
-						500,
-						[ 'reason' => $status->getErrors() ]
-					);
+					$this->logStatusError( $status, 'Parsoid backend error', 'HtmlOutputRendererHelper' );
+					$this->throwExceptionForStatus( $status, 'rest-html-backend-error', 500 );
 				}
 			}
 
@@ -617,20 +616,26 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 	 * @return Bcp47Code The language, as a BCP-47 code
 	 */
 	public function getHtmlOutputContentLanguage(): Bcp47Code {
-		$pageBundleData = $this->getHtml()->getExtensionData(
-			PageBundleParserOutputConverter::PARSOID_PAGE_BUNDLE_KEY
-		);
+		$contentLanguage = $this->getHtml()->getLanguage();
 
-		// XXX: We need a canonical way of getting the output language from
-		//      ParserOutput since we may not be getting parser outputs from
-		//		Parsoid always in the future.
-		if ( !isset( $pageBundleData['headers']['content-language'] ) ) {
-			throw new LogicException( 'Failed to find content language in page bundle data' );
+		// This shouldn't happen, but don't crash if it does:
+		if ( !$contentLanguage ) {
+			if ( $this->pageLanguage ) {
+				LoggerFactory::getInstance( 'HtmlOutputRendererHelper' )->warning(
+					"ParserOutput does not specify a language"
+				);
+
+				$contentLanguage = $this->pageLanguage;
+			} else {
+				LoggerFactory::getInstance( 'HtmlOutputRendererHelper' )->warning(
+					"ParserOutput does not specify a language and no page language set in helper."
+				);
+
+				$title = Title::newFromPageIdentity( $this->page );
+				$contentLanguage = $title->getPageLanguage();
+			}
 		}
 
-		$contentLanguage = LanguageCode::normalizeNonstandardCodeAndWarn(
-			$pageBundleData['headers']['content-language']
-		);
 		return $contentLanguage;
 	}
 
@@ -759,6 +764,11 @@ class HtmlOutputRendererHelper implements HtmlOutputHelper {
 		if ( $this->flavor === 'fragment' || $this->getRevisionId() === null ) {
 			$this->isCacheable = false;
 		}
+
+		// TODO: Decide whether we want to allow stale content for speed for the
+		// 'view' flavor. In that case, we would want to use PoolCounterWork,
+		// either directly or through ParserOutputAccess.
+
 		if ( $this->isCacheable ) {
 			$flags = $this->parsoidOutputAccessOptions;
 			$status = $this->parsoidOutputAccess->getParserOutput(

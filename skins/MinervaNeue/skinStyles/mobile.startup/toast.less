@@ -6,7 +6,7 @@
 	font-size: @font-size-minerva-small;
 	padding: 0.9em 1em;
 	background-color: @background-color-toast-notification;
-	color: @color-inverted;
+	color: var( --color-inverted );
 	margin: 0 10% 20px;
 	width: 80%;
 	text-align: center;
@@ -35,13 +35,13 @@
 	}
 
 	a {
-		color: @color-inverted;
+		color: var( --color-inverted );
 		text-decoration: underline;
 	}
 }
 
 .mw-notification-area {
-	z-index: @z-indexOverOverlay;
+	z-index: @z-index-over-overlay;
 	position: fixed;
 	bottom: 0;
 	width: 100%;

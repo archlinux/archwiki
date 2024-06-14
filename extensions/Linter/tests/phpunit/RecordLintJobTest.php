@@ -23,6 +23,7 @@ namespace MediaWiki\Linter\Test;
 use MediaWiki\Linter\Database;
 use MediaWiki\Linter\LintError;
 use MediaWiki\Linter\RecordLintJob;
+use MediaWiki\Page\PageReference;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -32,6 +33,16 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  * @covers \MediaWiki\Linter\RecordLintJob
  */
 class RecordLintJobTest extends MediaWikiIntegrationTestCase {
+
+	private function newRecordLintJob( PageReference $page, array $params ) {
+		$services = $this->getServiceContainer();
+		return new RecordLintJob(
+			$page,
+			$params,
+			$services->getMainWANObjectCache()
+		);
+	}
+
 	/**
 	 * @param string $titleText
 	 * @param int|null $ns
@@ -104,7 +115,7 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 			'dbid' => null,
 		];
 		$titleAndPage = $this->createTitleAndPage( 'TestPage' );
-		$job = new RecordLintJob( $titleAndPage[ 'title' ], [
+		$job = $this->newRecordLintJob( $titleAndPage[ 'title' ], [
 			'errors' => [ $error ],
 			'revision' => $titleAndPage[ 'revID' ]
 		] );
@@ -130,7 +141,7 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 			'dbid' => null,
 		];
 		$titleAndPage = $this->createTitleAndPage( 'TestPage2' );
-		$job = new RecordLintJob( $titleAndPage[ 'title' ], [
+		$job = $this->newRecordLintJob( $titleAndPage[ 'title' ], [
 			'errors' => [ $error ],
 			'revision' => $titleAndPage[ 'revID' ]
 		] );
@@ -170,7 +181,7 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 			'dbid' => null,
 		];
 		$titleAndPage = $this->createTitleAndPage( 'TestPage2' );
-		$job = new RecordLintJob( $titleAndPage[ 'title' ], [
+		$job = $this->newRecordLintJob( $titleAndPage[ 'title' ], [
 			'errors' => [ $error ],
 			'revision' => $titleAndPage[ 'revID' ]
 		] );
@@ -202,7 +213,7 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 			'params' => [],
 			'dbid' => null,
 		];
-		$job = new RecordLintJob( $titleAndPage[ 'title' ], [
+		$job = $this->newRecordLintJob( $titleAndPage[ 'title' ], [
 			'errors' => [ $error ],
 			'revision' => $titleAndPage[ 'revID' ]
 		] );
@@ -267,7 +278,7 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 	 */
 	private function createTitleAndPageForTagsAndRunJob( string $titleText, array $error ): array {
 		$titleAndPage = $this->createTitleAndPage( $titleText );
-		$job = new RecordLintJob( $titleAndPage[ 'title' ], [
+		$job = $this->newRecordLintJob( $titleAndPage[ 'title' ], [
 			'errors' => [ $error ],
 			'revision' => $titleAndPage[ 'revID' ]
 		] );
@@ -399,7 +410,7 @@ class RecordLintJobTest extends MediaWikiIntegrationTestCase {
 			'dbid' => null,
 		];
 		$titleAndPage = $this->createTitleAndPage( 'TestPageMediaCaption' );
-		$job = new RecordLintJob( $titleAndPage[ 'title' ], [
+		$job = $this->newRecordLintJob( $titleAndPage[ 'title' ], [
 			'errors' => [ $error ],
 			'revision' => $titleAndPage[ 'revID' ]
 		] );

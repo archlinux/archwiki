@@ -25,8 +25,8 @@
 	"math-tracking-category-render-error-desc": "Dagiti panid iti daytoy a kategoria ket addaan kadagiti biddut iti pannakaipatarus dagiti etiketa ti math.",
 	"math_unknown_error": "di ammmo a biddut",
 	"math_unknown_function": "di ammo a pamay-an ti \"$1\"",
-	"mw_math_latexml": "LaTeXML (eksperimental; agus-usar ti MathML)",
-	"mw_math_source": "Taudan ti LaTeX (para kadagiti pagbasabasa ti teksto)",
+	"mw-math-latexml": "LaTeXML (eksperimental; agus-usar ti MathML)",
+	"mw-math-source": "Taudan ti LaTeX (para kadagiti pagbasabasa ti teksto)",
 	"prefs-math": "Math",
 	"mathstatus": "Kasasaad ti math."
 }

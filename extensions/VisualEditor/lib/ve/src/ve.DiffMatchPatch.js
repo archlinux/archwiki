@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DiffMatchPatch implementation for linear model
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /* global diff_match_patch */
@@ -19,7 +19,7 @@ ve.DiffMatchPatch = function VeDiffMatchPatch( oldStore, newStore ) {
 	// Parent constructor
 	ve.DiffMatchPatch.super.call( this );
 
-	this.store = oldStore.clone();
+	this.store = oldStore.slice();
 	this.store.merge( newStore );
 };
 

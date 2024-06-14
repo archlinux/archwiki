@@ -3,7 +3,7 @@
 /**
  * API for MediaWiki 1.17+
  *
- * Copyright © 2010 Bryan Tong Minh and Brion Vibber
+ * Copyright © 2010 Bryan Tong Minh and Brooke Vibber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,5 +151,9 @@ class ApiRsd extends ApiBase {
 		}
 
 		return $outputData;
+	}
+
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Rsd';
 	}
 }

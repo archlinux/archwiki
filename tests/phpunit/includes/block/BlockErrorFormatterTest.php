@@ -1,52 +1,83 @@
 <?php
 
+use MediaWiki\Block\BlockErrorFormatter;
 use MediaWiki\Block\CompositeBlock;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\SystemBlock;
-use MediaWiki\Request\FauxRequest;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\LoadBalancer;
 
 /**
  * @todo Can this be converted to unit tests?
  *
  * @group Blocking
- * @coversDefaultClass \MediaWiki\Block\BlockErrorFormatter
+ * @covers \MediaWiki\Block\BlockErrorFormatter
  */
 class BlockErrorFormatterTest extends MediaWikiIntegrationTestCase {
+
+	/**
+	 * @return DerivativeContext
+	 */
+	private function getContext(): DerivativeContext {
+		$context = new DerivativeContext( RequestContext::getMain() );
+
+		$context->setLanguage(
+			$this->getServiceContainer()
+				->getLanguageFactory()->getLanguage( 'qqx' )
+		);
+
+		return $context;
+	}
+
+	private function getBlockErrorFormatter( IContextSource $context ): BlockErrorFormatter {
+		return $this->getServiceContainer()
+			->getFormatterFactory()->getBlockErrorFormatter( $context );
+	}
+
 	protected function setUp(): void {
 		parent::setUp();
 
-		$db = $this->createNoOpMock( IDatabase::class, [ 'getInfinity' ] );
+		$db = $this->createMock( IDatabase::class );
 		$db->method( 'getInfinity' )->willReturn( 'infinity' );
-		$lbFactory = $this->createMock( LBFactory::class );
+		$db->method( 'decodeExpiry' )->willReturnArgument( 0 );
+
+		$lb = $this->createNoOpMock(
+			LoadBalancer::class,
+			[ 'getConnectionRef', 'getConnection' ]
+		);
+		$lb->method( 'getConnectionRef' )->willReturn( $db );
+		$lb->method( 'getConnection' )->willReturn( $db );
+
+		$lbFactory = $this->createNoOpMock(
+			LBFactory::class,
+			[ 'getReplicaDatabase', 'getPrimaryDatabase', 'getMainLB', ]
+		);
 		$lbFactory->method( 'getReplicaDatabase' )->willReturn( $db );
+		$lbFactory->method( 'getPrimaryDatabase' )->willReturn( $db );
+		$lbFactory->method( 'getMainLB' )->willReturn( $lb );
 		$this->setService( 'DBLoadBalancerFactory', $lbFactory );
 	}
 
 	/**
 	 * @dataProvider provideTestGetMessage
-	 * @covers ::getMessage
-	 * @covers ::getBlockErrorMessageParams
-	 * @covers ::getBlockErrorInfo
-	 * @covers ::getFormattedBlockErrorInfo
-	 * @covers ::getBlockErrorMessageKey
 	 */
-	public function testGetMessage( $block, $expectedKey, $expectedParams ) {
-		$context = new DerivativeContext( RequestContext::getMain() );
-		$request = $this->getMockBuilder( FauxRequest::class )
-			->onlyMethods( [ 'getIP' ] )
-			->getMock();
-		$request->method( 'getIP' )
-			->willReturn( '1.2.3.4' );
-		$context->setRequest( $request );
+	public function testGetMessage( $blockClass, $blockData, $expectedKey, $expectedParams ) {
+		$block = $this->makeBlock(
+			$blockClass,
+			$blockData
+		);
+		$context = $this->getContext();
 
-		$formatter = $this->getServiceContainer()->getBlockErrorFormatter();
+		$formatter = $this->getBlockErrorFormatter( $context );
 		$message = $formatter->getMessage(
 			$block,
 			$context->getUser(),
-			$this->getServiceContainer()->getLanguageFactory()->getLanguage( 'qqx' ),
-			$context->getRequest()->getIP()
+			$context->getLanguage(),
+			'1.2.3.4'
 		);
 
 		$this->assertSame( $expectedKey, $message->getKey() );
@@ -57,28 +88,29 @@ class BlockErrorFormatterTest extends MediaWikiIntegrationTestCase {
 		$timestamp = '20000101000000';
 		$expiry = '20010101000000';
 
-		$databaseBlock = new DatabaseBlock( [
+		$databaseBlock = [
 			'timestamp' => $timestamp,
 			'expiry' => $expiry,
 			'reason' => 'Test reason.',
-		] );
+		];
 
-		$systemBlock = new SystemBlock( [
+		$systemBlock = [
 			'timestamp' => $timestamp,
 			'systemBlock' => 'test',
 			'reason' => new Message( 'proxyblockreason' ),
-		] );
+		];
 
-		$compositeBlock = new CompositeBlock( [
+		$compositeBlock = [
 			'timestamp' => $timestamp,
 			'originalBlocks' => [
-				$databaseBlock,
-				$systemBlock
+				[ DatabaseBlock::class, $databaseBlock ],
+				[ SystemBlock::class, $systemBlock ]
 			]
-		] );
+		];
 
 		return [
 			'Database block' => [
+				DatabaseBlock::class,
 				$databaseBlock,
 				'blockedtext',
 				[
@@ -93,11 +125,12 @@ class BlockErrorFormatterTest extends MediaWikiIntegrationTestCase {
 				],
 			],
 			'Database block (autoblock)' => [
-				new DatabaseBlock( [
+				DatabaseBlock::class,
+				[
 					'timestamp' => $timestamp,
 					'expiry' => $expiry,
 					'auto' => true,
-				] ),
+				],
 				'autoblockedtext',
 				[
 					'',
@@ -111,11 +144,12 @@ class BlockErrorFormatterTest extends MediaWikiIntegrationTestCase {
 				],
 			],
 			'Database block (partial block)' => [
-				new DatabaseBlock( [
+				DatabaseBlock::class,
+				[
 					'timestamp' => $timestamp,
 					'expiry' => $expiry,
 					'sitewide' => false,
-				] ),
+				],
 				'blockedtext-partial',
 				[
 					'',
@@ -129,6 +163,7 @@ class BlockErrorFormatterTest extends MediaWikiIntegrationTestCase {
 				],
 			],
 			'System block (type \'test\')' => [
+				SystemBlock::class,
 				$systemBlock,
 				'systemblockedtext',
 				[
@@ -143,11 +178,12 @@ class BlockErrorFormatterTest extends MediaWikiIntegrationTestCase {
 				],
 			],
 			'System block (type \'test\') with reason parameters' => [
-				new SystemBlock( [
+				SystemBlock::class,
+				[
 					'timestamp' => $timestamp,
 					'systemBlock' => 'test',
 					'reason' => new Message( 'softblockrangesreason', [ '1.2.3.4' ] ),
-				] ),
+				],
 				'systemblockedtext',
 				[
 					'',
@@ -161,6 +197,7 @@ class BlockErrorFormatterTest extends MediaWikiIntegrationTestCase {
 				],
 			],
 			'Composite block (original blocks not inserted)' => [
+				CompositeBlock::class,
 				$compositeBlock,
 				'blockedtext-composite',
 				[
@@ -179,8 +216,6 @@ class BlockErrorFormatterTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideTestGetMessageCompositeBlocks
-	 * @covers ::getMessage
-	 * @covers ::getBlockErrorMessageParams
 	 */
 	public function testGetMessageCompositeBlocks( $ids, $expected ) {
 		$block = $this->getMockBuilder( CompositeBlock::class )
@@ -191,7 +226,7 @@ class BlockErrorFormatterTest extends MediaWikiIntegrationTestCase {
 
 		$context = RequestContext::getMain();
 
-		$formatter = $this->getServiceContainer()->getBlockErrorFormatter();
+		$formatter = $this->getBlockErrorFormatter( $context );
 		$this->assertContains(
 			$expected,
 			$formatter->getMessage(
@@ -218,5 +253,86 @@ class BlockErrorFormatterTest extends MediaWikiIntegrationTestCase {
 				'Relevant block IDs: #100, #101, #102 (your IP address may also appear in a blocklist)',
 			],
 		];
+	}
+
+	/**
+	 * @dataProvider provideTestGetMessages
+	 */
+	public function testGetMessages( $blockClass, $blockData, $expectedKeys ) {
+		$block = $this->makeBlock(
+			$blockClass,
+			$blockData
+		);
+
+		$context = $this->getContext();
+
+		$formatter = $this->getBlockErrorFormatter( $context );
+		$messages = $formatter->getMessages(
+			$block,
+			$context->getUser(),
+			'1.2.3.4'
+		);
+
+		$this->assertSame( $expectedKeys, array_map( static function ( $message ) {
+			return $message->getKey();
+		}, $messages ) );
+	}
+
+	public static function provideTestGetMessages() {
+		$timestamp = '20000101000000';
+		$expiry = '20010101000000';
+
+		$databaseBlock = [
+			'timestamp' => $timestamp,
+			'expiry' => $expiry,
+			'reason' => 'Test reason.',
+		];
+
+		$systemBlock = [
+			'timestamp' => $timestamp,
+			'systemBlock' => 'test',
+			'reason' => new Message( 'proxyblockreason' ),
+		];
+
+		$compositeBlock = [
+			'timestamp' => $timestamp,
+			'originalBlocks' => [
+				[ DatabaseBlock::class, $databaseBlock ],
+				[ SystemBlock::class, $systemBlock ]
+			]
+		];
+
+		return [
+			'Database block' => [
+				DatabaseBlock::class,
+				$databaseBlock,
+				[ 'blockedtext' ],
+			],
+
+			'System block (type \'test\')' => [
+				SystemBlock::class,
+				$systemBlock,
+				[ 'systemblockedtext' ],
+			],
+			'Composite block (original blocks not inserted)' => [
+				CompositeBlock::class,
+				$compositeBlock,
+				[ 'blockedtext', 'systemblockedtext' ],
+			],
+		];
+	}
+
+	/**
+	 * @param string $blockClass
+	 * @param array $blockData
+	 *
+	 * @return mixed
+	 */
+	private function makeBlock( $blockClass, $blockData ) {
+		foreach ( $blockData['originalBlocks'] ?? [] as $key => $originalBlock ) {
+			$blockData['originalBlocks'][$key] = $this->makeBlock( ...$originalBlock );
+		}
+
+		return new $blockClass( $blockData );
 	}
 }

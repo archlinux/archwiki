@@ -2,7 +2,7 @@
 /**
  * Corrects wrong values in the `page_latest` field in the database.
  *
- * Copyright © 2005 Brion Vibber <brion@pobox.com>
+ * Copyright © 2005 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,6 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Title\Title;
 
 require_once __DIR__ . '/Maintenance.php';
@@ -46,7 +45,7 @@ class AttachLatest extends Maintenance {
 
 	public function execute() {
 		$this->output( "Looking for pages with page_latest set to 0...\n" );
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		$conds = [ 'page_latest' => 0 ];
 		if ( $this->hasOption( 'regenerate-all' ) ) {
 			$conds = '';
@@ -79,7 +78,7 @@ class AttachLatest extends Maintenance {
 				continue;
 			}
 
-			$revRecord = $revisionLookup->getRevisionByTimestamp( $title, $latestTime, RevisionLookup::READ_LATEST );
+			$revRecord = $revisionLookup->getRevisionByTimestamp( $title, $latestTime, IDBAccessObject::READ_LATEST );
 			if ( $revRecord === null ) {
 				$this->output(
 					"$dbDomain $pageId [[$name]] latest time $latestTime, can't find revision id\n"

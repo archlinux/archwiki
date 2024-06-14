@@ -23,12 +23,13 @@
 
 namespace MediaWiki\Category;
 
-use DeferredUpdates;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleArrayFromResult;
-use MWException;
+use MediaWiki\Title\TitleFactory;
+use RuntimeException;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ReadOnlyMode;
@@ -72,21 +73,24 @@ class Category {
 	/** @var ReadOnlyMode */
 	private $readOnlyMode;
 
+	/** @var TitleFactory */
+	private $titleFactory;
+
 	private function __construct() {
 		$services = MediaWikiServices::getInstance();
-		$this->dbProvider = $services->getDBLoadBalancerFactory();
+		$this->dbProvider = $services->getConnectionProvider();
 		$this->readOnlyMode = $services->getReadOnlyMode();
+		$this->titleFactory = $services->getTitleFactory();
 	}
 
 	/**
 	 * Set up all member variables using a database query.
 	 * @param int $mode One of (Category::LOAD_ONLY, Category::LAZY_INIT_ROW)
-	 * @throws MWException
 	 * @return bool True on success, false on failure.
 	 */
 	protected function initialize( $mode = self::LOAD_ONLY ) {
 		if ( $this->mName === null && $this->mID === null ) {
-			throw new MWException( __METHOD__ . ' has both names and IDs null' );
+			throw new RuntimeException( __METHOD__ . ' has both names and IDs null' );
 		} elseif ( $this->mID === null ) {
 			$where = [ 'cat_title' => $this->mName ];
 		} elseif ( $this->mName === null ) {
@@ -337,12 +341,12 @@ class Category {
 		}
 
 		if ( $offset !== '' ) {
-			$queryBuilder->andWhere( $dbr->buildComparison( '>', [ 'cl_sortkey' => $offset ] ) );
+			$queryBuilder->andWhere( $dbr->expr( 'cl_sortkey', '>', $offset ) );
 		}
 
-		$result = new TitleArrayFromResult( $queryBuilder->caller( __METHOD__ )->fetchResultSet() );
-
-		return $result;
+		return $this->titleFactory->newTitleArrayFromResult(
+			$queryBuilder->caller( __METHOD__ )->fetchResultSet()
+		);
 	}
 
 	/**
@@ -383,7 +387,7 @@ class Category {
 
 		$dbw->startAtomic( __METHOD__ );
 
-		// Lock the `category` row before locking `categorylinks` rows to try
+		// Lock the `category` row before potentially locking `categorylinks` rows to try
 		// to avoid deadlocks with LinksDeletionUpdate (T195397)
 		$dbw->newSelectQueryBuilder()
 			->from( 'category' )
@@ -392,16 +396,26 @@ class Category {
 			->forUpdate()
 			->acquireRowLocks();
 
-		// Lock all the `categorylinks` records and gaps for this category;
-		// this is a separate query due to postgres limitations
-		$dbw->newSelectQueryBuilder()
+		$rowCount = $dbw->newSelectQueryBuilder()
 			->select( '*' )
 			->from( 'categorylinks' )
 			->join( 'page', null, 'page_id = cl_from' )
 			->where( [ 'cl_to' => $this->mName ] )
-			->lockInShareMode()
-			->caller( __METHOD__ )
-			->acquireRowLocks();
+			->limit( 110 )
+			->caller( __METHOD__ )->fetchRowCount();
+		// Only lock if there are below 100 rows (T352628)
+		if ( $rowCount < 100 ) {
+			// Lock all the `categorylinks` records and gaps for this category;
+			// this is a separate query due to postgres limitations
+			$dbw->newSelectQueryBuilder()
+				->select( '*' )
+				->from( 'categorylinks' )
+				->join( 'page', null, 'page_id = cl_from' )
+				->where( [ 'cl_to' => $this->mName ] )
+				->lockInShareMode()
+				->caller( __METHOD__ )
+				->acquireRowLocks();
+		}
 
 		// Get the aggregate `categorylinks` row counts for this category
 		$catCond = $dbw->conditional( [ 'page_namespace' => NS_CATEGORY ], '1', 'NULL' );
@@ -543,7 +557,5 @@ class Category {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( Category::class, 'Category' );

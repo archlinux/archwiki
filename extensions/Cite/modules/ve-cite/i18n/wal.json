@@ -42,7 +42,5 @@
 	"cite-ve-reference-input-placeholder": "Ha'i naqaashaa besotun koyya",
 	"cite-ve-referenceslist-isempty-default": "Ha paatettan gelissanawu ha sinttan ayba naqaashatikka baawa.",
 	"cite-ve-toolbar-group-label": "Naqaashaa bessa",
-	"cite-ve-othergroup-item": "$1 naqaashaa",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Naqaashata",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Naqaashaa citaa name: \"$1\""
+	"cite-ve-othergroup-item": "$1 naqaashaa"
 }

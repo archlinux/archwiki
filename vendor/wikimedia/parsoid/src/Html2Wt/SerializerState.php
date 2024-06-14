@@ -138,11 +138,11 @@ class SerializerState {
 
 	/**
 	 * Is the serializer currently processing a subtree that has been
-	 * modified compared to original content (ex: via VE / CX)?
+	 * marked inserted compared to original content (ex: via VE / CX)?
 	 *
 	 * @var bool
 	 */
-	public $inModifiedContent;
+	public $inInsertedContent;
 
 	/**
 	 * Did we introduce nowikis for indent-pre protection?
@@ -359,11 +359,11 @@ class SerializerState {
 	}
 
 	private function resetSep() {
-		$this->sep = PHPUtils::arrayToObject( [
+		$this->sep = (object)[
 			'constraints' => null,
 			'src' => null,
 			'lastSourceNode' => null,
-		] );
+		];
 	}
 
 	/**
@@ -669,7 +669,7 @@ class SerializerState {
 							// ! and | chars are harmless outside tables
 							|| ( strspn( $match[2], '|!' ) && $this->wikiTableNesting > 0 )
 							// indent-pres are suppressed inside <blockquote>
-							|| ( preg_match( '/^ [^\s]/', $match[2] )
+							|| ( preg_match( '/^ \S/', $match[2] )
 								&& !DOMUtils::hasNameOrHasAncestorOfName( $node, 'blockquote' ) )
 						) {
 							$res = ConstrainedText::cast( ( $match[1] ?: '' )

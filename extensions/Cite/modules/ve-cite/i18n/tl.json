@@ -51,7 +51,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Binigyang-kahulugan ang sangguniang ito sa isang padron o sa iba pang ginawang bloke, at maaari lamang ito munang masilip sa wikitext.",
 	"cite-ve-referenceslist-missingreflist": "Ang listahan ng sanggunian na ito ay nabuo ng isang padron, at sa ngayon ay maaari lamang mabago sa anyong wikitext.",
 	"cite-ve-toolbar-group-label": "Magsipi",
-	"cite-ve-othergroup-item": "Sanggunian na $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Mga sanggunian",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Pangalan ng grupo ng sanggunian: \"$1\""
+	"cite-ve-othergroup-item": "Sanggunian na $1"
 }

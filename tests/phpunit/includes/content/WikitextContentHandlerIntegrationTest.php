@@ -5,6 +5,7 @@ use MediaWiki\Interwiki\ClassicInterwikiLookup;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 
 /**
  * @group ContentHandler
@@ -44,7 +45,7 @@ class WikitextContentHandlerIntegrationTest extends TextContentHandlerIntegratio
 			'title' => 'WikitextContentTest_testGetParserOutput',
 			'model' => CONTENT_MODEL_WIKITEXT,
 			'text' => "hello ''world''\n",
-			'expectedHtml' => "<div class=\"mw-parser-output\"><p>hello <i>world</i>\n</p></div>",
+			'expectedHtml' => '<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr">' . "<p>hello <i>world</i>\n</p></div>",
 			'expectedFields' => [
 				'Links' => [
 				],
@@ -53,7 +54,7 @@ class WikitextContentHandlerIntegrationTest extends TextContentHandlerIntegratio
 				'UsedOptions' => [
 					'useParsoid', 'suppressTOC', 'maxIncludeSize', 'maxPPNodeCount',
 					'targetLanguage', 'interfaceMessage', 'maxPPExpandDepth', 'disableTitleConversion',
-					'disableContentConversion', 'expensiveParserFunctionLimit', 'wrapclass'
+					'disableContentConversion', 'expensiveParserFunctionLimit', 'suppressSectionEditLinks', 'isPreview', 'wrapclass'
 				],
 			],
 		];
@@ -61,23 +62,23 @@ class WikitextContentHandlerIntegrationTest extends TextContentHandlerIntegratio
 			'title' => 'WikitextContentTest_testGetParserOutput',
 			'model' => CONTENT_MODEL_WIKITEXT,
 			'text' => "hello ''world''\n",
-			'expectedHtml' => "<div class=\"mw-parser-output\"><section data-mw-section-id=\"0\" id=\"mwAQ\"><p id=\"mwAg\">hello <i id=\"mwAw\">world</i></p>\n</section></div>",
+			'expectedHtml' => '<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr">' . "<section data-mw-section-id=\"0\" id=\"mwAQ\"><p id=\"mwAg\">hello <i id=\"mwAw\">world</i></p>\n</section></div>",
 			'expectedFields' => [
 				'Links' => [
 				],
 				'Sections' => [
 				],
 				'UsedOptions' => [
-					'useParsoid', 'maxIncludeSize', 'interfaceMessage', 'wrapclass'
+					'useParsoid', 'maxIncludeSize', 'interfaceMessage', 'disableContentConversion', 'suppressSectionEditLinks', 'isPreview', 'wrapclass'
 				],
 			],
-			'options' => [ 'useParsoid' => true ]
+			'options' => [ 'useParsoid' => true, 'suppressSectionEditLinks' => true ],
 		];
 		yield 'Parsoid render (redirect page)' => [
 			'title' => 'WikitextContentTest_testGetParserOutput',
 			'model' => CONTENT_MODEL_WIKITEXT,
 			'text' => "#REDIRECT [[Main Page]]",
-			'expectedHtml' => "<div class=\"mw-parser-output\"><div class=\"redirectMsg\"><p>Redirect to:</p><ul class=\"redirectText\"><li><a href=\"/index.php?title=Main_Page&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Main Page (page does not exist)\">Main Page</a></li></ul></div><section data-mw-section-id=\"0\" id=\"mwAQ\"><link rel=\"mw:PageProp/redirect\" href=\"./Main_Page\" id=\"mwAg\"/></section></div>",
+			'expectedHtml' => '<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr">' . "<div class=\"redirectMsg\"><p>Redirect to:</p><ul class=\"redirectText\"><li><a href=\"/w/index.php?title=Main_Page&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Main Page (page does not exist)\">Main Page</a></li></ul></div><section data-mw-section-id=\"0\" id=\"mwAQ\"><link rel=\"mw:PageProp/redirect\" href=\"./Main_Page\" id=\"mwAg\"></section></div>",
 			'expectedFields' => [
 				'Links' => [
 					[ 'Main_Page' => 0 ],
@@ -85,10 +86,37 @@ class WikitextContentHandlerIntegrationTest extends TextContentHandlerIntegratio
 				'Sections' => [
 				],
 				'UsedOptions' => [
-					'useParsoid', 'maxIncludeSize', 'interfaceMessage', 'wrapclass'
+					'useParsoid', 'maxIncludeSize', 'interfaceMessage', 'disableContentConversion', 'suppressSectionEditLinks', 'isPreview', 'wrapclass'
 				],
 			],
-			'options' => [ 'useParsoid' => true ]
+			'options' => [ 'useParsoid' => true, 'suppressSectionEditLinks' => true ],
+		];
+		yield 'Parsoid render (section edit links)' => [
+			'title' => 'WikitextContentTest_testGetParserOutput',
+			'model' => CONTENT_MODEL_WIKITEXT,
+			'text' => "== Hello ==",
+			'expectedHtml' => '<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr" id="mwAw"><section data-mw-section-id="0" id="mwAQ"></section><section data-mw-section-id="1" id="mwAg"><div class="mw-heading mw-heading2" id="mwBA"><h2 id="Hello">Hello</h2><span class="mw-editsection" id="mwBQ"><span class="mw-editsection-bracket" id="mwBg">[</span><a href="/w/index.php?title=WikitextContentTest_testGetParserOutput&amp;action=edit&amp;section=1" title="Edit section: Hello" id="mwBw"><span id="mwCA">edit</span></a><span class="mw-editsection-bracket" id="mwCQ">]</span></span></div></section></div>',
+			'expectedFields' => [
+				'Links' => [
+				],
+				'Sections' => [
+					[
+						'toclevel' => 1,
+						'level' => '2',
+						'line' => 'Hello',
+						'number' => '1',
+						'index' => '1',
+						'fromtitle' => 'WikitextContentTest_testGetParserOutput',
+						'byteoffset' => 0,
+						'anchor' => 'Hello',
+						'linkAnchor' => 'Hello',
+					],
+				],
+				'UsedOptions' => [
+					'useParsoid', 'maxIncludeSize', 'interfaceMessage', 'disableContentConversion', 'suppressSectionEditLinks', 'isPreview', 'wrapclass'
+				],
+			],
+			'options' => [ 'useParsoid' => true ],
 		];
 		yield 'Links' => [
 			'title' => 'WikitextContentTest_testGetParserOutput',
@@ -185,11 +213,17 @@ class WikitextContentHandlerIntegrationTest extends TextContentHandlerIntegratio
 
 	/**
 	 * @dataProvider provideGetParserOutput
-	 * @covers WikitextContentHandler::fillParserOutput
+	 * @covers \WikitextContentHandler::fillParserOutput
 	 */
 	public function testGetParserOutput( $title, $model, $text, $expectedHtml,
 		$expectedFields = null, $options = null
 	) {
+		$this->overrideConfigValues( [
+			MainConfigNames::ScriptPath => '/w',
+			MainConfigNames::Script => '/w/index.php',
+			MainConfigNames::FragmentMode => [ 'html5' ],
+		] );
+
 		$parserOptions = null;
 		if ( $options ) {
 			$parserOptions = ParserOptions::newFromAnon();
@@ -197,7 +231,6 @@ class WikitextContentHandlerIntegrationTest extends TextContentHandlerIntegratio
 				$parserOptions->setOption( $key, $val );
 			}
 		}
-		$this->overrideConfigValue( MainConfigNames::FragmentMode, [ 'html5' ] );
 		parent::testGetParserOutput(
 			$title, $model, $text, $expectedHtml, $expectedFields, $parserOptions
 		);
@@ -208,8 +241,8 @@ class WikitextContentHandlerIntegrationTest extends TextContentHandlerIntegratio
 	 * @param LinkTarget $target
 	 * @param string $expectedWT Serialized wikitext form of the content object built
 	 * @param string $expectedTarget Expected target string in the HTML redirect
-	 * @covers WikitextContentHandler::makeRedirectContent
-	 * @covers WikitextContentHandler::getParserOutput
+	 * @covers \WikitextContentHandler::makeRedirectContent
+	 * @covers \WikitextContentHandler::getParserOutput
 	 */
 	public function testMakeRedirectContent( LinkTarget $target, string $expectedWT, string $expectedTarget ) {
 		$this->getServiceContainer()->resetServiceForTesting( 'ContentLanguage' );

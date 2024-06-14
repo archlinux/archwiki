@@ -7,7 +7,8 @@
 			"ShockD",
 			"Spiritia",
 			"StanProg",
-			"Termininja"
+			"Termininja",
+			"Ted Masters"
 		]
 	},
 	"vector-skin-desc": "Предоставя 2 облика от тип „Вектор“:\n* 2011: „Модерна“ – версия на MonoBook с обновен дизайн и много подобрения на ползваемостта.\n* 2022: „Векторна“ – създадена като част от проекта WMF [[mw:Desktop Improvements]].",
@@ -17,11 +18,10 @@
 	"vector-opt-out-tooltip": "Променете настройките си, за да се върнете към стария вид на облика (Vector legacy)",
 	"vector-action-toggle-sidebar": "Превключване на страничната лента",
 	"vector-languages": "Езици",
-	"vector-language-button-aria-label": "Към на статията на друг език. Налична на {{PLURAL:$1|$1 език|$1 езика}}",
+	"vector-language-button-aria-label": "Към статията на друг език. Налична на {{PLURAL:$1|$1 език|$1 езика}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 език|$1 езика}}",
 	"vector-no-language-button-label": "Добавяне на езици",
 	"vector-no-language-button-aria-label": "Тази статия съществува само на този език. Добавете статията за други езици",
-	"vector-language-redirect-to-top": "Езиковите връзки са в горната част на страницата срещу заглавието на статията.",
 	"vector-language-variant-switcher-label": "Промяна на езиковия вариант",
 	"vector-action-addsection": "Добавяне на тема",
 	"vector-action-delete": "Изтриване",

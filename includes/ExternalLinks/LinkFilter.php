@@ -26,8 +26,10 @@ use MediaWiki\MediaWikiServices;
 use StringUtils;
 use TextContent;
 use Wikimedia\IPUtils;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeMatch;
-use Wikimedia\Rdbms\Platform\ISQLPlatform;
+use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\OrExpressionGroup;
 
 /**
  * Utilities for formatting and querying the externallinks table.
@@ -104,10 +106,8 @@ class LinkFilter {
 			$okChars .= '\x80-\xf4';
 		}
 		$host = preg_replace_callback(
-			'<[^' . $okChars . ']>',
-			static function ( $m ) {
-				return rawurlencode( $m[0] );
-			},
+			'<[^' . $okChars . ']+>',
+			static fn ( $m ) => rawurlencode( $m[0] ),
 			strtolower( $host )
 		);
 
@@ -184,7 +184,7 @@ class LinkFilter {
 		// versus "https://" prefix. If you change that, you'll likely need to update
 		// refreshExternallinksIndex.php accordingly.
 
-		$bits = wfParseUrl( $url );
+		$bits = MediaWikiServices::getInstance()->getUrlUtils()->parse( $url );
 		if ( !$bits ) {
 			return [];
 		}
@@ -193,7 +193,10 @@ class LinkFilter {
 		// while we want to match the email's domain or news server the same way we are
 		// matching hosts for other URLs.
 		if ( in_array( $bits['scheme'], [ 'mailto', 'news' ] ) ) {
-			$bits['host'] = $bits['path'];
+			// (T347574) Only set host if it's not already set (if // is used)
+			if ( array_key_exists( 'path', $bits ) ) {
+				$bits['host'] = $bits['path'];
+			}
 			$bits['path'] = '';
 		}
 
@@ -258,7 +261,7 @@ class LinkFilter {
 	}
 
 	public static function reverseIndexes( $domainIndex ) {
-		$bits = wfParseUrl( $domainIndex );
+		$bits = MediaWikiServices::getInstance()->getUrlUtils()->parse( $domainIndex );
 		if ( !$bits ) {
 			return '';
 		}
@@ -344,7 +347,7 @@ class LinkFilter {
 		}
 
 		$domainConditions = [];
-		$db = $options['db'] ?: MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$db = $options['db'] ?: MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		foreach ( $options['protocol'] as $protocol ) {
 			$like = self::makeLikeArray( $filterEntry, $protocol );
 			if ( $like === false ) {
@@ -356,20 +359,19 @@ class LinkFilter {
 				array_pop( $trimmedlikeDomain );
 			}
 			$index1 = implode( '', $trimmedlikeDomain );
-			$thisDomainConditions = [];
 			if ( $options['oneWildcard'] && $likePath[0] != '/' ) {
-				$thisDomainConditions[] = 'el_to_domain_index = ' . $db->addQuotes( $index1 );
+				$thisDomainExpr = $db->expr( 'el_to_domain_index', '=', $index1 );
 			} else {
-				$thisDomainConditions[] = "el_to_domain_index" . $db->buildLike( $index1, $db->anyString() );
+				$thisDomainExpr = $db->expr(
+					'el_to_domain_index',
+					IExpression::LIKE,
+					new LikeValue( $index1, $db->anyString() )
+				);
 			}
 			foreach ( $domainGaps[$index1] ?? [] as $from => $to ) {
-				$thisDomainConditions[] = $db->makeList( [
-					$db->buildComparison( '<', [ 'el_id' => $from ] ),
-					$db->buildComparison( '>', [ 'el_id' => $to ] ),
-				], ISQLPlatform::LIST_OR );
+				$thisDomainExpr = $thisDomainExpr->andExpr( $db->expr( 'el_id', '<', $from )->or( 'el_id', '>', $to ) );
 			}
-			$domainConditions[] = $db->makeList( $thisDomainConditions, ISQLPlatform::LIST_AND );
-
+			$domainConditions[] = $thisDomainExpr;
 		}
 		if ( !$domainConditions ) {
 			return false;
@@ -382,8 +384,8 @@ class LinkFilter {
 		$index2 = implode( '', $trimmedlikePath );
 
 		return [
-			$db->makeList( $domainConditions, ISQLPlatform::LIST_OR ),
-			"el_to_path" . $db->buildLike( $index2, $db->anyString() ),
+			new OrExpressionGroup( ...$domainConditions ),
+			$db->expr( 'el_to_path', IExpression::LIKE, new LikeValue( $index2, $db->anyString() ) ),
 		];
 	}
 
@@ -431,12 +433,13 @@ class LinkFilter {
 	 * @return array|false Array to be passed to Database::buildLike() or false on error
 	 */
 	public static function makeLikeArray( $filterEntry, $protocol = 'http://' ) {
-		$db = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$services = MediaWikiServices::getInstance();
+		$db = $services->getConnectionProvider()->getReplicaDatabase();
 		$likeDomain = [];
 		$likePath = [];
 
 		$target = $protocol . $filterEntry;
-		$bits = wfParseUrl( $target );
+		$bits = $services->getUrlUtils()->parse( $target );
 		if ( !$bits ) {
 			return false;
 		}
@@ -524,7 +527,5 @@ class LinkFilter {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( LinkFilter::class, 'LinkFilter' );

@@ -12,6 +12,8 @@
 	"linter-page-viewsource": "čuäʹjet wikiteeʹkst",
 	"linter-pager-category-header": "Kategoria",
 	"linter-pager-details-header": "Lââʹssteâđ",
+	"linter-pager-inline-media-caption-details": "Kuâsttjeʹteʹmes kartt-teʹkstt",
+	"linter-pager-wikilink-in-extlink-details": "Liiŋk liiŋkin",
 	"linterrors-subpage": "Lint-vââʹjj: $1",
 	"pageinfo-linter": "Lint-vââʹjj"
 }

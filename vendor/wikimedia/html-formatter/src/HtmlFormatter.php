@@ -27,7 +27,7 @@ use DOMDocument;
 use DOMElement;
 use DOMNodeList;
 use DOMXPath;
-use Exception;
+use InvalidArgumentException;
 
 class HtmlFormatter {
 	/**
@@ -104,9 +104,9 @@ class HtmlFormatter {
 				$html = self::wrapHTML( $html );
 			}
 
-			// Workaround for bug that caused spaces before references
-			// to disappear during processing: https://phabricator.wikimedia.org/T55086
-			$html = str_replace( ' <', '&#32;<', $html );
+			// Workaround for bug that caused spaces after references
+			// to disappear during processing (T55086, T348402)
+			$html = str_replace( '> <', '>&#32;<', $html );
 
 			\libxml_use_internal_errors( true );
 			$loader = false;
@@ -310,11 +310,12 @@ class HtmlFormatter {
 			$html = $this->html;
 		}
 		// Remove stuff added by wrapHTML()
-		$html = \preg_replace( '/^.*?<body>|<\/body>.*$/s', '', $html );
+		$html = self::removeBeforeIncluding( $html, '<body>' );
+		$html = self::removeAfterIncluding( $html, '</body>' );
 		$html = $this->onHtmlReady( $html );
 
 		if ( $this->removeComments ) {
-			$html = \preg_replace( "/<!--.*?-->/s", '', $html );
+			$html = self::removeBetweenIncluding( $html, '<!--', '-->' );
 		}
 		if ( $this->elementsToFlatten ) {
 			$elements = \implode( '|', $this->elementsToFlatten );
@@ -322,6 +323,56 @@ class HtmlFormatter {
 		}
 
 		return $html;
+	}
+
+	/**
+	 * Removes everything from beginning of string to last occurance of $needle, including $needle.
+	 *
+	 * Equivalent to the regex /^.*?<body>/s when $needle = '<body>'
+	 */
+	public static function removeBeforeIncluding( string $haystack, string $needle ): string {
+		$pos = strrpos( $haystack, $needle );
+		if ( $pos === false ) {
+			return $haystack;
+		}
+		return substr( $haystack, $pos + strlen( $needle ) );
+	}
+
+	/**
+	 * Removes everything from the first occurance of $needle to the end of the string, including $needle
+	 *
+	 * Equivalent to the regex /<\/body>.*$/s when $needle = '</body>'
+	 */
+	public static function removeAfterIncluding( string $haystack, string $needle ): string {
+		$pos = strpos( $haystack, $needle );
+		if ( $pos === false ) {
+			return $haystack;
+		}
+		return substr( $haystack, 0, $pos );
+	}
+
+	/**
+	 * Removes everything between $open and $close, including $open and $close.
+	 */
+	public static function removeBetweenIncluding( string $haystack, string $open, string $close ): string {
+		$pieces = [];
+		$offset = 0;
+		while ( true ) {
+			$openPos = strpos( $haystack, $open, $offset );
+			if ( $openPos == false ) {
+				break;
+			}
+
+			$closePos = strpos( $haystack, $close, $openPos );
+			if ( $closePos === false ) {
+				break;
+			}
+
+			$pieces[] = substr( $haystack, $offset, $openPos - $offset );
+			$offset = $closePos + strlen( $close );
+		}
+		$pieces[] = substr( $haystack, $offset );
+		return implode( '', $pieces );
 	}
 
 	/**
@@ -333,7 +384,6 @@ class HtmlFormatter {
 	 * @param string &$type The type of selector (ID, CLASS, TAG_CLASS, or TAG)
 	 * @param string &$rawName The raw name of the selector
 	 * @return bool Whether the selector was successfully recognised
-	 * @throws Exception
 	 */
 	protected function parseSelector( string $selector, string &$type, string &$rawName ): bool {
 		$firstChar = substr( $selector, 0, 1 );
@@ -350,7 +400,7 @@ class HtmlFormatter {
 			$type = 'TAG';
 			$rawName = $selector;
 		} else {
-			throw new Exception( __METHOD__ . "(): unrecognized selector '$selector'" );
+			throw new InvalidArgumentException( __METHOD__ . "(): unrecognized selector '$selector'" );
 		}
 
 		return true;

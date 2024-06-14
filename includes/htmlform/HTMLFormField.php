@@ -1,9 +1,21 @@
 <?php
 
+namespace MediaWiki\HTMLForm;
+
+use FormatJson;
+use HtmlArmor;
+use HTMLCheckField;
+use HTMLFormFieldCloner;
+use InvalidArgumentException;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
+use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Message\Message;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Status\Status;
+use MessageSpecifier;
+use StatusValue;
 
 /**
  * The parent class to generate form fields.  Any field type should
@@ -68,10 +80,26 @@ abstract class HTMLFormField {
 	 * @stable to override
 	 *
 	 * @param string $value
-	 * @return OOUI\Widget|string|false
+	 * @return \OOUI\Widget|string|false
 	 */
 	public function getInputOOUI( $value ) {
 		return false;
+	}
+
+	/**
+	 * Same as getInputHTML, but for Codex. This is called by CodexHTMLForm.
+	 *
+	 * If not overridden, falls back to getInputHTML.
+	 *
+	 * @param string $value The value to set the input to
+	 * @param bool $hasErrors Whether there are validation errors. If set to true, this method
+	 *   should apply a CSS class for the error status (e.g. cdx-text-input--status-error)
+	 *   if the component used supports that.
+	 * @return string HTML
+	 */
+	public function getInputCodex( $value, $hasErrors ) {
+		// If not overridden, fall back to getInputHTML()
+		return $this->getInputHTML( $value );
 	}
 
 	/**
@@ -133,12 +161,13 @@ abstract class HTMLFormField {
 	 *
 	 * @param string $name
 	 * @param bool $backCompat Whether to try striping the 'wp' prefix.
-	 * @return mixed
+	 * @return HTMLFormField
 	 */
 	protected function getNearestField( $name, $backCompat = false ) {
 		// When the field is belong to a HTMLFormFieldCloner
-		if ( isset( $this->mParams['cloner'] ) ) {
-			$field = $this->mParams['cloner']->findNearestField( $this, $name );
+		$cloner = $this->mParams['cloner'] ?? null;
+		if ( $cloner instanceof HTMLFormFieldCloner ) {
+			$field = $cloner->findNearestField( $this, $name );
 			if ( $field ) {
 				return $field;
 			}
@@ -167,8 +196,9 @@ abstract class HTMLFormField {
 	protected function getNearestFieldValue( $alldata, $name, $asDisplay = false, $backCompat = false ) {
 		$field = $this->getNearestField( $name, $backCompat );
 		// When the field belongs to a HTMLFormFieldCloner
-		if ( isset( $field->mParams['cloner'] ) ) {
-			$value = $field->mParams['cloner']->extractFieldData( $field, $alldata );
+		$cloner = $field->mParams['cloner'] ?? null;
+		if ( $cloner instanceof HTMLFormFieldCloner ) {
+			$value = $cloner->extractFieldData( $field, $alldata );
 		} else {
 			// Note $alldata is an empty array when first rendering a form with a formIdentifier.
 			// In that case, $alldata[$field->mParams['fieldname']] is unset and we use the
@@ -361,8 +391,8 @@ abstract class HTMLFormField {
 	public function isDisabled( $alldata ) {
 		return ( $this->mParams['disabled'] ?? false ) ||
 			$this->isHidden( $alldata ) ||
-			isset( $this->mCondState['disable'] ) &&
-			$this->checkStateRecurse( $alldata, $this->mCondState['disable'] );
+			( isset( $this->mCondState['disable'] )
+				&& $this->checkStateRecurse( $alldata, $this->mCondState['disable'] ) );
 	}
 
 	/**
@@ -472,7 +502,7 @@ abstract class HTMLFormField {
 	 */
 	protected function isSubmitAttempt( WebRequest $request ) {
 		// HTMLForm would add a hidden field of edit token for forms that require to be posted.
-		return $request->wasPosted() && $request->getCheck( 'wpEditToken' )
+		return ( $request->wasPosted() && $request->getCheck( 'wpEditToken' ) )
 			// The identifier matching or not has been checked in HTMLForm::prepareForm()
 			|| $request->getCheck( 'wpFormIdentifier' );
 	}
@@ -697,7 +727,7 @@ abstract class HTMLFormField {
 	 *
 	 * @param string $value The value to set the input to.
 	 *
-	 * @return OOUI\FieldLayout
+	 * @return \OOUI\FieldLayout
 	 */
 	public function getOOUI( $value ) {
 		$inputField = $this->getInputOOUI( $value );
@@ -707,7 +737,7 @@ abstract class HTMLFormField {
 			// generate the whole field, label and errors and all, then wrap it in a Widget.
 			// It might look weird, but it'll work OK.
 			return $this->getFieldLayoutOOUI(
-				new OOUI\Widget( [ 'content' => new OOUI\HtmlSnippet( $this->getDiv( $value ) ) ] ),
+				new \OOUI\Widget( [ 'content' => new \OOUI\HtmlSnippet( $this->getDiv( $value ) ) ] ),
 				[ 'align' => 'top' ]
 			);
 		}
@@ -717,7 +747,7 @@ abstract class HTMLFormField {
 			// We have an OOUI implementation, but it's not proper, and we got a load of HTML.
 			// Cheat a little and wrap it in a widget. It won't be infusable, though, since client-side
 			// JavaScript doesn't know how to rebuilt the contents.
-			$inputField = new OOUI\Widget( [ 'content' => new OOUI\HtmlSnippet( $inputField ) ] );
+			$inputField = new \OOUI\Widget( [ 'content' => new \OOUI\HtmlSnippet( $inputField ) ] );
 			$infusable = false;
 		}
 
@@ -725,13 +755,13 @@ abstract class HTMLFormField {
 		$help = $this->getHelpText();
 		$errors = $this->getErrorsRaw( $value );
 		foreach ( $errors as &$error ) {
-			$error = new OOUI\HtmlSnippet( $error );
+			$error = new \OOUI\HtmlSnippet( $error );
 		}
 
 		$config = [
 			'classes' => [ "mw-htmlform-field-$fieldType" ],
 			'align' => $this->getLabelAlignOOUI(),
-			'help' => ( $help !== null && $help !== '' ) ? new OOUI\HtmlSnippet( $help ) : null,
+			'help' => ( $help !== null && $help !== '' ) ? new \OOUI\HtmlSnippet( $help ) : null,
 			'errors' => $errors,
 			'infusable' => $infusable,
 			'helpInline' => $this->isHelpInline(),
@@ -754,7 +784,7 @@ abstract class HTMLFormField {
 		// the element could specify, that the label doesn't need to be added
 		$label = $this->getLabel();
 		if ( $label && $label !== "\u{00A0}" && $label !== '&#160;' ) {
-			$config['label'] = new OOUI\HtmlSnippet( $label );
+			$config['label'] = new \OOUI\HtmlSnippet( $label );
 		}
 
 		if ( $this->mCondState ) {
@@ -770,6 +800,86 @@ abstract class HTMLFormField {
 		}
 
 		return $this->getFieldLayoutOOUI( $inputField, $config );
+	}
+
+	/**
+	 * Get the Codex version of the div.
+	 * @since 1.42
+	 *
+	 * @param string $value The value to set the input to.
+	 * @return string HTML
+	 */
+	public function getCodex( $value ) {
+		$isDisabled = ( $this->mParams['disabled'] ?? false );
+
+		// Label
+		$labelDiv = '';
+		$labelValue = trim( $this->getLabel() );
+		// For weird historical reasons, a non-breaking space is treated as an empty label
+		// Check for both a literal nbsp ("\u{00A0}") and the HTML-encoded version
+		if ( $labelValue !== '' && $labelValue !== "\u{00A0}" && $labelValue !== '&#160;' ) {
+			$labelFor = $this->needsLabel() ? [ 'for' => $this->mID ] : [];
+			$labelClasses = [ 'cdx-label' ];
+			if ( $isDisabled ) {
+				$labelClasses[] = 'cdx-label--disabled';
+			}
+			// <div class="cdx-label">
+			$labelDiv = Html::rawElement( 'div', [ 'class' => $labelClasses ],
+				// <label class="cdx-label__label" for="ID">
+				Html::rawElement( 'label', [ 'class' => 'cdx-label__label' ] + $labelFor,
+					// <span class="cdx-label__label__text">
+					Html::rawElement( 'span', [ 'class' => 'cdx-label__label__text' ],
+						$labelValue
+					)
+				)
+			);
+		}
+
+		// Help text
+		// <div class="cdx-field__help-text">
+		$helptext = $this->getHelpTextHtmlDiv( $this->getHelpText(), [ 'cdx-field__help-text' ] );
+
+		// Validation message
+		// <div class="cdx-field__validation-message">
+		// $errors is a <div class="cdx-message">
+		// FIXME right now this generates a block message (cdx-message--block), we want an inline message instead
+		$validationMessage = '';
+		[ $errors, $errorClass ] = $this->getErrorsAndErrorClass( $value );
+		if ( $errors !== '' ) {
+			$validationMessage = Html::rawElement( 'div', [ 'class' => 'cdx-field__validation-message' ],
+				$errors
+			);
+		}
+
+		// Control
+		$inputHtml = $this->getInputCodex( $value, $errors !== '' );
+		// <div class="cdx-field__control cdx-field__control--has-help-text">
+		$controlClasses = [ 'cdx-field__control' ];
+		if ( $helptext ) {
+			$controlClasses[] = 'cdx-field__control--has-help-text';
+		}
+		$control = Html::rawElement( 'div', [ 'class' => $controlClasses ], $inputHtml );
+
+		// <div class="cdx-field">
+		$fieldClasses = [
+			"mw-htmlform-field-{$this->getClassName()}",
+			$this->mClass,
+			$errorClass,
+			'cdx-field'
+		];
+		if ( $isDisabled ) {
+			$fieldClasses[] = 'cdx-field--disabled';
+		}
+		$fieldAttributes = [];
+		// Set data attribute and CSS class for client side handling of hide-if / disable-if
+		if ( $this->mCondState ) {
+			$fieldAttributes['data-cond-state'] = FormatJson::encode( $this->parseCondStateForClient() );
+			$fieldClasses = array_merge( $fieldClasses, $this->mCondStateClass );
+		}
+
+		return Html::rawElement( 'div', [ 'class' => $fieldClasses ] + $fieldAttributes,
+			$labelDiv . $control . $helptext . $validationMessage
+		);
 	}
 
 	/**
@@ -795,9 +905,9 @@ abstract class HTMLFormField {
 
 	/**
 	 * Get a FieldLayout (or subclass thereof) to wrap this field in when using OOUI output.
-	 * @param OOUI\Widget $inputField
+	 * @param \OOUI\Widget $inputField
 	 * @param array $config
-	 * @return OOUI\FieldLayout
+	 * @return \OOUI\FieldLayout
 	 */
 	protected function getFieldLayoutOOUI( $inputField, $config ) {
 		return new HTMLFormFieldLayout( $inputField, $config );
@@ -908,16 +1018,17 @@ abstract class HTMLFormField {
 	 * @since 1.20
 	 *
 	 * @param string|null $helptext
+	 * @param string[] $cssClasses
 	 *
 	 * @return string
 	 */
-	public function getHelpTextHtmlDiv( $helptext ) {
+	public function getHelpTextHtmlDiv( $helptext, $cssClasses = [] ) {
 		if ( $helptext === null ) {
 			return '';
 		}
 
 		$wrapperAttributes = [
-			'class' => [ 'htmlform-tip' ],
+			'class' => array_merge( $cssClasses, [ 'htmlform-tip' ] ),
 		];
 		if ( $this->mHelpClass !== false ) {
 			$wrapperAttributes['class'][] = $this->mHelpClass;
@@ -1151,8 +1262,21 @@ abstract class HTMLFormField {
 		$ret = [];
 		foreach ( $options as $key => $value ) {
 			$msg = $this->msg( $key );
-			$key = $needsParse ? $msg->parse() : $msg->plain();
-			$ret[$key] = is_array( $value )
+			$msgAsText = $needsParse ? $msg->parse() : $msg->plain();
+			if ( array_key_exists( $msgAsText, $ret ) ) {
+				LoggerFactory::getInstance( 'error' )->error(
+					'The option that uses the message key {msg_key_one} has the same translation as ' .
+					'another option in {lang}. This means that {msg_key_one} will not be used as an option.',
+					[
+						'msg_key_one' => $key,
+						'lang' => $this->mParent ?
+							$this->mParent->getLanguageCode()->toBcp47Code() :
+							RequestContext::getMain()->getLanguageCode()->toBcp47Code(),
+					]
+				);
+				continue;
+			}
+			$ret[$msgAsText] = is_array( $value )
 				? $this->lookupOptionsKeys( $value, $needsParse )
 				: strval( $value );
 		}
@@ -1193,7 +1317,7 @@ abstract class HTMLFormField {
 				$this->mOptions = self::forceToStringRecursive( $this->mParams['options'] );
 			} elseif ( array_key_exists( 'options-message', $this->mParams ) ) {
 				$message = $this->getMessage( $this->mParams['options-message'] )->inContentLanguage()->plain();
-				$this->mOptions = Xml::listDropDownOptions( $message );
+				$this->mOptions = Html::listDropdownOptions( $message );
 			} else {
 				$this->mOptions = null;
 			}
@@ -1214,7 +1338,7 @@ abstract class HTMLFormField {
 			return null;
 		}
 
-		return Xml::listDropDownOptionsOoui( $oldoptions );
+		return Html::listDropdownOptionsOoui( $oldoptions );
 	}
 
 	/**
@@ -1309,3 +1433,6 @@ abstract class HTMLFormField {
 		return (bool)$this->mCondState;
 	}
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( HTMLFormField::class, 'HTMLFormField' );

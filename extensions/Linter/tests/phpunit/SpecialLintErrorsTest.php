@@ -26,6 +26,7 @@ use MediaWiki\Linter\CategoryManager;
 use MediaWiki\Linter\Database;
 use MediaWiki\Linter\RecordLintJob;
 use MediaWiki\Linter\SpecialLintErrors;
+use MediaWiki\Page\PageReference;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Title\Title;
 use SpecialPageTestBase;
@@ -37,8 +38,22 @@ use SpecialPageTestBase;
  */
 class SpecialLintErrorsTest extends SpecialPageTestBase {
 
+	private function newRecordLintJob( PageReference $page, array $params ) {
+		$services = $this->getServiceContainer();
+		return new RecordLintJob(
+			$page,
+			$params,
+			$services->getMainWANObjectCache()
+		);
+	}
+
 	protected function newSpecialPage() {
-		return new SpecialLintErrors();
+		$services = $this->getServiceContainer();
+		return new SpecialLintErrors(
+			$services->getMainWANObjectCache(),
+			$services->getNamespaceInfo(),
+			$services->getTitleParser()
+		);
 	}
 
 	public function testExecute() {
@@ -90,7 +105,7 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 			'dbid' => null,
 		];
 		$titleAndPage = $this->createTitleAndPage();
-		$job = new RecordLintJob( $titleAndPage['title'], [
+		$job = $this->newRecordLintJob( $titleAndPage['title'], [
 			'errors' => [ $error ],
 			'revision' => $titleAndPage['revID']
 		] );
@@ -126,7 +141,7 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 			'dbid' => null,
 		];
 		$titleAndPage = $this->createTitleAndPage();
-		$job = new RecordLintJob( $titleAndPage['title'], [
+		$job = $this->newRecordLintJob( $titleAndPage['title'], [
 			'errors' => [ $error ],
 			'revision' => $titleAndPage['revID']
 		] );
@@ -172,7 +187,7 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 					'dbid' => null
 				];
 			}
-			$job = new RecordLintJob( $titleAndPage[ 'title' ], [
+			$job = $this->newRecordLintJob( $titleAndPage[ 'title' ], [
 				'errors' => $errors,
 				'revision' => $titleAndPage[ 'revID' ]
 			] );
@@ -212,29 +227,34 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 		$pageData[] = [ 'name' => 'FooBar:ErrorFive', 'ns' => 3,
 			'lintErrors' => [ [ 'type' => 'obsolete-tag', 'location' => [ 0, 10 ] ] ]
 		];
+		$pageData[] = [ 'name' => 'ErrorSix', 'ns' => 3,
+			'lintErrors' => [
+				[ 'type' => 'obsolete-tag', 'location' => [ 0, 10 ] ],
+				[ 'type' => 'misnested-tag', 'location' => [ 20, 30 ] ]
+			]
+		];
 		return $pageData;
 	}
 
-	// drop-down namespaces specified: all, Talk and User talk (defined in config as null, int 0, 1 and 3)
-	// namespace invert: true and false, some true cases make no sense like invert against all namespaces
+	// namespaces specified: all, Main, Talk and User talk (defined in config as null, int 0, 1 and 3)
 	// Titles exact matched and searched by tests include: empty - "", "L", "Lint Error One", "User Talk:L",
 	// "User talk:LintErrorTwo", "NotANamespace:L", "NotANamespace:LintErrorThree", "NotANamespace:LintErrorFour"
 	//
 	// Tests are grouped into three categories: empty title for all tests, namespace all for half and User talk for
-	// the rest, with invert and exact match booleans cycling.
+	// the rest, with exact match booleans cycling.
 	//
 	// The second group is similar, the title being either "NotANamespace:L" or "NotANamespace:LintErrorThree" or
-	// "NotANamespace:LintErrorFour" with half namespace set all or User talk and invert and exact match booleans
+	// "NotANamespace:LintErrorFour" with half namespace set all or User talk and exact match booleans
 	// cycling.
 	//
 	// The third group is composed of tests against main, talk, User Talk and all namespaces. This test also includes
 	// titles with and without namespace prefixes, some which match the drop-down namespace and some which conflict
-	// depending on the invert setting and the combination of namespace definitions.
+	// depending on the combination of namespace definitions.
 	//
 	// The forth test covers the use of ':title' (main namespace) as the search text to ensure 'all' and 'main'
 	// are handled properly.
 	//
-	// The fifth test covers the user of an editor defined, non wiki defined namespace, without a namespace ID, but
+	// The fifth test covers the user of an editor defined, (non wiki defined namespace with a namespace ID), but
 	// which was created in the User_talk wiki defined namespace ID 3.
 	//
 	// The sixth test covers accessing the search mechanism through the misnested-tag subpage. It verifies that
@@ -250,74 +270,91 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 			$testConfigurations[ 1 ] = [
 				'namespaces' => [ 0, 3 ],
 				'titles' => [ '' ],
-				'cases' => [ [ 'iterations' => [ 0, 1, 2, 3, 4, 5, 6, 7 ], 'message' => 'linter-invalid-title' ]
+				'cases' => [ [ 'iterations' => [ 0, 1, 2, 3 ], 'message' => 'linter-invalid-title' ]
 				]
 			];
 			$testConfigurations[ 2 ] = [
 				'namespaces' => [ 0, 3 ],
 				'titles' => [ 'NotANamespace:L', 'NotANamespace:LintErrorFour' ],
 				'cases' => [
-					[ 'iterations' => [ 1, 11 ], 'message' => 'NotANamespace:LintErrorThree' ],
-					[ 'iterations' => [ 1, 4, 5, 11, 14, 15 ], 'message' => 'NotANamespace:LintErrorFour' ],
-					[ 'iterations' => [ 0, 2, 3, 6, 7, 8, 9, 10, 12, 13 ], 'message' => 'table_pager_empty' ]
+					[ 'iterations' => [ 1 ], 'message' => 'NotANamespace:LintErrorThree' ],
+					[ 'iterations' => [ 1, 2, 3 ], 'message' => 'NotANamespace:LintErrorFour' ],
+					[ 'iterations' => [ 0, 4, 5, 6, 7 ], 'message' => 'table_pager_empty' ]
 				]
 			];
 			$testConfigurations[ 3 ] = [
-				'namespaces' => [ 0, 1, 3, null ],
+				'namespaces' => [ 0, 1, 3 ],
 				'titles' => [ 'L', 'Lint Error One', 'LintErrorTwo', 'User talk:L', 'User talk:LintErrorTwo',
 					'Talk:L' ],
 				'cases' => [
-					[ 'iterations' => [ 1, 4, 5, 27, 30, 31, 47, 51, 54, 55, 63, 73, 76, 77, 87, 95 ],
+					[ 'iterations' => [ 1, 2, 3 ],
 						'message' => 'Lint Error One' ],
-					[ 'iterations' => [ 3, 10, 11, 27, 34, 35, 47, 49, 56, 57, 61, 64, 65, 73, 80, 81, 85, 88, 89, 95 ],
+					[ 'iterations' => [ 25, 28, 29, 31, 32, 33 ],
 						'message' => 'LintErrorTwo' ],
-					[ 'iterations' => [ 0, 2, 6, 7, 8, 9, 24, 25, 26, 28, 29, 32, 33, 44, 45, 46, 48, 50, 52, 53, 59,
-						58, 60, 62, 66, 67, 72, 84, 86, 90, 91, 92, 93, 94 ],
+					[ 'iterations' => [ 0, 4, 5, 12, 13, 14, 15, 16, 17, 22, 23, 24, 26, 27, 30 ],
 						'message' => 'table_pager_empty' ],
-					[ 'iterations' => [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 36, 37, 38, 39, 40, 41, 42,
-						43, 68, 69, 70, 71 ],
-						'message' => 'linter-namespace-mismatch' ],
-					[ 'iterations' => [ 74, 75, 78, 79, 82, 83 ],
-						'message' => 'linter-namespace-invert-error' ]
+					[ 'iterations' => [ 6, 7, 8, 9, 10, 11, 18, 19, 20, 21, 34, 35 ],
+						'message' => 'linter-namespace-mismatch' ]
 				]
 			];
 			$testConfigurations[ 4 ] = [
-				'namespaces' => [ 0, 3, null ],
+				'namespaces' => [ 0, 3 ],
 				'titles' => [ ':Lint Error One' ],
 				'cases' => [
-					[ 'iterations' => [ 0, 1, 8, 9 ],
+					[ 'iterations' => [ 0, 1 ],
 						'message' => 'Lint Error One' ],
-					[ 'iterations' => [ 2, 3, 10, 11 ],
-						'message' => 'table_pager_empty' ],
-					[ 'iterations' => [ 4, 5, 6, 7 ],
+					[ 'iterations' => [ 2, 3 ],
 						'message' => 'linter-namespace-mismatch' ]
 				]
 			];
 			$testConfigurations[ 5 ] = [
-				'namespaces' => [ 0, 3, null ],
+				'namespaces' => [ 0, 3 ],
 				'titles' => [ 'FooBar:ErrorFive' ],
 				'cases' => [
-					[ 'iterations' => [ 2, 3, 4, 5, 8, 9 ],
+					[ 'iterations' => [ 2, 3 ],
 						'message' => 'FooBar:ErrorFive' ],
-					[ 'iterations' => [ 0, 1, 6, 7 ],
+					[ 'iterations' => [ 0, 1 ],
 						'message' => 'table_pager_empty' ],
-					[ 'iterations' => [ 10, 11 ],
-					'message' => 'linter-namespace-invert-error' ]
+				]
+			];
+			// check both NS0 and NS3 at the same time
+			$testConfigurations[ 6 ] = [
+				'namespaces' => [ [ 0, 3 ] ],
+				'titles' => [ 'L', 'Lint Error One', 'LintErrorTwo' ],
+				'cases' => [
+					[ 'iterations' => [ 1, 2, 3 ],
+						'message' => 'Lint Error One' ],
+					[ 'iterations' => [ 1, 4, 5 ],
+						'message' => 'LintErrorTwo' ],
+					[ 'iterations' => [ 0 ],
+						'message' => 'table_pager_empty' ],
 				]
 			];
 		} else {
-			$testConfigurations[ 6 ] = [
+			$testConfigurations[ 7 ] = [
 				'namespaces' => [ 0, 3 ],
-				'titles' => [ 'L', 'Lint Error One', "NotANamespace:L" ],
+				'titles' => [ 'L', 'Lint Error One', 'NotANamespace:L' ],
 				'cases' => [
-					[ 'iterations' => [ 1, 4, 5, 15, 18, 19 ], 'message' => 'title="Lint Error One">' ],
+					[ 'iterations' => [ 1, 2, 3 ], 'message' => 'title="Lint Error One">' ],
 					[ 'iterations' => [], 'message' => 'title="LintErrorTwo">' ],
-					[ 'iterations' => [ 9, 23 ], 'message' => 'title="NotANamespace:LintErrorThree">' ],
-					[ 'iterations' => [ 9, 23 ], 'message' => 'title="NotANamespace:LintErrorFour">' ],
-					[ 'iterations' => [ 0, 2, 3, 6, 7, 8, 10, 11, 12, 13, 14, 16, 17, 20, 21, 22 ],
-						'message' => '(table_pager_empty)' ]
+					[ 'iterations' => [ 5 ], 'message' => 'title="NotANamespace:LintErrorThree">' ],
+					[ 'iterations' => [ 5 ], 'message' => 'title="NotANamespace:LintErrorFour">' ],
+					[ 'iterations' => [ 0, 4, 6, 7, 8, 9, 10, 11 ], 'message' => '(table_pager_empty)' ]
 				]
 			];
+			$testConfigurations[ 8 ] = [
+				'namespaces' => [ [ 0, 3 ] ],
+				'titles' => [ 'L', 'Lint Error One', 'NotANamespace:L', 'ErrorSix' ],
+				'cases' => [
+					[ 'iterations' => [ 1, 2, 3 ], 'message' => 'title="Lint Error One">' ],
+					[ 'iterations' => [], 'message' => 'title="LintErrorTwo">' ],
+					[ 'iterations' => [ 5 ], 'message' => 'title="NotANamespace:LintErrorThree">' ],
+					[ 'iterations' => [ 5 ], 'message' => 'title="NotANamespace:LintErrorFour">' ],
+					[ 'iterations' => [ 6, 7 ], 'message' => ':ErrorSix">' ],
+					[ 'iterations' => [ 0, 4 ], 'message' => '(table_pager_empty)' ]
+				]
+			];
+
 		}
 		return $testConfigurations;
 	}
@@ -330,41 +367,61 @@ class SpecialLintErrorsTest extends SpecialPageTestBase {
 	 * @throws Exception
 	 */
 	private function performLinterSearchTests( array $testConfig, ?string $subPage, string $titleSearchString ): void {
-		foreach ( $testConfig as $configIndex => $group ) {
+		foreach ( $testConfig as $groupIndex => $group ) {
 			$testIndex = 0;
 			foreach ( $group[ 'namespaces' ] as $namespace ) {
 				foreach ( $group[ 'titles' ] as $title ) {
-					$invert = false;
+					$exact = true;
 					do {
-						$exact = true;
-						do {
-							$params = [ 'namespace' => $namespace, 'invert' => $invert,
-								$titleSearchString => $title, 'exactmatch' => $exact ];
-							$webRequest = new FauxRequest( $params );
+						if ( $namespace === null ) {
+							$params = [ $titleSearchString => $title, 'exactmatch' => $exact ];
+						} else {
+							if ( is_array( $namespace ) ) {
+								// simulate the same URL string that the multi namespace widget produces
+								$namespaces = implode( "\r\n", $namespace );
+								$params = array_merge( [ 'wpNamespaceRestrictions' => $namespaces ],
+									[ $titleSearchString => $title, 'exactmatch' => $exact ] );
+							} else {
+								$params = [ 'wpNamespaceRestrictions' => $namespace, $titleSearchString => $title,
+									'exactmatch' => $exact ];
+							}
+						}
+						$webRequest = new FauxRequest( $params );
+						$html = $this->executeSpecialPage( $subPage, $webRequest, 'qqx' )[ 0 ];
 
-							$html = $this->executeSpecialPage( $subPage, $webRequest, 'qqx' )[ 0 ];
-							foreach ( $group[ 'cases' ] as $cases ) {
-								$invertString = [ 'unselected', 'selected' ][ $invert ];
-								$exactString = [ 'prefix', 'exact' ][ $exact ];
-								$message = $cases[ 'message' ];
-								$descriptionNamespace = $namespace ?? 'all';
-								$description = "On config [$configIndex], iteration [$testIndex] " .
-									"namespace [$descriptionNamespace], invert checkbox [$invertString], " .
-									"for a [$exactString] match, with search title [$title], and test text [$message] ";
+						foreach ( $group[ 'cases' ] as $caseIndex => $case ) {
+							$exactString = [ 'prefix', 'exact' ][ $exact ];
+							$message = $case[ 'message' ];
+							$descriptionNamespace = implode( ',', (array)$namespace );
+							$description = "On group [$groupIndex], namespace [$descriptionNamespace], " .
+								"case [$caseIndex], iteration [$testIndex] " .
+								"for a [$exactString] match with search title [$title] and test text [$message] ";
 
-								if ( in_array( $testIndex, $cases[ 'iterations' ] ) ) {
+							if ( in_array( $testIndex, $case[ 'iterations' ] ) ) {
+								if ( empty( $debugTests ) ) {
 									$this->assertStringContainsString( $message, $html, $description .
 										"was not found." );
 								} else {
+									// code to aid in debugging test conditions
+									if ( !str_contains( $html, $message ) ) {
+										echo $description . "was not found.\n";
+									}
+								}
+							} else {
+								if ( empty( $debugTests ) ) {
 									$this->assertStringNotContainsString( $message, $html, $description .
 										"was not supposed to be found." );
+								} else {
+									// code to aid in debugging test conditions
+									if ( str_contains( $html, $message ) ) {
+										echo $description . "was not supposed to be found.\n";
+									}
 								}
 							}
-							$testIndex++;
-							$exact = !$exact;
-						} while ( !$exact );
-						$invert = !$invert;
-					} while ( $invert );
+						}
+						$testIndex++;
+						$exact = !$exact;
+					} while ( !$exact );
 				}
 			}
 		}

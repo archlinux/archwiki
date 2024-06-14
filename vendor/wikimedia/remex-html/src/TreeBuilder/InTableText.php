@@ -67,20 +67,20 @@ class InTableText extends InsertionMode {
 		$builder = $this->builder;
 		$allSpace = true;
 		foreach ( $builder->pendingTableCharacters as $token ) {
-			list( $text, $start, $length, $sourceStart, $sourceLength ) = $token;
+			[ $text, $start, $length, $sourceStart, $sourceLength ] = $token;
 			if ( strspn( $text, "\t\n\f\r ", $start, $length ) !== $length ) {
 				$allSpace = false;
 			}
 		}
 		if ( $allSpace ) {
 			foreach ( $builder->pendingTableCharacters as $token ) {
-				list( $text, $start, $length, $sourceStart, $sourceLength ) = $token;
+				[ $text, $start, $length, $sourceStart, $sourceLength ] = $token;
 				$builder->insertCharacters( $text, $start, $length, $sourceStart, $sourceLength );
 			}
 		} else {
 			$builder->fosterParenting = true;
 			foreach ( $builder->pendingTableCharacters as $token ) {
-				list( $text, $start, $length, $sourceStart, $sourceLength ) = $token;
+				[ $text, $start, $length, $sourceStart, $sourceLength ] = $token;
 				$builder->error( 'invalid characters in table text, fostering', $sourceStart );
 				$this->dispatcher->inBody->characters( $text, $start, $length,
 					$sourceStart, $sourceLength );

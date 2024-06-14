@@ -23,9 +23,5 @@
 	"gadgets-export": "patahkal",
 	"gadgets-export-title": "patahkal adidi’ay a sakaluk",
 	"gadgets-not-found": "inayi’ adidi’ay sakaluk \"$1\".",
-	"gadgets-export-text": "apatahkal $1 adidi’ay sakaluk, pisapecec \"{{int:gadgets-export-download}}\" pipenecan, atu misuped patasasa’ay a tangan, taayaw papatuzu’an Wiki a Special:Import zumasatu apatapabawan。izikuz sa isasa’ay a sulit pacunus ta MediaWiki:Gadgets-definition kasabelih:\n<pre>$2</pre>\nkanca kisu sipapatuzu’an Wiki a tatengaay a tungus (yamalyilu mikawaway-kalumyiti sisetyimo palatuh a tungus), atu kanca miwawah micaliw tu tangan patapabaw pacumuday a sasahicaan.",
-	"right-gadgets-edit": "mikawaway-kalumyiti adidi’ay sakaluk a JavaScript atu CSS kasabelih",
-	"action-gadgets-edit": "mikawaway-kalumyiti tina adidi’ay sakaluk a JavaScript saca CSS kasabelih",
-	"right-gadgets-definition-edit": "mikawaway-kalumyiti adidiay sakaluk satetek",
-	"action-gadgets-definition-edit": "mikawaway-kalumyiti tina pasaheci nu adidi’ay sakaluk"
+	"gadgets-export-text": "apatahkal $1 adidi’ay sakaluk, pisapecec \"{{int:gadgets-export-download}}\" pipenecan, atu misuped patasasa’ay a tangan, taayaw papatuzu’an Wiki a Special:Import zumasatu apatapabawan。izikuz sa isasa’ay a sulit pacunus ta MediaWiki:Gadgets-definition kasabelih:\n<pre>$2</pre>\nkanca kisu sipapatuzu’an Wiki a tatengaay a tungus (yamalyilu mikawaway-kalumyiti sisetyimo palatuh a tungus), atu kanca miwawah micaliw tu tangan patapabaw pacumuday a sasahicaan."
 }

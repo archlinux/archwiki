@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Gadgets\Content;
 
-use Status;
+use MediaWiki\Status\Status;
 
 /**
  * Class responsible for validating Gadget definition contents
@@ -17,33 +17,33 @@ class GadgetDefinitionValidator {
 	 */
 	protected static $propertyValidation = [
 		'settings' => [ 'is_array', 'array' ],
-		'settings.rights' => [ 'is_array', 'array' , 'is_string', 'string' ],
+		'settings.actions' => [ 'is_array', 'array', 'is_string', 'string' ],
+		'settings.categories' => [ 'is_array', 'array', 'is_string', 'string' ],
+		'settings.category' => [ 'is_string', 'string' ],
+		'settings.contentModels' => [ 'is_array', 'array', 'is_string', 'string' ],
 		'settings.default' => [ 'is_bool', 'boolean' ],
 		'settings.hidden' => [ 'is_bool', 'boolean' ],
+		'settings.namespaces' => [ 'is_array', 'array', 'is_int', 'integer' ],
 		'settings.package' => [ 'is_bool', 'boolean' ],
-		'settings.skins' => [ [ __CLASS__, 'isArrayOrTrue' ], 'array or true', 'is_string', 'string' ],
-		'settings.actions' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'settings.namespaces' => [ 'is_array', 'array', 'is_numeric', 'number' ],
-		'settings.contentModels' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'settings.category' => [ 'is_string', 'string' ],
-		'settings.supportsUrlLoad' => [ 'is_bool', 'boolean' ],
 		'settings.requiresES6' => [ 'is_bool', 'boolean' ],
+		'settings.rights' => [ 'is_array', 'array', 'is_string', 'string' ],
+		'settings.skins' => [ 'is_array', 'array', 'is_string', 'string' ],
+		'settings.supportsUrlLoad' => [ 'is_bool', 'boolean' ],
+
 		'module' => [ 'is_array', 'array' ],
-		'module.scripts' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'module.styles' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'module.datas' => [ 'is_array', 'array', 'is_string', 'string' ],
 		'module.dependencies' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'module.peers' => [ 'is_array', 'array', 'is_string', 'string' ],
 		'module.messages' => [ 'is_array', 'array', 'is_string', 'string' ],
-		'module.type' => [ 'is_string', 'string' ],
+		'module.pages' => [ 'is_array', 'array', [ __CLASS__, 'isValidTitleSuffix' ], '.js, .css or .json page' ],
+		'module.peers' => [ 'is_array', 'array', 'is_string', 'string' ],
+		'module.type' => [ [ __CLASS__, 'isValidType' ], 'general or styles' ],
 	];
 
-	/**
-	 * @param mixed $value
-	 * @return bool
-	 */
-	public static function isArrayOrTrue( $value ) {
-		return is_array( $value ) || $value === true;
+	public static function isValidTitleSuffix( string $title ): bool {
+		return str_ends_with( $title, '.js' ) || str_ends_with( $title, '.css' ) || str_ends_with( $title, '.json' );
+	}
+
+	public static function isValidType( string $type ): bool {
+		return $type === '' || $type === 'general' || $type === 'styles';
 	}
 
 	/**

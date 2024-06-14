@@ -40,7 +40,7 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 	 *      unprefixed access. This can be used with mcrouter. [optional]
 	 */
 	public function __construct( array $params ) {
-		$params['segmentationSize'] ??= 917504; // < 1MiB
+		$params['segmentationSize'] ??= 917_504; // < 1MiB
 		parent::__construct( $params );
 
 		$this->routingPrefix = $params['routingPrefix'] ?? '';
@@ -106,7 +106,7 @@ abstract class MemcachedBagOStuff extends MediumSpecificBagOStuff {
 	 */
 	public function validateKeyEncoding( $key ) {
 		if ( preg_match( '/[^\x21-\x7e]+/', $key ) ) {
-			throw new Exception( "Key contains invalid characters: $key" );
+			throw new InvalidArgumentException( "Key contains invalid characters: $key" );
 		}
 
 		return $key;

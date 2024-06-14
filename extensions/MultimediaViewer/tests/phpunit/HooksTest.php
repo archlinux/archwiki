@@ -15,8 +15,10 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 
 	public function newHooksInstance() {
 		return new Hooks(
+			$this->getServiceContainer()->getMainConfig(),
+			$this->getServiceContainer()->getSpecialPageFactory(),
 			$this->getServiceContainer()->getUserOptionsLookup(),
-			$this->getServiceContainer()->getSpecialPageFactory()
+			null
 		);
 	}
 
@@ -33,9 +35,12 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideOnBeforePageDisplay
 	 */
 	public function testOnBeforePageDisplay( $pagename, $fileCount, $modulesExpected ) {
+		$t = Title::newFromText( $pagename );
+		// Force content model to avoid DB queries
+		$t->setContentModel( CONTENT_MODEL_WIKITEXT );
 		$skin = new SkinTemplate();
 		$output = $this->createMock( OutputPage::class );
-		$output->method( 'getTitle' )->willReturn( Title::newFromText( $pagename ) );
+		$output->method( 'getTitle' )->willReturn( $t );
 		$output->method( 'getFileSearchOptions' )->willReturn( array_fill( 0, $fileCount, null ) );
 		$output->expects( $this->exactly( $modulesExpected ? 1 : 0 ) )->method( 'addModules' );
 		$this->newHooksInstance()->onBeforePageDisplay( $output, $skin );

@@ -33,7 +33,7 @@ use Wikimedia\Rdbms\IDatabase;
  *
  * @since 1.35 (also backported to 1.33.3 and 1.34.1)
  */
-define( 'MW_VERSION', '1.41.1' );
+define( 'MW_VERSION', '1.42.0' );
 
 /** @{
  * Obsolete IDatabase::makeList() constants
@@ -182,6 +182,17 @@ define( 'APCOND_IPINRANGE', 6 );
 define( 'APCOND_AGE_FROM_EDIT', 7 );
 define( 'APCOND_BLOCKED', 8 );
 define( 'APCOND_ISBOT', 9 );
+/** @} */
+
+/** @{
+ * Conditional user defaults conditions
+ *
+ * Strings are used to make the values easier to use in extension.json
+ * @since 1.42
+ */
+define( 'CUDCOND_AFTER', 'registered-after' );
+define( 'CUDCOND_ANON', 'anonymous-user' );
+define( 'CUDCOND_NAMED', 'named-user' );
 /** @} */
 
 /** @{

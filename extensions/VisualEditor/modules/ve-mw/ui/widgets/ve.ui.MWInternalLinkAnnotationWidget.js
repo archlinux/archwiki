@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface MWInternalLinkAnnotationWidget class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -61,6 +61,7 @@ ve.ui.MWInternalLinkAnnotationWidget.prototype.createInputWidget = function ( co
 		showDescriptions: mw.config.get( 'wgVisualEditorConfig' ).usePageDescriptions,
 		showDisambigsLast: true,
 		showInterwikis: true,
+		searchFragments: true,
 		addQueryInput: false,
 		api: ve.init.target.getContentApi(),
 		cache: ve.init.platform.linkCache

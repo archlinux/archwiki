@@ -7,17 +7,14 @@ use EchoUserLocator;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Extension\Notifications\UserLocator;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
-use User;
 
 /**
  * @group Database
  * @covers \MediaWiki\Extension\Notifications\UserLocator
  */
 class UserLocatorTest extends MediaWikiIntegrationTestCase {
-
-	/** @inheritDoc */
-	protected $tablesUsed = [ 'user', 'watchlist' ];
 
 	public function testLocateUsersWatchingTitle() {
 		$title = Title::makeTitleSafe( NS_USER_TALK, 'Something_something_something' );
@@ -30,7 +27,8 @@ class UserLocatorTest extends MediaWikiIntegrationTestCase {
 				'wl_title' => $key
 			];
 		}
-		wfGetDB( DB_PRIMARY )->insert( 'watchlist', $rows, __METHOD__ );
+
+		$this->getDb()->insert( 'watchlist', $rows, __METHOD__ );
 
 		$event = $this->createMock( Event::class );
 		$event->method( 'getTitle' )

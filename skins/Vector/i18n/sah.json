@@ -16,7 +16,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 тыл|$1 тыллар}}",
 	"vector-no-language-button-label": "Тылы эбии",
 	"vector-no-language-button-aria-label": "Ыстатыйа бу тылынан эрэ баар. Ыстатыйаны атын тылларга эп",
-	"vector-language-redirect-to-top": "Бу ситим-сиргэ тыл сигэлэр сирэй саҕаланыытыгар, ыстатыйа аатын утары бааллар",
 	"vector-language-variant-switcher-label": "Тылы уларыт",
 	"vector-action-addsection": "Тиэмэ эбии",
 	"vector-action-delete": "Сот",
@@ -33,8 +32,12 @@
 	"vector-jumptosearch": "Көрдөбүлгэ көс",
 	"vector-jumptocontent": "Иһинээҕитигэр көс",
 	"vector-more-actions": "Эбии",
+	"vector-client-prefs-label": "Тас көстүүтэ",
+	"vector-feature-limited-width-0-label": "Кэтитэ",
+	"vector-feature-custom-font-size-0-label": "Кыра",
+	"vector-feature-custom-font-size-2-label": "Бөдөҥ",
 	"vector-search-loader": "Көрдөбүл булбута хачайдана турар",
-	"vector-searchsuggest-containing": "Иһилэригэр <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> баар сирэйдэри көрдөөһүн",
+	"vector-searchsuggest-containing": "Истэригэр <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ахтыллар сирэйдэри көрдөөһүн",
 	"vector-intro-page": "Help:Киирии тыл",
 	"vector-toc-label": "Иһинээҕитэ",
 	"vector-toc-beginning": "Саҕаланыы",
@@ -63,10 +66,5 @@
 	"empty-language-selector-body": "Сирэй ис хоһооно атын тылга суох.",
 	"vector-toc-unpinned-popup": "Ис хоһооно манна көһөрүлүннэ.",
 	"vector-page-tools-unpinned-popup": "Сэп-сэбиргэл талбана манна көһөрүлүннэ",
-	"vector-main-menu-unpinned-popup": "Сүрүн талба манна көһөрөлүннэ.",
-	"vector-readability-survey-fontSize": "Бичик кээмэйэ",
-	"vector-readability-survey-lineHeight": "Сурааһын үрдүгэ",
-	"vector-readability-survey-randomize": "түбэспиччэ",
-	"vector-readability-survey-reset": "саҥаттан",
-	"vector-readability-survey-share": "салгыы"
+	"vector-main-menu-unpinned-popup": "Сүрүн талба манна көһөрөлүннэ."
 }

@@ -13,6 +13,8 @@
 		// Infuse for pretty dropdown
 		OO.ui.infuse( $( '#wpNewTitle' ) );
 
-		mw.widgets.visibleCodePointLimit( wpReason, mw.config.get( 'wgCommentCodePointLimit' ) );
+		var wpReasonList = OO.ui.infuse( $( '#wpReasonList' ).closest( '.oo-ui-widget' ) );
+
+		mw.widgets.visibleCodePointLimitWithDropdown( wpReason, wpReasonList, mw.config.get( 'wgCommentCodePointLimit' ) );
 	} );
 }() );

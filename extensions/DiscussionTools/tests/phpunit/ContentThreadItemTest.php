@@ -9,7 +9,6 @@ use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentHeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentThreadItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ThreadItem;
-use MediaWiki\MediaWikiServices;
 
 /**
  * @group DiscussionTools
@@ -32,12 +31,12 @@ class ContentThreadItemTest extends IntegrationTestCase {
 		$makeThreadItem = static function ( array $arr ) use ( &$makeThreadItem, $range ): ContentThreadItem {
 			if ( $arr['type'] === 'comment' ) {
 				$item = new ContentCommentItem(
-					1, $range, [], [], new DateTimeImmutable(),
+					1, $range, false, [], [], new DateTimeImmutable(),
 					$arr['author'],
 					$arr['displayName'] ?? null
 				);
 			} else {
-				$item = new ContentHeadingItem( $range, 2 );
+				$item = new ContentHeadingItem( $range, false, 2 );
 			}
 			$item->setId( $arr['id'] );
 			foreach ( $arr['replies'] as $reply ) {
@@ -70,8 +69,7 @@ class ContentThreadItemTest extends IntegrationTestCase {
 		$config = static::getJson( $config );
 		$data = static::getJson( $data );
 
-		$this->setupEnv( $config, $data );
-		$title = MediaWikiServices::getInstance()->getTitleParser()->parseTitle( $title );
+		$title = $this->createTitleParser( $config )->parseTitle( $title );
 
 		$doc = static::createDocument( $dom );
 		$container = static::getThreadContainer( $doc );
@@ -80,7 +78,7 @@ class ContentThreadItemTest extends IntegrationTestCase {
 		// comments in the sections to be treated as transcluded from another page.
 		CommentUtils::unwrapParsoidSections( $container );
 
-		$threadItemSet = static::createParser( $data )->parse( $container, $title );
+		$threadItemSet = $this->createParser( $config, $data )->parse( $container, $title );
 		$comments = $threadItemSet->getCommentItems();
 
 		$transcludedFrom = [];
@@ -119,9 +117,8 @@ class ContentThreadItemTest extends IntegrationTestCase {
 		$doc = static::createDocument( $dom );
 		$container = static::getThreadContainer( $doc );
 
-		$this->setupEnv( $config, $data );
-		$title = MediaWikiServices::getInstance()->getTitleParser()->parseTitle( $title );
-		$threadItemSet = static::createParser( $data )->parse( $container, $title );
+		$title = $this->createTitleParser( $config )->parseTitle( $title );
+		$threadItemSet = $this->createParser( $config, $data )->parse( $container, $title );
 		$items = $threadItemSet->getThreadItems();
 
 		$output = [];
@@ -162,9 +159,8 @@ class ContentThreadItemTest extends IntegrationTestCase {
 		$doc = static::createDocument( $dom );
 		$container = static::getThreadContainer( $doc );
 
-		$this->setupEnv( $config, $data );
-		$title = MediaWikiServices::getInstance()->getTitleParser()->parseTitle( $title );
-		$threadItemSet = static::createParser( $data )->parse( $container, $title );
+		$title = $this->createTitleParser( $config )->parseTitle( $title );
+		$threadItemSet = $this->createParser( $config, $data )->parse( $container, $title );
 		$items = $threadItemSet->getThreadItems();
 
 		$output = [];

@@ -105,7 +105,7 @@ Empty imagemap
 </imagemap>
 !! html/php
 <p class="error">Error: Must specify an image in the first line.</p>
-!! html/parsoid
+!! html/parsoid-disabled
 <p><span typeof="mw:Extension/imagemap mw:Error" about="#mwt2" data-mw='{"name":"imagemap","attrs":{},"body":{"extsrc":"\n"},"errors":[{"key":"imagemap_no_image"}]}' data-mw-i18n='{"/":{"lang":"x-user","key":"imagemap_no_image","params":null}}'>imagemap_no_image</span></p>
 !! end
 
@@ -117,7 +117,7 @@ Invalid image title
 </imagemap>
 !! html/php
 <p class="error">Error: Must specify an image in the first line.</p>
-!! html/parsoid
+!! html/parsoid-disabled
 <p><span typeof="mw:Extension/imagemap mw:Error" about="#mwt2" data-mw='{"name":"imagemap","attrs":{},"body":{"extsrc":"\n[[x|xx]]]]\n"},"errors":[{"key":"imagemap_no_image"}]}' data-mw-i18n='{"/":{"lang":"x-user","key":"imagemap_no_image","params":null}}'>imagemap_no_image</span></p>
 !! end
 
@@ -129,7 +129,7 @@ File:Nopenopenope.jpg
 </imagemap>
 !! html/php
 <p class="error">Error: Image is invalid or non-existent.</p>
-!! html/parsoid
+!! html/parsoid-disabled
 <p><span typeof="mw:Extension/imagemap mw:Error" about="#mwt2" data-mw='{"name":"imagemap","attrs":{},"body":{"extsrc":"\nFile:Nopenopenope.jpg\n"},"errors":[{"key":"imagemap_invalid_image"}]}' data-mw-i18n='{"/":{"lang":"x-user","key":"imagemap_invalid_image","params":null}}'>imagemap_invalid_image</span></p>
 !! end
 
@@ -172,6 +172,23 @@ desc top-left
 <figure class="mw-default-size noresize mw-ext-imagemap-desc-top-left" typeof="mw:File"><span><img src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" class="mw-file-element" resource="/wiki/File:Foobar.jpg" /></span><figcaption></figcaption></figure>
 !! html/parsoid
 <figure class="mw-default-size noresize mw-ext-imagemap-desc-top-left" typeof="mw:File mw:Extension/imagemap" about="#mwt2" data-mw='{"name":"imagemap","attrs":{},"body":{"extsrc":"\nImage:Foobar.jpg\ndesc top-left\n"}}'><span><img resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" class="mw-file-element"/></span><figcaption></figcaption></figure>
+!! end
+
+!! test
+Non-default localized (French) description type
+!! options
+language=fr
+!! config
+wgParserEnableLegacyMediaDOM=false
+!! wikitext
+<imagemap>
+Image:Foobar.jpg
+desc haut-gauche
+</imagemap>
+!! html/php
+<figure class="mw-default-size noresize mw-ext-imagemap-desc-top-left" typeof="mw:File"><span><img src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" class="mw-file-element" resource="/wiki/Fichier:Foobar.jpg" /></span><figcaption></figcaption></figure>
+!! html/parsoid
+<figure class="mw-default-size noresize mw-ext-imagemap-desc-top-left" typeof="mw:File mw:Extension/imagemap" about="#mwt2" data-mw='{"name":"imagemap","attrs":{},"body":{"extsrc":"\nImage:Foobar.jpg\ndesc haut-gauche\n"}}'><span><img resource="./Fichier:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" class="mw-file-element"/></span><figcaption></figcaption></figure>
 !! end
 
 !! test
@@ -314,6 +331,22 @@ Foobar.jpg
 </imagemap>
 !! html/php
 <p class="error">Error: Must specify an image in the first line.</p>
-!! html/parsoid
+!! html/parsoid-disabled
 <p><span typeof="mw:Extension/imagemap mw:Error" about="#mwt2" data-mw='{"name":"imagemap","attrs":{},"body":{"extsrc":"\nFoobar.jpg\n"},"errors":[{"key":"imagemap_no_image"}]}' data-mw-i18n='{"/":{"lang":"x-user","key":"imagemap_no_image","params":null}}'>imagemap_no_image</span></p>
+!! end
+
+!! test
+Imagemap with external link
+!! config
+wgParserEnableLegacyMediaDOM=false
+wgExternalLinkTarget="_blank"
+!! wikitext
+<imagemap>
+File:Foobar.jpg
+default [http://google.com]
+</imagemap>
+!! html/php
+<figure class="mw-default-size noresize mw-ext-imagemap-desc-bottom-right" typeof="mw:File"><a target="_blank" rel="nofollow noreferrer noopener" href="http://google.com" class="plainlinks" title="http://google.com"><img src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" class="mw-file-element" resource="/wiki/File:Foobar.jpg" /></a><figcaption></figcaption></figure>
+!! html/parsoid
+<figure class="mw-default-size noresize mw-ext-imagemap-desc-bottom-right" typeof="mw:File mw:Extension/imagemap" data-mw='{"name":"imagemap","attrs":{},"body":{"extsrc":"\nFile:Foobar.jpg\ndefault [http://google.com]\n"}}'><a href="http://google.com" class="plainlinks" rel="nofollow noreferrer noopener" target="_blank"><img resource="./File:Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" data-file-width="1941" data-file-height="220" data-file-type="bitmap" height="220" width="1941" class="mw-file-element"/></a><figcaption></figcaption></figure>
 !! end

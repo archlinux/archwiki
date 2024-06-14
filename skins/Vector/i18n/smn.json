@@ -4,10 +4,11 @@
 			"Kimberli Mäkäräinen (WMNO)",
 			"Seipinne",
 			"Trondtr",
-			"Yupik"
+			"Yupik",
+			"Muotâ"
 		]
 	},
-	"vector-opt-out": "Molso ovdebii olgoldâsháámán",
+	"vector-opt-out": "Molso puáris olgoháámán",
 	"vector-languages": "Kielah",
 	"vector-language-button-label": "{{PLURAL:$1|$1 kielâ|$1 kielâ|$1 kielâ|$1 kiellâd}}",
 	"vector-no-language-button-label": "Lasseet kielâid",

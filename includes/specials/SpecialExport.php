@@ -2,7 +2,7 @@
 /**
  * Implements Special:Export
  *
- * Copyright © 2003-2008 Brion Vibber <brion@pobox.com>
+ * Copyright © 2003-2008 Brooke Vibber <bvibber@wikimedia.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
 use HTMLTextAreaField;
 use MediaWiki\Export\WikiExporterFactory;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
@@ -135,10 +135,10 @@ class SpecialExport extends SpecialPage {
 			// If not, we could deprecate them and do some cleanup, here and in WikiExporter.
 			LoggerFactory::getInstance( 'export' )->debug(
 				'Special:Export POST, dir: [{dir}], offset: [{offset}], limit: [{limit}]', [
-				'dir' => $request->getRawVal( 'dir' ),
-				'offset' => $request->getRawVal( 'offset' ),
-				'limit' => $request->getRawVal( 'limit' ),
-			] );
+					'dir' => $request->getRawVal( 'dir' ),
+					'offset' => $request->getRawVal( 'offset' ),
+					'limit' => $request->getRawVal( 'limit' ),
+				] );
 
 			$page = $request->getText( 'pages' );
 			$this->curonly = $request->getCheck( 'curonly' );
@@ -624,7 +624,5 @@ class SpecialExport extends SpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialExport::class, 'SpecialExport' );

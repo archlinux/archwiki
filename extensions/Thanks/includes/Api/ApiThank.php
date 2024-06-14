@@ -7,7 +7,7 @@ use ApiMain;
 use MediaWiki\Extension\Thanks\Storage\LogStore;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Title\Title;
-use User;
+use MediaWiki\User\User;
 
 /**
  * Base API module for Thanks

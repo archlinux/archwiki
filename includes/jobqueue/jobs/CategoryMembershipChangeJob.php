@@ -21,7 +21,6 @@
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
-use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Title\Title;
@@ -89,7 +88,7 @@ class CategoryMembershipChangeJob extends Job {
 
 		$this->ticket = $lbFactory->getEmptyTransactionTicket( __METHOD__ );
 
-		$page = $services->getWikiPageFactory()->newFromID( $this->params['pageId'], WikiPage::READ_LATEST );
+		$page = $services->getWikiPageFactory()->newFromID( $this->params['pageId'], IDBAccessObject::READ_LATEST );
 		if ( !$page ) {
 			$this->setLastError( "Could not find page #{$this->params['pageId']}" );
 			return false; // deleted?
@@ -134,7 +133,7 @@ class CategoryMembershipChangeJob extends Job {
 			->select( [ 'rev_timestamp', 'rev_id' ] )
 			->from( 'revision' )
 			->where( [ 'rev_page' => $page->getId() ] )
-			->andWhere( $dbr->buildComparison( '>=', [ 'rev_timestamp' => $dbr->timestamp( $cutoffUnix ) ] ) )
+			->andWhere( $dbr->expr( 'rev_timestamp', '>=', $dbr->timestamp( $cutoffUnix ) ) )
 			->andWhere( 'EXISTS (' . $subQuery->caller( __METHOD__ )->getSQL() . ')' )
 			->orderBy( [ 'rev_timestamp', 'rev_id' ], SelectQueryBuilder::SORT_DESC )
 			->caller( __METHOD__ )->fetchRow();
@@ -174,7 +173,6 @@ class CategoryMembershipChangeJob extends Job {
 	 * @param LBFactory $lbFactory
 	 * @param WikiPage $page
 	 * @param RevisionRecord $newRev
-	 * @throws MWException
 	 */
 	protected function notifyUpdatesForRevision(
 		LBFactory $lbFactory, WikiPage $page, RevisionRecord $newRev
@@ -190,7 +188,7 @@ class CategoryMembershipChangeJob extends Job {
 		// Get the prior revision (the same for null edits)
 		if ( $newRev->getParentId() ) {
 			$oldRev = $services->getRevisionLookup()
-				->getRevisionById( $newRev->getParentId(), RevisionLookup::READ_LATEST );
+				->getRevisionById( $newRev->getParentId(), IDBAccessObject::READ_LATEST );
 			if ( !$oldRev || $oldRev->isDeleted( RevisionRecord::DELETED_TEXT ) ) {
 				return;
 			}

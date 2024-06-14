@@ -9,7 +9,7 @@
 	"gadgets-desc": "Lassa scegliere a l'utente 'e [[Special:Gadgets|Ppazzielle CSS e JavaScript]] personalizzate int' 'e [[Special:Preferences#mw-prefsection-gadgets|preferenze]] 'e lloro",
 	"prefs-gadgets": "Pazzielle",
 	"gadgets-prefstext": "Ccà sotto sta n'elenco 'e ppazzielle speciali ca putite appiccià p' 'o cunto vuosto. Ste pazzielle songo fatte c' 'e JavaScript, pe cchisto 'o JavaScript avess'a essere appicciato dint' 'o browser vuosto p' 'e fà jí.\nVedite buono ca ste ppazzielle nun farrànno ammuìna int'a sta paggena 'e preferenze.\n\nVedite pure ca ste pazzielle speciali nun songo parte d' 'o software MediaWiki, e songo normalmente sviluppate e accunciate 'a ll'utente d' 'a wiki lucale d' 'a vosta. Ll'editore lucale putesser'edità [[MediaWiki:Gadgets-definition|defineziune]] e [[Special:Gadgets|descrizziune]] d' 'e ppazzielle a disposizione. 'O nummero 'utente ca stann'ausà ogne pazziella int'a sta wiki se tròva elencato ncopp' [[Special:GadgetUsage|statistiche 'e uso 'e Ppazzielle]].",
-	"gadgets": "Pazzielle",
+	"special-gadgets": "Pazzielle",
 	"gadgetusage": "Statistiche d'auso d' 'a pazziella",
 	"gadgetusage-gadget": "Pazziella",
 	"gadgetusage-usercount": "Nummero 'e utente",
@@ -31,9 +31,5 @@
 	"gadgets-export-text": "Pe esportà 'a pazziella $1, cliccate ncopp' 'u buttone \"{{int:gadgets-export-download}}\", riggistrate 'u file scarrecato, ghiate 'a pàggene Special:Import ncopp' 'a Wiki 'e destinaziona e carrecatevello. Aroppo azzeccate 'a paggena ccà MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nAvita tenè permesse ghiuste ncopp' 'a wiki 'e destinaziona (ncludenno 'e deritte 'e cagnà mmasciate d' 'o sistema) e 'a mpurtaziona 'e file carrecate ave 'a sta appicciata.",
 	"gadgets-export-download": "Scarreca",
 	"gadgets-validate-notset": "'O codece <code>$1</code> 'e pruprietà nun è mpustato.",
-	"gadgets-validate-wrongtype": "'O codece <code>$1</code> 'e pruprietà adda essere 'e tipo <code>$2</code> mmece 'e <code>$3</code>.",
-	"right-gadgets-edit": "Cagna 'a pazziella JavaScript e li paggene CSS",
-	"action-gadgets-edit": "cagna sta pazziella JavaScript o paggena CSS",
-	"right-gadgets-definition-edit": "Cagna 'e definiziuni d' 'e ppazzielle",
-	"action-gadgets-definition-edit": "cagna 'a definiziona 'e sta pazziella"
+	"gadgets-validate-wrongtype": "'O codece <code>$1</code> 'e pruprietà adda essere 'e tipo <code>$2</code> mmece 'e <code>$3</code>."
 }

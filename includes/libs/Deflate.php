@@ -16,8 +16,6 @@
  *
  */
 
-use Wikimedia\AtEase\AtEase;
-
 /**
  * Server-side helper for client-side compressed content.
  *
@@ -32,7 +30,7 @@ class Deflate {
 	 *
 	 * @return bool
 	 */
-	public static function isDeflated( $data ) {
+	public static function isDeflated( string $data ): bool {
 		return substr( $data, 0, 11 ) === 'rawdeflate,';
 	}
 
@@ -54,7 +52,7 @@ class Deflate {
 	 * @return StatusValue Inflated data will be set as the value
 	 * @throws InvalidArgumentException If the data wasn't deflated
 	 */
-	public static function inflate( $data ) {
+	public static function inflate( string $data ): StatusValue {
 		if ( !self::isDeflated( $data ) ) {
 			throw new InvalidArgumentException( 'Data does not begin with deflated prefix' );
 		}
@@ -62,17 +60,11 @@ class Deflate {
 		if ( $deflated === false ) {
 			return StatusValue::newFatal( 'deflate-invaliddeflate' );
 		}
-		AtEase::suppressWarnings();
-		$inflated = gzinflate( $deflated );
-		AtEase::restoreWarnings();
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		$inflated = @gzinflate( $deflated );
 		if ( $inflated === false ) {
 			return StatusValue::newFatal( 'deflate-invaliddeflate' );
 		}
 		return StatusValue::newGood( $inflated );
 	}
 }
-
-/**
- * @deprecated since 1.35
- */
-class_alias( Deflate::class, 'EasyDeflate' );

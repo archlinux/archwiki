@@ -137,7 +137,7 @@ class SpecialCollabPad extends SpecialPage {
 
 		if ( $subPage ) {
 			$title = Title::newFromText( $subPage );
-			$output->setPageTitle( $this->msg( 'collabpad-doctitle', $title->getPrefixedText() ) );
+			$output->setPageTitleMsg( $this->msg( 'collabpad-doctitle', $title->getPrefixedText() ) );
 			$form->addClasses( [ 'oo-ui-element-hidden' ] );
 		} else {
 			// Scripts only, styles already added above

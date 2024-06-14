@@ -25,6 +25,8 @@
 	"apihelp-discussiontoolsedit-summary": "Post en beskjed på en diskusjonsside.",
 	"apihelp-discussiontoolsfindcomment-summary": "Finn en kommentar etter ID eller navn.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "Kommentar-ID eller -navn",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Overskrifts-hash-fragment",
+	"apihelp-discussiontoolsfindcomment-param-page": "Siden overskrifts-hash-fragmentet én gang fantes på",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Navn på aktuelle emner å gjennomgå",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Få abonnementenes status på angitte emner.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Sideversjonstallet som skal brukes (standardverdien er siste versjon).",

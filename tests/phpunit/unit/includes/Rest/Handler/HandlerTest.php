@@ -7,13 +7,14 @@ use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
+use MediaWiki\Rest\RequestInterface;
 use MediaWiki\Rest\Response;
 use MediaWiki\Rest\ResponseFactory;
 use MediaWiki\Rest\ResponseInterface;
 use MediaWiki\Rest\Router;
 use MediaWiki\Rest\Validator\BodyValidator;
-use MediaWiki\Rest\Validator\Validator;
 use MediaWiki\Session\Session;
+use MediaWikiUnitTestCase;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\Message\MessageValue;
@@ -24,7 +25,7 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
 /**
  * @covers \MediaWiki\Rest\Handler\SearchHandler
  */
-class HandlerTest extends \MediaWikiUnitTestCase {
+class HandlerTest extends MediaWikiUnitTestCase {
 
 	use HandlerTestTrait;
 
@@ -231,13 +232,102 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 		}
 	}
 
-	public function testGetValidatedBody() {
-		$validator = $this->createMock( Validator::class );
-		$validator->method( 'validateBody' )->willReturn( 'VALIDATED BODY' );
+	public static function provideValidateBodyParams() {
+		yield 'no body parameter' => [
+			[
+				'pathfoo' => [
+					ParamValidator::PARAM_TYPE => 'string',
+					ParamValidator::PARAM_REQUIRED => false,
+					Handler::PARAM_SOURCE => 'path',
+				],
+			],
+			new RequestData( [ 'parsedBody' => [ 'foo' => 'kittens' ] ] ),
+			[] // extra parameter should be ignored if no body param is defined
+		];
 
-		$handler = $this->newHandler();
-		$this->initHandler( $handler, new RequestData() );
-		$handler->validate( $validator );
+		yield 'parameter' => [
+			[
+				'foo' => [
+					ParamValidator::PARAM_TYPE => 'string',
+					ParamValidator::PARAM_REQUIRED => true,
+					Handler::PARAM_SOURCE => 'body',
+				],
+				'pathfoo' => [
+					ParamValidator::PARAM_TYPE => 'string',
+					ParamValidator::PARAM_REQUIRED => false,
+					Handler::PARAM_SOURCE => 'path',
+				],
+			],
+			new RequestData( [ 'parsedBody' => [ 'foo' => 'kittens' ] ] ),
+			[ 'foo' => 'kittens' ]
+		];
+	}
+
+	/**
+	 * @dataProvider provideValidateBodyParams
+	 */
+	public function testValidateBodyParams( $paramSettings, $request, $expected ) {
+		$handler = $this->newHandler( [ 'getParamSettings' ] );
+		$handler->method( 'getParamSettings' )->willReturn( $paramSettings );
+
+		$this->initHandler( $handler, $request );
+		$this->validateHandler( $handler );
+
+		$params = $handler->getValidatedBody();
+		$this->assertSame( $expected, $params );
+	}
+
+	public function provideValidateBodyParams_invalid() {
+		$paramSettings = [
+			'foo' => [
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_REQUIRED => true,
+				Handler::PARAM_SOURCE => 'body',
+			]
+		];
+
+		$request = new RequestData(
+			[
+				'parsedBody' => [
+					'foo' => 'kittens',
+					'xyzzy' => 'lizzards',
+				],
+			]
+		);
+
+		$handler = $this->newHandler( [ 'getParamSettings' ] );
+		$handler->method( 'getParamSettings' )->willReturn( $paramSettings );
+
+		try {
+			$this->initHandler( $handler, $request );
+			$this->validateHandler( $handler );
+			$this->fail( 'Expected LocalizedHttpException' );
+		} catch ( LocalizedHttpException $ex ) {
+			$this->assertSame( 'paramvalidator-missingparam', $ex->getMessageValue()->getKey() );
+		}
+	}
+
+	public function testBodyValidator() {
+		$request = new RequestData( [
+			'method' => 'POST',
+			'headers' => [
+				'Content-Type' => 'test/test'
+			],
+			'bodyContents' => 'test test test'
+		] );
+
+		$bodyValidator = new class () implements BodyValidator {
+
+			public function validateBody( RequestInterface $request ) {
+				return 'VALIDATED BODY';
+			}
+		};
+
+		$handler = $this->newHandler( [ 'getBodyValidator' ] );
+		$handler->method( 'getBodyValidator' )->willReturn( $bodyValidator );
+
+		$this->initHandler( $handler, $request );
+		$this->validateHandler( $handler );
 
 		$body = $handler->getValidatedBody();
 		$this->assertSame( 'VALIDATED BODY', $body );
@@ -307,43 +397,68 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 		$this->assertTrue( $handler->needsWriteAccess() );
 	}
 
-	public function testBodyValidation_extraneousToken() {
-		$requestData = [
-			'method' => 'POST',
-			'pathParams' => [ 'title' => 'Foo' ],
-			'headers' => [
-				'Content-Type' => 'application/json',
+	public static function provideBodyValidationFailure() {
+		yield 'extraneous token (bodyContents)' => [
+			[
+				'method' => 'POST',
+				'pathParams' => [ 'title' => 'Foo' ],
+				'headers' => [
+					'Content-Type' => 'application/json',
+				],
+				'bodyContents' => json_encode( [
+					'title' => 'Foo',
+					'token' => 'TOKEN',
+					'comment' => 'Testing',
+					'source' => 'Lorem Ipsum',
+					'content_model' => 'wikitext'
+				] ),
 			],
-			'bodyContents' => json_encode( [
-				'title' => 'Foo',
-				'token' => 'TOKEN',
-				'comment' => 'Testing',
-				'source' => 'Lorem Ipsum',
-				'content_model' => 'wikitext'
-			] ),
+			new MessageValue( 'rest-extraneous-csrf-token' )
 		];
+		yield 'extraneous token (parsedBody)' => [
+			[
+				'method' => 'POST',
+				'pathParams' => [ 'title' => 'Foo' ],
+				'headers' => [
+					'Content-Type' => 'application/json',
+				],
+				'parsedBody' => [
+					'title' => 'Foo',
+					'token' => 'TOKEN',
+					'comment' => 'Testing',
+					'source' => 'Lorem Ipsum',
+					'content_model' => 'wikitext'
+				],
+			],
+			new MessageValue( 'rest-extraneous-csrf-token' )
+		];
+	}
 
+	/**
+	 * @dataProvider provideBodyValidationFailure
+	 */
+	public function testBodyValidationFailure( $requestData, $expectedMessage ) {
 		$request = new RequestData( $requestData );
 
 		$handler = $this->newHandler();
 		$this->initHandler( $handler, $request, [], [], null, $this->getSession( true ) );
 
-		$validator = $this->getMockValidator( [], [ 'token' => 'TOKEN' ] );
+		// NOTE: initHandler() should be setting the parsed body if needed!
+		$validator = $this->getMockValidator( [], $request->getParsedBody() );
 		$handler->validate( $validator );
+
+		// sanity check
+		$this->assertTrue( $handler->getSession()->getProvider()->safeAgainstCsrf() );
 
 		try {
 			$handler->checkSession();
 			Assert::fail( 'Expected a LocalizedHttpException to be thrown' );
 		} catch ( HttpException $ex ) {
+			$this->assertSame( 400, $ex->getCode(), 'HTTP status' );
+			$this->assertInstanceOf( LocalizedHttpException::class, $ex );
+
+			$this->assertEquals( $expectedMessage, $ex->getMessageValue() );
 		}
-
-		$this->assertSame( 400, $ex->getCode(), 'HTTP status' );
-		$this->assertInstanceOf( LocalizedHttpException::class, $ex );
-
-		$expectedMessage = new MessageValue( 'rest-extraneous-csrf-token' );
-		$this->assertEquals( $expectedMessage, $ex->getMessageValue() );
-
-		$this->assertTrue( $handler->getSession()->getProvider()->safeAgainstCsrf() );
 	}
 
 	public function testCsrfUnsafeSessionProviderRejection() {
@@ -465,6 +580,88 @@ class HandlerTest extends \MediaWikiUnitTestCase {
 		$handler->applyCacheControl( $response );
 
 		$this->assertSame( $expected, $response->getHeaderLine( 'Cache-Control' ) );
+	}
+
+	public static function provideParseBodyData() {
+		return [
+			'no body type with non-empty body' => [
+				new RequestData( [
+					'method' => 'POST',
+					'bodyContents' => '{"foo":"bar"}',
+				] ),
+				new LocalizedHttpException(
+					new MessageValue( 'rest-unsupported-content-type', [ '' ] ),
+					415
+				)
+			],
+			'no body type with empty body' => [
+				new RequestData( [
+					'headers' => [ 'content-length' => '0' ],
+					'bodyContent' => '',
+				] ),
+				null
+			],
+			'json body' => [
+				new RequestData( [
+					'bodyContents' => '{"foo":"bar"}',
+					'headers' => [ 'Content-Type' => 'application/json' ]
+				] ),
+				[ 'foo' => 'bar' ]
+			],
+			'unknown body type' => [
+				new RequestData( [
+					'headers' => [ 'Content-Type' => 'unknown/type' ]
+				] ),
+				new LocalizedHttpException(
+					new MessageValue( 'rest-unsupported-content-type', [ '' ] ),
+					415
+				)
+			],
+			'malformed json body' => [
+				new RequestData( [
+					'bodyContents' => '{"foo":"bar"',
+					'headers' => [ 'Content-Type' => 'application/json' ]
+				] ),
+				new LocalizedHttpException(
+					new MessageValue( 'rest-json-body-parse-error', [ '' ] ),
+					400
+				)
+			],
+			'empty json body' => [
+				new RequestData( [
+					'bodyContents' => '',
+					'headers' => [ 'Content-Type' => 'application/json' ]
+				] ),
+				new LocalizedHttpException(
+					new MessageValue( 'rest-json-body-parse-error', [ '' ] ),
+					400
+				)
+			],
+			'non-array json body' => [
+				new RequestData( [
+					'bodyContents' => '"foo"',
+					'headers' => [ 'Content-Type' => 'application/json' ]
+				] ),
+				new LocalizedHttpException(
+					new MessageValue( 'rest-json-body-parse-error', [ '' ] ),
+					400
+				)
+			],
+		];
+	}
+
+	/** @dataProvider provideParseBodyData */
+	public function testParseBodyData( $requestData, $expectedResult ) {
+		$handler = $this->newHandler();
+		if ( $expectedResult instanceof LocalizedHttpException ) {
+			$this->expectException( LocalizedHttpException::class );
+			$this->expectExceptionCode( $expectedResult->getCode() );
+			$this->expectExceptionMessage( $expectedResult->getMessage() );
+			$handler->parseBodyData( $requestData );
+		} else {
+			$parsedBody = $handler->parseBodyData( $requestData );
+			$this->assertEquals( $expectedResult, $parsedBody );
+		}
 	}
 
 }

@@ -19,7 +19,6 @@
 	},
 	"apierror-visualeditor-badcachekey": "کپچا برای آن کلید یافت نشد",
 	"apierror-visualeditor-difffailed": "تفاوت دارای خطا",
-	"apierror-visualeditor-docserver": "خطا در اتصال به سرور Parsoid/RESTBase (پاسخی دریافت نشد)",
 	"apihelp-visualeditor-param-basetimestamp": "هنگام ذخیره کردن، زمان نسخهٔ ویرایش شده را برای این مورد تنظیم کنید. برای تشخیص تعارض ویرایش کاربرد دارد.",
 	"apihelp-visualeditor-param-cachekey": "برای پیوند تفاوت، از نتیجه درخواست تفاوت پیشین به کمک این کلید استفاده کنید. بازنویسی $1html.",
 	"apihelp-visualeditor-param-editintro": "ویرایش بخش ابتدایی برای افزودن هشدارها.",

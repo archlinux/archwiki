@@ -311,6 +311,8 @@
 	"visualeditor-preference-tabs-prefer-ve": "Sempre dar me le editor visual si possibile",
 	"visualeditor-preference-tabs-prefer-wt": "Sempre dar me le editor de codice fonte",
 	"visualeditor-preference-tabs-remember-last": "Memorar mi ultime editor",
+	"visualeditor-preference-collab-label": "Modification collaborative",
+	"visualeditor-preference-collab-description": "Inviar altere usatores a participar a tu session de modification in le editor visual.",
 	"visualeditor-rebase-client-export": "Exportar",
 	"visualeditor-rebase-client-export-start": "Exportar…",
 	"visualeditor-rebase-client-import": "Importar",

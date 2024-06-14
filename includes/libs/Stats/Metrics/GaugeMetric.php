@@ -45,9 +45,6 @@ class GaugeMetric implements MetricInterface {
 	 */
 	private const TYPE_INDICATOR = "g";
 
-	/** @var string|null */
-	private ?string $statsdNamespace = null;
-
 	/** @var BaseMetricInterface */
 	private BaseMetricInterface $baseMetric;
 
@@ -67,11 +64,16 @@ class GaugeMetric implements MetricInterface {
 	 * @return void
 	 */
 	public function set( float $value ): void {
-		if ( $this->statsdNamespace !== null ) {
-			$this->baseMetric->getStatsdDataFactory()->updateCount( $this->statsdNamespace, $value );
-			$this->statsdNamespace = null;
+		foreach ( $this->baseMetric->getStatsdNamespaces() as $namespace ) {
+			$this->baseMetric->getStatsdDataFactory()->updateCount( $namespace, $value );
 		}
-		$this->baseMetric->addSample( new Sample( $this->baseMetric->getLabelValues(), $value ) );
+
+		try {
+			$this->baseMetric->addSample( new Sample( $this->baseMetric->getLabelValues(), $value ) );
+		} catch ( IllegalOperationException $ex ) {
+			// Log the condition and give the caller something that will absorb calls.
+			trigger_error( $ex->getMessage(), E_USER_WARNING );
+		}
 	}
 
 	/** @inheritDoc */
@@ -92,6 +94,11 @@ class GaugeMetric implements MetricInterface {
 	/** @inheritDoc */
 	public function getSamples(): array {
 		return $this->baseMetric->getSamples();
+	}
+
+	/** @inheritDoc */
+	public function getSampleCount(): int {
+		return $this->baseMetric->getSampleCount();
 	}
 
 	/** @inheritDoc */
@@ -129,9 +136,13 @@ class GaugeMetric implements MetricInterface {
 	}
 
 	/** @inheritDoc */
-	public function copyToStatsdAt( string $statsdNamespace ) {
-		if ( $this->baseMetric->getStatsdDataFactory() !== null ) {
-			$this->statsdNamespace = $statsdNamespace;
+	public function copyToStatsdAt( $statsdNamespaces ) {
+		try {
+			$this->baseMetric->setStatsdNamespaces( $statsdNamespaces );
+		} catch ( InvalidArgumentException $ex ) {
+			// Log the condition and give the caller something that will absorb calls.
+			trigger_error( $ex->getMessage(), E_USER_WARNING );
+			return new NullMetric;
 		}
 		return $this;
 	}

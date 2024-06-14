@@ -23,14 +23,17 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
 use MediaWiki\Block\BlockActionInfo;
 use MediaWiki\Block\BlockRestrictionStore;
 use MediaWiki\Block\BlockUtils;
+use MediaWiki\Block\HideUserUtils;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Pager\BlockListPager;
 use MediaWiki\SpecialPage\SpecialPage;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -48,6 +51,7 @@ class SpecialAutoblockList extends SpecialPage {
 	private IConnectionProvider $dbProvider;
 	private CommentStore $commentStore;
 	private BlockUtils $blockUtils;
+	private HideUserUtils $hideUserUtils;
 	private BlockActionInfo $blockActionInfo;
 	private RowCommentFormatter $rowCommentFormatter;
 
@@ -57,6 +61,7 @@ class SpecialAutoblockList extends SpecialPage {
 	 * @param IConnectionProvider $dbProvider
 	 * @param CommentStore $commentStore
 	 * @param BlockUtils $blockUtils
+	 * @param HideUserUtils $hideUserUtils
 	 * @param BlockActionInfo $blockActionInfo
 	 * @param RowCommentFormatter $rowCommentFormatter
 	 */
@@ -66,6 +71,7 @@ class SpecialAutoblockList extends SpecialPage {
 		IConnectionProvider $dbProvider,
 		CommentStore $commentStore,
 		BlockUtils $blockUtils,
+		HideUserUtils $hideUserUtils,
 		BlockActionInfo $blockActionInfo,
 		RowCommentFormatter $rowCommentFormatter
 	) {
@@ -76,6 +82,7 @@ class SpecialAutoblockList extends SpecialPage {
 		$this->dbProvider = $dbProvider;
 		$this->commentStore = $commentStore;
 		$this->blockUtils = $blockUtils;
+		$this->hideUserUtils = $hideUserUtils;
 		$this->blockActionInfo = $blockActionInfo;
 		$this->rowCommentFormatter = $rowCommentFormatter;
 	}
@@ -114,7 +121,6 @@ class SpecialAutoblockList extends SpecialPage {
 			->prepareForm()
 			->displayForm( false );
 
-		$this->showTotal( $pager );
 		$this->showList( $pager );
 	}
 
@@ -123,14 +129,29 @@ class SpecialAutoblockList extends SpecialPage {
 	 * @return BlockListPager
 	 */
 	protected function getBlockListPager() {
-		$conds = [
-			'ipb_parent_block_id IS NOT NULL',
-			// ipb_parent_block_id <> 0 because of T282890
-			'ipb_parent_block_id <> 0',
-		];
-		# Is the user allowed to see hidden blocks?
-		if ( !$this->getAuthority()->isAllowed( 'hideuser' ) ) {
-			$conds['ipb_deleted'] = 0;
+		$readStage = $this->getConfig()
+				->get( MainConfigNames::BlockTargetMigrationStage ) & SCHEMA_COMPAT_READ_MASK;
+		if ( $readStage === SCHEMA_COMPAT_READ_OLD ) {
+			$conds = [
+				'ipb_parent_block_id IS NOT NULL',
+				// ipb_parent_block_id <> 0 because of T282890
+				'ipb_parent_block_id <> 0',
+			];
+			# Is the user allowed to see hidden blocks?
+			if ( !$this->getAuthority()->isAllowed( 'hideuser' ) ) {
+				$conds['ipb_deleted'] = 0;
+			}
+		} elseif ( $readStage === SCHEMA_COMPAT_READ_NEW ) {
+			$conds = [
+				'bl_parent_block_id IS NOT NULL',
+			];
+			# Is the user allowed to see hidden blocks?
+			if ( !$this->getAuthority()->isAllowed( 'hideuser' ) ) {
+				$conds['bl_deleted'] = 0;
+			}
+		} else {
+			throw new ConfigException(
+				'$wgBlockTargetMigrationStage has an invalid read stage' );
 		}
 
 		return new BlockListPager(
@@ -138,6 +159,7 @@ class SpecialAutoblockList extends SpecialPage {
 			$this->blockActionInfo,
 			$this->blockRestrictionStore,
 			$this->blockUtils,
+			$this->hideUserUtils,
 			$this->commentStore,
 			$this->linkBatchFactory,
 			$this->getLinkRenderer(),
@@ -145,20 +167,6 @@ class SpecialAutoblockList extends SpecialPage {
 			$this->rowCommentFormatter,
 			$this->getSpecialPageFactory(),
 			$conds
-		);
-	}
-
-	/**
-	 * Show total number of autoblocks on top of the table
-	 *
-	 * @param BlockListPager $pager The BlockListPager instance for this page
-	 */
-	protected function showTotal( BlockListPager $pager ) {
-		$out = $this->getOutput();
-		$out->addHTML(
-			Html::rawElement( 'div', [ 'style' => 'font-weight: bold;' ],
-				$this->msg( 'autoblocklist-total-autoblocks', $pager->getTotalAutoblocks() )->parse() )
-			. "\n"
 		);
 	}
 
@@ -216,7 +224,5 @@ class SpecialAutoblockList extends SpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialAutoblockList::class, 'SpecialAutoblockList' );

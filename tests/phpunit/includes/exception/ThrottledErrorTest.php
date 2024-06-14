@@ -3,7 +3,7 @@
 use MediaWiki\Output\OutputPage;
 
 /**
- * @covers ThrottledError
+ * @covers \ThrottledError
  * @author Addshore
  */
 class ThrottledErrorTest extends MediaWikiIntegrationTestCase {
@@ -21,6 +21,7 @@ class ThrottledErrorTest extends MediaWikiIntegrationTestCase {
 			ob_start();
 			$e->report();
 			$text = ob_get_clean();
+			$this->expectDeprecationAndContinue( '/MWException::getText was deprecated/' );
 			$this->assertStringContainsString( $e->getText(), $text );
 		}
 	}

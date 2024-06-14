@@ -1,5 +1,9 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use ApiUsageException;
+use IDBAccessObject;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\SlotRecord;
@@ -11,17 +15,12 @@ use MediaWiki\User\User;
  * @group Database
  * @group medium
  *
- * @covers ApiMove
+ * @covers \ApiMove
  */
 class ApiMoveTest extends ApiTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'watchlist', 'watchlist_expiry' ]
-		);
 
 		$this->overrideConfigValue( MainConfigNames::WatchlistExpiry, true );
 	}
@@ -35,16 +34,16 @@ class ApiMoveTest extends ApiTestCase {
 	protected function assertMoved( $fromTitle, $toTitle, $id, $opts = null ) {
 		$opts = (array)$opts;
 
-		$this->assertTrue( $toTitle->exists( Title::READ_LATEST ),
+		$this->assertTrue( $toTitle->exists( IDBAccessObject::READ_LATEST ),
 			"Destination {$toTitle->getPrefixedText()} does not exist" );
 
 		if ( in_array( 'noredirect', $opts ) ) {
-			$this->assertFalse( $fromTitle->exists( Title::READ_LATEST ),
+			$this->assertFalse( $fromTitle->exists( IDBAccessObject::READ_LATEST ),
 				"Source {$fromTitle->getPrefixedText()} exists" );
 		} else {
-			$this->assertTrue( $fromTitle->exists( Title::READ_LATEST ),
+			$this->assertTrue( $fromTitle->exists( IDBAccessObject::READ_LATEST ),
 				"Source {$fromTitle->getPrefixedText()} does not exist" );
-			$this->assertTrue( $fromTitle->isRedirect( Title::READ_LATEST ),
+			$this->assertTrue( $fromTitle->isRedirect( IDBAccessObject::READ_LATEST ),
 				"Source {$fromTitle->getPrefixedText()} is not a redirect" );
 
 			$target = $this->getServiceContainer()
@@ -55,7 +54,7 @@ class ApiMoveTest extends ApiTestCase {
 			$this->assertSame( $toTitle->getPrefixedText(), $target->getPrefixedText() );
 		}
 
-		$this->assertSame( $id, $toTitle->getArticleID( Title::READ_LATEST ) );
+		$this->assertSame( $id, $toTitle->getArticleID( IDBAccessObject::READ_LATEST ) );
 	}
 
 	/**
@@ -192,15 +191,15 @@ class ApiMoveTest extends ApiTestCase {
 				'to' => '[',
 			] );
 		} finally {
-			$this->assertSame( $id, $title->getArticleID( Title::READ_LATEST ) );
+			$this->assertSame( $id, $title->getArticleID( IDBAccessObject::READ_LATEST ) );
 		}
 	}
 
 	public function testMoveWhileBlocked() {
-		$this->assertNull( DatabaseBlock::newFromTarget( '127.0.0.1' ) );
+		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
+		$this->assertNull( $blockStore->newFromTarget( '127.0.0.1' ) );
 
 		$user = $this->getTestSysop()->getUser();
-		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
 		$block = new DatabaseBlock( [
 			'address' => $user->getName(),
 			'by' => $user,
@@ -224,47 +223,48 @@ class ApiMoveTest extends ApiTestCase {
 			$this->fail( 'Expected exception not thrown' );
 		} catch ( ApiUsageException $ex ) {
 			$this->assertApiErrorCode( 'blocked', $ex );
-			$this->assertNotNull( DatabaseBlock::newFromTarget( '127.0.0.1' ), 'Autoblock spread' );
-		} finally {
-			$blockStore->deleteBlock( $block );
-			$user->clearInstanceCache();
-			$this->assertSame( $id, $title->getArticleID( Title::READ_LATEST ) );
+			$this->assertNotNull( $blockStore->newFromTarget( '127.0.0.1' ), 'Autoblock spread' );
+			$this->assertSame( $id, $title->getArticleID( IDBAccessObject::READ_LATEST ) );
 		}
 	}
 
 	// @todo File moving
 
-	public function testPingLimiter() {
-		$this->expectApiErrorCode( 'ratelimited' );
+	public function testRateLimit() {
+		$name1 = 'TestPingLimiter 1';
+		$name2 = 'TestPingLimiter 2';
+		$name3 = 'TestPingLimiter 3';
 
-		$title = Title::makeTitle( NS_MAIN, 'TestPingLimiter' );
-		$title2 = Title::makeTitle( NS_MAIN, 'TestPingLimiter 2' );
+		$title1 = Title::makeTitle( NS_MAIN, $name1 );
+		$title2 = Title::makeTitle( NS_MAIN, $name2 );
 
 		$this->overrideConfigValue( MainConfigNames::RateLimits,
 			[ 'move' => [ '&can-bypass' => false, 'user' => [ 1, 60 ] ] ]
 		);
 
-		$id = $this->createPage( $title );
-
+		$id = $this->createPage( $title1 );
 		$res = $this->doApiRequestWithToken( [
 			'action' => 'move',
-			'from' => $title->getPrefixedText(),
-			'to' => $title2->getPrefixedText(),
+			'from' => $name1,
+			'to' => $name2,
 		] );
-
-		$this->assertMoved( $title, $title2, $id );
+		$this->assertMoved( $title1, $title2, $id );
 		$this->assertArrayNotHasKey( 'warnings', $res[0] );
 
-		$title3 = Title::makeTitle( NS_MAIN, 'TestPingLimiter 3' );
 		try {
 			$this->doApiRequestWithToken( [
 				'action' => 'move',
-				'from' => $title2->getPrefixedText(),
-				'to' => $title3->getPrefixedText(),
+				'from' => $name2,
+				'to' => $name3,
 			] );
+
+			$this->fail( 'Rate limit was expected to trigger an exception' );
+		} catch ( ApiUsageException $ex ) {
+			$this->assertStatusError( 'apierror-ratelimited', $ex->getStatusValue() );
 		} finally {
-			$this->assertSame( $id, $title2->getArticleID( Title::READ_LATEST ) );
-			$this->assertFalse( $title3->exists( Title::READ_LATEST ),
+			$title3 = Title::makeTitle( NS_MAIN, $name3 );
+			$this->assertSame( $id, $title2->getArticleID( IDBAccessObject::READ_LATEST ) );
+			$this->assertFalse( $title3->exists( IDBAccessObject::READ_LATEST ),
 				"\"{$title3->getPrefixedText()}\" should not exist" );
 		}
 	}
@@ -289,8 +289,8 @@ class ApiMoveTest extends ApiTestCase {
 				'tags' => 'custom tag',
 			] );
 		} finally {
-			$this->assertSame( $id, $title->getArticleID( Title::READ_LATEST ) );
-			$this->assertFalse( $title2->exists( Title::READ_LATEST ),
+			$this->assertSame( $id, $title->getArticleID( IDBAccessObject::READ_LATEST ) );
+			$this->assertFalse( $title2->exists( IDBAccessObject::READ_LATEST ),
 				"\"{$title2->getPrefixedText()}\" should not exist" );
 		}
 	}
@@ -348,9 +348,9 @@ class ApiMoveTest extends ApiTestCase {
 		] );
 
 		$this->assertMoved( $title, $title2, $id );
-		$this->assertSame( $talkId, $talkTitle->getArticleID( Title::READ_LATEST ) );
+		$this->assertSame( $talkId, $talkTitle->getArticleID( IDBAccessObject::READ_LATEST ) );
 		$this->assertSame( $talkDestinationId,
-			$talkDestinationTitle->getArticleID( Title::READ_LATEST ) );
+			$talkDestinationTitle->getArticleID( IDBAccessObject::READ_LATEST ) );
 		$this->assertSame( [ [
 			'message' => 'articleexists',
 			'params' => [ $talkDestinationTitle->getPrefixedText() ],
@@ -399,8 +399,8 @@ class ApiMoveTest extends ApiTestCase {
 			$this->assertMoved( $from, $to, $ids[$from->getPrefixedText()] );
 		}
 
-		$this->assertSame( $idError, $titleError->getArticleID( Title::READ_LATEST ) );
-		$this->assertSame( $id2Error, $title2Error->getArticleID( Title::READ_LATEST ) );
+		$this->assertSame( $idError, $titleError->getArticleID( IDBAccessObject::READ_LATEST ) );
+		$this->assertSame( $id2Error, $title2Error->getArticleID( IDBAccessObject::READ_LATEST ) );
 
 		$results = array_merge( $res[0]['move']['subpages'], $res[0]['move']['subpages-talk'] );
 		foreach ( $results as $arr ) {
@@ -439,8 +439,8 @@ class ApiMoveTest extends ApiTestCase {
 			$this->assertTrue( ApiTestCase::apiExceptionHasCode( $ex, 'cantmove-anon' ) );
 			$this->assertTrue( ApiTestCase::apiExceptionHasCode( $ex, 'cantmove' ) );
 		} finally {
-			$this->assertSame( $id, $title->getArticleID( Title::READ_LATEST ) );
-			$this->assertFalse( $title2->exists( Title::READ_LATEST ),
+			$this->assertSame( $id, $title->getArticleID( IDBAccessObject::READ_LATEST ) );
+			$this->assertFalse( $title2->exists( IDBAccessObject::READ_LATEST ),
 				"\"{$title2->getPrefixedText()}\" should not exist" );
 		}
 	}
@@ -498,8 +498,8 @@ class ApiMoveTest extends ApiTestCase {
 		] );
 
 		$this->assertMoved( $titleBase, $title, $idBase );
-		$this->assertSame( $idSub, $talkTitleSub->getArticleID( Title::READ_LATEST ) );
-		$this->assertFalse( $titleSub->exists( Title::READ_LATEST ),
+		$this->assertSame( $idSub, $talkTitleSub->getArticleID( IDBAccessObject::READ_LATEST ) );
+		$this->assertFalse( $titleSub->exists( IDBAccessObject::READ_LATEST ),
 			"\"{$titleSub->getPrefixedText()}\" should not exist" );
 
 		$this->assertSame( [ 'errors' => [ [

@@ -37,7 +37,6 @@
 	"echo-pref-subscription-edit-thank": "ߒ ߞߏߢߌߡߊߟߐ߲ ߒ ߠߊ߫ ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߞߏߛߐ߲߬",
 	"echo-pref-tooltip-edit-thank": "ߞߊ߬ ߒ ߖߊ߲߭ߓߌ߬ߟߊ߬ ߣߌ߫ ߘߏߕߌ߰ ߞߊ߬ ߒ ߞߏߢߌߡߊߟߐ߲߫ ߒ ߠߊ߫ ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߞߏߛߐ߲߬.",
 	"echo-category-title-edit-thank": "ߌ ߣߌ߫ ߗߋ߫߹",
-	"notification-thanks-diff-link": "ߌ ߟߊ߫ ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲",
 	"notification-header-rev-thank": "$1 ߓߘߊ߫{{GENDER:$2|}} {{GENDER:$4|ߌ}}ߞߏߢߌߡߊߟߐ߲߫ ߌ ߟߊ߫ ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߠߊ߫ <strong>$3</strong> ߞߊ߲߬.",
 	"notification-header-creation-thank": "$1 ߓߘߊ߫{{GENDER:$2|}} {{GENDER:$4|ߌ}}ߞߏߢߌߡߊߟߐ߲߫ ߌ ߟߊ߫ <strong>$3</strong> ߛߌ߲ߘߟߌ ߟߊ߫.",
 	"notification-header-log-thank": "$1 ߓߘߊ߫{{GENDER:$2|}} {{GENDER:$4|ߌ}}ߞߏߢߌߡߊߟߐ߲߫ ߌ ߟߊ߫ ߞߍߟߌ ߘߏ߫ ߟߊ߫ ߞߊ߬ ߟߐ߬ <strong>$3</strong> ߡߊ߬.",
@@ -53,7 +52,6 @@
 	"notification-link-text-view-logentry": "ߕߋ߬ߟߋ߲ ߘߏ߲߬ߠߌ߲ ߠߎ߬ ߦߋ߫",
 	"thanks-error-invalidpostid": "ߗߋߛߓߍ߫ ߗߋߣߍ߲ ߏ߬ ߡߊ߬ߟߐ߲߬ߠߌ߲ ߓߍ߲߬ߣߍ߲߫ ߕߍ߫.",
 	"flow-thanks-confirmation-special": "ߌ ߦߴߊ߬ ߝߍ߬ ߟߋ߬ ߓߊ߬ ߞߊ߬ ߌ ߣߌ߫ ߗߋ ߗߋ߫ ߜߍ ߘߐ߫ ߟߋ߬ ߡߙߌߣߊ߲ ߣߌ߲߬ ߢߍ߫؟",
-	"notification-flow-thanks-post-link": "ߌ ߟߊ߫ ߞߊ߲߬ߞߎߡߊ",
 	"notification-header-flow-thank": "$1 ߓߘߊ߫{{GENDER:$2|}} {{GENDER:$5|ߌ}}ߞߏߢߌߡߊߟߐ߲߫ ߌ ߟߊ߫ ߞߊ߲߬ߞߎߡߊ ߟߊ߫ <strong>$3</strong> ߞߊ߲߬.",
 	"notification-compact-header-flow-thank": "$1 ߓߘߊ߫{{GENDER:$2|}}{{GENDER:$3|ߌ}}ߞߏߢߌߡߊߟߐ߲߫.",
 	"ipb-action-thanks": "ߌ ߣߌ߫ ߗߋ ߗߋ ߦߴߌ ߘߐ߫"

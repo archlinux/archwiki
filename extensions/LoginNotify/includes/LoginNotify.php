@@ -9,31 +9,32 @@
 namespace LoginNotify;
 
 use BagOStuff;
-use CentralIdLookup;
-use Exception;
 use ExtensionRegistry;
 use IBufferingStatsdDataFactory;
 use JobQueueGroup;
 use JobSpecification;
+use LogicException;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\CentralAuth\User\CentralAuthUser;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
 use MWCryptRand;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use UnexpectedValueException;
-use User;
-use WebRequest;
 use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\LikeValue;
 
 /**
  * Handle sending notifications on login from unknown source.
@@ -55,11 +56,10 @@ class LoginNotify implements LoggerAwareInterface {
 		'LoginNotifyMaxCookieRecords',
 		'LoginNotifySecretKey',
 		'LoginNotifySeenBucketSize',
-		'LoginNotifySeenCluster',
-		'LoginNotifySeenDatabase',
 		'LoginNotifySeenExpiry',
 		'LoginNotifyUseCheckUser',
 		'LoginNotifyUseSeenTable',
+		'LoginNotifyUseCentralId',
 		'SecretKey',
 		'UpdateRowsPerQuery'
 	];
@@ -156,8 +156,6 @@ class LoginNotify implements LoggerAwareInterface {
 	 *
 	 * @param string $ip Either IPv4 or IPv6 address
 	 * @return string Just the network part (e.g. 127.0.0.)
-	 * @throws UnexpectedValueException If given something not an IP
-	 * @throws Exception If regex totally fails (Should never happen)
 	 */
 	private function getIPNetwork( $ip ) {
 		$ip = IPUtils::sanitizeIP( $ip );
@@ -172,7 +170,7 @@ class LoginNotify implements LoggerAwareInterface {
 		}
 		$prefix = preg_replace( $subnetRegex, '', $ip );
 		if ( !is_string( $prefix ) ) {
-			throw new Exception( __METHOD__ . " Regex failed on '$ip'!?" );
+			throw new LogicException( __METHOD__ . " Regex failed on '$ip'!?" );
 		}
 		return $prefix;
 	}
@@ -317,7 +315,7 @@ class LoginNotify implements LoggerAwareInterface {
 			->where( [
 				'lsn_user' => $centralUserId,
 				'lsn_subnet' => $hash,
-				'lsn_time_bucket >= ' . $dbr->addQuotes( $this->getMinBucket() )
+				$dbr->expr( 'lsn_time_bucket', '>=', $this->getMinBucket() )
 			] )
 			->caller( __METHOD__ )
 			->fetchField();
@@ -367,7 +365,6 @@ class LoginNotify implements LoggerAwareInterface {
 	 * @param WebRequest $request
 	 * @param int $centralUserId
 	 * @return int|string
-	 * @throws Exception
 	 */
 	private function getSeenHash( WebRequest $request, int $centralUserId ) {
 		$ipPrefix = $this->getIPNetwork( $request->getIP() );
@@ -418,8 +415,7 @@ class LoginNotify implements LoggerAwareInterface {
 	 * @return IReadableDatabase
 	 */
 	private function getSeenReplicaDb(): IReadableDatabase {
-		$dbName = $this->config->get( 'LoginNotifySeenDatabase' ) ?? false;
-		return $this->getSeenLoadBalancer()->getConnection( DB_REPLICA, [], $dbName );
+		return $this->lbFactory->getReplicaDatabase( 'virtual-LoginNotify' );
 	}
 
 	/**
@@ -428,33 +424,7 @@ class LoginNotify implements LoggerAwareInterface {
 	 * @return IDatabase
 	 */
 	private function getSeenPrimaryDb(): IDatabase {
-		$dbName = $this->config->get( 'LoginNotifySeenDatabase' ) ?? false;
-		return $this->getSeenLoadBalancer()->getConnection( DB_PRIMARY, [], $dbName );
-	}
-
-	/**
-	 * Is the database holding the loginnotify_seen_net table replicated to
-	 * multiple servers?
-	 *
-	 * @return bool
-	 */
-	private function isSeenDbReplicated() {
-		return $this->getSeenLoadBalancer()->hasReplicaServers();
-	}
-
-	/**
-	 * Get the LoadBalancer holding the loginnotify_seen_net table.
-	 *
-	 * @return ILoadBalancer
-	 */
-	private function getSeenLoadBalancer() {
-		$cluster = $this->config->get( 'LoginNotifySeenCluster' );
-		if ( $cluster ) {
-			return $this->lbFactory->getExternalLB( $cluster );
-		} else {
-			$dbName = $this->config->get( 'LoginNotifySeenDatabase' ) ?? false;
-			return $this->lbFactory->getMainLB( $dbName );
-		}
+		return $this->lbFactory->getPrimaryDatabase( 'virtual-LoginNotify' );
 	}
 
 	/**
@@ -497,7 +467,7 @@ class LoginNotify implements LoggerAwareInterface {
 	}
 
 	/**
-	 * If LoginNotifySeenDatabase is configured, indicating a shared table,
+	 * If LoginNotifyUseCentralId is true, indicating a shared table,
 	 * get the central user ID. Otherwise, get the local user ID.
 	 *
 	 * If CentralAuth is not installed, $this->centralIdLookup will be a
@@ -509,7 +479,7 @@ class LoginNotify implements LoggerAwareInterface {
 	 * @return int
 	 */
 	private function getMaybeCentralId( User $user ) {
-		if ( ( $this->config->get( 'LoginNotifySeenDatabase' ) ?? false ) !== false ) {
+		if ( $this->config->get( 'LoginNotifyUseCentralId' ) ) {
 			return $this->centralIdLookup->centralIdFromLocalUser( $user );
 		} else {
 			return $user->getId();
@@ -624,10 +594,10 @@ class LoginNotify implements LoggerAwareInterface {
 			->join( 'actor', null, 'actor_id = cuc_actor' )
 			->where( [
 				'actor_user' => $userId,
-				'cuc_ip ' . $dbr->buildLike(
+				$dbr->expr( 'cuc_ip', IExpression::LIKE, new LikeValue(
 					$ipFragment,
 					$dbr->anyString()
-				)
+				) )
 			] )
 			->caller( __METHOD__ )
 			->fetchField();
@@ -689,7 +659,7 @@ class LoginNotify implements LoggerAwareInterface {
 	 */
 	private function setLoginCookie( User $user ) {
 		$cookie = $this->getPrevLoginCookie( $user->getRequest() );
-		list( , $newCookie ) = $this->checkAndGenerateCookie( $user, $cookie );
+		[ , $newCookie ] = $this->checkAndGenerateCookie( $user, $cookie );
 		$expire = $this->getCurrentTime() + $this->config->get( 'LoginNotifyCookieExpire' );
 		$resp = $user->getRequest()->response();
 		$resp->setCookie(
@@ -802,17 +772,9 @@ class LoginNotify implements LoggerAwareInterface {
 
 		// Insert a row
 		$dbw = $this->getSeenPrimaryDb();
-		$isReplicated = $this->isSeenDbReplicated();
 		$fname = __METHOD__;
 		$dbw->onTransactionCommitOrIdle(
-			function () use ( $dbw, $id, $hash, $isReplicated, $fname ) {
-				// Check if the user/hash is in the primary DB, as late as
-				// possible before the insert. (Trying to reduce the number of
-				// no-op queries in the binlog)
-				if ( $isReplicated && $this->userIsInCurrentSeenBucket( $id, $hash, true ) ) {
-					return;
-				}
-
+			function () use ( $dbw, $id, $hash, $fname ) {
 				$dbw->newInsertQueryBuilder()
 					->insert( 'loginnotify_seen_net' )
 					->ignore()
@@ -845,13 +807,12 @@ class LoginNotify implements LoggerAwareInterface {
 			->limit( 1 )
 			->caller( __METHOD__ )
 			->fetchRow();
-		if ( !$minRow ) {
-			return null;
-		} elseif ( $minRow->lsn_time_bucket < $this->getMinBucket() ) {
+
+		if ( $minRow && ( $minRow->lsn_time_bucket < $this->getMinBucket() ) ) {
 			return (int)$minRow->lsn_id;
-		} else {
-			return null;
 		}
+
+		return null;
 	}
 
 	/**
@@ -868,9 +829,9 @@ class LoginNotify implements LoggerAwareInterface {
 		$dbw->newDeleteQueryBuilder()
 			->delete( 'loginnotify_seen_net' )
 			->where( [
-				'lsn_id >= ' . $dbw->addQuotes( $minId ),
-				'lsn_id < ' . $dbw->addQuotes( $maxId ),
-				'lsn_time_bucket < ' . $dbw->addQuotes( $this->getMinBucket() )
+				$dbw->expr( 'lsn_id', '>=', $minId ),
+				$dbw->expr( 'lsn_id', '<', $maxId ),
+				$dbw->expr( 'lsn_time_bucket', '<', $this->getMinBucket() )
 			] )
 			->caller( __METHOD__ )
 			->execute();
@@ -913,7 +874,7 @@ class LoginNotify implements LoggerAwareInterface {
 		if ( $cookie === '' ) {
 			$result = self::USER_NO_INFO;
 		} else {
-			list( $userKnown, ) = $this->checkAndGenerateCookie( $user, $cookie );
+			[ $userKnown, ] = $this->checkAndGenerateCookie( $user, $cookie );
 			$result = $userKnown ? self::USER_KNOWN : self::USER_NOT_KNOWN;
 		}
 

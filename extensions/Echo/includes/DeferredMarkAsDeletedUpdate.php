@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications;
 
-use DeferrableUpdate;
-use DeferredUpdates;
+use MediaWiki\Deferred\DeferrableUpdate;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\Notifications\Controller\ModerationController;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Logger\LoggerFactory;

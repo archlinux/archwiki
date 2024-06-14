@@ -156,7 +156,7 @@ const UiElement = require( './ui/mmv.ui.js' );
 			// Make sure that the metadata is going to be at the bottom when it appears
 			// 83 is the height of the top metadata area. Which can't be measured by
 			// reading the DOM at this point of the execution, unfortunately
-			this.$postDiv.css( 'top', `${$( window ).height() - 83}px` );
+			this.$postDiv.css( 'top', `${ $( window ).height() - 83 }px` );
 
 			// Re-appending the same content can have nasty side-effects
 			// Such as the browser leaving fullscreen mode if the fullscreened element is part of it
@@ -306,7 +306,7 @@ const UiElement = require( './ui/mmv.ui.js' );
 		 * Enters fullscreen mode.
 		 */
 		enterFullscreen() {
-			var el = this.$main.get( 0 );
+			const el = this.$main.get( 0 );
 			if ( el.requestFullscreen ) {
 				el.requestFullscreen();
 			}
@@ -468,7 +468,7 @@ const UiElement = require( './ui/mmv.ui.js' );
 		 * @param {boolean} showNextButton Whether the next button should be revealed or not
 		 */
 		updateControls( showPrevButton, showNextButton ) {
-			const prevNextTop = `${( this.$imageWrapper.height() / 2 ) - 60}px`;
+			const prevNextTop = `${ ( this.$imageWrapper.height() / 2 ) - 60 }px`;
 
 			if ( this.isFullscreen ) {
 				this.$postDiv.css( 'top', '' );

@@ -4,7 +4,7 @@
  */
 class Less_Tree_UnitConversions {
 
-	public static $groups = [ 'length','duration','angle' ];
+	public static $groups = [ 'length', 'duration', 'angle' ];
 
 	public static $length = [
 		'm' => 1,
@@ -22,9 +22,9 @@ class Less_Tree_UnitConversions {
 		];
 
 	public static $angle = [
-		'rad' => 0.1591549430919,	// 1/(2*M_PI),
-		'deg' => 0.002777778, 		// 1/360,
-		'grad' => 0.0025,			// 1/400,
+		'rad' => 0.1591549430919, // 1/(2*M_PI),
+		'deg' => 0.002777778, // 1/360,
+		'grad' => 0.0025, // 1/400,
 		'turn' => 1
 		];
 

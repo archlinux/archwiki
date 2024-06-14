@@ -1,5 +1,8 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use IDBAccessObject;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -13,16 +16,12 @@ use MediaWiki\User\User;
  * @group Database
  * @group medium
  *
- * @covers ApiDelete
+ * @covers \ApiDelete
  */
 class ApiDeleteTest extends ApiTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'change_tag', 'change_tag_def', 'logging', 'watchlist', 'watchlist_expiry' ]
-		);
 
 		$this->overrideConfigValue( MainConfigNames::WatchlistExpiry, true );
 	}
@@ -44,7 +43,7 @@ class ApiDeleteTest extends ApiTestCase {
 		$this->assertSame( $title->getPrefixedText(), $apiResult['delete']['title'] );
 		$this->assertArrayHasKey( 'logid', $apiResult['delete'] );
 
-		$this->assertFalse( $title->exists( Title::READ_LATEST ) );
+		$this->assertFalse( $title->exists( IDBAccessObject::READ_LATEST ) );
 	}
 
 	public function testBatchedDelete() {
@@ -72,7 +71,7 @@ class ApiDeleteTest extends ApiTestCase {
 		// Run the jobs
 		$this->runJobs();
 
-		$this->assertFalse( $title->exists( Title::READ_LATEST ) );
+		$this->assertFalse( $title->exists( IDBAccessObject::READ_LATEST ) );
 	}
 
 	public function testDeleteNonexistent() {
@@ -96,7 +95,7 @@ class ApiDeleteTest extends ApiTestCase {
 		] )[0];
 
 		$this->assertSame( $title->getPrefixedText(), $apiResult['delete']['title'] );
-		$this->assertFalse( $talkPage->exists( Title::READ_LATEST ) );
+		$this->assertFalse( $talkPage->exists( IDBAccessObject::READ_LATEST ) );
 	}
 
 	public function testDeleteAssociatedTalkPageNonexistent() {
@@ -129,7 +128,7 @@ class ApiDeleteTest extends ApiTestCase {
 				'token' => $user->getEditToken(),
 			], null, null, $user );
 		} finally {
-			$this->assertTrue( $title->exists( Title::READ_LATEST ) );
+			$this->assertTrue( $title->exists( IDBAccessObject::READ_LATEST ) );
 		}
 	}
 
@@ -146,7 +145,7 @@ class ApiDeleteTest extends ApiTestCase {
 			'tags' => 'custom tag',
 		] );
 
-		$this->assertFalse( $title->exists( Title::READ_LATEST ) );
+		$this->assertFalse( $title->exists( IDBAccessObject::READ_LATEST ) );
 
 		$this->assertSame( 'custom tag', $this->getDb()->newSelectQueryBuilder()
 			->select( 'ctd_name' )
@@ -177,7 +176,7 @@ class ApiDeleteTest extends ApiTestCase {
 				'tags' => 'custom tag',
 			] );
 		} finally {
-			$this->assertTrue( $title->exists( Title::READ_LATEST ) );
+			$this->assertTrue( $title->exists( IDBAccessObject::READ_LATEST ) );
 		}
 	}
 
@@ -197,7 +196,7 @@ class ApiDeleteTest extends ApiTestCase {
 		try {
 			$this->doApiRequestWithToken( [ 'action' => 'delete', 'title' => $title->getPrefixedText() ] );
 		} finally {
-			$this->assertTrue( $title->exists( Title::READ_LATEST ) );
+			$this->assertTrue( $title->exists( IDBAccessObject::READ_LATEST ) );
 		}
 	}
 
@@ -232,7 +231,7 @@ class ApiDeleteTest extends ApiTestCase {
 		$user = $this->getTestSysop()->getUser();
 
 		$this->editPage( $title, 'Some text' );
-		$this->assertTrue( $title->exists( Title::READ_LATEST ) );
+		$this->assertTrue( $title->exists( IDBAccessObject::READ_LATEST ) );
 		$watchlistManager = $this->getServiceContainer()->getWatchlistManager();
 		$watchlistManager->addWatch( $user, $title );
 		$this->assertTrue( $watchlistManager->isWatched( $user, $title ) );
@@ -243,7 +242,7 @@ class ApiDeleteTest extends ApiTestCase {
 			'watchlist' => 'unwatch',
 		] );
 
-		$this->assertFalse( $title->exists( Title::READ_LATEST ) );
+		$this->assertFalse( $title->exists( IDBAccessObject::READ_LATEST ) );
 		$this->assertFalse( $watchlistManager->isWatched( $user, $title ) );
 	}
 }

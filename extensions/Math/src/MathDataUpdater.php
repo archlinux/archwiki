@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Math;
 
-use ParserOutput;
+use MediaWiki\Parser\ParserOutput;
 use Wikibase\DataModel\Services\Entity\PropertyDataTypeMatcher;
 use Wikibase\DataModel\Statement\Statement;
 use Wikibase\Repo\ParserOutput\StatementDataUpdater;

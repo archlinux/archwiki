@@ -9,6 +9,7 @@
 	"tag-editcheck-newcontent-description": "Labi maali niŋ ka baŋ ni yɛla pala nyɛla din pahi yaɣili ŋɔ",
 	"tag-editcheck-newreference-description": "Kundivihirili nyɛla din pahi yaɣili ŋɔ",
 	"tag-editcheck-references-description": "Labi lihi ka baŋ ni kundivihira nyɛla din ni tooi pahi",
+	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|lihi maali niŋ (kundivihira) activated]]",
 	"tag-editcheck-references-activated-description": "Labi lihi ka baŋ ni kundivihira nyɛla din ni tooi pahi ka UI maa di wuhi",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Nin'nyabu mali niŋ ]]",
 	"tag-visualeditor-description": "Zaŋmi [[{{MediaWiki:visualeditor-descriptionpagelink}}|visual editor]]m-maali niŋ",

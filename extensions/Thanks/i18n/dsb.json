@@ -20,7 +20,6 @@
 	"echo-pref-subscription-edit-thank": "Źěkujo se mě za móju změnu.",
 	"echo-pref-tooltip-edit-thank": "Informěruj mě, gaž něchten źěkujo se mě za změnu, kótaruž som cynił.",
 	"echo-category-title-edit-thank": "Wjeliki źěk",
-	"notification-thanks-diff-link": "twója změna",
 	"log-name-thanks": "Źěkowy protokol",
 	"log-description-thanks": "Dołojce jo lisćina wužywarjow, kótarymž druge wužywarje su se źěkowali.",
 	"logentry-thanks-thank": "$1 jo {{GENDER:$4|$3}} {{GENDER:$2|źěkował|źěkowała}}"

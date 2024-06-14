@@ -296,6 +296,8 @@
 	"visualeditor-preference-tabs-prefer-ve": "Увек отвори визуелни уређивач (ако је могуће)",
 	"visualeditor-preference-tabs-prefer-wt": "Увек отвори уређивач извора",
 	"visualeditor-preference-tabs-remember-last": "Запамти мој последњи уређивач",
+	"visualeditor-preference-collab-label": "Удружено уређивање",
+	"visualeditor-preference-collab-description": "Позовите друге кориснике да се придруже Вашој уређивачкој сесији у Визуелном уређивачу",
 	"visualeditor-rebase-client-export": "Извоз",
 	"visualeditor-rebase-client-export-start": "Извези…",
 	"visualeditor-rebase-client-import": "Увези",

@@ -12,18 +12,23 @@
  * @return {Element}
  */
 function addDefaultPortlet( portlet ) {
+	portlet.classList.add( 'vector-menu' );
 	const ul = portlet.querySelector( 'ul' );
 	if ( !ul ) {
 		return portlet;
 	}
 	ul.classList.add( 'vector-menu-content-list' );
 	const label = portlet.querySelector( 'label' );
+	const labelId = `${ portlet.id }-label`;
 	if ( label ) {
 		const labelDiv = document.createElement( 'div' );
+		labelDiv.id = labelId;
 		labelDiv.classList.add( 'vector-menu-heading' );
-		labelDiv.innerHTML = label.innerText;
+		labelDiv.innerHTML = label.textContent || '';
 		portlet.insertBefore( labelDiv, label );
 		label.remove();
+		portlet.setAttribute( 'aria-labelledby', labelId );
+		portlet.setAttribute( 'role', 'navigation' );
 	}
 	let wrapper = portlet.querySelector( 'div:last-child' );
 	if ( wrapper ) {
@@ -37,7 +42,10 @@ function addDefaultPortlet( portlet ) {
 		wrapper.appendChild( ul );
 		portlet.appendChild( wrapper );
 	}
-	portlet.classList.add( 'vector-menu', 'vector-menu-portal' );
+	// menus inside the legacy sidebar should have vector-menu-portal class.
+	if ( portlet.closest( '.vector-legacy-sidebar' ) ) {
+		portlet.classList.add( 'vector-menu-portal' );
+	}
 
 	return portlet;
 }
@@ -50,12 +58,27 @@ function addDefaultPortlet( portlet ) {
  * @return {Element}
  */
 function addPortletHandler( portlet ) {
+	const parent = /** @type {HTMLElement} */( portlet.parentNode );
+	// Note if there is a parent, it's been appended to the DOM so we can determine
+	// its type.
+	if ( parent && parent.id === 'right-navigation' ) {
+		const id = portlet.id;
+		portlet.classList.add( 'vector-menu-dropdown' );
+		const checkbox = document.createElement( 'input' );
+		checkbox.type = 'checkbox';
+		checkbox.id = `${ id }-checkbox`;
+		checkbox.setAttribute( 'role', 'button' );
+		checkbox.setAttribute( 'aria-haspopup', 'true' );
+		checkbox.setAttribute( 'data-event-name', `ui.dropdown-${ id }` );
+		checkbox.setAttribute( 'class', 'vector-menu-checkbox' );
+		checkbox.setAttribute( 'aria-labelledby', `${ id }-label` );
+		portlet.prepend( checkbox );
+	}
 	portlet.classList.remove( 'mw-portlet-js' );
 	return addDefaultPortlet( portlet );
 }
 
 /**
- *
  * @return {{addPortletHandler: (function(Element): Element)}}
  */
 function main() {

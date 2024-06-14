@@ -28,7 +28,6 @@ class MathRestbaseInterfaceTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals( '\\sin x^{2}', $rbi->getCheckedTex() );
 		$this->assertStringContainsString( '<mi>sin</mi>', $rbi->getMathML() );
 		$this->assertStringContainsString( '/svg/RESOURCE_LOCATION', $rbi->getFullSvgUrl() );
-		$this->assertStringContainsString( '/png/RESOURCE_LOCATION', $rbi->getFullPngUrl() );
 	}
 
 	public function testBatchEvaluate() {

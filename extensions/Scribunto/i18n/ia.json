@@ -4,6 +4,7 @@
 			"McDutchie"
 		]
 	},
+	"content-model-scribunto": "Modulo Scribunto",
 	"scribunto-desc": "Structura pro incorporar linguages de script in paginas de MediaWiki",
 	"scribunto-line": "al linea $1",
 	"scribunto-module-line": "in $1 al linea $2",

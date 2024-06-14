@@ -23,7 +23,6 @@
 	"cite_error_included_references": "Falta la etiqueta final de <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Esisten etiquetes <code>&lt;ref&gt;</code> pa un grupu llamáu \"$1\", pero nun s'alcontró la etiqueta <code>&lt;references group=\"$1\"/&gt;</code> correspondiente",
 	"cite_error_references_group_mismatch": "La etiqueta <code>&lt;ref&gt;</code> en <code>&lt;references&gt;</code> tien un conflictu col atributu de grupu \"$1\".",
-	"cite_error_references_missing_group": "La etiqueta <code>&lt;ref&gt;</code> definida en <code>&lt;references&gt;</code> tien l'atributu de grupu \"$1\" que nun apaez nel testu anterior.",
 	"cite_error_references_missing_key": "La etiqueta <code>&lt;ref&gt;</code> col nome \"$1\" definida en <code>&lt;references&gt;</code> nun s'utiliza nel testu anterior.",
 	"cite_error_references_no_key": "La etiqueta <code>&lt;ref&gt;</code> definida en <code>&lt;references&gt;</code> nun tien dengún atributu de nome.",
 	"cite_error_empty_references_define": "La etiqueta <code>&lt;ref&gt;</code> definida en <code>&lt;references&gt;</code> col nome \"$1\" nun tien conteníu.",

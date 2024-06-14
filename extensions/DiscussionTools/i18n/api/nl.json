@@ -25,6 +25,8 @@
 	"apihelp-discussiontoolsedit-summary": "Plaats een bericht op een discussiepagina.",
 	"apihelp-discussiontoolsfindcomment-summary": "Een opmerking zoeken op basis van de ID of de naam.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "Identificatiecode of naam van de reactie",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Kop-hashfragment",
+	"apihelp-discussiontoolsfindcomment-param-page": "Pagina waarop het kop-hashfragment ooit bestond",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Namen van de onderwerpen die moeten worden gecontroleerd",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "De abonnementsstatussen van de gegeven onderwerpen ontvangen.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Het te gebruiken versienummer (standaard de laatste versie).",

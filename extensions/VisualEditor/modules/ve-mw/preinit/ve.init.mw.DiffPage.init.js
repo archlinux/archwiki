@@ -1,7 +1,7 @@
 /*!
  * VisualEditor MediaWiki DiffPage init.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -144,7 +144,7 @@
 		reviewModeButtonSelect.on( 'select', onReviewModeButtonSelectSelect );
 		reviewModeButtonSelect.on( 'choose', onReviewModeButtonSelectChoose );
 		$( '.ve-init-mw-diffPage-diffMode' ).empty().append( reviewModeButtonSelect.$element );
-		reviewModeButtonSelect.selectItemByData( initMode );
+		reviewModeButtonSelect.selectItemByData( mode );
 	} );
 
 	mw.hook( 'wikipage.diff.wikitextBodyUpdate' ).add( function ( $wikitextBody ) {

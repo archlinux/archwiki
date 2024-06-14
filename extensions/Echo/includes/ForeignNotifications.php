@@ -4,8 +4,8 @@ namespace MediaWiki\Extension\Notifications;
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
-use MWTimestamp;
 
 /**
  * Caches the result of UnreadWikis::getUnreadCounts() and interprets the results in various useful ways.

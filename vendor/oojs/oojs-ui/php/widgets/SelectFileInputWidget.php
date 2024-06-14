@@ -20,16 +20,31 @@ class SelectFileInputWidget extends InputWidget {
 	protected $button;
 	/** @var string|null */
 	protected $icon;
+	/** @var bool */
+	protected $droppable;
+	/** @var bool */
+	protected $buttonOnly;
+	/** @var bool */
+	protected $showDropTarget;
+	/** @var float */
+	protected $thumbnailSizeLimit;
 
 	/**
 	 * @param array $config Configuration options
 	 *      - string[]|null $config['accept'] MIME types to accept. null accepts all types.
-	 *  (default: null)
-	 *      - bool $config['multiple'] Allow multiple files to be selected. (default: false)
+	 *          (default: null)
+	 *      - bool $config['multiple'] Allow multiple files to be selected.
 	 *      - string $config['placeholder'] Text to display when no file is selected.
 	 *      - array $config['button'] Config to pass to select file button.
 	 *      - string $config['icon'] Icon to show next to file info
-	 *  and show a preview (for performance).
+	 *          and show a preview (for performance).
+	 *      - boolean $config['droppable'] Whether to accept files by drag and drop. (default: true)
+	 *      - boolean $config['buttonOnly'] Show only the select file button, no info field. Requires
+	 *          showDropTarget to be false.
+	 *      - boolean $config['showDropTarget'] Whether to show a drop target. Requires droppable to be
+	 *          true.
+	 *      - number $config['thumbnailSizeLimit'] File size limit in MiB above which to not try and show a
+	 *          preview (for performance). (default: 20)
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
@@ -41,6 +56,10 @@ class SelectFileInputWidget extends InputWidget {
 		$this->placeholder = $config['placeholder'] ?? null;
 		$this->button = $config['button'] ?? null;
 		$this->icon = $config['icon'] ?? null;
+		$this->droppable = $config['droppable'] ?? true;
+		$this->buttonOnly = $config['buttonOnly'] ?? false;
+		$this->showDropTarget = $config['showDropTarget'] ?? false;
+		$this->thumbnailSizeLimit = $config['thumbnailSizeLimit'] ?? 20;
 
 		// Traits
 		$this->initializeRequiredElement(
@@ -80,6 +99,18 @@ class SelectFileInputWidget extends InputWidget {
 		}
 		if ( $this->icon !== null ) {
 			$config['icon'] = $this->icon;
+		}
+		if ( $this->droppable !== null ) {
+			$config['droppable'] = $this->droppable;
+		}
+		if ( $this->buttonOnly !== null ) {
+			$config['buttonOnly'] = $this->buttonOnly;
+		}
+		if ( $this->showDropTarget !== null ) {
+			$config['showDropTarget'] = $this->showDropTarget;
+		}
+		if ( $this->thumbnailSizeLimit !== null ) {
+			$config['thumbnailSizeLimit'] = $this->thumbnailSizeLimit;
 		}
 		return parent::getConfig( $config );
 	}

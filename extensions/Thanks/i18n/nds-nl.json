@@ -20,7 +20,6 @@
 	"echo-pref-subscription-edit-thank": "Bedank m'n veur mien bewarking",
 	"echo-pref-tooltip-edit-thank": "Stuur m'n n melding as der ene mien bedankt veur n bewarking die'k an-ebröcht hebbe.",
 	"echo-category-title-edit-thank": "Bedankt",
-	"notification-thanks-diff-link": "joew bewarking",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|hef}} {{GENDER:$4|joe}} bedankt veur joew bewarking op '''$3'''.",
 	"log-name-thanks": "Bedankjeslogboek",
 	"log-description-thanks": "Hieronder zie'j n lieste mit gebrukers die deur aandere gebrukers bedankt bin.",
@@ -30,6 +29,5 @@
 	"notification-link-text-view-post": "Reaksie bekieken",
 	"thanks-error-invalidpostid": "Berichtnummer is niet geldig.",
 	"flow-thanks-confirmation-special": "Wil jy een oapenbåre dankbetüging stüren vöär disse reakty?",
-	"flow-thanks-thanked-notice": "$1 hef joew bedankjen ontvangen veur {{GENDER:$2|zien|heur|zien}} reaksie.",
-	"notification-flow-thanks-post-link": "joew reaksie"
+	"flow-thanks-thanked-notice": "$1 hef joew bedankjen ontvangen veur {{GENDER:$2|zien|heur|zien}} reaksie."
 }

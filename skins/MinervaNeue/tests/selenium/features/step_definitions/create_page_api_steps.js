@@ -15,7 +15,7 @@ const { ArticlePage } = require( '../support/world' ),
 const iAmInAWikiThatHasCategories = ( title ) => {
 	const msg = 'This page is used by Selenium to test category related features.',
 		wikitext = `
-            ${msg}
+            ${ msg }
 
             [[Category:Test category]]
             [[Category:Selenium artifacts]]
@@ -46,7 +46,7 @@ const iAmInAWikiThatHasCategories = ( title ) => {
 
 const iAmOnAPageThatHasTheFollowingEdits = function ( table ) {
 	const randomString = Math.random().toString( 36 ).slice( 7 ),
-		pageTitle = `Selenium_diff_test_${randomString}`,
+		pageTitle = `Selenium_diff_test_${ randomString }`,
 		edits = table.rawTable.map( ( row, i ) =>
 			[ i === 0 ? 'create' : 'edit', pageTitle, row[ 0 ] ] );
 
@@ -55,10 +55,12 @@ const iAmOnAPageThatHasTheFollowingEdits = function ( table ) {
 		return bot.loginGetEditToken( {
 			username: browser.options.username,
 			password: browser.options.password,
-			apiUrl: `${browser.options.baseUrl}/api.php`
+			apiUrl: `${ browser.options.baseUrl }/api.php`
 		} )
 			.then( () => bot.batch( edits ) )
-			.catch( ( err ) => { throw err; } );
+			.catch( ( err ) => {
+				throw err;
+			} );
 	} );
 
 	browser.call( () => RunJobs.run() );
@@ -91,7 +93,7 @@ const watch = ( title ) => {
 };
 
 const iAmViewingAWatchedPage = () => {
-	const title = `I am on the "Selenium mobile watched page test ${Date.now()}`;
+	const title = `I am on the "Selenium mobile watched page test ${ Date.now() }`;
 	browser.call( () => {
 		return createPage( title, 'watch test' );
 	} );
@@ -111,10 +113,10 @@ const iAmViewingAnUnwatchedPage = async () => {
 };
 
 const iAmOnATalkPageWithNoTalkTopics = () => {
-	const title = `Selenium talk test ${new Date()}`;
+	const title = `Selenium talk test ${ new Date() }`;
 
 	createPage( title, 'Selenium' );
-	iAmOnPage( `Talk:${title}` );
+	iAmOnPage( `Talk:${ title }` );
 };
 
 module.exports = {

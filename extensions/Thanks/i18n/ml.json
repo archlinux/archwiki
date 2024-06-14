@@ -36,7 +36,6 @@
 	"echo-pref-subscription-edit-thank": "എന്റെ തിരുത്തിന് എനിക്ക് കൃതജ്ഞത രേഖപ്പെടുത്തുക",
 	"echo-pref-tooltip-edit-thank": "ഞാൻ ചെയ്ത തിരുത്തിന് ആരെങ്കിലും നന്ദി രേഖപ്പെടുത്തിയാൽ എന്നെ അറിയിക്കുക.",
 	"echo-category-title-edit-thank": "നന്ദി",
-	"notification-thanks-diff-link": "താങ്കൾ ചെയ്ത തിരുത്തിന്",
 	"notification-header-rev-thank": "'''$3''' താളിൽ താങ്കൾ ചെയ്ത തിരുത്തിന്  $1 {{GENDER:$4|താങ്കൾക്ക്}} {{GENDER:$2|നന്ദി രേഖപ്പെടുത്തി}}.",
 	"notification-header-creation-thank": "<strong>$3</strong> സൃഷ്ടിച്ചതിന് $1 {{GENDER:$4|താങ്കൾക്ക്}} {{GENDER:$2|നന്ദി രേഖപ്പെടുത്തി}}.",
 	"notification-header-log-thank": "<strong>$3</strong> താളുമായി ബന്ധപ്പെട്ട പ്രവൃത്തിക്ക് $1 {{GENDER:$4|താങ്കൾക്ക്}} {{GENDER:$2|നന്ദി രേഖപ്പെടുത്തി}}.",
@@ -55,7 +54,6 @@
 	"thanks-error-invalidpostid": "കുറിപ്പിന്റെ ഐ.ഡി. സാധുവല്ല.",
 	"flow-thanks-confirmation-special": "ഈ കുറിപ്പിന് താങ്കളുടെ പരസ്യമായി കാണാവുന്ന നന്ദി അറിയിക്കുക?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|താങ്കൾ}} $1 എന്ന ഉപയോക്താവിനെ {{GENDER:$2|അദ്ദേഹത്തിന്റെ}} അഭിപ്രായത്തിന് നന്ദി അറിയിച്ചു.",
-	"notification-flow-thanks-post-link": "താങ്കളുടെ അഭിപ്രായം",
 	"notification-header-flow-thank": "\"<strong>$3</strong>\" എന്ന ഭാഗത്ത് താങ്കൾ ഇട്ട കുറിപ്പിന് {{GENDER:$5|താങ്കൾക്ക്}} $1 {{GENDER:$2|നന്ദി രേഖപ്പെടുത്തി}}.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|താങ്കൾക്ക്}} {{GENDER:$2|നന്ദി രേഖപ്പെടുത്തി}}",
 	"notification-bundle-header-flow-thank": "\"<strong>$2</strong>\" താളിലെ അഭിപ്രായത്തിന് {{PLURAL:$1|ഒരാൾ|$1 ആൾക്കാർ|100=99+ ആൾക്കാർ}} {{GENDER:$3|താങ്കൾക്ക്}} നന്ദി രേഖപ്പെടുത്തി."

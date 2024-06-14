@@ -38,7 +38,6 @@
 	"echo-pref-subscription-edit-thank": "Agradecimientos pola mio edición",
 	"echo-pref-tooltip-edit-thank": "Avisame cuando alguién me de les gracies por una edición de mio.",
 	"echo-category-title-edit-thank": "Gracies",
-	"notification-thanks-diff-link": "la so edición",
 	"notification-header-rev-thank": "$1 {{GENDER:$4|dióte}} les {{GENDER:$2|gracies}} pola to edición sobro <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 {{GENDER:$4|dióte}} les {{GENDER:$2|gracies}} pola creación de <strong>$3</strong>.",
 	"notification-header-log-thank": "$1 {{GENDER:$4|dióte}} les {{GENDER:$2|gracies}} pola to aición rellacionada con <strong>$3</strong>.",
@@ -57,7 +56,6 @@
 	"thanks-error-invalidpostid": "La ID de publicación nun ye válida.",
 	"flow-thanks-confirmation-special": "¿Quies agradecer públicamente esti comentariu?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Agradecisti}} a $1 el {{GENDER:$2|so}} comentariu.",
-	"notification-flow-thanks-post-link": "el so comentariu",
 	"notification-header-flow-thank": "$1 {{GENDER:$5|dióte}} les {{GENDER:$2|gracies}} pol to comentariu en «<strong>$3</strong>».",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|dióte}} les {{GENDER:$2|gracies}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Una persona|$1 persones|100=99+ persones}} {{GENDER:$3|diéronte les gracies}} pol to comentariu en <strong>$2</strong>."

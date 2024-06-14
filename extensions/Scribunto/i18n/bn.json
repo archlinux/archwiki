@@ -3,12 +3,13 @@
 		"authors": [
 			"Aftab1995",
 			"Aftabuzzaman",
+			"Aishik Rehman",
 			"Bellayet",
 			"Bodhisattwa",
-			"আফতাবুজ্জামান",
-			"Aishik Rehman"
+			"আফতাবুজ্জামান"
 		]
 	},
+	"content-model-scribunto": "স্ক্রিবুন্তো মডিউল",
 	"scribunto-desc": "মিডিয়াওয়িকি পৃষ্ঠাগুলিতে স্ক্রিপ্টিং ভাষাগুলি গাঁথার জন্য ফ্রেমওয়ার্ক",
 	"scribunto-line": "$1 নং লাইনে",
 	"scribunto-module-line": "$1 এর $2 নং লাইনে",

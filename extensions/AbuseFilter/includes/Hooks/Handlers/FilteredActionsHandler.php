@@ -4,9 +4,9 @@ namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
 use ApiMessage;
 use Content;
-use DeferredUpdates;
 use IBufferingStatsdDataFactory;
 use IContextSource;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\AbuseFilter\BlockedDomainFilter;
 use MediaWiki\Extension\AbuseFilter\EditRevUpdater;
 use MediaWiki\Extension\AbuseFilter\FilterRunnerFactory;
@@ -19,11 +19,11 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\Hook\ArticleDeleteHook;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Status\Status;
 use MediaWiki\Storage\Hook\ParserOutputStashForEditHook;
 use MediaWiki\Title\Title;
-use Status;
+use MediaWiki\User\User;
 use UploadBase;
-use User;
 use WikiPage;
 
 /**

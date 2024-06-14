@@ -5,6 +5,8 @@
 		]
 	},
 	"math-desc": "<code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code> टॅगसब के बीचे गणितीय सूत्र रेण्डर् करी",
+	"popups-settings-option-math": "गणित",
+	"popups-settings-option-math-description": "गणितीय सूत्र समझावी ।",
 	"math-visualeditor-mwchemdialog-title": "रासायनिक सूत्र",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "शीघ्र सम्पादन",
 	"math-visualeditor-mwlatexdialog-card-formula": "सूत्र",

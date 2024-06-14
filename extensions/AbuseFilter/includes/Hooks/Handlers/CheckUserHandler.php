@@ -45,7 +45,7 @@ class CheckUserHandler implements
 	) {
 		if (
 			$this->userIdentityUtils->isNamed( $user ) &&
-			$this->filterUser->getUserIdentity()->getId() == $user->getId()
+			$this->filterUser->isSameUserAs( $user )
 		) {
 			$ip = '127.0.0.1';
 			$xff = false;
@@ -64,7 +64,7 @@ class CheckUserHandler implements
 	) {
 		if (
 			$this->userIdentityUtils->isNamed( $user ) &&
-			$this->filterUser->getUserIdentity()->getId() == $user->getId()
+			$this->filterUser->isSameUserAs( $user )
 		) {
 			$ip = '127.0.0.1';
 			$xff = false;
@@ -83,7 +83,7 @@ class CheckUserHandler implements
 	) {
 		if (
 			$this->userIdentityUtils->isNamed( $user ) &&
-			$this->filterUser->getUserIdentity()->getId() == $user->getId()
+			$this->filterUser->isSameUserAs( $user )
 		) {
 			$ip = '127.0.0.1';
 			$xff = false;

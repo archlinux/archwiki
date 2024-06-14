@@ -13,14 +13,23 @@ runInfo() {
 	"$PDFHANDLER_INFO" \
 		-enc 'UTF-8' \
 		-meta \
-		file.pdf > meta
+		file.pdf 1> meta
+
+	# Check for errors and forward them
+	if [ $? -ne 0 ]; then
+		exit 1;
+	fi
 
 	# Report metadata as UTF-8 text...and report page sizes for all pages
 	"$PDFHANDLER_INFO" \
 		-enc 'UTF-8' \
 		-l 9999999 \
-		file.pdf > pages
+		file.pdf 1> pages
 
+	# Check for errors and forward them
+	if [ $? -ne 0 ]; then
+		exit 1;
+	fi
 }
 
 runToText() {
@@ -34,10 +43,10 @@ runToText() {
 	echo $? > text_exit_code
 }
 
-if [ -x "$PDFHANDLER_INFO" ]; then
+if [ -x "$(command -v $PDFHANDLER_INFO)" ]; then
 	runInfo
 fi
 
-if [ -x "$PDFHANDLER_TOTEXT" ]; then
+if [ -x "$(command -v $PDFHANDLER_TOTEXT)" ]; then
 	runToText
 fi

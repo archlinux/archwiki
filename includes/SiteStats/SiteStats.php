@@ -162,7 +162,7 @@ class SiteStats {
 					->where(
 						[
 							'ug_group' => $group,
-							'ug_expiry IS NULL OR ug_expiry >= ' . $dbr->addQuotes( $dbr->timestamp() )
+							$dbr->expr( 'ug_expiry', '=', null )->or( 'ug_expiry', '>=', $dbr->timestamp() )
 						]
 					)
 					->caller( $fname )
@@ -299,7 +299,5 @@ class SiteStats {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SiteStats::class, 'SiteStats' );

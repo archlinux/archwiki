@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Tests\Rest;
 
+use EmptyBagOStuff;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Rest\BasicAccess\StaticBasicAuthorizer;
@@ -45,7 +46,11 @@ trait RestTestTrait {
 		$config = ( $params['config'] ?? [] ) + [
 			MainConfigNames::CanonicalServer => 'https://wiki.example.com',
 			MainConfigNames::InternalServer => 'http://api.local:8080',
-			MainConfigNames::RestPath => '/rest'
+			MainConfigNames::RestPath => '/rest',
+			MainConfigNames::RightsUrl => 'https://rights.url',
+			MainConfigNames::RightsText => 'your rights',
+			MainConfigNames::EmergencyContact => 'admin@test.test',
+			MainConfigNames::Sitename => 'Test Site',
 		];
 
 		$request = $params['request'] ?? new RequestData();
@@ -54,7 +59,7 @@ trait RestTestTrait {
 			$params['routeFiles'] ?? [ MW_INSTALL_PATH . '/tests/phpunit/unit/includes/Rest/testRoutes.json' ],
 			$params['extraRoutes'] ?? [],
 			$params['options'] ?? new ServiceOptions( Router::CONSTRUCTOR_OPTIONS, $config ),
-			$params['cacheBag'] ?? new \EmptyBagOStuff(),
+			$params['cacheBag'] ?? new EmptyBagOStuff(),
 			$params['responseFactory'] ?? new ResponseFactory( [] ),
 			$params['basicAuth'] ?? new StaticBasicAuthorizer(),
 			$params['authority'] ?? $authority,

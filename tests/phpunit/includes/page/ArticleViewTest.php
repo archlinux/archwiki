@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\FauxRequest;
@@ -72,8 +75,8 @@ class ArticleViewTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers Article::getOldId()
-	 * @covers Article::getRevIdFetched()
+	 * @covers \Article::getOldId()
+	 * @covers \Article::getRevIdFetched()
 	 */
 	public function testGetOldId() {
 		$revisions = [];
@@ -146,8 +149,8 @@ class ArticleViewTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers Article::getPage
-	 * @covers WikiPage::getRedirectTarget
+	 * @covers \Article::getPage
+	 * @covers \WikiPage::getRedirectTarget
 	 * @covers \MediaWiki\Page\RedirectLookup::getRedirectTarget
 	 */
 	public function testViewRedirect() {
@@ -277,7 +280,8 @@ class ArticleViewTest extends MediaWikiIntegrationTestCase {
 		$revisions = [];
 		$page = $this->getPage( __METHOD__, [ 1 => 'Test A', 2 => 'Test B' ], $revisions );
 		$idA = $revisions[1]->getId();
-		$this->setMwGlobals( 'wgTitle', $page->getTitle() );
+		$context = RequestContext::getMain();
+		$context->setTitle( $page->getTitle() );
 
 		// View the revision once (to get it into the cache)
 		$article = new Article( $page->getTitle(), $idA );
@@ -285,7 +289,6 @@ class ArticleViewTest extends MediaWikiIntegrationTestCase {
 
 		// Reset the output page and view the revision again (from ParserCache)
 		$article = new Article( $page->getTitle(), $idA );
-		$context = RequestContext::getMain();
 		$context->setOutput( new OutputPage( $context ) );
 		$article->setContext( $context );
 
@@ -728,7 +731,7 @@ class ArticleViewTest extends MediaWikiIntegrationTestCase {
 			RequestContext::getMain(),
 			$title,
 			[ $revisionId ],
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$services->getHookContainer(),
 			$services->getHtmlCacheUpdater(),
 			$services->getRevisionStore()

@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Metalhead64",
-			"McDutchie"
+			"McDutchie",
+			"Metalhead64"
 		]
 	},
 	"apihelp-scribunto-console-summary": "Internes Modul zur Verarbeitung von XHR-Anfragen der Scribunto-Konsole.",

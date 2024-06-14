@@ -14,8 +14,6 @@
 	 *  for popups.
 	 */
 	mw.echo.ui.SubGroupListWidget = function MwEchoUiSubGroupListWidget( controller, listModel, config ) {
-		var sourceURL;
-
 		this.$header = $( '<div>' )
 			.addClass( 'mw-echo-ui-subGroupListWidget-header' );
 
@@ -51,7 +49,7 @@
 			}
 		);
 
-		sourceURL = this.model.getSourceURL() ?
+		var sourceURL = this.model.getSourceURL() ?
 			this.model.getSourceURL().replace( '$1', 'Special:Notifications' ) :
 			null;
 		if ( sourceURL ) {
@@ -195,14 +193,13 @@
 	 *  If this is empty, the widget will request all the items from the model.
 	 */
 	mw.echo.ui.SubGroupListWidget.prototype.resetItemsFromModel = function ( items ) {
-		var i, widget,
-			itemWidgets = [],
+		var itemWidgets = [],
 			$elements = $();
 
 		items = items || this.model.getItems();
 
-		for ( i = 0; i < items.length; i++ ) {
-			widget = new mw.echo.ui.SingleNotificationItemWidget(
+		for ( var i = 0; i < items.length; i++ ) {
+			var widget = new mw.echo.ui.SingleNotificationItemWidget(
 				this.controller,
 				items[ i ],
 				{
@@ -231,10 +228,9 @@
 	 * @param {mw.echo.dm.NotificationItem[]} items Notification item models
 	 */
 	mw.echo.ui.SubGroupListWidget.prototype.onModelDiscardItems = function ( items ) {
-		var i,
-			itemWidgets = [];
+		var itemWidgets = [];
 
-		for ( i = 0; i < items.length; i++ ) {
+		for ( var i = 0; i < items.length; i++ ) {
 			itemWidgets.push( this.listWidget.getItemFromId( items[ i ].getId() ) );
 		}
 		this.listWidget.removeItems( itemWidgets );

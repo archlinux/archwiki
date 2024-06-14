@@ -46,9 +46,6 @@ class TimingMetric implements MetricInterface {
 	 */
 	private const TYPE_INDICATOR = "ms";
 
-	/** @var string|null */
-	private ?string $statsdNamespace = null;
-
 	/** @var BaseMetricInterface */
 	private BaseMetricInterface $baseMetric;
 
@@ -70,7 +67,7 @@ class TimingMetric implements MetricInterface {
 	 * @return void
 	 */
 	public function start(): void {
-		$this->startTime = microtime( true );
+		$this->startTime = hrtime( true );
 	}
 
 	/**
@@ -83,22 +80,30 @@ class TimingMetric implements MetricInterface {
 			trigger_error( "Stats: stop() called before start() for metric '{$this->getName()}'", E_USER_WARNING );
 			return;
 		}
-		$this->observe( ( microtime( true ) - $this->startTime ) * 1000 );
+		$value = ( hrtime( true ) - $this->startTime ) * 1e-6; // convert nanoseconds to milliseconds
+		$this->observe( $value );
 		$this->startTime = null;
 	}
 
 	/**
 	 * Records a previously calculated observation.
 	 *
-	 * @param float $value
+	 * Expects values in milliseconds.
+	 *
+	 * @param float $value milliseconds
 	 * @return void
 	 */
 	public function observe( float $value ): void {
-		if ( $this->statsdNamespace !== null ) {
-			$this->baseMetric->getStatsdDataFactory()->timing( $this->statsdNamespace, $value );
-			$this->statsdNamespace = null;
+		foreach ( $this->baseMetric->getStatsdNamespaces() as $namespace ) {
+			$this->baseMetric->getStatsdDataFactory()->timing( $namespace, $value );
 		}
-		$this->baseMetric->addSample( new Sample( $this->baseMetric->getLabelValues(), $value ) );
+
+		try {
+			$this->baseMetric->addSample( new Sample( $this->baseMetric->getLabelValues(), $value ) );
+		} catch ( IllegalOperationException $ex ) {
+			// Log the condition and give the caller something that will absorb calls.
+			trigger_error( $ex->getMessage(), E_USER_WARNING );
+		}
 	}
 
 	/** @inheritDoc */
@@ -119,6 +124,11 @@ class TimingMetric implements MetricInterface {
 	/** @inheritDoc */
 	public function getSamples(): array {
 		return $this->baseMetric->getSamples();
+	}
+
+	/** @inheritDoc */
+	public function getSampleCount(): int {
+		return $this->baseMetric->getSampleCount();
 	}
 
 	/** @inheritDoc */
@@ -156,9 +166,13 @@ class TimingMetric implements MetricInterface {
 	}
 
 	/** @inheritDoc */
-	public function copyToStatsdAt( string $statsdNamespace ) {
-		if ( $this->baseMetric->getStatsdDataFactory() !== null ) {
-			$this->statsdNamespace = $statsdNamespace;
+	public function copyToStatsdAt( $statsdNamespaces ) {
+		try {
+			$this->baseMetric->setStatsdNamespaces( $statsdNamespaces );
+		} catch ( InvalidArgumentException $ex ) {
+			// Log the condition and give the caller something that will absorb calls.
+			trigger_error( $ex->getMessage(), E_USER_WARNING );
+			return new NullMetric;
 		}
 		return $this;
 	}

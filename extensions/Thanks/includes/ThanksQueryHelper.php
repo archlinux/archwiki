@@ -5,20 +5,18 @@ use DBAccessObjectUtils;
 use IDBAccessObject;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserIdentity;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Query module
  */
 class ThanksQueryHelper {
-	/** @var TitleFactory */
 	private TitleFactory $titleFactory;
-	/** @var ILoadBalancer */
-	private ILoadBalancer $loadBalancer;
+	private IConnectionProvider $dbProvider;
 
-	public function __construct( TitleFactory $titleFactory, ILoadBalancer $loadBalancer ) {
+	public function __construct( TitleFactory $titleFactory, IConnectionProvider $dbProvider ) {
 		$this->titleFactory = $titleFactory;
-		$this->loadBalancer = $loadBalancer;
+		$this->dbProvider = $dbProvider;
 	}
 
 	/**
@@ -36,9 +34,7 @@ class ThanksQueryHelper {
 		int $limit = 1000,
 		int $flags = IDBAccessObject::READ_NORMAL
 	): int {
-		$loadBalancer = $this->loadBalancer;
-		list( $index, $options ) = DBAccessObjectUtils::getDBOptions( $flags );
-		$db = $loadBalancer->getConnection( $index );
+		$db = DBAccessObjectUtils::getDBFromRecency( $this->dbProvider, $flags );
 		$userPage = $this->titleFactory->newFromText( $userIdentity->getName(), NS_USER );
 		$logTitle = $userPage->getDBkey();
 		return $db->newSelectQueryBuilder()
@@ -54,6 +50,7 @@ class ThanksQueryHelper {
 				'log_title' => $logTitle,
 			] )
 			->limit( $limit )
+			->caller( __METHOD__ )
 			->fetchRowCount();
 	}
 }

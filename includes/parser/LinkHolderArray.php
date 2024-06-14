@@ -21,11 +21,13 @@
  * @ingroup Parser
  */
 
+use MediaWiki\Cache\LinkCache;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
 
 /**
@@ -166,7 +168,7 @@ class LinkHolderArray {
 		$output = $this->parent->getOutput();
 		$linkRenderer = $this->parent->getLinkRenderer();
 
-		$dbr = $services->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = $services->getConnectionProvider()->getReplicaDatabase();
 
 		# Sort by namespace
 		ksort( $this->internals );
@@ -268,7 +270,7 @@ class LinkHolderArray {
 
 		# Do the thing
 		$text = preg_replace_callback(
-			'/<!--LINK\'" (-?[\d+:]+)-->/',
+			'/<!--LINK\'" (-?[\d:]+)-->/',
 			static function ( array $matches ) use ( $replacePairs ) {
 				return $replacePairs[$matches[1]];
 			},
@@ -390,7 +392,7 @@ class LinkHolderArray {
 		}
 
 		// construct query
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 
 		$varRes = $dbr->newSelectQueryBuilder()
 			->select( LinkCache::getSelectFields() )

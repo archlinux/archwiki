@@ -1,7 +1,13 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
+use ApiMain;
+use ApiUsageException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\Api\ApiTestCase;
+use MediaWiki\Tests\Api\MockApiQueryBase;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\Title;
 
@@ -9,7 +15,7 @@ use MediaWiki\Title\Title;
  * @group API
  * @group Database
  * @group medium
- * @covers ApiQuery
+ * @covers \ApiQuery
  */
 class ApiQueryTest extends ApiTestCase {
 	use DummyServicesTrait;
@@ -60,7 +66,7 @@ class ApiQueryTest extends ApiTestCase {
 	public function testTitlesAreRejectedIfInvalid() {
 		$title = false;
 		while ( !$title || Title::newFromText( $title )->exists() ) {
-			$title = md5( mt_rand( 0, 100000 ) );
+			$title = md5( mt_rand( 0, 100_000 ) );
 		}
 
 		$data = $this->doApiRequest( [

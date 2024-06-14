@@ -4,25 +4,15 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 
 /**
- * @covers RevisionList
- * @covers RevisionListBase
- * @covers RevisionItem
- * @covers RevisionItemBase
+ * @covers \RevisionList
+ * @covers \RevisionListBase
+ * @covers \RevisionItem
+ * @covers \RevisionItemBase
  * @group Database
  *
  * @author DannyS712
  */
 class RevisionListTest extends MediaWikiIntegrationTestCase {
-
-	protected function setUp(): void {
-		parent::setUp();
-
-		$this->tablesUsed[] = 'revision';
-		$this->tablesUsed[] = 'page';
-		$this->tablesUsed[] = 'comment';
-		$this->tablesUsed[] = 'content';
-		$this->tablesUsed[] = 'user';
-	}
 
 	public function testGetType() {
 		$context = new RequestContext();

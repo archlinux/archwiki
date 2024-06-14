@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -9,7 +11,7 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group Database
  * @group Cache
- * @covers MessageCache
+ * @covers \MessageCache
  */
 class MessageCacheTest extends MediaWikiLangTestCase {
 
@@ -62,9 +64,7 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 	 * @return RevisionRecord
 	 */
 	private function makePage( $title, $lang, $content = null ) {
-		if ( $content === null ) {
-			$content = $lang;
-		}
+		$content ??= $lang;
 		if ( $lang !== $this->getServiceContainer()->getContentLanguage()->getCode() ) {
 			$title = "$title/$lang";
 		}
@@ -277,12 +277,11 @@ class MessageCacheTest extends MediaWikiLangTestCase {
 
 	public static function provideIsMainCacheable() {
 		$cases = [
-			// $message                $expected
-			[ 'allpages',              true ],
-			[ 'Allpages',              true ],
-			[ 'Allpages/bat',          true ],
+			[ 'allpages', true ],
+			[ 'Allpages', true ],
+			[ 'Allpages/bat', true ],
 			[ 'Conversiontable/zh-tw', true ],
-			[ 'My_special_message',    false ],
+			[ 'My_special_message', false ],
 		];
 		foreach ( [ null, 'en', 'fr' ] as $code ) {
 			foreach ( $cases as $case ) {

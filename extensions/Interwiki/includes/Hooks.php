@@ -59,18 +59,22 @@ class Hooks implements UserGetAllRightsHook {
 
 	public static function onInterwikiLoadPrefix( $prefix, &$iwData ) {
 		global $wgInterwikiCentralDB, $wgInterwikiCentralInterlanguageDB;
-		$isInterlanguageLink = MediaWikiServices::getInstance()->getLanguageNameUtils()->getLanguageName( $prefix );
+
+		$services = MediaWikiServices::getInstance();
+		$connectionProvider = $services->getConnectionProvider();
+		$isInterlanguageLink = $services->getLanguageNameUtils()->getLanguageName( $prefix );
 		if ( !$isInterlanguageLink && !self::$shouldSkipIWCheck ) {
 			// Check if prefix exists locally and skip
-			$lookup = MediaWikiServices::getInstance()->getInterwikiLookup();
+			$lookup = $services->getInterwikiLookup();
 			foreach ( $lookup->getAllPrefixes( null ) as $id => $localPrefixInfo ) {
 				if ( $prefix === $localPrefixInfo['iw_prefix'] ) {
 					return true;
 				}
 			}
-			// @phan-suppress-next-line PhanTypeMismatchArgument
-			$dbr = wfGetDB( DB_REPLICA, [], $wgInterwikiCentralDB );
-			$res = $dbr->selectRow(
+
+			$dbrCentralDB = $connectionProvider->getReplicaDatabase( $wgInterwikiCentralDB ?? false );
+
+			$res = $dbrCentralDB->selectRow(
 				'interwiki',
 				'*',
 				[ 'iw_prefix' => $prefix ],
@@ -85,9 +89,9 @@ class Hooks implements UserGetAllRightsHook {
 			return false;
 		} elseif ( $isInterlanguageLink && !self::$shouldSkipILCheck ) {
 			// Global interlanguage link? Whoo!
-			// @phan-suppress-next-line PhanTypeMismatchArgument
-			$dbr = wfGetDB( DB_REPLICA, [], $wgInterwikiCentralInterlanguageDB );
-			$res = $dbr->selectRow(
+			$dbrCentralLangDB = $connectionProvider->getReplicaDatabase( $wgInterwikiCentralInterlanguageDB ?? false );
+
+			$res = $dbrCentralLangDB->selectRow(
 				'interwiki',
 				'*',
 				[ 'iw_prefix' => $prefix ],

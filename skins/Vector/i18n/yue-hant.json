@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Deryck Chan",
+			"H78c67c",
 			"Hello903hello",
 			"Ktchankt",
 			"Moon0319",
@@ -9,12 +10,11 @@
 			"Roy17",
 			"Waihorace",
 			"Winston Sung",
-			"Yueman",
-			"H78c67c"
+			"Yueman"
 		]
 	},
 	"skinname-vector": "Vector",
-	"vector-skin-desc": "有2隻Vector外觀：\n* 2011 - MonoBook嘅摩登版，有新嘅樣，又有好多功能改進。\n* 2022 - 由維基媒體基金會[[mw:Desktop Improvements|桌面改善]]計劃搞出嚟嘅Vector版本。",
+	"vector-skin-desc": "提供2隻Vector外觀：\n* 2011 - MonoBook嘅摩登版，有新嘅樣，又有好多功能改進。\n* 2022 - 由維基媒體基金會[[mw:Desktop Improvements|桌面改善]]計劃搞出嚟嘅Vector版本。",
 	"prefs-vector-enable-vector-1-label": "用舊版Vector",
 	"prefs-vector-enable-vector-1-help": "來緊幾年，我哋會逐步更新Vector外觀。揀舊版Vector畀你用返Vector嘅舊版本（2019年12月版）。要瞭解更新詳情，請去我哋嘅[[mw:Reading/Web/Desktop_Improvements|計畫專頁]]。",
 	"vector-opt-out": "轉返舊貌",
@@ -27,7 +27,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1種語言}}",
 	"vector-no-language-button-label": "加語言",
 	"vector-no-language-button-aria-label": "呢篇文淨係喺呢種語言先有。喺第種語言開呢篇文。",
-	"vector-language-redirect-to-top": "其他語言嘅連結喺頁頂標題側邊。",
 	"vector-language-variant-switcher-label": "改語言變體",
 	"vector-action-addsection": "加主題",
 	"vector-action-delete": "剷走",
@@ -44,8 +43,14 @@
 	"vector-jumptosearch": "跳去搵嘢",
 	"vector-jumptocontent": "跳去內容",
 	"vector-more-actions": "多啲",
+	"vector-client-prefs-label": "閱讀設定",
 	"vector-feature-limited-width-name": "欄闊",
 	"vector-feature-custom-font-size-name": "打字大細",
+	"vector-feature-limited-width-0-label": "闊",
+	"vector-feature-limited-width-1-label": "標準",
+	"vector-feature-custom-font-size-0-label": "細",
+	"vector-feature-custom-font-size-1-label": "標準",
+	"vector-feature-custom-font-size-2-label": "大",
 	"vector-search-loader": "載入緊搜索提議",
 	"vector-searchsuggest-containing": "搵包含 <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> 嘅版",
 	"vector-intro-page": "Help:目錄",
@@ -77,11 +82,5 @@
 	"vector-toc-unpinned-popup": "頁面目錄搬咗嚟呢度。",
 	"vector-page-tools-unpinned-popup": "架撐目錄搬咗嚟呢度。",
 	"vector-main-menu-unpinned-popup": "主目錄搬咗嚟呢度。",
-	"vector-readability-survey-title": "維基媒體閱讀架撐",
-	"vector-readability-survey-fontSize": "字大細",
-	"vector-readability-survey-lineHeight": "行高",
-	"vector-readability-survey-paragraphSpacing": "段間距",
-	"vector-readability-survey-randomize": "是但",
-	"vector-readability-survey-reset": "重設",
-	"vector-readability-survey-share": "繼續"
+	"vector-2022-beta-preview-label": "Vector 2022 beta"
 }

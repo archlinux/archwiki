@@ -2,29 +2,33 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use Config;
-use ConfigFactory;
 use Exception;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\ConfigFactory;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\CommentItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\DatabaseCommentItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\DatabaseHeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\DatabaseThreadItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\HeadingItem;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Title\TitleFormatter;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\ActorStore;
-use MWTimestamp;
-use ReadOnlyMode;
+use MediaWiki\Utils\MWTimestamp;
 use stdClass;
-use TitleFormatter;
 use Wikimedia\NormalizedException\NormalizedException;
 use Wikimedia\Rdbms\DBError;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
+use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 use Wikimedia\Timestamp\TimestampException;
 
@@ -62,8 +66,6 @@ class ThreadItemStore {
 	/**
 	 * Returns true if the tables necessary for this feature haven't been created yet,
 	 * to allow failing softly in that case.
-	 *
-	 * @return bool
 	 */
 	public function isDisabled(): bool {
 		return !$this->config->get( 'DiscussionToolsEnablePermalinksBackend' );
@@ -83,6 +85,7 @@ class ThreadItemStore {
 		}
 
 		$queryBuilder = $this->getIdsNamesBuilder()
+			->caller( __METHOD__ )
 			->where( [
 				'it_itemname' => $itemName,
 				// Disallow querying for headings of sections that contain no comments.
@@ -121,7 +124,8 @@ class ThreadItemStore {
 			return [];
 		}
 
-		$queryBuilder = $this->getIdsNamesBuilder();
+		$queryBuilder = $this->getIdsNamesBuilder()
+			->caller( __METHOD__ );
 
 		// First find the name associated with the ID; then find by name. Otherwise we wouldn't find the
 		// latest revision in case comment ID changed, e.g. the comment was moved elsewhere on the page.
@@ -158,9 +162,130 @@ class ThreadItemStore {
 	}
 
 	/**
-	 * @param SelectQueryBuilder $queryBuilder
-	 * @return IResultWrapper
+	 * Find heading items matching some text which:
+	 *
+	 *  1. appeared at some point in the history of the targetpage, or if this returns no results:
+	 *  2. currently appear on a sub-page of the target page, or if this returns no results:
+	 *  3. currently appears on any page, but only if it is a unique match
+	 *
+	 * @param string|string[] $heading Heading text to match
+	 * @param int $articleId Article ID of the target page
+	 * @param TitleValue $title Title of the target page
+	 * @param int|null $limit
+	 * @return DatabaseThreadItem[]
 	 */
+	public function findNewestRevisionsByHeading(
+		$heading, int $articleId, TitleValue $title, ?int $limit = 50
+	): array {
+		if ( $this->isDisabled() ) {
+			return [];
+		}
+
+		$language = MediaWikiServices::getInstance()->getContentLanguage();
+		$heading = $language->truncateForDatabase( $heading, 80, '' );
+
+		$dbw = $this->dbProvider->getPrimaryDatabase();
+
+		// 1. Try to find items which have appeared on the page at some point
+		//    in its history.
+		$itemIdInPageHistoryQueryBuilder = $this->getIdsNamesBuilder()
+			->caller( __METHOD__ . ' case 1' )
+			->join( 'revision', null, [ 'rev_id = itr_revision_id' ] )
+			->where( $dbw->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
+				'h-' . $heading . '-',
+				$dbw->anyString()
+			) ) )
+			// Has once appered on the specified page ID
+			->where( [ 'rev_page' => $articleId ] )
+			->field( 'itid_itemid' );
+
+		$threadItems = $this->findNewestRevisionsByQuery( __METHOD__ . ' case 1',
+			$itemIdInPageHistoryQueryBuilder, $limit );
+
+		if ( count( $threadItems ) ) {
+			return $threadItems;
+		}
+
+		// 2. If the thread item's database hasn't been back-filled with historical revisions
+		//    then approach (1) may not work, instead look for matching headings the currently
+		//    appear on sub-pages, which matches the archiving convention on most wikis.
+		$itemIdInSubPageQueryBuilder = $this->getIdsNamesBuilder()
+			->caller( __METHOD__ . ' case 2' )
+			->join( 'page', null, [ 'page_id = itp_page_id' ] )
+			->where( $dbw->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
+				'h-' . $heading . '-',
+				$dbw->anyString()
+			) ) )
+			->where( $dbw->expr( 'page_title', IExpression::LIKE, new LikeValue(
+				$title->getText() . '/',
+				$dbw->anyString()
+			) ) )
+			->where( [ 'page_namespace' => $title->getNamespace() ] )
+			->field( 'itid_itemid' );
+
+		$threadItems = $this->findNewestRevisionsByQuery( __METHOD__ . ' case 2',
+			$itemIdInSubPageQueryBuilder, $limit );
+
+		if ( count( $threadItems ) ) {
+			return $threadItems;
+		}
+
+		// 3. Look for an "exact" match of the heading on any page. Because we are searching
+		//    so broadly, only return if there is exactly one match to the heading name.
+		$itemIdInAnyPageQueryBuilder = $this->getIdsNamesBuilder()
+			->caller( __METHOD__ . ' case 3' )
+			->join( 'page', null, [ 'page_id = itp_page_id', 'page_latest = itr_revision_id' ] )
+			->where( $dbw->expr( 'itid_itemid', IExpression::LIKE, new LikeValue(
+				'h-' . $heading . '-',
+				$dbw->anyString()
+			) ) )
+			->field( 'itid_itemid' )
+			// We only care if there is one, or more than one result
+			->limit( 2 );
+
+		// Check there is only one result in the sub-query
+		$itemIds = $itemIdInAnyPageQueryBuilder->fetchFieldValues();
+		if ( count( $itemIds ) === 1 ) {
+			return $this->findNewestRevisionsByQuery( __METHOD__ . ' case 3', $itemIds[ 0 ] );
+		}
+
+		return [];
+	}
+
+	/**
+	 * @param string $fname
+	 * @param SelectQueryBuilder|string $itemIdOrQueryBuilder Sub-query which returns item ID's, or an itemID
+	 * @param int|null $limit
+	 * @return DatabaseThreadItem[]
+	 */
+	private function findNewestRevisionsByQuery( $fname, $itemIdOrQueryBuilder, ?int $limit = 50 ): array {
+		$queryBuilder = $this->getIdsNamesBuilder()->caller( $fname . ' / ' . __METHOD__ );
+		if ( $itemIdOrQueryBuilder instanceof SelectQueryBuilder ) {
+			$queryBuilder
+				->where( [
+					'itid_itemid IN (' . $itemIdOrQueryBuilder->getSQL() . ')'
+				] );
+		} else {
+			$queryBuilder->where( [ 'itid_itemid' => $itemIdOrQueryBuilder ] );
+		}
+
+		if ( $limit !== null ) {
+			$queryBuilder->limit( $limit );
+		}
+
+		$result = $this->fetchItemsResultSet( $queryBuilder );
+		$revs = $this->fetchRevisionAndPageForItems( $result );
+
+		$threadItems = [];
+		foreach ( $result as $row ) {
+			$threadItem = $this->getThreadItemFromRow( $row, null, $revs );
+			if ( $threadItem ) {
+				$threadItems[] = $threadItem;
+			}
+		}
+		return $threadItems;
+	}
+
 	private function fetchItemsResultSet( SelectQueryBuilder $queryBuilder ): IResultWrapper {
 		$queryBuilder
 			->fields( [
@@ -184,6 +309,7 @@ class ThreadItemStore {
 			// Parent item ID (the string, not just the primary key)
 			->leftJoin(
 				$this->getIdsNamesBuilder()
+					->caller( __METHOD__ )
 					->fields( [
 						'itr_parent__itr_id' => 'itr_id',
 						'itr_parent__itid_itemid' => 'itid_itemid',
@@ -209,9 +335,10 @@ class ThreadItemStore {
 			$revs[ $row->itr_revision_id ] = null;
 		}
 		$revQueryBuilder = $this->dbProvider->getReplicaDatabase()->newSelectQueryBuilder()
-											->queryInfo( $this->revStore->getQueryInfo( [ 'page' ] ) )
-											->fields( $this->pageStore->getSelectFields() )
-											->where( $revs ? [ 'rev_id' => array_keys( $revs ) ] : '0=1' );
+			->caller( __METHOD__ )
+			->queryInfo( $this->revStore->getQueryInfo( [ 'page' ] ) )
+			->fields( $this->pageStore->getSelectFields() )
+			->where( $revs ? [ 'rev_id' => array_keys( $revs ) ] : '0=1' );
 		$revResult = $revQueryBuilder->fetchResultSet();
 		foreach ( $revResult as $row ) {
 			$revs[ $row->rev_id ] = $row;
@@ -219,12 +346,6 @@ class ThreadItemStore {
 		return $revs;
 	}
 
-	/**
-	 * @param stdClass $row
-	 * @param DatabaseThreadItemSet|null $set
-	 * @param array $revs
-	 * @return DatabaseThreadItem|null
-	 */
 	private function getThreadItemFromRow(
 		stdClass $row, ?DatabaseThreadItemSet $set, array $revs
 	): ?DatabaseThreadItem {
@@ -294,9 +415,6 @@ class ThreadItemStore {
 	/**
 	 * Find the thread item set for the given revision, assuming that it is the current revision of
 	 * its page.
-	 *
-	 * @param int $revId
-	 * @return DatabaseThreadItemSet
 	 */
 	public function findThreadItemsInCurrentRevision( int $revId ): DatabaseThreadItemSet {
 		if ( $this->isDisabled() ) {
@@ -323,9 +441,6 @@ class ThreadItemStore {
 		return $set;
 	}
 
-	/**
-	 * @return SelectQueryBuilder
-	 */
 	private function getIdsNamesBuilder(): SelectQueryBuilder {
 		$dbr = $this->dbProvider->getReplicaDatabase();
 
@@ -349,7 +464,7 @@ class ThreadItemStore {
 	 * @param RevisionRecord $rev For error logging
 	 * @return int Return value of whichever function succeeded
 	 */
-	private function findOrInsertIdButTryHarder(
+	private function findOrInsertId(
 		callable $find, callable $insert, bool &$didInsert, RevisionRecord $rev
 	) {
 		$dbw = $this->dbProvider->getPrimaryDatabase();
@@ -383,13 +498,13 @@ class ThreadItemStore {
 	 * Store the thread item set.
 	 *
 	 * @param RevisionRecord $rev
-	 * @param ThreadItemSet $threadItemSet
+	 * @param ContentThreadItemSet $threadItemSet
 	 * @throws TimestampException
 	 * @throws DBError
 	 * @throws Exception
 	 * @return bool
 	 */
-	public function insertThreadItems( RevisionRecord $rev, ThreadItemSet $threadItemSet ): bool {
+	public function insertThreadItems( RevisionRecord $rev, ContentThreadItemSet $threadItemSet ): bool {
 		if ( $this->readOnlyMode->isReadOnly() ) {
 			return false;
 		}
@@ -409,7 +524,7 @@ class ThreadItemStore {
 		// (This is not in a transaction. Orphaned rows in this table are harmlessly ignored,
 		// and long transactions caused performance issues on Wikimedia wikis: T315353#8218914.)
 		foreach ( $threadItemSet->getThreadItems() as $item ) {
-			$itemIdsId = $this->findOrInsertIdButTryHarder(
+			$itemIdsId = $this->findOrInsertId(
 				static function ( IReadableDatabase $dbw ) use ( $item, $method ) {
 					return $dbw->newSelectQueryBuilder()
 						->from( 'discussiontools_item_ids' )
@@ -437,7 +552,7 @@ class ThreadItemStore {
 		// (This is not in a transaction. Orphaned rows in this table are harmlessly ignored,
 		// and long transactions caused performance issues on Wikimedia wikis: T315353#8218914.)
 		foreach ( $threadItemSet->getThreadItems() as $item ) {
-			$itemsId = $this->findOrInsertIdButTryHarder(
+			$itemsId = $this->findOrInsertId(
 				static function ( IReadableDatabase $dbw ) use ( $item, $method ) {
 					return $dbw->newSelectQueryBuilder()
 						->from( 'discussiontools_items' )
@@ -608,7 +723,7 @@ class ThreadItemStore {
 						$itemRevisionsId = $itemRevisionsUpdateId;
 						$didInsert = true;
 					} else {
-						$itemRevisionsId = $this->findOrInsertIdButTryHarder(
+						$itemRevisionsId = $this->findOrInsertId(
 							static function ( IReadableDatabase $dbw ) use ( $itemRevisionsConds, $method ) {
 								return $dbw->newSelectQueryBuilder()
 									->from( 'discussiontools_item_revisions' )
@@ -625,7 +740,11 @@ class ThreadItemStore {
 									// which are causing conflicts (T339882, T343859#9185559)
 									->onDuplicateKeyUpdate()
 									->uniqueIndexFields( [ 'itr_itemid_id', 'itr_revision_id' ] )
-									->set( $newOrUpdateRevRow )
+									// Omit redundant updates to avoid warnings (T353432)
+									->set( array_diff_key(
+										$newOrUpdateRevRow,
+										[ 'itr_itemid_id' => true, 'itr_revision_id' => true ]
+									) )
 									->caller( $method )
 									->execute();
 								return $dbw->affectedRows() ? $dbw->insertId() : null;

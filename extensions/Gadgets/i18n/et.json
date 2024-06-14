@@ -10,7 +10,7 @@
 	"prefs-description-gadgets": "Luba lisafunktsioonid.",
 	"gadgets-prefstext": "Allpool on nimekiri eririistadest, mida kasutajad saavad oma konto jaoks sisse lülitada.\nEnamasti põhinevad need riistad JavaScriptil. Seega, et need töötaks, peab olema sinu brauseris JavaScript lubatud.\nPane tähele, et need riistad ei mõjuta kuidagi seda eelistuste lehekülge.\n\nSamuti pane tähele, et need eririistad ei ole osa MediaWiki tarkvarast ja on tavaliselt arendatud ja ülalpeetud sinu kohalikus vikis.\nKohalikud liidese administraatorid saavad muuta tööriistade [[MediaWiki:Gadgets-definition|määratlusi]], nende [[Special:Gadgets|kirjeldusi]] saavad muuta ka kohalikud administraatorid ning kõik kasutajad näevad iga tööriista lähtekoodi. Iga tööriista kasutajate arv selles vikis on ära toodud [[Special:GadgetUsage|tööriistade kasutuse arvandmestikus]].",
 	"gadgets-prefstext-safemode": "Tööriistad pole praegu saadaval, kuna kasutad turvalist režiimi. Palun [[#mw-input-wpforcesafemode|keela turvaline režiim]], et tööriistu kasutada.",
-	"gadgets": "Tööriistad",
+	"special-gadgets": "Tööriistad",
 	"gadgetusage": "Tööriistade kasutuse arvandmestik",
 	"gadgetusage-gadget": "Tööriist",
 	"gadgetusage-usercount": "Kasutajaid",
@@ -24,7 +24,7 @@
 	"gadgets-editdescription": "muuda kirjeldust",
 	"gadgets-viewdescription": "vaata kirjeldust",
 	"gadgets-uses": "Kasutab",
-	"gadgets-required-rights": "Tarvis on {{PLURAL:$2|järgmist õigust|järgmisi õigusi}}:\n\n$1",
+	"gadgets-required-rights": "Tarvis on {{PLURAL:$2|järgmist õigust|järgmisi õigusi}}: $1.",
 	"gadgets-required-skins": "Saadaval {{PLURAL:$2|järgmise kujundusega|järgmiste kujundustega}}: $1.",
 	"gadgets-required-actions": "Töötab {{PLURAL:$2|lehetoimingul \"$1\"|järgmistel lehetoimingutel: $1}}.",
 	"gadgets-required-namespaces": "Töötab {{PLURAL:$2|nimeruumis $1|järgmistes nimeruumides: $1}}.",
@@ -36,9 +36,5 @@
 	"gadgets-not-found": "Tööriista \"$1\" ei leidu.",
 	"gadgets-export-text": "Klõpsa nuppu \"{{int:gadgets-export-download}}\", et eksportida tööriist $1; salvesta allalaaditav fail;\nmine sihtvikis leheküljele Special:Import ja laadi see üles. Seejärel lisa järgnev leheküljele MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nSul peavad olema sihtvikis vajalikud õigused (kaasa arvatud õigus redigeerida süsteemi sõnumeid) ja üleslaaditavate failide kaudu importimine peab olema lubatud.",
 	"gadgets-export-download": "Laadi alla",
-	"right-gadgets-edit": "Muuta tööriistade JavaScripti ja CSS-lehekülgi",
-	"action-gadgets-edit": "muuta tööriistade JavaScripti ega CSS-lehekülgi",
-	"right-gadgets-definition-edit": "Muuta tööriistade määratlusi",
-	"action-gadgets-definition-edit": "muuta tööriistade määratlusi",
 	"gadgets-supports-urlload": "See tööriist toetab laadimist URL-i päringuparameetriga <code>?withgadget</code>."
 }

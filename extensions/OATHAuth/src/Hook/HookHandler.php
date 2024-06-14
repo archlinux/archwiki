@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\OATHAuth\Hook;
 
-use Config;
 use MediaWiki\Auth\AuthenticationRequest;
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\OATHAuth\OATHAuth;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsHook;
@@ -11,16 +11,17 @@ use MediaWiki\Permissions\Hook\UserGetRightsHook;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\SpecialPage\Hook\AuthChangeFormFieldsHook;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Hook\UserEffectiveGroupsHook;
+use MediaWiki\User\User;
 use MediaWiki\User\UserGroupManager;
+use MediaWiki\User\UserGroupMembership;
+use Message;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
 use OOUI\LabelWidget;
 use RequestContext;
-use SpecialPage;
-use User;
-use UserGroupMembership;
 
 class HookHandler implements
 	AuthChangeFormFieldsHook,
@@ -97,11 +98,10 @@ class HookHandler implements
 	public function onGetPreferences( $user, &$preferences ) {
 		$oathUser = $this->userRepo->findByUser( $user );
 
-		// If there is no existing module in user, and the user is not allowed to enable it,
+		// If there is no existing module for the user, and the user is not allowed to enable it,
 		// we have nothing to show.
-
 		if (
-			$oathUser->getModule() === null &&
+			!$oathUser->isTwoFactorAuthEnabled() &&
 			!$this->permissionManager->userHasRight( $user, 'oathauth-enable' )
 		) {
 			return true;
@@ -139,7 +139,7 @@ class HookHandler implements
 
 		$dbGroups = $this->userGroupManager->getUserGroups( $user );
 		$disabledGroups = $this->getDisabledGroups( $user, $dbGroups );
-		if ( $module === null && $disabledGroups ) {
+		if ( !$oathUser->isTwoFactorAuthEnabled() && $disabledGroups ) {
 			$context = RequestContext::getMain();
 			$list = [];
 			foreach ( $disabledGroups as $disabledGroup ) {
@@ -149,9 +149,9 @@ class HookHandler implements
 			$disabledInfo = [ 'oathauth-disabledgroups' => [
 				'type' => 'info',
 				'label-message' => [ 'oathauth-prefs-disabledgroups',
-					\Message::numParam( count( $disabledGroups ) ) ],
+					Message::numParam( count( $disabledGroups ) ) ],
 				'help-message' => [ 'oathauth-prefs-disabledgroups-help',
-					\Message::numParam( count( $disabledGroups ) ), $user->getName() ],
+					Message::numParam( count( $disabledGroups ) ), $user->getName() ],
 				'default' => $info,
 				'raw' => true,
 				'section' => 'personal/info',
@@ -182,12 +182,12 @@ class HookHandler implements
 		}
 
 		$oathUser = $this->userRepo->findByUser( $user );
-		if ( $oathUser->getModule() === null ) {
+		if ( !$oathUser->isTwoFactorAuthEnabled() ) {
 			// Not enabled, strip the groups
 			return $intersect;
-		} else {
-			return [];
 		}
+
+		return [];
 	}
 
 	/**
@@ -242,7 +242,7 @@ class HookHandler implements
 
 		$dbGroups = $this->userGroupManager->getUserGroups( $user );
 		if ( $this->getDisabledGroups( $user, $dbGroups ) ) {
-			// Has some disabled groups, add oathauth-enable
+			// User has some disabled groups, add oathauth-enable
 			$rights[] = 'oathauth-enable';
 		}
 	}

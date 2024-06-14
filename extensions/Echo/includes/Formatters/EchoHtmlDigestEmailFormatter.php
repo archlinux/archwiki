@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use Html;
 use Language;
-use Sanitizer;
-use SpecialPage;
-use User;
+use MediaWiki\Html\Html;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\User;
 
 class EchoHtmlDigestEmailFormatter extends EchoEventDigestFormatter {
 

@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel MWDefaultSortMetaItem class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -28,25 +28,55 @@ ve.dm.MWDefaultSortMetaItem.static.name = 'mwDefaultSort';
 
 ve.dm.MWDefaultSortMetaItem.static.group = 'mwDefaultSort';
 
-ve.dm.MWDefaultSortMetaItem.static.matchTagNames = [ 'meta' ];
+ve.dm.MWDefaultSortMetaItem.static.matchTagNames = [ 'span' ];
 
-ve.dm.MWDefaultSortMetaItem.static.matchRdfaTypes = [ 'mw:PageProp/categorydefaultsort' ];
+ve.dm.MWDefaultSortMetaItem.static.matchRdfaTypes = [ 'mw:Transclusion' ];
+
+ve.dm.MWDefaultSortMetaItem.static.matchFunction = function ( domElement ) {
+	var mwDataJSON = domElement.getAttribute( 'data-mw' ),
+		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
+	return ve.getProp( mwData, 'parts', '0', 'template', 'target', 'function' ) === 'defaultsort';
+};
 
 ve.dm.MWDefaultSortMetaItem.static.toDataElement = function ( domElements ) {
-	var content = domElements[ 0 ].getAttribute( 'content' );
+	var mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
+		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {},
+		input = ve.getProp( mwData, 'parts', '0', 'template', 'target', 'wt' ),
+		prefix, sortKey;
+	if ( input ) {
+		prefix = input.split( ':' )[ 0 ];
+		sortKey = input.slice( prefix.length + 1 );
+	}
 	return {
 		type: this.name,
 		attributes: {
-			content: content
+			prefix: prefix,
+			sortkey: sortKey
 		}
 	};
 };
 
 ve.dm.MWDefaultSortMetaItem.static.toDomElements = function ( dataElement, doc ) {
-	var meta = doc.createElement( 'meta' );
-	meta.setAttribute( 'property', 'mw:PageProp/categorydefaultsort' );
-	meta.setAttribute( 'content', dataElement.attributes.content );
-	return [ meta ];
+	var prefix = dataElement.attributes.prefix ||
+			mw.config.get( 'wgVisualEditorConfig' ).defaultSortPrefix,
+		sortKey = dataElement.attributes.sortkey || '',
+		mwData = {
+			parts: [
+				{
+					template: {
+						target: {
+							wt: prefix + ':' + sortKey,
+							function: 'defaultsort'
+						}
+					}
+				}
+			]
+		};
+
+	var span = doc.createElement( 'span' );
+	span.setAttribute( 'typeof', 'mw:Transclusion' );
+	span.setAttribute( 'data-mw', JSON.stringify( mwData ) );
+	return [ span ];
 };
 
 /* Registration */

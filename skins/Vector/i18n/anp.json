@@ -12,7 +12,6 @@
 	"vector-languages": "भाषा सिनी",
 	"vector-language-button-label": "{{PLURAL:$1|$1 भाषा|$1 भाषा सिनी}}",
 	"vector-no-language-button-label": "भाषा सिनी जोड़ौ",
-	"vector-language-redirect-to-top": "हैय {{SITENAME}} प भाषा केरौ कड़ी सिनी पन्ना के ऊप्पर क ओरी लेख केरौ शीर्षक क पास छौं। [[#p-lang-btn|ऊप्पर जा]]।",
 	"vector-language-variant-switcher-label": "भाषा केरौ प्रकार बदलौ",
 	"vector-action-addsection": "विषय जोड़ौ",
 	"vector-action-delete": "मेटाबौ",

@@ -1,10 +1,11 @@
 <?php
 
+use MediaWiki\User\User;
 use MediaWiki\User\UserArrayFromResult;
 
 /**
  * @author Addshore
- * @covers UserArrayFromResult
+ * @covers \MediaWiki\User\UserArrayFromResult
  */
 class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 
@@ -26,7 +27,7 @@ class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers UserArrayFromResult::__construct
+	 * @covers \MediaWiki\User\UserArrayFromResult::__construct
 	 */
 	public function testConstructionWithFalseRow() {
 		$row = false;
@@ -40,7 +41,7 @@ class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers UserArrayFromResult::__construct
+	 * @covers \MediaWiki\User\UserArrayFromResult::__construct
 	 */
 	public function testConstructionWithRow() {
 		$username = 'addshore';
@@ -65,7 +66,7 @@ class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideNumberOfRows
-	 * @covers UserArrayFromResult::count
+	 * @covers \MediaWiki\User\UserArrayFromResult::count
 	 */
 	public function testCountWithVaryingValues( $numRows ) {
 		$object = new UserArrayFromResult( $this->getMockResultWrapper(
@@ -76,7 +77,7 @@ class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers UserArrayFromResult::current
+	 * @covers \MediaWiki\User\UserArrayFromResult::current
 	 */
 	public function testCurrentAfterConstruction() {
 		$username = 'addshore';
@@ -95,7 +96,7 @@ class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideTestValid
-	 * @covers UserArrayFromResult::valid
+	 * @covers \MediaWiki\User\UserArrayFromResult::valid
 	 */
 	public function testValid( $input, $expected ) {
 		$object = new UserArrayFromResult( $this->getMockResultWrapper( $input ) );
@@ -113,7 +114,7 @@ class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideTestKey
-	 * @covers UserArrayFromResult::key
+	 * @covers \MediaWiki\User\UserArrayFromResult::key
 	 */
 	public function testKey( $input, $expected ) {
 		$object = new UserArrayFromResult( $this->getMockResultWrapper( $input ) );
@@ -121,7 +122,7 @@ class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers UserArrayFromResult::next
+	 * @covers \MediaWiki\User\UserArrayFromResult::next
 	 */
 	public function testNextOnce() {
 		$object = new UserArrayFromResult(
@@ -132,8 +133,8 @@ class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers UserArrayFromResult::next
-	 * @covers UserArrayFromResult::key
+	 * @covers \MediaWiki\User\UserArrayFromResult::next
+	 * @covers \MediaWiki\User\UserArrayFromResult::key
 	 */
 	public function testNextTwice() {
 		$object = new UserArrayFromResult(
@@ -145,9 +146,9 @@ class UserArrayFromResultTest extends \MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers UserArrayFromResult::rewind
-	 * @covers UserArrayFromResult::next
-	 * @covers UserArrayFromResult::key
+	 * @covers \MediaWiki\User\UserArrayFromResult::rewind
+	 * @covers \MediaWiki\User\UserArrayFromResult::next
+	 * @covers \MediaWiki\User\UserArrayFromResult::key
 	 */
 	public function testRewind() {
 		$object = new UserArrayFromResult(

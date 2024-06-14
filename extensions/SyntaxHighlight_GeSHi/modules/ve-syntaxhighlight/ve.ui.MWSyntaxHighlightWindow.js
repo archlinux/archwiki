@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface MWSyntaxHighlightWindow class.
  *
- * @copyright 2011-2015 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright VisualEditor Team and others
  * @license The MIT License (MIT); see LICENSE.txt
  */
 

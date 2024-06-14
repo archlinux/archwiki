@@ -1,8 +1,8 @@
 <?php
 namespace MediaWiki\Skins\Vector\Components;
 
-use Html;
-use Linker;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MessageLocalizer;
 
 /**

@@ -16,9 +16,6 @@ use MediaWiki\Title\Title;
 
 class VisualEditorDataModule extends ResourceLoaderModule {
 
-	/** @inheritDoc */
-	protected $targets = [ 'desktop', 'mobile' ];
-
 	/**
 	 * @param ResourceLoaderContext $context Object containing information about the state of this
 	 *   specific loader request.

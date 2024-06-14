@@ -169,6 +169,26 @@ return testframework.getTestProvider( {
 		}
 	},
 
+	{ name = 'lang:toBcp47Code (sr-ec)', func = test_method_lang,
+		args = { 'sr-ec', 'toBcp47Code' },
+		expect = { 'sr-Cyrl' },
+	},
+
+	{ name = 'lang:toBcp47Code (sr-el)', func = test_method_lang,
+		args = { 'sr-el', 'toBcp47Code' },
+		expect = { 'sr-Latn' },
+	},
+
+	{ name = 'lang:toBcp47Code (en)', func = test_method_lang,
+		args = { 'en', 'toBcp47Code' },
+		expect = { 'en' },
+	},
+
+	{ name = 'lang:toBcp47Code (simple)', func = test_method_lang,
+		args = { 'simple', 'toBcp47Code' },
+		expect = { 'en-simple' },
+	},
+
 	{ name = 'lang:getFallbackLanguages', func = test_method,
 		args = { 'getFallbackLanguages' },
 		expect = {

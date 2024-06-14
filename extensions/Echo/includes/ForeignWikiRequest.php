@@ -4,18 +4,18 @@ namespace MediaWiki\Extension\Notifications;
 
 use ApiMain;
 use CentralAuthSessionProvider;
-use CentralIdLookup;
 use Exception;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\WikiMap\WikiMap;
 use MWExceptionHandler;
 use RequestContext;
-use User;
-use WebRequest;
 
 class ForeignWikiRequest {
 

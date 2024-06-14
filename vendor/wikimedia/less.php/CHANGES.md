@@ -1,5 +1,40 @@
 # Changelog
 
+## 4.2.1
+
+Added:
+* Add support for `/deep/` selectors (Hannah Okwelum) [T352862](https://phabricator.wikimedia.org/T352862)
+
+Fixed:
+* Fix ParseError in some division expressions (Hannah Okwelum) [T358256](https://phabricator.wikimedia.org/T358256)
+* Fix `when()` matching between string and non-string (Timo Tijhof) [T358159](https://phabricator.wikimedia.org/T358159)
+* Preserve whitespace before `;` or `!` in simple rules (Hannah Okwelum) [T352911](https://phabricator.wikimedia.org/T352911)
+
+## 4.2.0
+
+Added:
+* Add `isruleset()` function (Hannah Okwelum) [T354895](https://phabricator.wikimedia.org/T354895)
+* Add source details to "Operation on an invalid type" error (Hannah Okwelum) [T344197](https://phabricator.wikimedia.org/T344197)
+* Add support for `method=relative` parameter in color functions (Hannah Okwelum) [T354895](https://phabricator.wikimedia.org/T354895)
+* Add support for comments in variables and function parameters (Hannah Okwelum) [T354895](https://phabricator.wikimedia.org/T354895)
+* Less_Parser: Add `functions` parser option API (Hannah Okwelum)
+
+Changed, to match Less.js 2.5.3:
+* Preserve original color keywords and shorthand hex (Hannah Okwelum) [T352866](https://phabricator.wikimedia.org/T352866)
+
+Fixed:
+* Fix PHP Warning when using a dynamic variable name like `@@name` (Hannah Okwelum) [T352830](https://phabricator.wikimedia.org/T352830)
+* Fix PHP Warning when `@extend` path contains non-quoted attribute (Gr8b) [T349433](https://phabricator.wikimedia.org/T349433)
+* Less_Parser: Faster `skipWhitespace` by using native `strspn` (Umherirrender)
+* Less_Parser: Fix Less_Tree_JavaScript references to consistently be in camel-case (Stefan Fröhlich)
+* Fix `!important` in nested mixins (Hannah Okwelum) [T353141](https://phabricator.wikimedia.org/T353141)
+* Fix crash when using recursive mixins (Timo Tijhof) [T352829](https://phabricator.wikimedia.org/T352829)
+* Fix disappearing selectors in certain nested blocks (Hannah Okwelum) [T352859](https://phabricator.wikimedia.org/T352859)
+* Fix Less_Exception_Compiler when passing unquoted value to `color()` (Hannah Okwelum) [T353289](https://phabricator.wikimedia.org/T353289)
+* Fix order of comments in `@font-face` blocks (Timo Tijhof) [T356706](https://phabricator.wikimedia.org/T356706)
+* Fix string comparison to ignore quote type (Timo Tijhof) [T357160](https://phabricator.wikimedia.org/T357160)
+* Fix string interpolation in selectors (Hannah Okwelum) [T353142](https://phabricator.wikimedia.org/T353142)
+
 ## 4.1.1
 
 * Less_Parser: Faster `MatchQuoted` by using native `strcspn`. (Thiemo Kreuz)

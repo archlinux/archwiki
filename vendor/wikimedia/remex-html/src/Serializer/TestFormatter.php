@@ -108,30 +108,30 @@ class TestFormatter implements Formatter, DOMFormatter {
 		}
 
 		switch ( $node->nodeType ) {
-		case XML_ELEMENT_NODE:
-			'@phan-var \DOMElement $node'; /** @var \DOMElement $node */
-			return $this->formatDOMElement( $node, $contents );
+			case XML_ELEMENT_NODE:
+				'@phan-var \DOMElement $node'; /** @var \DOMElement $node */
+				return $this->formatDOMElement( $node, $contents );
 
-		case XML_DOCUMENT_NODE:
-		case XML_DOCUMENT_FRAG_NODE:
-			return $contents;
+			case XML_DOCUMENT_NODE:
+			case XML_DOCUMENT_FRAG_NODE:
+				return $contents;
 
-		case XML_TEXT_NODE:
-		case XML_CDATA_SECTION_NODE:
-			'@phan-var \DOMCharacterData $node'; /** @var \DOMCharacterData $node */
-			return $this->formatCharacters( $node->data );
+			case XML_TEXT_NODE:
+			case XML_CDATA_SECTION_NODE:
+				'@phan-var \DOMCharacterData $node'; /** @var \DOMCharacterData $node */
+				return $this->formatCharacters( $node->data );
 
-		case XML_COMMENT_NODE:
-			'@phan-var \DOMComment $node'; /** @var \DOMComment $node */
-			return $this->formatComment( $node->data );
+			case XML_COMMENT_NODE:
+				'@phan-var \DOMComment $node'; /** @var \DOMComment $node */
+				return $this->formatComment( $node->data );
 
-		case XML_DOCUMENT_TYPE_NODE:
-			'@phan-var \DOMDocumentType $node'; /** @var \DOMDocumentType $node */
-			return $this->doctype( $node->name, $node->publicId, $node->systemId );
+			case XML_DOCUMENT_TYPE_NODE:
+				'@phan-var \DOMDocumentType $node'; /** @var \DOMDocumentType $node */
+				return $this->doctype( $node->name, $node->publicId, $node->systemId );
 
-		case XML_PI_NODE:
-		default:
-			return '';
+			case XML_PI_NODE:
+			default:
+				return '';
 		}
 	}
 
@@ -140,29 +140,29 @@ class TestFormatter implements Formatter, DOMFormatter {
 		foreach ( $node->attributes as $attr ) {
 			$prefix = null;
 			switch ( $attr->namespaceURI ) {
-			case HTMLData::NS_XML:
-				$prefix = 'xml';
-				$qName = 'xml:' . $attr->localName;
-				break;
-			case HTMLData::NS_XMLNS:
-				if ( $attr->localName === 'xmlns' ) {
-					$qName = 'xmlns';
-				} else {
-					$prefix = 'xmlns';
-					$qName = 'xmlns:' . $attr->localName;
-				}
-				break;
-			case HTMLData::NS_XLINK:
-				$prefix = 'xlink';
-				$qName = 'xlink:' . $attr->localName;
-				break;
-			default:
-				if ( strlen( $attr->prefix ) ) {
-					$qName = $attr->prefix . ':' . $attr->localName;
-				} else {
-					$prefix = $attr->prefix;
-					$qName = $attr->localName;
-				}
+				case HTMLData::NS_XML:
+					$prefix = 'xml';
+					$qName = 'xml:' . $attr->localName;
+					break;
+				case HTMLData::NS_XMLNS:
+					if ( $attr->localName === 'xmlns' ) {
+						$qName = 'xmlns';
+					} else {
+						$prefix = 'xmlns';
+						$qName = 'xmlns:' . $attr->localName;
+					}
+					break;
+				case HTMLData::NS_XLINK:
+					$prefix = 'xlink';
+					$qName = 'xlink:' . $attr->localName;
+					break;
+				default:
+					if ( strlen( $attr->prefix ) ) {
+						$qName = $attr->prefix . ':' . $attr->localName;
+					} else {
+						$prefix = $attr->prefix;
+						$qName = $attr->localName;
+					}
 			}
 
 			$attrs[$qName] = new Attribute( $qName, $attr->namespaceURI, $prefix,

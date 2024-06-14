@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"G0rn",
 			"Jack who built the house",
 			"MaxBioHazard",
@@ -24,8 +25,8 @@
 	"pfunc_expr_unrecognised_punctuation": "Ошибка выражения: неопознанный символ пунктуации «$1»",
 	"pfunc_expr_unclosed_bracket": "Ошибка выражения: незакрытая скобка",
 	"pfunc_expr_division_by_zero": "Деление на ноль",
-	"pfunc_expr_invalid_argument": "Ошибочный аргумент $1: < -1 или > 1",
-	"pfunc_expr_invalid_argument_ln": "Ошибочный аргумент ln: <= 0",
+	"pfunc_expr_invalid_argument": "Ошибочный аргумент $1: меньше -1 или больше 1",
+	"pfunc_expr_invalid_argument_ln": "Ошибочный аргумент ln: значение меньше или равно 0",
 	"pfunc_expr_unknown_error": "Ошибка выражения: неизвестная ошибка ($1)",
 	"pfunc_expr_not_a_number": "В $1: результат не является числом",
 	"pfunc_string_too_long": "Ошибка: строка превышает ограничение в $1 символов"

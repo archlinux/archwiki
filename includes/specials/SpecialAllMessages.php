@@ -23,10 +23,10 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
 use LocalisationCache;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
@@ -178,7 +178,5 @@ class SpecialAllMessages extends SpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialAllMessages::class, 'SpecialAllMessages' );

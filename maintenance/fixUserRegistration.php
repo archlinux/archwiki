@@ -22,7 +22,6 @@
  * @ingroup Maintenance
  */
 
-use MediaWiki\User\ActorMigration;
 use MediaWiki\User\User;
 
 require_once __DIR__ . '/Maintenance.php';
@@ -40,7 +39,7 @@ class FixUserRegistration extends Maintenance {
 	}
 
 	public function execute() {
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 
 		$lastId = 0;
 		do {
@@ -48,32 +47,36 @@ class FixUserRegistration extends Maintenance {
 			$res = $dbw->newSelectQueryBuilder()
 				->select( 'user_id' )
 				->from( 'user' )
-				->where( [ 'user_id > ' . $dbw->addQuotes( $lastId ), 'user_registration' => null ] )
+				->where( [ $dbw->expr( 'user_id', '>', $lastId ), 'user_registration' => null ] )
 				->orderBy( 'user_id' )
 				->limit( $this->getBatchSize() )
 				->caller( __METHOD__ )->fetchResultSet();
+
 			foreach ( $res as $row ) {
 				$id = $row->user_id;
 				$lastId = $id;
+
 				// Get first edit time
-				$actorQuery = ActorMigration::newMigration()
-					->getWhere( $dbw, 'rev_user', User::newFromId( $id ) );
-				$timestamp = $dbw->selectField(
-					[ 'revision' ] + $actorQuery['tables'],
-					'MIN(rev_timestamp)',
-					$actorQuery['conds'],
-					__METHOD__,
-					[],
-					$actorQuery['joins']
-				);
+				$actorStore = $this->getServiceContainer()->getActorStore();
+				$userIdentity = $actorStore->getUserIdentityByUserId( $id );
+				if ( !$userIdentity ) {
+					continue;
+				}
+
+				$timestamp = $dbw->newSelectQueryBuilder()
+					->select( 'MIN(rev_timestamp)' )
+					->from( 'revision' )
+					->where( [ 'rev_actor' => $userIdentity->getId() ] )
+					->caller( __METHOD__ )->fetchField();
+
 				// Update
 				if ( $timestamp !== null ) {
-					$dbw->update(
-						'user',
-						[ 'user_registration' => $timestamp ],
-						[ 'user_id' => $id ],
-						__METHOD__
-					);
+					$dbw->newUpdateQueryBuilder()
+						->update( 'user' )
+						->set( [ 'user_registration' => $timestamp ] )
+						->where( [ 'user_id' => $id ] )
+						->caller( __METHOD__ )->execute();
+
 					$user = User::newFromId( $id );
 					$user->invalidateCache();
 					$this->output( "Set registration for #$id to $timestamp\n" );

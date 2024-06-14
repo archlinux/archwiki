@@ -8,7 +8,7 @@ use ImageHandler;
 use MediaTransformError;
 use MediaTransformOutput;
 use MediaWiki\MediaWikiServices;
-use PoolCounterWorkViaCallback;
+use MediaWiki\PoolCounter\PoolCounterWorkViaCallback;
 use ThumbnailImage;
 use TransformParameterError;
 

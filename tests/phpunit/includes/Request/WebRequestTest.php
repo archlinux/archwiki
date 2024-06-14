@@ -5,7 +5,7 @@ use MediaWiki\Request\ProxyLookup;
 use MediaWiki\Request\WebRequest;
 
 /**
- * @covers WebRequest
+ * @covers \MediaWiki\Request\WebRequest
  *
  * @group WebRequest
  */
@@ -310,6 +310,11 @@ class WebRequestTest extends MediaWikiIntegrationTestCase {
 	public function testGetFuzzyBoolDefault() {
 		$req = $this->mockWebRequest();
 		$this->assertFalse( $req->getFuzzyBool( 'z' ), 'Not found' );
+	}
+
+	public function testGetFuzzyBoolDefaultTrue() {
+		$req = $this->mockWebRequest();
+		$this->assertTrue( $req->getFuzzyBool( 'z', true ), 'Not found, default true' );
 	}
 
 	public function testGetCheck() {
@@ -667,6 +672,36 @@ class WebRequestTest extends MediaWikiIntegrationTestCase {
 			[ self::INTERNAL_SERVER . '/w/index.php?action=history&title=Thing', $cdnUrls, /* matchOrder= */ true, false ],
 			[ self::INTERNAL_SERVER . '/w/index.php?action=history&title=Title', $cdnUrls, /* matchOrder= */ false, true ],
 			[ self::INTERNAL_SERVER . '/w/index.php?action=history&title=Title', $cdnUrls, /* matchOrder= */ true, false ],
+		];
+	}
+
+	/**
+	 * @dataProvider provideRequestPathSuffix
+	 *
+	 * @param string $basePath
+	 * @param string $requestUrl
+	 * @param string|false $expected
+	 */
+	public function testRequestPathSuffix( string $basePath, string $requestUrl, $expected ) {
+		$suffix = WebRequest::getRequestPathSuffix( $basePath, $requestUrl );
+		$this->assertSame( $expected, $suffix );
+	}
+
+	public static function provideRequestPathSuffix() {
+		yield [
+			'/w/index.php',
+			'/w/index.php/Hello',
+			'Hello'
+		];
+		yield [
+			'/w/index.php',
+			'/w/index.php/Hello?x=y',
+			'Hello'
+		];
+		yield [
+			'/wiki/',
+			'/w/index.php/Hello?x=y',
+			false
 		];
 	}
 }

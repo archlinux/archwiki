@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Config\HashConfig;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Tests\Maintenance\DumpAsserter;
 use MediaWiki\Title\Title;
@@ -10,8 +11,8 @@ use Wikimedia\Rdbms\SelectQueryBuilder;
  * Import/export round trip test.
  *
  * @group Database
- * @covers WikiExporter
- * @covers WikiImporter
+ * @covers \WikiExporter
+ * @covers \WikiImporter
  */
 class ImportExportTest extends MediaWikiLangTestCase {
 
@@ -45,11 +46,12 @@ class ImportExportTest extends MediaWikiLangTestCase {
 	 */
 	private function getImporter( ImportSource $source ) {
 		$config = new HashConfig( [
-			'CommandLineMode' => true,
+			MainConfigNames::MaxArticleSize => 2048,
 		] );
 		$services = $this->getServiceContainer();
 		$importer = new WikiImporter(
 			$source,
+			$this->getTestSysop()->getAuthority(),
 			$config,
 			$services->getHookContainer(),
 			$services->getContentLanguage(),
@@ -57,7 +59,6 @@ class ImportExportTest extends MediaWikiLangTestCase {
 			$services->getTitleFactory(),
 			$services->getWikiPageFactory(),
 			$services->getWikiRevisionUploadImporter(),
-			$services->getPermissionManager(),
 			$services->getContentHandlerFactory(),
 			$services->getSlotRoleRegistry()
 		);
@@ -145,7 +146,7 @@ class ImportExportTest extends MediaWikiLangTestCase {
 		foreach ( $pageTitles as $name => $page ) {
 			$title = Title::newFromText( $page );
 
-			if ( !$title->exists( Title::READ_LATEST ) ) {
+			if ( !$title->exists( IDBAccessObject::READ_LATEST ) ) {
 				// map only existing pages, since only they can appear in a dump
 				continue;
 			}

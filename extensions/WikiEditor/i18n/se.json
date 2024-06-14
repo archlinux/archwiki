@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kimberli Mäkäräinen (WMNO)",
-			"Yupik",
-			"Lea-Christine Sara"
+			"Lea-Christine Sara",
+			"Yupik"
 		]
 	},
 	"wikieditor-wikitext-tab": "Wikiteaksta",
@@ -13,7 +13,6 @@
 	"wikieditor-toolbar-tool-bold-example": "Buoiddesčálan čállojuvvon teaksta",
 	"wikieditor-toolbar-tool-italic": "Finjučála",
 	"wikieditor-toolbar-tool-italic-example": "Finjučálan čállojuvvon teaksta",
-	"wikieditor-toolbar-tool-ilink": "Siskkáldas liŋka",
 	"wikieditor-toolbar-tool-link": "Liŋka",
 	"wikieditor-toolbar-tool-link-title": "Lasit liŋkka",
 	"wikieditor-toolbar-tool-link-int": "wikisiidui",
@@ -28,7 +27,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Siskkáldas liŋka",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Olgguldas liŋka",
 	"wikieditor-toolbar-tool-file": "Govat ja media",
-	"wikieditor-toolbar-tool-file-example": "Ovdamearka.jpg",
 	"wikieditor-toolbar-tool-file-title": "Lasit fiilla",
 	"wikieditor-toolbar-file-target": "Fiilanamma:",
 	"wikieditor-toolbar-file-caption": "Govvateaksta:",
@@ -92,7 +90,7 @@
 	"wikieditor-toolbar-help-content-bolditalic-description": "Buoiddes- ja finjučálan čállojuvvon teaksta",
 	"wikieditor-toolbar-help-content-bolditalic-example": "Buoiddes- ja finjučálan čállojuvvon teaksta",
 	"wikieditor-toolbar-help-content-ilink-description": "Siskkáldas liŋka",
-	"wikieditor-toolbar-help-content-ilink-example": "[[Siido namma]]\n[[Siido namma|Liŋkkateaksta]]",
+	"wikieditor-toolbar-help-content-ilink-example": "[[Siidonamma]]\n[[Siidonamma|Liŋkkateaksta]]",
 	"wikieditor-toolbar-help-content-xlink-description": "Olgguldas liŋka",
 	"wikieditor-toolbar-help-content-xlink-example-label": "Liŋkateaksta",
 	"wikieditor-toolbar-help-content-heading2-description": "Bajilčála 2. dásis",
@@ -106,6 +104,7 @@
 	"wikieditor-toolbar-help-content-ulist-description": "Čuokkislistu",
 	"wikieditor-toolbar-help-content-ulist-example": "Mearkkuš listtus",
 	"wikieditor-toolbar-help-content-olist-description": "Nummaraston listu",
+	"wikieditor-toolbar-help-content-file-description": "Vurkejuvvon govva",
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-file-caption": "Govvateaksta",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "Vuolláičála áigesteampaliin",
@@ -113,8 +112,8 @@
 	"wikieditor-toolbar-help-content-signature-description": "Vuolláičála",
 	"wikieditor-toolbar-help-content-signature-example": "[[$1:$3|$3]] ([[$2:$3|ságastallan]])",
 	"wikieditor-toolbar-help-content-signature-username": "Geavaheaddjinamma",
+	"wikieditor-toolbar-help-content-indent-description": "Siskkit",
 	"wikieditor-toolbar-help-content-indent1": "Dábálaš teaksta",
 	"wikieditor-realtimepreview-preview": "Ovdačájáhus",
-	"wikieditor-realtimepreview-reload": "Viečča ođđasit",
-	"wikieditor-realtimepreview-onboarding-button": "Ášši lea čielggas."
+	"wikieditor-realtimepreview-reload": "Viečča ođđasit"
 }

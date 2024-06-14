@@ -24,7 +24,7 @@
 		// Ensures the button has a font size of 16px
 		font-size: unit( 16 / @font-size-browser, rem );
 
-		@media ( min-width: @min-width-desktop ) {
+		@media ( min-width: @min-width-breakpoint-desktop ) {
 			// Override .cdx-button styles
 			display: none !important;  /* stylelint-disable-line declaration-no-important */
 		}
@@ -33,12 +33,12 @@
 	.vector-typeahead-search-container {
 		display: none;
 
-		@media ( min-width: @min-width-desktop ) {
+		@media ( min-width: @min-width-breakpoint-desktop ) {
 			display: block;
 		}
 	}
 
-	@media ( max-width: @max-width-tablet ) {
+	@media ( max-width: @max-width-breakpoint-tablet ) {
 		/**
 	 	 * Toggles the visibility of the search box at lower resolutions.
 		 */

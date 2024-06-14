@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Kisare",
 			"Kwisha",
 			"Lloffiwr",
 			"Macofe",
 			"Muddyb",
 			"Muddyb Blast Producer",
-			"Rance",
-			"Kisare"
+			"Rance"
 		]
 	},
 	"wikieditor": "Kusano ya juu ya kuandika kiwiki",
@@ -19,10 +19,6 @@
 	"wikieditor-toolbar-tool-bold-example": "Maandishi ya kooze",
 	"wikieditor-toolbar-tool-italic": "Italiki",
 	"wikieditor-toolbar-tool-italic-example": "Maandishi ya italiki",
-	"wikieditor-toolbar-tool-ilink": "Kiungo cha ndani",
-	"wikieditor-toolbar-tool-ilink-example": "Jina la kiungo",
-	"wikieditor-toolbar-tool-xlink": "Kiungo cha nje (kumbuka kuanza na http:// )",
-	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com jina la kiungo",
 	"wikieditor-toolbar-tool-link": "Kiungo",
 	"wikieditor-toolbar-tool-link-title": "Kuweka kiungo",
 	"wikieditor-toolbar-tool-link-int": "Kwa ukurasa mwingine wa wiki",
@@ -39,12 +35,10 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Ukurasa haupatikani",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Jina batili",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Kiungo cha nje",
-	"wikieditor-toolbar-tool-link-int-invalid": "Jina la ukurasa uliloliandika ni batili.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Inaonekana kwamba KISARA (URL) ulioingiza inaelekea ukurasa mwingine wa wiki hii. Je, unataka kutengeneza kiungo cha ndani?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Kiungo cha ndani",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Kiungo cha nje",
 	"wikieditor-toolbar-tool-file": "Ingiza faili",
-	"wikieditor-toolbar-tool-file-example": "Mfano.jpg",
 	"wikieditor-toolbar-tool-file-title": "Ingiza faili",
 	"wikieditor-toolbar-file-target": "Jina la faili:",
 	"wikieditor-toolbar-file-size": "Ukubwa:",
@@ -81,7 +75,6 @@
 	"wikieditor-toolbar-tool-gallery-example": "Example.jpg|Maelezo mafupi 1\nExample.jpg|Maelezo mafupi 2",
 	"wikieditor-toolbar-tool-newline": "Mstari mpya",
 	"wikieditor-toolbar-tool-table": "Jedwali",
-	"wikieditor-toolbar-tool-table-example-old": "-\n! kichwa 1\n! kichwa 2\n! kichwa 3\n|-\n| mstari 1, kisanduku 1\n| mstari 1, kisanduku 2\n| mstari 1, kisanduku 3\n|-\n| mstari 2, kisanduku 1\n| mstari 2, kisanduku 2\n| mstari 2, kisanduku 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Maandishi ya kisanduku jedwali",
 	"wikieditor-toolbar-tool-table-example-header": "Maandiko ya kichwa",
 	"wikieditor-toolbar-tool-table-title": "Weka jedwali",

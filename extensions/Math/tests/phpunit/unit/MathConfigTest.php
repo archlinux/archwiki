@@ -103,7 +103,7 @@ class MathConfigTest extends TestCase {
 			'MathValidModes' => [ MathConfig::MODE_MATHML ],
 		] );
 		$this->assertEquals(
-			[ 'mathml' => 'mw_math_mathml' ],
+			[ 'mathml' => 'mw-math-mathml' ],
 			$mathConfig->getValidRenderingModeKeys() );
 	}
 

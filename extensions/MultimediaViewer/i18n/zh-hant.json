@@ -13,7 +13,9 @@
 			"Tranve",
 			"Winston Sung",
 			"Xiplus",
-			"列维劳德"
+			"列维劳德",
+			"Ericliu1912",
+			"LittlePaw365"
 		]
 	},
 	"multimediaviewer-desc": "使用全螢幕介面以較大尺寸的方式顯示展開後的縮圖",
@@ -45,7 +47,7 @@
 	"multimediaviewer-permission-link-hide": "隱藏條款",
 	"multimediaviewer-permission-viewmore": "檢視更多",
 	"multimediaviewer-restriction-2257": "此圖片包含露骨的色情內容，可能會受到美國兒童保護及汙穢執行法所限制。",
-	"multimediaviewer-restriction-aus-reserve": "此圖片是由澳大利亞聯邦儲備所拍攝，並不能在未經許可情況下用於商業使用。",
+	"multimediaviewer-restriction-aus-reserve": "此圖片拍攝於澳大利亞聯邦保護區，未經許可不能用於商業使用。",
 	"multimediaviewer-restriction-communist": "此圖片包含共產黨標誌，這可能會在一些國家裡禁止使用。",
 	"multimediaviewer-restriction-costume": "此圖片描述著衣裝，並可能會受到法律限制。",
 	"multimediaviewer-restriction-currency": "此圖片呈現出對於貨幣單位的描述，並可能會受到法律限制。",
@@ -59,7 +61,7 @@
 	"multimediaviewer-restriction-trademarked": "此圖片包含受商標法限制的內容。",
 	"multimediaviewer-restriction-default": "此圖片可能受到版權法以外的法律規範所限制。請查看檔案描述頁面來獲得詳情內容。",
 	"multimediaviewer-restriction-default-and-others": "此圖片可能受到版權法以外的法律規範進一步限制。請查看檔案描述頁面來獲得詳情內容。",
-	"multimediaviewer-about-mmv": "關於 Media Viewer：",
+	"multimediaviewer-about-mmv": "關於 Media Viewer",
 	"multimediaviewer-optout-mmv": "停用媒體檢視器",
 	"multimediaviewer-optin-mmv": "開啟媒體檢視器",
 	"multimediaviewer-optout-pending-mmv": "正在停用媒體檢視器",

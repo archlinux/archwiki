@@ -3,12 +3,14 @@
 		"authors": [
 			"Chrumps",
 			"Matma Rex",
+			"Msz2001",
 			"Rail",
 			"Woytecr"
 		]
 	},
 	"apihelp-query+linterrors-summary": "Pobiera listę błędów lintera",
 	"apihelp-query+linterrors-param-categories": "Kategorie błędów składniowych",
+	"apihelp-query+linterrors-param-invisible-categories": "Ukryte kategorie błędów lintera",
 	"apihelp-query+linterrors-param-limit": "Liczba zwracanych wyników",
 	"apihelp-query+linterrors-param-from": "ID błędu od którego zacząć wymieniać",
 	"apihelp-query+linterrors-param-namespace": "Tylko błędy występujące w podanych przestrzeniach nazw",

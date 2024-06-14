@@ -6,7 +6,7 @@ use Language;
 use MediaWiki\Extension\Notifications\DiscussionParser;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\Revision\RevisionRecord;
-use User;
+use MediaWiki\User\User;
 
 class EchoMentionPresentationModel extends EchoEventPresentationModel {
 

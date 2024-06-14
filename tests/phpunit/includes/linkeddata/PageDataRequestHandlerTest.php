@@ -1,13 +1,17 @@
 <?php
 
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\LinkedData\PageDataRequestHandler;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\FauxResponse;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 
 /**
- * @covers PageDataRequestHandler
+ * @covers \PageDataRequestHandler
  * @group PageData
  */
 class PageDataRequestHandlerTest extends \MediaWikiLangTestCase {

@@ -1,4 +1,4 @@
-var newTopicButton, $readAsWikiPage, ledeSectionDialog;
+var newTopicButton, ledeSectionDialog;
 var viewportScrollContainer = null;
 var wasKeyboardOpen = null;
 var initialClientHeight = null;
@@ -24,7 +24,7 @@ function onViewportChange() {
 	wasKeyboardOpen = isKeyboardOpen;
 }
 
-function init( $container, pageThreads ) {
+function init( $container ) {
 	// For compatibility with MobileWebUIActionsTracking logging (T295490)
 	$container.find( '.section-heading' ).attr( 'data-event-name', 'talkpage.section' );
 
@@ -37,52 +37,6 @@ function init( $container, pageThreads ) {
 	}
 
 	// Mobile overflow menu
-	mw.loader.using( [ 'oojs-ui-widgets', 'oojs-ui.styles.icons-editing-core' ] ).then( function () {
-		// TODO: Replace with .ext-discussiontools-init-section-overflowMenuButton
-		//  after parser cache is updated
-		$container.find( '.ext-discussiontools-init-section-ellipsisButton' ).each( function () {
-			// Comment ellipsis
-			var $threadMarker = $( this ).closest( '[data-mw-thread-id]' );
-			if ( !$threadMarker.length ) {
-				// Heading ellipsis
-				$threadMarker = $( this ).closest( '.ext-discussiontools-init-section' ).find( '[data-mw-thread-id]' );
-			}
-			var threadItem = pageThreads.findCommentById( $threadMarker.data( 'mw-thread-id' ) );
-
-			var buttonMenu = OO.ui.infuse( this, {
-				$overlay: true,
-				menu: {
-					classes: [ 'ext-discussiontools-init-section-overflowMenu' ],
-					horizontalPosition: threadItem.type === 'heading' ? 'end' : 'start'
-				}
-			} );
-
-			mw.loader.using( buttonMenu.getData().resourceLoaderModules || [] ).then( function () {
-				var itemConfigs = buttonMenu.getData().itemConfigs;
-				if ( !itemConfigs ) {
-					// We should never have missing itemConfigs, but if this happens, hide the empty menu
-					buttonMenu.toggle( false );
-					return;
-				}
-				var overflowMenuItemWidgets = itemConfigs.map( function ( itemConfig ) {
-					return new OO.ui.MenuOptionWidget( itemConfig );
-				} );
-				buttonMenu.getMenu().addItems( overflowMenuItemWidgets );
-				buttonMenu.getMenu().items.forEach( function ( menuItem ) {
-					mw.hook( 'discussionToolsOverflowMenuOnAddItem' ).fire( menuItem.getData().id, menuItem, threadItem );
-				} );
-			} );
-
-			buttonMenu.getMenu().on( 'choose', function ( menuItem ) {
-				mw.hook( 'discussionToolsOverflowMenuOnChoose' ).fire( menuItem.getData().id, menuItem, threadItem );
-			} );
-		} );
-
-		$container.find( '.ext-discussiontools-init-section-bar' ).on( 'click', function ( e ) {
-			// Don't toggle section when clicking on bar
-			e.stopPropagation();
-		} );
-	} );
 
 	var $ledeContent = $container.find( '.mf-section-0' ).children( ':not( .ext-discussiontools-emptystate )' )
 		// On non-existent pages MobileFrontend wrapping isn't there
@@ -156,34 +110,17 @@ function init( $container, pageThreads ) {
 			wasScrollDown = isScrollDown;
 		}, 200 ), { passive: true } );
 	}
-	if ( !$readAsWikiPage ) {
-		// Read as wiki page button, copied from old MobileFrontend/Minerva feature (removed in T319145)
-		$readAsWikiPage = $( '<button>' )
-			.addClass( 'ext-discussiontools-init-readAsWikiPage' )
-			.attr( 'data-event-name', 'talkpage.readAsWiki' )
-			.text( mw.message( 'minerva-talk-full-page' ).text() )
-			.on( 'click', function () {
-				$( document.body ).removeClass( 'ext-discussiontools-visualenhancements-enabled ext-discussiontools-replytool-enabled' );
-			} );
-	}
-
-	/* eslint-disable no-jquery/no-global-selector */
-	if ( newTopicButton ) {
-		$newTopicWrapper.after( $readAsWikiPage );
-	} else {
-		$( '#mw-content-text' ).append( $readAsWikiPage );
-	}
 
 	// Tweak to prevent our footer buttons from overlapping Minerva skin elements (T328452).
 	// TODO: It would be more elegant to do this in just CSS somehow.
 	// BEWARE: I have wasted 4 hours here trying to make that happen. The elements are not nested in a
 	// helpful way, and moving them around tends to break the stickiness of the "Add topic" button.
+	/* eslint-disable no-jquery/no-global-selector */
 	if (
 		$( '.catlinks' ).filter( '[data-mw="interface"]' ).length ||
 		$( '#page-secondary-actions' ).children().length ||
 		$( '.return-link' ).length
 	) {
-		$readAsWikiPage.addClass( 'ext-discussiontools-init-button-notFlush' );
 		$newTopicWrapper.addClass( 'ext-discussiontools-init-button-notFlush' );
 	}
 	/* eslint-enable no-jquery/no-global-selector */
@@ -193,7 +130,7 @@ function init( $container, pageThreads ) {
 mw.hook( 'discussionToolsOverflowMenuOnChoose' ).add( function ( id, menuItem, threadItem ) {
 	if ( id === 'edit' ) {
 		// Click the hidden section-edit link
-		$( threadItem.getNativeRange().commonAncestorContainer )
+		$( threadItem.getRange().commonAncestorContainer )
 			.closest( '.ext-discussiontools-init-section' ).find( '.mw-editsection > a' ).trigger( 'click' );
 	}
 } );

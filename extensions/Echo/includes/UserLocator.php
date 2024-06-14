@@ -7,8 +7,8 @@ use Iterator;
 use MediaWiki\Extension\Notifications\Iterator\CallbackIterator;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\User;
 use RecursiveIteratorIterator;
-use User;
 
 class UserLocator {
 	/**
@@ -26,9 +26,9 @@ class UserLocator {
 		if ( !$title ) {
 			return [];
 		}
-
+		$provider = MediaWikiServices::getInstance()->getConnectionProvider();
 		$batchRowIt = new BatchRowIterator(
-			wfGetDB( DB_REPLICA, 'watchlist' ),
+			$provider->getReplicaDatabase( false, 'watchlist' ),
 			/* $table = */ 'watchlist',
 			/* $primaryKeys = */ [ 'wl_user' ],
 			$batchSize
@@ -138,8 +138,9 @@ class UserLocator {
 	 * @return User|null
 	 */
 	public static function getArticleAuthorByArticleId( int $articleId ): ?User {
-		$dbr = wfGetDB( DB_REPLICA );
-		$revQuery = MediaWikiServices::getInstance()->getRevisionStore()->getQueryInfo();
+		$services = MediaWikiServices::getInstance();
+		$dbr = $services->getConnectionProvider()->getReplicaDatabase();
+		$revQuery = $services->getRevisionStore()->getQueryInfo();
 		$res = $dbr->selectRow(
 			$revQuery['tables'],
 			[ 'rev_user' => $revQuery['fields']['rev_user'] ],

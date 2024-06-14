@@ -27,13 +27,13 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\Hook\ParserOutputStashForEditHook;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
-use ParserOutput;
 use Psr\Log\LoggerInterface;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -130,8 +130,7 @@ class PageEditStash {
 		$logger = $this->logger;
 
 		if ( $pageUpdater instanceof WikiPage ) {
-			// TODO: Trigger deprecation warning once extensions have been fixed.
-			//       Or better, create PageUpdater::prepareAndStash and deprecate this method.
+			wfDeprecated( __METHOD__ . ' with WikiPage instance', '1.42' );
 			$pageUpdater = $pageUpdater->newPageUpdater( $user );
 		}
 

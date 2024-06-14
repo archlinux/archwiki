@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel MWCategoryMetaItem class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -92,7 +92,7 @@ ve.dm.MWCategoryMetaItem.static.describeChange = function ( key, change ) {
 	}
 
 	// Parent method
-	return ve.dm.MWCategoryMetaItem.parent.static.describeChange.apply( this, arguments );
+	return ve.dm.MWCategoryMetaItem.super.static.describeChange.apply( this, arguments );
 };
 
 /* Registration */

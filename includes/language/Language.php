@@ -31,6 +31,7 @@
 
 use CLDRPluralRuleParser\Evaluator;
 use MediaWiki\Config\Config;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Languages\Data\NormalizeAr;
@@ -42,7 +43,6 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\MagicWord;
-use MediaWiki\Specials\SpecialBlock;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
@@ -257,12 +257,13 @@ class Language implements Bcp47Code {
 	 * @since 1.35
 	 */
 	protected const DURATION_INTERVALS = [
-		'millennia' => 31556952000,
-		'centuries' => 3155695200,
-		'decades' => 315569520,
-		'years' => 31556952, // 86400 * ( 365 + ( 24 * 3 + 25 ) / 400 )
-		'weeks' => 604800,
-		'days' => 86400,
+		'millennia' => 1000 * 31_556_952,
+		'centuries' => 100 * 31_556_952,
+		'decades' => 10 * 31_556_952,
+		// The average year is 365.2425 days (365 + (24 * 3 + 25) / 400)
+		'years' => 31_556_952, // 365.2425 * 24 * 3600
+		'weeks' => 7 * 24 * 3600,
+		'days' => 24 * 3600,
 		'hours' => 3600,
 		'minutes' => 60,
 		'seconds' => 1,
@@ -656,9 +657,11 @@ class Language implements Bcp47Code {
 	 * @return string
 	 */
 	public function getVariantname( $code, $usemsg = true ) {
-		$msg = "variantname-$code";
-		if ( $usemsg && wfMessage( $msg )->exists() ) {
-			return $this->getMessageFromDB( $msg );
+		if ( $usemsg ) {
+			$msg = $this->msg( "variantname-$code" );
+			if ( $msg->exists() ) {
+				return $msg->text();
+			}
 		}
 		$name = $this->langNameUtils->getLanguageName( $code );
 		if ( $name ) {
@@ -786,38 +789,6 @@ class Language implements Bcp47Code {
 	}
 
 	/**
-	 * @param int $key Number from 1 to 12
-	 * @return string
-	 */
-	private function getIranianCalendarMonthName( $key ) {
-		return $this->getMessageFromDB( self::IRANIAN_CALENDAR_MONTHS_MESSAGES[$key - 1] );
-	}
-
-	/**
-	 * @param int $key Number from 1 to 14
-	 * @return string
-	 */
-	private function getHebrewCalendarMonthName( $key ) {
-		return $this->getMessageFromDB( self::HEBREW_CALENDAR_MONTHS_MESSAGES[$key - 1] );
-	}
-
-	/**
-	 * @param int $key Number from 1 to 14
-	 * @return string
-	 */
-	private function getHebrewCalendarMonthNameGen( $key ) {
-		return $this->getMessageFromDB( self::HEBREW_CALENDAR_MONTH_GENITIVE_MESSAGES[$key - 1] );
-	}
-
-	/**
-	 * @param int $key Number from 1 to 12
-	 * @return string
-	 */
-	private function getHijriCalendarMonthName( $key ) {
-		return $this->getMessageFromDB( self::HIJRI_CALENDAR_MONTH_MESSAGES[$key - 1] );
-	}
-
-	/**
 	 * Pass through the result from $dateTimeObj->format()
 	 *
 	 * @param DateTime|false|null &$dateTimeObj
@@ -901,7 +872,6 @@ class Language implements Bcp47Code {
 	 * Only makes sense if $ts is the current time.
 	 * @todo handling of "o" format character for Iranian, Hebrew, Hijri & Thai?
 	 *
-	 * @throws MWException
 	 * @return string
 	 * @return-taint tainted
 	 */
@@ -940,11 +910,11 @@ class Language implements Bcp47Code {
 		$usedTennoYear = false;
 
 		if ( strlen( $ts ) !== 14 ) {
-			throw new MWException( __METHOD__ . ": The timestamp $ts should have 14 characters" );
+			throw new InvalidArgumentException( __METHOD__ . ": The timestamp $ts should have 14 characters" );
 		}
 
 		if ( !ctype_digit( $ts ) ) {
-			throw new MWException( __METHOD__ . ": The timestamp $ts should be a number" );
+			throw new InvalidArgumentException( __METHOD__ . ": The timestamp $ts should be a number" );
 		}
 
 		$formatLength = strlen( $format );
@@ -997,7 +967,7 @@ class Language implements Bcp47Code {
 					if ( !$hebrew ) {
 						$hebrew = self::tsToHebrew( $ts );
 					}
-					$s .= $this->getHebrewCalendarMonthNameGen( $hebrew[1] );
+					$s .= $this->getMessageFromDB( self::HEBREW_CALENDAR_MONTH_GENITIVE_MESSAGES[$hebrew[1] - 1] );
 					break;
 
 				case 'd':
@@ -1058,7 +1028,7 @@ class Language implements Bcp47Code {
 					if ( !$iranian ) {
 						$iranian = self::tsToIranian( $ts );
 					}
-					$s .= $this->getIranianCalendarMonthName( $iranian[1] );
+					$s .= $this->getMessageFromDB( self::IRANIAN_CALENDAR_MONTHS_MESSAGES[$iranian[1] - 1] );
 					break;
 
 				case 'xmF':
@@ -1066,7 +1036,7 @@ class Language implements Bcp47Code {
 					if ( !$hijri ) {
 						$hijri = self::tsToHijri( $ts );
 					}
-					$s .= $this->getHijriCalendarMonthName( $hijri[1] );
+					$s .= $this->getMessageFromDB( self::HIJRI_CALENDAR_MONTH_MESSAGES[$hijri[1] - 1] );
 					break;
 
 				case 'xjF':
@@ -1074,7 +1044,7 @@ class Language implements Bcp47Code {
 					if ( !$hebrew ) {
 						$hebrew = self::tsToHebrew( $ts );
 					}
-					$s .= $this->getHebrewCalendarMonthName( $hebrew[1] );
+					$s .= $this->getMessageFromDB( self::HEBREW_CALENDAR_MONTHS_MESSAGES[$hebrew[1] - 1] );
 					break;
 
 				case 'm':
@@ -1172,9 +1142,9 @@ class Language implements Bcp47Code {
 				case 'xtY':
 					$usedTennoYear = true;
 					if ( !$tenno ) {
-						$tenno = self::tsToYear( $ts, 'tenno' );
+						$tenno = self::tsToJapaneseGengo( $ts );
 					}
-					$num = $tenno[0];
+					$num = $tenno;
 					break;
 
 				case 'y':
@@ -1735,7 +1705,6 @@ class Language implements Bcp47Code {
 	 *
 	 * Link: https://en.wikipedia.org/wiki/Thai_solar_calendar
 	 *       https://en.wikipedia.org/wiki/Minguo_calendar
-	 *       https://en.wikipedia.org/wiki/Japanese_era_name
 	 *
 	 * @param string $ts 14-character timestamp
 	 * @param string $cName Calender name
@@ -1764,74 +1733,63 @@ class Language implements Bcp47Code {
 			# Deduct 1911 years from the Gregorian calendar
 			# Months and days are identical
 			$gy_offset = $gy - 1911;
-		} elseif ( $cName === 'tenno' ) {
-			# Nengō dates up to Meiji period.
-			# Deduct years from the Gregorian calendar
-			# depending on the nengo periods
-			# The months and days are identical
-			if ( ( $gy < 1912 )
-				|| ( ( $gy == 1912 ) && ( $gm < 7 ) )
-				|| ( ( $gy == 1912 ) && ( $gm == 7 ) && ( $gd < 31 ) )
-			) {
-				# Meiji period
-				$gy_gannen = $gy - 1868 + 1;
-				$gy_offset = $gy_gannen;
-				if ( $gy_gannen == 1 ) {
-					$gy_offset = '元';
-				}
-				$gy_offset = '明治' . $gy_offset;
-			} elseif (
-				( ( $gy == 1912 ) && ( $gm == 7 ) && ( $gd == 31 ) ) ||
-				( ( $gy == 1912 ) && ( $gm >= 8 ) ) ||
-				( ( $gy > 1912 ) && ( $gy < 1926 ) ) ||
-				( ( $gy == 1926 ) && ( $gm < 12 ) ) ||
-				( ( $gy == 1926 ) && ( $gm == 12 ) && ( $gd < 26 ) )
-			) {
-				# Taishō period
-				$gy_gannen = $gy - 1912 + 1;
-				$gy_offset = $gy_gannen;
-				if ( $gy_gannen == 1 ) {
-					$gy_offset = '元';
-				}
-				$gy_offset = '大正' . $gy_offset;
-			} elseif (
-				( ( $gy == 1926 ) && ( $gm == 12 ) && ( $gd >= 26 ) ) ||
-				( ( $gy > 1926 ) && ( $gy < 1989 ) ) ||
-				( ( $gy == 1989 ) && ( $gm == 1 ) && ( $gd < 8 ) )
-			) {
-				# Shōwa period
-				$gy_gannen = $gy - 1926 + 1;
-				$gy_offset = $gy_gannen;
-				if ( $gy_gannen == 1 ) {
-					$gy_offset = '元';
-				}
-				$gy_offset = '昭和' . $gy_offset;
-			} elseif (
-				( ( $gy == 1989 ) && ( $gm == 1 ) && ( $gd >= 8 ) ) ||
-				( ( $gy > 1989 ) && ( $gy < 2019 ) ) ||
-				( ( $gy == 2019 ) && ( $gm < 5 ) )
-			) {
-				# Heisei period
-				$gy_gannen = $gy - 1989 + 1;
-				$gy_offset = $gy_gannen;
-				if ( $gy_gannen == 1 ) {
-					$gy_offset = '元';
-				}
-				$gy_offset = '平成' . $gy_offset;
-			} else {
-				# Reiwa period
-				$gy_gannen = $gy - 2019 + 1;
-				$gy_offset = $gy_gannen;
-				if ( $gy_gannen == 1 ) {
-					$gy_offset = '元';
-				}
-				$gy_offset = '令和' . $gy_offset;
-			}
 		} else {
 			$gy_offset = $gy;
 		}
 
 		return [ $gy_offset, $gm, $gd ];
+	}
+
+	/**
+	 * Algorithm to convert Gregorian dates to Japanese gengo year.
+	 *
+	 * Link: https://en.wikipedia.org/wiki/Japanese_era_name
+	 *
+	 * @param string $ts 14-character timestamp
+	 * @return string Converted year
+	 */
+	private static function tsToJapaneseGengo( $ts ) {
+		# Nengō dates up to Meiji period.
+		# Deduct years from the Gregorian calendar
+		# depending on the nengo periods
+		# The months and days are identical
+		$gy = (int)substr( $ts, 0, 4 );
+		$ts = (int)$ts;
+		if ( $ts >= 18730101000000 && $ts < 19120730000000 ) {
+			# Meiji period; start from meiji 6 (1873) it starts using gregorian year
+			return self::tsToJapaneseGengoCalculate( $gy, 1868, '明治' );
+		} elseif ( $ts >= 19120730000000 && $ts < 19261225000000 ) {
+			# Taishō period
+			return self::tsToJapaneseGengoCalculate( $gy, 1912, '大正' );
+		} elseif ( $ts >= 19261225000000 && $ts < 19890108000000 ) {
+			# Shōwa period
+			return self::tsToJapaneseGengoCalculate( $gy, 1926, '昭和' );
+		} elseif ( $ts >= 19890108000000 && $ts < 20190501000000 ) {
+			# Heisei period
+			return self::tsToJapaneseGengoCalculate( $gy, 1989, '平成' );
+		} elseif ( $ts >= 20190501000000 ) {
+			# Reiwa period
+			return self::tsToJapaneseGengoCalculate( $gy, 2019, '令和' );
+		}
+		return "西暦$gy";
+	}
+
+	/**
+	 * Calculate Gregorian year to Japanese gengo year.
+	 *
+	 * Link: https://en.wikipedia.org/wiki/Japanese_era_name
+	 *
+	 * @param int $gy 4-digit Gregorian year
+	 * @param int $startYear 4-digit Gengo start year
+	 * @param string $gengo Actual Gengo string
+	 * @return string Converted year
+	 */
+	private static function tsToJapaneseGengoCalculate( $gy, $startYear, $gengo ) {
+		$gy_offset = $gy - $startYear + 1;
+		if ( $gy_offset == 1 ) {
+			$gy_offset = '元';
+		}
+		return "$gengo$gy_offset";
 	}
 
 	/**
@@ -1997,7 +1955,7 @@ class Language implements Bcp47Code {
 		if ( $tzObj ) {
 			$date = new DateTime( $ts, new DateTimeZone( 'UTC' ) );
 			$date->setTimezone( $tzObj );
-			return $date->format( 'YmdHis' );
+			return self::makeMediaWikiTimestamp( $ts, $date );
 		}
 		$minDiff = $timeCorrection->getTimeOffset();
 
@@ -2008,7 +1966,21 @@ class Language implements Bcp47Code {
 
 		$date = new DateTime( $ts );
 		$date->modify( "{$minDiff} minutes" );
-		return $date->format( 'YmdHis' );
+		return self::makeMediaWikiTimestamp( $ts, $date );
+	}
+
+	/**
+	 * Convenience function to convert a PHP DateTime object to a 14-character MediaWiki timestamp,
+	 * falling back to the specified timestamp if the DateTime object holds a too large date (T32148, T277809).
+	 * This is a private utility method as it is only really useful for {@link userAdjust}.
+	 *
+	 * @param string $fallback 14-character MW timestamp to fall back to if the DateTime object holds a too large date
+	 * @param DateTime $date The DateTime object to convert
+	 * @return string 14-character MW timestamp
+	 */
+	private static function makeMediaWikiTimestamp( $fallback, $date ) {
+		$ts = $date->format( 'YmdHis' );
+		return strlen( $ts ) === 14 ? $ts : $fallback;
 	}
 
 	/**
@@ -2160,8 +2132,8 @@ class Language implements Bcp47Code {
 		foreach ( $intervals as $intervalName => $intervalValue ) {
 			// Messages: duration-seconds, duration-minutes, duration-hours, duration-days, duration-weeks,
 			// duration-years, duration-decades, duration-centuries, duration-millennia
-			$message = wfMessage( 'duration-' . $intervalName )->numParams( $intervalValue );
-			$segments[] = $message->inLanguage( $this )->escaped();
+			$message = $this->msg( 'duration-' . $intervalName )->numParams( $intervalValue );
+			$segments[] = $message->escaped();
 		}
 
 		return $this->listToText( $segments );
@@ -2411,22 +2383,19 @@ class Language implements Bcp47Code {
 			$weekday = self::WEEKDAY_MESSAGES[(int)$ts->timestamp->format( 'w' )];
 			// The following messages are used here:
 			// * sunday-at, monday-at, tuesday-at, wednesday-at, thursday-at, friday-at, saturday-at
-			$ts = wfMessage( "$weekday-at" )
-				->inLanguage( $this )
+			$ts = $this->msg( "$weekday-at" )
 				->params( $this->sprintfDate( $format, $ts->getTimestamp( TS_MW ) ) )
 				->text();
 		} elseif ( $days == 1 ) {
 			// Timestamp was yesterday: say 'yesterday' and the time.
 			$format = $this->getDateFormatString( 'time', $user->getDatePreference() ?: 'default' );
-			$ts = wfMessage( 'yesterday-at' )
-				->inLanguage( $this )
+			$ts = $this->msg( 'yesterday-at' )
 				->params( $this->sprintfDate( $format, $ts->getTimestamp( TS_MW ) ) )
 				->text();
-		} elseif ( $diff->h > 1 || $diff->h == 1 && $diff->i > 30 ) {
+		} elseif ( $diff->h > 1 || ( $diff->h == 1 && $diff->i > 30 ) ) {
 			// Timestamp was today, but more than 90 minutes ago: say 'today' and the time.
 			$format = $this->getDateFormatString( 'time', $user->getDatePreference() ?: 'default' );
-			$ts = wfMessage( 'today-at' )
-				->inLanguage( $this )
+			$ts = $this->msg( 'today-at' )
 				->params( $this->sprintfDate( $format, $ts->getTimestamp( TS_MW ) ) )
 				->text();
 
@@ -2434,16 +2403,16 @@ class Language implements Bcp47Code {
 		// XX units ago, e.g., "2 hours ago" or "5 minutes ago"
 		} elseif ( $diff->h == 1 ) {
 			// Less than 90 minutes, but more than an hour ago.
-			$ts = wfMessage( 'hours-ago' )->inLanguage( $this )->numParams( 1 )->text();
+			$ts = $this->msg( 'hours-ago' )->numParams( 1 )->text();
 		} elseif ( $diff->i >= 1 ) {
 			// A few minutes ago.
-			$ts = wfMessage( 'minutes-ago' )->inLanguage( $this )->numParams( $diff->i )->text();
+			$ts = $this->msg( 'minutes-ago' )->numParams( $diff->i )->text();
 		} elseif ( $diff->s >= 30 ) {
 			// Less than a minute, but more than 30 sec ago.
-			$ts = wfMessage( 'seconds-ago' )->inLanguage( $this )->numParams( $diff->s )->text();
+			$ts = $this->msg( 'seconds-ago' )->numParams( $diff->s )->text();
 		} else {
 			// Less than 30 seconds ago.
-			$ts = wfMessage( 'just-now' )->text();
+			$ts = $this->msg( 'just-now' )->text();
 		}
 
 		return $ts;
@@ -2681,15 +2650,10 @@ class Language implements Bcp47Code {
 	}
 
 	/**
-	 * TODO: $s is not always a string per T218883
-	 *
 	 * @param string $s
 	 * @return string
 	 */
-	public function checkTitleEncoding( $s ) {
-		if ( is_array( $s ) ) {
-			throw new MWException( 'Given array to checkTitleEncoding.' );
-		}
+	public function checkTitleEncoding( string $s ) {
 		if ( StringUtils::isUtf8( $s ) ) {
 			return $s;
 		}
@@ -3334,7 +3298,7 @@ class Language implements Bcp47Code {
 	 */
 	public function commaList( array $list ) {
 		return implode(
-			wfMessage( 'comma-separator' )->inLanguage( $this )->escaped(),
+			$this->msg( 'comma-separator' )->escaped(),
 			$list
 		);
 	}
@@ -3348,7 +3312,7 @@ class Language implements Bcp47Code {
 	 */
 	public function semicolonList( array $list ) {
 		return implode(
-			wfMessage( 'semicolon-separator' )->inLanguage( $this )->escaped(),
+			$this->msg( 'semicolon-separator' )->escaped(),
 			$list
 		);
 	}
@@ -3361,7 +3325,7 @@ class Language implements Bcp47Code {
 	 */
 	public function pipeList( array $list ) {
 		return implode(
-			wfMessage( 'pipe-separator' )->inLanguage( $this )->escaped(),
+			$this->msg( 'pipe-separator' )->escaped(),
 			$list
 		);
 	}
@@ -3395,7 +3359,7 @@ class Language implements Bcp47Code {
 	 * This provides the multibyte version of truncateForDatabase() method of this class,
 	 * suitable for truncation based on number of characters, instead of number of bytes.
 	 *
-	 * The input should be a raw UTF-8 strin, and *NOT* be HTML
+	 * The input should be a raw UTF-8 string, and *NOT* be HTML
 	 * escaped. It is not safe to truncate HTML-escaped strings,
 	 * because the entity can be truncated! Use ::truncateHtml() if you
 	 * need a specific number of HTML-encoded bytes, or
@@ -3449,7 +3413,7 @@ class Language implements Bcp47Code {
 
 		# Use the localized ellipsis character
 		if ( $ellipsis == '...' ) {
-			$ellipsis = wfMessage( 'ellipsis' )->inLanguage( $this )->text();
+			$ellipsis = $this->msg( 'ellipsis' )->text();
 		}
 		if ( $length == 0 ) {
 			return $ellipsis; // convention
@@ -3527,7 +3491,7 @@ class Language implements Bcp47Code {
 	public function truncateHtml( $text, $length, $ellipsis = '...' ) {
 		# Use the localized ellipsis character
 		if ( $ellipsis == '...' ) {
-			$ellipsis = wfMessage( 'ellipsis' )->inLanguage( $this )->escaped();
+			$ellipsis = $this->msg( 'ellipsis' )->escaped();
 		}
 		# Check if there is clearly no need to truncate
 		if ( $length <= 0 ) {
@@ -3759,7 +3723,6 @@ class Language implements Bcp47Code {
 	 * but uses pairs of regexes and replacements instead of code.
 	 *
 	 * @return array[] Array of grammar transformations.
-	 * @throws MWException
 	 * @since 1.28
 	 */
 	public function getGrammarTransformations() {
@@ -3774,7 +3737,7 @@ class Language implements Bcp47Code {
 			: [];
 
 		if ( $this->grammarTransformCache === null ) {
-			throw new MWException( "Invalid grammar data for \"{$this->getCode()}\"." );
+			throw new RuntimeException( "Invalid grammar data for \"{$this->getCode()}\"." );
 		}
 
 		return $this->grammarTransformCache;
@@ -3914,6 +3877,33 @@ class Language implements Bcp47Code {
 	}
 
 	/**
+	 * Get an array of suggested block durations from MediaWiki:Ipboptions
+	 * @todo FIXME: This uses a rather odd syntax for the options, should it be converted
+	 *     to the standard "**<duration>|<displayname>" format?
+	 * @since 1.42
+	 * @param bool $includeOther Whether to include the 'other' option in the list of
+	 *     suggestions
+	 * @return string[]
+	 */
+	public function getBlockDurations( $includeOther = true ): array {
+		$msg = $this->msg( 'ipboptions' )->text();
+
+		if ( $msg == '-' ) {
+			return [];
+		}
+
+		$a = XmlSelect::parseOptionsMessage( $msg );
+
+		if ( $a && $includeOther ) {
+			// If options exist, add other to the end instead of the beginning (which
+			// is what happens by default).
+			$a[ $this->msg( 'ipbother' )->text() ] = 'other';
+		}
+
+		return $a;
+	}
+
+	/**
 	 * @todo Maybe translate block durations.  Note that this function is somewhat misnamed: it
 	 * deals with translating the *duration* ("1 week", "4 days", etc.), not the expiry time
 	 * (which is an absolute timestamp). Please note: do NOT add this blindly, as it is used
@@ -3927,7 +3917,7 @@ class Language implements Bcp47Code {
 	 * @see LanguageFi.php file for an implementation example
 	 */
 	public function translateBlockExpiry( $str, UserIdentity $user = null, $now = 0 ) {
-		$duration = SpecialBlock::getSuggestedDurations( $this );
+		$duration = $this->getBlockDurations();
 		$show = array_search( $str, $duration, true );
 		if ( $show !== false ) {
 			return trim( $show );
@@ -4128,7 +4118,7 @@ class Language implements Bcp47Code {
 	 */
 	public function formatExpiry( $expiry, $format = true, $infinity = 'infinity', $user = null ) {
 		static $dbInfinity;
-		$dbInfinity ??= MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
+		$dbInfinity ??= MediaWikiServices::getInstance()->getConnectionProvider()
 			->getReplicaDatabase()
 			->getInfinity();
 

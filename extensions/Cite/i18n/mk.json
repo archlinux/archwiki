@@ -9,9 +9,11 @@
 	"cite-desc": "Додава ознаки <code>&lt;ref&gt;</code> и <code>&lt;references&gt;</code> за цитирања",
 	"cite_error": "Грешка во наводот: $1.",
 	"cite_error_ref_invalid_dir": "Неважечка ознака <code>dir=\"$1\"</code>. Мора да биде <code>ltr</code> или <code>rtl</code>",
+	"cite_error_ref_conflicting_dir": "Една од ознаките <code>&lt;ref&gt;</code> по име „$1“ има спротиставен атрибут dir.",
 	"cite_error_ref_numeric_key": "Погрешна ознака <code>&lt;ref&gt;</code>; името не може да биде број. Употребете описен наслов",
 	"cite_error_ref_no_key": "Отворачката ознака <code>&lt;ref&gt;</code> не е добро срочена или има погрешно име",
-	"cite_error_ref_too_many_keys": "Погрешна ознака<code>&lt;ref&gt;</code>; погрешни имиња, т.е. ги има премногу",
+	"cite_error_ref_too_many_keys": "Неважечки параметар во ознаката <code>&lt;ref&gt;</code>",
+	"cite_error_ref_follow_conflicts": "Ознаката <code>&lt;ref follow=\"…\"&gt;</code> која е продолжението на претходна не може да се именува поединечно, ниту да се проширува",
 	"cite_error_ref_nested_extends": "Не е дозволено зголемувањето на продорноста на ознаките  <code>&lt;ref&gt;</code> повеќе од еден степен",
 	"cite_error_ref_no_input": "Погрешна ознака <code>&lt;ref&gt;</code>; наводите без име мораат да имаат содржина",
 	"cite_error_references_duplicate_key": "Неважечка ознака <code>&lt;ref&gt;</code>; називот „$1“ е зададен повеќепати со различна содржина",
@@ -23,7 +25,6 @@
 	"cite_error_included_references": "Недостасува затворачка ознака за <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Има ознаки <code>&lt;ref&gt;</code> за група именувана како „$1“, но нема соодветна ознака <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "Ознаката <code>&lt;ref&gt;</code> во <code>&lt;references&gt;</code> има спротивставен групен атрибут „$1“.",
-	"cite_error_references_missing_group": "Ознаката <code>&lt;ref&gt;</code> со назив „$2“ определена во <code>&lt;references&gt;</code> има групен атрибут „$1“ кој не се јавува во претходен текст.",
 	"cite_error_references_missing_key": "Ознаката <code>&lt;ref&gt;</code> со име „$1“ определена во <code>&lt;references&gt;</code> не се користи во претходен текст.",
 	"cite_error_references_no_key": "Ознаката <code>&lt;ref&gt;</code> определена во <code>&lt;referencesgt;</code> нема именски атрибут.",
 	"cite_error_empty_references_define": "Ознаката <code>&lt;ref&gt;</code> со назив „$1“ определена во <code>&lt;references&gt;</code> групата „$2“ нема содржина.",
@@ -44,5 +45,6 @@
 	"cite-wikieditor-help-content-showreferences-description": "Прикажи наводи",
 	"cite-wikieditor-help-content-reference-example-text1": "Текст на страницата.$1",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 Текст на врската], дополнителен текст.",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 Текст на врската]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 Текст на врската]",
+	"cite-wikieditor-help-content-reference-example-ref-id": "проба"
 }

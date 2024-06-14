@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aishik Rehman",
 			"Amire80",
 			"Bodhisattwa",
 			"DannyS712",
@@ -10,8 +11,7 @@
 			"Usingha",
 			"Uttam Singha, Dec 2006",
 			"আফতাবুজ্জামান",
-			"아라",
-			"Aishik Rehman"
+			"아라"
 		]
 	},
 	"tog-underline": "লিঙ্কর তলে দুরগ দিক:",
@@ -217,7 +217,7 @@
 	"versionrequiredtext": "এরে পাতা এহান ব্যবহারর কা মিডিয়াউইকির $1 নং সংস্করণহান দরকার। [[Special:Version|সংস্করণ পাতা]] চা।",
 	"ok": "চুমিসে",
 	"retrievedfrom": "'$1' -ত্ত আনানি অসে",
-	"youhavenewmessages": "তরতা $1 ($2) আসে।",
+	"new-messages": "তরতা $1 ($2) আসে।",
 	"editsection": "পতিক",
 	"editold": "পতিক",
 	"viewsourceold": "উৎস চা",
@@ -755,7 +755,6 @@
 	"filehist-nothumb": "থাম্বনেইল নেই",
 	"filehist-user": "আতাকুরা",
 	"filehist-dimensions": "চাঙহান",
-	"filehist-filesize": "ফাইলর সাইজহান",
 	"filehist-comment": "মতহান",
 	"filehist-missing": "ফাইলগ মাঙুইসে",
 	"imagelinks": "ফাইলর ব্যবহার",

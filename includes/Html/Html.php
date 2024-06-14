@@ -26,11 +26,10 @@
 namespace MediaWiki\Html;
 
 use FormatJson;
-use InvalidArgumentException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\ContentSecurityPolicy;
-use MWException;
+use UnexpectedValueException;
 
 /**
  * This class is a collection of static functions that serve two purposes:
@@ -109,109 +108,62 @@ class Html {
 	];
 
 	/**
-	 * Modifies a set of attributes meant for button elements
-	 * and apply a set of default attributes when $wgUseMediaWikiUIEverywhere enabled.
+	 * Modifies a set of attributes meant for button elements.
+	 *
 	 * @param array $attrs HTML attributes in an associative array
-	 * @param string[] $modifiers classes to add to the button
-	 * @see https://tools.wmflabs.org/styleguide/desktop/index.html for guidance on available modifiers
+	 * @param string[] $modifiers Unused
 	 * @return array Modified attributes array
+	 * @deprecated since 1.42 No-op
 	 */
 	public static function buttonAttributes( array $attrs, array $modifiers = [] ) {
-		$useMediaWikiUIEverywhere =
-			MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::UseMediaWikiUIEverywhere );
-		if ( $useMediaWikiUIEverywhere ) {
-			if ( isset( $attrs['class'] ) ) {
-				if ( is_array( $attrs['class'] ) ) {
-					$attrs['class'][] = 'mw-ui-button';
-					$attrs['class'] = array_merge( $attrs['class'], $modifiers );
-					// ensure compatibility with Xml
-					$attrs['class'] = implode( ' ', $attrs['class'] );
-				} else {
-					$attrs['class'] .= ' mw-ui-button ' . implode( ' ', $modifiers );
-				}
-			} else {
-				// ensure compatibility with Xml
-				$attrs['class'] = 'mw-ui-button ' . implode( ' ', $modifiers );
-			}
-		}
+		wfDeprecated( __METHOD__, '1.42' );
 		return $attrs;
 	}
 
 	/**
-	 * Modifies a set of attributes meant for text input elements
-	 * and apply a set of default attributes.
+	 * Modifies a set of attributes meant for text input elements.
 	 *
 	 * @param array $attrs An attribute array.
 	 * @return array Modified attributes array
+	 * @deprecated since 1.42 No-op
 	 */
 	public static function getTextInputAttributes( array $attrs ) {
-		$useMediaWikiUIEverywhere = MediaWikiServices::getInstance()
-			->getMainConfig()->get( MainConfigNames::UseMediaWikiUIEverywhere );
-		if ( $useMediaWikiUIEverywhere ) {
-			$cdxInputClass = 'cdx-text-input__input';
-			// This will only apply if the input is not using official Codex classes.
-			// In future this should trigger a deprecation warning.
-			if ( isset( $attrs['class'] ) ) { // see expandAttributes() for supported attr formats
-				if ( is_array( $attrs['class'] ) ) {
-					if (
-						!in_array( $cdxInputClass, $attrs['class'], true ) &&
-						!( $attrs['class'][$cdxInputClass] ?? false )
-					) {
-						$attrs['class']['mw-ui-input'] = true;
-					}
-				} elseif ( is_string( $attrs['class'] ) ) {
-					if ( !preg_match( "/(^| )$cdxInputClass($| )/", $attrs['class'] ) ) {
-						$attrs['class'] .= ' mw-ui-input';
-					}
-				} else {
-					throw new InvalidArgumentException(
-						'Unexpected class attr of type ' . gettype( $attrs['class'] )
-					);
-				}
-			} else {
-				$attrs['class'] = 'mw-ui-input';
-			}
-		}
+		wfDeprecated( __METHOD__, '1.42' );
 		return $attrs;
 	}
 
 	/**
-	 * Returns an HTML link element in a string styled as a button
-	 * (when $wgUseMediaWikiUIEverywhere is enabled).
+	 * Returns an HTML link element in a string.
 	 *
 	 * @param string $text The text of the element. Will be escaped (not raw HTML)
 	 * @param array $attrs Associative array of attributes, e.g., [
 	 *   'href' => 'https://www.mediawiki.org/' ]. See expandAttributes() for
 	 *   further documentation.
-	 * @param string[] $modifiers classes to add to the button
-	 * @see https://tools.wmflabs.org/styleguide/desktop/index.html for guidance on available modifiers
+	 * @param string[] $modifiers Unused
 	 * @return string Raw HTML
 	 */
 	public static function linkButton( $text, array $attrs, array $modifiers = [] ) {
 		return self::element(
 			'a',
-			self::buttonAttributes( $attrs, $modifiers ),
+			$attrs,
 			$text
 		);
 	}
 
 	/**
-	 * Returns an HTML link element in a string styled as a button
-	 * (when $wgUseMediaWikiUIEverywhere is enabled).
+	 * Returns an HTML input element in a string.
 	 *
-	 * @param string $contents The raw HTML contents of the element: *not*
-	 *   escaped!
+	 * @param string $contents Plain text label for the button value
 	 * @param array $attrs Associative array of attributes, e.g., [
 	 *   'href' => 'https://www.mediawiki.org/' ]. See expandAttributes() for
 	 *   further documentation.
-	 * @param string[] $modifiers classes to add to the button
-	 * @see https://tools.wmflabs.org/styleguide/desktop/index.html for guidance on available modifiers
+	 * @param string[] $modifiers Unused
 	 * @return string Raw HTML
 	 */
-	public static function submitButton( $contents, array $attrs, array $modifiers = [] ) {
+	public static function submitButton( $contents, array $attrs = [], array $modifiers = [] ) {
 		$attrs['type'] = 'submit';
 		$attrs['value'] = $contents;
-		return self::element( 'input', self::buttonAttributes( $attrs, $modifiers ) );
+		return self::element( 'input', $attrs );
 	}
 
 	/**
@@ -505,7 +457,6 @@ class Html {
 	 *   you can omit the key, e.g., [ 'checked' ] instead of
 	 *   [ 'checked' => 'checked' ] or such.
 	 *
-	 * @throws MWException If an attribute that doesn't allow lists is set to an array
 	 * @return string HTML fragment that goes between element name and '>'
 	 *   (starting with a space if at least one attribute is output)
 	 */
@@ -585,7 +536,7 @@ class Html {
 				// phpcs:ignore Generic.PHP.DiscourageGoto
 				goto not_bool; // NOSONAR
 			} elseif ( is_array( $value ) ) {
-				throw new MWException( "HTML attribute $key can not contain a list of values" );
+				throw new UnexpectedValueException( "HTML attribute $key can not contain a list of values" );
 			}
 
 			if ( isset( self::$boolAttribs[$key] ) ) {
@@ -700,7 +651,7 @@ class Html {
 	}
 
 	/**
-	 * Convenience function to produce an "<input>" element.  This supports the
+	 * Convenience function to produce an `<input>` element.  This supports the
 	 * new HTML5 input types and attributes.
 	 *
 	 * @param string $name Name attribute
@@ -714,24 +665,6 @@ class Html {
 		$attribs['type'] = $type;
 		$attribs['value'] = $value;
 		$attribs['name'] = $name;
-		$textInputAttributes = [
-			'text' => true,
-			'search' => true,
-			'email' => true,
-			'password' => true,
-			'number' => true,
-		];
-		if ( isset( $textInputAttributes[$type] ) ) {
-			$attribs = self::getTextInputAttributes( $attribs );
-		}
-		$buttonAttributes = [
-			'button' => true,
-			'reset' => true,
-			'submit' => true,
-		];
-		if ( isset( $buttonAttributes[$type] ) ) {
-			$attribs = self::buttonAttributes( $attribs );
-		}
 		return self::element( 'input', $attribs );
 	}
 
@@ -930,7 +863,7 @@ class Html {
 		} else {
 			$spacedValue = $value;
 		}
-		return self::element( 'textarea', self::getTextInputAttributes( $attribs ), $spacedValue );
+		return self::element( 'textarea', $attribs, $spacedValue );
 	}
 
 	/**
@@ -1033,19 +966,14 @@ class Html {
 			);
 		}
 
-		if ( !array_key_exists( 'id', $selectAttribs ) ) {
-			$selectAttribs['id'] = 'namespace';
-		}
-
-		if ( !array_key_exists( 'name', $selectAttribs ) ) {
-			$selectAttribs['name'] = 'namespace';
-		}
+		$selectAttribs['id'] ??= 'namespace';
+		$selectAttribs['name'] ??= 'namespace';
 
 		$ret = '';
 		if ( isset( $params['label'] ) ) {
 			$ret .= self::element(
 				'label', [
-					'for' => $selectAttribs['id'] ?? null,
+					'for' => $selectAttribs['id'],
 				], $params['label']
 			) . "\u{00A0}";
 		}
@@ -1225,9 +1153,87 @@ class Html {
 			return implode( ',', $args );
 		}
 	}
+
+	/**
+	 * Build options for a drop-down box from a textual list.
+	 *
+	 * The result of this function can be passed to XmlSelect::addOptions()
+	 * (to render a plain `<select>` dropdown box) or to Html::listDropdownOptionsOoui()
+	 * and then OOUI\DropdownInputWidget() (to render a pretty one).
+	 *
+	 * @param string $list Correctly formatted text (newline delimited) to be
+	 *   used to generate the options.
+	 * @param array $params Extra parameters:
+	 *   - string $params['other'] If set, add an option with this as text and a value of 'other'
+	 * @return array Array keys are textual labels, values are internal values
+	 */
+	public static function listDropdownOptions( $list, $params = [] ) {
+		$options = [];
+
+		if ( isset( $params['other'] ) ) {
+			$options[ $params['other'] ] = 'other';
+		}
+
+		$optgroup = false;
+		foreach ( explode( "\n", $list ) as $option ) {
+			$value = trim( $option );
+			if ( $value == '' ) {
+				continue;
+			}
+			if ( substr( $value, 0, 1 ) == '*' && substr( $value, 1, 1 ) != '*' ) {
+				# A new group is starting...
+				$value = trim( substr( $value, 1 ) );
+				if ( $value !== '' &&
+					// Do not use the value for 'other' as option group - T251351
+					( !isset( $params['other'] ) || $value !== $params['other'] )
+				) {
+					$optgroup = $value;
+				} else {
+					$optgroup = false;
+				}
+			} elseif ( substr( $value, 0, 2 ) == '**' ) {
+				# groupmember
+				$opt = trim( substr( $value, 2 ) );
+				if ( $optgroup === false ) {
+					$options[$opt] = $opt;
+				} else {
+					$options[$optgroup][$opt] = $opt;
+				}
+			} else {
+				# groupless reason list
+				$optgroup = false;
+				$options[$option] = $option;
+			}
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Convert options for a drop-down box into a format accepted by OOUI\DropdownInputWidget etc.
+	 *
+	 * TODO Find a better home for this function.
+	 *
+	 * @param array $options Options, as returned e.g. by Html::listDropdownOptions()
+	 * @return array
+	 */
+	public static function listDropdownOptionsOoui( $options ) {
+		$optionsOoui = [];
+
+		foreach ( $options as $text => $value ) {
+			if ( is_array( $value ) ) {
+				$optionsOoui[] = [ 'optgroup' => (string)$text ];
+				foreach ( $value as $text2 => $value2 ) {
+					$optionsOoui[] = [ 'data' => (string)$value2, 'label' => (string)$text2 ];
+				}
+			} else {
+				$optionsOoui[] = [ 'data' => (string)$value, 'label' => (string)$text ];
+			}
+		}
+
+		return $optionsOoui;
+	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( Html::class, 'Html' );

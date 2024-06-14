@@ -15,6 +15,7 @@
 			"Impersonator 1",
 			"Liangent",
 			"Linforest",
+			"LittlePaw365",
 			"Liuxinyu970226",
 			"Mywood",
 			"Qiyue2001",
@@ -28,8 +29,7 @@
 			"乌拉跨氪",
 			"佛壁灯",
 			"夢蝶葬花",
-			"沈澄心",
-			"LittlePaw365"
+			"沈澄心"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "图书",
@@ -76,7 +76,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "此参考资料定义在模板或其他生成块内，目前只能使用源代码模式预览。",
 	"cite-ve-referenceslist-missingreflist": "此参考资料列表由模板生成。",
 	"cite-ve-toolbar-group-label": "引证",
-	"cite-ve-othergroup-item": "$1参考资料",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "参考文献",
-	"visualeditor-internal-list-diff-group-name-mwreference": "参考文献组名：“$1”"
+	"cite-ve-othergroup-item": "$1参考资料"
 }

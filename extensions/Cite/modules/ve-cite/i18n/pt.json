@@ -67,7 +67,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Esta referência está definida numa predefinição ou noutro bloco, e de momento só pode ser antevista no modo de código-fonte.",
 	"cite-ve-referenceslist-missingreflist": "Esta lista de referências é gerada por uma predefinição.",
 	"cite-ve-toolbar-group-label": "Citar",
-	"cite-ve-othergroup-item": "Referência $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referências",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nome do grupo da referência: \"$1\""
+	"cite-ve-othergroup-item": "Referência $1"
 }

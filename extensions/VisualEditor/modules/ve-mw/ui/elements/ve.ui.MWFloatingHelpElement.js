@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface MWFloatingHelpElement class.
  *
- * @copyright 2011-2021 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -39,7 +39,7 @@ ve.ui.MWFloatingHelpElement = function VeUiMWFloatingHelpElement( config ) {
 	this.windowManager.$element.addClass( 've-ui-mwFloatingHelpElement-windowManager' );
 
 	if ( OO.ui.isMobile() ) {
-		$( document.body ).append( this.windowManager.$element );
+		$( OO.ui.getTeleportTarget() ).append( this.windowManager.$element );
 	} else {
 		this.$element.append( this.windowManager.$element );
 	}

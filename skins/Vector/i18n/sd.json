@@ -23,7 +23,6 @@
 	"vector-language-button-aria-label": "ڪنھن مضمون ڏانھن ڪنھن ٻي ٻوليءَ ۾ وڃو. {{PLURAL:$1|$1 ٻوليءَ|$1 ٻولين ۾}} موجود آھي",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ٻولي|$1 ٻوليون}}",
 	"vector-no-language-button-label": "ٻوليون شامل ڪريو",
-	"vector-language-redirect-to-top": "ھن {{SITENAME}} تي ٻوليءَ جا ڳنڍڻا صفحي جي مٿان آھن، مضمون جي عنوان کان اڳتي. [[#p-lang-btn|مٿي وڃو]].",
 	"vector-language-variant-switcher-label": "ٻوليءَ جو ويرينٽ بدلايو",
 	"vector-action-addsection": "موضوع شامل ڪريو",
 	"vector-action-delete": "ڊاھيو",
@@ -40,6 +39,8 @@
 	"vector-jumptosearch": "ڳولا ڏانھن هلو",
 	"vector-jumptocontent": "مواد ڏانھن ٽپ ڏيو",
 	"vector-more-actions": "وڌيڪ",
+	"skin-night-mode-0-label": "ڏينھن",
+	"skin-theme-day-label": "ڏينھن",
 	"vector-search-loader": "ڳولا صلاحون لاھيندي",
 	"vector-searchsuggest-containing": "اھي صفحا ڳوليو جن ۾ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> آھي",
 	"vector-intro-page": "Help:تعارف",
@@ -57,7 +58,7 @@
 	"vector-pin-element-label": "سائڊبار ڏانھن چوريو",
 	"vector-unpin-element-label": "لڪايو",
 	"tooltip-vector-anon-user-menu-title": "وڌيڪ چارا",
-	"vector-toc-unpinned-popup": "عنوانن جي فھرست کي ھيڏانھن چوريو ويو آھي.",
-	"vector-page-tools-unpinned-popup": "اوزار مينيو ھيڏانھن چوريو ويو آھي.",
-	"vector-main-menu-unpinned-popup": "مک مينيو ھيڏانھن چوريو ويو آهي."
+	"vector-toc-unpinned-popup": "عنوانن جي فھرست کي ھيڏانهن چوريو ويو آھي.",
+	"vector-page-tools-unpinned-popup": "اوزار مينيو ھيڏانهن چوريو ويو آھي.",
+	"vector-main-menu-unpinned-popup": "مک مينيو ھيڏانهن چوريو ويو آهي."
 }

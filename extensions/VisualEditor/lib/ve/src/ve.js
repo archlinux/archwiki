@@ -1,7 +1,7 @@
 /*!
  * VisualEditor namespace.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -24,7 +24,9 @@ ve.now = function () {
 	var perf = window.performance;
 	var navStart = perf && perf.timing && perf.timing.navigationStart;
 	ve.now = navStart && perf.now ?
-		function () { return navStart + perf.now(); } : Date.now;
+		function () {
+			return navStart + perf.now();
+		} : Date.now;
 
 	return ve.now();
 };

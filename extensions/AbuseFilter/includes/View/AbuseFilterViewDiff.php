@@ -3,9 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\View;
 
 use DifferenceEngine;
-use Html;
 use IContextSource;
-use Linker;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Filter\ClosestFilterVersionNotFoundException;
 use MediaWiki\Extension\AbuseFilter\Filter\FilterNotFoundException;
@@ -14,6 +12,8 @@ use MediaWiki\Extension\AbuseFilter\Filter\HistoryFilter;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Extension\AbuseFilter\TableDiffFormatterFullContext;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use OOUI;
 use TextContent;

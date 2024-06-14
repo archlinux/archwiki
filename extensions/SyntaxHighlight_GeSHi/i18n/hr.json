@@ -11,6 +11,7 @@
 	},
 	"syntaxhighlight-desc": "Omogućava bojanje sintakse <code>&lt;syntaxhighlight&gt;</code> korištenjem [http://pygments.org/ Pygments-a]",
 	"syntaxhighlight-error-category": "Stranice s pogreškama u isticanju sintakse",
+	"syntaxhighlight-source-category": "Stranice koje rabe zastarjele oznake izvora",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kôd",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Jezik",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Prikaži brojeve redova",

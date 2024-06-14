@@ -80,7 +80,7 @@ class MoveToExternal extends Maintenance {
 		$this->resolveStubs = new ResolveStubs;
 		$this->esType = $this->getArg( 0 ); // e.g. "DB" or "mwstore"
 		$this->esLocation = $this->getArg( 1 ); // e.g. "cluster12" or "global-swift"
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 
 		$maxID = $this->getOption( 'end' );
 		if ( $maxID === null ) {
@@ -124,11 +124,12 @@ class MoveToExternal extends Maintenance {
 		}
 		$this->resolveStubs->setUndoLog( $this->undoLog );
 
-		$this->doMoveToExternal();
+		return $this->doMoveToExternal();
 	}
 
 	private function doMoveToExternal() {
-		$dbr = $this->getDB( DB_REPLICA );
+		$success = true;
+		$dbr = $this->getReplicaDB();
 
 		$count = $this->maxID - $this->minID + 1;
 		$blockSize = $this->getBatchSize();
@@ -136,7 +137,6 @@ class MoveToExternal extends Maintenance {
 		print "Moving text rows from {$this->minID} to {$this->maxID} to external storage\n";
 
 		$esFactory = $this->getServiceContainer()->getExternalStoreFactory();
-		$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
 		$extStore = $esFactory->getStore( $this->esType );
 		$numMoved = 0;
 		$stubIDs = [];
@@ -147,7 +147,7 @@ class MoveToExternal extends Maintenance {
 
 			if ( $this->reportingInterval && !( $block % $this->reportingInterval ) ) {
 				$this->output( "oldid=$blockStart, moved=$numMoved\n" );
-				$lbFactory->waitForReplication();
+				$this->waitForReplication();
 			}
 
 			$res = $dbr->newSelectQueryBuilder()
@@ -161,6 +161,10 @@ class MoveToExternal extends Maintenance {
 				$flags = SqlBlobStore::explodeFlags( $row->old_flags );
 				[ $text, $flags ] = $this->resolveText( $text, $flags );
 
+				if ( $text === false ) {
+					$success = false;
+				}
+
 				if ( in_array( 'error', $flags ) ) {
 					continue;
 				} elseif ( in_array( 'object', $flags ) ) {
@@ -173,13 +177,28 @@ class MoveToExternal extends Maintenance {
 						continue;
 					} elseif ( $obj instanceof HistoryBlobCurStub ) {
 						// Copy cur text to ES
-						[ $text, $flags ] = $this->resolveLegacyEncoding( $obj->getText(), [] );
+						$newText = $obj->getText();
+						if ( $newText === false ) {
+							print "Warning: Could not fetch revision blob {$id}: {$text}\n";
+							$success = false;
+							continue;
+						}
+
+						[ $text, $flags ] = $this->resolveLegacyEncoding( $newText, [] );
+
+						if ( $text === false ) {
+							print "Warning: Could not decode legacy-encoded gzip\'ed revision blob {$id}: {$newText}\n";
+							$success = false;
+							continue;
+						}
+
 						[ $text, $flags ] = $this->compress( $text, $flags );
 					} elseif ( $obj instanceof ConcatenatedGzipHistoryBlob ) {
 						// Store as is
 					} else {
 						$className = get_class( $obj );
 						print "Warning: old_id=$id unrecognised object class \"$className\"\n";
+						$success = false;
 						continue;
 					}
 				} elseif ( strlen( $text ) < $this->threshold ) {
@@ -187,7 +206,13 @@ class MoveToExternal extends Maintenance {
 					continue;
 				} else {
 					[ $text, $flags ] = $this->resolveLegacyEncoding( $text, $flags );
-					[ $text, $flags ] = $this->compress( $text, $flags );
+					[ $newText, $flags ] = $this->compress( $text, $flags );
+					if ( $newText === false ) {
+						print "Warning: Could not compress revision blob {$id}: {$text}\n";
+						$success = false;
+						continue;
+					}
+					$text = $newText;
 				}
 				$flags[] = 'external';
 				$flagsString = implode( ',', $flags );
@@ -214,6 +239,7 @@ class MoveToExternal extends Maintenance {
 					$numMoved++;
 				} else {
 					print "Update of old_id $id failed, affected zero rows\n";
+					$success = false;
 				}
 			}
 		}
@@ -221,6 +247,8 @@ class MoveToExternal extends Maintenance {
 		if ( count( $stubIDs ) ) {
 			$this->resolveStubs( $stubIDs );
 		}
+
+		return $success;
 	}
 
 	private function compress( $text, $flags ) {
@@ -242,11 +270,19 @@ class MoveToExternal extends Maintenance {
 					return [ $text, $flags ];
 				}
 				$flags = array_diff( $flags, [ 'gzip' ] );
-				$text = gzinflate( $text );
+				$newText = gzinflate( $text );
+				if ( $newText === false ) {
+					return [ false, $flags ];
+				}
+				$text = $newText;
 			}
 			AtEase::suppressWarnings();
-			$text = iconv( $this->legacyEncoding, 'UTF-8//IGNORE', $text );
+			$newText = iconv( $this->legacyEncoding, 'UTF-8//IGNORE', $text );
 			AtEase::restoreWarnings();
+			if ( $newText === false ) {
+				return [ false, $flags ];
+			}
+			$text = $newText;
 			$flags[] = 'utf-8';
 		}
 		return [ $text, $flags ];
@@ -258,8 +294,7 @@ class MoveToExternal extends Maintenance {
 				"because the main blobs have not been moved to external storage.\n";
 		}
 
-		$dbr = $this->getDB( DB_REPLICA );
-		$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
+		$dbr = $this->getReplicaDB();
 		$this->output( "Resolving " . count( $stubIDs ) . " stubs\n" );
 		$numResolved = 0;
 		$numTotal = 0;
@@ -276,7 +311,7 @@ class MoveToExternal extends Maintenance {
 					&& $numTotal % $this->reportingInterval == 0
 				) {
 					$this->output( "$numTotal stubs processed\n" );
-					$lbFactory->waitForReplication();
+					$this->waitForReplication();
 				}
 			}
 		}

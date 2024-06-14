@@ -2,10 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Pirehelokan",
-			"Sarchia"
+			"Sarchia",
+			"Aram"
 		]
 	},
+	"syntaxhighlight-source-category": "ئەو پەڕانەی تاگە پەسەندنەکراوەکانی source بەکاردەھێنن",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "کۆد",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "زمان",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(ھیچ)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "ژمارەی دێڕەکان پیشان بدە",
-	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "بلۆکی کۆد"
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "بلۆکی کۆد",
+	"syntaxhighlight-error-unknown-language": "زمانی نەناسراوی «$1»"
 }

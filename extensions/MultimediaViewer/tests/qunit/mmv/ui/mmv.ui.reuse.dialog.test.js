@@ -19,22 +19,22 @@ const { ReuseDialog, Repo } = require( 'mmv' );
 
 ( function () {
 	function makeReuseDialog( sandbox ) {
-		var $fixture = $( '#qunit-fixture' ),
-			config = { getFromLocalStorage: sandbox.stub(), setInLocalStorage: sandbox.stub() };
+		const $fixture = $( '#qunit-fixture' );
+		const config = { getFromLocalStorage: sandbox.stub(), setInLocalStorage: sandbox.stub() };
 		return new ReuseDialog( $fixture, $( '<div>' ).appendTo( $fixture ), config );
 	}
 
 	QUnit.module( 'mmv.ui.reuse.Dialog', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
-		var reuseDialog = makeReuseDialog( this.sandbox );
+		const reuseDialog = makeReuseDialog( this.sandbox );
 
 		assert.true( reuseDialog instanceof ReuseDialog, 'Reuse UI element is created.' );
 		assert.strictEqual( reuseDialog.$dialog.length, 1, 'Reuse dialog div created.' );
 	} );
 
 	QUnit.test( 'handleOpenCloseClick():', function ( assert ) {
-		var reuseDialog = makeReuseDialog( this.sandbox );
+		const reuseDialog = makeReuseDialog( this.sandbox );
 
 		reuseDialog.openDialog = function () {
 			assert.true( true, 'openDialog called.' );
@@ -59,7 +59,7 @@ const { ReuseDialog, Repo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'handleTabSelection():', function ( assert ) {
-		var reuseDialog = makeReuseDialog( this.sandbox );
+		const reuseDialog = makeReuseDialog( this.sandbox );
 
 		reuseDialog.initTabs();
 
@@ -77,9 +77,7 @@ const { ReuseDialog, Repo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'default tab:', function ( assert ) {
-		var reuseDialog;
-
-		reuseDialog = makeReuseDialog( this.sandbox );
+		let reuseDialog = makeReuseDialog( this.sandbox );
 		reuseDialog.initTabs();
 		assert.strictEqual( reuseDialog.selectedTab, 'share', 'Share tab is default' );
 
@@ -90,7 +88,7 @@ const { ReuseDialog, Repo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'attach()/unattach():', function ( assert ) {
-		var reuseDialog = makeReuseDialog( this.sandbox );
+		const reuseDialog = makeReuseDialog( this.sandbox );
 
 		reuseDialog.initTabs();
 
@@ -134,33 +132,31 @@ const { ReuseDialog, Repo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'start/stopListeningToOutsideClick():', function ( assert ) {
-		var reuseDialog = makeReuseDialog( this.sandbox ),
-			realCloseDialog = reuseDialog.closeDialog;
+		const reuseDialog = makeReuseDialog( this.sandbox );
+		const realCloseDialog = reuseDialog.closeDialog;
 
 		reuseDialog.initTabs();
 
 		function clickOutsideDialog() {
-			var event = new $.Event( 'click', { target: reuseDialog.$container[ 0 ] } );
+			const event = new $.Event( 'click', { target: reuseDialog.$container[ 0 ] } );
 			reuseDialog.$container.trigger( event );
 			return event;
 		}
 		function clickInsideDialog() {
-			var event = new $.Event( 'click', { target: reuseDialog.$dialog[ 0 ] } );
+			const event = new $.Event( 'click', { target: reuseDialog.$dialog[ 0 ] } );
 			reuseDialog.$dialog.trigger( event );
 			return event;
 		}
 
 		function assertDialogDoesNotCatchClicks() {
-			var event;
 			reuseDialog.closeDialog = () => assert.true( false, 'Dialog is not affected by click' );
-			event = clickOutsideDialog();
+			const event = clickOutsideDialog();
 			assert.strictEqual( event.isDefaultPrevented(), false, 'Dialog does not affect click' );
 			assert.strictEqual( event.isPropagationStopped(), false, 'Dialog does not affect click propagation' );
 		}
 		function assertDialogCatchesOutsideClicksOnly() {
-			var event;
 			reuseDialog.closeDialog = () => assert.true( false, 'Dialog is not affected by inside click' );
-			event = clickInsideDialog();
+			let event = clickInsideDialog();
 			assert.strictEqual( event.isDefaultPrevented(), false, 'Dialog does not affect inside click' );
 			assert.strictEqual( event.isPropagationStopped(), false, 'Dialog does not affect inside click propagation' );
 			reuseDialog.closeDialog = () => assert.true( true, 'Dialog is closed by outside click' );
@@ -180,22 +176,22 @@ const { ReuseDialog, Repo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'set()/empty() sense check:', function ( assert ) {
-		var reuseDialog = makeReuseDialog( this.sandbox ),
-			title = mw.Title.newFromText( 'File:Foobar.jpg' ),
-			src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
-			url = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg',
-			image = { // fake ImageModel
-				title: title,
-				url: src,
-				descriptionUrl: url,
-				width: 100,
-				height: 80
-			},
-			embedFileInfo = {
-				imageInfo: title,
-				repoInfo: src,
-				caption: url
-			};
+		const reuseDialog = makeReuseDialog( this.sandbox );
+		const title = mw.Title.newFromText( 'File:Foobar.jpg' );
+		const src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg';
+		const url = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg';
+		const image = { // fake ImageModel
+			title: title,
+			url: src,
+			descriptionUrl: url,
+			width: 100,
+			height: 80
+		};
+		const embedFileInfo = {
+			imageInfo: title,
+			repoInfo: src,
+			caption: url
+		};
 
 		reuseDialog.set( image, embedFileInfo );
 		reuseDialog.empty();
@@ -204,18 +200,18 @@ const { ReuseDialog, Repo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'openDialog()/closeDialog():', function ( assert ) {
-		var reuseDialog = makeReuseDialog( this.sandbox ),
-			title = mw.Title.newFromText( 'File:Foobar.jpg' ),
-			src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
-			url = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg',
-			image = { // fake ImageModel
-				title: title,
-				url: src,
-				descriptionUrl: url,
-				width: 100,
-				height: 80
-			},
-			repoInfo = new Repo( 'Wikipedia', '//wikipedia.org/favicon.ico', true );
+		const reuseDialog = makeReuseDialog( this.sandbox );
+		const title = mw.Title.newFromText( 'File:Foobar.jpg' );
+		const src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg';
+		const url = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg';
+		const image = { // fake ImageModel
+			title: title,
+			url: src,
+			descriptionUrl: url,
+			width: 100,
+			height: 80
+		};
+		const repoInfo = new Repo( 'Wikipedia', '//wikipedia.org/favicon.ico', true );
 
 		reuseDialog.initTabs();
 
@@ -233,18 +229,18 @@ const { ReuseDialog, Repo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'getImageWarnings():', function ( assert ) {
-		var reuseDialog = makeReuseDialog( this.sandbox ),
-			title = mw.Title.newFromText( 'File:Foobar.jpg' ),
-			src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',
-			url = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg',
-			image = { // fake ImageModel
-				title: title,
-				url: src,
-				descriptionUrl: url,
-				width: 100,
-				height: 80
-			},
-			imageDeleted = Object.assign( { deletionReason: 'deleted file test' }, image );
+		const reuseDialog = makeReuseDialog( this.sandbox );
+		const title = mw.Title.newFromText( 'File:Foobar.jpg' );
+		const src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg';
+		const url = 'https://commons.wikimedia.org/wiki/File:Foobar.jpg';
+		const image = { // fake ImageModel
+			title: title,
+			url: src,
+			descriptionUrl: url,
+			width: 100,
+			height: 80
+		};
+		const imageDeleted = Object.assign( { deletionReason: 'deleted file test' }, image );
 
 		// Test that the lack of license is picked up
 		assert.strictEqual( reuseDialog.getImageWarnings( image ).length, 1, 'Lack of license detected' );

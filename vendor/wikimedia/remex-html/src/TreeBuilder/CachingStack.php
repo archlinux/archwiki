@@ -183,32 +183,32 @@ class CachingStack extends Stack {
 	private function getScopeTypesToStack( $ns, $name ) {
 		if ( $ns === HTMLData::NS_HTML ) {
 			switch ( $name ) {
-			case 'html':
-			case 'table':
-			case 'template':
-				return self::$allScopes;
+				case 'html':
+				case 'table':
+				case 'template':
+					return self::$allScopes;
 
-			case 'applet':
-			case 'caption':
-			case 'td':
-			case 'th':
-			case 'marquee':
-			case 'object':
-				return self::$nonTableScopes;
+				case 'applet':
+				case 'caption':
+				case 'td':
+				case 'th':
+				case 'marquee':
+				case 'object':
+					return self::$nonTableScopes;
 
-			case 'ol':
-			case 'ul':
-				return self::$listScopes;
+				case 'ol':
+				case 'ul':
+					return self::$listScopes;
 
-			case 'button':
-				return self::$buttonScopes;
+				case 'button':
+					return self::$buttonScopes;
 
-			case 'option':
-			case 'optgroup':
-				return [];
+				case 'option':
+				case 'optgroup':
+					return [];
 
-			default:
-				return self::$selectOnly;
+				default:
+					return self::$selectOnly;
 			}
 		} elseif ( $ns === HTMLData::NS_MATHML ) {
 			if ( isset( self::$mathBreakers[$name] ) ) {

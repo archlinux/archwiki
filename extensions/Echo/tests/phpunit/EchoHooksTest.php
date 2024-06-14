@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Extension\Notifications\Hooks as EchoHooks;
+use MediaWiki\Extension\Notifications\Services;
 
 class EchoHooksTest extends MediaWikiIntegrationTestCase {
 	/**
@@ -35,7 +36,8 @@ class EchoHooksTest extends MediaWikiIntegrationTestCase {
 			// T174220: don't overwrite defaults set elsewhere
 			'echo-subscriptions-web-mention' => false,
 		];
-		( new EchoHooks( new HashConfig ) )->onUserGetDefaultOptions( $defaults );
+		$hooks = $this->getHooks();
+		$hooks->onUserGetDefaultOptions( $defaults );
 		self::assertEquals(
 			[
 				'something' => 'unrelated',
@@ -51,5 +53,27 @@ class EchoHooksTest extends MediaWikiIntegrationTestCase {
 			],
 			$defaults
 		);
+	}
+
+	public function getHooks() {
+		$services = $this->getServiceContainer();
+		$hooks = new EchoHooks(
+			$services->getAuthManager(),
+			$services->getCentralIdLookup(),
+			$services->getMainConfig(),
+			Services::wrap( $services )->getAttributeManager(),
+			$services->getHookContainer(),
+			$services->getContentLanguage(),
+			$services->getLinkRenderer(),
+			$services->getNamespaceInfo(),
+			$services->getPermissionManager(),
+			$services->getRevisionStore(),
+			$services->getStatsdDataFactory(),
+			$services->getTalkPageNotificationManager(),
+			$services->getUserEditTracker(),
+			$services->getUserFactory(),
+			$services->getUserOptionsManager(),
+		);
+		return $hooks;
 	}
 }

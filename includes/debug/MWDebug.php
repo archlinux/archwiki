@@ -18,6 +18,7 @@
  * @file
  */
 
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LegacyLogger;
 use MediaWiki\Output\OutputPage;
@@ -85,7 +86,7 @@ class MWDebug {
 	 */
 	public static function setup() {
 		global $wgDebugToolbar,
-			$wgUseCdn, $wgUseFileCache, $wgCommandLineMode;
+			$wgUseCdn, $wgUseFileCache;
 
 		if (
 			// Easy to forget to falsify $wgDebugToolbar for static caches.
@@ -94,7 +95,7 @@ class MWDebug {
 			$wgUseFileCache ||
 			// Keep MWDebug off on CLI. This prevents MWDebug from eating up
 			// all the memory for logging SQL queries in maintenance scripts.
-			$wgCommandLineMode
+			MW_ENTRY_POINT === 'cli'
 		) {
 			return;
 		}
@@ -202,14 +203,6 @@ class MWDebug {
 			self::formatCallerDescription( $msg, $callerDescription ),
 			'warning',
 			$level );
-
-		if ( self::$enabled ) {
-			self::$log[] = [
-				'msg' => htmlspecialchars( $msg ),
-				'type' => 'warn',
-				'caller' => $callerDescription['func'],
-			];
-		}
 	}
 
 	/**
@@ -385,19 +378,6 @@ class MWDebug {
 		if ( $sendToLog ) {
 			trigger_error( $msg, E_USER_DEPRECATED );
 		}
-
-		if ( self::$enabled ) {
-			$logMsg = htmlspecialchars( $msg ) .
-				Html::rawElement( 'div', [ 'class' => 'mw-debug-backtrace' ],
-					Html::element( 'span', [], 'Backtrace:' ) . wfBacktrace()
-				);
-
-			self::$log[] = [
-				'msg' => $logMsg,
-				'type' => 'deprecated',
-				'caller' => $callerFunc,
-			];
-		}
 	}
 
 	/**
@@ -516,9 +496,11 @@ class MWDebug {
 	}
 
 	/**
-	 * This is a method to pass messages from wfDebug to the pretty debugger.
-	 * Do NOT use this method, use MWDebug::log or wfDebug()
+	 * This method receives messages from LoggerFactory, wfDebugLog, and MWExceptionHandler.
 	 *
+	 * Do NOT call this method directly.
+	 *
+	 * @internal For use by MWExceptionHandler and LegacyLogger only
 	 * @since 1.19
 	 * @param string $str
 	 * @param array $context
@@ -540,7 +522,40 @@ class MWDebug {
 				$str = LegacyLogger::interpolate( $str, $context );
 				$str = $prefix . $str;
 			}
-			self::$debug[] = rtrim( UtfNormal\Validator::cleanUp( $str ) );
+			$str = rtrim( UtfNormal\Validator::cleanUp( $str ) );
+			self::$debug[] = $str;
+			if ( isset( $context['channel'] ) && $context['channel'] === 'error' ) {
+				$message = isset( $context['exception'] )
+					? $context['exception']->getMessage()
+					: $str;
+				$real = self::parseCallerDescription( $message );
+				if ( $real ) {
+					// from wfLogWarning()
+					$message = $real['message'];
+					$caller = $real['func'];
+				} else {
+					$trace = isset( $context['exception'] ) ? $context['exception']->getTrace() : [];
+					if ( ( $trace[5]['function'] ?? null ) === 'wfDeprecated' ) {
+						// from MWExceptionHandler/trigger_error/MWDebug/MWDebug/MWDebug/wfDeprecated()
+						$offset = 6;
+					} elseif ( ( $trace[1]['function'] ?? null ) === 'trigger_error' ) {
+						// from trigger_error
+						$offset = 2;
+					} else {
+						// built-in PHP error
+						$offset = 1;
+					}
+					$frame = $trace[$offset] ?? $trace[0];
+					$caller = ( isset( $frame['class'] ) ? $frame['class'] . '::' : '' )
+						. $frame['function'];
+				}
+
+				self::$log[] = [
+					'msg' => htmlspecialchars( $message ),
+					'type' => 'warn',
+					'caller' => $caller,
+				];
+			}
 		}
 	}
 
@@ -603,7 +618,14 @@ class MWDebug {
 		$files = get_included_files();
 		$fileList = [];
 		foreach ( $files as $file ) {
-			$size = filesize( $file );
+			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			$size = @filesize( $file );
+			if ( $size === false ) {
+				// Certain files that have been included might then be deleted. This is especially likely to happen
+				// in tests, see T351986.
+				// Just use a size of 0, but include these files here to try and be as useful as possible.
+				$size = 0;
+			}
 			$fileList[] = [
 				'name' => $file,
 				'size' => $context->getLanguage()->formatSize( $size ),

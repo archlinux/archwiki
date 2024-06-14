@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
-use Config;
+use MediaWiki\Config\Config;
 use MessageLocalizer;
 
 /**

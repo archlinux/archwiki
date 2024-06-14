@@ -223,7 +223,7 @@ class WANObjectCache implements
 	/** @var float Tiny negative float to use when CTL comes up >= 0 due to clock skew */
 	private const TINY_NEGATIVE = -0.000001;
 	/** @var float Tiny positive float to use when using "minTime" to assert an inequality */
-	private const TINY_POSTIVE = 0.000001;
+	private const TINY_POSITIVE = 0.000001;
 
 	/** Min millisecond set() backoff during hold-off (far less than INTERIM_KEY_TTL) */
 	private const RECENT_SET_LOW_MS = 50;
@@ -705,7 +705,7 @@ class WANObjectCache implements
 	 *
 	 * Example usage:
 	 * @code
-	 *     $dbr = wfGetDB( DB_REPLICA );
+	 *     $dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 	 *     $setOpts = Database::getCacheSetOptions( $dbr );
 	 *     // Fetch the row from the DB
 	 *     $row = $dbr->selectRow( ... );
@@ -1274,7 +1274,7 @@ class WANObjectCache implements
 	 *         $cache::TTL_MINUTE,
 	 *         // Function that derives the new key value
 	 *         function ( $oldValue, &$ttl, array &$setOpts ) {
-	 *             $dbr = wfGetDB( DB_REPLICA );
+	 *             $dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 	 *             // Account for any snapshot/replica DB lag
 	 *             $setOpts += Database::getCacheSetOptions( $dbr );
 	 *
@@ -1292,7 +1292,7 @@ class WANObjectCache implements
 	 *         $cache::TTL_DAY,
 	 *         // Function that derives the new key value
 	 *         function ( $oldValue, &$ttl, array &$setOpts ) {
-	 *             $dbr = wfGetDB( DB_REPLICA );
+	 *             $dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 	 *             // Account for any snapshot/replica DB lag
 	 *             $setOpts += Database::getCacheSetOptions( $dbr );
 	 *
@@ -1319,7 +1319,7 @@ class WANObjectCache implements
 	 *         // Function that derives the new key value
 	 *         function ( $oldValue, &$ttl, array &$setOpts ) {
 	 *             // Determine new value from the DB
-	 *             $dbr = wfGetDB( DB_REPLICA );
+	 *             $dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 	 *             // Account for any snapshot/replica DB lag
 	 *             $setOpts += Database::getCacheSetOptions( $dbr );
 	 *
@@ -1347,7 +1347,7 @@ class WANObjectCache implements
 	 *         // Function that derives the new key value
 	 *         function ( $oldValue, &$ttl, array &$setOpts ) {
 	 *             // Determine new value from the DB
-	 *             $dbr = wfGetDB( DB_REPLICA );
+	 *             $dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 	 *             // Account for any snapshot/replica DB lag
 	 *             $setOpts += Database::getCacheSetOptions( $dbr );
 	 *
@@ -1356,7 +1356,7 @@ class WANObjectCache implements
 	 *         [
 	 *              // Get the highest timestamp of any of the cat's toys
 	 *             'touchedCallback' => function ( $value ) use ( $catId ) {
-	 *                 $dbr = wfGetDB( DB_REPLICA );
+	 *                 $dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 	 *                 $ts = $dbr->selectField( 'cat_toys', 'MAX(ct_touched)', ... );
 	 *
 	 *                 return wfTimestampOrNull( TS_UNIX, $ts );
@@ -1376,7 +1376,7 @@ class WANObjectCache implements
 	 *         10,
 	 *         // Function that derives the new key value
 	 *         function ( $oldValue, &$ttl, array &$setOpts ) {
-	 *             $dbr = wfGetDB( DB_REPLICA );
+	 *             $dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 	 *             // Account for any snapshot/replica DB lag
 	 *             $setOpts += Database::getCacheSetOptions( $dbr );
 	 *
@@ -1650,7 +1650,7 @@ class WANObjectCache implements
 			$curState[self::RES_TOMB_AS_OF],
 			$curState[self::RES_CHECK_AS_OF]
 		);
-		$safeMinAsOf = max( $minAsOf, $lastPurgeTime + self::TINY_POSTIVE );
+		$safeMinAsOf = max( $minAsOf, $lastPurgeTime + self::TINY_POSITIVE );
 		if ( $this->isExtremelyNewValue( $volState, $safeMinAsOf, $startTime ) ) {
 			$this->logger->debug( "fetchOrRegenerate($key): volatile hit" );
 			$this->stats->timing(
@@ -1983,7 +1983,7 @@ class WANObjectCache implements
 	 *         $cache::TTL_DAY,
 	 *         // Function that derives the new key value
 	 *         function ( $id, $oldValue, &$ttl, array &$setOpts ) {
-	 *             $dbr = wfGetDB( DB_REPLICA );
+	 *             $dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 	 *             // Account for any snapshot/replica DB lag
 	 *             $setOpts += Database::getCacheSetOptions( $dbr );
 	 *
@@ -2085,7 +2085,7 @@ class WANObjectCache implements
 	 *         $cache::TTL_DAY,
 	 *         // Function that derives the new key value
 	 *         function ( array $ids, array &$ttls, array &$setOpts ) {
-	 *             $dbr = wfGetDB( DB_REPLICA );
+	 *             $dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 	 *             // Account for any snapshot/replica DB lag
 	 *             $setOpts += Database::getCacheSetOptions( $dbr );
 	 *
@@ -2180,9 +2180,9 @@ class WANObjectCache implements
 					// T303092
 					$this->logger->warning(
 						$method . ' failed due to {id} not set in result {result}', [
-						'id' => $id,
-						'result' => json_encode( $result )
-					] );
+							'id' => $id,
+							'result' => json_encode( $result )
+						] );
 				}
 				$newValue = $result[$id];
 				$ttl = $ttls[$id];
@@ -2727,7 +2727,7 @@ class WANObjectCache implements
 		// Ramp up $chance from 0 to its nominal value over RAMPUP_TTL seconds to avoid stampedes
 		$chance *= ( $timeOld <= self::RAMPUP_TTL ) ? $timeOld / self::RAMPUP_TTL : 1;
 
-		return ( mt_rand( 1, 1000000000 ) <= 1000000000 * $chance );
+		return ( mt_rand( 1, 1_000_000_000 ) <= 1_000_000_000 * $chance );
 	}
 
 	/**
@@ -2768,7 +2768,7 @@ class WANObjectCache implements
 		// having p(0)=0 and p(1)=1. The value expires at the nominal expiry.
 		$chance = $ttrRatio ** 4;
 
-		return ( mt_rand( 1, 1000000000 ) <= 1000000000 * $chance );
+		return ( mt_rand( 1, 1_000_000_000 ) <= 1_000_000_000 * $chance );
 	}
 
 	/**

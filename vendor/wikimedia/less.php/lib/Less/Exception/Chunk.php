@@ -43,6 +43,7 @@ class Less_Exception_Chunk extends Less_Exception_Parser {
 		$lastMultiComment = null;
 		$lastParen = null;
 
+		// phpcs:ignore Generic.CodeAnalysis.JumbledIncrementer
 		for ( $this->parserCurrentIndex = 0; $this->parserCurrentIndex < $this->input_len; $this->parserCurrentIndex++ ) {
 			$cc = $this->CharCode( $this->parserCurrentIndex );
 			if ( ( ( $cc >= 97 ) && ( $cc <= 122 ) ) || ( $cc < 34 ) ) {
@@ -102,10 +103,12 @@ class Less_Exception_Chunk extends Less_Exception_Parser {
 					$currentChunkStartIndex = $this->parserCurrentIndex;
 					for ( $this->parserCurrentIndex += 1; $this->parserCurrentIndex < $this->input_len; $this->parserCurrentIndex++ ) {
 						$cc2 = $this->CharCode( $this->parserCurrentIndex );
-						if ( $cc2 > 96 ) { continue;
+						if ( $cc2 > 96 ) {
+							continue;
 						}
-						if ( $cc2 == $cc ) { $matched = 1;
-break;
+						if ( $cc2 == $cc ) {
+							$matched = 1;
+							break;
 						}
 						if ( $cc2 == 92 ) {        // \
 							if ( $this->parserCurrentIndex == $this->input_len - 1 ) {
@@ -114,20 +117,23 @@ break;
 							$this->parserCurrentIndex++;
 						}
 					}
-					if ( $matched ) { break;
+					if ( $matched ) {
+						break;
 					}
 					return $this->fail( "unmatched `" . chr( $cc ) . "`", $currentChunkStartIndex );
 
 				// /, check for comment
 				case 47:
-					if ( $parenLevel || ( $this->parserCurrentIndex == $this->input_len - 1 ) ) { break;
+					if ( $parenLevel || ( $this->parserCurrentIndex == $this->input_len - 1 ) ) {
+						break;
 					}
 					$cc2 = $this->CharCode( $this->parserCurrentIndex + 1 );
 					if ( $cc2 == 47 ) {
 						// //, find lnfeed
 						for ( $this->parserCurrentIndex += 2; $this->parserCurrentIndex < $this->input_len; $this->parserCurrentIndex++ ) {
 							$cc2 = $this->CharCode( $this->parserCurrentIndex );
-							if ( ( $cc2 <= 13 ) && ( ( $cc2 == 10 ) || ( $cc2 == 13 ) ) ) { break;
+							if ( ( $cc2 <= 13 ) && ( ( $cc2 == 10 ) || ( $cc2 == 13 ) ) ) {
+								break;
 							}
 						}
 					} elseif ( $cc2 == 42 ) {
@@ -135,11 +141,14 @@ break;
 						$lastMultiComment = $currentChunkStartIndex = $this->parserCurrentIndex;
 						for ( $this->parserCurrentIndex += 2; $this->parserCurrentIndex < $this->input_len - 1; $this->parserCurrentIndex++ ) {
 							$cc2 = $this->CharCode( $this->parserCurrentIndex );
-							if ( $cc2 == 125 ) { $lastMultiCommentEndBrace = $this->parserCurrentIndex;
+							if ( $cc2 == 125 ) {
+								$lastMultiCommentEndBrace = $this->parserCurrentIndex;
 							}
-							if ( $cc2 != 42 ) { continue;
+							if ( $cc2 != 42 ) {
+								continue;
 							}
-							if ( $this->CharCode( $this->parserCurrentIndex + 1 ) == 47 ) { break;
+							if ( $this->CharCode( $this->parserCurrentIndex + 1 ) == 47 ) {
+								break;
 							}
 						}
 						if ( $this->parserCurrentIndex == $this->input_len - 1 ) {

@@ -16,32 +16,39 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	&-ns {
+		cursor: ns-resize;
+	}
+
+	span {
+		width: @affordance-length;
+		height: @affordance-width;
+		background-color: @background-color-wikieditor-resizing-dragbar-drag;
+		border-radius: @border-radius-base;
+		display: block;
+		margin: 2px;
+	}
+
+	&:hover span {
+		background-color: @background-color-wikieditor-resizing-dragbar-drag--hover;
+	}
+
+	&-ew {
+		cursor: ew-resize;
+		background-color: @background-color-wikieditor-resizing-dragbar-ew;
+
+		span {
+			height: @affordance-length;
+			width: @affordance-width;
+			border-width: 0 @border-width-base;
+		}
+	}
 }
 
-.ext-WikiEditor-ResizingDragBar-ns {
-	cursor: ns-resize;
-}
-
-.ext-WikiEditor-ResizingDragBar-ew {
-	cursor: ew-resize;
-	background-color: @background-color-wikieditor-resizing-dragbar-ew;
-}
-
-.ext-WikiEditor-ResizingDragBar span {
-	width: @affordance-length;
-	height: @affordance-width;
-	background-color: @background-color-wikieditor-resizing-dragbar-drag;
-	border-radius: @border-radius-base;
-	display: block;
-	margin: 2px;
-}
-
-.ext-WikiEditor-ResizingDragBar:hover span {
-	background-color: @background-color-wikieditor-resizing-dragbar-drag--hover;
-}
-
-.ext-WikiEditor-ResizingDragBar-ew span {
-	height: @affordance-length;
-	width: @affordance-width;
-	border-width: 0 @border-width-base;
+// This is needed to make the CodeMirror editor height constrained to .wikiEditor-ui-text
+// This only is needed when the ResizingDragBar is enabled.
+.cm-editor {
+	// stylelint-disable-next-line declaration-no-important
+	height: 100% !important;
 }

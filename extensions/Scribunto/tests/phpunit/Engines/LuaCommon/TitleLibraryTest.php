@@ -28,15 +28,15 @@ class TitleLibraryTest extends LuaEngineTestBase {
 		parent::setUp();
 
 		// Set up interwikis (via wgInterwikiCache) before creating any Titles
-		$this->setMwGlobals( [
-			'wgServer' => '//wiki.local',
-			'wgCanonicalServer' => 'http://wiki.local',
-			'wgUsePathInfo' => true,
-			'wgActionPaths' => [],
-			'wgScript' => '/w/index.php',
-			'wgScriptPath' => '/w',
-			'wgArticlePath' => '/wiki/$1',
-			'wgInterwikiCache' => ClassicInterwikiLookup::buildCdbHash( [
+		$this->overrideConfigValues( [
+			'Server' => '//wiki.local',
+			'CanonicalServer' => 'http://wiki.local',
+			'UsePathInfo' => true,
+			'ActionPaths' => [],
+			'Script' => '/w/index.php',
+			'ScriptPath' => '/w',
+			'ArticlePath' => '/wiki/$1',
+			'InterwikiCache' => ClassicInterwikiLookup::buildCdbHash( [
 				[
 					'iw_prefix' => 'interwikiprefix',
 					'iw_url'    => '//test.wikipedia.org/wiki/$1',

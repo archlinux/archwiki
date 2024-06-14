@@ -57,7 +57,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Această referință este definită printr-un format sau alt cadru generat și, pentru moment, poate fi previzualizată doar în modul sursă.",
 	"cite-ve-referenceslist-missingreflist": "Această listă de referințe este generată de un format și momentan nu poate fi editată decât în modul sursă.",
 	"cite-ve-toolbar-group-label": "Citare",
-	"cite-ve-othergroup-item": "referință $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referințe",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Numele grupului de referințe: \"$1\""
+	"cite-ve-othergroup-item": "referință $1"
 }

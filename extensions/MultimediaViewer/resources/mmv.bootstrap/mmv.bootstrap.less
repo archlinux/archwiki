@@ -25,7 +25,6 @@ body.mw-mmv-lightbox-open {
 }
 
 .mw-mmv-filepage-buttons {
-	font-size: 1rem;
 	margin-top: 5px;
 
 	.cdx-button:nth-child(n + 2) {
@@ -33,11 +32,13 @@ body.mw-mmv-lightbox-open {
 	}
 
 	.mw-mmv-view-expanded .cdx-button__icon {
-		.cdx-mixin-css-icon( @cdx-icon-image-gallery, @param-is-button-icon: true );
+		.cdx-mixin-css-icon( @cdx-icon-image-gallery, @param-is-button-icon: true,
+			@param-size-icon: @size-icon-small );
 	}
 
 	.mw-mmv-view-config .cdx-button__icon {
-		.cdx-mixin-css-icon( @cdx-icon-settings, @param-is-button-icon: true );
+		.cdx-mixin-css-icon( @cdx-icon-settings, @param-is-button-icon: true,
+			@param-size-icon: @size-icon-small );
 	}
 }
 

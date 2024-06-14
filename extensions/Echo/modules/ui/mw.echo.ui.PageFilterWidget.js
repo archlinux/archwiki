@@ -64,13 +64,12 @@
 	 * Populate the widget from the model
 	 */
 	mw.echo.ui.PageFilterWidget.prototype.populateDataFromModel = function () {
-		var title, widget, isUserPage,
-			optionWidgets = [],
+		var optionWidgets = [],
 			sourcePages = this.model.getSourcePages( this.source );
 
-		for ( title in sourcePages ) {
-			isUserPage = sourcePages[ title ].ns === mw.config.get( 'wgNamespaceIds' ).user;
-			widget = new mw.echo.ui.PageNotificationsOptionWidget( {
+		for ( var title in sourcePages ) {
+			var isUserPage = sourcePages[ title ].ns === mw.config.get( 'wgNamespaceIds' ).user;
+			var widget = new mw.echo.ui.PageNotificationsOptionWidget( {
 				label: isUserPage ? sourcePages[ title ].unprefixed : title,
 				title: isUserPage ? sourcePages[ title ].unprefixed : title,
 				icon: isUserPage ? 'userAvatar' : 'article',
@@ -112,11 +111,9 @@
 	 * @param {mw.echo.ui.PageNotificationsOptionWidget[]} items Item widgets to order and insert
 	 */
 	mw.echo.ui.PageFilterWidget.prototype.setItems = function ( items ) {
-		var i, index;
-
 		this.clearItems();
-		for ( i = 0; i < items.length; i++ ) {
-			index = this.findInsertionIndex( items[ i ] );
+		for ( var i = 0; i < items.length; i++ ) {
+			var index = this.findInsertionIndex( items[ i ] );
 			this.addItems( [ items[ i ] ], index );
 		}
 

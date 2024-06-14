@@ -21,10 +21,13 @@
 namespace MediaWiki\User;
 
 use Iterator;
+use MediaWiki\Block\HideUserUtils;
 use MediaWiki\User\TempUser\TempUserConfig;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Assert\PreconditionException;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
+use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 class UserSelectQueryBuilder extends SelectQueryBuilder {
@@ -32,6 +35,9 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	/** @var ActorStore */
 	private $actorStore;
 	private TempUserConfig $tempUserConfig;
+	private HideUserUtils $hideUserUtils;
+
+	private bool $userJoined = false;
 
 	/**
 	 * @internal
@@ -42,12 +48,14 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	public function __construct(
 		IReadableDatabase $db,
 		ActorStore $actorStore,
-		TempUserConfig $tempUserConfig
+		TempUserConfig $tempUserConfig,
+		HideUserUtils $hideUserUtils
 	) {
 		parent::__construct( $db );
 
 		$this->actorStore = $actorStore;
 		$this->tempUserConfig = $tempUserConfig;
+		$this->hideUserUtils = $hideUserUtils;
 		$this->table( 'actor' );
 	}
 
@@ -111,7 +119,9 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 		if ( !isset( $this->options['LIMIT'] ) ) {
 			throw new PreconditionException( 'Must set a limit when using a user name prefix' );
 		}
-		$this->conds( 'actor_name' . $this->db->buildLike( $prefix, $this->db->anyString() ) );
+		$this->conds(
+			$this->db->expr( 'actor_name', IExpression::LIKE, new LikeValue( $prefix, $this->db->anyString() ) )
+		);
 		return $this;
 	}
 
@@ -126,6 +136,26 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	 */
 	public function userNamePrefix( string $prefix ): self {
 		return $this->whereUserNamePrefix( $prefix );
+	}
+
+	/**
+	 * Find registered users who registered
+	 *
+	 * @param string $timestamp
+	 * @param bool $direction Direction flag (if true, user_registration must be before $timestamp)
+	 * @since 1.42
+	 * @return UserSelectQueryBuilder
+	 */
+	public function whereRegisteredTimestamp( string $timestamp, bool $direction ): self {
+		if ( !$this->userJoined ) {
+			$this->join( 'user', null, [ "actor_user=user_id" ] );
+			$this->userJoined = true;
+		}
+
+		$this->conds( 'user_registration ' .
+			( $direction ? '< ' : '> ' ) .
+			$this->db->addQuotes( $this->db->timestamp( $timestamp ) ) );
+		return $this;
 	}
 
 	/**
@@ -156,7 +186,7 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	 * @return UserSelectQueryBuilder
 	 */
 	public function registered(): self {
-		$this->conds( [ 'actor_user != 0' ] );
+		$this->conds( $this->db->expr( 'actor_user', '!=', null ) );
 		return $this;
 	}
 
@@ -177,14 +207,10 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	 */
 	public function named(): self {
 		if ( !$this->tempUserConfig->isEnabled() ) {
-			// nothing to do: getMatchPattern throws if temp accounts aren't enabled
+			// nothing to do: getMatchCondition throws if temp accounts aren't enabled
 			return $this;
 		}
-
-		$this->conds( [
-			'actor_name NOT ' . $this->tempUserConfig->getMatchPattern()
-				->buildLike( $this->db )
-		] );
+		$this->conds( $this->tempUserConfig->getMatchCondition( $this->db, 'actor_name', IExpression::NOT_LIKE ) );
 		return $this;
 	}
 
@@ -195,14 +221,10 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	 */
 	public function temp(): self {
 		if ( !$this->tempUserConfig->isEnabled() ) {
-			// nothing to do: getMatchPattern throws if temp accounts aren't enabled
+			// nothing to do: getMatchCondition throws if temp accounts aren't enabled
 			return $this;
 		}
-
-		$this->conds( [
-			'actor_name ' . $this->tempUserConfig->getMatchPattern()
-				->buildLike( $this->db )
-		] );
+		$this->conds( $this->tempUserConfig->getMatchCondition( $this->db, 'actor_name', IExpression::LIKE ) );
 		return $this;
 	}
 
@@ -214,14 +236,11 @@ class UserSelectQueryBuilder extends SelectQueryBuilder {
 	 * @return $this
 	 */
 	public function hidden( bool $hidden ): self {
-		$this->leftJoin( 'ipblocks', null, [ "actor_user=ipb_user" ] );
-		if ( $hidden ) {
-			// only hidden users
-			$this->conds( [ 'ipb_deleted = 1' ] );
-		} else {
-			// filter out hidden users
-			$this->conds( [ 'ipb_deleted' => [ 0, null ] ] );
-		}
+		$this->conds( $this->hideUserUtils->getExpression(
+			$this->db,
+			'actor_user',
+			$hidden ? HideUserUtils::HIDDEN_USERS : HideUserUtils::SHOWN_USERS
+		) );
 		return $this;
 	}
 

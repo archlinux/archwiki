@@ -1,14 +1,16 @@
 <?php
 
+use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\SiteStats\SiteStats;
 use MediaWiki\SiteStats\SiteStatsInit;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Database
- * @covers SiteStatsUpdate
- * @covers MediaWiki\SiteStats\SiteStats
- * @covers MediaWiki\SiteStats\SiteStatsInit
+ * @covers \MediaWiki\Deferred\SiteStatsUpdate
+ * @covers \MediaWiki\SiteStats\SiteStats
+ * @covers \MediaWiki\SiteStats\SiteStatsInit
  */
 class SiteStatsUpdateTest extends MediaWikiIntegrationTestCase {
 	public function testFactoryAndMerge() {

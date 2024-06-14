@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Extension\Math\MathDataUpdater;
+use MediaWiki\Parser\ParserOutput;
 use Wikibase\DataModel\Entity\NumericPropertyId;
 use Wikibase\DataModel\Services\Entity\PropertyDataTypeMatcher;
 use Wikibase\DataModel\Snak\PropertyNoValueSnak;

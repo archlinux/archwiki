@@ -18,8 +18,8 @@
 		<radialGradient xlink:href="#c" id="e" cx="1.984" cy="2.381" r=".397" fx="1.984" fy="1.984" gradientTransform="matrix(.33333 0 0 1.30283 1.323 -.469)" gradientUnits="userSpaceOnUse"/>
 	</defs>
 	<path fill="url(#d)" fill-rule="evenodd" d="m.661 3.307.133-.661.264-.265c.53-.264 1.323-.264 1.852 0l.265.265.132.661z"/>
-	<path fill="url(#e)" fill-rule="evenodd" d="M1.587 2.117v.264l.265.265h.265l.264-.265v-.264c-.264-.265-.529-.265-.793 0z"/>
-	<path fill="url(#f)" fill-rule="evenodd" d="M1.323 1.058v.53l.264.264c.265.265.53.265.794 0l.265-.265v-.529L2.116.53h-.264z"/>
+	<path fill="url(#e)" fill-rule="evenodd" d="M1.587 2.117v.264l.265.265h.265l.264-.265v-.264q-.397-.398-.793 0z"/>
+	<path fill="url(#f)" fill-rule="evenodd" d="M1.323 1.058v.53l.264.264q.398.397.794 0l.265-.265v-.529L2.116.53h-.264z"/>
 	<path fill="#4e4e4e" d="M2.646 1.058v.53h.264v-.53zM2.38 2.117v.264h.53v-.264zm.53.264v.265h.264V2.38zm.264.265v.529H.529v.265h2.91v-.795z"/>
 	<path fill="#a3a3a3" d="M1.058 1.058v.53h.265v-.53zm.265.53v.264h.264v-.265zm-.265.529v.264h.53v-.264zm0 .264H.794v.265h.264zm-.264.265H.529v.529h.265z"/>
 	<path fill="#768854" d="M1.587 2.381v.265h.265V2.38zm.265.265v.264h.265v-.264zm.265 0h.264V2.38h-.264z"/>

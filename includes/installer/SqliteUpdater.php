@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Sqlite-specific updater.
  *
@@ -21,12 +22,21 @@
  * @ingroup Installer
  */
 
+namespace MediaWiki\Installer;
+
+use FixInconsistentRedirects;
+use MigrateExternallinks;
+use MigrateRevisionActorTemp;
+use MigrateRevisionCommentTemp;
+use PopulateUserIsTemp;
+use UpdateRestrictions;
+
 /**
  * Class for handling updates to Sqlite databases.
  *
  * @ingroup Installer
  * @since 1.17
- * @property Wikimedia\Rdbms\DatabaseSqlite $db
+ * @property \Wikimedia\Rdbms\DatabaseSqlite $db
  */
 class SqliteUpdater extends DatabaseUpdater {
 
@@ -137,11 +147,19 @@ class SqliteUpdater extends DatabaseUpdater {
 			[ 'modifyField', 'filearchive', 'fa_size', 'patch-filearchive-fa_size_to_bigint.sql' ],
 			[ 'modifyField', 'oldimage', 'oi_size', 'patch-oldimage-oi_size_to_bigint.sql' ],
 			[ 'modifyField', 'uploadstash', 'us_size', 'patch-uploadstash-us_size_to_bigint.sql' ],
+
+			// 1.42
+			[ 'addField', 'user_autocreate_serial', 'uas_year', 'patch-user_autocreate_serial-uas_year.sql' ],
+			[ 'addTable', 'block_target', 'patch-block_target.sql' ],
+			[ 'dropIndex', 'categorylinks', 'cl_collation_ext', 'patch-drop-cl_collation_ext.sql' ],
+			[ 'runMaintenance', PopulateUserIsTemp::class, 'maintenance/populateUserIsTemp.php' ],
+			[ 'dropIndex', 'sites', 'site_type', 'patch-sites-drop_indexes.sql' ],
+			[ 'dropIndex', 'iwlinks', 'iwl_prefix_from_title', 'patch-iwlinks-drop-iwl_prefix_from_title.sql' ],
 		];
 	}
 
 	/**
-	 * Check whether an index contain a field
+	 * Check whether an index contains a field
 	 *
 	 * @param string $table Table name
 	 * @param string $index Index name to check

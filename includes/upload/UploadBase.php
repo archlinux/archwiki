@@ -21,8 +21,10 @@
  * @ingroup Upload
  */
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
@@ -48,7 +50,7 @@ use Wikimedia\AtEase\AtEase;
  *
  * @stable to extend
  *
- * @author Brion Vibber
+ * @author Brooke Vibber
  * @author Bryan Tong Minh
  * @author Michael Dale
  */
@@ -244,6 +246,14 @@ abstract class UploadBase {
 	}
 
 	/**
+	 * Get the desired destination name.
+	 * @return string|null
+	 */
+	public function getDesiredDestName() {
+		return $this->mDesiredDestName;
+	}
+
+	/**
 	 * @stable to call
 	 */
 	public function __construct() {
@@ -262,15 +272,14 @@ abstract class UploadBase {
 
 	/**
 	 * @param string $name The desired destination name
-	 * @param string|null $tempPath
+	 * @param string|null $tempPath Callers should make sure this is not a storage path
 	 * @param int|null $fileSize
 	 * @param bool $removeTempFile (false) remove the temporary file?
-	 * @throws MWException
 	 */
 	public function initializePathInfo( $name, $tempPath, $fileSize, $removeTempFile = false ) {
 		$this->mDesiredDestName = $name;
 		if ( FileBackend::isStoragePath( $tempPath ) ) {
-			throw new MWException( __METHOD__ . " given storage path `$tempPath`." );
+			throw new InvalidArgumentException( __METHOD__ . " given storage path `$tempPath`." );
 		}
 
 		$this->setTempFile( $tempPath, $fileSize );
@@ -291,6 +300,7 @@ abstract class UploadBase {
 	protected function setTempFile( $tempPath, $fileSize = null ) {
 		$this->mTempPath = $tempPath ?? '';
 		$this->mFileSize = $fileSize ?: null;
+		$this->mFileProps = null;
 		if ( strlen( $this->mTempPath ) && file_exists( $this->mTempPath ) ) {
 			$this->tempFileObj = new TempFSFile( $this->mTempPath );
 			if ( !$fileSize ) {
@@ -307,6 +317,15 @@ abstract class UploadBase {
 	 * @return Status
 	 */
 	public function fetchFile() {
+		return Status::newGood();
+	}
+
+	/**
+	 * Perform checks to see if the file can be fetched. Usually a no-op.
+	 * @stable to override
+	 * @return Status
+	 */
+	public function canFetchFile() {
 		return Status::newGood();
 	}
 
@@ -332,6 +351,10 @@ abstract class UploadBase {
 	 * @return string|false
 	 */
 	public function getTempFileSha1Base36() {
+		// Use cached version if we already have it.
+		if ( $this->mFileProps && is_string( $this->mFileProps['sha1'] ) ) {
+			return $this->mFileProps['sha1'];
+		}
 		return FSFile::getSha1Base36FromPath( $this->mTempPath );
 	}
 
@@ -480,8 +503,12 @@ abstract class UploadBase {
 			return $status;
 		}
 
-		$mwProps = new MWFileProps( MediaWikiServices::getInstance()->getMimeAnalyzer() );
-		$this->mFileProps = $mwProps->getPropsFromPath( $this->mTempPath, $this->mFinalExtension );
+		// Calculating props calculates the sha1 which is expensive.
+		// reuse props if we already have them
+		if ( !is_array( $this->mFileProps ) ) {
+			$mwProps = new MWFileProps( MediaWikiServices::getInstance()->getMimeAnalyzer() );
+			$this->mFileProps = $mwProps->getPropsFromPath( $this->mTempPath, $this->mFinalExtension );
+		}
 		$mime = $this->mFileProps['mime'];
 
 		if ( $verifyMimeType ) {
@@ -542,8 +569,12 @@ abstract class UploadBase {
 		# getTitle() sets some internal parameters like $this->mFinalExtension
 		$this->getTitle();
 
-		$mwProps = new MWFileProps( MediaWikiServices::getInstance()->getMimeAnalyzer() );
-		$this->mFileProps = $mwProps->getPropsFromPath( $this->mTempPath, $this->mFinalExtension );
+		// Calculating props calculates the sha1 which is expensive.
+		// reuse props if we already have them (e.g. During stashed upload)
+		if ( !is_array( $this->mFileProps ) ) {
+			$mwProps = new MWFileProps( MediaWikiServices::getInstance()->getMimeAnalyzer() );
+			$this->mFileProps = $mwProps->getPropsFromPath( $this->mTempPath, $this->mFinalExtension );
+		}
 
 		# check MIME type, if desired
 		$mime = $this->mFileProps['file-mime'];
@@ -666,7 +697,7 @@ abstract class UploadBase {
 		$warnings = [];
 
 		$localFile = $this->getLocalFile();
-		$localFile->load( File::READ_LATEST );
+		$localFile->load( IDBAccessObject::READ_LATEST );
 		$filename = $localFile->getName();
 		$hash = $this->getTempFileSha1Base36();
 
@@ -734,6 +765,29 @@ abstract class UploadBase {
 					'Unexpected object of class ' . get_class( $param ) );
 			}
 		} );
+		return $warnings;
+	}
+
+	/**
+	 * Convert the serialized warnings array created by makeWarningsSerializable()
+	 * back to the output of checkWarnings().
+	 *
+	 * @param mixed[] $warnings
+	 * @return mixed[]
+	 */
+	public static function unserializeWarnings( $warnings ) {
+		foreach ( $warnings as $key => $value ) {
+			if ( is_array( $value ) ) {
+				if ( isset( $value['fileName'] ) && isset( $value['timestamp'] ) ) {
+					$warnings[$key] = MediaWikiServices::getInstance()->getRepoGroup()->findFile(
+						$value['fileName'],
+						[ 'time' => $value['timestamp'] ]
+					);
+				} else {
+					$warnings[$key] = self::unserializeWarnings( $value );
+				}
+			}
+		}
 		return $warnings;
 	}
 
@@ -909,7 +963,7 @@ abstract class UploadBase {
 	public function performUpload(
 		$comment, $pageText, $watch, $user, $tags = [], ?string $watchlistExpiry = null
 	) {
-		$this->getLocalFile()->load( File::READ_LATEST );
+		$this->getLocalFile()->load( IDBAccessObject::READ_LATEST );
 		$props = $this->mFileProps;
 
 		$error = null;
@@ -1175,7 +1229,7 @@ abstract class UploadBase {
 	protected function doStashFile( User $user = null ) {
 		$stash = MediaWikiServices::getInstance()->getRepoGroup()
 			->getLocalRepo()->getUploadStash( $user );
-		$file = $stash->stashFile( $this->mTempPath, $this->getSourceType() );
+		$file = $stash->stashFile( $this->mTempPath, $this->getSourceType(), $this->mFileProps );
 		$this->mStashFile = $file;
 
 		return $file;
@@ -1413,9 +1467,11 @@ abstract class UploadBase {
 	 * @return bool True if the file contains an encoding that could be misinterpreted
 	 */
 	public static function checkXMLEncodingMissmatch( $file ) {
-		$svgMetadataCutoff = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::SVGMetadataCutoff );
-		$contents = file_get_contents( $file, false, null, 0, $svgMetadataCutoff );
+		// https://mimesniff.spec.whatwg.org/#resource-header says browsers
+		// should read the first 1445 bytes. Do 4096 bytes for good measure.
+		// XML Spec says XML declaration if present must be first thing in file
+		// other than BOM
+		$contents = file_get_contents( $file, false, null, 0, 4096 );
 		$encodingRegex = '!encoding[ \t\n\r]*=[ \t\n\r]*[\'"](.*?)[\'"]!si';
 
 		if ( preg_match( "!<\?xml\b(.*?)\?>!si", $contents, $matches ) ) {
@@ -1427,7 +1483,7 @@ abstract class UploadBase {
 				return true;
 			}
 		} elseif ( preg_match( "!<\?xml\b!i", $contents ) ) {
-			// Start of XML declaration without an end in the first $wgSVGMetadataCutoff
+			// Start of XML declaration without an end in the first 4096 bytes
 			// bytes. There shouldn't be a legitimate reason for this to happen.
 			wfDebug( __METHOD__ . ": Unmatched XML declaration start" );
 
@@ -1455,7 +1511,7 @@ abstract class UploadBase {
 					return true;
 				}
 			} elseif ( $str != '' && preg_match( "!<\?xml\b!i", $str ) ) {
-				// Start of XML declaration without an end in the first $wgSVGMetadataCutoff
+				// Start of XML declaration without an end in the first 4096 bytes
 				// bytes. There shouldn't be a legitimate reason for this to happen.
 				wfDebug( __METHOD__ . ": Unmatched XML declaration start" );
 
@@ -1969,7 +2025,7 @@ abstract class UploadBase {
 	private function checkOverwrite( Authority $performer ) {
 		// First check whether the local file can be overwritten
 		$file = $this->getLocalFile();
-		$file->load( File::READ_LATEST );
+		$file->load( IDBAccessObject::READ_LATEST );
 		if ( $file->exists() ) {
 			if ( !self::userCanReUpload( $performer, $file ) ) {
 				return [ 'fileexists-forbidden', $file->getName() ];
@@ -2034,13 +2090,13 @@ abstract class UploadBase {
 			return [ 'warning' => 'page-exists', 'file' => $file ];
 		}
 
-		if ( !strpos( $file->getName(), '.' ) ) {
+		$n = strrpos( $file->getName(), '.' );
+		if ( $n > 0 ) {
+			$partname = substr( $file->getName(), 0, $n );
+			$extension = substr( $file->getName(), $n + 1 );
+		} else {
 			$partname = $file->getName();
 			$extension = '';
-		} else {
-			$n = strrpos( $file->getName(), '.' );
-			$extension = substr( $file->getName(), $n + 1 );
-			$partname = substr( $file->getName(), 0, $n );
 		}
 		$normalizedExtension = File::normalizeExtension( $extension );
 		$localRepo = MediaWikiServices::getInstance()->getRepoGroup()->getLocalRepo();
@@ -2155,28 +2211,15 @@ abstract class UploadBase {
 	/**
 	 * Gets image info about the file just uploaded.
 	 *
-	 * Also has the effect of setting metadata to be an 'indexed tag name' in
-	 * returned API result if 'metadata' was requested. Oddly, we have to pass
-	 * the "result" object down just so it can do that with the appropriate
-	 * format, presumably.
+	 * @deprecated since 1.42, subclasses of ApiUpload can use
+	 * ApiUpload::getUploadImageInfo() instead.
 	 *
-	 * @param ApiResult $result
+	 * @param ?ApiResult $result unused since 1.42
 	 * @return array Image info
 	 */
-	public function getImageInfo( $result ) {
-		$stashFile = $this->getStashFile();
-		// Calling a different API module depending on whether the file was stashed is less than optimal.
-		// In fact, calling API modules here at all is less than optimal. Maybe it should be refactored.
-		if ( $stashFile ) {
-			$imParam = ApiQueryStashImageInfo::getPropertyNames();
-			$info = ApiQueryStashImageInfo::getInfo( $stashFile, array_fill_keys( $imParam, true ), $result );
-		} else {
-			$localFile = $this->getLocalFile();
-			$imParam = ApiQueryImageInfo::getPropertyNames();
-			$info = ApiQueryImageInfo::getInfo( $localFile, array_fill_keys( $imParam, true ), $result );
-		}
-
-		return $info;
+	public function getImageInfo( $result = null ) {
+		$apiUpload = ApiUpload::getDummyInstance();
+		return $apiUpload->getUploadImageInfo( $this );
 	}
 
 	/**
@@ -2237,7 +2280,7 @@ abstract class UploadBase {
 	 *
 	 * @param UserIdentity $user
 	 * @param string $statusKey
-	 * @return Status[]|false
+	 * @return mixed[]|false
 	 */
 	public static function getSessionStatus( UserIdentity $user, $statusKey ) {
 		$store = self::getUploadSessionStore();
@@ -2261,6 +2304,39 @@ abstract class UploadBase {
 	public static function setSessionStatus( UserIdentity $user, $statusKey, $value ) {
 		$store = self::getUploadSessionStore();
 		$key = self::getUploadSessionKey( $store, $user, $statusKey );
+		$logger = LoggerFactory::getInstance( 'upload' );
+
+		if ( is_array( $value ) && ( $value['result'] ?? '' ) === 'Failure' ) {
+			$logger->info( 'Upload session {key} for {user} set to failure {status} at {stage}',
+				[
+					'result' => $value['result'] ?? '',
+					'stage' => $value['stage'] ?? 'unknown',
+					'user' => $user->getName(),
+					'status' => (string)( $value['status'] ?? '-' ),
+					'filekey' => $value['filekey'] ?? '',
+					'key' => $statusKey
+				]
+			);
+		} elseif ( is_array( $value ) ) {
+			$logger->debug( 'Upload session {key} for {user} changed {status} at {stage}',
+				[
+					'result' => $value['result'] ?? '',
+					'stage' => $value['stage'] ?? 'unknown',
+					'user' => $user->getName(),
+					'status' => (string)( $value['status'] ?? '-' ),
+					'filekey' => $value['filekey'] ?? '',
+					'key' => $statusKey
+				]
+			);
+		} else {
+			$logger->debug( "Upload session {key} deleted for {user}",
+				[
+					'value' => $value,
+					'key' => $statusKey,
+					'user' => $user->getName()
+				]
+			);
+		}
 
 		if ( $value === false ) {
 			$store->delete( $key );

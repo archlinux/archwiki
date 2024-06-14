@@ -33,8 +33,3 @@ class DBAccessError extends DBUnexpectedError {
 		parent::__construct( null, "Database access has been disabled." );
 	}
 }
-
-/**
- * @deprecated since 1.29
- */
-class_alias( DBAccessError::class, 'DBAccessError' );

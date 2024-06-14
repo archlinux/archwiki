@@ -14,10 +14,10 @@
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {boolean} [performSearchOnClick=true] If true, the script will start a search when-
+	 * @param {boolean} [config.performSearchOnClick=true] If true, the script will start a search when-
 	 *  ever a user hits a suggestion. If false, the text of the suggestion is inserted into the
 	 *  text field only.
-	 *  @cfg {string} [dataLocation='header'] Where the search input field will be
+	 * @param {string} [config.dataLocation='header'] Where the search input field will be
 	 *  used (header or content).
 	 */
 	mw.widgets.SearchInputWidget = function MwWidgetsSearchInputWidget( config ) {
@@ -36,7 +36,7 @@
 		}, config );
 
 		// Parent constructor
-		mw.widgets.SearchInputWidget.parent.call( this, config );
+		mw.widgets.SearchInputWidget.super.call( this, config );
 
 		// Initialization
 		this.$element.addClass( 'mw-widget-searchInputWidget' );
@@ -113,7 +113,7 @@
 	};
 
 	/**
-	 * @see OO.ui.SearchInputWidget#onChange
+	 * @inheritdoc
 	 */
 	mw.widgets.SearchInputWidget.prototype.onChange = function () {
 		this.updateSearchIndicator();
@@ -133,17 +133,16 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.SearchInputWidget.prototype.setReadOnly = function ( state ) {
-		mw.widgets.SearchInputWidget.parent.prototype.setReadOnly.call( this, state );
+		mw.widgets.SearchInputWidget.super.prototype.setReadOnly.call( this, state );
 		this.updateSearchIndicator();
 		return this;
 	};
 
 	/**
-	 * @inheritdoc mw.widgets.TitleWidget
+	 * @inheritdoc
 	 */
 	mw.widgets.SearchInputWidget.prototype.getSuggestionsPromise = function () {
 		var api = this.getApi(),
-			promise,
 			self = this;
 
 		// While the name is, for historical reasons, 'session-start', this indicates
@@ -153,7 +152,7 @@
 		} );
 
 		// reuse the searchSuggest function from mw.searchSuggest
-		promise = mw.searchSuggest.request( api, this.getQueryValue(), function () {}, this.limit, this.getNamespace() );
+		var promise = mw.searchSuggest.request( api, this.getQueryValue(), function () {}, this.limit, this.getNamespace() );
 
 		// tracking purposes
 		promise.done( function ( data, jqXHR ) {
@@ -165,14 +164,12 @@
 	};
 
 	/**
-	 * @inheritdoc mw.widgets.TitleInputWidget
+	 * @inheritdoc
 	 */
 	mw.widgets.SearchInputWidget.prototype.getLookupCacheDataFromResponse = function ( response ) {
-		var resp;
-
 		// mw.widgets.TitleInputWidget uses response.query, which doesn't exist for opensearch,
 		// so return the whole response (titles only, and links)
-		resp = {
+		var resp = {
 			data: response || {},
 			metadata: {
 				type: this.requestType || 'unknown',
@@ -187,7 +184,7 @@
 	};
 
 	/**
-	 * @inheritdoc mw.widgets.TitleWidget
+	 * @inheritdoc
 	 */
 	mw.widgets.SearchInputWidget.prototype.getOptionsFromData = function ( data ) {
 		var items = [],
@@ -232,7 +229,7 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.SearchInputWidget.prototype.onLookupMenuChoose = function () {
-		mw.widgets.SearchInputWidget.parent.prototype.onLookupMenuChoose.apply( this, arguments );
+		mw.widgets.SearchInputWidget.super.prototype.onLookupMenuChoose.apply( this, arguments );
 
 		if ( this.performSearchOnClick ) {
 			this.$element.closest( 'form' ).trigger( 'submit' );
@@ -243,7 +240,7 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.SearchInputWidget.prototype.getLookupMenuOptionsFromData = function () {
-		var items = mw.widgets.SearchInputWidget.parent.prototype.getLookupMenuOptionsFromData.apply(
+		var items = mw.widgets.SearchInputWidget.super.prototype.getLookupMenuOptionsFromData.apply(
 			this, arguments
 		);
 

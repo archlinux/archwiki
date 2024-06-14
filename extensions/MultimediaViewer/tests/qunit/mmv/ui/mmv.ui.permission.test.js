@@ -26,16 +26,16 @@ const { Permission } = require( 'mmv' );
 	} ) );
 
 	QUnit.test( 'Constructor sense check', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			permission = new Permission( $qf );
+		const $qf = $( '#qunit-fixture' );
+		const permission = new Permission( $qf );
 
 		assert.true( permission instanceof Permission, 'constructor does not throw error' );
 	} );
 
 	QUnit.test( 'set()', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			permission = new Permission( $qf ),
-			text = 'Nothing to see here.';
+		const $qf = $( '#qunit-fixture' );
+		const permission = new Permission( $qf );
+		const text = 'Nothing to see here.';
 
 		permission.set( text );
 
@@ -49,9 +49,9 @@ const { Permission } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'set() with html', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			permission = new Permission( $qf ),
-			text = '<b>Nothing</b> to see here.';
+		const $qf = $( '#qunit-fixture' );
+		const permission = new Permission( $qf );
+		const text = '<b>Nothing</b> to see here.';
 
 		permission.set( text );
 
@@ -60,9 +60,9 @@ const { Permission } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'empty()', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			permission = new Permission( $qf ),
-			text = 'Nothing to see here.';
+		const $qf = $( '#qunit-fixture' );
+		const permission = new Permission( $qf );
+		const text = 'Nothing to see here.';
 
 		permission.set( text );
 		permission.empty();
@@ -73,9 +73,9 @@ const { Permission } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'grow()', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			permission = new Permission( $qf ),
-			text = 'Nothing to see here.';
+		const $qf = $( '#qunit-fixture' );
+		const permission = new Permission( $qf );
+		const text = 'Nothing to see here.';
 
 		permission.set( text );
 		permission.grow();
@@ -86,9 +86,9 @@ const { Permission } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'shrink()', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			permission = new Permission( $qf ),
-			text = 'Nothing to see here.';
+		const $qf = $( '#qunit-fixture' );
+		const permission = new Permission( $qf );
+		const text = 'Nothing to see here.';
 
 		permission.set( text );
 		permission.grow();
@@ -100,9 +100,9 @@ const { Permission } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'isFullSize()', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			permission = new Permission( $qf ),
-			text = 'Nothing to see here.';
+		const $qf = $( '#qunit-fixture' );
+		const permission = new Permission( $qf );
+		const text = 'Nothing to see here.';
 
 		permission.set( text );
 		assert.strictEqual( permission.isFullSize(), false, 'permission is not full-size' );

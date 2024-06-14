@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Fitoschido",
+			"Lluis Cat",
 			"SMP",
 			"Toniher",
-			"Vriullop",
-			"Lluis Cat"
+			"Vriullop"
 		]
 	},
 	"linterrors": "Errors de lint",

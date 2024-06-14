@@ -2,11 +2,11 @@
 /**
  * @private
  */
-class Less_Tree_Expression extends Less_Tree {
-	/** @var array */
+class Less_Tree_Expression extends Less_Tree implements Less_Tree_HasValueProperty {
+
+	/** @var Less_Tree[] */
 	public $value = [];
 	public $parens = false;
-	public $type = 'Expression';
 
 	public function __construct( $value, $parens = null ) {
 		$this->value = $value;
@@ -35,11 +35,11 @@ class Less_Tree_Expression extends Less_Tree {
 				foreach ( $this->value as $e ) {
 					$ret[] = $e->compile( $env );
 				}
-				$returnValue = new Less_Tree_Expression( $ret );
+				$returnValue = new self( $ret );
 
 			} else {
 
-				if ( ( $this->value[0] instanceof Less_Tree_Expression ) && $this->value[0]->parens && !$this->value[0]->parensInOp ) {
+				if ( ( $this->value[0] instanceof self ) && $this->value[0]->parens && !$this->value[0]->parensInOp ) {
 					$doubleParen = true;
 				}
 

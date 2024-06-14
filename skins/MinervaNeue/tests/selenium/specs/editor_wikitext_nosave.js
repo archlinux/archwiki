@@ -26,7 +26,8 @@ describe( 'Wikitext Editor', () => {
 		iDoNotSeeAnOverlay();
 	} );
 
-	it( 'Closing editor (browser button)', async () => {
+	// FIXME T348539
+	it.skip( 'Closing editor (browser button)', async () => {
 		await iClickTheEditButton();
 		await iSeeTheWikitextEditorOverlay();
 		await iClickTheBrowserBackButton();

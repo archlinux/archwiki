@@ -1,6 +1,6 @@
 <?php
 
-use MediaWiki\Extension\OATHAuth\IModule;
+use MediaWiki\Extension\OATHAuth\OATHAuthServices;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Session\SessionManager;
 
@@ -14,33 +14,34 @@ require_once "$IP/maintenance/Maintenance.php";
 class DisableOATHAuthForUser extends Maintenance {
 	public function __construct() {
 		parent::__construct();
-		$this->addDescription( 'Remove OATHAuth from a specific user' );
-		$this->addArg( 'user', 'The username to remove OATHAuth from.' );
+		$this->addDescription( 'Remove all two-factor authentication devices from a specific user' );
+		$this->addArg( 'user', 'The username to remove 2FA devices from.' );
 		$this->requireExtension( 'OATHAuth' );
 	}
 
 	public function execute() {
 		$username = $this->getArg( 0 );
 
-		$user = User::newFromName( $username );
-		if ( $user && $user->getId() === 0 ) {
+		$user = MediaWikiServices::getInstance()->getUserFactory()
+			->newFromName( $username );
+		if ( $user === null || $user->getId() === 0 ) {
 			$this->fatalError( "User $username doesn't exist!" );
 		}
 
-		$repo = MediaWikiServices::getInstance()->getService( 'OATHUserRepository' );
+		$repo = OATHAuthServices::getInstance()->getUserRepository();
 		$oathUser = $repo->findByUser( $user );
-		$module = $oathUser->getModule();
-		if ( !( $module instanceof IModule ) || $module->isEnabled( $oathUser ) === false ) {
-			$this->fatalError( "User $username doesn't have OATHAuth enabled!" );
+		if ( !$oathUser->isTwoFactorAuthEnabled() ) {
+			$this->fatalError( "User $username does not have two-factor authentication enabled!" );
 		}
 
-		$repo->remove( $oathUser, 'Maintenance script', false );
-		// Kill all existing sessions. If this disable was social-engineered by an attacker,
-		// the legitimate user will hopefully login again and notice that the second factor
+		$repo->removeAll( $oathUser, 'Maintenance script', false );
+		// Kill all existing sessions.
+		// If this request to disable 2FA was social-engineered by an attacker,
+		// the legitimate user will hopefully log in again to the wiki, and notice that the second factor
 		// is missing or different, and alert the operators.
 		SessionManager::singleton()->invalidateSessionsForUser( $user );
 
-		$this->output( "OATHAuth disabled for $username.\n" );
+		$this->output( "Two-factor authentication disabled for $username.\n" );
 	}
 }
 

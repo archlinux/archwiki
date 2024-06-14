@@ -19,7 +19,6 @@
 	"cite_error_included_ref": "Hee för dat <code>&lt;ref&gt;</code> ham_mer kei zopaß <code>&lt;/ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Et sinn_er <code>&lt;ref&gt;</code>-Befähle för de Jrop „$1“ en heh dä Sigg, ävver mer han keine <code>&lt;references group=\"$1\"/&gt;</code>-Befähl jefonge, udder dä Befähl <code>&lt;/ref&gt;</code> zom zohmaache es nit doh.",
 	"cite_error_references_group_mismatch": "Dä <code>&lt;ref&gt;</code> Befähl en <code>&lt;references&gt;</code> hät en widerschpröschlesche Jroppe-Eijeschaff „$1“.",
-	"cite_error_references_missing_group": "Dä <code>&lt;ref&gt;</code> Befähl, aanjejoove em Befähl <code>&lt;references&gt;</code>, hät en Jroppe-Eijeschaff „$1“, di ävver em Täx doför nit vörjekumme es.",
 	"cite_error_references_missing_key": "Dä <code>&lt;ref&gt;</code> Befähl mem Nahme „$1“, aanjejovve em Befähl <code>&lt;references&gt;</code>, es em Täx doför nit vörjekumme.",
 	"cite_error_references_no_key": "Dä <code>&lt;ref&gt;</code> Befähl, aanjejoove em Befähl <code>&lt;references&gt;</code>, hät kei Eijeschaff <code>name=</code> aanjejovve.",
 	"cite_error_empty_references_define": "Dä <code>&lt;ref&gt;</code> Befähl mem Nahme „$1“, aanjejoove em Befähl <code>&lt;references&gt;</code> mem Nahme „$1“, hät keine Enhallt.",

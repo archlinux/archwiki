@@ -3,7 +3,7 @@
  * Creates a sitemap for the site.
  *
  * Copyright © 2005, Ævar Arnfjörð Bjarmason, Jens Frank <jeluf@gmx.de> and
- * Brion Vibber <brion@pobox.com>
+ * Brooke Vibber <bvibber@wikimedia.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,13 +194,13 @@ class GenerateSitemap extends Maintenance {
 		$dbDomain = WikiMap::getCurrentWikiDbDomain()->getId();
 		$this->fspath = realpath( $fspath ) . DIRECTORY_SEPARATOR;
 		$this->urlpath = $this->getOption( 'urlpath', "" );
-		if ( $this->urlpath !== "" && $this->urlpath[-1] !== '/' ) {
+		if ( $this->urlpath !== "" && substr( $this->urlpath, -1 ) !== '/' ) {
 			$this->urlpath .= '/';
 		}
 		$this->identifier = $this->getOption( 'identifier', $dbDomain );
 		$this->compress = $this->getOption( 'compress', 'yes' ) !== 'no';
 		$this->skipRedirects = $this->hasOption( 'skip-redirects' );
-		$this->dbr = $this->getDB( DB_REPLICA );
+		$this->dbr = $this->getReplicaDB();
 		$this->generateNamespaces();
 		$this->timestamp = wfTimestamp( TS_ISO_8601, wfTimestampNow() );
 		$encIdentifier = rawurlencode( $this->identifier );
@@ -497,7 +497,7 @@ class GenerateSitemap extends Maintenance {
 	private function indexEntry( $filename ) {
 		return "\t<sitemap>\n" .
 			"\t\t<loc>" . wfGetServerUrl( PROTO_CANONICAL ) .
-				( $this->urlpath[0] === "/" ? "" : "/" ) .
+				( substr( $this->urlpath, 0, 1 ) === "/" ? "" : "/" ) .
 				"{$this->urlpath}$filename</loc>\n" .
 			"\t\t<lastmod>{$this->timestamp}</lastmod>\n" .
 			"\t</sitemap>\n";

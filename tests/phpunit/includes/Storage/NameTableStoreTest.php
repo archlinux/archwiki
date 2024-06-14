@@ -25,11 +25,6 @@ use Wikimedia\TestingAccessWrapper;
  */
 class NameTableStoreTest extends MediaWikiIntegrationTestCase {
 
-	protected function setUp(): void {
-		parent::setUp();
-		$this->tablesUsed[] = 'slot_roles';
-	}
-
 	private function populateTable( $values ) {
 		$insertValues = [];
 		foreach ( $values as $name ) {
@@ -146,9 +141,6 @@ class NameTableStoreTest extends MediaWikiIntegrationTestCase {
 		$name,
 		$expectedId
 	) {
-		// Make sure the table is empty!
-		$this->truncateTable( 'slot_roles' );
-
 		$this->populateTable( $existingValues );
 		$store = $this->getNameTableSqlStore( $cacheBag, (int)$needsInsert, $selectCalls );
 
@@ -177,18 +169,8 @@ class NameTableStoreTest extends MediaWikiIntegrationTestCase {
 	public static function provideTestGetAndAcquireIdNameNormalization() {
 		yield [ 'A', 'a', 'strtolower' ];
 		yield [ 'b', 'B', 'strtoupper' ];
-		yield [
-			'X',
-			'X',
-			static function ( $name ) {
-				return $name;
-			}
-		];
-		yield [ 'ZZ', 'ZZ-a', __CLASS__ . '::appendDashAToString' ];
-	}
-
-	public static function appendDashAToString( $string ) {
-		return $string . '-a';
+		yield [ 'X', 'X', static fn ( $name ) => $name ];
+		yield [ 'ZZ', 'ZZ-a', static fn ( $name ) => "$name-a" ];
 	}
 
 	/**

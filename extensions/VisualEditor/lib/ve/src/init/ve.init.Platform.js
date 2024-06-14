@@ -1,7 +1,7 @@
 /*!
  * VisualEditor Initialization Platform class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -70,18 +70,6 @@ ve.init.Platform.static.initializedPromise = ve.init.Platform.static.deferredPla
  */
 ve.init.Platform.static.getSystemPlatform = function () {
 	return $.client.profile().platform;
-};
-
-/**
- * Check whether we are running in Internet Explorer.
- *
- * @deprecated Always returns false
- * @static
- * @inheritable
- * @return {boolean} We are in IE
- */
-ve.init.Platform.static.isInternetExplorer = function () {
-	return false;
 };
 
 /**
@@ -229,6 +217,15 @@ ve.init.Platform.prototype.addMessages = null;
 ve.init.Platform.prototype.getMessage = null;
 
 /**
+ * Get the current user's name, if the platform supports it
+ *
+ * @return {string|null} User name, or null if not applicable
+ */
+ve.init.Platform.prototype.getUserName = function () {
+	return null;
+};
+
+/**
  * Parse a string into a number
  *
  * @abstract
@@ -362,6 +359,51 @@ ve.init.Platform.prototype.getInitializedPromise = function () {
 };
 
 /**
+ * Post-process the symbol list.
+ *
+ * If a keyed object format is used, it is coverted to an array,
+ * and the label property is set from the key when required.
+ *
+ * For individual symbols, turns the `source` property into a CSS class.
+ *
+ * @param {Object|Array} symbols Symbol data
+ * @return {Object[]}
+ */
+ve.init.Platform.prototype.processSpecialCharSymbols = function ( symbols ) {
+	var symbolList;
+	if ( Array.isArray( symbols ) ) {
+		symbolList = ve.copy( symbols );
+	} else {
+		symbolList = [];
+		Object.keys( symbols ).forEach( function ( key ) {
+			var val = symbols[ key ];
+			if ( typeof val === 'object' ) {
+				var symbolData = ve.copy( val );
+				if ( !Object.prototype.hasOwnProperty.call( symbolData, 'label' ) ) {
+					symbolData.label = key;
+				}
+				symbolList.push( symbolData );
+			} else if ( key !== val ) {
+				symbolList.push( {
+					label: key,
+					string: val
+				} );
+			} else {
+				// Plain string
+				symbolList.push( val );
+			}
+		} );
+	}
+	symbolList.forEach( function ( symbol ) {
+		if ( symbol.source ) {
+			symbol.classes = symbol.classes || [];
+			symbol.classes.push( 've-ui-specialCharacterDialog-source' );
+		}
+	} );
+	return symbolList;
+};
+
+/**
  * Fetch the special character list object
  *
  * Returns a promise which resolves with the character list
@@ -374,29 +416,33 @@ ve.init.Platform.prototype.fetchSpecialCharList = function () {
 			return JSON.parse( json );
 		} catch ( err ) {
 			// There was no character list found, or the character list message is
-			// invalid json string. Force a fallback to the minimal character list
+			// invalid json string.
 			ve.log( 've.init.Platform: Could not parse the special character list ' + json );
 			ve.log( err.message );
 		}
-		return {};
+		return null;
 	}
 
 	var charsObj = {},
 		groups = [ 'accents', 'mathematical', 'symbols' ];
 
+	var platform = this;
 	groups.forEach( function ( group ) {
-		charsObj[ group ] = {
-			// The following messages are used here:
-			// * visualeditor-specialcharacter-group-label-accents
-			// * visualeditor-specialcharacter-group-label-mathematical
-			// * visualeditor-specialcharacter-group-label-symbols
-			label: ve.msg( 'visualeditor-specialcharacter-group-label-' + group ),
-			// The following messages are used here:
-			// * visualeditor-specialcharacter-group-set-accents
-			// * visualeditor-specialcharacter-group-set-mathematical
-			// * visualeditor-specialcharacter-group-set-symbols
-			characters: tryParseJSON( ve.msg( 'visualeditor-specialcharacter-group-set-' + group ) )
-		};
+		// The following messages are used here:
+		// * visualeditor-specialcharacter-group-set-accents
+		// * visualeditor-specialcharacter-group-set-mathematical
+		// * visualeditor-specialcharacter-group-set-symbols
+		var symbols = tryParseJSON( ve.msg( 'visualeditor-specialcharacter-group-set-' + group ) );
+		if ( symbols ) {
+			charsObj[ group ] = {
+				// The following messages are used here:
+				// * visualeditor-specialcharacter-group-label-accents
+				// * visualeditor-specialcharacter-group-label-mathematical
+				// * visualeditor-specialcharacter-group-label-symbols
+				label: ve.msg( 'visualeditor-specialcharacter-group-label-' + group ),
+				symbols: platform.processSpecialCharSymbols( symbols )
+			};
+		}
 	} );
 
 	// This implementation always resolves instantly

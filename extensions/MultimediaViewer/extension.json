@@ -28,7 +28,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42.0"
 	},
 	"MessagesDirs": {
 		"MultimediaViewer": [
@@ -425,8 +425,12 @@
 		"main": {
 			"class": "MediaWiki\\Extension\\MultimediaViewer\\Hooks",
 			"services": [
-				"UserOptionsLookup",
-				"SpecialPageFactory"
+				"MainConfig",
+				"SpecialPageFactory",
+				"UserOptionsLookup"
+			],
+			"optional_services": [
+				"MobileFrontend.Context"
 			]
 		}
 	},

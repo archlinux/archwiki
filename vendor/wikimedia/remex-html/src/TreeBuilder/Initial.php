@@ -28,9 +28,9 @@ class Initial extends InsertionMode {
 
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
 		// Ignore whitespace
-		list( $part1, $part2 ) = $this->splitInitialMatch(
+		[ $part1, $part2 ] = $this->splitInitialMatch(
 			true, "\t\n\f\r ", $text, $start, $length, $sourceStart, $sourceLength );
-		list( $start, $length, $sourceStart, $sourceLength ) = $part2;
+		[ $start, $length, $sourceStart, $sourceLength ] = $part2;
 		if ( !$length ) {
 			return;
 		}
@@ -94,9 +94,9 @@ class Initial extends InsertionMode {
 			$quirks = TreeBuilder::LIMITED_QUIRKS;
 		}
 
-		$name = $name ?? '';
-		$public = $public ?? '';
-		$system = $system ?? '';
+		$name ??= '';
+		$public ??= '';
+		$system ??= '';
 		$this->builder->doctype( $name, $public, $system, $quirks,
 			$sourceStart, $sourceLength );
 		$this->dispatcher->switchMode( Dispatcher::BEFORE_HTML );

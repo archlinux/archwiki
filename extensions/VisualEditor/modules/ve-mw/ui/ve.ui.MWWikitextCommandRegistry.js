@@ -1,7 +1,7 @@
 /*!
  * VisualEditor Wikitext command registry
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -234,7 +234,7 @@ ve.ui.wikitextCommandRegistry.register(
 				[ { type: 'paragraph' } ].concat( '|}'.split( '' ) ).concat( { type: '/paragraph' } ),
 				function () {
 					return '' +
-						'|+ ' + ve.msg( 'visualeditor-table-caption' ) +
+						'|+ ' + ve.msg( 'visualeditor-dialog-table-caption' ) +
 						'\n' +
 						'! ' + ve.msg( 'visualeditor-table-format-header' ) + ' !! ' + ve.msg( 'visualeditor-table-format-header' ) +
 						'\n' +

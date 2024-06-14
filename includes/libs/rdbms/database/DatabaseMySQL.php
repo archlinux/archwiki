@@ -33,6 +33,8 @@ use Wikimedia\Rdbms\Replication\MysqlReplicationReporter;
  *
  * Defines methods independent of the used MySQL extension.
  *
+ * @property mysqli|null $conn
+ *
  * @ingroup Database
  * @since 1.22
  * @see Database
@@ -251,6 +253,35 @@ class DatabaseMySQL extends Database {
 		);
 	}
 
+	protected function checkInsertWarnings( Query $query, $fname ) {
+		if ( $this->conn && $this->conn->warning_count ) {
+			// Yeah it's weird. It's not iterable.
+			$warnings = $this->conn->get_warnings();
+			$done = $warnings === false;
+			while ( !$done ) {
+				if ( in_array( $warnings->errno, [
+					// List based on https://dev.mysql.com/doc/refman/8.0/en/sql-mode.html#ignore-effect-on-execution
+					1048, /* ER_BAD_NULL_ERROR */
+					1526, /* ER_NO_PARTITION_FOR_GIVEN_VALUE */
+					1748, /* ER_ROW_DOES_NOT_MATCH_GIVEN_PARTITION_SET */
+					1242, /* ER_SUBQUERY_NO_1_ROW */
+					1369, /* ER_VIEW_CHECK_FAILED */
+					// Truncation and overflow per T108255
+					1264, /* ER_WARN_DATA_OUT_OF_RANGE */
+					1265, /* WARN_DATA_TRUNCATED */
+				] ) ) {
+					$this->reportQueryError(
+						'Insert returned unacceptable warning: ' . $warnings->message,
+						$warnings->errno,
+						$query->getSQL(),
+						$fname
+					);
+				}
+				$done = !$warnings->next();
+			}
+		}
+	}
+
 	/**
 	 * Estimate rows in dataset
 	 * Returns estimated count, based on EXPLAIN output
@@ -296,32 +327,28 @@ class DatabaseMySQL extends Database {
 	}
 
 	public function tableExists( $table, $fname = __METHOD__ ) {
-		// Split database and table into proper variables as Database::tableName() returns
-		// shared tables prefixed with their database, which do not work in SHOW TABLES statements
-		[ $database, , $prefix, $table ] = $this->platform->qualifiedTableComponents( $table );
-		$tableName = "{$prefix}{$table}";
+		$components = $this->platform->qualifiedTableComponents( $table );
+		if ( count( $components ) === 1 ) {
+			$db = $this->currentDomain->getDatabase();
+			$tableName = $components[0];
+		} elseif ( count( $components ) === 2 ) {
+			[ $db, $tableName ] = $components;
+		} else {
+			throw new DBLanguageError( 'Too many table components' );
+		}
 
 		if ( isset( $this->sessionTempTables[$tableName] ) ) {
-			return true; // already known to exist and won't show in SHOW TABLES anyway
+			return true; // already known to exist and won't be found in the query anyway
 		}
-
-		// We can't use buildLike() here, because it specifies an escape character
-		// other than the backslash, which is the only one supported by SHOW TABLES
-		// TODO: Avoid using platform's internal methods
-		$encLike = $this->platform->escapeLikeInternal( $tableName, '\\' );
-
-		// If the database has been specified (such as for shared tables), use "FROM"
-		if ( $database !== '' ) {
-			$encDatabase = $this->platform->addIdentifierQuotes( $database );
-			$sql = "SHOW TABLES FROM $encDatabase LIKE '$encLike'";
-		} else {
-			$sql = "SHOW TABLES LIKE '$encLike'";
-		}
-
-		$query = new Query( $sql, self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE, 'SHOW', $table );
-		$res = $this->query( $query, $fname );
-
-		return $res->numRows() > 0;
+		return (bool)$this->newSelectQueryBuilder()
+			->select( '1' )
+			->from( 'information_schema.tables' )
+			->where( [
+				'table_schema' => $db,
+				'table_name' => $tableName,
+			] )
+			->caller( $fname )
+			->fetchField();
 	}
 
 	/**
@@ -333,8 +360,7 @@ class DatabaseMySQL extends Database {
 		$query = new Query(
 			"SELECT * FROM " . $this->tableName( $table ) . " LIMIT 1",
 			self::QUERY_SILENCE_ERRORS | self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE,
-			'SELECT',
-			$table
+			'SELECT'
 		);
 		$res = $this->query( $query, __METHOD__ );
 		if ( !$res ) {
@@ -360,8 +386,7 @@ class DatabaseMySQL extends Database {
 		$query = new Query(
 			'SHOW INDEX FROM ' . $this->tableName( $table ),
 			self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE,
-			'SHOW',
-			$table
+			'SHOW'
 		);
 		$res = $this->query( $query, $fname );
 
@@ -538,7 +563,7 @@ class DatabaseMySQL extends Database {
 	public function upsert( $table, array $rows, $uniqueKeys, array $set, $fname = __METHOD__ ) {
 		$identityKey = $this->platform->normalizeUpsertParams( $uniqueKeys, $rows );
 		if ( !$rows ) {
-			return true;
+			return;
 		}
 		$this->platform->assertValidUpsertSetArray( $set, $identityKey, $rows );
 
@@ -557,7 +582,6 @@ class DatabaseMySQL extends Database {
 		$this->query( $query, $fname );
 		// Count updates of conflicting rows and row inserts equally toward the change count
 		$this->lastQueryAffectedRows = min( $this->lastQueryAffectedRows, count( $rows ) );
-		return true;
 	}
 
 	public function replace( $table, $uniqueKeys, $rows, $fname = __METHOD__ ) {
@@ -637,8 +661,9 @@ class DatabaseMySQL extends Database {
 		$query = new Query(
 			"CREATE $tmp TABLE $newNameQuoted (LIKE $oldNameQuoted)",
 			self::QUERY_PSEUDO_PERMANENT | self::QUERY_CHANGE_SCHEMA,
-			'CREATE',
-			[ $oldName, $newName ]
+			$temporary ? 'CREATE TEMPORARY' : 'CREATE',
+			// Use a dot to avoid double-prefixing in Database::getTempTableWrites()
+			'.' . $newName
 		);
 		return $this->query( $query, $fname );
 	}
@@ -651,61 +676,47 @@ class DatabaseMySQL extends Database {
 	 * @return array
 	 */
 	public function listTables( $prefix = null, $fname = __METHOD__ ) {
-		$query = new Query( "SHOW TABLES", self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE, 'SHOW' );
-		$result = $this->query( $query, $fname );
-
-		$endArray = [];
-
-		foreach ( $result as $table ) {
-			$vars = get_object_vars( $table );
-			$table = array_pop( $vars );
-
-			if ( !$prefix || strpos( $table, $prefix ) === 0 ) {
-				$endArray[] = $table;
-			}
+		$qb = $this->newSelectQueryBuilder()
+			->select( 'table_name' )
+			->from( 'information_schema.tables' )
+			->where( [
+				'table_schema' => $this->currentDomain->getDatabase(),
+				'table_type' => 'BASE TABLE'
+			] )
+			->caller( $fname );
+		if ( $prefix !== null && $prefix !== '' ) {
+			$qb->andWhere( $this->expr(
+				'table_name', IExpression::LIKE, new LikeValue( $prefix, $this->anyString() )
+			) );
 		}
-
-		return $endArray;
+		return $qb->fetchFieldValues();
 	}
 
 	/**
 	 * Lists VIEWs in the database
 	 *
+	 * @since 1.22
+	 * @deprecated since 1.42
+	 *
 	 * @param string|null $prefix Only show VIEWs with this prefix, eg.
 	 * unit_test_, or $wgDBprefix. Default: null, would return all views.
 	 * @param string $fname Name of calling function
 	 * @return array
-	 * @since 1.22
 	 */
 	public function listViews( $prefix = null, $fname = __METHOD__ ) {
-		// The name of the column containing the name of the VIEW
-		$propertyName = 'Tables_in_' . $this->getDBname();
-		$query = new Query(
-			'SHOW FULL TABLES WHERE TABLE_TYPE = "VIEW"',
-			self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE,
-			'SHOW'
-		);
-		// Query for the VIEWS
-		$res = $this->query( $query, $fname );
+		wfDeprecated( __METHOD__, '1.42' );
+		$qb = $this->newSelectQueryBuilder()
+			->select( 'table_name' )
+			->from( 'information_schema.views' )
+			->where( [ 'table_schema' => $this->currentDomain->getDatabase() ] )
+			->caller( $fname );
 
-		$allViews = [];
-		foreach ( $res as $row ) {
-			$allViews[] = $row->$propertyName;
+		if ( $prefix !== null && $prefix !== '' ) {
+			$qb->andWhere( $this->expr(
+				'table_name', IExpression::LIKE, new LikeValue( $prefix, $this->anyString() )
+			) );
 		}
-
-		if ( $prefix === null || $prefix === '' ) {
-			return $allViews;
-		}
-
-		$filteredViews = [];
-		foreach ( $allViews as $viewName ) {
-			// Does the name of this VIEW start with the table-prefix?
-			if ( strpos( $viewName, $prefix ) === 0 ) {
-				$filteredViews[] = $viewName;
-			}
-		}
-
-		return $filteredViews;
+		return $qb->fetchFieldValues();
 	}
 
 	public function selectSQLText(
@@ -892,13 +903,3 @@ class DatabaseMySQL extends Database {
 		return $conn->real_escape_string( (string)$s );
 	}
 }
-
-/**
- * @deprecated since 1.29
- */
-class_alias( DatabaseMySQL::class, 'DatabaseMysqlBase' );
-
-/**
- * @deprecated since 1.29
- */
-class_alias( DatabaseMySQL::class, 'DatabaseMysqli' );

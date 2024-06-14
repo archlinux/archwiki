@@ -24,6 +24,8 @@
 	"apihelp-discussiontoolsedit-summary": "Напишете порака на разговорната страница.",
 	"apihelp-discussiontoolsfindcomment-summary": "Најдете коментар според назнака или име.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "Назнака на коментарот или име",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Раздробничко парче на заглавието",
+	"apihelp-discussiontoolsfindcomment-param-page": "Страницата на која некогаш постоело раздробничко парче за заглавие",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Називи на темите за проверка",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Дај ги претплатните статуси на дадените теми.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Број на преработката што ќе се користи (по основно: најновата преработка).",

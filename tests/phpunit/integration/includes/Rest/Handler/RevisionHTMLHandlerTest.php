@@ -2,14 +2,14 @@
 
 namespace MediaWiki\Tests\Rest\Handler;
 
-use DeferredUpdates;
 use Exception;
 use HashBagOStuff;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
-use MediaWiki\Parser\ParserCacheFactory;
 use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
+use MediaWiki\Parser\Parsoid\ParsoidParser;
 use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
 use MediaWiki\Rest\Handler\Helper\HtmlOutputRendererHelper;
 use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
@@ -48,15 +48,6 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		// Clean up these tables after each test
-		$this->tablesUsed = [
-			'page',
-			'revision',
-			'comment',
-			'text',
-			'content'
-		];
-
 		$this->parserCacheBagOStuff = new HashBagOStuff();
 	}
 
@@ -64,11 +55,6 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 	 * @return RevisionHTMLHandler
 	 */
 	private function newHandler(): RevisionHTMLHandler {
-		$parserCacheFactoryOptions = new ServiceOptions( ParserCacheFactory::CONSTRUCTOR_OPTIONS, [
-			'CacheEpoch' => '20200202112233',
-			'OldRevisionParserCacheExpireTime' => 60 * 60,
-		] );
-
 		$services = $this->getServiceContainer();
 		$config = [
 			'RightsUrl' => 'https://example.com/rights',
@@ -78,11 +64,6 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		];
 
 		$parsoidOutputAccess = new ParsoidOutputAccess(
-			new ServiceOptions(
-				ParsoidOutputAccess::CONSTRUCTOR_OPTIONS,
-				$services->getMainConfig(),
-				[ 'ParsoidWikiID' => 'MyWiki' ]
-			),
 			$services->getParsoidParserFactory(),
 			$services->getParserOutputAccess(),
 			$services->getPageStore(),
@@ -274,7 +255,7 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 			->willThrowException( $parsoidException );
 
 		// Install it in the ParsoidParser object
-		$reflector = new ReflectionClass( 'MediaWiki\Parser\Parsoid\ParsoidParser' );
+		$reflector = new ReflectionClass( ParsoidParser::class );
 		$prop = $reflector->getProperty( 'parsoid' );
 		$prop->setAccessible( true );
 		$prop->setValue( $parsoidParser, $mockParsoid );
@@ -366,8 +347,8 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 	 * Request Two:
 	 *   This request then uses the request header ETag which is the same as that in
 	 *   the cached stashed key container because during the second request, no stashing
-	 *   was done and the page revision is the same so what is the in output response headers
-	 *   in the user's browser will be exactly what's in the parsoid output stash.
+	 *   was done and the page revision is the same. So what is in the output response headers
+	 *   in the user's browser will be exactly what is in the parsoid output stash.
 	 *
 	 * NOTE: if we make another request which actually stashes, that cached stash key will
 	 *   be updated, and we can use it to access the stash's latest entry.
@@ -386,10 +367,13 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 			$revisions['first']->getId(),
 			[ 'stash' => false ]
 		);
-		$this->assertNotNull( $outputStash->get( $stashKey1 ) );
-		$this->assertNotNull( $outputStash->get( $stashKey2 ) );
 
+		// The etags should be different, but the stash key should be identicl
 		$this->assertNotSame( $etag1, $etag2 );
+		$this->assertSame( $stashKey1->getKey(), $stashKey2->getKey() );
+
+		// Ensure nothing has changed with the output stash
+		$this->assertNotNull( $outputStash->get( $stashKey1 ) );
 
 		// Make sure the output for stashed and unstashed doesn't have the same tag,
 		// since it will actually be different!
@@ -423,11 +407,12 @@ class RevisionHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 
 		$page = $this->getExistingTestPage();
 
-		$this->executeRevisionHTMLRequest( $page->getLatest(), [ 'stash' => true ] );
+		$authority = $this->getAuthority();
+		$this->executeRevisionHTMLRequest( $page->getLatest(), [ 'stash' => true ], [], $authority );
 		// In this request, the rate limit has been exceeded, so it should throw.
 		$this->expectException( LocalizedHttpException::class );
 		$this->expectExceptionCode( 429 );
-		$this->executeRevisionHTMLRequest( $page->getLatest(), [ 'stash' => true ] );
+		$this->executeRevisionHTMLRequest( $page->getLatest(), [ 'stash' => true ], [], $authority );
 	}
 
 	/**

@@ -43,8 +43,11 @@ class SingleMenuEntry implements IMenuEntry {
 	 * @param string $text Text to show on menu element
 	 * @param string $url URL menu element points to
 	 * @param string|array $className Additional CSS class names.
+	 * @param bool $isInterface If true, the menu element is provided with data-mw='interface'
+	 * and is treated as a standard part of the interface (ie. MediaWiki Core might bind to
+	 * the menu element)
 	 */
-	public function __construct( $name, $text, $url, $className = '' ) {
+	public function __construct( $name, $text, $url, $className = '', bool $isInterface = true ) {
 		$this->name = $name;
 		$menuClass = 'menu__item--' . $name;
 
@@ -58,11 +61,17 @@ class SingleMenuEntry implements IMenuEntry {
 			'text' => $text,
 			'href' => $url,
 			'role' => '',
-			'data-mw' => 'interface',
 			'class' => is_array( $className ) ?
 				implode( ' ', $className + [ $menuClass ] ) :
 					ltrim( $className . ' ' . $menuClass ),
 		];
+		if ( $isInterface ) {
+			// This is needed when Minerva uses a standard MediaWiki button (such as the
+			// watchstar) for a different purpose than MediaWiki usually uses it for. Not setting
+			// data-mw interface will prevent MediaWiki Core from binding to the element and
+			// potentially triggering its own actions. See T344925 for an example bug report.
+			$this->attributes['data-mw'] = 'interface';
+		}
 	}
 
 	/**
@@ -121,7 +130,7 @@ class SingleMenuEntry implements IMenuEntry {
 	 * @inheritDoc
 	 */
 	public function getCSSClasses(): array {
-		return $this->isJSOnly ? [ 'jsonly' ] : [];
+		return $this->isJSOnly ? [ 'skin-minerva-list-item-jsonly' ] : [];
 	}
 
 	/**
@@ -130,7 +139,7 @@ class SingleMenuEntry implements IMenuEntry {
 	public function getComponents(): array {
 		$attrs = [];
 		foreach ( [ 'id', 'href', 'data-event-name', 'data-mw', 'role' ] as $key ) {
-			$value = $this->attributes[$key];
+			$value = $this->attributes[$key] ?? null;
 			if ( $value ) {
 				$attrs[] = [
 					'key' => $key,

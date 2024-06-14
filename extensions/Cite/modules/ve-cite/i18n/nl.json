@@ -84,7 +84,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Deze referentie staat in een sjabloon of elders gemaakt blok waarvan men nu alleen broncode kan zien.",
 	"cite-ve-referenceslist-missingreflist": "Deze referentielijst wordt gegenereerd door een sjabloon.",
 	"cite-ve-toolbar-group-label": "Referentie",
-	"cite-ve-othergroup-item": "$1 referentie",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referenties",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Referentiegroep: \"$1\""
+	"cite-ve-othergroup-item": "$1 referentie"
 }

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Andriy.v",
 			"Andriykopanytsia",
 			"Base",
 			"DDPAT",
@@ -17,8 +18,8 @@
 		]
 	},
 	"math-desc": "Відображає математичні формули у тегах <code>&lt;math&gt;</code> … <code>&lt;/math&gt;</code>",
+	"popups-settings-option-math-tooltip": "Пояснювати математичні формули при наведенні",
 	"math-visualeditor-mwchemdialog-title": "Хімічна формула",
-	"math-visualeditor-mwcheminspector-title": "Хімічна формула",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Швидке редагування",
 	"math-visualeditor-mwlatexdialog-card-formula": "Формула",
 	"math-visualeditor-mwlatexdialog-card-options": "Параметри",
@@ -76,9 +77,9 @@
 	"math_syntax_error": "синтаксична помилка",
 	"math_timeout": "$1 перевищив час очікування від «$2»",
 	"math-test-end": "Бекенд-тести для режиму візуалізації ''$1'' завершено.",
-	"math-test-fail": "Тест ''$1'' <span style=\"color:red\">не вдався</span>.",
+	"math-test-fail": "Тест ''$1'' не вдався.",
 	"math-test-start": "Бекенд-тести для режиму візуалізації ''$1'' у процесі.",
-	"math-test-success": "Тест ''$1'' <span style=\"color:green\">успішний</span>.",
+	"math-test-success": "Тест ''$1'' успішний.",
 	"math-test-contains-diff": "Виведений рядок $1 не містить очікуваного рядка $2.",
 	"math-test-equals-diff": "Виведений рядок $1 відрізняється від очікуваного рядка $2.",
 	"math-tracking-category-error": "Сторінки з математичними помилками",
@@ -91,10 +92,10 @@
 	"math-tracking-category-render-error-desc": "Сторінки в цій категорії мають помилки відтворення в математичних тегах.",
 	"math_unknown_error": "невідома помилка",
 	"math_unknown_function": "невідома функція '$1'",
-	"mw_math_latexml": "LaTeXML (експериментально; використовує MathML)",
-	"mw_math_mathml": "SVG (MathML можна ввімкнути через плагін браузера)",
-	"mw_math_native": "MathML (експериментально; без зображень)",
-	"mw_math_source": "LaTeX-розмітка (для текстових браузерів)",
+	"mw-math-latexml": "LaTeXML (експериментально; використовує MathML)",
+	"mw-math-mathml": "SVG (MathML можна ввімкнути через плагін браузера)",
+	"mw-math-native": "MathML (експериментально; без зображень)",
+	"mw-math-source": "LaTeX-розмітка (для текстових браузерів)",
 	"prefs-math": "Відображення формул",
 	"mathstatus": "Статус Math",
 	"mathwikibase": "Інформація про математичні формули",
@@ -115,6 +116,5 @@
 	"math-wikibase-special-form-button": "Запит на інформацію",
 	"math-wikibase-special-error-header": "Помилка",
 	"math-wikibase-special-error-invalid-argument": "Вказаний вами ID елемента Вікібази не існує.",
-	"math-wikibase-special-error-unknown": "Сталася невідома помилка під час отримання даних з Вікібази.",
-	"math-wikibase-special-error-no-wikibase": "Для використання цієї спеціальної сторінки необхідне розширення Вікібази."
+	"math-wikibase-special-error-unknown": "Сталася невідома помилка під час отримання даних з Вікібази."
 }

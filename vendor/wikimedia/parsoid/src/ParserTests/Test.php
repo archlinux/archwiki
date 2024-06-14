@@ -219,9 +219,6 @@ class Test extends Item {
 		return true; // Trivial match because of a bad test filter
 	}
 
-	/**
-	 * @return string
-	 */
 	public function pageName(): string {
 		if ( !$this->pageName ) {
 			$this->pageName = $this->options['title'] ?? 'Parser test';
@@ -656,8 +653,7 @@ class Test extends Item {
 					) &&
 					// Deleting these wrappers is tantamount to removing the
 					// references-tag encapsulation wrappers, which results in errors.
-					!preg_match( '/\bmw-references-wrap\b/', $node->getAttribute( 'class' ) ?? ''
-					)
+					!DOMUtils::hasClass( $node, 'mw-references-wrap' )
 				);
 		};
 
@@ -886,10 +882,14 @@ class Test extends Item {
 			$haveIntegratedHTML ||
 			isset( $this->sections['html/parsoid+langconv'] ) ||
 			( isset( $opts['parsoid'] ) && !isset( $opts['parsoid']['normalizePhp'] ) );
+		$externalLinkTarget = ( $opts['externallinktarget'] ?? false ) ||
+			isset( $this->config['wgExternalLinkTarget'] ) ||
+			isset( $this->config['wgNoFollowLinks'] ) ||
+			isset( $this->config['wgNoFollowDomainExceptions'] );
 		$normOpts = [
 			'parsoidOnly' => $parsoidOnly,
 			'preserveIEW' => isset( $opts['parsoid']['preserveIEW'] ),
-			'externallinktarget' => $opts['externallinktarget'] ?? false,
+			'externallinktarget' => $externalLinkTarget,
 		];
 
 		if ( $normExpected === null ) {

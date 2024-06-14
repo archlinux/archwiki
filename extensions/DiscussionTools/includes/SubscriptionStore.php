@@ -2,19 +2,19 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use Config;
-use ConfigFactory;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\ConfigFactory;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityUtils;
-use ReadOnlyMode;
 use stdClass;
-use TitleValue;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 class SubscriptionStore {
 
@@ -172,12 +172,6 @@ class SubscriptionStore {
 		return $items;
 	}
 
-	/**
-	 * @param UserIdentity $user
-	 * @param LinkTarget $target
-	 * @param stdClass $row
-	 * @return SubscriptionItem
-	 */
 	private function getSubscriptionItemFromRow(
 		UserIdentity $user,
 		LinkTarget $target,
@@ -193,13 +187,6 @@ class SubscriptionStore {
 		);
 	}
 
-	/**
-	 * @param UserIdentity $user
-	 * @param LinkTarget $target
-	 * @param string $itemName
-	 * @param int $state
-	 * @return bool
-	 */
 	public function addSubscriptionForUser(
 		UserIdentity $user,
 		LinkTarget $target,
@@ -214,32 +201,34 @@ class SubscriptionStore {
 		if ( !$user->isRegistered() || $this->userIdentityUtils->isTemp( $user ) ) {
 			return false;
 		}
+
+		$section = $target->getFragment();
+		// Truncate to the database field length, taking care not to mess up multibyte characters,
+		// appending a marker so that we can recognize this happened and display an ellipsis later.
+		// Using U+001F "Unit Separator" seems appropriate, and it can't occur in wikitext.
+		$truncSection = strlen( $section ) > 254 ? mb_strcut( $section, 0, 254 ) . "\x1f" : $section;
+
 		$dbw = $this->dbProvider->getPrimaryDatabase();
-		$dbw->upsert(
-			'discussiontools_subscription',
-			[
+		$dbw->newInsertQueryBuilder()
+			->table( 'discussiontools_subscription' )
+			->row( [
 				'sub_user' => $user->getId(),
 				'sub_namespace' => $target->getNamespace(),
 				'sub_title' => $target->getDBkey(),
-				'sub_section' => $target->getFragment(),
+				'sub_section' => $truncSection,
 				'sub_item' => $itemName,
 				'sub_state' => $state,
 				'sub_created' => $dbw->timestamp(),
-			],
-			[ [ 'sub_user', 'sub_item' ] ],
-			[
+			] )
+			->onDuplicateKeyUpdate()
+			->uniqueIndexFields( [ 'sub_user', 'sub_item' ] )
+			->set( [
 				'sub_state' => $state,
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )->execute();
 		return (bool)$dbw->affectedRows();
 	}
 
-	/**
-	 * @param UserIdentity $user
-	 * @param string $itemName
-	 * @return bool
-	 */
 	public function removeSubscriptionForUser(
 		UserIdentity $user,
 		string $itemName
@@ -264,12 +253,6 @@ class SubscriptionStore {
 		return (bool)$dbw->affectedRows();
 	}
 
-	/**
-	 * @param UserIdentity $user
-	 * @param LinkTarget $target
-	 * @param string $itemName
-	 * @return bool
-	 */
 	public function addAutoSubscriptionForUser(
 		UserIdentity $user,
 		LinkTarget $target,
@@ -333,10 +316,6 @@ class SubscriptionStore {
 	 * This field could be used in future to cleanup notifications
 	 * that are no longer needed (e.g. because the conversation has
 	 * been archived), so should be set for muted notifications too.
-	 *
-	 * @param UserIdentity|null $user
-	 * @param string $itemName
-	 * @return bool
 	 */
 	public function updateSubscriptionNotifiedTimestamp(
 		?UserIdentity $user,

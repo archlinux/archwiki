@@ -62,7 +62,7 @@ abstract class UserArray implements Iterator {
 			// Database::select() doesn't like empty arrays
 			return new ArrayIterator( [] );
 		}
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$res = User::newQueryBuilder( $dbr )
 			->where( [ 'user_id' => array_unique( $ids ) ] )
 			->caller( __METHOD__ )
@@ -86,7 +86,7 @@ abstract class UserArray implements Iterator {
 			// Database::select() doesn't like empty arrays
 			return new ArrayIterator( [] );
 		}
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$res = User::newQueryBuilder( $dbr )
 			->where( [ 'user_name' => array_unique( $names ) ] )
 			->caller( __METHOD__ )
@@ -105,8 +105,5 @@ abstract class UserArray implements Iterator {
 	abstract public function key(): int;
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( UserArray::class, 'UserArray' );

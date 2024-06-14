@@ -23,6 +23,7 @@
 namespace MediaWiki\User;
 
 use InvalidArgumentException;
+use LogicException;
 use ReflectionClass;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IDatabase;
@@ -45,12 +46,14 @@ class ActorMigrationBase {
 	/** @var int A combination of the SCHEMA_COMPAT_WRITE_* flags */
 	private $writeStage;
 
-	private ActorStoreFactory $actorStoreFactory;
+	protected ActorStoreFactory $actorStoreFactory;
 
 	/** @var array */
 	private $fieldInfos;
 
 	private bool $allowUnknown;
+
+	private bool $forImport = false;
 
 	/**
 	 * @param array $fieldInfos An array of associative arrays, giving configuration
@@ -61,19 +64,6 @@ class ActorMigrationBase {
 	 *      Default: MediaWiki.
 	 *    - textField: Override the old text field name. Default {$key}_text.
 	 *    - actorField: Override the actor field name. Default {$key}_actor.
-	 *    - tempTable: An array of information about the temp table linking
-	 *      the old table to the actor table. Default: no temp table is used.
-	 *      If set, the following subkeys must be present:
-	 *        - table: Temporary table name
-	 *        - pk: Temporary table column referring to the main table's primary key
-	 *        - field: Temporary table column referring actor.actor_id
-	 *        - joinPK: Main table's primary key
-	 *        - extra: An array of extra field names to be copied into the
-	 *          temp table for indexing. The key is the field name in the temp
-	 *          table, and the value is the field name in the main table.
-	 *    - formerTempTableVersion: The version of the component in which this
-	 *      field used a temp table. If present, getInsertValuesWithTempTable()
-	 *      still works, but issues a deprecation warning.
 	 *   All subkeys are optional.
 	 *
 	 * @stable to override
@@ -83,13 +73,8 @@ class ActorMigrationBase {
 	 *   SCHEMA_COMPAT_* flags:
 	 *     - SCHEMA_COMPAT_READ_OLD, SCHEMA_COMPAT_WRITE_OLD: Use the old schema,
 	 *       with *_user and *_user_text fields.
-	 *     - SCHEMA_COMPAT_READ_TEMP, SCHEMA_COMPAT_WRITE_TEMP: Use the new schema,
-	 *       with an actor table. Normal tables are joined via a *_actor field,
-	 *       whereas temp tables are joined to the actor table via an
-	 *       intermediate table.
 	 *     - SCHEMA_COMPAT_READ_NEW, SCHEMA_COMPAT_WRITE_NEW: Use the new
-	 *       schema. Former temp tables are no longer used, and all relevant
-	 *       tables join directly to the actor table.
+	 *       schema. All relevant tables join directly to the actor table.
 	 *
 	 * @param ActorStoreFactory $actorStoreFactory
 	 * @param array $options Array of other options. May contain:
@@ -112,16 +97,11 @@ class ActorMigrationBase {
 		if ( $readStage === 0 ) {
 			throw new InvalidArgumentException( '$stage must include a read mode' );
 		}
-		if ( !in_array(
-			$readStage, [ SCHEMA_COMPAT_READ_OLD, SCHEMA_COMPAT_READ_TEMP, SCHEMA_COMPAT_READ_NEW ]
-		) ) {
+		if ( !in_array( $readStage, [ SCHEMA_COMPAT_READ_OLD, SCHEMA_COMPAT_READ_NEW ] ) ) {
 			throw new InvalidArgumentException( 'Cannot read multiple schemas' );
 		}
 		if ( $readStage === SCHEMA_COMPAT_READ_OLD && !( $writeStage & SCHEMA_COMPAT_WRITE_OLD ) ) {
 			throw new InvalidArgumentException( 'Cannot read the old schema without also writing it' );
-		}
-		if ( $readStage === SCHEMA_COMPAT_READ_TEMP && !( $writeStage & SCHEMA_COMPAT_WRITE_TEMP ) ) {
-			throw new InvalidArgumentException( 'Cannot read the temp schema without also writing it' );
 		}
 		if ( $readStage === SCHEMA_COMPAT_READ_NEW && !( $writeStage & SCHEMA_COMPAT_WRITE_NEW ) ) {
 			throw new InvalidArgumentException( 'Cannot read the new schema without also writing it' );
@@ -130,6 +110,14 @@ class ActorMigrationBase {
 		$this->writeStage = $writeStage;
 
 		$this->actorStoreFactory = $actorStoreFactory;
+	}
+
+	/**
+	 * Get an instance that allows IP actor creation
+	 * @return self
+	 */
+	public static function newMigrationForImport() {
+		throw new LogicException( __METHOD__ . " must be overridden" );
 	}
 
 	/**
@@ -196,7 +184,7 @@ class ActorMigrationBase {
 	 * @return string
 	 */
 	public function isAnon( $field ) {
-		return ( $this->readStage >= SCHEMA_COMPAT_READ_TEMP ) ? "$field IS NULL" : "$field = 0";
+		return ( $this->readStage & SCHEMA_COMPAT_READ_NEW ) ? "$field IS NULL" : "$field = 0";
 	}
 
 	/**
@@ -205,7 +193,7 @@ class ActorMigrationBase {
 	 * @return string
 	 */
 	public function isNotAnon( $field ) {
-		return ( $this->readStage >= SCHEMA_COMPAT_READ_TEMP ) ? "$field IS NOT NULL" : "$field != 0";
+		return ( $this->readStage & SCHEMA_COMPAT_READ_NEW ) ? "$field IS NOT NULL" : "$field != 0";
 	}
 
 	/**
@@ -218,17 +206,6 @@ class ActorMigrationBase {
 		$textField = $fieldInfo['textField'] ?? $key . '_text';
 		$actorField = $fieldInfo['actorField'] ?? substr( $key, 0, -5 ) . '_actor';
 		return [ $textField, $actorField ];
-	}
-
-	/**
-	 * Convenience function for getting temp table config
-	 *
-	 * @param string $key
-	 * @return array|null
-	 */
-	private function getTempTableInfo( $key ) {
-		$fieldInfo = $this->getFieldInfo( $key );
-		return $fieldInfo['tempTable'] ?? null;
 	}
 
 	/**
@@ -257,27 +234,6 @@ class ActorMigrationBase {
 				$fields[$key] = $key;
 				$fields[$text] = $text;
 				$fields[$actor] = 'NULL';
-			} elseif ( $this->readStage === SCHEMA_COMPAT_READ_TEMP ) {
-				$tempTableInfo = $this->getTempTableInfo( $key );
-				if ( $tempTableInfo ) {
-					$alias = "temp_$key";
-					$tables[$alias] = $tempTableInfo['table'];
-					$joins[$alias] = [
-						'JOIN',
-						"{$alias}.{$tempTableInfo['pk']} = {$tempTableInfo['joinPK']}",
-					];
-					$joinField = "{$alias}.{$tempTableInfo['field']}";
-				} else {
-					$joinField = $actor;
-				}
-
-				$alias = "actor_$key";
-				$tables[$alias] = 'actor';
-				$joins[$alias] = [ 'JOIN', "{$alias}.actor_id = {$joinField}" ];
-
-				$fields[$key] = "{$alias}.actor_user";
-				$fields[$text] = "{$alias}.actor_name";
-				$fields[$actor] = $joinField;
 			} else /* SCHEMA_COMPAT_READ_NEW */ {
 				$alias = "actor_$key";
 				$tables[$alias] = 'actor';
@@ -310,108 +266,17 @@ class ActorMigrationBase {
 	public function getInsertValues( IDatabase $dbw, $key, UserIdentity $user ) {
 		$this->checkDeprecation( $key );
 
-		if ( $this->getTempTableInfo( $key ) ) {
-			throw new InvalidArgumentException( "Must use getInsertValuesWithTempTable() for $key" );
-		}
-
 		[ $text, $actor ] = $this->getFieldNames( $key );
 		$ret = [];
 		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_OLD ) {
 			$ret[$key] = $user->getId();
 			$ret[$text] = $user->getName();
 		}
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_TEMP || $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$ret[$actor] =
-				$this->actorStoreFactory->getActorNormalization( $dbw->getDomainID() )->acquireActorId( $user, $dbw );
+		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
+			$ret[$actor] = $this->getActorNormalization( $dbw->getDomainID() )
+				->acquireActorId( $user, $dbw );
 		}
 		return $ret;
-	}
-
-	/**
-	 * Get UPDATE fields for the actor
-	 *
-	 * @param IDatabase $dbw Database to use for creating an actor ID, if necessary
-	 * @param string $key A key such as "rev_user" identifying the actor
-	 *  field being fetched.
-	 * @param UserIdentity $user User to set in the update
-	 * @return array with two values:
-	 *  - array to merge into `$values` to `IDatabase->update()` or `$a` to `IDatabase->insert()`
-	 *  - callback to call with the primary key for the main table insert
-	 *    and extra fields needed for the temp table.
-	 */
-	public function getInsertValuesWithTempTable( IDatabase $dbw, $key, UserIdentity $user ) {
-		$this->checkDeprecation( $key );
-
-		$fieldInfo = $this->getFieldInfo( $key );
-		$tempTableInfo = $fieldInfo['tempTable'] ?? null;
-		if ( isset( $fieldInfo['formerTempTableVersion'] ) ) {
-			wfDeprecated(
-				__METHOD__ . " for $key",
-				$fieldInfo['formerTempTableVersion'],
-				$fieldInfo['component'] ?? 'MediaWiki'
-			);
-		} elseif ( !$tempTableInfo ) {
-			throw new InvalidArgumentException( "Must use getInsertValues() for $key" );
-		}
-
-		[ $text, $actor ] = $this->getFieldNames( $key );
-		$ret = [];
-		$callback = null;
-
-		if ( $this->writeStage & SCHEMA_COMPAT_WRITE_OLD ) {
-			$ret[$key] = $user->getId();
-			$ret[$text] = $user->getName();
-		}
-		if ( $this->writeStage & ( SCHEMA_COMPAT_WRITE_TEMP | SCHEMA_COMPAT_WRITE_NEW ) ) {
-			$id = $this->actorStoreFactory
-				->getActorNormalization( $dbw->getDomainID() )
-				->acquireActorId( $user, $dbw );
-
-			if ( $tempTableInfo ) {
-				if ( $this->writeStage & SCHEMA_COMPAT_WRITE_TEMP ) {
-					$func = __METHOD__;
-					$callback = static function ( $pk, array $extra ) use ( $tempTableInfo, $dbw, $id, $func ) {
-						$set = [ $tempTableInfo['field'] => $id ];
-						foreach ( $tempTableInfo['extra'] as $to => $from ) {
-							if ( !array_key_exists( $from, $extra ) ) {
-								throw new InvalidArgumentException( "$func callback: \$extra[$from] is not provided" );
-							}
-							$set[$to] = $extra[$from];
-						}
-						$dbw->newInsertQueryBuilder()
-							->insertInto( $tempTableInfo['table'] )
-							->row( [ $tempTableInfo['pk'] => $pk ] + $set )
-							->onDuplicateKeyUpdate()
-							->uniqueIndexFields( [ $tempTableInfo['pk'] ] )
-							->set( $set )
-							->caller( $func )->execute();
-					};
-				}
-				if ( $this->writeStage & SCHEMA_COMPAT_WRITE_NEW ) {
-					$ret[$actor] = $id;
-				}
-			} else {
-				$ret[$actor] = $id;
-			}
-		}
-
-		if ( $callback === null ) {
-			// Make a validation-only callback if there was temp table info
-			if ( $tempTableInfo ) {
-				$func = __METHOD__;
-				$callback = static function ( $pk, array $extra ) use ( $tempTableInfo, $func ) {
-					foreach ( $tempTableInfo['extra'] as $from ) {
-						if ( !array_key_exists( $from, $extra ) ) {
-							throw new InvalidArgumentException( "$func callback: \$extra[$from] is not provided" );
-						}
-					}
-				};
-			} else {
-				$callback = static function ( $pk, array $extra ) {
-				};
-			}
-		}
-		return [ $ret, $callback ];
 	}
 
 	/**
@@ -468,8 +333,7 @@ class ActorMigrationBase {
 				// make sure to use normalized form of IP for anonymous users
 				$names[] = IPUtils::sanitizeIP( $user->getName() );
 			}
-			$actorId = $this->actorStoreFactory
-				->getActorNormalization( $db->getDomainID() )
+			$actorId = $this->getActorNormalization( $db->getDomainID() )
 				->findActorId( $user, $db );
 
 			if ( $actorId ) {
@@ -483,22 +347,6 @@ class ActorMigrationBase {
 		if ( $this->readStage === SCHEMA_COMPAT_READ_NEW ) {
 			if ( $actors ) {
 				$conds['newactor'] = $db->makeList( [ $actor => $actors ], IDatabase::LIST_AND );
-			}
-		} elseif ( $this->readStage === SCHEMA_COMPAT_READ_TEMP ) {
-			if ( $actors ) {
-				$tempTableInfo = $this->getTempTableInfo( $key );
-				if ( $tempTableInfo ) {
-					$alias = "temp_$key";
-					$tables[$alias] = $tempTableInfo['table'];
-					$joins[$alias] = [
-						'JOIN',
-						"{$alias}.{$tempTableInfo['pk']} = {$tempTableInfo['joinPK']}",
-					];
-					$joinField = "{$alias}.{$tempTableInfo['field']}";
-				} else {
-					$joinField = $actor;
-				}
-				$conds['actor'] = $db->makeList( [ $joinField => $actors ], IDatabase::LIST_AND );
 			}
 		} else {
 			if ( $ids ) {
@@ -516,9 +364,27 @@ class ActorMigrationBase {
 			'joins' => $joins,
 		];
 	}
+
+	/**
+	 * @internal For use immediately after construction only
+	 * @param bool $forImport
+	 */
+	public function setForImport( bool $forImport ): void {
+		$this->forImport = $forImport;
+	}
+
+	/**
+	 * @param string $domainId
+	 * @return ActorNormalization
+	 */
+	protected function getActorNormalization( $domainId ): ActorNormalization {
+		if ( $this->forImport ) {
+			return $this->actorStoreFactory->getActorNormalizationForImport( $domainId );
+		} else {
+			return $this->actorStoreFactory->getActorNormalization( $domainId );
+		}
+	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( ActorMigrationBase::class, 'ActorMigrationBase' );

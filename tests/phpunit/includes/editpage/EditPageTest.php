@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\EditPage\EditPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
@@ -19,6 +21,8 @@ use Wikimedia\TestingAccessWrapper;
  * @group medium
  */
 class EditPageTest extends MediaWikiLangTestCase {
+	/** @var User[] */
+	private static $editUsers;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -38,9 +42,31 @@ class EditPageTest extends MediaWikiLangTestCase {
 		$this->setMainCache( CACHE_NONE );
 	}
 
+	public function addDBDataOnce() {
+		$userFactory = $this->getServiceContainer()->getUserFactory();
+		self::$editUsers = [
+			'anon' => new User(),
+			'UTSysop' => $userFactory->newFromName( 'UTSysop' ),
+			'user' => $userFactory->newFromName( 'UTUser' ),
+			'Adam' => $userFactory->newFromName( 'Adam' ),
+			'Berta' => $userFactory->newFromName( 'Berta' ),
+			'Elmo' => $userFactory->newFromName( 'Elmo' ),
+		];
+
+		foreach ( self::$editUsers as $key => $user ) {
+			if ( $key !== 'anon' ) {
+				$user->addToDatabase();
+			}
+		}
+
+		$groupManager = $this->getServiceContainer()->getUserGroupManager();
+		$groupManager->addUserToMultipleGroups(
+			self::$editUsers['UTSysop'], [ 'sysop', 'bureaucrat' ] );
+	}
+
 	/**
 	 * @dataProvider provideExtractSectionTitle
-	 * @covers MediaWiki\EditPage\EditPage::extractSectionTitle
+	 * @covers \MediaWiki\EditPage\EditPage::extractSectionTitle
 	 */
 	public function testExtractSectionTitle( $section, $title ) {
 		$this->assertEquals(
@@ -103,7 +129,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 	 *
 	 * @param string|Title $title The title of the page to edit
 	 * @param string|null $baseText Some text to create the page with before attempting the edit.
-	 * @param User|string|null $user The user to perform the edit as.
+	 * @param string $userKey The user to perform the edit as.
 	 * @param array $edit An array of request parameters used to define the edit to perform.
 	 *              Some well known fields are:
 	 *              * wpTextbox1: the text to submit
@@ -124,7 +150,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 	 *
 	 * @return WikiPage The page that was just edited, useful for getting the edit's rev_id, etc.
 	 */
-	protected function assertEdit( $title, $baseText, $user, array $edit,
+	protected function assertEdit( $title, $baseText, $userKey, array $edit,
 		$expectedCode = null, $expectedText = null, $message = null
 	) {
 		if ( is_string( $title ) ) {
@@ -133,17 +159,10 @@ class EditPageTest extends MediaWikiLangTestCase {
 		}
 		$this->assertNotNull( $title );
 
-		if ( is_string( $user ) ) {
-			$user = User::newFromName( $user );
-
-			if ( $user->getId() === 0 ) {
-				$user->addToDatabase();
-			}
+		if ( !isset( self::$editUsers[$userKey] ) ) {
+			$this->fail( "User $userKey not registered in addDBDataOnce" );
 		}
-
-		if ( $user == null ) {
-			$user = $this->getTestUser()->getUser();
-		}
+		$user = self::$editUsers[$userKey];
 
 		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
 		$page = $wikiPageFactory->newFromTitle( $title );
@@ -223,14 +242,14 @@ class EditPageTest extends MediaWikiLangTestCase {
 		return [
 			[ 'expected article being created',
 				'EditPageTest_testCreatePage',
-				null,
+				'user',
 				'Hello World!',
 				EditPage::AS_SUCCESS_NEW_ARTICLE,
 				'Hello World!'
 			],
 			[ 'expected article not being created if empty',
 				'EditPageTest_testCreatePage',
-				null,
+				'user',
 				'',
 				EditPage::AS_BLANK_ARTICLE,
 				null
@@ -273,7 +292,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 			],
 			[ 'expected empty article being created',
 				'EditPageTest_testCreatePage',
-				null,
+				'user',
 				'',
 				EditPage::AS_SUCCESS_NEW_ARTICLE,
 				'',
@@ -284,7 +303,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideCreatePages
-	 * @covers MediaWiki\EditPage\EditPage
+	 * @covers \MediaWiki\EditPage\EditPage
 	 */
 	public function testCreatePage(
 		$desc, $pageTitle, $user, $editText, $expectedCode, $expectedText, $ignoreBlank = false
@@ -320,7 +339,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideCreatePages
-	 * @covers MediaWiki\EditPage\EditPage
+	 * @covers \MediaWiki\EditPage\EditPage
 	 */
 	public function testCreatePageTrx(
 		$desc, $pageTitle, $user, $editText, $expectedCode, $expectedText, $ignoreBlank = false
@@ -371,7 +390,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\EditPage\EditPage
+	 * @covers \MediaWiki\EditPage\EditPage
 	 */
 	public function testUpdatePage() {
 		$checkIds = [];
@@ -392,7 +411,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 			'wpSummary' => 'first update',
 		];
 
-		$page = $this->assertEdit( 'EditPageTest_testUpdatePage', "zero", null, $edit,
+		$page = $this->assertEdit( 'EditPageTest_testUpdatePage', "zero", 'user', $edit,
 			EditPage::AS_SUCCESS_UPDATE, $text,
 			"expected successful update with given text" );
 		$this->assertGreaterThan( 0, $checkIds[0], "First event rev ID set" );
@@ -405,7 +424,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 			'wpSummary' => 'second update',
 		];
 
-		$this->assertEdit( 'EditPageTest_testUpdatePage', null, null, $edit,
+		$this->assertEdit( 'EditPageTest_testUpdatePage', null, 'user', $edit,
 			EditPage::AS_SUCCESS_UPDATE, $text,
 			"expected successful update with given text" );
 		$this->assertGreaterThan( 0, $checkIds[1], "Second edit hook rev ID set" );
@@ -413,12 +432,9 @@ class EditPageTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\EditPage\EditPage
+	 * @covers \MediaWiki\EditPage\EditPage
 	 */
 	public function testUpdateNoMinor() {
-		$user = $this->getTestUser()->getUser();
-		$anon = new User(); // anon
-
 		// Test that page creation can never be minor
 		$edit = [
 			'wpTextbox1' => 'testing',
@@ -426,7 +442,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 			'wpMinoredit' => 'minor'
 		];
 
-		$page = $this->assertEdit( 'EditPageTest_testUpdateNoMinor', null, $user, $edit,
+		$page = $this->assertEdit( 'EditPageTest_testUpdateNoMinor', null, 'user', $edit,
 			EditPage::AS_SUCCESS_NEW_ARTICLE, 'testing', "expected successful update" );
 
 		$this->assertFalse(
@@ -443,7 +459,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 			'wpMinoredit' => 'minor'
 		];
 
-		$page = $this->assertEdit( 'EditPageTest_testUpdateNoMinor', null, $anon, $edit,
+		$page = $this->assertEdit( 'EditPageTest_testUpdateNoMinor', null, 'anon', $edit,
 			EditPage::AS_SUCCESS_UPDATE, 'testing 2', "expected successful update" );
 
 		$this->assertFalse(
@@ -460,7 +476,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 			'wpMinoredit' => 'minor'
 		];
 
-		$page = $this->assertEdit( 'EditPageTest_testUpdateNoMinor', null, $user, $edit,
+		$page = $this->assertEdit( 'EditPageTest_testUpdateNoMinor', null, 'user', $edit,
 			EditPage::AS_SUCCESS_UPDATE, 'testing 3', "expected successful update" );
 
 		$this->assertTrue(
@@ -470,7 +486,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\EditPage\EditPage
+	 * @covers \MediaWiki\EditPage\EditPage
 	 */
 	public function testUpdatePageTrx() {
 		$text = "one";
@@ -479,7 +495,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 			'wpSummary' => 'first update',
 		];
 
-		$page = $this->assertEdit( 'EditPageTest_testTrxUpdatePage', "zero", null, $edit,
+		$page = $this->assertEdit( 'EditPageTest_testTrxUpdatePage', "zero", 'user', $edit,
 			EditPage::AS_SUCCESS_UPDATE, $text,
 			"expected successful update with given text" );
 
@@ -505,7 +521,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 			'wpSummary' => 'second update',
 		];
 
-		$this->assertEdit( 'EditPageTest_testTrxUpdatePage', null, null, $edit,
+		$this->assertEdit( 'EditPageTest_testTrxUpdatePage', null, 'user', $edit,
 			EditPage::AS_SUCCESS_UPDATE, $text,
 			"expected successful update with given text" );
 
@@ -515,7 +531,7 @@ class EditPageTest extends MediaWikiLangTestCase {
 			'wpSummary' => 'third update',
 		];
 
-		$this->assertEdit( 'EditPageTest_testTrxUpdatePage', null, null, $edit,
+		$this->assertEdit( 'EditPageTest_testTrxUpdatePage', null, 'user', $edit,
 			EditPage::AS_SUCCESS_UPDATE, $text,
 			"expected successful update with given text" );
 
@@ -596,7 +612,7 @@ hello
 
 	/**
 	 * @dataProvider provideSectionEdit
-	 * @covers MediaWiki\EditPage\EditPage
+	 * @covers \MediaWiki\EditPage\EditPage
 	 */
 	public function testSectionEdit( $title, $base, $section, $text, $summary, $expected ) {
 		$edit = [
@@ -612,7 +628,7 @@ hello
 			$result = null;
 			$this->expectException( ErrorPageError::class );
 		}
-		$this->assertEdit( $title, $base, null, $edit, $result, $expected, $msg );
+		$this->assertEdit( $title, $base, 'user', $edit, $result, $expected, $msg );
 	}
 
 	public static function provideConflictDetection() {
@@ -665,7 +681,7 @@ hello
 
 	/**
 	 * @dataProvider provideConflictDetection
-	 * @covers MediaWiki\EditPage\EditPage
+	 * @covers \MediaWiki\EditPage\EditPage
 	 */
 	public function testConflictDetection( $editUser, $newEdit, $expectedCode, $message ) {
 		// create page
@@ -791,7 +807,7 @@ hello
 
 	/**
 	 * @dataProvider provideAutoMerge
-	 * @covers MediaWiki\EditPage\EditPage
+	 * @covers \MediaWiki\EditPage\EditPage
 	 */
 	public function testAutoMerge( $baseUser, $text, $adamsEdit, $bertasEdit,
 		$expectedCode, $expectedText, $message = null
@@ -800,7 +816,7 @@ hello
 
 		// create page
 		$ns = $this->getDefaultWikitextNS();
-		$title = Title::makeTitle( NS_MAIN, 'EditPageTest_testAutoMerge', $ns );
+		$title = Title::makeTitle( $ns, 'EditPageTest_testAutoMerge' );
 		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
 		$page = $wikiPageFactory->newFromTitle( $title );
 
@@ -840,10 +856,10 @@ hello
 
 	/**
 	 * @depends testAutoMerge
-	 * @covers MediaWiki\EditPage\EditPage
+	 * @covers \MediaWiki\EditPage\EditPage
 	 */
 	public function testCheckDirectEditingDisallowed_forNonTextContent() {
-		$user = $this->getTestUser()->getUser();
+		$user = self::$editUsers['user'];
 
 		$edit = [
 			'wpTextbox1' => serialize( 'non-text content' ),
@@ -860,7 +876,7 @@ hello
 		$this->doEditDummyNonTextPage( $edit );
 	}
 
-	/** @covers EditPage */
+	/** @covers \MediaWiki\EditPage\EditPage */
 	public function testShouldPreventChangingContentModelWhenUserCannotChangeModelForTitle() {
 		$this->setTemporaryHook( 'getUserPermissionsErrors',
 			static function ( Title $page, $user, $action, &$result ) {
@@ -873,7 +889,7 @@ hello
 				}
 			} );
 
-		$user = $this->getTestUser()->getUser();
+		$user = self::$editUsers['user'];
 
 		$status = $this->doEditDummyNonTextPage( [
 			'wpTextbox1' => 'some text',
@@ -890,7 +906,7 @@ hello
 		$this->assertStatusValue( EditPage::AS_NO_CHANGE_CONTENT_MODEL, $status );
 	}
 
-	/** @covers EditPage */
+	/** @covers \MediaWiki\EditPage\EditPage */
 	public function testShouldPreventChangingContentModelWhenUserCannotEditTargetTitle() {
 		$this->setTemporaryHook( 'getUserPermissionsErrors',
 			static function ( Title $page, $user, $action, &$result ) {
@@ -934,7 +950,7 @@ hello
 	/**
 	 * The watchlist expiry field should select the entered value on preview, rather than the
 	 * calculated number of days till the expiry (as it shows on edit).
-	 * @covers MediaWiki\EditPage\EditPage::getCheckboxesDefinition()
+	 * @covers \MediaWiki\EditPage\EditPage::getCheckboxesDefinition()
 	 * @dataProvider provideWatchlistExpiry()
 	 */
 	public function testWatchlistExpiry( $existingExpiry, $postVal, $selected, $options ) {
@@ -1004,7 +1020,7 @@ hello
 
 	/**
 	 * T277204
-	 * @covers MediaWiki\EditPage\EditPage
+	 * @covers \MediaWiki\EditPage\EditPage
 	 */
 	public function testFalseyEditRevId() {
 		$elmosEdit['wpTextbox1'] = 'Elmo\'s text';

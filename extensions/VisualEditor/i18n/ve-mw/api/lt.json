@@ -8,7 +8,6 @@
 			"Nokeoo"
 		]
 	},
-	"apierror-visualeditor-docserver": "Klaida susisiekiant su Parsoid/RESTBase serveriu",
 	"apihelp-visualeditor-param-basetimestamp": "Išsaugodami nustatykite į redaguotos versijos laiko žymą. Naudojamas, kai reikia aptikti redagavimo konfliktus.",
 	"apihelp-visualeditor-param-cachekey": "Nuoseklinimui ar pakeitimams naudoti prieš tai buvusią serializeforcache užklausą su šiuo raktu. Perdengia $1html.",
 	"apihelp-visualeditor-param-etag": "ETag, kurį siųsti.",

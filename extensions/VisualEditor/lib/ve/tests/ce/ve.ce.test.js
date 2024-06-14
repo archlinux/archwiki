@@ -1,7 +1,7 @@
 /*!
  * VisualEditor ContentEditable tests.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 QUnit.module( 've.ce' );
@@ -454,7 +454,7 @@ QUnit.test( 'isAfterAnnotationBoundary', function ( assert ) {
 		assert.strictEqual(
 			ve.ce.isAfterAnnotationBoundary( node, caseItem.offset ),
 			caseItem.expected,
-			`node=${caseItem.path.join( ',' )} offset=${caseItem.offset}`
+			`node=${ caseItem.path.join( ',' ) } offset=${ caseItem.offset }`
 		);
 	} );
 } );

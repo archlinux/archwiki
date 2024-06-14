@@ -2,7 +2,7 @@
 
 namespace Shellbox\Command;
 
-use Shellbox\Shellbox;
+use Shellbox\ShellboxError;
 
 /**
  * A wrapper that restricts the command using firejail
@@ -75,10 +75,20 @@ class FirejailWrapper extends Wrapper {
 		$useSeccomp = $extraSeccomp || $command->getFirejailDefaultSeccomp();
 
 		if ( in_array( 'execve', $extraSeccomp ) ) {
-			// Normally firejail will run commands in a bash shell,
-			// but that won't work if we ban the execve syscall, so
-			// run the command without a shell.
-			$cmd[] = '--shell=none';
+			// Running the command in the shell won't work without the execve
+			// syscall, so split the command string into literal arguments and
+			// pass those to firejail for direct execution.
+			// Firejail 0.9.72 or later must be used for this mode to work.
+			$argv = $command->getSyntaxInfo()->getLiteralArgv();
+			if ( $argv === null ) {
+				throw new ShellboxError(
+					"The command contained non-literal shell components but " .
+					"seccomp=execve was requested"
+				);
+			}
+		} else {
+			// Wrap the whole command in a shell (T353194)
+			$argv = [ '/bin/sh', '-c', '--', $command->getCommandString() ];
 		}
 
 		if ( $useSeccomp ) {
@@ -99,13 +109,13 @@ class FirejailWrapper extends Wrapper {
 		}
 
 		foreach ( $command->getEnvironment() as $name => $value ) {
-			$cmd[] = "--env=$name=$value";
+			if ( (string)$value !== '' ) {
+				$cmd[] = "--env=$name=$value";
+			}
 		}
 
-		$builtCmd = Shellbox::escape( $cmd );
-
 		// Prefix the firejail command in front of the wanted command
-		$command->unsafeCommand( "$builtCmd -- " . $command->getCommandString() );
+		$command->replaceParams( array_merge( $cmd, $argv ) );
 	}
 
 	public function getPriority() {

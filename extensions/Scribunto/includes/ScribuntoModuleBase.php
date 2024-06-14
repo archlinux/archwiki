@@ -23,8 +23,8 @@
 
 namespace MediaWiki\Extension\Scribunto;
 
+use MediaWiki\Status\Status;
 use PPFrame;
-use Status;
 
 /**
  * Class that represents a module. Responsible for initial module parsing

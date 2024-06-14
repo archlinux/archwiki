@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tacsipacsi",
-			"Dj"
+			"Dj",
+			"Tacsipacsi"
 		]
 	},
 	"paramvalidator-badbool": "A „$1” logikai paraméterhez megadott „$2”  érték nem megfelelő. Adjon át $3 értéket igaznak, $5 értéket hamisnak.",

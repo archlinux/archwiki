@@ -6,7 +6,7 @@ use DeleteAutoPatrolLogs;
 
 /**
  * @group Database
- * @covers DeleteAutoPatrolLogs
+ * @covers \DeleteAutoPatrolLogs
  */
 class DeleteAutoPatrolLogsTest extends MaintenanceBaseTestCase {
 
@@ -16,18 +16,12 @@ class DeleteAutoPatrolLogsTest extends MaintenanceBaseTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->tablesUsed = [ 'logging' ];
 
-		$this->cleanLoggingTable();
 		$this->insertLoggingData();
 	}
 
-	private function cleanLoggingTable() {
-		wfGetDB( DB_PRIMARY )->delete( 'logging', '*' );
-	}
-
 	private function insertLoggingData() {
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = $this->getDb();
 		$logs = [];
 
 		$comment = \MediaWiki\MediaWikiServices::getInstance()->getCommentStore()

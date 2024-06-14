@@ -3,11 +3,11 @@
 		"authors": [
 			"Aefgh39622",
 			"Ans",
+			"Ekminarin",
 			"Horus",
 			"Nullzero",
-			"Taweetham",
-			"Ekminarin",
-			"RidJasper"
+			"RidJasper",
+			"Taweetham"
 		]
 	},
 	"multimediaviewer-desc": "ขยายรูปขนาดย่อให้มีขนาดใหญ่ขึ้นในอินเทอร์เฟซเต็มหน้าจอ",
@@ -92,6 +92,7 @@
 	"multimediaviewer-download-attribution-cta": "แสดงวิธีให้ฉัน",
 	"multimediaviewer-reuse-warning-noattribution": "ไฟล์นี้ไม่มีข้อมูลการระบุแหล่งที่มา",
 	"multimediaviewer-attr-plain": "ธรรมดา",
+	"multimediaviewer-attr-html": "เอชทีเอ็มแอล",
 	"multimediaviewer-options-tooltip": "เปิดหรือปิดใช้งานตัวแสดงสื่อ",
 	"multimediaviewer-options-dialog-header": "ปิดใช้งานตัวแสดงสื่อหรือไม่?",
 	"multimediaviewer-options-text-header": "ข้ามคุณสมบัติการดูนี้สำหรับไฟล์ทั้งหมด",

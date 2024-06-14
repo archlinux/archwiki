@@ -10,7 +10,7 @@ use Wikimedia\TestingAccessWrapper;
  * @group Upload
  * @group Database
  *
- * @covers UploadFromUrl
+ * @covers \UploadFromUrl
  */
 class UploadFromUrlTest extends ApiTestCase {
 	use MockHttpTrait;
@@ -290,6 +290,17 @@ class UploadFromUrlTest extends ApiTestCase {
 
 		$this->assertStatusOK( $status );
 		$this->assertUploadOk( $upload );
+	}
+
+	public function testUploadFromUrlCacheKey() {
+		// Test we get back a properly formatted sha1 key out
+		$key = UploadFromUrl::getCacheKey( [ 'filename' => 'test.png', 'url' => 'https://example.com/example.png' ] );
+		$this->assertNotEmpty( $key );
+		$this->assertMatchesRegularExpression( "/^[0-9a-f]{40}$/", $key );
+	}
+
+	public function testUploadFromUrlCacheKeyMissingParam() {
+		$this->assertSame( "", UploadFromUrl::getCacheKey( [] ) );
 	}
 
 }

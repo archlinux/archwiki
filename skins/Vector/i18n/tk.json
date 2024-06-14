@@ -12,7 +12,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 Dil}}",
 	"vector-no-language-button-label": "Dil goşuň",
 	"vector-no-language-button-aria-label": "Bu makala diňe şu dilde bar. Makalany başga diller üçin goşuň",
-	"vector-language-redirect-to-top": "Bu {{SITENAME}} saýtynda diller ýokarda, makala adynyň ýanynda. [[#p-lang-btn|Ýokary git]].",
 	"vector-language-variant-switcher-label": "Dil görnüşini üýtgediň",
 	"vector-action-addsection": "Mowzuk goş",
 	"vector-action-delete": "Öçür",

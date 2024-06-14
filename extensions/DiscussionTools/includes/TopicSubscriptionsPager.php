@@ -5,12 +5,13 @@ namespace MediaWiki\Extension\DiscussionTools;
 use IContextSource;
 use InvalidArgumentException;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Extension\DiscussionTools\ThreadItem\DatabaseThreadItem;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Pager\TablePager;
 use MediaWiki\Title\Title;
 use OOUI;
-use TablePager;
 
 class TopicSubscriptionsPager extends TablePager {
 
@@ -31,25 +32,45 @@ class TopicSubscriptionsPager extends TablePager {
 	];
 
 	private LinkBatchFactory $linkBatchFactory;
+	private ThreadItemStore $threadItemStore;
+	private ThreadItemFormatter $threadItemFormatter;
+
+	/** @var array<string,DatabaseThreadItem[]> */
+	private array $threadItemsByName = [];
 
 	public function __construct(
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
-		LinkBatchFactory $linkBatchFactory
+		LinkBatchFactory $linkBatchFactory,
+		ThreadItemStore $threadItemStore,
+		ThreadItemFormatter $threadItemFormatter
 	) {
 		parent::__construct( $context, $linkRenderer );
 		$this->linkBatchFactory = $linkBatchFactory;
+		$this->threadItemStore = $threadItemStore;
+		$this->threadItemFormatter = $threadItemFormatter;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function preprocessResults( $result ) {
+		if ( !$result->numRows() ) {
+			return;
+		}
 		$lb = $this->linkBatchFactory->newLinkBatch();
+		$itemNames = [];
 		foreach ( $result as $row ) {
 			$lb->add( $row->sub_namespace, $row->sub_title );
+			$itemNames[] = $row->sub_item;
 		}
 		$lb->execute();
+
+		// Increased limit to allow finding and skipping over some bad permalinks
+		$threadItems = $this->threadItemStore->findNewestRevisionsByName( $itemNames, $this->mLimit * 5 );
+		foreach ( $threadItems as $threadItem ) {
+			$this->threadItemsByName[ $threadItem->getName() ][] = $threadItem;
+		}
 	}
 
 	/**
@@ -71,33 +92,13 @@ class TopicSubscriptionsPager extends TablePager {
 	public function formatValue( $field, $value ) {
 		/** @var stdClass $row */
 		$row = $this->mCurrentRow;
-		$linkRenderer = $this->getLinkRenderer();
 
 		switch ( $field ) {
 			case '_topic':
-				if ( str_starts_with( $row->sub_item, 'p-topics-' ) ) {
-					return '<em>' .
-						$this->msg( 'discussiontools-topicsubscription-pager-newtopics-label' )->escaped() .
-					'</em>';
-				} else {
-					$titleSection = Title::makeTitleSafe( $row->sub_namespace, $row->sub_title, $row->sub_section );
-					if ( !$titleSection ) {
-						// Handle invalid titles (T345648)
-						return htmlspecialchars( $row->sub_section );
-					}
-					return $linkRenderer->makeLink( $titleSection, $row->sub_section );
-				}
+				return $this->formatValueTopic( $row );
 
 			case '_page':
-				$title = Title::makeTitleSafe( $row->sub_namespace, $row->sub_title );
-				if ( !$title ) {
-					// Handle invalid titles (T345648)
-					return Html::element( 'span', [ 'class' => 'mw-invalidtitle' ],
-						Linker::getInvalidTitleDescription(
-							$this->getContext(), $row->sub_namespace, $row->sub_title )
-						);
-				}
-				return $linkRenderer->makeLink( $title, $title->getPrefixedText() );
+				return $this->formatValuePage( $row );
 
 			case 'sub_created':
 				return htmlspecialchars( $this->getLanguage()->userTimeAndDate( $value, $this->getUser() ) );
@@ -134,6 +135,103 @@ class TopicSubscriptionsPager extends TablePager {
 			default:
 				throw new InvalidArgumentException( "Unknown field '$field'" );
 		}
+	}
+
+	/**
+	 * Format items as a HTML list, unless there's just one item, in which case return it unwrapped.
+	 * @param string[] $list HTML
+	 * @return string HTML
+	 */
+	private function maybeFormatAsList( array $list ): string {
+		if ( count( $list ) === 1 ) {
+			return $list[0];
+		} else {
+			foreach ( $list as &$item ) {
+				$item = Html::rawElement( 'li', [], $item );
+			}
+			return Html::rawElement( 'ul', [], implode( '', $list ) );
+		}
+	}
+
+	private function formatValuePage( \stdClass $row ): string {
+		$linkRenderer = $this->getLinkRenderer();
+
+		if ( isset( $this->threadItemsByName[ $row->sub_item ] ) ) {
+			$items = [];
+			foreach ( $this->threadItemsByName[ $row->sub_item ] as $threadItem ) {
+				if ( $threadItem->isCanonicalPermalink() ) {
+					$items[] = $this->threadItemFormatter->formatLine( $threadItem, $this );
+				}
+			}
+			if ( $items ) {
+				return $this->maybeFormatAsList( $items );
+			}
+
+			// Found items in the permalink database, but they're not good permalinks.
+			// TODO: We could link to the full list on Special:FindComment here
+			// (but we don't link it from the mw.notify message either, at the moment).
+		}
+
+		// Permalink not available - display a plain link to the page title at the time of subscription
+		$title = Title::makeTitleSafe( $row->sub_namespace, $row->sub_title );
+		if ( !$title ) {
+			// Handle invalid titles (T345648)
+			return Html::element( 'span', [ 'class' => 'mw-invalidtitle' ],
+				Linker::getInvalidTitleDescription(
+					$this->getContext(), $row->sub_namespace, $row->sub_title )
+				);
+		}
+		return $linkRenderer->makeLink( $title );
+	}
+
+	private function formatValueTopic( \stdClass $row ): string {
+		$linkRenderer = $this->getLinkRenderer();
+
+		$sectionText = $row->sub_section;
+		$sectionLink = $row->sub_section;
+		// Detect truncated section titles: either intentionally truncated by SubscriptionStore,
+		// or incorrect multibyte truncation of old entries (T345648).
+		$last = mb_substr( $sectionText, -1 );
+		if ( $last !== '' && ( $last === "\x1f" || mb_ord( $last ) === false ) ) {
+			$sectionText = substr( $sectionText, 0, -strlen( $last ) ) . $this->msg( 'ellipsis' )->text();
+			$sectionLink = null;
+		}
+
+		if ( str_starts_with( $row->sub_item, 'p-topics-' ) ) {
+			return '<em>' .
+				$this->msg( 'discussiontools-topicsubscription-pager-newtopics-label' )->escaped() .
+			'</em>';
+		}
+
+		if ( isset( $this->threadItemsByName[ $row->sub_item ] ) ) {
+			$items = [];
+			foreach ( $this->threadItemsByName[ $row->sub_item ] as $threadItem ) {
+				if ( $threadItem->isCanonicalPermalink() ) {
+					// TODO: Can we extract the current topic title out of $threadItem->getId() sometimes,
+					// instead of always using the topic title at the time of subscription? (T295431)
+					$items[] = $this->threadItemFormatter->makeLink( $threadItem, $sectionText );
+				}
+			}
+			if ( $items ) {
+				return $this->maybeFormatAsList( $items );
+			}
+
+			// Found items in the permalink database, but they're not good permalinks.
+			// TODO: We could link to the full list on Special:FindComment here
+			// (but we don't link it from the mw.notify message either, at the moment).
+		}
+
+		// Permalink not available - display a plain link to the section at the time of subscription
+		if ( !$sectionLink ) {
+			// We can't link to the section correctly, since the only link we have is truncated
+			return htmlspecialchars( $sectionText );
+		}
+		$titleSection = Title::makeTitleSafe( $row->sub_namespace, $row->sub_title, $sectionLink );
+		if ( !$titleSection ) {
+			// Handle invalid titles of any other kind, just in case
+			return htmlspecialchars( $sectionText );
+		}
+		return $linkRenderer->makeLink( $titleSection, $sectionText );
 	}
 
 	/**

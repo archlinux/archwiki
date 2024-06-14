@@ -2,32 +2,34 @@
 ( function () {
 
 	/**
-	 * mw.ForeignStructuredUpload.BookletLayout encapsulates the process
+	 * Class that encapsulates the process of uploading a file to MediaWiki.
+	 *
+	 * @classdesc mw.ForeignStructuredUpload.BookletLayout encapsulates the process
 	 * of uploading a file to MediaWiki using the mw.ForeignStructuredUpload model.
 	 *
-	 *     var uploadDialog = new mw.Upload.Dialog( {
-	 *         bookletClass: mw.ForeignStructuredUpload.BookletLayout,
-	 *         booklet: {
-	 *             target: 'local'
-	 *         }
-	 *     } );
-	 *     var windowManager = new OO.ui.WindowManager();
-	 *     $( document.body ).append( windowManager.$element );
-	 *     windowManager.addWindows( [ uploadDialog ] );
+	 * @example
+	 * var uploadDialog = new mw.Upload.Dialog( {
+	 *     bookletClass: mw.ForeignStructuredUpload.BookletLayout,
+	 *     booklet: {
+	 *         target: 'local'
+	 *     }
+	 * } );
+	 * var windowManager = new OO.ui.WindowManager();
+	 * $( document.body ).append( windowManager.$element );
+	 * windowManager.addWindows( [ uploadDialog ] );
 	 *
 	 * @class mw.ForeignStructuredUpload.BookletLayout
-	 * @uses mw.ForeignStructuredUpload
 	 * @extends mw.Upload.BookletLayout
 	 *
 	 * @constructor
 	 * @param {Object} config Configuration options
-	 * @cfg {string} [target] Used to choose the target repository.
+	 * @param {string} [config.target] Used to choose the target repository.
 	 *     If nothing is passed, the {@link mw.ForeignUpload#property-target default} is used.
 	 */
 	mw.ForeignStructuredUpload.BookletLayout = function ( config ) {
 		config = config || {};
 		// Parent constructor
-		mw.ForeignStructuredUpload.BookletLayout.parent.call( this, config );
+		mw.ForeignStructuredUpload.BookletLayout.super.call( this, config );
 
 		this.target = config.target;
 	};
@@ -40,10 +42,11 @@
 
 	/**
 	 * @inheritdoc
+	 * @ignore
 	 */
 	mw.ForeignStructuredUpload.BookletLayout.prototype.initialize = function () {
 		var booklet = this;
-		return mw.ForeignStructuredUpload.BookletLayout.parent.prototype.initialize.call( this ).then(
+		return mw.ForeignStructuredUpload.BookletLayout.super.prototype.initialize.call( this ).then(
 			function () {
 				return $.when(
 					// Point the CategoryMultiselectWidget to the right wiki
@@ -125,13 +128,15 @@
 			}
 		).catch(
 			// Always resolve, never reject
-			function () { return $.Deferred().resolve(); }
+			function () {
+				return $.Deferred().resolve();
+			}
 		);
 	};
 
 	/**
 	 * Returns a {@link mw.ForeignStructuredUpload mw.ForeignStructuredUpload}
-	 * with the {@link #cfg-target target} specified in config.
+	 * with the `target` specified in config.
 	 *
 	 * @protected
 	 * @return {mw.Upload}
@@ -162,7 +167,7 @@
 		this.$notOwnWorkMessage = $( '<p>' );
 		this.$notOwnWorkLocal = $( '<p>' );
 
-		this.selectFileWidget = new OO.ui.SelectFileWidget( {
+		this.selectFileWidget = new OO.ui.SelectFileInputWidget( {
 			showDropTarget: true
 		} );
 		this.messageLabel = new OO.ui.LabelWidget( {
@@ -369,7 +374,7 @@
 
 		return this.uploadPromise
 			.then( this.validateFilename.bind( this, title ) )
-			.then( mw.ForeignStructuredUpload.BookletLayout.parent.prototype.saveFile.bind( this ) );
+			.then( mw.ForeignStructuredUpload.BookletLayout.super.prototype.saveFile.bind( this ) );
 	};
 
 	/* Getters */
@@ -391,9 +396,9 @@
 	};
 
 	/**
-	 * Get original date from EXIF data
+	 * Get original date from EXIF data.
 	 *
-	 * @param {Object} file
+	 * @param {File} file
 	 * @return {jQuery.Promise} Promise resolved with the EXIF date
 	 */
 	mw.ForeignStructuredUpload.BookletLayout.prototype.getDateFromExif = function ( file ) {
@@ -445,10 +450,10 @@
 	};
 
 	/**
-	 * Get last modified date from file
+	 * Get last modified date from file.
 	 *
-	 * @param {Object} file
-	 * @return {Object} Last modified date from file
+	 * @param {File} file
+	 * @return {string|undefined} Last modified date from file
 	 */
 	mw.ForeignStructuredUpload.BookletLayout.prototype.getDateFromLastModified = function ( file ) {
 		if ( file && file.lastModified ) {
@@ -462,7 +467,7 @@
 	 * @inheritdoc
 	 */
 	mw.ForeignStructuredUpload.BookletLayout.prototype.clear = function () {
-		mw.ForeignStructuredUpload.BookletLayout.parent.prototype.clear.call( this );
+		mw.ForeignStructuredUpload.BookletLayout.super.prototype.clear.call( this );
 
 		this.ownWorkCheckbox.setSelected( false );
 		this.categoriesWidget.setValue( [] );

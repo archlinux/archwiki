@@ -2,13 +2,19 @@
 
 namespace MediaWiki\Widget;
 
+use OOUI\CheckboxInputWidget;
+use OOUI\FieldLayout;
+use OOUI\HtmlSnippet;
+use OOUI\Tag;
+use OOUI\Widget;
+
 /**
  * Check matrix widget. Displays a matrix of checkboxes for given options
  *
  * @copyright 2018 MediaWiki Widgets Team and others; see AUTHORS.txt
  * @license MIT
  */
-class CheckMatrixWidget extends \OOUI\Widget {
+class CheckMatrixWidget extends Widget {
 	/** @var string|null */
 	protected $name;
 	/** @var string|null */
@@ -19,6 +25,8 @@ class CheckMatrixWidget extends \OOUI\Widget {
 	protected $rows;
 	/** @var array */
 	protected $tooltips;
+	/** @var array */
+	protected $tooltipsHtml;
 	/** @var array */
 	protected $values;
 	/** @var array */
@@ -43,6 +51,9 @@ class CheckMatrixWidget extends \OOUI\Widget {
 	 *     - Array of column-row tags to be displayed as disabled but unavailable to change.
 	 *   - tooltips
 	 *     - Optional associative array mapping row labels to tooltips (as text, will be escaped).
+	 *   - tooltips-html
+	 *     - Optional associative array mapping row labels to tooltips (as HTML). Takes precedence
+	 *       over text tooltips.
 	 */
 	public function __construct( array $config = [] ) {
 		// Configuration initialization
@@ -56,6 +67,7 @@ class CheckMatrixWidget extends \OOUI\Widget {
 		$this->rows = $config['rows'] ?? [];
 		$this->columns = $config['columns'] ?? [];
 		$this->tooltips = $config['tooltips'] ?? [];
+		$this->tooltipsHtml = $config['tooltips-html'] ?? [];
 
 		$this->values = $config['values'] ?? [];
 
@@ -63,23 +75,23 @@ class CheckMatrixWidget extends \OOUI\Widget {
 		$this->forcedOff = $config['forcedOff'] ?? [];
 
 		// Build the table
-		$table = new \OOUI\Tag( 'table' );
+		$table = new Tag( 'table' );
 		$table->addClasses( [ 'mw-htmlform-matrix mw-widget-checkMatrixWidget-matrix' ] );
-		$thead = new \OOUI\Tag( 'thead' );
+		$thead = new Tag( 'thead' );
 		$table->appendContent( $thead );
-		$tr = new \OOUI\Tag( 'tr' );
+		$tr = new Tag( 'tr' );
 
 		// Build the header
 		$tr->appendContent( $this->getCellTag( "\u{00A0}" ) );
 		foreach ( $this->columns as $columnLabel => $columnTag ) {
 			$tr->appendContent(
-				$this->getCellTag( new \OOUI\HtmlSnippet( $columnLabel ), 'th' )
+				$this->getCellTag( new HtmlSnippet( $columnLabel ), 'th' )
 			);
 		}
 		$thead->appendContent( $tr );
 
 		// Build the options matrix
-		$tbody = new \OOUI\Tag( 'tbody' );
+		$tbody = new Tag( 'tbody' );
 		$table->appendContent( $tbody );
 		foreach ( $this->rows as $rowLabel => $rowTag ) {
 			$tbody->appendContent(
@@ -98,17 +110,18 @@ class CheckMatrixWidget extends \OOUI\Widget {
 	 *
 	 * @param string $label Row label (as HTML)
 	 * @param string $tag Row tag name
-	 * @return \OOUI\Tag The resulting table row
+	 *
+	 * @return Tag The resulting table row
 	 */
 	private function getTableRow( $label, $tag ) {
-		$row = new \OOUI\Tag( 'tr' );
+		$row = new Tag( 'tr' );
 		$tooltip = $this->getTooltip( $label );
 		$labelFieldConfig = $tooltip ? [ 'help' => $tooltip ] : [];
 		// Build label cell
-		$labelField = new \OOUI\FieldLayout(
-			new \OOUI\Widget(), // Empty widget, since we don't have the checkboxes here
+		$labelField = new FieldLayout(
+			new Widget(), // Empty widget, since we don't have the checkboxes here
 			[
-				'label' => new \OOUI\HtmlSnippet( $label ),
+				'label' => new HtmlSnippet( $label ),
 				'align' => 'inline',
 			] + $labelFieldConfig
 		);
@@ -119,7 +132,7 @@ class CheckMatrixWidget extends \OOUI\Widget {
 			$thisTag = "$columnTag-$tag";
 
 			// Construct a checkbox
-			$checkbox = new \OOUI\CheckboxInputWidget( [
+			$checkbox = new CheckboxInputWidget( [
 				'value' => $thisTag,
 				'name' => $this->name ? "{$this->name}[]" : null,
 				'id' => $this->id ? "{$this->id}-$thisTag" : null,
@@ -137,10 +150,10 @@ class CheckMatrixWidget extends \OOUI\Widget {
 	 *
 	 * @param mixed $content Content for the <td> cell
 	 * @param string $tagElement
-	 * @return \OOUI\Tag Resulting cell
+	 * @return Tag Resulting cell
 	 */
 	private function getCellTag( $content, $tagElement = 'td' ) {
-		$cell = new \OOUI\Tag( $tagElement );
+		$cell = new Tag( $tagElement );
 		$cell->appendContent( $content );
 		return $cell;
 	}
@@ -180,10 +193,15 @@ class CheckMatrixWidget extends \OOUI\Widget {
 	 * Get the tooltip help associated with this row
 	 *
 	 * @param string $label Label name
+	 *
 	 * @return string Tooltip. Null if none is available.
 	 */
 	private function getTooltip( $label ) {
-		return $this->tooltips[ $label ] ?? null;
+		if ( isset( $this->tooltipsHtml[ $label ] ) ) {
+			return new HtmlSnippet( $this->tooltipsHtml[ $label ] );
+		} else {
+			return $this->tooltips[ $label ] ?? null;
+		}
 	}
 
 	protected function getJavaScriptClassName() {
@@ -197,6 +215,7 @@ class CheckMatrixWidget extends \OOUI\Widget {
 			'rows' => $this->rows,
 			'columns' => $this->columns,
 			'tooltips' => $this->tooltips,
+			'tooltipsHtml' => $this->tooltipsHtml,
 			'forcedOff' => $this->forcedOff,
 			'forcedOn' => $this->forcedOn,
 			'values' => $this->values,

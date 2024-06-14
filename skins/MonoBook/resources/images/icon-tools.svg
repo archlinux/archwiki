@@ -2,7 +2,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 4.233 4.233">
 	<defs>
 		<radialGradient xlink:href="#a" id="c" cx="2.016" cy="2.35" r=".893" fx="2.016" fy="2.35" gradientTransform="matrix(.2963 .29626 -1.4815 1.4817 5 -1.961)" gradientUnits="userSpaceOnUse"/>
-		<radialGradient xlink:href="#b" id="d" cx="2.646" cy="2.646" r=".628" fx="2.646" fy="2.646" gradientTransform="rotate(-45 2.11 1.355) scale(.59545 1)" gradientUnits="userSpaceOnUse"/>
+		<radialGradient xlink:href="#b" id="d" cx="2.646" cy="2.646" r=".628" fx="2.646" fy="2.646" gradientTransform="rotate(-45 2.11 1.355)scale(.59545 1)" gradientUnits="userSpaceOnUse"/>
 		<linearGradient id="b">
 			<stop offset="0" stop-color="#d8eef8" stop-opacity=".996"/>
 			<stop offset="1" stop-color="#75badf"/>

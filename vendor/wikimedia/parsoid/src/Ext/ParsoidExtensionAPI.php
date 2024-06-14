@@ -10,11 +10,14 @@ use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\DomSourceRange;
+use Wikimedia\Parsoid\Core\MediaStructure;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\Html2Wt\ConstrainedText\WikiLinkText;
+use Wikimedia\Parsoid\Html2Wt\LinkHandlerUtils;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SourceRange;
@@ -208,9 +211,6 @@ class ParsoidExtensionAPI {
 		WTUtils::addLangI18nAttribute( $element, $lang, $name, $key, $params );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getErrors(): array {
 		return $this->errors;
 	}
@@ -281,11 +281,7 @@ class ParsoidExtensionAPI {
 	 * @return string
 	 */
 	public function getPageUri(): string {
-		$title = Title::newFromText(
-			$this->env->getPageConfig()->getTitle(),
-			$this->env->getSiteConfig()
-		);
-		return $this->getTitleUri( $title );
+		return $this->getTitleUri( $this->env->getContextTitle() );
 	}
 
 	/**
@@ -345,9 +341,6 @@ class ParsoidExtensionAPI {
 		return $this->env->getDOMFragment( $contentId );
 	}
 
-	/**
-	 * @param string $contentId
-	 */
 	public function clearContentDOM( string $contentId ): void {
 		$this->env->removeDOMFragment( $contentId );
 	}
@@ -358,12 +351,14 @@ class ParsoidExtensionAPI {
 	 * @param string $wikitext
 	 * @param array $opts
 	 * - srcOffsets
-	 * - frame
+	 * - processInNewFrame
+	 * - clearDSROffsets
+	 * - shiftDSRFn
 	 * - parseOpts
 	 *   - extTag
 	 *   - extTagOpts
 	 *   - context "inline", "block", etc. Currently, only "inline" is supported
-	 * @param bool $sol
+	 * @param bool $sol Whether tokens should be processed in start-of-line context.
 	 * @return DocumentFragment
 	 */
 	public function wikitextToDOM(
@@ -424,8 +419,10 @@ class ParsoidExtensionAPI {
 	 * @param string $wikitext Wikitext content of the tag
 	 * @param array $opts
 	 * - srcOffsets
-	 * - frame
 	 * - wrapperTag (skip OR pass null to not add any wrapper tag)
+	 * - processInNewFrame
+	 * - clearDSROffsets
+	 * - shiftDSRFn
 	 * - parseOpts
 	 *   - extTag
 	 *   - extTagOpts
@@ -476,7 +473,6 @@ class ParsoidExtensionAPI {
 	 *
 	 * @param Element $node
 	 * @param mixed $data
-	 * @return void
 	 */
 	public function setTempNodeData( Element $node, $data ): void {
 		$dataParsoid = DOMDataUtils::getDataParsoid( $node );
@@ -649,7 +645,7 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
-	 * Equivalent of 'preprocessWikitext' from Parser.php in core.
+	 * Equivalent of 'preprocess' from Parser.php in core.
 	 * - expands templates
 	 * - replaces magic variables
 	 * This does not run any hooks however since that would be unexpected.
@@ -785,7 +781,7 @@ class ParsoidExtensionAPI {
 		Element $elt, bool $inner, callable $checkIfOrigSrcReusable
 	): ?string {
 		$state = $this->serializerState;
-		if ( !$state->selserMode ) {
+		if ( !$state->selserMode || $state->inInsertedContent ) {
 			return null;
 		}
 		$dsr = DOMDataUtils::getDataParsoid( $elt )->dsr ?? null;
@@ -896,7 +892,7 @@ class ParsoidExtensionAPI {
 		$fileNs = $this->getSiteConfig()->canonicalNamespaceId( 'file' );
 
 		$title = $this->makeTitle( $titleStr, 0 );
-		if ( $title === null || $title->getNamespaceId() !== $fileNs ) {
+		if ( $title === null || $title->getNamespace() !== $fileNs ) {
 			$error = "{$extTagName}_no_image";
 			return null;
 		}
@@ -1017,6 +1013,27 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
+	 * Serialize a MediaStructure to a title and media options string.
+	 * The converse to ::renderMedia.
+	 *
+	 * @param MediaStructure $ms
+	 * @return array Where,
+	 *   [0] is the media title string
+	 *   [1] is the string of media options
+	 */
+	public function serializeMedia( MediaStructure $ms ): array {
+		$ct = LinkHandlerUtils::figureToConstrainedText( $this->serializerState, $ms );
+		if ( $ct instanceof WikiLinkText ) {
+			// Remove the opening and closing square brackets
+			$text = substr( $ct->text, 2, -2 );
+			return array_pad( explode( '|', $text, 2 ), 2, '' );
+		} else {
+			// Note that $ct could be an AutoURLLinkText, not just null
+			return [ '', '' ];
+		}
+	}
+
+	/**
 	 * @param array $modules
 	 * @deprecated Use ::getMetadata()->addModules() instead.
 	 */
@@ -1032,4 +1049,10 @@ class ParsoidExtensionAPI {
 		$this->getMetadata()->addModuleStyles( $modulestyles );
 	}
 
+	/**
+	 * Get an array of attributes to apply to an anchor linking to $url
+	 */
+	public function getExternalLinkAttribs( string $url ): array {
+		return $this->env->getExternalLinkAttribs( $url );
+	}
 }

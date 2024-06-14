@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Balajijagadesh",
+			"Fahimrazick",
 			"Karthi.dr",
 			"Logicwiki",
 			"Macofe",
@@ -10,8 +11,7 @@
 			"Surya Prakash.S.A.",
 			"TRYPPN",
 			"செல்வா",
-			"மதனாஹரன்",
-			"Fahimrazick"
+			"மதனாஹரன்"
 		]
 	},
 	"wikieditor": "மேம்பட்ட விக்கியுரைத் தொகுப்பு இடைமுகம்",
@@ -24,10 +24,6 @@
 	"wikieditor-toolbar-tool-bold-example": "தடித்த எழுத்துக்கள்",
 	"wikieditor-toolbar-tool-italic": "சாய்ந்த",
 	"wikieditor-toolbar-tool-italic-example": "சாய்ந்த எழுத்துக்கள்",
-	"wikieditor-toolbar-tool-ilink": "உள்ளிணைப்பு",
-	"wikieditor-toolbar-tool-ilink-example": "# இணைப்புத் தலைப்பு\n# தலைப்பை இணை",
-	"wikieditor-toolbar-tool-xlink": "வெளியிணைப்பு (http:// முன்னிணைப்பை மறக்காதீர்)",
-	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com இணைப்புத் தலைப்பு",
 	"wikieditor-toolbar-tool-link": "தொடுப்பு",
 	"wikieditor-toolbar-tool-link-title": "இணைப்பையிடு",
 	"wikieditor-toolbar-tool-link-int": "ஒரு விக்கியின் பக்கத்திற்கு",
@@ -44,12 +40,10 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "இப்பக்கம் இன்னும் உருவாக்கப்படவில்லை",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "தவறான தலைப்பு",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "வெளித் தொடுப்பு",
-	"wikieditor-toolbar-tool-link-int-invalid": "நீங்கள் குறிப்பிட்ட தலைப்பு செல்லாதது.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "நீங்கள் குறிப்பிட்ட உரலி ஒரு விக்கிப்பக்கத்தின் இணைப்பைப் போல் தோன்றுகிறது. நீங்கள் அதனை ஒரு அக இணைப்பாக ஆக்குகிறீர்களா?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "உள்ளிணைப்பு",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "வெளித் தொடுப்பு",
 	"wikieditor-toolbar-tool-file": "பொதிந்துள்ள படிமம்",
-	"wikieditor-toolbar-tool-file-example": "மாதிரிப்படம்",
 	"wikieditor-toolbar-tool-file-title": "கோப்பை நுழை",
 	"wikieditor-toolbar-file-target": "கோப்பின் பெயர்:",
 	"wikieditor-toolbar-file-caption": "தலைப்பு:",
@@ -91,7 +85,6 @@
 	"wikieditor-toolbar-tool-gallery-example": "எடுத்துக்காட்டு.jpg|படவிளக்கம்1\nஎடுத்துக்காட்டு.jpg|படவிளக்கம்2",
 	"wikieditor-toolbar-tool-newline": "புதிய வரி",
 	"wikieditor-toolbar-tool-table": "பட்டியல்",
-	"wikieditor-toolbar-tool-table-example-old": ";-\n;! குறுந்தலைப்பு 1\n;! குறுந்தலைப்பு 2\n;! குறுந்தலைப்பு 3\n;|-\n;| கிடைவரிசை 1, செங்குத்து வரிசை 1\n;| கிடைவரிசை 1, செங்குத்து வரிசை 2\n;| கிடைவரிசை 1, செங்குத்து வரிசை 3\n;|-\n;| கிடைவரிசை 2, செங்குத்து வரிசை 1\n;| கிடைவரிசை 2, செங்குத்து வரிசை 2\n;| கிடைவரிசை 2, செங்குத்து வரிசை 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "சிறு கட்டத்தில் உள்ள சொற்கள்",
 	"wikieditor-toolbar-tool-table-example-header": "தலைப்பு எழுத்துக்கள்",
 	"wikieditor-toolbar-tool-table-title": "பட்டியலை உள்ளிடு",

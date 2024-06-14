@@ -55,11 +55,18 @@
 	"skinname-minerva": "مائينروانَييو",
 	"minerva-skin-desc": "ھڪ جواب-ڏيندڙ موبائل پھريان ظاھريت",
 	"skin-minerva-issue-learn-more": "وڌيڪ ڄاڻيو",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 سيڪنڊ}} اڳ",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 منٽ}} اڳ",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 ڪلاڪ}} اڳ",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 ڏينھن}} اڳ",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 مھينو|$1 مھينا}} اڳ",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|سال}} اڳ",
 	"skin-minerva-mobile-option-MinervaShowCategories": "زمرا",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "صفحي جا زمرا ڏسو",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "بھتربڻايل صفحي جي مسئلن جي تيمارداري",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "صفحي جا مسئلا (سانچو:ambox) مضمون ۾ انلائن ڪيا ويندا.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "بدقسمتيءَ سان، صفحي پاران گروھڪاري جا نتيجا موبائل تي موجود نہ آھن. جيڪڏھن توھان صفحي پاران گروھ جي خصوصيت استعمال ڪرڻ چاھيو ٿا تہ مھرباني ڪري ڊيسڪٽاپ سائيٽ ڏسو.",
+	"skin-minerva-night-mode-unavailable": "اھو اڪيلو صفحو جيڪ \"ڏينھن\" رنگ جي ٿيم ۾ موجود آهي.",
 	"minerva.css": "/* ھتي سڀ سي.ايس.ايس مائينروانَييو ظاھريت جي واپرائيندڙ لاءِ لاٿي ويندي */",
 	"minerva.js": "/* ھتي سڀ جاوااسڪرپٽ مائينروانَييو ظاھريت جي واپرائيندڙ لاءِ لاٿي ويندي */"
 }

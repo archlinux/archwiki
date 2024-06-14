@@ -87,6 +87,7 @@
 	"templatedata-modal-table-param-aliases": "Rööpkujud",
 	"templatedata-modal-table-param-autovalue": "Eeltäidetud",
 	"templatedata-modal-table-param-default": "Vaikeväärtus ($1)",
+	"templatedata-modal-table-param-status": "Olek",
 	"templatedata-modal-table-param-deprecated": "Vananenud",
 	"templatedata-modal-table-param-deprecatedValue": "Vananenud parameetri juhtnöör",
 	"templatedata-modal-table-param-description": "Kirjeldus ($1)",

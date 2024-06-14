@@ -15,6 +15,7 @@
  * along with MediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { isMediaViewerEnabledOnClick } = require( 'mmv.head' );
 ( function () {
 
 	/**
@@ -23,7 +24,7 @@
 	class Config {
 		/**
 		 * @param {Object} viewerConfig
-		 * @param {mw.Map} mwConfig
+		 * @param {Map} mwConfig
 		 * @param {Object} mwUser
 		 * @param {mw.Api} api
 		 * @param {mw.SafeStorage} localStorage
@@ -39,7 +40,7 @@
 			/**
 			 * The mw.config object, for dependency injection
 			 *
-			 * @type {mw.Map}
+			 * @type {Map}
 			 */
 			this.mwConfig = mwConfig;
 
@@ -84,7 +85,7 @@
 			}
 
 			if ( value === null ) {
-				mw.log( `Failed to fetch item ${key} from localStorage` );
+				mw.log( `Failed to fetch item ${ key } from localStorage` );
 			}
 
 			return fallback !== undefined ? fallback : null;
@@ -128,18 +129,6 @@
 		 */
 		setUserPreference( key, value ) {
 			return this.api.saveOption( key, value );
-		}
-
-		/**
-		 * Returns true if MediaViewer should handle thumbnail clicks.
-		 *
-		 * @return {boolean}
-		 */
-		isMediaViewerEnabledOnClick() {
-			// IMPORTANT: mmv.head.js uses the same logic but does not use this class to be lightweight. Make sure to keep it in sync.
-			return this.mwConfig.get( 'wgMediaViewer' ) && // global opt-out switch, can be set in user JS
-				this.mwConfig.get( 'wgMediaViewerOnClick' ) && // thumbnail opt-out, can be set in preferences
-				( this.mwUser.isNamed() || this.getFromLocalStorage( 'wgMediaViewerOnClick', '1' ) === '1' ); // thumbnail opt-out for anons
 		}
 
 		/**
@@ -199,7 +188,7 @@
 		 * @return {boolean}
 		 */
 		shouldShowStatusInfo() {
-			return !this.isMediaViewerEnabledOnClick() && this.getFromLocalStorage( 'mmv-showStatusInfo' ) === '1';
+			return !isMediaViewerEnabledOnClick( this.mwConfig, this.mwUser, this.localStorage ) && this.getFromLocalStorage( 'mmv-showStatusInfo' ) === '1';
 		}
 
 		/**

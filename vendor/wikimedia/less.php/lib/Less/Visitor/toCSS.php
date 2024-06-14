@@ -82,7 +82,8 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 
 		foreach ( $rulesetNode->rules as $ruleNode ) {
 			if ( $ruleNode instanceof Less_Tree_Rule && !$ruleNode->variable ) {
-				$msg = "properties must be inside selector blocks, they cannot be in the root. Index " . $ruleNode->index . ( $ruleNode->currentFileInfo ? ( ' Filename: ' . $ruleNode->currentFileInfo['filename'] ) : null );
+				$msg = "properties must be inside selector blocks, they cannot be in the root. Index " . $ruleNode->index .
+					( $ruleNode->currentFileInfo ? ' Filename: ' . $ruleNode->currentFileInfo['filename'] : null );
 				throw new Less_Exception_Compiler( $msg );
 			}
 		}
@@ -195,7 +196,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing {
 					}
 
 					$ruleCSS = $rule->toCSS();
-					if ( array_search( $ruleCSS, $ruleList ) !== false ) {
+					if ( in_array( $ruleCSS, $ruleList ) ) {
 						array_splice( $rules, $i, 1 );
 					} else {
 						$ruleList[] = $ruleCSS;

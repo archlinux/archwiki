@@ -4,6 +4,9 @@ use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\WikiMap\WikiMap;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\OrExpressionGroup;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -51,7 +54,7 @@ class GrepPages extends Maintenance {
 		$titleOnly = $this->hasOption( 'pages-with-matches' );
 
 		if ( ( $regex[0] ?? '' ) === '/' ) {
-			$delimRegex = $regex[0];
+			$delimRegex = $regex;
 		} else {
 			$delimRegex = '{' . $regex . '}';
 		}
@@ -94,7 +97,7 @@ class GrepPages extends Maintenance {
 	}
 
 	public function findPages( $prefixes = null ) {
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 		$orConds = [];
 		if ( $prefixes !== null ) {
 			foreach ( $prefixes as $prefix ) {
@@ -106,20 +109,20 @@ class GrepPages extends Maintenance {
 					$ns = NS_MAIN;
 					$prefixDBkey = $prefix;
 				}
-				$prefixCond = [ 'page_namespace' => $ns ];
+				$prefixExpr = $dbr->expr( 'page_namespace', '=', $ns );
 				if ( $prefixDBkey !== '' ) {
-					$prefixCond[] = 'page_title ' . $dbr->buildLike( $prefixDBkey, $dbr->anyString() );
+					$prefixExpr = $prefixExpr->and(
+						'page_title',
+						IExpression::LIKE,
+						new LikeValue( $prefixDBkey, $dbr->anyString() )
+					);
 				}
-				$orConds[] = $dbr->makeList( $prefixCond, LIST_AND );
+				$orConds[] = $prefixExpr;
 			}
 		}
-
-		$conds = $orConds ? $dbr->makeList( $orConds, LIST_OR ) : [];
-		$pageQuery = WikiPage::getQueryInfo();
-
 		$res = $dbr->newSelectQueryBuilder()
-			->queryInfo( $pageQuery )
-			->where( $conds )
+			->queryInfo( WikiPage::getQueryInfo() )
+			->where( $orConds ? new OrExpressionGroup( ...$orConds ) : [] )
 			->caller( __METHOD__ )
 			->fetchResultSet();
 		foreach ( $res as $row ) {

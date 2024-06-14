@@ -2,7 +2,7 @@
 /**
  * @private
  */
-class Less_Tree_Element extends Less_Tree {
+class Less_Tree_Element extends Less_Tree implements Less_Tree_HasValueProperty {
 
 	/** @var string */
 	public $combinator;
@@ -12,7 +12,6 @@ class Less_Tree_Element extends Less_Tree {
 	public $value;
 	public $index;
 	public $currentFileInfo;
-	public $type = 'Element';
 
 	public $value_is_object = false;
 
@@ -41,7 +40,7 @@ class Less_Tree_Element extends Less_Tree {
 	}
 
 	public function compile( $env ) {
-		return new Less_Tree_Element(
+		return new self(
 			$this->combinator,
 			( $this->value_is_object ? $this->value->compile( $env ) : $this->value ),
 			$this->index,
@@ -63,11 +62,12 @@ class Less_Tree_Element extends Less_Tree {
 			$value = $this->value;
 		}
 
-		if ( $value === '' && $this->combinator && $this->combinator === '&' ) {
-			return '';
+		$spaceOrEmpty = ' ';
+		if ( Less_Parser::$options['compress'] || ( isset( Less_Environment::$_noSpaceCombinators[$this->combinator] ) && Less_Environment::$_noSpaceCombinators[$this->combinator] ) ) {
+			$spaceOrEmpty = '';
 		}
 
-		return Less_Environment::$_outputMap[$this->combinator] . $value;
+		return $spaceOrEmpty . $this->combinator . $spaceOrEmpty . $value;
 	}
 
 }

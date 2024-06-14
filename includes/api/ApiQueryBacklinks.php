@@ -24,6 +24,7 @@ use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
+use Wikimedia\Rdbms\OrExpressionGroup;
 
 /**
  * This is a three-in-one module to query:
@@ -230,15 +231,20 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @todo This should support links migration but since it's unreachable for templatelinks
-	 *     it's not needed right now.
 	 * @param ApiPageSet|null $resultPageSet
 	 * @return void
 	 */
 	private function runSecondQuery( $resultPageSet = null ) {
 		$db = $this->getDB();
-		$this->addTables( [ $this->bl_table, 'page' ] );
-		$this->addWhere( "{$this->bl_from}=page_id" );
+		if ( isset( $this->linksMigration::$mapping[$this->bl_table] ) ) {
+			$queryInfo = $this->linksMigration->getQueryInfo( $this->bl_table, $this->bl_table );
+			$this->addTables( $queryInfo['tables'] );
+			$this->addJoinConds( $queryInfo['joins'] );
+		} else {
+			$this->addTables( [ $this->bl_table ] );
+		}
+		$this->addTables( [ 'page' ] );
+		$this->addJoinConds( [ 'page' => [ 'JOIN', "{$this->bl_from}=page_id" ] ] );
 
 		if ( $resultPageSet === null ) {
 			$this->addFields( [ 'page_id', 'page_title', 'page_namespace', 'page_is_redirect' ] );
@@ -259,12 +265,15 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		foreach ( $this->redirTitles as $t ) {
 			$redirNs = $t->getNamespace();
 			$redirDBkey = $t->getDBkey();
-			$titleWhere[] = "{$this->bl_title} = " . $db->addQuotes( $redirDBkey ) .
-				( $this->hasNS ? " AND {$this->bl_ns} = {$redirNs}" : '' );
+			$expr = $db->expr( $this->bl_title, '=', $redirDBkey );
+			if ( $this->hasNS ) {
+				$expr = $expr->and( $this->bl_ns, '=', $redirNs );
+			}
+			$titleWhere[] = $expr;
 			$allRedirNs[$redirNs] = true;
 			$allRedirDBkey[$redirDBkey] = true;
 		}
-		$this->addWhere( $db->makeList( $titleWhere, LIST_OR ) );
+		$this->addWhere( new OrExpressionGroup( ...$titleWhere ) );
 		$this->addWhereFld( 'page_namespace', $this->params['namespace'] );
 
 		if ( count( $this->cont ) >= 6 ) {

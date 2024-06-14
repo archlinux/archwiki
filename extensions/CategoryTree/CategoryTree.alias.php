@@ -427,12 +427,12 @@ $specialPageAliases['sk'] = [
 ];
 
 /** Serbian Cyrillic (српски (ћирилица)) */
-$specialPageAliases['sr-ec'] = [
+$specialPageAliases['sr-cyrl'] = [
 	'CategoryTree' => [ 'СтаблоКатегорија' ],
 ];
 
 /** Serbian Latin (srpski (latinica)) */
-$specialPageAliases['sr-el'] = [
+$specialPageAliases['sr-latn'] = [
 	'CategoryTree' => [ 'StabloKategorija' ],
 ];
 

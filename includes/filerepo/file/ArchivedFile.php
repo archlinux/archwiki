@@ -152,7 +152,6 @@ class ArchivedFile {
 
 	/**
 	 * @stable to call
-	 * @throws MWException
 	 * @param Title|null $title
 	 * @param int $id
 	 * @param string $key
@@ -196,7 +195,7 @@ class ArchivedFile {
 		}
 
 		if ( !$id && !$key && !( $title instanceof Title ) && !$sha1 ) {
-			throw new MWException( "No specifications provided to ArchivedFile constructor." );
+			throw new BadMethodCallException( "No specifications provided to ArchivedFile constructor." );
 		}
 
 		$this->repo = MediaWikiServices::getInstance()->getRepoGroup()->getLocalRepo();
@@ -206,7 +205,6 @@ class ArchivedFile {
 	/**
 	 * Loads a file object from the filearchive table
 	 * @stable to override
-	 * @throws MWException
 	 * @return bool|null True on success or null
 	 */
 	public function load() {
@@ -230,7 +228,7 @@ class ArchivedFile {
 		}
 
 		if ( $conds === [] ) {
-			throw new MWException( "No specific information for retrieving archived file" );
+			throw new RuntimeException( "No specific information for retrieving archived file" );
 		}
 
 		if ( !$this->title || $this->title->getNamespace() === NS_FILE ) {
@@ -248,7 +246,7 @@ class ArchivedFile {
 			// initialize fields for filestore image object
 			$this->loadFromRow( $row );
 		} else {
-			throw new MWException( 'This title does not correspond to an image page.' );
+			throw new UnexpectedValueException( 'This title does not correspond to an image page.' );
 		}
 
 		return true;
@@ -286,7 +284,7 @@ class ArchivedFile {
 	 * @phan-return array{tables:string[],fields:string[],joins:array}
 	 */
 	public static function getQueryInfo() {
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$queryInfo = ( FileSelectQueryBuilder::newForArchivedFile( $dbr ) )->getQueryInfo();
 		return [
 			'tables' => $queryInfo['tables'],
@@ -509,7 +507,7 @@ class ArchivedFile {
 			$s = serialize( $this->getMetadataArray() );
 		}
 		if ( !is_string( $s ) ) {
-			throw new MWException( 'Could not serialize image metadata value for DB' );
+			throw new RuntimeException( 'Could not serialize image metadata value for DB' );
 		}
 		return $db->encodeBlob( $s );
 	}

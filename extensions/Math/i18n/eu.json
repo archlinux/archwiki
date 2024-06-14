@@ -6,11 +6,11 @@
 			"Macofe",
 			"Mikel Ibaiba",
 			"Subi",
-			"Theklan"
+			"Theklan",
+			"Atzerritik"
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "Formula kimikoa",
-	"math-visualeditor-mwcheminspector-title": "Formula kimikoa",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Edizio azkarra",
 	"math-visualeditor-mwlatexdialog-card-formula": "Formula",
 	"math-visualeditor-mwlatexdialog-card-options": "Aukerak",
@@ -56,10 +56,10 @@
 	"math_syntax_error": "sintaxi errorea",
 	"math_unknown_error": "errore ezezaguna",
 	"math_unknown_function": "\"$1\" funtzio ezezaguna",
-	"mw_math_latexml": "LaTeXML (esperimentala, MathML erabiltzen du)",
-	"mw_math_mathml": "MathML posible bada (proba fasean)",
-	"mw_math_source": "LaTeX kodea (testu nabigatzaileentzako)",
-	"prefs-math": "Formulak",
+	"mw-math-latexml": "LaTeXML (esperimentala, MathML erabiltzen du)",
+	"mw-math-mathml": "MathML posible bada (proba fasean)",
+	"mw-math-source": "LaTeX kodea (testu nabigatzaileentzako)",
+	"prefs-math": "Matematika",
 	"mathstatus": "Matematikaren egoera",
 	"mathwikibase": "Formula matematikoaren informazioa",
 	"datatypes-type-math": "Adierazpen matematikoa",

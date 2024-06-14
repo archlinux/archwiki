@@ -17,8 +17,8 @@
 
 namespace MediaWiki\Minerva\Menu\Entries;
 
+use MediaWiki\SpecialPage\SpecialPage;
 use MessageLocalizer;
-use SpecialPage;
 
 final class LogInMenuEntry extends SingleMenuEntry {
 	/**

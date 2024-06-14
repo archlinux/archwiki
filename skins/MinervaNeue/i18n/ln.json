@@ -3,15 +3,18 @@
 		"authors": [
 			"BamLifa",
 			"Dfoy",
-			"Moyogo"
+			"Moyogo",
+			"CapitainAfrika",
+			"Eruedin"
 		]
 	},
 	"mobile-frontend-editor-edit": "Kobɔngisa",
-	"mobile-frontend-home-button": "Lonkásá loa libosó",
+	"mobile-frontend-home-button": "Lonkásá ya boyambi",
 	"mobile-frontend-language-article-heading": "Kotánga o lokótá lisúsu",
 	"mobile-frontend-main-menu-login": "Komíkitola",
 	"mobile-frontend-main-menu-nearby": "Pɛmbɛ́ni",
 	"mobile-frontend-main-menu-settings": "Palamɛ́tɛlɛ",
 	"mobile-frontend-main-menu-watchlist": "Nkásá nalandí",
-	"mobile-frontend-placeholder": "Luka na {{SITENAME}}"
+	"mobile-frontend-placeholder": "Boluki {{SITENAME}}",
+	"mobile-frontend-random-button": "Mbɛsɛ"
 }

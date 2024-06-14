@@ -21,6 +21,7 @@
  * @ingroup Upload
  */
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -116,6 +117,49 @@ class UploadFromUrl extends UploadBase {
 	}
 
 	/**
+	 * Provides a caching key for an upload from url set of parameters
+	 * Used to set the status of an async job in UploadFromUrlJob
+	 * and retreive it in frontend clients like ApiUpload. Will return the
+	 * empty string if not all parameters are present.
+	 *
+	 * @param array $params
+	 * @return string
+	 */
+	public static function getCacheKey( $params ) {
+		if ( !isset( $params['filename'] ) || !isset( $params['url'] ) ) {
+			return "";
+		} else {
+			// We use sha1 here to ensure we have a fixed-length string of printable
+			// characters. There is no cryptography involved, so we just need a
+			// relatively fast function.
+			return sha1( sprintf( "%s|||%s", $params['filename'], $params['url'] ) );
+		}
+	}
+
+	/**
+	 * Get the caching key from a web request
+	 * @param WebRequest &$request
+	 *
+	 * @return string
+	 */
+	public static function getCacheKeyFromRequest( &$request ) {
+		$uploadCacheKey = $request->getText( 'wpCacheKey', $request->getText( 'key', '' ) );
+		if ( $uploadCacheKey !== '' ) {
+			return $uploadCacheKey;
+		}
+		$desiredDestName = $request->getText( 'wpDestFile' );
+		if ( !$desiredDestName ) {
+			$desiredDestName = $request->getText( 'wpUploadFileURL' );
+		}
+		return self::getCacheKey(
+			[
+				'filename' => $desiredDestName,
+				'url' => trim( $request->getVal( 'wpUploadFileURL' ) )
+			]
+		);
+	}
+
+	/**
 	 * @return string[]
 	 */
 	private static function getAllowedHosts(): array {
@@ -158,11 +202,18 @@ class UploadFromUrl extends UploadBase {
 	}
 
 	/**
+	 * Get the URL of the file to be uploaded
+	 * @return string
+	 */
+	public function getUrl() {
+		return $this->mUrl;
+	}
+
+	/**
 	 * Entry point for API upload
 	 *
 	 * @param string $name
 	 * @param string $url
-	 * @throws MWException
 	 */
 	public function initialize( $name, $url ) {
 		$this->mUrl = $url;
@@ -217,6 +268,19 @@ class UploadFromUrl extends UploadBase {
 	 * @return Status
 	 */
 	public function fetchFile( $httpOptions = [] ) {
+		$status = $this->canFetchFile();
+		if ( !$status->isGood() ) {
+			return $status;
+		}
+		return $this->reallyFetchFile( $httpOptions );
+	}
+
+	/**
+	 * verify we can actually download the file
+	 *
+	 * @return Status
+	 */
+	public function canFetchFile() {
 		if ( !MWHttpRequest::isValidURI( $this->mUrl ) ) {
 			return Status::newFatal( 'http-invalid-url', $this->mUrl );
 		}
@@ -227,7 +291,7 @@ class UploadFromUrl extends UploadBase {
 		if ( !self::isAllowedUrl( $this->mUrl ) ) {
 			return Status::newFatal( 'upload-copy-upload-invalid-url' );
 		}
-		return $this->reallyFetchFile( $httpOptions );
+		return Status::newGood();
 	}
 
 	/**

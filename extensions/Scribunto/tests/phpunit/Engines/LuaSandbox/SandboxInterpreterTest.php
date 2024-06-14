@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Scribunto\Tests\Engines\LuaSandbox;
 
 use MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxEngine;
 use MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxInterpreter;
-use MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon\LuaInterpreterTest;
+use MediaWiki\Extension\Scribunto\Tests\Engines\LuaCommon\LuaInterpreterTestBase;
 
 if ( !wfIsCLI() ) {
 	exit;
@@ -15,7 +15,7 @@ if ( !wfIsCLI() ) {
  * @group LuaSandbox
  * @covers \MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxInterpreter
  */
-class SandboxInterpreterTest extends LuaInterpreterTest {
+class SandboxInterpreterTest extends LuaInterpreterTestBase {
 	/** @var array */
 	public $stdOpts = [
 		'memoryLimit' => 50000000,

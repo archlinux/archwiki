@@ -56,9 +56,16 @@
 	"skinname-minerva": "מינרווה נויה",
 	"minerva-skin-desc": "ערכת עיצוב מסתגלת לסוג המכשיר ומפותחת ראשית למכשירים מיידים",
 	"skin-minerva-issue-learn-more": "מידע נוסף",
+	"skin-minerva-time-ago-seconds": "לפני {{PLURAL:$1|שנייה|$1 שניות}}",
+	"skin-minerva-time-ago-minutes": "לפני {{PLURAL:$1|דקה|$1 דקות}}",
+	"skin-minerva-time-ago-hours": "לפני {{PLURAL:$1|שעה|שעתיים|$1 שעות}}",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|אתמול|שלשום|3=לפני יומיים|לפני $1 יום|לפני $1 ימים}}",
+	"skin-minerva-time-ago-months": "לפני {{PLURAL:$1|חודש|חודשיים|$1 חודשים}}",
+	"skin-minerva-time-ago-years": "לפני {{PLURAL:$1|שנה|שנתיים|$1 שנה|$1 שנים}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "קטגוריות",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "הצגת קטגוריות של דפים",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "שיפור בטיפול בבעיות בדף",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "תבנית עם בעיות בדף יוצגו בתוך גוף הערך.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "למרבה הצער, הקבצת תוצאות לפי דף אינה זמינה במכשירים ניידים. אם ברצונך להשתמש באפשרות הקבצת תוצאות לפי דף, נא לבקר בדף למחשבים."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "למרבה הצער, הקבצת תוצאות לפי דף אינה זמינה במכשירים ניידים. אם ברצונך להשתמש באפשרות הקבצת תוצאות לפי דף, נא לבקר בדף למחשבים.",
+	"skin-minerva-night-mode-unavailable": "הדף זמין רק בערכת הצבעים \"יום\"."
 }

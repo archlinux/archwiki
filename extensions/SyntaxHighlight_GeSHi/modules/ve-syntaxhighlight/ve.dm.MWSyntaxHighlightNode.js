@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel MWSyntaxHighlightNode class.
  *
- * @copyright 2011-2015 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright VisualEditor Team and others
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -36,12 +36,10 @@ ve.dm.MWSyntaxHighlightNode.static.getMatchRdfaTypes = function () {
  * @inheritdoc
  */
 ve.dm.MWSyntaxHighlightNode.static.toDataElement = function ( domElements, converter ) {
-	// Parent method
 	var isInline = this.isHybridInline( domElements, converter ),
-		type = isInline ? 'mwInlineSyntaxHighlight' : 'mwBlockSyntaxHighlight',
-		dataElement = ve.dm.MWExtensionNode.static.toDataElement.call( this, domElements, converter, type );
-
-	return dataElement;
+		type = isInline ? 'mwInlineSyntaxHighlight' : 'mwBlockSyntaxHighlight';
+	// Parent method
+	return ve.dm.MWExtensionNode.static.toDataElement.call( this, domElements, converter, type );
 };
 
 ( function () {
@@ -51,8 +49,9 @@ ve.dm.MWSyntaxHighlightNode.static.toDataElement = function ( domElements, conve
 
 	/**
 	 * Register supported Pygments languages.
+	 * Called from PHP's ResourceLoaderSyntaxHighlightVisualEditorModule.
 	 *
-	 * @param {Array} languages
+	 * @param {string[]} languages List of language names, e.g. "html"
 	 */
 	ve.dm.MWSyntaxHighlightNode.static.addPygmentsLanguages = function ( languages ) {
 		ve.batchPush( supportedLanguages, languages );
@@ -60,8 +59,9 @@ ve.dm.MWSyntaxHighlightNode.static.toDataElement = function ( domElements, conve
 
 	/**
 	 * Register map from Geshi to pygments lexer names.
+	 * Called from PHP's ResourceLoaderSyntaxHighlightVisualEditorModule.
 	 *
-	 * @param {Array} map
+	 * @param {Object.<string.string>} map Map of compatible lexers, e.g. { "html5": "html" }
 	 */
 	ve.dm.MWSyntaxHighlightNode.static.addGeshiToPygmentsMap = function ( map ) {
 		geshiToPygmentsMap = map;
@@ -70,8 +70,9 @@ ve.dm.MWSyntaxHighlightNode.static.toDataElement = function ( domElements, conve
 
 	/**
 	 * Register a map from pygments to Ace lexer names.
+	 * Called from PHP's ResourceLoaderSyntaxHighlightVisualEditorModule.
 	 *
-	 * @param {Array} map
+	 * @param {Object.<string.string>} map Map of compatible lexers, e.g. { "js": "JavaScript" }
 	 */
 	ve.dm.MWSyntaxHighlightNode.static.addPygmentsToAceMap = function ( map ) {
 		pygmentsToAceMap = map;
@@ -92,8 +93,8 @@ ve.dm.MWSyntaxHighlightNode.static.toDataElement = function ( domElements, conve
 	/**
 	 * Check if a language is supported
 	 *
-	 * @param {string} language Language name
-	 * @return {boolean} The language is supported
+	 * @param {string} [language] Language name
+	 * @return {boolean} The language is supported; always true when called with no language
 	 */
 	ve.dm.MWSyntaxHighlightNode.static.isLanguageSupported = function ( language ) {
 		return supportedLanguages.indexOf( language || undefined ) !== -1;
@@ -102,7 +103,7 @@ ve.dm.MWSyntaxHighlightNode.static.toDataElement = function ( domElements, conve
 	/**
 	 * Get an array of all languages (both Pygments and former GeSHi names)
 	 *
-	 * @return {Array} All currently supported languages
+	 * @return {string[]} All currently supported languages, including an undefined entry for "none"
 	 */
 	ve.dm.MWSyntaxHighlightNode.static.getLanguages = function () {
 		return supportedLanguages.slice();

@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface MWEditSummaryWidget class.
  *
- * @copyright 2011-2018 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -23,10 +23,7 @@ ve.ui.MWEditSummaryWidget = function VeUiMWEditSummaryWidget( config ) {
 	ve.ui.MWEditSummaryWidget.super.call( this, ve.extendObject( {
 		autosize: true,
 		maxRows: 15,
-		inputFilter: function ( value ) {
-			// Prevent the user from inputting newlines (this kicks in on paste, etc.)
-			return value.replace( /\r?\n/g, ' ' );
-		}
+		allowLinebreaks: false
 	}, config ) );
 
 	// Mixin method
@@ -129,19 +126,6 @@ ve.ui.MWEditSummaryWidget.prototype.adjustSize = function () {
 	}
 
 	return this;
-};
-
-/**
- * @inheritdoc
- */
-ve.ui.MWEditSummaryWidget.prototype.onKeyPress = function ( e ) {
-	if ( e.which === OO.ui.Keys.ENTER ) {
-		e.preventDefault();
-	}
-	// Grand-parent method
-	// Multi-line only fires 'enter' on ctrl+enter, but this should
-	// fire on plain enter as it behaves like a single line input.
-	OO.ui.TextInputWidget.prototype.onKeyPress.call( this, e );
 };
 
 /**

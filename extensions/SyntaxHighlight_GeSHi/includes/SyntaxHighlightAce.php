@@ -22,7 +22,7 @@ namespace MediaWiki\SyntaxHighlight;
  * Class provides functionality to map Ace lexer definitions
  */
 class SyntaxHighlightAce {
-	/** @var array This map is inverted, because it is easier to maintain this way */
+	/** @var array<string,string[]> This map is inverted, because it is easier to maintain this way */
 	private static $aceLexers = [
 		'ABAP'         => [ 'abap' ],
 		'ABC'          => [],
@@ -159,7 +159,10 @@ class SyntaxHighlightAce {
 		'YAML'         => [ 'yaml' ],
 	];
 
-	public static function getPygmentsToAceMap() {
+	/**
+	 * @return array<string,string>
+	 */
+	public static function getPygmentsToAceMap(): array {
 		$result = [];
 		foreach ( self::$aceLexers as $aceName => $pygmentsLexers ) {
 			foreach ( $pygmentsLexers as $lexer ) {

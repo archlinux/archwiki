@@ -24,30 +24,31 @@
 namespace MediaWiki\SpecialPage;
 
 use ErrorPageError;
-use IContextSource;
 use Language;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Config\Config;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Navigation\PagerNavigationBuilder;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
-use Message;
 use MessageLocalizer;
 use MessageSpecifier;
 use MWCryptRand;
 use PermissionsError;
 use ReadOnlyError;
-use RequestContext;
 use SearchEngineFactory;
 use Skin;
 use UserNotLoggedIn;
@@ -219,7 +220,7 @@ class SpecialPage implements MessageLocalizer {
 	}
 
 	/**
-	 * Get the name of this Special Page.
+	 * Get the canonical, unlocalized name of this special page without namespace.
 	 * @return string
 	 */
 	public function getName() {
@@ -244,32 +245,6 @@ class SpecialPage implements MessageLocalizer {
 	 */
 	public function isListed() {
 		return $this->mListed;
-	}
-
-	/**
-	 * Set whether this page is listed in Special:Specialpages, at run-time
-	 * @since 1.3
-	 * @deprecated since 1.35
-	 * @param bool $listed Set via subclassing UnlistedSpecialPage, get via
-	 *  isListed()
-	 * @return bool
-	 */
-	public function setListed( $listed ) {
-		wfDeprecated( __METHOD__, '1.35' );
-		return wfSetVar( $this->mListed, $listed );
-	}
-
-	/**
-	 * Get or set whether this special page is listed in Special:SpecialPages
-	 * @since 1.6
-	 * @deprecated since 1.35 Set via subclassing UnlistedSpecialPage, get via
-	 *  isListed()
-	 * @param bool|null $x
-	 * @return bool
-	 */
-	public function listed( $x = null ) {
-		wfDeprecated( __METHOD__, '1.35' );
-		return wfSetVar( $this->mListed, $x );
 	}
 
 	/**
@@ -381,6 +356,29 @@ class SpecialPage implements MessageLocalizer {
 		return MediaWikiServices::getInstance()
 			->getPermissionManager()
 			->userHasRight( $user, $this->mRestriction );
+	}
+
+	/**
+	 * Utility function for authorizing an action to be performed by the special
+	 * page. User blocks and rate limits are enforced implicitly.
+	 *
+	 * @see Authority::authorizeAction.
+	 *
+	 * @param ?string $action If not given, the action returned by
+	 *        getRestriction() will be used.
+	 *
+	 * @return PermissionStatus
+	 */
+	protected function authorizeAction( ?string $action = null ): PermissionStatus {
+		$action ??= $this->getRestriction();
+
+		if ( !$action ) {
+			return PermissionStatus::newGood();
+		}
+
+		$status = PermissionStatus::newEmpty();
+		$this->getAuthority()->authorizeAction( $action, $status );
+		return $status;
 	}
 
 	/**
@@ -695,18 +693,12 @@ class SpecialPage implements MessageLocalizer {
 		$out->setArticleRelated( false );
 		$out->setRobotPolicy( $this->getRobotPolicy() );
 		$title = $this->getDescription();
-		if ( is_string( $title ) ) { // T343849
-			wfDeprecated( 'string return from SpecialPage::getDescription()', '1.41' );
+		// T343849
+		if ( is_string( $title ) ) {
+			wfDeprecated( "string return from {$this->getName()}::getDescription()", '1.41' );
 			$title = ( new RawMessage( '$1' ) )->rawParams( $title );
 		}
 		$out->setPageTitleMsg( $title );
-		if ( $this->getConfig()->get( MainConfigNames::UseMediaWikiUIEverywhere ) ) {
-			$out->addModuleStyles( [
-				'mediawiki.ui.input',
-				'mediawiki.ui.radio',
-				'mediawiki.ui.checkbox',
-			] );
-		}
 	}
 
 	/**
@@ -1223,8 +1215,5 @@ class SpecialPage implements MessageLocalizer {
 	}
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialPage::class, 'SpecialPage' );

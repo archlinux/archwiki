@@ -2,28 +2,23 @@
 
 namespace Cite\Tests;
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use ParserOptions;
 
 /**
  * @group Database
- *
+ * @covers \Cite\ReferenceStack
  * @license GPL-2.0-or-later
  */
 class CiteDbTest extends \MediaWikiIntegrationTestCase {
-	/** @inheritDoc */
-	protected $tablesUsed = [ 'page' ];
-
 	/**
-	 * Edge case where a parser call within `<ref>` parse clears the original parser state.
+	 * Parser call within `<ref>` parse clears the original parser state.
 	 * @see https://phabricator.wikimedia.org/T240248
-	 * @covers \Cite\ReferenceStack::pushRef
 	 */
 	public function testReferenceStackError() {
 		$this->insertPage( 'Cite-tracking-category-cite-error', '{{PAGENAME}}', NS_MEDIAWIKI );
 
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		// Reset the MessageCache in order to force it to clone a new parser.
 		$services->resetServiceForTesting( 'MessageCache' );
 		$services->getMessageCache()->enable();

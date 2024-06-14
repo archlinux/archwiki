@@ -9,6 +9,15 @@ class EchoEditThresholdPresentationModel extends EchoEventPresentationModel {
 	}
 
 	public function getHeaderMessageKey() {
+		// The following messages are used here:
+		// * notification-header-thank-you-1-edit
+		// * notification-header-thank-you-10-edit
+		// * notification-header-thank-you-100-edit
+		// * notification-header-thank-you-1000-edit
+		// * notification-header-thank-you-10000-edit
+		// * notification-header-thank-you-100000-edit
+		// * notification-header-thank-you-1000000-edit
+		// * notification-header-thank-you-10000000-edit
 		return 'notification-header-thank-you-' . $this->event->getExtraParam( 'editCount' ) . '-edit';
 	}
 

@@ -63,6 +63,7 @@ class RequestData extends RequestBase {
 		$this->postParams = $params['postParams'] ?? [];
 		$this->setPathParams( $params['pathParams'] ?? [] );
 		$this->setHeaders( $params['headers'] ?? [] );
+		$this->setParsedBody( $params['parsedBody'] ?? null );
 		parent::__construct( $params['cookiePrefix'] ?? '' );
 	}
 
@@ -101,4 +102,21 @@ class RequestData extends RequestBase {
 	public function getPostParams() {
 		return $this->postParams;
 	}
+
+	public function hasBody(): bool {
+		if ( parent::hasBody() ) {
+			return true;
+		}
+
+		if ( $this->parsedBody !== null ) {
+			return true;
+		}
+
+		if ( $this->getBody()->getSize() > 0 ) {
+			return true;
+		}
+
+		return false;
+	}
+
 }

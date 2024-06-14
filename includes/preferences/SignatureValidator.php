@@ -20,9 +20,11 @@
 
 namespace MediaWiki\Preferences;
 
+use ExtensionRegistry;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Parser\Parsoid\Config\PageConfigFactory;
 use MediaWiki\Revision\MutableRevisionRecord;
@@ -33,6 +35,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserIdentity;
 use MessageLocalizer;
+use OOUI\ButtonWidget;
 use ParserFactory;
 use ParserOptions;
 use Wikimedia\Parsoid\Parsoid;
@@ -65,6 +68,7 @@ class SignatureValidator {
 	private $specialPageFactory;
 	/** @var TitleFactory */
 	private $titleFactory;
+	private ExtensionRegistry $extensionRegistry;
 
 	/**
 	 * @param ServiceOptions $options
@@ -76,6 +80,7 @@ class SignatureValidator {
 	 * @param PageConfigFactory $pageConfigFactory
 	 * @param SpecialPageFactory $specialPageFactory
 	 * @param TitleFactory $titleFactory
+	 * @param ExtensionRegistry $extensionRegistry
 	 */
 	public function __construct(
 		ServiceOptions $options,
@@ -86,7 +91,8 @@ class SignatureValidator {
 		Parsoid $parsoid,
 		PageConfigFactory $pageConfigFactory,
 		SpecialPageFactory $specialPageFactory,
-		TitleFactory $titleFactory
+		TitleFactory $titleFactory,
+		ExtensionRegistry $extensionRegistry
 	) {
 		$this->user = $user;
 		$this->localizer = $localizer;
@@ -100,6 +106,7 @@ class SignatureValidator {
 		// TODO SpecialPage::getTitleFor should also be available via SpecialPageFactory
 		$this->specialPageFactory = $specialPageFactory;
 		$this->titleFactory = $titleFactory;
+		$this->extensionRegistry = $extensionRegistry;
 	}
 
 	/**
@@ -127,6 +134,17 @@ class SignatureValidator {
 
 		$errors = $this->localizer ? [] : false;
 
+		$hiddenCats = [];
+		if ( $this->extensionRegistry->isLoaded( 'Linter' ) ) { // T360809
+			$services = MediaWikiServices::getInstance();
+			$linterCategories = $services->getMainConfig()->get( 'LinterCategories' );
+			foreach ( $linterCategories as $name => $cat ) {
+				if ( $cat['priority'] === 'none' ) {
+					$hiddenCats[$name] = true;
+				}
+			}
+		}
+
 		$lintErrors = $this->checkLintErrors( $signature );
 		if ( $lintErrors ) {
 			$allowedLintErrors = $this->serviceOptions->get(
@@ -141,6 +159,9 @@ class SignatureValidator {
 				if ( in_array( $error['type'], $allowedLintErrors, true ) ) {
 					continue;
 				}
+				if ( $hiddenCats[$error['type']] ?? false ) {
+					continue;
+				}
 				if ( !$this->localizer ) {
 					$errors = true;
 					break;
@@ -148,16 +169,27 @@ class SignatureValidator {
 
 				$details = $this->getLintErrorDetails( $error );
 				$location = $this->getLintErrorLocation( $error );
+				// THESE MESSAGE IDS SHOULD BE KEPT IN SYNC WITH
+				// those declared in Extension:Linter -- in particular
+				// there should be a linterror-<cat> declared here for every
+				// linter-pager-<cat>-details declared in Linter's qqq.json.
+				// T360809: this redundancy should be eventually eliminated
+
 				// Messages used here:
 				// * linterror-bogus-image-options
 				// * linterror-deletable-table-tag
+				// * linterror-fostered
 				// * linterror-html5-misnesting
+				// * linterror-inline-media-caption
+				// * linterror-large-tables
 				// * linterror-misc-tidy-replacement-issues
 				// * linterror-misnested-tag
 				// * linterror-missing-end-tag
+				// * linterror-missing-end-tag-in-heading
 				// * linterror-multi-colon-escape
 				// * linterror-multiline-html-table-in-list
 				// * linterror-multiple-unclosed-formatting-tags
+				// * linterror-night-mode-unaware-background-color
 				// * linterror-obsolete-tag
 				// * linterror-pwrap-bug-workaround
 				// * linterror-self-closed-tag
@@ -165,8 +197,9 @@ class SignatureValidator {
 				// * linterror-tidy-font-bug
 				// * linterror-tidy-whitespace-bug
 				// * linterror-unclosed-quotes-in-heading
+				// * linterror-wikilink-in-extlink
 				$label = $this->localizer->msg( "linterror-{$error['type']}" )->parse();
-				$docsLink = new \OOUI\ButtonWidget( [
+				$docsLink = new ButtonWidget( [
 					'href' =>
 						"https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Lint_errors/{$error['type']}",
 					'target' => '_blank',

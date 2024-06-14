@@ -18,6 +18,8 @@
  * @file
  */
 
+namespace MediaWiki\Site;
+
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 
@@ -255,3 +257,6 @@ class DBSiteStore implements SiteStore {
 	}
 
 }
+
+/** @deprecated class alias since 1.41 */
+class_alias( DBSiteStore::class, 'DBSiteStore' );

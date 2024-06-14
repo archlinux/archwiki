@@ -10,8 +10,10 @@
 	white-space: normal;
 	padding: 0.8em 1em 0.5em 1em;
 	box-sizing: border-box;
-	border: @border-width-base @border-style-base @border-color-subtle;
-	margin-bottom: -1px;
+
+	&:not( :last-child ) {
+		border-bottom: @border-width-base @border-style-base @border-color-subtle;
+	}
 
 	&:not( [ href ] ) {
 		// Items without a primary URL are not clickable
@@ -30,10 +32,8 @@
 
 	&:focus {
 		text-decoration: none;
-		box-shadow: @box-shadow-inset-small @box-shadow-color-progressive--focus;
-		border-color: @border-color-progressive--focus;
+		box-shadow: @box-shadow-inset-medium @box-shadow-color-progressive--focus;
 		outline: @outline-base--focus;
-		z-index: 1;
 	}
 
 	&-unread {

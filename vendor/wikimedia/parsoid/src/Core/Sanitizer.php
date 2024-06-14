@@ -54,10 +54,9 @@ class Sanitizer {
 		'/&([A-Za-z0-9\x80-\xff]+;)
 		|&\#([0-9]+);
 		|&\#[xX]([0-9A-Fa-f]+);
-		|(&)/x';
+		|&/x';
 
 	private const INSECURE_RE = '! expression
-		| filter\s*:
 		| accelerator\s*:
 		| -o-link\s*:
 		| -o-link-source\s*:
@@ -77,7 +76,7 @@ class Sanitizer {
 	 * and deny everything else.
 	 * [1]: http://ha.ckers.org/xss.html
 	 */
-	private const EVIL_URI_PATTERN = '!(^|\s|\*/\s*)(javascript|vbscript)([^\w]|$)!iD';
+	private const EVIL_URI_PATTERN = '!(^|\s|\*/\s*)(javascript|vbscript)(\W|$)!iD';
 	private const XMLNS_ATTRIBUTE_PATTERN = "/^xmlns:[:A-Z_a-z-.0-9]+$/D";
 
 	/**
@@ -162,7 +161,7 @@ class Sanitizer {
 	 * Fetch the list of acceptable attributes for a given element name.
 	 *
 	 * @param string $element
-	 * @return array
+	 * @return array<string,int>
 	 */
 	public static function attributesAllowedInternal( string $element ): array {
 		// PORT-FIXME: this method is private in core, but used by Gallery
@@ -174,7 +173,7 @@ class Sanitizer {
 	/**
 	 * Foreach array key (an allowed HTML element), return an array
 	 * of allowed attributes
-	 * @return array
+	 * @return array<string,string[]>
 	 */
 	private static function setupAttributesAllowedInternal(): array {
 		static $allowed;
@@ -420,24 +419,25 @@ class Sanitizer {
 	 * @return string
 	 * @internal
 	 */
-	public static function normalizeCharReferences( $text ) {
+	public static function normalizeCharReferences( string $text ): string {
 		return preg_replace_callback(
 			self::CHAR_REFS_REGEX,
 			[ self::class, 'normalizeCharReferencesCallback' ],
-			$text );
+			$text, -1, $count, PREG_UNMATCHED_AS_NULL
+		);
 	}
 
 	/**
-	 * @param string $matches
+	 * @param array $matches
 	 * @return string
 	 */
-	private static function normalizeCharReferencesCallback( $matches ): string {
+	private static function normalizeCharReferencesCallback( array $matches ): string {
 		$ret = null;
-		if ( $matches[1] != '' ) {
+		if ( isset( $matches[1] ) ) {
 			$ret = self::normalizeEntity( $matches[1] );
-		} elseif ( $matches[2] != '' ) {
+		} elseif ( isset( $matches[2] ) ) {
 			$ret = self::decCharReference( $matches[2] );
-		} elseif ( $matches[3] != '' ) {
+		} elseif ( isset( $matches[3] ) ) {
 			$ret = self::hexCharReference( $matches[3] );
 		}
 		if ( $ret === null ) {
@@ -457,7 +457,7 @@ class Sanitizer {
 	 * @param string $name Semicolon-terminated name
 	 * @return string
 	 */
-	private static function normalizeEntity( $name ) {
+	private static function normalizeEntity( string $name ): string {
 		if ( isset( self::MW_ENTITY_ALIASES[$name] ) ) {
 			// Non-standard MediaWiki-specific entities
 			return '&' . self::MW_ENTITY_ALIASES[$name];
@@ -483,7 +483,7 @@ class Sanitizer {
 		# value if $codepoint is too many digits
 		$point = intval( $codepoint );
 		if ( self::validateCodepoint( $point ) ) {
-			return sprintf( '&#%d;', $point );
+			return "&#$point;";
 		} else {
 			return null;
 		}
@@ -494,14 +494,9 @@ class Sanitizer {
 	 * @return null|string
 	 */
 	private static function hexCharReference( string $codepoint ): ?string {
-		# hexdec() will return a float (not an int) if $codepoint is too
-		# long, so protect against that.  The largest valid codepoint is
-		# 0x10FFFF.
-		if ( strlen( ltrim( $codepoint, '0' ) ) > 6 ) {
-			return null;
-		}
 		$point = hexdec( $codepoint );
-		if ( self::validateCodepoint( $point ) ) {
+		// hexdec() might return a float if the string is too long
+		if ( is_int( $point ) && self::validateCodepoint( $point ) ) {
 			return sprintf( '&#x%x;', $point );
 		} else {
 			return null;
@@ -532,7 +527,7 @@ class Sanitizer {
 	 * @param int $cp
 	 * @return string
 	 */
-	private static function codepointToUtf8( int $cp ) {
+	private static function codepointToUtf8( int $cp ): string {
 		$chr = mb_chr( $cp, 'UTF-8' );
 		Assert::invariant( $chr !== false, "Getting char failed!" );
 		return $chr;
@@ -544,7 +539,7 @@ class Sanitizer {
 	 * @param string $str
 	 * @return int
 	 */
-	private static function utf8ToCodepoint( string $str ) {
+	private static function utf8ToCodepoint( string $str ): int {
 		$ord = mb_ord( $str );
 		Assert::invariant( $ord !== false, "Getting code point failed!" );
 		return $ord;
@@ -554,7 +549,7 @@ class Sanitizer {
 	 * @param string $host
 	 * @return string
 	 */
-	private static function stripIDNs( string $host ) {
+	private static function stripIDNs( string $host ): string {
 		// This code is part of Sanitizer::cleanUrl in core
 		return preg_replace( self::IDN_RE_G, '', $host );
 	}
@@ -604,7 +599,7 @@ class Sanitizer {
 	 * @param string $name Semicolon-terminated entity name
 	 * @return string
 	 */
-	private static function decodeEntity( $name ) {
+	private static function decodeEntity( string $name ): string {
 		// These are MediaWiki-specific entities, not in the HTML standard
 		if ( isset( self::MW_ENTITY_ALIASES[$name] ) ) {
 			$name = self::MW_ENTITY_ALIASES[$name];
@@ -637,23 +632,23 @@ class Sanitizer {
 		return preg_replace_callback(
 			self::CHAR_REFS_REGEX,
 			function ( $matches ) {
-				if ( $matches[1] !== '' ) {
+				if ( isset( $matches[1] ) ) {
 					return self::decodeEntity( $matches[1] );
-				} elseif ( $matches[2] !== '' ) {
+				} elseif ( isset( $matches[2] ) ) {
 					return self::decodeChar( intval( $matches[2] ) );
-				} elseif ( $matches[3] !== '' ) {
-					# hexdec will return a float if the string is too long (!) so
-					# check the length of the string first.
-					if ( strlen( ltrim( $matches[3], '0' ) ) > 6 ) {
+				} elseif ( isset( $matches[3] ) ) {
+					$point = hexdec( $matches[3] );
+					// hexdec() might return a float if the string is too long
+					if ( !is_int( $point ) ) {
 						// Invalid character reference.
 						return self::UTF8_REPLACEMENT;
 					}
-					return self::decodeChar( hexdec( $matches[3] ) );
+					return self::decodeChar( $point );
 				}
 				# Last case should be an ampersand by itself
-				return $matches[4];
+				return $matches[0];
 			},
-			$text
+			$text, -1, $count, PREG_UNMATCHED_AS_NULL
 		);
 	}
 
@@ -910,9 +905,7 @@ class Sanitizer {
 		$n = count( $attrs );
 		for ( $i = 0;  $i < $n;  $i++ ) {
 			$a = $attrs[$i];
-			if ( !isset( $a->v ) ) {
-				$a->v = '';
-			}
+			$a->v ??= '';
 
 			// Convert attributes to string, if necessary.
 			$a->k = TokenUtils::tokensToString( $a->k );
@@ -1007,7 +1000,7 @@ class Sanitizer {
 				// Paranoia. Allow "simple" values but suppress javascript
 				if ( preg_match( self::EVIL_URI_PATTERN, $v ) ) {
 					// Retain the Parsoid typeofs for Parsoid attrs
-					$newV = $psdAttr ? trim( preg_replace( '/(?:^|\s)(?!mw:\w)[^\s]*/', '', $origV ) ) : null;
+					$newV = $psdAttr ? trim( preg_replace( '/(?:^|\s)(?!mw:\w)\S*/', '', $origV ) ) : null;
 					$newAttrs[$k] = [ $newV, $origV, $origK ];
 					continue;
 				}
@@ -1100,7 +1093,7 @@ class Sanitizer {
 	 * @param array $matches
 	 * @return string
 	 */
-	public static function cssDecodeCallback( $matches ) {
+	public static function cssDecodeCallback( array $matches ): string {
 		if ( $matches[1] !== '' ) {
 			// Line continuation
 			return '';
@@ -1164,7 +1157,7 @@ class Sanitizer {
 	 * @param string $space Space character for the French spaces, defaults to '&#160;'
 	 * @return string Armored text
 	 */
-	public static function armorFrenchSpaces( $text, $space = '&#160;' ) {
+	public static function armorFrenchSpaces( string $text, string $space = '&#160;' ): string {
 		// Replace $ with \$ and \ with \\
 		$space = preg_replace( '#(?<!\\\\)(\\$|\\\\)#', '\\\\$1', $space );
 		return preg_replace(
@@ -1195,7 +1188,7 @@ class Sanitizer {
 	 *
 	 * @since 1.30
 	 */
-	public static function escapeIdForAttribute( string $id, $mode = self::ID_PRIMARY ): string {
+	public static function escapeIdForAttribute( string $id, int $mode = self::ID_PRIMARY ): string {
 		// For consistency with PHP's API, we accept "primary" or "fallback" as
 		// the mode in 'options'.  This (slightly) abstracts the actual details
 		// of the id encoding from the Parsoid code which handles ids; we could
@@ -1243,7 +1236,7 @@ class Sanitizer {
 	 * @param string $mode One of modes from $wgFragmentMode
 	 * @return string
 	 */
-	private static function escapeIdInternalUrl( $id, $mode ) {
+	private static function escapeIdInternalUrl( string $id, string $mode ): string {
 		$id = self::escapeIdInternal( $id, $mode );
 		if ( $mode === 'html5' ) {
 			$id = preg_replace( '/%([a-fA-F0-9]{2})/', '%25$1', $id );

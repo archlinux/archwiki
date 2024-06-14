@@ -1,14 +1,16 @@
 <?php
 
 use MediaWiki\Json\JsonCodec;
+use MediaWiki\PoolCounter\PoolWorkArticleViewCurrent;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
 use Psr\Log\NullLogger;
 use Wikimedia\Rdbms\ChronologyProtector;
+use Wikimedia\Stats\StatsFactory;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers PoolWorkArticleViewCurrent
+ * @covers \MediaWiki\PoolCounter\PoolWorkArticleViewCurrent
  * @group Database
  */
 class PoolWorkArticleViewCurrentTest extends PoolWorkArticleViewTest {
@@ -45,7 +47,7 @@ class PoolWorkArticleViewCurrentTest extends PoolWorkArticleViewTest {
 			$options,
 			$this->getServiceContainer()->getRevisionRenderer(),
 			$parserCache,
-			$this->getServiceContainer()->getDBLoadBalancerFactory(),
+			$this->getServiceContainer()->getConnectionProvider(),
 			$this->getServiceContainer()->getChronologyProtector(),
 			$this->getLoggerSpi(),
 			$this->getServiceContainer()->getWikiPageFactory()
@@ -59,10 +61,11 @@ class PoolWorkArticleViewCurrentTest extends PoolWorkArticleViewTest {
 			'',
 			$this->getServiceContainer()->getHookContainer(),
 			new JsonCodec(),
-			$this->getServiceContainer()->getStatsdDataFactory(),
+			StatsFactory::newNull(),
 			new NullLogger(),
 			$this->getServiceContainer()->getTitleFactory(),
-			$this->getServiceContainer()->getWikiPageFactory()
+			$this->getServiceContainer()->getWikiPageFactory(),
+			$this->getServiceContainer()->getGlobalIdGenerator()
 		);
 
 		return $this->parserCache;

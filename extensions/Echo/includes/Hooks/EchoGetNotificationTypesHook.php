@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\Notifications\Hooks;
 
 use MediaWiki\Extension\Notifications\Model\Event;
-use User;
+use MediaWiki\User\User;
 
 /**
  * This is a hook handler interface, see docs/Hooks.md in core.

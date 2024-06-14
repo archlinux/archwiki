@@ -1,18 +1,5 @@
 <?php
-
-namespace MediaWiki\Extension\Gadgets\Api;
-
-use ApiBase;
-use ApiQuery;
-use ApiQueryBase;
-use ApiResult;
-use MediaWiki\Extension\Gadgets\GadgetRepo;
-use Wikimedia\ParamValidator\ParamValidator;
-
 /**
- * Created on 16 April 2011
- * API for Gadgets extension
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -27,8 +14,22 @@ use Wikimedia\ParamValidator\ParamValidator;
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
  */
 
+namespace MediaWiki\Extension\Gadgets\Api;
+
+use ApiBase;
+use ApiQuery;
+use ApiQueryBase;
+use ApiResult;
+use MediaWiki\Extension\Gadgets\GadgetRepo;
+use Wikimedia\ParamValidator\ParamValidator;
+
+/**
+ * API for Gadgets extension
+ */
 class ApiQueryGadgetCategories extends ApiQueryBase {
 	/**
 	 * @var array
@@ -40,8 +41,11 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 	 */
 	private $neededNames;
 
-	public function __construct( ApiQuery $queryModule, $moduleName ) {
+	private GadgetRepo $gadgetRepo;
+
+	public function __construct( ApiQuery $queryModule, $moduleName, GadgetRepo $gadgetRepo ) {
 		parent::__construct( $queryModule, $moduleName, 'gc' );
+		$this->gadgetRepo = $gadgetRepo;
 	}
 
 	public function execute() {
@@ -62,7 +66,7 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 	private function getList() {
 		$data = [];
 		$result = $this->getResult();
-		$gadgets = GadgetRepo::singleton()->getStructuredList();
+		$gadgets = $this->gadgetRepo->getStructuredList();
 
 		if ( $gadgets ) {
 			foreach ( $gadgets as $category => $list ) {

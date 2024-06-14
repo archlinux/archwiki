@@ -29,7 +29,6 @@
 	"echo-pref-subscription-edit-thank": "'Mercie' fir meng Ännerung",
 	"echo-pref-tooltip-edit-thank": "Mech Informéiere wann ee mir fir eng Ännerung déi ech gemaach hu Merci seet.",
 	"echo-category-title-edit-thank": "Merci",
-	"notification-thanks-diff-link": "Är Ännerung",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|huet}} {{GENDER:$4|Iech}} fir Är Ännerung op <strong>$3</strong> Merci gesot.",
 	"notification-compact-header-edit-thank": "$1 huet {{GENDER:$3|Iech}} {{GENDER:$2|Merci gesot}}.",
 	"log-name-thanks": "Logbuch vum Merci-soen",
@@ -39,7 +38,6 @@
 	"thanks-confirmation-special-rev": "Wëllt Dir de 'Merci' fir dës Ännerung ëffentlech schécken?",
 	"notification-link-text-view-post": "Bemierkung weisen",
 	"flow-thanks-confirmation-special": "Wëllt Dir ëffentlech fir dës Bemierkung e 'Merci' schécken?",
-	"notification-flow-thanks-post-link": "Är Bemierkung",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|huet}} {{GENDER:$5|Iech}} fir Är Bemierkung op \"<strong>$3</strong>\" Merci gesot.",
 	"notification-compact-header-flow-thank": "$1 huet {{GENDER:$3|Iech}} {{GENDER:$2|Merci gesot}} .",
 	"ipb-action-thanks": "Merci schécken"

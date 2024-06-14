@@ -1,10 +1,10 @@
 <?php
 
 use MediaWiki\Extension\Notifications\AttributeManager;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
-use MediaWiki\User\UserOptionsLookup;
 
 /**
  * @covers \MediaWiki\Extension\Notifications\AttributeManager

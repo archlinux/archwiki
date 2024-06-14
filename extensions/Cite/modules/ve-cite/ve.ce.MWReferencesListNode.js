@@ -10,11 +10,9 @@
 /**
  * ContentEditable MediaWiki references list node.
  *
- * @class
- * @extends ve.ce.LeafNode
- * @mixin ve.ce.FocusableNode
- *
  * @constructor
+ * @extends ve.ce.LeafNode
+ * @mixes ve.ce.FocusableNode
  * @param {ve.dm.MWReferencesListNode} model Model to observe
  * @param {Object} [config] Configuration options
  */
@@ -68,28 +66,27 @@ ve.ce.MWReferencesListNode.static.primaryCommandName = 'referencesList';
 /* Static Methods */
 
 /**
- * @inheritdoc
+ * @override
+ * @see ve.ce.LeafNode
  */
 ve.ce.MWReferencesListNode.static.getDescription = function ( model ) {
 	return model.getAttribute( 'refGroup' );
 };
 
 /**
- * @inheritdoc ve.ce.FocusableNode
+ * @override
+ * @see ve.ce.FocusableNode
  */
 ve.ce.MWReferencesListNode.prototype.getExtraHighlightClasses = function () {
-	const extraClasses = ve.ce.FocusableNode.prototype.getExtraHighlightClasses.apply( this, arguments );
-	return extraClasses.concat( [
-		've-ce-mwReferencesListNode-highlight'
-	] );
+	return ve.ce.FocusableNode.prototype
+		.getExtraHighlightClasses.apply( this, arguments )
+		.concat( [ 've-ce-mwReferencesListNode-highlight' ] );
 };
 
 /* Methods */
 
 /**
  * Handle setup events.
- *
- * @method
  */
 ve.ce.MWReferencesListNode.prototype.onSetup = function () {
 	this.internalList = this.getModel().getDocument().getInternalList();
@@ -104,8 +101,6 @@ ve.ce.MWReferencesListNode.prototype.onSetup = function () {
 
 /**
  * Handle teardown events.
- *
- * @method
  */
 ve.ce.MWReferencesListNode.prototype.onTeardown = function () {
 	// Parent method
@@ -127,7 +122,6 @@ ve.ce.MWReferencesListNode.prototype.onTeardown = function () {
  *
  * This will occur after a document transaction.
  *
- * @method
  * @param {string[]} groupsChanged A list of groups which have changed in this transaction
  */
 ve.ce.MWReferencesListNode.prototype.onInternalListUpdate = function ( groupsChanged ) {
@@ -161,8 +155,6 @@ ve.ce.MWReferencesListNode.prototype.onAttributeChange = function ( key ) {
  * Handle the updating of the InternalListNode.
  *
  * This will occur after changes to any InternalItemNode.
- *
- * @method
  */
 ve.ce.MWReferencesListNode.prototype.onListNodeUpdate = function () {
 	// When the list node updates we're not sure which list group the item
@@ -269,17 +261,18 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 			if ( this.getRoot() ) {
 				const surface = this.getRoot().getSurface().getSurface();
 				$li.on( 'mousedown', function ( e ) {
-					if ( modelNode && modelNode.length ) {
-						const items = ve.ui.contextItemFactory.getRelatedItems( [ firstNode ] ).filter( function ( item ) {
-							return item.name !== 'mobileActions';
-						} );
+					if ( ve.isUnmodifiedLeftClick( e ) && modelNode && modelNode.length ) {
+						const items = ve.ui.contextItemFactory.getRelatedItems( [ firstNode ] )
+							.filter( ( item ) => item.name !== 'mobileActions' );
 						if ( items.length ) {
 							const contextItem = ve.ui.contextItemFactory.lookup( items[ 0 ].name );
 							if ( contextItem ) {
-								const command = surface.commandRegistry.lookup( contextItem.static.commandName );
+								const command = surface.commandRegistry
+									.lookup( contextItem.static.commandName );
 								if ( command ) {
 									const fragmentArgs = {
-										fragment: surface.getModel().getLinearFragment( firstNode.getOuterRange(), true ),
+										fragment: surface.getModel()
+											.getLinearFragment( firstNode.getOuterRange(), true ),
 										selectFragmentOnClose: false
 									};
 									const newArgs = ve.copy( command.args );

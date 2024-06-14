@@ -19,8 +19,8 @@ A file for css that optimises the Minerva skin on larger devices.
 	.content,
 	.content-unstyled,
 	.post-content {
-		max-width: @contentMaxWidthTablet;
-		margin: 0 @contentPaddingTablet;
+		max-width: @max-width-content-tablet;
+		margin: 0 @padding-content-tablet;
 	}
 	// stylelint-enable selector-max-id
 
@@ -67,7 +67,7 @@ A file for css that optimises the Minerva skin on larger devices.
 		figure[ typeof~='mw:File/Thumb' ],
 		figure[ typeof~='mw:File/Frame' ],
 		.thumb {
-			max-width: @width-breakpoint-tablet - @contentMargin;
+			max-width: @width-breakpoint-tablet - @margin-content;
 
 			&.mw-halign-left,
 			&.tleft {
@@ -145,6 +145,6 @@ A file for css that optimises the Minerva skin on larger devices.
 		margin-left: auto;
 		margin-right: auto;
 		width: 90%;
-		max-width: @contentMaxWidthTablet;
+		max-width: @max-width-content-tablet;
 	}
 }

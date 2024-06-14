@@ -12,8 +12,6 @@
 	 * @param {Object} [config] Configuration object
 	 */
 	mw.echo.ui.CrossWikiUnreadFilterWidget = function MwEchoUiCrossWikiUnreadFilterWidget( controller, filtersModel, config ) {
-		var titleWidget, subtitleWidget;
-
 		config = config || {};
 
 		// Parent constructor
@@ -47,11 +45,11 @@
 		this.model = filtersModel;
 		this.previousPageSelected = null;
 
-		titleWidget = new OO.ui.LabelWidget( {
+		var titleWidget = new OO.ui.LabelWidget( {
 			classes: [ 'mw-echo-ui-crossWikiUnreadFilterWidget-title' ],
 			label: mw.msg( 'echo-specialpage-pagefilters-title' )
 		} );
-		subtitleWidget = new OO.ui.LabelWidget( {
+		var subtitleWidget = new OO.ui.LabelWidget( {
 			classes: [ 'mw-echo-ui-crossWikiUnreadFilterWidget-subtitle' ],
 			label: mw.msg( 'echo-specialpage-pagefilters-subtitle' )
 		} );
@@ -133,16 +131,15 @@
 	 * Populate the widget from the model data
 	 */
 	mw.echo.ui.CrossWikiUnreadFilterWidget.prototype.populateDataFromModel = function () {
-		var i, source, widget, selectedWidget, item,
-			widgets = [],
+		var widgets = [],
 			sourcePageModel = this.model.getSourcePagesModel(),
 			selectedSource = sourcePageModel.getCurrentSource(),
 			selectedPage = sourcePageModel.getCurrentPage(),
 			sources = sourcePageModel.getSourcesArray();
 
-		for ( i = 0; i < sources.length; i++ ) {
-			source = sources[ i ];
-			widget = new mw.echo.ui.PageFilterWidget(
+		for ( var i = 0; i < sources.length; i++ ) {
+			var source = sources[ i ];
+			var widget = new mw.echo.ui.PageFilterWidget(
 				sourcePageModel,
 				source,
 				{
@@ -159,7 +156,8 @@
 		this.addItems( widgets );
 
 		// Select the current source
-		selectedWidget = this.findItemFromData( selectedSource );
+		var selectedWidget = this.findItemFromData( selectedSource );
+		var item;
 		if ( selectedPage ) {
 			// Select a specific page
 			item = selectedWidget.findItemFromData( selectedPage );

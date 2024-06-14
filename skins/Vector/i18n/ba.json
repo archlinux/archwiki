@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Assele",
+			"Bashkorttan",
 			"Haqmar",
 			"Sagan",
-			"З. ӘЙЛЕ",
-			"Рустам Нурыев",
 			"Айсар",
-			"Bashkorttan"
+			"З. ӘЙЛЕ",
+			"Рустам Нурыев"
 		]
 	},
 	"skinname-vector": "Векторлы иҫкергән (2010)",
@@ -24,7 +24,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 тел}}",
 	"vector-no-language-button-label": "Тел өҫтәргә.",
 	"vector-no-language-button-aria-label": "Был мәҡәлә ошо телдә генә бар. Башҡа телдәрҙә лә яҙығыҙ",
-	"vector-language-redirect-to-top": "Башҡа телдәргә һылтанмалар мәҡәләнең атамаһы эргәһендә тора",
 	"vector-language-variant-switcher-label": "Телде үҙгәртергә",
 	"vector-action-addsection": "Тема өҫтәү",
 	"vector-action-delete": "Юйырға",
@@ -41,11 +40,14 @@
 	"vector-jumptosearch": "Эҙләүгә күсергә",
 	"vector-jumptocontent": "Эстәлеккә күсергә",
 	"vector-more-actions": "Тағы",
-	"vector-client-preferences": "Уҡыу көйләүҙәре",
+	"vector-client-prefs-label": "Уҡыу көйләүҙәре",
 	"vector-feature-limited-width-name": "Бағана киңлеге",
 	"vector-feature-custom-font-size-name": "Шрифт ҙурлығы",
 	"vector-feature-limited-width-0-label": "Сикләүһеҙ киңлек",
 	"vector-feature-limited-width-1-label": "Сикләнгән киңлек",
+	"vector-feature-custom-font-size-0-label": "Бәләкәй",
+	"vector-feature-custom-font-size-1-label": "Ғәҙәти",
+	"vector-feature-custom-font-size-2-label": "Ҙур",
 	"vector-search-loader": "Эҙләү тексы йөкләнә",
 	"vector-searchsuggest-containing": "Эстәлегендә <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> булған биттәрҙе эҙләргә",
 	"vector-intro-page": "Википедия:Рәхим итегеҙ",
@@ -77,13 +79,6 @@
 	"vector-toc-unpinned-popup": "Йөкмәтке бында күсерелгән.",
 	"vector-page-tools-unpinned-popup": "Ҡоралдар менюһы бында күсерелгән.",
 	"vector-main-menu-unpinned-popup": "Төп меню бында күсерелгән.",
-	"vector-readability-survey-title": "Уҡыу мөмкинлеген үҙгәртеү прототибы",
-	"vector-readability-survey-description": "Һеҙгә Википедияла текст нисек булһа нығыраҡ оҡшай? Күренеште көйләү өсөн түбәндәге күсергестәрҙе файҙаланығыҙ. Проект тураһында күберәк белеү өсөн [[mw:Special:MyLanguage/Reading/Web/Accessibility for reading|«Уҡыу мөмкинлеге»]] менән танышығыҙ.",
-	"vector-readability-survey-fontSize": "Шрифт ҙурлығы",
-	"vector-readability-survey-lineHeight": "Бейеклеге",
-	"vector-readability-survey-paragraphSpacing": "Параграфтар арауығы",
-	"vector-readability-survey-optout": "Үҙегеҙҙең дизайнығыҙҙы беҙгә ебәреү һәм киләһе биттә фекер ҡалдырыу өсөн Дауам итергә тигән төймәгә баҫығыҙ. [[#close-vector-survey|Ҡоралды юйҙырыу өсөн, бында баҫығыҙ]].",
-	"vector-readability-survey-randomize": "Осраҡлы һайлау эшләргә",
-	"vector-readability-survey-reset": "алып ташларға",
-	"vector-readability-survey-share": "Дауам итергә"
+	"vector-2022-beta-preview-label": "Vector 2022 бета",
+	"vector-2022-beta-preview-description": "Vector 2022 яңы мөмкинлектәрен алдан ҡарап сығыу"
 }

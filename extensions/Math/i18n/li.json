@@ -7,7 +7,6 @@
 	},
 	"math-desc": "Tuin wiskóndige formules tösse <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>-labels",
 	"math-visualeditor-mwchemdialog-title": "Sjemische formuul",
-	"math-visualeditor-mwcheminspector-title": "Sjemische formuul",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Snel bewirking",
 	"math-visualeditor-mwlatexdialog-card-formula": "Formuul",
 	"math-visualeditor-mwlatexdialog-card-options": "Opties",
@@ -21,8 +20,8 @@
 	"math_syntax_error": "fout vanne syntax",
 	"math_unknown_error": "onbekènde fout",
 	"math_unknown_function": "ónbekènde functie \"$1\"",
-	"mw_math_latexml": "LaTeXML (experimenteel; gebroek MathML)",
-	"mw_math_mathml": "MathML woe meugelik (experimenteil)",
-	"mw_math_source": "LaTeX-brón (veur teksbrowsers)",
+	"mw-math-latexml": "LaTeXML (experimenteel; gebroek MathML)",
+	"mw-math-mathml": "MathML woe meugelik (experimenteil)",
+	"mw-math-source": "LaTeX-brón (veur teksbrowsers)",
 	"prefs-math": "Mattemetik rendere"
 }

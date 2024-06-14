@@ -21,7 +21,7 @@ describe( 'instrumentation', () => {
 			},
 			{
 				title: 'Ab',
-				url: `${url2Base}&wprov=xyz`
+				url: `${ url2Base }&wprov=xyz`
 			},
 			{
 				title: 'Ac',
@@ -36,15 +36,15 @@ describe( 'instrumentation', () => {
 			.toStrictEqual( [
 				{
 					title: 'Aa',
-					url: `${url1}&wprov=acrw1_0`
+					url: `${ url1 }&wprov=acrw1_0`
 				},
 				{
 					title: 'Ab',
-					url: `${url2Base}&wprov=acrw1_1`
+					url: `${ url2Base }&wprov=acrw1_1`
 				},
 				{
 					title: 'Ac',
-					url: `${url3}?wprov=acrw1_2`
+					url: `${ url3 }?wprov=acrw1_2`
 				},
 				{
 					title: 'Ad'
@@ -71,11 +71,11 @@ describe( 'instrumentation', () => {
 			.toStrictEqual( [
 				{
 					title: 'Ae',
-					url: `${url1}&wprov=acrw1_4`
+					url: `${ url1 }&wprov=acrw1_4`
 				},
 				{
 					title: 'Af',
-					url: `${url2}&wprov=acrw1_5`
+					url: `${ url2 }&wprov=acrw1_5`
 				}
 			] );
 	} );

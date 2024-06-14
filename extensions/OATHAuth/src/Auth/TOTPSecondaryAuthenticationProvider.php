@@ -24,8 +24,8 @@ use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Extension\OATHAuth\Module\TOTP;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\User;
 use Message;
-use User;
 
 /**
  * AuthManager secondary authentication provider for TOTP second-factor authentication.
@@ -45,13 +45,8 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 	 * @return array
 	 */
 	public function getAuthenticationRequests( $action, array $options ) {
-		switch ( $action ) {
-			case AuthManager::ACTION_LOGIN:
-				// don't ask for anything initially so the second factor is on a separate screen
-				return [];
-			default:
-				return [];
-		}
+		// don't ask for anything initially, so the second factor is on a separate screen
+		return [];
 	}
 
 	/**
@@ -68,10 +63,12 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 
 		if ( !( $authUser->getModule() instanceof TOTP ) ) {
 			return AuthenticationResponse::newAbstain();
-		} else {
-			return AuthenticationResponse::newUI( [ new TOTPAuthenticationRequest() ],
-				wfMessage( 'oathauth-auth-ui' ), 'warning' );
 		}
+
+		return AuthenticationResponse::newUI(
+			[ new TOTPAuthenticationRequest() ],
+			wfMessage( 'oathauth-auth-ui' ),
+		);
 	}
 
 	/**
@@ -91,8 +88,9 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 		$token = $request->OATHToken;
 
 		if ( !( $authUser->getModule() instanceof TOTP ) ) {
-			$this->logger->warning( 'Two-factor authentication was disabled mid-authentication for '
-				. $user->getName() );
+			$this->logger->warning( 'Two-factor authentication was disabled mid-authentication for {user}', [
+				'user' => $user->getName(),
+			] );
 			return AuthenticationResponse::newAbstain();
 		}
 
@@ -109,18 +107,21 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 
 		if ( $authUser->getModule()->verify( $authUser, [ 'token' => $token ] ) ) {
 			return AuthenticationResponse::newPass();
-		} else {
-			// Increase rate limit counter for failed request
-			$user->pingLimiter( 'badoath' );
-
-			$this->logger->info( 'OATHAuth user {user} failed OTP token/recovery code from {clientip}', [
-				'user'     => $user,
-				'clientip' => $user->getRequest()->getIP(),
-			] );
-
-			return AuthenticationResponse::newUI( [ new TOTPAuthenticationRequest() ],
-				wfMessage( 'oathauth-login-failed' ), 'error' );
 		}
+
+		// Increase rate limit counter for failed request
+		$user->pingLimiter( 'badoath' );
+
+		$this->logger->info( 'OATHAuth user {user} failed OTP token/recovery code from {clientip}', [
+			'user'     => $user->getName(),
+			'clientip' => $user->getRequest()->getIP(),
+		] );
+
+		return AuthenticationResponse::newUI(
+			[ new TOTPAuthenticationRequest() ],
+			wfMessage( 'oathauth-login-failed' ),
+			'error'
+		);
 	}
 
 	/**

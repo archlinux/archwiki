@@ -21,6 +21,14 @@
  * @ingroup Installer
  */
 
+namespace MediaWiki\Installer;
+
+use FixInconsistentRedirects;
+use MigrateExternallinks;
+use MigrateRevisionActorTemp;
+use MigrateRevisionCommentTemp;
+use PopulateUserIsTemp;
+use UpdateRestrictions;
 use Wikimedia\Rdbms\DatabasePostgres;
 
 /**
@@ -157,7 +165,7 @@ class PostgresUpdater extends DatabaseUpdater {
 			[ 'addPgIndex', 'page_restrictions', 'pr_typelevel', '(pr_type, pr_level)' ],
 			[ 'addPgIndex', 'page_restrictions', 'pr_level', '(pr_level)' ],
 			[ 'addPgIndex', 'page_restrictions', 'pr_cascade', '(pr_cascade)' ],
-			[ 'changePrimaryKey', 'page_restrictions', [ 'pr_id' ], 'page_restrictions_pk' ] ,
+			[ 'changePrimaryKey', 'page_restrictions', [ 'pr_id' ], 'page_restrictions_pk' ],
 			[ 'changeNullableField', 'page_restrictions', 'pr_page', 'NOT NULL', true ],
 			[ 'dropFkey', 'user_groups', 'ug_user' ],
 			[ 'setDefault', 'user_groups', 'ug_user', 0 ],
@@ -457,6 +465,14 @@ class PostgresUpdater extends DatabaseUpdater {
 			[ 'modifyField', 'filearchive', 'fa_size', 'patch-filearchive-fa_size_to_bigint.sql' ],
 			[ 'modifyField', 'oldimage', 'oi_size', 'patch-oldimage-oi_size_to_bigint.sql' ],
 			[ 'modifyField', 'uploadstash', 'us_size', 'patch-uploadstash-us_size_to_bigint.sql' ],
+
+			// 1.42
+			[ 'addField', 'user_autocreate_serial', 'uas_year', 'patch-user_autocreate_serial-uas_year.sql' ],
+			[ 'addTable', 'block_target', 'patch-block_target.sql' ],
+			[ 'dropIndex', 'categorylinks', 'cl_collation_ext', 'patch-drop-cl_collation_ext.sql' ],
+			[ 'runMaintenance', PopulateUserIsTemp::class, 'maintenance/populateUserIsTemp.php' ],
+			[ 'dropIndex', 'sites', 'site_type', 'patch-sites-drop_indexes.sql' ],
+			[ 'dropIndex', 'iwlinks', 'iwl_prefix_from_title', 'patch-iwlinks-drop-iwl_prefix_from_title.sql' ],
 		];
 	}
 
@@ -824,46 +840,6 @@ END;
 			$this->db->query( "CREATE INDEX $index ON $table $type", __METHOD__ );
 		} else {
 			$this->applyPatch( $type, true, "Creating index '$index' on table '$table'" );
-		}
-	}
-
-	/**
-	 * Add a value to an existing PostgreSQL enum type
-	 * @since 1.31
-	 * @param string $type Type name. Must be in the core schema.
-	 * @param string $value Value to add.
-	 */
-	protected function addPgEnumValue( $type, $value ) {
-		$row = $this->db->selectRow(
-			[
-				't' => 'pg_catalog.pg_type',
-				'n' => 'pg_catalog.pg_namespace',
-				'e' => 'pg_catalog.pg_enum',
-			],
-			[ 't.typname', 't.typtype', 'e.enumlabel' ],
-			[
-				't.typname' => $type,
-				'n.nspname' => $this->db->getCoreSchema(),
-			],
-			__METHOD__,
-			[],
-			[
-				'n' => [ 'JOIN', 't.typnamespace = n.oid' ],
-				'e' => [ 'LEFT JOIN', [ 'e.enumtypid = t.oid', 'e.enumlabel' => $value ] ],
-			]
-		);
-
-		if ( !$row ) {
-			$this->output( "...Type $type does not exist, skipping modify enum.\n" );
-		} elseif ( $row->typtype !== 'e' ) {
-			$this->output( "...Type $type does not seem to be an enum, skipping modify enum.\n" );
-		} elseif ( $row->enumlabel === $value ) {
-			$this->output( "...Enum type $type already contains value '$value'.\n" );
-		} else {
-			$this->output( "...Adding value '$value' to enum type $type.\n" );
-			$etype = $this->db->addIdentifierQuotes( $type );
-			$evalue = $this->db->addQuotes( $value );
-			$this->db->query( "ALTER TYPE $etype ADD VALUE $evalue", __METHOD__ );
 		}
 	}
 

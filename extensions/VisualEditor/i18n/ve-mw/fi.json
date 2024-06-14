@@ -349,7 +349,7 @@
 	"visualeditor-section-body-placeholder": "Uusi osio",
 	"visualeditor-section-title-placeholder": "Otsikko",
 	"visualeditor-loaderror-revidconflict": "Palvelimen palauttamat versio-ID:t eivät vastaa toisiaan (asiakirja: $1, metadata: $2).",
-	"visualeditor-loaderror-wrongmode": "Editori yritettiin ladata väärässä moodissa (datan tyyppi: \"$1\", editorin moodi: \"$2\").",
+	"visualeditor-loaderror-wrongmode": "Muokkain yritettiin ladata väärässä moodissa (datan tyyppi: \"$1\", muokkaimen moodi: \"$2\").",
 	"visualeditor-settings-tool": "Sivun asetukset",
 	"visualeditor-special-characters-group-other": "Useimmin käytetyt",
 	"visualeditor-templatesused-tool": "Käytetyt mallineet",

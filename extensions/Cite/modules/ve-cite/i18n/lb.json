@@ -39,7 +39,5 @@
 	"cite-ve-referenceslist-isempty-default": "Et gëtt keng Referenzen op dëser Säit fir an dës Lëscht opzehuelen.",
 	"cite-ve-referenceslist-missingref": "Dës Referenz ass an enger Schabloun oder engem anere generéierte Block definéiert a kann dowéinst just am Quelltextmodus geännert ginn.",
 	"cite-ve-toolbar-group-label": "Zitat",
-	"cite-ve-othergroup-item": "$1 Referenz",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referenzen",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Numm vum Referenzgrupp: \"$1\""
+	"cite-ve-othergroup-item": "$1 Referenz"
 }

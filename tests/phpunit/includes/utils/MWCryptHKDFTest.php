@@ -4,8 +4,8 @@ use MediaWiki\MainConfigNames;
 
 /**
  * @group HKDF
- * @covers CryptHKDF
- * @covers MWCryptHKDF
+ * @covers \CryptHKDF
+ * @covers \MWCryptHKDF
  */
 class MWCryptHKDFTest extends MediaWikiIntegrationTestCase {
 
@@ -22,9 +22,9 @@ class MWCryptHKDFTest extends MediaWikiIntegrationTestCase {
 		$a = MWCryptHKDF::generateHex( 64 );
 		$b = MWCryptHKDF::generateHex( 64 );
 
-		$this->assertTrue( strlen( $a ) == 64, "MWCryptHKDF produced fewer bytes than expected" );
-		$this->assertTrue( strlen( $b ) == 64, "MWCryptHKDF produced fewer bytes than expected" );
-		$this->assertFalse( $a == $b, "Two runs of MWCryptHKDF produced the same result." );
+		$this->assertSame( 64, strlen( $a ), "MWCryptHKDF produced fewer bytes than expected" );
+		$this->assertSame( 64, strlen( $b ), "MWCryptHKDF produced fewer bytes than expected" );
+		$this->assertNotEquals( $a, $b, "Two runs of MWCryptHKDF produced the same result." );
 	}
 
 	/**

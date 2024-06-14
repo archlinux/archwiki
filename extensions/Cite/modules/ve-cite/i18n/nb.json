@@ -63,7 +63,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Denne referanser defineres i en mal eller annen generert blokk, og kan for nå kun forhåndsvises i kildemodus.",
 	"cite-ve-referenceslist-missingreflist": "Denne referanselista genereres av en mal.",
 	"cite-ve-toolbar-group-label": "Angi kilde",
-	"cite-ve-othergroup-item": "$1 referanse",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referanser",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Referansegruppenavn: «$1»"
+	"cite-ve-othergroup-item": "$1 referanse"
 }

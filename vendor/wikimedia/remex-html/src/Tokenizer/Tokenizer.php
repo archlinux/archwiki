@@ -216,32 +216,32 @@ class Tokenizer {
 		}
 
 		switch ( $tagName ) {
-		case 'title':
-		case 'textarea':
-			$this->state = self::STATE_RCDATA;
-			break;
+			case 'title':
+			case 'textarea':
+				$this->state = self::STATE_RCDATA;
+				break;
 
-		case 'style':
-		case 'xmp':
-		case 'iframe':
-		case 'noembed':
-		case 'noframes':
-			$this->state = self::STATE_RAWTEXT;
-			break;
-
-		case 'script':
-			$this->state = self::STATE_SCRIPT_DATA;
-			break;
-
-		case 'noscript':
-			if ( $this->scriptingFlag ) {
+			case 'style':
+			case 'xmp':
+			case 'iframe':
+			case 'noembed':
+			case 'noframes':
 				$this->state = self::STATE_RAWTEXT;
-			}
-			break;
+				break;
 
-		case 'plaintext':
-			$this->state = self::STATE_PLAINTEXT;
-			break;
+			case 'script':
+				$this->state = self::STATE_SCRIPT_DATA;
+				break;
+
+			case 'noscript':
+				if ( $this->scriptingFlag ) {
+					$this->state = self::STATE_RAWTEXT;
+				}
+				break;
+
+			case 'plaintext':
+				$this->state = self::STATE_PLAINTEXT;
+				break;
 		}
 	}
 
@@ -365,37 +365,37 @@ class Tokenizer {
 
 		do {
 			switch ( $this->state ) {
-			case self::STATE_DATA:
-				$this->state = $this->dataState( $loop );
-				break;
+				case self::STATE_DATA:
+					$this->state = $this->dataState( $loop );
+					break;
 
-			case self::STATE_RCDATA:
-				$this->state = $this->textElementState( false );
-				break;
+				case self::STATE_RCDATA:
+					$this->state = $this->textElementState( false );
+					break;
 
-			case self::STATE_RAWTEXT:
-				$this->state = $this->textElementState( true );
-				break;
+				case self::STATE_RAWTEXT:
+					$this->state = $this->textElementState( true );
+					break;
 
-			case self::STATE_SCRIPT_DATA:
-				$this->state = $this->scriptDataState();
-				break;
+				case self::STATE_SCRIPT_DATA:
+					$this->state = $this->scriptDataState();
+					break;
 
-			case self::STATE_PLAINTEXT:
-				$this->state = $this->plaintextState();
-				break;
+				case self::STATE_PLAINTEXT:
+					$this->state = $this->plaintextState();
+					break;
 
-			case self::STATE_START:
-				$this->state = self::STATE_DATA;
-				break;
+				case self::STATE_START:
+					$this->state = self::STATE_DATA;
+					break;
 
-			case self::STATE_EOF:
-				$this->listener->endDocument( $this->length );
-				$eof = true;
-				break 2;
+				case self::STATE_EOF:
+					$this->listener->endDocument( $this->length );
+					$eof = true;
+					break 2;
 
-			default:
-				$this->fatal( 'invalid state' );
+				default:
+					$this->fatal( 'invalid state' );
 			}
 		} while ( $loop );
 
@@ -1628,30 +1628,30 @@ REGEX;
 			$PREG_JIT_STACKLIMIT_ERROR = 'undefined error';
 		}
 		switch ( preg_last_error() ) {
-		case PREG_NO_ERROR:
-			$msg = "PCRE returned false but gave PREG_NO_ERROR";
-			break;
+			case PREG_NO_ERROR:
+				$msg = "PCRE returned false but gave PREG_NO_ERROR";
+				break;
 
-		case PREG_INTERNAL_ERROR:
-			$msg = "PCRE internal error";
-			break;
+			case PREG_INTERNAL_ERROR:
+				$msg = "PCRE internal error";
+				break;
 
-		case PREG_BACKTRACK_LIMIT_ERROR:
-			$msg = "pcre.backtrack_limit exhausted";
-			break;
+			case PREG_BACKTRACK_LIMIT_ERROR:
+				$msg = "pcre.backtrack_limit exhausted";
+				break;
 
-		case PREG_RECURSION_LIMIT_ERROR:
-			$msg = "pcre.recursion_limit exhausted";
-			break;
+			case PREG_RECURSION_LIMIT_ERROR:
+				$msg = "pcre.recursion_limit exhausted";
+				break;
 
-		case $PREG_JIT_STACKLIMIT_ERROR:
-			$msg = "PCRE JIT stack space exhausted";
-			break;
+			case $PREG_JIT_STACKLIMIT_ERROR:
+				$msg = "PCRE JIT stack space exhausted";
+				break;
 
-		case PREG_BAD_UTF8_ERROR:
-		case PREG_BAD_UTF8_OFFSET_ERROR:
-		default:
-			$msg = "PCRE unexpected error";
+			case PREG_BAD_UTF8_ERROR:
+			case PREG_BAD_UTF8_OFFSET_ERROR:
+			default:
+				$msg = "PCRE unexpected error";
 		}
 
 		throw new TokenizerError( __CLASS__ . ": $msg" );

@@ -25,7 +25,6 @@
 	"echo-pref-subscription-edit-thank": "Damme 'e grazie p' 'o cagnamiento mio",
 	"echo-pref-tooltip-edit-thank": "Famme 'a notifica quanno coccheruno me ringraziasse pe' nu cagnamiento c'aggio fatto.",
 	"echo-category-title-edit-thank": "Grazie",
-	"notification-thanks-diff-link": "'o càgnamiento tujo",
 	"notification-header-rev-thank": "$1 {{GENDER:$4|ve}} {{GENDER:$2|ringraziaje}} p' 'o cagnamiento ncopp'a '''$3'''.",
 	"log-name-thanks": "Riggistro ringraziamente",
 	"log-description-thanks": "Ccà abbascio ce sta n'elenco 'utente c'avessero ringraziato ati utente.",
@@ -35,6 +34,5 @@
 	"thanks-error-invalidpostid": "L'ID d' 'a mmasciata è invalido.",
 	"flow-thanks-confirmation-special": "Vulite ringrazià pubbrecamente pe' stu cagnamiento?",
 	"flow-thanks-thanked-notice": "$1 ricevette 'e grazie voste p' 'e cummente {{GENDER:$2|suojo|suojo|lloro}}.",
-	"notification-flow-thanks-post-link": "'o cummento tujo",
 	"notification-header-flow-thank": "$1 {{GENDER:$5|ve}} {{GENDER:$2|ringraziaje}} p' 'o cummento dint'a '''$3''' ncopp'a '''$4'''."
 }

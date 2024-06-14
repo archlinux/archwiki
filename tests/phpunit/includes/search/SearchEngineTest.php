@@ -6,7 +6,7 @@ use MediaWiki\MainConfigNames;
  * @group Search
  * @group Database
  *
- * @covers SearchEngine<extended>
+ * @covers \SearchEngine<extended>
  * @note Coverage will only ever show one of on of the Search* classes
  */
 class SearchEngineTest extends MediaWikiLangTestCase {
@@ -31,7 +31,7 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 		if ( !$dbSupported ) {
 			$this->markTestSkipped( "MySQL or SQLite with FTS3 only" );
 		}
-		$dbProvider = $this->getServiceContainer()->getDBLoadBalancerFactory();
+		$dbProvider = $this->getServiceContainer()->getConnectionProvider();
 
 		$searchType = SearchEngineFactory::getSearchEngineClass( $dbProvider );
 		$this->overrideConfigValues( [
@@ -274,8 +274,8 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 	 * (in other test that the default search backend can benefit from wgCapitalLinksOverride)
 	 * Guard against regressions like T208255
 	 * @dataProvider provideCompletionSearchMustRespectCapitalLinkOverrides
-	 * @covers SearchEngine::completionSearch
-	 * @covers PrefixSearch::defaultSearchBackend
+	 * @covers \SearchEngine::completionSearch
+	 * @covers \PrefixSearch::defaultSearchBackend
 	 * @param string $search
 	 * @param string $expectedSuggestion
 	 * @param int[] $namespaces
@@ -292,7 +292,7 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers SearchEngine::getSearchIndexFields
+	 * @covers \SearchEngine::getSearchIndexFields
 	 */
 	public function testSearchIndexFields() {
 		/**
@@ -508,7 +508,7 @@ class SearchEngineTest extends MediaWikiLangTestCase {
 	 */
 	public function testParseNamespacePrefix( array $params, $expected ) {
 		$this->setTemporaryHook( 'PrefixSearchExtractNamespace', static function ( &$namespaces, &$query ) {
-			if ( strpos( $query, 'hélp:' ) === 0 ) {
+			if ( str_starts_with( $query, 'hélp:' ) ) {
 				$namespaces = [ NS_HELP ];
 				$query = substr( $query, strlen( 'hélp:' ) );
 			}

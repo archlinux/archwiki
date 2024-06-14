@@ -23,8 +23,6 @@ class VisualEditorHookRunner implements
 	VisualEditorBeforeEditorHook
 {
 
-	public const SERVICE_NAME = 'VisualEditorHookRunner';
-
 	/** @var HookContainer */
 	private $hookContainer;
 

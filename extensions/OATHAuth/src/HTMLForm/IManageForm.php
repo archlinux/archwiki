@@ -3,9 +3,9 @@
 namespace MediaWiki\Extension\OATHAuth\HTMLForm;
 
 use HTMLForm;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use OOUI\Layout;
-use Status;
 
 interface IManageForm {
 	/**

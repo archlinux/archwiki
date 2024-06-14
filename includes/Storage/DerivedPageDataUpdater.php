@@ -23,8 +23,6 @@ namespace MediaWiki\Storage;
 use CategoryMembershipChangeJob;
 use Content;
 use ContentHandler;
-use DeferrableUpdate;
-use DeferredUpdates;
 use IDBAccessObject;
 use InvalidArgumentException;
 use JobQueueGroup;
@@ -33,13 +31,18 @@ use LogicException;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Transform\ContentTransformer;
+use MediaWiki\Deferred\DeferrableUpdate;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
+use MediaWiki\Deferred\SearchUpdate;
+use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\Edit\PreparedEdit;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\ParserOutputAccess;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\Revision\MutableRevisionRecord;
@@ -60,15 +63,12 @@ use MessageCache;
 use MWUnknownContentModelException;
 use ParserCache;
 use ParserOptions;
-use ParserOutput;
 use ParsoidCachePrewarmJob;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RefreshSecondaryDataUpdate;
 use RevertedTagUpdateJob;
-use SearchUpdate;
-use SiteStatsUpdate;
 use WANObjectCache;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Rdbms\ILBFactory;
@@ -104,7 +104,7 @@ use WikiPage;
  * @since 1.32
  * @ingroup Page
  */
-class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, PreparedUpdate {
+class DerivedPageDataUpdater implements LoggerAwareInterface, PreparedUpdate {
 
 	/**
 	 * @var UserIdentity|null
@@ -620,7 +620,7 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 		}
 
 		$oldId = $this->revision->getParentId();
-		$flags = $this->usePrimary() ? RevisionStore::READ_LATEST : 0;
+		$flags = $this->usePrimary() ? IDBAccessObject::READ_LATEST : 0;
 		$this->parentRevision = $oldId
 			? $this->revisionStore->getRevisionById( $oldId, $flags )
 			: null;
@@ -660,7 +660,7 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 
 		// Do not call WikiPage::clear(), since the caller may already have caused page data
 		// to be loaded with SELECT FOR UPDATE. Just assert it's loaded now.
-		$wikiPage->loadPageData( self::READ_LATEST );
+		$wikiPage->loadPageData( IDBAccessObject::READ_LATEST );
 		$current = $wikiPage->getRevisionRecord();
 
 		$this->pageState = [
@@ -743,28 +743,18 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 	}
 
 	/**
-	 * Returns the content model of the given slot
-	 *
-	 * @param string $role slot role name
-	 * @return string
-	 */
-	private function getContentModel( $role ) {
-		return $this->getRawSlot( $role )->getModel();
-	}
-
-	/**
 	 * @param string $role slot role name
 	 * @return ContentHandler
 	 * @throws MWUnknownContentModelException
 	 */
 	private function getContentHandler( $role ): ContentHandler {
 		return $this->contentHandlerFactory
-			->getContentHandler( $this->getContentModel( $role ) );
+			->getContentHandler( $this->getRawSlot( $role )->getModel() );
 	}
 
 	private function usePrimary() {
 		// TODO: can we just set a flag to true in prepareContent()?
-		return $this->wikiPage->wasLoadedFrom( self::READ_LATEST );
+		return $this->wikiPage->wasLoadedFrom( IDBAccessObject::READ_LATEST );
 	}
 
 	/**
@@ -1483,7 +1473,7 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 		}
 
 		$wikiPage = $this->getWikiPage();
-		$wikiPage->loadPageData( WikiPage::READ_LATEST );
+		$wikiPage->loadPageData( IDBAccessObject::READ_LATEST );
 		if ( !$wikiPage->exists() ) {
 			// page deleted while deferring the update
 			return [];
@@ -1802,11 +1792,13 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 	 *     current page or otherwise depend on it (default: false)
 	 *   - defer: one of the DeferredUpdates constants, or false to run immediately after waiting
 	 *     for replication of the changes from the SecondaryDataUpdates hooks (default: false)
+	 *   - freshness: used with 'defer'; forces an update if the last update was before the given timestamp,
+	 *     even if the page and its dependencies didn't change since then (TS_MW; default: false)
 	 * @since 1.32
 	 */
 	public function doSecondaryDataUpdates( array $options = [] ) {
 		$this->assertHasRevision( __METHOD__ );
-		$options += [ 'recursive' => false, 'defer' => false ];
+		$options += [ 'recursive' => false, 'defer' => false, 'freshness' => false ];
 		$deferValues = [ false, DeferredUpdates::PRESEND, DeferredUpdates::POSTSEND ];
 		if ( !in_array( $options['defer'], $deferValues, true ) ) {
 			throw new InvalidArgumentException( 'Invalid value for defer: ' . $options['defer'] );
@@ -1829,7 +1821,7 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 			$this->wikiPage,
 			$this->revision,
 			$this,
-			[ 'recursive' => $options['recursive'] ]
+			[ 'recursive' => $options['recursive'], 'freshness' => $options['freshness'] ]
 		);
 		$update->setCause( $causeAction, $causeAgent );
 

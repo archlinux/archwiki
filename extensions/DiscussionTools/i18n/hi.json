@@ -49,6 +49,5 @@
 	"discussiontools-topicsubscription-pager-topic": "विषय",
 	"discussiontools-topicsubscription-preferences-editsubscriptions": "सदस्यताएँ संपादित करें",
 	"echo-category-title-dt-subscription": "वार्ता पृष्ठ की {{PLURAL:$1|सदस्यता|सदस्यताएँ}}",
-	"minerva-talk-full-page": "विकि पृष्ठ के रूप में पढ़ें",
 	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} उत्तर]"
 }

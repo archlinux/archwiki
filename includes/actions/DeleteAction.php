@@ -20,10 +20,12 @@
 
 use MediaWiki\Cache\BacklinkCacheFactory;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\DeletePage;
 use MediaWiki\Page\DeletePageFactory;
 use MediaWiki\Revision\RevisionRecord;
@@ -31,7 +33,7 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\TitleFactory;
 use MediaWiki\Title\TitleFormatter;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ReadOnlyMode;
@@ -86,7 +88,7 @@ class DeleteAction extends FormAction {
 		$this->namespaceInfo = $services->getNamespaceInfo();
 		$this->titleFormatter = $services->getTitleFormatter();
 		$this->titleFactory = $services->getTitleFactory();
-		$this->dbProvider = $services->getDBLoadBalancerFactory();
+		$this->dbProvider = $services->getConnectionProvider();
 	}
 
 	public function getName() {
@@ -146,7 +148,7 @@ class DeleteAction extends FormAction {
 
 		# Better double-check that it hasn't been deleted yet!
 		$article->getPage()->loadPageData(
-			$request->wasPosted() ? WikiPage::READ_LATEST : WikiPage::READ_NORMAL
+			$request->wasPosted() ? IDBAccessObject::READ_LATEST : IDBAccessObject::READ_NORMAL
 		);
 		if ( !$article->getPage()->exists() ) {
 			$outputPage->setPageTitleMsg(
@@ -160,8 +162,16 @@ class DeleteAction extends FormAction {
 			return;
 		}
 
+		# If we are not processing the results of the deletion confirmation dialog, show the form
 		$token = $request->getVal( 'wpEditToken' );
 		if ( !$request->wasPosted() || !$user->matchEditToken( $token, [ 'delete', $title->getPrefixedText() ] ) ) {
+			$this->tempConfirmDelete();
+			return;
+		}
+
+		# Check to make sure the page has not been edited while the deletion was being confirmed
+		if ( $article->getRevIdFetched() !== $request->getIntOrNull( 'wpConfirmationRevId' ) ) {
+			$this->showEditedWarning();
 			$this->tempConfirmDelete();
 			return;
 		}
@@ -271,6 +281,12 @@ class DeleteAction extends FormAction {
 		}
 	}
 
+	protected function showEditedWarning(): void {
+		$this->getOutput()->addHTML(
+			Html::warningBox( $this->getContext()->msg( 'editedwhiledeleting' )->parse() )
+		);
+	}
+
 	private function showHistoryWarnings(): void {
 		$context = $this->getContext();
 		$title = $this->getTitle();
@@ -354,11 +370,19 @@ class DeleteAction extends FormAction {
 
 	private function tempConfirmDelete(): void {
 		$this->prepareOutputForForm();
-		$ctx = $this->getContext();
-		$outputPage = $ctx->getOutput();
+		$context = $this->getContext();
+		$outputPage = $context->getOutput();
+		$article = $this->getArticle();
 
 		$reason = $this->getDefaultReason();
 
+		// oldid is set to the revision id of the page when the page was displayed.
+		// Check to make sure the page has not been edited between loading the page
+		// and clicking the delete link
+		$oldid = $context->getRequest()->getIntOrNull( 'oldid' );
+		if ( $oldid !== null && $oldid !== $article->getRevIdFetched() ) {
+			$this->showEditedWarning();
+		}
 		// If the page has a history, insert a warning
 		if ( $this->pageHasHistory() ) {
 			$this->showHistoryWarnings();
@@ -414,18 +438,19 @@ class DeleteAction extends FormAction {
 	protected function getFormFields(): array {
 		$user = $this->getUser();
 		$title = $this->getTitle();
+		$article = $this->getArticle();
 
 		$fields = [];
 
-		$dropDownReason = $this->getFormMsg( self::MSG_REASON_DROPDOWN )->inContentLanguage()->text();
+		$dropdownReason = $this->getFormMsg( self::MSG_REASON_DROPDOWN )->inContentLanguage()->text();
 		// Add additional specific reasons for suppress
 		if ( $this->isSuppressionAllowed() ) {
-			$dropDownReason .= "\n" . $this->getFormMsg( self::MSG_REASON_DROPDOWN_SUPPRESS )
+			$dropdownReason .= "\n" . $this->getFormMsg( self::MSG_REASON_DROPDOWN_SUPPRESS )
 					->inContentLanguage()->text();
 		}
 
-		$options = Xml::listDropDownOptions(
-			$dropDownReason,
+		$options = Html::listDropdownOptions(
+			$dropdownReason,
 			[ 'other' => $this->getFormMsg( self::MSG_REASON_DROPDOWN_OTHER )->text() ]
 		);
 
@@ -457,7 +482,7 @@ class DeleteAction extends FormAction {
 			$fields['DeleteTalk'] = [
 				'type' => 'check',
 				'id' => 'wpDeleteTalk',
-				'tabIndex' => 3,
+				'tabindex' => 3,
 				'default' => false,
 				'label-message' => 'deletepage-deletetalk',
 			];
@@ -492,6 +517,12 @@ class DeleteAction extends FormAction {
 			'flags' => [ 'primary', 'destructive' ],
 		];
 
+		$fields['ConfirmationRevId'] = [
+			'type' => 'hidden',
+			'id' => 'wpConfirmationRevId',
+			'default' => $article->getRevIdFetched(),
+		];
+
 		return $fields;
 	}
 
@@ -519,7 +550,7 @@ class DeleteAction extends FormAction {
 	protected function showLogEntries(): void {
 		$deleteLogPage = new LogPage( 'delete' );
 		$outputPage = $this->getContext()->getOutput();
-		$outputPage->addHTML( Xml::element( 'h2', null, $deleteLogPage->getName()->text() ) );
+		$outputPage->addHTML( Html::element( 'h2', [], $deleteLogPage->getName()->text() ) );
 		LogEventsList::showLogExtract( $outputPage, 'delete', $this->getTitle() );
 	}
 
@@ -597,7 +628,7 @@ class DeleteAction extends FormAction {
 	 * @return bool
 	 */
 	private function pageHasHistory(): bool {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->dbProvider->getReplicaDatabase();
 		$res = $dbr->newSelectQueryBuilder()
 			->select( '*' )
 			->from( 'revision' )

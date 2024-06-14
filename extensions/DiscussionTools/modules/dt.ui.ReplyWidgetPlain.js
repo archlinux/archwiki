@@ -50,7 +50,7 @@ function ReplyWidgetPlain() {
 
 /* Inheritance */
 
-OO.inheritClass( ReplyWidgetPlain, require( 'ext.discussionTools.ReplyWidget' ) );
+OO.inheritClass( ReplyWidgetPlain, require( './dt.ui.ReplyWidget.js' ) );
 
 /* Methods */
 

@@ -1,21 +1,14 @@
-/**
- * Allows to retrieve a specific or a set of
- * messages to be added to mw.messages and returned
- * by the Api.
- *
- * @class mw.Api.plugin.messages
- * @since 1.27
- */
 ( function () {
 	'use strict';
 
-	Object.assign( mw.Api.prototype, {
+	Object.assign( mw.Api.prototype, /** @lends mw.Api.prototype */ {
 		/**
 		 * Get a set of messages.
 		 *
+		 * @since 1.27
 		 * @param {string|string[]} messages Messages to retrieve
 		 * @param {Object} [options] Additional parameters for the API call
-		 * @return {jQuery.Promise}
+		 * @return {jQuery.Promise<Object.<string, string>>}
 		 */
 		getMessages: function ( messages, options ) {
 			var that = this;
@@ -56,7 +49,7 @@
 		},
 
 		/**
-		 * Loads a set of messages and add them to mw.messages.
+		 * Loads a set of messages and add them to {@link mw.messages}.
 		 *
 		 * @param {string|string[]} messages Messages to retrieve
 		 * @param {Object} [options] Additional parameters for the API call
@@ -67,14 +60,16 @@
 		},
 
 		/**
-		 * Loads a set of messages and add them to mw.messages. Only messages that are not already known
+		 * Loads a set of messages and add them to {@link mw.messages}. Only messages that are not already known
 		 * are loaded. If all messages are known, the returned promise is resolved immediately.
 		 *
-		 * @param {string[]} messages Messages to retrieve
+		 * @since 1.27
+		 * @param {string|string[]} messages Messages to retrieve
 		 * @param {Object} [options] Additional parameters for the API call
 		 * @return {jQuery.Promise}
 		 */
 		loadMessagesIfMissing: function ( messages, options ) {
+			messages = Array.isArray( messages ) ? messages : [ messages ];
 			var missing = messages.filter( function ( msg ) {
 				// eslint-disable-next-line mediawiki/msg-doc
 				return !mw.message( msg ).exists();
@@ -87,10 +82,5 @@
 			return this.loadMessages( missing, options );
 		}
 	} );
-
-	/**
-	 * @class mw.Api
-	 * @mixins mw.Api.plugin.messages
-	 */
 
 }() );

@@ -21,14 +21,13 @@
 namespace MediaWiki\EditPage;
 
 use Article;
+use BadMethodCallException;
 use CategoryPage;
 use Content;
 use ContentHandler;
-use DeferredUpdates;
 use DeprecationHelper;
-use DerivativeContext;
 use ErrorPageError;
-use IContextSource;
+use IDBAccessObject;
 use LogPage;
 use ManualLogEntry;
 use MediaWiki\Block\BlockErrorFormatter;
@@ -37,16 +36,17 @@ use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\Config;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\EditPage\Constraint\AccidentalRecreationConstraint;
 use MediaWiki\EditPage\Constraint\AutoSummaryMissingSummaryConstraint;
 use MediaWiki\EditPage\Constraint\ChangeTagsConstraint;
 use MediaWiki\EditPage\Constraint\ContentModelChangeConstraint;
-use MediaWiki\EditPage\Constraint\CreationPermissionConstraint;
 use MediaWiki\EditPage\Constraint\DefaultTextConstraint;
 use MediaWiki\EditPage\Constraint\EditConstraintFactory;
 use MediaWiki\EditPage\Constraint\EditConstraintRunner;
 use MediaWiki\EditPage\Constraint\EditFilterMergedContentHookConstraint;
-use MediaWiki\EditPage\Constraint\EditRightConstraint;
 use MediaWiki\EditPage\Constraint\IEditConstraint;
 use MediaWiki\EditPage\Constraint\ImageRedirectConstraint;
 use MediaWiki\EditPage\Constraint\MissingCommentConstraint;
@@ -56,7 +56,6 @@ use MediaWiki\EditPage\Constraint\SelfRedirectConstraint;
 use MediaWiki\EditPage\Constraint\SpamRegexConstraint;
 use MediaWiki\EditPage\Constraint\UnicodeConstraint;
 use MediaWiki\EditPage\Constraint\UserBlockConstraint;
-use MediaWiki\EditPage\Constraint\UserRateLimitConstraint;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
@@ -66,10 +65,12 @@ use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\RestrictionStore;
@@ -83,15 +84,14 @@ use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\PageUpdater;
 use MediaWiki\Title\Title;
 use MediaWiki\User\ExternalUserNames;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\TempUser\CreateStatus;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
-use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
-use Message;
 use MessageLocalizer;
 use MWContentSerializationException;
 use MWException;
@@ -102,7 +102,6 @@ use OOUI\CheckboxInputWidget;
 use OOUI\DropdownInputWidget;
 use OOUI\FieldLayout;
 use ParserOptions;
-use ParserOutput;
 use PermissionsError;
 use ReadOnlyError;
 use RecentChange;
@@ -117,8 +116,8 @@ use WatchedItemStoreInterface;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
+use Wikimedia\Rdbms\IConnectionProvider;
 use WikiPage;
-use Xml;
 
 /**
  * The HTML user interface for page editing.
@@ -433,17 +432,9 @@ class EditPage implements IEditObject {
 	 */
 	private $unicodeCheck;
 
-	/**
-	 * Factory function to create an edit conflict helper
-	 *
-	 * @var callable
-	 */
-	private $editConflictHelperFactory;
-
-	/**
-	 * @var TextConflictHelper|null
-	 */
-	private $editConflictHelper;
+	/** @var callable|null */
+	private $editConflictHelperFactory = null;
+	private ?TextConflictHelper $editConflictHelper = null;
 
 	private IContentHandlerFactory $contentHandlerFactory;
 	private PermissionManager $permManager;
@@ -455,6 +446,8 @@ class EditPage implements IEditObject {
 	private UserOptionsLookup $userOptionsLookup;
 	private TempUserCreator $tempUserCreator;
 	private UserFactory $userFactory;
+	private IConnectionProvider $connectionProvider;
+	private BlockErrorFormatter $blockErrorFormatter;
 
 	/** @var User|null */
 	private $placeholderTempUser;
@@ -474,11 +467,13 @@ class EditPage implements IEditObject {
 	/** @var bool Whether temp user creation was successful */
 	private $tempUserCreateDone = false;
 
+	/** @var bool Whether temp username acquisition failed (false indicates no failure or not attempted) */
+	private $unableToAcquireTempName = false;
+
 	private LinkRenderer $linkRenderer;
 	private LinkBatchFactory $linkBatchFactory;
 	private RestrictionStore $restrictionStore;
 	private CommentStore $commentStore;
-	private BlockErrorFormatter $blockErrorFormatter;
 
 	/**
 	 * @stable to call
@@ -505,7 +500,6 @@ class EditPage implements IEditObject {
 		$this->contentFormat = $this->contentHandlerFactory
 			->getContentHandler( $this->contentModel )
 			->getDefaultFormat();
-		$this->editConflictHelperFactory = [ $this, 'newTextConflictHelper' ];
 		$this->permManager = $services->getPermissionManager();
 		$this->revisionStore = $services->getRevisionStore();
 		$this->watchlistExpiryEnabled = $this->getContext()->getConfig() instanceof Config
@@ -522,7 +516,9 @@ class EditPage implements IEditObject {
 		$this->linkBatchFactory = $services->getLinkBatchFactory();
 		$this->restrictionStore = $services->getRestrictionStore();
 		$this->commentStore = $services->getCommentStore();
-		$this->blockErrorFormatter = $services->getBlockErrorFormatter();
+		$this->connectionProvider = $services->getConnectionProvider();
+		$this->blockErrorFormatter = $services->getFormatterFactory()
+			->getBlockErrorFormatter( $this->context );
 
 		// XXX: Restore this deprecation as soon as TwoColConflict is fixed (T305028)
 		// $this->deprecatePublicProperty( 'textbox2', '1.38', __CLASS__ );
@@ -575,7 +571,7 @@ class EditPage implements IEditObject {
 	 *
 	 * @param string $modelId The ID of the content model to test. Use CONTENT_MODEL_XXX constants.
 	 * @return bool
-	 * @throws MWException If $modelId has no known handler
+	 * @throws MWUnknownContentModelException If $modelId has no known handler
 	 */
 	private function isSupportedContentModel( string $modelId ): bool {
 		return $this->enableApiEditOverride === true ||
@@ -648,7 +644,7 @@ class EditPage implements IEditObject {
 		// This allows anonymous users to edit via a temporary account, if the site is
 		// configured to (1) disallow anonymous editing and (2) autocreate temporary
 		// accounts on edit.
-		$this->maybeActivateTempUserCreate( !$this->firsttime );
+		$this->unableToAcquireTempName = !$this->maybeActivateTempUserCreate( !$this->firsttime )->isOK();
 
 		$permErrors = $this->getEditPermissionErrors(
 			$this->save ? PermissionManager::RIGOR_SECURE : PermissionManager::RIGOR_FULL
@@ -780,17 +776,23 @@ class EditPage implements IEditObject {
 	 * @param bool $doAcquire Whether to acquire a name for the temporary account
 	 *
 	 * @since 1.39
+	 * @return Status Will return a fatal status if $doAcquire was true and the acquire failed.
 	 */
-	public function maybeActivateTempUserCreate( $doAcquire ) {
+	public function maybeActivateTempUserCreate( $doAcquire ): Status {
 		if ( $this->tempUserCreateActive ) {
 			// Already done
-			return;
+			return Status::newGood();
 		}
 		$user = $this->context->getUser();
 		if ( $this->tempUserCreator->shouldAutoCreate( $user, 'edit' ) ) {
 			if ( $doAcquire ) {
 				$name = $this->tempUserCreator->acquireAndStashName(
 					$this->context->getRequest()->getSession() );
+				if ( $name === null ) {
+					$status = Status::newFatal( 'temp-user-unable-to-acquire' );
+					$status->value = self::AS_UNABLE_TO_ACQUIRE_TEMP_ACCOUNT;
+					return $status;
+				}
 				$this->unsavedTempUser = $this->userFactory->newUnsavedTempUser( $name );
 				$this->tempUserName = $name;
 			} else {
@@ -798,6 +800,7 @@ class EditPage implements IEditObject {
 			}
 			$this->tempUserCreateActive = true;
 		}
+		return Status::newGood();
 	}
 
 	/**
@@ -885,7 +888,7 @@ class EditPage implements IEditObject {
 			// fallback to a placeholder for this situation (T330943)
 			return $this->placeholderTempUser;
 		} elseif ( $this->tempUserCreateActive ) {
-			throw new MWException(
+			throw new BadMethodCallException(
 				"Can't use the request user for preview with IP masking enabled" );
 		} else {
 			return $this->context->getUser();
@@ -902,7 +905,7 @@ class EditPage implements IEditObject {
 		if ( $this->savedTempUser ) {
 			return $this->savedTempUser;
 		} elseif ( $this->tempUserCreateActive ) {
-			throw new MWException(
+			throw new BadMethodCallException(
 				"Can't use the request user for storage with IP masking enabled" );
 		} else {
 			return $this->context->getUser();
@@ -920,39 +923,13 @@ class EditPage implements IEditObject {
 		if ( $this->preview || $this->diff ) {
 			$ignoredErrors = [ 'blockedtext', 'autoblockedtext', 'systemblockedtext' ];
 		}
-		$permErrors = $this->permManager->getPermissionErrors(
+		return $this->permManager->getPermissionErrors(
 			'edit',
 			$user,
 			$this->mTitle,
 			$rigor,
 			$ignoredErrors
 		);
-
-		// Check if the user is blocked from editing.
-		// This check must be done on the context user, in order to trigger
-		// checks for blocks against IP address, XFF, etc, until T221067
-		if ( !$user->getBlock() ) {
-			$contextUser = $this->context->getUser();
-			if (
-				$user->getName() !== $contextUser->getName() &&
-				$this->permManager->isBlockedFrom(
-					$contextUser,
-					$this->mTitle,
-					$rigor !== PermissionManager::RIGOR_SECURE
-				)
-			) {
-				$message = $this->blockErrorFormatter->getMessage(
-					// @phan-suppress-next-line PhanTypeMismatchArgumentNullable User must have a block
-					$contextUser->getBlock(),
-					$contextUser,
-					$this->context->getLanguage(),
-					$this->context->getRequest()->getIP()
-				);
-				$permErrors[] = array_merge( [ $message->getKey() ], $message->getParams() );
-			}
-		}
-
-		return $permErrors;
 	}
 
 	/**
@@ -1124,162 +1101,7 @@ class EditPage implements IEditObject {
 		$this->isNew = !$this->mTitle->exists() || $this->section === 'new';
 
 		if ( $request->wasPosted() ) {
-			# These fields need to be checked for encoding.
-			# Also remove trailing whitespace, but don't remove _initial_
-			# whitespace from the text boxes. This may be significant formatting.
-			$this->textbox1 = rtrim( $request->getText( 'wpTextbox1' ) );
-			if ( !$request->getCheck( 'wpTextbox2' ) ) {
-				// Skip this if wpTextbox2 has input, it indicates that we came
-				// from a conflict page with raw page text, not a custom form
-				// modified by subclasses
-				$textbox1 = $this->importContentFormData( $request );
-				if ( $textbox1 !== null ) {
-					$this->textbox1 = $textbox1;
-				}
-			}
-
-			$this->unicodeCheck = $request->getText( 'wpUnicodeCheck' );
-
-			if ( $this->section === 'new' ) {
-				# Allow setting sectiontitle different from the edit summary.
-				# Note that wpSectionTitle is not yet a part of the actual edit form, as wpSummary is
-				# currently doing double duty as both edit summary and section title. Right now this
-				# is just to allow API edits to work around this limitation, but this should be
-				# incorporated into the actual edit form when EditPage is rewritten (T20654, T28312).
-				if ( $request->getCheck( 'wpSectionTitle' ) ) {
-					$this->sectiontitle = $request->getText( 'wpSectionTitle' );
-					if ( $request->getCheck( 'wpSummary' ) ) {
-						$this->summary = $request->getText( 'wpSummary' );
-					}
-				} else {
-					$this->sectiontitle = $request->getText( 'wpSummary' );
-				}
-			} else {
-				$this->sectiontitle = null;
-				$this->summary = $request->getText( 'wpSummary' );
-			}
-
-			# If the summary consists of a heading, e.g. '==Foobar==', extract the title from the
-			# header syntax, e.g. 'Foobar'. This is mainly an issue when we are using wpSummary for
-			# section titles. (T3600)
-			# It is weird to modify 'sectiontitle', even when it is provided when using the API, but API
-			# users have come to rely on it: https://github.com/wikimedia-gadgets/twinkle/issues/1625
-			$this->summary = preg_replace( '/^\s*=+\s*(.*?)\s*=+\s*$/', '$1', $this->summary );
-			if ( $this->sectiontitle !== null ) {
-				$this->sectiontitle = preg_replace( '/^\s*=+\s*(.*?)\s*=+\s*$/', '$1', $this->sectiontitle );
-			}
-
-			if ( $this->section === 'new' ) {
-				$this->setNewSectionSummary();
-			}
-
-			$this->edittime = $request->getVal( 'wpEdittime' );
-			$this->editRevId = $request->getIntOrNull( 'editRevId' );
-			$this->starttime = $request->getVal( 'wpStarttime' );
-
-			$undidRev = $request->getInt( 'wpUndidRevision' );
-			if ( $undidRev ) {
-				$this->undidRev = $undidRev;
-			}
-			$undoAfter = $request->getInt( 'wpUndoAfter' );
-			if ( $undoAfter ) {
-				$this->undoAfter = $undoAfter;
-			}
-
-			$this->scrolltop = $request->getIntOrNull( 'wpScrolltop' );
-
-			if ( $this->textbox1 === '' && !$request->getCheck( 'wpTextbox1' ) ) {
-				// wpTextbox1 field is missing, possibly due to being "too big"
-				// according to some filter rules that may have been configured
-				// for security reasons.
-				$this->incompleteForm = true;
-			} else {
-				// If we receive the last parameter of the request, we can fairly
-				// claim the POST request has not been truncated.
-				$this->incompleteForm = !$request->getVal( 'wpUltimateParam' );
-			}
-			if ( $this->incompleteForm ) {
-				# If the form is incomplete, force to preview.
-				wfDebug( __METHOD__ . ": Form data appears to be incomplete" );
-				wfDebug( "POST DATA: " . var_export( $request->getPostValues(), true ) );
-				$this->preview = true;
-			} else {
-				$this->preview = $request->getCheck( 'wpPreview' );
-				$this->diff = $request->getCheck( 'wpDiff' );
-
-				// Remember whether a save was requested, so we can indicate
-				// if we forced preview due to session failure.
-				$this->mTriedSave = !$this->preview;
-
-				if ( $this->tokenOk( $request ) ) {
-					# Some browsers will not report any submit button
-					# if the user hits enter in the comment box.
-					# The unmarked state will be assumed to be a save,
-					# if the form seems otherwise complete.
-					wfDebug( __METHOD__ . ": Passed token check." );
-				} elseif ( $this->diff ) {
-					# Failed token check, but only requested "Show Changes".
-					wfDebug( __METHOD__ . ": Failed token check; Show Changes requested." );
-				} else {
-					# Page might be a hack attempt posted from
-					# an external site. Preview instead of saving.
-					wfDebug( __METHOD__ . ": Failed token check; forcing preview" );
-					$this->preview = true;
-				}
-			}
-			$this->save = !$this->preview && !$this->diff;
-			if ( !$this->edittime || !preg_match( '/^\d{14}$/', $this->edittime ) ) {
-				$this->edittime = null;
-			}
-
-			if ( !$this->starttime || !preg_match( '/^\d{14}$/', $this->starttime ) ) {
-				$this->starttime = null;
-			}
-
-			$this->recreate = $request->getCheck( 'wpRecreate' );
-
-			$user = $this->context->getUser();
-
-			$this->minoredit = $request->getCheck( 'wpMinoredit' );
-			$this->watchthis = $request->getCheck( 'wpWatchthis' );
-			$expiry = $request->getText( 'wpWatchlistExpiry' );
-			if ( $this->watchlistExpiryEnabled && $expiry !== '' ) {
-				// This parsing of the user-posted expiry is done for both preview and saving. This
-				// is necessary because ApiEditPage uses preview when it saves (yuck!). Note that it
-				// only works because the unnormalized value is retrieved again below in
-				// getCheckboxesDefinitionForWatchlist().
-				$expiry = ExpiryDef::normalizeExpiry( $expiry, TS_ISO_8601 );
-				if ( $expiry !== false ) {
-					$this->watchlistExpiry = $expiry;
-				}
-			}
-
-			# Don't force edit summaries when a user is editing their own user or talk page
-			if ( ( $this->mTitle->getNamespace() === NS_USER || $this->mTitle->getNamespace() === NS_USER_TALK )
-				&& $this->mTitle->getText() === $user->getName()
-			) {
-				$this->allowBlankSummary = true;
-			} else {
-				$this->allowBlankSummary = $request->getBool( 'wpIgnoreBlankSummary' )
-					|| !$this->userOptionsLookup->getOption( $user, 'forceeditsummary' );
-			}
-
-			$this->autoSumm = $request->getText( 'wpAutoSummary' );
-
-			$this->allowBlankArticle = $request->getBool( 'wpIgnoreBlankArticle' );
-			$this->allowSelfRedirect = $request->getBool( 'wpIgnoreSelfRedirect' );
-
-			$changeTags = $request->getVal( 'wpChangeTags' );
-			if ( $changeTags === null || $changeTags === '' ) {
-				$this->changeTags = [];
-			} else {
-				$this->changeTags = array_filter(
-					array_map(
-						'trim',
-						explode( ',', $changeTags )
-					)
-				);
-			}
+			$this->importFormDataPosted( $request );
 		} else {
 			# Not a posted form? Start with nothing.
 			wfDebug( __METHOD__ . ": Not a posted form." );
@@ -1355,6 +1177,169 @@ class EditPage implements IEditObject {
 
 		// Allow extensions to modify form data
 		$this->getHookRunner()->onEditPage__importFormData( $this, $request );
+	}
+
+	/**
+	 * @param WebRequest $request
+	 */
+	private function importFormDataPosted( WebRequest $request ): void {
+		# These fields need to be checked for encoding.
+		# Also remove trailing whitespace, but don't remove _initial_
+		# whitespace from the text boxes. This may be significant formatting.
+		$this->textbox1 = rtrim( $request->getText( 'wpTextbox1' ) );
+		if ( !$request->getCheck( 'wpTextbox2' ) ) {
+			// Skip this if wpTextbox2 has input, it indicates that we came
+			// from a conflict page with raw page text, not a custom form
+			// modified by subclasses
+			$textbox1 = $this->importContentFormData( $request );
+			if ( $textbox1 !== null ) {
+				$this->textbox1 = $textbox1;
+			}
+		}
+
+		$this->unicodeCheck = $request->getText( 'wpUnicodeCheck' );
+
+		if ( $this->section === 'new' ) {
+			# Allow setting sectiontitle different from the edit summary.
+			# Note that wpSectionTitle is not yet a part of the actual edit form, as wpSummary is
+			# currently doing double duty as both edit summary and section title. Right now this
+			# is just to allow API edits to work around this limitation, but this should be
+			# incorporated into the actual edit form when EditPage is rewritten (T20654, T28312).
+			if ( $request->getCheck( 'wpSectionTitle' ) ) {
+				$this->sectiontitle = $request->getText( 'wpSectionTitle' );
+				if ( $request->getCheck( 'wpSummary' ) ) {
+					$this->summary = $request->getText( 'wpSummary' );
+				}
+			} else {
+				$this->sectiontitle = $request->getText( 'wpSummary' );
+			}
+		} else {
+			$this->sectiontitle = null;
+			$this->summary = $request->getText( 'wpSummary' );
+		}
+
+		# If the summary consists of a heading, e.g. '==Foobar==', extract the title from the
+		# header syntax, e.g. 'Foobar'. This is mainly an issue when we are using wpSummary for
+		# section titles. (T3600)
+		# It is weird to modify 'sectiontitle', even when it is provided when using the API, but API
+		# users have come to rely on it: https://github.com/wikimedia-gadgets/twinkle/issues/1625
+		$this->summary = preg_replace( '/^\s*=+\s*(.*?)\s*=+\s*$/', '$1', $this->summary );
+		if ( $this->sectiontitle !== null ) {
+			$this->sectiontitle = preg_replace( '/^\s*=+\s*(.*?)\s*=+\s*$/', '$1', $this->sectiontitle );
+		}
+
+		// @phan-suppress-next-line PhanSuspiciousValueComparison
+		if ( $this->section === 'new' ) {
+			$this->setNewSectionSummary();
+		}
+
+		$this->edittime = $request->getVal( 'wpEdittime' );
+		$this->editRevId = $request->getIntOrNull( 'editRevId' );
+		$this->starttime = $request->getVal( 'wpStarttime' );
+
+		$undidRev = $request->getInt( 'wpUndidRevision' );
+		if ( $undidRev ) {
+			$this->undidRev = $undidRev;
+		}
+		$undoAfter = $request->getInt( 'wpUndoAfter' );
+		if ( $undoAfter ) {
+			$this->undoAfter = $undoAfter;
+		}
+
+		$this->scrolltop = $request->getIntOrNull( 'wpScrolltop' );
+
+		if ( $this->textbox1 === '' && !$request->getCheck( 'wpTextbox1' ) ) {
+			// wpTextbox1 field is missing, possibly due to being "too big"
+			// according to some filter rules that may have been configured
+			// for security reasons.
+			$this->incompleteForm = true;
+		} else {
+			// If we receive the last parameter of the request, we can fairly
+			// claim the POST request has not been truncated.
+			$this->incompleteForm = !$request->getVal( 'wpUltimateParam' );
+		}
+		if ( $this->incompleteForm ) {
+			# If the form is incomplete, force to preview.
+			wfDebug( __METHOD__ . ": Form data appears to be incomplete" );
+			wfDebug( "POST DATA: " . var_export( $request->getPostValues(), true ) );
+			$this->preview = true;
+		} else {
+			$this->preview = $request->getCheck( 'wpPreview' );
+			$this->diff = $request->getCheck( 'wpDiff' );
+
+			// Remember whether a save was requested, so we can indicate
+			// if we forced preview due to session failure.
+			$this->mTriedSave = !$this->preview;
+
+			if ( $this->tokenOk( $request ) ) {
+				# Some browsers will not report any submit button
+				# if the user hits enter in the comment box.
+				# The unmarked state will be assumed to be a save,
+				# if the form seems otherwise complete.
+				wfDebug( __METHOD__ . ": Passed token check." );
+			} elseif ( $this->diff ) {
+				# Failed token check, but only requested "Show Changes".
+				wfDebug( __METHOD__ . ": Failed token check; Show Changes requested." );
+			} else {
+				# Page might be a hack attempt posted from
+				# an external site. Preview instead of saving.
+				wfDebug( __METHOD__ . ": Failed token check; forcing preview" );
+				$this->preview = true;
+			}
+		}
+		$this->save = !$this->preview && !$this->diff;
+		if ( !$this->edittime || !preg_match( '/^\d{14}$/', $this->edittime ) ) {
+			$this->edittime = null;
+		}
+
+		if ( !$this->starttime || !preg_match( '/^\d{14}$/', $this->starttime ) ) {
+			$this->starttime = null;
+		}
+
+		$this->recreate = $request->getCheck( 'wpRecreate' );
+
+		$user = $this->context->getUser();
+
+		$this->minoredit = $request->getCheck( 'wpMinoredit' );
+		$this->watchthis = $request->getCheck( 'wpWatchthis' );
+		$expiry = $request->getText( 'wpWatchlistExpiry' );
+		if ( $this->watchlistExpiryEnabled && $expiry !== '' ) {
+			// This parsing of the user-posted expiry is done for both preview and saving. This
+			// is necessary because ApiEditPage uses preview when it saves (yuck!). Note that it
+			// only works because the unnormalized value is retrieved again below in
+			// getCheckboxesDefinitionForWatchlist().
+			$expiry = ExpiryDef::normalizeExpiry( $expiry, TS_ISO_8601 );
+			if ( $expiry !== false ) {
+				$this->watchlistExpiry = $expiry;
+			}
+		}
+
+		# Don't force edit summaries when a user is editing their own user or talk page
+		if ( ( $this->mTitle->getNamespace() === NS_USER || $this->mTitle->getNamespace() === NS_USER_TALK )
+			&& $this->mTitle->getText() === $user->getName()
+		) {
+			$this->allowBlankSummary = true;
+		} else {
+			$this->allowBlankSummary = $request->getBool( 'wpIgnoreBlankSummary' )
+				|| !$this->userOptionsLookup->getOption( $user, 'forceeditsummary' );
+		}
+
+		$this->autoSumm = $request->getText( 'wpAutoSummary' );
+
+		$this->allowBlankArticle = $request->getBool( 'wpIgnoreBlankArticle' );
+		$this->allowSelfRedirect = $request->getBool( 'wpIgnoreSelfRedirect' );
+
+		$changeTags = $request->getVal( 'wpChangeTags' );
+		if ( $changeTags === null || $changeTags === '' ) {
+			$this->changeTags = [];
+		} else {
+			$this->changeTags = array_filter(
+				array_map(
+					'trim',
+					explode( ',', $changeTags )
+				)
+			);
+		}
 	}
 
 	/**
@@ -1868,6 +1853,7 @@ class EditPage implements IEditObject {
 
 			case self::AS_PARSE_ERROR:
 			case self::AS_UNICODE_NOT_SUPPORTED:
+			case self::AS_UNABLE_TO_ACQUIRE_TEMP_ACCOUNT:
 				$out->wrapWikiTextAsInterface( 'error',
 					$status->getWikiText( false, false, $this->context->getLanguage() )
 				);
@@ -2055,6 +2041,12 @@ class EditPage implements IEditObject {
 			return $status;
 		}
 
+		if ( $this->unableToAcquireTempName ) {
+			$status = Status::newFatal( 'temp-user-unable-to-acquire' );
+			$status->value = self::AS_UNABLE_TO_ACQUIRE_TEMP_ACCOUNT;
+			return $status;
+		}
+
 		try {
 			# Construct Content object
 			$textbox_content = $this->toEditContent( $this->textbox1 );
@@ -2113,9 +2105,6 @@ class EditPage implements IEditObject {
 			)
 		);
 		$constraintRunner->addConstraint(
-			new EditRightConstraint( $authority )
-		);
-		$constraintRunner->addConstraint(
 			new ImageRedirectConstraint(
 				$textbox_content,
 				$this->mTitle,
@@ -2137,7 +2126,11 @@ class EditPage implements IEditObject {
 			$constraintFactory->newReadOnlyConstraint()
 		);
 		$constraintRunner->addConstraint(
-			new UserRateLimitConstraint( $requestUser, $this->mTitle, $this->contentModel )
+			$constraintFactory->newUserRateLimitConstraint(
+				$requestUser->toRateLimitSubject(),
+				$this->mTitle->getContentModel(),
+				$this->contentModel
+			)
 		);
 		$constraintRunner->addConstraint(
 			// Same constraint is used to check size before and after merging the
@@ -2160,6 +2153,16 @@ class EditPage implements IEditObject {
 			)
 		);
 
+		// Load the page data from the primary DB. If anything changes in the meantime,
+		// we detect it by using page_latest like a token in a 1 try compare-and-swap.
+		$this->page->loadPageData( IDBAccessObject::READ_LATEST );
+		$new = !$this->page->exists();
+
+		// We do this last, as some of the other constraints are more specific
+		$constraintRunner->addConstraint(
+			$constraintFactory->newEditRightConstraint( $this->getUserForPermissions(), $this->mTitle, $new )
+		);
+
 		// Check the constraints
 		if ( !$constraintRunner->checkConstraints() ) {
 			$failed = $constraintRunner->getFailedConstraint();
@@ -2175,11 +2178,6 @@ class EditPage implements IEditObject {
 			return Status::wrap( $failed->getLegacyStatus() );
 		}
 		// END OF MIGRATION TO EDITCONSTRAINT SYSTEM (continued below)
-
-		// Load the page data from the primary DB. If anything changes in the meantime,
-		// we detect it by using page_latest like a token in a 1 try compare-and-swap.
-		$this->page->loadPageData( WikiPage::READ_LATEST );
-		$new = !$this->page->exists();
 
 		$flags = EDIT_AUTOSUMMARY |
 			( $new ? EDIT_NEW : EDIT_UPDATE ) |
@@ -2206,10 +2204,6 @@ class EditPage implements IEditObject {
 			// BEGINNING OF MIGRATION TO EDITCONSTRAINT SYSTEM (see T157658)
 			// Create a new runner to avoid rechecking the prior constraints, use the same factory
 			$constraintRunner = new EditConstraintRunner();
-			// Late check for create permission, just in case *PARANOIA*
-			$constraintRunner->addConstraint(
-				new CreationPermissionConstraint( $authority, $this->mTitle )
-			);
 
 			// Don't save a new page if it's blank or if it's a MediaWiki:
 			// message with content equivalent to default (allow empty pages
@@ -2277,7 +2271,7 @@ class EditPage implements IEditObject {
 				} elseif ( $this->section === ''
 					&& $this->edittime
 					&& $this->revisionStore->userWasLastToEdit(
-						wfGetDB( DB_PRIMARY ),
+						$this->connectionProvider->getPrimaryDatabase(),
 						$this->mTitle->getArticleID(),
 						$requestUser->getId(),
 						$this->edittime
@@ -2520,8 +2514,9 @@ class EditPage implements IEditObject {
 
 		$result['nullEdit'] = !$doEditStatus->wasRevisionCreated();
 		if ( $result['nullEdit'] ) {
-			// We don't know if it was a null edit until now, so increment here
-			$requestUser->pingLimiter( 'linkpurge' );
+			// We didn't know if it was a null edit until now, so bump the rate limit now
+			$limitSubject = $requestUser->toRateLimitSubject();
+			MediaWikiServices::getInstance()->getRateLimiter()->limit( $limitSubject, 'linkpurge' );
 		}
 		$result['redirect'] = $content->isRedirect();
 
@@ -2693,13 +2688,17 @@ class EditPage implements IEditObject {
 
 		if ( $baseContent === null ) {
 			return false;
+		} elseif ( $baseRevRecord->isCurrent() ) {
+			// Impossible to have a conflict when the user just edited the latest revision. This can
+			// happen e.g. when $wgDiff3 is badly configured.
+			return [ $editContent, $baseRevRecord->getId() ];
 		}
 
 		// The current state, we want to merge updates into it
 		$currentRevisionRecord = $this->revisionStore->getRevisionByTitle(
 			$this->mTitle,
 			0,
-			RevisionStore::READ_LATEST
+			IDBAccessObject::READ_LATEST
 		);
 		$currentContent = $currentRevisionRecord
 			? $currentRevisionRecord->getContent( SlotRecord::MAIN )
@@ -2734,13 +2733,13 @@ class EditPage implements IEditObject {
 			if ( $this->editRevId ) {
 				$revRecord = $this->revisionStore->getRevisionById(
 					$this->editRevId,
-					RevisionStore::READ_LATEST
+					IDBAccessObject::READ_LATEST
 				);
 			} elseif ( $this->edittime ) {
 				$revRecord = $this->revisionStore->getRevisionByTimestamp(
 					$this->getTitle(),
 					$this->edittime,
-					RevisionStore::READ_LATEST
+					IDBAccessObject::READ_LATEST
 				);
 			}
 			$this->mExpectedParentRevision = $revRecord;
@@ -2766,7 +2765,11 @@ class EditPage implements IEditObject {
 			$out->addModules( 'mediawiki.action.edit.editWarning' );
 		}
 
-		if ( $this->context->getConfig()->get( MainConfigNames::EnableEditRecovery ) ) {
+		if ( $this->context->getConfig()->get( MainConfigNames::EnableEditRecovery )
+			&& $this->userOptionsLookup->getOption( $user, 'editrecovery' )
+		) {
+			$wasPosted = $this->getContext()->getRequest()->getMethod() === 'POST';
+			$out->addJsConfigVars( 'wgEditRecoveryWasPosted', $wasPosted );
 			$out->addModules( 'mediawiki.editRecovery.edit' );
 		}
 
@@ -2865,7 +2868,7 @@ class EditPage implements IEditObject {
 			$this->section !== '' ? $this->section : null
 		);
 
-		foreach ( $messages as $noticeName => $message ) {
+		foreach ( $messages as $message ) {
 			$this->context->getOutput()->addHTML( $message );
 		}
 	}
@@ -2997,7 +3000,8 @@ class EditPage implements IEditObject {
 				'name' => self::EDITFORM_ID,
 				'method' => 'post',
 				'action' => $this->getActionURL( $this->getContextTitle() ),
-				'enctype' => 'multipart/form-data'
+				'enctype' => 'multipart/form-data',
+				'data-mw-editform-type' => $this->formtype
 			]
 		) );
 
@@ -3006,13 +3010,13 @@ class EditPage implements IEditObject {
 
 		// Add an empty field to trip up spambots
 		$out->addHTML(
-			Xml::openElement( 'div', [ 'id' => 'antispam-container', 'style' => 'display: none;' ] )
+			Html::openElement( 'div', [ 'id' => 'antispam-container', 'style' => 'display: none;' ] )
 			. Html::rawElement(
 				'label',
 				[ 'for' => 'wpAntispam' ],
 				$this->context->msg( 'simpleantispam-label' )->parse()
 			)
-			. Xml::element(
+			. Html::element(
 				'input',
 				[
 					'type' => 'text',
@@ -3021,7 +3025,7 @@ class EditPage implements IEditObject {
 					'value' => ''
 				]
 			)
-			. Xml::closeElement( 'div' )
+			. Html::closeElement( 'div' )
 		);
 
 		$this->getHookRunner()->onEditPage__showEditForm_fields( $this, $out );
@@ -3034,7 +3038,7 @@ class EditPage implements IEditObject {
 			$comment = $this->commentStore->getComment( 'log_comment', $this->lastDelete )->text;
 
 			// It is better to not parse the comment at all than to have templates expanded in the middle
-			// TODO: can the checkLabel be moved outside of the div so that wrapWikiMsg could be used?
+			// TODO: can the label be moved outside of the div so that wrapWikiMsg could be used?
 			$key = $comment === ''
 				? 'confirmrecreate-noreason'
 				: 'confirmrecreate';
@@ -3045,12 +3049,20 @@ class EditPage implements IEditObject {
 					->params( $username )
 					->plaintextParams( $comment )
 					->parse() .
-					Xml::checkLabel(
-						$this->context->msg( 'recreate' )->text(),
-						'wpRecreate',
-						'wpRecreate',
-						false,
-						[ 'title' => Linker::titleAttrib( 'recreate' ), 'tabindex' => 1, 'id' => 'wpRecreate' ]
+					Html::rawElement(
+						'div',
+						[],
+						Html::check(
+							'wpRecreate',
+							false,
+							[ 'title' => Linker::titleAttrib( 'recreate' ), 'tabindex' => 1, 'id' => 'wpRecreate' ]
+						)
+						. "\u{00A0}" .
+						Html::label(
+							$this->context->msg( 'recreate' )->text(),
+							'wpRecreate',
+							[ 'title' => Linker::titleAttrib( 'recreate' ) ]
+						)
 					)
 			) );
 		}
@@ -3256,7 +3268,7 @@ class EditPage implements IEditObject {
 			$this->addExplainConflictHeader();
 			$this->editRevId = $this->page->getLatest();
 		} else {
-			if ( $this->section !== '' && $this->section !== 'new' && !$this->summary &&
+			if ( $this->section !== '' && $this->section !== 'new' && $this->summary === '' &&
 				!$this->preview && !$this->diff
 			) {
 				$sectionTitle = self::extractSectionTitle( $this->textbox1 ); // FIXME: use Content object
@@ -3443,7 +3455,7 @@ class EditPage implements IEditObject {
 		$commentFormatter = MediaWikiServices::getInstance()->getCommentFormatter();
 		$summary = $this->context->msg( 'summary-preview' )->parse()
 			. $commentFormatter->formatBlock( $summary, $this->mTitle, $isSubjectPreview );
-		return Xml::tags( 'div', [ 'class' => 'mw-summary-preview' ], $summary );
+		return Html::rawElement( 'div', [ 'class' => 'mw-summary-preview' ], $summary );
 	}
 
 	private function showFormBeforeText(): void {
@@ -3538,16 +3550,10 @@ class EditPage implements IEditObject {
 		}
 
 		$out = $this->context->getOutput();
-		$out->addHTML( Xml::openElement( 'div', $attribs ) );
+		$out->addHTML( Html::openElement( 'div', $attribs ) );
 
 		if ( $this->formtype === 'preview' ) {
 			$this->showPreview( $previewOutput );
-		} else {
-			// Empty content container for LivePreview
-			$pageViewLang = $this->mTitle->getPageViewLanguage();
-			$attribs = [ 'lang' => $pageViewLang->getHtmlCode(), 'dir' => $pageViewLang->getDir(),
-				'class' => 'mw-content-' . $pageViewLang->getDir() ];
-			$out->addHTML( Html::rawElement( 'div', $attribs ) );
 		}
 
 		$out->addHTML( '</div>' );
@@ -3919,7 +3925,7 @@ class EditPage implements IEditObject {
 	 * @return stdClass|null
 	 */
 	private function getLastDelete(): ?stdClass {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->connectionProvider->getReplicaDatabase();
 		$commentQuery = $this->commentStore->getJoin( 'log_comment' );
 		$data = $dbr->selectRow(
 			array_merge( [ 'logging' ], $commentQuery['tables'], [ 'actor' ] ),
@@ -4105,17 +4111,17 @@ class EditPage implements IEditObject {
 			) . $conflict
 		);
 
-		$pageViewLang = $this->mTitle->getPageViewLanguage();
-		$attribs = [ 'lang' => $pageViewLang->getHtmlCode(), 'dir' => $pageViewLang->getDir(),
-			'class' => 'mw-content-' . $pageViewLang->getDir() ];
-		$previewHTML = Html::rawElement( 'div', $attribs, $previewHTML );
-
 		return $previewhead . $previewHTML . $this->previewTextAfterContent;
 	}
 
 	private function incrementEditFailureStats( string $failureType ): void {
-		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
-		$stats->increment( 'edit.failures.' . $failureType );
+		MediaWikiServices::getInstance()->getStatsFactory()
+			->getCounter( 'edit_failure_total' )
+			->setLabel( 'cause', $failureType )
+			->setLabel( 'namespace', 'n/a' )
+			->setLabel( 'user_bucket', 'n/a' )
+			->copyToStatsdAt( 'edit.failures.' . $failureType )
+			->increment();
 	}
 
 	/**
@@ -4580,47 +4586,33 @@ class EditPage implements IEditObject {
 	}
 
 	/**
-	 * Set a factory function to create an EditConflictHelper
-	 *
-	 * @param callable $factory Factory function
+	 * @param callable $factory Factory function to create a {@see TextConflictHelper}
 	 * @since 1.31
 	 */
 	public function setEditConflictHelperFactory( callable $factory ) {
+		Assert::precondition( !$this->editConflictHelperFactory,
+			'Can only have one extension that resolves edit conflicts' );
 		$this->editConflictHelperFactory = $factory;
-		$this->editConflictHelper = null;
 	}
 
-	/**
-	 * @return TextConflictHelper
-	 */
 	private function getEditConflictHelper(): TextConflictHelper {
 		if ( !$this->editConflictHelper ) {
-			$this->editConflictHelper = call_user_func(
-				$this->editConflictHelperFactory,
-				$this->getSubmitButtonLabel()
-			);
+			$label = $this->getSubmitButtonLabel();
+			if ( $this->editConflictHelperFactory ) {
+				$this->editConflictHelper = ( $this->editConflictHelperFactory )( $label );
+			} else {
+				$this->editConflictHelper = new TextConflictHelper(
+					$this->getTitle(),
+					$this->getContext()->getOutput(),
+					MediaWikiServices::getInstance()->getStatsFactory(),
+					$label,
+					MediaWikiServices::getInstance()->getContentHandlerFactory()
+				);
+			}
 		}
-
 		return $this->editConflictHelper;
-	}
-
-	/**
-	 * @param string $submitButtonLabel
-	 * @return TextConflictHelper
-	 * @throws MWUnknownContentModelException
-	 */
-	private function newTextConflictHelper( string $submitButtonLabel ): TextConflictHelper {
-		return new TextConflictHelper(
-			$this->getTitle(),
-			$this->getContext()->getOutput(),
-			MediaWikiServices::getInstance()->getStatsdDataFactory(),
-			$submitButtonLabel,
-			MediaWikiServices::getInstance()->getContentHandlerFactory()
-		);
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( EditPage::class, 'EditPage' );

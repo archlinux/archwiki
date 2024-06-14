@@ -23,11 +23,15 @@
 
 namespace MediaWiki\Session;
 
+use BadMethodCallException;
+use LogicException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\User\User;
+use MWRestrictions;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 /**
  * Manages data for an authenticated session
@@ -184,6 +188,15 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
+	 * Fetch any restrictions imposed on logins or actions when this
+	 * session is active.
+	 * @return MWRestrictions|null
+	 */
+	public function getRestrictions(): ?MWRestrictions {
+		return $this->backend->getRestrictions();
+	}
+
+	/**
 	 * Indicate whether the session user info can be changed
 	 * @return bool
 	 */
@@ -266,7 +279,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 			$this->backend->dirty();
 		}
 		if ( $this->backend->canSetUser() ) {
-			$this->backend->setUser( new User );
+			$this->backend->setUser( MediaWikiServices::getInstance()->getUserFactory()->newAnonymous() );
 		}
 		$this->backend->save();
 	}
@@ -462,7 +475,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 				return self::$encryptionAlgorithm;
 			}
 
-			throw new \BadMethodCallException(
+			throw new BadMethodCallException(
 				'Encryption is not available. You really should install the PHP OpenSSL extension. ' .
 				'But if you really can\'t and you\'re willing ' .
 				'to accept insecure storage of sensitive session data, set ' .
@@ -500,12 +513,12 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 				}
 				break;
 			case 'insecure':
-				$ex = new \Exception( 'No encryption is available, storing data as plain text' );
+				$ex = new RuntimeException( 'No encryption is available, storing data as plain text' );
 				$this->logger->warning( $ex->getMessage(), [ 'exception' => $ex ] );
 				$ciphertext = $serialized;
 				break;
 			default:
-				throw new \LogicException( 'invalid algorithm' );
+				throw new LogicException( 'invalid algorithm' );
 		}
 
 		// Seal
@@ -537,7 +550,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 		// Unseal and check
 		$pieces = explode( '.', $encrypted, 4 );
 		if ( count( $pieces ) !== 3 ) {
-			$ex = new \Exception( 'Invalid sealed-secret format' );
+			$ex = new RuntimeException( 'Invalid sealed-secret format' );
 			$this->logger->warning( $ex->getMessage(), [ 'exception' => $ex ] );
 			return $default;
 		}
@@ -545,7 +558,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 		[ $encKey, $hmacKey ] = $this->getSecretKeys();
 		$integCalc = hash_hmac( 'sha256', $iv . '.' . $ciphertext, $hmacKey, true );
 		if ( !hash_equals( $integCalc, base64_decode( $hmac ) ) ) {
-			$ex = new \Exception( 'Sealed secret has been tampered with, aborting.' );
+			$ex = new RuntimeException( 'Sealed secret has been tampered with, aborting.' );
 			$this->logger->warning( $ex->getMessage(), [ 'exception' => $ex ] );
 			return $default;
 		}
@@ -557,13 +570,13 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 				$serialized = openssl_decrypt( base64_decode( $ciphertext ), $algorithm[1], $encKey,
 					OPENSSL_RAW_DATA, base64_decode( $iv ) );
 				if ( $serialized === false ) {
-					$ex = new \Exception( 'Decyption failed: ' . openssl_error_string() );
+					$ex = new RuntimeException( 'Decyption failed: ' . openssl_error_string() );
 					$this->logger->debug( $ex->getMessage(), [ 'exception' => $ex ] );
 					return $default;
 				}
 				break;
 			case 'insecure':
-				$ex = new \Exception(
+				$ex = new RuntimeException(
 					'No encryption is available, retrieving data that was stored as plain text'
 				);
 				$this->logger->warning( $ex->getMessage(), [ 'exception' => $ex ] );
@@ -664,7 +677,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	public function &offsetGet( $offset ) {
 		$data = &$this->backend->getData();
 		if ( !array_key_exists( $offset, $data ) ) {
-			$ex = new \Exception( "Undefined index (auto-adds to session with a null value): $offset" );
+			$ex = new LogicException( "Undefined index (auto-adds to session with a null value): $offset" );
 			$this->logger->debug( $ex->getMessage(), [ 'exception' => $ex ] );
 		}
 		return $data[$offset];

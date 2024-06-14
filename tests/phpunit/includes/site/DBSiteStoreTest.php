@@ -1,5 +1,13 @@
 <?php
 
+namespace MediaWiki\Tests\Site;
+
+use MediaWiki\Site\DBSiteStore;
+use MediaWiki\Site\MediaWikiSite;
+use MediaWiki\Site\Site;
+use MediaWiki\Site\SiteList;
+use MediaWikiIntegrationTestCase;
+
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,11 +41,11 @@ class DBSiteStoreTest extends MediaWikiIntegrationTestCase {
 	 * @return DBSiteStore
 	 */
 	private function newDBSiteStore() {
-		return new DBSiteStore( $this->getServiceContainer()->getDBLoadBalancerFactory() );
+		return new DBSiteStore( $this->getServiceContainer()->getConnectionProvider() );
 	}
 
 	/**
-	 * @covers DBSiteStore::getSites
+	 * @covers \MediaWiki\Site\DBSiteStore::getSites
 	 */
 	public function testGetSites() {
 		$expectedSites = TestSites::getSites();
@@ -64,7 +72,7 @@ class DBSiteStoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers DBSiteStore::saveSites
+	 * @covers \MediaWiki\Site\DBSiteStore::saveSites
 	 */
 	public function testSaveSites() {
 		$store = $this->newDBSiteStore();
@@ -97,7 +105,7 @@ class DBSiteStoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers DBSiteStore::reset
+	 * @covers \MediaWiki\Site\DBSiteStore::reset
 	 */
 	public function testReset() {
 		TestSites::insertIntoDb();
@@ -124,7 +132,7 @@ class DBSiteStoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers DBSiteStore::clear
+	 * @covers \MediaWiki\Site\DBSiteStore::clear
 	 */
 	public function testClear() {
 		$store = $this->newDBSiteStore();
@@ -138,7 +146,7 @@ class DBSiteStoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers DBSiteStore::getSites
+	 * @covers \MediaWiki\Site\DBSiteStore::getSites
 	 */
 	public function testGetSitesDefaultOrder() {
 		$store = $this->newDBSiteStore();

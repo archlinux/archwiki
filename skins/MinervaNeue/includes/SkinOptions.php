@@ -19,6 +19,14 @@
  */
 namespace MediaWiki\Minerva;
 
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Minerva\Hooks\HookRunner;
+use MediaWiki\Minerva\Skins\SkinMinerva;
+use MediaWiki\Minerva\Skins\SkinUserPageHelper;
+use MobileContext;
+use Skin;
+
 /**
  * A wrapper for all available Skin options.
  */
@@ -36,6 +44,7 @@ final class SkinOptions {
 	public const MAIN_MENU_EXPANDED = 'mainMenuExpanded';
 	public const PERSONAL_MENU = 'personalMenu';
 	public const SINGLE_ECHO_BUTTON = 'echo';
+	public const NIGHT_MODE = 'nightMode';
 
 	/**
 	 * Note stable skin options default to true for desktop-Minerva and are expected to be
@@ -68,7 +77,20 @@ final class SkinOptions {
 		self::MAIN_MENU_EXPANDED => true,
 		/** whether Echo should be replaced with a single button */
 		self::SINGLE_ECHO_BUTTON => false,
+		/** whether night mode is available to the user */
+		self::NIGHT_MODE => false,
 	];
+
+	private HookContainer $hookContainer;
+	private SkinUserPageHelper $skinUserPageHelper;
+
+	public function __construct(
+		HookContainer $hookContainer,
+		SkinUserPageHelper $skinUserPageHelper
+	) {
+		$this->hookContainer = $hookContainer;
+		$this->skinUserPageHelper = $skinUserPageHelper;
+	}
 
 	/**
 	 * override an existing option or options with new values
@@ -114,5 +136,75 @@ final class SkinOptions {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Set the skin options for Minerva
+	 *
+	 * @param MobileContext $mobileContext
+	 * @param Skin $skin
+	 */
+	public function setMinervaSkinOptions(
+		MobileContext $mobileContext, Skin $skin
+	) {
+		// setSkinOptions is not available
+		if ( $skin instanceof SkinMinerva ) {
+			$services = MediaWikiServices::getInstance();
+			$featureManager = $services
+				->getService( 'MobileFrontend.FeaturesManager' );
+			$title = $skin->getTitle();
+
+			// T245162 - this should only apply if the context relates to a page view.
+			// Examples:
+			// - parsing wikitext during an REST response
+			// - a ResourceLoader response
+			if ( $title !== null ) {
+				// T232653: TALK_AT_TOP, HISTORY_IN_PAGE_ACTIONS, TOOLBAR_SUBMENU should
+				// be true on user pages and user talk pages for all users
+				$this->skinUserPageHelper
+					->setContext( $mobileContext )
+					->setTitle(
+						$title->inNamespace( NS_USER_TALK ) ? $title->getSubjectPage() : $title
+					);
+
+				$isUserPage = $this->skinUserPageHelper->isUserPage();
+				$isUserPageAccessible = $this->skinUserPageHelper->isUserPageAccessibleToCurrentUser();
+				$isUserPageOrUserTalkPage = $isUserPage && $isUserPageAccessible;
+			} else {
+				// If no title this must be false
+				$isUserPageOrUserTalkPage = false;
+			}
+
+			$isBeta = $mobileContext->isBetaGroupMember();
+			$this->setMultiple( [
+				self::SHOW_DONATE => $featureManager->isFeatureAvailableForCurrentUser( 'MinervaDonateLink' ),
+				self::TALK_AT_TOP => $isUserPageOrUserTalkPage ?
+					true : $featureManager->isFeatureAvailableForCurrentUser( 'MinervaTalkAtTop' ),
+				self::BETA_MODE
+					=> $isBeta,
+				self::CATEGORIES
+					=> $featureManager->isFeatureAvailableForCurrentUser( 'MinervaShowCategories' ),
+				self::PAGE_ISSUES
+					=> $featureManager->isFeatureAvailableForCurrentUser( 'MinervaPageIssuesNewTreatment' ),
+				self::MOBILE_OPTIONS => true,
+				self::PERSONAL_MENU => $featureManager->isFeatureAvailableForCurrentUser(
+					'MinervaPersonalMenu'
+				),
+				self::MAIN_MENU_EXPANDED => $featureManager->isFeatureAvailableForCurrentUser(
+					'MinervaAdvancedMainMenu'
+				),
+				// In mobile, always resort to single icon.
+				self::SINGLE_ECHO_BUTTON => true,
+				self::HISTORY_IN_PAGE_ACTIONS => $isUserPageOrUserTalkPage ?
+					true : $featureManager->isFeatureAvailableForCurrentUser( 'MinervaHistoryInPageActions' ),
+				self::TOOLBAR_SUBMENU => $isUserPageOrUserTalkPage ?
+					true : $featureManager->isFeatureAvailableForCurrentUser(
+						Hooks::FEATURE_OVERFLOW_PAGE_ACTIONS
+					),
+				self::TABS_ON_SPECIALS => true,
+				self::NIGHT_MODE => $featureManager->isFeatureAvailableForCurrentUser( 'MinervaNightMode' ),
+			] );
+			( new HookRunner( $this->hookContainer ) )->onSkinMinervaOptionsInit( $skin, $this );
+		}
 	}
 }

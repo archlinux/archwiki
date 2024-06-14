@@ -8,7 +8,7 @@ class TimeAdjustTest extends MediaWikiLangTestCase {
 	/**
 	 * Test offset usage for a given Language::userAdjust
 	 * @dataProvider dataUserAdjust
-	 * @covers Language::userAdjust
+	 * @covers \Language::userAdjust
 	 */
 	public function testUserAdjust( string $date, $correction, string $expected ) {
 		$this->overrideConfigValue( MainConfigNames::LocalTZoffset, self::LOCAL_TZ_OFFSET );
@@ -82,5 +82,16 @@ class TimeAdjustTest extends MediaWikiLangTestCase {
 
 		yield 'Garbage, fallback to local offset' => [ '20221015120000', 'WhatAmIEvenDoingHere', '20221015121700' ];
 		yield 'Empty string, fallback to local offset' => [ '20221015120000', '', '20221015121700' ];
+
+		yield 'T32148 - local date in year 10000' => [
+			'99991231235959',
+			'ZoneInfo|600|Asia/Vladivostok',
+			'99991231235959'
+		];
+		yield 'T32148 - date in year 10000 due to local offset' => [
+			'99991231235959',
+			'System|0',
+			'99991231235959'
+		];
 	}
 }

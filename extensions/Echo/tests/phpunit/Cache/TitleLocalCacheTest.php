@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Extension\Notifications\Cache\TitleLocalCache;
+use MediaWiki\Title\Title;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -10,8 +11,7 @@ use Wikimedia\TestingAccessWrapper;
 class TitleLocalCacheTest extends MediaWikiIntegrationTestCase {
 
 	public function testAdd() {
-		$cache = $this->getMockBuilder( TitleLocalCache::class )
-			->onlyMethods( [ 'resolve' ] )->getMock();
+		$cache = $this->mockTitleLocalCache();
 
 		$cache->add( 1 );
 		$cache->add( 9 );
@@ -25,8 +25,7 @@ class TitleLocalCacheTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testGet() {
-		$cache = $this->getMockBuilder( TitleLocalCache::class )
-			->onlyMethods( [ 'resolve' ] )->getMock();
+		$cache = $this->mockTitleLocalCache();
 		$cachePriv = TestingAccessWrapper::newFromObject( $cache );
 
 		// First title included in cache
@@ -50,8 +49,7 @@ class TitleLocalCacheTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testClearAll() {
-		$cache = $this->getMockBuilder( TitleLocalCache::class )
-			->onlyMethods( [ 'resolve' ] )->getMock();
+		$cache = $this->mockTitleLocalCache();
 
 		// Add 1 to cache
 		$cachePriv = TestingAccessWrapper::newFromObject( $cache );
@@ -78,5 +76,15 @@ class TitleLocalCacheTest extends MediaWikiIntegrationTestCase {
 		$title = $this->createMock( Title::class );
 
 		return $title;
+	}
+
+	private function mockTitleLocalCache(): TitleLocalCache {
+		$services = $this->getServiceContainer();
+		return $this->getMockBuilder( TitleLocalCache::class )
+			->setConstructorArgs( [
+				$services->getPageStore(),
+				$services->getTitleFactory()
+			] )
+			->onlyMethods( [ 'resolve' ] )->getMock();
 	}
 }

@@ -2,6 +2,7 @@
 
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\MultiConfig;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Languages\LanguageConverterFactory;
@@ -18,6 +19,8 @@ use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\ResourceLoader\ResourceLoader;
+use MediaWiki\Tests\ResourceLoader\ResourceLoaderTestCase;
+use MediaWiki\Tests\ResourceLoader\ResourceLoaderTestModule;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -33,7 +36,7 @@ use Wikimedia\TestingAccessWrapper;
  *
  * @group Database
  * @group Output
- * @covers OutputPage
+ * @covers \MediaWiki\Output\OutputPage
  */
 class OutputPageTest extends MediaWikiIntegrationTestCase {
 	use MockAuthorityTrait;
@@ -500,16 +503,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				Html::inlineScript( "\nalert( foo );\n" ) . "\n",
 			"\n" . $op->getBottomScripts() . "\n"
 		);
-	}
-
-	// @todo How to test filterModules(), warnModuleTargetFilter(), getModules(), etc.?
-
-	public function testSetTarget() {
-		$op = $this->newInstance();
-		$op->setTarget( 'foo' );
-
-		$this->assertSame( 'foo', $op->getTarget() );
-		// @todo What else?  Test some actual effect?
 	}
 
 	// @todo How to test addContentOverride(Callback)?
@@ -1288,7 +1281,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op = $this->setupCategoryTests( $fakeResults, $variantLinkCallback );
 
 		$stubPO = $this->createParserOutputStub( [
-			'getCategories' => $args,
 			'getCategoryMap' => $args,
 		] );
 
@@ -1608,12 +1600,21 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 */
 	private function createParserOutputStubWithFlags( array $retVals, array $flags ): ParserOutput {
 		$pOut = $this->createMock( ParserOutput::class );
+
+		$mockedGetText = false;
 		foreach ( $retVals as $method => $retVal ) {
 			$pOut->method( $method )->willReturn( $retVal );
+			if ( $method === 'getText' ) {
+				$mockedGetText = true;
+			}
+		}
+
+		// Needed to ensure OutputPage::getParserOutputText doesn't return null
+		if ( !$mockedGetText ) {
+			$pOut->method( 'getText' )->willReturn( '' );
 		}
 
 		$arrayReturningMethods = [
-			'getCategories',
 			'getCategoryMap',
 			'getFileSearchOptions',
 			'getHeadItems',
@@ -1794,16 +1795,16 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			'wrapWikiTextAsInterface' => [
 				'Simple' => [
 					[ 'wrapperClass', 'text' ],
-					"<div class=\"wrapperClass\"><p>text\n</p></div>"
+					"<div class=\"mw-content-ltr wrapperClass\" lang=\"en\" dir=\"ltr\"><p>text\n</p></div>"
 				], 'Spurious </div>' => [
 					[ 'wrapperClass', 'text</div><div>more' ],
-					"<div class=\"wrapperClass\"><p>text</p><div>more</div></div>"
+					"<div class=\"mw-content-ltr wrapperClass\" lang=\"en\" dir=\"ltr\"><p>text</p><div>more</div></div>"
 				], 'Extra newlines would break <p> wrappers' => [
 					[ 'two classes', "1\n\n2\n\n3" ],
-					"<div class=\"two classes\"><p>1\n</p><p>2\n</p><p>3\n</p></div>"
+					"<div class=\"mw-content-ltr two classes\" lang=\"en\" dir=\"ltr\"><p>1\n</p><p>2\n</p><p>3\n</p></div>"
 				], 'Other unclosed tags' => [
 					[ 'error', 'a<b>c<i>d' ],
-					"<div class=\"error\"><p>a<b>c<i>d\n</i></b></p></div>"
+					"<div class=\"mw-content-ltr error\" lang=\"en\" dir=\"ltr\"><p>a<b>c<i>d\n</i></b></p></div>"
 				],
 			],
 		];
@@ -1821,7 +1822,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testAddWikiTextAsInterfaceNoTitle() {
-		$this->expectException( MWException::class );
+		$this->expectException( RuntimeException::class );
 		$this->expectExceptionMessage( 'Title is null' );
 
 		$op = $this->newInstance( [], null, 'notitle' );
@@ -1829,7 +1830,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testAddWikiTextAsContentNoTitle() {
-		$this->expectException( MWException::class );
+		$this->expectException( RuntimeException::class );
 		$this->expectExceptionMessage( 'Title is null' );
 
 		$op = $this->newInstance( [], null, 'notitle' );
@@ -1890,12 +1891,13 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op = $this->newInstance();
 		$this->assertSame( '', $op->getHTML() );
 
-		$pOut = $this->createParserOutputStub( 'getText', '<some text>' );
+		$text = '<some text>';
+		$pOut = $this->createParserOutputStub( 'getText', $text );
 
 		$op->addParserOutputMetadata( $pOut );
 		$this->assertSame( '', $op->getHTML() );
 
-		$op->addParserOutputText( $pOut );
+		$op->addParserOutputText( $text );
 		$this->assertSame( '<some text>', $op->getHTML() );
 	}
 
@@ -1990,21 +1992,21 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testParseAsContentNullTitle() {
-		$this->expectException( MWException::class );
+		$this->expectException( RuntimeException::class );
 		$this->expectExceptionMessage( 'Empty $mTitle in MediaWiki\Output\OutputPage::parseInternal' );
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->parseAsContent( '' );
 	}
 
 	public function testParseAsInterfaceNullTitle() {
-		$this->expectException( MWException::class );
+		$this->expectException( RuntimeException::class );
 		$this->expectExceptionMessage( 'Empty $mTitle in MediaWiki\Output\OutputPage::parseInternal' );
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->parseAsInterface( '' );
 	}
 
 	public function testParseInlineAsInterfaceNullTitle() {
-		$this->expectException( MWException::class );
+		$this->expectException( RuntimeException::class );
 		$this->expectExceptionMessage( 'Empty $mTitle in MediaWiki\Output\OutputPage::parseInternal' );
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->parseInlineAsInterface( '' );
@@ -2883,32 +2885,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $op->getOutputFlag( ParserOutputFlags::SHOW_TOC ) );
 	}
 
-	public function testIsTOCEnabledBackCompat() {
-		// This tests backward compatibility: OutputPage *used* to use
-		// ParserOutput::getTOCHTML() to determine whether the TOC should
-		// be enabled, before ParserOutputFlags::SHOW_TOC was added in 1.39.
-		$op = $this->newInstance();
-		$this->assertFalse( $op->isTOCEnabled() );
-
-		$pOut1 = $this->createParserOutputStub( [
-			'getTOCHTML' => '',
-			'hasTOCHTML' => false,
-		] );
-		$op->addParserOutputMetadata( $pOut1 );
-		$this->assertFalse( $op->isTOCEnabled() );
-
-		$pOut2 = $this->createParserOutputStub( [
-			'getTOCHTML' => 'stuff',
-			'hasTOCHTML' => true,
-		] );
-		$op->addParserOutput( $pOut2 );
-		$this->assertTrue( $op->isTOCEnabled() );
-
-		// The parser output doesn't disable the TOC after it was enabled
-		$op->addParserOutputMetadata( $pOut1 );
-		$this->assertTrue( $op->isTOCEnabled() );
-	}
-
 	public function testNoTOC() {
 		$op = $this->newInstance();
 		$this->assertFalse( $op->getOutputFlag( ParserOutputFlags::NO_TOC ) );
@@ -3171,6 +3147,69 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op = $this->newInstance( [], null, null, $performer );
 		$op->getContext()->getSkin()->setRelevantTitle( Title::makeTitle( NS_MAIN, 'RelevantTitle' ) );
 		$this->assertArraySubmapSame( $expectedEditableConfig, $op->getJSVars() );
+	}
+
+	public function provideJsVarsAboutPageLang() {
+		// Format:
+		// - expected
+		// - title
+		// - site content language
+		// - user language
+		// - wgDefaultLanguageVariant
+		return [
+			[ 'fr', [ NS_HELP, 'I_need_somebody' ], 'fr', 'fr', false ],
+			[ 'es', [ NS_HELP, 'I_need_somebody' ], 'es', 'zh-tw', false ],
+			[ 'zh', [ NS_HELP, 'I_need_somebody' ], 'zh', 'zh-tw', false ],
+			[ 'es', [ NS_HELP, 'I_need_somebody' ], 'es', 'zh-tw', 'zh-cn' ],
+			[ 'es', [ NS_MEDIAWIKI, 'About' ], 'es', 'zh-tw', 'zh-cn' ],
+			[ 'es', [ NS_MEDIAWIKI, 'About/' ], 'es', 'zh-tw', 'zh-cn' ],
+			[ 'de', [ NS_MEDIAWIKI, 'About/de' ], 'es', 'zh-tw', 'zh-cn' ],
+			[ 'en', [ NS_MEDIAWIKI, 'Common.js' ], 'es', 'zh-tw', 'zh-cn' ],
+			[ 'en', [ NS_MEDIAWIKI, 'Common.css' ], 'es', 'zh-tw', 'zh-cn' ],
+			[ 'en', [ NS_USER, 'JohnDoe/Common.js' ], 'es', 'zh-tw', 'zh-cn' ],
+			[ 'en', [ NS_USER, 'JohnDoe/Monobook.css' ], 'es', 'zh-tw', 'zh-cn' ],
+
+			[ 'zh-cn', [ NS_HELP, 'I_need_somebody' ], 'zh', 'zh-tw', 'zh-cn' ],
+			[ 'zh', [ NS_MEDIAWIKI, 'About' ], 'zh', 'zh-tw', 'zh-cn' ],
+			[ 'zh', [ NS_MEDIAWIKI, 'About/' ], 'zh', 'zh-tw', 'zh-cn' ],
+			[ 'de', [ NS_MEDIAWIKI, 'About/de' ], 'zh', 'zh-tw', 'zh-cn' ],
+			[ 'zh-cn', [ NS_MEDIAWIKI, 'About/zh-cn' ], 'zh', 'zh-tw', 'zh-cn' ],
+			[ 'zh-tw', [ NS_MEDIAWIKI, 'About/zh-tw' ], 'zh', 'zh-tw', 'zh-cn' ],
+			[ 'en', [ NS_MEDIAWIKI, 'Common.js' ], 'zh', 'zh-tw', 'zh-cn' ],
+			[ 'en', [ NS_MEDIAWIKI, 'Common.css' ], 'zh', 'zh-tw', 'zh-cn' ],
+			[ 'en', [ NS_USER, 'JohnDoe/Common.js' ], 'zh', 'zh-tw', 'zh-cn' ],
+			[ 'en', [ NS_USER, 'JohnDoe/Monobook.css' ], 'zh', 'zh-tw', 'zh-cn' ],
+
+			[ 'nl', [ NS_SPECIAL, 'BlankPage' ], 'en', 'nl', false ],
+			[ 'zh-tw', [ NS_SPECIAL, 'NewPages' ], 'es', 'zh-tw', 'zh-cn' ],
+			[ 'zh-tw', [ NS_SPECIAL, 'NewPages' ], 'zh', 'zh-tw', 'zh-cn' ],
+
+			[ 'sr-ec', [ NS_FILE, 'Example' ], 'sr', 'sr', 'sr-ec' ],
+			[ 'sr', [ NS_FILE, 'Example' ], 'sr', 'sr', 'sr' ],
+			[ 'sr-ec', [ NS_MEDIAWIKI, 'Example' ], 'sr-ec', 'sr-ec', 'sr' ],
+			[ 'sr', [ NS_MEDIAWIKI, 'Example' ], 'sr', 'sr', 'sr-ec' ],
+		];
+	}
+
+	/**
+	 * @dataProvider provideJsVarsAboutPageLang
+	 */
+	public function testGetJsVarsAboutPageLang( $expected, $title, $contLang, $userLang, $variant ) {
+		$this->overrideConfigValues( [
+			MainConfigNames::DefaultLanguageVariant => $variant,
+		] );
+		$this->setContentLang( $contLang );
+		$output = $this->newInstance(
+			[ 'LanguageCode' => $contLang ],
+			new FauxRequest( [ 'uselang' => $userLang ] ),
+			'notitle'
+		);
+		$output->setTitle( Title::makeTitle( $title[0], $title[1] ) );
+
+		$this->assertArraySubmapSame( [
+			'wgPageViewLanguage' => $expected,
+			'wgPageContentLanguage' => $expected,
+		], $output->getJSVars() );
 	}
 
 	/**

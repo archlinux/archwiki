@@ -91,11 +91,17 @@ return [
 	},
 
 	'EchoTitleLocalCache' => static function ( MediaWikiServices $services ): TitleLocalCache {
-		return new TitleLocalCache();
+		return new TitleLocalCache(
+			$services->getPageStore(),
+			$services->getTitleFactory()
+		);
 	},
 
 	'EchoRevisionLocalCache' => static function ( MediaWikiServices $services ): RevisionLocalCache {
-		return new RevisionLocalCache();
+		return new RevisionLocalCache(
+			$services->getConnectionProvider(),
+			$services->getRevisionStore()
+		);
 	}
 
 ];

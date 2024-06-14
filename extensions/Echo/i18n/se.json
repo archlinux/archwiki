@@ -81,6 +81,8 @@
 	"notification-link-text-view-page": "Čájet siiddu",
 	"notification-header-edit-user-page": "Geavaheaddji $1 {{GENDER:$2|rievdadii}} <strong>{{GENDER:$3|du geavaheaddjisiiddu}}</strong>.",
 	"notification-compact-header-edit-user-page": "Geavaheaddji $1 {{GENDER:$2|rievdadii}} {{GENDER:$3|du geavaheaddjisiiddu}}.",
+	"notification-header-page-linked": "Liŋka siiddus <strong>$4</strong> siidui <strong>$3</strong> lea lasihuvvon.",
+	"notification-compact-header-page-linked": "Liŋkejuvvon siiddus <strong>$1</strong>.",
 	"notification-link-text-what-links-here": "Buot liŋkkat dán siidui",
 	"notification-compact-header-mention-failure-user-unknown": "<strong>Geavaheaddjinamma ii gávdno:</strong> $1",
 	"notification-header-watchlist-created": "Geavaheaddji $1 {{GENDER:$2|ráhkadii}} {{PLURAL:$5||1=oktii|2=guovtte geardde|3=golmma geardde|4=njeallje geardde|5=viđa geardde|6=guđa geardde|7=čieža geardde|8=gávcce geardde|9=ovcce geardde|$5 geardde}} siiddu <strong>$3</strong>, mii lea {{GENDER:$4|du}} čuovvunlisttus.",

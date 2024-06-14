@@ -10,10 +10,8 @@
 /**
  * Use existing reference command.
  *
- * @class
- * @extends ve.ui.Command
- *
  * @constructor
+ * @extends ve.ui.Command
  */
 ve.ui.MWUseExistingReferenceCommand = function VeUiMWUseExistingReferenceCommand() {
 	// Parent constructor
@@ -30,11 +28,12 @@ OO.inheritClass( ve.ui.MWUseExistingReferenceCommand, ve.ui.Command );
 /* Methods */
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWUseExistingReferenceCommand.prototype.isExecutable = function ( fragment ) {
-	// Parent method
-	if ( !ve.ui.MWUseExistingReferenceCommand.super.prototype.isExecutable.apply( this, arguments ) ) {
+	if ( !ve.ui.MWUseExistingReferenceCommand.super.prototype
+		.isExecutable.apply( this, arguments )
+	) {
 		return false;
 	}
 

@@ -5,10 +5,8 @@
 @dividerHeight: 2px;
 @dividerSpacing: 28px;
 
-// FIXME: Remove #page-actions when cache has cleared
 .hatnote,
-.pre-content #p-views,
-.pre-content #page-actions {
+.pre-content #p-views {
 	display: none;
 }
 
@@ -94,21 +92,27 @@
 		font-style: italic;
 	}
 
-	.section-heading {
+	.mw-heading,
+	h1, h2, h3, h4, h5, h6 {
 		border-bottom: 0;
 		padding-bottom: 0;
 		margin-bottom: 16px;
 	}
 
+	.mw-heading2,
 	h2 {
 		font-size: 48px;
 	}
 
+	.mw-heading3,
 	h3 {
 		font-size: 40px;
 		margin-bottom: 13px;
 	}
 
+	.mw-heading4,
+	.mw-heading5,
+	.mw-heading6,
 	h4, h5, h6 {
 		font-size: 36px;
 		margin-bottom: 12px;

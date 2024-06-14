@@ -5,12 +5,12 @@
 			"Edwingudfriend",
 			"Hussein m mmbaga",
 			"Kipala",
+			"Kisare",
 			"Lloffiwr",
 			"Muddyb",
 			"Muddyb Blast Producer",
 			"Wangombe",
-			"Yasen igra",
-			"Kisare"
+			"Yasen igra"
 		]
 	},
 	"prefs-vector-enable-vector-1-label": "Tumia Legacy Vector",
@@ -35,6 +35,13 @@
 	"vector-jumptosearch": "Nenda kwa kutafuta",
 	"vector-jumptocontent": "Nenda kwa yaliyomo",
 	"vector-more-actions": "Zaidi",
+	"vector-client-prefs-label": "Mandhari",
+	"vector-feature-limited-width-name": "Upana",
+	"vector-feature-limited-width-0-label": "Pana",
+	"vector-feature-limited-width-1-label": "Kawaida",
+	"vector-feature-custom-font-size-0-label": "Ndogo",
+	"vector-feature-custom-font-size-1-label": "Kawaida",
+	"vector-feature-custom-font-size-2-label": "Kubwa",
 	"vector-searchsuggest-containing": "Tafuta kurasa zilizo na <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Yaliyomo",
 	"vector-toc-beginning": "Mwanzo",
@@ -52,5 +59,9 @@
 	"vector-page-tools-nav-label": "Zana za ukurasa",
 	"vector-prefs-limited-width": "Wezesha hali ya upana mdogo",
 	"vector-prefs-limited-width-help": "Wezesha hali ya upana mdogo kwa kusema bora.",
-	"empty-language-selector-body": "Yaliyomo ya ukurasa hayatumiki katika lugha nyingine."
+	"empty-language-selector-body": "Yaliyomo ya ukurasa hayatumiki katika lugha nyingine.",
+	"vector-toc-unpinned-popup": "Sehemu ya yaliyomo imehamia hapa.",
+	"vector-page-tools-unpinned-popup": "Menyu ya zana imehamia hapa.",
+	"vector-main-menu-unpinned-popup": "Menyu kuu imehamia hapa.",
+	"vector-client-prefs-unpinned-popup": "Menyu ya mandhari imehamia hapa."
 }

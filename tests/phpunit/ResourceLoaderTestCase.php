@@ -1,14 +1,16 @@
 <?php
 
+namespace MediaWiki\Tests\ResourceLoader;
+
 use MediaWiki\Config\Config;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\ResourceLoader\Context;
 use MediaWiki\ResourceLoader\FileModule;
 use MediaWiki\ResourceLoader\Module;
 use MediaWiki\ResourceLoader\ResourceLoader;
+use MediaWikiIntegrationTestCase;
 use Psr\Log\LoggerInterface;
 
 abstract class ResourceLoaderTestCase extends MediaWikiIntegrationTestCase {
@@ -46,7 +48,7 @@ abstract class ResourceLoaderTestCase extends MediaWikiIntegrationTestCase {
 			'sourcemap' => null,
 		];
 		$resourceLoader = $rl ?: new ResourceLoader(
-			MediaWikiServices::getInstance()->getMainConfig(),
+			$this->getServiceContainer()->getMainConfig(),
 			null,
 			null,
 			[
@@ -124,7 +126,6 @@ class ResourceLoaderTestModule extends Module {
 	protected $isRaw = false;
 	protected $isKnownEmpty = false;
 	protected $type = Module::LOAD_GENERAL;
-	protected $targets = [ 'phpunit' ];
 	protected $shouldEmbed = null;
 	protected $mayValidateScript = false;
 
@@ -241,3 +242,18 @@ class EmptyResourceLoader extends ResourceLoader {
 		parent::__construct( $config ?: ResourceLoaderTestCase::getMinimalConfig(), $logger );
 	}
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( ResourceLoaderTestModule::class, 'ResourceLoaderTestModule' );
+
+/** @deprecated class alias since 1.42 */
+class_alias( ResourceLoaderTestCase::class, 'ResourceLoaderTestCase' );
+
+/** @deprecated class alias since 1.42 */
+class_alias( ResourceLoaderFileTestModule::class, 'ResourceLoaderFileTestModule' );
+
+/** @deprecated class alias since 1.42 */
+class_alias( ResourceLoaderFileModuleTestingSubclass::class, 'ResourceLoaderFileModuleTestingSubclass' );
+
+/** @deprecated class alias since 1.42 */
+class_alias( EmptyResourceLoader::class, 'EmptyResourceLoader' );

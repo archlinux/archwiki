@@ -68,10 +68,6 @@ class Separators {
 		return $c;
 	}
 
-	/**
-	 * @param Node $n
-	 * @return int|null
-	 */
 	private static function precedingSeparatorTextLen( Node $n ): ?int {
 		// Given the CSS white-space property and specifically,
 		// "pre" and "pre-line" values for this property, it seems that any
@@ -346,10 +342,6 @@ class Separators {
 		return $res;
 	}
 
-	/**
-	 * @param Node $node
-	 * @return string
-	 */
 	public static function debugOut( Node $node ): string {
 		$value = '';
 		if ( $node instanceof Element ) {
@@ -427,20 +419,11 @@ class Separators {
 		];
 	}
 
-	/**
-	 * @param Env $env
-	 * @param SerializerState $state
-	 */
 	public function __construct( Env $env, SerializerState $state ) {
 		$this->env = $env;
 		$this->state = $state;
 	}
 
-	/**
-	 * @param string $sep
-	 * @param array $nlConstraints
-	 * @return string
-	 */
 	private function makeSepIndentPreSafe(
 		string $sep, array $nlConstraints
 	): string {
@@ -793,7 +776,7 @@ class Separators {
 		 * ---------------------------------------------------------------------- */
 		$origSepNeeded = $node !== $prevNode && $state->selserMode;
 		$origSepNeededAndUsable =
-			$origSepNeeded && !$state->inModifiedContent &&
+			$origSepNeeded && !$state->inInsertedContent &&
 			!WTSUtils::nextToDeletedBlockNodeInWT( $prevNode, true ) &&
 			!WTSUtils::nextToDeletedBlockNodeInWT( $node, false ) &&
 			WTSUtils::origSrcValidInEditedContext( $state, $prevNode ) &&
@@ -905,19 +888,19 @@ class Separators {
 							// Both have the same dsr range, so there can't be any
 							// separators between them
 							$sep = '';
-						} elseif ( ( $dsrA->openWidth ?? null ) !== null ) {
+						} elseif ( isset( $dsrA->openWidth ) ) {
 							// B in A, from parent to child
 							$sep = $state->getOrigSrc( $dsrA->innerStart(), $dsrB->start );
 						}
 					} elseif ( $dsrA->end <= $dsrB->start ) {
 						// B following A (siblingish)
 						$sep = $state->getOrigSrc( $dsrA->end, $dsrB->start );
-					} elseif ( ( $dsrB->closeWidth ?? null ) !== null ) {
+					} elseif ( isset( $dsrB->closeWidth ) ) {
 						// A in B, from child to parent
 						$sep = $state->getOrigSrc( $dsrA->end, $dsrB->innerEnd() );
 					}
 				} elseif ( $dsrA->end <= $dsrB->end ) {
-					if ( ( $dsrB->closeWidth ?? null ) !== null ) {
+					if ( isset( $dsrB->closeWidth ) ) {
 						// A in B, from child to parent
 						$sep = $state->getOrigSrc( $dsrA->end, $dsrB->innerEnd() );
 					}

@@ -9,7 +9,8 @@
 			"Kaztrans",
 			"Nurlan",
 			"U.ayaao.p",
-			"СеніңШешең"
+			"СеніңШешең",
+			"Amankel'dy"
 		]
 	},
 	"skinname-vector": "Ескі Vector (2010)",
@@ -28,7 +29,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 тіл}}",
 	"vector-no-language-button-label": "Тіл қосу",
 	"vector-no-language-button-aria-label": "Бұл мақала осы тілде ғана қолжетімді. Басқа тілдерге мақаланы қосыңыз",
-	"vector-language-redirect-to-top": "Бұл {{SITENAME}} сайтында тіл сілтемелері беттің жоғары жақында мақала атауына бойында орналасқан. [[#p-lang-btn|Жоғары көтерілу]].",
 	"vector-language-variant-switcher-label": "Тіл нұсқасын ауыстыру",
 	"vector-action-addsection": "Тақырып қосу",
 	"vector-action-delete": "Жою",
@@ -45,6 +45,7 @@
 	"vector-jumptosearch": "Іздеуге өту",
 	"vector-jumptocontent": "Мазмұнға өту",
 	"vector-more-actions": "Тағы",
+	"vector-feature-limited-width-0-label": "Кең",
 	"vector-search-loader": "Іздеу ұсыныстары жүктелуде",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">«$1»</strong> бар беттерді іздеу",
 	"vector-intro-page": "Жәрдем:Таныстыру",

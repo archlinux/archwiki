@@ -20,25 +20,27 @@
 namespace MediaWiki\Extension\ReplaceText;
 
 use ErrorPageError;
-use Html;
 use JobQueueGroup;
 use Language;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\MovePageFactory;
+use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Storage\NameTableStore;
+use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserFactory;
-use MediaWiki\User\UserOptionsLookup;
-use NamespaceInfo;
+use MediaWiki\Watchlist\WatchlistManager;
 use OOUI;
 use PermissionsError;
 use SearchEngineConfig;
-use SpecialPage;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ReadOnlyMode;
-use Xml;
 
 class SpecialReplaceText extends SpecialPage {
 	private $target;
@@ -56,6 +58,9 @@ class SpecialReplaceText extends SpecialPage {
 	/** @var HookHelper */
 	private $hookHelper;
 
+	/** @var IConnectionProvider */
+	private $dbProvider;
+
 	/** @var Language */
 	private $contentLanguage;
 
@@ -70,6 +75,9 @@ class SpecialReplaceText extends SpecialPage {
 
 	/** @var NamespaceInfo */
 	private $namespaceInfo;
+
+	/** @var PermissionManager */
+	private $permissionManager;
 
 	/** @var ReadOnlyMode */
 	private $readOnlyMode;
@@ -86,44 +94,66 @@ class SpecialReplaceText extends SpecialPage {
 	/** @var UserOptionsLookup */
 	private $userOptionsLookup;
 
+	private WatchlistManager $watchlistManager;
+	private WikiPageFactory $wikiPageFactory;
+
+	/** @var Search */
+	private $search;
+
 	/**
 	 * @param HookContainer $hookContainer
+	 * @param IConnectionProvider $dbProvider
 	 * @param Language $contentLanguage
 	 * @param JobQueueGroup $jobQueueGroup
 	 * @param LinkRenderer $linkRenderer
 	 * @param MovePageFactory $movePageFactory
 	 * @param NamespaceInfo $namespaceInfo
+	 * @param PermissionManager $permissionManager
 	 * @param ReadOnlyMode $readOnlyMode
 	 * @param SearchEngineConfig $searchEngineConfig
 	 * @param NameTableStore $slotRoleStore
 	 * @param UserFactory $userFactory
 	 * @param UserOptionsLookup $userOptionsLookup
+	 * @param WatchlistManager $watchlistManager
+	 * @param WikiPageFactory $wikiPageFactory
 	 */
 	public function __construct(
 		HookContainer $hookContainer,
+		IConnectionProvider $dbProvider,
 		Language $contentLanguage,
 		JobQueueGroup $jobQueueGroup,
 		LinkRenderer $linkRenderer,
 		MovePageFactory $movePageFactory,
 		NamespaceInfo $namespaceInfo,
+		PermissionManager $permissionManager,
 		ReadOnlyMode $readOnlyMode,
 		SearchEngineConfig $searchEngineConfig,
 		NameTableStore $slotRoleStore,
 		UserFactory $userFactory,
-		UserOptionsLookup $userOptionsLookup
+		UserOptionsLookup $userOptionsLookup,
+		WatchlistManager $watchlistManager,
+		WikiPageFactory $wikiPageFactory
 	) {
 		parent::__construct( 'ReplaceText', 'replacetext' );
 		$this->hookHelper = new HookHelper( $hookContainer );
+		$this->dbProvider = $dbProvider;
 		$this->contentLanguage = $contentLanguage;
 		$this->jobQueueGroup = $jobQueueGroup;
 		$this->linkRenderer = $linkRenderer;
 		$this->movePageFactory = $movePageFactory;
 		$this->namespaceInfo = $namespaceInfo;
+		$this->permissionManager = $permissionManager;
 		$this->readOnlyMode = $readOnlyMode;
 		$this->searchEngineConfig = $searchEngineConfig;
 		$this->slotRoleStore = $slotRoleStore;
 		$this->userFactory = $userFactory;
 		$this->userOptionsLookup = $userOptionsLookup;
+		$this->watchlistManager = $watchlistManager;
+		$this->wikiPageFactory = $wikiPageFactory;
+		$this->search = new Search(
+			$this->getConfig(),
+			$dbProvider
+		);
 	}
 
 	/**
@@ -146,7 +176,7 @@ class SpecialReplaceText extends SpecialPage {
 		if ( $this->getConfig()->get( 'CompressRevisions' ) ) {
 			throw new ErrorPageError( 'replacetext_cfg_error', 'replacetext_no_compress' );
 		}
-		if ( !empty( $this->getConfig()->get( 'ExternalStores' ) ) ) {
+		if ( $this->getConfig()->get( 'ExternalStores' ) ) {
 			throw new ErrorPageError( 'replacetext_cfg_error', 'replacetext_no_external_stores' );
 		}
 
@@ -211,8 +241,7 @@ class SpecialReplaceText extends SpecialPage {
 		if ( $request->getCheck( 'replace' ) ) {
 
 			// check for CSRF
-			$user = $this->getUser();
-			if ( !$user->matchEditToken( $request->getVal( 'token' ) ) ) {
+			if ( !$this->checkToken() ) {
 				$out->addWikiMsg( 'sessionfailure' );
 				return;
 			}
@@ -239,8 +268,7 @@ class SpecialReplaceText extends SpecialPage {
 
 		if ( $request->getCheck( 'target' ) ) {
 			// check for CSRF
-			$user = $this->getUser();
-			if ( !$user->matchEditToken( $request->getVal( 'token' ) ) ) {
+			if ( !$this->checkToken() ) {
 				$out->addWikiMsg( 'sessionfailure' );
 				return;
 			}
@@ -271,7 +299,7 @@ class SpecialReplaceText extends SpecialPage {
 			if ( count( $titles_for_edit ) == 0 && count( $titles_for_move ) == 0 ) {
 				$category_title_exists = true;
 
-				if ( !empty( $this->category ) ) {
+				if ( $this->category ) {
 					$category_title = Title::makeTitleSafe( NS_CATEGORY, $this->category );
 					if ( !$category_title->exists() ) {
 						$category_title_exists = false;
@@ -368,7 +396,13 @@ class SpecialReplaceText extends SpecialPage {
 				$title = Title::newFromID( (int)substr( $key, 5 ) );
 				$replacement_params['move_page'] = true;
 				if ( $title !== null ) {
-					$jobs[] = new Job( $title, $replacement_params );
+					$jobs[] = new Job( $title, $replacement_params,
+						$this->movePageFactory,
+						$this->permissionManager,
+						$this->userFactory,
+						$this->watchlistManager,
+						$this->wikiPageFactory
+					);
 				}
 				unset( $replacement_params['move_page'] );
 			} elseif ( strpos( $key, '|' ) !== false ) {
@@ -382,7 +416,13 @@ class SpecialReplaceText extends SpecialPage {
 			$title = Title::newFromID( (int)$page_id );
 			$replacement_params['roles'] = $roles;
 			if ( $title !== null ) {
-				$jobs[] = new Job( $title, $replacement_params );
+				$jobs[] = new Job( $title, $replacement_params,
+					$this->movePageFactory,
+					$this->permissionManager,
+					$this->userFactory,
+					$this->watchlistManager,
+					$this->wikiPageFactory
+				);
 			}
 			unset( $replacement_params['roles'] );
 		}
@@ -399,7 +439,7 @@ class SpecialReplaceText extends SpecialPage {
 	function getTitlesForEditingWithContext() {
 		$titles_for_edit = [];
 
-		$res = Search::doSearchQuery(
+		$res = $this->search->doSearchQuery(
 			$this->target,
 			$this->selected_namespaces,
 			$this->category,
@@ -444,7 +484,7 @@ class SpecialReplaceText extends SpecialPage {
 		$titles_for_move = [];
 		$unmoveable_titles = [];
 
-		$res = Search::getMatchingTitles(
+		$res = $this->search->getMatchingTitles(
 			$this->target,
 			$this->selected_namespaces,
 			$this->category,
@@ -510,7 +550,7 @@ class SpecialReplaceText extends SpecialPage {
 			// it's a meaningless check.
 			return null;
 		} elseif ( count( $titles_for_edit ) > 0 ) {
-			$res = Search::doSearchQuery(
+			$res = $this->search->doSearchQuery(
 				$this->replacement,
 				$this->selected_namespaces,
 				$this->category,
@@ -525,7 +565,7 @@ class SpecialReplaceText extends SpecialPage {
 					->params( "<code><nowiki>{$this->replacement}</nowiki></code>" )->parse();
 			}
 		} elseif ( count( $titles_for_move ) > 0 ) {
-			$res = Search::getMatchingTitles(
+			$res = $this->search->getMatchingTitles(
 				$this->replacement,
 				$this->selected_namespaces,
 				$this->category,
@@ -551,7 +591,7 @@ class SpecialReplaceText extends SpecialPage {
 		$out = $this->getOutput();
 
 		$out->addHTML(
-			Xml::openElement(
+			Html::openElement(
 				'form',
 				[
 					'id' => 'powersearch',
@@ -561,7 +601,7 @@ class SpecialReplaceText extends SpecialPage {
 			) . "\n" .
 			Html::hidden( 'title', $this->getPageTitle()->getPrefixedText() ) .
 			Html::hidden( 'continue', 1 ) .
-			Html::hidden( 'token', $out->getUser()->getEditToken() )
+			Html::hidden( 'token', $this->getToken() )
 		);
 		if ( $warning_msg === null ) {
 			$out->addWikiMsg( 'replacetext_docu' );
@@ -578,29 +618,29 @@ class SpecialReplaceText extends SpecialPage {
 		// 'width: auto' style is needed to override MediaWiki's
 		// normal 'width: 100%', which causes the textarea to get
 		// zero width in IE
-		$out->addHTML(
-			Xml::textarea( 'target', $this->target, 100, 5, [ 'style' => 'width: auto;' ] )
-		);
+		$out->addHTML( Html::textarea( 'target', $this->target,
+			[ 'cols' => 100, 'rows' => 5, 'style' => 'width: auto;' ]
+		) );
 		$out->addHTML( '</td></tr><tr><td style="vertical-align: top;">' );
 		$out->addWikiMsg( 'replacetext_replacementtext' );
 		$out->addHTML( '</td><td>' );
-		$out->addHTML(
-			Xml::textarea( 'replacement', $this->replacement, 100, 5, [ 'style' => 'width: auto;' ] )
-		);
+		$out->addHTML( Html::textarea( 'replacement', $this->replacement,
+			[ 'cols' => 100, 'rows' => 5, 'style' => 'width: auto;' ]
+		) );
 		$out->addHTML( '</td></tr></table>' );
 
 		// SQLite unfortunately lack a REGEXP
 		// function or operator by default, so disable regex(p)
 		// searches that DB type.
-		$dbr = wfGetDB( DB_REPLICA );
-		if ( $dbr->getType() != 'sqlite' ) {
-			$out->addHTML( Xml::tags( 'p', null,
-					Xml::checkLabel(
-						$this->msg( 'replacetext_useregex' )->text(),
-						'use_regex', 'use_regex'
+		$dbr = $this->dbProvider->getReplicaDatabase();
+		if ( $dbr->getType() !== 'sqlite' ) {
+			$out->addHTML( Html::rawElement( 'p', [],
+					Html::rawElement( 'label', [],
+						Html::input( 'use_regex', '1', 'checkbox' )
+						. ' ' . $this->msg( 'replacetext_useregex' )->escaped(),
 					)
 				) . "\n" .
-				Xml::element( 'p',
+				Html::element( 'p',
 					[ 'style' => 'font-style: italic' ],
 					$this->msg( 'replacetext_regexdocu' )->text()
 				)
@@ -613,7 +653,7 @@ class SpecialReplaceText extends SpecialPage {
 		$out->addHTML(
 			"<div class=\"mw-search-formheader\"></div>\n" .
 			"<fieldset class=\"ext-replacetext-searchoptions\">\n" .
-			Xml::tags( 'h4', null, $this->msg( 'powersearch-ns' )->parse() )
+			Html::element( 'h4', [], $this->msg( 'powersearch-ns' )->text() )
 		);
 		// The ability to select/unselect groups of namespaces in the
 		// search interface exists only in some skins, like Vector -
@@ -643,42 +683,44 @@ class SpecialReplaceText extends SpecialPage {
 			);
 		}
 		$out->addHTML(
-			Xml::element( 'div', [ 'class' => 'ext-replacetext-divider' ], '', false ) .
+			Html::element( 'div', [ 'class' => 'ext-replacetext-divider' ] ) .
 			"$tables\n</fieldset>"
 		);
 		$category_search_label = $this->msg( 'replacetext_categorysearch' )->escaped();
 		$prefix_search_label = $this->msg( 'replacetext_prefixsearch' )->escaped();
 		$page_limit_label = $this->msg( 'replacetext_pagelimit' )->escaped();
-		$this->pageLimit = $this->pageLimit === 0 ? $this->getConfig()->get( 'ReplaceTextResultsLimit' )
-		: $this->pageLimit;
+		$this->pageLimit = $this->pageLimit === 0
+			? $this->getConfig()->get( 'ReplaceTextResultsLimit' )
+			: $this->pageLimit;
 		$out->addHTML(
 			"<fieldset class=\"ext-replacetext-searchoptions\">\n" .
-			Xml::tags( 'h4', null, $this->msg( 'replacetext_optionalfilters' )->parse() ) .
-			Xml::element( 'div', [ 'class' => 'ext-replacetext-divider' ], '', false ) .
+			Html::element( 'h4', [], $this->msg( 'replacetext_optionalfilters' )->text() ) .
+			Html::element( 'div', [ 'class' => 'ext-replacetext-divider' ] ) .
 			"<p>$category_search_label\n" .
-			Xml::input( 'category', 20, $this->category, [ 'type' => 'text' ] ) . '</p>' .
+			Html::element( 'input', [ 'name' => 'category', 'size' => 20, 'value' => $this->category ] ) . '</p>' .
 			"<p>$prefix_search_label\n" .
-			Xml::input( 'prefix', 20, $this->prefix, [ 'type' => 'text' ] ) . '</p>' .
+			Html::element( 'input', [ 'name' => 'prefix', 'size' => 20, 'value' => $this->prefix ] ) . '</p>' .
 			"<p>$page_limit_label\n" .
-			Xml::input( 'pageLimit', 20, (string)$this->pageLimit,
-			[ 'type' => 'number', 'min' => 0 ] ) . "</p></fieldset>\n" .
+			Html::element( 'input', [ 'name' => 'pageLimit', 'size' => 20, 'value' => (string)$this->pageLimit,
+				'type' => 'number', 'min' => 0 ] ) . "</p></fieldset>\n" .
 			"<p>\n" .
-			Xml::checkLabel(
-				$this->msg( 'replacetext_editpages' )->text(), 'edit_pages', 'edit_pages', true
+			Html::rawElement( 'label', [],
+				Html::input( 'edit_pages', '1', 'checkbox', [ 'checked' => true ] )
+				. ' ' . $this->msg( 'replacetext_editpages' )->escaped()
 			) . '<br />' .
-			Xml::checkLabel(
-				$this->msg( 'replacetext_movepages' )->text(), 'move_pages', 'move_pages'
+			Html::rawElement( 'label', [],
+				Html::input( 'move_pages', '1', 'checkbox' )
+				. ' ' . $this->msg( 'replacetext_movepages' )->escaped()
 			)
 		);
 
 		// If the user is a bot, don't even show the "Mark changes as bot edits" checkbox -
 		// presumably a bot user should never be allowed to make non-bot edits.
-		$permissionManager = MediaWikiServices::getInstance()->getPermissionManager();
-		if ( !$permissionManager->userHasRight( $this->getReplaceTextUser(), 'bot' ) ) {
+		if ( !$this->permissionManager->userHasRight( $this->getReplaceTextUser(), 'bot' ) ) {
 			$out->addHTML(
 				'<br />' .
-				Xml::checkLabel(
-					$this->msg( 'replacetext_botedit' )->text(), 'botEdit', 'botEdit'
+				Html::rawElement( 'label', [],
+					Html::input( 'botEdit', '1', 'checkbox' ) . ' ' . $this->msg( 'replacetext_botedit' )->escaped()
 				)
 			);
 		}
@@ -690,7 +732,7 @@ class SpecialReplaceText extends SpecialPage {
 		$out->addHTML(
 			"</p>\n" .
 			$continueButton .
-			Xml::closeElement( 'form' )
+			Html::closeElement( 'form' )
 		);
 		$out->addModuleStyles( 'ext.ReplaceTextStyles' );
 		$out->addModules( 'ext.ReplaceText' );
@@ -729,34 +771,33 @@ class SpecialReplaceText extends SpecialPage {
 		// Group namespaces into rows according to subject.
 		// Try not to make too many assumptions about namespace numbering.
 		$rows = [];
-		$tables = "";
+		$tables = '';
 		foreach ( $namespaces as $ns => $name ) {
 			$subj = $this->namespaceInfo->getSubject( $ns );
 			if ( !array_key_exists( $subj, $rows ) ) {
-				$rows[$subj] = "";
+				$rows[$subj] = '';
 			}
 			$name = str_replace( '_', ' ', $name );
 			if ( $name == '' ) {
 				$name = $this->msg( 'blanknamespace' )->text();
 			}
-			$rows[$subj] .= Xml::openElement( 'td', [ 'style' => 'white-space: nowrap' ] ) .
-				Xml::checkLabel( $name, "ns{$ns}", "mw-search-ns{$ns}", in_array( $ns, $namespaces ) ) .
-				Xml::closeElement( 'td' ) . "\n";
+			$id = "mw-search-ns{$ns}";
+			$rows[$subj] .= Html::openElement( 'td', [ 'style' => 'white-space: nowrap' ] ) .
+				Html::input( "ns{$ns}", '1', 'checkbox', [ 'id' => $id, 'checked' => in_array( $ns, $namespaces ) ] ) .
+				' ' . Html::label( $name, $id ) .
+				Html::closeElement( 'td' ) . "\n";
 		}
 		$rows = array_values( $rows );
 		$numRows = count( $rows );
 		// Lay out namespaces in multiple floating two-column tables so they'll
 		// be arranged nicely while still accommodating different screen widths
-		// Float to the right on RTL wikis
-		$tableStyle = $this->contentLanguage->isRTL() ?
-			'float: right; margin: 0 0 0em 1em' : 'float: left; margin: 0 1em 0em 0';
 		// Build the final HTML table...
 		for ( $i = 0; $i < $numRows; $i += $rowsPerTable ) {
-			$tables .= Xml::openElement( 'table', [ 'style' => $tableStyle ] );
+			$tables .= Html::openElement( 'table' );
 			for ( $j = $i; $j < $i + $rowsPerTable && $j < $numRows; $j++ ) {
 				$tables .= "<tr>\n" . $rows[$j] . "</tr>";
 			}
-			$tables .= Xml::closeElement( 'table' ) . "\n";
+			$tables .= Html::closeElement( 'table' ) . "\n";
 		}
 		return $tables;
 	}
@@ -776,7 +817,7 @@ class SpecialReplaceText extends SpecialPage {
 			'action' => $this->getPageTitle()->getLocalURL()
 		];
 		$out->addHTML(
-			Xml::openElement( 'form', $formOpts ) . "\n" .
+			Html::openElement( 'form', $formOpts ) . "\n" .
 			Html::hidden( 'title', $this->getPageTitle()->getPrefixedText() ) .
 			Html::hidden( 'target', $this->target ) .
 			Html::hidden( 'replacement', $this->replacement ) .
@@ -785,15 +826,15 @@ class SpecialReplaceText extends SpecialPage {
 			Html::hidden( 'edit_pages', $this->edit_pages ) .
 			Html::hidden( 'botEdit', $this->botEdit ) .
 			Html::hidden( 'replace', 1 ) .
-			Html::hidden( 'token', $out->getUser()->getEditToken() )
+			Html::hidden( 'token', $this->getToken() )
 		);
 
 		foreach ( $this->selected_namespaces as $ns ) {
 			$out->addHTML( Html::hidden( 'ns' . $ns, 1 ) );
 		}
 
-		$out->addModules( "ext.ReplaceText" );
-		$out->addModuleStyles( "ext.ReplaceTextStyles" );
+		$out->addModules( 'ext.ReplaceText' );
+		$out->addModuleStyles( 'ext.ReplaceTextStyles' );
 
 		// Only show "invert selections" link if there are more than
 		// five pages.
@@ -819,7 +860,7 @@ class SpecialReplaceText extends SpecialPage {
 				 */
 				[ $title, $context, $role ] = $title_and_context;
 				$checkbox = new OOUI\CheckboxInputWidget( [
-					'name' => $title->getArticleID() . "|" . $role,
+					'name' => $title->getArticleID() . '|' . $role,
 					'selected' => true
 				] );
 				if ( $role === SlotRecord::MAIN ) {
@@ -850,19 +891,21 @@ class SpecialReplaceText extends SpecialPage {
 			);
 			foreach ( $titles_for_move as $title ) {
 				$out->addHTML(
-					Xml::check( 'move-' . $title->getArticleID(), true ) . "\u{00A0}" .
+					Html::check( 'move-' . $title->getArticleID(), true ) . "\u{00A0}" .
 					$this->linkRenderer->makeLink( $title ) . "<br />\n"
 				);
 			}
 			$out->addHTML( '<br />' );
 			$out->addWikiMsg( 'replacetext_formovedpages' );
 			$out->addHTML(
-				Xml::checkLabel(
-					$this->msg( 'replacetext_savemovedpages' )->text(),
-						'create-redirect', 'create-redirect', true ) . "<br />\n" .
-				Xml::checkLabel(
-					$this->msg( 'replacetext_watchmovedpages' )->text(),
-					'watch-pages', 'watch-pages', false ) . '<br />'
+				Html::rawElement( 'label', [],
+					Html::input( 'create-redirect', '1', 'checkbox', [ 'checked' => true ] )
+					. ' ' . $this->msg( 'replacetext_savemovedpages' )->escaped()
+				) . "<br />\n" .
+				Html::rawElement( 'label', [],
+					Html::input( 'watch-pages', '1', 'checkbox' )
+					. ' ' . $this->msg( 'replacetext_watchmovedpages' )->escaped()
+				) . '<br />'
 			);
 			$out->addHTML( '<br />' );
 		}
@@ -907,7 +950,8 @@ class SpecialReplaceText extends SpecialPage {
 
 		// Get all indexes
 		if ( $use_regex ) {
-			preg_match_all( "/$target/Uu", $text, $matches, PREG_OFFSET_CAPTURE );
+			$targetq = str_replace( "/", "\\/", $target );
+			preg_match_all( "/$targetq/Uu", $text, $matches, PREG_OFFSET_CAPTURE );
 		} else {
 			$targetq = preg_quote( $target, '/' );
 			preg_match_all( "/$targetq/", $text, $matches, PREG_OFFSET_CAPTURE );
@@ -1009,5 +1053,13 @@ class SpecialReplaceText extends SpecialPage {
 		}
 		$text .= "</ul>\n";
 		return $text;
+	}
+
+	private function getToken(): string {
+		return $this->getContext()->getCsrfTokenSet()->getToken();
+	}
+
+	private function checkToken(): bool {
+		return $this->getContext()->getCsrfTokenSet()->matchTokenField( 'token' );
 	}
 }

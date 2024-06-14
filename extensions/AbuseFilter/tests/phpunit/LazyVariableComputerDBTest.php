@@ -4,6 +4,7 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyLoadedVariable;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Permissions\UltimateAuthority;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 
 /**
@@ -14,14 +15,6 @@ use MediaWiki\User\UserIdentityValue;
  * @todo Move to LazyVariableComputerTest
  */
 class LazyVariableComputerDBTest extends MediaWikiIntegrationTestCase {
-
-	/** @inheritDoc */
-	protected $tablesUsed = [
-		'page',
-		'text',
-		'user',
-		'recentchanges',
-	];
 
 	/**
 	 * Make different users edit a page, so that we can check their names against

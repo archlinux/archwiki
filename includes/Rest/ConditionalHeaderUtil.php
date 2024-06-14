@@ -4,6 +4,7 @@ namespace MediaWiki\Rest;
 
 use MediaWiki\Rest\HeaderParser\HttpDate;
 use MediaWiki\Rest\HeaderParser\IfNoneMatch;
+use RuntimeException;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 class ConditionalHeaderUtil {
@@ -59,8 +60,8 @@ class ConditionalHeaderUtil {
 		if ( $this->eTag !== null ) {
 			$resourceTag = $parser->parseETag( $this->eTag );
 			if ( !$resourceTag ) {
-				throw new \Exception( 'Invalid ETag returned by handler: ' .
-					$parser->getLastError() );
+				throw new RuntimeException( 'Invalid ETag returned by handler: `' .
+					$parser->getLastError() . '`' );
 			}
 		} else {
 			$resourceTag = null;

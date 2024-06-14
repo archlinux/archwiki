@@ -144,16 +144,13 @@ class MigrateActorsAF extends LoggedUpdateMaintenance {
 		foreach ( $rows as $index => $row ) {
 			$keep[$index] = true;
 			if ( $row->actor_id === null ) {
-				// All registered users should have an actor_id already. So
-				// if we have a usable name here, it means they didn't run
-				// maintenance/cleanupUsersWithNoId.php
 				$name = $row->$nameField;
 				if ( $userNameUtils->isUsable( $name ) ) {
 					if ( !isset( $complainedAboutUsers[$name] ) ) {
 						$complainedAboutUsers[$name] = true;
 						$this->error(
 							"User name \"$name\" is usable, cannot create an anonymous actor for it."
-							. " Run maintenance/cleanupUsersWithNoId.php to fix this situation.\n"
+							. " Your database has likely been corrupted, and may require manual intervention.\n"
 						);
 					}
 					unset( $keep[$index] );
@@ -229,8 +226,7 @@ class MigrateActorsAF extends LoggedUpdateMaintenance {
 		$this->output(
 			"Beginning migration of $table.$userField and $table.$nameField to $table.$actorField\n"
 		);
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
-		$lbFactory->waitForReplication();
+		$this->waitForReplication();
 
 		$actorIdSubquery = $this->makeActorIdSubquery( $dbw, $userField, $nameField );
 		$next = '1=1';
@@ -266,7 +262,7 @@ class MigrateActorsAF extends LoggedUpdateMaintenance {
 			// Update the existing rows
 			foreach ( $rows as $row ) {
 				if ( !$row->actor_id ) {
-					list( , $display ) = $this->makeNextCond( $dbw, $primaryKey, $row );
+					[ , $display ] = $this->makeNextCond( $dbw, $primaryKey, $row );
 					$this->error(
 						"Could not make actor for row with $display "
 						. "$userField={$row->$userField} $nameField={$row->$nameField}\n"
@@ -287,9 +283,9 @@ class MigrateActorsAF extends LoggedUpdateMaintenance {
 				$countUpdated += $dbw->affectedRows();
 			}
 
-			list( $next, $display ) = $this->makeNextCond( $dbw, $primaryKey, $lastRow );
+			[ $next, $display ] = $this->makeNextCond( $dbw, $primaryKey, $lastRow );
 			$this->output( "... $display\n" );
-			$lbFactory->waitForReplication();
+			$this->waitForReplication();
 		}
 
 		$this->output(

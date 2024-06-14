@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Winston Sung",
-			"H78c67c"
+			"H78c67c",
+			"Winston Sung"
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|多謝}}}}",

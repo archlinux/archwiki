@@ -48,7 +48,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Esta referencia ta definida nuna plantía o n'otru bloque xeneráu, y de momentu namái puede entevese'n mou códigu fonte.",
 	"cite-ve-referenceslist-missingreflist": "Esta llista de referencies ta xenerada por una plantía, y de momentu sólo puede editase'n mou de códigu fonte.",
 	"cite-ve-toolbar-group-label": "Citar",
-	"cite-ve-othergroup-item": "referencia $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referencies",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nome del grupu de referencies: «$1»"
+	"cite-ve-othergroup-item": "referencia $1"
 }

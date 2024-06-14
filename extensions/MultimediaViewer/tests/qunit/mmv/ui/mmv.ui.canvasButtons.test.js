@@ -21,8 +21,8 @@ const { CanvasButtons } = require( 'mmv' );
 	QUnit.module( 'mmv.ui.CanvasButtons', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'Prev/Next', function ( assert ) {
-		var $qf = $( '#qunit-fixture' ),
-			buttons = new CanvasButtons( $qf, $( '<div>' ), $( '<div>' ) );
+		const $qf = $( '#qunit-fixture' );
+		const buttons = new CanvasButtons( $qf, $( '<div>' ), $( '<div>' ) );
 
 		buttons.on( 'next', function () {
 			assert.true( true, 'Switched to next image' );

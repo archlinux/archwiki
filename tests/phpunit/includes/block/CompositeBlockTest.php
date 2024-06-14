@@ -38,13 +38,6 @@ class CompositeBlockTest extends MediaWikiLangTestCase {
 		];
 	}
 
-	private function deleteBlocks( $blocks ) {
-		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
-		foreach ( $blocks as $block ) {
-			$blockStore->deleteBlock( $block );
-		}
-	}
-
 	/**
 	 * @dataProvider provideTestStrictestParametersApplied
 	 */
@@ -165,8 +158,6 @@ class CompositeBlockTest extends MediaWikiLangTestCase {
 
 		$this->assertTrue( $block->appliesToTitle( $pageFoo->getTitle() ) );
 		$this->assertTrue( $block->appliesToTitle( $pageBar->getTitle() ) );
-
-		$this->deleteBlocks( $blocks );
 	}
 
 	public function testBlockAppliesToUsertalk() {
@@ -192,8 +183,6 @@ class CompositeBlockTest extends MediaWikiLangTestCase {
 		] );
 
 		$this->assertTrue( $block->appliesToUsertalk( $title ) );
-
-		$this->deleteBlocks( $blocks );
 	}
 
 	/**
@@ -265,6 +254,38 @@ class CompositeBlockTest extends MediaWikiLangTestCase {
 			'originalBlocks' => [ $thirdBlock, $firstBlock, $secondBlock ],
 		] );
 		$this->assertSame( (string)$timestamp, $block->getTimestamp() );
+	}
+
+	public function testCreateFromBlocks() {
+		$block1 = new SystemBlock( [
+			'address' => '127.0.0.1',
+			'systemBlock' => 'test1',
+		] );
+		$block2 = new SystemBlock( [
+			'address' => '127.0.0.1',
+			'systemBlock' => 'test2',
+		] );
+		$block3 = new SystemBlock( [
+			'address' => '127.0.0.1',
+			'systemBlock' => 'test3',
+		] );
+
+		$compositeBlock = CompositeBlock::createFromBlocks( $block1, $block2 );
+		$this->assertInstanceOf( CompositeBlock::class, $compositeBlock );
+		$this->assertCount( 2, $compositeBlock->getOriginalBlocks() );
+		[ $actualBlock1, $actualBlock2 ] = $compositeBlock->getOriginalBlocks();
+		$this->assertSame( $block1->getSystemBlockType(), $actualBlock1->getSystemBlockType() );
+		$this->assertSame( $block2->getSystemBlockType(), $actualBlock2->getSystemBlockType() );
+		$this->assertSame( 'blockedtext-composite-reason',
+			$compositeBlock->getReasonComment()->message->getKey() );
+		$this->assertSame( '127.0.0.1', $compositeBlock->getTargetName() );
+
+		$compositeBlock2 = CompositeBlock::createFromBlocks( $compositeBlock, $block3 );
+		$this->assertCount( 3, $compositeBlock2->getOriginalBlocks() );
+		[ $actualBlock1, $actualBlock2, $actualBlock3 ] = $compositeBlock2->getOriginalBlocks();
+		$this->assertSame( $block1->getSystemBlockType(), $actualBlock1->getSystemBlockType() );
+		$this->assertSame( $block2->getSystemBlockType(), $actualBlock2->getSystemBlockType() );
+		$this->assertSame( $block3->getSystemBlockType(), $actualBlock3->getSystemBlockType() );
 	}
 
 	/**

@@ -1,4 +1,7 @@
 <?php
+
+namespace MediaWiki\Tests\Api;
+
 /**
  * RandomImageGenerator -- does what it says on the tin.
  * Requires Imagick, the ImageMagick library for PHP, or the command line
@@ -23,7 +26,13 @@
  * @author Neil Kandalgaonkar <neilk@wikimedia.org>
  */
 
+use Exception;
+use Imagick;
+use ImagickDraw;
+use ImagickPixel;
 use MediaWiki\Shell\Shell;
+use SimpleXMLElement;
+use UnexpectedValueException;
 
 /**
  * RandomImageGenerator: does what it says on the tin.
@@ -138,9 +147,7 @@ class RandomImageGenerator {
 	 * @return string[]
 	 */
 	private function getRandomFilenames( $number, $extension = 'jpg', $dir = null ) {
-		if ( $dir === null ) {
-			$dir = getcwd();
-		}
+		$dir ??= getcwd();
 		$filenames = [];
 		$prefix = wfRandomString( 3 ) . '_' . gmdate( 'YmdHis' ) . '_';
 		foreach ( range( 1, $number ) as $offset ) {
@@ -240,11 +247,11 @@ class RandomImageGenerator {
 
 		$fh = fopen( $filename, 'w' );
 		if ( !$fh ) {
-			throw new Exception( "couldn't open $filename for writing" );
+			throw new UnexpectedValueException( "couldn't open $filename for writing" );
 		}
 		fwrite( $fh, $svg->asXML() );
 		if ( !fclose( $fh ) ) {
-			throw new Exception( "couldn't close $filename" );
+			throw new UnexpectedValueException( "couldn't close $filename" );
 		}
 	}
 
@@ -413,3 +420,5 @@ class RandomImageGenerator {
 		return 'rgb(' . implode( ', ', $components ) . ')';
 	}
 }
+
+class_alias( RandomImageGenerator::class, 'RandomImageGenerator' );

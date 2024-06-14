@@ -238,8 +238,6 @@ CREATE TABLE iwlinks (
 
 CREATE INDEX iwl_prefix_title_from ON iwlinks (iwl_prefix, iwl_title, iwl_from);
 
-CREATE INDEX iwl_prefix_from_title ON iwlinks (iwl_prefix, iwl_from, iwl_title);
-
 
 CREATE TABLE category (
   cat_id SERIAL NOT NULL,
@@ -390,20 +388,6 @@ CREATE TABLE sites (
 
 CREATE UNIQUE INDEX site_global_key ON sites (site_global_key);
 
-CREATE INDEX site_type ON sites (site_type);
-
-CREATE INDEX site_group ON sites (site_group);
-
-CREATE INDEX site_source ON sites (site_source);
-
-CREATE INDEX site_language ON sites (site_language);
-
-CREATE INDEX site_protocol ON sites (site_protocol);
-
-CREATE INDEX site_domain ON sites (site_domain);
-
-CREATE INDEX site_forward ON sites (site_forward);
-
 
 CREATE TABLE user_newtalk (
   user_id INT DEFAULT 0 NOT NULL, user_ip TEXT DEFAULT '' NOT NULL,
@@ -542,10 +526,6 @@ CREATE INDEX cl_sortkey ON categorylinks (
 );
 
 CREATE INDEX cl_timestamp ON categorylinks (cl_to, cl_timestamp);
-
-CREATE INDEX cl_collation_ext ON categorylinks (
-  cl_collation, cl_to, cl_type, cl_from
-);
 
 
 CREATE TABLE logging (
@@ -736,6 +716,55 @@ CREATE INDEX ipb_expiry ON ipblocks (ipb_expiry);
 CREATE INDEX ipb_parent_block_id ON ipblocks (ipb_parent_block_id);
 
 
+CREATE TABLE block (
+  bl_id SERIAL NOT NULL,
+  bl_target INT NOT NULL,
+  bl_by_actor BIGINT NOT NULL,
+  bl_reason_id BIGINT NOT NULL,
+  bl_timestamp TIMESTAMPTZ NOT NULL,
+  bl_anon_only SMALLINT DEFAULT 0 NOT NULL,
+  bl_create_account SMALLINT DEFAULT 1 NOT NULL,
+  bl_enable_autoblock SMALLINT DEFAULT 1 NOT NULL,
+  bl_expiry TIMESTAMPTZ NOT NULL,
+  bl_deleted SMALLINT DEFAULT 0 NOT NULL,
+  bl_block_email SMALLINT DEFAULT 0 NOT NULL,
+  bl_allow_usertalk SMALLINT DEFAULT 0 NOT NULL,
+  bl_parent_block_id INT DEFAULT NULL,
+  bl_sitewide SMALLINT DEFAULT 1 NOT NULL,
+  PRIMARY KEY(bl_id)
+);
+
+CREATE INDEX bl_timestamp ON block (bl_timestamp);
+
+CREATE INDEX bl_target ON block (bl_target);
+
+CREATE INDEX bl_expiry ON block (bl_expiry);
+
+CREATE INDEX bl_parent_block_id ON block (bl_parent_block_id);
+
+
+CREATE TABLE block_target (
+  bt_id SERIAL NOT NULL,
+  bt_address TEXT DEFAULT NULL,
+  bt_user INT DEFAULT NULL,
+  bt_user_text TEXT DEFAULT NULL,
+  bt_auto SMALLINT DEFAULT 0 NOT NULL,
+  bt_range_start TEXT DEFAULT NULL,
+  bt_range_end TEXT DEFAULT NULL,
+  bt_ip_hex TEXT DEFAULT NULL,
+  bt_count INT DEFAULT 0 NOT NULL,
+  PRIMARY KEY(bt_id)
+);
+
+CREATE INDEX bt_address ON block_target (bt_address);
+
+CREATE INDEX bt_ip_user_text ON block_target (bt_ip_hex, bt_user_text);
+
+CREATE INDEX bt_range ON block_target (bt_range_start, bt_range_end);
+
+CREATE INDEX bt_user ON block_target (bt_user);
+
+
 CREATE TABLE image (
   img_name TEXT DEFAULT '' NOT NULL,
   img_size BIGINT DEFAULT 0 NOT NULL,
@@ -902,8 +931,9 @@ CREATE INDEX user_email ON "user" (user_email);
 
 CREATE TABLE user_autocreate_serial (
   uas_shard INT NOT NULL,
+  uas_year SMALLINT NOT NULL,
   uas_value INT NOT NULL,
-  PRIMARY KEY(uas_shard)
+  PRIMARY KEY(uas_shard, uas_year)
 );
 
 

@@ -24,6 +24,9 @@ use RepoGroup;
  */
 class IntroMessageBuilderTest extends MediaWikiIntegrationTestCase {
 
+	/** @var IntroMessageBuilder */
+	private $introMessageBuilder;
+
 	protected function setUp(): void {
 		$services = $this->getServiceContainer();
 
@@ -73,11 +76,13 @@ class IntroMessageBuilderTest extends MediaWikiIntegrationTestCase {
 			$tempUserCreator,
 			$userFactory,
 			$services->getRestrictionStore(),
+			$services->getDatabaseBlockStore(),
 			$services->getReadOnlyMode(),
 			$services->getSpecialPageFactory(),
 			$repoGroup,
 			$services->getNamespaceInfo(),
-			$services->getSkinFactory()
+			$services->getSkinFactory(),
+			$services->getConnectionProvider()
 		);
 	}
 

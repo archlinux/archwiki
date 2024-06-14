@@ -2,9 +2,12 @@
 
 use LoginNotify\LoginNotify;
 use MediaWiki\CheckUser as CU;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\User\CentralId\LocalIdLookup;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use Wikimedia\TestingAccessWrapper;
 
@@ -38,10 +41,9 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 			"LoginNotifyCookieDomain" => null,
 			"LoginNotifyMaxCookieRecords" => 6,
 			"LoginNotifyCacheLoginIPExpiry" => 60 * $day,
-			'LoginNotifySeenCluster' => null,
-			"LoginNotifySeenDatabase" => null,
 			"LoginNotifyUseCheckUser" => false,
 			"LoginNotifyUseSeenTable" => true,
+			"LoginNotifyUseCentralId" => false,
 			"LoginNotifySeenExpiry" => 180 * $day,
 			"LoginNotifySeenBucketSize" => 15 * $day,
 			"UpdateRowsPerQuery" => 100,
@@ -61,7 +63,8 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 						'SharedTables' => [],
 						'LocalDatabases' => []
 					] ),
-					$services->getDBLoadBalancerFactory()
+					$services->getDBLoadBalancerFactory(),
+					$services->getHideUserUtils()
 				),
 				$services->getAuthManager()
 			)
@@ -240,7 +243,7 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 	) {
 		$this->setUpLoginNotify();
 		$user = $this->userFactory->newFromName( 'Foo' );
-		list( $actualSeenBefore, $actualNewCookie ) =
+		[ $actualSeenBefore, $actualNewCookie ] =
 			$this->inst->checkAndGenerateCookie( $user, $cookie );
 
 		$this->assertEquals( $expectedSeenBefore, $actualSeenBefore,
@@ -542,19 +545,11 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 		];
 		$this->setUpLoginNotify( $config );
 		$this->overrideConfigValues( $config ); // for jobs
-		$this->tablesUsed[] = 'user';
-		$this->tablesUsed[] = 'echo_event';
-		$this->tablesUsed[] = 'echo_notification';
-		if ( $config['LoginNotifyUseSeenTable'] ?? true ) {
-			$this->tablesUsed[] = 'loginnotify_seen_net';
-		}
 	}
 
 	private function setupRecordFailureWithCheckUser() {
 		$this->markTestSkippedIfExtensionNotLoaded( 'CheckUser' );
 		$this->setupRecordFailure( [ 'LoginNotifyUseCheckUser' => true ] );
-		$this->tablesUsed[] = 'comment';
-		$this->tablesUsed[] = 'cu_changes';
 	}
 
 	/**
@@ -600,8 +595,6 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 
 	public function testPurgeSeen() {
 		$this->setupLoginNotify( [ 'UpdateRowsPerQuery' => 1 ] );
-		$this->tablesUsed[] = 'user';
-		$this->tablesUsed[] = 'loginnotify_seen_net';
 		$user = $this->getTestUser()->getUser();
 		$day = 86400;
 		$this->inst->setFakeTime( 0 );
@@ -631,8 +624,6 @@ class LoginNotifyTest extends MediaWikiIntegrationTestCase {
 
 	public function testPurgeViaJob() {
 		$this->setupLoginNotify( [ 'UpdateRowsPerQuery' => 1 ] );
-		$this->tablesUsed[] = 'user';
-		$this->tablesUsed[] = 'loginnotify_seen_net';
 		$user = $this->getTestUser()->getUser();
 
 		$this->inst->setFakeTime( 0 ); // 1970

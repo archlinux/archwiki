@@ -74,3 +74,13 @@ $specialPageAliases['sr-el'] = [
 $specialPageAliases['ur'] = [
 	'LintErrors' => [ 'نحوی_نقائص' ],
 ];
+
+/** Simplified Chinese (中文（简体）) */
+$specialPageAliases['zh-hans'] = [
+	'LintErrors' => [ 'Lint错误' ],
+];
+
+/** Traditional Chinese (中文（繁體）) */
+$specialPageAliases['zh-hant'] = [
+	'LintErrors' => [ 'Lint錯誤' ],
+];

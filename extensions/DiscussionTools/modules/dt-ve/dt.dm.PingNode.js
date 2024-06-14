@@ -1,12 +1,5 @@
-/*!
- * VisualEditor DataModel MWPingNode class.
- *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
- * @license The MIT License (MIT); see LICENSE.txt
- */
-
 /**
- * DataModel MediaWiki ping node. A ping is just a link to a user page, but
+ * PingNode model. A ping is just a link to a user page, but
  * by defining it as a node we can make is a single FocusableNode.
  *
  * @class

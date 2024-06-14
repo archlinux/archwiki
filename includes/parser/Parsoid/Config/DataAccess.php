@@ -31,14 +31,17 @@ use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\File\BadFileLookup;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
-use Parser;
 use ParserFactory;
+use PPFrame;
 use RepoGroup;
+use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\DataAccess as IDataAccess;
 use Wikimedia\Parsoid\Config\PageConfig as IPageConfig;
 use Wikimedia\Parsoid\Config\PageContent as IPageContent;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
+use Wikimedia\Parsoid\Core\LinkTarget as ParsoidLinkTarget;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
@@ -48,46 +51,23 @@ use Wikimedia\Rdbms\ReadOnlyMode;
  * @internal
  */
 class DataAccess extends IDataAccess {
-
-	/** @var RepoGroup */
-	private $repoGroup;
-
-	/** @var BadFileLookup */
-	private $badFileLookup;
-
-	/** @var HookContainer */
-	private $hookContainer;
-
-	/** @var HookRunner */
-	private $hookRunner;
-
-	/** @var ContentTransformer */
-	private $contentTransformer;
-
-	/** @var ParserFactory */
-	private $parserFactory;
-
-	/** @var ?Parser Lazy-created via self::prepareParser() */
-	private $parser = null;
-
-	/** @var \PPFrame */
-	private $ppFrame;
-
-	/** @var ?PageConfig */
-	private $previousPageConfig;
-
 	public const CONSTRUCTOR_OPTIONS = [
 		MainConfigNames::SVGMaxSize,
 	];
 
-	/** @var ServiceOptions */
-	private $config;
-
-	/** @var ReadOnlyMode */
-	private $readOnlyMode;
-
-	/** @var LinkBatchFactory */
-	private $linkBatchFactory;
+	private RepoGroup $repoGroup;
+	private BadFileLookup $badFileLookup;
+	private HookContainer $hookContainer;
+	private HookRunner $hookRunner;
+	private ContentTransformer $contentTransformer;
+	private ParserFactory $parserFactory;
+	/** Lazy-created via self::prepareParser() */
+	private ?Parser $parser = null;
+	private PPFrame $ppFrame;
+	private ?PageConfig $previousPageConfig = null;
+	private ServiceOptions $config;
+	private ReadOnlyMode $readOnlyMode;
+	private LinkBatchFactory $linkBatchFactory;
 
 	/**
 	 * @param ServiceOptions $config MediaWiki main configuration object
@@ -170,7 +150,19 @@ class DataAccess extends IDataAccess {
 	}
 
 	/** @inheritDoc */
-	public function getPageInfo( IPageConfig $pageConfig, array $titles ): array {
+	public function getPageInfo( $pageConfigOrTitle, array $titles ): array {
+		if ( $pageConfigOrTitle instanceof IPageConfig ) {
+			$context_title = Title::newFromLinkTarget(
+				$pageConfigOrTitle->getLinkTarget()
+			);
+		} elseif ( is_string( $pageConfigOrTitle ) ) {
+			// Temporary, deprecated.
+			$context_title = Title::newFromTextThrow( $pageConfigOrTitle );
+		} elseif ( $pageConfigOrTitle instanceof ParsoidLinkTarget ) {
+			$context_title = Title::newFromLinkTarget( $pageConfigOrTitle );
+		} else {
+			throw new UnreachableException( "Bad type for argument 1" );
+		}
 		$titleObjs = [];
 		$pagemap = [];
 		$classes = [];
@@ -204,7 +196,6 @@ class DataAccess extends IDataAccess {
 			$pagemap[$obj->getArticleID()] = $pdbk;
 			$classes[$pdbk] = $obj->isRedirect() ? 'mw-redirect' : '';
 		}
-		$context_title = Title::newFromText( $pageConfig->getTitle() );
 		$this->hookRunner->onGetLinkColours(
 			# $classes is passed by reference and mutated
 			$pagemap, $classes, $context_title
@@ -230,7 +221,7 @@ class DataAccess extends IDataAccess {
 
 	/** @inheritDoc */
 	public function getFileInfo( IPageConfig $pageConfig, array $files ): array {
-		$page = Title::newFromText( $pageConfig->getTitle() );
+		$page = Title::newFromLinkTarget( $pageConfig->getLinkTarget() );
 
 		$keys = [];
 		foreach ( $files as $f ) {
@@ -262,7 +253,9 @@ class DataAccess extends IDataAccess {
 				'mime' => $file->getMimeType(),
 				'url' => $file->getFullUrl(),
 				'mustRender' => $file->mustRender(),
-				'badFile' => $this->badFileLookup->isBadFile( $filename, $page ?: false ),
+				'badFile' => $this->badFileLookup->isBadFile( $filename, $page ),
+				'timestamp' => $file->getTimestamp(),
+				'sha1' => $file->getSha1(),
 			];
 
 			$length = $file->getLength();
@@ -332,7 +325,8 @@ class DataAccess extends IDataAccess {
 		// processing, for greater compatibility.
 		$this->parser ??= $this->parserFactory->create();
 		$this->parser->startExternalParse(
-			Title::newFromText( $pageConfig->getTitle() ), $pageConfig->getParserOptions(),
+			Title::newFromLinkTarget( $pageConfig->getLinkTarget() ),
+			$pageConfig->getParserOptions(),
 			$outputType, $clearState, $pageConfig->getRevisionId() );
 		$this->parser->resetOutput();
 
@@ -349,7 +343,7 @@ class DataAccess extends IDataAccess {
 		'@phan-var PageConfig $pageConfig'; // @var PageConfig $pageConfig
 		// This could use prepareParser(), but it's only called once per page,
 		// so it's not essential.
-		$titleObj = Title::newFromText( $pageConfig->getTitle() );
+		$titleObj = Title::newFromLinkTarget( $pageConfig->getLinkTarget() );
 		$user = $pageConfig->getParserOptions()->getUserIdentity();
 		$content = ContentHandler::makeContent( $wikitext, $titleObj, CONTENT_MODEL_WIKITEXT );
 		return $this->contentTransformer->preSaveTransform(
@@ -373,9 +367,9 @@ class DataAccess extends IDataAccess {
 		// created (implicitly in ::prepareParser()/Parser::resetOutput() )
 		// which we then have to manually merge.
 		$out = $parser->getOutput();
-		$out->setText( $html );
+		$out->setRawText( $html );
 		$out->collectMetadata( $metadata ); # merges $out into $metadata
-		return $out->getText( [ 'unwrap' => true ] ); # HTML
+		return Parser::extractBody( $out->getRawText() );
 	}
 
 	/** @inheritDoc */
@@ -409,10 +403,14 @@ class DataAccess extends IDataAccess {
 
 	/** @inheritDoc */
 	public function fetchTemplateSource(
-		IPageConfig $pageConfig, string $title
+		IPageConfig $pageConfig, $title
 	): ?IPageContent {
 		'@phan-var PageConfig $pageConfig'; // @var PageConfig $pageConfig
-		$titleObj = Title::newFromText( $title );
+		if ( is_string( $title ) ) {
+			$titleObj = Title::newFromTextThrow( $title );
+		} else {
+			$titleObj = Title::newFromLinkTarget( $title );
+		}
 
 		// Use the PageConfig to take advantage of custom template
 		// fetch hooks like FlaggedRevisions, etc.
@@ -422,8 +420,12 @@ class DataAccess extends IDataAccess {
 	}
 
 	/** @inheritDoc */
-	public function fetchTemplateData( IPageConfig $pageConfig, string $title ): ?array {
+	public function fetchTemplateData( IPageConfig $pageConfig, $title ): ?array {
 		$ret = [];
+		if ( !is_string( $title ) ) {
+			$titleObj = Title::newFromLinkTarget( $title );
+			$title = $titleObj->getPrefixedText();
+		}
 		// @todo: This hook needs some clean up: T304899
 		$this->hookRunner->onParserFetchTemplateData(
 			[ $title ],
@@ -446,7 +448,9 @@ class DataAccess extends IDataAccess {
 		}
 
 		$revId = $pageConfig->getRevisionId();
-		$title = $pageConfig->getTitle();
+		$title = Title::newFromLinkTarget(
+			$pageConfig->getLinkTarget()
+		)->getPrefixedText();
 		$pageInfo = $this->getPageInfo( $pageConfig, [ $title ] );
 		$latest = $pageInfo[$title]['revId'];
 

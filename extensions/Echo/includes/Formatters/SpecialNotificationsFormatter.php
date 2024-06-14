@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use Html;
 use MediaWiki\Extension\Notifications\Special\SpecialNotificationsMarkRead;
-use MWTimestamp;
+use MediaWiki\Html\Html;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Utils\MWTimestamp;
 use OOUI\IconWidget;
-use OutputPage;
 use Xml;
 
 /**

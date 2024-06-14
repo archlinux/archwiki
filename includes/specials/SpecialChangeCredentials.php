@@ -9,11 +9,11 @@ use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PasswordAuthenticationRequest;
 use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Message\Message;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\SpecialPage\AuthManagerSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use Message;
 
 /**
  * Special change to change credentials (such as the password).
@@ -158,27 +158,28 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 	protected function getAuthFormDescriptor( $requests, $action ) {
 		if ( !static::$loadUserData ) {
 			return [];
-		} else {
-			$descriptor = parent::getAuthFormDescriptor( $requests, $action );
+		}
 
-			$any = false;
-			foreach ( $descriptor as &$field ) {
-				if ( $field['type'] === 'password' && $field['name'] !== 'retype' ) {
-					$any = true;
-					if ( isset( $field['cssclass'] ) ) {
-						$field['cssclass'] .= ' mw-changecredentials-validate-password';
-					} else {
-						$field['cssclass'] = 'mw-changecredentials-validate-password';
-					}
+		$descriptor = parent::getAuthFormDescriptor( $requests, $action );
+
+		$any = false;
+		foreach ( $descriptor as &$field ) {
+			if ( $field['type'] === 'password' && $field['name'] !== 'retype' ) {
+				$any = true;
+				if ( isset( $field['cssclass'] ) ) {
+					$field['cssclass'] .= ' mw-changecredentials-validate-password';
+				} else {
+					$field['cssclass'] = 'mw-changecredentials-validate-password';
 				}
 			}
-
-			if ( $any ) {
-				$this->getOutput()->addModules( 'mediawiki.misc-authed-ooui' );
-			}
-
-			return $descriptor;
 		}
+		unset( $field );
+
+		if ( $any ) {
+			$this->getOutput()->addModules( 'mediawiki.misc-authed-ooui' );
+		}
+
+		return $descriptor;
 	}
 
 	protected function getAuthForm( array $requests, $action ) {
@@ -291,8 +292,7 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 			return null;
 		}
 
-		$title = Title::newFromText( $returnTo );
-		return $title->getFullUrlForRedirect( $returnToQuery );
+		return Title::newFromText( $returnTo )->getFullUrlForRedirect( $returnToQuery );
 	}
 
 	protected function getRequestBlacklist() {
@@ -300,7 +300,5 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialChangeCredentials::class, 'SpecialChangeCredentials' );

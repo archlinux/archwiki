@@ -21,6 +21,7 @@
  * @ingroup RevisionDelete
  */
 
+use MediaWiki\Context\IContextSource;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
@@ -123,12 +124,11 @@ class RevisionDeleter {
 	 * @param PageIdentity $page
 	 * @param array $ids
 	 * @return RevDelList
-	 * @throws MWException
 	 */
 	public static function createList( $typeName, IContextSource $context, PageIdentity $page, array $ids ) {
 		$typeName = self::getCanonicalTypeName( $typeName );
 		if ( !$typeName ) {
-			throw new MWException( __METHOD__ . ": Unknown RevDel type '$typeName'" );
+			throw new InvalidArgumentException( __METHOD__ . ": Unknown RevDel type '$typeName'" );
 		}
 		$spec = self::ALLOWED_TYPES[$typeName];
 		$objectFactory = MediaWikiServices::getInstance()->getObjectFactory();

@@ -28,19 +28,22 @@
 
 namespace MediaWiki\Specials;
 
-use DeferredUpdates;
 use EditWatchlistCheckboxSeriesField;
 use EditWatchlistNormalHTMLForm;
-use GenderCache;
-use HTMLForm;
 use LogicException;
+use MediaWiki\Cache\GenderCache;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\HTMLForm\OOUIHTMLForm;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -52,9 +55,6 @@ use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleParser;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\Watchlist\WatchlistManager;
-use OOUIHTMLForm;
-use Parser;
-use ParserOutput;
 use UserNotLoggedIn;
 use WatchedItemStore;
 use WatchedItemStoreInterface;
@@ -254,7 +254,7 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 		$pout = new ParserOutput;
 		$pout->setTOCData( $this->tocData );
 		$pout->setOutputFlag( ParserOutputFlags::SHOW_TOC );
-		$pout->setText( Parser::TOC_PLACEHOLDER );
+		$pout->setRawText( Parser::TOC_PLACEHOLDER );
 		$out->addParserOutput( $pout );
 
 		$form->displayForm( $result );
@@ -960,7 +960,5 @@ class SpecialEditWatchlist extends UnlistedSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialEditWatchlist::class, 'SpecialEditWatchlist' );

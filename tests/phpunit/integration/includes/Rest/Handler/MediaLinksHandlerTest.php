@@ -2,12 +2,13 @@
 
 namespace MediaWiki\Tests\Rest\Handler;
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Rest\Handler\MediaLinksHandler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Title\Title;
-use RequestContext;
+use MediaWikiIntegrationTestCase;
 use Wikimedia\Message\MessageValue;
 
 /**
@@ -15,7 +16,7 @@ use Wikimedia\Message\MessageValue;
  *
  * @group Database
  */
-class MediaLinksHandlerTest extends \MediaWikiIntegrationTestCase {
+class MediaLinksHandlerTest extends MediaWikiIntegrationTestCase {
 
 	use MediaTestTrait;
 
@@ -25,7 +26,7 @@ class MediaLinksHandlerTest extends \MediaWikiIntegrationTestCase {
 
 	private function newHandler() {
 		return new MediaLinksHandler(
-			$this->getServiceContainer()->getDBLoadBalancerFactory(),
+			$this->getServiceContainer()->getConnectionProvider(),
 			$this->makeMockRepoGroup( [ 'Existing.jpg' ] ),
 			$this->getServiceContainer()->getPageStore()
 		);
@@ -145,7 +146,7 @@ class MediaLinksHandlerTest extends \MediaWikiIntegrationTestCase {
 		$title = __CLASS__ . '_Foo';
 
 		$handler = new class (
-			$this->getServiceContainer()->getDBLoadBalancerFactory(),
+			$this->getServiceContainer()->getConnectionProvider(),
 			$this->makeMockRepoGroup( [ 'Existing.jpg' ] ),
 			$this->getServiceContainer()->getPageStore()
 		) extends MediaLinksHandler {

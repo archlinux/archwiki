@@ -1,15 +1,20 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use ApiUsageException;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
+use RevisionDeleter;
 
 /**
  * @group API
  * @group Database
  * @group medium
- * @covers ApiComparePages
+ * @covers \ApiComparePages
  */
 class ApiComparePagesTest extends ApiTestCase {
 

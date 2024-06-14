@@ -74,7 +74,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Bu kaynak, bir şablonda veya diğer oluşturulmuş bir blokta tanımlanmıştır ve şimdilik sadece kaynak modunda ön izlenebilir.",
 	"cite-ve-referenceslist-missingreflist": "Bu kaynakça listesi, bir şablon tarafından oluşturulmuştur.",
 	"cite-ve-toolbar-group-label": "Kaynak ekle",
-	"cite-ve-othergroup-item": "$1 kaynağı",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Kaynakça",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Kaynakça grubunun adı: \"$1\""
+	"cite-ve-othergroup-item": "$1 kaynağı"
 }

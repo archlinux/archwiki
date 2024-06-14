@@ -6,14 +6,17 @@ class Less_Tree_Color extends Less_Tree {
 	public $rgb;
 	public $alpha;
 	public $isTransparentKeyword;
-	public $type = 'Color';
+	public $value;
 
-	public function __construct( $rgb, $a = 1, $isTransparentKeyword = null ) {
+	public function __construct( $rgb, $a = 1, $isTransparentKeyword = null, $originalForm = null ) {
 		if ( $isTransparentKeyword ) {
 			$this->rgb = $rgb;
 			$this->alpha = $a;
 			$this->isTransparentKeyword = true;
 			return;
+		}
+		if ( isset( $originalForm ) ) {
+			$this->value = $originalForm;
 		}
 
 		$this->rgb = [];
@@ -53,7 +56,9 @@ class Less_Tree_Color extends Less_Tree {
 	public function toCSS( $doNotCompress = false ) {
 		$compress = Less_Parser::$options['compress'] && !$doNotCompress;
 		$alpha = Less_Functions::fround( $this->alpha );
-
+		if ( $this->value ) {
+			return $this->value;
+		}
 		//
 		// If we have some transparency, the only way to represent it
 		// is via `rgba`. Otherwise, we use the hex representation,
@@ -98,7 +103,7 @@ class Less_Tree_Color extends Less_Tree {
 
 	/**
 	 * @param string $op
-	 * @param Less_Tree_Color $other
+	 * @param self $other
 	 */
 	public function operate( $op, $other ) {
 		$rgb = [];
@@ -106,7 +111,7 @@ class Less_Tree_Color extends Less_Tree {
 		for ( $c = 0; $c < 3; $c++ ) {
 			$rgb[$c] = Less_Functions::operate( $op, $this->rgb[$c], $other->rgb[$c] );
 		}
-		return new Less_Tree_Color( $rgb, $alpha );
+		return new self( $rgb, $alpha );
 	}
 
 	public function toRGB() {
@@ -186,15 +191,20 @@ class Less_Tree_Color extends Less_Tree {
 		return $this->toHex( $argb );
 	}
 
+	/**
+	 * @param mixed $x
+	 * @return int|null
+	 * @see less-2.5.3.js#Color.prototype.compare
+	 */
 	public function compare( $x ) {
-		if ( !property_exists( $x, 'rgb' ) ) {
+		if ( !$x instanceof self ) {
 			return -1;
 		}
 
 		return ( $x->rgb[0] === $this->rgb[0] &&
 			$x->rgb[1] === $this->rgb[1] &&
 			$x->rgb[2] === $this->rgb[2] &&
-			$x->alpha === $this->alpha ) ? 0 : -1;
+			$x->alpha === $this->alpha ) ? 0 : null;
 	}
 
 	public function toHex( $v ) {
@@ -214,15 +224,20 @@ class Less_Tree_Color extends Less_Tree {
 	 * @param string $keyword
 	 */
 	public static function fromKeyword( $keyword ) {
-		$keyword = strtolower( $keyword );
+		$c = $keyword = strtolower( $keyword );
 
 		if ( Less_Colors::hasOwnProperty( $keyword ) ) {
 			// detect named color
-			return new Less_Tree_Color( substr( Less_Colors::color( $keyword ), 1 ) );
+			$c = new self( substr( Less_Colors::color( $keyword ), 1 ) );
 		}
 
 		if ( $keyword === 'transparent' ) {
-			return new Less_Tree_Color( [ 0, 0, 0 ], 0, true );
+			$c = new self( [ 0, 0, 0 ], 0, true );
+		}
+
+		if ( isset( $c ) && is_object( $c ) ) {
+			$c->value = $keyword;
+			return $c;
 		}
 	}
 

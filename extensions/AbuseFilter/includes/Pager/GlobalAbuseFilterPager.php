@@ -29,7 +29,7 @@ class GlobalAbuseFilterPager extends AbuseFilterPager {
 		CentralDBManager $centralDBManager,
 		array $conds
 	) {
-		// Set database before parent constructor to avoid setting it there with wfGetDB
+		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $centralDBManager->getConnection( DB_REPLICA );
 		parent::__construct( $page, $linkRenderer, null, $afPermManager, $specsFormatter, $conds, null, null );
 	}

@@ -3,7 +3,10 @@
 namespace MediaWiki\Extension\Math\InputCheck;
 
 use Exception;
-use MediaWiki\Extension\Math\TexVC\TexVC;
+use MediaWiki\Extension\Math\Hooks\HookRunner;
+use MediaWiki\Extension\Math\MathRenderer;
+use MediaWiki\Extension\Math\WikiTexVC\TexVC;
+use MediaWiki\HookContainer\HookContainer;
 use Message;
 use WANObjectCache;
 
@@ -18,10 +21,12 @@ class LocalChecker extends BaseChecker {
 	private WANObjectCache $cache;
 
 	private bool $isChecked = false;
+	private ?MathRenderer $context = null;
+	private ?HookContainer $hookContainer = null;
 
-	public function __construct( WANObjectCache $cache, $tex = '', string $type = 'tex' ) {
+	public function __construct( WANObjectCache $cache, $tex = '', string $type = 'tex', bool $purge = false ) {
 		$this->cache = $cache;
-		parent::__construct( $tex );
+		parent::__construct( $tex, $purge );
 		$this->type = $type;
 	}
 
@@ -45,8 +50,12 @@ class LocalChecker extends BaseChecker {
 			return;
 		}
 		try {
+			$cacheInputKey = $this->getInputCacheKey();
+			if ( $this->purge ) {
+				$this->cache->delete( $cacheInputKey, WANObjectCache::TTL_INDEFINITE );
+			}
 			$result = $this->cache->getWithSetCallback(
-				$this->getInputCacheKey(),
+				$cacheInputKey,
 				WANObjectCache::TTL_INDEFINITE,
 				[ $this, 'runCheck' ],
 				[ 'version' => self::VERSION ],
@@ -91,9 +100,17 @@ class LocalChecker extends BaseChecker {
 	}
 
 	public function runCheck(): array {
-		$options = $this->type === 'chem' ? [ "usemhchem" => true ] : null;
+		if ( $this->type == 'chem' ) {
+			$options = [ 'usemhchem' => true, 'usemhchemtexified' => true ];
+			$texifyMhchem = true;
+		} else {
+			$options = [];
+			$texifyMhchem = false;
+		}
+
 		try {
-			$result = ( new TexVC() )->check( $this->inputTeX, $options );
+			$warnings = [];
+			$result = ( new TexVC() )->check( $this->inputTeX, $options, $warnings, $texifyMhchem );
 		} catch ( Exception $e ) { // @codeCoverageIgnoreStart
 			// This is impossible since errors are thrown only if the option debug would be set.
 			$this->error = Message::newFromKey( 'math_failure' );
@@ -102,16 +119,33 @@ class LocalChecker extends BaseChecker {
 			// @codeCoverageIgnoreEnd
 		}
 		if ( $result['status'] === '+' ) {
-			return [
+			$result['mathml'] = $result['input']->renderMML();
+			$out = [
 				'status' => '+',
 				'output' => $result['output'],
-				'mathml' => $result['input']->renderMML()
+				'mathml' => $result['mathml']
 			];
 		} else {
-			return [
+			$out = [
 				'status' => $result['status'],
 				'error' => $result['error'],
 			];
 		}
+		if ( $this->context !== null && $this->hookContainer !== null ) {
+			$resultObject = (object)$result;
+			( new HookRunner( $this->hookContainer ) )->onMathRenderingResultRetrieved(
+				$this->context,
+				$resultObject
+			);
+		}
+		return $out;
+	}
+
+	public function setContext( ?MathRenderer $renderer ): void {
+		$this->context = $renderer;
+	}
+
+	public function setHookContainer( ?HookContainer $hookContainer ): void {
+		$this->hookContainer = $hookContainer;
 	}
 }

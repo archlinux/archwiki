@@ -92,14 +92,14 @@ class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 		$this->assertNotNull( $render );
 		$this->assertStringContainsString( "<render>source:TEST_FORMULA</render>", $render->getText() );
 
-		// Now render with 'png' and make sure we didn't get the cached output
+		// Now render with 'mathml' and make sure we didn't get the cached output
 		$parserOptions2 = ParserOptions::newCanonical( 'canonical' );
 		$parserOptions2->setOption( 'math', MathConfig::MODE_MATHML );
 		$this->assertNull( $parserOutputAccess->getCachedParserOutput( $page, $parserOptions2 ) );
 		$renderStatus = $parserOutputAccess->getParserOutput( $page, $parserOptions2 );
 		$this->assertStatusGood( $renderStatus );
 		$this->assertStringContainsString(
-			"<render>png:TEST_FORMULA</render>",
+			"<render>mathml:TEST_FORMULA</render>",
 			$renderStatus->getValue()->getText()
 		);
 
@@ -111,11 +111,11 @@ class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 			$cachedWithDummy1->getText()
 		);
 
-		// Fetch from cache with png
+		// Fetch from cache with mathml
 		$cachedWithDummy2 = $parserOutputAccess->getCachedParserOutput( $page, $parserOptions2 );
 		$this->assertNotNull( $cachedWithDummy2 );
 		$this->assertStringContainsString(
-			"<render>png:TEST_FORMULA</render>",
+			"<render>mathml:TEST_FORMULA</render>",
 			$cachedWithDummy2->getText()
 		);
 	}
@@ -132,6 +132,6 @@ class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 				$po
 			)
 			->getText();
-		$this->assertStringMatchesFormat( '%A<a%S><render>png:formula</render></a>%A', $res );
+		$this->assertStringMatchesFormat( '%A<a%S><render>mathml:formula</render></a>%A', $res );
 	}
 }

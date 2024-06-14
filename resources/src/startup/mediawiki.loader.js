@@ -19,11 +19,12 @@
 	 * machine, initiating network (batch) requests for loading modules, as
 	 * well as dependency resolution and execution of source code.
 	 *
-	 * For more information, refer to
-	 * <https://www.mediawiki.org/wiki/ResourceLoader/Features>
-	 *
-	 * @class mw.loader
+	 * @see <https://www.mediawiki.org/wiki/ResourceLoader/Features>
+	 * @namespace mw.loader
+	 * @memberof mw
 	 * @singleton
+	 * @hideconstructor
+	 * @static
 	 */
 
 	/**
@@ -59,7 +60,9 @@
 	/**
 	 * Fired via mw.track on various resource loading errors.
 	 *
-	 * @event resourceloader_exception
+	 * eslint-disable jsdoc/valid-types
+	 * @event ~'resourceloader.exception'
+	 * @ignore
 	 * @param {Error|Mixed} e The error that was thrown. Almost always an Error
 	 *   object, but in theory module code could manually throw something else, and that
 	 *   might also end up here.
@@ -81,28 +84,27 @@
 	 *
 	 * See #implement and #execute for exact details on support for script, style and messages.
 	 *
-	 *     @example Format:
+	 * @example // Format:
+	 * {
+	 *     'moduleName': {
+	 *         // From mw.loader.register()
+	 *         'version': '#####' (five-character hash)
+	 *         'dependencies': ['required.foo', 'bar.also', ...]
+	 *         'group': string, integer, (or) null
+	 *         'source': 'local', (or) 'anotherwiki'
+	 *         'skip': 'return !!window.Example;', (or) null, (or) boolean result of skip
+	 *         'module': export Object
 	 *
-	 *     {
-	 *         'moduleName': {
-	 *             // From mw.loader.register()
-	 *             'version': '#####' (five-character hash)
-	 *             'dependencies': ['required.foo', 'bar.also', ...]
-	 *             'group': string, integer, (or) null
-	 *             'source': 'local', (or) 'anotherwiki'
-	 *             'skip': 'return !!window.Example;', (or) null, (or) boolean result of skip
-	 *             'module': export Object
+	 *         // Set by execute() or mw.loader.state()
+	 *         // See mw.loader.getState() for documentation of the state machine
+	 *         'state': 'registered', 'loading', 'loaded', 'executing', 'ready', 'error', or 'missing'
 	 *
-	 *             // Set by execute() or mw.loader.state()
-	 *             // See mw.loader.getState() for documentation of the state machine
-	 *             'state': 'registered', 'loading', 'loaded', 'executing', 'ready', 'error', or 'missing'
-	 *
-	 *             // Optionally added at run-time by mw.loader.impl()
-	 *             'script': closure, array of urls, or string
-	 *             'style': { ... } (see #execute)
-	 *             'messages': { 'key': 'value', ... }
-	 *         }
+	 *         // Optionally added at run-time by mw.loader.impl()
+	 *         'script': closure, array of urls, or string
+	 *         'style': { ... } (see #execute)
+	 *         'messages': { 'key': 'value', ... }
 	 *     }
+	 * }
 	 *
 	 * @property {Object}
 	 * @private
@@ -132,13 +134,12 @@
 		 * Typically when a job is created for a module, the job's dependencies contain
 		 * both the required module and all its recursive dependencies.
 		 *
-		 *     @example Format:
-		 *
-		 *     {
-		 *         'dependencies': [ module names ],
-		 *         'ready': Function callback
-		 *         'error': Function callback
-		 *     }
+		 * @example // Format:
+		 * {
+		 *     'dependencies': [ module names ],
+		 *     'ready': Function callback
+		 *     'error': Function callback
+		 * }
 		 *
 		 * @property {Object[]} jobs
 		 * @private
@@ -183,8 +184,9 @@
 
 	/**
 	 * Create a new style element and add it to the DOM.
+	 * Stable for use in gadgets.
 	 *
-	 * @private
+	 * @method mw.loader.addStyleTag
 	 * @param {string} text CSS text
 	 * @param {Node|null} [nextNode] The element where the style tag
 	 *  should be inserted before
@@ -387,7 +389,7 @@
 					} catch ( e ) {
 						// A user-defined callback raised an exception.
 						// Swallow it to protect our state machine!
-						mw.trackError( 'resourceloader.exception', {
+						mw.trackError( {
 							exception: e,
 							source: 'load-callback'
 						} );
@@ -546,7 +548,7 @@
 				// was circular or invalid dependencies. What the above scenarios have in
 				// common is that they don't register the module client-side.
 				if ( modules[ i ] in registry ) {
-					mw.trackError( 'resourceloader.exception', {
+					mw.trackError( {
 						exception: err,
 						source: 'resolve'
 					} );
@@ -911,11 +913,11 @@
 					markModuleReady();
 				}
 			} catch ( e ) {
-				// Use mw.track instead of mw.log because these errors are common in production mode
+				// Use mw.trackError instead of mw.log because these errors are common in production mode
 				// (e.g. undefined variable), and mw.log is only enabled in debug mode.
 				setAndPropagate( module, 'error' );
 				$CODE.profileScriptEnd();
-				mw.trackError( 'resourceloader.exception', {
+				mw.trackError( {
 					exception: e,
 					module: module,
 					source: 'module-execute'
@@ -1044,11 +1046,13 @@
 	 * because its implementation needs to keep track of potential string size in order
 	 * to decide when to split the requests due to url size.
 	 *
+	 * @typedef {Object} ModuleString
+	 * @property {string} str Module query string
+	 * @property {Array} list List of module names in matching order
+	 *
 	 * @private
 	 * @param {Object} moduleMap Module map
-	 * @return {Object}
-	 * @return {string} return.str Module query string
-	 * @return {Array} return.list List of module names in matching order
+	 * @return {ModuleString}
 	 */
 	function buildModulesString( moduleMap ) {
 		var str = [];
@@ -1343,18 +1347,17 @@
 		 */
 		maxQueryLength: $VARS.maxQueryLength,
 
-		/**
-		 * @inheritdoc #newStyleTag
-		 * @method
-		 */
 		addStyleTag: newStyleTag,
 
 		// Exposed for internal use only. Documented as @private.
 		addScriptTag: addScript,
+		// Exposed for internal use only. Documented as @private.
 		addLinkTag: addLink,
 
+		// Exposed for internal use only. Documented as @private.
 		enqueue: enqueue,
 
+		// Exposed for internal use only. Documented as @private.
 		resolve: resolve,
 
 		/**
@@ -1418,7 +1421,7 @@
 				// risks and clear everything in this cache.
 				store.clear();
 
-				mw.trackError( 'resourceloader.exception', {
+				mw.trackError( {
 					exception: err,
 					source: 'store-eval'
 				} );
@@ -1437,8 +1440,8 @@
 		 *
 		 * The #work() method will use this information to split up requests by source.
 		 *
-		 *     @example
-		 *     mw.loader.addSource( { mediawikiwiki: 'https://www.mediawiki.org/w/load.php' } );
+		 * @example
+		 * mw.loader.addSource( { mediawikiwiki: 'https://www.mediawiki.org/w/load.php' } );
 		 *
 		 * @private
 		 * @param {Object} ids An object mapping ids to load.php end point urls
@@ -1469,6 +1472,7 @@
 		 * @param {string} [group=null] Group which the module is in
 		 * @param {string} [source='local'] Name of the source
 		 * @param {string} [skip=null] Script body of the skip function
+		 * @private
 		 */
 		register: function ( modules ) {
 			if ( typeof modules !== 'object' ) {
@@ -1520,6 +1524,7 @@
 		 * @param {Object} [messages] List of key/value pairs to be added to mw#messages.
 		 * @param {Object} [templates] List of key/value pairs to be added to mw#templates.
 		 * @param {string|null} [deprecationWarning] Deprecation warning if any
+		 * @private
 		 */
 		implement: function ( module, script, style, messages, templates, deprecationWarning ) {
 			var split = splitModuleKey( module ),
@@ -1582,6 +1587,7 @@
 		 * Function.prototype.toString() and later restored and executed in the global scope.
 		 *
 		 * The elements are all optional except the name.
+		 * @private
 		 */
 		impl: function ( declarator ) {
 			var data = declarator(),
@@ -1671,6 +1677,7 @@
 		 * Change the state of one or more modules.
 		 *
 		 * @param {Object} states Object of module name/state pairs
+		 * @private
 		 */
 		state: function ( states ) {
 			for ( var module in states ) {
@@ -1739,7 +1746,7 @@
 		 * @private
 		 * @since 1.27
 		 * @param {string} moduleName Module name
-		 * @return {Mixed} Exported value
+		 * @return {any} Exported value
 		 */
 		require: function ( moduleName ) {
 			var path;
@@ -1780,18 +1787,6 @@
 		}
 	};
 
-	/**
-	 * On browsers that implement the localStorage API, the module store serves as a
-	 * smart complement to the browser cache. Unlike the browser cache, the module store
-	 * can slice a concatenated response from ResourceLoader into its constituent
-	 * modules and cache each of them separately, using each module's versioning scheme
-	 * to determine when the cache should be invalidated.
-	 *
-	 * @private
-	 * @singleton
-	 * @class mw.loader.store
-	 */
-
 	var hasPendingFlush = false,
 		hasPendingWrites = false;
 
@@ -1828,7 +1823,7 @@
 					asOf: Math.ceil( Date.now() / 1e7 )
 				} ) );
 			} catch ( e ) {
-				mw.trackError( 'resourceloader.exception', {
+				mw.trackError( {
 					exception: e,
 					source: 'store-localstorage-update'
 				} );
@@ -1841,6 +1836,19 @@
 
 	// We use a local variable `store` so that its easier to access, but also need to set
 	// this in mw.loader so its exported - combine the two
+
+	/**
+	 * On browsers that implement the localStorage API, the module store serves as a
+	 * smart complement to the browser cache. Unlike the browser cache, the module store
+	 * can slice a concatenated response from ResourceLoader into its constituent
+	 * modules and cache each of them separately, using each module's versioning scheme
+	 * to determine when the cache should be invalidated.
+	 *
+	 * @private
+	 * @singleton
+	 * @class mw.loader.store
+	 * @ignore
+	 */
 	mw.loader.store = store = {
 		// Whether the store is in use on this page.
 		enabled: null,
@@ -2127,5 +2135,4 @@
 			}
 		}
 	};
-
 }() );

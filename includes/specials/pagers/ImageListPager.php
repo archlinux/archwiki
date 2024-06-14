@@ -21,21 +21,21 @@
 
 namespace MediaWiki\Pager;
 
-use HTMLForm;
-use IContextSource;
 use LocalRepo;
+use MediaWiki\Cache\UserCache;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserNameUtils;
-use MWException;
 use RepoGroup;
-use UserCache;
+use UnexpectedValueException;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -134,7 +134,7 @@ class ImageListPager extends TablePager {
 		} else {
 			$this->mDefaultDirection = IndexPager::DIR_ASCENDING;
 		}
-		// Set database before parent constructor to avoid setting it there with wfGetDB
+		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbProvider->getReplicaDatabase();
 
 		parent::__construct( $context, $linkRenderer );
@@ -320,7 +320,6 @@ class ImageListPager extends TablePager {
 	 * @param int $limit
 	 * @param bool $order IndexPager::QUERY_ASCENDING or IndexPager::QUERY_DESCENDING
 	 * @return IResultWrapper
-	 * @throws MWException
 	 */
 	public function reallyDoQuery( $offset, $limit, $order ) {
 		$dbr = $this->getDatabase();
@@ -341,10 +340,11 @@ class ImageListPager extends TablePager {
 		$oldIndex = $this->mIndexField;
 		foreach ( $this->mIndexField as &$index ) {
 			if ( !str_starts_with( $index, 'img_' ) ) {
-				throw new MWException( "Expected to be sorting on an image table field" );
+				throw new UnexpectedValueException( "Expected to be sorting on an image table field" );
 			}
 			$index = 'oi_' . substr( $index, 4 );
 		}
+		unset( $index );
 
 		[ $tables, $fields, $conds, $fname, $options, $join_conds ] =
 			$this->buildQueryInfo( $offset, $limit, $order );
@@ -436,7 +436,6 @@ class ImageListPager extends TablePager {
 	 * @param string $field
 	 * @param string|null $value
 	 * @return string
-	 * @throws MWException
 	 */
 	public function formatValue( $field, $value ) {
 		$linkRenderer = $this->getLinkRenderer();
@@ -446,12 +445,11 @@ class ImageListPager extends TablePager {
 				$file = $this->localRepo->findFile( $this->getCurrentRow()->img_name, $opt );
 				// If statement for paranoia
 				if ( $file ) {
-					$thumb = $file->transform( [ 'width' => 180, 'height' => 360, 'loading' => 'lazy' ] );
+					$thumb = $file->transform( [ 'width' => 180, 'height' => 360 ] );
 					if ( $thumb ) {
-						return $thumb->toHtml( [ 'desc-link' => true ] );
-					} else {
-						return $this->msg( 'thumbnail_error', '' )->escaped();
+						return $thumb->toHtml( [ 'desc-link' => true, 'loading' => 'lazy' ] );
 					}
+					return $this->msg( 'thumbnail_error', '' )->escaped();
 				} else {
 					return htmlspecialchars( $this->getCurrentRow()->img_name );
 				}
@@ -521,7 +519,7 @@ class ImageListPager extends TablePager {
 				// Messages: listfiles-latestversion-yes, listfiles-latestversion-no
 				return $this->msg( 'listfiles-latestversion-' . $value )->escaped();
 			default:
-				throw new MWException( "Unknown field '$field'" );
+				throw new UnexpectedValueException( "Unknown field '$field'" );
 		}
 	}
 

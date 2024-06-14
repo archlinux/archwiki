@@ -24,7 +24,7 @@ use FormatJson;
 use InvalidArgumentException;
 use Language;
 use MediaWiki\Language\RawMessage;
-use Message;
+use MediaWiki\Message\Message;
 use OverflowException;
 use stdClass;
 use Wikimedia\Rdbms\IDatabase;
@@ -75,26 +75,6 @@ class CommentStore {
 	 */
 	public function __construct( Language $lang ) {
 		$this->lang = $lang;
-	}
-
-	/**
-	 * Get SELECT fields for the comment key
-	 *
-	 * Each resulting row should be passed to `self::getCommentLegacy()` to get the
-	 * actual comment.
-	 *
-	 * @note Use of this method may require a subsequent database query to
-	 *  actually fetch the comment. If possible, use `self::getJoin()` instead.
-	 *
-	 * @since 1.30
-	 * @since 1.31 Method signature changed, $key parameter added (required since 1.35)
-	 * @param string $key A key such as "rev_comment" identifying the comment
-	 *  field being fetched.
-	 * @return string[] to include in the `$vars` to `IDatabase->select()`. All
-	 *  fields are aliased, so `+` is safe to use.
-	 */
-	public function getFields( $key ) {
-		return [ "{$key}_id" => "{$key}_id" ];
 	}
 
 	/**
@@ -425,7 +405,5 @@ class CommentStore {
 
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( CommentStore::class, 'CommentStore' );

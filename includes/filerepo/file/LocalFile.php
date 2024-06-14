@@ -19,7 +19,11 @@
  */
 
 use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Deferred\AutoCommitUpdate;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
+use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\FileRepo\File\FileSelectQueryBuilder;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
@@ -273,7 +277,7 @@ class LocalFile extends File {
 	 * @phan-return array{tables:string[],fields:string[],joins:array}
 	 */
 	public static function getQueryInfo( array $options = [] ) {
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$queryInfo = FileSelectQueryBuilder::newForFile( $dbr, $options )->getQueryInfo();
 		// needs remapping...
 		return [
@@ -324,7 +328,7 @@ class LocalFile extends File {
 
 		$key = $this->getCacheKey();
 		if ( !$key ) {
-			$this->loadFromDB( self::READ_NORMAL );
+			$this->loadFromDB( IDBAccessObject::READ_NORMAL );
 
 			return;
 		}
@@ -336,7 +340,7 @@ class LocalFile extends File {
 			function ( $oldValue, &$ttl, array &$setOpts ) use ( $cache ) {
 				$setOpts += Database::getCacheSetOptions( $this->repo->getReplicaDB() );
 
-				$this->loadFromDB( self::READ_NORMAL );
+				$this->loadFromDB( IDBAccessObject::READ_NORMAL );
 
 				$fields = $this->getCacheFields( '' );
 				$cacheVal = [];
@@ -479,7 +483,7 @@ class LocalFile extends File {
 		$this->dataLoaded = true;
 		$this->extraDataLoaded = true;
 
-		$dbr = ( $flags & self::READ_LATEST )
+		$dbr = ( $flags & IDBAccessObject::READ_LATEST )
 			? $this->repo->getPrimaryDB()
 			: $this->repo->getReplicaDB();
 		$queryBuilder = FileSelectQueryBuilder::newForFile( $dbr );
@@ -521,7 +525,7 @@ class LocalFile extends File {
 				$this->loadMetadataFromDbFieldValue( $db, $fieldMap['metadata'] );
 			}
 		} else {
-			throw new MWException( "Could not find data for image '{$this->getName()}'." );
+			throw new RuntimeException( "Could not find data for image '{$this->getName()}'." );
 		}
 	}
 
@@ -556,7 +560,6 @@ class LocalFile extends File {
 	/**
 	 * @param array|stdClass $row
 	 * @param string $prefix
-	 * @throws MWException
 	 * @return array
 	 */
 	protected function unprefixRow( $row, $prefix = 'img_' ) {
@@ -565,7 +568,7 @@ class LocalFile extends File {
 
 		// Double check prefix once
 		if ( substr( array_key_first( $array ), 0, $prefixLength ) !== $prefix ) {
-			throw new MWException( __METHOD__ . ': incorrect $prefix parameter' );
+			throw new InvalidArgumentException( __METHOD__ . ': incorrect $prefix parameter' );
 		}
 
 		$decoded = [];
@@ -671,7 +674,7 @@ class LocalFile extends File {
 	 */
 	public function load( $flags = 0 ) {
 		if ( !$this->dataLoaded ) {
-			if ( $flags & self::READ_LATEST ) {
+			if ( $flags & IDBAccessObject::READ_LATEST ) {
 				$this->loadFromDB( $flags );
 			} else {
 				$this->loadFromCache();
@@ -1071,7 +1074,7 @@ class LocalFile extends File {
 			$s = serialize( $this->getMetadataArray() );
 		}
 		if ( !is_string( $s ) ) {
-			throw new MWException( 'Could not serialize image metadata value for DB' );
+			throw new RuntimeException( 'Could not serialize image metadata value for DB' );
 		}
 		return $db->encodeBlob( $s );
 	}
@@ -1284,13 +1287,6 @@ class LocalFile extends File {
 	}
 
 	/**
-	 * Refresh metadata in memcached, but don't touch thumbnails or CDN
-	 */
-	private function purgeMetadataCache() {
-		$this->invalidateCache();
-	}
-
-	/**
 	 * Delete all previously generated thumbnails, refresh metadata in memcached and purge the CDN.
 	 * @stable to override
 	 *
@@ -1299,9 +1295,9 @@ class LocalFile extends File {
 	 * @note This used to purge old thumbnails by default as well, but doesn't anymore.
 	 */
 	public function purgeCache( $options = [] ) {
-		// Refresh metadata cache
+		// Refresh metadata in memcached, but don't touch thumbnails or CDN
 		$this->maybeUpgradeRow();
-		$this->purgeMetadataCache();
+		$this->invalidateCache();
 
 		// Delete thumbnails
 		$this->purgeThumbnails( $options );
@@ -1733,16 +1729,17 @@ class LocalFile extends File {
 		$props['description'] = $comment;
 		$props['timestamp'] = wfTimestamp( TS_MW, $timestamp ); // DB -> TS_MW
 		$this->setProps( $props );
-		$mimeAnalyzer = MediaWikiServices::getInstance()->getMimeAnalyzer();
-		if ( !$mimeAnalyzer->isValidMajorMimeType( $this->major_mime ) ) {
-			$this->major_mime = 'unknown';
-		}
 
 		# Fail now if the file isn't there
 		if ( !$this->fileExists ) {
 			wfDebug( __METHOD__ . ": File " . $this->getRel() . " went missing!" );
 
 			return Status::newFatal( 'filenotfound', $this->getRel() );
+		}
+
+		$mimeAnalyzer = MediaWikiServices::getInstance()->getMimeAnalyzer();
+		if ( !$mimeAnalyzer->isValidMajorMimeType( $this->major_mime ) ) {
+			$this->major_mime = 'unknown';
 		}
 
 		$actorNormalizaton = MediaWikiServices::getInstance()->getActorNormalization();
@@ -1854,7 +1851,7 @@ class LocalFile extends File {
 		$descId = $descTitle->getArticleID();
 		$wikiPage = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $descTitle );
 		if ( !$wikiPage instanceof WikiFilePage ) {
-			throw new MWException( 'Cannot instance WikiFilePage for ' . $this->getName()
+			throw new UnexpectedValueException( 'Cannot obtain instance of WikiFilePage for ' . $this->getName()
 				. ', got instance of ' . get_class( $wikiPage ) );
 		}
 		$wikiPage->setFile( $this );
@@ -1993,15 +1990,14 @@ class LocalFile extends File {
 					->where( [ 'log_id' => $logId ] )
 					->caller( $fname )->execute();
 
-				$this->getRepo()->getPrimaryDB()->insert(
-					'log_search',
-					[
+				$this->getRepo()->getPrimaryDB()->newInsertQueryBuilder()
+					->insertInto( 'log_search' )
+					->row( [
 						'ls_field' => 'associated_rev_id',
 						'ls_value' => (string)$logEntry->getAssociatedRevId(),
 						'ls_log_id' => $logId,
-					],
-					$fname
-				);
+					] )
+					->caller( $fname )->execute();
 
 				# Add change tags, if any
 				if ( $tags ) {
@@ -2294,7 +2290,6 @@ class LocalFile extends File {
 	 * @param string $reason
 	 * @param UserIdentity $user
 	 * @param bool $suppress
-	 * @throws MWException Exception on database or file store failure
 	 * @return Status
 	 */
 	public function deleteOldFile( $archiveName, $reason, UserIdentity $user, $suppress = false ) {

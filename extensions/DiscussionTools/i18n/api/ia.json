@@ -24,6 +24,8 @@
 	"apihelp-discussiontoolsedit-summary": "Publicar un message sur un pagina de discussion.",
 	"apihelp-discussiontoolsfindcomment-summary": "Cercar un commento per su ID o nomine.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "ID o nomine del commento",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Fragmento hash del capite",
+	"apihelp-discussiontoolsfindcomment-param-page": "Le pagina sur le qual le fragmento hash del capite soleva exister",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Nomines del topicos a verificar",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Obtener le statos de subscription de topicos date.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Le numero del version a usar (predefinite le ultime version).",

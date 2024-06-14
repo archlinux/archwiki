@@ -6,17 +6,17 @@
  */
 
 /**
- * Extends CopyTextLayout with MediaWiki notifications
+ * Extends CopyTextLayout with MediaWiki notifications.
  *
  * @class
  * @extends OO.ui.CopyTextLayout
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {string} successMessage Success message,
- *  defaults to 'mw-widgets-copytextlayout-copy-success'.
- * @cfg {string} failMessage Failure message,
- *  defaults to 'mw-widgets-copytextlayout-copy-fail'.
+ * @param {string} [config.successMessage] Success message,
+ *  defaults to the {@link mw.Message} 'mw-widgets-copytextlayout-copy-success'.
+ * @param {string} [config.failMessage] Failure message,
+ *  defaults to the {@link mw.Message} 'mw-widgets-copytextlayout-copy-fail'.
  */
 mw.widgets.CopyTextLayout = function MwWidgetsCopyTextLayout( config ) {
 	// Parent constructor
@@ -35,7 +35,7 @@ OO.inheritClass( mw.widgets.CopyTextLayout, OO.ui.CopyTextLayout );
 /* Methods */
 
 /**
- * Handle copy events
+ * Handle copy events.
  *
  * @param {boolean} copied
  */

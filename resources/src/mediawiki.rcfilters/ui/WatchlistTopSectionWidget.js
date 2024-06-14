@@ -1,12 +1,12 @@
 var MarkSeenButtonWidget = require( './MarkSeenButtonWidget.js' ),
 	WatchlistTopSectionWidget;
 /**
- * Top section (between page title and filters) on Special:Watchlist
+ * Top section (between page title and filters) on Special:Watchlist.
  *
  * @class mw.rcfilters.ui.WatchlistTopSectionWidget
+ * @ignore
  * @extends OO.ui.Widget
  *
- * @constructor
  * @param {mw.rcfilters.Controller} controller
  * @param {mw.rcfilters.dm.ChangesListViewModel} changesListModel
  * @param {mw.rcfilters.ui.SavedLinksListWidget} savedLinksListWidget
@@ -24,7 +24,7 @@ WatchlistTopSectionWidget = function MwRcfiltersUiWatchlistTopSectionWidget(
 	config = config || {};
 
 	// Parent
-	WatchlistTopSectionWidget.parent.call( this, config );
+	WatchlistTopSectionWidget.super.call( this, config );
 
 	editWatchlistButton = new OO.ui.ButtonWidget( {
 		label: mw.msg( 'rcfilters-watchlist-edit-watchlist-button' ),

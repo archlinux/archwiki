@@ -91,11 +91,10 @@ class SpecialBrokenRedirects extends QueryPage {
 				'rd_fragment',
 			],
 			'conds' => [
-				// Exclude pages that don't exist locally as wiki pages,
-				// but aren't "broken" either.
-				// Special pages and interwiki links
+				// Exclude pages that don't exist locally as wiki pages, but aren't "broken" either: special
+				// pages and interwiki links.
 				'rd_namespace >= 0',
-				'rd_interwiki' => [ null, '' ],
+				'rd_interwiki' => '',
 				'p2.page_namespace' => null,
 			],
 			'join_conds' => [
@@ -128,15 +127,10 @@ class SpecialBrokenRedirects extends QueryPage {
 			$toObj = Title::makeTitle(
 				$result->rd_namespace,
 				$result->rd_title,
-				$result->rd_fragment ?? ''
+				$result->rd_fragment
 			);
 		} else {
-			$blinks = $fromObj->getBrokenLinksFrom(); # TODO: check for redirect, not for links
-			if ( $blinks ) {
-				$toObj = $blinks[0];
-			} else {
-				$toObj = false;
-			}
+			$toObj = false;
 		}
 
 		$linkRenderer = $this->getLinkRenderer();
@@ -216,7 +210,5 @@ class SpecialBrokenRedirects extends QueryPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialBrokenRedirects::class, 'SpecialBrokenRedirects' );

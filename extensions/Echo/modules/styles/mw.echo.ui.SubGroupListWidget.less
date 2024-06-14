@@ -32,8 +32,13 @@
 			}
 		}
 	}
+}
 
-	.mw-echo-ui-sortedListWidget {
-		margin-bottom: @bundle-group-padding / 2;
+/* stylelint-disable no-descending-specificity */
+.mw-echo-ui-subGroupListWidget,
+.mw-echo-ui-bundleNotificationItemWidget-group {
+	.mw-echo-ui-sortedListWidget-group:not( :empty ) {
+		border: @border-width-base @border-style-base @border-color-subtle;
 	}
 }
+/* stylelint-enable no-descending-specificity */

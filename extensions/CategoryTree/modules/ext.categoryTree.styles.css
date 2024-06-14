@@ -78,7 +78,6 @@
 
 .CategoryTreeBullet,
 .CategoryTreeEmptyBullet {
-	cursor: default;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -89,23 +88,10 @@
 	color: #c0c0c0;
 }
 
-.CategoryTreeBullet a,
-.CategoryTreeBullet a:link,
-.CategoryTreeBullet a:active,
-.CategoryTreeBullet a:visited {
-	text-decoration: none;
-	color: inherit;
-	speak: none;
-}
-
 /* Hide toggle buttons for clients without JavaScript */
 .client-nojs .CategoryTreeBullet,
 .client-nojs .CategoryTreeEmptyBullet {
 	display: none;
-}
-
-.CategoryTreeToggle {
-	color: #0645ad;
 }
 
 .CategoryTreeEmptyBullet,
@@ -117,7 +103,7 @@
 }
 
 .CategoryTreeEmptyBullet,
-.CategoryTreeToggle[ data-ct-state='collapsed' ] {
+.CategoryTreeToggle[ aria-expanded='false' ] {
 	border-top: 5px solid transparent;
 	border-left: 10px solid;
 	border-bottom: 5px solid transparent;
@@ -126,23 +112,23 @@
 
 /* @noflip */
 .mw-content-ltr .CategoryTreeEmptyBullet,
-.mw-content-ltr .CategoryTreeToggle[ data-ct-state='collapsed' ],
+.mw-content-ltr .CategoryTreeToggle[ aria-expanded='false' ],
 .mw-content-rtl .mw-content-ltr .CategoryTreeEmptyBullet,
-.mw-content-rtl .mw-content-ltr .CategoryTreeToggle[ data-ct-state='collapsed' ] {
+.mw-content-rtl .mw-content-ltr .CategoryTreeToggle[ aria-expanded='false' ] {
 	border-left: 10px solid;
 	border-right: 0 none;
 }
 
 /* @noflip */
 .mw-content-rtl .CategoryTreeEmptyBullet,
-.mw-content-rtl .CategoryTreeToggle[ data-ct-state='collapsed' ],
+.mw-content-rtl .CategoryTreeToggle[ aria-expanded='false' ],
 .mw-content-ltr .mw-content-rtl .CategoryTreeEmptyBullet,
-.mw-content-ltr .mw-content-rtl .CategoryTreeToggle[ data-ct-state='collapsed' ] {
+.mw-content-ltr .mw-content-rtl .CategoryTreeToggle[ aria-expanded='false' ] {
 	border-right: 10px solid;
 	border-left: 0 none;
 }
 
-.CategoryTreeToggle[ data-ct-state='expanded' ] {
+.CategoryTreeToggle[ aria-expanded='true' ] {
 	border-left: 5px solid transparent;
 	border-right: 5px solid transparent;
 	border-top: 10px solid;

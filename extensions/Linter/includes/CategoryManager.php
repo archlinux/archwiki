@@ -55,12 +55,6 @@ class CategoryManager {
 	 * @var bool[]
 	 * @phan-var array<string,bool>
 	 */
-	private $parserMigrationCategories = [];
-
-	/**
-	 * @var bool[]
-	 * @phan-var array<string,bool>
-	 */
 	private $hasNameParam = [];
 
 	/**
@@ -76,9 +70,6 @@ class CategoryManager {
 		foreach ( $linterCategories as $name => $info ) {
 			if ( $info['enabled'] ) {
 				$this->categories[$info['priority']][] = $name;
-			}
-			if ( $info['parser-migration'] ?? false ) {
-				$this->parserMigrationCategories[$name] = true;
 			}
 			if ( $info['has-name'] ?? false ) {
 				$this->hasNameParam[$name] = true;
@@ -98,14 +89,6 @@ class CategoryManager {
 		sort( $this->categories[self::MEDIUM] );
 		sort( $this->categories[self::LOW] );
 		sort( $this->categories[self::NONE] );
-	}
-
-	/**
-	 * @param string $name
-	 * @return bool
-	 */
-	public function needsParserMigrationEdit( $name ) {
-		return isset( $this->parserMigrationCategories[$name] );
 	}
 
 	/**
@@ -166,14 +149,12 @@ class CategoryManager {
 	}
 
 	/**
-	 * Categories that are configured to be displayed to users
+	 * Categories that are configured to not be displayed to users
 	 *
 	 * @return string[]
 	 */
 	public function getInvisibleCategories() {
-		return array_merge(
-			$this->categories[self::NONE]
-		);
+		return $this->categories[self::NONE];
 	}
 
 	/**

@@ -7,6 +7,7 @@
 .wikiEditor-ui-toolbar {
 	position: relative;
 	display: block;
+	z-index: 7;
 
 	.empty {
 		display: none;
@@ -111,7 +112,7 @@
 
 		.group {
 			padding-right: 0;
-			padding-left: 6px;
+			margin-left: 6px;
 			border-left: 1px solid #c8ccd1;
 		}
 	}
@@ -119,6 +120,7 @@
 	/* Groups */
 	.group {
 		float: left;
+		display: flex;
 		min-height: 26px;
 		padding-right: 6px;
 		border-right: 1px solid #c8ccd1;
@@ -358,7 +360,6 @@
 .tool-button {
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
-	display: inline-block;
 	vertical-align: middle;
 	width: 24px;
 	height: 24px;

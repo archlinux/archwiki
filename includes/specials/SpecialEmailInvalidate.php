@@ -23,6 +23,7 @@
 
 namespace MediaWiki\Specials;
 
+use IDBAccessObject;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\User\UserFactory;
 use Profiler;
@@ -74,7 +75,7 @@ class SpecialEmailInvalidate extends UnlistedSpecialPage {
 	private function attemptInvalidate( $code ) {
 		$user = $this->userFactory->newFromConfirmationCode(
 			(string)$code,
-			UserFactory::READ_LATEST
+			IDBAccessObject::READ_LATEST
 		);
 
 		if ( !is_object( $user ) ) {
@@ -93,7 +94,5 @@ class SpecialEmailInvalidate extends UnlistedSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialEmailInvalidate::class, 'SpecialEmailInvalidate' );

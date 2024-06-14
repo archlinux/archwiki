@@ -21,6 +21,9 @@
  * @file
  */
 
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Installer\Installer;
+use MediaWiki\Installer\InstallerOverrides;
 use MediaWiki\MediaWikiServices;
 
 // Bail on old versions of PHP, or if composer has not been run yet to install
@@ -29,7 +32,7 @@ use MediaWiki\MediaWikiServices;
 require_once dirname( __FILE__ ) . '/../includes/PHPVersionCheck.php';
 wfEntryPointCheck( 'html', dirname( dirname( $_SERVER['SCRIPT_NAME'] ) ) );
 
-define( 'MW_CONFIG_CALLBACK', 'Installer::overrideConfig' );
+define( 'MW_CONFIG_CALLBACK', [ Installer::class, 'overrideConfig' ] );
 define( 'MEDIAWIKI_INSTALL', true );
 
 // Resolve relative to regular MediaWiki root

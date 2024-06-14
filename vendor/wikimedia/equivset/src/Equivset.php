@@ -21,6 +21,7 @@ namespace Wikimedia\Equivset;
 use ArrayIterator;
 use IteratorAggregate;
 use LogicException;
+use Throwable;
 use Wikimedia\Equivset\Exception\EquivsetException;
 
 /**
@@ -46,7 +47,7 @@ class Equivset implements EquivsetInterface, IteratorAggregate {
 	 */
 	public function __construct( array $data = [], string $serializedPath = '' ) {
 		$this->data = $data;
-		$this->serializedPath = $serializedPath ?: __DIR__ . '/../dist/equivset.ser';
+		$this->serializedPath = $serializedPath ?: __DIR__ . '/../dist/equivset.php';
 	}
 
 	/**
@@ -128,7 +129,7 @@ class Equivset implements EquivsetInterface, IteratorAggregate {
 	 * Get the equivset.
 	 *
 	 * @return array<string,string> An associative array of equivalent characters.
-	 * @throws \Throwable If the serialized equivset file is unreadable.
+	 * @throws Throwable If the serialized equivset file is unreadable.
 	 */
 	protected function load(): array {
 		if ( pathinfo( $this->serializedPath, PATHINFO_EXTENSION ) === 'php' ) {

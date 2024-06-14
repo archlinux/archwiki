@@ -12,6 +12,7 @@
 			"Keegan",
 			"Konovalov",
 			"Mainframe98",
+			"McDutchie",
 			"PiefPafPier",
 			"RajeshPandey",
 			"Romaine",
@@ -20,13 +21,13 @@
 			"Siebrand",
 			"Sjoerddebruin",
 			"Southparkfan",
-			"सरोज कुमार ढकाल",
-			"McDutchie"
+			"सरोज कुमार ढकाल"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck denkt dat er nieuwe inhoud aan de pagina is toegevoegd",
 	"tag-editcheck-newreference-description": "Er is een referentie aan de pagina toegevoegd",
 	"tag-editcheck-references-description": "EditCheck denkt dat er een referentie nodig kan zijn",
+	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|EditCheck (referenties) geactiveerd]]",
 	"tag-editcheck-references-activated-description": "EditCheck denkt dat er een referentie nodig kan zijn, en de gebruikersinterface is weergegeven",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuele tekstverwerker]]",
 	"tag-visualeditor-description": "Bewerking gedaan met de [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuele tekstverwerker]]",
@@ -40,7 +41,6 @@
 	"visualeditor-feedback-tool": "Terugkoppeling achterlaten over deze software",
 	"visualeditor-help-label": "Lees de gebruikershandleiding",
 	"visualeditor-help-link": "mw:Special:MyLanguage/Help:VisualEditor/User guide",
-	"visualeditor-help-title": "Handleiding voor de tekstverwerker",
 	"visualeditor-welcomedialog-action": "Begin met bewerken",
 	"visualeditor-welcomedialog-content": "Iedereen kan bewerken en elke verbetering helpt.",
 	"visualeditor-welcomedialog-content-thanks": "Dank u wel. Dankzij u kan de wereld meer ontdekken!",

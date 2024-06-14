@@ -81,7 +81,7 @@ class SqlitePlatform extends SQLPlatform {
 		return 'CAST ( ' . $field . ' AS TEXT )';
 	}
 
-	public function tableName( $name, $format = 'quoted' ) {
+	public function tableName( string $name, $format = 'quoted' ) {
 		if ( preg_match( '/^sqlite_[a-z_]+$/', $name ) ) {
 			// Such names are reserved for internal SQLite tables
 			return $name;
@@ -150,9 +150,5 @@ class SqlitePlatform extends SQLPlatform {
 				[ 'ATTACH', 'PRAGMA' ],
 				true
 			);
-	}
-
-	public function isWriteQuery( $sql, $flags ) {
-		return parent::isWriteQuery( $sql, $flags ) && !preg_match( '/^(ATTACH|PRAGMA)\b/i', $sql );
 	}
 }

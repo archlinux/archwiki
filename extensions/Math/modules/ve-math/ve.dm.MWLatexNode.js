@@ -4,7 +4,7 @@
  * An abstract class that has most of the common functionality
  * for the different tags in the Math extension.
  *
- * @copyright 2011-2015 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license MIT
  */
 
@@ -38,7 +38,7 @@ ve.dm.MWLatexNode.static.tagName = 'img';
  */
 ve.dm.MWLatexNode.static.getHashObjectForRendering = function ( dataElement ) {
 	// Parent method
-	var hashObject = ve.dm.MWLatexNode.super.static.getHashObjectForRendering.call( this, dataElement );
+	const hashObject = ve.dm.MWLatexNode.super.static.getHashObjectForRendering.call( this, dataElement );
 
 	// The id does not affect the rendering.
 	if ( hashObject.mw.attrs ) {

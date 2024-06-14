@@ -7,7 +7,7 @@
 	"gadgets-desc": "Dowólujo wužywarjam w jich [[Special:Preferences#mw-prefsection-gadgets|nastajenjach]] [[Special:Gadgets|gadgets CSS a JavaScript]] wubraś",
 	"prefs-gadgets": "Gadgets",
 	"gadgets-prefstext": "Dołojce jo lisćina specielnych gadgetow, kótarež móžoš za swójo konto zmóžniś.\nToś te gadgety se zwětšego bazěruju na JavaScripśe, togodla musy JavaScript w twójom wobglědowaku zmóžnjony byś, aby funkcioněrowali.\nGlědaj, až toś te gadgety njewustatkuju se na bok nastajenjow.\n\nGlědaj teke, až toś te gadgety njejsu źěl softwary MediaWiki a se zwětšego wót wužywarjow na twójom lokalnem wikiju wuwijaju a wótwarduju.\nLokalne administratory mógu k dispoziciji stojece gadgety z pomocu [[MediaWiki:Gadgets-definition|definicijow ]] a [[Special:Gadgets|wopisanjow]] wobźełaś.",
-	"gadgets": "Gadgets",
+	"special-gadgets": "Gadgets",
 	"gadgets-title": "Gadgets",
 	"gadgets-pagetext": "Dołojce jo lisćina specialnych gadgetow, kótarež wužywarje mógu w [[Special:Preferences#mw-prefsection-gadgets|swójich nastajenjach]] zmóžniś, kaž w [[MediaWiki:Gadgets-definition]] definiěrowane.\nToś ten pśeglěd bitujo lažki pśistup k bokam systemowych powěsćow, kótarež wopisanje a kod gadgeta definěruju.",
 	"gadgets-uses": "Wužywa",

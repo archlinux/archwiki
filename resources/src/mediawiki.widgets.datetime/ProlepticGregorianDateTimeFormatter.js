@@ -1,7 +1,9 @@
 ( function () {
 
 	/**
-	 * Provides various methods needed for formatting dates and times. This
+	 * A DateTimeFormatter for the proleptic Gregorian calendar.
+	 *
+	 * @classdesc Provides various methods needed for formatting dates and times. This
 	 * implementation implements the proleptic Gregorian calendar over years
 	 * 0000–9999.
 	 *
@@ -10,20 +12,20 @@
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {Object} [fullMonthNames] Mapping 1–12 to full month names.
-	 * @cfg {Object} [shortMonthNames] Mapping 1–12 to abbreviated month names.
+	 * @param {Object} [config.fullMonthNames] Mapping 1–12 to full month names.
+	 * @param {Object} [config.shortMonthNames] Mapping 1–12 to abbreviated month names.
 	 *  If {@link #fullMonthNames fullMonthNames} is given and this is not,
 	 *  defaults to the first three characters from that setting.
-	 * @cfg {Object} [fullDayNames] Mapping 0–6 to full day of week names. 0 is Sunday, 6 is Saturday.
-	 * @cfg {Object} [shortDayNames] Mapping 0–6 to abbreviated day of week names. 0 is Sunday, 6 is Saturday.
+	 * @param {Object} [config.fullDayNames] Mapping 0–6 to full day of week names. 0 is Sunday, 6 is Saturday.
+	 * @param {Object} [config.shortDayNames] Mapping 0–6 to abbreviated day of week names. 0 is Sunday, 6 is Saturday.
 	 *  If {@link #fullDayNames fullDayNames} is given and this is not, defaults to
 	 *  the first three characters from that setting.
-	 * @cfg {string[]} [dayLetters] Weekday column headers for a calendar. Array of 7 strings.
+	 * @param {string[]} [config.dayLetters] Weekday column headers for a calendar. Array of 7 strings.
 	 *  If {@link #fullDayNames fullDayNames} or {@link #shortDayNames shortDayNames}
 	 *  are given and this is not, defaults to the first character from
 	 *  shortDayNames.
-	 * @cfg {string[]} [hour12Periods] AM and PM texts. Array of 2 strings, AM and PM.
-	 * @cfg {number} [weekStartsOn=0] What day the week starts on: 0 is Sunday, 1 is Monday, 6 is Saturday.
+	 * @param {string[]} [config.hour12Periods] AM and PM texts. Array of 2 strings, AM and PM.
+	 * @param {number} [config.weekStartsOn=0] What day the week starts on: 0 is Sunday, 1 is Monday, 6 is Saturday.
 	 */
 	mw.widgets.datetime.ProlepticGregorianDateTimeFormatter = function MwWidgetsDatetimeProlepticGregorianDateTimeFormatter( config ) {
 		this.constructor.static.setupDefaults();
@@ -89,7 +91,13 @@
 	/* Static */
 
 	/**
-	 * @inheritdoc
+	 * Default format specifications.
+	 *
+	 * See the `format` parameter in {@link mw.widgets.datetime.DateTimeFormatter}.
+	 *
+	 * @memberof mw.widgets.datetime.ProlepticGregorianDateTimeFormatter
+	 * @type {Object.<string,string>}
+	 * @name formats
 	 */
 	mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.static.formats = {
 		'@time': '${hour|0}:${minute|0}:${second|0}',
@@ -103,7 +111,8 @@
 	 *
 	 * @static
 	 * @inheritable
-	 * @property {Object}
+	 * @type {Object}
+	 * @name mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.fullMonthNames
 	 */
 	mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.static.fullMonthNames = null;
 
@@ -112,7 +121,8 @@
 	 *
 	 * @static
 	 * @inheritable
-	 * @property {Object}
+	 * @type {Object}
+	 * @name mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.shortMonthNames
 	 */
 	mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.static.shortMonthNames = null;
 
@@ -121,7 +131,8 @@
 	 *
 	 * @static
 	 * @inheritable
-	 * @property {Object}
+	 * @type {Object}
+	 * @name mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.fullDayNames
 	 */
 	mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.static.fullDayNames = null;
 
@@ -130,7 +141,8 @@
 	 *
 	 * @static
 	 * @inheritable
-	 * @property {Object}
+	 * @type {Object}
+	 * @name mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.shortDayNames
 	 */
 	mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.static.shortDayNames = null;
 
@@ -139,16 +151,18 @@
 	 *
 	 * @static
 	 * @inheritable
-	 * @property {string[]}
+	 * @type {string[]}
+	 * @name mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.dayLetters
 	 */
 	mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.static.dayLetters = null;
 
 	/**
-	 * Default AM/PM indicators
+	 * Default AM/PM indicators.
 	 *
 	 * @static
 	 * @inheritable
-	 * @property {string[]}
+	 * @type {string[]}
+	 * @name mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.hour12Periods
 	 */
 	mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.static.hour12Periods = null;
 
@@ -260,7 +274,7 @@
 	/* Methods */
 
 	/**
-	 * @inheritdoc
+	 * Turn a tag into a field specification object.
 	 *
 	 * Additional fields implemented here are:
 	 * - ${year|#}: Year as a number
@@ -284,6 +298,11 @@
 	 * - ${second|0}: Second as a number with leading 0
 	 * - ${millisecond|#}: Millisecond as a number
 	 * - ${millisecond|0}: Millisecond as a number, zero-padded to 3 digits
+	 *
+	 * @protected
+	 * @param {string} tag
+	 * @param {string[]} params
+	 * @return {FieldSpecificationObject} Field specification object, or null if the tag+params are unrecognized.
 	 */
 	mw.widgets.datetime.ProlepticGregorianDateTimeFormatter.prototype.getFieldForTag = function ( tag, params ) {
 		var spec = null;
@@ -393,7 +412,9 @@
 			if ( spec.values ) {
 				spec.size = Math.max.apply(
 					// eslint-disable-next-line no-jquery/no-map-util
-					null, $.map( spec.values, function ( v ) { return v.length; } )
+					null, $.map( spec.values, function ( v ) {
+						return v.length;
+					} )
 				);
 			}
 		}
@@ -402,7 +423,7 @@
 	};
 
 	/**
-	 * Get components from a Date object
+	 * Get components from a Date object.
 	 *
 	 * Components are:
 	 * - year {number}
@@ -581,7 +602,7 @@
 	};
 
 	/**
-	 * Get the number of days in a month
+	 * Get the number of days in a month.
 	 *
 	 * @protected
 	 * @param {number} month

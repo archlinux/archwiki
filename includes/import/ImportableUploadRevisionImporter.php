@@ -9,25 +9,11 @@ use Psr\Log\LoggerInterface;
  */
 class ImportableUploadRevisionImporter implements UploadRevisionImporter {
 
-	/**
-	 * @var LoggerInterface
-	 */
-	private $logger;
+	private bool $enableUploads;
+	private LoggerInterface $logger;
 
-	/**
-	 * @var bool
-	 */
-	private $enableUploads;
+	private bool $shouldCreateNullRevision = true;
 
-	/**
-	 * @var bool
-	 */
-	private $shouldCreateNullRevision = true;
-
-	/**
-	 * @param bool $enableUploads
-	 * @param LoggerInterface $logger
-	 */
 	public function __construct(
 		$enableUploads,
 		LoggerInterface $logger
@@ -66,7 +52,7 @@ class ImportableUploadRevisionImporter implements UploadRevisionImporter {
 				$localRepo, $archiveName );
 		} else {
 			$file = $localRepo->newFile( $importableRevision->getTitle() );
-			$file->load( File::READ_LATEST );
+			$file->load( IDBAccessObject::READ_LATEST );
 			$this->logger->debug( __METHOD__ . ': Importing new file as ' . $file->getName() );
 			if ( $file->exists() && $file->getTimestamp() > $importableRevision->getTimestamp() ) {
 				$archiveName = $importableRevision->getTimestamp() . '!' . $file->getName();

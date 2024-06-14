@@ -83,6 +83,7 @@
 	"linter-pager-tidy-whitespace-bug-details": "Problema di parsing con gli spazi",
 	"linter-pager-title-header": "Titolo della pagina",
 	"linter-pager-unclosed-quotes-in-heading-details": "Apici non chiusi il cui effetto fuoriesce dall'indice",
+	"linter-pager-wikilink-in-extlink-details": "Collegamenti in collegamenti",
 	"linterrors-subpage": "Errori di Lint: $1",
 	"linterrors-summary": "<strong>Nota:</strong> i conteggi degli errori non sono esatti, bensì stimati.",
 	"multi-part-template-block": "Generato da più di un template",

@@ -1,7 +1,7 @@
 /*!
  * VisualEditor ContentEditable FocusableNode class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -285,6 +285,10 @@ ve.ce.FocusableNode.prototype.onFocusableSetup = function () {
 			.on( 'load', this.updateInvisibleIcon.bind( this ) );
 		this.updateInvisibleIcon();
 	}
+
+	// A node may be re-setup when focused. redrawHighlights will only do
+	// something if the node is currently focused.
+	this.redrawHighlightsDebounced();
 
 	this.isFocusableSetup = true;
 };
@@ -694,7 +698,7 @@ ve.ce.FocusableNode.prototype.clearHighlights = function () {
  * Redraws highlight.
  */
 ve.ce.FocusableNode.prototype.redrawHighlights = function () {
-	if ( this.focused ) {
+	if ( this.focused && this.focusableSurface ) {
 		// setFocused will call clearHighlights/createHighlights
 		// and also re-bind events.
 		this.setFocused( false );

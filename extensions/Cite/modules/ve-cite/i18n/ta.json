@@ -4,14 +4,14 @@
 			"Balajijagadesh",
 			"Dineshkumar Ponnusamy",
 			"ElangoRamanujam",
+			"Fahimrazick",
 			"Info-farmer",
 			"Jayarathina",
 			"Kalyanasundar",
 			"Sank",
 			"Shanmugamp7",
 			"கௌசிக் பிரபு",
-			"மதனாஹரன்",
-			"Fahimrazick"
+			"மதனாஹரன்"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "நூல்",
@@ -35,6 +35,5 @@
 	"cite-ve-dialogbutton-referenceslist-tooltip": "மேற்கோள்கள் பட்டியல்",
 	"cite-ve-reference-input-placeholder": "தற்போதைய மேற்கோள்களுக்குள் தேடு",
 	"cite-ve-toolbar-group-label": "மேற்கோள் காட்டு",
-	"cite-ve-othergroup-item": "$1 மேற்கோள்",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "மேற்கோள்கள்"
+	"cite-ve-othergroup-item": "$1 மேற்கோள்"
 }

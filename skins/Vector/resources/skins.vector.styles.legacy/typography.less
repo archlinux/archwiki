@@ -41,8 +41,11 @@ pre,
 	// h1's can exist outside of `.mw-body-content` so some heading styles
 	// therefore need to be defined in `.mw-body` as well.
 	& h1,
+	& .mw-heading1,
 	&-content h1,
-	&-content h2 {
+	&-content .mw-heading1,
+	&-content h2,
+	&-content .mw-heading2 {
 		margin-bottom: 0.25em;
 		padding: 0;
 		font-family: @font-family-serif;
@@ -68,7 +71,9 @@ pre,
 	}
 
 	& h1,
-	&-content h1 {
+	& .mw-heading1,
+	&-content h1,
+	&-content .mw-heading1 {
 		font-size: @font-size-heading-1;
 	}
 }
@@ -87,26 +92,28 @@ pre,
 	font-size: @font-size-base--trident-hack;
 	line-height: @line-height-base;
 
-	.vector-feature-custom-font-size-clientpref-enabled & {
-		font-size: 16px;
-	}
-
 	#siteSub {
 		font-size: 12.8px; // T311421
 	}
 
+	.mw-heading1,
 	h1 {
 		margin-top: 1em;
 	}
 
+	.mw-heading2,
 	h2 {
 		margin-top: 1em;
 		font-size: @font-size-heading-2;
 	}
 
+	.mw-heading3,
 	h3,
+	.mw-heading4,
 	h4,
+	.mw-heading5,
 	h5,
+	.mw-heading6,
 	h6 {
 		margin-top: 0.3em;
 		margin-bottom: 0;
@@ -114,19 +121,38 @@ pre,
 		line-height: @line-height-base;
 	}
 
+	.mw-heading3,
 	h3 {
 		font-size: @font-size-heading-3;
 	}
 
+	.mw-heading3,
 	h3,
+	.mw-heading4,
 	h4 {
 		font-weight: bold;
 	}
 
+	.mw-heading4,
 	h4,
+	.mw-heading5,
 	h5,
+	.mw-heading6,
 	h6 {
 		font-size: @font-size-reset; // Reset.
+	}
+
+	// On Talk:Test?dtenable=0 h2 is inside mw-heading which results in larger than
+	// expected font size since @font-size-heading-2 is defined in ems (T357929).
+	// TODO: Consider switching font-sizes to rems instead of ems to remove these styles.
+	.mw-heading1 h1,
+	.mw-heading2 h2,
+	.mw-heading3 h3,
+	.mw-heading4 h4,
+	.mw-heading5 h5,
+	.mw-heading6 h6 {
+		margin-top: 0;
+		font-size: inherit;
 	}
 
 	.toc h2 {

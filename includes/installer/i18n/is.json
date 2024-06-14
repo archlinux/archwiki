@@ -3,9 +3,9 @@
 		"authors": [
 			"Danniel07",
 			"Snævar",
+			"Stefán Örvar Sigmundsson",
 			"Sveinn í Felli",
-			"Þjarkur",
-			"Stefán Örvar Sigmundsson"
+			"Þjarkur"
 		]
 	},
 	"config-desc": "Uppsetningarforrit fyrir MediaWiki",
@@ -88,7 +88,6 @@
 	"config-license-cc-0": "Creative Commons Zero leyfi (almenningseign)",
 	"config-license-gfdl": "Frjálsa GNU-handbókarleyfið, útgáfa 1.3 eða nýrri",
 	"config-license-pd": "Almenningseign (Public Domain)",
-	"config-license-cc-choose": "Veldu sérsniðið Creative Commons notkunarleyfi",
 	"config-extensions": "Viðbætur",
 	"config-skins": "Skinn",
 	"config-install-step-done": "lokið",

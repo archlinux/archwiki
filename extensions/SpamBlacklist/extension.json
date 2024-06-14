@@ -10,7 +10,7 @@
 	"type": "antispam",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42"
 	},
 	"GroupPermissions": {
 		"user": {
@@ -55,11 +55,7 @@
 	},
 	"ResourceModules": {
 		"ext.spamBlacklist.visualEditor": {
-			"scripts": "ve-spamblacklist/ve.init.mw.SpamBlacklistSaveErrorHandler.js",
-			"targets": [
-				"desktop",
-				"mobile"
-			]
+			"scripts": "ve-spamblacklist/ve.init.mw.SpamBlacklistSaveErrorHandler.js"
 		}
 	},
 	"attributes": {

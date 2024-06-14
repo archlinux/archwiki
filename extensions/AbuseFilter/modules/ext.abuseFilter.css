@@ -139,7 +139,7 @@ div.mw-abusefilter-editor {
 #mw-abusefilter-edit-description-input,
 #mw-abusefilter-edit-group-input {
 	width: 90%; /* Same as mw-abusefilter-editor */
-	max-width: unset; /* OOUI's default of 50em is too low for this field */
+	max-width: none; /* OOUI's default of 50em is too low for this field */
 }
 
 #mw-abusefilter-switcheditor {
@@ -172,12 +172,12 @@ fieldset.mw-abusefilter-edit-buttons {
 
 /* Name is in site content language */
 /* @noflip */
-.sitedir-ltr .TablePager_col_af_public_comments {
+.sitedir-ltr .TablePager_col_af_public_comments { /* stylelint-disable-line selector-class-pattern */
 	direction: ltr;
 }
 
 /* @noflip */
-.sitedir-rtl .TablePager_col_af_public_comments {
+.sitedir-rtl .TablePager_col_af_public_comments { /* stylelint-disable-line selector-class-pattern */
 	direction: rtl;
 }
 
@@ -201,11 +201,11 @@ fieldset.mw-abusefilter-edit-buttons {
 
 /* Ace highlight customisation */
 
-span.ace_invalid.ace_deprecated {
+span.ace_invalid.ace_deprecated { /* stylelint-disable-line selector-class-pattern */
 	color: #fe6767;
 	background-color: initial;
 }
 
-span.ace_support.ace_function {
+span.ace_support.ace_function { /* stylelint-disable-line selector-class-pattern */
 	color: #495dd0;
 }

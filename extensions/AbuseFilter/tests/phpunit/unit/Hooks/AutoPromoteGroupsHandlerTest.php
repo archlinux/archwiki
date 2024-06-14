@@ -39,7 +39,7 @@ class AutoPromoteGroupsHandlerTest extends MediaWikiUnitTestCase {
 		$store = $this->createMock( BlockAutopromoteStore::class );
 		$store->expects( $this->never() )->method( $this->anything() );
 		$registry = $this->getConsequencesRegistry( $enabled );
-		$handler = new AutoPromoteGroupsHandler( $cache, $registry, $store );
+		$handler = new AutoPromoteGroupsHandler( $registry, $store, $cache );
 
 		$user = new UserIdentityValue( 1, 'User' );
 		$copy = $groups;
@@ -69,7 +69,7 @@ class AutoPromoteGroupsHandlerTest extends MediaWikiUnitTestCase {
 		$store->expects( $this->never() )->method( $this->anything() );
 		$registry = $this->getConsequencesRegistry();
 
-		$handler = new AutoPromoteGroupsHandler( $cache, $registry, $store );
+		$handler = new AutoPromoteGroupsHandler( $registry, $store, $cache );
 		$handler->onGetAutoPromoteGroups( $user, $groups );
 
 		$this->assertSame( $expected, $groups );
@@ -90,23 +90,10 @@ class AutoPromoteGroupsHandlerTest extends MediaWikiUnitTestCase {
 			->willReturn( $status );
 		$registry = $this->getConsequencesRegistry();
 
-		$handler = new AutoPromoteGroupsHandler( $cache, $registry, $store );
+		$handler = new AutoPromoteGroupsHandler( $registry, $store, $cache );
 		$handler->onGetAutoPromoteGroups( $user, $groups );
 
 		$this->assertSame( $expected, $groups );
 		$this->assertTrue( $cache->hasKey( 'local:abusefilter:blockautopromote:quick:1' ) );
-	}
-
-	/**
-	 * @covers ::factory
-	 */
-	public function testFactory() {
-		$this->assertInstanceOf(
-			AutoPromoteGroupsHandler::class,
-			AutoPromoteGroupsHandler::factory(
-				$this->createMock( ConsequencesRegistry::class ),
-				$this->createMock( BlockAutopromoteStore::class )
-			)
-		);
 	}
 }

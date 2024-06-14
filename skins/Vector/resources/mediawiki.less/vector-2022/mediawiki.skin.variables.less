@@ -19,7 +19,8 @@
 // Overrides for Codex variables:
 
 // Fonts
-@font-size-base: 1em; // Codex: 14px
+// Assumes 16px as the default browser font-size.
+@font-size-base: unit( 14 / 16, em ); // Equals `0.875em`.
 
 // Body content uses the user setting in browser / the system default sans-serif font:
 // Arial on Windows, Roboto on Android.

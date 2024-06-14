@@ -4,6 +4,10 @@ use Flow\Model\AbstractRevision;
 use Flow\Model\PostRevision;
 use Flow\Model\UUID;
 use Flow\Model\Workflow;
+use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Title\Title;
+use MediaWiki\User\User;
+use MediaWiki\WikiMap\WikiMap;
 
 /**
  * Integration tests for the Thanks Flow api module
@@ -43,13 +47,8 @@ class ApiFlowThankIntegrationTest extends ApiTestCase {
 		}
 
 		// mock topic and post
-		if ( method_exists( $this, 'getTestUser' ) ) {
-			$this->meUser = $this->getMutableTestUser()->getUser();
-			$this->otherUser = $this->getMutableTestUser()->getUser();
-		} else {
-			$this->meUser = self::$users[ 'sysop' ]->getUser();
-			$this->otherUser = self::$users[ 'uploader' ]->getUser();
-		}
+		$this->meUser = $this->getMutableTestUser()->getUser();
+		$this->otherUser = $this->getMutableTestUser()->getUser();
 		$this->topic = $this->generateObject();
 		$this->postByOtherUser = $this->generateObject( [
 				'tree_orig_user_id' => $this->otherUser->getId(),
@@ -111,7 +110,7 @@ class ApiFlowThankIntegrationTest extends ApiTestCase {
 		$container[ 'storage' ] = $mockStorage;
 		$container[ 'templating' ] = $mockTemplating;
 
-		\DeferredUpdates::clearPendingUpdates();
+		DeferredUpdates::clearPendingUpdates();
 	}
 
 	public function testRequestWithoutToken() {
@@ -128,7 +127,7 @@ class ApiFlowThankIntegrationTest extends ApiTestCase {
 	}
 
 	public function testValidRequest() {
-		list( $result,, ) = $this->doApiRequestWithToken( [
+		[ $result,, ] = $this->doApiRequestWithToken( [
 			'action' => 'flowthank',
 			'postid' => $this->postByOtherUser->getPostId()->getAlphadecimal(),
 		] );

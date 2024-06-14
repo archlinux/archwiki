@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Purodha"
+			"Purodha",
+			"Matěj Suchánek"
 		]
 	},
 	"scribunto-desc": "Ene Rahme för Schprohche för Skrepte en et MehdijaWikki un sing Sigge enzebenge.",
@@ -30,7 +31,7 @@
 	"scribunto-lua-notarrayreturn": "Ene Fähler mem Skrepp: Dat Modul  johv ene Wäät vun dä Zoot „$2“ uß. Et sullt ävver en Tabäll för der Äxpoot livvere.",
 	"scribunto-luastandalone-proc-error": "Lua mäldt ene Fähler: Kunnt keine Prozäss aanlähje.",
 	"scribunto-luastandalone-proc-error-msg": "Lua mäldt ene Fähler: Kunnt keine Prozäss aanlähje: $2",
-	"scribunto-luastandalone-proc-error-proc-open": "Lua mäldt ene Fähler: Kunnt keine Prozäss aanlähje: proc_open is not available. Check PHP's \"disable_functions\" configuration directive.\n",
+	"scribunto-luastandalone-proc-error-proc-open": "Lua mäldt ene Fähler: Kunnt keine Prozäss aanlähje: proc_open is not available. Check PHP's \"disable_functions\" configuration directive.",
 	"scribunto-luastandalone-decode-error": "Fähler em LUA. Mer kunnte di Mäldong nit verschtonn.",
 	"scribunto-luastandalone-write-error": "Fähler em Lua.\nEne entärne Fähler es opjetrodde beim Schriive en en <i lang=\"en\" xml:lang=\"en\">pipe</i>.",
 	"scribunto-luastandalone-read-error": "Fähler em Lua.\nEne entärne Fähler es opjetrodde beim Lässe us ener <i lang=\"en\" xml:lang=\"en\">pipe</i>.",

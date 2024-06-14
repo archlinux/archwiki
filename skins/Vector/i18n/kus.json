@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Agurwin Isaac",
 			"Amire80",
 			"Bugirbiig",
-			"Agurwin Isaac",
-			"Mozanky"
+			"Mozanky",
+			"Poasana Anabah"
 		]
 	},
 	"vector-skin-desc": "Bɔɔmi 2 Vector niŋgbana:\n \n* 2011- nannana MonoBook buudir nɛ li nindapaalim nɛ amɛŋ tʋʋma bɛdegʋ tuon ken.\n*2022- vector la nɔbigi paasWMF[[mw:Desktop Improvements]] tʋʋma",
@@ -18,7 +19,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 buudi pian'uk|$1 buudi pian'ad}}",
 	"vector-no-language-button-label": "Paasim Pian'ad nam",
 	"vector-no-language-button-aria-label": "Sɔb labaar kaŋa bɛnɛ pian'ʋk kaŋa ni ma'a.paasim sɔb labaar la bɛ buudi pian'ʋk kɔn'ɔb kɔn'ɔbin",
-	"vector-language-redirect-to-top": "Buudi pian'ʋk liŋnam bɛnɛ gɔl lakir linɛ puue yi pian'azugin la",
 	"vector-language-variant-switcher-label": "Tiakim buudi pian'ʋk nwɛnnim",
 	"vector-action-addsection": "Paasim pian'azug",
 	"vector-action-delete": "Yiisim",
@@ -35,8 +35,14 @@
 	"vector-jumptosearch": "Iankim vɛɛns",
 	"vector-jumptocontent": "Iankim keŋ kʋ'ʋlʋmin la",
 	"vector-more-actions": "iem paas",
+	"vector-client-prefs-label": "Pian'azug",
 	"vector-feature-limited-width-name": "Zan'antɔl yalʋŋ",
-	"vector-feature-custom-font-size-name": "Sɔmmi li zɛmisim kpɛn'ɛs",
+	"vector-feature-custom-font-size-name": "Sɔbʋg",
+	"vector-feature-limited-width-0-label": "Bɛdir",
+	"vector-feature-limited-width-1-label": "Zi'esim",
+	"vector-feature-custom-font-size-0-label": "Bi'ela",
+	"vector-feature-custom-font-size-1-label": "Zi'esim",
+	"vector-feature-custom-font-size-2-label": "Bɛdir",
 	"vector-search-loader": "La'asidi pʋtɛn'ɛr ieeb",
 	"vector-searchsuggest-containing": "Iem lakir banɛ mɔri <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Zaŋi pa'al",
@@ -68,13 +74,7 @@
 	"vector-toc-unpinned-popup": "Teebul la yɛlkpana vudigi kpɛn' kpɛla na",
 	"vector-page-tools-unpinned-popup": "La'ad dɔɔg la vudigi kpɛn' kpɛla na",
 	"vector-main-menu-unpinned-popup": "La'ad Dɔmɛŋir la vudigi kpɛn' kpɛla na",
-	"vector-readability-survey-title": "Wikipedia karʋŋ laʋg",
-	"vector-readability-survey-description": "Wikipedia sɔbʋg la an sʋ'ʋŋa wala-wala tisif? Nɔkim silaida nam banɛ digi gbinnin la maal nwɛnnɛm la. Zamisim bɛdegʋ Kat wa'ae nɛ [[mw:Special:MyLanguage/Reading/Web/Accessibility for reading|Ya'ag suor tis tʋʋma karʋŋ]].",
-	"vector-readability-survey-fontSize": "Zi'esim zɛmisim",
-	"vector-readability-survey-lineHeight": "Bɔɔnr wa'alim",
-	"vector-readability-survey-paragraphSpacing": "Yakkim paalʋ yaligir",
-	"vector-readability-survey-optout": "Diinmi a-tɔlis-tuon n zaŋi fʋ dɔllisʋg maalʋg la tisi ti ka nɔki ban lɛbisif labasi'a la pa'al sɔ' wʋsa bɛ sɔbʋg lakirin la.[[#close-vector-survey|Yiisim laʋk kaŋa bas]].",
-	"vector-readability-survey-randomize": "Gaansim yɔɔg-yɔɔg",
-	"vector-readability-survey-reset": "Maligim niŋ zi'el",
-	"vector-readability-survey-share": "Kem tuon"
+	"vector-client-prefs-unpinned-popup": "Nindanwaasim dɔɔg vudigi kpɛn' kpɛla ni",
+	"vector-2022-beta-preview-label": "Suor paamʋg ya'alim tis (vector2022) karʋŋ",
+	"vector-2022-beta-preview-description": "Ieem suori kpɛn' karʋŋ paamʋg bɛllim paala la ni,nwɛnnɛ taipɔgirafi nɔbigir nɛ sabilig nɛɛsim."
 }

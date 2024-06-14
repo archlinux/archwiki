@@ -22,7 +22,6 @@
 	"cite_error_included_references": "Gh'amanca l'etichetta finâ pe <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Ghè di tag  <code>&lt;ref&gt;</code> pe 'n groppo ciamou \"$1\" ma no l'è stæto trovou nisciun tag <code>&lt;references group=\"$1\"/&gt;</code> corrispondente",
 	"cite_error_references_group_mismatch": "O tag <code>&lt;ref&gt;</code> in <code>&lt;references&gt;</code> o g'ha l'attributo groppo \"$1\" in conflito.",
-	"cite_error_references_missing_group": "O tag <code>&lt;ref&gt;</code> definio in <code>&lt;references&gt;</code> o g'ha un attributo gruppo \"$1\" ch'o no compâ into testo precedente.",
 	"cite_error_references_missing_key": "O tag <code>&lt;ref&gt;</code> con nomme \"$1\" definio in <code>&lt;references&gt;</code> o no l'è doeuviou into testo precedente.",
 	"cite_error_references_no_key": "O tag <code>&lt;ref&gt;</code> definio in <code>&lt;references&gt;</code> o no g'ha un attributo nomme.",
 	"cite_error_empty_references_define": "O tag <code>&lt;ref&gt;</code> definio in <code>&lt;references&gt;</code> con nomme \"$1\" o no g'ha arcun contegnuo.",

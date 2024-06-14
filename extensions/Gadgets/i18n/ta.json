@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Balajijagadesh",
+			"Fahimrazick",
 			"TRYPPN",
-			"மதனாஹரன்",
-			"Fahimrazick"
+			"மதனாஹரன்"
 		]
 	},
 	"prefs-gadgets": "கருவிகள்",
-	"gadgets": "கருவிகள்",
+	"special-gadgets": "கருவிகள்",
 	"gadgetusage": "கருவிகள் பயன்பாடு புள்ளிவிவரங்கள்",
 	"gadgetusage-gadget": "கருவிகள்",
 	"gadgetusage-usercount": "பயனர்கள் எண்ணிக்கை",

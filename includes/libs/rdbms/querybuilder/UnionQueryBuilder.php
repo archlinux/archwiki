@@ -14,6 +14,12 @@ use Wikimedia\Rdbms\Platform\ISQLPlatform;
  * @ingroup Database
  */
 class UnionQueryBuilder {
+	/** @var string sort the results in ascending order */
+	public const SORT_ASC = 'ASC';
+
+	/** @var string sort the results in descending order */
+	public const SORT_DESC = 'DESC';
+
 	/**
 	 * @var SelectQueryBuilder[]
 	 */
@@ -105,9 +111,11 @@ class UnionQueryBuilder {
 	 * This would be ignored if the DB does not support order by in union queries.
 	 *
 	 * @param string[]|string $fields The field or list of fields to order by.
+	 * @param-taint $fields exec_sql
 	 * @param string|null $direction self::SORT_ASC or self::SORT_DESC.
 	 * If this is null then $fields is assumed to optionally contain ASC or DESC
 	 * after each field name.
+	 * @param-taint $direction exec_sql
 	 * @return $this
 	 */
 	public function orderBy( $fields, $direction = null ) {
@@ -149,6 +157,7 @@ class UnionQueryBuilder {
 	 * Set the method name to be included in an SQL comment.
 	 *
 	 * @param string $fname
+	 * @param-taint $fname exec_sql
 	 * @return $this
 	 */
 	public function caller( $fname ) {
@@ -162,14 +171,83 @@ class UnionQueryBuilder {
 	 * @return IResultWrapper
 	 */
 	public function fetchResultSet() {
-		$sqls = [];
-		$tables = [];
-		foreach ( $this->sqbs as $sqb ) {
-			$sqls[] = $sqb->getSQL();
-			$tables = array_merge( $tables, $sqb->getQueryInfo()['tables'] );
-		}
-		$sql = $this->db->unionQueries( $sqls, $this->all, $this->options );
-		$query = new Query( $sql, ISQLPlatform::QUERY_CHANGE_NONE, 'SELECT', $tables );
+		$query = new Query( $this->getSQL(), ISQLPlatform::QUERY_CHANGE_NONE, 'SELECT' );
 		return $this->db->query( $query, $this->caller );
 	}
+
+	/**
+	 * Run the constructed UNION query, and return a single field extracted
+	 * from the first result row. If there were no result rows, false is
+	 * returned. This may only be called when only one field has been added to
+	 * the constituent queries.
+	 *
+	 * @since 1.42
+	 * @return mixed
+	 * @return-taint tainted
+	 */
+	public function fetchField() {
+		$this->limit( 1 );
+		foreach ( $this->fetchResultSet() as $row ) {
+			$row = (array)$row;
+			if ( count( $row ) !== 1 ) {
+				throw new \UnexpectedValueException(
+					__METHOD__ . ' expects the query to have only one field' );
+			}
+			return $row[ array_key_first( $row ) ];
+		}
+		return false;
+	}
+
+	/**
+	 * Run the constructed UNION query, and extract a single field from each
+	 * result row, returning an array containing all the values. This may only
+	 * be called when only one field has been added to the constituent queries.
+	 *
+	 * @since 1.42
+	 * @return array
+	 * @return-taint tainted
+	 */
+	public function fetchFieldValues() {
+		$values = [];
+		foreach ( $this->fetchResultSet() as $row ) {
+			$row = (array)$row;
+			if ( count( $row ) !== 1 ) {
+				throw new \UnexpectedValueException(
+					__METHOD__ . ' expects the query to have only one field' );
+			}
+			$values[] = $row[ array_key_first( $row ) ];
+		}
+		return $values;
+	}
+
+	/**
+	 * Run the constructed UNION query, and return the first result row. If
+	 * there were no results, return false.
+	 *
+	 * @since 1.42
+	 * @return \stdClass|false
+	 * @return-taint tainted
+	 */
+	public function fetchRow() {
+		$this->limit( 1 );
+		foreach ( $this->fetchResultSet() as $row ) {
+			return $row;
+		}
+		return false;
+	}
+
+	/**
+	 * Get the SQL query string which would be used by fetchResultSet().
+	 *
+	 * @since 1.42
+	 * @return string
+	 */
+	public function getSQL() {
+		$sqls = [];
+		foreach ( $this->sqbs as $sqb ) {
+			$sqls[] = $sqb->getSQL();
+		}
+		return $this->db->unionQueries( $sqls, $this->all, $this->options );
+	}
+
 }

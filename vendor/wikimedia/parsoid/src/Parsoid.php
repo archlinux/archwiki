@@ -51,10 +51,6 @@ class Parsoid {
 	/** @var DataAccess */
 	private $dataAccess;
 
-	/**
-	 * @param SiteConfig $siteConfig
-	 * @param DataAccess $dataAccess
-	 */
 	public function __construct(
 		SiteConfig $siteConfig, DataAccess $dataAccess
 	) {
@@ -123,10 +119,6 @@ class Parsoid {
 		return class_exists( '\Wikimedia\LangConv\ReplacementMachine' );
 	}
 
-	/**
-	 * @param array $options
-	 * @return array
-	 */
 	private function setupCommonOptions( array $options ): array {
 		$envOptions = [];
 		if ( isset( $options['offsetType'] ) ) {
@@ -172,13 +164,13 @@ class Parsoid {
 		}
 		$envOptions['discardDataParsoid'] = !empty( $options['discardDataParsoid'] );
 		if ( isset( $options['wrapSections'] ) ) {
-			$envOptions['wrapSections'] = !empty( $options['wrapSections'] );
+			$envOptions['wrapSections'] = (bool)$options['wrapSections'];
 		}
 		if ( isset( $options['pageBundle'] ) ) {
-			$envOptions['pageBundle'] = !empty( $options['pageBundle'] );
+			$envOptions['pageBundle'] = (bool)$options['pageBundle'];
 		}
 		if ( isset( $options['logLinterData'] ) ) {
-			$envOptions['logLinterData'] = !empty( $options['logLinterData'] );
+			$envOptions['logLinterData'] = (bool)$options['logLinterData'];
 		}
 		$envOptions['skipLanguageConversionPass'] =
 			$options['skipLanguageConversionPass'] ?? false;
@@ -233,7 +225,7 @@ class Parsoid {
 		?ContentMetadataCollector $metadata = null
 	) {
 		if ( $metadata === null ) {
-			$metadata = new StubMetadataCollector( $this->siteConfig->getLogger() );
+			$metadata = new StubMetadataCollector( $this->siteConfig );
 		}
 
 		$parseTiming = Timing::start();
@@ -344,7 +336,7 @@ class Parsoid {
 	public function wikitext2lint(
 		PageConfig $pageConfig, array $options = []
 	): array {
-		$metadata = new StubMetadataCollector( $this->siteConfig->getLogger() );
+		$metadata = new StubMetadataCollector( $this->siteConfig );
 		[ $env, ] = $this->parseWikitext( $pageConfig, $metadata, $options );
 		return $env->getLints();
 	}
@@ -382,7 +374,7 @@ class Parsoid {
 			$envOptions['inputContentVersion'] = $options['inputContentVersion'];
 		}
 		$envOptions['topLevelDoc'] = $doc;
-		$metadata = new StubMetadataCollector( $this->siteConfig->getLogger() );
+		$metadata = new StubMetadataCollector( $this->siteConfig );
 		$env = new Env(
 			$this->siteConfig, $pageConfig, $this->dataAccess, $metadata, $envOptions
 		);
@@ -445,9 +437,7 @@ class Parsoid {
 		?SelserData $selserData = null
 	): string {
 		$doc = DOMUtils::parseHTML( $html, true );
-		if ( !isset( $options['htmlSize'] ) ) {
-			$options['htmlSize'] = mb_strlen( $html );
-		}
+		$options['htmlSize'] ??= mb_strlen( $html );
 		return $this->dom2wikitext( $pageConfig, $doc, $options, $selserData );
 	}
 
@@ -474,7 +464,7 @@ class Parsoid {
 			'pageBundle' => true,
 			'topLevelDoc' => DOMUtils::parseHTML( $pb->toHtml(), true ),
 		];
-		$metadata = new StubMetadataCollector( $this->siteConfig->getLogger() );
+		$metadata = new StubMetadataCollector( $this->siteConfig );
 		$env = new Env(
 			$this->siteConfig, $pageConfig, $this->dataAccess, $metadata, $envOptions
 		);
@@ -501,52 +491,43 @@ class Parsoid {
 				( new ConvertOffsets() )->run( $env, DOMCompat::getBody( $doc ), [], true );
 				break;
 
-			// variant-metadata-hack exists to support the hack in core where
-			// Parsoid-unsupported variants are transformed via core's variant converters.
-			// But, that generated HTML needs Parsoid metadata to make it look like
-			// Parsoid HTML. (See includes/parser/Parsoid/LanguageVariantConverter.php)
-			case 'variant-metadata-hack':
 			case 'variant':
 				ContentUtils::convertOffsets(
 					$env, $doc, $env->getRequestOffsetType(), 'byte'
 				);
 
-				if ( $update === 'variant' ) {
-					// Note that `maybeConvert` could still be a no-op, in case the
-					// __NOCONTENTCONVERT__ magic word is present, or the targetVariant
-					// is a base language code or otherwise invalid.
-					LanguageConverter::maybeConvert(
-						$env, $doc,
-						Utils::mwCodeToBcp47(
-							$options['variant']['target'],
-							// Be strict in what we accept.
-							true, $this->siteConfig->getLogger()
-						),
-						$options['variant']['source'] ?
-						Utils::mwCodeToBcp47(
-							$options['variant']['source'],
-							// Be strict in what we accept.
-							true, $this->siteConfig->getLogger()
-						) : null
-					);
-				}
+				// Note that `maybeConvert` could still be a no-op, in case the
+				// __NOCONTENTCONVERT__ magic word is present, or the htmlVariant
+				// is a base language code or otherwise invalid.
+				$hasWtVariant = $options['variant']['wikitext'] ??
+					// Deprecated name for this option:
+					$options['variant']['source'] ?? false;
+				LanguageConverter::maybeConvert(
+					$env, $doc,
+					Utils::mwCodeToBcp47(
+						$options['variant']['html'] ??
+						// Deprecated name for this option:
+						$options['variant']['target'],
+						// Be strict in what we accept.
+						true, $this->siteConfig->getLogger()
+					),
+					$hasWtVariant ?
+					Utils::mwCodeToBcp47(
+						$options['variant']['wikitext'] ??
+						// Deprecated name for this option:
+						$options['variant']['source'],
+						// Be strict in what we accept.
+						true, $this->siteConfig->getLogger()
+					) : null
+				);
+
+				// NOTE: Keep this in sync with code in core's LanguageVariantConverter
 				// Update content-language and vary headers.
-				// This also ensures there is a <head> element.
-				$ensureHeader = static function ( string $h ) use ( $doc ) {
-					$el = DOMCompat::querySelector( $doc, "meta[http-equiv=\"{$h}\"i]" );
-					if ( !$el ) {
-						$el = DOMUtils::appendToHead( $doc, 'meta', [
-							'http-equiv' => $h,
-						] );
-					}
-					return $el;
-				};
-				( $ensureHeader( 'content-language' ) )->setAttribute(
-					'content', $env->htmlContentLanguageBcp47()->toBcp47Code()
-				);
-				( $ensureHeader( 'vary' ) )->setAttribute(
-					'content', $env->htmlVary()
-				);
+				DOMUtils::addHttpEquivHeaders( $doc, [
+					'content-language' => $env->htmlContentLanguageBcp47()->toBcp47Code(),
+					'vary' => $env->htmlVary()
+				] );
+
 				( new ConvertOffsets() )->run( $env, DOMCompat::getBody( $doc ), [], true );
 				break;
 
@@ -588,7 +569,7 @@ class Parsoid {
 	public function substTopLevelTemplates(
 		PageConfig $pageConfig, string $wikitext
 	): string {
-		$metadata = new StubMetadataCollector( $this->siteConfig->getLogger() );
+		$metadata = new StubMetadataCollector( $this->siteConfig );
 		$env = new Env( $this->siteConfig, $pageConfig, $this->dataAccess, $metadata );
 		return Wikitext::pst( $env, $wikitext, true /* $substTLTemplates */ );
 	}
@@ -604,7 +585,7 @@ class Parsoid {
 	 *   can't be fulfilled.
 	 */
 	public static function findDowngrade( string $from, string $to ): ?array {
-		foreach ( self::DOWNGRADES as list( 'from' => $dgFrom, 'to' => $dgTo ) ) {
+		foreach ( self::DOWNGRADES as [ 'from' => $dgFrom, 'to' => $dgTo ] ) {
 			if (
 				Semver::satisfies( $from, "^$dgFrom" ) &&
 				Semver::satisfies( $to, "^$dgTo" )
@@ -625,7 +606,7 @@ class Parsoid {
 	public static function downgrade(
 		array $dg, PageBundle $pageBundle
 	): void {
-		foreach ( self::DOWNGRADES as list( 'from' => $dgFrom, 'to' => $dgTo, 'func' => $dgFunc ) ) {
+		foreach ( self::DOWNGRADES as [ 'from' => $dgFrom, 'to' => $dgTo, 'func' => $dgFunc ] ) {
 			if ( $dg['from'] === $dgFrom && $dg['to'] === $dgTo ) {
 				call_user_func( [ self::class, $dgFunc ], $pageBundle );
 
@@ -655,19 +636,19 @@ class Parsoid {
 	 *
 	 * @internal FIXME: Remove once Parsoid's language variant work is completed
 	 * @param PageConfig $pageConfig
-	 * @param Bcp47Code $targetVariant Variant language to check
+	 * @param Bcp47Code $htmlVariant Variant language to check
 	 * @return bool
 	 */
-	public function implementsLanguageConversionBcp47( PageConfig $pageConfig, Bcp47Code $targetVariant ): bool {
+	public function implementsLanguageConversionBcp47( PageConfig $pageConfig, Bcp47Code $htmlVariant ): bool {
 		// Hardcode disable zh lang conversion support since Parsoid's
 		// implementation is incomplete and not performant.
 		if ( $pageConfig->getPageLanguageBcp47()->toBcp47Code() === 'zh' ) {
 			return false;
 		}
 
-		$metadata = new StubMetadataCollector( $this->siteConfig->getLogger() );
+		$metadata = new StubMetadataCollector( $this->siteConfig );
 		$env = new Env( $this->siteConfig, $pageConfig, $this->dataAccess, $metadata );
-		return LanguageConverter::implementsLanguageConversionBcp47( $env, $targetVariant );
+		return LanguageConverter::implementsLanguageConversionBcp47( $env, $htmlVariant );
 	}
 
 	/**

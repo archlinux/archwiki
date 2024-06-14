@@ -19,6 +19,11 @@
 		color: @color-link;
 	}
 
+	/* T361841 add invisible bottom border by default */
+	.mw-list-item.vector-tab-noicon a {
+		border-bottom: 2px @border-style-base @border-color-transparent;
+	}
+
 	/* focus and hover have outlines. Text underline interferes with bottom border */
 	.mw-list-item.vector-tab-noicon a:focus,
 	.mw-list-item.vector-tab-noicon a:hover {
@@ -67,10 +72,6 @@
 		display: inline-flex;
 		position: relative;
 		cursor: pointer;
-		// max-height & box-sizing to make link, watchstar & dropdown height consistent.
-		// NOTE: Was 40px instead of 41, but changed to avoid visual regressions.
-		max-height: unit( 41 / @font-size-tabs / @font-size-browser, em );
-		box-sizing: border-box;
 		font-weight: normal;
 	}
 

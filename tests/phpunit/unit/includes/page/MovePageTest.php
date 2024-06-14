@@ -12,7 +12,7 @@ use MediaWikiUnitTestCase;
 use MockTitleTrait;
 
 /**
- * @coversDefaultClass MediaWiki\Page\MovePage
+ * @coversDefaultClass \MediaWiki\Page\MovePage
  * @package MediaWiki\Tests\Unit
  * @method MovePage newServiceInstance(string $serviceClass, array $parameterOverrides)
  */
@@ -26,7 +26,7 @@ class MovePageTest extends MediaWikiUnitTestCase {
 			'authority' => $this->mockRegisteredUltimateAuthority(),
 			'good' => true,
 		];
-		yield 'can not move' => [
+		yield 'cannot move' => [
 			'authority' => $this->mockAnonAuthority( function (
 				string $permission,
 				PageIdentity $page,
@@ -41,7 +41,7 @@ class MovePageTest extends MediaWikiUnitTestCase {
 			} ),
 			'good' => false,
 		];
-		yield 'can not edit old page' => [
+		yield 'cannot edit old page' => [
 			'authority' => $this->mockAnonAuthority( static function (
 				string $permission,
 				PageIdentity $page,
@@ -55,7 +55,7 @@ class MovePageTest extends MediaWikiUnitTestCase {
 			} ),
 			'good' => false,
 		];
-		yield 'can not move-target' => [
+		yield 'cannot move-target' => [
 			'authority' => $this->mockAnonAuthority( function (
 				string $permission,
 				PageIdentity $page,
@@ -70,7 +70,7 @@ class MovePageTest extends MediaWikiUnitTestCase {
 			} ),
 			'good' => false,
 		];
-		yield 'can not edit new page' => [
+		yield 'cannot edit new page' => [
 			'authority' => $this->mockAnonAuthority( static function (
 				string $permission,
 				PageIdentity $page,
@@ -88,9 +88,9 @@ class MovePageTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideCheckPermissions
-	 * @covers MediaWiki\Page\MovePage::checkPermissions
-	 * @covers MediaWiki\Page\MovePage::authorizeMove
-	 * @covers MediaWiki\Page\MovePage::probablyCanMove
+	 * @covers \MediaWiki\Page\MovePage::checkPermissions
+	 * @covers \MediaWiki\Page\MovePage::authorizeMove
+	 * @covers \MediaWiki\Page\MovePage::probablyCanMove
 	 */
 	public function testCheckPermissions( Authority $authority, bool $good ) {
 		$spamChecker = $this->createNoOpMock( SpamChecker::class, [ 'checkSummary' ] );
@@ -110,9 +110,9 @@ class MovePageTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Page\MovePage::checkPermissions
-	 * @covers MediaWiki\Page\MovePage::authorizeMove
-	 * @covers MediaWiki\Page\MovePage::probablyCanMove
+	 * @covers \MediaWiki\Page\MovePage::checkPermissions
+	 * @covers \MediaWiki\Page\MovePage::authorizeMove
+	 * @covers \MediaWiki\Page\MovePage::probablyCanMove
 	 */
 	public function testCheckPermissions_spam() {
 		$spamChecker = $this->createNoOpMock( SpamChecker::class, [ 'checkSummary' ] );

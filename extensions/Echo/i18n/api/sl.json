@@ -19,7 +19,7 @@
 	"apihelp-echomarkseen-param-type": "Vrste obvestil za označitev za ogledano: 'opomnik', 'sporočilo' ali 'vse'.",
 	"apihelp-echomarkseen-param-timestampFormat": "Datumski odtis pri izpisovanju, 'ISO_8601' ali 'MW'. 'MW' se ne priporoča, zato ga naj uporabniki zamenjajo z 'ISO_8601'. Ko bo ukinjen, bo ostal v uporabi le 'ISO_8601'.",
 	"apihelp-echomute-summary": "Izklop ali vklop obvestil določenih uporabnikov ali strani",
-	"apihelp-echomute-param-type": "Na kateri seznam utišanih naj se doda ali odstrani",
+	"apihelp-echomute-param-type": "Na kateri seznam utišanih naj se doda ali z njega odstrani",
 	"apihelp-echomute-param-mute": "Strani ali uporabniki, ki naj se dodajo na seznam utišanih",
 	"apihelp-echomute-param-unmute": "Strani ali uporabniki za odstranitev s spiska utišanih.",
 	"apihelp-echopushsubscriptions-summary": "Upravljanje potisnih naročil za trenutnega uporabnika.",

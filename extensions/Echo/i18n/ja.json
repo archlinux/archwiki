@@ -9,11 +9,13 @@
 			"Kokage si",
 			"LaMagiaaa",
 			"Marine-Blue",
+			"Müller857",
 			"Ochaochaocha3",
 			"Omotecho",
 			"Otokoume",
 			"Penn Station",
 			"RYOUMA1117",
+			"Salvare",
 			"Shirayuki",
 			"Suchichi02",
 			"Sujiniku",
@@ -27,8 +29,7 @@
 			"Yusuke1109",
 			"おはぐろ蜻蛉",
 			"ネイ",
-			"春春眠眠",
-			"Müller857"
+			"春春眠眠"
 		]
 	},
 	"echo-desc": "イベントおよびメッセージについて、利用者に通知するシステム",
@@ -194,6 +195,7 @@
 	"notification-header-thank-you-10000-edit": "{{GENDER:$2|あなた}}は10,000回の編集を行いました。非常に多くの寄稿をありがとうございます。",
 	"notification-header-thank-you-100000-edit": "{{GENDER:$2|あなた}}は100,000回の編集を行いました。数えきれないほどの寄稿をありがとうございます。",
 	"notification-header-thank-you-1000000-edit": "{{GENDER:$2|あなた}}は1,000,000回の編集を行いました。莫大な数の寄稿をありがとうございます。",
+	"notification-header-thank-you-10000000-edit": "{{GENDER:$2|あなた}}は10,000,000回の編集を行いました。素晴らしい献身に感謝します！",
 	"notification-link-thank-you-edit": "{{GENDER:$1|自身}}の編集",
 	"notification-link-text-view-edit": "編集内容を閲覧",
 	"notification-link-article-reminder": "ページを閲覧",

@@ -20,7 +20,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 мотт}}",
 	"vector-no-language-button-label": "Метташ тӀатоха",
 	"vector-no-language-button-aria-label": "Ер лустам укх меттала мара бац. ТӀатоха кхыча меттала а",
-	"vector-language-redirect-to-top": "Укх сайта тӀа меттий тӀатовжамаш оагӀув йолалуча да, оагӀон цӀерá духьал.",
 	"vector-language-variant-switcher-label": "Метта эрш хувца",
 	"vector-action-addsection": "Тема тӀатоха",
 	"vector-action-delete": "ДӀаяккха",
@@ -37,6 +36,14 @@
 	"vector-jumptosearch": "Лахарага гӀó",
 	"vector-jumptocontent": "Чулоацамага гӀó",
 	"vector-more-actions": "Кхы а",
+	"vector-client-prefs-label": "ТӀера куц",
+	"vector-feature-limited-width-name": "Шорал",
+	"vector-feature-custom-font-size-name": "Йоазув",
+	"vector-feature-limited-width-0-label": "Шера",
+	"vector-feature-limited-width-1-label": "Стандартаца",
+	"vector-feature-custom-font-size-0-label": "ЗӀамига",
+	"vector-feature-custom-font-size-1-label": "Стандартаца",
+	"vector-feature-custom-font-size-2-label": "Доккха",
 	"vector-search-loader": "Лахарца дола хьехараш хьаделлалуш латт",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> чулоацам бола оагӀонаш лахар",
 	"vector-intro-page": "Help:Чудоаладар",
@@ -64,5 +71,5 @@
 	"vector-page-tools-nav-label": "ОагӀоний кечалаш",
 	"vector-prefs-limited-width": "Хьалсага кӀезигача шорала раж",
 	"vector-prefs-limited-width-help": "Хьалсага кӀезигача шорала раж деша аттагӀа хургдолаш.",
-	"vector-main-menu-unpinned-popup": "Керттера меню укхазахьа дехьаяьккхай."
+	"vector-main-menu-unpinned-popup": "Керттера меню уккхаза хьасехьаяьккхай."
 }

@@ -28,9 +28,6 @@ class MathConfig {
 	/** @var string use input tex as formula rendering */
 	public const MODE_SOURCE = 'source';
 
-	/** @var string render formula into PNG images */
-	public const MODE_PNG = 'png';
-
 	/** @var string render formula into MathML */
 	public const MODE_MATHML = 'mathml';
 
@@ -58,10 +55,8 @@ class MathConfig {
 		self::MODE_NATIVE_MML => 8
 	];
 
-	/** @var ServiceOptions */
-	private $options;
-	/** @var ExtensionRegistry */
-	private $registry;
+	private ServiceOptions $options;
+	private ExtensionRegistry $registry;
 
 	/**
 	 * @param ServiceOptions $options
@@ -118,7 +113,7 @@ class MathConfig {
 	public function getValidRenderingModeKeys(): array {
 		$result = [];
 		foreach ( $this->getValidRenderingModes() as $mode ) {
-			$result[$mode] = 'mw_math_' . $mode;
+			$result[$mode] = 'mw-math-' . $mode;
 		}
 		return $result;
 	}
@@ -132,7 +127,7 @@ class MathConfig {
 	public function getValidRenderingModeNames(): array {
 		$result = [];
 		foreach ( $this->getValidRenderingModes() as $mode ) {
-			$result[$mode] = Message::newFromKey( 'mw_math_' . $mode );
+			$result[$mode] = Message::newFromKey( 'mw-math-' . $mode );
 		}
 		return $result;
 	}
@@ -144,7 +139,7 @@ class MathConfig {
 	 * @return Message
 	 */
 	public function getRenderingModeName( string $mode ): Message {
-		return Message::newFromKey( 'mw_math_' . $mode );
+		return Message::newFromKey( 'mw-math-' . $mode );
 	}
 
 	/**

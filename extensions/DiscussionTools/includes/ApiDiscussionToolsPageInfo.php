@@ -121,9 +121,6 @@ class ApiDiscussionToolsPageInfo extends ApiBase {
 
 	/**
 	 * Get transcluded=from data for a ContentThreadItemSet
-	 *
-	 * @param ContentThreadItemSet $threadItemSet
-	 * @return array
 	 */
 	private static function getTranscludedFrom( ContentThreadItemSet $threadItemSet ): array {
 		$threadItems = $threadItemSet->getThreadItems();
@@ -150,10 +147,6 @@ class ApiDiscussionToolsPageInfo extends ApiBase {
 
 	/**
 	 * Get thread items HTML for a ContentThreadItemSet
-	 *
-	 * @param ContentThreadItemSet $threadItemSet
-	 * @param bool $excludeSignatures
-	 * @return array
 	 */
 	private static function getThreadItemsHtml( ContentThreadItemSet $threadItemSet, bool $excludeSignatures ): array {
 		// This function assumes that the start of the ranges associated with
@@ -173,7 +166,7 @@ class ApiDiscussionToolsPageInfo extends ApiBase {
 			$closest = CommentUtils::closestElementWithSibling( $firstRange->startContainer, 'previous' );
 			if ( $closest && !$rootNode->isSameNode( $closest ) ) {
 				$range = new ImmutableRange( $rootNode, 0, $rootNode, 0 );
-				$fakeHeading = new ContentHeadingItem( $range, null );
+				$fakeHeading = new ContentHeadingItem( $range, false, null );
 				$fakeHeading->setRootNode( $rootNode );
 				$fakeHeading->setName( 'h-' );
 				$fakeHeading->setId( 'h-' );

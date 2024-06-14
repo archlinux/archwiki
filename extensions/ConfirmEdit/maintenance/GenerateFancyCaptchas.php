@@ -32,6 +32,7 @@ require_once "$IP/maintenance/Maintenance.php";
 use MediaWiki\Extension\ConfirmEdit\FancyCaptcha\FancyCaptcha;
 use MediaWiki\Extension\ConfirmEdit\Hooks;
 use MediaWiki\Shell\Shell;
+use MediaWiki\Status\Status;
 
 /**
  * Maintenance script to generate fancy captchas using a python script and copy them into storage.
@@ -47,7 +48,6 @@ class GenerateFancyCaptchas extends Maintenance {
 		$this->addOption( "font", "The font to use", true, true );
 		$this->addOption( "font-size", "The font size ", false, true );
 		$this->addOption( "badwordlist", "A list of words that should not be used", false, true );
-		$this->addOption( "blacklist", "DEPRECATED: A list of words that should not be used", false, true );
 		$this->addOption( "fill", "Fill the captcha container to N files", true, true );
 		$this->addOption(
 			"verbose",
@@ -55,11 +55,17 @@ class GenerateFancyCaptchas extends Maintenance {
 		);
 		$this->addOption(
 			"oldcaptcha",
-			"Whether to use captcha-old.py which doesn't have OCR fighting improvements"
+			"DEPRECATED: Whether to use captcha-old.py which doesn't have OCR fighting improvements"
 		);
 		$this->addOption( "delete", "Deletes all the old captchas" );
 		$this->addOption( "threads", "The number of threads to use to generate the images",
 			false, true );
+		$this->addOption(
+			'captchastoragedir',
+			'Overrides the value of $wgCaptchaStorageDirectory',
+			false,
+			true
+		);
 		$this->addDescription( "Generate new fancy captchas and move them into storage" );
 
 		$this->requireExtension( "FancyCaptcha" );
@@ -74,6 +80,13 @@ class GenerateFancyCaptchas extends Maintenance {
 		if ( !( $instance instanceof FancyCaptcha ) ) {
 			$this->fatalError( "\$wgCaptchaClass is not FancyCaptcha.\n", 1 );
 		}
+
+		// Overrides $wgCaptchaStorageDirectory for this script run
+		if ( $this->hasOption( 'captchastoragedir' ) ) {
+			global $wgCaptchaStorageDirectory;
+			$wgCaptchaStorageDirectory = $this->getOption( 'captchastoragedir' );
+		}
+
 		$backend = $instance->getBackend();
 
 		$deleteOldCaptchas = $this->getOption( 'delete' );
@@ -86,7 +99,7 @@ class GenerateFancyCaptchas extends Maintenance {
 		}
 
 		if ( $countGen <= 0 ) {
-			$this->output( "No need to generate anymore captchas.\n" );
+			$this->output( "No need to generate any extra captchas.\n" );
 			return;
 		}
 
@@ -98,6 +111,7 @@ class GenerateFancyCaptchas extends Maintenance {
 		$captchaScript = 'captcha.py';
 
 		if ( $this->hasOption( 'oldcaptcha' ) ) {
+			$this->output( "Using --oldcaptcha is deprecated, and captcha-old.py will be removed in the future!" );
 			$captchaScript = 'captcha-old.py';
 		}
 
@@ -114,7 +128,7 @@ class GenerateFancyCaptchas extends Maintenance {
 			$wgCaptchaDirectoryLevels
 		];
 		foreach (
-			[ 'wordlist', 'font', 'font-size', 'blacklist', 'badwordlist', 'verbose', 'threads' ] as $par
+			[ 'wordlist', 'font', 'font-size', 'badwordlist', 'verbose', 'threads' ] as $par
 		) {
 			if ( $this->hasOption( $par ) ) {
 				$cmd[] = "--$par";
@@ -153,7 +167,7 @@ class GenerateFancyCaptchas extends Maintenance {
 		$filesToDelete = [];
 		if ( $deleteOldCaptchas ) {
 			$this->output( "Getting a list of old captchas to delete..." );
-			$path = $backend->getRootStoragePath() . '/captcha-render';
+			$path = $backend->getRootStoragePath() . '/' . $instance->getStorageDir();
 			foreach ( $backend->getFileList( [ 'dir' => $path ] ) as $file ) {
 				$filesToDelete[] = [
 					'op' => 'delete',

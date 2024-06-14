@@ -34,7 +34,7 @@ class NullTokenHandler implements TokenHandler {
 	 * @inheritDoc
 	 */
 	public function startTag( $name, Attributes $attrs, $selfClose,
-	   $sourceStart, $sourceLength
+		$sourceStart, $sourceLength
 	) {
 	}
 

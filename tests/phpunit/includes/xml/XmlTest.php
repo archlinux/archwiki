@@ -6,7 +6,7 @@ use MediaWiki\MainConfigNames;
  * See also \MediaWiki\Tests\Unit\XmlTest for the pure unit tests
  *
  * @group Xml
- * @covers Xml
+ * @covers \Xml
  */
 class XmlTest extends MediaWikiIntegrationTestCase {
 
@@ -15,7 +15,6 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 
 		$this->overrideConfigValues( [
 			MainConfigNames::LanguageCode => 'en',
-			MainConfigNames::UseMediaWikiUIEverywhere => false,
 		] );
 
 		$langObj = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'en' );
@@ -77,21 +76,6 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	/**
-	 * @covers Xml::input
-	 * @covers Html::getTextInputAttributes
-	 */
-	public function testInputWithMWUIEverywhere() {
-		$this->overrideConfigValues( [
-			MainConfigNames::UseMediaWikiUIEverywhere => true,
-		] );
-
-		$this->assertSame(
-			'<input name="name" class="foo mw-ui-input" />',
-			Xml::input( 'name', false, false, [ 'class' => 'foo' ] )
-		);
-	}
-
 	public function testOpenElement() {
 		$this->assertEquals(
 			'<element k="v">',
@@ -148,6 +132,7 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideMonthSelector
 	 */
 	public function testMonthSelector( $expected, $selected, $allmonths, $id ) {
+		$this->hideDeprecated( 'Xml::monthSelector' );
 		$this->assertEquals(
 			$expected,
 			Xml::monthSelector( $selected, $allmonths, $id )
@@ -171,6 +156,9 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 		if ( $nextMonth == 13 ) {
 			$nextMonth = 1;
 		}
+
+		$this->hideDeprecated( 'Xml::dateMenu' );
+		$this->hideDeprecated( 'Xml::monthSelector' );
 
 		$this->assertEquals(
 			'<label for="year">From year (and earlier):</label> ' .
@@ -278,7 +266,7 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 		$this->assertEquals(
 			'<label for="id">name</label>',
 			Xml::label( 'name', 'id', [ 'generated' => true ] ),
-			'label() can not be given a generated attribute'
+			'label() cannot be given a generated attribute'
 		);
 		$this->assertEquals(
 			'<label for="id" class="nice">name</label>',
@@ -304,6 +292,8 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testLanguageSelector() {
+		$this->hideDeprecated( 'Xml::languageSelector' );
+
 		$select = Xml::languageSelector( 'en', true, null,
 			[ 'id' => 'testlang' ], wfMessage( 'yourlanguage' ) );
 		$this->assertEquals(
@@ -312,7 +302,7 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function testListDropDown() {
+	public function testListDropdown() {
 		$this->assertEquals(
 			'<select name="test-name" id="test-name" class="test-css" tabindex="2">' .
 				'<option value="other">other reasons</option>' . "\n" .
@@ -324,7 +314,7 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 				'<option value="Bar 1">Bar 1</option>' . "\n" .
 				'</optgroup>' .
 				'</select>',
-			Xml::listDropDown(
+			Xml::listDropdown(
 				// name
 				'test-name',
 				// source list
@@ -341,7 +331,7 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function testListDropDownOptions() {
+	public function testListDropdownOptions() {
 		$this->assertEquals(
 			[
 				'other reasons' => 'other',
@@ -354,14 +344,14 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 					'Bar 1' => 'Bar 1',
 				],
 			],
-			Xml::listDropDownOptions(
+			Xml::listDropdownOptions(
 				"*\n** Empty group item\n* Foo\n** Foo 1\n** Example\n* Bar\n** Bar 1",
 				[ 'other' => 'other reasons' ]
 			)
 		);
 	}
 
-	public function testListDropDownOptionsOthers() {
+	public function testListDropdownOptionsOthers() {
 		// Do not use the value for 'other' as option group - T251351
 		$this->assertEquals(
 			[
@@ -372,14 +362,14 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 					'Bar 1' => 'Bar 1',
 				],
 			],
-			Xml::listDropDownOptions(
+			Xml::listDropdownOptions(
 				"* other reasons\n** Foo 1\n** Example\n* Bar\n** Bar 1",
 				[ 'other' => 'other reasons' ]
 			)
 		);
 	}
 
-	public function testListDropDownOptionsOoui() {
+	public function testListDropdownOptionsOoui() {
 		$this->assertEquals(
 			[
 				[ 'data' => 'other', 'label' => 'other reasons' ],
@@ -389,7 +379,7 @@ class XmlTest extends MediaWikiIntegrationTestCase {
 				[ 'optgroup' => 'Bar' ],
 				[ 'data' => 'Bar 1', 'label' => 'Bar 1' ],
 			],
-			Xml::listDropDownOptionsOoui( [
+			Xml::listDropdownOptionsOoui( [
 				'other reasons' => 'other',
 				'Foo' => [
 					'Foo 1' => 'Foo 1',

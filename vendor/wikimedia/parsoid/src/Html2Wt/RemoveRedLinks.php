@@ -11,12 +11,8 @@ use Wikimedia\Parsoid\Utils\UrlUtils;
 
 class RemoveRedLinks {
 
-	/** @var Env */
 	private Env $env;
 
-	/**
-	 * @param Env $env
-	 */
 	public function __construct( Env $env ) {
 		$this->env = $env;
 	}
@@ -29,8 +25,8 @@ class RemoveRedLinks {
 		'@phan-var Element|DocumentFragment $root';  // @var Element|DocumentFragment $root
 		$wikilinks = DOMCompat::querySelectorAll( $root, 'a[rel~="mw:WikiLink"].new' );
 		foreach ( $wikilinks as $a ) {
-			$href = $a->getAttribute( 'href' );
-			$qmPos = strpos( $href, '?' );
+			$href = DOMCompat::getAttribute( $a, 'href' );
+			$qmPos = strpos( $href ?? '', '?' );
 			if ( $qmPos !== false ) {
 				$parsedURL = UrlUtils::parseUrl( $href );
 				if ( !isset( $parsedURL['query'] ) ) {

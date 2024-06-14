@@ -62,7 +62,7 @@
 			if ( !this.cache[ cacheKey ] ) {
 				this.cache[ cacheKey ] = this.rawGet( url, this.imagePreloadingSupported() );
 				this.cache[ cacheKey ].fail( ( error ) => {
-					mw.log( `${this.constructor.name} provider failed to load: `, error );
+					mw.log( `${ this.constructor.name } provider failed to load: `, error );
 				} );
 			}
 
@@ -87,7 +87,7 @@
 			}
 
 			img.onload = () => deferred.resolve( img );
-			img.onerror = () => deferred.reject( `could not load image from ${url}` );
+			img.onerror = () => deferred.reject( `could not load image from ${ url }` );
 
 			img.src = url;
 

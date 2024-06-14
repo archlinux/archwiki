@@ -51,7 +51,7 @@ class WikiReference {
 	 * @return string
 	 */
 	public function getDisplayName() {
-		$host = parse_url( $this->mCanonicalServer,  PHP_URL_HOST );
+		$host = parse_url( $this->mCanonicalServer, PHP_URL_HOST );
 		if ( $host ) {
 			return $host;
 		} else {
@@ -127,7 +127,5 @@ class WikiReference {
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( WikiReference::class, 'WikiReference' );

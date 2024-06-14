@@ -18,6 +18,8 @@
  * @file
  */
 
+namespace MediaWiki\Site;
+
 /**
  * In-memory SiteStore implementation, stored in an associative array.
  *
@@ -107,3 +109,6 @@ class HashSiteStore implements SiteStore {
 	}
 
 }
+
+/** @deprecated class alias since 1.41 */
+class_alias( HashSiteStore::class, 'HashSiteStore' );

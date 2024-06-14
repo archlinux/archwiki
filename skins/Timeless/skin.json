@@ -8,7 +8,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42"
 	},
 	"ValidSkinNames": {
 		"timeless": {
@@ -135,6 +135,7 @@
 	},
 	"ResourceModuleSkinStyles": {
 		"timeless": {
+			"+mediawiki.page.ready": "resources/teleportTarget.less",
 			"+oojs-ui-core.styles": "resources/ooui.less",
 			"+ext.echo.styles.badge": "resources/extensions/Echo.less",
 			"+ext.eventLogging.jsonSchema.styles": "resources/extensions/EventLogging.jsonSchema.less",
@@ -146,7 +147,6 @@
 			"+ext.MWOAuth.AuthorizeForm": "resources/extensions/MWOAuth.AuthorizeForm.less",
 			"+ext.wikiLove.icon": "resources/extensions/WikiLove.icon.less",
 			"+ext.proofreadpage.page.navigation": "resources/extensions/Proofreadpage.page.navigation.less",
-			"+ext.CodeMirror": "resources/extensions/CodeMirror.less",
 			"+ext.wikiEditor.styles": "resources/extensions/WikiEditor.less"
 		}
 	},

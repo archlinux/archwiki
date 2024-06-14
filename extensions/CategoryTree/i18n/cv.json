@@ -1,12 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"Astahar",
 			"Chavash",
-			"Chuvash2014",
-			"Astahar"
+			"Chuvash2014"
 		]
 	},
+	"categorytree": "Категорисен йывӑҫҫи",
 	"categorytree-portlet": "Категорисем",
+	"categorytree-legend": "Категорисен йывӑҫҫине кӑтарт",
+	"categorytree-desc": "Викири [[Special:CategoryTree|категорисен структурине]] кӑтртма усӑ куракан AJAX-компонент",
+	"categorytree-header": "Шалти ӑшлӑхне туратласа кӑтартмалли категори ятне ҫырса кӗртӗр (JavaScript кирлӗ).",
 	"categorytree-category": "Категори:",
 	"categorytree-go": "Тие",
 	"categorytree-parents": "Ҫӳлти категорисем",

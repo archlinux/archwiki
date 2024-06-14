@@ -43,12 +43,6 @@ class TokenTransformManager extends PipelineStage {
 	/** @var bool */
 	private $hasShuttleTokens = false;
 
-	/**
-	 * @param Env $env
-	 * @param array $options
-	 * @param string $stageId
-	 * @param ?PipelineStage $prevStage
-	 */
 	public function __construct(
 		Env $env, array $options, string $stageId,
 		?PipelineStage $prevStage = null
@@ -60,9 +54,6 @@ class TokenTransformManager extends PipelineStage {
 		$this->traceEnabled = $env->hasTraceFlags();
 	}
 
-	/**
-	 * @param int $id
-	 */
 	public function setPipelineId( int $id ): void {
 		parent::setPipelineId( $id );
 		foreach ( $this->transformers as $transformer ) {
@@ -70,16 +61,10 @@ class TokenTransformManager extends PipelineStage {
 		}
 	}
 
-	/**
-	 * @return Frame
-	 */
 	public function getFrame(): Frame {
 		return $this->frame;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getOptions(): array {
 		return $this->options;
 	}
@@ -95,10 +80,6 @@ class TokenTransformManager extends PipelineStage {
 		}
 	}
 
-	/**
-	 * @param array $toks
-	 * @return array
-	 */
 	public function shuttleTokensToEndOfStage( array $toks ): array {
 		$this->hasShuttleTokens = true;
 		$ttmEnd = new SelfclosingTagTk( 'mw:ttm-end' );
@@ -112,7 +93,7 @@ class TokenTransformManager extends PipelineStage {
 	 */
 	public function processChunk( array $tokens ): ?array {
 		// Trivial case
-		if ( count( $tokens ) === 0 ) {
+		if ( !$tokens ) {
 			return $tokens;
 		}
 
@@ -126,7 +107,7 @@ class TokenTransformManager extends PipelineStage {
 
 		foreach ( $this->transformers as $transformer ) {
 			if ( !$transformer->isDisabled() ) {
-				if ( count( $tokens ) === 0 ) {
+				if ( !$tokens ) {
 					break;
 				}
 				$tokens = $transformer->process( $tokens );

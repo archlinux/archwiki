@@ -94,6 +94,21 @@ QUnit.module( 'mediawiki.base', ( hooks ) => {
 		assert.verifySteps( [ 'x2' ], 'Remember only the most recent firing' );
 	} );
 
+	QUnit.test( 'mw.hook - functions always registered before firing', function ( assert ) {
+		mw.hook( 'test.register' ).fire();
+
+		function onceHandler() {
+			// The handler has already be registered so can be removed
+			mw.hook( 'test.register' ).remove( onceHandler );
+			assert.step( 'call' );
+		}
+		mw.hook( 'test.register' ).add( onceHandler );
+		// Subsequent fire does nothing as handler has been removed
+		mw.hook( 'test.register' ).fire();
+
+		assert.verifySteps( [ 'call' ] );
+	} );
+
 	QUnit.test( 'mw.hook - Multiple consumers with memory between fires', function ( assert ) {
 		mw.hook( 'test.many' )
 			.add( function ( data ) {
@@ -284,23 +299,19 @@ QUnit.module( 'mediawiki.base', ( hooks ) => {
 
 	QUnit.test( 'RLQ.push', function ( assert ) {
 		/* global RLQ */
-		var loaded = 0,
-			called = 0,
-			done = assert.async();
-		mw.loader.testCallback = function () {
+		let loaded = 0;
+		mw.loader.implement( 'test.rlq-push', function () {
 			loaded++;
-			delete mw.loader.testCallback;
-		};
-		mw.loader.implement( 'test.rlq-push', [
-			mw.config.get( 'wgScriptPath' ) + '/tests/qunit/data/mwLoaderTestCallback.js'
-		] );
+		} );
 
 		// Regression test for T208093
+		let called = 0;
 		RLQ.push( function () {
 			called++;
 		} );
 		assert.strictEqual( called, 1, 'Invoke plain callbacks' );
 
+		const done = assert.async();
 		RLQ.push( [ 'test.rlq-push', function () {
 			assert.strictEqual( loaded, 1, 'Load the required module' );
 			done();

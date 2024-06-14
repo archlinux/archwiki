@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
+			"Joachim Yirkang",
 			"Linus Konkor",
-			"Zakaria Tunsung",
-			"Joachim Yirkang"
+			"Zakaria Tunsung"
 		]
 	},
 	"minerva-last-modified-date": "Maaleŋ eebo naŋ maale yi $1, a yi a $2 poɔŋ",
@@ -53,6 +53,12 @@
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Discussion]]",
 	"minerva-skin-desc": "A moobale endaa dɛŋdɛŋ soba sagebo",
 	"skin-minerva-issue-learn-more": "Zanne yɛlɛ yaga",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 ayi soba|$1 ayi soba mine}} naŋ pare",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 minti|$1 mintiri}} naŋ pare",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 gbeliŋ|$1 gbelime}} naŋ pare",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 bebiri|$1 bebie}} naŋ pare",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 kyuu|$1 kyuuri}} naŋ pare",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 yuoni|$1 yuomo}} naŋ pare",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Gbulogbulo",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Muuli kaa a Gbulogbulo gampɛlɛ",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Emmo gampɛle yɛlɛ sagembo",

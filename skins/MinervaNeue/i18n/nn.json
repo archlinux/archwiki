@@ -33,6 +33,12 @@
 	"minerva-page-actions-editfull": "Endra heile sida",
 	"minerva-page-actions-overflow": "Meir",
 	"skin-minerva-issue-learn-more": "Lær meir",
+	"skin-minerva-time-ago-seconds": "for {{PLURAL:$1|eitt sekund|$1 sekund}} sidan",
+	"skin-minerva-time-ago-minutes": "for {{PLURAL:$1|eitt|$1}} minutt sidan",
+	"skin-minerva-time-ago-hours": "for {{PLURAL:$1|éin time|$1 timar}} sidan",
+	"skin-minerva-time-ago-days": "for {{PLURAL:$1|éin dag|$1 dagar}} sidan",
+	"skin-minerva-time-ago-months": "for {{PLURAL:$1|éin månad|$1 månader}} sidan",
+	"skin-minerva-time-ago-years": "for {{PLURAL:$1|eitt|$1}} år sidan",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategoriar",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Sjå kategoriane til sider"
 }

@@ -25,9 +25,6 @@
 	 *  for popups.
 	 */
 	mw.echo.ui.NotificationBadgeWidget = function MwEchoUiNotificationBadgeButtonPopupWidget( controller, manager, links, config ) {
-		var buttonFlags, allNotificationsButton, preferencesButton, footerButtonGroupWidget, $footer,
-			adjustedTypeString;
-
 		config = config || {};
 
 		// Parent constructor
@@ -46,7 +43,7 @@
 		this.controller = controller;
 		this.manager = manager;
 
-		adjustedTypeString = this.controller.getTypeString() === 'message' ? 'notice' : this.controller.getTypeString();
+		var adjustedTypeString = this.controller.getTypeString() === 'message' ? 'notice' : this.controller.getTypeString();
 
 		// Properties
 		this.types = this.manager.getTypes();
@@ -54,7 +51,7 @@
 		this.numItems = config.numItems || 0;
 		this.hasRunFirstTime = false;
 
-		buttonFlags = [];
+		var buttonFlags = [];
 		if ( config.hasUnseen ) {
 			buttonFlags.push( 'unseen' );
 		}
@@ -83,7 +80,7 @@
 		);
 
 		// Footer
-		allNotificationsButton = new OO.ui.ButtonWidget( {
+		var allNotificationsButton = new OO.ui.ButtonWidget( {
 			icon: 'next',
 			label: mw.msg( 'echo-overlay-link' ),
 			href: links.notifications,
@@ -91,7 +88,7 @@
 		} );
 		allNotificationsButton.$element.children().first().removeAttr( 'role' );
 
-		preferencesButton = new OO.ui.ButtonWidget( {
+		var preferencesButton = new OO.ui.ButtonWidget( {
 			icon: 'settings',
 			label: mw.msg( 'mypreferences' ),
 			href: links.preferences,
@@ -103,11 +100,11 @@
 		if ( !mw.user.isTemp() ) {
 			footerItems.push( preferencesButton );
 		}
-		footerButtonGroupWidget = new OO.ui.ButtonGroupWidget( {
+		var footerButtonGroupWidget = new OO.ui.ButtonGroupWidget( {
 			items: footerItems,
 			classes: [ 'mw-echo-ui-notificationBadgeButtonPopupWidget-footer-buttons' ]
 		} );
-		$footer = $( '<div>' )
+		var $footer = $( '<div>' )
 			.addClass( 'mw-echo-ui-notificationBadgeButtonPopupWidget-footer' )
 			.append( footerButtonGroupWidget.$element );
 
@@ -244,12 +241,10 @@
 	 * Update the badge state and label based on changes to the model
 	 */
 	mw.echo.ui.NotificationBadgeWidget.prototype.updateBadge = function () {
-		var unreadCount, cappedUnreadCount, badgeLabel, convertedCount;
-
-		unreadCount = this.manager.getUnreadCounter().getCount();
-		cappedUnreadCount = this.manager.getUnreadCounter().getCappedNotificationCount( unreadCount );
-		convertedCount = mw.language.convertNumber( cappedUnreadCount );
-		badgeLabel = mw.msg( 'echo-badge-count', convertedCount );
+		var unreadCount = this.manager.getUnreadCounter().getCount();
+		var cappedUnreadCount = this.manager.getUnreadCounter().getCappedNotificationCount( unreadCount );
+		var convertedCount = mw.language.convertNumber( cappedUnreadCount );
+		var badgeLabel = mw.msg( 'echo-badge-count', convertedCount );
 		this.markAllReadLabel = mw.msg( 'echo-mark-all-as-read', convertedCount );
 		this.markAllReadButton.setLabel( this.markAllReadLabel );
 

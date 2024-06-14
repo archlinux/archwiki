@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kly",
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"Diskdance"
 		]
 	},
 	"visualeditor-mwlanguagevariant-disabled": "變體轉換已停用",
@@ -24,7 +25,7 @@
 	"visualeditor-mwlanguagevariantcontextitem-title-filter": "變體篩選",
 	"visualeditor-mwlanguagevariantcontextitem-title-name": "語言名稱",
 	"visualeditor-mwlanguagevariantcontextitem-title-oneway": "單向轉換規則",
-	"visualeditor-mwlanguagevariantcontextitem-title-twoway": "語言轉換規則",
+	"visualeditor-mwlanguagevariantcontextitem-title-twoway": "字詞轉換規則",
 	"visualeditor-mwlanguagevariantcontextitem-title-unknown": "語言變體",
 	"visualeditor-mwlanguagevariantinspector-disabled-placeholder": "文字已受變體轉換的保護",
 	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "語言",
@@ -39,7 +40,7 @@
 	"visualeditor-mwlanguagevariantinspector-title-filter": "變體篩選",
 	"visualeditor-mwlanguagevariantinspector-title-name": "語言名稱",
 	"visualeditor-mwlanguagevariantinspector-title-oneway": "單向轉換規則",
-	"visualeditor-mwlanguagevariantinspector-title-twoway": "語言轉換規則",
+	"visualeditor-mwlanguagevariantinspector-title-twoway": "字詞轉換規則",
 	"visualeditor-mwlanguagevariantinspector-twoway-add-button": "加入新實例",
 	"visualeditor-mwlanguagevariantinspector-twoway-clear-button": "移除實例",
 	"visualeditor-mwlanguagevariantinspector-twoway-text-placeholder": "變體文字"

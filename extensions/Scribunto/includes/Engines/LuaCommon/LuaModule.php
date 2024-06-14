@@ -4,8 +4,8 @@ namespace MediaWiki\Extension\Scribunto\Engines\LuaCommon;
 
 use MediaWiki\Extension\Scribunto\ScribuntoException;
 use MediaWiki\Extension\Scribunto\ScribuntoModuleBase;
+use MediaWiki\Status\Status;
 use PPFrame;
-use Status;
 
 class LuaModule extends ScribuntoModuleBase {
 	/**

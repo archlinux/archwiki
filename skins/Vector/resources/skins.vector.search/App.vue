@@ -49,7 +49,7 @@
 </template>
 
 <script>
-const { CdxTypeaheadSearch } = require( '@wikimedia/codex-search' ),
+const { CdxTypeaheadSearch } = mw.loader.require( 'skins.vector.search.codex.scripts' ),
 	{ defineComponent, nextTick } = require( 'vue' ),
 	client = require( './restSearchClient.js' ),
 	restClient = client( mw.config ),

@@ -6,12 +6,12 @@ use IContextSource;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Hooks\Handlers\ToolLinksHandler;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWikiUnitTestCase;
 use Message;
-use SpecialPage;
-use User;
-use WebRequest;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Hooks\Handlers\ToolLinksHandler

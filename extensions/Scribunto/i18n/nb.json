@@ -7,6 +7,7 @@
 			"Jon Harald Søby"
 		]
 	},
+	"content-model-scribunto": "Scribunto-modul",
 	"scribunto-desc": "Rammeverk for å bygge inn scriptspråk i MediaWiki-sider",
 	"scribunto-line": "i linje $1",
 	"scribunto-module-line": "i $1, linje $2",

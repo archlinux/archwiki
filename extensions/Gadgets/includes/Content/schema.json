@@ -30,17 +30,9 @@
 					"type": "boolean",
 					"default": false
 				},
-				"targets": {
-					"description": "List of ResourceLoader targets the module can run on",
-					"type": "array",
-					"items": {
-						"type": "string"
-					},
-					"default": [ "desktop" ]
-				},
 				"skins": {
-					"description": "Skins supported by this gadget; empty or true if all skins are supported",
-					"type": [ "array", "boolean" ],
+					"description": "Skins supported by this gadget; empty if all skins are supported",
+					"type": "array",
 					"items": {
 						"type": "string"
 					}
@@ -57,6 +49,13 @@
 					"type": "array",
 					"items": {
 						"type": "number"
+					}
+				},
+				"categories": {
+					"description": "Categories in which to load the gadget",
+					"type": "array",
+					"items": {
+						"type": "string"
 					}
 				},
 				"contentModels": {
@@ -87,17 +86,9 @@
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
-				"scripts": {
+				"pages": {
 					"type": "array",
-					"description": "List of JavaScript pages included in this gadget"
-				},
-				"styles": {
-					"type": "array",
-					"description": "List of CSS pages included in this gadget"
-				},
-				"datas": {
-					"type": "array",
-					"description": "List of JSON pages included in this gadget"
+					"description": "List of JS/CSS/JSON pages included in this gadget"
 				},
 				"dependencies": {
 					"type": "array",

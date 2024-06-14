@@ -3,8 +3,8 @@
 		"authors": [
 			"Maxí",
 			"Snævar",
-			"Sveinn í Felli",
-			"Stefán Örvar Sigmundsson"
+			"Stefán Örvar Sigmundsson",
+			"Sveinn í Felli"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Bókaheimild",
@@ -32,6 +32,5 @@
 	"cite-ve-referenceslist-isempty-default": "Það eru engar tilvísanir á þessari síðu til að taka með í þennan lista.",
 	"cite-ve-referenceslist-missingref": "Þessi tilvísun er tilgreind í sniði eða öðru framleiddu bálkni og sem stendur er einungis hægt að breyta henni með frumkóðaritlinum.",
 	"cite-ve-toolbar-group-label": "Tilvísun",
-	"cite-ve-othergroup-item": "$1 tilvísun",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Tilvísanir"
+	"cite-ve-othergroup-item": "$1 tilvísun"
 }

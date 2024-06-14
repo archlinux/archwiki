@@ -34,7 +34,6 @@
 	"cite_error_included_references": "Avslutande tagg saknades för <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code>-taggar finns för en grupp vid namn \"$1\", men ingen motsvarande <code>&lt;references group=\"$1\"/&gt;</code>-tagg hittades",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code>-tagg i <code>&lt;references&gt;</code> har ett motstridigt group-attribut \"$1\".",
-	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code>-tagg med namn \"$2\" definierad i <code>&lt;references&gt;</code> har grupp-attribut \"$1\" som inte används tidigare i texten.",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code>-tagg med namn \"$1\", definierad i <code>&lt;references&gt;</code> används inte tidigare i texten.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code>-tagg definierad i <code>&lt;references&gt;</code> saknar name-attribut.",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code>-tagg med namn \"$1\" definierad i <code>&lt;references&gt;</code>-grupp \"$2\" har inget innehåll.",

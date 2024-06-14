@@ -25,7 +25,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 wika|$1 (na) wika}}",
 	"vector-no-language-button-label": "Magdagdag ng wika",
 	"vector-no-language-button-aria-label": "Mayroon lamang ang artikulong ito sa wikang ito. Idagdag ang artikulo sa ibang mga wika",
-	"vector-language-redirect-to-top": "Sa {{SITENAME}} na ito, ang mga link ng wika ay nasa itaas ng pahina sa may bandang pamagat ng artikulo. [[#p-lang-btn|Pumunta sa itaas]].",
 	"vector-language-variant-switcher-label": "Ibahin ang baryante o variant ng wika",
 	"vector-action-addsection": "Magdagdag ng paksa",
 	"vector-action-delete": "Burahin",

@@ -3,13 +3,13 @@
 		"authors": [
 			"Aftab1995",
 			"Aftabuzzaman",
+			"Aishik Rehman",
 			"Leemon2010",
 			"Tahmid",
 			"Tauhid16",
 			"Titodutta",
 			"আফতাবুজ্জামান",
-			"খাত্তাব হাসান",
-			"Aishik Rehman"
+			"খাত্তাব হাসান"
 		]
 	},
 	"templatedata-desc": "টেমপ্লেট প্যারামিটারের জন্য ডেটা স্টোরেজ প্রয়োগ করে (JSON ব্যবহার করে)",
@@ -85,6 +85,7 @@
 	"templatedata-modal-table-param-aliases": "উপনাম",
 	"templatedata-modal-table-param-autovalue": "স্বয়ংক্রিয় মান",
 	"templatedata-modal-table-param-default": "পূর্বনির্ধারিত ($1)",
+	"templatedata-modal-table-param-status": "স্থিতি",
 	"templatedata-modal-table-param-deprecated": "অবচিত",
 	"templatedata-modal-table-param-deprecatedValue": "অ-অনুমোদিত পথনির্দেশ",
 	"templatedata-modal-table-param-description": "বিবরণ ($1)",

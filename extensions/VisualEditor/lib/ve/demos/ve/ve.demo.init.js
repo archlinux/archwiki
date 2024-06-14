@@ -1,7 +1,7 @@
 /*!
  * VisualEditor standalone demo
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( function () {
@@ -184,6 +184,7 @@ new ve.init.sa.Platform( ve.messagePaths ).getInitializedPromise().then( functio
 	}
 
 	createSurfacesFromHash( location.hash );
+	ve.init.target.once( 'surfaceReady', ve.collab.join );
 
 	$( window ).on( 'hashchange', function () {
 		if ( hashChanging ) {

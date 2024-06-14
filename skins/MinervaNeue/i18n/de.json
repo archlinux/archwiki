@@ -60,9 +60,16 @@
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Diskussion]]",
 	"minerva-skin-desc": "Stellt eine responsive und für mobile Endgeräte geeignete Benutzeroberfläche bereit",
 	"skin-minerva-issue-learn-more": "Mehr erfahren",
+	"skin-minerva-time-ago-seconds": "Vor {{PLURAL:$1|$1 Sekunde|$1 Sekunden}}",
+	"skin-minerva-time-ago-minutes": "Vor {{PLURAL:$1|$1 Minute|$1 Minuten}}",
+	"skin-minerva-time-ago-hours": "Vor {{PLURAL:$1|1 Stunde|$1 Stunden}}",
+	"skin-minerva-time-ago-days": "Vor {{PLURAL:$1|$1 Tag|$1 Tagen}}",
+	"skin-minerva-time-ago-months": "Vor {{PLURAL:$1|1 Monat|$1 Monaten}}",
+	"skin-minerva-time-ago-years": "Vor {{PLURAL:$1|1 Jahr|$1 Jahren}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorien",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Kategorien von Seiten ansehen",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Verbesserte Behandlung von Seitenproblemen",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Seitenprobleme (Vorlage:ambox) werden im Artikeltext eingefügt.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Leider ist die Gruppierung der Ergebnisse nach Seiten in der mobilen Ansicht nicht möglich. Wenn du die Funktion Gruppierung nach Seiten nutzen möchtest, besuche bitte die Desktop-Ansicht."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Leider ist die Gruppierung der Ergebnisse nach Seiten in der mobilen Ansicht nicht möglich. Wenn du die Funktion Gruppierung nach Seiten nutzen möchtest, besuche bitte die Desktop-Ansicht.",
+	"skin-minerva-night-mode-unavailable": "Seite nur im Farbschema „Tag“ verfügbar."
 }

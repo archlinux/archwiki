@@ -11,7 +11,7 @@
 	"gadgets-desc": "Deixa que os usuarios seleccionen [[Special:Gadgets|trebellos CSS e JavaScript]] nas súas [[Special:Preferences#mw-prefsection-gadgets|preferencias]]",
 	"prefs-gadgets": "Trebellos",
 	"gadgets-prefstext": "A continuación hai unha lista cos trebellos especiais que pode activar para a súa conta.\nA maioría destes trebellos están escritos en JavaScript, así que debe ter o JavaScript activado no seu navegador para que funcionen.\nTeña en conta que estes trebellos non funcionarán nesta páxina de preferencias.\n\nTeña tamén en conta que estes trebellos especiais non son parte do software de MediaWiki e que están creados e mantidos por usuarios no seu wiki local.\nOs administradores da interfaz local poden editar as [[MediaWiki:Gadgets-definition|definicións]] dos trebellos dispoñibles, e os administradores locais poden editar as súas [[Special:Gadgets|descricións]], onde podes ver o código fonte de cada trebello. O número de usuarios de cada trebello neste wiki está listado na [[Special:GadgetUsage|páxina de estatísticas de uso dos trebellos]].",
-	"gadgets": "Trebellos",
+	"special-gadgets": "Trebellos",
 	"gadgetusage": "Estatísticas de uso dos trebellos",
 	"gadgetusage-gadget": "Trebello",
 	"gadgetusage-usercount": "Número de usuarios",
@@ -33,9 +33,5 @@
 	"gadgets-export-text": "Para exportar o trebello $1, prema sobre o botón \"{{int:gadgets-export-download}}\", garde o ficheiro descargado,\nvaia á páxina especial Special:Import do wiki de destino e cárgueo. A continuación, engada o seguinte texto na páxina MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nDebe ter os permisos axeitados no wiki de destino (incluído o dereito de modificar as mensaxes do sistema) e a importación desde a carga de ficheiros debe estar activada.",
 	"gadgets-export-download": "Descargar",
 	"gadgets-validate-notset": "A propiedade <code>$1</code> non está establecida.",
-	"gadgets-validate-wrongtype": "A propiedade <code>$1</code> debe ser de tipo <code>$2</code> en vez de <code>$3</code>.",
-	"right-gadgets-edit": "Editar as páxinas de JavaScript e CSS dos trebellos",
-	"action-gadgets-edit": "editar a páxina de JavaScript ou CSS deste trebello",
-	"right-gadgets-definition-edit": "Editar as definicións dos trebellos",
-	"action-gadgets-definition-edit": "editar a definición deste trebello"
+	"gadgets-validate-wrongtype": "A propiedade <code>$1</code> debe ser de tipo <code>$2</code> en vez de <code>$3</code>."
 }

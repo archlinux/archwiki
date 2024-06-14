@@ -18,7 +18,9 @@
 @opacity-base--disabled: 0.55; // = `#737373` on `background-color: #fff`, still within WCAG level AA. Codex: 0.51
 
 // Fonts
-@font-size-base: 1em; // Codex: 14px
+// Assumes 16px as the default browser font-size.
+@font-size-base: unit( 14 / 16, em ); // Equals `0.875em`.
+
 // Body content uses the user setting in browser / the system default sans-serif font:
 // Arial on Windows, Roboto on Android.
 // FIXME: Use WikimediaUI Base's OS specific default sans-serif fonts.

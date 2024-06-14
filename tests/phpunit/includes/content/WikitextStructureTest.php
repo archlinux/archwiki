@@ -4,7 +4,7 @@ use MediaWiki\Title\Title;
 
 /**
  * @group Database
- * @covers WikiTextStructure
+ * @covers \WikiTextStructure
  */
 class WikitextStructureTest extends MediaWikiLangTestCase {
 
@@ -80,7 +80,7 @@ END;
 	public function testTexts() {
 		$text = <<<END
 Opening text is opening.
-== Then comes header ==
+<h2 class="hello">Then comes header</h2>
 Then we got more<br>text
 === And more headers ===
 {| class="wikitable"

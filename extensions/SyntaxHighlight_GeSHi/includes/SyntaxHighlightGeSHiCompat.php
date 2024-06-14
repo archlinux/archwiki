@@ -19,7 +19,7 @@
 namespace MediaWiki\SyntaxHighlight;
 
 class SyntaxHighlightGeSHiCompat {
-	/** @var array A mapping of GeSHi lexer names to compatible Pygments lexers. */
+	/** @var array<string,string> A mapping of GeSHi lexer names to compatible Pygments lexers. */
 	private static $compatibleLexers = [
 		// Assembler
 		'arm'       => 'asm',
@@ -110,7 +110,7 @@ class SyntaxHighlightGeSHiCompat {
 		'apt_sources' => 'debsources',
 	];
 
-	public static function getGeSHiToPygmentsMap() {
+	public static function getGeSHiToPygmentsMap(): array {
 		return self::$compatibleLexers;
 	}
 }

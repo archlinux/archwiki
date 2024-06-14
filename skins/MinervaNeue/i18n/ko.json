@@ -13,7 +13,8 @@
 			"SeoJeongHo",
 			"Ykhwong",
 			"관인생략",
-			"아라"
+			"아라",
+			"Markingdots"
 		]
 	},
 	"minerva-last-modified-date": "$1 $2에 마지막으로 편집됨",
@@ -63,6 +64,12 @@
 	"skinname-minerva": "미네르바 노이에",
 	"minerva-skin-desc": "반응형 모바일 우선 스킨",
 	"skin-minerva-issue-learn-more": "더 알아보기",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1초}} 전",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|1분|$1분}} 전",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1시간}} 전",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1일}} 전",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1개월}} 전",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1년}} 전",
 	"skin-minerva-mobile-option-MinervaShowCategories": "분류",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "문서 분류 보기",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "문서의 문제들(틀:ambox)은 문서에서 인라인 처리됩니다.",

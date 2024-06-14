@@ -3,7 +3,8 @@
 		"authors": [
 			"Les Meloures",
 			"Matěj Suchánek",
-			"Robby"
+			"Robby",
+			"Volvox"
 		]
 	},
 	"minerva-last-modified-date": "Fir d'lescht geännert den $1 ëm $2",
@@ -44,6 +45,11 @@
 	"minerva-page-actions-language-switcher": "Sproochen",
 	"minerva-page-actions-history": "Versiounen",
 	"skin-minerva-issue-learn-more": "Fir méi ze wëssen",
+	"skin-minerva-time-ago-seconds": "Viru(n) {{PLURAL:$1|$1 Sekonn|$1 Sekonnen}}",
+	"skin-minerva-time-ago-hours": "Viru(n) {{PLURAL:$1|$1 Stonn|$1 Stonnen}}",
+	"skin-minerva-time-ago-days": "Viru(n) {{PLURAL:$1|$1 Dag|$1 Deeg}}",
+	"skin-minerva-time-ago-months": "Viru(n) {{PLURAL:$1|$1 Mount|$1 Méint}}",
+	"skin-minerva-time-ago-years": "Viru(n) {{PLURAL:$1|$1 Joer}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorien",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Kategorie vu Säite weisen"
 }

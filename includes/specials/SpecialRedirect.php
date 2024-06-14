@@ -23,7 +23,7 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\MalformedTitleException;
@@ -275,38 +275,26 @@ class SpecialRedirect extends FormSpecialPage {
 	}
 
 	protected function getFormFields() {
-		$ns = [
-			// subpage => message
-			'user' => 'redirect-user',
-			'page' => 'redirect-page',
-			'revision' => 'redirect-revision',
-			'file' => 'redirect-file',
-			'logid' => 'redirect-logid',
+		return [
+			'type' => [
+				'type' => 'select',
+				'label-message' => 'redirect-lookup',
+				'options-messages' => [
+					'redirect-user' => 'user',
+					'redirect-page' => 'page',
+					'redirect-revision' => 'revision',
+					'redirect-file' => 'file',
+					'redirect-logid' => 'logid',
+				],
+				'default' => $this->mType,
+			],
+			'value' => [
+				'type' => 'text',
+				'label-message' => 'redirect-value',
+				'default' => $this->mValue,
+				'required' => true,
+			],
 		];
-		$a = [];
-		$a['type'] = [
-			'type' => 'select',
-			'label-message' => 'redirect-lookup',
-			'options' => [],
-			'default' => current( array_keys( $ns ) ),
-		];
-		foreach ( $ns as $n => $m ) {
-			$m = $this->msg( $m )->text();
-			$a['type']['options'][$m] = $n;
-		}
-		$a['value'] = [
-			'type' => 'text',
-			'label-message' => 'redirect-value'
-		];
-		// set the defaults according to the parsed subpage path
-		if ( $this->mType ) {
-			$a['type']['default'] = $this->mType;
-		}
-		if ( $this->mValue ) {
-			$a['value']['default'] = $this->mValue;
-		}
-
-		return $a;
 	}
 
 	public function onSubmit( array $data ) {

@@ -22,7 +22,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 йылме}}",
 	"vector-no-language-button-label": "Йылме-влакым ешараш",
 	"vector-no-language-button-aria-label": "Ты статья тиде йылме дене гына уло. Вес йылмылан келыштарыме статьям ешаре",
-	"vector-language-redirect-to-top": "Тиде сайтыште йылме ссылке-влак странице тӱҥалтыште, статьян вуймутшо ваштареш верланеныт.",
 	"vector-language-variant-switcher-label": "Йылме вариантым вашталташ",
 	"vector-action-addsection": "Темым ешараш",
 	"vector-action-delete": "Кораҥдаш",

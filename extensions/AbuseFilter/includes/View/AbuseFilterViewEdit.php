@@ -2,11 +2,10 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
-use BadMethodCallException;
-use Html;
 use HtmlArmor;
 use IContextSource;
-use Linker;
+use IDBAccessObject;
+use LogicException;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry;
 use MediaWiki\Extension\AbuseFilter\EditBox\EditBoxBuilderFactory;
@@ -20,12 +19,14 @@ use MediaWiki\Extension\AbuseFilter\FilterProfiler;
 use MediaWiki\Extension\AbuseFilter\FilterStore;
 use MediaWiki\Extension\AbuseFilter\InvalidImportDataException;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Specials\SpecialBlock;
 use OOUI;
-use SpecialBlock;
-use SpecialPage;
 use UnexpectedValueException;
 use Wikimedia\Rdbms\LBFactory;
 use Xml;
@@ -225,7 +226,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 			$out->redirect( $this->getTitle()->getLocalURL() );
 		} else {
 			// Everything went fine!
-			list( $new_id, $history_id ) = $status->getValue();
+			[ $new_id, $history_id ] = $status->getValue();
 			$out->redirect(
 				$this->getTitle()->getLocalURL(
 					[
@@ -279,9 +280,10 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		$user = $this->getUser();
 		$actions = $filterObj->getActions();
 
+		$isCreatingNewFilter = $filter === null;
 		$out->addSubtitle( $this->msg(
-			$filter === null ? 'abusefilter-edit-subtitle-new' : 'abusefilter-edit-subtitle',
-			$filter === null ? $filter : $this->getLanguage()->formatNum( $filter ),
+			$isCreatingNewFilter ? 'abusefilter-edit-subtitle-new' : 'abusefilter-edit-subtitle',
+			$isCreatingNewFilter ? $filter : $this->getLanguage()->formatNum( $filter ),
 			$history_id
 		)->parse() );
 
@@ -295,6 +297,19 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 			$out->addHTML( $this->msg( 'abusefilter-edit-denied' )->escaped() );
 			return;
 		}
+
+		if ( $isCreatingNewFilter ) {
+			$title = $this->msg( 'abusefilter-add' );
+		} elseif ( $this->afPermManager->canEditFilter( $user, $filterObj ) ) {
+			$title = $this->msg( 'abusefilter-edit-specific' )
+				->numParams( $this->filter )
+				->params( $filterObj->getName() );
+		} else {
+			$title = $this->msg( 'abusefilter-view-specific' )
+				->numParams( $this->filter )
+				->params( $filterObj->getName() );
+		}
+		$out->setPageTitleMsg( $title );
 
 		$readOnly = !$this->afPermManager->canEditFilter( $user, $filterObj );
 
@@ -312,7 +327,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		$fields = [];
 
 		$fields['abusefilter-edit-id'] =
-			$filter === null ?
+			$isCreatingNewFilter ?
 				$this->msg( 'abusefilter-edit-new' )->escaped() :
 				htmlspecialchars( $lang->formatNum( (string)$filter ) );
 		$fields['abusefilter-edit-description'] =
@@ -339,7 +354,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 				$options += [ $this->specsFormatter->nameGroup( $group ) => $group ];
 			}
 
-			$options = Xml::listDropDownOptionsOoui( $options );
+			$options = Xml::listDropdownOptionsOoui( $options );
 			$groupSelector->setOptions( $options );
 
 			$fields['abusefilter-edit-group'] = $groupSelector;
@@ -538,7 +553,6 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 			$fields['abusefilter-edit-tools'] = $tools;
 		}
 
-		// @phan-suppress-next-line SecurityCheck-DoubleEscaped taint-check still tracks keys and values together
 		$form = Xml::buildForm( $fields );
 		$form = Xml::fieldset( $this->msg( 'abusefilter-edit-main' )->text(), $form );
 		$form .= Xml::fieldset(
@@ -647,7 +661,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 
 				if ( $set ) {
 					// @phan-suppress-next-line PhanTypeArraySuspiciousNullable $parameters is array here
-					list( $throttleCount, $throttlePeriod ) = explode( ',', $parameters[1], 2 );
+					[ $throttleCount, $throttlePeriod ] = explode( ',', $parameters[1], 2 );
 
 					$throttleGroups = array_slice( $parameters, 2 );
 				} else {
@@ -907,7 +921,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 			case 'block':
 				if ( $set && count( $parameters ) === 3 ) {
 					// Both blocktalk and custom block durations available
-					list( $blockTalk, $defaultAnonDuration, $defaultUserDuration ) = $parameters;
+					[ $blockTalk, $defaultAnonDuration, $defaultUserDuration ] = $parameters;
 				} else {
 					if ( $set && count( $parameters ) === 1 ) {
 						// Only blocktalk available
@@ -938,7 +952,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 					);
 				$output .= $checkbox;
 
-				$suggestedBlocks = Xml::listDropDownOptionsOoui( $suggestedBlocks );
+				$suggestedBlocks = Xml::listDropdownOptionsOoui( $suggestedBlocks );
 
 				$anonDuration =
 					new OOUI\DropdownInputWidget( [
@@ -1091,7 +1105,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		// abusefilter-edit-warn-other, abusefilter-edit-disallow-other
 		$options[ $this->msg( "abusefilter-edit-$formId-other" )->text() ] = 'other';
 
-		$options = Xml::listDropDownOptionsOoui( $options );
+		$options = Xml::listDropdownOptionsOoui( $options );
 		$existingSelector->setOptions( $options );
 
 		$existingSelector =
@@ -1167,8 +1181,8 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 
 		$flags = $this->getRequest()->wasPosted()
 			// Load from primary database to avoid unintended reversions where there's replication lag.
-			? FilterLookup::READ_LATEST
-			: FilterLookup::READ_NORMAL;
+			? IDBAccessObject::READ_LATEST
+			: IDBAccessObject::READ_NORMAL;
 
 		return $this->filterLookup->getFilter( $id, false, $flags );
 	}
@@ -1200,7 +1214,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		$request = $this->getRequest();
 		if ( !$request->wasPosted() ) {
 			// Sanity
-			throw new BadMethodCallException( __METHOD__ . ' called without the request being POSTed.' );
+			throw new LogicException( __METHOD__ . ' called without the request being POSTed.' );
 		}
 
 		$origFilter = $this->loadFilterData( $filter );
@@ -1249,7 +1263,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		$request = $this->getRequest();
 		if ( !$request->wasPosted() ) {
 			// Sanity
-			throw new BadMethodCallException( __METHOD__ . ' called without the request being POSTed.' );
+			throw new LogicException( __METHOD__ . ' called without the request being POSTed.' );
 		}
 
 		try {

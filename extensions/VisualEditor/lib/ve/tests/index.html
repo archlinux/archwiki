@@ -5,10 +5,10 @@
 		<title>VisualEditor Tests</title>
 
 		<!-- jsdifflib -->
-		<link rel=stylesheet href="../lib/jsdifflib/diffview.css">
+		<link rel="stylesheet" href="../lib/jsdifflib/diffview.css">
 
 		<!-- qunit -->
-		<link rel=stylesheet href="../node_modules/qunit/qunit/qunit.css">
+		<link rel="stylesheet" href="../node_modules/qunit/qunit/qunit.css">
 
 	</head>
 	<body>
@@ -36,6 +36,9 @@
 
 		<!-- oojs-ui-apex -->
 		<script src="../lib/oojs-ui/oojs-ui-apex.js"></script>
+
+		<!-- less -->
+		<script src="../lib/less/less.js"></script>
 
 		<!-- CLDRPluralRuleParser -->
 		<script src="../lib/jquery.i18n/libs/CLDRPluralRuleParser/src/CLDRPluralRuleParser.js"></script>
@@ -446,7 +449,8 @@
 		<script src="../src/ui/inspectors/ve.ui.LinkAnnotationInspector.js"></script>
 		<script src="../src/ui/inspectors/ve.ui.CommentInspector.js"></script>
 		<script src="../src/ui/inspectors/ve.ui.LanguageInspector.js"></script>
-		<script src="../src/ui/pages/ve.ui.SpecialCharacterPage.js"></script>
+		<script src="../src/ui/layouts/ve.ui.SymbolListBookletLayout.js"></script>
+		<script src="../src/ui/pages/ve.ui.SymbolListPage.js"></script>
 
 		<!-- treeDiffer -->
 		<script src="../lib/treeDiffer/treeDiffer-dist.js"></script>
@@ -498,10 +502,29 @@
 		<script src="../src/ui/tools/ve.ui.CheckListTool.js"></script>
 
 		<!-- visualEditor.rebase -->
+		<script src="../src/ve.FakePeer.js"></script>
 		<script src="../src/dm/ve.dm.RebaseClient.js"></script>
 		<script src="../src/dm/ve.dm.SurfaceSynchronizer.js"></script>
 		<script src="../src/ui/widgets/ve.ui.AuthorItemWidget.js"></script>
 		<script src="../src/ui/tools/ve.ui.AuthorListPopupTool.js"></script>
+
+		<!-- peerjs -->
+		<script src="../lib/peerjs/peerjs.min.js"></script>
+
+		<!-- visualEditor.collab -->
+		<script src="../rebaser/src/dm/ve.dm.RebaseDocState.js"></script>
+		<script src="../rebaser/src/dm/ve.dm.RebaseServer.js"></script>
+		<script src="../rebaser/src/dm/ve.dm.DocumentStore.js"></script>
+		<script src="../rebaser/src/dm/ve.dm.ProtocolServer.js"></script>
+		<script src="../src/dm/ve.dm.RebaseClient.js"></script>
+		<script src="../src/dm/ve.dm.SurfaceSynchronizer.js"></script>
+		<script src="../src/ui/widgets/ve.ui.AuthorItemWidget.js"></script>
+		<script src="../src/ui/tools/ve.ui.AuthorListPopupTool.js"></script>
+		<script src="../src/ve.FakePeer.js"></script>
+		<script src="../collab/ve.collab.js"></script>
+		<script src="../collab/ve.dm.CollabTransportServer.js"></script>
+		<script src="../collab/ve.ui.CollabProcessDialog.js"></script>
+		<script src="../collab/ve.ui.CollabTool.js"></script>
 
 		<!-- visualEditor.test -->
 		<script src="../src/ve.freeze.js"></script>
@@ -523,6 +546,7 @@
 		<script src="../tests/ve.BranchNode.test.js"></script>
 		<script src="../tests/ve.LeafNode.test.js"></script>
 		<script src="../tests/ve.sanitize.test.js"></script>
+		<script src="../tests/ve.FakePeer.test.js"></script>
 		<script src="../tests/dm/ve.dm.example.js"></script>
 		<script src="../tests/dm/ve.dm.example.StubReferenceNode.js"></script>
 		<script src="../tests/dm/ve.dm.Annotation.test.js"></script>

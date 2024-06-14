@@ -26,10 +26,11 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleParser;
-use ParserOutput;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -258,15 +259,10 @@ class TrackingCategories {
 		if ( $categoryPage === null ) {
 			return false;
 		}
-		$parserOutput->addCategory(
-			$categoryPage->getDBkey(),
-			$parserOutput->getPageProperty( 'defaultsort' ) ?? ''
-		);
+		$parserOutput->addCategory( $categoryPage->getDBkey() );
 		return true;
 	}
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( TrackingCategories::class, 'TrackingCategories' );

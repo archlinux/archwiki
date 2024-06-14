@@ -16,7 +16,7 @@ function save( feature, enabled ) {
 			case 'limited-width':
 				// Save the setting under the new system
 				// @ts-ignore https://github.com/wikimedia/typescript-types/pull/44
-				mw.user.clientPrefs.set( `vector-feature-${feature}`, enabled ? '1' : '0' );
+				mw.user.clientPrefs.set( `vector-feature-${ feature }`, enabled ? '1' : '0' );
 				break;
 			default:
 				// not a supported anonymous preference
@@ -31,7 +31,6 @@ function save( feature, enabled ) {
 }
 
 /**
- *
  * @param {string} name feature name
  * @param {boolean} [override] option to force enabled or disabled state.
  * @param {boolean} [isLegacy] should we search for legacy classes
@@ -43,9 +42,9 @@ function save( feature, enabled ) {
 function toggleDocClasses( name, override, isLegacy ) {
 	const suffixEnabled = isLegacy ? 'enabled' : 'clientpref-1';
 	const suffixDisabled = isLegacy ? 'disabled' : 'clientpref-0';
-	const featureClassEnabled = `vector-feature-${name}-${suffixEnabled}`,
+	const featureClassEnabled = `vector-feature-${ name }-${ suffixEnabled }`,
 		classList = document.documentElement.classList,
-		featureClassDisabled = `vector-feature-${name}-${suffixDisabled}`,
+		featureClassDisabled = `vector-feature-${ name }-${ suffixDisabled }`,
 		// If neither of the classes can be found it is a legacy feature
 		isLegacyFeature = !classList.contains( featureClassDisabled ) &&
 			!classList.contains( featureClassEnabled );
@@ -63,7 +62,7 @@ function toggleDocClasses( name, override, isLegacy ) {
 		classList.remove( featureClassEnabled );
 		return false;
 	} else {
-		throw new Error( `Attempt to toggle unknown feature: ${name}` );
+		throw new Error( `Attempt to toggle unknown feature: ${ name }` );
 	}
 }
 
@@ -99,10 +98,10 @@ function isEnabled( name ) {
 function getClass( name, featureEnabled, isLegacy ) {
 	if ( featureEnabled ) {
 		const suffix = isLegacy ? 'enabled' : 'clientpref-1';
-		return `vector-feature-${name}-${suffix}`;
+		return `vector-feature-${ name }-${ suffix }`;
 	} else {
 		const suffix = isLegacy ? 'disabled' : 'clientpref-0';
-		return `vector-feature-${name}-${suffix}`;
+		return `vector-feature-${ name }-${ suffix }`;
 	}
 }
 

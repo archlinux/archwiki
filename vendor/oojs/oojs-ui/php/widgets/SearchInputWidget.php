@@ -21,7 +21,7 @@ class SearchInputWidget extends TextInputWidget {
 	}
 
 	/** @inheritDoc */
-	protected function getSaneType( $config ) {
+	protected function getValidType( $config ) {
 		return 'search';
 	}
 }

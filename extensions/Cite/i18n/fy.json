@@ -23,7 +23,6 @@
 	"cite_error_included_references": "In ôfslutende oantsjutting foar <code>&lt;references&gt;</code> mist",
 	"cite_error_group_refs_without_references": "Der binne <code>&lt;ref&gt;</code>-oantsjuttings foar in groep mei de namme \"$1\", mar de byhearrende <code>&lt;references group=\"$1\"/&gt;</code>-oantsjutting mist",
 	"cite_error_references_group_mismatch": "In <code>&lt;ref&gt;</code>-oantsjutting yn <code>&lt;references&gt;</code> hat de net-oerienkommende groepseigenskip \"$1\".",
-	"cite_error_references_missing_group": "In <code>&lt;ref&gt;</code>-oantsjutting definiearre yn <code>&lt;references&gt;</code> hat groepseigenskip \"$1\" dy't net yn 'e foarôfgeande tekst stiet.",
 	"cite_error_references_missing_key": "De <code>&lt;ref&gt;</code>-oantsjutting mei de namme \"$1\" definiearre yn <code>&lt;references&gt;</code> wurdt net brûkt yn 'e foarôfgeande tekst.",
 	"cite_error_references_no_key": "In <code>&lt;ref&gt;</code>-oantsjutting definiearre yn <code>&lt;references&gt;</code> hat gjin namme-eigenskip.",
 	"cite_error_empty_references_define": "De <code>&lt;ref&gt;</code>-oantsjutting definiearre yn <code>&lt;references&gt;</code> mei de namme \"$1\" hat gjin ynhâld.",

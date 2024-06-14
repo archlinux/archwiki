@@ -1,5 +1,11 @@
 # Release History
 
+## 4.0.0 (2024-03-04)
+* Use a class instead of an assoc array for cache entry
+* Switch phan to special library mode
+* PHP dependency updates (eslint, mediawiki-codesniffer, mediawiki-phan-config, phpunit)
+* JS dependency updates (word-wrap)
+
 ## 3.0.0 (2022-11-10)
 * Drop class aliases for old \WikiPEG namespace.
 * Bump minimum required PHP version to 7.4.3.

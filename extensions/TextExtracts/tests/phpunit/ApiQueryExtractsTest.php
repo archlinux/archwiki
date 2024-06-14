@@ -3,6 +3,8 @@
 namespace TextExtracts\Test;
 
 use ILanguageConverter;
+use MediaWiki\Config\ConfigFactory;
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Title\Title;
 use MediaWikiCoversValidator;
@@ -20,11 +22,11 @@ class ApiQueryExtractsTest extends \MediaWikiIntegrationTestCase {
 	use MediaWikiCoversValidator;
 
 	private function newInstance() {
-		$config = new \HashConfig( [
+		$config = new HashConfig( [
 			'ParserCacheExpireTime' => ExpirationAwareness::TTL_INDEFINITE,
 		] );
 
-		$configFactory = $this->createMock( \ConfigFactory::class );
+		$configFactory = $this->createMock( ConfigFactory::class );
 		$configFactory->method( 'makeConfig' )
 			->with( 'textextracts' )
 			->willReturn( $config );

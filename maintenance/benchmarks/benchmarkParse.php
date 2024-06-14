@@ -24,6 +24,7 @@
 
 require_once __DIR__ . '/../Maintenance.php';
 
+use MediaWiki\Cache\LinkCache;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -136,14 +137,14 @@ class BenchmarkParse extends Maintenance {
 	 * @return bool|string Revision ID, or false if not found or error
 	 */
 	private function getRevIdForTime( Title $title, $timestamp ) {
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 
 		$id = $dbr->newSelectQueryBuilder()
 			->select( 'rev_id' )
 			->from( 'revision' )
 			->join( 'page', null, 'rev_page=page_id' )
 			->where( [ 'page_namespace' => $title->getNamespace(), 'page_title' => $title->getDBkey() ] )
-			->andWhere( 'rev_timestamp <= ' . $dbr->addQuotes( $timestamp ) )
+			->andWhere( $dbr->expr( 'rev_timestamp', '<=', $timestamp ) )
 			->orderBy( 'rev_timestamp', SelectQueryBuilder::SORT_DESC )
 			->caller( __METHOD__ )->fetchField();
 

@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\Page\ParserOutputAccess;
@@ -12,11 +13,6 @@ use MediaWiki\User\User;
  * @group Database
  */
 class ArticleTest extends \MediaWikiIntegrationTestCase {
-
-	protected $tablesUsed = [
-		'revision',
-		'recentchanges',
-	];
 
 	/**
 	 * @param Title $title
@@ -39,32 +35,7 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers Article::__get
-	 * @covers Article::__set
-	 */
-	public function testGetOrSetOnNewProperty() {
-		$article = new Article( Title::newMainPage() );
-
-		$this->filterDeprecated(
-			'/Accessing Article::\$ext_someNewProperty/'
-		);
-		$this->filterDeprecated(
-			'/Setting Article::\$ext_someNewProperty/'
-		);
-		$article->ext_someNewProperty = 12;
-		$this->assertEquals( 12, $article->ext_someNewProperty,
-			"Article get/set magic on new field" );
-		$this->assertEquals( 12, $article->getPage()->ext_someNewProperty,
-			"Article get/set magic on new field" );
-		$article->ext_someNewProperty = -8;
-		$this->assertEquals( -8, $article->ext_someNewProperty,
-			"Article get/set magic on update to new field" );
-		$this->assertEquals( -8, $article->getPage()->ext_someNewProperty,
-			"Article get/set magic on new field" );
-	}
-
-	/**
-	 * @covers Article::__sleep
+	 * @covers \Article::__sleep
 	 */
 	public function testSerialization_fails() {
 		$article = new Article( Title::newMainPage() );
@@ -76,7 +47,7 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 	/**
 	 * Tests that missing article page shows parser contents
 	 * of the well-known system message for NS_MEDIAWIKI pages
-	 * @covers Article::showMissingArticle
+	 * @covers \Article::showMissingArticle
 	 */
 	public function testMissingArticleMessage() {
 		// Use a well-known system message
@@ -93,7 +64,7 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test if patrol footer is possible to show
-	 * @covers Article::showPatrolFooter
+	 * @covers \Article::showPatrolFooter
 	 * @dataProvider provideShowPatrolFooter
 	 */
 	public function testShowPatrolFooter( $group, $title, $editPageText, $isEditedBySameUser, $expectedResult ) {
@@ -147,7 +118,7 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 	/**
 	 * Show patrol footer even if the page was moved (T162871).
 	 *
-	 * @covers Article::showPatrolFooter
+	 * @covers \Article::showPatrolFooter
 	 */
 	public function testShowPatrolFooterMovedPage() {
 		$oldTitle = Title::makeTitle( NS_USER, 'NewDraft' );
@@ -172,7 +143,7 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 	/**
 	 * Ensure that content that is present in the parser cache will be used.
 	 *
-	 * @covers Article::generateContentOutput
+	 * @covers \Article::generateContentOutput
 	 */
 	public function testUsesCachedOutput() {
 		$title = $this->getExistingTestPage()->getTitle();
@@ -194,7 +165,7 @@ class ArticleTest extends \MediaWikiIntegrationTestCase {
 	/**
 	 * Ensure that content that is present in the parser cache will be used.
 	 *
-	 * @covers Article::generateContentOutput
+	 * @covers \Article::generateContentOutput
 	 */
 	public function testOutputIsCached() {
 		$this->overrideConfigValue(

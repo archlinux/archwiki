@@ -25,6 +25,8 @@
  * @file
  */
 
+use MediaWiki\Context\ContextSource;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
@@ -459,6 +461,9 @@ class FormatMetadata extends ContextSource {
 						break;
 
 					case 'Flash':
+						if ( $val === '' ) {
+							$val = 0;
+						}
 						$flashDecode = [
 							'fired' => $val & 0b00000001,
 							'return' => ( $val & 0b00000110 ) >> 1,
@@ -1221,7 +1226,7 @@ class FormatMetadata extends ContextSource {
 	 */
 	private function langItem( $value, $lang, $default = false, $noHtml = false ) {
 		if ( $lang === false && $default === false ) {
-			throw new BadMethodCallException( '$lang and $default cannot both be false.' );
+			throw new InvalidArgumentException( '$lang and $default cannot both be false.' );
 		}
 
 		if ( $noHtml ) {

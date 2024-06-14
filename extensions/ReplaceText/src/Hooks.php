@@ -21,12 +21,12 @@
  */
 namespace MediaWiki\Extension\ReplaceText;
 
-use Config;
+use MediaWiki\Config\Config;
 use MediaWiki\Hook\SpecialMovepageAfterMoveHook;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Specials\SpecialMovePage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Hook\UserGetReservedNamesHook;
-use MovePageForm;
 
 class Hooks implements
 	SpecialMovepageAfterMoveHook,
@@ -57,7 +57,7 @@ class Hooks implements
 	 * Adds a link to the Special:ReplaceText page at the end of a successful
 	 * regular page move message.
 	 *
-	 * @param MovePageForm $form
+	 * @param SpecialMovePage $form
 	 * @param Title $ot Title object of the old article (moved from)
 	 * @param Title $nt Title object of the new article (moved to)
 	 */

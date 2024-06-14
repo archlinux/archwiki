@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\Notifications;
 
 use MediaWiki\Title\Title;
-use User;
+use MediaWiki\User\User;
 
 class SummaryParser {
 	/** @var callable */

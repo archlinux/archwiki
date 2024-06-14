@@ -5,10 +5,10 @@
 			"Friðrik Bragi Dýrfjörð",
 			"Maxí",
 			"Snævar",
+			"Stefán Örvar Sigmundsson",
 			"Sveinki",
 			"Sveinn í Felli",
-			"Ævar Arnfjörð Bjarmason",
-			"Stefán Örvar Sigmundsson"
+			"Ævar Arnfjörð Bjarmason"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -25,7 +25,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 tungumál}}",
 	"vector-no-language-button-label": "Bæta við tungumálum",
 	"vector-no-language-button-aria-label": "Þessi grein er bara til á þessu tungumáli. Búðu til grein á öðru tungumáli",
-	"vector-language-redirect-to-top": "Á þessari {{SITENAME}} eru tungumálatenglarnir efst á síðunni hinum megin við greinartitilinn. [[#p-lang-btn|Go to top]].",
 	"vector-language-variant-switcher-label": "Breyta tungumálaafbrigði",
 	"vector-action-addsection": "Bæta við umræðu",
 	"vector-action-delete": "Eyða",

@@ -11,13 +11,6 @@ use Wikimedia\Rdbms\IDatabase;
  */
 class EventMapperTest extends MediaWikiIntegrationTestCase {
 
-	protected function setUp(): void {
-		parent::setUp();
-		$this->tablesUsed[] = 'echo_event';
-		$this->tablesUsed[] = 'echo_notification';
-		$this->tablesUsed[] = 'echo_target_page';
-	}
-
 	public static function provideDataTestInsert() {
 		return [
 			[

@@ -28,15 +28,6 @@ class PageSourceHandlerTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		// Clean up these tables after each test
-		$this->tablesUsed = [
-			'page',
-			'revision',
-			'comment',
-			'text',
-			'content'
-		];
-
 		$this->overrideConfigValues( [
 			MainConfigNames::RightsUrl => 'https://example.com/rights',
 			MainConfigNames::RightsText => 'some rights',
@@ -109,7 +100,23 @@ class PageSourceHandlerTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$handler = $this->newHandler();
-		$this->executeHandler( $handler, $request );
+		$config = [ 'format' => 'bare' ];
+		$this->executeHandler( $handler, $request, $config );
+	}
+
+	public function testExecute_message() {
+		$request = new RequestData( [ 'pathParams' => [ 'title' => 'MediaWiki:Ok' ] ] );
+
+		$this->expectExceptionObject(
+			new LocalizedHttpException(
+				new MessageValue( "rest-nonexistent-title", [ 'testing' ] ),
+				404
+			)
+		);
+
+		$handler = $this->newHandler();
+		$config = [ 'format' => 'bare' ];
+		$this->executeHandler( $handler, $request, $config );
 	}
 
 	/**

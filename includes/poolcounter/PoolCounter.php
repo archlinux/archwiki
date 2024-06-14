@@ -18,7 +18,12 @@
  * @file
  */
 
+namespace MediaWiki\PoolCounter;
+
 use MediaWiki\Status\Status;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * Semaphore semantics to restrict how many workers may concurrently perform a task.
@@ -48,7 +53,7 @@ use MediaWiki\Status\Status;
  * @since 1.16
  * @stable to extend
  */
-abstract class PoolCounter {
+abstract class PoolCounter implements LoggerAwareInterface {
 	/* Return codes */
 	public const LOCKED = 1; /* Lock acquired */
 	public const RELEASED = 2; /* Lock released */
@@ -75,6 +80,7 @@ abstract class PoolCounter {
 	protected $maxqueue;
 	/** @var int Maximum time in seconds to wait for the lock */
 	protected $timeout;
+	protected LoggerInterface $logger;
 
 	/**
 	 * @var bool Whether the key is a "might wait" key
@@ -103,6 +109,7 @@ abstract class PoolCounter {
 			$this->slots = $conf['slots'];
 		}
 		$this->fastStale = $conf['fastStale'] ?? false;
+		$this->logger = new NullLogger();
 
 		if ( $this->slots ) {
 			$key = $this->hashKeyIntoSlots( $type, $key, $this->slots );
@@ -163,12 +170,16 @@ abstract class PoolCounter {
 				 * good idea then feel free to implement an unsafe flag or
 				 * something.
 				 */
-				return Status::newFatal( 'poolcounter-usage-error',
-					'You may only aquire a single non-nowait lock.' );
+				return Status::newFatal(
+					'poolcounter-usage-error',
+					'You may only aquire a single non-nowait lock.'
+				);
 			}
 		} elseif ( $this->timeout !== 0 ) {
-			return Status::newFatal( 'poolcounter-usage-error',
-				'Locks starting in nowait: must have 0 timeout.' );
+			return Status::newFatal(
+				'poolcounter-usage-error',
+				'Locks starting in nowait: must have 0 timeout.'
+			);
 		}
 		return Status::newGood();
 	}
@@ -214,4 +225,24 @@ abstract class PoolCounter {
 	public function isFastStaleEnabled() {
 		return $this->fastStale;
 	}
+
+	/**
+	 * @since 1.42
+	 * @param LoggerInterface $logger
+	 * @return void
+	 */
+	public function setLogger( LoggerInterface $logger ) {
+		$this->logger = $logger;
+	}
+
+	/**
+	 * @internal For use in PoolCounterWork only
+	 * @return LoggerInterface
+	 */
+	public function getLogger(): LoggerInterface {
+		return $this->logger;
+	}
 }
+
+/** @deprecated class alias since 1.41 */
+class_alias( PoolCounter::class, 'PoolCounter' );

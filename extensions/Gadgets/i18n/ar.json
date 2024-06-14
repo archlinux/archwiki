@@ -18,7 +18,7 @@
 	"prefs-gadgets": "الإضافات",
 	"prefs-description-gadgets": "تمكين ميزات إضافية لحسابك.",
 	"gadgets-prefstext": "فيما يلي قائمة بالأدوات الخاصة التي يمكنك تمكينها لحسابك.\nتعتمد هذه الأدوات في الغالب على جافا سكريبت؛ لذلك يجب تمكين جافا سكريبت في متصفحك حتى تعمل.\nلاحظ أن هذه الأدوات لن يكون لها أي تأثير على صفحة التفضيلات هذه.\n\nلاحظ أيضا أن هذه الأدوات الخاصة ليست جزءا من برنامج ميدياويكي، وعادةً ما يتم تطويرها وصيانتها من قبل المستخدمين على الويكي المحلي الخاص بك.\nيمكن لإداريي الواجهة المحليين تحرير [[MediaWiki:Gadgets-definition|تعريفات]]  الأدوات المتاحة، ويمكن للإداريين المحليين تحرير [[Special:Gadgets|أوصافها]]، حيث يمكنك رؤية النص المصدري لكل إضافة. يتم سرد أرقام المستخدمين لكل أداة على هذا الويكي في[[Special:GadgetUsage|إحصائيات استخدام الأدوات]].",
-	"gadgets": "إضافات",
+	"special-gadgets": "إضافات",
 	"gadgetusage": "إحصاءات استخدام الإضافات",
 	"gadgetusage-gadget": "الإضافة",
 	"gadgetusage-usercount": "عدد المستخدمين",
@@ -48,10 +48,5 @@
 	"gadgets-requires-es6": "هذه الأداة الذكية مدعومة فقط في المتصفحات المتوافقة مع ES6",
 	"gadgets-validate-notset": "الخاصية <code>$1</code> ليست مضبوطة.",
 	"gadgets-validate-wrongtype": "الخاصية <code>$1</code> يجب أن تكون من النوع <code>$2</code> بدلا من <code>$3</code>.",
-	"right-gadgets-edit": "تعديل صفحات JavaScript و CSS للإضافات",
-	"action-gadgets-edit": "تعديل هذه الأداة جافا سكريبت أو CSS الصفحة",
-	"right-gadgets-definition-edit": "تعديل تعريفات الإضافات",
-	"action-gadgets-definition-edit": "تعديل تعريف الادوات",
-	"gadgets-wrong-contentmodel": "يجب أن تكون الصفحات الموجودة في مساحة الاسم {{ns:2302}} من نموذج محتوى GadgetDefinition.",
 	"gadgets-supports-urlload": "تدعم هذه الأداة التحميل عبر عنوان URL باستخدام معلمة طلب البحث <code>?withgadget</code>."
 }

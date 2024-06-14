@@ -33,31 +33,6 @@
 				}
 			}
 
-			> .oo-ui-popupWidget-body {
-				// Work around scrollbar rendering bug in Chrome
-				overflow-y: visible;
-				// ...but make sure we don't actually overflow in the Y direction,
-				// to avoid breaking ClippableElement
-				overflow-x: auto;
-
-				> .mw-echo-ui-notificationsListWidget > .mw-echo-ui-notificationItemWidget {
-					// The popup body itself has a border. We need to override the notification
-					// item widget styles so that the edge borders of the items are not duplicated
-					border-left: 0;
-					border-right: 0;
-
-					&:last-child {
-						border-bottom: 0;
-					}
-
-					// Compensate for adjusted borders
-					&:focus {
-						box-shadow: @box-shadow-inset-medium @box-shadow-color-progressive--focus;
-						border-color: @border-color-subtle;
-					}
-				}
-			}
-
 			> .oo-ui-popupWidget-footer {
 				width: 100%;
 				margin: 0; // Override OOUI's popup footer margins (T171302)

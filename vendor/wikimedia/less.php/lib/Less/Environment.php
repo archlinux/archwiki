@@ -9,11 +9,11 @@ class Less_Environment {
 	 *
 	 * - rootpath: rootpath to append to URLs
 	 *
-	 * @var array|null $currentFileInfo
+	 * @var array|null
 	 */
 	public $currentFileInfo;
 
-	/* Whether we are currently importing multiple copies */
+	/** @var bool Whether we are currently importing multiple copies */
 	public $importMultiple = false;
 
 	/**
@@ -21,14 +21,9 @@ class Less_Environment {
 	 */
 	public $frames = [];
 
-	/**
-	 * @var array
-	 */
+	/** @var Less_Tree_Media[] */
 	public $mediaBlocks = [];
-
-	/**
-	 * @var array
-	 */
+	/** @var Less_Tree_Media[] */
 	public $mediaPath = [];
 
 	public static $parensStack = 0;
@@ -37,7 +32,7 @@ class Less_Environment {
 
 	public static $lastRule = false;
 
-	public static $_outputMap;
+	public static $_noSpaceCombinators;
 
 	public static $mixin_stack = 0;
 
@@ -54,43 +49,15 @@ class Less_Environment {
 		self::$lastRule = false;
 		self::$mixin_stack = 0;
 
-		if ( Less_Parser::$options['compress'] ) {
-
-			self::$_outputMap = [
-				','	=> ',',
-				': ' => ':',
-				''  => '',
-				' ' => ' ',
-				':' => ' :',
-				'+' => '+',
-				'~' => '~',
-				'>' => '>',
-				'|' => '|',
-				'^' => '^',
-				'^^' => '^^'
-			];
-
-		} else {
-
-			self::$_outputMap = [
-				','	=> ', ',
-				': ' => ': ',
-				''  => '',
-				' ' => ' ',
-				':' => ' :',
-				'+' => ' + ',
-				'~' => ' ~ ',
-				'>' => ' > ',
-				'|' => '|',
-				'^' => ' ^ ',
-				'^^' => ' ^^ '
-			];
-
-		}
+		self::$_noSpaceCombinators = [
+			'' => true,
+			' ' => true,
+			'|' => true
+		];
 	}
 
 	public function copyEvalEnv( $frames = [] ) {
-		$new_env = new Less_Environment();
+		$new_env = new self();
 		$new_env->frames = $frames;
 		return $new_env;
 	}

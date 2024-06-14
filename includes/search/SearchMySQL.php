@@ -2,7 +2,7 @@
 /**
  * MySQL search engine
  *
- * Copyright (C) 2004 Brion Vibber <brion@pobox.com>
+ * Copyright (C) 2004 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,9 @@
 
 use MediaWiki\MediaWikiServices;
 use Wikimedia\AtEase\AtEase;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 /**
@@ -225,7 +228,9 @@ class SearchMySQL extends SearchDatabase {
 		foreach ( $this->features as $feature => $value ) {
 			if ( $feature === 'title-suffix-filter' && $value ) {
 				$dbr = $this->dbProvider->getReplicaDatabase();
-				$queryBuilder->andWhere( 'page_title' . $dbr->buildLike( $dbr->anyString(), $value ) );
+				$queryBuilder->andWhere(
+					$dbr->expr( 'page_title', IExpression::LIKE, new LikeValue( $dbr->anyString(), $value ) )
+				);
 			}
 		}
 	}
@@ -321,7 +326,7 @@ class SearchMySQL extends SearchDatabase {
 		$this->dbProvider->getPrimaryDatabase()->newReplaceQueryBuilder()
 			->replaceInto( 'searchindex' )
 			->uniqueIndexFields( [ 'si_page' ] )
-			->rows( [
+			->row( [
 				'si_page' => $id,
 				'si_title' => $this->normalizeText( $title ),
 				 'si_text' => $this->normalizeText( $text )
@@ -420,6 +425,8 @@ class SearchMySQL extends SearchDatabase {
 			$sql = "SHOW GLOBAL VARIABLES LIKE 'ft\\_min\\_word\\_len'";
 
 			$dbr = $this->dbProvider->getReplicaDatabase();
+			// The real type is still IDatabase, but IReplicaDatabase is used for safety.
+			'@phan-var IDatabase $dbr';
 			// phpcs:ignore MediaWiki.Usage.DbrQueryUsage.DbrQueryFound
 			$result = $dbr->query( $sql, __METHOD__ );
 			$row = $result->fetchObject();

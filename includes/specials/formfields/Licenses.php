@@ -24,6 +24,7 @@
  */
 
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLFormField;
 use MediaWiki\MediaWikiServices;
 
 /**
@@ -41,7 +42,6 @@ class Licenses extends HTMLFormField {
 
 	/** @var string|null */
 	protected $selected;
-	/** #@- */
 
 	/**
 	 * @param array $params
@@ -154,8 +154,7 @@ class Licenses extends HTMLFormField {
 				$html .= $this->outputOption(
 					$key, '',
 					[
-						'disabled' => 'disabled',
-						'style' => 'color: GrayText', // for MSIE
+						'disabled' => 'disabled'
 					],
 					$depth
 				);
@@ -190,8 +189,6 @@ class Licenses extends HTMLFormField {
 		$val = str_repeat( /* &nbsp */ "\u{00A0}", $depth * 2 ) . $text;
 		return str_repeat( "\t", $depth ) . Html::element( 'option', $attribs, $val ) . "\n";
 	}
-
-	/** #@- */
 
 	/**
 	 * Accessor for $this->lines

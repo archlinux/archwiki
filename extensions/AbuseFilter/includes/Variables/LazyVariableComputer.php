@@ -17,9 +17,12 @@ use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\PreparedUpdate;
 use MediaWiki\Title\Title;
+use MediaWiki\User\ExternalUserNames;
+use MediaWiki\User\User;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityUtils;
 use ParserFactory;
 use ParserOptions;
 use Psr\Log\LoggerInterface;
@@ -27,10 +30,10 @@ use stdClass;
 use StringUtils;
 use TextContent;
 use UnexpectedValueException;
-use User;
 use WANObjectCache;
 use Wikimedia\Diff\Diff;
 use Wikimedia\Diff\UnifiedDiffFormatter;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\LBFactory;
 use WikiPage;
@@ -87,6 +90,9 @@ class LazyVariableComputer {
 	/** @var RestrictionStore */
 	private $restrictionStore;
 
+	/** @var UserIdentityUtils */
+	private $userIdentityUtils;
+
 	/** @var string */
 	private $wikiID;
 
@@ -104,6 +110,7 @@ class LazyVariableComputer {
 	 * @param UserGroupManager $userGroupManager
 	 * @param PermissionManager $permissionManager
 	 * @param RestrictionStore $restrictionStore
+	 * @param UserIdentityUtils $userIdentityUtils
 	 * @param string $wikiID
 	 */
 	public function __construct(
@@ -120,6 +127,7 @@ class LazyVariableComputer {
 		UserGroupManager $userGroupManager,
 		PermissionManager $permissionManager,
 		RestrictionStore $restrictionStore,
+		UserIdentityUtils $userIdentityUtils,
 		string $wikiID
 	) {
 		$this->textExtractor = $textExtractor;
@@ -135,6 +143,7 @@ class LazyVariableComputer {
 		$this->userGroupManager = $userGroupManager;
 		$this->permissionManager = $permissionManager;
 		$this->restrictionStore = $restrictionStore;
+		$this->userIdentityUtils = $userIdentityUtils;
 		$this->wikiID = $wikiID;
 	}
 
@@ -340,6 +349,21 @@ class LazyVariableComputer {
 				/** @var Title $title */
 				$title = $parameters['title'];
 				$result = $this->restrictionStore->getRestrictions( $title, $action );
+				break;
+			case 'user-type':
+				/** @var UserIdentity $userIdentity */
+				$userIdentity = $parameters['user-identity'];
+				if ( $this->userIdentityUtils->isNamed( $userIdentity ) ) {
+					$result = 'named';
+				} elseif ( $this->userIdentityUtils->isTemp( $userIdentity ) ) {
+					$result = 'temp';
+				} elseif ( IPUtils::isIPAddress( $userIdentity->getName() ) ) {
+					$result = 'ip';
+				} elseif ( ExternalUserNames::isExternal( $userIdentity->getName() ) ) {
+					$result = 'external';
+				} else {
+					$result = 'unknown';
+				}
 				break;
 			case 'user-editcount':
 				/** @var UserIdentity $userIdentity */

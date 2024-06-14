@@ -12,8 +12,8 @@
 
 namespace MediaWiki\Extension\Math;
 
-use Exception;
-use Html;
+use LogicException;
+use MediaWiki\Html\Html;
 
 /**
  * Takes LaTeX fragments and outputs the source directly to the browser
@@ -51,7 +51,7 @@ class MathSource extends MathRenderer {
 				'span',
 				[
 					// the former class name was 'tex'
-					// for backwards compatibility we keep this classname
+					// for backwards compatibility we keep this classname T348938
 					'class' => $class . ' tex',
 					'dir' => 'ltr'
 				]
@@ -61,11 +61,11 @@ class MathSource extends MathRenderer {
 	}
 
 	/**
-	 * @throws Exception always
+	 * @throws LogicException always
 	 * @return never
 	 */
 	protected function getMathTableName() {
-		throw new Exception( 'in math source mode no database caching should happen' );
+		throw new LogicException( 'in math source mode no database caching should happen' );
 	}
 
 	/**

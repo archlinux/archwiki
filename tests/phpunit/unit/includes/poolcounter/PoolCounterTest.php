@@ -1,7 +1,9 @@
 <?php
 
+use MediaWiki\PoolCounter\PoolCounter;
+
 /**
- * @covers PoolCounter
+ * @covers \MediaWiki\PoolCounter\PoolCounter
  */
 class PoolCounterTest extends MediaWikiUnitTestCase {
 	public function testConstruct() {

@@ -3,14 +3,13 @@
 		"authors": [
 			"Saederup92",
 			"Tinamalmgren",
-			"Weblars"
+			"Weblars",
+			"Sarrus"
 		]
 	},
 	"disableoathforuser": "Deaktivere brugeres tofaktorgodkendelse",
-	"specialpages-group-oath": "Tofaktorgodkendelse",
 	"oathauth-account": "Kontonavn:",
 	"oathauth-enable": "Aktiver tofaktorgodkendelse",
-	"oathauth-token": "Nøgle",
 	"oathauth-disable": "Deaktiver tofaktorgodkendelse",
 	"oathauth-validatedoath": "Validerede oplysninger for login med tofaktorgodkendelse, der nu er slået til.",
 	"oathauth-failedtovalidateoath": "Det mislykkedes at validere koden for tofaktorgodkendelse",
@@ -20,6 +19,7 @@
 	"action-oathauth-disable-for-user": "deaktivere tofaktorgodkendelse for en bruger",
 	"oathauth-enteruser": "Brugernavn:",
 	"oathauth-enterdisablereason": "Begrundelse for deaktivering:",
+	"right-oathauth-enable": "Aktivere tofaktorgodkendelse",
 	"action-oathauth-enable": "aktivere tofaktorgodkendelse",
 	"oathauth-auth-token-label": "Nøgle",
 	"oathauth-auth-ui": "Angiv en bekræftelseskode fra din godkendelsesenhed.",

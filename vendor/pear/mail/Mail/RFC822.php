@@ -486,7 +486,7 @@ class Mail_RFC822 {
         }
 
         // Trim the whitespace from all of the address strings.
-        array_map('trim', $addresses);
+        $addresses = array_map('trim', $addresses);
 
         // Validate each mailbox.
         // Format could be one of: name <geezer@domain.com>

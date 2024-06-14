@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface FindAndReplaceDialog class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -218,7 +218,7 @@ ve.ui.FindAndReplaceDialog.prototype.getSetupProcess = function ( data ) {
 			// Events
 			this.surface.getModel().connect( this, { documentUpdate: 'onSurfaceModelDocumentUpdate' } );
 			this.surface.getView().connect( this, { position: 'onSurfaceViewPosition' } );
-			ve.addPassiveEventListener( this.surface.$scrollListener[ 0 ], 'scroll', this.onWindowScrollThrottled );
+			this.surface.$scrollListener[ 0 ].addEventListener( 'scroll', this.onWindowScrollThrottled, { passive: true } );
 
 			this.updateFragments();
 			this.renderFragments();
@@ -247,7 +247,7 @@ ve.ui.FindAndReplaceDialog.prototype.getTeardownProcess = function ( data ) {
 			// Events
 			this.surface.getModel().disconnect( this );
 			surfaceView.disconnect( this );
-			ve.removePassiveEventListener( this.surface.$scrollListener[ 0 ], 'scroll', this.onWindowScrollThrottled );
+			this.surface.$scrollListener[ 0 ].removeEventListener( 'scroll', this.onWindowScrollThrottled );
 
 			var selection;
 			if ( this.fragments.length ) {
@@ -259,6 +259,7 @@ ve.ui.FindAndReplaceDialog.prototype.getTeardownProcess = function ( data ) {
 			}
 			surfaceModel.setSelection( selection );
 
+			// Generates ve-ce-surface-selections-findResults CSS class
 			surfaceView.drawSelections( 'findResults', [] );
 			this.fragments = [];
 			this.surface = null;
@@ -448,6 +449,7 @@ ve.ui.FindAndReplaceDialog.prototype.renderRangeOfFragments = function ( range )
 			this.surface.getView().getSelection( this.fragments[ i ].getSelection() )
 		);
 	}
+	// Generates ve-ce-surface-selections-findResults CSS class
 	this.surface.getView().drawSelections( 'findResults', selections );
 	this.isClipped = range.getLength() < this.results;
 	this.highlightFocused();

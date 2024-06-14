@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Reda Benkhadra",
-			"SADIQUI"
+			"SADIQUI",
+			"Ideophagous"
 		]
 	},
 	"mobile-frontend-editor-redlink-create": "صاوب صفحة",
@@ -15,5 +16,6 @@
 	"mobile-frontend-placeholder": "قلّب ف {{SITENAME}}",
 	"mobile-frontend-random-button": "صفحة كيما كانت",
 	"mobile-frontend-talk-back-to-page": "رجع ل صفحة \"$1\".",
-	"mobile-frontend-user-page-member-since": "{{GENDER:$1|دخل|دخلات}} هادي $1"
+	"mobile-frontend-user-page-member-since": "{{GENDER:$1|دخل|دخلات}} هادي $1",
+	"skinname-minerva": "مينيرڤانيو"
 }

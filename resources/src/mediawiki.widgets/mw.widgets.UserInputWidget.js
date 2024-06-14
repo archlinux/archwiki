@@ -11,19 +11,19 @@
 	 *
 	 * @class
 	 * @extends OO.ui.TextInputWidget
-	 * @mixins OO.ui.mixin.LookupElement
+	 * @mixes OO.ui.mixin.LookupElement
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {number} [limit=10] Number of results to show
-	 * @cfg {mw.Api} [api] API object to use, creates a default mw.Api instance if not specified
+	 * @param {number} [config.limit=10] Number of results to show
+	 * @param {mw.Api} [config.api] API object to use, creates a default mw.Api instance if not specified
 	 */
 	mw.widgets.UserInputWidget = function MwWidgetsUserInputWidget( config ) {
 		// Config initialization
 		config = config || {};
 
 		// Parent constructor
-		mw.widgets.UserInputWidget.parent.call( this, $.extend( {}, config, { autocomplete: false } ) );
+		mw.widgets.UserInputWidget.super.call( this, $.extend( {}, config, { autocomplete: false } ) );
 
 		// Mixin constructors
 		OO.ui.mixin.LookupElement.call( this, config );
@@ -60,13 +60,11 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.UserInputWidget.prototype.focus = function () {
-		var retval;
-
 		// Prevent programmatic focus from opening the menu
 		this.setLookupsDisabled( true );
 
 		// Parent method
-		retval = mw.widgets.UserInputWidget.parent.prototype.focus.apply( this, arguments );
+		var retval = mw.widgets.UserInputWidget.super.prototype.focus.apply( this, arguments );
 
 		this.setLookupsDisabled( false );
 
@@ -89,7 +87,7 @@
 	 * Get lookup cache item from server response data.
 	 *
 	 * @method
-	 * @param {Mixed} response Response from server
+	 * @param {any} response Response from server
 	 * @return {Object}
 	 */
 	mw.widgets.UserInputWidget.prototype.getLookupCacheDataFromResponse = function ( response ) {
@@ -103,11 +101,10 @@
 	 * @return {OO.ui.MenuOptionWidget[]} Menu items
 	 */
 	mw.widgets.UserInputWidget.prototype.getLookupMenuOptionsFromData = function ( data ) {
-		var len, i, user,
-			items = [];
+		var items = [];
 
-		for ( i = 0, len = data.length; i < len; i++ ) {
-			user = data[ i ] || {};
+		for ( var i = 0, len = data.length; i < len; i++ ) {
+			var user = data[ i ] || {};
 			items.push( new OO.ui.MenuOptionWidget( {
 				label: user.name,
 				data: user.name

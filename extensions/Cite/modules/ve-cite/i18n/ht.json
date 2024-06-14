@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80"
+			"Amire80",
+			"LeGuyanaisPure"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Liv",
@@ -46,7 +47,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Yo defini referans sa a nan yon modèl oswa lòt blòk pwodwi, epi pou kounye a yo ka sèlman wè previzyalizasyon li nan mòd sous.",
 	"cite-ve-referenceslist-missingreflist": "Yo defini referans sa a nan yon modèl, epi pou kounye a yo ka sèlman modifye li nan mòd sous.",
 	"cite-ve-toolbar-group-label": "Mete sitasyon",
-	"cite-ve-othergroup-item": "Referans: $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referans",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Non gwoup referans : « $1 »"
+	"cite-ve-othergroup-item": "Referans: $1"
 }

@@ -322,8 +322,8 @@ const UiElement = require( './mmv.ui.js' );
 				duration: animationLength,
 				step: ( step ) => {
 					this.$image.css( {
-						'-webkit-filter': `blur(${step}px)`,
-						filter: `blur(${step}px)`
+						'-webkit-filter': `blur(${ step }px)`,
+						filter: `blur(${ step }px)`
 					} );
 				},
 				complete: () => {
@@ -332,6 +332,7 @@ const UiElement = require( './mmv.ui.js' );
 				}
 			} );
 		}
+
 		unblur() {
 			// We apply empty CSS values to remove the inline styles applied by jQuery
 			// so that they don't get in the way of styles defined in CSS
@@ -350,18 +351,18 @@ const UiElement = require( './mmv.ui.js' );
 			const htmlUtils = new HtmlUtils();
 
 			// ** is bolding in Phabricator
-			const description = `**${mw.message( 'multimediaviewer-errorreport-privacywarning' ).text()}**
+			const description = `**${ mw.message( 'multimediaviewer-errorreport-privacywarning' ).text() }**
 
 
 Error details:
 
-error: ${error}
-URL: ${location.href}
-user agent: ${navigator.userAgent}
-screen size: ${screen.width}x${screen.height}
-canvas size: ${canvasDimensions.width}x${canvasDimensions.height}
-image size: ${this.imageRawMetadata.originalWidth}x${this.imageRawMetadata.originalHeight}
-thumbnail size: CSS: ${thumbnailDimensions.cssWidth}x${thumbnailDimensions.cssHeight}, screen width: ${thumbnailDimensions.screen}, real width: ${thumbnailDimensions.real}`;
+error: ${ error }
+URL: ${ location.href }
+user agent: ${ navigator.userAgent }
+screen size: ${ screen.width }x${ screen.height }
+canvas size: ${ canvasDimensions.width }x${ canvasDimensions.height }
+image size: ${ this.imageRawMetadata.originalWidth }x${ this.imageRawMetadata.originalHeight }
+thumbnail size: CSS: ${ thumbnailDimensions.cssWidth }x${ thumbnailDimensions.cssHeight }, screen width: ${ thumbnailDimensions.screen }, real width: ${ thumbnailDimensions.real }`;
 			const errorUri = mw.msg( 'multimediaviewer-report-issue-url', encodeURIComponent( description ) );
 
 			const $retryLink = $( '<a>' ).addClass( 'mw-mmv-retry-link' ).text(

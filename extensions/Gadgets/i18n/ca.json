@@ -16,7 +16,7 @@
 	"gadgets-desc": "Permet als usuaris personalitzar [[Special:Gadgets|ginys CSS i JavaScript]] a les seves [[Special:Preferences#mw-prefsection-gadgets|preferències]]",
 	"prefs-gadgets": "Ginys",
 	"gadgets-prefstext": "A continuació teniu una llista de ginys especials que podeu activar al vostre compte.\nLa majoria d'aquests ginys fan servir JavaScript, per tant l'haureu de tenir activat al vostre navegador per a que funcionin.\nTingueu en compte que aquests ginys no tenen cap efecte sobre aquesta pàgina de preferències.\n\nTingueu també present que aquests ginys especials no formen part del programari MediaWiki i que acostumen a estar fets i mantinguts per usuaris del vostre wiki local.\nEls administradors d'interfície local poden editar els ginys disponibles fent servir [[MediaWiki:Gadgets-definition|definicions]], i els administradors locals poden editar les seves [[Special:Gadgets|descripcions]]. El nombre d'usuaris de cada giny al wiki es llista a les [[Special:GadgetUsage|estadístiques d'ús dels ginys]].",
-	"gadgets": "Ginys",
+	"special-gadgets": "Ginys",
 	"gadgetusage": "Estadístiques d'ús de ginys",
 	"gadgetusage-gadget": "Giny",
 	"gadgetusage-usercount": "Nombre d'usuaris",
@@ -34,7 +34,5 @@
 	"gadgets-export-title": "Exportació de ginys",
 	"gadgets-not-found": "No s'ha trobat el giny «$1».",
 	"gadgets-export-text": "Per a exportar el giny $1, feu clic al botó «{{int:gadgets-export-download}}», deseu el fitxer baixat,\naneu a Special:Import al wiki de destinació i pugeu-lo. Llavors afegiu el següent a la pàgina MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nHeu de tenir els permisos adequats en el wiki de destinació (incloent-hi els permisos per editar missatges del sistema) i s'ha d'habilitar la importació de la pujada de fitxers.",
-	"gadgets-export-download": "Baixa",
-	"right-gadgets-edit": "Edita el gadget JavaScript i les pàgines CSS",
-	"right-gadgets-definition-edit": "Modificar les definicions de gadgets"
+	"gadgets-export-download": "Baixa"
 }

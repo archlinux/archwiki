@@ -1,7 +1,7 @@
 /*!
  * VisualEditor Initialization Target class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -123,8 +123,6 @@ ve.init.Target.static.toolbarGroups = [
 	},
 	{
 		name: 'style',
-		header: OO.ui.deferMsg( 'visualeditor-toolbar-text-style' ),
-		title: OO.ui.deferMsg( 'visualeditor-toolbar-style-tooltip' ),
 		include: [ 'bold', 'italic', 'moreTextStyle' ]
 	},
 	{
@@ -162,11 +160,15 @@ ve.init.Target.static.toolbarGroups = [
 		align: 'after',
 		icon: 'menu',
 		indicator: null,
+		header: OO.ui.deferMsg( 'visualeditor-pagemenu-tooltip' ),
 		title: OO.ui.deferMsg( 'visualeditor-pagemenu-tooltip' ),
 		label: OO.ui.deferMsg( 'visualeditor-pagemenu-tooltip' ),
 		invisibleLabel: true,
 		include: [ { group: 'utility' }, { group: 'help' } ]
 	}
+	// ve-mw puts help in a separate group and so uses the
+	// visualeditor-help-tool message.
+	// TODO: Consider downstreaming this message.
 ];
 
 /**
@@ -223,6 +225,8 @@ ve.init.Target.static.importRules = {
 	external: {
 		blacklist: {
 			// Annotations
+			// TODO: This also removes harmless things like <span style="font-weight: bold;">
+			// which would otherwise get converted to a bold annotation
 			'textStyle/span': true,
 			'textStyle/font': true,
 			// Nodes
@@ -241,7 +245,11 @@ ve.init.Target.static.importRules = {
 				// Unsupported sectioning tags
 				main: true,
 				nav: true,
-				aside: true
+				aside: true,
+				// HTML headings are already bold by default. Some skins may use non-bold
+				// heaidngs, but more likely we will end up with useless bold annotations.
+				'h1 b, h2 b, h3 b, h4 b, h5 b, h6 b': true,
+				'h1 strong, h2 strong, h3 strong, h4 strong, h5 strong, h6 strong': true
 			}
 		},
 		nodeSanitization: true
@@ -348,7 +356,7 @@ ve.init.Target.prototype.bindHandlers = function () {
 		visibilitychange: this.onDocumentVisibilityChangeHandler
 	} );
 	this.$element.on( 'keydown', this.onTargetKeyDownHandler );
-	ve.addPassiveEventListener( this.$scrollListener[ 0 ], 'scroll', this.onContainerScrollHandler );
+	this.$scrollListener[ 0 ].addEventListener( 'scroll', this.onContainerScrollHandler, { passive: true } );
 };
 
 /**
@@ -361,7 +369,7 @@ ve.init.Target.prototype.unbindHandlers = function () {
 		visibilitychange: this.onDocumentVisibilityChangeHandler
 	} );
 	this.$element.off( 'keydown', this.onTargetKeyDownHandler );
-	ve.removePassiveEventListener( this.$scrollListener[ 0 ], 'scroll', this.onContainerScrollHandler );
+	this.$scrollListener[ 0 ].removeEventListener( 'scroll', this.onContainerScrollHandler );
 };
 
 /**

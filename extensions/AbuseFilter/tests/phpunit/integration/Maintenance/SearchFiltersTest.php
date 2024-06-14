@@ -14,9 +14,6 @@ use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
  */
 class SearchFiltersTest extends MaintenanceBaseTestCase {
 
-	/** @inheritDoc */
-	protected $tablesUsed = [ 'abuse_filter' ];
-
 	protected function setUp(): void {
 		global $wgDBtype;
 

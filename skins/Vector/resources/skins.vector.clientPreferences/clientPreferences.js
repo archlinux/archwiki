@@ -2,8 +2,9 @@
  * @typedef {Object} ClientPreference
  * @property {string[]} options that are valid for this client preference
  * @property {string} preferenceKey for registered users.
+ * @property {string} [type] defaults to radio. Supported: radio, switch
+ * @property {function} [callback] callback executed after a client preference has been modified.
  */
-const config = /** @type {Record<string,ClientPreference>} */( require( './config.json' ) );
 let /** @type {MwApi} */ api;
 /**
  * @typedef {Object} PreferenceOption
@@ -13,6 +14,8 @@ let /** @type {MwApi} */ api;
  */
 
 /**
+ * Get the list of client preferences that are active on the page, including hidden.
+ *
  * @return {string[]} of active client preferences
  */
 function getClientPreferences() {
@@ -22,41 +25,145 @@ function getClientPreferences() {
 }
 
 /**
- * @param {Element} parent
- * @param {string} featureName
- * @param {ClientPreference} pref
- * @param {string} value
- * @param {string} currentValue
+ * Get the list of client preferences that are active on the page and not hidden.
+ *
+ * @param {Record<string,ClientPreference>} config
+ * @return {string[]} of user facing client preferences
  */
-function appendRadioToggle( parent, featureName, pref, value, currentValue ) {
+function getVisibleClientPreferences( config ) {
+	const active = getClientPreferences();
+	// Order should be based on key in config.json
+	return Object.keys( config ).filter( ( key ) => active.indexOf( key ) > -1 );
+}
+
+/**
+ * @param {string} featureName
+ * @param {string} value
+ * @param {Record<string,ClientPreference>} config
+ */
+function toggleDocClassAndSave( featureName, value, config ) {
+	const pref = config[ featureName ];
+	const callback = pref.callback || ( () => {} );
+	if ( mw.user.isNamed() ) {
+		// FIXME: Ideally this would be done in mw.user.clientprefs API.
+		// mw.user.clientPrefs.get is marked as being only stable for anonymous and temporary users.
+		// So instead we have to keep track of all the different possible values and remove them
+		// before adding the new class.
+		config[ featureName ].options.forEach( ( possibleValue ) => {
+			document.documentElement.classList.remove( `${ featureName }-clientpref-${ possibleValue }` );
+		} );
+		document.documentElement.classList.add( `${ featureName }-clientpref-${ value }` );
+		// Ideally this should be taken care of via a single core helper function.
+		mw.util.debounce( function () {
+			api = api || new mw.Api();
+			api.saveOption( pref.preferenceKey, value ).then( () => {
+				callback();
+			} );
+		}, 100 )();
+		// END FIXME.
+	} else {
+		// This case is much simpler, the API transparently takes care of classes as well as storage.
+		mw.user.clientPrefs.set( featureName, value );
+		callback();
+	}
+}
+
+/**
+ * @param {string} featureName
+ * @param {string} value
+ * @return {string}
+ */
+const getInputId = ( featureName, value ) => `skin-client-pref-${ featureName }-value-${ value }`;
+
+/**
+ * @param {string} type
+ * @param {string} featureName
+ * @param {string} value
+ * @return {HTMLInputElement}
+ */
+function makeInputElement( type, featureName, value ) {
 	const input = document.createElement( 'input' );
-	const name = `vector-client-pref-${featureName}-group`;
-	const id = `vector-client-pref-${featureName}-value-${value}`;
+	const name = `skin-client-pref-${ featureName }-group`;
+	const id = getInputId( featureName, value );
 	input.name = name;
 	input.id = id;
-	input.type = 'radio';
-	input.value = value;
+	input.type = type;
+	if ( type === 'checkbox' ) {
+		input.checked = value === '1';
+	} else {
+		input.value = value;
+	}
+	input.setAttribute( 'data-event-name', id );
+	return input;
+}
+
+/**
+ * @param {string} featureName
+ * @param {string} value
+ * @return {HTMLLabelElement}
+ */
+function makeLabelElement( featureName, value ) {
+	const label = document.createElement( 'label' );
+	// eslint-disable-next-line mediawiki/msg-doc
+	label.textContent = mw.msg( `${ featureName }-${ value }-label` );
+	label.setAttribute( 'for', getInputId( featureName, value ) );
+	return label;
+}
+
+/**
+ * @param {Element} parent
+ * @param {string} featureName
+ * @param {string} value
+ * @param {string} currentValue
+ * @param {Record<string,ClientPreference>} config
+ */
+function appendRadioToggle( parent, featureName, value, currentValue, config ) {
+	const input = makeInputElement( 'radio', featureName, value );
+	input.classList.add( 'cdx-radio__input' );
 	if ( currentValue === value ) {
 		input.checked = true;
 	}
-	const label = document.createElement( 'label' );
-	// eslint-disable-next-line mediawiki/msg-doc
-	label.textContent = mw.msg( `${featureName}-${value}-label` );
-	label.setAttribute( 'for', id );
+	const icon = document.createElement( 'span' );
+	icon.classList.add( 'cdx-radio__icon' );
+	const label = makeLabelElement( featureName, value );
+	label.classList.add( 'cdx-radio__label' );
 	const container = document.createElement( 'div' );
+	container.classList.add( 'cdx-radio' );
 	container.appendChild( input );
+	container.appendChild( icon );
 	container.appendChild( label );
 	parent.appendChild( container );
 	input.addEventListener( 'change', () => {
-		// @ts-ignore https://github.com/wikimedia/typescript-types/pull/44
-		mw.user.clientPrefs.set( featureName, value );
-		if ( mw.user.isNamed() ) {
-			mw.util.debounce( function () {
-				api = api || new mw.Api();
-				api.saveOption( pref.preferenceKey, value );
-			}, 100 )();
-		}
+		toggleDocClassAndSave( featureName, value, config );
 	} );
+}
+
+/**
+ * @param {Element} form
+ * @param {string} featureName
+ * @param {HTMLElement} labelElement
+ * @param {string} currentValue
+ * @param {Record<string,ClientPreference>} config
+ */
+function appendToggleSwitch( form, featureName, labelElement, currentValue, config ) {
+	const input = makeInputElement( 'checkbox', featureName, currentValue );
+	input.classList.add( 'cdx-toggle-switch__input' );
+	const switcher = document.createElement( 'span' );
+	switcher.classList.add( 'cdx-toggle-switch__switch' );
+	const grip = document.createElement( 'span' );
+	grip.classList.add( 'cdx-toggle-switch__switch__grip' );
+	switcher.appendChild( grip );
+	const label = labelElement || makeLabelElement( featureName, currentValue );
+	label.classList.add( 'cdx-toggle-switch__label' );
+	const toggleSwitch = document.createElement( 'span' );
+	toggleSwitch.classList.add( 'cdx-toggle-switch' );
+	toggleSwitch.appendChild( input );
+	toggleSwitch.appendChild( switcher );
+	toggleSwitch.appendChild( label );
+	input.addEventListener( 'change', () => {
+		toggleDocClassAndSave( featureName, input.checked ? '1' : '0', config );
+	} );
+	form.appendChild( toggleSwitch );
 }
 
 /**
@@ -70,67 +177,144 @@ function createRow( className ) {
 }
 
 /**
+ * Get the label for the feature.
+ *
+ * @param {string} featureName
+ * @return {MwMessage}
+ */
+const getFeatureLabelMsg = ( featureName ) =>
+	// eslint-disable-next-line mediawiki/msg-doc
+	mw.message( `${ featureName }-name` );
+
+/**
  * adds a toggle button
  *
  * @param {string} featureName
- * @param {string} label
+ * @param {Record<string,ClientPreference>} config
  * @return {Element|null}
  */
-function makeClientPreferenceBinaryToggle( featureName, label ) {
+function makeControl( featureName, config ) {
 	const pref = config[ featureName ];
 	if ( !pref ) {
 		return null;
 	}
-	// @ts-ignore https://github.com/wikimedia/typescript-types/pull/44
 	const currentValue = mw.user.clientPrefs.get( featureName );
 	// The client preference was invalid. This shouldn't happen unless a gadget
 	// or script has modified the documentElement.
-	if ( !currentValue ) {
+	if ( typeof currentValue === 'boolean' ) {
 		return null;
 	}
 	const row = createRow( '' );
 	const form = document.createElement( 'form' );
-	const labelNode = document.createElement( 'label' );
-	labelNode.textContent = label;
-	form.appendChild( labelNode );
-	const toggle = document.createElement( 'fieldset' );
-	pref.options.forEach( ( value ) => {
-		appendRadioToggle( toggle, featureName, pref, value, currentValue );
-	} );
-	form.appendChild( toggle );
+	const type = pref.type || 'radio';
+	switch ( type ) {
+		case 'radio':
+			pref.options.forEach( ( value ) => {
+				appendRadioToggle( form, featureName, value, currentValue, config );
+			} );
+			break;
+		case 'switch': {
+			const labelElement = document.createElement( 'label' );
+			labelElement.textContent = getFeatureLabelMsg( featureName ).text();
+			appendToggleSwitch( form, featureName, labelElement, currentValue, config );
+			break;
+		} default:
+			throw new Error( 'Unknown client preference! Only switch or radio are supported.' );
+	}
 	row.appendChild( form );
 	return row;
 }
 
 /**
+ * @param {Element} parent
  * @param {string} featureName
- * @return {Element|null}
+ * @param {Record<string,ClientPreference>} config
  */
-function makeClientPreference( featureName ) {
-	// eslint-disable-next-line mediawiki/msg-doc
-	const labelMsg = mw.message( `${featureName}-name` );
-	// If the user is not debugging messages and no language exists exit as its a hidden client preference.
+function makeClientPreference( parent, featureName, config ) {
+	const labelMsg = getFeatureLabelMsg( featureName );
+	// If the user is not debugging messages and no language exists,
+	// exit as its a hidden client preference.
 	if ( !labelMsg.exists() && mw.config.get( 'wgUserLanguage' ) !== 'qqx' ) {
-		return null;
+		return;
 	} else {
-		return makeClientPreferenceBinaryToggle( featureName, labelMsg.text() );
+		const id = `skin-client-prefs-${ featureName }`;
+		// @ts-ignore TODO: upstream patch URL
+		const portlet = mw.util.addPortlet( id, labelMsg.text() );
+		const labelElement = portlet.querySelector( 'label' );
+		// eslint-disable-next-line mediawiki/msg-doc
+		const descriptionMsg = mw.message( `${ featureName }-description` );
+		if ( descriptionMsg.exists() ) {
+			const desc = document.createElement( 'span' );
+			desc.classList.add( 'skin-client-pref-description' );
+			desc.textContent = descriptionMsg.text();
+			if ( labelElement && labelElement.parentNode ) {
+				labelElement.appendChild( desc );
+			}
+		}
+		const row = makeControl( featureName, config );
+		parent.appendChild( portlet );
+		if ( row ) {
+			const tmp = mw.util.addPortletLink( id, '', '' );
+			// create a dummy link
+			if ( tmp ) {
+				const link = tmp.querySelector( 'a' );
+				if ( link ) {
+					link.replaceWith( row );
+				}
+			}
+		}
 	}
 }
 
 /**
  * Fills the client side preference dropdown with controls.
+ * @param {string} selector of element to fill with client preferences
+ * @param {Record<string,ClientPreference>} config
+ * @return {Promise<Node>}
  */
-function fillClientPreferencesDropdown() {
-	const dropdownContents = document.querySelectorAll( '#vector-client-prefs .vector-dropdown-content' )[ 0 ];
-	if ( !dropdownContents ) {
-		return;
+function render( selector, config ) {
+	const node = document.querySelector( selector );
+	if ( !node ) {
+		return Promise.reject();
 	}
-	getClientPreferences().forEach( ( pref ) => {
-		const prefNode = makeClientPreference( pref );
-		if ( prefNode ) {
-			dropdownContents.appendChild( prefNode );
-		}
+	return new Promise( ( resolve ) => {
+		getVisibleClientPreferences( config ).forEach( ( pref ) => {
+			makeClientPreference( node, pref, config );
+		} );
+		mw.requestIdleCallback( () => {
+			resolve( node );
+		} );
 	} );
 }
 
-module.exports = fillClientPreferencesDropdown;
+/**
+ * @param {string} clickSelector what to click
+ * @param {string} renderSelector where to render
+ * @param {Record<string,ClientPreference>} config
+ */
+function bind( clickSelector, renderSelector, config ) {
+	let enhanced = false;
+	const chk = /** @type {HTMLInputElement} */ (
+		document.querySelector( clickSelector )
+	);
+	if ( !chk ) {
+		return;
+	}
+	if ( chk.checked ) {
+		render( renderSelector, config );
+		enhanced = true;
+	} else {
+		chk.addEventListener( 'input', () => {
+			if ( enhanced ) {
+				return;
+			}
+			render( renderSelector, config );
+			enhanced = true;
+		} );
+	}
+}
+module.exports = {
+	bind,
+	toggleDocClassAndSave,
+	render
+};

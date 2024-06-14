@@ -25,7 +25,7 @@ namespace MediaWiki\SpecialPage;
 
 use Closure;
 use MediaWiki\Html\Html;
-use Message;
+use MediaWiki\Message\Message;
 
 /**
  * This class is a drop-in replacement for other special pages that need to be manually
@@ -76,8 +76,5 @@ class DisabledSpecialPage extends UnlistedSpecialPage {
 
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( DisabledSpecialPage::class, 'DisabledSpecialPage' );

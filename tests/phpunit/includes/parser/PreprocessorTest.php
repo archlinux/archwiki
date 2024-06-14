@@ -1,21 +1,30 @@
 <?php
 
+namespace MediaWiki\Tests\Parser;
+
+use HashBagOStuff;
+use MediaWiki\Parser\Parser;
 use MediaWiki\User\User;
+use MediaWikiIntegrationTestCase;
+use ParserOptions;
+use Preprocessor;
+use Preprocessor_Hash;
+use WANObjectCache;
 
 /**
- * @covers Preprocessor
+ * @covers \Preprocessor
  *
- * @covers Preprocessor_Hash
- * @covers PPDStack_Hash
- * @covers PPDStackElement_Hash
- * @covers PPDPart_Hash
- * @covers PPFrame_Hash
- * @covers PPTemplateFrame_Hash
- * @covers PPCustomFrame_Hash
- * @covers PPNode_Hash_Tree
- * @covers PPNode_Hash_Text
- * @covers PPNode_Hash_Array
- * @covers PPNode_Hash_Attr
+ * @covers \Preprocessor_Hash
+ * @covers \PPDStack_Hash
+ * @covers \PPDStackElement_Hash
+ * @covers \PPDPart_Hash
+ * @covers \PPFrame_Hash
+ * @covers \PPTemplateFrame_Hash
+ * @covers \PPCustomFrame_Hash
+ * @covers \PPNode_Hash_Tree
+ * @covers \PPNode_Hash_Text
+ * @covers \PPNode_Hash_Array
+ * @covers \PPNode_Hash_Attr
  */
 class PreprocessorTest extends MediaWikiIntegrationTestCase {
 	protected $mTitle = 'Page title';

@@ -20,12 +20,13 @@
 namespace MediaWiki\Extension\AbuseFilter\Special;
 
 use ErrorPageError;
-use Html;
 use HTMLForm;
 use IDBAccessObject;
 use MediaWiki\Extension\AbuseFilter\BlockedDomainStorage;
+use MediaWiki\Html\Html;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Title\TitleValue;
 use PermissionsError;
-use SpecialPage;
 use WANObjectCache;
 
 /**
@@ -112,11 +113,19 @@ class BlockedExternalDomains extends SpecialPage {
 		}
 
 		$content = Html::element( 'th', [], $this->msg( 'abusefilter-blocked-domains-domain-header' )->text() ) .
-			Html::element( 'th', [], $this->msg( 'abusefilter-blocked-domains-notes-header' )->text() ) .
-			( $userCanManage ?
-				Html::element( 'th', [ 'class' => 'unsortable' ],
-						   $this->msg( 'abusefilter-blocked-domains-actions-header' )->text() ) :
-				'' );
+			Html::element( 'th', [], $this->msg( 'abusefilter-blocked-domains-notes-header' )->text() );
+		if ( $userCanManage ) {
+			$content .= Html::element(
+				'th',
+				[],
+				$this->msg( 'abusefilter-blocked-domains-addedby-header' )->text()
+			);
+			$content .= Html::element(
+				'th',
+				[ 'class' => 'unsortable' ],
+				$this->msg( 'abusefilter-blocked-domains-actions-header' )->text()
+			);
+		}
 		$thead = Html::rawElement( 'tr', [], $content );
 
 		// Parsing each row is expensive, put it behind WAN cache
@@ -163,6 +172,16 @@ class BlockedExternalDomains extends SpecialPage {
 		$newRow .= Html::rawElement( 'td', [], $this->getOutput()->parseInlineAsInterface( $domain['notes'] ) );
 
 		if ( $showManageActions ) {
+			if ( isset( $domain['addedBy'] ) ) {
+				$addedBy = $this->getLinkRenderer()->makeLink(
+					new TitleValue( 3, $domain['addedBy'] ),
+					$domain['addedBy']
+				);
+			} else {
+				$addedBy = '';
+			}
+			$newRow .= Html::rawElement( 'td', [], $addedBy );
+
 			$actionLink = $this->getLinkRenderer()->makeKnownLink(
 				$this->getPageTitle( 'remove' ),
 				$this->msg( 'abusefilter-blocked-domains-remove' )->text(),

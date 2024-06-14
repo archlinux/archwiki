@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Fitoschido",
+			"Lluis Cat",
 			"Luckas",
 			"Macofe",
 			"Mguix",
 			"Qllach",
 			"Toniher",
-			"Vriullop",
-			"Lluis Cat"
+			"Vriullop"
 		]
 	},
 	"templatedata-desc": "Implementa emmagatzematge de dades pels paràmetres de plantilles (utilitzant JSON)",

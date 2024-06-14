@@ -7,7 +7,6 @@
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "Himiki formula",
-	"math-visualeditor-mwcheminspector-title": "Himiki formula",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Çalt redaktirlemek",
 	"math-visualeditor-mwlatexdialog-card-formula": "Formula",
 	"math-visualeditor-mwlatexdialog-card-options": "Görnüş",
@@ -51,8 +50,8 @@
 	"math-tracking-category-error": "Matematika ýalňyşlyklary bolan sahypalar",
 	"math_unknown_error": "näbelli säwlik",
 	"math_unknown_function": "näbelli funksiýa",
-	"mw_math_mathml": "Mümkin bolsa MathML (eksperimental)",
-	"mw_math_source": "TeX-ligine galdyr (tekst brauzerleri üçin)",
+	"mw-math-mathml": "Mümkin bolsa MathML (eksperimental)",
+	"mw-math-source": "TeX-ligine galdyr (tekst brauzerleri üçin)",
 	"prefs-math": "Matematiki formulalar",
 	"mathstatus": "Matematika ýagdaýy",
 	"mathwikibase": "Matematika formulasy barada maglumat",

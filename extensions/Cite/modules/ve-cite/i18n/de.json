@@ -62,7 +62,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Dieser Einzelnachweis wird in einer Vorlage oder einem anderen erzeugten Block definiert und derzeit kann eine Vorschau nur im Quelltextmodus angezeigt werden.",
 	"cite-ve-referenceslist-missingreflist": "Diese Einzelnachweisliste wurde von einer Vorlage erzeugt.",
 	"cite-ve-toolbar-group-label": "Belegen",
-	"cite-ve-othergroup-item": "$1-Einzelnachweis",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referenzierungen",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Referenzierungsgruppenname: „$1“"
+	"cite-ve-othergroup-item": "$1-Einzelnachweis"
 }

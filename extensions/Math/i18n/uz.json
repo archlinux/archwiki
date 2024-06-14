@@ -8,7 +8,6 @@
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "Kimyoviy formula",
-	"math-visualeditor-mwcheminspector-title": "Kimyoviy formula",
 	"math-visualeditor-mwlatexdialog-card-options": "Opsiyalar",
 	"math-visualeditor-mwlatexinspector-display-block": "Blok",
 	"math-visualeditor-mwlatexinspector-display-default": "Sukut boʻyicha",
@@ -35,7 +34,7 @@
 	"math-visualeditor-symbol-group-math-typefaces": "Shrift turlari",
 	"math_syntax_error": "sintaktik xato",
 	"math_unknown_error": "nomaʼlum xato",
-	"mw_math_source": "Ishoralarda TeX ni qoldirish (matnli brauzerlar uchun)",
+	"mw-math-source": "Ishoralarda TeX ni qoldirish (matnli brauzerlar uchun)",
 	"prefs-math": "Formulalar",
 	"math-wikibase-formula": "Formula",
 	"math-wikibase-formula-name": "Nomi",

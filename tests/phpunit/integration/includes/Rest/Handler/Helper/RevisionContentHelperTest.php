@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Tests\Rest\Handler\Helper;
 
+use Exception;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\ExistingPageRecord;
@@ -24,24 +25,11 @@ class RevisionContentHelperTest extends MediaWikiIntegrationTestCase {
 
 	private const NO_REVISION_ETAG = '"b620cd7841f9ea8f545f11cc44ce794f848fa2d3"';
 
-	protected function setUp(): void {
-		parent::setUp();
-
-		// Clean up these tables after each test
-		$this->tablesUsed = [
-			'page',
-			'revision',
-			'comment',
-			'text',
-			'content'
-		];
-	}
-
 	/**
 	 * @param array $params
 	 * @param Authority|null $authority
 	 * @return RevisionContentHelper
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	private function newHelper(
 		array $params = [],

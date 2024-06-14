@@ -1,6 +1,6 @@
 <?php
 
-namespace phpunit\unit\includes\Settings;
+namespace MediaWiki\Tests\Unit\Settings;
 
 use BagOStuff;
 use ExtensionRegistry;
@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\Settings\Cache\CacheableSource;
+use MediaWiki\Settings\Cache\CachedSource;
 use MediaWiki\Settings\Config\ArrayConfigBuilder;
 use MediaWiki\Settings\Config\MergeStrategy;
 use MediaWiki\Settings\Config\PhpIniSink;
@@ -150,13 +151,19 @@ class SettingsBuilderTest extends TestCase {
 
 	public function testLoadingExtensions() {
 		$extensionRegistryMock = $this->createMock( ExtensionRegistry::class );
+		$expectedQueuePaths = [
+			'/test/extensions/Foo/extension.json',
+			'/test/extensions/Bar/extension.json',
+			'/test/skins/Quux/skin.json',
+		];
 		$extensionRegistryMock
 			->expects( $this->exactly( 3 ) )
-			->method( 'queue' )->withConsecutive(
-				[ '/test/extensions/Foo/extension.json' ],
-				[ '/test/extensions/Bar/extension.json' ],
-				[ '/test/skins/Quux/skin.json' ]
-			);
+			->method( 'queue' )
+			->willReturnCallback( function ( $path ) use ( &$expectedQueuePaths ) {
+				$this->assertContains( $path, $expectedQueuePaths );
+				$pathIdx = array_search( $path, $expectedQueuePaths, true );
+				unset( $expectedQueuePaths[$pathIdx] );
+			} );
 
 		$setting = $this->newSettingsBuilder( [
 			'extensionRegistry' => $extensionRegistryMock,
@@ -529,7 +536,7 @@ class SettingsBuilderTest extends TestCase {
 			->load( $mockSource );
 
 		$hashKey = 'abc123';
-		$key = 'global:MediaWiki\Tests\Unit\Settings\Cache\CachedSourceTest:' . $hashKey;
+		$key = 'global:' . self::class . ':' . $hashKey;
 
 		// Mock a cache miss
 		$mockSource
@@ -540,7 +547,7 @@ class SettingsBuilderTest extends TestCase {
 		$mockCache
 			->expects( $this->once() )
 			->method( 'makeGlobalKey' )
-			->with( 'MediaWiki\Settings\Cache\CachedSource', $hashKey )
+			->with( CachedSource::class, $hashKey )
 			->willReturn( $key );
 
 		$mockCache

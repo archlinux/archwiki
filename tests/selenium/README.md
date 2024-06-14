@@ -2,15 +2,14 @@
 
 ## Getting started
 
-See <https://www.mediawiki.org/wiki/Selenium/Node.js> for how to best
+See <https://www.mediawiki.org/wiki/Selenium> for how to best
 run these locally. Below the internal prerequisites are documented,
 but you might not need to install these yourself.
 
 ## Prerequisites
 
-- [Chromium](https://www.chromium.org/) or [Chrome](https://www.google.com/chrome/)
-- [ChromeDriver](https://chromedriver.chromium.org/downloads)
-- [Node.js](https://nodejs.org/en/)
+- [Chromium](https://www.chromium.org/Home) or [Chrome](https://www.google.com/chrome)
+- [Node.js](https://nodejs.org)
 
 ## Usage
 
@@ -22,20 +21,20 @@ The Selenium tests default to headless mode, unless a `DISPLAY` environment vari
 This variable may be set on Linux desktop and XQuartz environments. To run headless there,
 unset the `DISPLAY` environment variable first.
 
-    npm run selenium
+    npm run selenium-test
 
 Or:
 
-    DISPLAY= npm run selenium
+    DISPLAY= npm run selenium-test
 
-#### Visible browser
+### Visible browser
 
 To see the browser window, ensure the `DISPLAY` variable is set. On Linux desktop and in XQuartz
 environments this is probably set already. On macOS, set it to a dummy value like `1`.
 
-    DISPLAY=1 npm run selenium
+    DISPLAY=1 npm run selenium-test
 
-#### Video recording
+### Video recording
 
 To capture a video, the tests have to run in the context of an X11 server, with the `DISPLAY`
 environment variable set to its display name. If the shell has no X11 server or if you want
@@ -50,17 +49,17 @@ Example test run in [Fresh](https://gerrit.wikimedia.org/g/fresh).
     Xvfb "$DISPLAY" -screen 0 1280x1024x24 &
     npm run selenium-test
 
-#### Filter
+## Filter
 
 Run a specific spec:
 
-    npm run selenium -- --spec tests/selenium/specs/page.js
+    npm run selenium-test -- --spec tests/selenium/specs/page.js
 
 To filter by test case, e.g. with the name containing "preferences":
 
-    npm run selenium -- --mochaOpts.grep preferences
+    npm run selenium-test -- --mochaOpts.grep preferences
 
-#### Configuration
+## Configuration
 
 The following environment variables decide where to find MediaWiki and how to login:
 
@@ -71,4 +70,4 @@ The following environment variables decide where to find MediaWiki and how to lo
 
 ## Further reading
 
-- [Selenium/Node.js](https://www.mediawiki.org/wiki/Selenium/Node.js) on mediawiki.org
+- [Selenium](https://www.mediawiki.org/wiki/Selenium) on mediawiki.org

@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Snævar",
-			"Sveinn í Felli",
-			"Stefán Örvar Sigmundsson"
+			"Stefán Örvar Sigmundsson",
+			"Sveinn í Felli"
 		]
 	},
 	"templatedata-doc-desc-empty": "Engin lýsing",
@@ -64,7 +64,7 @@
 	"templatedata-modal-format-block": "Blokk",
 	"templatedata-modal-format-custom": "Sérsniðið",
 	"templatedata-modal-format-inline": "Innfellt",
-	"templatedata-modal-format-null": "Óskilgreint",
+	"templatedata-modal-format-null": "Ótilgreint",
 	"templatedata-modal-json-error-replace": "Skipta út",
 	"templatedata-modal-notice-import-numparams": "$1 {{PLURAL:$1|nýtt gildi var|ný gildi voru}} innflutt: $2",
 	"templatedata-modal-placeholder-paramkey": "Nafn gildis",

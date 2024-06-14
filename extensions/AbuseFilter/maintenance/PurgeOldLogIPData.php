@@ -11,7 +11,7 @@ require_once "$IP/maintenance/Maintenance.php";
 // @codeCoverageIgnoreEnd
 
 use Maintenance;
-use MWTimestamp;
+use MediaWiki\Utils\MWTimestamp;
 
 class PurgeOldLogIPData extends Maintenance {
 	public function __construct() {

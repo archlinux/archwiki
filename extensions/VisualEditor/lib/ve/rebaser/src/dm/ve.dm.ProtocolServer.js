@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel protocol server class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 'use strict';
@@ -117,15 +117,18 @@ ve.dm.ProtocolServer.prototype.onLogEvent = function ( context, event ) {
  * Setup author on the server and send initialization events
  *
  * @param {Object} context The connection context
+ * @param {number} [startLength=0] The length of the common history
  */
-ve.dm.ProtocolServer.prototype.welcomeClient = function ( context ) {
+ve.dm.ProtocolServer.prototype.welcomeClient = function ( context, startLength ) {
 	const docName = context.docName,
 		serverId = context.serverId,
 		authorId = context.authorId;
 
+	if ( !startLength ) {
+		startLength = 0;
+	}
 	this.rebaseServer.updateDocState( docName, authorId, null, {
-		// TODO: i18n
-		name: 'User ' + authorId,
+		name: ve.init.platform.getUserName() || ve.msg( 'visualeditor-collab-user-placeholder', authorId ),
 		color: this.constructor.static.palette[
 			authorId % this.constructor.static.palette.length
 		],
@@ -153,7 +156,7 @@ ve.dm.ProtocolServer.prototype.welcomeClient = function ( context ) {
 	// feasible if TransactionProcessor was modified to have a "don't sync, just apply"
 	// mode and ve.dm.Document was faked with { data: …, metadata: …, store: … }
 	context.sendAuthor( 'initDoc', {
-		history: state.history.serialize( true ),
+		history: state.history.mostRecent( startLength ).serialize( true ),
 		authors: state.getActiveAuthors()
 	} );
 };

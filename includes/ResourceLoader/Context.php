@@ -24,13 +24,13 @@ namespace MediaWiki\ResourceLoader;
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserRigorOptions;
-use Message;
 use MessageLocalizer;
 use MessageSpecifier;
 use Psr\Log\LoggerInterface;
@@ -300,13 +300,13 @@ class Context implements MessageLocalizer {
 	public function getUserObj(): User {
 		if ( $this->userObj === null ) {
 			$username = $this->getUser();
+			$userFactory = MediaWikiServices::getInstance()->getUserFactory();
 			if ( $username ) {
 				// Use provided username if valid, fallback to anonymous user
-				$this->userObj = User::newFromName( $username ) ?: new User;
-			} else {
-				// Anonymous user
-				$this->userObj = new User;
+				$this->userObj = $userFactory->newFromName( $username, UserRigorOptions::RIGOR_VALID );
 			}
+			// Anonymous user
+			$this->userObj ??= $userFactory->newAnonymous();
 		}
 
 		return $this->userObj;
@@ -515,6 +515,3 @@ class Context implements MessageLocalizer {
 		return $json;
 	}
 }
-
-/** @deprecated since 1.39 */
-class_alias( Context::class, 'ResourceLoaderContext' );

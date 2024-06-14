@@ -10,10 +10,9 @@
 /**
  * MediaWiki UserInterface citation dialog tool.
  *
- * @class
  * @abstract
- * @extends ve.ui.MWReferenceDialogTool
  * @constructor
+ * @extends ve.ui.MWReferenceDialogTool
  * @param {OO.ui.Toolbar} toolbar
  * @param {Object} [config] Configuration options
  */
@@ -41,7 +40,7 @@ ve.ui.MWCitationDialogTool.static.template = null;
 /* Static Methods */
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWCitationDialogTool.static.isCompatibleWith = function ( model ) {
 	const compatible = ve.ui.MWCitationDialogTool.super.static.isCompatibleWith.call( this, model );

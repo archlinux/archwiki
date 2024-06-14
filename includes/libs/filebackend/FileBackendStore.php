@@ -48,27 +48,27 @@ abstract class FileBackendStore extends FileBackend {
 	/** @var MapCacheLRU Map of paths to large (RAM/disk) cache items */
 	protected $expensiveCache;
 
-	/** @var array Map of container names to sharding config */
+	/** @var array<string,array> Map of container names to sharding config */
 	protected $shardViaHashLevels = [];
 
-	/** @var callable Method to get the MIME type of files */
+	/** @var callable|null Method to get the MIME type of files */
 	protected $mimeCallback;
 
-	protected $maxFileSize = 4294967296; // integer bytes (4GiB)
+	protected $maxFileSize = 32 * 1024 * 1024 * 1024; // integer bytes (32GiB)
 
 	protected const CACHE_TTL = 10; // integer; TTL in seconds for process cache entries
 	protected const CACHE_CHEAP_SIZE = 500; // integer; max entries in "cheap cache"
 	protected const CACHE_EXPENSIVE_SIZE = 5; // integer; max entries in "expensive cache"
 
 	/** @var false Idiom for "no result due to missing file" (since 1.34) */
-	protected static $RES_ABSENT = false;
+	protected const RES_ABSENT = false;
 	/** @var null Idiom for "no result due to I/O errors" (since 1.34) */
-	protected static $RES_ERROR = null;
+	protected const RES_ERROR = null;
 
 	/** @var string File does not exist according to a normal stat query */
-	protected static $ABSENT_NORMAL = 'FNE-N';
+	protected const ABSENT_NORMAL = 'FNE-N';
 	/** @var string File does not exist according to a "latest"-mode stat query */
-	protected static $ABSENT_LATEST = 'FNE-L';
+	protected const ABSENT_LATEST = 'FNE-L';
 
 	/**
 	 * @see FileBackend::__construct()
@@ -100,7 +100,7 @@ abstract class FileBackendStore extends FileBackend {
 	 * @return int Bytes
 	 */
 	final public function maxFileSizeInternal() {
-		return $this->maxFileSize;
+		return min( $this->maxFileSize, PHP_INT_MAX );
 	}
 
 	/**
@@ -306,24 +306,10 @@ abstract class FileBackendStore extends FileBackend {
 
 	/**
 	 * @see FileBackendStore::moveInternal()
-	 * @stable to override
 	 * @param array $params
 	 * @return StatusValue
 	 */
-	protected function doMoveInternal( array $params ) {
-		unset( $params['async'] ); // two steps, won't work here :)
-		$nsrc = FileBackend::normalizeStoragePath( $params['src'] );
-		$ndst = FileBackend::normalizeStoragePath( $params['dst'] );
-		// Copy source to dest
-		$status = $this->copyInternal( $params );
-		if ( $nsrc !== $ndst && $status->isOK() ) {
-			// Delete source (only fails due to races or network problems)
-			$status->merge( $this->deleteInternal( [ 'src' => $params['src'] ] ) );
-			$status->setResult( true, $status->value ); // ignore delete() errors
-		}
-
-		return $status;
-	}
+	abstract protected function doMoveInternal( array $params );
 
 	/**
 	 * Alter metadata for a file at the storage path.
@@ -425,7 +411,7 @@ abstract class FileBackendStore extends FileBackend {
 				$fsFile = $this->getLocalReference( [ 'src' => $path ] );
 				if ( !$fsFile ) { // retry failed?
 					$status->fatal(
-						$fsFile === self::$RES_ERROR ? 'backend-fail-read' : 'backend-fail-notexists',
+						$fsFile === self::RES_ERROR ? 'backend-fail-read' : 'backend-fail-notexists',
 						$path
 					);
 
@@ -656,7 +642,7 @@ abstract class FileBackendStore extends FileBackend {
 			return true;
 		}
 
-		return ( $stat === self::$RES_ABSENT ) ? false : self::EXISTENCE_ERROR;
+		return $stat === self::RES_ABSENT ? false : self::EXISTENCE_ERROR;
 	}
 
 	final public function getFileTimestamp( array $params ) {
@@ -722,9 +708,9 @@ abstract class FileBackendStore extends FileBackend {
 			) {
 				return $stat;
 			}
-		} elseif ( $stat === self::$ABSENT_LATEST ) {
+		} elseif ( $stat === self::ABSENT_LATEST ) {
 			return self::STAT_ABSENT;
-		} elseif ( $stat === self::$ABSENT_NORMAL ) {
+		} elseif ( $stat === self::ABSENT_NORMAL ) {
 			if ( !$latest ) {
 				return self::STAT_ABSENT;
 			}
@@ -738,13 +724,13 @@ abstract class FileBackendStore extends FileBackend {
 			return $stat;
 		}
 
-		return ( $stat === self::$RES_ERROR ) ? self::STAT_ERROR : self::STAT_ABSENT;
+		return $stat === self::RES_ERROR ? self::STAT_ERROR : self::STAT_ABSENT;
 	}
 
 	/**
 	 * Ingest file stat entries that just came from querying the backend (not cache)
 	 *
-	 * @param array[]|bool[]|null[] $stats Map of (path => doGetFileStat() stype result)
+	 * @param array<string,array|false|null> $stats Map of storage path => {@see doGetFileStat} result
 	 * @param bool $latest Whether doGetFileStat()/doGetFileStatMulti() had the 'latest' flag
 	 * @return bool Whether all files have non-error stat replies
 	 */
@@ -776,11 +762,11 @@ abstract class FileBackendStore extends FileBackend {
 				}
 				// Update persistent cache (@TODO: set all entries in one batch)
 				$this->setFileCache( $path, $stat );
-			} elseif ( $stat === self::$RES_ABSENT ) {
+			} elseif ( $stat === self::RES_ABSENT ) {
 				$this->cheapCache->setField(
 					$path,
 					'stat',
-					$latest ? self::$ABSENT_LATEST : self::$ABSENT_NORMAL
+					$latest ? self::ABSENT_LATEST : self::ABSENT_NORMAL
 				);
 				$this->cheapCache->setField(
 					$path,
@@ -811,6 +797,7 @@ abstract class FileBackendStore extends FileBackend {
 	/**
 	 * @see FileBackendStore::getFileStat()
 	 * @param array $params
+	 * @return array|false|null
 	 */
 	abstract protected function doGetFileStat( array $params );
 
@@ -842,9 +829,9 @@ abstract class FileBackendStore extends FileBackend {
 				AtEase::suppressWarnings();
 				$content = file_get_contents( $fsFile->getPath() );
 				AtEase::restoreWarnings();
-				$contents[$path] = is_string( $content ) ? $content : self::$RES_ERROR;
+				$contents[$path] = is_string( $content ) ? $content : self::RES_ERROR;
 			} else {
-				// self::$RES_ERROR or self::$RES_ABSENT
+				// self::RES_ERROR or self::RES_ABSENT
 				$contents[$path] = $fsFile;
 			}
 		}
@@ -877,7 +864,7 @@ abstract class FileBackendStore extends FileBackend {
 				'xattr',
 				[ 'map' => $fields, 'latest' => $latest ]
 			);
-		} elseif ( $fields === self::$RES_ABSENT ) {
+		} elseif ( $fields === self::RES_ABSENT ) {
 			$this->cheapCache->setField(
 				$path,
 				'xattr',
@@ -924,7 +911,7 @@ abstract class FileBackendStore extends FileBackend {
 				'sha1',
 				[ 'hash' => $sha1, 'latest' => $latest ]
 			);
-		} elseif ( $sha1 === self::$RES_ABSENT ) {
+		} elseif ( $sha1 === self::RES_ABSENT ) {
 			$this->cheapCache->setField(
 				$path,
 				'sha1',
@@ -948,10 +935,10 @@ abstract class FileBackendStore extends FileBackend {
 		if ( $fsFile instanceof FSFile ) {
 			$sha1 = $fsFile->getSha1Base36();
 
-			return is_string( $sha1 ) ? $sha1 : self::$RES_ERROR;
+			return is_string( $sha1 ) ? $sha1 : self::RES_ERROR;
 		}
 
-		return ( $fsFile === self::$RES_ERROR ) ? self::$RES_ERROR : self::$RES_ABSENT;
+		return $fsFile === self::RES_ERROR ? self::RES_ERROR : self::RES_ABSENT;
 	}
 
 	final public function getFileProps( array $params ) {
@@ -975,7 +962,7 @@ abstract class FileBackendStore extends FileBackend {
 		foreach ( $params['srcs'] as $src ) {
 			$path = self::normalizeStoragePath( $src );
 			if ( $path === null ) {
-				$fsFiles[$src] = self::$RES_ERROR; // invalid storage path
+				$fsFiles[$src] = self::RES_ERROR; // invalid storage path
 			} elseif ( $this->expensiveCache->hasField( $path, 'localRef' ) ) {
 				$val = $this->expensiveCache->getField( $path, 'localRef' );
 				// If we want the latest data, check that this cached
@@ -996,7 +983,7 @@ abstract class FileBackendStore extends FileBackend {
 					[ 'object' => $fsFile, 'latest' => $latest ]
 				);
 			} else {
-				// self::$RES_ERROR or self::$RES_ABSENT
+				// self::RES_ERROR or self::RES_ABSENT
 				$fsFiles[$path] = $fsFile;
 			}
 		}
@@ -1112,7 +1099,7 @@ abstract class FileBackendStore extends FileBackend {
 				if ( $exists === true ) {
 					$res = true;
 					break; // found one!
-				} elseif ( $exists === self::$RES_ERROR ) {
+				} elseif ( $exists === self::RES_ERROR ) {
 					$res = self::EXISTENCE_ERROR;
 				}
 			}
@@ -1349,31 +1336,26 @@ abstract class FileBackendStore extends FileBackend {
 		$maxConcurrency = $this->concurrency; // throttle
 		/** @var StatusValue[] $statuses */
 		$statuses = []; // array of (index => StatusValue)
-		$fileOpHandles = []; // list of (index => handle) arrays
-		$curFileOpHandles = []; // current handle batch
-		// Perform the sync-only ops and build up op handles for the async ops...
+		/** @var FileBackendStoreOpHandle[] $batch */
+		$batch = [];
 		foreach ( $fileOps as $index => $fileOp ) {
 			$subStatus = $async
 				? $fileOp->attemptAsyncQuick()
 				: $fileOp->attemptQuick();
 			if ( $subStatus->value instanceof FileBackendStoreOpHandle ) { // async
-				if ( count( $curFileOpHandles ) >= $maxConcurrency ) {
-					// We better stop queuing things and get some work done
-					// See T230245 for the issues caused by extreme laziness
-					$statuses += $this->executeOpHandlesInternal( $curFileOpHandles );
-					$curFileOpHandles = [];
+				if ( count( $batch ) >= $maxConcurrency ) {
+					// Execute this batch. Don't queue any more ops since they contain
+					// open filehandles which are a limited resource (T230245).
+					$statuses += $this->executeOpHandlesInternal( $batch );
+					$batch = [];
 				}
-				$curFileOpHandles[$index] = $subStatus->value; // keep index
+				$batch[$index] = $subStatus->value; // keep index
 			} else { // error or completed
 				$statuses[$index] = $subStatus; // keep index
 			}
 		}
-		if ( count( $curFileOpHandles ) ) {
-			$fileOpHandles[] = $curFileOpHandles; // last batch
-		}
-		// Do all the async ops that can be done concurrently...
-		foreach ( $fileOpHandles as $fileHandleBatch ) {
-			$statuses += $this->executeOpHandlesInternal( $fileHandleBatch );
+		if ( count( $batch ) ) {
+			$statuses += $this->executeOpHandlesInternal( $batch );
 		}
 		// Marshall and merge all the responses...
 		foreach ( $statuses as $index => $subStatus ) {
@@ -1506,7 +1488,7 @@ abstract class FileBackendStore extends FileBackend {
 	 *
 	 * @see FileBackend::clearCache()
 	 *
-	 * @param array|null $paths Storage paths (optional)
+	 * @param string[]|null $paths Storage paths (optional)
 	 */
 	protected function doClearCache( array $paths = null ) {
 	}
@@ -1536,7 +1518,8 @@ abstract class FileBackendStore extends FileBackend {
 	 * @param array $params Parameters include:
 	 *   - srcs        : list of source storage paths
 	 *   - latest      : use the latest available data
-	 * @return array|null Map of storage paths to array|bool|null (returns null if not supported)
+	 * @return array<string,array|false|null>|null Null if not supported. Otherwise a map of storage
+	 *  path to attribute map, false (missing file), or null (I/O error).
 	 * @since 1.23
 	 */
 	protected function doGetFileStatMulti( array $params ) {

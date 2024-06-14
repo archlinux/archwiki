@@ -14,7 +14,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 mutauro|$1 mitauro}}",
 	"vector-no-language-button-label": "Wedzera mitauro",
 	"vector-no-language-button-aria-label": "Sipwi iri riripo mumutuaro uyu bedzi. Wedzera sipwi kuitira mimwe mitauro.",
-	"vector-language-redirect-to-top": "Zvikochekero zvemutauro zvirikumusoro kwezanhi kwakarinfana nedumidzo.",
 	"vector-language-variant-switcher-label": "Shandura chisiyano chemutauro",
 	"vector-action-addsection": "Wedzera ndaba",
 	"vector-action-delete": "Bharanura",

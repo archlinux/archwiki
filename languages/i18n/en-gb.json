@@ -21,6 +21,7 @@
 			"Don Alessandro",
 			"Dr. Shikha Jaggi",
 			"Dreamy Jazz",
+			"Drkirstyross",
 			"Ed g2s",
 			"EpochFail",
 			"Esketti",
@@ -51,7 +52,8 @@
 			"Usandaru555",
 			"Valentine Badu",
 			"Vogone",
-			"Xð"
+			"Xð",
+			"Umar Ahmad2345"
 		]
 	},
 	"tog-hidecategorization": "Hide categorisation of pages",
@@ -86,6 +88,7 @@
 	"login-migrated-generic": "Your account has been migrated, and your username no longer exists on this wiki.",
 	"botpasswords-no-central-id": "To use bot passwords, you must be logged in to a centralised account.",
 	"botpasswords-label-resetpassword": "Reset password",
+	"editundo": "cin gbere le",
 	"search-invalid-sort-order": "Sort order of $1 is unrecognised, default sorting will be applied. Valid sort orders are: $2",
 	"search-unknown-profile": "Search profile of $1 is unrecognised, default search profile will be applied.",
 	"prefs-description-editing": "Customise how you make, track, and review edits.",
@@ -108,6 +111,9 @@
 	"license": "Licencing:",
 	"license-header": "Licencing",
 	"licenses-edit": "Edit licence options",
+	"filehist-help": "Yi efo/eka'e gwa ebo wo le nyangagi wuncin ye kamina wunga tinya nan",
+	"filehist-datetime": "Gwalagizhi",
+	"filehist-thumb": "Nyangagi",
 	"uncategorizedpages": "Uncategorised pages",
 	"uncategorizedcategories": "Uncategorised categories",
 	"uncategorizedimages": "Uncategorised files",
@@ -121,7 +127,6 @@
 	"protect_expiry_old": "Expiry time is in the past.",
 	"protect-existing-expiry": "Existing expiry time: $3, $2",
 	"protect-existing-expiry-infinity": "Existing expiry time: infinite",
-	"blockiptext": "Use the form below to block write access from a specific IP address or username.\nThis should be done only to prevent vandalism, and in accordance with [[{{MediaWiki:Policy-url}}|policy]].\nFill in a specific reason below (for example, citing particular pages that were vandalised).\nYou can block IP address ranges using the [https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing CIDR] syntax; the largest allowed range is /$1 for IPv4 and /$2 for IPv6.",
 	"ipbreason-dropdown": "*Common block reasons\n** Inserting false information\n** Removing content from pages\n** Spamming links to external sites\n** Inserting nonsense/gibberish into pages\n** Intimidating behaviour/harassment\n** Abusing multiple accounts\n** Unacceptable username",
 	"block-expiry": "Expiry:",
 	"proxyblockreason": "Your IP address has been blocked because it is an open proxy.\nPlease contact your Internet service provider or technical support of your organisation and inform them of this serious security problem.",

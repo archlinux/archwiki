@@ -1,12 +1,13 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Diff\TextDiffer\ManifoldTextDiffer;
 use MediaWiki\Diff\TextDiffer\Wikidiff2TextDiffer;
 use MediaWiki\Tests\Diff\TextDiffer\TextDifferData;
 use Wikimedia\Assert\ParameterTypeException;
 
 /**
- * @covers TextSlotDiffRenderer
+ * @covers \TextSlotDiffRenderer
  */
 class TextSlotDiffRendererTest extends MediaWikiIntegrationTestCase {
 

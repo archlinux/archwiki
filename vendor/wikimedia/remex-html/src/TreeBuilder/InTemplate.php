@@ -17,44 +17,44 @@ class InTemplate extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'base':
-		case 'basefont':
-		case 'bgsound':
-		case 'link':
-		case 'meta':
-		case 'noframes':
-		case 'script':
-		case 'style':
-		case 'template':
-		case 'title':
-			$dispatcher->inHead->startTag(
-				$name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			return;
+			case 'base':
+			case 'basefont':
+			case 'bgsound':
+			case 'link':
+			case 'meta':
+			case 'noframes':
+			case 'script':
+			case 'style':
+			case 'template':
+			case 'title':
+				$dispatcher->inHead->startTag(
+					$name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				return;
 
-		case 'caption':
-		case 'colgroup':
-		case 'tbody':
-		case 'tfoot':
-		case 'thead':
-			$mode = Dispatcher::IN_TABLE;
-			break;
+			case 'caption':
+			case 'colgroup':
+			case 'tbody':
+			case 'tfoot':
+			case 'thead':
+				$mode = Dispatcher::IN_TABLE;
+				break;
 
-		case 'col':
-			$mode = Dispatcher::IN_COLUMN_GROUP;
-			break;
+			case 'col':
+				$mode = Dispatcher::IN_COLUMN_GROUP;
+				break;
 
-		case 'tr':
-			$mode = Dispatcher::IN_TABLE_BODY;
-			break;
+			case 'tr':
+				$mode = Dispatcher::IN_TABLE_BODY;
+				break;
 
-		case 'td':
-		case 'th':
-			$mode = Dispatcher::IN_ROW;
-			break;
+			case 'td':
+			case 'th':
+				$mode = Dispatcher::IN_ROW;
+				break;
 
-		default:
-			$mode = Dispatcher::IN_BODY;
-			break;
+			default:
+				$mode = Dispatcher::IN_BODY;
+				break;
 		}
 
 		$dispatcher->templateModeStack->pop();
@@ -67,31 +67,31 @@ class InTemplate extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'template':
-			$dispatcher->inHead->endTag( $name, $sourceStart, $sourceLength );
-			break;
+			case 'template':
+				$dispatcher->inHead->endTag( $name, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			$this->builder->error( "unexpected </$name> in template, ignoring", $sourceStart );
-			return;
+			default:
+				$this->builder->error( "unexpected </$name> in template, ignoring", $sourceStart );
+				return;
 		}
 	}
 
 	public function endDocument( $pos ) {
-		 $builder = $this->builder;
-		 $stack = $builder->stack;
-		 $dispatcher = $this->dispatcher;
+		$builder = $this->builder;
+		$stack = $builder->stack;
+		$dispatcher = $this->dispatcher;
 
-		 if ( !$stack->hasTemplate() ) {
-			 $builder->stopParsing( $pos );
-			 return;
-		 }
+		if ( !$stack->hasTemplate() ) {
+			$builder->stopParsing( $pos );
+			return;
+		}
 
-		 $builder->error( "unexpected end of file in template", $pos );
-		 $builder->popAllUpToName( 'template', $pos, 0 );
-		 $builder->afe->clearToMarker();
-		 $dispatcher->templateModeStack->pop();
-		 $dispatcher->reset()
-			 ->endDocument( $pos );
+		$builder->error( "unexpected end of file in template", $pos );
+		$builder->popAllUpToName( 'template', $pos, 0 );
+		$builder->afe->clearToMarker();
+		$dispatcher->templateModeStack->pop();
+		$dispatcher->reset()
+			->endDocument( $pos );
 	}
 }

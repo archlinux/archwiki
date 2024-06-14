@@ -1,7 +1,9 @@
 <?php
 
+use MediaWiki\Deferred\MWCallableUpdate;
+
 /**
- * @covers MWCallableUpdate
+ * @covers \MediaWiki\Deferred\MWCallableUpdate
  */
 class MWCallableUpdateTest extends MediaWikiUnitTestCase {
 

@@ -10,10 +10,8 @@
 /**
  * Dialog for editing MediaWiki references lists.
  *
- * @class
- * @extends ve.ui.NodeDialog
- *
  * @constructor
+ * @extends ve.ui.NodeDialog
  * @param {Object} [config] Configuration options
  */
 ve.ui.MWReferencesListDialog = function VeUiMWReferencesListDialog( config ) {
@@ -39,14 +37,14 @@ ve.ui.MWReferencesListDialog.static.size = 'medium';
 /* Methods */
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferencesListDialog.prototype.getBodyHeight = function () {
 	return Math.max( 150, Math.ceil( this.editPanel.$element[ 0 ].scrollHeight ) );
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferencesListDialog.prototype.initialize = function () {
 	// Parent method
@@ -114,7 +112,7 @@ ve.ui.MWReferencesListDialog.prototype.isModified = function () {
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferencesListDialog.prototype.getActionProcess = function ( action ) {
 	if ( action === 'done' ) {
@@ -160,7 +158,7 @@ ve.ui.MWReferencesListDialog.prototype.getActionProcess = function ( action ) {
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferencesListDialog.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWReferencesListDialog.super.prototype.getSetupProcess.call( this, data )
@@ -186,7 +184,7 @@ ve.ui.MWReferencesListDialog.prototype.getSetupProcess = function ( data ) {
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferencesListDialog.prototype.getTeardownProcess = function ( data ) {
 	return ve.ui.MWReferencesListDialog.super.prototype.getTeardownProcess.call( this, data )
@@ -197,7 +195,7 @@ ve.ui.MWReferencesListDialog.prototype.getTeardownProcess = function ( data ) {
 };
 
 /**
- * @inheritdoc
+ * @override
  */
 ve.ui.MWReferencesListDialog.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.MWReferencesListDialog.super.prototype.getReadyProcess.call( this, data )

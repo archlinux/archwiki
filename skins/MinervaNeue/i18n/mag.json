@@ -15,7 +15,7 @@
 	"mobile-frontend-history": "ई पन्नाके सम्पादन इतिहास देखहू",
 	"mobile-frontend-home-button": "घर",
 	"mobile-frontend-language-article-heading": "भाषा",
-	"mobile-frontend-languages-not-available": "ई पन्ना अन्य भाषामे न उपलब्ध है।",
+	"mobile-frontend-languages-not-available": "ई पन्ना अन्य भाषामे न उपलब्ध हे ।",
 	"mobile-frontend-main-menu-button-tooltip": "मुख्य मेनू खोली",
 	"mobile-frontend-main-menu-contributions": "जोगदान",
 	"mobile-frontend-main-menu-login": "प्रबेस करी",
@@ -50,9 +50,16 @@
 	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|बार्ता]]",
 	"minerva-skin-desc": "मोबाइल् लागि एगो संवेदनशील बिशेष आवरण",
 	"skin-minerva-issue-learn-more": "आउ जानी",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 सेकेण्ड्}} पहिले",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 मिनट्}} पहिले",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 घण्टा}} पहिले",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 दिन}} पहिले",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 माह}} पहिले",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 बरिस}} पहिले",
 	"skin-minerva-mobile-option-MinervaShowCategories": "बर्गसभ",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "पन्नाके बर्ग देखी",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "पन्ना समस्या उपचारमे सुधार",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "पन्नाके समस्या (Template:ambox) क लेखमे इन्लाइन् कर देल जैतै ।",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "दुर्भागसे, मोबाइल् प परिणामके समूहन सम्भव न हे । यदि अपने पन्ना के आधारपर समूहन सुविधाके उपयोग कैल चाहही त कृपया डेस्कटॉप् जालस्थान प जायी ।"
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "दुर्भागसे, मोबाइल् प परिणामके समूहन सम्भव न हे । यदि अपने पन्ना के आधारपर समूहन सुविधाके उपयोग कैल चाहही त कृपया डेस्कटॉप् जालस्थान प जायी ।",
+	"skin-minerva-night-mode-unavailable": "पन्ना खाली \"दिन\" रङ्गके बिषयबस्तुमे उपलब्ध हे ।"
 }

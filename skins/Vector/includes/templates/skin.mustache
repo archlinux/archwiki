@@ -3,7 +3,7 @@
 		Also used by CentralNotice to inject banners into Vector.
 	Indicator[] array-indicators wiki-defined badges such as "good article",
 		"featured article". An empty array if none are defined.
-	string html-title
+	string|null html-title
 	bool is-article
 	string msg-tagline
 	string html-subtitle
@@ -73,7 +73,6 @@
 <div class="vector-settings" id="p-dock-bottom">
 	<ul>
 		<li>
-		{{#data-client-prefs}}{{>ClientPreferences}}{{/data-client-prefs}}
 		{{#data-vector-settings-button}}{{>Button}}{{/data-vector-settings-button}}</li>
 	</ul>
 </div>

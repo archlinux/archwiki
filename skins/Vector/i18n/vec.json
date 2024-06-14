@@ -35,8 +35,14 @@
 	"vector-jumptosearch": "Salta a ła riserca",
 	"vector-jumptocontent": "Salta al contegnùo",
 	"vector-more-actions": "Piasè",
+	"vector-client-prefs-label": "Inpostasion de letura",
 	"vector-feature-limited-width-name": "Larghessa de ła colona",
 	"vector-feature-custom-font-size-name": "Grandessa del caràtere",
+	"vector-feature-limited-width-0-label": "A tuta larghessa",
+	"vector-feature-limited-width-1-label": "A larghessa pi streta",
+	"vector-feature-custom-font-size-0-label": "Picenin",
+	"vector-feature-custom-font-size-1-label": "Normałe",
+	"vector-feature-custom-font-size-2-label": "Grando",
 	"vector-search-loader": "Carga sujerimenti de riserca",
 	"vector-toc-label": "Somario",
 	"vector-toc-beginning": "Scuminsio",
@@ -64,11 +70,5 @@
 	"vector-toc-unpinned-popup": "El somario el xe stà spostà chì.",
 	"vector-page-tools-unpinned-popup": "El menù dei instrumenti el xe stà spostà chì.",
 	"vector-main-menu-unpinned-popup": "El menù prinsipal xe stà spostà chì.",
-	"vector-readability-survey-title": "Strumento de letura de Wikimedia",
-	"vector-readability-survey-fontSize": "Grandesa łétare",
-	"vector-readability-survey-lineHeight": "Altessa de ła lìnia",
-	"vector-readability-survey-paragraphSpacing": "Spasio tra i paragrafi",
-	"vector-readability-survey-randomize": "fa a ocio",
-	"vector-readability-survey-reset": "axera tuto",
-	"vector-readability-survey-share": "sèvita"
+	"vector-2022-beta-preview-label": "Vector 2022 beta"
 }

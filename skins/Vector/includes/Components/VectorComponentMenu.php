@@ -23,6 +23,10 @@ class VectorComponentMenu implements VectorComponent, Countable {
 	 * @return int
 	 */
 	public function count(): int {
+		$items = $this->data['array-list-items'] ?? null;
+		if ( $items ) {
+			return count( $items );
+		}
 		$htmlItems = $this->data['html-items'] ?? '';
 		return substr_count( $htmlItems, '<li' );
 	}
@@ -39,6 +43,7 @@ class VectorComponentMenu implements VectorComponent, Countable {
 			'html-before-portal' => '',
 			'html-items' => '',
 			'html-after-portal' => '',
+			'array-list-items' => null,
 		];
 	}
 }

@@ -4,9 +4,11 @@
 			"NMW03",
 			"Serkanland",
 			"Toghrul Rahimli",
-			"Wertuose"
+			"Wertuose",
+			"Nemoralis"
 		]
 	},
+	"content-model-scribunto": "Scribunto modulu",
 	"scribunto-desc": "Skriptləşdirmə dillərini MediaWiki səhifələrində istifadə etmək üçün framework",
 	"scribunto-line": "sətir $1",
 	"scribunto-module-line": "modul $1, sətir $2",

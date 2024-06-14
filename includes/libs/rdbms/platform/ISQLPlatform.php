@@ -20,6 +20,7 @@
 namespace Wikimedia\Rdbms\Platform;
 
 use Wikimedia\Rdbms\DBError;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\LikeMatch;
 use Wikimedia\Rdbms\Subquery;
 
@@ -68,6 +69,8 @@ interface ISQLPlatform {
 	public const QUERY_CHANGE_SCHEMA = 256 | self::QUERY_IGNORE_DBO_TRX;
 	/** @var int Query is a command for advisory locks */
 	public const QUERY_CHANGE_LOCKS = 512 | self::QUERY_IGNORE_DBO_TRX;
+	/** @var int Query creates a temporary table */
+	public const QUERY_CREATE_TEMP = 1024;
 
 	/**
 	 * @param string|int $field
@@ -150,14 +153,16 @@ interface ISQLPlatform {
 	 * Note that the order of keys in the associative array $conds is significant,
 	 * and must match the order of fields used by the index.
 	 *
-	 * You might also use it to generate a simple comparison without writing raw SQL:
+	 * When comparing a single value, prefer using the expression builder:
 	 *
-	 *     $db->buildComparison( '<=', [ 'key' => $val ] )
+	 *     $db->expr( 'key', '<=', $val )
+	 *
 	 *     // equivalent to:
+	 *     $db->buildComparison( '<=', [ 'key' => $val ] )
 	 *     'key <= ' . $db->addQuotes( $val )
 	 *
 	 * @param string $op Comparison operator, one of '>', '>=', '<', '<='
-	 * @param array $conds Map of field names to their values to use in the comparison
+	 * @param non-empty-array<string,mixed> $conds Map of field names to their values to use in the comparison
 	 * @return string SQL code
 	 */
 	public function buildComparison( string $op, array $conds ): string;
@@ -402,7 +407,7 @@ interface ISQLPlatform {
 	 *
 	 * This doesn't need to be overridden unless CASE isn't supported in the RDBMS.
 	 *
-	 * @param string|array $cond SQL condition expression (yields a boolean)
+	 * @param string|array|IExpression $cond SQL condition expression (yields a boolean)
 	 * @param string $caseTrueExpression SQL expression to return when the condition is true
 	 * @param string $caseFalseExpression SQL expression to return when the condition is false
 	 * @return string SQL fragment
@@ -543,7 +548,7 @@ interface ISQLPlatform {
 	 *   raw - Do not add identifier quotes to the table name
 	 * @return string Full database name
 	 */
-	public function tableName( $name, $format = 'quoted' );
+	public function tableName( string $name, $format = 'quoted' );
 
 	/**
 	 * Fetch a number of table names into an associative array

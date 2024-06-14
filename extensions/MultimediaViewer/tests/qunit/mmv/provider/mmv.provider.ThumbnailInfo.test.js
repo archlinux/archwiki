@@ -78,40 +78,40 @@ const { ThumbnailInfo } = require( 'mmv' );
 	} ) );
 
 	QUnit.test( 'ThumbnailInfo constructor sense check', function ( assert ) {
-		var api = { get: function () {} },
-			thumbnailInfoProvider = new ThumbnailInfo( api );
+		const api = { get: function () {} };
+		const thumbnailInfoProvider = new ThumbnailInfo( api );
 
 		assert.true( thumbnailInfoProvider instanceof ThumbnailInfo );
 	} );
 
 	QUnit.test( 'ThumbnailInfo get test', function ( assert ) {
-		var apiCallCount = 0,
-			api = { get: function () {
-				apiCallCount++;
-				return $.Deferred().resolve( {
-					query: {
-						pages: [
-							{
-								ns: 6,
-								title: 'File:Stuff.jpg',
-								missing: true,
-								imagerepository: 'shared',
-								imageinfo: [
-									{
-										thumburl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Stuff.jpg/51px-Stuff.jpg',
-										thumbwidth: 95,
-										thumbheight: 200,
-										url: 'https://upload.wikimedia.org/wikipedia/commons/1/19/Stuff.jpg',
-										descriptionurl: 'https://commons.wikimedia.org/wiki/File:Stuff.jpg'
-									}
-								]
-							}
-						]
-					}
-				} );
-			} },
-			file = new mw.Title( 'File:Stuff.jpg' ),
-			thumbnailInfoProvider = new ThumbnailInfo( api );
+		let apiCallCount = 0;
+		const api = { get: function () {
+			apiCallCount++;
+			return $.Deferred().resolve( {
+				query: {
+					pages: [
+						{
+							ns: 6,
+							title: 'File:Stuff.jpg',
+							missing: true,
+							imagerepository: 'shared',
+							imageinfo: [
+								{
+									thumburl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Stuff.jpg/51px-Stuff.jpg',
+									thumbwidth: 95,
+									thumbheight: 200,
+									url: 'https://upload.wikimedia.org/wikipedia/commons/1/19/Stuff.jpg',
+									descriptionurl: 'https://commons.wikimedia.org/wiki/File:Stuff.jpg'
+								}
+							]
+						}
+					]
+				}
+			} );
+		} };
+		const file = new mw.Title( 'File:Stuff.jpg' );
+		const thumbnailInfoProvider = new ThumbnailInfo( api );
 
 		return thumbnailInfoProvider.get( file, 100 ).then( function ( thumbnail ) {
 			assert.strictEqual( thumbnail.url,
@@ -137,12 +137,12 @@ const { ThumbnailInfo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'ThumbnailInfo fail test', function ( assert ) {
-		var api = { get: function () {
-				return $.Deferred().resolve( {} );
-			} },
-			file = new mw.Title( 'File:Stuff.jpg' ),
-			done = assert.async(),
-			thumbnailInfoProvider = new ThumbnailInfo( api );
+		const api = { get: function () {
+			return $.Deferred().resolve( {} );
+		} };
+		const file = new mw.Title( 'File:Stuff.jpg' );
+		const done = assert.async();
+		const thumbnailInfoProvider = new ThumbnailInfo( api );
 
 		thumbnailInfoProvider.get( file, 100 ).fail( function () {
 			assert.true( true, 'promise rejected when no data is returned' );
@@ -151,20 +151,20 @@ const { ThumbnailInfo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'ThumbnailInfo fail test 2', function ( assert ) {
-		var api = { get: function () {
-				return $.Deferred().resolve( {
-					query: {
-						pages: [
-							{
-								title: 'File:Stuff.jpg'
-							}
-						]
-					}
-				} );
-			} },
-			file = new mw.Title( 'File:Stuff.jpg' ),
-			done = assert.async(),
-			thumbnailInfoProvider = new ThumbnailInfo( api );
+		const api = { get: function () {
+			return $.Deferred().resolve( {
+				query: {
+					pages: [
+						{
+							title: 'File:Stuff.jpg'
+						}
+					]
+				}
+			} );
+		} };
+		const file = new mw.Title( 'File:Stuff.jpg' );
+		const done = assert.async();
+		const thumbnailInfoProvider = new ThumbnailInfo( api );
 
 		thumbnailInfoProvider.get( file, 100 ).fail( function () {
 			assert.true( true, 'promise rejected when imageinfo is missing' );
@@ -173,22 +173,22 @@ const { ThumbnailInfo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'ThumbnailInfo missing page test', function ( assert ) {
-		var api = { get: function () {
-				return $.Deferred().resolve( {
-					query: {
-						pages: [
-							{
-								title: 'File:Stuff.jpg',
-								missing: true,
-								imagerepository: ''
-							}
-						]
-					}
-				} );
-			} },
-			file = new mw.Title( 'File:Stuff.jpg' ),
-			done = assert.async(),
-			thumbnailInfoProvider = new ThumbnailInfo( api );
+		const api = { get: function () {
+			return $.Deferred().resolve( {
+				query: {
+					pages: [
+						{
+							title: 'File:Stuff.jpg',
+							missing: true,
+							imagerepository: ''
+						}
+					]
+				}
+			} );
+		} };
+		const file = new mw.Title( 'File:Stuff.jpg' );
+		const done = assert.async();
+		const thumbnailInfoProvider = new ThumbnailInfo( api );
 
 		thumbnailInfoProvider.get( file ).fail( function ( errorMessage ) {
 			assert.strictEqual( errorMessage, 'file does not exist: File:Stuff.jpg',
@@ -198,23 +198,23 @@ const { ThumbnailInfo } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'ThumbnailInfo fail test 3', function ( assert ) {
-		var api = { get: function () {
-				return $.Deferred().resolve( {
-					query: {
-						pages: [
-							{
-								title: 'File:Stuff.jpg',
-								imageinfo: [
-									{}
-								]
-							}
-						]
-					}
-				} );
-			} },
-			file = new mw.Title( 'File:Stuff.jpg' ),
-			done = assert.async(),
-			thumbnailInfoProvider = new ThumbnailInfo( api );
+		const api = { get: function () {
+			return $.Deferred().resolve( {
+				query: {
+					pages: [
+						{
+							title: 'File:Stuff.jpg',
+							imageinfo: [
+								{}
+							]
+						}
+					]
+				}
+			} );
+		} };
+		const file = new mw.Title( 'File:Stuff.jpg' );
+		const done = assert.async();
+		const thumbnailInfoProvider = new ThumbnailInfo( api );
 
 		thumbnailInfoProvider.get( file, 100 ).fail( function () {
 			assert.true( true, 'promise rejected when thumbnail info is missing' );

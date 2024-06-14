@@ -2,6 +2,7 @@
 namespace MediaWiki\Tests\Page;
 
 use Exception;
+use IDBAccessObject;
 use InvalidArgumentException;
 use LinkCacheTestTrait;
 use MediaWiki\Config\ServiceOptions;
@@ -26,11 +27,6 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 
 	use MockTitleTrait;
 	use LinkCacheTestTrait;
-
-	protected function setUp(): void {
-		parent::setUp();
-		$this->tablesUsed[] = 'page';
-	}
 
 	/**
 	 * @param array $options
@@ -705,7 +701,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 		// Test that the load balancer is asked for a master connection
 		$lb = $this->createMock( LoadBalancer::class );
 		$lb->expects( $this->atLeastOnce() )
-			->method( 'getConnectionRef' )
+			->method( 'getConnection' )
 			->with( DB_PRIMARY )
 			->willReturn( $db );
 
@@ -717,7 +713,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 			[ 'dbLoadBalancer' => $lb ]
 		);
 
-		$pageStore->newSelectQueryBuilder( PageStore::READ_LATEST )
+		$pageStore->newSelectQueryBuilder( IDBAccessObject::READ_LATEST )
 			->fetchPageRecord();
 	}
 
@@ -748,7 +744,7 @@ class PageStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $existingSubpageB->isSamePageAs( $subpages[1] ) );
 
 		// make sure the limit works as well
-		$this->assertCount( 1, $pageStore->getSubpages( $title, 1 ) );
+		$this->assertCount( 1, iterator_to_array( $pageStore->getSubpages( $title, 1 ) ) );
 	}
 
 	/**

@@ -1,24 +1,38 @@
 <?php
 
+namespace MediaWiki\Tests\Parser;
+
+use Language;
 use MediaWiki\Category\TrackingCategories;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Linker\LinkRendererFactory;
 use MediaWiki\Page\File\BadFileLookup;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Parser\MagicWord;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Preferences\SignatureValidatorFactory;
+use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Tidy\TidyDriverBase;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleFormatter;
+use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\Utils\UrlUtils;
+use MediaWikiIntegrationTestCase;
+use ParserFactory;
+use Psr\Log\NullLogger;
+use ReflectionObject;
+use WANObjectCache;
 
 /**
- * @covers Parser::__construct
+ * @covers \Parser::__construct
  */
 class ParserTest extends MediaWikiIntegrationTestCase {
 	/**
@@ -37,10 +51,9 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 		// Stub out a MagicWordFactory so the Parser can initialize its
 		// function hooks when it is created.
 		$mwFactory = $this->createNoOpMock( MagicWordFactory::class,
-			[ 'get', 'getVariableIDs', 'getSubstIDs', 'newArray' ] );
+			[ 'get', 'getVariableIDs', 'getSubstArray', 'newArray' ] );
 		$mwFactory->method( 'get' )->willReturn( $mw );
 		$mwFactory->method( 'getVariableIDs' )->willReturn( [] );
-		$mwFactory->method( 'getSubstIDs' )->willReturn( [] );
 
 		$urlUtils = $this->createNoOpMock( UrlUtils::class, [ 'validProtocols' ] );
 		$urlUtils->method( 'validProtocols' )->willReturn( '' );
@@ -51,17 +64,17 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 			$contLang,
 			$this->createNoOpMock( ParserFactory::class ),
 			$urlUtils,
-			$this->createNoOpMock( MediaWiki\SpecialPage\SpecialPageFactory::class ),
-			$this->createNoOpMock( MediaWiki\Linker\LinkRendererFactory::class ),
+			$this->createNoOpMock( SpecialPageFactory::class ),
+			$this->createNoOpMock( LinkRendererFactory::class ),
 			$this->createNoOpMock( NamespaceInfo::class ),
-			new Psr\Log\NullLogger(),
+			new NullLogger(),
 			$this->createNoOpMock( BadFileLookup::class ),
 			$this->createNoOpMock( LanguageConverterFactory::class, [ 'isConversionDisabled' ] ),
 			$this->createNoOpMock( HookContainer::class, [ 'run' ] ),
-			$this->createNoOpMock( MediaWiki\Tidy\TidyDriverBase::class ),
+			$this->createNoOpMock( TidyDriverBase::class ),
 			$this->createNoOpMock( WANObjectCache::class ),
-			$this->createNoOpMock( MediaWiki\User\UserOptionsLookup::class ),
-			$this->createNoOpMock( MediaWiki\User\UserFactory::class ),
+			$this->createNoOpMock( UserOptionsLookup::class ),
+			$this->createNoOpMock( UserFactory::class ),
 			$this->createNoOpMock( TitleFormatter::class ),
 			$this->createNoOpMock( HttpRequestFactory::class ),
 			$this->createNoOpMock( TrackingCategories::class ),
@@ -71,7 +84,7 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers Parser::__construct
+	 * @covers \Parser::__construct
 	 */
 	public function testConstructorArguments() {
 		$args = $this->createConstructorArguments();
@@ -124,9 +137,9 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers Parser::setPage
-	 * @covers Parser::getPage
-	 * @covers Parser::getTitle
+	 * @covers \Parser::setPage
+	 * @covers \Parser::getPage
+	 * @covers \Parser::getTitle
 	 */
 	public function testSetPage() {
 		$parser = $this->newParser();
@@ -139,9 +152,9 @@ class ParserTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers Parser::setPage
-	 * @covers Parser::getPage
-	 * @covers Parser::getTitle
+	 * @covers \Parser::setPage
+	 * @covers \Parser::getPage
+	 * @covers \Parser::getTitle
 	 */
 	public function testSetTitle() {
 		$parser = $this->newParser();

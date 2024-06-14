@@ -26,6 +26,7 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\MagicWordFactory;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionAccessException;
@@ -675,21 +676,6 @@ class CoreParserFunctions {
 		return str_replace( '_', ' ', $t->getNsText() );
 	}
 
-	/**
-	 * Given a title, return the namespace name that would be given by the
-	 * corresponding magic word.
-	 * @note This function corresponded to the `namespace` parser function
-	 * and magic variable, but `namespace` was a reserved word before PHP 7.
-	 * @param Parser $parser
-	 * @param string|null $title
-	 * @return mixed|string
-	 * @deprecated Use CoreParserFunctions::namespace() instead.
-	 */
-	public static function mwnamespace( $parser, $title = null ) {
-		wfDeprecated( __METHOD__, '1.39' );
-		return self::namespace( $parser, $title );
-	}
-
 	public static function namespacee( $parser, $title = null ) {
 		$t = self::makeTitle( $parser, $title );
 		if ( $t === null ) {
@@ -937,7 +923,7 @@ class CoreParserFunctions {
 	public static function pagesize( $parser, $page = '', $raw = null ) {
 		$title = Title::newFromText( $page );
 
-		if ( !is_object( $title ) ) {
+		if ( !is_object( $title ) || $title->isExternal() ) {
 			return self::formatRaw( 0, $raw, $parser->getTargetLanguage() );
 		}
 
@@ -1367,7 +1353,7 @@ class CoreParserFunctions {
 	 */
 	public static function revisionid( $parser, $title = null ) {
 		$t = self::makeTitle( $parser, $title );
-		if ( $t === null ) {
+		if ( $t === null || $t->isExternal() ) {
 			return '';
 		}
 
@@ -1472,7 +1458,7 @@ class CoreParserFunctions {
 	 */
 	public static function revisionday( $parser, $title = null ) {
 		$t = self::makeTitle( $parser, $title );
-		if ( $t === null ) {
+		if ( $t === null || $t->isExternal() ) {
 			return '';
 		}
 		return strval( (int)self::getRevisionTimestampSubstring(
@@ -1489,7 +1475,7 @@ class CoreParserFunctions {
 	 */
 	public static function revisionday2( $parser, $title = null ) {
 		$t = self::makeTitle( $parser, $title );
-		if ( $t === null ) {
+		if ( $t === null || $t->isExternal() ) {
 			return '';
 		}
 		return self::getRevisionTimestampSubstring(
@@ -1506,7 +1492,7 @@ class CoreParserFunctions {
 	 */
 	public static function revisionmonth( $parser, $title = null ) {
 		$t = self::makeTitle( $parser, $title );
-		if ( $t === null ) {
+		if ( $t === null || $t->isExternal() ) {
 			return '';
 		}
 		return self::getRevisionTimestampSubstring(
@@ -1523,7 +1509,7 @@ class CoreParserFunctions {
 	 */
 	public static function revisionmonth1( $parser, $title = null ) {
 		$t = self::makeTitle( $parser, $title );
-		if ( $t === null ) {
+		if ( $t === null || $t->isExternal() ) {
 			return '';
 		}
 		return strval( (int)self::getRevisionTimestampSubstring(
@@ -1540,7 +1526,7 @@ class CoreParserFunctions {
 	 */
 	public static function revisionyear( $parser, $title = null ) {
 		$t = self::makeTitle( $parser, $title );
-		if ( $t === null ) {
+		if ( $t === null || $t->isExternal() ) {
 			return '';
 		}
 		return self::getRevisionTimestampSubstring(
@@ -1557,7 +1543,7 @@ class CoreParserFunctions {
 	 */
 	public static function revisiontimestamp( $parser, $title = null ) {
 		$t = self::makeTitle( $parser, $title );
-		if ( $t === null ) {
+		if ( $t === null || $t->isExternal() ) {
 			return '';
 		}
 		return self::getRevisionTimestampSubstring(
@@ -1574,7 +1560,7 @@ class CoreParserFunctions {
 	 */
 	public static function revisionuser( $parser, $title = null ) {
 		$t = self::makeTitle( $parser, $title );
-		if ( $t === null ) {
+		if ( $t === null || $t->isExternal() ) {
 			return '';
 		}
 		// VARY_USER informs the edit saving system that getting the canonical

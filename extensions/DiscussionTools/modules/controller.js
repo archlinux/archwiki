@@ -20,7 +20,8 @@ var
 	pageDataCache = {},
 	defaultEditMode = mw.user.options.get( 'discussiontools-editmode' ) || mw.config.get( 'wgDiscussionToolsFallbackEditMode' ),
 	defaultVisual = defaultEditMode === 'visual',
-	enable2017Wikitext = featuresEnabled.sourcemodetoolbar;
+	enable2017Wikitext = featuresEnabled.sourcemodetoolbar,
+	overflowMenu = require( './overflowMenu.js' );
 
 var mobile = null;
 if ( OO.ui.isMobile() && mw.config.get( 'skin' ) === 'minerva' ) {
@@ -256,31 +257,26 @@ function getCheckboxesPromise( pageName, oldId ) {
 /**
  * Get the resourceloader modules required for a mode of the reply widget
  *
- * @param {boolean} visual Prefer the VE-based class
  * @return {string[]}
  */
-function getReplyWidgetModules( visual ) {
-	if ( !visual ) {
-		return [ 'ext.discussionTools.ReplyWidgetPlain' ];
-	}
-
+function getReplyWidgetModules() {
 	var veConf = mw.config.get( 'wgVisualEditorConfig' ),
-		visualModules = [ 'ext.discussionTools.ReplyWidgetVisual' ]
+		modules = [ 'ext.discussionTools.ReplyWidget' ]
 			.concat( veConf.pluginModules.filter( mw.loader.getState ) );
 
 	if ( OO.ui.isMobile() ) {
-		visualModules = [
+		modules = [
 			'ext.visualEditor.core.mobile',
 			'ext.visualEditor.mwextensions'
-		].concat( visualModules );
+		].concat( modules );
 	} else {
-		visualModules = [
+		modules = [
 			'ext.visualEditor.core.desktop',
 			'ext.visualEditor.desktopTarget',
 			'ext.visualEditor.mwextensions.desktop'
-		].concat( visualModules );
+		].concat( modules );
 	}
-	return visualModules;
+	return modules;
 }
 
 /**
@@ -337,6 +333,8 @@ function init( $container, state ) {
 		topicSubscriptions.initTopicSubscriptions( $container, pageThreads );
 	}
 
+	overflowMenu.init( $container, pageThreads );
+
 	if ( mobile ) {
 		mobile.init( $container, pageThreads );
 	}
@@ -347,7 +345,7 @@ function init( $container, state ) {
 		// and the add-topic link suppressed, *but* which has valid links to
 		// trigger the new topic tool within the content. If that happens,
 		// the modules will still be loaded when those links are interacted with.
-		mw.loader.using( getReplyWidgetModules( defaultVisual || enable2017Wikitext ) );
+		mw.loader.using( getReplyWidgetModules() );
 	}
 
 	/**
@@ -432,7 +430,6 @@ function init( $container, state ) {
 		// If the reply widget is already open, activate it.
 		// Reply links are also made unclickable using 'pointer-events' in CSS, but that doesn't happen
 		// for new section links, because we don't have a good way of visually disabling them.
-		// (And it also doesn't work on IE 11.)
 		if ( activeCommentId === commentId ) {
 			activeController.showAndFocus();
 			return;
@@ -442,7 +439,7 @@ function init( $container, state ) {
 		if ( commentId === utils.NEW_TOPIC_COMMENT_ID ) {
 			// If this is a new topic link, and a reply widget is open, attempt to close it first.
 			if ( activeController ) {
-				teardownPromise = activeController.replyWidget.tryTeardown();
+				teardownPromise = activeController.tryTeardown();
 			} else if ( OO.getProp( window, 've', 'init', 'target', 'tryTeardown' ) ) {
 				// If VE or 2017WTE is open, attempt to close it as well. (T317035#8590357)
 				// FIXME This should be generalized, using some global router or something,
@@ -469,9 +466,18 @@ function init( $container, state ) {
 			} else {
 				comment = newTopicComment( data );
 			}
-			setupController( comment, $link );
+			if ( comment ) {
+				setupController( comment, $link );
+			} else {
+				// We couldn't find the comment, so express that there's an issue
+				mw.notify( mw.msg( 'discussiontools-error-comment-disappeared' ) );
+			}
 		} );
 	} );
+
+	var mobilePromise = OO.ui.isMobile() && mw.loader.getState( 'mobile.init' ) ?
+		mw.loader.using( 'mobile.init' ) :
+		$.Deferred().resolve().promise();
 
 	// Restore autosave
 	( function () {
@@ -480,28 +486,33 @@ function init( $container, state ) {
 			return;
 		}
 
-		var mode, $link, storage;
-		for ( var i = 0; i < pageThreads.threadItems.length; i++ ) {
-			var comment = pageThreads.threadItems[ i ];
-			storage = new MemoryStorage( mw.storage, 'mw-ext-DiscussionTools-reply/' + comment.id, STORAGE_EXPIRY );
-			if ( storage.get( 'saveable' ) ) {
-				mode = storage.get( 'mode' );
-				$link = $( commentNodes[ i ] );
-				setupController( comment, $link, mode, true, !state.firstLoad, storage );
-				if ( OO.ui.isMobile() ) {
-					var urlFragment = mw.util.escapeIdForLink( comment.id );
-					// Force the section to expand on mobile (T338920)
-					location.hash = '#' + urlFragment;
-				}
+		for ( let i = 0; i < pageThreads.threadItems.length; i++ ) {
+			const comment = pageThreads.threadItems[ i ];
+			const replyStorage = new MemoryStorage( mw.storage, 'mw-ext-DiscussionTools-reply/' + comment.id, STORAGE_EXPIRY );
+			if ( replyStorage.get( 'saveable' ) ) {
+				const mode = replyStorage.get( 'mode' );
+				const $link = $( commentNodes[ i ] );
+				// Wait for mobile section toggling code to be ready
+				mobilePromise.then( function () {
+					if ( OO.ui.isMobile() ) {
+						const urlFragment = mw.util.escapeIdForLink( comment.id );
+						// Force the section to expand on mobile (T338920)
+						location.hash = '#' + urlFragment;
+					}
+					// Wait for the 'hashchange' event to be handled by the mobile code
+					setTimeout( function () {
+						setupController( comment, $link, mode, true, !state.firstLoad, replyStorage );
+					} );
+				} );
 				break;
 			}
 		}
-		storage = new MemoryStorage( mw.storage, 'mw-ext-DiscussionTools-reply/' + utils.NEW_TOPIC_COMMENT_ID, STORAGE_EXPIRY );
-		if ( storage.get( 'saveable' ) || storage.get( 'title' ) ) {
-			mode = storage.get( 'mode' );
-			setupController( newTopicComment(), $( [] ), mode, true, !state.firstLoad, storage );
+		const newTopicStorage = new MemoryStorage( mw.storage, 'mw-ext-DiscussionTools-reply/' + utils.NEW_TOPIC_COMMENT_ID, STORAGE_EXPIRY );
+		if ( newTopicStorage.get( 'saveable' ) || newTopicStorage.get( 'title' ) ) {
+			const mode = newTopicStorage.get( 'mode' );
+			setupController( newTopicComment(), $( [] ), mode, true, !state.firstLoad, newTopicStorage );
 		} else if ( mw.config.get( 'wgDiscussionToolsStartNewTopicTool' ) ) {
-			var data = linksController.parseNewTopicLink( location.href );
+			const data = linksController.parseNewTopicLink( location.href );
 			setupController( newTopicComment( data ), $( [] ) );
 		}
 	}() );
@@ -509,11 +520,7 @@ function init( $container, state ) {
 	// For debugging (now unused in the code)
 	mw.dt.pageThreads = pageThreads;
 
-	var promise = OO.ui.isMobile() && mw.loader.getState( 'mobile.init' ) ?
-		mw.loader.using( 'mobile.init' ) :
-		$.Deferred().resolve().promise();
-
-	promise.then( function () {
+	mobilePromise.then( function () {
 		if ( state.repliedTo ) {
 			highlighter.highlightPublishedComment( pageThreads, state.repliedTo );
 
@@ -539,6 +546,7 @@ function init( $container, state ) {
 		}
 	} );
 
+	var dismissableNotificationPromise = null;
 	// Page-level handlers only need to be setup once
 	if ( !pageHandlersSetup ) {
 		$( window ).on( 'popstate', function () {
@@ -550,15 +558,149 @@ function init( $container, state ) {
 		} );
 		// eslint-disable-next-line no-jquery/no-global-selector
 		$( 'body' ).on( 'click', function ( e ) {
-			if ( utils.isUnmodifiedLeftClick( e ) ) {
+			if ( utils.isUnmodifiedLeftClick( e ) && !e.target.closest( 'a' ) ) {
+				// Remove the highlight and the hash from the URL, unless clicking on another link
 				highlighter.clearHighlightTargetComment( pageThreads );
+			}
+			if ( dismissableNotificationPromise ) {
+				dismissableNotificationPromise.then( function ( notif ) {
+					notif.close();
+				} );
+				dismissableNotificationPromise = null;
 			}
 		} );
 		pageHandlersSetup = true;
 	}
 	if ( state.firstLoad ) {
-		promise.then( function () {
-			highlighter.highlightTargetComment( pageThreads );
+		mobilePromise.then( function () {
+			var findCommentQuery;
+			var isHeading = false;
+			var highlightResult = highlighter.highlightTargetComment( pageThreads );
+
+			// Hash contains a non-replaced space (should be underscore), maybe due to
+			// manual creation or a broken third party tool. Just replace the spaces
+			// and navigate to the new URL.
+			// Ideally we'd use history.replaceState but that wouldn't scroll the page.
+			// Only do the replacement if the original hash doesn't correspond to a target
+			// element, but the fixed hash does, to avoid affects on other apps which
+			// may use fragments with spaces.
+			if ( location.hash && !mw.util.getTargetFromFragment() && location.hash.indexOf( '%20' ) !== -1 ) {
+				var fixedHash = location.hash.slice( 1 ).replace( /%20/g, '_' );
+				if ( mw.util.getTargetFromFragment( fixedHash ) ) {
+					location.hash = fixedHash;
+				}
+			}
+			if (
+				// Fragment doesn't correspond to an element on the page
+				location.hash &&
+				!mw.util.getTargetFromFragment() &&
+				// Not a DT comment
+				highlightResult.highlighted.length === 0 && highlightResult.requested.length === 0
+			) {
+				var fragment = location.hash.slice( 1 );
+				var ignorePatterns = [
+					// A leading '/' or '!/' usually means a application route, e.g. /media, or /editor.
+					// We can't rule out a heading title (T349498), but they are unlikely
+					/^!?\//,
+					// "top" is a magic value in the WHATWG spec that goes to the top of the
+					// document (unless there's an actual id=top element on the page), see:
+					// https://html.spec.whatwg.org/multipage/browsing-the-web.html#scrolling-to-a-fragment:top-of-the-document-2
+					// There's a very rare edge case of actual headings named "top" that we'll
+					// be missing here, but they're far less common than the top-of-page usage.
+					/^top$/i,
+					// Gadget: ConvenientDiscussions
+					/^\d{12}_/,
+					// Gadget: RedWarn
+					/^noticeApplied-/
+				];
+				if ( ignorePatterns.every( function ( pattern ) {
+					return !pattern.test( fragment );
+				} ) ) {
+					findCommentQuery = {
+						heading: mw.util.percentDecodeFragment( fragment ).replace( / /g, '_' ),
+						page: mw.config.get( 'wgRelevantPageName' )
+					};
+					isHeading = true;
+				}
+			} else if ( highlightResult.highlighted.length === 0 && highlightResult.requested.length === 1 ) {
+				findCommentQuery = {
+					idorname: mw.util.percentDecodeFragment( highlightResult.requested[ 0 ] )
+				};
+				isHeading = highlightResult.requested[ 0 ].slice( 0, 1 ) === 'h';
+			}
+			if ( findCommentQuery ) {
+				// TODO: Support multiple commentIds being requested and not all being found
+				var dtConf = require( './config.json' );
+				var findCommentRequest = dtConf.enablePermalinksFrontend ?
+					getApi().get( $.extend( {
+						action: 'discussiontoolsfindcomment'
+					}, findCommentQuery ) ) :
+					$.Deferred().resolve( [ {} ] ).promise();
+				dismissableNotificationPromise = $.when(
+					findCommentRequest,
+					mw.loader.using( 'mediawiki.notification' )
+				).then( function ( results ) {
+					var result = results[ 0 ];
+					var titles = [];
+					if ( result.discussiontoolsfindcomment ) {
+						titles = result.discussiontoolsfindcomment.map( function ( threadItemData ) {
+							// Only show items that appear on the current revision of their page
+							// and are not transcluded from another page
+							if ( threadItemData.couldredirect ) {
+								var title = mw.Title.newFromText(
+									threadItemData.title + '#' +
+									mw.util.escapeIdForLink( threadItemData.id )
+								);
+								return title;
+							}
+							return null;
+						} ).filter( function ( url ) {
+							return url;
+						} );
+					}
+					if ( titles.length ) {
+						var $list = $( '<ul>' );
+						var $notification = $( '<div>' ).append(
+							$( '<p>' ).text( mw.message(
+								isHeading ?
+									'discussiontools-target-heading-found-moved' :
+									'discussiontools-target-comment-found-moved',
+								titles.length
+							).text() ),
+							$list
+						);
+						titles.forEach( function ( title ) {
+							$list.append(
+								$( '<li>' ).append(
+									$( '<a>' ).attr( 'href', title.getUrl() ).text( title.getPrefixedText() )
+								)
+							);
+						} );
+						mw.notification.notify(
+							$notification,
+							{ type: 'warn', autoHide: false }
+						);
+						// This notification should not be accidentally dismissable
+						return $.Deferred().reject().promise();
+					} else {
+						return mw.notification.notify(
+							mw.message( isHeading ?
+								'discussiontools-target-heading-missing' :
+								'discussiontools-target-comment-missing'
+							).text(),
+							{ type: 'warn', autoHide: false }
+						);
+					}
+				} );
+			}
+			if ( highlightResult.highlighted.length === 0 && ( highlightResult.requested.length > 1 || highlightResult.requestedSince ) ) {
+				dismissableNotificationPromise = mw.loader.using( 'mediawiki.notification' ).then( function () {
+					return mw.notification.notify(
+						mw.message( 'discussiontools-target-comments-missing' ).text(),
+						{ type: 'warn', autoHide: false }
+					);
+				} );
+			}
 		} );
 	}
 }
@@ -652,9 +794,8 @@ function refreshPageContents( oldId ) {
 		useskin: mw.config.get( 'skin' ),
 		mobileformat: OO.ui.isMobile(),
 		uselang: mw.config.get( 'wgUserLanguage' ),
-		// HACK: Always display reply links afterwards, ignoring preferences etc., in case this was
-		// a page view with reply links forced with ?dtenable=1 or otherwise
-		dtenable: '1',
+		// Pass through dtenable query string param from original request
+		dtenable: new URLSearchParams( location.search ).get( 'dtenable' ) ? '1' : undefined,
 		prop: [ 'text', 'revid', 'categorieshtml', 'sections', 'displaytitle', 'subtitle', 'modules', 'jsconfigvars' ],
 		page: !oldId ? mw.config.get( 'wgRelevantPageName' ) : undefined,
 		oldid: oldId || undefined

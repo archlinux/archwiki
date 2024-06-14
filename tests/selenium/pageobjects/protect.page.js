@@ -3,12 +3,20 @@
 const Page = require( 'wdio-mediawiki/Page' );
 
 class ProtectPage extends Page {
-	get reason() { return $( '#mwProtect-reason input' ); }
-	get editProtectSelect() { return $( '#mwProtect-level-edit select' ); }
-	get submit() { return $( '#mw-Protect-submit' ); }
+	get reason() {
+		return $( '#mwProtect-reason input' );
+	}
 
-	open( title ) {
-		super.openTitle( title, { action: 'protect' } );
+	get editProtectSelect() {
+		return $( '#mwProtect-level-edit select' );
+	}
+
+	get submit() {
+		return $( '#mw-Protect-submit' );
+	}
+
+	async open( title ) {
+		return super.openTitle( title, { action: 'protect' } );
 	}
 
 	async protect( title, reason, editProtect ) {

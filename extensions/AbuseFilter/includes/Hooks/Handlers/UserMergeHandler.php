@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Hooks\Handlers;
 
-use Config;
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\UserMerge\Hooks\AccountFieldsHook;
 
 class UserMergeHandler implements AccountFieldsHook {

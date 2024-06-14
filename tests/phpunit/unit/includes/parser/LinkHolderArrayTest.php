@@ -2,17 +2,24 @@
 
 declare( strict_types = 1 );
 
+namespace MediaWiki\Tests\Parser;
+
+use ILanguageConverter;
+use LinkHolderArray;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\Title;
+use MediaWikiUnitTestCase;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers LinkHolderArray
+ * @covers \LinkHolderArray
  */
 class LinkHolderArrayTest extends MediaWikiUnitTestCase {
 
 	/**
-	 * @covers LinkHolderArray::merge
+	 * @covers \LinkHolderArray::merge
 	 */
 	public function testMerge() {
 		$link1 = new LinkHolderArray(
@@ -144,7 +151,7 @@ class LinkHolderArrayTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers LinkHolderArray::clear
+	 * @covers \LinkHolderArray::clear
 	 */
 	public function testClear() {
 		$linkHolderArray = new LinkHolderArray(
@@ -166,7 +173,7 @@ class LinkHolderArrayTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideReplaceText
-	 * @covers LinkHolderArray::replaceText
+	 * @covers \LinkHolderArray::replaceText
 	 *
 	 * @param string $input
 	 * @param string $expected
@@ -235,8 +242,8 @@ class LinkHolderArrayTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider provideReplace_external
-	 * @covers LinkHolderArray::replace
-	 * @covers LinkHolderArray::replaceInterwiki
+	 * @covers \LinkHolderArray::replace
+	 * @covers \LinkHolderArray::replaceInterwiki
 	 *
 	 * @param string $text
 	 * @param string $extended

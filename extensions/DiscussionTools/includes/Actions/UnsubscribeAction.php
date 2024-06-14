@@ -5,14 +5,14 @@ namespace MediaWiki\Extension\DiscussionTools\Actions;
 use Article;
 use ErrorPageError;
 use FormAction;
-use Html;
 use HTMLForm;
 use IContextSource;
 use MediaWiki\Extension\DiscussionTools\SubscriptionItem;
 use MediaWiki\Extension\DiscussionTools\SubscriptionStore;
+use MediaWiki\Html\Html;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
-use SpecialPage;
-use User;
+use MediaWiki\User\User;
 use UserNotLoggedIn;
 
 class UnsubscribeAction extends FormAction {

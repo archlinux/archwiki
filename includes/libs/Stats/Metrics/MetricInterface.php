@@ -55,6 +55,13 @@ interface MetricInterface {
 	public function getSamples(): array;
 
 	/**
+	 * Returns a count of samples recorded by the metric.
+	 *
+	 * @return int
+	 */
+	public function getSampleCount(): int;
+
+	/**
 	 * Sets sample rate on a new metric instance.
 	 *
 	 * @param float $sampleRate
@@ -71,6 +78,17 @@ interface MetricInterface {
 
 	/**
 	 * Adds a label $key with $value.
+	 * Note that the order in which labels are added is significant for StatsD output.
+	 *
+	 * Example:
+	 * ```php
+	 * $statsFactory->getCounter( 'testMetric_total' )
+	 *     ->setLabel( 'first', 'foo' )
+	 *     ->setLabel( 'second', 'bar' )
+	 *     ->increment();
+	 * ```
+	 * statsd: "mediawiki.testMetric_total.foo.bar"
+	 * prometheus: "mediawiki_testMetric_total{ first='foo', second='bar' }
 	 *
 	 * @param string $key
 	 * @param string $value
@@ -81,10 +99,12 @@ interface MetricInterface {
 	/**
 	 * Copies metric operation to StatsD at provided namespace.
 	 *
-	 * @param string $statsdNamespace
+	 * Takes a namespace or multiple namespaces.
+	 *
+	 * @param string|string[] $statsdNamespaces
 	 * @return CounterMetric|GaugeMetric|TimingMetric|NullMetric
 	 */
-	public function copyToStatsdAt( string $statsdNamespace );
+	public function copyToStatsdAt( $statsdNamespaces );
 
 	/**
 	 * Returns metric with cleared labels.

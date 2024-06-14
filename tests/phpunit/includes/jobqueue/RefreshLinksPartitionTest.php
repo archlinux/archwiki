@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Title\Title;
+
 /**
  * @group JobQueue
  * @group medium
@@ -7,17 +9,9 @@
  */
 class RefreshLinksPartitionTest extends MediaWikiIntegrationTestCase {
 
-	protected function setUp(): void {
-		parent::setUp();
-
-		$this->tablesUsed[] = 'page';
-		$this->tablesUsed[] = 'revision';
-		$this->tablesUsed[] = 'pagelinks';
-	}
-
 	/**
 	 * @dataProvider provideBacklinks
-	 * @covers BacklinkJobUtils
+	 * @covers \BacklinkJobUtils
 	 */
 	public function testRefreshLinks( $ns, $dbKey, $pages ) {
 		$title = Title::makeTitle( $ns, $dbKey );

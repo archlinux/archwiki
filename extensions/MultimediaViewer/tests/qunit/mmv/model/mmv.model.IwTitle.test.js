@@ -21,21 +21,21 @@ const { IwTitle } = require( 'mmv' );
 	QUnit.module( 'mmv.model.IwTitle', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'constructor sense test', function ( assert ) {
-		var namespace = 4,
-			fullPageName = 'User_talk:John_Doe',
-			domain = 'en.wikipedia.org',
-			url = 'https://en.wikipedia.org/wiki/User_talk:John_Doe',
-			title = new IwTitle( namespace, fullPageName, domain, url );
+		const namespace = 4;
+		const fullPageName = 'User_talk:John_Doe';
+		const domain = 'en.wikipedia.org';
+		const url = 'https://en.wikipedia.org/wiki/User_talk:John_Doe';
+		const title = new IwTitle( namespace, fullPageName, domain, url );
 
 		assert.true( title instanceof IwTitle );
 	} );
 
 	QUnit.test( 'getters', function ( assert ) {
-		var namespace = 4,
-			fullPageName = 'User_talk:John_Doe',
-			domain = 'en.wikipedia.org',
-			url = 'https://en.wikipedia.org/wiki/User_talk:John_Doe',
-			title = new IwTitle( namespace, fullPageName, domain, url );
+		const namespace = 4;
+		const fullPageName = 'User_talk:John_Doe';
+		const domain = 'en.wikipedia.org';
+		const url = 'https://en.wikipedia.org/wiki/User_talk:John_Doe';
+		const title = new IwTitle( namespace, fullPageName, domain, url );
 
 		assert.strictEqual( title.getUrl(), url, 'getUrl()' );
 		assert.strictEqual( title.getDomain(), domain, 'getDomain()' );

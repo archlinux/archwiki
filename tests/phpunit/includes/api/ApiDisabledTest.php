@@ -1,10 +1,12 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
 /**
  * @group API
  * @group medium
  *
- * @covers ApiDisabled
+ * @covers \ApiDisabled
  */
 class ApiDisabledTest extends ApiTestCase {
 	public function testDisabled() {

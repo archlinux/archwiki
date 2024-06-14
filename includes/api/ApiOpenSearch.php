@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
- * Copyright © 2008 Brion Vibber <brion@wikimedia.org>
+ * Copyright © 2008 Brooke Vibber <bvibber@wikimedia.org>
  * Copyright © 2014 Wikimedia Foundation and contributors
  *
  * This program is free software; you can redistribute it and/or modify
@@ -167,11 +167,11 @@ class ApiOpenSearch extends ApiBase {
 				$res = $db->newSelectQueryBuilder()
 					->select( [ 'page_namespace', 'page_title', 'rd_namespace', 'rd_title' ] )
 					->from( 'page' )
+					->join( 'redirect', null, [ 'rd_from = page_id' ] )
 					->where( [
-						'rd_interwiki' => [ null, '' ],
+						'rd_interwiki' => '',
 						$lb->constructSet( 'page', $db )
 					] )
-					->join( 'redirect', null, [ 'rd_from = page_id' ] )
 					->caller( __METHOD__ )
 					->fetchResultSet();
 				foreach ( $res as $row ) {
@@ -381,12 +381,6 @@ class ApiOpenSearch extends ApiBase {
 	 */
 	public static function getOpenSearchTemplate( $type ) {
 		$config = MediaWikiServices::getInstance()->getSearchEngineConfig();
-		$template = $config->getConfig()->get( MainConfigNames::OpenSearchTemplate );
-
-		if ( $template && $type === 'application/x-suggestions+json' ) {
-			return $template;
-		}
-
 		$ns = implode( '|', $config->defaultNamespaces() );
 		if ( !$ns ) {
 			$ns = '0';

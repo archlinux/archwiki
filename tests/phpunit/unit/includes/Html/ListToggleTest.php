@@ -5,13 +5,10 @@ use MediaWiki\Output\OutputPage;
 use MediaWiki\Tests\Unit\FakeQqxMessageLocalizer;
 
 /**
- * @covers MediaWiki\Html\ListToggle
+ * @covers \MediaWiki\Html\ListToggle
  */
 class ListToggleTest extends MediaWikiUnitTestCase {
 
-	/**
-	 * @covers MediaWiki\Html\ListToggle::__construct
-	 */
 	public function testConstruct() {
 		$output = $this->createMock( OutputPage::class );
 		$output->expects( $this->once() )
@@ -24,9 +21,6 @@ class ListToggleTest extends MediaWikiUnitTestCase {
 		new ListToggle( $output );
 	}
 
-	/**
-	 * @covers MediaWiki\Html\ListToggle::getHTML
-	 */
 	public function testGetHTML() {
 		$language = $this->createMock( Language::class );
 		$language->method( 'commaList' )

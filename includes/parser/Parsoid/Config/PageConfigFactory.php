@@ -19,6 +19,7 @@
 
 namespace MediaWiki\Parser\Parsoid\Config;
 
+use IDBAccessObject;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Page\PageIdentity;
@@ -40,15 +41,9 @@ use Wikimedia\Bcp47Code\Bcp47Code;
  * @internal
  */
 class PageConfigFactory extends \Wikimedia\Parsoid\Config\PageConfigFactory {
-
-	/** @var RevisionStore */
-	private $revisionStore;
-
-	/** @var SlotRoleRegistry */
-	private $slotRoleRegistry;
-
-	/** @var LanguageFactory */
-	private $languageFactory;
+	private RevisionStore $revisionStore;
+	private SlotRoleRegistry $slotRoleRegistry;
+	private LanguageFactory $languageFactory;
 
 	/**
 	 * @param RevisionStore $revisionStore
@@ -137,7 +132,7 @@ class PageConfigFactory extends \Wikimedia\Parsoid\Config\PageConfigFactory {
 				// were pending writes, but this codepath should be very rare.
 				// [T259855]
 				$revisionRecord = $this->revisionStore->getRevisionById(
-					$revision, RevisionStore::READ_LATEST
+					$revision, IDBAccessObject::READ_LATEST
 				);
 				$success = ( $revisionRecord !== null ) ? 'success' : 'failure';
 				LoggerFactory::getInstance( 'Parsoid' )->error(

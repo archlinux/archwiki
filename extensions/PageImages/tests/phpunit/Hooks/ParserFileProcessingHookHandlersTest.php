@@ -4,7 +4,9 @@ namespace PageImages\Tests\Hooks;
 
 use File;
 use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 use MediaWikiIntegrationTestCase;
 use PageImages\Hooks\ParserFileProcessingHookHandlers;
 use PageImages\PageImageCandidate;
@@ -12,7 +14,6 @@ use PageImages\PageImages;
 use Parser;
 use ParserOptions;
 use RepoGroup;
-use TitleFactory;
 use WANObjectCache;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\TestingAccessWrapper;
@@ -67,16 +68,12 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 	 * @return RepoGroup
 	 */
 	private function getRepoGroup() {
-		$file = $this->getMockBuilder( File::class )
-			->disableOriginalConstructor()
-			->getMock();
+		$file = $this->createMock( File::class );
 		// ugly hack to avoid all the unmockable crap in FormatMetadata
 		$file->method( 'isDeleted' )
 			->willReturn( true );
 
-		$repoGroup = $this->getMockBuilder( RepoGroup::class )
-			->disableOriginalConstructor()
-			->getMock();
+		$repoGroup = $this->createMock( RepoGroup::class );
 		$repoGroup->method( 'findFile' )
 			->willReturn( $file );
 
@@ -221,6 +218,7 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 					$this->createMock( HttpRequestFactory::class ),
 					$this->createMock( IConnectionProvider::class ),
 					$this->createMock( TitleFactory::class ),
+					$this->createMock( LinksMigration::class ),
 				] )
 				->onlyMethods( [ 'scoreFromTable', 'fetchFileMetadata', 'getRatio', 'getDenylist' ] )
 				->getMock()
@@ -294,7 +292,8 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 				$this->createMock( WANObjectCache::class ),
 				$this->createMock( HttpRequestFactory::class ),
 				$this->createMock( IConnectionProvider::class ),
-				$this->createMock( TitleFactory::class )
+				$this->createMock( TitleFactory::class ),
+				$this->createMock( LinksMigration::class )
 			)
 		);
 
@@ -360,6 +359,7 @@ class ParserFileProcessingHookHandlersTest extends MediaWikiIntegrationTestCase 
 					$this->createMock( HttpRequestFactory::class ),
 					$this->createMock( IConnectionProvider::class ),
 					$this->createMock( TitleFactory::class ),
+					$this->createMock( LinksMigration::class ),
 				] )
 				->onlyMethods( [ 'fetchFileMetadata' ] )
 				->getMock()

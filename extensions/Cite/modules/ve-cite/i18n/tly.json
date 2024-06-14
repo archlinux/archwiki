@@ -8,7 +8,7 @@
 	},
 	"visualeditor-cite-tool-name-book": "Kitob",
 	"visualeditor-cite-tool-name-journal": "Žurnal",
-	"visualeditor-cite-tool-name-news": "Tojə xəbon",
+	"visualeditor-cite-tool-name-news": "Tožə xəbon",
 	"visualeditor-cite-tool-name-web": "Vebsajt",
 	"cite-ve-changedesc-ref-group-both": "Ǧejdon grup ovaxtə byən ce «$1» bə «$2»",
 	"cite-ve-changedesc-ref-group-from": "Ǧejdi grup ovaxtə byə ce «$1» bə umumijə grup",
@@ -50,7 +50,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Ym ǧejd heste šablonədə ja čo soxtə byə ǧysmədə ijən ysət syftənə vinde bəbe iglə bə viki-kodi sərost karde režimədə.",
 	"cite-ve-referenceslist-missingreflist": "Ym ǧejdon sijohi šablon soxtejdə.",
 	"cite-ve-toolbar-group-label": "Səvonon",
-	"cite-ve-othergroup-item": "$1 ǧejd",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Ǧejdon",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Ǧejdon grupon nom: «$1»"
+	"cite-ve-othergroup-item": "$1 ǧejd"
 }

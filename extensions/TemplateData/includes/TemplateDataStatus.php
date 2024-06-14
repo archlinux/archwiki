@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\TemplateData;
 
-use Status;
+use MediaWiki\Status\Status;
 
 /**
  * @license GPL-2.0-or-later

@@ -13,7 +13,7 @@
 	"math_syntax_error": "syntaktiska zmólka",
 	"math_unknown_error": "njeznata zmólka",
 	"math_unknown_function": "njeznata funkcija \"$1\"",
-	"mw_math_mathml": "Jo-lic móžno - MathML (eksperimentelny)",
-	"mw_math_source": "Ako LaTeX wóstajiś (za tekstowe browsery)",
+	"mw-math-mathml": "Jo-lic móžno - MathML (eksperimentelny)",
+	"mw-math-source": "Ako LaTeX wóstajiś (za tekstowe browsery)",
 	"prefs-math": "Math"
 }

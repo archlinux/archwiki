@@ -53,7 +53,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Гэтая зноска вызначаная ў шаблоне ці іншым створаным блоку і пакуль яна можа быць перадпаказаная толькі ў рэжыме праўкі зыходнага тэксту.",
 	"cite-ve-referenceslist-missingreflist": "Гэты спіс зносак створаны шаблонам і пакуль яго можна правіць толькі ў рэжыме зыходнага тэксту.",
 	"cite-ve-toolbar-group-label": "Зноскі",
-	"cite-ve-othergroup-item": "$1 зноска",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Зноскі",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Назва групы зносак: «$1»"
+	"cite-ve-othergroup-item": "$1 зноска"
 }

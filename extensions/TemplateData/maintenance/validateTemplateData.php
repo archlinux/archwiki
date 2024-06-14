@@ -35,7 +35,7 @@ class ValidateTemplateData extends Maintenance {
 				->join( 'page', null, 'pp_page=page_id' )
 				->fields( [ 'pp_page', 'pp_value', 'page_namespace', 'page_title' ] )
 				->where( [
-					'pp_page > ' . $db->addQuotes( $lastId ),
+					$db->expr( 'pp_page', '>', $lastId ),
 					'pp_propname' => 'templatedata'
 				] )
 				->orderBy( 'pp_page' )

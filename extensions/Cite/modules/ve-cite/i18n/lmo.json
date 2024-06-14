@@ -49,7 +49,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Quel riferiment chì l'è definid in d'un model o in d'un alter bloch ingenerad e adesdess la po vesser modifegada domà in manera sorgent.",
 	"cite-ve-referenceslist-missingreflist": "Questa lista de riferiment l'è ingenerada de un model e per el moment la po vesser modifegada doma in manera sorgent.",
 	"cite-ve-toolbar-group-label": "Cita",
-	"cite-ve-othergroup-item": "$1 riferiment",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Riferiment",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nom del grup di riferiment: \"$1\""
+	"cite-ve-othergroup-item": "$1 riferiment"
 }

@@ -10,10 +10,8 @@
 /**
  * Context item for a MWCitation.
  *
- * @class
- * @extends ve.ui.MWReferenceContextItem
- *
  * @constructor
+ * @extends ve.ui.MWReferenceContextItem
  * @param {ve.ui.LinearContext} context Context the item is in
  * @param {ve.dm.Model} model Model the item is related to
  * @param {Object} [config]

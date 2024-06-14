@@ -18,7 +18,9 @@
 
 namespace MediaWiki\Extension\OATHAuth;
 
-use User;
+use InvalidArgumentException;
+use MediaWiki\User\User;
+use ReflectionClass;
 
 /**
  * Class representing a user from OATH's perspective
@@ -26,32 +28,35 @@ use User;
  * @ingroup Extensions
  */
 class OATHUser {
-	/** @var User */
-	private $user;
+	private User $user;
+	private int $centralId;
 
 	/** @var IAuthKey[] */
-	private $keys;
-
-	/**
-	 * @var ?IModule
-	 */
-	private $module;
+	private array $keys = [];
+	private ?IModule $module = null;
 
 	/**
 	 * Constructor. Can't be called directly. Use OATHUserRepository::findByUser instead.
 	 * @param User $user
-	 * @param IAuthKey[] $keys
+	 * @param int $centralId
 	 */
-	public function __construct( User $user, array $keys = [] ) {
+	public function __construct( User $user, int $centralId ) {
 		$this->user = $user;
-		$this->setKeys( $keys );
+		$this->centralId = $centralId;
 	}
 
 	/**
 	 * @return User
 	 */
-	public function getUser() {
+	public function getUser(): User {
 		return $this->user;
+	}
+
+	/**
+	 * @return int The central ID of this user
+	 */
+	public function getCentralId(): int {
+		return $this->centralId;
 	}
 
 	/**
@@ -76,24 +81,21 @@ class OATHUser {
 	/**
 	 * Get the key associated with this user.
 	 *
-	 * @return IAuthKey[]|array
+	 * @return IAuthKey[]
 	 */
-	public function getKeys() {
+	public function getKeys(): array {
 		return $this->keys;
 	}
 
 	/**
 	 * Useful for modules that operate on single-key premise,
-	 * as well as testing the key type, since first key is
+	 * as well as testing the key type, since the first key is(?)
 	 * necessarily the same type as others
 	 *
 	 * @return IAuthKey|null
 	 */
 	public function getFirstKey() {
-		if ( !empty( $this->keys ) ) {
-			return $this->keys[0];
-		}
-		return null;
+		return $this->keys[0] ?? null;
 	}
 
 	/**
@@ -123,10 +125,7 @@ class OATHUser {
 	 * @param IAuthKey $key
 	 */
 	public function addKey( IAuthKey $key ) {
-		if ( !$this->keyTypeCorrect( $key ) ) {
-			return;
-		}
-
+		$this->checkKeyTypeCorrect( $key );
 		$this->keys[] = $key;
 	}
 
@@ -149,6 +148,13 @@ class OATHUser {
 	}
 
 	/**
+	 * @return bool Whether this user has two-factor authentication enabled or not
+	 */
+	public function isTwoFactorAuthEnabled(): bool {
+		return count( $this->getKeys() ) >= 1;
+	}
+
+	/**
 	 * Disables current (if any) auth method
 	 */
 	public function disable() {
@@ -158,16 +164,19 @@ class OATHUser {
 
 	/**
 	 * All keys set for the user must be of the same type
-	 *
 	 * @param IAuthKey $key
-	 * @return bool
 	 */
-	private function keyTypeCorrect( IAuthKey $key ) {
+	private function checkKeyTypeCorrect( IAuthKey $key ): void {
+		$newKeyClass = get_class( $key );
 		foreach ( $this->keys as $keyToTest ) {
-			if ( get_class( $keyToTest ) !== get_class( $key ) ) {
-				return false;
+			if ( get_class( $keyToTest ) !== $newKeyClass ) {
+				$first = ( new ReflectionClass( $keyToTest ) )->getShortName();
+				$second = ( new ReflectionClass( $key ) )->getShortName();
+
+				throw new InvalidArgumentException(
+					"User already has a key from a different two-factor module enabled ($first !== $second)"
+				);
 			}
 		}
-		return true;
 	}
 }

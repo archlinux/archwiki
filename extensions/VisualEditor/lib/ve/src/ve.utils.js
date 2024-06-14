@@ -1,7 +1,7 @@
 /*!
  * VisualEditor utilities.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -303,24 +303,6 @@ ve.isEmptyObject = $.isEmptyObject;
  * @return {Mixed} Modified version of first or second argument
  */
 ve.extendObject = $.extend;
-
-/**
- * Feature detect if the browser supports the Internationalization API
- *
- * Should work in Chrome>=24, FF>=29 & IE>=11
- *
- * @deprecated Always set to true
- * @private
- * @property {boolean}
- */
-ve.supportsIntl = true;
-
-/**
- * @deprecated Always set to true
- * @private
- * @property {boolean}
- */
-ve.supportsSplice = true;
 
 /**
  * Splice one array into another.
@@ -931,17 +913,6 @@ ve.safeDecodeURIComponent = function ( s ) {
 		s = decodeURIComponent( s );
 	} catch ( e ) {}
 	return s;
-};
-
-/**
- * Wrapper for node.normalize(). The native implementation is broken in IE,
- * so we use our own implementation in that case.
- *
- * @deprecated Use Node#normalize
- * @param {Node} node Node to normalize
- */
-ve.normalizeNode = function ( node ) {
-	node.normalize();
 };
 
 /**

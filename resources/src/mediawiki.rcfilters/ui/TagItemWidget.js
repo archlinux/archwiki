@@ -2,16 +2,16 @@
  * Extend OOUI's TagItemWidget to also display a popup on hover.
  *
  * @class mw.rcfilters.ui.TagItemWidget
+ * @ignore
  * @extends OO.ui.TagItemWidget
- * @mixins OO.ui.mixin.PopupElement
+ * @mixes OO.ui.mixin.PopupElement
  *
- * @constructor
  * @param {mw.rcfilters.Controller} controller
  * @param {mw.rcfilters.dm.FiltersViewModel} filtersViewModel
  * @param {mw.rcfilters.dm.FilterItem|null} invertModel
  * @param {mw.rcfilters.dm.FilterItem} itemModel Item model
  * @param {Object} config Configuration object
- * @cfg {jQuery} [$overlay] A jQuery object serving as overlay for popups
+ * @param {jQuery} [config.$overlay] A jQuery object serving as overlay for popups
  */
 var TagItemWidget = function MwRcfiltersUiTagItemWidget(
 	controller, filtersViewModel, invertModel, itemModel, config
@@ -25,7 +25,7 @@ var TagItemWidget = function MwRcfiltersUiTagItemWidget(
 	this.itemModel = itemModel;
 	this.selected = false;
 
-	TagItemWidget.parent.call( this, $.extend( {
+	TagItemWidget.super.call( this, $.extend( {
 		data: this.itemModel.getName()
 	}, config ) );
 
@@ -88,12 +88,12 @@ TagItemWidget.prototype.updateUiBasedOnState = function () {
 	// Update label if needed
 	var labelMsg = this.itemModel.getLabelMessageKey( this.invertModel && this.invertModel.isSelected() );
 	if ( labelMsg ) {
-		this.setLabel( $( '<div>' ).append(
-			$( '<bdi>' ).html(
+		this.setLabel(
+			$( '<bdi>' ).append(
 				// eslint-disable-next-line mediawiki/msg-doc
-				mw.message( labelMsg, mw.html.escape( this.itemModel.getLabel() ) ).parse()
+				mw.message( labelMsg, mw.html.escape( this.itemModel.getLabel() ) ).parseDom()
 			)
-		).contents() );
+		);
 	} else {
 		this.setLabel(
 			$( '<bdi>' ).text(

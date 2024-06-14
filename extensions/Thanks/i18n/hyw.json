@@ -28,7 +28,6 @@
 	"echo-pref-subscription-edit-thank": "Խմբագրումներուս համար զիս շնորհակալութիւն յայտնէ՛",
 	"echo-pref-tooltip-edit-thank": "Զիս տեղեկացո՛ւր, երբ որեւէ մէկը շնորհակալութիւն յայտնած է կատարած խմբագրումներուս համար:",
 	"echo-category-title-edit-thank": "Շնորհակալութիւն",
-	"notification-thanks-diff-link": "Ձեր խմբագրումը",
 	"notification-header-rev-thank": "$1 մասնակիցը {{GENDER:$4|ձեզ}} {{GENDER:$2|շնորհակալութիւն յայտնած}} է՝ $3 էջին մէջ ձեր կատարած խմբագրման համար։",
 	"notification-compact-header-edit-thank": "$1 մասնակիցը {{GENDER:$2|շնորհակալութիւն}} յայտնած է {{GENDER:$3|ձեզի}}։",
 	"logentry-thanks-thank": "$1 մասնակիցը {{GENDER:$2|շնորհակալութիւն յայտնած է}} {{GENDER:$4|$3}} մասնակիցին",
@@ -36,7 +35,6 @@
 	"thanks-confirmation-special-rev": "Կ'ուզէ՞ք շնորհակալութիւն յայտնել այս խմբագրումին համար։",
 	"notification-link-text-view-post": "Տեսնել մեկնաբանութիւնը",
 	"flow-thanks-confirmation-special": "Կ'ուզէ՞ք շնորհակալութիւն յայտնել այս մեկնաբանումին համար։",
-	"notification-flow-thanks-post-link": "Ձեր մեկնաբանութիւնը",
 	"notification-compact-header-flow-thank": "$1 մասնակիցը {{GENDER:$2|շնորհակալութիւն}} յայտնած է {{GENDER:$3|ձեզի}}։",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Մէկը|$1 մարդիկ|100=99+ people}} {{GENDER:$3|քեզ}} շնորհակալութիւն յայտնած է՝ մեկնաբանութեանդ համար \"<strong>$2</strong>\".",
 	"ipb-action-thanks": "Շնորհակալութիւն յայտնել"

@@ -3,8 +3,8 @@
 namespace MediaWiki\Extension\AbuseFilter\LogFormatter;
 
 use LogFormatter;
+use MediaWiki\SpecialPage\SpecialPage;
 use Message;
-use SpecialPage;
 
 class AbuseFilterModifyLogFormatter extends LogFormatter {
 
@@ -25,7 +25,7 @@ class AbuseFilterModifyLogFormatter extends LogFormatter {
 	protected function extractParameters() {
 		$parameters = $this->entry->getParameters();
 		if ( $this->entry->isLegacy() ) {
-			list( $historyId, $filterId ) = $parameters;
+			[ $historyId, $filterId ] = $parameters;
 		} else {
 			$historyId = $parameters['historyId'];
 			$filterId = $parameters['newId'];

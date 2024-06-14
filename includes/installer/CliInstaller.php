@@ -1,7 +1,6 @@
 <?php
+
 /**
- * Core installer command line interface.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,11 +20,14 @@
  * @ingroup Installer
  */
 
-use MediaWiki\Installer\InstallException;
+namespace MediaWiki\Installer;
+
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Status\Status;
 use MediaWiki\User\User;
+use UserPasswordPolicy;
 
 /**
  * Class for the core installer command line interface.
@@ -165,6 +167,8 @@ class CliInstaller extends Installer {
 			$skinNames = array_map( 'strtolower', $skins );
 			$this->setVar( 'wgDefaultSkin', $this->getDefaultSkin( $skinNames ) );
 		}
+
+		$this->setVar( '_WithDevelopmentSettings', isset( $options['with-developmentsettings'] ) );
 	}
 
 	private function validateExtensions( $type, $directory, $nameLists ) {

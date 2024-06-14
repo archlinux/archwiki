@@ -19,6 +19,9 @@
  */
 
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Deferred\MessageCacheUpdate;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Languages\LanguageConverterFactory;
@@ -31,6 +34,8 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\StubObject\StubObject;
 use MediaWiki\StubObject\StubUserLang;
@@ -39,7 +44,9 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Wikimedia\LightweightObjectStore\ExpirationAwareness;
 use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IResultWrapper;
+use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\RequestTimeout\TimeoutException;
 use Wikimedia\ScopedCallback;
 
@@ -566,7 +573,9 @@ class MessageCache implements LoggerAwareInterface {
 	 * @return array Loaded messages for storing in caches
 	 */
 	private function loadFromDB( $code, $mode = null ) {
-		$dbr = wfGetDB( ( $mode === self::FOR_UPDATE ) ? DB_PRIMARY : DB_REPLICA );
+		$icp = MediaWikiServices::getInstance()->getConnectionProvider();
+
+		$dbr = ( $mode === self::FOR_UPDATE ) ? $icp->getPrimaryDatabase() : $icp->getReplicaDatabase();
 
 		$cache = [];
 
@@ -589,12 +598,19 @@ class MessageCache implements LoggerAwareInterface {
 		if ( count( $mostused ) ) {
 			$conds['page_title'] = $mostused;
 		} elseif ( $code !== $this->contLangCode ) {
-			$conds[] = 'page_title' . $dbr->buildLike( $dbr->anyString(), '/', $code );
+			$conds[] = $dbr->expr(
+				'page_title',
+				IExpression::LIKE,
+				new LikeValue( $dbr->anyString(), '/', $code )
+			);
 		} else {
 			// Effectively disallows use of '/' character in NS_MEDIAWIKI for uses
 			// other than language code.
-			$conds[] = 'page_title NOT' .
-				$dbr->buildLike( $dbr->anyString(), '/', $dbr->anyString() );
+			$conds[] = $dbr->expr(
+				'page_title',
+				IExpression::NOT_LIKE,
+				new LikeValue( $dbr->anyString(), '/', $dbr->anyString() )
+			);
 		}
 
 		// Set the stubs for oversized software-defined messages in the main cache map
@@ -836,7 +852,7 @@ class MessageCache implements LoggerAwareInterface {
 		$wikiPageFactory = MediaWikiServices::getInstance()->getWikiPageFactory();
 		foreach ( $replacements as [ $title ] ) {
 			$page = $wikiPageFactory->newFromTitle( Title::makeTitle( NS_MEDIAWIKI, $title ) );
-			$page->loadPageData( $page::READ_LATEST );
+			$page->loadPageData( IDBAccessObject::READ_LATEST );
 			$text = $this->getMessageTextFromContent( $page->getContent() );
 			// Remember the text for the blob store update later on
 			$newTextByTitle[$title] = $text ?? '';
@@ -1380,7 +1396,9 @@ class MessageCache implements LoggerAwareInterface {
 					self::WAN_TTL,
 					function ( $oldValue, &$ttl, &$setOpts ) use ( $dbKey, $code, $fname ) {
 						// Try loading the message from the database
-						$setOpts += Database::getCacheSetOptions( wfGetDB( DB_REPLICA ) );
+						$setOpts += Database::getCacheSetOptions(
+							MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase()
+						);
 						// Use newKnownCurrent() to avoid querying revision/user tables
 						$title = Title::makeTitle( NS_MEDIAWIKI, $dbKey );
 						// Injecting RevisionStore breaks installer since it
@@ -1487,7 +1505,7 @@ class MessageCache implements LoggerAwareInterface {
 			$logger = LoggerFactory::getInstance( 'GlobalTitleFail' );
 			$logger->info(
 				__METHOD__ . ' called with no title set.',
-				[ 'exception' => new Exception ]
+				[ 'exception' => new RuntimeException ]
 			);
 			$page = $wgTitle;
 		}

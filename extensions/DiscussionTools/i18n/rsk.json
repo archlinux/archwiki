@@ -175,7 +175,6 @@
 	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|Архивированє}} бока за розгварку",
 	"echo-pref-tooltip-dt-subscription": "Информуй ме кед дахто обяви нови коментар у теми на хтору {{GENDER:|сом}} ше уписал.",
 	"echo-pref-tooltip-dt-subscription-archiving": "Яв ми кед тема на хтору сом {{GENDER:|уписани|уписана}} будзе архивована або одстранєта з боку, або кед обвисценє о нових коментарох положених на тоту тему нє може буц послате пре инши причини",
-	"minerva-talk-full-page": "Читайце як вики бок",
 	"discussiontools-comments-before-first-heading-category-desc": "Бок за дискусию ма коментари у часци скорей першого наслова.Тото може привесц до нєточного приказу тей часци бока або коментара, окреме то можлїве у мобилней верзиї и у мобилних апликацийох.",
 	"tag-discussiontools-added-comment-description": "Додати коментар на бок за розгварку у тим ушореню",
 	"tag-discussiontools-description": "Вименки зробени з помоцу DiscussionTools",

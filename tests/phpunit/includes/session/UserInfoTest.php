@@ -1,7 +1,9 @@
 <?php
 
-namespace MediaWiki\Session;
+namespace MediaWiki\Tests\Session;
 
+use InvalidArgumentException;
+use MediaWiki\Session\UserInfo;
 use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 
@@ -33,7 +35,7 @@ class UserInfoTest extends MediaWikiIntegrationTestCase {
 		try {
 			UserInfo::newFromId( $id );
 			$this->fail( 'Expected exception not thrown' );
-		} catch ( \InvalidArgumentException $ex ) {
+		} catch ( InvalidArgumentException $ex ) {
 			$this->assertSame( 'Invalid ID', $ex->getMessage() );
 		}
 
@@ -67,7 +69,7 @@ class UserInfoTest extends MediaWikiIntegrationTestCase {
 		try {
 			UserInfo::newFromName( '<bad name>' );
 			$this->fail( 'Expected exception not thrown' );
-		} catch ( \InvalidArgumentException $ex ) {
+		} catch ( InvalidArgumentException $ex ) {
 			$this->assertSame( 'Invalid user name', $ex->getMessage() );
 		}
 

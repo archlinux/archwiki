@@ -23,7 +23,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 زبان|$1 زبانیں}}",
 	"vector-no-language-button-label": "زبانیں شامل کریں",
 	"vector-no-language-button-aria-label": "اس زبان میں یہ مضمون موجود نہیں ہے۔ دوسری زبانوں کے مضامین شامل کريں۔",
-	"vector-language-redirect-to-top": "اس {{SITENAME}} پر دیگر زبانوں کے مضامین کے روابط صفحہ کے اوپر عنوان کے بائیں جانب موجود ہیں۔ [[#p-lang-btn|اوپر جائیں]]۔",
 	"vector-language-variant-switcher-label": "زبان کا لہجہ بدلیں",
 	"vector-action-addsection": "نیا موضوع",
 	"vector-action-delete": "حذف کریں",

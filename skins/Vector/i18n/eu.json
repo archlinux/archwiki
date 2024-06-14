@@ -23,7 +23,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|Hizkuntza bat|$1 hizkuntza}}",
 	"vector-no-language-button-label": "Hizkuntzak gehitu",
 	"vector-no-language-button-aria-label": "Artikulua soilik hizkuntza honetan existitzen da. Gehitu artikulua beste hizkuntza batean",
-	"vector-language-redirect-to-top": "{{SITENAME}} honetan hizkuntzen loturak orriaren goiko aldean daude, artikuluaren izenburuaren eskuinaldean. [[#p-lang-btn|Joan gora]].",
 	"vector-language-variant-switcher-label": "Aldatu hizkuntza aldaera",
 	"vector-action-addsection": "Gehitu atala",
 	"vector-action-delete": "Ezabatu",

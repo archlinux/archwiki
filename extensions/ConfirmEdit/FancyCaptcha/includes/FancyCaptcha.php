@@ -2,21 +2,21 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\FancyCaptcha;
 
-use Exception;
 use FileBackend;
 use FSFileBackend;
-use Html;
+use InvalidArgumentException;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
-use MWTimestamp;
 use NullLockManager;
 use ObjectCache;
 use RequestContext;
-use SpecialPage;
 use StatusValue;
 use UnderflowException;
 
@@ -37,21 +37,22 @@ class FancyCaptcha extends SimpleCaptcha {
 		if ( $wgCaptchaFileBackend ) {
 			return MediaWikiServices::getInstance()->getFileBackendGroup()
 				->get( $wgCaptchaFileBackend );
-		} else {
-			static $backend = null;
-			if ( !$backend ) {
-				$backend = new FSFileBackend( [
-					'name'           => 'captcha-backend',
-					'wikiId'         => WikiMap::getCurrentWikiId(),
-					'lockManager'    => new NullLockManager( [] ),
-					'containerPaths' => [ 'captcha-render' => $wgCaptchaDirectory ],
-					'fileMode'       => 777,
-					'obResetFunc'    => 'wfResetOutputBuffers',
-					'streamMimeFunc' => [ 'StreamFile', 'contentTypeFromPath' ]
-				] );
-			}
-			return $backend;
 		}
+
+		static $backend = null;
+		if ( !$backend ) {
+			$backend = new FSFileBackend( [
+				'name'           => 'captcha-backend',
+				'wikiId'         => WikiMap::getCurrentWikiId(),
+				'lockManager'    => new NullLockManager( [] ),
+				'containerPaths' => [ $this->getStorageDir() => $wgCaptchaDirectory ],
+				'fileMode'       => 777,
+				'obResetFunc'    => 'wfResetOutputBuffers',
+				'streamMimeFunc' => [ 'StreamFile', 'contentTypeFromPath' ]
+			] );
+		}
+
+		return $backend;
 	}
 
 	/**
@@ -60,10 +61,18 @@ class FancyCaptcha extends SimpleCaptcha {
 	public function getCaptchaCount() {
 		$backend = $this->getBackend();
 		$files = $backend->getFileList(
-			[ 'dir' => $backend->getRootStoragePath() . '/captcha-render' ]
+			[ 'dir' => $backend->getRootStoragePath() . '/' . $this->getStorageDir() ]
 		);
 
 		return iterator_count( $files );
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getStorageDir() {
+		global $wgCaptchaStorageDirectory;
+		return $wgCaptchaStorageDirectory;
 	}
 
 	/**
@@ -120,16 +129,9 @@ class FancyCaptcha extends SimpleCaptcha {
 	 * @return array
 	 */
 	public function getFormInformation( $tabIndex = 1 ) {
-		$modules = [];
-
 		$title = SpecialPage::getTitleFor( 'Captcha', 'image' );
 		$info = $this->getCaptcha();
 		$index = $this->storeCaptcha( $info );
-
-		// Loaded only for clients with JS enabled
-		$modules[] = 'ext.confirmEdit.fancyCaptcha';
-		// FIXME: This should be removed (works around T341525)
-		$modules[] = 'mediawiki.ui.input';
 
 		$captchaReload = Html::element(
 			'small',
@@ -155,9 +157,10 @@ class FancyCaptcha extends SimpleCaptcha {
 				]
 			) . $captchaReload . Html::closeElement( 'div' ) . Html::closeElement( 'div' ) . "\n" .
 			// FIXME: This should use CodexHTMLForm rather than Html::element
+			Html::openElement( 'div', [ 'class' => 'cdx-text-input' ] ) .
 			Html::element( 'input', [
 					'name' => 'wpCaptchaWord',
-					'class' => 'mw-ui-input',
+					'class' => 'cdx-text-input__input',
 					'id'   => 'wpCaptchaWord',
 					'type' => 'text',
 					// max_length in captcha.py plus fudge factor
@@ -170,7 +173,7 @@ class FancyCaptcha extends SimpleCaptcha {
 					'tabindex' => $tabIndex,
 					'placeholder' => wfMessage( 'fancycaptcha-imgcaptcha-ph' )->text()
 				]
-			);
+			) . Html::closeElement( 'div' );
 		if ( $this->action == 'createaccount' ) {
 			// use raw element, because the message can contain links or some other html
 			$form .= Html::rawElement( 'small', [
@@ -188,9 +191,9 @@ class FancyCaptcha extends SimpleCaptcha {
 
 		return [
 			'html' => $form,
-			'modules' => $modules,
+			'modules' => [ 'ext.confirmEdit.fancyCaptcha' ],
 			// Uses addModuleStyles so it is loaded when JS is disabled.
-			'modulestyles' => [ 'mediawiki.ui.input', 'ext.confirmEdit.fancyCaptcha.styles' ],
+			'modulestyles' => [ 'codex-styles', 'ext.confirmEdit.fancyCaptcha.styles' ],
 		];
 	}
 
@@ -203,7 +206,7 @@ class FancyCaptcha extends SimpleCaptcha {
 
 		// number of times another process claimed a file before this one
 		$lockouts = 0;
-		$baseDir = $this->getBackend()->getRootStoragePath() . '/captcha-render';
+		$baseDir = $this->getBackend()->getRootStoragePath() . '/' . $this->getStorageDir();
 		return $this->pickImageDir( $baseDir, $wgCaptchaDirectoryLevels, $lockouts );
 	}
 
@@ -417,7 +420,7 @@ class FancyCaptcha extends SimpleCaptcha {
 	public function imagePath( $salt, $hash ) {
 		global $wgCaptchaDirectoryLevels;
 
-		$file = $this->getBackend()->getRootStoragePath() . '/captcha-render/';
+		$file = $this->getBackend()->getRootStoragePath() . '/' . $this->getStorageDir() . '/';
 		for ( $i = 0; $i < $wgCaptchaDirectoryLevels; $i++ ) {
 			$file .= $hash[ $i ] . '/';
 		}
@@ -429,13 +432,12 @@ class FancyCaptcha extends SimpleCaptcha {
 	/**
 	 * @param string $basename
 	 * @return array (salt, hash)
-	 * @throws Exception
 	 */
 	public function hashFromImageName( $basename ) {
 		if ( preg_match( '/^image_([0-9a-f]+)_([0-9a-f]+)\\.png$/', $basename, $matches ) ) {
 			return [ $matches[1], $matches[2] ];
 		} else {
-			throw new Exception( "Invalid filename '$basename'.\n" );
+			throw new InvalidArgumentException( "Invalid filename '$basename'.\n" );
 		}
 	}
 
@@ -463,7 +465,7 @@ class FancyCaptcha extends SimpleCaptcha {
 	 * Returns an array with 'salt' and 'hash' keys. Hash is
 	 * md5( $wgCaptchaSecret . $salt . $answer . $wgCaptchaSecret . $salt )[0..15]
 	 * @return array
-	 * @throws Exception When a captcha image cannot be produced.
+	 * @throws UnderflowException When a captcha image cannot be produced.
 	 */
 	public function getCaptcha() {
 		$info = $this->pickImage();

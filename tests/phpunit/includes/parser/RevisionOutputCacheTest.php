@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use MediaWiki\Json\JsonCodec;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\RevisionOutputCache;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
@@ -15,15 +16,15 @@ use MediaWiki\Tests\Json\JsonUnserializableSuperClass;
 use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
 use MediaWikiIntegrationTestCase;
-use NullStatsdDataFactory;
 use ParserOptions;
-use ParserOutput;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 use TestLogger;
 use WANObjectCache;
+use Wikimedia\Stats\StatsFactory;
 use Wikimedia\TestingAccessWrapper;
+use Wikimedia\UUID\GlobalIdGenerator;
 
 /**
  * @covers \MediaWiki\Parser\RevisionOutputCache
@@ -74,14 +75,17 @@ class RevisionOutputCacheTest extends MediaWikiIntegrationTestCase {
 		$expiry = 3600,
 		$epoch = '19900220000000'
 	): RevisionOutputCache {
+		$globalIdGenerator = $this->createMock( GlobalIdGenerator::class );
+		$globalIdGenerator->method( 'newUUIDv1' )->willReturn( 'uuid-uuid' );
 		return new RevisionOutputCache(
 			'test',
 			new WANObjectCache( [ 'cache' => $storage ?: new HashBagOStuff() ] ),
 			$expiry,
 			$epoch,
 			new JsonCodec(),
-			new NullStatsdDataFactory(),
-			$logger ?: new NullLogger()
+			StatsFactory::newNull(),
+			$logger ?: new NullLogger(),
+			$globalIdGenerator
 		);
 	}
 
@@ -101,7 +105,7 @@ class RevisionOutputCacheTest extends MediaWikiIntegrationTestCase {
 	 */
 	private function createDummyParserOutput(): ParserOutput {
 		$parserOutput = new ParserOutput();
-		$parserOutput->setText( 'TEST' );
+		$parserOutput->setRawText( 'TEST' );
 		foreach ( $this->getDummyUsedOptions() as $option ) {
 			$parserOutput->recordOption( $option );
 		}
@@ -365,7 +369,7 @@ class RevisionOutputCacheTest extends MediaWikiIntegrationTestCase {
 		$unicodeCharacter = "Э";
 		$cache = $this->createRevisionOutputCache( new HashBagOStuff() );
 		$parserOutput = $this->createDummyParserOutput();
-		$parserOutput->setText( $unicodeCharacter );
+		$parserOutput->setRawText( $unicodeCharacter );
 		$cache->save( $parserOutput, $this->revision, ParserOptions::newFromAnon() );
 
 		$backend = TestingAccessWrapper::newFromObject( $cache )->cache;

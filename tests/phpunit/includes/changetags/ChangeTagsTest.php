@@ -5,25 +5,10 @@ use MediaWiki\MainConfigNames;
 use Wikimedia\Rdbms\Platform\ISQLPlatform;
 
 /**
- * @covers ChangeTags
+ * @covers \ChangeTags
  * @group Database
  */
 class ChangeTagsTest extends MediaWikiIntegrationTestCase {
-
-	protected function setUp(): void {
-		parent::setUp();
-
-		$this->tablesUsed[] = 'change_tag';
-		$this->tablesUsed[] = 'change_tag_def';
-
-		// Truncate these to avoid the supposed-to-be-unused IDs in tests here turning
-		// out to be used, leading ChangeTags::updateTags() to pick up bogus rc_id,
-		// log_id, or rev_id values and run into unique constraint violations.
-		$this->tablesUsed[] = 'recentchanges';
-		$this->tablesUsed[] = 'logging';
-		$this->tablesUsed[] = 'revision';
-		$this->tablesUsed[] = 'archive';
-	}
 
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -55,8 +40,8 @@ class ChangeTagsTest extends MediaWikiIntegrationTestCase {
 		$this->overrideConfigValue( MainConfigNames::UseTagFilter, $useTags );
 		if (
 			$avoidReopeningTables &&
-			$this->db->getType() == 'mysql' &&
-			strpos( $this->db->getSoftwareLink(), 'MySQL' )
+			$this->db->getType() === 'mysql' &&
+			str_contains( $this->db->getSoftwareLink(), 'MySQL' )
 		) {
 			$this->markTestSkipped( 'See T256006' );
 		}
@@ -475,7 +460,7 @@ class ChangeTagsTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider dataGetSoftwareTags
-	 * @covers ChangeTags::getSoftwareTags
+	 * @covers \ChangeTags::getSoftwareTags
 	 */
 	public function testGetSoftwareTags( $softwareTags, $expected ) {
 		$this->overrideConfigValue( MainConfigNames::SoftwareTags, $softwareTags );

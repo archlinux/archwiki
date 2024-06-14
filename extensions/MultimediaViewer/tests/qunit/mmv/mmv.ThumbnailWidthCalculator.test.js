@@ -4,11 +4,10 @@ const { ThumbnailWidthCalculator } = require( 'mmv' );
 	QUnit.module( 'mmv.ThumbnailWidthCalculator', QUnit.newMwEnvironment() );
 
 	QUnit.test( 'ThumbnailWidthCalculator constructor sense check', function ( assert ) {
-		var badWidthBuckets = [],
-			goodWidthBuckets = [ 1 ],
-			thumbnailWidthCalculator;
+		const badWidthBuckets = [];
+		const goodWidthBuckets = [ 1 ];
 
-		thumbnailWidthCalculator = new ThumbnailWidthCalculator();
+		let thumbnailWidthCalculator = new ThumbnailWidthCalculator();
 		assert.true( thumbnailWidthCalculator instanceof ThumbnailWidthCalculator, 'constructor with no argument works' );
 
 		thumbnailWidthCalculator = new ThumbnailWidthCalculator( {} );
@@ -27,7 +26,7 @@ const { ThumbnailWidthCalculator } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'findNextBucket() test', function ( assert ) {
-		var thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
+		const thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
 			widthBuckets: [ 100, 200 ]
 		} );
 
@@ -46,7 +45,7 @@ const { ThumbnailWidthCalculator } = require( 'mmv' );
 
 	// Old tests for the default bucket sizes. Preserved because why not.
 	QUnit.test( 'We get sensible image sizes when we ask for them', function ( assert ) {
-		var twc = new ThumbnailWidthCalculator();
+		const twc = new ThumbnailWidthCalculator();
 
 		assert.strictEqual( twc.findNextBucket( 200 ), 320, 'Low target size gives us lowest possible size bucket' );
 		assert.strictEqual( twc.findNextBucket( 320 ), 320, 'Asking for a bucket size gives us exactly that bucket size' );
@@ -56,7 +55,7 @@ const { ThumbnailWidthCalculator } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'findNextBucket() test with unordered bucket list', function ( assert ) {
-		var thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
+		const thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
 			widthBuckets: [ 200, 100 ]
 		} );
 
@@ -71,9 +70,9 @@ const { ThumbnailWidthCalculator } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'calculateFittingWidth() test', function ( assert ) {
-		var boundingWidth = 100,
-			boundingHeight = 200,
-			thumbnailWidthCalculator = new ThumbnailWidthCalculator( { widthBuckets: [ 1 ] } );
+		const boundingWidth = 100;
+		const boundingHeight = 200;
+		const thumbnailWidthCalculator = new ThumbnailWidthCalculator( { widthBuckets: [ 1 ] } );
 
 		// 50x10 image in 100x200 box - need to scale up 2x
 		assert.strictEqual(
@@ -92,16 +91,15 @@ const { ThumbnailWidthCalculator } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'calculateWidths() test', function ( assert ) {
-		var boundingWidth = 100,
-			boundingHeight = 200,
-			thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
-				widthBuckets: [ 8, 16, 32, 64, 128, 256, 512 ],
-				devicePixelRatio: 1
-			} ),
-			widths;
+		const boundingWidth = 100;
+		const boundingHeight = 200;
+		const thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
+			widthBuckets: [ 8, 16, 32, 64, 128, 256, 512 ],
+			devicePixelRatio: 1
+		} );
 
 		// 50x10 image in 100x200 box - image size should be 100x20, thumbnail should be 128x25.6
-		widths = thumbnailWidthCalculator.calculateWidths( boundingWidth, boundingHeight, 50, 10 );
+		let widths = thumbnailWidthCalculator.calculateWidths( boundingWidth, boundingHeight, 50, 10 );
 		assert.strictEqual( widths.cssWidth, 100, 'css width is correct when limited by width' );
 		assert.strictEqual( widths.cssHeight, 20, 'css height is correct when limited by width' );
 		assert.strictEqual( widths.real, 128, 'real width is correct when limited by width' );
@@ -120,16 +118,15 @@ const { ThumbnailWidthCalculator } = require( 'mmv' );
 	} );
 
 	QUnit.test( 'calculateWidths() test with non-standard device pixel ratio', function ( assert ) {
-		var boundingWidth = 100,
-			boundingHeight = 200,
-			thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
-				widthBuckets: [ 8, 16, 32, 64, 128, 256, 512 ],
-				devicePixelRatio: 2
-			} ),
-			widths;
+		const boundingWidth = 100;
+		const boundingHeight = 200;
+		const thumbnailWidthCalculator = new ThumbnailWidthCalculator( {
+			widthBuckets: [ 8, 16, 32, 64, 128, 256, 512 ],
+			devicePixelRatio: 2
+		} );
 
 		// 50x10 image in 100x200 box - image size should be 100x20, thumbnail should be 256x51.2
-		widths = thumbnailWidthCalculator.calculateWidths( boundingWidth, boundingHeight, 50, 10 );
+		let widths = thumbnailWidthCalculator.calculateWidths( boundingWidth, boundingHeight, 50, 10 );
 		assert.strictEqual( widths.cssWidth, 100, 'css width is correct when limited by width' );
 		assert.strictEqual( widths.cssHeight, 20, 'css height is correct when limited by width' );
 		assert.strictEqual( widths.real, 256, 'real width is correct when limited by width' );

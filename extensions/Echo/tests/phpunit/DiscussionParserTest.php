@@ -2,11 +2,14 @@
 
 // phpcs:disable Generic.Files.LineLength -- Long html test examples
 
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Extension\Notifications\DiscussionParser;
 use MediaWiki\Extension\Notifications\Model\Event;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -24,11 +27,6 @@ class DiscussionParserTest extends MediaWikiIntegrationTestCase {
 	 * @var string
 	 */
 	private const EXEMPLAR_TIMESTAMP = '20:47, 2 November 2022 (UTC)';
-
-	/**
-	 * @var string[]
-	 */
-	protected $tablesUsed = [ 'user', 'revision', 'ip_changes', 'text', 'page' ];
 
 	/**
 	 * Convenience users for use in these tests.
@@ -943,7 +941,7 @@ TEXT
 		// (Title::getTitleParser), so should be the fake language ;)
 		$this->setContentLang( $lang );
 		$this->overrideConfigValues( [
-			// this one allows Mediawiki:xyz pages to be set as messages
+			// this one allows MediaWiki:xyz pages to be set as messages
 			MainConfigNames::UseDatabaseMessages => true
 		] );
 
@@ -1001,11 +999,8 @@ TEXT
 		// store diff in some local cache var, to circumvent
 		// DiscussionParser::getChangeInterpretationForRevision's attempt to
 		// retrieve parent revision from DB
-		$class = new ReflectionClass( DiscussionParser::class );
-		$property = $class->getProperty( 'revisionInterpretationCache' );
-		$property->setAccessible( true );
 		$cacheKey = $revision->getId() . '|' . $revision->getPage()->getNamespace() . '|' . $revision->getPage()->getDBkey();
-		$property->setValue( [ $cacheKey => $output ] );
+		TestingAccessWrapper::newFromClass( DiscussionParser::class )->revisionInterpretationCache = [ $cacheKey => $output ];
 		return $revision;
 	}
 

@@ -45,7 +45,7 @@ class DeleteArchivedFiles extends Maintenance {
 		}
 
 		# Data should come off the master, wrapped in a transaction
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		$this->beginTransaction( $dbw, __METHOD__ );
 		$repo = $this->getServiceContainer()->getRepoGroup()->getLocalRepo();
 
@@ -120,7 +120,10 @@ class DeleteArchivedFiles extends Maintenance {
 			}
 
 			$count++;
-			$dbw->delete( 'filearchive', [ 'fa_id' => $id ], __METHOD__ );
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'filearchive' )
+				->where( [ 'fa_id' => $id ] )
+				->caller( __METHOD__ )->execute();
 			$file->releaseFileLock();
 		}
 

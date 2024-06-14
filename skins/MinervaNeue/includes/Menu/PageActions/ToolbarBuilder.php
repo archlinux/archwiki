@@ -22,6 +22,7 @@ namespace MediaWiki\Minerva\Menu\PageActions;
 
 use ExtensionRegistry;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Minerva\LanguagesHelper;
 use MediaWiki\Minerva\Menu\Entries\IMenuEntry;
 use MediaWiki\Minerva\Menu\Entries\LanguageSelectorEntry;
@@ -30,13 +31,12 @@ use MediaWiki\Minerva\Menu\Group;
 use MediaWiki\Minerva\Permissions\IMinervaPagePermissions;
 use MediaWiki\Minerva\SkinOptions;
 use MediaWiki\Minerva\Skins\SkinUserPageHelper;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Watchlist\WatchlistManager;
-use MessageLocalizer;
 use SpecialMobileHistory;
-use SpecialPage;
-use User;
 
 class ToolbarBuilder {
 
@@ -48,10 +48,9 @@ class ToolbarBuilder {
 	 * @var Title Article title user is currently browsing
 	 */
 	private $title;
-	/**
-	 * @var MessageLocalizer Message localizer to generate localized texts
-	 */
-	private $messageLocalizer;
+
+	private IContextSource $context;
+
 	/**
 	 * @var IMinervaPagePermissions
 	 */
@@ -93,7 +92,7 @@ class ToolbarBuilder {
 	 * Build Group containing icons for toolbar
 	 * @param Title $title Article title user is currently browsing
 	 * @param User $user Currently logged in user
-	 * @param MessageLocalizer $msgLocalizer Message localizer to generate localized texts
+	 * @param IContextSource $context
 	 * @param IMinervaPagePermissions $permissions Minerva permissions system
 	 * @param SkinOptions $skinOptions
 	 * @param SkinUserPageHelper $relevantUserPageHelper User Page helper. The
@@ -107,7 +106,7 @@ class ToolbarBuilder {
 	public function __construct(
 		Title $title,
 		User $user,
-		MessageLocalizer $msgLocalizer,
+		IContextSource $context,
 		IMinervaPagePermissions $permissions,
 		SkinOptions $skinOptions,
 		SkinUserPageHelper $relevantUserPageHelper,
@@ -117,7 +116,7 @@ class ToolbarBuilder {
 	) {
 		$this->title = $title;
 		$this->user = $user;
-		$this->messageLocalizer = $msgLocalizer;
+		$this->context = $context;
 		$this->permissions = $permissions;
 		$this->skinOptions = $skinOptions;
 		$this->relevantUserPageHelper = $relevantUserPageHelper;
@@ -141,8 +140,11 @@ class ToolbarBuilder {
 			IMinervaPagePermissions::SWITCH_LANGUAGE ) ) {
 			$group->insertEntry( new LanguageSelectorEntry(
 				$this->title,
-				$this->languagesHelper->doesTitleHasLanguagesOrVariants( $this->title ),
-				$this->messageLocalizer,
+				$this->languagesHelper->doesTitleHasLanguagesOrVariants(
+					$this->context->getOutput(),
+					$this->title
+				),
+				$this->context,
 				true
 			) );
 		}
@@ -153,7 +155,7 @@ class ToolbarBuilder {
 			'icon' => 'star',
 			'class' => '',
 			'href' => $this->getLoginUrl( [ 'returnto' => $this->title ] ),
-			'text' => $this->messageLocalizer->msg( 'watch' ),
+			'text' => $this->context->msg( 'watch' ),
 		];
 		if ( $permissions->isAllowed( IMinervaPagePermissions::WATCHABLE ) && $watchData ) {
 			$group->insertEntry( $this->createWatchPageAction( $watchKey, $watchData ) );
@@ -192,7 +194,7 @@ class ToolbarBuilder {
 	 * @return IMenuEntry
 	 */
 	protected function createContributionsPageAction( UserIdentity $user ): IMenuEntry {
-		$label = $this->messageLocalizer->msg( 'mobile-frontend-user-page-contributions' );
+		$label = $this->context->msg( 'mobile-frontend-user-page-contributions' );
 
 		$entry = new SingleMenuEntry(
 			'page-actions-contributions',
@@ -227,7 +229,7 @@ class ToolbarBuilder {
 		$icon = $editAction['icon'] ?? $iconFallback;
 		$entry->setIcon( $icon . '-base20' )
 			->trackClicks( $key )
-			->setTitle( $this->messageLocalizer->msg( 'tooltip-' . $id ) )
+			->setTitle( $this->context->msg( 'tooltip-' . $id ) )
 			->setNodeID( $id );
 		return $entry;
 	}
@@ -246,7 +248,8 @@ class ToolbarBuilder {
 			'page-actions-watch',
 			$watchData['text'],
 			$watchData['href'],
-			$watchData[ 'class' ]
+			$watchData[ 'class' ],
+			$this->permissions->isAllowed( IMinervaPagePermissions::WATCH )
 		);
 		$icon = $watchData['icon'] ?? '';
 		if ( $icon ) {
@@ -254,7 +257,7 @@ class ToolbarBuilder {
 		}
 		return $entry->trackClicks( $watchKey )
 			->setIcon( $icon )
-			->setTitle( $this->messageLocalizer->msg( $watchKey ) )
+			->setTitle( $this->context->msg( $watchKey ) )
 			->setNodeID( 'ca-watch' );
 	}
 

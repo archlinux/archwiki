@@ -16,7 +16,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 لغـة|$1 لغـات}}",
 	"vector-no-language-button-label": "حط لغات",
 	"vector-no-language-button-aria-label": "هذه المقالة موجودة بس بهاي اللغة. حطها إلى اللغات الثانية.",
-	"vector-language-redirect-to-top": "في نسخة {{SITENAME}} هاي، وصلات اللغات موجودة في الزاوية الفوك اليسرى يم العنوان. [[#p-lang-btn|انتقل لفوك]].",
 	"vector-language-variant-switcher-label": "غيّر لهجة اللغة",
 	"vector-action-addsection": "حط موضوع",
 	"vector-action-delete": "حذف",

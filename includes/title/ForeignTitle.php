@@ -23,7 +23,7 @@
 
 namespace MediaWiki\Title;
 
-use MWException;
+use RuntimeException;
 
 /**
  * A simple, immutable structure to hold the title of a page on a foreign
@@ -67,13 +67,12 @@ class ForeignTitle {
 	}
 
 	/**
+	 * @note Callers should make sure that isNamespaceIdKnown() is true before calling this method.
 	 * @return int
-	 * @throws MWException If isNamespaceIdKnown() is false, it does not make
-	 * sense to call this function.
 	 */
 	public function getNamespaceId() {
 		if ( $this->namespaceId === null ) {
-			throw new MWException(
+			throw new RuntimeException(
 				"Attempted to call getNamespaceId when the namespace ID is not known" );
 		}
 		return $this->namespaceId;
@@ -120,8 +119,5 @@ class ForeignTitle {
 	}
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( ForeignTitle::class, 'ForeignTitle' );

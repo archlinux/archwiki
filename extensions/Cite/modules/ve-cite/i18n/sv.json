@@ -69,7 +69,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Denna referens definieras i en mall eller annat genererat block och kan för tillfället endast visas i källäge.",
 	"cite-ve-referenceslist-missingreflist": "Denna referenslista genererades av en mall.",
 	"cite-ve-toolbar-group-label": "Ange källa",
-	"cite-ve-othergroup-item": "$1 referens",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referenser",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Referensgruppnamn: \"$1\""
+	"cite-ve-othergroup-item": "$1 referens"
 }

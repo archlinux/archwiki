@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\Notifications\Formatters;
 
 use Language;
 use MediaWiki\Extension\Notifications\Model\Event;
-use User;
+use MediaWiki\User\User;
 
 /**
  * Presenter for 'mention-failure' and 'mention-success' notifications

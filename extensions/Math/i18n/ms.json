@@ -4,14 +4,15 @@
 			"Anakmalaysia",
 			"Aviator",
 			"CoolCityCat",
+			"Hakimi97",
 			"Jeluang Terluang",
 			"Kurniasan",
 			"Macofe",
-			"Tofeiku",
-			"Hakimi97"
+			"Tofeiku"
 		]
 	},
 	"math-desc": "Mengolah rumus-rumus matematik antara teg-teg <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
+	"popups-settings-option-math-tooltip": "Terangkan rumus matematik apabila menggerakkan kursor.",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "Sunting pantas",
 	"math-visualeditor-mwlatexinspector-display": "Paparan",
 	"math-visualeditor-mwlatexinspector-display-block": "Sekat",
@@ -26,9 +27,13 @@
 	"math_syntax_error": "ralat sintaks",
 	"math_unknown_error": "ralat yang tidak dikenali",
 	"math_unknown_function": "fungsi '$1' yang tidak dikenali",
-	"mw_math_latexml": "LaTeXML (percubaan; menggunakan MathML)",
-	"mw_math_mathml": "MathML dengan sandaran SVG atau PNG (disyorkan untuk pelayar dan alat-alat aksesibiliti moden)",
-	"mw_math_source": "Sumber LaTeX (untuk pelayar teks)",
+	"mw-math-latexml": "LaTeXML (percubaan; menggunakan MathML)",
+	"mw-math-mathml": "MathML dengan sandaran SVG atau PNG (disyorkan untuk pelayar dan alat-alat aksesibiliti moden)",
+	"mw-math-native": "MathML (percubaan; tiada imej)",
+	"mw-math-source": "Sumber LaTeX (untuk pelayar teks)",
 	"prefs-math": "Matematik",
-	"mathstatus": "Status Math"
+	"mathstatus": "Status Math",
+	"math-wikibase-header": "Maklumat Item Matematik",
+	"math-wikibase-special-form-header": "Nyatakan secara khusus nama formula:",
+	"math-wikibase-special-form-button": "Meminta Maklumat"
 }

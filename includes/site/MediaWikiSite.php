@@ -18,8 +18,10 @@
  * @file
  */
 
-use MediaWiki\Site\MediaWikiPageNameNormalizer;
+namespace MediaWiki\Site;
+
 use MediaWiki\Title\Title;
+use RuntimeException;
 
 /**
  * Class representing a MediaWiki site.
@@ -213,3 +215,6 @@ class MediaWikiSite extends Site {
 		return $filePath;
 	}
 }
+
+/** @deprecated class alias since 1.41 */
+class_alias( MediaWikiSite::class, 'MediaWikiSite' );

@@ -183,7 +183,6 @@
 	"discussiontools-topicsubscription-special-title": "Subscripcions de temes",
 	"echo-category-title-dt-subscription": "Pàgina de discussió\n{{PLURAL:$1|subscripció| subscripcions}}",
 	"echo-pref-tooltip-dt-subscription": "Notifica'm quan algú publiqui un comentari nou d'un tema on soc {{GENDER:|subscrit}}.",
-	"minerva-talk-full-page": "Mostra com a pàgina wiki",
 	"discussiontools-comments-before-first-heading-category-desc": "La pàgina de discussió conté comentaris en la secció inicial (abans del primer encapçalament). Això pot provocar que la secció inicial o els comentaris no es mostrin correctament, especialment en la versió per a mòbils i en aplicacions mòbils.",
 	"tag-discussiontools-added-comment-description": "S'ha afegit un comentari a la pàgina de discussió en aquesta edició",
 	"tag-discussiontools-description": "Edició realitzada a través de DiscussionTools",

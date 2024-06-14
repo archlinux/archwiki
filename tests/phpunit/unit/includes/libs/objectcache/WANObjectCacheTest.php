@@ -1,9 +1,21 @@
-<?php /** @noinspection PhpStaticAsDynamicMethodCallInspection */
+<?php
 
+/** @noinspection PhpStaticAsDynamicMethodCallInspection */
+
+namespace Wikimedia\Tests\ObjectCache;
+
+use ArrayIterator;
+use BagOStuff;
+use EmptyBagOStuff;
+use HashBagOStuff;
+use MediaWikiUnitTestCase;
+use Psr\Log\NullLogger;
+use UnexpectedValueException;
+use WANObjectCache;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers WANObjectCache
+ * @covers \WANObjectCache
  */
 class WANObjectCacheTest extends MediaWikiUnitTestCase {
 
@@ -570,6 +582,9 @@ class WANObjectCacheTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testPreemptiveRefresh() {
+		// (T353180) Flaky test, to fix and re-enable
+		$this->markTestSkippedIfPhp( '>=', '8.2' );
+
 		$value = 'KatCafe';
 		$wasSet = 0;
 		$func = static function ( $old, &$ttl, &$opts, $asOf ) use ( &$wasSet, &$value )
@@ -2117,7 +2132,7 @@ class WANObjectCacheTest extends MediaWikiUnitTestCase {
 	 */
 	public function testSetLogger() {
 		[ $cache ] = $this->newWanCache();
-		$this->assertSame( null, $cache->setLogger( new Psr\Log\NullLogger ) );
+		$this->assertSame( null, $cache->setLogger( new NullLogger ) );
 	}
 
 	/**

@@ -25,12 +25,11 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
-use MediaWiki\Permissions\Authority;
 use MediaWiki\Specials\SpecialUserRights;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
-use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
@@ -82,7 +81,7 @@ class ApiUserrights extends ApiBase {
 		// Deny if the user is blocked and doesn't have the full 'userrights' permission.
 		// This matches what Special:UserRights does for the web UI.
 		if ( !$this->getAuthority()->isAllowed( 'userrights' ) ) {
-			$block = $pUser->getBlock( Authority::READ_LATEST );
+			$block = $pUser->getBlock( IDBAccessObject::READ_LATEST );
 			if ( $block && $block->isSitewide() ) {
 				$this->dieBlocked( $block );
 			}
@@ -139,7 +138,7 @@ class ApiUserrights extends ApiBase {
 		$form->setContext( $this->getContext() );
 		$r = [];
 		$r['user'] = $user->getName();
-		$r['userid'] = $user->getId();
+		$r['userid'] = $user->getId( $user->getWikiId() );
 		[ $r['added'], $r['removed'] ] = $form->doSaveUserGroups(
 			// Don't pass null to doSaveUserGroups() for array params, cast to empty array
 			$user, $add, (array)$params['remove'],

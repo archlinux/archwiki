@@ -13,39 +13,23 @@ class Profile {
 	/** @var float */
 	public $endTime;
 
-	/** @var array */
-	private $timeProfile;
-
-	/** @var array */
-	private $mwProfile;
-
-	/** @var array */
-	private $timeCategories;
-
-	/** @var array */
-	private $counts;
+	private array $timeProfile = [];
+	private array $mwProfile = [];
+	private array $timeCategories = [];
+	private array $counts = [];
 
 	/**
 	 * Array of profiles for nested pipelines. So, we effectively end up with
 	 * a profile tree with the top-level-doc profile as the root profile.
 	 * @var array<Profile>
 	 */
-	private $nestedProfiles;
+	private array $nestedProfiles = [];
 
 	/**
 	 * This is the most recently pushed nested profile from a nested pipeline.
 	 * @var ?Profile
 	 */
-	private $recentNestedProfile;
-
-	public function __construct() {
-		$this->timeCategories = [];
-		$this->timeProfile = [];
-		$this->mwProfile = [];
-		$this->counts = [];
-		$this->nestedProfiles = [];
-		$this->recentNestedProfile = null;
-	}
+	private ?Profile $recentNestedProfile = null;
 
 	public function start(): void {
 		$this->startTime = microtime( true );
@@ -55,9 +39,6 @@ class Profile {
 		$this->endTime = microtime( true );
 	}
 
-	/**
-	 * @param Profile $p
-	 */
 	public function pushNestedProfile( Profile $p ): void {
 		$this->nestedProfiles[] = $this->recentNestedProfile = $p;
 	}
@@ -77,15 +58,10 @@ class Profile {
 			$this->recentNestedProfile = null;
 		}
 
-		if ( !isset( $profile[$resource] ) ) {
-			$profile[$resource] = 0;
-		}
-
+		$profile[$resource] ??= 0;
 		$profile[$resource] += $time;
 		if ( $cat ) {
-			if ( !isset( $this->timeCategories[$cat] ) ) {
-				$this->timeCategories[$cat] = 0;
-			}
+			$this->timeCategories[$cat] ??= 0;
 			$this->timeCategories[$cat] += $time;
 		}
 	}
@@ -122,9 +98,7 @@ class Profile {
 	 * @param int $n The amount to increment the counter; defaults to 1.
 	 */
 	public function bumpCount( string $resource, int $n = 1 ): void {
-		if ( !isset( $this->counts[$resource] ) ) {
-			$this->counts[$resource] = 0;
-		}
+		$this->counts[$resource] ??= 0;
 		$this->counts[$resource] += $n;
 	}
 
@@ -154,11 +128,6 @@ class Profile {
 		return $b[1] - $a[1];
 	}
 
-	/**
-	 * @param array $profile
-	 * @param array $options
-	 * @return array
-	 */
 	private function formatProfile( array $profile, array $options = [] ): array {
 		// Sort time profile in descending order
 
@@ -195,9 +164,6 @@ class Profile {
 		return [ 'buf' => implode( "\n", $lines ), 'total' => $total ];
 	}
 
-	/**
-	 * @return string
-	 */
 	private function printProfile(): string {
 		$outLines = [];
 		$mwOut = $this->formatProfile( $this->mwProfile );
@@ -230,22 +196,13 @@ class Profile {
 		return implode( "\n", $outLines );
 	}
 
-	/**
-	 * @param array $a
-	 * @param array &$res
-	 */
 	private static function swallowArray( array $a, array &$res ): void {
 		foreach ( $a as $k => $v ) {
-			if ( !isset( $res[$k] ) ) {
-				$res[$k] = 0;
-			}
+			$res[$k] ??= 0;
 			$res[$k] += $v;
 		}
 	}
 
-	/**
-	 * @param Profile $reducedProfile
-	 */
 	private function reduce( Profile $reducedProfile ): void {
 		self::swallowArray( $this->counts, $reducedProfile->counts );
 		self::swallowArray( $this->timeCategories, $reducedProfile->timeCategories );
@@ -257,9 +214,6 @@ class Profile {
 		}
 	}
 
-	/**
-	 * @return Profile
-	 */
 	private function reduceProfileTree(): Profile {
 		$reducedProfile = new Profile();
 		$reducedProfile->startTime = $this->startTime;
@@ -268,9 +222,6 @@ class Profile {
 		return $reducedProfile;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function print(): string {
 		return $this->reduceProfileTree()->printProfile();
 	}

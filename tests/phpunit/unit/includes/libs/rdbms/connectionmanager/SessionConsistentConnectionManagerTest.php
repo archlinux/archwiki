@@ -8,7 +8,7 @@ use Wikimedia\Rdbms\LoadBalancer;
 use Wikimedia\Rdbms\SessionConsistentConnectionManager;
 
 /**
- * @covers Wikimedia\Rdbms\SessionConsistentConnectionManager
+ * @covers \Wikimedia\Rdbms\SessionConsistentConnectionManager
  *
  * @author Daniel Kinzler
  */
@@ -72,19 +72,5 @@ class SessionConsistentConnectionManagerTest extends MediaWikiUnitTestCase {
 		$manager = new SessionConsistentConnectionManager( $lb );
 		$manager->prepareForUpdates();
 		$manager->getReadConnection();
-	}
-
-	public function testReleaseConnection() {
-		$database = $this->createMock( IDatabase::class );
-		$lb = $this->createMock( LoadBalancer::class );
-
-		$lb->expects( $this->once() )
-			->method( 'reuseConnection' )
-			->with( $database )
-			->willReturn( null );
-
-		$manager = new SessionConsistentConnectionManager( $lb );
-		$this->expectDeprecationAndContinue( '/releaseConnection/' );
-		$manager->releaseConnection( $database );
 	}
 }

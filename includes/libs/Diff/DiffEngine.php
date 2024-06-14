@@ -85,7 +85,7 @@ class DiffEngine {
 	 * @param int $tooLong
 	 * @param float $powLimit
 	 */
-	public function __construct( $tooLong = 2000000, $powLimit = 1.45 ) {
+	public function __construct( $tooLong = 2_000_000, $powLimit = 1.45 ) {
 		$this->tooLong = $tooLong;
 		$this->powLimit = $powLimit;
 	}
@@ -812,5 +812,5 @@ class DiffEngine {
 
 }
 
-/** @deprecated since 1.41 */
+/** @deprecated class alias since 1.41 */
 class_alias( DiffEngine::class, 'DiffEngine' );

@@ -1,19 +1,24 @@
 <?php
 
-namespace Wikimedia\Diff;
+namespace Wikimedia\Tests\Diff;
+
+use MediaWikiUnitTestCase;
+use Wikimedia\Diff\ArrayDiffFormatter;
+use Wikimedia\Diff\Diff;
+use Wikimedia\Diff\DiffOp;
 
 /**
  * @author Addshore
  *
  * @group Diff
  */
-class ArrayDiffFormatterTest extends \MediaWikiUnitTestCase {
+class ArrayDiffFormatterTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @param Diff $input
 	 * @param array $expectedOutput
 	 * @dataProvider provideTestFormat
-	 * @covers ArrayDiffFormatter::format
+	 * @covers \Wikimedia\Diff\ArrayDiffFormatter::format
 	 */
 	public function testFormat( Diff $input, array $expectedOutput ) {
 		$instance = new ArrayDiffFormatter();

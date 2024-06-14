@@ -133,8 +133,8 @@ class SpecialListRedirects extends QueryPage {
 			return Title::makeTitle(
 				$row->rd_namespace,
 				$row->rd_title,
-				$row->rd_fragment ?? '',
-				$row->rd_interwiki ?? ''
+				$row->rd_fragment,
+				$row->rd_interwiki
 			);
 		} else {
 			$title = Title::makeTitle( $row->namespace, $row->title );
@@ -188,7 +188,5 @@ class SpecialListRedirects extends QueryPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialListRedirects::class, 'SpecialListRedirects' );

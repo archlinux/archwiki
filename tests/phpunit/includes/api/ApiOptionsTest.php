@@ -1,11 +1,21 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+namespace MediaWiki\Tests\Api;
+
+use ApiMain;
+use ApiOptions;
+use ApiUsageException;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\IContextSource;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Preferences\DefaultPreferencesFactory;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
-use MediaWiki\User\UserOptionsManager;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -13,7 +23,7 @@ use PHPUnit\Framework\MockObject\MockObject;
  * @group Database
  * @group medium
  *
- * @covers ApiOptions
+ * @covers \ApiOptions
  */
 class ApiOptionsTest extends ApiTestCase {
 	use MockAuthorityTrait;
@@ -330,12 +340,18 @@ class ApiOptionsTest extends ApiTestCase {
 			$this->mUserMock->expects( $this->never() )->method( 'saveSettings' );
 		} else {
 			$this->userOptionsManagerMock->expects( $this->once() )->method( 'resetOptions' );
-			$this->userOptionsManagerMock->expects( $this->exactly( 2 ) )
+			$expectedOptions = [
+				'willBeHappy' => 'Happy',
+				'name' => 'value',
+			];
+			$this->userOptionsManagerMock->expects( $this->exactly( count( $expectedOptions ) ) )
 				->method( 'setOption' )
-				->withConsecutive(
-					[ $this->mUserMock, 'willBeHappy', 'Happy' ],
-					[ $this->mUserMock, 'name', 'value' ]
-				);
+				->willReturnCallback( function ( $user, $oname, $val ) use ( &$expectedOptions ) {
+					$this->assertSame( $this->mUserMock, $user );
+					$this->assertArrayHasKey( $oname, $expectedOptions );
+					$this->assertSame( $expectedOptions[$oname], $val );
+					unset( $expectedOptions[$oname] );
+				} );
 			$this->mUserMock->expects( $this->once() )->method( 'saveSettings' );
 		}
 
@@ -373,14 +389,19 @@ class ApiOptionsTest extends ApiTestCase {
 		$this->mUserMock->method( 'isNamed' )->willReturn( true );
 		$this->userOptionsManagerMock->expects( $this->never() )
 			->method( 'resetOptions' );
-		$args = [];
-		foreach ( $setOptions as $setOption ) {
-			$args[] = array_merge( [ $this->mUserMock ], $setOption );
-		}
 
+		$expectedOptions = [];
+		foreach ( $setOptions as [ $opt, $val ] ) {
+			$expectedOptions[$opt] = $val;
+		}
 		$this->userOptionsManagerMock->expects( $this->exactly( count( $setOptions ) ) )
 			->method( 'setOption' )
-			->withConsecutive( ...$args );
+			->willReturnCallback( function ( $user, $oname, $val ) use ( &$expectedOptions ) {
+				$this->assertSame( $this->mUserMock, $user );
+				$this->assertArrayHasKey( $oname, $expectedOptions );
+				$this->assertSame( $expectedOptions[$oname], $val );
+				unset( $expectedOptions[$oname] );
+			} );
 
 		if ( $setOptions ) {
 			$this->mUserMock->expects( $this->once() )

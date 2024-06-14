@@ -1,17 +1,24 @@
 <?php
 
-use MediaWiki\MainConfigNames;
+namespace MediaWiki\Tests\Api;
+
+use CssContent;
+use HashBagOStuff;
 use MediaWiki\Storage\PageEditStash;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserRigorOptions;
+use NullStatsdDataFactory;
 use Psr\Log\NullLogger;
+use stdClass;
 use Wikimedia\TestingAccessWrapper;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
+use WikitextContent;
 
 /**
- * @covers ApiStashEdit
+ * @covers \ApiStashEdit
  * @covers \MediaWiki\Storage\PageEditStash
  * @group API
  * @group medium
@@ -19,6 +26,10 @@ use Wikimedia\Timestamp\ConvertibleTimestamp;
  * @todo Expand tests for temporary users
  */
 class ApiStashEditTest extends ApiTestCase {
+	use TempUserTestTrait;
+
+	private const CLASS_NAME = 'ApiStashEditTest';
+
 	protected function setUp(): void {
 		parent::setUp();
 		// Hack to make user edit tracker survive service reset.
@@ -29,7 +40,7 @@ class ApiStashEditTest extends ApiTestCase {
 			->getUserEditTracker() );
 		$this->setService( 'PageEditStash', new PageEditStash(
 			new HashBagOStuff( [] ),
-			$this->getServiceContainer()->getDBLoadBalancerFactory(),
+			$this->getServiceContainer()->getConnectionProvider(),
 			new NullLogger(),
 			new NullStatsdDataFactory(),
 			$this->getServiceContainer()->getUserEditTracker(),
@@ -54,7 +65,7 @@ class ApiStashEditTest extends ApiTestCase {
 	) {
 		$params = array_merge( [
 			'action' => 'stashedit',
-			'title' => __CLASS__,
+			'title' => self::CLASS_NAME,
 			'contentmodel' => 'wikitext',
 			'contentformat' => 'text/x-wiki',
 			'baserevid' => 0,
@@ -123,7 +134,7 @@ class ApiStashEditTest extends ApiTestCase {
 	 * @param User|null $user User who made edit
 	 * @return string
 	 */
-	protected function getStashKey( $title = __CLASS__, $text = 'Content', User $user = null ) {
+	protected function getStashKey( $title = self::CLASS_NAME, $text = 'Content', User $user = null ) {
 		$titleObj = Title::newFromText( $title );
 		$content = new WikitextContent( $text );
 		if ( !$user ) {
@@ -352,7 +363,7 @@ class ApiStashEditTest extends ApiTestCase {
 	}
 
 	public function testCheckCacheAnon() {
-		$this->overrideConfigValue( MainConfigNames::AutoCreateTempUser, [ 'enabled' => false ] );
+		$this->disableAutoCreateTempUser();
 		$user = $this->getServiceContainer()->getUserFactory()->newFromName( '174.5.4.6', UserRigorOptions::RIGOR_NONE );
 
 		$this->doStash( [], $user );
@@ -384,7 +395,7 @@ class ApiStashEditTest extends ApiTestCase {
 	}
 
 	public function testCheckCacheOldNoEditsAnon() {
-		$this->overrideConfigValue( MainConfigNames::AutoCreateTempUser, [ 'enabled' => false ] );
+		$this->disableAutoCreateTempUser();
 		// Specify a made-up IP address to make sure no edits are lying around
 		$user = $this->getServiceContainer()->getUserFactory()->newFromName( '172.0.2.77', UserRigorOptions::RIGOR_NONE );
 
@@ -418,7 +429,7 @@ class ApiStashEditTest extends ApiTestCase {
 		$editStash = TestingAccessWrapper::newFromObject(
 			$this->getServiceContainer()->getPageEditStash() );
 		$cache = $editStash->cache;
-		$key = $this->getStashKey( __CLASS__, $text );
+		$key = $this->getStashKey( self::CLASS_NAME, $text );
 
 		$wrapper = TestingAccessWrapper::newFromObject( $cache );
 

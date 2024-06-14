@@ -35,7 +35,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "呢個註腳係用模或者其他組件砌成嘅，現時淨係可以喺源碼模式預覽。",
 	"cite-ve-referenceslist-missingreflist": "呢個註腳係用模或者其他組件砌成嘅，現時淨係可以喺源碼模式修改。",
 	"cite-ve-toolbar-group-label": "引用",
-	"cite-ve-othergroup-item": "$1參考資料",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "參考",
-	"visualeditor-internal-list-diff-group-name-mwreference": "參考分組名：「$1」"
+	"cite-ve-othergroup-item": "$1參考資料"
 }

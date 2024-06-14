@@ -49,7 +49,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Dizze referinsje is definiearre yn in berjocht of oar generearre blok, en it proefbyld kin op it stuit allinne besjoen wurde yn boarnemodus.",
 	"cite-ve-referenceslist-missingreflist": "Dizze referinsjelist is generearre troch in berjocht, en kin op it stuit allinne bewurke wurde yn boarnemodus.",
 	"cite-ve-toolbar-group-label": "Sitaat",
-	"cite-ve-othergroup-item": "$1referinsje",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referinsjes",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Namme referinsjegroep: \"$1\""
+	"cite-ve-othergroup-item": "$1referinsje"
 }

@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface CommentAnnotationInspector class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -57,7 +57,9 @@ ve.ui.CommentAnnotationInspector.prototype.updateActions = function () {
 		inspector = this;
 
 	this.textInput.getValidity()
-		.then( function () { isValid = true; } )
+		.then( function () {
+			isValid = true;
+		} )
 		.always( function () {
 			inspector.actions.forEach( { actions: [ 'done', 'insert' ] }, function ( action ) {
 				action.setDisabled( !isValid );

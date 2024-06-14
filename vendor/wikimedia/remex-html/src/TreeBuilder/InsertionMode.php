@@ -68,11 +68,11 @@ abstract class InsertionMode {
 		$builder = $this->builder;
 
 		do {
-			list( $part1, $part2 ) = $this->splitInitialMatch(
+			[ $part1, $part2 ] = $this->splitInitialMatch(
 				$isStartOfToken, "\t\n\f\r ", $text, $start, $length, $sourceStart, $sourceLength );
 			$isStartOfToken = false;
 
-			list( $start, $length, $sourceStart, $sourceLength ) = $part1;
+			[ $start, $length, $sourceStart, $sourceLength ] = $part1;
 			if ( $length ) {
 				if ( $inBody ) {
 					$this->dispatcher->inBody->characters( $text, $start, $length,
@@ -82,7 +82,7 @@ abstract class InsertionMode {
 				}
 			}
 
-			list( $start, $length, $sourceStart, $sourceLength ) = $part2;
+			[ $start, $length, $sourceStart, $sourceLength ] = $part2;
 			if ( $length ) {
 				$builder->error( "unexpected non-whitespace character", $sourceStart );
 				$start++;

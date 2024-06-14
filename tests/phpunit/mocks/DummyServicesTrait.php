@@ -21,14 +21,14 @@
 
 namespace MediaWiki\Tests\Unit;
 
-use CommentStore;
-use GenderCache;
 use Interwiki;
 use InvalidArgumentException;
 use Language;
 use MediaWiki\Cache\CacheKeyHelper;
+use MediaWiki\Cache\GenderCache;
 use MediaWiki\CommentFormatter\CommentParser;
 use MediaWiki\CommentFormatter\CommentParserFactory;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Interwiki\InterwikiLookup;
@@ -36,6 +36,7 @@ use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Tests\MockDatabase;
 use MediaWiki\Title\MalformedTitleException;
 use MediaWiki\Title\MediaWikiTitleCodec;
 use MediaWiki\Title\NamespaceInfo;
@@ -55,6 +56,8 @@ use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Rdbms\ConfiguredReadOnlyMode;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\LBFactorySingle;
 use Wikimedia\Rdbms\ReadOnlyMode;
 use Wikimedia\Services\NoSuchServiceException;
 
@@ -146,6 +149,14 @@ trait DummyServicesTrait {
 				}
 			);
 		return $contentHandlerFactory;
+	}
+
+	/**
+	 * @param array $dbOptions Options for the Database constructor
+	 * @return LBFactory
+	 */
+	private function getDummyDBLoadBalancerFactory( $dbOptions = [] ): LBFactory {
+		return LBFactorySingle::newFromConnection( new MockDatabase( $dbOptions ) );
 	}
 
 	/**
@@ -447,6 +458,32 @@ trait DummyServicesTrait {
 	}
 
 	/**
+	 * @param bool $dumpMessages Whether MessageValue objects should be formatted by dumping
+	 *   them rather than just returning the key
+	 * @return ITextFormatter
+	 */
+	private function getDummyTextFormatter( bool $dumpMessages = false ): ITextFormatter {
+		return new class( $dumpMessages ) implements ITextFormatter {
+			private bool $dumpMessages;
+
+			public function __construct( bool $dumpMessages ) {
+				$this->dumpMessages = $dumpMessages;
+			}
+
+			public function getLangCode() {
+				return 'qqx';
+			}
+
+			public function format( MessageValue $message ) {
+				if ( $this->dumpMessages ) {
+					return $message->dump();
+				}
+				return $message->getKey();
+			}
+		};
+	}
+
+	/**
 	 * @param array $options Supported keys:
 	 *   - any of the configuration options used in the ServiceOptions
 	 *   - logger: logger to use, defaults to a NullLogger
@@ -479,15 +516,7 @@ trait DummyServicesTrait {
 
 		$logger = $options['logger'] ?? new NullLogger();
 
-		$textFormatter = $options['textFormatter'] ?? new class implements ITextFormatter {
-			public function getLangCode() {
-				return 'qqx';
-			}
-
-			public function format( MessageValue $message ) {
-				return $message->getKey();
-			}
-		};
+		$textFormatter = $options['textFormatter'] ?? $this->getDummyTextFormatter();
 
 		$titleParser = $options['titleParser'] ?? false;
 		if ( !$titleParser ) {
@@ -514,6 +543,7 @@ trait DummyServicesTrait {
 			$options['hookContainer'] ?? $this->createHookContainer(),
 			new RealTempUserConfig( [
 				'enabled' => true,
+				'expireAfterDays' => null,
 				'actions' => [ 'edit' ],
 				'serialProvider' => [ 'type' => 'local' ],
 				'serialMapping' => [ 'type' => 'plain-numeric' ],

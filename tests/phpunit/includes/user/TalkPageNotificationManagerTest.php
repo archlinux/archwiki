@@ -2,6 +2,7 @@
 
 use MediaWiki\Config\HashConfig;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionLookup;
@@ -20,13 +21,6 @@ use PHPUnit\Framework\AssertionFailedError;
  */
 class TalkPageNotificationManagerTest extends MediaWikiIntegrationTestCase {
 	use DummyServicesTrait;
-
-	protected function setUp(): void {
-		parent::setUp();
-		// tablesUsed don't clear up the database before the first test runs: T265033
-		$this->truncateTable( 'user_newtalk' );
-		$this->tablesUsed[] = 'user_newtalk';
-	}
 
 	private function editUserTalk( UserIdentity $user, string $text ): RevisionRecord {
 		// UserIdentity doesn't have getUserPage/getTalkPage, but we can easily recreate
@@ -56,7 +50,7 @@ class TalkPageNotificationManagerTest extends MediaWikiIntegrationTestCase {
 					MainConfigNames::DisableAnonTalk => $disableAnonTalk
 				] )
 			),
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$this->getDummyReadOnlyMode( $isReadOnly ),
 			$revisionLookup ?? $services->getRevisionLookup(),
 			$this->createHookContainer(),

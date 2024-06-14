@@ -50,7 +50,7 @@ class AddRFCandPMIDInterwiki extends LoggedUpdateMaintenance {
 		if ( $interwikiCache !== false ) {
 			return true;
 		}
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 
 		$rfc = $dbw->newSelectQueryBuilder()
 			->select( 'iw_url' )
@@ -64,7 +64,7 @@ class AddRFCandPMIDInterwiki extends LoggedUpdateMaintenance {
 			$dbw->newReplaceQueryBuilder()
 				->replaceInto( 'interwiki' )
 				->uniqueIndexFields( [ 'iw_prefix' ] )
-				->rows( [
+				->row( [
 					'iw_prefix' => 'rfc',
 					'iw_url' => 'https://tools.ietf.org/html/rfc$1',
 					'iw_api' => '',
@@ -74,20 +74,18 @@ class AddRFCandPMIDInterwiki extends LoggedUpdateMaintenance {
 				->caller( __METHOD__ )->execute();
 		}
 
-		$dbw->insert(
-			'interwiki',
-			[
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'interwiki' )
+			// If there's already a pmid interwiki link, don't overwrite it
+			->ignore()
+			->row( [
 				'iw_prefix' => 'pmid',
 				'iw_url' => 'https://www.ncbi.nlm.nih.gov/pubmed/$1?dopt=Abstract',
 				'iw_api' => '',
 				'iw_wikiid' => '',
 				'iw_local' => 0,
-			],
-			__METHOD__,
-			// If there's already a pmid interwiki link, don't
-			// overwrite it
-			[ 'IGNORE' ]
-		);
+			] )
+			->caller( __METHOD__ )->execute();
 
 		return true;
 	}

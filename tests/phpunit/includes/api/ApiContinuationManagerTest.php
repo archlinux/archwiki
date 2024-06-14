@@ -1,9 +1,18 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use ApiContinuationManager;
+use ApiMain;
+use ApiResult;
+use ApiUsageException;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Request\FauxRequest;
+use UnexpectedValueException;
 
 /**
- * @covers ApiContinuationManager
+ * @covers \ApiContinuationManager
  * @group API
  */
 class ApiContinuationManagerTest extends ApiTestCase {

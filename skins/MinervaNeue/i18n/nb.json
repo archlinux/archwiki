@@ -57,11 +57,18 @@
 	"skinname-minerva": "MinervaNeue",
 	"minerva-skin-desc": "Ei responsiv drakt for mobil-først.",
 	"skin-minerva-issue-learn-more": "Lær mer",
+	"skin-minerva-time-ago-seconds": "for $1 {{PLURAL:$1|sekund|sekunder}} siden",
+	"skin-minerva-time-ago-minutes": "for $1 {{PLURAL:$1|minutt|minutter}} siden",
+	"skin-minerva-time-ago-hours": "for $1 {{PLURAL:$1|time|timer}} siden",
+	"skin-minerva-time-ago-days": "for $1 {{PLURAL:$1|dag|dager}} siden",
+	"skin-minerva-time-ago-months": "for $1 {{PLURAL:$1|måned|måneder}} siden",
+	"skin-minerva-time-ago-years": "for $1 {{PLURAL:$1|år}} siden",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategorier",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Vis kategoriene til sider",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Forbedret behandling av sideproblemer",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Sideproblemer (Mal:ambox) vises i artikkelteksten.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Dessverre er ikke gruppering av resultater tilgjengelig på mobil. Om du ønsker å bruke denne funksjonen, besøk datamaskinversjonen av nettstedet.",
+	"skin-minerva-night-mode-unavailable": "Siden er kun tilgjengelig med fargetemaet «Dag».",
 	"minerva.css": "/* CSS i denne fila vil gjelde alle som bruker drakta MinervaNeue */",
 	"minerva.js": "/* Javascript i denne fila vil gjelde for brukere av drakta MinervaNeue */"
 }

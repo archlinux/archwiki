@@ -25,6 +25,7 @@
 
 require_once __DIR__ . '/Maintenance.php';
 
+use MediaWiki\Deferred\SiteStatsUpdate;
 use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
 
@@ -192,8 +193,6 @@ class CreateAndPromote extends Maintenance {
 	 * @param array $oldGroups
 	 * @param array $newGroups
 	 * @param string $reason
-	 *
-	 * @throws MWException
 	 */
 	private function addLogEntry( $user, array $oldGroups, array $newGroups, string $reason ) {
 		$logEntry = new ManualLogEntry( 'rights', 'rights' );

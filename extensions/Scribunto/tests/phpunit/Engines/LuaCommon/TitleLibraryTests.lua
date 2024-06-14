@@ -97,6 +97,14 @@ local function test_getCurrentTitle_fragment()
 	return mw.title.getCurrentTitle().fragment
 end
 
+local function test_pageLang()
+	local l = mw.title.getCurrentTitle().pageLang
+	if l:getCode() ~= mw.language.getContentLanguage():getCode() then
+		return 'error'
+	end
+	return 'did not error'
+end
+
 -- Tests
 local tests = {
 	{ name = 'tostring', func = identity, type = 'ToString',
@@ -213,7 +221,7 @@ local tests = {
 	},
 	{ name = '.isTalkPage', func = prop_foreach,
 		args = { 'isTalkPage' },
-		expect = { false, false, false, true, false, true, true }
+		expect = { false, false, nil, true, false, true, true }
 	},
 	{ name = '.isSubpage', func = prop_foreach,
 		args = { 'isSubpage' },
@@ -264,7 +272,15 @@ local tests = {
 	},
 	{ name = '.subjectNsText', func = prop_foreach,
 		args = { 'subjectNsText' },
-		expect = { '', 'Module', '', '', '', 'Module', 'Module' }
+		expect = { '', 'Module', nil, '', '', 'Module', 'Module' }
+	},
+	{ name = '.canTalk', func = prop_foreach,
+		args = { 'canTalk' },
+		expect = { true, true, nil, true, true, true, true }
+	},
+	{ name = '.talkNsText', func = prop_foreach,
+		args = { 'talkNsText' },
+		expect = { 'Talk', 'Module talk', nil, 'Talk', 'Talk', 'Module talk', 'Module talk' }
 	},
 	{ name = '.fragment', func = prop_foreach,
 		args = { 'fragment' },
@@ -414,6 +430,9 @@ local tests = {
 	},
 	{ name = "fragments don't leak via getCurrentTitle()", func = test_getCurrentTitle_fragment,
 		expect = { '' }
+	},
+	{ name = "sample page language returns current content language", func = test_pageLang,
+		expect = { 'did not error' }
 	},
 }
 

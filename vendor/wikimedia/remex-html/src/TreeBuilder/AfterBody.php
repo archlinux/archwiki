@@ -9,14 +9,14 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  */
 class AfterBody extends InsertionMode {
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
-		list( $part1, $part2 ) = $this->splitInitialMatch(
+		[ $part1, $part2 ] = $this->splitInitialMatch(
 			true, "\t\n\f\r ", $text, $start, $length, $sourceStart, $sourceLength );
-		list( $start, $length, $sourceStart, $sourceLength ) = $part1;
+		[ $start, $length, $sourceStart, $sourceLength ] = $part1;
 		if ( $length ) {
 			$this->dispatcher->inBody->characters(
 				$text, $start, $length, $sourceStart, $sourceLength );
 		}
-		list( $start, $length, $sourceStart, $sourceLength ) = $part2;
+		[ $start, $length, $sourceStart, $sourceLength ] = $part2;
 		$this->builder->error( "unexpected non-whitespace character after body",
 			$sourceStart );
 		$this->dispatcher->switchMode( Dispatcher::IN_BODY )
@@ -28,15 +28,15 @@ class AfterBody extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'html':
-			$dispatcher->inBody->startTag(
-				$name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'html':
+				$dispatcher->inBody->startTag(
+					$name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			$builder->error( "unexpected start tag after body", $sourceStart );
-			$dispatcher->switchMode( Dispatcher::IN_BODY )
-				->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+			default:
+				$builder->error( "unexpected start tag after body", $sourceStart );
+				$dispatcher->switchMode( Dispatcher::IN_BODY )
+					->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
 		}
 	}
 
@@ -45,18 +45,18 @@ class AfterBody extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'html':
-			if ( $builder->isFragment ) {
-				$builder->error( "unexpected </html> in fragment", $sourceStart );
-				return;
-			}
-			$dispatcher->switchMode( Dispatcher::AFTER_AFTER_BODY );
-			break;
+			case 'html':
+				if ( $builder->isFragment ) {
+					$builder->error( "unexpected </html> in fragment", $sourceStart );
+					return;
+				}
+				$dispatcher->switchMode( Dispatcher::AFTER_AFTER_BODY );
+				break;
 
-		default:
-			$builder->error( "unexpected end tag after body", $sourceStart );
-			$dispatcher->switchMode( Dispatcher::IN_BODY )
-				->endTag( $name, $sourceStart, $sourceLength );
+			default:
+				$builder->error( "unexpected end tag after body", $sourceStart );
+				$dispatcher->switchMode( Dispatcher::IN_BODY )
+					->endTag( $name, $sourceStart, $sourceLength );
 		}
 	}
 

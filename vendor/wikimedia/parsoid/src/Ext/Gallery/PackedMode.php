@@ -7,7 +7,7 @@ use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
-use Wikimedia\Parsoid\Ext\PHPUtils;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 
 class PackedMode extends TraditionalMode {
 	/**
@@ -17,7 +17,7 @@ class PackedMode extends TraditionalMode {
 	protected function __construct( ?string $mode = null ) {
 		parent::__construct( $mode ?? 'packed' );
 		$this->scale = 1.5;
-		$this->padding = PHPUtils::arrayToObject( [ 'thumb' => 0, 'box' => 2, 'border' => 8 ] );
+		$this->padding = (object)[ 'thumb' => 0, 'box' => 2, 'border' => 8 ];
 	}
 
 	/** @inheritDoc */
@@ -35,7 +35,7 @@ class PackedMode extends TraditionalMode {
 	public function scaleMedia( Opts $opts, Element $wrapper ) {
 		$elt = $wrapper->firstChild->firstChild;
 		DOMUtils::assertElt( $elt );
-		$width = $elt->getAttribute( 'width' ) ?? '';
+		$width = DOMCompat::getAttribute( $elt, 'width' );
 		if ( !is_numeric( $width ) ) {
 			$width = $opts->imageWidth;
 		} else {
@@ -74,9 +74,6 @@ class PackedMode extends TraditionalMode {
 		$box->appendChild( $wrapper );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getModules(): array {
 		return [ 'mediawiki.page.gallery' ];
 	}

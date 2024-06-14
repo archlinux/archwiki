@@ -21,8 +21,7 @@ class MathRestbaseInterface {
 	private $tex;
 	/** @var string */
 	private $type;
-	/** @var string|null */
-	private $checkedTex;
+	private ?string $checkedTex = null;
 	/** @var bool|null */
 	private $success;
 	/** @var array */
@@ -149,11 +148,10 @@ class MathRestbaseInterface {
 	 * @return array
 	 */
 	private function executeRestbaseCheckRequest( $request ) {
-		$res = null;
 		$multiHttpClient = $this->getMultiHttpClient();
 		$response = $multiHttpClient->run( $request );
 		if ( $response['code'] !== 200 ) {
-			$this->log()->info( 'Tex check failed', [
+			$this->logger->info( 'Tex check failed', [
 				'post'  => $request['body'],
 				'error' => $response['error'],
 				'urlparams'   => $request['url']
@@ -227,13 +225,6 @@ class MathRestbaseInterface {
 	}
 
 	/**
-	 * @return \Psr\Log\LoggerInterface
-	 */
-	private function log() {
-		return $this->logger;
-	}
-
-	/**
 	 * @return string
 	 * @throws MathRestbaseException
 	 */
@@ -252,7 +243,7 @@ class MathRestbaseInterface {
 		$uniqueTeX = uniqid( 't=', true );
 		$testInterface = new MathRestbaseInterface( $uniqueTeX );
 		if ( !$testInterface->checkTeX() ) {
-			$this->log()->warning( 'Config check failed, since test expression was considered as invalid.',
+			$this->logger->warning( 'Config check failed, since test expression was considered as invalid.',
 				[ 'uniqueTeX' => $uniqueTeX ] );
 			return false;
 		}
@@ -265,10 +256,10 @@ class MathRestbaseInterface {
 				return true;
 			}
 
-			$this->log()->warning( 'Config check failed, due to an invalid response code.',
+			$this->logger->warning( 'Config check failed, due to an invalid response code.',
 				[ 'responseCode' => $status ] );
 		} catch ( Exception $e ) {
-			$this->log()->warning( 'Config check failed, due to an exception.', [ $e ] );
+			$this->logger->warning( 'Config check failed, due to an exception.', [ $e ] );
 		}
 
 		return false;
@@ -284,58 +275,30 @@ class MathRestbaseInterface {
 		return $this->getUrl( "media/math/render/svg/{$this->hash}", false );
 	}
 
-	/**
-	 * Gets a publicly accessible link to the generated SVG image.
-	 * @return string
-	 * @throws InvalidTeXException
-	 */
-	public function getFullPngUrl() {
-		$this->calculateHash();
-		return $this->getUrl( "media/math/render/png/{$this->hash}", false );
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCheckedTex() {
+	public function getCheckedTex(): ?string {
 		return $this->checkedTex;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function getSuccess() {
+	public function getSuccess(): bool {
 		if ( $this->success === null ) {
 			$this->checkTeX();
 		}
 		return $this->success;
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getIdentifiers() {
+	public function getIdentifiers(): ?array {
 		return $this->identifiers;
 	}
 
-	/**
-	 * @return stdClass
-	 */
-	public function getError() {
+	public function getError(): ?stdClass {
 		return $this->error;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getTex() {
+	public function getTex(): string {
 		return $this->tex;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getType() {
+	public function getType(): string {
 		return $this->type;
 	}
 
@@ -343,17 +306,11 @@ class MathRestbaseInterface {
 		$this->error = (object)[ 'error' => (object)[ 'message' => $msg ] ];
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getWarnings() {
+	public function getWarnings(): array {
 		return $this->warnings;
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getCheckRequest() {
+	public function getCheckRequest(): array {
 		return [
 			'method' => 'POST',
 			'body'   => [
@@ -364,13 +321,12 @@ class MathRestbaseInterface {
 		];
 	}
 
-	/**
-	 * @param array $response
-	 * @return bool
-	 */
-	public function evaluateRestbaseCheckResponse( $response ) {
+	public function evaluateRestbaseCheckResponse( array $response ): bool {
 		$json = json_decode( $response['body'] );
-		if ( $response['code'] === 200 ) {
+		if ( $response['code'] === 200 &&
+				isset( $json->success ) &&
+				isset( $json->checked ) &&
+				isset( $json->identifiers ) ) {
 			$headers = $response['headers'];
 			$this->hash = $headers['x-resource-location'];
 			$this->success = $json->success;
@@ -380,22 +336,21 @@ class MathRestbaseInterface {
 				$this->warnings = $json->warnings;
 			}
 			return true;
-		} else {
-			if ( isset( $json->detail ) && isset( $json->detail->success ) ) {
-				$this->success = $json->detail->success;
-				$this->error = $json->detail;
-			} else {
-				$this->success = false;
-				$this->setErrorMessage( 'Math extension cannot connect to Restbase.' );
-			}
+		}
+		if ( isset( $json->detail->success ) ) {
+			$this->success = $json->detail->success;
+			$this->error = $json->detail;
 			return false;
 		}
+		$this->success = false;
+		$this->setErrorMessage( 'Math extension cannot connect to Restbase.' );
+		$this->logger->error( 'Received invalid response from restbase.', [
+			'body' => $response['body'],
+			'code' => $response['code'] ] );
+		return false;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getMathoidStyle() {
+	public function getMathoidStyle(): ?string {
 		return $this->mathoidStyle;
 	}
 
@@ -435,7 +390,7 @@ class MathRestbaseInterface {
 		}
 		// Remove "convenience" duplicate keys put in place by MultiHttpClient
 		unset( $response[0], $response[1], $response[2], $response[3], $response[4] );
-		$this->log()->error( 'Restbase math server problem', [
+		$this->logger->error( 'Restbase math server problem', [
 			'urlparams' => $request['url'],
 			'response' => [ 'code' => $response['code'], 'body' => $response['body'] ],
 			'math_type' => $type,

@@ -8,7 +8,7 @@
 	"math_syntax_error": "сінтаксічна хыба",
 	"math_unknown_error": "незнама хыба",
 	"math_unknown_function": "незнама функція",
-	"mw_math_mathml": "MathML, кідь є підпороване (експеріменталне)",
-	"mw_math_source": "Зохабити як TeX (про текстовы переглядачі)",
+	"mw-math-mathml": "MathML, кідь є підпороване (експеріменталне)",
+	"mw-math-source": "Зохабити як TeX (про текстовы переглядачі)",
 	"prefs-math": "Математіка"
 }

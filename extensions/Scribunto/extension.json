@@ -10,10 +10,15 @@
 	"license-name": "GPL-2.0-or-later AND MIT",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42"
 	},
 	"APIModules": {
-		"scribunto-console": "MediaWiki\\Extension\\Scribunto\\ApiScribuntoConsole"
+		"scribunto-console": {
+			"class": "MediaWiki\\Extension\\Scribunto\\ApiScribuntoConsole",
+			"services": [
+				"ParserFactory"
+			]
+		}
 	},
 	"ContentHandlers": {
 		"Scribunto": "MediaWiki\\Extension\\Scribunto\\ScribuntoContentHandler"
@@ -103,10 +108,16 @@
 	},
 	"HookHandlers": {
 		"main": {
-			"class": "MediaWiki\\Extension\\Scribunto\\Hooks"
+			"class": "MediaWiki\\Extension\\Scribunto\\Hooks",
+			"services": [
+				"MainConfig"
+			]
 		},
 		"codeeditor": {
-			"class": "MediaWiki\\Extension\\Scribunto\\CodeEditorHooks"
+			"class": "MediaWiki\\Extension\\Scribunto\\CodeEditorHooks",
+			"services": [
+				"MainConfig"
+			]
 		}
 	},
 	"namespaces": [

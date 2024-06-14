@@ -4,6 +4,7 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterPreAuthenticationProvider;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReferenceValue;
+use MediaWiki\User\User;
 
 /**
  * This trait can be used to create accounts in integration tests.

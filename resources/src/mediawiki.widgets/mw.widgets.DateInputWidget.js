@@ -10,89 +10,87 @@
 	/**
 	 * Creates an mw.widgets.DateInputWidget object.
 	 *
-	 *     @example
-	 *     // Date input widget showcase
-	 *     var fieldset = new OO.ui.FieldsetLayout( {
-	 *       items: [
-	 *         new OO.ui.FieldLayout(
-	 *           new mw.widgets.DateInputWidget(),
-	 *           {
-	 *             align: 'top',
-	 *             label: 'Select date'
-	 *           }
-	 *         ),
-	 *         new OO.ui.FieldLayout(
-	 *           new mw.widgets.DateInputWidget( { precision: 'month' } ),
-	 *           {
-	 *             align: 'top',
-	 *             label: 'Select month'
-	 *           }
-	 *         ),
-	 *         new OO.ui.FieldLayout(
-	 *           new mw.widgets.DateInputWidget( {
-	 *             inputFormat: 'DD.MM.YYYY',
-	 *             displayFormat: 'Do [of] MMMM [anno Domini] YYYY'
-	 *           } ),
-	 *           {
-	 *             align: 'top',
-	 *             label: 'Select date (custom formats)'
-	 *           }
-	 *         )
-	 *       ]
-	 *     } );
-	 *     $( document.body ).append( fieldset.$element );
+	 * @example
+	 * // Date input widget showcase
+	 * var fieldset = new OO.ui.FieldsetLayout( {
+	 *   items: [
+	 *     new OO.ui.FieldLayout(
+	 *       new mw.widgets.DateInputWidget(),
+	 *       {
+	 *         align: 'top',
+	 *         label: 'Select date'
+	 *       }
+	 *     ),
+	 *     new OO.ui.FieldLayout(
+	 *       new mw.widgets.DateInputWidget( { precision: 'month' } ),
+	 *       {
+	 *         align: 'top',
+	 *         label: 'Select month'
+	 *       }
+	 *     ),
+	 *     new OO.ui.FieldLayout(
+	 *       new mw.widgets.DateInputWidget( {
+	 *         inputFormat: 'DD.MM.YYYY',
+	 *         displayFormat: 'Do [of] MMMM [anno Domini] YYYY'
+	 *       } ),
+	 *       {
+	 *         align: 'top',
+	 *         label: 'Select date (custom formats)'
+	 *       }
+	 *     )
+	 *   ]
+	 * } );
+	 * $( document.body ).append( fieldset.$element );
 	 *
-	 * The value is stored in 'YYYY-MM-DD' or 'YYYY-MM' format:
+	 * // The value is stored in 'YYYY-MM-DD' or 'YYYY-MM' format
 	 *
-	 *     @example
-	 *     // Accessing values in a date input widget
-	 *     var dateInput = new mw.widgets.DateInputWidget();
-	 *     var $label = $( '<p>' );
-	 *     $( document.body ).append( $label, dateInput.$element );
-	 *     dateInput.on( 'change', function () {
-	 *       // The value will always be a valid date or empty string, malformed input is ignored
-	 *       var date = dateInput.getValue();
-	 *       $label.text( 'Selected date: ' + ( date || '(none)' ) );
-	 *     } );
+	 * @example
+	 * // Accessing values in a date input widget
+	 * var dateInput = new mw.widgets.DateInputWidget();
+	 * var $label = $( '<p>' );
+	 * $( document.body ).append( $label, dateInput.$element );
+	 * dateInput.on( 'change', function () {
+	 *   // The value will always be a valid date or empty string, malformed input is ignored
+	 *   var date = dateInput.getValue();
+	 *   $label.text( 'Selected date: ' + ( date || '(none)' ) );
+	 * } );
 	 *
 	 * @class
 	 * @extends OO.ui.TextInputWidget
-	 * @mixins OO.ui.mixin.IndicatorElement
+	 * @mixes OO.ui.mixin.IndicatorElement
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {string} [precision='day'] Date precision to use, 'day' or 'month'
-	 * @cfg {string} [value] Day or month date (depending on `precision`), in the format 'YYYY-MM-DD'
+	 * @param {string} [config.precision='day'] Date precision to use, 'day' or 'month'
+	 * @param {string} [config.value] Day or month date (depending on `precision`), in the format 'YYYY-MM-DD'
 	 *     or 'YYYY-MM'. If not given or empty string, no date is selected.
-	 * @cfg {string} [inputFormat] Date format string to use for the textual input field. Displayed
+	 * @param {string} [config.inputFormat] Date format string to use for the textual input field. Displayed
 	 *     while the widget is active, and the user can type in a date in this format. Should be short
 	 *     and easy to type. When not given, defaults to 'YYYY-MM-DD' or 'YYYY-MM', depending on
 	 *     `precision`.
-	 * @cfg {string} [displayFormat] Date format string to use for the clickable label. Displayed
+	 * @param {string} [config.displayFormat] Date format string to use for the clickable label. Displayed
 	 *     while the widget is inactive. Should be as unambiguous as possible (for example, prefer to
 	 *     spell out the month, rather than rely on the order), even if that makes it longer. When not
 	 *     given, the default is language-specific.
-	 * @cfg {boolean} [longDisplayFormat=false] If a custom displayFormat is not specified, use
+	 * @param {boolean} [config.longDisplayFormat=false] If a custom displayFormat is not specified, use
 	 *     unabbreviated day of the week and month names in the default language-specific displayFormat.
-	 * @cfg {string} [placeholderLabel=No date selected] Placeholder text shown when the widget is not
+	 * @param {string} [config.placeholderLabel=No date selected] Placeholder text shown when the widget is not
 	 *     selected. Default text taken from message `mw-widgets-dateinput-no-date`.
-	 * @cfg {string} [placeholderDateFormat] User-visible date format string displayed in the textual input
+	 * @param {string} [config.placeholderDateFormat] User-visible date format string displayed in the textual input
 	 *     field when it's empty. Should be the same as `inputFormat`, but translated to the user's
 	 *     language. When not given, defaults to a translated version of 'YYYY-MM-DD' or 'YYYY-MM',
 	 *     depending on `precision`.
-	 * @cfg {boolean} [required=false] Mark the field as required. Implies `indicator: 'required'`.
-	 * @cfg {string} [mustBeAfter] Validates the date to be after this. In the 'YYYY-MM-DD' format.
-	 * @cfg {string} [mustBeBefore] Validates the date to be before this. In the 'YYYY-MM-DD' format.
-	 * @cfg {jQuery} [$overlay] Render the calendar into a separate layer. This configuration is
+	 * @param {boolean} [config.required=false] Mark the field as required. Implies `indicator: 'required'`.
+	 * @param {string} [config.mustBeAfter] Validates the date to be after this. In the 'YYYY-MM-DD' format.
+	 * @param {string} [config.mustBeBefore] Validates the date to be before this. In the 'YYYY-MM-DD' format.
+	 * @param {jQuery} [config.$overlay] Render the calendar into a separate layer. This configuration is
 	 *     useful in cases where the expanded calendar is larger than its container. The specified
 	 *     overlay layer is usually on top of the container and has a larger area. By default, the
 	 *     calendar uses relative positioning.
-	 * @cfg {Object} [calendar] Configuration options for the this input's
+	 * @param {Object} [config.calendar] Configuration options for the this input's
 	 *     {@link mw.widgets.CalendarWidget CalendarWidget}.
 	 */
 	mw.widgets.DateInputWidget = function MWWDateInputWidget( config ) {
-		var placeholderDateFormat, mustBeAfter, mustBeBefore, $overlay;
-
 		// Config initialization
 		config = $.extend( {
 			precision: 'day',
@@ -106,6 +104,7 @@
 			}
 		}
 
+		var placeholderDateFormat;
 		if ( config.placeholderDateFormat ) {
 			placeholderDateFormat = config.placeholderDateFormat;
 		} else if ( config.inputFormat ) {
@@ -143,19 +142,19 @@
 		// Validate and set min and max dates as properties
 
 		if ( config.mustBeAfter !== undefined ) {
-			mustBeAfter = moment( config.mustBeAfter, 'YYYY-MM-DD' );
+			var mustBeAfter = moment( config.mustBeAfter, 'YYYY-MM-DD' );
 			if ( mustBeAfter.isValid() ) {
 				this.mustBeAfter = mustBeAfter;
 			}
 		}
 		if ( config.mustBeBefore !== undefined ) {
-			mustBeBefore = moment( config.mustBeBefore, 'YYYY-MM-DD' );
+			var mustBeBefore = moment( config.mustBeBefore, 'YYYY-MM-DD' );
 			if ( mustBeBefore.isValid() ) {
 				this.mustBeBefore = mustBeBefore;
 			}
 		}
 		// Parent constructor
-		mw.widgets.DateInputWidget.parent.call( this, config );
+		mw.widgets.DateInputWidget.super.call( this, config );
 
 		// Mixin constructors
 		OO.ui.mixin.IndicatorElement.call( this, config );
@@ -196,7 +195,7 @@
 			.addClass( 'mw-widget-dateInputWidget' )
 			.append( this.$handle, this.textInput.$element, this.calendar.$element );
 
-		$overlay = config.$overlay === true ? OO.ui.getDefaultOverlay() : config.$overlay;
+		var $overlay = config.$overlay === true ? OO.ui.getDefaultOverlay() : config.$overlay;
 
 		if ( $overlay ) {
 			this.calendar.setFloatableContainer( this.$element );
@@ -249,10 +248,10 @@
 	/* Events */
 
 	/**
-	 * Fired when the widget is deactivated (i.e. the calendar is closed). This can happen because
+	 * Fired when the widget is deactivated (when the calendar is closed). This can happen because
 	 * the user selected a value, or because the user blurred the widget.
 	 *
-	 * @event deactivate
+	 * @event mw.widgets.DateInputWidget.deactivate
 	 * @param {boolean} userSelected Whether the deactivation happened because the user selected a value
 	 */
 
@@ -325,7 +324,7 @@
 			value = '';
 		}
 
-		mw.widgets.DateInputWidget.parent.prototype.setValue.call( this, value );
+		mw.widgets.DateInputWidget.super.prototype.setValue.call( this, value );
 
 		if ( this.value !== oldValue ) {
 			this.updateUI();
@@ -377,14 +376,13 @@
 	 * @private
 	 */
 	mw.widgets.DateInputWidget.prototype.updateUI = function () {
-		var moment;
 		if ( this.getValue() === '' ) {
 			this.textInput.setValue( '' );
 			this.calendar.setDate( null );
 			this.innerLabel.setLabel( this.placeholderLabel );
 			this.$element.addClass( 'mw-widget-dateInputWidget-empty' );
 		} else {
-			moment = this.getMoment();
+			var moment = this.getMoment();
 			if ( !this.inTextInput ) {
 				this.textInput.setValue( moment.format( this.getInputFormat() ) );
 			}
@@ -441,8 +439,6 @@
 	 * @return {string} Format string
 	 */
 	mw.widgets.DateInputWidget.prototype.getDisplayFormat = function () {
-		var localeData, llll, lll, ll, format;
-
 		if ( this.displayFormat !== undefined ) {
 			return this.displayFormat;
 		}
@@ -461,11 +457,11 @@
 			// We try to construct it as 'llll - (lll - ll)' and hope for the best.
 			// This seems to work well for many languages (maybe even all?).
 
-			localeData = moment.localeData( moment.locale() );
-			llll = localeData.longDateFormat( 'llll' );
-			lll = localeData.longDateFormat( 'lll' );
-			ll = localeData.longDateFormat( 'll' );
-			format = llll.replace( lll.replace( ll, '' ), '' );
+			var localeData = moment.localeData( moment.locale() );
+			var llll = localeData.longDateFormat( 'llll' );
+			var lll = localeData.longDateFormat( 'lll' );
+			var ll = localeData.longDateFormat( 'll' );
+			var format = llll.replace( lll.replace( ll, '' ), '' );
 
 			if ( this.longDisplayFormat ) {
 				// Replace MMM to MMMM and ddd to dddd but don't change MMMM and dddd
@@ -644,13 +640,12 @@
 	 * @return {boolean}
 	 */
 	mw.widgets.DateInputWidget.prototype.isInRange = function ( date ) {
-		var momentDate, isAfter, isBefore;
 		if ( this.mustBeAfter === undefined && this.mustBeBefore === undefined ) {
 			return true;
 		}
-		momentDate = moment( date, 'YYYY-MM-DD' );
-		isAfter = ( this.mustBeAfter === undefined || momentDate.isAfter( this.mustBeAfter ) );
-		isBefore = ( this.mustBeBefore === undefined || momentDate.isBefore( this.mustBeBefore ) );
+		var momentDate = moment( date, 'YYYY-MM-DD' );
+		var isAfter = ( this.mustBeAfter === undefined || momentDate.isAfter( this.mustBeAfter ) );
+		var isBefore = ( this.mustBeBefore === undefined || momentDate.isBefore( this.mustBeBefore ) );
 		return isAfter && isBefore;
 	};
 

@@ -26,8 +26,10 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IExpression;
 use Wikimedia\Rdbms\IReadableDatabase;
-use Wikimedia\Rdbms\Platform\ISQLPlatform;
+use Wikimedia\Rdbms\LikeValue;
+use Wikimedia\Rdbms\OrExpressionGroup;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -180,7 +182,7 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 			$this->fatalError( "Charmap file $charmapFile did not contain any usable character mappings." );
 		}
 
-		$db = $this->getDB( $this->run ? DB_PRIMARY : DB_REPLICA );
+		$db = $this->run ? $this->getPrimaryDB() : $this->getReplicaDB();
 
 		// Process inplace moves first, before actual moves, so mungeTitle() doesn't get confused
 		$this->processTable(
@@ -205,23 +207,27 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 
 	/**
 	 * Get batched LIKE conditions from the charmap
-	 * @param ISQLPlatform $db Database handle
+	 * @param IReadableDatabase $db Database handle
 	 * @param string $field Field name
 	 * @param int $batchSize Size of the batches
 	 * @return array
 	 */
-	private function getLikeBatches( ISQLPlatform $db, $field, $batchSize = 100 ) {
+	private function getLikeBatches( IReadableDatabase $db, $field, $batchSize = 100 ) {
 		$ret = [];
 		$likes = [];
 		foreach ( $this->charmap as $from => $to ) {
-			$likes[] = $field . $db->buildLike( $from, $db->anyString() );
+			$likes[] = $db->expr(
+				$field,
+				IExpression::LIKE,
+				new LikeValue( $from, $db->anyString() )
+			);
 			if ( count( $likes ) >= $batchSize ) {
-				$ret[] = $db->makeList( $likes, $db::LIST_OR );
+				$ret[] = new OrExpressionGroup( ...$likes );
 				$likes = [];
 			}
 		}
 		if ( $likes ) {
-			$ret[] = $db->makeList( $likes, $db::LIST_OR );
+			$ret[] = new OrExpressionGroup( ...$likes );
 		}
 		return $ret;
 	}
@@ -579,7 +585,6 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 		$batchSize = $this->getBatchSize();
 		$namespaces = $this->getNamespaces();
 		$likes = $this->getLikeBatches( $db, $titleField );
-		$lbFactory = $this->getServiceContainer()->getDBLoadBalancerFactory();
 
 		if ( is_int( $nsField ) ) {
 			$namespaces = array_intersect( $namespaces, [ $nsField ] );
@@ -637,10 +642,7 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 						// @phan-suppress-next-line PhanPossiblyUndeclaredVariable rows contains at least one item
 						$r = $cont ? json_encode( $row, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) : '<end>';
 						$this->output( "... $table: $count renames, $errors errors at $r\n" );
-						$lbFactory->waitForReplication(
-							[ 'timeout' => 30, 'ifWritesSince' => $lastReplicationWait ]
-						);
-						$lastReplicationWait = microtime( true );
+						$this->waitForReplication();
 					}
 				} while ( $cont );
 			}
@@ -697,7 +699,7 @@ class UppercaseTitlesForUnicodeTransition extends Maintenance {
 					$newName = $this->charmap[$char] . mb_substr( $row->user_name, 1 );
 					fprintf( $fh, "%s\t%s\t%s\n", WikiMap::getCurrentWikiId(), $row->user_id, $newName );
 					$count++;
-					$cont = [ 'user_name > ' . $db->addQuotes( $row->user_name ) ];
+					$cont = [ $db->expr( 'user_name', '>', $row->user_name ) ];
 				}
 				// @phan-suppress-next-line PhanPossiblyUndeclaredVariable rows contains at least one item
 				$this->output( "... at $row->user_name, $count names so far\n" );

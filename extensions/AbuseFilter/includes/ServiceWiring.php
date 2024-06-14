@@ -81,6 +81,7 @@ return [
 	},
 	ChangeTagsManager::SERVICE_NAME => static function ( MediaWikiServices $services ): ChangeTagsManager {
 		return new ChangeTagsManager(
+			$services->getChangeTagsStore(),
 			$services->getDBLoadBalancerFactory(),
 			$services->getMainWANObjectCache(),
 			$services->get( CentralDBManager::SERVICE_NAME )
@@ -110,6 +111,7 @@ return [
 			// TODO We need a proper MessageLocalizer, see T247127
 			RequestContext::getMain(),
 			$services->getUserGroupManager(),
+			$services->getUserNameUtils(),
 			LoggerFactory::getInstance( 'AbuseFilter' )
 		);
 	},
@@ -117,7 +119,7 @@ return [
 		return new RuleCheckerFactory(
 			$services->getContentLanguage(),
 			// We could use $services here, but we need the fallback
-			ObjectCache::getLocalServerInstance( 'hash' ),
+			ObjectCache::getLocalServerInstance( CACHE_HASH ),
 			LoggerFactory::getInstance( 'AbuseFilter' ),
 			$services->getService( KeywordsManager::SERVICE_NAME ),
 			$services->get( VariablesManager::SERVICE_NAME ),
@@ -130,8 +132,7 @@ return [
 		return new FilterLookup(
 			$services->getDBLoadBalancer(),
 			$services->getMainWANObjectCache(),
-			$services->get( CentralDBManager::SERVICE_NAME ),
-			$services->get( AbuseFilterActorMigration::SERVICE_NAME )
+			$services->get( CentralDBManager::SERVICE_NAME )
 		);
 	},
 	EmergencyCache::SERVICE_NAME => static function ( MediaWikiServices $services ): EmergencyCache {
@@ -336,6 +337,7 @@ return [
 			$services->getUserGroupManager(),
 			$services->getPermissionManager(),
 			$services->getRestrictionStore(),
+			$services->getUserIdentityUtils(),
 			WikiMap::getCurrentWikiDbDomain()->getId()
 		);
 	},
@@ -356,7 +358,8 @@ return [
 			$services->get( TextExtractor::SERVICE_NAME ),
 			$services->getMimeAnalyzer(),
 			$services->getRepoGroup(),
-			$services->getWikiPageFactory()
+			$services->getWikiPageFactory(),
+			$services->getUserFactory()
 		);
 	},
 	EditRevUpdater::SERVICE_NAME => static function ( MediaWikiServices $services ): EditRevUpdater {

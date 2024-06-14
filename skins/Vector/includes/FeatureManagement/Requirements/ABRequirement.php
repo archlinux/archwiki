@@ -22,44 +22,38 @@
 
 namespace MediaWiki\Skins\Vector\FeatureManagement\Requirements;
 
-use Config;
+use MediaWiki\Config\Config;
 use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
-use User;
+use MediaWiki\User\UserIdentity;
 
 /**
  * @package MediaWiki\Skins\Vector\FeatureManagement\Requirements
  * @internal
  */
 class ABRequirement implements Requirement {
-	/**
-	 * @var Config
-	 */
-	private $config;
+	private Config $config;
+
+	private UserIdentity $user;
 
 	/**
-	 * @var User
+	 * The name of the experiment
 	 */
-	private $user;
+	private string $experimentName;
 
 	/**
-	 * @var string The name of the experiment
+	 * The name of the requirement
 	 */
-	private $experimentName;
-
-	/**
-	 * @var string The name of the requirement
-	 */
-	private $name;
+	private string $name;
 
 	/**
 	 * @param Config $config
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @param string $experimentName The name of the experiment
 	 * @param string|null $name The name of the requirement
 	 */
 	public function __construct(
 		Config $config,
-		User $user,
+		UserIdentity $user,
 		string $experimentName,
 		?string $name = null
 	) {

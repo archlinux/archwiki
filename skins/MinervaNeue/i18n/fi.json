@@ -60,11 +60,20 @@
 	"mobile-frontend-user-page-talk": "Keskustelu",
 	"minerva-user-menu-button": "Käyttäjävalikko",
 	"minerva-user-navigation": "Käyttäjänavigaatio",
+	"minerva-page-actions-editfull": "Muokkaa koko sivua",
 	"minerva-page-actions-overflow": "Lisää",
 	"minerva-page-actions-language-switcher": "Kielet",
 	"minerva-page-actions-history": "Historia",
 	"minerva-skin-desc": "Responsiivinen mobiililaitteille suunniteltu ulkoasu",
 	"skin-minerva-issue-learn-more": "Lisätietoja",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 sekunti|$1 sekuntia}} sitten",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 minuutti|$1 minuuttia}} sitten",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 tunti|$1 tuntia}} sitten",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 päivä|$1 päivää}} sitten",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 kuukausi|$1 kuukautta}} sitten",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 vuosi|$1 vuotta}} sitten",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Luokat",
-	"skin-minerva-mobile-option-MinervaShowCategories-description": "Näytä sivun luokat"
+	"skin-minerva-mobile-option-MinervaShowCategories-description": "Näytä sivun luokat",
+	"minerva.css": "/* Tämä sivu sisältää MinervaNeue-ulkoasua muuttavia tyylejä. */",
+	"minerva.js": "/* Tämän sivun JavaScript-koodi liitetään MinervaNeue-tyyliin */"
 }

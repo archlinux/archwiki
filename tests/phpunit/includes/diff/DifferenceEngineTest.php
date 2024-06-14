@@ -1,9 +1,12 @@
 <?php
 
 use MediaWiki\Config\HashConfig;
+use MediaWiki\Context\DerivativeContext;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\SimpleAuthority;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -11,7 +14,7 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 
 /**
- * @covers DifferenceEngine
+ * @covers \DifferenceEngine
  *
  * @todo tests for the rest of DifferenceEngine!
  *
@@ -634,7 +637,7 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 				'expected' => [
 					'html' =>
 						'\(diff-empty\).*' .
-						'<div class="mw-parser-output"><p>no kittens'
+						'<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><p>no kittens'
 				],
 			],
 			'normal diff=prev' => [
@@ -647,7 +650,7 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 						'\(viewsourceold\).*' .
 						'<del class="diffchange diffchange-inline">no kittens</del>.*' .
 						'<ins class="diffchange diffchange-inline">one kitten</ins>.*' .
-						'<div class="mw-parser-output"><p>one kitten',
+						'<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><p>one kitten',
 				]
 			],
 			'normal diff=number' => [
@@ -660,7 +663,7 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 						'\(viewsourceold\).*' .
 						'<del class="diffchange diffchange-inline">no kittens</del>.*' .
 						'<ins class="diffchange diffchange-inline">one kitten</ins>.*' .
-						'<div class="mw-parser-output"><p>one kitten',
+						'<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><p>one kitten',
 				]
 			],
 			'user cannot read' => [
@@ -748,7 +751,7 @@ class DifferenceEngineTest extends MediaWikiIntegrationTestCase {
 						'\(rev-deleted-diff-view\).*' .
 						'<del class="diffchange diffchange-inline">three </del>.*' .
 						'<ins class="diffchange diffchange-inline">fnord </ins>.*' .
-						'<div class="mw-parser-output"><p>fnord kittens',
+						'<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><p>fnord kittens',
 				]
 			],
 		];

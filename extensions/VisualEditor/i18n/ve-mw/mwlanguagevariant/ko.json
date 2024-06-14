@@ -1,12 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ykhwong",
-			"Dr1t jg"
+			"Dr1t jg",
+			"Ykhwong"
 		]
 	},
-	"visualeditor-mwlanguagevariant-disabled": "변수 변환 비활성화됨",
-	"visualeditor-mwlanguagevariant-filter": "$1로 걸러진 변수",
 	"visualeditor-mwlanguagevariant-name": "언어 이름: $1",
 	"visualeditor-mwlanguagevariant-oneway": "단방향 변환: $1",
 	"visualeditor-mwlanguagevariant-twoway": "언어 변환: $1",

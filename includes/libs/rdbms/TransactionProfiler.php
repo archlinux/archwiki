@@ -437,9 +437,9 @@ class TransactionProfiler implements LoggerAwareInterface, StatsdAwareInterface 
 				$trace .= sprintf(
 					"%-2d %.3fs %s\n", $i, ( $end - $sTime ), $this->getGeneralizedSql( $query ) );
 			}
-			$this->logger->warning( "Sub-optimal transaction [{dbs}]:\n{trace}", [
+			$this->logger->warning( "Suboptimal transaction [{dbs}]:\n{trace}", [
 				'dbs' => implode( ', ', array_keys( $this->dbTrxHoldingLocks[$name]['conns'] ) ),
-				'trace' => $trace
+				'trace' => mb_substr( $trace, 0, 2000 )
 			] );
 		}
 		unset( $this->dbTrxHoldingLocks[$name] );
@@ -524,7 +524,8 @@ class TransactionProfiler implements LoggerAwareInterface, StatsdAwareInterface 
 				'query' => $this->getGeneralizedSql( $query ),
 				'exception' => new RuntimeException(),
 				'trxId' => $trxId,
-				'fullQuery' => $this->getRawSql( $query ),
+				// Avoid truncated JSON in Logstash (T349140)
+				'fullQuery' => mb_substr( $this->getRawSql( $query ), 0, 2000 ),
 				'dbHost' => $serverName
 			]
 		);

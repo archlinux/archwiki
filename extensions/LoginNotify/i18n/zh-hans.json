@@ -8,7 +8,7 @@
 		]
 	},
 	"loginnotify-desc": "通知用户来自陌生设备和/或IP地址的可疑登录",
-	"echo-category-title-login-fail": "失败登录尝试",
+	"echo-category-title-login-fail": "失败的登录尝试",
 	"echo-pref-tooltip-login-fail": "当我的账号有失败的登录尝试时通知我。",
 	"echo-category-title-login-success": "从陌生设备登录",
 	"echo-pref-tooltip-login-success": "当有人从陌生设备和IP地址登录我的账号时通知我。",

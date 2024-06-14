@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Hooks;
 
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Title\Title;
-use User;
+use MediaWiki\User\User;
 
 interface AbuseFilterAlterVariablesHook {
 	/**

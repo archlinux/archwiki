@@ -255,6 +255,7 @@ const UiElement = require( './mmv.ui.js' );
 			this.$reuse.prop( 'href', image.descriptionUrl );
 			this.$download.prop( 'href', image.url );
 		}
+
 		empty() {
 			this.$reuse
 				.removeClass( 'open' )

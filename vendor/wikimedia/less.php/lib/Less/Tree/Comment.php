@@ -2,13 +2,12 @@
 /**
  * @private
  */
-class Less_Tree_Comment extends Less_Tree {
+class Less_Tree_Comment extends Less_Tree implements Less_Tree_HasValueProperty {
 
 	public $value;
 	public $silent;
 	public $isReferenced;
 	public $currentFileInfo;
-	public $type = 'Comment';
 
 	public function __construct( $value, $silent, $index = null, $currentFileInfo = null ) {
 		$this->value = $value;

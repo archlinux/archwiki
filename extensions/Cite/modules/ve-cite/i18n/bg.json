@@ -54,7 +54,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Този източник е дефиниран в шаблон или друг генериран блок и в момента може да бъде предварително прегледан само в режим на редактиране на кода.",
 	"cite-ve-referenceslist-missingreflist": "Този списък с източници е генериран от шаблон.",
 	"cite-ve-toolbar-group-label": "Цитиране",
-	"cite-ve-othergroup-item": "$1 източник",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Източници",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Име на групата източници: „$1“"
+	"cite-ve-othergroup-item": "$1 източник"
 }

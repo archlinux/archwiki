@@ -23,7 +23,6 @@
 	"cite_error_included_ref": "Nedostaje oznaka za zatvaranje <code>&lt;/ref&gt;</code> nakon <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> oznake postoje za grupu pod imenom \"$1\", ali nije pronađena pripadajuća <code>&lt;references group=\"$1\"/&gt;</code> oznaka, ili zatvarajući <code>&lt;/ref&gt;</code> nedostaje",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code> oznaka u <code>&lt;references&gt;</code> ima atribut grupe konflikta \"$1\".",
-	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> oznaka definisana u <code>&lt;references&gt;</code> ima atribut grupe \"$1\" koji se ne pojavljuje u ranijem tekstu.",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> oznaka s imenom \"$1\" definirana u <code>&lt;references&gt;</code> nije korištena u ranijem tekstu.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> oznaka definisana u <code>&lt;references&gt;</code> nema imenski atribut.",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> oznaka definirana u <code>&lt;references&gt;</code> s imenom \"$1\" nema nikakvog sadržaja.",

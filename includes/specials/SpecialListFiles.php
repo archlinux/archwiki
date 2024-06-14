@@ -23,6 +23,7 @@
 
 namespace MediaWiki\Specials;
 
+use MediaWiki\Cache\UserCache;
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Pager\ImageListPager;
@@ -31,7 +32,6 @@ use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserRigorOptions;
 use RepoGroup;
-use UserCache;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 class SpecialListFiles extends IncludableSpecialPage {
@@ -88,11 +88,11 @@ class SpecialListFiles extends IncludableSpecialPage {
 		}
 		// Sanitize usernames to avoid symbols in the title of page.
 		$sanitizedUserName = $this->userNameUtils->getCanonical( $userName, UserRigorOptions::RIGOR_NONE );
-		if ( $sanitizedUserName ) {
+		if ( $sanitizedUserName !== false ) {
 			$userName = $sanitizedUserName;
 		}
 
-		if ( $userName ) {
+		if ( $userName !== '' ) {
 			$pageTitle = $this->msg( 'listfiles_subpage' )->plaintextParams( $userName );
 		} else {
 			$pageTitle = $this->msg( 'listfiles' );
@@ -152,7 +152,5 @@ class SpecialListFiles extends IncludableSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialListFiles::class, 'SpecialListFiles' );

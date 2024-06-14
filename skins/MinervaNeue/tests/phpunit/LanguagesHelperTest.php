@@ -5,10 +5,9 @@ namespace MediaWiki\Minerva;
 use ILanguageConverter;
 use Language;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
-use OutputPage;
-use PHPUnit\Framework\MockObject\Invocation;
 
 /**
  * @package Tests\MediaWiki\Minerva
@@ -32,48 +31,57 @@ class LanguagesHelperTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * Build test Title object
+	 * Build test LanguageConverterFactory object
 	 * @param bool $hasVariants
-	 * @param Invocation|null $matcher
+	 * @return LanguageConverterFactory
+	 */
+	private function getLanguageConverterFactory( $hasVariants ) {
+		$langConv = $this->createMock( ILanguageConverter::class );
+		$langConv->method( 'hasVariants' )->willReturn( $hasVariants );
+		$langConvFactory = $this->createMock( LanguageConverterFactory::class );
+		$langConvFactory->method( 'getLanguageConverter' )->willReturn( $langConv );
+
+		return $langConvFactory;
+	}
+
+	/**
+	 * Build test Title object
 	 * @return Title
 	 */
-	private function getTitle( $hasVariants, Invocation $matcher = null ) {
+	private function getTitle() {
 		$languageMock = $this->createMock( Language::class );
-		$langConv = $this->createMock( ILanguageConverter::class );
-		$langConv->expects( $matcher ?? $this->any() )->method( 'hasVariants' )->willReturn( $hasVariants );
-		$langConvFactory = $this->createMock( LanguageConverterFactory::class );
-		$langConvFactory->method( 'getLanguageConverter' )->with( $languageMock )->willReturn( $langConv );
-		$this->setService( 'LanguageConverterFactory', $langConvFactory );
-
 		$title = $this->createMock( Title::class );
-		$title->expects( $matcher ?? $this->any() )
-			->method( 'getPageLanguage' )
+		$title->method( 'getPageLanguage' )
 			->willReturn( $languageMock );
 
 		return $title;
 	}
 
 	/**
+	 * @dataProvider provideDoesTitleHasLanguagesOrVariants
+	 * @param bool $hasVariants
+	 * @param array $langLinks
+	 * @param bool $expected
 	 * @covers ::__construct
 	 * @covers ::doesTitleHasLanguagesOrVariants
 	 */
-	public function testReturnsWhenOutputPageHasLangLinks() {
-		$helper = new LanguagesHelper( $this->getOutput( [ 'pl:StronaTestowa', 'en:TestPage' ] ) );
+	public function testDoesTitleHasLanguagesOrVariants( bool $hasVariants, array $langLinks, bool $expected ) {
+		$helper = new LanguagesHelper(
+			$this->getLanguageConverterFactory( $hasVariants )
+		);
 
-		$this->assertTrue( $helper->doesTitleHasLanguagesOrVariants( $this->getTitle( false ) ) );
-		$this->assertTrue( $helper->doesTitleHasLanguagesOrVariants( $this->getTitle( true ) ) );
+		$this->assertSame( $expected, $helper->doesTitleHasLanguagesOrVariants(
+			$this->getOutput( $langLinks ),
+			$this->getTitle()
+		) );
 	}
 
-	/**
-	 * @covers ::__construct
-	 * @covers ::doesTitleHasLanguagesOrVariants
-	 */
-	public function testReturnsWhenOutputDoesNotHaveLangLinks() {
-		$helper = new LanguagesHelper( $this->getOutput( [] ) );
-
-		$this->assertFalse( $helper->doesTitleHasLanguagesOrVariants(
-			$this->getTitle( false ), $this->once() ) );
-		$this->assertTrue( $helper->doesTitleHasLanguagesOrVariants(
-			$this->getTitle( true ), $this->once() ) );
+	public static function provideDoesTitleHasLanguagesOrVariants() {
+		return [
+			[ false, [ 'pl:StronaTestowa', 'en:TestPage' ], true ],
+			[ true, [ 'pl:StronaTestowa', 'en:TestPage' ], true ],
+			[ false, [], false ],
+			[ true, [], true ],
+		];
 	}
 }

@@ -24,7 +24,7 @@ describe( 'User', function () {
 		await CreateAccountPage.createAccount( username, password );
 
 		// check
-		assert.strictEqual( await CreateAccountPage.heading.getText(), `Welcome, ${username}!` );
+		assert.strictEqual( await CreateAccountPage.heading.getText(), `Welcome, ${ username }!` );
 	} );
 
 	it( 'should be able to log in @daily', async function () {
@@ -35,7 +35,7 @@ describe( 'User', function () {
 		await UserLoginPage.login( username, password );
 
 		// check
-		const actualUsername = await browser.execute( async () => {
+		const actualUsername = await browser.execute( () => {
 			return mw.config.get( 'wgUserName' );
 		} );
 		assert.strictEqual( await actualUsername, username );

@@ -9,9 +9,9 @@ use LogPage;
 use MediaWiki\Extension\Notifications\Formatters\EchoEventPresentationModel;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionRecord;
-use Sanitizer;
-use SpecialPage;
+use MediaWiki\SpecialPage\SpecialPage;
 
 class EchoCoreThanksPresentationModel extends EchoEventPresentationModel {
 	/** @var LogEntry|bool|null */
@@ -59,6 +59,8 @@ class EchoCoreThanksPresentationModel extends EchoEventPresentationModel {
 	}
 
 	public function getCompactHeaderMessage() {
+		// The following message is used here:
+		// * notification-compact-header-edit-thank
 		$msg = parent::getCompactHeaderMessage();
 		$msg->params( $this->getViewingUserForGender() );
 		return $msg;
@@ -160,7 +162,8 @@ class EchoCoreThanksPresentationModel extends EchoEventPresentationModel {
 		if ( !$logId ) {
 			$this->logEntry = false;
 		} else {
-			$this->logEntry = DatabaseLogEntry::newFromId( $logId, wfGetDB( DB_REPLICA ) ) ?: false;
+			$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
+			$this->logEntry = DatabaseLogEntry::newFromId( $logId, $dbr ) ?: false;
 		}
 		return $this->logEntry;
 	}

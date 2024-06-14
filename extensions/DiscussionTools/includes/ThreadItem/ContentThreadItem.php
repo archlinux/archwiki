@@ -3,14 +3,11 @@
 namespace MediaWiki\Extension\DiscussionTools\ThreadItem;
 
 use JsonSerializable;
-use LogicException;
 use MediaWiki\Extension\DiscussionTools\CommentModifier;
-use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\ImmutableRange;
-use MediaWiki\Title\Title;
-use Sanitizer;
-use Wikimedia\Assert\Assert;
+use MediaWiki\Parser\Sanitizer;
 use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
 /**
@@ -19,34 +16,41 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
 abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 	use ThreadItemTrait;
 
-	protected $type;
-	protected $range;
-	protected $rootNode;
-	protected $level;
-	protected $parent;
-	protected $warnings = [];
+	protected string $type;
+	protected ImmutableRange $range;
+	protected Element $rootNode;
+	protected int $level;
+	protected ?ContentThreadItem $parent = null;
+	/** @var string[] */
+	protected array $warnings = [];
 
-	protected $name = null;
-	protected $id = null;
-	protected $replies = [];
+	protected string $name;
+	protected string $id;
+	/** @var ContentThreadItem[] */
+	protected array $replies = [];
+	/** @var string|bool */
+	private $transcludedFrom;
 
-	protected $authors = null;
-	protected $commentCount;
-	protected $oldestReply;
-	protected $latestReply;
+	/** @var ?array[] */
+	protected ?array $authors = null;
+	protected int $commentCount;
+	protected ?ContentCommentItem $oldestReply;
+	protected ?ContentCommentItem $latestReply;
 
 	/**
 	 * @param string $type `heading` or `comment`
 	 * @param int $level Indentation level
 	 * @param ImmutableRange $range Object describing the extent of the comment, including the
 	 *  signature and timestamp.
+	 * @param bool|string $transcludedFrom
 	 */
 	public function __construct(
-		string $type, int $level, ImmutableRange $range
+		string $type, int $level, ImmutableRange $range, $transcludedFrom
 	) {
 		$this->type = $type;
 		$this->level = $level;
 		$this->range = $range;
+		$this->transcludedFrom = $transcludedFrom;
 	}
 
 	/**
@@ -119,8 +123,6 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 
 	/**
 	 * Get the number of comment items in the tree below this thread item.
-	 *
-	 * @return int
 	 */
 	public function getCommentCount(): int {
 		$this->calculateThreadSummary();
@@ -129,8 +131,6 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 
 	/**
 	 * Get the latest reply in the tree below this thread item, null if there are no replies
-	 *
-	 * @return ContentCommentItem|null
 	 */
 	public function getLatestReply(): ?ContentCommentItem {
 		$this->calculateThreadSummary();
@@ -139,8 +139,6 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 
 	/**
 	 * Get the oldest reply in the tree below this thread item, null if there are no replies
-	 *
-	 * @return ContentCommentItem|null
 	 */
 	public function getOldestReply(): ?ContentCommentItem {
 		$this->calculateThreadSummary();
@@ -169,209 +167,10 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 	}
 
 	/**
-	 * Get the name of the page from which this thread item is transcluded (if any). Replies to
-	 * transcluded items must be posted on that page, instead of the current one.
-	 *
-	 * This is tricky, because we don't want to mark items as trancluded when they're just using a
-	 * template (e.g. {{ping|…}} or a non-substituted signature template). Sometimes the whole comment
-	 * can be template-generated (e.g. when using some wrapper templates), but as long as a reply can
-	 * be added outside of that template, we should not treat it as transcluded.
-	 *
-	 * The start/end boundary points of comment ranges and Parsoid transclusion ranges don't line up
-	 * exactly, even when to a human it's obvious that they cover the same content, making this more
-	 * complicated.
-	 *
-	 * @return string|bool `false` if this item is not transcluded. A string if it's transcluded
-	 *   from a single page (the page title, in text form with spaces). `true` if it's transcluded, but
-	 *   we can't determine the source.
+	 * @inheritDoc
 	 */
 	public function getTranscludedFrom() {
-		// General approach:
-		//
-		// Compare the comment range to each transclusion range on the page, and if it overlaps any of
-		// them, examine the overlap. There are a few cases:
-		//
-		// * Comment and transclusion do not overlap:
-		//   → Not transcluded.
-		// * Comment contains the transclusion:
-		//   → Not transcluded (just a template).
-		// * Comment is contained within the transclusion:
-		//   → Transcluded, we can determine the source page (unless it's a complex transclusion).
-		// * Comment and transclusion overlap partially:
-		//   → Transcluded, but we can't determine the source page.
-		// * Comment (almost) exactly matches the transclusion:
-		//   → Maybe transcluded (it could be that the source page only contains that single comment),
-		//     maybe not transcluded (it could be a wrapper template that covers a single comment).
-		//     This is very sad, and we decide based on the namespace.
-		//
-		// Most transclusion ranges on the page trivially fall in the "do not overlap" or "contains"
-		// cases, and we only have to carefully examine the two transclusion ranges that contain the
-		// first and last node of the comment range.
-		//
-		// To check for almost exact matches, we walk between the relevant boundary points, and if we
-		// only find uninteresting nodes (that would be ignored when detecting comments), we treat them
-		// like exact matches.
-
-		$commentRange = $this->getRange();
-		$startTransclNode = CommentUtils::getTranscludedFromElement(
-			CommentUtils::getRangeFirstNode( $commentRange )
-		);
-		$endTransclNode = CommentUtils::getTranscludedFromElement(
-			CommentUtils::getRangeLastNode( $commentRange )
-		);
-
-		// We only have to examine the two transclusion ranges that contain the first/last node of the
-		// comment range (if they exist). Ignore ranges outside the comment or in the middle of it.
-		$transclNodes = [];
-		if ( $startTransclNode ) {
-			$transclNodes[] = $startTransclNode;
-		}
-		if ( $endTransclNode && $endTransclNode !== $startTransclNode ) {
-			$transclNodes[] = $endTransclNode;
-		}
-
-		foreach ( $transclNodes as $transclNode ) {
-			$transclRange = static::getTransclusionRange( $transclNode );
-			$compared = CommentUtils::compareRanges( $commentRange, $transclRange );
-			$transclTitles = $this->getTransclusionTitles( $transclNode );
-			$simpleTransclTitle = count( $transclTitles ) === 1 ? $transclTitles[0] : null;
-
-			switch ( $compared ) {
-				case 'equal':
-					// Comment (almost) exactly matches the transclusion
-					if ( $simpleTransclTitle === null ) {
-						// Allow replying to some accidental complex transclusions consisting of only templates
-						// and wikitext (T313093)
-						if ( count( $transclTitles ) > 1 ) {
-							foreach ( $transclTitles as $transclTitle ) {
-								if ( $transclTitle && !$transclTitle->inNamespace( NS_TEMPLATE ) ) {
-									return true;
-								}
-							}
-							// Continue examining the other ranges.
-							break;
-						}
-						// Multi-template transclusion, or a parser function call, or template-affected wikitext outside
-						// of a template call, or a mix of the above
-						return true;
-
-					} elseif ( $simpleTransclTitle->inNamespace( NS_TEMPLATE ) ) {
-						// Is that a subpage transclusion with a single comment, or a wrapper template
-						// transclusion on this page? We don't know, but let's guess based on the namespace.
-						// (T289873)
-						// Continue examining the other ranges.
-						break;
-					} elseif ( !$simpleTransclTitle->canExist() ) {
-						// Special page transclusion, probably accidental (T344622). Don't return the title,
-						// since it's useless for replying, and can't be stored in the permalink database.
-						return true;
-					} else {
-						return $simpleTransclTitle->getPrefixedText();
-					}
-
-				case 'contains':
-					// Comment contains the transclusion
-
-					// If the entire transclusion is contained within the comment range, that's just a
-					// template. This is the same as a transclusion in the middle of the comment, which we
-					// ignored earlier, it just takes us longer to get here in this case.
-
-					// Continue examining the other ranges.
-					break;
-
-				case 'contained':
-					// Comment is contained within the transclusion
-					if ( $simpleTransclTitle === null ) {
-						return true;
-					} elseif ( !$simpleTransclTitle->canExist() ) {
-						// Special page transclusion, probably accidental (T344622). Don't return the title,
-						// since it's useless for replying, and can't be stored in the permalink database.
-						return true;
-					} else {
-						return $simpleTransclTitle->getPrefixedText();
-					}
-
-				case 'after':
-				case 'before':
-					// Comment and transclusion do not overlap
-
-					// This should be impossible, because we ignored these ranges earlier.
-					throw new LogicException( 'Unexpected transclusion or comment range' );
-
-				case 'overlapstart':
-				case 'overlapend':
-					// Comment and transclusion overlap partially
-					return true;
-
-				default:
-					throw new LogicException( 'Unexpected return value from compareRanges()' );
-			}
-		}
-
-		// If we got here, the comment range was not contained by or overlapping any of the transclusion
-		// ranges. Comment is not transcluded.
-		return false;
-	}
-
-	/**
-	 * Return the page titles for each part of the transclusion, or nulls for each part that isn't
-	 * transcluded from another page.
-	 *
-	 * If the node represents a single-page transclusion, this will return an array containing a
-	 * single Title object.
-	 *
-	 * @param Element $node
-	 * @return (?Title)[]
-	 */
-	private function getTransclusionTitles( Element $node ): array {
-		$dataMw = json_decode( $node->getAttribute( 'data-mw' ) ?? '', true );
-		$out = [];
-
-		foreach ( $dataMw['parts'] ?? [] as $part ) {
-			if (
-				!is_string( $part ) &&
-				// 'href' will be unset if this is a parser function rather than a template
-				isset( $part['template']['target']['href'] )
-			) {
-				$parsoidHref = $part['template']['target']['href'];
-				Assert::precondition( substr( $parsoidHref, 0, 2 ) === './', "href has valid format" );
-				$out[] = Title::newFromText( urldecode( substr( $parsoidHref, 2 ) ) );
-			} else {
-				$out[] = null;
-			}
-		}
-
-		return $out;
-	}
-
-	/**
-	 * Given a transclusion's first node (e.g. returned by CommentUtils::getTranscludedFromElement()),
-	 * return a range starting before the node and ending after the transclusion's last node.
-	 *
-	 * @param Element $startNode
-	 * @return ImmutableRange
-	 */
-	private function getTransclusionRange( Element $startNode ): ImmutableRange {
-		$endNode = $startNode;
-		while (
-			// Phan doesn't realize that the conditions on $nextSibling can terminate the loop
-			// @phan-suppress-next-line PhanInfiniteLoop
-			$endNode &&
-			( $nextSibling = $endNode->nextSibling ) &&
-			$nextSibling instanceof Element &&
-			$nextSibling->getAttribute( 'about' ) === $endNode->getAttribute( 'about' )
-		) {
-			$endNode = $nextSibling;
-		}
-
-		$range = new ImmutableRange(
-			$startNode->parentNode,
-			CommentUtils::childIndexOf( $startNode ),
-			$endNode->parentNode,
-			CommentUtils::childIndexOf( $endNode ) + 1
-		);
-
-		return $range;
+		return $this->transcludedFrom;
 	}
 
 	/**
@@ -382,6 +181,21 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 	public function getHTML(): string {
 		$fragment = $this->getRange()->cloneContents();
 		CommentModifier::unwrapFragment( $fragment );
+		// Does not work: T357812
+		// $editsection = DOMCompat::querySelector( $fragment, 'mw\\:editsection' );
+		for ( $n = $fragment->firstChild; $n; $n = $n->nextSibling ) {
+			if ( $n instanceof Element ) {
+				if ( strtolower( $n->tagName ) === 'mw:editsection' ) {
+					$n->parentNode->removeChild( $n );
+					break;
+				}
+				$editsection = DOMCompat::querySelector( $n, 'mw\\:editsection' );
+				if ( $editsection ) {
+					$editsection->parentNode->removeChild( $editsection );
+					break;
+				}
+			}
+		}
 		return DOMUtils::getFragmentInnerHTML( $fragment );
 	}
 
@@ -465,9 +279,6 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 		$this->level = $level;
 	}
 
-	/**
-	 * @param ContentThreadItem $parent
-	 */
 	public function setParent( ContentThreadItem $parent ): void {
 		$this->parent = $parent;
 	}
@@ -487,22 +298,19 @@ abstract class ContentThreadItem implements JsonSerializable, ThreadItem {
 	}
 
 	/**
-	 * @param string|null $name Thread item name
+	 * @param string $name Thread item name
 	 */
-	public function setName( ?string $name ): void {
+	public function setName( string $name ): void {
 		$this->name = $name;
 	}
 
 	/**
-	 * @param string|null $id Thread ID
+	 * @param string $id Thread ID
 	 */
-	public function setId( ?string $id ): void {
+	public function setId( string $id ): void {
 		$this->id = $id;
 	}
 
-	/**
-	 * @param string $warning
-	 */
 	public function addWarning( string $warning ): void {
 		$this->warnings[] = $warning;
 	}

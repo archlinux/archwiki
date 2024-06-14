@@ -7,12 +7,11 @@
 		]
 	},
 	"oathauth-desc": "Võimaldab autentimist HMAC-põhiste ühekordsete paroolidega.",
-	"specialpages-group-oath": "Kaheastmeline autentimine",
 	"oathauth-account": "Konto nimi:",
 	"oathauth-secret": "Kaheastmelise autentimise salavõti:",
 	"oathauth-enable": "Luba kaheastmeline autentimine",
+	"oathauth-recoverycodes": "All on ühekordsete taastekoodide nimekiri. Igat koodi saab kasutada vaid ühel korral, koodid on mõeldud hädaolukorra jaoks, kui sul pole juurdepääsu enda seadmele. Kirjuta koodid üles ja pane turvalisse kohta hoiule. Soovitatav on iga kood kasutatuks märkida, kui oled sellega sisse loginud. Kui peaksid seadme kaotama, on need koodid ainus võimalus oma kontot päästa.\n\n'''Allolevaid koode rohkem ei kuvata'''.",
 	"oathauth-recoverycodes-important": "See samm on oluline! Ära jäta seda sammu vahele!",
-	"oathauth-token": "Luba",
 	"oathauth-disable": "Keela kaheastmeline autentimine",
 	"oathauth-validatedoath": "Kaheastmelised autentimisandmed kinnitatud. Kaheastmeline autentimine on nüüd jõus.",
 	"oathauth-noscratchforvalidation": "Taastekoode ei saa kasutada kaheastmelise autentimise kinnitamiseks. Taastekoodid on tagavaraks ja kasutamiseks vaid erijuhul. Palun kasuta koodi, mis on pärit kaheastmelise autentimise rakendusest nagu Google Authenticator.",

@@ -13,13 +13,14 @@
 			"Siglite3",
 			"Sujiniku",
 			"Yusuke1109",
-			"青子守歌"
+			"青子守歌",
+			"Waki285"
 		]
 	},
 	"interwiki": "インターウィキデータの閲覧と編集",
 	"interwiki-title-norights": "インターウィキデータの閲覧",
 	"interwiki-desc": "インターウィキテーブルの表示と編集を行う[[Special:Interwiki|特別ページ]]を追加する",
-	"interwiki_intro": "以下はインターウィキの概要です。これは、すぐに別のウィキや他の外部サイトへのリンクに使用されるプレフィックスのショートカットを定義します。推奨される使用のために、次をご覧ください。[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki MediaWiki.org 上のマニュアル]",
+	"interwiki_intro": "以下はインターウィキテーブルの概要です。これは、すぐに別のウィキや他の外部サイトへのリンクに使用されるプレフィックスのショートカットを定義します。推奨される使用のために、次をご覧ください。[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki MediaWiki.org 上のマニュアル]",
 	"interwiki-legend-label": "凡例",
 	"interwiki_prefix": "接頭辞",
 	"interwiki-prefix-label": "接頭辞:",
@@ -56,6 +57,7 @@
 	"interwiki_edited": "インターウィキテーブル内で接頭辞「$1」を変更しました。",
 	"interwiki_editerror": "インターウィキテーブル内で接頭辞「$1」を変更できませんでした。\n存在しない可能性があります。",
 	"interwiki-badprefix": "指定されたインターウィキ接頭辞「$1」は無効な文字を含んでいます",
+	"interwiki-cannotaddlocallanguage": "接頭辞 \"$1\" は既知の言語コードにマッチします。グローバル言語間データベースを使用している場合、ローカル言語間接頭辞の追加は無効になります。",
 	"interwiki-submit-empty": "接頭辞や URL を空にすることはできません。",
 	"interwiki-submit-invalidurl": "URL のプロトコルが無効です。",
 	"log-name-interwiki": "インターウィキ編集記録",
@@ -71,5 +73,7 @@
 	"interwiki-local-description": "これらの接頭辞はローカルに存在します。グローバル設定と重複している場合はグローバル定義を上書きします。",
 	"interwiki-links": "インターウィキ接頭辞",
 	"interwiki-language-links": "言語間リンク接頭辞",
-	"interwiki-language-description": "これらの接頭辞は、定義済みの言語コードと一致しており、ページに追加する「{{int:otherlanguages}}」の一覧を作成する際に使用されます。"
+	"interwiki-language-description": "これらの接頭辞は、定義済みの言語コードと一致しており、ページに追加する「{{int:otherlanguages}}」の一覧を作成する際に使用されます。",
+	"interwiki-global-language-links": "グローバル言語間接頭辞",
+	"interwiki-global-language-description": "これらの接頭辞は定義された言語コードと一致し、ページに追加されたときに「{{int:otherlanguages}}」リストを作成するために使用されます。これらはグローバル設定から継承されるため、元のウィキ上でのみ編集可能です。グローバルな言語間定義をローカルで上書きすることはできません。"
 }

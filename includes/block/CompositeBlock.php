@@ -22,6 +22,8 @@
 
 namespace MediaWiki\Block;
 
+use InvalidArgumentException;
+use MediaWiki\Message\Message;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 
@@ -36,6 +38,30 @@ use MediaWiki\User\UserIdentity;
 class CompositeBlock extends AbstractBlock {
 	/** @var AbstractBlock[] */
 	private $originalBlocks;
+
+	/**
+	 * Helper method for merging multiple blocks into a composite block.
+	 * @param AbstractBlock ...$blocks
+	 * @return self
+	 */
+	public static function createFromBlocks( AbstractBlock ...$blocks ): self {
+		$originalBlocks = [];
+		foreach ( $blocks as $block ) {
+			if ( $block instanceof self ) {
+				$originalBlocks = array_merge( $originalBlocks, $block->getOriginalBlocks() );
+			} else {
+				$originalBlocks[] = $block;
+			}
+		}
+		if ( !$originalBlocks ) {
+			throw new InvalidArgumentException( 'No blocks given' );
+		}
+		return new self( [
+			'address' => $originalBlocks[0]->target,
+			'reason' => new Message( 'blockedtext-composite-reason' ),
+			'originalBlocks' => $originalBlocks,
+		] );
+	}
 
 	/**
 	 * Create a new block with specified parameters on a user, IP or IP range.
@@ -106,6 +132,20 @@ class CompositeBlock extends AbstractBlock {
 	 */
 	public function getOriginalBlocks() {
 		return $this->originalBlocks;
+	}
+
+	/**
+	 * Create a clone of the object with the original blocks array set to
+	 * something else.
+	 *
+	 * @since 1.42
+	 * @param AbstractBlock[] $blocks
+	 * @return self
+	 */
+	public function withOriginalBlocks( array $blocks ) {
+		$clone = clone $this;
+		$clone->originalBlocks = $blocks;
+		return $clone;
 	}
 
 	public function toArray(): array {

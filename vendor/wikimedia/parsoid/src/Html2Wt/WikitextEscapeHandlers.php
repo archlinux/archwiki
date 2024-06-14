@@ -37,10 +37,6 @@ class WikitextEscapeHandlers {
 	 */
 	private $tokenizer;
 
-	/**
-	 * @param Env $env
-	 * @param ?string $extName
-	 */
 	public function __construct( Env $env, ?string $extName ) {
 		$this->env = $env;
 		$this->extName = $extName;
@@ -200,10 +196,6 @@ class WikitextEscapeHandlers {
 		return $out;
 	}
 
-	/**
-	 * @param Node $node
-	 * @return bool
-	 */
 	public function isFirstContentNode( Node $node ): bool {
 		// Skip deleted-node markers
 		return DiffDOMUtils::previousNonDeletedSibling( $node ) === null;
@@ -269,29 +261,14 @@ class WikitextEscapeHandlers {
 			preg_match( '/^[^\n]*!!|\|/', $text );
 	}
 
-	/**
-	 * @param SerializerState $state
-	 * @param string $text
-	 * @return bool
-	 */
 	public function mediaOptionHandler( SerializerState $state, string $text ): bool {
 		return str_contains( $text, '|' ) || preg_match( self::LINKS_ESCAPE_RE, $text );
 	}
 
-	/**
-	 * @param SerializerState $state
-	 * @param string $text
-	 * @return bool
-	 */
 	public function wikilinkHandler( SerializerState $state, string $text ): bool {
 		return (bool)preg_match( self::LINKS_ESCAPE_RE, $text );
 	}
 
-	/**
-	 * @param SerializerState $state
-	 * @param string $text
-	 * @return bool
-	 */
 	public function aHandler( SerializerState $state, string $text ): bool {
 		return str_contains( $text, ']' );
 	}
@@ -338,12 +315,13 @@ class WikitextEscapeHandlers {
 				strspn( $text, '-+}', 0, 1 ) &&
 				$node
 			) {
-				$patch = DOMUtils::pathToAncestor( $node, $tdNode );
-				foreach ( $patch as $n ) {
+				$n = $node;
+				while ( $n && $n !== $tdNode ) {
 					if ( !$this->isFirstContentNode( $n ) ||
 						!( $n === $node || WTUtils::isZeroWidthWikitextElt( $n ) ) ) {
 						return false;
 					}
+					$n = $n->parentNode;
 				}
 				return true;
 			}
@@ -367,12 +345,6 @@ class WikitextEscapeHandlers {
 		return $tokens;
 	}
 
-	/**
-	 * @param Node $node
-	 * @param SerializerState $state
-	 * @param string $text
-	 * @return bool
-	 */
 	public function textCanParseAsLink( Node $node, SerializerState $state, string $text ): bool {
 		$env = $state->getEnv();
 		$env->log(
@@ -419,7 +391,7 @@ class WikitextEscapeHandlers {
 			if ( is_string( $t ) ) {
 				$buf = $t . $buf;
 			} elseif ( $t->getName() === 'wikilink' ) {
-				$target = $t->getAttribute( 'href' );
+				$target = $t->getAttributeV( 'href' );
 				if ( is_array( $target ) ) {
 					// FIXME: in theory template expansion *could* make this a link.
 					return false;
@@ -437,7 +409,7 @@ class WikitextEscapeHandlers {
 				// Check if the extlink came from a template which in the end
 				// would not really parse as an extlink.
 
-				$href = $t->getAttribute( 'href' );
+				$href = $t->getAttributeV( 'href' );
 				if ( is_array( $href ) ) {
 					$href = $href[0];
 				}
@@ -462,7 +434,7 @@ class WikitextEscapeHandlers {
 					}
 
 					if ( $node instanceof Element && DOMCompat::nodeName( $node ) === 'a' &&
-						$node->textContent === $node->getAttribute( 'href' )
+						$node->textContent === DOMCompat::getAttribute( $node, 'href' )
 					) {
 						// The template expands to an url link => needs nowiking
 						return true;
@@ -488,12 +460,6 @@ class WikitextEscapeHandlers {
 		return true;
 	}
 
-	/**
-	 * @param SerializerState $state
-	 * @param bool $onNewline
-	 * @param string $text
-	 * @return bool
-	 */
 	private function hasWikitextTokens(
 		SerializerState $state, bool $onNewline, string $text
 	): bool {
@@ -520,9 +486,7 @@ class WikitextEscapeHandlers {
 		// If the token stream has a TagTk, SelfclosingTagTk, EndTagTk or CommentTk
 		// then this text needs escaping!
 		$numEntities = 0;
-		for ( $i = 0,  $n = count( $tokens );  $i < $n;  $i++ ) {
-			$t = $tokens[$i];
-
+		foreach ( $tokens as $t ) {
 			$env->log(
 				'trace/wt-escape', 'T:',
 				static function () use ( $t ) {
@@ -536,7 +500,7 @@ class WikitextEscapeHandlers {
 			if ( TokenUtils::isHTMLTag( $t ) ) {
 				if (
 					TokenUtils::matchTypeOf( $t, '#^mw:Extension(/|$)#' ) &&
-					( $this->extName !== $t->getAttribute( 'name' ) )
+					( $this->extName !== $t->getAttributeV( 'name' ) )
 				) {
 					return true;
 				}
@@ -585,7 +549,7 @@ class WikitextEscapeHandlers {
 				}
 
 				if ( $t->getName() === 'wikilink' ) {
-					if ( $env->isValidLinkTarget( $t->getAttribute( 'href' ) ?? '' ) ) {
+					if ( $env->isValidLinkTarget( $t->getAttributeV( 'href' ) ?? '' ) ) {
 						return true;
 					} else {
 						continue;
@@ -655,13 +619,6 @@ class WikitextEscapeHandlers {
 		return false;
 	}
 
-	/**
-	 * @param string $str
-	 * @param bool $close
-	 * @param bool &$inNowiki
-	 * @param bool &$nowikisAdded
-	 * @param string &$buf
-	 */
 	private static function nowikiWrap(
 		string $str, bool $close, bool &$inNowiki, bool &$nowikisAdded, string &$buf
 	): void {
@@ -724,8 +681,7 @@ class WikitextEscapeHandlers {
 
 		$tokens = $this->tokenizeStr( $text, $sol );
 
-		for ( $i = 0,  $n = count( $tokens );  $i < $n;  $i++ ) {
-			$t = $tokens[$i];
+		foreach ( $tokens as $t ) {
 			if ( is_string( $t ) ) {
 				if ( strlen( $t ) > 0 ) {
 					$t = WTSUtils::escapeNowikiTags( $t );
@@ -859,8 +815,8 @@ class WikitextEscapeHandlers {
 		if ( !$fullCheckNeeded ) {
 			$hasQuoteChar = str_contains( $text, "'" );
 			$indentPreUnsafe = !$indentPreSafeMode && (
-				preg_match( '/\n +[^\r\n]*?[^\s]+/', $text ) ||
-				$sol && preg_match( '/^ +[^\r\n]*?[^\s]+/', $text )
+				preg_match( '/\n +[^\r\n]*?\S+/', $text ) ||
+				$sol && preg_match( '/^ +[^\r\n]*?\S+/', $text )
 			);
 			$hasNonQuoteEscapableChars = preg_match( '/[<>\[\]\-\+\|!=#\*:;~{}]|__[^_]*__/', $text );
 			$hasLanguageConverter = preg_match( '/-\{|\}-/', $text );
@@ -1170,7 +1126,7 @@ class WikitextEscapeHandlers {
 
 		$tokens = $this->tokenizeStr( $arg, false );
 
-		for ( $i = 0,  $n = count( $tokens ); $i < $n; $i++ ) {
+		for ( $i = 0, $n = count( $tokens ); $i < $n; $i++ ) {
 			$t = $tokens[$i];
 			$last = $i === $n - 1;
 

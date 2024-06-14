@@ -1,23 +1,26 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Tests\Api\ApiTestCase;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
+use MediaWiki\User\UserIdentityValue;
+use RecentChange;
+use WatchedItemQueryService;
 
 /**
  * @group API
  * @group Database
  * @group medium
  *
- * @covers ApiQueryRecentChanges
+ * @covers \ApiQueryRecentChanges
  */
 class ApiQueryRecentChangesIntegrationTest extends ApiTestCase {
-
-	protected $tablesUsed = [
-		'recentchanges',
-		'page',
-	];
+	use TempUserTestTrait;
 
 	private function getLoggedInTestUser() {
 		return $this->getTestUser()->getUser();
@@ -60,6 +63,19 @@ class ApiQueryRecentChangesIntegrationTest extends ApiTestCase {
 		$page->doUserEditContent(
 			$page->getContentHandler()->unserializeContent( __CLASS__ ),
 			$this->getServiceContainer()->getUserFactory()->newAnonymous(),
+			$summary
+		);
+	}
+
+	private function doTempPageEdit( LinkTarget $target, $summary ) {
+		// Set up temp user config
+		$this->enableAutoCreateTempUser();
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromLinkTarget( $target );
+		$page->doUserEditContent(
+			$page->getContentHandler()->unserializeContent( __CLASS__ ),
+			$this->getServiceContainer()
+				->getUserFactory()
+				->newFromUserIdentity( new UserIdentityValue( 123456, '~1' ) ),
 			$summary
 		);
 	}
@@ -282,13 +298,20 @@ class ApiQueryRecentChangesIntegrationTest extends ApiTestCase {
 	public function testUserPropParameter() {
 		$userEditTarget = new TitleValue( NS_MAIN, 'Foo' );
 		$anonEditTarget = new TitleValue( NS_MAIN, 'Bar' );
+		$tempEditTarget = new TitleValue( NS_MAIN, 'Baz' );
 		$this->doPageEdit( $this->getLoggedInTestUser(), $userEditTarget, 'Create the page' );
 		$this->doAnonPageEdit( $anonEditTarget, 'Create the page' );
+		$this->doTempPageEdit( $tempEditTarget, 'Create the page' );
 
 		$result = $this->doListRecentChangesRequest( [ 'rcprop' => 'user' ] );
 
 		$this->assertEquals(
 			[
+				[
+					'type' => 'new',
+					'temp' => true,
+					'user' => '~1',
+				],
 				[
 					'type' => 'new',
 					'anon' => true,
@@ -384,7 +407,8 @@ class ApiQueryRecentChangesIntegrationTest extends ApiTestCase {
 				[
 					'type' => 'new',
 					'oldlen' => 0,
-					'newlen' => 38,
+					// strlen( __CLASS__ ) - 2 = 64
+					'newlen' => 64,
 				],
 			],
 			$this->getItemsFromRecentChangesResult( $result )

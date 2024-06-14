@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42.0"
 	},
 	"MessagesDirs": {
 		"WikiEditor": [
@@ -38,15 +38,14 @@
 				"MainConfig",
 				"UserEditTracker",
 				"UserOptionsLookup"
+			],
+			"optional_services": [
+				"MobileFrontend.Context"
 			]
 		}
 	},
 	"ResourceModules": {
 		"ext.wikiEditor": {
-			"targets": [
-				"desktop",
-				"mobile"
-			],
 			"group": "ext.wikiEditor",
 			"packageFiles": [
 				"ext.wikiEditor.js",
@@ -96,10 +95,6 @@
 				"wikieditor-toolbar-tool-bold-example",
 				"wikieditor-toolbar-tool-italic",
 				"wikieditor-toolbar-tool-italic-example",
-				"wikieditor-toolbar-tool-ilink",
-				"wikieditor-toolbar-tool-ilink-example",
-				"wikieditor-toolbar-tool-xlink",
-				"wikieditor-toolbar-tool-xlink-example",
 				"wikieditor-toolbar-tool-link",
 				"wikieditor-toolbar-tool-link-title",
 				"wikieditor-toolbar-tool-link-int",
@@ -117,12 +112,10 @@
 				"wikieditor-toolbar-tool-link-int-target-status-invalid",
 				"wikieditor-toolbar-tool-link-int-target-status-external",
 				"wikieditor-toolbar-tool-link-int-target-status-disambig",
-				"wikieditor-toolbar-tool-link-int-invalid",
 				"wikieditor-toolbar-tool-link-lookslikeinternal",
 				"wikieditor-toolbar-tool-link-lookslikeinternal-int",
 				"wikieditor-toolbar-tool-link-lookslikeinternal-ext",
 				"wikieditor-toolbar-tool-file",
-				"wikieditor-toolbar-tool-file-example",
 				"wikieditor-toolbar-tool-signature",
 				"wikieditor-toolbar-section-advanced",
 				"wikieditor-toolbar-tool-heading",
@@ -154,7 +147,6 @@
 				"wikieditor-toolbar-tool-gallery-example",
 				"wikieditor-toolbar-tool-newline",
 				"wikieditor-toolbar-tool-table",
-				"wikieditor-toolbar-tool-table-example-old",
 				"wikieditor-toolbar-tool-table-example-cell-text",
 				"wikieditor-toolbar-tool-table-example",
 				"wikieditor-toolbar-tool-table-example-header",
@@ -275,15 +267,11 @@
 			]
 		},
 		"ext.wikiEditor.styles": {
-			"targets": [
-				"desktop",
-				"mobile"
-			],
 			"group": "ext.wikiEditor",
 			"styles": "ext.wikiEditor.toolbar.styles.less"
 		},
 		"ext.wikiEditor.images": {
-			"class": "ResourceLoaderImageModule",
+			"class": "MediaWiki\\ResourceLoader\\ImageModule",
 			"selector": ".ext-WikiEditor-image-{name}",
 			"images": {
 				"realtimepreview-error": {

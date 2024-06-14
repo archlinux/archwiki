@@ -45,7 +45,7 @@
 	"replacetext_blankwarning": "چون متن جایگزین خالی است، این عمل قابل بازگشت نخواهد بود؛ ادامه می‌دهید؟",
 	"replacetext_continue": "ادامه",
 	"replacetext_editsummary": "جایگزینی متن - '$1' به '$2'",
-	"replacetext_reminder": "برای اینکه پیوند ها به این صفحه را در صفحات دیگر نیز جایگزین کنید، به $1بروید.",
+	"replacetext_reminder": "برای اینکه پیوند‌ها به این صفحه را در صفحات دیگر نیز جایگزین کنید، به $1بروید.",
 	"replacetext_cfg_error": "خطای پیکربندی ReplaceText",
 	"right-replacetext": "انجام جایگزین کردن رشته در تمام ویکی",
 	"action-replacetext": "ساختن جایگزین کردن رشته در تمام ویکی"

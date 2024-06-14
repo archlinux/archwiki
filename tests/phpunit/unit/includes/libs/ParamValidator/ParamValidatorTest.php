@@ -1,19 +1,27 @@
 <?php
 
-namespace Wikimedia\ParamValidator;
+namespace Wikimedia\Tests\ParamValidator;
 
 use DomainException;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use stdClass;
+use UnexpectedValueException;
 use Wikimedia\Message\DataMessageValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Message\ParamType;
 use Wikimedia\Message\ScalarParam;
 use Wikimedia\ObjectFactory\ObjectFactory;
+use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\SimpleCallbacks;
+use Wikimedia\ParamValidator\TypeDef;
+use Wikimedia\ParamValidator\ValidationException;
 
 /**
- * @covers Wikimedia\ParamValidator\ParamValidator
+ * @covers \Wikimedia\ParamValidator\ParamValidator
  */
-class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
+class ParamValidatorTest extends TestCase {
 
 	public function testTypeRegistration() {
 		$validator = new ParamValidator(
@@ -31,7 +39,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 		try {
 			$validator->addTypeDef( 'baz', [] );
 			$this->fail( 'Expected exception not thrown' );
-		} catch ( \InvalidArgumentException $ex ) {
+		} catch ( InvalidArgumentException $ex ) {
 		}
 		$validator->overrideTypeDef( 'bar', null );
 		$validator->overrideTypeDef( 'baz', [] );
@@ -107,9 +115,9 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 		$validator = new ParamValidator(
 			new SimpleCallbacks( [] ),
 			new ObjectFactory( $this->getMockForAbstractClass( ContainerInterface::class ) ),
-			[ 'typeDefs' => [ 'foo' => [ 'class' => \stdClass::class ] ] ]
+			[ 'typeDefs' => [ 'foo' => [ 'class' => stdClass::class ] ] ]
 		);
-		$this->expectException( \UnexpectedValueException::class );
+		$this->expectException( UnexpectedValueException::class );
 		$this->expectExceptionMessage(
 			"Expected instance of Wikimedia\ParamValidator\TypeDef, got stdClass" );
 		$validator->getTypeDef( 'foo' );
@@ -198,11 +206,11 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 			ParamValidator::PARAM_ISMULTI, ParamValidator::PARAM_SENSITIVE, ParamValidator::PARAM_DEPRECATED,
 			ParamValidator::PARAM_IGNORE_UNRECOGNIZED_VALUES,
 		];
-		$multiKeys = array_merge( $normalKeys, [
+		$multiKeys = [ ...$normalKeys,
 			ParamValidator::PARAM_ISMULTI_LIMIT1, ParamValidator::PARAM_ISMULTI_LIMIT2,
 			ParamValidator::PARAM_ALL, ParamValidator::PARAM_ALLOW_DUPLICATES
-		] );
-		$multiEnumKeys = array_merge( $multiKeys, [ TypeDef\EnumDef::PARAM_DEPRECATED_VALUES ] );
+		];
+		$multiEnumKeys = [ ...$multiKeys, TypeDef\EnumDef::PARAM_DEPRECATED_VALUES ];
 
 		return [
 			'Basic test' => [
@@ -307,7 +315,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 					'issues' => [
 						ParamValidator::PARAM_DEFAULT => 'Value for PARAM_DEFAULT does not validate (code badvalue)',
 					],
-					'allowedKeys' => array_merge( $normalKeys, [ TypeDef\EnumDef::PARAM_DEPRECATED_VALUES ] ),
+					'allowedKeys' => [ ...$normalKeys, TypeDef\EnumDef::PARAM_DEPRECATED_VALUES ],
 					'messages' => [],
 				],
 			],

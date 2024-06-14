@@ -13,19 +13,19 @@
 	 *
 	 * @class
 	 * @extends OO.ui.TextInputWidget
-	 * @mixins mw.widgets.TitleWidget
-	 * @mixins OO.ui.mixin.LookupElement
+	 * @mixes mw.widgets.TitleWidget
+	 * @mixes OO.ui.mixin.LookupElement
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {boolean} [suggestions=true] Display search suggestions
-	 * @cfg {RegExp|Function|string} [validate] Perform title validation
+	 * @param {boolean} [config.suggestions=true] Display search suggestions
+	 * @param {RegExp|Function|string} [config.validate] Perform title validation
 	 */
 	mw.widgets.TitleInputWidget = function MwWidgetsTitleInputWidget( config ) {
 		config = config || {};
 
 		// Parent constructor
-		mw.widgets.TitleInputWidget.parent.call( this, $.extend( {}, config, {
+		mw.widgets.TitleInputWidget.super.call( this, $.extend( {}, config, {
 			validate: config.validate !== undefined ? config.validate : this.isQueryValid.bind( this ),
 			autocomplete: false
 		} ) );
@@ -58,14 +58,14 @@
 	/* Methods */
 
 	/**
-	 * @inheritdoc mw.widgets.TitleWidget
+	 * @inheritdoc
 	 */
 	mw.widgets.TitleInputWidget.prototype.getQueryValue = function () {
 		return this.getValue();
 	};
 
 	/**
-	 * @inheritdoc mw.widgets.TitleWidget
+	 * @inheritdoc
 	 */
 	mw.widgets.TitleInputWidget.prototype.setNamespace = function ( namespace ) {
 		// Mixin method
@@ -83,14 +83,14 @@
 	};
 
 	/**
-	 * @inheritdoc OO.ui.mixin.LookupElement
+	 * @inheritdoc
 	 */
 	mw.widgets.TitleInputWidget.prototype.getLookupCacheDataFromResponse = function ( response ) {
 		return response.query || {};
 	};
 
 	/**
-	 * @inheritdoc OO.ui.mixin.LookupElement
+	 * @inheritdoc
 	 */
 	mw.widgets.TitleInputWidget.prototype.getLookupMenuOptionsFromData = function ( response ) {
 		return this.getOptionsFromData( response );
@@ -114,13 +114,11 @@
 	 * @inheritdoc
 	 */
 	mw.widgets.TitleInputWidget.prototype.focus = function () {
-		var retval;
-
 		// Prevent programmatic focus from opening the menu
 		this.setLookupsDisabled( true );
 
 		// Parent method
-		retval = mw.widgets.TitleInputWidget.parent.prototype.focus.apply( this, arguments );
+		var retval = mw.widgets.TitleInputWidget.super.prototype.focus.apply( this, arguments );
 
 		this.setLookupsDisabled( !this.suggestions );
 
@@ -134,7 +132,7 @@
 		var widget = this;
 
 		// Parent method
-		value = mw.widgets.TitleInputWidget.parent.prototype.cleanUpValue.call( this, value );
+		value = mw.widgets.TitleInputWidget.super.prototype.cleanUpValue.call( this, value );
 
 		return trimByteLength( this.value, value, this.maxLength, function ( val ) {
 			var title = widget.getMWTitle( val );

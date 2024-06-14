@@ -23,7 +23,6 @@
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code> ला बंद करणारी <code>&lt;/ref&gt;</code> ही खूणपताका गायब आहे.",
 	"cite_error_group_refs_without_references": "\"$1\" नावाच्या गटाकरिता <code>&lt;ref&gt;</code>खूणपताका उपलब्ध आहेत, पण संबंधीत <code>&lt;references group=\"$1\"/&gt;</code>  खूण मिळाली नाही.",
 	"cite_error_references_group_mismatch": "<code>&lt;references&gt;</code>मधील खूणपताकेस<code>&lt;ref&gt;</code> खूणांशी विसंवाद असणारे  group attribute \"$1\" आहे.",
-	"cite_error_references_missing_group": "गट \"$1\" मधील <code>&lt;ref&gt;</code> खूणपताका <code>&lt;references&gt;</code> या पूर्वी वापल्या गेलेल्या नाहीत.",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code> ह्या मध्ये टाकलेला <code>&lt;ref&gt;</code>  \"$1\" ह्या नावाची खूणपताका  ह्या पूर्वी वापरण्यात आलेली नाही.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code>खूणपताकेत नमूद गोष्टींना <code>&lt;references&gt;</code> ला नाम-गुणधर्म नाहीत.",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code>खूणपताकेत नमूद गोष्टींना, <code>&lt;references&gt;</code> ज्या  \"$1\" ह्या नावाने संबोधल्या आहेत, त्यात माहिती नाही.",

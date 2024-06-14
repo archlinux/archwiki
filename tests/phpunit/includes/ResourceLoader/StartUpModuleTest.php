@@ -5,19 +5,13 @@ namespace MediaWiki\Tests\ResourceLoader;
 use Exception;
 use MediaWiki\ResourceLoader\Module;
 use MediaWiki\ResourceLoader\StartUpModule;
-use ResourceLoaderTestCase;
-use ResourceLoaderTestModule;
-use Wikimedia\Rdbms\ILoadBalancer;
+use Psr\Log\NullLogger;
 
 /**
+ * @group ResourceLoader
  * @covers \MediaWiki\ResourceLoader\StartUpModule
  */
 class StartUpModuleTest extends ResourceLoaderTestCase {
-
-	protected function setUp(): void {
-		parent::setUp();
-		$this->setService( 'DBLoadBalancer', $this->createMock( ILoadBalancer::class ) );
-	}
 
 	protected static function expandPlaceholders( $text ) {
 		return strtr( $text, [
@@ -280,26 +274,6 @@ mw.loader.register([
 ]);'
 			] ],
 			[ [
-				'msg' => 'Different target (non-test should not be registered)',
-				'modules' => [
-					'test.blank' => [ 'class' => ResourceLoaderTestModule::class ],
-					'test.target.foo' => [
-						'class' => ResourceLoaderTestModule::class,
-						'targets' => [ 'x-foo' ],
-					],
-				],
-				'out' => '
-mw.loader.addSource({
-    "local": "/w/load.php"
-});
-mw.loader.register([
-    [
-        "test.blank",
-        ""
-    ]
-]);'
-			] ],
-			[ [
 				'msg' => 'Different skin (irrelevant skin modules should not be registered)',
 				'modules' => [
 					'test.blank' => [ 'class' => ResourceLoaderTestModule::class ],
@@ -498,7 +472,6 @@ mw.loader.register([
 				'modules' => [
 					'test.es6' => [
 						'class' => ResourceLoaderTestModule::class,
-						'es6' => true
 					],
 				],
 				'out' => '
@@ -598,18 +571,8 @@ mw.loader.register([
 						'group' => 'x-bar',
 						'source' => 'example',
 					],
-					'test.target.foo' => [
-						'class' => ResourceLoaderTestModule::class,
-						'targets' => [ 'x-foo' ],
-					],
-					'test.target.bar' => [
-						'class' => ResourceLoaderTestModule::class,
-						'source' => 'example',
-						'targets' => [ 'x-foo' ],
-					],
 					'test.es6' => [
 						'class' => ResourceLoaderTestModule::class,
-						'es6' => true
 					]
 				],
 				'out' => '
@@ -707,7 +670,7 @@ mw.loader.register([
 
 		// Disable log from getModuleRegistrations via MWExceptionHandler
 		// for case where getVersionHash() is expected to throw.
-		$this->setLogger( 'exception', new \Psr\Log\NullLogger() );
+		$this->setLogger( 'exception', new NullLogger() );
 
 		$this->assertEquals(
 			self::expandPlaceholders( $out ),
@@ -771,7 +734,7 @@ mw.loader.register([
 		$out = ltrim( $case['out'], "\n" );
 
 		// Tolerate exception logs for cases that expect getVersionHash() to throw.
-		$this->setLogger( 'exception', new \Psr\Log\NullLogger() );
+		$this->setLogger( 'exception', new NullLogger() );
 
 		$this->assertEquals(
 			self::expandPlaceholders( $out ),
@@ -892,7 +855,7 @@ mw.loader.register([
 		] );
 		$module = new StartUpModule();
 		$module->setConfig( $rl1->getConfig() );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$version1 = $module->getVersionHash( $context1 );
 
 		$context2 = $this->getResourceLoaderContext();
@@ -903,7 +866,7 @@ mw.loader.register([
 		] );
 		$module = new StartUpModule();
 		$module->setConfig( $rl2->getConfig() );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$version2 = $module->getVersionHash( $context2 );
 
 		$context3 = $this->getResourceLoaderContext();
@@ -917,7 +880,7 @@ mw.loader.register([
 		] );
 		$module = new StartUpModule();
 		$module->setConfig( $rl3->getConfig() );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$version3 = $module->getVersionHash( $context3 );
 
 		// Module name *is* significant (T201686)
@@ -945,7 +908,7 @@ mw.loader.register([
 		] );
 		$module = new StartUpModule();
 		$module->setConfig( $rl->getConfig() );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$version1 = $module->getVersionHash( $context );
 
 		$context = $this->getResourceLoaderContext();
@@ -958,7 +921,7 @@ mw.loader.register([
 		] );
 		$module = new StartUpModule();
 		$module->setConfig( $rl->getConfig() );
-		$module->setName( "" );
+		$module->setName( 'test' );
 		$version2 = $module->getVersionHash( $context );
 
 		// Dependencies *are* significant (T201686)

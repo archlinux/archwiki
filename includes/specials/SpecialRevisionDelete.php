@@ -25,18 +25,17 @@ namespace MediaWiki\Specials;
 
 use ErrorPageError;
 use File;
-use HTMLForm;
 use LogEventsList;
 use LogPage;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
-use MWException;
 use PermissionsError;
 use RepoGroup;
 use RevDelList;
@@ -352,8 +351,6 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 	 * Show a deleted file version requested by the visitor.
 	 * @todo Mostly copied from Special:Undelete. Refactor.
 	 * @param string $archiveName
-	 * @throws MWException
-	 * @throws PermissionsError
 	 */
 	protected function tryShowFile( $archiveName ) {
 		$repo = $this->repoGroup->getLocalRepo();
@@ -477,11 +474,12 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 			$out->addModuleStyles( [ 'mediawiki.special',
 				'mediawiki.interface.helpers.styles' ] );
 
-			$dropDownReason = $this->msg( 'revdelete-reason-dropdown' )->inContentLanguage()->text();
+			$dropdownReason = $this->msg( 'revdelete-reason-dropdown' )
+				->page( $this->targetObj )->inContentLanguage()->text();
 			// Add additional specific reasons for suppress
 			if ( $suppressAllowed ) {
-				$dropDownReason .= "\n" . $this->msg( 'revdelete-reason-dropdown-suppress' )
-					->inContentLanguage()->text();
+				$dropdownReason .= "\n" . $this->msg( 'revdelete-reason-dropdown-suppress' )
+					->page( $this->targetObj )->inContentLanguage()->text();
 			}
 
 			$fields = $this->buildCheckBoxes();
@@ -492,8 +490,8 @@ class SpecialRevisionDelete extends UnlistedSpecialPage {
 				'cssclass' => 'wpReasonDropDown',
 				'id' => 'wpRevDeleteReasonList',
 				'name' => 'wpRevDeleteReasonList',
-				'options' => Xml::listDropDownOptions(
-					$dropDownReason,
+				'options' => Html::listDropdownOptions(
+					$dropdownReason,
 					[ 'other' => $this->msg( 'revdelete-reasonotherlist' )->text() ]
 				),
 				'default' => $this->getRequest()->getText( 'wpRevDeleteReasonList', 'other' )

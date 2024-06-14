@@ -15,29 +15,29 @@ class InCell extends InsertionMode {
 
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
 		switch ( $name ) {
-		case 'caption':
-		case 'col':
-		case 'colgroup':
-		case 'tbody':
-		case 'td':
-		case 'tfoot':
-		case 'th':
-		case 'thead':
-		case 'tr':
-			if ( !$this->builder->stack->isInTableScope( 'td' )
-			  && !$this->builder->stack->isInTableScope( 'th' )
-			) {
-				$this->builder->error( "<$name> tag should close the cell but none is in scope",
-					$sourceStart );
-				return;
-			}
-			$this->closeTheCell( $sourceStart )
-				->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'caption':
+			case 'col':
+			case 'colgroup':
+			case 'tbody':
+			case 'td':
+			case 'tfoot':
+			case 'th':
+			case 'thead':
+			case 'tr':
+				if ( !$this->builder->stack->isInTableScope( 'td' )
+					&& !$this->builder->stack->isInTableScope( 'th' )
+				) {
+					$this->builder->error( "<$name> tag should close the cell but none is in scope",
+						$sourceStart );
+					return;
+				}
+				$this->closeTheCell( $sourceStart )
+					->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			$this->dispatcher->inBody->startTag(
-				$name, $attrs, $selfClose, $sourceStart, $sourceLength );
+			default:
+				$this->dispatcher->inBody->startTag(
+					$name, $attrs, $selfClose, $sourceStart, $sourceLength );
 		}
 	}
 
@@ -47,47 +47,47 @@ class InCell extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'td':
-		case 'th':
-			if ( !$stack->isInTableScope( $name ) ) {
-				$builder->error( "</$name> encountered but there is no $name in scope, ignoring",
-					$sourceStart );
+			case 'td':
+			case 'th':
+				if ( !$stack->isInTableScope( $name ) ) {
+					$builder->error( "</$name> encountered but there is no $name in scope, ignoring",
+						$sourceStart );
+					return;
+				}
+				$builder->generateImpliedEndTags( false, $sourceStart );
+				if ( $stack->current->htmlName !== $name ) {
+					$builder->error( "</$name> encountered when there are tags open " .
+						"which can't be closed automatically", $sourceStart );
+				}
+				$builder->popAllUpToName( $name, $sourceStart, $sourceLength );
+				$builder->afe->clearToMarker();
+				$dispatcher->switchMode( Dispatcher::IN_ROW );
+				break;
+
+			case 'body':
+			case 'caption':
+			case 'col':
+			case 'colgroup':
+			case 'html':
+				$builder->error( "unexpected </$name> in cell, ignoring", $sourceStart );
 				return;
-			}
-			$builder->generateImpliedEndTags( false, $sourceStart );
-			if ( $stack->current->htmlName !== $name ) {
-				$builder->error( "</$name> encountered when there are tags open " .
-					"which can't be closed automatically", $sourceStart );
-			}
-			$builder->popAllUpToName( $name, $sourceStart, $sourceLength );
-			$builder->afe->clearToMarker();
-			$dispatcher->switchMode( Dispatcher::IN_ROW );
-			break;
 
-		case 'body':
-		case 'caption':
-		case 'col':
-		case 'colgroup':
-		case 'html':
-			$builder->error( "unexpected </$name> in cell, ignoring", $sourceStart );
-			return;
+			case 'table':
+			case 'tbody':
+			case 'tfoot':
+			case 'thead':
+			case 'tr':
+				if ( !$stack->isInTableScope( $name ) ) {
+					$builder->error( "</$name> encountered but there is no $name in scope, ignoring",
+						$sourceStart );
+					return;
+				}
+				$this->closeTheCell( $sourceStart )
+					->endTag( $name, $sourceStart, $sourceLength );
+				break;
 
-		case 'table':
-		case 'tbody':
-		case 'tfoot':
-		case 'thead':
-		case 'tr':
-			if ( !$stack->isInTableScope( $name ) ) {
-				$builder->error( "</$name> encountered but there is no $name in scope, ignoring",
-					$sourceStart );
-				return;
-			}
-			$this->closeTheCell( $sourceStart )
-				->endTag( $name, $sourceStart, $sourceLength );
-			break;
-
-		default:
-			$dispatcher->inBody->endTag( $name, $sourceStart, $sourceLength );
+			default:
+				$dispatcher->inBody->endTag( $name, $sourceStart, $sourceLength );
 		}
 	}
 

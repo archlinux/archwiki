@@ -4,7 +4,9 @@
 			"NMW03",
 			"Toghrul Rahimli",
 			"Wertuose",
-			"Zpizza"
+			"Zpizza",
+			"Atakhanli",
+			"Nemoralis"
 		]
 	},
 	"linterrors": "Lint xətaları",
@@ -28,7 +30,11 @@
 	"linter-category-missing-end-tag-in-heading-desc": "Bu səhifələrin başlıqlarında sonlandırma teqləri yoxdur.",
 	"linter-category-self-closed-tag": "Self-qapalı tags",
 	"linter-category-self-closed-tag-desc": "Bu pages özünü qapalı tags var.",
+	"linter-heading-high-priority": "Yüksək prioritet",
+	"linter-heading-low-priority": "Aşağı prioritet",
+	"linter-heading-medium-priority": "Orta prioritet",
 	"linter-page-edit": "redaktə",
 	"linter-page-viewsource": "mənbəyə bax",
-	"linter-pager-self-closed-tag-details": "Self-qapalı tag"
+	"linter-pager-self-closed-tag-details": "Self-qapalı tag",
+	"linterrors-summary": "<strong>Qeyd:</strong> Kateqoriyalar üçün hesablamalar dəqiq hesablamalar deyil, təxminlərə əsaslanır."
 }

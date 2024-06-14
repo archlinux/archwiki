@@ -206,7 +206,7 @@
 	"echo-overlay-link": "Sve obavijesti",
 	"echo-overlay-title": "<b>Obavijesti</b>",
 	"echo-mark-all-as-read": "Označi sve pročitanim",
-	"echo-mark-all-as-read-confirmation": "$1 {{PLURAL:$1|obavijest|obavijesti}} označeno je pročitanim",
+	"echo-mark-all-as-read-confirmation": "$1 {{PLURAL:$1|obavijest označena je pročitanom|obavijesti označene su pročitanim|obavijesti označeno je pročitanim}}",
 	"echo-mark-wiki-as-read": "Označi sve pročitanim u označenom wikiju: $1",
 	"echo-displaysnippet-title": "Nova obavijest",
 	"echo-date-today": "Danas",

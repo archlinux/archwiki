@@ -27,20 +27,17 @@ use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
  * heuristics and tricks to handle different scenarios.
  */
 class TokenStreamPatcher extends TokenHandler {
-	/** @var PegTokenizer */
-	private $tokenizer;
+	private PegTokenizer $tokenizer;
 
-	/** @var int */
+	/** @var int|null */
 	private $srcOffset;
 
-	/** @var bool */
-	private $sol;
+	private bool $sol;
 
-	/** @var array */
-	private $tokenBuf;
-
-	/** @var int */
-	private $wikiTableNesting;
+	private array $tokenBuf;
+	private int $wikiTableNesting;
+	/** True only for top-level & attribute value pipelines */
+	private bool $inIndependentParse;
 
 	/** @var Token|null */
 	private $lastConvertedTableCellToken;
@@ -51,15 +48,21 @@ class TokenStreamPatcher extends TokenHandler {
 	/** @var NlTk|null */
 	private $discardableNlTk = null;
 
-	/**
-	 * @param TokenTransformManager $manager
-	 * @param array $options
-	 */
 	public function __construct( TokenTransformManager $manager, array $options ) {
 		$newOptions = [ 'tsp' => true ] + $options;
 		parent::__construct( $manager, $newOptions );
 		$this->tokenizer = new PegTokenizer( $this->env );
 		$this->reset();
+	}
+
+	/**
+	 * Resets any internal state for this token handler.
+	 *
+	 * @param array $parseOpts
+	 */
+	public function resetState( array $parseOpts ): void {
+		parent::resetState( $parseOpts );
+		$this->inIndependentParse = $this->atTopLevel || isset( $this->options['attrExpansion'] );
 	}
 
 	private function reset() {
@@ -84,22 +87,25 @@ class TokenStreamPatcher extends TokenHandler {
 	 * @inheritDoc
 	 */
 	public function onNewline( NlTk $token ): ?TokenHandlerResult {
+		$self = $this;
 		$this->env->log( 'trace/tsp', $this->pipelineId,
-			static function () use ( $token ) {
-				return PHPUtils::jsonEncode( $token );
+			static function () use ( $self, $token ) {
+				return "(indep=" . ( $self->inIndependentParse ? "yes" : "no " ) .
+					";sol=" . ( $self->sol ? "yes" : "no " ) .
+					PHPUtils::jsonEncode( $token );
 			}
 		);
 		$this->srcOffset = $token->dataParsoid->tsr->end ?? null;
 		if ( $this->sol && $this->tplStartToken ) {
 			// When using core preprocessor, start-of-line start is forced by
-			// inserting a newline in certain cases (the "T2529 hack").  In the
-			// legacy parser the T2529 hack is never applied if the template was
+			// inserting a newline in certain cases (the "T2529 hack"). In the
+			// legacy parser, the T2529 hack is never applied if the template was
 			// already at the start of the line (the `!$piece['lineStart']`
 			// check in Parser::braceSubstitution where T2529 is handled), but
 			// that context (`$this->sol`) isn't passed through when Parsoid
-			// invokes the core preprocessor.  Thus when $this->sol prepare to
-			// (if the following tokens warrant) remove an unnecessary T2529
-			// newline added by the legacy preprocessor.
+			// invokes the core preprocessor. Thus, when $this->sol is true,
+			// prepare to (if the following tokens warrant it) remove an unnecessary
+			// T2529 newline added by the legacy preprocessor.
 			$this->discardableNlTk = $token;
 		}
 		$this->tokenBuf[] = $token;
@@ -131,24 +137,26 @@ class TokenStreamPatcher extends TokenHandler {
 	 *
 	 * @param int $srcOffset
 	 * @param array $toks
+	 * @param bool $popEOF
 	 * @return array
 	 */
-	private function reprocessTokens( int $srcOffset, array $toks ): array {
+	private function reprocessTokens( int $srcOffset, array $toks, bool $popEOF = false ): array {
 		// Update tsr
 		TokenUtils::shiftTokenTSR( $toks, $srcOffset );
 		$pipe = $this->env->getPipelineFactory()->getPipeline( "tokens/x-mediawiki" );
 		$pipe->init( [
 			'frame' => $this->manager->getFrame(),
 			'toplevel' => $this->atTopLevel,
-			// FIXME: What of the inTemplate/expandTemplate options here?
+			// The tokens should be reprocessed in the context of the original frame's source
+			'srcText' => $this->manager->getFrame()->getSrcText()
 		] );
-		return (array)$pipe->parse( $toks, [] );
+		$toks = (array)$pipe->parse( $toks, [] );
+		if ( $popEOF ) {
+			array_pop( $toks ); // pop EOFTk
+		}
+		return $toks;
 	}
 
-	/**
-	 * @param Token $token
-	 * @return array
-	 */
 	private function convertTokenToString( Token $token ): array {
 		$da = $token->dataParsoid;
 		$tsr = $da->tsr ?? null;
@@ -156,10 +164,9 @@ class TokenStreamPatcher extends TokenHandler {
 		if ( $tsr && $tsr->end > $tsr->start ) {
 			// > will only hold if these are valid numbers
 			$str = $tsr->substr( $this->manager->getFrame()->getSrcText() );
-			// sol === false ensures that the pipe will not be parsed as a <td> again
+			// sol === false ensures that the pipe will not be parsed as a <td>/listItem again
 			$toks = $this->tokenizer->tokenizeSync( $str, [ 'sol' => false ] );
-			array_pop( $toks ); // pop EOFTk
-			return $this->reprocessTokens( $tsr->start, $toks );
+			return $this->reprocessTokens( $tsr->start, $toks, true );
 		} elseif ( !empty( $da->autoInsertedStart ) && !empty( $da->autoInsertedEnd ) ) {
 			return [ '' ];
 		} else {
@@ -174,9 +181,9 @@ class TokenStreamPatcher extends TokenHandler {
 				case 'caption':
 					return [ $token instanceof TagTk ? '|+' : '' ];
 				case 'table':
-					if ( $token instanceof EndTagTk ) {
-						return [ '|}' ];
-					}
+					return [ $token instanceof EndTagTk ? '|}' : $token ];
+				case 'listItem':
+					return [ implode( '', $token->getAttributeV( 'bullets' ) ) ];
 			}
 
 			// No conversion if we get here
@@ -255,11 +262,14 @@ class TokenStreamPatcher extends TokenHandler {
 	 * @return ?TokenHandlerResult
 	 */
 	public function onAnyInternal( $token ): ?TokenHandlerResult {
-		$sol = $this->sol;
+		$self = $this;
 		$this->env->log( 'trace/tsp', $this->pipelineId,
-			static function () use ( $sol, $token ) {
-				return "(sol=" . ( $sol ? "yes" : "no" ) . ") " . PHPUtils::jsonEncode( $token );
-			} );
+			static function () use ( $self, $token ) {
+				return "(indep=" . ( $self->inIndependentParse ? "yes" : "no " ) .
+					";sol=" . ( $self->sol ? "yes" : "no " ) .
+					PHPUtils::jsonEncode( $token );
+			}
+		);
 
 		$tokens = [ $token ];
 		$tc = TokenUtils::getTokenType( $token );
@@ -298,7 +308,7 @@ class TokenStreamPatcher extends TokenHandler {
 				if ( $this->sol ) {
 					// Attempt to match "{|" after a newline and convert
 					// it to a table token.
-					if ( $this->atTopLevel && str_starts_with( $token, '{|' ) ) {
+					if ( $this->inIndependentParse && str_starts_with( $token, '{|' ) ) {
 						// Reparse string with the 'table_start_tag' rule
 						// and fully reprocess them.
 						$retoks = $this->tokenizer->tokenizeAs( $token, 'table_start_tag', /* sol */true );
@@ -313,7 +323,7 @@ class TokenStreamPatcher extends TokenHandler {
 							$this->wikiTableNesting++;
 							$this->lastConvertedTableCellToken = null;
 						}
-					} elseif ( $this->atTopLevel && $T2529hack ) { // {| has been handled above
+					} elseif ( $this->inIndependentParse && $T2529hack ) { // {| has been handled above
 						$retoks = $this->tokenizer->tokenizeAs( $token, 'list_item', /* sol */true );
 						if ( $retoks === false ) {
 							$this->env->log( 'error', 'Failed to tokenize list item.' );
@@ -341,9 +351,7 @@ class TokenStreamPatcher extends TokenHandler {
 
 			case 'SelfclosingTagTk':
 				if ( $token->getName() === 'meta' && ( $token->dataParsoid->stx ?? '' ) !== 'html' ) {
-					if ( TokenUtils::hasTypeOf( $token, 'mw:Transclusion' ) &&
-						$token->dataParsoid->tmp->tplarginfo->func === null // Not a parser-func
-					) {
+					if ( TokenUtils::hasTypeOf( $token, 'mw:Transclusion' ) ) {
 						$this->tplStartToken = $token;
 					}
 					$this->srcOffset = $token->dataParsoid->tsr->end ?? null;
@@ -356,7 +364,7 @@ class TokenStreamPatcher extends TokenHandler {
 						return new TokenHandlerResult( [] );
 					}
 				} elseif ( $token->getName() === 'link' &&
-					$token->getAttribute( 'rel' ) === 'mw:PageProp/Category'
+					$token->getAttributeV( 'rel' ) === 'mw:PageProp/Category'
 				) {
 					// Replace buffered newline & whitespace tokens with mw:EmptyLine
 					// meta-tokens. This tunnels them through the rest of the transformations
@@ -400,19 +408,16 @@ class TokenStreamPatcher extends TokenHandler {
 				break;
 
 			case 'TagTk':
-				if ( $this->atTopLevel && !TokenUtils::isHTMLTag( $token ) ) {
+				if ( $this->inIndependentParse && !TokenUtils::isHTMLTag( $token ) ) {
 					$tokenName = $token->getName();
 					$this->handleT2529Hack( $tokenName );
-					if ( $tokenName === 'table' ) {
+					if ( $tokenName === 'listItem' && isset( $this->options['attrExpansion'] ) ) {
+						// Convert list items back to bullet wikitext in attribute context
+						$tokens = $this->convertTokenToString( $token );
+					} elseif ( $tokenName === 'table' ) {
 						$this->lastConvertedTableCellToken = null;
 						$this->wikiTableNesting++;
-					} elseif (
-						in_array(
-							$token->getName(),
-							[ 'td', 'th', 'tr', 'caption' ],
-							true
-						)
-					) {
+					} elseif ( in_array( $tokenName, [ 'td', 'th', 'tr', 'caption' ], true ) ) {
 						if ( $this->wikiTableNesting === 0 ) {
 							if ( $token->getName() === 'td' || $token->getName() === 'th' ) {
 								$this->lastConvertedTableCellToken = $token;
@@ -427,7 +432,7 @@ class TokenStreamPatcher extends TokenHandler {
 				break;
 
 			case 'EndTagTk':
-				if ( $this->atTopLevel && !TokenUtils::isHTMLTag( $token ) ) {
+				if ( $this->inIndependentParse && !TokenUtils::isHTMLTag( $token ) ) {
 					if ( $this->wikiTableNesting > 0 ) {
 						if ( $token->getName() === 'table' ) {
 							$this->lastConvertedTableCellToken = null;

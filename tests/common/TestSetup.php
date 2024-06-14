@@ -36,7 +36,6 @@ class TestSetup {
 	public static function applyInitialConfig() {
 		global $wgMainCacheType, $wgMessageCacheType, $wgParserCacheType, $wgSessionCacheType;
 		global $wgMainStash, $wgChronologyProtectorStash;
-		global $wgObjectCaches;
 		global $wgLanguageConverterCacheType, $wgUseDatabaseMessages;
 		global $wgLocaltimezone, $wgLocalTZoffset, $wgLocalisationCacheConf;
 		global $wgSearchType;
@@ -46,12 +45,14 @@ class TestSetup {
 		global $wgMWLoggerDefaultSpi;
 		global $wgAuthManagerConfig;
 		global $wgShowExceptionDetails, $wgShowHostnames;
+		global $wgDBStrictWarnings, $wgUsePigLatinVariant;
 
 		$wgShowExceptionDetails = true;
 		$wgShowHostnames = true;
 
 		// wfWarn should cause tests to fail
 		$wgDevelopmentWarnings = true;
+		$wgDBStrictWarnings = true;
 
 		// Make sure all caches and stashes are either disabled or use
 		// in-process cache only to prevent tests from using any preconfigured
@@ -68,8 +69,6 @@ class TestSetup {
 		// Uses db-replicated per default in MainConfigSchema
 		$wgMainStash = 'hash';
 		$wgChronologyProtectorStash = 'hash';
-		// Use hash instead of db
-		$wgObjectCaches['db-replicated'] = $wgObjectCaches['hash'];
 		// Use memory job queue
 		$wgJobTypeConf = [
 			'default' => [ 'class' => JobQueueMemory::class, 'order' => 'fifo' ],
@@ -136,14 +135,15 @@ class TestSetup {
 			'secondaryauth' => [],
 		];
 
+		// This is often used for variant testing
+		$wgUsePigLatinVariant = true;
+
 		// xdebug's default of 100 is too low for MediaWiki
-		// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 		ini_set( 'xdebug.max_nesting_level', 1000 );
 
 		// Make sure that serialize_precision is set to its default value
 		// so floating-point numbers within serialized or JSON-encoded data
 		// will match the expected string representations (T116683).
-		// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 		ini_set( 'serialize_precision', -1 );
 	}
 
@@ -165,7 +165,6 @@ class TestSetup {
 			'_' => true,
 			'ignore' => true,
 			'wgAutoloadClasses' => true,
-			'wgWikimediaJenkinsCI' => true,
 		];
 
 		// Import $GLOBALS into local scope for the file.
@@ -176,16 +175,11 @@ class TestSetup {
 			global $$key;
 		}
 
-		// phpcs:disable MediaWiki.VariableAnalysis.UnusedGlobalVariables
 		// Setup.php creates this variable, but we cannot wait for the below code to make it global,
 		// because Setup.php (and MW_SETUP_CALLBACK -> TestsAutoLoader.php) needs this to be a
 		// global during its execution (not just after).
+		// phpcs:ignore MediaWiki.VariableAnalysis.UnusedGlobalVariables
 		global $wgAutoloadClasses;
-		// $wgWikimediaJenkinsCI is not a config variable and is therefore not made explicitly global
-		// in Setup.php when checking wgScopeTest. Do that here instead, as the variable might be
-		// read in an extension before the code below is executed (T341731).
-		global $wgWikimediaJenkinsCI;
-		// phpcs:enable MediaWiki.VariableAnalysis.UnusedGlobalVariables
 
 		require_once $fileName;
 

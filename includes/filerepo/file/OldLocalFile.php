@@ -49,12 +49,11 @@ class OldLocalFile extends LocalFile {
 	 * @param LocalRepo $repo
 	 * @param string|int|null $time
 	 * @return static
-	 * @throws MWException
 	 */
 	public static function newFromTitle( $title, $repo, $time = null ) {
 		# The null default value is only here to avoid an E_STRICT
 		if ( $time === null ) {
-			throw new MWException( __METHOD__ . ' got null for $time parameter' );
+			throw new InvalidArgumentException( __METHOD__ . ' got null for $time parameter' );
 		}
 
 		return new static( $title, $repo, $time, null );
@@ -137,7 +136,7 @@ class OldLocalFile extends LocalFile {
 	 * @phan-return array{tables:string[],fields:string[],joins:array}
 	 */
 	public static function getQueryInfo( array $options = [] ) {
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$queryInfo = FileSelectQueryBuilder::newForOldFile( $dbr, $options )->getQueryInfo();
 		return [
 			'tables' => $queryInfo['tables'],
@@ -153,14 +152,13 @@ class OldLocalFile extends LocalFile {
 	 * @param LocalRepo $repo
 	 * @param string|int|null $time Timestamp or null to load by archive name
 	 * @param string|null $archiveName Archive name or null to load by timestamp
-	 * @throws MWException
 	 */
 	public function __construct( $title, $repo, $time, $archiveName ) {
 		parent::__construct( $title, $repo );
 		$this->requestedTime = $time;
 		$this->archive_name = $archiveName;
 		if ( $time === null && $archiveName === null ) {
-			throw new MWException( __METHOD__ . ': must specify at least one of $time or $archiveName' );
+			throw new LogicException( __METHOD__ . ': must specify at least one of $time or $archiveName' );
 		}
 	}
 
@@ -214,7 +212,7 @@ class OldLocalFile extends LocalFile {
 	protected function loadFromDB( $flags = 0 ) {
 		$this->dataLoaded = true;
 
-		$dbr = ( $flags & self::READ_LATEST )
+		$dbr = ( $flags & IDBAccessObject::READ_LATEST )
 			? $this->repo->getPrimaryDB()
 			: $this->repo->getReplicaDB();
 		$queryBuilder = $this->buildQueryBuilderForLoad( $dbr, [] );
@@ -249,7 +247,7 @@ class OldLocalFile extends LocalFile {
 				$this->$name = $value;
 			}
 		} else {
-			throw new MWException( "Could not find data for image '{$this->archive_name}'." );
+			throw new RuntimeException( "Could not find data for image '{$this->archive_name}'." );
 		}
 	}
 

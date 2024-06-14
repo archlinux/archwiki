@@ -4,9 +4,9 @@
 			"Cedric31",
 			"Fitoschido",
 			"Guilhelma",
+			"Lhanars",
 			"Macofe",
-			"Townie",
-			"Lhanars"
+			"Townie"
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "Formula quimica",
@@ -19,8 +19,8 @@
 	"math-tracking-category-error": "Paginas amb errors dins balisas math",
 	"math_unknown_error": "error indeterminada",
 	"math_unknown_function": "foncion desconeguda « $1 »",
-	"mw_math_mathml": "MathML amb SVG o PNG en secors (recomandat pels navigadors modèrnes e las aisinas d’accessibilitat)",
-	"mw_math_source": "Font LaTeX (pels navigadors en mòde tèxte)",
+	"mw-math-mathml": "MathML amb SVG o PNG en secors (recomandat pels navigadors modèrnes e las aisinas d’accessibilitat)",
+	"mw-math-source": "Font LaTeX (pels navigadors en mòde tèxte)",
 	"prefs-math": "Rendut de las matas",
 	"mathstatus": "Estat matematic"
 }

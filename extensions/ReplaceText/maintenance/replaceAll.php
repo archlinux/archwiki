@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 /**
  * Replace text in pages or page titles.
@@ -31,7 +30,7 @@
 namespace MediaWiki\Extension\ReplaceText;
 
 use Maintenance;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\User\User;
 use MWException;
 
 $IP = getenv( 'MW_INSTALL_PATH' ) ?: __DIR__ . '/../../..';
@@ -109,12 +108,12 @@ class ReplaceAll extends Maintenance {
 	private function getUser() {
 		$userReplacing = $this->getOption( 'user', 1 );
 
-		$userFactory = MediaWikiServices::getInstance()->getUserFactory();
+		$userFactory = $this->getServiceContainer()->getUserFactory();
 		$user = is_numeric( $userReplacing ) ?
 			$userFactory->newFromId( $userReplacing ) :
 			$userFactory->newFromName( $userReplacing );
 
-		if ( get_class( $user ) !== 'User' ) {
+		if ( !$user instanceof User ) {
 			$this->fatalError(
 				"Couldn't translate '$userReplacing' to a user."
 			);
@@ -156,7 +155,7 @@ class ReplaceAll extends Maintenance {
 		}
 
 		$this->defaultContinue = true;
-		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures.AssignmentInControlStructures
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( ( $line = fgets( $handle ) ) !== false ) {
 			$field = explode( "\t", substr( $line, 0, -1 ) );
 			if ( !isset( $field[1] ) ) {
@@ -193,7 +192,7 @@ class ReplaceAll extends Maintenance {
 
 	private function listNamespaces() {
 		$this->output( "Index\tNamespace\n" );
-		$nsList = MediaWikiServices::getInstance()->getNamespaceInfo()->getCanonicalNamespaces();
+		$nsList = $this->getServiceContainer()->getNamespaceInfo()->getCanonicalNamespaces();
 		ksort( $nsList );
 		foreach ( $nsList as $int => $val ) {
 			if ( $val == '' ) {
@@ -233,7 +232,7 @@ EOF;
 		if ( !$nsall && !$ns ) {
 			$namespaces = [ NS_MAIN ];
 		} else {
-			$canonical = MediaWikiServices::getInstance()->getNamespaceInfo()->getCanonicalNamespaces();
+			$canonical = $this->getServiceContainer()->getNamespaceInfo()->getCanonicalNamespaces();
 			$canonical[NS_MAIN] = '_';
 			$namespaces = array_flip( $canonical );
 			if ( !$nsall ) {
@@ -323,7 +322,14 @@ EOF;
 			}
 
 			$this->output( "Replacing on $title... " );
-			$job = new Job( $title, $params );
+			$services = $this->getServiceContainer();
+			$job = new Job( $title, $params,
+				$services->getMovePageFactory(),
+				$services->getPermissionManager(),
+				$services->getUserFactory(),
+				$services->getWatchlistManager(),
+				$services->getWikiPageFactory()
+			);
 			if ( $job->run() !== true ) {
 				$this->error( "Trouble on the page '$title'." );
 			}
@@ -371,9 +377,6 @@ EOF;
 	 * @inheritDoc
 	 */
 	public function execute() {
-		global $wgShowExceptionDetails;
-		$wgShowExceptionDetails = true;
-
 		$this->botEdit = false;
 		if ( !$this->localSetup() ) {
 			return;
@@ -383,7 +386,12 @@ EOF;
 			$this->fatalError( 'No matching namespaces.' );
 		}
 
-		$hookHelper = new HookHelper( MediaWikiServices::getInstance()->getHookContainer() );
+		$services = $this->getServiceContainer();
+		$hookHelper = new HookHelper( $services->getHookContainer() );
+		$search = new Search(
+			$services->getMainConfig(),
+			$services->getDBLoadBalancerFactory()
+		);
 		foreach ( $this->target as $index => $target ) {
 			$replacement = $this->replacement[$index];
 			$useRegex = $this->useRegex[$index];
@@ -397,7 +405,7 @@ EOF;
 			}
 
 			if ( $this->rename ) {
-				$res = Search::getMatchingTitles(
+				$res = $search->getMatchingTitles(
 					$target,
 					$this->namespaces,
 					$this->category,
@@ -407,7 +415,7 @@ EOF;
 				);
 				$titlesToProcess = $hookHelper->filterPageTitlesForRename( $res );
 			} else {
-				$res = Search::doSearchQuery(
+				$res = $search->doSearchQuery(
 					$target,
 					$this->namespaces,
 					$this->category,
@@ -442,7 +450,7 @@ EOF;
 				$this->botEdit = true;
 			}
 			if ( !$this->getReply(
-				"Attribute changes to the user '{$this->user}'?$comment"
+				"Attribute changes to the user '{$this->user->getName()}'?$comment"
 			) ) {
 				return;
 			}

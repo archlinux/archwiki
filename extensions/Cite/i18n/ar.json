@@ -3,6 +3,7 @@
 		"authors": [
 			"Aiman titi",
 			"Asaifm",
+			"Hanzo64",
 			"Meno25",
 			"OsamaK",
 			"ديفيد",
@@ -16,6 +17,7 @@
 	"cite_error_ref_numeric_key": "وسم <code>&lt;ref&gt;</code> غير صحيح؛ الاسم لا يمكن أن يكون عددا صحيحا بسيطا. استخدم عنوانا وصفيا",
 	"cite_error_ref_no_key": "وسم الفتح <code>&lt;ref&gt;</code> غير صحيح أو له اسم سييء.",
 	"cite_error_ref_too_many_keys": "وسم <code>&lt;ref&gt;</code> غير صحيح؛ أسماء غير صحيحة، على سبيل المثال كثيرة جدا",
+	"cite_error_ref_follow_conflicts": "يتبع <code>&lt;ref \nعلامة =\"…\"&gt;</code>  التي تعد استمرارًا للعلامة السابقة لا يمكن تسميتها بشكل فردي أو ذات صلة",
 	"cite_error_ref_nested_extends": "تمديد وسوم <code>&lt;ref&gt;</code> لعمق أكثر من مستوى واحد غير مسموح به",
 	"cite_error_ref_no_input": "وسم <code>&lt;ref&gt;</code> غير صحيح؛ المراجع غير ذات الاسم يجب أن تمتلك محتوى",
 	"cite_error_references_duplicate_key": "وسم <code>&lt;ref&gt;</code> غير صالح؛ الاسم \"$1\" معرف أكثر من مرة بمحتويات مختلفة.",
@@ -27,7 +29,6 @@
 	"cite_error_included_references": "وسم الإغلاق مفقود ل<code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "وسوم <code>&lt;ref&gt;</code> موجودة لمجموعة اسمها \"$1\"، ولكن لم يتم العثور على وسم <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "الوسم <code>&lt;ref&gt;</code> في <code>&lt;references&gt;</code> فيه خاصية group متضاربة \"$1\".",
-	"cite_error_references_missing_group": "علامة <code><ref></code> بالاسم \" $2 \" المحددة في <code><references></code> لها سمة المجموعة \" $1 \" والتي لا تظهر في النص السابق.",
 	"cite_error_references_missing_key": "الوسم <code>&lt;ref&gt;</code> ذو الاسم \"$1\" المُعرّف في <code>&lt;references&gt;</code> غير مستخدم في النص السابق.",
 	"cite_error_references_no_key": "الوسم <code>&lt;ref&gt;</code> المعرف في <code>&lt;references&gt;</code> ليس له خاصة اسم.",
 	"cite_error_empty_references_define": "علامة <code><ref></code> بالاسم \" $1 \" المحددة في مجموعة <code><references></code> \" $2 \" لا تحتوي على محتوى.",

@@ -43,20 +43,9 @@ class ResourceLoaderEchoImageModule extends RL\ImageModule {
 		foreach ( $this->definition['icons'] as $iconName => $definition ) {
 			// FIXME: We also have a 'site' icon which is "magical"
 			// and uses witchcraft and should be handled specifically
-			if ( isset( $definition[ 'path' ] ) ) {
-				if ( is_array( $definition[ 'path' ] ) ) {
-					$paths = [];
-					foreach ( $definition[ 'path' ] as $dir => $p ) {
-						// Has both rtl and ltr definitions
-						$paths[ $dir ] = $p;
-					}
-				} else {
-					$paths = $definition[ 'path' ];
-				}
-
-				if ( !empty( $paths ) ) {
-					$images[ $iconName ][ 'file' ] = $paths;
-				}
+			if ( isset( $definition[ 'path' ] ) && $definition[ 'path' ] ) {
+				// string or array, if array, has both rtl and ltr definitions
+				$images[ $iconName ][ 'file' ] = $definition[ 'path' ];
 			}
 		}
 

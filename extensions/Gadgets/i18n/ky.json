@@ -6,7 +6,7 @@
 		]
 	},
 	"prefs-gadgets": "Гаджеттер",
-	"gadgets": "Гаджеттер",
+	"special-gadgets": "Гаджеттер",
 	"gadgetusage-gadget": "Гаджет",
 	"gadgetusage-usercount": "Колдонуучулардын саны",
 	"gadgetusage-noresults": "Гаджеттер табылган жок.",
@@ -17,6 +17,5 @@
 	"gadgets-uses": "Колдонот",
 	"gadgets-export": "Экспорттоо",
 	"gadgets-not-found": "«$1» гаджети табылган жок.",
-	"gadgets-export-download": "Жүктөп алуу",
-	"action-gadgets-definition-edit": "бул гаджеттин аныктамасын түзөтүү"
+	"gadgets-export-download": "Жүктөп алуу"
 }

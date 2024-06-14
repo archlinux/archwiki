@@ -24,6 +24,8 @@
 	"apihelp-discussiontoolsedit-summary": "Publică un mesaj pe o pagină de discuție.",
 	"apihelp-discussiontoolsfindcomment-summary": "Găsiți un comentariu după ID-ul sau numele său.",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "ID-ul sau numele comentariului",
+	"apihelp-discussiontoolsfindcomment-param-heading": "Fragment hash de rubrică",
+	"apihelp-discussiontoolsfindcomment-param-page": "Pagina în care a existat cândva fragmentul hash de rubrică",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Numele subiectelor de verificat",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Obține stările de abonare ale subiectelor date.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Numărul versiunii de utilizat (implicit la cea mai recentă versiune).",

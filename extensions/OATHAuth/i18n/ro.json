@@ -9,10 +9,8 @@
 			"Strainu"
 		]
 	},
-	"specialpages-group-oath": "Autentificare cu doi factori",
 	"oathauth-account": "Numele contului:",
 	"oathauth-enable": "Activează autentificarea cu doi factori",
-	"oathauth-token": "Jeton",
 	"oathauth-disable": "Dezactivează autentificarea cu doi factori",
 	"oathauth-prefs-label": "Autentificare cu doi factori:",
 	"oathauth-step4": "Pasul 4: Verificare",

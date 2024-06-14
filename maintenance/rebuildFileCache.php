@@ -21,6 +21,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Title\Title;
@@ -47,7 +48,7 @@ class RebuildFileCache extends Maintenance {
 		$this->setBatchSize( 100 );
 	}
 
-	public function finalSetup( SettingsBuilder $settingsBuilder = null ) {
+	public function finalSetup( SettingsBuilder $settingsBuilder ) {
 		$this->enabled = $settingsBuilder->getConfig()->get( MainConfigNames::UseFileCache );
 		// Script will handle capturing output and saving it itself
 		$settingsBuilder->putConfigValue( MainConfigNames::UseFileCache, false );
@@ -81,7 +82,7 @@ class RebuildFileCache extends Maintenance {
 
 		$this->output( "Building page file cache from page_id {$start}!\n" );
 
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 		$batchSize = $this->getBatchSize();
 		$overwrite = $this->hasOption( 'overwrite' );
 		$start = ( $start > 0 )
@@ -116,7 +117,7 @@ class RebuildFileCache extends Maintenance {
 		$blockStart = $start;
 		$blockEnd = $start + $batchSize - 1;
 
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		// Go through each page and save the output
 		while ( $blockEnd <= $end ) {
 			// Get the pages

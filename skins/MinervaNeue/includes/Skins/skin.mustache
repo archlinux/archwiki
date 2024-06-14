@@ -14,11 +14,13 @@
 					{{{html-minerva-tagline}}}
 				</div>
 				{{#data-minerva-tabs}}
-					<div class="minerva__tab-container">
+					<ul {{#id}}id="{{.}}"{{/id}} class="minerva__tab-container">
 						{{#items}}
-							<a href="{{href}}" rel="{{rel}}" class="minerva__tab {{class}}" data-event-name="tabs.{{context}}">{{text}}</a>
+							<li class="minerva__tab {{class}}">
+								<a href="{{href}}" rel="{{rel}}" data-event-name="tabs.{{context}}">{{text}}</a>
+							</li>
 						{{/items}}
-					</div>
+					</ul>
 				{{/data-minerva-tabs}}
 				{{#data-minerva-page-actions}}
 				{{>PageActionsMenu}}

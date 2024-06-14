@@ -3,24 +3,27 @@
 	overflow-x: auto;
 
 	.minerva__tab {
-		font-size: @taglineFontSize;
+		font-size: @font-size-tag-line;
 		margin: 0 10px 0 0;
-		color: @color-subtle;
 		font-weight: bold;
 		padding-bottom: 6px;
 		display: inline-block;
 
-		&:visited,
-		&:hover,
-		&:active {
+		a {
+			color: var( --color-subtle );
+		}
+
+		a:visited,
+		a:hover,
+		a:active {
 			text-decoration: none;
 		}
 
-		&.new,
-		&.new:visited,
-		&.new:hover,
-		&.new:active {
-			color: @color-link-new;
+		&.new a,
+		&.new a:visited,
+		&.new a:hover,
+		&.new a:active {
+			color: var( --color-link-red );
 		}
 
 		&:last-child {

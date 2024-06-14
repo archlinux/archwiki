@@ -20,42 +20,45 @@
 
 namespace MediaWiki\Preferences;
 
-use HTMLForm;
-use HTMLFormField;
-use IContextSource;
 use ILanguageConverter;
 use Language;
 use LanguageCode;
 use LanguageConverter;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PasswordAuthenticationRequest;
-use MediaWiki\Config\Config;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
+use MediaWiki\HTMLForm\HTMLFormField;
+use MediaWiki\HTMLForm\HTMLNestedFilterable;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Specials\SpecialWatchlist;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\Options\UserOptionsManager;
 use MediaWiki\User\User;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserGroupMembership;
-use MediaWiki\User\UserOptionsLookup;
-use MediaWiki\User\UserOptionsManager;
 use MediaWiki\User\UserTimeCorrection;
-use Message;
 use MessageLocalizer;
-use MWException;
-use Parser;
+use OOUI\ButtonWidget;
+use OOUI\FieldLayout;
+use OOUI\HtmlSnippet;
+use OOUI\LabelWidget;
 use ParserFactory;
 use ParserOptions;
 use PreferencesFormOOUI;
@@ -116,9 +119,6 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	/** @var SignatureValidatorFactory */
 	private $signatureValidatorFactory;
 
-	/** @var Config */
-	private $config;
-
 	/**
 	 * @internal For use by ServiceWiring
 	 */
@@ -130,6 +130,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		MainConfigNames::DefaultSkin,
 		MainConfigNames::EmailAuthentication,
 		MainConfigNames::EmailConfirmToEdit,
+		MainConfigNames::EnableEditRecovery,
 		MainConfigNames::EnableEmail,
 		MainConfigNames::EnableUserEmail,
 		MainConfigNames::EnableUserEmailMuteList,
@@ -150,7 +151,9 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		MainConfigNames::SecureLogin,
 		MainConfigNames::ScriptPath,
 		MainConfigNames::SignatureValidation,
+		MainConfigNames::SkinsPreferred,
 		MainConfigNames::ThumbLimits,
+		MainConfigNames::ThumbnailNamespaces,
 	];
 
 	/**
@@ -169,7 +172,6 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	 * @param SkinFactory|null $skinFactory
 	 * @param UserGroupManager|null $userGroupManager
 	 * @param SignatureValidatorFactory|null $signatureValidatorFactory
-	 * @param Config|null $config
 	 */
 	public function __construct(
 		ServiceOptions $options,
@@ -186,8 +188,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		ParserFactory $parserFactory = null,
 		SkinFactory $skinFactory = null,
 		UserGroupManager $userGroupManager = null,
-		SignatureValidatorFactory $signatureValidatorFactory = null,
-		Config $config = null
+		SignatureValidatorFactory $signatureValidatorFactory = null
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 
@@ -223,7 +224,6 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		$this->userGroupManager = $userGroupManager ?? $services()->getUserGroupManager();
 		$this->signatureValidatorFactory = $signatureValidatorFactory
 			?? $services()->getSignatureValidatorFactory();
-		$this->config = $config ?? $services()->getMainConfig();
 	}
 
 	/**
@@ -237,7 +237,6 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	}
 
 	/**
-	 * @throws MWException
 	 * @param User $user
 	 * @param IContextSource $context
 	 * @return array
@@ -308,7 +307,6 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 
 	/**
 	 * Loads existing values for a given array of preferences
-	 * @throws MWException
 	 * @param User $user
 	 * @param IContextSource $context
 	 * @param array &$defaultPreferences Array to load values for
@@ -326,7 +324,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 
 		$disable = !$user->isAllowed( 'editmyoptions' );
 
-		$defaultOptions = $this->userOptionsManager->getDefaultOptions();
+		$defaultOptions = $this->userOptionsManager->getDefaultOptions( $user );
 		$userOptions = $this->userOptionsManager->getOptions( $user );
 		$this->applyFilters( $userOptions, $defaultPreferences, 'filterForForm' );
 		// Add in defaults from the user
@@ -353,7 +351,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 				$info['default'] = $globalDefault;
 			} else {
 				$globalDefault = json_encode( $globalDefault );
-				throw new MWException(
+				throw new UnexpectedValueException(
 					"Default '$globalDefault' is invalid for preference $name of user " . $user->getName()
 				);
 			}
@@ -375,7 +373,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 	public static function getPreferenceForField( $name, HTMLFormField $field, array $userOptions ) {
 		$val = $userOptions[$name] ?? null;
 
-		if ( $field instanceof \HTMLNestedFilterable ) {
+		if ( $field instanceof HTMLNestedFilterable ) {
 			$val = [];
 			$prefix = $field->mParams['prefix'] ?? $name;
 			// Fetch all possible preference keys of the given field on this wiki.
@@ -553,7 +551,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			$defaultPreferences['password'] = [
 				'type' => 'info',
 				'raw' => true,
-				'default' => (string)new \OOUI\ButtonWidget( [
+				'default' => (string)new ButtonWidget( [
 					'href' => SpecialPage::getTitleFor( 'ChangePassword' )->getLinkURL( [
 						'returnto' => SpecialPage::getTitleFor( 'Preferences' )->getPrefixedText()
 					] ),
@@ -724,7 +722,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 				// On initial page load, show the warnings as well
 				// (when posting, you get normal validation errors instead)
 				foreach ( $signatureErrors as &$sigError ) {
-					$sigError = new \OOUI\HtmlSnippet( $sigError );
+					$sigError = new HtmlSnippet( $sigError );
 				}
 				if ( !$context->getRequest()->wasPosted() ) {
 					$signatureFieldConfig = [
@@ -739,13 +737,13 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			// Normally HTMLFormFields do not display warnings, so we need to use 'rawrow'
 			// and provide the entire OOUI\FieldLayout here
 			'rawrow' => true,
-			'default' => new \OOUI\FieldLayout(
-				new \OOUI\LabelWidget( [
-					'label' => new \OOUI\HtmlSnippet( $oldsigHTML ),
+			'default' => new FieldLayout(
+				new LabelWidget( [
+					'label' => new HtmlSnippet( $oldsigHTML ),
 				] ),
 				[
 					'align' => 'top',
-					'label' => new \OOUI\HtmlSnippet( $context->msg( 'tog-oldsig' )->parse() )
+					'label' => new HtmlSnippet( $context->msg( 'tog-oldsig' )->parse() )
 				] + $signatureFieldConfig
 			),
 			'section' => 'personal/signature',
@@ -785,7 +783,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 
 				$emailAddress = $user->getEmail() ? htmlspecialchars( $user->getEmail() ) : '';
 				if ( $canEditPrivateInfo && $this->authManager->allowsPropertyChange( 'emailaddress' ) ) {
-					$button = new \OOUI\ButtonWidget( [
+					$button = new ButtonWidget( [
 						'href' => SpecialPage::getTitleFor( 'ChangeEmail' )->getLinkURL( [
 							'returnto' => SpecialPage::getTitleFor( 'Preferences' )->getPrefixedText()
 						] ),
@@ -836,7 +834,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 					} else {
 						$disableEmailPrefs = true;
 						$emailauthenticated = $context->msg( 'emailnotauthenticated' )->parse() . '<br />' .
-							new \OOUI\ButtonWidget( [
+							new ButtonWidget( [
 								'href' => SpecialPage::getTitleFor( 'Confirmemail' )->getLinkURL(),
 								'label' => $context->msg( 'emailconfirmlink' )->text(),
 							] );
@@ -950,6 +948,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 		$validSkinNames = $this->getValidSkinNames( $user, $context );
 		if ( $validSkinNames ) {
 			$defaultPreferences['skin'] = [
+				// @phan-suppress-next-line SecurityCheck-XSS False +ve, label is escaped in generateSkinOptions()
 				'type' => 'radio',
 				'options' => $this->generateSkinOptions( $user, $context, $validSkinNames ),
 				'section' => 'rendering/skin',
@@ -1207,6 +1206,20 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			'section' => 'editing/editor',
 			'label-message' => 'tog-forceeditsummary',
 		];
+
+		// T350653
+		if ( $this->options->get( MainConfigNames::EnableEditRecovery ) ) {
+			$defaultPreferences['editrecovery'] = [
+				'type' => 'toggle',
+				'section' => 'editing/editor',
+				'label-message' => 'tog-editrecovery',
+				'help-message' => [
+					'tog-editrecovery-help',
+					'https://meta.wikimedia.org/wiki/Talk:Community_Wishlist_Survey_2023/Edit-recovery_feature',
+				],
+			];
+		}
+
 		$defaultPreferences['useeditwarning'] = [
 			'type' => 'toggle',
 			'section' => 'editing/editor',
@@ -1351,10 +1364,10 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			foreach ( $editWatchlistModes as $mode => $options ) {
 				// Messages: prefs-editwatchlist-edit, prefs-editwatchlist-raw, prefs-editwatchlist-clear
 				$editWatchlistLinks .=
-					new \OOUI\ButtonWidget( [
+					new ButtonWidget( [
 						'href' => SpecialPage::getTitleFor( 'EditWatchlist', $options['subpage'] )->getLinkURL(),
 						'flags' => $options[ 'flags' ],
-						'label' => new \OOUI\HtmlSnippet(
+						'label' => new HtmlSnippet(
 							$context->msg( "prefs-editwatchlist-{$mode}" )->parse()
 						),
 					] );
@@ -1481,7 +1494,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			'type' => 'api',
 		];
 
-		$tokenButton = new \OOUI\ButtonWidget( [
+		$tokenButton = new ButtonWidget( [
 			'href' => SpecialPage::getTitleFor( 'ResetTokens' )->getLinkURL( [
 				'returnto' => SpecialPage::getTitleFor( 'Preferences' )->getPrefixedText()
 			] ),
@@ -1544,7 +1557,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 
 		// show a preference for thumbnails from namespaces other than NS_FILE,
 		// only when there they're actually configured to be served
-		$thumbNamespaces = $this->config->get( MainConfigNames::ThumbnailNamespaces );
+		$thumbNamespaces = $this->options->get( MainConfigNames::ThumbnailNamespaces );
 		$thumbNamespacesFormatted = array_combine(
 			$thumbNamespaces,
 			array_map(
@@ -1651,7 +1664,7 @@ class DefaultPreferencesFactory implements PreferencesFactory {
 			}
 		}
 
-		$preferredSkins = $this->config->get( MainConfigNames::SkinsPreferred );
+		$preferredSkins = $this->options->get( MainConfigNames::SkinsPreferred );
 		// Sort by the internal name, so that the ordering is the same for each display language,
 		// especially if some skin names are translated to use a different alphabet and some are not.
 		uksort( $validSkinNames, function ( $a, $b ) use ( $currentUserSkin, $preferredSkins ) {

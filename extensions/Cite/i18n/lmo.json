@@ -21,7 +21,6 @@
 	"cite_error_included_references": "Ghe manca l'eticheta de saradura per <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "A gh'è di marcador <code>&lt;ref&gt;</code> per un grup ciamad \"$1\" ma l'è stad trovad nissun marcador <code>&lt;references group=\"$1\"/&gt;</code> corispondent",
 	"cite_error_references_group_mismatch": "L'eticheta <code>&lt;ref&gt;</code> in <code>&lt;references&gt;</code> la gh'hà l'atribud del grup \"$1\" in conflit.",
-	"cite_error_references_missing_group": "L'eticheta <code>&lt;ref&gt;</code> definida in <code>&lt;references&gt;</code> la gh'hà un atribud del grup \"$1\" che 'l compar minga in del test indree.",
 	"cite_error_references_missing_key": "l'eticheta <code>&lt;ref&gt;</code> con nom \"$1\" definid in <code>&lt;references&gt;</code> a l'è minga doprad in del test indree.",
 	"cite_error_references_no_key": "L'eticheta <code>&lt;ref&gt;</code> definida in <code>&lt;references&gt;</code> la gh'hà minga un atribud del nom.",
 	"cite_error_empty_references_define": "L'eticheta <code>&lt;ref&gt;</code> definida in <code>&lt;references&gt;</code> con nom \"$1\" l'è senza contegnud.",

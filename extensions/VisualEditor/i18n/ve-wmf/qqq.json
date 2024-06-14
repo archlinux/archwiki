@@ -25,6 +25,7 @@
 			"Verdy p"
 		]
 	},
+	"editcheck-falsepositives-link": "{{notranslate}}\nLink to the false positives reporting page of EditCheck.\n\nUsed in:\n* {{msg-mw|tag-editcheck-references-activated}}",
 	"tag-editcheck-newcontent": "{{ignored}}Short description of the editcheck-newcontent tag.\n\nHidden tag added when EditCheck thinks new content was added to the page.\n\nSee also:\n* {{msg-mw|Tag-editcheck-newcontent-description}}\n{{Related|tag-newcontent-references-description}}",
 	"tag-editcheck-newcontent-description": "Long description of the editcheck-newcontent tag.\n\nHidden tag added when EditCheck thinks new content was added to the page.\n\nSee also:\n* {{msg-mw|Tag-editcheck-newcontent}}\n{{Related|tag-newcontent-references}}",
 	"tag-editcheck-newreference": "{{ignored}}Short description of the editcheck-newreference tag.\n\nHidden tag added when a reference is added to the page.\n\nSee also:\n* {{msg-mw|Tag-editcheck-newreference-description}}\n{{Related|tag-newreference-references-description}}",
@@ -46,7 +47,6 @@
 	"visualeditor-feedback-tool": "Text of tool in the toolbar that lets users provide feedback.",
 	"visualeditor-help-label": "Display text for the link to the user guide.\n{{Identical|User guide}}",
 	"visualeditor-help-link": "{{optional}}\n\nThis is the page title with interwiki link of the [[:mw:Help:VisualEditor/User guide|VisualEditor user guide in mediawiki.org]].\n\nIf the user guide is translated to your language there, you can put a link to the translated user guide here. Just copy the English string without \"Special:MyLanguage\" and add a slash and your language code in the end. For example, for Japanese write \"mw:Help:VisualEditor/User guide/ja\".",
-	"visualeditor-help-title": "Title (hover) text for the link to the user guide",
 	"visualeditor-welcomedialog-action": "Label for the 'Start editing' button used to close the welcome dialog and start using the editor.\n{{Identical|Start editing}}",
 	"visualeditor-welcomedialog-content": "Text welcoming the user to editing.",
 	"visualeditor-welcomedialog-content-thanks": "This message expresses gratitude for the user's upcoming edit. It may be translated in the context of \"Thank you for this action which helps others discover new things\" or \"(By doing this) you're helping readers learn new things\".",

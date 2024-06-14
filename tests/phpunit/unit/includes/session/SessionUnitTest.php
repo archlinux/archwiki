@@ -1,14 +1,19 @@
 <?php
 
-namespace MediaWiki\Session;
+namespace MediaWiki\Tests\Session;
 
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Session\Session;
+use MediaWiki\Session\SessionId;
 use MediaWikiUnitTestCase;
 use Psr\Log\LogLevel;
+use stdClass;
+use TestLogger;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Session
- * @covers MediaWiki\Session\Session
+ * @covers \MediaWiki\Session\Session
  */
 class SessionUnitTest extends MediaWikiUnitTestCase {
 
@@ -17,12 +22,12 @@ class SessionUnitTest extends MediaWikiUnitTestCase {
 		TestingAccessWrapper::newFromObject( $backend )->requests = [ -1 => 'dummy' ];
 		TestingAccessWrapper::newFromObject( $backend )->id = new SessionId( 'abc' );
 
-		$session = new Session( $backend, 42, new \TestLogger );
+		$session = new Session( $backend, 42, new TestLogger );
 		$priv = TestingAccessWrapper::newFromObject( $session );
 		$this->assertSame( $backend, $priv->backend );
 		$this->assertSame( 42, $priv->index );
 
-		$request = new \MediaWiki\Request\FauxRequest();
+		$request = new FauxRequest();
 		$priv2 = TestingAccessWrapper::newFromObject( $session->sessionWithRequest( $request ) );
 		$this->assertSame( $backend, $priv2->backend );
 		$this->assertNotSame( $priv->index, $priv2->index );
@@ -75,7 +80,7 @@ class SessionUnitTest extends MediaWikiUnitTestCase {
 			[ 'getRequest', [], true ],
 			[ 'getAllowedUserRights', [], false ],
 			[ 'canSetUser', [], false ],
-			[ 'setUser', [ new \stdClass ], false ],
+			[ 'setUser', [ new stdClass ], false ],
 			[ 'suggestLoginUsername', [], true ],
 			[ 'shouldForceHTTPS', [], false ],
 			[ 'setForceHTTPS', [ true ], false ],
@@ -148,7 +153,7 @@ class SessionUnitTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testArrayAccess() {
-		$logger = new \TestLogger;
+		$logger = new TestLogger;
 		$session = TestUtils::getDummySession( null, -1, $logger );
 		$backend = TestingAccessWrapper::newFromObject( $session )->backend;
 

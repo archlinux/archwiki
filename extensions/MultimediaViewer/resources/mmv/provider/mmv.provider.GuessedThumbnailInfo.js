@@ -42,6 +42,7 @@ const Thumbnail = require( '../model/mmv.model.Thumbnail.js' );
 				svg: 1
 			};
 		}
+
 		/**
 		 * File extensions which can be displayed in the browser.
 		 * Other file types need to be thumbnailed even if the size of the original file would be right.
@@ -261,7 +262,7 @@ const Thumbnail = require( '../model/mmv.model.Thumbnail.js' );
 			}
 
 			// we are assuming here that the other thumbnail parameters do not look like a size
-			url = url.replace( sizeRegexp, `${width}px` );
+			url = url.replace( sizeRegexp, `${ width }px` );
 
 			return this.restoreFilename( url, file );
 		}

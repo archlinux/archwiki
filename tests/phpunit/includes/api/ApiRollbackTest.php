@@ -1,5 +1,8 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
+use ApiUsageException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\Title;
 
@@ -10,17 +13,12 @@ use MediaWiki\Title\Title;
  * @group Database
  * @group medium
  *
- * @covers ApiRollback
+ * @covers \ApiRollback
  */
 class ApiRollbackTest extends ApiTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'watchlist', 'watchlist_expiry' ]
-		);
 
 		$this->overrideConfigValue( MainConfigNames::WatchlistExpiry, true );
 	}

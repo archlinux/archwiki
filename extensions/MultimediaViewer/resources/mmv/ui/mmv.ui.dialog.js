@@ -154,14 +154,14 @@ const UiElement = require( './mmv.ui.js' );
 				this.closeDialog();
 				return false;
 			} );
-			$( document ).on( `click.mmv.${this.eventPrefix}`, this.outsideClickHandler );
+			$( document ).on( `click.mmv.${ this.eventPrefix }`, this.outsideClickHandler );
 		}
 
 		/**
 		 * Removes the event handler set up by startListeningToOutsideClick().
 		 */
 		stopListeningToOutsideClick() {
-			$( document ).off( `click.mmv.${this.eventPrefix}`, this.outsideClickHandler );
+			$( document ).off( `click.mmv.${ this.eventPrefix }`, this.outsideClickHandler );
 		}
 
 		/**

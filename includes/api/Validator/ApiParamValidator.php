@@ -7,11 +7,11 @@ use ApiMain;
 use ApiMessage;
 use ApiUsageException;
 use MediaWiki\Message\Converter as MessageConverter;
+use MediaWiki\Message\Message;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
 use MediaWiki\ParamValidator\TypeDef\TagsDef;
 use MediaWiki\ParamValidator\TypeDef\TitleDef;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
-use Message;
 use Wikimedia\Message\DataMessageValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ObjectFactory\ObjectFactory;
@@ -128,7 +128,6 @@ class ApiParamValidator {
 				// Convert the message specification to a DataMessageValue. Flag in the data
 				// that it was so converted, so ApiParamValidatorCallbacks::recordCondition() can
 				// take that into account.
-				// @phan-suppress-next-line PhanTypeMismatchArgument
 				$msg = $this->messageConverter->convertMessage( ApiMessage::create( $v ) );
 				$v = DataMessageValue::new(
 					$msg->getKey(),
@@ -434,7 +433,7 @@ class ApiParamValidator {
 		foreach ( $ret as &$m ) {
 			$k = $m->getKey();
 			$m = $this->messageConverter->convertMessageValue( $m );
-			if ( substr( $k, 0, 20 ) === 'paramvalidator-help-' ) {
+			if ( str_starts_with( $k, 'paramvalidator-help-' ) ) {
 				$m = new Message(
 					[ 'api-help-param-' . substr( $k, 20 ), $k ],
 					$m->getParams()

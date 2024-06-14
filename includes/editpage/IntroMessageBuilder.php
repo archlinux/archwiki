@@ -3,7 +3,8 @@
 namespace MediaWiki\EditPage;
 
 use LogEventsList;
-use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Block\Block;
+use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Config\Config;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\RawMessage;
@@ -26,6 +27,7 @@ use MessageLocalizer;
 use RepoGroup;
 use Skin;
 use SkinFactory;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
@@ -50,11 +52,13 @@ class IntroMessageBuilder {
 	private TempUserCreator $tempUserCreator;
 	private UserFactory $userFactory;
 	private RestrictionStore $restrictionStore;
+	private DatabaseBlockStore $blockStore;
 	private ReadOnlyMode $readOnlyMode;
 	private SpecialPageFactory $specialPageFactory;
 	private RepoGroup $repoGroup;
 	private NamespaceInfo $namespaceInfo;
 	private SkinFactory $skinFactory;
+	private IConnectionProvider $dbProvider;
 
 	public function __construct(
 		Config $config,
@@ -64,11 +68,13 @@ class IntroMessageBuilder {
 		TempUserCreator $tempUserCreator,
 		UserFactory $userFactory,
 		RestrictionStore $restrictionStore,
+		DatabaseBlockStore $blockStore,
 		ReadOnlyMode $readOnlyMode,
 		SpecialPageFactory $specialPageFactory,
 		RepoGroup $repoGroup,
 		NamespaceInfo $namespaceInfo,
-		SkinFactory $skinFactory
+		SkinFactory $skinFactory,
+		IConnectionProvider $dbProvider
 	) {
 		$this->config = $config;
 		$this->linkRenderer = $linkRenderer;
@@ -77,11 +83,13 @@ class IntroMessageBuilder {
 		$this->tempUserCreator = $tempUserCreator;
 		$this->userFactory = $userFactory;
 		$this->restrictionStore = $restrictionStore;
+		$this->blockStore = $blockStore;
 		$this->readOnlyMode = $readOnlyMode;
 		$this->specialPageFactory = $specialPageFactory;
 		$this->repoGroup = $repoGroup;
 		$this->namespaceInfo = $namespaceInfo;
 		$this->skinFactory = $skinFactory;
+		$this->dbProvider = $dbProvider;
 	}
 
 	/**
@@ -310,7 +318,7 @@ class IntroMessageBuilder {
 			$validation = UserRigorOptions::RIGOR_NONE;
 			$user = $this->userFactory->newFromName( $username, $validation );
 			$ip = $this->userNameUtils->isIP( $username );
-			$block = DatabaseBlock::newFromTarget( $user, $user );
+			$block = $this->blockStore->newFromTarget( $user, $user );
 
 			$userExists = ( $user && $user->isRegistered() );
 			if ( $userExists && $user->isHidden() && !$performer->isAllowed( 'hideuser' ) ) {
@@ -330,7 +338,7 @@ class IntroMessageBuilder {
 				);
 			} elseif (
 				$block !== null &&
-				$block->getType() !== DatabaseBlock::TYPE_AUTO &&
+				$block->getType() !== Block::TYPE_AUTO &&
 				(
 					$block->isSitewide() ||
 					$this->permManager->isBlockedFrom(
@@ -427,13 +435,13 @@ class IntroMessageBuilder {
 	): void {
 		# Give a notice if the user is editing a deleted/moved page...
 		if ( !$page->exists() ) {
-			$dbr = wfGetDB( DB_REPLICA );
+			$dbr = $this->dbProvider->getReplicaDatabase();
 
 			$messages->addWithKey(
 				'recreate-moveddeleted-warn',
 				$this->getLogExtract( [ 'delete', 'move' ], $page, '', [
 					'lim' => 10,
-					'conds' => [ 'log_action != ' . $dbr->addQuotes( 'revision' ) ],
+					'conds' => [ $dbr->expr( 'log_action', '!=', 'revision' ) ],
 					'showIfEmpty' => false,
 					'msgKey' => [ 'recreate-moveddeleted-warn' ],
 				] )

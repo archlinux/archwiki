@@ -4,11 +4,11 @@ namespace MediaWiki\Extension\AbuseFilter\Pager;
 
 use MediaWiki\Extension\AbuseFilter\AbuseFilterChangesList;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Pager\ReverseChronologicalPager;
 use MediaWiki\Title\Title;
 use RecentChange;
-use ReverseChronologicalPager;
 use stdClass;
-use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 class AbuseFilterExaminePager extends ReverseChronologicalPager {
 	/**
@@ -31,18 +31,18 @@ class AbuseFilterExaminePager extends ReverseChronologicalPager {
 	/**
 	 * @param AbuseFilterChangesList $changesList
 	 * @param LinkRenderer $linkRenderer
-	 * @param IDatabase $dbr
+	 * @param IReadableDatabase $dbr
 	 * @param Title $title
 	 * @param array $conds
 	 */
 	public function __construct(
 		AbuseFilterChangesList $changesList,
 		LinkRenderer $linkRenderer,
-		IDatabase $dbr,
+		IReadableDatabase $dbr,
 		Title $title,
 		array $conds
 	) {
-		// Set database before parent constructor to avoid setting it there with wfGetDB
+		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbr;
 		parent::__construct( $changesList, $linkRenderer );
 		$this->changesList = $changesList;

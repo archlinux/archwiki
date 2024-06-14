@@ -20,8 +20,8 @@
 
 namespace MediaWiki\EditPage;
 
-use IContextSource;
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Page\PageIdentity;
@@ -214,7 +214,5 @@ class TemplatesOnThisPageFormatter {
 
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( TemplatesOnThisPageFormatter::class, 'TemplatesOnThisPageFormatter' );

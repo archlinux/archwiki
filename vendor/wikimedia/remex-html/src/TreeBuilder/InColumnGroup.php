@@ -9,16 +9,16 @@ use Wikimedia\RemexHtml\Tokenizer\Attributes;
  */
 class InColumnGroup extends InsertionMode {
 	public function characters( $text, $start, $length, $sourceStart, $sourceLength ) {
-		list( $part1, $part2 ) = $this->splitInitialMatch(
+		[ $part1, $part2 ] = $this->splitInitialMatch(
 			true, "\t\n\f\r ", $text, $start, $length, $sourceStart, $sourceLength );
 
-		list( $start, $length, $sourceStart, $sourceLength ) = $part1;
+		[ $start, $length, $sourceStart, $sourceLength ] = $part1;
 		if ( $length !== 0 ) {
 			$this->builder->insertCharacters( $text, $start, $length,
 				$sourceStart, $sourceLength );
 		}
 
-		list( $start, $length, $sourceStart, $sourceLength ) = $part2;
+		[ $start, $length, $sourceStart, $sourceLength ] = $part2;
 
 		if ( $length === 0 ) {
 			// All done with this sequence
@@ -46,30 +46,30 @@ class InColumnGroup extends InsertionMode {
 		$stack = $builder->stack;
 
 		switch ( $name ) {
-		case 'html':
-			$dispatcher->inBody->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'html':
+				$dispatcher->inBody->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		case 'col':
-			$dispatcher->ack = true;
-			$builder->insertElement( $name, $attrs, true, $sourceStart, $sourceLength );
-			break;
+			case 'col':
+				$dispatcher->ack = true;
+				$builder->insertElement( $name, $attrs, true, $sourceStart, $sourceLength );
+				break;
 
-		case 'template':
-			$dispatcher->inHead->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'template':
+				$dispatcher->inHead->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			if ( $stack->current->htmlName !== 'colgroup' ) {
-				$builder->error( 'start tag should close the colgroup but another element is open',
-					$sourceStart );
-				// Ignore
-				return;
-			} else {
-				$builder->pop( $sourceStart, 0 );
-			}
-			$this->dispatcher->switchMode( Dispatcher::IN_TABLE )
-				->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+			default:
+				if ( $stack->current->htmlName !== 'colgroup' ) {
+					$builder->error( 'start tag should close the colgroup but another element is open',
+						$sourceStart );
+					// Ignore
+					return;
+				} else {
+					$builder->pop( $sourceStart, 0 );
+				}
+				$this->dispatcher->switchMode( Dispatcher::IN_TABLE )
+					->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
 		}
 	}
 
@@ -79,35 +79,35 @@ class InColumnGroup extends InsertionMode {
 		$stack = $builder->stack;
 
 		switch ( $name ) {
-		case 'colgroup':
-			if ( $stack->current->htmlName !== 'colgroup' ) {
-				$builder->error( '</colgroup> found but another element is open, ignoring',
-					$sourceStart );
-				return;
-			}
-			$builder->pop( $sourceStart, $sourceLength );
-			$dispatcher->switchMode( Dispatcher::IN_TABLE );
-			break;
+			case 'colgroup':
+				if ( $stack->current->htmlName !== 'colgroup' ) {
+					$builder->error( '</colgroup> found but another element is open, ignoring',
+						$sourceStart );
+					return;
+				}
+				$builder->pop( $sourceStart, $sourceLength );
+				$dispatcher->switchMode( Dispatcher::IN_TABLE );
+				break;
 
-		case 'col':
-			$builder->error( '</col> found in column group mode, ignoring', $sourceStart );
-			break;
+			case 'col':
+				$builder->error( '</col> found in column group mode, ignoring', $sourceStart );
+				break;
 
-		case 'template':
-			$dispatcher->inHead->endTag( $name, $sourceStart, $sourceLength );
-			break;
+			case 'template':
+				$dispatcher->inHead->endTag( $name, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			if ( $stack->current->htmlName !== 'colgroup' ) {
-				$builder->error( 'non-matching end tag should close the colgroup ' .
-					' but another element is open', $sourceStart );
-				// Ignore
-				return;
-			} else {
-				$builder->pop( $sourceStart, 0 );
-			}
-			$dispatcher->switchMode( Dispatcher::IN_TABLE )
-				->endTag( $name, $sourceStart, $sourceLength );
+			default:
+				if ( $stack->current->htmlName !== 'colgroup' ) {
+					$builder->error( 'non-matching end tag should close the colgroup ' .
+						' but another element is open', $sourceStart );
+					// Ignore
+					return;
+				} else {
+					$builder->pop( $sourceStart, 0 );
+				}
+				$dispatcher->switchMode( Dispatcher::IN_TABLE )
+					->endTag( $name, $sourceStart, $sourceLength );
 		}
 	}
 

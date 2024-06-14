@@ -3,9 +3,9 @@ namespace MediaWiki\Skins\Vector\Components;
 
 use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
+use MediaWiki\User\UserIdentity;
 use MessageLocalizer;
 use Skin;
-use User;
 
 /**
  * VectorComponentMainMenu component
@@ -13,8 +13,6 @@ use User;
 class VectorComponentMainMenu implements VectorComponent {
 	/** @var VectorComponent|null */
 	private $optOut;
-	/** @var VectorComponent|null */
-	private $alert;
 	/** @var array */
 	private $sidebarData;
 	/** @var array */
@@ -30,21 +28,17 @@ class VectorComponentMainMenu implements VectorComponent {
 
 	/**
 	 * @param array $sidebarData
-	 * @param bool $shouldLanguageAlertBeInSidebar
-	 * @param int $numLanguages
 	 * @param array $languageData
 	 * @param MessageLocalizer $localizer
-	 * @param User $user
+	 * @param UserIdentity $user
 	 * @param FeatureManager $featureManager
 	 * @param Skin $skin
 	 */
 	public function __construct(
 		array $sidebarData,
-		bool $shouldLanguageAlertBeInSidebar,
-		int $numLanguages,
 		array $languageData,
 		MessageLocalizer $localizer,
-		User $user,
+		UserIdentity $user,
 		FeatureManager $featureManager,
 		Skin $skin
 	) {
@@ -63,9 +57,6 @@ class VectorComponentMainMenu implements VectorComponent {
 		if ( $user->isRegistered() ) {
 			$this->optOut = new VectorComponentMainMenuActionOptOut( $skin );
 		}
-		if ( $shouldLanguageAlertBeInSidebar ) {
-			$this->alert = new VectorComponentMainMenuActionLanguageSwitchAlert( $skin, $numLanguages );
-		}
 	}
 
 	/**
@@ -73,7 +64,6 @@ class VectorComponentMainMenu implements VectorComponent {
 	 */
 	public function getTemplateData(): array {
 		$action = $this->optOut;
-		$alert = $this->alert;
 		$pinnableHeader = $this->pinnableHeader;
 
 		$portletsRest = [];
@@ -90,8 +80,6 @@ class VectorComponentMainMenu implements VectorComponent {
 			'data-portlets-first' => $firstPortlet->getTemplateData(),
 			'array-portlets-rest' => $portletsRest,
 			'data-main-menu-action' => $action ? $action->getTemplateData() : null,
-			// T295555 Add language switch alert message temporarily (to be removed).
-			'data-vector-language-switch-alert' => $alert ? $alert->getTemplateData() : null,
 			'data-pinnable-header' => $pinnableHeader ? $pinnableHeader->getTemplateData() : null,
 			'data-languages' => $languageMenu->getTemplateData(),
 		];

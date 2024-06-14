@@ -10,17 +10,12 @@ use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\DOMProcessor as ExtDOMProcessor;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Utils\DOMUtils;
-use Wikimedia\Parsoid\Utils\PHPUtils;
 
 /**
  * See tests/parser/ParserTestParserHook.php in core.
  */
 class ParserHookProcessor extends ExtDOMProcessor {
 
-	/**
-	 * @param Node $node
-	 * @param stdClass $obj
-	 */
 	public function staticTagPostProcessor(
 		Node $node, stdClass $obj
 	): void {
@@ -46,7 +41,6 @@ class ParserHookProcessor extends ExtDOMProcessor {
 		// Pass an object since we want the data to be carried around across
 		// nodes in the DOM. Passing an array won't work since visitDOM doesn't
 		// use a reference on its end. Maybe we could fix that separately.
-		DOMUtils::visitDOM( $node, [ $this, 'staticTagPostProcessor' ],
-			PHPUtils::arrayToObject( [ 'buf' => '' ] ) );
+		DOMUtils::visitDOM( $node, [ $this, 'staticTagPostProcessor' ], (object)[ 'buf' => '' ] );
 	}
 }

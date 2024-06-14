@@ -316,6 +316,8 @@
 	"visualeditor-preference-tabs-prefer-ve": "Секогаш давај ми го нагледниот уредник, ако е можно",
 	"visualeditor-preference-tabs-prefer-wt": "Секогаш давај ми го изворното уредување",
 	"visualeditor-preference-tabs-remember-last": "Запомни го последниот употребен уредувач",
+	"visualeditor-preference-collab-label": "Соработно уредување",
+	"visualeditor-preference-collab-description": "Поканете други корисници да ви се придружат во вашето нагледно уредување.",
 	"visualeditor-rebase-client-export": "Извези",
 	"visualeditor-rebase-client-export-start": "Извоз…",
 	"visualeditor-rebase-client-import": "Увези",

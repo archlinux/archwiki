@@ -49,7 +49,5 @@
 	"cite-ve-referenceslist-missingref": "Ši nuoroda yra apibrėžta šablone arba kitame sugeneruotame bloke ir kol kas gali būti redaguojama tik išeities teksto režimu.",
 	"cite-ve-referenceslist-missingreflist": "Šis nuorodų sąrašas sukurtas pagal šabloną.",
 	"cite-ve-toolbar-group-label": "Cituoti",
-	"cite-ve-othergroup-item": "$1 nuoroda",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Išnašos",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nuorodų grupės pavadinimas: „$1“"
+	"cite-ve-othergroup-item": "$1 nuoroda"
 }

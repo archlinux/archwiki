@@ -3,7 +3,6 @@
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Status\Status;
 use Wikimedia\Message\MessageValue;
-use Wikimedia\TestingAccessWrapper;
 
 /**
  * @author Addshore
@@ -12,7 +11,7 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideValues
-	 * @covers Status::newGood
+	 * @covers \MediaWiki\Status\Status::newGood
 	 */
 	public function testNewGood( $value = null ) {
 		$status = Status::newGood( $value );
@@ -32,7 +31,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::newFatal
+	 * @covers \MediaWiki\Status\Status::newFatal
 	 */
 	public function testNewFatalWithMessage() {
 		$message = $this->getMockMessage();
@@ -43,7 +42,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::newFatal
+	 * @covers \MediaWiki\Status\Status::newFatal
 	 */
 	public function testNewFatalWithString() {
 		$message = 'foo';
@@ -54,7 +53,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::__get
+	 * @covers \MediaWiki\Status\Status::__get
 	 */
 	public function testOkAndErrorsGetters() {
 		$status = Status::newGood( 'foo' );
@@ -74,7 +73,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::__set
+	 * @covers \MediaWiki\Status\Status::__set
 	 */
 	public function testOkSetter() {
 		$status = new Status();
@@ -86,7 +85,7 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideSetResult
-	 * @covers Status::setResult
+	 * @covers \MediaWiki\Status\Status::setResult
 	 */
 	public function testSetResult( $ok, $value = null ) {
 		$status = new Status();
@@ -106,8 +105,8 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideIsOk
-	 * @covers Status::setOK
-	 * @covers Status::isOK
+	 * @covers \MediaWiki\Status\Status::setOK
+	 * @covers \MediaWiki\Status\Status::isOK
 	 */
 	public function testIsOk( $ok ) {
 		$status = new Status();
@@ -123,7 +122,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::getValue
+	 * @covers \MediaWiki\Status\Status::getValue
 	 */
 	public function testGetValue() {
 		$status = new Status();
@@ -133,7 +132,7 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideIsGood
-	 * @covers Status::isGood
+	 * @covers \MediaWiki\Status\Status::isGood
 	 */
 	public function testIsGood( $ok, $errors, $expected ) {
 		$status = new Status();
@@ -155,9 +154,9 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideMockMessageDetails
-	 * @covers Status::warning
-	 * @covers Status::getWarningsArray
-	 * @covers Status::getStatusArray
+	 * @covers \MediaWiki\Status\Status::warning
+	 * @covers \MediaWiki\Status\Status::getWarningsArray
+	 * @covers \MediaWiki\Status\Status::getStatusArray
 	 */
 	public function testWarningWithMessage( $mockDetails ) {
 		$status = new Status();
@@ -170,17 +169,17 @@ class StatusTest extends MediaWikiLangTestCase {
 
 		$this->assertSameSize( $messages, $warnings );
 		foreach ( $messages as $key => $message ) {
-			$expectedArray = array_merge( [ $message->getKey() ], $message->getParams() );
+			$expectedArray = [ $message->getKey(), ...$message->getParams() ];
 			$this->assertEquals( $expectedArray, $warnings[$key] );
 		}
 	}
 
 	/**
 	 * @dataProvider provideMockMessageDetails
-	 * @covers Status::error
-	 * @covers Status::getErrorsArray
-	 * @covers Status::getStatusArray
-	 * @covers Status::getErrors
+	 * @covers \MediaWiki\Status\Status::error
+	 * @covers \MediaWiki\Status\Status::getErrorsArray
+	 * @covers \MediaWiki\Status\Status::getStatusArray
+	 * @covers \MediaWiki\Status\Status::getErrors
 	 */
 	public function testErrorWithMessage( $mockDetails ) {
 		$status = new Status();
@@ -193,16 +192,16 @@ class StatusTest extends MediaWikiLangTestCase {
 
 		$this->assertSameSize( $messages, $errors );
 		foreach ( $messages as $key => $message ) {
-			$expectedArray = array_merge( [ $message->getKey() ], $message->getParams() );
+			$expectedArray = [ $message->getKey(), ...$message->getParams() ];
 			$this->assertEquals( $expectedArray, $errors[$key] );
 		}
 	}
 
 	/**
 	 * @dataProvider provideMockMessageDetails
-	 * @covers Status::fatal
-	 * @covers Status::getErrorsArray
-	 * @covers Status::getStatusArray
+	 * @covers \MediaWiki\Status\Status::fatal
+	 * @covers \MediaWiki\Status\Status::getErrorsArray
+	 * @covers \MediaWiki\Status\Status::getStatusArray
 	 */
 	public function testFatalWithMessage( $mockDetails ) {
 		$status = new Status();
@@ -215,7 +214,7 @@ class StatusTest extends MediaWikiLangTestCase {
 
 		$this->assertSameSize( $messages, $errors );
 		foreach ( $messages as $key => $message ) {
-			$expectedArray = array_merge( [ $message->getKey() ], $message->getParams() );
+			$expectedArray = [ $message->getKey(), ...$message->getParams() ];
 			$this->assertEquals( $expectedArray, $errors[$key] );
 		}
 		$this->assertStatusNotOK( $status );
@@ -235,13 +234,13 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	public static function provideMockMessageDetails() {
 		return [
-			[ [ 'key1' => [ 'foo' => 'bar' ] ] ],
-			[ [ 'key1' => [ 'foo' => 'bar' ], 'key2' => [ 'foo2' => 'bar2' ] ] ],
+			[ [ 'key1' => [ 'bar' ] ] ],
+			[ [ 'key1' => [ 'bar' ], 'key2' => [ 'bar2' ] ] ],
 		];
 	}
 
 	/**
-	 * @covers Status::merge
+	 * @covers \MediaWiki\Status\Status::merge
 	 */
 	public function testMerge() {
 		$status1 = new Status();
@@ -259,7 +258,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::merge
+	 * @covers \MediaWiki\Status\Status::merge
 	 */
 	public function testMergeWithOverwriteValue() {
 		$status1 = new Status();
@@ -279,7 +278,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::hasMessage
+	 * @covers \MediaWiki\Status\Status::hasMessage
 	 */
 	public function testHasMessage() {
 		$status = new Status();
@@ -296,7 +295,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::hasMessagesExcept
+	 * @covers \MediaWiki\Status\Status::hasMessagesExcept
 	 */
 	public function testHasMessagesExcept() {
 		$status = new Status();
@@ -315,29 +314,38 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideCleanParams
-	 * @covers Status::cleanParams
+	 * @covers \MediaWiki\Status\Status::getWikiText
 	 */
-	public function testCleanParams( $cleanCallback, $params, $expected ) {
-		$status = TestingAccessWrapper::newFromObject( new Status() );
-		$status->cleanCallback = $cleanCallback;
+	public function testCleanParams( $cleanCallback, $params, $expected, $unexpected ) {
+		$this->setUserLang( 'qqx' );
 
-		$this->assertEquals( $expected, $status->cleanParams( $params ) );
+		$status = new Status();
+		$status->cleanCallback = $cleanCallback;
+		$status->warning( 'ok', ...$params );
+
+		$wikitext = $status->getWikiText();
+		$this->assertStringContainsString( $expected, $wikitext );
+		$this->assertStringNotContainsString( $unexpected, $wikitext );
+
+		$html = $status->getHTML();
+		$this->assertStringContainsString( $expected, $html );
+		$this->assertStringNotContainsString( $unexpected, $html );
 	}
 
 	public static function provideCleanParams() {
 		$cleanCallback = static function ( $value ) {
-			return '-' . $value . '-';
+			return 'xxx';
 		};
 
 		return [
-			[ false, [ 'foo' => 'bar' ], [ 'foo' => 'bar' ] ],
-			[ $cleanCallback, [ 'foo' => 'bar' ], [ 'foo' => '-bar-' ] ],
+			[ false, [ 'secret' ], 'secret', 'xxx' ],
+			[ $cleanCallback, [ 'secret' ], 'xxx', 'secret' ],
 		];
 	}
 
 	/**
 	 * @dataProvider provideGetWikiTextAndHtml
-	 * @covers Status::getWikiText
+	 * @covers \MediaWiki\Status\Status::getWikiText
 	 */
 	public function testGetWikiText(
 		Status $status, $wikitext, $wrappedWikitext, $html, $wrappedHtml
@@ -349,7 +357,7 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideGetWikiTextAndHtml
-	 * @covers Status::getHtml
+	 * @covers \MediaWiki\Status\Status::getHtml
 	 */
 	public function testGetHtml(
 		Status $status, $wikitext, $wrappedWikitext, $html, $wrappedHtml
@@ -369,24 +377,24 @@ class StatusTest extends MediaWikiLangTestCase {
 
 		$testCases['GoodStatus'] = [
 			new Status(),
-			"Internal error: MediaWiki\Status\Status::getWikiText called for a good result, this is incorrect\n",
-			"(wrap-short: (internalerror_info: MediaWiki\Status\Status::getWikiText called for a good result, " .
-				"this is incorrect\n))",
-			"<p>Internal error: MediaWiki\Status\Status::getWikiText called for a good result, this is incorrect\n</p>",
-			"<p>(wrap-short: (internalerror_info: MediaWiki\Status\Status::getWikiText called for a good result, " .
-				"this is incorrect\n))\n</p>",
+			"Internal error: MediaWiki\Status\StatusFormatter::getWikiText called for a good result, this is incorrect&#10;",
+			"(wrap-short: (internalerror_info: MediaWiki\Status\StatusFormatter::getWikiText called for a good result, " .
+				"this is incorrect&#10;))",
+			"<p>Internal error: MediaWiki\Status\StatusFormatter::getWikiText called for a good result, this is incorrect&#10;\n</p>",
+			"<p>(wrap-short: (internalerror_info: MediaWiki\Status\StatusFormatter::getWikiText called for a good result, " .
+				"this is incorrect&#10;))\n</p>",
 		];
 
 		$status = new Status();
 		$status->setOK( false );
 		$testCases['GoodButNoError'] = [
 			$status,
-			"Internal error: MediaWiki\Status\Status::getWikiText: Invalid result object: no error text but not OK\n",
-			"(wrap-short: (internalerror_info: MediaWiki\Status\Status::getWikiText: Invalid result object: " .
-				"no error text but not OK\n))",
-			"<p>Internal error: MediaWiki\Status\Status::getWikiText: Invalid result object: no error text but not OK\n</p>",
-			"<p>(wrap-short: (internalerror_info: MediaWiki\Status\Status::getWikiText: Invalid result object: " .
-				"no error text but not OK\n))\n</p>",
+			"Internal error: MediaWiki\Status\StatusFormatter::getWikiText: Invalid result object: no error text but not OK&#10;",
+			"(wrap-short: (internalerror_info: MediaWiki\Status\StatusFormatter::getWikiText: Invalid result object: " .
+				"no error text but not OK&#10;))",
+			"<p>Internal error: MediaWiki\Status\StatusFormatter::getWikiText: Invalid result object: no error text but not OK&#10;\n</p>",
+			"<p>(wrap-short: (internalerror_info: MediaWiki\Status\StatusFormatter::getWikiText: Invalid result object: " .
+				"no error text but not OK&#10;))\n</p>",
 		];
 
 		$status = new Status();
@@ -448,7 +456,7 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideGetMessage
-	 * @covers Status::getMessage
+	 * @covers \MediaWiki\Status\Status::getMessage
 	 */
 	public function testGetMessage(
 		Status $status, $expectedParams, $expectedKey, $expectedWrapper
@@ -486,7 +494,7 @@ class StatusTest extends MediaWikiLangTestCase {
 
 		$testCases['GoodStatus'] = [
 			new Status(),
-			[ "MediaWiki\Status\Status::getMessage called for a good result, this is incorrect\n" ],
+			[ "MediaWiki\Status\StatusFormatter::getMessage called for a good result, this is incorrect&#10;" ],
 			'internalerror_info',
 			'wrapper-short'
 		];
@@ -495,7 +503,7 @@ class StatusTest extends MediaWikiLangTestCase {
 		$status->setOK( false );
 		$testCases['GoodButNoError'] = [
 			$status,
-			[ "MediaWiki\Status\Status::getMessage: Invalid result object: no error text but not OK\n" ],
+			[ "MediaWiki\Status\StatusFormatter::getMessage: Invalid result object: no error text but not OK&#10;" ],
 			'internalerror_info',
 			'wrapper-short'
 		];
@@ -549,7 +557,7 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideGetPsr3MessageAndContext
-	 * @covers Status::getPsr3MessageAndContext
+	 * @covers \MediaWiki\Status\Status::getPsr3MessageAndContext
 	 */
 	public function testGetPsr3MessageAndContext(
 		array $errors,
@@ -576,7 +584,7 @@ class StatusTest extends MediaWikiLangTestCase {
 			// parameters to Status::error() calls as array of arrays; expected message; expected context
 			'no errors' => [
 				[],
-				"Internal error: MediaWiki\Status\Status::getWikiText called for a good result, this is incorrect\n",
+				"Internal error: MediaWiki\Status\StatusFormatter::getWikiText called for a good result, this is incorrect&#10;",
 				[],
 			],
 			// make sure that the rawmessage_2 hack works as the following tests rely on it
@@ -630,7 +638,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::replaceMessage
+	 * @covers \MediaWiki\Status\Status::replaceMessage
 	 */
 	public function testReplaceMessage() {
 		$status = new Status();
@@ -644,7 +652,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::replaceMessage
+	 * @covers \MediaWiki\Status\Status::replaceMessage
 	 */
 	public function testReplaceMessageByKey() {
 		$status = new Status();
@@ -658,62 +666,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::getErrorMessage
-	 */
-	public function testGetErrorMessage() {
-		$status = TestingAccessWrapper::newFromObject( new Status() );
-		$key = 'foo';
-		$params = [ 'bar' ];
-
-		/** @var Message $message */
-		$message = $status->getErrorMessage( array_merge( [ $key ], $params ) );
-		$this->assertInstanceOf( Message::class, $message );
-		$this->assertEquals( $key, $message->getKey() );
-		$this->assertEquals( $params, $message->getParams() );
-	}
-
-	/**
-	 * @covers Status::getErrorMessage
-	 */
-	public function testGetErrorMessageComplexParam() {
-		$status = TestingAccessWrapper::newFromObject( new Status() );
-		$key = 'foo';
-		$params = [ 'bar', Message::numParam( 5 ) ];
-
-		/** @var Message $message */
-		$message = $status->getErrorMessage( array_merge( [ $key ], $params ) );
-		$this->assertInstanceOf( Message::class, $message );
-		$this->assertEquals( $key, $message->getKey() );
-		$this->assertEquals( $params, $message->getParams() );
-	}
-
-	/**
-	 * @covers Status::getErrorMessageArray
-	 */
-	public function testGetErrorMessageArray() {
-		$status = TestingAccessWrapper::newFromObject( new Status() );
-		$key = 'foo';
-		$params = [ 'bar' ];
-
-		/** @var Message[] $messageArray */
-		$messageArray = $status->getErrorMessageArray(
-			[
-				array_merge( [ $key ], $params ),
-				array_merge( [ $key ], $params )
-			]
-		);
-
-		$this->assertIsArray( $messageArray );
-		$this->assertCount( 2, $messageArray );
-		foreach ( $messageArray as $message ) {
-			$this->assertInstanceOf( Message::class, $message );
-			$this->assertEquals( $key, $message->getKey() );
-			$this->assertEquals( $params, $message->getParams() );
-		}
-	}
-
-	/**
-	 * @covers Status::getErrorsByType
+	 * @covers \MediaWiki\Status\Status::getErrorsByType
 	 */
 	public function testGetErrorsByType() {
 		$status = new Status();
@@ -732,7 +685,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::__wakeup
+	 * @covers \MediaWiki\Status\Status::__wakeup
 	 */
 	public function testWakeUpSanitizesCallback() {
 		$status = new Status();
@@ -745,7 +698,7 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideNonObjectMessages
-	 * @covers Status::getStatusArray
+	 * @covers \MediaWiki\Status\Status::getStatusArray
 	 */
 	public function testGetStatusArrayWithNonObjectMessages( $nonObjMsg ) {
 		$status = new Status();
@@ -770,8 +723,8 @@ class StatusTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideErrorsWarningsOnly
-	 * @covers Status::splitByErrorType
-	 * @covers StatusValue::splitByErrorType
+	 * @covers \MediaWiki\Status\Status::splitByErrorType
+	 * @covers \StatusValue::splitByErrorType
 	 */
 	public function testGetErrorsWarningsOnlyStatus( $errorText, $warningText, $type, $errorResult,
 		$warningResult
@@ -851,21 +804,19 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::setMessageLocalizer
+	 * @covers \MediaWiki\Status\Status::setMessageLocalizer
 	 */
 	public function testSetContext() {
 		$status = Status::newFatal( 'foo' );
 		$status->fatal( 'bar' );
 
-		$messageLocalizer = $this->getMockBuilder( MessageLocalizer::class )
-			->onlyMethods( [ 'msg' ] )
-			->getMockForAbstractClass();
+		$messageLocalizer = $this->createNoOpMock( IContextSource::class, [ 'msg' ] );
 		$messageLocalizer->expects( $this->atLeastOnce() )
 			->method( 'msg' )
 			->willReturnCallback( static function ( $key ) {
 				return new RawMessage( $key );
 			} );
-		/** @var MessageLocalizer $messageLocalizer */
+
 		$status->setMessageLocalizer( $messageLocalizer );
 		$status->getWikiText();
 		$status->getWikiText( false, false, 'en' );
@@ -876,13 +827,13 @@ class StatusTest extends MediaWikiLangTestCase {
 		yield [ [ 'foo', 1, 2 ], [ 'foo', 1, 2 ] ];
 		$message = new Message( 'foo', [ 1, 2 ] );
 		yield [ $message, $message ];
-		yield [ $message, array_merge( [ $message->getKey() ], $message->getParams() ) ];
-		yield [ array_merge( [ $message->getKey() ], $message->getParams() ), $message ];
+		yield [ $message, [ 'foo', 1, 2 ] ];
+		yield [ [ 'foo', 1, 2 ], $message ];
 	}
 
 	/**
 	 * @dataProvider provideDuplicates
-	 * @covers Status::error
+	 * @covers \MediaWiki\Status\Status::error
 	 */
 	public function testDuplicateError( $error1, $error2 ) {
 		$status = Status::newGood();
@@ -914,7 +865,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::warning
+	 * @covers \MediaWiki\Status\Status::warning
 	 */
 	public function testDuplicateWarning() {
 		$status = Status::newGood();
@@ -933,8 +884,8 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::error
-	 * @covers Status::warning
+	 * @covers \MediaWiki\Status\Status::error
+	 * @covers \MediaWiki\Status\Status::warning
 	 */
 	public function testErrorNotDowngradedToWarning() {
 		$status = Status::newGood();
@@ -953,8 +904,8 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::error
-	 * @covers Status::warning
+	 * @covers \MediaWiki\Status\Status::error
+	 * @covers \MediaWiki\Status\Status::warning
 	 */
 	public function testErrorNotDowngradedToWarningMessage() {
 		$status = Status::newGood();
@@ -974,8 +925,8 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::error
-	 * @covers Status::warning
+	 * @covers \MediaWiki\Status\Status::error
+	 * @covers \MediaWiki\Status\Status::warning
 	 */
 	public function testWarningUpgradedToError() {
 		$status = Status::newGood();
@@ -994,8 +945,8 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::error
-	 * @covers Status::warning
+	 * @covers \MediaWiki\Status\Status::error
+	 * @covers \MediaWiki\Status\Status::warning
 	 */
 	public function testWarningUpgradedToErrorMessage() {
 		$status = Status::newGood();
@@ -1017,7 +968,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	/**
 	 * Ensure that two MessageSpecifiers that have the same key and params are considered
 	 * identical even if they are different instances.
-	 * @covers Status::error
+	 * @covers \MediaWiki\Status\Status::error
 	 */
 	public function testCompareMessages() {
 		$status = Status::newGood();
@@ -1029,7 +980,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::merge
+	 * @covers \MediaWiki\Status\Status::merge
 	 */
 	public function testDuplicateMerge() {
 		$status1 = Status::newGood();
@@ -1063,7 +1014,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::error
+	 * @covers \MediaWiki\Status\Status::error
 	 */
 	public function testNotDuplicateIfKeyDiffers() {
 		$status = Status::newGood();
@@ -1087,7 +1038,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::error
+	 * @covers \MediaWiki\Status\Status::error
 	 */
 	public function testNotDuplicateIfParamsDiffer() {
 		$status = Status::newGood();
@@ -1108,7 +1059,7 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Status::__toString
+	 * @covers \MediaWiki\Status\Status::__toString
 	 */
 	public function testToString() {
 		$loremIpsum = 'Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor' .

@@ -3,9 +3,9 @@
  * Must be constructed after the model is initialized.
  *
  * @class mw.rcfilters.ui.FormWrapperWidget
+ * @ignore
  * @extends OO.ui.Widget
  *
- * @constructor
  * @param {mw.rcfilters.dm.FiltersViewModel} filtersModel Changes list view model
  * @param {mw.rcfilters.dm.ChangesListViewModel} changeListModel Changes list view model
  * @param {mw.rcfilters.Controller} controller RCfilters controller
@@ -16,7 +16,7 @@ var FormWrapperWidget = function MwRcfiltersUiFormWrapperWidget( filtersModel, c
 	config = config || {};
 
 	// Parent
-	FormWrapperWidget.parent.call( this, $.extend( {}, config, {
+	FormWrapperWidget.super.call( this, $.extend( {}, config, {
 		$element: $formRoot
 	} ) );
 
@@ -144,8 +144,7 @@ FormWrapperWidget.prototype.cleanUpFieldset = function () {
 	this.$element.find( '.rclinks, .cldays, .wlinfo' ).detach();
 
 	if ( !this.$element.find( '.mw-recentchanges-table tr' ).length ) {
-		this.$element.find( '.mw-recentchanges-table' ).detach();
-		this.$element.find( 'hr' ).detach();
+		this.$element.find( '.mw-recentchanges-table, hr' ).detach();
 	}
 
 	// Get rid of all <br>s, which are inside rcshowhide

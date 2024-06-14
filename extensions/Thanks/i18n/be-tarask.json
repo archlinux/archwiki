@@ -38,7 +38,6 @@
 	"echo-pref-subscription-edit-thank": "Дзякуе мне за маю праўку",
 	"echo-pref-tooltip-edit-thank": "Паведаміць мне, калі нехта дзякуе за мае праўкі.",
 	"echo-category-title-edit-thank": "Падзякі",
-	"notification-thanks-diff-link": "вашае рэдагаваньне",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|падзякаваў|падзякавала}} {{GENDER:$4|вам}} за вашую праўку на старонцы <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 {{GENDER:$2|падзякаваў|падзякавала}} {{GENDER:$4|вам}} за стварэньне старонкі <strong>$3</strong>.",
 	"notification-header-log-thank": "$1 {{GENDER:$2|падзякаваў|падзякавала}} {{GENDER:$4|вам}} за дзеяньне на старонцы <strong>$3</strong>.",
@@ -57,7 +56,6 @@
 	"thanks-error-invalidpostid": "Ідэнтыфікатар допісу памылковы.",
 	"flow-thanks-confirmation-special": "Вы хочаце даслаць публічную падзяку за гэты камэнтар?",
 	"flow-thanks-thanked-notice": "{{GENDER:$3|Вы}} падзякавалі $1 за {{GENDER:$2|ягоны|ейны|іхні}} камэнтар.",
-	"notification-flow-thanks-post-link": "выш камэнтар",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|падзякаваў|падзякавала}} {{GENDER:$5|вам}} за камэнтар у «<strong>$3</strong>».",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$2|падзякаваў|падзякавала}} {{GENDER:$3|вам}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Адна асоба падзякавала|$1 асобаў падзякавалі|100=>99 асобаў падзякавалі}} {{GENDER:$3|вам}} за камэнтар на «<strong>$2</strong>»."

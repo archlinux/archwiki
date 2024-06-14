@@ -2,6 +2,8 @@
 
 namespace Wikimedia\WikiPEG;
 
+use InvalidArgumentException;
+
 class DefaultTracer implements Tracer {
 	private $indentLevel = 0;
 
@@ -23,7 +25,7 @@ class DefaultTracer implements Tracer {
 			break;
 
 		default:
-			throw new \Exception( "Invalid event type {$event['type']}" );
+			throw new InvalidArgumentException( "Invalid event type {$event['type']}" );
 		}
 	}
 

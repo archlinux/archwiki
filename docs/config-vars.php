@@ -169,15 +169,6 @@ $wgLogo = null;
 $wgLogos = null;
 
 /**
- * Config variable stub for the LogoHD setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::LogoHD
- * @deprecated since 1.35. Developers should retrieve this logo (and other variants) using
- *    the static function MediaWiki\ResourceLoader\SkinModule::getAvailableLogos.
- *    $wgLogos should be used instead.
- */
-$wgLogoHD = null;
-
-/**
  * Config variable stub for the Favicon setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::Favicon
  */
@@ -243,6 +234,12 @@ $wgUploadStashMaxAge = null;
  * @see MediaWiki\MainConfigSchema::EnableAsyncUploads
  */
 $wgEnableAsyncUploads = null;
+
+/**
+ * Config variable stub for the EnableAsyncUploadsByURL setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::EnableAsyncUploadsByURL
+ */
+$wgEnableAsyncUploadsByURL = null;
 
 /**
  * Config variable stub for the UploadMaintenance setting, for use by phpdoc and IDEs.
@@ -852,6 +849,12 @@ $wgResponsiveImages = null;
 $wgImagePreconnect = null;
 
 /**
+ * Config variable stub for the DjvuUseBoxedCommand setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::DjvuUseBoxedCommand
+ */
+$wgDjvuUseBoxedCommand = null;
+
+/**
  * Config variable stub for the DjvuDump setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::DjvuDump
  */
@@ -1098,6 +1101,12 @@ $wgDBssl = null;
 $wgDBcompress = null;
 
 /**
+ * Config variable stub for the DBStrictWarnings setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::DBStrictWarnings
+ */
+$wgDBStrictWarnings = null;
+
+/**
  * Config variable stub for the DBadminuser setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::DBadminuser
  */
@@ -1258,13 +1267,6 @@ $wgContentHandlers = null;
  * @see MediaWiki\MainConfigSchema::NamespaceContentModels
  */
 $wgNamespaceContentModels = null;
-
-/**
- * Config variable stub for the ContentHandlerTextFallback setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::ContentHandlerTextFallback
- * @deprecated since 1.37
- */
-$wgContentHandlerTextFallback = null;
 
 /**
  * Config variable stub for the TextModelsToParse setting, for use by phpdoc and IDEs.
@@ -1477,12 +1479,6 @@ $wgSessionCacheType = null;
 $wgLanguageConverterCacheType = null;
 
 /**
- * Config variable stub for the StatsCacheType setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::StatsCacheType
- */
-$wgStatsCacheType = null;
-
-/**
  * Config variable stub for the ObjectCaches setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::ObjectCaches
  */
@@ -1495,6 +1491,12 @@ $wgObjectCaches = null;
 $wgWANObjectCache = null;
 
 /**
+ * Config variable stub for the MicroStashType setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::MicroStashType
+ */
+$wgMicroStashType = null;
+
+/**
  * Config variable stub for the MainStash setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::MainStash
  */
@@ -1505,6 +1507,12 @@ $wgMainStash = null;
  * @see MediaWiki\MainConfigSchema::ParsoidCacheConfig
  */
 $wgParsoidCacheConfig = null;
+
+/**
+ * Config variable stub for the ParserCacheFilterConfig setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::ParserCacheFilterConfig
+ */
+$wgParserCacheFilterConfig = null;
 
 /**
  * Config variable stub for the ChronologyProtectorStash setting, for use by phpdoc and IDEs.
@@ -1729,13 +1737,6 @@ $wgCdnServers = null;
 $wgCdnServersNoPurge = null;
 
 /**
- * Config variable stub for the SquidPurgeUseHostHeader setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::SquidPurgeUseHostHeader
- * @deprecated since 1.33
- */
-$wgSquidPurgeUseHostHeader = null;
-
-/**
  * Config variable stub for the HTCPRouting setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::HTCPRouting
  */
@@ -1938,18 +1939,6 @@ $wgMimeType = null;
  * @see MediaWiki\MainConfigSchema::Html5Version
  */
 $wgHtml5Version = null;
-
-/**
- * Config variable stub for the HTMLFormAllowTableFormat setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::HTMLFormAllowTableFormat
- */
-$wgHTMLFormAllowTableFormat = null;
-
-/**
- * Config variable stub for the UseMediaWikiUIEverywhere setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::UseMediaWikiUIEverywhere
- */
-$wgUseMediaWikiUIEverywhere = null;
 
 /**
  * Config variable stub for the EditSubmitButtonLabelPublish setting, for use by phpdoc and IDEs.
@@ -2343,13 +2332,6 @@ $wgAllowExternalImagesFrom = null;
 $wgEnableImageWhitelist = null;
 
 /**
- * Config variable stub for the AllowImageTag setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::AllowImageTag
- * @deprecated since 1.35; register an extension tag named <img> instead.
- */
-$wgAllowImageTag = null;
-
-/**
  * Config variable stub for the TidyConfig setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::TidyConfig
  */
@@ -2574,20 +2556,6 @@ $wgChangeCredentialsBlacklist = null;
 $wgRemoveCredentialsBlacklist = null;
 
 /**
- * Config variable stub for the MinimalPasswordLength setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::MinimalPasswordLength
- * @deprecated since 1.26, use $wgPasswordPolicy's MinimalPasswordLength.
- */
-$wgMinimalPasswordLength = null;
-
-/**
- * Config variable stub for the MaximalPasswordLength setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::MaximalPasswordLength
- * @deprecated since 1.26, use $wgPasswordPolicy's MaximalPasswordLength.
- */
-$wgMaximalPasswordLength = null;
-
-/**
  * Config variable stub for the InvalidPasswordReset setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::InvalidPasswordReset
  */
@@ -2646,6 +2614,12 @@ $wgReservedUsernames = null;
  * @see MediaWiki\MainConfigSchema::DefaultUserOptions
  */
 $wgDefaultUserOptions = null;
+
+/**
+ * Config variable stub for the ConditionalUserOptions setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::ConditionalUserOptions
+ */
+$wgConditionalUserOptions = null;
 
 /**
  * Config variable stub for the HiddenPrefs setting, for use by phpdoc and IDEs.
@@ -2724,6 +2698,18 @@ $wgBlockDisablesLogin = null;
  * @see MediaWiki\MainConfigSchema::EnablePartialActionBlocks
  */
 $wgEnablePartialActionBlocks = null;
+
+/**
+ * Config variable stub for the EnableMultiBlocks setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::EnableMultiBlocks
+ */
+$wgEnableMultiBlocks = null;
+
+/**
+ * Config variable stub for the BlockTargetMigrationStage setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::BlockTargetMigrationStage
+ */
+$wgBlockTargetMigrationStage = null;
 
 /**
  * Config variable stub for the WhitelistRead setting, for use by phpdoc and IDEs.
@@ -2906,6 +2892,12 @@ $wgHideUserContribLimit = null;
 $wgAccountCreationThrottle = null;
 
 /**
+ * Config variable stub for the TempAccountCreationThrottle setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::TempAccountCreationThrottle
+ */
+$wgTempAccountCreationThrottle = null;
+
+/**
  * Config variable stub for the SpamRegex setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::SpamRegex
  */
@@ -2994,6 +2986,12 @@ $wgGrantPermissions = null;
  * @see MediaWiki\MainConfigSchema::GrantPermissionGroups
  */
 $wgGrantPermissionGroups = null;
+
+/**
+ * Config variable stub for the GrantRiskGroups setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::GrantRiskGroups
+ */
+$wgGrantRiskGroups = null;
 
 /**
  * Config variable stub for the EnableBotPasswords setting, for use by phpdoc and IDEs.
@@ -3152,12 +3150,6 @@ $wgCookiePath = null;
 $wgCookieSecure = null;
 
 /**
- * Config variable stub for the DisableCookieCheck setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::DisableCookieCheck
- */
-$wgDisableCookieCheck = null;
-
-/**
  * Config variable stub for the CookiePrefix setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::CookiePrefix
  */
@@ -3174,12 +3166,6 @@ $wgCookieHttpOnly = null;
  * @see MediaWiki\MainConfigSchema::CookieSameSite
  */
 $wgCookieSameSite = null;
-
-/**
- * Config variable stub for the UseSameSiteLegacyCookies setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::UseSameSiteLegacyCookies
- */
-$wgUseSameSiteLegacyCookies = null;
 
 /**
  * Config variable stub for the CacheVaryCookies setting, for use by phpdoc and IDEs.
@@ -3396,14 +3382,6 @@ $wgAdvancedSearchHighlighting = null;
  * @see MediaWiki\MainConfigSchema::SearchHighlightBoundaries
  */
 $wgSearchHighlightBoundaries = null;
-
-/**
- * Config variable stub for the OpenSearchTemplate setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::OpenSearchTemplate
- * @deprecated since 1.25 Use $wgOpenSearchTemplates['application/x-suggestions+json']
- *    instead
- */
-$wgOpenSearchTemplate = null;
 
 /**
  * Config variable stub for the OpenSearchTemplates setting, for use by phpdoc and IDEs.
@@ -3886,6 +3864,12 @@ $wgExtensionMessagesFiles = null;
 $wgMessagesDirs = null;
 
 /**
+ * Config variable stub for the TranslationAliasesDirs setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::TranslationAliasesDirs
+ */
+$wgTranslationAliasesDirs = null;
+
+/**
  * Config variable stub for the ExtensionEntryPointListFiles setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::ExtensionEntryPointListFiles
  */
@@ -3944,12 +3928,6 @@ $wgJobTypesExcludedFromDefaultQueue = null;
  * @see MediaWiki\MainConfigSchema::JobBackoffThrottling
  */
 $wgJobBackoffThrottling = null;
-
-/**
- * Config variable stub for the JobSerialCommitThreshold setting, for use by phpdoc and IDEs.
- * @see MediaWiki\MainConfigSchema::JobSerialCommitThreshold
- */
-$wgJobSerialCommitThreshold = null;
 
 /**
  * Config variable stub for the JobTypeConf setting, for use by phpdoc and IDEs.
@@ -4290,6 +4268,12 @@ $wgShellboxUrls = null;
 $wgShellboxSecretKey = null;
 
 /**
+ * Config variable stub for the ShellboxShell setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::ShellboxShell
+ */
+$wgShellboxShell = null;
+
+/**
  * Config variable stub for the HTTPTimeout setting, for use by phpdoc and IDEs.
  * @see MediaWiki\MainConfigSchema::HTTPTimeout
  */
@@ -4438,3 +4422,21 @@ $wgSpecialContributeSkinsEnabled = null;
  * @see MediaWiki\MainConfigSchema::EnableEditRecovery
  */
 $wgEnableEditRecovery = null;
+
+/**
+ * Config variable stub for the EditRecoveryExpiry setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::EditRecoveryExpiry
+ */
+$wgEditRecoveryExpiry = null;
+
+/**
+ * Config variable stub for the UseCodexSpecialBlock setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::UseCodexSpecialBlock
+ */
+$wgUseCodexSpecialBlock = null;
+
+/**
+ * Config variable stub for the ShowLogoutConfirmation setting, for use by phpdoc and IDEs.
+ * @see MediaWiki\MainConfigSchema::ShowLogoutConfirmation
+ */
+$wgShowLogoutConfirmation = null;

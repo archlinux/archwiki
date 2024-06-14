@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel Node tests.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 QUnit.module( 've.dm.Node' );
@@ -18,6 +18,10 @@ OO.inheritClass( ve.dm.NodeStub, ve.dm.LeafNode );
 ve.dm.NodeStub.static.name = 'stub';
 
 ve.dm.NodeStub.static.matchTagNames = [];
+
+ve.dm.NodeStub.static.resetAttributesForClone = function ( clonedElement ) {
+	clonedElement.attributes.counter = 0;
+};
 
 ve.dm.nodeFactory.register( ve.dm.NodeStub );
 
@@ -114,12 +118,16 @@ QUnit.test( 'canBeMergedWith', function ( assert ) {
 		node2 = new ve.dm.BranchNodeStub( {}, [ node1 ] ),
 		node3 = new ve.dm.BranchNodeStub( {}, [ node2 ] ),
 		node4 = new ve.dm.LeafNodeStub(),
-		node5 = new ve.dm.BranchNodeStub( {}, [ node4 ] );
+		node5 = new ve.dm.BranchNodeStub( {}, [ node4 ] ),
+		heading1 = new ve.dm.HeadingNode( { type: 'heading', attributes: { level: 1 } } ),
+		heading2 = new ve.dm.HeadingNode( { type: 'heading', attributes: { level: 2 } } );
 
 	assert.strictEqual( node3.canBeMergedWith( node5 ), true, 'same level, same type' );
 	assert.strictEqual( node2.canBeMergedWith( node5 ), false, 'different level, same type' );
 	assert.strictEqual( node2.canBeMergedWith( node1 ), false, 'different level, different type' );
 	assert.strictEqual( node2.canBeMergedWith( node4 ), false, 'same level, different type' );
+	assert.strictEqual( heading1.canBeMergedWith( heading2 ), false, 'headings of different levels can\'t be merged' );
+	assert.strictEqual( heading1.canBeMergedWith( heading1 ), true, 'headings of samve level can be merged' );
 } );
 
 QUnit.test( 'getClonedElement', function ( assert ) {
@@ -192,12 +200,48 @@ QUnit.test( 'getClonedElement', function ( assert ) {
 					type: 'foo'
 				},
 				msg: 'internal property is removed if it only contained .generated'
+			},
+			{
+				original: {
+					type: 'foo',
+					attributes: {
+						mode: 'bar',
+						counter: 5
+					}
+				},
+				clone: {
+					type: 'foo',
+					attributes: {
+						mode: 'bar',
+						counter: 5
+					}
+				},
+				msg: 'attributes preserved in normal clone'
+			},
+			{
+				original: {
+					type: 'foo',
+					attributes: {
+						mode: 'bar',
+						counter: 5
+					}
+				},
+				clone: {
+					type: 'foo',
+					attributes: {
+						mode: 'bar',
+						counter: 0
+					}
+				},
+				resetAttributes: true,
+				msg: 'some attributes reset by resetAttributes'
 			}
 		];
 
 	cases.forEach( function ( caseItem ) {
 		var node = new ve.dm.NodeStub( caseItem.original );
 		node.setDocument( doc );
-		assert.deepEqual( node.getClonedElement( caseItem.preserveGenerated ), caseItem.clone, caseItem.msg );
+		var clonedElement = node.getClonedElement( caseItem.preserveGenerated, caseItem.resetAttributes );
+		assert.deepEqual( clonedElement, caseItem.clone, caseItem.msg );
 	} );
 } );

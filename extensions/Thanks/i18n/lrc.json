@@ -14,11 +14,9 @@
 	"thanks": "فرسنئن منمونداری",
 	"echo-pref-subscription-edit-thank": "منموندار مه سی ویرایشتم",
 	"echo-category-title-edit-thank": "منمون",
-	"notification-thanks-diff-link": "ویرایشت شما",
 	"log-name-thanks": "پهرستنومه منمون بیئنی یا",
 	"log-description-thanks": "د هار یه گل نوم که کاروریایی هئ که کاروریا هنی دشو تشکر کردنه",
 	"logentry-thanks-thank": "$1 {{GENDER:$2|منموندار بیه}} {{GENDER:$4|$3}}",
 	"notification-link-text-view-post": "دیئن ویر و باور",
-	"flow-thanks-confirmation-special": "آیا میهایت سی ای ویر و باور یه گل تشکر کل بکیت؟",
-	"notification-flow-thanks-post-link": "ویر و باور شما"
+	"flow-thanks-confirmation-special": "آیا میهایت سی ای ویر و باور یه گل تشکر کل بکیت؟"
 }

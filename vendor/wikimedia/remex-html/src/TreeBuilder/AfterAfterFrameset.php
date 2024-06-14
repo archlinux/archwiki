@@ -17,18 +17,18 @@ class AfterAfterFrameset extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'html':
-			$dispatcher->inBody->startTag( $name, $attrs, $selfClose,
-				$sourceStart, $sourceLength );
-			break;
+			case 'html':
+				$dispatcher->inBody->startTag( $name, $attrs, $selfClose,
+					$sourceStart, $sourceLength );
+				break;
 
-		case 'noframes':
-			$dispatcher->inHead->startTag( $name, $attrs, $selfClose,
-				$sourceStart, $sourceLength );
-			break;
+			case 'noframes':
+				$dispatcher->inHead->startTag( $name, $attrs, $selfClose,
+					$sourceStart, $sourceLength );
+				break;
 
-		default:
-			$builder->error( "unexpected start tag after after frameset", $sourceStart );
+			default:
+				$builder->error( "unexpected start tag after after frameset", $sourceStart );
 		}
 	}
 

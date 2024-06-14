@@ -24,7 +24,6 @@
 	"cite_error_included_references": "<code>&lt;references&gt;</code>માં બંધ કરવાનો ટેગ ખૂટે છે",
 	"cite_error_group_refs_without_references": "\"$1\" નામના સમૂહમાં <code>&lt;ref&gt;</code> ટેગ વિહરમાન છે, પણ તેને અનુરૂપ <code>&lt;references group=\"$1\"/&gt;</code> ટેગ ન મળ્યો",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code> ટેગને  <code>&lt;references&gt;</code> માં આ વિરોધાભાસી લક્ષણ છે : \"$1\".",
-	"cite_error_references_missing_group": "<code>&lt;references&gt;</code>માં વ્યાખ્યાયીત <code>&lt;ref&gt;</code> ટેગનો સમૂહ ગુણ \"$1\" છે જે પહેલાંની પહેલાંના લેખનમાં નથી.",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code> માં વ્યાખ્યાયિત  $1\" નામ સાથેનું <code>&lt;ref&gt;</code> ટેગ આગળના લેખનમાં વપરાયો નથી.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> ટેગની વ્યાખ્યા <code>&lt;references&gt;</code> ને કોઈ નામકરણ નથી.",
 	"cite_error_empty_references_define": "\"$1\" નામના <code>&lt;references&gt;</code>માં વ્યાખ્યાયિત ટેગ <code>&lt;ref&gt;</code>માં કોઇ માહિતી નથી.",

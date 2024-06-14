@@ -52,6 +52,8 @@
 
 // phpcs:disable MediaWiki.Usage.DeprecatedGlobalVariables
 use MediaWiki\Config\SiteConfiguration;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\HookContainer\FauxGlobalHookArray;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Logger\LoggerFactory;
@@ -133,8 +135,9 @@ if ( !interface_exists( LoggerInterface::class ) ) {
 	trigger_error( $message, E_USER_ERROR );
 }
 
-// Set $wgCommandLineMode to false if it wasn't set to true.
-$wgCommandLineMode ??= false;
+// Deprecated global variable for backwards-compatibility.
+// New code should check MW_ENTRY_POINT directly.
+$wgCommandLineMode = MW_ENTRY_POINT === 'cli';
 
 /**
  * $wgConf hold the site configuration.
@@ -270,7 +273,7 @@ if ( $wgBaseDirectory !== MW_INSTALL_PATH ) {
 }
 
 // Start time limit
-if ( $wgRequestTimeLimit && !$wgCommandLineMode ) {
+if ( $wgRequestTimeLimit && MW_ENTRY_POINT !== 'cli' ) {
 	RequestTimeout::singleton()->setWallTimeLimit( $wgRequestTimeLimit );
 }
 
@@ -360,13 +363,11 @@ if ( $wgCanonicalServer === false ) {
 }
 $wgVirtualRestConfig['global']['domain'] = $wgCanonicalServer;
 
-$serverParts = wfParseUrl( $wgCanonicalServer );
 if ( $wgServerName !== false ) {
 	wfWarn( '$wgServerName should be derived from $wgCanonicalServer, '
 		. 'not customized. Overwriting $wgServerName.' );
 }
-$wgServerName = $serverParts['host'];
-unset( $serverParts );
+$wgServerName = parse_url( $wgCanonicalServer, PHP_URL_HOST );
 
 // $wgEmergencyContact and $wgPasswordSender may be false or empty string (T104142)
 if ( !$wgEmergencyContact ) {
@@ -426,10 +427,10 @@ if ( $wgRequest->getCookie( 'UseDC', '' ) === 'master' ) {
 
 // Useful debug output
 ( static function () {
-	global $wgCommandLineMode, $wgRequest;
+	global $wgRequest;
 
 	$logger = LoggerFactory::getInstance( 'wfDebug' );
-	if ( $wgCommandLineMode ) {
+	if ( MW_ENTRY_POINT === 'cli' ) {
 		$self = $_SERVER['PHP_SELF'] ?? '';
 		$logger->debug( "\n\nStart command line script $self" );
 	} else {
@@ -464,7 +465,7 @@ if ( MW_ENTRY_POINT === 'index' ) {
  * @var MediaWiki\Session\SessionId|null $wgInitialSessionId The persistent session ID (if any) loaded at startup
  */
 $wgInitialSessionId = null;
-if ( !defined( 'MW_NO_SESSION' ) && !$wgCommandLineMode ) {
+if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
 	// If session.auto_start is there, we can't touch session name
 	if ( $wgPHPSessionHandling !== 'disable' && !wfIniGetBool( 'session.auto_start' ) ) {
 		HeaderCallback::warnIfHeadersSent();
@@ -573,7 +574,7 @@ unset( $func ); // no global pollution; destroy reference
 
 // If the session user has a 0 id but a valid name, that means we need to
 // autocreate it.
-if ( !defined( 'MW_NO_SESSION' ) && !$wgCommandLineMode ) {
+if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
 	$sessionUser = MediaWiki\Session\SessionManager::getGlobalSession()->getUser();
 	if ( $sessionUser->getId() === 0 &&
 		MediaWikiServices::getInstance()->getUserNameUtils()->isValid( $sessionUser->getName() )
@@ -594,7 +595,7 @@ if ( !defined( 'MW_NO_SESSION' ) && !$wgCommandLineMode ) {
 }
 
 // Optimization: Avoid overhead from DeferredUpdates and Pingback deps when turned off.
-if ( !$wgCommandLineMode && $wgPingback ) {
+if ( MW_ENTRY_POINT !== 'cli' && $wgPingback ) {
 	// NOTE: Do not refactor to inject Config or otherwise make unconditional service call.
 	//
 	// On a plain install of MediaWiki, Pingback is likely the *only* feature
@@ -622,6 +623,6 @@ global $wgFullyInitialised;
 $wgFullyInitialised = true;
 
 // T264370
-if ( !defined( 'MW_NO_SESSION' ) && !$wgCommandLineMode ) {
+if ( !defined( 'MW_NO_SESSION' ) && MW_ENTRY_POINT !== 'cli' ) {
 	MediaWiki\Session\SessionManager::singleton()->logPotentialSessionLeakage();
 }

@@ -28,7 +28,6 @@
 	"cite_error_included_references": "Trūksta <code>&lt;references&gt;</code> uždarymo žymos",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> žymės egzistuoja grupei vardu \"$1\", bet atitinkama <code>&lt;references group=\"$1\"/&gt;</code> žymė buvo nerasta",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code> žymė, esanti <code>&lt;references&gt;</code>, turi nesutampantį grupės atributą \"$1\".",
-	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> žymė, apibrėžta <code>&lt;references&gt;</code>, neturi grupės atributo \"$1\", kuris nebuvo nurodytas ir ankstesniame tekste.",
 	"cite_error_references_missing_key": "<code>&lt;ref&gt;</code> žymė vardu \"$1\", apibrėžta <code>&lt;references&gt;</code>, nėra naudojama ankstesniame tekste.",
 	"cite_error_references_no_key": "<code>&lt;ref&gt;</code> žymė, apibrėžta <code>&lt;references&gt;</code>, neturi vardo atributo.",
 	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> žymė, apibrėžta <code>&lt;references&gt;</code>, su vardu \"$1\", neturi turinio.",

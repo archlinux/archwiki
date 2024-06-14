@@ -18,29 +18,27 @@
  * @file
  */
 
-use MediaWiki\Extension\OATHAuth\OATHAuthDatabase;
 use MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * @author Taavi Väänänen <hi@taavi.wtf>
  * @group Database
  */
 class OATHAuthModuleRegistryTest extends MediaWikiIntegrationTestCase {
-	/** @var string[] */
-	protected $tablesUsed = [ 'oathauth_types' ];
-
 	/**
 	 * @covers \MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry::getModuleIds
 	 */
 	public function testGetModuleIds() {
-		$this->db->insert(
-			'oathauth_types',
-			[ 'oat_name' => 'first' ],
-			__METHOD__
-		);
+		$this->db->newInsertQueryBuilder()
+			->insertInto( 'oathauth_types' )
+			->row( [ 'oat_name' => 'first' ] )
+			->caller( __METHOD__ )
+			->execute();
 
-		$database = $this->createMock( OATHAuthDatabase::class );
-		$database->method( 'getDB' )->willReturn( $this->db );
+		$database = $this->createMock( IConnectionProvider::class );
+		$database->method( 'getPrimaryDatabase' )->with( 'virtual-oathauth' )->willReturn( $this->db );
+		$database->method( 'getReplicaDatabase' )->with( 'virtual-oathauth' )->willReturn( $this->db );
 
 		$registry = new OATHAuthModuleRegistry(
 			$database,

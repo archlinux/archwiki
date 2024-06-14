@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright © 2013 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
@@ -20,11 +21,15 @@
  * @file
  */
 
+namespace MediaWiki\Tests\Api\Query;
+
+use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\User\User;
 use PHPUnit\Framework\ExpectationFailedException;
 use SebastianBergmann\Comparator\ComparisonFailure;
 
-/** This class has some common functionality for testing query module
+/**
+ * This class has some common functionality for testing query module
  */
 abstract class ApiQueryTestBase extends ApiTestCase {
 
@@ -99,9 +104,7 @@ STR;
 		$appendModule = false, User $user = null
 	) {
 		[ $req, $exp ] = $this->validateRequestExpectedPair( $values );
-		if ( !array_key_exists( 'action', $req ) ) {
-			$req['action'] = 'query';
-		}
+		$req['action'] ??= 'query';
 		foreach ( $req as &$val ) {
 			if ( is_array( $val ) ) {
 				$val = implode( '|', array_unique( $val ) );
@@ -154,3 +157,5 @@ STR;
 		return array_merge( $result );
 	}
 }
+
+class_alias( ApiQueryTestBase::class, 'ApiQueryTestBase' );

@@ -18,7 +18,6 @@
 	"cite_error_included_ref": "caay kataneng <code>&lt;ref&gt;</code>aazihen-paya a pahezek aazihen-paya  <code>&lt;/ref&gt;</code>",
 	"cite_error_group_refs_without_references": "pisaungay luyaluy kalungangan \"$1\" a <code>&lt;ref&gt;</code> aazihen-paya mamueneng tu, caykatepa patatapalen a <code>&lt;references group=\"$1\"/&gt;</code> aazihen-paya，saca caay kataneng <code>&lt;/ref&gt;</code> pahezek aazihen-paya.",
 	"cite_error_references_group_mismatch": "i <code>&lt;references&gt;</code> a <code>&lt;ref&gt;</code> aazihen-paya group susin sasula’cus \"$1\"",
-	"cite_error_references_missing_group": "ihekal nu <code>&lt;ref&gt;</code> satetekay a<code>&lt;references&gt;</code> aazihen-paya izaw ku setin group susin ku \"$1\", uyzasa iayaway a sulit caay misaungay.",
 	"cite_error_references_missing_key": "i <code>&lt;references&gt;</code> satetekay a <code>&lt;ref&gt;</code> aazihen-paya misetin name susin ku \"$1\", uyzasa iayaway a sulit caay henay misaungay.",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code> satetekay <code>&lt;ref&gt;</code> inayi’ misetin name susin",
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> misatetekay a <code>&lt;ref&gt;</code> a name susin \"$1\" inayi’ amahicahica a lacul",

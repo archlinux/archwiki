@@ -19,7 +19,7 @@ use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
  */
 class ListHandler extends TokenHandler {
 	/** @var array<ListFrame> */
-	private $listFrames;
+	private array $listFrames = [];
 	/** @var ?ListFrame */
 	private $currListFrame;
 	/** @var int */
@@ -57,7 +57,6 @@ class ListHandler extends TokenHandler {
 	 */
 	public function __construct( TokenTransformManager $manager, array $options ) {
 		parent::__construct( $manager, $options );
-		$this->listFrames = [];
 		$this->reset();
 	}
 
@@ -254,7 +253,7 @@ class ListHandler extends TokenHandler {
 			if ( $this->currListFrame ) {
 				// Ignoring colons inside tags to prevent illegal overlapping.
 				// Attempts to mimic findColonNoLinks in the php parser.
-				$bullets = $token->getAttribute( 'bullets' );
+				$bullets = $token->getAttributeV( 'bullets' );
 				if ( PHPUtils::lastItem( $bullets ) === ':'
 					&& $this->currListFrame->numOpenTags > 0
 				) {
@@ -265,7 +264,7 @@ class ListHandler extends TokenHandler {
 				$this->currListFrame = new ListFrame;
 			}
 			// convert listItem to list and list item tokens
-			$res = $this->doListItem( $this->currListFrame->bstack, $token->getAttribute( 'bullets' ),
+			$res = $this->doListItem( $this->currListFrame->bstack, $token->getAttributeV( 'bullets' ),
 				$token );
 			return new TokenHandlerResult( $res );
 		}
@@ -466,7 +465,7 @@ class ListHandler extends TokenHandler {
 
 			for ( $i = $prefixLen + $prefixCorrection; $i < count( $bn ); $i++ ) {
 				if ( !self::$bullet_chars_map[$bn[$i]] ) {
-					throw new \Exception( 'Unknown node prefix ' . $prefix[$i] );
+					throw new \InvalidArgumentException( 'Unknown node prefix ' . $prefix[$i] );
 				}
 
 				// Each list item in the chain gets one bullet.

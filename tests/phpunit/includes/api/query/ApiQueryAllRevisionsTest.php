@@ -1,17 +1,17 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
+use MediaWiki\Tests\Api\ApiTestCase;
+use MediaWiki\Title\Title;
+
 /**
  * @group API
  * @group Database
  * @group medium
- * @covers ApiQueryAllRevisions
+ * @covers \ApiQueryAllRevisions
  */
 class ApiQueryAllRevisionsTest extends ApiTestCase {
-
-	protected function setUp(): void {
-		parent::setUp();
-		$this->tablesUsed[] = 'revision';
-	}
 
 	/**
 	 * @group medium

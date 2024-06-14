@@ -1,15 +1,16 @@
 <?php
 
-namespace MediaWiki\Api\Validator;
+namespace MediaWiki\Tests\Api\Validator;
 
 use ApiBase;
 use ApiMain;
 use ApiMessage;
-use ApiTestCase;
 use ApiUsageException;
+use MediaWiki\Api\Validator\ApiParamValidator;
+use MediaWiki\Message\Message;
 use MediaWiki\Request\FauxRequest;
+use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
-use Message;
 use Wikimedia\Message\DataMessageValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;

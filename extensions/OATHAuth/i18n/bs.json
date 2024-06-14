@@ -6,12 +6,10 @@
 			"Srđan"
 		]
 	},
-	"specialpages-group-oath": "Potvrda u 2 koraka",
 	"oathauth-account": "Ime računa:",
 	"oathauth-secret": "Tajni ključ za potvrdu u 2 koraka:",
 	"oathauth-enable": "Uključi potvrdu u 2 koraka",
-	"oathauth-scratchtokens": "Sljedeći spisak sadrži žetone za jednokratnu upotrebu. Mogu se koristiti samo jednom i to u hitnim slučajevima. Zapišite i čuvajte ih na sigurnom mjestu. Ako izgubite telefon, jedino će oni moći spasiti Vaš račun. '''Ovi žetoni više se nikad neće prikazati'''.",
-	"oathauth-token": "Žeton",
+	"oathauth-recoverycodes": "Sljedeći spisak sadrži žetone za jednokratnu upotrebu. Mogu se koristiti samo jednom i to u hitnim slučajevima. Zapišite i čuvajte ih na sigurnom mjestu. Ako izgubite telefon, jedino će oni moći spasiti Vaš račun. '''Ovi žetoni više se nikad neće prikazati'''.",
 	"oathauth-disable": "Isključi potvrdu u 2 koraka",
 	"oathauth-validatedoath": "Podaci potvrđeni. Odsad će se provoditi potvrda u 2 koraka.",
 	"oathauth-failedtovalidateoath": "Ne mogu potvrditi dvofaktorske podatke",

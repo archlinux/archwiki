@@ -5,19 +5,13 @@
 
 @import '../minerva.less/minerva.mixins.less';
 @import '../minerva.less/minerva.variables.less';
-@import 'mediawiki.ui/mixins.buttons.less';
 @import 'mediawiki.mixins.less';
 
 // Decrease the font-size of the advanced filters module (see T229360).
 .mw-rcfilters-container,
 .mw-rcfilters-ui-overlay,
 .watchlistDetails {
-	font-size: @taglineFontSize;
-}
-
-.mw-changeslist h4 {
-	font-size: @fontSizeH3;
-	padding: 1em 0 0 0 !important; // overriding .content h4
+	font-size: @font-size-tag-line;
 }
 
 ul.mw-contributions-list,
@@ -91,15 +85,15 @@ ul.mw-contributions-list li > * {
  * Colored watchlist and recent changes numbers.
  */
 .mw-plusminus-pos {
-	color: @color-success;
+	color: var( --minerva-diff-addedline );
 }
 
 .mw-plusminus-neg {
-	color: @color-destructive;
+	color: var( --minerva-diff-deletedline );
 }
 
 .mw-plusminus-null {
-	color: @color-subtle;
+	color: var( --color-subtle );
 }
 
 /*
@@ -124,7 +118,7 @@ ul.mw-contributions-list li > * {
 .mw-tag-marker {
 	// due to the extra space afforded by padding,
 	// we can make the font-size a bit smaller to save space.
-	font-size: @taglineFontSize;
+	font-size: @font-size-tag-line;
 	display: inline-block;
 	box-sizing: border-box;
 	height: 1.6em;
@@ -176,8 +170,8 @@ ul.mw-contributions-list li .mw-rollback-link {
 		// Since the user link is split over two lines,
 		// add the background color on the bdi instead
 		bdi {
-			// @background-color-interactive
-			background-color: #eaecf0;
+			// var(--background-color-interactive)
+			background-color: var( --background-color-interactive );
 			padding: 2px 8px 2px 8px;
 			border-radius: @border-radius-base;
 		}
@@ -185,8 +179,141 @@ ul.mw-contributions-list li .mw-rollback-link {
 }
 
 // `.content` must be specified to override padding of
-// `.content h2` rule provided by ResourceLoaderSkinModule.
-.content .mw-index-pager-list-header {
+// `.content h2` and `.content h4` rule provided by ResourceLoaderSkinModule.
+// Must apply to Watchlist h4s which currently do not use mw-index-pager-list-header.
+.content .mw-index-pager-list-header,
+.mw-special-Watchlist .content h4 {
 	.changeslist-header();
 	box-sizing: border-box;
+}
+
+.mw-mf-amc-disabled {
+	/* Watchlist modifications */
+	&.mw-special-Watchlist {
+		/* Traditionally not in default experience for mobile.
+		Can be restored once have design and PM approves. */
+		.mw-pager-tool,
+		.mw-changeslist-history,
+		.mw-tag-markers,
+		.mw-pager-tools,
+		.mw-usertoollinks,
+		/* visually not needed */
+		.mw-changeslist-separator--semicolon,
+		.mw-changeslist-separator {
+			display: none;
+		}
+
+		.mw-title {
+			/* Negative margin to counteract &lrm; tags providing enforced spacing. */
+			margin: 0 0 -1em;
+			display: block;
+			float: none;
+
+			a {
+				color: var( --color-subtle );
+			}
+		}
+
+		.mw-userlink {
+			color: var( --color-subtle );
+			display: block;
+
+			bdi {
+				word-break: break-word;
+			}
+		}
+
+		/* disable pseudo UI */
+		.mw-changeslist-links > span::after,
+		.mw-changeslist-links > span::before {
+			content: none;
+		}
+
+		.mw-history-histlinks-previous,
+		.mw-changeslist-diff {
+			position: absolute;
+			right: 0;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			color: transparent;
+			z-index: @z-index-above-content;
+		}
+
+		/** Reduce clutter on mobile devices. Users can use "Use desktop site" to reveal these. */
+		@media all and ( max-width: @width-breakpoint-tablet ) {
+			/* Reduce space at top of page */
+			.mw-rcfilters-ui-filterWrapperWidget-bottom-mobile,
+			.mw-rcfilters-ui-watchlistTopSectionWidget,
+			.mw-rcfilters-ui-watchlistTopSectionWidget-watchlistDetails,
+			.mw-rcfilters-ui-watchlistTopSectionWidget-savedLinksTable {
+				display: none;
+			}
+			/* Since we hid the above elements no need to compensate with a minimum height */
+			.mw-rcfilters-head {
+				min-height: auto !important;
+			}
+			/* Space reserved while filters load. */
+			.watchlistDetails {
+				visibility: hidden;
+			}
+			/* Make "Active filters" fill up entire page when collapsed. */
+			.mw-rcfilters-ui-filterTagMultiselectWidget {
+				/* Important so it also applies to collapsed view. */
+				width: 100% !important;
+			}
+		}
+	}
+
+	/** These apply to history and watchlist page */
+	&.mw-special-Watchlist,
+	&.action-history {
+		.mw-diff-bytes,
+		.mw-changeslist-time {
+			position: absolute;
+			top: 12px;
+			left: 16px;
+			font-size: 0.875rem;
+		}
+
+		.mw-diff-bytes {
+			top: 36px;
+		}
+
+		.mw-changeslist li,
+		.mw-contributions-list li {
+			padding: 12px 16px 12px 85px;
+			font-size: 1rem;
+			min-height: 90px;
+			box-sizing: border-box;
+
+			.comment {
+				-webkit-line-clamp: 2;
+				max-height: 2.6em;
+				color: var( --color-subtle );
+				line-height: 1.4;
+				white-space: normal;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				font-size: 0.875rem;
+				font-style: normal;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.mw-userlink::before {
+				content: '';
+				.cdx-mixin-css-icon( @cdx-icon-user-avatar, var(--color-subtle) );
+				margin-right: 8px;
+			}
+
+			.mw-anonuserlink::before {
+				.cdx-mixin-css-icon( @cdx-icon-user-anonymous, var(--color-subtle) );
+			}
+
+			.mw-tempuserlink::before {
+				.cdx-mixin-css-icon( @cdx-icon-user-temporary, var(--color-subtle) );
+			}
+		}
+	}
 }

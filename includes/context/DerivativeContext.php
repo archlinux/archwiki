@@ -19,14 +19,22 @@
  * @file
  */
 
+namespace MediaWiki\Context;
+
+use Language;
 use MediaWiki\Config\Config;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MessageSpecifier;
+use Skin;
+use Timing;
 use Wikimedia\Assert\Assert;
+use WikiPage;
 
 /**
  * An IContextSource implementation which will inherit context from another source
@@ -330,3 +338,6 @@ class DerivativeContext extends ContextSource implements MutableContext {
 		return wfMessage( $key, ...$params )->setContext( $this );
 	}
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( DerivativeContext::class, 'DerivativeContext' );

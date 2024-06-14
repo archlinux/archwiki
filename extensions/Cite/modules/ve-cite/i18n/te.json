@@ -57,7 +57,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "ఈ మూలాన్ని ఒక మూస లోనో ఇతర బ్లాకులోనో నిర్వచించారు. ప్రస్తుతానికి దీన్ని సోర్సు మోడ్‌లో మాత్రమే మునుజూపు చూడవచ్చు.",
 	"cite-ve-referenceslist-missingreflist": "ఈ మూలాల జాబితా ఒక మూస నుండి తయారైంది. ప్రస్తుతానికి దీన్ని సోర్సు మోడులో మాత్రమే సవరించగలరు.",
 	"cite-ve-toolbar-group-label": "ఉల్లేఖించండి",
-	"cite-ve-othergroup-item": "$1 మూలం",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "మూలాలు",
-	"visualeditor-internal-list-diff-group-name-mwreference": "మూలాల గుంపు పేరు: \"$1\""
+	"cite-ve-othergroup-item": "$1 మూలం"
 }

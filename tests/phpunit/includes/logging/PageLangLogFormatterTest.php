@@ -4,7 +4,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 
 /**
- * @covers PageLangLogFormatter
+ * @covers \PageLangLogFormatter
  */
 class PageLangLogFormatterTest extends LogFormatterTestCase {
 
@@ -18,7 +18,14 @@ class PageLangLogFormatterTest extends LogFormatterTestCase {
 		$this->overrideConfigValue(
 			MainConfigNames::LogActionsHandlers,
 			MainConfigSchema::getDefaultValue( MainConfigNames::LogActionsHandlers ) +
-			[ 'pagelang/pagelang' => PageLangLogFormatter::class ]
+			[
+				'pagelang/pagelang' => [
+					'class' => PageLangLogFormatter::class,
+					'services' => [
+						'LanguageNameUtils',
+					]
+				]
+			]
 		);
 	}
 

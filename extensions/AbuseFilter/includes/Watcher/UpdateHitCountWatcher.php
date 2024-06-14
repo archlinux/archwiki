@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\Watcher;
 
-use DeferredUpdates;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\LBFactory;

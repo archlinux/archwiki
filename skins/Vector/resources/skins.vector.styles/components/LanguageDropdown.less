@@ -9,9 +9,7 @@
 	// If there are no languages and JavaScript is not enabled there is no fallback so we hide
 	// the button altogether.
 	.client-nojs & .mw-portlet-lang-heading-0 {
-		// FIXME: remove !important after VectorZebra is the default
-		/* stylelint-disable-next-line declaration-no-important */
-		display: none !important;
+		display: none;
 	}
 
 	.vector-dropdown-label {
@@ -27,10 +25,7 @@
 
 		// T291286: Temporarily use progressive ULS style
 		&.cdx-button--action-progressive.cdx-button--weight-quiet::after {
-			// !important needed to override Zebra Dropdown.less styles
-			// FIXME: Remove !important when Zebra is default
-			/* stylelint-disable-next-line declaration-no-important */
-			background-image: url( ./images/arrow-down-progressive.svg ) !important;
+			background-image: url( ./images/arrow-down-progressive.svg );
 			opacity: @opacity-base;
 		}
 	}
@@ -43,10 +38,7 @@
 
 			&::after {
 				// Invert arrow color
-				// !important needed to override Zebra Dropdown.less styles
-				// FIXME: Remove !important when Zebra is default
-				/* stylelint-disable-next-line declaration-no-important */
-				background-image: url( ./images/arrow-down-invert.svg ) !important;
+				background-image: url( ./images/arrow-down-invert.svg );
 			}
 		}
 	}

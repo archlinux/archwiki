@@ -36,14 +36,14 @@ use MediaWiki\Skins\Vector\FeatureManagement\Requirement;
 class SimpleRequirement implements Requirement {
 
 	/**
-	 * @var string The name of the requirement
+	 * The name of the requirement
 	 */
-	private $name;
+	private string $name;
 
 	/**
-	 * @var bool Whether the requirement is met
+	 * Whether the requirement is met
 	 */
-	private $isMet;
+	private bool $isMet;
 
 	/**
 	 * @param string $name The name of the requirement

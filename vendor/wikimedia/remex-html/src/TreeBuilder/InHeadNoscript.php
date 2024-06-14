@@ -13,19 +13,19 @@ class InHeadNoscript extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		// Insert whitespace
-		list( $part1, $part2 ) = $this->splitInitialMatch( true, "\t\n\f\r ",
+		[ $part1, $part2 ] = $this->splitInitialMatch( true, "\t\n\f\r ",
 			$text, $start, $length, $sourceStart, $sourceLength );
-		list( $start, $length, $sourceStart, $sourceLength ) = $part1;
+		[ $start, $length, $sourceStart, $sourceLength ] = $part1;
 		if ( $length ) {
 			$dispatcher->inHead->characters(
 				$text, $start, $length, $sourceStart, $sourceLength );
 		}
 
 		// Switch mode on non-whitespace
-		list( $start, $length, $sourceStart, $sourceLength ) = $part2;
+		[ $start, $length, $sourceStart, $sourceLength ] = $part2;
 		if ( $length ) {
 			$builder->error( "unexpected non-whitespace character in head in noscript, " .
-				"closing noscript",  $sourceStart );
+				"closing noscript", $sourceStart );
 			$builder->pop( $sourceStart, 0 );
 			$dispatcher->switchMode( Dispatcher::IN_HEAD )
 				->characters( $text, $start, $length, $sourceStart, $sourceLength );
@@ -37,30 +37,30 @@ class InHeadNoscript extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'html':
-			$dispatcher->inBody->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'html':
+				$dispatcher->inBody->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		case 'basefont':
-		case 'bgsound':
-		case 'link':
-		case 'meta':
-		case 'noframes':
-		case 'style':
-			$dispatcher->inHead->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
-			break;
+			case 'basefont':
+			case 'bgsound':
+			case 'link':
+			case 'meta':
+			case 'noframes':
+			case 'style':
+				$dispatcher->inHead->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+				break;
 
-		case 'head':
-		case 'noscript':
-			$builder->error( "unexpected <$name> in head in noscript, ignoring", $sourceStart );
-			return;
+			case 'head':
+			case 'noscript':
+				$builder->error( "unexpected <$name> in head in noscript, ignoring", $sourceStart );
+				return;
 
-		default:
-			$builder->error( "unexpected <$name> in head in noscript, closing noscript",
-				$sourceStart );
-			$builder->pop( $sourceStart, 0 );
-			$dispatcher->switchMode( Dispatcher::IN_HEAD )
-				->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
+			default:
+				$builder->error( "unexpected <$name> in head in noscript, closing noscript",
+					$sourceStart );
+				$builder->pop( $sourceStart, 0 );
+				$dispatcher->switchMode( Dispatcher::IN_HEAD )
+					->startTag( $name, $attrs, $selfClose, $sourceStart, $sourceLength );
 		}
 	}
 
@@ -69,23 +69,23 @@ class InHeadNoscript extends InsertionMode {
 		$dispatcher = $this->dispatcher;
 
 		switch ( $name ) {
-		case 'noscript':
-			$builder->pop( $sourceStart, $sourceLength );
-			$dispatcher->switchMode( Dispatcher::IN_HEAD );
-			break;
+			case 'noscript':
+				$builder->pop( $sourceStart, $sourceLength );
+				$dispatcher->switchMode( Dispatcher::IN_HEAD );
+				break;
 
-		case 'br':
-			$builder->error( "unexpected </br> in head in noscript, closing noscript",
-				$sourceStart );
-			$builder->pop( $sourceStart, 0 );
-			$dispatcher->switchMode( Dispatcher::IN_HEAD )
-				->endTag( $name, $sourceStart, $sourceLength );
-			break;
+			case 'br':
+				$builder->error( "unexpected </br> in head in noscript, closing noscript",
+					$sourceStart );
+				$builder->pop( $sourceStart, 0 );
+				$dispatcher->switchMode( Dispatcher::IN_HEAD )
+					->endTag( $name, $sourceStart, $sourceLength );
+				break;
 
-		default:
-			$builder->error( "unexpected </$name> in head in noscript, ignoring",
-				$sourceStart );
-			return;
+			default:
+				$builder->error( "unexpected </$name> in head in noscript, ignoring",
+					$sourceStart );
+				return;
 		}
 	}
 

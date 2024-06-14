@@ -1,7 +1,7 @@
 /*!
  * VisualEditor ContentEditable Surface class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -88,6 +88,7 @@ ve.ce.Surface = function VeCeSurface( model, ui, config ) {
 	this.lastDropPosition = null;
 	this.$pasteTarget = $( '<div>' );
 	this.pasting = false;
+	this.beforePasteAnnotationsAtFocus = [];
 	this.copying = false;
 	this.pasteSpecial = false;
 	this.pointerEvents = null;
@@ -109,7 +110,8 @@ ve.ce.Surface = function VeCeSurface( model, ui, config ) {
 	this.cursorDirectionality = null;
 	this.unicorningNode = null;
 	this.setUnicorningRecursionGuard = false;
-	this.cursorHolders = null;
+	this.cursorHolderBefore = null;
+	this.cursorHolderAfter = null;
 
 	// Events
 	// Debounce to prevent trying to draw every cursor position in history.
@@ -654,8 +656,6 @@ ve.ce.Surface.prototype.blur = function () {
  */
 ve.ce.Surface.prototype.removeRangesAndBlur = function () {
 	this.nativeSelection.removeAllRanges();
-	// Support: IE<=11
-	// While switching between editor modes, there's sometimes no activeElement.
 	if ( this.getElementDocument().activeElement === this.$attachedRootNode[ 0 ] ) {
 		// Blurring the activeElement ensures the keyboard is hidden on iOS
 		this.getElementDocument().activeElement.blur();
@@ -759,7 +759,11 @@ ve.ce.Surface.prototype.deactivate = function ( showAsActivated, noSelectionChan
 			this.removeRangesAndBlur();
 			// iOS Safari will sometimes restore the selection immediately (T293661)
 			setTimeout( function () {
-				if ( OO.ui.contains( surface.$attachedRootNode[ 0 ], surface.nativeSelection.anchorNode, true ) ) {
+				if (
+					// Surface may have been immediately re-activated deliberately
+					surface.deactivated &&
+					OO.ui.contains( surface.$attachedRootNode[ 0 ], surface.nativeSelection.anchorNode, true )
+				) {
 					surface.removeRangesAndBlur();
 				}
 			} );
@@ -854,13 +858,15 @@ ve.ce.Surface.prototype.updateDeactivatedSelection = function () {
 			classes.push( 've-ce-surface-selections-deactivated-showAsDeactivated' );
 		}
 		if ( isCollapsed ) {
-			classes.push( 've-ce-surface-selections-deactivated-collapse' );
+			classes.push( 've-ce-surface-selections-deactivated-collapsed' );
 		}
+		// Generates ve-ce-surface-selections-deactivated CSS class
 		this.drawSelections( 'deactivated', [ selection ], {
 			color: textColor,
 			wrapperClass: classes.join( ' ' )
 		} );
 	} else {
+		// Generates ve-ce-surface-selections-deactivated CSS class
 		this.drawSelections( 'deactivated', [] );
 	}
 };
@@ -908,13 +914,12 @@ ve.ce.Surface.prototype.drawSelections = function ( name, selections, options ) 
 	drawnSelection.selections = selections;
 	drawnSelection.options = options;
 
-	if ( options.wrapperClass ) {
-		drawnSelection.$selections.attr(
-			'class',
-			've-ce-surface-selections ve-ce-surface-selections-' + name + ' ' +
-			options.wrapperClass
-		);
-	}
+	// Always set the 'class' attribute to ensure previously-set classes are cleared.
+	drawnSelection.$selections.attr(
+		'class',
+		've-ce-surface-selections ve-ce-surface-selections-' + name + ' ' +
+		( options.wrapperClass || '' )
+	);
 
 	var selectionsJustShown = {};
 	selections.forEach( function ( selection ) {
@@ -1583,8 +1588,8 @@ ve.ce.Surface.prototype.onDocumentKeyDown = function ( e ) {
 	}
 
 	if ( e.which === 229 ) {
-		// Support: IE, Chrome
-		// Ignore fake IME events (emitted in IE and Chrome)
+		// Support: Chrome
+		// Ignore fake IME events (emitted in Chrome)
 		return;
 	}
 
@@ -2255,6 +2260,19 @@ ve.ce.Surface.prototype.onCopy = function ( e, selection ) {
 };
 
 /**
+ * Get the annotation set that was a the user focus before a paste started
+ *
+ * @return {ve.dm.AnnotationSet} Annotation set
+ */
+ve.ce.Surface.prototype.getBeforePasteAnnotationSet = function () {
+	var store = this.getModel().getDocument().getStore();
+	var dmAnnotations = this.beforePasteAnnotationsAtFocus.map( function ( view ) {
+		return view.getModel();
+	} );
+	return new ve.dm.AnnotationSet( store, store.hashAll( dmAnnotations ) );
+};
+
+/**
  * Handle native paste event
  *
  * @param {jQuery.Event} e Paste event
@@ -2321,6 +2339,7 @@ ve.ce.Surface.prototype.beforePaste = function ( e ) {
 		return;
 	}
 
+	this.beforePasteAnnotationsAtFocus = this.annotationsAtFocus();
 	this.beforePasteData = {};
 	this.originalClipboardMetdata = null;
 	if ( this.middleClickPasting && !this.lastNonCollapsedDocumentSelection.isNull() ) {
@@ -2685,7 +2704,7 @@ ve.ce.Surface.prototype.afterPasteAddToFragmentFromInternal = function ( slice, 
  * @return {jQuery.Promise} Promise which resolves when the content has been inserted
  */
 ve.ce.Surface.prototype.afterPasteInsertInternalData = function ( targetFragment, data ) {
-	targetFragment.insertContent( data, true );
+	targetFragment.insertContent( data, this.getBeforePasteAnnotationSet() );
 	return targetFragment.getPending();
 };
 
@@ -2912,7 +2931,7 @@ ve.ce.Surface.prototype.afterPasteInsertExternalData = function ( targetFragment
 		}
 	}
 	if ( !handled ) {
-		targetFragment.insertDocument( pastedDocumentModel, contextRange, true );
+		targetFragment.insertDocument( pastedDocumentModel, contextRange, this.getBeforePasteAnnotationSet() );
 	}
 	return targetFragment.getPending();
 };
@@ -4319,51 +4338,90 @@ ve.ce.Surface.prototype.findAdjacentUneditableBranchNode = function ( direction 
  * Insert cursor holders, if they might be required as a cursor target
  */
 ve.ce.Surface.prototype.updateCursorHolders = function () {
-	var holderBefore = null,
-		holderAfter = null,
-		doc = this.getElementDocument(),
-		nodeBefore = this.findAdjacentUneditableBranchNode( -1 ),
-		nodeAfter = this.findAdjacentUneditableBranchNode( 1 );
+	this.updateCursorHolderBefore();
+	this.updateCursorHolderAfter();
+};
 
-	this.removeCursorHolders();
+/**
+ * Insert cursor holder between selection focus and subsequent ce=false node, if required as a cursor target
+ */
+ve.ce.Surface.prototype.updateCursorHolderBefore = function () {
+	var doc = this.getElementDocument(),
+		nodeBelow = this.findAdjacentUneditableBranchNode( 1 );
+	if (
+		!( nodeBelow === null && this.cursorHolderBefore === null ) &&
+		!( nodeBelow && this.cursorHolderBefore && nodeBelow.nextSibling === this.cursorHolderBefore )
+	) {
+		// cursorHolderBefore is not correct for nodeBelow; update it
+		this.removeCursorHolderBefore();
+		if ( nodeBelow ) {
+			this.cursorHolderBefore = doc.importNode( this.constructor.static.cursorHolderTemplate, true );
+			this.cursorHolderBefore.classList.add( 've-ce-cursorHolder-before' );
+			if ( ve.inputDebug ) {
+				this.cursorHolderBefore.classList.add( 've-ce-cursorHolder-debug' );
+			}
+			// this.cursorHolderBefore is a Node
+			// eslint-disable-next-line no-jquery/no-append-html
+			$( nodeBelow ).before( this.cursorHolderBefore );
+		}
+	}
+};
 
-	if ( nodeBefore ) {
-		holderBefore = doc.importNode( this.constructor.static.cursorHolderTemplate, true );
-		holderBefore.classList.add( 've-ce-cursorHolder-after' );
-		if ( ve.inputDebug ) {
-			holderBefore.classList.add( 've-ce-cursorHolder-debug' );
+/**
+ * Insert cursor holder between selection focus and preceding ce=false node, if required as a cursor target
+ */
+ve.ce.Surface.prototype.updateCursorHolderAfter = function () {
+	var doc = this.getElementDocument(),
+		nodeAbove = this.findAdjacentUneditableBranchNode( -1 );
+	if (
+		!( nodeAbove === null && this.cursorHolderAfter === null ) &&
+		!( nodeAbove && this.cursorHolderAfter && nodeAbove.nextSibling === this.cursorHolderAfter )
+	) {
+		// cursorHolderAfter is not correct for nodeAbove; update it
+		this.removeCursorHolderAfter();
+		if ( nodeAbove ) {
+			this.cursorHolderAfter = doc.importNode( this.constructor.static.cursorHolderTemplate, true );
+			this.cursorHolderAfter.classList.add( 've-ce-cursorHolder-after' );
+			if ( ve.inputDebug ) {
+				this.cursorHolderAfter.classList.add( 've-ce-cursorHolder-debug' );
+			}
+			// this.cursorHolderAfter is a Node
+			// eslint-disable-next-line no-jquery/no-append-html
+			$( nodeAbove ).after( this.cursorHolderAfter );
 		}
-		// holderBefore is a Node
-		// eslint-disable-next-line no-jquery/no-append-html
-		$( nodeBefore ).after( holderBefore );
 	}
-	if ( nodeAfter ) {
-		holderAfter = doc.importNode( this.constructor.static.cursorHolderTemplate, true );
-		holderAfter.classList.add( 've-ce-cursorHolder-before' );
-		// holderAfter is a Node
-		// eslint-disable-next-line no-jquery/no-append-html
-		$( nodeAfter ).before( holderAfter );
-		if ( ve.inputDebug ) {
-			holderAfter.classList.add( 've-ce-cursorHolder-debug' );
-		}
-	}
-	this.cursorHolders = { before: holderBefore, after: holderAfter };
 };
 
 /**
  * Remove cursor holders, if they exist
  */
 ve.ce.Surface.prototype.removeCursorHolders = function () {
-	if ( !this.cursorHolders ) {
-		return;
+	this.removeCursorHolderBefore();
+	this.removeCursorHolderAfter();
+};
+
+/**
+ * Remove cursorHolderBefore, if it exists
+ */
+ve.ce.Surface.prototype.removeCursorHolderBefore = function () {
+	if ( this.cursorHolderBefore ) {
+		if ( this.cursorHolderBefore.parentNode ) {
+			this.cursorHolderBefore.parentNode.removeChild( this.cursorHolderBefore );
+		}
+		this.cursorHolderBefore = null;
 	}
-	if ( this.cursorHolders.before && this.cursorHolders.before.parentNode ) {
-		this.cursorHolders.before.parentNode.removeChild( this.cursorHolders.before );
+};
+
+/**
+ * Remove cursorHolderAfter, if it exists
+ */
+ve.ce.Surface.prototype.removeCursorHolderAfter = function () {
+	if ( this.cursorHolderAfter ) {
+		if ( this.cursorHolderAfter.parentNode ) {
+			this.cursorHolderAfter.parentNode.removeChild( this.cursorHolderAfter );
+		}
+		this.cursorHolderAfter = null;
 	}
-	if ( this.cursorHolders.after && this.cursorHolders.after.parentNode ) {
-		this.cursorHolders.after.parentNode.removeChild( this.cursorHolders.after );
-	}
-	this.cursorHolders = null;
 };
 
 /**
@@ -4821,12 +4879,8 @@ ve.ce.Surface.prototype.showSelectionState = function ( selection ) {
 	var $focusTarget = $( newSel.focusNode ).closest( '[contenteditable=true]' );
 	if ( $focusTarget.get( 0 ) === this.getElementDocument().activeElement ) {
 		// Already focused, do nothing.
-		// Support: IE<=11
-		// Focusing already-focused elements scrolls the *top* of the element
-		// into view, meaning that in long text blocks refocusing the current
-		// element will jump the viewport around.
-		// Check $focusTarget is non-empty (T259531)
 	} else if ( $focusTarget.length && !OO.ui.contains( $focusTarget.get( 0 ), this.getElementDocument().activeElement ) ) {
+		// Check $focusTarget is non-empty (T259531)
 		// Note: contains *doesn't* include === here. This is desired, as the
 		// common case for getting here is when pressing backspace when the
 		// cursor is in the middle of a block of text (thus both are a <div>),

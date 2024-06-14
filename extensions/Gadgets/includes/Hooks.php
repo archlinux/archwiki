@@ -1,7 +1,4 @@
 <?php
-
-namespace MediaWiki\Extension\Gadgets;
-
 /**
  * Copyright © 2007 Daniel Kinzler
  *
@@ -23,42 +20,49 @@ namespace MediaWiki\Extension\Gadgets;
  * @file
  */
 
+namespace MediaWiki\Extension\Gadgets;
+
+use ApiMessage;
 use Content;
 use Exception;
-use ExtensionRegistry;
 use HTMLForm;
 use IContextSource;
 use InvalidArgumentException;
 use ManualLogEntry;
 use MediaWiki\Extension\Gadgets\Content\GadgetDefinitionContent;
+use MediaWiki\Extension\Gadgets\Special\SpecialGadgetUsage;
 use MediaWiki\Hook\BeforePageDisplayHook;
 use MediaWiki\Hook\DeleteUnknownPreferencesHook;
 use MediaWiki\Hook\EditFilterMergedContentHook;
 use MediaWiki\Hook\PreferencesGetIconHook;
 use MediaWiki\Hook\PreferencesGetLegendHook;
 use MediaWiki\Html\Html;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Page\Hook\PageDeleteCompleteHook;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsHook;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\Hook\WgQueryPagesHook;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
+use MediaWiki\User\Options\UserOptionsLookup;
+use MediaWiki\User\User;
+use MessageSpecifier;
 use OOUI\HtmlSnippet;
-use OutputPage;
 use RequestContext;
 use Skin;
-use SpecialPage;
-use Status;
-use TitleValue;
-use User;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IExpression;
+use Wikimedia\Rdbms\LikeValue;
 use Wikimedia\WrappedString;
 use WikiPage;
 use Xml;
@@ -75,8 +79,20 @@ class Hooks implements
 	EditFilterMergedContentHook,
 	ContentHandlerDefaultModelForHook,
 	WgQueryPagesHook,
-	DeleteUnknownPreferencesHook
+	DeleteUnknownPreferencesHook,
+	GetUserPermissionsErrorsHook
 {
+	private GadgetRepo $gadgetRepo;
+	private UserOptionsLookup $userOptionsLookup;
+
+	public function __construct(
+		GadgetRepo $gadgetRepo,
+		UserOptionsLookup $userOptionsLookup
+	) {
+		$this->gadgetRepo = $gadgetRepo;
+		$this->userOptionsLookup = $userOptionsLookup;
+	}
+
 	/**
 	 * Handle MediaWiki\Page\Hook\PageSaveCompleteHook
 	 *
@@ -96,8 +112,7 @@ class Hooks implements
 		$editResult
 	): void {
 		$title = $wikiPage->getTitle();
-		$repo = GadgetRepo::singleton();
-		$repo->handlePageUpdate( $title );
+		$this->gadgetRepo->handlePageUpdate( $title );
 	}
 
 	/**
@@ -121,8 +136,7 @@ class Hooks implements
 		int $archivedRevisionCount
 	): void {
 		$title = TitleValue::newFromPage( $page );
-		$repo = GadgetRepo::singleton();
-		$repo->handlePageUpdate( $title );
+		$this->gadgetRepo->handlePageUpdate( $title );
 	}
 
 	/**
@@ -130,7 +144,7 @@ class Hooks implements
 	 * @param array &$defaultOptions Array of default preference keys and values
 	 */
 	public function onUserGetDefaultOptions( &$defaultOptions ) {
-		$gadgets = GadgetRepo::singleton()->getStructuredList();
+		$gadgets = $this->gadgetRepo->getStructuredList();
 		if ( !$gadgets ) {
 			return;
 		}
@@ -149,26 +163,12 @@ class Hooks implements
 	}
 
 	/**
-	 * Check whether the gadget should load on the mobile domain based on its definition.
-	 *
-	 * @return bool
-	 */
-	private static function isMobileView(): bool {
-		if ( ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) ) {
-			$mobileContext = MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' );
-			return $mobileContext->shouldDisplayMobileView();
-		} else {
-			return false;
-		}
-	}
-
-	/**
 	 * GetPreferences hook handler.
 	 * @param User $user
 	 * @param array &$preferences Preference descriptions
 	 */
 	public function onGetPreferences( $user, &$preferences ) {
-		$gadgets = GadgetRepo::singleton()->getStructuredList();
+		$gadgets = $this->gadgetRepo->getStructuredList();
 		if ( !$gadgets ) {
 			return;
 		}
@@ -180,7 +180,7 @@ class Hooks implements
 			'raw' => true,
 		];
 
-		$safeMode = MediaWikiServices::getInstance()->getUserOptionsLookup()->getOption( $user, 'forcesafemode' );
+		$safeMode = $this->userOptionsLookup->getOption( $user, 'forcesafemode' );
 		if ( $safeMode ) {
 			$preferences['gadgets-safemode'] = [
 				'type' => 'info',
@@ -191,13 +191,7 @@ class Hooks implements
 		}
 
 		$skin = RequestContext::getMain()->getSkin();
-		$isMobileView = self::isMobileView();
 		foreach ( $gadgets as $section => $thisSection ) {
-			$available = [];
-
-			/**
-			 * @var $gadget Gadget
-			 */
 			foreach ( $thisSection as $gadget ) {
 				// Only show option to enable gadget if it can be enabled
 				$type = 'api';
@@ -205,7 +199,6 @@ class Hooks implements
 					!$safeMode
 					&& !$gadget->isHidden()
 					&& $gadget->isAllowed( $user )
-					&& $gadget->isTargetSupported( $isMobileView )
 					&& $gadget->isSkinSupported( $skin )
 				) {
 					$type = 'check';
@@ -257,10 +250,7 @@ class Hooks implements
 	 * @param ResourceLoader $resourceLoader
 	 */
 	public function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ): void {
-		$repo = GadgetRepo::singleton();
-		$ids = $repo->getGadgetIds();
-
-		foreach ( $ids as $id ) {
+		foreach ( $this->gadgetRepo->getGadgetIds() as $id ) {
 			$resourceLoader->register( Gadget::getModuleName( $id ), [
 				'class' => GadgetResourceLoaderModule::class,
 				'id' => $id,
@@ -274,15 +264,14 @@ class Hooks implements
 	 * @param Skin $skin
 	 */
 	public function onBeforePageDisplay( $out, $skin ): void {
-		$repo = GadgetRepo::singleton();
+		$repo = $this->gadgetRepo;
 		$ids = $repo->getGadgetIds();
-		$isMobileView = self::isMobileView();
 		if ( !$ids ) {
 			return;
 		}
 
 		$enabledLegacyGadgets = [];
-		$conditions = new GadgetLoadConditions( $out, $isMobileView );
+		$conditions = new GadgetLoadConditions( $out );
 
 		/**
 		 * @var $gadget Gadget
@@ -306,8 +295,7 @@ class Hooks implements
 							try {
 								$peers[] = $repo->getGadget( $peerName );
 							} catch ( InvalidArgumentException $e ) {
-								// Ignore
-								// @todo: Emit warning for invalid peer?
+								// Ignore, warning is emitted on Special:Gadgets
 							}
 						}
 						// Load peer modules
@@ -376,40 +364,22 @@ class Hooks implements
 				$status->merge( $validateStatus );
 				return false;
 			}
-		} else {
-			$title = $context->getTitle();
-			if ( $title->inNamespace( NS_GADGET_DEFINITION ) ) {
-				$status->merge( Status::newFatal( "gadgets-wrong-contentmodel" ) );
-				return false;
-			}
 		}
 
 		return true;
 	}
 
 	/**
-	 * Mark the Title as having a content model of javascript or css for pages
-	 * in the Gadget namespace based on their file extension
+	 * Create "MediaWiki:Gadgets/<id>.json" pages with GadgetDefinitionContent
 	 *
 	 * @param Title $title
 	 * @param string &$model
 	 * @return bool
 	 */
 	public function onContentHandlerDefaultModelFor( $title, &$model ) {
-		if ( $title->inNamespace( NS_GADGET ) ) {
-			preg_match( '!\.(css|js|json)$!u', $title->getText(), $ext );
-			$ext = $ext[1] ?? '';
-			switch ( $ext ) {
-				case 'js':
-					$model = 'javascript';
-					return false;
-				case 'css':
-					$model = 'css';
-					return false;
-				case 'json':
-					$model = 'json';
-					return false;
-			}
+		if ( MediaWikiGadgetsJsonRepo::isGadgetDefinitionTitle( $title ) ) {
+			$model = 'GadgetDefinition';
+			return false;
 		}
 
 		return true;
@@ -420,7 +390,7 @@ class Hooks implements
 	 * @param array &$queryPages
 	 */
 	public function onWgQueryPages( &$queryPages ) {
-		$queryPages[] = [ 'SpecialGadgetUsage', 'GadgetUsage' ];
+		$queryPages[] = [ SpecialGadgetUsage::class, 'GadgetUsage' ];
 	}
 
 	/**
@@ -430,6 +400,31 @@ class Hooks implements
 	 * @param IDatabase $db
 	 */
 	public function onDeleteUnknownPreferences( &$where, $db ) {
-		$where[] = 'up_property NOT' . $db->buildLike( 'gadget-', $db->anyString() );
+		$where[] = $db->expr(
+			'up_property',
+			IExpression::NOT_LIKE,
+			new LikeValue( 'gadget-', $db->anyString() )
+		);
+	}
+
+	/**
+	 * @param Title $title Title being checked against
+	 * @param User $user Current user
+	 * @param string $action Action being checked
+	 * @param array|string|MessageSpecifier &$result User permissions error to add. If none, return true.
+	 *   For consistency, error messages should be plain text with no special coloring,
+	 *   bolding, etc. to show that they're errors; presenting them properly to the
+	 *   user as errors is done by the caller.
+	 * @return bool|void
+	 */
+	public function onGetUserPermissionsErrors( $title, $user, $action, &$result ) {
+		if ( $action === 'edit'
+			&& MediaWikiGadgetsJsonRepo::isGadgetDefinitionTitle( $title )
+		) {
+			if ( !$user->isAllowed( 'editsitejs' ) ) {
+				$result = ApiMessage::create( wfMessage( 'sitejsprotected' ), 'sitejsprotected' );
+				return false;
+			}
+		}
 	}
 }

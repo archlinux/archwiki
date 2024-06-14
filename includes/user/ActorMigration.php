@@ -2,7 +2,6 @@
 
 namespace MediaWiki\User;
 
-use InvalidArgumentException;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -30,49 +29,7 @@ class ActorMigration extends ActorMigrationBase {
 	 */
 	public const FIELD_INFOS = [
 		// Deprecated since 1.39
-		'rev_user' => [
-			'tempTable' => [
-				'table' => 'revision_actor_temp',
-				'pk' => 'revactor_rev',
-				'field' => 'revactor_actor',
-				'joinPK' => 'rev_id',
-				'extra' => [
-					'revactor_timestamp' => 'rev_timestamp',
-					'revactor_page' => 'rev_page',
-				],
-			],
-		],
-
-		// Deprecated since 1.34
-		'ar_user' => [
-			'deprecatedVersion' => '1.37',
-		],
-		// Deprecated since 1.34
-		'img_user' => [
-			'deprecatedVersion' => '1.37',
-		],
-		// Deprecated since 1.34
-		'oi_user' => [
-			'deprecatedVersion' => '1.37',
-		],
-		// Deprecated since 1.34
-		'fa_user' => [
-			'deprecatedVersion' => '1.37',
-		],
-		// Deprecated since 1.34
-		'rc_user' => [
-			'deprecatedVersion' => '1.37',
-		],
-		// Deprecated since 1.34
-		'log_user' => [
-			'deprecatedVersion' => '1.37',
-		],
-		// Deprecated since 1.34
-		'ipb_by' => [
-			'deprecatedVersion' => '1.37',
-			'textField' => 'ipb_by_text',
-			'actorField' => 'ipb_by_actor',
-		],
+		'rev_user' => [],
 	];
 
 	/**
@@ -84,23 +41,26 @@ class ActorMigration extends ActorMigrationBase {
 	}
 
 	/**
+	 * Static constructor
+	 * @return self
+	 */
+	public static function newMigrationForImport() {
+		$migration = new self(
+			MediaWikiServices::getInstance()->getActorStoreFactory()
+		);
+		$migration->setForImport( true );
+		return $migration;
+	}
+
+	/**
 	 * @internal
 	 *
-	 * @param int $stage
 	 * @param ActorStoreFactory $actorStoreFactory
 	 */
-	public function __construct(
-		$stage,
-		ActorStoreFactory $actorStoreFactory
-	) {
-		if ( $stage & SCHEMA_COMPAT_OLD ) {
-			throw new InvalidArgumentException(
-				'The old actor table schema is no longer supported'
-			);
-		}
+	public function __construct( ActorStoreFactory $actorStoreFactory ) {
 		parent::__construct(
 			self::FIELD_INFOS,
-			$stage,
+			SCHEMA_COMPAT_NEW,
 			$actorStoreFactory
 		);
 	}
@@ -135,17 +95,7 @@ class ActorMigration extends ActorMigrationBase {
 		return parent::getInsertValues( $dbw, $key, $user );
 	}
 
-	/**
-	 * @inheritDoc
-	 * @deprecated since 1.39 Use same replacement as getInsertValues().
-	 */
-	public function getInsertValuesWithTempTable( IDatabase $dbw, $key, UserIdentity $user ) {
-		return parent::getInsertValuesWithTempTable( $dbw, $key, $user );
-	}
-
 }
 
-/**
- * @deprecated since 1.40
- */
+/** @deprecated class alias since 1.40 */
 class_alias( ActorMigration::class, 'ActorMigration' );

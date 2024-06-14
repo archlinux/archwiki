@@ -14,7 +14,7 @@
 	"gadgets-desc": "Lankideek [[Special:Gadgets|CSS eta JavaScript gadgetak]] aukeratu ditzazkete beraien [[Special:Preferences#mw-prefsection-gadgets|hobespenetan]]",
 	"prefs-gadgets": "Gadgetak",
 	"gadgets-prefstext": "Zure kontuan erabili ditzakezun gadgeten zerrenda bat agertzen da behean.\nJavaScript-en oinarritzen dira gehienbat gadget hauek; beraz, funtzionatzeko zure nabigatzailean JavaScript gaituta egon behar da.\nKontuan izan gadget hauek ez dutela eraginik izango hobespen orri honetan.\n\nKontuan izan baita gadget berezi hauek ez direla MediaWiki softwarearen zati bat. Gehienetan guneko wikietako garatzaileek sortu eta mantentzen dituzte.\nAdministratzaileek [[MediaWiki:Gadgets-definition|definizioak]] eta [[Special:Gadgets|deskribapenak]] erabiliz aldatu dezakete eskuragarri dauden gadgetak.",
-	"gadgets": "Gadgetak",
+	"special-gadgets": "Gadgetak",
 	"gadgetusage": "Gadgeten erabilpen estatistikak",
 	"gadgetusage-gadget": "Gadgeta",
 	"gadgetusage-usercount": "Erabiltzaile-kopurua",
@@ -27,8 +27,5 @@
 	"gadgets-export": "Esportatu",
 	"gadgets-export-title": "Gadgeten esportazioa",
 	"gadgets-not-found": "Ez da \"$1\" gadgeta aurkitu.",
-	"gadgets-export-download": "Deskargatu",
-	"action-gadgets-edit": "gadget honen JavaScript edo CSS orria aldatu",
-	"right-gadgets-definition-edit": "Gadgetaren definizioak aldatu",
-	"action-gadgets-definition-edit": "Gadget honen definizioa aldatu"
+	"gadgets-export-download": "Deskargatu"
 }

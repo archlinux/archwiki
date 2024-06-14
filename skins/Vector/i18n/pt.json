@@ -3,6 +3,7 @@
 		"authors": [
 			"Amire80",
 			"Athena in Wonderland",
+			"Caiofernandes",
 			"Crazymadlover",
 			"Giro720",
 			"GoEThe",
@@ -12,8 +13,7 @@
 			"MokaAkashiyaPT",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious",
-			"Caiofernandes"
+			"Waldyrious"
 		]
 	},
 	"skinname-vector": "Vector antigo (2010)",
@@ -30,7 +30,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 língua|$1 línguas}}",
 	"vector-no-language-button-label": "Adicionar línguas",
 	"vector-no-language-button-aria-label": "Este artigo só existe nesta língua. Adicione o artigo noutras línguas",
-	"vector-language-redirect-to-top": "Na wiki {{SITENAME}} as hiperligações interlínguas estão localizadas no topo da página do lado oposto ao título.",
 	"vector-language-variant-switcher-label": "Mudar a variante da língua",
 	"vector-action-addsection": "Adicionar tópico",
 	"vector-action-delete": "Eliminar",
@@ -47,6 +46,19 @@
 	"vector-jumptosearch": "Saltar para a pesquisa",
 	"vector-jumptocontent": "Saltar para o conteúdo",
 	"vector-more-actions": "Mais",
+	"vector-client-prefs-label": "Aspeto",
+	"vector-feature-limited-width-name": "Largura",
+	"vector-feature-custom-font-size-name": "Texto",
+	"vector-feature-limited-width-0-label": "Largura",
+	"vector-feature-limited-width-1-label": "Padrão",
+	"vector-feature-custom-font-size-0-label": "Pequeno",
+	"vector-feature-custom-font-size-1-label": "Padrão",
+	"vector-feature-custom-font-size-2-label": "Grande",
+	"skin-night-mode-name": "Cor",
+	"skin-night-mode-description": "Reduz a luz emitida pelos ecrãs dos dispositivos.",
+	"skin-night-mode-0-label": "Dia",
+	"skin-night-mode-1-label": "Noite",
+	"skin-night-mode-2-label": "Automático",
 	"vector-search-loader": "A carregar sugestões de pesquisa",
 	"vector-searchsuggest-containing": "Procurar páginas que contenham <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
@@ -75,7 +87,10 @@
 	"vector-prefs-limited-width": "Ativar o modo de largura limitada",
 	"vector-prefs-limited-width-help": "Ativar o modo de largura limitada, para uma melhor experiência de leitura.",
 	"empty-language-selector-body": "O conteúdo da página não é suportado noutras línguas.",
-	"vector-toc-unpinned-popup": "O índice foi movido para aqui.",
-	"vector-page-tools-unpinned-popup": "O menu de ferramentas foi movido para aqui.",
-	"vector-main-menu-unpinned-popup": "O menu principal foi movido para aqui."
+	"vector-toc-unpinned-popup": "O índice mudou para cá.",
+	"vector-page-tools-unpinned-popup": "O menu de ferramentas mudou para cá.",
+	"vector-main-menu-unpinned-popup": "O menu principal mudou para cá.",
+	"vector-client-prefs-unpinned-popup": "O menu de aparência mudou para cá.",
+	"vector-2022-beta-preview-label": "Acessibilidade para Leitura (Vector 2022)",
+	"vector-2022-beta-preview-description": "Obter acesso antecipado às novas funcionalidades de acessibilidade de leitura, como melhoramentos de tipografia e modo noturno."
 }

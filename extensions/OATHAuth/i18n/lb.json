@@ -7,7 +7,6 @@
 	},
 	"oathauth-account": "Numm vum Kont:",
 	"oathauth-enable": "Authentifikatioun mat zwee Elementer aschalten",
-	"oathauth-token": "Token",
 	"oathauth-disable": "Authentifikatioun mat zwee Elementer ausschalten",
 	"oathauth-disabledoath": "Authentifikatioun mat zwee Elementer ausgeschalt",
 	"oathauth-prefs-label": "Authentifikatioun mat zwee Elementer:",
@@ -27,5 +26,6 @@
 	"notification-body-oathauth-disable-other": "Wann {{GENDER:$2|Dir}} dëst net gefrot hutt, da sollt {{GENDER:$2|Dir}} en Administrateur kontaktéieren.",
 	"oathauth-notifications-disable-help": "Hëllef",
 	"oathauth-notifications-enable-help": "Hëllef",
-	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Desaktivéierte Grupp|Desaktivéiert Gruppen}}"
+	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Desaktivéierte Grupp|Desaktivéiert Gruppen}}",
+	"oathauth-qrcode-alt": "QR-Code fir ze scannen, deen de geheime Schlëssel representéiert."
 }

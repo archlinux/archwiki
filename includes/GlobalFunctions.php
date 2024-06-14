@@ -21,11 +21,11 @@
  */
 
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Libs\UnpackFailedException;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\ProcOpenError;
 use MediaWiki\Request\WebRequest;
-use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Shell\Shell;
 use MediaWiki\StubObject\StubUserLang;
 use MediaWiki\Title\Title;
@@ -34,7 +34,6 @@ use MediaWiki\Utils\UrlUtils;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
 use Wikimedia\RequestTimeout\RequestTimeout;
-use Wikimedia\WrappedString;
 
 /**
  * Load an extension
@@ -172,8 +171,7 @@ function wfMergeErrorArrays( ...$args ) {
 		foreach ( $errors as $params ) {
 			$originalParams = $params;
 			if ( $params[0] instanceof MessageSpecifier ) {
-				$msg = $params[0];
-				$params = array_merge( [ $msg->getKey() ], $msg->getParams() );
+				$params = [ $params[0]->getKey(), ...$params[0]->getParams() ];
 			}
 			# @todo FIXME: Sometimes get nested arrays for $params,
 			# which leads to E_NOTICEs
@@ -311,7 +309,7 @@ function wfUrlencode( $s ) {
 	if ( $needle === null ) {
 		$needle = [ '%3B', '%40', '%24', '%21', '%2A', '%28', '%29', '%2C', '%2F', '%7E' ];
 		if ( !isset( $_SERVER['SERVER_SOFTWARE'] ) ||
-			( strpos( $_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS/7' ) === false )
+			!str_contains( $_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS/7' )
 		) {
 			$needle[] = '%3A';
 		}
@@ -563,7 +561,7 @@ function wfRemoveDotSegments( $urlPath ) {
 }
 
 /**
- * Returns a regular expression of url protocols
+ * Returns a partial regular expression of recognized URL protocols, e.g. "http:\/\/|https:\/\/"
  *
  * @deprecated since 1.39, use UrlUtils::validProtocols()
  * @param bool $includeProtocolRelative If false, remove '//' from the returned protocol list.
@@ -571,8 +569,8 @@ function wfRemoveDotSegments( $urlPath ) {
  * @return string
  */
 function wfUrlProtocols( $includeProtocolRelative = true ) {
-	$method = $includeProtocolRelative ? 'validProtocols' : 'validAbsoluteProtocols';
-	return wfGetUrlUtils()->$method();
+	return $includeProtocolRelative ? wfGetUrlUtils()->validProtocols() :
+		wfGetUrlUtils()->validAbsoluteProtocols();
 }
 
 /**
@@ -979,39 +977,6 @@ function wfHostname() {
 }
 
 /**
- * Returns a script tag that stores the amount of time it took MediaWiki to
- * handle the request in milliseconds as 'wgBackendResponseTime'.
- *
- * If $wgShowHostnames is true, the script will also set 'wgHostname' to the
- * hostname of the server handling the request.
- *
- * @deprecated since 1.40
- * @param string|null $nonce Unused
- * @param bool $triggerWarnings introduced in 1.41 whether to trigger deprecation notice.
- * @return string|WrappedString HTML
- */
-function wfReportTime( $nonce = null, $triggerWarnings = true ) {
-	global $wgShowHostnames;
-
-	if ( $triggerWarnings ) {
-		wfDeprecated( __FUNCTION__, '1.40' );
-	}
-	$elapsed = ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] );
-	// seconds to milliseconds
-	$responseTime = round( $elapsed * 1000 );
-	$reportVars = [ 'wgBackendResponseTime' => $responseTime ];
-	if ( $wgShowHostnames ) {
-		$reportVars['wgHostname'] = wfHostname();
-	}
-
-	return (
-		ResourceLoader::makeInlineScript(
-			ResourceLoader::makeConfigSetScript( $reportVars )
-		)
-	);
-}
-
-/**
  * Safety wrapper for debug_backtrace().
  *
  * Will return an empty array if debug_backtrace is disabled, otherwise
@@ -1045,14 +1010,13 @@ function wfDebugBacktrace( $limit = 0 ) {
  * Get a debug backtrace as a string
  *
  * @param bool|null $raw If true, the return value is plain text. If false, HTML.
- *   Defaults to $wgCommandLineMode if unset.
+ *   Defaults to true if MW_ENTRY_POINT is 'cli', otherwise false.
  * @return string
  * @since 1.25 Supports $raw parameter.
  */
 function wfBacktrace( $raw = null ) {
-	global $wgCommandLineMode;
-
-	if ( $raw ?? $wgCommandLineMode ) {
+	$raw ??= MW_ENTRY_POINT === 'cli';
+	if ( $raw ) {
 		$frameFormat = "%s line %s calls %s()\n";
 		$traceFormat = "%s";
 	} else {
@@ -1161,20 +1125,23 @@ function wfClientAcceptsGzip( $force = false ) {
  * is achieved by substituting certain characters with HTML entities.
  * As required by the callers, "<nowiki>" is not used.
  *
- * @param string $text Text to be escaped
- * @param-taint $text escapes_html
+ * @param string|null|false $input Text to be escaped
+ * @param-taint $input escapes_html
  * @return string
  */
-function wfEscapeWikiText( $text ) {
+function wfEscapeWikiText( $input ): string {
 	global $wgEnableMagicLinks;
-	static $repl = null, $repl2 = null;
+	static $repl = null, $repl2 = null, $repl3 = null, $repl4 = null;
 	if ( $repl === null || defined( 'MW_PARSER_TEST' ) || defined( 'MW_PHPUNIT_TEST' ) ) {
 		// Tests depend upon being able to change $wgEnableMagicLinks, so don't cache
 		// in those situations
 		$repl = [
 			'"' => '&#34;', '&' => '&#38;', "'" => '&#39;', '<' => '&#60;',
 			'=' => '&#61;', '>' => '&#62;', '[' => '&#91;', ']' => '&#93;',
-			'{' => '&#123;', '|' => '&#124;', '}' => '&#125;', ';' => '&#59;',
+			'{' => '&#123;', '|' => '&#124;', '}' => '&#125;',
+			';' => '&#59;', // a token inside language converter brackets
+			'!!' => '&#33;!', // a token inside table context
+			"\n!" => "\n&#33;", "\r!" => "\r&#33;", // a token inside table context
 			"\n#" => "\n&#35;", "\r#" => "\r&#35;",
 			"\n*" => "\n&#42;", "\r*" => "\r&#42;",
 			"\n:" => "\n&#58;", "\r:" => "\r&#58;",
@@ -1184,6 +1151,7 @@ function wfEscapeWikiText( $text ) {
 			"\n\t" => "\n&#9;", "\r\t" => "\r&#9;", // "\n\t\n" is treated like "\n\n"
 			"\n----" => "\n&#45;---", "\r----" => "\r&#45;---",
 			'__' => '_&#95;', '://' => '&#58;//',
+			'~~~' => '~~&#126;', // protect from PST, just to be safe(r)
 		];
 
 		$magicLinks = array_keys( array_filter( $wgEnableMagicLinks ) );
@@ -1195,6 +1163,24 @@ function wfEscapeWikiText( $text ) {
 			$repl["$magic\n"] = "$magic&#10;";
 			$repl["$magic\f"] = "$magic&#12;";
 		}
+		// Additionally escape the following characters at the beginning of the
+		// string, in case they merge to form tokens when spliced into a
+		// string.  Tokens like -{ {{ [[ {| etc are already escaped because
+		// the second character is escaped above, but the following tokens
+		// are handled here: |+ |- __FOO__ ~~~
+		$repl3 = [
+			'+' => '&#43;', '-' => '&#45;', '_' => '&#95;', '~' => '&#126;',
+		];
+		// Similarly, protect the following characters at the end of the
+		// string, which could turn form the start of `__FOO__` or `~~~~`
+		// A trailing newline could also form the unintended start of a
+		// paragraph break if it is glued to a newline in the following
+		// context.
+		$repl4 = [
+			'_' => '&#95;', '~' => '&#126;',
+			"\n" => "&#10;", "\r" => "&#13;",
+			"\t" => "&#9;", // "\n\t\n" is treated like "\n\n"
+		];
 
 		// And handle protocols that don't use "://"
 		global $wgUrlProtocols;
@@ -1206,8 +1192,23 @@ function wfEscapeWikiText( $text ) {
 		}
 		$repl2 = $repl2 ? '/\b(' . implode( '|', $repl2 ) . '):/i' : '/^(?!)/';
 	}
-	$text = substr( strtr( "\n$text", $repl ), 1 );
-	// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal False positive
+	// Tell phan that $repl2, $repl3 and $repl4 will also be non-null here
+	'@phan-var string $repl2';
+	'@phan-var string $repl3';
+	'@phan-var string $repl4';
+	// This will also stringify input in case it's not a string
+	$text = substr( strtr( "\n$input", $repl ), 1 );
+	if ( $text === '' ) {
+		return $text;
+	}
+	$first = strtr( $text[0], $repl3 ); // protect first character
+	if ( strlen( $text ) > 1 ) {
+		$text = $first . substr( $text, 1, -1 ) .
+		strtr( substr( $text, -1 ), $repl4 ); // protect last character
+	} else {
+		// special case for single-character strings
+		$text = strtr( $first, $repl4 ); // protect last character
+	}
 	$text = preg_replace( $repl2, '$1&#58;', $text );
 	return $text;
 }
@@ -1418,47 +1419,39 @@ function wfTempDir() {
 /**
  * Make directory, and make all parent directories if they don't exist
  *
- * @param string $dir Full path to directory to create
+ * @param string $dir Full path to directory to create. Callers should make sure this is not a storage path.
  * @param int|null $mode Chmod value to use, default is $wgDirectoryMode
  * @param string|null $caller Optional caller param for debugging.
- * @throws MWException
  * @return bool
  */
 function wfMkdirParents( $dir, $mode = null, $caller = null ) {
 	global $wgDirectoryMode;
 
 	if ( FileBackend::isStoragePath( $dir ) ) {
-		throw new MWException( __FUNCTION__ . " given storage path '$dir'." );
+		throw new LogicException( __FUNCTION__ . " given storage path '$dir'." );
 	}
-
 	if ( $caller !== null ) {
 		wfDebug( "$caller: called wfMkdirParents($dir)" );
 	}
-
-	if ( strval( $dir ) === '' || is_dir( $dir ) ) {
+	if ( strval( $dir ) === '' ) {
 		return true;
 	}
 
 	$dir = str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $dir );
-
-	if ( $mode === null ) {
-		$mode = $wgDirectoryMode;
-	}
+	$mode ??= $wgDirectoryMode;
 
 	// Turn off the normal warning, we're doing our own below
-	AtEase::suppressWarnings();
-	$ok = mkdir( $dir, $mode, true ); // PHP5 <3
-	AtEase::restoreWarnings();
-
+	// PHP doesn't include the path in its warning message, so we add our own to aid in diagnosis.
+	//
+	// Repeat existence check if creation failed so that we silently recover in case of
+	// a race condition where another request created it since the first check.
+	//
+	// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+	$ok = is_dir( $dir ) || @mkdir( $dir, $mode, true ) || is_dir( $dir );
 	if ( !$ok ) {
-		// directory may have been created on another request since we last checked
-		if ( is_dir( $dir ) ) {
-			return true;
-		}
-
-		// PHP doesn't report the path in its warning message, so add our own to aid in diagnosis.
-		wfLogWarning( sprintf( "failed to mkdir \"%s\" mode 0%o", $dir, $mode ) );
+		trigger_error( sprintf( "failed to mkdir \"%s\" mode 0%o", $dir, $mode ), E_USER_WARNING );
 	}
+
 	return $ok;
 }
 
@@ -1865,12 +1858,20 @@ function wfRelativePath( $path, $from ) {
  * administrative tasks. See the IMaintainableDatabase and IDatabase interfaces
  * for details.
  *
- * @deprecated since 1.39, use LoadBalancer::getConnection() on an injected
- * instance of LoadBalancer instead.
+ * @deprecated since 1.39, emitting warnings since 1.42; instead, you can use:
+ *   $services = MediaWikiServices::getInstance();
+ *   $dbr = $services->getConnectionProvider()->getReplicaDatabase();
+ *   $dbw = $services->getConnectionProvider()->getPrimaryDatabase();
+ *
+ * 	 … or, in rare circumstances, you may need to use:
+ *
+ *   $services->getDBLoadBalancer()->getConnection() / getMaintenanceConnectionRef()
  *
  * @return \Wikimedia\Rdbms\DBConnRef
  */
 function wfGetDB( $db, $groups = [], $wiki = false ) {
+	wfDeprecated( __FUNCTION__, '1.39' );
+
 	if ( $wiki === false ) {
 		return MediaWikiServices::getInstance()
 			->getDBLoadBalancer()
@@ -1958,13 +1959,11 @@ function wfMemoryLimit( $newLimit ) {
 		if ( $newLimit == -1 ) {
 			wfDebug( "Removing PHP's memory limit" );
 			AtEase::suppressWarnings();
-			// @phan-suppress-next-line PhanTypeMismatchArgumentInternal Scalar okay with php8.1
 			ini_set( 'memory_limit', $newLimit );
 			AtEase::restoreWarnings();
 		} elseif ( $newLimit > $oldLimit ) {
 			wfDebug( "Raising PHP's memory limit to $newLimit bytes" );
 			AtEase::suppressWarnings();
-			// @phan-suppress-next-line PhanTypeMismatchArgumentInternal Scalar okay with php8.1
 			ini_set( 'memory_limit', $newLimit );
 			AtEase::restoreWarnings();
 		}
@@ -2044,27 +2043,15 @@ function wfShorthandToInteger( ?string $string = '', int $default = -1 ): int {
  *
  * @throws MWException If $data not long enough, or if unpack fails
  * @return array Associative array of the extracted data
+ * @deprecated since 1.42 Use StringUtils::unpack instead
  */
 function wfUnpack( $format, $data, $length = false ) {
-	if ( $length !== false ) {
-		$realLen = strlen( $data );
-		if ( $realLen < $length ) {
-			throw new MWException( "Tried to use wfUnpack on a "
-				. "string of length $realLen, but needed one "
-				. "of at least length $length."
-			);
-		}
+	wfDeprecated( __FUNCTION__, '1.42' );
+	try {
+		return StringUtils::unpack( (string)$format, (string)$data, $length );
+	} catch ( UnpackFailedException $e ) {
+		throw new MWException( $e->getMessage(), 0, $e );
 	}
-
-	AtEase::suppressWarnings();
-	$result = unpack( $format, $data );
-	AtEase::restoreWarnings();
-
-	if ( $result === false ) {
-		// If it cannot extract the packed data.
-		throw new MWException( "unpack could not unpack binary data" );
-	}
-	return $result;
 }
 
 /**

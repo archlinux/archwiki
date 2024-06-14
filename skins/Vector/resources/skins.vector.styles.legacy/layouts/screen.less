@@ -60,7 +60,8 @@ body {
 
 /* Head */
 #mw-page-base {
-	.vertical-gradient( @background-color-base, @background-color-secondary, 50%, 100% );
+	background-color: #fbfbfb; // This is equivalent to average( @background-color-base, @background-color-secondary );
+	background-image: linear-gradient( to bottom, @background-color-base 50%, @background-color-secondary 100% );
 	background-position: bottom left;
 	height: 5em;
 }

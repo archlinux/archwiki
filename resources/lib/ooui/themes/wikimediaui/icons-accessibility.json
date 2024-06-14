@@ -12,10 +12,10 @@
 			"global": true
 		},
 		"destructive": {
-			"color": "#d33"
+			"color": "#d73333"
 		},
 		"error": {
-			"color": "#d33"
+			"color": "#d73333"
 		},
 		"warning": {
 			"color": "#edab00"
@@ -25,6 +25,9 @@
 		}
 	},
 	"images": {
+		"appearance": {
+			"file": "images/icons/appearance.svg"
+		},
 		"bright": {
 			"file": "images/icons/bright.svg"
 		},

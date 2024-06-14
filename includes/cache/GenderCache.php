@@ -19,11 +19,14 @@
  * @author Niklas Laxström
  */
 
+namespace MediaWiki\Cache;
+
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\NamespaceInfo;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserIdentity;
-use MediaWiki\User\UserOptionsLookup;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
@@ -181,3 +184,6 @@ class GenderCache {
 		return strtr( $username, '_', ' ' );
 	}
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( GenderCache::class, 'GenderCache' );

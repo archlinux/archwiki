@@ -231,8 +231,6 @@ CREATE TABLE /*_*/iwlinks (
 
 CREATE INDEX iwl_prefix_title_from ON /*_*/iwlinks (iwl_prefix, iwl_title, iwl_from);
 
-CREATE INDEX iwl_prefix_from_title ON /*_*/iwlinks (iwl_prefix, iwl_from, iwl_title);
-
 
 CREATE TABLE /*_*/category (
   cat_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -373,20 +371,6 @@ CREATE TABLE /*_*/sites (
 
 CREATE UNIQUE INDEX site_global_key ON /*_*/sites (site_global_key);
 
-CREATE INDEX site_type ON /*_*/sites (site_type);
-
-CREATE INDEX site_group ON /*_*/sites (site_group);
-
-CREATE INDEX site_source ON /*_*/sites (site_source);
-
-CREATE INDEX site_language ON /*_*/sites (site_language);
-
-CREATE INDEX site_protocol ON /*_*/sites (site_protocol);
-
-CREATE INDEX site_domain ON /*_*/sites (site_domain);
-
-CREATE INDEX site_forward ON /*_*/sites (site_forward);
-
 
 CREATE TABLE /*_*/user_newtalk (
   user_id INTEGER UNSIGNED DEFAULT 0 NOT NULL,
@@ -517,10 +501,6 @@ CREATE INDEX cl_sortkey ON /*_*/categorylinks (
 );
 
 CREATE INDEX cl_timestamp ON /*_*/categorylinks (cl_to, cl_timestamp);
-
-CREATE INDEX cl_collation_ext ON /*_*/categorylinks (
-  cl_collation, cl_to, cl_type, cl_from
-);
 
 
 CREATE TABLE /*_*/logging (
@@ -688,6 +668,48 @@ CREATE INDEX ipb_expiry ON /*_*/ipblocks (ipb_expiry);
 CREATE INDEX ipb_parent_block_id ON /*_*/ipblocks (ipb_parent_block_id);
 
 
+CREATE TABLE /*_*/block (
+  bl_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  bl_target INTEGER UNSIGNED NOT NULL,
+  bl_by_actor BIGINT UNSIGNED NOT NULL,
+  bl_reason_id BIGINT UNSIGNED NOT NULL,
+  bl_timestamp BLOB NOT NULL, bl_anon_only SMALLINT DEFAULT 0 NOT NULL,
+  bl_create_account SMALLINT DEFAULT 1 NOT NULL,
+  bl_enable_autoblock SMALLINT DEFAULT 1 NOT NULL,
+  bl_expiry BLOB NOT NULL, bl_deleted SMALLINT DEFAULT 0 NOT NULL,
+  bl_block_email SMALLINT DEFAULT 0 NOT NULL,
+  bl_allow_usertalk SMALLINT DEFAULT 0 NOT NULL,
+  bl_parent_block_id INTEGER UNSIGNED DEFAULT NULL,
+  bl_sitewide SMALLINT DEFAULT 1 NOT NULL
+);
+
+CREATE INDEX bl_timestamp ON /*_*/block (bl_timestamp);
+
+CREATE INDEX bl_target ON /*_*/block (bl_target);
+
+CREATE INDEX bl_expiry ON /*_*/block (bl_expiry);
+
+CREATE INDEX bl_parent_block_id ON /*_*/block (bl_parent_block_id);
+
+
+CREATE TABLE /*_*/block_target (
+  bt_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  bt_address BLOB DEFAULT NULL, bt_user INTEGER UNSIGNED DEFAULT NULL,
+  bt_user_text BLOB DEFAULT NULL, bt_auto SMALLINT DEFAULT 0 NOT NULL,
+  bt_range_start BLOB DEFAULT NULL,
+  bt_range_end BLOB DEFAULT NULL, bt_ip_hex BLOB DEFAULT NULL,
+  bt_count INTEGER DEFAULT 0 NOT NULL
+);
+
+CREATE INDEX bt_address ON /*_*/block_target (bt_address);
+
+CREATE INDEX bt_ip_user_text ON /*_*/block_target (bt_ip_hex, bt_user_text);
+
+CREATE INDEX bt_range ON /*_*/block_target (bt_range_start, bt_range_end);
+
+CREATE INDEX bt_user ON /*_*/block_target (bt_user);
+
+
 CREATE TABLE /*_*/image (
   img_name BLOB DEFAULT '' NOT NULL,
   img_size BIGINT UNSIGNED DEFAULT 0 NOT NULL,
@@ -839,8 +861,9 @@ CREATE INDEX user_email ON /*_*/user (user_email);
 
 CREATE TABLE /*_*/user_autocreate_serial (
   uas_shard INTEGER UNSIGNED NOT NULL,
+  uas_year SMALLINT UNSIGNED NOT NULL,
   uas_value INTEGER UNSIGNED NOT NULL,
-  PRIMARY KEY(uas_shard)
+  PRIMARY KEY(uas_shard, uas_year)
 );
 
 

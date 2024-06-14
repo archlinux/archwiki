@@ -9,7 +9,7 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Hooks;
 
-use ConfigException;
+use MediaWiki\Config\ConfigException;
 
 class RegistrationHooks {
 	public static function onRegistration(): void {

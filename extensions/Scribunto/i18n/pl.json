@@ -14,6 +14,7 @@
 			"Woytecr"
 		]
 	},
+	"content-model-scribunto": "Moduł Scribunto",
 	"scribunto-desc": "Framework pozwalający na osadzanie języków skryptowych na stronach MediaWiki",
 	"scribunto-line": "w linii $1",
 	"scribunto-module-line": "w module „$1”, w linii $2",

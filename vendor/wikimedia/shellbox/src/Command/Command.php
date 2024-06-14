@@ -3,6 +3,9 @@
 namespace Shellbox\Command;
 
 use Shellbox\Shellbox;
+use Shellbox\ShellParser\ShellParser;
+use Shellbox\ShellParser\ShellSyntaxError;
+use Shellbox\ShellParser\SyntaxInfo;
 
 /**
  * The abstract base class for commands.
@@ -54,6 +57,8 @@ abstract class Command {
 	private $disallowedPaths = [];
 	/** @var bool */
 	private $disableSandbox = false;
+	/** @var SyntaxInfo|null */
+	private $syntaxInfo;
 
 	/**
 	 * Adds parameters to the command. All parameters are escaped via Shellbox::escape().
@@ -72,6 +77,7 @@ abstract class Command {
 		} else {
 			$this->command .= ' ' . $command;
 		}
+		$this->syntaxInfo = null;
 		return $this;
 	}
 
@@ -94,6 +100,7 @@ abstract class Command {
 				$this->command .= $arg;
 			}
 		}
+		$this->syntaxInfo = null;
 		return $this;
 	}
 
@@ -118,6 +125,7 @@ abstract class Command {
 	 */
 	public function unsafeCommand( string $command ) {
 		$this->command = $command;
+		$this->syntaxInfo = null;
 		return $this;
 	}
 
@@ -458,6 +466,7 @@ abstract class Command {
 			switch ( $name ) {
 				case 'command':
 					$this->command = $value;
+					$this->syntaxInfo = null;
 					break;
 
 				case 'cpuLimit':
@@ -694,5 +703,20 @@ abstract class Command {
 	 */
 	public function getDisableSandbox() {
 		return $this->disableSandbox;
+	}
+
+	/**
+	 * Parse the current command string
+	 *
+	 * @return SyntaxInfo
+	 * @throws ShellSyntaxError
+	 */
+	public function getSyntaxInfo() {
+		if ( $this->syntaxInfo === null ) {
+			$parser = new ShellParser;
+			$tree = $parser->parse( $this->getCommandString() );
+			$this->syntaxInfo = $tree->getInfo();
+		}
+		return $this->syntaxInfo;
 	}
 }

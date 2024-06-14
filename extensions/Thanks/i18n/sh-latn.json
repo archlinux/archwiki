@@ -21,10 +21,8 @@
 	"thanks-confirmation2": "{{GENDER:$1|Da pošaljem}} zahvalu javno?",
 	"echo-pref-subscription-edit-thank": "Će mi se zahvali za moju izmjenu",
 	"echo-category-title-edit-thank": "Hvala",
-	"notification-thanks-diff-link": "vašoj izmjeni",
 	"log-name-thanks": "Evidencija zahvaljivanja",
 	"log-description-thanks": "Ispod se nalazi spisak korisnika kojima su se drugi korisnici zahvalili.",
 	"logentry-thanks-thank": "$1 se {{GENDER:$2|zahvalio|zahvalila}} {{GENDER:$4|korisniku|korisnici}} {{GENDER:$4|$3}}",
-	"logeventslist-thanks-log": "Evidencija zahvaljivanja",
-	"notification-flow-thanks-post-link": "vašem komentaru"
+	"logeventslist-thanks-log": "Evidencija zahvaljivanja"
 }

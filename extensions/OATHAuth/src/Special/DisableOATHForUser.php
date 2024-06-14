@@ -2,32 +2,32 @@
 
 namespace MediaWiki\Extension\OATHAuth\Special;
 
-use ConfigException;
-use FormSpecialPage;
 use HTMLForm;
 use ManualLogEntry;
-use MediaWiki\Extension\OATHAuth\IModule;
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\SpecialPage\FormSpecialPage;
+use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
 use Message;
 use MWException;
-use User;
 use UserBlockedError;
 use UserNotLoggedIn;
 
 class DisableOATHForUser extends FormSpecialPage {
-	/** @var OATHUserRepository */
-	private $userRepo;
 
-	/** @var UserFactory */
-	private $userFactory;
+	private OATHUserRepository $userRepo;
+
+	private UserFactory $userFactory;
 
 	/**
 	 * @param OATHUserRepository $userRepo
 	 * @param UserFactory $userFactory
 	 */
 	public function __construct( $userRepo, $userFactory ) {
+		// messages used: disableoathforuser (display "name" on Special:SpecialPages),
+		// right-oathauth-disable-for-user, action-oathauth-disable-for-user
 		parent::__construct( 'DisableOATHForUser', 'oathauth-disable-for-user' );
 
 		$this->userRepo = $userRepo;
@@ -61,7 +61,7 @@ class DisableOATHForUser extends FormSpecialPage {
 		$form->setMessagePrefix( 'oathauth' );
 		$form->setWrapperLegendMsg( 'oathauth-disable-for-user' );
 		$form->setPreHtml( $this->msg( 'oathauth-disable-intro' )->parse() );
-		$form->getOutput()->setPageTitle( $this->msg( 'oathauth-disable-for-user' ) );
+		$form->getOutput()->setPageTitleMsg( $this->msg( 'oathauth-disable-for-user' ) );
 	}
 
 	/**
@@ -130,10 +130,10 @@ class DisableOATHForUser extends FormSpecialPage {
 		if ( !$user || ( $user->getId() === 0 ) ) {
 			return [ 'oathauth-user-not-found' ];
 		}
+
 		$oathUser = $this->userRepo->findByUser( $user );
 
-		if ( !( $oathUser->getModule() instanceof IModule ) ||
-			!$oathUser->getModule()->isEnabled( $oathUser ) ) {
+		if ( !$oathUser->isTwoFactorAuthEnabled() ) {
 			return [ 'oathauth-user-not-does-not-have-oath-enabled' ];
 		}
 
@@ -142,10 +142,9 @@ class DisableOATHForUser extends FormSpecialPage {
 			return [ 'oathauth-throttled', Message::durationParam( 60 ) ];
 		}
 
-		$this->userRepo->remove( $oathUser, $this->getRequest()->getIP(), false );
-		$oathUser->disable();
+		$this->userRepo->removeAll( $oathUser, $this->getRequest()->getIP(), false );
 
-		// message used: logentry-oath-disable-other
+		// messages used: logentry-oath-disable-other, log-action-oath-disable-other
 		$logEntry = new ManualLogEntry( 'oath', 'disable-other' );
 		$logEntry->setPerformer( $this->getUser() );
 		$logEntry->setTarget( $user->getUserPage() );

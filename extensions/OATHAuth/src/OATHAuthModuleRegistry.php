@@ -20,12 +20,12 @@
 
 namespace MediaWiki\Extension\OATHAuth;
 
-use Exception;
+use InvalidArgumentException;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 class OATHAuthModuleRegistry {
 
-	/** @var OATHAuthDatabase */
-	private OATHAuthDatabase $database;
+	private IConnectionProvider $dbProvider;
 
 	/** @var array */
 	private $modules;
@@ -33,22 +33,14 @@ class OATHAuthModuleRegistry {
 	/** @var array|null */
 	private $moduleIds;
 
-	/**
-	 * @param OATHAuthDatabase $database
-	 * @param array $modules
-	 */
 	public function __construct(
-		OATHAuthDatabase $database,
+		IConnectionProvider $dbProvider,
 		array $modules
 	) {
-		$this->database = $database;
+		$this->dbProvider = $dbProvider;
 		$this->modules = $modules;
 	}
 
-	/**
-	 * @param string $key
-	 * @return IModule|null
-	 */
 	public function getModuleByKey( string $key ): ?IModule {
 		if ( isset( $this->getModules()[$key] ) ) {
 			$module = call_user_func_array( $this->getModules()[$key], [] );
@@ -80,6 +72,7 @@ class OATHAuthModuleRegistry {
 
 	/**
 	 * Returns the numerical ID for the module with the specified key.
+	 *
 	 * @param string $key
 	 * @return int
 	 */
@@ -89,7 +82,7 @@ class OATHAuthModuleRegistry {
 			return $ids[$key];
 		}
 
-		throw new Exception( "Module $key does not seem to exist" );
+		throw new InvalidArgumentException( "Module $key does not seem to exist" );
 	}
 
 	/**
@@ -97,7 +90,7 @@ class OATHAuthModuleRegistry {
 	 */
 	public function getModuleIds(): array {
 		if ( $this->moduleIds === null ) {
-			$this->moduleIds = $this->getModuleIdsFromDatabase( DB_REPLICA );
+			$this->moduleIds = $this->getModuleIdsFromDatabase( false );
 		}
 
 		$missing = array_diff(
@@ -106,25 +99,33 @@ class OATHAuthModuleRegistry {
 		);
 
 		if ( $missing ) {
-			$rows = [];
+			$insert = $this->dbProvider
+				->getPrimaryDatabase( 'virtual-oathauth' )
+				->newInsertQueryBuilder()
+				->insertInto( 'oathauth_types' )
+				->caller( __METHOD__ );
+
 			foreach ( $missing as $name ) {
-				$rows[] = [ 'oat_name' => $name ];
+				$insert->row( [ 'oat_name' => $name ] );
 			}
 
-			$this->database
-				->getDB( DB_PRIMARY )
-				->insert( 'oathauth_types', $rows, __METHOD__ );
-			$this->moduleIds = $this->getModuleIdsFromDatabase( DB_PRIMARY );
+			$insert->execute();
+			$this->moduleIds = $this->getModuleIdsFromDatabase( true );
 		}
 
 		return $this->moduleIds;
 	}
 
-	private function getModuleIdsFromDatabase( int $index ): array {
+	private function getModuleIdsFromDatabase( bool $fromPrimary ): array {
 		$ids = [];
 
-		$rows = $this->database->getDB( $index )
-			->newSelectQueryBuilder()
+		if ( $fromPrimary ) {
+			$dbr = $this->dbProvider->getPrimaryDatabase( 'virtual-oathauth' );
+		} else {
+			$dbr = $this->dbProvider->getReplicaDatabase( 'virtual-oathauth' );
+		}
+
+		$rows = $dbr->newSelectQueryBuilder()
 			->select( [ 'oat_id', 'oat_name' ] )
 			->from( 'oathauth_types' )
 			->caller( __METHOD__ )

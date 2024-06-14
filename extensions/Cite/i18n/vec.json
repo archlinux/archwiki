@@ -18,7 +18,6 @@
 	"cite_error_included_ref": "<code>&lt;/ref&gt;</code> de chiusura mancante par el marcador <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Ghe xe un tag <code>&lt;ref&gt;</code> par un grupo che se ciama \"$1\", ma no xe stà catà nissun tag <code>&lt;references group=\"$1\"/&gt;</code> che corisponda.",
 	"cite_error_references_group_mismatch": "El tag <code>&lt;ref&gt;</code> in <code>&lt;references&gt;</code> el gà l'atributo de grupo \"$1\" in ràdego.",
-	"cite_error_references_missing_group": "El tag <code>&lt;ref&gt;</code> definìo in <code>&lt;references&gt;</code> el gà un atributo de grupo \"$1\" che no conpare mia nel testo precedente.",
 	"cite_error_references_missing_key": "El tag <code>&lt;ref&gt;</code> con nome \"$1\" definìo in <code>&lt;references&gt;</code> no'l xe doparà nel testo precedente.",
 	"cite_error_references_no_key": "El tag <code>&lt;ref&gt;</code> definìo in <code>&lt;references&gt;</code> no'l gà un atributo nome.",
 	"cite_error_empty_references_define": "El tag <code>&lt;ref&gt;</code> definìo in <code>&lt;references&gt;</code> con nome \"$1\" no'l gà nissun contenuto.",

@@ -18,6 +18,7 @@
  * @file
  */
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Html\Html;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
@@ -274,6 +275,12 @@ class MWExceptionRenderer {
 			// Avoid live config as this must work before Setup/MediaWikiServices finish.
 			$res = new RawMessage( $fallback, $params );
 		}
+		// We are in an error state, best to minimize how much work we do.
+		$res->useDatabase( false );
+		$isSafeToLoad = RequestContext::getMain()->getUser()->isSafeToLoad();
+		if ( !$isSafeToLoad ) {
+			$res->inContentLanguage();
+		}
 		return $res;
 	}
 
@@ -307,7 +314,10 @@ class MWExceptionRenderer {
 	 * @return Message
 	 */
 	private static function getExceptionTitle( Throwable $e ): Message {
-		if ( $e instanceof MWException ) {
+		if (
+			$e instanceof MWException &&
+			MWDebug::detectDeprecatedOverride( $e, MWException::class, 'getPageTitle', '1.42' )
+		) {
 			return ( new RawMessage( '$1' ) )->plaintextParams(
 				$e->getPageTitle() /* convert string title to Message */
 			);
@@ -349,7 +359,7 @@ class MWExceptionRenderer {
 	 * @return bool
 	 */
 	private static function isCommandLine() {
-		return !empty( $GLOBALS['wgCommandLineMode'] );
+		return MW_ENTRY_POINT === 'cli';
 	}
 
 	/**
@@ -381,7 +391,7 @@ class MWExceptionRenderer {
 		// NOTE: STDERR may not be available, especially if php-cgi is used from the
 		// command line (T17602). Try to produce meaningful output anyway. Using
 		// echo may corrupt output to STDOUT though.
-		if ( defined( 'STDERR' ) ) {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) && defined( 'STDERR' ) ) {
 			fwrite( STDERR, $message );
 		} else {
 			echo $message;

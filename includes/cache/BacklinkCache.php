@@ -25,7 +25,10 @@
  * @copyright © 2011, Antoine Musso
  */
 
-use MediaWiki\Cache\CacheKeyHelper;
+namespace MediaWiki\Cache;
+
+use Iterator;
+use LogicException;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
@@ -36,6 +39,9 @@ use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
+use RuntimeException;
+use stdClass;
+use WANObjectCache;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -187,12 +193,12 @@ class BacklinkCache {
 			// because databases are stupid and don't necessarily propagate indexes.
 			if ( $startId ) {
 				$queryBuilder->where(
-					$this->getDB()->buildComparison( '>=', [ $fromField => $startId ] )
+					$this->getDB()->expr( $fromField, '>=', $startId )
 				);
 			}
 			if ( $endId ) {
 				$queryBuilder->where(
-					$this->getDB()->buildComparison( '<=', [ $fromField => $endId ] )
+					$this->getDB()->expr( $fromField, '<=', $endId )
 				);
 			}
 			$queryBuilder->orderBy( $fromField );
@@ -423,7 +429,7 @@ class BacklinkCache {
 
 				// Do the selects in batches to avoid client-side OOMs (T45452).
 				// Use a LIMIT that plays well with $batchSize to keep equal sized partitions.
-				$selectSize = max( $batchSize, 200000 - ( 200000 % $batchSize ) );
+				$selectSize = max( $batchSize, 200_000 - ( 200_000 % $batchSize ) );
 				$start = false;
 				do {
 					$res = $this->queryLinks( $table, $start, false, $selectSize, 'ids' );
@@ -553,3 +559,6 @@ class BacklinkCache {
 		return array_values( $mergedRes );
 	}
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( BacklinkCache::class, 'BacklinkCache' );

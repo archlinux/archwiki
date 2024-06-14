@@ -20,7 +20,7 @@ use XmlDumpWriter;
  *
  * @group Database
  * @group Dump
- * @covers TextPassDumper
+ * @covers \TextPassDumper
  */
 class TextPassDumperDatabaseTest extends DumpTestCase {
 
@@ -197,7 +197,7 @@ class TextPassDumperDatabaseTest extends DumpTestCase {
 			$dumper = new TextPassDumper();
 			$dumper->loadWithArgv( [ "--stub=file:" . $nameStub,
 				"--output=" . $checkpointFormat . ":" . $nameOutputDir . "/full",
-				"--maxtime=1" /*This is in minutes. Fixup is below*/,
+				"--maxtime=1", // This is in minutes. Fixup is below
 				"--buffersize=32768", // The default of 32 iterations fill up 32 KiB about twice
 				"--checkpointfile=checkpoint-%s-%s.xml.gz" ] );
 			$dumper->setDB( $this->db );
@@ -430,8 +430,6 @@ class TextPassDumperDatabaseTest extends DumpTestCase {
 	 *   of iteration > 1 have no corresponding representation in the database.
 	 *
 	 * @return string Absolute filename of the stub
-	 * @throws \FatalError
-	 * @throws \MWException
 	 */
 	private function setUpStub( $templateName, $schemaVersion, $outFile = null, $iterations = 1 ) {
 		if ( $outFile === null ) {
@@ -483,7 +481,7 @@ class TextPassDumperDatabaseTest extends DumpTestCase {
  * cannot bring this test case's tests into the above main test case.)
  *
  * @group Dump
- * @covers TextPassDumper
+ * @covers \TextPassDumper
  */
 class TextPassDumperDatabaselessTest extends MediaWikiLangTestCase {
 	/**

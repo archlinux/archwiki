@@ -1,19 +1,28 @@
 <?php
 
+namespace MediaWiki\Tests\Parser;
+
+use HtmlArmor;
+use LogicException;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
+use MediaWikiLangTestCase;
+use MockTitleTrait;
+use ParserOptions;
+use WikitextContent;
 
 /**
  * @group Database
- * @covers Parser
- * @covers BlockLevelPass
+ * @covers \Parser
+ * @covers \BlockLevelPass
  */
 class ParserMethodsTest extends MediaWikiLangTestCase {
 	use MockTitleTrait;
@@ -115,7 +124,7 @@ class ParserMethodsTest extends MediaWikiLangTestCase {
 		$parser = $this->getServiceContainer()->getParser();
 		$po = ParserOptions::newFromAnon();
 		$parser->setHook( 'recursivecallparser', [ $this, 'helperParserFunc' ] );
-		$this->expectException( MWException::class );
+		$this->expectException( LogicException::class );
 		$this->expectExceptionMessage(
 			"Parser state cleared while parsing. Did you call Parser::parse recursively?"
 		);
@@ -150,8 +159,8 @@ class ParserMethodsTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers Parser
-	 * @covers ParserOutput::getSections
+	 * @covers \Parser
+	 * @covers \MediaWiki\Parser\ParserOutput::getSections
 	 */
 	public function testGetSections() {
 		$this->overrideConfigValue( MainConfigNames::FragmentMode, [ 'html5' ] );
@@ -239,6 +248,11 @@ class ParserMethodsTest extends MediaWikiLangTestCase {
 				'http://example.org/%23%2F%3F&=+;?%23/?%26%3D%2B%3B#%23/?&=+;',
 			],
 			[
+				'Removing dot segments in the path part only',
+				'http://example.org/foo/../bar?param=foo/../bar#foo/../bar',
+				'http://example.org/bar?param=foo/../bar#foo/../bar',
+			],
+			[
 				'IPv6 links aren\'t escaped',
 				'http://[::1]/foobar',
 				'http://[::1]/foobar',
@@ -260,7 +274,7 @@ class ParserMethodsTest extends MediaWikiLangTestCase {
 
 		$this->assertStringContainsString( 'Hello World', $text );
 		$this->assertStringContainsString( '<div', $text );
-		$this->assertStringContainsString( 'class="mw-parser-output"', $text );
+		$this->assertStringContainsString( 'class="mw-content-ltr mw-parser-output"', $text );
 	}
 
 	public function provideRevisionAccess() {

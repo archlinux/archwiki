@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\ReCaptchaNoCaptcha;
 
-use Html;
 use HTMLFormField;
+use MediaWiki\Html\Html;
 
 /**
  * Creates a ReCaptcha v2 widget. Does not return any data; handling the data submitted by the

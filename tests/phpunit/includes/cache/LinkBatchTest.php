@@ -1,6 +1,9 @@
 <?php
 
 use MediaWiki\Cache\CacheKeyHelper;
+use MediaWiki\Cache\GenderCache;
+use MediaWiki\Cache\LinkBatch;
+use MediaWiki\Cache\LinkCache;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Logger\LoggerFactory;
@@ -14,14 +17,14 @@ use Wikimedia\Rdbms\IConnectionProvider;
 /**
  * @group Database
  * @group Cache
- * @covers LinkBatch
+ * @covers \LinkBatch
  */
 class LinkBatchTest extends MediaWikiIntegrationTestCase {
 
 	/**
-	 * @covers LinkBatch::__construct()
-	 * @covers LinkBatch::getSize()
-	 * @covers LinkBatch::isEmpty()
+	 * @covers \LinkBatch::__construct()
+	 * @covers \LinkBatch::getSize()
+	 * @covers \LinkBatch::isEmpty()
 	 */
 	public function testConstructEmptyWithServices() {
 		$batch = new LinkBatch(
@@ -40,9 +43,9 @@ class LinkBatchTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers LinkBatch::__construct()
-	 * @covers LinkBatch::getSize()
-	 * @covers LinkBatch::isEmpty()
+	 * @covers \LinkBatch::__construct()
+	 * @covers \LinkBatch::getSize()
+	 * @covers \LinkBatch::isEmpty()
 	 */
 	public function testConstructWithServices() {
 		$batch = new LinkBatch(
@@ -76,15 +79,15 @@ class LinkBatchTest extends MediaWikiIntegrationTestCase {
 			$this->createMock( TitleFormatter::class ),
 			$this->createMock( Language::class ),
 			$this->createMock( GenderCache::class ),
-			$this->getServiceContainer()->getDBLoadBalancerFactory(),
+			$this->getServiceContainer()->getConnectionProvider(),
 			$this->getServiceContainer()->getLinksMigration(),
 			LoggerFactory::getInstance( 'LinkBatch' )
 		);
 	}
 
 	/**
-	 * @covers LinkBatch::addObj()
-	 * @covers LinkBatch::getSize()
+	 * @covers \LinkBatch::addObj()
+	 * @covers \LinkBatch::getSize()
 	 */
 	public function testAddObj() {
 		$batch = $this->newLinkBatch(
@@ -102,8 +105,8 @@ class LinkBatchTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers LinkBatch::add()
-	 * @covers LinkBatch::getSize()
+	 * @covers \LinkBatch::add()
+	 * @covers \LinkBatch::getSize()
 	 */
 	public function testAdd() {
 		$batch = $this->newLinkBatch(
@@ -151,7 +154,7 @@ class LinkBatchTest extends MediaWikiIntegrationTestCase {
 			$services->getTitleFormatter(),
 			$services->getContentLanguage(),
 			$services->getGenderCache(),
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$services->getLinksMigration(),
 			LoggerFactory::getInstance( 'LinkBatch' )
 		);

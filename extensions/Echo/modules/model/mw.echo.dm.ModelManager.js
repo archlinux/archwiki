@@ -113,10 +113,9 @@
 	 * @fires seen
 	 */
 	mw.echo.dm.ModelManager.prototype.onSeenTimeUpdate = function ( timestamp ) {
-		var modelId,
-			models = this.getAllNotificationModels();
+		var models = this.getAllNotificationModels();
 
-		for ( modelId in models ) {
+		for ( var modelId in models ) {
 			models[ modelId ].updateSeenState( timestamp );
 		}
 
@@ -157,11 +156,9 @@
 	 * }
 	 */
 	mw.echo.dm.ModelManager.prototype.setNotificationModels = function ( modelDefinitions ) {
-		var modelId;
-
 		this.resetNotificationModels();
 
-		for ( modelId in modelDefinitions ) {
+		for ( var modelId in modelDefinitions ) {
 			this.notificationModels[ modelId ] = modelDefinitions[ modelId ];
 			this.notificationModels[ modelId ].connect( this, {
 				discard: [ 'onModelDiscardItems', modelId ],
@@ -202,11 +199,10 @@
 	 * @return {number} A count of all notifications
 	 */
 	mw.echo.dm.ModelManager.prototype.getAllNotificationCount = function () {
-		var model,
-			count = 0,
+		var count = 0,
 			models = this.getAllNotificationModels();
 
-		for ( model in models ) {
+		for ( var model in models ) {
 			count += models[ model ].getCount();
 		}
 
@@ -259,9 +255,7 @@
 	 * @private
 	 */
 	mw.echo.dm.ModelManager.prototype.resetNotificationModels = function () {
-		var model;
-
-		for ( model in this.notificationModels ) {
+		for ( var model in this.notificationModels ) {
 			if ( Object.prototype.hasOwnProperty.call( this.notificationModels, model ) ) {
 				this.notificationModels[ model ].disconnect( this );
 				delete this.notificationModels[ model ];
@@ -347,12 +341,10 @@
 	 * @return {boolean} The given models has unseen notifications.
 	 */
 	mw.echo.dm.ModelManager.prototype.hasUnseenInSource = function ( source ) {
-		var i, modelNames;
-
 		source = source || 'local';
-		modelNames = this.getModelsBySource( source );
+		var modelNames = this.getModelsBySource( source );
 
-		for ( i = 0; i < modelNames.length; i++ ) {
+		for ( var i = 0; i < modelNames.length; i++ ) {
 			if ( this.getNotificationModel( modelNames[ i ] ).hasUnseen() ) {
 				return true;
 			}
@@ -367,10 +359,9 @@
 	 * @return {boolean} Local model has unseen notifications.
 	 */
 	mw.echo.dm.ModelManager.prototype.hasUnseenInAnyModel = function () {
-		var model,
-			models = this.getAllNotificationModels();
+		var models = this.getAllNotificationModels();
 
-		for ( model in models ) {
+		for ( var model in models ) {
 			if ( models[ model ].hasUnseen() ) {
 				return true;
 			}

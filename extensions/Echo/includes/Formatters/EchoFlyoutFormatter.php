@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use Html;
-use MWTimestamp;
+use MediaWiki\Html\Html;
+use MediaWiki\Utils\MWTimestamp;
 use Xml;
 
 /**

@@ -31,7 +31,6 @@
 	"cite_error_included_references": "<code>&lt;references&gt;</code>를 닫는 태그가 없습니다",
 	"cite_error_group_refs_without_references": "\"$1\"이라는 이름을 가진 그룹에 대한 <code>&lt;ref&gt;</code> 태그가 존재하지만, 이에 대응하는 <code>&lt;references group=\"$1\" /&gt;</code> 태그가 없습니다",
 	"cite_error_references_group_mismatch": "<code>&lt;references&gt;</code> 안에 있는 <code>&lt;ref&gt;</code> 태그에서 \"$1\" 그룹 특성이 충돌됩니다.",
-	"cite_error_references_missing_group": "<code>&lt;references&gt;</code> 안에 정의된 <code>&lt;ref&gt;</code> 태그에 이전 텍스트에 없는 \"$1\" 그룹 특성이 있습니다.",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code> 안에 정의된 \"$1\"이라는 이름을 가진 <code>&lt;ref&gt;</code> 태그가 위에서 사용되고 있지 않습니다.",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code> 안에 정의된 <code>&lt;ref&gt;</code> 태그에 이름 특성이 없습니다.",
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> 태그 안에 정의된 \"$1\"이라는 이름을 가진 <code>&lt;ref&gt;</code> 태그에 내용이 없습니다.",

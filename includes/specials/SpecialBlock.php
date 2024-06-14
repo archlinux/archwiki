@@ -25,8 +25,6 @@ namespace MediaWiki\Specials;
 
 use ErrorPageError;
 use HtmlArmor;
-use HTMLForm;
-use IContextSource;
 use Language;
 use LogEventsList;
 use MediaWiki\Block\BlockActionInfo;
@@ -35,13 +33,17 @@ use MediaWiki\Block\BlockUser;
 use MediaWiki\Block\BlockUserFactory;
 use MediaWiki\Block\BlockUtils;
 use MediaWiki\Block\DatabaseBlock;
+use MediaWiki\Block\DatabaseBlockStore;
 use MediaWiki\Block\Restriction\ActionRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Message\Message;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Permissions\Authority;
@@ -56,13 +58,11 @@ use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
-use Message;
 use OOUI\FieldLayout;
 use OOUI\HtmlSnippet;
 use OOUI\LabelWidget;
 use OOUI\Widget;
 use Wikimedia\IPUtils;
-use XmlSelect;
 
 /**
  * A special page that allows users with 'block' right to block users from
@@ -75,6 +75,7 @@ class SpecialBlock extends FormSpecialPage {
 	private BlockUtils $blockUtils;
 	private BlockPermissionCheckerFactory $blockPermissionCheckerFactory;
 	private BlockUserFactory $blockUserFactory;
+	private DatabaseBlockStore $blockStore;
 	private UserNameUtils $userNameUtils;
 	private UserNamePrefixSearch $userNamePrefixSearch;
 	private BlockActionInfo $blockActionInfo;
@@ -109,6 +110,7 @@ class SpecialBlock extends FormSpecialPage {
 	 * @param BlockUtils $blockUtils
 	 * @param BlockPermissionCheckerFactory $blockPermissionCheckerFactory
 	 * @param BlockUserFactory $blockUserFactory
+	 * @param DatabaseBlockStore $blockStore
 	 * @param UserNameUtils $userNameUtils
 	 * @param UserNamePrefixSearch $userNamePrefixSearch
 	 * @param BlockActionInfo $blockActionInfo
@@ -119,6 +121,7 @@ class SpecialBlock extends FormSpecialPage {
 		BlockUtils $blockUtils,
 		BlockPermissionCheckerFactory $blockPermissionCheckerFactory,
 		BlockUserFactory $blockUserFactory,
+		DatabaseBlockStore $blockStore,
 		UserNameUtils $userNameUtils,
 		UserNamePrefixSearch $userNamePrefixSearch,
 		BlockActionInfo $blockActionInfo,
@@ -130,11 +133,20 @@ class SpecialBlock extends FormSpecialPage {
 		$this->blockUtils = $blockUtils;
 		$this->blockPermissionCheckerFactory = $blockPermissionCheckerFactory;
 		$this->blockUserFactory = $blockUserFactory;
+		$this->blockStore = $blockStore;
 		$this->userNameUtils = $userNameUtils;
 		$this->userNamePrefixSearch = $userNamePrefixSearch;
 		$this->blockActionInfo = $blockActionInfo;
 		$this->titleFormatter = $titleFormatter;
 		$this->namespaceInfo = $namespaceInfo;
+	}
+
+	public function execute( $par ) {
+		parent::execute( $par );
+
+		if ( $this->getConfig()->get( 'UseCodexSpecialBlock' ) ) {
+			$this->getOutput()->addModules( 'mediawiki.special.block.codex' );
+		}
 	}
 
 	public function doesWrites() {
@@ -220,7 +232,7 @@ class SpecialBlock extends FormSpecialPage {
 	}
 
 	protected function getDisplayFormat() {
-		return 'ooui';
+		return $this->getConfig()->get( 'UseCodexSpecialBlock' ) ? 'codex' : 'ooui';
 	}
 
 	/**
@@ -235,7 +247,7 @@ class SpecialBlock extends FormSpecialPage {
 
 		$user = $this->getUser();
 
-		$suggestedDurations = self::getSuggestedDurations();
+		$suggestedDurations = $this->getLanguage()->getBlockDurations();
 
 		$a = [];
 
@@ -260,24 +272,41 @@ class SpecialBlock extends FormSpecialPage {
 			'section' => 'target',
 		];
 
+		$editingRestrictionOptions = $this->getConfig()->get( 'UseCodexSpecialBlock' ) ?
+			// If we're using Codex, use the option-descriptions feature, which is only supported by Codex
+			[
+				'options-messages' => [
+					'ipb-sitewide' => 'sitewide',
+					'ipb-partial' => 'partial'
+				],
+				'option-descriptions-messages' => [
+					'sitewide' => 'ipb-sitewide-help',
+					'partial' => 'ipb-partial-help'
+				],
+				'option-descriptions-messages-parse' => true,
+			] :
+			// Otherwise, if we're using OOUI, add the options' descriptions as part of their labels
+			[
+				'options' => [
+					$this->msg( 'ipb-sitewide' )->escaped() .
+						new LabelWidget( [
+							'classes' => [ 'oo-ui-inline-help' ],
+							'label' => new HtmlSnippet( $this->msg( 'ipb-sitewide-help' )->parse() ),
+						] ) => 'sitewide',
+					$this->msg( 'ipb-partial' )->escaped() .
+						new LabelWidget( [
+							'classes' => [ 'oo-ui-inline-help' ],
+							'label' => new HtmlSnippet( $this->msg( 'ipb-partial-help' )->parse() ),
+						] ) => 'partial',
+				]
+			];
+
 		$a['EditingRestriction'] = [
 			'type' => 'radio',
 			'cssclass' => 'mw-block-editing-restriction',
 			'default' => 'sitewide',
-			'options' => [
-				$this->msg( 'ipb-sitewide' )->escaped() .
-					new LabelWidget( [
-						'classes' => [ 'oo-ui-inline-help' ],
-						'label' => new HtmlSnippet( $this->msg( 'ipb-sitewide-help' )->parse() ),
-					] ) => 'sitewide',
-				$this->msg( 'ipb-partial' )->escaped() .
-					new LabelWidget( [
-						'classes' => [ 'oo-ui-inline-help' ],
-						'label' => $this->msg( 'ipb-partial-help' )->text(),
-					] ) => 'partial',
-			],
 			'section' => 'actions',
-		];
+		] + $editingRestrictionOptions;
 
 		$a['PageRestrictions'] = [
 			'type' => 'titlesmultiselect',
@@ -457,7 +486,7 @@ class SpecialBlock extends FormSpecialPage {
 		// This won't be
 		$fields['PreviousTarget']['default'] = (string)$this->target;
 
-		$block = DatabaseBlock::newFromTarget( $this->target );
+		$block = $this->blockStore->newFromTarget( $this->target );
 
 		// Populate fields if there is a block that is not an autoblock; if it is a range
 		// block, only populate the fields if the range is the same as $this->target
@@ -481,7 +510,7 @@ class SpecialBlock extends FormSpecialPage {
 				$fields['DisableUTEdit']['default'] = !$block->isUsertalkEditAllowed();
 			}
 
-			// If the username was hidden (ipb_deleted == 1), don't show the reason
+			// If the username was hidden (bl_deleted == 1), don't show the reason
 			// unless this user also has rights to hideuser: T37839
 			if ( !$block->getHideName() || $this->getAuthority()->isAllowed( 'hideuser' ) ) {
 				$fields['Reason']['default'] = $block->getReasonComment()->text;
@@ -962,6 +991,7 @@ class SpecialBlock extends FormSpecialPage {
 	 * Get an array of suggested block durations from MediaWiki:Ipboptions
 	 * @todo FIXME: This uses a rather odd syntax for the options, should it be converted
 	 *     to the standard "**<duration>|<displayname>" format?
+	 * @deprecated since 1.42, use Language::getBlockDurations() instead.
 	 * @param Language|null $lang The language to get the durations in, or null to use
 	 *     the wiki's content language
 	 * @param bool $includeOther Whether to include the 'other' option in the list of
@@ -969,23 +999,8 @@ class SpecialBlock extends FormSpecialPage {
 	 * @return string[]
 	 */
 	public static function getSuggestedDurations( Language $lang = null, $includeOther = true ) {
-		$msg = $lang === null
-			? wfMessage( 'ipboptions' )->inContentLanguage()->text()
-			: wfMessage( 'ipboptions' )->inLanguage( $lang )->text();
-
-		if ( $msg == '-' ) {
-			return [];
-		}
-
-		$a = XmlSelect::parseOptionsMessage( $msg );
-
-		if ( $a && $includeOther ) {
-			// If options exist, add other to the end instead of the beginning (which
-			// is what happens by default).
-			$a[ wfMessage( 'ipbother' )->text() ] = 'other';
-		}
-
-		return $a;
+		$lang ??= MediaWikiServices::getInstance()->getContentLanguage();
+		return $lang->getBlockDurations( $includeOther );
 	}
 
 	/**
@@ -1064,7 +1079,5 @@ class SpecialBlock extends FormSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialBlock::class, 'SpecialBlock' );

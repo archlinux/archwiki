@@ -13,9 +13,11 @@
 			"McDutchie",
 			"Peter Bowman",
 			"Ryo567",
-			"Vfrico"
+			"Vfrico",
+			"No se"
 		]
 	},
+	"content-model-scribunto": "Módulo scribunto",
 	"scribunto-desc": "Marco para la incorporación de lenguajes de script en páginas de MediaWiki",
 	"scribunto-line": "en la línea $1",
 	"scribunto-module-line": "en $1 en la línea $2",

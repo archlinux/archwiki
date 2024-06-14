@@ -163,7 +163,6 @@
 	"echo-category-title-dt-subscription-archiving": "वार्ता पृष्ठ {{PLURAL:$1|अभिलेख}}गर्दै",
 	"echo-pref-tooltip-dt-subscription": "मैले सदस्यता लिएको विषयमा कसैले नयाँ टिप्पणी पोस्ट गर्दा मलाई सूचित गर्नुहोस्।",
 	"echo-pref-tooltip-dt-subscription-archiving": "मलाई सूचित गर्नुहोस् जब मैले सदस्यता लिएको विषय संग्रहित वा पृष्ठबाट हटाइयो, वा यदि त्यस विषयमा पोस्ट गरिएका नयाँ टिप्पणीहरूको बारेमा सूचनाहरू अन्य कारणले पठाउन सकिँदैन भने।",
-	"minerva-talk-full-page": "विकि पृष्ठकाे रूपमा पढ्नुहाेस्",
 	"tag-discussiontools-added-comment-description": "यस सम्पादनमा वार्ता पृष्ठ टिप्पणी थपिएको थियो",
 	"tag-discussiontools-description": "छलफल उपकरण प्रयाेग गरि गरिएका सम्पादन",
 	"tag-discussiontools-edit": "सम्पादित टिप्पणी",

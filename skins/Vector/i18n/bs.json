@@ -22,7 +22,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 jezik|$1 jezika}}",
 	"vector-no-language-button-label": "Dodaj jezike",
 	"vector-no-language-button-aria-label": "Ovaj članak postoji samo na ovom jeziku. Dodaj članak za druge jezike",
-	"vector-language-redirect-to-top": "Linkovi na druge jezike nalaze se u gornjem desnom uglu stranice pored naslova članka. [[#p-lang-btn|Idi na vrh]].",
 	"vector-language-variant-switcher-label": "Promijeni varijantu jezika",
 	"vector-action-addsection": "Dodaj temu",
 	"vector-action-delete": "Izbriši",
@@ -39,6 +38,16 @@
 	"vector-jumptosearch": "Idi na pretragu",
 	"vector-jumptocontent": "Idi na sadržaj",
 	"vector-more-actions": "Više",
+	"vector-client-prefs-label": "Izgled",
+	"vector-feature-limited-width-name": "Širina",
+	"vector-feature-custom-font-size-name": "Tekst",
+	"vector-feature-limited-width-0-label": "Znatno šira",
+	"vector-feature-limited-width-1-label": "Standardna",
+	"vector-feature-custom-font-size-0-label": "Mali",
+	"vector-feature-custom-font-size-1-label": "Standardni",
+	"vector-feature-custom-font-size-2-label": "Veliki",
+	"skin-theme-name": "Boja",
+	"skin-theme-os-label": "Automatska",
 	"vector-search-loader": "Učitavam prijedloge pretrage",
 	"vector-searchsuggest-containing": "Pretraži stranice koje sadrže <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Pomoć:Uvod",
@@ -66,5 +75,6 @@
 	"vector-prefs-limited-width-help": "Uključuje režim ograničene širine za poboljšano iskustvo čitanja.",
 	"empty-language-selector-body": "Sadržaj stranice nije podržan na drugim jezicima.",
 	"vector-page-tools-unpinned-popup": "Alati su premješteni ovdje.",
-	"vector-main-menu-unpinned-popup": "Glavni meni premješten je ovdje."
+	"vector-main-menu-unpinned-popup": "Glavni meni premješten je ovdje.",
+	"vector-client-prefs-unpinned-popup": "Meni za izgled premješten je ovdje."
 }

@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Arent",
-			"Siebrand",
-			"McDutchie"
+			"McDutchie",
+			"Siebrand"
 		]
 	},
 	"textextracts-desc": "Maakt uittreksels van pagina-inhoud in platte tekst of in beperkte HTML"

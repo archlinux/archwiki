@@ -11,6 +11,7 @@
 
 namespace MediaWiki\Extension\Scribunto;
 
+use MediaWiki\Title\Title;
 use TextContent;
 
 /**
@@ -23,5 +24,19 @@ class ScribuntoContent extends TextContent {
 	 */
 	public function __construct( $text ) {
 		parent::__construct( $text, CONTENT_MODEL_SCRIBUNTO );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function updateRedirect( Title $target ) {
+		return Scribunto::newDefaultEngine()->updateRedirect( $this, $target );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getRedirectTarget() {
+		return Scribunto::newDefaultEngine()->getRedirectTarget( $this );
 	}
 }

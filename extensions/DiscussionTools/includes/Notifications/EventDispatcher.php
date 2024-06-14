@@ -9,14 +9,12 @@
 
 namespace MediaWiki\Extension\DiscussionTools\Notifications;
 
-use ChangeTags;
 use DateInterval;
 use DateTimeImmutable;
-use DeferredUpdates;
 use ExtensionRegistry;
 use IDBAccessObject;
 use Iterator;
-use MediaWiki\Extension\DiscussionTools\CommentParser;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Extension\DiscussionTools\CommentUtils;
 use MediaWiki\Extension\DiscussionTools\ContentThreadItemSet;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookUtils;
@@ -34,53 +32,22 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
-use ParserOptions;
 use RequestContext;
-use RuntimeException;
-use TitleValue;
 use Wikimedia\Assert\Assert;
+use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
 class EventDispatcher {
 	/**
-	 * @param RevisionRecord $revRecord
-	 * @return ContentThreadItemSet
+	 * @throws ResourceLimitExceededException
 	 */
 	private static function getParsedRevision( RevisionRecord $revRecord ): ContentThreadItemSet {
-		$services = MediaWikiServices::getInstance();
-
-		$pageRecord = $services->getPageStore()->getPageById( $revRecord->getPageId() ) ?:
-			$services->getPageStore()->getPageById( $revRecord->getPageId(), IDBAccessObject::READ_LATEST );
-
-		Assert::postcondition( $pageRecord !== null, 'Revision had no page' );
-
-		// If the $revRecord was fetched from the primary database, this will also fetch the content
-		// from the primary database (using the same query flags)
-		$status = $services->getParserOutputAccess()->getParserOutput(
-			$pageRecord,
-			ParserOptions::newFromAnon(),
-			$revRecord
-		);
-		if ( !$status->isOK() ) {
-			throw new RuntimeException( 'Could not load revision for notifications' );
-		}
-
-		$title = TitleValue::newFromPage( $revRecord->getPage() );
-
-		$parserOutput = $status->getValue();
-		$html = $parserOutput->getText();
-
-		$doc = DOMUtils::parseHTML( $html );
-		$container = DOMCompat::getBody( $doc );
-		/** @var CommentParser $parser */
-		$parser = $services->getService( 'DiscussionTools.CommentParser' );
-		return $parser->parse( $container, $title );
+		return HookUtils::parseRevisionParsoidHtml( $revRecord, __METHOD__ );
 	}
 
 	/**
-	 * @param array &$events
-	 * @param RevisionRecord $newRevRecord
+	 * @throws ResourceLimitExceededException
 	 */
 	public static function generateEventsForRevision( array &$events, RevisionRecord $newRevRecord ): void {
 		$services = MediaWikiServices::getInstance();
@@ -200,13 +167,6 @@ class EventDispatcher {
 
 	/**
 	 * Helper for generateEventsForRevision(), separated out for easier testing.
-	 *
-	 * @param array &$events
-	 * @param ContentThreadItemSet $oldItemSet
-	 * @param ContentThreadItemSet $newItemSet
-	 * @param RevisionRecord $newRevRecord
-	 * @param PageIdentity $title
-	 * @param UserIdentity $user
 	 */
 	protected static function generateEventsFromItemSets(
 		array &$events,
@@ -372,24 +332,19 @@ class EventDispatcher {
 
 	/**
 	 * Add our change tag for a revision that adds new comments.
-	 *
-	 * @param RevisionRecord $newRevRecord
 	 */
 	protected static function addCommentChangeTag( RevisionRecord $newRevRecord ): void {
 		// Unclear if DeferredUpdates::addCallableUpdate() is needed,
 		// but every extension does it that way.
 		DeferredUpdates::addCallableUpdate( static function () use ( $newRevRecord ) {
-			ChangeTags::addTags( [ 'discussiontools-added-comment' ], null, $newRevRecord->getId() );
+			MediaWikiServices::getInstance()->getChangeTagsStore()
+				->addTags( [ 'discussiontools-added-comment' ], null, $newRevRecord->getId() );
 		} );
 	}
 
 	/**
 	 * Add an automatic subscription to the given item, assuming the user has automatic subscriptions
 	 * enabled.
-	 *
-	 * @param UserIdentity $user
-	 * @param Title $title
-	 * @param string $itemName
 	 */
 	protected static function addAutoSubscription( UserIdentity $user, Title $title, string $itemName ): void {
 		$dtConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'discussiontools' );

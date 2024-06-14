@@ -36,7 +36,6 @@
 	"echo-pref-subscription-edit-thank": "Matur nuwun marang aku awit besutanku",
 	"echo-pref-tooltip-edit-thank": "Pariwarani aku nalika ana sing matur nuwun awit besutan sing dakgawé.",
 	"echo-category-title-edit-thank": "Matur nuwun",
-	"notification-thanks-diff-link": "besutanmu",
 	"notification-header-rev-thank": "$1 {{GENDER:$2|matur nuwun}} {{GENDER:$4|marang kowé}} awit besutanmu ing <strong>$3</strong>.",
 	"notification-compact-header-edit-thank": "$1 {{GENDER:$2|matur nuwun}} {{GENDER:$3|marang kowé}}.",
 	"notification-bundle-header-rev-thank": "{{PLURAL:$1|Sawong|$1 wong|100=99+ wong}} matur nuwun {{GENDER:$3|marang kowé}} awit besutanmu ing <strong>$2</strong>.",
@@ -47,6 +46,5 @@
 	"notification-link-text-view-post": "Deleng tanggepan",
 	"thanks-error-invalidpostid": "ID kiriman ora sah.",
 	"flow-thanks-confirmation-special": "Arep ngirim atur panuwun tinarbuka tumrap tanggepan iki?",
-	"flow-thanks-thanked-notice": "{{GENDER:$3|Kowé}} matur nuwun marang $1 awit tanggepan{{GENDER:$2|é}}.",
-	"notification-flow-thanks-post-link": "tanggapanmu"
+	"flow-thanks-thanked-notice": "{{GENDER:$3|Kowé}} matur nuwun marang $1 awit tanggepan{{GENDER:$2|é}}."
 }

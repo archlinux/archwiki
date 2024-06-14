@@ -25,8 +25,8 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserFactory;
-use MediaWiki\User\UserOptionsLookup;
 use Wikimedia\Message\IMessageFormatterFactory;
 use Wikimedia\Message\ITextFormatter;
 
@@ -36,21 +36,20 @@ use Wikimedia\Message\ITextFormatter;
  * @since 1.41
  */
 class EmailUserFactory {
-	/** @var ServiceOptions */
 	private ServiceOptions $options;
-	/** @var HookContainer */
+
 	private HookContainer $hookContainer;
-	/** @var UserOptionsLookup */
+
 	private UserOptionsLookup $userOptionsLookup;
-	/** @var CentralIdLookup */
+
 	private CentralIdLookup $centralIdLookup;
-	/** @var UserFactory */
+
 	private UserFactory $userFactory;
-	/** @var IEmailer */
+
 	private IEmailer $emailer;
-	/** @var IMessageFormatterFactory */
+
 	private IMessageFormatterFactory $messageFormatterFactory;
-	/** @var ITextFormatter */
+
 	private ITextFormatter $contLangMsgFormatter;
 
 	/**

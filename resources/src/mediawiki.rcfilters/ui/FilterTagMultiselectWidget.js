@@ -5,21 +5,21 @@ var ViewSwitchWidget = require( './ViewSwitchWidget.js' ),
 	FilterTagMultiselectWidget;
 
 /**
- * List displaying all filter groups
+ * List displaying all filter groups.
  *
  * @class mw.rcfilters.ui.FilterTagMultiselectWidget
+ * @ignore
  * @extends OO.ui.MenuTagMultiselectWidget
- * @mixins OO.ui.mixin.PendingElement
+ * @mixes OO.ui.mixin.PendingElement
  *
- * @constructor
  * @param {mw.rcfilters.Controller} controller Controller
  * @param {mw.rcfilters.dm.FiltersViewModel} model View model
  * @param {mw.rcfilters.dm.SavedQueriesModel} savedQueriesModel Saved queries model
  * @param {Object} config Configuration object
- * @cfg {jQuery} [$overlay] A jQuery object serving as overlay for popups
- * @cfg {jQuery} [$wrapper] A jQuery object for the wrapper of the general
+ * @param {jQuery} [config.$overlay] A jQuery object serving as overlay for popups
+ * @param {jQuery} [config.$wrapper] A jQuery object for the wrapper of the general
  *  system. If not given, falls back to this widget's $element
- * @cfg {boolean} [collapsed] Filter area is collapsed
+ * @param {boolean} [config.collapsed] Filter area is collapsed
  */
 FilterTagMultiselectWidget = function MwRcfiltersUiFilterTagMultiselectWidget( controller, model, savedQueriesModel, config ) {
 	var $rcFiltersRow,
@@ -50,7 +50,7 @@ FilterTagMultiselectWidget = function MwRcfiltersUiFilterTagMultiselectWidget( c
 	} );
 
 	// Parent
-	FilterTagMultiselectWidget.parent.call( this, $.extend( true, {
+	FilterTagMultiselectWidget.super.call( this, $.extend( true, {
 		label: mw.msg( 'rcfilters-filterlist-title' ),
 		placeholder: mw.msg( 'rcfilters-empty-filter' ),
 		inputPosition: 'outline',
@@ -82,6 +82,7 @@ FilterTagMultiselectWidget = function MwRcfiltersUiFilterTagMultiselectWidget( c
 		 * rather than a text input. Mobile screens are too small to accommodate both an
 		 * onscreen keyboard and a popup-menu, so readyOnly is set to disable the keyboard.
 		 * A different icon and shorter message is used for mobile as well. (See T224655 for details).
+		 * @ignore
 		 */
 		input: {
 			icon: this.isMobile ? 'funnel' : 'menu',
@@ -387,13 +388,19 @@ FilterTagMultiselectWidget.prototype.onMenuToggle = function ( isVisible ) {
 	var scrollToElement = this.isMobile ? this.input.$input : this.$element;
 
 	// Parent
-	FilterTagMultiselectWidget.parent.prototype.onMenuToggle.call( this );
+	FilterTagMultiselectWidget.super.prototype.onMenuToggle.call( this );
 
 	if ( isVisible ) {
 		if ( !this.isMobile ) {
 			this.focus();
 		}
 
+		/**
+		 * Fires when the RCFilters tag multi selector menu is toggled.
+		 *
+		 * @event ~'RcFilters.popup.open'
+		 * @memberof Hooks
+		 */
 		mw.hook( 'RcFilters.popup.open' ).fire();
 
 		if ( !this.getMenu().findSelectedItem() ) {
@@ -441,7 +448,7 @@ FilterTagMultiselectWidget.prototype.onInputFocus = function () {
 		this.getMenu().toggle();
 	} else {
 		// Parent
-		FilterTagMultiselectWidget.parent.prototype.onInputFocus.call( this );
+		FilterTagMultiselectWidget.super.prototype.onInputFocus.call( this );
 	}
 };
 
@@ -450,7 +457,7 @@ FilterTagMultiselectWidget.prototype.onInputFocus = function () {
  */
 FilterTagMultiselectWidget.prototype.doInputEscape = function () {
 	// Parent
-	FilterTagMultiselectWidget.parent.prototype.doInputEscape.call( this );
+	FilterTagMultiselectWidget.super.prototype.doInputEscape.call( this );
 
 	// Blur the input
 	this.input.$input.trigger( 'blur' );
@@ -473,7 +480,7 @@ FilterTagMultiselectWidget.prototype.onMouseDown = function ( e ) {
 FilterTagMultiselectWidget.prototype.onChangeTags = function () {
 	// If initialized, call parent method.
 	if ( this.controller.isInitialized() ) {
-		FilterTagMultiselectWidget.parent.prototype.onChangeTags.call( this );
+		FilterTagMultiselectWidget.super.prototype.onChangeTags.call( this );
 	}
 
 	this.emptyFilterMessage.toggle( this.isEmpty() );
@@ -635,7 +642,7 @@ FilterTagMultiselectWidget.prototype.onTagSelect = function ( tagItem ) {
 
 	this.menu.setUserSelecting( true );
 	// Parent method
-	FilterTagMultiselectWidget.parent.prototype.onTagSelect.call( this, tagItem );
+	FilterTagMultiselectWidget.super.prototype.onTagSelect.call( this, tagItem );
 
 	// Switch view
 	this.controller.resetSearchForView( tagItem.getView() );
@@ -668,7 +675,7 @@ FilterTagMultiselectWidget.prototype.selectTag = function ( item ) {
  */
 FilterTagMultiselectWidget.prototype.onTagRemove = function ( tagItem ) {
 	// Parent method
-	FilterTagMultiselectWidget.parent.prototype.onTagRemove.call( this, tagItem );
+	FilterTagMultiselectWidget.super.prototype.onTagRemove.call( this, tagItem );
 
 	this.controller.clearFilter( tagItem.getName() );
 

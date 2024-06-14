@@ -56,7 +56,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Ĉi tiu referenco estas difinita en ŝablono aŭ alia aŭtomate farita bloko; aktuale, vi povas nur antaŭrigardi ĝin en la fonto-redakta reĝimo.",
 	"cite-ve-referenceslist-missingreflist": "Ĉi tiu referencolisto estas farita per ŝablono.",
 	"cite-ve-toolbar-group-label": "Citi",
-	"cite-ve-othergroup-item": "referenco(n) $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referencoj",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nomo de referencaro: \"$1\""
+	"cite-ve-othergroup-item": "referenco(n) $1"
 }

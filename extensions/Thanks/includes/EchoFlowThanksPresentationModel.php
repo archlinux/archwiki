@@ -23,6 +23,8 @@ class EchoFlowThanksPresentationModel extends FlowPresentationModel {
 			$msg->params( $this->getViewingUserForGender() );
 			return $msg;
 		} else {
+			// The following message is used here:
+			// * notification-header-flow-thank
 			$msg = parent::getHeaderMessage();
 			$msg->plaintextParams( $this->getTopicTitle() );
 			$msg->params( $this->getTruncatedTitleText( $this->event->getTitle(), true ) );
@@ -32,6 +34,8 @@ class EchoFlowThanksPresentationModel extends FlowPresentationModel {
 	}
 
 	public function getCompactHeaderMessage() {
+		// The following message is used here:
+		// * notification-compact-header-flow-thank
 		$msg = parent::getCompactHeaderMessage();
 		$msg->params( $this->getViewingUserForGender() );
 		return $msg;

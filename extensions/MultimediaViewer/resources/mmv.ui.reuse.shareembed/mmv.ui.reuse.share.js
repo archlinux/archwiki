@@ -31,6 +31,7 @@ const Tab = require( './mmv.ui.reuse.tab.js' );
 			super( $container );
 			this.init();
 		}
+
 		init() {
 			this.$pane.addClass( 'mw-mmv-share-pane' )
 				.appendTo( this.$container );

@@ -2,6 +2,7 @@
 
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Extension\Thanks\Api\ApiCoreThank;
+use MediaWiki\User\User;
 use MediaWiki\User\UserIdentityValue;
 
 /**

@@ -15,7 +15,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
- * @covers MediaWiki\Page\MovePage
+ * @covers \MediaWiki\Page\MovePage
  * @group Database
  */
 class MovePageTest extends MediaWikiIntegrationTestCase {
@@ -104,18 +104,14 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 				}
 			}
 		);
-
-		$this->tablesUsed[] = 'page';
-		$this->tablesUsed[] = 'revision';
-		$this->tablesUsed[] = 'comment';
 	}
 
 	/**
 	 * @dataProvider provideIsValidMove
-	 * @covers MediaWiki\Page\MovePage::isValidMove
-	 * @covers MediaWiki\Page\MovePage::isValidMoveTarget
-	 * @covers MediaWiki\Page\MovePage::isValidFileMove
-	 * @covers MediaWiki\Page\MovePage::__construct
+	 * @covers \MediaWiki\Page\MovePage::isValidMove
+	 * @covers \MediaWiki\Page\MovePage::isValidMoveTarget
+	 * @covers \MediaWiki\Page\MovePage::isValidFileMove
+	 * @covers \MediaWiki\Page\MovePage::__construct
 	 *
 	 * @param string|Title $old
 	 * @param string|Title $new
@@ -339,7 +335,7 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 			$this->assertSame( $oldPageId, $nullRevision->getPageId() );
 			if ( $createRedirect ) {
 				$this->assertInstanceOf( RevisionRecord::class, $redirectRevision );
-				$this->assertSame( $old->getArticleID( Title::READ_LATEST ), $redirectRevision->getPageId() );
+				$this->assertSame( $old->getArticleID( IDBAccessObject::READ_LATEST ), $redirectRevision->getPageId() );
 			} else {
 				$this->assertNull( $redirectRevision );
 			}
@@ -348,7 +344,7 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test for the move operation being aborted via the TitleMove hook
-	 * @covers MediaWiki\Page\MovePage::move
+	 * @covers \MediaWiki\Page\MovePage::move
 	 */
 	public function testMoveAbortedByTitleMoveHook() {
 		$error = 'Preventing move operation with TitleMove hook.';
@@ -375,7 +371,7 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test moving subpages from one page to another
-	 * @covers MediaWiki\Page\MovePage::moveSubpages
+	 * @covers \MediaWiki\Page\MovePage::moveSubpages
 	 */
 	public function testMoveSubpages() {
 		$name = ucfirst( __FUNCTION__ );
@@ -408,7 +404,7 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test moving subpages from one page to another
-	 * @covers MediaWiki\Page\MovePage::moveSubpagesIfAllowed
+	 * @covers \MediaWiki\Page\MovePage::moveSubpagesIfAllowed
 	 */
 	public function testMoveSubpagesIfAllowed() {
 		$name = ucfirst( __FUNCTION__ );
@@ -486,7 +482,7 @@ class MovePageTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * Test redirect handling
 	 *
-	 * @covers MediaWiki\Page\MovePage::isValidMove
+	 * @covers \MediaWiki\Page\MovePage::isValidMove
 	 */
 	public function testRedirects() {
 		$this->editPage( 'ExistentRedirect', '#REDIRECT [[Existent]]' );

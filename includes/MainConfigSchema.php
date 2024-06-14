@@ -46,12 +46,15 @@ use LayeredParameterizedPassword;
 use LocalisationCache;
 use LocalRepo;
 use LogFormatter;
+use MediaWiki\Deferred\SiteStatsUpdate;
+use MediaWiki\Permissions\GrantsInfo;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Settings\Source\JsonSchemaTrait;
+use MediaWiki\Site\MediaWikiSite;
+use MediaWiki\Storage\SqlBlobStore;
 use MediaWiki\Title\NamespaceInfo;
 use MediaWiki\User\CentralId\LocalIdLookup;
 use MediaWiki\User\Registration\LocalUserRegistrationProvider;
-use MediaWikiSite;
 use MemcachedPeclBagOStuff;
 use MemcachedPhpBagOStuff;
 use MergeLogFormatter;
@@ -69,15 +72,14 @@ use ReflectionClass;
 use RefreshLinksJob;
 use RenameUserJob;
 use RenameuserLogFormatter;
-use ReplicatedBagOStuff;
 use RevertedTagUpdateJob;
 use RightsLogFormatter;
-use SiteStatsUpdate;
 use SqlBagOStuff;
 use TagLogFormatter;
 use TextContentHandler;
 use ThumbnailRenderJob;
 use UDPRCFeedEngine;
+use UploadFromUrlJob;
 use UploadLogFormatter;
 use UserEditCountInitJob;
 use UserGroupExpiryJob;
@@ -104,14 +106,14 @@ use WinCacheBagOStuff;
  *         with uniform values. The 'object' type should be used for structures that have a known
  *         set of meaningful properties, especially if each property may have a different kind
  *         of value.
- *         See {@link MediaWiki\Settings\Source\JsonTypeHelper} for details.
+ *         See {@link \MediaWiki\Settings\Source\JsonTypeHelper} for details.
  *
  * The following additional keys are used by MediaWiki:
- * - mergeStrategy: see the {@link MediaWiki\Settings\Config\MergeStrategy}.
+ * - mergeStrategy: see the {@link \MediaWiki\Settings\Config\MergeStrategy}.
  * - dynamicDefault: Specified a callback that computes the effective default at runtime, based
  *   on the value of other config variables or on the system environment.
- *   See {@link MediaWiki\Settings\Source\ReflectionSchemaSource}
- *   and {@link MediaWiki\Settings\DynamicDefaultValues} for details.
+ *   See {@link \MediaWiki\Settings\Source\ReflectionSchemaSource}
+ *   and {@link \MediaWiki\Settings\DynamicDefaultValues} for details.
  *
  * @note After changing this file, run maintenance/generateConfigSchema.php to update
  *       all the files derived from the information in MainConfigSchema.
@@ -692,43 +694,6 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Array with URL paths to HD versions of the wiki logo. The scaled logo size
-	 * should be under 135x155 pixels.
-	 * Only 1.5x and 2x versions are supported.
-	 *
-	 * @par Example:
-	 * @code
-	 * $wgLogoHD = [
-	 *  "1.5x" => "path/to/1.5x_version.png",
-	 *  "2x" => "path/to/2x_version.png"
-	 * ];
-	 * @endcode
-	 *
-	 * SVG is also supported but when enabled, it
-	 * disables 1.5x and 2x as svg will already
-	 * be optimised for screen resolution.
-	 *
-	 * @par Example:
-	 * @code
-	 * $wgLogoHD = [
-	 *  "svg" => "path/to/svg_version.svg",
-	 * ];
-	 * @endcode
-	 *
-	 * @since 1.25
-	 * @deprecated since 1.35. Developers should retrieve this logo (and other variants) using
-	 *   the static function MediaWiki\ResourceLoader\SkinModule::getAvailableLogos.
-	 *   $wgLogos should be used instead.
-	 */
-	public const LogoHD = [
-		'default' => false,
-		'type' => 'map|false',
-		'deprecated' => 'since 1.35. Developers should retrieve this logo (and other variants) ' .
-			'using the static function MediaWiki\ResourceLoader\SkinModule::getAvailableLogos. $wgLogos ' .
-			'should be used instead.',
-	];
-
-	/**
 	 * The URL path of the icon.
 	 *
 	 * @since 1.6
@@ -772,7 +737,7 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * The local filesystem path to a temporary directory. This must not be web accessible.
+	 * The local filesystem path to a temporary directory. This must not be web-accessible.
 	 *
 	 * When this setting is set to false, its value will automatically be decided
 	 * through the first call to wfTempDir(). See that method's implementation for
@@ -783,7 +748,7 @@ class MainConfigSchema {
 	 *
 	 * The temporary directory is expected to be shared with other applications,
 	 * including other MediaWiki instances (which might not run the same version
-	 * or configution). When storing files here, take care to avoid conflicts
+	 * or configuration). When storing files here, take care to avoid conflicts
 	 * with other instances of MediaWiki. For example, when caching the result
 	 * of a computation, the file name should incorporate the input of the
 	 * computation so that it cannot be confused for the result of a similar
@@ -843,9 +808,9 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Option to whether serve the main page as the domain root
+	 * When enabled, the domain root will show the wiki's main page,
+	 * instead of redirecting to the main page.
 	 *
-	 * @warning EXPERIMENTAL!
 	 * @since 1.34
 	 */
 	public const MainPageIsDomainRoot = [
@@ -883,9 +848,18 @@ class MainConfigSchema {
 	 * Enable deferred upload tasks that use the job queue.
 	 *
 	 * Only enable this if job runners are set up for both the
-	 * 'AssembleUploadChunks' and 'PublishStashedFile' job types.
+	 * 'AssembleUploadChunks','PublishStashedFile' and 'UploadFromUrl' job types.
 	 */
 	public const EnableAsyncUploads = [
+		'default' => false,
+	];
+
+	/**
+	 * Enable the async processing of upload by url in Special:Upload.
+	 *
+	 * Only works if EnableAsyncUploads is also enabled
+	 */
+	public const EnableAsyncUploadsByURL = [
 		'default' => false,
 	];
 
@@ -948,7 +922,7 @@ class MainConfigSchema {
 	 * The above maps ".../img_auth.php/timeline/X" to "mwstore://local-fs/timeline-render/".
 	 * The name "local-fs" should correspond by name to an entry in $wgFileBackends.
 	 *
-	 * @see $wgFileBackends
+	 * @see self::FileBackends
 	 */
 	public const ImgAuthUrlPathMap = [
 		'default' => [],
@@ -1014,9 +988,10 @@ class MainConfigSchema {
 	 *   - thumbProxySecret Optional value of the X-Swift-Secret header to use in requests to
 	 *                      thumbProxyUrl
 	 *   - disableLocalTransform
-	 *                      If present and true, local image scaling will be disabled -- it will
-	 *                      throw an exception if attempted. thumbProxyUrl must be set for this
-	 *                      to work, as well as either transformVia404 (preferred) or thumbScriptUrl.
+	 *                      If present and true, local image scaling will be disabled. If attempted,
+	 *                      it will show an error to the user and log an error message. To avoid an
+	 *                      error, thumbProxyUrl must be set, as well as either transformVia404
+	 *                      (preferred) or thumbScriptUrl.
 	 *   - initialCapital   Equivalent to $wgCapitalLinks (or $wgCapitalLinkOverrides[NS_FILE],
 	 *                      determines whether filenames implicitly start with a capital letter.
 	 *                      The current implementation may give incorrect description page links
@@ -1086,7 +1061,7 @@ class MainConfigSchema {
 	 * be searched after the local file repo.
 	 * Otherwise, you will only have access to local media files.
 	 *
-	 * @see FileRepo::__construct for the default options.
+	 * @see \FileRepo::__construct for the default options.
 	 * @see Setup.php for an example usage and default initialization.
 	 */
 	public const LocalFileRepo = [
@@ -1130,7 +1105,7 @@ class MainConfigSchema {
 	 * is found in the local repository (e.g. via `[[File:..]]` syntax).
 	 *
 	 * @since 1.11
-	 * @see $wgLocalFileRepo
+	 * @see self::LocalFileRepo
 	 */
 	public const ForeignFileRepos = [
 		'default' => [],
@@ -1729,7 +1704,7 @@ class MainConfigSchema {
 	/**
 	 * Toggles native image lazy loading, via the "loading" attribute.
 	 *
-	 * @warning EXPERIMENTAL!
+	 * @unstable EXPERIMENTAL
 	 * @since 1.34
 	 */
 	public const NativeImageLazyLoading = [
@@ -1941,10 +1916,10 @@ class MainConfigSchema {
 	/**
 	 * Don't read SVG metadata beyond this point.
 	 *
-	 * Default is 1024*256 bytes
+	 * Default is 5 MiB
 	 */
 	public const SVGMetadataCutoff = [
-		'default' => 262144,
+		'default' => 1024 * 1024 * 5,
 	];
 
 	/**
@@ -2004,7 +1979,7 @@ class MainConfigSchema {
 	 * 12.5 million pixels or 3500x3500.
 	 */
 	public const MaxImageArea = [
-		'default' => 12500000,
+		'default' => 12_500_000,
 		'type' => 'string|integer|false',
 	];
 
@@ -2017,7 +1992,7 @@ class MainConfigSchema {
 	 * It probably makes sense to keep this equal to $wgMaxImageArea.
 	 */
 	public const MaxAnimatedGifArea = [
-		'default' => 12500000,
+		'default' => 12_500_000,
 	];
 
 	/**
@@ -2436,7 +2411,7 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Default value for chmoding of new directories.
+	 * Default value for chmod-ing of new directories.
 	 */
 	public const DirectoryMode = [
 		'default' => 0777, // octal!
@@ -2477,9 +2452,22 @@ class MainConfigSchema {
 	/** @name   DJVU settings */
 
 	/**
+	 * Whether to use BoxedCommand or not.
+	 *
+	 * @unstable Temporary feature flag for T352515
+	 * @since 1.42
+	 */
+	public const DjvuUseBoxedCommand = [
+		'default' => false,
+	];
+
+	/**
 	 * Path of the djvudump executable
 	 * Enable this and $wgDjvuRenderer to enable djvu rendering
 	 * example: $wgDjvuDump = 'djvudump';
+	 *
+	 * If this is set, {@link self::ShellboxShell} must be set to the correct
+	 * shell path.
 	 */
 	public const DjvuDump = [
 		'default' => null,
@@ -2500,6 +2488,9 @@ class MainConfigSchema {
 	 * Path of the djvutxt DJVU text extraction utility
 	 * Enable this and $wgDjvuDump to enable text layer extraction from djvu files
 	 * example: $wgDjvuTxt = 'djvutxt';
+	 *
+	 * If this is set, {@link self::ShellboxShell} must be set to the correct
+	 *  shell path.
 	 */
 	public const DjvuTxt = [
 		'default' => null,
@@ -2807,7 +2798,9 @@ class MainConfigSchema {
 	/**
 	 * Current wiki database name
 	 *
-	 * Should be alphanumeric, without spaces nor hyphens.
+	 * This should only contain alphanumeric and underscore characters ([A-Za-z0-9_]+).
+	 * Spaces, quotes, backticks, dots, and hyphens are likely to be problematic.
+	 *
 	 * This is used to determine the current/local wiki ID (WikiMap::getCurrentWikiDbDomain).
 	 *
 	 * This should still be set even if $wgLBFactoryConf is configured.
@@ -2819,7 +2812,9 @@ class MainConfigSchema {
 	/**
 	 * Current wiki database schema name
 	 *
-	 * Should be alphanumeric, without spaces nor hyphens.
+	 * This should only contain alphanumeric and underscore characters ([A-Za-z0-9_]+).
+	 * Spaces, quotes, backticks, dots, and hyphens are likely to be problematic.
+	 *
 	 * This is used to determine the current/local wiki ID (WikiMap::getCurrentWikiDbDomain).
 	 *
 	 * This should still be set even if $wgLBFactoryConf is configured.
@@ -2832,7 +2827,10 @@ class MainConfigSchema {
 	/**
 	 * Current wiki database table name prefix
 	 *
-	 * Should be alphanumeric, without spaces nor hyphens, preferably ending in an underscore.
+	 * This should only contain alphanumeric and underscore characters ([A-Za-z0-9_]+).
+	 * If it's a non-empty string, then it preferably should end with an underscore.
+	 * Spaces, quotes, backticks, dots, and hyphens are especially likely to be problematic.
+	 *
 	 * This is used to determine the current/local wiki ID (WikiMap::getCurrentWikiDbDomain).
 	 *
 	 * This should still be set even if $wgLBFactoryConf is configured.
@@ -2896,6 +2894,21 @@ class MainConfigSchema {
 	 * connection to achieve the same functionality.
 	 */
 	public const DBcompress = [
+		'default' => false,
+	];
+
+	/**
+	 * Check for warnings after DB queries and throw an exception if an
+	 * unacceptable warning is detected.
+	 *
+	 * This setting is only used if $wgLBFactoryConf['class'] is set to
+	 * '\Wikimedia\Rdbms\LBFactorySimple' and $wgDBservers is an empty array.
+	 * Otherwise, the 'strictWarnings' parameter of the server array must be set
+	 * to achieve the same functionality.
+	 *
+	 * @since 1.42
+	 */
+	public const DBStrictWarnings = [
 		'default' => false,
 	];
 
@@ -3005,7 +3018,7 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * @see $wgSharedDB
+	 * @see self::SharedDB
 	 */
 	public const SharedPrefix = [
 		'default' => false,
@@ -3021,7 +3034,7 @@ class MainConfigSchema {
 	}
 
 	/**
-	 * @see $wgSharedDB
+	 * @see self::SharedDB
 	 * The installer will add 'actor' to this list for all new wikis.
 	 */
 	public const SharedTables = [
@@ -3034,7 +3047,7 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * @see $wgSharedDB
+	 * @see self::SharedDB
 	 * @since 1.23
 	 */
 	public const SharedSchema = [
@@ -3070,7 +3083,7 @@ class MainConfigSchema {
 	 *                  may belong to several groups, the most specific group defined here is used.
 	 *
 	 *   - flags:       (optional) Bit field of properties:
-	 *                  - DBO_DEFAULT:    Transactionalize web requests and use autocommit otherwise
+	 *                  - DBO_DEFAULT:    Transactional-ize web requests and use autocommit otherwise
 	 *                  - DBO_DEBUG:      Equivalent of $wgDebugDumpSql
 	 *                  - DBO_SSL:        Use TLS connection encryption if available (deprecated)
 	 *                  - DBO_COMPRESS:   Use protocol compression with database connections
@@ -3082,7 +3095,7 @@ class MainConfigSchema {
 	 *   - cliMode:     (optional) Connection handles will not assume that requests are short-lived
 	 *                  nor that INSERT..SELECT can be rewritten into a buffered SELECT and INSERT.
 	 *                  This is what DBO_DEFAULT uses to determine when a web request is present.
-	 *                  [Default: uses value of $wgCommandLineMode]
+	 *                  [Default: true if MW_ENTRY_POINT is 'cli', otherwise false]
 	 *
 	 *   These and any other user-defined properties will be assigned to the mLBInfo member
 	 *   variable of the Database object.
@@ -3212,7 +3225,7 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * @see $wgDatabaseReplicaLagWarning
+	 * @see self::DatabaseReplicaLagWarning
 	 * @since 1.36
 	 */
 	public const DatabaseReplicaLagCritical = [
@@ -3368,22 +3381,6 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * How to react if a plain text version of a non-text Content object is requested using
-	 * ContentHandler::getContentText():
-	 *
-	 * * 'ignore': return null
-	 * * 'fail': throw an MWException
-	 * * 'serialize': serialize to default format
-	 *
-	 * @since 1.21
-	 * @deprecated since 1.37
-	 */
-	public const ContentHandlerTextFallback = [
-		'default' => 'ignore',
-		'deprecated' => 'since 1.37',
-	];
-
-	/**
 	 * Determines which types of text are parsed as wikitext. This does not imply that these kinds
 	 * of texts are also rendered as wikitext, it only means that links, magic words, etc will have
 	 * the effect on the database they would have on a wikitext page.
@@ -3420,7 +3417,7 @@ class MainConfigSchema {
 	/**
 	 * List of enabled ExternalStore protocols.
 	 *
-	 * @see ExternalStoreAccess
+	 * @see \ExternalStoreAccess
 	 *
 	 * ```
 	 * $wgExternalStores = [ "DB" ];
@@ -3439,7 +3436,7 @@ class MainConfigSchema {
 	 * It is ignored if a different LBFactory is set, or if `externalClusters`
 	 * is already set explicitly.
 	 *
-	 * @see ExternalStoreAccess
+	 * @see \ExternalStoreAccess
 	 *
 	 * **Example:**
 	 * Create a cluster named 'blobs_cluster1':
@@ -3459,7 +3456,7 @@ class MainConfigSchema {
 	 * The place to put new text blobs or false to put them in the text table
 	 * of the local wiki database.
 	 *
-	 * @see ExternalStoreAccess
+	 * @see \ExternalStoreAccess
 	 *
 	 * **Example:**
 	 *
@@ -3479,7 +3476,7 @@ class MainConfigSchema {
 	 * Set to 0 to disable, or number of seconds before cache expiry.
 	 */
 	public const RevisionCacheExpiry = [
-		'default' => 86400 * 7,
+		'default' => SqlBlobStore::DEFAULT_TTL,
 		'type' => 'integer',
 	];
 
@@ -3714,7 +3711,7 @@ class MainConfigSchema {
 	 *   instead of `timeout` and will be retried once if a connection fails
 	 *   to be established. Background: https://phabricator.wikimedia.org/T105378.
 	 *
-	 * @see MediaWiki\PoolCounter\PoolCounterClient
+	 * @see \MediaWiki\PoolCounter\PoolCounterClient
 	 * @since 1.16
 	 */
 	public const PoolCountClientConf = [
@@ -3835,7 +3832,8 @@ class MainConfigSchema {
 	 * To configure the `broadcastRoutingPrefix` WANObjectCache parameter,
 	 * use $wgWANObjectCache.
 	 *
-	 * @see $wgMessageCacheType, $wgParserCacheType
+	 * @see self::MessageCacheType
+	 * @see self::ParserCacheType
 	 */
 	public const MainCacheType = [
 		'default' => CACHE_NONE,
@@ -3900,14 +3898,6 @@ class MainConfigSchema {
 	 * @since 1.20
 	 */
 	public const LanguageConverterCacheType = [
-		'default' => CACHE_ANYTHING,
-	];
-
-	/**
-	 * The object cache type for stats storage.
-	 * {@link \Wikimedia\WRStats\WRStatsFactory}
-	 */
-	public const StatsCacheType = [
 		'default' => CACHE_ANYTHING,
 	];
 
@@ -3980,22 +3970,6 @@ class MainConfigSchema {
 			CACHE_NONE => [ 'class' => EmptyBagOStuff::class, 'reportDupes' => false ],
 			CACHE_DB => [ 'class' => SqlBagOStuff::class, 'loggroup' => 'SQLBagOStuff' ],
 
-			CACHE_ANYTHING => [ 'factory' => 'ObjectCache::newAnything' ],
-			CACHE_ACCEL => [ 'factory' => 'ObjectCache::getLocalServerInstance' ],
-
-			'db-replicated' => [
-				'class'        => ReplicatedBagOStuff::class,
-				'readFactory'  => [
-					'factory' => 'ObjectCache::newFromParams',
-					'args'    => [ [ 'class' => SqlBagOStuff::class, 'replicaOnly' => true ] ]
-				],
-				'writeFactory' => [
-					'factory' => 'ObjectCache::newFromParams',
-					'args'    => [ [ 'class' => SqlBagOStuff::class, 'replicaOnly' => false ] ]
-				],
-				'loggroup'     => 'SQLBagOStuff',
-				'reportDupes'  => false
-			],
 			'memcached-php' => [ 'class' => MemcachedPhpBagOStuff::class, 'loggroup' => 'memcached' ],
 			'memcached-pecl' => [ 'class' => MemcachedPeclBagOStuff::class, 'loggroup' => 'memcached' ],
 			'hash' => [ 'class' => HashBagOStuff::class, 'reportDupes' => false ],
@@ -4030,6 +4004,31 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * The stash store backend for MicroStash.
+	 *
+	 * This store should be optimized for ephemeral data, and should be able to handle
+	 * a high volume of writes and reads. The dataset access scope should be across
+	 * all servers that serve the application.
+	 *
+	 * Note that the TTL of the data written to the store must be respected completely
+	 * before the data gets evicted from the store (whether the data is used or not).
+	 * Thus, the store should not evict data before the TTL expires.
+	 *
+	 * Properties of the backend should be:
+	 * 1.) the data written to the store should be short-lived,
+	 * 2.) it should be evicted ONLY after the TTL elapses (reliably persist),
+	 * 3.) should be accessed by all servers that serve the application,
+	 * 4.) should be able to handle a high volume of writes and reads.
+	 *
+	 * @see \BagOStuff
+	 * @since 1.42
+	 */
+	public const MicroStashType = [
+		'default' => CACHE_ANYTHING,
+		'type' => 'string|int',
+	];
+
+	/**
 	 * The object store type of the main stash.
 	 *
 	 * This should be a fast storage system optimized for lightweight data, both ephemeral and
@@ -4049,8 +4048,7 @@ class MainConfigSchema {
 	 * should avoid main stash updates during non-POST requests. In any case, callers should
 	 * gracefully tolerate occasional key evictions, temporary inconsistencies among datacenters,
 	 * and violations of linearizability (e.g. during timeouts). Modules that can never handle
-	 * these
-	 * kind of anamolies should use other storage mediums.
+	 * these kinds of anomalies should use other storage mediums.
 	 *
 	 * Valid options are the keys of {@link $wgObjectCaches}, e.g. CACHE_* constants.
 	 *
@@ -4058,7 +4056,7 @@ class MainConfigSchema {
 	 * @since 1.26
 	 */
 	public const MainStash = [
-		'default' => 'db-replicated',
+		'default' => CACHE_DB,
 	];
 
 	/**
@@ -4078,10 +4076,6 @@ class MainConfigSchema {
 	 *       since losing an entry from the stash may mean that the user can't save their edit.
 	 *       This is set to one day per default.
 	 *
-	 * - CacheThresholdTime: If parsing is completed before this time (in seconds), assume it's
-	 *       a small page that is fast for parsing and does not need caching. Setting this to zero
-	 *       causes all outputs to be cached.
-	 *
 	 * - WarmParsoidParserCache: Setting this to true will pre-populate the parsoid parser cache
 	 *       with parsoid outputs on page edits. This speeds up loading HTML into Visual Editor.
 	 *
@@ -4094,9 +4088,58 @@ class MainConfigSchema {
 		'properties' => [
 			'StashType' => [ 'type' => 'int|string|null', 'default' => null ],
 			'StashDuration' => [ 'type' => 'int', 'default' => 24 * 60 * 60 ],
-			'CacheThresholdTime' => [ 'type' => 'float', 'default' => 0.0 ],
 			'WarmParsoidParserCache' => [ 'type' => 'bool', 'default' => false ],
 		]
+	];
+
+	/**
+	 * Per-namespace configuration for the ParserCache filter.
+	 *
+	 * There is one top level key for each cache name supported in ParserCacheFactory.
+	 * The per-namespace configuration is given separately for each cache.
+	 *
+	 * For each namespace, this defines a set of filter options, which are represented
+	 * as an associative array. The following keys are supported in this array:
+	 *
+	 * - minCpuTime: causes the parser cache to not save any output that took fewer
+	 *   than the given number of seconds of CPU time to generate, according to
+	 *   ParserOutput::getTimeProfile(). Set to 0 to always cache, or to
+	 *   PHP_INT_MAX to disable caching for this namespace.
+	 *
+	 * If no filter options are defined for a given namespace, the filter options
+	 * under the "default" key will be used for pages in that namespace.
+	 *
+	 * @since 1.42
+	 */
+	public const ParserCacheFilterConfig = [
+		'type' => 'map',
+		'default' => [ // default value
+			'pcache' => [ // old parser cache
+				'default' => [ // all namespaces
+					// 0 means no threshold.
+					// Use PHP_INT_MAX to disable cache.
+					'minCpuTime' => 0
+				],
+			],
+			'parsoid-pcache' => [ // parsoid output cache
+				'default' => [ // all namespaces
+					// 0 means no threshold.
+					// Use PHP_INT_MAX to disable cache.
+					'minCpuTime' => 0
+				],
+			],
+		],
+		'additionalProperties' => [ // caches
+			'type' => 'map',
+			'description' => 'A map of namespace IDs to filter definitions.',
+			'additionalProperties' => [ // namespaces
+				'type' => 'map',
+				'description' => 'A map of filter names to values.',
+				'properties' => [ // filters
+					'minCpuTime' => [ 'type' => 'float' ]
+				]
+			],
+		],
 	];
 
 	/**
@@ -4212,7 +4255,7 @@ class MainConfigSchema {
 	 * Read/write timeout for MemCached server communication, in microseconds.
 	 */
 	public const MemCachedTimeout = [
-		'default' => 500000,
+		'default' => 500_000,
 	];
 
 	/**
@@ -4479,7 +4522,7 @@ class MainConfigSchema {
 	/**
 	 * Cache timeout for the CDN when DB replica DB lag is high
 	 *
-	 * @see $wgCdnMaxAge
+	 * @see self::CdnMaxAge
 	 * @since 1.27
 	 */
 	public const CdnMaxageLagged = [
@@ -4518,7 +4561,7 @@ class MainConfigSchema {
 	/**
 	 * Cache timeout for the CDN when a response is known to be wrong or incomplete (due to load)
 	 *
-	 * @see $wgCdnMaxAge
+	 * @see self::CdnMaxAge
 	 * @since 1.27
 	 */
 	public const CdnMaxageSubstitute = [
@@ -4560,31 +4603,6 @@ class MainConfigSchema {
 	public const CdnServersNoPurge = [
 		'default' => [],
 		'type' => 'map',
-	];
-
-	/**
-	 * Whether to use a Host header in purge requests sent to the proxy servers
-	 * configured in $wgCdnServers. Set this to false to support a CDN
-	 * configured in forward-proxy mode.
-	 *
-	 * If this is set to true, a Host header will be sent, and only the path
-	 * component of the URL will appear on the request line, as if the request
-	 * were a non-proxy HTTP 1.1 request. Varnish only supports this style of
-	 * request. Squid supports this style of request only if reverse-proxy mode
-	 * (http_port ... accel) is enabled.
-	 *
-	 * If this is set to false, no Host header will be sent, and the absolute URL
-	 * will be sent in the request line, as is the standard for an HTTP proxy
-	 * request in both HTTP 1.0 and 1.1. This style of request is not supported
-	 * by Varnish, but is supported by Squid in either configuration (forward or
-	 * reverse).
-	 *
-	 * @since 1.21
-	 * @deprecated since 1.33, will always be true in a future release.
-	 */
-	public const SquidPurgeUseHostHeader = [
-		'default' => true,
-		'deprecated' => 'since 1.33',
 	];
 
 	/**
@@ -4633,7 +4651,7 @@ class MainConfigSchema {
 	 * ```
 	 *
 	 * @since 1.22
-	 * @see $wgHTCPMulticastTTL
+	 * @see self::HTCPMulticastTTL
 	 */
 	public const HTCPRouting = [
 		'default' => [],
@@ -4643,7 +4661,7 @@ class MainConfigSchema {
 	/**
 	 * HTCP multicast TTL.
 	 *
-	 * @see $wgHTCPRouting
+	 * @see self::HTCPRouting
 	 */
 	public const HTCPMulticastTTL = [
 		'default' => 1,
@@ -4875,6 +4893,7 @@ class MainConfigSchema {
 
 	/**
 	 * Whether to enable language variant conversion for links.
+	 * Note that this option is slightly misnamed.
 	 */
 	public const DisableTitleConversion = [
 		'default' => false,
@@ -5003,8 +5022,6 @@ class MainConfigSchema {
 			'copyright',
 			'history_copyright',
 			'googlesearch',
-			'youhavenewmessagesmanyusers',
-			'youhavenewmessages',
 		],
 		'type' => 'list',
 		'items' => [ 'type' => 'string', ],
@@ -5114,31 +5131,6 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Temporary variable that allows HTMLForms to be rendered as tables.
-	 *
-	 * Table based layouts cause various issues when designing for mobile.
-	 * This global allows skins or extensions a means to force non-table based rendering.
-	 * Setting to false forces form components to always render as div elements.
-	 *
-	 * @since 1.24
-	 */
-	public const HTMLFormAllowTableFormat = [
-		'default' => true,
-	];
-
-	/**
-	 * Temporary variable that applies MediaWiki UI wherever it can be supported.
-	 *
-	 * Temporary variable that should be removed when mediawiki ui is more
-	 * stable and change has been communicated.
-	 *
-	 * @since 1.24
-	 */
-	public const UseMediaWikiUIEverywhere = [
-		'default' => false,
-	];
-
-	/**
 	 * Whether to label the store-to-database-and-show-to-others button in the editor
 	 * as "Save page"/"Save changes" if false (the default) or, if true, instead as
 	 * "Publish page"/"Publish changes".
@@ -5182,16 +5174,15 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Override ability of certains browsers to attempt to autodetect dataformats in pages.
+	 * Override the ability of certain browsers to attempt to autodetect dataformats in pages.
 	 *
 	 * This is a default feature of many mobile browsers, but can have a lot of false positives,
-	 * where for instance year ranges are confused with phone numbers.
+	 * where for instance, year ranges are confused with phone numbers.
 	 * The default of this setting is to disable telephone number data detection.
-	 * Set BrowserFormatDetection to false to fallback to browser defaults.
+	 * Set BrowserFormatDetection to false to fallback to the browser defaults.
 	 *
 	 * @since 1.37
-	 * @see https://developer.apple.com/
-	 *     library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html
+	 * @see https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html
 	 */
 	public const BrowserFormatDetection = [
 		'default' => 'telephone=no',
@@ -5201,7 +5192,7 @@ class MainConfigSchema {
 	/**
 	 * An array of open graph tags which should be added by all skins.
 	 *
-	 * Accepted values are "og:title", "og:type" and "twitter:card".
+	 * Accepted values are "og:site_name", "og:title", "og:type" and "twitter:card".
 	 * Since some of these fields can be provided by extensions it defaults to an empty array.
 	 *
 	 * @since 1.36
@@ -5507,15 +5498,6 @@ class MainConfigSchema {
 	 *   it will be wrapped by %ResourceLoader in an anonymous function and invoked
 	 *   when the module is considered for loading.
 	 *
-	 * - targets `{string[]}`
-	 *   List of %ResourceLoader targets where the module may be loaded from.
-	 *   This is used by the MobileFrontend extension to prevent certain modules
-	 *   from being loaded.
-	 *
-	 *   This option is **deprecated**. See [T127268](https://phabricator.wikimedia.org/T127268).
-	 *
-	 *   Default: `[ 'desktop', 'mobile' ]`
-	 *
 	 * ## FileModule options
 	 *
 	 * - localBasePath `{string}`:
@@ -5633,6 +5615,11 @@ class MainConfigSchema {
 	 *
 	 *   Default: `true`
 	 *
+	 *  - skipStructureTest `{boolean}`:
+	 *   Whether to skip ResourcesTest::testRespond(). Since MW 1.42.
+	 *
+	 *   Default: `false`.
+	 *
 	 * ## Examples
 	 *
 	 * **Example: Using an alternate subclass**
@@ -5681,14 +5668,6 @@ class MainConfigSchema {
 	 *
 	 * ```
 	 * return typeof SomeWebAPI === 'function' && SomeWebAPI.prototype.duckMethod;
-	 * ```
-	 *
-	 * **Example: Module targets**
-	 *
-	 * ```
-	 * $wgResourceModules['ext.myExtension'] = [
-	 *   'targets' => [ 'desktop', 'mobile' ],
-	 * ];
 	 * ```
 	 * @anchor wgResourceModules-example-stylesheet
 	 *
@@ -5908,7 +5887,7 @@ class MainConfigSchema {
 	 *   - versioned
 	 *   - unversioned
 	 *
-	 * @see ResourceLoader::__construct
+	 * @see \MediaWiki\ResourceLoader\ResourceLoader::__construct
 	 * @since 1.35
 	 */
 	public const ResourceLoaderMaxage = [
@@ -5919,8 +5898,8 @@ class MainConfigSchema {
 	/**
 	 * Use the main stash instead of the module_deps table for indirect dependency tracking
 	 *
+	 * @unstable EXPERIMENTAL
 	 * @since 1.35
-	 * @warning EXPERIMENTAL
 	 */
 	public const ResourceLoaderUseObjectCacheForDeps = [
 		'default' => false,
@@ -5953,11 +5932,14 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * If set to true, JavaScript modules loaded from wiki pages will be parsed
-	 * prior to minification to validate it.
+	 * Validate JavaScript code loaded from wiki pages.
 	 *
-	 * Parse errors will result in a JS exception being thrown during module load,
-	 * which avoids breaking other modules loaded in the same request.
+	 * If a syntax error is found, the script is replaced with a warning
+	 * logged to the browser console. This ensures errors are found early and
+	 * consistently (independent of the editor's own browser), and prevents
+	 * breaking other modules loaded in the same batch from load.php.
+	 *
+	 * @see \MediaWiki\ResourceLoader\Module::validateScriptFile
 	 */
 	public const ResourceLoaderValidateJS = [
 		'default' => true,
@@ -6424,7 +6406,7 @@ class MainConfigSchema {
 	 * by PPFrame::expand()
 	 */
 	public const MaxPPNodeCount = [
-		'default' => 1000000,
+		'default' => 1_000_000,
 	];
 
 	/**
@@ -6439,7 +6421,7 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * @see $wgMaxTemplateDepth
+	 * @see self::MaxTemplateDepth
 	 */
 	public const MaxPPExpandDepth = [
 		'default' => 100,
@@ -6453,7 +6435,7 @@ class MainConfigSchema {
 	 * to any other protocols with the same name as a namespace. See task T46011 for
 	 * more information.
 	 *
-	 * @see wfParseUrl
+	 * @see \wfParseUrl
 	 */
 	public const UrlProtocols = [
 		'default' => [
@@ -6514,22 +6496,6 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * A different approach to the above: simply allow the "<img>" tag to be used.
-	 *
-	 * This allows you to specify alt text and other attributes, copy-paste HTML to
-	 * your wiki more easily, etc.  However, allowing external images in any manner
-	 * will allow anyone with editing rights to snoop on your visitors' IP
-	 * addresses and so forth, if they wanted to, by inserting links to images on
-	 * sites they control.
-	 *
-	 * @deprecated since 1.35; register an extension tag named <img> instead.
-	 */
-	public const AllowImageTag = [
-		'default' => false,
-		'deprecated' => 'since 1.35; register an extension tag named <img> instead.',
-	];
-
-	/**
 	 * Configuration for HTML postprocessing tool. Set this to a configuration
 	 * array to enable an external tool. By default, we now use the RemexHtml
 	 * library; historically, other postprocessors were used.
@@ -6572,8 +6538,8 @@ class MainConfigSchema {
 	 * alternative modern HTML structure that replaces it is described at
 	 * https://www.mediawiki.org/wiki/Parsing/Media_structure
 	 *
-	 * @since 1.36
 	 * @deprecated since 1.41
+	 * @since 1.36
 	 */
 	public const ParserEnableLegacyMediaDOM = [
 		'default' => false,
@@ -6581,13 +6547,14 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Temporary flag to ship the styles for the media HTML structure that replaces
+	 * Enable shipping the styles for the media HTML structure that replaces
 	 * legacy, when $wgParserEnableLegacyMediaDOM is `false`.  This is configured
 	 * separately so that it can continue to be served after the latter is disabled
 	 * but still in the cache.
 	 *
-	 * @internal
 	 * @deprecated since 1.41
+	 * @internal Temporary flag, T51097.
+	 * @since 1.38
 	 */
 	public const UseContentMediaStyles = [
 		'default' => false,
@@ -6595,12 +6562,13 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Temporary flag to stop shipping the styles for the legacy media HTML structure
+	 * Disable shipping the styles for the legacy media HTML structure
 	 * that has been replaced when $wgParserEnableLegacyMediaDOM is `false`.  This is
 	 * configured separately to give time for templates and extensions that mimic the
-	 * parser output to be migrated away. See T318433
+	 * parser output to be migrated away.
 	 *
-	 * @internal
+	 * @internal Temporary feature flag for T318433.
+	 * @since 1.41
 	 */
 	public const UseLegacyMediaStyles = [
 		'default' => false,
@@ -6795,7 +6763,7 @@ class MainConfigSchema {
 	/**
 	 * Number of days the user must exist before becoming a learner.
 	 *
-	 * @see $wgLearnerEdits
+	 * @see self::LearnerEdits
 	 */
 	public const LearnerMemberSince = [
 		'default' => 4,
@@ -6804,7 +6772,7 @@ class MainConfigSchema {
 	/**
 	 * Number of edits the user must have before becoming "experienced".
 	 *
-	 * @see $wgLearnerEdits
+	 * @see self::LearnerEdits
 	 */
 	public const ExperiencedUserEdits = [
 		'default' => 500,
@@ -6813,7 +6781,7 @@ class MainConfigSchema {
 	/**
 	 * Number of days the user must exist before becoming "experienced".
 	 *
-	 * @see $wgLearnerEdits
+	 * @see self::LearnerEdits
 	 */
 	public const ExperiencedUserMemberSince = [
 		'default' => 30,
@@ -6878,6 +6846,7 @@ class MainConfigSchema {
 				'services' => [
 					'MainConfig',
 					'DBLoadBalancerFactory',
+					'HideUserUtils',
 				]
 			]
 		],
@@ -7042,7 +7011,7 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * @see $wgAuthManagerConfig
+	 * @see self::AuthManagerConfig
 	 * @since 1.27
 	 */
 	public const AuthManagerAutoConfig = [
@@ -7185,7 +7154,7 @@ class MainConfigSchema {
 	 * The key 'default' is used if a requested operation isn't defined in the array.
 	 *
 	 * @since 1.27
-	 * @see $wgReauthenticateTime
+	 * @see self::ReauthenticateTime
 	 */
 	public const AllowSecuritySensitiveOperationIfCannotReauthenticate = [
 		'default' => [ 'default' => true, ],
@@ -7227,33 +7196,6 @@ class MainConfigSchema {
 		],
 		'type' => 'list',
 		'items' => [ 'type' => 'string', ],
-	];
-
-	/**
-	 * Specifies the minimal length of a user password. If set to 0, empty pass-
-	 * words are allowed.
-	 *
-	 * @deprecated since 1.26, use $wgPasswordPolicy's MinimalPasswordLength.
-	 */
-	public const MinimalPasswordLength = [
-		'default' => false,
-		'deprecated' => 'since 1.26, use $wgPasswordPolicy\'s MinimalPasswordLength.',
-	];
-
-	/**
-	 * Specifies the maximal length of a user password (T64685).
-	 *
-	 * It is not recommended to make this greater than the default, as it can
-	 * allow DoS attacks by users setting really long passwords. In addition,
-	 * this should not be lowered too much, as it enforces weak passwords.
-	 *
-	 * @warning Unlike other password settings, user with passwords greater than
-	 * the maximum will not be able to log in.
-	 * @deprecated since 1.26, use $wgPasswordPolicy's MaximalPasswordLength.
-	 */
-	public const MaximalPasswordLength = [
-		'default' => false,
-		'deprecated' => 'since 1.26, use $wgPasswordPolicy\'s MaximalPasswordLength.',
 	];
 
 	/**
@@ -7448,6 +7390,15 @@ class MainConfigSchema {
 	 *
 	 * For instance, to disable editing on double clicks:
 	 * $wgDefaultUserOptions ['editondblclick'] = 0;
+	 *
+	 * To save storage space, no user_properties row will be stored for users with the
+	 * default setting for a given option, even if the user manually selects that option.
+	 * This means that a change to the defaults will change the setting for all users who
+	 * have been using the default setting; there is no way for users to opt out of this.
+	 * $wgConditionalUserOptions can be used to change the default value for future users
+	 * only.
+	 *
+	 * @see self::ConditionalUserOptions
 	 */
 	public const DefaultUserOptions = [
 		'default' =>
@@ -7460,6 +7411,7 @@ class MainConfigSchema {
 				'disablemail' => 0,
 				'editfont' => 'monospace',
 				'editondblclick' => 0,
+				'editrecovery' => 0,
 				'editsectiononrightclick' => 0,
 				'email-allow-new-users' => 1,
 				'enotifminoredits' => 0,
@@ -7520,6 +7472,41 @@ class MainConfigSchema {
 				'wlenhancedfilters-disable' => 0,
 				'wllimit' => 250,
 			],
+		'type' => 'map',
+	];
+
+	/**
+	 * Conditional defaults for user options
+	 *
+	 * Map of user options to conditional defaults descriptors, which is an array
+	 * of conditional cases [ VALUE, CONDITION1, CONDITION2 ], where VALUE is the default value for
+	 * all users that meet ALL conditions, and each CONDITION is either a:
+	 *     (a) a CUDCOND_* constant (when condition does not take any arguments), or
+	 *     (b) an array [ CUDCOND_*, argument1, argument1, ... ] (when chosen condition takes at
+	 *         least one argument).
+	 *
+	 * When `null` is used as the VALUE, it is interpreted as "no conditional default for this
+	 * condition". In other words, `null` and $wgDefaultUserOptions['user-option'] can be used
+	 * interchangeably as the VALUE.
+	 *
+	 * All conditions are evaluated in order. When no condition matches.
+	 * $wgDefaultUserOptions is used instead.
+	 *
+	 * Example of valid configuration:
+	 *   $wgConditionalUserOptions['user-option'] = [
+	 *       [ 'registered in 2024', [ CUDCOND_AFTER, '20240101000000' ] ]
+	 *   ];
+	 *
+	 * List of valid conditions:
+	 *   * CUDCOND_AFTER: user registered after given timestamp (args: string $timestamp)
+	 *   * CUDCOND_ANON: allows specifying a default for anonymous (logged-out, non-temporary) users
+	 *   * CUDCOND_NAMED: allows specifying a default for named (registered, non-temporary) users
+	 *
+	 * @since 1.42
+	 * @see self::DefaultUserOptions
+	 */
+	public const ConditionalUserOptions = [
+		'default' => [],
 		'type' => 'map',
 	];
 
@@ -7611,11 +7598,10 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Temporary feature flag that controls whether users will see a checkbox allowing them to
-	 * require providing email during password resets.
+	 * Whether users will see a checkbox allowing them to require providing email during password resets.
 	 *
-	 * @unstable This feature is under development, don't assume this flag's existence or function
-	 *          outside of Wikimedia.
+	 * @unstable EXPERIMENTAL This feature is under development, don't assume this flag's existence
+	 * or function outside of Wikimedia Foundation wikis.
 	 */
 	public const AllowRequiringEmailForResets = [
 		'default' => false,
@@ -7626,7 +7612,7 @@ class MainConfigSchema {
 	 * This can be enabled to avoid exposing the IP addresses of casual editors who
 	 * do not explicitly create an account.
 	 *
-	 * EXPERIMENTAL -- enabling may break extensions.
+	 * @warning This is EXPERIMENTAL, enabling may break extensions.
 	 *
 	 * An associative array with the following keys:
 	 *
@@ -7636,10 +7622,11 @@ class MainConfigSchema {
 	 *   - genPattern: (string) The pattern used when generating new usernames.
 	 *     This should have "$1" indicating the place where the serial string will
 	 *     be substituted.
-	 *   - matchPattern: (string) The pattern used when determining whether a
+	 *   - matchPattern: (string|string[]|null) The pattern used when determining whether a
 	 *     username is a temporary user. This affects the rights of the user
 	 *     and also prevents explicit creation of users with matching names.
-	 *     This is ignored if "enabled" is false.
+	 *     This is ignored if "enabled" is false. If the value is null, the
+	 *     the genPattern value is used as the matchPattern.
 	 *   - reservedPattern: (string) A pattern used to determine whether a
 	 *     username should be denied for explicit creation, in addition to
 	 *     matchPattern. This is used even if "enabled" is false.
@@ -7652,6 +7639,9 @@ class MainConfigSchema {
 	 *       - numShards (int, default 1): A small integer. This can be set to a
 	 *         value greater than 1 to avoid acquiring a global lock when
 	 *         allocating IDs, at the expense of making the IDs be non-monotonic.
+	 *       - useYear: (bool) Restart at 1 each time the year changes (in UTC).
+	 *         To avoid naming conflicts, the year is included in the name after
+	 *         the prefix, in the form 'YYYY-'.
 	 *   - serialMapping: (array) Configuration for mapping integer indexes to strings
 	 *     to substitute into genPattern.
 	 *       - type: (string) May be
@@ -7669,18 +7659,27 @@ class MainConfigSchema {
 	 *         be zero-based array indexes.
 	 *       - uppercase: (bool) With "filtered-radix", whether to use uppercase
 	 *         letters, default false.
+	 *       - offset: (int) With "plain-numeric", a constant to add to the stored index.
+	 *    - expireAfterDays: (int|null, default 365) If not null, how many days should the temporary
+	 *      accounts expire? Requires expireTemporaryAccounts.php to be periodically executed in
+	 *      order to work.
+	 *    - notifyBeforeExpirationDays: (int|null, default 10) If not null, how many days before the
+	 *      expiration of a temporary account should it be notified that their account is to be expired.
 	 *
+	 * @unstable EXPERIMENTAL
 	 * @since 1.39
 	 */
 	public const AutoCreateTempUser = [
 		'properties' => [
 			'enabled' => [ 'type' => 'bool', 'default' => false ],
 			'actions' => [ 'type' => 'list', 'default' => [ 'edit' ] ],
-			'genPattern' => [ 'type' => 'string', 'default' => '*Unregistered $1' ],
-			'matchPattern' => [ 'type' => 'string', 'default' => '*$1' ],
-			'reservedPattern' => [ 'type' => 'string|null', 'default' => null ],
-			'serialProvider' => [ 'type' => 'object', 'default' => [ 'type' => 'local' ] ],
-			'serialMapping' => [ 'type' => 'object', 'default' => [ 'type' => 'plain-numeric' ] ]
+			'genPattern' => [ 'type' => 'string', 'default' => '~$1' ],
+			'matchPattern' => [ 'type' => 'string|array|null', 'default' => null ],
+			'reservedPattern' => [ 'type' => 'string|null', 'default' => '~$1' ],
+			'serialProvider' => [ 'type' => 'object', 'default' => [ 'type' => 'local', 'useYear' => true ] ],
+			'serialMapping' => [ 'type' => 'object', 'default' => [ 'type' => 'plain-numeric' ] ],
+			'expireAfterDays' => [ 'type' => 'int|null', 'default' => 365 ],
+			'notifyBeforeExpirationDays' => [ 'type' => 'int|null', 'default' => 10 ],
 		],
 		'type' => 'object',
 	];
@@ -7743,11 +7742,40 @@ class MainConfigSchema {
 	/**
 	 * Flag to enable partial blocks against performing certain actions.
 	 *
-	 * @unstable Temporary feature flag, to be removed before the release of 1.38: T280532
+	 * @unstable Temporary feature flag, T280532
+	 * @since 1.37
 	 */
 	public const EnablePartialActionBlocks = [
 		'default' => false,
 		'type' => 'boolean',
+	];
+
+	/**
+	 * If this is false, the number of blocks of a given target is limited to only 1.
+	 *
+	 * @since 1.42
+	 */
+	public const EnableMultiBlocks = [
+		'default' => false,
+		'type' => 'boolean',
+	];
+
+	/**
+	 *  Ipblocks table schema migration stage, for normalizing ipb_address field and
+	 * 	adding the block_target table.
+	 *
+	 * Use the SCHEMA_COMPAT_XXX flags. Supported values:
+	 *
+	 *   - SCHEMA_COMPAT_OLD
+	 *   - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
+	 *   - SCHEMA_COMPAT_NEW
+	 *
+	 * History:
+	 *   - 1.42: Added
+	 */
+	public const BlockTargetMigrationStage = [
+		'default' => SCHEMA_COMPAT_OLD,
+		'type' => 'integer',
 	];
 
 	/**
@@ -7974,7 +8002,7 @@ class MainConfigSchema {
 	 * belonging in these groups can be abused in dangerous ways).
 	 * This is used for some security checks, mainly logging.
 	 * @since 1.41
-	 * @see UserGroupManager::getUserPrivilegedGroups()
+	 * @see \MediaWiki\User\UserGroupManager::getUserPrivilegedGroups()
 	 */
 	public const PrivilegedGroups = [
 		'default' => [
@@ -8064,7 +8092,7 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * @see $wgGroupsAddToSelf
+	 * @see self::GroupsAddToSelf
 	 */
 	public const GroupsRemoveFromSelf = [
 		'default' => [],
@@ -8283,7 +8311,7 @@ class MainConfigSchema {
 	 *
 	 * Criteria has the same format as $wgAutopromote
 	 *
-	 * @see $wgAutopromote
+	 * @see self::Autopromote
 	 * @since 1.18
 	 */
 	public const AutopromoteOnce = [
@@ -8335,7 +8363,7 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * @see $wgAddGroups
+	 * @see self::AddGroups
 	 */
 	public const RemoveGroups = [
 		'default' => [],
@@ -8429,7 +8457,8 @@ class MainConfigSchema {
 	 *
 	 * @note For backwards compatibility reasons, this may also be given as a single
 	 *       integer, representing the number of account creations per day.
-	 *
+	 * @see self::TempAccountCreationThrottle for the temporary accounts version of
+	 *       this throttle
 	 * @warning Requires $wgMainCacheType to be enabled
 	 */
 	public const AccountCreationThrottle = [
@@ -8438,6 +8467,39 @@ class MainConfigSchema {
 			'seconds' => 86400,
 		] ],
 		'type' => 'int|list',
+	];
+
+	/**
+	 * Number of temporary accounts each IP address may create per specified period(s).
+	 *
+	 * **Example:**
+	 *
+	 * ```
+	 * $wgTempAccountCreationThrottle = [
+	 *  // no more than 100 per month
+	 *  [
+	 *   'count' => 100,
+	 *   'seconds' => 30*86400,
+	 *  ],
+	 *  // no more than 6 per day
+	 *  [
+	 *   'count' => 6,
+	 *   'seconds' => 86400,
+	 *  ],
+	 * ];
+	 * ```
+	 *
+	 * @see self::AccountCreationThrottle for the regular account version of this throttle.
+	 * @warning Requires $wgMainCacheType to be enabled
+	 *
+	 * @since 1.42
+	 */
+	public const TempAccountCreationThrottle = [
+		'default' => [ [
+			'count' => 6,
+			'seconds' => 86400,
+		] ],
+		'type' => 'list',
 	];
 
 	/**
@@ -8915,13 +8977,20 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * Grant groups are used on some user interfaces to display conceptually
+	 * similar grants together.
+	 *
+	 * This configuration value should usually be set by extensions, not
+	 * site administrators.
+	 *
+	 * @see self::GrantPermissions
 	 * @since 1.27
 	 */
 	public const GrantPermissionGroups = [
 		'default' =>
 			[
 				// Hidden grants are implicitly present
-				'basic'            => 'hidden',
+				'basic'               => 'hidden',
 
 				'editpage'            => 'page-interaction',
 				'createeditmovepage'  => 'page-interaction',
@@ -8961,6 +9030,48 @@ class MainConfigSchema {
 	];
 
 	/**
+	 * Group grants by risk level. Keys are grant names (i.e. keys from GrantPermissions),
+	 * values are GrantsInfo::RISK_* constants.
+	 *
+	 * Note that this classification is only informative; merely applying 'security' or 'internal'
+	 * to a grant won't prevent it from being available. It's used to give guidance to users
+	 * in various interfaces about the riskiness of the various grants.
+	 *
+	 * @since 1.42
+	 */
+	public const GrantRiskGroups = [
+		'default' => [
+			'basic'               => GrantsInfo::RISK_LOW,
+			'editpage'            => GrantsInfo::RISK_LOW,
+			'createeditmovepage'  => GrantsInfo::RISK_LOW,
+			'editprotected'       => GrantsInfo::RISK_VANDALISM,
+			'patrol'              => GrantsInfo::RISK_LOW,
+			'uploadfile'          => GrantsInfo::RISK_LOW,
+			'uploadeditmovefile'  => GrantsInfo::RISK_LOW,
+			'sendemail'           => GrantsInfo::RISK_SECURITY,
+			'viewmywatchlist'     => GrantsInfo::RISK_LOW,
+			'editviewmywatchlist' => GrantsInfo::RISK_LOW,
+			'editmycssjs'         => GrantsInfo::RISK_SECURITY,
+			'editmyoptions'       => GrantsInfo::RISK_SECURITY,
+			'editinterface'       => GrantsInfo::RISK_VANDALISM,
+			'editsiteconfig'      => GrantsInfo::RISK_SECURITY,
+			'rollback'            => GrantsInfo::RISK_LOW,
+			'blockusers'          => GrantsInfo::RISK_VANDALISM,
+			'delete'              => GrantsInfo::RISK_VANDALISM,
+			'viewdeleted'         => GrantsInfo::RISK_VANDALISM,
+			'viewrestrictedlogs'  => GrantsInfo::RISK_SECURITY,
+			'protect'             => GrantsInfo::RISK_VANDALISM,
+			'oversight'           => GrantsInfo::RISK_SECURITY,
+			'createaccount'       => GrantsInfo::RISK_LOW,
+			'mergehistory'        => GrantsInfo::RISK_VANDALISM,
+			'import'              => GrantsInfo::RISK_SECURITY,
+			'highvolume'          => GrantsInfo::RISK_LOW,
+			'privateinfo'         => GrantsInfo::RISK_LOW,
+		],
+		'type' => 'map',
+	];
+
+	/**
 	 * @since 1.27
 	 */
 	public const EnableBotPasswords = [
@@ -8972,6 +9083,7 @@ class MainConfigSchema {
 	 * Cluster for the bot_passwords table
 	 *
 	 * @since 1.27
+	 * @deprecated since 1.42 Use $wgVirtualDomainsMapping instead.
 	 */
 	public const BotPasswordsCluster = [
 		'default' => false,
@@ -8985,6 +9097,7 @@ class MainConfigSchema {
 	 * "{$database}-{$prefix}".
 	 *
 	 * @since 1.27
+	 * @deprecated since 1.42 Use $wgVirtualDomainsMapping instead.
 	 */
 	public const BotPasswordsDatabase = [
 		'default' => false,
@@ -9059,7 +9172,7 @@ class MainConfigSchema {
 	 * attacks, such as edit pages. This prevents those pages from being displayed
 	 * in a frame or iframe. The options are:
 	 *
-	 * - 'DENY': Do not allow framing. This is recommended for most wikis.
+	 *   - 'DENY': Do not allow framing. This is recommended for most wikis.
 	 *
 	 *   - 'SAMEORIGIN': Allow framing by pages on the same domain. This can be used
 	 *         to allow framing within a trusted domain. This is insecure if there
@@ -9093,11 +9206,13 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Controls Content-Security-Policy header [Experimental]
+	 * Controls Content-Security-Policy header
 	 *
-	 * @see https://www.w3.org/TR/CSP2/
-	 * @since 1.32
 	 * @warning May cause slowness on Windows due to slow random number generator.
+	 *
+	 * @unstable EXPERIMENTAL
+	 * @since 1.32
+	 * @see https://www.w3.org/TR/CSP2/
 	 */
 	public const CSPHeader = [
 		'default' => false,
@@ -9283,16 +9398,6 @@ class MainConfigSchema {
 	}
 
 	/**
-	 * By default, MediaWiki checks if the client supports cookies during the
-	 * login process, so that it can display an informative error message if
-	 * cookies are disabled. Set this to true if you want to disable this cookie
-	 * check.
-	 */
-	public const DisableCookieCheck = [
-		'default' => false,
-	];
-
-	/**
 	 * Cookies generated by MediaWiki have names starting with this prefix. Set it
 	 * to a string to use a custom prefix. Setting it to false causes the database
 	 * name to be used as a prefix.
@@ -9334,18 +9439,6 @@ class MainConfigSchema {
 	public const CookieSameSite = [
 		'default' => null,
 		'type' => '?string',
-	];
-
-	/**
-	 * If true, when a cross-site cookie with SameSite=None is sent, a legacy
-	 * cookie with an "ss0" prefix will also be sent, without SameSite=None. This
-	 * is a workaround for broken behaviour in Chrome 51-66 and similar browsers.
-	 *
-	 * @since 1.35
-	 */
-	public const UseSameSiteLegacyCookies = [
-		'default' => false,
-		'type' => 'boolean',
 	];
 
 	/**
@@ -9484,7 +9577,7 @@ class MainConfigSchema {
 			'POST' => [
 				'readQueryTime' => 5,
 				'writeQueryTime' => 1,
-				'readQueryRows' => 100000,
+				'readQueryRows' => 100_000,
 				'maxAffected' => 1000
 			],
 			'POST-nonwrite' => [
@@ -9506,14 +9599,14 @@ class MainConfigSchema {
 			'PostSend-POST' => [
 				'readQueryTime' => 5,
 				'writeQueryTime' => 1,
-				'readQueryRows' => 100000,
+				'readQueryRows' => 100_000,
 				'maxAffected' => 1000
 			],
 			// Background job runner
 			'JobRunner' => [
 				'readQueryTime' => 30,
 				'writeQueryTime' => 5,
-				'readQueryRows' => 100000,
+				'readQueryRows' => 100_000,
 				'maxAffected' => 500 // ballpark of $wgUpdateRowsPerQuery
 			],
 			// Command-line scripts
@@ -9755,7 +9848,7 @@ class MainConfigSchema {
 	/**
 	 * Prefix for metric names sent to $wgStatsdServer.
 	 *
-	 * @see MediaWikiServices::getInstance()->getStatsdDataFactory
+	 * @see \MediaWiki\MediaWikiServices::getInstance()->getStatsdDataFactory
 	 * @see \BufferingStatsdDataFactory
 	 * @since 1.25
 	 */
@@ -9882,22 +9975,6 @@ class MainConfigSchema {
 	 */
 	public const SearchHighlightBoundaries = [
 		'default' => '[\\p{Z}\\p{P}\\p{C}]',
-	];
-
-	/**
-	 * Template for OpenSearch suggestions, defaults to API action=opensearch
-	 *
-	 * Sites with heavy load would typically have these point to a custom
-	 * PHP wrapper to avoid firing up mediawiki for every keystroke
-	 *
-	 * Placeholders: {searchTerms}
-	 *
-	 * @deprecated since 1.25 Use $wgOpenSearchTemplates['application/x-suggestions+json'] instead
-	 */
-	public const OpenSearchTemplate = [
-		'default' => false,
-		'deprecated' => 'since 1.25 ' .
-			'Use $wgOpenSearchTemplates[\'application/x-suggestions+json\'] instead',
 	];
 
 	/**
@@ -10918,12 +10995,12 @@ class MainConfigSchema {
 	/** @name   Wiki Farm */
 
 	/**
-	 * EXPERIMENTAL: A directory that contains site-specific
-	 * configuration files. Setting this will enable multi-tenant ("wiki farm")
-	 * mode, causing site-specific settings to be loaded based on information from
-	 * the web request.
+	 * A directory that contains site-specific configuration files.
 	 *
-	 * @unstable
+	 * Setting this will enable multi-tenant ("wiki farm") mode, causing
+	 * site-specific settings to be loaded based on information from the web request.
+	 *
+	 * @unstable EXPERIMENTAL
 	 * @since 1.38
 	 */
 	public const WikiFarmSettingsDirectory = [
@@ -10931,11 +11008,10 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * EXPERIMENTAL: The file extension to be used when looking up
-	 * site-specific settings files in $wgWikiFarmSettingsDirectory, such as 'json'
-	 * or 'yaml'.
+	 * The file extension to be used when looking up site-specific settings files in
+	 * $wgWikiFarmSettingsDirectory, such as 'json' or 'yaml'.
 	 *
-	 * @unstable
+	 * @unstable EXPERIMENTAL
 	 * @since 1.38
 	 */
 	public const WikiFarmSettingsExtension = [
@@ -11018,6 +11094,37 @@ class MainConfigSchema {
 	 * @since 1.23
 	 */
 	public const MessagesDirs = [
+		'default' => [],
+		'type' => 'map',
+	];
+
+	/**
+	 * Message directories containing JSON files for localisation of special page aliases.
+	 *
+	 * Associative array mapping extension name to the directory where configurations can be
+	 * found. The directory is expected to contain JSON files corresponding to each language code.
+	 *
+	 * Variables defined in extensions will override conflicting variables defined
+	 * in the core. We recommend using this configuration to set variables that require localisation:
+	 * special page aliases, and in the future namespace aliases and magic words.
+	 *
+	 * **Simple example**: extension.json
+	 * ```
+	 * "TranslationAliasesDirs": {
+	 *   "TranslationNotificationsAlias": "i18n/aliases/"
+	 * }
+	 * ```
+	 * **Complex example**: extension.json
+	 *  ```
+	 *  "TranslationAliasesDirs": {
+	 *    "TranslationNotificationsAlias": [ "i18n/special-page-aliases", "i18n/magic-words", "i18n/namespaces" ]
+	 *  }
+	 *  ```
+	 *
+	 * @unstable EXPERIMENTAL
+	 * @since 1.42
+	 */
+	public const TranslationAliasesDirs = [
 		'default' => [],
 		'type' => 'map',
 	];
@@ -11153,7 +11260,7 @@ class MainConfigSchema {
 	 * - license-name: Short name of the license (used as label for the link), such
 	 *   as "GPL-2.0-or-later" or "MIT" (https://spdx.org/licenses/ for a list of identifiers).
 	 *
-	 * @see \SpecialVersion::getCredits
+	 * @see \MediaWiki\Specials\SpecialVersion::getCredits
 	 */
 	public const ExtensionCredits = [
 		'default' => [],
@@ -11203,9 +11310,11 @@ class MainConfigSchema {
 	 * for that.
 	 *
 	 * @note the default wiring file will be added automatically by Setup.php
-	 * @see MediaWikiServices @see ServiceContainer::loadWiringFiles() for details on loading
-	 *     service instantiator functions. @see docs/Injection.md for an overview of dependency
-	 *     injection in MediaWiki.
+	 * @see \MediaWiki\MediaWikiServices
+	 * @see \Wikimedia\Services\ServiceContainer::loadWiringFiles() for details on loading
+	 *   service instantiator functions.
+	 * @see docs/Injection.md for an overview of dependency
+	 *   injection in MediaWiki.
 	 */
 	public const ServiceWiringFiles = [
 		'default' => [],
@@ -11236,7 +11345,12 @@ class MainConfigSchema {
 			'refreshLinks' => RefreshLinksJob::class,
 			'deleteLinks' => DeleteLinksJob::class,
 			'htmlCacheUpdate' => HTMLCacheUpdateJob::class,
-			'sendMail' => EmaillingJob::class,
+			'sendMail' => [
+				'class' => EmaillingJob::class,
+				'services' => [
+					0 => 'Emailer'
+				]
+			],
 			'enotifNotify' => EnotifNotifyJob::class,
 			'fixDoubleRedirect' => [
 				'class' => DoubleRedirectJob::class,
@@ -11251,6 +11365,7 @@ class MainConfigSchema {
 			'AssembleUploadChunks' => AssembleUploadChunksJob::class,
 			'PublishStashedFile' => PublishStashedFileJob::class,
 			'ThumbnailRender' => ThumbnailRenderJob::class,
+			'UploadFromUrl' => UploadFromUrlJob::class,
 			'recentChangesUpdate' => RecentChangesUpdateJob::class,
 			'refreshLinksPrioritized' => RefreshLinksJob::class,
 			'refreshLinksDynamic' => RefreshLinksJob::class,
@@ -11298,7 +11413,7 @@ class MainConfigSchema {
 	 * These settings should be global to all wikis.
 	 */
 	public const JobTypesExcludedFromDefaultQueue = [
-		'default' => [ 'AssembleUploadChunks', 'PublishStashedFile' ],
+		'default' => [ 'AssembleUploadChunks', 'PublishStashedFile', 'UploadFromUrl' ],
 		'type' => 'list',
 	];
 
@@ -11315,24 +11430,6 @@ class MainConfigSchema {
 		'default' => [],
 		'type' => 'map',
 		'additionalProperties' => [ 'type' => 'float', ],
-	];
-
-	/**
-	 * Make job runners commit changes for replica DB-lag prone jobs one job at a time.
-	 *
-	 * This is useful if there are many job workers that race on replica DB lag checks.
-	 * If set, jobs taking this many seconds of DB write time have serialized commits.
-	 *
-	 * Note that affected jobs may have worse lock contention. Also, if they affect
-	 * several DBs at once they may have a smaller chance of being atomic due to the
-	 * possibility of connection loss while queueing up to commit. Affected jobs may
-	 * also fail due to the commit lock acquisition timeout.
-	 *
-	 * @since 1.26
-	 */
-	public const JobSerialCommitThreshold = [
-		'default' => false,
-		'type' => 'float|false',
 	];
 
 	/**
@@ -11630,8 +11727,10 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * The same as above, but here values are names of classes,
-	 * not messages.
+	 * The same as above, but here values are class names or ObjectFactory specifications,
+	 * not messages. The specification must resolve to a LogFormatter subclass,
+	 * and will receive the LogEntry object as its first constructor argument.
+	 * The type can be specified as '*' (e.g. 'block/*') to handle all types.
 	 *
 	 * @see \LogPage::actionText
 	 * @see \LogFormatter
@@ -11831,7 +11930,7 @@ class MainConfigSchema {
 
 	/**
 	 * Map of allowed values for the "title=foo&action=<action>" parameter.
-	 * to the corrspeonding handler code.
+	 * to the corresponding handler code.
 	 * See ActionFactory for the syntax. Core defaults are in ActionFactory::CORE_ACTIONS,
 	 * anything here overrides that.
 	 */
@@ -12056,7 +12155,7 @@ class MainConfigSchema {
 	 * @warning Do not set this lower than $wgMaxArticleSize*1024
 	 */
 	public const APIMaxResultSize = [
-		'default' => 8388608,
+		'default' => 8_388_608,
 	];
 
 	/**
@@ -12193,7 +12292,7 @@ class MainConfigSchema {
 	 * Maximum amount of virtual memory available to shell processes under linux, in KiB.
 	 */
 	public const MaxShellMemory = [
-		'default' => 307200,
+		'default' => 307_200,
 	];
 
 	/**
@@ -12201,7 +12300,7 @@ class MainConfigSchema {
 	 * ImageMagick convert for example can be fairly hungry for scratch space
 	 */
 	public const MaxShellFileSize = [
-		'default' => 102400,
+		'default' => 102_400,
 	];
 
 	/**
@@ -12299,6 +12398,20 @@ class MainConfigSchema {
 	 */
 	public const ShellboxSecretKey = [
 		'default' => null,
+		'type' => '?string',
+	];
+
+	/**
+	 * The POSIX-compatible shell to use when running scripts. This is used by
+	 * some media handling shell commands.
+	 *
+	 * If ShellboxUrls is configured, this path should exist on the remote side.
+	 * On Windows this should be the full path to bash.exe, not git-bash.exe.
+	 *
+	 * @since 1.42
+	 */
+	public const ShellboxShell = [
+		'default' => '/bin/sh',
 		'type' => '?string',
 	];
 
@@ -12418,7 +12531,7 @@ class MainConfigSchema {
 	 *  - request ID provided by the incoming request via the `X-Request-Id`
 	 *  - trace context provided by the incoming request via the `tracestate` and `traceparent`
 	 *
-	 * Set to `true` if the entity sitting in front of Mediawiki sanitises external requests.
+	 * Set to `true` if the entity sitting in front of MediaWiki sanitises external requests.
 	 *
 	 * Default: `false`.
 	 */
@@ -12434,7 +12547,7 @@ class MainConfigSchema {
 
 	/**
 	 * Number of jobs to perform per request. May be less than one in which case jobs are
-	 * performed probabalistically. If this is zero, jobs will not be done during ordinary
+	 * performed probabilistically. If this is zero, jobs will not be done during ordinary
 	 * apache requests. In this case, maintenance/runJobs.php should be run in loop every
 	 * few seconds via a service or cron job. If using a cron job, be sure to handle the
 	 * case where the script is already running (e.g. via `/usr/bin/flock -n <lock_file>`).
@@ -12550,15 +12663,15 @@ class MainConfigSchema {
 	 *
 	 * By setting up a PubSub system (like Kafka) and enabling a corresponding EventRelayer class
 	 * that uses it, MediaWiki can broadcast events to all subscribers. Certain features like WAN
-	 * cache purging and CDN cache purging will emit events to this system. Appropriate listers can
-	 * subscribe to the channel and take actions based on the events. For example, a local daemon
+	 * cache purging and CDN cache purging will emit events to this system. Appropriate listeners
+	 * can subscribe to the channel and take actions based on the events. For example, a local daemon
 	 * can run on each CDN cache node and perform local purges based on the URL purge channel
 	 * events.
 	 *
 	 * Some extensions may want to use "channel categories" so that different channels can also
 	 * share the same custom relayer instance (e.g. when it's likely to be overridden). They can use
 	 * EventRelayerGroup::getRelayer() based on the category but call notify() on various different
-	 * actual channels. One reason for this would be that some system have very different
+	 * actual channels. One reason for this would be that some systems have very different
 	 * performance vs durability needs, so one system (e.g. Kafka) may not be suitable for all
 	 * uses.
 	 *
@@ -12609,7 +12722,7 @@ class MainConfigSchema {
 	/**
 	 * Expiry of the endpoint definition for the Reporting API.
 	 *
-	 * @warning EXPERIMENTAL!
+	 * @unstable EXPERIMENTAL
 	 * @since 1.34
 	 */
 	public const ReportToExpiry = [
@@ -12620,7 +12733,7 @@ class MainConfigSchema {
 	/**
 	 * List of endpoints for the Reporting API.
 	 *
-	 * @warning EXPERIMENTAL!
+	 * @unstable EXPERIMENTAL
 	 * @since 1.34
 	 */
 	public const ReportToEndpoints = [
@@ -12633,7 +12746,7 @@ class MainConfigSchema {
 	 *
 	 * Each entry is turned into a Feature-Policy-Report-Only header.
 	 *
-	 * @warning EXPERIMENTAL!
+	 * @unstable EXPERIMENTAL
 	 * @since 1.34
 	 */
 	public const FeaturePolicyReportOnly = [
@@ -12663,13 +12776,44 @@ class MainConfigSchema {
 
 	/**
 	 * Whether to enable the client-side edit recovery feature.
-	 * This is a temporary feature flag.
+	 *
+	 * @unstable Temporary feature flag, T341844
+	 * @since 1.41
 	 */
 	public const EnableEditRecovery = [
 		'default' => false,
 		'type' => 'boolean',
 	];
 
+	/**
+	 * Number of seconds to keep edit recovery data after the edit is stored.
+	 */
+	public const EditRecoveryExpiry = [
+		'default' => 30 * 24 * 3600,
+		'type' => 'integer',
+	];
+
+	/**
+	 * Whether to use Codex in Special:Block form.
+	 *
+	 * @unstable Temporary feature flag, T358153
+	 * @since 1.42
+	 */
+	public const UseCodexSpecialBlock = [
+		'default' => false,
+		'type' => 'boolean',
+	];
+
+	/**
+	 * Whether to display a confirmation screen during user log out.
+	 *
+	 * @unstable Temporary feature flag, T357484
+	 * @since 1.42
+	 */
+	public const ShowLogoutConfirmation = [
+		'default' => false,
+		'type' => 'boolean',
+	];
 	// endregion -- End Miscellaneous
 
 }

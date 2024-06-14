@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use Config;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
@@ -10,20 +9,23 @@ use DateTimeZone;
 use InvalidArgumentException;
 use Language;
 use LogicException;
-use MalformedTitleException;
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentCommentItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentHeadingItem;
 use MediaWiki\Extension\DiscussionTools\ThreadItem\ContentThreadItem;
 use MediaWiki\Languages\LanguageConverterFactory;
+use MediaWiki\Title\MalformedTitleException;
+use MediaWiki\Title\TitleParser;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\Utils\MWTimestamp;
 use RuntimeException;
-use TitleParser;
-use TitleValue;
 use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Timestamp\TimestampException;
 
 // TODO consider making timestamp parsing not a returned function
 
@@ -40,13 +42,16 @@ class CommentParser {
 	private LanguageConverterFactory $languageConverterFactory;
 	private TitleParser $titleParser;
 
-	private $dateFormat;
-	private $digits;
+	/** @var string[] */
+	private array $dateFormat;
+	/** @var string[][] */
+	private array $digits;
 	/** @var string[][] */
 	private $contLangMessages;
-	private $localTimezone;
-	private $timezones;
-	private $specialContributionsName;
+	private string $localTimezone;
+	/** @var string[][] */
+	private array $timezones;
+	private string $specialContributionsName;
 
 	private Element $rootNode;
 	private TitleValue $title;
@@ -105,18 +110,18 @@ class CommentParser {
 	 * that is a "void element" or "text element", except some special cases that we treat as comment
 	 * separators (isCommentSeparator()).
 	 *
-	 * @param Node $node Node to start searching at. This node's children are ignored.
+	 * @param ?Node $node Node after which to start searching
+	 *   (if null, start at the beginning of the document).
 	 * @return Node
 	 */
-	private function nextInterestingLeafNode( Node $node ): Node {
+	private function nextInterestingLeafNode( ?Node $node ): Node {
 		$rootNode = $this->rootNode;
 		$treeWalker = new TreeWalker(
 			$rootNode,
 			NodeFilter::SHOW_ELEMENT | NodeFilter::SHOW_TEXT,
 			static function ( $n ) use ( $node, $rootNode ) {
-				// Ignore this node and its descendants
-				// (unless it's the root node, this is a special case for "fakeHeading" handling)
-				if ( $node !== $rootNode && ( $n === $node || $n->parentNode === $node ) ) {
+				// Skip past the starting node and its descendants
+				if ( $n === $node || $n->parentNode === $node ) {
 					return NodeFilter::FILTER_REJECT;
 				}
 				// Ignore some elements usually used as separators or headers (and their descendants)
@@ -133,7 +138,9 @@ class CommentParser {
 				return NodeFilter::FILTER_SKIP;
 			}
 		);
-		$treeWalker->currentNode = $node;
+		if ( $node ) {
+			$treeWalker->currentNode = $node;
+		}
 		$treeWalker->nextNode();
 		if ( !$treeWalker->currentNode ) {
 			throw new RuntimeException( 'nextInterestingLeafNode not found' );
@@ -314,7 +321,7 @@ class CommentParser {
 	 *
 	 * @param string $contLangVariant Content language variant
 	 * @param string $format Date format, as used by MediaWiki
-	 * @param string[]|null $digits Localised digits from 0 to 9, e.g. `[ '0', '1', ..., '9' ]`
+	 * @param array<int,string>|null $digits Localised digits from 0 to 9, e.g. `[ '0', '1', ..., '9' ]`
 	 * @param string $localTimezone Local timezone IANA name, e.g. `America/New_York`
 	 * @param array $tzAbbrs Map of localised timezone abbreviations to IANA abbreviations
 	 *   for the local timezone, e.g. [ 'EDT' => 'EDT', 'EST' => 'EST' ]
@@ -323,17 +330,8 @@ class CommentParser {
 	private function getTimestampParser(
 		string $contLangVariant, string $format, ?array $digits, string $localTimezone, array $tzAbbrs
 	): callable {
-		$untransformDigits = static function ( string $text ) use ( $digits ) {
-			if ( !$digits ) {
-				return $text;
-			}
-			return preg_replace_callback(
-				'/[' . implode( '', $digits ) . ']/u',
-				static function ( array $m ) use ( $digits ) {
-					return (string)array_search( $m[0], $digits, true );
-				},
-				$text
-			);
+		$untransformDigits = static function ( string $text ) use ( $digits ): int {
+			return (int)( $digits ? strtr( $text, array_flip( $digits ) ) : $text );
 		};
 
 		$formatLength = strlen( $format );
@@ -415,7 +413,7 @@ class CommentParser {
 						break;
 					case 'd':
 					case 'j':
-						$day = intval( $untransformDigits( $text ) );
+						$day = $untransformDigits( $text );
 						break;
 					case 'D':
 					case 'l':
@@ -437,21 +435,21 @@ class CommentParser {
 						break;
 					case 'm':
 					case 'n':
-						$monthIdx = intval( $untransformDigits( $text ) ) - 1;
+						$monthIdx = $untransformDigits( $text ) - 1;
 						break;
 					case 'Y':
-						$year = intval( $untransformDigits( $text ) );
+						$year = $untransformDigits( $text );
 						break;
 					case 'xkY':
 						// Thai year
-						$year = intval( $untransformDigits( $text ) ) - 543;
+						$year = $untransformDigits( $text ) - 543;
 						break;
 					case 'G':
 					case 'H':
-						$hour = intval( $untransformDigits( $text ) );
+						$hour = $untransformDigits( $text );
 						break;
 					case 'i':
-						$minute = intval( $untransformDigits( $text ) );
+						$minute = $untransformDigits( $text );
 						break;
 					case 's':
 						// Seconds - unused, because most timestamp formats omit them
@@ -497,6 +495,16 @@ class CommentParser {
 			// Now set the timezone back to UTC for formatting
 			$date->setTimezone( new DateTimeZone( 'UTC' ) );
 			$date = DateTimeImmutable::createFromMutable( $date );
+
+			// We require the date to be compatible with our libraries, for example zero or negative years (T352455)
+			// In PHP we need to check with MWTimestamp.
+			// In JS we need to check with Moment.
+			try {
+				// @phan-suppress-next-line PhanNoopNew
+				new MWTimestamp( $date->format( 'c' ) );
+			} catch ( TimestampException $ex ) {
+				return null;
+			}
 
 			return [
 				'date' => $date,
@@ -559,24 +567,26 @@ class CommentParser {
 			$title = $this->title;
 		} else {
 			$titleString = CommentUtils::getTitleFromUrl( $link->getAttribute( 'href' ) ?? '', $this->config ) ?? '';
-			try {
-				$title = $this->titleParser->parseTitle( $titleString );
-			} catch ( MalformedTitleException $err ) {
+			// Performance optimization, skip strings that obviously don't contain a namespace
+			if ( $titleString === '' || !str_contains( $titleString, ':' ) ) {
+				return null;
+			}
+			$title = $this->parseTitle( $titleString );
+			if ( !$title ) {
 				return null;
 			}
 		}
 
 		$username = null;
 		$displayName = null;
-		$namespaceId = $title->getNamespace();
 		$mainText = $title->getText();
 
-		if ( $namespaceId === NS_USER || $namespaceId === NS_USER_TALK ) {
+		if ( $title->inNamespace( NS_USER ) || $title->inNamespace( NS_USER_TALK ) ) {
 			$username = $mainText;
 			if ( str_contains( $username, '/' ) ) {
 				return null;
 			}
-			if ( $namespaceId === NS_USER ) {
+			if ( $title->inNamespace( NS_USER ) ) {
 				// Use regex trim for consistency with JS implementation
 				$text = preg_replace( [ '/^[\s]+/u', '/[\s]+$/u' ], '', $link->textContent ?? '' );
 				// Record the display name if it has been customised beyond changing case
@@ -584,7 +594,7 @@ class CommentParser {
 					$displayName = $text;
 				}
 			}
-		} elseif ( $namespaceId === NS_SPECIAL ) {
+		} elseif ( $title->inNamespace( NS_SPECIAL ) ) {
 			$parts = explode( '/', $mainText );
 			if ( count( $parts ) === 2 && $parts[0] === $this->specialContributionsName ) {
 				// Normalize the username: users may link to their contributions with an unnormalized name
@@ -658,21 +668,26 @@ class CommentParser {
 				//
 				// Handle links nested in formatting elements.
 				if ( $event === 'leave' && $node instanceof Element && strtolower( $node->tagName ) === 'a' ) {
-					$user = $this->getUsernameFromLink( $node );
-					if ( $user ) {
-						// Accept the first link to the user namespace, then only accept links to that user
-						if ( $sigUsername === null ) {
-							$sigUsername = $user['username'];
-						}
-						if ( $user['username'] === $sigUsername ) {
-							$lastLinkNode = $node;
-							if ( $user['displayName'] ) {
-								$sigDisplayName = $user['displayName'];
+					$classList = DOMCompat::getClassList( $node );
+					// Generated timestamp links sometimes look like username links (e.g. on user talk pages)
+					// so ignore these.
+					if ( !$classList->contains( 'ext-discussiontools-init-timestamplink' ) ) {
+						$user = $this->getUsernameFromLink( $node );
+						if ( $user ) {
+							// Accept the first link to the user namespace, then only accept links to that user
+							if ( $sigUsername === null ) {
+								$sigUsername = $user['username'];
+							}
+							if ( $user['username'] === $sigUsername ) {
+								$lastLinkNode = $node;
+								if ( $user['displayName'] ) {
+									$sigDisplayName = $user['displayName'];
+								}
 							}
 						}
+						// Keep looking if a node with links wasn't a link to a user page
+						// "Doc James (talk · contribs · email)"
 					}
-					// Keep looking if a node with links wasn't a link to a user page
-					// "Doc James (talk · contribs · email)"
 				}
 			}
 		);
@@ -886,14 +901,13 @@ class CommentParser {
 		$timestampRegexps = $this->getLocalTimestampRegexps();
 		$dfParsers = $this->getLocalTimestampParsers();
 
-		$curCommentEnd = $this->rootNode;
+		$curCommentEnd = null;
 
 		$treeWalker = new TreeWalker(
 			$this->rootNode,
 			NodeFilter::SHOW_ELEMENT | NodeFilter::SHOW_TEXT,
 			[ static::class, 'acceptOnlyNodesAllowingComments' ]
 		);
-		$lastSigNode = null;
 		while ( $node = $treeWalker->nextNode() ) {
 			if ( $node instanceof Element && preg_match( '/^h([1-6])$/i', $node->tagName, $match ) ) {
 				$headingNodeAndOffset = CommentUtils::getHeadlineNodeAndOffset( $node );
@@ -902,15 +916,15 @@ class CommentParser {
 				$range = new ImmutableRange(
 					$headingNode, $startOffset, $headingNode, $headingNode->childNodes->length
 				);
-				$curComment = new ContentHeadingItem( $range, (int)( $match[ 1 ] ) );
+				$transcludedFrom = $this->computeTranscludedFrom( $range );
+				$curComment = new ContentHeadingItem( $range, $transcludedFrom, (int)( $match[ 1 ] ) );
 				$curComment->setRootNode( $this->rootNode );
 				$result->addThreadItem( $curComment );
 				$curCommentEnd = $node;
 			} elseif ( $node instanceof Text && ( $match = $this->findTimestamp( $node, $timestampRegexps ) ) ) {
 				$warnings = [];
-				$foundSignature = $this->findSignature( $node, $lastSigNode );
+				$foundSignature = $this->findSignature( $node, $curCommentEnd );
 				$author = $foundSignature['username'];
-				$lastSigNode = $foundSignature['nodes'][0];
 
 				if ( !$author ) {
 					// Ignore timestamps for which we couldn't find a signature. It's probably not a real
@@ -926,7 +940,7 @@ class CommentParser {
 
 				// Everything from the last comment up to here is the next comment
 				$startNode = $this->nextInterestingLeafNode( $curCommentEnd );
-				$endNode = $lastSigNode;
+				$endNode = $foundSignature['nodes'][0];
 
 				// Skip to the end of the "paragraph". This only looks at tag names and can be fooled by CSS, but
 				// avoiding that would be more difficult and slower.
@@ -939,7 +953,7 @@ class CommentParser {
 				// no way to indicate which one you're replying to (this might matter in the future for
 				// notifications or something).
 				CommentUtils::linearWalk(
-					$lastSigNode,
+					$endNode,
 					function ( string $event, Node $n ) use (
 						&$endNode, &$sigRanges, &$timestampRanges,
 						$treeWalker, $timestampRegexps, $node
@@ -980,6 +994,7 @@ class CommentParser {
 					$endNode,
 					$length
 				);
+				$transcludedFrom = $this->computeTranscludedFrom( $range );
 
 				$startLevel = CommentUtils::getIndentLevel( $startNode, $this->rootNode ) + 1;
 				$endLevel = CommentUtils::getIndentLevel( $node, $this->rootNode ) + 1;
@@ -989,8 +1004,11 @@ class CommentParser {
 				// Should this use the indent level of $startNode or $node?
 				$level = min( $startLevel, $endLevel );
 
-				[ 'date' => $dateTime, 'warning' => $dateWarning ] =
-					$dfParsers[ $match['parserIndex'] ]( $match['matchData'] );
+				$parserResult = $dfParsers[ $match['parserIndex'] ]( $match['matchData'] );
+				if ( !$parserResult ) {
+					continue;
+				}
+				[ 'date' => $dateTime, 'warning' => $dateWarning ] = $parserResult;
 
 				if ( $dateWarning ) {
 					$warnings[] = $dateWarning;
@@ -999,6 +1017,7 @@ class CommentParser {
 				$curComment = new ContentCommentItem(
 					$level,
 					$range,
+					$transcludedFrom,
 					$sigRanges,
 					$timestampRanges,
 					$dateTime,
@@ -1013,7 +1032,7 @@ class CommentParser {
 					// Add a fake placeholder heading if there are any comments in the 0th section
 					// (before the first real heading)
 					$range = new ImmutableRange( $this->rootNode, 0, $this->rootNode, 0 );
-					$fakeHeading = new ContentHeadingItem( $range, null );
+					$fakeHeading = new ContentHeadingItem( $range, false, null );
 					$fakeHeading->setRootNode( $this->rootNode );
 					$result->addThreadItem( $fakeHeading );
 				}
@@ -1023,6 +1042,237 @@ class CommentParser {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Get the name of the page from which this thread item is transcluded (if any). Replies to
+	 * transcluded items must be posted on that page, instead of the current one.
+	 *
+	 * This is tricky, because we don't want to mark items as trancluded when they're just using a
+	 * template (e.g. {{ping|…}} or a non-substituted signature template). Sometimes the whole comment
+	 * can be template-generated (e.g. when using some wrapper templates), but as long as a reply can
+	 * be added outside of that template, we should not treat it as transcluded.
+	 *
+	 * The start/end boundary points of comment ranges and Parsoid transclusion ranges don't line up
+	 * exactly, even when to a human it's obvious that they cover the same content, making this more
+	 * complicated.
+	 *
+	 * @return string|bool `false` if this item is not transcluded. A string if it's transcluded
+	 *   from a single page (the page title, in text form with spaces). `true` if it's transcluded, but
+	 *   we can't determine the source.
+	 */
+	public function computeTranscludedFrom( ImmutableRange $commentRange ) {
+		// Collapsed ranges should otherwise be impossible, but they're not (T299583)
+		// TODO: See if we can fix the root cause, and remove this?
+		if ( $commentRange->collapsed ) {
+			return false;
+		}
+
+		// General approach:
+		//
+		// Compare the comment range to each transclusion range on the page, and if it overlaps any of
+		// them, examine the overlap. There are a few cases:
+		//
+		// * Comment and transclusion do not overlap:
+		//   → Not transcluded.
+		// * Comment contains the transclusion:
+		//   → Not transcluded (just a template).
+		// * Comment is contained within the transclusion:
+		//   → Transcluded, we can determine the source page (unless it's a complex transclusion).
+		// * Comment and transclusion overlap partially:
+		//   → Transcluded, but we can't determine the source page.
+		// * Comment (almost) exactly matches the transclusion:
+		//   → Maybe transcluded (it could be that the source page only contains that single comment),
+		//     maybe not transcluded (it could be a wrapper template that covers a single comment).
+		//     This is very sad, and we decide based on the namespace.
+		//
+		// Most transclusion ranges on the page trivially fall in the "do not overlap" or "contains"
+		// cases, and we only have to carefully examine the two transclusion ranges that contain the
+		// first and last node of the comment range.
+		//
+		// To check for almost exact matches, we walk between the relevant boundary points, and if we
+		// only find uninteresting nodes (that would be ignored when detecting comments), we treat them
+		// like exact matches.
+
+		$startTransclNode = CommentUtils::getTranscludedFromElement(
+			CommentUtils::getRangeFirstNode( $commentRange )
+		);
+		$endTransclNode = CommentUtils::getTranscludedFromElement(
+			CommentUtils::getRangeLastNode( $commentRange )
+		);
+
+		// We only have to examine the two transclusion ranges that contain the first/last node of the
+		// comment range (if they exist). Ignore ranges outside the comment or in the middle of it.
+		$transclNodes = [];
+		if ( $startTransclNode ) {
+			$transclNodes[] = $startTransclNode;
+		}
+		if ( $endTransclNode && $endTransclNode !== $startTransclNode ) {
+			$transclNodes[] = $endTransclNode;
+		}
+
+		foreach ( $transclNodes as $transclNode ) {
+			$transclRange = static::getTransclusionRange( $transclNode );
+			$compared = CommentUtils::compareRanges( $commentRange, $transclRange );
+			$transclTitles = $this->getTransclusionTitles( $transclNode );
+			$simpleTransclTitle = count( $transclTitles ) === 1 && $transclTitles[0] !== null ?
+				$this->parseTitle( $transclTitles[0] ) : null;
+
+			switch ( $compared ) {
+				case 'equal':
+					// Comment (almost) exactly matches the transclusion
+					if ( $simpleTransclTitle === null ) {
+						// Allow replying to some accidental complex transclusions consisting of only templates
+						// and wikitext (T313093)
+						if ( count( $transclTitles ) > 1 ) {
+							foreach ( $transclTitles as $transclTitleString ) {
+								if ( $transclTitleString !== null ) {
+									$transclTitle = $this->parseTitle( $transclTitleString );
+									if ( $transclTitle && !$transclTitle->inNamespace( NS_TEMPLATE ) ) {
+										return true;
+									}
+								}
+							}
+							// Continue examining the other ranges.
+							break;
+						}
+						// Multi-template transclusion, or a parser function call, or template-affected wikitext outside
+						// of a template call, or a mix of the above
+						return true;
+
+					} elseif ( $simpleTransclTitle->inNamespace( NS_TEMPLATE ) ) {
+						// Is that a subpage transclusion with a single comment, or a wrapper template
+						// transclusion on this page? We don't know, but let's guess based on the namespace.
+						// (T289873)
+						// Continue examining the other ranges.
+						break;
+					} elseif ( !$this->titleCanExist( $simpleTransclTitle ) ) {
+						// Special page transclusion (T344622) or something else weird. Don't return the title,
+						// since it's useless for replying, and can't be stored in the permalink database.
+						return true;
+					} else {
+						Assert::precondition( $transclTitles[0] !== null, "Simple transclusion found" );
+						return strtr( $transclTitles[0], '_', ' ' );
+					}
+
+				case 'contains':
+					// Comment contains the transclusion
+
+					// If the entire transclusion is contained within the comment range, that's just a
+					// template. This is the same as a transclusion in the middle of the comment, which we
+					// ignored earlier, it just takes us longer to get here in this case.
+
+					// Continue examining the other ranges.
+					break;
+
+				case 'contained':
+					// Comment is contained within the transclusion
+					if ( $simpleTransclTitle === null ) {
+						return true;
+					} elseif ( !$this->titleCanExist( $simpleTransclTitle ) ) {
+						// Special page transclusion (T344622) or something else weird. Don't return the title,
+						// since it's useless for replying, and can't be stored in the permalink database.
+						return true;
+					} else {
+						Assert::precondition( $transclTitles[0] !== null, "Simple transclusion found" );
+						return strtr( $transclTitles[0], '_', ' ' );
+					}
+
+				case 'after':
+				case 'before':
+					// Comment and transclusion do not overlap
+
+					// This should be impossible, because we ignored these ranges earlier.
+					throw new LogicException( 'Unexpected transclusion or comment range' );
+
+				case 'overlapstart':
+				case 'overlapend':
+					// Comment and transclusion overlap partially
+					return true;
+
+				default:
+					throw new LogicException( 'Unexpected return value from compareRanges()' );
+			}
+		}
+
+		// If we got here, the comment range was not contained by or overlapping any of the transclusion
+		// ranges. Comment is not transcluded.
+		return false;
+	}
+
+	private function titleCanExist( TitleValue $title ): bool {
+		return $title->getNamespace() >= NS_MAIN &&
+			!$title->isExternal() &&
+			$title->getText() !== '';
+	}
+
+	private function parseTitle( string $titleString ): ?TitleValue {
+		try {
+			return $this->titleParser->parseTitle( $titleString );
+		} catch ( MalformedTitleException $err ) {
+			return null;
+		}
+	}
+
+	/**
+	 * Return the page titles for each part of the transclusion, or nulls for each part that isn't
+	 * transcluded from another page.
+	 *
+	 * If the node represents a single-page transclusion, this will return an array containing a
+	 * single string.
+	 *
+	 * @param Element $node
+	 * @return array<string|null>
+	 */
+	private function getTransclusionTitles( Element $node ): array {
+		$dataMw = json_decode( $node->getAttribute( 'data-mw' ) ?? '', true );
+		$out = [];
+
+		foreach ( $dataMw['parts'] ?? [] as $part ) {
+			if (
+				!is_string( $part ) &&
+				// 'href' will be unset if this is a parser function rather than a template
+				isset( $part['template']['target']['href'] )
+			) {
+				$parsoidHref = $part['template']['target']['href'];
+				Assert::precondition( substr( $parsoidHref, 0, 2 ) === './', "href has valid format" );
+				$out[] = urldecode( substr( $parsoidHref, 2 ) );
+			} else {
+				$out[] = null;
+			}
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Given a transclusion's first node (e.g. returned by CommentUtils::getTranscludedFromElement()),
+	 * return a range starting before the node and ending after the transclusion's last node.
+	 *
+	 * @param Element $startNode
+	 * @return ImmutableRange
+	 */
+	private function getTransclusionRange( Element $startNode ): ImmutableRange {
+		$endNode = $startNode;
+		while (
+			// Phan doesn't realize that the conditions on $nextSibling can terminate the loop
+			// @phan-suppress-next-line PhanInfiniteLoop
+			$endNode &&
+			( $nextSibling = $endNode->nextSibling ) &&
+			$nextSibling instanceof Element &&
+			$nextSibling->getAttribute( 'about' ) === $endNode->getAttribute( 'about' )
+		) {
+			$endNode = $nextSibling;
+		}
+
+		$range = new ImmutableRange(
+			$startNode->parentNode,
+			CommentUtils::childIndexOf( $startNode ),
+			$endNode->parentNode,
+			CommentUtils::childIndexOf( $endNode ) + 1
+		);
+
+		return $range;
 	}
 
 	/**
@@ -1037,10 +1287,6 @@ class CommentParser {
 
 	/**
 	 * Given a thread item, return an identifier for it that is unique within the page.
-	 *
-	 * @param ContentThreadItem $threadItem
-	 * @param ContentThreadItemSet $previousItems
-	 * @return string
 	 */
 	private function computeId( ContentThreadItem $threadItem, ContentThreadItemSet $previousItems ): string {
 		$id = null;
@@ -1052,7 +1298,8 @@ class CommentParser {
 			// <span class="mw-headline" …>, or <hN …> in Parsoid HTML
 			$headline = $threadItem->getRange()->startContainer;
 			Assert::precondition( $headline instanceof Element, 'HeadingItem refers to an element node' );
-			$id = 'h-' . $this->truncateForId( $headline->getAttribute( 'id' ) ?? '' );
+			$id = 'h-' . $this->truncateForId( $headline->getAttribute( 'id' )
+				 ?: $headline->getAttribute( 'data-mw-anchor' ) ?? '' );
 		} elseif ( $threadItem instanceof ContentCommentItem ) {
 			$id = 'c-' . $this->truncateForId( str_replace( ' ', '_', $threadItem->getAuthor() ) ) .
 				'-' . $threadItem->getTimestampString();
@@ -1067,7 +1314,8 @@ class CommentParser {
 			// <span class="mw-headline" …>, or <hN …> in Parsoid HTML
 			$headline = $threadItemParent->getRange()->startContainer;
 			Assert::precondition( $headline instanceof Element, 'HeadingItem refers to an element node' );
-			$id .= '-' . $this->truncateForId( $headline->getAttribute( 'id' ) ?? '' );
+			$id .= '-' . $this->truncateForId( $headline->getAttribute( 'id' )
+				 ?: $headline->getAttribute( 'data-mw-anchor' ) ?? '' );
 		} elseif ( $threadItemParent instanceof ContentCommentItem ) {
 			$id .= '-' . $this->truncateForId( str_replace( ' ', '_', $threadItemParent->getAuthor() ) ) .
 				'-' . $threadItemParent->getTimestampString();
@@ -1103,9 +1351,6 @@ class CommentParser {
 	 * revisions where this comment might appear.
 	 *
 	 * Multiple comments on a page can have the same name; use ID to distinguish them.
-	 *
-	 * @param ContentThreadItem $threadItem
-	 * @return string
 	 */
 	private function computeName( ContentThreadItem $threadItem ): string {
 		$name = null;
@@ -1128,9 +1373,6 @@ class CommentParser {
 		return $name;
 	}
 
-	/**
-	 * @param ContentThreadItemSet $result
-	 */
 	private function buildThreads( ContentThreadItemSet $result ): void {
 		$lastHeading = null;
 		$replies = [];
@@ -1176,8 +1418,6 @@ class CommentParser {
 	 * Set the IDs and names used to refer to comments and headings.
 	 * This has to be a separate pass because we don't have the list of replies before
 	 * this point.
-	 *
-	 * @param ContentThreadItemSet $result
 	 */
 	private function computeIdsAndNames( ContentThreadItemSet $result ): void {
 		foreach ( $result->getThreadItems() as $threadItem ) {

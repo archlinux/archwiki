@@ -17,7 +17,7 @@
 	"math_syntax_error": "Misy diso ny raikipohy",
 	"math_unknown_error": "tsy fahatomombanana tsy hay antony",
 	"math_unknown_function": "lefa tsy fantatra \"$1\"",
-	"mw_math_mathml": "MathML miaraka amy SVG na PNG fanavotana (andrana)",
-	"mw_math_source": "\nAvelao ho TeX (ho an'ny navigateurs textes)",
+	"mw-math-mathml": "MathML miaraka amy SVG na PNG fanavotana (andrana)",
+	"mw-math-source": "\nAvelao ho TeX (ho an'ny navigateurs textes)",
 	"prefs-math": "Math"
 }

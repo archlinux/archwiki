@@ -1,8 +1,12 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Format;
+
+use ApiResult;
+
 /**
  * @group API
- * @covers ApiFormatNone
+ * @covers \ApiFormatNone
  */
 class ApiFormatNoneTest extends ApiFormatTestBase {
 

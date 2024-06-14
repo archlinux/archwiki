@@ -4,12 +4,13 @@ namespace MediaWiki\Specials;
 
 use ContentHandler;
 use ErrorPageError;
-use HTMLForm;
 use LogEventsList;
 use LogPage;
+use MediaWiki\Collation\CollationFactory;
 use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\EditPage\SpamChecker;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Language\RawMessage;
 use MediaWiki\Page\ContentModelChangeFactory;
 use MediaWiki\Page\WikiPageFactory;
@@ -30,6 +31,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 	private RevisionLookup $revisionLookup;
 	private WikiPageFactory $wikiPageFactory;
 	private SearchEngineFactory $searchEngineFactory;
+	private CollationFactory $collationFactory;
 
 	/**
 	 * @param IContentHandlerFactory $contentHandlerFactory
@@ -38,6 +40,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 	 * @param RevisionLookup $revisionLookup
 	 * @param WikiPageFactory $wikiPageFactory
 	 * @param SearchEngineFactory $searchEngineFactory
+	 * @param CollationFactory $collationFactory
 	 */
 	public function __construct(
 		IContentHandlerFactory $contentHandlerFactory,
@@ -45,7 +48,8 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		SpamChecker $spamChecker,
 		RevisionLookup $revisionLookup,
 		WikiPageFactory $wikiPageFactory,
-		SearchEngineFactory $searchEngineFactory
+		SearchEngineFactory $searchEngineFactory,
+		CollationFactory $collationFactory
 	) {
 		parent::__construct( 'ChangeContentModel', 'editcontentmodel' );
 
@@ -55,6 +59,7 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		$this->revisionLookup = $revisionLookup;
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->searchEngineFactory = $searchEngineFactory;
+		$this->collationFactory = $collationFactory;
 	}
 
 	public function doesWrites() {
@@ -158,16 +163,10 @@ class SpecialChangeContentModel extends FormSpecialPage {
 			}
 			$fields['pagetitle']['readonly'] = true;
 			$fields += [
-				'currentmodel' => [
-					'type' => 'text',
-					'name' => 'currentcontentmodel',
-					'default' => $this->title->getContentModel(),
-					'label-message' => 'changecontentmodel-current-label',
-					'readonly' => true
-				],
 				'model' => [
 					'type' => 'select',
 					'name' => 'model',
+					'default' => $this->title->getContentModel(),
 					'options' => $options,
 					'label-message' => 'changecontentmodel-model-label'
 				],
@@ -197,6 +196,11 @@ class SpecialChangeContentModel extends FormSpecialPage {
 		return $fields;
 	}
 
+	/**
+	 * @return array $options An array of data for an OOUI drop-down list. The array keys
+	 * correspond to the human readable text in the drop-down list. The array values
+	 * correspond to the <option value="">.
+	 */
 	private function getOptionsForTitle( Title $title = null ) {
 		$models = $this->contentHandlerFactory->getContentModels();
 		$options = [];
@@ -206,15 +210,21 @@ class SpecialChangeContentModel extends FormSpecialPage {
 				continue;
 			}
 			if ( $title ) {
-				if ( $title->getContentModel() === $model ) {
-					continue;
-				}
 				if ( !$handler->canBeUsedOn( $title ) ) {
 					continue;
 				}
 			}
 			$options[ContentHandler::getLocalizedName( $model )] = $model;
 		}
+
+		// Put the options in the drop-down list in alphabetical order.
+		// Sort by array key, case insensitive.
+		$collation = $this->collationFactory->getCategoryCollation();
+		uksort( $options, static function ( $a, $b ) use ( $collation ) {
+			$a = $collation->getSortKey( $a );
+			$b = $collation->getSortKey( $b );
+			return strcmp( $a, $b );
+		} );
 
 		return $options;
 	}
@@ -269,7 +279,5 @@ class SpecialChangeContentModel extends FormSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialChangeContentModel::class, 'SpecialChangeContentModel' );

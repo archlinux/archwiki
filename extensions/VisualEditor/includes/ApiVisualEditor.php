@@ -34,13 +34,14 @@ use MediaWiki\Request\DerivativeRequest;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\Title\Title;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
-use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use MessageLocalizer;
 use RequestContext;
 use User;
+use Wikimedia\Assert\Assert;
 use Wikimedia\ParamValidator\ParamValidator;
 use WikitextContent;
 
@@ -232,9 +233,6 @@ class ApiVisualEditor extends ApiBase {
 						}
 						$content = $response['body'];
 						$restbaseHeaders = $response['headers'];
-						if ( $content === false ) {
-							$this->dieWithError( 'apierror-visualeditor-docserver', 'docserver' );
-						}
 					} elseif ( $params['paction'] === 'wikitext' ) {
 						$apiParams = [
 							'action' => 'query',
@@ -268,9 +266,6 @@ class ApiVisualEditor extends ApiBase {
 									$content = $revArr['content'];
 								}
 							}
-						}
-						if ( $content === false ) {
-							$this->dieWithError( 'apierror-visualeditor-docserver', 'docserver' );
 						}
 					}
 				} else {
@@ -470,6 +465,7 @@ class ApiVisualEditor extends ApiBase {
 				}
 
 				if ( isset( $content ) ) {
+					Assert::postcondition( is_string( $content ), 'Content expected' );
 					$result['content'] = $content;
 					$result['preloaded'] = $preloaded;
 				}
@@ -494,14 +490,11 @@ class ApiVisualEditor extends ApiBase {
 				$content = $this->transformWikitext(
 					$title, $wikitext, true
 				)['body'];
-				if ( $content === false ) {
-					$this->dieWithError( 'apierror-visualeditor-docserver', 'docserver' );
-				} else {
-					$result = [
-						'result' => 'success',
-						'content' => $content
-					];
-				}
+				Assert::postcondition( is_string( $content ), 'Content expected' );
+				$result = [
+					'result' => 'success',
+					'content' => $content
+				];
 				break;
 		}
 

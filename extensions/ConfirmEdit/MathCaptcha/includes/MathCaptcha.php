@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\MathCaptcha;
 
-use Html;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\Extension\Math\MathRenderer;
+use MediaWiki\Html\Html;
 
 class MathCaptcha extends SimpleCaptcha {
 
@@ -24,7 +24,7 @@ class MathCaptcha extends SimpleCaptcha {
 	 * @param array &$resultArr
 	 */
 	protected function addCaptchaAPI( &$resultArr ) {
-		list( $sum, $answer ) = $this->pickSum();
+		[ $sum, $answer ] = $this->pickSum();
 		$html = $this->fetchMath( $sum );
 		$index = $this->storeCaptcha( [ 'answer' => $answer ] );
 		$resultArr['captcha'] = $this->describeCaptchaType();
@@ -47,7 +47,7 @@ class MathCaptcha extends SimpleCaptcha {
 	 * @return array
 	 */
 	public function getFormInformation( $tabIndex = 1 ) {
-		list( $sum, $answer ) = $this->pickSum();
+		[ $sum, $answer ] = $this->pickSum();
 		$index = $this->storeCaptcha( [ 'answer' => $answer ] );
 
 		$form = '<table><tr><td>' . $this->fetchMath( $sum ) . '</td>';
@@ -89,7 +89,7 @@ class MathCaptcha extends SimpleCaptcha {
 	 * @return array
 	 */
 	public function getCaptcha() {
-		list( $sum, $answer ) = $this->pickSum();
+		[ $sum, $answer ] = $this->pickSum();
 		return [ 'question' => $sum, 'answer' => $answer ];
 	}
 

@@ -19,7 +19,6 @@
 	"echo-pref-subscription-edit-thank": "Gratias egit recensionis meae causa",
 	"echo-pref-tooltip-edit-thank": "Me certiorem facere si quis mihi gratias egerit",
 	"echo-category-title-edit-thank": "Gratias agere",
-	"notification-thanks-diff-link": "recensione tua",
 	"log-name-thanks": "Index gratiarum",
 	"log-description-thanks": "Infra est index usorum quibus gratiae ab aliis usoribus actae sunt.",
 	"logentry-thanks-thank": "$1 {{GENDER:$2|gratias egit}} {{GENDER:$4|$3}}"

@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\HTMLForm;
+
 /**
  * HTML form generation and submission handling, vertical-form style.
  *
@@ -46,10 +48,6 @@ class VFormHTMLForm extends HTMLForm {
 	}
 
 	public function getHTML( $submitResult ) {
-		// This is required for VForm HTMLForms that use that style regardless
-		// of wgUseMediaWikiUIEverywhere (since they pre-date it).
-		// When wgUseMediaWikiUIEverywhere is removed, this should be consolidated
-		// with the addModuleStyles in SpecialPage->setHeaders.
 		$this->getOutput()->addModuleStyles( [
 			'mediawiki.ui',
 			'mediawiki.ui.button',
@@ -77,3 +75,6 @@ class VFormHTMLForm extends HTMLForm {
 		return Html::rawElement( 'form', $this->getFormAttributes(), $html );
 	}
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( VFormHTMLForm::class, 'VFormHTMLForm' );

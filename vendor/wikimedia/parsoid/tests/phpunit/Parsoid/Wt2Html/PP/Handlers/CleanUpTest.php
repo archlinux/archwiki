@@ -26,17 +26,13 @@ class CleanUpTest extends TestCase {
 	/** @var Document[] */
 	private $liveDocs = [];
 
-	/**
-	 * @param string $wt
-	 * @return Element
-	 */
 	private function parseWT( string $wt ): Element {
 		$siteConfig = new MockSiteConfig( [] );
-		$dataAccess = new MockDataAccess( [] );
+		$dataAccess = new MockDataAccess( $siteConfig, [] );
 		$parsoid = new Parsoid( $siteConfig, $dataAccess );
 
 		$content = new MockPageContent( [ 'main' => $wt ] );
-		$pageConfig = new MockPageConfig( [], $content );
+		$pageConfig = new MockPageConfig( $siteConfig, [], $content );
 		$html = $parsoid->wikitext2html( $pageConfig, [ "wrapSections" => false ] );
 
 		$doc = ContentUtils::createAndLoadDocument( $html );
@@ -48,11 +44,6 @@ class CleanUpTest extends TestCase {
 		return DOMCompat::getBody( $doc );
 	}
 
-	/**
-	 * @param DOMTraverser $domVisitor
-	 * @param array $tags
-	 * @param bool $value
-	 */
 	private function addHandlers( DOMTraverser $domVisitor, array $tags, bool $value ): void {
 		foreach ( $tags as $tag ) {
 			$domVisitor->addHandler( $tag,
@@ -63,15 +54,10 @@ class CleanUpTest extends TestCase {
 		}
 	}
 
-	/**
-	 * @param bool $expectedValue
-	 * @param Element $node
-	 * @return bool
-	 */
 	private function autoInsValidation( bool $expectedValue, Element $node ): bool {
 		$dp = DOMDataUtils::getDataParsoid( $node );
 		$autoInsEnd = isset( $dp->autoInsertedEnd );
-		$this->assertEquals( $expectedValue,  $autoInsEnd );
+		$this->assertEquals( $expectedValue, $autoInsEnd );
 		return true;
 	}
 
@@ -93,9 +79,6 @@ class CleanUpTest extends TestCase {
 		$domVisitor->traverse( null, $body );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function provideCleanUp(): array {
 		$test = [
 			"{|",
@@ -124,9 +107,6 @@ class CleanUpTest extends TestCase {
 		$domVisitor->traverse( null, $body );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function provideCleanUpWT(): array {
 		$test = [
 			";Definition list",
@@ -168,9 +148,6 @@ class CleanUpTest extends TestCase {
 		$domVisitor->traverse( null, $body );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function provideCleanUpHTML(): array {
 		$test = [
 			"<dl>",
@@ -212,39 +189,36 @@ class CleanUpTest extends TestCase {
 		$this->assertEquals( $trailingWS, DOMDataUtils::getDataParsoid( $node )->dsr->trailingWS );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function provideWhitespaceTrimming(): array {
 		return [
 			/* List item tests */
-			[ "*a",            "li", 0, 0 ],
-			[ "* a",           "li", 1, 0 ],
-			[ "*    a  ",      "li", 4, 2 ],
-			[ "* <!--c-->a",   "li", 1, 0 ],
-			[ "* <!--c--> a",  "li", -1, 0 ],
+			[ "*a", "li", 0, 0 ],
+			[ "* a", "li", 1, 0 ],
+			[ "*    a  ", "li", 4, 2 ],
+			[ "* <!--c-->a", "li", 1, 0 ],
+			[ "* <!--c--> a", "li", -1, 0 ],
 			[ "* <!--c--> a ", "li", -1, 1 ],
-			[ "* a ",          "li", 1, 1 ],
-			[ "*a<!--c--> ",   "li", 0, 1 ],
-			[ "*a <!--c--> ",  "li", 0, -1 ],
-			[ "* [[Category:Foo]] a",  "li", -1, 0 ],
-			[ "* x[[Category:Foo]] ",  "li", 1, 1 ],
+			[ "* a ", "li", 1, 1 ],
+			[ "*a<!--c--> ", "li", 0, 1 ],
+			[ "*a <!--c--> ", "li", 0, -1 ],
+			[ "* [[Category:Foo]] a", "li", -1, 0 ],
+			[ "* x[[Category:Foo]] ", "li", 1, 1 ],
 			[ "* x [[Category:Foo]] ", "li", 1, -1 ],
 
 			/* Heading tests */
-			[ "==h==",             "h2", 0, 0 ],
-			[ "==  h   ==",        "h2", 2, 3 ],
-			[ "== <!--c-->h==",    "h2", 1, 0 ],
-			[ "== <!--c--> h ==",  "h2", -1, 1 ],
-			[ "== h<!--c--> ==",   "h2", 1, 1 ],
+			[ "==h==", "h2", 0, 0 ],
+			[ "==  h   ==", "h2", 2, 3 ],
+			[ "== <!--c-->h==", "h2", 1, 0 ],
+			[ "== <!--c--> h ==", "h2", -1, 1 ],
+			[ "== h<!--c--> ==", "h2", 1, 1 ],
 
 			/* Table tests */
-			[ "{|\n|x\n|}",           "td", 0, 0 ],
-			[ "{|\n| x|| y  \n|}",    "td:first-child", 1, 0 ],
-			[ "{|\n| x|| y  \n|}",    "td:first-child + td", 1, 2 ],
-			[ "{|\n| <!--c-->x\n|}",  "td", 1, 0 ],
+			[ "{|\n|x\n|}", "td", 0, 0 ],
+			[ "{|\n| x|| y  \n|}", "td:first-child", 1, 0 ],
+			[ "{|\n| x|| y  \n|}", "td:first-child + td", 1, 2 ],
+			[ "{|\n| <!--c-->x\n|}", "td", 1, 0 ],
 			[ "{|\n| <!--c--> x\n|}", "td", -1, 0 ],
-			[ "{|\n| <!--c-->x<!--c--> \n|}",   "td", 1, 1 ],
+			[ "{|\n| <!--c-->x<!--c--> \n|}", "td", 1, 1 ],
 			[ "{|\n| <!--c--> x <!--c--> \n|}", "td", -1, -1 ],
 		];
 	}

@@ -2,10 +2,12 @@
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Pager\DeletedContribsPager;
 use MediaWiki\Revision\RevisionStore;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * @group Database
@@ -19,6 +21,9 @@ class DeletedContribsPagerTest extends MediaWikiIntegrationTestCase {
 
 	/** @var LinkRenderer */
 	private $linkRenderer;
+
+	/** @var IConnectionProvider */
+	private $dbProvider;
 
 	/** @var RevisionStore */
 	private $revisionStore;
@@ -35,7 +40,7 @@ class DeletedContribsPagerTest extends MediaWikiIntegrationTestCase {
 		$services = $this->getServiceContainer();
 		$this->hookContainer = $services->getHookContainer();
 		$this->linkRenderer = $services->getLinkRenderer();
-		$this->dbProvider = $services->getDBLoadBalancerFactory();
+		$this->dbProvider = $services->getConnectionProvider();
 		$this->revisionStore = $services->getRevisionStore();
 		$this->commentFormatter = $services->getCommentFormatter();
 		$this->linkBatchFactory = $services->getLinkBatchFactory();
@@ -61,7 +66,7 @@ class DeletedContribsPagerTest extends MediaWikiIntegrationTestCase {
 	 * stdClass as a row, and then manually formats its own row in ContributionsLineEnding.
 	 * Emulate this behaviour and check that it works.
 	 *
-	 * @covers DeletedContribsPager::formatRow
+	 * @covers \MediaWiki\Pager\DeletedContribsPager::formatRow
 	 */
 	public function testDeletedContribProvidedByHook() {
 		$this->setTemporaryHook( 'DeletedContribsPager::reallyDoQuery', static function ( &$data ) {

@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Agzennay",
+			"AjellidnArif",
 			"Amara-Amaziɣ",
 			"Amire80",
 			"Aryaz",
@@ -11,8 +12,7 @@
 			"MoubarikBelkasim",
 			"Syphax Amaynu",
 			"Urhixidur",
-			"아라",
-			"AjellidnArif"
+			"아라"
 		]
 	},
 	"underline-always": "Řebda",
@@ -135,7 +135,7 @@
 	"privacypage": "Project:Tasertit n tusligi",
 	"ok": "OK",
 	"retrievedfrom": "Itwarr-d zi \"$1\"",
-	"youhavenewmessages": "{{PLURAL:$3|ⵖⴰⵔⴽ|ⵖⴰⵔⵎ}} $1 ($2).",
+	"new-messages": "{{PLURAL:$3|ⵖⴰⵔⴽ|ⵖⴰⵔⵎ}} $1 ($2).",
 	"editsection": "beddeř",
 	"editold": "Beddeř",
 	"viewsourceold": "Ẓar aɣbař",
@@ -348,7 +348,6 @@
 	"filehist-datetime": "Asakud/Akud",
 	"filehist-user": "Aseqdec",
 	"filehist-dimensions": "Tisektiwin",
-	"filehist-filesize": "ⵜⵉⴷⴷⵉ ⵏ ⵓⴼⴰⵢⵍⵓ",
 	"filehist-comment": "ⴰⵅⴼⴰⵡⴰⵍ",
 	"imagelinks": "Asqdac n ufaylu",
 	"linkstoimage": "{{PLURAL:$1|Tasna ya teqn-ad|$1 Tasniwin a qnent-id}} ɣa ufaylu ya :",

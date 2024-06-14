@@ -8,11 +8,12 @@
 			"Revi",
 			"Ykhwong",
 			"고솜",
-			"아라"
+			"아라",
+			"Markingdots"
 		]
 	},
 	"skinname-timeless": "타임리스",
-	"timeless-desc": "브랜든 해리스의 윈터 프로토타입 이후 개발된 타임리스 스킨 및 위키미디어 재단의 다양한 스타일.",
+	"timeless-desc": "브랜든 해리스의 윈터 프로토타입 이후 개발된 타임리스 스킨 및 위키미디어 재단의 다양한 스타일",
 	"timeless-anonymous": "익명 사용자",
 	"timeless-loggedinas": "'''$1'''님으로 로그인됨",
 	"timeless-notloggedin": "로그인하지 않음",

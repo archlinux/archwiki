@@ -4,7 +4,8 @@
 		"jest.setup.js",
 		"vendor",
 		"coverage",
-		"tests/jest"
+		"tests/jest",
+		"tests/integration-qunit"
 	],
 	"compilerOptions": {
 		"resolveJsonModule": true,

@@ -16,6 +16,7 @@
 			"جواد"
 		]
 	},
+	"content-model-scribunto": "پودمان اسکریبونتو",
 	"scribunto-desc": "چارچوبی برای تعبیه‌کردن زبان‌های اسکریپتی در صفحه‌های مدیاویکی",
 	"scribunto-line": "در خط $1",
 	"scribunto-module-line": "در $1 در خط $2",

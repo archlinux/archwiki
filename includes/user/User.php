@@ -25,8 +25,6 @@ namespace MediaWiki\User;
 use AllowDynamicProperties;
 use ArrayIterator;
 use DBAccessObjectUtils;
-use Exception;
-use FatalError;
 use IDBAccessObject;
 use InvalidArgumentException;
 use MailAddress;
@@ -34,14 +32,15 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Block\AbstractBlock;
 use MediaWiki\Block\Block;
-use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\SystemBlock;
-use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Cache\UserCache;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\DAO\WikiAwareEntityTrait;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Mail\UserEmailContact;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MainConfigSchema;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Parser\Sanitizer;
@@ -56,15 +55,11 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MWCryptHash;
 use MWCryptRand;
-use MWException;
 use MWExceptionHandler;
 use PasswordFactory;
-use RequestContext;
 use RuntimeException;
 use stdClass;
 use UnexpectedValueException;
-use UserCache;
-use UserMailer;
 use UserPasswordPolicy;
 use WANObjectCache;
 use Wikimedia\Assert\Assert;
@@ -216,36 +211,18 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 */
 	/** @var string|null */
 	protected $mDatePreference;
-	/**
-	 * @var string|int -1 when the block is unset
-	 */
-	private $mBlockedby;
 	/** @var string|false */
 	protected $mHash;
-	/**
-	 * TODO: This should be removed when User::blockedFor
-	 * and AbstractBlock::getReason are hard deprecated.
-	 * @var CommentStoreComment
-	 */
-	protected $mBlockreason;
 	/** @var AbstractBlock */
 	protected $mGlobalBlock;
 	/** @var bool */
 	protected $mLocked;
-	/** @var bool */
-	private $mHideName;
 
 	/** @var WebRequest|null */
 	private $mRequest;
 
-	/** @var AbstractBlock|null */
-	private $mBlock;
-
-	/** @var AbstractBlock|false */
-	private $mBlockedFromCreateAccount = false;
-
-	/** @var int User::READ_* constant bitfield used to load data */
-	protected $queryFlagsUsed = self::READ_NORMAL;
+	/** @var int IDBAccessObject::READ_* constant bitfield used to load data */
+	protected $queryFlagsUsed = IDBAccessObject::READ_NORMAL;
 
 	/**
 	 * @var UserAuthority|null lazy-initialized Authority of this user
@@ -368,9 +345,9 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	/**
 	 * Load the user table data for this object from the source given by mFrom.
 	 *
-	 * @param int $flags User::READ_* constant bitfield
+	 * @param int $flags IDBAccessObject::READ_* constant bitfield
 	 */
-	public function load( $flags = self::READ_NORMAL ) {
+	public function load( $flags = IDBAccessObject::READ_NORMAL ) {
 		global $wgFullyInitialised;
 
 		if ( $this->mLoadedItems === true ) {
@@ -386,7 +363,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 		if ( !$wgFullyInitialised && $this->mFrom === 'session' ) {
 			LoggerFactory::getInstance( 'session' )
 				->warning( 'User::loadFromSession called before the end of Setup.php', [
-					'exception' => new Exception(
+					'exception' => new RuntimeException(
 						'User::loadFromSession called before the end of Setup.php'
 					),
 				] );
@@ -404,7 +381,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 				if ( $this->mId != 0 ) {
 					$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 					if ( $lb->hasOrMadeRecentPrimaryChanges() ) {
-						$flags |= self::READ_LATEST;
+						$flags |= IDBAccessObject::READ_LATEST;
 						$this->queryFlagsUsed = $flags;
 					}
 				}
@@ -416,15 +393,18 @@ class User implements Authority, UserIdentity, UserEmailContact {
 				// Make sure this thread sees its own changes
 				$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 				if ( $lb->hasOrMadeRecentPrimaryChanges() ) {
-					$flags |= self::READ_LATEST;
+					$flags |= IDBAccessObject::READ_LATEST;
 					$this->queryFlagsUsed = $flags;
 				}
 
-				[ $index, $options ] = DBAccessObjectUtils::getDBOptions( $flags );
-				$queryBuilder = wfGetDB( $index )->newSelectQueryBuilder()
+				$dbr = DBAccessObjectUtils::getDBFromRecency(
+					MediaWikiServices::getInstance()->getDBLoadBalancerFactory(),
+					$flags
+				);
+				$queryBuilder = $dbr->newSelectQueryBuilder()
 					->select( [ 'actor_id', 'actor_user', 'actor_name' ] )
 					->from( 'actor' )
-					->options( $options );
+					->recency( $flags );
 				if ( $this->mFrom === 'name' ) {
 					// make sure to use normalized form of IP for anonymous users
 					$queryBuilder->where( [ 'actor_name' => IPUtils::sanitizeIP( $this->mName ) ] );
@@ -458,10 +438,10 @@ class User implements Authority, UserIdentity, UserEmailContact {
 
 	/**
 	 * Load user table data, given mId has already been set.
-	 * @param int $flags User::READ_* constant bitfield
+	 * @param int $flags IDBAccessObject::READ_* constant bitfield
 	 * @return bool False if the ID does not exist, true otherwise
 	 */
-	public function loadFromId( $flags = self::READ_NORMAL ) {
+	public function loadFromId( $flags = IDBAccessObject::READ_NORMAL ) {
 		if ( $this->mId == 0 ) {
 			// Anonymous users are not in the database (don't need cache)
 			$this->loadDefaults();
@@ -470,7 +450,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 
 		// Try cache (unless this needs data from the primary DB).
 		// NOTE: if this thread called saveSettings(), the cache was cleared.
-		$latest = DBAccessObjectUtils::hasFlags( $flags, self::READ_LATEST );
+		$latest = DBAccessObjectUtils::hasFlags( $flags, IDBAccessObject::READ_LATEST );
 		if ( $latest ) {
 			if ( !$this->loadFromDatabase( $flags ) ) {
 				// Can't load from ID
@@ -523,10 +503,12 @@ class User implements Authority, UserIdentity, UserEmailContact {
 			$this->getCacheKey( $cache ),
 			$cache::TTL_HOUR,
 			function ( $oldValue, &$ttl, array &$setOpts ) use ( $cache, $wgFullyInitialised ) {
-				$setOpts += Database::getCacheSetOptions( wfGetDB( DB_REPLICA ) );
+				$setOpts += Database::getCacheSetOptions(
+					MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase()
+				);
 				wfDebug( "User: cache miss for user {$this->mId}" );
 
-				$this->loadFromDatabase( self::READ_NORMAL );
+				$this->loadFromDatabase( IDBAccessObject::READ_NORMAL );
 
 				$data = [];
 				foreach ( self::$mCacheVars as $name ) {
@@ -715,10 +697,10 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @deprecated since 1.36, use a UserFactory instead
 	 *
 	 * @param string $code Confirmation code
-	 * @param int $flags User::READ_* bitfield
+	 * @param int $flags IDBAccessObject::READ_* bitfield
 	 * @return User|null
 	 */
-	public static function newFromConfirmationCode( $code, $flags = self::READ_NORMAL ) {
+	public static function newFromConfirmationCode( $code, $flags = IDBAccessObject::READ_NORMAL ) {
 		return MediaWikiServices::getInstance()
 			->getUserFactory()
 			->newFromConfirmationCode( (string)$code, $flags );
@@ -785,6 +767,8 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * - AuthManager is instructed to revoke access, to invalidate or remove
 	 *   passwords and other credentials.
 	 *
+	 * System users should usually be listed in $wgReservedUsernames.
+	 *
 	 * @param string $name Username
 	 * @param array $options Options are:
 	 *  - validate: Type of validation to use:
@@ -798,6 +782,8 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 *    exists, default false
 	 * @return User|null
 	 * @since 1.27
+	 * @see self::isSystemUser()
+	 * @see MainConfigSchema::ReservedUsernames
 	 */
 	public static function newSystemUser( $name, $options = [] ) {
 		$options += [
@@ -848,8 +834,10 @@ class User implements Authority, UserIdentity, UserEmailContact {
 			->caller( __METHOD__ );
 		$row = $userQuery->fetchRow();
 		if ( !$row ) {
-			// Try the primary database...
+			// Try the primary database
 			$userQuery->connection( $dbProvider->getPrimaryDatabase() );
+			// Lock the row to prevent insertNewUser() returning null due to race conditions
+			$userQuery->forUpdate();
 			$row = $userQuery->fetchRow();
 		}
 
@@ -925,7 +913,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 		if ( $groups === [] ) {
 			return UserArrayFromResult::newFromIDs( [] );
 		}
-		$dbr = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr = MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$queryBuilder = $dbr->newSelectQueryBuilder()
 			->select( 'ug_user' )
 			->distinct()
@@ -1095,10 +1083,10 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * Load user data from the database.
 	 * $this->mId must be set, this is how the user is identified.
 	 *
-	 * @param int $flags User::READ_* constant bitfield
+	 * @param int $flags IDBAccessObject::READ_* constant bitfield
 	 * @return bool True if the user exists, false if the user is anonymous
 	 */
-	public function loadFromDatabase( $flags = self::READ_LATEST ) {
+	public function loadFromDatabase( $flags = IDBAccessObject::READ_LATEST ) {
 		// Paranoia
 		$this->mId = intval( $this->mId );
 
@@ -1108,12 +1096,13 @@ class User implements Authority, UserIdentity, UserEmailContact {
 			return false;
 		}
 
-		[ $index, $options ] = DBAccessObjectUtils::getDBOptions( $flags );
-		$db = wfGetDB( $index );
-
+		$db = DBAccessObjectUtils::getDBFromRecency(
+			MediaWikiServices::getInstance()->getDBLoadBalancerFactory(),
+			$flags
+		);
 		$row = self::newQueryBuilder( $db )
 			->where( [ 'user_id' => $this->mId ] )
-			->options( $options )
+			->recency( $flags )
 			->caller( __METHOD__ )
 			->fetchRow();
 
@@ -1295,7 +1284,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 		// Get a new user_touched that is higher than the old one
 		$newTouched = $this->newTouchedTimestamp();
 
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 		$dbw->newUpdateQueryBuilder()
 			->update( 'user' )
 			->set( [ 'user_touched' => $dbw->timestamp( $newTouched ) ] )
@@ -1327,7 +1316,6 @@ class User implements Authority, UserIdentity, UserEmailContact {
 		global $wgFullyInitialised;
 
 		$this->mDatePreference = null;
-		$this->mBlockedby = -1; # Unset
 		$this->mHash = false;
 		$this->mThisAsAuthority = null;
 
@@ -1353,6 +1341,10 @@ class User implements Authority, UserIdentity, UserEmailContact {
 			if ( $services->peekService( 'UserEditTracker' ) ) {
 				$services->getUserEditTracker()->clearUserEditCache( $this );
 			}
+
+			if ( $services->peekService( 'BlockManager' ) ) {
+				$services->getBlockManager()->clearUserCache( $this );
+			}
 		}
 
 		if ( $reloadFrom ) {
@@ -1362,64 +1354,6 @@ class User implements Authority, UserIdentity, UserEmailContact {
 				$this->mLoadedItems = [];
 			}
 			$this->mFrom = $reloadFrom;
-		}
-	}
-
-	/**
-	 * Get blocking information
-	 *
-	 * TODO: Move this into the BlockManager, along with block-related properties.
-	 *
-	 * @param bool $fromReplica Whether to check the replica DB first.
-	 *   To improve performance, non-critical checks are done against replica DBs.
-	 *   Check when actually saving should be done against primary DB.
-	 * @param bool $disableIpBlockExemptChecking This is used internally to prevent
-	 *   a infinite recursion with autopromote. See T270145.
-	 */
-	private function getBlockedStatus( $fromReplica = true, $disableIpBlockExemptChecking = false ) {
-		if ( $this->mBlockedby != -1 ) {
-			return;
-		}
-
-		wfDebug( __METHOD__ . ": checking blocked status for " . $this->getName() );
-
-		// Initialize data...
-		// Otherwise something ends up stomping on $this->mBlockedby when
-		// things get lazy-loaded later, causing false positive block hits
-		// due to -1 !== 0. Probably session-related... Nothing should be
-		// overwriting mBlockedby, surely?
-		$this->load();
-
-		// TODO: Block checking shouldn't really be done from the User object. Block
-		// checking can involve checking for IP blocks, cookie blocks, and/or XFF blocks,
-		// which need more knowledge of the request context than the User should have.
-		// Since we do currently check blocks from the User, we have to do the following
-		// here:
-		// - Check if this is the user associated with the main request
-		// - If so, pass the relevant request information to the block manager
-		$request = null;
-		if ( $this->isGlobalSessionUser() ) {
-			// This is the global user, so we need to pass the request
-			$request = $this->getRequest();
-		}
-
-		$block = MediaWikiServices::getInstance()->getBlockManager()->getUserBlock(
-			$this,
-			$request,
-			$fromReplica,
-			$disableIpBlockExemptChecking
-		);
-
-		if ( $block ) {
-			$this->mBlock = $block;
-			$this->mBlockedby = $block->getByName();
-			$this->mBlockreason = $block->getReasonComment();
-			$this->mHideName = $block->getHideName();
-		} else {
-			$this->mBlock = null;
-			$this->mBlockedby = '';
-			$this->mBlockreason = CommentStoreComment::newUnsavedComment( '' );
-			$this->mHideName = false;
 		}
 	}
 
@@ -1469,23 +1403,23 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	/**
 	 * Check if user is blocked
 	 *
-	 * @deprecated since 1.34, use User::getBlock() or
-	 *             Authority:getBlock() or Authority:definitelyCan() or
-	 *             Authority:authorizeRead() or Authority:authorizeWrite() or
-	 *             PermissionManager::isBlockedFrom(), as appropriate.
+	 * @deprecated since 1.34, use BlockManager::getBlock(), Authority:definitelyCan(),
+	 *   Authority:authorizeRead() or Authority:authorizeWrite(), as appropriate.
+	 *   Hard-deprecated since 1.42.
 	 *
 	 * @param bool $fromReplica Whether to check the replica DB instead of
 	 *   the primary DB. Hacked from false due to horrible probs on site.
 	 * @return bool True if blocked, false otherwise
 	 */
 	public function isBlocked( $fromReplica = true ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return $this->getBlock( $fromReplica ) !== null;
 	}
 
 	/**
 	 * Get the block affecting the user, or null if the user is not blocked
 	 *
-	 * @param int|bool $freshness One of the Authority::READ_XXX constants.
+	 * @param int|bool $freshness One of the IDBAccessObject::READ_XXX constants.
 	 *                 For backwards compatibility, a boolean is also accepted,
 	 *                 with true meaning READ_NORMAL and false meaning
 	 *                 READ_LATEST.
@@ -1495,17 +1429,39 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @return ?AbstractBlock
 	 */
 	public function getBlock(
-		$freshness = self::READ_NORMAL,
+		$freshness = IDBAccessObject::READ_NORMAL,
 		$disableIpBlockExemptChecking = false
 	): ?Block {
 		if ( is_bool( $freshness ) ) {
 			$fromReplica = $freshness;
 		} else {
-			$fromReplica = ( $freshness !== self::READ_LATEST );
+			$fromReplica = ( $freshness !== IDBAccessObject::READ_LATEST );
 		}
 
-		$this->getBlockedStatus( $fromReplica, $disableIpBlockExemptChecking );
-		return $this->mBlock instanceof AbstractBlock ? $this->mBlock : null;
+		if ( $disableIpBlockExemptChecking ) {
+			$isExempt = false;
+		} else {
+			$isExempt = $this->isAllowed( 'ipblock-exempt' );
+		}
+
+		// TODO: Block checking shouldn't really be done from the User object. Block
+		// checking can involve checking for IP blocks, cookie blocks, and/or XFF blocks,
+		// which need more knowledge of the request context than the User should have.
+		// Since we do currently check blocks from the User, we have to do the following
+		// here:
+		// - Check if this is the user associated with the main request
+		// - If so, pass the relevant request information to the block manager
+		$request = null;
+		if ( !$isExempt && $this->isGlobalSessionUser() ) {
+			// This is the global user, so we need to pass the request
+			$request = $this->getRequest();
+		}
+
+		return MediaWikiServices::getInstance()->getBlockManager()->getBlock(
+			$this,
+			$request,
+			$fromReplica,
+		);
 	}
 
 	/**
@@ -1515,26 +1471,13 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @param bool $fromReplica Whether to check the replica DB instead of the primary DB
 	 * @return bool
 	 *
-	 * @deprecated since 1.33,
-	 * use MediaWikiServices::getInstance()->getPermissionManager()->isBlockedFrom(..)
-	 *
+	 * @deprecated since 1.33, hard-deprecated since 1.42
+	 *   use MediaWikiServices::getInstance()->getPermissionManager()->isBlockedFrom(..)
 	 */
 	public function isBlockedFrom( $title, $fromReplica = false ) {
+		wfDeprecated( __METHOD__, '1.33' );
 		return MediaWikiServices::getInstance()->getPermissionManager()
 			->isBlockedFrom( $this, $title, $fromReplica );
-	}
-
-	/**
-	 * If user is blocked, return the specified reason for the block.
-	 *
-	 * @deprecated since 1.35 Use AbstractBlock::getReasonComment instead
-	 * Hard deprecated since 1.39.
-	 * @return CommentStoreComment Blocking reason
-	 */
-	public function blockedFor() {
-		wfDeprecated( __METHOD__, '1.35' );
-		$this->getBlockedStatus();
-		return $this->mBlockreason;
 	}
 
 	/**
@@ -1557,8 +1500,6 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 *
 	 * @param string $ip IP address, uses current client if none given
 	 * @return AbstractBlock|null Block object if blocked, null otherwise
-	 * @throws FatalError
-	 * @throws MWException
 	 * @deprecated since 1.40. Use getBlock instead
 	 */
 	public function getGlobalBlock( $ip = '' ) {
@@ -1608,11 +1549,8 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @return bool True if hidden, false otherwise
 	 */
 	public function isHidden() {
-		if ( $this->mHideName !== null ) {
-			return (bool)$this->mHideName;
-		}
-		$this->getBlockedStatus();
-		return (bool)$this->mHideName;
+		$block = $this->getBlock();
+		return $block ? $block->getHideName() : false;
 	}
 
 	/**
@@ -1779,14 +1717,14 @@ class User implements Authority, UserIdentity, UserEmailContact {
 			return;
 		}
 
-		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
+		$dbProvider = MediaWikiServices::getInstance()->getConnectionProvider();
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$key = $this->getCacheKey( $cache );
 
 		if ( $mode === 'refresh' ) {
 			$cache->delete( $key, 1 ); // low tombstone/"hold-off" TTL
 		} else {
-			$lb->getConnectionRef( DB_PRIMARY )->onTransactionPreCommitOrIdle(
+			$dbProvider->getPrimaryDatabase()->onTransactionPreCommitOrIdle(
 				static function () use ( $cache, $key ) {
 					$cache->delete( $key );
 				},
@@ -2145,7 +2083,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @param string $oname The option name to reset the token in
 	 * @return string|false New token value, or false if this option is disabled.
 	 * @see getTokenFromOption()
-	 * @see UserOptionsManager::setOption
+	 * @see \MediaWiki\User\Options\UserOptionsManager::setOption
 	 */
 	public function resetTokenFromOption( $oname ) {
 		$hiddenPrefs =
@@ -2556,7 +2494,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 		// check against race conditions and replica DB lag.
 		$newTouched = $this->newTouchedTimestamp();
 
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 		$dbw->doAtomicSection( __METHOD__, function ( IDatabase $dbw, $fname ) use ( $newTouched ) {
 			$dbw->newUpdateQueryBuilder()
 				->update( 'user' )
@@ -2579,12 +2517,12 @@ class User implements Authority, UserIdentity, UserEmailContact {
 				// Maybe the problem was a missed cache update; clear it to be safe
 				$this->clearSharedCache( 'refresh' );
 				// User was changed in the meantime or loaded with stale data
-				$from = ( $this->queryFlagsUsed & self::READ_LATEST ) ? 'primary' : 'replica';
+				$from = ( $this->queryFlagsUsed & IDBAccessObject::READ_LATEST ) ? 'primary' : 'replica';
 				LoggerFactory::getInstance( 'preferences' )->warning(
 					"CAS update failed on user_touched for user ID '{user_id}' ({db_flag} read)",
 					[ 'user_id' => $this->mId, 'db_flag' => $from ]
 				);
-				throw new MWException( "CAS update failed on user_touched. " .
+				throw new RuntimeException( "CAS update failed on user_touched. " .
 					"The version of the user to be saved is older than the current version."
 				);
 			}
@@ -2611,23 +2549,24 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	/**
 	 * If only this user's username is known, and it exists, return the user ID.
 	 *
-	 * @param int $flags Bitfield of User:READ_* constants; useful for existence checks
+	 * @param int $flags Bitfield of IDBAccessObject::READ_* constants; useful for existence checks
 	 * @return int
 	 */
-	public function idForName( $flags = self::READ_NORMAL ) {
+	public function idForName( $flags = IDBAccessObject::READ_NORMAL ) {
 		$s = trim( $this->getName() );
 		if ( $s === '' ) {
 			return 0;
 		}
 
-		[ $index, $options ] = DBAccessObjectUtils::getDBOptions( $flags );
-		$db = wfGetDB( $index );
-
+		$db = DBAccessObjectUtils::getDBFromRecency(
+			MediaWikiServices::getInstance()->getDBLoadBalancerFactory(),
+			$flags
+		);
 		$id = $db->newSelectQueryBuilder()
 			->select( 'user_id' )
 			->from( 'user' )
 			->where( [ 'user_name' => $s ] )
-			->options( $options )
+			->recency( $flags )
 			->caller( __METHOD__ )->fetchField();
 
 		return (int)$id;
@@ -2658,7 +2597,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @param callable $insertActor ( UserIdentity $actor, IDatabase $dbw ): int actor ID,
 	 * @param string $name
 	 * @param array $params
-	 * @return User|null
+	 * @return User|null User object, or null if the username already exists.
 	 */
 	private static function insertNewUser( callable $insertActor, $name, $params = [] ) {
 		foreach ( [ 'password', 'newpassword', 'newpass_time', 'password_expires' ] as $field ) {
@@ -2677,7 +2616,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 				->loadUserOptions( $user, $user->queryFlagsUsed, $params['options'] );
 			unset( $params['options'] );
 		}
-		$dbw = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getPrimaryDatabase();
+		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 
 		$noPass = PasswordFactory::newInvalidPassword()->toString();
 
@@ -2715,7 +2654,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 					$dbw
 				);
 				// Load the user from primary DB to avoid replica lag
-				$newUser->load( self::READ_LATEST );
+				$newUser->load( IDBAccessObject::READ_LATEST );
 			} else {
 				$newUser = null;
 			}
@@ -2746,7 +2685,6 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * so it is still advisable to make the call conditional on isRegistered(),
 	 * and to commit the transaction after calling.
 	 *
-	 * @throws MWException
 	 * @return Status
 	 */
 	public function addToDatabase() {
@@ -2761,7 +2699,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 
 		$this->mTouched = $this->newTouchedTimestamp();
 
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbw = MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 		$status = $dbw->doAtomicSection( __METHOD__, function ( IDatabase $dbw, $fname ) {
 			$noPass = PasswordFactory::newInvalidPassword()->toString();
 			$dbw->newInsertQueryBuilder()
@@ -2778,6 +2716,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 					'user_registration' => $dbw->timestamp( $this->mRegistration ),
 					'user_editcount' => 0,
 					'user_touched' => $dbw->timestamp( $this->mTouched ),
+					'user_is_temp' => $this->isTemp(),
 				] )
 				->caller( $fname )->execute();
 			if ( !$dbw->affectedRows() ) {
@@ -2793,7 +2732,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 					$loaded = true;
 				}
 				if ( !$loaded ) {
-					throw new MWException( $fname . ": hit a key conflict attempting " .
+					throw new RuntimeException( $fname . ": hit a key conflict attempting " .
 						"to insert user '{$this->mName}' row, but it was not present in select!" );
 				}
 				return Status::newFatal( 'userexists' );
@@ -2845,39 +2784,32 @@ class User implements Authority, UserIdentity, UserEmailContact {
 			return false;
 		}
 
-		$userblock = DatabaseBlock::newFromTarget( $this->getName() );
+		$blockStore = MediaWikiServices::getInstance()->getDatabaseBlockStore();
+
+		$userblock = $blockStore->newFromTarget( $this->getName() );
 		if ( !$userblock ) {
 			return false;
 		}
 
-		return (bool)$userblock->doAutoblock( $this->getRequest()->getIP() );
+		return (bool)$blockStore->doAutoblock( $userblock, $this->getRequest()->getIP() );
 	}
 
 	/**
-	 * Get whether the user is explicitly blocked from account creation.
-	 * @deprecated since 1.37. Instead use Authority::authorize* for createaccount permission.
-	 * @return AbstractBlock|false
+	 * If the user is blocked from creating an account, return the Block.
+	 * @deprecated since 1.37. If a Block is needed, use BlockManager::getCreateAccountBlock().
+	 *   If a boolean or error message is needed, use Authority::authorize* for the
+	 *   createaccount permission.
+	 * @return Block|false
 	 */
 	public function isBlockedFromCreateAccount() {
-		$this->getBlockedStatus();
-		if ( $this->mBlock && $this->mBlock->appliesToRight( 'createaccount' ) ) {
-			return $this->mBlock;
-		}
-
-		# T15611: if the IP address the user is trying to create an account from is
-		# blocked with createaccount disabled, prevent new account creation there even
-		# when the user is logged in
-		if ( $this->mBlockedFromCreateAccount === false
-			&& !$this->isAllowed( 'ipblock-exempt' )
-		) {
-			$this->mBlockedFromCreateAccount = DatabaseBlock::newFromTarget(
-				null, $this->getRequest()->getIP()
-			);
-		}
-		return $this->mBlockedFromCreateAccount instanceof AbstractBlock
-			&& $this->mBlockedFromCreateAccount->appliesToRight( 'createaccount' )
-			? $this->mBlockedFromCreateAccount
-			: false;
+		wfDeprecated( __METHOD__, '1.37' );
+		$isExempt = $this->isAllowed( 'ipblock-exempt' );
+		$block = MediaWikiServices::getInstance()->getBlockManager()
+			->getCreateAccountBlock(
+				$this,
+				$isExempt ? null : $this->getRequest(),
+				false );
+		return $block ?: false;
 	}
 
 	/**
@@ -2887,8 +2819,8 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * check, use ::getBlock()->appliesToRight( 'sendemail' ).
 	 */
 	public function isBlockedFromEmailuser() {
-		$this->getBlockedStatus();
-		return $this->mBlock && $this->mBlock->appliesToRight( 'sendemail' );
+		$block = $this->getBlock();
+		return $block && $block->appliesToRight( 'sendemail' );
 	}
 
 	/**
@@ -2898,8 +2830,8 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @return bool
 	 */
 	public function isBlockedFromUpload() {
-		$this->getBlockedStatus();
-		return $this->mBlock && $this->mBlock->appliesToRight( 'upload' );
+		$block = $this->getBlock();
+		return $block && $block->appliesToRight( 'upload' );
 	}
 
 	/**
@@ -2907,7 +2839,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @return bool
 	 */
 	public function isAllowedToCreateAccount() {
-		return $this->isAllowed( 'createaccount' ) && !$this->isBlockedFromCreateAccount();
+		return $this->getThisAsAuthority()->isDefinitelyAllowed( 'createaccount' );
 	}
 
 	/**
@@ -2930,11 +2862,14 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	}
 
 	/**
-	 * Determine whether the user is a newbie. Newbies are either
-	 * anonymous IPs, or the most recently created accounts.
+	 * Determine whether the user is a newbie. Newbies are one of:
+	 * - IP address editors
+	 * - temporary accounts
+	 * - most recently created full accounts.
 	 * @return bool
 	 */
 	public function isNewbie() {
+		// IP users and temp account users are excluded from the autoconfirmed group.
 		return !$this->isAllowed( 'autoconfirmed' );
 	}
 
@@ -3070,9 +3005,23 @@ class User implements Authority, UserIdentity, UserEmailContact {
 		}
 		$to = MailAddress::newFromUser( $this );
 
-		return UserMailer::send( $to, $sender, $subject, $body, [
-			'replyTo' => $replyto,
-		] );
+		if ( is_array( $body ) ) {
+			$bodyText = $body['text'] ?? '';
+			$bodyHtml = $body['html'] ?? null;
+		} else {
+			$bodyText = $body;
+			$bodyHtml = null;
+		}
+
+		return Status::wrap( MediaWikiServices::getInstance()->getEmailer()
+			->send(
+				[ $to ],
+				$sender,
+				$subject,
+				$bodyText,
+				$bodyHtml,
+				[ 'replyTo' => $replyto ]
+			) );
 	}
 
 	/**
@@ -3296,7 +3245,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	}
 
 	/**
-	 * Get the description of a given right
+	 * Get the description of a given right as wikitext
 	 *
 	 * @since 1.29
 	 * @param string $right Right to query
@@ -3306,6 +3255,17 @@ class User implements Authority, UserIdentity, UserEmailContact {
 		$key = "right-$right";
 		$msg = wfMessage( $key );
 		return $msg->isDisabled() ? $right : $msg->text();
+	}
+
+	/**
+	 * Get the description of a given right as rendered HTML
+	 *
+	 * @since 1.42
+	 * @param string $right Right to query
+	 * @return string HTML description of the right
+	 */
+	public static function getRightDescriptionHtml( $right ) {
+		return wfMessage( "right-$right" )->parse();
 	}
 
 	/**
@@ -3538,13 +3498,14 @@ class User implements Authority, UserIdentity, UserEmailContact {
 			$request = $this->getRequest();
 			$uiContext = RequestContext::getMain();
 
+			$services = MediaWikiServices::getInstance();
 			$this->mThisAsAuthority = new UserAuthority(
 				$this,
 				$request,
 				$uiContext,
-				MediaWikiServices::getInstance()->getPermissionManager(),
-				MediaWikiServices::getInstance()->getRateLimiter(),
-				MediaWikiServices::getInstance()->getBlockErrorFormatter()
+				$services->getPermissionManager(),
+				$services->getRateLimiter(),
+				$services->getFormatterFactory()->getBlockErrorFormatter( $uiContext )
 			);
 		}
 
@@ -3590,8 +3551,5 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	}
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( User::class, 'User' );

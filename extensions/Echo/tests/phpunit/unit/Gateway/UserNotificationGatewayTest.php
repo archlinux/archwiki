@@ -1,7 +1,9 @@
 <?php
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\Gateway\UserNotificationGateway;
+use MediaWiki\User\User;
 use Wikimedia\Rdbms\IDatabase;
 
 /**

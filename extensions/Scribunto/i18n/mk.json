@@ -5,6 +5,7 @@
 			"Vlad5250"
 		]
 	},
+	"content-model-scribunto": "Модул на Scribunto",
 	"scribunto-desc": "Рамка за вметнување на скриптни јазици во страница на МедијаВики",
 	"scribunto-line": "во редот $1",
 	"scribunto-module-line": "во $1, ред $2",

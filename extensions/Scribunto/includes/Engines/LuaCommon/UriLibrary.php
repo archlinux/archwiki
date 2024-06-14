@@ -14,8 +14,9 @@ class UriLibrary extends LibraryBase {
 			'canonicalUrl' => [ $this, 'canonicalUrl' ],
 		];
 
+		$title = $this->getTitle();
 		return $this->getEngine()->registerInterface( 'mw.uri.lua', $lib, [
-			'defaultUrl' => $this->getTitle()->getFullUrl(),
+			'defaultUrl' => $title ? $title->getFullUrl() : null,
 		] );
 	}
 

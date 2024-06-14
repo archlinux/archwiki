@@ -23,7 +23,6 @@
 	"vector-language-button-label": "$1 basa",
 	"vector-no-language-button-label": "Tambah basa",
 	"vector-no-language-button-aria-label": "Artikel iki mung ana ing basa iki. Pertal artikelé menyang basa liya",
-	"vector-language-redirect-to-top": "Ing {{SITENAME}} iki, pranala basa kapernah ing pérangan ndhuwur kaca nuli ing sisihing irah-irahan artikel. [[#p-lang-btn|Menyang ndhuwur]].",
 	"vector-language-variant-switcher-label": "Owahi werna basa",
 	"vector-action-addsection": "Tambah rembug",
 	"vector-action-delete": "Busak",

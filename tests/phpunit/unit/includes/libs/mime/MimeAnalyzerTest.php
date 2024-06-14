@@ -1,12 +1,19 @@
 <?php
 
+namespace Wikimedia\Tests\Mime;
+
+use MediaWikiCoversValidator;
+use MimeAnalyzer;
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Media
- * @covers MimeAnalyzer
+ * @group Mime
+ * @covers \MimeAnalyzer
  */
-class MimeAnalyzerTest extends PHPUnit\Framework\TestCase {
+class MimeAnalyzerTest extends TestCase {
 
 	use MediaWikiCoversValidator;
 
@@ -169,7 +176,7 @@ class MimeAnalyzerTest extends PHPUnit\Framework\TestCase {
 		return [
 			[
 				'An invalid ZIP file due to the signature being too close to the ' .
-					'end to accomodate an EOCDR',
+					'end to accommodate an EOCDR',
 				'zip-sig-near-end.png',
 				'image/png',
 			],

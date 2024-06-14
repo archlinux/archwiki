@@ -25,7 +25,7 @@ class InsertQueryBuilder {
 	private $table = '';
 
 	/**
-	 * @var array The rows to be passed to IDatabase::insert()
+	 * @var list<array> The rows to be passed to IDatabase::insert()
 	 */
 	private $rows = [];
 
@@ -193,7 +193,7 @@ class InsertQueryBuilder {
 	/**
 	 * Add rows to be inserted.
 	 *
-	 * @param array $rows
+	 * @param list<array> $rows
 	 * $rows should be an integer-keyed list of such string-keyed maps, defining a list of new rows.
 	 * The keys in each map must be identical to each other and in the same order.
 	 * The rows must not collide with each other.
@@ -317,14 +317,12 @@ class InsertQueryBuilder {
 	}
 
 	/**
-	 * Run the constructed INSERT query and return the result.
+	 * Run the constructed INSERT query.
 	 */
-	public function execute() {
+	public function execute(): void {
 		if ( !$this->rows ) {
-			// (T347610) For now, allow this but deprecate it, so we can trace these and fix them rapidly.
-			wfDeprecatedMsg( self::class . ' triggered with no rows set; exit early instead.' );
-			// TODO: Uncomment rather than deprecate once early-exist mitigations are in place.
-			// throw new UnexpectedValueException( __METHOD__ . ' can\'t have empty $rows value' );
+			throw new UnexpectedValueException(
+				__METHOD__ . ' can\'t have empty $rows value' );
 		}
 		if ( $this->table === '' ) {
 			throw new UnexpectedValueException(

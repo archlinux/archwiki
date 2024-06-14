@@ -3,6 +3,11 @@
 	.cdx-mixin-css-icon-size( );
 	.cdx-mixin-css-icon-alignment( );
 	font-size: 14px;
+
+	// Temporary fix for https://phabricator.wikimedia.org/T356540
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: ~'calc( max( @{size-icon-medium}, @{min-size-icon-medium} ) )';
 }
 
 // Temporary generic small icon class
@@ -11,4 +16,7 @@
 	.cdx-mixin-css-icon-background( @size-icon-x-small );
 	.cdx-mixin-css-icon-size( @size-icon-x-small );
 	.cdx-mixin-css-icon-alignment( );
+
+	// Temporary fix for https://phabricator.wikimedia.org/T356540
+	background-size: ~'calc( max( @{size-icon-x-small}, @{min-size-icon-x-small} ) )';
 }

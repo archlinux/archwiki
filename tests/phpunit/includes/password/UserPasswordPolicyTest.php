@@ -25,11 +25,9 @@ use MediaWiki\User\User;
 
 /**
  * @group Database
- * @covers UserPasswordPolicy
+ * @covers \UserPasswordPolicy
  */
 class UserPasswordPolicyTest extends MediaWikiIntegrationTestCase {
-
-	protected $tablesUsed = [ 'user', 'user_groups' ];
 
 	protected $policies = [
 		'checkuser' => [
@@ -196,8 +194,7 @@ class UserPasswordPolicyTest extends MediaWikiIntegrationTestCase {
 		$user->addToDatabase();
 
 		$status = $upp->checkUserPassword( $user, 'Passpass' );
-		$this->assertStatusNotGood( $status, 'password invalid' );
-		$this->assertStatusOK( $status, 'can login' );
+		$this->assertStatusWarning( 'password-login-forbidden', $status );
 	}
 
 	/**

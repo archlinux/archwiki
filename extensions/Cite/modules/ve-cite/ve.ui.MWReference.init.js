@@ -58,14 +58,18 @@
 	/**
 	 * Add reference insertion tools from on-wiki data.
 	 *
-	 * By adding a definition in JSON to MediaWiki:Visualeditor-cite-tool-definition, the cite menu can
-	 * be populated with tools that create refrences containing a specific templates. The content of the
-	 * definition should be an array containing a series of objects, one for each tool. Each object must
-	 * contain a `name`, `icon` and `template` property. An optional `title` property can also be used
-	 * to define the tool title in plain text. The `name` property is a unique identifier for the tool,
-	 * and also provides a fallback title for the tool by being transformed into a message key. The name
-	 * is prefixed with `visualeditor-cite-tool-name-`, and messages can be defined on Wiki. Some common
-	 * messages are pre-defined for tool names such as `web`, `book`, `news` and `journal`.
+	 * By adding a definition in JSON to
+	 * MediaWiki:Visualeditor-cite-tool-definition, the cite menu can be populated
+	 * with tools that create refrences containing a specific templates. The
+	 * content of the definition should be an array containing a series of
+	 * objects, one for each tool. Each object must contain a `name`, `icon` and
+	 * `template` property. An optional `title` property can also be used to
+	 * define the tool title in plain text. The `name` property is a unique
+	 * identifier for the tool, and also provides a fallback title for the tool by
+	 * being transformed into a message key. The name is prefixed with
+	 * `visualeditor-cite-tool-name-`, and messages can be defined on Wiki. Some
+	 * common messages are pre-defined for tool names such as `web`, `book`,
+	 * `news` and `journal`.
 	 *
 	 * Example:
 	 * [ { "name": "web", "icon": "browser", "template": "Cite web" }, ... ]
@@ -142,10 +146,11 @@
 				contextItem.static.label = item.title;
 				contextItem.static.commandName = name;
 				contextItem.static.template = item.template;
-				// If the grand-parent class (ve.ui.MWReferenceContextItem) is extended and re-registered
-				// (e.g. by Citoid), then the inheritance chain is broken, and the generic 'reference'
-				// context item would show. Instead manually specify that that context should never show
-				// when a more specific context item is shown.
+				// If the grand-parent class (ve.ui.MWReferenceContextItem) is extended
+				// and re-registered (e.g. by Citoid), then the inheritance chain is
+				// broken, and the generic 'reference' context item would show. Instead
+				// manually specify that that context should never show when a more
+				// specific context item is shown.
 				contextItem.static.suppresses = [ 'reference' ];
 				ve.ui.contextItemFactory.register( contextItem );
 			}

@@ -10,7 +10,7 @@
 	"math_syntax_error": "Agul n tseddast",
 	"math_unknown_error": "Agul mačči d aḍahri",
 	"math_unknown_function": "tawuri tarussint \"$1\"",
-	"mw_math_mathml": "MathML s neɣ SVG ou PNG imiranen (yelha i yimigen atraren akked ifeck n tnekcumt)",
-	"mw_math_source": "Eǧǧ-it s TeX (i browsers/explorateurs n weḍris)",
+	"mw-math-mathml": "MathML s neɣ SVG ou PNG imiranen (yelha i yimigen atraren akked ifeck n tnekcumt)",
+	"mw-math-source": "Eǧǧ-it s TeX (i browsers/explorateurs n weḍris)",
 	"prefs-math": "Tusnakt"
 }

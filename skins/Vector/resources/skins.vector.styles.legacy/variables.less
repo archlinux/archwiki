@@ -2,14 +2,14 @@
 
 //
 // == Media query breakpoints ==
+// See also https://doc.wikimedia.org/codex/latest/design-tokens/breakpoint.html
 //
-@min-width-mobile: @width-breakpoint-mobile; // Above 320px
-@max-width-mobile: @width-breakpoint-tablet - 1px; // Below 719px
-@min-width-tablet: @width-breakpoint-tablet; // Above 720px
-@max-width-tablet: @width-breakpoint-desktop - 1px; // Below 999px
-@min-width-desktop: @width-breakpoint-desktop; // Above 1000px
-@max-width-desktop: @width-breakpoint-desktop-wide - 1px; // Below 1199px
-@min-width-desktop-wide: @width-breakpoint-desktop-wide; // Above 1200px
+@max-width-breakpoint-mobile: 719px;
+@min-width-breakpoint-tablet: 720px; // In contrast to Codex `640px`.
+@max-width-breakpoint-tablet: 999px;
+@min-width-breakpoint-desktop: 1000px; // In contrast to Codex `1120px`.
+@max-width-breakpoint-desktop: 1199px;
+@min-width-breakpoint-desktop-wide: 1200px; // In contrast to Codex `1680px`.
 
 // Defines the minimum viewport width, at which point the layout will not get any
 // smaller and will start horizontal scrolling instead.
@@ -28,21 +28,10 @@
 //
 // == Typography ==
 //
-// Typography in Wikimedia Design Style Guide:;
-// https://design.wikimedia.org/style-guide/visual-style_typography.html
-// Historic overview and background information of fonts in Wikimedia software:
-// https://www.mediawiki.org/wiki/Wikimedia_User_Interface/Use_cases/Font_family_stack
-// Source of this font stack definition in WikimediaUI Base:
-// https://phabricator.wikimedia.org/source/wikimedia-ui-base/browse/master/wikimedia-ui-base.less$202
-@font-family-serif: 'Linux Libertine', 'Georgia', 'Times', serif;
-
-// Body content uses the user setting in browser / operating system default sans-serif font:
-// For example, Arial on Windows, Roboto on Android.
-// FIXME: Use WikimediaUI Base's OS specific default sans-serif fonts.
-// @font-family-sans is set in mediawiki.variables/variables.less
-
-// Fallback for headings, language: ja,he,ko. See T73240, T65817, T65843, T65844, T65827.
-@font-family-sans--fallback: sans-serif;
+// Font family stack is defined in Codex “WikimediaUI“ theme, available
+// through 'mediawiki.less/mediawiki.skin.variables.less' in MediaWiki core:
+// https://gerrit.wikimedia.org/r/plugins/gitiles/design/codex/+/refs/heads/main/packages/codex-design-tokens/src/theme-wikimedia-ui.json#429
+// See also Vector's 'mediawiki.skin.variables.less' overrides.
 
 @font-size-base: unit( 14 / @font-size-browser, em ); // Equals `0.875em`.
 @font-size-base--trident-hack: calc( 1em ~'*' unit( @font-size-base ) );

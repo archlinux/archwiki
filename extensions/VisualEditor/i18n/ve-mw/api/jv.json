@@ -7,7 +7,6 @@
 			"Sumbukompor"
 		]
 	},
-	"apierror-visualeditor-docserver": "Masalah nalika nggayut paladèn Parsoid/RESTBase",
 	"apihelp-visualeditor-param-basetimestamp": "Nalika nyimpen, setèl ing cap-wektu kapan nalikané kacané dimot. Kanggo ngertèni yèn ana tabrakan besutan.",
 	"apihelp-visualeditor-param-editintro": "Besut pambuka kanggo ditambahaké menyang wara-wara.",
 	"apihelp-visualeditor-param-etag": "ETag kang arep kakirim.",

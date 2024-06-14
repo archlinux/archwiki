@@ -1,17 +1,24 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
+use ApiQueryImageInfo;
+use File;
+use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
 use MediaWiki\User\UserIdentityValue;
 use MediaWiki\Utils\MWTimestamp;
 
 /**
- * @covers ApiQueryImageInfo
+ * @covers \ApiQueryImageInfo
  * @group API
  * @group medium
  * @group Database
  */
 class ApiQueryImageInfoTest extends ApiTestCase {
 	use MockAuthorityTrait;
+	use TempUserTestTrait;
 
 	private const IMAGE_NAME = 'Random-11m.png';
 
@@ -25,13 +32,12 @@ class ApiQueryImageInfoTest extends ApiTestCase {
 
 	private const NO_COMMENT_TIMESTAMP = '20201105235239';
 
-	private $testUser = null;
+	private const IMAGE_2_NAME = 'Random-2.png';
+	private const IMAGE_2_TIMESTAMP = '20230101000000';
+	private const IMAGE_2_SIZE = 12345;
 
-	protected function setUp(): void {
-		parent::setUp();
-		$this->tablesUsed[] = 'image';
-		$this->tablesUsed[] = 'oldimage';
-	}
+	private $testUser = null;
+	private $tempUser = null;
 
 	public function addDBData() {
 		parent::addDBData();
@@ -104,6 +110,35 @@ class ApiQueryImageInfoTest extends ApiTestCase {
 				'oi_deleted' => 0,
 			]
 		);
+
+		// Set up temp user config
+		$this->enableAutoCreateTempUser();
+		$this->tempUser = $this->getServiceContainer()
+			->getTempUserCreator()
+			->create()->getUser();
+		$tempActorId = $this->getServiceContainer()
+			->getActorStore()
+			->acquireActorId( $this->tempUser, $this->db );
+		$this->db->insert(
+			'image',
+			[
+				'img_name' => self::IMAGE_2_NAME,
+				'img_size' => self::IMAGE_2_SIZE,
+				'img_width' => 1000,
+				'img_height' => 1800,
+				'img_metadata' => '',
+				'img_bits' => 16,
+				'img_media_type' => 'BITMAP',
+				'img_major_mime' => 'image',
+				'img_minor_mime' => 'png',
+				'img_description_id' => $this->getServiceContainer()
+					->getCommentStore()
+					->createComment( $this->db, "'''comment'''" )->id,
+				'img_actor' => $tempActorId,
+				'img_timestamp' => $this->db->timestamp( self::IMAGE_2_TIMESTAMP ),
+				'img_sha1' => 'aaaaasim0bgdh0jt4vdltuzoh7',
+			]
+		);
 	}
 
 	private function getImageInfoFromResult( array $result ) {
@@ -136,6 +171,17 @@ class ApiQueryImageInfoTest extends ApiTestCase {
 		$this->assertSame( $this->testUser->getName(), $image['user'] );
 		$this->assertSame( $this->testUser->getId(), $image['userid'] );
 		$this->assertSame( self::NEW_IMAGE_SIZE, $image['size'] );
+	}
+
+	public function testGetImageCreatedByTempUser() {
+		[ $result, ] = $this->doApiRequest( [
+			'action' => 'query',
+			'prop' => 'imageinfo',
+			'titles' => 'File:' . self::IMAGE_2_NAME
+		] );
+		$image = $result['query']['pages']['-1']['imageinfo'][0];
+		$this->assertArrayHasKey( 'temp', $image );
+		$this->assertTrue( $image['temp'] );
 	}
 
 	public function testGetImageEmptyComment() {

@@ -6,8 +6,8 @@ use ApiBase;
 use ApiMain;
 use ApiQueryBase;
 use ApiUsageException;
-use Config;
-use ConfigFactory;
+use MediaWiki\Config\Config;
+use MediaWiki\Config\ConfigFactory;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
@@ -315,7 +315,7 @@ class ApiQueryExtracts extends ApiQueryBase {
 					'url' => $this->getRequest()->getFullRequestURL(),
 					'exception' => $apiException,
 					'request' => $request
-			] );
+				] );
 			return null;
 		}
 

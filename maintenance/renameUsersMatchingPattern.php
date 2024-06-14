@@ -7,6 +7,7 @@ use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\TempUser\Pattern;
 use MediaWiki\User\User;
 use MediaWiki\User\UserFactory;
+use Wikimedia\Rdbms\IExpression;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -87,7 +88,7 @@ class RenameUsersMatchingPattern extends Maintenance {
 		$this->suppressRedirect = $this->getOption( 'suppress-redirect' );
 		$this->skipPageMoves = $this->getOption( 'skip-page-moves' );
 
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 		$batchConds = [];
 		$batchSize = $this->getBatchSize();
 		$numRenamed = 0;
@@ -95,10 +96,8 @@ class RenameUsersMatchingPattern extends Maintenance {
 			$res = $dbr->newSelectQueryBuilder()
 				->select( [ 'user_name' ] )
 				->from( 'user' )
-				->where( array_merge(
-					[ 'user_name' . $fromPattern->buildLike( $dbr ) ],
-					$batchConds
-				) )
+				->where( $dbr->expr( 'user_name', IExpression::LIKE, $fromPattern->toLikeValue( $dbr ) ) )
+				->andWhere( $batchConds )
 				->orderBy( 'user_name' )
 				->limit( $batchSize )
 				->caller( __METHOD__ )
@@ -106,7 +105,7 @@ class RenameUsersMatchingPattern extends Maintenance {
 
 			foreach ( $res as $row ) {
 				$oldName = $row->user_name;
-				$batchConds = [ 'user_name > ' . $dbr->addQuotes( $oldName ) ];
+				$batchConds = [ $dbr->expr( 'user_name', '>', $oldName ) ];
 				$variablePart = $fromPattern->extract( $oldName );
 				if ( $variablePart === null ) {
 					$this->output( "Username \"fromName\" matched the LIKE " .

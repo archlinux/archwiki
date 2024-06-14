@@ -12,7 +12,6 @@
 	},
 	"apierror-visualeditor-badcachekey": "Er is geen serialisatie met die sleutel in de cache gevonden",
 	"apierror-visualeditor-difffailed": "Wijz mislukt",
-	"apierror-visualeditor-docserver": "Fout bij het contact opnemen met de Parsoid/RESTBase-server (geen antwoord)",
 	"apihelp-visualeditor-param-basetimestamp": "Stel dit in op de tijd waarop de versie is bewerkt tijdens het opslaan. Wordt gebruikt om bewerkingsconflicten te detecteren.",
 	"apihelp-visualeditor-param-badetag": "Als de RESTBase-query een schijnbaar ongeldige ETag heeft opgeleverd, deze dan hier doorgeven voor logboekdoeleinden.",
 	"apihelp-visualeditor-param-cachekey": "Gebruik het resultaat van een eerder \"serializeforcache\"-verzoek met deze sleutel voor serialiseren of diff. Heeft voorrang boven $1html.",

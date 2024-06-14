@@ -5,7 +5,6 @@
 		]
 	},
 	"oathauth-account": "Аккаунттун аталышы:",
-	"oathauth-token": "Токен",
 	"oathauth-auth-token-label": "Токен",
 	"oathauth-ui-no-module": "колдонулбайт",
 	"oathauth-notifications-disable-help": "Жардам"

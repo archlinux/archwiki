@@ -1,3 +1,13 @@
+# Changelog
+
+## 2.5.0 / 2024-01-24
+
+* Screenshots no longer work with WebdriverIO v8, just with v7. (T347137)
+* Fix tests on macOS + Node.js v18. (T355556)
+
+## 2.4.0 / 2023-11-16
+
+* Screenshots work with both WebdriverIO v7 and v8
 
 ## 2.3.0 / 2023-09-21
 
@@ -9,7 +19,7 @@
 
 ## 2.2.0 / 2022-07-29
 
-* selenium: Default to larger window size (T314115)
+* Default to larger window size (T314115)
 
 ## 2.1.0 / 2022-05-19
 

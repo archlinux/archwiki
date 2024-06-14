@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use FormSpecialPage;
-use Html;
 use HTMLForm;
+use MediaWiki\Html\Html;
+use MediaWiki\SpecialPage\FormSpecialPage;
 
 class SpecialFindComment extends FormSpecialPage {
 
@@ -72,7 +72,7 @@ class SpecialFindComment extends FormSpecialPage {
 		$form->setSubmitTextMsg( 'discussiontools-findcomment-label-search' );
 	}
 
-	private $idOrName;
+	private string $idOrName;
 
 	/**
 	 * @inheritDoc
@@ -114,10 +114,6 @@ class SpecialFindComment extends FormSpecialPage {
 		}
 	}
 
-	/**
-	 * @param array $threadItems
-	 * @param string $msgKey
-	 */
 	private function displayItems( array $threadItems, string $msgKey ) {
 		$out = $this->getOutput();
 

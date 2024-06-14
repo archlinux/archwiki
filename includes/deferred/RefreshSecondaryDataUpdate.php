@@ -20,7 +20,11 @@
  * @file
  */
 
+use MediaWiki\Deferred\DataUpdate;
+use MediaWiki\Deferred\DeferredUpdates;
+use MediaWiki\Deferred\EnqueueableDataUpdate;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
+use MediaWiki\Deferred\TransactionRoundAwareUpdate;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\DerivedPageDataUpdater;
 use MediaWiki\User\UserIdentity;
@@ -45,10 +49,12 @@ class RefreshSecondaryDataUpdate extends DataUpdate
 	private $updater;
 	/** @var bool */
 	private $recursive;
+	/** @var string|false TS_MW */
+	private $freshness;
 
-	/** @var RevisionRecord|null */
+	/** @var RevisionRecord */
 	private $revisionRecord;
-	/** @var UserIdentity|null */
+	/** @var UserIdentity */
 	private $user;
 
 	/**
@@ -57,7 +63,7 @@ class RefreshSecondaryDataUpdate extends DataUpdate
 	 * @param WikiPage $page Page we are updating
 	 * @param RevisionRecord $revisionRecord
 	 * @param DerivedPageDataUpdater $updater
-	 * @param array $options Options map; supports "recursive"
+	 * @param array $options Options map; supports "recursive" (bool) and "freshness" (string|false, TS_MW)
 	 */
 	public function __construct(
 		ILBFactory $lbFactory,
@@ -75,6 +81,7 @@ class RefreshSecondaryDataUpdate extends DataUpdate
 		$this->revisionRecord = $revisionRecord;
 		$this->updater = $updater;
 		$this->recursive = !empty( $options['recursive'] );
+		$this->freshness = $options['freshness'] ?? false;
 	}
 
 	public function getTransactionRoundRequirement() {
@@ -120,20 +127,14 @@ class RefreshSecondaryDataUpdate extends DataUpdate
 				[
 					'namespace' => $this->page->getTitle()->getNamespace(),
 					'title' => $this->page->getTitle()->getDBkey(),
-					// Reuse the parser cache if it was saved
-					'rootJobTimestamp' => $this->revisionRecord
-						? $this->revisionRecord->getTimestamp()
-						: null,
+					// Ensure fresh data are used, for normal data reuse the parser cache if it was saved
+					'rootJobTimestamp' => $this->freshness ?: $this->revisionRecord->getTimestamp(),
 					'useRecursiveLinksUpdate' => $this->recursive,
-					'triggeringUser' => $this->user
-						? [
-							'userId' => $this->user->getId(),
-							'userName' => $this->user->getName()
-						]
-						: null,
-					'triggeringRevisionId' => $this->revisionRecord
-						? $this->revisionRecord->getId()
-						: null,
+					'triggeringUser' => [
+						'userId' => $this->user->getId(),
+						'userName' => $this->user->getName()
+					],
+					'triggeringRevisionId' => $this->revisionRecord->getId(),
 					'causeAction' => $this->getCauseAction(),
 					'causeAgent' => $this->getCauseAgent()
 				],

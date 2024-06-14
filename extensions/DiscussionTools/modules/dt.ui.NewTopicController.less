@@ -21,6 +21,13 @@
 		padding: 0;
 		border: 0;
 		margin-top: 4px;
+
+		.oo-ui-inputWidget-input {
+			// Support: Chrome
+			// Work around a bug causing some characters to be cut off vertically (T345489#9141063)
+			// https://bugs.chromium.org/p/chromium/issues/detail?id=1162116
+			line-height: 3;
+		}
 	}
 
 	.ext-discussiontools-ui-replyWidget {

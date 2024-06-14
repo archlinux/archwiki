@@ -16,7 +16,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-exists": "እዚ ገጽ እዚ ኣብ {{SITENAME}} ኣሎ",
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "እዚ ገጽ እዚ ኣብ {{SITENAME}} የለን",
 	"wikieditor-toolbar-tool-file": "ምስልታትን ሜድያን",
-	"wikieditor-toolbar-tool-file-example": "ኣብነት.jpg",
 	"wikieditor-toolbar-tool-file-title": "ፋይል ኣእትው",
 	"wikieditor-toolbar-file-target": "ስም ፋይል፦",
 	"wikieditor-toolbar-file-caption": "መግለጺ ጽሑፍ፦",
@@ -67,6 +66,5 @@
 	"wikieditor-toolbar-tool-replace-close": "ዕጸው",
 	"wikieditor-toolbar-section-characters": "ፍሉይ ፊደላት",
 	"wikieditor-toolbar-section-help": "ሓገዝ",
-	"wikieditor-realtimepreview-preview": "ገጽ ርኣይ",
-	"wikieditor-realtimepreview-beta-label": "ኣብ ሓቀኛ ግዜ ቅድመ ትርኢት"
+	"wikieditor-realtimepreview-preview": "ገጽ ርኣይ"
 }

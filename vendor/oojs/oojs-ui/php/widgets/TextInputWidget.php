@@ -56,7 +56,7 @@ class TextInputWidget extends InputWidget {
 		parent::__construct( $config );
 
 		// Properties
-		$this->type = $this->getSaneType( $config );
+		$this->type = $this->getValidType( $config );
 
 		// Traits
 		$this->initializeIconElement( $config );
@@ -123,13 +123,13 @@ class TextInputWidget extends InputWidget {
 
 	/** @inheritDoc */
 	protected function getInputElement( $config ) {
-		if ( $this->getSaneType( $config ) === 'number' ) {
+		if ( $this->getValidType( $config ) === 'number' ) {
 			return ( new Tag( 'input' ) )->setAttributes( [
 				'step' => 'any',
 				'type' => 'number',
 			] );
 		} else {
-			return ( new Tag( 'input' ) )->setAttributes( [ 'type' => $this->getSaneType( $config ) ] );
+			return ( new Tag( 'input' ) )->setAttributes( [ 'type' => $this->getValidType( $config ) ] );
 		}
 	}
 
@@ -137,7 +137,7 @@ class TextInputWidget extends InputWidget {
 	 * @param array $config
 	 * @return string
 	 */
-	protected function getSaneType( $config ) {
+	protected function getValidType( $config ) {
 		$allowedTypes = [
 			'password',
 			'email',

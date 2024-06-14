@@ -19,11 +19,9 @@ class DeleteTag extends Maintenance {
 	}
 
 	public function execute() {
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		$services = $this->getServiceContainer();
 		$defStore = $services->getChangeTagDefStore();
-		$lbFactory = $services->getDBLoadBalancerFactory();
-		$options = [ 'domain' => $lbFactory->getLocalDomainID() ];
 
 		$tag = $this->getArg( 0 );
 		try {
@@ -42,15 +40,14 @@ class DeleteTag extends Maintenance {
 
 		// Make the tag impossible to add by users while we're deleting it and drop the
 		// usage counter to zero
-		$dbw->update(
-			'change_tag_def',
-			[
+		$dbw->newUpdateQueryBuilder()
+			->update( 'change_tag_def' )
+			->set( [
 				'ctd_user_defined' => 0,
 				'ctd_count' => 0,
-			],
-			[ 'ctd_id' => $tagId ],
-			__METHOD__
-		);
+			] )
+			->where( [ 'ctd_id' => $tagId ] )
+			->caller( __METHOD__ )->execute();
 		ChangeTags::purgeTagCacheAll();
 
 		// Iterate over change_tag, deleting rows in batches
@@ -67,10 +64,13 @@ class DeleteTag extends Maintenance {
 			if ( !$ids ) {
 				break;
 			}
-			$dbw->delete( 'change_tag', [ 'ct_id' => $ids ], __METHOD__ );
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'change_tag' )
+				->where( [ 'ct_id' => $ids ] )
+				->caller( __METHOD__ )->execute();
 			$count += $dbw->affectedRows();
 			$this->output( "$count\n" );
-			$lbFactory->waitForReplication( $options );
+			$this->waitForReplication();
 		} while ( true );
 		$this->output( "The tag has been removed from $count revisions, deleting the tag itself...\n" );
 

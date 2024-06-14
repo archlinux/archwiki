@@ -35,9 +35,8 @@ Caveats
 
 Configuration
 -------------
-* `$wgGadgetsRepoClass`:  configures which GadgetRepo implementation will be used
-  to source gadgets from. Currently, "MediaWikiGadgetsDefinitionRepo" is the
-  recommended setting and default. The "GadgetDefinitionNamespaceRepo" is not
-  ready for production usage yet.
+* `$wgGadgetsRepo`:  configures which GadgetRepo implementation will be used
+  to source gadgets from. Currently, "definition" mode is the recommended
+  setting and default. The "json" mode is not ready for production usage yet.
 * `$wgSpecialGadgetUsageActiveUsers`:  configures whether or not to show active
   user stats on Special:GadgetUsage. True by default.

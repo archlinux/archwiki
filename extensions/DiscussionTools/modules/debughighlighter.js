@@ -79,7 +79,7 @@ function markComment( comment ) {
 
 	var update = function () {
 		var rect = fixFakeFirstHeadingRect(
-			comment.getNativeRange().getBoundingClientRect(),
+			comment.getRange().getBoundingClientRect(),
 			comment
 		);
 		var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
@@ -91,7 +91,7 @@ function markComment( comment ) {
 		marker.style.width = ( rect.width ) + 'px';
 
 		if ( marker2 ) {
-			var parentRect = comment.parent.getNativeRange().getBoundingClientRect();
+			var parentRect = comment.parent.getRange().getBoundingClientRect();
 			parentRect = fixFakeFirstHeadingRect( parentRect, comment.parent );
 			if ( comment.parent.level === 0 ) {
 				// Twiddle so that it looks nice

@@ -14,7 +14,7 @@
 	 *
 	 * @constructor
 	 * @param {Object} [config] Configuration options
-	 * @cfg {number} maxHeight The maximum height of the media, used in the
+	 * @param {number} config.maxHeight The maximum height of the media, used in the
 	 *  search call to the API.
 	 */
 	mw.widgets.MediaResourceQueue = function MwWidgetsMediaResourceQueue( config ) {
@@ -58,7 +58,7 @@
 	};
 
 	/**
-	 * Get image maximum height
+	 * Get image maximum height.
 	 *
 	 * @return {string} Image max height
 	 */

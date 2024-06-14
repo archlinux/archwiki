@@ -46,7 +46,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "ئەم سەرچاوە لە داڕێژەیەکەوە یان پارچەیەکی دروستکراوەوە ناسێراوە، و بۆ ئێستا تەنیا لەڕێگەی دۆخی سەرچاوەوە دەتوانرێت پێشبینین بکرێت.",
 	"cite-ve-referenceslist-missingreflist": "ئەم پێڕستی سەرچاوە لەڕێگەی داڕێژەیەکەوە دروست کراوە، و بۆ ئێستا تەنیا لەڕێگەی دۆخی سەرچاوەوە دەتوانرێت دەستکاری بکرێت.",
 	"cite-ve-toolbar-group-label": "ئاماژە",
-	"cite-ve-othergroup-item": "سەرچاوەی $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "سەرچاوەکان",
-	"visualeditor-internal-list-diff-group-name-mwreference": "ناوی گرووپی سەرچاوە: «$1»"
+	"cite-ve-othergroup-item": "سەرچاوەی $1"
 }

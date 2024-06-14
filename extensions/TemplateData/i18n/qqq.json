@@ -105,6 +105,7 @@
 	"templatedata-modal-table-param-aliases": "Label for a parameter property input: Aliases of the parameter.",
 	"templatedata-modal-table-param-autovalue": "Label for a parameter property input: Parameter auto value in the table",
 	"templatedata-modal-table-param-default": "Label for a parameter property input: Default value of the parameter.\n\nParameters:\n* $1 - currently showing language\n{{Identical|Default}}",
+	"templatedata-modal-table-param-status": "Label for a parameter property input: Status of the parameter, i.e. if the parameter is deprecated, required, suggested, or an ordinary optional parameter.",
 	"templatedata-modal-table-param-deprecated": "Label for a parameter property input: Deprecated status of the parameter.\n{{Identical|Deprecated}}",
 	"templatedata-modal-table-param-deprecatedValue": "Label for a parameter property input: Deprecated guidance of the parameter. This string will be shown to users as an explanation why the parameter is deprecated and what the users should do about it.",
 	"templatedata-modal-table-param-description": "Label for a parameter property input: Description of the parameter.\n\nParameters:\n* $1 - currently showing language\n{{Identical|Description}}",

@@ -3,7 +3,8 @@
 		"authors": [
 			"Akamycoco",
 			"Iyuqciyang",
-			"Shidailun73"
+			"Shidailun73",
+			"Amire80"
 		]
 	},
 	"underline-always": "iyat bahun",
@@ -141,10 +142,10 @@
 	"privacypage": "Project:Euda qmpah lning",
 	"ok": "pgkla",
 	"retrievedfrom": "Nangal paah \"$1\"",
-	"youhavenewmessages": "{{PLURAL:$3|}}Niqan nnisu $1 ($2).",
-	"youhavenewmessagesfromusers": "{{PLURAL:$4|Su}} niqan pnaah {{PLURAL:$3|taxa duri empduuy|$3 hnigan empduuy}} ka $1 ($2).",
-	"newmessageslinkplural": "{{PLURAL:$1|1 kingal bgurah pngkla kari|999= bgurah pngkla kari}}",
-	"newmessagesdifflinkplural": "{{PLURAL:$1|kmpriyux}} snii",
+	"new-messages": "{{PLURAL:$3|}}Niqan nnisu $1 ($2).",
+	"new-messages-from-users": "{{PLURAL:$4|Su}} niqan pnaah {{PLURAL:$3|taxa duri empduuy|$3 hnigan empduuy}} ka $1 ($2).",
+	"new-messages-link-plural": "{{PLURAL:$1|1 kingal bgurah pngkla kari|999= bgurah pngkla kari}}",
+	"new-messages-diff-link-plural": "{{PLURAL:$1|kmpriyux}} snii",
 	"editsection": "smmalu patas",
 	"editold": "smmalu patas",
 	"viewsourceold": "ida nkiya patas sspgan ka qtai",
@@ -409,7 +410,7 @@
 	"newpageletter": "Bg",
 	"boteditletter": "qa",
 	"rc-change-size-new": "Babaw kmpriyux {{PLURAL:$1|}}$1 pnspuan wiyeyn",
-	"rc-old-title": "plealay bi  phiyug ka hangan asaw bi \"$1\"",
+	"rc-old-title": "plealay bi phiyug ka hangan asaw bi \"$1\"",
 	"recentchangeslinked": "Kmpriyux quri",
 	"recentchangeslinked-feed": "Kmpriyux quri",
 	"recentchangeslinked-toolbox": "Kmpriyux quri",

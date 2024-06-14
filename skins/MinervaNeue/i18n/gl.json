@@ -57,11 +57,18 @@
 	"skinname-minerva": "MinervaNeue",
 	"minerva-skin-desc": "Un tema reactivo para dispositivos móbiles",
 	"skin-minerva-issue-learn-more": "Máis información",
+	"skin-minerva-time-ago-seconds": "hai {{PLURAL:$1|$1 segundo|$1 segundos}}",
+	"skin-minerva-time-ago-minutes": "hai {{PLURAL:$1|$1 minuto|$1 minutos}}",
+	"skin-minerva-time-ago-hours": "hai {{PLURAL:$1|$1 hora|$1 horas}}",
+	"skin-minerva-time-ago-days": "hai {{PLURAL:$1|$1 día|$1 días}}",
+	"skin-minerva-time-ago-months": "hai {{PLURAL:$1|$1 mes|$1 meses}}",
+	"skin-minerva-time-ago-years": "hai {{PLURAL:$1|$1 ano|$1 anos}}",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorías",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Amosa as categorías das páxinas",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Tratamento mellorado dos problemas das páxinas",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Os problemas da páxina (Modelo:ambox) incluiranse no artigo.",
 	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Desafortunadamente, a agrupación de resultados por páxina non está dispoñible no móbil. Se queres usar a función de grupo por páxina, visita o sitio de escritorio.",
+	"skin-minerva-night-mode-unavailable": "A páxina só está dispoñible no tema de cor \"Día\".",
 	"minerva.css": "/* O CSS colocado aquí afectará aos usuarios da aparencia MinervaNeue */",
 	"minerva.js": "/* O código JavaScript colocado aquí cargarase para os usuarios que utilicen a aparencia MinervaNeue */"
 }

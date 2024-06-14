@@ -58,18 +58,22 @@ class JsonContentHandlerIntegrationTest extends MediaWikiLangTestCase {
 
 	/**
 	 * @dataProvider provideDataAndParserText
-	 * @covers JsonContentHandler::fillParserOutput
+	 * @covers \JsonContentHandler::fillParserOutput
 	 */
 	public function testFillParserOutput( $data, $expected ) {
 		if ( !is_string( $data ) ) {
 			$data = FormatJson::encode( $data );
 		}
 
+		$title = $this->createMock( Title::class );
+		$title->method( 'getPageLanguage' )
+			->willReturn( $this->getServiceContainer()->getContentLanguage() );
+
 		$content = new JsonContent( $data );
 		$contentRenderer = $this->getServiceContainer()->getContentRenderer();
 		$parserOutput = $contentRenderer->getParserOutput(
 			$content,
-			$this->createMock( Title::class ),
+			$title,
 			null,
 			null,
 			true
@@ -79,7 +83,7 @@ class JsonContentHandlerIntegrationTest extends MediaWikiLangTestCase {
 	}
 
 	/**
-	 * @covers JsonContentHandler::validateSave
+	 * @covers \JsonContentHandler::validateSave
 	 */
 	public function testValidateSave() {
 		$handler = new JsonContentHandler();
@@ -92,7 +96,8 @@ class JsonContentHandlerIntegrationTest extends MediaWikiLangTestCase {
 		$invalidJson = new JsonContent( '{"key":' );
 
 		$this->assertStatusGood( $handler->validateSave( $validJson, $validationParams ) );
-		$this->assertStatusNotOK( $handler->validateSave( $invalidJson, $validationParams ) );
+		$this->assertStatusError( 'invalid-json-data',
+			$handler->validateSave( $invalidJson, $validationParams ) );
 
 		$this->setTemporaryHook(
 			'JsonValidateSave',
@@ -105,7 +110,6 @@ class JsonContentHandlerIntegrationTest extends MediaWikiLangTestCase {
 			}
 		);
 
-		$this->assertStatusNotOK( $handler->validateSave( $validJson, $validationParams ) );
 		$this->assertStatusError( 'invalid-json-data',
 			$handler->validateSave( $invalidJson, $validationParams ) );
 		$this->assertStatusError( 'missing-key-foo',

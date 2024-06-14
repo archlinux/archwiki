@@ -8,7 +8,7 @@ const { theTextOfTheFirstHeadingShouldBe } = require( './editor_steps' );
 const username = browser.config.mwUser.replace( /_/g, ' ' );
 
 const iVisitMyUserPage = async () => {
-	await iAmOnPage( `User:${username}` );
+	await iAmOnPage( `User:${ username }` );
 };
 
 const iShouldBeOnMyUserPage = async () => {

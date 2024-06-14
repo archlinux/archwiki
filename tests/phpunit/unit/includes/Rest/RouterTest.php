@@ -13,14 +13,19 @@ use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\RequestInterface;
 use MediaWiki\Rest\ResponseException;
 use MediaWiki\Rest\Router;
+use MediaWiki\Rest\StringStream;
+use MediaWiki\Rest\Validator\JsonBodyValidator;
+use MediaWikiUnitTestCase;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use RuntimeException;
 use Throwable;
+use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * @covers \MediaWiki\Rest\Router
  */
-class RouterTest extends \MediaWikiUnitTestCase {
+class RouterTest extends MediaWikiUnitTestCase {
 	use RestTestTrait;
 
 	private const CANONICAL_SERVER = 'https://wiki.example.com';
@@ -229,6 +234,23 @@ class RouterTest extends \MediaWikiUnitTestCase {
 	/**
 	 * @dataProvider provideGetRouteUrl
 	 */
+	public function testGetRoutePath( $route, $expectedUrl, $query = [], $path = [] ) {
+		$request = new RequestData( [ 'uri' => new Uri( '/rest/mock/route' ) ] );
+		$router = $this->createRouter( $request );
+
+		$path = $router->getRoutePath( $route, $path, $query );
+		$this->assertStringNotContainsString( self::CANONICAL_SERVER, $path );
+		$this->assertStringStartsWith( '/', $path );
+
+		$expected = new Uri( $expectedUrl );
+		$actual = new Uri( $path );
+		$this->assertStringContainsString( $expected->getPath(), $actual->getPath() );
+		$this->assertStringContainsString( $expected->getQuery(), $actual->getQuery() );
+	}
+
+	/**
+	 * @dataProvider provideGetRouteUrl
+	 */
 	public function testGetRouteUrl( $route, $expectedUrl, $query = [], $path = [] ) {
 		$request = new RequestData( [ 'uri' => new Uri( '/rest/mock/route' ) ] );
 		$router = $this->createRouter( $request );
@@ -254,4 +276,269 @@ class RouterTest extends \MediaWikiUnitTestCase {
 		$this->assertStringContainsString( $expectedUrl, $uri );
 	}
 
+	public function testHandlerDisablesBodyParsing() {
+		// This is valid JSON, but not an object.
+		// Automatic parsing will fail, since it re	requires
+		// an array to be returned.
+		$payload = '"just a test"';
+
+		$request = new RequestData( [
+			'uri' => new Uri( '/rest/mock/RouterTest/stream' ),
+			'method' => 'PUT',
+			'bodyContents' => $payload,
+			'headers' => [ "content-type" => 'application/json' ]
+		] );
+
+		$router = $this->createRouter( $request );
+		$response = $router->execute( $request );
+		$this->assertSame( 200, $response->getStatusCode() );
+
+		$responseStream = $response->getBody();
+		$this->assertSame( $payload, "$responseStream" );
+	}
+
+	/**
+	 * Asserts that handlers can use a custom BodyValidator to add support for
+	 * additional mime types, without overriding parseBodyData(). This ensures
+	 * backwards compatibility with extensions that are not yet aware of
+	 * parseBodyData().
+	 */
+	public function testCustomBodyValidator() {
+		// This is valid JSON, but not an object.
+		// Automatic parsing will fail, since it re	requires
+		// an array to be returned.
+		$payload = '{ "test": "yes" }';
+
+		$request = new RequestData( [
+			'uri' => new Uri( '/rest/mock/RouterTest/old-body-validator' ),
+			'method' => 'PUT',
+			'bodyContents' => $payload,
+			'headers' => [ "content-type" => 'application/json-patch+json' ]
+		] );
+
+		$router = $this->createRouter( $request );
+		$response = $router->execute( $request );
+		$this->assertSame( 200, $response->getStatusCode(), (string)$response->getBody() );
+	}
+
+	public static function streamHandlerFactory() {
+		return new class extends Handler {
+			public function parseBodyData( RequestInterface $request ): ?array {
+				// Disable parsing
+				return null;
+			}
+
+			public function execute() {
+				Assert::assertNull( $this->getRequest()->getParsedBody() );
+				$body = $this->getRequest()->getBody();
+				$response = $this->getResponseFactory()->create();
+				$response->setBody( new StringStream( "$body" ) );
+				return $response;
+			}
+		};
+	}
+
+	public static function oldBodyValidatorFactory() {
+		return new class extends Handler {
+			private $postValidationSetupCalled = false;
+
+			public function getBodyValidator( $contentType ) {
+				if ( $contentType !== 'application/json-patch+json' ) {
+					throw new HttpException(
+						"Unsupported Content-Type",
+						415,
+					);
+				}
+
+				return new JsonBodyValidator( [
+					'test' => [
+						ParamValidator::PARAM_REQUIRED => true,
+						static::PARAM_SOURCE => 'body',
+					]
+				] );
+			}
+
+			public function execute() {
+				$body = $this->getValidatedBody();
+				Assert::assertIsArray( $body );
+				Assert::assertArrayHasKey( 'test', $body );
+				Assert::assertTrue( $this->postValidationSetupCalled );
+				return "";
+			}
+
+			protected function postValidationSetup() {
+				$this->postValidationSetupCalled = true;
+			}
+		};
+	}
+
+	public function testGetRequestFailsWithBody() {
+		$this->markTestSkipped( 'T359509' );
+		$request = new RequestData( [
+			'uri' => new Uri( '/rest/mock/RouterTest/echo' ),
+			'method' => 'GET',
+			'bodyContents' => '{"foo":"bar"}',
+			'headers' => [ "content-type" => 'application/json' ]
+		] );
+		$router = $this->createRouter( $request );
+		$response = $router->execute( $request );
+		$this->assertSame( 400, $response->getStatusCode() );
+	}
+
+	public function testGetRequestIgnoresEmptyBody() {
+		$request = new RequestData( [
+			'uri' => new Uri( '/rest/mock/RouterTest/echo' ),
+			'method' => 'GET',
+			'bodyContents' => '',
+			'headers' => [
+				"content-length" => 0,
+				"content-type" => 'text/plain'
+			]
+		] );
+		$router = $this->createRouter( $request );
+		$response = $router->execute( $request );
+		$this->assertSame( 200, $response->getStatusCode() );
+	}
+
+	public function testPostRequestFailsWithoutBody() {
+		$request = new RequestData( [
+			'uri' => new Uri( '/rest/mock/RouterTest/echo' ),
+			'method' => 'POST',
+		] );
+		$router = $this->createRouter( $request );
+		$response = $router->execute( $request );
+		$this->assertSame( 411, $response->getStatusCode() );
+	}
+
+	public function testEmptyBodyWithoutContentTypePasses() {
+		$request = new RequestData( [
+			'uri' => new Uri( '/rest/mock/RouterTest/echo' ),
+			'method' => 'POST',
+			'headers' => [ 'content-length' => '0' ],
+			'bodyContent' => '',
+			// Should pass even without content-type!
+		] );
+
+		$router = $this->createRouter( $request );
+		$response = $router->execute( $request );
+		$this->assertSame( 200, $response->getStatusCode() );
+	}
+
+	public function testRequestBodyWithoutContentTypeFails() {
+		$request = new RequestData( [
+			'uri' => new Uri( '/rest/mock/RouterTest/echo' ),
+			'method' => 'POST',
+			'bodyContents' => '{"foo":"bar"}', // Request body without content-type
+		] );
+		$router = $this->createRouter( $request );
+		$response = $router->execute( $request );
+		$this->assertSame( 415, $response->getStatusCode() );
+	}
+
+	public function testDeleteRequestWithoutBody() {
+		// Test DELETE request without body
+		$requestWithoutBody = new RequestData( [
+		'uri' => new Uri( '/rest/mock/RouterTest/echo' ),
+		'method' => 'DELETE',
+		] );
+		$router = $this->createRouter( $requestWithoutBody );
+		$responseWithoutBody = $router->execute( $requestWithoutBody );
+		$this->assertSame( 200, $responseWithoutBody->getStatusCode() );
+	}
+
+	public function testDeleteRequestWithBody() {
+			// Test DELETE request with body
+			$requestWithBody = new RequestData( [
+				'uri' => new Uri( '/rest/mock/RouterTest/echo' ),
+				'method' => 'DELETE',
+				'bodyContents' => '{"bodyParam":"bar"}',
+				'headers' => [ "content-type" => 'application/json' ]
+			] );
+			$router = $this->createRouter( $requestWithBody );
+			$responseWithBody = $router->execute( $requestWithBody );
+			$this->assertSame( 200, $responseWithBody->getStatusCode() );
+	}
+
+	public function testUnsupportedContentTypeReturns415() {
+		$request = new RequestData( [
+			'uri' => new Uri( '/rest/mock/RouterTest/echo' ),
+			'method' => 'POST',
+			'bodyContents' => '{"foo":"bar"}',
+			'headers' => [ "content-type" => 'text/plain' ] // Unsupported content type
+		] );
+		$router = $this->createRouter( $request );
+		$response = $router->execute( $request );
+		$this->assertSame( 415, $response->getStatusCode() );
+	}
+
+	public function testHandlerCanAccessParsedBodyForJsonRequest() {
+		$request = new RequestData( [
+			'uri' => new Uri( '/rest/mock/RouterTest/echo' ),
+			'method' => 'POST',
+			'bodyContents' => '{"bodyParam":"bar"}',
+			'headers' => [ "content-type" => 'application/json' ]
+		] );
+		$router = $this->createRouter( $request );
+		$response = $router->execute( $request );
+		$this->assertSame( 200, $response->getStatusCode() );
+
+		// Check if the response contains a field called 'parsedBody'
+		$body = $response->getBody();
+		$body->rewind();
+		$data = json_decode( $body->getContents(), true );
+		$this->assertArrayHasKey( 'parsedBody', $data );
+
+		// Check the value of the 'parsedBody' field
+		$parsedBody = $data['parsedBody'];
+		$this->assertEquals( [ 'bodyParam' => 'bar' ], $parsedBody );
+	}
+
+	public function testHandlerCanAccessValidatedBodyForJsonRequest() {
+		$request = new RequestData( [
+			'uri' => new Uri( '/rest/mock/RouterTest/echo' ),
+			'method' => 'POST',
+			'bodyContents' => '{"bodyParam":"bar"}',
+			'headers' => [ "content-type" => 'application/json' ]
+		] );
+		$router = $this->createRouter( $request );
+		$response = $router->execute( $request );
+		$this->assertSame( 200, $response->getStatusCode(), (string)$response->getBody() );
+
+		// Check if the response contains a field called 'validatedBody'
+		$body = $response->getBody();
+		$body->rewind();
+		$data = json_decode( $body->getContents(), true );
+		$this->assertArrayHasKey( 'validatedBody', $data );
+
+		// Check the value of the 'validatedBody' field
+		$validatedBody = $data['validatedBody'];
+		$this->assertEquals( [ 'bodyParam' => 'bar' ], $validatedBody );
+
+		// Check the value of the 'validatedParams' field.
+		// It should not contain bodyParam.
+		$validatedParams = $data['validatedParams'];
+		$this->assertArrayNotHasKey( 'bodyParam', $validatedParams );
+	}
+
+	public function testHandlerCanAccessValidatedParams() {
+		$request = new RequestData( [
+			'uri' => new Uri( '/rest/mock/RouterTest/echo/bar' ),
+			'method' => 'POST',
+			'headers' => [ "content-type" => 'application/json' ],
+			'bodyContents' => '{}'
+		] );
+		$router = $this->createRouter( $request );
+		$response = $router->execute( $request );
+		$this->assertSame( 200, $response->getStatusCode(), (string)$response->getBody() );
+
+		// Check if the response contains a field called 'pathParams'
+		$body = $response->getBody();
+		$body->rewind();
+		$data = json_decode( $body->getContents(), true );
+		$this->assertArrayHasKey( 'validatedParams', $data );
+
+		// Check the value of the 'pathParams' field
+		$validatedParams = $data['validatedParams'];
+		$this->assertEquals( 'bar', $validatedParams[ 'pathParam' ], (string)$response->getBody() );
+	}
 }

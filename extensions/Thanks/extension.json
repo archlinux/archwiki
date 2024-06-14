@@ -11,7 +11,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.41",
+		"MediaWiki": ">= 1.42",
 		"extensions": {
 			"Echo": "*"
 		}
@@ -69,19 +69,6 @@
 		"MediaWiki\\Extension\\Thanks\\": "includes/"
 	},
 	"ResourceModules": {
-		"ext.thanks.images": {
-			"class": "ResourceLoaderImageModule",
-			"selector": ".mw-ui-icon-thanks-{name}",
-			"defaultColor": "#fff",
-			"images": {
-				"userTalk": {
-					"file": {
-						"ltr": "userTalk-ltr.svg",
-						"rtl": "userTalk-rtl.svg"
-					}
-				}
-			}
-		},
 		"ext.thanks": {
 			"scripts": [
 				"ext.thanks.thank.js"
@@ -89,10 +76,6 @@
 			"dependencies": [
 				"mediawiki.cookie",
 				"mediawiki.api"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		},
 		"ext.thanks.corethank": {
@@ -118,13 +101,12 @@
 				"mediawiki.api",
 				"jquery.confirmable",
 				"ext.thanks"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		},
 		"ext.thanks.mobilediff": {
+			"styles": [
+				"ext.thanks.mobilediff.less"
+			],
 			"scripts": [
 				"ext.thanks.mobilediff.js"
 			],
@@ -141,13 +123,8 @@
 			],
 			"dependencies": [
 				"mobile.startup",
-				"ext.thanks.images",
 				"mediawiki.api",
 				"mediawiki.jqueryMsg"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		},
 		"ext.thanks.flowthank": {
@@ -166,10 +143,6 @@
 				"mediawiki.jqueryMsg",
 				"mediawiki.api",
 				"ext.thanks"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
 			]
 		}
 	},
@@ -191,12 +164,12 @@
 	},
 	"Hooks": {
 		"ApiMain::moduleManager": "main",
-		"BeforeCreateEchoEvent": "MediaWiki\\Extension\\Thanks\\Hooks::onBeforeCreateEchoEvent",
+		"BeforeCreateEchoEvent": "echo",
 		"BeforePageDisplay": "main",
-		"BeforeSpecialMobileDiffDisplay": "MediaWiki\\Extension\\Thanks\\Hooks::onBeforeSpecialMobileDiffDisplay",
+		"BeforeSpecialMobileDiffDisplay": "mobile-frontend",
 		"DiffTools": "main",
 		"DifferenceEngineViewHeader": "main",
-		"EchoGetBundleRules": "MediaWiki\\Extension\\Thanks\\Hooks::onEchoGetBundleRules",
+		"EchoGetBundleRules": "echo",
 		"GetAllBlockActions": "main",
 		"GetLogTypesOnUser": "main",
 		"HistoryTools": "main",
@@ -206,7 +179,25 @@
 	},
 	"HookHandlers": {
 		"main": {
-			"class": "MediaWiki\\Extension\\Thanks\\Hooks"
+			"class": "MediaWiki\\Extension\\Thanks\\Hooks",
+			"services": [
+				"MainConfig",
+				"GenderCache",
+				"PermissionManager",
+				"RevisionLookup",
+				"UserFactory",
+				"UserOptionsManager"
+			]
+		},
+		"mobile-frontend": {
+			"class": "MediaWiki\\Extension\\Thanks\\MobileFrontendHandler",
+			"services": [
+				"MainConfig",
+				"UserFactory"
+			]
+		},
+		"echo": {
+			"class": "MediaWiki\\Extension\\Thanks\\EchoHooks"
 		}
 	},
 	"ServiceWiringFiles": [

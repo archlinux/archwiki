@@ -7,7 +7,7 @@ use MediaWiki\WikiMap\WikiMap;
  * @group JobQueue
  * @group medium
  * @group Database
- * @covers JobQueue
+ * @covers \JobQueue
  */
 class JobQueueTest extends MediaWikiIntegrationTestCase {
 	protected $key;
@@ -16,8 +16,6 @@ class JobQueueTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		global $wgJobTypeConf;
 		parent::setUp();
-
-		$this->tablesUsed[] = 'job';
 
 		$services = $this->getServiceContainer();
 		if ( $this->getCliArg( 'use-jobqueue' ) ) {
@@ -43,12 +41,7 @@ class JobQueueTest extends MediaWikiIntegrationTestCase {
 			'queueFifoTTL' => [ 'order' => 'fifo', 'claimTTL' => 10 ],
 		];
 		foreach ( $variants as $q => $settings ) {
-			try {
-				$this->$q = JobQueue::factory( $settings + $baseConfig );
-			} catch ( MWException $e ) {
-				// unsupported?
-				// @todo What if it was another error?
-			}
+			$this->$q = JobQueue::factory( $settings + $baseConfig );
 		}
 	}
 

@@ -7,9 +7,10 @@
 			"Kaganer",
 			"Liangent",
 			"Macofe",
+			"Patriot Kor",
 			"Vlad5250",
 			"아라",
-			"Patriot Kor"
+			"Гусейн"
 		]
 	},
 	"tog-underline": "Zerpajvandho xat kaşida şavand:",
@@ -205,7 +206,7 @@
 	"versionrequiredtext": "Baroi istifodai in sahifa ba nusxai $1 az narmafzori MediaViki nijoz dored. Baroi ittiloo' az nusxai narmafzori nasbşuda dar in viki ba [[Special:Version|in sahifa]] nigared.",
 	"ok": "Boşad",
 	"retrievedfrom": "Bargirifta az \"$1\"",
-	"youhavenewmessages": "Şumo $1 ($2) dored.",
+	"new-messages": "Şumo $1 ($2) dored.",
 	"editsection": "viroiş",
 	"editold": "viroiş",
 	"viewsourceold": "namoişi manba'",
@@ -581,7 +582,7 @@
 	"grouppage-user": "{{ns:project}}:Korbaron",
 	"grouppage-autoconfirmed": "{{ns:project}}:Korbaroni ta'jidşuda",
 	"grouppage-bot": "{{ns:project}}:Robotho",
-	"grouppage-sysop": "{{ns:project}}:İnzibátavonon",
+	"grouppage-sysop": "{{ns:project}}:Inzibatəvonon",
 	"grouppage-bureaucrat": "{{ns:project}}:Devonsolorho",
 	"grouppage-suppress": "{{ns:project}}:Nazorat",
 	"right-read": "Xondani sahifaho",
@@ -734,7 +735,6 @@
 	"filehist-thumbtext": "Aksi bandanguştī az nusxai to $1",
 	"filehist-user": "Korbar",
 	"filehist-dimensions": "Andoza",
-	"filehist-filesize": "Andozai parvanda",
 	"filehist-comment": "Tavzeh",
 	"imagelinks": "Pajvandhoi parvanda",
 	"linkstoimage": "{{PLURAL:$1|Sahifahoi|$1 Sahifai}} zerin ba in aks pajvandand:",

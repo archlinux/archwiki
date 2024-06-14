@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface MWSaveDialog class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @copyright See AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -137,8 +137,6 @@ ve.ui.MWSaveDialog.prototype.setDiffAndReview = function ( wikitextDiffPromise, 
 		diffElement.$document.addClass( [
 			'mw-body-content',
 			'mw-parser-output',
-			// HACK: T287733
-			mw.config.get( 'skin' ) === 'vector' || mw.config.get( 'skin' ) === 'vector-2022' ? 'vector-body' : null,
 			'mw-content-' + visualDiff.newDoc.getDir()
 		] );
 		ve.targetLinksToNewWindow( diffElement.$document[ 0 ] );
@@ -645,9 +643,7 @@ ve.ui.MWSaveDialog.prototype.initialize = function () {
 	this.$previewHeading = $( '<h1>' ).addClass( 'firstHeading' );
 	this.$previewViewer = $( '<div>' ).addClass( [
 		'mw-body-content',
-		'mw-parser-output',
-		// HACK: T287733
-		mw.config.get( 'skin' ) === 'vector' || mw.config.get( 'skin' ) === 'vector-2022' ? 'vector-body' : null
+		'mw-parser-output'
 	] );
 	this.previewPanel.$element
 		// Make focusable for keyboard accessible scrolling
@@ -753,7 +749,7 @@ ve.ui.MWSaveDialog.prototype.onReviewChoose = function ( item ) {
  */
 ve.ui.MWSaveDialog.prototype.setDimensions = function () {
 	// Parent method
-	ve.ui.MWSaveDialog.parent.prototype.setDimensions.apply( this, arguments );
+	ve.ui.MWSaveDialog.super.prototype.setDimensions.apply( this, arguments );
 
 	if ( !this.positioning ) {
 		this.positionDiffElement();

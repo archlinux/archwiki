@@ -509,6 +509,7 @@ pre,
 }
 
 .mw-body {
+	.mw-heading,
 	h1,
 	h2,
 	h3,
@@ -545,17 +546,21 @@ pre,
 		display: block;
 	}
 
+	.mw-heading1,
 	h1 {
 		font-size: 2em;
 		border-bottom: solid 3px @base70;
 	}
 
+	.mw-heading2,
 	h2 {
 		font-size: 1.8em;
 		border-bottom: solid 2px @base70;
 	}
 
+	.mw-heading1,
 	h1,
+	.mw-heading2,
 	h2 {
 		// Introduce a "block formatting context" so that the border-bottom underline doesn't overlap
 		// thumbnails, infoboxes and other floated content.
@@ -570,20 +575,39 @@ pre,
 		display: flow-root;
 	}
 
+	.mw-heading3,
 	h3 {
 		font-size: 1.6em;
 	}
 
+	.mw-heading4,
 	h4 {
 		font-size: 1.4em;
 	}
 
+	.mw-heading5,
 	h5 {
 		font-size: 1.25em;
 	}
 
+	.mw-heading6,
 	h6 {
 		font-size: 1.2em;
+	}
+
+	// Override the styles above for `hN` nested inside `.mw-heading`, as used on wikitext pages.
+	.mw-heading {
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			font-size: inherit;
+			border-bottom: 0;
+			// Must be inline to allow `.mw-editsection` to be shown on the same line
+			display: inline;
+		}
 	}
 
 	dt {

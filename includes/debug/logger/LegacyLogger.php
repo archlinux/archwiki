@@ -102,7 +102,7 @@ class LegacyLogger extends AbstractLogger {
 	 * @param string $channel
 	 */
 	public function __construct( $channel ) {
-		global $wgDebugLogFile, $wgDBerrorLog, $wgDebugLogGroups, $wgDebugToolbar, $wgDebugRawPage;
+		global $wgDebugLogFile, $wgDBerrorLog, $wgDebugLogGroups, $wgDebugToolbar, $wgDebugRawPage, $wgShowDebug;
 
 		$this->channel = $channel;
 		$this->isDB = ( $channel === 'rdbms' );
@@ -110,7 +110,7 @@ class LegacyLogger extends AbstractLogger {
 		// Calculate minimum level, duplicating some of the logic from log() and shouldEmit()
 		if ( !$wgDebugRawPage && wfIsDebugRawPage() ) {
 			$this->minimumLevel = self::LEVEL_WARNING;
-		} elseif ( $wgDebugLogFile != '' || $wgDebugToolbar ) {
+		} elseif ( $wgDebugLogFile != '' || $wgShowDebug || $wgDebugToolbar ) {
 			// Log all messages if there is a debug log file or debug toolbar
 			$this->minimumLevel = self::LEVEL_DEBUG;
 		} elseif ( isset( $wgDebugLogGroups[$channel] ) ) {
@@ -172,7 +172,7 @@ class LegacyLogger extends AbstractLogger {
 			MWDebug::query(
 				$context['sql'],
 				$context['method'],
-				$context['runtime'],
+				$context['runtime_ms'] / 1000,
 				$context['db_server']
 			);
 		}
@@ -193,6 +193,7 @@ class LegacyLogger extends AbstractLogger {
 		if ( self::shouldEmit( $effectiveChannel, $message, $level, $context ) ) {
 			$text = self::format( $effectiveChannel, $message, $context );
 			$destination = self::destination( $effectiveChannel, $message, $context );
+			$this->maybeLogToStderr( $text );
 			self::emit( $text, $destination );
 		}
 		if ( !isset( $context['private'] ) || !$context['private'] ) {
@@ -520,6 +521,19 @@ class LegacyLogger extends AbstractLogger {
 				file_put_contents( $file, $text, FILE_APPEND );
 			}
 			AtEase::restoreWarnings();
+		}
+	}
+
+	/**
+	 * If MW_LOG_STDERR is set (used currently in `composer serve`) then also
+	 * emit to stderr using error_log().
+	 *
+	 * @param string $text
+	 * @return void
+	 */
+	private function maybeLogToStderr( string $text ): void {
+		if ( getenv( 'MW_LOG_STDERR' ) ) {
+			error_log( trim( $text ) );
 		}
 	}
 

@@ -8,7 +8,8 @@
 			"SomeyaMako",
 			"VulpesVulpes825",
 			"Wenyuan Liu",
-			"Yfdyh000"
+			"Yfdyh000",
+			"LittlePaw365"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-summary": "检查以查看滥用过滤器是否匹配某个变量集、某次编辑或某条日志记载的过滤器活动。",
@@ -41,7 +42,7 @@
 	"apihelp-query+abuselog-summary": "显示一个滥用过滤器的捕获事件。",
 	"apihelp-query+abuselog-param-logid": "显示指定日志ID的记录。",
 	"apihelp-query+abuselog-param-start": "枚举的起始时间戳。",
-	"apihelp-query+abuselog-param-end": "枚举的结束时间戳。",
+	"apihelp-query+abuselog-param-end": "停止枚举的时间戳。",
 	"apihelp-query+abuselog-param-user": "只显示由指定的用户或IP地址完成的记录。",
 	"apihelp-query+abuselog-param-title": "只显示在指定页面上发生过的条项。",
 	"apihelp-query+abuselog-param-filter": "只显示被指定过滤器ID捕获过的记录。使用管道字符分离，以“$1”开始以表示为公共过滤器。",

@@ -22,7 +22,6 @@
 	"cite_error_included_ref": "<code>&lt;/ref&gt;</code> panutup ora ana tumrap tenger <code>&lt;ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Tenger <code>&lt;ref&gt;</code> ana tumrap golongan aran \"$1\", nanging tenger <code>&lt;references group=\"$1\"/&gt;</code> sing magepokan ora ana, utawa <code>&lt;/ref&gt;</code> panutup ora ana",
 	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code> tandha <code>&lt;references&gt;</code> nduwèni atribut klompok sing marai konflik \"$1\".",
-	"cite_error_references_missing_group": "Tenger <code>&lt;ref&gt;</code> sing diwedharaké ing <code>&lt;references&gt;</code> duwé atribut golongan \"$1\" sing ora muncul ing tèks sadurungé.",
 	"cite_error_references_missing_key": "Tenger <code>&lt;ref&gt;</code> kanthi jeneng \"$1\" sing diwedharaké ing <code>&lt;references&gt;</code> ora kanggo ing tèks sadurungé.",
 	"cite_error_references_no_key": "Tenger <code>&lt;ref&gt;</code> sing diwedharaké ing <code>&lt;references&gt;</code> ora duwé atribut jeneng.",
 	"cite_error_empty_references_define": "Tenger <code>&lt;ref&gt;</code> sing diwedharaké ing <code>&lt;references&gt;</code> kanthi jeneng \"$1\" ora ana isiné.",

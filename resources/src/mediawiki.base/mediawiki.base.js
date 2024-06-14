@@ -5,54 +5,49 @@ var slice = Array.prototype.slice;
 // Apply site-level data
 mw.config.set( require( './config.json' ) );
 
-// Load other files in the package
 require( './log.js' );
-require( './errorLogger.js' );
 
 /**
  * Object constructor for messages.
+ * The constructor is not publicly accessible; use {@link mw.message} instead.
  *
- * Similar to the Message class in MediaWiki PHP.
+ * @example
+ * var obj, str;
+ * mw.messages.set( {
+ *     'hello': 'Hello world',
+ *     'hello-user': 'Hello, $1!',
+ *     'welcome-user': 'Welcome back to $2, $1! Last visit by $1: $3',
+ *     'so-unusual': 'You will find: $1'
+ * } );
  *
- *     @example
+ * obj = mw.message( 'hello' );
+ * mw.log( obj.text() );
+ * // Hello world
  *
- *     var obj, str;
- *     mw.messages.set( {
- *         'hello': 'Hello world',
- *         'hello-user': 'Hello, $1!',
- *         'welcome-user': 'Welcome back to $2, $1! Last visit by $1: $3',
- *         'so-unusual': 'You will find: $1'
- *     } );
+ * obj = mw.message( 'hello-user', 'John Doe' );
+ * mw.log( obj.text() );
+ * // Hello, John Doe!
  *
- *     obj = mw.message( 'hello' );
- *     mw.log( obj.text() );
- *     // Hello world
+ * obj = mw.message( 'welcome-user', 'John Doe', 'Wikipedia', '2 hours ago' );
+ * mw.log( obj.text() );
+ * // Welcome back to Wikipedia, John Doe! Last visit by John Doe: 2 hours ago
  *
- *     obj = mw.message( 'hello-user', 'John Doe' );
- *     mw.log( obj.text() );
- *     // Hello, John Doe!
+ * // Using mw.msg shortcut, always in "text' format.
+ * str = mw.msg( 'hello-user', 'John Doe' );
+ * mw.log( str );
+ * // Hello, John Doe!
  *
- *     obj = mw.message( 'welcome-user', 'John Doe', 'Wikipedia', '2 hours ago' );
- *     mw.log( obj.text() );
- *     // Welcome back to Wikipedia, John Doe! Last visit by John Doe: 2 hours ago
+ * // Different formats
+ * obj = mw.message( 'so-unusual', 'Time "after" <time>' );
  *
- *     // Using mw.msg shortcut, always in "text' format.
- *     str = mw.msg( 'hello-user', 'John Doe' );
- *     mw.log( str );
- *     // Hello, John Doe!
+ * mw.log( obj.text() );
+ * // You will find: Time "after" <time>
  *
- *     // Different formats
- *     obj = mw.message( 'so-unusual', 'Time "after" <time>' );
- *
- *     mw.log( obj.text() );
- *     // You will find: Time "after" <time>
- *
- *     mw.log( obj.escaped() );
- *     // You will find: Time &quot;after&quot; &lt;time&gt;
+ * mw.log( obj.escaped() );
+ * // You will find: Time &quot;after&quot; &lt;time&gt;
  *
  * @class mw.Message
- *
- * @constructor
+ * @classdesc Describes a translateable text or HTML string. Similar to the Message class in MediaWiki PHP.
  * @param {mw.Map} map Message store
  * @param {string} key
  * @param {Array} [parameters]
@@ -63,7 +58,7 @@ function Message( map, key, parameters ) {
 	this.parameters = parameters || [];
 }
 
-Message.prototype = {
+Message.prototype = /** @lends mw.Message.prototype */ {
 	/**
 	 * Get parsed contents of the message.
 	 *
@@ -72,8 +67,9 @@ Message.prototype = {
 	 * The primary override is in the mediawiki.jqueryMsg module.
 	 *
 	 * This function will not be called for nonexistent messages.
+	 * For internal use by mediawiki.jqueryMsg only
 	 *
-	 * @private For internal use by mediawiki.jqueryMsg only
+	 * @private
 	 * @param {string} format
 	 * @return {string} Parsed message
 	 */
@@ -149,7 +145,7 @@ Message.prototype = {
 	 * Parse message as wikitext and return HTML.
 	 *
 	 * If jqueryMsg is loaded, this transforms text and parses a subset of supported wikitext
-	 * into HTML. Without jqueryMsg, it is equivalent to #escaped.
+	 * into HTML. Without jqueryMsg, it is equivalent to {@link mw.Message#escaped}.
 	 *
 	 * @return {string} String form of parsed message
 	 */
@@ -174,7 +170,7 @@ Message.prototype = {
 	 *
 	 * If jqueryMsg is loaded, `{{`-transformation is done for supported
 	 * magic words such as `{{plural:}}`, `{{gender:}}`, and `{{int:}}`.
-	 * Without jqueryMsg, it is equivalent to #plain.
+	 * Without jqueryMsg, it is equivalent to {@link mw.Message#plain}.
 	 *
 	 * @return {string} String form of text message
 	 */
@@ -194,9 +190,8 @@ Message.prototype = {
 	},
 
 	/**
-	 * Check if a message exists
+	 * Check if a message exists. Equivalent to {@link mw.Map.exists}.
 	 *
-	 * @see mw.Map#exists
 	 * @return {boolean}
 	 */
 	exists: function () {
@@ -207,6 +202,7 @@ Message.prototype = {
 /**
  * @class mw
  * @singleton
+ * @borrows mediawiki.inspect.runReports as inspect
  */
 
 /**
@@ -214,16 +210,27 @@ Message.prototype = {
  * want to add a new global, or the global is bad and needs containment
  * or wrapping.
  *
- * @property {Object}
+ * @type {Object}
  */
 mw.libs = {};
 
-// OOUI widgets specific to MediaWiki
+/**
+ * OOUI widgets specific to MediaWiki.
+ * Initially empty. To expand the amount of available widgets the `mediawiki.widget` module can be loaded.
+ *
+ * @namespace mw.widgets
+ * @example
+ * mw.loader.using('mediawiki.widget').then(() => {
+ *   OO.ui.getWindowManager().addWindows( [ new mw.widget.AbandonEditDialog() ] );
+ * });
+ */
 mw.widgets = {};
 
 /**
- * @inheritdoc mw.inspect#runReports
- * @method
+ * Generates a ResourceLoader report using the
+ * {@link mediawiki.inspect.js.html|mediawiki.inspect module}.
+ *
+ * @ignore
  */
 mw.inspect = function () {
 	var args = arguments;
@@ -278,8 +285,9 @@ mw.internalWikiUrlencode = function ( str ) {
 /**
  * Format a string. Replace $1, $2 ... $N with positional arguments.
  *
- * Used by Message#parser().
+ * Used by {@link mw.Message#parse}.
  *
+ * @memberof mw
  * @since 1.25
  * @param {string} formatString Format string
  * @param {...Mixed} parameters Values for $N replacements
@@ -302,7 +310,8 @@ mw.Message = Message;
  *
  * Shortcut for `new mw.Message( mw.messages, key, parameters )`.
  *
- * @see mw.Message
+ * @memberof mw
+ * @see {@link mw.Message}
  * @param {string} key Key of message to get
  * @param {...Mixed} parameters Values for $N replacements
  * @return {mw.Message}
@@ -317,9 +326,10 @@ mw.message = function ( key ) {
  *
  * Shortcut for `mw.message( key, parameters... ).text()`.
  *
- * @see mw.Message
+ * @memberof mw
+ * @see {@link mw.Message}
  * @param {string} key Key of message to get
- * @param {...Mixed} parameters Values for $N replacements
+ * @param {...any} parameters Values for $N replacements
  * @return {string}
  */
 mw.msg = function () {
@@ -329,7 +339,10 @@ mw.msg = function () {
 };
 
 /**
- * @see mw.notification#notify
+ * Convenience method for loading and accessing the
+ * {@link mw.notification.notify|mw.notification module}.
+ *
+ * @memberof mw
  * @param {HTMLElement|HTMLElement[]|jQuery|mw.Message|string} message
  * @param {Object} [options] See mw.notification#defaults for the defaults.
  * @return {jQuery.Promise}
@@ -341,7 +354,6 @@ mw.notify = function ( message, options ) {
 	} );
 };
 
-var mwLoaderTrack = mw.track;
 var trackCallbacks = $.Callbacks( 'memory' );
 var trackHandlers = [];
 
@@ -358,11 +370,12 @@ var trackHandlers = [];
  * events that match their subscription, including buffered events that fired before the handler
  * was subscribed.
  *
+ * @memberof mw
  * @param {string} topic Topic name
  * @param {Object|number|string} [data] Data describing the event.
  */
 mw.track = function ( topic, data ) {
-	mwLoaderTrack( topic, data );
+	mw.trackQueue.push( { topic: topic, data: data } );
 	trackCallbacks.fire( mw.trackQueue );
 };
 
@@ -374,14 +387,15 @@ mw.track = function ( topic, data ) {
  * `data` event object. The `this` value for the callback is a plain object with `topic` and
  * `data` properties set to those same values.
  *
- * Example to monitor all topics for debugging:
+ * @example
+ * // To monitor all topics for debugging
+ * mw.trackSubscribe( '', console.log );
  *
- *     mw.trackSubscribe( '', console.log );
+ * @example
+ * // To subscribe to any of `foo.*`, e.g. both `foo.bar` and `foo.quux`
+ * mw.trackSubscribe( 'foo.', console.log );
  *
- * Example to subscribe to any of `foo.*`, e.g. both `foo.bar` and `foo.quux`:
- *
- *     mw.trackSubscribe( 'foo.', console.log );
- *
+ * @memberof mw
  * @param {string} topic Handle events whose name starts with this string prefix
  * @param {Function} callback Handler to call for each matching tracked event
  * @param {string} callback.topic
@@ -403,8 +417,9 @@ mw.trackSubscribe = function ( topic, callback ) {
 };
 
 /**
- * Stop handling events for a particular handler
+ * Stop handling events for a particular handler.
  *
+ * @memberof mw
  * @param {Function} callback
  */
 mw.trackUnsubscribe = function ( callback ) {
@@ -418,11 +433,13 @@ mw.trackUnsubscribe = function ( callback ) {
 	} );
 };
 
-// Fire events from before track() triggered fire()
+// Notify subscribers of any mw.trackQueue.push() calls
+// from the startup module before mw.track() is defined.
 trackCallbacks.fire( mw.trackQueue );
 
 /**
- * Registry and firing of events.
+ * @namespace Hooks
+ * @description Registry and firing of events.
  *
  * MediaWiki has various interface components that are extended, enhanced
  * or manipulated in some other way by extensions, gadgets and even
@@ -437,9 +454,10 @@ trackCallbacks.fire( mw.trackQueue );
  * hooks accordingly to ensure everything still works as expected.
  *
  * Example usage:
- *
- *     mw.hook( 'wikipage.content' ).add( fn ).remove( fn );
- *     mw.hook( 'wikipage.content' ).fire( $content );
+ * ```
+ * mw.hook( 'wikipage.content' ).add( fn ).remove( fn );
+ * mw.hook( 'wikipage.content' ).fire( $content );
+ * ```
  *
  * Handlers can be added and fired for arbitrary event names at any time. The same
  * event can be fired multiple times. The last run of an event is memorized
@@ -447,29 +465,33 @@ trackCallbacks.fire( mw.trackQueue );
  * This means if an event is fired, and a handler added afterwards, the added
  * function will be fired right away with the last given event data.
  *
- * Like Deferreds and Promises, the mw.hook object is both detachable and chainable.
+ * Like Deferreds and Promises, the {@link mw.hook} object is both detachable and chainable.
  * Thus allowing flexible use and optimal maintainability and authority control.
  * You can pass around the `add` and/or `fire` method to another piece of code
- * without it having to know the event name (or `mw.hook` for that matter).
+ * without it having to know the event name (or {@link mw.hook} for that matter).
  *
- *     var h = mw.hook( 'bar.ready' );
- *     new mw.Foo( .. ).fetch( { callback: h.fire } );
+ * ```
+ * var h = mw.hook( 'bar.ready' );
+ * new mw.Foo( .. ).fetch( { callback: h.fire } );
+ * ```
  *
- * Note: Events are documented with an underscore instead of a dot in the event
- * name due to jsduck not supporting dots in that position.
+ * See available global events below.
  *
- * @class mw.hook
+ * @See {@link Hook}
  */
 
 var hooks = Object.create( null );
 
 /**
- * Create an instance of mw.hook.
+ * Create an instance of {@link Hook}.
  *
- * @method hook
- * @member mw
+ * @example
+ * const hook = mw.hook( 'name' );
+ * hook.add( () => alert( 'Hook was fired' ) );
+ * hook.fire();
+ *
  * @param {string} name Name of hook.
- * @return {mw.hook}
+ * @return {Hook}
  */
 mw.hook = function ( name ) {
 	return hooks[ name ] || ( hooks[ name ] = ( function () {
@@ -480,15 +502,23 @@ mw.hook = function ( name ) {
 				throw e;
 			} );
 		}
+		/**
+		 * @class Hook
+		 * @classdesc An instance of a hook, created via [mw.hook method]{@link mw.hook}.
+		 * @global
+		 * @hideconstructor
+		 */
 		return {
 			/**
-			 * Register a hook handler
+			 * Register a hook handler.
 			 *
 			 * @param {...Function} handler Function to bind.
-			 * @chainable
+			 * @memberof Hook
+			 * @return {Hook}
 			 */
 			add: function () {
 				for ( var i = 0; i < arguments.length; i++ ) {
+					fns.push( arguments[ i ] );
 					if ( memory ) {
 						try {
 							arguments[ i ].apply( null, memory );
@@ -496,15 +526,15 @@ mw.hook = function ( name ) {
 							rethrow( e );
 						}
 					}
-					fns.push( arguments[ i ] );
 				}
 				return this;
 			},
 			/**
-			 * Unregister a hook handler
+			 * Unregister a hook handler.
 			 *
 			 * @param {...Function} handler Function to unbind.
-			 * @chainable
+			 * @memberof Hook
+			 * @return {Hook}
 			 */
 			remove: function () {
 				for ( var i = 0; i < arguments.length; i++ ) {
@@ -518,8 +548,9 @@ mw.hook = function ( name ) {
 			/**
 			 * Call hook handlers with data.
 			 *
-			 * @param {...Mixed} data
-			 * @return {mw.hook}
+			 * @memberof Hook
+			 * @param {...any} data
+			 * @return {Hook}
 			 * @chainable
 			 */
 			fire: function () {
@@ -538,19 +569,18 @@ mw.hook = function ( name ) {
 };
 
 /**
- * HTML construction helper functions
+ * HTML construction helper functions.
  *
- *     @example
+ * @example
+ * var Html, output;
  *
- *     var Html, output;
+ * Html = mw.html;
+ * output = Html.element( 'div', {}, new Html.Raw(
+ *     Html.element( 'img', { src: '<' } )
+ * ) );
+ * mw.log( output ); // <div><img src="&lt;"/></div>
  *
- *     Html = mw.html;
- *     output = Html.element( 'div', {}, new Html.Raw(
- *         Html.element( 'img', { src: '<' } )
- *     ) );
- *     mw.log( output ); // <div><img src="&lt;"/></div>
- *
- * @class mw.html
+ * @namespace mw.html
  * @singleton
  */
 
@@ -574,8 +604,9 @@ mw.html = {
 	 *
 	 * Converts special characters to HTML entities.
 	 *
-	 *     mw.html.escape( '< > \' & "' );
-	 *     // Returns &lt; &gt; &#039; &amp; &quot;
+	 * @example
+	 * mw.html.escape( '< > \' & "' );
+	 * // Returns &lt; &gt; &#039; &amp; &quot;
 	 *
 	 * @param {string} s The string to escape
 	 * @return {string} HTML
@@ -636,11 +667,13 @@ mw.html = {
 	},
 
 	/**
-	 * Wrapper object for raw HTML passed to mw.html.element().
-	 *
+	 * @classdesc Wrapper object for raw HTML. Can be used with {@link mw.html.element}.
 	 * @class mw.html.Raw
-	 * @constructor
 	 * @param {string} value
+	 * @property {string} value
+	 * @example
+	 * const raw = new mw.html.Raw( 'Text' );
+	 * mw.html.element( 'div', { class: 'html' }, raw );
 	 */
 	Raw: function ( value ) {
 		this.value = value;
@@ -651,7 +684,7 @@ mw.html = {
  * Schedule a function to run once the page is ready (DOM loaded).
  *
  * @since 1.5.8
- * @member global
+ * @memberof window
  * @param {Function} fn
  */
 window.addOnloadHook = function ( fn ) {
@@ -663,9 +696,10 @@ window.addOnloadHook = function ( fn ) {
 var loadedScripts = {};
 
 /**
+ * Import a script using an absolute URI.
+ *
  * @since 1.12.2
- * @method importScriptURI
- * @member global
+ * @memberof window
  * @param {string} url
  * @return {HTMLElement|null} Script tag, or null if it was already imported before
  */
@@ -684,7 +718,7 @@ window.importScriptURI = function ( url ) {
  * be loaded and executed once.
  *
  * @since 1.12.2
- * @member global
+ * @memberof window
  * @param {string} title
  * @return {HTMLElement|null} Script tag, or null if it was already imported before
  */
@@ -699,7 +733,7 @@ window.importScript = function ( title ) {
  * Import a local CSS content page, for use by user scripts and site-wide scripts.
  *
  * @since 1.12.2
- * @member global
+ * @memberof window
  * @param {string} title
  * @return {HTMLElement} Link tag
  */
@@ -711,8 +745,10 @@ window.importStylesheet = function ( title ) {
 };
 
 /**
+ * Import a stylesheet using an absolute URI.
+ *
  * @since 1.12.2
- * @member global
+ * @memberof window
  * @param {string} url
  * @param {string} media
  * @return {HTMLElement} Link tag
@@ -724,7 +760,7 @@ window.importStylesheetURI = function ( url, media ) {
 /**
  * Get the names of all registered ResourceLoader modules.
  *
- * @member mw.loader
+ * @memberof mw.loader
  * @return {string[]}
  */
 mw.loader.getModuleNames = function () {
@@ -746,22 +782,24 @@ mw.loader.getModuleNames = function () {
  * automatically re-used.
  *
  * Example of inline dependency on OOjs:
- *
- *     mw.loader.using( 'oojs', function () {
- *         OO.compare( [ 1 ], [ 1 ] );
- *     } );
+ * ```
+ * mw.loader.using( 'oojs', function () {
+ *     OO.compare( [ 1 ], [ 1 ] );
+ * } );
+ * ```
  *
  * Example of inline dependency obtained via `require()`:
- *
- *     mw.loader.using( [ 'mediawiki.util' ], function ( require ) {
- *         var util = require( 'mediawiki.util' );
- *     } );
+ * ```
+ * mw.loader.using( [ 'mediawiki.util' ], function ( require ) {
+ *     var util = require( 'mediawiki.util' );
+ * } );
+ * ```
  *
  * Since MediaWiki 1.23 this returns a promise.
  *
  * Since MediaWiki 1.28 the promise is resolved with a `require` function.
  *
- * @member mw.loader
+ * @memberof mw.loader
  * @param {string|Array} dependencies Module name or array of modules names the
  *  callback depends on to be ready before executing
  * @param {Function} [ready] Callback to execute when all dependencies are ready
@@ -792,7 +830,9 @@ mw.loader.using = function ( dependencies, ready, error ) {
 
 	mw.loader.enqueue(
 		dependencies,
-		function () { deferred.resolve( mw.loader.require ); },
+		function () {
+			deferred.resolve( mw.loader.require );
+		},
 		deferred.reject
 	);
 
@@ -802,20 +842,19 @@ mw.loader.using = function ( dependencies, ready, error ) {
 /**
  * Load a script by URL.
  *
- * Example:
- *
- *     mw.loader.getScript(
- *         'https://example.org/x-1.0.0.js'
- *     )
- *         .then( function () {
- *             // Script succeeded. You can use X now.
- *         }, function ( e ) {
- *             // Script failed. X is not avaiable
- *             mw.log.error( e.message ); // => "Failed to load script"
- *         } );
+ * @example
+ * mw.loader.getScript(
+ *     'https://example.org/x-1.0.0.js'
+ * )
+ *     .then( function () {
+ *         // Script succeeded. You can use X now.
+ *     }, function ( e ) {
+ *         // Script failed. X is not avaiable
+ *         mw.log.error( e.message ); // => "Failed to load script"
  *     } );
+ * } );
  *
- * @member mw.loader
+ * @memberof mw.loader
  * @param {string} url Script URL
  * @return {jQuery.Promise} Resolved when the script is loaded
  */
@@ -828,16 +867,21 @@ mw.loader.getScript = function ( url ) {
 
 // Skeleton user object, extended by the 'mediawiki.user' module.
 /**
- * @class mw.user
+ * @namespace mw.user
  * @singleton
+ * @ignore
  */
 mw.user = {
 	/**
-	 * @property {mw.Map}
+	 * Map of user preferences and their values.
+	 *
+	 * @type {mw.Map}
 	 */
 	options: new mw.Map(),
 	/**
-	 * @property {mw.Map}
+	 * Map of retrieved user tokens.
+	 *
+	 * @type {mw.Map}
 	 */
 	tokens: new mw.Map()
 };
@@ -875,3 +919,6 @@ while ( queue[ 0 ] ) {
 		$( document.body ).append( $.parseHTML( slice.call( arguments ).join( '' ) ) );
 	}, 'Use jQuery or mw.loader.load instead.', 'document.' + func );
 } );
+
+// Load other files in the package
+require( './errorLogger.js' );

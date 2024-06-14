@@ -40,8 +40,6 @@
 	 *    }
 	 */
 	mw.echo.dm.NotificationItem = function MwEchoDmNotificationItem( id, config ) {
-		var fallbackDate = moment.utc().format( 'YYYY-MM-DD[T]HH:mm:ss[Z]' );
-
 		config = config || {};
 
 		// Mixin constructor
@@ -62,7 +60,7 @@
 		this.read = !!config.read;
 		this.seen = !!config.seen;
 
-		this.timestamp = config.timestamp || fallbackDate;
+		this.timestamp = config.timestamp || moment.utc().format( 'YYYY-MM-DD[T]HH:mm:ss[Z]' );
 		this.setPrimaryUrl( config.primaryUrl );
 		this.setSecondaryUrls( config.secondaryUrls );
 		this.bundledIds = config.bundledIds;
@@ -212,7 +210,7 @@
 	/**
 	 * Get the notification timestamp
 	 *
-	 * @return {number} Notification timestamp in Mediawiki timestamp format
+	 * @return {number} Notification timestamp in MediaWiki timestamp format
 	 */
 	mw.echo.dm.NotificationItem.prototype.getTimestamp = function () {
 		return this.timestamp;

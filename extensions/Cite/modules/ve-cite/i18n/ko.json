@@ -23,7 +23,8 @@
 			"고기랑",
 			"렌즈",
 			"아라",
-			"콩가루"
+			"콩가루",
+			"Bluehill"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "책",
@@ -66,9 +67,7 @@
 	"cite-ve-referenceslist-isempty-default": "이 문서에서 이 목록에 포함될 각주가 없습니다.",
 	"cite-ve-referenceslist-missingref": "이 각주는 틀이나 다른 생성된 블록에서 정의되었고, 현재는 원본 모드에서만 편집할 수 있습니다.",
 	"cite-ve-referenceslist-missingref-in-list": "이 각주는 틀이나 다른 생성된 블록에서 정의되었고, 현재는 원본 모드에서만 미리 볼 수 있습니다.",
-	"cite-ve-referenceslist-missingreflist": "이 각주 목록은 틀에 의해 생성된 것이며 현재 원본 모드에서만 편집할 수 있습니다.",
+	"cite-ve-referenceslist-missingreflist": "이 각주 목록은 틀에 의해 생성된 것입니다.",
 	"cite-ve-toolbar-group-label": "인용",
-	"cite-ve-othergroup-item": "$1 참조",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "각주",
-	"visualeditor-internal-list-diff-group-name-mwreference": "각주 그룹 이름: \"$1\""
+	"cite-ve-othergroup-item": "$1 참조"
 }

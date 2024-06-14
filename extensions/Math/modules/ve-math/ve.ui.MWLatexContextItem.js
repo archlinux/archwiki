@@ -1,7 +1,7 @@
 /*!
  * VisualEditor MWLatexContextItem class.
  *
- * @copyright 2015 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**

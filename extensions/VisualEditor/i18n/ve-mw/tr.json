@@ -348,6 +348,8 @@
 	"visualeditor-preference-tabs-prefer-ve": "Mümkün olan her zaman görsel düzenleyiciyi kullan",
 	"visualeditor-preference-tabs-prefer-wt": "Her zaman kaynak düzenleyiciyi kullan",
 	"visualeditor-preference-tabs-remember-last": "Son düzenleyicimi hatırla",
+	"visualeditor-preference-collab-label": "İşbirlikçi düzenleme",
+	"visualeditor-preference-collab-description": "Diğer kullanıcıları görsel düzenleyicideki düzenleme oturumunuza katılmaya çağırın.",
 	"visualeditor-rebase-client-export": "Dışa aktar",
 	"visualeditor-rebase-client-export-start": "Dışa aktar...",
 	"visualeditor-rebase-client-import": "İçe aktar",

@@ -4,24 +4,23 @@
 			"Alan ffm",
 			"Chrumps",
 			"Jdx",
+			"Msz2001",
+			"Nux",
 			"Openbk",
 			"Ostrzyciel",
 			"Rail",
 			"Railfail536",
 			"WTM",
-			"WaldiSt",
-			"Nux",
-			"Msz2001"
+			"WaldiSt"
 		]
 	},
 	"oathauth-desc": "Dodaje wsparcie uwierzytelniania za pomocą haseł jednorazowych opartych o HMAC",
 	"disableoathforuser": "Wyłączanie uwierzytelniania dwuskładnikowego dla użytkownika",
 	"verifyoathforuser": "Weryfikacja statusu uwierzytelniania dwuskładnikowego",
-	"specialpages-group-oath": "Uwierzytelnianie dwuskładnikowe",
 	"oathauth-account": "Nazwa konta:",
 	"oathauth-secret": "Tajny klucz uwierzytelniania dwuskładnikowego:",
 	"oathauth-enable": "Włączanie uwierzytelniania dwuskładnikowego",
-	"oathauth-token": "Token",
+	"oathauth-recoverycodes": "Poniżej znajduje się lista jednorazowych kodów zapasowych. Te kody będą mogły być użyte tylko raz w sytuacjach awaryjnych gdy nie masz dostępu do swojego urządzania. Zapisz je i przechowuj w bezpiecznym miejscu. Zalecamy, byś {{GENDER:|oznaczał|oznaczała}} sobie poszczególne kody jako wykorzystane, kiedy zalogujesz się za ich pomocą. Jeżeli zgubisz swoje urządzenie, będą one jedynym sposobem na odzyskanie konta.\n\n'''Kody nie zostaną wyświetlone ponownie'''.",
 	"oathauth-disable": "Wyłączanie uwierzytelniania dwuskładnikowego",
 	"oathauth-validatedoath": "Poświadczono urządzenie uwierzytelniające. Uwierzytelnianie dwuskładnikowe będzie teraz wymagane podczas logowania.",
 	"oathauth-noscratchforvalidation": "Do potwierdzenia uwierzytelniania dwuskładnikowego nie możesz użyć zapasowego kodu jednorazowego. Kody te służą tylko do odzyskiwania dostępu do konta w sytuacjach kryzysowych. Użyj kodu uwierzytelniającego ze swojej aplikacji do uwierzytelniania dwuskładnikowego (takiej jak Google Authenticator).",
@@ -79,7 +78,6 @@
 	"oathauth-enable-generic": "Włącz",
 	"oathauth-disable-generic": "Wyłącz",
 	"oathauth-invalid-data-format": "Dostawca danych nie mógł stworzyć klucza dla wybranej metody uwierzytelniania",
-	"oathauth-invalid-key-type": "Klucz ustawiony dla użytkownika nie pasuje do typu wymaganego dla wybranej metody uwierzytelniania",
 	"oathauth-disable-page-title": "Wyłącz $1",
 	"oathauth-enable-page-title": "Włącz $1",
 	"oathauth-action-exclusive-to-2fa": "Ta operacja może być wykonana tylko przez użytkowników, którzy mają włączone uwierzytelnianie dwuskładnikowe.",
@@ -105,5 +103,6 @@
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} ma włączone uwierzytelnianie dwuskładnikowe.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} nie ma włączonego uwierzytelniania dwuskładnikowego.",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Zawieszona grupa|Zawieszone grupy}}:",
-	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Twoja przynależność}} do {{PLURAL:$1|tej grupy|tych grup}} została zawieszona do czasu, aż włączysz [[Special:Manage Two-factor authentication|uwierzytelnianie dwuskładnikowe]]."
+	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Twoja przynależność}} do {{PLURAL:$1|tej grupy|tych grup}} została zawieszona do czasu, aż włączysz [[Special:Manage Two-factor authentication|uwierzytelnianie dwuskładnikowe]].",
+	"oathauth-qrcode-alt": "Kod QR zawierający tajny klucz do zeskanowania."
 }

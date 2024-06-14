@@ -1,6 +1,14 @@
 <?php
 
-class ComposerLockTest extends PHPUnit\Framework\TestCase {
+namespace Wikimedia\Tests\Composer;
+
+use PHPUnit\Framework\TestCase;
+use Wikimedia\Composer\ComposerLock;
+
+/**
+ * @covers \Wikimedia\Composer\ComposerLock
+ */
+class ComposerLockTest extends TestCase {
 
 	private $lock;
 
@@ -9,10 +17,6 @@ class ComposerLockTest extends PHPUnit\Framework\TestCase {
 		$this->lock = __DIR__ . "/../../../../data/composer/composer.lock";
 	}
 
-	/**
-	 * @covers ComposerLock::__construct
-	 * @covers ComposerLock::getInstalledDependencies
-	 */
 	public function testGetInstalledDependencies() {
 		$lock = new ComposerLock( $this->lock );
 		$this->assertEquals( [
@@ -116,5 +120,4 @@ class ComposerLockTest extends PHPUnit\Framework\TestCase {
 			],
 		], $lock->getInstalledDependencies() );
 	}
-
 }

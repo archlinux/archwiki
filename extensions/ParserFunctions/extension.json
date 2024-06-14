@@ -12,7 +12,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.35.0"
+		"MediaWiki": ">= 1.39"
 	},
 	"config": {
 		"PFEnableStringFunctions": {
@@ -33,14 +33,24 @@
 	"Hooks": {
 		"ParserTestGlobals": "ParserFunctionsHookHandler",
 		"ParserFirstCallInit": "ParserFunctionsHookHandler",
-		"ScribuntoExternalLibraries": "MediaWiki\\Extension\\ParserFunctions\\Hooks::onScribuntoExternalLibraries"
+		"ScribuntoExternalLibraries": "ParserFunctionsScribuntoHookHandler"
 	},
 	"HookHandlers": {
 		"ParserFunctionsHookHandler": {
 			"class": "MediaWiki\\Extension\\ParserFunctions\\Hooks",
 			"services": [
-				"MainConfig"
+				"MainConfig",
+				"HookContainer",
+				"LanguageConverterFactory",
+				"LanguageFactory",
+				"LanguageNameUtils",
+				"LinkCache",
+				"RepoGroup",
+				"SpecialPageFactory"
 			]
+		},
+		"ParserFunctionsScribuntoHookHandler": {
+			"class": "MediaWiki\\Extension\\ParserFunctions\\ScribuntoHooks"
 		}
 	},
 	"AutoloadNamespaces": {

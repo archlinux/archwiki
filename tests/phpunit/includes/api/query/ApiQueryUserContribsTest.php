@@ -1,14 +1,18 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
+use MediaWiki\Tests\Api\ApiTestCase;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\User\User;
 use MediaWiki\User\UserRigorOptions;
+use WikitextContent;
 
 /**
  * @group API
  * @group Database
  * @group medium
- * @covers ApiQueryUserContribs
+ * @covers \ApiQueryUserContribs
  */
 class ApiQueryUserContribsTest extends ApiTestCase {
 	public function addDBDataOnce() {

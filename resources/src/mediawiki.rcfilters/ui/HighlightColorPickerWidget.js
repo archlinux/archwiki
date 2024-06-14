@@ -1,20 +1,22 @@
+var HighlightColors = require( '../HighlightColors.js' );
+
 /**
- * A widget representing a filter item highlight color picker
+ * A widget representing a filter item highlight color picker.
  *
  * @class mw.rcfilters.ui.HighlightColorPickerWidget
+ * @ignore
  * @extends OO.ui.Widget
- * @mixins OO.ui.mixin.LabelElement
+ * @mixes OO.ui.mixin.LabelElement
  *
- * @constructor
  * @param {mw.rcfilters.Controller} controller RCFilters controller
  * @param {Object} [config] Configuration object
  */
 var HighlightColorPickerWidget = function MwRcfiltersUiHighlightColorPickerWidget( controller, config ) {
-	var colors = [ 'none' ].concat( mw.rcfilters.HighlightColors );
+	var colors = [ 'none' ].concat( HighlightColors );
 	config = config || {};
 
 	// Parent
-	HighlightColorPickerWidget.parent.call( this, config );
+	HighlightColorPickerWidget.super.call( this, config );
 	// Mixin constructors
 	OO.ui.mixin.LabelElement.call( this, $.extend( {}, config, {
 		label: mw.msg( 'rcfilters-highlightmenu-title' )
@@ -64,10 +66,11 @@ OO.mixinClass( HighlightColorPickerWidget, OO.ui.mixin.LabelElement );
 /* Events */
 
 /**
+ * A color has been chosen
+ *
  * @event chooseColor
  * @param {string} The chosen color
- *
- * A color has been chosen
+ * @ignore
  */
 
 /* Methods */

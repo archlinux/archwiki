@@ -262,7 +262,7 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 	protected function setReverseProxy( string $proxy ) {
 		$parsedProxy = wfParseUrl( $proxy );
 		if ( $parsedProxy === false ) {
-			throw new Exception( "Invalid reverseProxy configured: $proxy" );
+			throw new InvalidArgumentException( "Invalid reverseProxy configured: $proxy" );
 		}
 		// Set the current host in the Host header
 		$this->setHeader( 'Host', $this->parsedUrl['host'] );
@@ -286,12 +286,11 @@ abstract class MWHttpRequest implements LoggerAwareInterface {
 	 * @return bool
 	 */
 	private static function isLocalURL( $url ) {
-		$commandLineMode = MediaWikiServices::getInstance()->getMainConfig()->get( 'CommandLineMode' );
-		$localVirtualHosts = MediaWikiServices::getInstance()->getMainConfig()->get(
-			MainConfigNames::LocalVirtualHosts );
-		if ( $commandLineMode ) {
+		if ( MW_ENTRY_POINT === 'cli' ) {
 			return false;
 		}
+		$localVirtualHosts = MediaWikiServices::getInstance()->getMainConfig()->get(
+			MainConfigNames::LocalVirtualHosts );
 
 		// Extract host part
 		$matches = [];

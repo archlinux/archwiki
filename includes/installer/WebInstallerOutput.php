@@ -1,7 +1,6 @@
 <?php
+
 /**
- * Output handler for the web installer.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,6 +20,10 @@
  * @ingroup Installer
  */
 
+namespace MediaWiki\Installer;
+
+use Language;
+use LogicException;
 use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Request\FauxRequest;
@@ -55,7 +58,7 @@ class WebInstallerOutput {
 	private $contents = '';
 
 	/**
-	 * Has the header (or short header) been output?
+	 * Has the header been output?
 	 * @var bool
 	 */
 	private $headerDone = false;
@@ -64,20 +67,6 @@ class WebInstallerOutput {
 	 * @var string
 	 */
 	public $redirectTarget;
-
-	/**
-	 * Does the current page need to allow being used as a frame?
-	 * If not, X-Frame-Options will be output to forbid it.
-	 *
-	 * @var bool
-	 */
-	public $allowFrames = false;
-
-	/**
-	 * Whether to use the limited header (used during CC license callbacks)
-	 * @var bool
-	 */
-	private $useShortHeader = false;
 
 	/**
 	 * @param WebInstaller $parent
@@ -111,12 +100,10 @@ class WebInstallerOutput {
 
 	/**
 	 * @param string $url
-	 *
-	 * @throws MWException
 	 */
 	public function redirect( $url ) {
 		if ( $this->headerDone ) {
-			throw new MWException( __METHOD__ . ' called after sending headers' );
+			throw new LogicException( __METHOD__ . ' called after sending headers' );
 		}
 		$this->redirectTarget = $url;
 	}
@@ -173,14 +160,6 @@ class WebInstallerOutput {
 		return Html::linkedStyle( $this->parent->getUrl( [ 'css' => 1 ] ) );
 	}
 
-	public function useShortHeader( $use = true ) {
-		$this->useShortHeader = $use;
-	}
-
-	public function allowFrames( $allow = true ) {
-		$this->allowFrames = $allow;
-	}
-
 	public function flush() {
 		if ( !$this->headerDone ) {
 			$this->outputHeader();
@@ -225,23 +204,13 @@ class WebInstallerOutput {
 	public function outputHeader() {
 		$this->headerDone = true;
 		$this->parent->request->response()->header( 'Content-Type: text/html; charset=utf-8' );
-
-		if ( !$this->allowFrames ) {
-			$this->parent->request->response()->header( 'X-Frame-Options: DENY' );
-		}
+		$this->parent->request->response()->header( 'X-Frame-Options: DENY' );
 
 		if ( $this->redirectTarget ) {
 			$this->parent->request->response()->header( 'Location: ' . $this->redirectTarget );
 
 			return;
 		}
-
-		if ( $this->useShortHeader ) {
-			$this->outputShortHeader();
-
-			return;
-		}
-
 ?>
 <?php echo Html::htmlHeader( $this->getHeadAttribs() ); ?>
 
@@ -249,6 +218,7 @@ class WebInstallerOutput {
 	<meta name="robots" content="noindex, nofollow" />
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<title><?php $this->outputTitle(); ?></title>
+	<?php echo $this->getCodex() . "\n"; ?>
 	<?php echo $this->getCssUrl() . "\n"; ?>
 	<?php echo $this->getJQuery() . "\n"; ?>
 	<?php echo Html::linkedScript( 'config.js' ) . "\n"; ?>
@@ -265,63 +235,43 @@ class WebInstallerOutput {
 	}
 
 	public function outputFooter() {
-		if ( $this->useShortHeader ) {
-			echo Html::closeElement( 'body' ) . Html::closeElement( 'html' );
-
-			return;
-		}
 ?>
 
 </div></div>
 
-<div id="mw-panel">
+<aside id="mw-panel">
 	<div class="portal" id="p-logo">
 		<a href="https://www.mediawiki.org/" title="Main Page"></a>
 	</div>
 <?php
-	$message = wfMessage( 'config-sidebar' )->plain();
-	// Section 1: External links
-	// @todo FIXME: Migrate to plain link label messages (T227297).
-	foreach ( explode( '----', $message ) as $section ) {
-		echo '<div class="portal"><div class="body">';
-		echo $this->parent->parse( $section, true );
-		echo '</div></div>';
-	}
-	// Section 2: Installer pages
-	echo '<div class="portal"><div class="body"><ul>';
-	foreach ( [
-		'config-sidebar-relnotes' => 'ReleaseNotes',
-		'config-sidebar-license' => 'Copying',
-		'config-sidebar-upgrade' => 'UpgradeDoc',
-	] as $msgKey => $pageName ) {
-		echo $this->parent->makeLinkItem(
-			$this->parent->getDocUrl( $pageName ),
-			wfMessage( $msgKey )->text()
-		);
-	}
-	echo '</ul></div></div>';
+		// @phpcs:disable Generic.WhiteSpace.ScopeIndent.IncorrectExact
+		$message = wfMessage( 'config-sidebar' )->plain();
+		// Section 1: External links
+		// @todo FIXME: Migrate to plain link label messages (T227297).
+		foreach ( explode( '----', $message ) as $section ) {
+			echo '<div class="portal"><div class="body">';
+			echo $this->parent->parse( $section, true );
+			echo '</div></div>';
+		}
+		// Section 2: Installer pages
+		echo '<div class="portal"><div class="body"><ul>';
+		foreach ( [
+			'config-sidebar-relnotes' => 'ReleaseNotes',
+			'config-sidebar-license' => 'Copying',
+			'config-sidebar-upgrade' => 'UpgradeDoc',
+		] as $msgKey => $pageName ) {
+			echo $this->parent->makeLinkItem(
+				$this->parent->getDocUrl( $pageName ),
+				wfMessage( $msgKey )->text()
+			);
+		}
+		echo '</ul></div></div>';
+		// @phpcs:enable
 ?>
-</div>
+</aside>
 
 <?php
 		echo Html::closeElement( 'body' ) . Html::closeElement( 'html' );
-	}
-
-	public function outputShortHeader() {
-?>
-<?php echo Html::htmlHeader( $this->getHeadAttribs() ); ?>
-
-<head>
-	<meta name="robots" content="noindex, nofollow" />
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-	<title><?php $this->outputTitle(); ?></title>
-	<?php echo $this->getCssUrl() . "\n"; ?>
-	<?php echo $this->getJQuery() . "\n"; ?>
-	<?php echo Html::linkedScript( 'config.js' ) . "\n"; ?>
-</head>
-
-<body style="background-image: none">
-<?php
 	}
 
 	public function outputTitle() {
@@ -333,6 +283,13 @@ class WebInstallerOutput {
 	 */
 	public function getJQuery() {
 		return Html::linkedScript( "../resources/lib/jquery/jquery.js" );
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCodex() {
+		return Html::linkedStyle( "../resources/lib/codex/codex.style.css" );
 	}
 
 }

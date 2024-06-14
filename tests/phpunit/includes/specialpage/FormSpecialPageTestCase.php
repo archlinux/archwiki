@@ -1,11 +1,18 @@
 <?php
 
+namespace MediaWiki\Tests\SpecialPage;
+
 use MediaWiki\Block\BlockErrorFormatter;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\DAO\WikiAwareEntity;
+use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\SpecialPage\FormSpecialPage;
 use MediaWiki\User\User;
 use MediaWiki\Utils\MWTimestamp;
+use ReflectionMethod;
+use SpecialPageTestBase;
+use UserBlockedError;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
  * Factory for handling the special page list and generating SpecialPage objects.
@@ -34,7 +41,7 @@ abstract class FormSpecialPageTestCase extends SpecialPageTestBase {
 	abstract protected function newSpecialPage();
 
 	/**
-	 * @covers FormSpecialPage::checkExecutePermissions
+	 * @covers \MediaWiki\SpecialPage\FormSpecialPage::checkExecutePermissions
 	 */
 	public function testCheckExecutePermissionsSitewideBlock() {
 		$special = $this->newSpecialPage();
@@ -44,6 +51,11 @@ abstract class FormSpecialPageTestCase extends SpecialPageTestBase {
 		$blockErrorFormatter->method( 'getMessage' )
 			->willReturn( $this->getMockMessage( 'test' ) );
 		$this->setService( 'BlockErrorFormatter', $blockErrorFormatter );
+
+		// Make the permission tests pass so we can check that the user is denied access because of their block.
+		$permissionManager = $this->createMock( PermissionManager::class );
+		$permissionManager->method( 'userHasRight' )->willReturn( true );
+		$this->setService( 'PermissionManager', $permissionManager );
 
 		$user = $this->getMockBuilder( User::class )
 			->onlyMethods( [ 'getBlock', 'getWikiId' ] )
@@ -60,7 +72,7 @@ abstract class FormSpecialPageTestCase extends SpecialPageTestBase {
 	}
 
 	/**
-	 * @covers FormSpecialPage::checkExecutePermissions
+	 * @covers \MediaWiki\SpecialPage\FormSpecialPage::checkExecutePermissions
 	 */
 	public function testCheckExecutePermissionsPartialBlock() {
 		$special = $this->newSpecialPage();
@@ -74,6 +86,11 @@ abstract class FormSpecialPageTestCase extends SpecialPageTestBase {
 		$readOnlyMode = $this->createMock( ReadOnlyMode::class );
 		$readOnlyMode->method( 'isReadOnly' )->willReturn( false );
 		$this->setService( 'ReadOnlyMode', $readOnlyMode );
+
+		// Make the permission tests pass so we can check that the user is denied access because of their block.
+		$permissionManager = $this->createMock( PermissionManager::class );
+		$permissionManager->method( 'userHasRight' )->willReturn( true );
+		$this->setService( 'PermissionManager', $permissionManager );
 
 		$user = $this->getMockBuilder( User::class )
 			->onlyMethods( [ 'getBlock', 'getWikiId' ] )

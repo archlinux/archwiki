@@ -1,17 +1,20 @@
 <?php
 
-namespace MediaWiki\Tests\User\TempUser;
+namespace MediaWiki\Tests\Integration\User\TempUser;
 
 use ExtensionRegistry;
 use MediaWiki\Auth\AuthManager;
-use MediaWiki\MainConfigNames;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Session\Session;
+use MediaWiki\Tests\User\TempUser\TempUserTestTrait;
+use MediaWiki\User\CentralId\CentralIdLookup;
 use MediaWiki\User\TempUser\RealTempUserConfig;
 use MediaWiki\User\TempUser\SerialMapping;
 use MediaWiki\User\TempUser\SerialProvider;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\UserFactory;
 use Wikimedia\TestingAccessWrapper;
+use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @group Database
@@ -21,38 +24,21 @@ use Wikimedia\TestingAccessWrapper;
  * @covers \MediaWiki\User\TempUser\CreateStatus
  */
 class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
-	/** This is meant to be the default config from MainConfigSchema */
-	private const DEFAULTS = [
-		'enabled' => false,
-		'actions' => [ 'edit' ],
-		'genPattern' => '*Unregistered $1',
-		'matchPattern' => '*$1',
-		'serialProvider' => [ 'type' => 'local' ],
-		'serialMapping' => [ 'type' => 'plain-numeric' ]
-	];
+
+	use TempUserTestTrait;
 
 	public function testCreate() {
-		$this->tablesUsed[] = 'user';
-		$this->tablesUsed[] = 'user_autocreate_serial';
-
-		$this->overrideConfigValue(
-			MainConfigNames::AutoCreateTempUser,
-			[
-				'enabled' => true,
-				'actions' => [ 'edit' ],
-				'genPattern' => '*Unregistered $1',
-				'matchPattern' => '*$1',
-				'serialProvider' => [ 'type' => 'local' ],
-				'serialMapping' => [ 'type' => 'plain-numeric' ]
-			]
-		);
+		$this->enableAutoCreateTempUser( [
+			'serialProvider' => [ 'type' => 'local', 'useYear' => false ],
+			'matchPattern' => '~$1',
+		] );
 		$tuc = $this->getServiceContainer()->getTempUserCreator();
 		$this->assertTrue( $tuc->isAutoCreateAction( 'edit' ) );
-		$this->assertTrue( $tuc->isTempName( '*Unregistered 1' ) );
+		$this->assertTrue( $tuc->isTempName( '~1' ) );
 		$status = $tuc->create();
-		$this->assertSame( '*Unregistered 1', $status->getUser()->getName() );
+		$this->assertSame( '~1', $status->getUser()->getName() );
 		$status = $tuc->create();
-		$this->assertSame( '*Unregistered 2', $status->getUser()->getName() );
+		$this->assertSame( '~2', $status->getUser()->getName() );
 	}
 
 	private function getTempUserCreatorUnit() {
@@ -62,7 +48,7 @@ class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
 				'test' => [
 					'factory' => static function () {
 						return new class implements SerialProvider {
-							public function acquireIndex(): int {
+							public function acquireIndex( int $year = 0 ): int {
 								return 1;
 							}
 						};
@@ -87,18 +73,21 @@ class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
 				]
 			]
 		);
-		$config = new RealTempUserConfig(
-			[
-				'enabled' => true,
-				'serialProvider' => [ 'type' => 'test' ],
-				'serialMapping' => [ 'type' => 'test' ]
-			] + self::DEFAULTS
-		);
+		$config = new RealTempUserConfig( [
+			'enabled' => true,
+			'expireAfterDays' => null,
+			'actions' => [ 'edit' ],
+			'genPattern' => '*Unregistered $1',
+			'matchPattern' => '*$1',
+			'serialProvider' => [ 'type' => 'test' ],
+			'serialMapping' => [ 'type' => 'test' ],
+		] );
 		$creator = new TempUserCreator(
 			$config,
 			$this->createSimpleObjectFactory(),
 			$this->createMock( UserFactory::class ),
 			$this->createMock( AuthManager::class ),
+			$this->createMock( CentralIdLookup::class ),
 			null
 		);
 		return [ $creator, [ $scope1, $scope2 ] ];
@@ -112,16 +101,46 @@ class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	public function testAcquireName_db() {
-		$this->tablesUsed[] = 'user_autocreate_serial';
-		$this->overrideConfigValue(
-			MainConfigNames::AutoCreateTempUser,
-			[ 'enabled' => true ] + self::DEFAULTS
-		);
+		$this->enableAutoCreateTempUser( [
+			'serialProvider' => [ 'type' => 'local', 'useYear' => false ],
+			'matchPattern' => '~$1',
+		] );
 		$tuc = TestingAccessWrapper::newFromObject(
 			$this->getServiceContainer()->getTempUserCreator()
 		);
-		$this->assertSame( '*Unregistered 1', $tuc->acquireName() );
-		$this->assertSame( '*Unregistered 2', $tuc->acquireName() );
+		$this->assertSame( '~1', $tuc->acquireName() );
+		$this->assertSame( '~2', $tuc->acquireName() );
+	}
+
+	public function testAcquireName_dbWithYear() {
+		$this->enableAutoCreateTempUser( [ 'serialProvider' => [ 'type' => 'local', 'useYear' => true ] ] );
+
+		ConvertibleTimestamp::setFakeTime( '20000101000000' );
+		$tuc = TestingAccessWrapper::newFromObject(
+			$this->getServiceContainer()->getTempUserCreator()
+		);
+		$this->assertSame( '~2000-1', $tuc->acquireName() );
+		$this->assertSame( '~2000-2', $tuc->acquireName() );
+
+		ConvertibleTimestamp::setFakeTime( '20010101000000' );
+		$this->assertSame( '~2001-1', $tuc->acquireName() );
+	}
+
+	public function testAcquireNameOnDuplicate_db() {
+		$this->enableAutoCreateTempUser( [
+			'serialProvider' => [ 'type' => 'local', 'useYear' => false ],
+			'matchPattern' => '~$1',
+		] );
+		$tuc = TestingAccessWrapper::newFromObject(
+			$this->getServiceContainer()->getTempUserCreator()
+		);
+		// Create a temporary account
+		$this->assertSame( '~1', $tuc->create()->value->getName() );
+		// Reset the user_autocreate_serial table
+		$this->truncateTable( 'user_autocreate_serial' );
+		// Because user_autocreate_serial was truncated, the ::acquireName method should
+		// return null as the code attempts to return a temporary account that already exists.
+		$this->assertSame( null, $tuc->acquireName() );
 	}
 
 	public function testAcquireAndStashName() {
@@ -153,5 +172,26 @@ class TempUserCreatorTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSame( '*Unregistered active aardvark', $name );
 		$name = $creator->acquireAndStashName( $session );
 		$this->assertSame( '*Unregistered active aardvark', $name );
+	}
+
+	public function testRateLimit() {
+		$this->enableAutoCreateTempUser( [
+			'serialProvider' => [ 'type' => 'local', 'useYear' => false ],
+			'matchPattern' => '~$1',
+		] );
+		$this->overrideConfigValue( 'AccountCreationThrottle', [
+			'count' => 10,
+			'seconds' => 86400
+		] );
+		$this->overrideConfigValue( 'TempAccountCreationThrottle', [
+			'count' => 1,
+			'seconds' => 86400
+		] );
+		$tuc = $this->getServiceContainer()->getTempUserCreator();
+		$status = $tuc->create( null, new FauxRequest() );
+		$this->assertSame( '~1', $status->getUser()->getName() );
+		$status = $tuc->create( null, new FauxRequest() );
+		// TODO: Use new message key (T357777, T357802)
+		$this->assertStatusError( 'acct_creation_throttle_hit', $status );
 	}
 }

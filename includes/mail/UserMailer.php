@@ -19,13 +19,14 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @author <brion@pobox.com>
+ * @author Brooke Vibber
  * @author <mail@tgries.de>
  * @author Tim Starling
  * @author Luke Welling lwelling@wikimedia.org
  */
 
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\SpecialPage\SpecialPage;
@@ -67,15 +68,17 @@ class UserMailer {
 	 * @return string
 	 */
 	private static function makeMsgId() {
-		$smtp = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::SMTP );
-		$server = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::Server );
+		$services = MediaWikiServices::getInstance();
+
+		$smtp = $services->getMainConfig()->get( MainConfigNames::SMTP );
+		$server = $services->getMainConfig()->get( MainConfigNames::Server );
 		$domainId = WikiMap::getCurrentWikiDbDomain()->getId();
 		$msgid = uniqid( $domainId . ".", true /** for cygwin */ );
+
 		if ( is_array( $smtp ) && isset( $smtp['IDHost'] ) && $smtp['IDHost'] ) {
 			$domain = $smtp['IDHost'];
 		} else {
-			$url = wfParseUrl( $server );
-			$domain = $url['host'];
+			$domain = parse_url( $server, PHP_URL_HOST ) ?? '';
 		}
 		return "<$msgid@$domain>";
 	}
@@ -321,6 +324,15 @@ class UserMailer {
 		$ret = $hookRunner->onAlternateUserMailer( $headers, $to, $from, $subject, $body );
 		if ( $ret === false ) {
 			// the hook implementation will return false to skip regular mail sending
+			LoggerFactory::getInstance( 'usermailer' )->info(
+				"Email to {to} from {from} with subject {subject} handled by AlternateUserMailer",
+				[
+					'to' => $to[0]->toString(),
+					'allto' => implode( ', ', array_map( 'strval', $to ) ),
+					'from' => $from->toString(),
+					'subject' => $subject,
+				]
+			);
 			return Status::newGood();
 		} elseif ( $ret !== true ) {
 			// the hook implementation will return a string to pass an error message
@@ -398,6 +410,15 @@ class UserMailer {
 				wfDebug( "Unknown error sending mail" );
 				return Status::newFatal( 'php-mail-error-unknown' );
 			} else {
+				LoggerFactory::getInstance( 'usermailer' )->info(
+					"Email sent to {to} from {from} with subject {subject}",
+					[
+						'to' => $to[0]->toString(),
+						'allto' => implode( ', ', array_map( 'strval', $to ) ),
+						'from' => $from->toString(),
+						'subject' => $subject,
+					]
+				);
 				return Status::newGood();
 			}
 		}
@@ -424,10 +445,12 @@ class UserMailer {
 
 	/**
 	 * Converts a string into a valid RFC 822 "phrase", such as is used for the sender name
+	 * @deprecated 1.38 This method has not been used by anything
 	 * @param string $phrase
 	 * @return string
 	 */
 	public static function rfc822Phrase( $phrase ) {
+		wfDeprecated( __METHOD__, '1.38' );
 		// Remove line breaks
 		$phrase = self::sanitizeHeaderValue( $phrase );
 		// Remove quotes
@@ -465,10 +488,8 @@ class UserMailer {
 		$replace = $illegal . '.\t ?_';
 
 		$out = "=?$charset?Q?";
-		$out .= preg_replace_callback( "/([$replace])/",
-			static function ( $matches ) {
-				return sprintf( "=%02X", ord( $matches[1] ) );
-			},
+		$out .= preg_replace_callback( "/[$replace]/",
+			static fn ( $m ) => sprintf( "=%02X", ord( $m[0] ) ),
 			$string
 		);
 		$out .= '?=';

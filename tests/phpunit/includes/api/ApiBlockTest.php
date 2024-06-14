@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Tests\Api;
+
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Block\Restriction\ActionRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
@@ -16,19 +18,17 @@ use MediaWiki\Utils\MWTimestamp;
  * @group Database
  * @group medium
  *
- * @covers ApiBlock
+ * @covers \ApiBlock
  */
 class ApiBlockTest extends ApiTestCase {
 	use MockAuthorityTrait;
 
 	protected $mUser = null;
+	private $blockStore;
+	private $blockMigrationStage;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->tablesUsed = array_merge(
-			$this->tablesUsed,
-			[ 'ipblocks', 'ipblocks_restrictions', 'change_tag', 'change_tag_def', 'logging' ]
-		);
 
 		$this->mUser = $this->getMutableTestUser()->getUser();
 		$this->overrideConfigValue(
@@ -38,6 +38,9 @@ class ApiBlockTest extends ApiTestCase {
 				'IPv6' => 19,
 			]
 		);
+		$this->blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
+		$this->blockMigrationStage =
+			$this->getConfVar( MainConfigNames::BlockTargetMigrationStage );
 	}
 
 	/**
@@ -59,9 +62,9 @@ class ApiBlockTest extends ApiTestCase {
 		}
 		$ret = $this->doApiRequestWithToken( array_merge( $params, $extraParams ), null, $blocker );
 
-		$block = DatabaseBlock::newFromTarget( $this->mUser->getName() );
+		$block = $this->blockStore->newFromTarget( $this->mUser->getName() );
 
-		$this->assertTrue( $block !== null, 'Block is valid' );
+		$this->assertInstanceOf( DatabaseBlock::class, $block, 'Block is valid' );
 
 		$this->assertSame( $this->mUser->getName(), $block->getTargetName() );
 		$this->assertSame( 'Some reason', $block->getReasonComment()->text );
@@ -150,11 +153,20 @@ class ApiBlockTest extends ApiTestCase {
 			new UltimateAuthority( $this->getTestSysop()->getUser() )
 		);
 
-		$this->assertSame( '1', $this->db->newSelectQueryBuilder()
-			->select( 'ipb_deleted' )
-			->from( 'ipblocks' )
-			->where( [ 'ipb_id' => $res[0]['block']['id'] ] )
-			->caller( __METHOD__ )->fetchField() );
+		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+			$this->assertSame( '1', $this->db->newSelectQueryBuilder()
+				->select( 'ipb_deleted' )
+				->from( 'ipblocks' )
+				->where( [ 'ipb_id' => $res[0]['block']['id'] ] )
+				->caller( __METHOD__ )->fetchField() );
+		}
+		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+			$this->assertSame( '1', $this->db->newSelectQueryBuilder()
+				->select( 'bl_deleted' )
+				->from( 'block' )
+				->where( [ 'bl_id' => $res[0]['block']['id'] ] )
+				->caller( __METHOD__ )->fetchField() );
+		}
 	}
 
 	public function testBlockWithProhibitedHide() {
@@ -175,11 +187,20 @@ class ApiBlockTest extends ApiTestCase {
 
 		$res = $this->doBlock( [ 'noemail' => '' ] );
 
-		$this->assertSame( '1', $this->getDb()->newSelectQueryBuilder()
-			->select( 'ipb_block_email' )
-			->from( 'ipblocks' )
-			->where( [ 'ipb_id' => $res[0]['block']['id'] ] )
-			->caller( __METHOD__ )->fetchField() );
+		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+			$this->assertSame( '1', $this->getDb()->newSelectQueryBuilder()
+				->select( 'ipb_block_email' )
+				->from( 'ipblocks' )
+				->where( [ 'ipb_id' => $res[0]['block']['id'] ] )
+				->caller( __METHOD__ )->fetchField() );
+		}
+		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+			$this->assertSame( '1', $this->getDb()->newSelectQueryBuilder()
+				->select( 'bl_block_email' )
+				->from( 'block' )
+				->where( [ 'bl_id' => $res[0]['block']['id'] ] )
+				->caller( __METHOD__ )->fetchField() );
+		}
 	}
 
 	public function testBlockWithProhibitedEmailBlock() {
@@ -198,11 +219,20 @@ class ApiBlockTest extends ApiTestCase {
 		MWTimestamp::setFakeTime( $fakeTime );
 		$res = $this->doBlock( [ 'expiry' => '1 day' ] );
 
-		$expiry = $this->getDb()->newSelectQueryBuilder()
-			->select( 'ipb_expiry' )
-			->from( 'ipblocks' )
-			->where( [ 'ipb_id' => $res[0]['block']['id'] ] )
-			->caller( __METHOD__ )->fetchField();
+		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+			$expiry = $this->getDb()->newSelectQueryBuilder()
+				->select( 'ipb_expiry' )
+				->from( 'ipblocks' )
+				->where( [ 'ipb_id' => $res[0]['block']['id'] ] )
+				->caller( __METHOD__ )->fetchField();
+		}
+		if ( $this->blockMigrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+			$expiry = $this->getDb()->newSelectQueryBuilder()
+				->select( 'bl_expiry' )
+				->from( 'block' )
+				->where( [ 'bl_id' => $res[0]['block']['id'] ] )
+				->caller( __METHOD__ )->fetchField();
+		}
 
 		$this->assertSame( (int)wfTimestamp( TS_UNIX, $expiry ), $fakeTime + 86400 );
 	}
@@ -216,7 +246,7 @@ class ApiBlockTest extends ApiTestCase {
 	public function testBlockWithoutRestrictions() {
 		$this->doBlock();
 
-		$block = DatabaseBlock::newFromTarget( $this->mUser->getName() );
+		$block = $this->blockStore->newFromTarget( $this->mUser->getName() );
 
 		$this->assertTrue( $block->isSitewide() );
 		$this->assertSame( [], $block->getRestrictions() );
@@ -232,7 +262,7 @@ class ApiBlockTest extends ApiTestCase {
 			'allowusertalk' => true,
 		] );
 
-		$block = DatabaseBlock::newFromTarget( $this->mUser->getName() );
+		$block = $this->blockStore->newFromTarget( $this->mUser->getName() );
 
 		$this->assertFalse( $block->isSitewide() );
 		$this->assertInstanceOf( PageRestriction::class, $block->getRestrictions()[0] );
@@ -248,7 +278,7 @@ class ApiBlockTest extends ApiTestCase {
 			'allowusertalk' => true,
 		] );
 
-		$block = DatabaseBlock::newFromTarget( $this->mUser->getName() );
+		$block = $this->blockStore->newFromTarget( $this->mUser->getName() );
 
 		$this->assertInstanceOf( NamespaceRestriction::class, $block->getRestrictions()[0] );
 		$this->assertEquals( $namespace, $block->getRestrictions()[0]->getValue() );
@@ -269,7 +299,7 @@ class ApiBlockTest extends ApiTestCase {
 			'allowusertalk' => true,
 		] );
 
-		$block = DatabaseBlock::newFromTarget( $this->mUser->getName() );
+		$block = $this->blockStore->newFromTarget( $this->mUser->getName() );
 
 		$this->assertInstanceOf( ActionRestriction::class, $block->getRestrictions()[0] );
 		$this->assertEquals( $action, $blockActionInfo->getActionFromId( $block->getRestrictions()[0]->getValue() ) );

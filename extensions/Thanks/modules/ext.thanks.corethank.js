@@ -16,17 +16,20 @@
 		} );
 	}
 
-	// $thankLink is the element with the data-revision-id attribute
-	// $thankElement is the element to be removed on success
+	/**
+	 * Send thanks
+	 *
+	 * @param {jQuery} $thankLink The element with the data-revision-id attribute
+	 * @param {jQuery} $thankElement The element to be removed on success
+	 */
 	function sendThanks( $thankLink, $thankElement ) {
-		var source, apiParams;
-
 		if ( $thankLink.data( 'clickDisabled' ) ) {
 			// Prevent double clicks while we haven't received a response from API request
-			return false;
+			return;
 		}
 		$thankLink.data( 'clickDisabled', true );
 
+		var source;
 		// Determine the thank source (history, diff, or log).
 		if ( mw.config.get( 'wgAction' ) === 'history' ) {
 			source = 'history';
@@ -37,7 +40,7 @@
 		}
 
 		// Construct the API parameters.
-		apiParams = {
+		var apiParams = {
 			action: 'thank',
 			source: source
 		};

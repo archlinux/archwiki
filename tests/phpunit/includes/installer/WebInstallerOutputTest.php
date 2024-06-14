@@ -1,8 +1,11 @@
 <?php
 
+use MediaWiki\Installer\WebInstaller;
+use MediaWiki\Installer\WebInstallerOutput;
+
 class WebInstallerOutputTest extends MediaWikiIntegrationTestCase {
 	/**
-	 * @covers WebInstallerOutput::getCSS
+	 * @covers \MediaWiki\Installer\WebInstallerOutput::getCSS
 	 */
 	public function testGetCSS() {
 		$_SERVER['DOCUMENT_ROOT'] = __DIR__ . '../../../';
@@ -10,7 +13,7 @@ class WebInstallerOutputTest extends MediaWikiIntegrationTestCase {
 		$out = new WebInstallerOutput( $installer );
 		$css = $out->getCSS();
 		$this->assertStringContainsString(
-			'#content {',
+			'#mw-panel {',
 			$css,
 			'CSS for installer can be generated'
 		);

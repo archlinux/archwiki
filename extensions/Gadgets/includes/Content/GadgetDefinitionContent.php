@@ -1,7 +1,5 @@
 <?php
 /**
- * Copyright 2014
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,7 +22,7 @@ namespace MediaWiki\Extension\Gadgets\Content;
 
 use FormatJson;
 use JsonContent;
-use Status;
+use MediaWiki\Status\Status;
 
 class GadgetDefinitionContent extends JsonContent {
 
@@ -51,7 +49,7 @@ class GadgetDefinitionContent extends JsonContent {
 	 * @return string
 	 */
 	public function beautifyJSON() {
-		// @todo we should normalize entries in module.scripts and module.styles
+		// @todo we should normalize entries in module.pages
 		return FormatJson::encode( $this->getAssocArray(), "\t", FormatJson::UTF8_OK );
 	}
 
@@ -65,7 +63,7 @@ class GadgetDefinitionContent extends JsonContent {
 				$this->validation = $this->getData();
 			} else {
 				$validator = new GadgetDefinitionValidator();
-				$this->validation = $validator->validate( $this->getAssocArray() );
+				$this->validation = $validator->validate( $this->getAssocArray(), true );
 			}
 		}
 		return $this->validation;
@@ -82,7 +80,7 @@ class GadgetDefinitionContent extends JsonContent {
 		$info = wfObjectToArray( $this->getData()->getValue() );
 		/** @var GadgetDefinitionContentHandler $handler */
 		$handler = $this->getContentHandler();
-		$info = wfArrayPlus2d( $info, $handler->getDefaultMetadata() );
+		$info = wfArrayPlus2d( $info, $handler->getEmptyDefinition() );
 
 		return $info;
 	}

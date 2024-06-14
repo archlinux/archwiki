@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Specials\SpecialRenameUser;
 
 /**
@@ -11,7 +12,7 @@ class SpecialRenameUserTest extends SpecialPageTestBase {
 	protected function newSpecialPage() {
 		$services = $this->getServiceContainer();
 		return new SpecialRenameUser(
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$services->getContentLanguage(),
 			$services->getMovePageFactory(),
 			$services->getPermissionManager(),
@@ -50,7 +51,7 @@ class SpecialRenameUserTest extends SpecialPageTestBase {
 		$this->editPage( $oldTalkPage, 'user talk page' );
 
 		$formData = [
-			'token' => $performer->getEditToken(),
+			'wpEditToken' => $performer->getEditToken(),
 			'oldusername' => $oldName,
 			'newusername' => $newName,
 			'reason' => 'r',

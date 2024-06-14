@@ -49,7 +49,7 @@ const Thumbnail = require( '../model/mmv.model.Thumbnail.js' );
 		 * @return {jQuery.Promise.<Thumbnail>}
 		 */
 		get( file, width, height ) {
-			const cacheKey = `${file.getPrefixedDb()}|${width || ''}|${height || ''}`;
+			const cacheKey = `${ file.getPrefixedDb() }|${ width || '' }|${ height || '' }`;
 
 			return this.getCachedPromise( cacheKey, () => {
 				return this.apiGetWithMaxAge( {
@@ -78,7 +78,7 @@ const Thumbnail = require( '../model/mmv.model.Thumbnail.js' );
 							return $.Deferred().reject( 'error in provider, thumb info not found' );
 						}
 					} else if ( page.missing === true && page.imagerepository === '' ) {
-						return $.Deferred().reject( `file does not exist: ${file.getPrefixedDb()}` );
+						return $.Deferred().reject( `file does not exist: ${ file.getPrefixedDb() }` );
 					} else {
 						return $.Deferred().reject( 'unknown error' );
 					}

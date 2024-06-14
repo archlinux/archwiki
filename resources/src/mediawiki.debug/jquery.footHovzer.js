@@ -1,6 +1,5 @@
 /**
  * @private
- * @class jQuery.plugin.footHovzer
  */
 ( function () {
 	var $hovzer, footHovzer, $spacer;
@@ -15,12 +14,12 @@
 	/**
 	 * Utility to stack stuff in an overlay fixed on the bottom of the page.
 	 *
-	 * Usage:
+	 * @example
+	 * var hovzer = $.getFootHovzer();
+	 * hovzer.$.append( $myCollection );
+	 * hovzer.update();
 	 *
-	 *     var hovzer = $.getFootHovzer();
-	 *     hovzer.$.append( $myCollection );
-	 *     hovzer.update();
-	 *
+	 * @private
 	 * @static
 	 * @inheritable
 	 * @return {jQuery.footHovzer}
@@ -61,7 +60,7 @@
 
 	/**
 	 * @class jQuery
-	 * @mixins jQuery.plugin.footHovzer
+	 * @mixes jQuery.plugin.footHovzer
 	 */
 
 }() );

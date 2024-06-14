@@ -18,13 +18,20 @@
  * @file
  */
 
+namespace MediaWiki\Context;
+
+use Language;
 use MediaWiki\Config\Config;
+use MediaWiki\Language\LocalizationContext;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Session\CsrfTokenSetProvider;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use Skin;
+use Timing;
+use WikiPage;
 
 /**
  * Interface for objects which can provide a MediaWiki context on request
@@ -36,9 +43,9 @@ use MediaWiki\User\User;
  *   b) Key objects used for response building and PHP session state control
  *   c) Performance metric deltas accumulated from request execution
  *   d) The site configuration object
- * All of the objects are useful for the vast majority of MediaWiki requests.
+ * All these objects are useful for the vast majority of MediaWiki requests.
  * The site configuration object is included on grounds of extreme
- * utility, even though it should not actually depend on the web request.
+ * utility, even though it should not depend on the web request.
  *
  * More specifically, the scope of the context includes:
  *   a) Objects that represent the HTTP request/response and PHP session state
@@ -61,7 +68,7 @@ use MediaWiki\User\User;
  * @stable to type
  * @author Happy-melon
  */
-interface IContextSource extends MessageLocalizer, CsrfTokenSetProvider {
+interface IContextSource extends LocalizationContext, CsrfTokenSetProvider {
 
 	/**
 	 * @return WebRequest
@@ -74,7 +81,8 @@ interface IContextSource extends MessageLocalizer, CsrfTokenSetProvider {
 	public function getTitle();
 
 	/**
-	 * Check whether a WikiPage object can be get with getWikiPage().
+	 * Check whether a WikiPage object can be obtained with getWikiPage().
+	 *
 	 * Callers should expect that an exception is thrown from getWikiPage()
 	 * if this method returns false.
 	 *
@@ -85,6 +93,7 @@ interface IContextSource extends MessageLocalizer, CsrfTokenSetProvider {
 
 	/**
 	 * Get the WikiPage object.
+	 *
 	 * May throw an exception if there's no Title object set or the Title object
 	 * belongs to a special namespace that doesn't have WikiPage, so use first
 	 * canUseWikiPage() to check whether this method can be called safely.
@@ -119,8 +128,8 @@ interface IContextSource extends MessageLocalizer, CsrfTokenSetProvider {
 	public function getAuthority(): Authority;
 
 	/**
-	 * @return Language
 	 * @since 1.19
+	 * @return Language
 	 */
 	public function getLanguage();
 
@@ -145,6 +154,7 @@ interface IContextSource extends MessageLocalizer, CsrfTokenSetProvider {
 
 	/**
 	 * Export the resolved user IP, HTTP headers, user ID, and session ID.
+	 *
 	 * The result will be reasonably sized to allow for serialization.
 	 *
 	 * @return array
@@ -152,3 +162,6 @@ interface IContextSource extends MessageLocalizer, CsrfTokenSetProvider {
 	 */
 	public function exportSession();
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( IContextSource::class, 'IContextSource' );

@@ -19,20 +19,20 @@
  *
  * @file
  * @ingroup SpecialPage
- * @author Brion Vibber
+ * @author Brooke Vibber
  */
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\ExternalLinks\LinkFilter;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Parser\Parser;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\TitleValue;
 use MediaWiki\Utils\UrlUtils;
-use Parser;
 use Skin;
 use stdClass;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -277,7 +277,5 @@ class SpecialLinkSearch extends QueryPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialLinkSearch::class, 'SpecialLinkSearch' );

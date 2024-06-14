@@ -104,7 +104,7 @@ class FilteredActionsHandlerTest extends \MediaWikiIntegrationTestCase {
 
 		$variablesManager = $this->createMock( VariablesManager::class );
 		$variablesManager->method( 'getVar' )
-			->willReturnCallback( fn( $unused, $vars ) => AFPData::newFromPHPVar( $urlsAdded ) );
+			->willReturnCallback( fn ( $unused, $vars ) => AFPData::newFromPHPVar( $urlsAdded ) );
 
 		$blockedDomainStorage = $this->createMock( BlockedDomainStorage::class );
 		$blockedDomainStorage->method( 'loadComputed' )

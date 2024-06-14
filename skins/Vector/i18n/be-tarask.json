@@ -24,7 +24,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 мова|$1 мовы|$1 моваў}}",
 	"vector-no-language-button-label": "Дадаць мовы",
 	"vector-no-language-button-aria-label": "Гэты артыкул існуе толькі гэтай мовай. Дадайце артыкулы іншымі мовамі",
-	"vector-language-redirect-to-top": "У гэтым праекце {{SITENAME}} моўныя спасылкі знаходзяцца ўверсе старонкі насупраць назвы артыкулу. [[#p-lang-btn|Перайсьці ўгору]].",
 	"vector-language-variant-switcher-label": "Зьмяніць варыянт мовы",
 	"vector-action-addsection": "Дадаць тэму",
 	"vector-action-delete": "Выдаліць",
@@ -56,10 +55,13 @@
 	"vector-site-nav-label": "Сайт",
 	"vector-page-tools-label": "Інструмэнты",
 	"vector-page-tools-general-label": "Агульныя",
+	"vector-page-tools-actions-label": "Дзеяньні",
 	"vector-pin-element-label": "перанесьці ў бакавую панэль",
 	"vector-unpin-element-label": "схаваць",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Абмеркаваньне]]",
 	"tooltip-vector-anon-user-menu-title": "Болей парамэтраў",
 	"vector-prefs-limited-width": "Уключыць рэжым абмежаванай шырыні",
-	"vector-prefs-limited-width-help": "Уключыць рэжым абмежаванай шырыні дзеля лепшага чытаньня."
+	"vector-prefs-limited-width-help": "Уключыць рэжым абмежаванай шырыні дзеля лепшага чытаньня.",
+	"vector-2022-beta-preview-label": "Даступнасьць для чытаньня (Вэктар-2022)",
+	"vector-2022-beta-preview-description": "Атрымайце раньні доступ да новых функцыяў чытаньня, такіх як паляпшэньне тыпаграфікі і начны рэжым."
 }

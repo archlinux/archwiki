@@ -162,6 +162,7 @@ const License = require( './mmv.model.License.js' );
 			 */
 			this.thumbUrls = {};
 		}
+
 		/**
 		 * Constructs a new Image object out of an object containing
 		 *
@@ -192,15 +193,15 @@ const License = require( './mmv.model.License.js' );
 			const extmeta = innerInfo.extmetadata;
 
 			if ( extmeta ) {
-				creationDateTime = this.parseExtmeta( extmeta.DateTimeOriginal, 'plaintext' );
-				uploadDateTime = this.parseExtmeta( extmeta.DateTime, 'plaintext' ).toString();
+				creationDateTime = this.parseExtmeta( extmeta.DateTimeOriginal, 'datetime' );
+				uploadDateTime = this.parseExtmeta( extmeta.DateTime, 'datetime' );
 
 				// Convert to "timestamp" format commonly used in EventLogging
 				anonymizedUploadDateTime = uploadDateTime.replace( /[^\d]/g, '' );
 
 				// Anonymise the timestamp to avoid making the file identifiable
 				// We only need to know the day
-				anonymizedUploadDateTime = `${anonymizedUploadDateTime.slice( 0, anonymizedUploadDateTime.length - 6 )}000000`;
+				anonymizedUploadDateTime = `${ anonymizedUploadDateTime.slice( 0, anonymizedUploadDateTime.length - 6 ) }000000`;
 
 				name = this.parseExtmeta( extmeta.ObjectName, 'plaintext' );
 
@@ -260,6 +261,7 @@ const License = require( './mmv.model.License.js' );
 
 			return imageData;
 		}
+
 		/**
 		 * Constructs a new License object out of an object containing
 		 * imageinfo data from an API response.
@@ -284,11 +286,12 @@ const License = require( './mmv.model.License.js' );
 
 			return license;
 		}
+
 		/**
 		 * Reads and parses a value from the imageinfo API extmetadata field.
 		 *
 		 * @param {Array} data
-		 * @param {string} type one of 'plaintext', 'string', 'float', 'boolean', 'list'
+		 * @param {string} type one of 'plaintext', 'string', 'float', 'boolean', 'list', 'datetime'
 		 * @return {string|number|boolean|Array} value or undefined if it is missing
 		 */
 		static parseExtmeta( data, type ) {
@@ -312,12 +315,28 @@ const License = require( './mmv.model.License.js' );
 				} else {
 					return undefined;
 				}
+			} else if ( type === 'datetime' ) {
+				value = value.toString();
+				// https://datatracker.ietf.org/doc/html/rfc3339
+				// adapted from https://stackoverflow.com/questions/3143070/regex-to-match-an-iso-8601-datetime-string
+				const rfc3339 = /\d{4}-[01]\d-[0-3]\d(T[0-2]\d:[0-5]\d:[0-5]\d(\.\d+)?Z?)?/;
+				const match = value.match( rfc3339 );
+				if ( !match ) {
+					return value.replace( /<.*?>/g, '' );
+				}
+				value = match[ 0 ];
+				if ( value.match( /^\d{4}-00-00/ ) ) {
+					// assume yyyy
+					return value.slice( 0, 4 );
+				}
+				return value;
 			} else if ( type === 'list' ) {
 				return value === '' ? [] : value.split( '|' );
 			} else {
 				throw new Error( 'Image.parseExtmeta: unknown type' );
 			}
 		}
+
 		/**
 		 * Add a thumb URL
 		 *
@@ -327,6 +346,7 @@ const License = require( './mmv.model.License.js' );
 		addThumbUrl( width, url ) {
 			this.thumbUrls[ width ] = url;
 		}
+
 		/**
 		 * Get a thumb URL if we have it.
 		 *
@@ -336,6 +356,7 @@ const License = require( './mmv.model.License.js' );
 		getThumbUrl( width ) {
 			return this.thumbUrls[ width ];
 		}
+
 		/**
 		 * Check whether the image has geolocation data.
 		 *

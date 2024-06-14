@@ -1,12 +1,15 @@
 <?php
 
+namespace MediaWiki\Tests\Api\Query;
+
+use MediaWiki\Tests\Api\ApiTestCase;
 use Wikimedia\Timestamp\ConvertibleTimestamp;
 
 /**
  * @group API
  * @group medium
  *
- * @covers ApiQueryLanguageinfo
+ * @covers \ApiQueryLanguageinfo
  */
 class ApiQueryLanguageinfoTest extends ApiTestCase {
 
@@ -51,7 +54,7 @@ class ApiQueryLanguageinfoTest extends ApiTestCase {
 				'bcp47' => 'sr',
 				'autonym' => 'српски / srpski',
 				'name' => 'српски / srpski',
-				'fallbacks' => [ 'sr-ec', 'sr-cyrl' ],
+				'fallbacks' => [ 'sr-ec', 'sr-cyrl', 'sr-el', 'sr-latn' ],
 				'dir' => 'ltr',
 				'variants' => [ 'sr', 'sr-ec', 'sr-el' ],
 				'variantnames' => [

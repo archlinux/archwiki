@@ -97,8 +97,14 @@ class GlobalIdGenerator {
 			throw new InvalidArgumentException( "No temp directory provided" );
 		}
 		$this->tmpDir = $tempDirectory;
-		// Check if getmyuid exists, it could be disabled for security reasons - T324513
-		$fileSuffix = function_exists( 'getmyuid' ) ? getmyuid() : '';
+		// Include the UID in the filename (T268420, T358768)
+		if ( function_exists( 'posix_geteuid' ) ) {
+			$fileSuffix = posix_geteuid();
+		} elseif ( function_exists( 'getmyuid' ) ) {
+			$fileSuffix = getmyuid();
+		} else {
+			$fileSuffix = '';
+		}
 		$this->uniqueFilePrefix = self::FILE_PREFIX . $fileSuffix;
 		$this->nodeIdFile = $tempDirectory . '/' . $this->uniqueFilePrefix . '-UID-nodeid';
 		// If different processes run as different users, they may have different temp dirs.
@@ -175,8 +181,8 @@ class GlobalIdGenerator {
 		Assert::parameter( $base <= 36, '$base', 'must be <= 36' );
 		Assert::parameter( $base >= 2, '$base', 'must be >= 2' );
 
-		$info = $this->getTimeAndDelay( 'lockFile128', 16384, 1048576, 1048576 );
-		$info[self::CLOCK_OFFSET_COUNTER] %= 1048576;
+		$info = $this->getTimeAndDelay( 'lockFile128', 16384, 1_048_576, 1_048_576 );
+		$info[self::CLOCK_OFFSET_COUNTER] %= 1_048_576;
 
 		return \Wikimedia\base_convert( $this->getTimestampedID128( $info ), 2, $base );
 	}

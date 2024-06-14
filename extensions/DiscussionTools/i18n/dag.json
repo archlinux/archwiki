@@ -1,19 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
+			"ANTHONY DERY",
 			"Alhassan Mohammed Awal",
 			"Alhassan Peter",
 			"Amire80",
+			"Attah Mohammed",
 			"Chirifo",
 			"Hasslaebetch",
+			"Issahiddris98",
 			"Jahinfo",
 			"Karimbaasani",
-			"Naporo",
-			"Ruky Wunpini",
-			"Issahiddris98",
 			"Musahfm",
-			"ANTHONY DERY",
-			"Attah Mohammed"
+			"Naporo",
+			"Ruky Wunpini"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "{{GENDER:|You}} ni nya buɣisigu so yi niŋ tɔɣino zaŋ chaŋ saawara ŋɔ polo. A ni tooi baŋsi a ni bɔri ni nyari buɣisigu ŋɔ shɛm.",
@@ -31,6 +31,7 @@
 	"discussiontools-emptystate-desc-self-anon": "N IP adrɛɛsi maa taɣirila saha shɛli kam, ka di tooi zooi ka ninvuɣ' bɔbili mali ŋa. A ni [$1 nam akɔnti] bee [$2 kpubu[ din yɛn gu ka taɣi saha ŋan kanna nangbankpeeni zaŋ chaŋ ban yi polo. Akɔnti nambu gba nyɛla ŋan sɔŋdi sɔɣiri.",
 	"discussiontools-emptystate-title-self": "{{GENDER:|Welcome}} niŋdi a yɛltɔɣa peeji maraaba yaha",
 	"discussiontools-emptystate-title-self-anon": "{{PAƔA BEE DOO:|Maraba}} paaji ŋɔ zuɣu",
+	"discussiontools-emptystate-title-self-temp": "{{PAƔA BEE DOO:|maraba}} paaji shɛli din ku yuui ŋɔ zuɣu",
 	"discussiontools-emptystate-title-user": "Pilimi saawara ni  {{PAƔA BEE DOO :{{PAAJI YULI}}|ni}} {{PAAJI YULI}}",
 	"discussiontools-emptystate-title-user-anon": "{{PAƔA BEE DOO:|Maraba}} paaji ŋɔ zuɣu",
 	"discussiontools-error-noswitchtove-table": "Teebuli sintaɣisi",
@@ -124,7 +125,6 @@
 	"echo-category-title-dt-subscription": "Yɛltɔɣa yaɣili {{PLURAL:$1|zaŋ maŋa pahi|subscriptions}}",
 	"echo-category-title-dt-subscription-archiving": "Yɛltɔɣa paaji {{PLURAL:$1|archiving}}",
 	"echo-pref-tooltip-dt-subscription": "Timi ma tibili di yi niŋ ka so niŋ tɔɣino zaŋ chaŋ yɛlzuɣu shɛli ni n ni be {{GENDER\n:|subscribed}} to",
-	"minerva-talk-full-page": "Karimi ŋa kamani wiki paaji",
 	"tag-discussiontools-added-comment-description": "Tɔɣino ŋan be yɛltɔɣa paaji ŋɔ zuɣu pahila maliniŋ puuni",
 	"tag-discussiontools-description": "Maliniŋ shɛli din niŋ ka di nyɛla saawara tuma niɛma ka bɛ zaŋ niŋ ʋa",
 	"tag-discussiontools-edit": "Maliniŋ tɔɣino",

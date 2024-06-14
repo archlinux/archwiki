@@ -3,7 +3,6 @@
 		"authors": []
 	},
 	"apierror-discussiontools-commentid-notfound": "Komentar sa ID-om '$1' nije pronađen.",
-	"apihelp-discussiontoolsedit-param-commentid": "ID komentara",
 	"apihelp-discussiontoolsedit-param-wikitext": "Vikitekst",
 	"apihelp-discussiontoolsedit-summary": "Objavljivanje poruke na stranici za diskusiju.",
 	"apihelp-discussiontoolspageinfo-param-oldid": "Broj izmene za upotrebu (podrazumevano: poslednja izmena)",

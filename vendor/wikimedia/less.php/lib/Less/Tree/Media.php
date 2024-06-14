@@ -9,7 +9,6 @@ class Less_Tree_Media extends Less_Tree {
 	public $index;
 	public $currentFileInfo;
 	public $isReferenced;
-	public $type = 'Media';
 
 	public function __construct( $value = [], $features = [], $index = null, $currentFileInfo = null ) {
 		$this->index = $index;
@@ -39,11 +38,11 @@ class Less_Tree_Media extends Less_Tree {
 
 	/**
 	 * @param Less_Environment $env
-	 * @return Less_Tree_Media|Less_Tree_Ruleset
+	 * @return self|Less_Tree_Ruleset
 	 * @see less-2.5.3.js#Media.prototype.eval
 	 */
 	public function compile( $env ) {
-		$media = new Less_Tree_Media( [], [], $this->index, $this->currentFileInfo );
+		$media = new self( [], [], $this->index, $this->currentFileInfo );
 
 		$strictMathBypass = false;
 		if ( Less_Parser::$options['strictMath'] === false ) {
@@ -112,7 +111,7 @@ class Less_Tree_Media extends Less_Tree {
 	 */
 	public function compileNested( $env ) {
 		$path = array_merge( $env->mediaPath, [ $this ] );
-		'@phan-var array<Less_Tree_Media> $path';
+		'@phan-var self[] $path';
 
 		// Extract the media-query conditions separated with `,` (OR).
 		foreach ( $path as $key => $p ) {
@@ -130,6 +129,7 @@ class Less_Tree_Media extends Less_Tree {
 		//	b and c and e
 
 		$permuted = $this->permute( $path );
+		'@phan-var (Less_Tree|string)[][] $permuted';
 		$expressions = [];
 		foreach ( $permuted as $path ) {
 

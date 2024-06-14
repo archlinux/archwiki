@@ -23,7 +23,6 @@
 	"echo-pref-subscription-edit-thank": "El me rengrasia par on me canbiamento",
 	"echo-pref-tooltip-edit-thank": "Avìxame co calcheduni me ringrasia par on canbiamento che go faxesto.",
 	"echo-category-title-edit-thank": "Rengrasiamenti",
-	"notification-thanks-diff-link": "la to modifica",
 	"notification-header-rev-thank": "$1 {{GENDER:$4|el|ła}} te ga {{GENDER:$2|ringrasià}} par ła to modìfega in <strong>$3</strong>.",
 	"notification-header-creation-thank": "$1 {{GENDER:$2|el|ła}} te ga {{GENDER:$4|ringrasià}} par ver creà ła pàjina <strong>$3</strong>.",
 	"notification-header-log-thank": "$1 {{GENDER:$2|el|ła}} te ga {{GENDER:$4|ringrasià}} par ła to asion in <strong>$3</strong>.",
@@ -41,7 +40,6 @@
 	"thanks-error-invalidpostid": "El ID mesajo no el xe mija bon",
 	"flow-thanks-confirmation-special": "Vuto ringrasiar publegamente par sto comento?",
 	"flow-thanks-thanked-notice": "A {{GENDER:$3|te ghè ringrasià}} $1 par {{GENDER:$2|el so}} comento.",
-	"notification-flow-thanks-post-link": "el to comento",
 	"notification-header-flow-thank": "$1 {{GENDER:$2|el|ła}} te ga {{GENDER:$5|ringrasià}} par el to comento in <strong>$3</strong>.",
 	"notification-compact-header-flow-thank": "$1 {{GENDER:$3|el|ła}} te ga {{GENDER:$2|ringrasià}}.",
 	"notification-bundle-header-flow-thank": "{{PLURAL:$1|Na persona ła te ga|$1 persone łe te ga|100=Pì de 99 persone łe te ga}} {{GENDER:$3|ringrasià}} par el to comento in <strong>$2</strong>."

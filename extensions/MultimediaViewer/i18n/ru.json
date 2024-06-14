@@ -133,6 +133,7 @@
 	"multimediaviewer-reuse-warning-noattribution": "Этот файл не имеет информации об атрибуции.",
 	"multimediaviewer-reuse-warning-generic": "Проверьте [$1 сведения о нём] перед тем, как воспользоваться.",
 	"multimediaviewer-attr-plain": "Просто текст",
+	"multimediaviewer-attr-html": "HTML",
 	"multimediaviewer-options-tooltip": "Включение или отключение Медиа-просмотрщика",
 	"multimediaviewer-options-dialog-header": "Отключить Медиа-просмотрщик?",
 	"multimediaviewer-options-text-header": "Выключить эту функцию просмотра для всех файлов.",

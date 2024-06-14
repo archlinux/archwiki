@@ -19,15 +19,15 @@ use MediaWiki\Extension\DiscussionTools\ContentThreadItemSet;
 use MediaWiki\Extension\Gadgets\GadgetRepo;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Page\ParserOutputAccess;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
 use MediaWiki\User\UserIdentity;
-use OutputPage;
 use ParserOptions;
 use RequestContext;
 use RuntimeException;
-use TitleValue;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Utils\DOMCompat;
@@ -92,18 +92,22 @@ class HookUtils {
 	 */
 	public static function hasPagePropCached( Title $title, string $prop ): bool {
 		Assert::parameter(
-			in_array( $prop, static::CACHED_PAGE_PROPS, true ),
+			in_array( $prop, self::CACHED_PAGE_PROPS, true ),
 			'$prop',
 			'must be one of the cached properties'
 		);
 		$id = $title->getArticleId();
-		if ( !isset( static::$propCache[ $id ] ) ) {
+		if ( !isset( self::$propCache[ $id ] ) ) {
 			$services = MediaWikiServices::getInstance();
 			// Always fetch all of our properties, we need to check several of them on most requests
-			static::$propCache +=
-				$services->getPageProps()->getProperties( $title, static::CACHED_PAGE_PROPS );
+			$pagePropsPerId = $services->getPageProps()->getProperties( $title, self::CACHED_PAGE_PROPS );
+			if ( $pagePropsPerId ) {
+				self::$propCache += $pagePropsPerId;
+			} else {
+				self::$propCache[ $id ] = [];
+			}
 		}
-		return isset( static::$propCache[ $id ][ $prop ] );
+		return isset( self::$propCache[ $id ][ $prop ] );
 	}
 
 	/**
@@ -124,36 +128,28 @@ class HookUtils {
 	): ContentThreadItemSet {
 		$services = MediaWikiServices::getInstance();
 		$mainConfig = $services->getMainConfig();
-		$parsoidOutputAccess = $services->getParsoidOutputAccess();
+		$parserOutputAccess = $services->getParserOutputAccess();
 
 		// Look up the page by ID in master. If we just used $revRecord->getPage(),
-		// ParsoidOutputAccess would look it up by namespace+title in replica.
+		// ParserOutputAccess would look it up by namespace+title in replica.
 		$pageRecord = $services->getPageStore()->getPageById( $revRecord->getPageId() ) ?:
 			$services->getPageStore()->getPageById( $revRecord->getPageId(), IDBAccessObject::READ_LATEST );
 		Assert::postcondition( $pageRecord !== null, 'Revision had no page' );
 
 		$parserOptions = ParserOptions::newFromAnon();
-
-		// HACK: remove before the release of MW 1.40 / early 2023.
-		if ( $mainConfig->has( 'TemporaryParsoidHandlerParserCacheWriteRatio' ) ) {
-			// We need to be careful about ramping up the cache writes,
-			// so we don't run out of disk space.
-			if ( wfRandom() >= $mainConfig->get( 'TemporaryParsoidHandlerParserCacheWriteRatio' ) ) {
-				$updateParserCacheFor = false;
-			}
-		}
+		$parserOptions->setUseParsoid();
 
 		if ( $updateParserCacheFor ) {
 			// $updateParserCache contains the name of the calling method
 			$parserOptions->setRenderReason( $updateParserCacheFor );
 		}
 
-		$status = $parsoidOutputAccess->getParserOutput(
+		$status = $parserOutputAccess->getParserOutput(
 			$pageRecord,
 			$parserOptions,
 			$revRecord,
 			// Don't flood the parser cache
-			$updateParserCacheFor ? 0 : ParsoidOutputAccess::OPT_NO_UPDATE_CACHE
+			$updateParserCacheFor ? 0 : ParserOutputAccess::OPT_NO_UPDATE_CACHE
 		);
 
 		if ( !$status->isOK() ) {
@@ -168,7 +164,7 @@ class HookUtils {
 		}
 
 		$parserOutput = $status->getValue();
-		$html = $parserOutput->getText();
+		$html = $parserOutput->getRawText();
 
 		// Run the discussion parser on it
 		$doc = DOMUtils::parseHTML( $html );
@@ -380,12 +376,11 @@ class HookUtils {
 			$dtConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'discussiontools' );
 			// Visual enhancements are only enabled on talk namespaces (T325417) ...
 			return $title->isTalkPage() || (
-				$dtConfig->get( 'DiscussionTools_visualenhancements_newsectionlink_enable' ) &&
 				// ... or __NEWSECTIONLINK__ pages (T331635)
 				static::hasPagePropCached( $title, 'newsectionlink' ) &&
 				// excluding the main namespace, unless it has been configured for signatures
 				(
-					$title->getNamespace() !== NS_MAIN ||
+					!$title->inNamespace( NS_MAIN ) ||
 					$services->getNamespaceInfo()->wantSignatures( $title->getNamespace() )
 				)
 			);
@@ -493,9 +488,6 @@ class HookUtils {
 
 	/**
 	 * Check if the "New section" tab would be shown in a normal skin.
-	 *
-	 * @param IContextSource $context
-	 * @return bool
 	 */
 	public static function shouldShowNewSectionTab( IContextSource $context ): bool {
 		$title = $context->getTitle();
@@ -515,9 +507,6 @@ class HookUtils {
 
 	/**
 	 * Check if this page view should open the new topic tool on page load.
-	 *
-	 * @param IContextSource $context
-	 * @return bool
 	 */
 	public static function shouldOpenNewTopicTool( IContextSource $context ): bool {
 		$req = $context->getRequest();
@@ -541,9 +530,6 @@ class HookUtils {
 
 	/**
 	 * Check if this page view should display the "empty state" message for empty talk pages.
-	 *
-	 * @param IContextSource $context
-	 * @return bool
 	 */
 	public static function shouldDisplayEmptyState( IContextSource $context ): bool {
 		$req = $context->getRequest();
@@ -585,16 +571,13 @@ class HookUtils {
 	/**
 	 * Return whether the corresponding subject page exists, or (if the page is a user talk page,
 	 * excluding subpages) whether the user is registered or a valid IP address.
-	 *
-	 * @param LinkTarget $talkPage
-	 * @return bool
 	 */
 	private static function pageSubjectExists( LinkTarget $talkPage ): bool {
 		$services = MediaWikiServices::getInstance();
 		$namespaceInfo = $services->getNamespaceInfo();
 		Assert::precondition( $namespaceInfo->isTalk( $talkPage->getNamespace() ), "Page is a talk page" );
 
-		if ( $talkPage->getNamespace() === NS_USER_TALK && !str_contains( $talkPage->getText(), '/' ) ) {
+		if ( $talkPage->inNamespace( NS_USER_TALK ) && !str_contains( $talkPage->getText(), '/' ) ) {
 			if ( $services->getUserNameUtils()->isIP( $talkPage->getText() ) ) {
 				return true;
 			}
@@ -611,10 +594,6 @@ class HookUtils {
 
 	/**
 	 * Check if we should be adding automatic topic subscriptions for this user on this page.
-	 *
-	 * @param UserIdentity $user
-	 * @param Title $title
-	 * @return bool
 	 */
 	public static function shouldAddAutoSubscription( UserIdentity $user, Title $title ): bool {
 		// This duplicates the logic from isFeatureEnabledForOutput(),

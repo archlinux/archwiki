@@ -34,7 +34,6 @@
 	"wikieditor-toolbar-tool-superscript-example": "Testo an subrescrito",
 	"wikieditor-toolbar-tool-subscript-example": "Testo an subscrito",
 	"wikieditor-toolbar-tool-gallery-example": "Eisemplo1.jpg|Lhegenda1\nEisemplo2.jpg|Lhegenda2",
-	"wikieditor-toolbar-tool-table-example-old": "-\n! cabeçalho 1\n! cabeçalho 2\n! cabeçalho 3\n|-\n| lhinha 1, queluna 1\n| lhinha 1, queluna 2\n| lhinha 1, queluna 3\n|-\n| lhinha 2, queluna 1\n| lhinha 2, queluna 2\n| lhinha 2, queluna 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Testo de la célula",
 	"wikieditor-toolbar-tool-table-example-header": "Testo de l cabeçalho",
 	"wikieditor-toolbar-tool-table-title": "Poner tabela",

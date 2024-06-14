@@ -181,7 +181,7 @@ class ApiQueryDeletedRevisions extends ApiQueryRevisionsBase {
 			if ( $params['user'] !== null ) {
 				$this->addWhereFld( 'actor_name', $params['user'] );
 			} elseif ( $params['excludeuser'] !== null ) {
-				$this->addWhere( 'actor_name<>' . $db->addQuotes( $params['excludeuser'] ) );
+				$this->addWhere( $db->expr( 'actor_name', '!=', $params['excludeuser'] ) );
 			}
 		}
 
@@ -321,11 +321,11 @@ class ApiQueryDeletedRevisions extends ApiQueryRevisionsBase {
 			'tag' => null,
 			'user' => [
 				ParamValidator::PARAM_TYPE => 'user',
-				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'id', 'interwiki' ],
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'temp', 'id', 'interwiki' ],
 			],
 			'excludeuser' => [
 				ParamValidator::PARAM_TYPE => 'user',
-				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'id', 'interwiki' ],
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'temp', 'id', 'interwiki' ],
 			],
 			'continue' => [
 				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
@@ -336,22 +336,19 @@ class ApiQueryDeletedRevisions extends ApiQueryRevisionsBase {
 	protected function getExamplesMessages() {
 		$title = Title::newMainPage();
 		$talkTitle = $title->getTalkPageIfDefined();
-		$examples = [];
+		$examples = [
+			'action=query&prop=deletedrevisions&revids=123456'
+				=> 'apihelp-query+deletedrevisions-example-revids',
+		];
 
 		if ( $talkTitle ) {
 			$title = rawurlencode( $title->getPrefixedText() );
 			$talkTitle = rawurlencode( $talkTitle->getPrefixedText() );
-			$examples = [
-				"action=query&prop=deletedrevisions&titles={$title}|{$talkTitle}&" .
-					'drvslots=*&drvprop=user|comment|content'
-					=> 'apihelp-query+deletedrevisions-example-titles',
-			];
+			$examples["action=query&prop=deletedrevisions&titles={$title}|{$talkTitle}&" .
+				'drvslots=*&drvprop=user|comment|content'] = 'apihelp-query+deletedrevisions-example-titles';
 		}
 
-		return array_merge( $examples, [
-			'action=query&prop=deletedrevisions&revids=123456'
-				=> 'apihelp-query+deletedrevisions-example-revids',
-		] );
+		return $examples;
 	}
 
 	public function getHelpUrls() {

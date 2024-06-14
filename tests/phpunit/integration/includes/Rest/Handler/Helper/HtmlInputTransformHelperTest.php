@@ -6,16 +6,17 @@ use BufferingStatsdDataFactory;
 use Exception;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use LogicException;
+use MediaWiki\Edit\ParsoidRenderID;
 use MediaWiki\Edit\SelserContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\Message\Converter;
 use MediaWiki\Message\TextFormatter;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\Parsoid\HtmlToContentTransform;
 use MediaWiki\Parser\Parsoid\HtmlTransformFactory;
 use MediaWiki\Parser\Parsoid\PageBundleParserOutputConverter;
-use MediaWiki\Parser\Parsoid\ParsoidRenderID;
 use MediaWiki\Rest\Handler\Helper\HtmlInputTransformHelper;
 use MediaWiki\Rest\Handler\Helper\ParsoidFormatHelper;
 use MediaWiki\Rest\HttpException;
@@ -27,7 +28,6 @@ use MediaWiki\Revision\SlotRecord;
 use MediaWikiIntegrationTestCase;
 use NullStatsdDataFactory;
 use ParserOptions;
-use ParserOutput;
 use PHPUnit\Framework\MockObject\MockObject;
 use TextContent;
 use Wikimedia\Message\MessageValue;
@@ -49,15 +49,6 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		parent::setUp();
 
 		$this->overrideConfigValue( MainConfigNames::CacheEpoch, self::CACHE_EPOCH );
-
-		// Clean up these tables after each test
-		$this->tablesUsed = [
-			'page',
-			'revision',
-			'comment',
-			'text',
-			'content'
-		];
 	}
 
 	/**
@@ -804,8 +795,6 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 	 * @param ParsoidRenderID|PageBundle|ParserOutput|null $originalRendering
 	 * @param string|string[]|null $expectedText Null means use the original content
 	 *
-	 * @throws HttpException
-	 * @throws \MWException
 	 * @covers \MediaWiki\Rest\Handler\Helper\HtmlInputTransformHelper::setOriginal
 	 */
 	public function testSetOriginal( ?SelserContext $stashed, $rev, $originalRendering, $expectedText ) {
@@ -1089,7 +1078,7 @@ class HtmlInputTransformHelperTest extends MediaWikiIntegrationTestCase {
 		$popt = ParserOptions::newFromAnon();
 		$pout = $access->getParserOutput( $page, $popt )->getValue();
 
-		$key = $access->getParsoidRenderID( $pout );
+		$key = ParsoidRenderID::newFromParserOutput( $pout )->getKey();
 		$html = $pout->getRawText();
 
 		// Load the original data based on the ETag

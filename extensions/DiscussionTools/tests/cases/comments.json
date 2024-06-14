@@ -96,6 +96,14 @@
 		"data": "../data/frwiki-data.json"
 	},
 	{
+		"name": "frwiki fr-invalid-date",
+		"title": "Wikipédia:Oracle/semaine 9 2006",
+		"dom": "cases/fr-invalid-date/fr-invalid-date.html",
+		"expected": "../cases/fr-invalid-date/fr-invalid-date.json",
+		"config": "../data/frwiki-config.json",
+		"data": "../data/frwiki-data.json"
+	},
+	{
 		"name": "itwiki it-unsigned oldparser",
 		"title": "Aiuto:Sportello informazioni",
 		"dom": "cases/it-unsigned-oldparser/it-unsigned-oldparser.html",
@@ -224,10 +232,34 @@
 		"data": "../data/enwiki-data.json"
 	},
 	{
+		"name": "Signature with multiple timestamp in formatting elements causing an infinite loop (T356884)",
+		"title": "Talk:T356884",
+		"dom": "cases/signatures-T356884/signatures-T356884.html",
+		"expected": "../cases/signatures-T356884/signatures-T356884.json",
+		"config": "../data/enwiki-config.json",
+		"data": "../data/enwiki-data.json"
+	},
+	{
+		"name": "Signature with unclosed formatting elements doesn't eat subsequent comments",
+		"title": "Talk:T356884b",
+		"dom": "cases/signatures-T356884b/signatures-T356884b.html",
+		"expected": "../cases/signatures-T356884b/signatures-T356884b.json",
+		"config": "../data/enwiki-config.json",
+		"data": "../data/enwiki-data.json"
+	},
+	{
 		"name": "Timestamp format switch behavior",
 		"title": "Talk:T304595",
 		"dom": "cases/timestamp-format-switch/timestamp-format-switch.html",
 		"expected": "../cases/timestamp-format-switch/timestamp-format-switch.json",
+		"config": "../data/enwiki-config.json",
+		"data": "../data/enwiki-data.json"
+	},
+	{
+		"name": "Timestamp links",
+		"title": "User_talk:Ed",
+		"dom": "cases/timestamplink/timestamplink.html",
+		"expected": "../cases/timestamplink/timestamplink.json",
 		"config": "../data/enwiki-config.json",
 		"data": "../data/enwiki-data.json"
 	},

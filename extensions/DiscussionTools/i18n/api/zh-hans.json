@@ -8,7 +8,8 @@
 			"Shizhao",
 			"Stang",
 			"Zhang8569",
-			"列维劳德"
+			"列维劳德",
+			"沈澄心"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "未找到ID为“$1”的留言。",
@@ -31,6 +32,8 @@
 	"apihelp-discussiontoolsedit-summary": "在讨论页面上发布留言。",
 	"apihelp-discussiontoolsfindcomment-summary": "按ID或名称查找留言。",
 	"apihelp-discussiontoolsfindcomment-param-idorname": "留言ID或名称",
+	"apihelp-discussiontoolsfindcomment-param-heading": "标题杂凑片段",
+	"apihelp-discussiontoolsfindcomment-param-page": "标题杂凑片段曾存在的页面",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "要检查的话题名称",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "获取给定话题的订阅状态。",
 	"apihelp-discussiontoolspageinfo-param-oldid": "要使用的修订编号（默认为最后修订）。",

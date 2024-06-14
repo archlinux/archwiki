@@ -4,6 +4,7 @@
 			"2nd-player",
 			"Afaz",
 			"Anonymoususer12321",
+			"Ant176",
 			"Aotake",
 			"Ficell",
 			"Fryed-peach",
@@ -15,7 +16,8 @@
 			"Sujiniku",
 			"Yusuke1109",
 			"春春眠眠",
-			"Ant176"
+			"Chqaz",
+			"RYOUMA1117"
 		]
 	},
 	"cite-desc": "引用のためのタグ <code>&lt;ref&gt;</code> および <code>&lt;references/&gt;</code> を追加する",
@@ -23,7 +25,7 @@
 	"cite_error_ref_invalid_dir": "無効な<code>dir=\"$1\"</code>です。「<code>ltr</code>」か「<code>rtl</code>」でなければなりません。",
 	"cite_error_ref_numeric_key": "無効な <code>&lt;ref&gt;</code> タグです。名前に単なる整数は使用できません。説明的なものにしてください",
 	"cite_error_ref_no_key": "冒頭の <code>&lt;ref&gt;</code> タグは正しくない形式であるか、不適切な名前です",
-	"cite_error_ref_too_many_keys": "無効な <code>&lt;ref&gt;</code> タグです。数が多すぎるなどの理由で名前が無効です",
+	"cite_error_ref_too_many_keys": "<code>&lt;ref&gt;</code> タグ内の引数が無効です",
 	"cite_error_ref_no_input": "無効な <code>&lt;ref&gt;</code> タグです。名前 (name 属性) がない場合は注釈の中身が必要です",
 	"cite_error_references_duplicate_key": "無効な <code>&lt;ref&gt;</code> タグ; name \"$1\"が異なる内容で複数回定義されています",
 	"cite_error_references_invalid_parameters": "無効な <code>&lt;references&gt;</code> タグの引数です。",
@@ -34,7 +36,6 @@
 	"cite_error_included_references": "<code>&lt;references&gt;</code>の閉じタグがありません",
 	"cite_error_group_refs_without_references": "「$1」という名前のグループの <code>&lt;ref&gt;</code> タグがありますが、対応する <code>&lt;references group=\"$1\"/&gt;</code> タグが見つかりません",
 	"cite_error_references_group_mismatch": "<code>&lt;references&gt;</code> の <code>&lt;ref&gt;</code> タグで、group 属性「$1」が重複しています。",
-	"cite_error_references_missing_group": "<code>&lt;references&gt;</code> で定義されている「$2」という名前の <code>&lt;ref&gt;</code> タグに、先行するテキスト内で使用されていない group 属性「$1」があります。",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code> で定義されている name \"$1\" の <code>&lt;ref&gt;</code> タグは、先行するテキスト内で使用されていません。",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code> で定義されている <code>&lt;ref&gt;</code> タグに name 属性がありません。",
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> グループ「$2」で定義されている、nameが「$1」の <code>&lt;ref&gt;</code> タグに内容がありません。",
@@ -54,5 +55,6 @@
 	"cite-wikieditor-help-content-showreferences-description": "脚注の表示",
 	"cite-wikieditor-help-content-reference-example-text1": "ページ本文$1。",
 	"cite-wikieditor-help-content-reference-example-text2": "[$1 リンクタイトル]、追加テキスト",
-	"cite-wikieditor-help-content-reference-example-text3": "[$1 リンクタイトル]"
+	"cite-wikieditor-help-content-reference-example-text3": "[$1 リンクタイトル]",
+	"cite-wikieditor-help-content-reference-example-ref-id": "テスト"
 }

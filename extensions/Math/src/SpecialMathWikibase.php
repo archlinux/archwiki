@@ -3,17 +3,16 @@
 namespace MediaWiki\Extension\Math;
 
 use Exception;
-use ExtensionRegistry;
-use Html;
 use InvalidArgumentException;
 use MediaWiki\Extension\Math\Widget\WikibaseEntitySelector;
+use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\SpecialPage\SpecialPage;
 use Message;
 use OOUI\ButtonInputWidget;
 use OOUI\FormLayout;
-use OutputPage;
-use SpecialPage;
 
 class SpecialMathWikibase extends SpecialPage {
 	/**
@@ -43,21 +42,7 @@ class SpecialMathWikibase extends SpecialPage {
 	public function execute( $par ) {
 		global $wgLanguageCode;
 
-		if ( !self::isWikibaseAvailable() ) {
-			$out = $this->getOutput();
-
-			$out->setPageTitle(
-				$this->getPlainText( 'math-wikibase-special-error-header' )
-			);
-			$out->addHTML(
-				$this->msg( 'math-wikibase-special-error-no-wikibase' )->inContentLanguage()->parse()
-			);
-			return;
-		}
-
-		if ( !$this->wikibase ) {
-			$this->wikibase = MediaWikiServices::getInstance()->get( 'Math.WikibaseConnector' );
-		}
+		$this->wikibase = MediaWikiServices::getInstance()->get( 'Math.WikibaseConnector' );
 
 		$request = $this->getRequest();
 		$output = $this->getOutput();
@@ -245,13 +230,5 @@ class SpecialMathWikibase extends SpecialPage {
 			[],
 			$header
 		);
-	}
-
-	/**
-	 * Check whether Wikibase is available or not
-	 * @return bool
-	 */
-	public static function isWikibaseAvailable(): bool {
-		return ExtensionRegistry::getInstance()->isLoaded( 'WikibaseClient' );
 	}
 }

@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"IJzeren Jan"
+		]
+	},
+	"vector-languages": "Jezyky",
+	"vector-language-button-label": "{{PLURAL:$1|$1 jezyk|$1 jezykov}}",
+	"vector-no-language-button-label": "Dodati jezyky",
+	"vector-action-addsection": "Dodati temu",
+	"vector-action-move": "Prěimenovati",
+	"vector-view-create": "Stvoriti",
+	"vector-view-history": "Pozrěti historiju",
+	"vector-more-actions": "Veče",
+	"vector-searchsuggest-containing": "Iskati stranice sodrživajuče <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Sodržanje",
+	"vector-toc-beginning": "Početok",
+	"vector-main-menu-label": "Glavno menju",
+	"vector-page-tools-label": "Orudja",
+	"vector-page-tools-general-label": "Obče",
+	"vector-unpin-element-label": "skryti"
+}

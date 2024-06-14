@@ -2,22 +2,22 @@
 
 namespace MediaWiki\Extension\Notifications;
 
-use CentralIdLookup;
 use InvalidArgumentException;
 use MediaWiki\Extension\Notifications\Gateway\UserNotificationGateway;
 use MediaWiki\Extension\Notifications\Mapper\NotificationMapper;
 use MediaWiki\Extension\Notifications\Mapper\TargetPageMapper;
 use MediaWiki\Extension\Notifications\Model\Notification;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\WebRequest;
+use MediaWiki\User\CentralId\CentralIdLookup;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
-use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\Utils\MWTimestamp;
 use MediaWiki\WikiMap\WikiMap;
-use MWTimestamp;
-use ReadOnlyMode;
 use WANObjectCache;
-use WebRequest;
 use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\ReadOnlyMode;
 
 /**
  * Entity that represents a notification target user

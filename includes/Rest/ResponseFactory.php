@@ -277,10 +277,7 @@ class ResponseFactory {
 		} elseif ( is_array( $value ) || $value instanceof stdClass ) {
 			$data = $value;
 		} else {
-			$type = gettype( $originalValue );
-			if ( $type === 'object' ) {
-				$type = get_class( $originalValue );
-			}
+			$type = is_object( $originalValue ) ? get_class( $originalValue ) : gettype( $originalValue );
 			throw new InvalidArgumentException( __METHOD__ . ": Invalid return value type $type" );
 		}
 		$response = $this->createJson( $data );
@@ -322,6 +319,56 @@ class ResponseFactory {
 			$translations[$lang] = $messageText;
 		}
 		return [ 'messageTranslations' => $translations ];
+	}
+
+	/**
+	 * Returns OpenAPI schema response components object,
+	 * providing information about the structure of some standard responses,
+	 * for use in path specs.
+	 *
+	 * @see https://swagger.io/specification/#components-object
+	 * @see https://swagger.io/specification/#response-object
+	 *
+	 * @return array
+	 */
+	public static function getResponseComponents(): array {
+		return [
+			'responses' => [
+				'GenericErrorResponse' => [
+					'description' => 'Generic error response',
+					'content' => [
+						'application/json' => [
+							'schema' => [
+								'$ref' => '#/components/schemas/GenericErrorResponseModel'
+							]
+						],
+					],
+				]
+			],
+			'schemas' => [
+				'GenericErrorResponseModel' => [
+					'description' => 'Generic error response body',
+					'required' => [ 'httpCode', 'httpMessage' ],
+					'properties' => [
+						'httpCode' => [
+							'type' => 'integer'
+						],
+						'httpMessage' => [
+							'type' => 'string'
+						],
+						'message' => [
+							'type' => 'string'
+						],
+						'messageTranslations' => [
+							'type' => 'object',
+							'additionalProperties' => [
+								'type' => 'string'
+							]
+						],
+					]
+				]
+			],
+		];
 	}
 
 }

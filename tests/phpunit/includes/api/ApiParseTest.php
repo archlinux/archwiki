@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ApiParse check functions
  *
@@ -20,17 +21,23 @@
  * @file
  */
 
+namespace MediaWiki\Tests\Api;
+
+use ApiUsageException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
 use MediaWiki\Title\TitleValue;
+use MockPoolCounterFailing;
+use SkinFactory;
+use SkinFallback;
 
 /**
  * @group API
  * @group Database
  * @group medium
  *
- * @covers ApiParse
+ * @covers \ApiParse
  */
 class ApiParseTest extends ApiTestCase {
 	use DummyServicesTrait;
@@ -95,10 +102,15 @@ class ApiParseTest extends ApiTestCase {
 	private function doAssertParsedTo( $expected, array $res, $warnings, callable $callback ) {
 		$html = $res[0]['parse']['text'];
 
-		$expectedStart = '<div class="mw-parser-output">';
+		$expectedStart = '<div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"';
 		$this->assertSame( $expectedStart, substr( $html, 0, strlen( $expectedStart ) ) );
 
 		$html = substr( $html, strlen( $expectedStart ) );
+
+		# Parsoid-based transformations may add an ID attribute to the
+		# wrapper div
+		$possibleIdAttr = '/^( id="[^"]+")?>/';
+		$html = preg_replace( $possibleIdAttr, '', $html );
 
 		$possibleParserCache = '/\n<!-- Saved in (?>parser cache|RevisionOutputCache) (?>.*?\n -->)\n/';
 		$html = preg_replace( $possibleParserCache, '', $html );
@@ -152,7 +164,6 @@ class ApiParseTest extends ApiTestCase {
 			MainConfigNames::ExtraInterlanguageLinkPrefixes,
 			[ 'madeuplanguage' ]
 		);
-		$this->tablesUsed[] = 'interwiki';
 	}
 
 	/**
@@ -593,7 +604,7 @@ class ApiParseTest extends ApiTestCase {
 		yield [ false, false, $expected ];
 		yield [ false, true, $expected ];
 		// Parsoid parses, with and without pre-existing content.
-		$expected = '!^<section[^>]*><p[^>]*><a rel="mw:WikiLink" href="./Foo" title="Foo"[^>]*>Foo</a></p></section>!';
+		$expected = '!^<section[^>]*><p[^>]*><a rel="mw:WikiLink" href="[^"]*Foo" title="Foo"[^>]*>Foo</a></p></section>!';
 		yield [ true, false, $expected ];
 		yield [ true, true, $expected ];
 	}

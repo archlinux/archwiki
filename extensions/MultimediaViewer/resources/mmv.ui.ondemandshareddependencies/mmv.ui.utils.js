@@ -93,14 +93,9 @@ const { HtmlUtils } = require( 'mmv.bootstrap' );
 		 * @param {OO.ui.MenuOptionWidget[]} options
 		 */
 		updateMenuOptions( sizes, options ) {
-			let i;
-			let option;
-			let data;
-			let $label;
-
-			for ( i = 0; i < options.length; i++ ) {
-				option = options[ i ];
-				data = option.getData();
+			for ( let i = 0; i < options.length; i++ ) {
+				const option = options[ i ];
+				const data = option.getData();
 
 				if ( sizes[ data.name ] ) {
 					option.setDisabled( false );
@@ -109,7 +104,7 @@ const { HtmlUtils } = require( 'mmv.bootstrap' );
 					data.width = sizes[ data.name ].width;
 					data.height = sizes[ data.name ].height;
 
-					$label = $( '<span>' ).html( this.getDimensionsMessageHtml( data.name, data.width, data.height ) );
+					const $label = $( '<span>' ).html( this.getDimensionsMessageHtml( data.name, data.width, data.height ) );
 
 					option.setLabel( $label );
 				} else {
@@ -209,7 +204,7 @@ const { HtmlUtils } = require( 'mmv.bootstrap' );
 				// * multimediaviewer-large-embed-dimensions
 				// * multimediaviewer-medium-embed-dimensions
 				// * multimediaviewer-small-embed-dimensions
-				`multimediaviewer-${sizeLabel}-embed-dimensions`,
+				`multimediaviewer-${ sizeLabel }-embed-dimensions`,
 				dimensions
 			).text();
 		}

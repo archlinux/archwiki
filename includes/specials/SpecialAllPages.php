@@ -23,8 +23,8 @@
 
 namespace MediaWiki\Specials;
 
-use HTMLForm;
 use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\ExistingPageRecord;
@@ -70,7 +70,7 @@ class SpecialAllPages extends IncludableSpecialPage {
 		parent::__construct( 'Allpages' );
 		// This class is extended and therefore falls back to global state - T265309
 		$services = MediaWikiServices::getInstance();
-		$this->dbProvider = $dbProvider ?? $services->getDBLoadBalancerFactory();
+		$this->dbProvider = $dbProvider ?? $services->getConnectionProvider();
 		$this->searchEngineFactory = $searchEngineFactory ?? $services->getSearchEngineFactory();
 		$this->pageStore = $pageStore ?? $services->getPageStore();
 	}
@@ -227,9 +227,9 @@ class SpecialAllPages extends IncludableSpecialPage {
 			}
 
 			$conds = $filterConds;
-			$conds[] = 'page_title >= ' . $dbr->addQuotes( $fromKey );
+			$conds[] = $dbr->expr( 'page_title', '>=', $fromKey );
 			if ( $toKey !== "" ) {
-				$conds[] = 'page_title <= ' . $dbr->addQuotes( $toKey );
+				$conds[] = $dbr->expr( 'page_title', '<=', $toKey );
 			}
 
 			$res = $this->pageStore->newSelectQueryBuilder()
@@ -271,7 +271,7 @@ class SpecialAllPages extends IncludableSpecialPage {
 			if ( $fromKey !== '' && !$this->including() ) {
 				# Get the first title from previous chunk
 				$prevConds = $filterConds;
-				$prevConds[] = 'page_title < ' . $dbr->addQuotes( $fromKey );
+				$prevConds[] = $dbr->expr( 'page_title', '<', $fromKey );
 				$prevKey = $dbr->newSelectQueryBuilder()
 					->select( 'page_title' )
 					->from( 'page' )
@@ -410,7 +410,5 @@ class SpecialAllPages extends IncludableSpecialPage {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( SpecialAllPages::class, 'SpecialAllPages' );

@@ -5,7 +5,7 @@ use MediaWiki\Tests\Unit\DummyServicesTrait;
 use Wikimedia\Bcp47Code\Bcp47CodeValue;
 
 /**
- * @covers LanguageCode
+ * @covers \LanguageCode
  * @group Language
  *
  * @author Thiemo Kreuz
@@ -201,8 +201,8 @@ class LanguageCodeTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers LanguageCode::bcp47()
-	 * @covers LanguageCode::bcp47ToInternal()
+	 * @covers \LanguageCode::bcp47()
+	 * @covers \LanguageCode::bcp47ToInternal()
 	 * @dataProvider provideBcp47ToInternal()
 	 */
 	public function testBcp47ToInternal( $expected, $bcp47 ) {
@@ -211,7 +211,7 @@ class LanguageCodeTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers LanguageCode::bcp47ToInternal()
+	 * @covers \LanguageCode::bcp47ToInternal()
 	 * @dataProvider provideSupportedLanguageCodes()
 	 */
 	public function testBcp47ToInternalLanguage( $internalCode ) {
@@ -263,7 +263,7 @@ class LanguageCodeTest extends MediaWikiUnitTestCase {
 	/**
 	 * Test LanguageCode::isWellFormedLanguageTag()
 	 * @dataProvider provideWellFormedLanguageTags
-	 * @covers LanguageCode::isWellFormedLanguageTag
+	 * @covers \LanguageCode::isWellFormedLanguageTag
 	 */
 	public function testWellFormedLanguageTag( $code, $message = '' ) {
 		$this->assertTrue(
@@ -309,13 +309,15 @@ class LanguageCodeTest extends MediaWikiUnitTestCase {
 			[ 'zh-cmn-Hant', 'three-letter variant and script' ],
 			[ 'zh-cmn-Hant-HK', 'three-letter variant, script and country' ],
 			[ 'xr-p-lze', 'Extension' ],
+			[ 'en-GB-oed', 'grandfathered language tag, mixed capitalisation' ],
+			[ 'en-gb-oed', 'grandfathered language tag, all lowercase' ],
 		];
 	}
 
 	/**
 	 * Negative test for LanguageCode::isWellFormedLanguageTag()
 	 * @dataProvider provideMalformedLanguageTags
-	 * @covers LanguageCode::isWellFormedLanguageTag
+	 * @covers \LanguageCode::isWellFormedLanguageTag
 	 */
 	public function testMalformedLanguageTag( $code, $message = '' ) {
 		$this->assertFalse(
@@ -370,7 +372,7 @@ class LanguageCodeTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * Negative test for LanguageCode::isWellFormedLanguageTag()
-	 * @covers LanguageCode::isWellFormedLanguageTag
+	 * @covers \LanguageCode::isWellFormedLanguageTag
 	 */
 	public function testLenientLanguageTag() {
 		$this->assertTrue(

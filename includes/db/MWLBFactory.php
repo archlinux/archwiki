@@ -24,6 +24,7 @@
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use Wikimedia\Rdbms\ChronologyProtector;
@@ -44,11 +45,12 @@ class MWLBFactory {
 	/** @var array Cache of already-logged deprecation messages */
 	private static $loggedDeprecations = [];
 
+	public const CORE_VIRTUAL_DOMAINS = [ 'virtual-botpasswords' ];
+
 	/**
 	 * @internal For use by ServiceWiring
 	 */
 	public const APPLY_DEFAULT_CONFIG_OPTIONS = [
-		'CommandLineMode',
 		MainConfigNames::DBcompress,
 		MainConfigNames::DBDefaultGroup,
 		MainConfigNames::DBmwschema,
@@ -59,6 +61,7 @@ class MWLBFactory {
 		MainConfigNames::DBserver,
 		MainConfigNames::DBservers,
 		MainConfigNames::DBssl,
+		MainConfigNames::DBStrictWarnings,
 		MainConfigNames::DBtype,
 		MainConfigNames::DBuser,
 		MainConfigNames::DebugDumpSql,
@@ -97,7 +100,8 @@ class MWLBFactory {
 	 * @var StatsdDataFactoryInterface
 	 */
 	private $statsdDataFactory;
-	private array $virtualDomains = [];
+	/** @var string[] */
+	private array $virtualDomains;
 
 	/**
 	 * @param ServiceOptions $options
@@ -107,6 +111,7 @@ class MWLBFactory {
 	 * @param WANObjectCache $wanCache
 	 * @param CriticalSectionProvider $csProvider
 	 * @param StatsdDataFactoryInterface $statsdDataFactory
+	 * @param string[] $virtualDomains
 	 */
 	public function __construct(
 		ServiceOptions $options,
@@ -157,7 +162,7 @@ class MWLBFactory {
 			'errorLogger' => [ MWExceptionHandler::class, 'logException' ],
 			'deprecationLogger' => [ static::class, 'logDeprecation' ],
 			'statsdDataFactory' => $this->statsdDataFactory,
-			'cliMode' => $this->options->get( 'CommandLineMode' ),
+			'cliMode' => MW_ENTRY_POINT === 'cli',
 			'readOnlyReason' => $this->readOnlyMode->getReason(),
 			'defaultGroup' => $this->options->get( MainConfigNames::DBDefaultGroup ),
 			'criticalSectionProvider' => $this->csProvider
@@ -192,6 +197,9 @@ class MWLBFactory {
 					$server['ssl'] = true;
 				}
 				$server['flags'] |= $this->options->get( MainConfigNames::DBcompress ) ? DBO_COMPRESS : 0;
+				if ( $this->options->get( MainConfigNames::DBStrictWarnings ) ) {
+					$server['strictWarnings'] = true;
+				}
 
 				$lbConf['servers'] = [ $server ];
 			}
@@ -219,7 +227,7 @@ class MWLBFactory {
 		$lbConf['chronologyProtector'] = $this->chronologyProtector;
 		$lbConf['srvCache'] = $this->srvCache;
 		$lbConf['wanCache'] = $this->wanCache;
-		$lbConf['virtualDomains'] = $this->virtualDomains;
+		$lbConf['virtualDomains'] = array_merge( $this->virtualDomains, self::CORE_VIRTUAL_DOMAINS );
 		$lbConf['virtualDomainsMapping'] = $this->options->get( MainConfigNames::VirtualDomainsMapping );
 
 		return $lbConf;
@@ -320,7 +328,7 @@ class MWLBFactory {
 			"\$wgDBprefix is set to '$prefix' but the database type is '$dbType'. " .
 			"MediaWiki does not support using a table prefix with this RDBMS type."
 		);
-		MWExceptionRenderer::output( $e, MWExceptionRenderer::AS_PRETTY );
+		MWExceptionRenderer::output( $e, MWExceptionRenderer::AS_RAW );
 		exit;
 	}
 
@@ -338,7 +346,7 @@ class MWLBFactory {
 			"use of Database::getDomainId(), and other features are not reliable when " .
 			"\$wgDBservers does not match the local wiki database/prefix."
 		);
-		MWExceptionRenderer::output( $e, MWExceptionRenderer::AS_PRETTY );
+		MWExceptionRenderer::output( $e, MWExceptionRenderer::AS_RAW );
 		exit;
 	}
 
@@ -356,7 +364,7 @@ class MWLBFactory {
 			"use of Database::getDomainId(), and other features are not reliable when " .
 			"\$wgDBservers does not match the local wiki database/prefix."
 		);
-		MWExceptionRenderer::output( $e, MWExceptionRenderer::AS_PRETTY );
+		MWExceptionRenderer::output( $e, MWExceptionRenderer::AS_RAW );
 		exit;
 	}
 
@@ -425,7 +433,7 @@ class MWLBFactory {
 		Config $config,
 		IBufferingStatsdDataFactory $stats
 	): void {
-		if ( $config->get( 'CommandLineMode' ) ) {
+		if ( MW_ENTRY_POINT === 'cli' ) {
 			$lbFactory->getMainLB()->setTransactionListener(
 				__METHOD__,
 				static function ( $trigger ) use ( $stats, $config ) {

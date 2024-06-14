@@ -90,16 +90,10 @@ module.exports = function webABTest( props, token, forceInit ) {
 	 */
 	function getBucketFromHTML() {
 		for ( const bucketName of getBucketNames() ) {
-			if ( document.body.classList.contains( `${props.name}-${bucketName}` ) ) {
+			if ( document.body.classList.contains( `${ props.name }-${ bucketName }` ) ) {
 				return bucketName;
 			}
 		}
-		if ( props.name === 'skin-vector-zebra-experiment' ) {
-			return document.documentElement.classList.contains(
-				'vector-feature-zebra-design-enabled'
-			) ? 'treatment' : 'control';
-		}
-
 		return null;
 	}
 
@@ -174,7 +168,7 @@ module.exports = function webABTest( props, token, forceInit ) {
 	function isInTreatmentBucket( treatmentBucketName = '' ) {
 		const bucketLowerCase = getBucket().toLowerCase();
 		// Array.prototype.includes` is ES7
-		return bucketLowerCase.indexOf( `${TREATMENT_BUCKET_SUBSTRING}${treatmentBucketName}` ) > -1;
+		return bucketLowerCase.indexOf( `${ TREATMENT_BUCKET_SUBSTRING }${ treatmentBucketName }` ) > -1;
 	}
 
 	/**
@@ -184,6 +178,13 @@ module.exports = function webABTest( props, token, forceInit ) {
 		// Send data to WikimediaEvents to log A/B test initialization if the subject
 		// has been sampled into the experiment.
 		if ( isInSample() ) {
+			/**
+			 * For use by WikimediaEvents only
+			 * @event mediawiki.web_AB_test_enrollment
+			 * @internal
+			 * @property {string} context
+			 * @property {string} action
+			 */
 			mw.hook( WEB_AB_TEST_ENROLLMENT_HOOK ).fire( {
 				group: getBucket(),
 				experimentName: props.name

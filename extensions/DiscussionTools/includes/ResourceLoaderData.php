@@ -9,8 +9,8 @@
 
 namespace MediaWiki\Extension\DiscussionTools;
 
-use Config;
 use ExtensionRegistry;
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\DiscussionTools\Hooks\HookRunner;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\ResourceLoader as RL;
@@ -23,11 +23,6 @@ class ResourceLoaderData {
 	 *
 	 * We need all of this data *in content language*. Some of it is already available in JS, but only
 	 * in client language, so it's useless for us (e.g. digit transform table, month name messages).
-	 *
-	 * @param RL\Context $context
-	 * @param Config $config
-	 * @param string|null $langCode
-	 * @return array
 	 */
 	public static function getLocalData(
 		RL\Context $context, Config $config, ?string $langCode = null
@@ -50,11 +45,6 @@ class ResourceLoaderData {
 
 	/**
 	 * Return messages in content language, for use in a ResourceLoader module.
-	 *
-	 * @param RL\Context $context
-	 * @param Config $config
-	 * @param array $messagesKeys
-	 * @return array
 	 */
 	public static function getContentLanguageMessages(
 		RL\Context $context, Config $config, array $messagesKeys = []
@@ -93,10 +83,6 @@ class ResourceLoaderData {
 
 	/**
 	 * Return parsed terms-of-use messages, for use in a ResourceLoader module.
-	 *
-	 * @param MessageLocalizer $context
-	 * @param Config $config
-	 * @return array
 	 */
 	public static function getTermsOfUseMessagesParsed(
 		MessageLocalizer $context, Config $config
@@ -111,10 +97,6 @@ class ResourceLoaderData {
 	/**
 	 * Return information about terms-of-use messages, for use in a ResourceLoader module as
 	 * 'versionCallback'. This is to avoid calling the parser from version invalidation code.
-	 *
-	 * @param MessageLocalizer $context
-	 * @param Config $config
-	 * @return array
 	 */
 	public static function getTermsOfUseMessagesVersion(
 		MessageLocalizer $context, Config $config
@@ -134,9 +116,6 @@ class ResourceLoaderData {
 
 	/**
 	 * Add optional dependencies to a ResourceLoader module definition depending on loaded extensions.
-	 *
-	 * @param array $info
-	 * @return RL\Module
 	 */
 	public static function addOptionalDependencies( array $info ): RL\Module {
 		$extensionRegistry = ExtensionRegistry::getInstance();
@@ -154,9 +133,6 @@ class ResourceLoaderData {
 	/**
 	 * Generate the test module that includes all of the test data, based on the JSON files defining
 	 * test cases.
-	 *
-	 * @param array $info
-	 * @return RL\Module
 	 */
 	public static function makeTestModule( array $info ): RL\Module {
 		// Some tests rely on PHP-only features or are too large for the Karma test runner.

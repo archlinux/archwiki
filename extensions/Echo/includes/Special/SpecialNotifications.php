@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\Notifications\Special;
 
-use Html;
 use MediaWiki\Extension\Notifications\DataOutputFormatter;
 use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\Extension\Notifications\OOUI\LabelIconWidget;
 use MediaWiki\Extension\Notifications\SeenTime;
+use MediaWiki\Html\Html;
+use MediaWiki\SpecialPage\SpecialPage;
 use OOUI;
-use SpecialPage;
 
 class SpecialNotifications extends SpecialPage {
 

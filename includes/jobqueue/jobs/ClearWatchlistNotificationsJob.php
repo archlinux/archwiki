@@ -48,24 +48,22 @@ class ClearWatchlistNotificationsJob extends Job implements GenericParameterJob 
 
 	public function run() {
 		$services = MediaWikiServices::getInstance();
-		$lbFactory = $services->getDBLoadBalancerFactory();
+		$dbProvider = $services->getConnectionProvider();
 		$rowsPerQuery = $services->getMainConfig()->get( MainConfigNames::UpdateRowsPerQuery );
 
-		$dbw = $lbFactory->getPrimaryDatabase();
-		$ticket = $lbFactory->getEmptyTransactionTicket( __METHOD__ );
-		$timestamp = $this->params['timestamp'] ?? null;
-		if ( $timestamp === null ) {
-			$timestampCond = 'wl_notificationtimestamp IS NOT NULL';
+		$dbw = $dbProvider->getPrimaryDatabase();
+		$ticket = $dbProvider->getEmptyTransactionTicket( __METHOD__ );
+		if ( !isset( $this->params['timestamp'] ) ) {
+			$timestamp = null;
+			$timestampCond = $dbw->expr( 'wl_notificationtimestamp', '!=', null );
 		} else {
-			$timestamp = $dbw->timestamp( $timestamp );
-			$timestampCond = 'wl_notificationtimestamp != ' . $dbw->addQuotes( $timestamp ) .
-				' OR wl_notificationtimestamp IS NULL';
+			$timestamp = $dbw->timestamp( $this->params['timestamp'] );
+			$timestampCond = $dbw->expr( 'wl_notificationtimestamp', '!=', $timestamp )
+				->or( 'wl_notificationtimestamp', '=', null );
 		}
 		// New notifications since the reset should not be cleared
-		$casTimeCond = $dbw->buildComparison(
-			'<',
-			[ 'wl_notificationtimestamp' => $dbw->timestamp( $this->params['casTime'] ) ] ) .
-			' OR wl_notificationtimestamp IS NULL';
+		$casTimeCond = $dbw->expr( 'wl_notificationtimestamp', '<', $dbw->timestamp( $this->params['casTime'] ) )
+			->or( 'wl_notificationtimestamp', '=', null );
 
 		$firstBatch = true;
 		do {
@@ -86,7 +84,7 @@ class ClearWatchlistNotificationsJob extends Job implements GenericParameterJob 
 					->andWhere( $casTimeCond )
 					->caller( __METHOD__ )->execute();
 				if ( !$firstBatch ) {
-					$lbFactory->commitAndWaitForReplication( __METHOD__, $ticket );
+					$dbProvider->commitAndWaitForReplication( __METHOD__, $ticket );
 				}
 				$firstBatch = false;
 			}

@@ -1,10 +1,12 @@
+var HighlightColors = require( '../HighlightColors.js' );
+
 /**
- * List of changes
+ * List of changes.
  *
  * @class mw.rcfilters.ui.ChangesListWrapperWidget
+ * @ignore
  * @extends OO.ui.Widget
  *
- * @constructor
  * @param {mw.rcfilters.dm.FiltersViewModel} filtersViewModel View model
  * @param {mw.rcfilters.dm.ChangesListViewModel} changesListViewModel View model
  * @param {mw.rcfilters.Controller} controller
@@ -23,7 +25,7 @@ var ChangesListWrapperWidget = function MwRcfiltersUiChangesListWrapperWidget(
 	} );
 
 	// Parent
-	ChangesListWrapperWidget.parent.call( this, config );
+	ChangesListWrapperWidget.super.call( this, config );
 
 	this.filtersViewModel = filtersViewModel;
 	this.changesListViewModel = changesListViewModel;
@@ -366,7 +368,7 @@ ChangesListWrapperWidget.prototype.applyHighlight = function () {
  */
 ChangesListWrapperWidget.prototype.clearHighlight = function () {
 	// Remove highlight classes
-	mw.rcfilters.HighlightColors.forEach( function ( color ) {
+	HighlightColors.forEach( function ( color ) {
 		// The following classes are used here:
 		// * mw-rcfilters-highlight-color-c1
 		// * mw-rcfilters-highlight-color-c2

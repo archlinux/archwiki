@@ -1,7 +1,7 @@
 /*!
  * VisualEditor DataModel LinkAnnotation class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -57,7 +57,7 @@ ve.dm.LinkAnnotation.static.describeChange = function ( key, change ) {
 		}
 	}
 	// Parent method
-	return ve.dm.LinkAnnotation.parent.static.describeChange.apply( this, arguments );
+	return ve.dm.LinkAnnotation.super.static.describeChange.apply( this, arguments );
 };
 
 /**

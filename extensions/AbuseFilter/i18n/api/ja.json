@@ -52,7 +52,7 @@
 	"apihelp-query+abuselog-param-filter-central": "指定されたフィルター IDによってキャッチされたエントリのみを表示します。 パイプ(|)で分離します。",
 	"apihelp-query+abuselog-param-limit": "一覧表示する項目の最大量。",
 	"apihelp-query+abuselog-param-prop": "取得するプロパティ。",
-	"apihelp-query+abuselog-param-wiki": "ヒットを表示するWiki。",
+	"apihelp-query+abuselog-param-wiki": "ヒットを表示するウィキ。",
 	"apihelp-query+abuselog-example-1": "最近の不正利用記録を表示する",
 	"apihelp-query+abuselog-example-2": "[[API]] の最近の記録項目を表示する",
 	"apihelp-abuselogprivatedetails-summary": "不正利用記録エントリの個人情報を表示します。",

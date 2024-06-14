@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Olavinto",
+			"Pyscowicz"
+		]
+	},
+	"editcheck-dialog-action-no": "Ei",
+	"editcheck-dialog-action-yes": "Kyllä",
+	"editcheck-dialog-addref-description": "Viittauksen lisääminen auttaa lukijoita ymmärtämään, mistä nämä tiedot ovat peräisin.",
+	"editcheck-dialog-addref-reject-question": "Mikset lisää lainausta?",
+	"editcheck-dialog-addref-reject-uncertain": "En ole varma, minkä viittauksen lisäisin",
+	"editcheck-dialog-addref-reject-other": "Muu",
+	"editcheck-dialog-addref-success-notify": "Kiitos viittauksen lisäämisestä!",
+	"editcheck-dialog-addref-title": "Lisää viittaus",
+	"editcheck-dialog-title": "Ennen julkaisua"
+}

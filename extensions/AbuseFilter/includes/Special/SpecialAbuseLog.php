@@ -4,11 +4,8 @@ namespace MediaWiki\Extension\AbuseFilter\Special;
 
 use DifferenceEngine;
 use ExtensionRegistry;
-use Html;
 use HTMLForm;
 use InvalidArgumentException;
-use Linker;
-use ListToggle;
 use ManualLogEntry;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
@@ -24,17 +21,20 @@ use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesFormatter;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesManager;
 use MediaWiki\Extension\AbuseFilter\View\HideAbuseLog;
+use MediaWiki\Html\Html;
+use MediaWiki\Html\ListToggle;
+use MediaWiki\Linker\Linker;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityLookup;
 use MediaWiki\WikiMap\WikiMap;
 use OOUI\ButtonInputWidget;
-use SpecialPage;
-use Status;
 use stdClass;
 use Wikimedia\Rdbms\LBFactory;
 use Xml;
@@ -549,7 +549,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 
 			$filterConds = [ 'local' => [], 'global' => [] ];
 			foreach ( $searchIDs as $filter ) {
-				list( $filterID, $isGlobal ) = GlobalNameUtils::splitGlobalName( $filter );
+				[ $filterID, $isGlobal ] = GlobalNameUtils::splitGlobalName( $filter );
 				$key = $isGlobal ? 'global' : 'local';
 				$filterConds[$key][] = $filterID;
 			}

@@ -2,11 +2,11 @@
 
 namespace MediaWiki\Tests\Rest\Handler;
 
+use File;
+use FileRepo;
 use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Json\JsonCodec;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
-use MediaWiki\Parser\ParserCacheFactory;
 use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
 use MediaWiki\Parser\Parsoid\ParsoidParser;
 use MediaWiki\Parser\Parsoid\ParsoidParserFactory;
@@ -24,9 +24,8 @@ use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\RequestInterface;
 use MediaWiki\Rest\ResponseFactory;
 use MediaWiki\Rest\Router;
-use NullStatsdDataFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Log\NullLogger;
+use RepoGroup;
 use WANObjectCache;
 use Wikimedia\Parsoid\Parsoid;
 
@@ -40,14 +39,14 @@ use Wikimedia\Parsoid\Parsoid;
  */
 trait PageHandlerTestTrait {
 
-	private function newRouter( $baseUrl ): Router {
-		$router = $this->createNoOpMock( Router::class, [ 'getRouteUrl' ] );
-		$router->method( 'getRouteUrl' )
+	private function newRouter( $baseUrl, $rootPath = '' ): Router {
+		$router = $this->createNoOpMock( Router::class, [ 'getRoutePath', 'getRouteUrl' ] );
+		$router->method( 'getRoutePath' )
 			->willReturnCallback( static function (
 				string $route,
 				array $pathParams = [],
 				array $queryParams = []
-			) use ( $baseUrl ) {
+			) use ( $rootPath ) {
 				foreach ( $pathParams as $param => $value ) {
 					// NOTE: we use rawurlencode here, since execute() uses rawurldecode().
 					// Spaces in path params must be encoded to %20 (not +).
@@ -55,8 +54,16 @@ trait PageHandlerTestTrait {
 					$route = str_replace( '{' . $param . '}', rawurlencode( (string)$value ), $route );
 				}
 
-				$url = $baseUrl . $route;
+				$url = $rootPath . $route;
 				return wfAppendQuery( $url, $queryParams );
+			} );
+		$router->method( 'getRouteUrl' )
+			->willReturnCallback( static function (
+				string $route,
+				array $pathParams = [],
+				array $queryParams = []
+			) use ( $baseUrl, $router ) {
+				return $baseUrl . $router->getRoutePath( $route, $pathParams, $queryParams );
 			} );
 
 		return $router;
@@ -87,29 +94,7 @@ trait PageHandlerTestTrait {
 	 * @return PageHTMLHandler
 	 */
 	public function newPageHtmlHandler( ?RequestInterface $request = null ) {
-		// ParserOutputAccess has a localCache which can return stale content.
-		// Resetting ensures that ParsoidCachePrewarmJob gets a fresh copy
-		// of ParserOutputAccess and ParsoidOutputAccess without these problems!
-		$this->resetServices();
-
-		$parserCacheFactoryOptions = new ServiceOptions( ParserCacheFactory::CONSTRUCTOR_OPTIONS, [
-			'CacheEpoch' => '20200202112233',
-			'OldRevisionParserCacheExpireTime' => 60 * 60,
-		] );
-
 		$services = $this->getServiceContainer();
-		$parserCacheFactory = new ParserCacheFactory(
-			$this->parserCacheBagOStuff,
-			new WANObjectCache( [ 'cache' => $this->parserCacheBagOStuff, ] ),
-			$this->createHookContainer(),
-			new JsonCodec(),
-			new NullStatsdDataFactory(),
-			new NullLogger(),
-			$parserCacheFactoryOptions,
-			$services->getTitleFactory(),
-			$services->getWikiPageFactory()
-		);
-
 		$config = [
 			'RightsUrl' => 'https://example.com/rights',
 			'RightsText' => 'some rights',
@@ -118,11 +103,6 @@ trait PageHandlerTestTrait {
 		];
 
 		$parsoidOutputAccess = new ParsoidOutputAccess(
-			new ServiceOptions(
-				ParsoidOutputAccess::CONSTRUCTOR_OPTIONS,
-				$services->getMainConfig(),
-				[ 'ParsoidWikiID' => 'MyWiki' ]
-			),
 			$services->getParsoidParserFactory(),
 			$services->getParserOutputAccess(),
 			$services->getPageStore(),
@@ -196,7 +176,7 @@ trait PageHandlerTestTrait {
 			$services->getRevisionStore(),
 			$services->getNameTableStoreFactory(),
 			$services->getGroupPermissionsLookup(),
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$services->getPageStore(),
 			$services->getTitleFormatter(),
 			$services->getPageRestHelperFactory()
@@ -209,10 +189,9 @@ trait PageHandlerTestTrait {
 			$services->getRevisionStore(),
 			$services->getNameTableStoreFactory(),
 			$services->getGroupPermissionsLookup(),
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			new WANObjectCache( [ 'cache' => $this->parserCacheBagOStuff, ] ),
 			$services->getPageStore(),
-			$services->getActorMigration(),
 			$services->getPageRestHelperFactory()
 		);
 	}
@@ -220,12 +199,46 @@ trait PageHandlerTestTrait {
 	public function newLanguageLinksHandler() {
 		$services = $this->getServiceContainer();
 		return new LanguageLinksHandler(
-			$services->getDBLoadBalancerFactory(),
+			$services->getConnectionProvider(),
 			$services->getLanguageNameUtils(),
 			$services->getTitleFormatter(),
 			$services->getTitleParser(),
 			$services->getPageStore(),
 			$services->getPageRestHelperFactory()
+		);
+	}
+
+	private function installMockFileRepo( string $fileName, ?string $redirectedFrom = null ): void {
+		$repo = $this->createNoOpMock(
+			FileRepo::class,
+			[]
+		);
+		$file = $this->createNoOpMock(
+			File::class,
+			[
+				'isLocal',
+				'exists',
+				'getRepo',
+				'getRedirected',
+				'getName',
+			]
+		);
+		$file->method( 'isLocal' )->willReturn( false );
+		$file->method( 'exists' )->willReturn( true );
+		$file->method( 'getRepo' )->willReturn( $repo );
+		$file->method( 'getRedirected' )->willReturn( $redirectedFrom );
+		$file->method( 'getName' )->willReturn( $fileName );
+
+		$repoGroup = $this->createNoOpMock(
+			RepoGroup::class,
+			[ 'findFile' ]
+		);
+		$repoGroup->expects( $this->atLeastOnce() )->method( 'findFile' )
+			->willReturn( $file );
+
+		$this->setService(
+			'RepoGroup',
+			$repoGroup
 		);
 	}
 

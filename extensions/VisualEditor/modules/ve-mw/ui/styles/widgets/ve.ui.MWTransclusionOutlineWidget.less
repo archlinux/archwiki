@@ -1,18 +1,14 @@
+@import 'mediawiki.skin.variables.less';
 @import 'mediawiki.mixins.less';
 
-// Copied from wikimedia-ui-base.less
-@wmui-color-accent50: #36c;
-@color-base--subtle: #72777d;
-
-@selected-text-color: @wmui-color-accent50;
-// This shade on a white background results in #eaf3ff a.k.a. @wmui-color-accent90
+@selected-text-color: @color-progressive;
+// This shade on a white background results in #eaf3ff a.k.a. @background-color-progressive-subtle
 @selected-shading: rgba( 0, 109, 255, 21/255 );
 
-// This shade on a white background results in #eaecf0 a.k.a. @background-color-base--hover a.k.a.
-// @wmui-color-base80
-@hover-shading: rgba( 0, 24, 73, 21/255 );
+// This shade on a white background results in #eaecf0 a.k.a. @background-color-interactive
+@hover-shading: @background-color-button-quiet--active;
 
-@on-click-text-color: @wmui-color-accent50;
+@on-click-text-color: @color-progressive;
 // Same as .oo-ui-optionWidget-pressed, a.k.a. @background-color-primary--hover
 @on-click-shading: rgba( 41, 98, 204, 0.1 );
 
@@ -79,7 +75,7 @@
 
 .ve-ui-mwTransclusionOutlineTemplateWidget {
 	&-sticky {
-		background-color: #fff;
+		background-color: @background-color-base;
 		.position-sticky();
 		top: 0;
 		z-index: 1;
@@ -87,7 +83,7 @@
 
 	&-no-template-parameters {
 		font-style: italic;
-		color: @color-base--subtle;
+		color: @color-subtle;
 		margin: 8px 24px 24px 24px;
 	}
 
@@ -103,7 +99,7 @@
 
 	&-no-match {
 		font-style: italic;
-		color: @color-base--subtle;
+		color: @color-subtle;
 		margin: 8px 24px;
 	}
 
@@ -119,9 +115,9 @@
 	}
 
 	.ve-ui-mwTransclusionOutlineParameterSelectWidget:focus {
-		border-radius: 2px;
-		box-shadow: inset 0 0 0 1px @wmui-color-accent50;
-		outline: 0;
+		border-radius: @border-radius-base;
+		box-shadow: @box-shadow-inset-small @box-shadow-color-progressive--focus;
+		outline: @outline-base--focus;
 	}
 
 	.ve-ui-mwTransclusionOutlineParameterWidget {
@@ -149,7 +145,7 @@
 
 		&.oo-ui-optionWidget-highlighted {
 			background-color: @hover-shading;
-			color: #000;
+			color: @color-emphasized;
 		}
 
 		&-hasValue {

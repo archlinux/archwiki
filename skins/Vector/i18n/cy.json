@@ -18,7 +18,6 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 iaith}}",
 	"vector-no-language-button-label": "Ychwanegu ieithoedd",
 	"vector-no-language-button-aria-label": "Mae'r erthygl hon ar gael yn yr iaith hon yn unig. Ychwanegwch yr erthygl mewn ieithoedd eraill",
-	"vector-language-redirect-to-top": "Lleolir dolenni iaith ar frig y dudalen ar draws y teitl.",
 	"vector-language-variant-switcher-label": "Newid amrywiad iaith",
 	"vector-action-addsection": "Ychwanegu pwnc",
 	"vector-action-delete": "Dileu",
@@ -62,7 +61,7 @@
 	"vector-prefs-limited-width": "Galluogi modd lled cyfyngedig",
 	"vector-prefs-limited-width-help": "Galluogi modd lled cyfyngedig i wella profiad darllen.",
 	"empty-language-selector-body": "Ni chefnogir cynnwys y dudalen mewn ieithoedd eraill.",
-	"vector-toc-unpinned-popup": "Mae'r tabl cynnwys wedi cael ei symud yma.",
-	"vector-page-tools-unpinned-popup": "Mae'r blwch offer wedi cael ei symud yma.",
-	"vector-main-menu-unpinned-popup": "Mae'r brif ddewislen wedi cael ei symud yma."
+	"vector-toc-unpinned-popup": "Mae'r tabl cynnwys wedi symud yma.",
+	"vector-page-tools-unpinned-popup": "Mae'r blwch offer wedi symud yma.",
+	"vector-main-menu-unpinned-popup": "Mae'r brif ddewislen wedi symud yma."
 }

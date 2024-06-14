@@ -16,6 +16,7 @@
 			"Umherirrender"
 		]
 	},
+	"content-model-scribunto": "Name for the Scribunto content model. Used when describing what type of content a page contains.",
 	"scribunto-desc": "{{desc|name=Scribunto|url=https://www.mediawiki.org/wiki/Extension:Scribunto}}",
 	"scribunto-line": "Used as reference to a code location. Parameters:\n* $1 - a line number\nSee also:\n* {{msg-mw|Scribunto-module-line}}",
 	"scribunto-module-line": "Used as reference to a code location. Parameters:\n* $1 - a module (may also be {{msg-mw|Scribunto-console-current-src}})\n* $2 - a line number\nSee also:\n* {{msg-mw|Scribunto-line}}",

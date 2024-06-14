@@ -2,19 +2,18 @@
 /**
  * @private
  */
-class Less_Tree_Rule extends Less_Tree {
+class Less_Tree_Rule extends Less_Tree implements Less_Tree_HasValueProperty {
 
 	public $name;
-	/** @var Less_Tree $value */
+	/** @var Less_Tree */
 	public $value;
-	/** @var string $important */
+	/** @var string */
 	public $important;
 	public $merge;
 	public $index;
 	public $inline;
 	public $variable;
 	public $currentFileInfo;
-	public $type = 'Rule';
 
 	/**
 	 * @param string|array<Less_Tree_Keyword|Less_Tree_Variable> $name
@@ -43,14 +42,14 @@ class Less_Tree_Rule extends Less_Tree {
 	}
 
 	/**
-	 * @see Less_Tree::genCSS
+	 * @see less-2.5.3.js#Rule.prototype.genCSS
 	 */
 	public function genCSS( $output ) {
-		$output->add( $this->name . Less_Environment::$_outputMap[': '], $this->currentFileInfo, $this->index );
-		try{
+		$output->add( $this->name . ( Less_Parser::$options['compress'] ? ':' : ': ' ), $this->currentFileInfo, $this->index );
+		try {
 			$this->value->genCSS( $output );
 
-		}catch ( Less_Exception_Parser $e ) {
+		} catch ( Less_Exception_Parser $e ) {
 			$e->index = $this->index;
 			$e->currentFile = $this->currentFileInfo;
 			throw $e;
@@ -60,7 +59,7 @@ class Less_Tree_Rule extends Less_Tree {
 
 	/**
 	 * @param Less_Environment $env
-	 * @return Less_Tree_Rule
+	 * @return self
 	 */
 	public function compile( $env ) {
 		$name = $this->name;
@@ -82,12 +81,12 @@ class Less_Tree_Rule extends Less_Tree {
 		try {
 			$evaldValue = $this->value->compile( $env );
 
-			if ( !$this->variable && $evaldValue->type === "DetachedRuleset" ) {
+			if ( !$this->variable && $evaldValue instanceof Less_Tree_DetachedRuleset ) {
 				throw new Less_Exception_Compiler( "Rulesets cannot be evaluated on a property.", null, $this->index, $this->currentFileInfo );
 			}
 
 			if ( Less_Environment::$mixin_stack ) {
-				$return = new Less_Tree_Rule( $name, $evaldValue, $this->important, $this->merge, $this->index, $this->currentFileInfo, $this->inline );
+				$return = new self( $name, $evaldValue, $this->important, $this->merge, $this->index, $this->currentFileInfo, $this->inline );
 			} else {
 				$this->name = $name;
 				$this->value = $evaldValue;
@@ -98,6 +97,7 @@ class Less_Tree_Rule extends Less_Tree {
 			if ( !is_numeric( $e->index ) ) {
 				$e->index = $this->index;
 				$e->currentFile = $this->currentFileInfo;
+				$e->genMessage();
 			}
 			throw $e;
 		}
@@ -116,7 +116,7 @@ class Less_Tree_Rule extends Less_Tree {
 	}
 
 	public function makeImportant() {
-		return new Less_Tree_Rule( $this->name, $this->value, '!important', $this->merge, $this->index, $this->currentFileInfo, $this->inline );
+		return new self( $this->name, $this->value, '!important', $this->merge, $this->index, $this->currentFileInfo, $this->inline );
 	}
 
 }

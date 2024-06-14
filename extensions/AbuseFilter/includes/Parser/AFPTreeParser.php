@@ -88,7 +88,7 @@ class AFPTreeParser {
 	 * Advances the parser to the next token in the filter code.
 	 */
 	private function move() {
-		list( $this->mCur, $this->mPos ) = $this->mTokens[$this->mPos];
+		[ $this->mCur, $this->mPos ] = $this->mTokens[$this->mPos];
 	}
 
 	/**

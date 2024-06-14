@@ -6,7 +6,6 @@ if ( $IP === false ) {
 }
 require_once "$IP/maintenance/Maintenance.php";
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use PageImages\Job\InitImageDataJob;
 
@@ -44,7 +43,7 @@ class InitImageData extends Maintenance {
 		$queue = null;
 		$maxPressure = $this->getOption( 'queue-pressure', 0 );
 		if ( $maxPressure > 0 ) {
-			$queue = MediaWikiServices::getInstance()->getJobQueueGroup();
+			$queue = $this->getServiceContainer()->getJobQueueGroup();
 		}
 
 		do {
@@ -59,7 +58,8 @@ class InitImageData extends Maintenance {
 				'LEFT JOIN', 'page_id = il_from',
 			] ];
 
-			$dbr = wfGetDB( DB_REPLICA );
+			$dbr = $this->getServiceContainer()->getDBLoadBalancerFactory()
+				->getReplicaDatabase();
 			if ( $this->hasOption( 'namespaces' ) ) {
 				$ns = explode( ',', $this->getOption( 'namespaces' ) );
 				$conds['page_namespace'] = $ns;
@@ -82,7 +82,11 @@ class InitImageData extends Maintenance {
 			foreach ( $res as $row ) {
 				$pageIds[] = $row->page_id;
 			}
-			$job = new InitImageDataJob( Title::newMainPage(), [ 'page_ids' => $pageIds ] );
+			$job = new InitImageDataJob(
+				Title::newMainPage(),
+				[ 'page_ids' => $pageIds ],
+				$this->getServiceContainer()->getDBLoadBalancerFactory()
+			);
 			if ( $queue === null ) {
 				$job->run();
 			} else {

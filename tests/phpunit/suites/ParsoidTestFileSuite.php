@@ -15,17 +15,15 @@ use Wikimedia\ScopedCallback;
 class ParsoidTestFileSuite extends TestSuite {
 	use SuiteEventsTrait;
 
-	private $ptRunner;
-	private $ptFileName;
-	private $ptFileInfo;
+	private ParserTestRunner $ptRunner;
+	private TestFileReader $ptFileInfo;
 
 	/** @var ScopedCallback */
 	private $ptTeardownScope;
 
-	public function __construct( $runner, $name, $fileName ) {
+	public function __construct( ParserTestRunner $runner, string $name, string $fileName ) {
 		parent::__construct( $name );
 		$this->ptRunner = $runner;
-		$this->ptFileName = $fileName;
 		try {
 			$this->ptFileInfo = TestFileReader::read( $fileName, static function ( $msg ) {
 				wfDeprecatedMsg( $msg, '1.35', false, false );
@@ -53,6 +51,7 @@ class ParsoidTestFileSuite extends TestSuite {
 			$this->ptRunner->getRequestedTestModes(), $this->ptFileInfo->fileOptions );
 
 		$suite = $this;
+		$runnerOpts = $this->ptRunner->getOptions();
 		foreach ( $this->ptFileInfo->testCases as $t ) {
 			$skipMessage = $this->ptRunner->getTestSkipMessage( $t, false );
 			if ( $skipMessage ) {
@@ -68,9 +67,8 @@ class ParsoidTestFileSuite extends TestSuite {
 						// $test could be a clone of $t
 						// Ensure that updates to knownFailures in $test are reflected in $t
 						$test->knownFailures = &$t->knownFailures;
-						$runner = $this->ptRunner;
 						$mode = new ParserTestMode( $modeStr, $test->changetree );
-						$pit = new ParserIntegrationTest( $runner, $fileName, $test, $mode, $skipMessage );
+						$pit = new ParserIntegrationTest( $this->ptRunner, $fileName, $test, $mode, $skipMessage );
 						$suite->addTest( $pit, [ 'Database', 'Parser', 'ParserTests' ] );
 					}
 				}

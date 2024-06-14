@@ -161,6 +161,7 @@ Text <source lang="javascript" enclose="none">var a;</source>.
 !! test
 Enclose with nowiki
 !! options
+disabled
 parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 {{#tag:syntaxhighlight|<nowiki>foo</nowiki>|lang="text"|inline=none}}

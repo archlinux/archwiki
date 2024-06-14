@@ -29,34 +29,38 @@
 	// as well as the dropdown menu itself when the menu is empty
 	&.user-links-collapsible-item,
 	.user-links-collapsible-item {
-		@media ( min-width: @min-width-tablet ) {
+		@media ( min-width: @min-width-breakpoint-tablet ) {
 			display: none;
 		}
 	}
 }
 
-/**
- * Horizontal links menu - logged in and logged out.
- */
-.vector-user-links .mw-portlet-vector-user-menu-overflow {
-	font-size: @font-size-user-links;
+.vector-user-links-main {
+	display: flex;
+	align-items: center;
 
 	.vector-menu-content-list {
 		display: flex;
 		align-items: center;
+		font-size: @font-size-user-links;
 	}
 
-	@media ( min-width: @min-width-desktop ) {
+	@media ( min-width: @min-width-breakpoint-desktop ) {
 		// Right margin to separate overflow menu from dropdown
 		margin-right: 8px;
 
-		// Separate menu items inside overflow menu
+		#p-vector-user-menu-notifications,
+		#p-vector-user-menu-userpage,
+		#p-vector-user-menu-preferences {
+			margin-right: 8px;
+		}
+
 		.vector-menu-content-list {
 			column-gap: 8px;
 		}
 	}
 
-	@media ( max-width: @max-width-tablet ) {
+	@media ( max-width: @max-width-breakpoint-tablet ) {
 		// Only apply 8px spacing to normal links (i.e. Create account, User page)
 		// Links with button classes will have a larger touch area
 		// and therefore dont need additional spacing
@@ -66,7 +70,7 @@
 	}
 
 	.user-links-collapsible-item {
-		@media ( max-width: @max-width-mobile ) {
+		@media ( max-width: @max-width-breakpoint-mobile ) {
 			display: none;
 		}
 	}
@@ -94,9 +98,13 @@
 	}
 }
 
-//User-page link in personal (overflow) menu.
+/**
+ * User-page link in personal (overflow) menu.
+ */
 #pt-userpage-2 {
 	max-width: unit( 155 / @font-size-browser / @font-size-user-links, em );
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	a:not( .mw-selflink ) {
 		// T312157 Override redlink (.new) color for non-existant userpage
@@ -109,7 +117,7 @@
 
 	// T287522#7295558: Increase the max-width of the username when viewport
 	// allows for it.
-	@media ( min-width: @min-width-desktop-wide ) {
+	@media ( min-width: @min-width-breakpoint-desktop-wide ) {
 		max-width: unit( 200 / @font-size-browser / @font-size-user-links, em );
 	}
 }

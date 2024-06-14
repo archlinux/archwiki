@@ -65,7 +65,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "הערת השוליים הזאת מוגדרת בתבנית או מחוללת בדרך אחרת כלשהי, ולעת־עתה אפשר לראות תצוגה מקדימה שלה רק במצב קוד מקור.",
 	"cite-ve-referenceslist-missingreflist": "רשימת הערות השוליים הזאת מחוללת באמצעות תבנית.",
 	"cite-ve-toolbar-group-label": "הערת שוליים",
-	"cite-ve-othergroup-item": "הערה ($1)",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "הערות שוליים",
-	"visualeditor-internal-list-diff-group-name-mwreference": "שם קבוצת הערות שוליים: \"$1\""
+	"cite-ve-othergroup-item": "הערה ($1)"
 }

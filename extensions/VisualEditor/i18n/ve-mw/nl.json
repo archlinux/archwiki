@@ -355,6 +355,8 @@
 	"visualeditor-preference-tabs-prefer-ve": "Waar mogelijk de visuele tekstverwerker gebruiken",
 	"visualeditor-preference-tabs-prefer-wt": "Altijd wikitekst bewerken",
 	"visualeditor-preference-tabs-remember-last": "Laatste tekstverwerker onthouden",
+	"visualeditor-preference-collab-label": "Gezamenlijk bewerken",
+	"visualeditor-preference-collab-description": "Nodig andere gebruikers uit om deel te nemen aan uw bewerkingssessie in de visuele editor.",
 	"visualeditor-rebase-client-export": "Exporteren",
 	"visualeditor-rebase-client-export-start": "Exporteren…",
 	"visualeditor-rebase-client-import": "Importeren",

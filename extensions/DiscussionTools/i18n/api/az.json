@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"NMW03"
+			"NMW03",
+			"Nemoralis"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "\"$1\" nömrəli şərh tapıla bilmədi.",
@@ -13,6 +14,7 @@
 	"apihelp-discussiontoolscompare-summary": "İki səhifə versiyası arasında şərh dəyişiklikləri haqqında məlumat əldə edin.",
 	"apihelp-discussiontoolsedit-param-commentid": "Cavablandırılacaq şərhin nömrəsi. <var>paction</var> <var>addcomment</var> olduqda istifadə olunur. <var>commentname</var>-in üstünə yazır.",
 	"apihelp-discussiontoolsedit-param-commentname": "Cavablandırılacaq şərhin adı. <var>paction</var> <var>addcomment</var> olduqda istifadə olunur.",
+	"apihelp-discussiontoolsedit-param-autosubscribe": "İstifadəçi avtomatik olaraq müzakirə səhifəsi mövzusuna abunə olunsun?",
 	"apihelp-discussiontoolsedit-param-formtoken": "İki dəfə göndərməyin qarşısını almaq üçün yaradılan istəyə bağlı unikal ID.",
 	"apihelp-discussiontoolsedit-param-html": "HTML olaraq göndəriləcək məzmun. <var>wikitext</var> ilə birlikdə istifadə oluna bilər.",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} <var>paction</var> <var>addcomment</var> olduqda istifadə olunur.",

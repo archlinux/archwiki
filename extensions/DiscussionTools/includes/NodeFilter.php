@@ -35,9 +35,10 @@ class NodeFilter {
 	public const SHOW_DOCUMENT_FRAGMENT = 0x400;
 	public const SHOW_NOTATION = 0x800;
 
+	/** @var callable */
 	public $filter;
 
-	private $active = false;
+	private bool $active = false;
 
 	/**
 	 * See https://dom.spec.whatwg.org/#dom-nodefilter-acceptnode

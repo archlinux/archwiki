@@ -12,7 +12,7 @@ use Wikimedia\TestingAccessWrapper;
 class CommandFactoryTest extends MediaWikiUnitTestCase {
 
 	/**
-	 * @covers MediaWiki\Shell\CommandFactory::create
+	 * @covers \MediaWiki\Shell\CommandFactory::create
 	 */
 	public function testCreate() {
 		$logger = new NullLogger();
@@ -33,7 +33,7 @@ class CommandFactoryTest extends MediaWikiUnitTestCase {
 			}
 
 			public function getClient( array $options = [] ) {
-				throw new \Exception( 'unreachable' );
+				throw new \LogicException( 'unreachable' );
 			}
 		};
 

@@ -1,8 +1,9 @@
 ( function () {
-	var icon = {},
+	const iconElement = document.createElement( 'div' ),
 		pageIssuesParser = require( '../../../../resources/skins.minerva.scripts/page-issues/parser.js' ),
 		extractMessage = pageIssuesParser.extract;
 
+	iconElement.classList.add( 'minerva-icon--issue-generic-defaultColor', 'minerva-ambox-icon' );
 	QUnit.module( 'Minerva pageIssuesParser' );
 
 	/**
@@ -10,12 +11,12 @@
 	 * @return {Element}
 	 */
 	function newBox( className ) {
-		var box = document.createElement( 'div' );
+		const box = document.createElement( 'div' );
 		box.className = className;
 		return box;
 	}
 
-	QUnit.test( 'extractMessage', function () {
+	QUnit.test( 'extractMessage', function ( assert ) {
 		[
 			[
 				$( '<div />' ).html(
@@ -24,8 +25,8 @@
 				{
 					issue: {
 						severity: 'DEFAULT',
-						grouped: true,
-						icon: icon
+						iconElement,
+						grouped: true
 					},
 					text: '<p>Smelly</p>'
 				},
@@ -38,16 +39,18 @@
 				{
 					issue: {
 						severity: 'DEFAULT',
-						grouped: false,
-						icon: icon
+						iconElement,
+						grouped: false
 					},
 					text: '<p>Dirty</p>'
 				},
 				'When the box is not child of mw-collapsible-content it !grouped'
 			]
 		].forEach( function ( test ) {
-			sinon.assert.match( // eslint-disable-line no-undef
-				extractMessage( test[ 0 ] ),
+			const msg = extractMessage( test[ 0 ] );
+			delete msg.$el;
+			assert.deepEqual(
+				msg,
 				test[ 1 ],
 				test[ 2 ]
 			);
@@ -55,7 +58,7 @@
 	} );
 
 	QUnit.test( 'parseSeverity', function ( assert ) {
-		var tests = [
+		const tests = [
 			[ '', 'DEFAULT', 'empty' ],
 			[ 'foo', 'DEFAULT', 'unknown' ],
 			[ 'ambox-style', 'LOW', 'style' ],
@@ -69,11 +72,10 @@
 			// Mixed severities such as 'ambox-style ambox-content' are not prioritized.
 		];
 		tests.forEach( function ( params, i ) {
-			var
-				className = params[ 0 ],
-				expect = params[ 1 ],
-				test = params[ 2 ],
-				box = newBox( className );
+			const className = params[ 0 ];
+			const expect = params[ 1 ];
+			const test = params[ 2 ];
+			const box = newBox( className );
 			assert.strictEqual(
 				pageIssuesParser.test.parseSeverity( box ),
 				expect,
@@ -83,7 +85,7 @@
 	} );
 
 	QUnit.test( 'parseType', function ( assert ) {
-		var tests = [
+		const tests = [
 			[ '', 'DEFAULT', 'issue-generic', 'empty' ],
 			[ 'foo', 'DEFAULT', 'issue-generic', 'unknown' ],
 			[ 'ambox-move', 'DEFAULT', 'issue-type-move', 'move' ],
@@ -94,15 +96,14 @@
 			[ '', 'HIGH', 'issue-generic', 'HIGH severity' ]
 		];
 		tests.forEach( function ( params, i ) {
-			var
-				className = params[ 0 ],
-				severity = params[ 1 ],
-				expect = {
-					name: params[ 2 ],
-					severity: severity
-				},
-				test = params[ 3 ],
-				box = newBox( className );
+			const className = params[ 0 ];
+			const severity = params[ 1 ];
+			const expect = {
+				name: params[ 2 ],
+				severity: severity
+			};
+			const test = params[ 3 ];
+			const box = newBox( className );
 			assert.propEqual(
 				pageIssuesParser.test.parseType( box, severity ),
 				expect,
@@ -112,20 +113,18 @@
 	} );
 
 	QUnit.test( 'parseGroup', function ( assert ) {
-		var tests = [
+		const tests = [
 			[ undefined, false, 'orphaned' ],
 			[ '', false, 'ungrouped' ],
 			[ 'mw-collapsible-content', true, 'grouped' ]
 		];
 		tests.forEach( function ( params, i ) {
-			var
-				parentClassName = params[ 0 ],
-				expect = params[ 1 ],
-				test = params[ 2 ],
-				parent,
-				box = newBox( '' );
+			const parentClassName = params[ 0 ];
+			const expect = params[ 1 ];
+			const test = params[ 2 ];
+			const box = newBox( '' );
 			if ( parentClassName !== undefined ) {
-				parent = document.createElement( 'div' );
+				const parent = document.createElement( 'div' );
 				parent.className = parentClassName;
 				parent.appendChild( box );
 			}
@@ -138,7 +137,7 @@
 	} );
 
 	QUnit.test( 'iconName', function ( assert ) {
-		var tests = [
+		const tests = [
 			[ '', 'DEFAULT', 'issue-generic-defaultColor' ],
 			[ '', 'LOW', 'issue-severity-low-lowColor' ],
 			[ '', 'MEDIUM', 'issue-severity-medium-mediumColor' ],
@@ -151,11 +150,10 @@
 			[ 'ambox-content ambox-move', 'MEDIUM', 'issue-type-move-defaultColor' ]
 		];
 		tests.forEach( function ( params, i ) {
-			var
-				className = params[ 0 ],
-				severity = params[ 1 ],
-				expect = params[ 2 ],
-				box = newBox( className );
+			const className = params[ 0 ];
+			const severity = params[ 1 ];
+			const expect = params[ 2 ];
+			const box = newBox( className );
 			assert.strictEqual(
 				pageIssuesParser.iconName( box, severity ),
 				expect,
@@ -165,7 +163,7 @@
 	} );
 
 	QUnit.test( 'maxSeverity', function ( assert ) {
-		var tests = [
+		const tests = [
 			[ [], 'DEFAULT' ],
 			[ [ 'DEFAULT' ], 'DEFAULT' ],
 			[ [ 'DEFAULT', 'LOW' ], 'LOW' ],
@@ -175,8 +173,8 @@
 			[ [ 'DEFAULT', 'HIGH', 'LOW', 'MEDIUM' ], 'HIGH' ]
 		];
 		tests.forEach( function ( params, i ) {
-			var severities = params[ 0 ],
-				expect = params[ 1 ];
+			const severities = params[ 0 ];
+			const expect = params[ 1 ];
 
 			assert.strictEqual(
 				pageIssuesParser.maxSeverity( severities ),

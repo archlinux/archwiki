@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\Notifications\Gateway;
 
-use Config;
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\Notifications\DbFactory;
 use MediaWiki\Extension\Notifications\NotifUser;
 use MediaWiki\User\UserIdentity;

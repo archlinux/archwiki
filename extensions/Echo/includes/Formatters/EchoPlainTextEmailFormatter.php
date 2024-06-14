@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\Notifications\Formatters;
 
-use Sanitizer;
-use SpecialPage;
+use MediaWiki\Parser\Sanitizer;
+use MediaWiki\SpecialPage\SpecialPage;
 
 class EchoPlainTextEmailFormatter extends EchoEventFormatter {
 	protected function formatModel( EchoEventPresentationModel $model ) {

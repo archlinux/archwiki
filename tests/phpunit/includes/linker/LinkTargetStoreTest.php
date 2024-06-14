@@ -1,17 +1,12 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\TitleValue;
 
 /**
  * @group Database
- * @covers MediaWiki\Linker\LinkTargetStore
+ * @covers \MediaWiki\Linker\LinkTargetStore
  */
 class LinkTargetStoreTest extends MediaWikiIntegrationTestCase {
-	protected function setUp(): void {
-		parent::setUp();
-		$this->tablesUsed[] = 'linktarget';
-	}
 
 	public static function provideLinkTargets() {
 		yield [ new TitleValue( NS_SPECIAL, 'BlankPage' ) ];
@@ -41,7 +36,7 @@ class LinkTargetStoreTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Linker\LinkTargetStore::getLinkTargetById
 	 */
 	public function testGetLinkTargetById( $target ) {
-		$linkTargetStore = MediaWikiServices::getInstance()->getLinkTargetLookup();
+		$linkTargetStore = $this->getServiceContainer()->getLinkTargetLookup();
 		$db = $this->getDb();
 		$id = $linkTargetStore->acquireLinkTargetId( $target, $db );
 		$actualLinkTarget = $linkTargetStore->getLinkTargetById( $id, $db );
@@ -54,7 +49,7 @@ class LinkTargetStoreTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Linker\LinkTargetStore::getLinkTargetById
 	 */
 	public function testGetLinkTargetByIdWithoutCache( $target ) {
-		$linkTargetStore = MediaWikiServices::getInstance()->getLinkTargetLookup();
+		$linkTargetStore = $this->getServiceContainer()->getLinkTargetLookup();
 		$db = $this->getDb();
 		$id = $linkTargetStore->acquireLinkTargetId( $target, $db );
 		$linkTargetStore->clearClassCache();

@@ -72,7 +72,5 @@
 	"cite-ve-referenceslist-missingref-in-list": "Questa nota è definita in un template o in un altro blocco generato e per ora può essere modificata solo in modalità sorgente.",
 	"cite-ve-referenceslist-missingreflist": "Questo elenco di riferimenti è generato da un template.",
 	"cite-ve-toolbar-group-label": "Cita",
-	"cite-ve-othergroup-item": "$1 note",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Riferimenti",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nome gruppo riferimenti: \"$1\""
+	"cite-ve-othergroup-item": "$1 note"
 }

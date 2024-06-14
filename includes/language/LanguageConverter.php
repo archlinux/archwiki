@@ -22,6 +22,7 @@
  * @author PhiLiP <philip.npc@gmail.com>
  */
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkTarget;
@@ -29,6 +30,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
@@ -55,7 +57,6 @@ abstract class LanguageConverter implements ILanguageConverter {
 		'crh',
 		'gan',
 		'iu',
-		'kk',
 		'ku',
 		'sh',
 		'shi',
@@ -79,7 +80,6 @@ abstract class LanguageConverter implements ILanguageConverter {
 		'crh' => 'crh',
 		'gan' => 'gan',
 		'iu' => 'iu',
-		'kk' => 'kk',
 		'ku' => 'ku',
 		'sh' => 'sh-latn',
 		'shi' => 'shi',
@@ -116,44 +116,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 	 * @param Language|StubUserLang $langobj
 	 */
 	public function __construct( $langobj ) {
-		$this->deprecatePublicProperty( 'mConvRuleTitle', '1.35', __CLASS__ );
-		$this->deprecatePublicProperty( 'mUserVariant', '1.35', __CLASS__ );
-		$this->deprecatePublicProperty( 'mHeaderVariant', '1.35', __CLASS__ );
-		$this->deprecatePublicProperty( 'mMaxDepth', '1.35', __CLASS__ );
-		$this->deprecatePublicProperty( 'mVarSeparatorPattern', '1.35', __CLASS__ );
-		$this->deprecatePublicProperty( 'mLangObj', '1.35', __CLASS__ );
-		$this->deprecatePublicProperty( 'mTablesLoaded', '1.35', __CLASS__ );
-		$this->deprecatePublicProperty( 'mTables', '1.35', __CLASS__ );
-
 		$this->mLangObj = $langobj;
-
-		$this->deprecatePublicPropertyFallback( 'mVariants', '1.36', function () {
-			return $this->getVariants();
-		} );
-
-		$this->deprecatePublicPropertyFallback( 'mMainLanguageCode', '1.36', function () {
-			return $this->getMainCode();
-		} );
-
-		$this->deprecatePublicPropertyFallback( 'mVariantFallbacks', '1.36', function () {
-			return $this->getVariantsFallbacks();
-		} );
-
-		$this->deprecatePublicPropertyFallback( 'mFlags', '1.36', function () {
-			return $this->getFlags();
-		} );
-
-		$this->deprecatePublicPropertyFallback( 'mVariantNames', '1.36', function () {
-			return $this->getVariantNames();
-		} );
-
-		$this->deprecatePublicPropertyFallback( 'mDescCodeSep', '1.36', function () {
-			return $this->getDescCodeSeparator();
-		} );
-
-		$this->deprecatePublicPropertyFallback( 'mDescVarSep', '1.36', function () {
-			return $this->getDescVarSeparator();
-		} );
 	}
 
 	/**
@@ -207,13 +170,13 @@ abstract class LanguageConverter implements ILanguageConverter {
 			// '+' add rules for alltext
 			// 'E' the flags have an error
 			// these flags above are reserved for program
-			'A' => 'A',   // add rule for convert code (all text converted)
-			'T' => 'T',   // title convert
-			'R' => 'R',   // raw content
-			'D' => 'D',   // convert description (subclass implement)
-			'-' => '-',   // remove convert (not implement)
-			'H' => 'H',   // add rule for convert code (but no display in placed code)
-			'N' => 'N',   // current variant name
+			'A' => 'A', // add rule for convert code (all text converted)
+			'T' => 'T', // title convert
+			'R' => 'R', // raw content
+			'D' => 'D', // convert description (subclass implement)
+			'-' => '-', // remove convert (not implement)
+			'H' => 'H', // add rule for convert code (but no display in placed code)
+			'N' => 'N', // current variant name
 		];
 		$flags = array_merge( $defaultflags, $this->getAdditionalFlags() );
 		foreach ( $this->getVariants() as $v ) {
@@ -607,7 +570,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 					}
 					$attr = $attrs[$attrName];
 					// Don't convert URLs
-					if ( !strpos( $attr, '://' ) ) {
+					if ( !str_contains( $attr, '://' ) ) {
 						$attr = $this->recursiveConvertTopLevel( $attr, $toVariant );
 					}
 
@@ -672,7 +635,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 		$m = array_shift( $matches );
 		$this->loadTables();
 		if ( !isset( $this->mTables[$variant] ) ) {
-			throw new MWException( "Broken variant table: "
+			throw new RuntimeException( "Broken variant table: "
 				. implode( ',', array_keys( $this->mTables ) ) );
 		}
 		$ret = $this->mTables[$variant]->replace( $m[0] );
@@ -880,14 +843,12 @@ abstract class LanguageConverter implements ILanguageConverter {
 	 * @param string $variant The target variant code
 	 * @param int &$startPos
 	 * @param int $depth Depth of recursion
-	 *
-	 * @throws MWException
 	 * @return string Converted text
 	 */
 	protected function recursiveConvertRule( $text, $variant, &$startPos, $depth = 0 ) {
 		// Quick check (no function calls)
 		if ( $text[$startPos] !== '-' || $text[$startPos + 1] !== '{' ) {
-			throw new MWException( __METHOD__ . ': invalid input string' );
+			throw new InvalidArgumentException( __METHOD__ . ': invalid input string' );
 		}
 
 		$startPos += 2;
@@ -939,7 +900,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 					$this->applyManualConv( $rule );
 					return $rule->getDisplay();
 				default:
-					throw new MWException( __METHOD__ . ': invalid regex match' );
+					throw new UnexpectedValueException( __METHOD__ . ': invalid regex match' );
 			}
 		}
 
@@ -1227,7 +1188,7 @@ abstract class LanguageConverter implements ILanguageConverter {
 
 	public function markNoConversion( $text, $noParse = false ) {
 		# don't mark if already marked
-		if ( strpos( $text, '-{' ) || strpos( $text, '}-' ) ) {
+		if ( str_contains( $text, '-{' ) || str_contains( $text, '}-' ) ) {
 			return $text;
 		}
 
@@ -1278,15 +1239,14 @@ abstract class LanguageConverter implements ILanguageConverter {
 					$expandedVariants[ $old ] = 1;
 				}
 			}
+			$expandedVariants = implode( '|', array_keys( $expandedVariants ) );
 
 			$pat = '/;\s*(?=';
-			foreach ( $expandedVariants as $variant => $ignore ) {
-				// zh-hans:xxx;zh-hant:yyy
-				$pat .= $variant . '\s*:|';
-				// xxx=>zh-hans:yyy; xxx=>zh-hant:zzz
-				$pat .= '[^;]*?=>\s*' . $variant . '\s*:|';
-			}
-			$pat .= '\s*$)/';
+			// zh-hans:xxx;zh-hant:yyy
+			$pat .= '(?:' . $expandedVariants . ')\s*:';
+			// xxx=>zh-hans:yyy; xxx=>zh-hant:zzz
+			$pat .= '|[^;]*?=>\s*(?:' . $expandedVariants . ')\s*:';
+			$pat .= '|\s*$)/';
 			$this->mVarSeparatorPattern = $pat;
 		}
 		return $this->mVarSeparatorPattern;

@@ -2,7 +2,7 @@
 /**
  * Deal with importing all those nasty globals and things
  *
- * Copyright © 2003 Brion Vibber <brion@pobox.com>
+ * Copyright © 2003 Brooke Vibber <bvibber@wikimedia.org>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,8 +42,9 @@ use Wikimedia\IPUtils;
 
 /**
  * The WebRequest class encapsulates getting at data passed in the
- * URL or via a POSTed form stripping illegal input characters and
- * normalizing Unicode sequences.
+ * URL or via a POSTed form, stripping illegal input characters, and
+ * normalizing Unicode sequences. This class should be used instead
+ * of accessing globals such as $_GET, $_POST, and $_COOKIE.
  *
  * @ingroup HTTP
  */
@@ -83,7 +84,7 @@ class WebRequest {
 	 * Lazy-init response object
 	 * @var WebResponse
 	 */
-	private $response;
+	protected ?WebResponse $response = null;
 
 	/**
 	 * Cached client IP address
@@ -130,6 +131,23 @@ class WebRequest {
 	}
 
 	/**
+	 * Returns an entry from the $_SERVER array.
+	 * This exists mainly to allow us to inject fake values for testing.
+	 *
+	 * @param string $name A well known key for $_SERVER,
+	 *        see <https://www.php.net/manual/en/reserved.variables.server.php>.
+	 *        Only fields that contain string values are supported,
+	 *        so 'argv' and 'argc' are not safe to use.
+	 * @param ?string $default The value to return if no value is known for the
+	 *        key $name.
+	 *
+	 * @return ?string
+	 */
+	protected function getServerInfo( string $name, ?string $default = null ): ?string {
+		return isset( $_SERVER[$name] ) ? (string)$_SERVER[$name] : $default;
+	}
+
+	/**
 	 * Extract relevant query arguments from the http request uri's path
 	 * to be merged with the normal php provided query arguments.
 	 * Tries to use the REQUEST_URI data if available and parses it
@@ -149,13 +167,13 @@ class WebRequest {
 	 * @return string[] Any query arguments found in path matches.
 	 * @throws FatalError If invalid routes are configured (T48998)
 	 */
-	protected static function getPathInfo( $want = 'all' ) {
+	protected function getPathInfo( $want = 'all' ) {
 		// PATH_INFO is mangled due to https://bugs.php.net/bug.php?id=31892
 		// And also by Apache 2.x, double slashes are converted to single slashes.
 		// So we will use REQUEST_URI if possible.
-		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+		$url = $this->getServerInfo( 'REQUEST_URI' );
+		if ( $url !== null ) {
 			// Slurp out the path portion to examine...
-			$url = $_SERVER['REQUEST_URI'];
 			if ( !preg_match( '!^https?://!', $url ) ) {
 				$url = 'http://unused' . $url;
 			}
@@ -208,14 +226,16 @@ class WebRequest {
 			global $wgUsePathInfo;
 			$matches = [];
 			if ( $wgUsePathInfo ) {
-				if ( !empty( $_SERVER['ORIG_PATH_INFO'] ) ) {
+				$origPathInfo = $this->getServerInfo( 'ORIG_PATH_INFO' ) ?? '';
+				$pathInfo = $this->getServerInfo( 'PATH_INFO' ) ?? '';
+				if ( $origPathInfo !== '' ) {
 					// Mangled PATH_INFO
 					// https://bugs.php.net/bug.php?id=31892
 					// Also reported when ini_get('cgi.fix_pathinfo')==false
-					$matches['title'] = substr( $_SERVER['ORIG_PATH_INFO'], 1 );
-				} elseif ( !empty( $_SERVER['PATH_INFO'] ) ) {
+					$matches['title'] = substr( $origPathInfo, 1 );
+				} elseif ( $pathInfo !== '' ) {
 					// Regular old PATH_INFO yay
-					$matches['title'] = substr( $_SERVER['PATH_INFO'], 1 );
+					$matches['title'] = substr( $pathInfo, 1 );
 				}
 			}
 		}
@@ -232,11 +252,13 @@ class WebRequest {
 	 * @since 1.35
 	 * @param string $basePath The base URL path. Trailing slashes will be
 	 *   stripped.
+	 * @param ?string $requestUrl The request URL to examine. If not given, the
+	 *   URL returned by getGlobalRequestURL() will be used.
 	 * @return string|false
 	 */
-	public static function getRequestPathSuffix( $basePath ) {
+	public static function getRequestPathSuffix( string $basePath, ?string $requestUrl = null ) {
 		$basePath = rtrim( $basePath, '/' ) . '/';
-		$requestUrl = self::getGlobalRequestURL();
+		$requestUrl ??= self::getGlobalRequestURL();
 		$qpos = strpos( $requestUrl, '?' );
 		if ( $qpos !== false ) {
 			$requestPath = substr( $requestUrl, 0, $qpos );
@@ -334,7 +356,6 @@ class WebRequest {
 	 * environment variable, falling back to (process cached) randomly-generated string.
 	 *
 	 * @return string
-	 * @deprecated since 1.41 use Telemetry::getRequestId() instead
 	 * @since 1.27
 	 */
 	public static function getRequestId() {
@@ -346,7 +367,6 @@ class WebRequest {
 	 * that wish to use the same id but are not part of the same execution context.
 	 *
 	 * @param string|null $newId
-	 * @deprecated since 1.41 use Telemetry::overrideRequestId() instead
 	 * @since 1.27
 	 */
 	public static function overrideRequestId( $newId ) {
@@ -375,7 +395,7 @@ class WebRequest {
 	 * available variant URLs.
 	 */
 	public function interpolateTitle() {
-		$matches = self::getPathInfo( 'title' );
+		$matches = $this->getPathInfo( 'title' );
 		foreach ( $matches as $key => $val ) {
 			$this->data[$key] = $this->queryAndPathParams[$key] = $val;
 		}
@@ -464,9 +484,9 @@ class WebRequest {
 	}
 
 	/**
-	 * Fetch a string WITHOUT any Unicode or line break normalization. This is a fast alternative
-	 * for values that are known to be simple, e.g. pure ASCII. When reading user input, use
-	 * {@see getText} instead.
+	 * Fetch a string from this web request's $_GET, $_POST or path router vars WITHOUT any
+	 * Unicode or line break normalization. This is a fast alternative for values that are known
+	 * to be simple, e.g. pure ASCII. When reading user input, use {@see getText} instead.
 	 *
 	 * Array values are discarded for security reasons. Use {@see getArray} or {@see getIntArray}.
 	 *
@@ -488,7 +508,8 @@ class WebRequest {
 	}
 
 	/**
-	 * Fetch a text string and partially normalize it.
+	 * Fetch a text string from this web request's $_GET, $_POST or path router vars and partially
+	 * normalize it.
 	 *
 	 * Use of this method is discouraged. It doesn't normalize line breaks and defaults to null
 	 * instead of the empty string. Instead:
@@ -514,7 +535,8 @@ class WebRequest {
 	}
 
 	/**
-	 * Fetch a text string and return it in normalized form.
+	 * Fetch a text string from this web request's $_GET, $_POST or path router vars and return it
+	 * in normalized form.
 	 *
 	 * This normalizes Unicode sequences (via {@see getGPCVal}) and line breaks.
 	 *
@@ -565,9 +587,9 @@ class WebRequest {
 	}
 
 	/**
-	 * Fetch an array from the input or return $default if it's not set.
-	 * If source was scalar, will return an array with a single element.
-	 * If no source and no default, returns null.
+	 * Fetch an array from this web request's $_GET, $_POST or path router vars,
+	 * or return $default if it's not set. If source was scalar, will return an
+	 * array with a single element. If no source and no default, returns null.
 	 *
 	 * @param string $name
 	 * @param array|null $default Optional default (or null)
@@ -584,10 +606,11 @@ class WebRequest {
 	}
 
 	/**
-	 * Fetch an array of integers, or return $default if it's not set.
-	 * If source was scalar, will return an array with a single element.
-	 * If no source and no default, returns null.
-	 * If an array is returned, contents are guaranteed to be integers.
+	 * Fetch an array of integers from this web request's $_GET, $_POST or
+	 * path router vars, or return $default if it's not set. If source was
+	 * scalar, will return an array with a single element. If no source and
+	 * no default, returns null. If an array is returned, contents are
+	 * guaranteed to be integers.
 	 *
 	 * @param string $name
 	 * @param array|null $default Option default (or null)
@@ -603,9 +626,9 @@ class WebRequest {
 	}
 
 	/**
-	 * Fetch an integer value from the input or return $default if not set.
-	 * Guaranteed to return an integer; non-numeric input will typically
-	 * return 0.
+	 * Fetch an integer value from this web request's $_GET, $_POST or
+	 * path router vars, or return $default if not set. Guaranteed to return
+	 * an integer; non-numeric input will typically return 0.
 	 *
 	 * @param string $name
 	 * @param int $default
@@ -617,9 +640,9 @@ class WebRequest {
 	}
 
 	/**
-	 * Fetch an integer value from the input or return null if empty.
-	 * Guaranteed to return an integer or null; non-numeric input will
-	 * typically return null.
+	 * Fetch an integer value from this web request's $_GET, $_POST or
+	 * path router vars, or return null if empty. Guaranteed to return an
+	 * integer or null; non-numeric input will typically return null.
 	 *
 	 * @param string $name
 	 * @return int|null
@@ -630,9 +653,9 @@ class WebRequest {
 	}
 
 	/**
-	 * Fetch a floating point value from the input or return $default if not set.
-	 * Guaranteed to return a float; non-numeric input will typically
-	 * return 0.
+	 * Fetch a floating point value from this web request's $_GET, $_POST
+	 * or path router vars, or return $default if not set. Guaranteed to
+	 * return a float; non-numeric input will typically return 0.
 	 *
 	 * @since 1.23
 	 * @param string $name
@@ -645,9 +668,9 @@ class WebRequest {
 	}
 
 	/**
-	 * Fetch a boolean value from the input or return $default if not set.
-	 * Guaranteed to return true or false, with normal PHP semantics for
-	 * boolean interpretation of strings.
+	 * Fetch a boolean value from this web request's $_GET, $_POST or path
+	 * router vars or return $default if not set. Guaranteed to return true
+	 * or false, with normal PHP semantics for boolean interpretation of strings.
 	 *
 	 * @param string $name
 	 * @param bool $default
@@ -659,23 +682,29 @@ class WebRequest {
 	}
 
 	/**
-	 * Fetch a boolean value from the input or return $default if not set.
-	 * Unlike getBool, the string "false" will result in boolean false, which is
-	 * useful when interpreting information sent from JavaScript.
+	 * Fetch a boolean value from this web request's $_GET, $_POST or path router
+	 * vars or return $default if not set. Unlike getBool, the string "false" will
+	 * result in boolean false, which is useful when interpreting information sent
+	 * from JavaScript.
 	 *
 	 * @param string $name
 	 * @param bool $default
 	 * @return bool
 	 */
 	public function getFuzzyBool( $name, $default = false ): bool {
-		return $this->getBool( $name, $default )
-			&& strcasecmp( $this->getRawVal( $name ), 'false' ) !== 0;
+		$value = $this->getRawVal( $name );
+		if ( $value === null ) {
+			return (bool)$default;
+		}
+
+		return $value && strcasecmp( $value, 'false' ) !== 0;
 	}
 
 	/**
-	 * Return true if the named value is set in the input, whatever that
-	 * value is (even "0"). Return false if the named value is not set.
-	 * Example use is checking for the presence of check boxes in forms.
+	 * Return true if the named value is set in this web request's $_GET,
+	 * $_POST or path router vars, whatever that value is (even "0").
+	 * Return false if the named value is not set. Example use is checking
+	 * for the presence of check boxes in forms.
 	 *
 	 * @param string $name
 	 * @return bool
@@ -687,8 +716,8 @@ class WebRequest {
 	}
 
 	/**
-	 * Extracts the (given) named values into an array.
-	 * No transformation is performed on the values.
+	 * Extracts the (given) named values from this web request's $_GET, $_POST or path
+	 * router vars into an array. No transformation is performed on the values.
 	 *
 	 * @param string ...$names If no arguments are given, returns all input values
 	 * @return array
@@ -710,7 +739,8 @@ class WebRequest {
 	}
 
 	/**
-	 * Returns the names of all input values excluding those in $exclude.
+	 * Returns the names of this web request's $_GET, $_POST or path router vars,
+	 * excluding those in $exclude.
 	 *
 	 * @param array $exclude
 	 * @return array
@@ -721,7 +751,7 @@ class WebRequest {
 	}
 
 	/**
-	 * Get the values passed in the query string and the path router parameters.
+	 * Get the values passed in $_GET and the path router parameters.
 	 * No transformation is performed on the values.
 	 *
 	 * @codeCoverageIgnore
@@ -733,7 +763,7 @@ class WebRequest {
 	}
 
 	/**
-	 * Get the values passed in the query string only, not including the path
+	 * Get the values passed in $_GET only, not including the path
 	 * router parameters. This is less suitable for self-links to index.php but
 	 * useful for other entry points. No transformation is performed on the
 	 * values.
@@ -758,7 +788,7 @@ class WebRequest {
 	}
 
 	/**
-	 * Return the contents of the Query with no decoding. Use when you need to
+	 * Return the contents of the URL query string with no decoding. Use when you need to
 	 * know exactly what was sent, e.g. for an OAuth signature over the elements.
 	 *
 	 * @codeCoverageIgnore
@@ -766,7 +796,7 @@ class WebRequest {
 	 * @return-taint tainted
 	 */
 	public function getRawQueryString() {
-		return $_SERVER['QUERY_STRING'];
+		return $this->getServerInfo( 'QUERY_STRING' ) ?? '';
 	}
 
 	/**
@@ -803,7 +833,7 @@ class WebRequest {
 	 * @return string
 	 */
 	public function getMethod() {
-		return $_SERVER['REQUEST_METHOD'] ?? 'GET';
+		return $this->getServerInfo( 'REQUEST_METHOD' ) ?: 'GET';
 	}
 
 	/**
@@ -887,7 +917,9 @@ class WebRequest {
 	}
 
 	/**
-	 * Get a cookie set with SameSite=None possibly with a legacy fallback cookie.
+	 * Get a cookie set with SameSite=None.
+	 *
+	 * @deprecated since 1.42 use getCookie(), but note the different $prefix default
 	 *
 	 * @param string $key The name of the cookie
 	 * @param string $prefix A prefix to use, empty by default
@@ -895,21 +927,8 @@ class WebRequest {
 	 * @return mixed Cookie value or $default if the cookie is not set
 	 */
 	public function getCrossSiteCookie( $key, $prefix = '', $default = null ) {
-		global $wgUseSameSiteLegacyCookies;
-		$name = $prefix . $key;
-		// Work around mangling of $_COOKIE
-		$name = strtr( $name, '.', '_' );
-		if ( isset( $_COOKIE[$name] ) ) {
-			return $_COOKIE[$name];
-		}
-		if ( $wgUseSameSiteLegacyCookies ) {
-			$legacyName = $prefix . "ss0-" . $key;
-			$legacyName = strtr( $legacyName, '.', '_' );
-			if ( isset( $_COOKIE[$legacyName] ) ) {
-				return $_COOKIE[$legacyName];
-			}
-		}
-		return $default;
+		wfDeprecated( __METHOD__, '1.42' );
+		return $this->getCookie( $key, $prefix, $default );
 	}
 
 	/**
@@ -1101,14 +1120,11 @@ class WebRequest {
 	/**
 	 * Return a handle to WebResponse style object, for setting cookies,
 	 * headers and other stuff, for Request being worked on.
-	 *
-	 * @return WebResponse
 	 */
-	public function response() {
+	public function response(): WebResponse {
 		/* Lazy initialization of response object for this request */
-		if ( !is_object( $this->response ) ) {
-			$class = ( $this instanceof FauxRequest ) ? FauxResponse::class : WebResponse::class;
-			$this->response = new $class();
+		if ( !$this->response ) {
+			$this->response = new WebResponse();
 		}
 		return $this->response;
 	}
@@ -1249,11 +1265,11 @@ class WebRequest {
 	 * @return string|null
 	 */
 	protected function getRawIP() {
-		$remoteAddr = $_SERVER['REMOTE_ADDR'] ?? null;
+		$remoteAddr = $this->getServerInfo( 'REMOTE_ADDR' );
 		if ( !$remoteAddr ) {
 			return null;
 		}
-		if ( is_array( $remoteAddr ) || str_contains( $remoteAddr, ',' ) ) {
+		if ( str_contains( $remoteAddr, ',' ) ) {
 			throw new MWException( 'Remote IP must not contain multiple values' );
 		}
 
@@ -1387,11 +1403,11 @@ class WebRequest {
 	 * @since 1.28
 	 */
 	public function hasSafeMethod() {
-		if ( !isset( $_SERVER['REQUEST_METHOD'] ) ) {
+		if ( $this->getServerInfo( 'REQUEST_METHOD' ) === null ) {
 			return false; // CLI mode
 		}
 
-		return in_array( $_SERVER['REQUEST_METHOD'], [ 'GET', 'HEAD', 'OPTIONS', 'TRACE' ] );
+		return in_array( $this->getServerInfo( 'REQUEST_METHOD' ), [ 'GET', 'HEAD', 'OPTIONS', 'TRACE' ] );
 	}
 
 	/**
@@ -1488,7 +1504,5 @@ class WebRequest {
 	}
 }
 
-/**
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( WebRequest::class, 'WebRequest' );

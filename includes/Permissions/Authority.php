@@ -26,9 +26,9 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\User\UserIdentity;
 
 /**
- * This interface represents the authority associated the current execution context,
+ * This interface represents the authority associated with the current execution context,
  * such as a web request. The authority determines which actions can or cannot be performed
- * withing that execution context.
+ * within that execution context.
  *
  * See the individual implementations for information on how that authority is determined.
  *
@@ -67,7 +67,7 @@ interface Authority {
 	 * @return ?Block
 	 * @since 1.37
 	 */
-	public function getBlock( int $freshness = self::READ_NORMAL ): ?Block;
+	public function getBlock( int $freshness = IDBAccessObject::READ_NORMAL ): ?Block;
 
 	/**
 	 * Checks whether this authority has the given permission in general.

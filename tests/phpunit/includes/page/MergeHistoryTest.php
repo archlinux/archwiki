@@ -2,6 +2,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\MergeHistory;
+use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWiki\Title\Title;
 
@@ -26,11 +27,15 @@ class MergeHistoryTest extends MediaWikiIntegrationTestCase {
 		// Exclusive for testSourceUpdateForNoRedirectSupport()
 		$this->insertPage( 'Merge3' );
 		$this->insertPage( 'Merge4' );
+
+		// Exclusive for testSourceUpdateWithRedirectSupport()
+		$this->insertPage( 'Merge5' );
+		$this->insertPage( 'Merge6' );
 	}
 
 	/**
 	 * @dataProvider provideIsValidMerge
-	 * @covers MediaWiki\Page\MergeHistory::isValidMerge
+	 * @covers \MediaWiki\Page\MergeHistory::isValidMerge
 	 * @param string $source Source page
 	 * @param string $dest Destination page
 	 * @param string|bool $timestamp Timestamp up to which revisions are merged (or false for all)
@@ -77,7 +82,7 @@ class MergeHistoryTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test merge revision limit checking
-	 * @covers MediaWiki\Page\MergeHistory::isValidMerge
+	 * @covers \MediaWiki\Page\MergeHistory::isValidMerge
 	 */
 	public function testIsValidMergeRevisionLimit() {
 		$limit = MergeHistory::REVISION_LIMIT;
@@ -87,7 +92,7 @@ class MergeHistoryTest extends MediaWikiIntegrationTestCase {
 				Title::makeTitle( NS_MAIN, 'Test' ),
 				Title::makeTitle( NS_MAIN, 'Test2' ),
 				null,
-				$this->getServiceContainer()->getDBLoadBalancerFactory(),
+				$this->getServiceContainer()->getConnectionProvider(),
 				$this->getServiceContainer()->getContentHandlerFactory(),
 				$this->getServiceContainer()->getRevisionStore(),
 				$this->getServiceContainer()->getWatchedItemStore(),
@@ -112,8 +117,8 @@ class MergeHistoryTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test user permission checking
-	 * @covers MediaWiki\Page\MergeHistory::authorizeMerge
-	 * @covers MediaWiki\Page\MergeHistory::probablyCanMerge
+	 * @covers \MediaWiki\Page\MergeHistory::authorizeMerge
+	 * @covers \MediaWiki\Page\MergeHistory::probablyCanMerge
 	 */
 	public function testCheckPermissions() {
 		$factory = $this->getServiceContainer()->getMergeHistoryFactory();
@@ -140,7 +145,7 @@ class MergeHistoryTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * Test merged revision count
-	 * @covers MediaWiki\Page\MergeHistory::getMergedRevisionCount
+	 * @covers \MediaWiki\Page\MergeHistory::getMergedRevisionCount
 	 */
 	public function testGetMergedRevisionCount() {
 		$factory = $this->getServiceContainer()->getMergeHistoryFactory();
@@ -158,11 +163,11 @@ class MergeHistoryTest extends MediaWikiIntegrationTestCase {
 	 * Test update to source page for pages with
 	 * content model that supports redirects
 	 *
-	 * @covers MediaWiki\Page\MergeHistory::merge
+	 * @covers \MediaWiki\Page\MergeHistory::merge
 	 */
 	public function testSourceUpdateWithRedirectSupport() {
-		$title = Title::makeTitle( NS_MAIN, 'Merge1' );
-		$title2 = Title::makeTitle( NS_MAIN, 'Merge2' );
+		$title = Title::makeTitle( NS_MAIN, 'Merge5' );
+		$title2 = Title::makeTitle( NS_MAIN, 'Merge6' );
 
 		$factory = $this->getServiceContainer()->getMergeHistoryFactory();
 		$mh = $factory->newMergeHistory( $title, $title2 );
@@ -170,6 +175,7 @@ class MergeHistoryTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $title->exists() );
 
 		$status = $mh->merge( static::getTestSysop()->getUser() );
+		$this->assertStatusOK( $status );
 
 		$this->assertTrue( $title->exists() );
 	}
@@ -178,7 +184,7 @@ class MergeHistoryTest extends MediaWikiIntegrationTestCase {
 	 * Test update to source page for pages with
 	 * content model that does not support redirects
 	 *
-	 * @covers MediaWiki\Page\MergeHistory::merge
+	 * @covers \MediaWiki\Page\MergeHistory::merge
 	 */
 	public function testSourceUpdateForNoRedirectSupport() {
 		$this->overrideConfigValues( [
@@ -212,5 +218,41 @@ class MergeHistoryTest extends MediaWikiIntegrationTestCase {
 		$this->assertStatusOK( $status );
 
 		$this->assertFalse( $title->exists() );
+	}
+
+	/**
+	 * @covers \MediaWiki\Page\MergeHistory::initTimestampLimits
+	 */
+	public function testSplitTimestamp() {
+		// Create the source page with two revisions with the same timestamp
+		$user = static::getTestSysop()->getUser();
+		$title1 = $this->insertPage( "Merge7" )["title"];
+		$timestamp = MWTimestamp::now( TS_MW );
+		$store = $this->getServiceContainer()->getRevisionStore();
+		$revision = MutableRevisionRecord::newFromParentRevision( $store->getFirstRevision( $title1 ) );
+		$revision->setTimestamp( $timestamp );
+		$revision->setComment( CommentStoreComment::newUnsavedComment( "testing" ) );
+		$revision->setUser( $user );
+		$dbw = $this->getDB();
+		$revid1 = $store->insertRevisionOn( $revision, $dbw )->getID();
+
+		$revision2 = MutableRevisionRecord::newFromParentRevision( $store->getFirstRevision( $title1 ) );
+		$revision2->setTimestamp( $timestamp );
+		$revision2->setComment( CommentStoreComment::newUnsavedComment( "testing" ) );
+		$revision2->setUser( $user );
+		$revid2 = $store->insertRevisionOn( $revision2, $dbw )->getID();
+		// Create the destination page (here to ensure its timestamp is the same or later than the above)
+		$title2 = $this->insertPage( "Merge8" )["title"];
+
+		// Now do the merge
+		$factory = $this->getServiceContainer()->getMergeHistoryFactory();
+		$mh = $factory->newMergeHistory( $title1, $title2, $timestamp . '|' . $revid1 );
+		$status = $mh->merge( $user );
+		$this->assertStatusOK( $status );
+
+		$this->assertNull( $store->getRevisionByPageId( $title1->getId(), $revid1 ) );
+		$this->assertNotNull( $store->getRevisionByPageId( $title1->getId(), $revid2 ) );
+		$this->assertNotNull( $store->getRevisionByPageId( $title2->getId(), $revid1 ) );
+		$this->assertNull( $store->getRevisionByPageId( $title2->getId(), $revid2 ) );
 	}
 }

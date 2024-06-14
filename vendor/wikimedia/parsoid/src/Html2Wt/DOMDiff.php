@@ -54,10 +54,6 @@ class DOMDiff {
 	 */
 	public $specializedAttribHandlers;
 
-	/**
-	 * @param Node $node
-	 * @return Node|null
-	 */
 	private function nextNonTemplateSibling( Node $node ): ?Node {
 		if ( WTUtils::isEncapsulationWrapper( $node ) ) {
 			return WTUtils::skipOverEncapsulatedContent( $node );
@@ -72,9 +68,6 @@ class DOMDiff {
 		$this->env->log( 'trace/domdiff', ...$args );
 	}
 
-	/**
-	 * @param Env $env
-	 */
 	public function __construct( Env $env ) {
 		$this->env = $env;
 		$this->extApi = new ParsoidExtensionAPI( $env );
@@ -414,7 +407,7 @@ class DOMDiff {
 		} else {
 			// FIXME: Maybe $editNode should be marked as inserted to avoid
 			// losing any edits, at the cost of more normalization.
-			// $state->inModifiedContent is only set when we're in inserted
+			// $state->inInsertedContent is only set when we're in inserted
 			// content, so not sure this is currently doing all that much.
 			$subtreeDiffers = true;
 		}
@@ -426,11 +419,6 @@ class DOMDiff {
 		return $subtreeDiffers;
 	}
 
-	/**
-	 * @param Node $node
-	 * @param string $mark
-	 * @param bool $blockNodeDeleted
-	 */
 	private function markNode( Node $node, string $mark, bool $blockNodeDeleted = false ): void {
 		$meta = DiffUtils::addDiffMark( $node, $this->env, $mark );
 
@@ -450,23 +438,16 @@ class DOMDiff {
 		}
 	}
 
-	/**
-	 * @param Node $nodeA
-	 * @param Node $nodeB
-	 * @param string $laPrefix
-	 */
 	private function debugOut( Node $nodeA, Node $nodeB, string $laPrefix = '' ): void {
-		$this->env->log(
-			'trace/domdiff',
-			'--> A' . $laPrefix . ':' .
+		$prefix = 'trace/domdiff';
+		$this->env->log( $prefix,
+			static fn () => '--> A' . $laPrefix . ':' .
 				( $nodeA instanceof Element
 					? DOMCompat::getOuterHTML( $nodeA )
 					: PHPUtils::jsonEncode( $nodeA->nodeValue ) )
 		);
-
-		$this->env->log(
-			'trace/domdiff',
-			'--> B' . $laPrefix . ':' .
+		$this->env->log( $prefix,
+			static fn () => '--> B' . $laPrefix . ':' .
 				( $nodeB instanceof Element
 					? DOMCompat::getOuterHTML( $nodeB )
 					: PHPUtils::jsonEncode( $nodeB->nodeValue ) )

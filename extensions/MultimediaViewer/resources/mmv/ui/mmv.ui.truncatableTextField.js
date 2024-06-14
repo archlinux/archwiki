@@ -94,9 +94,11 @@ const UiElement = require( './mmv.ui.js' );
 				.addClass( 'mw-mmv-ttf-container empty' )
 				.append( this.$element, this.$ellipsis );
 		}
+
 		attach() {
 			$( window ).on( 'resize.mmv-ttf', mw.util.debounce( this.repaint.bind( this ), 100 ) );
 		}
+
 		unattach() {
 			$( window ).off( 'resize.mmv-ttf' );
 		}
@@ -113,6 +115,7 @@ const UiElement = require( './mmv.ui.js' );
 			this.$ellipsis.hide();
 			this.shrink();
 		}
+
 		empty() {
 			this.$element.empty();
 			// eslint-disable-next-line mediawiki/class-doc
@@ -203,7 +206,6 @@ const UiElement = require( './mmv.ui.js' );
 		 * Changes the element style if a certain length is reached.
 		 */
 		changeStyle() {
-			let oldClass;
 			let newClass = 'mw-mmv-ttf-normal';
 
 			// eslint-disable-next-line mediawiki/class-doc
@@ -217,7 +219,7 @@ const UiElement = require( './mmv.ui.js' );
 					break;
 				}
 
-				oldClass = newClass;
+				const oldClass = newClass;
 				newClass = v;
 				// eslint-disable-next-line mediawiki/class-doc
 				this.$container.removeClass( oldClass ).addClass( newClass );

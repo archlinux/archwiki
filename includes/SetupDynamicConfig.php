@@ -327,16 +327,12 @@ if ( $wgPageCreationLog ) {
 
 if ( $wgPageLanguageUseDB ) {
 	$wgLogTypes[] = 'pagelang';
-	$wgLogActionsHandlers['pagelang/pagelang'] = PageLangLogFormatter::class;
-}
-
-// Backwards compatibility with old password limits
-if ( $wgMinimalPasswordLength !== false ) {
-	$wgPasswordPolicy['policies']['default']['MinimalPasswordLength'] = $wgMinimalPasswordLength;
-}
-
-if ( $wgMaximalPasswordLength !== false ) {
-	$wgPasswordPolicy['policies']['default']['MaximalPasswordLength'] = $wgMaximalPasswordLength;
+	$wgLogActionsHandlers['pagelang/pagelang'] = [
+		'class' => PageLangLogFormatter::class,
+		'services' => [
+			'LanguageNameUtils',
+		]
+	];
 }
 
 if ( $wgPHPSessionHandling !== 'enable' &&
@@ -349,4 +345,16 @@ if ( defined( 'MW_NO_SESSION' ) ) {
 	// If the entry point wants no session, force 'disable' here unless they
 	// specifically set it to the (undocumented) 'warn'.
 	$wgPHPSessionHandling = MW_NO_SESSION === 'warn' ? 'warn' : 'disable';
+}
+
+// Backwards compatibility with old bot passwords storage configs
+if ( !$wgVirtualDomainsMapping ) {
+	$wgVirtualDomainsMapping = [];
+}
+if ( $wgBotPasswordsCluster ) {
+	$wgVirtualDomainsMapping['virtual-botpasswords']['cluster'] = $wgBotPasswordsCluster;
+}
+
+if ( $wgBotPasswordsDatabase ) {
+	$wgVirtualDomainsMapping['virtual-botpasswords']['db'] = $wgBotPasswordsDatabase;
 }

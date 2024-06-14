@@ -6,6 +6,7 @@ namespace Wikimedia\Parsoid\Utils\DOMCompat;
 use Iterator;
 use LogicException;
 use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 
 /**
  * Implements the parts of DOMTokenList interface which are used by Parsoid.
@@ -94,41 +95,26 @@ class TokenList implements Iterator {
 		}
 	}
 
-	/**
-	 * @return string
-	 */
 	public function current(): string {
 		$this->lazyLoadClassList();
 		return current( $this->classList );
 	}
 
-	/**
-	 * @return void
-	 */
 	public function next(): void {
 		$this->lazyLoadClassList();
 		next( $this->classList );
 	}
 
-	/**
-	 * @return int|null
-	 */
 	public function key(): ?int {
 		$this->lazyLoadClassList();
 		return key( $this->classList );
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function valid(): bool {
 		$this->lazyLoadClassList();
 		return key( $this->classList ) !== null;
 	}
 
-	/**
-	 * @return void
-	 */
 	public function rewind(): void {
 		$this->lazyLoadClassList();
 		reset( $this->classList );
@@ -138,7 +124,7 @@ class TokenList implements Iterator {
 	 * Set the classList property based on the class attribute of the wrapped element.
 	 */
 	private function lazyLoadClassList(): void {
-		$attrib = $this->node->getAttribute( 'class' ) ?? '';
+		$attrib = DOMCompat::getAttribute( $this->node, 'class' ) ?? '';
 		if ( $attrib !== $this->attribute ) {
 			$this->attribute = $attrib;
 			$this->classList = preg_split( '/\s+/', $attrib, -1,

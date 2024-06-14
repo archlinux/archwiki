@@ -1,19 +1,16 @@
 module.exports = function () {
-	var
-		// eslint-disable-next-line no-restricted-properties
-		M = mw.mobileFrontend,
-		mobile = M.require( 'mobile.startup' ),
-		SearchOverlay = mobile.search.SearchOverlay,
-		SearchGateway = mobile.search.SearchGateway,
-		overlayManager = mobile.OverlayManager.getSingleton(),
-		// eslint-disable-next-line no-jquery/no-global-selector
-		$searchInput = $( '#searchInput' ),
-		placeholder = $searchInput.attr( 'placeholder' ),
-		defaultSearchPage = $searchInput.siblings( 'input[name=title]' ).val(),
-		// eslint-disable-next-line no-jquery/no-global-selector
-		$searchBar = $( '#searchInput, #searchIcon, .skin-minerva-search-trigger' ),
-		searchRoute = new RegExp( /\/search/ ),
-		searchOverlayInstance;
+	const mobile = require( 'mobile.startup' );
+	const SearchOverlay = mobile.search.SearchOverlay;
+	const SearchGateway = mobile.search.SearchGateway;
+	const overlayManager = mobile.getOverlayManager();
+	// eslint-disable-next-line no-jquery/no-global-selector
+	const $searchInput = $( '#searchInput' );
+	const placeholder = $searchInput.attr( 'placeholder' );
+	const defaultSearchPage = $searchInput.siblings( 'input[name=title]' ).val();
+	// eslint-disable-next-line no-jquery/no-global-selector
+	const $searchBar = $( '#searchInput, #searchIcon, .skin-minerva-search-trigger' );
+	const searchRoute = new RegExp( /\/search/ );
+	let searchOverlayInstance;
 
 	// Only continue on mobile devices as it breaks desktop search
 	// See https://phabricator.wikimedia.org/T108432

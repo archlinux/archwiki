@@ -16,11 +16,11 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Media
  */
 
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Status\Status;
 
 /**
@@ -34,7 +34,6 @@ use MediaWiki\Status\Status;
  * Base media handler class
  *
  * @stable to extend
- *
  * @ingroup Media
  */
 abstract class MediaHandler {

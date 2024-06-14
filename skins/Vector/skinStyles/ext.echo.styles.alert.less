@@ -10,20 +10,16 @@
 }
 
 .vector-user-links {
-	.vector-menu-content-list {
-		.mw-echo-alert {
-			padding: 0.2em 0.5em;
-			white-space: nowrap;
-			// Prevent alert message from pushing user links off screen
-			max-width: 270px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
+	.mw-echo-alert {
+		padding: 0.2em 0.5em;
+		white-space: nowrap;
+		// Prevent alert message from pushing user links off screen
+		max-width: 270px;
+		overflow: hidden;
+		text-overflow: ellipsis;
 
-		@media ( max-width: @min-width-desktop-wide ) {
-			.mw-echo-alert {
-				.echo-alert-collapse();
-			}
+		@media ( max-width: @max-width-breakpoint-desktop ) {
+			.echo-alert-collapse();
 		}
 	}
 }

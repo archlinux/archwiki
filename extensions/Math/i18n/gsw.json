@@ -8,7 +8,7 @@
 	"math_syntax_error": "Syntaxfähler",
 	"math_unknown_error": "Nit bekannte Fähler",
 	"math_unknown_function": "Nit bekannti Funktion",
-	"mw_math_mathml": "MathML (experimentäll)",
-	"mw_math_source": "Als TeX la sy (für Tekschtbrowser)",
+	"mw-math-mathml": "MathML (experimentäll)",
+	"mw-math-source": "Als TeX la sy (für Tekschtbrowser)",
 	"prefs-math": "TeX"
 }

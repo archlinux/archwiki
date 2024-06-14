@@ -2,12 +2,11 @@
 /**
  * @private
  */
-class Less_Tree_Attribute extends Less_Tree {
+class Less_Tree_Attribute extends Less_Tree implements Less_Tree_HasValueProperty {
 
 	public $key;
 	public $op;
 	public $value;
-	public $type = 'Attribute';
 
 	public function __construct( $key, $op, $value ) {
 		$this->key = $key;
@@ -23,7 +22,7 @@ class Less_Tree_Attribute extends Less_Tree {
 			return $this;
 		}
 
-		return new Less_Tree_Attribute(
+		return new self(
 			$key_obj ? $this->key->compile( $env ) : $this->key,
 			$this->op,
 			$val_obj ? $this->value->compile( $env ) : $this->value );

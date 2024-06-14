@@ -27,8 +27,10 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Shell\Shell;
 use MediaWiki\User\User;
+use Wikimedia\Rdbms\IConnectionProvider;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 // NOTE: MaintenanceParameters is needed in the constructor, and we may not have
 //       autoloading enabled at this point?
@@ -178,6 +180,7 @@ abstract class Maintenance {
 	 * @var array
 	 */
 	public $orderedOptions = [];
+	private ?IConnectionProvider $dbProvider = null;
 
 	/**
 	 * Default constructor. Children should call this *first* if implementing
@@ -716,6 +719,9 @@ abstract class Maintenance {
 		if ( $this->mDb !== null ) {
 			$child->setDB( $this->mDb );
 		}
+		if ( $this->dbProvider !== null ) {
+			$child->setDBProvider( $this->dbProvider );
+		}
 
 		return $child;
 	}
@@ -875,17 +881,9 @@ abstract class Maintenance {
 	 *
 	 * @stable to override
 	 *
-	 * @param SettingsBuilder|null $settingsBuilder
+	 * @param SettingsBuilder $settingsBuilder
 	 */
-	public function finalSetup( SettingsBuilder $settingsBuilder = null ) {
-		if ( !$settingsBuilder ) {
-			// HACK for backwards compatibility. All subclasses that override
-			// finalSetup() should be updated to pass $settingsBuilder along.
-			// XXX: We don't want the parameter to be nullable! How can we make it required
-			//      without breaking backwards compatibility?
-			$settingsBuilder = $GLOBALS['wgSettings'];
-		}
-
+	public function finalSetup( SettingsBuilder $settingsBuilder ) {
 		$config = $settingsBuilder->getConfig();
 		$overrides = [];
 		$overrides['DBadminuser'] = $config->get( MainConfigNames::DBadminuser );
@@ -895,8 +893,6 @@ abstract class Maintenance {
 		if ( ob_get_level() ) {
 			ob_end_flush();
 		}
-		# Same with these
-		$overrides['CommandLineMode'] = true;
 
 		# Override $wgServer
 		if ( $this->hasOption( 'server' ) ) {
@@ -980,7 +976,7 @@ abstract class Maintenance {
 	 */
 	public function purgeRedundantText( $delete = true ) {
 		# Data should come off the master, wrapped in a transaction
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		$this->beginTransaction( $dbw, __METHOD__ );
 
 		# Get "active" text records via the content table
@@ -1007,7 +1003,7 @@ abstract class Maintenance {
 			->select( 'old_id' )
 			->distinct()
 			->from( 'text' )
-			->where( [ 'old_id NOT IN ( ' . $dbw->makeList( $cur ) . ' )' ] )
+			->where( $dbw->expr( 'old_id', '!=', $cur ) )
 			->caller( __METHOD__ )->fetchResultSet();
 		$old = [];
 		foreach ( $res as $row ) {
@@ -1044,6 +1040,8 @@ abstract class Maintenance {
 	 *
 	 * This function has the same parameters as LoadBalancer::getConnection().
 	 *
+	 * For simple cases, use ::getReplicaDB() or ::getPrimaryDB() instead.
+	 *
 	 * @stable to override
 	 *
 	 * @param int $db DB index (DB_REPLICA/DB_PRIMARY)
@@ -1070,6 +1068,37 @@ abstract class Maintenance {
 	 */
 	public function setDB( IMaintainableDatabase $db ) {
 		$this->mDb = $db;
+	}
+
+	/**
+	 * @return IReadableDatabase
+	 * @since 1.42
+	 */
+	protected function getReplicaDB(): IReadableDatabase {
+		if ( $this->dbProvider === null ) {
+			$this->dbProvider = $this->getServiceContainer()->getConnectionProvider();
+		}
+		return $this->dbProvider->getReplicaDatabase();
+	}
+
+	/**
+	 * @return IDatabase
+	 * @since 1.42
+	 */
+	protected function getPrimaryDB(): IDatabase {
+		if ( $this->dbProvider === null ) {
+			$this->dbProvider = $this->getServiceContainer()->getConnectionProvider();
+		}
+		return $this->dbProvider->getPrimaryDatabase();
+	}
+
+	/**
+	 * @internal
+	 * @param IConnectionProvider $dbProvider
+	 * @return void
+	 */
+	public function setDBProvider( IConnectionProvider $dbProvider ) {
+		$this->dbProvider = $dbProvider;
 	}
 
 	/**

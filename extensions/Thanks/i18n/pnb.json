@@ -21,11 +21,9 @@
 	"thanks-submit": "شکریئے بھیجو",
 	"echo-pref-subscription-edit-thank": "میں نوں اوہ شکریہ بھیجیا",
 	"echo-category-title-edit-thank": "شکریئے",
-	"notification-thanks-diff-link": "تہاڈیاں دودھ",
 	"notification-compact-header-edit-thank": "$1 توں {{GENDER:$3|تہاڈے}} {{GENDER:$2|شکریہ لے گئے}} او۔",
 	"logentry-thanks-thank": "{{GENDER:$4|$3}} نوں $1 {{GENDER:$2|شکریہ بھیجیا گیا}}۔",
 	"notification-link-text-view-post": "ٹپݨی ویکھو",
-	"notification-flow-thanks-post-link": "تہاڈیاں ٹپݨی",
 	"notification-compact-header-flow-thank": "$1 توں {{GENDER:$3|تہاڈے}} {{GENDER:$2|شکریہ لے گئے}} او۔",
 	"ipb-action-thanks": "شکریئے بھیجے جا رہے اے"
 }

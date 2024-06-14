@@ -1,21 +1,7 @@
 @import '../../minerva.less/minerva.variables.less';
 
-.user-button {
-	// Make sure count is positioned correctly in relation to bell icon
-	position: relative;
-
-	// can't use display:none class as icons must have a label to retain height
-	.label {
-		visibility: hidden;
-	}
-
-	&.loading span {
-		display: none;
-	}
-}
-
 .minerva-icon--bellOutline-base20 {
-	.cdx-mixin-css-icon( @cdx-icon-bell-outline, @color-subtle );
+	.cdx-mixin-css-icon( @cdx-icon-bell-outline, var(--color-subtle) );
 }
 
 //
@@ -34,17 +20,17 @@
 //
 .mw-mf .mw-echo-unseen-notifications {
 	margin: auto;
-	background: @background-color-light;
-	color: @color-subtle;
+	background: var( --background-color-interactive );
+	color: var( --color-subtle );
 	cursor: pointer;
 
 	.minerva-icon--circle {
 		border-radius: @border-radius-circle;
 		border: @border-width-thick @border-style-base #54595d;
 		margin: auto;
-		height: @icon-size-md;
-		width: @icon-size-md;
-		background: @background-color-destructive;
+		height: @icon-size-medium;
+		width: @icon-size-medium;
+		background: var( --background-color-destructive );
 		border-color: @border-color-destructive;
 
 		&::before {
@@ -53,7 +39,7 @@
 	}
 
 	&::after {
-		color: @color-inverted;
+		color: var( --color-inverted );
 		content: attr( data-counter-text );
 		position: absolute;
 		left: 0;

@@ -53,7 +53,7 @@ OO.mixinClass( ManualWidget, OO.ui.mixin.IconElement );
 OO.mixinClass( ManualWidget, OO.ui.mixin.TitledElement );
 
 ManualWidget.prototype.toggle = function ( show ) {
-	ManualWidget.parent.prototype.toggle.call( this, show );
+	ManualWidget.super.prototype.toggle.call( this, show );
 	if ( show ) {
 		this.reloadHoverButton.$element.remove();
 		// Use the same access key as the hover reload button, because this won't ever be displayed at the same time as that.

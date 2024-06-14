@@ -8,7 +8,7 @@
 	"--warnings-exit-nonzero": true,
 	"--builtin-classes": true,
 	"--external": "HTMLDocument,HTMLBodyElement,HTMLHtmlElement,Window,Node,Text,Set,Range,Selection,ClientRect,File,FileList,Blob,DataTransfer,DataTransferItem,KeyboardEvent,MouseEvent,Promise,Storage,URL",
-	"--warnings": [ "-nodoc(class,public)", "-global" ],
+	"--warnings": [ "-nodoc(class,public)", "-global", "-inheritdoc" ],
 	"--exclude": [
 		"lib/ve/rebaser/src/dm/",
 		"modules/ve-mw/tests/"
@@ -16,12 +16,7 @@
 	"--": [
 		".jsduck/external.js",
 		"lib/ve/.jsduck/external.js",
-		"lib/ve/lib/oojs-ui/oojs-ui-core.js",
-		"lib/ve/lib/oojs-ui/oojs-ui-widgets.js",
-		"lib/ve/lib/oojs-ui/oojs-ui-toolbars.js",
-		"lib/ve/lib/oojs-ui/oojs-ui-windows.js",
-		"lib/ve/lib/oojs-ui/oojs-ui-wikimediaui.js",
-		"lib/ve/lib/oojs-ui/oojs-ui-apex.js",
+		"lib/ve/.jsduck/external-ooui.js",
 		"lib/ve/lib/unicodejs/unicodejs.js",
 		"lib/ve/lib/treeDiffer/treeDiffer-dist.js",
 		"lib/ve/src",

@@ -43,7 +43,7 @@ class MigrateUserGroup extends Maintenance {
 		$count = 0;
 		$oldGroup = $this->getArg( 0 );
 		$newGroup = $this->getArg( 1 );
-		$dbw = $this->getDB( DB_PRIMARY );
+		$dbw = $this->getPrimaryDB();
 		$batchSize = $this->getBatchSize();
 		$start = $dbw->newSelectQueryBuilder()
 			->select( 'MIN(ug_user)' )
@@ -68,23 +68,27 @@ class MigrateUserGroup extends Maintenance {
 			$this->output( "Doing users $blockStart to $blockEnd\n" );
 
 			$this->beginTransaction( $dbw, __METHOD__ );
-			$dbw->update( 'user_groups',
-				[ 'ug_group' => $newGroup ],
-				[ 'ug_group' => $oldGroup,
-					"ug_user BETWEEN " . (int)$blockStart . " AND " . (int)$blockEnd ],
-				__METHOD__,
-				[ 'IGNORE' ]
-			);
+			$dbw->newUpdateQueryBuilder()
+				->update( 'user_groups' )
+				->ignore()
+				->set( [ 'ug_group' => $newGroup ] )
+				->where( [
+					'ug_group' => $oldGroup,
+					"ug_user BETWEEN " . (int)$blockStart . " AND " . (int)$blockEnd
+				] )
+				->caller( __METHOD__ )->execute();
 			$affected += $dbw->affectedRows();
 			// Delete rows that the UPDATE operation above had to ignore.
 			// This happens when a user is in both the old and new group.
 			// Updating the row for the old group membership failed since
 			// user/group is UNIQUE.
-			$dbw->delete( 'user_groups',
-				[ 'ug_group' => $oldGroup,
-					"ug_user BETWEEN " . (int)$blockStart . " AND " . (int)$blockEnd ],
-				__METHOD__
-			);
+			$dbw->newDeleteQueryBuilder()
+				->deleteFrom( 'user_groups' )
+				->where( [
+					'ug_group' => $oldGroup,
+					"ug_user BETWEEN " . (int)$blockStart . " AND " . (int)$blockEnd
+				] )
+				->caller( __METHOD__ )->execute();
 			$affected += $dbw->affectedRows();
 			$this->commitTransaction( $dbw, __METHOD__ );
 

@@ -1,7 +1,7 @@
 /*!
  * VisualEditor UserInterface FragmentDialog class.
  *
- * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
+ * @copyright See AUTHORS.txt
  */
 
 /**
@@ -49,6 +49,8 @@ ve.ui.FragmentDialog.static.actions = [
 		flags: [ 'progressive', 'primary' ],
 		modes: 'insert'
 	}
+	// The message visualeditor-dialog-action-goback is also available
+	// but currently only used in ve-mw.
 ];
 
 /* Methods */

@@ -2,14 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Ernác",
-			"Iltever"
+			"Iltever",
+			"Къарачайлы"
 		]
 	},
 	"categorytree": "Категорияланы тереги",
 	"categorytree-portlet": "Категорияла",
 	"categorytree-legend": "Категорияланы терегин кёргюз",
 	"categorytree-desc": "Викини [[Special:CategoryTree|структуры категорияларыны структурасын]] кёргюзюр ючюн AJAX-компонент",
-	"categorytree-header": "Категория атын джазыгъыз да, ол терек кибик кёрюннюкдю.\nОл амал, сизни браузеригиз AJAX-ны тута эсе барды.\nСизни браузеригизни версиясы эски эсе неда JavaScript джукъланыб эсе, тюбкатегорияланы терек кибик кёргюзтюу амал бла хайырланаллыкъ тюлсюз.",
+	"categorytree-header": "Категория атын джазыгъыз да, ол терек кибик кёрюннюкдю. (JavaScript керек боллукъду).",
 	"categorytree-category": "Категория:",
 	"categorytree-go": "Терекни кёргюз",
 	"categorytree-parents": "Огъары категорияла",
@@ -17,8 +18,8 @@
 	"categorytree-mode-categories": "къуру категорияла",
 	"categorytree-mode-pages": "файлладан къалгъан",
 	"categorytree-mode-all": "бютеу бетле",
-	"categorytree-collapse": "джашыр",
-	"categorytree-expand": "кёргюз",
+	"categorytree-collapse": "чырма",
+	"categorytree-expand": "джай",
 	"categorytree-member-counts": "Ичинде $1 {{PLURAL:$1|тюбкатегория}}, $2 {{PLURAL:$2|бет}} эмда $3 {{PLURAL:$3|файл}} барды",
 	"categorytree-num-categories": "$1 К",
 	"categorytree-num-pages": "$1 Б",

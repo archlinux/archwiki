@@ -1,11 +1,13 @@
 <?php
 
+use MediaWiki\Context\RequestContext;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Request\ContentSecurityPolicy;
+use MediaWiki\Request\FauxResponse;
 use Wikimedia\TestingAccessWrapper;
 
 class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
-	/** @var ContentSecurityPolicy */
+	/** @var ContentSecurityPolicy|TestingAccessWrapper */
 	private $csp;
 
 	protected function setUp(): void {
@@ -16,7 +18,6 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 		$this->overrideConfigValues( [
 			MainConfigNames::AllowExternalImages => false,
 			MainConfigNames::AllowExternalImagesFrom => [],
-			MainConfigNames::AllowImageTag => false,
 			MainConfigNames::EnableImageWhitelist => false,
 			MainConfigNames::LoadScript => false,
 			MainConfigNames::ExtensionAssetsPath => false,
@@ -47,8 +48,12 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 		// Note, there are some obscure globals which
 		// could affect the results which aren't included above.
 
+		$this->clearHook( 'ContentSecurityPolicyDefaultSource' );
+		$this->clearHook( 'ContentSecurityPolicyScriptSource' );
+		$this->clearHook( 'ContentSecurityPolicyDirectives' );
+
 		$context = RequestContext::getMain();
-		$resp = $context->getRequest()->response();
+		$resp = new FauxResponse();
 		$conf = $context->getConfig();
 		$hookContainer = $this->getServiceContainer()->getHookContainer();
 		$csp = new ContentSecurityPolicy( $resp, $conf, $hookContainer );
@@ -56,7 +61,7 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::getAdditionalSelfUrls
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::getAdditionalSelfUrls
 	 */
 	public function testGetAdditionalSelfUrlsRespectsUrlSettings() {
 		$this->overrideConfigValues( [
@@ -81,7 +86,7 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerFalsePositiveBrowser
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::falsePositiveBrowser
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::falsePositiveBrowser
 	 */
 	public function testFalsePositiveBrowser( $ua, $expected ) {
 		$actual = ContentSecurityPolicy::falsePositiveBrowser( $ua );
@@ -103,8 +108,8 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::addScriptSrc
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::makeCSPDirectives
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::addScriptSrc
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::makeCSPDirectives
 	 */
 	public function testAddScriptSrc() {
 		$this->csp->addScriptSrc( 'https://example.com:71' );
@@ -117,8 +122,8 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::addStyleSrc
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::makeCSPDirectives
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::addStyleSrc
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::makeCSPDirectives
 	 */
 	public function testAddStyleSrc() {
 		$this->csp->addStyleSrc( 'style.example.com' );
@@ -131,8 +136,8 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::addDefaultSrc
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::makeCSPDirectives
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::addDefaultSrc
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::makeCSPDirectives
 	 */
 	public function testAddDefaultSrc() {
 		$this->csp->addDefaultSrc( '*.example.com' );
@@ -146,7 +151,7 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerMakeCSPDirectives
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::makeCSPDirectives
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::makeCSPDirectives
 	 */
 	public function testMakeCSPDirectives(
 		$policy,
@@ -261,21 +266,7 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::makeCSPDirectives
-	 */
-	public function testMakeCSPDirectivesImage() {
-		global $wgAllowImageTag;
-		$origImg = wfSetVar( $wgAllowImageTag, true );
-
-		$actual = $this->csp->makeCSPDirectives( true, ContentSecurityPolicy::FULL_MODE );
-
-		$wgAllowImageTag = $origImg;
-		$expected = "script-src 'unsafe-eval' blob: 'self' 'unsafe-inline' sister-site.somewhere.com *.wikipedia.org; default-src * data: blob:; style-src * data: blob: 'unsafe-inline'; object-src 'none'; report-uri /w/api.php?action=cspreport&format=json";
-		$this->assertSame( $expected, $actual );
-	}
-
-	/**
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::makeCSPDirectives
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::makeCSPDirectives
 	 */
 	public function testMakeCSPDirectivesReportUri() {
 		$actual = $this->csp->makeCSPDirectives(
@@ -287,7 +278,7 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::getHeaderName
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::getHeaderName
 	 */
 	public function testGetHeaderName() {
 		$this->assertSame(
@@ -301,7 +292,7 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::getReportUri
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::getReportUri
 	 */
 	public function testGetReportUri() {
 		$full = $this->csp->getReportUri( ContentSecurityPolicy::FULL_MODE );
@@ -322,7 +313,7 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerPrepareUrlForCSP
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::prepareUrlForCSP
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::prepareUrlForCSP
 	 */
 	public function testPrepareUrlForCSP( $url, $expected ) {
 		$actual = $this->csp->prepareUrlForCSP( $url );
@@ -353,7 +344,7 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::escapeUrlForCSP
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::escapeUrlForCSP
 	 */
 	public function testEscapeUrlForCSP() {
 		$escaped = $this->csp->escapeUrlForCSP( ',;%2B' );
@@ -362,7 +353,7 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideIsNonceRequired
-	 * @covers MediaWiki\Request\ContentSecurityPolicy::isNonceRequired
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::isNonceRequired
 	 */
 	public function testIsNonceRequired( $main, $reportOnly, $expected ) {
 		$this->overrideConfigValues( [
@@ -386,5 +377,35 @@ class ContentSecurityPolicyTest extends MediaWikiIntegrationTestCase {
 			[ [ 'useNonces' => true ], [ 'useNonces' => false ], true ],
 			[ [ 'useNonces' => false ], [ 'useNonces' => true ], true ],
 		];
+	}
+
+	/**
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::getDirectives
+	 */
+	public function testGetDirectives() {
+		$this->assertSame(
+			[
+				'Content-Security-Policy' => "script-src 'unsafe-eval' blob: 'self' 'unsafe-inline'"
+					. " sister-site.somewhere.com *.wikipedia.org; default-src * data: blob:;"
+					. " style-src * data: blob: 'unsafe-inline'; object-src 'none';"
+					. " report-uri /w/api.php?action=cspreport&format=json",
+			],
+			$this->csp->getDirectives()
+		);
+	}
+
+	/**
+	 * @covers \MediaWiki\Request\ContentSecurityPolicy::sendHeaders
+	 */
+	public function testSendHeaders() {
+		$this->csp->sendHeaders();
+		$this->assertSame(
+			"script-src 'unsafe-eval' blob: 'self' 'unsafe-inline'"
+				. " sister-site.somewhere.com *.wikipedia.org; default-src *"
+				. " data: blob:; style-src * data: blob: 'unsafe-inline';"
+				. " object-src 'none'; report-uri /w/api.php?action=cspreport&format=json",
+			$this->csp->response->getHeader( 'Content-Security-Policy' )
+		);
+		$this->assertNull( $this->csp->response->getHeader( 'Content-Security-Policy-Report-Only' ) );
 	}
 }

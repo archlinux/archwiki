@@ -18,9 +18,15 @@
  * @file
  */
 
+namespace MediaWiki\Deferred;
+
+use CdnPurgeJob;
+use Exception;
+use InvalidArgumentException;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
+use RuntimeException;
 use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
 
@@ -153,7 +159,7 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		$services = MediaWikiServices::getInstance();
 		/** @var PageReference $page */
 
-		// Avoid multiple queries for HtmlCacheUpdater::getUrls() call
+		// Avoid multiple queries for HTMLCacheUpdater::getUrls() call
 		$lb = $services->getLinkBatchFactory()->newLinkBatch();
 		foreach ( $this->pageTuples as [ $page, ] ) {
 			$lb->addObj( $page );
@@ -344,3 +350,6 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		return false;
 	}
 }
+
+/** @deprecated class alias since 1.42 */
+class_alias( CdnCacheUpdate::class, 'CdnCacheUpdate' );

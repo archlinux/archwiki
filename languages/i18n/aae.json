@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Ftillimi",
-			"Martindimaggio",
-			"Amire80"
+			"Martindimaggio"
 		]
 	},
 	"tog-underline": "Sotulinia të kolegamenteve:",
@@ -228,10 +228,10 @@
 	"versionrequired": "Ke mbsogn të versionin $1 te MediaWiki",
 	"ok": "Mir",
 	"retrievedfrom": "Mori ka \"$1\"",
-	"youhavenewmessages": "{{PLURAL:$3|Ke}} $1 ($2).",
-	"youhavenewmessagesfromusers": "{{PLURAL:$4|Ke}} $1 ka {{PLURAL:$3|gnatrë utent|$3 utente}} ($2).",
-	"newmessageslinkplural": "{{PLURAL:$1|gnë messaggiu i ri|999=messaggi të ri}}",
-	"newmessagesdifflinkplural": "{{PLURAL:$1|modifika|999=modifike}} të sprasme",
+	"new-messages": "{{PLURAL:$3|Ke}} $1 ($2).",
+	"new-messages-from-users": "{{PLURAL:$4|Ke}} $1 ka {{PLURAL:$3|gnatrë utent|$3 utente}} ($2).",
+	"new-messages-link-plural": "{{PLURAL:$1|gnë messaggiu i ri|999=messaggi të ri}}",
+	"new-messages-diff-link-plural": "{{PLURAL:$1|modifika|999=modifike}} të sprasme",
 	"editsection": "ndroje",
 	"editold": "ndroje",
 	"viewsourceold": "vrej surgentin",
@@ -242,7 +242,10 @@
 	"showtoc": "fto",
 	"hidetoc": "fshih",
 	"collapsible-collapse": "Stringir",
+	"collapsible-collapse-all-text": "Stringir gjith",
+	"collapsible-collapse-all-tooltip": "Stringiru gjith elementet te pagina cë mënd jen të stringirm",
 	"collapsible-expand": "Sgjëro",
+	"collapsible-expand-all-text": "Sgjëro gjith",
 	"confirmable-confirm": "Je {{GENDER:$1|sikuru}}?",
 	"confirmable-yes": "Ëj (sì)",
 	"confirmable-no": "Jo",

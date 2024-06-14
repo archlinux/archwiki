@@ -21,14 +21,15 @@
  * @ingroup Parser
  */
 
+use MediaWiki\Context\IContextSource;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\StubObject\StubObject;
 use MediaWiki\Title\Title;
-use MediaWiki\User\User;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\Utils\MWTimestamp;
 use Wikimedia\ScopedCallback;
@@ -815,9 +816,33 @@ class ParserOptions {
 	 * other metadata generated (like the table of contents).
 	 * @see T307691
 	 * @since 1.39
+	 * @deprecated since 1.42; just clear the metadata in the final
+	 *  parser output
 	 */
 	public function setSuppressTOC() {
+		wfDeprecated( __METHOD__, '1.42' );
 		$this->setOption( 'suppressTOC', true );
+	}
+
+	/**
+	 * Should section edit links be suppressed?
+	 * Used when parsing wikitext which will be presented in a
+	 * non-interactive context: previews, UX text, etc.
+	 * @since 1.42
+	 * @return bool
+	 */
+	public function getSuppressSectionEditLinks() {
+		return $this->getOption( 'suppressSectionEditLinks' );
+	}
+
+	/**
+	 * Suppress section edit links in the output.
+	 * Used when parsing wikitext which will be presented in a
+	 * non-interactive context: previews, UX text, etc.
+	 * @since 1.42
+	 */
+	public function setSuppressSectionEditLinks() {
+		$this->setOption( 'suppressSectionEditLinks', true );
 	}
 
 	/**
@@ -1072,7 +1097,7 @@ class ParserOptions {
 	 * @return ParserOptions
 	 */
 	public static function newFromAnon() {
-		return new ParserOptions( new User,
+		return new ParserOptions( MediaWikiServices::getInstance()->getUserFactory()->newAnonymous(),
 			MediaWikiServices::getInstance()->getContentLanguage() );
 	}
 
@@ -1192,6 +1217,7 @@ class ParserOptions {
 				'targetLanguage' => null,
 				'removeComments' => true,
 				'suppressTOC' => false,
+				'suppressSectionEditLinks' => false,
 				'enableLimitReport' => false,
 				'preSaveTransform' => true,
 				'isPreview' => false,

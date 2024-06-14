@@ -21,9 +21,9 @@
 
 namespace MediaWiki\Pager;
 
-use IContextSource;
 use Language;
 use LocalisationCache;
+use MediaWiki\Context\IContextSource;
 use MediaWiki\Html\FormOptions;
 use MediaWiki\Html\Html;
 use MediaWiki\Languages\LanguageFactory;
@@ -93,7 +93,7 @@ class AllMessagesTablePager extends TablePager {
 		LocalisationCache $localisationCache,
 		FormOptions $opts
 	) {
-		// Set database before parent constructor to avoid setting it there with wfGetDB
+		// Set database before parent constructor to avoid setting it there
 		$this->mDb = $dbProvider->getReplicaDatabase();
 		parent::__construct( $context, $linkRenderer );
 		$this->localisationCache = $localisationCache;
@@ -171,7 +171,7 @@ class AllMessagesTablePager extends TablePager {
 	) {
 		// FIXME: This function should be moved to Language:: or something.
 		// Fallback to global state, if not provided
-		$dbr ??= MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->getReplicaDatabase();
+		$dbr ??= MediaWikiServices::getInstance()->getConnectionProvider()->getReplicaDatabase();
 		$res = $dbr->newSelectQueryBuilder()
 			->select( [ 'page_namespace', 'page_title' ] )
 			->from( 'page' )
@@ -232,7 +232,7 @@ class AllMessagesTablePager extends TablePager {
 		foreach ( $messageNames as $key ) {
 			$customised = isset( $statuses['pages'][$key] );
 			if ( $customised !== $this->custom &&
-				( $asc && ( $key < $offset || !$offset ) || !$asc && $key > $offset ) &&
+				( ( $asc && ( $key < $offset || !$offset ) ) || ( !$asc && $key > $offset ) ) &&
 				( ( $this->prefix && preg_match( $this->prefix, $key ) ) || $this->prefix === false )
 			) {
 				$actual = $this->msg( $key )->inLanguage( $this->lang )->plain();

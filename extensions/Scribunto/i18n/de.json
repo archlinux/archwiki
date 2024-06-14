@@ -10,6 +10,7 @@
 			"Umherirrender"
 		]
 	},
+	"content-model-scribunto": "Scribunto-Modul",
 	"scribunto-desc": "Ermöglicht eine Umgebung zum Einbetten von Skriptsprachen in Wikiseiten",
 	"scribunto-line": "in Zeile $1",
 	"scribunto-module-line": "in $1, Zeile $2",

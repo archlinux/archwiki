@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.42.0"
 	},
 	"MessagesDirs": {
 		"Cite": [
@@ -31,7 +31,8 @@
 		"ParserCloned": "parser",
 		"ParserFirstCallInit": "parser",
 		"EditPage::showEditForm:initial": "main",
-		"ResourceLoaderGetConfigVars": "main"
+		"ResourceLoaderGetConfigVars": "main",
+		"ResourceLoaderRegisterModules": "main"
 	},
 	"HookHandlers": {
 		"main": {
@@ -47,8 +48,8 @@
 	"ResourceModules": {
 		"ext.cite.styles": {
 			"styles": {
-				"ext.cite.styles.css": {},
-				"ext.cite.print.css": {
+				"ext.cite.styles.less": {},
+				"ext.cite.print.less": {
 					"media": "print"
 				}
 			},
@@ -57,8 +58,10 @@
 			}
 		},
 		"ext.cite.parsoid.styles": {
+			"localBasePath": "modules/parsoid-styles",
+			"remoteExtPath": "Cite/modules/parsoid-styles",
 			"class": "Cite\\ResourceLoader\\CiteCSSFileModule",
-			"styles": "ext.cite.parsoid.styles.css"
+			"styles": "ext.cite.parsoid.styles.less"
 		},
 		"ext.cite.visualEditor.core": {
 			"localBasePath": "modules/ve-cite",
@@ -84,9 +87,7 @@
 				"cite-ve-referenceslist-isempty-default",
 				"cite-ve-referenceslist-missingref",
 				"cite-ve-referenceslist-missingref-in-list",
-				"cite-ve-referenceslist-missingreflist",
-				"visualeditor-internal-list-diff-default-group-name-mwreference",
-				"visualeditor-internal-list-diff-group-name-mwreference"
+				"cite-ve-referenceslist-missingreflist"
 			]
 		},
 		"ext.cite.visualEditor": {
@@ -116,7 +117,6 @@
 			"styles": [
 				"ve.ui.MWReferenceDialog.less",
 				"ve.ui.MWReferenceContextItem.less",
-				"ve.ui.MWReferenceGroupInputWidget.less",
 				"ve.ui.MWReferenceResultWidget.less",
 				"ve.ui.MWReferenceSearchWidget.less",
 				"ve.ui.MWCitationDialogTool.less"
@@ -211,11 +211,10 @@
 				"ext.cite.tracking.js"
 			],
 			"styles": [
-				"ext.cite.a11y.css",
-				"ext.cite.highlighting.css"
+				"ext.cite.a11y.less",
+				"ext.cite.highlighting.less"
 			],
 			"messages": [
-				"cite_reference_link_prefix",
 				"cite_references_link_accessibility_label",
 				"cite_references_link_many_accessibility_label",
 				"cite_references_link_accessibility_back_label"
@@ -227,20 +226,39 @@
 		"remoteExtPath": "Cite/modules"
 	},
 	"QUnitTestModule": {
-		"localBasePath": "modules/ve-cite/tests",
-		"remoteExtPath": "Cite/modules/ve-cite/tests",
+		"localBasePath": "",
+		"remoteExtPath": "Cite",
 		"scripts": [
-			"ve.dm.citeExample.js",
-			"ve.dm.Converter.test.js",
-			"ve.dm.InternalList.test.js",
-			"ve.dm.Transaction.test.js",
-			"ve.ui.DiffElement.test.js",
-			"ve.ui.MWWikitextStringTransferHandler.test.js"
+			"tests/qunit/ve-cite/ve.dm.citeExample.js",
+			"tests/qunit/ve-cite/ve.dm.Converter.test.js",
+			"tests/qunit/ve-cite/ve.dm.InternalList.test.js",
+			"tests/qunit/ve-cite/ve.dm.MWReferenceModel.test.js",
+			"tests/qunit/ve-cite/ve.dm.MWReferenceNode.test.js",
+			"tests/qunit/ve-cite/ve.dm.MWReferencesListNode.test.js",
+			"tests/qunit/ve-cite/ve.dm.Transaction.test.js",
+			"tests/qunit/ve-cite/ve.ui.DiffElement.test.js",
+			"tests/qunit/ve-cite/ve.ui.MWCitationDialogTool.test.js",
+			"tests/qunit/ve-cite/ve.ui.MWReferenceContextItem.test.js",
+			"tests/qunit/ve-cite/ve.ui.MWReferenceDialog.test.js",
+			"tests/qunit/ve-cite/ve.ui.MWReferenceGroupInputWidget.test.js",
+			"tests/qunit/ve-cite/ve.ui.MWReferenceResultWidget.test.js",
+			"tests/qunit/ve-cite/ve.ui.MWReferenceSearchWidget.test.js",
+			"tests/qunit/ve-cite/ve.ui.MWReferencesListDialog.test.js",
+			"tests/qunit/ve-cite/ve.ui.MWUseExistingReferenceCommand.test.js",
+			"tests/qunit/ve-cite/ve.ui.MWWikitextStringTransferHandler.test.js",
+			"tests/qunit/ext.cite.referencePreviews/createReferenceGateway.test.js",
+			"tests/qunit/ext.cite.referencePreviews/isReferencePreviewsEnabled.test.js",
+			"tests/qunit/ext.cite.referencePreviews/renderer.test.js",
+			"tests/qunit/ext.cite.referencePreviews/setUserConfigFlags.test.js"
 		],
 		"dependencies": [
 			"ext.cite.visualEditor",
 			"test.VisualEditor"
-		]
+		],
+		"optionalDependencies": {
+			"Popups": "ext.cite.referencePreviews"
+		},
+		"factory": "Cite\\ResourceLoader\\OptionalLoader::addOptionalDependencies"
 	},
 	"attributes": {
 		"CodeMirror": {
@@ -249,11 +267,10 @@
 				"references": "text/mediawiki"
 			}
 		},
-		"EventLogging": {
-			"Schemas": {
-				"ReferencePreviewsBaseline": "/analytics/legacy/referencepreviewsbaseline/1.0.0",
-				"ReferencePreviewsCite": "/analytics/legacy/referencepreviewscite/1.0.0"
-			}
+		"Popups": {
+			"PluginModules": [
+				"ext.cite.referencePreviews"
+			]
 		},
 		"VisualEditor": {
 			"PluginModules": [
@@ -266,7 +283,7 @@
 	},
 	"config": {
 		"CiteBookReferencing": {
-			"description": "Development feature flag for Book Referencing, a way to nest citations. Please don't enable in production.",
+			"description": "Temporary feature flag while the extends=\"…\" feature (a way to nest citations and e.g. reference pages in a book) is in development.",
 			"public": true,
 			"value": false
 		},
@@ -284,8 +301,41 @@
 	"AutoloadNamespaces": {
 		"Cite\\": "src/"
 	},
+	"TestAutoloadNamespaces": {
+		"Cite\\Tests\\": "tests/phpunit/"
+	},
 	"TrackingCategories": [
 		"cite-tracking-category-cite-error"
 	],
+	"ParsoidModules": [ {
+		"name": "Cite",
+		"domProcessors": [
+			"Cite\\Parsoid\\RefProcessor"
+		],
+		"tags": [
+			{
+				"name": "ref",
+				"handler": "Cite\\Parsoid\\Ref",
+				"options": {
+					"wt2html": {
+						"unpackOutput": false,
+						"embedsHTMLInAttributes": true
+					},
+					"outputHasCoreMwDomSpecMarkup": true
+				}
+			},
+			{
+				"name": "references",
+				"handler": "Cite\\Parsoid\\References",
+				"options": {
+					"wt2html": {
+						"embedsHTMLInAttributes": true
+					},
+					"html2wt": { "format": "block" },
+					"outputHasCoreMwDomSpecMarkup": true
+				}
+			}
+		]
+	} ],
 	"manifest_version": 2
 }

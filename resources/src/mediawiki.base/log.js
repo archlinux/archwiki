@@ -4,8 +4,9 @@
 /* eslint-disable no-console */
 
 /**
- * @class mw
- * @singleton
+ * Library for logging developer warnings to the JavaScript console.
+ *
+ * @namespace mw.log
  */
 
 /**
@@ -39,6 +40,7 @@ function stackSet() {
  * argument is an Error object.
  *
  * @since 1.26
+ * @method
  * @param {...Mixed} msg Messages to output to console
  */
 mw.log.error = Function.prototype.bind.call( console.error, console );
@@ -46,20 +48,18 @@ mw.log.error = Function.prototype.bind.call( console.error, console );
 /**
  * Create a function that logs a deprecation warning when called.
  *
- * Usage:
+ * @example
+ * var deprecatedNoB = mw.log.makeDeprecated( 'hello_without_b', 'Use of hello without b is deprecated.' );
  *
- *     var deprecatedNoB = mw.log.makeDeprecated( 'hello_without_b', 'Use of hello without b is deprecated.' );
+ * function hello( a, b ) {
+ *   if ( b === undefined ) {
+ *     deprecatedNoB();
+ *     b = 0;
+ *   }
+ *   return a + b;
+ * }
  *
- *     function hello( a, b ) {
- *       if ( b === undefined ) {
- *         deprecatedNoB();
- *         b = 0;
- *       }
- *       return a + b;
- *     }
- *
- *     hello( 1 );
- *
+ * hello( 1 );
  *
  * @since 1.38
  * @param {string|null} key Name of the feature for deprecation tracker,
@@ -83,16 +83,15 @@ mw.log.makeDeprecated = function ( key, msg ) {
  * Create a property on a host object that, when accessed, will log
  * a deprecation warning to the console.
  *
- * Usage:
+ * @example
+ * mw.log.deprecate( window, 'myGlobalFn', myGlobalFn );
  *
- *    mw.log.deprecate( window, 'myGlobalFn', myGlobalFn );
- *
- *    mw.log.deprecate( Thing, 'old', old, 'Use Other.thing instead', 'Thing.old'  );
- *
+ * @example
+ * mw.log.deprecate( Thing, 'old', old, 'Use Other.thing instead', 'Thing.old'  );
  *
  * @param {Object} obj Host object of deprecated property
  * @param {string} key Name of property to create in `obj`
- * @param {Mixed} val The value this property should return when accessed
+ * @param {any} val The value this property should return when accessed
  * @param {string} [msg] Optional extra text to add to the deprecation warning
  * @param {string} [logName] Name of the feature for deprecation tracker.
  *  Tracking is disabled by default, except for global variables on `window`.

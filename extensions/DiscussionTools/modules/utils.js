@@ -113,28 +113,45 @@ function cantHaveElementChildren( node ) {
  * @return {boolean}
  */
 function isCommentSeparator( node ) {
-	return node.nodeType === Node.ELEMENT_NODE && (
-		// Empty paragraphs (`<p><br></p>`) between indented comments mess up indentation detection
-		node.tagName.toLowerCase() === 'br' ||
-		// Horizontal line
-		node.tagName.toLowerCase() === 'hr' ||
-		// TemplateStyles followed by any of the others
-		(
-			[ 'style', 'link' ].indexOf( node.tagName.toLowerCase() ) !== -1 &&
-			node.nextSibling && isCommentSeparator( node.nextSibling )
-		) ||
+	if ( node.nodeType !== Node.ELEMENT_NODE ) {
+		return false;
+	}
+
+	var tagName = node.tagName.toLowerCase();
+	if ( tagName === 'br' || tagName === 'hr' ) {
+		return true;
+	}
+
+	// TemplateStyles followed by any of the others
+	if ( node.nextSibling &&
+		( tagName === 'link' || tagName === 'style' ) &&
+		isCommentSeparator( node.nextSibling )
+	) {
+		return true;
+	}
+
+	var classList = node.classList;
+	if (
+		// Anything marked as not containing comments
+		classList.contains( 'mw-notalk' ) ||
 		// {{outdent}} templates
-		node.classList.contains( 'outdent-template' ) ||
+		classList.contains( 'outdent-template' ) ||
 		// {{tracked}} templates (T313097)
-		node.classList.contains( 'mw-trackedTemplate' ) ||
-		// Wikitext definition list term markup (`;`) when used as a fake heading (T265964)
-		(
-			node.nodeName.toLowerCase() === 'dl' &&
-			node.childNodes.length === 1 &&
-			node.firstChild.nodeType === Node.ELEMENT_NODE &&
-			node.firstChild.nodeName.toLowerCase() === 'dt'
-		)
-	);
+		classList.contains( 'mw-trackedTemplate' )
+	) {
+		return true;
+	}
+
+	// Wikitext definition list term markup (`;`) when used as a fake heading (T265964)
+	if ( tagName === 'dl' &&
+		node.childNodes.length === 1 &&
+		node.firstChild.nodeType === Node.ELEMENT_NODE &&
+		node.firstChild.nodeName.toLowerCase() === 'dt'
+	) {
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -338,7 +355,7 @@ function getCoveredSiblings( range ) {
  * @return {Node[]|null}
  */
 function getFullyCoveredSiblings( item, excludedAncestorNode ) {
-	var siblings = getCoveredSiblings( item.getNativeRange() );
+	var siblings = getCoveredSiblings( item.getRange() );
 
 	function makeRange( sibs ) {
 		var range = sibs[ 0 ].ownerDocument.createRange();
@@ -347,7 +364,7 @@ function getFullyCoveredSiblings( item, excludedAncestorNode ) {
 		return range;
 	}
 
-	var matches = compareRanges( makeRange( siblings ), item.getNativeRange() ) === 'equal';
+	var matches = compareRanges( makeRange( siblings ), item.getRange() ) === 'equal';
 
 	if ( matches ) {
 		// If these are all of the children (or the only child), go up one more level
@@ -355,7 +372,7 @@ function getFullyCoveredSiblings( item, excludedAncestorNode ) {
 		while (
 			( parent = siblings[ 0 ].parentNode ) &&
 			parent !== excludedAncestorNode &&
-			compareRanges( makeRange( [ parent ] ), item.getNativeRange() ) === 'equal'
+			compareRanges( makeRange( [ parent ] ), item.getRange() ) === 'equal'
 		) {
 			siblings = [ parent ];
 		}
@@ -380,9 +397,11 @@ function getTitleFromUrl( url ) {
 		return parsedUrl.searchParams.get( 'title' );
 	}
 
+	// wgArticlePath is site config so is trusted
+	// eslint-disable-next-line security/detect-non-literal-regexp
 	var articlePathRegexp = new RegExp(
 		mw.util.escapeRegExp( mw.config.get( 'wgArticlePath' ) )
-			.replace( mw.util.escapeRegExp( '$1' ), '(.*)' )
+			.replace( '\\$1', '(.*)' )
 	);
 	var match;
 	if ( ( match = parsedUrl.pathname.match( articlePathRegexp ) ) ) {
@@ -525,7 +544,6 @@ function compareRanges( a, b ) {
 	) {
 		endToEnd = 0;
 	}
-	/* eslint-enable no-use-before-define */
 
 	if ( startToStart === 0 && endToEnd === 0 ) {
 		return 'equal';

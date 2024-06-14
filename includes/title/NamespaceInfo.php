@@ -205,7 +205,7 @@ class NamespaceInfo {
 		$index = $this->makeValidNamespace( $index, __METHOD__ );
 
 		return $index > NS_MAIN
-			&& $index % 2;
+			&& $index % 2 === 1;
 	}
 
 	/**
@@ -642,8 +642,5 @@ class NamespaceInfo {
 	}
 }
 
-/**
- * Retain the old class name for backwards compatibility.
- * @deprecated since 1.41
- */
+/** @deprecated class alias since 1.41 */
 class_alias( NamespaceInfo::class, 'NamespaceInfo' );

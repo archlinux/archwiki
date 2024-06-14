@@ -41,6 +41,12 @@
 	"minerva-page-actions-language-switcher": "Lingui",
 	"minerva-page-actions-history": "Crunuluggìa",
 	"skin-minerva-issue-learn-more": "Àutri nfurmazzioni",
+	"skin-minerva-time-ago-seconds": "{{PLURAL:$1|$1 sicunnu|$1 sicunni}} fa",
+	"skin-minerva-time-ago-minutes": "{{PLURAL:$1|$1 minutu|$1 minuti}} fa",
+	"skin-minerva-time-ago-hours": "{{PLURAL:$1|$1 ura|$1 uri}} fa",
+	"skin-minerva-time-ago-days": "{{PLURAL:$1|$1 jornu|$1 jorna}} fa",
+	"skin-minerva-time-ago-months": "{{PLURAL:$1|$1 misi}} fa",
+	"skin-minerva-time-ago-years": "{{PLURAL:$1|$1 annu|$1 anni}} fa",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Catigurìi",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Talìa li catigurìi dî pàggini"
 }

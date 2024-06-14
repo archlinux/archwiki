@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\VisualEditor\Tests;
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\VisualEditor\Hooks;
 use MediaWikiIntegrationTestCase;
 
@@ -18,7 +19,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 		$this->overrideConfigValues( $config );
 
 		$vars = [];
-		Hooks::onResourceLoaderGetConfigVars( $vars );
+		( new Hooks() )->onResourceLoaderGetConfigVars( $vars, '', new HashConfig() );
 
 		$this->assertArrayHasKey( 'wgVisualEditorConfig', $vars );
 		$veConfig = $vars['wgVisualEditorConfig'];
@@ -30,6 +31,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function provideOnResourceLoaderGetConfigVars() {
+		yield [ [], [] ];
 		// TODO: test a lot more config!
 	}
 

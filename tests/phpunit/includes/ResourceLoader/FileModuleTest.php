@@ -2,16 +2,14 @@
 
 namespace MediaWiki\Tests\ResourceLoader;
 
-use Exception;
 use LogicException;
 use MediaWiki\Config\HashConfig;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\ResourceLoader\FileModule;
 use MediaWiki\ResourceLoader\FilePath;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
-use ResourceLoaderFileTestModule;
-use ResourceLoaderTestCase;
 use RuntimeException;
 use SkinFactory;
 
@@ -521,14 +519,14 @@ class FileModuleTest extends ResourceLoaderTestCase {
 			'packageFiles' => [ [ 'name' => 'data.json', 'versionCallback' => static function () {
 				return [ 'A-version' ];
 			}, 'callback' => static function () {
-				throw new Exception( 'Unexpected computation' );
+				throw new LogicException( 'Unexpected computation' );
 			} ] ]
 		];
 		$b = [
 			'packageFiles' => [ [ 'name' => 'data.json', 'versionCallback' => static function () {
 				return [ 'B-version' ];
 			}, 'callback' => static function () {
-				throw new Exception( 'Unexpected computation' );
+				throw new LogicException( 'Unexpected computation' );
 			} ] ]
 		];
 		yield 'packageFiles with different versionCallback' => [ $a, $b, false ];
@@ -539,7 +537,7 @@ class FileModuleTest extends ResourceLoaderTestCase {
 					return [ 'X-version' ];
 				},
 				'callback' => static function () {
-					throw new Exception( 'Unexpected computation' );
+					throw new LogicException( 'Unexpected computation' );
 				}
 			] ]
 		];
@@ -549,7 +547,7 @@ class FileModuleTest extends ResourceLoaderTestCase {
 					return [ 'X-version' ];
 				},
 				'callback' => static function () {
-					throw new Exception( 'Unexpected computation' );
+					throw new LogicException( 'Unexpected computation' );
 				}
 			] ]
 		];
@@ -585,7 +583,7 @@ class FileModuleTest extends ResourceLoaderTestCase {
 		$nosemiBScript = file_get_contents( "$basePathB/script-nosemi.js" );
 		$vueComponentDebug = trim( file_get_contents( "$basePath/vue-component-output-debug.js.txt" ) );
 		$vueComponentNonDebug = trim( file_get_contents( "$basePath/vue-component-output-nondebug.js.txt" ) );
-		$config = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$config = MediaWikiServices::getInstance()->getMainConfig();
 		return [
 			'plain package' => [
 				$base + [

@@ -4,8 +4,8 @@
 			"Maxí",
 			"S.Örvarr.S",
 			"Snævar",
-			"Sveinn í Felli",
-			"Stefán Örvar Sigmundsson"
+			"Stefán Örvar Sigmundsson",
+			"Sveinn í Felli"
 		]
 	},
 	"nuke": "Fjöldaeyða",
@@ -27,7 +27,7 @@
 	"nuke-not-deleted": "Mistök við eyðingu síðunnar [[:$1]].",
 	"nuke-delete-more": "[[Special:Nuke|Fjöldaeyða fleiri skrám]]",
 	"nuke-pattern": "SQL-LÍKT mynstur (t.d. %) fyrir nafn á síðuna:",
-	"nuke-nopages-global": "Það eru engir síðutitlar sem samsvara leitinni þinni.",
+	"nuke-nopages-global": "Það eru engir síðutitlar samsvarandi leitinni þinni.",
 	"nuke-viewchanges": "skoða breytingar",
 	"nuke-linkoncontribs": "fjöldaeyða"
 }

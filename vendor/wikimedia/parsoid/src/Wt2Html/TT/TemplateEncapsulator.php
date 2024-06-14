@@ -44,12 +44,6 @@ class TemplateEncapsulator {
 	/** @var string|null */
 	public $resolvedTemplateTarget;
 
-	/**
-	 * @param Env $env
-	 * @param Frame $frame
-	 * @param Token $token
-	 * @param string $wrapperType
-	 */
 	public function __construct(
 		Env $env, Frame $frame, Token $token, string $wrapperType
 	) {
@@ -77,7 +71,7 @@ class TemplateEncapsulator {
 			foreach ( $tplInfo->paramInfos as $paramInfo ) {
 				$paramTokens = null;
 				if ( $paramInfo->named ) {
-					$paramTokens = $this->token->getAttribute( $paramInfo->k );
+					$paramTokens = $this->token->getAttributeV( $paramInfo->k );
 				} else {
 					$paramTokens = $this->token->attribs[$paramInfo->k]->v;
 				}
@@ -129,7 +123,7 @@ class TemplateEncapsulator {
 		// since the 'k' and 'v' values in params will be expanded tokens
 		//
 		// Ignore params[0] -- that is the template name
-		for ( $i = 1,  $n = count( $params );  $i < $n;  $i++ ) {
+		for ( $i = 1, $n = count( $params );  $i < $n;  $i++ ) {
 			$param = $params[$i];
 			$srcOffsets = $param->srcOffsets;
 			$kSrc = null;
@@ -238,10 +232,6 @@ class TemplateEncapsulator {
 		return $ret;
 	}
 
-	/**
-	 * @param ?array $chunk
-	 * @return array
-	 */
 	private function getEncapsulationInfo( ?array $chunk = null ): array {
 		// TODO
 		// * only add this information for top-level includes, but track parameter
@@ -262,9 +252,6 @@ class TemplateEncapsulator {
 		return $chunk;
 	}
 
-	/**
-	 * @return Token
-	 */
 	private function getEncapsulationInfoEndTag(): Token {
 		$tsr = $this->token->dataParsoid->tsr ?? null;
 		$dp = new DataParsoid;

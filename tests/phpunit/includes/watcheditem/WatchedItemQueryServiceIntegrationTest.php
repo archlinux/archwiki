@@ -2,21 +2,18 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\Title\TitleValue;
+use MediaWiki\User\Options\UserOptionsLookup;
 use MediaWiki\User\User;
-use MediaWiki\User\UserOptionsLookup;
 
 /**
  * @group Database
  *
- * @covers WatchedItemQueryService
+ * @covers \WatchedItemQueryService
  */
 class WatchedItemQueryServiceIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-
-		$this->tablesUsed[] = 'watchlist';
-		$this->tablesUsed[] = 'watchlist_expiry';
 
 		$this->overrideConfigValue( MainConfigNames::WatchlistExpiry, true );
 	}

@@ -147,7 +147,7 @@ class GroupTest extends MediaWikiIntegrationTestCase {
 						]
 					]
 				],
-				'class' => 'jsonly'
+				'class' => 'skin-minerva-list-item-jsonly'
 			],
 		];
 

@@ -7,9 +7,7 @@
 		]
 	},
 	"disableoathforuser": "Diweradekaat an dilesadur div-elfenn evit an implijer",
-	"specialpages-group-oath": "Dilesadur div-elfenn",
 	"oathauth-secret": "Alc’hwez kuzh an dilesadur div-elfenn:",
-	"oathauth-token": "Jedouer",
 	"oathauth-disable": "Diweradekaat an dilesadur div-elfenn",
 	"oathauth-validatedoath": "Alc’hwezioù div-elfenn kadarnaet. Dileset e vioc’h gant div elfenn dre ret adalek bremañ.",
 	"oathauth-disabledoath": "Diweradekaet an dilesadur div-elfenn.",

@@ -2,12 +2,15 @@
 
 use MediaWiki\Json\JsonCodec;
 use MediaWiki\Parser\RevisionOutputCache;
+use MediaWiki\PoolCounter\PoolWorkArticleViewOld;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Status\Status;
 use Psr\Log\NullLogger;
+use Wikimedia\Stats\StatsFactory;
+use Wikimedia\UUID\GlobalIdGenerator;
 
 /**
- * @covers PoolWorkArticleViewOld
+ * @covers \MediaWiki\PoolCounter\PoolWorkArticleViewOld
  * @group Database
  */
 class PoolWorkArticleViewOldTest extends PoolWorkArticleViewTest {
@@ -57,14 +60,17 @@ class PoolWorkArticleViewOldTest extends PoolWorkArticleViewTest {
 	 * @return RevisionOutputCache
 	 */
 	private function installRevisionOutputCache( $bag = null ) {
+		$globalIdGenerator = $this->createMock( GlobalIdGenerator::class );
+		$globalIdGenerator->method( 'newUUIDv1' )->willReturn( 'uuid-uuid' );
 		$this->cache = new RevisionOutputCache(
 			'test',
 			new WANObjectCache( [ 'cache' => $bag ?: new HashBagOStuff() ] ),
 			60 * 60,
 			'20200101223344',
 			new JsonCodec(),
-			new NullStatsdDataFactory(),
-			new NullLogger()
+			StatsFactory::newNull(),
+			new NullLogger(),
+			$globalIdGenerator
 		);
 
 		return $this->cache;

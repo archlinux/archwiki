@@ -11,7 +11,6 @@
 		]
 	},
 	"apierror-visualeditor-difffailed": "Falló la generación de las diferencias",
-	"apierror-visualeditor-docserver": "Error al ponerse en contacto con el servidor Parsoid/RESTBase",
 	"apihelp-visualeditor-param-basetimestamp": "Al guardar, establece esto a la fecha y hora de la revisión que se ha editado. Se utiliza para detectar conflictos de edición.",
 	"apihelp-visualeditor-param-cachekey": "Para \"serialize\" o \"diff\", utilizar el resultado de una solicitud de \"serializeforcache\" anterior con éste código. Sobreescribe $1html.",
 	"apihelp-visualeditor-param-editintro": "Editar la intro para añadir a los avisos",

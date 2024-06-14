@@ -45,5 +45,12 @@ class PreferencesHooksHandler implements
 			'label' => '&#160;',
 			'section' => 'rendering/math',
 		];
+
+		$preferences['math-popups'] = [
+			'type' => 'toggle',
+			'label-message' => 'popups-settings-option-math-tooltip',
+			'section' => 'rendering/math',
+			'help-message' => 'popups-settings-option-math-tooltip-description'
+		];
 	}
 }
