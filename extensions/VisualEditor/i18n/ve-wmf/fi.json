@@ -19,6 +19,8 @@
 			"아라"
 		]
 	},
+	"tag-editcheck-newreference-description": "Lähde lisättiin tälle sivulle",
+	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|Muokkaustarkistin (lähteet) aktivoitu]]",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuaalinen muokkaus]]",
 	"tag-visualeditor-description": "Muutos tehtiin [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuaalisella muokkaimella]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuaalinen muokkaus: Tarkista]]",
@@ -28,7 +30,7 @@
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuaalinen muokkaus: vaihdettu]]",
 	"tag-visualeditor-switched-description": "Käyttäjä aloitti muokkaamisen visuaalisella muokkaimella; sen jälkeen vaihtoi wikitekstin muokkaustilaan.",
 	"visualeditor-feedback-link": "Project:Visuaalinen muokkain/Palaute",
-	"visualeditor-feedback-tool": "Anna tästä ohjelmistosta palautetta",
+	"visualeditor-feedback-tool": "Anna palautetta tästä ohjelmistosta",
 	"visualeditor-help-label": "Lue käyttöopas",
 	"visualeditor-help-link": "mw:Special:MyLanguage/Help:VisualEditor/User guide",
 	"visualeditor-welcomedialog-action": "Aloita muokkaaminen",

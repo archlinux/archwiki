@@ -78,6 +78,10 @@ class ParserHooksHandler implements
 	 */
 	public function mathTagHook( ?string $content, array $attributes, Parser $parser ) {
 		$mode = $parser->getOptions()->getOption( 'math' );
+		if ( $mode === MathConfig::MODE_NATIVE_JAX ) {
+			$parser->getOutput()->addModules( [ 'ext.math.mathjax' ] );
+			$mode = MathConfig::MODE_NATIVE_MML;
+		}
 		$renderer = $this->rendererFactory->getRenderer( $content ?? '', $attributes, $mode );
 
 		$parser->getOutput()->addModuleStyles( [ 'ext.math.styles' ] );

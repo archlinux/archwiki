@@ -35,7 +35,8 @@
 			"Woytecr",
 			"Yejianfei",
 			"Zoranzoki21",
-			"Ата"
+			"Ата",
+			"Jack who built the house"
 		]
 	},
 	"accesskey-ca-ve-edit": "{{doc-accesskey}}",
@@ -48,7 +49,7 @@
 	"accesskey-ca-createsource-local": "{{doc-accesskey}}",
 	"collabpad-doctitle": "Name of CollabPad special page with a document subtitle",
 	"collabpad-import-subtitle": "Subtitle of CollabPad page, linking to the page the content was imported from",
-	"collabpad": "Name of CollabPad special page",
+	"collabpad": "{{doc-special|CollabPad}}",
 	"tooltip-ca-ve-edit": "Tooltip of the dedicated VisualEditor \"Edit\" tab.\n{{Identical|Edit this page}}",
 	"tooltip-ca-ve-edit-local": "Tooltip of the dedicated VisualEditor \"Edit local description\" tab.",
 	"tooltip-ca-ve-create": "Tooltip of the dedicated VisualEditor \"Create\" tab.",

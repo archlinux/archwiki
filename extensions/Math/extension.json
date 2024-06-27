@@ -213,7 +213,15 @@
 			"test.VisualEditor"
 		]
 	},
+	"ForeignResourcesDir": "modules",
 	"ResourceModules": {
+		"ext.math.mathjax": {
+			"group": "ext.math",
+			"scripts": [
+				"ext.math.mathjax.js",
+				"mathjax/es5/tex-chtml.js"
+			]
+		},
 		"ext.math.styles": {
 			"styles": "ext.math.css"
 		},

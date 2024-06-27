@@ -8,7 +8,7 @@
 		]
 	},
 	"discussiontools": "Benvegioù kaozeal",
-	"discussiontools-autotopicsubpopup-body": "Ur gemennadenn {{GENDER:|ho po}} pa vo kaset un evezhiadenn nevez ur gaozeadenn-mañ. Gallout a rit kemmañ ho arventennoù kemenn en ho penndibaboù.",
+	"discussiontools-autotopicsubpopup-body": "Ur gemennadenn {{GENDER:|ho po}} pa vo lakaet un evezhiadenn nevez er gaozeadenn-mañ. Gallout a rit kemmañ hoc’h arventennoù kemenn en ho penndibaboù.",
 	"discussiontools-autotopicsubpopup-dismiss": "OK, komprenet am eus",
 	"discussiontools-autotopicsubpopup-preferences": "Kemmañ ar penndibaboù",
 	"discussiontools-autotopicsubpopup-title": "Koumanantet {{GENDER:|oc’h}} bet",
@@ -25,7 +25,7 @@
 	"discussiontools-emptystate-desc-user": "E [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|pajennoù kaozeal]] e komzer diwar-benn an tu gwellañ da aozañ endalc’h war {{SITENAME}}. Krogit gant ur gaozeadenn nevez evit mont e darempred ha kenlabourat {{GENDER:{{PAGENAME}}|gant}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]]. Gallout a raio an holl gwelout ar pezh skrivet {{GENDER:|ganeoc’h}} amañ.",
 	"discussiontools-emptystate-desc-user-anon": "E [[{{MediaWiki:discussiontools-emptystate-link-userpage-anon}}|pajennoù kaozeal]] e komzer diwar-benn an tu gwellañ da aozañ endalc’h. Krogit gant ur gaozeadenn nevez evit er bajenn-mañ evit kaozeal diwar-benn ar c’hemmoù graet eus ar chomlec’h IP-mañ. Gallout a raio an holl gwelout ar pezh skrivet {{GENDER:|ganeoc’h}} amañ. Lod eus ar chomlec’hioù IP a cheñch ur wech en amzer, hag alies ez int implijet gant meur a dud.",
 	"discussiontools-emptystate-desc-user-temp": "Grit gant ar [[{{MediaWiki:discussiontools-emptystate-link-userpage-temp}}|bajenn gaozeal]]-mañ evit boulc’hañ ur gaozeadenn {{GENDER:{{PAGENAME}}|gant}} [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] a-zivout penaos gwellaat {{SITENAME}}. Ar pezh a vo lavaret gant {{GENDER:|you}} a c’hallo bezañ gwelet gant ar re all. Peogwir [[:{{SUBJECTPAGENAME}}|{{PAGENAME}}]] zo ur [[{{MediaWiki:tempuser-helppage}}|gont evit ur mare]] ez aoio ar bajenn-mañ da dermen a-benn ar fin. [[{{MediaWiki:tempuser-helppage}}|Gouzout hiroc’h]].",
-	"discussiontools-emptystate-title": "Kregiñ ur gaozeadenn diwar-benn {{SUBJECTPAGENAME}}",
+	"discussiontools-emptystate-title": "Boulc’hañ ur gaozeadenn diwar-benn {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-self": "{{GENDER:|Degemer mat}} en ho pajenn gaozeal",
 	"discussiontools-emptystate-title-self-anon": "{{GENDER:|Degemer mat}} er bajenn gaozeal-mañ",
 	"discussiontools-emptystate-title-self-temp": "{{GENDER:|Degemer mat}} en ho pajenn gaozeal evit ur mare",

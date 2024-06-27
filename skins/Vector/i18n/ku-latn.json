@@ -74,9 +74,10 @@
 	"tooltip-vector-anon-user-menu-title": "Zêdetir opsiyon",
 	"vector-page-tools-nav-label": "Amûrên rûpelê",
 	"vector-prefs-limited-width": "Moda firehiya sînorkirî çalak bike",
-	"vector-prefs-limited-width-help": "Ji bo tecrûbeya xwendinê ya baştir moda firehiya sînorkirî çalak bike",
+	"vector-prefs-limited-width-help": "Ji bo tecrûbeya xwendinê ya baştir moda firehiya sînorkirî aktîv bike",
 	"empty-language-selector-body": "Naverokên rûpelê bi zimanên din nayê destekkirin.",
 	"vector-toc-unpinned-popup": "Tabloya naverokan neqlê vir kirine.",
 	"vector-page-tools-unpinned-popup": "Menûya amûran neqlê vir kirine.",
-	"vector-main-menu-unpinned-popup": "Menûya esasî neqlê vir kirine."
+	"vector-main-menu-unpinned-popup": "Menûya esasî neqlê vir kirine.",
+	"vector-2022-beta-preview-label": "Tercîhên Xwendinê (Vector 2022)"
 }

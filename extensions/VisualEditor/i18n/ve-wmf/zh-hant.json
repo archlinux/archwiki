@@ -24,13 +24,15 @@
 			"Waihorace",
 			"Xiplus",
 			"捍粵者",
-			"아라"
+			"아라",
+			"Cookai1205"
 		]
 	},
 	"tag-editcheck-newcontent-description": "EditCheck 發現頁面裡有新添加的內容",
 	"tag-editcheck-newreference-description": "頁面中添加了參考來源",
 	"tag-editcheck-references-description": "EditCheck 認為可能需要參考來源",
 	"tag-editcheck-references-activated": "[[{{MediaWiki:editcheck-falsepositives-link}}|編輯檢查（參考資料）已啟用]]",
+	"tag-editcheck-references-activated-description": "編輯檢查認為可能需要參考資料，並顯示了UI",
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|視覺化編輯]]",
 	"tag-visualeditor-description": "使用[[{{MediaWiki:visualeditor-descriptionpagelink}}|視覺化編輯器]]完成的編輯",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|視覺化編輯器：需要檢查]]",

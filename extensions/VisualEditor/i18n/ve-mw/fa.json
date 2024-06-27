@@ -32,7 +32,8 @@
 			"Taha",
 			"الناز",
 			"درفش کاویانی",
-			"فلورانس"
+			"فلورانس",
+			"Ebrahim"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -61,7 +62,7 @@
 	"visualeditor-autosave-recovered-title": "تغییرات بازیابی شد",
 	"visualeditor-backbutton-tooltip": "بازگشت به عقب",
 	"visualeditor-browserwarning": "شما از مرورگری استفاده می‌کنید که در این ویرایشگر به طور رسمی پشتیبانی نمی‌شود.",
-	"visualeditor-ca-createlocaldescriptionsource": "افزودن مبدأ توضیحات محلی",
+	"visualeditor-ca-createlocaldescriptionsource": "افزودن منبع توضیحات محلی",
 	"visualeditor-ca-createsource": "ایجاد مبدأ",
 	"visualeditor-ca-editlocaldescriptionsource": "ویرایش توضیحات محلی",
 	"visualeditor-ca-editsource": "ویرایش مبدأ",
@@ -368,8 +369,8 @@
 	"visualeditor-savedialog-review-visual": "دیداری",
 	"visualeditor-savedialog-review-wikitext": "ویکی‌متن",
 	"visualeditor-savedialog-title-conflict": "تعارض",
-	"visualeditor-savedialog-title-preview": "بازبینی تغییرات شما",
-	"visualeditor-savedialog-title-review": "بازبینی تغییرات شما",
+	"visualeditor-savedialog-title-preview": "پیش‌نمایش تغییرات",
+	"visualeditor-savedialog-title-review": "بازبینی تغییرات",
 	"visualeditor-savedialog-title-save": "تغییرات خود را ذخیره کنید",
 	"visualeditor-section-body-placeholder": "بخش جدید",
 	"visualeditor-section-title-placeholder": "موضوع",

@@ -95,6 +95,7 @@
 	"math_unknown_error": "Unbekannter Fehler",
 	"math_unknown_function": "Unbekannte Funktion „$1“",
 	"mw-math-latexml": "LaTeXML (experimentell; verwendet MathML)",
+	"mw-math-mathjax": "Clientseitiges MathJax-Rendering (für Browser mit eingeschränkter MathML-Unterstützung)",
 	"mw-math-mathml": "SVG (MathML kann über ein Browser-Plugin aktiviert werden)",
 	"mw-math-native": "MathML (experimentell; keine Bilder)",
 	"mw-math-source": "LaTeX-Quelltext (für Textbrowser)",
@@ -117,6 +118,5 @@
 	"math-wikibase-special-form-button": "Information anfordern",
 	"math-wikibase-special-error-header": "Fehler",
 	"math-wikibase-special-error-invalid-argument": "Die angegebene Wikibase-ID ist nicht vorhanden.",
-	"math-wikibase-special-error-unknown": "Fehler beim Holen der Daten von Wikibase.",
-	"math-wikibase-special-error-no-wikibase": "Die Wikibase-Erweiterung ist notwendig, um diese Spezialseite zu nutzen."
+	"math-wikibase-special-error-unknown": "Fehler beim Holen der Daten von Wikibase."
 }

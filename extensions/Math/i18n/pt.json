@@ -99,6 +99,7 @@
 	"math_unknown_error": "erro desconhecido",
 	"math_unknown_function": "função desconhecida: \"$1\"",
 	"mw-math-latexml": "LaTeXML (experimental; usa MathML)",
+	"mw-math-mathjax": "Composição de imagem MathJax do lado do cliente (para ''browsers'' com suporte limitado de MathML)",
 	"mw-math-mathml": "SVG (MathML pode ser ativado através de uma extensão do ''browser'')",
 	"mw-math-native": "MathML (experimental; sem imagens)",
 	"mw-math-source": "Fonte LaTeX (para navegadores de texto)",

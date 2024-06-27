@@ -90,6 +90,7 @@
 	"math_unknown_error": "непозната грешка",
 	"math_unknown_function": "непозната функција „$1“",
 	"mw-math-latexml": "LaTeXML (пробно; користи MathML)",
+	"mw-math-mathjax": "Испис на MathJax од клиентска страна (за прелистувачи со ограничена поддршка за MathML)",
 	"mw-math-mathml": "SVG (MathML може да се овозможи преку приклучок на прелистувачот)",
 	"mw-math-native": "MathML (пробно; без слики)",
 	"mw-math-source": "LaTeX-извор (за текстуални прелистувачи)",
@@ -112,6 +113,5 @@
 	"math-wikibase-special-form-button": "Побарај информации",
 	"math-wikibase-special-error-header": "Грешка",
 	"math-wikibase-special-error-invalid-argument": "Укажаниот предмет од Викибазата не постои.",
-	"math-wikibase-special-error-unknown": "Се јави непозната грешка при добивањето на податоците од Викибазата.",
-	"math-wikibase-special-error-no-wikibase": "За употреба на оваа службена страница се бара додатокот за Викибазата."
+	"math-wikibase-special-error-unknown": "Се јави непозната грешка при добивањето на податоците од Викибазата."
 }

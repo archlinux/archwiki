@@ -52,7 +52,7 @@
 	"math_unknown_error": "невядомая памылка",
 	"math_unknown_function": "невядомая функцыя '$1'",
 	"mw-math-latexml": "LaTeXML (экспэрымэнтальна; ужывае MathML)",
-	"mw-math-mathml": "SVG з запасным PNG (MathML можна ўключыць з дапамогай плагіну для броўзэра)",
+	"mw-math-mathml": "SVG (MathML можна ўключыць з дапамогай плагіну для броўзэра)",
 	"mw-math-source": "LaTeX-разьметка (для тэкставых браўзэраў)",
 	"prefs-math": "Матэматычныя формулы",
 	"mathstatus": "Генэрацыя матэматычных формулаў",

@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Akbarali"
+			"Akbarali",
+			"Praveenp"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "മറുപടി",
-	"discussiontools-replylink": "മറുപടി",
+	"discussiontools-replylink": "{{GENDER:|മറുപടി}}",
 	"discussiontools-replywidget-advanced": "വിപുലമായ",
 	"discussiontools-replywidget-cancel": "റദ്ദാക്കുക",
 	"discussiontools-replywidget-mode-source": "സ്രോതസ്സ്",

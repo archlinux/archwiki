@@ -3,7 +3,8 @@
 		"authors": [
 			"Macofe",
 			"Исмаил Садуев",
-			"Умар"
+			"Умар",
+			"TMg"
 		]
 	},
 	"echo-desc": "Декъашхойн хиларг а, хаамаш а болу дӀахаийтаран система",
@@ -114,7 +115,7 @@
 	"notification-body-edit-user-talk-with-section": "$1",
 	"notification-header-page-linked": "Хьажорг йина <strong>$4</strong> → <strong>$3</strong>.",
 	"notification-compact-header-page-linked": "Йихкина йу $1",
-	"notification-bundle-header-page-linked": "$4 а, $5 а агӀонаш {{PLURAL:$6|кхечу агӀон тӀера|кхечу агӀонаш тӀера}} $3 тӀе хьажийна.",
+	"notification-bundle-header-page-linked": "$4 а, $5 а агӀонаш {{PLURAL:$5|кхечу агӀон тӀера|кхечу агӀонаш тӀера}} $3 тӀе хьажийна.",
 	"notification-link-text-what-links-here": "ХӀокху агӀонна тӀе массо хьажоргаш",
 	"notification-header-mention-other": "$1 {{GENDER:$2|хьахийна}} {{GENDER:$3|хьо}} <strong>$4</strong> агӀонан «$5» дакъа тӀехь.",
 	"notification-header-mention-other-nosection": "$1 {{GENDER:$2|хьахийна}} {{GENDER:$3|хьо}} <strong>$4</strong> агӀонгахь.",

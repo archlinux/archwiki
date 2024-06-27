@@ -95,6 +95,7 @@
 	"math_unknown_error": "erro descoñecido",
 	"math_unknown_function": "descoñécese a función \"$1\"",
 	"mw-math-latexml": "LaTeXML (experimental; usa MathML)",
+	"mw-math-mathjax": "Renderización MathJax do lado do cliente (para navegadores con compatibilidade limitada de MathML)",
 	"mw-math-mathml": "SVG (MathML pódese activar mediante un complemento do navegador)",
 	"mw-math-native": "MathML (experimental; sen imaxes)",
 	"mw-math-source": "Código LaTeX (para os navegadores de texto)",

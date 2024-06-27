@@ -102,6 +102,7 @@
 	"math_unknown_error": "Used as error message for unknown texvc error.\n\nThis message follows the message {{msg-mw|Math failure}}.\n{{Identical|Unknown error}}",
 	"math_unknown_function": "Used as error message when texvc encounters an unknown function.\n\nPreceded by the message {{msg-mw|Math failure}}.\n\nParameters:\n* $1 - name of unknown function",
 	"mw-math-latexml": "Used as label for latexml radio button.\n\nSee also:\n* {{msg-mw|Mw math source}}",
+	"mw-math-mathjax": "Used as label for MathML radio button.\n\nSee also:\n* {{msg-mw|Mw math source}}\n* {{msg-mw|Mw math latexml}}",
 	"mw-math-mathml": "Used as label for MathML radio button.\n\nSee also:\n* {{msg-mw|Mw math source}}\n* {{msg-mw|Mw math latexml}}",
 	"mw-math-native": "Used as label for native MathML radio button.\n\nSee also:\n* {{msg-mw|Mw math source}}\n* {{msg-mw|Mw math latexml}}",
 	"mw-math-source": "In user preferences (math). All mw_math_* messages MUST be different, things will break otherwise!\n\nUsed as label for source radio button.\n\nSee also:\n* {{msg-mw|Mw math latexml}}",

@@ -10,6 +10,7 @@
 		]
 	},
 	"popups-settings-option-math": "গণিত",
+	"popups-settings-option-math-tooltip": "মাউস নিলে গাণিতিক সূত্রগুলি ব্যাখ্যা করুন।",
 	"math-visualeditor-mwchemdialog-title": "রাসায়নিক সূত্র",
 	"math-visualeditor-mwlatexcontextitem-quickedit": "দ্রুত সম্পাদনা",
 	"math-visualeditor-mwlatexdialog-card-formula": "সূত্র",
@@ -78,7 +79,8 @@
 	"math_unknown_error": "অজানা ত্রুটি",
 	"math_unknown_function": "'$1' অজানা ফাংশন",
 	"mw-math-latexml": "LaTeXML (পরীক্ষামূলক; MathML ব্যবহার করে)",
-	"mw-math-mathml": "SVG বা PNG পশ্চাদপসরণসহ MathML (আধুনিক ব্রাউজার এবং প্রবেশযোগ্যতা সরঞ্জামের জন্য সুপারিশ করা)",
+	"mw-math-mathml": "এসভিজি (ব্রাউজার প্লাগইনের মাধ্যমে ম্যাথএমএল সক্রিয় করা যেতে পারে)",
+	"mw-math-native": "ম্যাথএমএল (পরীক্ষামূলক; চিত্র ছাড়া)",
 	"mw-math-source": "LaTeX উৎস (পাঠ্য ব্রাউজারগুলোর জন্য)",
 	"prefs-math": "গণিত",
 	"mathstatus": "গণিতের অবস্থা",

@@ -19,7 +19,8 @@
 			"Wladek92",
 			"Wyz",
 			"Yona b",
-			"Zebulon84"
+			"Zebulon84",
+			"SleaY"
 		]
 	},
 	"math-desc": "Restitue les formules mathématiques entre les balises <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -98,6 +99,7 @@
 	"math_unknown_error": "erreur indéterminée",
 	"math_unknown_function": "fonction inconnue « $1 »",
 	"mw-math-latexml": "LaTeXML (expérimental, utilise MathML)",
+	"mw-math-mathjax": "Rendu MathJax côté client (pour les navigateurs avec une prise en charge MathML limitée)",
 	"mw-math-mathml": "SVG (MathML peut être activé via une extension du navigateur)",
 	"mw-math-native": "MathML (expérimental ; sans images)",
 	"mw-math-source": "Source LaTeX (pour les navigateurs en mode texte)",
@@ -121,6 +123,5 @@
 	"math-wikibase-special-form-button": "Demander des informations",
 	"math-wikibase-special-error-header": "Erreur",
 	"math-wikibase-special-error-invalid-argument": "L’ID de l’élément Wikibase que vous avez spécifié n’existe pas.",
-	"math-wikibase-special-error-unknown": "Une erreur inconnue s’est produite lors de la récupération des données depuis Wikibase.",
-	"math-wikibase-special-error-no-wikibase": "L’extension Wikibase est nécessaire pour utiliser cette page spéciale."
+	"math-wikibase-special-error-unknown": "Une erreur inconnue s’est produite lors de la récupération des données depuis Wikibase."
 }

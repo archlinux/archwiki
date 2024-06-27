@@ -90,6 +90,7 @@
 	"math_unknown_error": "error incognite",
 	"math_unknown_function": "function '$1' incognite",
 	"mw-math-latexml": "LaTeXML (experimental; usa MathML)",
+	"mw-math-mathjax": "Rendition MathJax al latere cliente (pro navigatores con supporto limitate de MathML)",
 	"mw-math-mathml": "SVG (MathML pote esser activate via un extension del navigator)",
 	"mw-math-native": "MathML (experimental; nulle imagines)",
 	"mw-math-source": "Codice-fonte LaTeX (pro navigatores in modo texto)",

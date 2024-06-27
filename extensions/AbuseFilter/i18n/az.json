@@ -223,6 +223,7 @@
 	"abusefilter-edit-lastmod-text": "$1 tarixində $2 tərəfindən",
 	"abusefilter-edit-hitcount": "Filtrin işləməsi:",
 	"abusefilter-edit-consequences": "Uyğungəlmə zamanı yerinə yetirilməli olan fəaliyyət",
+	"abusefilter-edit-action-warn": "İstifadəçiyə xəbərdarlıq etdikdən sonra bu tədbirləri işə salın",
 	"abusefilter-edit-action-disallow": "İstifadəçinin bu fəaliyyəti icra etməsinin qarşısını al",
 	"abusefilter-edit-action-blockautopromote": "İstifadəçinin avtotəsdiqlənmiş statusunu ləğv et",
 	"abusefilter-edit-action-block": "İstifadəçini və/və ya IP ünvanı blokla",
@@ -391,6 +392,6 @@
 	"abusefilter-blocked-domains-actions-header": "Əməliyyatlar",
 	"abusefilter-blocked-domains-addedby-header": "Əlavə edən",
 	"abusefilter-blocked-domains-remove": "sil",
-	"abusefilter-blocked-domains-attempted": "Əlavə etmək istədiyiniz mətn filtrimiz tərəfindən bloklandı. Aşağıdakı domenin əlavə edilməsi bloklanıb: $1",
+	"abusefilter-blocked-domains-attempted": "Əlavə etmək istədiyiniz mətn, dəyişiklik süzgəcimiz tərəfindən bloklanıb. Bu domenin əlavə edilməsi bloklanıb: $1",
 	"abusefilter-blocked-domains-domain-added-comment": "$1 domeni bloklanmış domenlər siyahısına əlavə edilir: $2"
 }

@@ -19,12 +19,17 @@
 	"vector-view-view": "Looǥǥ",
 	"vector-view-viewsource": "Čuäʹjet käivvkood",
 	"vector-more-actions": "Lââʹzz",
+	"vector-feature-limited-width-name": "Kobddâdvuõtt",
+	"vector-feature-custom-font-size-name": "Teʹkstt",
+	"skin-theme-name": "Euʹnn",
+	"skin-theme-os-label": "Automaattlaž",
 	"vector-searchsuggest-containing": "Ooʒʒ seeidaid, koin lij <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-toc-label": "Siiskâžlooǥǥtõs",
 	"vector-anon-user-menu-pages-learn": "lââʹssteâđ",
 	"vector-main-menu-tooltip": "Väʹlddvaʹlljõk",
 	"vector-toc-menu-tooltip": "Siiskâžlooǥǥtõs",
 	"vector-site-nav-label": "Seiddõs",
+	"vector-main-menu-label": "Väʹlddvaʹlljõk",
 	"vector-page-tools-label": "Neävv",
 	"vector-unpin-element-label": "čiõǥǥ"
 }
