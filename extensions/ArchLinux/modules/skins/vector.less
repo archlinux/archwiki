@@ -135,34 +135,6 @@ body.skin-vector-2022 {
     display: block;
   }
 
-  // Fix style and layout of main menu in the left sidebar
-  @media screen {
-    // NOTE: #vector-main-menu alone is not unique as of MW 1.40
-    #vector-main-menu.vector-main-menu {
-      background: @content-background-color;
-      border: @content-border-style;
-      width: auto;
-      margin-left: 0;
-      margin-top: 0;
-      margin-bottom: 1em;
-    }
-  }
-
-  // Fix layout of the TOC menu in the left sidebar
-  @media screen and (min-width: 1000px) {
-    // NOTE: #mw-panel-toc alone is not specific enough
-    #mw-panel-toc.mw-table-of-contents-container {
-      margin-left: 0;
-      #vector-toc-pinned-container {
-        margin-top: 0 !important;
-        border: @content-border-style;
-        .vector-toc, .vector-toc::after {
-          width: auto;
-        }
-      }
-    }
-  }
-
   // Restore section numbers in the sidebar table of contents
   .vector-toc .vector-toc-numb {
     display: inline;
